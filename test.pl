@@ -22,23 +22,24 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
-$config_obj->sqllog(0);       # デバッグ用
+$config_obj->sqllog(1);       # デバッグ用
 
 #------------------------#
 #   プロジェクトを開く   #
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
-		'E:/home/higuchi/perl/core/data/test/ecom2.html',
+		'F:/home/Koichi/Study/perl/test_data/ootaki_old/0100_fix.htm',
+#		'E:/home/higuchi/perl/core/data/test/ecom2.html',
 	dbname  =>
-		'khc6',
+		'khc7',
 )->open;
 
 # テストプリント
-print "kinds_all: ".mysql_words->num_kinds_all."\n";
-print "all: ".mysql_words->num_all."\n";
-print "kinds: ".mysql_words->num_kinds."\n\n";
+print "project opened:\n";
+print "\tkinds_all: ".mysql_words->num_kinds_all."\n";
+print "\tkinds: ".mysql_words->num_kinds."\n";
+print "\tall: ".mysql_words->num_all."\n\n";
 
 #----------------#
 #   テスト処理   #
@@ -47,16 +48,16 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-my $result = mysql_morpho_check->search(
-	query   => '使え',
-);
+use kh_cod;
+my $code = kh_cod->read_file('test.cod');
+print "\n";
+my $result = $code->count('bun');
+print "\n";
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
 # 結果を出力
 # open (OUT,">test.txt");
-foreach my $i (@{$result}){
-	print Jcode->new("$i->[1], $i->[0]\n")->sjis;
-}
+
 

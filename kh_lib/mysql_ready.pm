@@ -27,7 +27,7 @@ sub first{
 	}
 
 	# ローデータの読み込み
-	mysql_exec->do("drop table rowdata");
+	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("create table rowdata
 		(
 			hyoso varchar(255) not null,
@@ -76,7 +76,7 @@ sub first{
 	my $t2 = new Benchmark;
 	
 	# キャッシュ・テーブル作成
-	mysql_exec->do("drop table hgh");
+	mysql_exec->drop_table("hgh");
 	my @len = (
 		$self->length('hyoso'),
 		$self->length('genkei'),
@@ -104,7 +104,7 @@ sub first{
 
 	# 品詞テーブル作成
 	my $len = $self->length('hinshi');
-	mysql_exec->do("drop table hinshi");
+	mysql_exec->drop_table("hinshi");
 	mysql_exec->do("
 		create table hinshi (
 			id int auto_increment primary key not null,
@@ -125,7 +125,7 @@ sub first{
 	# 原形テーブル作成
 
 	$len = $self->length('genkei');                         # テーブル準備
-	mysql_exec->do("drop table genkei");
+	mysql_exec->drop_table("genkei");
 	mysql_exec->do("
 		create table genkei (
 			id int auto_increment primary key not null,
@@ -210,7 +210,7 @@ sub first{
 	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 
 	# KH_品詞テーブルの作成
-	mysql_exec->do("drop table khhinshi");
+	mysql_exec->drop_table("khhinshi");
 	mysql_exec->do("
 		create table khhinshi (
 			id int primary key not null,
@@ -235,7 +235,7 @@ sub first{
 	mysql_exec->do('alter table khhinshi add index index1(name,id)',1);
 
 	# キャッシュテーブル(2)作成
-	mysql_exec->do("drop table hghi");
+	mysql_exec->drop_table("hghi");
 	mysql_exec->do("
 		create table hghi (
 			hyoso varchar($len[0]) not null,
@@ -258,7 +258,7 @@ sub first{
 				AND hgh.hinshi = hinshi.name
 				AND genkei.hinshi_id = hinshi.id
 	',1); 
-	mysql_exec->do("drop table hgh");
+	mysql_exec->drop_table("hgh");
 	if ($len[0] + $len[1] + $len[2] <= 500){
 		mysql_exec->do(
 			"alter table hghi add index index1 (hyoso, genkei, hinshi)",
@@ -272,7 +272,7 @@ sub first{
 	}
 
 	# 活用テーブル作成
-	mysql_exec->do("drop table katuyo");
+	mysql_exec->drop_table("katuyo");
 	mysql_exec->do ("
 		create table katuyo (
 			id int auto_increment primary key not null,
@@ -288,7 +288,7 @@ sub first{
 
 
 	# 表層テーブル作成
-	mysql_exec->do("drop table hyoso");
+	mysql_exec->drop_table("hyoso");
 	mysql_exec->do("
 		create table hyoso (
 			id int not null primary key,
@@ -324,7 +324,7 @@ sub first{
 		$IDs->{$d->[1]} = $d->[0];
 	}
 
-	mysql_exec->do("drop table hyosobun");   # テーブル作成
+	mysql_exec->drop_table("hyosobun");   # テーブル作成
 	mysql_exec->do("
 		create table hyosobun (
 			id int auto_increment primary key not null,
@@ -496,7 +496,7 @@ sub first{
 		if ($longest > 65535){
 			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
 		}
-		mysql_exec->do("drop table bun");
+		mysql_exec->drop_table("bun");
 		mysql_exec->do("create table bun(id int auto_increment primary key not null, rowtxt TEXT )",1);
 		my $h = mysql_exec->select("
 			SELECT hyosobun.bun_idt, hyoso.name
@@ -526,7 +526,7 @@ sub first{
 	# 段落単位
 	if(mysql_exec->select("select max(dan_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_dan(1);
-		mysql_exec->do("drop table dan");
+		mysql_exec->drop_table("dan");
 		mysql_exec->do("
 			create table dan(
 				id int auto_increment primary key not null,
@@ -550,7 +550,7 @@ sub first{
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h5(1);
-		mysql_exec->do("drop table h5");
+		mysql_exec->drop_table("h5");
 		mysql_exec->do("
 			create table h5(
 				id int auto_increment primary key not null,
@@ -573,7 +573,7 @@ sub first{
 	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h4(1);
-		mysql_exec->do("drop table h4");
+		mysql_exec->drop_table("h4");
 		mysql_exec->do("
 			create table h4(
 				id int auto_increment primary key not null,
@@ -595,7 +595,7 @@ sub first{
 	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h3(1);
-		mysql_exec->do("drop table h3");
+		mysql_exec->drop_table("h3");
 		mysql_exec->do("
 			create table h3(
 				id int auto_increment primary key not null,
@@ -616,7 +616,7 @@ sub first{
 	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h2(1);
-		mysql_exec->do("drop table h2");
+		mysql_exec->drop_table("h2");
 		mysql_exec->do("
 			create table h2(
 				id int auto_increment primary key not null,
@@ -636,6 +636,21 @@ sub first{
 	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h1(1);
+		mysql_exec->drop_table("h1");
+		mysql_exec->do("
+			create table h1(
+				id int auto_increment primary key not null,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO h1 (h1_id)
+			SELECT h1_id
+			FROM hyosobun
+			WHERE h1_id > 0
+			GROUP BY h1_id
+			ORDER BY h1_id
+		",1);
 	}
 }
 

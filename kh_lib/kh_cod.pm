@@ -38,7 +38,7 @@ sub read_file{
 			next;
 		}
 		
-		$_ = Jcode->new("$_")->euc;
+		$_ = Jcode->new("$_",'sjis')->euc;
 		if ($_ =~ /^¡ö/o){
 			chomp;
 			$head = $_;
