@@ -58,7 +58,6 @@ sub get{
 }
 
 # 「部分テキストの取り出し」->「見出し文だけを取り出す」から利用
-
 sub get_all{
 	my $class = shift;
 	my %args  = @_;
@@ -90,8 +89,11 @@ sub get_all{
 			}
 		}
 	}
-	
 	close (F);
+
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_sjis($self->{file});
+	}
 }
 
 

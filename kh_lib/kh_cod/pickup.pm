@@ -77,9 +77,12 @@ sub pick{
 		print "$id,";
 	}
 	close (F);
-
 	my $t1 = new Benchmark;                           # 時間計測用
 	print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
+	
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_sjis($args{file});
+	}
 
 }
 
