@@ -15,6 +15,9 @@ sub new{
 		print Jcode->new("$args{genkei}, $args{hinshi}\n")->sjis;
 	}
 
+	# エスケープ
+	$args{genkei} =~ s/'/\\'/go;
+
 	my $self = \%args;
 	bless $self, $class;
 
