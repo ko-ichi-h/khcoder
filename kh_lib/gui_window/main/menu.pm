@@ -270,11 +270,19 @@ sub make{
 				-tearoff=>'no'
 			);
 
+			$self->{m_b3_contxtout_csv} = $self->{m_b3_contxtout}->command(
+				-label => Jcode->new("CSVファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::contxt_out::csv->open;
+				})},
+			);
+
 			$self->{m_b3_contxtout_spss} = $self->{m_b3_contxtout}->command(
 				-label => Jcode->new("SPSSファイル")->sjis,
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					gui_window::contxt_out->open;
+					gui_window::contxt_out::spss->open;
 				})},
 			);
 
@@ -330,20 +338,20 @@ sub make{
 			 -tearoff=>'no'
 		);
 
-			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
-				-label => Jcode->new('SPSSファイル')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-						gui_window::cod_out::spss->open;
-					})},
-				-state => 'disable'
-			);
-
 			$self->{t_cod_out_csv} = $self->{t_cod_out}->command(
 				-label => Jcode->new('CSVファイル')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::cod_out::csv->open;
+					})},
+				-state => 'disable'
+			);
+
+			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
+				-label => Jcode->new('SPSSファイル')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::cod_out::spss->open;
 					})},
 				-state => 'disable'
 			);
@@ -528,6 +536,7 @@ sub refresh{
 		't_out_list',
 		'm_b3_contxtout',
 		'm_b3_contxtout_spss',
+		'm_b3_contxtout_csv',
 	);
 
 	# 状態変更

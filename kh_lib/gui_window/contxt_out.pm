@@ -1,10 +1,14 @@
 package gui_window::contxt_out;
 use base qw(gui_window);
+use strict;
 
 use gui_widget::tani_and_o;
 use gui_widget::hinshi;
 use mysql_crossout;
 use mysql_contxt;
+
+use gui_window::contxt_out::spss;
+use gui_window::contxt_out::csv;
 
 #-------------#
 #   GUI作製   #
@@ -23,24 +27,24 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1, -side => left);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 	my $rf = $wf->LabFrame(
 		-label => 'Words for Context',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1, -side => left);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 	my $of = $win ->LabFrame(
 		-label => 'Optins',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-anchor => 'w', -side => left);
+	)->pack(-anchor => 'w', -side => 'left');
 	my $bf = $win ->Frame(
 		-borderwidth => 2
-	)->pack(-anchor => 'se', -side => right);
+	)->pack(-anchor => 'se', -side => 'right');
 
 	#--------------------#
 	#   集計オプション   #
-	
+
 	$of->Label(
 		-text       => Jcode->new('・集計単位と重み付けの設定')->sjis,
 		-font       => "TKFN",
@@ -106,7 +110,7 @@ sub _new{
 		-text => Jcode->new('　　')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
-	%pack = (
+	my %pack = (
 			-anchor => 'w',
 			-side   => 'left',
 			-pady   => 1,
@@ -200,13 +204,13 @@ sub _new{
 		-text => Jcode->new('　　')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
-	%pack = (
-			-anchor => 'w',
-			-side   => 'left',
-			-pady   => 1,
-			-fill   => 'y',
-			-expand => 1
-	);
+	#%pack = (
+	#		-anchor => 'w',
+	#		-side   => 'left',
+	#		-pady   => 1,
+	#		-fill   => 'y',
+	#		-expand => 1
+	#);
 	$self->{hinshi_obj} = gui_widget::hinshi->open(
 		parent => $l3,
 		pack   => \%pack
@@ -332,49 +336,7 @@ sub check2{
 	$self->{ent_check2}->configure(-state => 'disable');
 }
 
-#--------------#
-#   ロジック   #
-#--------------#
 
-sub go{
-	print "go!";
-	
-	my $self = shift;
-	my $file = shift;
-	
-	mysql_contxt->new(
-		tani    => $self->{tani_obj}->value,
-		hinshi2 => $self->hinshi2,
-		max2    => $self->max2,
-		min2    => $self->min2,
-		hinshi  => $self->hinshi,
-		max     => $self->max,
-		min     => $self->min,
-	)->culc->save($file);
-	
-}
-
-#-----------------#
-#   保存先の参照  #
-
-sub file_name{
-	my $self = shift;
-	my @types = (
-		[ "spss syntax file",[qw/.sps/] ],
-		["All files",'*']
-	);
-	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.sps',
-		-filetypes        => \@types,
-		-title            =>
-			Jcode->new('「抽出語ｘ文脈ベクトル」表：名前を付けて保存')->sjis,
-		-initialdir       => $::config_obj->cwd
-	);
-	unless ($path){
-		return 0;
-	}
-	return $path;
-}
 
 #--------------------------#
 #   入力チェックルーチン   #
@@ -436,17 +398,6 @@ sub max2{
 sub hinshi2{
 	my $self = shift;
 	return $self->{hinshi_obj2}->selected;
-}
-
-
-
-
-sub label{
-	return '「抽出語ｘ文脈ベクトル」表の出力： SPSS';
-}
-
-sub win_name{
-	return 'w_cross_out';
 }
 
 
