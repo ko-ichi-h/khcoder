@@ -9,26 +9,44 @@ use mysql_exec;
 #--------------#
 #   単語検索   #
 
-# Usage: mysql_word->search(query => 'EUC検索文', method => 'AND/OR');
+# Usage: mysql_word->search(
+# 	query  => 'EUC検索文',
+# 	method => 'AND/OR',
+# 	kihone => 1/0             # 基本形で検索するかどうか
+# 	katuyo => 1/0             # 活用形を表示するかどうか
+# );
 
 sub search{
 	my $class = shift;
 	my %args = @_;
+	my $self = \%args;
 	
 	my $query = $args{query};
 	$query =~ s/　/ /g;
 	my @query = split / /, $query;
 	
-	my $sql = '
-		SELECT
-			genkei.name, hselection.name, genkei.num
-		FROM
-			genkei, hselection
-		WHERE
-			    genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.ifuse = 1'."\n";
-	$sql .= "\t\t\tAND (\n";
+	my $sql;
+	if ($args{kihon}){
+		$sql = '
+			SELECT
+				genkei.name, hselection.name, genkei.num
+			FROM
+				genkei, hselection
+			WHERE
+				    genkei.khhinshi_id = hselection.khhinshi_id
+				AND hselection.ifuse = 1'."\n";
+		$sql .= "\t\t\tAND (\n";
+	} else {
+		$sql = '
+			SELECT
+				hyoso, hinshi, katuyo, count(*) as num
+			FROM
+				rowdata
+			WHERE
+				';
+	}
 
+	# SQL文に検索対象語を投入
 	foreach my $i (@query){
 		my $word;
 		if ($i =~ /%/){
@@ -36,8 +54,11 @@ sub search{
 		} else {
 			$word = "'%$i%'";
 		}
-		
-		$sql .= "\t\t\t\tgenkei.name LIKE $word";
+		if ($args{kihon}){
+			$sql .= "\t\t\t\tgenkei.name LIKE $word";
+		} else {
+			$sql .= "\t\t\t\thyoso LIKE $word";
+		}
 		if ($args{method} eq 'AND'){
 			$sql .= " AND\n";
 		} else {
@@ -45,11 +66,16 @@ sub search{
 		}
 	}
 	substr($sql,-4,3) = '';
-	$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC";
+	
+	if ($args{kihon}){
+		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC";
+	} else {
+		$sql .= 'GROUP BY hyoso ORDER BY num DESC';
+	}
 	
 #	print "\n$sql\n";
 	
-	my $t = mysql_exec->select($sql);
+	my $t = mysql_exec->select($sql,1);
 	my $result = $t->hundle->fetchall_arrayref;
 	return $result;
 }

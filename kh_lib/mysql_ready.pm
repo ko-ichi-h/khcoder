@@ -35,6 +35,7 @@ sub first{
 			yomi varchar(255) not null,
 			genkei varchar(255) not null,
 			hinshi varchar(255) not null,
+			katuyogata varchar(255) not null,
 			katuyo varchar(255) not null,
 			id int auto_increment primary key not null
 		)
