@@ -305,6 +305,7 @@ sub reform{
 					}
 				}
 			}
+			$d->[0] =~ s/'/\\'/go;
 			$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
 			++$num;
 			if ($num == $data_per_1ins){               # DBに投入
@@ -796,6 +797,8 @@ sub rowtxt{
 					gui_errormsg->open(type => 'msg',msg => "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。");
 					exit;
 				}
+				# エスケープ
+				$temp =~ s/'/\\'/go;
 				
 				$values .= "(\'$temp\'),";
 				$temp = $i->[1];
