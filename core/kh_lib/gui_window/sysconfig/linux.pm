@@ -161,14 +161,26 @@ sub __new{
 		-width => 26
 	)->pack( -side => 'right' );
 
-	$inis->Button(-text => 'OK',-font => 'TKFN',
+	$inis->Button(
+		-text => Jcode->new('キャンセル')->sjis,
+		-font => 'TKFN',
+		-width => 8,
+		-command => sub{
+			$inis->after(10,sub{$self->close;})
+		}
+	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
+
+	$inis->Button(
+		-text => 'OK',
+		-font => 'TKFN',
+		-width => 8,
 		-command => sub{ $mw->after
 			(
 				10,
 				sub {$self->ok }
 			);
 		}
-	)->pack(-anchor => 'c');
+	)->pack(-side => 'right');
 
 	$entry1->insert(0,$::config_obj->chasenrc_path);
 	$entry2->insert(0,$::config_obj->grammarcha_path);
