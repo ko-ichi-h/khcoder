@@ -48,7 +48,8 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-mysql_ready->tag_fix;
+use mysql_csvout;
+mysql_csvout->exec(tani => 'bun', file => 'test.csv');
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
