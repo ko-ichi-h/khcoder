@@ -8,7 +8,7 @@ sub a_word{
 	
 	print "0: getting hyoso list\n";
 	
-	# É½ÁØ¸ì¤Î¥ê¥¹¥È¥¢¥Ã¥×
+	# •\‘wŒê‚ÌƒŠƒXƒgƒAƒbƒv
 	my @hyoso;
 	if ($args{kihon}){
 		my $d = mysql_exec->select("
@@ -27,7 +27,7 @@ sub a_word{
 	
 	print "1: getting places\n";
 	
-	# ½Ğ¸½°ÌÃÖ¤Î¥ê¥¹¥È¥¢¥Ã¥×
+	# oŒ»ˆÊ’u‚ÌƒŠƒXƒgƒAƒbƒv
 	
 	my $sql;
 	$sql .= "SELECT id\n";
@@ -45,7 +45,7 @@ sub a_word{
 	
 	print "2: getting context(id)\n";
 
-	# Á°¸å¤Îhyoso.id¤ò¼èÆÀ
+	# ‘OŒã‚Ìhyoso.id‚ğæ“¾
 
 	my $order = [()];
 	$sql  = "SELECT id, hyoso_id\n FROM hyosobun\n WHERE\n";
@@ -84,7 +84,7 @@ sub a_word{
 __END__
 	print "3: getting ready for id2word conv\n";
 
-	# ID¤ËÂĞ±ş¤¹¤ëÉ½ÁØ¸ì¤ò¼èÆÀ
+	# ID‚É‘Î‰‚·‚é•\‘wŒê‚ğæ“¾
 	my %ids;
 	foreach my $i (@hyoso_order){
 		foreach my $h (@{$i}){
@@ -126,7 +126,7 @@ __END__
 	
 	print "4: id2word conversion\n";
 	
-	# ·ë²Ì¤ÎºîÀ®
+	# Œ‹‰Ê‚Ìì¬
 	
 	my $return;
 	foreach my $i (@hyoso_order){
