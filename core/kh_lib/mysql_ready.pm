@@ -725,6 +725,7 @@ sub tag_fix{
 		my $name = $i->[1];
 		chop $name; substr($name,0,1) = '';
 		my $length = length($name);
+		$name =~ s/'/\\'/go;
 		mysql_exec->do("
 			UPDATE hyoso
 			SET name = \'$name\', len = $length
@@ -746,6 +747,7 @@ sub tag_fix{
 	while (my $i = $k->fetch){
 		my $name = $i->[1];
 		chop $name; substr($name,0,1) = '';
+		$name =~ s/'/\\'/go;
 		mysql_exec->do("
 			UPDATE genkei
 			SET name = \'$name\'
