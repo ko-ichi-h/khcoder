@@ -64,7 +64,7 @@ my %sql_group = (
 	'h2' =>
 		'hyosobun.h2_id, hyosobun.h1_id',
 	'h1' =>
-		'hyhyosobun.h1_id',
+		'hyosobun.h1_id',
 );
 
 #--------------------#

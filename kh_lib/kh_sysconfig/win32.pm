@@ -136,7 +136,6 @@ sub save{
 			'juman_path',
 			'c_or_j',
 			'sqllog',
-			'use_sonota',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',

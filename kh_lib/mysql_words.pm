@@ -185,39 +185,25 @@ sub csv_list{
 #-----------------------#
 #   出現回数 度数分布   #
 
-sub spss_freq{
+sub freq_of_f{
 	my $class = shift;
-	my $target = shift;
 	
 	my $list = &_make_list;
-
-	my $text = '';
-	$text .= "data list list(',')\n";
-	$text .= "  /抽出語(a255) 品詞(a10) 出現回数(f10.0).\n";
-	$text .= "BEGIN DATA\n";
-
+	
+	my ($n, %frep, $sum, $sum_sq); 
 	foreach my $i (@{$list}){
 		foreach my $h (@{$i->[1]}){
-			$text .= "$h->[0],$i->[0],$h->[1]\n";
+			++$frep{$h->[1]};
+			++$n;
+			$sum += $h->[1];
+			$sum_sq += $h->[1] ** 2;
 		}
 	}
+	
+	my $mean = sprintf("%.2f", $sum / $n);
+	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
+	
 
-	$text .= "END DATA.\n";
-	$text .= "EXECUTE .\n";
-	$text .= "FREQUENCIES\n";
-	$text .= "  VARIABLES=出現回数\n";
-	$text .= "  /NTILES=  4\n";
-	$text .= "  /STATISTICS=MEAN MEDIAN MODE SUM\n";
-	$text .= "  /ORDER=  ANALYSIS .\n";
-
-	open (LIST,">$target") or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => "$target"
-		);
-	print LIST $text;
-	close (LIST);
-	kh_jchar->to_sjis($target);
 }
 
 #----------------------#
@@ -246,7 +232,7 @@ sub _make_list{
 
 	my $temp = &_make_hinshi_list;
 	unless (eval (@{$temp})){
-		print "damn!!!!!!!!!!!!\n";
+		print "oh, well, I don't know...\n";
 		return;
 	}
 

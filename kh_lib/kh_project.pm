@@ -75,11 +75,6 @@ sub open{
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 
-	
-	# 茶筌（複合名詞）の設定を確認
-	# $::config_obj->use_hukugo($self->use_hukugo);
-	# $::config_obj->save;
-
 	return $self;
 }
 
@@ -138,6 +133,57 @@ sub dbh{
 sub dbname{
 	my $self = shift;
 	return $self->{dbname};
+}
+
+sub last_tani{
+	my $self = shift;
+	my $new  = shift;
+	
+	if ($new){
+		mysql_exec->do(
+			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_tani\'"
+		,1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("
+				SELECT status FROM status_char WHERE name = 'last_tani'",1
+			)->hundle->fetch->[0];
+	}
+}
+
+sub last_codf{
+	my $self = shift;
+	my $new  = shift;
+	
+	if ($new){
+		mysql_exec->do(
+			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_codf\'"
+		,1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("
+				SELECT status FROM status_char WHERE name = 'last_codf'",1
+			)->hundle->fetch->[0];
+	}
+}
+
+sub last_tani{
+	my $self = shift;
+	my $new  = shift;
+	
+	if ($new){
+		mysql_exec->do(
+			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_tani\'"
+		,1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("
+				SELECT status FROM status_char WHERE name = 'last_tani'",1
+			)->hundle->fetch->[0];
+	}
 }
 
 sub status_h5{
