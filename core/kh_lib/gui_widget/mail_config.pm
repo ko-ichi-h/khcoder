@@ -3,49 +3,56 @@ use base qw(gui_widget);
 
 sub _new{
 	my $self = shift;
-	
+
 	my $lf = $self->parent->LabFrame(
-		-label => 'Mail notification',
+		-label => 'Other Settings',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
 	$self->{win_obj} = $lf;
-	
+
+	$self->{check2} = $lf->Checkbutton(
+		-variable => \$self->{if_heap},
+		-text     => Jcode->new('Á°½èÍý¸úÎ¨²½¤Î¤¿¤á¤Ë¥Ç¡¼¥¿¤òRAM¤ËÆÉ¤ß½Ð¤¹')->sjis,
+		-font     => "TKFN",
+		-command  => sub{$self->update;}
+	)->pack(-anchor => 'w');
+
 	$self->{check} = $lf->Checkbutton(
 		-variable => \$self->{if_mail},
-		-text     => Jcode->new('‘Oˆ—‚ÌŠ®—¹‚ðƒ[ƒ‹‚Å’Ê’m‚·‚é')->sjis,
+		-text     => Jcode->new('Á°½èÍý¤Î´°Î»¤ò¥á¡¼¥ë¤ÇÄÌÃÎ¤¹¤ë')->sjis,
 		-font     => "TKFN",
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 	
 	my $f1 = $lf->Frame()->pack(fill => 'x');
 	$self->{lab1} = $f1->Label(
-		-text => '  SMTP Server: ',
+		-text => '    SMTP Server: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e1} = $f1->Entry(
 		-font  => "TKFN",
-		-width => 28,
+		-width => 25,
 	)->pack(-side => 'right');
 	
 	my $f2 = $lf->Frame()->pack(fill => 'x');
 	$self->{lab2} = $f2->Label(
-		-text => '  From: ',
+		-text => '    From: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e2} = $f2->Entry(
 		-font  => "TKFN",
-		-width => 28,
+		-width => 25,
 	)->pack(-side => 'right');
 
 	my $f3 = $lf->Frame()->pack(fill => 'x');
 	$self->{lab3} = $f3->Label(
-		-text => '  To: ',
+		-text => '    To: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e3} = $f3->Entry(
 		-font  => "TKFN",
-		-width => 28,
+		-width => 25,
 	)->pack(-side => 'right');
 	
 	$self->fill_in;
@@ -59,6 +66,10 @@ sub fill_in{
 	$self->{e1}->insert(0,$::config_obj->mail_smtp() );
 	$self->{e2}->insert(0,$::config_obj->mail_from() );
 	$self->{e3}->insert(0,$::config_obj->mail_to() );
+	
+	if ($::config_obj->use_heap){
+		$self->{check2}->select;
+	}
 	
 	if ($::config_obj->mail_if){
 		$self->{if_mail} = 1;
@@ -89,7 +100,12 @@ sub update{
 }
 
 #--------------------------#
-#   Ý’è’l‚ð•Ô‚·ƒAƒNƒZƒT   #
+#   ÀßÄêÃÍ¤òÊÖ¤¹¥¢¥¯¥»¥µ   #
+
+sub if_heap{
+	my $self = shift;
+	return $self->{if_heap};
+}
 
 sub if{
 	my $self = shift;

@@ -59,13 +59,13 @@ sub hyosobun{
 			add index index2 (dan_id, bun_id, bun_idt),
 			add index index3 (hyoso_id),
 			add index index4 (bun_idt)
+			#add index index5 (bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
 	",1);
 }
 
 sub clear_heap{
 	return 0 unless $::config_obj->use_heap;
 
-	mysql_exec->drop_table("hghi");
 	mysql_exec->drop_table("hyosobun");
 	mysql_exec->do("ALTER TABLE hyosobun_isam RENAME hyosobun",1);
 }

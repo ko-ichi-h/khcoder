@@ -112,10 +112,11 @@ sub ok{
 	
 	$::config_obj->chasen_path($self->entry1->get());
 	
-	$::config_obj->mail_if(   $self->{mail_obj}->if   );
-	$::config_obj->mail_smtp( $self->{mail_obj}->smtp );
-	$::config_obj->mail_from( $self->{mail_obj}->from );
-	$::config_obj->mail_to(   $self->{mail_obj}->to   );
+	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
+	$::config_obj->mail_if(   $self->{mail_obj}->if      );
+	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
+	$::config_obj->mail_from( $self->{mail_obj}->from    );
+	$::config_obj->mail_to(   $self->{mail_obj}->to      );
 	
 	if ($::config_obj->save){
 		$self->close;

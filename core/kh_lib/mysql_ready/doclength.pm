@@ -10,6 +10,7 @@ use mysql_exec;
 sub make_each{
 	my $class = shift;
 	my $self;
+	
 	$self->{tani} = shift;
 	
 	$self->{html} = "99999";
@@ -44,22 +45,26 @@ sub sql{
 	my $d2 = shift;
 	
 	my $sql = "INSERT INTO $self->{tani}_length (id, c, w)\n";
-	$sql .= "SELECT $self->{tani}.id, sum(hyoso.len), count(*)\n";
-	$sql .= "FROM hyosobun, hyoso, $self->{tani}, genkei\n";
+	$sql .= "SELECT $self->{tani}.id, sum(lc), sum(lw)\n";
+	$sql .= "FROM hyosobun_t, $self->{tani}\n";
 	$sql .= "WHERE\n";
-	$sql .= "	    hyosobun.hyoso_id = hyoso.id\n";
-	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
 
-	my $flag = 0;
+
+	my ($flag, $n) = (0,0);
 	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
 		if ($i eq $self->{tani}){ $flag = 1; }
+
 		if ($flag){
-			$sql .= "	AND hyosobun.$i"."_id = $self->{tani}.$i"."_id\n";
+			if ($n){
+				$sql .= "	AND ";
+			} else {
+				$sql .= "	";
+			}
+			$sql .= "hyosobun_t.$i"."_id = $self->{tani}.$i"."_id\n";
+			++$n;
 		}
 	}
 
-	$sql .= "	AND genkei.nouse = 0\n";
-	$sql .= "	AND genkei.khhinshi_id != $self->{html}\n";
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id < $d2\n";
 	$sql .= "GROUP BY $self->{tani}.id";
