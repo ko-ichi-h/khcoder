@@ -6,6 +6,12 @@ use Tk::HList;
 use base qw(gui_window);
 use gui_window::project_edit;
 use gui_jchar;
+BEGIN{
+	if( $] > 5.008 ){
+		require encoding;
+		encoding->import( "euc-jp" );
+	}
+}
 
 #----------------#
 #   Window∫Ó¿Æ   #
