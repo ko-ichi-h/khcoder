@@ -204,6 +204,7 @@ sub delete{
 
 	my $sql = "DELETE FROM projects WHERE target = ";
 	$sql .= "'".$del->file_target."'";
+	$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 
 	# ゴミ箱テーブルが存在しない場合は作成 
