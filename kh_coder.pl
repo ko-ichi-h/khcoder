@@ -38,7 +38,8 @@ MainLoop;
 
 #-----------------#
 #   for perlapp   #
- __END__
+# __END__
 
 use Tk::DragDrop::Win32Drop;
 use Tk::DragDrop::Win32Site;
+use SQL::Dialects::CSV;
