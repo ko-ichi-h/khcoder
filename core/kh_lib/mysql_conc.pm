@@ -50,6 +50,19 @@ sub a_word{
 	return $self->_format;
 }
 
+sub last_words{
+	my $self;
+	my $class = shift;
+	my %args;
+	$args{query} = $l_query;
+	$args{hinshi} = $l_hinshi;
+	$args{katuyo} = $l_katuyo;
+	$self = \%args;
+	bless $self, $class;
+	return $self->_hyoso;
+}
+
+
 sub _hyoso{
 	my $self = shift;
 	my %args = %{$self};
@@ -259,7 +272,7 @@ sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 	print "4: Formating output...\n";
 	
 	my $result;
-	foreach my $i (@{$self->{scanlist}}){
+	foreach my $i (@{$self->{left}},@{$self->{right}}){
 		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc,temp_conc_sort )";
 		$sql .= "WHERE";
 		$sql .= "	temp_conc".".$i = hyoso.id\n";
@@ -267,6 +280,13 @@ sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 		$sql .= "ORDER BY temp_conc_sort.id";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
+	my $sql = "SELECT hyoso.name, temp_conc.id FROM ( hyoso,temp_conc,temp_conc_sort )\n";
+	$sql .= "WHERE\n\t";
+	$sql .= "temp_conc.center = hyoso.id\n";
+	$sql .= "\tAND temp_conc.id = temp_conc_sort.conc_id\n";
+	$sql .= "ORDER BY temp_conc_sort.id";
+	$result->{center} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+	
 	print "...\n";
 
 	my $return;
@@ -281,6 +301,7 @@ sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 		foreach my $i (@{$self->{right}}){
 			$return->[$n][2] .= $result->{$i}[$n][0];
 		}
+		$return->[$n][3] = $result->{center}[$n][1];
 	}
 
 	return $return;

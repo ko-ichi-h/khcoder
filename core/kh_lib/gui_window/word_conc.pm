@@ -166,6 +166,12 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$fra5->Button(
+		-text => Jcode->new('文書表示')->sjis,
+		-font => "TKFN",
+		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$fra5->Button(
 		-text => Jcode->new('コピー')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
@@ -210,6 +216,24 @@ sub _menu_check{
 			$flag = 1;
 		}
 	}
+}
+
+#--------------#
+#   文書表示   #
+#--------------#
+sub view_doc{
+	my $self = shift;
+	my @selected = $self->list->infoSelection;
+	unless (@selected){
+		return;
+	}
+	my $selected = $selected[0];
+	
+	my @kyotyo = @{mysql_conc->last_words};
+	my $hyosobun_id = $self->result->[$selected][3];
+
+
+
 }
 
 
@@ -353,7 +377,8 @@ sub search{
 		my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
 		$self->list->xview(moveto => $fragment);
 	}
-
+	
+	$self->{result} = $result;
 }
 
 #------------#
@@ -369,6 +394,10 @@ sub start{
 #   アクセサ   #
 #--------------#
 
+sub result{
+	my $self = shift;
+	return $self->{result};
+}
 sub list{
 	my $self = shift;
 	return $self->{list};
