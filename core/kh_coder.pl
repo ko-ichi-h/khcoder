@@ -31,7 +31,6 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
-
 $main_gui = gui_window::main->open;
 
 MainLoop;
