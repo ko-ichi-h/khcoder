@@ -7,7 +7,7 @@ use strict;
 sub expr{
 	my $self = shift;
 	if ($self->{valid}){
-		return " $self->{tani}.$self->{heading_tani}"."_id = $self->{heading_id} ";
+		return " ( $self->{tani}.$self->{heading_tani}"."_id = $self->{heading_id} ) ";
 	} else {
 		return 0;
 	}
@@ -35,7 +35,7 @@ sub ready{
 	# 集計単位が矛盾しないかどうか確認
 	$self->{valid} = 1;
 	if ($tani =~ /h([1-5])/i){
-		if ($1 > $var){
+		if ($1 < $var){
 			$self->{valid} = 0;
 			return;
 		}
