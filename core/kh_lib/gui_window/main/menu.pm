@@ -157,30 +157,6 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{m_b3_crossout} = $f->cascade(
-				-label => Jcode->new("「文書ｘ抽出語」表の出力",'euc')->sjis,
-				-font => "TKFN",
-				-state => 'disable',
-				-tearoff=>'no'
-			);
-		
-			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
-				-label => Jcode->new("CSVファイル")->sjis,
-				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::morpho_crossout::csv->open;
-				})},
-			);
-
-			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
-				-label => Jcode->new("SPSSファイル")->sjis,
-				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::morpho_crossout::spss->open;
-				})},
-			);
-
-
 	#------------#
 	#   ツール   #
 
@@ -206,6 +182,17 @@ sub make{
 				-state => 'disable'
 			);
 
+		$self->{t_word_conc} = $f3->command(
+				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_conc->open;
+				})},
+				-state => 'disable'
+			);
+		$f3->separator;
+		
+		
 		$self->{t_word_freq} = $f3->command(
 				-label => Jcode->new('出現回数 分布')->sjis,
 				-font => "TKFN",
@@ -227,29 +214,42 @@ sub make{
 			);
 		
 
-
 	my $f8 = $f->cascade(
-			-label => Jcode->new('探索・コーディング支援')->sjis,
+			-label => Jcode->new('文書')->sjis,
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
-		$self->{t_word_conc} = $f8->command(
-				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_conc->open;
-				})},
-				-state => 'disable'
-			);
-
 		$self->{t_doc_search} = $f8->command(
-				-label => Jcode->new('文書検索')->sjis,
+				-label => Jcode->new('検索')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::doc_search->open;
 				})},
 				-state => 'disable'
+			);
+
+		$self->{m_b3_crossout} = $f8->cascade(
+				-label => Jcode->new("「文書ｘ抽出語」表の出力",'euc')->sjis,
+				-font => "TKFN",
+				-state => 'disable',
+				-tearoff=>'no'
+			);
+		
+			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
+				-label => Jcode->new("CSVファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::csv->open;
+				})},
+			);
+
+			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
+				-label => Jcode->new("SPSSファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::spss->open;
+				})},
 			);
 
 	my $f5 = $f->cascade(

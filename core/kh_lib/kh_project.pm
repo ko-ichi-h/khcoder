@@ -144,10 +144,14 @@ sub last_tani{
 		,1);
 		return $new;
 	} else {
-		return mysql_exec
+		my $temp = mysql_exec
 			->select("
 				SELECT status FROM status_char WHERE name = 'last_tani'",1
 			)->hundle->fetch->[0];
+		unless (length($temp) > 1){
+			$temp = 'dan';
+		}
+		return $temp;
 	}
 }
 
@@ -164,23 +168,6 @@ sub last_codf{
 		return mysql_exec
 			->select("
 				SELECT status FROM status_char WHERE name = 'last_codf'",1
-			)->hundle->fetch->[0];
-	}
-}
-
-sub last_tani{
-	my $self = shift;
-	my $new  = shift;
-	
-	if ($new){
-		mysql_exec->do(
-			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_tani\'"
-		,1);
-		return $new;
-	} else {
-		return mysql_exec
-			->select("
-				SELECT status FROM status_char WHERE name = 'last_tani'",1
 			)->hundle->fetch->[0];
 	}
 }

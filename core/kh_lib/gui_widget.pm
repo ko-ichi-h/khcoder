@@ -14,9 +14,12 @@ sub open{
 	bless $self, $class;
 	
 	$self->_new->win_obj->pack(%{$self->{pack}});
+	$self->start;
 	return $self;
 }
-
+sub start{
+	return 1;
+}
 sub parent{
 	my $self = shift;
 	return $self->{parent};
