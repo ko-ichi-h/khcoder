@@ -271,7 +271,6 @@ sub _view_doc{
 	
 	my $t;                                        # 本文書き出し
 	foreach my $i (@{$doc->body}){
-		print "_view_doc: ok" if $i->[1] eq 'force';
 		if ($color{$i->[1]}){
 			$t .= "$color{$i->[1]}"."$i->[0]"."$black";
 		} else {
@@ -303,7 +302,6 @@ sub _init{
 			genkei => $i->[0]
 		)->hyoso_id_s;
 		@l = (@l,@{$list});
-		print "_init: $list->[0]\n";
 	}
 	$self->{w_force} = \@l;
 	
