@@ -23,7 +23,7 @@ sub new{
 	
 	foreach my $i (@pattern){
 		if ($self->{raw} =~ /$i->[0]/){
-			print Jcode->new("$self->{raw}, $i->[1]\n")->sjis;
+			# print Jcode->new("$self->{raw}, $i->[1]\n")->sjis;
 			$class .= '::'."$i->[1]";
 			last;
 		}

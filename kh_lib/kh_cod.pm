@@ -16,6 +16,7 @@ sub count{
 	foreach my $i (@{$self->{codes}}){
 		$i->ready($tani);
 		print Jcode->new($i->name.": ".$i->count($tani)."\n")->sjis;
+		# $i->clear_tmp;
 	}
 }
 
@@ -52,8 +53,7 @@ sub read_file{
 	
 	# ²ò¼á
 	foreach my $i (@codes){
-		print Jcode->new("code: $i\n")->sjis;
-		#print "in: $codes{$i}\n";
+		# print Jcode->new("code: $i\n")->sjis;
 		push @{$self->{codes}}, kh_cod::a_code->new($i,$codes{$i});
 	}
 	

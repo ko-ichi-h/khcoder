@@ -80,7 +80,7 @@ sub _find{
 	my @hyoso = @{$_[0]};
 	my $sql = '';
 
-	print "1: searching...\n";
+	print "\n1: searching...\n";
 
 	# Temp Table作成（left + center）	
 	mysql_exec->drop_table("temp_concl");
@@ -90,7 +90,7 @@ sub _find{
 		$sql .= "$i int,";
 	}
 	chop $sql;
-	$sql .= ")";
+	$sql .= ") TYPE = HEAP";
 	mysql_exec->do($sql,1);
 
 	$sql = '';
@@ -131,7 +131,7 @@ sub _find{
 		$sql .= "$i int,";
 	}
 	chop $sql;
-	$sql .= ")";
+	$sql .= ") TYPE = HEAP";
 	mysql_exec->do($sql,1);
 	
 	$sql = '';
@@ -172,7 +172,7 @@ sub _sort{                                        # ソート用テーブルの作成
 	my %args = %{$self};
 	my $sql = '';
 
-	print "3: Sorting...\n";
+	print "2: Sorting...\n";
 	my ($group, $n);
 	foreach my $i ('sort1','sort2','sort3'){
 		mysql_exec->drop_table("temp_conc_$i");
@@ -245,11 +245,12 @@ sub _sort{                                        # ソート用テーブルの作成
 	}
 	$sql .= "temp_conc.id";
 	mysql_exec->do($sql,1);
+	#mysql_exec->("alter table temp_conc_sort add index index1 (conc_id)",1);
 }
 
 sub _format{                                      # 結果の出力
 	my $self = shift;
-	print "4: Formating output...\n";
+	print "3: Formating output...\n";
 	
 	my $result;
 	foreach my $i (@{$self->{left}},@{$self->{right}}){

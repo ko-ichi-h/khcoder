@@ -32,6 +32,16 @@ sub tables{
 	return $self->{tables};
 }
 
+sub clear_tmp{
+	my $self = shift;
+	if ($self->tables){
+		foreach my $i (@{$self->tables}){
+			mysql_exec->drop_table($i);
+		}
+	}
+	return $self;
+}
+
 sub ready{
 	my $self = shift;
 	my $tani = shift;
@@ -40,7 +50,7 @@ sub ready{
 	}
 	
 	# ATOMごとのテーブルを作製
-	my ($n0, $n1,@t) = (0,0); 
+	my ($n0, $n1,@t,$unique_check) = (0,0); 
 	foreach my $i (@{$self->{condition}}){
 		$i->ready($tani);
 		if ($i->tables){
@@ -50,7 +60,12 @@ sub ready{
 			}
 			$i->parent_table("ct_$tani"."_$n1");
 			foreach my $h (@{$i->tables}){
-				push @{$t[$n1]}, $h;
+				if ($unique_check->{$n1}{$h}){
+					next;
+				} else {
+					push @{$t[$n1]}, $h;
+					$unique_check->{$n1}{$h} = 1;
+				}
 			}
 		}
 	}
@@ -67,7 +82,7 @@ sub ready{
 			$sql .= "$col INT,"
 		}
 		chop $sql;
-		$sql .= ')';
+		$sql .= ') TYPE = HEAP ';
 		mysql_exec->do($sql,1);
 		push @{$self->{tables}}, "ct_$tani"."_$n";
 		
