@@ -33,7 +33,7 @@ sub _new{
 		-fill => 'x',-expand => 'no');
 
 	$msg = '直前の文書'; Jcode::convert(\$msg,'sjis','euc');
-	my $pre_btn = $bframe->Button(
+	$self->{pre_btn} = $bframe->Button(
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -49,7 +49,7 @@ sub _new{
 	)->pack(-side => 'left',-pady => '0');
 
 	$msg = '直後の文書'; Jcode::convert(\$msg,'sjis','euc');
-	my $nxt_btn = $bframe->Button(
+	$self->{nxt_btn} = $bframe->Button(
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -133,7 +133,7 @@ sub view{
 		w_search    => $args{kyotyo},
 		tani        => $args{tani},
 	);
-	
+	$self->{doc}    = $doc;
 	$self->{doc_id} = $doc->{doc_id};
 	$self->_view_doc($doc);
 }
@@ -146,6 +146,7 @@ sub near{
 		w_search => $self->{w_search},
 		tani     => $self->{tani},
 	);
+	$self->{doc}    = $doc;
 	$self->{doc_id} = $doc->{doc_id};
 	$self->_view_doc($doc);
 
@@ -173,8 +174,26 @@ sub _view_doc{
 		}
 	}
 	$self->text->insert('end',$t);
+	$self->update_buttons;
 }
 
+sub update_buttons{
+	my $self = shift;
+	
+	# 直後ボタン
+	if ($self->{doc}->if_next){
+		$self->{nxt_btn}->configure(-state, 'normal');
+	} else {
+		$self->{nxt_btn}->configure(-state, 'disable');
+	}
+	# 直前ボタン
+	if ($self->{doc_id} > 1){
+		$self->{pre_btn}->configure(-state, 'normal');
+	} else {
+		$self->{pre_btn}->configure(-state, 'disable');
+	}
+	
+}
 
 
 sub win_name{ return 'w_doc_view'; }

@@ -2,6 +2,19 @@ package mysql_getdoc::h1;
 use base qw(mysql_getdoc);
 use strict;
 
+sub if_next{
+	my $self = shift;
+	my $max = mysql_exec->select("
+		SELECT max(h1_id)
+		FROM hyosobun
+	",1)->hundle->fetch->[0];
+	if ($self->{doc_id} < $max){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 sub get_doc_id{
 	my $self = shift;
 	return mysql_exec->select("

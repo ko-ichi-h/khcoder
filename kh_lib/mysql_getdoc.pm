@@ -101,7 +101,30 @@ sub get_doc_id{
 		$sql .= "    AND hyosobun.$i"."_id = $tani.$i"."_id\n";
 		if ($tani eq $i){last;}
 	}
-	return mysql_exec->select($sql,1)->hundle->fetch->[0];
+	if (my $check = mysql_exec->select($sql,1)->hundle->fetch){
+		return $check->[0]
+	} else {
+		my $n = 1;
+		while (1){
+			my $try = $self->{hyosobun_id} + $n;
+			my $sql = "SELECT $tani.id\n";
+			$sql   .= "FROM hyosobun, $tani\n";
+			$sql   .= "WHERE\n";
+			$sql   .= "    hyosobun.id = $try\n";
+			foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+				$sql .= "    AND hyosobun.$i"."_id = $tani.$i"."_id\n";
+				if ($tani eq $i){last;}
+			}
+			if (my $check = mysql_exec->select($sql,1)->hundle->fetch){
+				print "$n tries\n";
+				return $check->[0];
+			}
+			++$n;
+			if ($n > 1000){
+				return 1;
+			}
+		}
+	}
 }
 
 
@@ -158,6 +181,20 @@ sub get_header{
 	}
 	return $headers;
 }
+
+sub if_next{
+	my $self = shift;
+	my $max = mysql_exec->select("
+		SELECT max(id)
+		FROM $self->{tani}
+	",1)->hundle->fetch->[0];
+	if ($self->{doc_id} < $max){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 
 sub doc_id{
 	my $self = shift;
