@@ -40,7 +40,11 @@ sub readin{
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
 
 	$self = $self->_readin;
-
+	
+	if ($self->all_in_one_pack){
+		use kh_all_in_one;
+		kh_all_in_one->mysql_start;
+	}
 
 	return $self;
 }
@@ -260,6 +264,11 @@ sub sqllog_file{
 
 #------------#
 #   ¤½¤ÎÂ¾   #
+
+sub all_in_one_pack{
+	my $self = shift;
+	return $self->{all_in_one_pack};
+}
 
 sub in_preprocessing{
 	my $self = shift;

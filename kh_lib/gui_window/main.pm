@@ -51,7 +51,6 @@ sub start{
 	$self->inner->refresh;
 }
 
-
 #--------------#
 #   アクセサ   #
 #--------------#
@@ -106,11 +105,15 @@ sub opened{
 	$::main_gui = $self;
 }
 
+# プログラム全体の終了処理
 sub close{
 	my $self        = shift;
 	$self->close_all;
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
 	$::config_obj->save;
+	if ($::config_obj->all_in_one_pack){
+		kh_all_in_one->mysql_stop;
+	}
 	$self->win_obj->destroy;
 }
 

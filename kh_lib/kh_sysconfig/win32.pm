@@ -148,6 +148,7 @@ sub save{
 			'mail_from',
 			'mail_to',
 			'use_heap',
+			'all_in_one_pack',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',
@@ -180,8 +181,6 @@ sub save{
 		return 0;
 	}
 }
-
-
 
 #--------------------------------#
 #   以下は設定値を返すルーチン   #
