@@ -745,6 +745,11 @@ sub tanis{
 		mysql_exec->do("ALTER TABLE bun ADD INDEX index5 (h3_id)",1);
 		mysql_exec->do("ALTER TABLE bun ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE bun ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE bun ADD INDEX index8 (
+				bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+			)
+		",1);
 	}
 	
 	
@@ -777,6 +782,11 @@ sub tanis{
 		mysql_exec->do("ALTER TABLE dan ADD INDEX index5 (h3_id)",1);
 		mysql_exec->do("ALTER TABLE dan ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE dan ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE dan ADD INDEX index8 (
+				dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+			)
+		",1);
 	}
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -805,6 +815,11 @@ sub tanis{
 		mysql_exec->do("ALTER TABLE h5 ADD INDEX index5 (h3_id)",1);
 		mysql_exec->do("ALTER TABLE h5 ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE h5 ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE h5 ADD INDEX index8 (
+				h5_id,h4_id,h3_id,h2_id,h1_id
+			)
+		",1);
 	}
 	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -831,6 +846,11 @@ sub tanis{
 		mysql_exec->do("ALTER TABLE h4 ADD INDEX index5 (h3_id)",1);
 		mysql_exec->do("ALTER TABLE h4 ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE h4 ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE h4 ADD INDEX index8 (
+				h4_id,h3_id,h2_id,h1_id
+			)
+		",1);
 	}
 	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -855,6 +875,11 @@ sub tanis{
 		mysql_exec->do("ALTER TABLE h3 ADD INDEX index5 (h3_id)",1);
 		mysql_exec->do("ALTER TABLE h3 ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE h3 ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE h3 ADD INDEX index8 (
+				h3_id,h2_id,h1_id
+			)
+		",1);
 	}
 	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -877,6 +902,11 @@ sub tanis{
 		",1);
 		mysql_exec->do("ALTER TABLE h2 ADD INDEX index6 (h2_id)",1);
 		mysql_exec->do("ALTER TABLE h2 ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("
+			ALTER TABLE h2 ADD INDEX index8 (
+				h2_id,h1_id
+			)
+		",1);
 	}
 	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){

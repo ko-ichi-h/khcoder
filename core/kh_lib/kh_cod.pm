@@ -93,6 +93,7 @@ sub read_file{
 sub tables{                         # コーディング結果を納めたテーブルのリスト
 	my $self = shift;
 	my @r;
+	unless ($self->valid_codes){return 0;}
 	foreach my $i (@{$self->valid_codes}){
 		push @r, $i->res_table;
 	}

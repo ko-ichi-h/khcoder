@@ -5,7 +5,7 @@ package kh_cod::pickup;
 use base qw(kh_cod);
 use strict;
 
-my $records_per_once = 1000;
+my $records_per_once = 5000;
 
 sub pick{
 	my $self = shift;
@@ -124,6 +124,8 @@ sub sql{
 		$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
 		$sql .= "WHERE\n";
 		$sql .= "	    bun.id = bun_r.id\n";
+		$sql .= "	AND bun.id >= $args{d1}\n";
+		$sql .= "	AND bun.id <  $args{d2}\n";
 		$sql .= "	AND ct_pickup.id = $args{tani}.id\n";
 		my $flag = 0;
 		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
@@ -134,6 +136,8 @@ sub sql{
 		}
 		
 	}
+	
+	return $sql;
 }
 
 
