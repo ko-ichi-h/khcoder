@@ -264,5 +264,9 @@ sub name{                     # コード名
 	my $self = shift;         # ファイルから読み込み
 	return $self->{name};
 }
+sub row_condition{
+	my $self = shift;
+	return $self->{row_condition};
+}
 
 1;
