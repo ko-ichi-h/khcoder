@@ -199,13 +199,8 @@ sub win_gmtry{
 
 sub sqllog{
 	my $self = shift;
-	my $new = shift;
-	if (defined($new)){
-		$self->{sqllog} = $new;
-		return $new;
-	} else {
-		return $self->{sqllog};
-	}
+	unless ( length($self->{sqllog}) ){$self->{sqllog} = '0';}
+	return $self->{sqllog};
 }
 
 sub sqllog_file{

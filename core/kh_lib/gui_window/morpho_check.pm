@@ -218,7 +218,15 @@ sub if_prev{
 		return 0;
 	}
 }
-
+sub end{
+	my $check = 0;
+	if ($::main_gui){
+		$check = $::main_gui->if_opened('w_morpho_detail');
+	}
+	if ( $check ){
+		$::main_gui->get('w_morpho_detail')->close;
+	}
+}
 
 
 

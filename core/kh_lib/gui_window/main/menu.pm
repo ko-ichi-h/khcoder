@@ -49,6 +49,7 @@ sub make{
 			-state => 'disable',
 			-command =>
 				sub{ $mw->after(10,sub{
+					$::main_gui->close_all;
 					undef $::project_obj;
 					$::main_gui->menu->refresh;
 					$::main_gui->inner->refresh;
