@@ -19,7 +19,8 @@ sub save{
 	
 	# 保存先の参照
 	my @types = (
-		[ "csv file",[qw/.csv/] ],
+		[ Jcode->new('CSV形式')->sjis,[qw/.csv/] ],
+		[ Jcode->new('タブ区切り')->sjis,[qw/.txt/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
