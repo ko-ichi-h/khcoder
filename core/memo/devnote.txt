@@ -59,6 +59,10 @@
 
 以下は純然たるメモ・・・
 
+・Anonymous CVSのコマンド
+	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
+	cd core
+	perl kh_coder.pl
 
 [完了したもの]
 	・コーディングのロジック
