@@ -15,6 +15,7 @@ sub exec{
 	my $class = shift;
 	my %args  = @_;
 	
+	# 存在する見出しのチェック
 	my @h = ();
 	foreach my $i ("h1", "h2", "h3", "h4", "h5"){
 		if ($args{tani} eq $i) {last;}
@@ -27,6 +28,7 @@ sub exec{
 		}
 	}
 
+	# 書き出し用ファイルをオープン
 	open (CSVO,">$args{file}") or 
 		gui_errormsg->open(
 			type => 'file',
@@ -55,8 +57,8 @@ sub exec{
 			# print "$i->{$the_tani},";
 			if ($i->{$the_tani} == $last){             # 継ぎ足し
 				$current .= $i->{rowtxt};
-			} else {                                   # 書き出し
-				unless ($current){
+			} else {                                   # 書き出し（連続）
+				unless (length($current)){
 					$last = $i->{$the_tani};
 					$current = $i->{rowtxt};
 					next;
@@ -71,8 +73,15 @@ sub exec{
 				$current = $i->{rowtxt};
 			}
 		} else {                                  # 上位見出しの場合
+			if ( length($current) ){                   # 書き出し（見出し変化）
+				foreach my $g (@h){
+					print CSVO kh_csv->value_conv($h{$g}).',';
+				}
+				print CSVO kh_csv->value_conv($current)."\n";
+				$current = '';
+			}
 			$last = 0;
-			foreach my $g (reverse @h){
+			foreach my $g (reverse @h){                # 見出しの変更
 				if ( $i->{"$g"."_id"} ){
 					$h{$g} = $i->{rowtxt};
 					last;
