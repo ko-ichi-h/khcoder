@@ -55,7 +55,7 @@ sub Populate {
     ## Create the toplevel window
     $cw->withdraw;
     $cw->protocol('WM_DELETE_WINDOW' => sub {});
-    $cw->transient($cw->toplevel);
+    #$cw->transient($cw->toplevel);
 
     ### Set up the status
     $cw->{Shown} = 0;
