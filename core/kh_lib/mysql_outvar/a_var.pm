@@ -30,6 +30,9 @@ sub new{
 		$self->{tani}   = $i->[2];
 		$self->{name}   = $i->[3];
 	}
+	unless ( defined($self->{id}) ){
+		return $self;
+	}
 	
 	my $i = mysql_exec->select("
 		SELECT val, lab
