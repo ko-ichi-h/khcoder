@@ -6,7 +6,7 @@ use mysql_a_word;
 use mysql_exec;
 
 #-----------------#
-#   SQL•¶‚Ì€”õ   #
+#   SQLÊ¸¤Î½àÈ÷   #
 #-----------------#
 
 my %sql_join = (
@@ -68,7 +68,7 @@ my %sql_group = (
 );
 
 #--------------------#
-#   WHEREß—pSQL•¶   #
+#   WHEREÀáÍÑSQLÊ¸   #
 #--------------------#
 
 sub expr{
@@ -90,7 +90,7 @@ sub expr{
 }
 
 #---------------------------------------#
-#   ƒR[ƒfƒBƒ“ƒO€”õitmp tableì¬j   #
+#   ¥³¡¼¥Ç¥£¥ó¥°½àÈ÷¡Êtmp tableºîÀ®¡Ë   #
 #---------------------------------------#
 
 sub ready{
@@ -138,7 +138,7 @@ sub ready{
 }
 
 #-------------------------------#
-#   —˜—p‚·‚étmp table‚ÌƒŠƒXƒg   #
+#   ÍøÍÑ¤¹¤ëtmp table¤Î¥ê¥¹¥È   #
 
 sub tables{
 	my $self = shift;
@@ -146,7 +146,7 @@ sub tables{
 }
 
 #----------------#
-#   eƒe[ƒuƒ‹   #
+#   ¿Æ¥Æ¡¼¥Ö¥ë   #
 sub parent_table{
 	my $self = shift;
 	my $new  = shift;

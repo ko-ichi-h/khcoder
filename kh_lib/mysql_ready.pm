@@ -495,8 +495,8 @@ sub first{
 		if ($longest > 65535){
 			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
 		}
-		mysql_exec->drop_table("bun");
-		mysql_exec->do("create table bun(id int auto_increment primary key not null, rowtxt TEXT )",1);
+		mysql_exec->drop_table("bun_r");
+		mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
 		my $h = mysql_exec->select("
 			SELECT hyosobun.bun_idt, hyoso.name
 			FROM hyosobun, hyoso
@@ -508,7 +508,7 @@ sub first{
 			$d[$r->[0]] .= $r->[1];
 		}
 		shift @d;
-		my ($c,$values,$sql) = (0,'','INSERT into bun (rowtxt) VALUES ');
+		my ($c,$values,$sql) = (0,'','INSERT into bun_r (rowtxt) VALUES ');
 		foreach my $i (@d){
 			$values .= "(\'$i\'),";
 			++$c;
@@ -521,7 +521,31 @@ sub first{
 			chop $values; mysql_exec->do("$sql $values",1);
 		}
 		# mysql_exec->do("alter table bun add index index1 (rowtxt)",1);
+		
+		# 文単位2
+		mysql_exec->drop_table("bun");
+		mysql_exec->do("
+			create table bun(
+				id int auto_increment primary key not null,
+				bun_id int,
+				dan_id int,
+				h5_id int,
+				h4_id int,
+				h3_id int,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO bun (bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
+			SELECT bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+			FROM hyosobun
+			GROUP BY bun_idt
+			ORDER BY bun_idt
+		",1);
 	}
+	
+	
 	# 段落単位
 	if(mysql_exec->select("select max(dan_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_dan(1);
@@ -545,6 +569,7 @@ sub first{
 			GROUP BY dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id, dan_id
 		",1);
+
 	}
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){

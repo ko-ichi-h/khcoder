@@ -11,10 +11,10 @@ sub search{
 	}
 	my $h = mysql_exec->select("
 		SELECT hyoso.name, hyosobun.bun_idt
-		FROM bun, hyosobun LEFT JOIN hyoso ON hyosobun.hyoso_id = hyoso.id
+		FROM bun_r, hyosobun LEFT JOIN hyoso ON hyosobun.hyoso_id = hyoso.id
 		WHERE
-			bun.rowtxt LIKE \'%$self->{query}%\'
-			AND hyosobun.bun_idt  = bun.id
+			bun_r.rowtxt LIKE \'%$self->{query}%\'
+			AND hyosobun.bun_idt  = bun_r.id
 		ORDER BY hyosobun.id
 		LIMIT 2000
 	",1)->hundle;

@@ -163,9 +163,9 @@ sub get_header{
 		){
 			#print "getting $i header...\n";
 			my $sql = "SELECT rowtxt\n";
-			$sql   .= "FROM bun, hyosobun\n";
+			$sql   .= "FROM bun_r, bun\n";
 			$sql   .= "WHERE\n";
-			$sql   .= "    hyosobun.bun_idt = bun.id\n";
+			$sql   .= "    bun_r.id = bun.id\n";
 			$sql   .= "    AND bun_id = 0\n";
 			$sql   .= "    AND dan_id = 0\n";
 			my $frag = 0; my $n = 5;
