@@ -70,8 +70,9 @@ sub read_file{
 	# 解釈
 	foreach my $i (@codes){
 		# print Jcode->new("code: $i\n")->sjis;
-		$kh_cod::reading{$i} = $codes{$i};
-		push @{$self->{codes}}, kh_cod::a_code->new($i,$codes{$i});
+		my $c = kh_cod::a_code->new($i,$codes{$i});
+		push @{$self->{codes}}, $c;
+		$kh_cod::reading{$i} =  $c;
 	}
 	# リセット
 	%kh_cod::reading = ();

@@ -159,9 +159,11 @@ sub count{
 	my $self = shift;
 	my $tani = shift;
 	
+	use Benchmark;
+	my $t0 = new Benchmark;
+	
 	$self->code($tani) or return 0;
 	unless ($self->codes){ return 0; }
-	
 	
 	# 総数を取得
 	my $total = mysql_exec->select("select count(*) from $tani",1)
@@ -216,6 +218,9 @@ sub count{
 		$total,
 		''
 	];
+	
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n";
 	
 	return $result;
 }

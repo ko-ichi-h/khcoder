@@ -33,12 +33,36 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
-	$self->{the_code}->ready($tani);
-	$self->{the_code}->code("ct_$tani"."_atomcode_$num");
+	
+	# コーディングが実行されていなかった場合は、ここで実行
+	unless (
+		   $self->{the_code}->if_done == 1 
+		&& $self->{the_code}->tani    eq $tani
+	){
+		$self->{the_code}->ready($tani);
+		$self->{the_code}->code("ct_$tani"."_atomcode2_$num");
+	}
+	
 	$self->{hyosos} = $self->{the_code}->hyosos;
+	
 	if ($self->{the_code}->res_table){
-		push @{$self->{tables}}, "ct_$tani"."_atomcode_$num";
+		# 新しいテーブル名の作成・セット
+		my $table  = "ct_$tani"."_atomcode_$num";
+		push @{$self->{tables}}, $table;
 		++$num;
+		# テーブルをコピー
+		my $oldtab = $self->{the_code}->res_table;
+		mysql_exec->drop_table($table);
+		mysql_exec->do("
+			CREATE TABLE $table (
+				id INT primary key not null,
+				num INT
+			) TYPE = HEAP
+		",1);
+		mysql_exec->do("
+			INSERT INTO $table (id, num)
+			SELECT id, num FROM $oldtab
+		",1);
 	} else {
 		$self->{tables} = 0;
 	}
@@ -60,10 +84,7 @@ sub when_read{
 	chop $cod_name;
 	substr($cod_name,0,1) = '';
 	
-	$self->{the_code} = kh_cod::a_code->new(
-		$cod_name,
-		$kh_cod::reading{$cod_name}
-	);
+	$self->{the_code} = $kh_cod::reading{$cod_name};
 	return $self;
 }
 

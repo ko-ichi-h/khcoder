@@ -9,6 +9,7 @@ use strict;
 
 sub code{
 	my $self           = shift;	
+	$self->{if_done}   = 1;
 	
 	unless ($self->{condition}){
 		return 0;
@@ -224,6 +225,7 @@ sub clear{
 	$self->{res_table} = undef;
 	$self->{tables}    = undef;
 	$self->{tani}      = undef;
+	$self->{if_done}   = 0;
 	foreach my $i (@{$self->{condition}}){
 		$i->{tables} = undef;
 		$i->clear;
@@ -233,6 +235,11 @@ sub clear{
 
 #--------------#
 #   アクセサ   #
+
+sub if_done{                  # コーディングが実行されているか
+	my $self = shift;
+	return $self->{if_done};
+}
 
 sub tables{                   # アトム・テーブルをまとめたテーブルのリスト
 	my $self = shift;
