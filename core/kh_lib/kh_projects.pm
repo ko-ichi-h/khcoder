@@ -61,7 +61,13 @@ sub create_project_list{
 sub add_new{
 	my $self = shift;
 	my $new  = shift;
-	
+
+	# プロジェクト・テーブルが存在しない場合は作成
+	my $save_file = $::config_obj->history_file;
+	unless (-e $save_file){
+		$self->create_project_list;
+	}
+
 	# 既にファイルが登録されていないかチェック
 	foreach my $i (@{$self->list}){
 		if ($i->file_target eq $new->file_target){
