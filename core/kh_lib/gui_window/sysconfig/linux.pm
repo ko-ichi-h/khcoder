@@ -33,7 +33,7 @@ sub __new{
 	my $msg = Jcode::convert('KH Coderの設定','sjis','euc');
 	$inis->title("$msg");
 	my $lfra = $inis->LabFrame(
-		-label => '"ChaSen"',
+		-label => 'ChaSen',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
@@ -109,7 +109,7 @@ sub __new{
 #   外部アプリの設定   #
 
 	my $afra = $inis->LabFrame(
-		-label       => 'Other apps',
+		-label       => 'External Apps',
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
