@@ -38,7 +38,7 @@ sub open{
 	if ($::config_obj->os eq 'win32'){
 		$::splash->Destroy;
 	}
-	
+
 	$::main_gui = $self;
 	return $self;
 }
