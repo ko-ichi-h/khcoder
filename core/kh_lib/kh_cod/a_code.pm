@@ -36,11 +36,12 @@ sub code{
 	$sql .= "SELECT $self->{tani}.id, 1\n";
 	$sql .= "FROM $self->{tani}\n";
 	foreach my $i (@{$self->tables}){
+		unless ($i){next;}
 		$sql .= "\tLEFT JOIN $i ON $self->{tani}.id = $i.id\n";
 	}
 	$sql .= "WHERE\n";
 	foreach my $i (@{$self->{condition}}){
-		$sql .= "\t".$i->expr."\n";
+		$sql .= "\t".$i->expr()."\n";
 	}
 	#print "$sql\n";
 	
@@ -56,7 +57,7 @@ sub code{
 		return 0;
 	}
 	
-	if ($self->tables){                           # 一時テーブルの削除
+	if ($self->tables && $self->{parents}){          # 一時テーブルの削除
 		foreach my $i (@{$self->tables}){
 			mysql_exec->drop_table($i);
 		}
@@ -87,7 +88,7 @@ sub ready{
 	
 	# ATOMごとのテーブルを作製
 	my %words;
-	my ($n0, $n1,$unique_check) = (0,0,undef);
+	my ($n,$n0, $n1,$unique_check,@tmp_tab) = (0,0,0,undef,undef);
 	my @t = ();
 	foreach my $i (@{$self->{condition}}){
 		$i->ready($tani);
@@ -99,6 +100,7 @@ sub ready{
 		}
 		if ($i->tables){
 			$n0 += @{$i->tables};
+			$n  += @{$i->tables};
 			if ($n0 > 25){
 				++$n1; $n0 = 0;
 			}
@@ -108,6 +110,7 @@ sub ready{
 					next;
 				} else {
 					push @{$t[$n1]}, $h;
+					if ($h) {push @tmp_tab,   $h;}
 					$unique_check->{$n1}{$h} = 1;
 				}
 			}
@@ -116,6 +119,14 @@ sub ready{
 	my @words = (keys %words);
 	$self->{hyosos} = \@words;
 	
+	#if ($n < 30){
+	#	$self->{parents} = 0;
+	#	$self->{tables}  = \@tmp_tab;
+	#	print "tables: $n\n";
+	#	return 1;
+	#} else {
+	#	$self->{parents} = 1;
+	#}
 	unless ($unique_check){return 1;}
 	
 	# ATOMテーブルをまとめる
