@@ -67,6 +67,11 @@ sub __new{
 		}
 	)->pack(-padx => '2',-side => 'right');
 
+	$self->{mail_obj} = gui_widget::mail_config->open(
+		parent => $inis,
+	);
+
+
 	$inis->Button(
 		-text => Jcode->new('キャンセル')->sjis,
 		-font => 'TKFN',
@@ -106,7 +111,12 @@ sub ok{
 	my $self = shift;
 	
 	$::config_obj->chasen_path($self->entry1->get());
-
+	
+	$::config_obj->mail_if(   $self->{mail_obj}->if   );
+	$::config_obj->mail_smtp( $self->{mail_obj}->smtp );
+	$::config_obj->mail_from( $self->{mail_obj}->from );
+	$::config_obj->mail_to(   $self->{mail_obj}->to   );
+	
 	if ($::config_obj->save){
 		$self->close;
 	}

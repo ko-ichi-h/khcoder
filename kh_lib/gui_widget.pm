@@ -4,6 +4,7 @@ use strict;
 use gui_widget::tani;
 use gui_widget::tani2;
 use gui_widget::codf;
+use gui_widget::mail_config;
 
 sub open{
 	my $class = shift;

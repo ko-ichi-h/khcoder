@@ -17,6 +17,8 @@ use mysql_exec;
 
 sub first{
 	
+	$::config_obj->in_preprocessing(1);
+	
 	my $class = shift;
 	my $self;
 	$self->{dbh} = $::project_obj->dbh;
@@ -43,6 +45,11 @@ sub first{
 		my $t4 = new Benchmark;
 		print timestr(timediff($t4,$t3)),"\n";
 
+	if ($::config_obj->mail_if){
+		$self->notify;
+	}
+	$::config_obj->in_preprocessing(0);
+
 	#if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
 	#	my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
 	#	my $d = '';
@@ -64,10 +71,37 @@ sub first{
 	#	use kh_jchar;
 	#	kh_jchar->to_sjis($f);
 	#}
-	
-	
-	
 
+}
+
+sub notify{
+	my $self = shift;
+	
+	my $user = $ENV{USERNAME};
+	unless ($user){ $user = $ENV{USER}; }
+	
+	my $host = $ENV{USERDOMAIN};
+	unless ($host){ $host = $ENV{HOSTNAME}; }
+	
+	use Net::SMTP;
+	my $smtp = Net::SMTP->new($::config_obj->mail_smtp);
+	$smtp->mail($::config_obj->mail_from);
+	$smtp->to($::config_obj->mail_to);
+	$smtp->data();
+	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
+	$smtp->datasend("To:a_User_of_KH_Coder\n");
+	$smtp->datasend("Subject:Pre-processing is successfully complete.\n");
+	# 本文
+	
+	$smtp->datasend("Hello $user.\nThis is KH Coder v. $::kh_version.\n\n");
+	$smtp->datasend("It is my honor to notify you that pre-processing is successfully complete.\n\n");
+	
+	$smtp->datasend("computer used: $host\n");
+	$smtp->datasend("target file: ".$::project_obj->file_target."\n");
+	$smtp->datasend("project comment: ".$::project_obj->comment."\n");
+	
+	$smtp->dataend();
+	$smtp->quit;
 
 }
 
