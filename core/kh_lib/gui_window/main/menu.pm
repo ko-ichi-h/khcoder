@@ -1,5 +1,13 @@
 package gui_window::main::menu;
 use strict;
+BEGIN{
+	if( $] > 5.008 ){
+		require encoding;
+		encoding->import( "euc-jp" );
+	}
+}
+
+
 
 #------------------#
 #   メニュー作成   #

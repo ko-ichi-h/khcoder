@@ -1,5 +1,12 @@
 package gui_window::main::inner;
 use strict;
+BEGIN{
+	if( $] > 5.008 ){
+		require encoding;
+		encoding->import( "euc-jp" );
+	}
+}
+
 
 #----------------------#
 #   Windowの中身作成   #
@@ -27,6 +34,7 @@ sub make{
 	my $fra1b = $fra1->Frame(-borderwidth => 2) ->pack(-fill => 'x');
 	
 	my $msg = Jcode->new('現在のプロジェクト：','euc')->sjis;
+	#my $msg = '現在のプロジェクト：';
 	$fra1a->Label(
 		-text => "$msg",
 		-font => "TKFN"
@@ -87,7 +95,7 @@ sub make{
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
 
-	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', expand => 'y');
+	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', -expand => 'y');
 	$fra2_3->Label(
 		-font => "TKFN",
 		-text => Jcode->new('文書の単純集計：')->sjis
