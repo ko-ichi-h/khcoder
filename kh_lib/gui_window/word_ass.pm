@@ -1,5 +1,6 @@
 package gui_window::word_ass;
 use base qw(gui_window);
+use vars qw($filter);
 
 use Tk;
 use strict;
@@ -109,6 +110,8 @@ sub _new{
 		-font       => "TKFN"
 	);
 
+	$f2->Label(-text => '   ')->pack(-side => 'right');
+
 	my %pack = (
 			-anchor => 'w',
 			-pady   => 1,
@@ -123,9 +126,11 @@ sub _new{
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'right');
 
+	$f2->Label(-text => '  ')->pack(-side => 'right');
+
 	$self->{opt_w_method1} = gui_widget::optmenu->open(
 		parent  => $f2,
-		pack    => {-pady => '1', -side => 'left'},
+		pack    => {-pady => '1', -side => 'right'},
 		options =>
 			[
 				[Jcode->new('AND検索')->sjis, 'and'],
@@ -133,8 +138,6 @@ sub _new{
 			],
 		variable => \$self->{opt_method1},
 	);
-
-
 
 	#--------------#
 	#   検索結果   #
@@ -180,7 +183,7 @@ sub _new{
 	$f5->Button(
 		-font    => "TKFN",
 		-text    => Jcode->new('コピー')->sjis,
-		-width   => 8,
+		#-width   => 8,
 		-command => sub{ $win->after(10,sub{gui_hlist->copy($self->{rlist});});},
 		-borderwidth => 1
 	)->pack(-side => 'left');
@@ -203,10 +206,12 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[Jcode->new('出現順')->sjis , 'by'],
-				[Jcode->new('tf順')->sjis   , 'tf']
+				[Jcode->new('確率差')->sjis , 'sa'],
+				[Jcode->new('確率比')->sjis , 'hi'],
+				[Jcode->new('χ2乗')->sjis , 'chi'],
 			],
 		variable => \$self->{opt_order},
+		command  => sub{$self->display;}
 	);
 
 	$f5->Label(
@@ -219,9 +224,7 @@ sub _new{
 		-font        => "TKFN",
 		-command     =>
 			sub{
-				my $start =
-					$self->{current_start} - kh_cod::search->docs_per_once;
-				$self->display($start);
+				gui_window::word_ass_opt->open;
 			},
 		-borderwidth => 1,
 		-state       => 'normal',
@@ -231,8 +234,21 @@ sub _new{
 		text       => Jcode->new('  文書数：0')->sjis,
 		font       => "TKFN",
 	)->pack(side => 'left',);
-	
 
+	#--------------------------#
+	#   フィルタ設定の初期化   #
+
+	$filter = undef;
+	$filter->{limit}   = 200;                  # LIMIT数
+	$filter->{min_doc} = 1;                    # 最低文書数
+	my $h = mysql_exec->select("               # 品詞によるフィルタ
+		SELECT khhinshi_id
+		FROM   hselection
+		WHERE  ifuse = 1
+	",1)->hundle;
+	while (my $i = $h->fetch){
+		$filter->{hinshi}{$i->[0]} = 1;
+	}
 
 	$self->read_code;
 	$self->clist_check;
@@ -363,7 +379,6 @@ sub search{
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
-		order    => $self->{opt_order},
 	);
 	
 	$self->{status_label}->configure(
@@ -382,10 +397,15 @@ sub search{
 
 sub display{
 	my $self = shift;
-
+	
+	unless ( $self->{code_obj}          ) {return undef;}
+	unless ( $self->{code_obj}->doc_num ) {return undef;}
+	
 	# HListの更新
-	unless ( $self->{code_obj} ){return undef;}
-	$self->{result} = $self->{code_obj}->fetch_results();
+	$self->{result} = $self->{code_obj}->fetch_results(
+		order  => $self->{opt_order},
+		filter => $filter,
+	);
 
 	my $numb_style = $self->{rlist}->ItemStyle(
 		'text',

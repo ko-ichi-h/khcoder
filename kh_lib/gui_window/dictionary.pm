@@ -249,6 +249,11 @@ sub save{
 	
 	# Main Windowの表示を更新
 	$::main_gui->inner->refresh;
+	
+	if ( $::main_gui->if_opened('w_doc_ass') ){
+		$::main_gui->get('w_doc_ass')->close;
+	}
+	
 }
 
 
