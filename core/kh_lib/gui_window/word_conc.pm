@@ -17,7 +17,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->title(Jcode->new('コンコーダンス（KIWIC）')->sjis);
+	$wmw->title(Jcode->new('コンコーダンス（KWIC）')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -228,6 +228,15 @@ sub search{
 	my $katuyo = Jcode->new($self->entry2->get)->euc;
 	my $hinshi = Jcode->new($self->entry4->get)->euc;
 	my $length = $self->entry3->get;
+	if ($length > 30){
+		my $win = $self->win_obj;
+		gui_errormsg->open(
+			msg => "検索時に取り出せるのは前後29語までです。\n検索完了後に、より広い範囲を取り出すことができます。",
+			window => \$win,
+			type => 'msg',
+		);
+		return;
+	}
 
 	my %sconv = (
 		'出現順' => 'id',
