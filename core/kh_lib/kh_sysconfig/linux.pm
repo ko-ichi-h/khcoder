@@ -58,8 +58,11 @@ sub _readin{
 sub save{
 	my $self = shift;
 	$self = $self->refine_cj;
+
 	if ($self->path_check){
 		$self->config_morph;
+	}
+
 		my @outlist = (
 			'chasenrc_path',
 			'grammarcha_path',
@@ -75,7 +78,7 @@ sub save{
 			'DocSrch_CutLength',
 			'app_html',
 		);
-		
+
 		my $f = $self->{ini_file};
 		open (INI,">$f") or
 			gui_errormsg->open(
@@ -95,9 +98,7 @@ sub save{
 		}
 		close (INI);
 		return 1;
-	} else {
-		return 0;
-	}
+
 }
 
 #--------------------------------#

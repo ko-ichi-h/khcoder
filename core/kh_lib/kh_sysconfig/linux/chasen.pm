@@ -14,7 +14,7 @@ sub config_morph{
 	# 読み込み
 	my $grammercha = $self->grammarcha_path;
 	my $temp = ''; my $khflg = 0;
-	open (GRA,"$grammercha") or 
+	open (GRA,"$grammercha") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $grammercha
@@ -113,7 +113,12 @@ sub config_morph{
 }
 
 sub path_check{
-	return 1;
+	my $self = shift;
+	if (-e $self->chasenrc_path && -e $self->grammarcha_path){
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 
