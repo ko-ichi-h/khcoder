@@ -1,5 +1,4 @@
 package gui_window::main::menu;
-use gui_window::main::menu::underline;
 use strict;
 
 #------------------#
@@ -17,7 +16,6 @@ sub make{
 	$toplevel->configure(-menu => $menubar);
 
 
-
 	#------------------#
 	#   プロジェクト   #
 	
@@ -25,7 +23,7 @@ sub make{
 	my $f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
-		-underline => gui_window::main::menu::underline::conv(13),
+		-underline => $::config_obj->underline_conv(13),
 		-tearoff=>'no'
 	);
 
@@ -61,24 +59,19 @@ sub make{
 			-command => sub{ $mw->after(10,sub{exit;});},
 			-accelerator => 'Ctrl+Q'
 		);
-	
-	#--------------#
-	#   基礎処理   #
+
+	#------------#
+	#   前処理   #
 	
 	$f = $menubar->cascade(
 		-label => Jcode->new('前処理(B)')->sjis,
 		-font => "TKFN",
-		-underline => gui_window::main::menu::underline::conv(7),
+		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
 	
-	my $f2 = $f->cascade(
-			-label => Jcode->new('前処理 個別実行')->sjis,
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
 	
-		$self->{m_b1_mark} = $f2->command(
+		$self->{m_b1_mark} = $f->command(
 				-label => Jcode->new('語の取捨選択')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -88,7 +81,7 @@ sub make{
 			);
 	
 	
-		$self->{m_b2_morpho} = $f2->command(
+		$self->{m_b2_morpho} = $f->command(
 				-label => Jcode->new('形態素解析＋')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -100,33 +93,8 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{m_bx_test} = $f2->command(
-				-label => Jcode->new('テスト')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					mysql_ready->test;
-				})},
-				-state => 'disable'
-			);
 
 
-
-
-	$self->{m_b_all} = $f->command(
-			-label => Jcode->new('前処理 一括実行')->sjis,
-			-font => "TKFN",
-			-command => sub{ $::mw->after(10,\&gui_BatchProcess::go_batch);},
-			-state => 'disable'
-		);
-	
-	$f->separator();
-	
-	$self->{m_b_output} = $f->command(
-			-label => Jcode->new('単純集計の出力（SPSS）')->sjis,
-			-font => "TKFN",
-			-command => sub{ $::mw->after(10,\&syukei_exp);},
-			-state => 'disable'
-	);
 
 
 	#------------#
@@ -135,7 +103,7 @@ sub make{
 	$f = $menubar->cascade(
 		-label => Jcode->new('ツール(T)')->sjis,
 		-font => "TKFN",
-		-underline => gui_window::main::menu::underline::conv(7),
+		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
 
@@ -222,7 +190,7 @@ sub make{
 	$f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
-		-underline => gui_window::main::menu::underline::conv(7),
+		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
 	
@@ -287,9 +255,6 @@ sub refresh{
 	my @menu0 = (
 		'm_b1_mark',
 		'm_b2_morpho',
-		'm_bx_test',
-		'm_b_all',
-
 		't_sql_select',
 		't_sql_do',
 		't_word_search',
