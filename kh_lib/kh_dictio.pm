@@ -48,6 +48,7 @@ sub save{
 	if (eval (@{$self->words_mk})){
 		my $sql1 = 'INSERT INTO dmark (name) VALUES ';
 		foreach my $i (@{$self->words_mk}){
+			$i =~ s/'/\\'/go;
 			$sql1 .= "('$i'),";
 		}
 		chop $sql1;
@@ -60,6 +61,7 @@ sub save{
 	if (eval (@{$self->words_st})){
 		my $sql1 = 'INSERT INTO dstop (name) VALUES ';
 		foreach my $i (@{$self->words_st}){
+			$i =~ s/'/\\'/go;
 			$sql1 .= "('$i'),";
 		}
 		chop $sql1;

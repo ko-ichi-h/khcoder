@@ -133,6 +133,7 @@ sub search{
 sub conv_query{
 	my $self = shift;
 	my $q = shift;
+	$q =~ s/'/\\'/go;
 	
 	if ($self->{mode} eq 'p'){
 		$q = '\'%'."$q".'%\'';
