@@ -4,7 +4,7 @@ use base qw(gui_window);
 use Tk;
 
 #-------------#
-#   GUIì»   #
+#   GUIºîÀ½   #
 #-------------#
 
 sub _new{
@@ -14,19 +14,19 @@ sub _new{
 	my $win = $mw->Toplevel;
 	$win->focus;
 	$win->grab;
-	$win->title(Jcode->new('˜AŠÖ‹K‘¥ ƒtƒBƒ‹ƒ^Ý’è')->sjis);
+	$win->title(Jcode->new('Ï¢´Øµ¬Â§ ¥Õ¥£¥ë¥¿ÀßÄê')->sjis);
 	$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 
-	# •iŽŒ‚É‚æ‚é’PŒê‚ÌŽæŽÌ‘I‘ð
+	# ÉÊ»ì¤Ë¤è¤ëÃ±¸ì¤Î¼è¼ÎÁªÂò
 	$left->Label(
-		-text => Jcode->new('E•iŽŒ‚É‚æ‚éŒê‚ÌŽæŽÌ‘I‘ð')->sjis,
+		-text => Jcode->new('¡¦ÉÊ»ì¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
 	$l3->Label(
-		-text => Jcode->new('@@')->sjis,
+		-text => Jcode->new('¡¡¡¡')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -43,29 +43,29 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => Jcode->new('‘S‚Ä‘I‘ð')->sjis,
+		-text => Jcode->new('Á´¤ÆÁªÂò')->sjis,
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
 	)->pack(-pady => 3);
 	$l4->Button(
-		-text => Jcode->new('ƒNƒŠƒA')->sjis,
+		-text => Jcode->new('¥¯¥ê¥¢')->sjis,
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
 	)->pack();
 
-	# ‘S‘Ì‚Å‚ÌoŒ»”
+	# Á´ÂÎ¤Ç¤Î½Ð¸½¿ô
 	my $left2 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left2->Label(
-		-text => Jcode->new('E‘S‘Ì‚Å‚ÌoŒ»”‚É‚æ‚éŒê‚ÌŽæŽÌ‘I‘ð')->sjis,
+		-text => Jcode->new('¡¦Á´ÂÎ¤Ç¤Î½Ð¸½¿ô¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left2->Label(
-		-text => Jcode->new('@@@Å’á•¶‘”F')->sjis,
+		-text => Jcode->new('¡¡¡¡¡¡ºÇÄãÊ¸½ñ¿ô¡§')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -74,15 +74,15 @@ sub _new{
 		-width => 6,
 	)->pack(-anchor => 'w',-pady => 5);
 
-	# •\Ž¦”‚ÌLIMIT
+	# É½¼¨¿ô¤ÎLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
-		-text => Jcode->new('E•\Ž¦‚·‚éŒê‚Ì”')->sjis,
+		-text => Jcode->new('¡¦É½¼¨¤¹¤ë¸ì¤Î¿ô')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left3->Label(
-		-text => Jcode->new('@@@ãˆÊF')->sjis,
+		-text => Jcode->new('¡¡¡¡¡¡¾å°Ì¡§')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -93,7 +93,7 @@ sub _new{
 	
 	# OK & Cancel
 	$win->Button(
-		-text => Jcode->new('ƒLƒƒƒ“ƒZƒ‹')->sjis,
+		-text => Jcode->new('¥­¥ã¥ó¥»¥ë')->sjis,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -106,7 +106,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->save;});}
 	)->pack(-side => 'right');
 	
-	# ’l‚Ì“ü—Í
+	# ÃÍ¤ÎÆþÎÏ
 	$self->{ent_total}->insert(
 		"end",
 		"$gui_window::word_ass::filter->{min_doc}"
