@@ -349,7 +349,7 @@ sub first{
 	",1)->hundle;
 
 	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
-		(1,1,0,0,0,0,0,0,0,0);
+		(1,1,0,0,0,0,0,0,0,1);
 	my ($temp, $c, $maru);
 	while (my $d = $t->fetch){
 		if ($d->[0] - $lastrow > 1){              # 改行のチェック
@@ -360,26 +360,41 @@ sub first{
 			}
 		}
 		$lastrow = $d->[0];
-		if ( $IDs->{$d->[1]} eq '<h1>'){          # HTML開始タグのチ?Д奪?
+		if (                                      # HTML開始タグのチェック
+			   $IDs->{$d->[1]} eq '<h1>' 
+			|| $IDs->{$d->[1]} eq '<H1>'
+		){
 			++$h1;
 			($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
 				= (0,0,0,0,0,0,1);
 		}
-		elsif ( $IDs->{$d->[1]} eq '<h2>'){
+		elsif (
+			   $IDs->{$d->[1]} eq '<h2>'
+			|| $IDs->{$d->[1]} eq '<H2>'
+		){
 			++$h2;
 			($h3,$h4,$h5,$dan,$bun,$midashi)
 				= (0,0,0,0,0,1)
 		}
-		elsif ( $IDs->{$d->[1]} eq '<h3>'){
+		elsif (
+			   $IDs->{$d->[1]} eq '<h3>'
+			|| $IDs->{$d->[1]} eq '<H3>'
+		){
 			++$h3;
 			($h4,$h5,$dan,$bun,$midashi)
 				= (0,0,0,0,1)
 		}
-		elsif ( $IDs->{$d->[1]} eq '<h4>'){
+		elsif (
+			   $IDs->{$d->[1]} eq '<h4>'
+			|| $IDs->{$d->[1]} eq '<H4>'
+		){
 			++$h4;
 			($h5,$dan,$bun,$midashi)=(0,0,0,1)
 		}
-		elsif ( $IDs->{$d->[1]} eq '<h5>'){
+		elsif (
+			   $IDs->{$d->[1]} eq '<h5>'
+			|| $IDs->{$d->[1]} eq '<H5>'
+		){
 			++$h5;
 			($dan,$bun,$midashi)=(0,0,1)
 		}
@@ -461,7 +476,154 @@ sub first{
 		use kh_jchar;
 		kh_jchar->to_sjis($f);
 	}
-
+	
+	# 各集計単位（H1, H2, H3,,,）のテーブルを作製
+	# 文単位
+	if(mysql_exec->select("select max(bun_idt) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_bun(1);
+		my $longest = mysql_exec->select("
+			SELECT SUM( LENGTH(hyoso.name) ) as len
+			FROM hyosobun, hyoso
+			WHERE hyoso.id = hyosobun.hyoso_id
+			GROUP BY hyosobun.bun_idt
+			ORDER BY len DESC
+			LIMIT 1
+		")->hundle->fetch->[0];
+		++$longest;
+		if ($longest > 65535){
+			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
+		}
+		mysql_exec->do("drop table bun");
+		mysql_exec->do("create table bun(id int auto_increment primary key not null, rowtxt TEXT )",1);
+		my $h = mysql_exec->select("
+			SELECT hyosobun.bun_idt, hyoso.name
+			FROM hyosobun, hyoso
+			WHERE hyosobun.hyoso_id = hyoso.id
+			ORDER BY hyosobun.id
+		",1)->hundle;
+		my @d;
+		while (my $r = $h->fetch){
+			$d[$r->[0]] .= $r->[1];
+		}
+		shift @d;
+		my ($c,$values,$sql) = (0,'','INSERT into bun (rowtxt) VALUES ');
+		foreach my $i (@d){
+			$values .= "(\'$i\'),";
+			++$c;
+			if ($c == 200){
+				chop $values; mysql_exec->do("$sql $values",1);
+				$c = 0; $values = '';
+			}
+		}
+		if ($values){
+			chop $values; mysql_exec->do("$sql $values",1);
+		}
+		# mysql_exec->do("alter table bun add index index1 (rowtxt)",1);
+	}
+	# 段落単位
+	if(mysql_exec->select("select max(dan_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_dan(1);
+		mysql_exec->do("drop table dan");
+		mysql_exec->do("
+			create table dan(
+				id int auto_increment primary key not null,
+				dan_id int,
+				h5_id int,
+				h4_id int,
+				h3_id int,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO dan (dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
+			SELECT dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+			FROM hyosobun
+			GROUP BY dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+		",1);
+	}
+	# h5単位
+	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_h5(1);
+		mysql_exec->do("drop table h5");
+		mysql_exec->do("
+			create table h5(
+				id int auto_increment primary key not null,
+				h5_id int,
+				h4_id int,
+				h3_id int,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO h5 (h5_id, h4_id, h3_id, h2_id, h1_id)
+			SELECT h5_id, h4_id, h3_id, h2_id, h1_id
+			FROM hyosobun
+			GROUP BY h5_id, h4_id, h3_id, h2_id, h1_id
+		",1);
+	}
+	# h4単位
+	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_h4(1);
+		mysql_exec->do("drop table h4");
+		mysql_exec->do("
+			create table h4(
+				id int auto_increment primary key not null,
+				h4_id int,
+				h3_id int,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO h4 (h4_id, h3_id, h2_id, h1_id)
+			SELECT h4_id, h3_id, h2_id, h1_id
+			FROM hyosobun
+			GROUP BY h4_id, h3_id, h2_id, h1_id
+		",1);
+	}
+	# h3単位
+	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_h3(1);
+		mysql_exec->do("drop table h3");
+		mysql_exec->do("
+			create table h3(
+				id int auto_increment primary key not null,
+				h3_id int,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO h3 (h3_id, h2_id, h1_id)
+			SELECT h3_id, h2_id, h1_id
+			FROM hyosobun
+			GROUP BY h3_id, h2_id, h1_id
+		",1);
+	}
+	# h2単位
+	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_h2(1);
+		mysql_exec->do("drop table h2");
+		mysql_exec->do("
+			create table h2(
+				id int auto_increment primary key not null,
+				h2_id int,
+				h1_id int
+			)
+		",1);
+		mysql_exec->do("
+			INSERT INTO h2 (h2_id, h1_id)
+			SELECT h2_id, h1_id
+			FROM hyosobun
+			GROUP BY h2_id, h1_id
+		",1);
+	}
+	# h1単位
+	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
+		$::project_obj->status_h1(1);
+	}
 }
 
 #--------------#
