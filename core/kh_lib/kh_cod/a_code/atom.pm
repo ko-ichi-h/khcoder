@@ -5,9 +5,14 @@ use kh_cod::a_code::atom::delimit;
 use kh_cod::a_code::atom::word;
 use kh_cod::a_code::atom::code;
 use kh_cod::a_code::atom::hinshi;
+use kh_cod::a_code::atom::string;
 
 BEGIN {
 	use vars qw(@pattern);
+	push @pattern, [
+		kh_cod::a_code::atom::string->pattern,
+		kh_cod::a_code::atom::string->name
+	];
 	push @pattern, [
 		kh_cod::a_code::atom::hinshi->pattern,
 		kh_cod::a_code::atom::hinshi->name

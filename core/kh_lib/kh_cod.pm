@@ -72,7 +72,10 @@ sub read_file{
 		$kh_cod::reading{$i} = $codes{$i};
 		push @{$self->{codes}}, kh_cod::a_code->new($i,$codes{$i});
 	}
+	# リセット
 	%kh_cod::reading = ();
+	kh_cod::a_code::atom::code->reset;
+	kh_cod::a_code::atom::string->reset;
 	
 	unless ($self){
 		gui_errormsg->open(

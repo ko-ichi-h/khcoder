@@ -1,3 +1,5 @@
+# 抽出語を使った指定　（品詞と活用形の指定に対応）
+
 package kh_cod::a_code::atom::hinshi;
 use base qw(kh_cod::a_code::atom);
 use strict;
@@ -95,7 +97,7 @@ sub ready{
 	# 表層語リスト作成
 	my $list;
 	if ($self->raw =~ /^(.+)\-\->(.+)->(.+)$/o) {   # 品詞＆活用 指定
-		print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
+		#print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
 			khhinshi => $2,
@@ -103,14 +105,14 @@ sub ready{
 		)->hyoso_id_s;
 	}
 	elsif ($self->raw =~ /^(.+)\-\->(.+)$/o) {      # 品詞指定
-		print Jcode->new("g: $1, h: $2\n")->sjis;
+		#print Jcode->new("g: $1, h: $2\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
 			khhinshi => $2,
 		)->hyoso_id_s;
 	}
 	elsif ($self->raw =~ /^(.+)\->(.+)$/o) {       # 活用指定
-		print Jcode->new("g: $1, k: $2\n")->sjis;
+		#print Jcode->new("g: $1, k: $2\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
 			katuyo => $2
@@ -158,7 +160,7 @@ sub ready{
 	}
 	$sql .= ")\n";
 	$sql .= "GROUP BY $sql_group{$tani}";
-	print "$sql";
+	# print "$sql";
 	mysql_exec->do($sql,1);
 }
 
