@@ -3,9 +3,14 @@ use strict;
 
 use kh_cod::a_code::atom::delimit;
 use kh_cod::a_code::atom::word;
+use kh_cod::a_code::atom::code;
 
 BEGIN {
 	use vars qw(@pattern);
+	push @pattern, [
+		kh_cod::a_code::atom::code->pattern,
+		kh_cod::a_code::atom::code->name
+	];
 	push @pattern, [
 		kh_cod::a_code::atom::delimit->pattern,
 		kh_cod::a_code::atom::delimit->name
@@ -30,6 +35,7 @@ sub new{
 	}
 	
 	bless $self, $class;
+	$self->when_read;
 	return $self;
 }
 
@@ -37,6 +43,11 @@ sub raw{
 	my $self = shift;
 	return $self->{raw};
 }
+
+sub when_read{
+	return 1;
+}
+
 
 
 1;
