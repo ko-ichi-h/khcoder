@@ -155,7 +155,7 @@ sub save{
 				thefile => ">$f"
 			);
 		foreach my $i (@outlist){
-			print INI "$i\t".$self->$i('','1')."\n";
+			print INI "$i\t".$self->$i(undef,'1')."\n";
 		}
 		foreach my $i (keys %{$self}){
 			if ( index($i,'w_') == 0 ){
