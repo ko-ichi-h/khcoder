@@ -1,6 +1,6 @@
 package kh_jchar;
 use strict;
-use NKF;
+use Jcode; #use NKF;
 
 sub to_euc{
 	my $sjistoeuc = $_[1];
@@ -12,14 +12,14 @@ sub to_euc{
 	while (<EUC>){
 		$temp .= $_;
 		if ($n == 1000){
-			$temp = nkf('-e -S',$temp);
+			$temp = Jcode->new($temp)->euc; #nkf('-e -S',$temp);
 			print TEMP "$temp";
 			$n = 0; $temp = '';
 		}
 		++$n;
 	}
 	if ($temp){
-		$temp = nkf('-e -S',$temp);
+		$temp = Jcode->new($temp)->euc; #nkf('-e -S',$temp);
 		print TEMP "$temp";
 	}
 
@@ -39,14 +39,14 @@ sub to_sjis{
 	while (<EUC>){
 		$temp .= $_;
 		if ($n == 1000){
-			$temp = nkf('-s -E',$temp);
+			$temp = Jcode->new($temp)->sjis; #nkf('-s -E',$temp);
 			print TEMP "$temp";
 			$n = 0; $temp = '';
 		}
 		++$n;
 	}
 	if ($temp){
-		$temp = nkf('-s -E',$temp);
+		$temp = Jcode->new($temp)->sjis; #nkf('-s -E',$temp);
 		print TEMP "$temp";
 	}
 

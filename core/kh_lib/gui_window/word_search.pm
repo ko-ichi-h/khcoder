@@ -5,7 +5,7 @@ use strict;
 use Tk;
 use Tk::HList;
 use Tk::Balloon;
-use NKF;
+#use NKF;
 
 use mysql_words;
 use gui_widget::optmenu;
@@ -273,7 +273,7 @@ sub search{
 					-style => $numb_style
 				);
 			} else {
-				$self->list->itemCreate($cu,$col,-text => nkf('-s -E',$h));
+				$self->list->itemCreate($cu,$col,-text => Jcode->new($h)->sjis);# nkf('-s -E',$h)
 			}
 			++$col;
 		}
