@@ -207,7 +207,7 @@ sub make{
 			);
 
 		$self->{t_word_conc} = $f3->command(
-				-label => Jcode->new('コンコーダンス [KWIC]')->sjis,
+				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_conc->open;
