@@ -76,6 +76,7 @@ my %sql_group = (
 
 sub expr{
 	my $self = shift;
+	my %args = @_;
 	
 	my $t = $self->tables;
 	unless ($t){ return '0';}
@@ -83,8 +84,15 @@ sub expr{
 	my ($sql, $n) = ('',0);
 	foreach my $i (@{$t}){
 		if ($n){$sql .= ' or '}
-		my $col = (split /\_/, $i)[2].(split /\_/, $i)[3];
-		$sql .= "IFNULL(".$self->parent_table.".$col,0)";
+		my ($col,$tab);
+		#if ($args{parents}){
+			$col = (split /\_/, $i)[2].(split /\_/, $i)[3];
+			$tab = $self->parent_table;
+		#} else {
+		#	$col = 'num';
+		#	$tab = $i;
+		#}
+		$sql .= "IFNULL($tab.$col,0)";
 		++$n;
 	}
 	if ($n > 1){
