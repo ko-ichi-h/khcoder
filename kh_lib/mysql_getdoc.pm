@@ -18,10 +18,8 @@ sub get{
 	bless $self, $class;
 
 	# 文書の特定
-	#print "id, ";
 	unless ( length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
-		#print "doc_id $self->{doc_id}";
 	}
 
 	# 本文の取り出し

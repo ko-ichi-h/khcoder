@@ -57,7 +57,9 @@ sub raw{
 sub when_read{
 	return 1;
 }
-
+sub hyosos{
+	return undef;
+}
 
 
 1;
