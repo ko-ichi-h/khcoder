@@ -147,6 +147,7 @@ sub readin{
 	unless ( mysql_exec->table_exists('d_force') ){
 		mysql_exec->do("create table d_force
 			(
+				id int auto_increment primary key not null,
 				name varchar(255) not null,
 				type int not null
 			)
