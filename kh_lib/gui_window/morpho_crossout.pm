@@ -9,7 +9,7 @@ use mysql_crossout;
 
 use gui_window::morpho_crossout::csv;
 use gui_window::morpho_crossout::spss;
-
+use gui_window::morpho_crossout::tab;
 
 #-------------#
 #   GUI∫Ó¿Ω   #

@@ -245,7 +245,7 @@ sub make{
 				-state => 'disable',
 				-tearoff=>'no'
 			);
-		
+
 			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
 				-label => Jcode->new("CSVファイル")->sjis,
 				-font  => "TKFN",
@@ -259,6 +259,14 @@ sub make{
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_crossout::spss->open;
+				})},
+			);
+
+			$self->{m_b3_crossout_tab} = $self->{m_b3_crossout}->command(
+				-label => Jcode->new("タブ区切り")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::tab->open;
 				})},
 			);
 
@@ -285,7 +293,13 @@ sub make{
 				})},
 			);
 
-
+			$self->{m_b3_contxtout_tab} = $self->{m_b3_contxtout}->command(
+				-label => Jcode->new("タブ区切り")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::contxt_out::tab->open;
+				})},
+			);
 
 	my $f5 = $f->cascade(
 			-label => Jcode->new('コーディング')->sjis,
@@ -529,6 +543,7 @@ sub refresh{
 		'm_b3_crossout',
 		'm_b3_crossout_csv',
 		'm_b3_crossout_spss',
+		'm_b3_crossout_tab',
 		't_txt_pickup',
 		't_doc_search',
 		't_out_read',
@@ -536,6 +551,7 @@ sub refresh{
 		'm_b3_contxtout',
 		'm_b3_contxtout_spss',
 		'm_b3_contxtout_csv',
+		'm_b3_contxtout_tab',
 	);
 
 	# 状態変更
