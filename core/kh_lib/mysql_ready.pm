@@ -543,6 +543,13 @@ sub first{
 			GROUP BY bun_idt
 			ORDER BY bun_idt
 		",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index1 (bun_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index2 (dan_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index3 (h5_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index4 (h4_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index5 (h3_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE bun ADD INDEX index7 (h1_id)",1);
 	}
 	
 	
@@ -569,7 +576,12 @@ sub first{
 			GROUP BY dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id, dan_id
 		",1);
-
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index2 (dan_id)",1);
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index3 (h5_id)",1);
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index4 (h4_id)",1);
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index5 (h3_id)",1);
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE dan ADD INDEX index7 (h1_id)",1);
 	}
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -593,6 +605,11 @@ sub first{
 			GROUP BY h5_id, h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id
 		",1);
+		mysql_exec->do("ALTER TABLE h5 ADD INDEX index3 (h5_id)",1);
+		mysql_exec->do("ALTER TABLE h5 ADD INDEX index4 (h4_id)",1);
+		mysql_exec->do("ALTER TABLE h5 ADD INDEX index5 (h3_id)",1);
+		mysql_exec->do("ALTER TABLE h5 ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE h5 ADD INDEX index7 (h1_id)",1);
 	}
 	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -615,6 +632,10 @@ sub first{
 			GROUP BY h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id
 		",1);
+		mysql_exec->do("ALTER TABLE h4 ADD INDEX index4 (h4_id)",1);
+		mysql_exec->do("ALTER TABLE h4 ADD INDEX index5 (h3_id)",1);
+		mysql_exec->do("ALTER TABLE h4 ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE h4 ADD INDEX index7 (h1_id)",1);
 	}
 	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -636,6 +657,9 @@ sub first{
 			GROUP BY h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id
 		",1);
+		mysql_exec->do("ALTER TABLE h3 ADD INDEX index5 (h3_id)",1);
+		mysql_exec->do("ALTER TABLE h3 ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE h3 ADD INDEX index7 (h1_id)",1);
 	}
 	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -656,6 +680,8 @@ sub first{
 			GROUP BY h2_id, h1_id
 			ORDER BY h1_id, h2_id
 		",1);
+		mysql_exec->do("ALTER TABLE h2 ADD INDEX index6 (h2_id)",1);
+		mysql_exec->do("ALTER TABLE h2 ADD INDEX index7 (h1_id)",1);
 	}
 	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -675,6 +701,7 @@ sub first{
 			GROUP BY h1_id
 			ORDER BY h1_id
 		",1);
+	mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
 	}
 }
 
