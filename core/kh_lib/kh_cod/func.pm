@@ -7,6 +7,7 @@ use Jcode;
 
 #------------------------------------#
 #   コーディング結果の出力（SPSS）   #
+
 sub cod_out_spss{
 	my $self     = shift;
 	my $tani     = shift;
@@ -15,12 +16,7 @@ sub cod_out_spss{
 
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
-	my $n;
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		++$n;
-	}
-	unless ($n){return 0;}
+	unless ($self->valid_codes){ return 0; }
 
 	my ($sql,@head);
 	my $flag = 0;
@@ -36,9 +32,8 @@ sub cod_out_spss{
 	@head = reverse @head;
 	my %codes; my $cn = 1;
 	$sql = "SELECT "."$sql";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		$sql .= "IF($i->{res_table}.num,1,0),";
+	foreach my $i (@{$self->valid_codes}){
+		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		push @head, "code$cn";
 		$codes{"code$cn"} = Jcode->new($i->name)->sjis;
 		++$cn;
@@ -46,9 +41,8 @@ sub cod_out_spss{
 	chop $sql;
 
 	$sql .= "\nFROM ".$self->tani."\n";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		$sql .= "LEFT JOIN $i->{res_table} ON $i->{tani}.id = $i->{res_table}.id\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
 	
 	# データファイル
@@ -92,12 +86,7 @@ sub cod_out_spss{
 		);
 	print CODO "$spss";
 	close (CODO);
-
-
-
 }
-
-
 
 #-----------------------------------#
 #   コーディング結果の出力（CSV）   #
@@ -109,12 +98,7 @@ sub cod_out_csv{
 	
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
-	my $n;
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		++$n;
-	}
-	unless ($n){return 0;}
+	unless ($self->valid_codes){ return 0; }
 
 	my ($sql,$head);
 	my $flag = 0;
@@ -128,17 +112,15 @@ sub cod_out_csv{
 		}
 	}
 	$sql = "SELECT "."$sql";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		$sql .= "IF($i->{res_table}.num,1,0),";
+	foreach my $i (@{$self->valid_codes}){
+		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		$head .= Jcode->new($i->name)->sjis.",";
 	}
 	chop $sql;
 	chop $head;
 	$sql .= "\nFROM ".$self->tani."\n";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
-		$sql .= "LEFT JOIN $i->{res_table} ON $i->{tani}.id = $i->{res_table}.id\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
 	
 	open(CODO,">$outfile") or
@@ -172,6 +154,8 @@ sub count{
 	my $tani = shift;
 	
 	$self->code($tani) or return 0;
+	unless ($self->codes){ return 0; }
+	
 	
 	# 総数を取得
 	my $total = mysql_exec->select("select count(*) from $tani",1)
@@ -179,11 +163,12 @@ sub count{
 	
 	# 各コードの出現数を取得
 	my $result;
-	foreach my $i (@{$self->{codes}}){
+	foreach my $i (@{$self->codes}){
 		my $rows = 0;
-		if ($i->{res_table}){                # 出現数0に対処
-			$rows = mysql_exec->select("SELECT count(*) FROM $i->{res_table}")
-				->hundle;
+		if ($i->res_table){                  # 出現数0に対処
+			$rows = mysql_exec->select(
+				"SELECT sum(IF(".$i->res_col.",1,0)) FROM ".$i->res_table
+			)->hundle;
 			if ($rows = $rows->fetch){
 				$rows = $rows->[0]; 
 			} else {
@@ -200,16 +185,14 @@ sub count{
 	
 	# 1つでもコードが与えられた文書の数を取得
 	my $sql = "SELECT count(*)\nFROM $tani\n";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;} # 出現数0に対処
-		$sql .= "LEFT JOIN $i->{res_table} ON $tani.id = $i->{res_table}.id\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON $tani.id = $i.id\n";
 	}
 	$sql .= "WHERE\n";
 	my $n = 0;
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;} # 出現数0に対処
+	foreach my $i (@{$self->valid_codes}){
 		if ($n){ $sql .= "or "; }
-		$sql .= "$i->{res_table}.num\n";
+		$sql .= $i->res_table.".".$i->res_col."\n";
 		++$n;
 	}
 	my $least1 = mysql_exec->select($sql,1)->hundle->fetch->[0];
@@ -238,21 +221,20 @@ sub tab{
 	my $cell  = shift;
 	
 	$self->code($tani1) or return 0;
+	unless ($self->valid_codes){ return 0; }
 
 	my $result;
 
 	# 集計用SQL文の作製
 	my $sql;
 	$sql .= "SELECT $tani2.id, ";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;} # 出現数0に対処
-		$sql .= "sum( IF($i->{res_table}.num,1,0) ),";
+	foreach my $i (@{$self->{valid_codes}}){
+		$sql .= "sum( IF(".$i->res_table.".".$i->res_col.",1,0) ),";
 	}
 	$sql .= " count(*) \n";
 	$sql .= "FROM $tani1\n";
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;} # 出現数0に対処
-		$sql .= "LEFT JOIN $i->{res_table} ON $tani1.id = $i->{res_table}.id\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON $tani1.id = $i.id\n";
 	}
 	$sql .= "LEFT JOIN $tani2 ON ";
 	my ($flag1,$n);
@@ -287,8 +269,7 @@ sub tab{
 	
 	# 一行目
 	my @head = ('');
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;} # 出現数0に対処
+	foreach my $i (@{$self->{valid_codes}}){
 		push @head, Jcode->new($i->name)->sjis;
 	}
 	push @head, Jcode->new('ケース数')->sjis;
@@ -361,9 +342,10 @@ sub jaccard{
 	
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	
 	my ($n, @head) = (0, (''));
-	foreach my $i (@{$self->{codes}}){
-		unless ( $i->{res_table} ){next;}
+	foreach my $i (@{$self->valid_codes}){
 		push @head, Jcode->new($i->name)->sjis;        # 出力結果・ヘッダ行
 		++$n;
 	}
@@ -373,11 +355,9 @@ sub jaccard{
 	my @result;
 	push @result, \@head;
 	
-	foreach my $i (@{$self->{codes}}){                 # 出力結果・相関行列
-		unless ( $i->{res_table} ){next;}
+	foreach my $i (@{$self->valid_codes}){           # 出力結果・相関行列
 		my @current = (Jcode->new($i->name)->sjis);
-		foreach my $h (@{$self->{codes}}){
-			unless ( $h->{res_table} ){next;}
+		foreach my $h (@{$self->valid_codes}){
 			if ($i->name eq $h->name){
 				push @current,"1.000";
 			} else {
@@ -395,26 +375,33 @@ sub _jaccard{
 	my $c1    = shift;
 	my $c2    = shift;
 	
+	my @tables;
+	push @tables, $c1->res_table;
+	unless ($c1->res_table eq $c2->res_table){
+		push @tables, $c2->res_table;
+	}
+
 	# 両方出現しているケース
-	my $both = mysql_exec->select("
-		SELECT *
-		FROM $c1->{tani}
-			LEFT JOIN $c1->{res_table} ON $c1->{tani}.id = $c1->{res_table}.id
-			LEFT JOIN $c2->{res_table} ON $c1->{tani}.id = $c2->{res_table}.id
-		WHERE
-			$c1->{res_table}.num AND $c2->{res_table}.num
-	",1)->hundle->rows;
+	my $sql1 = "SELECT * FROM ".$c1->tani."\n";
+	foreach my $i (@tables){
+		$sql1 .= "LEFT JOIN $i ON ".$c1->tani.".id = $i.id\n";
+	}
+	$sql1 .= "WHERE\n";
+	$sql1 .= $c1->res_table.".".$c1->res_col." AND ".$c2->res_table.".".$c2->res_col;
 	
+	my $both =  mysql_exec->select($sql1,1)->hundle->rows;
+
 	# どちらかが出現しているケース
-	my $n = mysql_exec->select("
-		SELECT *
-		FROM $c1->{tani}
-			LEFT JOIN $c1->{res_table} ON $c1->{tani}.id = $c1->{res_table}.id
-			LEFT JOIN $c2->{res_table} ON $c1->{tani}.id = $c2->{res_table}.id
-		WHERE
-			IFNULL($c1->{res_table}.num,0) OR IFNULL($c2->{res_table}.num,0)
-	",1)->hundle->rows;
+	my $sql2 = "SELECT * FROM ".$c1->tani."\n";
+	foreach my $i (@tables){
+		$sql2 .= "LEFT JOIN $i ON ".$c1->tani.".id = $i.id\n";
+	}
+	$sql2 .= "WHERE\n";
+	$sql2 .= "IFNULL(".$c1->res_table.".".$c1->res_col.",0) OR IFNULL(".$c2->res_table.".".$c2->res_col.",0)";
 	
+	my $n = mysql_exec->select($sql2,1)->hundle->rows;
+	
+	unless ($n){return '0.000'; }
 	return sprintf("%.3f",$both / $n);
 }
 

@@ -24,6 +24,7 @@ sub code{
 		my $res_table = "ct_$tani"."_code_$n";
 		$i->ready($tani) or next;
 		$i->code($res_table);
+		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
 		++$n;
 	}
 	
@@ -84,6 +85,25 @@ sub read_file{
 
 #--------------#
 #   アクセサ   #
+
+sub tables{                         # コーディング結果を納めたテーブルのリスト
+	my $self = shift;
+	my @r;
+	foreach my $i (@{$self->valid_codes}){
+		push @r, $i->res_table;
+	}
+	return \@r;
+}
+
+sub valid_codes{
+	my $self = shift;
+	return $self->{valid_codes};
+}
+
+sub codes{
+	my $self = shift;
+	return $self->{codes};
+}
 
 sub tani{
 	my $self = shift;
