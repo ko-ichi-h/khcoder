@@ -230,14 +230,12 @@ sub _sort{                                        # ソート用テーブルの作成
 	$sql = '';
 	$sql .= "INSERT INTO temp_conc_sort ( conc_id )\n";
 	$sql .= "SELECT temp_concl.id\n";
-	$sql .= "FROM   temp_concl,temp_concr,";
+	$sql .= "FROM   temp_concl LEFT JOIN temp_concr ON temp_concl.id = temp_concr.id,";
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_$i,";
 	}
 	chop $sql; $sql .= "\n";
-	$sql .= "WHERE\n";
-	$sql .= "temp_concl.id = temp_concr.id\n";
 	$n = 0; my @temp;
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
@@ -247,7 +245,11 @@ sub _sort{                                        # ソート用テーブルの作成
 		} else {
 			$lr = 'l';
 		}
-
+		
+		if ($n == 0){
+			$sql .= "WHERE\n";
+			$sql .= "temp_conc$lr.$args{$i} = temp_conc_$i.hyoso_id\n";
+		}
 		$sql .= "AND temp_conc$lr.$args{$i} = temp_conc_$i.hyoso_id\n";
 		my $l = 0;
 		foreach my $h (@temp){

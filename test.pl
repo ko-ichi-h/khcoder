@@ -28,8 +28,8 @@ $config_obj->sqllog(0);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
-		'E:/home/higuchi/perl/core/data/test_big/test.html',
+		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
+#		'E:/home/higuchi/perl/core/data/test_big/test.html',
 	dbname  =>
 		'khc1',
 )->open;
