@@ -16,7 +16,7 @@ sub do{
 		){next;}
 		
 		my $num1 = mysql_exec->select(
-			"SELECT num FROM genkei WHERE name like \'%$i%\'",
+			"SELECT num FROM genkei WHERE name = \'<$i>\'",
 			1
 		)->hundle;
 		$num1 = $num1->[0] if $num1 = $num1->fetch;
