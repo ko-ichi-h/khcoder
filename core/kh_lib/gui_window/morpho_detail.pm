@@ -42,6 +42,7 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {
 			my $n = $self->{parent}->prev;
+			unless ($n > 0){return;}
 			$self->_view($n);
 		});} 
 	)->pack(-side => 'left',-pady   => 1,);
@@ -52,6 +53,7 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {
 			my $n = $self->{parent}->next;
+			unless ($n > 0){return;}
 			$self->_view($n);
 		});} 
 	)->pack(-side => 'left',-pady   => 1,);

@@ -26,6 +26,8 @@ sub _new{
 		-width => 64,
 		-wrap => 'word',
 		-font => "TKFN",
+		-background => 'white',
+		-foreground => 'black'
 	)->pack(-fill => 'both', -expand => 'yes');
 
 	$srtxt->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$srtxt]);
@@ -79,8 +81,12 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
+					my $hyosobun_id = $self->{parent}->prev;
+					unless ($hyosobun_id > 0){
+						return;
+					}
 					$self->{doc} = mysql_getdoc->get(
-						hyosobun_id => $self->{parent}->prev,
+						hyosobun_id => $hyosobun_id,
 						w_search    => $self->{w_search},
 						tani        => $self->{tani},
 					);
@@ -99,8 +105,12 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
+					my $hyosobun_id = $self->{parent}->next;
+					unless ($hyosobun_id > 0){
+						return;
+					}
 					$self->{doc} = mysql_getdoc->get(
-						hyosobun_id => $self->{parent}->next,
+						hyosobun_id => $hyosobun_id,
 						w_search    => $self->{w_search},
 						tani        => $self->{tani},
 					);
@@ -122,7 +132,7 @@ sub _new{
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $::mw->after
+		-command => sub{ $mw->after
 			(10,
 				sub {
 					$self->close;

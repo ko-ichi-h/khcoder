@@ -7,7 +7,7 @@ use mysql_morpho_check;
 use gui_window::morpho_detail;
 
 #----------------#
-#   Window•`‰æ   #
+#   WindowÉÁ²è   #
 
 sub _new{
 	my $self = shift;
@@ -15,7 +15,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->title(Jcode->new('Œ`‘Ô‘f‰ðÍŒ‹‰Ê‚ÌŠm”F')->sjis);
+	$wmw->title(Jcode->new('·ÁÂÖÁÇ²òÀÏ·ë²Ì¤Î³ÎÇ§')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -23,7 +23,7 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
-	# ƒGƒ“ƒgƒŠ‚ÆŒŸõƒ{ƒ^ƒ“‚ÌƒtƒŒ[ƒ€
+	# ¥¨¥ó¥È¥ê¤È¸¡º÷¥Ü¥¿¥ó¤Î¥Õ¥ì¡¼¥à
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN"
@@ -33,12 +33,12 @@ sub _new{
 	$e1->bind("<Shift-Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => Jcode->new('ŒŸõ')->sjis,
+		-text => Jcode->new('¸¡º÷')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
 	)->pack(-side => 'right', padx => '2');
 
-	# Œ‹‰Ê•\Ž¦•”•ª
+	# ·ë²ÌÉ½¼¨ÉôÊ¬
 	my $fra5 = $wmw->LabFrame(
 		-label => 'Result',
 		-labelside => 'acrosstop',
@@ -65,17 +65,17 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => 'ID');
-	$lis->header('create',1,-text => Jcode->new('•¶i•ªŠ„Ï‚Ýj')->sjis);
+	$lis->header('create',1,-text => Jcode->new('Ê¸¡ÊÊ¬³äºÑ¤ß¡Ë')->sjis);
 
 	$fra5->Button(
-		-text => Jcode->new('ƒRƒs[')->sjis,
+		-text => Jcode->new('¥³¥Ô¡¼')->sjis,
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => Jcode->new('Ú×•\Ž¦')->sjis,
+		-text => Jcode->new('¾ÜºÙÉ½¼¨')->sjis,
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->detail;});} 
@@ -96,7 +96,7 @@ sub _new{
 }
 
 #----------#
-#   ŒŸõ   #
+#   ¸¡º÷   #
 
 sub search{
 	my $self = shift;
@@ -129,7 +129,7 @@ sub search{
 }
 
 #--------------#
-#   Ú×•\Ž¦   #
+#   ¾ÜºÙÉ½¼¨   #
 
 sub detail{
 	my $self = shift;
@@ -150,7 +150,7 @@ sub next{
 	my $self = shift;
 	my @selected = $self->list->infoSelection;
 	unless (@selected){
-		return;
+		return -1;
 	}
 	my $selected = $selected[0] + 1;
 	my $max = @{$self->result} - 1;
@@ -173,7 +173,7 @@ sub prev{
 	my $self = shift;
 	my @selected = $self->list->infoSelection;
 	unless (@selected){
-		return;
+		return -1;
 	}
 	my $selected = $selected[0] - 1;
 	if ($selected < 0){

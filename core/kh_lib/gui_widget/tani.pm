@@ -31,6 +31,7 @@ sub _new{
 		-options=> \@list1,
 		-font => "TKFN",
 		-borderwidth => '1',
+		-width => 4,
 		-variable => \$self->{raw_opt},
 	);
 }
