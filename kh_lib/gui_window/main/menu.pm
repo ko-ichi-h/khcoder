@@ -174,7 +174,7 @@ sub make{
 		);
 
 		$self->{t_word_search} = $f3->command(
-				-label => Jcode->new('検索')->sjis,
+				-label => Jcode->new('抽出語検索')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_search->open;
@@ -191,17 +191,7 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{t_word_ass} = $f3->command(
-				-label => Jcode->new('連関規則')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_ass->open;
-				})},
-				-state => 'disable'
-			);
-
 		$f3->separator;
-		
 		
 		$self->{t_word_freq} = $f3->command(
 				-label => Jcode->new('出現回数 分布')->sjis,
@@ -231,13 +221,24 @@ sub make{
 		);
 
 		$self->{t_doc_search} = $f8->command(
-				-label => Jcode->new('検索')->sjis,
+				-label => Jcode->new('文書検索')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::doc_search->open;
 				})},
 				-state => 'disable'
 			);
+
+		$self->{t_word_ass} = $f8->command(
+				-label => Jcode->new('抽出語 連関規則')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_ass->open;
+				})},
+				-state => 'disable'
+			);
+
+		$f8->separator;
 
 		$self->{m_b3_crossout} = $f8->cascade(
 				-label => Jcode->new("「文書ｘ抽出語」表の出力",'euc')->sjis,
