@@ -39,6 +39,7 @@ use gui_window::morpho_crossout;
 use gui_window::outvar_read;
 use gui_window::outvar_list;
 use gui_window::outvar_detail;
+use gui_window::force_color;
 
 sub open{
 	my $class = shift;

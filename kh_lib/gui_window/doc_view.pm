@@ -144,7 +144,6 @@ sub _new{
 		-font => "TKFN")
 		->pack(-anchor=>'w',-side => 'left');
 
-
 	$msg = '閉じる'; Jcode::convert(\$msg,'sjis','euc');
 	$bframe->Button(
 		-text => $msg,
@@ -158,7 +157,27 @@ sub _new{
 			);
 		}
 	)->pack(-side => 'right',-pady => '0');
-	
+
+	$bframe->Label(
+		-text => ' ',
+		-font => "TKFN"
+	)->pack(-side => 'right');
+
+	$bframe->Button(
+		-text => Jcode->new('強調')->sjis,
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(10,
+				sub {
+					gui_window::force_color->open(
+						parent => $self
+					);
+				}
+			);
+		}
+	)->pack(-side => 'right',-pady => '0', -padx => 2);
+
 	# バインド関係
 	$bunhyojiwin->bind(
 		"<Shift-Key-Prior>",
