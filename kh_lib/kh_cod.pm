@@ -24,11 +24,11 @@ sub code{
 	my $n = 0;
 	foreach my $i (@{$self->{codes}}){
 		my $res_table = "ct_$tani"."_code_$n";
-		
+		++$n;
 		$i->ready($tani) or next;
 		$i->code($res_table);
 		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
-		++$n;
+		
 	}
 	
 	return $self;

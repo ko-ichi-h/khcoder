@@ -18,7 +18,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->title(Jcode->new('コンコーダンス [KWIC]')->sjis);
+	$wmw->title(Jcode->new('コンコーダンス （KWIC）')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
