@@ -5,7 +5,7 @@ use strict;
 use mysql_exec;
 
 my $last_tani;
-my $docs_per_once = 50;
+my $docs_per_once = 200;
 
 my %sql_join = (
 	'bun' =>
@@ -107,7 +107,7 @@ sub search{
 	$self->{tani} = $args{tani};
 	
 	$self->{last_search_words} = undef;
-	mysql_exec->drop_table("tmp_doc_search");
+	mysql_exec->drop_table("temp_doc_search");
 	
 	# コーディング
 	print "kh_cod::search -> coding...\n";
@@ -139,14 +139,14 @@ sub search{
 	# 合致する文書のリストを作成
 	print "kh_cod::search -> searching...\n";
 	mysql_exec->do("
-		create table tmp_doc_search(
+		create temporary table temp_doc_search(
 			rnum int auto_increment primary key not null,
 			id   int not null,
 			num  int not null
 		)
 	",1);
 	my $sql;
-	$sql .= "INSERT INTO tmp_doc_search (id, num)\n";
+	$sql .= "INSERT INTO temp_doc_search (id, num)\n";
 	$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
 	foreach my $i (@{$args{selected}}){
 		unless ($self->{codes}[$i]->res_table){
@@ -210,7 +210,7 @@ sub last_search_words{
 sub total_hits{
 	my $self = shift;
 	
-	my $sth = mysql_exec->select("select count(*) from tmp_doc_search")->hundle
+	my $sth = mysql_exec->select("select count(*) from temp_doc_search")->hundle
 		or return 0;
 	my $n = $sth->fetch or return 0;
 	if ($n){
@@ -227,7 +227,7 @@ sub fetch_results{
 
 	my $sth = mysql_exec->select("
 		SELECT id
-		FROM   tmp_doc_search
+		FROM   temp_doc_search
 		WHERE
 			    rnum >= $start
 			AND rnum <  $start + $docs_per_once
