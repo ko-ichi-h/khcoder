@@ -37,8 +37,6 @@ sub read{
 			);
 		++$n;
 	}
-
-
 	return $self;
 }
 
@@ -82,77 +80,15 @@ sub add_new{
 		}
 	}
 
-	# DB作成
-	my $drh = DBI->install_driver("mysql")
-		or gui_errormsg->open(type => 'mysql');
-	$drh->func('createdb', $new->dbname,'','','','admin')
-		or gui_errormsg->open(type => 'mysql', sql => 'createdb');
-
-	# デフォルトの品詞選択テーブルを作成
+	# デフォルトの品詞選択情報を取得
 	my $sql2 = "SELECT hinshi_id, kh_hinshi FROM hinshi_";  # 品詞リスト取得
 	$sql2 .= $::config_obj->c_or_j;
 	my $hst = $self->dbh->prepare($sql2) or die(dbh error 1);
 	$hst->execute or die(dbh error 2);
 	my $data = $hst->fetchall_arrayref or die (dbh error 3);
 
-	my $temp_new = $new->dbname;                            # MySQLテーブル作成
-	my $mysql = DBI->connect("DBI:mysql:$temp_new",undef,undef)
-		or gui_errormsg->open(type => 'mysql', sql => 'connect');
-	my $sql3 = 'create table hselection(
-		khhinshi_id int primary key not null,
-		ifuse       int,
-		name        varchar(20) not null
-	)';
-	$mysql->do($sql3) or
-		gui_errormsg->open(type =>'mysql', sql =>'create table hselection');
-
-	my $sql4 = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
-	my %temp_h;                                             # MySQLテーブルへのインサート
-	foreach my $i (@{$data}){
-		if ($temp_h{$i->[0]}){
-			next;
-		} else {
-			$temp_h{$i->[0]} = 1;
-		}
-		
-		#if ($i->[1] eq "複合名詞"){
-		#	$sql4 .= "($i->[0],0,'$i->[1]'),";
-		#} 
-		if ($i->[1] eq "HTMLタグ"){
-			$sql4 .= "($i->[0],0,'$i->[1]'),";
-		} else {
-			$sql4 .= "($i->[0],1,'$i->[1]'),";
-		}
-	}
-	$sql4 .= "(9999,0,'その他')";
-	$mysql->do($sql4) or 
-		gui_errormsg->open(type =>'mysql', sql => 'INSERT INTO hselection');
-
-	# 辞書テーブルの作成
-	$mysql->do('create table dmark ( name varchar(200) not null )') or die;
-	$mysql->do('create table dstop ( name varchar(200) not null )') or die;
-	# 状態テーブルの作成
-	$mysql->do('
-		create table status (
-			name   varchar(200) not null,
-			status INT not null
-		)
-	');
-	$mysql->do("
-		INSERT INTO status (name, status)
-		VALUES ('morpho',0),('bun',0),('dan',0),('h5',0),('h4',0),('h3',0),('h2',0),('h1',0)
-	");
-	$mysql->do('
-		create table status_char (
-			name   varchar(255) not null,
-			status varchar(255)
-		)
-	');
-	$mysql->do("
-		INSERT INTO status_char (name, status)
-		VALUES ('last_tani',''),('last_codf','')
-	");
-
+	# MySQL DBの整備
+	$new->prepare_db($data);
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
