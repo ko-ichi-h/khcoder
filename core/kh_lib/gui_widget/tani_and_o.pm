@@ -24,18 +24,103 @@ my %value = (
 	"H1"  => "h1",
 );
 
+#----------------#
+#   WidgetºîÀ®   #
 
 sub _new{
 	my $self = shift;
 	
 	$self->{win_obj} = $self->parent->Frame();
 	
+	$self->{hlist} = $self->{win_obj}->Scrolled(
+		'HList',
+		-scrollbars         => 'osoe',
+		-relief             => 'sunken',
+		-font               => 'TKFN',
+		-selectmode         => 'none',
+		-indicator          => 0,
+		-highlightthickness => 0,
+		-columns            => 3,
+		-borderwidth        => 2,
+		-height             => 6,
+	)->pack();
 	
+	my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
+	my $row = 0;
+	my $right = $self->{hlist}->ItemStyle('window',-anchor => 'e');
+	foreach my $i (@list0){
+		if (
+			mysql_exec->select(
+				"select status from status where name = \'$i\'",1
+			)->hundle->fetch->[0]
+		){
+			my $c = $self->{hlist}->Checkbutton(
+				-text     => '',
+				-variable => \$self->{check}{$i},
+				-command  => sub {$self->refresh;}
+			);
+			$self->{entry}{$i} = $self->{hlist}->Entry(
+				-width => 3,
+			);
+			
+			$self->{hlist}->add($row,-at => $row,);
+			$self->{hlist}->itemCreate(
+				$row,0,
+				-itemtype  => 'window',
+				-style => $right,
+				-widget    => $c,
+			);
+			$self->{hlist}->itemCreate(
+				$row,1,
+				-itemtype  => 'text',
+				-text      => Jcode->new($name{$i}.' ¡¡')->sjis,
+			);
+			$self->{hlist}->itemCreate(
+				$row,2,
+				-itemtype  => 'window',
+				-widget    => $self->{entry}{$i},
+			);
+			
+			$self->{entry}{$i}->insert(0,1);
+			if ($i eq 'bun'){
+				$c->select;
+			}
+			++$row;
+		}
+	}
+	
+	$self->refresh;
+	return $self;
+}
+
+sub refresh{
+	my $self = shift;
+	foreach my $i (keys %{$self->{check}}){
+		if ($self->{check}{$i}){
+			$self->{entry}{$i}->configure(
+				-state      => 'normal',
+				-background => 'white'
+			);
+		} else {
+			$self->{entry}{$i}->configure(
+				-state      => 'disable',
+				-background => 'gray'
+			);
+		}
+	}
 	
 	return $self;
 }
 
-
-
+sub value{
+	my $self = shift;
+	my @list;
+	foreach my $i (keys %{$self->{check}}){
+		if ($self->{check}{$i}){
+			push @list, [$i, $self->{entry}{$i}->get];
+		}
+	}
+	return \@list;
+}
 
 1;

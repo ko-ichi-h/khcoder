@@ -4,6 +4,7 @@ use base qw(gui_window);
 use gui_widget::tani_and_o;
 use gui_widget::hinshi;
 use mysql_crossout;
+use mysql_contxt;
 
 #-------------#
 #   GUI作製   #
@@ -16,7 +17,8 @@ sub _new{
 	$win->title(Jcode->new($self->label)->sjis);
 	$self->{win_obj} = $win;
 
-	my $wf = $win->Frame()->pack(-fill => 'x', -expand => 1);
+	# 各種フレーム
+	my $wf = $win->Frame()->pack(-fill => 'both', -expand => 1);
 	my $lf = $wf->LabFrame(
 		-label => 'Words',
 		-labelside => 'acrosstop',
@@ -31,7 +33,10 @@ sub _new{
 		-label => 'Optins',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-anchor => 'w');
+	)->pack(-anchor => 'w', -side => left);
+	my $bf = $win ->Frame(
+		-borderwidth => 2
+	)->pack(-anchor => 'se', -side => right);
 
 	#--------------------#
 	#   集計オプション   #
@@ -41,10 +46,17 @@ sub _new{
 		-font       => "TKFN",
 	)->pack(-anchor => 'w');
 
+	$of->Label(
+		-text => Jcode->new('　　')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left',-fill => 'y',-expand => 1);
+
 	$self->{tani_obj} = gui_widget::tani_and_o->open(
 		parent => $of,
 		pack   => {
-			-anchor => 'w'
+			-anchor => 'w',
+			-pady   => 2,
+			-side   => 'left'
 		}
 	);
 
@@ -228,7 +240,7 @@ sub _new{
 		-text => Jcode->new('チェック')->sjis,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->check;});}
+		-command => sub{ $mw->after(10,sub{$self->check1;});}
 	)->pack(-side => 'left', -padx => 2);
 	$self->{ent_check} = $cf->Entry(
 		-font       => "TKFN",
@@ -236,6 +248,38 @@ sub _new{
 		-state      => 'disable'
 	)->pack(-side => 'left',-fill => 'x', -expand => '1');
 
+	#----------------#
+	#   実行ボタン   #
+
+	$bf->Button(
+		-text => Jcode->new('キャンセル')->sjis,
+		-font => "TKFN",
+		-width => 8,
+		-command => sub{ $mw->after(10,sub{$self->close;});}
+	)->pack(-side => 'right',-padx => 2);
+
+	$bf->Button(
+		-text => 'OK',
+		-width => 8,
+		-font => "TKFN",
+		-command => sub{ $mw->after(10,sub{
+			$self->check or return;
+			my $file = $self->file_name or return;
+			my $ans = $self->win_obj->messageBox(
+				-message => Jcode->new
+					(
+					   "この処理には時間がかかることがあります。\n".
+					   "続行してよろしいですか？"
+					)->sjis,
+				-icon    => 'question',
+				-type    => 'OKCancel',
+				-title   => 'KH Coder'
+			);
+			unless ( $ans =~ /ok/i ){ return 0; }
+			$self->go($file);
+			$self->close;
+		});}
+	)->pack(-side => 'right');
 
 	return $self;
 }
@@ -243,7 +287,7 @@ sub _new{
 #------------------------#
 #   抽出語数のチェック   #
 
-sub check{
+sub check1{
 	my $self = shift;
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
@@ -287,7 +331,85 @@ sub check2{
 }
 
 #--------------#
+#   ロジック   #
+#--------------#
+
+sub go{
+	print "go!";
+	
+	my $self = shift;
+	my $file = shift;
+	
+	mysql_contxt->new(
+		tani    => $self->{tani_obj}->value,
+		hinshi2 => $self->hinshi2,
+		max2    => $self->max2,
+		min2    => $self->min2,
+		hinshi  => $self->hinshi,
+		max     => $self->max,
+		min     => $self->min,
+	)->culc;
+	
+}
+
+#-----------------#
+#   保存先の参照  #
+
+sub file_name{
+	my $self = shift;
+	my @types = (
+		[ "spss syntax file",[qw/.sps/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.sps',
+		-filetypes        => \@types,
+		-title            =>
+			Jcode->new('「抽出語ｘ文脈」表：名前を付けて保存')->sjis,
+		-initialdir       => $::config_obj->cwd
+	);
+	unless ($path){
+		return 0;
+	}
+	return $path;
+}
+
+#--------------------------#
+#   入力チェックルーチン   #
+
+sub check{
+	my $self = shift;
+	unless ( eval(@{$self->hinshi2}) ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '品詞が1つも選択されていません。',
+		);
+		return 0;
+	}
+	unless ( eval(@{$self->hinshi}) ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '品詞が1つも選択されていません。',
+		);
+		return 0;
+	}
+	
+	my $list = $self->{tani_obj}->value;
+	my $n = @{$list};
+	unless ($n){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '集計単位が1つも選択されていません。',
+		);
+		return 0;
+	}
+	return 1;
+}
+
+
+#--------------#
 #   アクセサ   #
+#--------------#
 
 sub min{
 	my $self = shift;
@@ -318,7 +440,7 @@ sub hinshi2{
 
 
 sub label{
-	return '「抽出語Ｘ文脈」表の出力： SPSS';
+	return '「抽出語ｘ文脈」表の出力： SPSS';
 }
 
 sub win_name{
