@@ -58,6 +58,19 @@ sub search{
 		my $t = mysql_exec->select($sql,1);
 		$result = $t->hundle->fetchall_arrayref;
 		
+		# 「その他」対策
+		if (
+			mysql_exec->select("
+				SELECT ifuse FROM hselection WHERE name = \'その他\'
+			",1)->hundle->fetch->[0]
+		){
+			foreach my $i (@{$result}){
+				if ($i->[1] eq 'その他'){
+					$i->[0] = "$i->[0]($i->[4])";
+				}
+			}
+		}
+		
 		if ( ! $args{katuyo} ){         # 活用語なしの場合
 			foreach my $i (@{$result}){
 				pop @{$i};
@@ -93,7 +106,7 @@ sub search{
 			$result = $result2
 		}
 
-	} else {                  # 活用語検索
+	} else {                  # 非-抽出語 検索
 		my $sql;
 		$sql = '
 			SELECT hyoso.name, hinshi.name, katuyo.name, hyoso.num
@@ -241,10 +254,23 @@ sub _make_list{
 	# 単語リストアップ
 	my @result = ();
 	foreach my $i (@hinshi){
-		my $sql = '';
-		$sql  = "SELECT name, num FROM genkei ";
-		$sql .= "WHERE khhinshi_id = $i->[1] ";
-		$sql .= "ORDER BY num DESC";
+		my $sql;
+		if ($i->[0] eq 'その他'){
+			$sql  = "
+				SELECT concat(genkei.name,'(',hinshi.name,')'), genkei.num
+				FROM genkei, hinshi
+				WHERE
+					genkei.hinshi_id = hinshi.id
+					and khhinshi_id = $i->[1]
+				ORDER BY num DESC
+			";
+		} else {
+			$sql  = "
+				SELECT name, num FROM genkei
+				WHERE khhinshi_id = $i->[1]
+				ORDER BY num DESC
+			";
+		}
 		my $t = mysql_exec->select($sql,1);
 		push @result, ["$i->[0]", $t->hundle->fetchall_arrayref];
 	}
