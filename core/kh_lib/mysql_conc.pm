@@ -23,20 +23,17 @@ sub a_word{
 	
 	# 表層語のリストアップ
 	my @hyoso;
-#	if ($args{kihon}){
-		my $d = mysql_exec->select("
-			SELECT hyoso.id
-			FROM   genkei, hyoso
-			WHERE
-				    genkei.id = hyoso.genkei_id
-				AND genkei.name = '$args{query}'
-		")->hundle->fetchall_arrayref;
-		foreach my $i (@{$d}){
-			push @hyoso, $i->[0];
-		}
-#	} else {
-#		push @hyoso, $query;
-#	}
+	my $d = mysql_exec->select("
+		SELECT hyoso.id
+		FROM   genkei, hyoso
+		WHERE
+			    genkei.id = hyoso.genkei_id
+			AND genkei.name = '$args{query}'
+	")->hundle->fetchall_arrayref;
+	foreach my $i (@{$d}){
+		push @hyoso, $i->[0];
+	}
+
 
 	unless (@hyoso){
 		return 0;
