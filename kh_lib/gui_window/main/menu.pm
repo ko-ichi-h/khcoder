@@ -276,6 +276,15 @@ sub make{
 			-state => 'disable'
 		);
 
+		$self->{t_cod_outtab} = $f5->command(
+			-label => Jcode->new('外部変数とのクロス集計')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::cod_outtab->open;
+				})},
+			-state => 'disable'
+		);
+
 		$self->{t_cod_jaccard} = $f5->command(
 			-label => Jcode->new('コード間関連')->sjis,
 			-font => "TKFN",
@@ -284,7 +293,7 @@ sub make{
 				})},
 			-state => 'disable'
 		);
-		
+
 		$f5->separator();
 
 		$self->{t_cod_out} = $f5->cascade(
@@ -477,6 +486,7 @@ sub refresh{
 		't_cod_tab',
 		't_cod_jaccard',
 		't_cod_out',
+		't_cod_outtab',
 		't_cod_out_spss',
 		't_cod_out_csv',
 		't_txt_html2mod',

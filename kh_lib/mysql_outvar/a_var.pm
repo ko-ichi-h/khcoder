@@ -30,6 +30,21 @@ sub new{
 	return $self;
 }
 
+# 値ラベルもしくは値を与えられた時に、値を返す
+sub real_val{
+	my $self = shift;
+	my $val  = shift;
+	
+	foreach my $i (keys %{$self->{labels}}){
+		if ($val eq $self->{labels}{$i}){
+			$val = $i;
+			last;
+		}
+	}
+	return $val;
+}
+
+# 値ラベル＋単集の表を返す
 sub detail_tab{
 	my $self = shift;
 	
@@ -52,6 +67,7 @@ sub detail_tab{
 	return \@data;
 }
 
+# 値ラベルを保存
 sub label_save{
 	my $self = shift;
 	my $val  = shift;

@@ -40,12 +40,13 @@ sub _new{
 	}
 
 	$self->{win_obj} = $self->parent->Menubutton(
-		-text      => '',
-		-tearoff   => 'no',
-		-relief    => 'raised',
-		-indicator => 'yes',
-		-font      => "TKFN",
-		-width     => 4,
+		-text        => '',
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'yes',
+		-font        => "TKFN",
+		-width       => 4,
+		-borderwidth => 1,
 	)->pack();
 	foreach my $i (@list1){
 		$self->{win_obj}->radiobutton(
