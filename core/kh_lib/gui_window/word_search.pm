@@ -144,6 +144,8 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
 	)->pack(-side => 'left');
 
+	$e1->focus;
+
 	MainLoop;
 	
 	$self->{list_f} = $hlist_fra;

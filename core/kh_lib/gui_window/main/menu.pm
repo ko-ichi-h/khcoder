@@ -190,6 +190,16 @@ sub make{
 				})},
 				-state => 'disable'
 			);
+
+		$self->{t_word_ass} = $f3->command(
+				-label => Jcode->new('Ï¢´Øµ¬Â§')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_ass->open;
+				})},
+				-state => 'disable'
+			);
+
 		$f3->separator;
 		
 		
@@ -480,6 +490,7 @@ sub refresh{
 		't_word_search',
 		't_word_list',
 		't_word_freq',
+		't_word_ass',
 		't_word_conc',
 		'm_b3_check',
 		't_cod_count',

@@ -175,7 +175,7 @@ sub hyosos{
 	my $self = shift;
 	return mysql_a_word->new(
 		genkei => $self->raw
-	)->hyoso_id_s;;
+	)->hyoso_id_s;
 }
 
 sub pattern{

@@ -201,7 +201,7 @@ sub search{
 		)
 	",1);
 	
-		# リストをテーブルに投入
+	# リストをテーブルに投入
 	my $sql;
 	$sql .= "INSERT INTO temp_doc_search (id, num)\n";
 			# 「コード無し」を使用している場合
