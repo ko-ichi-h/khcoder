@@ -25,6 +25,7 @@ sub readin{
 				thefile => "m: $self->{ini_file}"
 			);
 		close (CON);
+		use File::Copy;
 		copy("./.default/hinshi_chasen","./config/hinshi_chasen") or die;
 	}
 
