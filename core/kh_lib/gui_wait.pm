@@ -1,7 +1,7 @@
 package gui_wait;
 use strict;
 use Tk;
-use Tk::WaitBox;
+use Tk::WaitBox_kh;
 use Time::Local;
 use Time::CTime;    # Time-modules¤ËÆ±º­
 use gui_errormsg;
@@ -10,7 +10,7 @@ sub start{
 	my $class = shift;
 	my $self;
 	my $d = [localtime];
-	$self->{win} = $::main_gui->mw->WaitBox(
+	$self->{win} = $::main_gui->mw->WaitBox_kh(
 		-title      => 'KH Coder is processing data...',
 		-txt1       => "Start: ".strftime("%Y %m/%d %T",@{$d}),
 		-background => 'white',
