@@ -23,6 +23,9 @@ sub first{
 	bless $self, $class;
 	
 	kh_morpho->run;
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_euc($::project_obj->file_MorphoOut);
+	}
 		my $t0 = new Benchmark;
 	$self->readin;
 		my $t1 = new Benchmark;
@@ -73,10 +76,6 @@ sub first{
 
 sub readin{
 	my $self = shift;
-	# 茶筌の出力をEUCに変換
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($::project_obj->file_MorphoOut);
-	}
 
 	# ローデータの読み込み
 	mysql_exec->drop_table("rowdata");
@@ -131,7 +130,6 @@ sub readin{
 sub reform{
 	my $self = shift;
 
-	
 	# キャッシュ・テーブル作成
 	mysql_exec->drop_table("hgh");
 	my @len = (
