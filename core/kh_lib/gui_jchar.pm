@@ -10,6 +10,9 @@ sub check_key{
 	unless ($::config_obj->os eq 'win32'){
 		return 1;
 	}
+	if ($] > 5.008){
+		return 1;
+	}
 
 	my $sjis = q{
 		  [\x00-\x7F]
@@ -72,6 +75,10 @@ sub check_mouse{
 	unless ($::config_obj->os eq 'win32'){
 		return 1;
 	}
+	if ($] > 5.008){
+		return 1;
+	}
+
 	my $sjis = q{
 		[\x00-\x7F]
 		| [\x81-\x9F][\x40-\x7E]
