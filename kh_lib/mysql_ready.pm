@@ -915,6 +915,8 @@ sub tanis{
 			)
 		",1);
 		mysql_ready::doclength->make_each('dan');
+	} else {
+		$::project_obj->status_dan(0);
 	}
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -949,6 +951,8 @@ sub tanis{
 			)
 		",1);
 		mysql_ready::doclength->make_each('h5');
+	} else {
+		$::project_obj->status_h5(0);
 	}
 	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -981,6 +985,8 @@ sub tanis{
 			)
 		",1);
 		mysql_ready::doclength->make_each('h4');
+	} else {
+		$::project_obj->status_h4(0);
 	}
 	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -1011,6 +1017,8 @@ sub tanis{
 			)
 		",1);
 		mysql_ready::doclength->make_each('h3');
+	} else {
+		$::project_obj->status_h3(0);
 	}
 	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -1039,6 +1047,8 @@ sub tanis{
 			)
 		",1);
 		mysql_ready::doclength->make_each('h2');
+	} else {
+		$::project_obj->status_h2(0);
 	}
 	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -1060,6 +1070,8 @@ sub tanis{
 		",1);
 		mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
 		mysql_ready::doclength->make_each('h1');
+	} else {
+		$::project_obj->status_h1(0);
 	}
 }
 
