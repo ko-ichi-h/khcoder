@@ -6,6 +6,7 @@ use strict;
 
 use gui_window::doc_search::linux;
 use gui_window::doc_search::win32;
+use gui_widget::optmenu;
 use kh_cod::search;
 
 #-------------#
@@ -74,13 +75,25 @@ sub _new{
 		font => "TKFN"
 	)->pack(-side => 'left');
 
-	$self->{direct_w_o} = $f3->Optionmenu(
-		-options => ['and','or','code'],
-		-font    => "TKFN",
-		-width   => 4,
-		-variable => \$self->{opt_direct},
-		-borderwidth=> 1,
-	)->pack(-side => 'left');
+	#$self->{direct_w_o} = $f3->Optionmenu(
+	#	-options => ['and','or','code'],
+	#	-font    => "TKFN",
+	#	-width   => 4,
+	#	-variable => \$self->{opt_direct},
+	#	-borderwidth=> 1,
+	#)->pack(-side => 'left');
+
+	$self->{direct_w_o} = gui_widget::optmenu->open(
+		parent  => $f3,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['and'  , 'and' ],
+				['or'   , 'or'  ],
+				['code' , 'code']
+			],
+		variable => \$self->{opt_direct},
+	);
 
 	$self->{direct_w_e} = $f3->Entry(
 		-font       => "TKFN",
@@ -120,29 +133,51 @@ sub _new{
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'right');
 
-	$self->{opt_w_method1} = $f2->Optionmenu(
-		-options =>
-			[
-				[Jcode->new('AND¸¡º÷')->sjis => 'and'],
-				[Jcode->new('OR¸¡º÷')->sjis  => 'or']
-			],
-		-font    => "TKFN",
-		-width   => 7,
-		-variable => \$self->{opt_method1},
-		-borderwidth => 1,
-	)->pack(-pady => '1', -side => 'left');
+	#$self->{opt_w_method1} = $f2->Optionmenu(
+	#	-options =>
+	#		[
+	#			[Jcode->new('AND¸¡º÷')->sjis => 'and'],
+	#			[Jcode->new('OR¸¡º÷')->sjis  => 'or']
+	#		],
+	#	-font    => "TKFN",
+	#	-width   => 7,
+	#	-variable => \$self->{opt_method1},
+	#	-borderwidth => 1,
+	#)->pack(-pady => '1', -side => 'left');
 
-	$f2->Optionmenu(
-		-options =>
+	$self->{opt_w_method1} = gui_widget::optmenu->open(
+		parent  => $f2,
+		pack    => {-pady => '1', -side => 'left'},
+		options =>
 			[
-				[Jcode->new('½Ð¸½½ç')->sjis => 'by'],
-				[Jcode->new('tf½ç')->sjis  => 'tf']
+				[Jcode->new('AND¸¡º÷')->sjis, 'and'],
+				[Jcode->new('OR¸¡º÷')->sjis , 'or']
 			],
-		-font    => "TKFN",
-		-width   => 7,
-		-variable => \$self->{opt_order},
-		-borderwidth=> 1,
-	)->pack(-padx => 8);
+		variable => \$self->{opt_method1},
+	);
+
+	#$f2->Optionmenu(
+	#	-options =>
+	#		[
+	#			[Jcode->new('½Ð¸½½ç')->sjis => 'by'],
+	#			[Jcode->new('tf½ç')->sjis  => 'tf']
+	#		],
+	#	-font    => "TKFN",
+	#	-width   => 7,
+	#	-variable => \$self->{opt_order},
+	#	-borderwidth=> 1,
+	#)->pack(-padx => 8);
+
+	gui_widget::optmenu->open(
+		parent  => $f2,
+		pack    => {-padx => 8, -pady => 1},
+		options =>
+			[
+				[Jcode->new('½Ð¸½½ç')->sjis , 'by'],
+				[Jcode->new('tf½ç')->sjis   , 'tf']
+			],
+		variable => \$self->{opt_order},
+	);
 
 	#--------------#
 	#   ¸¡º÷·ë²Ì   #

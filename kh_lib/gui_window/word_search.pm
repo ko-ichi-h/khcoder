@@ -6,7 +6,9 @@ use Tk;
 use Tk::HList;
 use Tk::Balloon;
 use NKF;
+
 use mysql_words;
+use gui_widget::optmenu;
 
 #---------------------#
 #   Window オープン   #
@@ -73,32 +75,30 @@ sub _new{
 	}
 	
 	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
-	my @methods;
 
-	push @methods, Jcode->new('OR検索')->sjis;
-	push @methods, Jcode->new('AND検索')->sjis;
-	my $method;
-	$fra4i->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$gui_window::word_search::method,
-		-width => 7,
-	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
+	gui_widget::optmenu->open(
+		parent  => $fra4i,
+		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
+		options =>
+			[
+				[Jcode->new('OR検索')->sjis , 'OR'],
+				[Jcode->new('AND検索')->sjis, 'AND'],
+			],
+		variable => \$gui_window::word_search::method,
+	);
 
-	$fra4i->Optionmenu(
-		-options=>
+	gui_widget::optmenu->open(
+		parent  => $fra4i,
+		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
+		options =>
 			[
 				[Jcode->new('部分一致')->sjis => 'p'],
 				[Jcode->new('完全一致')->sjis => 'c'],
 				[Jcode->new('前方一致')->sjis => 'z'],
 				[Jcode->new('後方一致')->sjis => 'k']
 			],
-		-font => "TKFN",
-		-variable => \$gui_window::word_search::s_mode,
-		-width => 8,
-	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
-
-
+		variable => \$gui_window::word_search::s_mode,
+	);
 
 
 	# 結果表示部分
@@ -232,17 +232,11 @@ sub search{
 	unless ($query){
 		return;
 	}
-	my $method;
-	if ($gui_window::word_search::method =~ /^AND/){
-		$method = 'AND';
-	} else {
-		$method = 'OR';
-	}
 
 	# 検索実行
 	my $result = mysql_words->search(
 		query  => $query,
-		method => $method,
+		method => $gui_window::word_search::method,
 		kihon  => $gui_window::word_search::kihon,
 		katuyo => $gui_window::word_search::katuyo,
 		mode   => $gui_window::word_search::s_mode
