@@ -21,6 +21,7 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
+$config_obj->sqllog(1);
 
 #------------------------#
 #   プロジェクトを開く   #
@@ -46,8 +47,9 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 my $result = mysql_conc->a_word(
-	query  => 'パソコン',
-	kihon => '1'
+	query   => 'パソコン',
+	kihon   => 1,
+	context => 10,
 );
 
 my $t1 = new Benchmark;                           # 時間計測用
