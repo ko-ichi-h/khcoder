@@ -95,7 +95,7 @@ sub _new{
 			],
 		-font => "TKFN",
 		-variable => \$gui_window::word_search::s_mode,
-		-width => 7,
+		-width => 8,
 	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
 
 

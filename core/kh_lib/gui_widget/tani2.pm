@@ -73,6 +73,7 @@ sub _new{
 			-label    => " $i",
 			-variable => \$self->{raw_opt},
 			-value    => "$i",
+			-font     => "TKFN",
 			-command  => sub{$self->check;},
 		);
 	}
