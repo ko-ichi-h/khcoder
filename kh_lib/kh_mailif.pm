@@ -21,7 +21,7 @@ sub success{
 	$smtp->to($::config_obj->mail_to);
 	$smtp->data();
 	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
-	$smtp->datasend("To:a_User_of_KH_Coder\n");
+	$smtp->datasend("To:The User<".$::config_obj->mail_to.">\n");
 	$smtp->datasend("Subject:Pre-processing is successfully complete.\n");
 	
 	# 本文
@@ -53,7 +53,7 @@ sub failure{
 	$smtp->to($::config_obj->mail_to);
 	$smtp->data();
 	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
-	$smtp->datasend("To:a_User_of_KH_Coder\n");
+	$smtp->datasend("To:The User<".$::config_obj->mail_to.">\n");
 	$smtp->datasend("Subject:Failure in Pre-processing.\n");
 	# 本文
 	
