@@ -63,6 +63,12 @@ sub open{
 			$self->win_obj->geometry($g);
 		}
 
+		# Windowアイコンのセット
+		my $icon = $self->win_obj->Photo(
+			-file =>   Tk->findINC('acre.gif')
+		);
+		$self->win_obj->Icon(-image => $icon);
+
 		# Windowを閉じる際のバインド
 		$self->win_obj->bind(
 			'<Key-Escape>',
