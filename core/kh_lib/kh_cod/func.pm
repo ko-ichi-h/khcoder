@@ -5,15 +5,160 @@ use strict;
 use mysql_getheader;
 use Jcode;
 
+#------------------------------------#
+#   コーディング結果の出力（SPSS）   #
+sub cod_out_spss{
+	my $self     = shift;
+	my $tani     = shift;
+	my $outfile  = shift;
+	my $outfile2 = "$outfile".".dat";
+
+	# コーディングとコーディング結果のチェック
+	$self->code($tani) or return 0;
+	my $n;
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		++$n;
+	}
+	unless ($n){return 0;}
+
+	my ($sql,@head);
+	my $flag = 0;
+	foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+		if ($i eq $self->tani){
+			$flag = 1;
+		}
+		if ($flag){
+			$sql = "$i"."_id,"."$sql";
+			push @head, $i;
+		}
+	}
+	@head = reverse @head;
+	my %codes; my $cn = 1;
+	$sql = "SELECT "."$sql";
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		$sql .= "IF($i->{res_table}.num,1,0),";
+		push @head, "code$cn";
+		$codes{"code$cn"} = Jcode->new($i->name)->sjis;
+		++$cn;
+	}
+	chop $sql;
+
+	$sql .= "\nFROM ".$self->tani."\n";
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		$sql .= "LEFT JOIN $i->{res_table} ON $i->{tani}.id = $i->{res_table}.id\n";
+	}
+	
+	# データファイル
+	open(CODO,">$outfile2") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $outfile2
+		);
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		my $current;
+		foreach my $j (@{$i}){
+			$current .= "$j,";
+		}
+		chop $current;
+		print CODO "$current\n";
+	}
+	close (CODO);
+	
+	# シンタックスファイル
+	my $spss;
+	$spss .= "file handle trgt1 /name=\'$outfile2\'\n";
+	$spss .= "                 /lrecl=32767 .\n";
+	$spss .= "data list list(',') file=trgt1 /\n";
+	foreach my $i (@head){
+		$spss .= "  $i(f10.0)\n";
+	}
+	$spss .= ".\n";
+	$spss .= ".variable labels\n";
+	foreach my $i (keys %codes){
+		$spss .= "  $i \'$codes{$i}\'\n";
+	}
+	$spss .= ".\n";
+	$spss .= "execute.\n";
+	
+	open(CODO,">$outfile") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $outfile
+		);
+	print CODO "$spss";
+	close (CODO);
+
+
+
+}
+
+
+
 #-----------------------------------#
 #   コーディング結果の出力（CSV）   #
 
 sub cod_out_csv{
 	my $self    = shift;
+	my $tani    = shift;
 	my $outfile = shift;
 	
-	my $sql;
+	# コーディングとコーディング結果のチェック
+	$self->code($tani) or return 0;
+	my $n;
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		++$n;
+	}
+	unless ($n){return 0;}
+
+	my ($sql,$head);
+	my $flag = 0;
+	foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+		if ($i eq $self->tani){
+			$flag = 1;
+		}
+		if ($flag){
+			$sql = "$i"."_id,"."$sql";
+			$head = "$i,"."$head";
+		}
+	}
+	$sql = "SELECT "."$sql";
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		$sql .= "IF($i->{res_table}.num,1,0),";
+		$head .= Jcode->new($i->name)->sjis.",";
+	}
+	chop $sql;
+	chop $head;
+	$sql .= "\nFROM ".$self->tani."\n";
+	foreach my $i (@{$self->{codes}}){
+		unless ( $i->{res_table} ){next;}
+		$sql .= "LEFT JOIN $i->{res_table} ON $i->{tani}.id = $i->{res_table}.id\n";
+	}
 	
+	open(CODO,">$outfile") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $outfile
+		);
+	print CODO "$head\n";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		my $current;
+		foreach my $j (@{$i}){
+			$current .= "$j,";
+		}
+		chop $current;
+		print CODO "$current\n";
+	}
+	
+	close (CODO);
 }
 
 
