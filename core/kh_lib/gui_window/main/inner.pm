@@ -120,9 +120,18 @@ sub refresh{
 		
 		if ($::project_obj->status_morpho){
 			@list = (
-				[Jcode->new('単語（種類）数：')->sjis,'???'],
-				[Jcode->new('総単語数：')->sjis,'?????'],
-				[Jcode->new('使用単語（種類）数：　 ')->sjis,'??']
+				[
+					Jcode->new('単語（種類）数：')->sjis,
+					num_format(mysql_words->num_kinds_all)
+				],
+				[
+					Jcode->new('総単語数：')->sjis,
+					num_format(mysql_words->num_all)
+				],
+				[
+					Jcode->new('使用単語（種類）数：　 ')->sjis,
+					num_format(mysql_words->num_kinds)
+				]
 			);
 		}
 	} else {
@@ -177,6 +186,13 @@ sub entry{
 sub hlist{
 	my $self = shift;
 	return $self->{hlist};
+}
+
+# 数字の3桁ごとにコンマを・・・
+sub num_format{
+	$_ = shift;
+	1 while s/(.*\d)(\d\d\d)/$1,$2/;
+	return $_;
 }
 
 1;

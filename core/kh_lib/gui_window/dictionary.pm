@@ -245,6 +245,9 @@ sub save{
 
 	$self->config->save;
 	$self->close;
+	
+	# Main Windowの表示を更新
+	$::main_gui->inner->refresh;
 }
 
 

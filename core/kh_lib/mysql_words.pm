@@ -162,7 +162,7 @@ sub _make_list{
 
 	my $temp = &_make_hinshi_list;
 	unless (eval (@{$temp})){
-		print "fuck!!!!!!!!!!!!\n";
+		print "damn!!!!!!!!!!!!\n";
 		return;
 	}
 
@@ -177,9 +177,40 @@ sub _make_list{
 		my $t = mysql_exec->select($sql,1);
 		push @result, ["$i->[0]", $t->hundle->fetchall_arrayref];
 	}
-
 	return \@result;
 }
 
+#--------------------------#
+#   単語数を返すルーチン   #
+#--------------------------#
+
+sub num_kinds{
+	my $hinshi = &_make_hinshi_list;
+	my $sql = '';
+	$sql .= 'SELECT count(*) ';
+	$sql .= 'FROM genkei ';
+	$sql .= "WHERE\n";
+	my $n = 0;
+	foreach my $i (@{$hinshi}){
+		if ($n){
+			$sql .= '    or ';
+		} else {
+			$sql .= '       ';
+		}
+		$sql .= "khhinshi_id=$i->[1]\n";
+		++$n;
+	}
+	return mysql_exec->select($sql,1)->hundle->fetch->[0];
+}
+sub num_kinds_all{
+	return mysql_exec                   # HTMLタグを除く単語種類数を返す
+		->select("select count(*) from genkei where  khhinshi_id!=99999",1)
+			->hundle->fetch->[0];
+}
+sub num_all{
+	return mysql_exec                   # HTMLタグを除く単語数を返す
+		->select("select sum(num) from genkei where  khhinshi_id!=99999",1)
+			->hundle->fetch->[0];
+}
 
 1;
