@@ -55,20 +55,20 @@ sub pick{
 		$id += $records_per_once;
 
 		while (my $i = $sth->fetchrow_hashref){
-			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){
+			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){    # 見出し行
 				if ($last){
 					print F "\n";
 					$last = 0;
 				}
 				print F "$i->{rowtxt}\n";
 			} else {
-				if ($last == $i->{dan_id}){
+				if ($last == $i->{dan_id}){     # 同じ段落の続き
 					print F "$i->{rowtxt}";
 				}
-				elsif ($i->{dan_id} == 1){
+				elsif ($i->{dan_id} == 1){      # 段落の変わり目（1つ目の段落）
 					print F "$i->{rowtxt}";
 					$last = 1;
-				} else {
+				} else {                        # 段落の変わり目（2つ目以降）
 					print F "\n$i->{rowtxt}";
 					$last = $i->{dan_id};
 				}
@@ -91,17 +91,19 @@ sub sql{
 	if ($args{pick_hi}){
 		$sql .= "SELECT bun_id, dan_id, rowtxt\n";
 		$sql .= "FROM bun, bun_r\n";
-		$sql .= "	LEFT JOIN $args{tani} ON\n";
-		my $flag = 0;
-		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
-			if ($i eq $args{tani}){ ++$flag;}
-			if ($flag) {
-				if ($flag > 1){
-					$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
-				} else {
-					$sql .= "\t\t    bun.$i"."_id = $args{tani}.$i"."_id\n";
+		unless ($args{tani} eq 'bun'){
+			$sql .= "	LEFT JOIN $args{tani} ON\n";
+			my $flag = 0;
+			foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+				if ($i eq $args{tani}){ ++$flag;}
+				if ($flag) {
+					if ($flag > 1){
+						$sql .="\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
+					} else {
+						$sql .="\t\t    bun.$i"."_id = $args{tani}.$i"."_id\n";
+					}
+					++$flag;
 				}
-				++$flag;
 			}
 		}
 		$sql .= "\tLEFT JOIN ct_pickup ON ct_pickup.id = $args{tani}.id\n";
@@ -122,20 +124,25 @@ sub sql{
 		";
 	} else {
 		$sql .= "SELECT bun_id, dan_id, rowtxt\n";
-		$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
+		if ($args{tani} eq 'bun'){
+			$sql .= "FROM bun, bun_r, ct_pickup\n";
+		} else {
+			$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
+		}
 		$sql .= "WHERE\n";
 		$sql .= "	    bun.id = bun_r.id\n";
 		$sql .= "	AND bun.id >= $args{d1}\n";
 		$sql .= "	AND bun.id <  $args{d2}\n";
 		$sql .= "	AND ct_pickup.id = $args{tani}.id\n";
-		my $flag = 0;
-		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
-			if ($i eq $args{tani}){$flag=1;}
-			if ($flag) {
-				$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
+		unless ($args{tani} eq 'bun'){
+			my $flag = 0;
+			foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+				if ($i eq $args{tani}){$flag=1;}
+				if ($flag) {
+					$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
+				}
 			}
 		}
-		
 	}
 	
 	return $sql;
