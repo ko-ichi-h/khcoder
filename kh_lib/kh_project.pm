@@ -72,8 +72,7 @@ sub open{
 		or gui_errormsg->open(type => 'mysql', sql => 'connect');
 	$::project_obj = $self;
 	
-	# データベース内の一時テーブルをクリア
-	mysql_exec->clear_tmp_tables;
+
 
 	return $self;
 }
