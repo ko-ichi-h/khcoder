@@ -32,6 +32,10 @@ sub _new{
 
 	if ($::config_obj->os eq 'win32'){
 		$::splash->Destroy;
+		if ($::config_obj->all_in_one_pack){
+			use kh_all_in_one;
+			kh_all_in_one->mysql_start;
+		}
 	}
 
 	# GUI未作成のコマンド

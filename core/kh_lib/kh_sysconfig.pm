@@ -40,11 +40,6 @@ sub readin{
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
 
 	$self = $self->_readin;
-	
-	if ($self->all_in_one_pack){
-		use kh_all_in_one;
-		kh_all_in_one->mysql_start;
-	}
 
 	return $self;
 }
