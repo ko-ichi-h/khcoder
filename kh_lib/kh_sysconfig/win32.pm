@@ -2,6 +2,70 @@ package kh_sysconfig::win32;
 use base qw(kh_sysconfig);
 use strict;
 
+#------------------#
+#   設定の初期化   #
+#------------------#
+sub reset_parm{
+		my $self = shift;
+		print "Resetting parameters...\n";
+		mkdir "config";
+		open (CON,">$self->{ini_file}") or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => "m: $self->{ini_file}"
+			);
+		close (CON);
+		# 品詞定義ファイルを作成
+		use DBI;
+		use DBD::CSV;
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		$dbh->do(
+			"CREATE TABLE hinshi_chasen (
+				hinshi_id INTEGER,
+				kh_hinshi CHAR(225),
+				condition1 CHAR(225),
+				condition2 CHAR(225)
+			)"
+		) or die;
+		my @table = (
+				"7, '地名', '名詞-固有名詞-地域', undef",
+				"6, '人名', '名詞-固有名詞-人名', undef",
+				"5,'組織名','名詞-固有名詞-組織', undef",
+				"'4','固有名詞','名詞-固有名詞', undef",
+				"'2','サ変名詞','名詞-サ変接続', undef",
+				"'3','形容動詞','名詞-形容動詞語幹', undef",
+				"'8','ナイ形容','名詞-ナイ形容詞語幹', undef",
+				"'16','名詞B','名詞-一般','ひらがな'",
+				"'16','名詞B','名詞-副詞可能','ひらがな'",
+				"'20','名詞C','名詞-一般','一文字'",
+				"'20','名詞C','名詞-副詞可能','一文字'",
+				"'1','名詞','名詞-一般', undef",
+				"'1','名詞','名詞-副詞可能', undef",
+				"'9','複合名詞','複合名詞', undef",
+				"'10','未知語','未知語', undef",
+				"'12','感動詞','感動詞', undef",
+				"'12','感動詞','フィラー', undef",
+				"'99999','HTMLタグ','タグ', 'HTML'",
+				"'11','タグ','タグ', undef",
+				"'17','動詞B','動詞-自立','ひらがな'",
+				"'13','動詞','動詞-自立', undef",
+				"'18','形容詞B','形容詞','ひらがな'",
+				"'14','形容詞','形容詞', undef",
+				"'19','副詞B','副詞','ひらがな'",
+				"'15','副詞','副詞', undef"
+		);
+		foreach my $i (@table){
+			$dbh->do("
+				INSERT INTO hinshi_chasen
+					(hinshi_id, kh_hinshi, condition1, condition2 )
+				VALUES
+					( $i )
+			") or die($i);
+		}
+
+		$dbh->disconnect;
+}
+
 #----------------------------#
 #   設定の読み込みルーチン   #
 #----------------------------#

@@ -166,6 +166,15 @@ sub first{
 						last;
 					}
 				}
+				elsif ($i->[2] eq 'HTML'){         # ¾ò·ï3:HTML
+					if ( 
+						   ($d->[0] =~ /<h[1-5]>/io)
+						|| ($d->[0] =~ /<\/h[1-5]>/io) 
+					){
+						$kh_hinshi = $i->[3];
+						last;
+					}
+				}
 				else {                                 # ¾ò·ï2Ìµ¤·¤Î¾ì¹ç
 					$kh_hinshi = $i->[3];
 					last;
