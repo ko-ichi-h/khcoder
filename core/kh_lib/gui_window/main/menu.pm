@@ -384,16 +384,7 @@ sub make{
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
-	
-		$self->{t_out_list} = $f_out_var->command(
-			-label => Jcode->new('変数リスト・値ラベル')->sjis,
-			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
-					gui_window::outvar_list->open;
-				})},
-			-state => 'disable'
-		);
-	
+
 		$self->{t_out_read} = $f_out_var->cascade(
 			-label => Jcode->new('読み込み')->sjis,
 			 -font => "TKFN",
@@ -418,6 +409,14 @@ sub make{
 				-state => 'disable'
 			);
 
+		$self->{t_out_list} = $f_out_var->command(
+			-label => Jcode->new('変数リスト・値ラベル')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::outvar_list->open;
+				})},
+			-state => 'disable'
+		);
 
 	my $f6 = $f->cascade(
 		-label => Jcode->new('テキストファイルの変形')->sjis,
