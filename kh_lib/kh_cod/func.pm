@@ -19,7 +19,8 @@ sub cod_out_spss{
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
-
+	$self->cumulate if @{$self->{valid_codes}} > 30;
+	
 	my ($sql,@head);
 	my $flag = 0;
 	foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
@@ -101,6 +102,7 @@ sub cod_out_csv{
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 30;
 
 	my ($sql,$head);
 	my $flag = 0;
@@ -161,6 +163,7 @@ sub cod_out_tab{
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 30;
 
 	my ($sql,$head);
 	my $flag = 0;
@@ -298,6 +301,8 @@ sub outtab{
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	
+	$self->cumulate if @{$self->{valid_codes}} > 30;
+	
 	my $result;
 	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
 	
@@ -398,6 +403,8 @@ sub tab{
 	
 	$self->code($tani1) or return 0;
 	unless ($self->valid_codes){ return 0; }
+	
+	$self->cumulate if @{$self->{valid_codes}} > 30;
 
 	my $result;
 

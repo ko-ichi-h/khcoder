@@ -138,7 +138,9 @@ sub asso{
 				$i->clear;
 			}
 		}
+		$self->{valid_codes} = undef;
 		$self->code($self->{tani}) or return 0;
+		$self->cumulate('as') if @{$self->tables} > 30;
 	} else {                            # 選択されたコードのみ
 		foreach my $i (@{$args{selected}}){
 			$self->{codes}[$i]->clear;
@@ -175,9 +177,12 @@ sub asso{
 	if ($no_code_flag){
 		$sql .= "SELECT $args{tani}.id\nFROM $args{tani}\n";
 		my $n = 0;
+		my %if_table_mentioned = ();
 		foreach my $i (@{$self->{codes}}){
 			if ($n == 0 && @{$args{selected}} == 1 ){$n = 1; next;}
-			unless ($i->res_table){next;}
+			next unless $i->res_table;
+			next if     $if_table_mentioned{$i->res_table};
+			$if_table_mentioned{$i->res_table} = 1;
 			$sql .=
 				"LEFT JOIN "
 				.$i->res_table

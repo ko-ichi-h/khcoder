@@ -186,6 +186,7 @@ sub search{
 			print "    error: illegal use of \'no code\'\n";
 			return undef;
 		};
+		$self->cumulate('ds') if @{$self->tables} > 30;
 	}
 	
 	
@@ -208,9 +209,12 @@ sub search{
 	if ($no_code_flag){
 		$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
 		my $n = 0;
+		my %if_table_mentioned = ();
 		foreach my $i (@{$self->{codes}}){
 			if ($n == 0 && @{$args{selected}} == 1 ){$n = 1; next;}
-			unless ($i->res_table){next;}
+			next unless $i->res_table;
+			next if     $if_table_mentioned{$i->res_table};
+			$if_table_mentioned{$i->res_table} = 1;
 			$sql .=
 				"LEFT JOIN "
 				.$i->res_table

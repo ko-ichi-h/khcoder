@@ -230,6 +230,7 @@ sub clear{
 	my $self = shift;
 	
 	$self->{res_table} = undef;
+	$self->{res_col}   = undef;
 	$self->{tables}    = undef;
 	$self->{tani}      = undef;
 	$self->{if_done}   = 0;
@@ -260,11 +261,25 @@ sub tani{                     # コーディング単位
 
 sub res_table{                # コーディング結果を保存したテーブル
 	my $self = shift;         # $self->code("テーブル名")で指定されたもの
-	return $self->{res_table} 
+	my $val  = shift;
+	if ( length($val) ){
+		$self->{res_table} = $val;
+	}
+	return $self->{res_table};
 }
 
 sub res_col{                  # コーディング結果を保存したカラム
-	return 'num';
+	my $self = shift;
+	my $val  = shift;
+	if ( length($val) ){
+		$self->{res_col} = $val;
+	}
+	
+	if (length($self->{res_col})){
+		return $self->{res_col};
+	} else {
+		return 'num';
+	}
 }
 
 sub name{                     # コード名

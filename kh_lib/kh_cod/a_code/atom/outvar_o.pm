@@ -29,9 +29,15 @@ sub ready{
 	} else {
 		die("something wrong!");
 	}
-
-	# 集計単位が矛盾しないかどうか確認
+	
+	# 変数の存在を確認
 	my $var_obj = mysql_outvar::a_var->new($var);
+	unless ($var_obj->{tani}){
+		$self->{valid} = 0;
+		return 1;
+	}
+	
+	# 集計単位が矛盾しないかどうか確認
 	$self->{valid} = 1;
 	if ($tani eq 'dan'){                # 段落単位の場合
 		if ($var_obj->{tani} eq 'bun'){

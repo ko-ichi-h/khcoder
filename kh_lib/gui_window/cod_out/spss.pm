@@ -18,7 +18,7 @@ sub _save{
 	
 	# 保存先の参照
 	my @types = (
-		[ "csv file",[qw/.sps/] ],
+		[ "spss syntax file",[qw/.sps/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
