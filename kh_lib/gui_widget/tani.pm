@@ -35,7 +35,7 @@ sub _new{
 				"select status from status where name = \'$i\'",1
 			)->hundle->fetch->[0]
 		){
-			push @list1, Jcode->new($name{$i})->sjis;
+			push @list1, $i;
 		}
 	}
 
@@ -50,7 +50,7 @@ sub _new{
 	)->pack();
 	foreach my $i (@list1){
 		$self->{win_obj}->radiobutton(
-			-label     => " $i",
+			-label    => gui_window->gui_jchar(" $name{$i}",'euc'),
 			-variable => \$self->{raw_opt},
 			-value    => "$i",
 			-font     => "TKFN",
@@ -58,15 +58,14 @@ sub _new{
 		);
 	}
 
-	$self->{raw_opt} = Jcode->new($name{$::project_obj->last_tani})->sjis;
+	$self->{raw_opt} = $::project_obj->last_tani;
 
 	return $self;
 }
 
 sub tani{
 	my $self = shift;
-	my $opt = Jcode->new($self->{raw_opt})->euc;
-	return $value{$opt};
+	return $self->{raw_opt};
 }
 sub start{
 	my $self = shift;
@@ -74,9 +73,9 @@ sub start{
 }
 sub mb_refresh{
 	my $self = shift;
-	$self->{win_obj}->configure(-text,Jcode->new("$self->{raw_opt}")->sjis);
+	$self->{win_obj}->configure(-text,gui_window->gui_jchar($name{$self->{raw_opt}},'euc'));
 	$self->{win_obj}->update;
-	$::project_obj->last_tani($value{Jcode->new($self->{raw_opt})->euc});
+	$::project_obj->last_tani($self->{raw_opt});
 	if ( defined($self->{command}) && $_[0] != 5){
 		&{$self->{command}};
 	}

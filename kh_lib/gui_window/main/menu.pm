@@ -11,19 +11,17 @@ sub make{
 	my $self;
 	
 	my $mw = ${$gui}->mw;
-	#my $toplevel = $mw->toplevel;
 	my $menubar = $mw->Menu(-type => 'menubar');
 	$mw->configure(-menu => $menubar);
 
 	#------------------#
 	#   プロジェクト   #
 
-	#my $msg = gui_window->gui_jchar('プロジェクト(P)','euc');
-	my $msg = Jcode->new('プロジェクト(P)','euc')->sjis;
+	my $msg = gui_window->gui_jm('プロジェクト(P)','euc');
 	my $f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
-		#-underline => $::config_obj->underline_conv(13),
+		-underline => $::config_obj->underline_conv(13),
 		-tearoff=>'no'
 	);
 
@@ -57,7 +55,6 @@ sub make{
 			-accelerator => 'Ctrl+W'
 		);
 		
-		
 		$f->separator();
 		$msg = gui_window->gui_jchar('設定','euc');
 		$f->command(
@@ -79,7 +76,7 @@ sub make{
 	#   前処理   #
 	
 	$f = $menubar->cascade(
-		-label => gui_window->gui_jchar('前処理(B)'),
+		-label => gui_window->gui_jm('前処理(B)'),
 		-font => "TKFN",
 		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
@@ -162,16 +159,21 @@ sub make{
 	#   ツール   #
 
 	$f = $menubar->cascade(
-		-label => gui_window->gui_jchar('ツール(T)'),
+		-label => gui_window->gui_jchar('Tools(T)','euc'),
 		-font => "TKFN",
-		-underline => $::config_obj->underline_conv(7),
+		-underline => 6,
 		-tearoff=>'no'
 	);
 
+	$f->configure(
+		-label     => gui_window->gui_jm('ツール(T)'),
+		-underline => $::config_obj->underline_conv(7),
+	) unless ($] > 5.008 && $::config_obj->os eq 'win32');
+
 	my $f3 = $f->cascade(
 			-label => gui_window->gui_jchar('抽出語'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
+			-font => "TKFN",
+			-tearoff=>'no'
 		);
 
 		$self->{t_word_search} = $f3->command(
@@ -474,7 +476,7 @@ sub make{
 	#------------#
 	#   ヘルプ   #
 	
-	$msg = gui_window->gui_jchar('ヘルプ(H)','euc');
+	$msg = gui_window->gui_jm('ヘルプ(H)','euc');
 	$f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
