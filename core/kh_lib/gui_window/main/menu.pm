@@ -15,7 +15,6 @@ sub make{
 	my $menubar = $toplevel->Menu(-type => 'menubar');
 	$toplevel->configure(-menu => $menubar);
 
-
 	#------------------#
 	#   プロジェクト   #
 	
@@ -386,15 +385,6 @@ sub make{
 		 -tearoff=>'no'
 	);
 	
-		$self->{t_out_read} = $f_out_var->command(
-			-label => Jcode->new('CSVファイルから読み込み')->sjis,
-			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
-					gui_window::outvar_read->open;
-				})},
-			-state => 'disable'
-		);
-	
 		$self->{t_out_list} = $f_out_var->command(
 			-label => Jcode->new('変数リスト・値ラベル')->sjis,
 			-font => "TKFN",
@@ -404,6 +394,31 @@ sub make{
 			-state => 'disable'
 		);
 	
+		$self->{t_out_read} = $f_out_var->cascade(
+			-label => Jcode->new('読み込み')->sjis,
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+			$self->{t_out_read_csv} = $self->{t_out_read}->command(
+				-label => Jcode->new('CSVファイル')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::outvar_read::csv->open;
+					})},
+				-state => 'disable'
+			);
+
+			$self->{t_out_read_tab} = $self->{t_out_read}->command(
+				-label => Jcode->new('タブ区切り')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::outvar_read::tab->open;
+					})},
+				-state => 'disable'
+			);
+
+
 	my $f6 = $f->cascade(
 		-label => Jcode->new('テキストファイルの変形')->sjis,
 		 -font => "TKFN",
@@ -557,6 +572,8 @@ sub refresh{
 		't_txt_pickup',
 		't_doc_search',
 		't_out_read',
+		't_out_read_csv',
+		't_out_read_tab',
 		't_out_list',
 		'm_b3_contxtout',
 		'm_b3_contxtout_spss',
