@@ -1,6 +1,6 @@
 package mysql_ready;
 use strict;
-use DBI;
+
 use Jcode;
 use Benchmark;
 

@@ -5,7 +5,6 @@ use strict;
 use kh_morpho::win32::juman;
 use kh_morpho::win32::chasen;
 
-
 sub _run{
 	my $self = shift;
 
