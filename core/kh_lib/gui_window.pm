@@ -67,7 +67,13 @@ sub open{
 			sub{ $self->close; }
 		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
-		
+
+		# Altキーのバインド
+		$self->win_obj->bind(
+			'<Key-Alt_L>',
+			sub { $::main_gui->{main_window}->win_obj->focus; }
+		);
+
 		# 特殊処理に対応
 		$self->start;
 	}
