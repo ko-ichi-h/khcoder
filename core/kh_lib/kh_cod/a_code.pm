@@ -9,7 +9,9 @@ use strict;
 
 sub code{
 	my $self           = shift;
-
+	print "c";
+	
+	
 	unless ($self->{condition}){
 		return 0;
 	}
@@ -41,7 +43,7 @@ sub code{
 	}
 	#print "$sql\n";
 	
-	my $check = mysql_exec->do($sql);             # 構文エラーがあった場合
+	my $check = mysql_exec->do($sql,1);             # 構文エラーがあった場合
 	if ($check->err){
 		$self->{res_table} = '';
 		gui_errormsg->open(
@@ -83,6 +85,7 @@ sub ready{
 	}
 	
 	# ATOMごとのテーブルを作製
+	print "a";
 	my ($n0, $n1,$unique_check) = (0,0,undef);
 	my @t = ();
 	foreach my $i (@{$self->{condition}}){
@@ -106,6 +109,7 @@ sub ready{
 	unless ($unique_check){return 1;}
 	
 	# ATOMテーブルをまとめる
+	print "t";
 	my $n = 0;
 	foreach my $i (@t){
 		# テーブル作製
@@ -203,6 +207,7 @@ sub clear{
 	$self->{tani}      = undef;
 	foreach my $i (@{$self->{condition}}){
 		$i->{tables} = undef;
+		$i->clear;
 	}
 }
 

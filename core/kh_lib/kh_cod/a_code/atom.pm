@@ -54,6 +54,10 @@ sub new{
 	return $self;
 }
 
+sub clear{
+	return 1;
+}
+
 sub raw{
 	my $self = shift;
 	return $self->{raw};

@@ -39,6 +39,12 @@ sub clear_tmp_tables{
 	}
 }
 
+sub table_list{
+	my $class = shift;
+	my @r = $::project_obj->dbh->tables();
+	return @r;
+}
+
 sub do{
 	my $class = shift;
 	my $self;

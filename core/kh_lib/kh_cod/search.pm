@@ -56,7 +56,9 @@ sub new{
 	return $self;
 }
 
-# 直接入力コードの読み込み
+#------------------------------#
+#   直接入力コードの読み込み   #
+
 sub add_direct{
 	my $self = shift;
 	my %args = @_;
@@ -92,17 +94,14 @@ sub add_direct{
 
 }
 
-# 検索の実行
+#----------------#
+#   検索の実行   #
+
 sub search{
 	my $self = shift;
 	my %args = @_;
 	
-	# 前回のコーディング結果をクリア
-	foreach my $i (@{$self->{codes}}){
-		$i->clear;
-	}
-	$self->{valid_codes} = undef;
-	
+	$self->{tani} = $args{tani};
 	
 	# 取りあえずコーディング
 	print "kh_cod::search -> coding...\n";
@@ -164,10 +163,87 @@ sub search{
 	}
 	@words = (keys %words);
 	
+	# コーディング結果をクリア
+	foreach my $i (@{$self->{codes}}){
+		$i->clear;
+	}
+	$self->{valid_codes} = undef;
+	
 	return (\@result,\@words);
 }
 
-# 文書の先頭部分を取得
+#-----------------------------------------#
+#   1つの文書に与えられたコードのリスト   #
+
+sub check_a_doc{
+	my $self   = shift;
+	my $doc_id = shift;
+	
+	my $table = "$self->{tani}"."tmp";
+	
+	# コーディング結果をクリア
+	foreach my $i (@{$self->{codes}}){
+		$i->clear;
+	}
+	foreach my $i (mysql_exec->table_list){
+		if ( index($i, $table) > -1 ){
+			mysql_exec->drop_table($i);
+		}
+	}
+	
+	# テーブル準備
+	mysql_exec->drop_table($table);                         # CREATE
+	my $sql;
+	$sql .= "CREATE TABLE $table (\n";
+	$sql .= "ID int primary key not null,\n";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= "$i"."_id int,\n";
+		if ($i eq $self->{tani}){last;}
+	}
+	chop $sql; chop $sql; $sql .= "\n";
+	$sql .= ") TYPE = HEAP";
+	mysql_exec->do($sql,1);
+	
+	$sql = '';                                              # INSERT
+	$sql .= "INSERT INTO $table (id,";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= "$i"."_id,";
+		if ($i eq $self->{tani}){last;}
+	}
+	chop $sql;
+	$sql .= ")\n";
+	$sql .= "SELECT id,";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= "$i"."_id,";
+		if ($i eq $self->{tani}){last;}
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM $self->{tani}\n";
+	$sql .= "WHERE id = $doc_id\n";
+	mysql_exec->do($sql,1);
+	
+	# コーディング
+	my $text = "・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
+	foreach my $i (@{$self->{codes}}){
+		print ".\n";
+		unless ($i->{condition}){next;}
+		unless ($i->{row_condition}){next;}
+		$i->ready($table) or next;
+		$i->code('temp') or next;
+		if ($i->res_table){
+			$text .= "    ".$i->name."\n";
+		}
+	}
+	
+	$text = Jcode->new($text)->sjis;
+	return $text;
+}
+
+
+#--------------------------#
+#   文書の先頭部分を取得   #
+
 sub get_doc_head{
 	my $self = shift;
 	my $id   = shift;

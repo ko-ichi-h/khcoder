@@ -44,6 +44,11 @@ sub ready{
 	}
 	return $self;
 }
+sub clear{
+	my $self = shift;
+	$self->{the_code}->clear;
+}
+
 
 #----------------------------#
 #   コード読み込み時の処理   #

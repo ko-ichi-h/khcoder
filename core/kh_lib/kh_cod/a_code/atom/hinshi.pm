@@ -51,7 +51,46 @@ my %sql_join = (
 			AND h2.h1_id = hyosobun.h1_id
 		',
 	'h1' =>
-		'h1.h1_id = hyosobun.h1_id'
+		'h1.h1_id = hyosobun.h1_id',
+	'buntmp' =>
+		'bun_tmp.id = hyosobun.bun_idt',
+	'dantmp' =>
+		'
+			    dantmp.dan_id = hyosobun.dan_id
+			AND dantmp.h5_id = hyosobun.h5_id
+			AND dantmp.h4_id = hyosobun.h4_id
+			AND dantmp.h3_id = hyosobun.h3_id
+			AND dantmp.h2_id = hyosobun.h2_id
+			AND dantmp.h1_id = hyosobun.h1_id
+		',
+	'h5tmp' =>
+		'
+			    h5tmp.h5_id = hyosobun.h5_id
+			AND h5tmp.h4_id = hyosobun.h4_id
+			AND h5tmp.h3_id = hyosobun.h3_id
+			AND h5tmp.h2_id = hyosobun.h2_id
+			AND h5tmp.h1_id = hyosobun.h1_id
+		',
+	'h4tmp' =>
+		'
+			    h4tmp.h4_id = hyosobun.h4_id
+			AND h4tmp.h3_id = hyosobun.h3_id
+			AND h4tmp.h2_id = hyosobun.h2_id
+			AND h4tmp.h1_id = hyosobun.h1_id
+		',
+	'h3tmp' =>
+		'
+			    h3tmp.h3_id = hyosobun.h3_id
+			AND h3tmp.h2_id = hyosobun.h2_id
+			AND h3tmp.h1_id = hyosobun.h1_id
+		',
+	'h2tmp' =>
+		'
+			    h2tmp.h2_id = hyosobun.h2_id
+			AND h2tmp.h1_id = hyosobun.h1_id
+		',
+	'h1tmp' =>
+		'h1tmp.h1_id = hyosobun.h1_id'
 );
 my %sql_group = (
 	'bun' =>
@@ -67,6 +106,20 @@ my %sql_group = (
 	'h2' =>
 		'hyosobun.h2_id, hyosobun.h1_id',
 	'h1' =>
+		'hyosobun.h1_id',
+	'buntmp' =>
+		'hyosobun.bun_idt',
+	'dantmp' =>
+		'hyosobun.dan_id, hyosobun.h5_id, hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h5tmp' =>
+		'hyosobun.h5_id, hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h4tmp' =>
+		'hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h3tmp' =>
+		'hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h2tmp' =>
+		'hyosobun.h2_id, hyosobun.h1_id',
+	'h1tmp' =>
 		'hyosobun.h1_id',
 );
 
@@ -93,6 +146,11 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	
+	my $table_type = '';
+	if (index($tani,'tmp') > 0){
+		$table_type = " TYPE = HEAP";
+	}
 	
 	# 表層語リスト作成
 	my $list;
@@ -142,7 +200,7 @@ sub ready{
 		CREATE TABLE $table (
 			id INT primary key not null,
 			num INT
-		)
+		) $table_type
 	",1);
 	my $sql;
 	$sql = "
