@@ -101,7 +101,7 @@ sub save{
 		;
 		foreach my $w2 (@{$self->{wList2}}){
 			if ($line{$w2}){
-				$line .= "$line{$w2},";
+				$line .= sprintf("%.8f",$line{$w2}).',';
 			} else {
 				$line .= "0,";
 			}
@@ -124,7 +124,7 @@ sub save{
 	$spss .= "  word(A255)\n";
 	my $n = 0;
 	foreach my $w2 (@{$self->{wList2}}){
-		$spss .= "  cw$n(F20.16)\n";
+		$spss .= "  cw$n(F10.8)\n";
 		++$n;
 	}
 	$spss .= ".\nexecute.\n";
