@@ -3,7 +3,7 @@ use base qw(gui_window);
 use strict;
 use Tk;
 use Tk::HList;
-use NKF;
+#use NKF;
 use mysql_conc;
 use Jcode;
 use gui_widget::tani;
@@ -570,19 +570,19 @@ sub display{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => nkf('-s -E',$i->[0]),
+			-text  => Jcode->new($i->[0])->sjis, #nkf('-s -E',$i->[0]),
 			-style => $right_style
 		);
 		my $center = $self->list->itemCreate(
 			$row,
 			1,
-			-text  => nkf('-s -E',$i->[1]),
+			-text  => Jcode->new($i->[1])->sjis, #nkf('-s -E',$i->[1]),
 			-style => $center_style
 		);
 		$self->list->itemCreate(
 			$row,
 			2,
-			-text  => nkf('-s -E',$i->[2])
+			-text  => Jcode->new($i->[2])->sjis, #nkf('-s -E',$i->[2])
 		);
 		++$row;
 	}

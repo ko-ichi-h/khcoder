@@ -10,7 +10,8 @@ use Tk;
 use Tk::HList;
 use DBI;
 #use DBD::MySQL;
-use NKF;
+#use NKF;
+use Jcode;
 
 #----------------#
 #   WindowÉÁ²è   #
@@ -166,7 +167,7 @@ sub exec{
 		$self->list->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			$self->list->itemCreate($row,$col,-text => nkf('-s -E',$h));
+			$self->list->itemCreate($row,$col,-text => Jcode->new($h)->sjis); # nkf('-s -E',$h)
 			++$col;
 		}
 		++$row;
