@@ -62,7 +62,7 @@ sub save{
 	my $file_data = substr($file_syntax,0,length($file_syntax)-4).".dat";
 	
 	#--------------------------#
-	#   ƒf[ƒ^ƒtƒ@ƒCƒ‹‚Ìo—Í   #
+	#   ¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤Î½ÐÎÏ   #
 	
 	open (DOUT,">$file_data") or 
 		gui_errormsg->open(
@@ -72,17 +72,17 @@ sub save{
 	my $n = 1;
 	foreach my $i (@{$self->{wList}}){
 	print "\rout, $n.";
-		# Še’PˆÊ‚ÌWŒv‚ð‡ŽZ
+		# ³ÆÃ±°Ì¤Î½¸·×¤ò¹ç»»
 		my %line;
 		foreach my $t (@{$self->{tani}}){
 			my $table = 'ct_'."$t->[0]".'_contxt_'."$i";
-			# •¶‘”i•ª•ê‚ÌŽæ“¾j
+			# Ê¸½ñ¿ô¡ÊÊ¬Êì¤Î¼èÆÀ¡Ë
 			my $r_num = mysql_exec->select("
 				SELECT num
 				FROM   $table
 				WHERE  word = -1
 			",1)->hundle->fetch->[0];
-			# Šú‘Ò’lŒvŽZiŠ„‚èŽZ•d‚Ý•t‚¯j
+			# ´üÂÔÃÍ·×»»¡Ê³ä¤ê»»¡õ½Å¤ßÉÕ¤±¡Ë
 			my $sth = mysql_exec->select("
 				SELECT word, num
 				FROM   $table
@@ -92,7 +92,7 @@ sub save{
 				$line{$r->[0]} += ($r->[1] / $r_num) * $t->[1];
 			}
 		}
-		# ‘‚«o‚µ
+		# ½ñ¤­½Ð¤·
 		my $line =
 			Jcode->new($self->{wName}{$i})->sjis
 			.'('
@@ -114,9 +114,9 @@ sub save{
 	close DOUT;
 
 	#--------------------------------#
-	#   ƒVƒ“ƒ^ƒbƒNƒXƒtƒ@ƒCƒ‹‚Ìo—Í   #
+	#   ¥·¥ó¥¿¥Ã¥¯¥¹¥Õ¥¡¥¤¥ë¤Î½ÐÎÏ   #
 	
-	# •Ï”’è‹`
+	# ÊÑ¿ôÄêµÁ
 	my $spss;
 	$spss .= "file handle trgt1 /name=\'$file_data\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
@@ -129,7 +129,7 @@ sub save{
 	}
 	$spss .= ".\nexecute.\n";
 
-	# •Ï”ƒ‰ƒxƒ‹
+	# ÊÑ¿ô¥é¥Ù¥ë
 	$n = 0;
 	$spss .= "variable labels\n";
 	foreach my $w2 (@{$self->{wList2}}){
@@ -165,7 +165,7 @@ sub _culc_each{
 	
 	my $n = 0;
 	foreach my $i (@{$self->{wList}}){
-		# ƒe[ƒuƒ‹‚Ì€”õ
+		# ¥Æ¡¼¥Ö¥ë¤Î½àÈ÷
 		print "\r$tani, $n, list, ";
 		my $table = 'ct_'."$tani".'_contxt_'."$i";
 		mysql_exec->drop_table($table);
@@ -176,7 +176,7 @@ sub _culc_each{
 			)
 		",1);
 		
-		# “–ŠY‚ÌŒê‚ªoŒ»‚µ‚Ä‚¢‚é•¶‘‚ÌƒŠƒXƒg
+		# Åö³º¤Î¸ì¤¬½Ð¸½¤·¤Æ¤¤¤ëÊ¸½ñ¤Î¥ê¥¹¥È
 		my $table_w = 'ct_'."$tani".'_kihon_'. "$i";
 		unless ( mysql_exec->table_exists($table_w) ){
 			mysql_exec->do("
@@ -199,7 +199,7 @@ sub _culc_each{
 			",1);
 		}
 		
-		# “–ŠY‚ÌŒê‚ÌoŒ»”
+		# Åö³º¤Î¸ì¤Î½Ð¸½¿ô
 		my $d_num = mysql_exec->select("
 			SELECT COUNT(*)
 			FROM   $table_w
@@ -210,7 +210,7 @@ sub _culc_each{
 		",1);
 		print "count.";
 		
-		# ŠeŒê‚ÌoŒ»”‚ðƒJƒEƒ“ƒg
+		# ³Æ¸ì¤Î½Ð¸½¿ô¤ò¥«¥¦¥ó¥È
 		my $sql = "
 			INSERT INTO $table (word, num)
 			SELECT genkei.id, count(*)
@@ -243,12 +243,12 @@ sub _culc_each{
 }
 
 #------------------------#
-#   ’ŠoŒêƒŠƒXƒg‚Ìì»   #
+#   Ãê½Ð¸ì¥ê¥¹¥È¤ÎºîÀ½   #
 
 sub wlist{
 	my $self = shift;
 	
-	# ’ŠoŒê‚ÌƒŠƒXƒg
+	# Ãê½Ð¸ì¤Î¥ê¥¹¥È
 	my $sql = "
 		SELECT genkei.id, genkei.name, genkei.num
 		FROM   genkei, hselection
@@ -283,7 +283,7 @@ sub wlist{
 	$self->{wName}   = \%name;
 	$self->{wNum}    = \%num;
 	
-	# •¶–¬Œê‚ÌƒŠƒXƒg
+	# Ê¸Ì®¸ì¤Î¥ê¥¹¥È
 	$sql = "
 		SELECT genkei.id, genkei.name
 		FROM   genkei, hselection

@@ -263,7 +263,7 @@ sub make{
 			);
 
 		$self->{m_b3_contxtout} = $f8->cascade(
-				-label => Jcode->new("「抽出語ｘ文脈」表の出力",'euc')->sjis,
+				-label => Jcode->new("「抽出語ｘ文脈ベクトル」表の出力",'euc')->sjis,
 				-font => "TKFN",
 				-state => 'disable',
 				-tearoff=>'no'
