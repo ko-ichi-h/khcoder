@@ -33,7 +33,7 @@ sub new{
 sub detail_tab{
 	my $self = shift;
 	
-	# “x”i’PƒWŒvjŽæ“¾
+	# ÅÙ¿ô¡ÊÃ±½ã½¸·×¡Ë¼èÆÀ
 	my $f = mysql_exec->select("
 		SELECT $self->{column}, COUNT(*)
 		FROM   $self->{table}
@@ -43,7 +43,7 @@ sub detail_tab{
 		$self->{freqs}{$i->[0]} = $i->[1];
 	}
 	
-	# ƒŠƒ^[ƒ“‚·‚é•\‚ðì¬
+	# ¥ê¥¿¡¼¥ó¤¹¤ëÉ½¤òºîÀ®
 	my @data;
 	foreach my $i (sort keys %{$self->{freqs}}){
 		push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
@@ -57,9 +57,7 @@ sub label_save{
 	my $val  = shift;
 	my $lab  = shift;
 	
-	print "lab: $lab\n";
-	
-	if ($lab eq ''){                          # ƒ‰ƒxƒ‹‚ª‹ó‚Ìê‡‚ÍƒŒƒR[ƒhíœ
+	if ($lab eq ''){                          # ¥é¥Ù¥ë¤¬¶õ¤Î¾ì¹ç¤Ï¥ì¥³¡¼¥Éºï½ü
 		mysql_exec->do("
 			DELETE FROM outvar_lab
 			WHERE
@@ -67,7 +65,7 @@ sub label_save{
 				AND val = \'$val\'
 		",1);
 	} else {
-		my $exists = mysql_exec->select(     # ƒŒƒR[ƒh‚Ì—L–³‚ðŠm”F
+		my $exists = mysql_exec->select(     # ¥ì¥³¡¼¥É¤ÎÍ­Ìµ¤ò³ÎÇ§
 			"SELECT *
 			FROM outvar_lab
 			WHERE 
