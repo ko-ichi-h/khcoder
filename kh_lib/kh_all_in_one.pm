@@ -68,22 +68,11 @@ sub init{
 
 	# MySQL¤Îµ¯Æ°
 	print "starting mysql...\n";
-	
 	use Win32;
-	my $mysql_pass;
-	my $cmd_line;
-	if (Win32::IsWinNT()){
-		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld-nt.exe';
-		$cmd_line = 'bin\mysqld-nt --defaults-file=khc.ini';
-	} else {
-		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld.exe';
-		$cmd_line = 'bin\mysqld --defaults-file=khc.ini';
-	}
-	
 	use Win32::Process;
 	my $obj;
-	#print "$mysql_pass\n";
-	#print "$p3\n";
+	my $mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld-opt.exe';
+	my $cmd_line = 'bin\mysqld-opt --defaults-file=khc.ini';
 	Win32::Process::Create(
 		$obj,
 		$mysql_pass,
