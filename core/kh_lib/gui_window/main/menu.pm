@@ -369,6 +369,15 @@ sub make{
 				-state => 'disable'
 			);
 
+			$self->{t_cod_out_tab} = $self->{t_cod_out}->command(
+				-label => Jcode->new('タブ区切り')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::cod_out::tab->open;
+					})},
+				-state => 'disable'
+			);
+
 	$f->separator();
 	
 	my $f_out_var = $f->cascade(
@@ -539,6 +548,7 @@ sub refresh{
 		't_cod_outtab',
 		't_cod_out_spss',
 		't_cod_out_csv',
+		't_cod_out_tab',
 		't_txt_html2mod',
 		'm_b3_crossout',
 		'm_b3_crossout_csv',

@@ -3,6 +3,7 @@ use strict;
 use mysql_exec;
 use mysql_contxt::spss;
 use mysql_contxt::csv;
+use mysql_contxt::tab;
 
 my %sql_join = (
 	'bun' =>
@@ -104,7 +105,8 @@ sub save{
 		;
 		foreach my $w2 (@{$self->{wList2}}){
 			if ($line{$w2}){
-				$line .= sprintf("%.8f",$line{$w2}).',';
+				#$line .= sprintf("%.8f",$line{$w2}).',';
+				$line .= "$line{$w2},";
 			} else {
 				$line .= "0,";
 			}

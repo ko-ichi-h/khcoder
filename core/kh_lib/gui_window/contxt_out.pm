@@ -9,6 +9,7 @@ use mysql_contxt;
 
 use gui_window::contxt_out::spss;
 use gui_window::contxt_out::csv;
+use gui_window::contxt_out::tab;
 
 #-------------#
 #   GUI∫Ó¿Ω   #
