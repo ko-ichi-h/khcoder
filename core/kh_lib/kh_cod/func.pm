@@ -116,10 +116,11 @@ sub cod_out_csv{
 	$sql = "SELECT "."$sql";
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+		use kh_csv;
 		if ($::config_obj->os eq 'win32'){
-			$head .= Jcode->new($i->name)->sjis.",";
+			$head .= kh_csv->value_conv(Jcode->new($i->name)->sjis).",";
 		} else {
-			$head .= $i->name.",";
+			$head .= kh_csv->value_conv($i->name).",";
 		}
 	}
 	chop $sql;

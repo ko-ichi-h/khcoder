@@ -40,8 +40,6 @@ sub out2{                               # length作製をする
 	
 	open (F,">temp.dat") or die;
 	
-
-	
 	# セル内容の作製
 	my $id = 1;
 	my $last = 1;
@@ -131,6 +129,7 @@ sub sql2{
 	$sql .= "	AND genkei.nouse = 0\n";
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }
 

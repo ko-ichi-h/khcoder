@@ -43,23 +43,31 @@ sub exec{
 	
 	my $current; my %h;
 	my $last = 0;
+	my $the_tani;
+	if ($args{tani} eq 'bun'){
+		$the_tani = 'id';
+	} else {
+		$the_tani = "$args{tani}"."_id";
+	}
+	use kh_csv;
 	while (my $i = $h->fetchrow_hashref){
 		if ($i->{"$args{tani}"."_id"}){           # 本文の場合
-			if ($i->{"$args{tani}_id"} == $last){      # 継ぎ足し
+			# print "$i->{$the_tani},";
+			if ($i->{$the_tani} == $last){             # 継ぎ足し
 				$current .= $i->{rowtxt};
 			} else {                                   # 書き出し
 				unless ($current){
-					$last = $i->{"$args{tani}_id"};
+					$last = $i->{$the_tani};
 					$current = $i->{rowtxt};
 					next;
 				}
 				
 				foreach my $g (@h){
-					print CSVO "$h{$g},";
+					print CSVO kh_csv->value_conv($h{$g}).',';
 				}
-				print CSVO "$current\n";
+				print CSVO kh_csv->value_conv($current)."\n";
 				
-				$last = $i->{"$args{tani}_id"};
+				$last = $i->{$the_tani};
 				$current = $i->{rowtxt};
 			}
 		} else {                                  # 上位見出しの場合

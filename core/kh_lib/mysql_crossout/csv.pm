@@ -22,7 +22,7 @@ sub finish{
 	}
 	$head .= 'id,length_c,length_w,';
 	foreach my $i (@{$self->{wList}}){
-		$head .= "$self->{wName}{$i},";
+		$head .= kh_csv->value_conv($self->{wName}{$i}).',';
 	}
 	chop $head;
 	if ($::config_obj->os eq 'win32'){

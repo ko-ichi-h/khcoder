@@ -106,7 +106,7 @@ sub mark{
 	my $dist   = $::project_obj->file_m_target;
 
 	unless (eval (@{$self->words_mk})){
-		unlink($dist) or die;
+		unlink($dist) or die if -e $dist;
 		use File::Copy;
 		copy("$source","$dist") or die;
 		return undef;

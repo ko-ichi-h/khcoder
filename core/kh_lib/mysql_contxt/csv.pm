@@ -8,9 +8,10 @@ use strict;
 sub _save_finish{
 	my $self = shift;
 	
+	use kh_csv;
 	my $first_line = 'Ãê½Ğ¸ì,';
 	foreach my $w2 (@{$self->{wList2}}){
-		$first_line .= "cw: $self->{wName2}{$w2},";
+		$first_line .= 'cw: '.kh_csv->value_conv($self->{wName2}{$w2}).',';
 	}
 	chop $first_line;
 	$first_line = Jcode->new($first_line)->sjis;

@@ -99,8 +99,9 @@ sub run_from_morpho{
 		1
 	)->hundle;
 	
+	use kh_csv;
 	while (my $i = $oh->fetch){
-		print F "$i->[0],$i->[1]\n";
+		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
 	}
 	
 	close (F);
