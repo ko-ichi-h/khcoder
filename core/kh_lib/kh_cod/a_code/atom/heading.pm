@@ -57,9 +57,9 @@ sub ready{
 		last if $var == $i;
 	}
 	chop $temp_s; chop $temp_c; chop $temp_c;
-	mysql_exec->drop_table('ct_tmp_midashi'); # TEMPORARY 
+	mysql_exec->drop_table('ct_tmp_midashi');
 	mysql_exec->do("
-		CREATE TABLE ct_tmp_midashi (
+		CREATE TEMPORARY TABLE ct_tmp_midashi (
 			$temp_c
 		) TYPE=HEAP
 	",1);

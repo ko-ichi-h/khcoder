@@ -10,6 +10,8 @@ use kh_cod::a_code::atom::number;
 use kh_cod::a_code::atom::length;
 use kh_cod::a_code::atom::outvar_o;
 use kh_cod::a_code::atom::heading;
+use kh_cod::a_code::atom::phrase;
+
 
 BEGIN {
 	use vars qw(@pattern);
@@ -40,6 +42,10 @@ BEGIN {
 	push @pattern, [
 		kh_cod::a_code::atom::code->pattern,
 		kh_cod::a_code::atom::code->name
+	];
+	push @pattern, [
+		kh_cod::a_code::atom::phrase->pattern,
+		kh_cod::a_code::atom::phrase->name
 	];
 	push @pattern, [
 		kh_cod::a_code::atom::delimit->pattern,
