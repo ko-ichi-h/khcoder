@@ -25,32 +25,30 @@ sub __new{
 
 	$inis->focus;
 	$inis->grab;
-	my $msg = Jcode::convert('KH Coderの設定','sjis','euc');
-	$inis->title("$msg");
-	my $lfra = $inis->LabFrame(-label => 'ChaSen',
+	$inis->title($self->gui_jchar('KH Coderの設定'));
+
+	my $lfra = $inis->LabFrame(
+		-label => 'ChaSen',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
-	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	
-	$msg = '・茶筌の設定';
-	Jcode::convert(\$msg,'sjis','euc');
-	$fra0->Label(-text => "$msg",
+	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+
+	$fra0->Label(
+		-text => $self->gui_jchar('・茶筌の設定'),
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 
-
-
-	$msg = 'Chasen.exeのパス：'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{lb1} = $fra1->Label(-text => "$msg",
+	$self->{lb1} = $fra1->Label(
+		-text => $self->gui_jchar('Chasen.exeのパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry1 = $fra1->Entry(-font => 'TKFN')->pack(side => 'right');
+	my $entry1 = $fra1->Entry(-font => 'TKFN')->pack(-side => 'right');
 	$self->{entry1} = $entry1;
 
 	$entry1->DropSite(
@@ -58,8 +56,9 @@ sub __new{
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
 	);
 
-	$msg = '参照'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{btn1} = $fra1->Button(-text => "$msg",-font => 'TKFN',
+	$self->{btn1} = $fra1->Button(
+		-text => $self->gui_jchar('参照'),
+		-font => 'TKFN',
 		-command => sub{ $mw->after
 			(10,
 				sub { $self->gui_get_exe(); }
@@ -73,13 +72,13 @@ sub __new{
 
 
 	$inis->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{
 			$inis->after(10,sub{$self->close;})
 		}
-	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
+	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
 
 	$inis->Button(
 		-text  => 'OK',
@@ -91,7 +90,7 @@ sub __new{
 				sub {$self->ok }
 			);
 		}
-	)->pack(-anchor => 'e',-side => 'right');
+	)->pack(-anchor => 'e',-side => 'right',  -pady => 2);
 
 	# 文字化け回避用バインド
 	$inis->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
@@ -127,17 +126,15 @@ sub ok{
 # ファイル・オープン・ダイアログ
 sub gui_get_exe{
 	my $self = shift;
-	my $msg = $self->open_msg;
 
-	Jcode::convert(\$msg,'sjis','euc');
 	my @types =
 		(["exe files",           [qw/.exe/]],
 		["All files",		'*']
 	);
 	
 	my $path = $self->win_obj->getOpenFile(
-		-filetypes => \@types,
-		-title => "$msg",
+		-filetypes  => \@types,
+		-title      => $self->gui_jchar($self->open_msg),
 		-initialdir => $::config_obj->cwd
 	);
 	
