@@ -270,7 +270,7 @@ sub _new{
 }
 
 sub start{
-	my $self = shift;[
+	my $self = shift;
 	$self->read_code;
 	$self->clist_check;
 
