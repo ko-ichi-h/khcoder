@@ -252,7 +252,7 @@ sub make{
 			},
 		);
 		
-		$msg = Jcode->new('KH Coder II について','euc')->sjis;
+		$msg = Jcode->new('KHCについて','euc')->sjis;
 		$f->command(
 			-label => $msg,
 			-command => sub{ $mw->after(10, sub{gui_window::about->open;});},
