@@ -83,6 +83,24 @@ sub open{
 #--------------#
 #   アクセサ   #
 #--------------#
+
+sub status_morpho{
+	my $self = shift;
+	my $new  = shift;
+	
+	if ( defined($new) ){
+		mysql_exe->do("UPDATE status SET status=$new WHERE name='morpho'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status where name = 'morpho'",1)
+				->hundle
+					->fetch
+						->[0]
+		;
+	}
+}
+
 sub use_hukugo{
 	return mysql_exec
 		->select("SELECT ifuse FROM hselection where name = '複合名詞'",1)
