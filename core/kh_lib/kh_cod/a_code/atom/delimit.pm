@@ -1,3 +1,5 @@
+# 「and」や「or」などなどの演算子を識別
+
 package kh_cod::a_code::atom::delimit;
 use base qw(kh_cod::a_code::atom);
 use strict;

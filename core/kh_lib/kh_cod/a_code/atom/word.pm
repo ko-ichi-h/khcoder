@@ -1,3 +1,5 @@
+# 通常の抽出語（基本形）を使った指定
+
 package kh_cod::a_code::atom::word;
 use base qw(kh_cod::a_code::atom);
 use strict;

@@ -1,3 +1,5 @@
+# ´û¤ËÄêµÁ¤·¤Æ¤¢¤ë¥³¡¼¥É¤ÎÍøÍÑ --- <¡ö¥³¡¼¥ÉÌ¾>
+
 package kh_cod::a_code::atom::code;
 use base qw(kh_cod::a_code::atom);
 use strict;
@@ -5,7 +7,7 @@ use strict;
 my $num = 0;
 
 #--------------------#
-#   WHEREß—pSQL•¶   #
+#   WHEREÀáÍÑSQLÊ¸   #
 #--------------------#
 
 sub expr{
@@ -21,7 +23,7 @@ sub expr{
 
 
 #---------------------------------------#
-#   ƒR[ƒfƒBƒ“ƒO€”õitmp tableì¬j   #
+#   ¥³¡¼¥Ç¥£¥ó¥°½àÈ÷¡Êtmp tableºîÀ®¡Ë   #
 #---------------------------------------#
 
 sub ready{
@@ -39,7 +41,7 @@ sub ready{
 }
 
 #----------------------------#
-#   ƒR[ƒh“Ç‚İ‚İ‚Ìˆ—   #
+#   ¥³¡¼¥ÉÆÉ¤ß¹ş¤ß»ş¤Î½èÍı   #
 
 sub when_read{
 	my $self = shift;
@@ -56,7 +58,7 @@ sub when_read{
 }
 
 #-------------------------------#
-#   —˜—p‚·‚étmp table‚ÌƒŠƒXƒg   #
+#   ÍøÍÑ¤¹¤ëtmp table¤Î¥ê¥¹¥È   #
 
 sub tables{
 	my $self = shift;
@@ -64,7 +66,7 @@ sub tables{
 }
 
 #----------------#
-#   eƒe[ƒuƒ‹   #
+#   ¿Æ¥Æ¡¼¥Ö¥ë   #
 sub parent_table{
 	my $self = shift;
 	my $new  = shift;
