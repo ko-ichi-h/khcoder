@@ -25,8 +25,54 @@ sub readin{
 				thefile => "m: $self->{ini_file}"
 			);
 		close (CON);
-		use File::Copy;
-		copy("./.default/hinshi_chasen","./config/hinshi_chasen") or die;
+		# ÉÊ»ìÄêµÁ¥Õ¥¡¥¤¥ë¤òºîÀ®
+		use DBI;
+		use DBD::CSV;
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		$dbh->do(
+			"CREATE TABLE hinshi_chasen (
+				hinshi_id INTEGER,
+				kh_hinshi CHAR(225),
+				condition1 CHAR(225),
+				condition2 CHAR(225)
+			)"
+		) or die;
+		my @table = (
+				"7, 'ÃÏÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-ÃÏ°è', undef ",
+				"6, '¿ÍÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-¿ÍÌ¾', undef ",
+				"5,'ÁÈ¿¥Ì¾','Ì¾»ì-¸ÇÍ­Ì¾»ì-ÁÈ¿¥',undef",
+				"'4','¸ÇÍ­Ì¾»ì','Ì¾»ì-¸ÇÍ­Ì¾»ì',undef",
+				"'2','¥µÊÑÌ¾»ì','Ì¾»ì-¥µÊÑÀÜÂ³',undef",
+				"'3','·ÁÍÆÆ°»ì','Ì¾»ì-·ÁÍÆÆ°»ì¸ì´´',undef",
+				"'8','¥Ê¥¤·ÁÍÆ','Ì¾»ì-¥Ê¥¤·ÁÍÆ»ì¸ì´´',undef",
+				"'16','Ì¾»ìB','Ì¾»ì-°ìÈÌ','¤Ò¤é¤¬¤Ê'",
+				"'16','Ì¾»ìB','Ì¾»ì-Éû»ì²ÄÇ½','¤Ò¤é¤¬¤Ê',",
+				"'20','Ì¾»ìC','Ì¾»ì-°ìÈÌ','°ìÊ¸»ú'",
+				"'20','Ì¾»ìC','Ì¾»ì-Éû»ì²ÄÇ½','°ìÊ¸»ú'",
+				"'1','Ì¾»ì','Ì¾»ì-°ìÈÌ',undef",
+				"'1','Ì¾»ì','Ì¾»ì-Éû»ì²ÄÇ½',undef",
+				"'9','Ê£¹çÌ¾»ì','Ê£¹çÌ¾»ì',undef",
+				"'10','Ì¤ÃÎ¸ì','Ì¤ÃÎ¸ì',undef",
+				"'12','´¶Æ°»ì','´¶Æ°»ì',undef",
+				"'12','´¶Æ°»ì','¥Õ¥£¥é¡¼',undef",
+				"'11','¥¿¥°','¥¿¥°',undef",
+				"'17','Æ°»ìB','Æ°»ì-¼«Î©','¤Ò¤é¤¬¤Ê'",
+				"'13','Æ°»ì','Æ°»ì-¼«Î©',undef",
+				"'18','·ÁÍÆ»ìB','·ÁÍÆ»ì','¤Ò¤é¤¬¤Ê'",
+				"'14','·ÁÍÆ»ì','·ÁÍÆ»ì',undef",
+				"'19','Éû»ìB','Éû»ì','¤Ò¤é¤¬¤Ê'",
+				"'15','Éû»ì','Éû»ì',undef"
+		);
+		foreach my $i (@table){
+			$dbh->do("
+				INSERT INTO hinshi_chasen
+					(hinshi_id, kh_hinshi, condition1, condition2 )
+				VALUES
+					( $i )
+			") or die($i);
+		}
+
+		$dbh->disconnect;
 	}
 
 
