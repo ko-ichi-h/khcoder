@@ -28,16 +28,62 @@ sub _new{
 	# エントリと検索ボタンのフレーム
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
-	my $e1 = $fra4e->Entry(
+	$fra4e->Label(
+		-text => Jcode->new('抽出語：')->sjis,
 		-font => "TKFN"
-	)->pack(expand => 'y', fill => 'x', side => 'left');
+	)->pack(side => 'left');
+
+	my $e1 = $fra4e->Entry(
+		-font => "TKFN",
+		-width => 14
+	)->pack(side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Shift-Key-Return>",sub{$self->search;});
 
+	$fra4e->Label(
+		-text => Jcode->new('　品詞：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
+	my $e4 = $fra4e->Entry(
+		-font => "TKFN",
+		-width => 8
+	)->pack(side => 'left');
+	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
+	$e4->bind("<Shift-Key-Return>",sub{$self->search;});
+
+	$fra4e->Label(
+		-text => Jcode->new('　活用形：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
+	my $e2 = $fra4e->Entry(
+		-font => "TKFN",
+		-width => 8
+	)->pack(side => 'left');
+	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
+	$e2->bind("<Shift-Key-Return>",sub{$self->search;});
+
+	$fra4e->Label(
+		-text => Jcode->new('　（前後の')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
+	my $e3 = $fra4e->Entry(
+		-width => 2
+	)->pack(side => 'left');
+	$e3->insert('end','20');
+
+	$fra4e->Label(
+		-text => Jcode->new('語を取り出す）')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
 	my $sbutton = $fra4e->Button(
 		-text => Jcode->new('検索')->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
 	)->pack(-side => 'right', padx => '2');
 
@@ -48,37 +94,47 @@ sub _new{
 		-font => "TKFN"
 	);
 
-	# オプション・フレーム
+	# ソート・オプションのフレーム
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
-	my @methods;
-	push @methods, Jcode->new('AND検索')->sjis;
-	push @methods, Jcode->new('OR検索')->sjis;
-	my $method;
+	my @methods = ('出現順', '左・5','左・4','左・3','左・2','左・1','活用形','右・1','右・2','右・3','右・4','右・5',);
+	foreach my $i (@methods){
+		$i = Jcode->new("$i")->sjis;
+	}
+
+	$fra4h->Label(
+		-text => Jcode->new('ソート1：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
 	$fra4h->Optionmenu(
 		-options=> \@methods,
 		-font => "TKFN",
-		-variable => \$gui_window::word_search::method,
+		-variable => \$self->{sort1},
 	)->pack(-anchor=>'e', -side => 'left');
 
-	$fra4h->Checkbutton(
-		-text     => Jcode->new('基本形を検索')->sjis,
-		-variable => \$gui_window::word_search::kihon,
-		-font     => "TKFN",
-		-command  => sub { $mw->after(10,sub{$self->refresh}); }
-	)->pack(-side => 'left');
+	$fra4h->Label(
+		-text => Jcode->new('　ソート2：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
 
-	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => Jcode->new('活用語表示')->sjis,
-		-variable => \$gui_window::word_search::katuyo,
-		-font     => "TKFN",
-		-command  => sub { $mw->after(10,sub{$self->refresh}); }
-	)->pack(-side => 'left');
-	
-	unless (defined($gui_window::word_search::katuyo)){
-		$gui_window::word_search::kihon = 1;
-		$gui_window::word_search::katuyo = 0;
-	}
+	$fra4h->Optionmenu(
+		-options=> \@methods,
+		-font => "TKFN",
+		-variable => \$self->{sort2},
+	)->pack(-anchor=>'e', -side => 'left');
+
+	$fra4h->Label(
+		-text => Jcode->new('　ソート3：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
+	$fra4h->Optionmenu(
+		-options=> \@methods,
+		-font => "TKFN",
+		-variable => \$self->{sort3},
+	)->pack(-anchor=>'e', -side => 'left');
+
 
 
 
@@ -129,12 +185,20 @@ sub _new{
 		-foreground => 'blue'
 	)->pack(-side => 'right', -anchor => 'e');
 
+	my $hits = $fra5->Label(
+		-text => '  Hits: '
+	)->pack(-side => 'left');
+
 	MainLoop;
 
 	$self->{st_label} = $status;
+	$self->{hit_label} = $hits;
 	$self->{list}     = $lis;
 	$self->{win_obj}  = $wmw;
 	$self->{entry}    = $e1;
+	$self->{entry2}    = $e2;
+	$self->{entry3}    = $e3;
+	$self->{entry4}    = $e4;
 	return $self;
 }
 
@@ -145,22 +209,51 @@ sub _new{
 
 sub search{
 	my $self = shift;
-	
+
 	# 変数取得
 	my $query = Jcode->new($self->entry->get)->euc;
 	unless ($query){
 		return;
 	}
+	my $katuyo = Jcode->new($self->entry2->get)->euc;
+	my $hinshi = Jcode->new($self->entry4->get)->euc;
+	my $length = $self->entry3->get;
+
+	my %sconv = (
+		'出現順' => 'id',
+		'左・5'  => 'l5',
+		'左・4'  => 'l4',
+		'左・3'  => 'l3',
+		'左・2'  => 'l2',
+		'左・1'  => 'l1',
+		'活用形' => 'center',
+		'右・1'  => 'r1',
+		'右・2'  => 'r2',
+		'右・3'  => 'r3',
+		'右・4'  => 'r4',
+		'右・5'  => 'r5'
+	);
+	
+	print "test: ".$self->sort1."\n";
+
+	# 検索実行
 	$self->st_label->configure(
 		-text => 'Searching...',
 		-foreground => 'red',
 	);
+	$self->hit_label->configure(
+		-text => "  Hits:"
+	);
 	$self->win_obj->update;
 
-	# 検索実行
 	my $result = mysql_conc->a_word(
 		query  => $query,
-		length => 20,
+		katuyo => $katuyo,
+		hinshi => $hinshi,
+		length => $length,
+		sort1  => $sconv{Jcode->new($self->sort1)->euc},
+		sort2  => $sconv{Jcode->new($self->sort2)->euc},
+		sort3  => $sconv{Jcode->new($self->sort3)->euc},
 	);
 
 
@@ -216,7 +309,13 @@ sub search{
 		-text => 'Ready.',
 		-foreground => 'blue',
 	);
+	my $n = @{$result};
+	$self->hit_label->configure(
+		-text => "  Hits: $n"
+	);
 	$self->win_obj->update;
+	
+	# 表示のセンタリング
 	$self->list->xview(moveto => 1);
 	$self->list->yview(0);
 	$self->win_obj->update;
@@ -231,10 +330,10 @@ sub search{
 	my $s_scroll = $s_center - $v_center;
 	if ($s_scroll < 0){
 		$self->list->xview(moveto => 0);
-		return 1;
+	} else {
+		my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
+		$self->list->xview(moveto => $fragment);
 	}
-	my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
-	$self->list->xview(moveto => $fragment);
 
 }
 
@@ -251,9 +350,37 @@ sub entry{
 	my $self = shift;
 	return $self->{entry};
 }
+sub entry2{
+	my $self = shift;
+	return $self->{entry2};
+}
+sub entry3{
+	my $self = shift;
+	return $self->{entry3};
+}
+sub entry4{
+	my $self = shift;
+	return $self->{entry4};
+}
 sub st_label{
 	my $self= shift;
 	return $self->{st_label};
+}
+sub hit_label{
+	my $self= shift;
+	return $self->{hit_label};
+}
+sub sort1{
+	my $self = shift;
+	return $self->{sort1};
+}
+sub sort2{
+	my $self = shift;
+	return $self->{sort2};
+}
+sub sort3{
+	my $self = shift;
+	return $self->{sort3};
 }
 sub win_name{
 	return 'w_word_conc';
