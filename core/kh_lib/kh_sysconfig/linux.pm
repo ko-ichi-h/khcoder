@@ -179,6 +179,20 @@ sub app_csv{
 	}
 }
 
+#-------------#
+#   GUI関係   #
+
+sub underline_conv{
+	my $self = shift;
+	my $n    = shift;
+	$n = ( ($n - 1) / 2 ) + 1;
+	return $n;
+}
+
+sub mw_entry_length{
+	return 30;
+}
+
 #------------#
 #   その他   #
 

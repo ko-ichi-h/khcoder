@@ -32,7 +32,7 @@ sub make{
 	)->pack(-anchor=>'w',-side=>'left');
 	
 	my $cupro = $fra1a->Entry(
-		-width      => '30',
+		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
@@ -45,7 +45,7 @@ sub make{
 	)->pack(-anchor=>'w',-side=>'left');
 
 	my $cuprom = $fra1b->Entry(
-		-width      => '30',
+		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
@@ -71,7 +71,7 @@ sub make{
 	)->pack(-anchor=>'w',-side=>'left');
 
 	my $cuprodbwordsnum = $fra2a->Entry(
-		-width      => '30',
+		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',

@@ -134,6 +134,18 @@ sub juman_path{
 	return $self->{juman_path};
 }
 
+#-------------#
+#   GUI関係   #
+
+sub underline_conv{
+	my $self = shift;
+	my $n    = shift;
+	return $n;
+}
+
+sub mw_entry_length{
+	return 20;
+}
 
 #------------#
 #   その他   #
