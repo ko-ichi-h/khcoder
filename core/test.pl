@@ -46,15 +46,21 @@ print "kinds: ".mysql_words->num_kinds."\n\n";
 use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
+# 処理実行
 my $result = mysql_conc->a_word(
 	query   => 'パソコン',
 	kihon   => 1,
 	context => 10,
+	limit   => 1000,
+	sort1   => "k",
+	sort2   => "1l",
+	sort3   => "1r",
 );
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
+# 結果を出力
 open (OUT,">test.txt");
 foreach my $i (@{$result}){
 	print OUT "$i->[0]  $i->[1]  $i->[2]\n";
