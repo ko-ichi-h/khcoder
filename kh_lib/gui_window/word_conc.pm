@@ -347,7 +347,13 @@ sub if_prev{
 	}
 }
 sub end{
-	$::main_gui->get('w_doc_view')->close;
+	my $check = 0;
+	if ($::main_gui){
+		$check = $::main_gui->if_opened('w_doc_view');
+	}
+	if ( $check ){
+		$::main_gui->get('w_doc_view')->close;
+	}
 }
 
 
@@ -491,6 +497,7 @@ sub search{
 		my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
 		$self->list->xview(moveto => $fragment);
 	}
+	$self->list->yview(0);
 	
 	$self->{result} = $result;
 }
