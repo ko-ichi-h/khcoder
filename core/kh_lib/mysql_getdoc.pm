@@ -2,10 +2,19 @@ package mysql_getdoc;
 use strict;
 use mysql_exec;
 
+use mysql_getdoc::bun;
+use mysql_getdoc::dan;
+use mysql_getdoc::h1;
+use mysql_getdoc::h2;
+use mysql_getdoc::h3;
+use mysql_getdoc::h4;
+use mysql_getdoc::h5;
+
 sub get{
 	my $class = shift;
 	my %args  = @_;
 	my $self = \%args;
+	$class .= '::'."$args{tani}";
 	bless $self, $class;
 
 	# 文書の特定
@@ -13,7 +22,7 @@ sub get{
 		$self->{doc_id} = $self->get_doc_id;
 		print "doc_id $self->{doc_id}";
 	}
-	
+
 	# 本文の取り出し
 	my $d = $self->get_body;
 	my %for_color = ();                           # 強調指定の準備
@@ -124,7 +133,7 @@ sub get_header{
 				"select status from status where name = \'$i\'",1
 			)->hundle->fetch->[0]
 		){
-			print "getting $i header...\n";
+			#print "getting $i header...\n";
 			my $sql = "SELECT rowtxt\n";
 			$sql   .= "FROM bun, hyosobun\n";
 			$sql   .= "WHERE\n";
