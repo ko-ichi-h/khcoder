@@ -8,6 +8,8 @@ use strict;
 use gui_widget::optmenu;
 use kh_cod::asso;
 
+my $order_name;
+
 #-------------#
 #   GUIºîÀ½   #
 #-------------#
@@ -206,15 +208,23 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[Jcode->new('³ÎÎ¨º¹')->sjis , 'sa'],
-				[Jcode->new('³ÎÎ¨Èæ')->sjis , 'hi'],
-				[Jcode->new('Jaccard')->sjis , 'jac'],
-				[Jcode->new('Ochiai')->sjis , 'ochi'],
+				[Jcode->new('³ÎÎ¨º¹')->sjis , 'sa'  ],
+				[Jcode->new('³ÎÎ¨Èæ')->sjis , 'hi'  ],
+				['Jaccard'                  , 'jac' ],
+				['Ochiai'                   , 'ochi'],
 				#[Jcode->new('¦Ö2¾è')->sjis , 'chi'],
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
 	);
+
+	$order_name = {
+		'sa'  => Jcode->new('³ÎÎ¨º¹')->sjis,
+		'hi'  => Jcode->new('³ÎÎ¨Èæ')->sjis,
+		'jac' => 'Jaccard',
+		'ochi'=> 'Ochiai',
+	};
+
 
 	$f5->Label(
 		-text => Jcode->new(' ')->sjis,
@@ -408,6 +418,8 @@ sub display{
 	unless ( $self->{code_obj}->doc_num ) {return undef;}
 	
 	# HList¤Î¹¹¿·
+	$self->{rlist}->headerConfigure(5,-text,$order_name->{$self->{opt_order}});
+	
 	$self->{result} = $self->{code_obj}->fetch_results(
 		order  => $self->{opt_order},
 		filter => $filter,
