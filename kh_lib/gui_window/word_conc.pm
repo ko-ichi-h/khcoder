@@ -342,12 +342,18 @@ sub view_doc{
 	my @kyotyo = @{mysql_conc->last_words};
 	my $hyosobun_id = $self->result->[$selected][3];
 
+	$selected = $self->{current_start} + $selected;
+	my $foot = $self->{result_obj}->_count;
+	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
+
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
 		hyosobun_id => $hyosobun_id,
 		kyotyo      => \@kyotyo,
 		tani        => "$tani",
-		parent      => $self
+		parent      => $self,
+		foot        => $foot,
 	);
 }
 
@@ -372,7 +378,12 @@ sub next{
 		$self->list->yview(scroll => -5, 'units');
 	}
 	
-	return $hyosobun_id;
+	$selected = $self->{current_start} + $selected;
+	my $foot = $self->{result_obj}->_count;
+	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
+	
+	return ($hyosobun_id,undef,$foot);
 }
 
 sub prev{
@@ -395,7 +406,12 @@ sub prev{
 		$self->list->yview(scroll => -5, 'units');
 	}
 	
-	return $hyosobun_id;
+	$selected = $self->{current_start} + $selected;
+	my $foot = $self->{result_obj}->_count;
+	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
+
+	return ($hyosobun_id,undef,$foot);
 }
 
 sub if_next{

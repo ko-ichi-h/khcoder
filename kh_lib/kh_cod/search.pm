@@ -399,7 +399,7 @@ sub check_a_doc{
 	my $self   = shift;
 	my $doc_id = shift;
 	
-	# コーディング
+	# コーディング結果の読み出し
 	my $text = 
 		"・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
 	my (@words, %words, $n);
@@ -422,6 +422,19 @@ sub check_a_doc{
 		$text .= "    ＃コード無し\n";
 	}
 	
+	# いくつ目の検索結果かをチェック
+	my ($rnum_all, $rnum);
+	if (
+		$rnum = mysql_exec->select("
+			SELECT rnum
+			FROM temp_doc_search
+			WHERE id = $doc_id
+		",1)->hundle->fetch
+	){
+		$rnum = $rnum->[0];
+		$rnum_all = $self->total_hits;
+		$text .= "\n・現在表示中の検索結果： $rnum / $rnum_all\n";
+	}
 	
 	$text = Jcode->new($text)->sjis;
 	return ($text,\@words);
