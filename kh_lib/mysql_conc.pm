@@ -36,6 +36,9 @@ sub a_word{
 		&& ( $l_length == $args{length} )
 	){
 		my $hyoso = $self->_hyoso;
+		unless ($hyoso){
+			return 0;
+		}
 		my $points = $self->_find($hyoso);
 	}
 	$l_query = $args{query};
@@ -51,7 +54,7 @@ sub _hyoso{
 	my $self = shift;
 	my %args = %{$self};
 	
-	# É½ÁØ¸ì¤Î¥ê¥¹¥È¥¢¥Ã¥×
+	# •\‘wŒê‚ÌƒŠƒXƒgƒAƒbƒv
 	print "0: getting hyoso list\n";
 	my $sql= '';
 	$sql .= "SELECT hyoso.id\n";
@@ -92,11 +95,11 @@ sub _find{
 
 	print "1: searching...\n";
 
-	# Temp TableºîÀ®
-	mysql_exec->do("drop table temp_conc");
-	$sql  = "create table temp_conc (\n";
-	$sql .= "id int auto_increment primary key not null,\n";
-	foreach my $i (@{$self->{scanlist}}){
+	# Temp Tableì¬ileft + centerj	
+	mysql_exec->do("drop table temp_concl");
+	$sql  = "create table temp_concl (\n";
+	$sql .= "id int primary key not null,\n";
+	foreach my $i (@{$self->{left}},'center'){
 		$sql .= "$i int,";
 	}
 	chop $sql;
@@ -105,20 +108,20 @@ sub _find{
 
 
 	$sql = '';
-	$sql .= "INSERT INTO temp_conc\n(";
-	foreach my $i (@{$self->{scanlist}}){
+	$sql .= "INSERT INTO temp_concl\n(id, ";
+	foreach my $i (@{$self->{left}},'center'){
 		$sql .= "$i,";
 	}
 	chop $sql;
 	$sql .= ")\n";
-	$sql .= "SELECT ";
-	foreach my $i (@{$self->{scanlist}}){
+	$sql .= "SELECT center.id, ";
+	foreach my $i (@{$self->{left}},'center'){
 		$sql .= "$i".".hyoso_id,";
 	}
 	chop $sql;
 	$sql .= "\n";
 	$sql .= "FROM hyosobun as center\n";
-	foreach my $i (@{$self->{left}},@{$self->{right}}){
+	foreach my $i (@{$self->{left}}){
 		my $lr = substr($i,0,1);
 		if ($lr eq "l"){ $lr = '-';} else {$lr = '+';}
 		my $num = $i;
@@ -134,10 +137,53 @@ sub _find{
 		$sql .= "center.hyoso_id = $i\n";
 		++$n;
 	}
-	return mysql_exec->do($sql,1);
+	mysql_exec->do($sql,1);
+	
+	# Temp Tableì¬irightj
+	mysql_exec->do("drop table temp_concr");
+	$sql  = "create table temp_concr (\n";
+	$sql .= "id int primary key not null,\n";
+	foreach my $i (@{$self->{right}},'center'){
+		$sql .= "$i int,";
+	}
+	chop $sql;
+	$sql .= ")";
+	mysql_exec->do($sql,1);
+	
+	$sql = '';
+	$sql .= "INSERT INTO temp_concr\n(id, ";
+	foreach my $i (@{$self->{right}},'center'){
+		$sql .= "$i,";
+	}
+	chop $sql;
+	$sql .= ")\n";
+	$sql .= "SELECT center.id, ";
+	foreach my $i (@{$self->{right}},'center'){
+		$sql .= "$i".".hyoso_id,";
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM hyosobun as center\n";
+	foreach my $i (@{$self->{right}}){
+		my $lr = substr($i,0,1);
+		if ($lr eq "l"){ $lr = '-';} else {$lr = '+';}
+		my $num = $i;
+		substr($num,0,1) = '';
+		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id $lr $num ) = $i".".id\n";
+	}
+	$sql .= "WHERE\n";
+	my $n = 0;
+	foreach my $i (@hyoso){
+		if ($n){
+			$sql .= 'OR ';
+		}
+		$sql .= "center.hyoso_id = $i\n";
+		++$n;
+	}
+	mysql_exec->do($sql,1);
 }
 
-sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
+sub _sort{                                        # ƒ\[ƒg—pƒe[ƒuƒ‹‚Ìì¬
 	my $self = shift;
 	my %args = %{$self};
 	my $sql = '';
@@ -164,14 +210,15 @@ sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
 		}
 		$sql .= "hyoso_id, count )\n";
 		$sql .= "SELECT $group $args{$i}, count(*) as count\n";
-		$sql .= "FROM temp_conc\n";
+		$sql .= "FROM temp_concl, temp_concr\n";
+		$sql .= "WHERE temp_concl.id = temp_concr.id\n";
 		$sql .= "GROUP BY $group $args{$i}\n";
 		$sql .= "ORDER BY count DESC";
 		mysql_exec->do($sql,1);
 		$group .= "$args{$i},";
 		++$n;
 	}
-	# ºÇ½ª¥½¡¼¥È¡¦¥Æ¡¼¥Ö¥ë
+	# ÅIƒ\[ƒgEƒe[ƒuƒ‹
 	mysql_exec->do("drop table temp_conc_sort");
 	mysql_exec->do("
 		create table temp_conc_sort (
@@ -182,8 +229,8 @@ sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
 
 	$sql = '';
 	$sql .= "INSERT INTO temp_conc_sort ( conc_id )\n";
-	$sql .= "SELECT temp_conc.id\n";
-	$sql .= "FROM   temp_conc,";
+	$sql .= "SELECT temp_concl.id\n";
+	$sql .= "FROM   temp_concl,";
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_$i,";
@@ -194,12 +241,12 @@ sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
 		if ($args{$i} eq "id"){ last; }
 		if ($n == 0){
 			$sql .= "WHERE\n";
-			$sql .= " temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
+			$sql .= " temp_concl.$args{$i} = temp_conc_$i.hyoso_id\n";
 		} else {
-			$sql .= "AND temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
+			$sql .= "AND temp_concl.$args{$i} = temp_conc_$i.hyoso_id\n";
 			my $l = 0;
 			foreach my $h (@temp){
-				$sql .= "AND temp_conc.$h = temp_conc_$i.temp"."$l\n";
+				$sql .= "AND temp_concl.$h = temp_conc_$i.temp"."$l\n";
 				++$l;
 			}
 		}
@@ -211,59 +258,46 @@ sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_"."$i".".id,";
 	}
-	$sql .= "temp_conc.id";
+	$sql .= "temp_concl.id";
 	mysql_exec->do($sql,1);
 }
 
-sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
+sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 	my $self = shift;
 	print "4: Formating output...\n";
-
-	# º¸Â¦
-	my $sql = 'SELECT CONCAT(';
-	foreach my $i (@{$self->{left}}){
-		$sql .= "$i".'.name,';
-	}
-	chop $sql; $sql .= ")\nFROM\n";
-	$sql .= "temp_conc";
-	$sql .= "	LEFT JOIN  temp_conc_sort ON temp_conc.id = temp_conc_sort.conc_id\n";
-	foreach my $i (@{$self->{left}}){
-		$sql .= "	LEFT JOIN hyoso as $i ON $i".".id = temp_conc.$i\n";
-	}
-	$sql .= "ORDER BY temp_conc_sort.id";
-	my $left = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	
-	# ±¦Â¦
-	$sql = 'SELECT CONCAT(';
-	foreach my $i (@{$self->{right}}){
-		$sql .= "$i".'.name,';
+	my $result;
+	foreach my $i (@{$self->{scanlist}}){
+		my $lr;
+		if (substr($i,0,1) eq 'r'){
+			$lr = 'r';
+		} else {
+			$lr = 'l';
+		}
+		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc$lr,temp_conc_sort )";
+		$sql .= "WHERE";
+		$sql .= "	temp_conc$lr".".$i = hyoso.id\n";
+		$sql .= "	AND temp_conc$lr".".id = temp_conc_sort.conc_id\n";
+		$sql .= "ORDER BY temp_conc_sort.id";
+		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
-	chop $sql; $sql .= ")\nFROM\n";
-	$sql .= "temp_conc";
-	$sql .= "	LEFT JOIN  temp_conc_sort ON temp_conc.id = temp_conc_sort.conc_id\n";
-	foreach my $i (@{$self->{right}}){
-		$sql .= "	LEFT JOIN hyoso as $i ON $i".".id = temp_conc.$i\n";
-	}
-	$sql .= "ORDER BY temp_conc_sort.id";
-	my $right = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-	
-	# ¿¿¤óÃæ
-	$sql  = "SELECT hyoso.name\n";
-	$sql .= "FROM temp_conc, temp_conc_sort, hyoso\n";
-	$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
-	$sql .= "AND temp_conc.center = hyoso.id\n";
-	$sql .= "ORDER BY temp_conc_sort.id";
-	my $center = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-	
 	print "...\n";
-	my @result;
-	my $n = 0;
-	foreach my $c (@{$center}){
-		push @result, [ $left->[$n][0], $c, $right->[$n][0] ];
-		++$n;
+
+	my $return;
+	my $last = mysql_exec->select("SELECT COUNT(*) FROM temp_concl",1)->hundle->fetch->[0];
+	--$last;
+
+	for (my $n = 0; $n <= $last; ++$n){
+		foreach my $i (@{$self->{left}}){
+			$return->[$n][0] .= $result->{$i}[$n][0];
+		}
+		foreach my $i (@{$self->{right}}){
+			$return->[$n][2] .= $result->{$i}[$n][0];
+		}
+		$return->[$n][1] = $result->{center}[$n][0];
 	}
 
-	return \@result;
+	return $return;
 }
 
 1;

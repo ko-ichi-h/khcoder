@@ -76,7 +76,7 @@ sub _new{
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
 	)->pack(-side => 'left');
-	
+
 	unless (defined($gui_window::word_search::katuyo)){
 		$gui_window::word_search::kihon = 1;
 		$gui_window::word_search::katuyo = 0;
@@ -105,6 +105,7 @@ sub _new{
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
+		-command          => sub {$self->conc;},
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => Jcode->new('単語')->sjis);
@@ -117,7 +118,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
 
-	$fra5->Button(
+	$self->{conc_button} = $fra5->Button(
 		-text => Jcode->new('コンコーダンス')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
@@ -143,8 +144,10 @@ sub refresh{
 	# チェックボックスの切り替え
 	if ($gui_window::word_search::kihon){
 		$self->the_check->configure(-state,'normal');
+		$self->conc_button->configure(-state,'normal');
 	} else {
 		$self->the_check->configure(-state,'disable');
+		$self->conc_button->configure(-state,'disable');
 	}
 	
 	# リストの切り替え
@@ -164,6 +167,7 @@ sub refresh{
 			-selectforeground => 'brown',
 			-selectbackground => 'cyan',
 			-selectmode       => 'extended',
+			-command          => sub {$self->conc;},
 		)->pack(-fill =>'both',-expand => 'yes');
 		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
 		if ( $gui_window::word_search::katuyo ){
@@ -268,6 +272,9 @@ sub search{
 sub conc{
 	use gui_window::word_conc;
 	my $self = shift;
+	unless ($gui_window::word_search::kihon){
+		return 0;
+	}
 	
 	# 変数取得
 	my @selected = $self->list->infoSelection;
@@ -323,6 +330,9 @@ sub last_search{
 	my $self = shift;
 	return $self->{last_search};
 }
-
+sub conc_button{
+	my $self = shift;
+	return $self->{conc_button};
+}
 
 1;
