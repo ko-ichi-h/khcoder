@@ -167,6 +167,9 @@ sub delete{
 	$sql .= ')';
 	$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
+	
+	# MySQL DB¤òºï½ü
+	mysql_exec->drop_db($del->dbname);
 }
 
 

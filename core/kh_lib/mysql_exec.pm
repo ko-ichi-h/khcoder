@@ -51,7 +51,7 @@ sub create_new_db{
 
 	# DB作成
 	my $dsn = 
-		"DBI:mysql:database=test;$host;port=$port;mysql_local_infile=1";
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
@@ -60,6 +60,33 @@ sub create_new_db{
 	$dbh->disconnect;
 	
 	return $new_db_name;
+}
+
+# DBのDrop
+sub drop_db{
+	my $drop = $_[1];
+
+	my $dsn = 
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+	my $dbh = DBI->connect($dsn,$username,$password)
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+
+	$dbh->func("dropdb", $drop,$host,$username,$password,'admin')
+		or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
+
+	$dbh->disconnect;
+}
+
+# DB Serverのシャットダウン
+
+sub shutdown_db_server{
+	my $dsn = 
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+	my $dbh = DBI->connect($dsn,$username,$password)
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+
+	$dbh->func("shutdown",$host,$username,$password,'admin')
+		or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
 }
 
 #------------------#
