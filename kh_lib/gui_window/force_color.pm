@@ -80,7 +80,6 @@ sub refresh{
 		$self->list->itemCreate($row,1,-text => Jcode->new($i->[1])->sjis);
 		++$row;
 	}
-	
 }
 
 
