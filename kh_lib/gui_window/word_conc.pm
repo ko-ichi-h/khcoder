@@ -111,6 +111,7 @@ sub _new{
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort1},
+		-width => 6,
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Label(
@@ -122,6 +123,7 @@ sub _new{
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort2},
+		-width => 6,
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Label(
@@ -133,6 +135,7 @@ sub _new{
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort3},
+		-width => 6,
 	)->pack(-anchor=>'e', -side => 'left');
 
 

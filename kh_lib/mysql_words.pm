@@ -39,6 +39,7 @@ sub search{
 				AND hselection.ifuse = 1'."\n";
 		$sql .= "\t\t\tAND (\n";
 		foreach my $i (@query){
+			unless ($i){ next; }
 			my $word;
 			if ($i =~ /%/){
 				$word = "'$i'";

@@ -60,6 +60,7 @@ sub _new{
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$gui_window::word_search::method,
+		-width => 7,
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Checkbutton(
