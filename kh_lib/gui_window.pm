@@ -58,11 +58,6 @@ sub open{
 		$self = $self->_new(@arg);
 		$::main_gui->opened($self->win_name,$self);
 
-		# Windowサイズと位置の指定
-		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
-			$self->win_obj->geometry($g);
-		}
-
 		# Windowアイコンのセット
 		my $icon = $self->win_obj->Photo(
 			-file =>   Tk->findINC('acre.gif')
@@ -88,6 +83,13 @@ sub open{
 
 		# 特殊処理に対応
 		$self->start;
+
+		# Windowサイズと位置の指定
+		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
+			$self->win_obj->geometry($g);
+		} else {
+			#$self->win_obj->update;
+		}
 	}
 	return $self;
 }
