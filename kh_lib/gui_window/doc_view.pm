@@ -143,7 +143,7 @@ sub near{
 	my $id = shift;
 	my $doc = mysql_getdoc->get(
 		doc_id   => $id,
-		w_search => $self->{kyotyo},
+		w_search => $self->{w_search},
 		tani     => $self->{tani},
 	);
 	$self->{doc_id} = $doc->{doc_id};
