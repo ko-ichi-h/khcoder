@@ -8,12 +8,8 @@ use kh_jchar;
 use kh_dictio;
 use mysql_exec;
 
-#--------------------------#
-#   形態素解析直後の処理   #
-#--------------------------#
-
-
-
+# MySQL-Perl間で一度にやりとりするケース数
+my $rows_per_once = 30000;
 
 sub first{
 	
@@ -53,28 +49,6 @@ sub first{
 	mysql_exec->clear_tmp_tables;
 	
 	$::config_obj->in_preprocessing(0);
-
-	#if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
-	#	my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
-	#	my $d = '';
-	#	my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
-	#	my $last = -1;
-	#	while (my $r = $h->fetch){
-	#		if ( $r->[7] != $last){
-	#			$last = $r->[7];
-	#			$d .= "\n";
-	#			$d .= "$r->[0],$r->[1],$r->[2],$r->[3],$r->[4],$r->[5],$r->[6],$r->[7],$r->[8]";
-	#		} else {
-	#			$d .= $r->[8];
-	#		}
-	#	}
-	#	substr($d,0,1) = '';
-	#	open (FT,">$f") or die;
-	#	print FT $d;
-	#	close (FT);
-	#	use kh_jchar;
-	#	kh_jchar->to_sjis($f);
-	#}
 
 }
 
@@ -411,7 +385,8 @@ sub reform{
 
 sub hyosobun{
 	my $self = shift;
-
+	
+	# 各種準備
 	my $t = mysql_exec->select("        # HTMLタグと句読点のhyoso.idを取得
 		SELECT hyoso.name, hyoso.id
 		FROM hyoso
@@ -442,93 +417,100 @@ sub hyosobun{
 		)
 	",1);
 
-	$t = mysql_exec->select("
-		SELECT rowdata.id, hghi.hyoso_id
-			FROM rowdata, hghi
-			WHERE
-					    rowdata.hyoso  = hghi.hyoso
-					AND rowdata.genkei = hghi.genkei
-					AND rowdata.hinshi = hghi.hinshi
-#			ORDER BY rowdata.id
-	",1)->hundle;
-
+	# 初期化
 	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
 		(1,1,0,0,0,0,0,0,0,1);
 	my ($temp, $c, $maru);
-	while (my $d = $t->fetch){
-		if ($d->[0] - $lastrow > 1){              # 改行のチェック
-			++$dan;
-			$bun = 1;
-			unless ($maru){
-				++$bun2;
-			}
+	my $id = 1;
+	# 実行
+	while (1){
+		my $t = mysql_exec->select(
+			$self->hyosobun_sql($id, $id + $rows_per_once),
+			1
+		)->hundle;
+		unless ($t->rows > 0){
+			last;
 		}
-		$lastrow = $d->[0];
-		if (                                      # HTML開始タグのチェック
-			   $IDs->{$d->[1]} eq '<h1>' 
-			|| $IDs->{$d->[1]} eq '<H1>'
-		){
-			++$h1;
-			($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
-				= (0,0,0,0,0,0,1);
-		}
-		elsif (
-			   $IDs->{$d->[1]} eq '<h2>'
-			|| $IDs->{$d->[1]} eq '<H2>'
-		){
-			++$h2;
-			($h3,$h4,$h5,$dan,$bun,$midashi)
-				= (0,0,0,0,0,1)
-		}
-		elsif (
-			   $IDs->{$d->[1]} eq '<h3>'
-			|| $IDs->{$d->[1]} eq '<H3>'
-		){
-			++$h3;
-			($h4,$h5,$dan,$bun,$midashi)
-				= (0,0,0,0,1)
-		}
-		elsif (
-			   $IDs->{$d->[1]} eq '<h4>'
-			|| $IDs->{$d->[1]} eq '<H4>'
-		){
-			++$h4;
-			($h5,$dan,$bun,$midashi)=(0,0,0,1)
-		}
-		elsif (
-			   $IDs->{$d->[1]} eq '<h5>'
-			|| $IDs->{$d->[1]} eq '<H5>'
-		){
-			++$h5;
-			($dan,$bun,$midashi)=(0,0,1)
-		}
+		$id += $rows_per_once;
 
-		                                          # DBに書き込み
-		$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
-		++$c;
-		if ($c == 200){
-			chop $temp;
-			mysql_exec->do("
-				INSERT INTO hyosobun
-				(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
-				VALUES
-					$temp
-			",1);
-			$temp = '';
-			$c    = 0;
-		}
-		if ($IDs->{$d->[1]} eq '。'){             # 句読点のチェック
-			unless ($midashi){
-				++$bun; ++$bun2; $maru = 1;
+
+		while (my $d = $t->fetch){
+			if ($d->[0] - $lastrow > 1){              # 改行のチェック
+				++$dan;
+				$bun = 1;
+				unless ($maru){
+					++$bun2;
+				}
 			}
-		} else {
-			$maru = 0;
+			$lastrow = $d->[0];
+			if (                                      # HTML開始タグのチェック
+				   $IDs->{$d->[1]} eq '<h1>' 
+				|| $IDs->{$d->[1]} eq '<H1>'
+			){
+				++$h1;
+				($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
+					= (0,0,0,0,0,0,1);
+			}
+			elsif (
+				   $IDs->{$d->[1]} eq '<h2>'
+				|| $IDs->{$d->[1]} eq '<H2>'
+			){
+				++$h2;
+				($h3,$h4,$h5,$dan,$bun,$midashi)
+					= (0,0,0,0,0,1)
+			}
+			elsif (
+				   $IDs->{$d->[1]} eq '<h3>'
+				|| $IDs->{$d->[1]} eq '<H3>'
+			){
+				++$h3;
+				($h4,$h5,$dan,$bun,$midashi)
+					= (0,0,0,0,1)
+			}
+			elsif (
+				   $IDs->{$d->[1]} eq '<h4>'
+				|| $IDs->{$d->[1]} eq '<H4>'
+			){
+				++$h4;
+				($h5,$dan,$bun,$midashi)=(0,0,0,1)
+			}
+			elsif (
+				   $IDs->{$d->[1]} eq '<h5>'
+				|| $IDs->{$d->[1]} eq '<H5>'
+			){
+				++$h5;
+				($dan,$bun,$midashi)=(0,0,1)
+			}
+
+			                                          # DBに書き込み
+			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
+			++$c;
+			if ($c == 200){
+				chop $temp;
+				mysql_exec->do("
+					INSERT INTO hyosobun
+					(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
+					VALUES
+						$temp
+				",1);
+				$temp = '';
+				$c    = 0;
+			}
+			if ($IDs->{$d->[1]} eq '。'){             # 句読点のチェック
+				unless ($midashi){
+					++$bun; ++$bun2; $maru = 1;
+				}
+			} else {
+				$maru = 0;
+			}
+			if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
+					$midashi = 0;
+			}
 		}
-		if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
-				$midashi = 0;
-		}
-	}
 	$t->finish;
+	}
+
+	# 残りをDBに投入
 	if ($temp){
 		chop $temp;
 		mysql_exec->do("
@@ -556,10 +538,26 @@ sub hyosobun{
 		alter table hyosobun add index index4
 			(bun_idt)
 	",1);
-
 }
 
-
+sub hyosobun_sql{
+	my $self = shift;
+	my $d1   = shift;
+	my $d2   = shift;
+	
+	my $sql ="
+		SELECT rowdata.id, hghi.hyoso_id
+		FROM rowdata, hghi
+		WHERE
+				    rowdata.hyoso  = hghi.hyoso
+				AND rowdata.genkei = hghi.genkei
+				AND rowdata.hinshi = hghi.hinshi
+				AND rowdata.id >= $d1
+				AND rowdata.id <  $d2
+		ORDER BY rowdata.id
+	";
+	return $sql;
+}
 
 #--------------------------------------#
 #   タグ品詞の抽出語から<>を取り除く   #
@@ -611,29 +609,17 @@ sub tag_fix{
 	$k->finish;
 }
 
+#----------------------------#
+#   平文格納テーブルを作製   #
+
 sub rowtxt{
 	my $self = shift;
 	unless (
 		mysql_exec->select("select max(bun_idt) from hyosobun",1)
 			->hundle->fetch->[0]
 	){ return 0; }
-	
 	$::project_obj->status_bun(1);
 
-	#my $longest = mysql_exec->select("
-	#	SELECT SUM( LENGTH(hyoso.name) ) as len
-	#	FROM hyosobun, hyoso
-	#	WHERE hyoso.id = hyosobun.hyoso_id
-	#	GROUP BY hyosobun.bun_idt
-	#	ORDER BY len DESC
-	#	LIMIT 1
-	#")->hundle->fetch->[0];
-	#++$longest;
-	#print "\nMax length of bun: $longest\n";
-	#if ($longest > 65535){
-	#	gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
-	#}
-	
 	mysql_exec->drop_table("bun_r");
 	mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
 
@@ -643,13 +629,13 @@ sub rowtxt{
 	my $id = 1; my $tc = 0;
 	while (1){
 		my $h = mysql_exec->select(
-			mysql_ready->rowtxt_sql($id, $id + 30000),
+			mysql_ready->rowtxt_sql($id, $id + $rows_per_once),
 			1,
 		)->hundle;
 		unless ($h->rows > 0){
 			last;
 		}
-		$id += 30000;
+		$id += $rows_per_once;
 
 		while (my $i = $h->fetch){
 			++$tc;
@@ -678,7 +664,6 @@ sub rowtxt{
 			}
 		}
 		$h->finish;
-		print "done: $id\n";
 	}
 	
 	if ($values or $temp){
@@ -921,3 +906,28 @@ sub length{
 }
 
 1;
+
+
+__END__
+
+#if ($::config_obj->sqllog){                    # coder_data/*_fm.csv出力
+#	my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
+#	my $d = '';
+#	my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
+#	my $last = -1;
+#	while (my $r = $h->fetch){
+#		if ( $r->[7] != $last){
+#			$last = $r->[7];
+#			$d .= "\n";
+#			$d .= "$r->[0],$r->[1],$r->[2],$r->[3],$r->[4],$r->[5],$r->[6],$r->[7],$r->[8]";
+#		} else {
+#			$d .= $r->[8];
+#		}
+#	}
+#	substr($d,0,1) = '';
+#	open (FT,">$f") or die;
+#	print FT $d;
+#	close (FT);
+#	use kh_jchar;
+#	kh_jchar->to_sjis($f);
+#}
