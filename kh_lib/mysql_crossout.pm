@@ -10,7 +10,7 @@ sub new{
 	my %args  = @_;
 	my $self = \%args;
 	bless $self, $class;
-	
+
 	unless ( length($self->{max}) ){
 		$self->{max} = 0;
 	}
