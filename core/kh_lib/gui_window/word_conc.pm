@@ -6,6 +6,7 @@ use Tk::HList;
 use NKF;
 use mysql_conc;
 use Jcode;
+use gui_widget::tani;
 
 #---------------------#
 #   Window オープン   #
@@ -164,19 +165,44 @@ sub _new{
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-height           => 20,
+		-command          => sub {$mw->after(10,sub{$self->view_doc;});}
 	)->pack(-fill =>'both',-expand => 'yes');
 
+
+	
+	my $status = $fra5->Label(
+		-text => Jcode->new(' 表示単位：')->sjis,
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	
+	$self->{tani_obj} = gui_widget::tani->open(
+		parent => $fra5,
+	);
+	$self->{tani_obj}->win_obj->pack(-side => 'left',-padx => 1);
+
 	$fra5->Button(
-		-text => Jcode->new('文書表示')->sjis,
+		-text => Jcode->new('表示')->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
-	)->pack(-side => 'left',-anchor => 'w');
+	)->pack(-side => 'left',-anchor => 'w',-padx =>1);
+
+	my $status = $fra5->Label(
+		-text => Jcode->new('　　　')->sjis,
+		-font => "TKFN"
+	)->pack(-side => 'left');
 
 	$fra5->Button(
 		-text => Jcode->new('コピー')->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'left',-anchor => 'w');
+
+	my $status = $fra5->Label(
+		-text => Jcode->new('　　　')->sjis,
+		-font => "TKFN"
+	)->pack(-side => 'left');
 
 	my $status = $fra5->Label(
 		-text => 'Ready.',
@@ -184,7 +210,7 @@ sub _new{
 	)->pack(-side => 'right', -anchor => 'e');
 
 	my $hits = $fra5->Label(
-		-text => '  Hits: '
+		-text => 'Hits: '
 	)->pack(-side => 'left');
 
 	MainLoop;
@@ -229,12 +255,16 @@ sub view_doc{
 		return;
 	}
 	my $selected = $selected[0];
-	
+	my $tani = $self->doc_view_tani;
 	my @kyotyo = @{mysql_conc->last_words};
 	my $hyosobun_id = $self->result->[$selected][3];
 
-
-
+	my $view_win = gui_window::doc_view->open;
+	$view_win->view(
+		hyosobun_id => $hyosobun_id,
+		kyotyo      => \@kyotyo,
+		tani        => "$tani",
+	);
 }
 
 
@@ -286,7 +316,7 @@ sub search{
 		-foreground => 'red',
 	);
 	$self->hit_label->configure(
-		-text => "  Hits:"
+		-text => "Hits:"
 	);
 	$self->win_obj->update;
 
@@ -355,7 +385,7 @@ sub search{
 	);
 	my $n = @{$result};
 	$self->hit_label->configure(
-		-text => "  Hits: $n"
+		-text => "Hits: $n"
 	);
 	$self->win_obj->update;
 	
@@ -431,6 +461,7 @@ sub sort1{ my $self = shift; return $self->{sort1};}
 sub sort2{ my $self = shift; return $self->{sort2};}
 sub sort3{ my $self = shift; return $self->{sort3};}
 sub sort{  my $self = shift; return $self->{"sort$_[0]"};}
+sub doc_view_tani{ my $self = shift; return $self->{tani_obj}->tani;}
 sub menu{
 	my $self = shift;
 	my $key = "menu"."$_[0]";

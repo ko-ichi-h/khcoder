@@ -1,5 +1,4 @@
 package gui_window;
-use strict;
 
 use strict;
 use Tk;
@@ -22,6 +21,7 @@ use gui_window::sql_do;
 use gui_window::word_search;
 use gui_window::dictionary;
 use gui_window::word_conc;
+use gui_window::doc_view;
 
 sub open{
 	my $class = shift;

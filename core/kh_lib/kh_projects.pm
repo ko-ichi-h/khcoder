@@ -138,7 +138,7 @@ sub add_new{
 	');
 	$mysql->do("
 		INSERT INTO status (name, status)
-		VALUES ('morpho',0)
+		VALUES ('morpho',0),('bun',0),('dan',0),('h5',0),('h4',0),('h3',0),('h2',0),('h1',0)
 	");
 
 	# プロジェクトを登録

@@ -136,7 +136,83 @@ sub dbname{
 	return $self->{dbname};
 }
 
-
+sub status_h5{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='h5'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'h5'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_h4{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='h4'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'h4'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_h3{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='h3'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'h3'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_h2{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='h2'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'h2'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_h1{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='h1'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'h1'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_bun{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='bun'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'bun'",1)
+				->hundle->fetch->[0];
+	}
+}
+sub status_dan{
+	my $self = shift; my $new  = shift;
+	if ( defined($new) ){
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='dan'",1);
+		return $new;
+	} else {
+		return mysql_exec
+			->select("SELECT status FROM status WHERE name = 'dan'",1)
+				->hundle->fetch->[0];
+	}
+}
 #--------------------------#
 #   ファイル名・パス関連   #
 
