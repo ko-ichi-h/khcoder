@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/bin/perl
 
 use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
