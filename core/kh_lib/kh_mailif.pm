@@ -25,7 +25,7 @@ sub success{
 	$smtp->datasend("Subject:Pre-processing is successfully complete.\n");
 	
 	# ËÜÊ¸
-	$smtp->datasend("Hello $user.\nThis is KH Coder v. $::kh_version.\n\n");
+	$smtp->datasend("Hello $user.\nI am KH Coder v. $::kh_version.\n\n");
 	$smtp->datasend("It is my honor to notify you that I have successfully comleted pre-processing of your data.\n\n");
 	$smtp->datasend("Here is some info.\n");
 	$smtp->datasend("  Computer used:    $host\n");

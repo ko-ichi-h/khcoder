@@ -94,7 +94,6 @@ sub add_direct{
 			$t
 		);
 	}
-
 }
 
 #----------------#
@@ -136,8 +135,33 @@ sub search{
 		return undef;
 	}
 	
+	# 「＃コード無し」の使われ方をチェック
+	my $code_num_check = @{$self->{codes}};
+	my $no_code_flag = 0;
+	foreach my $i (@{$args{selected}}){
+		if ($i == $code_num_check){
+			print "\    'no code\' selected\n";
+			$no_code_flag = 1;
+			last;
+		}
+	}
+	if ($no_code_flag){
+		unless (
+			   (@{$args{selected}} == 1 )
+			|| (
+					   (@{$args{selected}} == 2)
+					&& ($args{selected}->[0] == 0 )
+			   )
+		){
+			print "    error: illegal use of \'no code\'\n";
+			return undef;
+		};
+	}
+	
+	
 	# 合致する文書のリストを作成
 	print "kh_cod::search -> searching...\n";
+		# テーブルの準備
 	mysql_exec->do("
 		create temporary table temp_doc_search(
 			rnum int auto_increment primary key not null,
@@ -145,36 +169,86 @@ sub search{
 			num  int not null
 		)
 	",1);
+	
+		# リストをテーブルに投入
 	my $sql;
 	$sql .= "INSERT INTO temp_doc_search (id, num)\n";
-	$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
-	foreach my $i (@{$args{selected}}){
-		unless ($self->{codes}[$i]->res_table){
-			next;
+			# 「コード無し」を使用している場合
+	if ($no_code_flag){
+		$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
+		my $n = 0;
+		foreach my $i (@{$self->{codes}}){
+			if ($n == 0 && @{$args{selected}} == 1 ){$n = 1; next;}
+			unless ($i->res_table){next;}
+			$sql .=
+				"LEFT JOIN "
+				.$i->res_table
+				." ON $args{tani}.id = "
+				.$i->res_table
+				.".id\n";
+			++$n;
 		}
-		$sql .=
-			"LEFT JOIN "
-			.$self->{codes}[$i]->res_table
-			." ON $args{tani}.id = "
-			.$self->{codes}[$i]->res_table
-			.".id\n";
-	}
-	$sql .= "WHERE\n";
-	my $n = 0;
-	foreach my $i (@{$args{selected}}){
-		if ($n){ $sql .= "$args{method} "; }
-		if ($self->{codes}[$i]->res_table){
+		
+		$sql .= "WHERE\n";
+		if (@{$args{selected}} == 2){
 			$sql .=
 				"IFNULL("
-				.$self->{codes}[$i]->res_table
+				.$self->{codes}[0]->res_table
 				."."
-				.$self->{codes}[$i]->res_col
-				.",0)\n";
-		} else {
-			$sql .= "0\n";
+				.$self->{codes}[0]->res_col
+				.",0)\n AND ";
 		}
-		++$n;
+		$sql .= "NOT (\n";
+		$n = 0;
+		foreach my $i (@{$self->{codes}}){
+			unless  ($n){$n = 1; next;}
+			unless ($i->res_table){next;}
+			$sql .= " OR " if ($n > 1);
+			$sql .=
+				"IFNULL("
+				.$i->res_table
+				."."
+				.$i->res_col
+				.",0)\n";
+			++$n;
+		}
+		
+		$sql .= ")";
 	}
+	
+			# 「コード無し」を使用しない場合
+	else {
+		$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
+		foreach my $i (@{$args{selected}}){
+			unless ($self->{codes}[$i]->res_table){
+				next;
+			}
+			$sql .=
+				"LEFT JOIN "
+				.$self->{codes}[$i]->res_table
+				." ON $args{tani}.id = "
+				.$self->{codes}[$i]->res_table
+				.".id\n";
+		}
+		$sql .= "WHERE\n";
+		my $n = 0;
+		foreach my $i (@{$args{selected}}){
+			if ($n){ $sql .= "$args{method} "; }
+			if ($self->{codes}[$i]->res_table){
+				$sql .=
+					"IFNULL("
+					.$self->{codes}[$i]->res_table
+					."."
+					.$self->{codes}[$i]->res_col
+					.",0)\n";
+			} else {
+				$sql .= "0\n";
+			}
+			++$n;
+		}
+	}
+	
+	
 	mysql_exec->do($sql,1);
 	
 	
@@ -182,6 +256,7 @@ sub search{
 	print "kh_cod::search -> getting word list...\n";
 	my (@words, %words);
 	foreach my $i (@{$args{selected}}){
+		unless ($self->{codes}[$i]){next;}
 		unless ($self->{codes}[$i]->res_table){
 			next;
 		}

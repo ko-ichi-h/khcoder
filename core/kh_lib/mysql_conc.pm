@@ -87,7 +87,7 @@ sub _find{
 
 	# Temp Table作成（left + center）	
 	mysql_exec->drop_table("temp_concl");
-	$sql  = "create table temp_concl (\n";
+	$sql  = "create temporary table temp_concl (\n";
 	$sql .= "id int primary key not null,\n";
 	foreach my $i (@{$self->{left}},'center'){
 		$sql .= "$i int,";
@@ -128,7 +128,7 @@ sub _find{
 	
 	# Temp Table作成（all）
 	mysql_exec->drop_table("temp_conc");
-	$sql  = "create table temp_conc (\n";
+	$sql  = "create temporary table temp_conc (\n";
 	$sql .= "id int primary key not null,\n";
 	foreach my $i (@{$self->{scanlist}}){
 		$sql .= "$i int,";
@@ -181,7 +181,7 @@ sub _sort{                                        # ソート用テーブルの作成
 		mysql_exec->drop_table("temp_conc_$i");
 		if ($args{$i} eq "id"){ last; }
 		mysql_exec->do("
-			create table temp_conc_$i (
+			create temporary table temp_conc_$i (
 				id int auto_increment primary key not null,
 				hyoso_id int not null,
 				count int not null,
@@ -208,7 +208,7 @@ sub _sort{                                        # ソート用テーブルの作成
 	# 最終ソート・テーブル
 	mysql_exec->drop_table("temp_conc_sort");
 	mysql_exec->do("
-		create table temp_conc_sort (
+		create temporary table temp_conc_sort (
 			id int auto_increment primary key not null,
 			conc_id int not null
 		)
