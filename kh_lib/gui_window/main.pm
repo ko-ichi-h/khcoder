@@ -84,6 +84,11 @@ sub if_opened{
 		return 0;
 	}
 }
+sub get{
+	my $self        = shift;
+	my $window_name = shift;
+	return $self->{$window_name};
+}
 sub opened{
 	my $self        = shift;
 	my $window_name = shift;

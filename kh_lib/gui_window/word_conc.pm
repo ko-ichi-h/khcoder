@@ -73,7 +73,7 @@ sub _new{
 	my $e3 = $fra4e->Entry(
 		-width => 2
 	)->pack(side => 'left');
-	$e3->insert('end','20');
+	$e3->insert('end','15');
 
 	$fra4e->Label(
 		-text => Jcode->new('語を取り出す）')->sjis,

@@ -218,37 +218,52 @@ sub _sort{                                        # ソート用テーブルの作成
 sub _format{                                      # 結果の出力
 	my $self = shift;
 	print "4: Formating output...\n";
-	
-	my $result;
-	foreach my $i (@{$self->{scanlist}}){
-		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc,temp_conc_sort )";
-		$sql .= "WHERE";
-		$sql .= "	temp_conc.$i = hyoso.id\n";
-		$sql .= "	AND temp_conc.id = temp_conc_sort.conc_id\n";
-		$sql .= "ORDER BY temp_conc_sort.id";
-		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+
+	# 左側
+	my $sql = 'SELECT CONCAT(';
+	foreach my $i (@{$self->{left}}){
+		$sql .= "$i".'.name,';
 	}
+	chop $sql; $sql .= ")\nFROM\n";
+	$sql .= "temp_conc";
+	$sql .= "	LEFT JOIN  temp_conc_sort ON temp_conc.id = temp_conc_sort.conc_id\n";
+	foreach my $i (@{$self->{left}}){
+		$sql .= "	LEFT JOIN hyoso as $i ON $i".".id = temp_conc.$i\n";
+	}
+	$sql .= "ORDER BY temp_conc_sort.id";
+	my $left = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+	
+	# 右側
+	$sql = 'SELECT CONCAT(';
+	foreach my $i (@{$self->{right}}){
+		$sql .= "$i".'.name,';
+	}
+	chop $sql; $sql .= ")\nFROM\n";
+	$sql .= "temp_conc";
+	$sql .= "	LEFT JOIN  temp_conc_sort ON temp_conc.id = temp_conc_sort.conc_id\n";
+	foreach my $i (@{$self->{right}}){
+		$sql .= "	LEFT JOIN hyoso as $i ON $i".".id = temp_conc.$i\n";
+	}
+	$sql .= "ORDER BY temp_conc_sort.id";
+	my $right = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+	
+	# 真ん中
+	$sql  = "SELECT hyoso.name\n";
+	$sql .= "FROM temp_conc, temp_conc_sort, hyoso\n";
+	$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
+	$sql .= "AND temp_conc.center = hyoso.id\n";
+	$sql .= "ORDER BY temp_conc_sort.id";
+	my $center = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+	
 	print "...\n";
-	
-	#open (TOUT,">test2.txt") or die;
-	#use Data::Dumper;
-	#print TOUT Dumper($result);
-
-	my $return;
-	my $last = mysql_exec->select("SELECT COUNT(*) FROM temp_conc",1)->hundle->fetch->[0];
-	--$last;
-
-	for (my $n = 0; $n <= $last; ++$n){
-		foreach my $i (@{$self->{left}}){
-			$return->[$n][0] .= $result->{$i}[$n][0];
-		}
-		foreach my $i (@{$self->{right}}){
-			$return->[$n][2] .= $result->{$i}[$n][0];
-		}
-		$return->[$n][1] = $result->{center}[$n][0];
+	my @result;
+	my $n = 0;
+	foreach my $c (@{$center}){
+		push @result, [ $left->[$n][0], $c, $right->[$n][0] ];
+		++$n;
 	}
 
-	return $return;
+	return \@result;
 }
 
 1;
