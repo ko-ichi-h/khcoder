@@ -106,7 +106,6 @@ sub _find{
 	$sql .= ")";
 	mysql_exec->do($sql,1);
 
-
 	$sql = '';
 	$sql .= "INSERT INTO temp_concl\n(id, ";
 	foreach my $i (@{$self->{left}},'center'){
@@ -122,11 +121,9 @@ sub _find{
 	$sql .= "\n";
 	$sql .= "FROM hyosobun as center\n";
 	foreach my $i (@{$self->{left}}){
-		my $lr = substr($i,0,1);
-		if ($lr eq "l"){ $lr = '-';} else {$lr = '+';}
 		my $num = $i;
 		substr($num,0,1) = '';
-		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id $lr $num ) = $i".".id\n";
+		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id - $num ) = $i".".id\n";
 	}
 	$sql .= "WHERE\n";
 	my $n = 0;
@@ -139,11 +136,11 @@ sub _find{
 	}
 	mysql_exec->do($sql,1);
 	
-	# Temp Table作成（right）
-	mysql_exec->do("drop table temp_concr");
-	$sql  = "create table temp_concr (\n";
+	# Temp Table作成（all）
+	mysql_exec->do("drop table temp_conc");
+	$sql  = "create table temp_conc (\n";
 	$sql .= "id int primary key not null,\n";
-	foreach my $i (@{$self->{right}},'center'){
+	foreach my $i (@{$self->{scanlist}}){
 		$sql .= "$i int,";
 	}
 	chop $sql;
@@ -151,35 +148,29 @@ sub _find{
 	mysql_exec->do($sql,1);
 	
 	$sql = '';
-	$sql .= "INSERT INTO temp_concr\n(id, ";
-	foreach my $i (@{$self->{right}},'center'){
+	$sql .= "INSERT INTO temp_conc\n(id, ";
+	foreach my $i (@{$self->{scanlist}}){
 		$sql .= "$i,";
 	}
 	chop $sql;
 	$sql .= ")\n";
 	$sql .= "SELECT center.id, ";
-	foreach my $i (@{$self->{right}},'center'){
+	foreach my $i (@{$self->{left}}, 'center'){
+		$sql .= "temp_concl.$i,";
+	}
+	foreach my $i (@{$self->{right}}){
 		$sql .= "$i".".hyoso_id,";
 	}
 	chop $sql;
 	$sql .= "\n";
-	$sql .= "FROM hyosobun as center\n";
+	$sql .= "FROM hyosobun as center, temp_concl\n";
 	foreach my $i (@{$self->{right}}){
-		my $lr = substr($i,0,1);
-		if ($lr eq "l"){ $lr = '-';} else {$lr = '+';}
 		my $num = $i;
 		substr($num,0,1) = '';
-		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id $lr $num ) = $i".".id\n";
+		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id + $num ) = $i".".id\n";
 	}
-	$sql .= "WHERE\n";
-	my $n = 0;
-	foreach my $i (@hyoso){
-		if ($n){
-			$sql .= 'OR ';
-		}
-		$sql .= "center.hyoso_id = $i\n";
-		++$n;
-	}
+	$sql .= "WHERE center.id = temp_concl.id";
+
 	mysql_exec->do($sql,1);
 }
 
@@ -210,14 +201,14 @@ sub _sort{                                        # ソート用テーブルの作成
 		}
 		$sql .= "hyoso_id, count )\n";
 		$sql .= "SELECT $group $args{$i}, count(*) as count\n";
-		$sql .= "FROM temp_concl, temp_concr\n";
-		$sql .= "WHERE temp_concl.id = temp_concr.id\n";
+		$sql .= "FROM temp_conc\n";
 		$sql .= "GROUP BY $group $args{$i}\n";
 		$sql .= "ORDER BY count DESC";
 		mysql_exec->do($sql,1);
 		$group .= "$args{$i},";
 		++$n;
 	}
+
 	# 最終ソート・テーブル
 	mysql_exec->do("drop table temp_conc_sort");
 	mysql_exec->do("
@@ -229,37 +220,26 @@ sub _sort{                                        # ソート用テーブルの作成
 
 	$sql = '';
 	$sql .= "INSERT INTO temp_conc_sort ( conc_id )\n";
-	$sql .= "SELECT temp_concl.id\n";
-	$sql .= "FROM   temp_concl LEFT JOIN temp_concr ON temp_concl.id = temp_concr.id,";
+	$sql .= "SELECT temp_conc.id\n";
+	$sql .= "FROM   temp_conc,";
+	my @temp;
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_$i,";
 	}
 	chop $sql; $sql .= "\n";
-	$n = 0; my @temp;
+	my @temp; my $n = 0;
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
-		my $lr;
-		if (substr($args{$i},0,1) eq 'r'){
-			$lr = 'r';
-		} else {
-			$lr = 'l';
-		}
-		
 		if ($n == 0){
 			$sql .= "WHERE\n";
-			$sql .= "temp_conc$lr.$args{$i} = temp_conc_$i.hyoso_id\n";
+			$sql .= "temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
+		} else {
+			$sql .= "AND temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
 		}
-		$sql .= "AND temp_conc$lr.$args{$i} = temp_conc_$i.hyoso_id\n";
 		my $l = 0;
 		foreach my $h (@temp){
-			my $lr;
-			if (substr($h,0,1) eq 'r'){
-				$lr = 'r';
-			} else {
-				$lr = 'l';
-			}
-			$sql .= "AND temp_conc$lr.$h = temp_conc_$i.temp"."$l\n";
+			$sql .= "AND temp_conc.$h = temp_conc_$i.temp"."$l\n";
 			++$l;
 		}
 		push @temp, $args{$i};
@@ -270,7 +250,7 @@ sub _sort{                                        # ソート用テーブルの作成
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_"."$i".".id,";
 	}
-	$sql .= "temp_concl.id";
+	$sql .= "temp_conc.id";
 	mysql_exec->do($sql,1);
 }
 
@@ -280,16 +260,10 @@ sub _format{                                      # 結果の出力
 	
 	my $result;
 	foreach my $i (@{$self->{scanlist}}){
-		my $lr;
-		if (substr($i,0,1) eq 'r'){
-			$lr = 'r';
-		} else {
-			$lr = 'l';
-		}
-		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc$lr,temp_conc_sort )";
+		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc,temp_conc_sort )";
 		$sql .= "WHERE";
-		$sql .= "	temp_conc$lr".".$i = hyoso.id\n";
-		$sql .= "	AND temp_conc$lr".".id = temp_conc_sort.conc_id\n";
+		$sql .= "	temp_conc".".$i = hyoso.id\n";
+		$sql .= "	AND temp_conc".".id = temp_conc_sort.conc_id\n";
 		$sql .= "ORDER BY temp_conc_sort.id";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
@@ -303,10 +277,10 @@ sub _format{                                      # 結果の出力
 		foreach my $i (@{$self->{left}}){
 			$return->[$n][0] .= $result->{$i}[$n][0];
 		}
+		$return->[$n][1] = $result->{center}[$n][0];
 		foreach my $i (@{$self->{right}}){
 			$return->[$n][2] .= $result->{$i}[$n][0];
 		}
-		$return->[$n][1] = $result->{center}[$n][0];
 	}
 
 	return $return;
