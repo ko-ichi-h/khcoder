@@ -154,7 +154,7 @@ sub _new{
 		-header           => 1,
 		-itemtype         => 'text',
 		-font             => 'TKFN',
-		-columns          => 7,
+		-columns          => 6,
 		-padx             => 2,
 		-background       => 'white',
 		-selectforeground => 'brown',
@@ -165,12 +165,12 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{rlist}->header('create',0,-text => Jcode->new('½ç°Ì')->sjis);
-	$self->{rlist}->header('create',1,-text => Jcode->new('Ã±¸ì')->sjis);
+	$self->{rlist}->header('create',1,-text => Jcode->new('Ãê½Ğ¸ì')->sjis);
 	$self->{rlist}->header('create',2,-text => Jcode->new('ÉÊ»ì')->sjis);
 	$self->{rlist}->header('create',3,-text => Jcode->new('Á´ÂÎ')->sjis);
 	$self->{rlist}->header('create',4,-text => Jcode->new('¶¦µ¯')->sjis);
-	$self->{rlist}->header('create',5,-text => Jcode->new('¾ò·ïÉÕ¤­³ÎÎ©')->sjis);
-	$self->{rlist}->header('create',6,-text => Jcode->new(' ¥½¡¼¥È')->sjis);
+	#$self->{rlist}->header('create',5,-text => Jcode->new('¾ò·ïÉÕ¤­³ÎÎ©')->sjis);
+	$self->{rlist}->header('create',5,-text => Jcode->new(' ¥½¡¼¥È')->sjis);
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
@@ -210,7 +210,7 @@ sub _new{
 				[Jcode->new('³ÎÎ¨Èæ')->sjis , 'hi'],
 				[Jcode->new('Jaccard')->sjis , 'jac'],
 				[Jcode->new('Ochiai')->sjis , 'ochi'],
-				[Jcode->new('¦Ö2¾è')->sjis , 'chi'],
+				#[Jcode->new('¦Ö2¾è')->sjis , 'chi'],
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
@@ -444,24 +444,24 @@ sub display{
 			$self->{rlist}->itemCreate(           # Á´ÂÎ
 				$row,
 				3,
-				-text  => "$i->[2]"." ("."$i->[3]".")",
+				-text  => " $i->[2]"." ("."$i->[3]".")",
 				-style => $numb_style
 			);
 			$self->{rlist}->itemCreate(           # ¶¦µ¯
 				$row,
 				4,
-				-text  => "$i->[4]",
+				-text  => " $i->[4]"." ("."$i->[5]".")",
 				-style => $numb_style
 			);
-			$self->{rlist}->itemCreate(           # ¾ò·ïÉÕ¤­³ÎÎ©
-				$row,
-				5,
-				-text  => "$i->[5]",
-				-style => $numb_style
-			);
+			#$self->{rlist}->itemCreate(           # ¾ò·ïÉÕ¤­³ÎÎ©
+			#	$row,
+			#	5,
+			#	-text  => "$i->[5]",
+			#	-style => $numb_style
+			#);
 			$self->{rlist}->itemCreate(           # Sort
 				$row,
-				6,
+				5,
 				-text  => " ".sprintf("%.4f",$i->[6]),
 				-style => $numb_style
 			);
