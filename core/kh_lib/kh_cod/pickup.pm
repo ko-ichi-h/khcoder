@@ -5,9 +5,14 @@ package kh_cod::pickup;
 use base qw(kh_cod);
 use strict;
 
+my $records_per_once = 1000;
+
 sub pick{
 	my $self = shift;
 	my %args = @_;
+	
+	use Benchmark;                                    # 時間計測用
+	my $t0 = new Benchmark;                           # 時間計測用
 	
 	# 取り合えずコーディング
 	
@@ -23,8 +28,63 @@ sub pick{
 		);
 		return 0;
 	}
-	
-	# SQL文の作製
+
+	# 書き出し
+
+	open (F,">$args{file}") or 
+		gui_errormsg->open(
+			thefile => $args{file},
+			type    => 'file'
+		);
+	my $last = 0;
+	my $id = 1;
+	while (1){
+		my $sth = mysql_exec->select(
+			$self->sql(
+				tani    => $args{tani},
+				pick_hi => $args{pick_hi},
+				d1      => $id,
+				d2      => $id + $records_per_once,
+			),
+			1
+		)->hundle;
+		unless ($sth->rows > 0){
+			last;
+		}
+		$id += $records_per_once;
+
+		while (my $i = $sth->fetchrow_hashref){
+			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){
+				if ($last){
+					print F "\n";
+					$last = 0;
+				}
+				print F "$i->{rowtxt}\n";
+			} else {
+				if ($last == $i->{dan_id}){
+					print F "$i->{rowtxt}";
+				}
+				elsif ($i->{dan_id} == 1){
+					print F "$i->{rowtxt}";
+					$last = 1;
+				} else {
+					print F "\n$i->{rowtxt}";
+					$last = $i->{dan_id};
+				}
+			}
+		}
+		print "$id,";
+	}
+	close (F);
+
+	my $t1 = new Benchmark;                           # 時間計測用
+	print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
+
+}
+
+sub sql{
+	my $self = shift;
+	my %args = @_;
 	
 	my $sql;
 	if ($args{pick_hi}){
@@ -47,6 +107,8 @@ sub pick{
 		$sql .= "WHERE\n";
 		$sql .= "
 			    bun.id = bun_r.id
+			AND bun.id >= $args{d1}
+			AND bun.id <  $args{d2}
 			AND (
 				IFNULL(ct_pickup.num,0)
 				OR
@@ -72,41 +134,7 @@ sub pick{
 		}
 		
 	}
-	my $sth = mysql_exec->select("$sql",1)->hundle;
-	
-	# 書き出し
-
-	open (F,">$args{file}") or 
-		gui_errormsg->open(
-			thefile => $args{file},
-			type    => 'file'
-		);
-	
-	my $last = 0;
-	while (my $i = $sth->fetchrow_hashref){
-		if ($i->{bun_id} == 0 && $i->{dan_id} == 0){
-			if ($last){
-				print F "\n";
-				$last = 0;
-			}
-			print F "$i->{rowtxt}\n";
-		} else {
-			if ($last == $i->{dan_id}){
-				print F "$i->{rowtxt}";
-			}
-			elsif ($i->{dan_id} == 1){
-				print F "$i->{rowtxt}";
-				$last = 1;
-			} else {
-				print F "\n$i->{rowtxt}";
-				$last = $i->{dan_id};
-			}
-		}
-	}
-	close (F);
 }
-
-
 
 
 1;
