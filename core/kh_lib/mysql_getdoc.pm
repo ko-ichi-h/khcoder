@@ -91,6 +91,7 @@ sub get_body{
 		$sql .= "    AND hyosobun.$i"."_id = $tani.$i"."_id\n";
 		if ($tani eq $i){last;}
 	}
+	$sql   .= "ORDER BY hyosobun.id";
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 }
 
