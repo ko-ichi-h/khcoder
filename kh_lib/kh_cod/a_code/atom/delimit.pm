@@ -2,6 +2,14 @@ package kh_cod::a_code::atom::delimit;
 use base qw(kh_cod::a_code::atom);
 use strict;
 
+my %conv = (
+	'|'  => 'or',
+	'&'  => 'and',
+	'|!' => 'or not',
+	'&!' => 'and not',
+	'==' => '=',
+);
+
 sub ready{
 	return 1;
 }
@@ -11,10 +19,36 @@ sub tables{
 }
 sub expr{
 	my $self = shift;
-	return $self->raw;
+	my $t = $self->raw;
+	
+	if (defined($conv{$t})){
+		$t = $conv{$t};
+	}
+	return $t;
 }
 sub pattern{
-	return '^and$|^or$|^not$|^\($|^\)$';
+	my $t = '';
+	$t .= '^and$';            $t .= '|';
+	$t .= '^or$';             $t .= '|';
+	$t .= '^not$';            $t .= '|';
+	$t .= '^\($';             $t .= '|';
+	$t .= '^\)$';             $t .= '|';
+	$t .= '^\&$';             $t .= '|';
+	$t .= '^\|$';             $t .= '|';
+	$t .= '^\!$';             $t .= '|';
+	$t .= '^\&\!$';           $t .= '|';
+	$t .= '^\|\!$';           $t .= '|';
+	$t .= '^\>$';             $t .= '|';
+	$t .= '^\>=$';            $t .= '|';
+	$t .= '^\<$';             $t .= '|';
+	$t .= '^\<=$';            $t .= '|';
+	$t .= '^==$';             $t .= '|';
+	$t .= '^\+$';             $t .= '|';
+	$t .= '^\-$';             $t .= '|';
+	$t .= '^\*$';             $t .= '|';
+	$t .= '^\/$';             $t .= '|';
+	$t .= '^\d+$';
+	return $t;
 }
 
 sub name{
@@ -24,31 +58,3 @@ sub name{
 
 
 __END__
-
-
-sub if_delimit{
-	my $ifdelimit = 0;
-	if (
-		($_[0] eq '|')
-		|| ($_[0] eq '&')
-		|| ($_[0] eq '(')
-		|| ($_[0] eq ')')
-		|| ($_[0] eq '!')
-		|| ($_[0] eq '&!')
-		|| ($_[0] eq '|!')
-		|| ($_[0] eq 'and')
-		|| ($_[0] eq 'or')
-		|| ($_[0] eq 'not')
-		|| ($_[0] eq '+')
-		|| ($_[0] eq '-')
-		|| ($_[0] eq '>')
-		|| ($_[0] eq '>=')
-		|| ($_[0] eq '<=')
-		|| ($_[0] eq '<')
-		|| ($_[0] eq '==')
-		|| ($_[0] =~ /^\d+$/)
-	){
-		$ifdelimit = 1;
-	}
-	return($ifdelimit);
-}
