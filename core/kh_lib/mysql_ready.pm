@@ -10,7 +10,7 @@ use kh_dictio;
 use kh_mailif;
 use mysql_exec;
 use mysql_ready::check;
-
+use mysql_ready::doclength;
 
 my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
 my $data_per_1ins = 200;      # 一度にINSERTする値の数
@@ -750,6 +750,7 @@ sub tanis{
 				bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('bun');
 	}
 	
 	
@@ -787,6 +788,7 @@ sub tanis{
 				dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('dan');
 	}
 	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -820,6 +822,7 @@ sub tanis{
 				h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('h5');
 	}
 	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -851,6 +854,7 @@ sub tanis{
 				h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('h4');
 	}
 	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -880,6 +884,7 @@ sub tanis{
 				h3_id,h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('h3');
 	}
 	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -907,6 +912,7 @@ sub tanis{
 				h2_id,h1_id
 			)
 		",1);
+		mysql_ready::doclength->make_each('h2');
 	}
 	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
@@ -926,7 +932,8 @@ sub tanis{
 			GROUP BY h1_id
 			ORDER BY h1_id
 		",1);
-	mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
+		mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
+		mysql_ready::doclength->make_each('h1');
 	}
 }
 

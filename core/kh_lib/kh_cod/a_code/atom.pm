@@ -7,9 +7,14 @@ use kh_cod::a_code::atom::code;
 use kh_cod::a_code::atom::hinshi;
 use kh_cod::a_code::atom::string;
 use kh_cod::a_code::atom::number;
+use kh_cod::a_code::atom::length;
 
 BEGIN {
 	use vars qw(@pattern);
+	push @pattern, [
+		kh_cod::a_code::atom::length->pattern,
+		kh_cod::a_code::atom::length->name
+	];
 	push @pattern, [
 		kh_cod::a_code::atom::number->pattern,
 		kh_cod::a_code::atom::number->name

@@ -1,11 +1,13 @@
-package mysql_doclength;
+package mysql_ready::doclength;
 use strict;
 
 my $records_per_once = 200;
 
 use mysql_exec;
 
-sub make{
+
+
+sub make_each{
 	my $class = shift;
 	my $self;
 	$self->{tani} = shift;
@@ -13,15 +15,13 @@ sub make{
 	$self->{html} = "99999";
 
 	bless $self, $class;
-	
 
-	
-	mysql_exec->drop_table("tmp_len_$self->{tani}");
+	mysql_exec->drop_table("$self->{tani}_length");
 	mysql_exec->do("
-		CREATE TABLE tmp_len_$self->{tani} (
+		CREATE TABLE $self->{tani}_length (
 			id int primary key not null,
-			length_c int,
-			length_w int
+			c int,
+			w int
 		)
 	",1);
 
@@ -43,7 +43,7 @@ sub sql{
 	my $d1 = shift;
 	my $d2 = shift;
 	
-	my $sql = "INSERT INTO tmp_len_$self->{tani} (id, length_c, length_w)\n";
+	my $sql = "INSERT INTO $self->{tani}_length (id, c, w)\n";
 	$sql .= "SELECT $self->{tani}.id, sum(hyoso.len), count(*)\n";
 	$sql .= "FROM hyosobun, hyoso, $self->{tani}, genkei\n";
 	$sql .= "WHERE\n";
@@ -62,7 +62,7 @@ sub sql{
 	$sql .= "	AND genkei.khhinshi_id != $self->{html}\n";
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id < $d2\n";
-	$sql .= "GROUP BY h5.id";
+	$sql .= "GROUP BY $self->{tani}.id";
 	
 	return $sql;
 }

@@ -217,7 +217,7 @@ sub search{
 	
 			# 「コード無し」を使用しない場合
 	else {
-		$sql .= "SELECT $args{tani}.id,";
+		$sql .= "SELECT $args{tani}.id, 100 - (";
 		my $nn = 0;
 		foreach my $i (@{$args{selected}}){
 			if ($nn){
@@ -236,11 +236,11 @@ sub search{
 			}
 		}
 		if ($nn = 2){
-			$sql .= " as tf\n";
+			$sql .= ") / $args{tani}_length.w as tf\n";
 		} else {
-			$sql .= "1 as tf\n";
+			$sql .= "0) as tf\n";
 		}
-		$sql .= "FROM $args{tani}\n";
+		$sql .= "FROM $args{tani}_length, $args{tani}\n";
 		foreach my $i (@{$args{selected}}){
 			unless ($self->{codes}[$i]->res_table){
 				next;
@@ -253,6 +253,7 @@ sub search{
 				.".id\n";
 		}
 		$sql .= "WHERE\n";
+		$sql .= "$args{tani}.id = $args{tani}_length.id AND (\n";
 		my $n = 0;
 		foreach my $i (@{$args{selected}}){
 			if ($n){ $sql .= "$args{method} "; }
@@ -268,8 +269,9 @@ sub search{
 			}
 			++$n;
 		}
+		$sql .= ")\n";
 		if ($args{order} eq 'tf'){
-			$sql .= "ORDER BY tf DESC";
+			$sql .= "ORDER BY tf,$args{tani}.id";
 		}
 	}
 	

@@ -94,7 +94,7 @@ sub ready{
 	
 	# ATOMごとのテーブルを作製
 	my %words;
-	my ($n,$n0, $n1,$unique_check,@tmp_tab) = (0,0,0,undef,undef);
+	my ($length_frag,$n,$n0, $n1,$unique_check,@tmp_tab) = (0,0,0,0,undef,undef);
 	my @t = ();
 	foreach my $i (@{$self->{condition}}){
 		$i->ready($tani);
@@ -104,7 +104,8 @@ sub ready{
 				++$words{$h};
 			}
 		}
-		if ($i->tables){
+		if ($i->name eq 'length'){$length_frag = 1;}
+		if ( ($i->tables) and not ($i->name eq 'length') ){
 			$n0 += @{$i->tables};
 			$n  += @{$i->tables};
 			if ($n0 > 25){
@@ -124,6 +125,7 @@ sub ready{
 	}
 	my @words = (keys %words);
 	$self->{hyosos} = \@words;
+	if ($length_frag) {push @{$self->{tables}},"$tani"."_length";}
 	
 	#if ($n < 30){
 	#	$self->{parents} = 0;
