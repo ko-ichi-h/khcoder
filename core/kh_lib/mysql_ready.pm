@@ -3,7 +3,6 @@ use strict;
 use DBI;
 use Jcode;
 use Benchmark;
-
 use kh_project;
 use kh_jchar;
 use mysql_exec;
