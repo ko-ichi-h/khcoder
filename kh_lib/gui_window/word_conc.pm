@@ -111,6 +111,19 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'left',-anchor => 'w');
 
+
+	$fra5->Button(
+		-text => Jcode->new('テスト')->sjis,
+		-font => "TKFN",
+		-command => sub{ $mw->after(10,sub {
+			my ($e1, $e2) = $self->list->xview;
+			print "xview: $e1, $e2\n";
+			my $width = $self->list->cget('width');
+			print "width: $width\n";
+		});} 
+	)->pack(-side => 'left',-anchor => 'w');
+
+
 	my $status = $fra5->Label(
 		-text => 'Ready.',
 		-foreground => 'blue'
@@ -147,6 +160,7 @@ sub search{
 	# 検索実行
 	my $result = mysql_conc->a_word(
 		query  => $query,
+		length => 20,
 	);
 
 
@@ -178,15 +192,13 @@ sub search{
 	my $row = 0;
 	foreach my $i (@{$result}){
 		$self->list->add($row,-at => "$row");
-		
-		
 		$self->list->itemCreate(
 			$row,
 			0,
 			-text  => nkf('-s -E',$i->[0]),
 			-style => $right_style
 		);
-		$self->list->itemCreate(
+		my $center = $self->list->itemCreate(
 			$row,
 			1,
 			-text  => nkf('-s -E',$i->[1]),
@@ -205,6 +217,24 @@ sub search{
 		-foreground => 'blue',
 	);
 	$self->win_obj->update;
+	$self->list->xview(moveto => 1);
+	$self->list->yview(0);
+	$self->win_obj->update;
+
+	my $w_col0 = $self->list->columnWidth(0);
+	my $w_col1 = $self->list->columnWidth(1);
+	my $w_col2 = $self->list->columnWidth(2);
+
+	my $visible = ($w_col0 + $w_col1 + $w_col2 - $self->list->xview);
+	my $v_center = int( $visible / 2);
+	my $s_center = $w_col0 + ( $w_col1 / 2 );
+	my $s_scroll = $s_center - $v_center;
+	if ($s_scroll < 0){
+		$self->list->xview(moveto => 0);
+		return 1;
+	}
+	my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
+	$self->list->xview(moveto => $fragment);
 
 }
 
