@@ -3,6 +3,11 @@ use strict;
 
 sub output{
 	
+	my $file_cha1 = $::project_obj->file_base.'_chasen1.csv';
+	my $file_cha2 = $::project_obj->file_base.'_chasen2.csv';
+	my $file_kh1 = $::project_obj->file_base.'_kh1.csv';
+	my $file_kh2 = $::project_obj->file_base.'_kh2.csv';
+
 	my $dun_num = mysql_exec->select("select count(*) from dan")
 		->hundle->fetch->[0];
 
@@ -31,7 +36,7 @@ sub output{
 				last;
 			}
 		}
-		unless ($chk){
+		if ( ($chk == 0) && ($i ne 'タグ') ){
 			gui_errormsg->open(
 				msg  => "error: $i",
 				type => 'msg',
@@ -65,7 +70,7 @@ sub output{
 	$h = mysql_exec->select($sql)->hundle;
 
 	# 書き出し
-	open (OUT,">hinshi1_1.csv") or die;
+	open (OUT,">$file_cha1") or die;
 	my $fstline;                                      # 一行目
 	foreach my $i (@hinshi){
 		$fstline .= Jcode->new("$i,")->sjis;
@@ -110,7 +115,7 @@ sub output{
 
 	# 書き出し
 
-	open (OUT,">hinshi1_2.csv") or die;
+	open (OUT,">$file_cha2") or die;
 	print OUT "$fstline\n";
 	for (my $n = 1; $n <= $dun_num; ++$n){
 		my $line;
@@ -135,6 +140,10 @@ sub output{
 	my $h = mysql_exec->select("
 		SELECT   khhinshi_id, name
 		FROM     hselection
+		WHERE
+		             name != 'HTMLタグ'
+		         and name != 'タグ'
+		ORDER BY khhinshi_id
 	")->hundle or die;
 	while (my $i = $h->fetch){
 		$hinshi{$i->[0]} = $i->[1];
@@ -160,7 +169,7 @@ sub output{
 	$h = mysql_exec->select($sql)->hundle;
 
 	# 書き出し
-	open (OUT,">hinshi2_1.csv") or die;
+	open (OUT,">$file_kh1") or die;
 	my $fstline;                                      # 一行目
 	foreach my $i (sort {$a <=> $b} keys %hinshi){
 		$fstline .= Jcode->new("$hinshi{$i},")->sjis;
@@ -205,7 +214,7 @@ sub output{
 
 	# 書き出し
 
-	open (OUT,">hinshi2_2.csv") or die;
+	open (OUT,">$file_kh2") or die;
 	print OUT "$fstline\n";
 	for (my $n = 1; $n <= $dun_num; ++$n){
 		my $line;
@@ -307,7 +316,7 @@ sub list{
 		'語断片',
 		'未知語',
 #		'複合名詞',
-		'タグ'
+#		'タグ'
 	);
 	return \@list;
 }
