@@ -103,18 +103,18 @@ sub search{
 	
 	$self->{tani} = $args{tani};
 	
-	# コーディング結果をクリア
-	foreach my $i (@{$self->{codes}}){
-		$i->clear;
-	}
-	$self->{valid_codes} = undef;
-	
-	# 取りあえず全部コーディング (もうちょっと効率的な方法ないかなぁ・・・)
+	# コーディング
 	print "kh_cod::search -> coding...\n";
-	$self->code($self->{tani}) or return 0;
-	unless ($self->valid_codes){ return undef; }
-	
+	if ($self->{coded}){                # 一度コーディングされている場合
+		$self->{codes}[0]->clear;
+		$self->{codes}[0]->ready($args{tani});
+		$self->{codes}[0]->code("ct_$args{tani}_code_0");
+	} else {                            # 一度もされていない場合
+		$self->code($self->{tani}) or return 0;
+	}
+
 	# AND条件の時に、0コードが存在した場合はreturn
+	unless ($self->valid_codes){ return undef; }
 	unless ($self->{valid_codes}){
 		return undef;
 	}
@@ -185,7 +185,7 @@ sub search{
 	@words = (keys %words);
 	
 
-	
+	$self->{coded} = 1;
 	return (\@result,\@words);
 }
 
