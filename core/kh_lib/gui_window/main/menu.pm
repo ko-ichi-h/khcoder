@@ -82,18 +82,7 @@ sub make{
 		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
-	
-	
-		$self->{m_b1_mark} = $f->command(
-				-label => Jcode->new('語の取捨選択')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::dictionary->open;
-				})},
-				-state => 'disable'
-			);
-	
-	
+
 		$self->{m_b2_morpho} = $f->command(
 				-label => Jcode->new('前処理の実行')->sjis,
 				-font => "TKFN",
@@ -109,10 +98,24 @@ sub make{
 				})},
 				-state => 'disable'
 			);
+		$f->separator();
+		$self->{m_b1_mark} = $f->command(
+				-label => Jcode->new('語の取捨選択')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::dictionary->open;
+				})},
+				-state => 'disable'
+			);
 
-
-
-
+		$self->{m_b3_check} = $f->command(
+				-label => Jcode->new('形態素解析結果の確認')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_check->open;
+				})},
+				-state => 'disable'
+			);
 
 	#------------#
 	#   ツール   #
@@ -147,7 +150,18 @@ sub make{
 				})},
 				-state => 'disable'
 			);
+		$f3->separator();
 
+		$self->{t_word_list} = $f3->command(
+				-label => Jcode->new('品詞別 出現回数順 リスト')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $target = $::project_obj->file_WordList;
+					mysql_words->csv_list($target);
+					gui_OtherWin->open($target);
+				})},
+				-state => 'disable'
+			);
 
 		$f3->separator();
 		
@@ -162,18 +176,7 @@ sub make{
 				-state => 'disable'
 			);
 		
-		$f3->separator();
 
-		$self->{t_word_list} = $f3->command(
-				-label => Jcode->new('品詞別 出現回数順 リスト')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_WordList;
-					mysql_words->csv_list($target);
-					gui_OtherWin->open($target);
-				})},
-				-state => 'disable'
-			);
 
 		#$self->{t_word_print} = $f3->command(
 		#		-label => Jcode->new('リストの印刷（LaTeX）')->sjis,
@@ -295,6 +298,7 @@ sub refresh{
 		't_word_list',
 		't_word_freq',
 		't_word_conc',
+		'm_b3_check',
 	);
 
 	# 状態変更
