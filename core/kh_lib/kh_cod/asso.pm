@@ -283,10 +283,8 @@ sub asso{
 	print "3: delete unnecessary words...\n";
 	my (@words, %words);                          # 表層リストを取得
 	foreach my $i (@{$args{selected}}){
-		unless ($self->{codes}[$i]){next;}
-		unless ($self->{codes}[$i]->res_table){
-			next;
-		}
+		next unless $self->{codes}[$i];
+		next unless $self->{codes}[$i]->res_table;
 		if ($self->{codes}[$i]->hyosos){
 			foreach my $h (@{$self->{codes}[$i]->hyosos}){
 				++$words{$h};
@@ -324,27 +322,6 @@ sub asso{
 		}
 		mysql_exec->do($sql,1);
 	}
-
-	#--------------------#
-	#   全体確立の計算   #
-	#
-	#print "4: probability...\n";
-	#mysql_exec->drop_table("ct_ass_a");           # 全体確立保存テーブル
-	#mysql_exec->do("
-	#	CREATE TABLE ct_ass_a(
-	#		genkei_id INT primary key,
-	#		p         INT
-	#	) TYPE=HEAP
-	#",1);
-	#$sql = "INSERT INTO ct_ass_a (genkei_id, p)\n";
-	#$sql .= "SELECT genkei.id, COUNT(DISTINCT $tani.id)\n";
-	#$sql .= "FROM hyosobun, $tani, ct_ass_p, hyoso, genkei\n";
-	#$sql .= "WHERE\n$sql_join{$tani}";
-	#$sql .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
-	#$sql .= "\tAND hyoso.genkei_id = genkei.id\n";
-	#$sql .= "\tAND ct_ass_p.genkei_id = genkei.id\n";
-	#$sql .= "GROUP BY genkei.id";
-	#mysql_exec->do($sql,1);
 
 	print "done\n";
 	return 1;
