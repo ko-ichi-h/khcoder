@@ -190,18 +190,21 @@ sub count{
 	}
 	
 	# 1つでもコードが与えられた文書の数を取得
-	my $sql = "SELECT count(*)\nFROM $tani\n";
-	foreach my $i (@{$self->tables}){
-		$sql .= "LEFT JOIN $i ON $tani.id = $i.id\n";
+	my $least1 = 0;
+	if ($self->valid_codes){
+		my $sql = "SELECT count(*)\nFROM $tani\n";
+		foreach my $i (@{$self->tables}){
+			$sql .= "LEFT JOIN $i ON $tani.id = $i.id\n";
+		}
+		$sql .= "WHERE\n";
+		my $n = 0;
+		foreach my $i (@{$self->valid_codes}){
+			if ($n){ $sql .= "or "; }
+			$sql .= $i->res_table.".".$i->res_col."\n";
+			++$n;
+		}
+		$least1 = mysql_exec->select($sql,1)->hundle->fetch->[0];
 	}
-	$sql .= "WHERE\n";
-	my $n = 0;
-	foreach my $i (@{$self->valid_codes}){
-		if ($n){ $sql .= "or "; }
-		$sql .= $i->res_table.".".$i->res_col."\n";
-		++$n;
-	}
-	my $least1 = mysql_exec->select($sql,1)->hundle->fetch->[0];
 	
 	push @{$result}, [
 		'＃コード無し',
