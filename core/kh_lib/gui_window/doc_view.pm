@@ -22,7 +22,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
-	$bunhyojiwin->focus;
+	#$bunhyojiwin->focus;
 	my $msg = '文書表示'; Jcode::convert(\$msg,'sjis','euc');
 	$bunhyojiwin->title("$msg");
 

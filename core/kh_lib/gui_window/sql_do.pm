@@ -38,7 +38,6 @@ sub _new{
 		-wrap => 'none',
 		-font => "TKFN",
 	)->pack(-fill=>'both',-expand=>'yes',pady => 2);
-	$t->focus;
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
 
 	$win->Label(
@@ -109,4 +108,8 @@ sub win_name{
 	return 'w_tool_sql_do';
 }
 
+sub start{
+	my $self = shift;
+	$self->text->focus;
+}
 1;

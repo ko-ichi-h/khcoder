@@ -14,7 +14,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
-	$wmw->focus;
+	#$wmw->focus;
 	$wmw->title(Jcode->new('語の抽出結果')->sjis);
 
 	my $fra4 = $wmw->LabFrame(

@@ -16,7 +16,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
-	$win->focus;
+	#$win->focus;
 	$win->title(Jcode->new('Ãê½Ğ¸ì Ï¢´Øµ¬Â§')->sjis);
 	$self->{win_obj} = $win;
 	
@@ -252,9 +252,13 @@ sub _new{
 		$filter->{hinshi}{$i->[0]} = 1;
 	}
 
+	return $self;
+}
+
+sub start{
+	my $self = shift;
 	$self->read_code;
 	$self->clist_check;
-	return $self;
 }
 
 #----------------------------#

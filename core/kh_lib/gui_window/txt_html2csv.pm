@@ -12,7 +12,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
-	$win->focus;
+	#$win->focus;
 	$win->title(Jcode->new('CSV形式のテキストファイルを作成')->sjis);
 	
 	$self->{win_obj} = $win;

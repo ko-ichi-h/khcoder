@@ -10,7 +10,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
-	$bunhyojiwin->focus;
+	#$bunhyojiwin->focus;
 	my $msg = '語の抽出結果：詳細'; Jcode::convert(\$msg,'sjis','euc');
 	$bunhyojiwin->title("$msg");
 

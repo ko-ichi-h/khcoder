@@ -10,7 +10,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$self->{win_obj} = $wmw;
-	$wmw->focus;
+	#$wmw->focus;
 	$wmw->title(Jcode->new('出現数 分布')->sjis);
 	
 	$wmw->Label(

@@ -43,7 +43,6 @@ sub _new{
 		-wrap => 'none',
 		-font => "TKFN",
 	)->pack(-fill=>'both',-expand=>'yes',pady => 2);
-	$t->focus;
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
 
 	$lf->Label(
@@ -195,6 +194,7 @@ sub close{
 sub start{
 	my $self = shift;
 	$self->plane->start;
+	$self->text->focus;
 }
 #--------------#
 #   アクセサ   #

@@ -14,7 +14,7 @@ sub _new{
 
 	my $mw = $::main_gui->mw->Toplevel;
 #	$mw->resizable(0, 0);
-	$mw->focus();
+	#$mw->focus();
 #	$mw->grab();
 	my $msg = Jcode->new('新規プロジェクト')->sjis;
 	$mw->title("$msg");
