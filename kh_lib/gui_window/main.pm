@@ -24,7 +24,7 @@ sub _new{
 	bless $self, "$class".'::'.$::config_obj->os;
 
 	# Windowへの書き込み
-	$mw->title('KHC [MAIN WINDOW]');          # Windowタイトル
+	$mw->title('KH Coder [MAIN WINDOW]');          # Windowタイトル
 	$self->make_font;                              # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身

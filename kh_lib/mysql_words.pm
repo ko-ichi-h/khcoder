@@ -316,21 +316,21 @@ sub num_kinds{
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
 sub num_kinds_all{
-	return mysql_exec                   # HTMLタグを除く単語種類数を返す
+	return mysql_exec                   # HTMLおよび幽霊を除く単語種類数を返す
 		->select("
 			select count(*)
 			from genkei
-#			where
-#				khhinshi_id!=99999 and genkei.nouse=0
+			where
+				khhinshi_id!=99999 and genkei.nouse=0
 		",1)->hundle->fetch->[0];
 }
 sub num_all{
-	return mysql_exec                   # HTMLタグを除く単語数を返す
+	return mysql_exec                   # HTMLおよび幽霊を除く単語数を返す
 		->select("
 			select sum(num)
 			from genkei
-#			where 
-#				khhinshi_id!=99999 and genkei.nouse=0
+			where 
+				khhinshi_id!=99999 and genkei.nouse=0
 		",1)->hundle->fetch->[0];
 }
 

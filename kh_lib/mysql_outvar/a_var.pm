@@ -6,19 +6,32 @@ sub new{
 	my $class = shift;
 	my $self;
 	$self->{name} = shift;
+	$self->{id}   = shift;
 	bless $self, $class;
 	
-	my $i = mysql_exec->select("
-		SELECT tab, col, tani, id
-		FROM outvar
-		where name = \'$self->{name}\'
-	",1)->hundle->fetch;
-	$self->{table}  = $i->[0];
-	$self->{column} = $i->[1];
-	$self->{tani}   = $i->[2];
-	$self->{id}     = $i->[3];
+	if ( length($self->{name}) ){                 # 変数名から他の情報を取得
+		my $i = mysql_exec->select("
+			SELECT tab, col, tani, id
+			FROM outvar
+			where name = \'$self->{name}\'
+		",1)->hundle->fetch;
+		$self->{table}  = $i->[0];
+		$self->{column} = $i->[1];
+		$self->{tani}   = $i->[2];
+		$self->{id}     = $i->[3];
+	} else {                                      # 変数IDから他の情報を取得
+		my $i = mysql_exec->select("
+			SELECT tab, col, tani, name
+			FROM outvar
+			where id = \'$self->{id}\'
+		",1)->hundle->fetch;
+		$self->{table}  = $i->[0];
+		$self->{column} = $i->[1];
+		$self->{tani}   = $i->[2];
+		$self->{name}   = $i->[3];
+	}
 	
-	$i = mysql_exec->select("
+	my $i = mysql_exec->select("
 		SELECT val, lab
 		FROM outvar_lab
 		WHERE var_id = $self->{id}
