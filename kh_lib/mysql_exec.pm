@@ -82,11 +82,13 @@ sub drop_db{
 sub shutdown_db_server{
 	my $dsn = 
 		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
-		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	my $dbh = DBI->connect($dsn,$username,$password);
+		#or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
-	$dbh->func("shutdown",$host,$username,$password,'admin')
-		or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
+	$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
+		#or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
+		# このルーチンは終了処理で呼ばれる（はず）なので、例外ハンドリングを
+		# 省いて終了させる…。
 }
 
 #------------------#

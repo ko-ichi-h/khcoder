@@ -80,8 +80,6 @@ sub _readin{
 
 	my $self = shift;
 
-
-
 	# Chasen¤ÎÀßÄê
 	if (-e $self->{chasen_path}){
 		my $pos = rindex($self->{chasen_path},'\\');
