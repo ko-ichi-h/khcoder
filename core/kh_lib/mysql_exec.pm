@@ -12,15 +12,10 @@ use kh_project;
 # 		sql: SQL ∏
 #		[1/0]: Critical(1) or not(0)
 
-my $username = '';
-my $password = '';
-my $host     = 'localhost';
-my $port     = '';
-
-#my $username = 'test';
-#my $password = 'hoge';
-#my $host     = '192.168.0.2';
-#my $port     = '3306';
+my $username = $::config_obj->sql_username;
+my $password = $::config_obj->sql_password;
+my $host     = $::config_obj->sql_host;
+my $port     = $::config_obj->sql_port;
 
 #------------#
 #   DB¡‡∫Ó   #

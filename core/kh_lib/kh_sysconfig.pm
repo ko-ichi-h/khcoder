@@ -193,6 +193,70 @@ sub win_gmtry{
 	}
 }
 
+#---------------#
+#   MySQL関連   #
+#---------------#
+
+sub sql_username{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (length($new)){
+		$self->{sql_username} = $new;
+	}
+	return $self->{sql_username};
+}
+
+sub sql_password{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (length($new)){
+		$self->{sql_password} = $new;
+	}
+	return $self->{sql_password};
+}
+
+sub sql_port{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (length($new)){
+		$self->{sql_port} = $new;
+	}
+	return $self->{sql_port};
+}
+
+sub sql_host{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (length($new)){
+		$self->{sql_host} = $new;
+	}
+	if ( defined($self->{sql_host}) ){
+		return $self->{sql_host};
+	} else {
+		return 'localhost';
+	}
+}
+
+
+sub sqllog{
+	my $self = shift;
+	my $new = shift;
+	
+	if ( length($new) ){
+		$self->{sqllog} = $new;
+	}
+
+	return $self->{sqllog};
+}
+
+sub sqllog_file{
+	my $self = shift;
+	return "./config/sql.log";
+}
 
 #------------#
 #   その他   #
@@ -249,22 +313,6 @@ sub mail_to{
 		$self->{mail_to} = $new;
 	}
 	return $self->{mail_to};
-}
-
-sub sqllog{
-	my $self = shift;
-	my $new = shift;
-	
-	if ( length($new) ){
-		$self->{sqllog} = $new;
-	}
-
-	return $self->{sqllog};
-}
-
-sub sqllog_file{
-	my $self = shift;
-	return "./config/sql.log";
 }
 
 sub history_file{
