@@ -126,7 +126,17 @@ sub add_new{
 	# 辞書テーブルの作成
 	$mysql->do('create table dmark ( name varchar(200) not null )') or die;
 	$mysql->do('create table dstop ( name varchar(200) not null )') or die;
-
+	# 状態テーブルの作成
+	$mysql->do('
+		create table status (
+			name   varchar(200) not null,
+			status INT not null
+		)
+	') or die;
+	$mysql->do('
+		INSERT INTO status (name, status)
+		VALUES ('morpho',0)
+	');
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
