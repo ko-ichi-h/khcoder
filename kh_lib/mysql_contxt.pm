@@ -1,6 +1,8 @@
 package mysql_contxt;
 use strict;
 use mysql_exec;
+use mysql_contxt::spss;
+use mysql_contxt::csv;
 
 my %sql_join = (
 	'bun' =>
@@ -58,12 +60,12 @@ sub new{
 
 sub save{
 	my $self = shift;
-	my $file_syntax = shift;
-	my $file_data = substr($file_syntax,0,length($file_syntax)-4).".dat";
-	
+	$self->{file_save} = shift;
+
 	#--------------------------#
 	#   データファイルの出力   #
 	
+	my $file_data = $self->data_file;
 	open (DOUT,">$file_data") or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -114,39 +116,7 @@ sub save{
 	print "\n";
 	close DOUT;
 
-	#--------------------------------#
-	#   シンタックスファイルの出力   #
-	
-	# 変数定義
-	my $spss;
-	$spss .= "file handle trgt1 /name=\'$file_data\'\n";
-	$spss .= "                 /lrecl=32767 .\n";
-	$spss .= "data list list(',') file=trgt1 /\n";
-	$spss .= "  word(A255)\n";
-	my $n = 0;
-	foreach my $w2 (@{$self->{wList2}}){
-		$spss .= "  cw$n(F10.8)\n";
-		++$n;
-	}
-	$spss .= ".\nexecute.\n";
-
-	# 変数ラベル
-	$n = 0;
-	$spss .= "variable labels\n";
-	foreach my $w2 (@{$self->{wList2}}){
-		$spss .= "  cw$n \'$self->{wName2}{$w2}\'\n";
-		++$n;
-	}
-	$spss .= ".\nexecute.";
-
-	open (SOUT,">$file_syntax") or 
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => "$file_syntax",
-		);
-	print SOUT $spss;
-	close (SOUT);
-	kh_jchar->to_sjis($file_syntax);
+	$self->_save_finish;
 }
 
 
