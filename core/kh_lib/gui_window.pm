@@ -23,6 +23,7 @@ use gui_window::dictionary;
 use gui_window::word_conc;
 use gui_window::word_freq;
 use gui_window::doc_view;
+use gui_window::doc_search;
 use gui_window::morpho_check;
 use gui_window::morpho_detail;
 use gui_window::cod_count;
