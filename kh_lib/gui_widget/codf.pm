@@ -68,7 +68,9 @@ sub _sansyo{
 		$self->entry->delete(0, 'end');
 		$self->entry->insert('0',Jcode->new("$path")->sjis);
 		$self->entry->configure(-state,'disable');
-		&{$self->{command}};
+		if (defined($self->{command})){
+			&{$self->{command}};
+		}
 	}
 }
 
