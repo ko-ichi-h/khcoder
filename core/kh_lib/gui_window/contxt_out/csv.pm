@@ -13,7 +13,7 @@ sub go{
 	my $self = shift;
 	my $file = shift;
 	
-	mysql_contxt->new(
+	mysql_contxt::csv->new(
 		tani    => $self->{tani_obj}->value,
 		hinshi2 => $self->hinshi2,
 		max2    => $self->max2,
