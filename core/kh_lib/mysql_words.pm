@@ -30,11 +30,12 @@ sub search{
 		my $sql;
 		$sql = '
 			SELECT
-				genkei.name, hselection.name, genkei.num, genkei.id
+				genkei.name, hselection.name, genkei.num, genkei.id, hinshi.name
 			FROM
-				genkei, hselection
+				genkei, hselection, hinshi
 			WHERE
 				    genkei.khhinshi_id = hselection.khhinshi_id
+				AND genkei.hinshi_id = hinshi.id
 				AND hselection.ifuse = 1'."\n";
 		$sql .= "\t\t\tAND (\n";
 		foreach my $i (@query){
@@ -59,12 +60,18 @@ sub search{
 		if ( ! $args{katuyo} ){         # 活用語なしの場合
 			foreach my $i (@{$result}){
 				pop @{$i};
+				pop @{$i};
 			}
 		} else {                        # 活用語ありの場合
 			my $result2;
 			foreach my $i (@{$result}){
+				my $hinshi = pop @{$i};
 				my $id = pop @{$i};
 				push @{$result2}, $i;
+				
+				if ( index("$hinshi",'名詞-') == 0 ){
+					next;
+				}
 				
 				my $r = mysql_exec->select("      # 活用語を探す
 					SELECT hyoso.name, katuyo.name, hyoso.num
