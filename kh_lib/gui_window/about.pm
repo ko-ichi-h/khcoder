@@ -38,7 +38,7 @@ sub _new{
 		font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'0',-padx=>'2', -side=>'left');
 
-	$fra1->Button(-text => 'http://koichi.nihon.to/psnl/khcoder',
+	$fra1->Button(-text => 'http://khc.sourceforge.net',
 		-font => "TKFN",
 		-foreground => 'blue',
 		-activeforeground => 'red',
@@ -49,7 +49,7 @@ sub _new{
 			(
 				10,
 				sub {
-					gui_OtherWin->open('http://koichi.nihon.to/psnl/khcoder');
+					gui_OtherWin->open('http://khc.sourceforge.net');
 				}
 			);
 		}
@@ -74,7 +74,7 @@ sub _new{
 				10,
 				sub {
 					gui_OtherWin->open(
-						'http://risya3.hus.osaka-u.ac.jp/kawabata/'
+						'http://keisya.hus.osaka-u.ac.jp/kawabata/'
 					);
 				}
 			);
