@@ -4,6 +4,9 @@ use strict;
 
 use mysql_exec;
 
+my $last_tani;
+my $docs_per_once = 50;
+
 my %sql_join = (
 	'bun' =>
 		'bun.id = bun_r.id',
@@ -103,13 +106,21 @@ sub search{
 	
 	$self->{tani} = $args{tani};
 	
+	$self->{last_search_words} = undef;
+	mysql_exec->drop_table("tmp_doc_search");
+	
 	# コーディング
 	print "kh_cod::search -> coding...\n";
-	if ($self->{coded}){                # 一度コーディングされている場合
+	if ($self->{coded} && $last_tani eq $self->{tani}){ # コーディング済み
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
 		$self->{codes}[0]->code("ct_$args{tani}_code_0");
-	} else {                            # 一度もされていない場合
+	} else {                                            # 全てコーディング
+		if ($self->{codes}){
+			foreach my $i (@{$self->{codes}}){
+				$i->clear;
+			}
+		}
 		$self->code($self->{tani}) or return 0;
 	}
 
@@ -125,9 +136,18 @@ sub search{
 		return undef;
 	}
 	
-	# 合致する文書のリストを取得
+	# 合致する文書のリストを作成
 	print "kh_cod::search -> searching...\n";
-	my $sql = "SELECT $args{tani}.id\nFROM $args{tani}\n";
+	mysql_exec->do("
+		create table tmp_doc_search(
+			rnum int auto_increment primary key not null,
+			id   int not null,
+			num  int not null
+		)
+	",1);
+	my $sql;
+	$sql .= "INSERT INTO tmp_doc_search (id, num)\n";
+	$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
 	foreach my $i (@{$args{selected}}){
 		unless ($self->{codes}[$i]->res_table){
 			next;
@@ -155,19 +175,8 @@ sub search{
 		}
 		++$n;
 	}
-	my $sth = mysql_exec->select($sql,1)->hundle;
+	mysql_exec->do($sql,1);
 	
-	# 文書の先頭部分を取り出し
-	my @result;
-	print "kh_cod::search -> fetching";
-	while (my $i = $sth->fetch){
-		push @result, [
-			$i->[0],
-			kh_cod::search->get_doc_head($i->[0],$args{tani})
-		];
-		print ".";
-	}
-	print "\n";
 	
 	# 検索に利用した語（表層）のリスト
 	print "kh_cod::search -> getting word list...\n";
@@ -183,10 +192,61 @@ sub search{
 		}
 	}
 	@words = (keys %words);
+	$self->{last_search_words} = \@words;
 	
-
 	$self->{coded} = 1;
-	return (\@result,\@words);
+	$last_tani     = $self->{tani};
+	
+	return $self;
+}
+
+#--------------------#
+#   結果の取り出し   #
+
+sub last_search_words{
+	my $self = shift;
+	return $self->{last_search_words};
+}
+sub total_hits{
+	my $self = shift;
+	
+	my $sth = mysql_exec->select("select count(*) from tmp_doc_search")->hundle
+		or return 0;
+	my $n = $sth->fetch or return 0;
+	if ($n){
+		return $n->[0];
+	} else {
+		return 0;
+	}
+}
+sub fetch_results{
+	my $self  = shift;
+	my $start = shift;
+	
+	print "kh_cod::search -> fetching";
+
+	my $sth = mysql_exec->select("
+		SELECT id
+		FROM   tmp_doc_search
+		WHERE
+			    rnum >= $start
+			AND rnum <  $start + $docs_per_once
+	",1)->hundle;
+
+	my @result;
+	while (my $i = $sth->fetch){
+		push @result, [
+			$i->[0],
+			kh_cod::search->get_doc_head($i->[0],$self->{tani})
+		];
+		print ".";
+	}
+	print "\n";
+	return \@result;
+}
+
+sub docs_per_once{
+	return $docs_per_once;
 }
 
 #-----------------------------------------#
@@ -199,7 +259,7 @@ sub check_a_doc{
 	# コーディング
 	my $text = 
 		"・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
-	my (@words, %words);
+	my (@words, %words, $n);
 	foreach my $i (@{$self->{codes}}){
 		unless ($i->res_table){next;}
 		my $sql .= 
@@ -211,9 +271,14 @@ sub check_a_doc{
 					++$words{$h};
 				}
 			}
+			++$n;
 		}
 	}
 	@words = (keys %words);
+	unless ($n){
+		$text .= "    ＃コード無し\n";
+	}
+	
 	
 	$text = Jcode->new($text)->sjis;
 	return ($text,\@words);
@@ -281,6 +346,9 @@ sub get_doc_head{
 	
 }
 
+sub docs_per_once{
+	return $docs_per_once;
+}
 
 
 1;

@@ -186,12 +186,44 @@ sub _new{
 		-width   => 8,
 		-command => sub{ $win->after(10,sub{$self->copy;});},
 		-borderwidth => 1
-	)->pack(-side => 'left', -padx => 10);
+	)->pack(-side => 'left',-padx => 2);
+
+	$f5->Label(
+		-text => ' ',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{btn_prev} = $f5->Button(
+		-text        => Jcode->new('前'.kh_cod::search->docs_per_once)->sjis,
+		-font        => "TKFN",
+		-command     =>
+			sub{
+				my $start =
+					$self->{current_start} - kh_cod::search->docs_per_once;
+				$self->display($start);
+			},
+		-borderwidth => 1,
+		-state       => 'disable',
+	)->pack(-side => 'left',-padx => 2);
+
+	$self->{btn_next} = $f5->Button(
+		-text        => Jcode->new('次'.kh_cod::search->docs_per_once)->sjis,
+		-font        => "TKFN",
+		-command     =>
+			sub{
+				my $start =
+					$self->{current_start} + kh_cod::search->docs_per_once;
+				$self->display($start);
+			},
+		-borderwidth => 1,
+		-state       => 'disable',
+	)->pack(-side => 'left');
 
 	$self->{hits_label} = $f5->Label(
-		text       => '   Hits: 0',
+		text       => Jcode->new('  ヒット数：0')->sjis,
 		font       => "TKFN",
-	)->pack(side => 'left');
+	)->pack(side => 'left',);
+	
 
 
 	$self->read_code;
@@ -406,11 +438,12 @@ sub search{
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => '   Hits: 0');
+	$self->{hits_label}->configure(-text => Jcode->new('  ヒット数： 0')->sjis);
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searcing...'
 	);
+	$self->{rlist}->delete('all');
 	$self->win_obj->update;
 	sleep (0.01);
 	
@@ -422,16 +455,35 @@ sub search{
 	);
 	
 	# 検索ロジックの呼び出し（検索実行）
-	($self->{result}, $self->{last_words}) = $self->{code_obj}->search(
+	# ($self->{result}, $self->{last_words}) = 
+	$self->{code_obj}->search(
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
 		order    => $self->{opt_order},
 	);
+	$self->{last_words} = $self->{code_obj}->last_search_words;
+
+	$self->{status_label}->configure(
+		-foreground => 'blue',
+		-text => 'Ready.'
+	);
 	
-	# 結果の書き出し
+	$self->display(1);
+	return $self;
+}
+
+#------------------------#
+#   検索結果の書き出し   #
+
+sub display{
+	my $self = shift;
+	my $start = shift;
+	$self->{current_start} = $start;
+
+	# HListの更新
+	$self->{result}     = $self->{code_obj}->fetch_results($start);
 	$self->{rlist}->delete('all');
-	
 	if ($self->{result}){
 		my $row = 0;
 		foreach my $i (@{$self->{result}}){
@@ -447,13 +499,32 @@ sub search{
 		$self->{result} = [];
 	}
 	
-	# ラベル等の更新
+	# ラベルの更新
+	my $num_total = $self->{code_obj}->total_hits;
+	my $num_disp  = $start + kh_cod::search->docs_per_once - 1;
+	my $num_disp2;
+	if ($num_total > $num_disp){
+		$num_disp2 = $num_disp;
+	} else {
+		$num_disp2 = $num_total;
+	}
+	if ($num_total == 0){$start = 0;}
 	$self->{rlist}->yview(0);
-	$self->{hits_label}->configure(-text => '   Hits: '.@{$self->{result}});
-	$self->{status_label}->configure(
-		-foreground => 'blue',
-		-text => 'Ready.'
-	);
+	$self->{hits_label}->configure(-text => Jcode->new("  ヒット数： $num_total  表示： $start"."-$num_disp2")->sjis);
+
+	# ボタンの更新
+	if ($start > 1){
+		$self->{btn_prev}->configure(-state => 'normal');
+	} else {
+		$self->{btn_prev}->configure(-state => 'disable');
+	}
+	if ($num_total > $num_disp){
+		$self->{btn_next}->configure(-state => 'normal');
+	} else {
+		$self->{btn_next}->configure(-state => 'disable');
+	}
+	
+	return $self;
 }
 
 #------------------#

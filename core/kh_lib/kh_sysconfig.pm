@@ -99,7 +99,7 @@ sub DocSrch_CutLength{
 	if (defined($self->{DocSrch_CutLength})){
 		return $self->{DocSrch_CutLength};
 	} else {
-		return '66';
+		return '85';
 	}
 }
 
