@@ -28,7 +28,6 @@ sub get{
 	my %for_color = ();                           # 強調指定の準備
 	foreach my $i (@{$self->{w_force}}){               # その他のコード
 		$for_color{$i} = "force";
-		print "getdoc: $i\n";
 	}
 	foreach my $i (@{$self->{w_other}}){               # その他のコード
 		$for_color{$i} = "CodeW";
