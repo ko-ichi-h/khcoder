@@ -13,7 +13,7 @@ BEGIN {
 		$splash = Tk::Splash->Show(
 			Tk->findINC('kh_logo.bmp'),
 			400,
-			122,
+			109,
 			'',
 		);
 	} else {
@@ -39,7 +39,6 @@ MainLoop;
 
 #---------------#
 #   perlapp—p   #
-
 # __END__
 
 use Tk::DragDrop::Win32Drop;

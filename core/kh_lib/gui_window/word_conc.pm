@@ -107,11 +107,12 @@ sub _new{
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$fra4h->Optionmenu(
+	$self->{menu1} = $fra4h->Optionmenu(
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort1},
 		-width => 6,
+		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Label(
@@ -119,11 +120,12 @@ sub _new{
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$fra4h->Optionmenu(
+	$self->{menu2} = $fra4h->Optionmenu(
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort2},
 		-width => 6,
+		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Label(
@@ -131,14 +133,13 @@ sub _new{
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$fra4h->Optionmenu(
+	$self->{menu3} = $fra4h->Optionmenu(
 		-options=> \@methods,
 		-font => "TKFN",
 		-variable => \$self->{sort3},
 		-width => 6,
+		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	)->pack(-anchor=>'e', -side => 'left');
-
-
 
 
 	# 結果表示部分
@@ -159,7 +160,7 @@ sub _new{
 		-columns          => 3,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'brown',
+		-selectforeground => 'black',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 	)->pack(-fill =>'both',-expand => 'yes');
@@ -169,19 +170,6 @@ sub _new{
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'left',-anchor => 'w');
-
-
-	$fra5->Button(
-		-text => Jcode->new('テスト')->sjis,
-		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub {
-			my ($e1, $e2) = $self->list->xview;
-			print "xview: $e1, $e2\n";
-			my $width = $self->list->cget('width');
-			print "width: $width\n";
-		});} 
-	)->pack(-side => 'left',-anchor => 'w');
-
 
 	my $status = $fra5->Label(
 		-text => 'Ready.',
@@ -203,6 +191,25 @@ sub _new{
 	$self->{entry3}    = $e3;
 	$self->{entry4}    = $e4;
 	return $self;
+}
+
+#------------------------#
+#   メニューの状態変更   #
+#------------------------#
+sub _menu_check{
+	my $self = shift;
+	my $flag = 0;
+	for (my $n = 1; $n <= 3; ++$n){
+		if ($flag){
+			$self->menu($n)->configure(-state, 'disable');
+		} else {
+			$self->menu($n)->configure(-state, 'normal');
+		}
+		
+		if (Jcode->new($self->sort($n))->euc eq '出現順'){
+			$flag = 1;
+		}
+	}
 }
 
 
@@ -340,6 +347,14 @@ sub search{
 
 }
 
+#------------#
+#   初期化   #
+#------------#
+
+sub start{
+	mysql_conc->initialize;
+}
+
 
 #--------------#
 #   アクセサ   #
@@ -373,17 +388,14 @@ sub hit_label{
 	my $self= shift;
 	return $self->{hit_label};
 }
-sub sort1{
+sub sort1{ my $self = shift; return $self->{sort1};}
+sub sort2{ my $self = shift; return $self->{sort2};}
+sub sort3{ my $self = shift; return $self->{sort3};}
+sub sort{  my $self = shift; return $self->{"sort$_[0]"};}
+sub menu{
 	my $self = shift;
-	return $self->{sort1};
-}
-sub sort2{
-	my $self = shift;
-	return $self->{sort2};
-}
-sub sort3{
-	my $self = shift;
-	return $self->{sort3};
+	my $key = "menu"."$_[0]";
+	return $self->{"$key"};
 }
 sub win_name{
 	return 'w_word_conc';

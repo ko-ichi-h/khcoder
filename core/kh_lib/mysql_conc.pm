@@ -2,9 +2,17 @@ package mysql_conc;
 use strict;
 use mysql_exec;
 
+my ( $l_query, $l_hinshi, $l_katuyo, $l_length);
+
+sub initialize{
+	($l_query, $l_hinshi, $l_katuyo, $l_length) = ('','','','')
+}
+
 sub a_word{
 	my $class = shift;
 	my %args  = @_;
+	my $self = \%args;
+	bless $self, $class;
 
 	unless ($args{length}){
 		$args{length} = 20;
@@ -17,10 +25,35 @@ sub a_word{
 		push @right, "r$n";
 	}
 	my @scanlist = (@left,"center",@right);
+	$self->{scanlist} = \@scanlist;
+	$self->{left}     = \@left;
+	$self->{right}    = \@right;
 
-	print "0: getting hyoso list\n";
+	unless (
+		   ( $l_query eq $args{query} )
+		&& ( $l_hinshi eq $args{hinshi} )
+		&& ( $l_katuyo eq $args{katuyo} )
+		&& ( $l_length == $args{length} )
+	){
+		my $hyoso = $self->_hyoso;
+		my $points = $self->_find($hyoso);
+		$self->_get_data($points);
+	}
+	$l_query = $args{query};
+	$l_hinshi = $args{hinshi};
+	$l_katuyo = $args{katuyo};
+	$l_length = $args{length};
 
+	$self->_sort;
+	return $self->_format;
+}
+
+sub _hyoso{
+	my $self = shift;
+	my %args = %{$self};
+	
 	# 表層語のリストアップ
+	print "0: getting hyoso list\n";
 	my $sql= '';
 	$sql .= "SELECT hyoso.id\n";
 	$sql .= "FROM genkei, hyoso, hselection";
@@ -49,9 +82,16 @@ sub a_word{
 	unless (@hyoso){
 		return 0;
 	}
+	return \@hyoso;
+}
+
+sub _find{
+	my $self = shift;
+	my %args = %{$self};
+	my @hyoso = @{$_[0]};
+	my $sql = '';
 
 	print "1: getting places\n";
-
 	# 出現位置のリストアップ
 	
 	$sql = '';
@@ -66,22 +106,29 @@ sub a_word{
 		$sql .= "hyoso_id = $i\n";
 		++$n;
 	}
-	my $points = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-	
-	print "2: Creating temp table\n";
+	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+}
+
+sub _get_data{
+	my $self = shift;
+	my %args = %{$self};
+	my $points = shift;
+	my $sql = '';
 
 	# Temp Table作成
-
+	print "2: Creating temp table\n";
 	mysql_exec->do("drop table temp_conc");
 	$sql  = "create table temp_conc (\n";
 	$sql .= "id int auto_increment primary key not null,\n";
-	foreach my $i (@scanlist){
+	foreach my $i (@{$self->{scanlist}}){
 		$sql .= "$i int,";
 	}
 	chop $sql;
 	$sql .= ")";
 	mysql_exec->do($sql,1);
 	
+	my $n = 0;
+	my $temp = '';
 	foreach my $i (@{$points}){
 		my $p = $i->[0] - $args{length};
 		my $n = $i->[0] + $args{length};
@@ -89,21 +136,45 @@ sub a_word{
 		$sql .= "id >= $p AND id <= $n \n";
 		$sql .= "ORDER BY id";
 		my $r = mysql_exec->select("$sql",1)->hundle->fetchall_arrayref;
-		$sql  = "INSERT INTO temp_conc\n (";
-		foreach my $h (@scanlist){
+
+		$temp .= "(";
+		foreach my $h (@{$r}){
+			$temp .= "$h->[0],";
+		}
+		chop $temp;
+		$temp .= "),";
+
+		if ($n == 300){
+			chop $temp;
+			my $sql  = "INSERT INTO temp_conc\n (";
+			foreach my $h (@{$self->{scanlist}}){
+				$sql .= "$h,";
+			}
+			chop $sql;		
+			$sql .= ") VALUES $temp";
+			mysql_exec->do("$sql",1);
+			$temp = '';
+		}
+		++$n;
+	}
+	
+	if ($temp){
+		chop $temp;
+		my $sql  = "INSERT INTO temp_conc\n (";
+		foreach my $h (@{$self->{scanlist}}){
 			$sql .= "$h,";
 		}
 		chop $sql;		
-		$sql .= ") VALUES (";
-		foreach my $h (@{$r}){
-			$sql .= "$h->[0],";
-		}
-		chop $sql;
-		$sql .= ")";
+		$sql .= ") VALUES $temp";
 		mysql_exec->do("$sql",1);
 	}
-	
-	# ソート用テーブルの作成
+}
+
+sub _sort{                                        # ソート用テーブルの作成
+	my $self = shift;
+	my %args = %{$self};
+	my $sql = '';
+
 	print "3: Sorting...\n";
 	my ($group, $n);
 	foreach my $i ('sort1','sort2','sort3'){
@@ -175,12 +246,14 @@ sub a_word{
 	}
 	$sql .= "temp_conc.id";
 	mysql_exec->do($sql,1);
+}
 
-	# 結果の出力
-	
+sub _format{                                      # 結果の出力
+	my $self = shift;
+	print "4: Formating output...\n";
 	
 	my $result;
-	foreach my $i (@scanlist){
+	foreach my $i (@{$self->{scanlist}}){
 		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc,temp_conc_sort )";
 		$sql .= "WHERE";
 		$sql .= "	temp_conc.$i = hyoso.id\n";
@@ -189,27 +262,23 @@ sub a_word{
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
-	print "4: Formating output...\n";
 	#open (TOUT,">test2.txt") or die;
 	#use Data::Dumper;
 	#print TOUT Dumper($result);
 
 	my $return;
-	my $last = @{$points};
+	my $last = mysql_exec->select("SELECT COUNT(*) FROM temp_conc",1)->hundle->fetch->[0];
 	--$last;
 
-	
 	for (my $n = 0; $n <= $last; ++$n){
-		foreach my $i (@left){
+		foreach my $i (@{$self->{left}}){
 			$return->[$n][0] .= $result->{$i}[$n][0];
 		}
-		foreach my $i (@right){
+		foreach my $i (@{$self->{right}}){
 			$return->[$n][2] .= $result->{$i}[$n][0];
 		}
 		$return->[$n][1] = $result->{center}[$n][0];
 	}
-
-
 
 	return $return;
 }
