@@ -173,11 +173,18 @@ sub _fill_in{
 				-style => $right,
 				-widget    => $c,
 			);
-			if ($i eq '複合名詞'){ $i .= ' (*)' }
+			
+			my $h_name;
+			if ($i eq '複合名詞'){
+				$h_name = "$i".' (*)' 
+			} else {
+				$h_name = $i;
+			}
+			
 			$self->hlist->itemCreate(
 				$row,1,
 				-itemtype => 'text',
-				-text     => Jcode->new($i)->sjis
+				-text     => Jcode->new($h_name)->sjis
 			);
 			++$row;
 		}
@@ -238,6 +245,7 @@ sub save{
 	if ($self->config->hinshi_list){
 		my $row = 0;
 		foreach my $i (@{$self->config->hinshi_list}){
+		#	print Jcode->new("$i, ".$self->checks->[$row]."\n")->sjis;
 			$self->config->ifuse_this($i,$self->checks->[$row]);
 			++$row;
 		}
