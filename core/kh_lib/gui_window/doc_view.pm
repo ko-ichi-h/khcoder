@@ -18,7 +18,8 @@ sub _new{
 	my $self = shift;
 	my $class = 'gui_window::doc_view::'.$::config_obj->os;
 	bless $self, $class;
-
+	$self->_init;
+	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
 	$bunhyojiwin->focus;
@@ -99,6 +100,7 @@ sub _new{
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
+						w_force     => $self->{w_force},
 						w_other     => $w,
 						tani        => $self->{tani},
 					);
@@ -126,6 +128,7 @@ sub _new{
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
+						w_force     => $self->{w_force},
 						w_other     => $w,
 						tani        => $self->{tani},
 					);
@@ -201,6 +204,11 @@ sub _new{
 	return $self;
 }
 
+#--------------------------#
+#   文書の読み込み＆表示   #
+#--------------------------#
+
+# 通常の文書読み込み
 sub view{
 	my $self = shift;
 	my %args = @_;
@@ -214,6 +222,7 @@ sub view{
 		doc_id      => $args{doc_id},
 		w_search    => $args{kyotyo},
 		w_other     => $args{kyotyo2},
+		w_force     => $self->{w_force},
 		tani        => $args{tani},
 	);
 	$self->{doc}    = $doc;
@@ -222,7 +231,7 @@ sub view{
 	$self->_view_doc($doc);
 }
 
-
+# 直前・直後の文書を読み込み
 sub near{
 	my $self = shift;
 	my $id = shift;
@@ -236,6 +245,7 @@ sub near{
 	my $doc = mysql_getdoc->get(
 		doc_id   => $id,
 		w_search => $self->{w_search},
+		w_force  => $self->{w_force},
 		w_other  => $w,
 		tani     => $self->{tani},
 	);
@@ -245,11 +255,12 @@ sub near{
 
 }
 
+# 実際の表示用ルーチン
 sub _view_doc{
 	my $self = shift;
 	my $doc = shift;
 	my %color;                                    # 色情報準備
-	foreach my $i ('info', 'search','html','CodeW'){
+	foreach my $i ('info', 'search','html','CodeW','force'){
 		my $name = "color_DocView_".$i;
 		$color{$i} = Term::ANSIColor::color($::config_obj->$name);
 	}
@@ -260,6 +271,7 @@ sub _view_doc{
 	
 	my $t;                                        # 本文書き出し
 	foreach my $i (@{$doc->body}){
+		print "_view_doc: ok" if $i->[1] eq 'force';
 		if ($color{$i->[1]}){
 			$t .= "$color{$i->[1]}"."$i->[0]"."$black";
 		} else {
@@ -272,6 +284,30 @@ sub _view_doc{
 	
 	$self->wrap;
 	$self->update_buttons;
+}
+
+#------------#
+#   その他   #
+#------------#
+
+sub _init{
+	my $self = shift;
+	my @l;
+	
+	my $h = mysql_exec->select(
+		"SELECT name FROM d_force WHERE type=1",
+		1
+	)->hundle;
+	while (my $i = $h->fetch){
+		my $list = mysql_a_word->new(
+			genkei => $i->[0]
+		)->hyoso_id_s;
+		@l = (@l,@{$list});
+		print "_init: $list->[0]\n";
+	}
+	$self->{w_force} = \@l;
+	
+	return $self;
 }
 
 sub wrap{
@@ -309,7 +345,11 @@ sub update_buttons{
 }
 
 
-sub win_name{ return 'w_doc_view'; }
-sub text{ my $self = shift; return $self->{text}; }
+sub win_name{
+	return 'w_doc_view'; 
+}
+sub text{
+	my $self = shift; return $self->{text};
+}
 
 1;

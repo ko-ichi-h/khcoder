@@ -18,7 +18,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
-	$wmw->focus;
+	#$wmw->focus;
 	$wmw->title(Jcode->new('コンコーダンス （KWIC）')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
@@ -642,7 +642,9 @@ sub display{
 #------------#
 
 sub start{
+	my $self = shift;
 	mysql_conc->initialize;
+	$self->entry->focus;
 }
 
 

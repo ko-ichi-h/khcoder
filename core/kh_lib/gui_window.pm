@@ -64,6 +64,11 @@ sub open{
 		);
 		$self->win_obj->Icon(-image => $icon);
 
+		# Windowサイズと位置の指定
+		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
+			$self->win_obj->geometry($g);
+		}
+
 		# Windowを閉じる際のバインド
 		$self->win_obj->bind(
 			'<Key-Escape>',
@@ -81,15 +86,10 @@ sub open{
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 
+		$self->win_obj->focus;
+
 		# 特殊処理に対応
 		$self->start;
-
-		# Windowサイズと位置の指定
-		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
-			$self->win_obj->geometry($g);
-		} else {
-			#$self->win_obj->update;
-		}
 	}
 	return $self;
 }

@@ -23,10 +23,13 @@ sub get{
 	}
 
 	# 本文の取り出し
-	#print "body:s ";
 	my $d = $self->get_body;
-	#print "p1 ";
+
 	my %for_color = ();                           # 強調指定の準備
+	foreach my $i (@{$self->{w_force}}){               # その他のコード
+		$for_color{$i} = "force";
+		print "getdoc: $i\n";
+	}
 	foreach my $i (@{$self->{w_other}}){               # その他のコード
 		$for_color{$i} = "CodeW";
 	}
@@ -61,6 +64,7 @@ sub get{
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
 		push @body, [Jcode->new("$i->[0]")->sjis, $k];
 		$lastw = $i->[0];
+		
 	}
 	$self->{body} = \@body;
 	
