@@ -28,6 +28,9 @@ sub expr{
 	}
 	return $t;
 }
+sub num_expr{
+	return 0;
+}
 sub pattern{
 	my $t = '';
 	$t .= '^and$';            $t .= '|';

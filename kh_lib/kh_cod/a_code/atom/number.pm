@@ -9,7 +9,9 @@ sub expr{
 	my $self = shift;
 	return "$self->{tani}.id";
 }
-
+sub num_expr{
+	return 1;
+}
 sub tables{
 	return 0;
 }

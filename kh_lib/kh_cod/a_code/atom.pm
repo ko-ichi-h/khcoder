@@ -54,6 +54,11 @@ sub new{
 	return $self;
 }
 
+sub num_expr{
+	my $self = shift;
+	return $self->expr;
+}
+
 sub clear{
 	return 1;
 }
