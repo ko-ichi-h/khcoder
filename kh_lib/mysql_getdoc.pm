@@ -2,34 +2,44 @@ package mysql_getdoc;
 use strict;
 use mysql_exec;
 
-use mysql_getdoc::dan;
-
 sub get{
 	my $class = shift;
 	my %args  = @_;
 	my $self = \%args;
-	$class .= '::'."$args{tani}";
 	bless $self, $class;
 
 	# 文書の特定
-	unless ( defined($self->{doc_id}) ){
+	unless ( length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
 		print "doc_id $self->{doc_id}";
 	}
 	
 	# 本文の取り出し
 	my $d = $self->get_body;
-	my %w_search = ();                            # 検索語強調の準備
-	foreach my $i (@{$self->{w_search}}){
-		$w_search{$i} = 1;
+	my %for_color = ();                           # 強調指定の準備
+	foreach my $i (@{$self->{w_search}}){              # 検索語
+		$for_color{$i} = "search";
 	}
-	my @body = (); my $last;                      # 改行付加＆検索語強調
+	my $html = mysql_exec->select("                    # HTMLタグ
+		select hyoso.id
+		from hyoso, genkei, hselection
+		where
+			hyoso.genkei_id = genkei.id
+			AND genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = 'HTMLタグ'
+	",1)->hundle;
+	while (my $i = $html->fetch){
+		$for_color{$i->[0]} = 'html';
+	}
+	
+	
+	my @body = (); my $last = -1;                 # 改行付加＆検索語強調
 	foreach my $i (@{$d}){
 		unless ($i->[2] == $last){
 			$last = $i->[2];
 			push @body, ["\n",''];
 		}
-		my $k = ''; if ($w_search{$i->[1]}){$k = "search";}
+		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
 		push @body, [Jcode->new("$i->[0]")->sjis, $k];
 	}
 	$self->{body} = \@body;
@@ -39,6 +49,44 @@ sub get{
 	
 	
 	return $self;
+}
+
+#----------------#
+#   本文の取得   #
+
+sub get_body{
+	my $self = shift;
+	my $tani = $self->{tani};
+	
+	my $sql = "SELECT hyoso.name, hyoso.id, hyosobun.dan_id\n";
+	$sql   .= "FROM hyoso, hyosobun, $tani\n";
+	$sql   .= "WHERE\n";
+	$sql   .= "    $tani.id = $self->{doc_id}\n";
+	$sql   .= "    AND hyosobun.hyoso_id = hyoso.id\n";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= "    AND hyosobun.$i"."_id = $tani.$i"."_id\n";
+		if ($tani eq $i){last;}
+	}
+	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+}
+
+
+#----------------#
+#   文書の特定   #
+
+sub get_doc_id{
+	my $self = shift;
+	my $tani = $self->{tani};
+	
+	my $sql = "SELECT $tani.id\n";
+	$sql   .= "FROM hyosobun, $tani\n";
+	$sql   .= "WHERE\n";
+	$sql   .= "    hyosobun.id = $self->{hyosobun_id}\n";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= "    AND hyosobun.$i"."_id = $tani.$i"."_id\n";
+		if ($tani eq $i){last;}
+	}
+	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
 
 
@@ -51,11 +99,16 @@ sub get_header{
 	my @possible_header = ('h1','h2','h3','h4','h5');
 	my $headers = '';
 	
-	my $id_info = mysql_exec->select("
-		SELECT id, h1_id, h2_id, h3_id, h4_id, h5_id
-		FROM $tani
-		WHERE id = $self->{doc_id}
-	",1)->hundle->fetch;
+	my $sql = "SELECT id,";
+	foreach my $i (@possible_header){
+		$sql .= "$i"."_id,";
+		if ($i eq $tani){last;}
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM $tani\n";
+	$sql .= "WHERE id = $self->{doc_id}";
+	my $id_info = mysql_exec->select($sql,1)->hundle->fetch;
 
 	my %possible;
 	foreach my $i (@possible_header){

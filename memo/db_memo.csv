@@ -1,0 +1,21 @@
+,,,,,,,,,[重複有り],,,,,,,,,,,,
+テーブル名,KH 品詞,khhinshi,品詞,hinshi,原形,genkei,表層語,hyoso,表層語-文,hyosobun,文,bun,段落,,H5,,H4,,H3,,H2
+,KH品詞ID,id,品詞ID,id,原形ID,id,表層語ID,id,表層語-文ID,id,文ID(org),id,id,,id,,id,,id,,id
+,KH品詞名,name,品詞,name,原形,name,表層語,name,表層語ID,hyoso_id,生の文,rowtxt,H5ID,,H5ID,,H4ID,,H3ID,,H2ID
+,,,,,出現数,num,長さ,len,文ID,bun_id,,,H4ID,,H4ID,,H3ID,,H2ID,,H1ID
+,,,,,品詞ID,hinshi_id,原形ID,genkei_id,文ID(org),bun_idt,,,H3ID,,H3ID,,H2ID,,H1ID,,
+,,,,,KH品詞ID,khhinshi_id,,,段落ID,dan_id,,,H2ID,,H2ID,,H1ID,,,,
+,,,,,未使用？,nouse,,,H5ID,h5_id,,,H1ID,,H1ID,,,,,,
+,,,,,,,,,H4ID,h4_id,,,,,,,,,,,
+,,,,,,,,,H3ID,h3_id,,,,,,,,,,,
+,,,,,,,,,H2ID,h2_id,,,,,,,,,,,
+,,,,,,,,,H1ID,h1_id,,,,,,,,,,,
+
+
+
+
+
+テーブル名,強制抽出語,dmark,棄却語,dstop,品詞選択,hselection,状況保存,status
+,語,name,語,name,KH品詞ID,khhinshi_id,状況名,name
+,,,,,使用するか否か,ifuse,状況,status
+,,,,,KH品詞名,name,,
