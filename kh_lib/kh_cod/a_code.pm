@@ -110,6 +110,7 @@ sub ready{
 		my $sql =
 			"CREATE TABLE ct_$tani"."_$n ( id int primary key not null,\n";
 		foreach my $h (@{$i}){
+			# print "atom table: $h\n";
 			my $col = (split /\_/, $h)[2].(split /\_/, $h)[3];
 			$sql .= "$col INT,"
 		}

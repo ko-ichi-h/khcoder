@@ -7,6 +7,8 @@ use mysql_exec;
 use kh_cod::a_code;
 use kh_cod::func;
 
+use vars(%kh_cod::reading);
+
 #----------------------#
 #   コーディング実行   #
 
@@ -67,8 +69,10 @@ sub read_file{
 	# 解釈
 	foreach my $i (@codes){
 		# print Jcode->new("code: $i\n")->sjis;
+		$kh_cod::reading{$i} = $codes{$i};
 		push @{$self->{codes}}, kh_cod::a_code->new($i,$codes{$i});
 	}
+	%kh_cod::reading = ();
 	
 	unless ($self){
 		gui_errormsg->open(
