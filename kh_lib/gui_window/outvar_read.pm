@@ -3,8 +3,11 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
-use mysql_outvar;
 use gui_errormsg;
+
+use gui_window::outvar_read::tab;
+use gui_window::outvar_read::csv;
+
 
 #---------------------#
 #   Window オープン   #
@@ -16,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('外部変数の読み込み')->sjis);
+	$wmw->title($self->win_title);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Options',
@@ -28,7 +31,7 @@ sub _new{
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x',-pady => 3);
 	
 	$fra4e->Label(
-		-text => Jcode->new('CSVファイル：')->sjis,
+		-text => $self->file_label,
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
@@ -82,74 +85,37 @@ sub _new{
 	return $self;
 }
 
-# ファイル参照
-
-sub file{
-	my $self = shift;
-
-	my @types = (
-		[ "CSV files",[qw/.csv/] ],
-		["All files",'*']
-	);
-	
-	my $path = $self->win_obj->getOpenFile(
-		-filetypes  => \@types,
-		-title      => Jcode->new('CSVファイルを選択してください')->sjis,
-		-initialdir => $::config_obj->cwd
-	);
-	
-	if ($path){
-		# substr($path, 0, rindex($path, '/') + 1 ) = '';
-		$self->{entry}->delete(0, 'end');
-		$self->{entry}->insert('0',Jcode->new("$path")->sjis);
-	}
-}
-
 #--------------#
 #   読み込み   #
 #--------------#
 
 sub _read{
 	my $self = shift;
-	
+
 	# 入力チェック
-	
 	unless (-e $self->{entry}->get){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new('CSVファイルを正しく指定して下さい。')->sjis,
+			msg    => Jcode->new('ファイルを正しく指定して下さい。')->sjis,
 			window => \$self->{win_obj},
 		);
 		return 0;
 	}
+
+	# 読み込みの実行
+	$self->__read or return 0;
+
+	# 以下は完了処理
 	
-	my $rtrn = mysql_outvar->read(
-		file => $self->{entry}->get,
-		tani => $self->{tani_obj}->tani,
-	);
+	# 変数リストWindowをオープン
+	$self->close;
+	my $list = gui_window::outvar_list->open;
+	$list->_fill;
 	
-	# 完了処理
-	if ($rtrn){
-		# 変数リストWindowをオープン
-		$self->close;
-		my $list = gui_window::outvar_list->open;
-		$list->_fill;
-		
-		# 「コーディング・外部変数とのクロス集計」Windowが開いていた場合
-		if ( $::main_gui->if_opened('w_cod_outtab') ){
-			$::main_gui->get('w_cod_outtab')->fill;
-		}
+	# 「コーディング・外部変数とのクロス集計」Windowが開いていた場合
+	if ( $::main_gui->if_opened('w_cod_outtab') ){
+		$::main_gui->get('w_cod_outtab')->fill;
 	}
 }
-
-#--------------#
-#   アクセサ   #
-#--------------#
-
-
-sub win_name{
-	return 'w_outvar_read';
-}
-
 
 1;
