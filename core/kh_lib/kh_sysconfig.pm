@@ -197,6 +197,51 @@ sub win_gmtry{
 #------------#
 #   ¤½¤ÎÂ¾   #
 
+sub in_preprocessing{
+	my $self = shift;
+	my $new = shift;
+	if ( length($new) ){
+		$self->{in_preprocessing} = $new;
+	}
+	return $self->{in_preprocessing};
+}
+
+sub mail_if{
+	my $self = shift;
+	my $new = shift;
+	if ( length($new) ){
+		$self->{mail_if} = $new;
+	}
+	return $self->{mail_if};
+}
+
+sub mail_smtp{
+	my $self = shift;
+	my $new = shift;
+	if ( defined($new) ){
+		$self->{mail_smtp} = $new;
+	}
+	return $self->{mail_smtp};
+}
+
+sub mail_from{
+	my $self = shift;
+	my $new = shift;
+	if ( defined($new) ){
+		$self->{mail_from} = $new;
+	}
+	return $self->{mail_from};
+}
+
+sub mail_to{
+	my $self = shift;
+	my $new = shift;
+	if ( defined($new) ){
+		$self->{mail_to} = $new;
+	}
+	return $self->{mail_to};
+}
+
 sub sqllog{
 	my $self = shift;
 	my $new = shift;
