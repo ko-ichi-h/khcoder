@@ -14,4 +14,11 @@ sub value_conv{
 	return $v;
 }
 
+sub value_conv_t{
+	my $v = $_[1];
+	$v =~ s/\t/ /g;
+	return $v;
+}
+
+
 1;
