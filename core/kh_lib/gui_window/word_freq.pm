@@ -33,7 +33,7 @@ sub _new{
 		-borderwidth        => 0,
 		-highlightthickness => 0,
 		-selectmode       => 'none',
-		-height           => 4,
+		-height           => 5,
 		-width            => 30,
 	)->pack();
 	
