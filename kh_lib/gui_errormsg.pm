@@ -27,7 +27,13 @@ sub open{
 	$self->{msg} = $self->get_msg;
 	$self->print;
 	unless ($self->{type} eq 'msg'){
-		exit;
+		
+		if ($::main_gui){
+			print "Exit (gui_errormsg.pm)\n";
+			$::main_gui->close;
+		} else {
+			exit;
+		}
 	}
 }
 

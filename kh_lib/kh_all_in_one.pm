@@ -1,6 +1,10 @@
 package kh_all_in_one;
 use strict;
 
+# 茶筌のパス設定
+# MySQL base/dataパスの取得
+# MySQL設定ファイル作成（khc.ini）
+
 #----------------------------------------------#
 #   All In One 版に含まれるMySQLの起動・終了   #
 #----------------------------------------------#
@@ -20,8 +24,8 @@ sub mysql_start{
 	);
 }
 sub mysql_stop{
-	print "shutting down mysql....\n";
-	system 'c:\apps\mysql\bin\mysqladmin --port=3307 --user=root --password=khcallinone shutdown';
+	mysql_exec->shutdown_db_server;
+	#system 'c:\apps\mysql\bin\mysqladmin --port=3307 --user=root --password=khcallinone shutdown';
 }
 
 1;
