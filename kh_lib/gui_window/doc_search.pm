@@ -17,7 +17,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
-	$win->focus;
+	#$win->focus;
 	$win->title(Jcode->new('文書検索')->sjis);
 	$self->{win_obj} = $win;
 	
@@ -266,10 +266,16 @@ sub _new{
 	
 
 
-	$self->read_code;
-	$self->clist_check;
 	return $self;
 }
+
+sub start{
+	my $self = shift;[
+	$self->read_code;
+	$self->clist_check;
+
+}
+
 
 #----------------------------#
 #   ルールファイル読み込み   #

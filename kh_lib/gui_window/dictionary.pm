@@ -17,7 +17,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	
 	my $wmw= $mw->Toplevel;
-	$wmw->focus;
+	#$wmw->focus;
 	$wmw->title(Jcode->new('分析に使用する語の取捨選択')->sjis);
 	
 	my $base = $wmw->Frame()->pack(-expand => '1', -fill => 'both');

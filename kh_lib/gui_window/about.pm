@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $mw->Toplevel;
 	$wabtkh->resizable(0, 0);
-	$wabtkh->focus;
+	#$wabtkh->focus;
 	my $msg = Jcode->new('KH Coderについて','euc')->sjis;
 	$wabtkh->title("$msg");
 

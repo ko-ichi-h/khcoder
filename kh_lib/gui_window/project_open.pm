@@ -17,7 +17,7 @@ sub _new{
 	# Window作成
 	my $few = $mw->Toplevel;
 	$self->{win_obj} = $few;
-	$few->focus;
+	#$few->focus;
 #	$few->grab;
 	$few->title(Jcode->new('プロジェクト・マネージャ')->sjis);
 

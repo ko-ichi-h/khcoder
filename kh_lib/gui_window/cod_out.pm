@@ -13,7 +13,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
-	$win->focus;
+	#$win->focus;
 	$win->title(Jcode->new($self->win_label)->sjis);
 	$self->{win_obj} = $win;
 
