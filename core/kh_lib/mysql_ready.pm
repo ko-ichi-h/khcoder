@@ -13,6 +13,7 @@ use mysql_ready::check;
 use mysql_ready::doclength;
 use mysql_ready::heap;
 use mysql_ready::df;
+use mysql_ready::dump;
 
 my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
 my $data_per_1ins = 200;      # 一度にINSERTする値の数
@@ -114,6 +115,7 @@ sub readin{
 	my $total_length;
 	my $sql_temp;
 	foreach my $key (keys %{$r}){
+		mysql_ready::dump->word_length if $r->{$key} == 255;
 		my $len = $r->{$key} + 4;
 		$self->length($key,$len);
 	}

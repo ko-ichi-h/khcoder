@@ -122,8 +122,16 @@ sub mark{
 		++$n;
 	}
 
-	open (MARKED,">$dist") or &Gui_lib::fileerror($dist);
-	open (SOURCE,"$source") or &Gui_lib::fileerror($source);
+	open (MARKED,">$dist") or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $dist
+		);
+	open (SOURCE,"$source") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $source
+		);
 	while (<SOURCE>){
 		Jcode::convert(\$_,'euc');
 		my $text = $_;
