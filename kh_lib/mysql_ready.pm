@@ -818,6 +818,7 @@ sub rowtxt{
 	
 	if ($values or $temp){
 		if ($temp){
+			$temp =~ s/'/\\'/go;
 			$values .= "(\'$temp\'),";
 		}
 		chop $values; mysql_exec->do("$sql $values",1);
