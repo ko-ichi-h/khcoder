@@ -92,15 +92,66 @@ sub read_file{
 	return $self;
 }
 
+#--------------------------------------------#
+#   コーディング結果格納テーブルをまとめる   #
+#--------------------------------------------#
+sub cumulate{
+	my $self = shift;
+	$self->valid_codes;
+	
+	my $cnt = 0;
+	my $cycle = 0;
+	my @temp;
+	foreach my $i (@{$self->valid_codes}){
+		push @temp, $i;
+		++$cnt;
+		if ($cnt == 30){
+			$self->_cumulate(\@temp,$cycle);
+			$cnt = 0;
+			@temp = ();
+			++$cycle;
+		}
+	}
+	return 1;
+}
+
+sub _cumulate{
+	my $self  = shift;
+	my $codes = shift;
+	my $n     = shift;
+	
+	my $table = "ct_$self->{tani}_code_cum_$n";
+	
+	mysql_exec->drop_table($table);
+	
+	mysql_exec->do("
+		CREATE TABLE $table (
+			id int not null primary key,
+			num int
+		) type = heap
+	",1);
+	
+	print "$table\n"; die;
+	
+}
+
+
+
+
 #--------------#
 #   アクセサ   #
 
 sub tables{                         # コーディング結果を納めたテーブルのリスト
 	my $self = shift;
 	my @r;
-	unless ($self->valid_codes){return 0;}
+	
+	return 0 unless $self->valid_codes;
+	
+	my %check;
 	foreach my $i (@{$self->valid_codes}){
+		next if $check{$i->res_table};
 		push @r, $i->res_table;
+		$check{$i->res_table} = 1;
 	}
 	return \@r;
 }
