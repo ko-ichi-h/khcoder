@@ -15,13 +15,18 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->title(Jcode->new('形態素解析結果の確認')->sjis);
+	$wmw->title(Jcode->new('語の抽出結果')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
+
+	$fra4->Label(
+		-text => Jcode->new('・語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい')->sjis,
+		-font => "TKFN",
+	)->pack(-anchor => 'w');
 
 	# エントリと検索ボタンのフレーム
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');

@@ -102,7 +102,6 @@ sub refresh{
 	$self->hlist->delete('all');
 	my @list = (
 		[Jcode->new('総抽出語数： ')->sjis,'n/a'],
-		[Jcode->new('異なり語数： ')->sjis,'n/a'],
 		[Jcode->new('異なり語数(使用)： ')->sjis,'n/a'],
 		[Jcode->new('異なり語率： ')->sjis,'n/a']
 	);
@@ -126,12 +125,8 @@ sub refresh{
 					num_format(mysql_words->num_all)
 				],
 				[
-					Jcode->new('異なり語数： ')->sjis,
-					num_format(mysql_words->num_kinds_all)
-				],
-				[
-					Jcode->new('異なり語数(使用)： ')->sjis,
-					num_format(mysql_words->num_kinds)
+					Jcode->new('異なり語数 (使用)： ')->sjis,
+					num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")")
 				],
 				[
 					Jcode->new('異なり語率： ')->sjis,
@@ -162,9 +157,6 @@ sub refresh{
 		);
 		++$row;
 	}
-
-
-
 }
 
 #--------------#

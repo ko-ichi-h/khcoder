@@ -70,7 +70,9 @@ sub select{
 
 sub print_error{
 	my $self = shift;
-	$self->{err} = "SQL入力:\n".$self->sql."\nエラー出力:\n"."$DBD::mysql::errstr";
+	$self->{err} =
+		"SQL入力:\n".$self->sql."\nエラー出力:\n".
+		$::project_obj->dbh->{'mysql_error'};
 	unless ($self->critical){
 		return 0;
 	}

@@ -4,7 +4,7 @@ use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
-	$kh_version = "0.00 (pre-alpha release)";
+	$kh_version = "2A.0";
 	use Cwd qw(cwd);
 	push @INC, cwd.'/kh_lib';
 	if ($^O eq 'MSWin32'){
@@ -42,4 +42,4 @@ MainLoop;
 
 use Tk::DragDrop::Win32Drop;
 use Tk::DragDrop::Win32Site;
-use SQL::Dialects::CSV;
+# use SQL::Dialects::CSV;
