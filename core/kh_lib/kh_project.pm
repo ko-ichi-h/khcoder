@@ -68,7 +68,7 @@ sub open{
 	}
 	
 	# データベースを開く
-	$self->{dbh} = DBI->connect("DBI:mysql:$self->{dbname}",undef,undef)
+	$self->{dbh} = DBI->connect("DBI:mysql:database=$self->{dbname};mysql_local_infile=1",undef,undef)
 		or gui_errormsg->open(type => 'mysql', sql => 'connect');
 	$::project_obj = $self;
 
