@@ -25,5 +25,13 @@ sub win_obj{
 	my $self = shift;
 	return $self->{win_obj};
 }
+sub normal{
+	my $self = shift;
+	$self->win_obj->configure(-state => 'normal');
+}
+sub disable{
+	my $self = shift;
+	$self->win_obj->configure(-state => 'disable');
+}
 
 1;

@@ -1,3 +1,5 @@
+# 「ツール」 -> 「コーディング」メニュー以下のコマンドのためのロジック群
+
 package kh_cod::func;
 use base qw(kh_cod);
 use strict;

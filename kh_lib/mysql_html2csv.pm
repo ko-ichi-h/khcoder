@@ -42,7 +42,7 @@ sub exec{
 	",1)->hundle;
 	
 	my $current; my %h;
-	my $last = 1;
+	my $last = 0;
 	while (my $i = $h->fetchrow_hashref){
 		if ($i->{"$args{tani}"."_id"}){           # 本文の場合
 			if ($i->{"$args{tani}_id"} == $last){      # 継ぎ足し
@@ -50,6 +50,7 @@ sub exec{
 			} else {                                   # 書き出し
 				unless ($current){
 					$last = $i->{"$args{tani}_id"};
+					$current = $i->{rowtxt};
 					next;
 				}
 				

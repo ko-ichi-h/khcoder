@@ -314,6 +314,15 @@ sub make{
 		 -tearoff=>'no'
 	);
 
+		$self->{t_txt_pickup} = $f6->command(
+			-label => Jcode->new('部分テキストの取り出し')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::txt_pickup->open;
+				})},
+			-state => 'disable'
+		);
+
 		$self->{t_txt_html2mod} = $f6->command(
 			-label => Jcode->new('HTMLからCSVに変換')->sjis,
 			-font => "TKFN",
@@ -445,6 +454,7 @@ sub refresh{
 		'm_b3_crossout',
 		'm_b3_crossout_csv',
 		'm_b3_crossout_spss',
+		't_txt_pickup',
 	);
 
 	# 状態変更
