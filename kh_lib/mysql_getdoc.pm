@@ -20,7 +20,7 @@ sub get{
 	# 文書の特定
 	unless ( length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
-		print "doc_id $self->{doc_id}";
+		#print "doc_id $self->{doc_id}";
 	}
 
 	# 本文の取り出し
@@ -116,7 +116,7 @@ sub get_doc_id{
 				if ($tani eq $i){last;}
 			}
 			if (my $check = mysql_exec->select($sql,1)->hundle->fetch){
-				print "$n tries\n";
+				#print "$n tries\n";
 				return $check->[0];
 			}
 			++$n;

@@ -264,7 +264,28 @@ sub view_doc{
 		hyosobun_id => $hyosobun_id,
 		kyotyo      => \@kyotyo,
 		tani        => "$tani",
+		parent      => $self
 	);
+}
+
+sub next{
+	my $self = shift;
+	my @selected = $self->list->infoSelection;
+	unless (@selected){
+		return;
+	}
+	my $selected = $selected[0] + 1;
+	my $hyosobun_id = $self->result->[$selected][3];
+	
+	$self->list->selectionClear;
+	$self->list->selectionSet($selected);
+	$self->list->yview($selected);
+	my $n = @{$self->result};
+	if ($n - $selected > 7){
+		$self->list->yview(scroll => -5, 'units');
+	}
+	
+	return $hyosobun_id;
 }
 
 
@@ -308,7 +329,7 @@ sub search{
 		'右・5'  => 'r5'
 	);
 	
-	print "test: ".$self->sort1."\n";
+	#print "test: ".$self->sort1."\n";
 
 	# 検索実行
 	$self->st_label->configure(
