@@ -88,10 +88,16 @@ sub _new{
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $::mw->after
+		-command => sub { $mw->after
 			(10,
 				sub {
-					
+					$self->{doc} = mysql_getdoc->get(
+						hyosobun_id => $self->{parent}->next,
+						w_search    => $self->{w_search},
+						tani        => $self->{tani},
+					);
+					$self->{doc_id} = $self->{doc}->{doc_id};
+					$self->_view_doc($self->{doc});
 				}
 			);
 		}
@@ -127,6 +133,7 @@ sub view{
 	my %args = @_;
 	$self->{w_search} = $args{kyotyo};
 	$self->{tani}     = $args{tani};
+	$self->{parent}   = $args{parent};
 	
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
