@@ -98,7 +98,7 @@ sub make{
 						-type    => 'OKCancel',
 						-title   => 'KH Coder'
 					);
-					unless ($ans eq 'ok'){ return 0; }
+					unless ($ans =~ /ok/i){ return 0; }
 					
 					my $w = gui_wait->start;
 					
@@ -137,7 +137,7 @@ sub make{
 							-type    => 'OKCancel',
 							-title   => 'KH Coder'
 						);
-						unless ($ans eq 'ok'){ return 0; }
+						unless ($ans =~ /ok/i){ return 0; }
 						use mysql_hukugo;
 						mysql_hukugo->run_from_morpho($target);
 					}
