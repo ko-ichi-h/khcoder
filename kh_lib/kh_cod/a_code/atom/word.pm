@@ -51,45 +51,6 @@ my %sql_join = (
 		',
 	'h1' =>
 		'h1.h1_id = hyosobun.h1_id',
-	'buntmp' =>
-		'buntmp.id = hyosobun.bun_idt',
-	'dantmp' =>
-		'
-			    dantmp.dan_id = hyosobun.dan_id
-			AND dantmp.h5_id = hyosobun.h5_id
-			AND dantmp.h4_id = hyosobun.h4_id
-			AND dantmp.h3_id = hyosobun.h3_id
-			AND dantmp.h2_id = hyosobun.h2_id
-			AND dantmp.h1_id = hyosobun.h1_id
-		',
-	'h5tmp' =>
-		'
-			    h5tmp.h5_id = hyosobun.h5_id
-			AND h5tmp.h4_id = hyosobun.h4_id
-			AND h5tmp.h3_id = hyosobun.h3_id
-			AND h5tmp.h2_id = hyosobun.h2_id
-			AND h5tmp.h1_id = hyosobun.h1_id
-		',
-	'h4tmp' =>
-		'
-			    h4tmp.h4_id = hyosobun.h4_id
-			AND h4tmp.h3_id = hyosobun.h3_id
-			AND h4tmp.h2_id = hyosobun.h2_id
-			AND h4tmp.h1_id = hyosobun.h1_id
-		',
-	'h3tmp' =>
-		'
-			    h3tmp.h3_id = hyosobun.h3_id
-			AND h3tmp.h2_id = hyosobun.h2_id
-			AND h3tmp.h1_id = hyosobun.h1_id
-		',
-	'h2tmp' =>
-		'
-			    h2tmp.h2_id = hyosobun.h2_id
-			AND h2tmp.h1_id = hyosobun.h1_id
-		',
-	'h1tmp' =>
-		'h1tmp.h1_id = hyosobun.h1_id'
 );
 my %sql_group = (
 	'bun' =>
@@ -106,23 +67,8 @@ my %sql_group = (
 		'hyosobun.h2_id, hyosobun.h1_id',
 	'h1' =>
 		'hyosobun.h1_id',
-	'buntmp' =>
-		'hyosobun.bun_idt',
-	'dantmp' =>
-		'dantmp.id',
-	'h5tmp' =>
-		'hyosobun.h5_id, hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
-	'h4tmp' =>
-		'hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
-	'h3tmp' =>
-		'hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
-	'h2tmp' =>
-		'hyosobun.h2_id, hyosobun.h1_id',
-	'h1tmp' =>
-		'hyosobun.h1_id',
 );
 
-my %a_doc_cache;
 
 #--------------------#
 #   WHERE節用SQL文   #
@@ -130,10 +76,6 @@ my %a_doc_cache;
 
 sub expr{
 	my $self = shift;
-	
-	if (index($self->{tani},'tmp') > 0){
-		return $self->{bool};
-	}
 	
 	my $t = $self->tables;
 	unless ($t){ return '0';}
@@ -159,44 +101,6 @@ sub ready{
 	my $self = shift;
 	my $tani = shift;
 	$self->{tani} = $tani;
-	
-	#-------------------#
-	#   文書1つの場合   #
-	
-	if (index($tani,'tmp') > 0){
-		
-		$self->{bool} = 0;
-	
-		my $list = mysql_a_word->new(
-			genkei => $self->raw
-		)->genkei_ids;
-		unless ( $list ){
-			return '';
-		}
-		
-		# キャッシュ作製
-		unless ( %a_doc_cache ){
-			print " making cache\n";
-			my $sql = "
-				SELECT genkei.id
-				FROM   hyosobun, hyoso, genkei, $tani
-				WHERE
-					$sql_join{$tani}
-					AND hyosobun.hyoso_id = hyoso.id
-					AND hyoso.genkei_id   = genkei.id
-			";
-			my $sth = mysql_exec->select($sql,1)->hundle;
-			while (my $i = $sth->fetch){
-				++$a_doc_cache{$i->[0]};
-			}
-		}
-		
-		foreach my $i (@{$list}){
-			$self->{bool} += $a_doc_cache{$i};
-		}
-		return 1;
-	}
-	
 	
 	
 	my $list = mysql_a_word->new(
@@ -257,10 +161,6 @@ sub parent_table{
 		$self->{parent_table} = $new;
 	}
 	return $self->{parent_table};
-}
-
-sub clear{
-	%a_doc_cache = ();
 }
 
 sub hyosos{

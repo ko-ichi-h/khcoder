@@ -90,7 +90,7 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my ($hyosobun_id,$doc_id,$foot) = $self->{parent}->prev;
+					my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->prev;
 					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
@@ -99,6 +99,7 @@ sub _new{
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
+						w_other     => $w,
 						tani        => $self->{tani},
 					);
 					$self->{doc_id} = $self->{doc}->{doc_id};
@@ -116,7 +117,7 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my ($hyosobun_id,$doc_id,$foot) = $self->{parent}->next;
+					my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->next;
 					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
@@ -125,6 +126,7 @@ sub _new{
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
+						w_other     => $w,
 						tani        => $self->{tani},
 					);
 					$self->{doc_id} = $self->{doc}->{doc_id};
@@ -211,6 +213,7 @@ sub view{
 		hyosobun_id => $args{hyosobun_id},
 		doc_id      => $args{doc_id},
 		w_search    => $args{kyotyo},
+		w_other     => $args{kyotyo2},
 		tani        => $args{tani},
 	);
 	$self->{doc}    = $doc;
@@ -219,16 +222,21 @@ sub view{
 	$self->_view_doc($doc);
 }
 
-sub check_codes{
-	
-}
 
 sub near{
 	my $self = shift;
 	my $id = shift;
+	
+	my ($t,$w);
+	if ($self->{parent}{code_obj}){
+		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
+	}
+	$self->{foot} = $t;
+	
 	my $doc = mysql_getdoc->get(
 		doc_id   => $id,
 		w_search => $self->{w_search},
+		w_other  => $w,
 		tani     => $self->{tani},
 	);
 	$self->{doc}    = $doc;
@@ -241,7 +249,7 @@ sub _view_doc{
 	my $self = shift;
 	my $doc = shift;
 	my %color;                                    # 色情報準備
-	foreach my $i ('info', 'search','html'){
+	foreach my $i ('info', 'search','html','CodeW'){
 		my $name = "color_DocView_".$i;
 		$color{$i} = Term::ANSIColor::color($::config_obj->$name);
 	}
