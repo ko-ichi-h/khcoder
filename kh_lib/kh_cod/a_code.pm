@@ -183,12 +183,16 @@ sub tables{                   # アトム・テーブルをまとめたテーブルのリスト
 
 sub tani{                     # コーディング単位
 	my $self = shift;         # $self->ready("単位")で指定されたもの
-	return $self->tani;
+	return $self->{tani};
 }
 
 sub res_table{                # コーディング結果を保存したテーブル
 	my $self = shift;         # $self->code("テーブル名")で指定されたもの
 	return $self->{res_table} 
+}
+
+sub res_col{                  # コーディング結果を保存したカラム
+	return 'num';
 }
 
 sub name{                     # コード名
