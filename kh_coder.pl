@@ -31,15 +31,15 @@ use kh_morpho;
 use kh_sysconfig;
 use gui_window;
 
-$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# 設定読み込み
-$config_obj->sqllog(0);                                       # デバッグモード
-$main_gui = gui_window::main->open;                           # GUI開始
+$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# ????????????
+$config_obj->sqllog(0);                                       # ?f?o?b?O???[?h
+$main_gui = gui_window::main->open;                           # GUI?J?n
 
 MainLoop;
 
 #---------------#
-#   perlapp用   #
-# __END__
+#   perlapp?p   #
+ __END__
 
 use Tk::DragDrop::Win32Drop;
 use Tk::DragDrop::Win32Site;

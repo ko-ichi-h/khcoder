@@ -276,7 +276,7 @@ sub next{
 	my $self = shift;
 	my @selected = $self->list->infoSelection;
 	unless (@selected){
-		return;
+		return -1;
 	}
 	my $selected = $selected[0] + 1;
 	my $max = @{$self->result} - 1;
@@ -300,7 +300,7 @@ sub prev{
 	my $self = shift;
 	my @selected = $self->list->infoSelection;
 	unless (@selected){
-		return;
+		return -1;
 	}
 	my $selected = $selected[0] - 1;
 	if ($selected < 0){
