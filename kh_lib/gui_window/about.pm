@@ -1,19 +1,10 @@
 package gui_window::about;
 use strict;
 use base qw(gui_window);
-BEGIN{
-	if( $] > 5.008 ){
-		require encoding;
-		encoding->import( "euc-jp" );
-	}
-}
-
-
 
 #------------------#
 #   Windowを開く   #
 #------------------#
-
 
 sub _new{
 	my $self = shift;
@@ -22,9 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $mw->Toplevel;
 	$wabtkh->resizable(0, 0);
-	#$wabtkh->focus;
-	my $msg = Jcode->new('KH Coderについて','euc')->sjis;
-	$wabtkh->title("$msg");
+	$wabtkh->title($self->gui_jchar('KH Coderについて','euc'));
 
 	$wabtkh->Label(
 		-image => $wabtkh->Photo(-file => $::config_obj->logo_image_file),
@@ -32,18 +21,15 @@ sub _new{
 		-relief => 'sunken',
 		)->pack(-anchor => 'c');
 
-	$msg = '　Version：  '."$::kh_version";
-	$msg = Jcode->new($msg,'euc')->sjis;
 	$wabtkh->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('　Version：  '."$::kh_version",'euc'),
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	my $fra1 = $wabtkh->Frame() ->pack(-anchor=>'w');
 
-	$msg = Jcode->new('　Web page：','euc')->sjis;
 	$fra1->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('　Web page：','euc'),
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'0',-padx=>'2', -side=>'left');
 
@@ -66,10 +52,8 @@ sub _new{
 
 	my $fra2 = $wabtkh->Frame() ->pack(-anchor=>'w');
 
-
-	$msg = Jcode->new('　Thanks to：  川端亮 ','euc')->sjis;
 	$fra2->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('　Thanks to：  川端亮 ','euc'),
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2',-side=>'left');
 
@@ -96,15 +80,13 @@ sub _new{
 		-font => "TKFN"
 		);
 
-
-	$msg = Jcode->new('　Copyright (C)2001-2005 樋口耕一','euc')->sjis;
 	$wabtkh->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('　Copyright (C)2001-2005 樋口耕一','euc'),
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$wabtkh->Button(
-		-text => Jcode->new('閉じる')->sjis,
+		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-width => 8,
 	#	-borderwidth => '1',

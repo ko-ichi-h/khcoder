@@ -6,12 +6,6 @@ use Tk::HList;
 use base qw(gui_window);
 use gui_window::project_edit;
 use gui_jchar;
-BEGIN{
-	if( $] > 5.008 ){
-		require encoding;
-		encoding->import( "euc-jp" );
-	}
-}
 
 #----------------#
 #   Window作成   #
@@ -25,7 +19,7 @@ sub _new{
 	$self->{win_obj} = $few;
 	#$few->focus;
 #	$few->grab;
-	$few->title(Jcode->new('プロジェクト・マネージャ')->sjis);
+	$few->title($self->gui_jchar('プロジェクト・マネージャ'));
 
 	# リスト作成
 	my $plis = $few->Scrolled(
@@ -45,25 +39,25 @@ sub _new{
 	)->pack(-fill=>'both',-expand => 'yes');
 	$self->{g_list} = $plis;
 
-	$plis->header('create',0,-text => Jcode->new('対象ファイル')->sjis);
-	$plis->header('create',1,-text => Jcode->new('説明（メモ）')->sjis);
-	$plis->header('create',2,-text => Jcode->new('ディレクトリ')->sjis);
+	$plis->header('create',0,-text => $self->gui_jchar('対象ファイル'));
+	$plis->header('create',1,-text => $self->gui_jchar('説明（メモ）'));
+	$plis->header('create',2,-text => $self->gui_jchar('ディレクトリ'));
 
 	# ボタン
 	my $b1 = $few->Button(
-		-text => Jcode->new('削除')->sjis,
+		-text => $self->gui_jchar('削除'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->delete;}); }
 	)->pack(-side => 'left',-padx => 2,-pady => 1);
 	my $b2 = $few->Button(
-		-text => Jcode->new('編集')->sjis,
+		-text => $self->gui_jchar('編集'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->edit;}); }
 	)->pack(-side => 'left',-pady => 1);
 	$few->Button(
-		-text => Jcode->new('新規',-padx => 2)->sjis,
+		-text => $self->gui_jchar('新規'),-padx => 2,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{
@@ -71,13 +65,8 @@ sub _new{
 			gui_window::project_new->open;
 		}); }
 	)->pack(-side => 'left',-padx => 3,,-pady => 1);
-#	$few->Button(
-#		-text => Jcode->new('キャンセル')->sjis,
-#		-font => "TKFN",
-#		-command => sub{ $mw->after(10,sub{$self->close;}); }
-#	)->pack(-anchor => 'w',-side => 'right',-padx => 3);
 	my $b3 = $few->Button(
-		-text => Jcode->new('開く',-padx => 3)->sjis,
+		-text => $self->gui_jchar('開く'),-padx => 3,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->_open;}); }
@@ -192,9 +181,9 @@ sub refresh{
 	my $n = 0;
 	foreach my $i (@{$self->projects->list}){
 		$self->list->add($n,-at => $n);
-		$self->list->itemCreate($n,0,-text => $i->file_short_name);
-		$self->list->itemCreate($n,1,-text => $i->comment);
-		$self->list->itemCreate($n,2,-text => $i->file_dir);
+		$self->list->itemCreate($n,0,-text => $self->gui_jchar($i->file_short_name));
+		$self->list->itemCreate($n,1,-text => $self->gui_jchar($i->comment));
+		$self->list->itemCreate($n,2,-text => $self->gui_jchar($i->file_dir));
 #		if ( $current_file eq $i->file_target){
 #			$self->list->entryconfigure($n, -state, 'disable');
 #		}

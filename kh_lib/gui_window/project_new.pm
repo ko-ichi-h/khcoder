@@ -13,24 +13,16 @@ sub _new{
 	my $self = shift;
 
 	my $mw = $::main_gui->mw->Toplevel;
-#	$mw->resizable(0, 0);
-	#$mw->focus();
-#	$mw->grab();
-	my $msg = Jcode->new('新規プロジェクト')->sjis;
-	$mw->title("$msg");
-
+	$mw->title($self->gui_jchar('新規プロジェクト','euc'));
 	$self->{win_obj} = $mw;
-
 	my $lfra = $mw->LabFrame(-label => 'Entry',-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
+	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
-
-	$msg = Jcode->new('分析対象ファイル：')->sjis;
 	$fra1->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('分析対象ファイル：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my $e1 = $fra1->Entry(
@@ -38,16 +30,14 @@ sub _new{
 		-background => 'white'
 	)->pack(-side => 'right');
 
-	$msg = Jcode->new('参照')->sjis;
 	$fra1->Button(
-		-text => "$msg",
+		-text => $self->gui_jchar('参照'),
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
 	)->pack(-side => 'right',-padx => 2);
 
-	$msg = Jcode->new('説明（メモ）：')->sjis;
 	$fra2->Label(
-		-text => "$msg",
+		-text => $self->gui_jchar('説明（メモ）：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my $e2 = $fra2->Entry(
@@ -56,7 +46,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$mw->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -112,7 +102,7 @@ sub _sansyo{
 
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => Jcode->new('分析対象ファイルを選択してください')->sjis,
+		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),
 		-initialdir => $::config_obj->cwd
 	);
 
@@ -120,6 +110,8 @@ sub _sansyo{
 		$::config_obj->os_path($path);
 		$self->e1->delete('0','end');
 		$self->e1->insert(0,$path);
+		#print "$path\n";
+		#print Encode::encode('shiftjis',$path)."\n";
 	}
 }
 

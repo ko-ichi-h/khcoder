@@ -42,6 +42,12 @@ use gui_window::outvar_detail;
 use gui_window::force_color;
 use gui_window::contxt_out;
 
+BEGIN{
+	if( $] > 5.008 ){
+		require Encode;
+	}
+}
+
 sub open{
 	my $class = shift;
 	my $self;
@@ -116,6 +122,24 @@ sub end{
 
 sub start{
 	return 1;
+}
+
+sub gui_jchar{
+	my $char = $_[1];
+	my $code = $_[2];
+	
+	if ( $] > 5.008 ) {
+		$code = Jcode->new($char)->icode unless $code;
+		$code = 'euc-jp'   if $code eq 'euc';
+		$code = 'shiftjis' if $code eq 'sjis';
+		return Encode::decode($code,$char);
+	} else {
+		if ($code eq 'sjis'){
+			return $char;
+		} else {
+			return Jcode->new($char,$code)->sjis;
+		}
+	}
 }
 
 1;
