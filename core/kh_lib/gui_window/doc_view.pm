@@ -10,6 +10,10 @@ use gui_window::word_conc;
 use gui_window::doc_view::win32;
 use gui_window::doc_view::linux;
 
+my $ascii = '[\x00-\x7F]';
+my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
+my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
+
 #------------------#
 #   Windowを開く   #
 #------------------#
@@ -289,19 +293,70 @@ sub _view_doc{
 	$self->text->insert('end',"$color{info}".$doc->header."$black");
 	
 	my $t;                                        # 本文書き出し
+	my $buffer;
 	foreach my $i (@{$doc->body}){
 		if ($color{$i->[1]}){
+			if (length($buffer)){
+				$t .= $self->_str_color($buffer);
+				$buffer = '';
+			}
+			
 			$t .= "$color{$i->[1]}"."$i->[0]"."$black";
 		} else {
-			$t .= "$i->[0]";
+			$buffer .= "$i->[0]";
 		}
 	}
+	$t .= $self->_str_color($buffer);
+
 	$self->text->insert('end',$t);
-	
 	$self->text->insert('end',"\n\n"."$color{info}"."$self->{foot}");
 	
 	$self->wrap;
 	$self->update_buttons;
+}
+
+# 文字列強調ルーチン
+sub _str_color{
+	my $self = shift;
+	my $str  = shift;
+	
+	my $black = Term::ANSIColor::color('clear');
+	my $color = Term::ANSIColor::color($::config_obj->color_DocView_force);
+	
+	$str = Jcode->new($str)->euc;
+	foreach my $i (@{$self->{str_force}}){
+		my $pat = $i;
+		my $rep = $color.$i.$black;
+		$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
+	}
+	$str = Jcode->new($str)->sjis;
+	return $str;
+}
+
+# 再描画ルーチン
+sub refresh{
+	my $self = shift;
+	
+	# 設定の読み込み
+	$self->_init;
+	
+	# 文書再取得
+	my ($t,$w);
+	if ($self->{parent}{code_obj}){
+		($t,$w) = $self->{parent}{code_obj}->check_a_doc($self->{doc_id});
+	}
+	$self->{foot} = $t;
+	my $doc = mysql_getdoc->get(
+		doc_id   => $self->{doc_id},
+		w_search => $self->{w_search},
+		w_force  => $self->{w_force},
+		w_other  => $w,
+		tani     => $self->{tani},
+	);
+	$self->{doc}    = $doc;
+	
+	# 表示
+	$self->_view_doc($doc);
 }
 
 #------------#
@@ -312,6 +367,7 @@ sub _init{
 	my $self = shift;
 	my @l;
 	
+	# 強調語の取得
 	my $h = mysql_exec->select(
 		"SELECT name FROM d_force WHERE type=1",
 		1
@@ -320,10 +376,22 @@ sub _init{
 		my $list = mysql_a_word->new(
 			genkei => $i->[0]
 		)->hyoso_id_s;
-		@l = (@l,@{$list});
+		if ($list){
+			@l = (@l,@{$list});
+		}
 	}
 	$self->{w_force} = \@l;
 	
+	# 強調文字列の取得
+	$self->{str_force} = undef;
+	my $h = mysql_exec->select(
+		"SELECT name FROM d_force WHERE type=0 ORDER BY id",
+		1
+	)->hundle;
+	while (my $i = $h->fetch){
+		push @{$self->{str_force}}, $i->[0]
+	}
+
 	return $self;
 }
 
