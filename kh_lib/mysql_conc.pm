@@ -4,6 +4,7 @@ use mysql_exec;
 use mysql_a_word;
 
 my ( $l_query, $l_hinshi, $l_katuyo, $l_length);
+my $docs_per_once = 200;
 
 sub initialize{
 	($l_query, $l_hinshi, $l_katuyo, $l_length) = ('','','','')
@@ -48,7 +49,9 @@ sub a_word{
 	$l_length = $args{length};
 
 	$self->_sort;
-	return ($self->_format,$self->_count);
+	
+	return $self;
+	# return ($self->_format,$self->_count);
 }
 
 sub last_words{
@@ -248,8 +251,14 @@ sub _sort{                                        # ソート用テーブルの作成
 	#mysql_exec->("alter table temp_conc_sort add index index1 (conc_id)",1);
 }
 
+sub docs_per_once{
+	return $docs_per_once;
+}
+
 sub _format{                                      # 結果の出力
 	my $self = shift;
+	my $start = shift;
+	
 	print "3: Formating output...\n";
 	
 	my $result;
@@ -258,28 +267,34 @@ sub _format{                                      # 結果の出力
 		$sql .= "	LEFT JOIN hyoso ON temp_conc.$i = hyoso.id,\n";
 		$sql .= "	temp_conc_sort\n";
 		$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
+		$sql .= "	AND temp_conc_sort.id >= $start\n";
+		$sql .= "	AND temp_conc_sort.id <  $start + $docs_per_once\n";
 		$sql .= "ORDER BY temp_conc_sort.id\n";
-		$sql .= "LIMIT $self->{limit}";
+		# $sql .= "LIMIT $self->{limit}";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 	my $sql = "SELECT hyoso.name, temp_conc.id FROM ( hyoso,temp_conc,temp_conc_sort )\n";
 	$sql .= "WHERE\n\t";
 	$sql .= "temp_conc.center = hyoso.id\n";
-	$sql .= "\tAND temp_conc.id = temp_conc_sort.conc_id\n";
+	$sql .= "	AND temp_conc.id = temp_conc_sort.conc_id\n";
+	$sql .= "	AND temp_conc_sort.id >= $start\n";
+	$sql .= "	AND temp_conc_sort.id <  $start + $docs_per_once\n";
 	$sql .= "ORDER BY temp_conc_sort.id\n";
-	$sql .= "LIMIT $self->{limit}";
+	# $sql .= "LIMIT $self->{limit}";
 	$result->{center} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	
 	print "...\n";
 
 	my $return;
-	my $last = mysql_exec->select("SELECT COUNT(*) FROM temp_concl",1)->hundle->fetch->[0];
+	my $last = mysql_exec->select("
+		SELECT COUNT(*)
+		FROM temp_conc_sort
+		WHERE
+			    temp_conc_sort.id >= $start
+			AND temp_conc_sort.id <  $start + $docs_per_once
+	",1)->hundle->fetch->[0];
 	--$last;
 	
-	if ($self->{limit} <= $last){
-		$last = $self->{limit} - 1;
-	}
-
 	for (my $n = 0; $n <= $last; ++$n){
 		foreach my $i (@{$self->{left}}){
 			$return->[$n][0] .= $result->{$i}[$n][0];
