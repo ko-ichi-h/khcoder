@@ -21,7 +21,7 @@ sub table_exists{
 	my $class = shift;
 	my $table = shift;
 	my $r = 0;
-	foreach my $i ( $::project_obj->dbh->func( '_ListTables' ) ){
+	foreach my $i ( $::project_obj->dbh->tables() ){
 		if ($i eq $table){
 			$r = 1;
 			last;
@@ -32,7 +32,7 @@ sub table_exists{
 
 sub clear_tmp_tables{
 	my $class = shift;
-	foreach my $i ( $::project_obj->dbh->func( '_ListTables' ) ){
+	foreach my $i ( $::project_obj->dbh->tables() ){
 		if ( index($i,'ct_') == 0){
 			$::project_obj->dbh->do("drop table $i");
 		}

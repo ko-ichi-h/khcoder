@@ -11,9 +11,9 @@ use kh_mailif;
 use mysql_exec;
 use mysql_ready::check;
 
-# MySQL-Perl間で一度にやりとりするケース数
-my $rows_per_once = 30000;
-my $data_per_1ins = 200;
+
+my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
+my $data_per_1ins = 200;      # 一度にINSERTする値の数
 
 sub first{
 	$::config_obj->in_preprocessing(1);
