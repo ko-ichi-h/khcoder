@@ -1,13 +1,11 @@
-package gui_window::doc_search;
+package gui_window::word_ass;
 use base qw(gui_window);
 
 use Tk;
 use strict;
 
-use gui_window::doc_search::linux;
-use gui_window::doc_search::win32;
 use gui_widget::optmenu;
-use kh_cod::search;
+use kh_cod::asso;
 
 #-------------#
 #   GUI作製   #
@@ -18,7 +16,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	$win->focus;
-	$win->title(Jcode->new('文書検索')->sjis);
+	$win->title(Jcode->new('抽出語 連関規則')->sjis);
 	$self->{win_obj} = $win;
 	
 	#--------------------#
@@ -75,14 +73,6 @@ sub _new{
 		font => "TKFN"
 	)->pack(-side => 'left');
 
-	#$self->{direct_w_o} = $f3->Optionmenu(
-	#	-options => ['and','or','code'],
-	#	-font    => "TKFN",
-	#	-width   => 4,
-	#	-variable => \$self->{opt_direct},
-	#	-borderwidth=> 1,
-	#)->pack(-side => 'left');
-
 	$self->{direct_w_o} = gui_widget::optmenu->open(
 		parent  => $f3,
 		pack    => {-side => 'left'},
@@ -110,7 +100,7 @@ sub _new{
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('検索')->sjis,
+		-text    => Jcode->new('集計')->sjis,
 		-command => sub{ $win->after(10,sub{$self->search;});}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
@@ -129,21 +119,9 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		text => Jcode->new('検索単位：')->sjis,
+		text => Jcode->new('集計単位：')->sjis,
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'right');
-
-	#$self->{opt_w_method1} = $f2->Optionmenu(
-	#	-options =>
-	#		[
-	#			[Jcode->new('AND検索')->sjis => 'and'],
-	#			[Jcode->new('OR検索')->sjis  => 'or']
-	#		],
-	#	-font    => "TKFN",
-	#	-width   => 7,
-	#	-variable => \$self->{opt_method1},
-	#	-borderwidth => 1,
-	#)->pack(-pady => '1', -side => 'left');
 
 	$self->{opt_w_method1} = gui_widget::optmenu->open(
 		parent  => $f2,
@@ -156,28 +134,7 @@ sub _new{
 		variable => \$self->{opt_method1},
 	);
 
-	#$f2->Optionmenu(
-	#	-options =>
-	#		[
-	#			[Jcode->new('出現順')->sjis => 'by'],
-	#			[Jcode->new('tf順')->sjis  => 'tf']
-	#		],
-	#	-font    => "TKFN",
-	#	-width   => 7,
-	#	-variable => \$self->{opt_order},
-	#	-borderwidth=> 1,
-	#)->pack(-padx => 8);
 
-	gui_widget::optmenu->open(
-		parent  => $f2,
-		pack    => {-padx => 8, -pady => 1},
-		options =>
-			[
-				[Jcode->new('出現順')->sjis , 'by'],
-				[Jcode->new('tf順')->sjis   , 'tf']
-			],
-		variable => \$self->{opt_order},
-	);
 
 	#--------------#
 	#   検索結果   #
@@ -191,18 +148,26 @@ sub _new{
 	$self->{rlist} = $rf->Scrolled(
 		'HList',
 		-scrollbars       => 'osoe',
-		-header           => 0,
+		-header           => 1,
 		-itemtype         => 'text',
 		-font             => 'TKFN',
-		-columns          => 1,
+		-columns          => 7,
 		-padx             => 2,
 		-background       => 'white',
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-height           => 10,
-		-command          => sub {$self->view_doc;}
+		-command          => sub {$self->conc;}
 	)->pack(-fill =>'both',-expand => 'yes');
+
+	$self->{rlist}->header('create',0,-text => Jcode->new('順位')->sjis);
+	$self->{rlist}->header('create',1,-text => Jcode->new('単語')->sjis);
+	$self->{rlist}->header('create',2,-text => Jcode->new('品詞')->sjis);
+	$self->{rlist}->header('create',3,-text => Jcode->new('全体')->sjis);
+	$self->{rlist}->header('create',4,-text => Jcode->new('共起')->sjis);
+	$self->{rlist}->header('create',5,-text => Jcode->new('条件付き確立')->sjis);
+	$self->{rlist}->header('create',6,-text => Jcode->new(' ソート')->sjis);
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
@@ -216,25 +181,41 @@ sub _new{
 		-font    => "TKFN",
 		-text    => Jcode->new('コピー')->sjis,
 		-width   => 8,
-		-command => sub{ $win->after(10,sub{$self->copy;});},
+		-command => sub{ $win->after(10,sub{gui_hlist->copy($self->{rlist});});},
 		-borderwidth => 1
 	)->pack(-side => 'left');
 
 	$f5->Button(
 		-font    => "TKFN",
-		-width   => 8,
-		-text    => Jcode->new('文書表示')->sjis,
-		-command => sub{ $win->after(10,sub{$self->view_doc;});},
+		#-width   => 8,
+		-text    => Jcode->new('コンコーダンス')->sjis,
+		-command => sub{ $win->after(10,sub{$self->conc;});},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
 
 	$f5->Label(
-		-text => ' ',
+		-text => Jcode->new(' ソート：')->sjis,
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	gui_widget::optmenu->open(
+		parent  => $f5,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[Jcode->new('出現順')->sjis , 'by'],
+				[Jcode->new('tf順')->sjis   , 'tf']
+			],
+		variable => \$self->{opt_order},
+	);
+
+	$f5->Label(
+		-text => Jcode->new(' ')->sjis,
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => Jcode->new('前'.kh_cod::search->docs_per_once)->sjis,
+		-text        => Jcode->new('フィルタ設定')->sjis,
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -243,24 +224,11 @@ sub _new{
 				$self->display($start);
 			},
 		-borderwidth => 1,
-		-state       => 'disable',
+		-state       => 'normal',
 	)->pack(-side => 'left',-padx => 2);
 
-	$self->{btn_next} = $f5->Button(
-		-text        => Jcode->new('次'.kh_cod::search->docs_per_once)->sjis,
-		-font        => "TKFN",
-		-command     =>
-			sub{
-				my $start =
-					$self->{current_start} + kh_cod::search->docs_per_once;
-				$self->display($start);
-			},
-		-borderwidth => 1,
-		-state       => 'disable',
-	)->pack(-side => 'left');
-
 	$self->{hits_label} = $f5->Label(
-		text       => Jcode->new('  ヒット数：0')->sjis,
+		text       => Jcode->new('  文書数：0')->sjis,
 		font       => "TKFN",
 	)->pack(side => 'left',);
 	
@@ -291,13 +259,13 @@ sub read_code{
 
 	# ルールファイルを読み込み
 	unless (-e $self->cfile ){
-		$self->{code_obj} = kh_cod::search->new;
+		$self->{code_obj} = kh_cod::asso->new;
 		return 0;
 	}
 	
-	my $cod_obj = kh_cod::search->read_file($self->cfile);
+	my $cod_obj = kh_cod::asso->read_file($self->cfile);
 	unless (eval(@{$cod_obj->codes})){
-		$self->{code_obj} = kh_cod::search->new;
+		$self->{code_obj} = kh_cod::asso->new;
 		return 0;
 	}
 	
@@ -353,119 +321,6 @@ sub clist_check{
 	}
 }
 
-#--------------#
-#   文書表示   #
-#--------------#
-
-sub view_doc{
-	my $self = shift;
-	my @selected = $self->{rlist}->infoSelection;
-	unless (@selected){
-		return;
-	}
-	my $selected = $selected[0];
-	
-	my ($t,$w) = $self->{code_obj}->check_a_doc($self->{result}[$selected][0]);
-	
-	my $view_win = gui_window::doc_view->open;
-	$view_win->view(
-		doc_id  => $self->{result}[$selected][0],
-		tani    => $self->tani,
-		parent  => $self,
-		kyotyo  => $self->last_words,
-		kyotyo2 => $w,
-		foot    => $t,
-	);
-}
-
-sub next{
-	my $self = shift;
-	my @selected = $self->{rlist}->infoSelection;
-	unless (@selected){
-		return -1;
-	}
-	my $selected = $selected[0] + 1;
-	my $max = @{$self->{result}} - 1;
-	if ($selected > $max){
-		$selected = $max;
-	}
-	my $doc_id = $self->{result}[$selected][0];
-	my ($t,$w) = $self->{code_obj}->check_a_doc($doc_id);
-	
-	$self->{rlist}->selectionClear;
-	$self->{rlist}->selectionSet($selected);
-	$self->{rlist}->yview($selected);
-	my $n = @{$self->{result}};
-	if ($n - $selected > 7){
-		$self->{rlist}->yview(scroll => -5, 'units');
-	}
-	
-	return (undef,$doc_id,$t,$w);
-}
-
-sub prev{
-	my $self = shift;
-	my @selected = $self->{rlist}->infoSelection;
-	unless (@selected){
-		return -1;
-	}
-	my $selected = $selected[0] - 1;
-	if ($selected < 0){
-		$selected = 0;
-	}
-	my $doc_id = $self->{result}[$selected][0];
-	my ($t,$w) = $self->{code_obj}->check_a_doc($doc_id);
-	
-	$self->{rlist}->selectionClear;
-	$self->{rlist}->selectionSet($selected);
-	$self->{rlist}->yview($selected);
-	my $n = @{$self->{result}};
-	if ($n - $selected > 7){
-		$self->{rlist}->yview(scroll => -5, 'units');
-	}
-	
-	return (undef,$doc_id,$t,$w);
-}
-
-sub if_next{
-	my $self = shift;
-	my @selected = $self->{rlist}->infoSelection;
-	unless (@selected){
-		return 0;
-	}
-	my $selected = $selected[0] ;
-	my $max = @{$self->{result}} - 1;
-	if ($selected < $max){
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-sub if_prev{
-	my $self = shift;
-	my @selected = $self->{rlist}->infoSelection;
-	unless (@selected){
-		return 0;
-	}
-	my $selected = $selected[0] ;
-	if ($selected > 0){
-		return 1;
-	} else {
-		return 0;
-	}
-}
-sub end{
-	my $check = 0;
-	if ($::main_gui){
-		$check = $::main_gui->if_opened('w_doc_view');
-	}
-	if ( $check ){
-		$::main_gui->get('w_doc_view')->close;
-	}
-}
-
-
 
 #--------------#
 #   検索実行   #
@@ -487,7 +342,7 @@ sub search{
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => Jcode->new('  ヒット数： 0')->sjis);
+	$self->{hits_label}->configure(-text => Jcode->new('  文書数： 0')->sjis);
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searcing...'
@@ -504,7 +359,7 @@ sub search{
 	);
 	
 	# 検索ロジックの呼び出し（検索実行）
-	my $query_ok = $self->{code_obj}->search(
+	my $query_ok = $self->{code_obj}->asso(
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
@@ -517,8 +372,7 @@ sub search{
 	);
 	
 	if ($query_ok){
-		$self->{last_words} = $self->{code_obj}->last_search_words;
-		$self->display(1);
+		$self->display;
 	}
 	return $self;
 }
@@ -528,21 +382,62 @@ sub search{
 
 sub display{
 	my $self = shift;
-	my $start = shift;
-	$self->{current_start} = $start;
 
 	# HListの更新
 	unless ( $self->{code_obj} ){return undef;}
-	$self->{result}     = $self->{code_obj}->fetch_results($start);
+	$self->{result} = $self->{code_obj}->fetch_results();
+
+	my $numb_style = $self->{rlist}->ItemStyle(
+		'text',
+		-anchor => 'e',
+		-background => 'white',
+		-font => "TKFN"
+	);
+
 	$self->{rlist}->delete('all');
 	if ($self->{result}){
 		my $row = 0;
 		foreach my $i (@{$self->{result}}){
 			$self->{rlist}->add($row,-at => "$row");
-			$self->{rlist}->itemCreate(
+			$self->{rlist}->itemCreate(           # 順位
 				$row,
 				0,
+				-text  => $row + 1,
+				-style => $numb_style
+			);
+			$self->{rlist}->itemCreate(           # 単語
+				$row,
+				1,
+				-text  => Jcode->new($i->[0])->sjis,
+			);
+			$self->{rlist}->itemCreate(           # 品詞
+				$row,
+				2,
 				-text  => Jcode->new($i->[1])->sjis,
+			);
+			$self->{rlist}->itemCreate(           # 全体
+				$row,
+				3,
+				-text  => "$i->[2]"." ("."$i->[3]".")",
+				-style => $numb_style
+			);
+			$self->{rlist}->itemCreate(           # 共起
+				$row,
+				4,
+				-text  => "$i->[4]",
+				-style => $numb_style
+			);
+			$self->{rlist}->itemCreate(           # 条件付き確立
+				$row,
+				5,
+				-text  => "$i->[5]",
+				-style => $numb_style
+			);
+			$self->{rlist}->itemCreate(           # Sort
+				$row,
+				6,
+				-text  => " ".sprintf("%.4f",$i->[6]),
+				-style => $numb_style
 			);
 			++$row;
 		}
@@ -551,42 +446,39 @@ sub display{
 	}
 	
 	# ラベルの更新
-	my $num_total = $self->{code_obj}->total_hits;
-	my $num_disp  = $start + kh_cod::search->docs_per_once - 1;
-	my $num_disp2;
-	if ($num_total > $num_disp){
-		$num_disp2 = $num_disp;
-	} else {
-		$num_disp2 = $num_total;
-	}
-	if ($num_total == 0){$start = 0;}
+	my $num_total = $self->{code_obj}->doc_num;
 	$self->{rlist}->yview(0);
-	$self->{hits_label}->configure(-text => Jcode->new("  ヒット数： $num_total  表示： $start"."-$num_disp2")->sjis);
+	$self->{hits_label}->configure(-text => Jcode->new("  文書数： $num_total")->sjis);
 
-	# ボタンの更新
-	if ($start > 1){
-		$self->{btn_prev}->configure(-state => 'normal');
-	} else {
-		$self->{btn_prev}->configure(-state => 'disable');
-	}
-	if ($num_total > $num_disp){
-		$self->{btn_next}->configure(-state => 'normal');
-	} else {
-		$self->{btn_next}->configure(-state => 'disable');
-	}
-	
 	return $self;
 }
 
-#------------------#
-#   文書のコピー   #
-#------------------#
-sub copy{
+#----------------------------#
+#   コンコーダンス呼び出し   #
+#----------------------------#
+sub conc{
+	use gui_window::word_conc;
 	my $self = shift;
-	my $class = "gui_window::doc_search::".$::config_obj->os;
-	bless $self, $class;
+
+	# 変数取得
+	my @selected = $self->{rlist}->infoSelection;
+	unless(@selected){
+		return;
+	}
+	my $selected = $selected[0];
+	my ($query, $hinshi);
+	$query = Jcode->new($self->{result}->[$selected][0])->sjis;
+	$hinshi = Jcode->new($self->{result}->[$selected][1])->sjis;
 	
-	$self->_copy;
+	# コンコーダンスの呼び出し
+	my $conc = gui_window::word_conc->open;
+	$conc->entry->delete(0,'end');
+	$conc->entry4->delete(0,'end');
+	$conc->entry2->delete(0,'end');
+	$conc->entry->insert('end',$query);
+	$conc->entry4->insert('end',$hinshi);
+	$conc->search;
+
 }
 
 #--------------#
@@ -609,7 +501,7 @@ sub tani{
 }
 
 sub win_name{
-	return 'w_doc_search';
+	return 'w_doc_ass';
 }
 
 1;

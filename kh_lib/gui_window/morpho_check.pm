@@ -90,6 +90,7 @@ sub _new{
 	$self->{label} = $fra5->Label(
 		-text => '    Ready.'
 	)->pack(-side => 'left');
+	$e1->focus;
 
 	MainLoop;
 	

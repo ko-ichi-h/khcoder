@@ -33,6 +33,26 @@ use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
 $main_gui = gui_window::main->open;
+#MainLoop;
+
+
+#--------------------#
+#   テスト用コード   #
+
+# プロジェクトを開く
+kh_project->temp(
+	target  =>
+		'F:/home/Koichi/Study/perl/test_data/kokoro/kokoro.txt',
+		#'E:/home/higuchi/perl/core/data/big_test/mainichi2.txt',
+	dbname  =>
+		'khc4',
+)->open;
+$::main_gui->close_all;
+$::main_gui->menu->refresh;
+$::main_gui->inner->refresh;
+
+# 特定のWindowを開く
+gui_window::word_ass->open;
 
 MainLoop;
 
