@@ -273,6 +273,14 @@ sub read_code{
 	}
 	$self->{code_obj} = $cod_obj;
 	
+	# 「コード無し」を付与
+	$self->{clist}->add($row,-at => "$row");
+	$self->{clist}->itemCreate(
+		$row,
+		0,
+		-text  => Jcode->new('＃コード無し')->sjis,
+	);
+	
 	$self->clist_check;
 	return $self;
 }
@@ -455,21 +463,22 @@ sub search{
 	);
 	
 	# 検索ロジックの呼び出し（検索実行）
-	# ($self->{result}, $self->{last_words}) = 
-	$self->{code_obj}->search(
+	my $query_ok = $self->{code_obj}->search(
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
 		order    => $self->{opt_order},
 	);
-	$self->{last_words} = $self->{code_obj}->last_search_words;
-
+	
 	$self->{status_label}->configure(
 		-foreground => 'blue',
 		-text => 'Ready.'
 	);
 	
-	$self->display(1);
+	if ($query_ok){
+		$self->{last_words} = $self->{code_obj}->last_search_words;
+		$self->display(1);
+	}
 	return $self;
 }
 
@@ -482,6 +491,7 @@ sub display{
 	$self->{current_start} = $start;
 
 	# HListの更新
+	unless ( $self->{code_obj} ){return undef;}
 	$self->{result}     = $self->{code_obj}->fetch_results($start);
 	$self->{rlist}->delete('all');
 	if ($self->{result}){

@@ -484,6 +484,9 @@ sub display{
 	$self->{current_start} = $start;
 	
 	# HList¤Î¹¹¿·
+	unless ($self->{result_obj}){
+		return undef;
+	}
 	my $result = $self->{result_obj}->_format($start);
 	$self->list->delete('all');
 	unless ($result){
