@@ -37,7 +37,6 @@ sub a_word{
 	){
 		my $hyoso = $self->_hyoso;
 		my $points = $self->_find($hyoso);
-		$self->_get_data($points);
 	}
 	$l_query = $args{query};
 	$l_hinshi = $args{hinshi};
@@ -91,32 +90,9 @@ sub _find{
 	my @hyoso = @{$_[0]};
 	my $sql = '';
 
-	print "1: getting places\n";
-	# 出現位置のリストアップ
-	
-	$sql = '';
-	$sql .= "SELECT id\n";
-	$sql .= "FROM hyosobun\n";
-	$sql .= "WHERE\n";
-	my $n = 0;
-	foreach my $i (@hyoso){
-		if ($n){
-			$sql .= 'OR ';
-		}
-		$sql .= "hyoso_id = $i\n";
-		++$n;
-	}
-	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-}
-
-sub _get_data{
-	my $self = shift;
-	my %args = %{$self};
-	my $points = shift;
-	my $sql = '';
+	print "1: searching...\n";
 
 	# Temp Table作成
-	print "2: Creating temp table\n";
 	mysql_exec->do("drop table temp_conc");
 	$sql  = "create table temp_conc (\n";
 	$sql .= "id int auto_increment primary key not null,\n";
@@ -126,48 +102,39 @@ sub _get_data{
 	chop $sql;
 	$sql .= ")";
 	mysql_exec->do($sql,1);
-	
+
+
+	$sql = '';
+	$sql .= "INSERT INTO temp_conc\n(";
+	foreach my $i (@{$self->{scanlist}}){
+		$sql .= "$i,";
+	}
+	chop $sql;
+	$sql .= ")\n";
+	$sql .= "SELECT ";
+	foreach my $i (@{$self->{scanlist}}){
+		$sql .= "$i".".hyoso_id,";
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM hyosobun as center\n";
+	foreach my $i (@{$self->{left}},@{$self->{right}}){
+		my $lr = substr($i,0,1);
+		if ($lr eq "l"){ $lr = '-';} else {$lr = '+';}
+		my $num = $i;
+		substr($num,0,1) = '';
+		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id $lr $num ) = $i".".id\n";
+	}
+	$sql .= "WHERE\n";
 	my $n = 0;
-	my $temp = '';
-	foreach my $i (@{$points}){
-		my $p = $i->[0] - $args{length};
-		my $n = $i->[0] + $args{length};
-		my $sql  = "SELECT hyoso_id\n FROM hyosobun\n WHERE\n";
-		$sql .= "id >= $p AND id <= $n \n";
-		$sql .= "ORDER BY id";
-		my $r = mysql_exec->select("$sql",1)->hundle->fetchall_arrayref;
-
-		$temp .= "(";
-		foreach my $h (@{$r}){
-			$temp .= "$h->[0],";
+	foreach my $i (@hyoso){
+		if ($n){
+			$sql .= 'OR ';
 		}
-		chop $temp;
-		$temp .= "),";
-
-		if ($n == 300){
-			chop $temp;
-			my $sql  = "INSERT INTO temp_conc\n (";
-			foreach my $h (@{$self->{scanlist}}){
-				$sql .= "$h,";
-			}
-			chop $sql;		
-			$sql .= ") VALUES $temp";
-			mysql_exec->do("$sql",1);
-			$temp = '';
-		}
+		$sql .= "center.hyoso_id = $i\n";
 		++$n;
 	}
-	
-	if ($temp){
-		chop $temp;
-		my $sql  = "INSERT INTO temp_conc\n (";
-		foreach my $h (@{$self->{scanlist}}){
-			$sql .= "$h,";
-		}
-		chop $sql;		
-		$sql .= ") VALUES $temp";
-		mysql_exec->do("$sql",1);
-	}
+	return mysql_exec->do($sql,1);
 }
 
 sub _sort{                                        # ソート用テーブルの作成
@@ -261,7 +228,8 @@ sub _format{                                      # 結果の出力
 		$sql .= "ORDER BY temp_conc_sort.id";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
-
+	print "...\n";
+	
 	#open (TOUT,">test2.txt") or die;
 	#use Data::Dumper;
 	#print TOUT Dumper($result);
