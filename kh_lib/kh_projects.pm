@@ -24,15 +24,16 @@ sub read{
 	}
 
 	# 読み込み                                    # euc-->sjis変換を
-	my $st = $dbh->prepare("SELECT * FROM projects");
-	$st->execute;
+	my $st = $dbh->prepare("SELECT target,comment,dbname FROM projects")
+		or die;
+	$st->execute or die;
 	my $n = 0;
-	while (my $r = $st->fetchrow_hashref){
+	while (my $r = $st->fetch){
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => Jcode->new($r->{target})->sjis,
-				comment => Jcode->new($r->{comment})->sjis,
-				dbname  => Jcode->new($r->{dbname})->sjis
+				target  => Jcode->new($r->[0])->sjis,
+				comment => Jcode->new($r->[1])->sjis,
+				dbname  => Jcode->new($r->[2])->sjis
 			);
 		++$n;
 	}
