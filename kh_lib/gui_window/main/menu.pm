@@ -90,7 +90,7 @@ sub make{
 				-command => sub {$mw->after(10,sub{
 					
 					my $w = gui_wait->start;
-					kh_morpho->run;
+					
 					mysql_ready->first;
 					$::project_obj->status_morpho(1);
 					$w->end;
