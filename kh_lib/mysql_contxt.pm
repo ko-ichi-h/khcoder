@@ -91,6 +91,7 @@ sub save{
 			while (my $r = $sth->fetch){
 				$line{$r->[0]} += ($r->[1] / $r_num) * $t->[1];
 			}
+			$sth->finish;
 		}
 		# 書き出し
 		my $line =

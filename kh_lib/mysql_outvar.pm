@@ -98,7 +98,11 @@ sub read{
 	foreach my $i (@data){
 		my $v = '';
 		foreach my $h (@{$i}){
-			$v .= "$h,";
+			if ($v =~ /^[0-9]+$/o){
+				$v .= "$h,";
+			} else {
+				$v .= "\'$h\',";
+			}
 		}
 		chop $v;
 		mysql_exec->do("
