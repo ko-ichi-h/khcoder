@@ -1,6 +1,7 @@
 #!/usr/local/bin/perl
 
 # ベンチマーク用の分析対象ファイル
+use Cwd qw(cwd);
 my $target = cwd."/bench/kokoro.txt";
 
 #-----------------------------#

@@ -1,10 +1,19 @@
 package gui_window::about;
 use strict;
 use base qw(gui_window);
+BEGIN{
+	if( $] > 5.008 ){
+		require encoding;
+		encoding->import( "euc-jp" );
+	}
+}
+
+
 
 #------------------#
 #   Windowを開く   #
 #------------------#
+
 
 sub _new{
 	my $self = shift;
@@ -26,16 +35,16 @@ sub _new{
 	$msg = '　Version：  '."$::kh_version";
 	$msg = Jcode->new($msg,'euc')->sjis;
 	$wabtkh->Label(
-		text => "$msg",
-		font => "TKFN",
+		-text => "$msg",
+		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	my $fra1 = $wabtkh->Frame() ->pack(-anchor=>'w');
 
 	$msg = Jcode->new('　Web page：','euc')->sjis;
 	$fra1->Label(
-		text => "$msg",
-		font => "TKFN",
+		-text => "$msg",
+		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'0',-padx=>'2', -side=>'left');
 
 	$fra1->Button(-text => 'http://khc.sourceforge.net',
@@ -60,8 +69,8 @@ sub _new{
 
 	$msg = Jcode->new('　Thanks to：  川端亮 ','euc')->sjis;
 	$fra2->Label(
-		text => "$msg",
-		font => "TKFN",
+		-text => "$msg",
+		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2',-side=>'left');
 
 	my $kwebbutton = $fra2->Button(-image => $fra2->Photo(-file => $::config_obj->icon_image_file),
@@ -90,8 +99,8 @@ sub _new{
 
 	$msg = Jcode->new('　Copyright (C)2001-2005 樋口耕一','euc')->sjis;
 	$wabtkh->Label(
-		text => "$msg",
-		font => "TKFN",
+		-text => "$msg",
+		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$wabtkh->Button(

@@ -9,7 +9,7 @@ use Tk;
 # use Tk::HList;
 use DBI;
 # use DBD::MySQL;
-use NKF;
+# use NKF;
 
 #----------------#
 #   Window…¡≤Ë   #

@@ -9,7 +9,7 @@ use base qw(kh_morpho::win32);
 sub _run_morpho{
 	my $self = shift;
 	my $cmd;
-	if (Win32::IsWinNT){
+	if ( Win32::IsWinNT() ){
 		$cmd = $ENV{'WINDIR'};
 		$cmd .= '\system32\cmd.exe';
 	} else {
