@@ -33,7 +33,7 @@ sub new{
 	if ($args{hinshi}){
 		$sql .= "			and hinshi.name = \'$args{hinshi}\'";
 	}
-	my $t = mysql_exec->select("$sql",1)->hundle;
+	my $t = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $t->fetch){
 		push @{$self->{genkei_id_s}}, $i->[0];
 	}

@@ -10,6 +10,13 @@ use kh_project;
 # 		sql: SQLʸ
 #		[1/0]: Critical(1) or not(0)
 
+sub drop_table{
+	my $class = shift;
+	my $table = shift;
+	
+	$::project_obj->dbh->do("DROP TABLE IF EXISTS $table");
+}
+
 sub do{
 	my $class = shift;
 	my $self;

@@ -19,6 +19,8 @@ sub count{
 		$sql .= "\t".$i->expr."\n";
 	}
 	
+	print "$sql";
+	
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
 

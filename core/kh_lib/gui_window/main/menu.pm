@@ -188,6 +188,21 @@ sub make{
 		#		-state => 'disable'
 		#	);
 
+	my $f5 = $f->cascade(
+			-label => Jcode->new('コーディング')->sjis,
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+		$self->{t_cod_count} = $f5->command(
+				-label => Jcode->new('単純集計')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::sql_select->open;
+				})},
+				-state => 'disable'
+			);
+
 
 	my $f2 = $f->cascade(
 			-label => Jcode->new('SQLコマンド入力')->sjis,
@@ -300,6 +315,7 @@ sub refresh{
 		't_word_freq',
 		't_word_conc',
 		'm_b3_check',
+		't_cod_count',
 	);
 
 	# 状態変更
