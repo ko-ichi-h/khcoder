@@ -256,16 +256,26 @@ sub reform{
 							last;
 						}
 					}
-					elsif ($i->[2] eq '°ìÊ¸»ú'){         # ¾ò·ï2:¤Ò¤é¤¬¤Ê
+					elsif ($i->[2] eq '°ìÊ¸»ú'){           # ¾ò·ï2:¤Ò¤é¤¬¤Ê
 						if (length($d->[0]) == 2){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
-					elsif ($i->[2] eq 'HTML'){         # ¾ò·ï3:HTML
+					elsif ($i->[2] eq 'HTML'){             # ¾ò·ï2:HTML
 						if ( 
 							   ($d->[0] =~ /<h[1-5]>/io)
 							|| ($d->[0] =~ /<\/h[1-5]>/io) 
+						){
+							$kh_hinshi = $i->[3];
+							last;
+						}
+					}
+					elsif($i->[2] eq 'ÈÝÄê'){             # ¾ò·ï2:HTML
+						if (
+							($d->[0] eq '¤Ê¤¤')
+							|| ($d->[0] eq '¤Þ¤¤')
+							|| ($d->[0] eq '¤Ì')
 						){
 							$kh_hinshi = $i->[3];
 							last;
