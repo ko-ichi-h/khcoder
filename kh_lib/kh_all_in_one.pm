@@ -13,8 +13,12 @@ use strict;
 #	sql_host	localhost
 #	sql_port	3307
 # (2) 同梱するMySQLの設定
-#	ユーザー設定: khc, root
+#	ユーザー設定: khc[khc], root[khcallinone]
 #	「khc.ini」も添付する
+
+
+# 「khc.ini」は必要な部分だけを修正するように…
+# Win9xに対応？
 
 sub init{
 	# 茶筌のパス設定
@@ -93,6 +97,7 @@ sub init{
 
 sub mysql_stop{
 	mysql_exec->shutdown_db_server;
+	#system 'c:\apps\mysql\bin\mysqladmin --port=3307 --user=root --password=khcallinone shutdown';
 }
 
 1;
