@@ -66,6 +66,10 @@ sub open{
 			'<Key-Escape>',
 			sub{ $self->close; }
 		);
+		$self->win_obj->bind(
+			'<Alt-Key-F4>',
+			sub{ $self->close; }
+		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
 		# Altキーのバインド
