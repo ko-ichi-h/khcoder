@@ -53,8 +53,8 @@ sub _new{
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
 	my @methods;
-	push @methods, Jcode->new('AND検索')->sjis;
 	push @methods, Jcode->new('OR検索')->sjis;
+	push @methods, Jcode->new('AND検索')->sjis;
 	my $method;
 	$fra4h->Optionmenu(
 		-options=> \@methods,
@@ -64,14 +64,14 @@ sub _new{
 	)->pack(-anchor=>'e', -side => 'left');
 
 	$fra4h->Checkbutton(
-		-text     => Jcode->new('基本形を検索')->sjis,
+		-text     => Jcode->new('抽出語検索')->sjis,
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => Jcode->new('活用語表示')->sjis,
+		-text     => Jcode->new('活用を表示')->sjis,
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
@@ -106,6 +106,7 @@ sub _new{
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-command          => sub {$self->conc;},
+		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => Jcode->new('単語')->sjis);
