@@ -208,6 +208,8 @@ sub _new{
 			[
 				[Jcode->new('³ÎÎ¨º¹')->sjis , 'sa'],
 				[Jcode->new('³ÎÎ¨Èæ')->sjis , 'hi'],
+				[Jcode->new('Jaccard')->sjis , 'jac'],
+				[Jcode->new('Ochiai')->sjis , 'ochi'],
 				[Jcode->new('¦Ö2¾è')->sjis , 'chi'],
 			],
 		variable => \$self->{opt_order},

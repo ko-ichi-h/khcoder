@@ -11,6 +11,7 @@ use kh_mailif;
 use mysql_exec;
 use mysql_ready::check;
 use mysql_ready::doclength;
+use mysql_ready::df;
 
 my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
 my $data_per_1ins = 200;      # 一度にINSERTする値の数
@@ -50,9 +51,12 @@ sub first{
 	$self->tanis;
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t3)),"\n";
-	mysql_ready::check->do;
+	mysql_ready::df->calc;
 		my $t5 = new Benchmark;
-		print "Check\t",timestr(timediff($t5,$t4)),"\n";
+		print "df\t",timestr(timediff($t5,$t4)),"\n";
+	mysql_ready::check->do;
+		my $t6 = new Benchmark;
+		print "Check\t",timestr(timediff($t6,$t5)),"\n";
 	
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
