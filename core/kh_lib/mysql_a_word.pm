@@ -83,7 +83,7 @@ sub hyoso_id_s{
 		push @result, $i->[0];
 	}
 	if (@result){
-		print "@result";
+		# print "@result";
 		return \@result;
 	} else {
 		return 0;

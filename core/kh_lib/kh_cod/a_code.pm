@@ -81,7 +81,8 @@ sub ready{
 	}
 	
 	# ATOMごとのテーブルを作製
-	my ($n0, $n1,@t,$unique_check) = (0,0); 
+	my ($n0, $n1,$unique_check) = (0,0,undef);
+	my @t = ();
 	foreach my $i (@{$self->{condition}}){
 		$i->ready($tani);
 		if ($i->tables){
@@ -173,6 +174,36 @@ sub new{
 	bless $self, $class;
 	return $self;
 }
+
+
+# 利用語のリストを返す
+sub hyosos{
+	my $self = shift;
+	my %ready;
+	foreach my $i (@{$self->{condition}}){
+		if ($i->hyosos){
+			foreach my $h (@{$i->hyosos}){
+				++$ready{$h};
+			}
+		}
+	}
+	my @r = (keys %ready);
+	return \@r;
+}
+
+
+# 2回目以降のコーディングに備える
+sub clear{
+	my $self = shift;
+	
+	$self->{res_table} = undef;
+	$self->{tables}    = undef;
+	$self->{tani}      = undef;
+	foreach my $i (@{$self->{condition}}){
+		$i->{tables} = undef;
+	}
+}
+
 
 #--------------#
 #   アクセサ   #

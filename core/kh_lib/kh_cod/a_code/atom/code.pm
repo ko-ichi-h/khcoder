@@ -35,6 +35,7 @@ sub ready{
 	my $tani = shift;
 	$self->{the_code}->ready($tani);
 	$self->{the_code}->code("ct_$tani"."_atomcode_$num");
+	$self->{hyosos} = $self->{the_code}->hyosos;
 	if ($self->{the_code}->res_table){
 		push @{$self->{tables}}, "ct_$tani"."_atomcode_$num";
 		++$num;
@@ -80,7 +81,10 @@ sub parent_table{
 	}
 	return $self->{parent_table};
 }
-
+sub hyosos{
+	my $self = shift;
+	return $self->{hyosos};
+}
 sub pattern{
 	return '^<.+>$';
 }

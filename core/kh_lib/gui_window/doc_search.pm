@@ -3,7 +3,7 @@ use base qw(gui_window);
 
 use Tk;
 use kh_cod::search;
-
+use strict;
 
 #-------------#
 #   GUI作製   #
@@ -49,7 +49,8 @@ sub _new{
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
-		-browsecmd        => sub{ $self->clist_check; }
+		-command          => sub{ $self->search; },
+		-browsecmd        => sub{ $self->clist_check; },
 	)->pack(-anchor => 'w', -padx => '4',-pady => '2', -fill => 'both',-expand => 1);
 
 	# コーディングルール・ファイル
@@ -80,7 +81,7 @@ sub _new{
 
 	$self->{direct_w_e} = $self->{direct_entry} = $f3->Entry(
 		-font       => "TKFN",
-	)->pack(-side => left, -padx => 2,-fill => 'x',-expand => 1);
+	)->pack(-side => 'left', -padx => 2,-fill => 'x',-expand => 1);
 	$self->{direct_w_e}->bind(
 		"<Key>",
 		[\&gui_jchar::check_key_e,Ev('K'),\$self->{direct_w_e}]
@@ -110,7 +111,7 @@ sub _new{
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'right');
 
-	$f2->Optionmenu(
+	$self->{opt_w_method1} = $f2->Optionmenu(
 		-options =>
 			[
 				[Jcode->new('AND検索')->sjis => 'and'],
@@ -152,19 +153,41 @@ sub _new{
 		-columns          => 1,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'black',
+		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
 		-selectmode       => 'single',
 		-height           => 10,
+		-command          => sub {$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	my $f5 = $rf->Frame()->pack(-fill => 'x');
+	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
-	$self->{status_label} = $rf->Label(
+	$self->{status_label} = $f5->Label(
 		text       => 'Ready.',
 		font       => "TKFN",
 		foreground => 'blue'
 	)->pack(side => 'right');
+
+	$f5->Button(
+		-font    => "TKFN",
+		-width   => 8,
+		-text    => Jcode->new('文書表示')->sjis,
+		-command => sub{ $win->after(10,sub{$self->view_doc;});},
+		-borderwidth => 1
+	)->pack(-side => 'left');
+
+	$f5->Button(
+		-font    => "TKFN",
+		-text    => Jcode->new('コピー')->sjis,
+		-width   => 8,
+		-command => sub{ $win->after(10,sub{$self->copy;});},
+		-borderwidth => 1
+	)->pack(-side => 'left', -padx => 10);
+
+	$self->{hits_label} = $f5->Label(
+		text       => '   Hits: 0',
+		font       => "TKFN",
+	)->pack(side => 'left');
 
 
 	$self->read_code;
@@ -224,6 +247,120 @@ sub clist_check{
 		$self->{direct_w_e}->configure(-state => 'disable');
 		$self->{direct_w_e}->configure(-background => 'gray');
 	}
+	
+	my @s = $self->{clist}->info('selection');
+	my $n = @s;
+	if (  $n >= 2) {
+		$self->{opt_w_method1}->configure(-state => 'normal');
+	} else {
+		$self->{opt_w_method1}->configure(-state => 'disable');
+	}
+}
+
+#--------------#
+#   文書表示   #
+#--------------#
+
+sub view_doc{
+	my $self = shift;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return;
+	}
+	my $selected = $selected[0];
+	
+	my $view_win = gui_window::doc_view->open;
+	$view_win->view(
+		doc_id => $self->{result}[$selected][0],
+		tani   => $self->tani,
+		parent => $self,
+		kyotyo => $self->last_words,
+	);
+}
+
+sub next{
+	my $self = shift;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return -1;
+	}
+	my $selected = $selected[0] + 1;
+	my $max = @{$self->{result}} - 1;
+	if ($selected > $max){
+		$selected = $max;
+	}
+	my $doc_id = $self->{result}[$selected][0];
+	
+	$self->{rlist}->selectionClear;
+	$self->{rlist}->selectionSet($selected);
+	$self->{rlist}->yview($selected);
+	my $n = @{$self->{result}};
+	if ($n - $selected > 7){
+		$self->{rlist}->yview(scroll => -5, 'units');
+	}
+	
+	return (undef,$doc_id);
+}
+
+sub prev{
+	my $self = shift;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return -1;
+	}
+	my $selected = $selected[0] - 1;
+	if ($selected < 0){
+		$selected = 0;
+	}
+	my $doc_id = $self->{result}[$selected][0];
+	
+	$self->{rlist}->selectionClear;
+	$self->{rlist}->selectionSet($selected);
+	$self->{rlist}->yview($selected);
+	my $n = @{$self->{result}};
+	if ($n - $selected > 7){
+		$self->{rlist}->yview(scroll => -5, 'units');
+	}
+	
+	return (undef,$doc_id);
+}
+
+sub if_next{
+	my $self = shift;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return 0;
+	}
+	my $selected = $selected[0] ;
+	my $max = @{$self->{result}} - 1;
+	if ($selected < $max){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+sub if_prev{
+	my $self = shift;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return 0;
+	}
+	my $selected = $selected[0] ;
+	if ($selected > 0){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+sub end{
+	my $check = 0;
+	if ($::main_gui){
+		$check = $::main_gui->if_opened('w_doc_view');
+	}
+	if ( $check ){
+		$::main_gui->get('w_doc_view')->close;
+	}
 }
 
 
@@ -246,29 +383,67 @@ sub search{
 		return 0;
 	}
 	
+	# ラベルの変更
+	$self->{hits_label}->configure(-text => '   Hits: 0');
+	$self->{status_label}->configure(
+		-foreground => 'red',
+		-text => 'Searcing...'
+	);
+	$self->win_obj->update;
+	sleep (0.01);
+	
+	
 	# 直接入力部分の読み込み
 	my $direct;
-	if ( eval( ($self->{clist}->info('selection'))[0] eq '0') ){
+	if ( $selected[0] == '0' ){
 		
 	}
 	$self->{code_obj}->add_direct($direct);
 	
 	# 検索ロジックの呼び出し（検索実行）
-	my $result = $self->{code_obj}->search(
+	($self->{result}, $self->{last_words}) = $self->{code_obj}->search(
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
 		order    => $self->{opt_order},
 	);
 	
+	# 結果の書き出し
+	$self->{rlist}->delete('all');
 	
+	if ($self->{result}){
+		my $row = 0;
+		foreach my $i (@{$self->{result}}){
+			$self->{rlist}->add($row,-at => "$row");
+			$self->{rlist}->itemCreate(
+				$row,
+				0,
+				-text  => Jcode->new($i->[1])->sjis,
+			);
+			++$row;
+		}
+	} else {
+		$self->{result} = [];
+	}
 	
+	# ラベル等の更新
+	$self->{rlist}->yview(0);
+	$self->{hits_label}->configure(-text => '   Hits: '.@{$self->{result}});
+	$self->{status_label}->configure(
+		-foreground => 'blue',
+		-text => 'Ready.'
+	);
 }
 
 
 #--------------#
 #   アクセサ   #
 #--------------#
+
+sub last_words{
+	my $self = shift;
+	return $self->{last_words};
+}
 
 sub cfile{
 	my $self = shift;

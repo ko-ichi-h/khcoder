@@ -86,12 +86,13 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my $hyosobun_id = $self->{parent}->prev;
-					unless ($hyosobun_id > 0){
+					my ($hyosobun_id,$doc_id) = $self->{parent}->prev;
+					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
 					$self->{doc} = mysql_getdoc->get(
 						hyosobun_id => $hyosobun_id,
+						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
 						tani        => $self->{tani},
 					);
@@ -110,12 +111,13 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my $hyosobun_id = $self->{parent}->next;
-					unless ($hyosobun_id > 0){
+					my ($hyosobun_id,$doc_id) = $self->{parent}->next;
+					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
 					$self->{doc} = mysql_getdoc->get(
 						hyosobun_id => $hyosobun_id,
+						doc_id      => $doc_id,
 						w_search    => $self->{w_search},
 						tani        => $self->{tani},
 					);
@@ -200,6 +202,7 @@ sub view{
 	
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
+		doc_id      => $args{doc_id},
 		w_search    => $args{kyotyo},
 		tani        => $args{tani},
 	);

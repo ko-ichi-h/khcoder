@@ -118,6 +118,7 @@ sub ready{
 			katuyo => $2
 		)->hyoso_id_s;
 	}
+	$self->{hyosos} = $list;
 	
 	unless ( $list ){
 		print Jcode->new(
@@ -162,6 +163,7 @@ sub ready{
 	$sql .= "GROUP BY $sql_group{$tani}";
 
 	mysql_exec->do($sql,1);
+	return $self;
 }
 
 #-------------------------------#
@@ -182,6 +184,11 @@ sub parent_table{
 		$self->{parent_table} = $new;
 	}
 	return $self->{parent_table};
+}
+
+sub hyosos{
+	my $self = shift;
+	return $self->{hyosos};
 }
 
 sub pattern{
