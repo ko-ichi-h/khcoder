@@ -31,7 +31,7 @@ kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
 #		'E:/home/higuchi/perl/core/data/test_big/test.html',
 	dbname  =>
-		'khc36',
+		'khc1',
 #		'khc20',
 )->open;
 
@@ -50,7 +50,7 @@ my $t0 = new Benchmark;                           # 時間計測用
 my $result = mysql_conc->a_word(
 	query   => '使う',
 	kihon   => 1,
-	length => 20,
+	length => 15,
 	sort1   => "l1",
 	sort2   => "l2",
 	sort3   => "l3",
