@@ -83,24 +83,17 @@ sub _new{
 
 sub _make_new{
 	my $self = shift;
-	print "1 ";
 	my $new = kh_project->new(
 		target  => $self->e1->get,
 		comment => $self->e2->get,
 	) or return 0;
-	print "2 ";
 	kh_projects->read->add_new($new) or return 0;
-	print "3 ";
 	$self->close;
 
 	$new->open or die;
-	print "4 ";
 	$::main_gui->close_all;
-	print "5 ";
 	$::main_gui->menu->refresh;
-	print "6 ";
 	$::main_gui->inner->refresh;
-	print "7 ";
 }
 
 sub _sansyo{
