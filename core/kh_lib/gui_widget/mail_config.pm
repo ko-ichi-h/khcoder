@@ -13,19 +13,19 @@ sub _new{
 
 	$self->{check2} = $lf->Checkbutton(
 		-variable => \$self->{if_heap},
-		-text     => Jcode->new('前処理効率化のためにデータをRAMに読み出す')->sjis,
+		-text     => gui_window->gui_jchar('前処理効率化のためにデータをRAMに読み出す'),
 		-font     => "TKFN",
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 
 	$self->{check} = $lf->Checkbutton(
 		-variable => \$self->{if_mail},
-		-text     => Jcode->new('前処理の完了をメールで通知する')->sjis,
+		-text     => gui_window->gui_jchar('前処理の完了をメールで通知する'),
 		-font     => "TKFN",
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 	
-	my $f1 = $lf->Frame()->pack(fill => 'x');
+	my $f1 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab1} = $f1->Label(
 		-text => '    SMTP Server: ',
 		-font => "TKFN",
@@ -35,7 +35,7 @@ sub _new{
 		-width => 25,
 	)->pack(-side => 'right');
 	
-	my $f2 = $lf->Frame()->pack(fill => 'x');
+	my $f2 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab2} = $f2->Label(
 		-text => '    From: ',
 		-font => "TKFN",
@@ -45,7 +45,7 @@ sub _new{
 		-width => 25,
 	)->pack(-side => 'right');
 
-	my $f3 = $lf->Frame()->pack(fill => 'x');
+	my $f3 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab3} = $f3->Label(
 		-text => '    To: ',
 		-font => "TKFN",
