@@ -539,7 +539,9 @@ sub first{
 			INSERT INTO dan (dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
 			SELECT dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
 			FROM hyosobun
+			WHERE dan_id > 0
 			GROUP BY dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id, dan_id
 		",1);
 	}
 	# h5単位
@@ -560,7 +562,9 @@ sub first{
 			INSERT INTO h5 (h5_id, h4_id, h3_id, h2_id, h1_id)
 			SELECT h5_id, h4_id, h3_id, h2_id, h1_id
 			FROM hyosobun
+			WHERE h5_id > 0
 			GROUP BY h5_id, h4_id, h3_id, h2_id, h1_id
+			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id
 		",1);
 	}
 	# h4単位
@@ -580,7 +584,9 @@ sub first{
 			INSERT INTO h4 (h4_id, h3_id, h2_id, h1_id)
 			SELECT h4_id, h3_id, h2_id, h1_id
 			FROM hyosobun
+			WHERE h4_id > 0
 			GROUP BY h4_id, h3_id, h2_id, h1_id
+			ORDER BY h1_id, h2_id, h3_id, h4_id
 		",1);
 	}
 	# h3単位
@@ -599,7 +605,9 @@ sub first{
 			INSERT INTO h3 (h3_id, h2_id, h1_id)
 			SELECT h3_id, h2_id, h1_id
 			FROM hyosobun
+			WHERE h3_id > 0
 			GROUP BY h3_id, h2_id, h1_id
+			ORDER BY h1_id, h2_id, h3_id
 		",1);
 	}
 	# h2単位
@@ -617,7 +625,9 @@ sub first{
 			INSERT INTO h2 (h2_id, h1_id)
 			SELECT h2_id, h1_id
 			FROM hyosobun
+			WHERE h2_id > 0
 			GROUP BY h2_id, h1_id
+			ORDER BY h1_id, h2_id
 		",1);
 	}
 	# h1単位
