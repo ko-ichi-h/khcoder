@@ -169,7 +169,15 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 
-	
+
+	$fra5->Button(
+		-text => Jcode->new('文書表示')->sjis,
+		-font => "TKFN",
+		-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
+	)->pack(-side => 'left',-anchor => 'w',-padx =>1, -pady => 1);
+
 	my $status = $fra5->Label(
 		-text => Jcode->new(' 表示単位：')->sjis,
 		-font => "TKFN"
@@ -178,14 +186,9 @@ sub _new{
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $fra5,
 	);
-	$self->{tani_obj}->win_obj->pack(-side => 'left',-padx => 1);
+	$self->{tani_obj}->win_obj->pack(-side => 'left',-padx => 1,-pady => 1);
 
-	$fra5->Button(
-		-text => Jcode->new('表示')->sjis,
-		-font => "TKFN",
-		-width => 8,
-		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
-	)->pack(-side => 'left',-anchor => 'w',-padx =>1);
+
 
 	my $status = $fra5->Label(
 		-text => Jcode->new('　　　')->sjis,
@@ -196,8 +199,9 @@ sub _new{
 		-text => Jcode->new('コピー')->sjis,
 		-font => "TKFN",
 		-width => 8,
+		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
-	)->pack(-side => 'left',-anchor => 'w');
+	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
 	my $status = $fra5->Label(
 		-text => Jcode->new('　　　')->sjis,
@@ -275,6 +279,10 @@ sub next{
 		return;
 	}
 	my $selected = $selected[0] + 1;
+	my $max = @{$self->result} - 1;
+	if ($selected > $max){
+		$selected = $max;
+	}
 	my $hyosobun_id = $self->result->[$selected][3];
 	
 	$self->list->selectionClear;
@@ -286,6 +294,60 @@ sub next{
 	}
 	
 	return $hyosobun_id;
+}
+
+sub prev{
+	my $self = shift;
+	my @selected = $self->list->infoSelection;
+	unless (@selected){
+		return;
+	}
+	my $selected = $selected[0] - 1;
+	if ($selected < 0){
+		$selected = 0;
+	}
+	my $hyosobun_id = $self->result->[$selected][3];
+	
+	$self->list->selectionClear;
+	$self->list->selectionSet($selected);
+	$self->list->yview($selected);
+	my $n = @{$self->result};
+	if ($n - $selected > 7){
+		$self->list->yview(scroll => -5, 'units');
+	}
+	
+	return $hyosobun_id;
+}
+
+sub if_next{
+	my $self = shift;
+	my @selected = $self->list->infoSelection;
+	unless (@selected){
+		return 0;
+	}
+	my $selected = $selected[0] ;
+	my $max = @{$self->result} - 1;
+	if ($selected < $max){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+sub if_prev{
+	my $self = shift;
+	my @selected = $self->list->infoSelection;
+	unless (@selected){
+		return 0;
+	}
+	my $selected = $selected[0] ;
+	if ($selected > 0){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+sub end{
+	$::main_gui->get('w_doc_view')->close;
 }
 
 
