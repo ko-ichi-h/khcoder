@@ -451,7 +451,7 @@ sub make{
 			-command => sub{ $mw->after
 				(
 					10,
-					sub { gui_OtherWin->open('kh_coder_manual.pdf'); }
+					sub { gui_OtherWin->open('khcoder_manual.pdf'); }
 				);
 			},
 		);
@@ -464,7 +464,7 @@ sub make{
 				(
 					10,
 					sub {
-					 gui_OtherWin->open('http://koichi.nihon.to/psnl/khcoder');
+					 gui_OtherWin->open('http://khc.sourceforge.net');
 					}
 				);
 			},
