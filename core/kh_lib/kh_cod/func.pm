@@ -114,7 +114,11 @@ sub cod_out_csv{
 	$sql = "SELECT "."$sql";
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
-		$head .= Jcode->new($i->name)->sjis.",";
+		if ($::config_obj->os eq 'win32'){
+			$head .= Jcode->new($i->name)->sjis.",";
+		} else {
+			$head .= $i->name.",";
+		}
 	}
 	chop $sql;
 	chop $head;

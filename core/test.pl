@@ -29,10 +29,10 @@ $config_obj->sqllog(1);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/test_data/kokoro/kokoro.txt',
+		'F:/home/Koichi/Study/perl/test_data/mainichi_small/DefaultFile.html',
 #		'E:/home/higuchi/perl/core/data/test/ecom2.html',
 	dbname  =>
-		'khc4',
+		'khc8',
 )->open;
 
 # テストプリント
@@ -48,8 +48,8 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-use mysql_hukugo;
-mysql_hukugo->run_from_morpho;
+use mysql_doclength;
+mysql_doclength->make("h5");
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用

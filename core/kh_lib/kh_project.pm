@@ -307,6 +307,13 @@ sub file_WordList{
 	return $list;
 }
 
+sub file_HukugoList{
+	my $self = shift;
+	my $list = $self->file_datadir.'_hl.csv';
+	$list = $::config_obj->os_path($list);
+	return $list;
+}
+
 sub file_WordFreq{
 	my $self = shift;
 	my $list = $self->file_datadir.'_wf.sps';

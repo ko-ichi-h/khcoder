@@ -88,6 +88,17 @@ sub make{
 				-label => Jcode->new('前処理の実行')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
+					my $ans = $mw->messageBox(
+						-message => Jcode->new
+							(
+							   "時間のかかる処理を実行しようとしています。\n".
+							   "続行してよろしいですか？"
+							)->sjis,
+						-icon    => 'question',
+						-type    => 'OKCancel',
+						-title   => 'KH Coder'
+					);
+					unless ($ans eq 'ok'){ return 0; }
 					
 					my $w = gui_wait->start;
 					
@@ -109,14 +120,66 @@ sub make{
 				-state => 'disable'
 			);
 
+		$self->{m_b1_hukugo} = $f->command(
+				-label => Jcode->new('複合名詞のリスト（一部）')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $target = $::project_obj->file_HukugoList;
+					unless (-e $target){
+						my $ans = $mw->messageBox(
+							-message => Jcode->new
+								(
+								   "時間のかかる処理を実行しようとしています。"
+								   ."（前処理よりは短時間で終了します）\n".
+								   "続行してよろしいですか？"
+								)->sjis,
+							-icon    => 'question',
+							-type    => 'OKCancel',
+							-title   => 'KH Coder'
+						);
+						unless ($ans eq 'ok'){ return 0; }
+						use mysql_hukugo;
+						mysql_hukugo->run_from_morpho($target);
+					}
+					gui_OtherWin->open($target);
+				})},
+				-state => 'disable'
+			);
+
+		$f->separator();
+
 		$self->{m_b3_check} = $f->command(
-				-label => Jcode->new('形態素解析結果の確認')->sjis,
+				-label => Jcode->new('語の抽出結果を確認')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_check->open;
 				})},
 				-state => 'disable'
 			);
+
+		$self->{m_b3_crossout} = $f->cascade(
+				-label => Jcode->new("「文書ｘ抽出語」表の出力",'euc')->sjis,
+				-font => "TKFN",
+				-state => 'disable',
+				-tearoff=>'no'
+			);
+		
+			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
+				-label => Jcode->new("CSVファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::csv->open;
+				})},
+			);
+
+			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
+				-label => Jcode->new("SPSSファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::spss->open;
+				})},
+			);
+
 
 	#------------#
 	#   ツール   #
@@ -362,6 +425,7 @@ sub refresh{
 		't_sql_select',
 		't_sql_do',
 		'm_b0_close',
+		'm_b1_hukugo',
 	);
 
 	# 形態素解析が行われていればActive
@@ -378,6 +442,9 @@ sub refresh{
 		't_cod_out_spss',
 		't_cod_out_csv',
 		't_txt_html2mod',
+		'm_b3_crossout',
+		'm_b3_crossout_csv',
+		'm_b3_crossout_spss',
 	);
 
 	# 状態変更
