@@ -107,7 +107,7 @@ sub save{
 
 sub refine_cj{
 	my $self = shift;
-	bless $self, 'kh_sysconfig::win32::'.$self->{c_or_j};
+	bless $self, 'kh_sysconfig::win32::'.$self->c_or_j;
 	return $self;
 }
 
@@ -153,7 +153,7 @@ sub c_or_j{
 		$self->{c_or_j} = $new;
 	}
 
-	if ($self->{c_or_j}) {
+	if (length($self->{c_or_j}) > 0) {
 		return $self->{c_or_j};
 	} else {
 		return 'chasen';
