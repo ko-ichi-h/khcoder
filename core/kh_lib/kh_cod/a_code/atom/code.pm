@@ -17,6 +17,8 @@ sub reset{
 sub expr{
 	my $self = shift;
 	
+	return '0' unless $self->{the_code};
+	
 	if ($self->{tables}){
 		my $col = (split /\_/, $self->{tables}[0])[2].(split /\_/, $self->{tables}[0])[3];
 		return "IFNULL(".$self->parent_table.".$col,0)";
@@ -33,6 +35,8 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	
+	return $self unless $self->{the_code};
 	
 	# コーディングが実行されていなかった場合は、ここで実行
 	unless (
@@ -70,6 +74,7 @@ sub ready{
 }
 sub clear{
 	my $self = shift;
+	return '0' unless $self->{the_code};
 	$self->{the_code}->clear;
 }
 
@@ -85,6 +90,13 @@ sub when_read{
 	substr($cod_name,0,1) = '';
 	
 	$self->{the_code} = $kh_cod::reading{$cod_name};
+
+	gui_errormsg->open(
+		msg  => "コーディングルールの記述に誤りがあります。\n".
+		        '「'.$cod_name.'」というコードは定義されていません。',
+		type => 'msg'
+	) unless $self->{the_code};
+
 	return $self;
 }
 
