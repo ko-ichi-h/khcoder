@@ -52,19 +52,21 @@
 	・tf-idf値の出力
 
 [現在追加中の機能]
-	・表示中の文書がいくつ目の検索結果かを表示
 	・フレーズ検索
 	・フォントサイズの設定機能
 	・コード集計時にχ２乗検定を
 	・EUC/S-JIS/JISなど各種文字コードでの入力に対応
 	・マニュアル作製
 
-以下は純然たるメモ・・・
-
+[メモ]
 ・Anonymous CVSのコマンド
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
 	cd core
 	perl kh_coder.pl
+
+[2.pa.2以降の改善点]
+	・表示中の文書がいくつ目の検索結果かを表示
+
 
 [2.pa.1以降の改善点]
 	・抽出語の連関規則
