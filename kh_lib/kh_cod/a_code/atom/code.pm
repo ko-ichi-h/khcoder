@@ -81,6 +81,7 @@ sub parent_table{
 	}
 	return $self->{parent_table};
 }
+
 sub hyosos{
 	my $self = shift;
 	return $self->{hyosos};

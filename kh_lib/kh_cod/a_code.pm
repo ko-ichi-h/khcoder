@@ -14,7 +14,8 @@ sub code{
 		return 0;
 	}
 	unless ($self->tables){
-		return 0;
+		$self->{tables} = [];
+		#return 0;
 	}
 
 	$self->{res_table} = shift;
@@ -38,6 +39,7 @@ sub code{
 	foreach my $i (@{$self->{condition}}){
 		$sql .= "\t".$i->expr."\n";
 	}
+	#print "$sql\n";
 	
 	my $check = mysql_exec->do($sql);             # 構文エラーがあった場合
 	if ($check->err){
@@ -101,7 +103,7 @@ sub ready{
 			}
 		}
 	}
-	unless ($unique_check){return 0;}
+	unless ($unique_check){return 1;}
 	
 	# ATOMテーブルをまとめる
 	my $n = 0;
