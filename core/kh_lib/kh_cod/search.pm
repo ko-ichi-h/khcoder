@@ -162,6 +162,7 @@ sub search{
 	# 合致する文書のリストを作成
 	print "kh_cod::search -> searching...\n";
 		# テーブルの準備
+	mysql_exec->drop_table("temp_doc_search");
 	mysql_exec->do("
 		create temporary table temp_doc_search(
 			rnum int auto_increment primary key not null,
@@ -217,30 +218,37 @@ sub search{
 	
 			# 「コード無し」を使用しない場合
 	else {
-		$sql .= "SELECT $args{tani}.id, 100 - (";
-		my $nn = 0;
-		foreach my $i (@{$args{selected}}){
-			if ($nn){
-				$sql .= " + ";
+		$sql .= "SELECT $args{tani}.id, ";
+		if ($args{order} eq 'tf'){
+			$sql .= 100 - (";
+			my $nn = 0;
+			foreach my $i (@{$args{selected}}){
+				if ($nn){
+					$sql .= " + ";
+				} else {
+					$nn = 1;
+				}
+				if ($self->{codes}[$i]->res_table){
+					$sql .=
+						"IFNULL("
+						.$self->{codes}[$i]->res_table
+						."."
+						.$self->{codes}[$i]->res_col
+						.",0)\n";
+					$nn = 2;
+				}
+			}
+			if ($nn = 2){
+				$sql .= ") / $args{tani}_length.w as tf\n";
 			} else {
-				$nn = 1;
+				$sql .= "0) as tf\n";
 			}
-			if ($self->{codes}[$i]->res_table){
-				$sql .=
-					"IFNULL("
-					.$self->{codes}[$i]->res_table
-					."."
-					.$self->{codes}[$i]->res_col
-					.",0)\n";
-				$nn = 2;
-			}
-		}
-		if ($nn = 2){
-			$sql .= ") / $args{tani}_length.w as tf\n";
+			$sql .= "FROM $args{tani}_length, $args{tani}\n";
 		} else {
-			$sql .= "0) as tf\n";
+			$sql .= "1\n";
+			$sql .= "FROM $args{tani}\n";
 		}
-		$sql .= "FROM $args{tani}_length, $args{tani}\n";
+		
 		foreach my $i (@{$args{selected}}){
 			unless ($self->{codes}[$i]->res_table){
 				next;
@@ -253,7 +261,10 @@ sub search{
 				.".id\n";
 		}
 		$sql .= "WHERE\n";
-		$sql .= "$args{tani}.id = $args{tani}_length.id AND (\n";
+		if ($args{order} eq 'tf'){
+			$sql .= "$args{tani}.id = $args{tani}_length.id AND ";
+		}
+		$sql .= " (\n";
 		my $n = 0;
 		foreach my $i (@{$args{selected}}){
 			if ($n){ $sql .= "$args{method} "; }

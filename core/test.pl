@@ -30,9 +30,9 @@ $config_obj->sqllog(1);       # デバッグ用
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
 #		'F:/home/Koichi/Study/perl/test_data/mainichi_small/DefaultFile.html',
-		'E:/home/higuchi/perl/core/data/big_test/mainichi.txt',
+		'E:/home/higuchi/perl/core/data/big_test/mainichi2.txt',
 	dbname  =>
-		'khc0',
+		'khc4',
 )->open;
 
 # テストプリント
@@ -47,8 +47,8 @@ print "\tall: ".mysql_words->num_all."\n\n";
 use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
-# 処理実行
-mysql_ready::check->do();
+# テスト処理実行
+mysql_ready::doclength->make_each('h5');
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用

@@ -11,9 +11,10 @@ sub make_each{
 	my $class = shift;
 	my $self;
 	$self->{tani} = shift;
-
+	
 	$self->{html} = "99999";
-
+	my $max = mysql_exec->select("SELECT count(*) from $self->{tani}")->hundle->fetch->[0];
+	
 	bless $self, $class;
 
 	mysql_exec->drop_table("$self->{tani}_length");
@@ -32,8 +33,7 @@ sub make_each{
 			1
 		);
 		$id += $records_per_once;
-		print "$id,";
-		if ($id > 1492){last;}
+		if ($id > $max){last;}
 	}
 
 }
