@@ -7,11 +7,13 @@ use Benchmark;
 use kh_project;
 use kh_jchar;
 use kh_dictio;
+use kh_mailif;
 use mysql_exec;
 use mysql_ready::check;
 
 # MySQL-Perl間で一度にやりとりするケース数
 my $rows_per_once = 30000;
+my $data_per_1ins = 200;
 
 sub first{
 	$::config_obj->in_preprocessing(1);
@@ -55,44 +57,11 @@ sub first{
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	
-	if ($::config_obj->mail_if){
-		$self->notify;
-	}
-	
+	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
-
 }
 
-sub notify{
-	my $self = shift;
-	
-	my $user = $ENV{USERNAME};
-	unless ($user){ $user = $ENV{USER}; }
-	
-	my $host = $ENV{USERDOMAIN};
-	unless ($host){ $host = $ENV{HOSTNAME}; }
-	
-	use Net::SMTP;
-	my $smtp = Net::SMTP->new($::config_obj->mail_smtp);
-	$smtp->mail($::config_obj->mail_from);
-	$smtp->to($::config_obj->mail_to);
-	$smtp->data();
-	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
-	$smtp->datasend("To:a_User_of_KH_Coder\n");
-	$smtp->datasend("Subject:Pre-processing is successfully complete.\n");
-	# 本文
-	
-	$smtp->datasend("Hello $user.\nThis is KH Coder v. $::kh_version.\n\n");
-	$smtp->datasend("It is my honor to notify you that pre-processing is successfully complete.\n\n");
-	
-	$smtp->datasend("computer used: $host\n");
-	$smtp->datasend("target file: ".$::project_obj->file_target."\n");
-	$smtp->datasend("project comment: ".$::project_obj->comment."\n");
-	
-	$smtp->dataend();
-	$smtp->quit;
 
-}
 
 #----------------------#
 #   データの読み込み   #
@@ -287,7 +256,7 @@ sub reform{
 			}
 			$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
 			++$num;
-			if ($num == 200){                              # DBに投入
+			if ($num == $data_per_1ins){               # DBに投入
 				chop $con;
 				mysql_exec->do("
 					INSERT
@@ -535,7 +504,7 @@ sub hyosobun{
 			                                          # DBに書き込み
 			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
 			++$c;
-			if ($c == 200){
+			if ($c == $data_per_1ins){
 				chop $temp;
 				mysql_exec->do("
 					INSERT INTO hyosobun
@@ -708,7 +677,7 @@ sub rowtxt{
 				++$c;
 			}
 			
-			if ($c == 200){
+			if ($c == $data_per_1ins){
 				chop $values; mysql_exec->do("$sql $values",1);
 				$c = 0; $values = '';
 			}
