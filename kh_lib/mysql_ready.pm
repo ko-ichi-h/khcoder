@@ -12,15 +12,66 @@ use mysql_exec;
 #   形態素解析直後の処理   #
 #--------------------------#
 
+
+
+
 sub first{
 	
 	my $class = shift;
 	my $self;
 	$self->{dbh} = $::project_obj->dbh;
-#	$class .= '::readin';
 	bless $self, $class;
-#	$self->readin
+	
+		my $t0 = new Benchmark;
+	$self->readin;
+		my $t1 = new Benchmark;
+		print timestr(timediff($t1,$t0)),"\n";
+	$self->reform;
+	$self->tag_fix;
+	$self->hyosobun;
+	kh_dictio->readin->save;
+		my $t2 = new Benchmark;
+		print timestr(timediff($t2,$t1)),"\n";
+	$self->rowtxt;
+		my $t3 = new Benchmark;
+		print timestr(timediff($t3,$t2)),"\n";
+	$self->tanis;
+		my $t4 = new Benchmark;
+		print timestr(timediff($t4,$t3)),"\n";
 
+	#if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
+	#	my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
+	#	my $d = '';
+	#	my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
+	#	my $last = -1;
+	#	while (my $r = $h->fetch){
+	#		if ( $r->[7] != $last){
+	#			$last = $r->[7];
+	#			$d .= "\n";
+	#			$d .= "$r->[0],$r->[1],$r->[2],$r->[3],$r->[4],$r->[5],$r->[6],$r->[7],$r->[8]";
+	#		} else {
+	#			$d .= $r->[8];
+	#		}
+	#	}
+	#	substr($d,0,1) = '';
+	#	open (FT,">$f") or die;
+	#	print FT $d;
+	#	close (FT);
+	#	use kh_jchar;
+	#	kh_jchar->to_sjis($f);
+	#}
+	
+	
+	
+
+
+}
+
+#----------------------#
+#   データの読み込み   #
+
+sub readin{
+	my $self = shift;
 	# 茶筌の出力をEUCに変換
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_euc($::project_obj->file_MorphoOut);
@@ -45,7 +96,7 @@ sub first{
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
 
 	# 要らないフィールドを捨てる
-	my $t0 = new Benchmark;
+
 #	mysql_exec->do("ALTER TABLE rowdata DROP yomi",1);
 #	mysql_exec->do("ALTER TABLE rowdata DROP katuyo",1);
 
@@ -59,6 +110,7 @@ sub first{
 		FROM rowdata
 	",1)->hundle;
 	my $r = $t->fetchrow_hashref;
+	$t->finish;
 	foreach my $key (keys %{$r}){
 		my $len = $r->{$key} + 4;
 #		my $len = 255;
@@ -70,10 +122,14 @@ sub first{
 			$self->length($key,255);
 		}
 	}
-	my $t1 = new Benchmark;
-	print timestr(timediff($t1,$t0)),"\n";
+}
 
-	my $t2 = new Benchmark;
+#----------------#
+#   データ整形   #
+
+sub reform{
+	my $self = shift;
+
 	
 	# キャッシュ・テーブル作成
 	mysql_exec->drop_table("hgh");
@@ -198,6 +254,8 @@ sub first{
 			$num = 0;
 		}
 	}
+	$td->finish;
+	
 	if ($con){                                         # 残りをDBに投入
 		chop $con;
 		mysql_exec->do("
@@ -309,10 +367,15 @@ sub first{
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
 	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
+}
 
-	# 表層-文テーブル作成
+#-------------------------#
+#   表層-文テーブル作成   #
 
-	$t = mysql_exec->select("        # HTMLタグと句読点のhyoso.idを取得
+sub hyosobun{
+	my $self = shift;
+
+	my $t = mysql_exec->select("        # HTMLタグと句読点のhyoso.idを取得
 		SELECT hyoso.name, hyoso.id
 		FROM hyoso
 		WHERE
@@ -324,6 +387,7 @@ sub first{
 	while (my $d = $t->fetch){
 		$IDs->{$d->[1]} = $d->[0];
 	}
+	$t->finish;
 
 	mysql_exec->drop_table("hyosobun");   # テーブル作成
 	mysql_exec->do("
@@ -427,6 +491,7 @@ sub first{
 				$midashi = 0;
 		}
 	}
+	$t->finish;
 	if ($temp){
 		chop $temp;
 		mysql_exec->do("
@@ -436,9 +501,6 @@ sub first{
 					$temp
 		",1);
 	}
-
-	my $t3 = new Benchmark;
-	print timestr(timediff($t3,$t1)),"\n";
 
 	# インデックスを貼る
 	mysql_exec->do("
@@ -458,84 +520,125 @@ sub first{
 			(bun_idt)
 	",1);
 
-	$self->tag_fix;
+}
 
-	if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
-		my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
-		my $d = '';
-		my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
-		my $last = -1;
-		while (my $r = $h->fetch){
-			if ( $r->[7] != $last){
-				$last = $r->[7];
-				$d .= "\n";
-				$d .= "$r->[0],$r->[1],$r->[2],$r->[3],$r->[4],$r->[5],$r->[6],$r->[7],$r->[8]";
-			} else {
-				$d .= $r->[8];
-			}
-		}
-		substr($d,0,1) = '';
-		open (FT,">$f") or die;
-		print FT $d;
-		close (FT);
-		use kh_jchar;
-		kh_jchar->to_sjis($f);
+
+
+#--------------------------------------#
+#   タグ品詞の抽出語から<>を取り除く   #
+
+sub tag_fix{
+	my $self = shift;
+	
+	# 表層語テーブル
+	
+	my $h = mysql_exec->select("
+		SELECT hyoso.id, hyoso.name
+		FROM hyoso, genkei, hselection
+		WHERE 
+			    hyoso.genkei_id = genkei.id
+			AND genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = \'タグ\'
+	",1)->hundle;
+	while (my $i = $h->fetch){
+		my $name = $i->[1];
+		chop $name; substr($name,0,1) = '';
+		my $length = length($name);
+		mysql_exec->do("
+			UPDATE hyoso
+			SET name = \'$name\', len = $length
+			WHERE id = $i->[0]
+		",1);
+	}
+	$h->finish;
+	
+	# 基本形テーブル
+	
+	my $k = mysql_exec->select("
+		SELECT genkei.id, genkei.name
+		FROM genkei, hselection
+		WHERE 
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = \'タグ\'
+	",1)->hundle;
+	
+	while (my $i = $k->fetch){
+		my $name = $i->[1];
+		chop $name; substr($name,0,1) = '';
+		mysql_exec->do("
+			UPDATE genkei
+			SET name = \'$name\'
+			WHERE id = $i->[0]
+		",1);
+	}
+	$k->finish;
+}
+
+sub rowtxt{
+	unless (
+		mysql_exec->select("select max(bun_idt) from hyosobun",1)
+			->hundle->fetch->[0]
+	){
+		return 0;
+	}
+
+	$::project_obj->status_bun(1);
+	my $longest = mysql_exec->select("
+		SELECT SUM( LENGTH(hyoso.name) ) as len
+		FROM hyosobun, hyoso
+		WHERE hyoso.id = hyosobun.hyoso_id
+		GROUP BY hyosobun.bun_idt
+		ORDER BY len DESC
+		LIMIT 1
+	")->hundle->fetch->[0];
+	++$longest;
+	print "\nMax length of bun: $longest\n";
+	if ($longest > 65535){
+		gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
 	}
 	
-	kh_dictio->readin->save;
+	mysql_exec->drop_table("bun_r");
+	mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
 	
-	# 各集計単位（H1, H2, H3,,,）のテーブルを作製
-	# 文単位
-	if(mysql_exec->select("select max(bun_idt) from hyosobun",1)->hundle->fetch->[0]){
-		$::project_obj->status_bun(1);
-		my $longest = mysql_exec->select("
-			SELECT SUM( LENGTH(hyoso.name) ) as len
-			FROM hyosobun, hyoso
-			WHERE hyoso.id = hyosobun.hyoso_id
-			GROUP BY hyosobun.bun_idt
-			ORDER BY len DESC
-			LIMIT 1
-		")->hundle->fetch->[0];
-		++$longest;
-		print "\nMax length of bun: $longest\n";
-		if ($longest > 65535){
-			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
+	my $h = mysql_exec->select("
+		SELECT hyosobun.bun_idt, hyoso.name
+		FROM hyosobun, hyoso
+		WHERE hyosobun.hyoso_id = hyoso.id
+		ORDER BY hyosobun.id
+	",1)->hundle;
+	
+	my ($c,$last,$values,$sql,$temp)
+		=(0,1,'','INSERT into bun_r (rowtxt) VALUES ','');
+	while (my $i = $h->fetch){
+		if ($last == $i->[0]){
+			$temp .= $i->[1]
+		} else {
+			$values .= "(\'$temp\'),";
+			$temp = $i->[1];
+			$last = $i->[0];
+			++$c;
 		}
 		
-		mysql_exec->drop_table("bun_r");
-		mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
-		
-		my $h = mysql_exec->select("
-			SELECT hyosobun.bun_idt, hyoso.name
-			FROM hyosobun, hyoso
-			WHERE hyosobun.hyoso_id = hyoso.id
-			ORDER BY hyosobun.id
-		",1)->hundle;
-		
-		my ($c,$last,$values,$sql,$temp)
-			=(0,1,'','INSERT into bun_r (rowtxt) VALUES ','');
-		while (my $i = $h->fetch){
-			if ($last == $i->[0]){
-				$temp .= $i->[1]
-			} else {
-				$values .= "(\'$temp\'),";
-				$temp = $i->[1];
-				$last = $i->[0];
-				++$c;
-			}
-			
-			if ($c == 200){
-				chop $values; mysql_exec->do("$sql $values",1);
-				$c = 0; $values = '';
-			}
-		}
-		if ($values or $temp){
-			if ($temp){
-				$values .= "(\'$temp\'),";
-			}
+		if ($c == 200){
 			chop $values; mysql_exec->do("$sql $values",1);
+			$c = 0; $values = '';
 		}
-		
+	}
+	$h->finish;
+	if ($values or $temp){
+		if ($temp){
+			$values .= "(\'$temp\'),";
+		}
+		chop $values; mysql_exec->do("$sql $values",1);
+	}
+}
+
+#--------------------------------------------------#
+#    各集計単位（H1, H2, H3,,,）のテーブルを作製   #
+
+
+sub tanis{
+	if (mysql_exec->select("select max(bun_idt) from hyosobun",1)->hundle->fetch->[0]){
 		# 文単位2
 		mysql_exec->drop_table("bun");
 		mysql_exec->do("
@@ -718,55 +821,6 @@ sub first{
 	mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
 	}
 }
-
-#--------------------------------------#
-#   タグ品詞の抽出語から<>を取り除く   #
-
-sub tag_fix{
-	my $self = shift;
-	
-	# 表層語テーブル
-	
-	my $h = mysql_exec->select("
-		SELECT hyoso.id, hyoso.name
-		FROM hyoso, genkei, hselection
-		WHERE 
-			    hyoso.genkei_id = genkei.id
-			AND genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = \'タグ\'
-	",1)->hundle;
-	while (my $i = $h->fetch){
-		my $name = $i->[1];
-		chop $name; substr($name,0,1) = '';
-		my $length = length($name);
-		mysql_exec->do("
-			UPDATE hyoso
-			SET name = \'$name\', len = $length
-			WHERE id = $i->[0]
-		",1);
-	}
-	
-	# 基本形テーブル
-	
-	my $k = mysql_exec->select("
-		SELECT genkei.id, genkei.name
-		FROM genkei, hselection
-		WHERE 
-			    genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = \'タグ\'
-	",1)->hundle;
-	
-	while (my $i = $k->fetch){
-		my $name = $i->[1];
-		chop $name; substr($name,0,1) = '';
-		mysql_exec->do("
-			UPDATE genkei
-			SET name = \'$name\'
-			WHERE id = $i->[0]
-		",1);
-	}
-}
-
 
 #--------------#
 #   アクセサ   #
