@@ -52,7 +52,7 @@ sub code{
 	}
 	#print "$sql\n";
 	
-	my $check = mysql_exec->do($sql,1);             # 構文エラーがあった場合
+	my $check = mysql_exec->do($sql);             # 構文エラーがあった場合
 	if ($check->err){
 		$self->{res_table} = '';
 		gui_errormsg->open(
