@@ -26,9 +26,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
-	#$bunhyojiwin->focus;
-	my $msg = '文書表示'; Jcode::convert(\$msg,'sjis','euc');
-	$bunhyojiwin->title("$msg");
+	$bunhyojiwin->title($self->gui_jchar('文書表示'));
 
 	my $srtxt = $bunhyojiwin->Scrolled(
 		"ROTextANSIColor",
@@ -50,9 +48,8 @@ sub _new{
 	my $bframe = $bunhyojiwin->Frame(-borderwidth => 2) ->pack(
 		-fill => 'x',-expand => 'no');
 
-	$msg = '直前の文書'; Jcode::convert(\$msg,'sjis','euc');
 	$self->{pre_btn} = $bframe->Button(
-		-text => $msg,
+		-text => $self->gui_jchar('直前の文書'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $mw->after
@@ -66,9 +63,8 @@ sub _new{
 		}
 	)->pack(-side => 'left',-pady => '0');
 
-	$msg = '直後の文書'; Jcode::convert(\$msg,'sjis','euc');
 	$self->{nxt_btn} = $bframe->Button(
-		-text => $msg,
+		-text => $self->gui_jchar('直後の文書'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $mw->after
@@ -82,14 +78,13 @@ sub _new{
 		}
 	)->pack(-side => 'left',-pady => '0');
 
-	$msg = '　'; Jcode::convert(\$msg,'sjis','euc');
-	$bframe->Label(-text => "$msg",
-		-font => "TKFN")
-		->pack(-anchor=>'w',-side => 'left');
+	$bframe->Label(
+		-text => $self->gui_jchar('　'),
+		-font => "TKFN"
+	)->pack(-anchor=>'w',-side => 'left');
 
-	$msg = '前の検索結果'; Jcode::convert(\$msg,'sjis','euc');
 	$self->{pre_result_btn} = $bframe->Button(
-		-text => $msg,
+		-text => $self->gui_jchar('前の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $mw->after
@@ -115,9 +110,8 @@ sub _new{
 		}
 	)->pack(-side => 'left',-pady => '0');
 
-	$msg = '次の検索結果'; Jcode::convert(\$msg,'sjis','euc');
 	$self->{nxt_result_btn} = $bframe->Button(
-		-text => $msg,
+		-text => $self->gui_jchar('次の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $mw->after
@@ -143,14 +137,13 @@ sub _new{
 		}
 	)->pack(-side => 'left',-pady => '0');
 
-	$msg = '　'; Jcode::convert(\$msg,'sjis','euc');
-	$bframe->Label(-text => "$msg",
-		-font => "TKFN")
-		->pack(-anchor=>'w',-side => 'left');
+	$bframe->Label(
+		-text => $self->gui_jchar('　'),
+		-font => "TKFN"
+	)->pack(-anchor=>'w',-side => 'left');
 
-	$msg = '閉じる'; Jcode::convert(\$msg,'sjis','euc');
 	$bframe->Button(
-		-text => $msg,
+		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after
@@ -168,7 +161,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$bframe->Button(
-		-text => Jcode->new('強調')->sjis,
+		-text => $self->gui_jchar('強調'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after
@@ -290,7 +283,7 @@ sub _view_doc{
 	my $black = Term::ANSIColor::color('clear');
 	
 	$self->text->delete('0.0','end');             # 見出し書き出し
-	$self->text->insert('end',"$color{info}".$doc->header."$black");
+	$self->text->insert('end',"$color{info}".$self->gui_jchar($doc->header,'sjis')."$black");
 	
 	my $t;                                        # 本文書き出し
 	my $buffer;
@@ -301,15 +294,15 @@ sub _view_doc{
 				$buffer = '';
 			}
 			
-			$t .= "$color{$i->[1]}"."$i->[0]"."$black";
+			$t .= "$color{$i->[1]}".$self->gui_jchar("$i->[0]",'sjis')."$black";
 		} else {
-			$buffer .= "$i->[0]";
+			$buffer .= $self->gui_jchar("$i->[0]",'sjis');
 		}
 	}
 	$t .= $self->_str_color($buffer);
 
 	$self->text->insert('end',$t);
-	$self->text->insert('end',"\n\n"."$color{info}"."$self->{foot}");
+	$self->text->insert('end',"\n\n"."$color{info}".$self->gui_jchar("$self->{foot}",'euc'));
 	
 	$self->wrap;
 	$self->update_buttons;

@@ -79,6 +79,7 @@ sub _new{
 	gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
+		width   => 7,
 		options =>
 			[
 				[$self->gui_jchar('OR検索') , 'OR'],
@@ -90,6 +91,7 @@ sub _new{
 	gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
+		width   => 8,
 		options =>
 			[
 				[$self->gui_jchar('部分一致')  => 'p'],
@@ -229,8 +231,8 @@ sub search{
 	my $self = shift;
 	
 	# 変数取得
-	#my $query = Jcode->new($self->entry->get)->euc;
-	my $query = Encode::encode('euc-jp',$self->entry->get);
+	my $query = Jcode->new($self->gui_jg($self->entry->get))->euc;
+
 	unless ($query){
 		return;
 	}
@@ -249,7 +251,8 @@ sub search{
 	my $numb_style = $self->list->ItemStyle(
 		'text',
 		-anchor => 'e',
-		-background => 'white'
+		-background => 'white',
+		-font => "TKFN"
 	);
 	
 	$self->list->delete('all');
@@ -303,13 +306,13 @@ sub conc{
 	my ($query, $hinshi, $katuyo);
 	if (index($selected,'.') > 0){
 		my ($parent, $child) = split /\./, $selected;
-		$query = Jcode->new($result->[$parent][0])->sjis;
-		$hinshi = Jcode->new($result->[$parent][1])->sjis;
-		$katuyo = Jcode->new($result->[$parent + $child + 1][1])->sjis;
+		$query = $self->gui_jchar($result->[$parent][0],'euc');
+		$hinshi = $self->gui_jchar($result->[$parent][1],'euc');
+		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][1],'euc');
 		substr($katuyo,0,3) = ''
 	} else {
-		$query = Jcode->new($result->[$selected][0])->sjis;
-		$hinshi = Jcode->new($result->[$selected][1])->sjis;
+		$query = $self->gui_jchar($result->[$selected][0],'euc');
+		$hinshi = $self->gui_jchar($result->[$selected][1],'euc');
 	}
 
 	# コンコーダンスの呼び出し

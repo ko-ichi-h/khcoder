@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('コンコーダンス （KWIC）')->sjis);
+	$wmw->title($self->gui_jchar('コンコーダンス （KWIC）'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -31,67 +31,67 @@ sub _new{
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	$fra4e->Label(
-		-text => Jcode->new('抽出語：')->sjis,
+		-text => $self->gui_jchar('抽出語：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
 		-background => 'white',
 		-width => 14
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
-		-text => Jcode->new('　品詞：')->sjis,
+		-text => $self->gui_jchar('　品詞：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	my $e4 = $fra4e->Entry(
 		-font => "TKFN",
 		-background => 'white',
 		-width => 8
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
 	$e4->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
-		-text => Jcode->new('　活用形：')->sjis,
+		-text => $self->gui_jchar('　活用形：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	my $e2 = $fra4e->Entry(
 		-font => "TKFN",
 		-width => 8,
 		-background => 'white'
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
-		-text => Jcode->new('　（前後の')->sjis,
+		-text => $self->gui_jchar('　（前後の'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	my $e3 = $fra4e->Entry(
 		-width => 2,
 		-background => 'white'
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$e3->insert('end','20');
 
 	$fra4e->Label(
-		-text => Jcode->new('語を取り出す）')->sjis,
+		-text => $self->gui_jchar('語を取り出す）'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
-		-text => Jcode->new('検索')->sjis,
+		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
-	)->pack(-side => 'right', padx => '2');
+	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $wmw->Balloon();
 	$blhelp->attach(
@@ -105,85 +105,64 @@ sub _new{
 
 	#my @methods = ('出現順', '左・5','左・4','左・3','左・2','左・1','活用形','右・1','右・2','右・3','右・4','右・5',);
 	#foreach my $i (@methods){
-	#	$i = Jcode->new("$i")->sjis;
+	#	$i = $self->gui_jchar("$i");
 	#}
 
 	my @options = (
-		[ Jcode->new('出現順')->sjis, 'id'],
-		[ Jcode->new('左・5')->sjis,  'l5'],
-		[ Jcode->new('左・4')->sjis,  'l4'],
-		[ Jcode->new('左・3')->sjis,  'l3'],
-		[ Jcode->new('左・2')->sjis,  'l2'],
-		[ Jcode->new('左・1')->sjis,  'l1'],
-		[ Jcode->new('活用形')->sjis, 'center'],
-		[ Jcode->new('右・1')->sjis,  'r1'],
-		[ Jcode->new('右・2')->sjis,  'r2'],
-		[ Jcode->new('右・3')->sjis,  'r3'],
-		[ Jcode->new('右・4')->sjis,  'r4'],
-		[ Jcode->new('右・5')->sjis,  'r5']
+		[ $self->gui_jchar('出現順'), 'id'],
+		[ $self->gui_jchar('左・5'),  'l5'],
+		[ $self->gui_jchar('左・4'),  'l4'],
+		[ $self->gui_jchar('左・3'),  'l3'],
+		[ $self->gui_jchar('左・2'),  'l2'],
+		[ $self->gui_jchar('左・1'),  'l1'],
+		[ $self->gui_jchar('活用形'), 'center'],
+		[ $self->gui_jchar('右・1'),  'r1'],
+		[ $self->gui_jchar('右・2'),  'r2'],
+		[ $self->gui_jchar('右・3'),  'r3'],
+		[ $self->gui_jchar('右・4'),  'r4'],
+		[ $self->gui_jchar('右・5'),  'r5']
 	);
 
 	$fra4h->Label(
-		-text => Jcode->new('ソート1：')->sjis,
+		-text => $self->gui_jchar('ソート1：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
-
-	#$self->{menu1} = $fra4h->Optionmenu(
-	#	-options=> \@methods,
-	#	-font => "TKFN",
-	#	-variable => \$self->{sort1},
-	#	-width => 6,
-	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	#)->pack(-anchor=>'e', -side => 'left');
+	)->pack(-side => 'left');
 
 	$self->{menu1} = gui_widget::optmenu->open(
-		parent  => $fra4h,
-		pack    => {-anchor=>'e', -side => 'left'},
-		options => \@options,
+		parent   => $fra4h,
+		pack     => {-anchor=>'e', -side => 'left'},
+		options  => \@options,
 		variable => \$self->{sort1},
-		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		width    => 6,
+		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	);
 
 	$fra4h->Label(
-		-text => Jcode->new('　ソート2：')->sjis,
+		-text => $self->gui_jchar('　ソート2：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
-
-	#$self->{menu2} = $fra4h->Optionmenu(
-	#	-options=> \@methods,
-	#	-font => "TKFN",
-	#	-variable => \$self->{sort2},
-	#	-width => 6,
-	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	#)->pack(-anchor=>'e', -side => 'left');
+	)->pack(-side => 'left');
 
 	$self->{menu2} = gui_widget::optmenu->open(
-		parent  => $fra4h,
-		pack    => {-anchor=>'e', -side => 'left'},
-		options => \@options,
+		parent   => $fra4h,
+		pack     => {-anchor=>'e', -side => 'left'},
+		options  => \@options,
 		variable => \$self->{sort2},
-		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		width    => 6,
+		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	);
 
 	$fra4h->Label(
-		-text => Jcode->new('　ソート3：')->sjis,
+		-text => $self->gui_jchar('　ソート3：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
-
-	#$self->{menu3} = $fra4h->Optionmenu(
-	#	-options=> \@methods,
-	#	-font => "TKFN",
-	#	-variable => \$self->{sort3},
-	#	-width => 6,
-	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	#)->pack(-anchor=>'e', -side => 'left');
+	)->pack(-side => 'left');
 
 	$self->{menu3} = gui_widget::optmenu->open(
-		parent  => $fra4h,
-		pack    => {-anchor=>'e', -side => 'left'},
-		options => \@options,
+		parent   => $fra4h,
+		pack     => {-anchor=>'e', -side => 'left'},
+		options  => \@options,
 		variable => \$self->{sort3},
-		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		width    => 6,
+		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	);
 	$self->_menu_check;
 
@@ -191,18 +170,6 @@ sub _new{
 		-text => 'Ready.',
 		-foreground => 'blue'
 	)->pack(-side => 'right');
-
-	#$fra4h->Label(
-	#	-text => Jcode->new('　最大表示数：')->sjis,
-	#	-font => "TKFN"
-	#)->pack(side => 'left');
-
-	#my $limit_e = $fra4h->Entry(
-	#	-font  => "TKFN",
-	#	-width => 5,
-	#	-background => 'white'
-	#)->pack(-side => 'left');
-	#$limit_e->insert(0,'200');
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
@@ -230,7 +197,7 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$fra5->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -238,7 +205,7 @@ sub _new{
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
 
 	$fra5->Button(
-		-text => Jcode->new('文書表示')->sjis,
+		-text => $self->gui_jchar('文書表示'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -246,7 +213,7 @@ sub _new{
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
 	$fra5->Label(
-		-text => Jcode->new(' 表示単位：')->sjis,
+		-text => $self->gui_jchar(' 表示単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
@@ -260,12 +227,12 @@ sub _new{
 	);
 
 	$fra5->Label(
-		-text => Jcode->new('  ')->sjis,
+		-text => '  ',
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $fra5->Button(
-		-text        => Jcode->new('前'.mysql_conc->docs_per_once)->sjis,
+		-text        => $self->gui_jchar('前'.mysql_conc->docs_per_once,'euc'),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -278,7 +245,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $fra5->Button(
-		-text        => Jcode->new('次'.mysql_conc->docs_per_once)->sjis,
+		-text        => $self->gui_jchar('次'.mysql_conc->docs_per_once,'euc'),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -291,7 +258,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $hits = $fra5->Label(
-		-text => Jcode->new('  ヒット数：')->sjis,
+		-text => $self->gui_jchar('  ヒット数：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -345,7 +312,6 @@ sub view_doc{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
-	$foot = Jcode->new($foot)->sjis;
 
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
@@ -381,8 +347,7 @@ sub next{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
-	$foot = Jcode->new($foot)->sjis;
-	
+
 	return ($hyosobun_id,undef,$foot);
 }
 
@@ -409,7 +374,6 @@ sub prev{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
-	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
 }
@@ -460,12 +424,12 @@ sub search{
 	my $self = shift;
 
 	# 変数取得
-	my $query = Jcode->new($self->entry->get)->euc;
+	my $query = Jcode->new($self->gui_jg($self->entry->get))->euc;
 	unless ($query){
 		return;
 	}
-	my $katuyo = Jcode->new($self->entry2->get)->euc;
-	my $hinshi = Jcode->new($self->entry4->get)->euc;
+	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get))->euc;
+	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get))->euc;
 	my $length = $self->entry3->get;
 	if ($length > 30){
 		my $win = $self->win_obj;
@@ -476,24 +440,6 @@ sub search{
 		);
 		return;
 	}
-	# my $limit = $self->entry_limit->get;
-
-	#my %sconv = (
-	#	'出現順' => 'id',
-	#	'左・5'  => 'l5',
-	#	'左・4'  => 'l4',
-	#	'左・3'  => 'l3',
-	#	'左・2'  => 'l2',
-	#	'左・1'  => 'l1',
-	#	'活用形' => 'center',
-	#	'右・1'  => 'r1',
-	#	'右・2'  => 'r2',
-	#	'右・3'  => 'r3',
-	#	'右・4'  => 'r4',
-	#	'右・5'  => 'r5'
-	#);
-	
-	#print "test: ".$self->sort1."\n";
 
 	# 検索実行
 	$self->st_label->configure(
@@ -501,7 +447,7 @@ sub search{
 		-foreground => 'red',
 	);
 	$self->hit_label->configure(
-		-text => Jcode->new("  ヒット数：")->sjis
+		-text => $self->gui_jchar("  ヒット数：")
 	);
 	$self->win_obj->update;
 
@@ -570,19 +516,19 @@ sub display{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->[0])->sjis, #nkf('-s -E',$i->[0]),
+			-text  => $self->gui_jchar($i->[0],'euc'), #nkf('-s -E',$i->[0]),
 			-style => $right_style
 		);
 		my $center = $self->list->itemCreate(
 			$row,
 			1,
-			-text  => Jcode->new($i->[1])->sjis, #nkf('-s -E',$i->[1]),
+			-text  => $self->gui_jchar($i->[1],'euc'), #nkf('-s -E',$i->[1]),
 			-style => $center_style
 		);
 		$self->list->itemCreate(
 			$row,
 			2,
-			-text  => Jcode->new($i->[2])->sjis, #nkf('-s -E',$i->[2])
+			-text  => $self->gui_jchar($i->[2],'euc'), #nkf('-s -E',$i->[2])
 		);
 		++$row;
 	}
@@ -597,7 +543,7 @@ sub display{
 		$num_disp2 = $num_total;
 	}
 	if ($num_total == 0){$start = 0;}
-	$self->hit_label->configure(-text => Jcode->new("  ヒット数： $num_total  表示： $start"."-$num_disp2")->sjis);
+	$self->hit_label->configure(-text => $self->gui_jchar("  ヒット数： $num_total  表示： $start"."-$num_disp2"));
 	
 	# ボタンの更新
 	if ($start > 1){
@@ -621,14 +567,24 @@ sub display{
 	my $w_col1 = $self->list->columnWidth(1);
 	my $w_col2 = $self->list->columnWidth(2);
 
-	my $visible = ($w_col0 + $w_col1 + $w_col2 - $self->list->xview);
+	my $xv;
+	if ($Tk::version >= 8.4){
+		$xv = $self->list->xview->[0];
+	} else {
+		$xv = $self->list->xview;
+	}
+
+	my $visible = ($w_col0 + $w_col1 + $w_col2 - $xv);
 	my $v_center = int( $visible / 2);
+	#print "$v_center\n";
 	my $s_center = $w_col0 + ( $w_col1 / 2 );
 	my $s_scroll = $s_center - $v_center;
+	#print "s_scroll: $s_scroll\n";
 	if ($s_scroll < 0){
 		$self->list->xview(moveto => 0);
 	} else {
 		my $fragment = $s_scroll / ($w_col0 + $w_col1 + $w_col2);
+		#print "fragment: $fragment\n";
 		$self->list->xview(moveto => $fragment);
 	}
 	$self->list->yview(0);

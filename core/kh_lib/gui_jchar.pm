@@ -103,6 +103,9 @@ sub check_key_e_d{
 	unless ($::config_obj->os eq 'win32'){
 		return 1;
 	}
+	if ($] > 5.008){
+		return 1;
+	}
 	my $sjis = q{
 		  [\x00-\x7F]
 		| [\x81-\x9F][\x40-\x7E]
@@ -139,6 +142,9 @@ sub check_key_e_d{
 
 sub check_key_e{
 	unless ($::config_obj->os eq 'win32'){
+		return 1;
+	}
+	if ($] > 5.008){
 		return 1;
 	}
 	my $sjis = q{

@@ -21,7 +21,7 @@ sub print{
 			-icon => $self->icon,
 			-type => 'OK',
 			-title => 'KH Coder',
-			-message => "$self->{msg}",
+			-message => gui_window->gui_jchar("$self->{msg}"),
 		);
 	} else {
 		# use Win32;

@@ -124,7 +124,7 @@ sub start{
 	return 1;
 }
 
-sub gui_jchar{
+sub gui_jchar{ # GUI表示用の日本語
 	my $char = $_[1];
 	my $code = $_[2];
 	
@@ -139,6 +139,37 @@ sub gui_jchar{
 		} else {
 			return Jcode->new($char,$code)->sjis;
 		}
+	}
+}
+
+sub gui_jm{ # メニューのトップ部分用日本語
+	my $char = $_[1];
+	my $code = $_[2];
+	
+	if ( $] > 5.008 && $::config_obj->os eq 'linux' ) {
+		$code = Jcode->new($char)->icode unless $code;
+		$code = 'euc-jp'   if $code eq 'euc';
+		$code = 'shiftjis' if $code eq 'sjis';
+		return Encode::decode($code,$char);
+	}
+	elsif ($] > 5.008){
+		return Jcode->new($char,$code)->sjis;
+	} else {
+		if ($code eq 'sjis'){
+			return $char;
+		} else {
+			return Jcode->new($char,$code)->sjis;
+		}
+	}
+}
+
+sub gui_jg{
+	my $char = $_[1];
+	
+	if ($] > 5.008){
+		return Encode::encode('shiftjis',$char);
+	} else {
+		return $char;
 	}
 }
 

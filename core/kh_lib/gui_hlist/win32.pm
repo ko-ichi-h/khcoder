@@ -19,6 +19,8 @@ sub _copy{
 		$clip .= "\n";
 	}
 
+	$clip = gui_window->gui_jg($clip);
+
 	$CLIP->Empty();
 	$CLIP->Set("$clip");
 }
