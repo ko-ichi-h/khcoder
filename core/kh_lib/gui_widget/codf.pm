@@ -21,6 +21,20 @@ sub _new{
 		-command => sub{ $f1->after(10,sub{$self->_sansyo;});}
 	)->pack( -side => 'left');
 	
+	if ($self->{r_button}){
+		$self->{button} = $f1->Button(
+			-text => Jcode->new('リロード')->sjis,
+			-font => "TKFN",
+			-borderwidth => '1',
+			-command => sub{ $f1->after(10,sub{
+				if (defined($self->{command})){
+					&{$self->{command}};
+				}
+			});}
+		)->pack( -side => 'left', -padx => 2);
+	}
+	
+	
 	my $e1 = $f1->Entry(
 		-state      => 'disable',
 		-font       => "TKFN",
