@@ -174,17 +174,17 @@ sub _new{
 
 	$f5->Button(
 		-font    => "TKFN",
+		-text    => Jcode->new('コピー')->sjis,
 		-width   => 8,
-		-text    => Jcode->new('文書表示')->sjis,
-		-command => sub{ $win->after(10,sub{$self->view_doc;});},
+		-command => sub{ $win->after(10,sub{$self->copy;});},
 		-borderwidth => 1
 	)->pack(-side => 'left');
 
 	$f5->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('コピー')->sjis,
 		-width   => 8,
-		-command => sub{ $win->after(10,sub{$self->copy;});},
+		-text    => Jcode->new('文書表示')->sjis,
+		-command => sub{ $win->after(10,sub{$self->view_doc;});},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
 

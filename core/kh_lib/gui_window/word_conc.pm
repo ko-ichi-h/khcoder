@@ -146,6 +146,11 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	)->pack(-anchor=>'e', -side => 'left');
 
+	my $status = $fra4h->Label(
+		-text => 'Ready.',
+		-foreground => 'blue'
+	)->pack(-side => 'right');
+
 	#$fra4h->Label(
 	#	-text => Jcode->new('　最大表示数：')->sjis,
 	#	-font => "TKFN"
@@ -183,7 +188,13 @@ sub _new{
 		-command          => sub {$mw->after(10,sub{$self->view_doc;});}
 	)->pack(-fill =>'both',-expand => 'yes');
 
-
+	$fra5->Button(
+		-text => Jcode->new('コピー')->sjis,
+		-font => "TKFN",
+		-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
 
 	$fra5->Button(
 		-text => Jcode->new('文書表示')->sjis,
@@ -191,16 +202,15 @@ sub _new{
 		-width => 8,
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
-	)->pack(-side => 'left',-anchor => 'w',-padx =>1, -pady => 1);
+	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
-	my $status = $fra5->Label(
+	$fra5->Label(
 		-text => Jcode->new(' 表示単位：')->sjis,
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
 	my %pack = (
 		-side => 'left',
-		-padx => 1,
 		-pady => 1
 	);
 	$self->{tani_obj} = gui_widget::tani->open(
@@ -210,21 +220,8 @@ sub _new{
 
 
 
-	my $status = $fra5->Label(
-		-text => Jcode->new('   ')->sjis,
-		-font => "TKFN"
-	)->pack(-side => 'left');
-
-	$fra5->Button(
-		-text => Jcode->new('コピー')->sjis,
-		-font => "TKFN",
-		-width => 8,
-		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
-	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
-
-	my $status = $fra5->Label(
-		-text => Jcode->new('   ')->sjis,
+	$fra5->Label(
+		-text => Jcode->new('  ')->sjis,
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -255,10 +252,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 
-	my $status = $fra5->Label(
-		-text => 'Ready.',
-		-foreground => 'blue'
-	)->pack(-side => 'right', -anchor => 'e');
+
 
 	my $hits = $fra5->Label(
 		-text => Jcode->new('  ヒット数：')->sjis,
