@@ -18,14 +18,14 @@ sub do{
 		my $num1 = mysql_exec->select(
 			"SELECT num FROM genkei WHERE name like \'%$i%\'",
 			1
-		)->hundle->fetch;
-		$num1 = $num1->[0] if $num1;
+		)->hundle;
+		$num1 = $num1->[0] if $num1 = $num1->fetch;
 		
 		my $num2 = mysql_exec->select(
 			"SELECT count(*) FROM $i",
 			1
-		)->hundle->fetch;
-		$num2 = $num2->[0] if $num2;
+		)->hundle;
+		$num2 = $num2->[0] if $num2 = $num2->fetch;
 		
 		unless ($num1 == $num2){
 			push @error, $i;
