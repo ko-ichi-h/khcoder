@@ -47,21 +47,24 @@ sub _new{
 	my $b1 = $few->Button(
 		-text => Jcode->new('削除')->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->delete;}); }
-	)->pack(-anchor => 'w',-side => 'left',-padx => 3);
+	)->pack(-side => 'left',-padx => 2);
 	my $b2 = $few->Button(
 		-text => Jcode->new('編集')->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->edit;}); }
-	)->pack(-anchor => 'w',-side => 'left',-padx => 3);
+	)->pack(-side => 'left');
 	$few->Button(
-		-text => Jcode->new('新規',-padx => 3)->sjis,
+		-text => Jcode->new('新規',-padx => 2)->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub{
 			$self->close;
 			gui_window::project_new->open;
 		}); }
-	)->pack(-anchor => 'w',-side => 'left',-padx => 3);
+	)->pack(-side => 'left',-padx => 3);
 #	$few->Button(
 #		-text => Jcode->new('キャンセル')->sjis,
 #		-font => "TKFN",
@@ -70,8 +73,9 @@ sub _new{
 	my $b3 = $few->Button(
 		-text => Jcode->new('開く',-padx => 3)->sjis,
 		-font => "TKFN",
+		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->_open;}); }
-	)->pack(-anchor => 'w',-side => 'right',-padx => 3);
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2);
 	$self->{g_buttons} = [$b1,$b2,$b3];
 	
 	

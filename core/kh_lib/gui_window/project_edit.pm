@@ -47,7 +47,7 @@ sub _new{
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->_sansyo;});},
 		-state => 'disable'
-	)->pack(-side => 'right');
+	)->pack(-side => 'right',padx => 2);
 
 	$msg = Jcode->new('説明（メモ）：')->sjis;
 	$fra2->Label(
@@ -58,15 +58,17 @@ sub _new{
 
 	$npro->Button(
 		-text => Jcode->new('キャンセル')->sjis,
+		-width => 8,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->close();});}
-	)->pack(-side => 'right',-padx => 3);
+	)->pack(-side => 'right',-padx => 2);
 
 	$npro->Button(
 		-text => 'OK',
+		-width => 8,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->_edit;});},
-	)->pack(-side => 'right',-padx => 3);
+	)->pack(-side => 'right');
 
 	# ENTRYのバインド
 	$e1->DropSite(
