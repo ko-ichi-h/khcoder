@@ -16,7 +16,6 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->grab;
 	$wmw->title(Jcode->new("変数詳細： "."$args{name}")->sjis);
 
 	my $fra4 = $wmw->LabFrame(
@@ -96,6 +95,7 @@ sub _new{
 
 	$self->{list}    = $lis;
 	$self->{win_obj} = $wmw;
+	$wmw->grab;
 	return $self;
 }
 

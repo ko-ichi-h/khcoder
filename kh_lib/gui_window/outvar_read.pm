@@ -40,7 +40,8 @@ sub _new{
 	
 	$self->{entry} = $fra4e->Entry(
 		-font  => "TKFN",
-		-width => 20
+		-width => 20,
+		-background => 'white'
 	)->pack(-side => 'left',-padx => 2);
 
 	# 読み込み単位の指定
