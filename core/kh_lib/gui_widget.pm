@@ -9,7 +9,7 @@ sub open{
 	my $self = \%args;
 	bless $self, $class;
 	
-	$self->_new;
+	$self->_new->win_obj->pack(%{$self->{pack}});
 	return $self;
 }
 

@@ -24,6 +24,7 @@ use gui_window::word_conc;
 use gui_window::doc_view;
 use gui_window::morpho_check;
 use gui_window::morpho_detail;
+use gui_window::cod_count;
 
 sub open{
 	my $class = shift;
@@ -50,7 +51,7 @@ sub open{
 
 		# Windowを閉じる際のバインド
 		$self->win_obj->bind(
-			'<Control-Key-q>',
+			'<Key-Escape>',
 			sub{ $self->close; }
 		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });

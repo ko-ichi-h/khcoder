@@ -156,7 +156,7 @@ sub _new{
 		-width => 5,
 		-background => 'white'
 	)->pack(-side => 'left');
-	$limit_e->insert(0,'1000');
+	$limit_e->insert(0,'200');
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
@@ -198,10 +198,15 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
+	my %pack = (
+		-side => 'left',
+		-padx => 1,
+		-pady => 1
+	);
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $fra5,
+		pack   => \%pack
 	);
-	$self->{tani_obj}->win_obj->pack(-side => 'left',-padx => 1,-pady => 1);
 
 
 

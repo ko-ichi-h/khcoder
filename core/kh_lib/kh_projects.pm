@@ -142,6 +142,17 @@ sub add_new{
 		INSERT INTO status (name, status)
 		VALUES ('morpho',0),('bun',0),('dan',0),('h5',0),('h4',0),('h3',0),('h2',0),('h1',0)
 	");
+	$mysql->do('
+		create table status_char (
+			name   varchar(255) not null,
+			status varchar(255)
+		)
+	');
+	$mysql->do("
+		INSERT INTO status_char (name, status)
+		VALUES ('last_tani',''),('last_codf','')
+	");
+
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';

@@ -34,6 +34,8 @@ sub _new{
 		-width => 4,
 		-variable => \$self->{raw_opt},
 	);
+	
+	return $self;
 }
 
 sub tani{

@@ -1,40 +1,54 @@
 package kh_cod::a_code;
 use kh_cod::a_code::atom;
+use gui_errormsg;
 use mysql_exec;
 use strict;
 
-sub count{
-	my $self = shift;
-	my $tani = shift;
+sub code{
+	my $self           = shift;
+
 	unless ($self->{condition}){
 		return 0;
 	}
 	unless ($self->tables){
 		return 0;
 	}
-	
-	my $sql = "SELECT count(*)\n";
-	$sql .= "FROM $tani\n";
+
+	$self->{res_table} = shift;
+
+	mysql_exec->drop_table($self->{res_table});
+	mysql_exec->do("
+		CREATE TABLE $self->{res_table} (
+			id int not null primary key,
+			num int
+		) type = heap
+	",1);
+
+	my $sql = '';
+	$sql .= "INSERT INTO $self->{res_table} (id, num)\n";
+	$sql .= "SELECT $self->{tani}.id, 1\n";
+	$sql .= "FROM $self->{tani}\n";
 	foreach my $i (@{$self->tables}){
-		$sql .= "\tLEFT JOIN $i ON $tani.id = $i.id\n";
+		$sql .= "\tLEFT JOIN $i ON $self->{tani}.id = $i.id\n";
 	}
 	$sql .= "WHERE\n";
 	foreach my $i (@{$self->{condition}}){
 		$sql .= "\t".$i->expr."\n";
 	}
-	# print "$sql";
 	
-	return mysql_exec->select($sql,1)->hundle->fetch->[0];
-}
-
-sub tables{
-	my $self = shift;
-	return $self->{tables};
-}
-
-sub clear_tmp{
-	my $self = shift;
-	if ($self->tables){
+	my $check = mysql_exec->do($sql);             # 構文エラーがあった場合
+	if ($check->err){
+		$self->{res_table} = '';
+		gui_errormsg->open(
+			type => 'msg',
+			msg  =>
+				"コーディング・ルールの書式に誤りがありました。\n".
+				"誤りを含むコード： ".$self->name
+		);
+		return 0;
+	}
+	
+	if ($self->tables){                           # 一時テーブルの削除
 		foreach my $i (@{$self->tables}){
 			mysql_exec->drop_table($i);
 		}
@@ -42,9 +56,15 @@ sub clear_tmp{
 	return $self;
 }
 
+sub tables{
+	my $self = shift;
+	return $self->{tables};
+}
+
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	$self->{tani} = $tani;
 	unless ($self->{condition}){
 		return 0;
 	}
@@ -69,6 +89,7 @@ sub ready{
 			}
 		}
 	}
+	unless ($unique_check){return 0;}
 	
 	# ATOMテーブルをまとめる
 	my $n = 0;
@@ -116,6 +137,7 @@ sub ready{
 		
 		++$n;
 	}
+	return $self;
 }
 
 sub new{

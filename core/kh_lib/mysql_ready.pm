@@ -6,7 +6,6 @@ use Benchmark;
 use kh_project;
 use kh_jchar;
 use mysql_exec;
-#use mysql_ready::readin;
 
 #--------------------------#
 #   形態素解析直後の処理   #
@@ -92,7 +91,7 @@ sub first{
 			hinshi varchar($len[2]) not null,
 			katuyo varchar($len[3]) not null
 		)
-	" or 1);
+	", 1);
 	mysql_exec->do("
 		INSERT
 		INTO hgh ( num, hyoso, genkei, hinshi, katuyo)

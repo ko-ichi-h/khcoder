@@ -167,17 +167,13 @@ sub make{
 		$f3->separator();
 		
 		$self->{t_word_freq} = $f3->command(
-				-label => Jcode->new('出現回数 分布 (SPSS)')->sjis,
+				-label => Jcode->new('出現回数 分布')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_WordFreq;
-					mysql_words->spss_freq($target);
-					gui_OtherWin->open($target);
+					mysql_words->freq_of_f;
 				})},
 				-state => 'disable'
 			);
-		
-
 
 		#$self->{t_word_print} = $f3->command(
 		#		-label => Jcode->new('リストの印刷（LaTeX）')->sjis,
@@ -198,7 +194,7 @@ sub make{
 				-label => Jcode->new('単純集計')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					gui_window::sql_select->open;
+					gui_window::cod_count->open;
 				})},
 				-state => 'disable'
 			);
