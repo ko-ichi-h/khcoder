@@ -43,7 +43,7 @@ sub save{
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
 	);
-	unless ($ans eq 'ok'){ return 0; }
+	unless ( $ans =~ /ok/i ){ return 0; }
 	
 	my $w = gui_wait->start;
 	mysql_crossout::spss->new(
