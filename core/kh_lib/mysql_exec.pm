@@ -27,7 +27,7 @@ sub connect_db{
 	my $dsn = 
 		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
-		or gui_errormsg->open(type => 'mysql', sql => 'connect');
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 	return $dbh;
 }
 
@@ -36,10 +36,12 @@ sub create_new_db{
 	# DB名決定
 	my $drh = DBI->install_driver("mysql") or
 		gui_errormsg->open(type => 'mysql',sql=>'install_driver');
-
+	my @dbs = $drh->func($host,$port,$username,$password,'_ListDBs') or 
+		gui_errormsg->open(type => 'mysql', sql => 'List DBs');
 	my %dbs;
-	foreach my $i ($drh->func($host,$port,$username,$password,'_ListDBs')){
+	foreach my $i (@dbs){
 		$dbs{$i} = 1;
+		print "$i\n";
 	}
 	my $n = 0;
 	while ( $dbs{"khc$n"} ){
@@ -48,8 +50,14 @@ sub create_new_db{
 	my $new_db_name = "khc$n";
 
 	# DB作成
-	$drh->func('createdb', $new_db_name,$host,$username,$password,'admin')
-		or gui_errormsg->open(type => 'mysql', sql => 'createdb');
+	my $dsn = 
+		"DBI:mysql:database=test;$host;port=$port;mysql_local_infile=1";
+	my $dbh = DBI->connect($dsn,$username,$password)
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+
+	$dbh->func("createdb", $new_db_name,$host,$username,$password,'admin')
+		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
+	$dbh->disconnect;
 	
 	return $new_db_name;
 }
