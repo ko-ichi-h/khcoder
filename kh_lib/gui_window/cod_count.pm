@@ -34,19 +34,21 @@ sub _new{
 	# ルール・ファイル
 	my $f1 = $lf->Frame()->pack(expand => 'y', fill => 'x');
 	$f1->Label(
-		text => Jcode->new('コーディング・ルール・ファイル： ')->sjis,
+		text => Jcode->new('コーディング・ルール・ファイル：')->sjis,
 		font => "TKFN",
 	)->pack(anchor =>'w',side => 'left');
-	my $e1 = $f1->Label(
-		-text => Jcode->new('(選択ファイル無し)')->sjis,
-		-font => "TKFN",
-	)->pack(-side => 'left');
 	$f1->Button(
 		-text => Jcode->new('参照')->sjis,
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
-	)->pack(-padx => 2, -side => 'right');
+	)->pack(-padx => 2, -side => 'left');
+
+	my $e1 = $f1->Label(
+		-text => Jcode->new('(選択ファイル無し)')->sjis,
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
 	if ($::project_obj->last_codf){
 		my $path = $::project_obj->last_codf;
 		$self->{cfile} = $path;
