@@ -39,7 +39,11 @@ sub _new{
 	",1)->hundle;
 	
 	while (my $i = $sth->fetch){
-		$selection[$row] = 1;
+		if ( defined($self->{selection}) ){
+			$selection[$row] = $self->{selection}{$i->[1]};
+		} else {
+			$selection[$row] = 1;
+		}
 		$self->{name}{$row} = $i->[1];
 		my $c = $self->hlist->Checkbutton(
 			-text     => '',
@@ -92,6 +96,7 @@ sub selected{
 	}
 	return \@r;
 }
+
 
 #--------------#
 #   アクセサ   #

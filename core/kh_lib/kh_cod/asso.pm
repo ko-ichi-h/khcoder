@@ -258,6 +258,7 @@ sub asso{
 	my $denom1 = mysql_exec->select("SELECT count(*) from $m_table",1)
 		->hundle->fetch->[0];                     # 条件付き確立の分母
 	unless ($denom1){return 0;}
+	$self->{doc_num} = $denom1;
 	mysql_exec->drop_table("ct_ass_p");           # 条件付き確立保存テーブル
 	mysql_exec->do("
 		CREATE TEMPORARY TABLE ct_ass_p(
@@ -305,21 +306,24 @@ sub asso{
 	}
 	$sql .= "\t)\n";
 	$sql .= "GROUP BY genkei.id";
-	my $h = mysql_exec->select("$sql",1)->hundle;
-	@words = ();
-	while (my $i = $h->fetch){
-		push @words, $i->[0];
+	my $h;
+	if ($n){
+		$h = mysql_exec->select("$sql",1)->hundle;
+		@words = ();
+		while (my $i = $h->fetch){
+			push @words, $i->[0];
+		}
+		$sql = "DELETE FROM ct_ass_p\n";
+		$sql .= "WHERE\n";
+		$n = 0;
+		foreach my $i (@words){
+			if ($n){ $sql .= "OR ";}
+			$sql .= "genkei_id = $i\n";
+			++$n;
+		}
+		mysql_exec->do($sql,1);
 	}
-	$sql = "DELETE FROM ct_ass_p\n";
-	$sql .= "WHERE\n";
-	$n = 0;
-	foreach my $i (@words){
-		if ($n){ $sql .= "OR ";}
-		$sql .= "genkei_id = $i\n";
-		++$n;
-	}
-	mysql_exec->do($sql,1);
-
+	
 	print "4: probability...\n";
 
 	my $denom2 = mysql_exec->select("SELECT count(*) from $tani",1)
@@ -349,13 +353,46 @@ sub asso{
 #--------------------#
 sub fetch_results{
 	my $self = shift;
+	my %args = @_;
 
 	my $denom1 = mysql_exec->select("SELECT count(*) from temp_word_ass",1)
 		->hundle->fetch->[0];                     # 条件付き確立の分母
 	my $denom2 = mysql_exec->select("SELECT count(*) from $self->{tani}",1)
 		->hundle->fetch->[0];                     # 全体確立の分母
 
-	$self->{doc_num} = $denom1;
+	# ソート値
+	my %lift = (
+		'sa'  => "ct_ass_p.p / $denom1 - ct_ass_a.p / $denom2",
+		'hi'  => "(ct_ass_p.p / $denom1) / (ct_ass_a.p / $denom2)",
+		'chi' => "
+			$denom2 * 
+			( ct_ass_p.p * ( $denom2 - $denom1 - ct_ass_a.p + ct_ass_p.p )
+				- ($denom1 - ct_ass_p.p) * ( ct_ass_a.p - ct_ass_p.p ) ) * 
+			( ct_ass_p.p * ( $denom2 - $denom1 - ct_ass_a.p + ct_ass_p.p )
+				- ($denom1 - ct_ass_p.p) * ( ct_ass_a.p - ct_ass_p.p ) ) 
+			/
+			(
+				( ct_ass_a.p )
+				* ( $denom2 - ct_ass_a.p )
+				* ( $denom1 )
+				* ( $denom2 - $denom1 )
+			)
+			",
+	);
+
+	# 品詞フィルタ
+	my $hselection = "AND (\n";
+	my $n = 0;
+	foreach my $i (keys %{$args{filter}->{hinshi}}){
+		if ( $args{filter}->{hinshi}{$i} ){
+			$hselection .= "\t\t";
+			if ($n){ $hselection .= "OR "; }
+			$hselection .= "khhinshi.id = $i\n";
+			++$n;
+		}
+	}
+	$hselection .= "\t)";
+	unless ($n){return undef;}
 
 	my $sql ="
 		SELECT
@@ -365,17 +402,20 @@ sub fetch_results{
 			ROUND(ct_ass_a.p / $denom2, 3),
 			ct_ass_p.p,
 			ROUND(ct_ass_p.p / $denom1, 3),
-			ROUND(ct_ass_p.p / $denom1 - ct_ass_a.p / $denom2, 15) as lift
+			ROUND($lift{$args{order}}, 15) as lift
 		FROM genkei, khhinshi, ct_ass_p, ct_ass_a
 		WHERE
 			    genkei.khhinshi_id = khhinshi.id
 			AND ct_ass_p.genkei_id = ct_ass_a.genkei_id
 			AND ct_ass_p.genkei_id = genkei.id
+			AND ( ct_ass_p.p / $denom1 - ct_ass_a.p / $denom2 ) > 0
+			AND ct_ass_a.p >= $args{filter}->{min_doc}
+			$hselection
 		ORDER BY lift DESC
-		LIMIT 200
+		LIMIT $args{filter}->{limit}
 	";
 
-	return mysql_exec->select($sql)->hundle->fetchall_arrayref;
+	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 
 }
 
