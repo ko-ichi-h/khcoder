@@ -113,7 +113,7 @@ sub refresh{
 		} else {
 			$title = $::project_obj->file_short_name;
 		}
-		$title .= ' - KH Coder II';
+		$title .= ' - KHC';
 		$mw->title($title);
 		$self->entry('e_curent_project', $::project_obj->file_short_name);
 		$self->entry('e_project_memo', $::project_obj->comment);
@@ -135,7 +135,7 @@ sub refresh{
 			);
 		}
 	} else {
-		$mw->title('KH Coder II');
+		$mw->title('KHC');
 		$self->entry('e_curent_project', '');
 		$self->entry('e_project_memo', '');
 	}
