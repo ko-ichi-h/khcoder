@@ -7,7 +7,7 @@ sub value_conv{
 	my $v = $_[1];
 	if (
 		   ($v =~ s/"/""/g )
-		or ($v =~ /\r\n,/ )
+		or ($v =~ /\r|\n|,/o )
 	){
 		$v = "\"$v\"";
 	}

@@ -169,7 +169,7 @@ sub csv_list{
 	# 1¹ÔÌÜ
 	my $line = '';
 	foreach my $i (@{$list}){
-		$line .= kh_csv->value_conv($i->[1]).',,';
+		$line .= kh_csv->value_conv($i->[0]).',,';
 	}
 	chop $line;
 	print LIST "$line\n";
