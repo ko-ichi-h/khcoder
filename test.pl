@@ -29,10 +29,10 @@ $config_obj->sqllog(1);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/test_data/mainichi_small/DefaultFile.html',
-#		'E:/home/higuchi/perl/core/data/test/ecom2.html',
+#		'F:/home/Koichi/Study/perl/test_data/mainichi_small/DefaultFile.html',
+		'E:/home/higuchi/perl/core/data/big_test/mainichi.txt',
 	dbname  =>
-		'khc8',
+		'khc0',
 )->open;
 
 # テストプリント
@@ -48,8 +48,7 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-use mysql_doclength;
-mysql_doclength->make("h5");
+mysql_ready::check->do();
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用

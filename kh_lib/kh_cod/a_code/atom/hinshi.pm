@@ -160,7 +160,7 @@ sub ready{
 	}
 	$sql .= ")\n";
 	$sql .= "GROUP BY $sql_group{$tani}";
-	# print "$sql";
+
 	mysql_exec->do($sql,1);
 }
 

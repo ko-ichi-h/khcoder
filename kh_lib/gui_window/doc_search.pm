@@ -1,25 +1,284 @@
 package gui_window::doc_search;
 use base qw(gui_window);
 
+use Tk;
+use kh_cod::search;
+
+
 #-------------#
-#   GUIì»   #
+#   GUIºîÀ½   #
+#-------------#
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	$win->focus;
-	$win->title(Jcode->new('•¶‘ŒŸõ')->sjis);
+	$win->title(Jcode->new('Ê¸½ñ¸¡º÷')->sjis);
 	$self->{win_obj} = $win;
+	
+	#--------------------#
+	#   ¸¡º÷¥ª¥×¥·¥ç¥ó   #
+	
+	my $lf = $win->LabFrame(
+		-label => 'Search Entry',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'x');
+
+	my $left = $lf->Frame()->pack(-side => 'left', -fill => 'x', -expand => 1);
+	my $right = $lf->Frame()->pack(-side => 'right');
+	
+	# ¥³¡¼¥ÉÁªÂò
+	$left->Label(
+		-text => Jcode->new('¡¦¥³¡¼¥ÉÁªÂò')->sjis,
+		-font => "TKFN"
+	)->pack(-anchor => 'w');
+	
+	$self->{clist} = $left->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header           => '0',
+		-itemtype         => 'text',
+		-font             => 'TKFN',
+		-columns          => '1',
+		-padx             => '2',
+		-height           => '6',
+		-width            => '20',
+		-background       => 'white',
+		-selectforeground => 'brown',
+		-selectbackground => 'cyan',
+		-selectmode       => 'extended',
+		-browsecmd        => sub{ $self->clist_check; }
+	)->pack(-anchor => 'w', -padx => '4',-pady => '2', -fill => 'both',-expand => 1);
+
+	# ¥³¡¼¥Ç¥£¥ó¥°¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë
+	my %pack0 = (
+			-anchor => 'w',
+	);
+	$self->{codf_obj} = gui_widget::codf->open(
+		parent   => $right,
+		command  => sub{$self->read_code;},
+		r_button => 1,
+		pack     => \%pack0,
+	);
+
+	# Ä¾ÀÜÆşÎÏ¥Õ¥ì¡¼¥à
+	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
+	$self->{direct_w_l} = $f3->Label(
+		text => Jcode->new('Ä¾ÀÜÆşÎÏ¡§')->sjis,
+		font => "TKFN"
+	)->pack(-side => 'left');
+
+	$self->{direct_w_o} = $f3->Optionmenu(
+		-options => ['and','or','code'],
+		-font    => "TKFN",
+		-width   => 4,
+		-variable => \$self->{opt_direct},
+		-borderwidth=> 1,
+	)->pack(-side => 'left');
+
+	$self->{direct_w_e} = $self->{direct_entry} = $f3->Entry(
+		-font       => "TKFN",
+	)->pack(-side => left, -padx => 2,-fill => 'x',-expand => 1);
+	$self->{direct_w_e}->bind(
+		"<Key>",
+		[\&gui_jchar::check_key_e,Ev('K'),\$self->{direct_w_e}]
+	);
+	$win->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
+
+	# ³Æ¼ï¥ª¥×¥·¥ç¥ó
+	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 2);
+
+	$f2->Button(
+		-font    => "TKFN",
+		-text    => Jcode->new('¸¡º÷')->sjis,
+		-command => sub{ $win->after(10,sub{$self->search;});}
+	)->pack(-side => 'right',-padx => 4);
+
+	my %pack = (
+			-anchor => 'w',
+			-pady   => 1,
+			-side   => 'right'
+	);
+	$self->{tani_obj} = gui_widget::tani->open(
+		parent => $f2,
+		pack   => \%pack
+	);
+	$self->{l_c_2} = $f2->Label(
+		text => Jcode->new('¸¡º÷Ã±°Ì¡§')->sjis,
+		font => "TKFN"
+	)->pack(anchor => 'w', side => 'right');
+
+	$f2->Optionmenu(
+		-options =>
+			[
+				[Jcode->new('AND¸¡º÷')->sjis => 'and'],
+				[Jcode->new('OR¸¡º÷')->sjis  => 'or']
+			],
+		-font    => "TKFN",
+		-width   => 7,
+		-variable => \$self->{opt_method1},
+		-borderwidth => 1,
+	)->pack(-pady => '1', -side => 'left');
+
+	$f2->Optionmenu(
+		-options =>
+			[
+				[Jcode->new('½Ğ¸½½ç')->sjis => 'by'],
+				[Jcode->new('tf½ç')->sjis  => 'tf']
+			],
+		-font    => "TKFN",
+		-width   => 7,
+		-variable => \$self->{opt_order},
+		-borderwidth=> 1,
+	)->pack(-padx => 8);
+
+	#--------------#
+	#   ¸¡º÷·ë²Ì   #
+	
+	my $rf = $win->LabFrame(
+		-label => 'Result',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both',-expand => 'yes',-anchor => 'n');
+
+	$self->{rlist} = $rf->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header           => 0,
+		-itemtype         => 'text',
+		-font             => 'TKFN',
+		-columns          => 1,
+		-padx             => 2,
+		-background       => 'white',
+		-selectforeground => 'black',
+		-selectbackground => 'cyan',
+		-selectmode       => 'single',
+		-height           => 10,
+	)->pack(-fill =>'both',-expand => 'yes');
+
+	my $f5 = $rf->Frame()->pack(-fill => 'x');
+	
+	$self->{status_label} = $rf->Label(
+		text       => 'Ready.',
+		font       => "TKFN",
+		foreground => 'blue'
+	)->pack(side => 'right');
 
 
-
+	$self->read_code;
 	return $self;
 }
 
+#----------------------------#
+#   ¥ë¡¼¥ë¥Õ¥¡¥¤¥ëÆÉ¤ß¹ş¤ß   #
+
+sub read_code{
+	my $self = shift;
+	
+	$self->{clist}->delete('all');
+	
+	# ¡ÖÄ¾ÀÜÆşÎÏ¡×¤òÄÉ²Ã
+	$self->{clist}->add(0,-at => 0);
+	$self->{clist}->itemCreate(
+		0,
+		0,
+		-text  => Jcode->new('¡ôÄ¾ÀÜÆşÎÏ')->sjis,
+	);
+
+	# ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤òÆÉ¤ß¹ş¤ß
+	unless (-e $self->cfile ){return 0;}
+	my $cod_obj = kh_cod::search->read_file($self->cfile) or return 0;
+	unless (eval(@{$cod_obj->codes})){return 0;}
+	
+	my $row = 1;
+	foreach my $i (@{$cod_obj->codes}){
+		$self->{clist}->add($row,-at => "$row");
+		$self->{clist}->itemCreate(
+			$row,
+			0,
+			-text  => Jcode->new($i->name)->sjis,
+		);
+		++$row;
+	}
+	$self->{code_obj} = $cod_obj;
+	
+	$self->clist_check;
+	return $self;
+}
+
+#----------------------------------#
+#   ¡ÖÄ¾ÀÜÆşÎÏ¡×¤Îon/offÀÚ¤êÂØ¤¨   #
+sub clist_check{
+	my $self = shift;
+
+	if ( eval( ($self->{clist}->info('selection'))[0] eq '0') ){
+		$self->{direct_w_l}->configure(-foreground => 'black');
+		$self->{direct_w_o}->configure(-state => 'normal');
+		$self->{direct_w_e}->configure(-state => 'normal');
+		$self->{direct_w_e}->configure(-background => 'white');
+	} else {
+		$self->{direct_w_l}->configure(-foreground => 'gray');
+		$self->{direct_w_o}->configure(-state => 'disable');
+		$self->{direct_w_e}->configure(-state => 'disable');
+		$self->{direct_w_e}->configure(-background => 'gray');
+	}
+}
+
+
 #--------------#
-#   ƒAƒNƒZƒT   #
+#   ¸¡º÷¼Â¹Ô   #
 #--------------#
+
+sub search{
+	my $self = shift;
+	
+	# ÁªÂò¤Î¥Á¥§¥Ã¥¯
+	my @selected = $self->{clist}->info('selection');
+	unless (@selected){
+		my $win = $self->win_obj;
+		gui_errormsg->open(
+			type   => 'msg',
+			msg    => Jcode->new('¥³¡¼¥É¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó')->sjis,
+			window => \$win,
+		);
+		return 0;
+	}
+	
+	# Ä¾ÀÜÆşÎÏÉôÊ¬¤ÎÆÉ¤ß¹ş¤ß
+	my $direct;
+	if ( eval( ($self->{clist}->info('selection'))[0] eq '0') ){
+		
+	}
+	$self->{code_obj}->add_direct($direct);
+	
+	# ¸¡º÷¥í¥¸¥Ã¥¯¤Î¸Æ¤Ó½Ğ¤·¡Ê¸¡º÷¼Â¹Ô¡Ë
+	my $result = $self->{code_obj}->search(
+		selected => \@selected,
+		tani     => $self->tani,
+		method   => $self->{opt_method1},
+		order    => $self->{opt_order},
+	);
+	
+	
+	
+}
+
+
+#--------------#
+#   ¥¢¥¯¥»¥µ   #
+#--------------#
+
+sub cfile{
+	my $self = shift;
+	$self->{codf_obj}->cfile;
+}
+
+sub tani{
+	my $self = shift;
+	return $self->{tani_obj}->tani;
+}
 
 sub win_name{
 	return 'w_doc_search';
