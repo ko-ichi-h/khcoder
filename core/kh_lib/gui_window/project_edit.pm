@@ -12,14 +12,14 @@ sub _new{
 	$self->{project}  = $self->projects->a_project($self->num);
 
 
-	# äJÇ≠
+	# ≥´§Ø
 	my $mw = $::main_gui->mw;
 	my $npro = $mw->Toplevel;
 	$npro->resizable(0, 0);
 	$npro->focus();
 	$npro->grab();
 
-	my $msg = Jcode->new('ê‡ñæÅiÉÅÉÇÅjÇÃï“èW')->sjis;
+	my $msg = Jcode->new('¿‚Ã¿° •·•‚°À§Œ ‘Ω∏')->sjis;
 	$npro->title("$msg");
 
 	$self->{win_obj} = $npro;
@@ -31,7 +31,7 @@ sub _new{
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
 
 
-	$msg = Jcode->new('ï™êÕëŒè€ÉtÉ@ÉCÉãÅF')->sjis;
+	$msg = Jcode->new(' ¨¿œ¬–æ›•’•°•§•Î°ß')->sjis;
 	$fra1->Label(
 		-text => "$msg",
 		-font => "TKFN"
@@ -41,7 +41,7 @@ sub _new{
 		-background => 'gray',
 	)->pack(-side => 'right');
 
-	$msg = Jcode->new('éQè∆')->sjis;
+	$msg = Jcode->new('ª≤æ»')->sjis;
 	$fra1->Button(
 		-text => "$msg",
 		-font => "TKFN",
@@ -49,7 +49,7 @@ sub _new{
 		-state => 'disable'
 	)->pack(-side => 'right');
 
-	$msg = Jcode->new('ê‡ñæÅiÉÅÉÇÅjÅF')->sjis;
+	$msg = Jcode->new('¿‚Ã¿° •·•‚°À°ß')->sjis;
 	$fra2->Label(
 		-text => "$msg",
 		-font => "TKFN"
@@ -57,7 +57,7 @@ sub _new{
 	my $e2 = $fra2->Entry(-font => "TKFN")->pack(-side => 'right');
 
 	$npro->Button(
-		-text => Jcode->new('ÉLÉÉÉìÉZÉã')->sjis,
+		-text => Jcode->new('•≠•„•Û•ª•Î')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->close();});}
 	)->pack(-side => 'right',-padx => 3);
@@ -68,7 +68,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_edit;});},
 	)->pack(-side => 'right',-padx => 3);
 
-	# ENTRYÇÃÉoÉCÉìÉh
+	# ENTRY§Œ•–•§•Û•…
 	$e1->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
@@ -76,7 +76,7 @@ sub _new{
 	$npro->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	
-	# ENTRYÇ÷ÇÃë}ì¸
+	# ENTRY§ÿ§Œ¡ﬁ∆˛
 	$e1->insert(0,$self->project->file_target);
 	$e2->insert(0,$self->project->comment);
 	$e1->configure(-state => 'disable');
@@ -94,7 +94,7 @@ sub _edit{
 
 
 #--------------#
-#   ÉAÉNÉZÉT   #
+#   •¢•Ø•ª•µ   #
 #--------------#
 
 sub e2{

@@ -15,8 +15,6 @@ sub readin{
 	if (
 		   ! -e "$self->{ini_file}"
 		|| ! -e "./config/hinshi_chasen"
-		|| ! -e "./config/projects"
-		|| ! -e "./config/projects_trush"
 	){
 		# 揃っていない場合は設定を初期化
 		print "Resetting parameters...\n";
@@ -27,21 +25,6 @@ sub readin{
 				thefile => "m: $self->{ini_file}"
 			);
 		close (CON);
-		open (CON,">./config/projects") or 
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => "./config/projects"
-			);
-		print CON "target,comment,dbname\n";
-		close (CON);
-		open (CON,">./config/projects_trush") or 
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => "./config/projects_trush"
-			);
-		print CON "target,comment,dbname\n";
-		close (CON);
-		use File::Copy;
 		copy("./.default/hinshi_chasen","./config/hinshi_chasen") or die;
 	}
 

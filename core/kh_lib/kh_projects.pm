@@ -15,17 +15,12 @@ sub read{
 	my $self;
 	my $dbh = DBI->connect("DBI:CSV:f_dir=./config");
 	$self->{dbh} = $dbh;
+	bless $self, $class;
 
-	# テーブルが存在しない場合は作成 
+	# テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
 	unless (-e $save_file){
-		$dbh->do(                                 # ルーチン化？
-			"CREATE TABLE projects (
-				target CHAR(225),
-				comment CHAR(225),
-				dbname CHAR(225),
-			)"
-		) or die;
+		$self->create_project_list;
 	}
 
 	# 読み込み                                    # euc-->sjis変換を
@@ -42,8 +37,21 @@ sub read{
 		++$n;
 	}
 
-	bless $self, $class;
+
 	return $self;
+}
+
+sub create_project_list{
+	my $self = shift;
+	print "creating project list... ";
+	$self->dbh->do(                                 # ルーチン化？
+		"CREATE TABLE projects (
+			target CHAR(225),
+			comment CHAR(225),
+			dbname CHAR(225)
+		)"
+	) or die;
+	print "ok\n";
 }
 
 #--------------------#
@@ -66,7 +74,7 @@ sub add_new{
 			return 0;
 		}
 	}
-	
+
 	# DB作成
 	my $drh = DBI->install_driver("mysql")
 		or gui_errormsg->open(type => 'mysql');
@@ -74,12 +82,13 @@ sub add_new{
 		or gui_errormsg->open(type => 'mysql', sql => 'createdb');
 
 	# デフォルトの品詞選択テーブルを作成
-	my $sql2 = "SELECT hinshi_id, kh_hinshi FROM hinshi_";
+	my $sql2 = "SELECT hinshi_id, kh_hinshi FROM hinshi_";  # 品詞リスト取得
 	$sql2 .= $::config_obj->c_or_j;
-	my $hst = $self->dbh->prepare($sql2); $hst->execute;
-	my $data = $hst->fetchall_arrayref;
-	
-	my $temp_new = $new->dbname;
+	my $hst = $self->dbh->prepare($sql2) or die(dbh error 1);
+	$hst->execute or die(dbh error 2);
+	my $data = $hst->fetchall_arrayref or die (dbh error 3);
+
+	my $temp_new = $new->dbname;                            # MySQLテーブル作成
 	my $mysql = DBI->connect("DBI:mysql:$temp_new",undef,undef)
 		or gui_errormsg->open(type => 'mysql', sql => 'connect');
 	my $sql3 = 'create table hselection(
@@ -89,8 +98,9 @@ sub add_new{
 	)';
 	$mysql->do($sql3) or
 		gui_errormsg->open(type =>'mysql', sql =>'create table hselection');
+
 	my $sql4 = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
-	my %temp_h;
+	my %temp_h;                                             # MySQLテーブルへのインサート
 	foreach my $i (@{$data}){
 		if ($temp_h{$i->[0]}){
 			next;
@@ -118,7 +128,8 @@ sub add_new{
 	if ($new->comment){
 		$sql .= "'".$new->comment."',";
 	} else {
-		$sql .= "undef,";
+		$sql .= "'no description',";
+		$new->comment('no description');
 	}
 	$sql .= "'".$new->dbname."'";
 	$sql .= ')';
@@ -135,9 +146,9 @@ sub add_new{
 sub edit{
 	my $self = shift;
 	my $edp = $self->a_project($_[0]);
-	
+
 	$edp->comment($_[1]);
-	
+
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){
 		$sql .= "'".$edp->comment."'";
@@ -170,7 +181,7 @@ sub delete{
 			"CREATE TABLE projects_trush (
 				target CHAR(225),
 				comment CHAR(225),
-				dbname CHAR(225),
+				dbname CHAR(225)
 			)"
 		) or die;
 	}
