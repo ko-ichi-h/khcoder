@@ -440,6 +440,28 @@ sub first{
 #			(bun_idt)
 #	",1);
 
+	if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
+		my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
+		my $d = '';
+		my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
+		my $last = -1;
+		while (my $r = $h->fetch){
+			if ( $r->[7] != $last){
+				$last = $r->[7];
+				$d .= "\n";
+				$d .= "$r->[0],$r->[1],$r->[2],$r->[3],$r->[4],$r->[5],$r->[6],$r->[7],$r->[8]";
+			} else {
+				$d .= $r->[8];
+			}
+		}
+		substr($d,0,1) = '';
+		open (FT,">$f") or die;
+		print FT $d;
+		close (FT);
+		use kh_jchar;
+		kh_jchar->to_sjis($f);
+	}
+
 }
 
 #--------------#

@@ -152,7 +152,7 @@ sub make{
 		$f3->separator();
 		
 		$self->{t_word_freq} = $f3->command(
-				-label => Jcode->new('出現回数 分布（SPSS）')->sjis,
+				-label => Jcode->new('出現回数 分布 (SPSS)')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $target = $::project_obj->file_WordFreq;
