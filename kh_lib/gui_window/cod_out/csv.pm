@@ -9,14 +9,14 @@ sub _save{
 	unless (-e $self->cfile){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "ƒR[ƒfƒBƒ“ƒOEƒ‹[ƒ‹Eƒtƒ@ƒCƒ‹‚ª‘I‘ğ‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB",
+			msg => "¥³¡¼¥Ç¥£¥ó¥°¡¦¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£",
 			window => \$win,
 			type => 'msg',
 		);
 		return;
 	}
 	
-	# •Û‘¶æ‚ÌQÆ
+	# ÊİÂ¸Àè¤Î»²¾È
 	my @types = (
 		[ "csv file",[qw/.csv/] ],
 		["All files",'*']
@@ -25,11 +25,11 @@ sub _save{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('ƒR[ƒfƒBƒ“ƒOŒ‹‰ÊiCSVjF–¼‘O‚ğ•t‚¯‚Ä•Û‘¶')->sjis,
+			Jcode->new('¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¡ÊCSV¡Ë¡§Ì¾Á°¤òÉÕ¤±¤ÆÊİÂ¸')->sjis,
 		-initialdir       => $::config_obj->cwd
 	);
 	
-	# •Û‘¶‚ğÀs
+	# ÊİÂ¸¤ò¼Â¹Ô
 	if ($path){
 		my $result;
 		unless ( $result = kh_cod::func->read_file($self->cfile) ){
@@ -42,7 +42,7 @@ sub _save{
 }
 
 sub win_label{
-	return 'ƒR[ƒfƒBƒ“ƒOŒ‹‰Ê‚Ìo—ÍFCSVƒtƒ@ƒCƒ‹';
+	return '¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î½ĞÎÏ¡§CSV¥Õ¥¡¥¤¥ë';
 }
 
 sub win_name{

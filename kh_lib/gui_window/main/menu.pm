@@ -243,8 +243,26 @@ sub make{
 				-state => 'disable'
 			);
 
+	$f->separator();
+	
+	my $f6 = $f->cascade(
+		-label => Jcode->new('テキストファイルの変形')->sjis,
+		 -font => "TKFN",
+		 -tearoff=>'no'
+	);
+
+		$self->{t_txt_html2mod} = $f6->command(
+			-label => Jcode->new('HTMLからCSVに変換')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::txt_html2csv->open;
+				})},
+			-state => 'disable'
+		);
+
+
 	my $f2 = $f->cascade(
-			-label => Jcode->new('SQLコマンド入力')->sjis,
+			-label => Jcode->new('SQL文 入力')->sjis,
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
@@ -358,7 +376,8 @@ sub refresh{
 		't_cod_jaccard',
 		't_cod_out',
 		't_cod_out_spss',
-		't_cod_out_csv'
+		't_cod_out_csv',
+		't_txt_html2mod',
 	);
 
 	# 状態変更

@@ -7,7 +7,7 @@ use gui_window::cod_out::spss;
 use gui_window::cod_out::csv;
 
 #-------------#
-#   GUIçÏêª   #
+#   GUI∫Ó¿Ω   #
 
 sub _new{
 	my $self = shift;
@@ -23,15 +23,15 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
 
-	# ÉãÅ[ÉãÅEÉtÉ@ÉCÉã
+	# •Î°º•Î°¶•’•°•§•Î
 	$self->{codf_obj} = gui_widget::codf->open(
 		parent => $lf
 	);
 
-	# ÉRÅ[ÉfÉBÉìÉOíPà 
+	# •≥°º•«•£•Û•∞√±∞Ã
 	my $f2 = $lf->Frame()->pack(expand => 'y', fill => 'x', -pady => 3);
 	$f2->Label(
-		text => Jcode->new('ÉRÅ[ÉfÉBÉìÉOíPà ÅF')->sjis,
+		text => Jcode->new('•≥°º•«•£•Û•∞√±∞Ã°ß')->sjis,
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'left');
 	my %pack = (
@@ -45,7 +45,7 @@ sub _new{
 	);
 	
 	$win->Button(
-		-text => Jcode->new('ÉLÉÉÉìÉZÉã')->sjis,
+		-text => Jcode->new('•≠•„•Û•ª•Î')->sjis,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -62,7 +62,7 @@ sub _new{
 }
 
 #--------------#
-#   ÉAÉNÉZÉT   #
+#   •¢•Ø•ª•µ   #
 
 sub cfile{
 	my $self = shift;
