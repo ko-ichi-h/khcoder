@@ -89,6 +89,8 @@ sub _new{
 		-width      => 14,
 		-wrap       => 'none',
 		-font       => "TKFN",
+		-state      => 'disable',
+		-background => 'gray'
 	)->pack(-expand => 1, -fill => 'both');
 
 	# 文字化け回避バインド
@@ -170,6 +172,7 @@ sub _fill_in{
 				-style => $right,
 				-widget    => $c,
 			);
+			if ($i eq '複合名詞'){ $i .= ' (*)' }
 			$self->hlist->itemCreate(
 				$row,1,
 				-itemtype => 'text',
