@@ -53,6 +53,16 @@ sub code{
 			mysql_exec->drop_table($i);
 		}
 	}
+	
+	
+	my $check2 = mysql_exec->select(
+		"SELECT * FROM $self->{res_table} LIMIT 1"
+	)->hundle;
+	unless (my $ch = $check2->fetch){
+		$self->{res_table} = '';
+		return 0;
+	}
+	
 	return $self;
 }
 

@@ -191,14 +191,22 @@ sub make{
 		);
 
 		$self->{t_cod_count} = $f5->command(
-				-label => Jcode->new('単純集計')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+			-label => Jcode->new('単純集計')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
 					gui_window::cod_count->open;
 				})},
-				-state => 'disable'
-			);
+			-state => 'disable'
+		);
 
+		$self->{t_cod_tab} = $f5->command(
+			-label => Jcode->new('章・節・段落ごとの集計')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::cod_tab->open;
+				})},
+			-state => 'disable'
+		);
 
 	my $f2 = $f->cascade(
 			-label => Jcode->new('SQLコマンド入力')->sjis,
@@ -306,12 +314,12 @@ sub refresh{
 	# 形態素解析が行われていればActive
 	my @menu1 = (
 		't_word_search',
-		# 't_word_print',
 		't_word_list',
 		't_word_freq',
 		't_word_conc',
 		'm_b3_check',
 		't_cod_count',
+		't_cod_tab',
 	);
 
 	# 状態変更

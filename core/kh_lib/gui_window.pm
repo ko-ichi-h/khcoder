@@ -26,6 +26,7 @@ use gui_window::doc_view;
 use gui_window::morpho_check;
 use gui_window::morpho_detail;
 use gui_window::cod_count;
+use gui_window::cod_tab;
 
 sub open{
 	my $class = shift;

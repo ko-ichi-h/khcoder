@@ -11,6 +11,9 @@ use Tk;
 use Tk::LabFrame;
 use Tk::HList;
 
+#-------------#
+#   GUI作製   #
+
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
@@ -19,11 +22,9 @@ sub _new{
 	$win->title(Jcode->new('コーディング・単純集計')->sjis);
 	
 	$self->{win_obj} = $win;
-	
-	
 
-#------------------------#
-#   オプション入力部分   #
+	#------------------------#
+	#   オプション入力部分   #
 
 	my $lf = $win->LabFrame(
 		-label => 'Entry',
@@ -32,39 +33,18 @@ sub _new{
 	)->pack(-fill => 'x');
 
 	# ルール・ファイル
-	my $f1 = $lf->Frame()->pack(expand => 'y', fill => 'x');
-	$f1->Label(
-		text => Jcode->new('コーディング・ルール・ファイル：')->sjis,
-		font => "TKFN",
-	)->pack(anchor =>'w',side => 'left');
-	$f1->Button(
-		-text => Jcode->new('参照')->sjis,
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
-	)->pack(-padx => 2, -side => 'left');
-
-	my $e1 = $f1->Label(
-		-text => Jcode->new('(選択ファイル無し)')->sjis,
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	if ($::project_obj->last_codf){
-		my $path = $::project_obj->last_codf;
-		$self->{cfile} = $path;
-		substr($path, 0, rindex($path, '/') + 1 ) = '';
-		$e1->configure(-text => $path);
-	}
+	$self->{codf_obj} = gui_widget::codf->open(
+		parent => $lf
+	);
 
 	# コーディング単位
-	my $f2 = $lf->Frame()->pack(expand => 'y', fill => 'x');
+	my $f2 = $lf->Frame()->pack(expand => 'y', fill => 'x', -pady => 3);
 	$f2->Label(
-		text => Jcode->new('コーディング単位： ')->sjis,
+		text => Jcode->new('コーディング単位：')->sjis,
 		font => "TKFN"
 	)->pack(anchor => 'w', side => 'left');
 	my %pack = (
 			-anchor => 'e',
-			-padx   => 1,
 			-pady   => 1,
 			-side   => 'left'
 	);
@@ -80,8 +60,8 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_calc;});}
 	)->pack( -side => 'right',-pady => 2);
 
-#------------------#
-#   結果表示部分   #
+	#------------------#
+	#   結果表示部分   #
 
 	my $rf = $win->LabFrame(
 		-label => 'Result',
@@ -123,7 +103,6 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right', -anchor => 'e', -pady => 1);
 
-	$self->{entry} = $e1;
 	$self->{label} = $label;
 	$self->{list}  = $lis;
 	return $self;
@@ -143,7 +122,7 @@ sub _calc{
 	$self->win_obj->update;
 	
 	my $tani = $self->tani;
-	my $codf = $self->{cfile};
+	my $codf = $self->cfile;
 	
 	unless (-e $codf){
 		my $win = $self->win_obj;
@@ -215,42 +194,22 @@ sub _calc{
 
 }
 
-#------------------#
-#   参照ルーチン   #
-sub _sansyo{
-	my $self = shift;
-	
-	my @types = (
-		[ "coding rule files",[qw/.txt .cod/] ],
-		["All files",'*']
-	);
-	
-	my $path = $self->win_obj->getOpenFile(
-		-filetypes  => \@types,
-		-title      => Jcode->new('コーディング・ルール・ファイルを選択してください')->sjis,
-		-initialdir => $::config_obj->cwd
-	);
-	
-	if ($path){
-		$::project_obj->last_codf($path);
-		$self->{cfile} = $path;
-		substr($path, 0, rindex($path, '/') + 1 ) = '';
-		$self->entry->configure(-text => $path);
-	}
-}
+
 
 #--------------#
 #   アクセサ   #
+
+sub cfile{
+	my $self = shift;
+	$self->{codf_obj}->cfile;
+}
 
 sub tani{
 	my $self = shift;
 	return $self->{tani_obj}->tani;
 }
 
-sub entry{
-	my $self = shift;
-	return $self->{entry};
-}
+
 sub list{
 	my $self = shift;
 	return $self->{list};
