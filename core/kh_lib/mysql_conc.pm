@@ -45,41 +45,43 @@ sub a_word{
 	
 	print "2: getting context(id)\n";
 
-	# 前後10づつのhyoso.idを取得
+	# 前後のhyoso.idを取得
 
-	my @hyoso_order;
+	my $order = [()];
+	$sql  = "SELECT id, hyoso_id\n FROM hyosobun\n WHERE\n";
+	my $n2 = 0;
+	my $temp = '';
 	foreach my $i (@{$points}){
-		my $p1 = $i->[0] - 10;
-		my $p2 = $i->[0] - 1;
-		my $n1 = $i->[0] + 1;
-		my $n2 = $i->[0] + 10;
-		
-		my $prev = mysql_exec->select("
-			SELECT hyoso_id
-			FROM hyosobun
-			WHERE id >= $p1 AND id <= $p2
-		",1)->hundle->fetchall_arrayref;
-		
-		my $center =  mysql_exec->select("
-			SELECT hyoso_id
-			FROM hyosobun
-			WHERE id = $i->[0]
-		",1)->hundle->fetchall_arrayref;
-		
-		my $next =  mysql_exec->select("
-			SELECT hyoso_id
-			FROM hyosobun
-			WHERE id >= $n1 AND id <= $n2
-		",1)->hundle->fetchall_arrayref;
-		
-		my $current;
-		push @{$current}, _listing($prev);
-		push @{$current}, _listing($center);
-		push @{$current}, _listing($next);
-		
-		push @hyoso_order, $current;
+		my $p = $i->[0] - $args{context};
+		my $n = $i->[0] + $args{context};
+		$temp .= "OR ( id >= $p AND id <= $n )\n";
+		++$n2;
+		if ($n2 >= 100){
+			substr($temp,0,2) = '';
+			my $hoge = &run_sql($sql,$temp);
+			@{$order} = (@{$order},@{$hoge});
+			$temp = ''; $n2 = 0;
+		}
+	}
+	if ($temp){
+		substr($temp,0,2) = '';
+		my $hoge = &run_sql($sql,$temp);
+		@{$order} = (@{$order},@{$hoge});
 	}
 
+	sub run_sql{ 
+		my $sql = shift;
+		my $temp = shift;
+		$sql .= $temp;
+		my $result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+		return $result;
+	}
+
+	return 0;
+}
+1;
+
+__END__
 	print "3: getting ready for id2word conv\n";
 
 	# IDに対応する表層語を取得
