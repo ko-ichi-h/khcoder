@@ -77,7 +77,7 @@ sub table_exists{
 	my $class = shift;
 	my $table = shift;
 	my $r = 0;
-	foreach my $i ( $::project_obj->dbh->tables() ){
+	foreach my $i ( &table_list ){
 		if ($i eq $table){
 			$r = 1;
 			last;
@@ -88,7 +88,7 @@ sub table_exists{
 
 sub clear_tmp_tables{
 	my $class = shift;
-	foreach my $i ( $::project_obj->dbh->tables() ){
+	foreach my $i ( &table_list ){
 		if ( index($i,'ct_') == 0){
 			$::project_obj->dbh->do("drop table $i");
 		}
@@ -97,7 +97,10 @@ sub clear_tmp_tables{
 
 sub table_list{
 	my $class = shift;
-	my @r = $::project_obj->dbh->tables();
+	my @r = map { $_ =~ s/.*\.//; $_ } $::project_obj->dbh->tables();
+	foreach my $i (@r){
+		$i = $1 if $i =~ /`(.*)`/;
+	}
 	return @r;
 }
 
