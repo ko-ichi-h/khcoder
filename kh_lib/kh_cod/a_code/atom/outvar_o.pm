@@ -32,6 +32,7 @@ sub ready{
 	
 	# 集計単位が一致するかどうか確認
 	my $var_obj = mysql_outvar::a_var->new($var);
+
 	if ($var_obj->{tani} eq $tani){
 		$self->{valid} = 1;
 	} else {
