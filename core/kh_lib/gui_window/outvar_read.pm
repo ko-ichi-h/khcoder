@@ -128,10 +128,17 @@ sub _read{
 		tani => $self->{tani_obj}->tani,
 	);
 	
+	# 完了処理
 	if ($rtrn){
+		# 変数リストWindowをオープン
 		$self->close;
 		my $list = gui_window::outvar_list->open;
 		$list->_fill;
+		
+		# 「コーディング・外部変数とのクロス集計」Windowが開いていた場合
+		if ( $::main_gui->if_opened('w_cod_outtab') ){
+			$::main_gui->get('w_cod_outtab')->fill;
+		}
 	}
 }
 

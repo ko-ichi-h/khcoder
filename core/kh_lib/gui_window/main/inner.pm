@@ -63,18 +63,53 @@ sub make{
 		-anchor => 'n'
 	);
 
-	my $hlist = $fra2->Scrolled(
+	my $fra2_1 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
+	$fra2_1->Label(
+		-text => Jcode->new('総抽出語数：')->sjis,
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_num1} = $fra2_1->Entry(
+		-width      => $::config_obj->mw_entry_length,
+		-background => 'gray',
+		-font       => 'TKFN',
+		-state      => 'disable',
+	)->pack(-anchor=>'e',-side=>'right');
+
+	my $fra2_2 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
+	$fra2_2->Label(
+		-font => "TKFN",
+		-text => Jcode->new('異なり語数（使用）：')->sjis
+	)->pack(-side => 'left');
+	$self->{ent_num2} = $fra2_2->Entry(
+		-width      => $::config_obj->mw_entry_length,
+		-background => 'gray',
+		-font       => 'TKFN',
+		-state      => 'disable',
+	)->pack(-anchor=>'e',-side=>'right');
+
+	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', expand => 'y');
+	$fra2_3->Label(
+		-font => "TKFN",
+		-text => Jcode->new('文書の単純集計：')->sjis
+	)->pack(-side => 'left');
+
+	my $hlist = $fra2_3->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator          => 0,
 		-command            => sub{$mw->after(10,sub{$self->unselect;});},
-		-highlightthickness => 0,
+		#-highlightthickness => 0,
 		-columns            => 2,
-		-borderwidth        => 0,
+		#-borderwidth        => 0,
 		-height             => 3,
-	)->pack(-expand => '1', -fill => 'both');
+		-header             => 1,
+		-width      => $::config_obj->mw_entry_length - 2,
+	)->pack(-side => 'right', -anchor => 'e', -fill => 'y');
+
+	$hlist->header('create',0,-text => Jcode->new('集計単位')->sjis);
+	$hlist->header('create',1,-text => Jcode->new('ケース数')->sjis);
 
 	sub unselect{
 		my $self = shift;
@@ -100,11 +135,7 @@ sub refresh{
 	my $mw = $::main_gui->mw;
 
 	$self->hlist->delete('all');
-	my @list = (
-		[Jcode->new('総抽出語数： ')->sjis,'n/a'],
-		[Jcode->new('異なり語数(使用)： ')->sjis,'n/a'],
-		[Jcode->new('異なり語率： ')->sjis,'n/a']
-	);
+	my @list = ();
 
 	if ($::project_obj){
 		my $title;
@@ -113,31 +144,45 @@ sub refresh{
 		} else {
 			$title = $::project_obj->file_short_name;
 		}
-		$title .= ' - KHC';
+		$title .= ' - KH Coder';
 		$mw->title($title);
 		$self->entry('e_curent_project', $::project_obj->file_short_name);
 		$self->entry('e_project_memo', $::project_obj->comment);
 		
 		if ($::project_obj->status_morpho){
-			@list = (
-				[
-					Jcode->new('総抽出語数： ')->sjis,
-					num_format(mysql_words->num_all)
-				],
-				[
-					Jcode->new('異なり語数 (使用)： ')->sjis,
-					num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")")
-				],
-				[
-					Jcode->new('異なり語率： ')->sjis,
-					num_format(mysql_words->num_kotonari_ritsu)
-				]
+			# 抽出語数
+			$self->entry('ent_num1', num_format(mysql_words->num_all));
+			$self->entry('ent_num2', num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")") );
+			# 集計単位
+			my %name = (
+				"bun" => "文",
+				"dan" => "段落",
+				"h5"  => "H5",
+				"h4"  => "H4",
+				"h3"  => "H3",
+				"h2"  => "H2",
+				"h1"  => "H1",
 			);
+			my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
+			foreach my $i (@list0){
+				if (
+					mysql_exec->select(
+						"select status from status where name = \'$i\'",1
+					)->hundle->fetch->[0]
+				){
+					my $num = mysql_exec->select(
+						"SELECT count(*) FROM $i"
+					)->hundle->fetch->[0];
+					push @list, [Jcode->new($name{$i})->sjis, num_format($num)];
+				}
+			}
 		}
 	} else {
-		$mw->title('KHC');
+		$mw->title('KH Coder');
 		$self->entry('e_curent_project', '');
 		$self->entry('e_project_memo', '');
+		$self->entry('ent_num1', '');
+		$self->entry('ent_num2', '');
 	}
 
 	my $right = $self->hlist->ItemStyle('text',-anchor => 'e',-font => "TKFN");

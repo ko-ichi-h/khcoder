@@ -226,6 +226,113 @@ sub count{
 }
 
 #----------------------------#
+#   外部変数とのクロス集計   #
+
+sub outtab{
+	my $self  = shift;
+	my $tani = shift;
+	my $var_id = shift;
+	my $cell  = shift;
+	
+	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	
+	my $result;
+	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
+	
+	# 集計用SQL文の作製
+	my $sql;
+	$sql .= "SELECT $var_obj->{table}.$var_obj->{column}, ";
+	foreach my $i (@{$self->{valid_codes}}){
+		$sql .= "sum( IF(".$i->res_table.".".$i->res_col.",1,0) ),";
+	}
+	$sql .= " count(*) \n";
+	$sql .= "FROM $var_obj->{table}\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON $var_obj->{table}.id = $i.id\n";
+	}
+	$sql .= "\nGROUP BY $var_obj->{table}.$var_obj->{column}";
+	$sql .= "\nORDER BY $var_obj->{table}.$var_obj->{column}";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	
+	# 結果出力の作製
+	my @result;
+	
+	# 一行目
+	my @head = ('');
+	foreach my $i (@{$self->{valid_codes}}){
+		push @head, Jcode->new($i->name)->sjis;
+	}
+	push @head, Jcode->new('ケース数')->sjis;
+	push @result, \@head;
+	# 中身
+	my @sum = (Jcode->new('合計')->sjis);
+	my $total;
+	while (my $i = $h->fetch){
+		my $n = 0;
+		my @current;
+		my @c = @{$i};
+		my $nd = pop @c;
+		unless ( length($i->[0]) ){next;}
+		foreach my $h (@c){
+			if ($n == 0){                         # 行ヘッダ
+				#if (index($tani2,'h') == 0){
+				#	push @current, mysql_getheader->get($tani2, $h);
+				#} else {
+				#	push @current, $h;
+				#}
+				if ( length($var_obj->{labels}{$h}) ){
+					push @current, $var_obj->{labels}{$h};
+				} else {
+					push @current, $h;
+				}
+			} else {                              # 中身
+				$sum[$n] += $h;
+				my $p = sprintf("%.2f",($h / $nd ) * 100);
+				if ($cell == 0){
+					push @current, "$h ($p"."%)";
+				}
+				elsif ($cell == 1){
+					push @current, $h;
+				} else {
+					push @current, "$p"."%";
+				}
+			}
+			++$n;
+		}
+		$total += $nd;
+		push @current, $nd;
+		push @result, \@current;
+	}
+	# 合計行
+	my @c = @sum;
+	my @current; my $n = 0;
+	foreach my $i (@sum){
+		if ($n == 0){
+			push @current, $i;
+		} else {
+			my $p = sprintf("%.2f", ($i / $total) * 100);
+			if ($cell == 0){
+				push @current, "$i ($p"."%)";
+			}
+			elsif ($cell == 1){
+				push @current, $i;
+			} else {
+				push @current, "$p"."%";
+			}
+		}
+		++$n;
+	}
+	push @current, $total;
+	push @result, \@current;
+
+	
+	return \@result;
+}
+
+
+#----------------------------#
 #   章・節・段落ごとの集計   #
 
 sub tab{

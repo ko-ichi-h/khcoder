@@ -14,7 +14,7 @@ sub _new{
 	my $wabtkh = $mw->Toplevel;
 	$wabtkh->resizable(0, 0);
 	$wabtkh->focus;
-	my $msg = Jcode->new('KHCについて','euc')->sjis;
+	my $msg = Jcode->new('KH Coderについて','euc')->sjis;
 	$wabtkh->title("$msg");
 
 	$wabtkh->Label(
