@@ -18,30 +18,34 @@ sub get{
 	bless $self, $class;
 
 	# 文書の特定
+	#print "id, ";
 	unless ( length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
 		#print "doc_id $self->{doc_id}";
 	}
 
 	# 本文の取り出し
+	#print "body:s ";
 	my $d = $self->get_body;
+	#print "p1 ";
 	my %for_color = ();                           # 強調指定の準備
 	foreach my $i (@{$self->{w_search}}){              # 検索語
 		$for_color{$i} = "search";
 	}
+	#print "p2 ";
 	my $html = mysql_exec->select("                    # HTMLタグ
 		select hyoso.id
-		from hyoso, genkei, hselection
+		from  hselection,
+			genkei LEFT JOIN hyoso ON hyoso.genkei_id = genkei.id
 		where
-			hyoso.genkei_id = genkei.id
-			AND genkei.khhinshi_id = hselection.khhinshi_id
+			genkei.khhinshi_id = hselection.khhinshi_id
 			AND hselection.name = 'HTMLタグ'
 	",1)->hundle;
 	while (my $i = $html->fetch){
 		$for_color{$i->[0]} = 'html';
 	}
 	
-	
+	#print "p3, ";
 	my @body = (); my $last = -1;                 # 改行付加＆検索語強調
 	my $lastw;
 	foreach my $i (@{$d}){
@@ -51,7 +55,7 @@ sub get{
 		}
 		
 		my $c = "$lastw"."$i->[0]";
-		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/){ push @body, ["\n",'']; }
+		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/o){ push @body, ["\n",'']; }
 		
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
 		push @body, [Jcode->new("$i->[0]")->sjis, $k];
@@ -60,6 +64,7 @@ sub get{
 	$self->{body} = \@body;
 	
 	# 上位見出しの取り出し
+	#print "head\n";
 	$self->{header} = $self->get_header;
 	
 	

@@ -206,6 +206,8 @@ sub first{
 		",1);
 	}
 	mysql_exec->do('alter table genkei add index index1(name,hinshi_id,khhinshi_id)',1);
+	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
+	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 
 	# KH_品詞テーブルの作成
 	mysql_exec->do("drop table khhinshi");
@@ -305,6 +307,7 @@ sub first{
 			WHERE hghi.katuyo = katuyo.name
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
+	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
 
 	# 表層-文テーブル作成
 
