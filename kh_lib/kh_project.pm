@@ -21,30 +21,69 @@ sub new{
 	# データディレクトリが無かった場合は作成
 	print $self->dir_CoderData."\n";
 	unless (-d $self->dir_CoderData){
-
 		mkdir $self->dir_CoderData or die;
 	}
-	
-	# データベース名決定
-	my $drh;
-	unless ( $drh = DBI->install_driver("mysql") ){
-		gui_errormsg->open(
-			type => 'mysql',
-			sql  => 'install_driver'
-		);
-		return 0;
-	}
-	my %dbs;
-	foreach my $i ($drh->func('','','_ListDBs')){
-		$dbs{$i} = 1;
-	}
-	my $n = 0;
-	while ( $dbs{"khc$n"} ){
-		++$n;
-	}
-	$self->{dbname} = "khc$n";
-
 	return $self;
+}
+
+sub prepare_db{
+	my $self   = shift;
+	my $hinshi = shift;
+	$self->{dbname} = mysql_exec->create_new_db;
+	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
+	$::project_obj = $self;
+	
+	# 品詞選択テーブル
+	mysql_exec->do('
+		create table hselection(
+			khhinshi_id int primary key not null,
+			ifuse       int,
+			name        varchar(20) not null
+		)
+	',1);
+	my %temp_h;
+	my $sql4 = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
+	foreach my $i (@{$hinshi}){
+		if ($temp_h{$i->[0]}){
+			next;
+		} else {
+			$temp_h{$i->[0]} = 1;
+		}
+		#if ($i->[1] eq "複合名詞"){
+		#	$sql4 .= "($i->[0],0,'$i->[1]'),";
+		#} 
+		if ($i->[1] eq "HTMLタグ"){
+			$sql4 .= "($i->[0],0,'$i->[1]'),";
+		} else {
+			$sql4 .= "($i->[0],1,'$i->[1]'),";
+		}
+	}
+	$sql4 .= "(9999,0,'その他')";
+	mysql_exec->do($sql4,1);
+	# 辞書テーブル
+	mysql_exec->do('create table dmark ( name varchar(200) not null )',1);
+	mysql_exec->do('create table dstop ( name varchar(200) not null )',1);
+	# 状態テーブルの作成
+	mysql_exec->do('
+		create table status (
+			name   varchar(200) not null,
+			status INT not null
+		)
+	',1);
+	mysql_exec->do("
+		INSERT INTO status (name, status)
+		VALUES ('morpho',0),('bun',0),('dan',0),('h5',0),('h4',0),('h3',0),('h2',0),('h1',0)
+	",1);
+	mysql_exec->do('
+		create table status_char (
+			name   varchar(255) not null,
+			status varchar(255)
+		)
+	',1);
+	mysql_exec->do("
+		INSERT INTO status_char (name, status)
+		VALUES ('last_tani',''),('last_codf','')
+	",1);
 }
 
 sub temp{
@@ -68,12 +107,9 @@ sub open{
 	}
 	
 	# データベースを開く
-	$self->{dbh} = DBI->connect("DBI:mysql:database=$self->{dbname};mysql_local_infile=1",undef,undef)
-		or gui_errormsg->open(type => 'mysql', sql => 'connect');
+	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
+
 	$::project_obj = $self;
-	
-
-
 	return $self;
 }
 
