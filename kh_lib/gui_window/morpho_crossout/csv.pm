@@ -19,7 +19,7 @@ sub save{
 	
 	# 保存先の参照
 	my @types = (
-		[ Jcode->new('CSV Files')->sjis,[qw/.csv/] ],
+		['CSV Files',[qw/.csv/] ],
 		#[ Jcode->new('タブ区切り')->sjis,[qw/.txt/] ],
 		["All files",'*']
 	);
