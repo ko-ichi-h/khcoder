@@ -40,6 +40,7 @@ use gui_window::outvar_read;
 use gui_window::outvar_list;
 use gui_window::outvar_detail;
 use gui_window::force_color;
+use gui_window::contxt_out;
 
 sub open{
 	my $class = shift;
