@@ -110,7 +110,7 @@ sub _new{
 	);
 
 	$wmw->Label(
-		-text => Jcode->new("(*) 強制抽出する語の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。")->sjis,
+		-text => Jcode->new("(*) 「強制抽出する語」や「使用しない語」の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。")->sjis,
 		-font => 'TKFN',
 		-justify => 'left',
 	)->pack(-anchor => 'w', -side => 'left');

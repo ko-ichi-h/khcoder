@@ -95,11 +95,16 @@ sub _new{
 	# 各種オプション
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 2);
 
-	$f2->Button(
+	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
 		-text    => Jcode->new('検索')->sjis,
 		-command => sub{ $win->after(10,sub{$self->search;});}
 	)->pack(-side => 'right',-padx => 4);
+	$win->Balloon()->attach(
+		$self->{btn_search},
+		-balloonmsg => '"Shinf + Enter"',
+		-font       => "TKFN"
+	);
 
 	my %pack = (
 			-anchor => 'w',
