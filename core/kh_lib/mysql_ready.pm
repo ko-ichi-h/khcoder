@@ -114,6 +114,29 @@ sub readin{
 #			$self->length($key,255);
 #		}
 	}
+
+	# 外部変数用のテーブルを準備
+	unless ( mysql_exec->table_exists('outvar') ){
+		mysql_exec->do("create table outvar
+			(
+				name varchar(255) not null,
+				tab varchar(255) not null,
+				col varchar(255) not null,
+				tani varchar(10) not null,
+				id int auto_increment primary key not null
+			)
+		",1);
+	}
+	unless ( mysql_exec->table_exists('outvar_lab') ){
+		mysql_exec->do("create table outvar_lab
+			(
+				var_id int not null,
+				val varchar(255) not null,
+				lab varchar(255) not null,
+				id int auto_increment primary key not null
+			)
+		",1);
+	}
 }
 
 #----------------#

@@ -37,6 +37,4 @@ sub print{
 	gui_errormsg::print->new(%args);
 }
 
-
-
 1;
