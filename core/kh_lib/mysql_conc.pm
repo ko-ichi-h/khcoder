@@ -273,10 +273,10 @@ sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 	
 	my $result;
 	foreach my $i (@{$self->{left}},@{$self->{right}}){
-		my $sql = "SELECT hyoso.name FROM ( hyoso,temp_conc,temp_conc_sort )";
-		$sql .= "WHERE";
-		$sql .= "	temp_conc".".$i = hyoso.id\n";
-		$sql .= "	AND temp_conc".".id = temp_conc_sort.conc_id\n";
+		my $sql = "SELECT hyoso.name FROM temp_conc\n";
+		$sql .= "	LEFT JOIN hyoso ON temp_conc.$i = hyoso.id,\n";
+		$sql .= "	temp_conc_sort\n";
+		$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
 		$sql .= "ORDER BY temp_conc_sort.id";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
