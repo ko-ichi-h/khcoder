@@ -51,20 +51,38 @@ sub _new{
 		font => "TKFN",
 	)->pack(side => 'left');
 	
-	$f1->Optionmenu(
-		-options=> \@list1,
-		-font => "TKFN",
-		-borderwidth => '1',
-		-width => 4,
-		-command => sub{$self->check;},
-		-variable => \$self->{raw_opt},
+#	$f1->Optionmenu(
+#		-options=> \@list1,
+#		-font => "TKFN",
+#		-borderwidth => '1',
+#		-width => 4,
+#		-command => sub{$self->check;},
+#		-variable => \$self->{raw_opt},
+#	)->pack(side=>'left',-pady => 2);
+
+	$self->{mb} = $f1->Menubutton(
+		-text      => '',
+		-tearoff   => 'no',
+		-relief    => 'raised',
+		-indicator => 'yes',
+		-font      => "TKFN",
+		-width     => 4,
 	)->pack(side=>'left',-pady => 2);
-	
+	foreach my $i (@list1){
+		$self->{mb}->radiobutton(
+			-label    => " $i",
+			-variable => \$self->{raw_opt},
+			-value    => "$i",
+			-command  => sub{$self->check;},
+		);
+	}
+	$self->{raw_opt} = Jcode->new($name{$::project_obj->last_tani})->sjis;
+
 	$f1->Label(
 		text => Jcode->new('    集計単位：')->sjis,
 		font => "TKFN",
 	)->pack(side => 'left');
-	
+
 	$self->{opt2} = $f1->Optionmenu(
 		-options=> \@list2_1,
 		-font => "TKFN",
@@ -72,9 +90,14 @@ sub _new{
 		-width => 4,
 		-variable => \$self->{raw_opt2},
 	)->pack(side=>'left');
-	
-	
+
+
 	return $self;
+}
+
+sub start{
+	my $self = shift;
+	$self->check;
 }
 
 #-----------------------------#
@@ -82,6 +105,11 @@ sub _new{
 
 sub check{
 	my $self = shift;
+	
+	$self->{mb}->configure(-text,Jcode->new("$self->{raw_opt}")->sjis);
+	$self->{mb}->update;
+	$::project_obj->last_tani($value{Jcode->new($self->{raw_opt})->euc});
+	
 	unless (Exists($self->opt2)){
 		return 0;
 	}

@@ -53,17 +53,6 @@ sub _new{
 	# オプション・フレーム
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
-	my @methods;
-	push @methods, Jcode->new('OR検索')->sjis;
-	push @methods, Jcode->new('AND検索')->sjis;
-	my $method;
-	$fra4h->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$gui_window::word_search::method,
-		-width => 7,
-	)->pack(-anchor=>'e', -side => 'left');
-
 	$fra4h->Checkbutton(
 		-text     => Jcode->new('抽出語検索')->sjis,
 		-variable => \$gui_window::word_search::kihon,
@@ -72,7 +61,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => Jcode->new('活用を表示')->sjis,
+		-text     => Jcode->new('活用形を表示')->sjis,
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
@@ -80,8 +69,35 @@ sub _new{
 
 	unless (defined($gui_window::word_search::katuyo)){
 		$gui_window::word_search::kihon = 1;
-		$gui_window::word_search::katuyo = 0;
+		$gui_window::word_search::katuyo = 1;
 	}
+	
+	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
+	my @methods;
+
+	push @methods, Jcode->new('OR検索')->sjis;
+	push @methods, Jcode->new('AND検索')->sjis;
+	my $method;
+	$fra4i->Optionmenu(
+		-options=> \@methods,
+		-font => "TKFN",
+		-variable => \$gui_window::word_search::method,
+		-width => 7,
+	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
+
+	$fra4i->Optionmenu(
+		-options=>
+			[
+				[Jcode->new('部分一致')->sjis => 'p'],
+				[Jcode->new('完全一致')->sjis => 'c'],
+				[Jcode->new('前方一致')->sjis => 'z'],
+				[Jcode->new('後方一致')->sjis => 'k']
+			],
+		-font => "TKFN",
+		-variable => \$gui_window::word_search::s_mode,
+		-width => 7,
+	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
+
 
 
 
@@ -228,7 +244,8 @@ sub search{
 		query  => $query,
 		method => $method,
 		kihon  => $gui_window::word_search::kihon,
-		katuyo => $gui_window::word_search::katuyo
+		katuyo => $gui_window::word_search::katuyo,
+		mode   => $gui_window::word_search::s_mode
 	);
 
 	# 結果表示

@@ -19,6 +19,8 @@ use mysql_exec;
 sub search{
 	my $class = shift;
 	my %args = @_;
+	my $self = \%args;
+	bless $self, $class;
 	
 	my $query = $args{query};
 	$query =~ s/¡¡/ /g;
@@ -41,12 +43,7 @@ sub search{
 		$sql .= "\t\t\tAND (\n";
 		foreach my $i (@query){
 			unless ($i){ next; }
-			my $word;
-			if ($i =~ /%/){
-				$word = "'$i'";
-			} else {
-				$word = "'%$i%'";
-			}
+			my $word = $self->conv_query($i);
 			$sql .= "\t\t\t\tgenkei.name LIKE $word";
 			if ($args{method} eq 'AND'){
 				$sql .= " AND\n";
@@ -118,12 +115,7 @@ sub search{
 				AND hyoso.katuyo_id = katuyo.id AND (
 		';
 		foreach my $i (@query){
-			my $word;
-			if ($i =~ /%/){
-				$word = "'$i'";
-			} else {
-				$word = "'%$i%'";
-			}
+			my $word = $self->conv_query($i);
 			$sql .= "\t\t\t\thyoso.name LIKE $word";
 			if ($args{method} eq 'AND'){
 				$sql .= " AND\n";
@@ -137,6 +129,24 @@ sub search{
 	}
 
 	return $result;
+}
+sub conv_query{
+	my $self = shift;
+	my $q = shift;
+	
+	if ($self->{mode} eq 'p'){
+		$q = '\'%'."$q".'%\'';
+	}
+	elsif ($self->{mode} eq 'c'){
+		$q = "\'$q\'";
+	}
+	elsif ($self->{mode} eq 'k'){
+		$q = '\'%'."$q\'";
+	}
+	elsif ($self->{mode} eq 'z'){
+		$q = "\'$q".'%\'';
+	}
+	return $q;
 }
 
 #-------------------------#
