@@ -103,12 +103,12 @@ sub save{
 sub mark{
 	my $self = shift;
 	my $source = $::project_obj->file_target;
-	my $dist  = $::project_obj->file_m_target;
+	my $dist   = $::project_obj->file_m_target;
 
 	unless (eval (@{$self->words_mk})){
 		use File::Copy;
 		copy("$source","$dist") or die;
-		return;
+		return undef;
 	}
 
 	my @keywords = @{$self->words_mk};
