@@ -41,7 +41,7 @@ sub create_new_db{
 	my %dbs;
 	foreach my $i (@dbs){
 		$dbs{$i} = 1;
-		print "$i\n";
+		# print "$i\n";
 	}
 	my $n = 0;
 	while ( $dbs{"khc$n"} ){

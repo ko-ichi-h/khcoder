@@ -18,6 +18,10 @@
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
 	cd core
 	perl kh_coder.pl
+	
+	EXPORTの場合：
+	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc export -r HEAD core
+
 
 [TO DO]
 	・分析対象ファイルに「読み取り専用」属性がついていた場合のバグが直っていない？？
