@@ -74,8 +74,8 @@ sub open{
 
 	
 	# 茶筌（複合名詞）の設定を確認
-	$::config_obj->use_hukugo($self->use_hukugo);
-	$::config_obj->save;
+	# $::config_obj->use_hukugo($self->use_hukugo);
+	# $::config_obj->save;
 
 	return $self;
 }
@@ -102,12 +102,13 @@ sub status_morpho{
 }
 
 sub use_hukugo{
-	return mysql_exec
-		->select("SELECT ifuse FROM hselection where name = '複合名詞'",1)
-			->hundle
-				->fetch
-					->[0]
-	;
+	#return mysql_exec
+	#	->select("SELECT ifuse FROM hselection where name = '複合名詞'",1)
+	#		->hundle
+	#			->fetch
+	#				->[0]
+	#;
+	return 0;
 }
 sub use_sonota{
 	return mysql_exec

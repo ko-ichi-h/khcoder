@@ -111,7 +111,7 @@ sub _new{
 	);
 
 	$wmw->Label(
-		-text => Jcode->new("(*) 「複合名詞」のチェック有無や、強制抽出する語の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。")->sjis,
+		-text => Jcode->new("(*) 強制抽出する語の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。")->sjis,
 		-font => 'TKFN',
 		-justify => 'left',
 	)->pack(-anchor => 'w', -side => 'left');
@@ -174,17 +174,10 @@ sub _fill_in{
 				-widget    => $c,
 			);
 			
-			my $h_name;
-			if ($i eq '複合名詞'){
-				$h_name = "$i".' (*)' 
-			} else {
-				$h_name = $i;
-			}
-			
 			$self->hlist->itemCreate(
 				$row,1,
 				-itemtype => 'text',
-				-text     => Jcode->new($h_name)->sjis
+				-text     => Jcode->new($i)->sjis
 			);
 			++$row;
 		}
