@@ -54,7 +54,10 @@ sub _new{
 		-text => "$msg",
 		-font => "TKFN"
 	)->pack(-side => 'left');
-	my $e2 = $fra2->Entry(-font => "TKFN")->pack(-side => 'right');
+	my $e2 = $fra2->Entry(
+		-font => "TKFN",
+		-background => 'white'
+	)->pack(-side => 'right');
 
 	$npro->Button(
 		-text => Jcode->new('キャンセル')->sjis,

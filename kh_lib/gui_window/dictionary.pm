@@ -68,6 +68,7 @@ sub _new{
 	my $t1 = $f_mark->Scrolled(
 		'Text',
 		-scrollbars => 'osoe',
+		-background => 'white',
 		-height     => 18,
 		-width      => 14,
 		-wrap       => 'none',

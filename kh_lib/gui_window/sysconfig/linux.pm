@@ -55,7 +55,10 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry1 = $fra1->Entry(-font => 'TKFN')->pack(side => 'right');
+	my $entry1 = $fra1->Entry(
+		-font => 'TKFN',
+		-background => 'white'
+	)->pack(side => 'right');
 	$self->{entry1} = $entry1;
 
 	$entry1->DropSite(
@@ -78,7 +81,10 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry2 = $lfra->Entry(-font => 'TKFN')->pack(side => 'right');
+	my $entry2 = $lfra->Entry(
+		-font => 'TKFN',
+		-background => 'white'
+	)->pack(side => 'right');
 	$self->{entry2} = $entry2;
 
 	$entry2->DropSite(
@@ -127,6 +133,7 @@ sub __new{
 	)->pack(-side => 'left');
 	my $ent_html = $appf1->Entry(
 		-font => 'TKFN',
+		-background => 'white',
 		-width => 26
 	)->pack( -side => 'right' );
 
@@ -138,6 +145,7 @@ sub __new{
 	)->pack(-side => 'left');
 	my $ent_csv = $appf2->Entry(
 		-font => 'TKFN',
+		-background => 'white',
 		-width => 26
 	)->pack( -side => 'right' );
 
@@ -149,6 +157,7 @@ sub __new{
 	)->pack(-side => 'left');
 	my $ent_pdf = $appf2->Entry(
 		-font => 'TKFN',
+		-background => 'white',
 		-width => 26
 	)->pack( -side => 'right' );
 

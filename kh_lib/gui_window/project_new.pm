@@ -33,7 +33,10 @@ sub _new{
 		-text => "$msg",
 		-font => "TKFN"
 	)->pack(-side => 'left');
-	my $e1 = $fra1->Entry(-font => "TKFN")->pack(-side => 'right');
+	my $e1 = $fra1->Entry(
+		-font => "TKFN",
+		-background => 'white'
+	)->pack(-side => 'right');
 
 	$msg = Jcode->new('»²¾È')->sjis;
 	$fra1->Button(
@@ -48,7 +51,8 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my $e2 = $fra2->Entry(
-		-font => "TKFN"
+		-font => "TKFN",
+		-background => 'white'
 	)->pack(-side => 'right');
 
 	$mw->Button(
@@ -70,7 +74,7 @@ sub _new{
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
 	);
-	$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
+	$mw->bind('Tk::', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 
 	$self->{e1}  = $e1;
