@@ -3,50 +3,61 @@ use strict;
 use DBI;
 use Jcode;
 use Benchmark;
+
 use kh_project;
 use kh_jchar;
 use kh_dictio;
 use mysql_exec;
+use mysql_ready::check;
 
 # MySQL-Perl間で一度にやりとりするケース数
 my $rows_per_once = 30000;
 
 sub first{
-	
 	$::config_obj->in_preprocessing(1);
 	
 	my $class = shift;
 	my $self;
-	$self->{dbh} = $::project_obj->dbh;
+	$self->{temp} = 'temp';
 	bless $self, $class;
 	
+		my $ta0 = new Benchmark;
 	kh_morpho->run;
+		my $ta1 = new Benchmark;
+		print "Morpho1\t",timestr(timediff($ta1,$ta0)),"\n";
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_euc($::project_obj->file_MorphoOut);
+			my $ta2 = new Benchmark;
+			print "Morpho2\t",timestr(timediff($ta2,$ta1)),"\n";
 	}
 		my $t0 = new Benchmark;
 	$self->readin;
 		my $t1 = new Benchmark;
-		print timestr(timediff($t1,$t0)),"\n";
+		print "Read\t",timestr(timediff($t1,$t0)),"\n";
 	$self->reform;
 	$self->tag_fix;
+		my $t15 = new Benchmark;
+		print "Format\t",timestr(timediff($t15,$t1)),"\n";
 	$self->hyosobun;
 	kh_dictio->readin->save;
 		my $t2 = new Benchmark;
-		print timestr(timediff($t2,$t1)),"\n";
+		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	$self->rowtxt;
 		my $t3 = new Benchmark;
-		print timestr(timediff($t3,$t2)),"\n";
+		print "RawTXT\t",timestr(timediff($t3,$t2)),"\n";
 	$self->tanis;
 		my $t4 = new Benchmark;
-		print timestr(timediff($t4,$t3)),"\n";
-
-	if ($::config_obj->mail_if){
-		$self->notify;
-	}
+		print "Strat2\t",timestr(timediff($t4,$t3)),"\n";
+	mysql_ready::check->do;
+		my $t5 = new Benchmark;
+		print "Check\t",timestr(timediff($t5,$t4)),"\n";
 	
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
+	
+	if ($::config_obj->mail_if){
+		$self->notify;
+	}
 	
 	$::config_obj->in_preprocessing(0);
 
@@ -213,59 +224,82 @@ sub reform{
 	my $rule = $th->fetchall_arrayref;
 
                                                             # データ準備
-	my $td = mysql_exec->select('
+	mysql_exec->drop_table("hgh2");
+	mysql_exec->do("
+		create table hgh2 (
+			id INT auto_increment primary key not null,
+			genkei varchar($len) not null,
+			sum INT,
+			h_id INT,
+			h_name varchar(".$self->length('hinshi').")
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO hgh2 (genkei, sum, h_id, h_name)
 		SELECT hgh.genkei, SUM(num), hinshi.id, hinshi.name
-			FROM hgh, hinshi
-			WHERE hgh.hinshi=hinshi.name
-			GROUP BY hgh.genkei, hgh.hinshi
-	',1)->hundle;
+		FROM hgh, hinshi
+		WHERE hgh.hinshi=hinshi.name
+		GROUP BY hgh.genkei, hgh.hinshi
+	",1);
 
 	my ($num, $con) = (0,'');
-	while (my $d = $td->fetch){                             # 振り分け
-		my $kh_hinshi = '9999';
-		foreach my $i (@{$rule}){
-			if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
-				if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
-					if ($d->[0] =~ /^(\xA4[\xA1-\xF3])+$/o){
+	my $id = 1;
+	while (1){
+		my $td = mysql_exec->select(
+			mysql_ready->genkei_sql($id, $id + $rows_per_once),
+			1
+		)->hundle;
+		unless ($td->rows > 0){
+			last;
+		}
+		$id += $rows_per_once;
+		
+		while (my $d = $td->fetch){                             # 振り分け
+			my $kh_hinshi = '9999';
+			foreach my $i (@{$rule}){
+				if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
+					if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
+						if ($d->[0] =~ /^(\xA4[\xA1-\xF3])+$/o){
+							$kh_hinshi = $i->[3];
+							last;
+						}
+					}
+					elsif ($i->[2] eq '一文字'){         # 条件2:ひらがな
+						if (length($d->[0]) == 2){
+							$kh_hinshi = $i->[3];
+							last;
+						}
+					}
+					elsif ($i->[2] eq 'HTML'){         # 条件3:HTML
+						if ( 
+							   ($d->[0] =~ /<h[1-5]>/io)
+							|| ($d->[0] =~ /<\/h[1-5]>/io) 
+						){
+							$kh_hinshi = $i->[3];
+							last;
+						}
+					}
+					else {                                 # 条件2無しの場合
 						$kh_hinshi = $i->[3];
 						last;
 					}
-				}
-				elsif ($i->[2] eq '一文字'){         # 条件2:ひらがな
-					if (length($d->[0]) == 2){
-						$kh_hinshi = $i->[3];
-						last;
-					}
-				}
-				elsif ($i->[2] eq 'HTML'){         # 条件3:HTML
-					if ( 
-						   ($d->[0] =~ /<h[1-5]>/io)
-						|| ($d->[0] =~ /<\/h[1-5]>/io) 
-					){
-						$kh_hinshi = $i->[3];
-						last;
-					}
-				}
-				else {                                 # 条件2無しの場合
-					$kh_hinshi = $i->[3];
-					last;
 				}
 			}
+			$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
+			++$num;
+			if ($num == 200){                              # DBに投入
+				chop $con;
+				mysql_exec->do("
+					INSERT
+					INTO genkei (name, num, hinshi_id, khhinshi_id)
+					VALUES $con
+				",1);
+				$con = '';
+				$num = 0;
+			}
 		}
-		$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
-		++$num;
-		if ($num == 200){                              # DBに投入
-			chop $con;
-			mysql_exec->do("
-				INSERT
-				INTO genkei (name, num, hinshi_id, khhinshi_id)
-				VALUES $con
-			",1);
-			$con = '';
-			$num = 0;
-		}
+		$td->finish;
 	}
-	$td->finish;
 	
 	if ($con){                                         # 残りをDBに投入
 		chop $con;
@@ -379,6 +413,22 @@ sub reform{
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
 	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
 }
+
+sub genkei_sql{
+	my $self = shift;
+	my $d1 = shift;
+	my $d2 = shift;
+	
+	my $sql = "
+		SELECT genkei, sum, h_id, h_name
+		FROM hgh2
+		WHERE
+			    id >= $d1
+			AND id  < $d2
+	";
+	return $sql;
+}
+
 
 #-------------------------#
 #   表層-文テーブル作成   #
@@ -885,10 +935,6 @@ sub tanis{
 #   アクセサ   #
 #--------------#
 
-sub dbh{
-	my $self=shift;
-	return $self->{dbh};
-}
 sub length{
 	my $self   = shift;
 	my $name   = shift;
