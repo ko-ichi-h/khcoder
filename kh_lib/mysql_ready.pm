@@ -519,7 +519,7 @@ sub first{
 				$temp .= $i->[1]
 			} else {
 				$values .= "(\'$temp\'),";
-				$temp = '';
+				$temp = $i->[1];
 				$last = $i->[0];
 				++$c;
 			}
@@ -529,7 +529,10 @@ sub first{
 				$c = 0; $values = '';
 			}
 		}
-		if ($values){
+		if ($values or $temp){
+			if ($temp){
+				$values .= "(\'$temp\'),";
+			}
 			chop $values; mysql_exec->do("$sql $values",1);
 		}
 		
