@@ -277,13 +277,8 @@ sub outtab{
 		unless ( length($i->[0]) ){next;}
 		foreach my $h (@c){
 			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À
-				#if (index($tani2,'h') == 0){
-				#	push @current, mysql_getheader->get($tani2, $h);
-				#} else {
-				#	push @current, $h;
-				#}
 				if ( length($var_obj->{labels}{$h}) ){
-					push @current, $var_obj->{labels}{$h};
+					push @current, Jcode->new($var_obj->{labels}{$h})->sjis;
 				} else {
 					push @current, $h;
 				}
