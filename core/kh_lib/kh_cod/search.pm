@@ -63,7 +63,7 @@ sub add_direct{
 	
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
-		if ($self->{codes}[0]->name eq 'direct'){
+		if ($self->{codes}[0]->name eq '直接入力'){
 			print "Delete old \'direct\'\n";
 			shift @{$self->{codes}};
 		}
@@ -71,7 +71,7 @@ sub add_direct{
 	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'direct',
+			'直接入力',
 			Jcode->new($args{raw})->euc
 		);
 	} else {                                      # 「AND」,「OR」の場合
@@ -85,7 +85,7 @@ sub add_direct{
 			++$n;
 		}
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'direct',
+			'直接入力',
 			$t
 		);
 	}
