@@ -8,18 +8,16 @@ use gui_errormsg;
 
 sub start{
 	my $class = shift;
-	
+	my $self;
 	my $d = [localtime];
-	my $wait = $::main_gui->mw->WaitBox(
+	$self->{win} = $::main_gui->mw->WaitBox(
 		-title      => 'KH Coder is processing data...',
 		-txt1       => "Start: ".strftime("%Y %m/%d %T",@{$d}),
 		-background => 'white',
 		-takefocus  => 0
 	);
+	$self->{win}->Show;
 	
-	$wait->Show;
-	my $self;
-	$self->{win} = $wait;
 	$self->{started} = timelocal(@{$d});
 	bless $self, $class;
 	return $self;
@@ -27,7 +25,6 @@ sub start{
 
 sub end{
 	my $self = shift;
-	$self->{win}->unShow;
 	my $e = timelocal(localtime) - $self->{started};
 	
 	my ($h, $m, $s);
@@ -63,6 +60,7 @@ sub end{
 		icon => 'info'
 	);
 	
+	$self->{win}->unShow;
 }
 
 

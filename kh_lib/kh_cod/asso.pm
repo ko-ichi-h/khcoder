@@ -250,6 +250,7 @@ sub asso{
 
 	#------------------------#
 	#   条件付き確立の計算   #
+
 	my $m_table = 'temp_word_ass';
 	my $tani    = $args{tani};
 	
@@ -323,11 +324,11 @@ sub asso{
 		}
 		mysql_exec->do($sql,1);
 	}
-	
-	print "4: probability...\n";
 
-	my $denom2 = mysql_exec->select("SELECT count(*) from $tani",1)
-		->hundle->fetch->[0];                     # 全体確立の分母
+	#--------------------#
+	#   全体確立の計算   #
+
+	print "4: probability...\n";
 	mysql_exec->drop_table("ct_ass_a");           # 全体確立保存テーブル
 	mysql_exec->do("
 		CREATE TABLE ct_ass_a(
@@ -346,6 +347,7 @@ sub asso{
 	mysql_exec->do($sql,1);
 
 	print "done\n";
+	return 1;
 }
 
 #--------------------#
