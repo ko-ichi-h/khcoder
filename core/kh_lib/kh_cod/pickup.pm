@@ -38,6 +38,7 @@ sub pick{
 			type    => 'file'
 		);
 	my $last = 0;
+	my $last_seq = 0;
 	my $id = 1;
 	while (1){
 		my $sth = mysql_exec->select(
@@ -63,9 +64,19 @@ sub pick{
 				print F "$i->{rowtxt}\n";
 			} else {
 				if ($last == $i->{dan_id}){     # 同じ段落の続き
-					print F "$i->{rowtxt}";
+					if (                  # 文単位の場合の特殊処理
+						   ($args{tani} eq 'bun')
+						&! ($last_seq + 1 == $i->{seq})
+					){
+						print F "\n$i->{rowtxt}";
+						print ".";
+					} else {
+						print F "$i->{rowtxt}";
+						print "-";
+					}
 				}
 				elsif ($i->{dan_id} == 1){      # 段落の変わり目（1つ目の段落）
+					print F "\n" if $last;# 直前が見出しでなければ改行付加
 					print F "$i->{rowtxt}";
 					$last = 1;
 				} else {                        # 段落の変わり目（2つ目以降）
@@ -73,6 +84,7 @@ sub pick{
 					$last = $i->{dan_id};
 				}
 			}
+			$last_seq = $i->{seq};
 		}
 		print "$id,";
 	}
@@ -92,7 +104,7 @@ sub sql{
 	
 	my $sql;
 	if ($args{pick_hi}){
-		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt\n";
+		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
 		$sql .= "FROM bun, bun_r\n";
 		unless ($args{tani} eq 'bun'){
 			$sql .= "	LEFT JOIN $args{tani} ON\n";
@@ -126,7 +138,7 @@ sub sql{
 			)
 		";
 	} else {
-		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt\n";
+		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
 		if ($args{tani} eq 'bun'){
 			$sql .= "FROM bun, bun_r, ct_pickup\n";
 		} else {
