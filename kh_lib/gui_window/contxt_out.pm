@@ -65,7 +65,7 @@ sub _new{
 
 	my $right = $rf->Frame()->pack(-fill => 'both', -expand => 1);
 	$right->Label(
-		-text       => Jcode->new('■文脈計算に使用する語の取捨選択')->sjis,
+		-text       => Jcode->new('■文脈ベクトルの計算に使用する語の取捨選択')->sjis,
 		-font       => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w');
@@ -134,7 +134,7 @@ sub _new{
 	)->pack();
 
 	$right->Label(
-		-text => Jcode->new('・現在の設定で出力される語の数')->sjis,
+		-text => Jcode->new('・現在の設定で計算に使用される語の数')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $cf2 = $right->Frame->pack(-fill => 'x', -expand => '1');
@@ -276,7 +276,9 @@ sub _new{
 				-title   => 'KH Coder'
 			);
 			unless ( $ans =~ /ok/i ){ return 0; }
+			my $w = gui_wait->start;
 			$self->go($file);
+			$w->end;
 			$self->close;
 		});}
 	)->pack(-side => 'right');
@@ -348,7 +350,7 @@ sub go{
 		hinshi  => $self->hinshi,
 		max     => $self->max,
 		min     => $self->min,
-	)->culc;
+	)->culc->save($file);
 	
 }
 
@@ -365,7 +367,7 @@ sub file_name{
 		-defaultextension => '.sps',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('「抽出語ｘ文脈」表：名前を付けて保存')->sjis,
+			Jcode->new('「抽出語ｘ文脈ベクトル」表：名前を付けて保存')->sjis,
 		-initialdir       => $::config_obj->cwd
 	);
 	unless ($path){
@@ -440,7 +442,7 @@ sub hinshi2{
 
 
 sub label{
-	return '「抽出語ｘ文脈」表の出力： SPSS';
+	return '「抽出語ｘ文脈ベクトル」表の出力： SPSS';
 }
 
 sub win_name{
