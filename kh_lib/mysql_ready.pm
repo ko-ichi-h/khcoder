@@ -142,6 +142,16 @@ sub readin{
 			)
 		",1);
 	}
+	
+	# 強調文字列保存用のテーブルを準備
+	unless ( mysql_exec->table_exists('d_force') ){
+		mysql_exec->do("create table d_force
+			(
+				name varchar(255) not null,
+				type int not null
+			)
+		",1);
+	}
 }
 
 #----------------#
@@ -647,6 +657,7 @@ sub hyosobun{
 		alter table hyosobun
 			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
 			add index index2 (bun_id, dan_id, bun_idt, hyoso_id),
+			add index index3 (hyoso_id),
 			add index index4 (bun_idt)
 	",1);
 	mysql_exec->do("

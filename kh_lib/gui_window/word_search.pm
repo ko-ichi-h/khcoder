@@ -19,7 +19,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
-	$wmw->focus;
+	#$wmw->focus;
 	$wmw->title(Jcode->new('Ãê½Ð¸ì¸¡º÷')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
@@ -144,7 +144,6 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
 	)->pack(-side => 'left');
 
-	$e1->focus;
 
 	MainLoop;
 	
@@ -353,6 +352,10 @@ sub last_search{
 sub conc_button{
 	my $self = shift;
 	return $self->{conc_button};
+}
+sub start{
+	my $self = shift;
+	$self->entry->focus;
 }
 
 1;
