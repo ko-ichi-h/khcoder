@@ -35,7 +35,10 @@ sub hyoso_id_s{
 	$sql .= "FROM hyoso, genkei ";
 	if ($self->{katuyo}){ $sql .= ",katuyo "; }
 	$sql .= "WHERE genkei.id = hyoso.genkei_id ";
-	if ($self->{katuyo}){$sql .= "AND hyoso.katuyo_id = katuyo.id ";}
+	if ($self->{katuyo}){
+		$sql .= "AND hyoso.katuyo_id = katuyo.id ";
+		$sql .= "AND katuyo.name = '$args{katuyo}\'";
+	}
 	
 	my $n = 0;
 	foreach my $i (@{$self->{genkei_id_s}}){

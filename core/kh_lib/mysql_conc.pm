@@ -1,6 +1,7 @@
 package mysql_conc;
 use strict;
 use mysql_exec;
+use mysql_a_word;
 
 my ( $l_query, $l_hinshi, $l_katuyo, $l_length);
 
@@ -65,7 +66,16 @@ sub last_words{
 
 sub _hyoso{
 	my $self = shift;
+	
+	return mysql_a_word->new(
+		genkei   => $self->{query},
+		katuyo   => $self->{katuyo},
+		khhinshi => $self->{hinshi}
+	)->hyoso_id_s;
+	
 	my %args = %{$self};
+	
+	
 	
 	# 表層語のリストアップ
 	print "0: getting hyoso list\n";
