@@ -7,9 +7,14 @@ use Tk::ROTextANSIColor;
 use gui_jchar;
 use mysql_getdoc;
 use gui_window::word_conc;
+use gui_window::doc_view::win32;
+use gui_window::doc_view::linux;
 
 sub _new{
 	my $self = shift;
+	my $class = 'gui_window::doc_view::'.$::config_obj->os;
+	bless $self, $class;
+
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
 	$bunhyojiwin->focus;
@@ -239,7 +244,12 @@ sub _view_doc{
 		}
 	}
 	$self->text->insert('end',$t);
+	$self->wrap;
 	$self->update_buttons;
+}
+
+sub wrap{
+	return 1;
 }
 
 sub update_buttons{
