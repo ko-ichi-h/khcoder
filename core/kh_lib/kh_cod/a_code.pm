@@ -79,6 +79,13 @@ sub code{
 		return 0;
 	}
 	
+	# $self->{tani}.num が0だった場合のための手当
+	mysql_exec->do("
+		UPDATE $self->{res_table}
+		SET    num = 1
+		WHERE  num = 0
+	",1);
+	
 	return $self;
 }
 
