@@ -23,7 +23,7 @@ sub save{
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.tab',
+		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
 			Jcode->new('「文書ｘ抽出語」表：名前を付けて保存')->sjis,

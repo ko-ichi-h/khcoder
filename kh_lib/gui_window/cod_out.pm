@@ -5,6 +5,7 @@ use strict;
 
 use gui_window::cod_out::spss;
 use gui_window::cod_out::csv;
+use gui_window::cod_out::tab;
 
 #-------------#
 #   GUI∫Ó¿Ω   #

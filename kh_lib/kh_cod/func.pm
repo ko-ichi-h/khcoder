@@ -150,7 +150,65 @@ sub cod_out_csv{
 	close (CODO);
 }
 
+#------------------------------------------#
+#   コーディング結果の出力（タブ区切り）   #
 
+sub cod_out_tab{
+	my $self    = shift;
+	my $tani    = shift;
+	my $outfile = shift;
+	
+	# コーディングとコーディング結果のチェック
+	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+
+	my ($sql,$head);
+	my $flag = 0;
+	foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+		if ($i eq $self->tani){
+			$flag = 1;
+		}
+		if ($flag){
+			$sql = "$i"."_id,"."$sql";
+			$head = "$i\t"."$head";
+		}
+	}
+	$sql = "SELECT "."$sql";
+	foreach my $i (@{$self->valid_codes}){
+		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+		use kh_csv;
+		if ($::config_obj->os eq 'win32'){
+			$head .= kh_csv->value_conv_t(Jcode->new($i->name)->sjis)."\t";
+		} else {
+			$head .= kh_csv->value_conv_t($i->name)."\t";
+		}
+	}
+	chop $sql;
+	chop $head;
+	$sql .= "\nFROM ".$self->tani."\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
+	}
+	
+	open(CODO,">$outfile") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $outfile
+		);
+	print CODO "$head\n";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		my $current;
+		foreach my $j (@{$i}){
+			$current .= "$j\t";
+		}
+		chop $current;
+		print CODO "$current\n";
+	}
+	
+	close (CODO);
+}
 
 
 #--------------#
