@@ -11,6 +11,7 @@ sub make{
 	my $self;
 	my $mw = ${$gui}->mw;
 
+	# プロジェクト情報
 	my $fra1 = $mw->LabFrame(
 		-label       => 'Project',
 		-labelside   => 'acrosstop',
@@ -51,6 +52,7 @@ sub make{
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
 
+	# データベース情報
 	my $fra2 = $mw->LabFrame(
 		-label       => 'Database Stats',
 		-labelside   => 'acrosstop',
@@ -61,26 +63,32 @@ sub make{
 		-anchor => 'n'
 	);
 
-	my $fra2a = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x',);
-	my $fra2b = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x',);
+	my $hlist = $fra2->Scrolled(
+		'HList',
+		-scrollbars         => 'osoe',
+		-font               => 'TKFN',
+		-selectmode         => 'none',
+		-indicator          => 0,
+		-command            => sub{$mw->after(10,sub{$self->unselect;});},
+		-highlightthickness => 0,
+		-columns            => 2,
+		-borderwidth        => 0,
+		-height             => 3,
+	)->pack(-expand => '1', -fill => 'both');
 
-	$msg = Jcode->new("使用単語数：",'euc')->sjis;
-	$fra2a->Label(
-		-text => "$msg",
-		-font => "TKFN"
-	)->pack(-anchor=>'w',-side=>'left');
-
-	my $cuprodbwordsnum = $fra2a->Entry(
-		-width      => $::config_obj->mw_entry_length,
-		-background => 'gray',
-		-font       => 'TKFN',
-		-state      => 'disable',
-	)->pack(-anchor=>'e',-side=>'right');
+	sub unselect{
+		my $self = shift;
+		$self->hlist->selectionClear();
+		print "fuck\n";
+	}
 
 	$self->{e_curent_project} = $cupro;
 	$self->{e_project_memo}   = $cuprom;
-	$self->{e_words_num}      = $cuprodbwordsnum;
+	$self->{hlist}            = $hlist;
 	bless $self, $class;
+	
+#	$self->refresh;
+	
 	return $self;
 }
 
@@ -90,18 +98,59 @@ sub make{
 sub refresh{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	
-	# プロジェクト名
-	my $title;
-	if ( length($::project_obj->comment) ){
-		$title = $::project_obj->comment;
+
+	$self->hlist->delete('all');
+	my @list = (
+		[Jcode->new('単語（種類）数：')->sjis,'n/a'],
+		[Jcode->new('総単語数：')->sjis,'n/a'],
+		[Jcode->new('使用単語（種類）数：　 ')->sjis,'n/a']
+	);
+
+	if ($::project_obj){
+		my $title;
+		if ( length($::project_obj->comment) ){
+			$title = $::project_obj->comment;
+		} else {
+			$title = $::project_obj->file_short_name;
+		}
+		$title .= ' - KH Coder';
+		$mw->title($title);
+		$self->entry('e_curent_project', $::project_obj->file_short_name);
+		$self->entry('e_project_memo', $::project_obj->comment);
+		
+		if ($::project_obj->status_morpho){
+			@list = (
+				[Jcode->new('単語（種類）数：')->sjis,'???'],
+				[Jcode->new('総単語数：')->sjis,'?????'],
+				[Jcode->new('使用単語（種類）数：　 ')->sjis,'??']
+			);
+		}
 	} else {
-		$title = $::project_obj->file_short_name;
+		$mw->title('KH Coder');
+		$self->entry('e_curent_project', '');
+		$self->entry('e_project_memo', '');
 	}
-	$title .= ' - KH Coder';
-	$mw->title($title);
-	$self->entry('e_curent_project', $::project_obj->file_short_name);
-	$self->entry('e_project_memo', $::project_obj->comment);
+
+	my $right = $self->hlist->ItemStyle('text',-anchor => 'e',-font => "TKFN");
+	my $row = 0;
+	foreach my $i (@list){
+		$self->hlist->add($row,-at => $row);
+		$self->hlist->itemCreate(
+			$row,0,
+			-itemtype  => 'text',
+			-text      => $i->[0]
+		);
+		$self->hlist->itemCreate(
+			$row,1,
+			-itemtype  => 'text',
+			-style     => $right,
+			-text      => $i->[1]
+		);
+		++$row;
+	}
+
+
+
 }
 
 #--------------#
@@ -125,5 +174,9 @@ sub entry{
 	$ent->configure(-state,'disable');
 }
 
+sub hlist{
+	my $self = shift;
+	return $self->{hlist};
+}
 
 1;

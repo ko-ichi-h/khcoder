@@ -43,6 +43,19 @@ sub make{
 				sub{ $mw->after(10,sub{gui_window::project_open->open;});},
 			-accelerator => 'Ctrl+O'
 		);
+		$self->{m_b0_close} = $f->command(
+			-label => Jcode->new('閉じる')->sjis,
+			-font => "TKFN",
+			-state => 'disable',
+			-command =>
+				sub{ $mw->after(10,sub{
+					undef $::project_obj;
+					$::main_gui->menu->refresh;
+					$::main_gui->inner->refresh;
+				});},
+		);
+		
+		
 		$f->separator();
 		$msg = Jcode->new('設定','euc')->sjis;
 		$f->command(
@@ -88,7 +101,10 @@ sub make{
 					my $w = gui_wait->start;
 					kh_morpho->run;
 					mysql_ready->first;
+					$::project_obj->status_morpho(1);
 					$w->end;
+					$::main_gui->menu->refresh;
+					$::main_gui->inner->refresh;
 				})},
 				-state => 'disable'
 			);
@@ -257,12 +273,24 @@ sub refresh{
 		'm_b2_morpho',
 		't_sql_select',
 		't_sql_do',
+		'm_b0_close',
+	);
+
+	# 形態素解析が行われていればActive
+	my @menu1 = (
 		't_word_search',
 		't_word_print',
 		't_word_list',
 		't_word_freq',
 	);
-	$self->normalize(\@menu0);
+
+	# 状態変更
+	if ($::project_obj){
+		$self->normalize(\@menu0);
+		if ($::project_obj->status_morpho){
+			$self->normalize(\@menu1);
+		}
+	}
 
 }
 
@@ -278,7 +306,7 @@ sub normalize{
 sub disable_all{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
-		if (substr($i,0,2) eq 'm_'){
+		if (substr($i,0,2) eq 'm_' || substr($i,0,2) eq 't_'){
 			$self->{$i}->configure(-state, 'disable');
 		}
 	}
