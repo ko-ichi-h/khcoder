@@ -77,6 +77,9 @@ sub mb_refresh{
 	$self->{win_obj}->configure(-text,Jcode->new("$self->{raw_opt}")->sjis);
 	$self->{win_obj}->update;
 	$::project_obj->last_tani($value{Jcode->new($self->{raw_opt})->euc});
+	if ( defined($self->{command}) && $_[0] != 5){
+		&{$self->{command}};
+	}
 }
 
 1;
