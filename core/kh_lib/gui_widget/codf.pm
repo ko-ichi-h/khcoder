@@ -9,12 +9,12 @@ sub _new{
 	my $f1 = $self->parent->Frame()->pack();
 	$self->{win_obj} = $f1;
 	
-	$f1->Label(
+	$self->{label} = $f1->Label(
 		text => Jcode->new('コーディングルール・ファイル：')->sjis,
 		font => "TKFN",
 	)->pack(anchor =>'w',side => 'left');
 	
-	$f1->Button(
+	$self->{button} = $f1->Button(
 		-text => Jcode->new('参照')->sjis,
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -68,11 +68,23 @@ sub _sansyo{
 		$self->entry->delete(0, 'end');
 		$self->entry->insert('0',Jcode->new("$path")->sjis);
 		$self->entry->configure(-state,'disable');
+		&{$self->{command}};
 	}
 }
 
 #--------------#
 #   アクセサ   #
+
+sub normal{
+	my $self = shift;
+	$self->{button}->configure(-state => 'normal');
+	$self->{label}->configure(-foreground => 'black');
+}
+sub disable{
+	my $self = shift;
+	$self->{button}->configure(-state => 'disable');
+	$self->{label}->configure(-foreground => 'gray');
+}
 
 sub cfile{
 	my $self = shift;

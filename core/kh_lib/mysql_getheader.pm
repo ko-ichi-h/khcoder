@@ -2,6 +2,7 @@ package mysql_getheader;
 use strict;
 use mysql_exec;
 
+# 「章・節・段落ごとの集計」コマンドで利用
 sub get{
 	my $class = shift;
 	my $tani  = shift;
@@ -55,4 +56,43 @@ sub get{
 	}
 	return Jcode->new($h)->sjis;
 }
+
+# 「部分テキストの取り出し」->「見出し文だけを取り出す」から利用
+
+sub get_all{
+	my $class = shift;
+	my %args  = @_;
+	my $self = \%args;
+	
+	open (F,">$self->{file}")
+		or gui_errormsg->open(
+			type    => 'file',
+			thefile => $self->{file}
+		);
+	
+	my $sth = mysql_exec->select ("
+		select *
+		from bun_r, bun
+		where
+			bun_r.id = bun.id
+			and bun.bun_id = 0
+			and bun.dan_id = 0
+		order by bun.id
+	",1)->hundle;
+	
+	while (my $i = $sth->fetchrow_hashref){
+		foreach my $h ("h5", "h4", "h3", "h2", "h1"){
+			if ( $i->{"$h".'_id'} ){
+				if ($self->{pic_head}{$h}){
+					print F "$i->{rowtxt}\n";
+				}
+				last;
+			}
+		}
+	}
+	
+	close (F);
+}
+
+
 1;
