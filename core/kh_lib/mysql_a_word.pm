@@ -25,6 +25,7 @@ sub new{
 			    genkei.khhinshi_id = hselection.khhinshi_id
 			and genkei.hinshi_id = hinshi.id
 			and hselection.ifuse = 1
+			and genkei.nouse = 0
 			and genkei.name = \'$args{genkei}\'
 	";
 	if ($args{khhinshi}){

@@ -127,7 +127,7 @@ sub _calc{
 	unless (-e $codf){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "コーディング・ルール・ファイルが存在しません。",
+			msg => "コーディング・ルール・ファイルが選択されていません。",
 			window => \$win,
 			type => 'msg',
 		);
@@ -139,7 +139,7 @@ sub _calc{
 	}
 	
 	my $result;
-	unless ($result = kh_cod->read_file($codf)){
+	unless ($result = kh_cod::func->read_file($codf)){
 		$self->label->configure(
 			-text => 'Ready.',
 			-foreground => 'blue'

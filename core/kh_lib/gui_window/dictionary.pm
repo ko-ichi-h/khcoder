@@ -90,8 +90,7 @@ sub _new{
 		-width      => 14,
 		-wrap       => 'none',
 		-font       => "TKFN",
-		-state      => 'disable',
-		-background => 'gray'
+		-background => 'white'
 	)->pack(-expand => 1, -fill => 'both');
 
 	# 文字化け回避バインド

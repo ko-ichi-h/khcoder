@@ -5,6 +5,7 @@ use Jcode;
 use Benchmark;
 use kh_project;
 use kh_jchar;
+use kh_dictio;
 use mysql_exec;
 
 #--------------------------#
@@ -131,7 +132,8 @@ sub first{
 			name varchar($len) not null,
 			num int not null,
 			hinshi_id int not null,
-			khhinshi_id int not null
+			khhinshi_id int not null,
+			nouse int not null default 0
 		)
 	",1);
 
@@ -421,7 +423,7 @@ sub first{
 		} else {
 			$maru = 0;
 		}
-		if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/){  # HTML終了タグのチェック
+		if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
 				$midashi = 0;
 		}
 	}
@@ -477,6 +479,8 @@ sub first{
 		use kh_jchar;
 		kh_jchar->to_sjis($f);
 	}
+	
+	kh_dictio->readin->save;
 	
 	# 各集計単位（H1, H2, H3,,,）のテーブルを作製
 	# 文単位

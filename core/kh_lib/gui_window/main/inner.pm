@@ -101,9 +101,10 @@ sub refresh{
 
 	$self->hlist->delete('all');
 	my @list = (
-		[Jcode->new('単語（種類）数：')->sjis,'n/a'],
-		[Jcode->new('総単語数：')->sjis,'n/a'],
-		[Jcode->new('使用単語（種類）数：　 ')->sjis,'n/a']
+		[Jcode->new('総抽出語数： ')->sjis,'n/a'],
+		[Jcode->new('異なり語数： ')->sjis,'n/a'],
+		[Jcode->new('異なり語数(使用)： ')->sjis,'n/a'],
+		[Jcode->new('異なり語率： ')->sjis,'n/a']
 	);
 
 	if ($::project_obj){
@@ -121,16 +122,20 @@ sub refresh{
 		if ($::project_obj->status_morpho){
 			@list = (
 				[
-					Jcode->new('単語（種類）数：')->sjis,
-					num_format(mysql_words->num_kinds_all)
-				],
-				[
-					Jcode->new('総単語数：')->sjis,
+					Jcode->new('総抽出語数： ')->sjis,
 					num_format(mysql_words->num_all)
 				],
 				[
-					Jcode->new('使用単語（種類）数：　 ')->sjis,
+					Jcode->new('異なり語数： ')->sjis,
+					num_format(mysql_words->num_kinds_all)
+				],
+				[
+					Jcode->new('異なり語数(使用)： ')->sjis,
 					num_format(mysql_words->num_kinds)
+				],
+				[
+					Jcode->new('異なり語率： ')->sjis,
+					num_format(mysql_words->num_kotonari_ritsu)
 				]
 			);
 		}

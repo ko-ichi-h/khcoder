@@ -66,6 +66,16 @@ sub save{
 		mysql_exec->do($sql1,1);
 	}
 	
+	if ( mysql_exec->table_exists("genkei") ){
+		mysql_exec->do('UPDATE genkei SET nouse=0',1);
+		if (eval (@{$self->words_st})){
+			foreach my $i (@{$self->words_st}){
+				mysql_exec->
+					do("UPDATE genkei SET nouse=1 WHERE name=\'$i\'",1);
+			}
+		}
+	}
+	
 	# ÉÊ»ìÁªÂò
 	if (eval (@{$self->hinshi_list})){
 		foreach my $i (@{$self->hinshi_list}){
