@@ -90,10 +90,11 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my ($hyosobun_id,$doc_id) = $self->{parent}->prev;
+					my ($hyosobun_id,$doc_id,$foot) = $self->{parent}->prev;
 					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
+					$self->{foot} = $foot;
 					$self->{doc} = mysql_getdoc->get(
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
@@ -115,10 +116,11 @@ sub _new{
 		-command => sub { $mw->after
 			(10,
 				sub {
-					my ($hyosobun_id,$doc_id) = $self->{parent}->next;
+					my ($hyosobun_id,$doc_id,$foot) = $self->{parent}->next;
 					if ( ! defined($doc_id) && $hyosobun_id <= 0){
 						return;
 					}
+					$self->{foot} = $foot;
 					$self->{doc} = mysql_getdoc->get(
 						hyosobun_id => $hyosobun_id,
 						doc_id      => $doc_id,
@@ -203,7 +205,7 @@ sub view{
 	$self->{w_search} = $args{kyotyo};
 	$self->{tani}     = $args{tani};
 	$self->{parent}   = $args{parent};
-	
+	$self->{foot}     = $args{foot};
 
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
@@ -257,6 +259,9 @@ sub _view_doc{
 		}
 	}
 	$self->text->insert('end',$t);
+	
+	$self->text->insert('end',"\n\n"."$color{info}"."$self->{foot}");
+	
 	$self->wrap;
 	$self->update_buttons;
 }
