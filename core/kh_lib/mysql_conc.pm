@@ -72,42 +72,6 @@ sub _hyoso{
 		katuyo   => $self->{katuyo},
 		khhinshi => $self->{hinshi}
 	)->hyoso_id_s;
-	
-	my %args = %{$self};
-	
-	
-	
-	# 表層語のリストアップ
-	print "0: getting hyoso list\n";
-	my $sql= '';
-	$sql .= "SELECT hyoso.id\n";
-	$sql .= "FROM genkei, hyoso, hselection";
-	if ($args{katuyo}) {
-		$sql .= ", katuyo";
-	}
-	$sql .= "\n";
-	$sql .= "WHERE\n";
-	$sql .= "	genkei.id = hyoso.genkei_id\n";
-	$sql .= "	AND genkei.khhinshi_id = hselection.khhinshi_id\n";
-	$sql .= "	AND hselection.ifuse = 1\n";
-	if ($args{katuyo}){
-		$sql .= "	AND hyoso.katuyo_id = katuyo.id\n";
-		$sql .= "	AND katuyo.name = '$args{katuyo}'\n";
-	}
-	if ($args{hinshi}){
-		$sql .= "	AND hselection.name = '$args{hinshi}'\n";
-	}
-	$sql .= "	AND genkei.name = '$args{query}'";
-	my $d = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-
-	my @hyoso;
-	foreach my $i (@{$d}){
-		push @hyoso, $i->[0];
-	}
-	unless (@hyoso){
-		return 0;
-	}
-	return \@hyoso;
 }
 
 sub _find{
