@@ -28,11 +28,11 @@ $config_obj->sqllog(1);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
-#		'E:/home/higuchi/perl/core/data/test_big/test.html',
+#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
+		'E:/home/higuchi/perl/core/data/test_big/test.html',
 	dbname  =>
-		'khc36',
-#		'khc20',
+#		'khc36',
+		'khc20',
 )->open;
 
 # テストプリント
@@ -50,7 +50,7 @@ my $t0 = new Benchmark;                           # 時間計測用
 my $result = mysql_conc->a_word(
 	query   => '使う',
 	kihon   => 1,
-	context => 10,
+	# context => 10, # 使用不可
 	limit   => 1000,
 	sort1   => "k",
 	sort2   => "1l",
