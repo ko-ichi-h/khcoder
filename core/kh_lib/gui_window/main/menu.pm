@@ -262,6 +262,23 @@ sub make{
 				})},
 			);
 
+		$self->{m_b3_contxtout} = $f8->cascade(
+				-label => Jcode->new("「抽出語ｘ文脈」表の出力",'euc')->sjis,
+				-font => "TKFN",
+				-state => 'disable',
+				-tearoff=>'no'
+			);
+
+			$self->{m_b3_contxtout_spss} = $self->{m_b3_contxtout}->command(
+				-label => Jcode->new("SPSSファイル")->sjis,
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::contxt_out->open;
+				})},
+			);
+
+
+
 	my $f5 = $f->cascade(
 			-label => Jcode->new('コーディング')->sjis,
 			 -font => "TKFN",
@@ -508,6 +525,8 @@ sub refresh{
 		't_doc_search',
 		't_out_read',
 		't_out_list',
+		'm_b3_contxtout',
+		'm_b3_contxtout_spss',
 	);
 
 	# 状態変更
