@@ -1,4 +1,10 @@
 [[メモ]]
+
+・<h1>〜<h5>でくくる見出しの長さは全角4000字が限度
+・文字化け部分があると、その行に関するChaSenの解析結果がおかしくなることがある
+	・茶筌 ver. 2.03b9（Windows版）の場合
+	・見出し部分では、HTMLタグが消失する場合があり、致命的→整合性エラー
+
 [Anonymous CVSのコマンド]
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
 	cd core
