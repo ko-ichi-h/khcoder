@@ -47,7 +47,7 @@ sub a_word{
 	$l_length = $args{length};
 
 	$self->_sort;
-	return $self->_format;
+	return ($self->_format,$self->_count);
 }
 
 sub last_words{
@@ -59,7 +59,7 @@ sub last_words{
 	$args{katuyo} = $l_katuyo;
 	$self = \%args;
 	bless $self, $class;
-	return $self->_hyoso;
+	return ($self->_hyoso);
 }
 
 
@@ -67,7 +67,7 @@ sub _hyoso{
 	my $self = shift;
 	my %args = %{$self};
 	
-	# •\‘wŒê‚ÌƒŠƒXƒgƒAƒbƒv
+	# É½ÁØ¸ì¤Î¥ê¥¹¥È¥¢¥Ã¥×
 	print "0: getting hyoso list\n";
 	my $sql= '';
 	$sql .= "SELECT hyoso.id\n";
@@ -108,7 +108,7 @@ sub _find{
 
 	print "1: searching...\n";
 
-	# Temp Tableì¬ileft + centerj	
+	# Temp TableºîÀ®¡Êleft + center¡Ë	
 	mysql_exec->do("drop table temp_concl");
 	$sql  = "create table temp_concl (\n";
 	$sql .= "id int primary key not null,\n";
@@ -149,7 +149,7 @@ sub _find{
 	}
 	mysql_exec->do($sql,1);
 	
-	# Temp Tableì¬iallj
+	# Temp TableºîÀ®¡Êall¡Ë
 	mysql_exec->do("drop table temp_conc");
 	$sql  = "create table temp_conc (\n";
 	$sql .= "id int primary key not null,\n";
@@ -187,7 +187,13 @@ sub _find{
 	mysql_exec->do($sql,1);
 }
 
-sub _sort{                                        # ƒ\[ƒg—pƒe[ƒuƒ‹‚Ìì¬
+sub _count{
+	my $self = shift;
+	return mysql_exec->select("SELECT COUNT(*) FROM temp_conc_sort",1)
+		->hundle->fetch->[0];
+}
+
+sub _sort{                                        # ¥½¡¼¥ÈÍÑ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
 	my $self = shift;
 	my %args = %{$self};
 	my $sql = '';
@@ -222,7 +228,7 @@ sub _sort{                                        # ƒ\[ƒg—pƒe[ƒuƒ‹‚Ìì¬
 		++$n;
 	}
 
-	# ÅIƒ\[ƒgEƒe[ƒuƒ‹
+	# ºÇ½ª¥½¡¼¥È¡¦¥Æ¡¼¥Ö¥ë
 	mysql_exec->do("drop table temp_conc_sort");
 	mysql_exec->do("
 		create table temp_conc_sort (
@@ -267,7 +273,7 @@ sub _sort{                                        # ƒ\[ƒg—pƒe[ƒuƒ‹‚Ìì¬
 	mysql_exec->do($sql,1);
 }
 
-sub _format{                                      # Œ‹‰Ê‚Ìo—Í
+sub _format{                                      # ·ë²Ì¤Î½ÐÎÏ
 	my $self = shift;
 	print "4: Formating output...\n";
 	
@@ -277,14 +283,16 @@ sub _format{                                      # Œ‹‰Ê‚Ìo—Í
 		$sql .= "	LEFT JOIN hyoso ON temp_conc.$i = hyoso.id,\n";
 		$sql .= "	temp_conc_sort\n";
 		$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
-		$sql .= "ORDER BY temp_conc_sort.id";
+		$sql .= "ORDER BY temp_conc_sort.id\n";
+		$sql .= "LIMIT $self->{limit}";
 		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 	my $sql = "SELECT hyoso.name, temp_conc.id FROM ( hyoso,temp_conc,temp_conc_sort )\n";
 	$sql .= "WHERE\n\t";
 	$sql .= "temp_conc.center = hyoso.id\n";
 	$sql .= "\tAND temp_conc.id = temp_conc_sort.conc_id\n";
-	$sql .= "ORDER BY temp_conc_sort.id";
+	$sql .= "ORDER BY temp_conc_sort.id\n";
+	$sql .= "LIMIT $self->{limit}";
 	$result->{center} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	
 	print "...\n";

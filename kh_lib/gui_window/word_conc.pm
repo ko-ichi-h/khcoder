@@ -142,6 +142,16 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	)->pack(-anchor=>'e', -side => 'left');
 
+	$fra4h->Label(
+		-text => Jcode->new('　最大表示数：')->sjis,
+		-font => "TKFN"
+	)->pack(side => 'left');
+
+	my $limit_e = $fra4h->Entry(
+		-font  => "TKFN",
+		-width => 5,
+	)->pack(-side => 'left');
+	$limit_e->insert(0,'1000');
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
@@ -219,6 +229,7 @@ sub _new{
 
 	MainLoop;
 
+	$self->{entry_limit} = $limit_e;
 	$self->{st_label} = $status;
 	$self->{hit_label} = $hits;
 	$self->{list}     = $lis;
@@ -381,6 +392,7 @@ sub search{
 		);
 		return;
 	}
+	my $limit = $self->entry_limit->get;
 
 	my %sconv = (
 		'出現順' => 'id',
@@ -409,7 +421,7 @@ sub search{
 	);
 	$self->win_obj->update;
 
-	my $result = mysql_conc->a_word(
+	my ($result, $r_num) = mysql_conc->a_word(
 		query  => $query,
 		katuyo => $katuyo,
 		hinshi => $hinshi,
@@ -417,6 +429,7 @@ sub search{
 		sort1  => $sconv{Jcode->new($self->sort1)->euc},
 		sort2  => $sconv{Jcode->new($self->sort2)->euc},
 		sort3  => $sconv{Jcode->new($self->sort3)->euc},
+		limit  => $limit,
 	);
 
 
@@ -472,9 +485,8 @@ sub search{
 		-text => 'Ready.',
 		-foreground => 'blue',
 	);
-	my $n = @{$result};
 	$self->hit_label->configure(
-		-text => "Hits: $n"
+		-text => "Hits: $r_num"
 	);
 	$self->win_obj->update;
 	
@@ -538,6 +550,10 @@ sub entry3{
 sub entry4{
 	my $self = shift;
 	return $self->{entry4};
+}
+sub entry_limit{
+	my $self = shift;
+	return $self->{entry_limit};
 }
 sub st_label{
 	my $self= shift;

@@ -47,7 +47,7 @@ sub _new{
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
 
 	$lf->Label(
-		-text => Jcode->new('最大表示行数:')->sjis,
+		-text => Jcode->new('最大表示数:')->sjis,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
