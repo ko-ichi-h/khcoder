@@ -1,6 +1,9 @@
 package gui_airborne;
 use strict;
 
+use gui_airborne::win32;
+use gui_airborne::linux;
+
 use Tk;
 use Tk::DockFrame;
 
@@ -10,10 +13,17 @@ use Tk::DockFrame;
 
 sub make{
 	my $class = shift;
+	$class .= '::'.$::config_obj->os;
 	my %args = @_;
 	my $self = \%args;
 	bless $self, $class;
 	
+	$self->_make;
+	return $self;
+}
+
+sub _make{
+	my $self = shift;
 	$self->tower->pack(-fill => 'x', -expand => '0');
 	$self->{port} = $self->parent->DockPort();
 	$self->port->pack(fill => 'both', -expand => 'y');

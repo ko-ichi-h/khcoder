@@ -40,7 +40,7 @@ sub _new{
 	)->pack(side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
-	$e1->bind("<Shift-Key-Return>",sub{$self->search;});
+	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
 		-text => Jcode->new('　品詞：')->sjis,
@@ -52,7 +52,7 @@ sub _new{
 		-width => 8
 	)->pack(side => 'left');
 	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
-	$e4->bind("<Shift-Key-Return>",sub{$self->search;});
+	$e4->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
 		-text => Jcode->new('　活用形：')->sjis,
@@ -64,7 +64,7 @@ sub _new{
 		-width => 8
 	)->pack(side => 'left');
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
-	$e2->bind("<Shift-Key-Return>",sub{$self->search;});
+	$e2->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
 		-text => Jcode->new('　（前後の')->sjis,
@@ -91,7 +91,7 @@ sub _new{
 	my $blhelp = $wmw->Balloon();
 	$blhelp->attach(
 		$sbutton,
-		-balloonmsg => '"Shift + ENTER" key',
+		-balloonmsg => '"ENTER" key',
 		-font => "TKFN"
 	);
 
