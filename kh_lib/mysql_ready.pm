@@ -18,13 +18,18 @@ my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
 my $data_per_1ins = 200;      # 一度にINSERTする値の数
 
 sub first{
-	$::config_obj->in_preprocessing(1);
-	
 	my $class = shift;
 	my $self;
 	$self->{temp} = 'temp';
 	bless $self, $class;
-	
+
+	$::config_obj->in_preprocessing(1);
+	if ($::config_obj->use_heap) {
+		$self->{type_heap} = ' TYPE=HEAP ';
+	} else {
+		$self->{type_heap} = '';
+	}
+
 		my $ta0 = new Benchmark;
 	kh_morpho->run;
 		my $ta1 = new Benchmark;
@@ -35,15 +40,15 @@ sub first{
 			print "Morpho2\t",timestr(timediff($ta2,$ta1)),"\n";
 	}
 		my $t0 = new Benchmark;
-	$self->readin;
+	$self->readin;                 # rowdata, outvar, outvar_lab
 		my $t1 = new Benchmark;
 		print "Read\t",timestr(timediff($t1,$t0)),"\n";
-	$self->reform;
-	$self->tag_fix;
+	$self->reform;                 # hinshi, genkei, katuyo, hyoso, khhinshi
+	$self->tag_fix;                # hyoso, genkei
 		my $t15 = new Benchmark;
 		print "Format\t",timestr(timediff($t15,$t1)),"\n";
-	$self->hyosobun;
 	kh_dictio->readin->save;
+	$self->hyosobun;
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	$self->rowtxt;
@@ -62,6 +67,8 @@ sub first{
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
+	mysql_exec->drop_table("hyosobun_t");
+	mysql_exec->drop_table("hghi");
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
@@ -354,7 +361,7 @@ sub reform{
 			genkei_id int not null,
 			hinshi_id int not null,
 			num       int not null
-		) TYPE=HEAP
+		) $self->{type_heap}
 	",1);
 	mysql_exec->do('
 		INSERT
@@ -470,11 +477,27 @@ sub hyosobun{
 			bun_idt INT not null
 		)
 	",1);
+	mysql_exec->drop_table("hyosobun_t");# 単位用キャッシュ・テーブル作成
+	mysql_exec->do("
+		create table hyosobun_t (
+			h1_id INT not null,
+			h2_id INT not null,
+			h3_id INT not null,
+			h4_id INT not null,
+			h5_id INT not null,
+			dan_id INT not null,
+			bun_id INT not null,
+			bun_idt INT not null,
+			lc INT not null,
+			lw INT not null
+		) $self->{type_heap}
+	",1);
 
 	# 初期化
 	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
 		(1,1,0,0,0,0,0,0,0,1);
 	my ($temp, $c, $maru);
+	my ($temp_tani, $last_tani, $c_t, $lw, $lc);
 	my $id = 1;
 	# 実行
 	while (1){
@@ -538,6 +561,16 @@ sub hyosobun{
 
 			                                          # DBに書き込み
 			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
+			unless ($last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
+				if (length($last_tani)){
+					$temp_tani .= '('."$last_tani,$lc,$lw".'),';
+				}
+				$last_tani = "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1";
+				$lc = 0;
+				$lw = 0;
+				++$c_t;
+			}
+			
 			++$c;
 			if ($c == $data_per_1ins){
 				chop $temp;
@@ -550,7 +583,29 @@ sub hyosobun{
 				$temp = '';
 				$c    = 0;
 			}
-			if ($IDs->{$d->[1]} eq '。'){             # 句読点のチェック
+			if ($c_t == $data_per_1ins){
+				chop $temp_tani;
+				mysql_exec->do("
+					INSERT INTO hyosobun_t
+					(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+					VALUES
+						$temp_tani
+				",1);
+				$temp_tani = '';
+				$c_t = 0;
+			}
+
+			if (
+				   ($d->[2])
+				and not ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o)
+				and not ($IDs->{$d->[1]} =~ /<[Hh][1-5]>/o)
+				and not ($d->[3])
+			){
+				$lc += $d->[2];
+				++$lw;
+			}
+
+			if ($IDs->{$d->[1]} eq '。'){              # 句読点のチェック
 				unless ($midashi){
 					++$bun; ++$bun2; $maru = 1;
 				}
@@ -574,27 +629,32 @@ sub hyosobun{
 					$temp
 		",1);
 	}
+	if ( ($lc) || ($lw) ){
+		$temp_tani .= '('."$last_tani,$lc,$lw".'),';
+	}
+	if ($temp_tani){
+		chop $temp_tani;
+		mysql_exec->do("
+			INSERT INTO hyosobun_t
+			(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+			VALUES
+				$temp_tani
+		",1);
+	}
 
 	# インデックスを貼る
 	mysql_exec->do("
 		alter table hyosobun
 			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
 			add index index2 (bun_id, dan_id, bun_idt, hyoso_id),
-			#add index index3 add index index3,
 			add index index4 (bun_idt)
 	",1);
-	#mysql_exec->do("
-	#	alter table hyosobun add index index2
-	#		(bun_id, dan_id, bun_idt, hyoso_id)
-	#",1);
-	#mysql_exec->do("
-	#	alter table hyosobun add index index3
-	#		add index index3
-	#",1);
-	#mysql_exec->do("
-	#	alter table hyosobun add index index4
-	#		(bun_idt)
-	#",1);
+	mysql_exec->do("
+		alter table hyosobun_t
+			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index index2 (bun_id, dan_id, bun_idt),
+			add index index4 (bun_idt)
+	",1);
 	
 	mysql_ready::heap->hyosobun;
 }
@@ -603,18 +663,32 @@ sub hyosobun_sql{
 	my $self = shift;
 	my $d1   = shift;
 	my $d2   = shift;
-	
+
 	my $sql ="
-		SELECT rowdata.id, hghi.hyoso_id
-		FROM rowdata, hghi
+		SELECT rowdata.id, hghi.hyoso_id, hyoso.len, genkei.nouse
+		FROM rowdata, hghi, genkei, hyoso
 		WHERE
 				    rowdata.hyoso  = hghi.hyoso
 				AND rowdata.genkei = hghi.genkei
 				AND rowdata.hinshi = hghi.hinshi
+				AND hghi.genkei_id = genkei.id
+				AND hghi.hyoso_id  = hyoso.id
 				AND rowdata.id >= $d1
 				AND rowdata.id <  $d2
 		ORDER BY rowdata.id
 	";
+
+	#my $sql ="
+	#	SELECT rowdata.id, hghi.hyoso_id,
+	#	FROM rowdata, hghi
+	#	WHERE
+	#			    rowdata.hyoso  = hghi.hyoso
+	#			AND rowdata.genkei = hghi.genkei
+	#			AND rowdata.hinshi = hghi.hinshi
+	#			AND rowdata.id >= $d1
+	#			AND rowdata.id <  $d2
+	#	ORDER BY rowdata.id
+	#";
 	return $sql;
 }
 
@@ -747,7 +821,7 @@ sub rowtxt_sql{
 			AND hyosobun.id < $d2
 		ORDER BY hyosobun.id
 	";
-	
+
 	return $sql;
 }
 
@@ -774,7 +848,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO bun (bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
 			SELECT bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			GROUP BY bun_idt
 			ORDER BY bun_idt
 		",1);
@@ -812,7 +886,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO dan (dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
 			SELECT dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE dan_id > 0
 			GROUP BY dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id, dan_id
@@ -847,7 +921,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO h5 (h5_id, h4_id, h3_id, h2_id, h1_id)
 			SELECT h5_id, h4_id, h3_id, h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE h5_id > 0
 			GROUP BY h5_id, h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id, h5_id
@@ -880,7 +954,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO h4 (h4_id, h3_id, h2_id, h1_id)
 			SELECT h4_id, h3_id, h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE h4_id > 0
 			GROUP BY h4_id, h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id, h4_id
@@ -911,7 +985,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO h3 (h3_id, h2_id, h1_id)
 			SELECT h3_id, h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE h3_id > 0
 			GROUP BY h3_id, h2_id, h1_id
 			ORDER BY h1_id, h2_id, h3_id
@@ -940,7 +1014,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO h2 (h2_id, h1_id)
 			SELECT h2_id, h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE h2_id > 0
 			GROUP BY h2_id, h1_id
 			ORDER BY h1_id, h2_id
@@ -967,7 +1041,7 @@ sub tanis{
 		mysql_exec->do("
 			INSERT INTO h1 (h1_id)
 			SELECT h1_id
-			FROM hyosobun
+			FROM hyosobun_t
 			WHERE h1_id > 0
 			GROUP BY h1_id
 			ORDER BY h1_id
