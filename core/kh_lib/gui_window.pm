@@ -28,6 +28,7 @@ use gui_window::morpho_check;
 use gui_window::morpho_detail;
 use gui_window::cod_count;
 use gui_window::cod_tab;
+use gui_window::cod_outtab;
 use gui_window::cod_jaccard;
 use gui_window::cod_out;
 use gui_window::txt_html2csv;

@@ -61,12 +61,13 @@ sub _new{
 #	)->pack(side=>'left',-pady => 2);
 
 	$self->{mb} = $f1->Menubutton(
-		-text      => '',
-		-tearoff   => 'no',
-		-relief    => 'raised',
-		-indicator => 'yes',
-		-font      => "TKFN",
-		-width     => 4,
+		-text        => '',
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'yes',
+		-font        => "TKFN",
+		-width       => 4,
+		-borderwidth => 1,
 	)->pack(side=>'left',-pady => 2);
 	foreach my $i (@list1){
 		$self->{mb}->radiobutton(
