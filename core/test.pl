@@ -21,18 +21,18 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
-$config_obj->sqllog(1);
+$config_obj->sqllog(1);       # デバッグ用
 
 #------------------------#
 #   プロジェクトを開く   #
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/inet_and_hp.html',
-		'E:/home/higuchi/perl/core/data/test_big/test.html',
+		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
+#		'E:/home/higuchi/perl/core/data/test_big/test.html',
 	dbname  =>
-#		'khc36',
-		'khc20',
+		'khc36',
+#		'khc20',
 )->open;
 
 # テストプリント
@@ -48,7 +48,7 @@ my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
 my $result = mysql_conc->a_word(
-	query   => 'パソコン',
+	query   => '使う',
 	kihon   => 1,
 	context => 10,
 	limit   => 1000,

@@ -4,7 +4,7 @@ use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
-	$kh_version = "2.a";
+	$kh_version = "2A (pre-alpha release)";
 
 	use Cwd qw(cwd);
 	push @INC, cwd.'/kh_lib';
@@ -32,7 +32,7 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# 設定読み込み
-$config_obj->sqllog(0);                                       # SQL文のログ記録
+$config_obj->sqllog(1);                                       # SQL文のログ記録
 $main_gui = gui_window::main->open;                           # GUI開始
 
 MainLoop;

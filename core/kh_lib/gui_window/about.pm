@@ -88,7 +88,7 @@ sub _new{
 		);
 
 
-	$msg = Jcode->new('¡¡Copyright (C) Èõ¸ý¹Ì°ì 2001','euc')->sjis;
+	$msg = Jcode->new('¡¡Copyright (C) Èõ¸ý¹Ì°ì 2003','euc')->sjis;
 	$wabtkh->Label(
 		text => "$msg",
 		font => "TKFN",
