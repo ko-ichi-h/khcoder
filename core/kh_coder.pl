@@ -32,7 +32,7 @@ use kh_sysconfig;
 use gui_window;
 
 $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# 設定読み込み
-$config_obj->sqllog(1);                                       # SQL文のログ記録
+$config_obj->sqllog(1);                                       # デバッグモード
 $main_gui = gui_window::main->open;                           # GUI開始
 
 MainLoop;
