@@ -208,6 +208,41 @@ sub make{
 			-state => 'disable'
 		);
 
+		$self->{t_cod_jaccard} = $f5->command(
+			-label => Jcode->new('コード間関連')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::cod_jaccard->open;
+				})},
+			-state => 'disable'
+		);
+		
+		$f5->separator();
+
+		$self->{t_cod_out} = $f5->cascade(
+			-label => Jcode->new('コーディング結果の出力')->sjis,
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
+				-label => Jcode->new('SPSSファイル')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::cod_out::spss->open;
+					})},
+				-state => 'disable'
+			);
+
+			$self->{t_cod_out_csv} = $self->{t_cod_out}->command(
+				-label => Jcode->new('CSVファイル')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::cod_out::csv->open;
+					})},
+				-state => 'disable'
+			);
+
 	my $f2 = $f->cascade(
 			-label => Jcode->new('SQLコマンド入力')->sjis,
 			 -font => "TKFN",
@@ -320,6 +355,10 @@ sub refresh{
 		'm_b3_check',
 		't_cod_count',
 		't_cod_tab',
+		't_cod_jaccard',
+		't_cod_out',
+		't_cod_out_spss',
+		't_cod_out_csv'
 	);
 
 	# 状態変更

@@ -4,6 +4,9 @@ use gui_errormsg;
 use mysql_exec;
 use strict;
 
+#----------------------#
+#   コーディング実行   #
+
 sub code{
 	my $self           = shift;
 
@@ -66,10 +69,8 @@ sub code{
 	return $self;
 }
 
-sub tables{
-	my $self = shift;
-	return $self->{tables};
-}
+#----------------------#
+#   コーディング準備   #
 
 sub ready{
 	my $self = shift;
@@ -150,6 +151,9 @@ sub ready{
 	return $self;
 }
 
+#------------------------------#
+#   コーディングルールの解釈   #
+
 sub new{
 	my $self;
 	my $class = shift;
@@ -169,12 +173,27 @@ sub new{
 	return $self;
 }
 
-sub name{
+#--------------#
+#   アクセサ   #
+
+sub tables{                   # アトム・テーブルをまとめたテーブルのリスト
 	my $self = shift;
-	return $self->{name};
+	return $self->{tables};
 }
 
+sub tani{                     # コーディング単位
+	my $self = shift;         # $self->ready("単位")で指定されたもの
+	return $self->tani;
+}
 
+sub res_table{                # コーディング結果を保存したテーブル
+	my $self = shift;         # $self->code("テーブル名")で指定されたもの
+	return $self->{res_table} 
+}
 
+sub name{                     # コード名
+	my $self = shift;         # ファイルから読み込み
+	return $self->{name};
+}
 
 1;

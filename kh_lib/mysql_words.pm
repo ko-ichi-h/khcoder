@@ -36,7 +36,8 @@ sub search{
 			WHERE
 				    genkei.khhinshi_id = hselection.khhinshi_id
 				AND genkei.hinshi_id = hinshi.id
-				AND hselection.ifuse = 1'."\n";
+				AND hselection.ifuse = 1
+				AND genkei.nouse = 0'."\n";
 		$sql .= "\t\t\tAND (\n";
 		foreach my $i (@query){
 			unless ($i){ next; }
@@ -203,7 +204,7 @@ sub freq_of_f{
 	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
 	
 	my @r1;
-	push @r1, ['抽出語 種類数 (n)  ', $n];
+	push @r1, ['異なり語数 (n)  ', $n];
 	push @r1, ['平均 出現数', $mean];
 	push @r1, ['標準偏差', $sd];
 	
@@ -263,12 +264,15 @@ sub _make_list{
 				WHERE
 					genkei.hinshi_id = hinshi.id
 					and khhinshi_id = $i->[1]
+					and genkei.nouse = 0
 				ORDER BY num DESC
 			";
 		} else {
 			$sql  = "
 				SELECT name, num FROM genkei
-				WHERE khhinshi_id = $i->[1]
+				WHERE
+					khhinshi_id = $i->[1]
+					and genkei.nouse = 0
 				ORDER BY num DESC
 			";
 		}
@@ -287,7 +291,7 @@ sub num_kinds{
 	my $sql = '';
 	$sql .= 'SELECT count(*) ';
 	$sql .= 'FROM genkei ';
-	$sql .= "WHERE\n";
+	$sql .= "WHERE genkei.nouse = 0 and (\n";
 	my $n = 0;
 	foreach my $i (@{$hinshi}){
 		if ($n){
@@ -298,17 +302,46 @@ sub num_kinds{
 		$sql .= "khhinshi_id=$i->[1]\n";
 		++$n;
 	}
+	$sql .= " )";
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
 sub num_kinds_all{
 	return mysql_exec                   # HTMLタグを除く単語種類数を返す
-		->select("select count(*) from genkei where  khhinshi_id!=99999",1)
-			->hundle->fetch->[0];
+		->select("
+			select count(*)
+			from genkei
+#			where
+#				khhinshi_id!=99999 and genkei.nouse=0
+		",1)->hundle->fetch->[0];
 }
 sub num_all{
 	return mysql_exec                   # HTMLタグを除く単語数を返す
-		->select("select sum(num) from genkei where  khhinshi_id!=99999",1)
-			->hundle->fetch->[0];
+		->select("
+			select sum(num)
+			from genkei
+#			where 
+#				khhinshi_id!=99999 and genkei.nouse=0
+		",1)->hundle->fetch->[0];
+}
+
+sub num_kotonari_ritsu{
+	my $total = mysql_exec->select("
+		select sum(num)
+		from genkei
+		where 
+			khhinshi_id!=99999 and genkei.nouse=0
+	",1)->hundle->fetch->[0];
+	
+	my $koto = mysql_exec->select("
+		select count(*)
+		from genkei
+		where
+			khhinshi_id!=99999 and genkei.nouse=0
+	",1)->hundle->fetch->[0];
+	
+	unless ($total){return 0;}
+	
+	return sprintf("%.2f",($koto / $total) * 100)."%";
 }
 
 1;

@@ -1,7 +1,8 @@
-package gui_window::cod_tab;
+package gui_window::cod_jaccard;
 use base qw(gui_window);
 
 use strict;
+
 
 #-------------#
 #   GUI作製   #
@@ -11,57 +12,35 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	$win->focus;
-	$win->title(Jcode->new('コーディング・章 節 段落ごとの集計')->sjis);
+	$win->title(Jcode->new('コーディング・コード間関連')->sjis);
 	$self->{win_obj} = $win;
 	
 	#------------------------#
 	#   オプション入力部分   #
-	
+
 	my $lf = $win->LabFrame(
 		-label => 'Entry',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
 	
-	my $f0 = $lf->Frame->pack(-fill => 'x');
 	# ルール・ファイル
 	my %pack0 = (-side => 'left');
 	$self->{codf_obj} = gui_widget::codf->open(
-		parent => $f0,
+		parent => $lf,
 		pack   => \%pack0
 	);
-	# セル内容選択
-	$f0->Label(
-		-text => Jcode->new('　　セル内容：')->sjis,
+	# コーディング単位
+	$lf->Label(
+		-text => Jcode->new('　コーディング単位：')->sjis,
 		-font => "TKFN",
 	)->pack(side => 'left');
-	$f0->Optionmenu(
-		-options => 
-			[
-				[ Jcode->new('度数とパーセント')->sjis => 0 ],
-				[ Jcode->new('度数のみ')->sjis         => 1 ],
-				[ Jcode->new('パーセントのみ')->sjis   => 2 ],
-			],
-		-font => "TKFN",
-		-borderwidth => '1',
-		-width => 4,
-		-variable => \$self->{cell_opt},
-	)->pack(side=>'left');
-	
-	my $f1 = $lf->Frame->pack(-fill => 'x');
-	
-	# 単位選択
-	my %pack = (
-			-pady   => 3,
-			-side   => 'left',
-	);
-	$self->{tani_obj} = gui_widget::tani2->open(
-		parent => $f1,
-		pack   => \%pack,
+	$self->{tani_obj} = gui_widget::tani->open(
+		parent => $lf,
+		pack   => \%pack0,
 	);
 
-	
-	$f1->Button(
+	$lf->Button(
 		-text    => Jcode->new('集計')->sjis,
 		-font    => "TKFN",
 		-width   => 8,
@@ -108,7 +87,6 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
-	
 	return $self;
 }
 
@@ -122,16 +100,15 @@ sub _calc{
 		-foreground => 'red'
 	);
 	$self->win_obj->update;
-	
+
 	# 入力内容チェック
 	unless (
-		   $self->tani1
-		&& $self->tani2
+		   $self->tani
 		&& -e $self->cfile
 	){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "指定された条件での集計は行えません。",
+			msg => "コーディングルール・ファイルを指定して下さい。",
 			window => \$win,
 			type => 'msg',
 		);
@@ -140,25 +117,20 @@ sub _calc{
 	}
 	
 	# 集計の実行
-
+	
 	my $result;
 	unless ($result = kh_cod::func->read_file($self->cfile)){
 		$self->rtn;
 		return 0;
 	}
-	unless (
-		$result = $result->tab(
-			$self->tani1,
-			$self->tani2,
-			$self->{cell_opt}
-		)
-	){
+	
+	unless ( $result = $result->jaccard($self->tani) ){
 		$self->rtn;
 		return 0;
 	}
-	
+
 	# 結果の書き出し
-	
+
 	my $cols = @{$result->[0]};
 	$self->list->destroy;
 	$self->{list} = $self->{list_flame}->Scrolled(
@@ -186,7 +158,7 @@ sub _calc{
 		-anchor => 'c',
 		-background => 'white',
 	);
-	
+
 	my $row = 0;
 	foreach my $i (@{$result}){
 		$self->list->add($row,-at => "$row");
@@ -222,6 +194,7 @@ sub _calc{
 	
 	
 	$self->rtn;
+
 }
 
 sub rtn{
@@ -239,17 +212,9 @@ sub cfile{
 	my $self = shift;
 	return $self->{codf_obj}->cfile;
 }
-sub tani1{
+sub tani{
 	my $self = shift;
-	return $self->{tani_obj}->tani1;
-}
-sub tani2{
-	my $self = shift;
-	return $self->{tani_obj}->tani2;
-}
-sub label{
-	my $self = shift;
-	return $self->{label};
+	return $self->{tani_obj}->tani;
 }
 sub list{
 	my $self = shift;
@@ -259,7 +224,11 @@ sub list_frame{
 	my $self = shift;
 	return $self->{listframe};
 }
+sub label{
+	my $self = shift;
+	return $self->{label};
+}
 sub win_name{
-	return 'w_cod_tab';
+	return 'w_cod_jaccard';
 }
 1;
