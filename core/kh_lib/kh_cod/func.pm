@@ -251,6 +251,8 @@ sub count{
 	}
 	
 	# 1つでもコードが与えられた文書の数を取得
+	$self->cumulate if @{$self->{valid_codes}} > 30;
+	
 	my $least1 = 0;
 	if ($self->valid_codes){
 		my $sql = "SELECT count(*)\nFROM $tani\n";
