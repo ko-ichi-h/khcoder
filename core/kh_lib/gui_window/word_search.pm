@@ -1,6 +1,6 @@
 package gui_window::word_search;
 use base qw(gui_window);
-use vars qw($method);
+use vars qw($method,$kihon,$katuyo);
 use strict;
 use Tk;
 use Tk::HList;
@@ -26,30 +26,7 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
-	my $fra4h = $fra4->Frame->pack(-expand => 1, -fill => 'x');
-	my $fra4hr = $fra4h->Frame->pack(-expand => 1, -fill => 'x',-side => 'right');
-	my $fra4hl = $fra4h->Frame->pack(-expand => 1, -fill => 'x',-side => 'left');
-
-	$fra4hl->Label(
-		-text => Jcode->new('・検索対象文字列の入力')->sjis,
-		-font => "TKFN"
-	)->pack(-anchor=>'w');
-
-	$fra4hl->Label(
-		-text => Jcode->new('　(複数の場合はスペースで区切る)　')->sjis,
-		-font => "TKFN"
-	)->pack(-anchor=>'w');
-
-	my @methods;
-	push @methods, Jcode->new('AND検索')->sjis;
-	push @methods, Jcode->new('OR検索')->sjis;
-	my $method;
-	$fra4hr->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$gui_window::word_search::method,
-	)->pack(-anchor=>'e', -side => 'right');
-
+	# エントリと検索ボタンのフレーム
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	my $e1 = $fra4e->Entry(
@@ -63,7 +40,7 @@ sub _new{
 		-text => Jcode->new('検索')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
-	)->pack(-side => 'right');
+	)->pack(-side => 'right', padx => '2');
 
 	my $blhelp = $wmw->Balloon();
 	$blhelp->attach(
@@ -72,15 +49,50 @@ sub _new{
 		-font => "TKFN"
 	);
 
+	# オプション・フレーム
+	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
+
+	my @methods;
+	push @methods, Jcode->new('AND検索')->sjis;
+	push @methods, Jcode->new('OR検索')->sjis;
+	my $method;
+	$fra4h->Optionmenu(
+		-options=> \@methods,
+		-font => "TKFN",
+		-variable => \$gui_window::word_search::method,
+	)->pack(-anchor=>'e', -side => 'left');
+
+	$fra4h->Checkbutton(
+		-text     => Jcode->new('基本形を検索')->sjis,
+		-variable => \$gui_window::word_search::kihon,
+		-font     => "TKFN",
+		-command  => sub { $mw->after(10,sub{$self->refresh}); }
+	)->pack(-side => 'left');
+
+	$self->{the_check} = $fra4h->Checkbutton(
+		-text     => Jcode->new('活用語表示')->sjis,
+		-variable => \$gui_window::word_search::katuyo,
+		-font     => "TKFN",
+		-command  => sub { $mw->after(10,sub{$self->refresh}); }
+	)->pack(-side => 'left');
+	
+	unless (defined($gui_window::word_search::katuyo)){
+		$gui_window::word_search::kihon = 1;
+		$gui_window::word_search::katuyo = 0;
+	}
 
 
+
+	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
 		-label => 'Result',
 		-labelside => 'acrosstop',
 		-borderwidth => 2
 	)->pack(-expand=>'yes',-fill=>'both');
 
-	my $lis = $fra5->Scrolled(
+	my $hlist_fra = $fra5->Frame()->pack(-expand => 'y', -fill => 'both');
+
+	my $lis = $hlist_fra->Scrolled(
 		'HList',
 		-scrollbars       => 'osoe',
 		-header           => 1,
@@ -105,12 +117,71 @@ sub _new{
 	)->pack(-anchor => 'e');
 
 	MainLoop;
-
+	
+	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
 	$self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
+	$self->refresh;
 	return $self;
 }
+
+#--------------------#
+#   表示の切り替え   #
+#--------------------#
+
+sub refresh{
+	my $self = shift;
+	
+	# チェックボックスの切り替え
+	if ($gui_window::word_search::kihon){
+		$self->the_check->configure(-state,'normal');
+	} else {
+		$self->the_check->configure(-state,'disable');
+	}
+	
+	# リストの切り替え
+	if ($gui_window::word_search::kihon){
+		$self->list->destroy;
+		$self->{list} = $self->list_f->Scrolled(
+			'HList',
+			-scrollbars       => 'osoe',
+			-header           => 1,
+			-itemtype         => 'text',
+			-font             => 'TKFN',
+			-columns          => 3,
+			-padx             => 2,
+			-background       => 'white',
+			-selectforeground => 'brown',
+			-selectbackground => 'cyan',
+			-selectmode       => 'extended',
+		)->pack(-fill =>'both',-expand => 'yes');
+		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
+		$self->list->header('create',1,-text => Jcode->new('品詞')->sjis);
+		$self->list->header('create',2,-text => Jcode->new('頻度')->sjis);
+	} else {
+		$self->list->destroy;
+		$self->{list} = $self->list_f->Scrolled(
+			'HList',
+			-scrollbars       => 'osoe',
+			-header           => 1,
+			-itemtype         => 'text',
+			-font             => 'TKFN',
+			-columns          => 4,
+			-padx             => 2,
+			-background       => 'white',
+			-selectforeground => 'brown',
+			-selectbackground => 'cyan',
+			-selectmode       => 'extended',
+		)->pack(-fill =>'both',-expand => 'yes');
+		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
+		$self->list->header('create',1,-text => Jcode->new('品詞（茶筌）')->sjis);
+		$self->list->header('create',2,-text => Jcode->new('活用')->sjis);
+		$self->list->header('create',3,-text => Jcode->new('頻度')->sjis);
+	}
+	
+}
+
 
 #----------#
 #   検索   #
@@ -135,6 +206,7 @@ sub search{
 	my $result = mysql_words->search(
 		query  => $query,
 		method => $method,
+		kihon  => $gui_window::word_search::kihon
 	);
 
 	# 結果表示
@@ -151,7 +223,7 @@ sub search{
 		$self->list->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			if ($col == 2){
+			if ($h =~ /[0-9]+/o){
 				$self->list->itemCreate(
 					$row,
 					$col,
@@ -182,6 +254,14 @@ sub entry{
 }
 sub win_name{
 	return 'w_word_search';
+}
+sub the_check{
+	my $self = shift;
+	return $self->{the_check};
+}
+sub list_f{
+	my $self = shift;
+	return $self->{list_f};
 }
 
 1;
