@@ -34,13 +34,19 @@ sub get{
 	
 	
 	my @body = (); my $last = -1;                 # 改行付加＆検索語強調
+	my $lastw;
 	foreach my $i (@{$d}){
 		unless ($i->[2] == $last){
 			$last = $i->[2];
 			push @body, ["\n",''];
 		}
+		
+		my $c = "$lastw"."$i->[0]";
+		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/){ push @body, ["\n",'']; }
+		
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
 		push @body, [Jcode->new("$i->[0]")->sjis, $k];
+		$lastw = $i->[0];
 	}
 	$self->{body} = \@body;
 	

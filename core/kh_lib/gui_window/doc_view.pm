@@ -8,6 +8,7 @@ use mysql_getdoc;
 
 sub _new{
 	my $self = shift;
+	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $::main_gui->mw->Toplevel;
 	$bunhyojiwin->focus;
 	my $msg = '文書表示'; Jcode::convert(\$msg,'sjis','euc');
@@ -36,10 +37,12 @@ sub _new{
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $::mw->after
+		-command => sub { $mw->after
 			(10,
 				sub {
-					
+					my $id = $self->{doc_id};
+					--$id;
+					$self->near($id);
 				}
 			);
 		}
@@ -50,10 +53,12 @@ sub _new{
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $::mw->after
+		-command => sub { $mw->after
 			(10,
 				sub {
-					
+					my $id = $self->{doc_id};
+					++$id;
+					$self->near($id);
 				}
 			);
 		}
@@ -120,13 +125,35 @@ sub _new{
 sub view{
 	my $self = shift;
 	my %args = @_;
+	$self->{w_search} = $args{kyotyo};
+	$self->{tani}     = $args{tani};
 	
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
-		w_search      => $args{kyotyo},
+		w_search    => $args{kyotyo},
 		tani        => $args{tani},
 	);
 	
+	$self->{doc_id} = $doc->{doc_id};
+	$self->_view_doc($doc);
+}
+
+sub near{
+	my $self = shift;
+	my $id = shift;
+	my $doc = mysql_getdoc->get(
+		doc_id   => $id,
+		w_search => $self->{kyotyo},
+		tani     => $self->{tani},
+	);
+	$self->{doc_id} = $doc->{doc_id};
+	$self->_view_doc($doc);
+
+}
+
+sub _view_doc{
+	my $self = shift;
+	my $doc = shift;
 	my %color;                                    # 色情報準備
 	foreach my $i ('info', 'search','html'){
 		my $name = "color_DocView_".$i;
