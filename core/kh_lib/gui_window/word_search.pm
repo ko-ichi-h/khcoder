@@ -143,6 +143,7 @@ sub refresh{
 	# リストの切り替え
 	if ($gui_window::word_search::kihon){
 		$self->list->destroy;
+		
 		$self->{list} = $self->list_f->Scrolled(
 			'HList',
 			-scrollbars       => 'osoe',
@@ -150,6 +151,7 @@ sub refresh{
 			-itemtype         => 'text',
 			-font             => 'TKFN',
 			-columns          => 3,
+			-indent           => 20,
 			-padx             => 2,
 			-background       => 'white',
 			-selectforeground => 'brown',
@@ -157,7 +159,11 @@ sub refresh{
 			-selectmode       => 'extended',
 		)->pack(-fill =>'both',-expand => 'yes');
 		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
-		$self->list->header('create',1,-text => Jcode->new('品詞')->sjis);
+		if ( $gui_window::word_search::katuyo ){
+			$self->list->header('create',1,-text => Jcode->new('品詞/活用')->sjis);
+		} else {
+			$self->list->header('create',1,-text => Jcode->new('品詞')->sjis);
+		}
 		$self->list->header('create',2,-text => Jcode->new('頻度')->sjis);
 	} else {
 		$self->list->destroy;
@@ -206,7 +212,8 @@ sub search{
 	my $result = mysql_words->search(
 		query  => $query,
 		method => $method,
-		kihon  => $gui_window::word_search::kihon
+		kihon  => $gui_window::word_search::kihon,
+		katuyo => $gui_window::word_search::katuyo
 	);
 
 	# 結果表示
@@ -219,19 +226,27 @@ sub search{
 	
 	$self->list->delete('all');
 	my $row = 0;
+	my $last;
 	foreach my $i (@{$result}){
-		$self->list->add($row,-at => "$row");
+		my $cu;
+		if ( $i->[0] eq 'katuyo' ){
+			$cu = $self->list->addchild($last);
+			shift @{$i};
+		} else {
+			$cu = $self->list->add($row,-at => "$row");
+			$last = $cu;
+		}
 		my $col = 0;
 		foreach my $h (@{$i}){
 			if ($h =~ /[0-9]+/o){
 				$self->list->itemCreate(
-					$row,
+					$cu,
 					$col,
 					-text  => $h,
 					-style => $numb_style
 				);
 			} else {
-				$self->list->itemCreate($row,$col,-text => nkf('-s -E',$h));
+				$self->list->itemCreate($cu,$col,-text => nkf('-s -E',$h));
 			}
 			++$col;
 		}

@@ -19,64 +19,101 @@ use mysql_exec;
 sub search{
 	my $class = shift;
 	my %args = @_;
-	my $self = \%args;
 	
 	my $query = $args{query};
 	$query =~ s/　/ /g;
 	my @query = split / /, $query;
 	
-	my $sql;
-	if ($args{kihon}){
+	my $result;
+	
+	if ($args{kihon}){        # KHCの抽出語(基本形)を検索
+		my $sql;
 		$sql = '
 			SELECT
-				genkei.name, hselection.name, genkei.num
+				genkei.name, hselection.name, genkei.num, genkei.id
 			FROM
 				genkei, hselection
 			WHERE
 				    genkei.khhinshi_id = hselection.khhinshi_id
 				AND hselection.ifuse = 1'."\n";
 		$sql .= "\t\t\tAND (\n";
-	} else {
+		foreach my $i (@query){
+			my $word;
+			if ($i =~ /%/){
+				$word = "'$i'";
+			} else {
+				$word = "'%$i%'";
+			}
+			$sql .= "\t\t\t\tgenkei.name LIKE $word";
+			if ($args{method} eq 'AND'){
+				$sql .= " AND\n";
+			} else {
+				$sql .= " OR\n";
+			}
+		}
+		substr($sql,-4,3) = '';
+		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC";
+		my $t = mysql_exec->select($sql,1);
+		$result = $t->hundle->fetchall_arrayref;
+		
+		if ( ! $args{katuyo} ){         # 活用語なしの場合
+			foreach my $i (@{$result}){
+				pop @{$i};
+			}
+		} else {                        # 活用語ありの場合
+			my $result2;
+			foreach my $i (@{$result}){
+				my $id = pop @{$i};
+				push @{$result2}, $i;
+				
+				my $r = mysql_exec->select("      # 活用語を探す
+					SELECT hyoso.name, katuyo.name, hyoso.num
+					FROM hyoso, katuyo
+					WHERE
+						    hyoso.katuyo_id = katuyo.id
+						AND hyoso.genkei_id = $id
+				",1)->hundle->fetchall_arrayref;
+				
+				foreach my $h (@{$r}){            # 活用語の追加
+					if ( length($h->[1]) > 1 ){
+						$h->[1] = '   '.$h->[1];
+						unshift @{$h}, 'katuyo';
+						push @{$result2}, $h;
+					}
+				}
+			}
+			$result = $result2
+		}
+
+	} else {                  # 活用語検索
+		my $sql;
 		$sql = '
-			SELECT
-				hyoso, hinshi, katuyo, count(*) as num
-			FROM
-				rowdata
+			SELECT hyoso.name, hinshi.name, katuyo.name, hyoso.num
+			FROM hyoso, genkei, hinshi, katuyo
 			WHERE
-				';
+				    hyoso.genkei_id = genkei.id
+				AND genkei.hinshi_id = hinshi.id
+				AND hyoso.katuyo_id = katuyo.id AND
+		';
+		foreach my $i (@query){
+			my $word;
+			if ($i =~ /%/){
+				$word = "'$i'";
+			} else {
+				$word = "'%$i%'";
+			}
+			$sql .= "\t\t\t\thyoso.name LIKE $word";
+			if ($args{method} eq 'AND'){
+				$sql .= " AND\n";
+			} else {
+				$sql .= " OR\n";
+			}
+		}
+		substr($sql,-4,3) = '';
+		$sql .= "ORDER BY hyoso.num DESC";
+		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
-	# SQL文に検索対象語を投入
-	foreach my $i (@query){
-		my $word;
-		if ($i =~ /%/){
-			$word = "'$i'";
-		} else {
-			$word = "'%$i%'";
-		}
-		if ($args{kihon}){
-			$sql .= "\t\t\t\tgenkei.name LIKE $word";
-		} else {
-			$sql .= "\t\t\t\thyoso LIKE $word";
-		}
-		if ($args{method} eq 'AND'){
-			$sql .= " AND\n";
-		} else {
-			$sql .= " OR\n";
-		}
-	}
-	substr($sql,-4,3) = '';
-	
-	if ($args{kihon}){
-		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC";
-	} else {
-		$sql .= 'GROUP BY hyoso ORDER BY num DESC';
-	}
-	
-#	print "\n$sql\n";
-	
-	my $t = mysql_exec->select($sql,1);
-	my $result = $t->hundle->fetchall_arrayref;
 	return $result;
 }
 

@@ -55,7 +55,8 @@ sub first{
 		SELECT
 			MAX( LENGTH(hyoso) ) AS hyoso,
 			MAX( LENGTH(genkei) ) AS genkei,
-			MAX( LENGTH(hinshi) ) AS hinshi
+			MAX( LENGTH(hinshi) ) AS hinshi,
+			MAX( LENGTH(katuyo) ) AS katuyo
 		FROM rowdata
 	",1)->hundle;
 	my $r = $t->fetchrow_hashref;
@@ -80,7 +81,8 @@ sub first{
 	my @len = (
 		$self->length('hyoso'),
 		$self->length('genkei'),
-		$self->length('hinshi')
+		$self->length('hinshi'),
+		$self->length('katuyo')
 	);
 	mysql_exec->do("
 		create table hgh (
@@ -88,13 +90,14 @@ sub first{
 			num int not null,
 			hyoso varchar($len[0]) not null,
 			genkei varchar($len[1]) not null,
-			hinshi varchar($len[2]) not null
+			hinshi varchar($len[2]) not null,
+			katuyo varchar($len[3]) not null
 		)
 	" or 1);
 	mysql_exec->do("
 		INSERT
-		INTO hgh ( num, hyoso, genkei, hinshi)
-		SELECT COUNT(*), hyoso, genkei, hinshi
+		INTO hgh ( num, hyoso, genkei, hinshi, katuyo)
+		SELECT COUNT(*), hyoso, genkei, hinshi, katuyo
 			FROM rowdata
 #			WHERE LENGTH(rowdata.genkei) > 1
 			GROUP BY rowdata.hyoso, rowdata.genkei, rowdata.hinshi
@@ -237,15 +240,17 @@ sub first{
 			hyoso varchar($len[0]) not null,
 			genkei varchar($len[1]) not null,
 			hinshi varchar($len[2]) not null,
+			katuyo varchar($len[3]) not null,
 			hyoso_id int not null primary key,
 			genkei_id int not null,
-			hinshi_id int not null
+			hinshi_id int not null,
+			num       int not null
 		)
 	",1);
 	mysql_exec->do('
 		INSERT
-		INTO hghi (hyoso, genkei, hinshi, hyoso_id, genkei_id, hinshi_id)
-		SELECT hgh.hyoso, hgh.genkei, hgh.hinshi, hgh.id, genkei.id, hinshi.id
+		INTO hghi (hyoso, genkei, hinshi, katuyo, hyoso_id, genkei_id, hinshi_id, num)
+		SELECT hgh.hyoso, hgh.genkei, hgh.hinshi, hgh.katuyo, hgh.id, genkei.id, hinshi.id, hgh.num
 			FROM hgh, genkei, hinshi
 			WHERE
 				    hgh.genkei = genkei.name
@@ -262,7 +267,24 @@ sub first{
 		mysql_exec->do("alter table hghi add index index1 (hyoso)",1);
 		mysql_exec->do("alter table hghi add index index2 (genkei)",1);
 		mysql_exec->do("alter table hghi add index index3 (hinshi)",1);
+		mysql_exec->do("alter table hghi add index index4 (katuyo)",1);
 	}
+
+	# 活用テーブル作成
+	mysql_exec->do("drop table katuyo");
+	mysql_exec->do ("
+		create table katuyo (
+			id int auto_increment primary key not null,
+			name varchar($len[3])
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO katuyo ( name )
+		SELECT katuyo FROM hghi
+		GROUP BY katuyo
+	",1);
+	mysql_exec->do("alter table katuyo add index index1 (id, name)",1);
+
 
 	# 表層テーブル作成
 	mysql_exec->do("drop table hyoso");
@@ -271,17 +293,19 @@ sub first{
 			id int not null primary key,
 			name varchar($len[0]) not null,
 			len int not null,
-			genkei_id int not null
+			katuyo_id int not null,
+			genkei_id int not null,
+			num int not null
 		)
 	",1);
 	mysql_exec->do("
 		INSERT
-		INTO hyoso (id, name, len, genkei_id)
-		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_id
-			FROM hghi
+		INTO hyoso (id, name, len, genkei_id, num, katuyo_id)
+		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_id, num, katuyo.id
+			FROM hghi, katuyo
+			WHERE hghi.katuyo = katuyo.name
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
-
 
 	# 表層-文テーブル作成
 
@@ -405,7 +429,7 @@ sub first{
 	",1);
 	mysql_exec->do("
 		alter table hyosobun add index index2
-			(bun_id, dan_id, bun_idt)
+			(bun_id, dan_id, bun_idt, hyoso_id)
 	",1);
 
 }
