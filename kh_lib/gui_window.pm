@@ -65,7 +65,7 @@ sub win_obj{
 }
 
 sub start{
-	return;
+	return 1;
 }
 
 1;
