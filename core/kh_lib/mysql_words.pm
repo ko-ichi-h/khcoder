@@ -153,8 +153,10 @@ sub conv_query{
 #   CSV形式リストの出力   #
 
 sub csv_list{
+	use kh_csv;
 	my $class = shift;
 	my $target = shift;
+	
 	
 	my $list = &_make_list;
 	
@@ -167,7 +169,7 @@ sub csv_list{
 	# 1行目
 	my $line = '';
 	foreach my $i (@{$list}){
-		$line .= "$i->[0],,";
+		$line .= kh_csv->value_conv($i->[1]).',,';
 	}
 	chop $line;
 	print LIST "$line\n";
@@ -177,7 +179,7 @@ sub csv_list{
 		my $line = '';
 		my $check;
 		foreach my $i (@{$list}){
-			$line .= "$i->[1][$row][0],$i->[1][$row][1],";
+			$line .=kh_csv->value_conv($i->[1][$row][0]).",$i->[1][$row][1],";
 			$check += $i->[1][$row][1];
 		}
 		chop $line;
