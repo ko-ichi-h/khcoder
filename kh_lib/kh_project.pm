@@ -89,11 +89,11 @@ sub status_morpho{
 	my $new  = shift;
 	
 	if ( defined($new) ){
-		mysql_exe->do("UPDATE status SET status=$new WHERE name='morpho'",1);
+		mysql_exec->do("UPDATE status SET status=$new WHERE name='morpho'",1);
 		return $new;
 	} else {
 		return mysql_exec
-			->select("SELECT status FROM status where name = 'morpho'",1)
+			->select("SELECT status FROM status WHERE name = 'morpho'",1)
 				->hundle
 					->fetch
 						->[0]

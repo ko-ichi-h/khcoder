@@ -109,7 +109,6 @@ sub _open{
 	$self->if_selected or return 0;
 	my $project = $self->projects->a_project($self->selected);
 	$project->open or return 0;
-	
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;

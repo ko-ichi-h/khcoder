@@ -13,9 +13,10 @@ use Tk;
 #   メインウィンドウ・クラス作成   #
 #----------------------------------#
 
-sub open{
+sub _new{
 	# クラス作成
-	my $class = shift;
+	my $class = 'gui_window::main';
+	
 	my $self;
 
 	my $mw= MainWindow->new;
@@ -27,12 +28,6 @@ sub open{
 	$self->make_font;                              # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
-
-	if ( my $g = $::config_obj->win_gmtry('main_window') ){
-		$mw->geometry($g);
-	}
-	$mw->bind('<Control-Key-q>',sub{ $self->close; });
-	$mw->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 	$self->{win_obj} = $mw;
 
 	if ($::config_obj->os eq 'win32'){
@@ -41,6 +36,12 @@ sub open{
 
 	$::main_gui = $self;
 	return $self;
+}
+
+sub start{
+	my $self = shift;
+	$self->menu->refresh;
+	$self->inner->refresh;
 }
 
 #--------------#
@@ -69,7 +70,12 @@ sub win_name{
 sub if_opened{
 	my $self        = shift;
 	my $window_name = shift;
-	my $win         = $self->{$window_name};
+	my $win;
+	if ( defined($self->{$window_name}) ){
+		$win = $self->{$window_name}->win_obj;
+	} else {
+		return 0;
+	}
 	
 	if ( Exists($win) ){
 		focus $win;
@@ -87,22 +93,25 @@ sub opened{
 	$::main_gui = $self;
 }
 
-sub _close{
+sub close{
 	my $self        = shift;
-	my $window_name = shift;
-	my $win         = $self->{$window_name};
-	if ( Exists($win) ){
-		$::config_obj->win_gmtry($window_name,$win->geometry);
-		$::config_obj->save;
-		$win->destroy;
-	}
-	$self->{$window_name} = undef;
+	$self->close_all;
+	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
+	$::config_obj->save;
+	$self->win_obj->destroy;
 }
+
 sub close_all{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
 		if ( substr($i,0,2) eq 'w_'){
-			$self->_close($i);
+			my $win;
+			if ($self->{$i}){
+				my $win = $self->{$i}->win_obj;
+				if (Exists($win)){
+					$self->{$i}->close;
+				}
+			}
 		}
 	}
 }

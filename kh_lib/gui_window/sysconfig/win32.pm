@@ -37,7 +37,7 @@ sub __new{
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
 	
-	$msg = '・茶筌の設定を行ってください';
+	$msg = '・茶筌の設定';
 	Jcode::convert(\$msg,'sjis','euc');
 	$fra0->Label(-text => "$msg",
 		-font => 'TKFN'

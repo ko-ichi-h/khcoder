@@ -29,9 +29,15 @@ sub open{
 	$self->{dummy} = 1;
 	bless $self, $class;
 	
-	unless ( $::main_gui->if_opened($self->win_name) ){
+	
+	my $check = 0;
+	if ($::main_gui){
+		$check = $::main_gui->if_opened($self->win_name);
+	}
+	
+	unless ( $check ){
 		$self = $self->_new(@arg);
-		$::main_gui->opened($self->win_name,$self->win_obj);
+		$::main_gui->opened($self->win_name,$self);
 
 		# Windowサイズと位置の指定
 		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){

@@ -132,11 +132,11 @@ sub add_new{
 			name   varchar(200) not null,
 			status INT not null
 		)
-	') or die;
-	$mysql->do('
+	');
+	$mysql->do("
 		INSERT INTO status (name, status)
 		VALUES ('morpho',0)
-	');
+	");
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
