@@ -16,6 +16,7 @@ sub search{
 			bun.rowtxt LIKE \'%$self->{query}%\'
 			AND hyosobun.bun_idt  = bun.id
 		ORDER BY hyosobun.id
+		LIMIT 2000
 	",1)->hundle;
 	
 	my %d;

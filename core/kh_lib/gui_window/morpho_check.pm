@@ -30,7 +30,7 @@ sub _new{
 	)->pack(expand => 'y', fill => 'x', side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
-	$e1->bind("<Shift-Key-Return>",sub{$self->search;});
+	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
 		-text => Jcode->new('¸¡º÷')->sjis,
@@ -123,7 +123,7 @@ sub search{
 		);
 		++$row;
 	}
-	$self->label->configure(-foreground => 'black', text => "    Hits: $row");
+	$self->label->configure(-foreground => 'black', text => "    Ready.");
 	$self->list->yview(0);
 	$self->{result} = $result;
 }
