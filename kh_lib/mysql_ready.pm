@@ -446,14 +446,14 @@ sub first{
 		alter table hyosobun add index index2
 			(bun_id, dan_id, bun_idt, hyoso_id)
 	",1);
-#	mysql_exec->do("
-#		alter table hyosobun add index index3
-#			(hyoso_id)
-#	",1);
-#	mysql_exec->do("
-#		alter table hyosobun add index index4
-#			(bun_idt)
-#	",1);
+	mysql_exec->do("
+		alter table hyosobun add index index3
+			(hyoso_id)
+	",1);
+	mysql_exec->do("
+		alter table hyosobun add index index4
+			(bun_idt)
+	",1);
 
 	if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
 		my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ

@@ -14,6 +14,7 @@ BEGIN{
 use mysql_ready;
 use mysql_words;
 use mysql_conc;
+use mysql_morpho_check;
 use kh_project;
 use kh_projects;
 use kh_morpho;
@@ -28,10 +29,10 @@ $config_obj->sqllog(0);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
-#		'E:/home/higuchi/perl/core/data/test_big/test.html',
+#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/test.html',
+		'E:/home/higuchi/perl/core/data/test/ecom2.html',
 	dbname  =>
-		'khc1',
+		'khc6',
 )->open;
 
 # テストプリント
@@ -46,21 +47,16 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-my $result = mysql_conc->a_word(
-	query   => '使う',
-	kihon   => 1,
-	length => 15,
-	sort1   => "l1",
-	sort2   => "l2",
-	sort3   => "l3",
+my $result = mysql_morpho_check->search(
+	query   => '使え',
 );
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
 # 結果を出力
-open (OUT,">test.txt");
+# open (OUT,">test.txt");
 foreach my $i (@{$result}){
-	print OUT "$i->[0]  $i->[1]  $i->[2]\n";
+	print Jcode->new("$i->[1], $i->[0]\n")->sjis;
 }
 
