@@ -29,10 +29,10 @@ $config_obj->sqllog(1);       # デバッグ用
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/test_data/ootaki_old/0100_fix.htm',
+		'F:/home/Koichi/Study/perl/test_data/kokoro/kokoro.txt',
 #		'E:/home/higuchi/perl/core/data/test/ecom2.html',
 	dbname  =>
-		'khc7',
+		'khc4',
 )->open;
 
 # テストプリント
@@ -48,16 +48,11 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
-use kh_cod;
-my $code = kh_cod->read_file('test.cod');
-print "\n";
-my $result = $code->count('bun');
-print "\n";
+mysql_ready->tag_fix;
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
 # 結果を出力
-# open (OUT,">test.txt");
 
 

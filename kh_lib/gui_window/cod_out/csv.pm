@@ -22,9 +22,11 @@ sub _save{
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
-		-filetypes  => \@types,
-		-title      => Jcode->new('コーディング結果（CSV）：名前を付けて保存')->sjis,
-		-initialdir => $::config_obj->cwd
+		-defaultextension => '.csv',
+		-filetypes        => \@types,
+		-title            =>
+			Jcode->new('コーディング結果（CSV）：名前を付けて保存')->sjis,
+		-initialdir       => $::config_obj->cwd
 	);
 	
 	# 保存を実行
@@ -33,7 +35,7 @@ sub _save{
 		unless ( $result = kh_cod::func->read_file($self->cfile) ){
 			return 0;
 		}
-		$result->cod_out_csv($path);
+		$result->cod_out_csv($self->tani,$path);
 	}
 	
 	$self->close;

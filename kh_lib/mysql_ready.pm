@@ -458,6 +458,8 @@ sub first{
 			(bun_idt)
 	",1);
 
+	$self->tag_fix;
+
 	if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
 		my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
 		my $d = '';
@@ -708,6 +710,55 @@ sub first{
 	mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
 	}
 }
+
+#--------------------------------------#
+#   タグ品詞の抽出語から<>を取り除く   #
+
+sub tag_fix{
+	my $self = shift;
+	
+	# 表層語テーブル
+	
+	my $h = mysql_exec->select("
+		SELECT hyoso.id, hyoso.name
+		FROM hyoso, genkei, hselection
+		WHERE 
+			    hyoso.genkei_id = genkei.id
+			AND genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = \'タグ\'
+	",1)->hundle;
+	while (my $i = $h->fetch){
+		my $name = $i->[1];
+		chop $name; substr($name,0,1) = '';
+		my $length = length($name);
+		mysql_exec->do("
+			UPDATE hyoso
+			SET name = \'$name\', len = $length
+			WHERE id = $i->[0]
+		",1);
+	}
+	
+	# 基本形テーブル
+	
+	my $k = mysql_exec->select("
+		SELECT genkei.id, genkei.name
+		FROM genkei, hselection
+		WHERE 
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = \'タグ\'
+	",1)->hundle;
+	
+	while (my $i = $k->fetch){
+		my $name = $i->[1];
+		chop $name; substr($name,0,1) = '';
+		mysql_exec->do("
+			UPDATE genkei
+			SET name = \'$name\'
+			WHERE id = $i->[0]
+		",1);
+	}
+}
+
 
 #--------------#
 #   アクセサ   #
