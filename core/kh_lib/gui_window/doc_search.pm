@@ -79,7 +79,7 @@ sub _new{
 		-borderwidth=> 1,
 	)->pack(-side => 'left');
 
-	$self->{direct_w_e} = $self->{direct_entry} = $f3->Entry(
+	$self->{direct_w_e} = $f3->Entry(
 		-font       => "TKFN",
 	)->pack(-side => 'left', -padx => 2,-fill => 'x',-expand => 1);
 	$self->{direct_w_e}->bind(
@@ -87,6 +87,7 @@ sub _new{
 		[\&gui_jchar::check_key_e,Ev('K'),\$self->{direct_w_e}]
 	);
 	$win->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
+	$self->{direct_w_e}->bind("<Key-Return>",sub{$self->search;});
 
 	# 各種オプション
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 2);
@@ -191,6 +192,7 @@ sub _new{
 
 
 	$self->read_code;
+	$self->clist_check;
 	return $self;
 }
 
@@ -209,11 +211,20 @@ sub read_code{
 		0,
 		-text  => Jcode->new('＃直接入力')->sjis,
 	);
+	$self->{clist}->selectionClear;
+	$self->{clist}->selectionSet(0);
 
 	# ルールファイルを読み込み
-	unless (-e $self->cfile ){return 0;}
-	my $cod_obj = kh_cod::search->read_file($self->cfile) or return 0;
-	unless (eval(@{$cod_obj->codes})){return 0;}
+	unless (-e $self->cfile ){
+		$self->{code_obj} = kh_cod::search->new;
+		return 0;
+	}
+	
+	my $cod_obj = kh_cod::search->read_file($self->cfile);
+	unless (eval(@{$cod_obj->codes})){
+		$self->{code_obj} = kh_cod::search->new;
+		return 0;
+	}
 	
 	my $row = 1;
 	foreach my $i (@{$cod_obj->codes}){
@@ -233,10 +244,12 @@ sub read_code{
 
 #----------------------------------#
 #   「直接入力」のon/off切り替え   #
+
 sub clist_check{
 	my $self = shift;
-
-	if ( eval( ($self->{clist}->info('selection'))[0] eq '0') ){
+	my @s = $self->{clist}->info('selection');
+	
+	if ( @s && $s[0] eq '0' ){
 		$self->{direct_w_l}->configure(-foreground => 'black');
 		$self->{direct_w_o}->configure(-state => 'normal');
 		$self->{direct_w_e}->configure(-state => 'normal');
@@ -248,7 +261,6 @@ sub clist_check{
 		$self->{direct_w_e}->configure(-background => 'gray');
 	}
 	
-	my @s = $self->{clist}->info('selection');
 	my $n = @s;
 	if (  $n >= 2) {
 		$self->{opt_w_method1}->configure(-state => 'normal');
@@ -394,11 +406,10 @@ sub search{
 	
 	
 	# 直接入力部分の読み込み
-	my $direct;
-	if ( $selected[0] == '0' ){
-		
-	}
-	$self->{code_obj}->add_direct($direct);
+	$self->{code_obj}->add_direct(
+		mode => $self->{opt_direct},
+		raw  => $self->{direct_w_e}->get,
+	);
 	
 	# 検索ロジックの呼び出し（検索実行）
 	($self->{result}, $self->{last_words}) = $self->{code_obj}->search(

@@ -46,19 +46,50 @@ my %sql_join = (
 		'h1.h1_id = bun.h1_id'
 );
 
+sub new{
+	my $class = shift;
+	my $self;
+	$self->{dummy} = '0';
+	
+	bless $self, $class;
+	
+	return $self;
+}
+
 # 直接入力コードの読み込み
 sub add_direct{
-	my $self   = shift;
-	my $direct = shift;
+	my $self = shift;
+	my %args = @_;
 	
 	# 既に追加されていた場合はいったん削除
-	if ($self->{codes}[0]->name eq 'direct'){
-		print "Delete old \'direct\'\n";
-		shift @{$self->{codes}};
+	if ($self->{codes}){
+		if ($self->{codes}[0]->name eq 'direct'){
+			print "Delete old \'direct\'\n";
+			shift @{$self->{codes}};
+		}
 	}
 	
-	
-	unshift @{$self->{codes}}, kh_cod::a_code->new('direct',$direct);
+	if ($args{mode} eq 'code'){                   #「code」の場合
+		unshift @{$self->{codes}}, kh_cod::a_code->new(
+			'direct',
+			Jcode->new($args{raw})->euc
+		);
+	} else {                                      # 「AND」,「OR」の場合
+		$args{raw} = Jcode->new($args{raw})->tr('　',' ')->euc;
+		$args{raw} =~ tr/\t\n/  /;
+		my ($n, $t) = (0,'');
+		foreach my $i (split / /, $args{raw}){
+			unless ( length($i) ){next;}
+			if ($n){$t .= " $args{mode} ";}
+			$t .= "$i";
+			++$n;
+		}
+		unshift @{$self->{codes}}, kh_cod::a_code->new(
+			'direct',
+			$t
+		);
+	}
+
 }
 
 # 検索の実行
@@ -67,6 +98,7 @@ sub search{
 	my %args = @_;
 	
 	# 取りあえずコーディング
+	print "kh_cod::search -> coding...\n";
 	foreach my $i (@{$args{selected}}){
 		my $res_table = "ct_$args{tani}"."_code_$i";
 		$self->{codes}[$i]->ready($args{tani}) or next;
@@ -96,6 +128,7 @@ sub search{
 	}
 	
 	# 合致する文書のリストを取得
+	print "kh_cod::search -> searching...\n";
 	my $sql = "SELECT $args{tani}.id\nFROM $args{tani}\n";
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON $args{tani}.id = $i.id\n";
@@ -110,14 +143,18 @@ sub search{
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
 	my @result;
+	print "kh_cod::search -> fetching";
 	while (my $i = $sth->fetch){
 		push @result, [
 			$i->[0],
 			kh_cod::search->get_doc_head($i->[0],$args{tani})
 		];
+		print ".";
 	}
+	print "\n";
 	
 	# 検索に利用した語（表層）のリスト
+	print "kh_cod::search -> getting word list...\n";
 	my (@words, %words);
 	foreach my $i (@{$self->{valid_codes}}){
 		if ($i->hyosos){
@@ -129,6 +166,7 @@ sub search{
 	@words = (keys %words);
 	
 	# コードのクリア
+	print "kh_cod::search -> cleaning...\n";
 	foreach my $i (@{$args{selected}}){
 		$self->{codes}[$i]->clear;
 	}
