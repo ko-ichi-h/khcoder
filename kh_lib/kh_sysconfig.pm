@@ -206,6 +206,15 @@ sub in_preprocessing{
 	return $self->{in_preprocessing};
 }
 
+sub use_heap {
+	my $self = shift;
+	my $new = shift;
+	if ( length($new) ){
+		$self->{use_heap} = $new;
+	}
+	return $self->{use_heap};
+}
+
 sub mail_if{
 	my $self = shift;
 	my $new = shift;

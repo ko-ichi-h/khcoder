@@ -11,6 +11,7 @@ use kh_mailif;
 use mysql_exec;
 use mysql_ready::check;
 use mysql_ready::doclength;
+use mysql_ready::heap;
 use mysql_ready::df;
 
 my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
@@ -57,14 +58,14 @@ sub first{
 	mysql_ready::check->do;
 		my $t6 = new Benchmark;
 		print "Check\t",timestr(timediff($t6,$t5)),"\n";
-	
+
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
+	mysql_ready::heap->clear_heap;
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 }
-
 
 
 #----------------------#
@@ -72,6 +73,7 @@ sub first{
 
 sub readin{
 	my $self = shift;
+
 
 	# ローデータの読み込み
 	mysql_exec->drop_table("rowdata");
@@ -91,12 +93,7 @@ sub readin{
 	$thefile =~ tr/\\/\//;
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
 
-	# 要らないフィールドを捨てる
-
-#	mysql_exec->do("ALTER TABLE rowdata DROP yomi",1);
-#	mysql_exec->do("ALTER TABLE rowdata DROP katuyo",1);
-
-	# 長すぎるフィールドを短縮
+	# フィールド長の取得
 	my $t = mysql_exec->select("
 		SELECT
 			MAX( LENGTH(hyoso) ) AS hyoso,
@@ -107,17 +104,14 @@ sub readin{
 	",1)->hundle;
 	my $r = $t->fetchrow_hashref;
 	$t->finish;
+	my $total_length;
+	my $sql_temp;
 	foreach my $key (keys %{$r}){
 		my $len = $r->{$key} + 4;
-#		my $len = 255;
 		$self->length($key,$len);
-#		if ($len < 200){
-#			mysql_exec->do("ALTER TABLE rowdata MODIFY $key varchar($len)",1);
-#		}
-#		if ($len > 255){
-#			$self->length($key,255);
-#		}
 	}
+
+	mysql_ready::heap->rowdata($self);
 
 	# 外部変数用のテーブルを準備
 	unless ( mysql_exec->table_exists('outvar') ){
@@ -149,6 +143,7 @@ sub readin{
 sub reform{
 	my $self = shift;
 
+
 	# キャッシュ・テーブル作成
 	mysql_exec->drop_table("hgh");
 	my @len = (
@@ -176,6 +171,7 @@ sub reform{
 			GROUP BY rowdata.hyoso, rowdata.genkei, rowdata.hinshi
 	", 1);
 
+
 	# 品詞テーブル作成
 	my $len = $self->length('hinshi');
 	mysql_exec->drop_table("hinshi");
@@ -195,9 +191,9 @@ sub reform{
 			GROUP BY hinshi
 	',1);
 	mysql_exec->do("alter table hinshi add index index1 (name)",1);
-	
-	# 原形テーブル作成
 
+
+	# 原形テーブル作成
 	$len = $self->length('genkei');                         # テーブル準備
 	mysql_exec->drop_table("genkei");
 	mysql_exec->do("
@@ -319,6 +315,7 @@ sub reform{
 	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 
+
 	# KH_品詞テーブルの作成
 	mysql_exec->drop_table("khhinshi");
 	mysql_exec->do("
@@ -344,6 +341,7 @@ sub reform{
 	",1);
 	mysql_exec->do('alter table khhinshi add index index1(name,id)',1);
 
+
 	# キャッシュテーブル(2)作成
 	mysql_exec->drop_table("hghi");
 	mysql_exec->do("
@@ -356,7 +354,7 @@ sub reform{
 			genkei_id int not null,
 			hinshi_id int not null,
 			num       int not null
-		)
+		) TYPE=HEAP
 	",1);
 	mysql_exec->do('
 		INSERT
@@ -579,21 +577,26 @@ sub hyosobun{
 
 	# インデックスを貼る
 	mysql_exec->do("
-		alter table hyosobun add index index1
-			(h1_id, h2_id, h3_id, h4_id, h5_id)
+		alter table hyosobun
+			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index index2 (bun_id, dan_id, bun_idt, hyoso_id),
+			#add index index3 add index index3,
+			add index index4 (bun_idt)
 	",1);
-	mysql_exec->do("
-		alter table hyosobun add index index2
-			(bun_id, dan_id, bun_idt, hyoso_id)
-	",1);
-	mysql_exec->do("
-		alter table hyosobun add index index3
-			(hyoso_id)
-	",1);
-	mysql_exec->do("
-		alter table hyosobun add index index4
-			(bun_idt)
-	",1);
+	#mysql_exec->do("
+	#	alter table hyosobun add index index2
+	#		(bun_id, dan_id, bun_idt, hyoso_id)
+	#",1);
+	#mysql_exec->do("
+	#	alter table hyosobun add index index3
+	#		add index index3
+	#",1);
+	#mysql_exec->do("
+	#	alter table hyosobun add index index4
+	#		(bun_idt)
+	#",1);
+	
+	mysql_ready::heap->hyosobun;
 }
 
 sub hyosobun_sql{
@@ -985,6 +988,7 @@ sub length{
 	
 	if ($length){
 		$self->{length}{$name} = $length;
+		return $self;
 	} else {
 		if ($self->{length}{$name}){
 			return $self->{length}{$name};

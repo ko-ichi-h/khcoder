@@ -139,6 +139,7 @@ sub save{
 			'mail_smtp',
 			'mail_from',
 			'mail_to',
+			'use_heap',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',
