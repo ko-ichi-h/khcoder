@@ -1,7 +1,6 @@
 package kh_cod::search;
 use base qw(kh_cod);
 use strict;
-
 use mysql_exec;
 
 my $last_tani;
@@ -145,6 +144,9 @@ sub search{
 		$self->{codes}[0]->ready($args{tani});
 		$self->{codes}[0]->code("ct_$args{tani}_dscode_0");
 	} else {                                            # 全てコーディング
+		unless ($last_tani eq $self->{tani}){
+			$self->{valid_codes} = undef;
+		}
 		if ($self->{codes}){
 			foreach my $i (@{$self->{codes}}){
 				$i->clear;

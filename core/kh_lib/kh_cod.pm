@@ -99,8 +99,6 @@ sub cumulate{
 	my $self = shift;
 	my $salt = shift;
 	
-	$self->valid_codes;
-	
 	my $cnt = 0;
 	my $cycle = 0;
 	my @temp;
