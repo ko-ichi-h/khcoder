@@ -48,6 +48,10 @@ sub first{
 	if ($::config_obj->mail_if){
 		$self->notify;
 	}
+	
+	# データベース内の一時テーブルをクリア
+	mysql_exec->clear_tmp_tables;
+	
 	$::config_obj->in_preprocessing(0);
 
 	#if ($::config_obj->sqllog){                     # coder_data/*_fm.csv出力
@@ -608,62 +612,99 @@ sub tag_fix{
 }
 
 sub rowtxt{
+	my $self = shift;
 	unless (
 		mysql_exec->select("select max(bun_idt) from hyosobun",1)
 			->hundle->fetch->[0]
-	){
-		return 0;
-	}
-
+	){ return 0; }
+	
 	$::project_obj->status_bun(1);
-	my $longest = mysql_exec->select("
-		SELECT SUM( LENGTH(hyoso.name) ) as len
-		FROM hyosobun, hyoso
-		WHERE hyoso.id = hyosobun.hyoso_id
-		GROUP BY hyosobun.bun_idt
-		ORDER BY len DESC
-		LIMIT 1
-	")->hundle->fetch->[0];
-	++$longest;
-	print "\nMax length of bun: $longest\n";
-	if ($longest > 65535){
-		gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
-	}
+
+	#my $longest = mysql_exec->select("
+	#	SELECT SUM( LENGTH(hyoso.name) ) as len
+	#	FROM hyosobun, hyoso
+	#	WHERE hyoso.id = hyosobun.hyoso_id
+	#	GROUP BY hyosobun.bun_idt
+	#	ORDER BY len DESC
+	#	LIMIT 1
+	#")->hundle->fetch->[0];
+	#++$longest;
+	#print "\nMax length of bun: $longest\n";
+	#if ($longest > 65535){
+	#	gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
+	#}
 	
 	mysql_exec->drop_table("bun_r");
 	mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
-	
-	my $h = mysql_exec->select("
-		SELECT hyosobun.bun_idt, hyoso.name
-		FROM hyosobun, hyoso
-		WHERE hyosobun.hyoso_id = hyoso.id
-		ORDER BY hyosobun.id
-	",1)->hundle;
-	
+
 	my ($c,$last,$values,$sql,$temp)
 		=(0,1,'','INSERT into bun_r (rowtxt) VALUES ','');
-	while (my $i = $h->fetch){
-		if ($last == $i->[0]){
-			$temp .= $i->[1]
-		} else {
-			$values .= "(\'$temp\'),";
-			$temp = $i->[1];
-			$last = $i->[0];
-			++$c;
+
+	my $id = 1; my $tc = 0;
+	while (1){
+		my $h = mysql_exec->select(
+			mysql_ready->rowtxt_sql($id, $id + 30000),
+			1,
+		)->hundle;
+		unless ($h->rows > 0){
+			last;
 		}
-		
-		if ($c == 200){
-			chop $values; mysql_exec->do("$sql $values",1);
-			$c = 0; $values = '';
+		$id += 30000;
+
+		while (my $i = $h->fetch){
+			++$tc;
+			if ($last == $i->[0]){
+				$temp .= $i->[1]
+			} else {
+				# エラー・チェック
+				if ( length($temp) > 65535 ){
+					gui_errormsg->open(type => 'msg',msg => "32,767文字を超える文がありました。\nKH Coderを終了します。");
+					exit;
+				}
+				unless ($last + 1 == $i->[0]){
+					gui_errormsg->open(type => 'msg',msg => "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。");
+					exit;
+				}
+				
+				$values .= "(\'$temp\'),";
+				$temp = $i->[1];
+				$last = $i->[0];
+				++$c;
+			}
+			
+			if ($c == 200){
+				chop $values; mysql_exec->do("$sql $values",1);
+				$c = 0; $values = '';
+			}
 		}
+		$h->finish;
+		print "done: $id\n";
 	}
-	$h->finish;
+	
 	if ($values or $temp){
 		if ($temp){
 			$values .= "(\'$temp\'),";
 		}
 		chop $values; mysql_exec->do("$sql $values",1);
 	}
+}
+
+sub rowtxt_sql{
+	my $self = shift;
+	my $d1   = shift;
+	my $d2   = shift;
+
+	my $sql ="
+		SELECT hyosobun.bun_idt, hyoso.name
+		FROM hyosobun, hyoso
+		WHERE 
+			    hyosobun.hyoso_id = hyoso.id
+			AND hyosobun.id >= $d1
+			AND hyosobun.id < $d2
+		ORDER BY hyosobun.id
+	";
+	
+	return $sql;
 }
 
 #--------------------------------------------------#

@@ -119,7 +119,7 @@ sub ready{
 			CREATE TABLE $table (
 				id INT primary key not null,
 				num INT
-			) TYPE = HEAP
+			)
 		",1);
 		mysql_exec->do("
 			INSERT
