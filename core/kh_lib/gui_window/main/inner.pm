@@ -1,12 +1,5 @@
 package gui_window::main::inner;
 use strict;
-BEGIN{
-	if( $] > 5.008 ){
-		require encoding;
-		encoding->import( "euc-jp" );
-	}
-}
-
 
 #----------------------#
 #   Windowの中身作成   #
@@ -33,8 +26,7 @@ sub make{
 	my $fra1a = $fra1->Frame(-borderwidth => 2) ->pack(-fill => 'x');
 	my $fra1b = $fra1->Frame(-borderwidth => 2) ->pack(-fill => 'x');
 	
-	my $msg = Jcode->new('現在のプロジェクト：','euc')->sjis;
-	#my $msg = '現在のプロジェクト：';
+	my $msg = gui_window->gui_jchar('現在のプロジェクト：','euc');
 	$fra1a->Label(
 		-text => "$msg",
 		-font => "TKFN"
@@ -47,7 +39,7 @@ sub make{
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
 	
-	$msg = Jcode->new('説明（メモ）：','euc')->sjis;
+	$msg = gui_window->gui_jchar('説明（メモ）：','euc');
 	$fra1b->Label(
 		-text => "$msg",
 		-font => "TKFN"
@@ -73,7 +65,7 @@ sub make{
 
 	my $fra2_1 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
 	$fra2_1->Label(
-		-text => Jcode->new('総抽出語数：')->sjis,
+		-text => gui_window->gui_jchar('総抽出語数：','euc'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_num1} = $fra2_1->Entry(
@@ -86,7 +78,7 @@ sub make{
 	my $fra2_2 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
 	$fra2_2->Label(
 		-font => "TKFN",
-		-text => Jcode->new('異なり語数（使用）：')->sjis
+		-text => gui_window->gui_jchar('異なり語数（使用）：','euc')
 	)->pack(-side => 'left');
 	$self->{ent_num2} = $fra2_2->Entry(
 		-width      => $::config_obj->mw_entry_length,
@@ -98,7 +90,7 @@ sub make{
 	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', -expand => 'y');
 	$fra2_3->Label(
 		-font => "TKFN",
-		-text => Jcode->new('文書の単純集計：')->sjis
+		-text => gui_window->gui_jchar('文書の単純集計：','euc')
 	)->pack(-side => 'left');
 
 	my $hlist = $fra2_3->Scrolled(
@@ -116,8 +108,8 @@ sub make{
 		-width      => $::config_obj->mw_entry_length - 2,
 	)->pack(-side => 'right', -anchor => 'e', -fill => 'y');
 
-	$hlist->header('create',0,-text => Jcode->new('集計単位')->sjis);
-	$hlist->header('create',1,-text => Jcode->new('ケース数')->sjis);
+	$hlist->header('create',0,-text => gui_window->gui_jchar('集計単位','euc'));
+	$hlist->header('create',1,-text => gui_window->gui_jchar('ケース数','euc'));
 
 	sub unselect{
 		my $self = shift;
@@ -160,9 +152,9 @@ sub refresh{
 			$title = $::project_obj->file_short_name;
 		}
 		$title .= ' - KH Coder';
-		$mw->title($title);
-		$self->entry('e_curent_project', $::project_obj->file_short_name);
-		$self->entry('e_project_memo', $::project_obj->comment);
+		$mw->title(gui_window->gui_jchar($title));
+		$self->entry('e_curent_project', gui_window->gui_jchar($::project_obj->file_short_name));
+		$self->entry('e_project_memo', gui_window->gui_jchar($::project_obj->comment));
 		
 		if ($::project_obj->status_morpho){       # 前処理が完了している場合
 			# 抽出語数
@@ -188,7 +180,7 @@ sub refresh{
 					my $num = mysql_exec->select(
 						"SELECT count(*) FROM $i"
 					)->hundle->fetch->[0];
-					push @list, [Jcode->new($name{$i})->sjis, num_format($num)];
+					push @list, [gui_window->gui_jchar($name{$i},'euc'), num_format($num)];
 				}
 			}
 		}
@@ -226,7 +218,6 @@ sub entry{
 	my $self = shift;
 	my $entry_name = shift;
 	my $entry_cont = shift;
-#	$entry_cont = Jcode->new(\$entry_cont,'euc')->sjis;
 	
 	my $ent = $self->{$entry_name};
 	$ent->configure(-state,'normal');

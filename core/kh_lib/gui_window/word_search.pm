@@ -20,7 +20,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('抽出語検索')->sjis);
+	$wmw->title($self->gui_jchar('抽出語検索'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -34,16 +34,16 @@ sub _new{
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(expand => 'y', fill => 'x', side => 'left');
+	)->pack(-expand => 'y', -fill => 'x', -side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => Jcode->new('検索')->sjis,
+		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
-	)->pack(-side => 'right', padx => '2');
+	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $wmw->Balloon();
 	$blhelp->attach(
@@ -56,14 +56,14 @@ sub _new{
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
 	$fra4h->Checkbutton(
-		-text     => Jcode->new('抽出語検索')->sjis,
+		-text     => $self->gui_jchar('抽出語検索'),
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => Jcode->new('活用形を表示')->sjis,
+		-text     => $self->gui_jchar('活用形を表示'),
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
 		-command  => sub { $mw->after(10,sub{$self->refresh}); }
@@ -81,8 +81,8 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		options =>
 			[
-				[Jcode->new('OR検索')->sjis , 'OR'],
-				[Jcode->new('AND検索')->sjis, 'AND'],
+				[$self->gui_jchar('OR検索') , 'OR'],
+				[$self->gui_jchar('AND検索'), 'AND'],
 			],
 		variable => \$gui_window::word_search::method,
 	);
@@ -92,10 +92,10 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
 		options =>
 			[
-				[Jcode->new('部分一致')->sjis => 'p'],
-				[Jcode->new('完全一致')->sjis => 'c'],
-				[Jcode->new('前方一致')->sjis => 'z'],
-				[Jcode->new('後方一致')->sjis => 'k']
+				[$self->gui_jchar('部分一致')  => 'p'],
+				[$self->gui_jchar('完全一致') => 'c'],
+				[$self->gui_jchar('前方一致') => 'z'],
+				[$self->gui_jchar('後方一致') => 'k']
 			],
 		variable => \$gui_window::word_search::s_mode,
 	);
@@ -126,19 +126,19 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => Jcode->new('単語')->sjis);
-	$lis->header('create',1,-text => Jcode->new('品詞')->sjis);
-	$lis->header('create',2,-text => Jcode->new('頻度')->sjis);
+	$lis->header('create',0,-text => $self->gui_jchar('単語'));
+	$lis->header('create',1,-text => $self->gui_jchar('品詞'));
+	$lis->header('create',2,-text => $self->gui_jchar('頻度'));
 
 	$fra5->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => Jcode->new('コンコーダンス')->sjis,
+		-text => $self->gui_jchar('コンコーダンス'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
@@ -190,13 +190,13 @@ sub refresh{
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
+		$self->list->header('create',0,-text => $self->gui_jchar('単語'));
 		if ( $gui_window::word_search::katuyo ){
-			$self->list->header('create',1,-text => Jcode->new('品詞/活用')->sjis);
+			$self->list->header('create',1,-text => $self->gui_jchar('品詞/活用'));
 		} else {
-			$self->list->header('create',1,-text => Jcode->new('品詞')->sjis);
+			$self->list->header('create',1,-text => $self->gui_jchar('品詞'));
 		}
-		$self->list->header('create',2,-text => Jcode->new('頻度')->sjis);
+		$self->list->header('create',2,-text => $self->gui_jchar('頻度'));
 	} else {
 		$self->list->destroy;
 		$self->{list} = $self->list_f->Scrolled(
@@ -212,10 +212,10 @@ sub refresh{
 			-selectbackground => 'cyan',
 			-selectmode       => 'extended',
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => Jcode->new('単語')->sjis);
-		$self->list->header('create',1,-text => Jcode->new('品詞（茶筌）')->sjis);
-		$self->list->header('create',2,-text => Jcode->new('活用')->sjis);
-		$self->list->header('create',3,-text => Jcode->new('頻度')->sjis);
+		$self->list->header('create',0,-text => $self->gui_jchar('単語'));
+		$self->list->header('create',1,-text => $self->gui_jchar('品詞（茶筌）'));
+		$self->list->header('create',2,-text => $self->gui_jchar('活用'));
+		$self->list->header('create',3,-text => $self->gui_jchar('頻度'));
 	}
 	
 }
@@ -229,7 +229,8 @@ sub search{
 	my $self = shift;
 	
 	# 変数取得
-	my $query = Jcode->new($self->entry->get)->euc;
+	#my $query = Jcode->new($self->entry->get)->euc;
+	my $query = Encode::encode('euc-jp',$self->entry->get);
 	unless ($query){
 		return;
 	}
@@ -273,7 +274,7 @@ sub search{
 					-style => $numb_style
 				);
 			} else {
-				$self->list->itemCreate($cu,$col,-text => Jcode->new($h)->sjis);# nkf('-s -E',$h)
+				$self->list->itemCreate($cu,$col,-text => $self->gui_jchar($h,'euc')); # nkf('-s -E',$h)
 			}
 			++$col;
 		}

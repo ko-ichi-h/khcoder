@@ -1,13 +1,5 @@
 package gui_window::main::menu;
 use strict;
-BEGIN{
-	if( $] > 5.008 ){
-		require encoding;
-		encoding->import( "euc-jp" );
-	}
-}
-
-
 
 #------------------#
 #   メニュー作成   #
@@ -19,22 +11,23 @@ sub make{
 	my $self;
 	
 	my $mw = ${$gui}->mw;
-	my $toplevel = $mw->toplevel;
-	my $menubar = $toplevel->Menu(-type => 'menubar');
-	$toplevel->configure(-menu => $menubar);
+	#my $toplevel = $mw->toplevel;
+	my $menubar = $mw->Menu(-type => 'menubar');
+	$mw->configure(-menu => $menubar);
 
 	#------------------#
 	#   プロジェクト   #
-	
+
+	#my $msg = gui_window->gui_jchar('プロジェクト(P)','euc');
 	my $msg = Jcode->new('プロジェクト(P)','euc')->sjis;
 	my $f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
-		-underline => $::config_obj->underline_conv(13),
+		#-underline => $::config_obj->underline_conv(13),
 		-tearoff=>'no'
 	);
 
-		$msg = Jcode->new('新規','euc')->sjis;
+		$msg = gui_window->gui_jchar('新規','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -42,7 +35,7 @@ sub make{
 				sub{ $mw->after(10,sub{gui_window::project_new->open;});},
 			-accelerator => 'Ctrl+N'
 		);
-		$msg = Jcode->new('開く','euc')->sjis;
+		$msg = gui_window->gui_jchar('開く','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -51,7 +44,7 @@ sub make{
 			-accelerator => 'Ctrl+O'
 		);
 		$self->{m_b0_close} = $f->command(
-			-label => Jcode->new('閉じる')->sjis,
+			-label => gui_window->gui_jchar('閉じる'),
 			-font => "TKFN",
 			-state => 'disable',
 			-command =>
@@ -66,7 +59,7 @@ sub make{
 		
 		
 		$f->separator();
-		$msg = Jcode->new('設定','euc')->sjis;
+		$msg = gui_window->gui_jchar('設定','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -74,7 +67,7 @@ sub make{
 				sub{ $mw->after(10,sub{gui_window::sysconfig->open;});},
 		);
 		$f->separator();
-		$msg = Jcode->new('終了','euc')->sjis;
+		$msg = gui_window->gui_jchar('終了','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -86,22 +79,22 @@ sub make{
 	#   前処理   #
 	
 	$f = $menubar->cascade(
-		-label => Jcode->new('前処理(B)')->sjis,
+		-label => gui_window->gui_jchar('前処理(B)'),
 		-font => "TKFN",
 		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
 
 		$self->{m_b2_morpho} = $f->command(
-				-label => Jcode->new('前処理の実行')->sjis,
+				-label => gui_window->gui_jchar('前処理の実行'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $ans = $mw->messageBox(
-						-message => Jcode->new
+						-message => gui_window->gui_jchar
 							(
 							   "時間のかかる処理を実行しようとしています。\n".
 							   "続行してよろしいですか？"
-							)->sjis,
+							),
 						-icon    => 'question',
 						-type    => 'OKCancel',
 						-title   => 'KH Coder'
@@ -120,7 +113,7 @@ sub make{
 			);
 		$f->separator();
 		$self->{m_b1_mark} = $f->command(
-				-label => Jcode->new('語の取捨選択')->sjis,
+				-label => gui_window->gui_jchar('語の取捨選択'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::dictionary->open;
@@ -129,18 +122,18 @@ sub make{
 			);
 
 		$self->{m_b1_hukugo} = $f->command(
-				-label => Jcode->new('複合名詞のリスト（一部）')->sjis,
+				-label => gui_window->gui_jchar('複合名詞のリスト（一部）'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $target = $::project_obj->file_HukugoList;
 					unless (-e $target){
 						my $ans = $mw->messageBox(
-							-message => Jcode->new
+							-message => gui_window->gui_jchar
 								(
 								   "時間のかかる処理を実行しようとしています。"
 								   ."（前処理よりは短時間で終了します）\n".
 								   "続行してよろしいですか？"
-								)->sjis,
+								),
 							-icon    => 'question',
 							-type    => 'OKCancel',
 							-title   => 'KH Coder'
@@ -157,7 +150,7 @@ sub make{
 		$f->separator();
 
 		$self->{m_b3_check} = $f->command(
-				-label => Jcode->new('語の抽出結果を確認')->sjis,
+				-label => gui_window->gui_jchar('語の抽出結果を確認'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_check->open;
@@ -169,20 +162,20 @@ sub make{
 	#   ツール   #
 
 	$f = $menubar->cascade(
-		-label => Jcode->new('ツール(T)')->sjis,
+		-label => gui_window->gui_jchar('ツール(T)'),
 		-font => "TKFN",
 		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
 
 	my $f3 = $f->cascade(
-			-label => Jcode->new('抽出語')->sjis,
+			-label => gui_window->gui_jchar('抽出語'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 		$self->{t_word_search} = $f3->command(
-				-label => Jcode->new('抽出語検索')->sjis,
+				-label => gui_window->gui_jchar('抽出語検索'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_search->open;
@@ -191,7 +184,7 @@ sub make{
 			);
 
 		$self->{t_word_conc} = $f3->command(
-				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
+				-label => gui_window->gui_jchar('コンコーダンス（KWIC）'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_conc->open;
@@ -202,7 +195,7 @@ sub make{
 		$f3->separator;
 		
 		$self->{t_word_freq} = $f3->command(
-				-label => Jcode->new('出現回数 分布')->sjis,
+				-label => gui_window->gui_jchar('出現回数 分布'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_freq->open->count;
@@ -211,7 +204,7 @@ sub make{
 			);
 
 		$self->{t_word_list} = $f3->command(
-				-label => Jcode->new('品詞別 出現回数順 リスト')->sjis,
+				-label => gui_window->gui_jchar('品詞別 出現回数順 リスト'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $target = $::project_obj->file_WordList;
@@ -222,13 +215,13 @@ sub make{
 			);
 
 	my $f8 = $f->cascade(
-			-label => Jcode->new('文書')->sjis,
+			-label => gui_window->gui_jchar('文書'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 		$self->{t_doc_search} = $f8->command(
-				-label => Jcode->new('文書検索')->sjis,
+				-label => gui_window->gui_jchar('文書検索'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::doc_search->open;
@@ -237,7 +230,7 @@ sub make{
 			);
 
 		$self->{t_word_ass} = $f8->command(
-				-label => Jcode->new('抽出語 連関規則')->sjis,
+				-label => gui_window->gui_jchar('抽出語 連関規則'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_ass->open;
@@ -248,14 +241,14 @@ sub make{
 		$f8->separator;
 
 		$self->{m_b3_crossout} = $f8->cascade(
-				-label => Jcode->new("「文書ｘ抽出語」表の出力",'euc')->sjis,
+				-label => gui_window->gui_jchar("「文書ｘ抽出語」表の出力",'euc'),
 				-font => "TKFN",
 				-state => 'disable',
 				-tearoff=>'no'
 			);
 
 			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
-				-label => Jcode->new("CSVファイル")->sjis,
+				-label => gui_window->gui_jchar("CSVファイル"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_crossout::csv->open;
@@ -263,7 +256,7 @@ sub make{
 			);
 
 			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
-				-label => Jcode->new("SPSSファイル")->sjis,
+				-label => gui_window->gui_jchar("SPSSファイル"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_crossout::spss->open;
@@ -271,7 +264,7 @@ sub make{
 			);
 
 			$self->{m_b3_crossout_tab} = $self->{m_b3_crossout}->command(
-				-label => Jcode->new("タブ区切り")->sjis,
+				-label => gui_window->gui_jchar("タブ区切り"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_crossout::tab->open;
@@ -279,14 +272,14 @@ sub make{
 			);
 
 		$self->{m_b3_contxtout} = $f8->cascade(
-				-label => Jcode->new("「抽出語ｘ文脈ベクトル」表の出力",'euc')->sjis,
+				-label => gui_window->gui_jchar("「抽出語ｘ文脈ベクトル」表の出力",'euc'),
 				-font => "TKFN",
 				-state => 'disable',
 				-tearoff=>'no'
 			);
 
 			$self->{m_b3_contxtout_csv} = $self->{m_b3_contxtout}->command(
-				-label => Jcode->new("CSVファイル")->sjis,
+				-label => gui_window->gui_jchar("CSVファイル"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::contxt_out::csv->open;
@@ -294,7 +287,7 @@ sub make{
 			);
 
 			$self->{m_b3_contxtout_spss} = $self->{m_b3_contxtout}->command(
-				-label => Jcode->new("SPSSファイル")->sjis,
+				-label => gui_window->gui_jchar("SPSSファイル"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::contxt_out::spss->open;
@@ -302,7 +295,7 @@ sub make{
 			);
 
 			$self->{m_b3_contxtout_tab} = $self->{m_b3_contxtout}->command(
-				-label => Jcode->new("タブ区切り")->sjis,
+				-label => gui_window->gui_jchar("タブ区切り"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::contxt_out::tab->open;
@@ -310,13 +303,13 @@ sub make{
 			);
 
 	my $f5 = $f->cascade(
-			-label => Jcode->new('コーディング')->sjis,
+			-label => gui_window->gui_jchar('コーディング'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 		$self->{t_cod_count} = $f5->command(
-			-label => Jcode->new('単純集計')->sjis,
+			-label => gui_window->gui_jchar('単純集計'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::cod_count->open;
@@ -325,7 +318,7 @@ sub make{
 		);
 
 		$self->{t_cod_tab} = $f5->command(
-			-label => Jcode->new('章・節・段落ごとの集計')->sjis,
+			-label => gui_window->gui_jchar('章・節・段落ごとの集計'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::cod_tab->open;
@@ -334,7 +327,7 @@ sub make{
 		);
 
 		$self->{t_cod_outtab} = $f5->command(
-			-label => Jcode->new('外部変数とのクロス集計')->sjis,
+			-label => gui_window->gui_jchar('外部変数とのクロス集計'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::cod_outtab->open;
@@ -343,7 +336,7 @@ sub make{
 		);
 
 		$self->{t_cod_jaccard} = $f5->command(
-			-label => Jcode->new('コード間関連')->sjis,
+			-label => gui_window->gui_jchar('コード間関連'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::cod_jaccard->open;
@@ -354,13 +347,13 @@ sub make{
 		$f5->separator();
 
 		$self->{t_cod_out} = $f5->cascade(
-			-label => Jcode->new('コーディング結果の出力')->sjis,
+			-label => gui_window->gui_jchar('コーディング結果の出力'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 			$self->{t_cod_out_csv} = $self->{t_cod_out}->command(
-				-label => Jcode->new('CSVファイル')->sjis,
+				-label => gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::cod_out::csv->open;
@@ -369,7 +362,7 @@ sub make{
 			);
 
 			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
-				-label => Jcode->new('SPSSファイル')->sjis,
+				-label => gui_window->gui_jchar('SPSSファイル'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::cod_out::spss->open;
@@ -378,7 +371,7 @@ sub make{
 			);
 
 			$self->{t_cod_out_tab} = $self->{t_cod_out}->command(
-				-label => Jcode->new('タブ区切り')->sjis,
+				-label => gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::cod_out::tab->open;
@@ -389,19 +382,19 @@ sub make{
 	$f->separator();
 	
 	my $f_out_var = $f->cascade(
-		-label => Jcode->new('外部変数')->sjis,
+		-label => gui_window->gui_jchar('外部変数'),
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
 
 		$self->{t_out_read} = $f_out_var->cascade(
-			-label => Jcode->new('読み込み')->sjis,
+			-label => gui_window->gui_jchar('読み込み'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 			$self->{t_out_read_csv} = $self->{t_out_read}->command(
-				-label => Jcode->new('CSVファイル')->sjis,
+				-label => gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::outvar_read::csv->open;
@@ -410,7 +403,7 @@ sub make{
 			);
 
 			$self->{t_out_read_tab} = $self->{t_out_read}->command(
-				-label => Jcode->new('タブ区切り')->sjis,
+				-label => gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::outvar_read::tab->open;
@@ -419,7 +412,7 @@ sub make{
 			);
 
 		$self->{t_out_list} = $f_out_var->command(
-			-label => Jcode->new('変数リスト・値ラベル')->sjis,
+			-label => gui_window->gui_jchar('変数リスト・値ラベル'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::outvar_list->open;
@@ -428,13 +421,13 @@ sub make{
 		);
 
 	my $f6 = $f->cascade(
-		-label => Jcode->new('テキストファイルの変形')->sjis,
+		-label => gui_window->gui_jchar('テキストファイルの変形'),
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
 
 		$self->{t_txt_pickup} = $f6->command(
-			-label => Jcode->new('部分テキストの取り出し')->sjis,
+			-label => gui_window->gui_jchar('部分テキストの取り出し'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::txt_pickup->open;
@@ -443,7 +436,7 @@ sub make{
 		);
 
 		$self->{t_txt_html2mod} = $f6->command(
-			-label => Jcode->new('HTMLからCSVに変換')->sjis,
+			-label => gui_window->gui_jchar('HTMLからCSVに変換'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::txt_html2csv->open;
@@ -453,13 +446,13 @@ sub make{
 
 
 	my $f2 = $f->cascade(
-			-label => Jcode->new('SQL文 入力')->sjis,
+			-label => gui_window->gui_jchar('SQL文 入力'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 	
 		$self->{t_sql_select} = $f2->command(
-				-label => Jcode->new('SELECT')->sjis,
+				-label => gui_window->gui_jchar('SELECT'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::sql_select->open;
@@ -468,7 +461,7 @@ sub make{
 			);
 
 		$self->{t_sql_do} = $f2->command(
-				-label => Jcode->new('その他')->sjis,
+				-label => gui_window->gui_jchar('その他'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::sql_do->open;
@@ -481,7 +474,7 @@ sub make{
 	#------------#
 	#   ヘルプ   #
 	
-	$msg = Jcode->new('ヘルプ(H)','euc')->sjis;
+	$msg = gui_window->gui_jchar('ヘルプ(H)','euc');
 	$f = $menubar->cascade(
 		-label => "$msg",
 		-font => "TKFN",
@@ -489,7 +482,7 @@ sub make{
 		-tearoff=>'no'
 	);
 	
-		$msg = Jcode->new('使用説明書（PDF形式）','euc')->sjis;
+		$msg = gui_window->gui_jchar('使用説明書（PDF形式）','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -501,7 +494,7 @@ sub make{
 			},
 		);
 		
-		$msg = Jcode->new('最新情報','euc')->sjis;
+		$msg = gui_window->gui_jchar('最新情報','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
@@ -515,7 +508,7 @@ sub make{
 			},
 		);
 		
-		$msg = Jcode->new('KH Coderについて','euc')->sjis;
+		$msg = gui_window->gui_jchar('KH Coderについて','euc');
 		$f->command(
 			-label => $msg,
 			-command => sub{ $mw->after(10, sub{gui_window::about->open;});},
