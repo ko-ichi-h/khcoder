@@ -7,6 +7,7 @@ use NKF;
 use mysql_conc;
 use Jcode;
 use gui_widget::tani;
+use gui_widget::optmenu;
 
 #---------------------#
 #   Window オープン   #
@@ -102,49 +103,89 @@ sub _new{
 	# ソート・オプションのフレーム
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
-	my @methods = ('出現順', '左・5','左・4','左・3','左・2','左・1','活用形','右・1','右・2','右・3','右・4','右・5',);
-	foreach my $i (@methods){
-		$i = Jcode->new("$i")->sjis;
-	}
+	#my @methods = ('出現順', '左・5','左・4','左・3','左・2','左・1','活用形','右・1','右・2','右・3','右・4','右・5',);
+	#foreach my $i (@methods){
+	#	$i = Jcode->new("$i")->sjis;
+	#}
+
+	my @options = (
+		[ Jcode->new('出現順')->sjis, 'id'],
+		[ Jcode->new('左・5')->sjis,  'l5'],
+		[ Jcode->new('左・4')->sjis,  'l4'],
+		[ Jcode->new('左・3')->sjis,  'l3'],
+		[ Jcode->new('左・2')->sjis,  'l2'],
+		[ Jcode->new('左・1')->sjis,  'l1'],
+		[ Jcode->new('活用形')->sjis, 'center'],
+		[ Jcode->new('右・1')->sjis,  'r1'],
+		[ Jcode->new('右・2')->sjis,  'r2'],
+		[ Jcode->new('右・3')->sjis,  'r3'],
+		[ Jcode->new('右・4')->sjis,  'r4'],
+		[ Jcode->new('右・5')->sjis,  'r5']
+	);
 
 	$fra4h->Label(
 		-text => Jcode->new('ソート1：')->sjis,
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$self->{menu1} = $fra4h->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$self->{sort1},
-		-width => 6,
-		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	)->pack(-anchor=>'e', -side => 'left');
+	#$self->{menu1} = $fra4h->Optionmenu(
+	#	-options=> \@methods,
+	#	-font => "TKFN",
+	#	-variable => \$self->{sort1},
+	#	-width => 6,
+	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	#)->pack(-anchor=>'e', -side => 'left');
+
+	$self->{menu1} = gui_widget::optmenu->open(
+		parent  => $fra4h,
+		pack    => {-anchor=>'e', -side => 'left'},
+		options => \@options,
+		variable => \$self->{sort1},
+		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	);
 
 	$fra4h->Label(
 		-text => Jcode->new('　ソート2：')->sjis,
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$self->{menu2} = $fra4h->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$self->{sort2},
-		-width => 6,
-		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	)->pack(-anchor=>'e', -side => 'left');
+	#$self->{menu2} = $fra4h->Optionmenu(
+	#	-options=> \@methods,
+	#	-font => "TKFN",
+	#	-variable => \$self->{sort2},
+	#	-width => 6,
+	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	#)->pack(-anchor=>'e', -side => 'left');
+
+	$self->{menu2} = gui_widget::optmenu->open(
+		parent  => $fra4h,
+		pack    => {-anchor=>'e', -side => 'left'},
+		options => \@options,
+		variable => \$self->{sort2},
+		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	);
 
 	$fra4h->Label(
 		-text => Jcode->new('　ソート3：')->sjis,
 		-font => "TKFN"
 	)->pack(side => 'left');
 
-	$self->{menu3} = $fra4h->Optionmenu(
-		-options=> \@methods,
-		-font => "TKFN",
-		-variable => \$self->{sort3},
-		-width => 6,
-		-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
-	)->pack(-anchor=>'e', -side => 'left');
+	#$self->{menu3} = $fra4h->Optionmenu(
+	#	-options=> \@methods,
+	#	-font => "TKFN",
+	#	-variable => \$self->{sort3},
+	#	-width => 6,
+	#	-command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	#)->pack(-anchor=>'e', -side => 'left');
+
+	$self->{menu3} = gui_widget::optmenu->open(
+		parent  => $fra4h,
+		pack    => {-anchor=>'e', -side => 'left'},
+		options => \@options,
+		variable => \$self->{sort3},
+		command => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+	);
+	$self->_menu_check;
 
 	my $status = $fra4h->Label(
 		-text => 'Ready.',
@@ -218,8 +259,6 @@ sub _new{
 		pack   => \%pack
 	);
 
-
-
 	$fra5->Label(
 		-text => Jcode->new('  ')->sjis,
 		-font => "TKFN"
@@ -250,9 +289,6 @@ sub _new{
 		-borderwidth => 1,
 		-state       => 'disable',
 	)->pack(-side => 'left');
-
-
-
 
 	my $hits = $fra5->Label(
 		-text => Jcode->new('  ヒット数：')->sjis,
@@ -286,7 +322,7 @@ sub _menu_check{
 			$self->menu($n)->configure(-state, 'normal');
 		}
 		
-		if (Jcode->new($self->sort($n))->euc eq '出現順'){
+		if ($self->sort($n) eq 'id'){
 			$flag = 1;
 		}
 	}
@@ -426,20 +462,20 @@ sub search{
 	}
 	# my $limit = $self->entry_limit->get;
 
-	my %sconv = (
-		'出現順' => 'id',
-		'左・5'  => 'l5',
-		'左・4'  => 'l4',
-		'左・3'  => 'l3',
-		'左・2'  => 'l2',
-		'左・1'  => 'l1',
-		'活用形' => 'center',
-		'右・1'  => 'r1',
-		'右・2'  => 'r2',
-		'右・3'  => 'r3',
-		'右・4'  => 'r4',
-		'右・5'  => 'r5'
-	);
+	#my %sconv = (
+	#	'出現順' => 'id',
+	#	'左・5'  => 'l5',
+	#	'左・4'  => 'l4',
+	#	'左・3'  => 'l3',
+	#	'左・2'  => 'l2',
+	#	'左・1'  => 'l1',
+	#	'活用形' => 'center',
+	#	'右・1'  => 'r1',
+	#	'右・2'  => 'r2',
+	#	'右・3'  => 'r3',
+	#	'右・4'  => 'r4',
+	#	'右・5'  => 'r5'
+	#);
 	
 	#print "test: ".$self->sort1."\n";
 
@@ -459,9 +495,9 @@ sub search{
 		katuyo => $katuyo,
 		hinshi => $hinshi,
 		length => $length,
-		sort1  => $sconv{Jcode->new($self->sort1)->euc},
-		sort2  => $sconv{Jcode->new($self->sort2)->euc},
-		sort3  => $sconv{Jcode->new($self->sort3)->euc},
+		sort1  => $self->sort1,
+		sort2  => $self->sort2,
+		sort3  => $self->sort3,
 	);
 
 	$self->st_label->configure(

@@ -2,6 +2,7 @@ package gui_window::cod_tab;
 use base qw(gui_window);
 
 use strict;
+use gui_widget::optmenu;
 
 #-------------#
 #   GUI作製   #
@@ -35,18 +36,31 @@ sub _new{
 		-text => Jcode->new('　　セル内容：')->sjis,
 		-font => "TKFN",
 	)->pack(side => 'left');
-	$f0->Optionmenu(
-		-options => 
+
+	gui_widget::optmenu->open(
+		parent  => $f0,
+		pack    => {-side => 'left'},
+		options =>
 			[
-				[ Jcode->new('度数とパーセント')->sjis => 0 ],
-				[ Jcode->new('度数のみ')->sjis         => 1 ],
-				[ Jcode->new('パーセントのみ')->sjis   => 2 ],
+				[Jcode->new('度数とパーセント')->sjis , 0],
+				[Jcode->new('度数のみ')->sjis         , 1],
+				[Jcode->new('パーセントのみ')->sjis   , 2],
 			],
-		-font => "TKFN",
-		-borderwidth => '1',
-		-width => 4,
-		-variable => \$self->{cell_opt},
-	)->pack(side=>'left');
+		variable => \$self->{cell_opt},
+	);
+
+#	$f0->Optionmenu(
+#		-options => 
+#			[
+#				[ Jcode->new('度数とパーセント')->sjis => 0 ],
+#				[ Jcode->new('度数のみ')->sjis         => 1 ],
+#				[ Jcode->new('パーセントのみ')->sjis   => 2 ],
+#			],
+#		-font => "TKFN",
+#		-borderwidth => '1',
+#		-width => 4,
+#		-variable => \$self->{cell_opt},
+#	)->pack(side=>'left');
 	
 	my $f1 = $lf->Frame->pack(-fill => 'x');
 	
