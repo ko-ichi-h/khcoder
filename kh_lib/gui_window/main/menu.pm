@@ -206,15 +206,14 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{t_word_conc} = $f3->command(
-				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
+		$self->{t_word_freq} = $f3->command(
+				-label => Jcode->new('出現回数 分布')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					gui_window::word_conc->open;
+					gui_window::word_freq->open->count;
 				})},
 				-state => 'disable'
 			);
-		$f3->separator();
 
 		$self->{t_word_list} = $f3->command(
 				-label => Jcode->new('品詞別 出現回数順 リスト')->sjis,
@@ -226,26 +225,32 @@ sub make{
 				})},
 				-state => 'disable'
 			);
-
-		$f3->separator();
 		
-		$self->{t_word_freq} = $f3->command(
-				-label => Jcode->new('出現回数 分布')->sjis,
+
+
+	my $f8 = $f->cascade(
+			-label => Jcode->new('探索・コーディング支援')->sjis,
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+		$self->{t_word_conc} = $f8->command(
+				-label => Jcode->new('コンコーダンス（KWIC）')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					gui_window::word_freq->open->count;
+					gui_window::word_conc->open;
 				})},
 				-state => 'disable'
 			);
 
-		#$self->{t_word_print} = $f3->command(
-		#		-label => Jcode->new('リストの印刷（LaTeX）')->sjis,
-		#		-font => "TKFN",
-		#		-command => sub {$mw->after(10,sub{
-		#			mysql_words->make_list();
-		#		})},
-		#		-state => 'disable'
-		#	);
+		$self->{t_doc_search} = $f8->command(
+				-label => Jcode->new('文書検索')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::doc_search->open;
+				})},
+				-state => 'disable'
+			);
 
 	my $f5 = $f->cascade(
 			-label => Jcode->new('コーディング')->sjis,
@@ -455,6 +460,7 @@ sub refresh{
 		'm_b3_crossout_csv',
 		'm_b3_crossout_spss',
 		't_txt_pickup',
+		't_doc_search',
 	);
 
 	# 状態変更
