@@ -63,7 +63,7 @@ sub save{
 		my @outlist = (
 			'chasenrc_path',
 			'grammarcha_path',
-			'juman_path',
+#			'juman_path',
 			'c_or_j',
 			'use_sonota',
 			'color_DocView_info',
@@ -100,27 +100,12 @@ sub save{
 	}
 }
 
-sub refine_cj{
-	my $self = shift;
-	bless $self, 'kh_sysconfig::linux::'.$self->c_or_j;
-	return $self;
-}
-
 #--------------------------------#
 #   以下は設定値を返すルーチン   #
 #--------------------------------#
 
 #--------------------#
 #   形態素解析関係   #
-
-sub use_hukugo{
-	my $self = shift;
-	my $new = shift;
-	if (length($new) > 0){
-		$self->{use_hukugo} = $new;
-	}
-	return $self->{use_hukugo};
-}
 
 sub chasenrc_path{
 	my $self = shift;
@@ -141,42 +126,15 @@ sub grammarcha_path{
 }
 
 
-sub juman_path{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{juman_path} = $new;
-	}
-	return $self->{juman_path};
-}
+#sub juman_path{
+#	my $self = shift;
+#	my $new = shift;
+#	if ($new){
+#		$self->{juman_path} = $new;
+#	}
+#	return $self->{juman_path};
+#}
 
-sub c_or_j{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{c_or_j} = $new;
-	}
-
-	if ($self->{c_or_j}) {
-		return $self->{c_or_j};
-	} else {
-		return 'chasen';
-	}
-}
-
-sub use_sonota{
-	my $self = shift;
-	my $new = shift;
-	if ( length($new) > 0 ){
-		$self->{use_sonota} = $new;
-	}
-
-	if ( $self->{use_sonota} ){
-		return $self->{use_sonota};
-	} else {
-		return 0;
-	}
-}
 
 #--------------------------#
 #   外部アプリケーション   #

@@ -105,11 +105,7 @@ sub save{
 	}
 }
 
-sub refine_cj{
-	my $self = shift;
-	bless $self, 'kh_sysconfig::win32::'.$self->c_or_j;
-	return $self;
-}
+
 
 #--------------------------------#
 #   以下は設定値を返すルーチン   #
@@ -119,14 +115,6 @@ sub refine_cj{
 #--------------------#
 #   形態素解析関係   #
 
-sub use_hukugo{
-	my $self = shift;
-	my $new = shift;
-	if (length($new) > 0){
-		$self->{use_hukugo} = $new;
-	}
-	return $self->{use_hukugo};
-}
 
 sub chasen_path{
 	my $self = shift;
@@ -146,33 +134,6 @@ sub juman_path{
 	return $self->{juman_path};
 }
 
-sub c_or_j{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{c_or_j} = $new;
-	}
-
-	if (length($self->{c_or_j}) > 0) {
-		return $self->{c_or_j};
-	} else {
-		return 'chasen';
-	}
-}
-
-sub use_sonota{
-	my $self = shift;
-	my $new = shift;
-	if ( length($new) > 0 ){
-		$self->{use_sonota} = $new;
-	}
-
-	if ( $self->{use_sonota} ){
-		return $self->{use_sonota};
-	} else {
-		return 0;
-	}
-}
 
 #------------#
 #   その他   #

@@ -15,9 +15,9 @@ sub make{
 	my $toplevel = $mw->toplevel;
 	my $menubar = $toplevel->Menu(-type => 'menubar');
 	$toplevel->configure(-menu => $menubar);
-	
 
-	
+
+
 	#------------------#
 	#   プロジェクト   #
 	
@@ -66,9 +66,9 @@ sub make{
 	#   基礎処理   #
 	
 	$f = $menubar->cascade(
-		-label => Jcode->new('基礎処理(B)')->sjis,
+		-label => Jcode->new('前処理(B)')->sjis,
 		-font => "TKFN",
-		-underline => gui_window::main::menu::underline::conv(9),
+		-underline => gui_window::main::menu::underline::conv(7),
 		-tearoff=>'no'
 	);
 	

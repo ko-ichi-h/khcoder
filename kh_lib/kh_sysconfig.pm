@@ -55,6 +55,52 @@ sub readin{
 
 	return $self;
 }
+#--------------------#
+#   ·ÁÂÖÁÇ²òÀÏ´Ø·¸   #
+
+sub refine_cj{
+	my $self = shift;
+	bless $self, 'kh_sysconfig::win32::'.$self->c_or_j;
+	return $self;
+}
+
+sub use_hukugo{
+	my $self = shift;
+	my $new = shift;
+	if (length($new) > 0){
+		$self->{use_hukugo} = $new;
+	}
+	return $self->{use_hukugo};
+}
+
+sub c_or_j{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{c_or_j} = $new;
+	}
+
+	if (length($self->{c_or_j}) > 0) {
+		return $self->{c_or_j};
+	} else {
+		return 'chasen';
+	}
+}
+
+sub use_sonota{
+	my $self = shift;
+	my $new = shift;
+	if ( length($new) > 0 ){
+		$self->{use_sonota} = $new;
+	}
+
+	if ( $self->{use_sonota} ){
+		return $self->{use_sonota};
+	} else {
+		return 0;
+	}
+}
+
 
 #-------------#
 #   GUI´Ø·¸   #
