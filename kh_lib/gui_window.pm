@@ -62,6 +62,7 @@ sub open{
 
 sub close{
 	my $self = shift;
+	$self->end; # 特殊処理に対応
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
 	$::config_obj->save;
 	$self->win_obj->destroy;
@@ -70,6 +71,10 @@ sub close{
 sub win_obj{
 	my $self = shift;
 	return $self->{win_obj};
+}
+
+sub end{
+	return 1;
 }
 
 sub start{

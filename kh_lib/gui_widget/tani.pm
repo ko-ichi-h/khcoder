@@ -30,6 +30,7 @@ sub _new{
 	$self->{win_obj} = $self->parent->Optionmenu(
 		-options=> \@list1,
 		-font => "TKFN",
+		-borderwidth => '1',
 		-variable => \$self->{raw_opt},
 	);
 }

@@ -116,12 +116,14 @@ sub _new{
 	$fra5->Button(
 		-text => Jcode->new('コピー')->sjis,
 		-font => "TKFN",
+		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
 		-text => Jcode->new('コンコーダンス')->sjis,
 		-font => "TKFN",
+		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
 	)->pack(-side => 'left');
 

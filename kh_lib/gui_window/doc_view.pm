@@ -1,10 +1,12 @@
 package gui_window::doc_view;
 use base qw(gui_window);
 use strict;
-use gui_jchar;
 use Tk;
+use Tk::Balloon;
 use Tk::ROTextANSIColor;
+use gui_jchar;
 use mysql_getdoc;
+use gui_window::word_conc;
 
 sub _new{
 	my $self = shift;
@@ -70,21 +72,27 @@ sub _new{
 		->pack(-anchor=>'w',-side => 'left');
 
 	$msg = '前の検索結果'; Jcode::convert(\$msg,'sjis','euc');
-	my $prev_result_btn = $bframe->Button(
+	$self->{pre_result_btn} = $bframe->Button(
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $::mw->after
+		-command => sub { $mw->after
 			(10,
 				sub {
-					
+					$self->{doc} = mysql_getdoc->get(
+						hyosobun_id => $self->{parent}->prev,
+						w_search    => $self->{w_search},
+						tani        => $self->{tani},
+					);
+					$self->{doc_id} = $self->{doc}->{doc_id};
+					$self->_view_doc($self->{doc});
 				}
 			);
 		}
 	)->pack(-side => 'left',-pady => '0');
 
 	$msg = '次の検索結果'; Jcode::convert(\$msg,'sjis','euc');
-	my $next_result_btn = $bframe->Button(
+	$self->{nxt_result_btn} = $bframe->Button(
 		-text => $msg,
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -123,6 +131,46 @@ sub _new{
 		}
 	)->pack(-side => 'right',-pady => '0');
 	
+	# バインド関係
+	$bunhyojiwin->bind(
+		"<Shift-Key-Prior>",
+		sub { $self->{pre_btn}->invoke; }
+	);
+	$bunhyojiwin->bind(
+		"<Shift-Key-Next>",
+		sub { $self->{nxt_btn}->invoke; }
+	);
+	$bunhyojiwin->bind(
+		"<Control-Key-Prior>",
+		sub { $self->{pre_result_btn}->invoke; }
+	);
+	$bunhyojiwin->bind(
+		"<Control-Key-Next>",
+		sub { $self->{nxt_result_btn}->invoke; }
+	);
+	$bunhyojiwin->Balloon()->attach(
+		$self->{pre_btn},
+		-balloonmsg => '"Shift + PageUp"',
+		-font => "TKFN"
+	);
+	$bunhyojiwin->Balloon()->attach(
+		$self->{nxt_btn},
+		-balloonmsg => '"Shift + PageDown"',
+		-font => "TKFN"
+	);
+	$bunhyojiwin->Balloon()->attach(
+		$self->{pre_result_btn},
+		-balloonmsg => '"Ctrl + PageUp"',
+		-font => "TKFN"
+	);
+	$bunhyojiwin->Balloon()->attach(
+		$self->{nxt_result_btn},
+		-balloonmsg => '"Ctrl + PageDown"',
+		-font => "TKFN"
+	);
+
+
+
 	$self->{text}    = $srtxt;
 	$self->{win_obj} = $bunhyojiwin;
 	return $self;
@@ -200,6 +248,18 @@ sub update_buttons{
 		$self->{pre_btn}->configure(-state, 'disable');
 	}
 	
+	# 次の結果
+	if ($self->{parent}->if_next){
+		$self->{nxt_result_btn}->configure(-state, 'normal');
+	} else {
+		$self->{nxt_result_btn}->configure(-state, 'disable');
+	}
+	# 前の結果
+	if ($self->{parent}->if_prev){
+		$self->{pre_result_btn}->configure(-state, 'normal');
+	} else {
+		$self->{pre_result_btn}->configure(-state, 'disable');
+	}
 }
 
 
