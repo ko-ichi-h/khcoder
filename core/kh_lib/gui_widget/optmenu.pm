@@ -62,4 +62,10 @@ sub configure{
 	$self->{win_obj}->configure(%args);
 }
 
+sub destroy{
+	my $self = shift;
+	$self->{win_obj}->destroy;
+	undef $self;
+}
+
 1;

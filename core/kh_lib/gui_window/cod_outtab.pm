@@ -2,6 +2,7 @@ package gui_window::cod_outtab;
 use base qw(gui_window);
 use strict;
 use gui_widget::optmenu;
+use mysql_outvar;
 
 #-------------#
 #   GUI作製   #
@@ -48,7 +49,7 @@ sub _new{
 		variable => \$self->{cell_opt},
 	);
 	
-	my $f1 = $lf->Frame->pack(-fill => 'x');
+	my $f1 = $lf->Frame->pack(-fill => 'x', -pady => 3);
 	
 	# 単位選択
 	$f1->Label(
@@ -60,8 +61,9 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{tani_obj} = gui_widget::tani->open(
-		parent => $f1,
-		pack   => \%pack,
+		parent  => $f1,
+		pack    => \%pack,
+		command => sub{$self->fill;}
 	);
 
 	# 変数選択
@@ -70,6 +72,7 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
+	$self->{opt_frame} = $f1;
 	
 	$f1->Button(
 		-text    => Jcode->new('集計')->sjis,
@@ -118,8 +121,50 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
-	
+	$self->fill;
 	return $self;
+}
+
+#----------------------------------#
+#   利用できる変数のリストを表示   #
+#----------------------------------#
+
+sub fill{
+	my $self = shift;
+	unless ($self->{tani_obj}){return 0;}
+	
+	if ($self->{opt_body}){
+		$self->{opt_body}->destroy;
+	}
+	
+	# 利用できる変数があるかどうかチェック
+	my $h = mysql_outvar->get_list;
+	my @options;
+	foreach my $i (@{$h}){
+		if ($i->[0] eq $self->tani){
+			push @options, [Jcode->new($i->[1])->sjis, $i->[2]];
+		}
+	}
+	
+	if (@options){
+		$self->{opt_body} = gui_widget::optmenu->open(
+			parent  => $self->{opt_frame},
+			pack    => {-side => 'left', -padx => 2},
+			options => \@options,
+			variable => \$self->{var_id},
+		);
+	} else {
+		$self->{opt_body} = gui_widget::optmenu->open(
+			parent  => $self->{opt_frame},
+			pack    => {-side => 'left', -padx => 2},
+			options => 
+				[
+					[Jcode->new('利用不可')->sjis, -1],
+				],
+			variable => \$self->{var_id},
+		);
+		$self->{opt_body}->configure(-state => 'disable');
+	}
 }
 
 #------------------#
@@ -134,7 +179,7 @@ sub _calc{
 	$self->win_obj->update;
 	
 	# 入力内容チェック
-	unless ( $self->tani1 && -e $self->cfile ){
+	unless ( $self->tani && -e $self->cfile && $self->{var_id} > -1){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			msg => "指定された条件での集計は行えません。",
@@ -153,9 +198,9 @@ sub _calc{
 		return 0;
 	}
 	unless (
-		$result = $result->tab(
-			$self->tani1,
-			$self->tani2,
+		$result = $result->outtab(
+			$self->tani,
+			$self->{var_id},
 			$self->{cell_opt}
 		)
 	){
@@ -245,13 +290,9 @@ sub cfile{
 	my $self = shift;
 	return $self->{codf_obj}->cfile;
 }
-sub tani1{
+sub tani{
 	my $self = shift;
-	return $self->{tani_obj}->tani1;
-}
-sub tani2{
-	my $self = shift;
-	return $self->{tani_obj}->tani2;
+	return $self->{tani_obj}->tani;
 }
 sub label{
 	my $self = shift;

@@ -116,7 +116,7 @@ sub read{
 
 sub get_list{
 	my $h = mysql_exec->select("
-		SELECT tani, name
+		SELECT tani, name, id
 		FROM outvar
 		ORDER BY id
 	",1)->hundle->fetchall_arrayref;
