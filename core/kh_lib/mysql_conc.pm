@@ -274,6 +274,10 @@ sub _format{                                      # 結果の出力
 	my $return;
 	my $last = mysql_exec->select("SELECT COUNT(*) FROM temp_concl",1)->hundle->fetch->[0];
 	--$last;
+	
+	if ($self->{limit} <= $last){
+		$last = $self->{limit} - 1;
+	}
 
 	for (my $n = 0; $n <= $last; ++$n){
 		foreach my $i (@{$self->{left}}){

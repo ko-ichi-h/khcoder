@@ -74,7 +74,7 @@ sub add_new{
 		if ($i->file_target eq $new->file_target){
 			gui_errormsg->open(
 				type    => 'msg',
-				window  => \$::main_gui->{w_new_pro},
+				# window  => \$win,
 				msg     =>
 				"選択されたファイルは既にプロジェクトとして登録されています"
 			);

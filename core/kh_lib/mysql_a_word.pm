@@ -40,6 +40,11 @@ sub new{
 	return $self;
 }
 
+sub genkei_ids{
+	my $self = shift;
+	return $self->{genkei_id_s};
+}
+
 # 表層語IDリストを返す
 sub hyoso_id_s{
 	my $self = shift;
