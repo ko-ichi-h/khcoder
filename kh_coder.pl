@@ -36,3 +36,11 @@ $config_obj->sqllog(1);                                       # SQL文のログ記録
 $main_gui = gui_window::main->open;                           # GUI開始
 
 MainLoop;
+
+#---------------#
+#   perlapp用   #
+
+# __END__
+
+use Tk::DragDrop::Win32Drop;
+use Tk::DragDrop::Win32Site;
