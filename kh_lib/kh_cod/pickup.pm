@@ -92,7 +92,7 @@ sub sql{
 	
 	my $sql;
 	if ($args{pick_hi}){
-		$sql .= "SELECT bun_id, dan_id, rowtxt\n";
+		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt\n";
 		$sql .= "FROM bun, bun_r\n";
 		unless ($args{tani} eq 'bun'){
 			$sql .= "	LEFT JOIN $args{tani} ON\n";
@@ -126,7 +126,7 @@ sub sql{
 			)
 		";
 	} else {
-		$sql .= "SELECT bun_id, dan_id, rowtxt\n";
+		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt\n";
 		if ($args{tani} eq 'bun'){
 			$sql .= "FROM bun, bun_r, ct_pickup\n";
 		} else {
