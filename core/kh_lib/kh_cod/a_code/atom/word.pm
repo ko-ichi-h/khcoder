@@ -111,12 +111,15 @@ sub ready{
 		my $table = 'ct_'."$tani".'_kihon_'. "$i";
 		push @{$self->{tables}}, $table;
 		
-		mysql_exec->do("drop table $table");
+		if ( mysql_exec->table_exists($table) ){
+			next;
+		}
+		
 		mysql_exec->do("
 			CREATE TABLE $table (
 				id INT primary key not null,
 				num INT
-			)
+			) TYPE = HEAP
 		",1);
 		mysql_exec->do("
 			INSERT

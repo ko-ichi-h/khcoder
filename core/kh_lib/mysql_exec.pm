@@ -17,6 +17,28 @@ sub drop_table{
 	$::project_obj->dbh->do("DROP TABLE IF EXISTS $table");
 }
 
+sub table_exists{
+	my $class = shift;
+	my $table = shift;
+	my $r = 0;
+	foreach my $i ( $::project_obj->dbh->func( '_ListTables' ) ){
+		if ($i eq $table){
+			$r = 1;
+			last;
+		}
+	}
+	return $r;
+}
+
+sub clear_tmp_tables{
+	my $class = shift;
+	foreach my $i ( $::project_obj->dbh->func( '_ListTables' ) ){
+		if ( index($i,'ct_') == 0){
+			$::project_obj->dbh->do("drop table $i");
+		}
+	}
+}
+
 sub do{
 	my $class = shift;
 	my $self;

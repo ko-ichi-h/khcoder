@@ -71,6 +71,9 @@ sub open{
 	$self->{dbh} = DBI->connect("DBI:mysql:database=$self->{dbname};mysql_local_infile=1",undef,undef)
 		or gui_errormsg->open(type => 'mysql', sql => 'connect');
 	$::project_obj = $self;
+	
+	# データベース内の一時テーブルをクリア
+	mysql_exec->clear_tmp_tables;
 
 	
 	# 茶筌（複合名詞）の設定を確認
