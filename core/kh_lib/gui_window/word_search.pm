@@ -30,7 +30,8 @@ sub _new{
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	my $e1 = $fra4e->Entry(
-		-font => "TKFN"
+		-font => "TKFN",
+		-background => 'white'
 	)->pack(expand => 'y', fill => 'x', side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);

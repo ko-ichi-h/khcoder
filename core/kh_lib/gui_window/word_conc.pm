@@ -36,6 +36,7 @@ sub _new{
 
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
+		-background => 'white',
 		-width => 14
 	)->pack(side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
@@ -49,6 +50,7 @@ sub _new{
 
 	my $e4 = $fra4e->Entry(
 		-font => "TKFN",
+		-background => 'white',
 		-width => 8
 	)->pack(side => 'left');
 	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
@@ -61,7 +63,8 @@ sub _new{
 
 	my $e2 = $fra4e->Entry(
 		-font => "TKFN",
-		-width => 8
+		-width => 8,
+		-background => 'white'
 	)->pack(side => 'left');
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->search;});
@@ -72,7 +75,8 @@ sub _new{
 	)->pack(side => 'left');
 
 	my $e3 = $fra4e->Entry(
-		-width => 2
+		-width => 2,
+		-background => 'white'
 	)->pack(side => 'left');
 	$e3->insert('end','20');
 
@@ -150,6 +154,7 @@ sub _new{
 	my $limit_e = $fra4h->Entry(
 		-font  => "TKFN",
 		-width => 5,
+		-background => 'white'
 	)->pack(-side => 'left');
 	$limit_e->insert(0,'1000');
 
