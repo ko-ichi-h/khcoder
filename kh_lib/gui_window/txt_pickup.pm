@@ -3,6 +3,8 @@ use base qw(gui_window);
 
 use strict;
 
+use kh_cod::pickup;
+
 #-------------#
 #   GUI作製   #
 
@@ -115,7 +117,7 @@ sub _new{
 	$self->{ch_w_high} = $right->Checkbutton(
 		-text     => Jcode->new('より上位の見出しを新規テキストファイルに含める')->sjis,
 		-font     => "TKFN",
-		-variable => $self->{ch_v_high},
+		-variable => \$self->{ch_v_high},
 	)->pack(-anchor => 'w');
 	$self->{ch_w_high}->select;
 
@@ -193,7 +195,7 @@ sub read_code{
 	$self->{clist}->delete('all');
 	unless (-e $self->cfile ){return 0;}
 	
-	my $cod_obj = kh_cod::func->read_file($self->cfile) or return 0;
+	my $cod_obj = kh_cod::pickup->read_file($self->cfile) or return 0;
 	unless (eval(@{$cod_obj->codes})){return 0;}
 	my $row = 0;
 	foreach my $i (@{$cod_obj->codes}){
@@ -212,7 +214,7 @@ sub read_code{
 
 #--------------#
 #   処理内容   #
-
+#--------------#
 
 
 sub save{
@@ -224,29 +226,58 @@ sub save{
 	}
 }
 
-# コードが与えられたテキストの取り出し
+#------------------------------------------#
+#   コードが与えられたテキストの取り出し   #
 
 sub _cod{
 	my $self = shift;
 	
+	if ( $self->{clist}->info('selection') eq '' ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => 'コードが選択されていません。'
+		);
+		return 0;
+	}
+	my $selected = $self->{clist}->info('selection');
 	
+	my $path = $self->get_path or return 0;
+	
+	$self->{code_obj}->pick(
+		file     => $path,
+		selected => $selected,
+		tani     => $self->tani,
+		pick_hi  => $self->{ch_v_high},
+	);
+	
+	$self->close;
 }
 
-# 見出しの取り出し
+#----------------------#
+#   見出しの取り出し   #
 
 sub _head{
 	my $self = shift;
 	
 	# 取り出す見出しのチェック
 	my %midashi;
+	my $n;
 	foreach my $i ('H1','H2','H3','H4','H5'){
 		if ($self->{"check_v_"."$i"}){
 			my $h = $i;
 			$h =~ tr/H/h/;
 			$midashi{$h} = 1;
+			++$n;
 		}
 	}
-
+	unless ($n){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '取り出す見出しが選択されていません。'
+		);
+		return 0;
+	}
+	
 	my $path = $self->get_path or return 0;
 
 	mysql_getheader->get_all(
@@ -257,7 +288,9 @@ sub _head{
 	$self->close;
 }
 
-# 保存先の参照
+#------------------#
+#   保存先の参照   #
+
 sub get_path{
 	my $self = shift;
 	

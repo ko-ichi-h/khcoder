@@ -62,7 +62,7 @@ sub select{
 	
 	$self->log;
 	
-	my $t = $::project_obj->dbh->prepare($self->sql);
+	my $t = $::project_obj->dbh->prepare($self->sql) or $self->print_error;
 	$t->execute or $self->print_error;
 	$self->{hundle} = $t;
 	return $self;
