@@ -170,7 +170,7 @@ sub make{
 				-label => Jcode->new('出現回数 分布')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					mysql_words->freq_of_f;
+					gui_window::word_freq->open->count;
 				})},
 				-state => 'disable'
 			);

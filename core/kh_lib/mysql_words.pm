@@ -190,20 +190,35 @@ sub freq_of_f{
 	
 	my $list = &_make_list;
 	
-	my ($n, %frep, $sum, $sum_sq); 
+	my ($n, %freq, $sum, $sum_sq); 
 	foreach my $i (@{$list}){
 		foreach my $h (@{$i->[1]}){
-			++$frep{$h->[1]};
+			++$freq{$h->[1]};
 			++$n;
 			$sum += $h->[1];
 			$sum_sq += $h->[1] ** 2;
 		}
 	}
-	
 	my $mean = sprintf("%.2f", $sum / $n);
 	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
 	
-
+	my @r1;
+	push @r1, ['抽出語 種類数 (n)  ', $n];
+	push @r1, ['平均 出現数', $mean];
+	push @r1, ['標準偏差', $sd];
+	
+	my (@r2, $cum); 
+	foreach my $i (sort {$a <=> $b} keys %freq){
+		$cum += $freq{$i};
+		push @r2, [
+			$i,
+			$freq{$i},
+			sprintf("%.2f",($freq{$i} / $n) * 100),
+			$cum,
+			sprintf("%.2f",($cum / $n) * 100)
+		];
+	}
+	return(\@r1, \@r2);
 }
 
 #----------------------#
