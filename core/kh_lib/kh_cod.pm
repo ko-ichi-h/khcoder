@@ -97,6 +97,8 @@ sub read_file{
 #--------------------------------------------#
 sub cumulate{
 	my $self = shift;
+	my $salt = shift;
+	
 	$self->valid_codes;
 	
 	my $cnt = 0;
@@ -106,12 +108,16 @@ sub cumulate{
 		push @temp, $i;
 		++$cnt;
 		if ($cnt == 30){
-			$self->_cumulate(\@temp,$cycle);
+			$self->_cumulate(\@temp,$cycle,$salt);
 			$cnt = 0;
 			@temp = ();
 			++$cycle;
 		}
 	}
+	if (@temp){
+		$self->_cumulate(\@temp,$cycle,$salt);
+	}
+	
 	return 1;
 }
 
@@ -119,20 +125,58 @@ sub _cumulate{
 	my $self  = shift;
 	my $codes = shift;
 	my $n     = shift;
+	my $salt  = shift;
 	
-	my $table = "ct_$self->{tani}_code_cum_$n";
+	my $table = "ct_$self->{tani}_$salt"."code_cum_$n";
+	print "$table\n";
 	
+	# テーブル作成
 	mysql_exec->drop_table($table);
+	my $sql = "CREATE TABLE $table (\n";
+	$sql .= "	id int not null primary key,\n";
+	my $n = 0;
+	my $col_list;
+	foreach my $i (@{$codes}){
+		$sql .= "	c$n int,\n";
+		$col_list .= "c$n,";
+		++$n;
+	}
+	chop $sql; chop $sql; $sql .= "\n";
+	chop $col_list;
+	$sql .= ") type = heap";
+	mysql_exec->do("$sql",1);
 	
-	mysql_exec->do("
-		CREATE TABLE $table (
-			id int not null primary key,
-			num int
-		) type = heap
-	",1);
+	# Insert
+	$sql = "";
+	$sql .= "INSERT INTO $table (id,$col_list)\n";
+	$sql .= "SELECT $self->{tani}.id, ";
+	foreach my $i (@{$codes}){
+		$sql .= $i->res_table.'.'.$i->res_col.',';
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM $self->{tani}\n";
+	foreach my $i (@{$codes}){
+		$sql .= '	LEFT JOIN '.$i->res_table.' ON '.$i->res_table.".id = $self->{tani}.id\n";
+	}
+	$sql .= "WHERE\n";
+	$n = 0;
+	foreach my $i (@{$codes}){
+		$sql .= "OR " if $n;
+		$sql .= $i->res_table.'.'.$i->res_col."\n";
+		++$n;
+	}
+	mysql_exec->do("$sql",1);
 	
-	print "$table\n"; die;
-	
+	# 新しいテーブル・カラム名をセット
+	$n = 0;
+	foreach my $i (@{$codes}){
+		$i->res_table($table);
+		$i->res_col("c$n");
+		++$n;
+	}
+
+
 }
 
 
