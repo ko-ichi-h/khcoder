@@ -22,6 +22,7 @@ sub first{
 	$self->{dbh} = $::project_obj->dbh;
 	bless $self, $class;
 	
+	kh_morpho->run;
 		my $t0 = new Benchmark;
 	$self->readin;
 		my $t1 = new Benchmark;
