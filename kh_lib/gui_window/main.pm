@@ -34,6 +34,13 @@ sub _new{
 		$::splash->Destroy;
 	}
 
+	# GUI未作成のコマンド
+	use kh_hinshi;
+	$self->win_obj->bind(
+		'<Control-Key-h>',
+		sub { kh_hinshi->output; }
+	);
+
 	$::main_gui = $self;
 	return $self;
 }
