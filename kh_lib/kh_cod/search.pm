@@ -69,7 +69,7 @@ sub add_direct{
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
 		if ($self->{codes}[0]->name eq '＃直接入力'){
-			print "Delete old \'direct\'\n";
+			print "Deleting old \'direct\' code\n";
 			shift @{$self->{codes}};
 		}
 	}
@@ -96,6 +96,32 @@ sub add_direct{
 	}
 }
 
+#----------------------#
+#   コーディング実行   #
+
+sub code{
+	my $self = shift;
+	my $tani = shift;
+	$self->{tani} = $tani;
+	
+	unless ($self->{codes}){
+		return 0;
+	}
+	
+	my $n = 0;
+	foreach my $i (@{$self->{codes}}){
+		my $res_table = "ct_$tani"."_dscode_$n";
+		++$n;
+		$i->ready($tani) or next;
+		$i->code($res_table);
+		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
+		
+	}
+	
+	return $self;
+}
+
+
 #----------------#
 #   検索の実行   #
 
@@ -104,16 +130,20 @@ sub search{
 	my %args = @_;
 	
 	$self->{tani} = $args{tani};
-	
 	$self->{last_search_words} = undef;
-	mysql_exec->drop_table("temp_doc_search");
+	
+	# デバッグコード
+	foreach my $i (@{$self->{codes}}){
+		print Jcode->new($i->name)->sjis."\n".Jcode->new($i->row_condition)->sjis."\n";
+	}
+	print "\n";
 	
 	# コーディング
 	print "kh_cod::search -> coding...\n";
 	if ($self->{coded} && $last_tani eq $self->{tani}){ # コーディング済み
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
-		$self->{codes}[0]->code("ct_$args{tani}_code_0");
+		$self->{codes}[0]->code("ct_$args{tani}_dscode_0");
 	} else {                                            # 全てコーディング
 		if ($self->{codes}){
 			foreach my $i (@{$self->{codes}}){
@@ -220,7 +250,7 @@ sub search{
 	else {
 		$sql .= "SELECT $args{tani}.id, ";
 		if ($args{order} eq 'tf'){
-			$sql .= 100 - (";
+			$sql .= "100 - (";
 			my $nn = 0;
 			foreach my $i (@{$args{selected}}){
 				if ($nn){
