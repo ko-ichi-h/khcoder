@@ -230,25 +230,35 @@ sub _sort{                                        # ソート用テーブルの作成
 	$sql = '';
 	$sql .= "INSERT INTO temp_conc_sort ( conc_id )\n";
 	$sql .= "SELECT temp_concl.id\n";
-	$sql .= "FROM   temp_concl,";
+	$sql .= "FROM   temp_concl,temp_concr,";
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
 		$sql .= "temp_conc_$i,";
 	}
 	chop $sql; $sql .= "\n";
+	$sql .= "WHERE\n";
+	$sql .= "temp_concl.id = temp_concr.id\n";
 	$n = 0; my @temp;
 	foreach my $i ('sort1','sort2','sort3'){
 		if ($args{$i} eq "id"){ last; }
-		if ($n == 0){
-			$sql .= "WHERE\n";
-			$sql .= " temp_concl.$args{$i} = temp_conc_$i.hyoso_id\n";
+		my $lr;
+		if (substr($args{$i},0,1) eq 'r'){
+			$lr = 'r';
 		} else {
-			$sql .= "AND temp_concl.$args{$i} = temp_conc_$i.hyoso_id\n";
-			my $l = 0;
-			foreach my $h (@temp){
-				$sql .= "AND temp_concl.$h = temp_conc_$i.temp"."$l\n";
-				++$l;
+			$lr = 'l';
+		}
+
+		$sql .= "AND temp_conc$lr.$args{$i} = temp_conc_$i.hyoso_id\n";
+		my $l = 0;
+		foreach my $h (@temp){
+			my $lr;
+			if (substr($h,0,1) eq 'r'){
+				$lr = 'r';
+			} else {
+				$lr = 'l';
 			}
+			$sql .= "AND temp_conc$lr.$h = temp_conc_$i.temp"."$l\n";
+			++$l;
 		}
 		push @temp, $args{$i};
 		++$n;
