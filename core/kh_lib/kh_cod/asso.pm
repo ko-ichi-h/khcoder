@@ -327,24 +327,24 @@ sub asso{
 
 	#--------------------#
 	#   全体確立の計算   #
-
-	print "4: probability...\n";
-	mysql_exec->drop_table("ct_ass_a");           # 全体確立保存テーブル
-	mysql_exec->do("
-		CREATE TABLE ct_ass_a(
-			genkei_id INT primary key,
-			p         INT
-		) TYPE=HEAP
-	",1);
-	$sql = "INSERT INTO ct_ass_a (genkei_id, p)\n";
-	$sql .= "SELECT genkei.id, COUNT(DISTINCT $tani.id)\n";
-	$sql .= "FROM hyosobun, $tani, ct_ass_p, hyoso, genkei\n";
-	$sql .= "WHERE\n$sql_join{$tani}";
-	$sql .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
-	$sql .= "\tAND hyoso.genkei_id = genkei.id\n";
-	$sql .= "\tAND ct_ass_p.genkei_id = genkei.id\n";
-	$sql .= "GROUP BY genkei.id";
-	mysql_exec->do($sql,1);
+	#
+	#print "4: probability...\n";
+	#mysql_exec->drop_table("ct_ass_a");           # 全体確立保存テーブル
+	#mysql_exec->do("
+	#	CREATE TABLE ct_ass_a(
+	#		genkei_id INT primary key,
+	#		p         INT
+	#	) TYPE=HEAP
+	#",1);
+	#$sql = "INSERT INTO ct_ass_a (genkei_id, p)\n";
+	#$sql .= "SELECT genkei.id, COUNT(DISTINCT $tani.id)\n";
+	#$sql .= "FROM hyosobun, $tani, ct_ass_p, hyoso, genkei\n";
+	#$sql .= "WHERE\n$sql_join{$tani}";
+	#$sql .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
+	#$sql .= "\tAND hyoso.genkei_id = genkei.id\n";
+	#$sql .= "\tAND ct_ass_p.genkei_id = genkei.id\n";
+	#$sql .= "GROUP BY genkei.id";
+	#mysql_exec->do($sql,1);
 
 	print "done\n";
 	return 1;
@@ -364,18 +364,46 @@ sub fetch_results{
 
 	# ソート値
 	my %lift = (
-		'sa'  => "ct_ass_p.p / $denom1 - ct_ass_a.p / $denom2",
-		'hi'  => "(ct_ass_p.p / $denom1) / (ct_ass_a.p / $denom2)",
-		'chi' => "
-			$denom2 * 
-			( ct_ass_p.p * ( $denom2 - $denom1 - ct_ass_a.p + ct_ass_p.p )
-				- ($denom1 - ct_ass_p.p) * ( ct_ass_a.p - ct_ass_p.p ) ) * 
-			( ct_ass_p.p * ( $denom2 - $denom1 - ct_ass_a.p + ct_ass_p.p )
-				- ($denom1 - ct_ass_p.p) * ( ct_ass_a.p - ct_ass_p.p ) ) 
+		'sa'  => "ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2",
+		'hi'  => "(ct_ass_p.p / $denom1) / (df_$self->{tani}.f / $denom2)",
+		'jac' => "
+			ct_ass_p.p
 			/
 			(
-				( ct_ass_a.p )
-				* ( $denom2 - ct_ass_a.p )
+				ct_ass_p.p
+				+ df_$self->{tani}.f - ct_ass_p.p
+				+ $denom1 - ct_ass_p.p
+			)
+			",
+		'ochi' => "
+			sqrt(
+				( ct_ass_p.p / $denom1 )
+				*
+				( ct_ass_p.p / df_$self->{tani}.f )
+			)
+			",
+		'chi' => "
+			$denom2
+			*
+			(
+				ct_ass_p.p
+				*
+				( $denom2 - $denom1 - df_$self->{tani}.f + ct_ass_p.p )
+				-
+				($denom1 - ct_ass_p.p) * ( df_$self->{tani}.f - ct_ass_p.p ) 
+			)
+			* 
+			(
+				ct_ass_p.p
+				*
+				( $denom2 - $denom1 - df_$self->{tani}.f + ct_ass_p.p )
+				-
+				($denom1 - ct_ass_p.p) * ( df_$self->{tani}.f - ct_ass_p.p ) 
+			)
+			/
+			(
+				( df_$self->{tani}.f )
+				* ( $denom2 - df_$self->{tani}.f )
 				* ( $denom1 )
 				* ( $denom2 - $denom1 )
 			)
@@ -400,20 +428,20 @@ sub fetch_results{
 		SELECT
 			genkei.name,
 			khhinshi.name,
-			ct_ass_a.p,
-			ROUND(ct_ass_a.p / $denom2, 3),
+			df_$self->{tani}.f,
+			ROUND(df_$self->{tani}.f / $denom2, 3),
 			ct_ass_p.p,
 			ROUND(ct_ass_p.p / $denom1, 3),
 			ROUND($lift{$args{order}}, 15) as lift
-		FROM genkei, khhinshi, ct_ass_p, ct_ass_a
+		FROM genkei, khhinshi, ct_ass_p, df_$self->{tani}
 		WHERE
 			    genkei.khhinshi_id = khhinshi.id
-			AND ct_ass_p.genkei_id = ct_ass_a.genkei_id
+			AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
 			AND ct_ass_p.genkei_id = genkei.id
-			AND ( ct_ass_p.p / $denom1 - ct_ass_a.p / $denom2 ) > 0
-			AND ct_ass_a.p >= $args{filter}->{min_doc}
+			AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
+			AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 			$hselection
-		ORDER BY lift DESC
+		ORDER BY lift DESC, ct_ass_p.p DESC
 		LIMIT $args{filter}->{limit}
 	";
 
