@@ -5,12 +5,25 @@ use mysql_exec;
 sub a_word{
 	my $class = shift;
 	my %args  = @_;
-	
+
+	unless ($args{length}){
+		$args{length} = 20;
+	}
+	my (@left, @right);
+	for (my $n = 1; $n <= $args{length}; ++$n){
+		my $l = $args{length} - $n + 1;
+		$l = 'l'."$l";
+		push @left, $l;
+		push @right, "r$n";
+	}
+	my @scanlist = (@left,"center",@right);
+
+
 	print "0: getting hyoso list\n";
 	
-	# •\‘wŒê‚ÌƒŠƒXƒgƒAƒbƒv
+	# É½ÁØ¸ì¤Î¥ê¥¹¥È¥¢¥Ã¥×
 	my @hyoso;
-	if ($args{kihon}){
+#	if ($args{kihon}){
 		my $d = mysql_exec->select("
 			SELECT hyoso.id
 			FROM   genkei, hyoso
@@ -21,13 +34,17 @@ sub a_word{
 		foreach my $i (@{$d}){
 			push @hyoso, $i->[0];
 		}
-	} else {
+#	} else {
 #		push @hyoso, $query;
+#	}
+
+	unless (@hyoso){
+		return 0;
 	}
-	
+
 	print "1: getting places\n";
-	
-	# oŒ»ˆÊ’u‚ÌƒŠƒXƒgƒAƒbƒv
+
+	# ½Ğ¸½°ÌÃÖ¤Î¥ê¥¹¥È¥¢¥Ã¥×
 	
 	my $sql;
 	$sql .= "SELECT id\n";
@@ -43,116 +60,75 @@ sub a_word{
 	}
 	my $points = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	
-	print "2: getting context(id)\n";
+	print "2: Creating temp table\n";
 
-	# ‘OŒã‚Ìhyoso.id‚ğæ“¾
+	# Temp TableºîÀ®
 
-	my $order = [()];
-	$sql  = "SELECT id, hyoso_id\n FROM hyosobun\n WHERE\n";
-	my $n2 = 0;
-	my $temp = '';
+	mysql_exec->do("drop table temp_conc");
+	$sql  = "create table temp_conc (\n";
+	$sql .= "id int auto_increment primary key not null,\n";
+	foreach my $i (@scanlist){
+		$sql .= "$i int,";
+	}
+	chop $sql;
+	$sql .= ")";
+	mysql_exec->do($sql,1);
+	
 	foreach my $i (@{$points}){
-		my $p = $i->[0] - $args{context};
-		my $n = $i->[0] + $args{context};
-		$temp .= "OR ( id >= $p AND id <= $n )\n";
-		++$n2;
-		if ($n2 >= 100){
-			substr($temp,0,2) = '';
-			my $hoge = &run_sql($sql,$temp);
-			@{$order} = (@{$order},@{$hoge});
-			$temp = ''; $n2 = 0;
+		my $p = $i->[0] - $args{length};
+		my $n = $i->[0] + $args{length};
+		my $sql  = "SELECT hyoso_id\n FROM hyosobun\n WHERE\n";
+		$sql .= "id >= $p AND id <= $n \n";
+		$sql .= "ORDER BY id";
+		my $r = mysql_exec->select("$sql",1)->hundle->fetchall_arrayref;
+		$sql  = "INSERT INTO temp_conc\n (";
+		foreach my $h (@scanlist){
+			$sql .= "$h,";
 		}
+		chop $sql;		
+		$sql .= ") VALUES (";
+		foreach my $h (@{$r}){
+			$sql .= "$h->[0],";
+		}
+		chop $sql;
+		$sql .= ")";
+		mysql_exec->do("$sql",1);
 	}
-	if ($temp){
-		substr($temp,0,2) = '';
-		my $hoge = &run_sql($sql,$temp);
-		@{$order} = (@{$order},@{$hoge});
+	
+	# ·ë²Ì¤Î½ĞÎÏ
+	print "3: Sorting...\n";
+	
+	my $result;
+	foreach my $i (@scanlist){
+		my $sql  = "SELECT hyoso.name FROM ( hyoso, temp_conc ) WHERE";
+		   $sql .= "	temp_conc.$i = hyoso.id\n";
+		   $sql .= "ORDER BY temp_conc.id";
+		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
-	sub run_sql{ 
-		my $sql = shift;
-		my $temp = shift;
-		$sql .= $temp;
-		my $result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-		return $result;
-	}
+	print "4: Formating output...\n";
+	#open (TOUT,">test2.txt") or die;
+	#use Data::Dumper;
+	#print TOUT Dumper($result);
 
-	return 0;
-}
-1;
-
-__END__
-	print "3: getting ready for id2word conv\n";
-
-	# ID‚É‘Î‰‚·‚é•\‘wŒê‚ğæ“¾
-	my %ids;
-	foreach my $i (@hyoso_order){
-		foreach my $h (@{$i}){
-			foreach my $j (@{$h}){
-				++$ids{$j};
-			}
-		}
-	}
-	
-	$sql = "SELECT id, name \n FROM hyoso \n WHERE \n";
-	my $temp = '';
-	my $n = 0;
-	my %id2word;
-	foreach my $i (keys %ids){
-		$temp .= "OR id = $i\n";
-		++$n;
-		if ($n = 500){
-			substr($temp, 0, 2) = '';
-			my $tempsql = "$sql"."$temp";
-			my $id2word =
-				mysql_exec->select($tempsql,1)->hundle->fetchall_arrayref;
-			foreach my $i (@{$id2word}){
-				$id2word{$i->[0]} = $i->[1];
-			}
-			$temp = '';
-			$n = 0;
-		}
-	}
-	
-	if ($temp){
-		substr($temp, 0, 2) = '';
-		my $tempsql = "$sql"."$temp";
-		my $id2word =
-			mysql_exec->select($tempsql,1)->hundle->fetchall_arrayref;
-		foreach my $i (@{$id2word}){
-			$id2word{$i->[0]} = $i->[1];
-		}
-	}
-	
-	print "4: id2word conversion\n";
-	
-	# Œ‹‰Ê‚Ìì¬
-	
 	my $return;
-	foreach my $i (@hyoso_order){
-		my $current;
-		foreach my $h (@{$i}){
-			my $part;
-			foreach my $g (@{$h}){
-				$part .= $id2word{$g};
-			}
-			push @{$current}, $part;
-		}
-		push @{$return}, $current;
-	}
+	my $last = @{$points};
+	--$last;
+
 	
+	for (my $n = 0; $n <= $last; ++$n){
+		foreach my $i (@left){
+			$return->[$n][0] .= $result->{$i}[$n][0];
+		}
+		foreach my $i (@right){
+			$return->[$n][2] .= $result->{$i}[$n][0];
+		}
+		$return->[$n][1] = $result->{center}[$n][0];
+	}
+
+
+
 	return $return;
 }
-
-
-sub _listing{
-	my $result = shift;
-	my $return;
-	foreach my $i (@{$result}){
-		push @{$return}, $i->[0];
-	}
-	return $return;
-}
-
 
 1;

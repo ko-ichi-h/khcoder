@@ -21,6 +21,7 @@ use gui_window::sql_select;
 use gui_window::sql_do;
 use gui_window::word_search;
 use gui_window::dictionary;
+use gui_window::word_conc;
 
 sub open{
 	my $class = shift;

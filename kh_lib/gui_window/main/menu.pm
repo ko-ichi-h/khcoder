@@ -98,6 +98,7 @@ sub make{
 				-label => Jcode->new('形態素解析＋')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
+					
 					my $w = gui_wait->start;
 					kh_morpho->run;
 					mysql_ready->first;
@@ -169,6 +170,21 @@ sub make{
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					mysql_words->make_list();
+				})},
+				-state => 'disable'
+			);
+
+	my $f4 = $f->cascade(
+		-label => Jcode->new('探索・コーディング支援')->sjis,
+		-font => "TKFN",
+		-tearoff=>'no'
+	);
+
+		$self->{t_word_conc} = $f4->command(
+				-label => Jcode->new('コンコーダンス(KWIC)')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_conc->open;
 				})},
 				-state => 'disable'
 			);
@@ -282,6 +298,7 @@ sub refresh{
 		't_word_print',
 		't_word_list',
 		't_word_freq',
+		't_word_conc',
 	);
 
 	# 状態変更
