@@ -53,6 +53,7 @@ sub make{
 					$::main_gui->menu->refresh;
 					$::main_gui->inner->refresh;
 				});},
+			-accelerator => 'Ctrl+W'
 		);
 		
 		
@@ -523,6 +524,15 @@ sub make{
 	$mw->bind(
 		'<Control-Key-n>',
 		sub{ $mw->after(10,sub{gui_window::project_new->open;});}
+	);
+	$mw->bind(
+		'<Control-Key-w>',
+		sub{ $mw->after(10,sub{
+					$::main_gui->close_all;
+					undef $::project_obj;
+					$::main_gui->menu->refresh;
+					$::main_gui->inner->refresh;
+				});}
 	);
 
 	bless $self, $class;
