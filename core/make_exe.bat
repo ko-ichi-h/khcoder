@@ -1,0 +1,1 @@
+perlapp -exe kh_coder2.exe -force -verbose  -lib ./kh_lib -info Comments="Japanese Text analysis tool";CompanyName="Osaka-u";FileDescription="Japanese Text analysis tool";FileVersion=2.0.0.0;InternalName="kh_coder2";LegalCopyright="HIGUCHI Koichi";OriginalFilename="kh_coder2.exe";ProductName="KH Coder";"ProductVersion=2.0.0.0" kh_coder.pl
