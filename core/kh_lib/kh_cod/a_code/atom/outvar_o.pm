@@ -29,17 +29,28 @@ sub ready{
 	} else {
 		die("something wrong!");
 	}
-	
-	# 集計単位が一致するかどうか確認
-	my $var_obj = mysql_outvar::a_var->new($var);
 
-	if ($var_obj->{tani} eq $tani){
-		$self->{valid} = 1;
-	} else {
-		$self->{valid} = 0;
-		return 1;
+	# 集計単位が矛盾しないかどうか確認
+	my $var_obj = mysql_outvar::a_var->new($var);
+	$self->{valid} = 1;
+	if ($tani eq 'dan'){                # 段落単位の場合
+		if ($var_obj->{tani} eq 'bun'){
+			$self->{valid} = 0;
+			return 1;
+		}
 	}
-	
+	elsif ($tani =~ /h([1-5])/i) {      # H1-H5単位の場合
+		if ($var_obj->{tani} eq 'bun' || $var_obj->{tani} eq 'dan'){
+			$self->{valid} = 0;
+			return 1;
+		}
+		my $var_tani_num = substr($var_obj->{tani},1,1);
+		if ($var_tani_num < $1){
+			$self->{valid} = 0;
+			return 1;
+		}
+	}
+
 	# テーブル名決定
 	$val = $var_obj->real_val($val);
 	my @temp = unpack "C*", $val;
@@ -49,7 +60,7 @@ sub ready{
 	}
 	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"."$temp";
 	$self->{tables} = ["$table"];
-	
+
 	# テーブル作成
 	if ( mysql_exec->table_exists($table) ){
 		return 1;
@@ -60,14 +71,28 @@ sub ready{
 			num INT
 		)
 	",1);
-	mysql_exec->do("
-		INSERT
-		INTO $table (id, num)
-		SELECT id, 1
-		FROM $var_obj->{table}
-		WHERE
-			$var_obj->{column} = \'$val\'
-	",1);
+	if ($var_obj->{tani} eq $tani){          # 集計単位が同じ場合
+		mysql_exec->do("
+			INSERT
+			INTO $table (id, num)
+			SELECT id, 1
+			FROM $var_obj->{table}
+			WHERE
+				$var_obj->{column} = \'$val\'
+		",1);
+	} else {                                 # 集計単位が異なる場合
+		my $sql;
+		$sql .= "INSERT INTO $table (id, num) SELECT $tani.id, 1 FROM\n";
+		$sql .= "$var_obj->{table}, $var_obj->{tani}, $tani\n";
+		$sql .= "WHERE\n";
+		$sql .= "$var_obj->{table}.id = $var_obj->{tani}.id\n";
+		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+			$sql .= "and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+			last if ($i eq $var_obj->{tani});
+		}
+		$sql .= "and $var_obj->{table}.$var_obj->{column} = \'$val\'";
+		mysql_exec->do("$sql",1);
+	}
 }
 
 sub tables{
