@@ -135,8 +135,7 @@ sub delete{
 	mysql_exec->do("
 		DELETE FROM outvar
 		WHERE
-			    tani = \'$args{tani}\'
-			AND name = \'$args{name}\'
+			name = \'$args{name}\'
 	",1);
 }
 
