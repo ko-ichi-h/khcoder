@@ -131,13 +131,13 @@ sub search{
 	
 	$self->{tani} = $args{tani};
 	$self->{last_search_words} = undef;
-	
+
 	# デバッグコード
-	foreach my $i (@{$self->{codes}}){
-		print Jcode->new($i->name)->sjis."\n".Jcode->new($i->row_condition)->sjis."\n";
-	}
-	print "\n";
-	
+	#foreach my $i (@{$self->{codes}}){
+	#	print Jcode->new($i->name)->sjis."\n".Jcode->new($i->row_condition)->sjis."\n";
+	#}
+	#print "\n";
+
 	# コーディング
 	print "kh_cod::search -> coding...\n";
 	if ($self->{coded} && $last_tani eq $self->{tani}){ # コーディング済み
