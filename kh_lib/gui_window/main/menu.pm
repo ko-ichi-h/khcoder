@@ -212,7 +212,6 @@ sub make{
 				})},
 				-state => 'disable'
 			);
-		
 
 	my $f8 = $f->cascade(
 			-label => Jcode->new('Ê¸½ñ')->sjis,
