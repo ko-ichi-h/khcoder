@@ -95,7 +95,7 @@ sub _new{
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$wabtkh->Button(
-		-text => 'OK',
+		-text => Jcode->new('ÊÄ¤¸¤ë')->sjis,
 		-font => "TKFN",
 		-width => 8,
 	#	-borderwidth => '1',

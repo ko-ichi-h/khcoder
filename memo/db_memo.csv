@@ -19,3 +19,13 @@
 ,語,name,語,name,KH品詞ID,khhinshi_id,状況名,name
 ,,,,,使用するか否か,ifuse,状況,status
 ,,,,,KH品詞名,name,,
+
+
+
+
+,,outvar,,outvar_lab,,,,
+,外部変数ID,id,ラベルID,id,,,,
+,変数名,name,ラベル,lab,,,,
+,保存テーブル,tab,値,val,,,,
+,保存カラム,col,変数ID,var_id,,,,
+,単位,tani,,,,,,

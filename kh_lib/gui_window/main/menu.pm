@@ -313,6 +313,30 @@ sub make{
 
 	$f->separator();
 	
+	my $f_out_var = $f->cascade(
+		-label => Jcode->new('外部変数')->sjis,
+		 -font => "TKFN",
+		 -tearoff=>'no'
+	);
+	
+		$self->{t_out_read} = $f_out_var->command(
+			-label => Jcode->new('CSVファイルから読み込み')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::outvar_read->open;
+				})},
+			-state => 'disable'
+		);
+	
+		$self->{t_out_list} = $f_out_var->command(
+			-label => Jcode->new('変数リスト・値ラベル')->sjis,
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::outvar_list->open;
+				})},
+			-state => 'disable'
+		);
+	
 	my $f6 = $f->cascade(
 		-label => Jcode->new('テキストファイルの変形')->sjis,
 		 -font => "TKFN",
@@ -461,6 +485,8 @@ sub refresh{
 		'm_b3_crossout_spss',
 		't_txt_pickup',
 		't_doc_search',
+		't_out_read',
+		't_out_list',
 	);
 
 	# 状態変更
