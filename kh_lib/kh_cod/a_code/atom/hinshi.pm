@@ -6,79 +6,164 @@ use mysql_a_word;
 use mysql_exec;
 
 
+#-----------------#
+#   SQLÊ¸¤Î½àÈ÷   #
+#-----------------#
+
+my %sql_join = (
+	'bun' =>
+		'bun.id = hyosobun.bun_idt',
+	'dan' =>
+		'
+			    dan.dan_id = hyosobun.dan_id
+			AND dan.h5_id = hyosobun.h5_id
+			AND dan.h4_id = hyosobun.h4_id
+			AND dan.h3_id = hyosobun.h3_id
+			AND dan.h2_id = hyosobun.h2_id
+			AND dan.h1_id = hyosobun.h1_id
+		',
+	'h5' =>
+		'
+			    h5.h5_id = hyosobun.h5_id
+			AND h5.h4_id = hyosobun.h4_id
+			AND h5.h3_id = hyosobun.h3_id
+			AND h5.h2_id = hyosobun.h2_id
+			AND h5.h1_id = hyosobun.h1_id
+		',
+	'h4' =>
+		'
+			    h4.h4_id = hyosobun.h4_id
+			AND h4.h3_id = hyosobun.h3_id
+			AND h4.h2_id = hyosobun.h2_id
+			AND h4.h1_id = hyosobun.h1_id
+		',
+	'h3' =>
+		'
+			    h3.h3_id = hyosobun.h3_id
+			AND h3.h2_id = hyosobun.h2_id
+			AND h3.h1_id = hyosobun.h1_id
+		',
+	'h2' =>
+		'
+			    h2.h2_id = hyosobun.h2_id
+			AND h2.h1_id = hyosobun.h1_id
+		',
+	'h1' =>
+		'h1.h1_id = hyosobun.h1_id'
+);
+my %sql_group = (
+	'bun' =>
+		'hyosobun.bun_idt',
+	'dan' =>
+		'hyosobun.dan_id, hyosobun.h5_id, hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h5' =>
+		'hyosobun.h5_id, hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h4' =>
+		'hyosobun.h4_id, hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h3' =>
+		'hyosobun.h3_id, hyosobun.h2_id, hyosobun.h1_id',
+	'h2' =>
+		'hyosobun.h2_id, hyosobun.h1_id',
+	'h1' =>
+		'hyosobun.h1_id',
+);
+
+#--------------------#
+#   WHEREÀáÍÑSQLÊ¸   #
+#--------------------#
+
+sub expr{
+	my $self = shift;
+	my $t = $self->tables;
+	unless ($t){ return '0';}
+	
+	$t = $t->[0];
+	my $col = (split /\_/, $t)[2].(split /\_/, $t)[3];
+	my $sql = "IFNULL(".$self->parent_table.".$col,0)";
+	return $sql;
+}
 
 
 #---------------------------------------#
-#   ƒR[ƒfƒBƒ“ƒO€”õitmp tableì¬j   #
+#   ¥³¡¼¥Ç¥£¥ó¥°½àÈ÷¡Êtmp tableºîÀ®¡Ë   #
 #---------------------------------------#
 
 sub ready{
 	my $self = shift;
 	my $tani = shift;
 	
+	# É½ÁØ¸ì¥ê¥¹¥ÈºîÀ®
 	my $list;
-	if ($self->raw =~ /^(.+)\-\->(.+)->(.+)$/){   # •iŒ•Šˆ—p w’è
+	if ($self->raw =~ /^(.+)\-\->(.+)->(.+)$/o) {   # ÉÊ»ì¡õ³èÍÑ »ØÄê
+		print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
-			hinshi => $2,
+			khhinshi => $2,
 			katuyo => $3
 		)->hyoso_id_s;
 	}
-	elsif ($self->raw =~ /^(.+)\-\->(.+)$/){      # •iŒw’è
+	elsif ($self->raw =~ /^(.+)\-\->(.+)$/o) {      # ÉÊ»ì»ØÄê
+		print Jcode->new("g: $1, h: $2\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
-			hinshi => $2,
+			khhinshi => $2,
 		)->hyoso_id_s;
 	}
-	elsif ($self->raw ~= /^(.+)\->(.+)$$/){       # Šˆ—pw’è
+	elsif ($self->raw =~ /^(.+)\->(.+)$/o) {       # ³èÍÑ»ØÄê
+		print Jcode->new("g: $1, k: $2\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
-			katuyo => $2,
+			katuyo => $2
 		)->hyoso_id_s;
 	}
 	
-	my $list = mysql_a_word->new(
-		genkei => $self->raw
-	)->genkei_ids;
-	unless (defined($list) ){
+	unless ( $list ){
 		print Jcode->new(
-			"no such word in the text: \"".$self->raw."\"\n"
+			"atom::hinshi, could not find : \"".$self->raw."\"\n"
 		)->sjis;
 		return '';
 	}
 	
+	# ¥Æ¡¼¥Ö¥ëÌ¾·èÄê
+	my $table = "ct_$tani"."_h_";
 	foreach my $i (@{$list}){
-		my $table = 'ct_'."$tani".'_kihon_'. "$i";
-		push @{$self->{tables}}, $table;
-		
-		if ( mysql_exec->table_exists($table) ){
-			next;
-		}
-		
-		mysql_exec->do("
-			CREATE TABLE $table (
-				id INT primary key not null,
-				num INT
-			)
-		",1);
-		mysql_exec->do("
-			INSERT
-			INTO $table (id, num)
-			SELECT $tani.id, count(*)
-			FROM $tani, hyosobun, hyoso, genkei
-			WHERE
-				hyosobun.hyoso_id = hyoso.id
-				AND genkei.id = hyoso.genkei_id
-				AND genkei.id = $i
-				AND $sql_join{$tani}
-			GROUP BY $sql_group{$tani}
-		",1);
-		
+		$table .= "$i"."d";
 	}
+	$self->{tables} = ["$table"];
+	if ( mysql_exec->table_exists($table) ){
+		return 1;
+	}
+	
+	# ¥Æ¡¼¥Ö¥ëºîÀ®
+	mysql_exec->do("
+		CREATE TABLE $table (
+			id INT primary key not null,
+			num INT
+		)
+	",1);
+	my $sql;
+	$sql = "
+		INSERT
+		INTO $table (id, num)
+		SELECT $tani.id, count(*)
+		FROM $tani, hyosobun
+		WHERE
+			$sql_join{$tani} AND (
+	";
+	my $n = 0;
+	foreach my $i (@{$list}){
+		if ($n){$sql .= " OR ";}
+		$sql .= "hyoso_id = $i\n";
+		++$n;
+	}
+	$sql .= ")\n";
+	$sql .= "GROUP BY $sql_group{$tani}";
+	print "$sql";
+	mysql_exec->do($sql,1);
 }
 
 #-------------------------------#
-#   —˜—p‚·‚étmp table‚ÌƒŠƒXƒg   #
+#   ÍøÍÑ¤¹¤ëtmp table¤Î¥ê¥¹¥È   #
 
 sub tables{
 	my $self = shift;
@@ -86,7 +171,7 @@ sub tables{
 }
 
 #----------------#
-#   eƒe[ƒuƒ‹   #
+#   ¿Æ¥Æ¡¼¥Ö¥ë   #
 sub parent_table{
 	my $self = shift;
 	my $new  = shift;
@@ -101,7 +186,7 @@ sub pattern{
 	return '.+\->.+';
 }
 sub name{
-	return 'word';
+	return 'hinshi';
 }
 
 
