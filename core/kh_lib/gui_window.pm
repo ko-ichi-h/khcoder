@@ -29,14 +29,15 @@ sub open{
 	my @arg = @_;
 	$self->{dummy} = 1;
 	bless $self, $class;
-	
-	
+
 	my $check = 0;
 	if ($::main_gui){
 		$check = $::main_gui->if_opened($self->win_name);
 	}
-	
-	unless ( $check ){
+
+	if ( $check ){
+		$self = $::main_gui->get($self->win_name);
+	} else {
 		$self = $self->_new(@arg);
 		$::main_gui->opened($self->win_name,$self);
 

@@ -115,7 +115,13 @@ sub _new{
 		-text => Jcode->new('コピー')->sjis,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
-	)->pack(-anchor => 'e');
+	)->pack(-side => 'right');
+
+	$fra5->Button(
+		-text => Jcode->new('コンコーダンス')->sjis,
+		-font => "TKFN",
+		-command => sub{ $mw->after(10,sub {$self->conc;});} 
+	)->pack(-side => 'left');
 
 	MainLoop;
 	
@@ -253,8 +259,42 @@ sub search{
 		}
 		++$row;
 	}
+	$self->{last_search} = $result;
 }
 
+#----------------------------#
+#   コンコーダンス呼び出し   #
+#----------------------------#
+sub conc{
+	use gui_window::word_conc;
+	my $self = shift;
+	
+	# 変数取得
+	my @selected = $self->list->infoSelection;
+	my $selected = $selected[0];
+	my $result = $self->last_search;
+	my ($query, $hinshi, $katuyo);
+	if (index($selected,'.') > 0){
+		my ($parent, $child) = split /\./, $selected;
+		$query = Jcode->new($result->[$parent][0])->sjis;
+		$hinshi = Jcode->new($result->[$parent][1])->sjis;
+		$katuyo = Jcode->new($result->[$parent + $child + 1][1])->sjis;
+		substr($katuyo,0,3) = ''
+	} else {
+		$query = Jcode->new($result->[$selected][0])->sjis;
+		$hinshi = Jcode->new($result->[$selected][1])->sjis;
+	}
+
+	# コンコーダンスの呼び出し
+	my $conc = gui_window::word_conc->open;
+	$conc->entry->delete(0,'end');
+	$conc->entry4->delete(0,'end');
+	$conc->entry2->delete(0,'end');
+	$conc->entry->insert('end',$query);
+	$conc->entry4->insert('end',$hinshi);
+	$conc->entry2->insert('end',$katuyo);
+	$conc->search;
+}
 
 #--------------#
 #   アクセサ   #
@@ -279,5 +319,10 @@ sub list_f{
 	my $self = shift;
 	return $self->{list_f};
 }
+sub last_search{
+	my $self = shift;
+	return $self->{last_search};
+}
+
 
 1;
