@@ -15,41 +15,41 @@ my %sql_join = (
 		'bun.id = bun_r.id',
 	'dan' =>
 		'
-			    dan.dan_id = bun_r.dan_id
-			AND dan.h5_id = bun_r.h5_id
-			AND dan.h4_id = bun_r.h4_id
-			AND dan.h3_id = bun_r.h3_id
-			AND dan.h2_id = bun_r.h2_id
-			AND dan.h1_id = bun_r.h1_id
+			    dan.dan_id = bun.dan_id
+			AND dan.h5_id = bun.h5_id
+			AND dan.h4_id = bun.h4_id
+			AND dan.h3_id = bun.h3_id
+			AND dan.h2_id = bun.h2_id
+			AND dan.h1_id = bun.h1_id
 		',
 	'h5' =>
 		'
-			    h5.h5_id = bun_r.h5_id
-			AND h5.h4_id = bun_r.h4_id
-			AND h5.h3_id = bun_r.h3_id
-			AND h5.h2_id = bun_r.h2_id
-			AND h5.h1_id = bun_r.h1_id
+			    h5.h5_id = bun.h5_id
+			AND h5.h4_id = bun.h4_id
+			AND h5.h3_id = bun.h3_id
+			AND h5.h2_id = bun.h2_id
+			AND h5.h1_id = bun.h1_id
 		',
 	'h4' =>
 		'
-			    h4.h4_id = bun_r.h4_id
-			AND h4.h3_id = bun_r.h3_id
-			AND h4.h2_id = bun_r.h2_id
-			AND h4.h1_id = bun_r.h1_id
+			    h4.h4_id = bun.h4_id
+			AND h4.h3_id = bun.h3_id
+			AND h4.h2_id = bun.h2_id
+			AND h4.h1_id = bun.h1_id
 		',
 	'h3' =>
 		'
-			    h3.h3_id = bun_r.h3_id
-			AND h3.h2_id = bun_r.h2_id
-			AND h3.h1_id = bun_r.h1_id
+			    h3.h3_id = bun.h3_id
+			AND h3.h2_id = bun.h2_id
+			AND h3.h1_id = bun.h1_id
 		',
 	'h2' =>
 		'
-			    h2.h2_id = bun_r.h2_id
-			AND h2.h1_id = bun_r.h1_id
+			    h2.h2_id = bun.h2_id
+			AND h2.h1_id = bun.h1_id
 		',
 	'h1' =>
-		'h1.h1_id = bun_r.h1_id'
+		'h1.h1_id = bun.h1_id'
 );
 
 my $num = 0;
@@ -105,10 +105,11 @@ sub ready{
 		INSERT
 		INTO $table (id, num)
 		SELECT $tani.id, count(*)
-		FROM $tani, bun_r
+		FROM $tani, bun_r, bun
 		WHERE
-			$sql_join{$tani} AND
-			rowtxt like \'%$query%\'
+			    bun.id = bun_r.id
+			AND $sql_join{$tani}
+			AND rowtxt like \'%$query%\'
 		GROUP BY $tani.id
 	";
 	mysql_exec->do($sql,1);
