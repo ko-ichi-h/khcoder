@@ -9,12 +9,14 @@ sub reset_parm{
 		my $self = shift;
 		print "Resetting parameters...\n";
 		mkdir "config";
-		open (CON,">$self->{ini_file}") or 
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => "m: $self->{ini_file}"
-			);
-		close (CON);
+		unless (-e $self->{ini_file}){
+			open (CON,">$self->{ini_file}") or 
+				gui_errormsg->open(
+					type    => 'file',
+					thefile => "m: $self->{ini_file}"
+				);
+			close (CON);
+		}
 		# 品詞定義ファイルを作成
 		use DBI;
 		use DBD::CSV;
