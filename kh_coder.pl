@@ -4,7 +4,7 @@ use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
-	$kh_version = "2A (pre-alpha release)";
+	$kh_version = "0.00 (pre-alpha release)";
 
 	use Cwd qw(cwd);
 	push @INC, cwd.'/kh_lib';

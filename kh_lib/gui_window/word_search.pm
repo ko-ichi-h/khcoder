@@ -278,6 +278,9 @@ sub conc{
 	
 	# 変数取得
 	my @selected = $self->list->infoSelection;
+	unless(@selected){
+		return;
+	}
 	my $selected = $selected[0];
 	my $result = $self->last_search;
 	my ($query, $hinshi, $katuyo);
