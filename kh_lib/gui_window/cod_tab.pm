@@ -31,7 +31,7 @@ sub _new{
 	);
 	# セル内容選択
 	$f0->Label(
-		-text => '　　セル内容：',
+		-text => Jcode->new('　　セル内容：')->sjis,
 		-font => "TKFN",
 	)->pack(side => 'left');
 	$f0->Optionmenu(
