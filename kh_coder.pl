@@ -5,7 +5,6 @@ use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
 	$kh_version = "0.00 (pre-alpha release)";
-
 	use Cwd qw(cwd);
 	push @INC, cwd.'/kh_lib';
 	if ($^O eq 'MSWin32'){
@@ -22,6 +21,7 @@ BEGIN {
 }
 
 use Tk;
+
 use mysql_ready;
 use mysql_words;
 use mysql_conc;
@@ -31,14 +31,13 @@ use kh_morpho;
 use kh_sysconfig;
 use gui_window;
 
-$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# ????????????
-$config_obj->sqllog(0);                                       # ?f?o?b?O???[?h
-$main_gui = gui_window::main->open;                           # GUI?J?n
+$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
+$main_gui = gui_window::main->open;
 
 MainLoop;
 
-#---------------#
-#   perlapp?p   #
+#-----------------#
+#   for perlapp   #
  __END__
 
 use Tk::DragDrop::Win32Drop;

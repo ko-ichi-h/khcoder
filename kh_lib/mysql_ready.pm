@@ -489,6 +489,7 @@ sub first{
 			LIMIT 1
 		")->hundle->fetch->[0];
 		++$longest;
+		print "\nMax length of bun: $longest\n";
 		if ($longest > 65535){
 			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
 		}

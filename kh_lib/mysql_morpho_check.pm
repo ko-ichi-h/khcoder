@@ -11,10 +11,9 @@ sub search{
 	}
 	my $h = mysql_exec->select("
 		SELECT hyoso.name, hyosobun.bun_idt
-		FROM hyoso, hyosobun, bun
+		FROM bun, hyosobun LEFT JOIN hyoso ON hyosobun.hyoso_id = hyoso.id
 		WHERE
 			bun.rowtxt LIKE \'%$self->{query}%\'
-			AND hyosobun.hyoso_id = hyoso.id
 			AND hyosobun.bun_idt  = bun.id
 		ORDER BY hyosobun.id
 	",1)->hundle;
