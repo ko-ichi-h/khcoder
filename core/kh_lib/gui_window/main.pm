@@ -34,7 +34,7 @@ sub _new{
 		$::splash->Destroy;
 		if ($::config_obj->all_in_one_pack){
 			use kh_all_in_one;
-			kh_all_in_one->mysql_start;
+			kh_all_in_one->init;
 		}
 	}
 
