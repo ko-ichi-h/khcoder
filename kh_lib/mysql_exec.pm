@@ -1,7 +1,8 @@
 package mysql_exec;
 use DBI;
 use strict;
-
+use Time::Local;
+use Time::CTime;    # Time-modulesに同梱
 use kh_project;
 
 # Usage:
@@ -15,7 +16,9 @@ sub do{
 	$self->{sql} = shift;
 	$self->{critical} = shift;
 	bless $self, $class;
-	
+
+	$self->log;
+
 	$::project_obj->dbh->do($self->sql)
 		or $self->print_error;
 	return $self;
@@ -27,6 +30,8 @@ sub select{
 	$self->{sql} = shift;
 	$self->{critical} = shift;
 	bless $self, $class;
+	
+	$self->log;
 	
 	my $t = $::project_obj->dbh->prepare($self->sql);
 	$t->execute or $self->print_error;
@@ -46,6 +51,26 @@ sub print_error{
 
 
 
+#-------------------------------#
+#   ログファイルにSQL文を記録   #
+sub log{
+	unless ($::config_obj->sqllog){
+		return 1;
+	}
+	
+	my $self = shift;
+	my $logfile = $::config_obj->sqllog_file;
+	open (LOG,">>$logfile") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$logfile"
+		);
+	my $d = strftime("%Y %m/%d %T",localtime);
+	print LOG "$d\n";
+	print LOG $self->sql."\n\n";
+	close LOG;
+	return 1;
+}
 #--------------#
 #   アクセサ   #
 #--------------#

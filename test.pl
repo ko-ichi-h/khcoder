@@ -27,8 +27,11 @@ $config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
 
 kh_project->temp(             # 分析対象ファイルのパスとDB名を直接指定
 	target  =>
-		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/inet_and_hp.html',
-	dbname  => 'khc36',
+#		'F:/home/Koichi/Study/perl/CVSS/core/data/big_test/inet_and_hp.html',
+		'E:/home/higuchi/perl/core/data/test_big/test.html',
+	dbname  =>
+#		'khc36',
+		'khc20',
 )->open;
 
 # テストプリント
@@ -43,7 +46,7 @@ use Benchmark;                                    # 時間計測用
 my $t0 = new Benchmark;                           # 時間計測用
 
 my $result = mysql_conc->a_word(
-	query  => '人',
+	query  => 'パソコン',
 	kihon => '1'
 );
 

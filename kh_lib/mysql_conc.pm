@@ -6,7 +6,7 @@ sub a_word{
 	my $class = shift;
 	my %args  = @_;
 	
-	print "0-";
+	print "0: getting hyoso list\n";
 	
 	# 表層語のリストアップ
 	my @hyoso;
@@ -25,7 +25,7 @@ sub a_word{
 #		push @hyoso, $query;
 	}
 	
-	print "1-";
+	print "1: getting places\n";
 	
 	# 出現位置のリストアップ
 	
@@ -43,7 +43,7 @@ sub a_word{
 	}
 	my $points = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	
-	print "2-";
+	print "2: getting context(id)\n";
 
 	# 前後10づつのhyoso.idを取得
 
@@ -80,7 +80,7 @@ sub a_word{
 		push @hyoso_order, $current;
 	}
 
-	print "3-";
+	print "3: getting ready for id2word conv\n";
 
 	# IDに対応する表層語を取得
 	my %ids;
@@ -122,9 +122,7 @@ sub a_word{
 		}
 	}
 	
-
-	
-	print "4->";
+	print "4: id2word conversion\n";
 	
 	# 結果の作成
 	

@@ -194,10 +194,24 @@ sub win_gmtry{
 }
 
 
-
-
 #------------#
 #   ¤½¤ÎÂ¾   #
+
+sub sqllog{
+	my $self = shift;
+	my $new = shift;
+	if (defined($new)){
+		$self->{sqllog} = $new;
+		return $new;
+	} else {
+		return $self->{sqllog};
+	}
+}
+
+sub sqllog_file{
+	my $self = shift;
+	return "./config/sql.log";
+}
 
 sub history_file{
 	my $self = shift;

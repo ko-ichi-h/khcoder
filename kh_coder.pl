@@ -31,7 +31,8 @@ use kh_morpho;
 use kh_sysconfig;
 use gui_window;
 
-$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
-$main_gui = gui_window::main->open;
+$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);# 設定読み込み
+$config_obj->sqllog(0);                                       # SQL文のログ記録
+$main_gui = gui_window::main->open;                           # GUI開始
 
 MainLoop;

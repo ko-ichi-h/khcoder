@@ -100,7 +100,7 @@ sub search{
 			WHERE
 				    hyoso.genkei_id = genkei.id
 				AND genkei.hinshi_id = hinshi.id
-				AND hyoso.katuyo_id = katuyo.id AND
+				AND hyoso.katuyo_id = katuyo.id AND (
 		';
 		foreach my $i (@query){
 			my $word;
@@ -117,7 +117,7 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= "ORDER BY hyoso.num DESC";
+		$sql .= ") \n ORDER BY hyoso.num DESC";
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
