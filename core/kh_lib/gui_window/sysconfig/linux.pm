@@ -161,6 +161,10 @@ sub __new{
 		-width => 26
 	)->pack( -side => 'right' );
 
+	$self->{mail_obj} = gui_widget::mail_config->open(
+		parent => $inis,
+	);
+
 	$inis->Button(
 		-text => Jcode->new('キャンセル')->sjis,
 		-font => 'TKFN',
@@ -215,6 +219,12 @@ sub ok{
 	$::config_obj->app_html($self->e_html->get());
 	$::config_obj->app_pdf($self->e_pdf->get());
 	$::config_obj->app_csv($self->e_csv->get());
+
+	$::config_obj->mail_if(   $self->{mail_obj}->if   );
+	$::config_obj->mail_smtp( $self->{mail_obj}->smtp );
+	$::config_obj->mail_from( $self->{mail_obj}->from );
+	$::config_obj->mail_to(   $self->{mail_obj}->to   );
+
 
 	if ($::config_obj->save){
 		$self->close;
