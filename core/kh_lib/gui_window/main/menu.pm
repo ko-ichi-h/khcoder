@@ -95,7 +95,7 @@ sub make{
 	
 	
 		$self->{m_b2_morpho} = $f->command(
-				-label => Jcode->new('形態素解析＋')->sjis,
+				-label => Jcode->new('前処理の実行')->sjis,
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					
@@ -138,7 +138,17 @@ sub make{
 				})},
 				-state => 'disable'
 			);
-		
+
+		$self->{t_word_conc} = $f3->command(
+				-label => Jcode->new('コンコーダンス [KWIC]')->sjis,
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_conc->open;
+				})},
+				-state => 'disable'
+			);
+
+
 		$f3->separator();
 		
 		$self->{t_word_freq} = $f3->command(
@@ -165,29 +175,15 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{t_word_print} = $f3->command(
-				-label => Jcode->new('リストの印刷（LaTeX）')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					mysql_words->make_list();
-				})},
-				-state => 'disable'
-			);
+		#$self->{t_word_print} = $f3->command(
+		#		-label => Jcode->new('リストの印刷（LaTeX）')->sjis,
+		#		-font => "TKFN",
+		#		-command => sub {$mw->after(10,sub{
+		#			mysql_words->make_list();
+		#		})},
+		#		-state => 'disable'
+		#	);
 
-	my $f4 = $f->cascade(
-		-label => Jcode->new('探索・コーディング支援')->sjis,
-		-font => "TKFN",
-		-tearoff=>'no'
-	);
-
-		$self->{t_word_conc} = $f4->command(
-				-label => Jcode->new('コンコーダンス(KWIC)')->sjis,
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_conc->open;
-				})},
-				-state => 'disable'
-			);
 
 	my $f2 = $f->cascade(
 			-label => Jcode->new('SQLコマンド入力')->sjis,
@@ -295,7 +291,7 @@ sub refresh{
 	# 形態素解析が行われていればActive
 	my @menu1 = (
 		't_word_search',
-		't_word_print',
+		# 't_word_print',
 		't_word_list',
 		't_word_freq',
 		't_word_conc',

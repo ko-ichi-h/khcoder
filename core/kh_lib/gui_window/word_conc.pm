@@ -17,7 +17,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	$wmw->focus;
-	$wmw->title(Jcode->new('コンコーダンス（KWIC）')->sjis);
+	$wmw->title(Jcode->new('コンコーダンス [KWIC]')->sjis);
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -163,6 +163,7 @@ sub _new{
 		-selectforeground => 'black',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
+		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$fra5->Button(
