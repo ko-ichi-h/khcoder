@@ -7,13 +7,15 @@ use strict;
 use vars qw($config_obj $project_obj $kh_version);
 BEGIN{
 	use Cwd qw(cwd);
-	push @INC, cwd.'/kh_lib';
+	use lib cwd.'/kh_lib';
+	use kh_sysconfig;
+	$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
 }
+
+$config_obj->sqllog(1);       # デバッグ用
+
 use kh_project;
 use kh_projects;
-use kh_sysconfig;
-$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
-$config_obj->sqllog(1);       # デバッグ用
 
 #------------------------#
 #   プロジェクトを開く   #
