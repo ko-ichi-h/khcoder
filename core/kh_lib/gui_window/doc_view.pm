@@ -10,6 +10,10 @@ use gui_window::word_conc;
 use gui_window::doc_view::win32;
 use gui_window::doc_view::linux;
 
+#------------------#
+#   Window¤ò³«¤¯   #
+#------------------#
+
 sub _new{
 	my $self = shift;
 	my $class = 'gui_window::doc_view::'.$::config_obj->os;
@@ -200,6 +204,7 @@ sub view{
 	$self->{tani}     = $args{tani};
 	$self->{parent}   = $args{parent};
 	
+
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
 		doc_id      => $args{doc_id},
@@ -208,7 +213,12 @@ sub view{
 	);
 	$self->{doc}    = $doc;
 	$self->{doc_id} = $doc->{doc_id};
+	
 	$self->_view_doc($doc);
+}
+
+sub check_codes{
+	
 }
 
 sub near{

@@ -97,6 +97,13 @@ sub search{
 	my $self = shift;
 	my %args = @_;
 	
+	# 前回のコーディング結果をクリア
+	foreach my $i (@{$self->{codes}}){
+		$i->clear;
+	}
+	$self->{valid_codes} = undef;
+	
+	
 	# 取りあえずコーディング
 	print "kh_cod::search -> coding...\n";
 	foreach my $i (@{$args{selected}}){
@@ -110,20 +117,12 @@ sub search{
 	
 	# AND条件の時に、0コードが存在した場合はreturn
 	unless ($self->{valid_codes}){
-		foreach my $i (@{$args{selected}}){
-			$self->{codes}[$i]->clear;
-		}
-		$self->{valid_codes} = undef;
 		return undef;
 	}
 	if (
 		   ( $args{method} eq 'and' )
 		&& ( @{$self->{valid_codes}} < @{$args{selected}} )
 	) {
-		foreach my $i (@{$args{selected}}){
-			$self->{codes}[$i]->clear;
-		}
-		$self->{valid_codes} = undef;
 		return undef;
 	}
 	
@@ -165,13 +164,6 @@ sub search{
 	}
 	@words = (keys %words);
 	
-	# コードのクリア
-	print "kh_cod::search -> cleaning...\n";
-	foreach my $i (@{$args{selected}}){
-		$self->{codes}[$i]->clear;
-	}
-	$self->{valid_codes} = undef;
-	
 	return (\@result,\@words);
 }
 
@@ -182,7 +174,6 @@ sub get_doc_head{
 	my $tani = shift;
 	
 	my $sql;
-	
 	if ($tani eq 'bun'){
 		$sql = "
 			SELECT rowtxt
@@ -198,7 +189,7 @@ sub get_doc_head{
 			WHERE $sql_join{$tani}
 				AND bun_r.id = bun.id
 				AND $tani.id = $id
-			LIMIT 10
+			LIMIT 5
 		";
 	}
 	
@@ -207,7 +198,7 @@ sub get_doc_head{
 	my $r;
 	while (my $i = $sth->fetch){
 		$r .= $i->[0];
-		if (length($r) > 66){
+		if (length($r) > $::config_obj->DocSrch_CutLength){
 			last;
 		}
 	}

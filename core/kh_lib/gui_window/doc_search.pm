@@ -2,8 +2,11 @@ package gui_window::doc_search;
 use base qw(gui_window);
 
 use Tk;
-use kh_cod::search;
 use strict;
+
+use gui_window::doc_search::linux;
+use gui_window::doc_search::win32;
+use kh_cod::search;
 
 #-------------#
 #   GUI作製   #
@@ -156,7 +159,7 @@ sub _new{
 		-background       => 'white',
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
-		-selectmode       => 'single',
+		-selectmode       => 'extended',
 		-height           => 10,
 		-command          => sub {$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
@@ -376,6 +379,7 @@ sub end{
 }
 
 
+
 #--------------#
 #   検索実行   #
 #--------------#
@@ -446,6 +450,16 @@ sub search{
 	);
 }
 
+#------------------#
+#   文書のコピー   #
+#------------------#
+sub copy{
+	my $self = shift;
+	my $class = "gui_window::doc_search::".$::config_obj->os;
+	bless $self, $class;
+	
+	$self->_copy;
+}
 
 #--------------#
 #   アクセサ   #
