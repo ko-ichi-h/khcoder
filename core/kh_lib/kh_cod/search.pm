@@ -212,13 +212,35 @@ sub search{
 				.",0)\n";
 			++$n;
 		}
-		
 		$sql .= ")";
 	}
 	
 			# 「コード無し」を使用しない場合
 	else {
-		$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
+		$sql .= "SELECT $args{tani}.id,";
+		my $nn = 0;
+		foreach my $i (@{$args{selected}}){
+			if ($nn){
+				$sql .= " + ";
+			} else {
+				$nn = 1;
+			}
+			if ($self->{codes}[$i]->res_table){
+				$sql .=
+					"IFNULL("
+					.$self->{codes}[$i]->res_table
+					."."
+					.$self->{codes}[$i]->res_col
+					.",0)\n";
+				$nn = 2;
+			}
+		}
+		if ($nn = 2){
+			$sql .= " as tf\n";
+		} else {
+			$sql .= "1 as tf\n";
+		}
+		$sql .= "FROM $args{tani}\n";
 		foreach my $i (@{$args{selected}}){
 			unless ($self->{codes}[$i]->res_table){
 				next;
@@ -245,6 +267,9 @@ sub search{
 				$sql .= "0\n";
 			}
 			++$n;
+		}
+		if ($args{order} eq 'tf'){
+			$sql .= "ORDER BY tf DESC";
 		}
 	}
 	

@@ -33,7 +33,13 @@ sub code{
 
 	my $sql = '';
 	$sql .= "INSERT INTO $self->{res_table} (id, num)\n";
-	$sql .= "SELECT $self->{tani}.id, 1\n";
+	$sql .= "SELECT $self->{tani}.id, ";
+	my $nn = 0;
+	foreach my $i (@{$self->{condition}}){
+		if ($nn){ $sql .= " + "; } else { $nn = 1; }
+		$sql .= $i->num_expr();
+	}
+	$sql .= "\n";
 	$sql .= "FROM $self->{tani}\n";
 	foreach my $i (@{$self->tables}){
 		unless ($i){next;}
