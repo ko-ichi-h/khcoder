@@ -501,23 +501,29 @@ sub first{
 		if ($longest > 65535){
 			gui_errormsg->open(type => 'msg',msg => '32,767文字を超える文がありました。KH Coderを終了します。');
 		}
+		
 		mysql_exec->drop_table("bun_r");
 		mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
+		
 		my $h = mysql_exec->select("
 			SELECT hyosobun.bun_idt, hyoso.name
 			FROM hyosobun, hyoso
 			WHERE hyosobun.hyoso_id = hyoso.id
 			ORDER BY hyosobun.id
 		",1)->hundle;
-		my @d;
-		while (my $r = $h->fetch){
-			$d[$r->[0]] .= $r->[1];
-		}
-		shift @d;
-		my ($c,$values,$sql) = (0,'','INSERT into bun_r (rowtxt) VALUES ');
-		foreach my $i (@d){
-			$values .= "(\'$i\'),";
-			++$c;
+		
+		my ($c,$last,$values,$sql,$temp)
+			=(0,1,'','INSERT into bun_r (rowtxt) VALUES ','');
+		while (my $i = $h->fetch){
+			if ($last == $i->[0]){
+				$temp .= $i->[1]
+			} else {
+				$values .= "(\'$temp\'),";
+				$temp = '';
+				$last = $i->[0];
+				++$c;
+			}
+			
 			if ($c == 200){
 				chop $values; mysql_exec->do("$sql $values",1);
 				$c = 0; $values = '';
@@ -526,7 +532,6 @@ sub first{
 		if ($values){
 			chop $values; mysql_exec->do("$sql $values",1);
 		}
-		# mysql_exec->do("alter table bun add index index1 (rowtxt)",1);
 		
 		# 文単位2
 		mysql_exec->drop_table("bun");
