@@ -8,7 +8,6 @@ use gui_errormsg;
 use gui_window::outvar_read::tab;
 use gui_window::outvar_read::csv;
 
-
 #---------------------#
 #   Window オープン   #
 #---------------------#
