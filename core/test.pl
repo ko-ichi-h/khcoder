@@ -49,7 +49,7 @@ my $t0 = new Benchmark;                           # 時間計測用
 
 # 処理実行
 use mysql_csvout;
-mysql_csvout->exec(tani => 'bun', file => 'test.csv');
+mysql_csvout->exec(tani => 'dan', file => 'test.csv');
 
 my $t1 = new Benchmark;                           # 時間計測用
 print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
