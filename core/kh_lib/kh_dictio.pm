@@ -78,6 +78,7 @@ sub save{
 	}
 
 	# 複合名詞
+	# print "hukugo: ".$self->ifuse_this('複合名詞')."\n";
 	$::config_obj->use_hukugo($self->ifuse_this('複合名詞'));
 	$::config_obj->save;
 
