@@ -49,46 +49,7 @@ my %sql_join = (
 			AND h2.h1_id = bun.h1_id
 		',
 	'h1' =>
-		'h1.h1_id = bun.h1_id',
-	'buntmp' =>
-		'buntmp.id = bun_r.id',
-	'dantmp' =>
-		'
-			    dantmp.dan_id = bun.dan_id
-			AND dantmp.h5_id = bun.h5_id
-			AND dantmp.h4_id = bun.h4_id
-			AND dantmp.h3_id = bun.h3_id
-			AND dantmp.h2_id = bun.h2_id
-			AND dantmp.h1_id = bun.h1_id
-		',
-	'h5tmp' =>
-		'
-			    h5tmp.h5_id = bun.h5_id
-			AND h5tmp.h4_id = bun.h4_id
-			AND h5tmp.h3_id = bun.h3_id
-			AND h5tmp.h2_id = bun.h2_id
-			AND h5tmp.h1_id = bun.h1_id
-		',
-	'h4tmp' =>
-		'
-			    h4tmp.h4_id = bun.h4_id
-			AND h4tmp.h3_id = bun.h3_id
-			AND h4tmp.h2_id = bun.h2_id
-			AND h4tmp.h1_id = bun.h1_id
-		',
-	'h3tmp' =>
-		'
-			    h3tmp.h3_id = bun.h3_id
-			AND h3tmp.h2_id = bun.h2_id
-			AND h3tmp.h1_id = bun.h1_id
-		',
-	'h2tmp' =>
-		'
-			    h2tmp.h2_id = bun.h2_id
-			AND h2tmp.h1_id = bun.h1_id
-		',
-	'h1tmp' =>
-		'h1tmp.h1_id = bun.h1_id',
+		'h1.h1_id = bun.h1_id'
 );
 
 my $num = 0;
@@ -119,10 +80,6 @@ sub ready{
 	my $self = shift;
 	my $tani = shift;
 
-	my $table_type = '';
-	if (index($tani,'tmp') > 0){
-		$table_type = " TYPE = HEAP";
-	}
 
 	# テーブル名
 	my $table = "ct_$tani"."_string_$num";
@@ -135,7 +92,7 @@ sub ready{
 		CREATE TABLE $table (
 			id INT primary key not null,
 			num INT
-		) $table_type
+		)
 	",1);
 
 	# クエリの取得

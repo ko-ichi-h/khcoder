@@ -8,11 +8,12 @@ use strict;
 #   コーディング実行   #
 
 sub code{
-	my $self           = shift;
-	print "c";
-	
+	my $self           = shift;	
 	
 	unless ($self->{condition}){
+		return 0;
+	}
+	unless ($self->{row_condition}){
 		return 0;
 	}
 	unless ($self->tables){
@@ -85,11 +86,17 @@ sub ready{
 	}
 	
 	# ATOMごとのテーブルを作製
-	print "a";
+	my %words;
 	my ($n0, $n1,$unique_check) = (0,0,undef);
 	my @t = ();
 	foreach my $i (@{$self->{condition}}){
 		$i->ready($tani);
+		my $temp_w = $i->hyosos;
+		if ($temp_w){
+			foreach my $h (@{$temp_w}){
+				++$words{$h};
+			}
+		}
 		if ($i->tables){
 			$n0 += @{$i->tables};
 			if ($n0 > 25){
@@ -106,10 +113,12 @@ sub ready{
 			}
 		}
 	}
+	my @words = (keys %words);
+	$self->{hyosos} = \@words;
+	
 	unless ($unique_check){return 1;}
 	
 	# ATOMテーブルをまとめる
-	print "t";
 	my $n = 0;
 	foreach my $i (@t){
 		# テーブル作製
@@ -185,16 +194,7 @@ sub new{
 # 利用語のリストを返す
 sub hyosos{
 	my $self = shift;
-	my %ready;
-	foreach my $i (@{$self->{condition}}){
-		if ($i->hyosos){
-			foreach my $h (@{$i->hyosos}){
-				++$ready{$h};
-			}
-		}
-	}
-	my @r = (keys %ready);
-	return \@r;
+	return $self->{hyosos};
 }
 
 

@@ -65,7 +65,7 @@ sub add_direct{
 	
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
-		if ($self->{codes}[0]->name eq '直接入力'){
+		if ($self->{codes}[0]->name eq '＃直接入力'){
 			print "Delete old \'direct\'\n";
 			shift @{$self->{codes}};
 		}
@@ -73,7 +73,7 @@ sub add_direct{
 	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'直接入力',
+			'＃直接入力',
 			Jcode->new($args{raw})->euc
 		);
 	} else {                                      # 「AND」,「OR」の場合
@@ -87,7 +87,7 @@ sub add_direct{
 			++$n;
 		}
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'直接入力',
+			'＃直接入力',
 			$t
 		);
 	}
@@ -103,16 +103,16 @@ sub search{
 	
 	$self->{tani} = $args{tani};
 	
-	# 取りあえずコーディング
-	print "kh_cod::search -> coding...\n";
-	foreach my $i (@{$args{selected}}){
-		my $res_table = "ct_$args{tani}"."_code_$i";
-		$self->{codes}[$i]->ready($args{tani}) or next;
-		$self->{codes}[$i]->code($res_table) or next;
-		if ($self->{codes}[$i]->res_table){
-			push @{$self->{valid_codes}}, $self->{codes}[$i];
-		}
+	# コーディング結果をクリア
+	foreach my $i (@{$self->{codes}}){
+		$i->clear;
 	}
+	$self->{valid_codes} = undef;
+	
+	# 取りあえず全部コーディング (もうちょっと効率的な方法ないかなぁ・・・)
+	print "kh_cod::search -> coding...\n";
+	$self->code($self->{tani}) or return 0;
+	unless ($self->valid_codes){ return undef; }
 	
 	# AND条件の時に、0コードが存在した場合はreturn
 	unless ($self->{valid_codes}){
@@ -128,18 +128,36 @@ sub search{
 	# 合致する文書のリストを取得
 	print "kh_cod::search -> searching...\n";
 	my $sql = "SELECT $args{tani}.id\nFROM $args{tani}\n";
-	foreach my $i (@{$self->tables}){
-		$sql .= "LEFT JOIN $i ON $args{tani}.id = $i.id\n";
+	foreach my $i (@{$args{selected}}){
+		unless ($self->{codes}[$i]->res_table){
+			next;
+		}
+		$sql .=
+			"LEFT JOIN "
+			.$self->{codes}[$i]->res_table
+			." ON $args{tani}.id = "
+			.$self->{codes}[$i]->res_table
+			.".id\n";
 	}
 	$sql .= "WHERE\n";
 	my $n = 0;
-	foreach my $i (@{$self->valid_codes}){
+	foreach my $i (@{$args{selected}}){
 		if ($n){ $sql .= "$args{method} "; }
-		$sql .= "IFNULL(".$i->res_table.".".$i->res_col.",0)\n";
+		if ($self->{codes}[$i]->res_table){
+			$sql .=
+				"IFNULL("
+				.$self->{codes}[$i]->res_table
+				."."
+				.$self->{codes}[$i]->res_col
+				.",0)\n";
+		} else {
+			$sql .= "0\n";
+		}
 		++$n;
 	}
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
+	# 文書の先頭部分を取り出し
 	my @result;
 	print "kh_cod::search -> fetching";
 	while (my $i = $sth->fetch){
@@ -154,20 +172,19 @@ sub search{
 	# 検索に利用した語（表層）のリスト
 	print "kh_cod::search -> getting word list...\n";
 	my (@words, %words);
-	foreach my $i (@{$self->{valid_codes}}){
-		if ($i->hyosos){
-			foreach my $h (@{$i->hyosos}){
+	foreach my $i (@{$args{selected}}){
+		unless ($self->{codes}[$i]->res_table){
+			next;
+		}
+		if ($self->{codes}[$i]->hyosos){
+			foreach my $h (@{$self->{codes}[$i]->hyosos}){
 				++$words{$h};
 			}
 		}
 	}
 	@words = (keys %words);
 	
-	# コーディング結果をクリア
-	foreach my $i (@{$self->{codes}}){
-		$i->clear;
-	}
-	$self->{valid_codes} = undef;
+
 	
 	return (\@result,\@words);
 }
@@ -179,65 +196,27 @@ sub check_a_doc{
 	my $self   = shift;
 	my $doc_id = shift;
 	
-	my $table = "$self->{tani}"."tmp";
-	
-	# コーディング結果をクリア
-	foreach my $i (@{$self->{codes}}){
-		$i->clear;
-	}
-	foreach my $i (mysql_exec->table_list){
-		if ( index($i, $table) > -1 ){
-			mysql_exec->drop_table($i);
-		}
-	}
-	
-	# テーブル準備
-	mysql_exec->drop_table($table);                         # CREATE
-	my $sql;
-	$sql .= "CREATE TABLE $table (\n";
-	$sql .= "ID int primary key not null,\n";
-	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-		$sql .= "$i"."_id int,\n";
-		if ($i eq $self->{tani}){last;}
-	}
-	chop $sql; chop $sql; $sql .= "\n";
-	$sql .= ") TYPE = HEAP";
-	mysql_exec->do($sql,1);
-	
-	$sql = '';                                              # INSERT
-	$sql .= "INSERT INTO $table (id,";
-	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-		$sql .= "$i"."_id,";
-		if ($i eq $self->{tani}){last;}
-	}
-	chop $sql;
-	$sql .= ")\n";
-	$sql .= "SELECT id,";
-	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-		$sql .= "$i"."_id,";
-		if ($i eq $self->{tani}){last;}
-	}
-	chop $sql;
-	$sql .= "\n";
-	$sql .= "FROM $self->{tani}\n";
-	$sql .= "WHERE id = $doc_id\n";
-	mysql_exec->do($sql,1);
-	
 	# コーディング
-	my $text = "・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
+	my $text = 
+		"・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
+	my (@words, %words);
 	foreach my $i (@{$self->{codes}}){
-		print ".\n";
-		unless ($i->{condition}){next;}
-		unless ($i->{row_condition}){next;}
-		$i->ready($table) or next;
-		$i->code('temp') or next;
-		if ($i->res_table){
+		unless ($i->res_table){next;}
+		my $sql .= 
+			"SELECT ".$i->res_col." FROM ".$i->res_table." WHERE id = $doc_id";
+		if (mysql_exec->select($sql,1)->hundle->rows){
 			$text .= "    ".$i->name."\n";
+			if ($i->hyosos){
+				foreach my $h (@{$i->hyosos}){
+					++$words{$h};
+				}
+			}
 		}
 	}
+	@words = (keys %words);
 	
 	$text = Jcode->new($text)->sjis;
-	return $text;
+	return ($text,\@words);
 }
 
 

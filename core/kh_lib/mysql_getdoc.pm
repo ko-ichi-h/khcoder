@@ -27,6 +27,9 @@ sub get{
 	my $d = $self->get_body;
 	#print "p1 ";
 	my %for_color = ();                           # 強調指定の準備
+	foreach my $i (@{$self->{w_other}}){               # その他のコード
+		$for_color{$i} = "CodeW";
+	}
 	foreach my $i (@{$self->{w_search}}){              # 検索語
 		$for_color{$i} = "search";
 	}
