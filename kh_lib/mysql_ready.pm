@@ -127,12 +127,12 @@ sub readin{
 		my $len = $r->{$key} + 4;
 #		my $len = 255;
 		$self->length($key,$len);
-		if ($len < 200){
-			mysql_exec->do("ALTER TABLE rowdata MODIFY $key varchar($len)",1);
-		}
-		if ($len > 255){
-			$self->length($key,255);
-		}
+#		if ($len < 200){
+#			mysql_exec->do("ALTER TABLE rowdata MODIFY $key varchar($len)",1);
+#		}
+#		if ($len > 255){
+#			$self->length($key,255);
+#		}
 	}
 }
 
