@@ -12,10 +12,10 @@ use mysql_exec;
 
 my %sql_join = (
 	'bun' =>
-		'bun.id = bun_r.id',
+		'',
 	'dan' =>
 		'
-			    dan.dan_id = bun.dan_id
+			AND dan.dan_id = bun.dan_id
 			AND dan.h5_id = bun.h5_id
 			AND dan.h4_id = bun.h4_id
 			AND dan.h3_id = bun.h3_id
@@ -24,7 +24,7 @@ my %sql_join = (
 		',
 	'h5' =>
 		'
-			    h5.h5_id = bun.h5_id
+			AND h5.h5_id = bun.h5_id
 			AND h5.h4_id = bun.h4_id
 			AND h5.h3_id = bun.h3_id
 			AND h5.h2_id = bun.h2_id
@@ -32,24 +32,24 @@ my %sql_join = (
 		',
 	'h4' =>
 		'
-			    h4.h4_id = bun.h4_id
+			AND h4.h4_id = bun.h4_id
 			AND h4.h3_id = bun.h3_id
 			AND h4.h2_id = bun.h2_id
 			AND h4.h1_id = bun.h1_id
 		',
 	'h3' =>
 		'
-			    h3.h3_id = bun.h3_id
+			AND h3.h3_id = bun.h3_id
 			AND h3.h2_id = bun.h2_id
 			AND h3.h1_id = bun.h1_id
 		',
 	'h2' =>
 		'
-			    h2.h2_id = bun.h2_id
+			AND h2.h2_id = bun.h2_id
 			AND h2.h1_id = bun.h1_id
 		',
 	'h1' =>
-		'h1.h1_id = bun.h1_id'
+		'AND h1.h1_id = bun.h1_id'
 );
 
 my $num = 0;
@@ -106,10 +106,12 @@ sub ready{
 		INSERT
 		INTO $table (id, num)
 		SELECT $tani.id, count(*)
-		FROM $tani, bun_r, bun
+		FROM $tani, bun_r";
+	unless ($tani eq 'bun'){$sql .= " ,bun";}
+	$sql .= "
 		WHERE
 			    bun.id = bun_r.id
-			AND $sql_join{$tani}
+			$sql_join{$tani}
 			AND rowtxt like \'%$query%\'
 		GROUP BY $tani.id
 	";
