@@ -81,6 +81,31 @@ sub _new{
 	
 	$self->refresh;
 	
+	# 各種バインド
+	$self->win_obj->bind(
+		'<Key-Return>',
+		sub {$self->_open}
+	);
+	$self->win_obj->bind(
+		'<Key-Down>',
+		sub {
+			my @s = $self->list->infoSelection;
+			if ($self->{max} > $s[0]){
+				$self->list->selectionClear;
+				$self->list->selectionSet($s[0] + 1);
+			}
+		}
+	);
+	$self->win_obj->bind(
+		'<Key-Up>',
+		sub {
+			my @s = $self->list->infoSelection;
+			if ($s[0] > 0){
+				$self->list->selectionClear;
+				$self->list->selectionSet($s[0] - 1);
+			}
+		}
+	);
 	
 	MainLoop;
 	return $self;
@@ -169,6 +194,12 @@ sub refresh{
 #		}
 		++$n;
 	}
+	
+	$self->{max} = $n - 1;
+	if ($n){
+		$self->list->selectionSet(0);
+	}
+	
 }
 
 #--------------#
