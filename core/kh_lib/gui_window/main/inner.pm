@@ -133,11 +133,18 @@ sub make{
 sub refresh{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-
+	
+	# 初期化
 	$self->hlist->delete('all');
+	$mw->title('KH Coder');
+	$self->entry('e_curent_project', '');
+	$self->entry('e_project_memo', '');
+	$self->entry('ent_num1', '');
+	$self->entry('ent_num2', '');
+	
 	my @list = ();
 
-	if ($::project_obj){
+	if ($::project_obj){                    # プロジェクトを開いている場合
 		my $title;
 		if ( length($::project_obj->comment) ){
 			$title = $::project_obj->comment;
@@ -149,7 +156,7 @@ sub refresh{
 		$self->entry('e_curent_project', $::project_obj->file_short_name);
 		$self->entry('e_project_memo', $::project_obj->comment);
 		
-		if ($::project_obj->status_morpho){
+		if ($::project_obj->status_morpho){       # 前処理が完了している場合
 			# 抽出語数
 			$self->entry('ent_num1', num_format(mysql_words->num_all));
 			$self->entry('ent_num2', num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")") );
@@ -177,14 +184,9 @@ sub refresh{
 				}
 			}
 		}
-	} else {
-		$mw->title('KH Coder');
-		$self->entry('e_curent_project', '');
-		$self->entry('e_project_memo', '');
-		$self->entry('ent_num1', '');
-		$self->entry('ent_num2', '');
 	}
-
+	
+	# 「文書の単純集計：」の更新
 	my $right = $self->hlist->ItemStyle('text',-anchor => 'e',-font => "TKFN");
 	my $row = 0;
 	foreach my $i (@list){
