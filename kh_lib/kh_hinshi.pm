@@ -191,7 +191,7 @@ sub output{
 
 	# データ作成
 	$sql = "
-		select dan.id, hyoso.name, khhinshi.id
+		select dan.id, genkei.name, khhinshi.id
 		from hyosobun,hyoso,genkei,hinshi,khhinshi,dan
 		where
 			hyosobun.hyoso_id = hyoso.id
@@ -209,7 +209,7 @@ sub output{
 	$h = mysql_exec->select($sql)->hundle;
 	$data = undef;
 	while (my $i = $h->fetch){
-		$data->{$i->[0]}{$i->[2]} .= "$i->[1],"
+		$data->{$i->[0]}{$i->[2]} .= "$i->[1] "
 	}
 
 	# 書き出し
