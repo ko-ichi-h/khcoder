@@ -138,10 +138,15 @@ sub fill{
 	}
 	
 	# 利用できる変数があるかどうかチェック
+	my %tani_check = ();
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$tani_check{$i} = 1;
+		last if ($self->tani eq $i);
+	}
 	my $h = mysql_outvar->get_list;
 	my @options;
 	foreach my $i (@{$h}){
-		if ($i->[0] eq $self->tani){
+		if ($tani_check{$i->[0]}){
 			push @options, [Jcode->new($i->[1])->sjis, $i->[2]];
 		}
 	}

@@ -213,7 +213,6 @@ sub cod_out_tab{
 	close (CODO);
 }
 
-
 #--------------#
 #   単純集計   #
 
@@ -298,27 +297,57 @@ sub outtab{
 	my $var_id = shift;
 	my $cell  = shift;
 	
+	# コーディングの実行
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
-	
 	$self->cumulate if @{$self->{valid_codes}} > 30;
 	
-	my $result;
+	# 外部変数のチェック
+	my ($outvar_tbl,$outvar_clm);
 	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
+	if ( $var_obj->{tani} eq $tani){
+		$outvar_tbl = $var_obj->{table};
+		$outvar_clm = $var_obj->{column};
+	} else {
+		$outvar_tbl = 'ct_outvar_cross';
+		$outvar_clm = 'value';
+		mysql_exec->drop_table('ct_outvar_cross');
+		mysql_exec->do("
+			CREATE TABLE ct_outvar_cross (
+				id int primary key not null,
+				value varchar(255)
+			) TYPE=HEAP
+		",1);
+		my $sql;
+		$sql .= "INSERT INTO ct_outvar_cross\n";
+		$sql .= "SELECT $tani.id, $var_obj->{table}.$var_obj->{column}\n";
+		$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
+		$sql .= "WHERE\n";
+		$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+			$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+			last if ($var_obj->{tani} eq $i);
+		}
+		$sql .= "ORDER BY $tani.id";
+		#print "$sql\n\n";
+		mysql_exec->do("$sql",1);
+	}
+	
 	
 	# 集計用SQL文の作製
 	my $sql;
-	$sql .= "SELECT $var_obj->{table}.$var_obj->{column}, ";
+	$sql .= "SELECT $outvar_tbl.$outvar_clm, ";
 	foreach my $i (@{$self->{valid_codes}}){
 		$sql .= "sum( IF(".$i->res_table.".".$i->res_col.",1,0) ),";
 	}
 	$sql .= " count(*) \n";
-	$sql .= "FROM $var_obj->{table}\n";
+	$sql .= "FROM $outvar_tbl\n";
 	foreach my $i (@{$self->tables}){
-		$sql .= "LEFT JOIN $i ON $var_obj->{table}.id = $i.id\n";
+		$sql .= "LEFT JOIN $i ON $outvar_tbl.id = $i.id\n";
 	}
-	$sql .= "\nGROUP BY $var_obj->{table}.$var_obj->{column}";
-	$sql .= "\nORDER BY $var_obj->{table}.$var_obj->{column}";
+	$sql .= "\nGROUP BY $outvar_tbl.$outvar_clm";
+	$sql .= "\nORDER BY $outvar_tbl.$outvar_clm";
+	#print "$sql\n";
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 	
@@ -352,7 +381,9 @@ sub outtab{
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				if ($cell == 0){
-					push @current, "$h ($p"."%)";
+					my $pp = "($p"."%)";
+					$pp = '  '.$pp if length($pp) == 7;
+					push @current, "$h $pp";
 				}
 				elsif ($cell == 1){
 					push @current, $h;
