@@ -7,6 +7,88 @@ use strict;
 use mysql_getheader;
 use Jcode;
 
+#-----------------------------------------#
+#   コーディング結果の出力（不定長CSV）   #
+
+sub cod_out_var{
+	my $self    = shift;
+	my $tani    = shift;
+	my $outfile = shift;
+	
+	# コーディングとコーディング結果のチェック
+	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 30;
+	
+	# 出力用SQL・一行目の作成
+	my ($sql,$head);
+	my $flag = 0;
+	my $hnum = 0;
+	foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+		if ($i eq $self->tani){
+			$flag = 1;
+		}
+		if ($flag){
+			$sql = "$i"."_id,"."$sql";
+			$head = "$i,"."$head";
+			++$hnum;
+		}
+	}
+	$head .= 'コード';
+	$sql = "SELECT "."$sql";
+	
+	my @codename;                                 # ここでコード名もチェック
+	my $n = 0;
+	foreach my $i (@{$self->valid_codes}){
+		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+		use kh_csv;
+		$codename[$n] = $i->name;
+		substr($codename[$n],0,2) = '';
+		++$n;
+	}
+	chop $sql;
+	$sql .= "\nFROM ".$self->tani."\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
+	}
+	
+	# 出力開始
+	open(CODO,">$outfile") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $outfile
+		);
+	print CODO "$head\n";
+	my $h = mysql_exec->select($sql,1)->hundle;
+	
+	while (my $i = $h->fetch){
+		my $current;
+		my $current_code;
+		my $n = 0;
+		foreach my $j (@{$i}){
+			if ($n < $hnum){                     # 位置情報
+				$current .= "$j,";
+			} else {                              # コード
+				if ($j){
+					my $cnum = $n - $hnum;
+					$current_code .= "$codename[$cnum] ";
+				}
+			}
+			++$n;
+		}
+		if ($current_code){
+			chop $current_code if $current_code;
+			$current_code = kh_csv->value_conv($current_code);
+		}
+		print CODO "$current$current_code\n";
+	}
+	close (CODO);
+	
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_sjis($outfile);
+	}
+}
+
 #------------------------------------#
 #   コーディング結果の出力（SPSS）   #
 

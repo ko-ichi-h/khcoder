@@ -276,7 +276,7 @@ sub make{
 			$self->{m_b3_crossout}->separator;
 
 			$self->{m_b3_crossout_var} = $self->{m_b3_crossout}->command(
-				-label => gui_window->gui_jchar("不定長CSV"),
+				-label => gui_window->gui_jchar("不定長CSV （WordMiner）"),
 				-font  => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::morpho_crossout::var->open;
@@ -387,6 +387,17 @@ sub make{
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 						gui_window::cod_out::tab->open;
+					})},
+				-state => 'disable'
+			);
+
+			$self->{t_cod_out}->separator();
+
+			$self->{t_cod_out_var} = $self->{t_cod_out}->command(
+				-label => gui_window->gui_jchar('不定長CSV （WordMiner）'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+						gui_window::cod_out::var->open;
 					})},
 				-state => 'disable'
 			);
@@ -586,6 +597,7 @@ sub refresh{
 		't_cod_out_spss',
 		't_cod_out_csv',
 		't_cod_out_tab',
+		't_cod_out_var',
 		't_txt_html2mod',
 		'm_b3_crossout',
 		'm_b3_crossout_csv',

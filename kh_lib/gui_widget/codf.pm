@@ -10,12 +10,12 @@ sub _new{
 	$self->{win_obj} = $f1;
 	
 	$self->{label} = $f1->Label(
-		text => Jcode->new('コーディングルール・ファイル：')->sjis,
-		font => "TKFN",
-	)->pack(anchor =>'w',side => 'left');
+		-text => gui_window->gui_jchar('コーディングルール・ファイル：'),
+		-font => "TKFN",
+	)->pack(-anchor =>'w',-side => 'left');
 	
 	$self->{button} = $f1->Button(
-		-text => Jcode->new('参照')->sjis,
+		-text => gui_window->gui_jchar('参照'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $f1->after(10,sub{$self->_sansyo;});}
@@ -23,7 +23,7 @@ sub _new{
 	
 	if ($self->{r_button}){
 		$self->{button} = $f1->Button(
-			-text => Jcode->new('リロード')->sjis,
+			-text => gui_window->gui_jchar('リロード'),
 			-font => "TKFN",
 			-borderwidth => '1',
 			-command => sub{ $f1->after(10,sub{
@@ -41,6 +41,7 @@ sub _new{
 		-background => 'gray',
 		-width      => 17,
 	)->pack(-side => 'left',-padx => 2);
+	gui_window->disabled_entry_configure($e1);
 	
 	if ($::project_obj->last_codf){
 		my $path = $::project_obj->last_codf;
@@ -51,7 +52,7 @@ sub _new{
 		$e1->configure(-state,'disable');
 	} else {
 		$e1->configure(-state,'normal');
-		$e1->insert('0',Jcode->new('選択ファイル無し')->sjis);
+		$e1->insert('0',gui_window->gui_jchar('選択ファイル無し'));
 		$e1->configure(-state,'disable');
 	}
 	$self->{entry} = $e1;
@@ -70,7 +71,7 @@ sub _sansyo{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => Jcode->new('コーディング・ルール・ファイルを選択してください')->sjis,
+		-title      => gui_window->gui_jchar('コーディング・ルール・ファイルを選択してください'),
 		-initialdir => $::config_obj->cwd
 	);
 	
@@ -80,7 +81,7 @@ sub _sansyo{
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
 		$self->entry->configure(-state,'normal');
 		$self->entry->delete(0, 'end');
-		$self->entry->insert('0',Jcode->new("$path")->sjis);
+		$self->entry->insert('0',gui_window->gui_jchar("$path"));
 		$self->entry->configure(-state,'disable');
 		if (defined($self->{command})){
 			&{$self->{command}};

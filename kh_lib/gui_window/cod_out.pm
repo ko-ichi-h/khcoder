@@ -6,6 +6,8 @@ use strict;
 use gui_window::cod_out::spss;
 use gui_window::cod_out::csv;
 use gui_window::cod_out::tab;
+use gui_window::cod_out::var;
+
 
 #-------------#
 #   GUI作製   #
@@ -15,7 +17,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new($self->win_label)->sjis);
+	$win->title($self->gui_jchar($self->win_label));
 	$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
@@ -30,11 +32,11 @@ sub _new{
 	);
 
 	# コーディング単位
-	my $f2 = $lf->Frame()->pack(expand => 'y', fill => 'x', -pady => 3);
+	my $f2 = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 3);
 	$f2->Label(
-		text => Jcode->new('コーディング単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'left');
+		-text => $self->gui_jchar('コーディング単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
 			-anchor => 'e',
 			-pady   => 1,
@@ -46,7 +48,7 @@ sub _new{
 	);
 	
 	$win->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}

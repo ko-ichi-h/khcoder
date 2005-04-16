@@ -25,7 +25,7 @@ sub _save{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('コーディング結果（CSV）：名前を付けて保存')->sjis,
+			$self->gui_jchar('コーディング結果（CSV）：名前を付けて保存'),
 		-initialdir       => $::config_obj->cwd
 	);
 	
