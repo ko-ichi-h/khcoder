@@ -1,4 +1,4 @@
-package gui_window::cod_out::spss;
+package gui_window::cod_out::var;
 use base qw(gui_window::cod_out);
 
 use strict;
@@ -18,14 +18,14 @@ sub _save{
 	
 	# 保存先の参照
 	my @types = (
-		[ "spss syntax file",[qw/.sps/] ],
+		[ "csv file",[qw/.csv/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.sps',
+		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('コーディング結果（SPSS）：名前を付けて保存'),
+			$self->gui_jchar('コーディング結果：不定長CSV：名前を付けて保存'),
 		-initialdir       => $::config_obj->cwd
 	);
 	
@@ -35,19 +35,17 @@ sub _save{
 		unless ( $result = kh_cod::func->read_file($self->cfile) ){
 			return 0;
 		}
-		$result->cod_out_spss($self->tani,$path);
+		$result->cod_out_var($self->tani,$path);
 	}
 	
 	$self->close;
 }
 
-
-
 sub win_label{
-	return 'コーディング結果の出力：SPSSファイル';
+	return 'コーディング結果の出力：不定長CSV';
 }
 
 sub win_name{
-	return 'w_cod_save_spss';
+	return 'w_cod_save_csv';
 }
 1;

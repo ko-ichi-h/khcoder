@@ -38,6 +38,7 @@ sub make{
 		-font       => 'TKFN',
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
+	gui_window->disabled_entry_configure($cupro);
 	
 	$msg = gui_window->gui_jchar('説明（メモ）：','euc');
 	$fra1b->Label(
@@ -51,6 +52,7 @@ sub make{
 		-font       => 'TKFN',
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
+	gui_window->disabled_entry_configure($cuprom);
 
 	# データベース情報
 	my $fra2 = $mw->LabFrame(
@@ -74,6 +76,7 @@ sub make{
 		-font       => 'TKFN',
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
+	gui_window->disabled_entry_configure($self->{ent_num1});
 
 	my $fra2_2 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
 	$fra2_2->Label(
@@ -86,6 +89,7 @@ sub make{
 		-font       => 'TKFN',
 		-state      => 'disable',
 	)->pack(-anchor=>'e',-side=>'right');
+	gui_window->disabled_entry_configure($self->{ent_num2});
 
 	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', -expand => 'y');
 	$fra2_3->Label(

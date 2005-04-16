@@ -18,14 +18,14 @@ sub _save{
 	
 	# 保存先の参照
 	my @types = (
-		[ Jcode->new("タブ区切り")->sjis,[qw/.txt/] ],
+		[ $self->gui_jchar("タブ区切り"),[qw/.txt/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('コーディング結果：名前を付けて保存')->sjis,
+			$self->gui_jchar('コーディング結果：名前を付けて保存'),
 		-initialdir       => $::config_obj->cwd
 	);
 	
