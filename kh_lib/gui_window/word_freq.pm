@@ -11,12 +11,12 @@ sub _new{
 	my $wmw= $mw->Toplevel;
 	$self->{win_obj} = $wmw;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('出現数 分布')->sjis);
+	$wmw->title($self->gui_jchar('出現数 分布'));
 	
 	$wmw->Label(
-		-text => Jcode->new('・記述統計')->sjis,
+		-text => $self->gui_jchar('・記述統計'),
 		-font => "TKFN"
-	)->pack(anchor => 'w');
+	)->pack(-anchor => 'w');
 	
 	my $lis1 = $wmw->Scrolled(
 		'HList',
@@ -38,9 +38,9 @@ sub _new{
 	)->pack();
 	
 	$wmw->Label(
-		-text => Jcode->new('・度数分布表')->sjis,
+		-text => $self->gui_jchar('・度数分布表'),
 		-font => "TKFN"
-	)->pack(anchor => 'w');
+	)->pack(-anchor => 'w');
 
 	my $lis2 = $wmw->Scrolled(
 		'HList',
@@ -57,28 +57,28 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 	
-	$lis2->header('create',0,-text => Jcode->new('出現数')->sjis);
-	$lis2->header('create',1,-text => Jcode->new('度数')->sjis);
-	$lis2->header('create',2,-text => Jcode->new('パーセント')->sjis);
-	$lis2->header('create',3,-text => Jcode->new('累積度数')->sjis);
-	$lis2->header('create',4,-text => Jcode->new('累積パーセント')->sjis);
+	$lis2->header('create',0,-text => $self->gui_jchar('出現数'));
+	$lis2->header('create',1,-text => $self->gui_jchar('度数'));
+	$lis2->header('create',2,-text => $self->gui_jchar('パーセント'));
+	$lis2->header('create',3,-text => $self->gui_jchar('累積度数'));
+	$lis2->header('create',4,-text => $self->gui_jchar('累積パーセント'));
 	
 	$wmw->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list2);});} 
 	)->pack(-side => 'left');
 
 	$wmw->Button(
-		-text => Jcode->new('閉じる')->sjis,
+		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->close;});} 
 	)->pack(-side => 'right');
 
 	$wmw->Button(
-		-text => Jcode->new('再計算')->sjis,
+		-text => $self->gui_jchar('再計算'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->count;});} 
@@ -106,7 +106,7 @@ sub count{
 		$self->list1->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->[0])->sjis,
+			-text  => $self->gui_jchar($i->[0]),
 		);
 		$self->list1->itemCreate(
 			$row,

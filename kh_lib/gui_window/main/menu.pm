@@ -273,6 +273,16 @@ sub make{
 				})},
 			);
 
+			$self->{m_b3_crossout}->separator;
+
+			$self->{m_b3_crossout_var} = $self->{m_b3_crossout}->command(
+				-label => gui_window->gui_jchar("不定長CSV"),
+				-font  => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::morpho_crossout::var->open;
+				})},
+			);
+
 		$self->{m_b3_contxtout} = $f8->cascade(
 				-label => gui_window->gui_jchar("「抽出語ｘ文脈ベクトル」表の出力",'euc'),
 				-font => "TKFN",
@@ -581,6 +591,7 @@ sub refresh{
 		'm_b3_crossout_csv',
 		'm_b3_crossout_spss',
 		'm_b3_crossout_tab',
+		'm_b3_crossout_var',
 		't_txt_pickup',
 		't_doc_search',
 		't_out_read',

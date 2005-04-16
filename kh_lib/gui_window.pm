@@ -124,6 +124,10 @@ sub start{
 	return 1;
 }
 
+#--------------------------#
+#   日本語表示・入力関係   #
+#--------------------------#
+
 sub gui_jchar{ # GUI表示用の日本語
 	my $char = $_[1];
 	my $code = $_[2];
@@ -172,5 +176,20 @@ sub gui_jg{
 		return $char;
 	}
 }
+
+#------------------------#
+#   Tkのバージョン関係   #
+#------------------------#
+
+sub disabled_entry_configure{
+	my $ent = $_[1];
+	$ent->configure(
+		-disabledbackground => 'gray',
+		-disabledforeground => 'black',
+	) if $Tk::VERSION >= 804;
+}
+
+
+
 
 1;

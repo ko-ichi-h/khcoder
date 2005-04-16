@@ -5,6 +5,7 @@ use mysql_exec;
 use mysql_crossout::csv;
 use mysql_crossout::spss;
 use mysql_crossout::tab;
+use mysql_crossout::var;
 
 sub new{
 	my $class = shift;
@@ -23,9 +24,10 @@ sub run{
 	my $self = shift;
 	
 	use Benchmark;
-	my $t0 = new Benchmark;
-	
+
 	$self->make_list;
+	
+	my $t0 = new Benchmark;
 	$self->out2;
 	$self->finish;
 	
