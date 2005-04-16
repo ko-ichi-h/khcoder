@@ -14,6 +14,9 @@
 	・Ctrl + Hで品詞別の頻度などを段落単位で集計・出力
 		（強制抽出無し、HTMLタグ無視。大隅先生向け）
 
+Jcode->new\(\f.*\f\)->sjis
+$self->gui_jchar(\1)
+
 [Anonymous CVSのコマンド]
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
 	cd core

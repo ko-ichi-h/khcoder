@@ -60,7 +60,7 @@ sub _new{
 		$self->hlist->itemCreate(
 			$row,1,
 			-itemtype => 'text',
-			-text     => Jcode->new($i->[0])->sjis
+			-text     => gui_window->gui_jchar($i->[0],'euc')
 		);
 		++$row;
 	}

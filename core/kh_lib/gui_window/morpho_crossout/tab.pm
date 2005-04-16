@@ -19,14 +19,14 @@ sub save{
 	
 	# 保存先の参照
 	my @types = (
-		[ Jcode->new('タブ区切り')->sjis,[qw/.txt/] ],
+		[ $self->gui_jchar('タブ区切り'),[qw/.txt/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('「文書ｘ抽出語」表：名前を付けて保存')->sjis,
+			$self->gui_jchar('「文書ｘ抽出語」表：名前を付けて保存'),
 		-initialdir       => $::config_obj->cwd
 	);
 	unless ($path){
@@ -34,11 +34,11 @@ sub save{
 	}
 	
 	my $ans = $self->win_obj->messageBox(
-		-message => Jcode->new
+		-message => $self->gui_jchar
 			(
 			   "この処理には時間がかかることがあります。\n".
 			   "続行してよろしいですか？"
-			)->sjis,
+			),
 		-icon    => 'question',
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
