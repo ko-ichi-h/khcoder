@@ -289,14 +289,13 @@ sub _view_doc{
 	my $buffer;
 	foreach my $i (@{$doc->body}){
 		if ($color{$i->[1]}){
-			if (length($buffer)){
+			if (length($buffer)){       # 強調語の場合
 				$t .= $self->_str_color($buffer);
 				$buffer = '';
 			}
-			
-			$t .= "$color{$i->[1]}".$self->gui_jchar("$i->[0]",'sjis')."$black";
-		} else {
-			$buffer .= $self->gui_jchar("$i->[0]",'sjis');
+			$t .="$color{$i->[1]}".$self->gui_jchar("$i->[0]",'sjis')."$black";
+		} else {                        # 強調語以外：バッファに蓄積
+			$buffer .= $i->[0];
 		}
 	}
 	$t .= $self->_str_color($buffer);
@@ -316,13 +315,24 @@ sub _str_color{
 	my $black = Term::ANSIColor::color('clear');
 	my $color = Term::ANSIColor::color($::config_obj->color_DocView_force);
 	
-	$str = Jcode->new($str)->euc;
-	foreach my $i (@{$self->{str_force}}){
-		my $pat = $i;
-		my $rep = $color.$i.$black;
-		$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
+	# 色情報を付けてからdecodeすると、色情報が失われるので、
+	# Perlのバージョンによって分岐させる
+	if ( $] > 5.008 ){
+		$str = $self->gui_jchar($str);
+		foreach my $i (@{$self->{str_force}}){
+			my $pat = $self->gui_jchar($i);
+			my $rep = $color.$pat.$black;
+			$str =~ s/$pat/$rep/g;
+		}
+	} else {
+		$str = Jcode->new($str)->euc;
+		foreach my $i (@{$self->{str_force}}){
+			my $pat = $i;
+			my $rep = $color.$i.$black;
+			$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
+		}
+		$str = $self->gui_jchar($str);
 	}
-	$str = Jcode->new($str)->sjis;
 	return $str;
 }
 

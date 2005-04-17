@@ -16,7 +16,7 @@ sub _new{
 	$self->{parent} = $args{parent};
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
-	$win->title(Jcode->new('強調する言葉')->sjis);
+	$win->title($self->gui_jchar('強調する言葉'));
 
 	# リスト用フレーム
 	my $lf = $win->LabFrame(
@@ -26,7 +26,7 @@ sub _new{
 	)->pack(-fill => 'both',-expand => 'y');
 
 	$lf->Label(
-		-text => Jcode->new('■以下の言葉が常に強調されます。')->sjis,
+		-text => $self->gui_jchar('■以下の言葉が常に強調されます。'),
 		-font => "TKFN",
 	)->pack(
 		-anchor =>'w',
@@ -48,11 +48,11 @@ sub _new{
 		-selectbackground=> 'cyan',
 		-selectmode => 'extended',
 	)->pack(-fill=>'both',-expand => 'yes',-pady => 2);
-	$plis->header('create',0,-text => Jcode->new('　言葉　')->sjis);
-	$plis->header('create',1,-text => Jcode->new('　種類　')->sjis);
+	$plis->header('create',0,-text => $self->gui_jchar('　言葉　'));
+	$plis->header('create',1,-text => $self->gui_jchar('　種類　'));
 
 	$lf->Button(
-		-text => Jcode->new('選択した言葉を削除')->sjis,
+		-text => $self->gui_jchar('選択した言葉を削除'),
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->delete;});}
 	)->pack(-anchor => 'e');
@@ -66,7 +66,7 @@ sub _new{
 	my $lf2a = $lf2->Frame()->pack(-fill => 'x',-expand => 'y');
 
 	$lf2a->Label(
-		-text => Jcode->new('言葉：')->sjis,
+		-text => $self->gui_jchar('言葉：'),
 		-font => "TKFN",
 	)->pack(
 		-side => 'left',
@@ -75,7 +75,7 @@ sub _new{
 	$self->{entry} = $lf2a->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(-side => 'left',fill => 'x',expand => 'y');
+	)->pack(-side => 'left',-fill => 'x',-expand => 'y');
 	$self->{entry}->bind(
 		"<Key>",
 		[\&gui_jchar::check_key_e,Ev('K'),\$self->{entry}]
@@ -83,28 +83,29 @@ sub _new{
 	$self->{entry}->bind("<Key-Return>",sub{$self->add;});
 
 	$lf2->Label(
-		-text => Jcode->new('種類：')->sjis,
+		-text => $self->gui_jchar('種類：'),
 		-font => "TKFN",
 	)->pack(
 		-side => 'left'
 	);
 	$self->{menu} = gui_widget::optmenu->open(
 		parent  => $lf2,
+		width   => 6,
 		pack    => {-side => 'left'},
 		options => [
-			[Jcode->new('抽出語')->sjis, '1'],
-			[Jcode->new('文字列')->sjis, '0'],
+			[$self->gui_jchar('抽出語'), '1'],
+			[$self->gui_jchar('文字列'), '0'],
 		],
 		variable => \$self->{type},
 	);
 	$lf2->Button(
-		-text => Jcode->new('追加')->sjis,
+		-text => $self->gui_jchar('追加'),
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->add;});}
 	)->pack(-anchor => 'e');
 
 	$win->Button(
-		-text => Jcode->new('閉じる')->sjis,
+		-text => $self->gui_jchar('閉じる'),
 		#-width => 8,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -131,18 +132,19 @@ sub refresh{
 	",1)->hundle;
 	while (my $i = $h->fetch){
 		$self->list->add($row,-at => "$row");
-		$self->list->itemCreate($row,0,-text => Jcode->new($i->[0])->sjis);
+		$self->list->itemCreate($row,0,-text => $self->gui_jchar($i->[0]));
+		
 		if ($i->[1]){
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => Jcode->new('抽出語')->sjis
+				-text => $self->gui_jchar('抽出語')
 			);
 		} else {
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => Jcode->new('文字列')->sjis
+				-text => $self->gui_jchar('文字列')
 			);
 		}
 		++$row;
@@ -159,7 +161,10 @@ sub refresh{
 sub add{
 	my $self = shift;
 	
-	my ($word, $type) = (Jcode->new($self->{entry}->get)->euc,$self->{type});
+	my ($word, $type) = (
+		Jcode->new($self->gui_jg($self->{entry}->get),'sjis')->euc,
+		$self->gui_jg($self->{type})
+	);
 
 	# 入力があるかどうかをチェック
 	unless (length($word)){
@@ -186,8 +191,7 @@ sub add{
 	
 	# 追加
 	mysql_exec->do("
-		INSERT INTO d_force (name, type)
-		VALUES (\'$word\', $type)
+		INSERT INTO d_force (name, type) VALUES (\'$word\', $type)
 	",1);
 	
 	# エントリのクリア
@@ -209,8 +213,12 @@ sub delete{
 	# 削除
 	my @selected = $self->{list}->infoSelection;
 	foreach my $i (@selected){
-		my $word = Jcode->new($self->list->itemCget($i,0,-text))->euc;
-		my $type = Jcode->new($self->list->itemCget($i,1,-text))->euc;
+		my $word = Jcode->new(
+			$self->gui_jg($self->list->itemCget($i,0,-text))
+		)->euc;
+		my $type = Jcode->new(
+			$self->gui_jg($self->list->itemCget($i,1,-text))
+		)->euc;
 		if ($type eq '抽出語'){
 			$type = 1;
 		} else {

@@ -167,7 +167,7 @@ sub gui_jm{ # メニューのトップ部分用日本語
 	}
 }
 
-sub gui_jg{
+sub gui_jg{ # 入力された文字列の変換
 	my $char = $_[1];
 	
 	if ($] > 5.008){
