@@ -26,6 +26,11 @@ sub _new{
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
+	$wabtkh->Label(
+		-text => $self->gui_jchar('¡¡Perl¡§  '."$]",'euc'),
+		-font => "TKFN",
+		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
+
 	my $fra1 = $wabtkh->Frame() ->pack(-anchor=>'w');
 
 	$fra1->Label(

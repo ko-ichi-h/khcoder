@@ -165,11 +165,6 @@ sub make{
 		-tearoff=>'no'
 	);
 
-	$f->configure(
-		-label     => gui_window->gui_jm('ツール(T)'),
-		-underline => $::config_obj->underline_conv(7),
-	) unless ($] > 5.008 && $::config_obj->os eq 'win32');
-
 	my $f3 = $f->cascade(
 			-label => gui_window->gui_jchar('抽出語'),
 			-font => "TKFN",
@@ -493,6 +488,11 @@ sub make{
 			);
 
 
+	$f->configure(
+		-label     => gui_window->gui_jm('ツール(T)'),
+		-underline => $::config_obj->underline_conv(7),
+	);
+
 
 	#------------#
 	#   ヘルプ   #
@@ -535,7 +535,7 @@ sub make{
 		$f->command(
 			-label => $msg,
 			-command => sub{ $mw->after(10, sub{gui_window::about->open;});},
-			-font => "TKFN"
+			-font => "TKFN",
 		);
 
 	#--------------------#
@@ -548,6 +548,10 @@ sub make{
 	$mw->bind(
 		'<Control-Key-n>',
 		sub{ $mw->after(10,sub{gui_window::project_new->open;});}
+	);
+	$mw->bind(
+		'<Control-Key-v>',
+		sub{ $mw->after(10,sub{gui_window::about->open;});}
 	);
 	$mw->bind(
 		'<Control-Key-w>',
