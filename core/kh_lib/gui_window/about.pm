@@ -22,12 +22,7 @@ sub _new{
 		)->pack(-anchor => 'c');
 
 	$wabtkh->Label(
-		-text => $self->gui_jchar('　Version：  '."$::kh_version",'euc'),
-		-font => "TKFN",
-		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
-
-	$wabtkh->Label(
-		-text => $self->gui_jchar('　Perl：  '."$]",'euc'),
+		-text => $self->gui_jchar('　Version：  '."$::kh_version  (".$].")",'euc'),
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
