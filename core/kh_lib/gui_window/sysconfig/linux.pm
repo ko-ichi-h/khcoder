@@ -30,44 +30,42 @@ sub __new{
 
 	$inis->focus;
 #	$inis->grab;
-	my $msg = Jcode::convert('KH Coderの設定','sjis','euc');
-	$inis->title("$msg");
+	$inis->title( $self->gui_jchar('KH Coderの設定','euc') );
 	my $lfra = $inis->LabFrame(
 		-label => 'ChaSen',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
-	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',expand=>'yes');
+	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
-	$msg = '・茶筌の利用に必要な情報';
-	Jcode::convert(\$msg,'sjis','euc');
-	$fra0->Label(-text => "$msg",
+	$fra0->Label(
+		-text => $self->gui_jchar('・茶筌の利用に必要な情報','euc'),
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 
-
-	$msg = '"chasenrc"のパス：'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{lb1} = $fra1->Label(-text => "$msg",
+	$self->{lb1} = $fra1->Label(
+		-text => $self->gui_jchar('"chasenrc"のパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
 	my $entry1 = $fra1->Entry(
 		-font => 'TKFN',
 		-background => 'white'
-	)->pack(side => 'right');
+	)->pack(-side => 'right');
 	$self->{entry1} = $entry1;
 
 	$entry1->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $entry1,],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-	$msg = '参照'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{btn1} = $fra1->Button(-text => "$msg",-font => 'TKFN',
+	$self->{btn1} = $fra1->Button(
+		-text => $self->gui_jchar('参照'),
+		-font => 'TKFN',
 		-command => sub{ $mw->after
 			(10,
 				sub { $self->gui_get_exe('chasenrc','entry1'); }
@@ -75,26 +73,25 @@ sub __new{
 		}
 	)->pack(-padx => '2',-side => 'right');
 
-
-	$msg = '"grammar.cha"のパス：'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{lb2} = $lfra->Label(-text => "$msg",
+	$self->{lb2} = $lfra->Label(
+		-text => $self->gui_jchar('"grammar.cha"のパス：','euc'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
 	my $entry2 = $lfra->Entry(
 		-font => 'TKFN',
 		-background => 'white'
-	)->pack(side => 'right');
+	)->pack(-side => 'right');
 	$self->{entry2} = $entry2;
 
 	$entry2->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $entry2,],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-
-	$msg = '参照'; Jcode::convert(\$msg,'sjis','euc');
-	$self->{btn2} = $lfra->Button(-text => "$msg",-font => 'TKFN',
+	$self->{btn2} = $lfra->Button(
+		-text => $self->gui_jchar('参照'),
+		-font => 'TKFN',
 		-command => sub{ $mw->after
 			(
 				10,
@@ -115,11 +112,11 @@ sub __new{
 	)->pack(-expand=>'yes',-fill=>'both');
 
 	$afra->Label(
-		-text => Jcode->new('・その他の外部アプリケーション')->sjis,
+		-text => $self->gui_jchar('・その他の外部アプリケーション'),
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 	$afra->Label(
-		-text => Jcode->new('　（%sはファイル名やURLで置き換えられます）')->sjis,
+		-text => $self->gui_jchar('　（%sはファイル名やURLで置き換えられます）'),
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 
@@ -128,7 +125,7 @@ sub __new{
 	# Webブラウザ
 	my $appf1 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
 	$appf1->Label(
-		-text => Jcode->new('Webブラウザ：')->sjis,
+		-text => $self->gui_jchar('Webブラウザ：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 	my $ent_html = $appf1->Entry(
@@ -140,7 +137,7 @@ sub __new{
 	# 表計算
 	my $appf2 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
 	$appf2->Label(
-		-text => Jcode->new('表計算（CSVビューア）：')->sjis,
+		-text => $self->gui_jchar('表計算（CSVビューア）：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 	my $ent_csv = $appf2->Entry(
@@ -152,7 +149,7 @@ sub __new{
 	# PDFビューア
 	my $appf2 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
 	$appf2->Label(
-		-text => Jcode->new('PDFビューア')->sjis,
+		-text => $self->gui_jchar('PDFビューア'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 	my $ent_pdf = $appf2->Entry(
@@ -166,7 +163,7 @@ sub __new{
 	);
 
 	$inis->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{
@@ -239,15 +236,13 @@ sub gui_get_exe{
 	my $file = shift;
 	my $ent  = shift;
 
-	my $msg = Jcode->new("「$file」を開いてください")->sjis;
-	Jcode::convert(\$msg,'sjis','euc');
 	my @types = (
 		["All files", '*']
 	);
 
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes => \@types,
-		-title => "$msg",
+		-title => $self->gui_jchar("「$file」を開いてください"),
 		-initialdir => $::config_obj->cwd
 	);
 
