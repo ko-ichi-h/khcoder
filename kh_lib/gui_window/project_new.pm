@@ -62,7 +62,7 @@ sub _new{
 	# ENTRYのバインド
 	$e1->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 	$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
@@ -81,8 +81,8 @@ sub _new{
 sub _make_new{
 	my $self = shift;
 	my $new = kh_project->new(
-		target  => $self->e1->get,
-		comment => $self->e2->get,
+		target  => $self->gui_jg($self->e1->get),
+		comment => $self->gui_jg($self->e2->get),
 	) or return 0;
 	kh_projects->read->add_new($new) or return 0;
 	$self->close;
