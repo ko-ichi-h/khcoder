@@ -16,6 +16,7 @@ sub open{
 		}
 		$self->{values}{$i->[1]} = $i->[0];
 	}
+	$self->{width} *= 2 if $] > 5.008;
 	
 	# ËÜÂÎºîÀ½
 	$self->{win_obj} = $self->{parent}->Menubutton(

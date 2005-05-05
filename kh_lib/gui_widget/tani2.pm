@@ -36,20 +36,20 @@ sub _new{
 				"select status from status where name = \'$i\'",1
 			)->hundle->fetch->[0]
 		){
-			push @list1, Jcode->new($name{$i})->sjis;
+			push @list1, gui_window->gui_jchar($name{$i},'euc');
 			unless ($i eq 'bun'){
-				push @list2_1, Jcode->new($name{$i})->sjis;
+				push @list2_1, gui_window->gui_jchar($name{$i},'euc');
 			}
 		}
 	}
 	
-	my $f1 = $self->parent->Frame()->pack(expand => 'y', fill => 'x');
+	my $f1 = $self->parent->Frame()->pack(-expand => 'y', -fill => 'x');
 	$self->{win_obj} = $f1;
 	
 	$f1->Label(
-		text => Jcode->new('コーディング単位：')->sjis,
-		font => "TKFN",
-	)->pack(side => 'left');
+		-text => gui_window->gui_jchar('コーディング単位：','euc'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
 	
 #	$f1->Optionmenu(
 #		-options=> \@list1,
@@ -68,7 +68,7 @@ sub _new{
 		-font        => "TKFN",
 		-width       => 4,
 		-borderwidth => 1,
-	)->pack(side=>'left',-pady => 2);
+	)->pack(-side=>'left',-pady => 2);
 	foreach my $i (@list1){
 		$self->{mb}->radiobutton(
 			-label    => " $i",
@@ -78,12 +78,12 @@ sub _new{
 			-command  => sub{$self->check;},
 		);
 	}
-	$self->{raw_opt} = Jcode->new($name{$::project_obj->last_tani})->sjis;
+	$self->{raw_opt} = gui_window->gui_jchar($name{$::project_obj->last_tani},'euc');
 
 	$f1->Label(
-		text => Jcode->new('    集計単位：')->sjis,
-		font => "TKFN",
-	)->pack(side => 'left');
+		-text => gui_window->gui_jchar('    集計単位：','euc'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
 
 	$self->{opt2} = $f1->Optionmenu(
 		-options=> \@list2_1,
@@ -91,7 +91,7 @@ sub _new{
 		-borderwidth => '1',
 		-width => 4,
 		-variable => \$self->{raw_opt2},
-	)->pack(side=>'left');
+	)->pack(-side=>'left');
 
 
 	return $self;
@@ -108,9 +108,9 @@ sub start{
 sub check{
 	my $self = shift;
 	
-	$self->{mb}->configure(-text,Jcode->new("$self->{raw_opt}")->sjis);
+	$self->{mb}->configure(-text,$self->{raw_opt});
 	$self->{mb}->update;
-	$::project_obj->last_tani($value{Jcode->new($self->{raw_opt})->euc});
+	$::project_obj->last_tani($value{Jcode->new( gui_window->gui_jg($self->{raw_opt}) )->euc});
 	
 	unless (Exists($self->opt2)){
 		return 0;
@@ -133,7 +133,7 @@ sub check{
 				)->hundle->fetch->[0]
 			)
 		){
-			push @list, Jcode->new($name{$i})->sjis;
+			push @list, gui_window->gui_jchar($name{$i},'euc');
 		}
 	}
 	
@@ -144,7 +144,7 @@ sub check{
 		-borderwidth => '1',
 		-width => 4,
 		-variable => \$self->{raw_opt2},
-	)->pack(side=>'left');
+	)->pack(-side=>'left');
 	
 }
 
@@ -154,13 +154,13 @@ sub check{
 
 sub tani1{
 	my $self = shift;
-	my $opt = Jcode->new($self->{raw_opt})->euc;
+	my $opt = Jcode->new( gui_window->gui_jg($self->{raw_opt}) )->euc;
 
 	return $value{$opt};
 }
 sub tani2{
 	my $self = shift;
-	my $opt = Jcode->new($self->{raw_opt2})->euc;
+	my $opt = Jcode->new( gui_window->gui_jg($self->{raw_opt2}) )->euc;
 
 	return $value{$opt};
 }
