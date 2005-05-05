@@ -3,6 +3,8 @@ use strict;
 use Tk;
 use Jcode;
 
+# Perl 5.8の場合、decodeされた文字列がラベルとして与えられることが前提
+
 sub open{
 	my $self;
 	my $class = shift;
@@ -11,12 +13,19 @@ sub open{
 	
 	# widthの決定
 	foreach my $i (@{$self->{options}}){
-		if ( length($i->[0]) > $self->{width} ){
-			$self->{width} = length($i->[0]);
+		my $len;
+		if ($] > 5.008){
+			$len = length(Encode::encode('shiftjis',$i->[0]));
+		} else {
+			$len = length($i->[0]);
+		}
+		
+		if ( $len > $self->{width} ){
+			$self->{width} = $len;
 		}
 		$self->{values}{$i->[1]} = $i->[0];
 	}
-	$self->{width} *= 2 if $] > 5.008;
+
 	
 	# 本体作製
 	$self->{win_obj} = $self->{parent}->Menubutton(
