@@ -7,10 +7,10 @@ sub make_font{
 
 	if ($Tk::VERSION >= 804){
 		$self->mw->fontCreate('TKFN',
-			-family => 'goth_p',
+			-family => 'sazanami gothic',
 			-size   => 10
 		);
-		$self->mw->optionAdd('*font', 'goth_p 10')
+		$self->mw->optionAdd('*font', "TKFN")
 	} else {
 		$self->mw->fontCreate('TKFN',
 			-compound => [

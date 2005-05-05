@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('コーディング・章 節 段落ごとの集計')->sjis);
+	$win->title($self->gui_jchar('コーディング・章 節 段落ごとの集計'));
 	$self->{win_obj} = $win;
 	
 	#------------------------#
@@ -33,18 +33,18 @@ sub _new{
 	);
 	# セル内容選択
 	$f0->Label(
-		-text => Jcode->new('　　セル内容：')->sjis,
+		-text => $self->gui_jchar('　　セル内容：'),
 		-font => "TKFN",
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 
 	gui_widget::optmenu->open(
 		parent  => $f0,
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[Jcode->new('度数とパーセント')->sjis , 0],
-				[Jcode->new('度数のみ')->sjis         , 1],
-				[Jcode->new('パーセントのみ')->sjis   , 2],
+				[$self->gui_jchar('度数とパーセント') , 0],
+				[$self->gui_jchar('度数のみ')         , 1],
+				[$self->gui_jchar('パーセントのみ')   , 2],
 			],
 		variable => \$self->{cell_opt},
 	);
@@ -52,9 +52,9 @@ sub _new{
 #	$f0->Optionmenu(
 #		-options => 
 #			[
-#				[ Jcode->new('度数とパーセント')->sjis => 0 ],
-#				[ Jcode->new('度数のみ')->sjis         => 1 ],
-#				[ Jcode->new('パーセントのみ')->sjis   => 2 ],
+#				[ $self->gui_jchar('度数とパーセント') => 0 ],
+#				[ $self->gui_jchar('度数のみ')         => 1 ],
+#				[ $self->gui_jchar('パーセントのみ')   => 2 ],
 #			],
 #		-font => "TKFN",
 #		-borderwidth => '1',
@@ -76,11 +76,11 @@ sub _new{
 
 	
 	$f1->Button(
-		-text    => Jcode->new('集計')->sjis,
+		-text    => $self->gui_jchar('集計'),
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->_calc;});}
-	)->pack( -anchor => 'e', side => 'right');
+	)->pack( -anchor => 'e', -side => 'right');
 	
 	#------------------#
 	#   結果表示部分   #
@@ -109,13 +109,13 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{label} = $rf->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'left');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'left');
 
 	$rf->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -210,7 +210,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 					-style => $center_style
 				);
 			}
@@ -225,7 +225,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 				);
 			}
 			++$col;

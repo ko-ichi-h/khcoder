@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('コーディング・単純集計')->sjis);
+	$win->title($self->gui_jchar('コーディング・単純集計'));
 	
 	$self->{win_obj} = $win;
 
@@ -38,11 +38,11 @@ sub _new{
 	);
 
 	# コーディング単位
-	my $f2 = $lf->Frame()->pack(expand => 'y', fill => 'x', -pady => 3);
+	my $f2 = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 3);
 	$f2->Label(
-		text => Jcode->new('コーディング単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'left');
+		-text => $self->gui_jchar('コーディング単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
 			-anchor => 'e',
 			-pady   => 1,
@@ -54,7 +54,7 @@ sub _new{
 	);
 
 	$f2->Button(
-		-text    => Jcode->new('集計')->sjis,
+		-text    => $self->gui_jchar('集計'),
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->_calc;});}
@@ -85,18 +85,18 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => Jcode->new('コード名')->sjis);
-	$lis->header('create',1,-text => Jcode->new('頻度')->sjis);
-	$lis->header('create',2,-text => Jcode->new('パーセント')->sjis);
+	$lis->header('create',0,-text => $self->gui_jchar('コード名'));
+	$lis->header('create',1,-text => $self->gui_jchar('頻度'));
+	$lis->header('create',2,-text => $self->gui_jchar('パーセント'));
 
 	my $label = $rf->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'left');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'left');
 
 	$rf->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -169,7 +169,7 @@ sub _calc{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->[0])->sjis,
+			-text  => $self->gui_jchar($i->[0],'euc'),
 		);
 		$self->list->itemCreate(
 			$row,
