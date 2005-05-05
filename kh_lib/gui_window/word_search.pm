@@ -79,7 +79,7 @@ sub _new{
 	gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
-		width   => 7,
+		#width   => 7,
 		options =>
 			[
 				[$self->gui_jchar('OR¸¡º÷') , 'OR'],
@@ -91,7 +91,7 @@ sub _new{
 	gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
-		width   => 8,
+		#width   => 8,
 		options =>
 			[
 				[$self->gui_jchar('ÉôÊ¬°ìÃ×')  => 'p'],
