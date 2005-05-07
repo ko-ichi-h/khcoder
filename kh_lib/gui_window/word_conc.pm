@@ -312,6 +312,7 @@ sub view_doc{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
 
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
@@ -347,6 +348,7 @@ sub next{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
 }
@@ -374,6 +376,7 @@ sub prev{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = "・現在表示中の文書： $selected / "."$foot";
+	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
 }
