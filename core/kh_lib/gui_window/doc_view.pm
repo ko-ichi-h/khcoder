@@ -3,7 +3,8 @@ use base qw(gui_window);
 use strict;
 use Tk;
 use Tk::Balloon;
-use Tk::ROTextANSIColor;
+use Tk::ROText;
+#use Tk::ROTextANSIColor;
 use gui_jchar;
 use mysql_getdoc;
 use gui_window::word_conc;
@@ -29,7 +30,7 @@ sub _new{
 	$bunhyojiwin->title($self->gui_jchar('文書表示'));
 
 	my $srtxt = $bunhyojiwin->Scrolled(
-		"ROTextANSIColor",
+		"ROText",
 		spacing1 => 3,
 		spacing2 => 2,
 		spacing3 => 3,
@@ -278,30 +279,33 @@ sub _view_doc{
 	my %color;                                    # 色情報準備
 	foreach my $i ('info', 'search','html','CodeW','force'){
 		my $name = "color_DocView_".$i;
-		$color{$i} = Term::ANSIColor::color($::config_obj->$name);
+		$self->text->tagConfigure($i,
+			-foreground => ($::config_obj->$name)[0],
+			-background => ($::config_obj->$name)[1],
+			-underline  => ($::config_obj->$name)[2],
+		);
 	}
-	my $black = Term::ANSIColor::color('clear');
 	
 	$self->text->delete('0.0','end');             # 見出し書き出し
-	$self->text->insert('end',"$color{info}".$self->gui_jchar($doc->header,'sjis')."$black");
+	$self->text->insert('end',$self->gui_jchar($doc->header,'sjis'),'info');
 	
-	my $t;                                        # 本文書き出し
-	my $buffer;
-	foreach my $i (@{$doc->body}){
-		if ($color{$i->[1]}){
-			if (length($buffer)){       # 強調語の場合
-				$t .= $self->_str_color($buffer);
+	my $t;
+	my $buffer;                                   # 本文書き出し
+	foreach my $i (@{$doc->body}){      # 強調語の場合
+		if ($i->[1]){
+			if (length($buffer)){
+				$self->_str_color($buffer);
 				$buffer = '';
 			}
-			$t .="$color{$i->[1]}".$self->gui_jchar("$i->[0]",'sjis')."$black";
+			$self->text->insert('end',$self->gui_jchar("$i->[0]",'sjis'),$i->[1]);
 		} else {                        # 強調語以外：バッファに蓄積
 			$buffer .= $i->[0];
 		}
 	}
-	$t .= $self->_str_color($buffer);
+	$self->_str_color($buffer);
 
-	$self->text->insert('end',$t);
-	$self->text->insert('end',"\n\n"."$color{info}".$self->gui_jchar("$self->{foot}",'euc'));
+	$self->text->insert('end',"\n\n");
+	$self->text->insert('end',$self->gui_jchar($self->{foot},'sjis'),'info');
 	
 	$self->wrap;
 	$self->update_buttons;
@@ -312,28 +316,43 @@ sub _str_color{
 	my $self = shift;
 	my $str  = shift;
 	
-	my $black = Term::ANSIColor::color('clear');
-	my $color = Term::ANSIColor::color($::config_obj->color_DocView_force);
-	
-	# 色情報を付けてからdecodeすると、色情報が失われるので、
-	# Perlのバージョンによって分岐させる
-	if ( $] > 5.008 ){
-		$str = $self->gui_jchar($str);
-		foreach my $i (@{$self->{str_force}}){
-			my $pat = $self->gui_jchar($i);
-			my $rep = $color.$pat.$black;
-			$str =~ s/$pat/$rep/g;
-		}
-	} else {
-		$str = Jcode->new($str)->euc;
-		foreach my $i (@{$self->{str_force}}){
-			my $pat = $i;
-			my $rep = $color.$i.$black;
-			$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
-		}
-		$str = $self->gui_jchar($str);
+	$str = Jcode->new($str)->euc;
+	foreach my $i (@{$self->{str_force}}){
+		my $pat = $i;
+		my $rep = "	start$i	end";
+		$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
 	}
-	return $str;
+
+	my $pref = 0;
+	while ( (my $pos = index($str,'	end',$pref)) >= 0 ){
+		my $color;                      # startまで
+		while ( (my $start = index($str,'	start',$pref)) >= 0){
+			last if $start > $pos;
+			$self->text->insert(
+				'end',
+				$self->gui_jchar(substr($str,$pref,$start - $pref),'euc'),
+				$color
+			);
+			#print Jcode->new(substr($str,$pref,$start - $pref))->sjis.", $color, ,$pref, $start\n";
+			$color = 'force';
+			$pref = $start + 6;
+		}
+		
+		$self->text->insert(            # endまで
+			'end',
+			$self->gui_jchar(substr($str, $pref, $pos - $pref),'euc'),
+			'force'
+		);
+		#print Jcode->new( substr($str, $pref, $pos - $pref) )->sjis.", nakami\n";
+		
+		$pref = $pos + 4;
+	}
+	
+	$self->text->insert(                # end以降
+		'end',
+		$self->gui_jchar( substr($str, $pref, length($str) - $pref), 'euc')
+	);
+	#print Jcode->new( substr($str, $pref, length($str) - $pref) )->sjis.", nokori\n";
 }
 
 # 再描画ルーチン
