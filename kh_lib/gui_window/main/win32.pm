@@ -8,7 +8,8 @@ sub make_font{
 	$self->mw->fontCreate('TKFN',
 		-family => 'MS UI Gothic',
 		-size => '10',
-	); 
+	);
+	$self->mw->optionAdd('*font',"TKFN");
 }
 
 
