@@ -32,12 +32,18 @@ MainLoop;
 sub font_change{
 	my $self = shift;
 	my $font = $self->{mw}->FontDialog(
+		-title            => $self->gui_jchar('フォントの選択'),
+		-familylabel      => $self->gui_jchar('フォント：'),
+		-sizelabel        => $self->gui_jchar('サイズ：'),
+		-cancellabel      => $self->gui_jchar('キャンセル'),
 		-nicefontsbutton  => 0,
 		-fixedfontsbutton => 0,
 		-fontsizes        => [8,9,10,11,12,13,14,15,16,17,18,19,20],
-		-sampletext       => $self->gui_jchar('KH Coderは計量テキスト分析を支援します。'),
+		-sampletext       => $self->gui_jchar('KH Coderは計量テキスト分析を実践するためのツールです。'),
 		-initfont         => ,"TKFN"
 	)->Show;
+	return unless $font;
+
 	$self->{mw}->fontDelete('TKFN');
 	$self->{mw}->fontCreate('TKFN',
 		-family => $font->configure(-family),
