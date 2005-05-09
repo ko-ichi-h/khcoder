@@ -34,6 +34,7 @@ sub font_change{
 	my $font = $self->{mw}->FontDialog(
 		-nicefontsbutton  => 0,
 		-fixedfontsbutton => 0,
+		-fontsizes        => [8,9,10,11,12,13,14,15,16,17,18,19,20],
 		-sampletext       => $self->gui_jchar('KH Coderは計量テキスト分析を支援します。'),
 		-initfont         => ,"TKFN"
 	)->Show;
