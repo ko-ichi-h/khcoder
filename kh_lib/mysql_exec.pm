@@ -31,6 +31,21 @@ sub connect_db{
 	return $dbh;
 }
 
+# DBへの接続テスト
+sub connection_test{
+	my $dsn = 
+		"DBI:mysql:database=test;$host;port=$port;mysql_local_infile=1";
+	my $dbh = DBI->connect($dsn,$username,$password)
+		or return 0;
+	my @r = $dbh->func('_ListDBs')
+		or return 0;
+	unless (@r){
+		return 0;
+	}
+	$dbh->disconnect;
+	return 1;
+}
+
 # 新規DBの作成
 sub create_new_db{
 	# DB名決定
