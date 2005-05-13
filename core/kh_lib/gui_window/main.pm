@@ -31,11 +31,11 @@ sub _new{
 	$self->{win_obj} = $mw;
 
 	if ($::config_obj->os eq 'win32'){
-		$::splash->Destroy;
 		if ($::config_obj->all_in_one_pack){
 			use kh_all_in_one;
 			kh_all_in_one->init;
 		}
+		$::splash->Destroy;
 	}
 
 	# GUI未作成のコマンド
