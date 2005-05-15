@@ -165,7 +165,7 @@ sub save{
 			);
 		foreach my $i (@outlist){
 			print INI "$i\t".$self->$i( undef,'1')."\n";
-			print  "$i\t".$self->$i( undef,'1')."\n";
+			# print  "$i\t".$self->$i( undef,'1')."\n";
 		}
 		foreach my $i (keys %{$self}){
 			if ( index($i,'w_') == 0 ){
