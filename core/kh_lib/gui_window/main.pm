@@ -2,8 +2,8 @@ package gui_window::main;
 use base qw(gui_window);
 use strict;
 
-use gui_window::main::linux;
-use gui_window::main::win32;
+#use gui_window::main::linux;
+#use gui_window::main::win32;
 use gui_window::main::menu;
 use gui_window::main::inner;
 
@@ -21,7 +21,7 @@ sub _new{
 
 	my $mw= MainWindow->new;
 	$self->{mw} = $mw;
-	bless $self, "$class".'::'.$::config_obj->os;
+	bless $self, "$class";
 
 	# Windowへの書き込み
 	$mw->title('KH Coder [MAIN WINDOW]');          # Windowタイトル
@@ -53,6 +53,26 @@ sub start{
 	my $self = shift;
 	$self->menu->refresh;
 	$self->inner->refresh;
+}
+
+#------------------#
+#   フォント設定   #
+#------------------#
+
+sub make_font{
+	my $self = shift;
+	my @font = split /,/, $::config_obj->font_main;
+	
+	$self->mw->fontCreate('TKFN',
+		-family => $font[0],
+		-size   => $font[1],
+	);
+	$self->mw->optionAdd('*font',"TKFN");
+}
+
+sub remove_font{
+	my $self = shift;
+	$self->{mw}->fontDelete('TKFN');
 }
 
 #--------------#

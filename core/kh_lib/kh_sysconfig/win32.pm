@@ -147,6 +147,7 @@ sub save{
 			'mail_to',
 			'use_heap',
 			'all_in_one_pack',
+			'font_main',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',
@@ -164,6 +165,7 @@ sub save{
 			);
 		foreach my $i (@outlist){
 			print INI "$i\t".$self->$i( undef,'1')."\n";
+			print  "$i\t".$self->$i( undef,'1')."\n";
 		}
 		foreach my $i (keys %{$self}){
 			if ( index($i,'w_') == 0 ){
@@ -218,6 +220,14 @@ sub underline_conv{
 
 sub mw_entry_length{
 	return 20;
+}
+
+sub font_main{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_main} = $new         if length($new);
+	$self->{font_main} = 'MS UI Gothic,10'  unless length($self->{font_main});
+	return $self->{font_main};
 }
 
 #------------#

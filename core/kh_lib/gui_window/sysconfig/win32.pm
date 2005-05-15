@@ -116,10 +116,14 @@ sub ok{
 	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
 	$::config_obj->mail_from( $self->{mail_obj}->from    );
 	$::config_obj->mail_to(   $self->{mail_obj}->to      );
+	$::config_obj->font_main( $self->{mail_obj}->font    );
 	
 	if ($::config_obj->save){
 		$self->close;
 	}
+	
+	$::main_gui->remove_font;
+	$::main_gui->make_font;
 }
 
 

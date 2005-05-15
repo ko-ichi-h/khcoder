@@ -1,6 +1,8 @@
 package gui_widget::mail_config;
 use base qw(gui_widget);
 
+# WinとLinux共通の設定項目
+
 sub _new{
 	my $self = shift;
 
@@ -55,6 +57,28 @@ sub _new{
 		-width => 25,
 	)->pack(-side => 'right');
 	
+	my $f4 = $lf->Frame()->pack(-fill => 'x', -pady => 2);
+	$f4->Label(
+		-text => gui_window->gui_jchar('フォント設定：','euc'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	$self->{e_font} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 25,
+		#-state      => 'disable',
+		-background => 'gray',
+		-foreground => 'black',
+	)->pack(-side => 'right');
+	$f4->Button(
+		-text  => gui_window->gui_jchar('変更'),
+		-font  => "TKFN",
+		-command => sub{ $self->parent->after
+			(10,
+				sub { $self->font_change(); }
+			)
+		}
+	)->pack(-padx => '2',-side => 'right');
+	
 	$self->fill_in;
 	
 	return $self;
@@ -66,6 +90,9 @@ sub fill_in{
 	$self->{e1}->insert(0,$::config_obj->mail_smtp() );
 	$self->{e2}->insert(0,$::config_obj->mail_from() );
 	$self->{e3}->insert(0,$::config_obj->mail_to() );
+	
+	$self->{e_font}->insert(0,$::config_obj->font_main);
+	$self->{e_font}->configure(-state => 'disable');
 	
 	if ($::config_obj->use_heap){
 		$self->{check2}->select;
@@ -99,29 +126,61 @@ sub update{
 	}
 }
 
+sub font_change{
+	my $self = shift;
+	
+	use Tk::Font;
+	my $font = $self->parent->FontDialog(
+		-title            => gui_window->gui_jchar('フォントの変更'),
+		-familylabel      => gui_window->gui_jchar('フォント：'),
+		-sizelabel        => gui_window->gui_jchar('サイズ：'),
+		-cancellabel      => gui_window->gui_jchar('キャンセル'),
+		-nicefontsbutton  => 0,
+		-fixedfontsbutton => 0,
+		-fontsizes        => [8,9,10,11,12,13,14,15,16,17,18,19,20],
+		-sampletext       => gui_window->gui_jchar('KH Coderは計量テキスト分析を実践するためのツールです。'),
+		-initfont         => ,"TKFN"
+	)->Show;
+	return unless $font;
+
+	my $font_conf = $font->configure(-family);
+	$font_conf .= ",";
+	$font_conf .= $font->configure(-size);
+	
+	$self->{e_font}->configure(-state => 'normal');
+	$self->{e_font}->delete('0','end');
+	$self->{e_font}->insert(0,$font_conf);
+	$self->{e_font}->configure(-state => 'disable');
+}
+
+
 #--------------------------#
 #   設定値を返すアクセサ   #
 
 sub if_heap{
 	my $self = shift;
-	return $self->{if_heap};
+	return gui_window->gui_jg( $self->{if_heap} );
 }
 
 sub if{
 	my $self = shift;
-	return $self->{if_mail};
+	return gui_window->gui_jg( $self->{if_mail} );
 }
 sub smtp{
 	my $self = shift;
-	return $self->{e1}->get;
+	return gui_window->gui_jg( $self->{e1}->get );
 }
 sub from{
 	my $self = shift;
-	return $self->{e2}->get;
+	return gui_window->gui_jg( $self->{e2}->get );
 }
 sub to{
 	my $self = shift;
-	return $self->{e3}->get;
+	return gui_window->gui_jg( $self->{e3}->get );
+}
+sub font{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{e_font}->get );
 }
 
 1;

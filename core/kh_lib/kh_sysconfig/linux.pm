@@ -146,6 +146,7 @@ sub save{
 			'mail_from',
 			'mail_to',
 			'use_heap',
+			'font_main',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',
@@ -268,6 +269,14 @@ sub underline_conv{
 
 sub mw_entry_length{
 	return 30;
+}
+
+sub font_main{
+	my $self = shift;
+	my $new  = shift;
+	$self->{Font_Main} = $new         if ($new);
+	$self->{Font_Main} = 'kochi gothic,10'  unless $self->{Font_Main};
+	return $self->{Font_Main};
 }
 
 #------------#
