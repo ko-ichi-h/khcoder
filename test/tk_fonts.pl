@@ -50,6 +50,8 @@ sub font_change{
 		-size   => $font->configure(-size),
 	);
 	$self->{mw}->optionAdd('*font', "TKFN");
+	
+	print $font->configure(-size)."\n";
 }
 
 sub gui_jchar{
