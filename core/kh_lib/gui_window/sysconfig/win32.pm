@@ -128,8 +128,6 @@ sub ok{
 		$::main_gui->remove_font;
 		$::main_gui->make_font;
 		$::config_obj->ClearGeometries;
-		
-		
 		gui_errormsg->open(
 			type => 'msg',
 			msg  => "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。",
