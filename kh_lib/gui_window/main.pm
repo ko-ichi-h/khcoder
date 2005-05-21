@@ -62,11 +62,24 @@ sub start{
 sub make_font{
 	my $self = shift;
 	my @font = split /,/, $::config_obj->font_main;
-	
-	$self->mw->fontCreate('TKFN',
-		-family => $self->gui_jchar($font[0]),
-		-size   => $font[1],
-	);
+
+	if ($Tk::VERSION < 804 && $::config_obj->os eq 'linux'){
+		$self->mw->fontCreate('TKFN',
+			-compound => [
+				['ricoh-gothic','-12'],
+				'-ricoh-gothic--medium-r-normal--12-*-*-*-c-*-jisx0208.1983-0'
+			]
+		);
+	} else {
+		$self->mw->fontCreate('TKFN',
+			-family => $self->gui_jchar($font[0]),
+			-size   => $font[1],
+		);
+	}
+
+
+
+
 	$self->mw->optionAdd('*font',"TKFN");
 }
 
