@@ -7,7 +7,7 @@ sub make_font{
 
 	if ($Tk::VERSION >= 804){
 		$self->mw->fontCreate('TKFN',
-			-family => 'sazanami gothic',
+			-family => 'HiraginoKaku',
 			-size   => 10
 		);
 		$self->mw->optionAdd('*font', "TKFN")
