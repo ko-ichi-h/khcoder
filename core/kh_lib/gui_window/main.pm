@@ -64,7 +64,7 @@ sub make_font{
 	my @font = split /,/, $::config_obj->font_main;
 	
 	$self->mw->fontCreate('TKFN',
-		-family => $font[0],
+		-family => $self->gui_jchar($font[0]),
 		-size   => $font[1],
 	);
 	$self->mw->optionAdd('*font',"TKFN");

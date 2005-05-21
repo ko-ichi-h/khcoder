@@ -91,7 +91,10 @@ sub fill_in{
 	$self->{e2}->insert(0,$::config_obj->mail_from() );
 	$self->{e3}->insert(0,$::config_obj->mail_to() );
 	
-	$self->{e_font}->insert(0,$::config_obj->font_main);
+	$self->{e_font}->insert(
+		0,
+		gui_window->gui_jchar($::config_obj->font_main,'euc')
+	);
 	$self->{e_font}->configure(-state => 'disable');
 	
 	if ($::config_obj->use_heap){
@@ -130,6 +133,8 @@ sub font_change{
 	my $self = shift;
 	
 	use Tk::Font;
+	use Tk::FontDialog_kh;
+	
 	my $font = $self->parent->FontDialog(
 		-title            => gui_window->gui_jchar('フォントの変更'),
 		-familylabel      => gui_window->gui_jchar('フォント：'),

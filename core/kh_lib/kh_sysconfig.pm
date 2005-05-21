@@ -93,6 +93,15 @@ sub use_sonota{
 #-------------#
 #   GUI関係   #
 
+# Window位置とサイズのリセット
+sub ClearGeometries{
+	my $self = shift;
+	foreach my $i (keys %{$self}){
+		undef $self->{$i} if $i =~ /^w_/;
+	}
+	return $self;
+}
+
 sub DocSrch_CutLength{
 	my $self = shift;
 	if (defined($self->{DocSrch_CutLength})){
@@ -239,7 +248,6 @@ sub sql_host{
 		return 'localhost';
 	}
 }
-
 
 sub sqllog{
 	my $self = shift;

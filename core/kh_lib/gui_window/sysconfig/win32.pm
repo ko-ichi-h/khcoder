@@ -109,21 +109,34 @@ sub __new{
 sub ok{
 	my $self = shift;
 	
-	$::config_obj->chasen_path($self->entry1->get());
+	my $oldfont = $::config_obj->font_main;
 	
+	$::config_obj->chasen_path( $self->gui_jg( $self->entry1->get() ) );
 	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(   $self->{mail_obj}->if      );
 	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
 	$::config_obj->mail_from( $self->{mail_obj}->from    );
 	$::config_obj->mail_to(   $self->{mail_obj}->to      );
-	$::config_obj->font_main( $self->{mail_obj}->font    );
+	$::config_obj->font_main( Jcode->new($self->{mail_obj}->font)->euc );
 	
 	if ($::config_obj->save){
 		$self->close;
 	}
 	
-	$::main_gui->remove_font;
-	$::main_gui->make_font;
+	unless ($oldfont eq $::config_obj->font_main){
+		$::main_gui->close_all;
+		$::main_gui->remove_font;
+		$::main_gui->make_font;
+		$::config_obj->ClearGeometries;
+		
+		
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。",
+		);
+		
+	}
+
 }
 
 
