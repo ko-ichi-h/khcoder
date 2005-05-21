@@ -274,10 +274,12 @@ sub mw_entry_length{
 sub font_main{
 	my $self = shift;
 	my $new  = shift;
-	$self->{Font_Main} = $new         if ($new);
-	$self->{Font_Main} = 'kochi gothic,10'  unless $self->{Font_Main};
-	return $self->{Font_Main};
+	$self->{font_main} = $new         if length($new);
+	$self->{font_main} = 'kochi gothic,10'  unless length($self->{font_main});
+	return $self->{font_main};
 }
+
+
 
 #------------#
 #   ¤½¤ÎÂ¾   #
