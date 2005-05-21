@@ -211,6 +211,8 @@ sub unselect{
 sub ok{
 	my $self = shift;
 	
+	my $oldfont = $::config_obj->font_main;
+	
 	$::config_obj->chasenrc_path($self->entry1->get());
 	$::config_obj->grammarcha_path($self->entry2->get());
 	$::config_obj->app_html($self->e_html->get());
@@ -222,9 +224,22 @@ sub ok{
 	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
 	$::config_obj->mail_from( $self->{mail_obj}->from    );
 	$::config_obj->mail_to(   $self->{mail_obj}->to      );
+	$::config_obj->font_main( Jcode->new($self->{mail_obj}->font)->euc );
 
 	if ($::config_obj->save){
 		$self->close;
+	}
+
+	unless ($oldfont eq $::config_obj->font_main){
+		$::main_gui->close_all;
+		$::main_gui->remove_font;
+		$::main_gui->make_font;
+		$::config_obj->ClearGeometries;
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。",
+		);
+		
 	}
 
 }
