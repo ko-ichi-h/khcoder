@@ -435,6 +435,7 @@ sub outtab{
 	
 	# 結果出力の作製
 	my @result;
+	my @for_chisq;
 	
 	# 一行目
 	my @head = ('');
@@ -449,6 +450,7 @@ sub outtab{
 	while (my $i = $h->fetch){
 		my $n = 0;
 		my @current;
+		my @current_for_chisq;
 		my @c = @{$i};
 		my $nd = pop @c;
 		unless ( length($i->[0]) ){next;}
@@ -462,6 +464,7 @@ sub outtab{
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
+				push @current_for_chisq, [$h, $nd - $h];
 				if ($cell == 0){
 					my $pp = "($p"."%)";
 					$pp = '  '.$pp if length($pp) == 7;
@@ -478,6 +481,7 @@ sub outtab{
 		$total += $nd;
 		push @current, $nd;
 		push @result, \@current;
+		push @for_chisq, \@current_for_chisq if @current_for_chisq;
 	}
 	# 合計行
 	my @c = @sum;
@@ -488,7 +492,9 @@ sub outtab{
 		} else {
 			my $p = sprintf("%.2f", ($i / $total) * 100);
 			if ($cell == 0){
-				push @current, "$i ($p"."%)";
+				my $pp = "($p"."%)";
+				$pp = '  '.$pp if length($pp) == 7;
+				push @current, "$i $pp";
 			}
 			elsif ($cell == 1){
 				push @current, $i;
@@ -501,6 +507,30 @@ sub outtab{
 	push @current, $total;
 	push @result, \@current;
 
+	# chi-square test
+	my @chisq = (Jcode->new('p-value')->sjis);
+	$n = @current - 2;
+	for (my $c = 0; $c < $n; ++$c){
+		my $cmd = 'chi <- chisq.test(matrix( c(';
+		my $nrow = 0;
+		foreach my $i (@for_chisq){
+			$cmd .= "$i->[$c][0],";
+			$cmd .= "$i->[$c][1], ";
+			++$nrow;
+		}
+		chop $cmd; chop $cmd;
+		$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n print (chi)";
+		$::config_obj->R->send($cmd);
+		my $ret = $::config_obj->R->read;
+		unless (length($ret)){
+			push @chisq, ' ';
+			next;
+		}
+		$ret = sprintf("%.3f", substr($ret, index($ret,'p-value = ') + 10, length($ret) - (index($ret,'p-value = ') + 10) ));
+		substr($ret,0,1) = '';
+		push @chisq, $ret;
+	}
+	push @result, \@chisq;
 	
 	return \@result;
 }
@@ -562,7 +592,8 @@ sub tab{
 	
 	# 結果出力の作製
 	my @result;
-	
+	my @for_chisq;
+
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
@@ -576,6 +607,7 @@ sub tab{
 	while (my $i = $h->fetch){
 		my $n = 0;
 		my @current;
+		my @current_for_chisq;
 		my @c = @{$i};
 		my $nd = pop @c;
 		unless ( length($i->[0]) ){next;}
@@ -589,6 +621,7 @@ sub tab{
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
+				push @current_for_chisq, [$h, $nd - $h];
 				if ($cell == 0){
 					push @current, "$h ($p"."%)";
 				}
@@ -603,6 +636,7 @@ sub tab{
 		$total += $nd;
 		push @current, $nd;
 		push @result, \@current;
+		push @for_chisq, \@current_for_chisq if @current_for_chisq;
 	}
 	# 合計行
 	my @c = @sum;
@@ -625,6 +659,31 @@ sub tab{
 	}
 	push @current, $total;
 	push @result, \@current;
+
+	# chi-square test
+	my @chisq = (Jcode->new('p-value')->sjis);
+	$n = @current - 2;
+	for (my $c = 0; $c < $n; ++$c){
+		my $cmd = 'chi <- chisq.test(matrix( c(';
+		my $nrow = 0;
+		foreach my $i (@for_chisq){
+			$cmd .= "$i->[$c][0],";
+			$cmd .= "$i->[$c][1], ";
+			++$nrow;
+		}
+		chop $cmd; chop $cmd;
+		$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n print (chi)";
+		$::config_obj->R->send($cmd);
+		my $ret = $::config_obj->R->read;
+		unless (length($ret)){
+			push @chisq, ' ';
+			next;
+		}
+		$ret = sprintf("%.3f", substr($ret, index($ret,'p-value = ') + 10, length($ret) - (index($ret,'p-value = ') + 10) ));
+		substr($ret,0,1) = '';
+		push @chisq, $ret;
+	}
+	push @result, \@chisq;
 
 	
 	return \@result;

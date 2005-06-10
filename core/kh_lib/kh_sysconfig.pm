@@ -21,7 +21,6 @@ sub readin{
 		$self->reset_parm;
 	}
 
-
 	# iniファイル
 	open (CINI,"$self->{ini_file}") or
 		gui_errormsg->open(
@@ -40,6 +39,10 @@ sub readin{
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
 
 	$self = $self->_readin;
+
+	use Statistics::R;
+	$self->{R} = Statistics::R->new();
+	$self->{R}->start_sharedR;
 
 	return $self;
 }
@@ -271,6 +274,11 @@ sub sqllog_file{
 sub all_in_one_pack{
 	my $self = shift;
 	return $self->{all_in_one_pack};
+}
+
+sub R{
+	my $self = shift;
+	return $self->{R};
 }
 
 sub in_preprocessing{
