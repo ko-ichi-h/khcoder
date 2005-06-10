@@ -508,29 +508,37 @@ sub outtab{
 	push @result, \@current;
 
 	# chi-square test
-	my @chisq = (Jcode->new('p-value')->sjis);
-	$n = @current - 2;
-	for (my $c = 0; $c < $n; ++$c){
-		my $cmd = 'chi <- chisq.test(matrix( c(';
-		my $nrow = 0;
-		foreach my $i (@for_chisq){
-			$cmd .= "$i->[$c][0],";
-			$cmd .= "$i->[$c][1], ";
-			++$nrow;
+	if ($::config_obj->R){
+		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
+		$n = @current - 2;
+		for (my $c = 0; $c < $n; ++$c){
+			my $cmd = 'chi <- chisq.test(matrix( c(';
+			my $nrow = 0;
+			foreach my $i (@for_chisq){
+				$cmd .= "$i->[$c][0],";
+				$cmd .= "$i->[$c][1], ";
+				++$nrow;
+			}
+			chop $cmd; chop $cmd;
+			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
+			$::config_obj->R->send($cmd);
+			my $ret = $::config_obj->R->read;
+			next unless length($ret);
+			chop $ret;
+			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			$::config_obj->R->send('print (chi$p.value)');
+			my $p = $::config_obj->R->read;
+			substr($p, 0, 4) = '';
+			if ($p < 0.01){
+				$ret .= '**';
+			}
+			elsif ($p < 0.05){
+				$ret .= '*';
+			}
+			push @chisq, $ret;
 		}
-		chop $cmd; chop $cmd;
-		$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n print (chi)";
-		$::config_obj->R->send($cmd);
-		my $ret = $::config_obj->R->read;
-		unless (length($ret)){
-			push @chisq, ' ';
-			next;
-		}
-		$ret = sprintf("%.3f", substr($ret, index($ret,'p-value = ') + 10, length($ret) - (index($ret,'p-value = ') + 10) ));
-		substr($ret,0,1) = '';
-		push @chisq, $ret;
+		push @result, \@chisq;
 	}
-	push @result, \@chisq;
 	
 	return \@result;
 }
@@ -661,29 +669,37 @@ sub tab{
 	push @result, \@current;
 
 	# chi-square test
-	my @chisq = (Jcode->new('p-value')->sjis);
-	$n = @current - 2;
-	for (my $c = 0; $c < $n; ++$c){
-		my $cmd = 'chi <- chisq.test(matrix( c(';
-		my $nrow = 0;
-		foreach my $i (@for_chisq){
-			$cmd .= "$i->[$c][0],";
-			$cmd .= "$i->[$c][1], ";
-			++$nrow;
+	if ($::config_obj->R){
+		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
+		$n = @current - 2;
+		for (my $c = 0; $c < $n; ++$c){
+			my $cmd = 'chi <- chisq.test(matrix( c(';
+			my $nrow = 0;
+			foreach my $i (@for_chisq){
+				$cmd .= "$i->[$c][0],";
+				$cmd .= "$i->[$c][1], ";
+				++$nrow;
+			}
+			chop $cmd; chop $cmd;
+			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
+			$::config_obj->R->send($cmd);
+			my $ret = $::config_obj->R->read;
+			next unless length($ret);
+			chop $ret;
+			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			$::config_obj->R->send('print (chi$p.value)');
+			my $p = $::config_obj->R->read;
+			substr($p, 0, 4) = '';
+			if ($p < 0.01){
+				$ret .= '**';
+			}
+			elsif ($p < 0.05){
+				$ret .= '*';
+			}
+			push @chisq, $ret;
 		}
-		chop $cmd; chop $cmd;
-		$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n print (chi)";
-		$::config_obj->R->send($cmd);
-		my $ret = $::config_obj->R->read;
-		unless (length($ret)){
-			push @chisq, ' ';
-			next;
-		}
-		$ret = sprintf("%.3f", substr($ret, index($ret,'p-value = ') + 10, length($ret) - (index($ret,'p-value = ') + 10) ));
-		substr($ret,0,1) = '';
-		push @chisq, $ret;
+		push @result, \@chisq;
 	}
-	push @result, \@chisq;
 
 	
 	return \@result;
