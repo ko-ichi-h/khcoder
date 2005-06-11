@@ -151,6 +151,7 @@ sub close{
 	if ($::config_obj->all_in_one_pack){
 		kh_all_in_one->mysql_stop;
 	}
+	$::config_obj->R->stopR if $::config_obj->R;
 	$self->win_obj->destroy;
 }
 
