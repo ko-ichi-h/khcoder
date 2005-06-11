@@ -42,7 +42,8 @@ sub readin{
 
 	use Statistics::R;
 	$self->{R} = Statistics::R->new();
-	$self->{R}->start_sharedR;
+	$self->{R}->start_sharedR or $self->{R} = 0;
+	chdir ($self->{cwd});
 
 	return $self;
 }

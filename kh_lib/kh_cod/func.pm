@@ -631,7 +631,9 @@ sub tab{
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
 				if ($cell == 0){
-					push @current, "$h ($p"."%)";
+					my $pp = "($p"."%)";
+					$pp = '  '.$pp if length($pp) == 7;
+					push @current, "$h $pp";
 				}
 				elsif ($cell == 1){
 					push @current, $h;
@@ -655,7 +657,9 @@ sub tab{
 		} else {
 			my $p = sprintf("%.2f", ($i / $total) * 100);
 			if ($cell == 0){
-				push @current, "$i ($p"."%)";
+				my $pp = "($p"."%)";
+				$pp = '  '.$pp if length($pp) == 7;
+				push @current, "$i $pp";
 			}
 			elsif ($cell == 1){
 				push @current, $i;
