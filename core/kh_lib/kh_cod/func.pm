@@ -511,6 +511,7 @@ sub outtab{
 	if ($::config_obj->R){
 		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
 		$n = @current - 2;
+		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
 			my $cmd = 'chi <- chisq.test(matrix( c(';
 			my $nrow = 0;
@@ -537,6 +538,8 @@ sub outtab{
 			}
 			push @chisq, $ret;
 		}
+		$::config_obj->R->unlock;
+		push @chisq, ' ';
 		push @result, \@chisq;
 	}
 	
@@ -676,6 +679,7 @@ sub tab{
 	if ($::config_obj->R){
 		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
 		$n = @current - 2;
+		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
 			my $cmd = 'chi <- chisq.test(matrix( c(';
 			my $nrow = 0;
@@ -689,6 +693,7 @@ sub tab{
 			$::config_obj->R->send($cmd);
 			my $ret = $::config_obj->R->read;
 			next unless length($ret);
+
 			chop $ret;
 			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
 			$::config_obj->R->send('print (chi$p.value)');
@@ -702,6 +707,8 @@ sub tab{
 			}
 			push @chisq, $ret;
 		}
+		$::config_obj->R->unlock;
+		push @chisq, ' ';
 		push @result, \@chisq;
 	}
 
