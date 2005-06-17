@@ -6,31 +6,31 @@ use Jcode;
 use mysql_outvar::read;
 
 #------------------#
-#   ƒtƒ@ƒCƒ‹QÆ   #
+#   ¥Õ¥¡¥¤¥ë»²¾È   #
 #------------------#
 
 sub file{
 	my $self = shift;
 
 	my @types = (
-		[ Jcode->new("ƒ^ƒu‹æØ‚èƒtƒ@ƒCƒ‹")->sjis,[qw/.dat .txt/] ],
+		[ $self->gui_jchar("¥¿¥Ö¶èÀÚ¤ê¥Õ¥¡¥¤¥ë"),[qw/.dat .txt/] ],
 		["All files",'*']
 	);
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => Jcode->new('ŠO•”•Ï”ƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢')->sjis,
+		-title      => $self->gui_jchar('³°ÉôÊÑ¿ô¥Õ¥¡¥¤¥ë¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤'),
 		-initialdir => $::config_obj->cwd
 	);
 	
 	if ($path){
 		$self->{entry}->delete(0, 'end');
-		$self->{entry}->insert('0',Jcode->new("$path")->sjis);
+		$self->{entry}->insert('0',$self->gui_jchar("$path"));
 	}
 }
 
 #--------------#
-#   “Ç‚İ‚İ   #
+#   ÆÉ¤ß¹ş¤ß   #
 #--------------#
 
 sub __read{
@@ -43,15 +43,17 @@ sub __read{
 }
 
 #--------------#
-#   ƒAƒNƒZƒT   #
+#   ¥¢¥¯¥»¥µ   #
 #--------------#
 
 sub file_label{
-	Jcode->new('ƒ^ƒu‹æØ‚èƒtƒ@ƒCƒ‹')->sjis;
+	my $self = shift;
+	return $self->gui_jchar('¥¿¥Ö¶èÀÚ¤ê¥Õ¥¡¥¤¥ë');
 }
 
 sub win_title{
-	return Jcode->new('ŠO•”•Ï”‚Ì“Ç‚İ‚İF ƒ^ƒu‹æØ‚è')->sjis;
+	my $self = shift;
+	return $self->gui_jchar('³°ÉôÊÑ¿ô¤ÎÆÉ¤ß¹ş¤ß¡§ ¥¿¥Ö¶èÀÚ¤ê');
 }
 
 sub win_name{

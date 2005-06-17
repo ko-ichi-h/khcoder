@@ -16,7 +16,7 @@ sub new{
 sub read{
 	my $self = shift;
 	
-	# ƒtƒ@ƒCƒ‹‚ğƒƒ‚ƒŠã‚É“Ç‚İ‚İ
+	# ¥Õ¥¡¥¤¥ë¤ò¥á¥â¥ê¾å¤ËÆÉ¤ß¹ş¤ß
 	my @data;
 	open (CSVD,$self->{file}) or 
 		gui_errormsg->open(
@@ -30,19 +30,19 @@ sub read{
 	}
 	close (CSVD);
 	
-	# ƒP[ƒX”‚Ìƒ`ƒFƒbƒN
+	# ¥±¡¼¥¹¿ô¤Î¥Á¥§¥Ã¥¯
 	my $cases_in_file = @data; --$cases_in_file;
 	my $cases = mysql_exec->select("SELECT COUNT(*) from $self->{tani}",1)
 		->hundle->fetch->[0];
 	unless ($cases == $cases_in_file){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new("ƒP[ƒX”‚ªˆê’v‚µ‚Ü‚¹‚ñB\n“Ç‚İ‚İˆ—‚ğ’†’f‚µ‚Ü‚·B")->sjis,
+			msg    => Jcode->new("¥±¡¼¥¹¿ô¤¬°ìÃ×¤·¤Ş¤»¤ó¡£\nÆÉ¤ß¹ş¤ß½èÍı¤òÃæÃÇ¤·¤Ş¤¹¡£")->sjis,
 		);
 		return 0;
 	}
 	
-	# “¯‚¶•Ï”–¼‚ª–³‚¢‚©ƒ`ƒFƒbƒN
+	# Æ±¤¸ÊÑ¿ôÌ¾¤¬Ìµ¤¤¤«¥Á¥§¥Ã¥¯
 	my %name_check;
 	my $h = mysql_exec->select("
 		SELECT name
@@ -56,13 +56,13 @@ sub read{
 		if ($name_check{$i}){
 			gui_errormsg->open(
 				type   => 'msg',
-				msg    => Jcode->new("“¯‚¶–¼‘O‚Ì•Ï”‚ªŠù‚É“Ç‚İ‚Ü‚ê‚Ä‚¢‚Ü‚·B\n“Ç‚İ‚İˆ—‚ğ’†’f‚µ‚Ü‚·B")->sjis,
+				msg    => Jcode->new("Æ±¤¸Ì¾Á°¤ÎÊÑ¿ô¤¬´û¤ËÆÉ¤ß¹ş¤Ş¤ì¤Æ¤¤¤Ş¤¹¡£\nÆÉ¤ß¹ş¤ß½èÍı¤òÃæÃÇ¤·¤Ş¤¹¡£")->sjis,
 			);
 			return 0;
 		}
 	}
 	
-	# •Û‘¶—pƒe[ƒuƒ‹–¼‚ÌŒˆ’è
+	# ÊİÂ¸ÍÑ¥Æ¡¼¥Ö¥ëÌ¾¤Î·èÄê
 	my $n = 0;
 	while (1){
 		my $table = 'outvar'."$n";
@@ -74,7 +74,7 @@ sub read{
 	}
 	my $table = 'outvar'."$n";
 	
-	# DB‚Éƒwƒbƒ_‚ğŠi”[
+	# DB¤Ë¥Ø¥Ã¥À¤ò³ÊÇ¼
 	my $cn = 0;
 	my $cols = '';
 	my $cols2 = '';
@@ -89,7 +89,7 @@ sub read{
 	}
 	chop $cols2;
 	
-	# DB‚Éƒf[ƒ^‚ğŠi”[
+	# DB¤Ë¥Ç¡¼¥¿¤ò³ÊÇ¼
 	mysql_exec->do("create table $table
 		(
 			$cols

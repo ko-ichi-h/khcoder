@@ -15,7 +15,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('外部変数リスト')->sjis);
+	$wmw->title($self->gui_jchar('外部変数リスト'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Variables',
@@ -39,25 +39,25 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => Jcode->new('集計単位')->sjis);
-	$lis->header('create',1,-text => Jcode->new('変数名')->sjis);
+	$lis->header('create',0,-text => $self->gui_jchar('集計単位'));
+	$lis->header('create',1,-text => $self->gui_jchar('変数名'));
 
 	$wmw->Button(
-		-text => Jcode->new('詳細')->sjis,
+		-text => $self->gui_jchar('詳細'),
 		-font => "TKFN",
 #		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->_open_var;});}
 	)->pack(-side => 'left');
 
 	$wmw->Button(
-		-text => Jcode->new('削除')->sjis,
+		-text => $self->gui_jchar('削除'),
 		-font => "TKFN",
 #		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->_delete;});}
 	)->pack(-side => 'left',-padx => 2);
 
 	$wmw->Button(
-		-text => Jcode->new('閉じる')->sjis,
+		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -86,9 +86,11 @@ sub _fill{
 		if ($i->[0] eq 'dan'){$i->[0] = '段落';}
 		if ($i->[0] eq 'bun'){$i->[0] = '文';}
 		$self->{list}->add($n,-at => "$n");
-		$self->{list}->itemCreate($n,0,-text => Jcode->new($i->[0])->sjis,);
-		$self->{list}->itemCreate($n,1,-text => Jcode->new($i->[1])->sjis,);
+		$self->{list}->itemCreate($n,0,-text => $self->gui_jchar($i->[0]),);
+		$self->{list}->itemCreate($n,1,-text => $self->gui_jchar($i->[1]),);
 		++$n;
+		# my $chk = Jcode->new($i->[1])->icode;
+		# print "$chk, $i->[1]\n";
 	}
 	$self->{var_list} = $h;
 	return $self;
@@ -109,7 +111,7 @@ sub _delete{
 		-type    => 'OKCancel',
 #		-default => 'OK',
 		-icon    => 'question',
-		-message => Jcode->new('選択されている変数を削除しますか？')->sjis,
+		-message => $self->gui_jchar('選択されている変数を削除しますか？'),
 	);
 	unless ($confirm =~ /^OK$/i){
 		return 0;

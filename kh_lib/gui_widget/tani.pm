@@ -65,7 +65,7 @@ sub _new{
 
 sub tani{
 	my $self = shift;
-	return $self->{raw_opt};
+	return gui_window->gui_jg( $self->{raw_opt} );
 }
 sub start{
 	my $self = shift;

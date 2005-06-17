@@ -6,31 +6,31 @@ use Jcode;
 use mysql_outvar::read;
 
 #------------------#
-#   ƒtƒ@ƒCƒ‹QÆ   #
+#   ¥Õ¥¡¥¤¥ë»²¾È   #
 #------------------#
 
 sub file{
 	my $self = shift;
 
 	my @types = (
-		[ Jcode->new("CSVƒtƒ@ƒCƒ‹")->sjis,[qw/.csv/] ],
+		[ $self->gui_jchar("CSV¥Õ¥¡¥¤¥ë"),[qw/.csv/] ],
 		["All files",'*']
 	);
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => Jcode->new('ŠO•”•Ï”ƒtƒ@ƒCƒ‹‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢')->sjis,
+		-title      => $self->gui_jchar('³°ÉôÊÑ¿ô¥Õ¥¡¥¤¥ë¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤'),
 		-initialdir => $::config_obj->cwd
 	);
 	
 	if ($path){
 		$self->{entry}->delete(0, 'end');
-		$self->{entry}->insert('0',Jcode->new("$path")->sjis);
+		$self->{entry}->insert('0',$self->gui_jchar("$path"));
 	}
 }
 
 #--------------#
-#   “Ç‚İ‚İ   #
+#   ÆÉ¤ß¹ş¤ß   #
 #--------------#
 
 sub __read{
@@ -43,15 +43,17 @@ sub __read{
 }
 
 #--------------#
-#   ƒAƒNƒZƒT   #
+#   ¥¢¥¯¥»¥µ   #
 #--------------#
 
 sub file_label{
-	Jcode->new('CSVƒtƒ@ƒCƒ‹')->sjis;
+	my $self = shift;
+	$self->gui_jchar('CSV¥Õ¥¡¥¤¥ë');
 }
 
 sub win_title{
-	return Jcode->new('ŠO•”•Ï”‚Ì“Ç‚İ‚İF CSVƒtƒ@ƒCƒ‹')->sjis;
+	my $self = shift;
+	return $self->gui_jchar('³°ÉôÊÑ¿ô¤ÎÆÉ¤ß¹ş¤ß¡§ CSV¥Õ¥¡¥¤¥ë');
 }
 
 sub win_name{

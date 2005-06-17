@@ -18,7 +18,7 @@ use DBI;
 sub _new{
 	my $self = shift;
 	my $win = $::main_gui->mw->Toplevel;
-	$win->title(Jcode->new('SQL文 (その他) 実行')->sjis);
+	$win->title($self->gui_jchar('SQL文 (その他) 実行'));
 	$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
@@ -29,15 +29,15 @@ sub _new{
 
 	my $t = $lf->Scrolled(
 		'Text',
-		spacing1 => 0,
-		spacing2 => 0,
-		spacing3 => 0,
+		-spacing1 => 0,
+		-spacing2 => 0,
+		-spacing3 => 0,
 		-scrollbars=> 'osoe',
 		-height => 8,
 		-width => 48,
 		-wrap => 'none',
 		-font => "TKFN",
-	)->pack(-fill=>'both',-expand=>'yes',pady => 2);
+	)->pack(-fill=>'both',-expand=>'yes',-pady => 2);
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
 
 	$win->Label(
@@ -52,7 +52,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$win->Button(
-		-text    => Jcode->new('実行')->sjis,
+		-text    => $self->gui_jchar('実行'),
 		-command => sub {$self->exec;},
 		-font    => "TKFN"
 	)->pack(-side => "right",-padx => 2,-pady =>2);
@@ -70,7 +70,11 @@ sub exec{
 	$self->win_obj->update;
 	
 	# SQL実行
-	my $t = mysql_exec->do(Jcode->new($self->text->get("1.0","end"))->euc);
+	my $t = mysql_exec->do(
+		Jcode->new(
+			$self->gui_jg( $self->text->get("1.0","end") )
+		)->euc
+	);
 
 	# エラーチェック
 	if ( $t->err ){

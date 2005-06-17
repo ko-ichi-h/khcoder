@@ -24,7 +24,7 @@ sub _new{
 
 	my $self = shift;
 	my $win = $::main_gui->mw->Toplevel;
-	$win->title(Jcode->new('SQL文 (SELECT) 実行')->sjis);
+	$win->title($self->gui_jchar('SQL文 (SELECT) 実行'));
 	$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
@@ -35,19 +35,19 @@ sub _new{
 
 	my $t = $lf->Scrolled(
 		'Text',
-		spacing1 => 0,
-		spacing2 => 0,
-		spacing3 => 0,
+		-spacing1 => 0,
+		-spacing2 => 0,
+		-spacing3 => 0,
 		-scrollbars=> 'osoe',
 		-height => 8,
 		-width => 48,
 		-wrap => 'none',
 		-font => "TKFN",
-	)->pack(-fill=>'both',-expand=>'yes',pady => 2);
+	)->pack(-fill=>'both',-expand=>'yes',-pady => 2);
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
 
 	$lf->Label(
-		-text => Jcode->new('最大表示数:')->sjis,
+		-text => $self->gui_jchar('最大表示数:'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -58,7 +58,7 @@ sub _new{
 	$e->insert(0,'1000');
 
 	$lf->Button(
-		-text    => Jcode->new('実行')->sjis,
+		-text    => $self->gui_jchar('実行'),
 		-command => sub {$self->exec;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
@@ -71,7 +71,7 @@ sub _new{
 		parent      => $win,
 		parent_name => $self->win_name,
 		tower       => $lf,
-		title       => Jcode->new('SQL文 (SELECT) 結果')->sjis,
+		title       => $self->gui_jchar('SQL文 (SELECT) 結果'),
 	);
 
 	my $lf2 = $plane->frame->LabFrame(
@@ -95,13 +95,13 @@ sub _new{
 	my $frame = $lf2->Frame()->pack(-fill => 'x', -expand => '0');
 
 	$frame->Button(
-		-text    => Jcode->new('コピー')->sjis,
+		-text    => $self->gui_jchar('コピー'),
 		-command => sub {gui_hlist->copy($self->list);},
 		-font    => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
 	my $label = $frame->Label(
-		-text => Jcode->new('　出力された行数: ')->sjis,
+		-text => $self->gui_jchar('　出力された行数: '),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -126,7 +126,11 @@ sub _new{
 
 sub exec{
 	my $self = shift;
-	my $t = mysql_exec->select(Jcode->new($self->text->get("1.0","end"))->euc);
+	my $t = mysql_exec->select(
+		Jcode->new(
+			$self->gui_jg( $self->text->get("1.0","end") )
+		)->euc
+	);
 	
 	# エラーチェック
 	if ( $t->err ){
@@ -167,7 +171,7 @@ sub exec{
 		$self->list->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			$self->list->itemCreate($row,$col,-text => Jcode->new($h)->sjis); # nkf('-s -E',$h)
+			$self->list->itemCreate($row,$col,-text => $self->gui_jchar($h)); # nkf('-s -E',$h)
 			++$col;
 		}
 		++$row;
@@ -181,7 +185,7 @@ sub exec{
 			++$row;
 		}
 	}
-	$self->label->configure(-text,Jcode->new('出力された行数: '."$row")->sjis);
+	$self->label->configure(-text,$self->gui_jchar('出力された行数: '."$row"));
 	
 	$self->plane->frame->focus;
 }

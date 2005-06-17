@@ -26,7 +26,7 @@ sub _make{
 	my $self = shift;
 	$self->tower->pack(-fill => 'x', -expand => '0');
 	$self->{port} = $self->parent->DockPort();
-	$self->port->pack(fill => 'both', -expand => 'y');
+	$self->port->pack(-fill => 'both', -expand => 'y');
 	
 	$self->{frame} = $self->parent->DockFrame(
 		'-dock' => $self->port,
@@ -43,13 +43,13 @@ sub make_control{
 	my $p = shift;
 
 	$self->{b_airborne} = $p->Button(
-		-text    => Jcode->new('Î¥Î¦')->sjis,
+		-text    => $self->gui_jchar('Î¥Î¦'),
 		-command => sub {$self->airborne;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
 
 	$self->{b_land} = $p->Button(
-		-text    => Jcode->new('ÃåÎ¦')->sjis,
+		-text    => $self->gui_jchar('ÃåÎ¦'),
 		-command => sub {$self->land;},
 		-font    => "TKFN",
 		-state   => 'disable'
