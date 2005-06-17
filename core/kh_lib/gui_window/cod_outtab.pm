@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('コーディング・外部変数とのクロス集計')->sjis);
+	$win->title($self->gui_jchar('コーディング・外部変数とのクロス集計'));
 	$self->{win_obj} = $win;
 	
 	#------------------------#
@@ -33,18 +33,18 @@ sub _new{
 	);
 	# セル内容選択
 	$f0->Label(
-		-text => Jcode->new('　　セル内容：')->sjis,
+		-text => $self->gui_jchar('　　セル内容：'),
 		-font => "TKFN",
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	
 	gui_widget::optmenu->open(
 		parent  => $f0,
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[Jcode->new('度数とパーセント')->sjis , 0],
-				[Jcode->new('度数のみ')->sjis         , 1],
-				[Jcode->new('パーセントのみ')->sjis   , 2],
+				[$self->gui_jchar('度数とパーセント') , 0],
+				[$self->gui_jchar('度数のみ')         , 1],
+				[$self->gui_jchar('パーセントのみ')   , 2],
 			],
 		variable => \$self->{cell_opt},
 	);
@@ -53,7 +53,7 @@ sub _new{
 	
 	# 単位選択
 	$f1->Label(
-		-text => Jcode->new('コーディング単位：')->sjis,
+		-text => $self->gui_jchar('コーディング単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my %pack = (
@@ -68,18 +68,18 @@ sub _new{
 
 	# 変数選択
 	$f1->Label(
-		-text => Jcode->new(' 　クロスする変数：')->sjis,
+		-text => $self->gui_jchar(' 　クロスする変数：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
 	$self->{opt_frame} = $f1;
 	
 	$f1->Button(
-		-text    => Jcode->new('集計')->sjis,
+		-text    => $self->gui_jchar('集計'),
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->_calc;});}
-	)->pack( -anchor => 'e', side => 'right');
+	)->pack( -anchor => 'e', -side => 'right');
 	
 	#------------------#
 	#   結果表示部分   #
@@ -108,13 +108,13 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{label} = $rf->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'left');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'left');
 
 	$rf->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -147,7 +147,7 @@ sub fill{
 	my @options;
 	foreach my $i (@{$h}){
 		if ($tani_check{$i->[0]}){
-			push @options, [Jcode->new($i->[1])->sjis, $i->[2]];
+			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
 		}
 	}
 	
@@ -164,7 +164,7 @@ sub fill{
 			pack    => {-side => 'left', -padx => 2},
 			options => 
 				[
-					[Jcode->new('利用不可')->sjis, -1],
+					[$self->gui_jchar('利用不可'), -1],
 				],
 			variable => \$self->{var_id},
 		);
@@ -252,7 +252,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 					-style => $center_style
 				);
 			}
@@ -267,7 +267,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;

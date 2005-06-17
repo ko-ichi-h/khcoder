@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('コーディング・コード間関連')->sjis);
+	$win->title($self->gui_jchar('コーディング・コード間関連'));
 	$self->{win_obj} = $win;
 	
 	#------------------------#
@@ -32,20 +32,20 @@ sub _new{
 	);
 	# コーディング単位
 	$lf->Label(
-		-text => Jcode->new('　コーディング単位：')->sjis,
+		-text => $self->gui_jchar('　コーディング単位：'),
 		-font => "TKFN",
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $lf,
 		pack   => \%pack0,
 	);
 
 	$lf->Button(
-		-text    => Jcode->new('集計')->sjis,
+		-text    => $self->gui_jchar('集計'),
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->_calc;});}
-	)->pack( -anchor => 'e', side => 'right');
+	)->pack( -anchor => 'e', -side => 'right');
 	
 	#------------------#
 	#   結果表示部分   #
@@ -74,13 +74,13 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{label} = $rf->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'left');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'left');
 
 	$rf->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -168,7 +168,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 					-style => $center_style
 				);
 			}
@@ -183,7 +183,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;
