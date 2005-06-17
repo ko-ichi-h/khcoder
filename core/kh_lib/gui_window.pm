@@ -136,6 +136,7 @@ sub gui_jchar{ # GUI表示用の日本語
 		$code = Jcode->new($char)->icode unless $code;
 		$code = 'euc-jp'   if $code eq 'euc';
 		$code = 'shiftjis' if $code eq 'sjis';
+		$code = 'euc-jp' unless length($code);
 		return Encode::decode($code,$char);
 	} else {
 		if ($code eq 'sjis'){

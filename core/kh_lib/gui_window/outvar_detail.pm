@@ -16,7 +16,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new("変数詳細： "."$args{name}")->sjis);
+	$wmw->title($self->gui_jchar("変数詳細： "."$args{name}"));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Variables',
@@ -40,19 +40,19 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => Jcode->new('値')->sjis);
-	$lis->header('create',1,-text => Jcode->new('ラベル')->sjis);
-	$lis->header('create',2,-text => Jcode->new('度数')->sjis);
+	$lis->header('create',0,-text => $self->gui_jchar('値'));
+	$lis->header('create',1,-text => $self->gui_jchar('ラベル'));
+	$lis->header('create',2,-text => $self->gui_jchar('度数'));
 
 	$wmw->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
 	)->pack(-side => 'right',-padx => 2);
 
 	$wmw->Button(
-		-text => Jcode->new('OK')->sjis,
+		-text => $self->gui_jchar('OK'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->_save;});}
@@ -67,11 +67,11 @@ sub _new{
 	my $right = $lis->ItemStyle('text',-anchor => 'e',-background => 'white');
 	foreach my $i (@{$v}){
 		$lis->add($n,-at => "$n");
-		$lis->itemCreate($n,0,-text => Jcode->new($i->[0])->sjis,);
+		$lis->itemCreate($n,0,-text => $self->gui_jchar($i->[0]),);
 		$lis->itemCreate(
 			$n,
 			2,
-			-text  => Jcode->new($i->[2])->sjis,
+			-text  => $self->gui_jchar($i->[2]),
 			-style => $right
 		);
 		
@@ -84,11 +84,11 @@ sub _new{
 			-itemtype  => 'window',
 			-widget    => $c,
 		);
-		$c->insert(0,Jcode->new($i->[1])->sjis);
+		$c->insert(0,$self->gui_jchar($i->[1]));
 		$c->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$c]);
 		
 		$self->{entry}{$i->[0]} = $c;
-		$self->{label}{$i->[0]} = Jcode->new($i->[1])->sjis;
+		$self->{label}{$i->[0]} = $i->[1];
 		++$n;
 	}
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
@@ -108,12 +108,16 @@ sub _save{
 	
 	# 変更されたラベルを保存
 	foreach my $i (keys %{$self->{label}}){
-		if ($self->{label}{$i} eq $self->{entry}{$i}->get){
+		if (
+			$self->{label}{$i}
+			eq
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get) )->euc
+		){
 			next;
 		}
 		$self->{var_obj}->label_save(
 			Jcode->new($i)->euc,
-			Jcode->new($self->{entry}{$i}->get)->euc,
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get) )->euc,
 		);
 	}
 	

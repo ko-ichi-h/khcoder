@@ -35,7 +35,7 @@ sub _new{
 	)->pack(-side => 'left');
 	
 	$fra4e->Button(
-		-text    => Jcode->new('参照')->sjis,
+		-text    => $self->gui_jchar('参照'),
 		-font    => "TKFN",
 		-command => sub {$mw->after(10,sub { $self->file; });},
 	)->pack(-side => 'left');
@@ -50,9 +50,9 @@ sub _new{
 	my $fra4f = $fra4->Frame()->pack(-expand => 'y', -fill => 'x', -pady =>3);
 	
 	$fra4f->Label(
-		text => Jcode->new('読み込み単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'left');
+		-text => $self->gui_jchar('読み込み単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 
 	my %pack = (
 			-anchor => 'w',
@@ -65,7 +65,7 @@ sub _new{
 	);
 
 	$wmw->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -95,7 +95,7 @@ sub _read{
 	unless (-e $self->{entry}->get){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new('ファイルを正しく指定して下さい。')->sjis,
+			msg    => $self->gui_jchar('ファイルを正しく指定して下さい。'),
 			window => \$self->{win_obj},
 		);
 		return 0;
