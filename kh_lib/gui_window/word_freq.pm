@@ -124,8 +124,10 @@ sub count{
 		-anchor => 'e',
 		-font => "TKFN"
 	);
+	my $rcmd = 'hage <- matrix( c(';
 	my $row = 0;
 	foreach my $i (@{$r2}){
+		$rcmd .= "$i->[0],$i->[3],$i->[1],";
 		$self->list2->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
@@ -138,6 +140,26 @@ sub count{
 			++$col;
 		}
 		++$row;
+	}
+	
+	if (0){
+		chop $rcmd;
+		$rcmd .= "), nrow=$row, ncol=3, byrow=TRUE)";
+		my $path1 = $::project_obj->dir_CoderData.'word_freq1.png';
+		my $path2 = $::project_obj->dir_CoderData.'word_freq2.png';
+		$path1 =~ tr/\\/\//;
+		$path2 =~ tr/\\/\//;
+		
+		$::config_obj->R->lock;
+		$::config_obj->R->send($rcmd);
+		$::config_obj->R->send("png(\"$path1\")");
+		$::config_obj->R->send('matplot(hage[,1],hage[,2],type="b",lty=1,pch=1)');
+		$::config_obj->R->send('dev.off()');
+		$::config_obj->R->send("png(\"$path2\")");
+		$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1)');
+		$::config_obj->R->send('dev.off()');
+		
+		#$::config_obj->R->unlock;
 	}
 }
 
