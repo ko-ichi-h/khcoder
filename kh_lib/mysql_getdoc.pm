@@ -219,6 +219,31 @@ sub header{
 	return $self->{header};
 }
 
+sub id_for_print{
+	my $self = shift;
+	my $sql = 'SELECT ';
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$sql .= $i.'_id,';
+		last if $i eq $self->{tani};
+	}
+	chop $sql;
+	$sql .= "\n";
+	$sql .= "FROM $self->{tani}\n";
+	$sql .= "WHERE id = $self->{doc_id}";
+	
+	$sql = mysql_exec->select($sql,1)->hundle->fetch;
+	
+	my $r;
+	my $n = 0;
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$r .= "$i = $sql->[$n], ";
+		last if $i eq $self->{tani};
+		++$n;
+	}
+	$r .= "No. = $self->{doc_id}";
+	
+	return $r;
+}
 
 
 

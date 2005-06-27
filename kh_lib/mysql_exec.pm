@@ -87,7 +87,10 @@ sub drop_db{
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
 	$dbh->func("dropdb", $drop,$host,$username,$password,'admin')
-		or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
+		or gui_errormsg->open(
+			type => 'msg',
+			msg => 'データベース（MySQL）の削除に失敗しました。'
+		);
 
 	$dbh->disconnect;
 }

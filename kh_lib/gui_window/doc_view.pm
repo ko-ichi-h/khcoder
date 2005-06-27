@@ -269,7 +269,6 @@ sub near{
 	$self->{doc}    = $doc;
 	$self->{doc_id} = $doc->{doc_id};
 	$self->_view_doc($doc);
-
 }
 
 # 実際の表示用ルーチン
@@ -287,6 +286,7 @@ sub _view_doc{
 	}
 	
 	$self->text->delete('0.0','end');             # 見出し書き出し
+	$self->text->insert('end','ID: '.$doc->id_for_print."\n",'info');
 	$self->text->insert('end',$self->gui_jchar($doc->header,'sjis'),'info');
 	
 	my $t;
