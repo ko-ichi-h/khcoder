@@ -131,7 +131,7 @@ sub color_DocView_info{
 	my $self = shift;
 	my $i    = $self->{color_DocView_info};
 	unless ( defined($i) ){
-		$i = "blue,white";
+		$i = "#008000,white";
 	}
 	if ($_[1]){
 		return $i;
