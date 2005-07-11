@@ -286,7 +286,6 @@ sub _view_doc{
 	}
 	
 	$self->text->delete('0.0','end');             # 見出し書き出し
-	$self->text->insert('end','ID: '.$doc->id_for_print."\n",'info');
 	$self->text->insert('end',$self->gui_jchar($doc->header,'sjis'),'info');
 	
 	my $t;
@@ -304,8 +303,11 @@ sub _view_doc{
 	}
 	$self->_str_color($buffer);
 
+	chomp $self->{foot};
 	$self->text->insert('end',"\n\n");
 	$self->text->insert('end',$self->gui_jchar($self->{foot},'sjis'),'info');
+	$self->text->insert('end',",  No. ".$doc->doc_id."\n",'info');
+	$self->text->insert('end','  '.$doc->id_for_print,'info');
 	
 	$self->wrap;
 	$self->update_buttons;

@@ -236,11 +236,13 @@ sub id_for_print{
 	my $r;
 	my $n = 0;
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-		$r .= "$i = $sql->[$n], ";
+		$r .= "$i = $sql->[$n],  ";
 		last if $i eq $self->{tani};
 		++$n;
 	}
-	$r .= "No. = $self->{doc_id}";
+	chop $r;
+	chop $r;
+	chop $r;
 	
 	return $r;
 }
