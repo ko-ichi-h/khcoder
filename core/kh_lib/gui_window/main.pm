@@ -30,14 +30,6 @@ sub _new{
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
 	$self->{win_obj} = $mw;
 
-	if ($::config_obj->os eq 'win32'){
-		if ($::config_obj->all_in_one_pack){
-			use kh_all_in_one;
-			kh_all_in_one->init;
-		}
-		$::splash->Destroy;
-	}
-
 	# GUI未作成のコマンド
 	use kh_hinshi;
 	$self->win_obj->bind(
@@ -53,6 +45,27 @@ sub start{
 	my $self = shift;
 	$self->menu->refresh;
 	$self->inner->refresh;
+	
+	# All-in-One Pack用の初期化処理
+	if (
+		   ($::config_obj->os eq 'win32')
+		&& $::config_obj->all_in_one_pack
+	){
+		use kh_all_in_one;
+		kh_all_in_one->init;
+	}
+	
+	# Rの初期化処理
+	use Statistics::R;
+	$::config_obj->{R} = Statistics::R->new(
+		log_dir => $::config_obj->{cwd}.'/config/R-bridge'
+	);
+	$::config_obj->{R}->startR or $::config_obj->{R} = 0 if $::config_obj->{R};
+	chdir ($::config_obj->{cwd});
+	
+	# スプラッシュWindowを閉じる
+	$::splash->Destroy if $::config_obj->os eq 'win32';
+	return 1;
 }
 
 #------------------#

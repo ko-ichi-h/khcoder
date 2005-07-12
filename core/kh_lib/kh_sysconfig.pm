@@ -40,14 +40,6 @@ sub readin{
 
 	$self = $self->_readin;
 
-	# R´ØÏ¢
-	use Statistics::R;
-	$self->{R} = Statistics::R->new(
-		log_dir => $self->{cwd}.'/config/R-bridge'
-	);
-	$self->{R}->startR or $self->{R} = 0;
-	chdir ($self->{cwd});
-
 	return $self;
 }
 #--------------------#
