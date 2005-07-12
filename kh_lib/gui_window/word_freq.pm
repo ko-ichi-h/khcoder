@@ -158,8 +158,7 @@ sub count{
 		$::config_obj->R->send("png(\"$path2\")");
 		$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1)');
 		$::config_obj->R->send('dev.off()');
-		
-		#$::config_obj->R->unlock;
+		$::config_obj->R->unlock;
 	}
 }
 
