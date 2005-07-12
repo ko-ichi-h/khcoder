@@ -459,7 +459,7 @@ sub outtab{
 				if ( length($var_obj->{labels}{$h}) ){
 					push @current, Jcode->new($var_obj->{labels}{$h})->sjis;
 				} else {
-					push @current, $h;
+					push @current, Jcode->new($h,'euc')->sjis;
 				}
 			} else {                              # Ãæ¿È
 				$sum[$n] += $h;

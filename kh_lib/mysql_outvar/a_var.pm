@@ -60,6 +60,39 @@ sub real_val{
 	return $val;
 }
 
+# 特定の文書に与えられた値を返す
+sub doc_val{
+	my $self = shift;
+	my %args = @_;
+	
+	my $doc_id;
+	if ($self->{tani} eq $args{tani}){
+		$doc_id = $args{doc_id};
+	} else {
+		$doc_id = mysql_exec->select("
+			SELECT $self->{tani}_id
+			FROM   $args{tani}
+			WHERE  id = $args{doc_id}
+		",1)->hundle->fetch->[0];
+	}
+	
+	return mysql_exec->select("
+		SELECT $self->{column}
+		FROM   $self->{table}
+		WHERE  id = $doc_id
+	",1)->hundle->fetch->[0];
+}
+
+# 値を与えられた時に、値ラベルか値を返す
+sub print_val{
+	my $self = shift;
+	if ($self->{labels}{$_[0]}){
+		return $self->{labels}{$_[0]};
+	} else {
+		return $_[0];
+	}
+}
+
 # 値ラベル＋単集の表を返す
 sub detail_tab{
 	my $self = shift;

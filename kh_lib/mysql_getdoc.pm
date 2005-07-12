@@ -221,6 +221,8 @@ sub header{
 
 sub id_for_print{
 	my $self = shift;
+	
+	# 文書の位置情報を取得
 	my $sql = 'SELECT ';
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 		$sql .= $i.'_id,';
@@ -239,6 +241,33 @@ sub id_for_print{
 		$r .= "$i = $sql->[$n],  ";
 		last if $i eq $self->{tani};
 		++$n;
+	}
+	chop $r;
+	chop $r;
+	chop $r;
+	
+	# 外部変数の取得
+	my @vars;                           # 外部変数のリスト作成
+	my %tani_check = ();
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$tani_check{$i} = 1;
+		last if ($self->{tani} eq $i);
+	}
+	my $h = mysql_outvar->get_list;
+	foreach my $i (@{$h}){
+		if ($tani_check{$i->[0]}){      # 使える外部変数かどうかチェック
+			push @vars, mysql_outvar::a_var->new($i->[1],$i->[2]);
+		}
+	}
+	$r .= "\n  " if @vars;
+	foreach my $i (@vars){              # 値の取得
+		my $val = $i->doc_val(
+			doc_id => $self->{doc_id},
+			tani   => $self->{tani}
+		);
+		$val = $i->print_val($val);
+		$r .= Jcode->new($i->{name})->sjis;
+		$r .= " = ".Jcode->new($val)->sjis.",  ";
 	}
 	chop $r;
 	chop $r;
