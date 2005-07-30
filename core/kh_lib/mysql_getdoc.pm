@@ -232,7 +232,7 @@ sub id_for_print{
 	$sql .= "\n";
 	$sql .= "FROM $self->{tani}\n";
 	$sql .= "WHERE id = $self->{doc_id}";
-	
+	print "$sql\n";
 	$sql = mysql_exec->select($sql,1)->hundle->fetch;
 	
 	my $r;
@@ -259,7 +259,11 @@ sub id_for_print{
 			push @vars, mysql_outvar::a_var->new($i->[1],$i->[2]);
 		}
 	}
-	$r .= "\n  " if @vars;
+	if (@vars){
+		$r .= "\n  ";
+	} else {
+		return $r;
+	}
 	foreach my $i (@vars){              # 値の取得
 		my $val = $i->doc_val(
 			doc_id => $self->{doc_id},
