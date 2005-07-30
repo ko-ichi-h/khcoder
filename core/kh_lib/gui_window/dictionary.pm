@@ -102,11 +102,11 @@ sub _new{
 	# ドラッグ＆ドロップ
 	$t1->DropSite(
 		-dropcommand => [\&Gui_DragDrop::read_TextFile_droped,$t1],
-		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 	$t2->DropSite(
 		-dropcommand => [\&Gui_DragDrop::read_TextFile_droped,$t2],
-		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
 	$wmw->Label(

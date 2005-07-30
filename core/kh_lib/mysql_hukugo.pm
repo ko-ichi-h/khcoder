@@ -106,7 +106,7 @@ sub run_from_morpho{
 	
 	close (F);
 	
-	kh_jchar->to_sjis($target);
+	kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
 	
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n";
