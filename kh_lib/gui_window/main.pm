@@ -30,6 +30,15 @@ sub _new{
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
 	$self->{win_obj} = $mw;
 
+	$::main_gui = $self;
+
+	#-----------------------#
+	#   KH Coder 開始処理   #
+	#-----------------------#
+	
+	$self->menu->refresh;
+	$self->inner->refresh;
+
 	# GUI未作成のコマンド
 	use kh_hinshi;
 	$self->win_obj->bind(
@@ -37,15 +46,6 @@ sub _new{
 		sub { kh_hinshi->output; }
 	);
 
-	$::main_gui = $self;
-	return $self;
-}
-
-sub start{
-	my $self = shift;
-	$self->menu->refresh;
-	$self->inner->refresh;
-	
 	# All-in-One Pack用の初期化処理
 	if (
 		   ($::config_obj->os eq 'win32')
@@ -65,7 +65,8 @@ sub start{
 	
 	# スプラッシュWindowを閉じる
 	$::splash->Destroy if $::config_obj->os eq 'win32';
-	return 1;
+
+	return $self;
 }
 
 #------------------#

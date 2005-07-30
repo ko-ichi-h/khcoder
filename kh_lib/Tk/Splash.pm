@@ -1,7 +1,7 @@
 # -*- perl -*-
 
 #
-# $Id: Splash.pm,v 1.1.1.1 2002-10-26 14:48:54 ko-ichi Exp $
+# $Id: Splash.pm,v 1.2 2005-07-30 21:27:17 ko-ichi Exp $
 # Author: Slaven Rezic
 #
 # Copyright (C) 1999 Slaven Rezic. All rights reserved.
@@ -52,7 +52,8 @@ sub Raise {
 sub Destroy {
     my $w = shift;
     if ($w->{"Exists"}) {
-	Tk::catch { Tk::destroy($w) };
+	#Tk::catch { Tk::destroy($w) };
+	Tk::destroy($w);
     }
 }
 

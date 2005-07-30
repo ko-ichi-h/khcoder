@@ -232,7 +232,6 @@ sub id_for_print{
 	$sql .= "\n";
 	$sql .= "FROM $self->{tani}\n";
 	$sql .= "WHERE id = $self->{doc_id}";
-	print "$sql\n";
 	$sql = mysql_exec->select($sql,1)->hundle->fetch;
 	
 	my $r;
