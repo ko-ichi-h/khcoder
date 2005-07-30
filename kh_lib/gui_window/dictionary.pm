@@ -18,7 +18,7 @@ sub _new{
 	
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('分析に使用する語の取捨選択')->sjis);
+	$wmw->title($self->gui_jchar('分析に使用する語の取捨選択'));
 	
 	my $base = $wmw->Frame()->pack(-expand => '1', -fill => 'both');
 
@@ -39,7 +39,7 @@ sub _new{
 
 
 	$f_hinshi->Label(
-		-text => Jcode->new('・品詞による語の選択')->sjis,
+		-text => $self->gui_jchar('・品詞による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $hlist = $f_hinshi->Scrolled(
@@ -58,11 +58,11 @@ sub _new{
 
 
 	$f_mark->Label(
-		-text => Jcode->new('・強制抽出する語の指定')->sjis,
+		-text => $self->gui_jchar('・強制抽出する語の指定'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	$f_mark->Label(
-		-text => Jcode->new('　（複数の場合は改行で区切る）')->sjis,
+		-text => $self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $t1 = $f_mark->Scrolled(
@@ -76,11 +76,11 @@ sub _new{
 	)->pack(-expand => 1, -fill => 'both');
 
 	$f_stop->Label(
-		-text => Jcode->new('・使用しない語の指定')->sjis,
+		-text => $self->gui_jchar('・使用しない語の指定'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	$f_stop->Label(
-		-text => Jcode->new('　（複数の場合は改行で区切る）')->sjis,
+		-text => $self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $t2 = $f_stop->Scrolled(
@@ -110,13 +110,13 @@ sub _new{
 	);
 
 	$wmw->Label(
-		-text => Jcode->new("(*) 「強制抽出する語」や「使用しない語」の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。")->sjis,
+		-text => $self->gui_jchar("(*) 「強制抽出する語」や「使用しない語」の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。"),
 		-font => 'TKFN',
 		-justify => 'left',
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$wmw->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{
@@ -143,7 +143,6 @@ sub _new{
 	$wmw->after(10,sub{$self->_fill_in;});
 
 	return $self;
-
 }
 
 #---------------------------------------#
@@ -173,10 +172,11 @@ sub _fill_in{
 				-widget    => $c,
 			);
 			
+			#print Jcode->new("$i\n",'euc')->sjis;
 			$self->hlist->itemCreate(
 				$row,1,
 				-itemtype => 'text',
-				-text     => Jcode->new($i)->sjis
+				-text     => $self->gui_jchar($i)
 			);
 			++$row;
 		}
@@ -187,14 +187,14 @@ sub _fill_in{
 	if ($self->config->words_mk){
 		foreach my $i (@{$self->config->words_mk}){
 #			print "$i\n";
-			my $t = Jcode->new($i)->sjis;
+			my $t = $self->gui_jchar($i);
 			$self->t1->insert('end',"$t\n");
 		}
 	}
 	# 使用しない語
 	if ($self->config->words_st){
 		foreach my $i (@{$self->config->words_st}){
-			my $t = Jcode->new($i)->sjis;
+			my $t = $self->gui_jchar($i);
 			$self->t2->insert('end',"$t\n");
 		}
 	}
@@ -214,7 +214,7 @@ sub save{
 
 	# 強制抽出
 	my @mark; my %check;
-	foreach my $i (split /\n/, Jcode->new($self->t1->get("1.0","end"))->euc){
+	foreach my $i (split /\n/, Jcode->new($self->gui_jg($self->t1->get("1.0","end")))->euc){
 		if ($i and not $check{$i}) {
 			push @mark, $i;
 			$check{$i} = 1;
@@ -223,7 +223,7 @@ sub save{
 
 	# 使用しない語
 	my @stop; %check = ();
-	foreach my $i (split /\n/, Jcode->new($self->t2->get("1.0","end"))->euc){
+	foreach my $i (split /\n/, Jcode->new($self->gui_jg($self->t2->get("1.0","end")))->euc){
 		if ($i and not $check{$i}) {
 			push @stop, $i;
 			$check{$i} = 1;
@@ -237,12 +237,11 @@ sub save{
 	if ($self->config->hinshi_list){
 		my $row = 0;
 		foreach my $i (@{$self->config->hinshi_list}){
-		#	print Jcode->new("$i, ".$self->checks->[$row]."\n")->sjis;
-			$self->config->ifuse_this($i,$self->checks->[$row]);
+			#print Jcode->new("$i, ".$self->checks->[$row]."\n",'euc')->sjis;
+			$self->config->ifuse_this($i,$self->gui_jg($self->checks->[$row]));
 			++$row;
 		}
 	}
-
 
 	$self->config->save;
 	$self->close;

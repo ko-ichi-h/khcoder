@@ -43,13 +43,13 @@ sub make_control{
 	my $p = shift;
 
 	$self->{b_airborne} = $p->Button(
-		-text    => $self->gui_jchar('Î¥Î¦'),
+		-text    => gui_window->gui_jchar('Î¥Î¦'),
 		-command => sub {$self->airborne;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
 
 	$self->{b_land} = $p->Button(
-		-text    => $self->gui_jchar('ÃåÎ¦'),
+		-text    => gui_window->gui_jchar('ÃåÎ¦'),
 		-command => sub {$self->land;},
 		-font    => "TKFN",
 		-state   => 'disable'
@@ -74,7 +74,6 @@ sub start{
 		$self->airborne;
 	}
 }
-
 
 #--------------#
 #   ¥¤¥Ù¥ó¥È   #
