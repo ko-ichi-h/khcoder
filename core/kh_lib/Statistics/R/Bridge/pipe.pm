@@ -94,7 +94,12 @@
     
   }
   
-  sub send { 
+  sub send {
+	if ($::config_obj->os eq 'linux'){
+		require Time::HiRes;
+		Time::HiRes::sleep(0.05);
+	}
+
     my $CLASS_HPLOO ;
     $CLASS_HPLOO = $this if defined $this ;
     my $this = UNIVERSAL::isa($_[0],'UNIVERSAL') ? shift : $CLASS_HPLOO ;

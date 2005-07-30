@@ -680,7 +680,7 @@ sub tab{
 	push @result, \@current;
 
 	# chi-square test
-	my $R_debug = 1;
+	my $R_debug = 0;
 	if ($::config_obj->R){
 		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
 		$n = @current - 2;
