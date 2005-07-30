@@ -71,6 +71,24 @@ sub to_sjis{
 	rename ("temp.txt","$sjistoeuc");
 }
 
+# ファイルの文字コードを判別
+
+sub check_code{
+	my $the_file = $_[1];
+	open (TEMP,$the_file)
+		or &gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > 1000;
+	}
+	close (TEMP);
+	use Jcode;
+	return Jcode->new($t)->icode;
+}
+
 # 文字列変換
 
 sub s2e{

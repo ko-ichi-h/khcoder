@@ -15,7 +15,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $mw->Toplevel;
 	#$wmw->focus;
-	$wmw->title(Jcode->new('語の抽出結果')->sjis);
+	$wmw->title($self->gui_jchar('語の抽出結果'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -24,7 +24,7 @@ sub _new{
 	)->pack(-fill=>'x');
 
 	$fra4->Label(
-		-text => Jcode->new('・語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい')->sjis,
+		-text => $self->gui_jchar('・語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -33,16 +33,16 @@ sub _new{
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(expand => 'y', fill => 'x', side => 'left');
+	)->pack(-expand => 'y', -fill => 'x', -side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => Jcode->new('検索')->sjis,
+		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->search;});} 
-	)->pack(-side => 'right', padx => '2');
+	)->pack(-side => 'right', -padx => '2');
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
@@ -71,17 +71,17 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => 'ID');
-	$lis->header('create',1,-text => Jcode->new('文（分割済み）')->sjis);
+	$lis->header('create',1,-text => $self->gui_jchar('文（分割済み）'));
 
 	$fra5->Button(
-		-text => Jcode->new('コピー')->sjis,
+		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => Jcode->new('詳細表示')->sjis,
+		-text => $self->gui_jchar('詳細表示'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->detail;});} 
@@ -107,7 +107,7 @@ sub _new{
 
 sub search{
 	my $self = shift;
-	my $query = Jcode->new($self->entry->get)->euc;
+	my $query = Jcode->new( $self->gui_jg($self->entry->get) )->euc;
 	unless ($query){
 		return;
 	}
@@ -126,11 +126,11 @@ sub search{
 		$self->list->itemCreate(
 			$row,
 			1,
-			-text  => Jcode->new("$i->[0]")->sjis,
+			-text  => $self->gui_jchar("$i->[0]"),
 		);
 		++$row;
 	}
-	$self->label->configure(-foreground => 'black', text => "    Ready.");
+	$self->label->configure(-foreground => 'black', -text => "    Ready.");
 	$self->list->yview(0);
 	$self->{result} = $result;
 }

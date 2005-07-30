@@ -96,8 +96,6 @@ sub save{
 
 }
 
-
-
 #------------------------#
 #   データのマーキング   #
 #------------------------#
@@ -107,21 +105,24 @@ sub mark{
 	my $source = $::project_obj->file_target;
 	my $dist   = $::project_obj->file_m_target;
 
-	unless (eval (@{$self->words_mk})){
-		unlink($dist) or die if -e $dist;
-		use File::Copy;
-		copy("$source","$dist") or die;
-		return undef;
-	}
+#	unless (eval (@{$self->words_mk})){
+#		unlink($dist) or die if -e $dist;
+#		use File::Copy;
+#		copy("$source","$dist") or die;
+#		return undef;
+#	}
 
-	my @keywords = @{$self->words_mk};
+	my @keywords;
+	@keywords = @{$self->words_mk} if eval @{$self->words_mk};
 
 	my %priority; my $n = 0;
 	foreach my $i (@keywords){
 		$priority{$i} = $n;
 		++$n;
 	}
-
+	
+	my $icode = kh_jchar->check_code($source);
+	
 	open (MARKED,">$dist") or 
 		gui_errormsg->open(
 			type => 'file',
@@ -132,9 +133,9 @@ sub mark{
 			type => 'file',
 			thefile => $source
 		);
+	
 	while (<SOURCE>){
-		Jcode::convert(\$_,'euc');
-		my $text = $_;
+		my $text = Jcode->new($_,$icode)->h2z->euc;
 		while (1){
 			my %temp = (); my $f = 0;                      # 位置を取得
 			foreach my $i (@keywords){
