@@ -524,7 +524,11 @@ sub outtab{
 			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
 			$::config_obj->R->send($cmd);
 			my $ret = $::config_obj->R->read;
-			next unless length($ret);
+			unless (length($ret)){
+				push @chisq, '';
+				next;
+			}
+
 			chop $ret;
 			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
 			$::config_obj->R->send('print (chi$p.value)');
@@ -676,6 +680,7 @@ sub tab{
 	push @result, \@current;
 
 	# chi-square test
+	my $R_debug = 1;
 	if ($::config_obj->R){
 		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
 		$n = @current - 2;
@@ -690,14 +695,23 @@ sub tab{
 			}
 			chop $cmd; chop $cmd;
 			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
+			print "send: $cmd ..." if $R_debug;
 			$::config_obj->R->send($cmd);
-			my $ret = $::config_obj->R->read;
-			next unless length($ret);
+			print "ok\n" if $R_debug;
+			my $ret = $::config_obj->R->read(3);
+			print "read: $ret\n" if $R_debug;
+			unless (length($ret)){
+				push @chisq, '';
+				next;
+			}
 
 			chop $ret;
 			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			print 'send: print (chi$p.value) ...' if $R_debug;
 			$::config_obj->R->send('print (chi$p.value)');
-			my $p = $::config_obj->R->read;
+			print "ok\n" if $R_debug;
+			my $p = $::config_obj->R->read(3);
+			print "read: $p\n" if $R_debug;
 			substr($p, 0, 4) = '';
 			if ($p < 0.01){
 				$ret .= '**';
