@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('CSV形式のテキストファイルを作成')->sjis);
+	$win->title($self->gui_jchar('CSV形式のテキストファイルを作成'));
 	
 	$self->{win_obj} = $win;
 
@@ -24,16 +24,16 @@ sub _new{
 	)->pack(-fill => 'x');
 	
 	$lf->Label(
-		text => Jcode->new('どの単位を1行（1ケース）として出力しますか？')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w');
+		-text => $self->gui_jchar('どの単位を1行（1ケース）として出力しますか？'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w');
 	
-	my $f1 = $lf->Frame()->pack(fill => 'x',-pady => 3);
+	my $f1 = $lf->Frame()->pack(-fill => 'x',-pady => 3);
 	
 	$f1->Label(
-		text => Jcode->new('　選択：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', -side => 'left');
+		-text => $self->gui_jchar('　選択：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 	
 	my %pack = (
 			-anchor => 'e',
@@ -46,7 +46,7 @@ sub _new{
 	);
 	
 	$win->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -73,12 +73,14 @@ sub save{
 		[ "csv file",[qw/.csv/] ],
 		["All files",'*']
 	);
-	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.csv',
-		-filetypes        => \@types,
-		-title            =>
-			Jcode->new('テキストファイルの変形：名前を付けて保存')->sjis,
-		-initialdir       => $::config_obj->cwd
+	my $path = $self->gui_jg(
+		$self->win_obj->getSaveFile(
+			-defaultextension => '.csv',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jchar('テキストファイルの変形：名前を付けて保存'),
+			-initialdir       => $::config_obj->cwd
+		)
 	);
 	
 	if ($path){

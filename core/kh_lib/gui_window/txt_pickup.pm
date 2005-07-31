@@ -13,14 +13,14 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $mw->Toplevel;
 	#$win->focus;
-	$win->title(Jcode->new('部分テキストの取り出し')->sjis);
+	$win->title($self->gui_jchar('部分テキストの取り出し'));
 	$self->{win_obj} = $win;
 
 	#----------------------#
 	#   見出しの取り出し   #
 
 	my $radio_head = $win->Radiobutton(
-		-text             => Jcode->new('見出し文だけを取り出す')->sjis,
+		-text             => $self->gui_jchar('見出し文だけを取り出す'),
 		-font             => "TKFN",
 		-foreground       => 'blue',
 		-activeforeground => 'red',
@@ -36,17 +36,17 @@ sub _new{
 	)->pack(-fill => 'x');
 	
 	$self->{l_h_1} = $lf->Label(
-		-text => Jcode->new('・取り出す見出しの選択')->sjis,
+		-text => $self->gui_jchar('・取り出す見出しの選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $f1 = $lf->Frame->pack(-fill => 'x');
 	$f1->Label(
-		-text => Jcode->new('　　')->sjis,
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 2);
 	foreach my $i ('H1','H2','H3','H4','H5'){
 		$self->{"check_w_"."$i"} = $f1->Checkbutton(
-			-text     => "$i".Jcode->new('見出し','euc')->sjis,
+			-text     => "$i".$self->gui_jchar('見出し','euc'),
 			-font     => "TKFN",
 			-variable => \$self->{"check_v_"."$i"},
 		)->pack(-side => 'left', -padx => 4)
@@ -56,7 +56,7 @@ sub _new{
 	#   コーディング・ルール   #
 	
 	$win->Radiobutton(
-		-text             => Jcode->new('特定のコードが与えられた文書だけを取り出す')->sjis,
+		-text             => $self->gui_jchar('特定のコードが与えられた文書だけを取り出す'),
 		-font             => "TKFN",
 		-foreground       => 'blue',
 		-activeforeground => 'red',
@@ -71,11 +71,11 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 'y');
 
-	my $left = $cf->Frame()->pack(-side => 'left',fill=>'y',-expand => 1);
+	my $left = $cf->Frame()->pack(-side => 'left',-fill=>'y',-expand => 1);
 	my $right = $cf->Frame()->pack(-side => 'right');
 
 	$self->{l_c_1} = $left->Label(
-		-text => Jcode->new('・コード選択')->sjis,
+		-text => $self->gui_jchar('・コード選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	
@@ -102,9 +102,9 @@ sub _new{
 	);
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 8);
 	$self->{l_c_2} = $f2->Label(
-		text => Jcode->new('コーディング単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'left');
+		-text => $self->gui_jchar('コーディング単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
 			-anchor => 'e',
 			-pady   => 1,
@@ -115,7 +115,7 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{ch_w_high} = $right->Checkbutton(
-		-text     => Jcode->new('より上位の見出しを新規テキストファイルに含める')->sjis,
+		-text     => $self->gui_jchar('より上位の見出しを新規テキストファイルに含める'),
 		-font     => "TKFN",
 		-variable => \$self->{ch_v_high},
 	)->pack(-anchor => 'w');
@@ -124,7 +124,7 @@ sub _new{
 
 
 	$win->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -203,7 +203,7 @@ sub read_code{
 		$self->{clist}->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->name)->sjis,
+			-text  => $self->gui_jchar($i->name),
 		);
 		++$row;
 	}
@@ -239,7 +239,7 @@ sub _cod{
 		);
 		return 0;
 	}
-	my $selected = $self->{clist}->info('selection');
+	my $selected = $self->gui_jg( $self->{clist}->info('selection') );
 	
 	my $path = $self->get_path or return 0;
 	
@@ -298,12 +298,14 @@ sub get_path{
 		[ "text file",[qw/.txt/] ],
 		["All files",'*']
 	);
-	return $self->win_obj->getSaveFile(
-		-defaultextension => '.txt',
-		-filetypes        => \@types,
-		-title            =>
-			Jcode->new('部分テキストの取り出し：名前を付けて保存')->sjis,
-		-initialdir       => $::config_obj->cwd
+	return $self->gui_jg(
+		$self->win_obj->getSaveFile(
+			-defaultextension => '.txt',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jchar('部分テキストの取り出し：名前を付けて保存'),
+			-initialdir       => $::config_obj->cwd
+		)
 	);
 }
 
