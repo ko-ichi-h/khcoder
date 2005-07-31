@@ -135,6 +135,7 @@ sub mark{
 		);
 	
 	while (<SOURCE>){
+		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;
 		while (1){
 			my %temp = (); my $f = 0;                      # 位置を取得
@@ -174,7 +175,7 @@ sub mark{
 				last;
 			}
 		}
-		print MARKED "$text";
+		print MARKED "$text\n";
 	}
 	close (SOURCE);
 	close (MARKED);
