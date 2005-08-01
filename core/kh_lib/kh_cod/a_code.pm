@@ -59,7 +59,7 @@ sub code{
 			type => 'msg',
 			msg  =>
 				"コーディング・ルールの書式に誤りがありました。\n".
-				"誤りを含むコード： ".$self->name
+				"誤りを含むコード： ".$self->name."\n".$check->err
 		);
 		return 0;
 	}
@@ -205,13 +205,16 @@ sub new{
 	$self->{row_condition} = shift;
 	
 	my $condition = Jcode->new($self->{row_condition},'euc')->tr('　',' ');
-	$condition =~ tr/\t\n/  /;
+	$condition =~ tr/\t\n\r/   /;
+	#print "$condition\n";
 	my @temp = split / /, $condition;
 	
 	foreach my $i (@temp){
 		unless ( length($i) ){next;}
+		#print "$i,";
 		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
 	}
+	#print "\n";
 	
 	bless $self, $class;
 	return $self;

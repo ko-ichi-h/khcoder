@@ -51,18 +51,18 @@ sub read_file{
 	# 読みとり
 	my (@codes, %codes, $head);
 	while (<F>){
+		chomp;
 		if ((substr($_,0,1) eq '#') || (length($_) == 0)){
 			next;
 		}
 		
 		$_ = Jcode->new("$_")->euc;
 		if ($_ =~ /^＊/o){
-			chomp;
 			$head = $_;
 			push @codes, $head;
 			#print Jcode->new("$head\n")->sjis;
 		} else {
-			$codes{$head} .= $_;
+			$codes{$head} .= "$_\n";
 		}
 	}
 	close (F);

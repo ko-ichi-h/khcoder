@@ -509,7 +509,7 @@ sub outtab{
 
 	# chi-square test
 	if ($::config_obj->R){
-		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
+		my @chisq = (Jcode->new('¥«¥¤2¾èÃÍ')->sjis);
 		$n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
@@ -682,7 +682,7 @@ sub tab{
 	# chi-square test
 	my $R_debug = 0;
 	if ($::config_obj->R){
-		my @chisq = (Jcode->new('¦Ö2¾è')->sjis);
+		my @chisq = (Jcode->new('¥«¥¤2¾èÃÍ')->sjis);
 		$n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
