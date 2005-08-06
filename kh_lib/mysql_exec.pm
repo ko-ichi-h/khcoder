@@ -33,6 +33,7 @@ sub connect_db{
 
 # DBへの接続テスト
 sub connection_test{
+	print "Checking MySQL connection...\n";
 	my $dsn = 
 		"DBI:mysql:database=test;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
@@ -123,15 +124,28 @@ sub drop_table{
 sub table_exists{
 	my $class = shift;
 	my $table = shift;
-	my $r = 0;
-	foreach my $i ( &table_list ){
-		if ($i eq $table){
-			$r = 1;
-			last;
-		}
-	}
-	return $r;
+	print "\tDose the table exist? : ";
+	
+	my $t = $::project_obj->dbh->prepare("SELECT * FROM $table") or return 0;
+	$t->execute or return 0;
+	$t->finish;
+	
+	print "Yes.\n";
+	return 1;
 }
+
+#sub table_exists{
+#	my $class = shift;
+#	my $table = shift;
+#	my $r = 0;
+#	foreach my $i ( &table_list ){
+#		if ($i eq $table){
+#			$r = 1;
+#			last;
+#		}
+#	}
+#	return $r;
+#}
 
 sub clear_tmp_tables{
 	my $class = shift;
@@ -144,6 +158,7 @@ sub clear_tmp_tables{
 
 sub table_list{
 	my $class = shift;
+	
 	my @r = map { $_ =~ s/.*\.//; $_ } $::project_obj->dbh->tables();
 	foreach my $i (@r){
 		$i = $1 if $i =~ /`(.*)`/;

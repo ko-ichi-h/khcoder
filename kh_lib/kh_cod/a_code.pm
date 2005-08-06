@@ -10,7 +10,7 @@ use strict;
 sub code{
 	my $self           = shift;	
 	$self->{if_done}   = 1;
-	
+	print "* Stage 2 started...\n";
 	unless ($self->{condition}){
 		return 0;
 	}
@@ -95,6 +95,7 @@ sub code{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	print "* Stage 1 started...\n";
 	$self->{tani} = $tani;
 	unless ($self->{condition}){
 		return 0;

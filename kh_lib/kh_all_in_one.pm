@@ -68,7 +68,7 @@ sub init{
 
 	# MySQL¤Îµ¯Æ°
 	return 1 if mysql_exec->connection_test;
-	print "starting mysql...\n";
+	print "Starting mysql...\n";
 	use Win32;
 	use Win32::Process;
 	my $obj;
