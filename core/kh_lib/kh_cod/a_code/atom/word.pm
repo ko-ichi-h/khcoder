@@ -116,7 +116,7 @@ sub ready{
 	)->genkei_ids;
 	unless (defined($list) ){
 		print Jcode->new(
-			"no such word in the text: \"".$self->raw."\"\n"
+			"Could NOT find the word : \"".$self->raw."\"\n"
 		)->sjis;
 		return '';
 	}
@@ -126,8 +126,14 @@ sub ready{
 		push @{$self->{tables}}, $table;
 		
 		if ( mysql_exec->table_exists($table) ){
+			#print Jcode->new(
+			#	"table exists: \"".$self->raw."\"\n"
+			#)->sjis;
 			next;
 		}
+		#print Jcode->new(
+		#	"table dose not exist: \"".$self->raw."\"\n"
+		#)->sjis;
 		
 		mysql_exec->do("
 			CREATE TABLE $table (
