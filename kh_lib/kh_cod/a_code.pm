@@ -212,7 +212,8 @@ sub new{
 	my @temp = split / /, $condition;
 	
 	foreach my $i (@temp){
-		unless ( length($i) ){next;}
+		next unless length($i);
+		next if ($i eq ' ');
 		#print "$i,";
 		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
 	}

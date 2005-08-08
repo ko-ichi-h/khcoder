@@ -51,6 +51,7 @@ sub read_file{
 	# 読みとり
 	my (@codes, %codes, $head);
 	while (<F>){
+		$_ =~ s/\r\n\z/\n/o;
 		chomp;
 		if ((substr($_,0,1) eq '#') || (length($_) == 0)){
 			next;
