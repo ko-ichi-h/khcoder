@@ -64,12 +64,13 @@ sub code{
 		return 0;
 	}
 	
-	if ($self->tables && $self->{parents}){          # 一時テーブルの削除
-		foreach my $i (@{$self->tables}){
-			mysql_exec->drop_table($i);
-		}
-	}
-	
+	#if ($self->tables && $self->{parents}){          # 一時テーブルの削除
+	#	foreach my $i (@{$self->tables}){
+	#		print "$i,";
+	#		mysql_exec->drop_table($i);
+	#	}
+	#	print "\n";
+	#}
 	
 	my $check2 = mysql_exec->select(
 		"SELECT * FROM $self->{res_table} LIMIT 1"
@@ -214,10 +215,10 @@ sub new{
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
-		#print "$i,";
+		print Jcode->new("$i,")->sjis;
 		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
 	}
-	#print "\n";
+	print "\n";
 	
 	bless $self, $class;
 	return $self;
