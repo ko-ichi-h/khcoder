@@ -215,10 +215,10 @@ sub new{
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
-		print Jcode->new("$i,")->sjis;
+		#print Jcode->new("$i,")->sjis;
 		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
 	}
-	print "\n";
+	#print "\n";
 	
 	bless $self, $class;
 	return $self;
