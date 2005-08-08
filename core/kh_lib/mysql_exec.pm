@@ -125,7 +125,8 @@ sub table_exists{
 	my $class = shift;
 	my $table = shift;
 	
-	my $t = $::project_obj->dbh->prepare("SELECT * FROM $table") or return 0;
+	my $t = $::project_obj->dbh->prepare("SELECT * FROM $table LIMIT 1")
+		or return 0;
 	$t->{PrintError} = 0; # テーブルが存在しなかった場合のエラー出力を抑制
 	$t->execute or return 0;
 	$t->finish;
