@@ -148,6 +148,7 @@ sub save{
 			'use_heap',
 			'all_in_one_pack',
 			'font_main',
+			'kaigyo_kigou',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',

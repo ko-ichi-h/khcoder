@@ -445,6 +445,8 @@ sub search{
 	}
 
 	# ¸¡º÷¼Â¹Ô
+	use Benchmark;
+	my $t0 = new Benchmark;
 	$self->st_label->configure(
 		-text => 'Searching...',
 		-foreground => 'red',
@@ -471,6 +473,10 @@ sub search{
 	);
 
 	$self->display(1);
+	
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n";
+	
 	return $self;
 }
 
