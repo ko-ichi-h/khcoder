@@ -434,15 +434,15 @@ sub search{
 	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get))->euc;
 	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get))->euc;
 	my $length = $self->entry3->get;
-	if ($length > 30){
-		my $win = $self->win_obj;
-		gui_errormsg->open(
-			msg => "検索時に取り出せるのは前後29語までです。\n検索完了後に、より広い範囲を取り出すことができます。",
-			window => \$win,
-			type => 'msg',
-		);
-		return;
-	}
+	#if ($length > 30){
+	#	my $win = $self->win_obj;
+	#	gui_errormsg->open(
+	#		msg => "検索時に取り出せるのは前後29語までです。\n検索完了後に、より広い範囲を取り出すことができます。",
+	#		window => \$win,
+	#		type => 'msg',
+	#	);
+	#	return;
+	#}
 
 	# 検索実行
 	use Benchmark;
