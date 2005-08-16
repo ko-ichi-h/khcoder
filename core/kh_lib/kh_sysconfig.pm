@@ -272,6 +272,23 @@ sub all_in_one_pack{
 	return $self->{all_in_one_pack};
 }
 
+sub kaigyo_kigou{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 新しい値を指定された場合
+	if (defined($new)){
+		$self->{kaigyo_kigou} = $new;
+	}
+	
+	# デフォルト値
+	unless ($self->{kaigyo_kigou}){
+		return '（↓）';
+	}
+	
+	return $self->{kaigyo_kigou};
+}
+
 sub R{
 	my $self = shift;
 	return $self->{R};

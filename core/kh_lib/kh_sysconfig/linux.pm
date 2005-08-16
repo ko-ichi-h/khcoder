@@ -147,6 +147,7 @@ sub save{
 			'mail_to',
 			'use_heap',
 			'font_main',
+			'kaigyo_kigou',
 			'color_DocView_info',
 			'color_DocView_search',
 			'color_DocView_force',

@@ -19,6 +19,9 @@ sub a_word{
 	unless ($args{length}){
 		$args{length} = 20;
 	}
+	#$args{length} = 5; # チェック用
+	
+	
 	my (@left, @right);
 	for (my $n = 1; $n <= $args{length}; ++$n){
 		my $l = $args{length} - $n + 1;
@@ -36,6 +39,7 @@ sub a_word{
 		&& ( $l_hinshi eq $args{hinshi} )
 		&& ( $l_katuyo eq $args{katuyo} )
 		&& ( $l_length == $args{length} )
+		&& 0 # 必ず再検索・チェック用
 	){
 		my $hyoso = $self->_hyoso;
 		unless ($hyoso){
@@ -81,40 +85,45 @@ sub _find{
 	my $self = shift;
 	my %args = %{$self};
 	my @hyoso = @{$_[0]};
-	my $sql = '';
 
 	print "\n1: searching...\n";
 
-	# Temp Table作成（left + center）	
-	mysql_exec->drop_table("temp_concl");
-	$sql  = "create temporary table temp_concl (\n";
-	$sql .= "id int primary key not null,\n";
-	foreach my $i (@{$self->{left}},'center'){
-		$sql .= "$i int,";
-	}
-	chop $sql;
-	$sql .= ") TYPE = HEAP";
-	mysql_exec->do($sql,1);
+	# Temp Table作成
+	mysql_exec->drop_table("temp_conc");
+	mysql_exec->do("
+		#create temporary table temp_conc ( # チェック用
+		create table temp_conc (
+			id int primary key not null,
+			l5 int,
+			l4 int,
+			l3 int,
+			l2 int,
+			l1 int,
+			center int,
+			r1 int,
+			r2 int,
+			r3 int,
+			r4 int,
+			r5 int
+		)  TYPE = HEAP
+	",1);
 
-	$sql = '';
-	$sql .= "INSERT INTO temp_concl\n(id, ";
-	foreach my $i (@{$self->{left}},'center'){
-		$sql .= "$i,";
-	}
-	chop $sql;
-	$sql .= ")\n";
-	$sql .= "SELECT center.id, ";
-	foreach my $i (@{$self->{left}},'center'){
-		$sql .= "$i".".hyoso_id,";
-	}
-	chop $sql;
-	$sql .= "\n";
+	# 検索して投入
+	my $sql = '';
+	$sql .= "INSERT INTO temp_conc\n";
+	$sql .= "(id, l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5)\n";
+	$sql .= "SELECT center.id, l5.hyoso_id,l4.hyoso_id,l3.hyoso_id,l2.hyoso_id,l1.hyoso_id,center.hyoso_id,r1.hyoso_id,r2.hyoso_id,r3.hyoso_id,r4.hyoso_id,r5.hyoso_id\n";
 	$sql .= "FROM hyosobun as center\n";
-	foreach my $i (@{$self->{left}}){
-		my $num = $i;
-		substr($num,0,1) = '';
-		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id - $num ) = $i".".id\n";
-	}
+	$sql .= "\tLEFT JOIN hyosobun as l1 ON ( center.id - 1 ) = l1.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as l2 ON ( center.id - 2 ) = l2.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as l3 ON ( center.id - 3 ) = l3.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as l4 ON ( center.id - 4 ) = l4.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as l5 ON ( center.id - 5 ) = l5.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as r1 ON ( center.id + 1 ) = r1.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as r2 ON ( center.id + 2 ) = r2.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as r3 ON ( center.id + 3 ) = r3.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as r4 ON ( center.id + 4 ) = r4.id\n";
+	$sql .= "\tLEFT JOIN hyosobun as r5 ON ( center.id + 5 ) = r5.id\n";
 	$sql .= "WHERE\n";
 	my $n = 0;
 	foreach my $i (@hyoso){
@@ -125,43 +134,67 @@ sub _find{
 		++$n;
 	}
 	mysql_exec->do($sql,1);
-	
-	# Temp Table作成（all）
-	mysql_exec->drop_table("temp_conc");
-	$sql  = "create temporary table temp_conc (\n";
-	$sql .= "id int primary key not null,\n";
-	foreach my $i (@{$self->{scanlist}}){
-		$sql .= "$i int,";
-	}
-	chop $sql;
-	$sql .= ") TYPE = HEAP";
-	mysql_exec->do($sql,1);
-	
-	$sql = '';
-	$sql .= "INSERT INTO temp_conc\n(id, ";
-	foreach my $i (@{$self->{scanlist}}){
-		$sql .= "$i,";
-	}
-	chop $sql;
-	$sql .= ")\n";
-	$sql .= "SELECT center.id, ";
-	foreach my $i (@{$self->{left}}, 'center'){
-		$sql .= "temp_concl.$i,";
-	}
-	foreach my $i (@{$self->{right}}){
-		$sql .= "$i".".hyoso_id,";
-	}
-	chop $sql;
-	$sql .= "\n";
-	$sql .= "FROM hyosobun as center, temp_concl\n";
-	foreach my $i (@{$self->{right}}){
-		my $num = $i;
-		substr($num,0,1) = '';
-		$sql .= "	LEFT JOIN hyosobun as $i ON ( center.id + $num ) = $i".".id\n";
-	}
-	$sql .= "WHERE center.id = temp_concl.id";
+}
 
+sub hogehoge{
+	my $self;
+	# キャッシュ作成
+	print "\n1: cashing...\n";
+	mysql_exec->drop_table("temp_conc_cash");
+	mysql_exec->do("
+		create table temp_conc_cash (
+			id int primary key not null,
+			dan_id int,
+			hyoso int
+		) TYPE = HEAP
+	",1);
+	
+	mysql_exec->drop_table("temp_conc_cash1");
+	mysql_exec->do("
+		create table temp_conc_cash1 (id int primary key not null) TYPE = HEAP
+	",1);
+	
+	my $st = mysql_exec->select("SELECT id FROM temp_conc",1)->hundle;
+	my @d = ();
+	while (my $i = $st->fetch ){
+		my $min = $i->[0] - $self->{length};
+		my $max = $i->[0] + $self->{length};
+		$min = 1 if $min < 1;
+		foreach my $i (@d[$min...$max]){
+			$i = 1;
+		}
+	}
+	
+	my $n = 0; my @temp;
+	foreach my $i (@d){
+		if ($i){
+			push @temp, $n;
+			if (@temp == 200){
+				my $sql = "INSERT INTO temp_conc_cash1 (id) VALUES \n";
+				foreach my $h (@temp){
+					$sql .= "($h),";
+				}
+				chop $sql;
+				mysql_exec->do($sql,1);
+				
+				@temp = ();
+			}
+		}
+		++$n;
+	}
+	my $sql = "INSERT INTO temp_conc_cash1 (id) VALUES \n";
+	foreach my $h (@temp){
+		$sql .= "($h),";
+	}
+	chop $sql;
 	mysql_exec->do($sql,1);
+	
+	mysql_exec->do("
+		INSERT INTO temp_conc_cash (id,dan_id,hyoso)
+		SELECT hyosobun.id, hyosobun.dan_id, hyosobun.hyoso_id
+		FROM   hyosobun, temp_conc_cash1
+		WHERE  hyosobun.id = temp_conc_cash1.id
+	",1);
 }
 
 sub _count{
@@ -181,7 +214,8 @@ sub _sort{                                        # ソート用テーブルの作成
 		mysql_exec->drop_table("temp_conc_$i");
 		if ($args{$i} eq "id"){ last; }
 		mysql_exec->do("
-			create temporary table temp_conc_$i (
+			#create temporary table temp_conc_$i (
+			create table temp_conc_$i (
 				id int auto_increment primary key not null,
 				hyoso_id int not null,
 				count int not null,
@@ -208,7 +242,8 @@ sub _sort{                                        # ソート用テーブルの作成
 	# 最終ソート・テーブル
 	mysql_exec->drop_table("temp_conc_sort");
 	mysql_exec->do("
-		create temporary table temp_conc_sort (
+		# create temporary table temp_conc_sort (
+		create table temp_conc_sort (
 			id int auto_increment primary key not null,
 			conc_id int not null
 		)
@@ -261,51 +296,72 @@ sub _format{                                      # 結果の出力
 	
 	print "3: Formating output...\n";
 	
-	my $result;
-	foreach my $i (@{$self->{left}},@{$self->{right}}){
-		my $sql = "SELECT hyoso.name FROM temp_conc\n";
-		$sql .= "	LEFT JOIN hyoso ON temp_conc.$i = hyoso.id,\n";
-		$sql .= "	temp_conc_sort\n";
-		$sql .= "WHERE temp_conc.id = temp_conc_sort.conc_id\n";
-		$sql .= "	AND temp_conc_sort.id >= $start\n";
-		$sql .= "	AND temp_conc_sort.id <  $start + $docs_per_once\n";
-		$sql .= "ORDER BY temp_conc_sort.id\n";
-		# $sql .= "LIMIT $self->{limit}";
-		$result->{$i} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-	}
-	my $sql = "SELECT hyoso.name, temp_conc.id FROM ( hyoso,temp_conc,temp_conc_sort )\n";
-	$sql .= "WHERE\n\t";
-	$sql .= "temp_conc.center = hyoso.id\n";
-	$sql .= "	AND temp_conc.id = temp_conc_sort.conc_id\n";
-	$sql .= "	AND temp_conc_sort.id >= $start\n";
-	$sql .= "	AND temp_conc_sort.id <  $start + $docs_per_once\n";
-	$sql .= "ORDER BY temp_conc_sort.id\n";
-	# $sql .= "LIMIT $self->{limit}";
-	$result->{center} = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
-	
-	print "...\n";
-
-	my $return;
-	my $last = mysql_exec->select("
-		SELECT COUNT(*)
-		FROM temp_conc_sort
+	# 出力リスト
+	my $st1 = mysql_exec->select("
+		SELECT temp_conc.id
+		FROM   temp_conc,temp_conc_sort
 		WHERE
-			    temp_conc_sort.id >= $start
+			    temp_conc.id = temp_conc_sort.conc_id
+			AND temp_conc_sort.id >= $start
 			AND temp_conc_sort.id <  $start + $docs_per_once
-	",1)->hundle->fetch->[0];
-	--$last;
+	",1)->hundle;
+	my $dlist = $st1->fetchall_arrayref;
+	$st1->finish;
 	
-	for (my $n = 0; $n <= $last; ++$n){
-		foreach my $i (@{$self->{left}}){
-			$return->[$n][0] .= $result->{$i}[$n][0];
-		}
-		$return->[$n][1] = $result->{center}[$n][0];
-		foreach my $i (@{$self->{right}}){
-			$return->[$n][2] .= $result->{$i}[$n][0];
-		}
-		$return->[$n][3] = $result->{center}[$n][1];
+	print "L";
+	
+	my $sql = '';
+	$sql .= "SELECT hyosobun.id, hyoso.name\n";
+	$sql .= "FROM   hyosobun, hyoso\n";
+	$sql .= "WHERE hyosobun.hyoso_id = hyoso.id \n AND (";
+	my $n = 0;
+	foreach my $i (@{$dlist}){
+		$sql .= "OR " if $n;
+		$sql .= "( ";
+		$sql .= "hyosobun.hyoso_id >= $i->[0] - $self->{length}";
+		$sql .= " AND ";
+		$sql .= "hyosobun.hyoso_id <= $i->[0] + $self->{length}";
+		$sql .= " )\n";
+		$n = 1;
 	}
-
+	$sql .= " )";
+	my $st2 = mysql_exec->select($sql,1)->hundle;
+	
+	
+	return 0;
+	
+	
+	my $return;
+	my $n = 0;
+	foreach my $i (@{$dlist}){
+		$return->[$n][3] = $i->[0];
+		
+		my $st2 = mysql_exec->select("
+			SELECT hyosobun.id, hyoso.name
+			FROM   hyosobun, hyoso
+			WHERE
+				    hyosobun.hyoso_id = hyoso.id
+				AND hyosobun.id >= $i->[0] - $self->{length}
+				AND hyosobun.id <= $i->[0] + $self->{length}
+			ORDER BY hyosobun.id
+		",1)->hundle;
+		my $hlist = $st2->fetchall_arrayref;
+		#$st2->finish;
+		
+		my $cn = 0;
+		foreach my $h (@{$hlist}){
+			if ($h->[0] == $i->[0]){
+				$return->[$n][1] .= $h->[1];
+				$cn = 2;
+				next;
+			}
+			$return->[$n][$cn] .= $h->[1];
+		}
+		print ".";
+		++$n;
+	}
+	print "\n";
+	
 	return $return;
 }
 
