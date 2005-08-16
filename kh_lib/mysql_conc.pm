@@ -6,6 +6,10 @@ use mysql_a_word;
 my ( $l_query, $l_hinshi, $l_katuyo, $l_length);
 my $docs_per_once = 200;
 
+#----------------------------#
+#   初期化・コンストラクト   #
+#----------------------------#
+
 sub initialize{
 	($l_query, $l_hinshi, $l_katuyo, $l_length) = ('','','','')
 }
@@ -77,6 +81,10 @@ sub _hyoso{
 	)->hyoso_id_s;
 }
 
+#----------#
+#   検索   #
+#----------#
+
 sub _find{
 	my $self = shift;
 	my %args = %{$self};
@@ -131,11 +139,9 @@ sub _find{
 	mysql_exec->do($sql,1);
 }
 
-sub _count{
-	my $self = shift;
-	return mysql_exec->select("SELECT COUNT(*) FROM temp_conc_sort",1)
-		->hundle->fetch->[0];
-}
+#------------#
+#   ソート   #
+#------------#
 
 sub _sort{                                        # ソート用テーブルの作成
 	my $self = shift;
@@ -215,12 +221,11 @@ sub _sort{                                        # ソート用テーブルの作成
 	}
 	$sql .= "temp_conc.id";
 	mysql_exec->do($sql,1);
-	#mysql_exec->("alter table temp_conc_sort add index index1 (conc_id)",1);
 }
 
-sub docs_per_once{
-	return $docs_per_once;
-}
+#--------------------------------#
+#   コンコーダンス・ライン作成   #
+#--------------------------------#
 
 sub _format{                                      # 結果の出力
 	my $self = shift;
@@ -309,6 +314,68 @@ sub _format{                                      # 結果の出力
 	}
 	
 	return $return;
+}
+
+#------------------------#
+#   コロケーション集計   #
+#------------------------#
+
+sub coloc{
+	my $self = shift;
+	my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5',);
+	
+	# 列ごとにカウント
+	my %words_count;
+	my %num2words;
+	my $res_atom;
+	foreach my $i (@cols){
+		my $st = mysql_exec->select("
+			SELECT genkei.id, count($i), genkei.name
+			FROM temp_conc, hyoso, genkei, hselection
+			WHERE
+				temp_conc.$i = hyoso.id
+				AND hyoso.genkei_id = genkei.id
+				AND genkei.khhinshi_id = hselection.khhinshi_id
+				AND hselection.ifuse = 1
+				AND genkei.nouse = 0
+			GROUP by $i
+		",1)->hundle;
+		while ( my $h = $st->fetch ){
+			$res_atom->{$i}{$h->[0]} = $h->[1];
+			$words_count{$h->[0]} += $h->[1];
+			$num2words{$h->[0]} = $h->[2];
+		}
+	}
+	
+	# 整形
+	foreach my $i (
+		sort {$words_count{$b} <=> $words_count{$a}}
+		keys %words_count
+	){
+		print Jcode->new("$num2words{$i}\t$words_count{$i}\t")->sjis;
+		foreach my $h (@cols){
+			print "$res_atom->{$h}{$i}\t";
+		}
+		print "\n";
+	}
+	
+	
+	
+}
+
+
+#------------#
+#   その他   #
+#------------#
+
+sub _count{
+	my $self = shift;
+	return mysql_exec->select("SELECT COUNT(*) FROM temp_conc_sort",1)
+		->hundle->fetch->[0];
+}
+
+sub docs_per_once{
+	return $docs_per_once;
 }
 
 1;

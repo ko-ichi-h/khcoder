@@ -262,6 +262,14 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
+	$self->{btn_coloc} = $fra5->Button(
+		-text        => $self->gui_jchar('集計','euc'),
+		-font        => "TKFN",
+		-command     => sub{ $mw->after(10,sub{$self->coloc;});},
+		-borderwidth => 1,
+	)->pack(-side => 'right');
+
+
 	MainLoop;
 
 	# $self->{entry_limit} = $limit_e;
@@ -418,6 +426,15 @@ sub end{
 	}
 }
 
+#----------#
+#   集計   #
+#----------#
+
+sub coloc{
+	my $self = shift;
+	$self->{result_obj}->coloc;
+}
+
 
 #----------#
 #   検索   #
@@ -434,19 +451,11 @@ sub search{
 	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get))->euc;
 	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get))->euc;
 	my $length = $self->entry3->get;
-	#if ($length > 30){
-	#	my $win = $self->win_obj;
-	#	gui_errormsg->open(
-	#		msg => "検索時に取り出せるのは前後29語までです。\n検索完了後に、より広い範囲を取り出すことができます。",
-	#		window => \$win,
-	#		type => 'msg',
-	#	);
-	#	return;
-	#}
 
 	# 検索実行
 	use Benchmark;
 	my $t0 = new Benchmark;
+	$self->list->delete('all');
 	$self->st_label->configure(
 		-text => 'Searching...',
 		-foreground => 'red',
