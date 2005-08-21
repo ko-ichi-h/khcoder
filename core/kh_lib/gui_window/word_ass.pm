@@ -166,7 +166,7 @@ sub _new{
 		-command          => sub {$self->conc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$self->{rlist}->header('create',0,-text => Jcode->new('½ç°Ì')->sjis);
+	$self->{rlist}->header('create',0,-text => 'N');
 	$self->{rlist}->header('create',1,-text => Jcode->new('Ãê½Ğ¸ì')->sjis);
 	$self->{rlist}->header('create',2,-text => Jcode->new('ÉÊ»ì')->sjis);
 	$self->{rlist}->header('create',3,-text => Jcode->new('Á´ÂÎ')->sjis);

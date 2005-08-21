@@ -23,6 +23,8 @@ use gui_window::dictionary;
 use gui_window::word_ass_opt;
 use gui_window::word_ass;
 use gui_window::word_conc;
+use gui_window::word_conc_coloc;
+use gui_window::word_conc_coloc_opt;
 use gui_window::word_freq;
 use gui_window::doc_view;
 use gui_window::doc_search;
