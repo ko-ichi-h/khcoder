@@ -267,6 +267,7 @@ sub _new{
 		-font        => "TKFN",
 		-command     => sub{ $mw->after(10,sub{$self->coloc;});},
 		-borderwidth => 1,
+		-state       => 'disable'
 	)->pack(-side => 'right');
 
 
@@ -417,12 +418,11 @@ sub if_prev{
 	}
 }
 sub end{
-	my $check = 0;
 	if ($::main_gui){
-		$check = $::main_gui->if_opened('w_doc_view');
-	}
-	if ( $check ){
-		$::main_gui->get('w_doc_view')->close;
+		$::main_gui->get('w_doc_view')->close
+			if $::main_gui->if_opened('w_doc_view');
+		$::main_gui->get('w_word_conc_coloc')->close
+			if $::main_gui->if_opened('w_word_conc_coloc');
 	}
 }
 
@@ -433,6 +433,9 @@ sub end{
 sub coloc{
 	my $self = shift;
 	$self->{result_obj}->coloc;
+	
+	my $view_win = gui_window::word_conc_coloc->open;
+	$view_win->view($self->{result_obj});
 }
 
 
@@ -452,18 +455,23 @@ sub search{
 	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get))->euc;
 	my $length = $self->entry3->get;
 
-	# 検索実行
-	use Benchmark;
-	my $t0 = new Benchmark;
+	# 表示の初期化
+	$self->hit_label->configure(
+		-text => $self->gui_jchar("  ヒット数：")
+	);
 	$self->list->delete('all');
+	$self->{btn_prev}->configure(-state => 'disable');
+	$self->{btn_next}->configure(-state => 'disable');
+	$self->{btn_coloc}->configure(-state => 'disable');
 	$self->st_label->configure(
 		-text => 'Searching...',
 		-foreground => 'red',
 	);
-	$self->hit_label->configure(
-		-text => $self->gui_jchar("  ヒット数：")
-	);
 	$self->win_obj->update;
+
+	# 検索実行
+	use Benchmark;
+	my $t0 = new Benchmark;
 
 	# my ($result, $r_num)
 	$self->{result_obj} = mysql_conc->a_word(
@@ -482,6 +490,11 @@ sub search{
 	);
 
 	$self->display(1);
+	
+	if ( $::main_gui->if_opened('w_word_conc_coloc') ){
+		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
+		$self->win_obj->focus;
+	}
 	
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n";
@@ -574,6 +587,7 @@ sub display{
 	} else {
 		$self->{btn_next}->configure(-state => 'disable');
 	}
+	$self->{btn_coloc}->configure(-state => 'normal');
 	$self->win_obj->update;
 
 	# 表示のセンタリング

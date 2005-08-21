@@ -325,12 +325,11 @@ sub coloc{
 	my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5',);
 	
 	# 列ごとにカウント
-	my %words_count;
-	my %num2words;
+	my %words;
 	my $res_atom;
 	foreach my $i (@cols){
 		my $st = mysql_exec->select("
-			SELECT genkei.id, count($i), genkei.name
+			SELECT genkei.id, count($i)
 			FROM temp_conc, hyoso, genkei, hselection
 			WHERE
 				temp_conc.$i = hyoso.id
@@ -341,26 +340,91 @@ sub coloc{
 			GROUP by $i
 		",1)->hundle;
 		while ( my $h = $st->fetch ){
+			$words{$h->[0]} = 1;
 			$res_atom->{$i}{$h->[0]} = $h->[1];
-			$words_count{$h->[0]} += $h->[1];
-			$num2words{$h->[0]} = $h->[2];
 		}
 	}
 	
-	# 整形
-	foreach my $i (
-		sort {$words_count{$b} <=> $words_count{$a}}
-		keys %words_count
-	){
-		print Jcode->new("$num2words{$i}\t$words_count{$i}\t")->sjis;
+	# 仮テーブル作成
+	mysql_exec->drop_table("temp_conc_coloc");
+	my $sql = '';
+	$sql .= "create temporary table temp_conc_coloc(\n";
+	$sql .= "\tgenkei_id int primary key not null,\n";
+	foreach my $i (@cols){
+		$sql .= "\t$i int not null,\n";
+	}
+	chop $sql; chop $sql;
+	$sql .= ") TYPE = HEAP";
+	mysql_exec->do($sql);
+	
+	# 整形して仮テーブルに投入
+	my $value; my $n;
+	foreach my $i (keys %words){
+		$value .= "($i,";
 		foreach my $h (@cols){
-			print "$res_atom->{$h}{$i}\t";
+			$res_atom->{$h}{$i} = 0 unless $res_atom->{$h}{$i};
+			$value .= "$res_atom->{$h}{$i},";
 		}
-		print "\n";
+		chop $value;
+		$value .= "),";
+		++$n;
+		if ($n == 300){
+			&coloc_insert($value);
+			$value = '';
+			$n = 0;
+		}
+	}
+	&coloc_insert($value);
+	
+	# テーブル投入用ルーチン
+	sub coloc_insert{
+		my $value = shift;
+		chop $value;
+		
+		my $sql = "INSERT INTO temp_conc_coloc (genkei_id,";
+		foreach my $i (@cols){
+			$sql .= "$i,";
+		}
+		chop $sql;
+		$sql .= ")\nVALUES $value";
+		mysql_exec->do($sql);
+		return 1;
+	}
+}
+
+sub format_coloc{
+	my $self = shift;
+	my %args = @_;
+	
+	my $sql = '';
+	$sql .= "SELECT genkei.name, hselection.name,";
+	$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
+	$sql .= "l5+l4+l3+l2+l1 as suml,";
+	$sql .= "r1+r2+r3+r4+r5 as sumr,";
+	$sql .= "l5,l4,l3,l2,l1,r1,r2,r3,r4,r5\n";
+	$sql .= "FROM temp_conc_coloc,genkei,hselection\n";
+	$sql .= "WHERE\n";
+	$sql .= "\ttemp_conc_coloc.genkei_id = genkei.id\n";
+	$sql .= "\tAND genkei.khhinshi_id = hselection.khhinshi_id\n";
+	$sql .= "\tAND (\n";
+	my $n = 0;
+	foreach my $i (keys %{$args{filter}->{hinshi}}){
+		$sql .= "\t\t";
+		$sql .= "OR " if $n;
+		if ($args{filter}->{hinshi}{$i}){
+			$sql .= "hselection.khhinshi_id = $i\n";
+		} else {
+			$sql .= "0\n";
+		}
+		$n = 1;
 	}
 	
 	
+	$sql .= "\t)\n";
+	$sql .= "ORDER BY $args{sort} DESC\n";
+	$sql .= "LIMIT $args{filter}->{limit}";
 	
+	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 }
 
 
