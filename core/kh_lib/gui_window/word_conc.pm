@@ -491,7 +491,11 @@ sub search{
 
 	$self->display(1);
 	
-	if ( $::main_gui->if_opened('w_word_conc_coloc') ){
+	if (
+		   defined( $::main_gui->{'w_word_conc_coloc'})
+		&& Exists($::main_gui->{'w_word_conc_coloc'}->win_obj)
+	){
+		$self->{result_obj}->coloc;
 		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
 		$self->win_obj->focus;
 	}

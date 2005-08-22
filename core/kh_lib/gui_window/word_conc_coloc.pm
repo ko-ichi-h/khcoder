@@ -86,8 +86,8 @@ sub _new{
 		-columns          => 16,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'black',
-		-selectbackground => 'cyan',
+		#-selectforeground => 'black',
+		#-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-height           => 20,
 		#-command          => sub {$mw->after(10,sub{$self->view_doc;});}
@@ -295,30 +295,33 @@ sub view{
 	# 集計結果の表示
 	my $right_style = $self->list->ItemStyle(
 		'text',
-		-font => "TKFN",
-		-anchor => 'e',
-		-background => 'white'
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-background       => 'white'
 	);
 	my $right_style_blue = $self->list->ItemStyle(
 		'text',
-		-font => "TKFN",
-		-anchor => 'e',
-		-foreground => 'blue',
-		-background => 'white'
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-foreground       => 'blue',
+		-selectforeground => 'blue',
+		-background       => 'white'
 	);
 	my $right_style_green = $self->list->ItemStyle(
 		'text',
-		-font => "TKFN",
-		-anchor => 'e',
-		-foreground => '#008000',
-		-background => 'white'
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-foreground       => '#008000',
+		-selectforeground => '#008000',
+		-background       => 'white'
 	);
 	my $right_style_red = $self->list->ItemStyle(
 		'text',
-		-font => "TKFN",
-		-anchor => 'e',
-		-foreground => 'red',
-		-background => 'white'
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-foreground       => 'red',
+		-selectforeground => 'red',
+		-background       => 'white'
 	);
 	
 	my $row = 0;
