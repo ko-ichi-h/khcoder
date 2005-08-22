@@ -398,7 +398,11 @@ sub format_coloc{
 	
 	my $sql = '';
 	$sql .= "SELECT genkei.name, hselection.name,";
-	$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
+	if ($args{sort} eq 'sum'){
+		$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
+	} else {
+		$sql .= "(l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 as score,";
+	}
 	$sql .= "l5+l4+l3+l2+l1 as suml,";
 	$sql .= "r1+r2+r3+r4+r5 as sumr,";
 	$sql .= "l5,l4,l3,l2,l1,r1,r2,r3,r4,r5\n";

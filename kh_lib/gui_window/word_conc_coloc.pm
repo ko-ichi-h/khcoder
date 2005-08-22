@@ -109,7 +109,7 @@ sub _new{
 	$lis->header('create',0,-text  => 'N');
 	$lis->header('create',1,-text  => $self->gui_jchar('抽出語'));
 	$lis->header('create',2,-text  => $self->gui_jchar('品詞'));
-	$lis->header('create',3,-text  => $self->gui_jchar('合計'));
+	$lis->header('create',3,-text  => $self->gui_jchar('スコア'));
 	$lis->header('create',4,-text  => $self->gui_jchar('左合計'));
 	$lis->header('create',5,-text  => $self->gui_jchar('右合計'));
 	$lis->header(
@@ -180,6 +180,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my @options = (
+		[ $self->gui_jchar('スコア'), 'score'],
 		[ $self->gui_jchar('合計'),   'sum'],
 		[ $self->gui_jchar('左合計'), 'suml'],
 		[ $self->gui_jchar('右合計'), 'sumr'],
@@ -250,6 +251,12 @@ sub _new{
 sub view{
 	my $self = shift;
 	$self->{result_obj} = shift if defined($_[0]);
+	
+	if ($self->{sort} eq 'sum'){
+		$self->list->header('create',3,-text  => $self->gui_jchar('合計'));
+	} else {
+		$self->list->header('create',3,-text  => $self->gui_jchar('スコア'));
+	}
 	
 	# nord word 情報の表示
 	$self->{entry}{nw_w}->configure(-state => 'normal');
@@ -339,6 +346,10 @@ sub view{
 		foreach my $h (@{$i}){
 			if ($col > 2){              # 数字
 				my $style;
+				if ($col == 3 &! $self->{sort} eq 'sum'){
+					$style = $right_style;
+					$h = sprintf("%.3f",$h);
+				}
 				if ($col < 6){
 					$style = $right_style;
 				}

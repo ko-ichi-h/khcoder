@@ -495,9 +495,8 @@ sub search{
 		   defined( $::main_gui->{'w_word_conc_coloc'})
 		&& Exists($::main_gui->{'w_word_conc_coloc'}->win_obj)
 	){
-		$self->{result_obj}->coloc;
+		$self->{result_obj}->coloc if $self->{result_obj};
 		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
-		$self->win_obj->focus;
 	}
 	
 	my $t1 = new Benchmark;
