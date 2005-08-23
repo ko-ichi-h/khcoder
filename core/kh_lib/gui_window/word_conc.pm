@@ -71,19 +71,15 @@ sub _new{
 	$e2->bind("<Key-Return>",sub{$self->search;});
 
 	$fra4e->Label(
-		-text => $self->gui_jchar('　（前後の'),
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
-	my $e3 = $fra4e->Entry(
-		-width => 2,
-		-background => 'white'
-	)->pack(-side => 'left');
-	$e3->insert('end','20');
-
-	$fra4e->Label(
-		-text => $self->gui_jchar('語を取り出す）'),
-		-font => "TKFN"
+	$self->{btn_tuika} = $fra4e->Button(
+		-text => $self->gui_jchar('絞り込み'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
@@ -101,12 +97,7 @@ sub _new{
 	);
 
 	# ソート・オプションのフレーム
-	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
-
-	#my @methods = ('出現順', '左・5','左・4','左・3','左・2','左・1','活用形','右・1','右・2','右・3','右・4','右・5',);
-	#foreach my $i (@methods){
-	#	$i = $self->gui_jchar("$i");
-	#}
+	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	my @options = (
 		[ $self->gui_jchar('出現順'), 'id'],
@@ -165,6 +156,24 @@ sub _new{
 		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
 	);
 	$self->_menu_check;
+
+
+	$fra4h->Label(
+		-text => $self->gui_jchar('　（前後'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	my $e3 = $fra4h->Entry(
+		-width => 2,
+		-background => 'white'
+	)->pack(-side => 'left');
+	$e3->insert('end','20');
+
+	$fra4h->Label(
+		-text => $self->gui_jchar('語を表示）'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
 
 	my $status = $fra4h->Label(
 		-text => 'Ready.',
