@@ -117,6 +117,7 @@ sub readin{
 	foreach my $key (keys %{$r}){
 		mysql_ready::dump->word_length if $r->{$key} == 255;
 		my $len = $r->{$key} + 4;
+		$len = 255 if $len > 255;
 		$self->length($key,$len);
 	}
 
