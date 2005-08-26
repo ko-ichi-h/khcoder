@@ -11,11 +11,11 @@ use mysql_html2csv;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title($self->gui_jchar('CSV形式のテキストファイルを作成'));
 	
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
 		-label => 'Option',

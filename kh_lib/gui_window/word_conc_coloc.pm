@@ -13,8 +13,8 @@ use gui_hlist;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
-	$self->{win_obj} = $wmw;
+	my $wmw= $self->{win_obj};
+	#$self->{win_obj} = $wmw;
 	$wmw->title($self->gui_jchar('コロケーション統計'));
 	
 	# Nord Wordの情報表示部分

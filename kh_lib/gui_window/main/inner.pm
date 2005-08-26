@@ -118,7 +118,7 @@ sub make{
 	sub unselect{
 		my $self = shift;
 		$self->hlist->selectionClear();
-		print "fuck\n";
+		#print "fuck\n";
 	}
 
 	$self->{e_curent_project} = $cupro;

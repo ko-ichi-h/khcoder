@@ -15,10 +15,9 @@ use gui_window::cod_out::var;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title($self->gui_jchar($self->win_label));
-	$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
 		-label => 'Entry',

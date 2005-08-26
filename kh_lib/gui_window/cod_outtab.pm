@@ -10,10 +10,9 @@ use mysql_outvar;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title($self->gui_jchar('コーディング・外部変数とのクロス集計'));
-	$self->{win_obj} = $win;
 	
 	#------------------------#
 	#   オプション入力部分   #

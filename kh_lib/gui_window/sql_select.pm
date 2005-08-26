@@ -21,9 +21,9 @@ sub _new{
 #   入力部分   #
 
 	my $self = shift;
-	my $win = $::main_gui->mw->Toplevel;
+	my $win = $self->{win_obj};
 	$win->title($self->gui_jchar('SQL文 (SELECT) 実行'));
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
 		-label => 'Entry',

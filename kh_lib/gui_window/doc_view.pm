@@ -26,7 +26,7 @@ sub _new{
 	$self->_init;
 	
 	my $mw = $::main_gui->mw;
-	my $bunhyojiwin = $::main_gui->mw->Toplevel;
+	my $bunhyojiwin = $self->{win_obj};
 	$bunhyojiwin->title($self->gui_jchar('文書表示'));
 
 	my $srtxt = $bunhyojiwin->Scrolled(
@@ -217,7 +217,7 @@ sub _new{
 
 
 	$self->{text}    = $srtxt;
-	$self->{win_obj} = $bunhyojiwin;
+	#$self->{win_obj} = $bunhyojiwin;
 	return $self;
 }
 

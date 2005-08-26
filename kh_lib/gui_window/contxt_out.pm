@@ -18,9 +18,9 @@ use gui_window::contxt_out::tab;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	$win->title(Jcode->new($self->label)->sjis);
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 
 	# 各種フレーム
 	my $wf = $win->Frame()->pack(-fill => 'both', -expand => 1);

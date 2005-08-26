@@ -11,8 +11,8 @@ sub _new{
 	use Tk::Balloon;
 	
 	my $mw = $::main_gui->mw;
-	my $wabtkh = $mw->Toplevel;
-	$wabtkh->resizable(0, 0);
+	my $wabtkh = $self->{win_obj};
+	#$wabtkh->resizable(0, 0);
 	$wabtkh->title($self->gui_jchar('KH Coderについて','euc'));
 
 	$wabtkh->Label(
@@ -99,7 +99,7 @@ sub _new{
 			);
 		}
 	)->pack(-anchor => 'c',-pady => '0');
-	$self->{win_obj} = $wabtkh;
+	#$self->{win_obj} = $wabtkh;
 	return $self;
 }
 

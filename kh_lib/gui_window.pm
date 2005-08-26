@@ -66,19 +66,27 @@ sub open{
 	if ( $check ){
 		$self = $::main_gui->get($self->win_name);
 	} else {
+		
+		# Windowオープン
+		if ($self->win_name eq 'main_window'){
+			$self->{win_obj} = MainWindow->new;
+		} else {
+			$self->{win_obj} = $::main_gui->mw->Toplevel;
+			$self->win_obj->focus;
+			# Windowサイズと位置の指定
+			if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
+				$self->win_obj->geometry($g);
+			}
+			# Windowアイコンのセット
+			my $icon = $self->win_obj->Photo(
+				-file =>   Tk->findINC('acre.gif')
+			);
+			$self->win_obj->Icon(-image => $icon);
+		}
+
+		# Windowの中身作成
 		$self = $self->_new(@arg);
 		$::main_gui->opened($self->win_name,$self);
-
-		# Windowアイコンのセット
-		my $icon = $self->win_obj->Photo(
-			-file =>   Tk->findINC('acre.gif')
-		);
-		$self->win_obj->Icon(-image => $icon);
-
-		# Windowサイズと位置の指定
-		if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
-			$self->win_obj->geometry($g);
-		}
 
 		# Windowを閉じる際のバインド
 		$self->win_obj->bind(
@@ -96,8 +104,6 @@ sub open{
 			'<Key-Alt_L>',
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
-
-		$self->win_obj->focus;
 
 		# 特殊処理に対応
 		$self->start;

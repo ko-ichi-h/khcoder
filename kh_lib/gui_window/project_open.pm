@@ -15,10 +15,10 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	# Window作成
-	my $few = $mw->Toplevel;
-	$self->{win_obj} = $few;
+	my $few = $self->{win_obj};
+	#$self->{win_obj} = $few;
 	#$few->focus;
-#	$few->grab;
+	#$few->grab;
 	$few->title($self->gui_jchar('プロジェクト・マネージャ'));
 
 	# リスト作成

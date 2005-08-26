@@ -13,7 +13,7 @@ sub _new{
 	my $self = shift;
 	
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
+	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->gui_jchar('外部変数リスト'));
 
@@ -66,7 +66,7 @@ sub _new{
 	MainLoop;
 	
 	$self->{list}    = $lis;
-	$self->{win_obj} = $wmw;
+	#$self->{win_obj} = $wmw;
 	$self->_fill;
 	return $self;
 }

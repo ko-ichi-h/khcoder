@@ -8,8 +8,8 @@ use mysql_words;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
-	$self->{win_obj} = $wmw;
+	my $wmw= $self->{win_obj};
+	#$self->{win_obj} = $wmw;
 	#$wmw->focus;
 	$wmw->title($self->gui_jchar('出現数 分布'));
 	

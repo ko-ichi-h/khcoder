@@ -10,9 +10,10 @@ use Tk;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
+	#$win->focus;
 	$win->title($self->gui_jchar('追加条件：コンコーダンス（KWIC）'));
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 
 	$win->Label(
 		-text => $self->gui_jchar("・「左右（前後）に特定の語が出現していること」という条件を追加でます。"),

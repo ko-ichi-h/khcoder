@@ -17,10 +17,10 @@ my $order_name;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title(Jcode->new('抽出語 連関規則')->sjis);
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 	
 	#--------------------#
 	#   検索オプション   #

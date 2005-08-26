@@ -16,10 +16,10 @@ use kh_cod::search;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title(Jcode->new('文書検索')->sjis);
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 	
 	#--------------------#
 	#   検索オプション   #
