@@ -1,9 +1,9 @@
 package gui_window::word_conc;
 use base qw(gui_window);
+use vars qw($additional);
 use strict;
 use Tk;
 use Tk::HList;
-#use NKF;
 use mysql_conc;
 use Jcode;
 use gui_widget::tani;
@@ -76,10 +76,10 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_tuika} = $fra4e->Button(
-		-text => $self->gui_jchar('¹Ê¤ê¹þ¤ß'),
+		-text => $self->gui_jchar('ÄÉ²Ã¾ò·ï'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub{ $mw->after(10,sub {gui_window::word_conc_opt->open;});} 
 	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
@@ -504,6 +504,7 @@ sub search{
 		   defined( $::main_gui->{'w_word_conc_coloc'})
 		&& Exists($::main_gui->{'w_word_conc_coloc'}->win_obj)
 	){
+		$self->win_obj->update;
 		$self->{result_obj}->coloc if $self->{result_obj};
 		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
 	}
