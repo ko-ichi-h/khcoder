@@ -13,14 +13,14 @@ sub _new{
 
 	# 開く
 	my $mw = $::main_gui->mw;
-	my $npro = $mw->Toplevel;
+	my $npro = $self->{win_obj};
 	$npro->resizable(0, 0);
 	$npro->focus();
 	$npro->grab();
 
 	$npro->title( $self->gui_jchar('説明（メモ）の編集') );
 
-	$self->{win_obj} = $npro;
+	# $self->{win_obj} = $npro;
 
 	my $lfra = $npro->LabFrame(
 		-label => 'Entry',

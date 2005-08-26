@@ -18,7 +18,7 @@ sub _new{
 	my $self = shift;
 	
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
+	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->gui_jchar('Ãê½Ğ¸ì¸¡º÷'));
 
@@ -151,7 +151,7 @@ sub _new{
 	
 	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
-	$self->{win_obj} = $wmw;
+	#$self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
 	$self->refresh;
 	return $self;

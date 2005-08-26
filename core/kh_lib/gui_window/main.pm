@@ -14,23 +14,22 @@ use Tk;
 #----------------------------------#
 
 sub _new{
-	# クラス作成
-	my $class = 'gui_window::main';
-	
-	my $self;
+	my $self = shift;
 
-	my $mw= MainWindow->new;
-	$self->{mw} = $mw;
-	bless $self, "$class";
+	$self->{mw} = $self->{win_obj};
+	$::main_gui = $self;
+
+	# Windowサイズと位置の指定
+	if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
+		$self->win_obj->geometry($g);
+	}
 
 	# Windowへの書き込み
-	$mw->title('KH Coder [MAIN WINDOW]');          # Windowタイトル
-	$self->make_font;                              # フォント
+	$self->{mw}->title('KH Coder [MAIN WINDOW]');          # Windowタイトル
+	$self->make_font;                                      # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
-	$self->{win_obj} = $mw;
-
-	$::main_gui = $self;
+	#$self->{win_obj} = $mw;
 
 	#-----------------------#
 	#   KH Coder 開始処理   #
@@ -64,9 +63,20 @@ sub _new{
 	chdir ($::config_obj->{cwd});
 	
 	# スプラッシュWindowを閉じる
-	$::splash->Destroy if $::config_obj->os eq 'win32';
+	if ($::config_obj->os eq 'win32'){
+		$::splash->Destroy;
+	}
 
 	return $self;
+}
+
+sub start{
+	my $self = shift;
+	# Windowアイコンのセット
+	my $icon = $self->win_obj->Photo(
+		-file =>   Tk->findINC('acre.gif')
+	);
+	$self->win_obj->Icon(-image => $icon);
 }
 
 #------------------#
@@ -90,10 +100,6 @@ sub make_font{
 			-size   => $font[1],
 		);
 	}
-
-
-
-
 	$self->mw->optionAdd('*font',"TKFN");
 }
 

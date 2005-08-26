@@ -11,11 +11,11 @@ sub _new{
 	my $self = shift;
 	
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
-	$win->focus;
+	my $win = $self->{win_obj};
+	#$win->focus;
 	$win->grab;
 	$win->title(Jcode->new('連関規則 フィルタ設定')->sjis);
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 

@@ -11,10 +11,10 @@ use kh_cod::pickup;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->title($self->gui_jchar('部分テキストの取り出し'));
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 
 	#----------------------#
 	#   見出しの取り出し   #

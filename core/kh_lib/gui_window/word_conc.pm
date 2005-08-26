@@ -17,7 +17,7 @@ sub _new{
 	my $self = shift;
 	
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
+	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->gui_jchar('コンコーダンス （KWIC）'));
 
@@ -286,7 +286,7 @@ sub _new{
 	$self->{st_label} = $status;
 	$self->{hit_label} = $hits;
 	$self->{list}     = $lis;
-	$self->{win_obj}  = $wmw;
+	#$self->{win_obj}  = $wmw;
 	$self->{entry}    = $e1;
 	$self->{entry2}    = $e2;
 	$self->{entry3}    = $e3;

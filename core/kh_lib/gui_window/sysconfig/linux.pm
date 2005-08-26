@@ -20,15 +20,15 @@ sub __new{
 
 	my $self = shift;
 	my $mw   = $::main_gui->mw;
-	my $inis = $mw->Toplevel;
+	my $inis = $self->{win_obj};
 
 	$self->{c_or_j}      = $::config_obj->c_or_j;
 #	$self->{use_hukugo}  = $::config_obj->use_hukugo;
 #	$self->{use_sonota}  = $::config_obj->use_sonota;
-	$self->{win_obj}     = $inis;
+#	$self->{win_obj}     = $inis;
 #	$self = $self->refine_cj;
 
-	$inis->focus;
+#	$inis->focus;
 #	$inis->grab;
 	$inis->title( $self->gui_jchar('KH Coder¤ÎÀßÄê','euc') );
 	my $lfra = $inis->LabFrame(

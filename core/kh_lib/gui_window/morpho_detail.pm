@@ -9,7 +9,7 @@ use mysql_morpho_check;
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
-	my $bunhyojiwin = $::main_gui->mw->Toplevel;
+	my $bunhyojiwin = $self->{win_obj};
 	$bunhyojiwin->title($self->gui_jchar('語の抽出結果：詳細'));
 
 	$self->{list} = $bunhyojiwin->Scrolled(
@@ -63,7 +63,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right',-pady   => 1,);
 
-	$self->{win_obj} = $bunhyojiwin;
+	#$self->{win_obj} = $bunhyojiwin;
 	return $self;
 }
 

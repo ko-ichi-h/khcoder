@@ -16,7 +16,7 @@ sub _new{
 	my $self = shift;
 	
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
+	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->win_title);
 
@@ -80,7 +80,7 @@ sub _new{
 
 	MainLoop;
 	
-	$self->{win_obj} = $wmw;
+	#$self->{win_obj} = $wmw;
 	return $self;
 }
 

@@ -15,7 +15,7 @@ sub _new{
 	my %args = @_;
 	$self->{parent} = $args{parent};
 	my $mw = $::main_gui->mw;
-	my $win = $mw->Toplevel;
+	my $win = $self->{win_obj};
 	$win->title($self->gui_jchar('強調する言葉'));
 
 	# リスト用フレーム
@@ -112,7 +112,7 @@ sub _new{
 	)->pack(-anchor => 'c',);
 	
 	$self->{list}    = $plis;
-	$self->{win_obj} = $win;
+	#$self->{win_obj} = $win;
 	
 	$self->refresh;
 	return $self;

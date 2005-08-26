@@ -14,7 +14,7 @@ sub _new{
 	my %args = @_;
 	
 	my $mw = $::main_gui->mw;
-	my $wmw= $mw->Toplevel;
+	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->gui_jchar("変数詳細： "."$args{name}"));
 
@@ -94,7 +94,7 @@ sub _new{
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 
 	$self->{list}    = $lis;
-	$self->{win_obj} = $wmw;
+	#$self->{win_obj} = $wmw;
 	$wmw->grab;
 	return $self;
 }

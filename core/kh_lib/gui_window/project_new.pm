@@ -12,9 +12,9 @@ use gui_jchar;
 sub _new{
 	my $self = shift;
 
-	my $mw = $::main_gui->mw->Toplevel;
+	my $mw = $self->{win_obj};
 	$mw->title($self->gui_jchar('新規プロジェクト','euc'));
-	$self->{win_obj} = $mw;
+	#$self->{win_obj} = $mw;
 	my $lfra = $mw->LabFrame(-label => 'Entry',-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
