@@ -313,6 +313,19 @@ sub _menu_check{
 	}
 }
 
+sub btn_check{
+	my $self = shift;
+	
+	if (
+		   $gui_window::word_conc::additional->{1}{pos}
+		&& length($gui_window::word_conc::additional->{1}{query})
+	){
+		$self->{btn_tuika}->configure(-text => $self->gui_jchar('ÄÉ²Ã¾ò·ï¡ö'));
+	} else {
+		$self->{btn_tuika}->configure(-text => $self->gui_jchar('ÄÉ²Ã¾ò·ï'));
+	}
+}
+
 #--------------#
 #   Ê¸½ñÉ½¼¨   #
 #--------------#
@@ -487,6 +500,7 @@ sub search{
 		query  => $query,
 		katuyo => $katuyo,
 		hinshi => $hinshi,
+		tuika  => $gui_window::word_conc::additional,
 		length => $length,
 		sort1  => $self->sort1,
 		sort2  => $self->sort2,

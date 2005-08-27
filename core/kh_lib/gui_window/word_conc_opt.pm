@@ -71,7 +71,7 @@ sub _new{
 
 	$self->{entry}{'1a'} = $f2->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 14
 	)->pack(-side => 'left');
 
@@ -82,7 +82,7 @@ sub _new{
 
 	$self->{entry}{'1b'} = $f2->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 8
 	)->pack(-side => 'left');
 
@@ -94,7 +94,7 @@ sub _new{
 	$self->{entry}{'1c'} = $f2->Entry(
 		-font => "TKFN",
 		-width => 8,
-		-background => 'white'
+		-background => 'gray'
 	)->pack(-side => 'left');
 	
 	#-----------#
@@ -127,7 +127,7 @@ sub _new{
 
 	$self->{entry}{'2a'} = $f3->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 14
 	)->pack(-side => 'left');
 
@@ -138,7 +138,7 @@ sub _new{
 
 	$self->{entry}{'2b'} = $f3->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 8
 	)->pack(-side => 'left');
 
@@ -150,7 +150,7 @@ sub _new{
 	$self->{entry}{'2c'} = $f3->Entry(
 		-font => "TKFN",
 		-width => 8,
-		-background => 'white'
+		-background => 'gray'
 	)->pack(-side => 'left');
 	
 	#-----------#
@@ -183,7 +183,7 @@ sub _new{
 
 	$self->{entry}{'3a'} = $f4->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 14
 	)->pack(-side => 'left');
 
@@ -194,7 +194,7 @@ sub _new{
 
 	$self->{entry}{'3b'} = $f4->Entry(
 		-font => "TKFN",
-		-background => 'white',
+		-background => 'gray',
 		-width => 8
 	)->pack(-side => 'left');
 
@@ -206,7 +206,7 @@ sub _new{
 	$self->{entry}{'3c'} = $f4->Entry(
 		-font => "TKFN",
 		-width => 8,
-		-background => 'white'
+		-background => 'gray'
 	)->pack(-side => 'left');
 	
 	# OK & Cancel
@@ -231,10 +231,34 @@ sub start {
 	my $self = shift;
 	foreach my $i ('1a','1b','1c','2a','2b','2c','3a','3b','3c'){
 		$self->{entry}{$i}
-			->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
+			->bind(
+				"<Key>",
+				[\&gui_jchar::check_key_e,Ev('K'),\$self->{entry}{$i}]
+			);
 		$self->{entry}{$i}
 			->bind("<Key-Return>",sub{$self->save;});
 	}
+	
+	foreach my $n (1,2,3){
+		if ($gui_window::word_conc::additional->{$n}{pos}){
+			$self->{"menu"."$n"}->set_value(
+				$gui_window::word_conc::additional->{$n}{pos}
+			);
+			$self->{entry}{"$n"."a"}->insert(
+				'end',
+				$self->gui_jchar($gui_window::word_conc::additional->{$n}{query}),
+			);
+			$self->{entry}{"$n"."b"}->insert(
+				'end',
+				$self->gui_jchar($gui_window::word_conc::additional->{$n}{hinshi})
+			);
+			$self->{entry}{"$n"."c"}->insert(
+				'end',
+				$self->gui_jchar($gui_window::word_conc::additional->{$n}{katuyo})
+			);
+		}
+	}
+	
 	$self->_menu_check;
 	$self->{win_obj}->grab;
 }
@@ -276,24 +300,32 @@ sub _menu_check{
 	}
 }
 
+#------------------#
+#   Option¤ÎÊİÂ¸   #
+#------------------#
+
 sub save{
 	my $self = shift;
 
 	my $ad;
 	foreach my $n (1,2,3){
 		if ($self->{"pos$n"}) {
+			$ad->{$n}{query}  = Jcode->new($self->gui_jg( $self->{entry}{"$n"."a"}->get ))->euc;
+			unless (length($ad->{$n}{query})){
+				$ad->{$n} = undef;
+				next;
+			}
 			$ad->{$n}{pos} = $self->{"pos$n"};
-			$ad->{$n}{query}  = $self->gui_jg( $self->{entry}{"$n"."a"}->get );
-			$ad->{$n}{hinshi} = $self->gui_jg( $self->{entry}{"$n"."b"}->get );
-			$ad->{$n}{katuyo} = $self->gui_jg( $self->{entry}{"$n"."c"}->get );
+			$ad->{$n}{hinshi} = Jcode->new($self->gui_jg( $self->{entry}{"$n"."b"}->get ))->euc;
+			$ad->{$n}{katuyo} = Jcode->new($self->gui_jg( $self->{entry}{"$n"."c"}->get ))->euc;
 		} else {
 			$ad->{$n} = undef;
 		}
 	}
 	
-	print "$ad->{1}{query}\n";
-	
-	$gui_window::additional = $ad;
+	$gui_window::word_conc::additional = $ad;
+	$::main_gui->{'w_word_conc'}->btn_check;
+	$self->close;
 }
 
 

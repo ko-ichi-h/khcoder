@@ -19,14 +19,12 @@ sub open{
 		} else {
 			$len = length($i->[0]);
 		}
-		
 		if ( $len > $self->{width} ){
 			$self->{width} = $len;
 		}
 		$self->{values}{$i->[1]} = $i->[0];
 	}
 
-	
 	# ËÜÂÎºîÀ½
 	$self->{win_obj} = $self->{parent}->Menubutton(
 		-text        => '',
@@ -64,6 +62,14 @@ sub mb_refresh{
 	if ( defined($self->{command}) && $_[0] != 5){
 		&{$self->{command}};
 	}
+}
+
+sub set_value{
+	my $self = shift;
+	my $v    = shift;
+	$self->{selection}   = $v;
+	${$self->{variable}} = $v;
+	$self->mb_refresh(5);
 }
 
 sub configure{
