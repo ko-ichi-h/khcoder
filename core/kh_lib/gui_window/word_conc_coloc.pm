@@ -284,8 +284,15 @@ sub view{
 	$self->{entry}{nw_k}->configure(-state => 'disable');
 	my $hit_numb;
 	$hit_numb = $self->{result_obj}->_count if $self->{result_obj};
+	my $if_tuika = '';
+	if (
+		   $gui_window::word_conc::additional->{1}{pos}
+		&& length($gui_window::word_conc::additional->{1}{query})
+	){
+		$if_tuika = '  ¡ÜÄÉ²Ã¾ò·ï';
+	}
 	$self->{label}->configure(
-		-text => $self->gui_jchar("  ¥Ò¥Ã¥È¿ô¡§ $hit_numb")
+		-text => $self->gui_jchar("$if_tuika  ¥Ò¥Ã¥È¿ô¡§ $hit_numb")
 	);
 	
 	$self->list->delete('all');
