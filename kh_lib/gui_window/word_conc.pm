@@ -658,6 +658,7 @@ sub display{
 
 sub start{
 	my $self = shift;
+	$gui_window::word_conc::additional = undef;
 	mysql_conc->initialize;
 	$self->entry->focus;
 }
