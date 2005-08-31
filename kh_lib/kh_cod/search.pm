@@ -427,6 +427,7 @@ sub check_a_doc{
 	unless ($n){
 		$text .= "    ＃コード無し\n";
 	}
+	$text .= "\n";
 	
 	# いくつ目の検索結果かをチェック
 	my ($rnum_all, $rnum);
@@ -439,7 +440,9 @@ sub check_a_doc{
 	){
 		$rnum = $rnum->[0];
 		$rnum_all = $self->total_hits;
-		$text .= "\n・現在表示中の検索結果： $rnum / $rnum_all\n";
+		$text .= "・現在表示中の検索結果： $rnum / $rnum_all,  ";
+	} else {
+		$text .= "・現在表示中の文書：  ";
 	}
 	
 	$text = Jcode->new($text)->sjis;

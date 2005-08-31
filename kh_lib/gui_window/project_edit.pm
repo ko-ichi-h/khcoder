@@ -14,7 +14,7 @@ sub _new{
 	# ³«¤¯
 	my $mw = $::main_gui->mw;
 	my $npro = $self->{win_obj};
-	$npro->resizable(0, 0);
+	#$npro->resizable(0, 0);
 	$npro->focus();
 	$npro->grab();
 
