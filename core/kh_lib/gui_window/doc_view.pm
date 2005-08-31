@@ -256,6 +256,8 @@ sub near{
 	my ($t,$w);
 	if ($self->{parent}{code_obj}){
 		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
+	} else {
+		$t = $self->gui_jchar('・現在表示中の文書：  ');
 	}
 	$self->{foot} = $t;
 	
@@ -306,7 +308,7 @@ sub _view_doc{
 	chomp $self->{foot};
 	$self->text->insert('end',"\n\n");
 	$self->text->insert('end',$self->gui_jchar($self->{foot},'sjis'),'info');
-	$self->text->insert('end',",  No. ".$doc->doc_id."\n",'info');
+	$self->text->insert('end',"No. ".$doc->doc_id."\n",'info');
 	$self->text->insert('end',$self->gui_jchar('  '.$doc->id_for_print),'info');
 	
 	$self->wrap;
