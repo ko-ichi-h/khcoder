@@ -21,7 +21,7 @@ sub _open{
 	print "$cmd\n";
 
 	system "$cmd";
-	print "hoge\n";
+	#print "hoge\n";
 }
 
 

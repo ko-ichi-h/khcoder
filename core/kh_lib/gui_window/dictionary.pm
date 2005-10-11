@@ -203,7 +203,7 @@ sub _fill_in{
 sub unselect{
 	my $self = shift;
 	$self->hlist->selectionClear();
-	print "fuck\n";
+	#print "fuck\n";
 }
 
 #----------------------#
