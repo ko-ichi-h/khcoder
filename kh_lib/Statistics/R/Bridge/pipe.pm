@@ -25,7 +25,8 @@
   use strict qw(vars) ; no warnings ;
 
   my (%CLASS_HPLOO , $this) ;
- 
+  my $debug = 0; # kh
+
   sub new { 
     my $class = shift ;
     my $this = bless({} , $class) ;
@@ -93,12 +94,14 @@
     }
     
   }
-  
+
   sub send {
-	if ($::config_obj->os eq 'linux'){
-		require Time::HiRes;
-		Time::HiRes::sleep(0.05);
-	}
+	if ($::config_obj){                                   # kh
+		if ($::config_obj->os eq 'linux'){                # kh
+			require Time::HiRes;                          # kh
+			Time::HiRes::sleep(0.05);                     # kh
+		}                                                 # kh
+	}                                                     # kh
 
     my $CLASS_HPLOO ;
     $CLASS_HPLOO = $this if defined $this ;
@@ -110,7 +113,8 @@
     $cmd =~ s/\r\n?/\n/gs ;
     $cmd .= "\n" if $cmd !~ /\n$/ ;
     $cmd =~ s/\n/\r\n/gs ;
-    #print "debug: $cmd\n";
+
+    print "Statistics::R::Bridge::pipe::send cmd: $cmd" if $debug; # kh
     
     while ( $this->is_blocked ) { sleep(1) ;}
     
@@ -127,24 +131,28 @@
     open (my $fh,">$file._") ;
     print $fh "$cmd\n" ;
     close ($fh) ;
-    
     chmod(0777 , "$file._") ;
-    
     $this->{OUTPUT_R_POS} = -s $this->{OUTPUT_R} ;
-    
+
+	print "Statistics::R::Bridge::pipe::send, size: $this->{OUTPUT_R_POS}\n" if $debug; # kh
+
     rename("$file._" , $file) ;
     
     my $has_quit = 1 if $cmd =~ /^\s*(?:q|quit)\s*\(.*?\)\s*$/s ;
     
-    ##print "CMD[$n]$has_quit>> $cmd\n" ;
+    ##print "CMD[$n]$has_quit>> $cmd\n" if $debug;
     
     my $status = 1 ;
     my $delay = 0.02 ;
     
     my ($x,$xx) ;
-    while( (!$has_quit || $this->{STOPING} == 1) && -e $file && $this->is_started( !$this->{STOPING} ) ) {
+    while (
+		   (!$has_quit || $this->{STOPING} == 1)
+		&& -e $file
+		&& $this->is_started( !$this->{STOPING} )
+	) {
       ++$x ;
-      ##print "sleep $file\n" ;
+      print "sleep $file\n" if $debug;
       select(undef,undef,undef,$delay) ;
       if ( $x == 20 ) {
         my (undef , $data) = $this->read_processR ;
@@ -155,7 +163,16 @@
       }
       if ( $xx > 5 ) { $status = undef ;} ## xx > 5 = x > 50
     }
-    
+
+	unless ($has_quit){
+		print "Statistics::R::Bridge::pipe::send, checking output " if $debug;
+		while (-s $this->{OUTPUT_R} == $this->{OUTPUT_R_POS}){
+			print -s $this->{OUTPUT_R},"," if $debug;
+			sleep 1;
+		}
+		print "...ok\n" if $debug;
+	}
+
     if ( $has_quit && !$this->{STOPING} ) { $this->stop(1) ;}
 
     return $status ;
@@ -168,19 +185,25 @@
     my $class = ref($this) || __PACKAGE__ ;
     $CLASS_HPLOO = undef ;
     my $timeout = shift(@_) ;
-    
+
+	#print "Statistics::R::Bridge::pipe::read, file: $this->{OUTPUT_R} pos: $this->{OUTPUT_R_POS} \n" if $debug; # kh
+
     $timeout = -1 if $timeout eq '' ;
-    
-    open (my $fh, $this->{OUTPUT_R} ) ; binmode($fh) ;
-    seek($fh , ($this->{OUTPUT_R_POS}||0) , 0) ;
-    
-    my $time = time ;
-    my ($x,$data) ;
+
+	open (my $fh, $this->{OUTPUT_R} );
+	binmode($fh);
+	seek($fh , ($this->{OUTPUT_R_POS}||0) , 0) ;
+
+	my $time = time ;
+	my ($x,$data) ;
 
     while( $x == 0 || (time-$time) <= $timeout ) {
       ++$x ;
       my $s = -s $this->{OUTPUT_R} ;
       my $r = read($fh , $data , ($s - $this->{OUTPUT_R_POS}) , length($data) ) ;
+	print "Statistics::R::Bridge::pipe::read, size: $s, start: $this->{OUTPUT_R_POS}, read: $r, timeout: $timeout \n" if $debug; # kh
+	
+	
       $this->{OUTPUT_R_POS} = tell($fh) ;
       last if !$r ;
     }
