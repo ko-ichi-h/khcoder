@@ -35,7 +35,7 @@ sub connect_db{
 sub connection_test{
 	print "Checking MySQL connection...\n";
 	my $dsn = 
-		"DBI:mysql:database=test;$host;port=$port;mysql_local_infile=1";
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or return 0;
 	my @r = $dbh->func('_ListDBs')
