@@ -99,17 +99,16 @@ sub read_TextFile_droped{
 			);
 		while (<DROPED>){
 			chomp;
-			unless ($_){
-				next;
-			}
-			if (substr("$_",'0','1') eq '#'){
-				next;
-			}
+			#unless ($_){
+			#	next;
+			#}
+			#if (substr("$_",'0','1') eq '#'){
+			#	next;
+			#}
 			$widget->insert('end',"$_\n");
 		}
 		close (DROPED);
 	}
 }
-
 
 1;
