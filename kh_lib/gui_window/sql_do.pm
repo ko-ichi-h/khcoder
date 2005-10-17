@@ -39,6 +39,12 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-fill=>'both',-expand=>'yes',-pady => 2);
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
+	# ドラッグ＆ドロップ
+	$t->DropSite(
+		-dropcommand => [\&Gui_DragDrop::read_TextFile_droped,$t],
+		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
+
 
 	$win->Label(
 		-text => 'Status:',
@@ -69,30 +75,35 @@ sub exec{
 	$self->label->configure(-foreground => 'red',-text => 'Running...');
 	$self->win_obj->update;
 	
-	# SQL実行
-	my $t = mysql_exec->do(
-		Jcode->new(
-			$self->gui_jg( $self->text->get("1.0","end") )
-		)->euc
-	);
-
-	# エラーチェック
-	if ( $t->err ){
-		my $msg = "SQL文にエラーがありました。\n\n".$t->err;
-		my $w = $self->win_obj;
-		gui_errormsg->open(
-			type   => 'msg',
-			msg    => $msg,
-			window => \$w
-		);
-		$self->label->configure(-foreground => 'black',-text => 'Ready (last quely failed)');
-		$self->win_obj->update;
-		return 0;
+	my $all = Jcode->new(
+		$self->gui_jg(
+			$self->text->get("1.0","end")
+		)
+	)->euc;
+	$all =~ s/\r\n/\n/g;
+	my @temp = split /\;\n\n/, $all;
+	foreach my $i (@temp){
+		print "$i\n";
+		# SQL実行
+		my $t = mysql_exec->do($i);
+		
+		# エラーチェック
+		if ( $t->err ){
+			my $msg = "SQL文にエラーがありました。\n\n".$t->err;
+			my $w = $self->win_obj;
+			gui_errormsg->open(
+				type   => 'msg',
+				msg    => $msg,
+				window => \$w
+			);
+			$self->label->configure(-foreground => 'black',-text => 'Ready (last quely failed)');
+			$self->win_obj->update;
+			return 0;
+		}
 	}
 
 	$self->label->configure(-foreground => 'blue',-text => 'Ready');
 	$self->win_obj->update;
-
 }
 
 
