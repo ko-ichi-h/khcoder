@@ -6,7 +6,7 @@ use strict;
 
 use mysql_a_word;
 use mysql_exec;
-
+use POSIX qw(log10);
 
 #-----------------#
 #   SQL文の準備   #
@@ -70,6 +70,8 @@ my %sql_group = (
 		'hyosobun.h1_id'
 );
 
+my $dn;
+
 #--------------------#
 #   WHERE節用SQL文   #
 #--------------------#
@@ -85,6 +87,29 @@ sub expr{
 	return $sql;
 }
 
+sub idf{
+	my $self = shift;
+	return 0 unless $self->tables;
+	
+	# 全文書数の取得・保持
+	unless (
+		($dn->{$self->{tani}}) && ($dn->{check} eq $::project_obj->file_target)
+	){
+		$dn->{$self->{tani}} = mysql_exec->select(
+			"SELECT COUNT(*) FROM $self->{tani}",1
+		)->hundle->fetch->[0];
+		$dn->{check} = $::project_obj->file_target;
+	}
+	
+	# 計算
+	my $df;
+	$df = mysql_exec->select(
+		"SELECT COUNT(*) FROM $self->{tables}[0]",1
+	)->hundle->fetch->[0];
+	return 0 unless $df;
+	
+	return log10($dn->{$self->{tani}} / $df);
+}
 
 #---------------------------------------#
 #   コーディング準備（tmp table作成）   #
