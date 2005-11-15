@@ -83,7 +83,7 @@ sub exec{
 	$all =~ s/\r\n/\n/g;
 	my @temp = split /\;\n\n/, $all;
 	foreach my $i (@temp){
-		print "$i\n";
+		#print "$i\n";
 		# SQL¼Â¹Ô
 		my $t = mysql_exec->do($i);
 		
