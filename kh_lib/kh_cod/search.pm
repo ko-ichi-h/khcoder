@@ -149,7 +149,7 @@ sub search{
 			|| ( $self->{order} eq 'by' )
 		)
 	){                                                  # コーディング済み
-		print "\t[re-use]\n";
+		#print "\t[re-use]\n";
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
 		$self->{codes}[0]->code("ct_$args{tani}_dscode_0",$self->{order});

@@ -85,7 +85,7 @@ sub expr{
 	
 	my ($sql, $n) = ('',0);
 	foreach my $i (@{$t}){
-		if ($n){$sql .= ' or '}
+		if ($n){$sql .= ' + '}
 		my ($col,$tab);
 		#if ($args{parents}){
 			$col = (split /\_/, $i)[2].(split /\_/, $i)[3];

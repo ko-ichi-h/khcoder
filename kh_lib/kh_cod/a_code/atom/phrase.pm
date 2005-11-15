@@ -4,6 +4,7 @@ package kh_cod::a_code::atom::phrase;
 use base qw(kh_cod::a_code::atom);
 use strict;
 use mysql_a_word;
+use POSIX qw(log10);
 
 my $num = 0;
 sub reset{
@@ -113,6 +114,7 @@ my %sql_group = (
 		'hyosobun.h1_id',
 );
 
+my $dn;
 
 #--------------------#
 #   WHERE節用SQL文   #
@@ -127,6 +129,30 @@ sub expr{
 	my $col = (split /\_/, $t)[2].(split /\_/, $t)[3];
 	my $sql = "IFNULL(".$self->parent_table.".$col,0)";
 	return $sql;
+}
+
+sub idf{
+	my $self = shift;
+	return 0 unless $self->tables;
+	
+	# 全文書数の取得・保持
+	unless (
+		($dn->{$self->{tani}}) && ($dn->{check} eq $::project_obj->file_target)
+	){
+		$dn->{$self->{tani}} = mysql_exec->select(
+			"SELECT COUNT(*) FROM $self->{tani}",1
+		)->hundle->fetch->[0];
+		$dn->{check} = $::project_obj->file_target;
+	}
+	
+	# 計算
+	my $df;
+	$df = mysql_exec->select(
+		"SELECT COUNT(*) FROM $self->{tables}[0]",1
+	)->hundle->fetch->[0];
+	return 0 unless $df;
+	
+	return log10($dn->{$self->{tani}} / $df);
 }
 
 #---------------------------------------#
@@ -226,7 +252,7 @@ sub ready{
 			num INT
 		)
 	",1);
-	
+
 	# 連続して出現しているかどうかをチェック
 	my $n2 = @wlist - 1;
 	$sql = '';
