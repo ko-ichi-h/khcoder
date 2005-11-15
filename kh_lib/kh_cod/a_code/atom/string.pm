@@ -79,7 +79,7 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
-
+	$self->{tani} = $tani;
 
 	# テーブル名
 	my $table = "ct_$tani"."_string_$num";

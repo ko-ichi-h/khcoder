@@ -10,7 +10,16 @@ sub expr{
 	return "$self->{tani}.id";
 }
 sub num_expr{
-	return 1;
+	my $self = shift;
+	my $sort = shift;
+	my $r = "1";
+	if ($sort eq 'tf*idf'){
+		$r .= " * ".$self->idf;
+	}
+	elsif ($sort eq 'tf/idf'){
+		$r .= " / ".$self->idf;
+	}
+	return $r;
 }
 sub tables{
 	return 0;

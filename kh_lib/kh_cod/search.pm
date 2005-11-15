@@ -4,6 +4,7 @@ use strict;
 use mysql_exec;
 
 my $last_tani;
+my $last_order;
 my $docs_per_once = 200;
 
 my %sql_join = (
@@ -139,7 +140,16 @@ sub search{
 
 	# コーディング
 	print "kh_cod::search -> coding...\n";
-	if ($self->{coded} && $last_tani eq $self->{tani}){ # コーディング済み
+	
+	if (
+		   ( $self->{coded} )
+		&& ( $last_tani eq $self->{tani} )
+		&& (
+			   ( $last_order eq $self->{order} )
+			|| ( $self->{order} eq 'by' )
+		)
+	){                                                  # コーディング済み
+		print "\t[re-use]\n";
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
 		$self->{codes}[0]->code("ct_$args{tani}_dscode_0",$self->{order});
@@ -264,6 +274,7 @@ sub search{
 				} else {
 					$nn = 1;
 				}
+				
 				if ($self->{codes}[$i]->res_table){
 					$sql .=
 						"IFNULL("
@@ -274,7 +285,7 @@ sub search{
 					$nn = 2;
 				}
 			}
-			if ($nn = 2){
+			if ($nn == 2){
 				$sql .= ") / $args{tani}_length.w as tf\n";
 			} else {
 				$sql .= "0) as tf\n";
@@ -306,11 +317,10 @@ sub search{
 			if ($n){ $sql .= "$args{method} "; }
 			if ($self->{codes}[$i]->res_table){
 				$sql .=
-					"IFNULL("
-					.$self->{codes}[$i]->res_table
+					$self->{codes}[$i]->res_table
 					."."
 					.$self->{codes}[$i]->res_col
-					.",0) > 0\n";
+					." is not null\n";
 			} else {
 				$sql .= "0\n";
 			}
@@ -322,7 +332,7 @@ sub search{
 		}
 	}
 	
-	print "\n$sql\n";
+	#print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
 	
@@ -342,7 +352,8 @@ sub search{
 	$self->{last_search_words} = \@words;
 	
 	$self->{coded} = 1;
-	$last_tani     = $self->{tani};
+	$last_tani  = $self->{tani};
+	$last_order = $self->{order};
 	
 	return $self;
 }

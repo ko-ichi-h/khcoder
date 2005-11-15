@@ -6,6 +6,7 @@ use strict;
 
 use mysql_a_word;
 use mysql_exec;
+use POSIX qw(log10);
 
 #-----------------#
 #   SQL文の準備   #
@@ -69,6 +70,7 @@ my %sql_group = (
 		'hyosobun.h1_id',
 );
 
+my $dn;
 
 #--------------------#
 #   WHERE節用SQL文   #
@@ -101,6 +103,60 @@ sub expr{
 	return $sql;
 }
 
+sub idf{
+	my $self = shift;
+
+	my $t = $self->tables;
+	unless ($t){ return '0';}
+
+	# 全文書数の取得・保持
+	unless (
+		($dn->{$self->{tani}}) && ($dn->{check} eq $::project_obj->file_target)
+	){
+		$dn->{$self->{tani}} = mysql_exec->select(
+			"SELECT COUNT(*) FROM $self->{tani}",1
+		)->hundle->fetch->[0];
+		$dn->{check} = $::project_obj->file_target;
+	}
+
+	my $df = 0;
+	# 1種類の場合
+	if (@{$t} == 1){
+		$df = mysql_exec->select("
+			SELECT f
+			FROM   df_$self->{tani}
+			WHERE  genkei_id = $self->{list}->[0]
+		",1)->hundle->fetch->[0];
+	}
+	# 2種類以上の場合
+	elsif (@{$t} > 1){
+		my $sql;
+		$sql .= "SELECT COUNT(*)\n";
+		$sql .= "FROM $self->{tani}\n";
+		foreach my $i (@{$t}){
+			$sql .= "	LEFT JOIN $i ON $self->{tani}.id = $i.id\n";
+		}
+		$sql .= "WHERE\n";
+		my $n = 0;
+		foreach my $i (@{$t}){
+			$sql .= " OR " if $n;
+			$sql .= "	($i.num is not null)";
+			$n = 1;
+		}
+		#print "$sql\n";
+		$df = mysql_exec->select($sql,1)->hundle->fetch->[0];
+	}
+	
+	return 0 unless $df;
+	
+	# debug print
+	#my $debug = $self->raw."\t$df\t";
+	#$debug .= log10($dn->{$self->{tani}} / $df);
+	#print Jcode->new("$debug\n")->sjis;
+	
+	return log10($dn->{$self->{tani}} / $df);
+}
+
 #---------------------------------------#
 #   コーディング準備（tmp table作成）   #
 #---------------------------------------#
@@ -120,6 +176,7 @@ sub ready{
 		#)->sjis;
 		return '';
 	}
+	$self->{list} = $list;
 	
 	foreach my $i (@{$list}){
 		my $table = 'ct_'."$tani".'_kihon_'. "$i";

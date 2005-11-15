@@ -16,9 +16,18 @@ sub reset{
 
 sub expr{
 	my $self = shift;
-	
 	return '0' unless $self->{the_code};
-	
+	if ($self->{tables}){
+		my $col = (split /\_/, $self->{tables}[0])[2].(split /\_/, $self->{tables}[0])[3];
+		return "(".$self->parent_table.".$col is not null)";
+	} else {
+		return ' 0 ';
+	}
+}
+
+sub num_expr{
+	my $self = shift;
+	return '0' unless $self->{the_code};
 	if ($self->{tables}){
 		my $col = (split /\_/, $self->{tables}[0])[2].(split /\_/, $self->{tables}[0])[3];
 		return "IFNULL(".$self->parent_table.".$col,0)";
@@ -27,7 +36,6 @@ sub expr{
 	}
 }
 
-
 #---------------------------------------#
 #   コーディング準備（tmp table作成）   #
 #---------------------------------------#
@@ -35,6 +43,7 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	$self->{tani} = $tani;
 	
 	return $self unless $self->{the_code};
 	
@@ -45,6 +54,7 @@ sub ready{
 	){
 		$self->{the_code}->ready($tani);
 		$self->{the_code}->code("ct_$tani"."_atomcode2_$num");
+		print "\tWarn: Coding an atom-code. IDF values would be incorrect...";
 	}
 	
 	$self->{hyosos} = $self->{the_code}->hyosos;
@@ -56,11 +66,12 @@ sub ready{
 		++$num;
 		# テーブルをコピー
 		my $oldtab = $self->{the_code}->res_table;
+		print "\tatom-code: old-$oldtab, new-$table\n";
 		mysql_exec->drop_table($table);
 		mysql_exec->do("
 			CREATE TABLE $table (
-				id INT primary key not null,
-				num INT
+				id  INT primary key not null,
+				num FLOAT
 			) TYPE = HEAP
 		",1);
 		mysql_exec->do("

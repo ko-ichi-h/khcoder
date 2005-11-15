@@ -159,7 +159,7 @@ sub ready{
 		foreach my $h (@{$i}){
 			# print "atom table: $h\n";
 			my $col = (split /\_/, $h)[2].(split /\_/, $h)[3];
-			$sql .= "$col INT,"
+			$sql .= "$col FLOAT,"
 		}
 		chop $sql;
 		$sql .= ') TYPE = HEAP ';
@@ -189,7 +189,7 @@ sub ready{
 		my $nn = 0;
 		foreach my $h (@{$i}){
 			if ($nn){ $sql .= ' OR '; }
-			$sql .= " $h.num ";
+			$sql .= " $h.num is not null";
 			++$nn;
 		}
 		mysql_exec->do($sql,1);

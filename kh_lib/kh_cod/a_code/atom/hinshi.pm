@@ -93,7 +93,7 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
-
+	$self->{tani} = $tani;
 	
 	# 表層語リスト作成
 	my $list;
