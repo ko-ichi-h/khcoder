@@ -23,12 +23,13 @@ sub code{
 	}
 
 	$self->{res_table} = shift;
+	$self->{sort} = shift;
 
 	mysql_exec->drop_table($self->{res_table});
 	mysql_exec->do("
 		CREATE TABLE $self->{res_table} (
 			id int not null primary key,
-			num int
+			num float
 		) type = heap
 	",1);
 
@@ -38,7 +39,7 @@ sub code{
 	my $nn = 0;
 	foreach my $i (@{$self->{condition}}){
 		if ($nn){ $sql .= " + "; } else { $nn = 1; }
-		$sql .= $i->num_expr();
+		$sql .= $i->num_expr($self->{sort});
 	}
 	$sql .= "\n";
 	$sql .= "FROM $self->{tani}\n";

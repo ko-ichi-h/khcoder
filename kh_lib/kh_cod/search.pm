@@ -112,7 +112,7 @@ sub code{
 		my $res_table = "ct_$tani"."_dscode_$n";
 		++$n;
 		$i->ready($tani) or next;
-		$i->code($res_table);
+		$i->code($res_table,$self->{order});
 		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
 		
 	}
@@ -127,7 +127,8 @@ sub search{
 	my $self = shift;
 	my %args = @_;
 	
-	$self->{tani} = $args{tani};
+	$self->{tani}  = $args{tani};
+	$self->{order} = $args{order};
 	$self->{last_search_words} = undef;
 
 	# デバッグコード
@@ -141,7 +142,7 @@ sub search{
 	if ($self->{coded} && $last_tani eq $self->{tani}){ # コーディング済み
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
-		$self->{codes}[0]->code("ct_$args{tani}_dscode_0");
+		$self->{codes}[0]->code("ct_$args{tani}_dscode_0",$self->{order});
 	} else {                                            # 全てコーディング
 		unless ($last_tani eq $self->{tani}){
 			$self->{valid_codes} = undef;
@@ -254,7 +255,7 @@ sub search{
 			# 「コード無し」を使用しない場合
 	else {
 		$sql .= "SELECT $args{tani}.id, ";
-		if ($args{order} eq 'tf'){
+		if ($args{order} =~ /^tf/o){
 			$sql .= "100 - (";
 			my $nn = 0;
 			foreach my $i (@{$args{selected}}){
@@ -296,7 +297,7 @@ sub search{
 				.".id\n";
 		}
 		$sql .= "WHERE\n";
-		if ($args{order} eq 'tf'){
+		if ($args{order} =~ /^tf/o){
 			$sql .= "$args{tani}.id = $args{tani}_length.id AND ";
 		}
 		$sql .= " (\n";
@@ -309,19 +310,19 @@ sub search{
 					.$self->{codes}[$i]->res_table
 					."."
 					.$self->{codes}[$i]->res_col
-					.",0)\n";
+					.",0) > 0\n";
 			} else {
 				$sql .= "0\n";
 			}
 			++$n;
 		}
 		$sql .= ")\n";
-		if ($args{order} eq 'tf'){
+		if ($args{order} =~ /^tf/o){
 			$sql .= "ORDER BY tf,$args{tani}.id";
 		}
 	}
 	
-	#print "\n$sql\n";
+	print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
 	
