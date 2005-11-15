@@ -20,6 +20,7 @@ sub expr{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
+	$self->{tani} = $tani;
 	
 	# ルール指定の解釈
 	my ($var, $val);

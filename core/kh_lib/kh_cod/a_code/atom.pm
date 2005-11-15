@@ -13,6 +13,7 @@ use kh_cod::a_code::atom::heading;
 use kh_cod::a_code::atom::phrase;
 
 use mysql_exec;
+use POSIX qw(log10);
 
 BEGIN {
 	use vars qw(@pattern);
@@ -58,8 +59,6 @@ BEGIN {
 	];
 }
 
-my $dn;
-
 sub new{
 	my $self;
 	my $class = shift;
@@ -90,28 +89,20 @@ sub num_expr{
 	elsif ($sort eq 'tf/idf'){
 		$t .= " / ".$self->idf;
 	}
-	print "$sort : $t, ";
+	#print Jcode->new("$sort : ".$self->raw." : $t \n")->sjis;
 	
 	return $t;
 }
 
-# デフォルトのDF値
-	# 外部変数などの指定では、「各文書中に含まれる確率が50%の語（すなわち
-	# 全文書のうち半数の文書に含まれる語）が、当該文書中に1回出現していた」
-	# のと同じスコアを与える。
-	# 「全文書のうち半数（50%）」という部分をここで設定。
 sub idf{
+	# デフォルトのIDF値
+		# 外部変数などの指定では、「各文書中に含まれる確率が50%の語（すなわち
+		# 全文書のうち半数の文書に含まれる語）が、当該文書中に1回出現していた」
+		# のと同じスコアを与える。
+		# 「全文書のうち半数（50%）」という部分をここで設定。
 	my $self = shift;
 	die("No tani definition!\n") unless $self->{tani};
-	if ($dn->{$self->{tani}}){
-		return $dn->{$self->{tani}};
-	} else {
-		my $n = mysql_exec->select("SELECT COUNT(*) FROM $self->{tani}",1)
-			->hundle->fetch->[0];
-		$n = $n / 2;
-		$dn->{$self->{tani}} = $n;
-		return $dn->{$self->{tani}};
-	}
+	return log10( 2 / 1 );
 }
 
 sub clear{
