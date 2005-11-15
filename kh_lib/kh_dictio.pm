@@ -137,6 +137,7 @@ sub mark{
 	while (<SOURCE>){
 		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;
+		$text =~ s/ /　/go;
 		while (1){
 			my %temp = (); my $f = 0;                      # 位置を取得
 			foreach my $i (@keywords){
