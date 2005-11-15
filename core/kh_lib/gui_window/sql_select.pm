@@ -124,22 +124,29 @@ sub _new{
 
 sub exec{
 	my $self = shift;
-	my $t = mysql_exec->select(
-		Jcode->new(
-			$self->gui_jg( $self->text->get("1.0","end") )
-		)->euc
-	);
 	
-	# エラーチェック
-	if ( $t->err ){
-		my $msg = "SQL文にエラーがありました。\n\n".$t->err;
-		my $w = $self->win_obj;
-		gui_errormsg->open(
-			type   => 'msg',
-			msg    => $msg,
-			window => \$w
-		);
-		return 0;
+	my $all = Jcode->new(
+		$self->gui_jg( $self->text->get("1.0","end") )
+	)->euc;
+	$all =~ s/\r\n/\n/g;
+	my @temp = split /\;\n\n/, $all;
+	
+	my $t;
+	foreach my $i (@temp){
+		# SQL実行
+		my $tc = mysql_exec->select($i);
+		# エラーチェック
+		if ( $tc->err ){
+			my $msg = "SQL文にエラーがありました。\n\n".$tc->err;
+			my $w = $self->win_obj;
+			gui_errormsg->open(
+				type   => 'msg',
+				msg    => $msg,
+				window => \$w
+			);
+			return 0;
+		}
+		$t = $tc;
 	}
 	
 	# 結果の書き出し
