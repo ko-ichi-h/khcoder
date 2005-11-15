@@ -173,8 +173,10 @@ sub _new{
 		pack    => {-padx => 8, -pady => 1},
 		options =>
 			[
-				[Jcode->new('叫附界')->sjis , 'by'],
-				[Jcode->new('tf界')->sjis   , 'tf']
+				[Jcode->new('叫附界')->sjis   , 'by'    ],
+				[Jcode->new('tf界')->sjis     , 'tf'    ],
+				[Jcode->new('tf*idf界')->sjis , 'tf*idf'],
+				[Jcode->new('tf/idf界')->sjis , 'tf/idf']
 			],
 		variable => \$self->{opt_order},
 	);
