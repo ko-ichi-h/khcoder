@@ -116,7 +116,6 @@ sub code{
 		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
 		
 	}
-	
 	return $self;
 }
 
@@ -198,9 +197,9 @@ sub search{
 	mysql_exec->drop_table("temp_doc_search");
 	mysql_exec->do("
 		create temporary table temp_doc_search(
-			rnum int auto_increment primary key not null,
-			id   int not null,
-			num  int not null
+			rnum int   auto_increment primary key not null,
+			id   int   not null,
+			num  float not null
 		)
 	",1);
 	
@@ -322,7 +321,7 @@ sub search{
 		}
 	}
 	
-	
+	#print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
 	
@@ -330,10 +329,8 @@ sub search{
 	print "kh_cod::search -> getting word list...\n";
 	my (@words, %words);
 	foreach my $i (@{$args{selected}}){
-		unless ($self->{codes}[$i]){next;}
-		unless ($self->{codes}[$i]->res_table){
-			next;
-		}
+		next unless $self->{codes}[$i];
+		next unless $self->{codes}[$i]->res_table;
 		if ($self->{codes}[$i]->hyosos){
 			foreach my $h (@{$self->{codes}[$i]->hyosos}){
 				++$words{$h};
