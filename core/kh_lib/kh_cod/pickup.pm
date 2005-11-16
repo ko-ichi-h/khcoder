@@ -16,7 +16,6 @@ sub pick{
 	my $t0 = new Benchmark;                           # 時間計測用
 	
 	# 取り合えずコーディング
-	
 	my $the_code = $self->{codes}[$args{selected}];
 	$the_code->ready($args{tani});
 	$the_code->code('ct_pickup');
@@ -37,10 +36,14 @@ sub pick{
 			thefile => $args{file},
 			type    => 'file'
 		);
+
 	my $last = 0;
 	my $last_seq = 0;
 	my $id = 1;
-	while (1){
+	my $bun_num = mysql_exec->select("SELECT MAX(id) FROM bun")
+		->hundle->fetch->[0]; # データに含まれる文の数
+
+	while ($id <= $bun_num){
 		my $sth = mysql_exec->select(
 			$self->sql(
 				tani    => $args{tani},
@@ -50,9 +53,9 @@ sub pick{
 			),
 			1
 		)->hundle;
-		unless ($sth->rows > 0){
-			last;
-		}
+		#unless ($sth->rows > 0){
+		#	last;
+		#}
 		$id += $records_per_once;
 
 		while (my $i = $sth->fetchrow_hashref){
