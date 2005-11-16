@@ -26,8 +26,8 @@ use kh_projects;
 
 # 分析対象ファイルのパスとDB名を直接指定
 kh_project->temp(
-	target  => 'F:/home/Koichi/Study/perl/test_data/kokoro/kokoro.txt',
-	dbname  => 'khc14',
+	target  => 'f:/home/Koichi/Study/perl/test_data/STATS_law/data/p1676.txt',
+	dbname  => 'khc3',
 )->open;
 
 # テストプリント
@@ -47,7 +47,8 @@ my $t0 = new Benchmark;
 
 
 # ここでテスト処理実行
-
+use mysql_ready::fc;
+&mysql_ready::fc::calc_by_db;
 
 # 時間計測(2)
 my $t1 = new Benchmark;

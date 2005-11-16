@@ -14,6 +14,7 @@ use mysql_ready::doclength;
 use mysql_ready::heap;
 use mysql_ready::df;
 use mysql_ready::dump;
+use mysql_ready::fc;
 
 my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
 my $data_per_1ins = 200;      # 一度にINSERTする値の数
@@ -61,9 +62,12 @@ sub first{
 	mysql_ready::df->calc;
 		my $t5 = new Benchmark;
 		print "df\t",timestr(timediff($t5,$t4)),"\n";
-	mysql_ready::check->do;
+	mysql_ready::fc->calc_by_db;
 		my $t6 = new Benchmark;
-		print "Check\t",timestr(timediff($t6,$t5)),"\n";
+		print "fc\t",timestr(timediff($t6,$t5)),"\n";
+	mysql_ready::check->do;
+		my $t7 = new Benchmark;
+		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
