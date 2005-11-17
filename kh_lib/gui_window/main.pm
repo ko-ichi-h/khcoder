@@ -39,11 +39,11 @@ sub _new{
 	$self->inner->refresh;
 
 	# GUI未作成のコマンド
-	use kh_hinshi;
-	$self->win_obj->bind(
-		'<Control-Key-h>',
-		sub { kh_hinshi->output; }
-	);
+	#use kh_hinshi;
+	#$self->win_obj->bind(
+	#	'<Control-Key-h>',
+	#	sub { kh_hinshi->output; }
+	#);
 
 	# All-in-One Pack用の初期化処理
 	if (
