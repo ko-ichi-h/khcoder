@@ -26,6 +26,8 @@ sub calc_by_db{
 	}
 	#print "\n";
 	
+	mysql_exec->do("alter table fc_bun add index index1 (bun_idt)",1);
+	
 	return 1;
 }
 
