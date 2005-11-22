@@ -65,14 +65,16 @@ sub new{
 sub add_direct{
 	my $self = shift;
 	my %args = @_;
+	my $debug = 0;
 	
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
 		if ($self->{codes}[0]->name eq '＃直接入力'){
-			print "Deleting old \'direct\' code\n";
+			print "Deleting old \'direct\' code\n" if $debug;
 			shift @{$self->{codes}};
 		}
 	}
+	print "direct-raw: $args{raw}\n" if $debug;
 	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
@@ -80,7 +82,7 @@ sub add_direct{
 			Jcode->new($args{raw})->euc
 		);
 	} else {                                      # 「AND」,「OR」の場合
-		$args{raw} = Jcode->new($args{raw})->tr('　',' ')->euc;
+		$args{raw} = Jcode->new($args{raw},'sjis')->tr('　',' ')->euc;
 		$args{raw} =~ tr/\t\n/  /;
 		my ($n, $t) = (0,'');
 		foreach my $i (split / /, $args{raw}){
@@ -89,6 +91,8 @@ sub add_direct{
 			$t .= "$i";
 			++$n;
 		}
+		print Jcode->new("direct-code: $t \n",'euc')->sjis if $debug;
+		
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			'＃直接入力',
 			$t

@@ -25,7 +25,7 @@
   use strict qw(vars) ; no warnings ;
 
   my (%CLASS_HPLOO , $this) ;
-  my $debug = 0; # kh
+  my $debug = 1; # kh
 
   sub new { 
     my $class = shift ;
