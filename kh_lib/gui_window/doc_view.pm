@@ -195,26 +195,24 @@ sub _new{
 	);
 	$bunhyojiwin->Balloon()->attach(
 		$self->{pre_btn},
-		-balloonmsg => '"Shift + PageUp"',
+		-balloonmsg => 'Shift + PageUp',
 		-font => "TKFN"
 	);
 	$bunhyojiwin->Balloon()->attach(
 		$self->{nxt_btn},
-		-balloonmsg => '"Shift + PageDown"',
+		-balloonmsg => 'Shift + PageDown',
 		-font => "TKFN"
 	);
 	$bunhyojiwin->Balloon()->attach(
 		$self->{pre_result_btn},
-		-balloonmsg => '"Ctrl + PageUp"',
+		-balloonmsg => 'Ctrl + PageUp',
 		-font => "TKFN"
 	);
 	$bunhyojiwin->Balloon()->attach(
 		$self->{nxt_result_btn},
-		-balloonmsg => '"Ctrl + PageDown"',
+		-balloonmsg => 'Ctrl + PageDown',
 		-font => "TKFN"
 	);
-
-
 
 	$self->{text}    = $srtxt;
 	#$self->{win_obj} = $bunhyojiwin;
