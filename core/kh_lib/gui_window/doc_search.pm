@@ -17,9 +17,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	#$win->focus;
-	$win->title(Jcode->new('文書検索')->sjis);
-	#$self->{win_obj} = $win;
+	$win->title($self->gui_jchar('文書検索'));
 	
 	#--------------------#
 	#   検索オプション   #
@@ -35,7 +33,7 @@ sub _new{
 	
 	# コード選択
 	$left->Label(
-		-text => Jcode->new('・コード選択')->sjis,
+		-text => $self->gui_jchar('・コード選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	
@@ -71,17 +69,9 @@ sub _new{
 	# 直接入力フレーム
 	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
 	$self->{direct_w_l} = $f3->Label(
-		text => Jcode->new('直接入力：')->sjis,
-		font => "TKFN"
+		-text => $self->gui_jchar('直接入力：'),
+		-font => "TKFN"
 	)->pack(-side => 'left');
-
-	#$self->{direct_w_o} = $f3->Optionmenu(
-	#	-options => ['and','or','code'],
-	#	-font    => "TKFN",
-	#	-width   => 4,
-	#	-variable => \$self->{opt_direct},
-	#	-borderwidth=> 1,
-	#)->pack(-side => 'left');
 
 	$self->{direct_w_o} = gui_widget::optmenu->open(
 		parent  => $f3,
@@ -110,12 +100,12 @@ sub _new{
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('検索')->sjis,
+		-text    => $self->gui_jchar('検索'),
 		-command => sub{ $win->after(10,sub{$self->search;});}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
 		$self->{btn_search},
-		-balloonmsg => '"Shinf + Enter"',
+		-balloonmsg => 'Shift + Enter',
 		-font       => "TKFN"
 	);
 
@@ -129,54 +119,30 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		text => Jcode->new('検索単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'right');
-
-	#$self->{opt_w_method1} = $f2->Optionmenu(
-	#	-options =>
-	#		[
-	#			[Jcode->new('AND検索')->sjis => 'and'],
-	#			[Jcode->new('OR検索')->sjis  => 'or']
-	#		],
-	#	-font    => "TKFN",
-	#	-width   => 7,
-	#	-variable => \$self->{opt_method1},
-	#	-borderwidth => 1,
-	#)->pack(-pady => '1', -side => 'left');
+		-text => $self->gui_jchar('検索単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'right');
 
 	$self->{opt_w_method1} = gui_widget::optmenu->open(
 		parent  => $f2,
 		pack    => {-pady => '1', -side => 'left'},
 		options =>
 			[
-				[Jcode->new('AND検索')->sjis, 'and'],
-				[Jcode->new('OR検索')->sjis , 'or']
+				[$self->gui_jchar('AND検索'), 'and'],
+				[$self->gui_jchar('OR検索') , 'or']
 			],
 		variable => \$self->{opt_method1},
 	);
-
-	#$f2->Optionmenu(
-	#	-options =>
-	#		[
-	#			[Jcode->new('出現順')->sjis => 'by'],
-	#			[Jcode->new('tf順')->sjis  => 'tf']
-	#		],
-	#	-font    => "TKFN",
-	#	-width   => 7,
-	#	-variable => \$self->{opt_order},
-	#	-borderwidth=> 1,
-	#)->pack(-padx => 8);
 
 	gui_widget::optmenu->open(
 		parent  => $f2,
 		pack    => {-padx => 8, -pady => 1},
 		options =>
 			[
-				[Jcode->new('出現順')->sjis   , 'by'    ],
-				[Jcode->new('tf順')->sjis     , 'tf'    ],
-				[Jcode->new('tf*idf順')->sjis , 'tf*idf'],
-				[Jcode->new('tf/idf順')->sjis , 'tf/idf']
+				[$self->gui_jchar('出現順')   , 'by'    ],
+				[$self->gui_jchar('tf順')     , 'tf'    ],
+				[$self->gui_jchar('tf*idf順') , 'tf*idf'],
+				[$self->gui_jchar('tf/idf順') , 'tf/idf']
 			],
 		variable => \$self->{opt_order},
 	);
@@ -209,14 +175,14 @@ sub _new{
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
 	$self->{status_label} = $f5->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'right');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'right');
 
 	$f5->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('コピー')->sjis,
+		-text    => $self->gui_jchar('コピー'),
 		-width   => 8,
 		-command => sub{ $win->after(10,sub{$self->copy;});},
 		-borderwidth => 1
@@ -225,7 +191,7 @@ sub _new{
 	$f5->Button(
 		-font    => "TKFN",
 		-width   => 8,
-		-text    => Jcode->new('文書表示')->sjis,
+		-text    => $self->gui_jchar('文書表示'),
 		-command => sub{ $win->after(10,sub{$self->view_doc;});},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
@@ -236,7 +202,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => Jcode->new('前'.kh_cod::search->docs_per_once)->sjis,
+		-text        => $self->gui_jchar('前'.kh_cod::search->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -249,7 +215,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $f5->Button(
-		-text        => Jcode->new('次'.kh_cod::search->docs_per_once)->sjis,
+		-text        => $self->gui_jchar('次'.kh_cod::search->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -262,9 +228,9 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{hits_label} = $f5->Label(
-		text       => Jcode->new('  ヒット数：0')->sjis,
-		font       => "TKFN",
-	)->pack(side => 'left',);
+		-text       => $self->gui_jchar('  ヒット数：0'),
+		-font       => "TKFN",
+	)->pack(-side => 'left',);
 	
 
 
@@ -292,7 +258,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		0,
 		0,
-		-text  => Jcode->new('＃直接入力')->sjis,
+		-text  => $self->gui_jchar('＃直接入力'),
 	);
 	$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
@@ -315,7 +281,7 @@ sub read_code{
 		$self->{clist}->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->name)->sjis,
+			-text  => $self->gui_jchar($i->name),
 		);
 		++$row;
 	}
@@ -326,7 +292,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		$row,
 		0,
-		-text  => Jcode->new('＃コード無し')->sjis,
+		-text  => $self->gui_jchar('＃コード無し'),
 	);
 	
 	$self->clist_check;
@@ -488,14 +454,14 @@ sub search{
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new('コードが選択されていません')->sjis,
+			msg    => $self->gui_jchar('コードが選択されていません'),
 			window => \$win,
 		);
 		return 0;
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => Jcode->new('  ヒット数： 0')->sjis);
+	$self->{hits_label}->configure(-text => $self->gui_jchar('  ヒット数： 0'));
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searcing...'
@@ -507,8 +473,8 @@ sub search{
 	
 	# 直接入力部分の読み込み
 	$self->{code_obj}->add_direct(
-		mode => $self->{opt_direct},
-		raw  => $self->{direct_w_e}->get,
+		mode => $self->gui_jg( $self->{opt_direct}      ),
+		raw  => $self->gui_jg( $self->{direct_w_e}->get ),
 	);
 	
 	# 検索ロジックの呼び出し（検索実行）
@@ -550,7 +516,7 @@ sub display{
 			$self->{rlist}->itemCreate(
 				$row,
 				0,
-				-text  => Jcode->new($i->[1])->sjis,
+				-text  => $self->gui_jchar($i->[1]),
 			);
 			++$row;
 		}
@@ -569,7 +535,7 @@ sub display{
 	}
 	if ($num_total == 0){$start = 0;}
 	$self->{rlist}->yview(0);
-	$self->{hits_label}->configure(-text => Jcode->new("  ヒット数： $num_total  表示： $start"."-$num_disp2")->sjis);
+	$self->{hits_label}->configure(-text => $self->gui_jchar("  ヒット数： $num_total  表示： $start"."-$num_disp2"));
 
 	# ボタンの更新
 	if ($start > 1){
