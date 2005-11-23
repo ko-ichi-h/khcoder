@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title(Jcode->new('抽出語 連関規則')->sjis);
+	$win->title($self->gui_jchar('抽出語 連関規則'));
 	#$self->{win_obj} = $win;
 	
 	#--------------------#
@@ -36,7 +36,7 @@ sub _new{
 	
 	# コード選択
 	$left->Label(
-		-text => Jcode->new('・コード選択')->sjis,
+		-text => $self->gui_jchar('・コード選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	
@@ -72,8 +72,8 @@ sub _new{
 	# 直接入力フレーム
 	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
 	$self->{direct_w_l} = $f3->Label(
-		text => Jcode->new('直接入力：')->sjis,
-		font => "TKFN"
+		-text => $self->gui_jchar('直接入力：'),
+		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	$self->{direct_w_o} = gui_widget::optmenu->open(
@@ -103,7 +103,7 @@ sub _new{
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('集計')->sjis,
+		-text    => $self->gui_jchar('集計'),
 		-command => sub{ $win->after(10,sub{$self->search;});}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
@@ -124,9 +124,9 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		text => Jcode->new('集計単位：')->sjis,
-		font => "TKFN"
-	)->pack(anchor => 'w', side => 'right');
+		-text => $self->gui_jchar('集計単位：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'right');
 
 	$f2->Label(-text => '  ')->pack(-side => 'right');
 
@@ -135,8 +135,8 @@ sub _new{
 		pack    => {-pady => '1', -side => 'right'},
 		options =>
 			[
-				[Jcode->new('AND検索')->sjis, 'and'],
-				[Jcode->new('OR検索')->sjis , 'or']
+				[$self->gui_jchar('AND検索'), 'and'],
+				[$self->gui_jchar('OR検索') , 'or']
 			],
 		variable => \$self->{opt_method1},
 	);
@@ -167,24 +167,24 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{rlist}->header('create',0,-text => 'N');
-	$self->{rlist}->header('create',1,-text => Jcode->new('抽出語')->sjis);
-	$self->{rlist}->header('create',2,-text => Jcode->new('品詞')->sjis);
-	$self->{rlist}->header('create',3,-text => Jcode->new('全体')->sjis);
-	$self->{rlist}->header('create',4,-text => Jcode->new('共起')->sjis);
-	#$self->{rlist}->header('create',5,-text => Jcode->new('条件付き確立')->sjis);
-	$self->{rlist}->header('create',5,-text => Jcode->new(' ソート')->sjis);
+	$self->{rlist}->header('create',1,-text => $self->gui_jchar('抽出語'));
+	$self->{rlist}->header('create',2,-text => $self->gui_jchar('品詞'));
+	$self->{rlist}->header('create',3,-text => $self->gui_jchar('全体'));
+	$self->{rlist}->header('create',4,-text => $self->gui_jchar('共起'));
+	#$self->{rlist}->header('create',5,-text => $self->gui_jchar('条件付き確立'));
+	$self->{rlist}->header('create',5,-text => $self->gui_jchar(' ソート'));
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
 	$self->{status_label} = $f5->Label(
-		text       => 'Ready.',
-		font       => "TKFN",
-		foreground => 'blue'
-	)->pack(side => 'right');
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'right');
 
 	$f5->Button(
 		-font    => "TKFN",
-		-text    => Jcode->new('コピー')->sjis,
+		-text    => $self->gui_jchar('コピー'),
 		#-width   => 8,
 		-command => sub{ $win->after(10,sub{gui_hlist->copy($self->{rlist});});},
 		-borderwidth => 1
@@ -193,13 +193,13 @@ sub _new{
 	$f5->Button(
 		-font    => "TKFN",
 		#-width   => 8,
-		-text    => Jcode->new('コンコーダンス')->sjis,
+		-text    => $self->gui_jchar('コンコーダンス'),
 		-command => sub{ $win->after(10,sub{$self->conc;});},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
 
 	$f5->Label(
-		-text => Jcode->new(' ソート：')->sjis,
+		-text => $self->gui_jchar(' ソート：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -208,31 +208,31 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[Jcode->new('確率差')->sjis , 'sa'  ],
-				[Jcode->new('確率比')->sjis , 'hi'  ],
+				[$self->gui_jchar('確率差') , 'sa'  ],
+				[$self->gui_jchar('確率比') , 'hi'  ],
 				['Jaccard'                  , 'jac' ],
 				['Ochiai'                   , 'ochi'],
-				#[Jcode->new('χ2乗')->sjis , 'chi'],
+				#[$self->gui_jchar('χ2乗') , 'chi'],
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
 	);
 
 	$order_name = {
-		'sa'  => Jcode->new('確率差')->sjis,
-		'hi'  => Jcode->new('確率比')->sjis,
+		'sa'  => $self->gui_jchar('確率差'),
+		'hi'  => $self->gui_jchar('確率比'),
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
 	};
 
 
 	$f5->Label(
-		-text => Jcode->new(' ')->sjis,
+		-text => $self->gui_jchar(' '),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => Jcode->new('フィルタ設定')->sjis,
+		-text        => $self->gui_jchar('フィルタ設定'),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -243,9 +243,9 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{hits_label} = $f5->Label(
-		text       => Jcode->new('  文書数：0')->sjis,
-		font       => "TKFN",
-	)->pack(side => 'left',);
+		-text       => $self->gui_jchar('  文書数：0'),
+		-font       => "TKFN",
+	)->pack(-side => 'left',);
 
 	#--------------------------#
 	#   フィルタ設定の初期化   #
@@ -284,7 +284,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		0,
 		0,
-		-text  => Jcode->new('＃直接入力')->sjis,
+		-text  => $self->gui_jchar('＃直接入力'),
 	);
 	$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
@@ -307,7 +307,7 @@ sub read_code{
 		$self->{clist}->itemCreate(
 			$row,
 			0,
-			-text  => Jcode->new($i->name)->sjis,
+			-text  => $self->gui_jchar($i->name),
 		);
 		++$row;
 	}
@@ -318,7 +318,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		$row,
 		0,
-		-text  => Jcode->new('＃コード無し')->sjis,
+		-text  => $self->gui_jchar('＃コード無し'),
 	);
 	
 	$self->clist_check;
@@ -367,14 +367,14 @@ sub search{
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new('コードが選択されていません')->sjis,
+			msg    => $self->gui_jchar('コードが選択されていません'),
 			window => \$win,
 		);
 		return 0;
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => Jcode->new('  文書数： 0')->sjis);
+	$self->{hits_label}->configure(-text => $self->gui_jchar('  文書数： 0'));
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searcing...'
@@ -386,8 +386,8 @@ sub search{
 	
 	# 直接入力部分の読み込み
 	$self->{code_obj}->add_direct(
-		mode => $self->{opt_direct},
-		raw  => $self->{direct_w_e}->get,
+		mode => $self->gui_jg( $self->{opt_direct} ),
+		raw  => $self->gui_jg( $self->{direct_w_e}->get ),
 	);
 	
 	# 検索ロジックの呼び出し（検索実行）
@@ -446,12 +446,12 @@ sub display{
 			$self->{rlist}->itemCreate(           # 単語
 				$row,
 				1,
-				-text  => Jcode->new($i->[0])->sjis,
+				-text  => $self->gui_jchar($i->[0]),
 			);
 			$self->{rlist}->itemCreate(           # 品詞
 				$row,
 				2,
-				-text  => Jcode->new($i->[1])->sjis,
+				-text  => $self->gui_jchar($i->[1]),
 			);
 			$self->{rlist}->itemCreate(           # 全体
 				$row,
@@ -486,7 +486,7 @@ sub display{
 	# ラベルの更新
 	my $num_total = $self->{code_obj}->doc_num;
 	$self->{rlist}->yview(0);
-	$self->{hits_label}->configure(-text => Jcode->new("  文書数： $num_total")->sjis);
+	$self->{hits_label}->configure(-text => $self->gui_jchar("  文書数： $num_total"));
 
 	return $self;
 }
@@ -505,8 +505,8 @@ sub conc{
 	}
 	my $selected = $selected[0];
 	my ($query, $hinshi);
-	$query = Jcode->new($self->{result}->[$selected][0])->sjis;
-	$hinshi = Jcode->new($self->{result}->[$selected][1])->sjis;
+	$query = $self->gui_jchar($self->{result}->[$selected][0]);
+	$hinshi = $self->gui_jchar($self->{result}->[$selected][1]);
 	
 	# コンコーダンスの呼び出し
 	my $conc = gui_window::word_conc->open;

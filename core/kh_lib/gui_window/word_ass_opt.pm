@@ -14,19 +14,19 @@ sub _new{
 	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->grab;
-	$win->title(Jcode->new('連関規則 フィルタ設定')->sjis);
+	$win->title($self->gui_jchar('連関規則 フィルタ設定'));
 	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 
 	# 品詞による単語の取捨選択
 	$left->Label(
-		-text => Jcode->new('・品詞による語の取捨選択')->sjis,
+		-text => $self->gui_jchar('・品詞による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
 	$l3->Label(
-		-text => Jcode->new('　　')->sjis,
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -43,14 +43,14 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => Jcode->new('全て選択')->sjis,
+		-text => $self->gui_jchar('全て選択'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
 	)->pack(-pady => 3);
 	$l4->Button(
-		-text => Jcode->new('クリア')->sjis,
+		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -60,12 +60,12 @@ sub _new{
 	# 全体での出現数
 	my $left2 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left2->Label(
-		-text => Jcode->new('・全体での出現数による語の取捨選択')->sjis,
+		-text => $self->gui_jchar('・全体での出現数による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left2->Label(
-		-text => Jcode->new('　　　最低文書数：')->sjis,
+		-text => $self->gui_jchar('　　　最低文書数：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -77,12 +77,12 @@ sub _new{
 	# 表示数のLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
-		-text => Jcode->new('・表示する語の数')->sjis,
+		-text => $self->gui_jchar('・表示する語の数'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left3->Label(
-		-text => Jcode->new('　　　上位：')->sjis,
+		-text => $self->gui_jchar('　　　上位：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -93,7 +93,7 @@ sub _new{
 	
 	# OK & Cancel
 	$win->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
