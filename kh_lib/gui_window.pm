@@ -74,8 +74,10 @@ sub open{
 			$self->{win_obj} = $::main_gui->mw->Toplevel;
 			$self->win_obj->focus;
 			# Windowサイズと位置の指定
-			if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
+			my $g = $::config_obj->win_gmtry($self->win_name);
+			if ($g){
 				$self->win_obj->geometry($g);
+				#print "win_size: $g\n";
 			}
 			# Windowアイコンのセット
 			my $icon = $self->win_obj->Photo(
