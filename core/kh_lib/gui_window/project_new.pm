@@ -52,7 +52,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->close;});}
 	)->pack(-side => 'right',-padx => 2);
 
-	$mw->Button(
+	$self->{ok_btn} = $mw->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
@@ -71,7 +71,7 @@ sub _new{
 	$self->{e1}  = $e1;
 	$self->{e2}  = $e2;
 
-	MainLoop;
+	#MainLoop;
 	return $self;
 }
 
