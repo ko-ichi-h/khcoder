@@ -42,12 +42,11 @@ use Cwd qw(cwd);
 use lib cwd.'/auto_test/lib';
 use kh_at;
 
-kh_at::project_new->exec_test;
+kh_at::project_new->exec_test;                    # テストファイル登録＆前処理
 
 
 
-
-
-
+#kh_at->close_test_project;                        # プロジェクトを閉じる
+#kh_at->delete_test_project;                       # プロジェクトを削除
 
 MainLoop;

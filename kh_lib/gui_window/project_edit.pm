@@ -62,7 +62,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->close();});}
 	)->pack(-side => 'right',-padx => 2);
 
-	$npro->Button(
+	$self->{ok_btn} = $npro->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
@@ -70,10 +70,10 @@ sub _new{
 	)->pack(-side => 'right');
 
 	# ENTRYのバインド
-	$e1->DropSite(
-		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
-	);
+	#$e1->DropSite(
+	#	-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
+	#	-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	#);
 	$npro->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	
@@ -82,7 +82,7 @@ sub _new{
 	$e2->insert(0,$self->gui_jchar($self->project->comment));
 	$e1->configure(-state => 'disable');
 	$self->{e2}  = $e2;
-	MainLoop;
+	#MainLoop;
 	return $self;
 }
 

@@ -46,12 +46,11 @@ sub make{
 			-font => "TKFN",
 			-state => 'disable',
 			-command =>
-				sub{ $mw->after(10,sub{
-					$::main_gui->close_all;
-					undef $::project_obj;
-					$::main_gui->menu->refresh;
-					$::main_gui->inner->refresh;
-				});},
+				sub{
+					$mw->after(10,sub{
+						$self->mc_close_project;
+					});
+				},
 			-accelerator => 'Ctrl+W'
 		);
 		
@@ -97,14 +96,7 @@ sub make{
 						-title   => 'KH Coder'
 					);
 					unless ($ans =~ /ok/i){ return 0; }
-					
-					my $w = gui_wait->start;
-					
-					mysql_ready->first;
-					$::project_obj->status_morpho(1);
-					$w->end;
-					$::main_gui->menu->refresh;
-					$::main_gui->inner->refresh;
+					$self->mc_morpho;
 				})},
 				-state => 'disable'
 			);
@@ -555,16 +547,29 @@ sub make{
 	);
 	$mw->bind(
 		'<Control-Key-w>',
-		sub{ $mw->after(10,sub{
-					$::main_gui->close_all;
-					undef $::project_obj;
-					$::main_gui->menu->refresh;
-					$::main_gui->inner->refresh;
-				});}
+		sub{ $mw->after(10,sub{$self->mc_close_project;});}
 	);
 
 	bless $self, $class;
 	return $self;
+}
+
+#------------------------------------#
+#   一行を越えるメニュー・コマンド   #
+#------------------------------------#
+sub mc_close_project{
+	$::main_gui->close_all;
+	undef $::project_obj;
+	$::main_gui->menu->refresh;
+	$::main_gui->inner->refresh;
+}
+sub mc_morpho{
+	my $w = gui_wait->start;
+	mysql_ready->first;
+	$::project_obj->status_morpho(1);
+	$w->end;
+	$::main_gui->menu->refresh;
+	$::main_gui->inner->refresh;
 }
 
 #------------------------#

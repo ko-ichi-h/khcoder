@@ -73,7 +73,6 @@ sub _new{
 	)->pack(-anchor => 'w',-side => 'right',-padx => 2,,-pady => 1);
 	$self->{g_buttons} = [$b1,$b2,$b3];
 	
-	
 	$self->refresh;
 	
 	# 各種バインド
@@ -102,7 +101,7 @@ sub _new{
 		}
 	);
 	
-	MainLoop;
+	#MainLoop;
 	return $self;
 }
 

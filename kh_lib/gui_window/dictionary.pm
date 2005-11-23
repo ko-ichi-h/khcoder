@@ -55,8 +55,6 @@ sub _new{
 		-borderwidth        => 0,
 	)->pack(-expand => '1', -fill => 'both');
 
-
-
 	$f_mark->Label(
 		-text => $self->gui_jchar('・強制抽出する語の指定'),
 		-font => "TKFN"
@@ -124,7 +122,7 @@ sub _new{
 		}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
 
-	$wmw->Button(
+	$self->{ok_btn} = $wmw->Button(
 		-text => 'OK',
 		-font => 'TKFN',
 		-width => 8,
@@ -132,8 +130,6 @@ sub _new{
 			$wmw->after(10,sub{$self->save;})
 		}
 	)->pack(-anchor=>'e',-side => 'right');
-
-
 
 	$self->{t1} = $t1;
 	$self->{t2} = $t2;
