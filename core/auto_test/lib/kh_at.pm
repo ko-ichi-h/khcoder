@@ -17,8 +17,34 @@ sub check_output{
 	return 1;
 }
 
+#--------------------------------#
+#   •∆•π•»Õ—•◊•Ì•∏•ß•Ø•»§Œ¡‡∫Ó   #
+
+sub close_test_project{
+	$::main_gui->{menu}->mc_close_project;
+}
+
+sub open_test_project{
+	gui_window::project_open->open;
+	my $win_opn = $::main_gui->get('w_open_pro');
+	my $n = @{$win_opn->projects->list} - 1;
+	$win_opn->{g_list}->selectionClear(0);
+	$win_opn->{g_list}->selectionSet($n);
+	$win_opn->_open;
+}
+
+sub delete_test_project{
+	gui_window::project_open->open;
+	my $win_opn = $::main_gui->get('w_open_pro');
+	my $n = @{$win_opn->projects->list} - 1;
+	$win_opn->{g_list}->selectionClear(0);
+	$win_opn->{g_list}->selectionSet($n);
+	$win_opn->delete;
+	$win_opn->close;
+}
+
 #--------------#
-#   ÉAÉNÉZÉT   #
+#   •¢•Ø•ª•µ   #
 
 sub file_testdata{
 	use Cwd qw(cwd);

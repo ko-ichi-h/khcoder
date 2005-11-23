@@ -5,17 +5,45 @@ use strict;
 sub _exec_test{
 	my $self = shift;
 	
-	# Window‚ğŠJ‚­
+	# ¥×¥í¥¸¥§¥¯¥È¤ÎºîÀ®
 	gui_window::project_new->open;
-	my $win_obj = $::main_gui->get('w_new_pro');
-	$self->{win_obj} = $win_obj;
+	my $win_np = $::main_gui->get('w_new_pro');
+	$win_np->{e1}->insert(0,gui_window->gui_jchar($self->file_testdata));
+	$win_np->{e2}->insert(0,gui_window->gui_jchar('¼«Æ°¥Æ¥¹¥ÈÍÑProject'));
+	$win_np->{ok_btn}->invoke;
+	
+	# ¸ì¤Î¼è¼ÎÁªÂò
+	gui_window::dictionary->open;
+	my $win_dic = $::main_gui->get('w_dictionary');
+	$win_dic->{t1}->insert('end',gui_window->gui_jchar("£Ë\nÀ¾ÍÎ¿Í\n¹¥´ñ¿´"));
+	$win_dic->{t2}->insert('end',gui_window->gui_jchar("£±¤Ä\n¹Í¤¨"));
+	$win_dic->{ok_btn}->invoke;
+	
+	# Á°½èÍı¤Î¼Â¹Ô
+	$::main_gui->{menu}->mc_morpho;
+	
+	# ¤¤¤Ã¤¿¤ó¥×¥í¥¸¥§¥¯¥È¤òÊÄ¤¸¤ë
+	$::main_gui->{menu}->mc_close_project;
+	#}
+	
+	# ¥×¥í¥¸¥§¥¯¥È¤ÎÊÔ½¸
+	gui_window::project_open->open;
+	my $win_opn = $::main_gui->get('w_open_pro');
+	my $n = @{$win_opn->projects->list} - 1;
+	$win_opn->{g_list}->selectionClear(0);
+	$win_opn->{g_list}->selectionSet($n);
 
-	# ƒeƒXƒgˆ—Às
-	$win_obj->{e1}->insert(0,gui_window->gui_jchar($self->file_testdata));
-	$win_obj->{e2}->insert(0,gui_window->gui_jchar('©“®ƒeƒXƒg—pProject'));
-	
-	$win_obj->{ok_btn}->invoke;
-	
+	$win_opn->edit;
+	my $win_edt;
+	$win_edt = $::main_gui->get('w_edit_pro');
+	$win_edt->{e2}->insert('end',gui_window->gui_jchar('¡ÎÊÔ¡Ï'));
+	$win_edt->_edit;
+
+	# ¥×¥í¥¸¥§¥¯¥È¤ò³«¤­Ä¾¤¹
+	$win_opn->{g_list}->selectionClear(0);
+	$win_opn->{g_list}->selectionSet($n);
+	$win_opn->_open;
+
 	return $self;
 }
 
