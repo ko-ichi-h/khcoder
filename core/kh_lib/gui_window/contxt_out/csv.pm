@@ -16,13 +16,12 @@ sub go{
 	mysql_contxt::csv->new(
 		tani    => $self->{tani_obj}->value,
 		hinshi2 => $self->hinshi2,
-		max2    => $self->max2,
-		min2    => $self->min2,
+		max2    => $self->gui_jg( $self->max2 ),
+		min2    => $self->gui_jg( $self->min2 ),
 		hinshi  => $self->hinshi,
-		max     => $self->max,
-		min     => $self->min,
+		max     => $self->gui_jg( $self->max ),
+		min     => $self->gui_jg( $self->min ),
 	)->culc->save($file);
-	
 }
 
 #-----------------#
@@ -38,7 +37,7 @@ sub file_name{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			Jcode->new('「抽出語ｘ文脈ベクトル」表：名前を付けて保存')->sjis,
+			$self->gui_jchar('「抽出語ｘ文脈ベクトル」表：名前を付けて保存'),
 		-initialdir       => $::config_obj->cwd
 	);
 	unless ($path){

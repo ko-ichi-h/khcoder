@@ -19,7 +19,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title(Jcode->new($self->label)->sjis);
+	$win->title($self->gui_jchar($self->label));
 	#$self->{win_obj} = $win;
 
 	# 各種フレーム
@@ -47,14 +47,14 @@ sub _new{
 	#   集計オプション   #
 
 	$of->Label(
-		-text       => Jcode->new('・集計単位と重み付けの設定')->sjis,
+		-text       => $self->gui_jchar('・集計単位と重み付けの設定'),
 		-font       => "TKFN",
 	)->pack(-anchor => 'w');
 
 	$of->Label(
-		-text => Jcode->new('　　')->sjis,
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
-	)->pack(side => 'left',-fill => 'y',-expand => 1);
+	)->pack(-side => 'left',-fill => 'y',-expand => 1);
 
 	$self->{tani_obj} = gui_widget::tani_and_o->open(
 		parent => $of,
@@ -70,30 +70,30 @@ sub _new{
 
 	my $right = $rf->Frame()->pack(-fill => 'both', -expand => 1);
 	$right->Label(
-		-text       => Jcode->new('■文脈ベクトルの計算に使用する語の取捨選択')->sjis,
+		-text       => $self->gui_jchar('■文脈ベクトルの計算に使用する語の取捨選択'),
 		-font       => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w');
 	
 	# 最小・最大出現数
 	$right->Label(
-		-text => Jcode->new('・最小/最大 出現数による語の選択')->sjis,
+		-text => $self->gui_jchar('・最小/最大 出現数による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $r2 = $right->Frame()->pack(-fill => 'x');
 	$r2->Label(
-		-text => Jcode->new('　 　最小出現数：')->sjis,
+		-text => $self->gui_jchar('　 　最小出現数：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$self->{ent_min2} = $r2->Entry(
 		-font       => "TKFN",
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
 	$r2->Label(
-		-text => Jcode->new('　 最大出現数：')->sjis,
+		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$self->{ent_max2} = $r2->Entry(
 		-font       => "TKFN",
 		-width      => 6,
@@ -103,12 +103,12 @@ sub _new{
 
 	# 品詞による単語の取捨選択
 	$right->Label(
-		-text => Jcode->new('・品詞による語の選択')->sjis,
+		-text => $self->gui_jchar('・品詞による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $r3 = $right->Frame()->pack(-fill => 'both',-expand => 1);
 	$r3->Label(
-		-text => Jcode->new('　　')->sjis,
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	my %pack = (
@@ -124,14 +124,14 @@ sub _new{
 	);
 	my $r4 = $r3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$r4->Button(
-		-text => Jcode->new('全て選択')->sjis,
+		-text => $self->gui_jchar('全て選択'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj2}->select_all;});}
 	)->pack(-pady => 3);
 	$r4->Button(
-		-text => Jcode->new('クリア')->sjis,
+		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -139,16 +139,16 @@ sub _new{
 	)->pack();
 
 	$right->Label(
-		-text => Jcode->new('・現在の設定で計算に使用される語の数')->sjis,
+		-text => $self->gui_jchar('・現在の設定で計算に使用される語の数'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $cf2 = $right->Frame->pack(-fill => 'x', -expand => '1');
 	$cf2->Label(
-		-text => Jcode->new('　 　')->sjis,
+		-text => $self->gui_jchar('　 　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	$cf2->Button(
-		-text => Jcode->new('チェック')->sjis,
+		-text => $self->gui_jchar('チェック'),
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->check2;});}
@@ -164,30 +164,30 @@ sub _new{
 
 	my $left = $lf->Frame()->pack(-fill => 'both', -expand => 1);
 	$left->Label(
-		-text       => Jcode->new('■抽出語の取捨選択')->sjis,
+		-text       => $self->gui_jchar('■抽出語の取捨選択'),
 		-font       => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w');
 	
 	# 最小・最大出現数
 	$left->Label(
-		-text => Jcode->new('・最小/最大 出現数による語の選択')->sjis,
+		-text => $self->gui_jchar('・最小/最大 出現数による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $l2 = $left->Frame()->pack(-fill => 'x');
 	$l2->Label(
-		-text => Jcode->new('　 　最小出現数：')->sjis,
+		-text => $self->gui_jchar('　 　最小出現数：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$self->{ent_min} = $l2->Entry(
 		-font       => "TKFN",
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
 	$l2->Label(
-		-text => Jcode->new('　 最大出現数：')->sjis,
+		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
-	)->pack(side => 'left');
+	)->pack(-side => 'left');
 	$self->{ent_max} = $l2->Entry(
 		-font       => "TKFN",
 		-width      => 6,
@@ -197,12 +197,12 @@ sub _new{
 
 	# 品詞による単語の取捨選択
 	$left->Label(
-		-text => Jcode->new('・品詞による語の選択')->sjis,
+		-text => $self->gui_jchar('・品詞による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
 	$l3->Label(
-		-text => Jcode->new('　　')->sjis,
+		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	#%pack = (
@@ -218,14 +218,14 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => Jcode->new('全て選択')->sjis,
+		-text => $self->gui_jchar('全て選択'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
 	)->pack(-pady => 3);
 	$l4->Button(
-		-text => Jcode->new('クリア')->sjis,
+		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -233,16 +233,16 @@ sub _new{
 	)->pack();
 
 	$left->Label(
-		-text => Jcode->new('・現在の設定で出力される語の数')->sjis,
+		-text => $self->gui_jchar('・現在の設定で出力される語の数'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $cf = $left->Frame->pack(-fill => 'x', -expand => '1');
 	$cf->Label(
-		-text => Jcode->new('　 　')->sjis,
+		-text => $self->gui_jchar('　 　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	$cf->Button(
-		-text => Jcode->new('チェック')->sjis,
+		-text => $self->gui_jchar('チェック'),
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->check1;});}
@@ -257,7 +257,7 @@ sub _new{
 	#   実行ボタン   #
 
 	$bf->Button(
-		-text => Jcode->new('キャンセル')->sjis,
+		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -271,11 +271,11 @@ sub _new{
 			$self->check or return;
 			my $file = $self->file_name or return;
 			my $ans = $self->win_obj->messageBox(
-				-message => Jcode->new
+				-message => $self->gui_jchar
 					(
 					   "この処理には時間がかかることがあります。\n".
 					   "続行してよろしいですか？"
-					)->sjis,
+					),
 				-icon    => 'question',
 				-type    => 'OKCancel',
 				-title   => 'KH Coder'

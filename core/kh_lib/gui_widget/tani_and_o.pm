@@ -73,7 +73,7 @@ sub _new{
 			$self->{hlist}->itemCreate(
 				$row,1,
 				-itemtype  => 'text',
-				-text      => Jcode->new($name{$i}.' ¡¡')->sjis,
+				-text      => gui_window->gui_jchar($name{$i}.' ¡¡'),
 			);
 			$self->{hlist}->itemCreate(
 				$row,2,
@@ -117,7 +117,7 @@ sub value{
 	my @list;
 	foreach my $i (keys %{$self->{check}}){
 		if ($self->{check}{$i}){
-			push @list, [$i, $self->{entry}{$i}->get];
+			push @list, [$i, gui_window->gui_jg($self->{entry}{$i}->get) ];
 		}
 	}
 	return \@list;
