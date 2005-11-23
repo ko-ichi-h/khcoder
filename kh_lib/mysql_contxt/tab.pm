@@ -101,6 +101,10 @@ sub _save_finish{
 	close (OLD);
 	unlink($file);
 	rename($file_tmp,$file);
+
+	unless ($::config_obj->os eq 'win32'){
+		kh_jchar->to_euc($file);
+	}
 }
 
 #--------------#
