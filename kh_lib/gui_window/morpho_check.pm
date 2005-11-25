@@ -14,7 +14,6 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	#$wmw->focus;
 	$wmw->title($self->gui_jchar('語の抽出結果'));
 
 	my $fra4 = $wmw->LabFrame(
@@ -91,14 +90,10 @@ sub _new{
 		-text => '    Ready.'
 	)->pack(-side => 'left');
 	$e1->focus;
-
-	MainLoop;
 	
 	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
-	# $self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
-	# $self->refresh;
 	return $self;
 }
 
