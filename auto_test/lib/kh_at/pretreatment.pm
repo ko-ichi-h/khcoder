@@ -4,19 +4,28 @@ use strict;
 
 sub _exec_test{
 	my $self = shift;
+	my $t = '';
 	
-	# uŒê‚Ì’ŠoŒ‹‰Ê‚ğŠm”Fv
+	# ¡Ö¸ì¤ÎÃê½Ğ·ë²Ì¤ò³ÎÇ§¡×
 	gui_window::morpho_check->open;
 	my $win_src = $::main_gui->get('w_morpho_check');
-	$win_src->entry->insert(0,gui_window->gui_jchar('‘²‹ÆØ‘'));
+	$win_src->entry->insert(0,gui_window->gui_jchar('Â´¶È¾Ú½ñ'));
 	$win_src->search;
+	$t .= "¢£morpho-check:\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_src->list ) )
+	)->euc;
 	
-	# uŒê‚Ì’ŠoŒ‹‰Ê‚ğŠm”FFÚ×v
+	# ¡Ö¸ì¤ÎÃê½Ğ·ë²Ì¤ò³ÎÇ§¡§¾ÜºÙ¡×
 	$win_src->list->selectionSet(0);
 	$win_src->detail;
 	my $win_dtl = $::main_gui->get('w_morpho_detail');
+	$t .= "¢£morpho-detail:\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_dtl->list ) ),
+		'sjis'
+	)->euc;
+
 	
-	
+	$self->{result} = $t;
 	return $self;
 }
 
