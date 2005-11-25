@@ -1,20 +1,46 @@
 package kh_at;
-use strict;
 
+use strict;
+use Text::Diff;
 use kh_at::project_new;
 
 sub exec_test{
-	my $self;
-	$self->{win_obj} = '';
 	my $class = shift;
+	my $self;
+	$self->{file_base} = shift;
 	bless $self, $class;
+	
 	$self->_exec_test;
+	$self->_write_result;
+	$self->_check_output;
+	
 	return 1;
 }
 
-sub check_output{
-	print "Nothing to check!\n";
+sub _check_output{
+	my $self = shift;
+	print $self->test_name." ";
+	
+	my $diff = diff(
+		$self->file_test_output,
+		$self->file_test_ref
+	);
+	
+	if ($diff){
+		print "NG\n";
+	} else {
+		print "OK\n";
+	}
+	
 	return 1;
+}
+
+sub _write_result{
+	my $self = shift;
+	my $out_file = $self->file_test_output;
+	open (OUTF,">$out_file") or die;
+	print OUTF $self->{result};
+	close (OUTF);
 }
 
 #--------------------------------#
@@ -52,5 +78,18 @@ sub file_testdata{
 	return $file;
 }
 
+sub file_test_output{
+	my $self = shift;
+	use Cwd qw(cwd);
+	my $file = cwd.'/auto_test/'.$self->{file_base}.'.txt';
+	return $file;
+}
+
+sub file_test_ref{
+	my $self = shift;
+	use Cwd qw(cwd);
+	my $file = cwd.'/auto_test/data_ref/'.$self->{file_base}.'.txt';
+	return $file;
+}
 
 1;
