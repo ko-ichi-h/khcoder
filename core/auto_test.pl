@@ -42,8 +42,10 @@ use Cwd qw(cwd);
 use lib cwd.'/auto_test/lib';
 use kh_at;
 
-kh_at::project_new->exec_test('project_new');      # テストファイル登録＆前処理
+#kh_at::project_new->exec_test('project_new');      # テストファイル登録&前処理
+kh_at->open_test_project;
 
+kh_at::pretreatment->exec_test('pretreatment');    # 前処理メニュー
 
 
 #kh_at->close_test_project;                        # プロジェクトを閉じる
