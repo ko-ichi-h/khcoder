@@ -3,6 +3,7 @@ package kh_at;
 use strict;
 use Text::Diff;
 use kh_at::project_new;
+use kh_at::pretreatment;
 
 sub exec_test{
 	my $class = shift;
