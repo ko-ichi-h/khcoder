@@ -24,7 +24,6 @@ sub _exec_test{
 	
 	# いったんプロジェクトを閉じる
 	$::main_gui->{menu}->mc_close_project;
-	#}
 	
 	# プロジェクトの編集
 	gui_window::project_open->open;
@@ -44,9 +43,32 @@ sub _exec_test{
 	$win_opn->{g_list}->selectionSet($n);
 	$win_opn->_open;
 
+	# テスト結果の取得
+	my $t = '';
+	$t .= "■project_name:\t".Jcode->new(
+		gui_window->gui_jg( $::main_gui->inner->{e_curent_project}->get )
+	)->euc."\n";
+	$t .= "■project_comment:\t".Jcode->new(
+		gui_window->gui_jg( $::main_gui->inner->{e_project_memo}->get )
+	)->euc."\n";
+	$t .= "■words_all:\t".Jcode->new(
+		gui_window->gui_jg( $::main_gui->inner->{ent_num1}->get )
+	)->euc."\n";
+	$t .= "■project_kinds:\t".Jcode->new(
+		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get )
+	)->euc."\n";
+	$t .= "■doc num:\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $::main_gui->inner->hlist ) )
+	)->euc;
+
+	$self->{result} = $t;
+
 	return $self;
 }
 
+sub test_name{
+	return 'Create / Close / Edit / Open project...';
+}
 
 
 1;

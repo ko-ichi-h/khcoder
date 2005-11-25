@@ -42,7 +42,7 @@ use Cwd qw(cwd);
 use lib cwd.'/auto_test/lib';
 use kh_at;
 
-kh_at::project_new->exec_test;                    # テストファイル登録＆前処理
+kh_at::project_new->exec_test('project_new');      # テストファイル登録＆前処理
 
 
 
