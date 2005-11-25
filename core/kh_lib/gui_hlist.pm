@@ -28,9 +28,16 @@ sub get_all{
 	my $t = '';
 	my $n = 0;
 	while ($self->list->info('exists', $n)){
+		#print "n$n, ";
 		for (my $c = 0; $c <= $cols; ++$c){
-			$t .= $self->list->itemCget($n, $c, -text)."\t";
+			if ( $self->list->itemExists($n, $c) ){
+				$t .= $self->list->itemCget($n, $c, -text)."\t";
+				#print "c$c: ".$self->list->itemCget($n, $c, -text).", ";
+			} else {
+				$t .= "\t";
+			}
 		}
+		#print "line-end\n";
 		chop $t; $t .= "\n";
 		++$n;
 	}

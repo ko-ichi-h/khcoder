@@ -39,6 +39,9 @@ sub _check_output{
 sub _write_result{
 	my $self = shift;
 	my $out_file = $self->file_test_output;
+	
+	$self->{result} =~ s/\r\n/\n/go;
+	
 	open (OUTF,">$out_file") or die;
 	print OUTF $self->{result};
 	close (OUTF);
