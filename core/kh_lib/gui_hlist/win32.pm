@@ -13,7 +13,11 @@ sub _copy{
 
 	foreach my $i (@selected){
 		for (my $c = 0; $c <= $cols; ++$c){
-			$clip .= $self->list->itemCget($i, $c, -text)."\t";
+			if ( $self->list->itemExists($i, $c) ){
+				$clip .= $self->list->itemCget($i, $c, -text)."\t";
+			} else {
+				$clip .= "\t";
+			}
 		}
 		chop $clip;
 		$clip .= "\n";
