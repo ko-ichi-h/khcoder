@@ -134,9 +134,9 @@ sub _new{
 	$self->{t1} = $t1;
 	$self->{t2} = $t2;
 	$self->{hlist} = $hlist;
-	#$self->{win_obj} = $wmw;
 	
-	$wmw->after(10,sub{$self->_fill_in;});
+	#$wmw->after(10,sub{$self->_fill_in;});
+	$self->_fill_in;
 
 	return $self;
 }
@@ -248,7 +248,6 @@ sub save{
 	if ( $::main_gui->if_opened('w_doc_ass') ){
 		$::main_gui->get('w_doc_ass')->close;
 	}
-	
 }
 
 

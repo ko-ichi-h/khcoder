@@ -114,24 +114,7 @@ sub make{
 				-label => gui_window->gui_jchar('複合名詞のリスト（一部）'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_HukugoList;
-					unless (-e $target){
-						my $ans = $mw->messageBox(
-							-message => gui_window->gui_jchar
-								(
-								   "時間のかかる処理を実行しようとしています。"
-								   ."（前処理よりは短時間で終了します）\n".
-								   "続行してよろしいですか？"
-								),
-							-icon    => 'question',
-							-type    => 'OKCancel',
-							-title   => 'KH Coder'
-						);
-						unless ($ans =~ /ok/i){ return 0; }
-						use mysql_hukugo;
-						mysql_hukugo->run_from_morpho($target);
-					}
-					gui_OtherWin->open($target);
+					$self->mc_hukugo;
 				})},
 				-state => 'disable'
 			);
@@ -564,13 +547,47 @@ sub mc_close_project{
 	$::main_gui->inner->refresh;
 }
 sub mc_morpho{
+	my $self = shift;
 	my $w = gui_wait->start;
-	mysql_ready->first;
-	$::project_obj->status_morpho(1);
+	$self->mc_morpho_exec;
 	$w->end;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 }
+sub mc_morpho_exec{
+	mysql_ready->first;
+	$::project_obj->status_morpho(1);
+}
+sub mc_hukugo{
+	my $self = shift;
+	my $mw = $::main_gui->{win_obj};
+	
+	my $target = $::project_obj->file_HukugoList;
+	unless (-e $target){
+		my $ans = $mw->messageBox(
+			-message => gui_window->gui_jchar
+				(
+				   "時間のかかる処理を実行しようとしています。"
+				   ."（前処理よりは短時間で終了します）\n".
+				   "続行してよろしいですか？"
+				),
+			-icon    => 'question',
+			-type    => 'OKCancel',
+			-title   => 'KH Coder'
+		);
+		unless ($ans =~ /ok/i){ return 0; }
+		my $w = gui_wait->start;
+		$self->mc_hukugo_exec;
+		$w->end;
+	}
+	gui_OtherWin->open($target);
+}
+sub mc_hukugo_exec{
+	use mysql_hukugo;
+	my $target = $::project_obj->file_HukugoList;
+	mysql_hukugo->run_from_morpho($target);
+}
+
 
 #------------------------#
 #   メニューの状態変更   #

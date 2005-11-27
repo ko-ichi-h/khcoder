@@ -10,17 +10,17 @@ sub _exec_test{
 	my $win_np = $::main_gui->get('w_new_pro');
 	$win_np->{e1}->insert(0,gui_window->gui_jchar($self->file_testdata));
 	$win_np->{e2}->insert(0,gui_window->gui_jchar('自動テスト用Project'));
-	$win_np->{ok_btn}->invoke;
+	$win_np->_make_new;
 	
 	# 語の取捨選択
 	gui_window::dictionary->open;
 	my $win_dic = $::main_gui->get('w_dictionary');
 	$win_dic->{t1}->insert('end',gui_window->gui_jchar("Ｋ\n西洋人\n好奇心"));
 	$win_dic->{t2}->insert('end',gui_window->gui_jchar("１つ\n考え"));
-	$win_dic->{ok_btn}->invoke;
+	$win_dic->save;
 	
 	# 前処理の実行
-	$::main_gui->{menu}->mc_morpho;
+	$::main_gui->{menu}->mc_morpho_exec;
 	
 	# いったんプロジェクトを閉じる
 	$::main_gui->{menu}->mc_close_project;
