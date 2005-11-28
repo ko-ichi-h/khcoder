@@ -69,7 +69,7 @@ sub _exec_test{
 }
 
 sub test_name{
-	return 'Pretreatment commands...';
+	return 'Pretreatment-Menu commands...';
 }
 
 1;

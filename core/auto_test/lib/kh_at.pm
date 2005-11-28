@@ -4,6 +4,7 @@ use strict;
 use Text::Diff;
 use kh_at::project_new;
 use kh_at::pretreatment;
+use kh_at::words;
 
 sub exec_test{
 	my $class = shift;
@@ -40,7 +41,7 @@ sub _write_result{
 	my $self = shift;
 	my $out_file = $self->file_test_output;
 	
-	$self->{result} =~ s/\r\n/\n/go;
+	$self->{result} =~ s/\r//go;
 	
 	open (OUTF,">$out_file") or die;
 	print OUTF $self->{result};
