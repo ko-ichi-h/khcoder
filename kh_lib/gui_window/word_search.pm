@@ -76,7 +76,7 @@ sub _new{
 	
 	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
-	gui_widget::optmenu->open(
+	$self->{optmenu_andor} = gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		#width   => 7,
@@ -88,7 +88,7 @@ sub _new{
 		variable => \$gui_window::word_search::method,
 	);
 
-	gui_widget::optmenu->open(
+	$self->{optmenu_bk} = gui_widget::optmenu->open(
 		parent  => $fra4i,
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
 		#width   => 8,
@@ -145,9 +145,6 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {$self->conc;});} 
 	)->pack(-side => 'left');
-
-
-	MainLoop;
 	
 	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
