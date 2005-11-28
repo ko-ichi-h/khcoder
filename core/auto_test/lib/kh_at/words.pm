@@ -2,6 +2,8 @@ package kh_at::words;
 use base qw(kh_at);
 use strict;
 
+# テスト出力数: 48 + 
+
 sub _exec_test{
 	my $self = shift;
 	$self->{result} = '';

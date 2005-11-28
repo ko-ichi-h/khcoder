@@ -2,6 +2,8 @@ package kh_at::pretreatment;
 use base qw(kh_at);
 use strict;
 
+# テスト出力数: 7
+
 sub _exec_test{
 	my $self = shift;
 	my $t = '';

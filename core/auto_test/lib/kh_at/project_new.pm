@@ -2,6 +2,8 @@ package kh_at::project_new;
 use base qw(kh_at);
 use strict;
 
+# テスト出力数: 5
+
 sub _exec_test{
 	my $self = shift;
 	
