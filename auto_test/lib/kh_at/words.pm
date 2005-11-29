@@ -29,9 +29,77 @@ sub _exec_test{
 	$self->_ws_BK($win_src);
 	
 	# コンコーダンス
+	$self->{result} .= "■コンコーダンス\n";
+	
+	$self->{result} .= "□ノーマル\n";
+	$win_src->{optmenu_bk}->set_value('p');
+	$win_src->{entry}->delete(0,'end');
+	$win_src->{entry}->insert( 0, gui_window->gui_jchar('死') );
+	$win_src->search;
+	$win_src->list->selectionSet(0);
+	$win_src->conc;
+	my $win_cnc = $::main_gui->get('w_word_conc');
+	$self->_wc_sort($win_cnc);
+	
+	$self->{result} .= "□活用形指定\n";
+	$win_src->list->selectionClear(0);
+	$win_src->list->selectionSet("0.4");
+	$win_src->conc;
+	$self->_wc_sort($win_cnc);
+	
+	$self->{result} .= "□品詞指定\n";
 	
 	
+	return $self;
+}
+
+sub _wc_sort{
+	my $self = shift;
+	my $win  = shift;
+	my $t = '';
 	
+	#$win->{entry}->insert(0, gui_window->gui_jchar('死ぬ') );
+	
+	$win->{menu1}->set_value('l1');
+	$win->_menu_check;
+	$win->{menu2}->set_value('l2');
+	$win->_menu_check;
+	$win->{menu3}->set_value('l3');
+	$win->_menu_check;
+	$win->search;
+	$t .= "○ソート：左\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+	)->euc;
+
+	$win->{menu1}->set_value('r1');
+	$win->_menu_check;
+	$win->{menu2}->set_value('r2');
+	$win->_menu_check;
+	$win->{menu3}->set_value('r3');
+	$win->_menu_check;
+	$win->search;
+	$t .= "○ソート：右\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+	)->euc;
+
+	$win->{menu1}->set_value('l2');
+	$win->_menu_check;
+	$win->{menu2}->set_value('id');
+	$win->_menu_check;
+	$win->search;
+	$t .= "○ソート：左2\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+	)->euc;
+
+
+	$win->{menu1}->set_value('id');
+	$win->_menu_check;
+	$win->search;
+	$t .= "○ソート：ID\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+	)->euc;
+	
+	$self->{result} .= $t;
 	return $self;
 }
 

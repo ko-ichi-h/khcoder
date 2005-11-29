@@ -279,9 +279,6 @@ sub _new{
 		-state       => 'disable'
 	)->pack(-side => 'right');
 
-
-	MainLoop;
-
 	# $self->{entry_limit} = $limit_e;
 	$self->{st_label} = $status;
 	$self->{hit_label} = $hits;
