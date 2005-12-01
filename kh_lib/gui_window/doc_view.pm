@@ -255,7 +255,7 @@ sub near{
 	if ($self->{parent}{code_obj}){
 		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
 	} else {
-		$t = $self->gui_jchar('・現在表示中の文書：  ');
+		$t = Jcode->new('・現在表示中の文書：  ')->sjis;
 	}
 	$self->{foot} = $t;
 	

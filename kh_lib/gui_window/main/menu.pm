@@ -68,7 +68,7 @@ sub make{
 			-label => $msg,
 			-font => "TKFN",
 			-command => sub{ $mw->after(10,sub{exit;});},
-			-accelerator => 'ECS'
+			-accelerator => 'ESC'
 		);
 
 	#------------#
