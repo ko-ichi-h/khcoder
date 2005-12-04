@@ -279,6 +279,14 @@ sub _new{
 		-state       => 'disable'
 	)->pack(-side => 'right');
 
+	$self->{btn_save} = $fra5->Button(
+		-text        => $self->gui_jchar('保存','euc'),
+		-font        => "TKFN",
+		-command     => sub{ $mw->after(10,sub{$self->save;});},
+		-borderwidth => 1,
+		-state       => 'disable'
+	)->pack(-side => 'right',-padx => 2);
+
 	# $self->{entry_limit} = $limit_e;
 	$self->{st_label} = $status;
 	$self->{hit_label} = $hits;
@@ -446,6 +454,33 @@ sub end{
 }
 
 #----------#
+#   保存   #
+#----------#
+
+sub save{
+	my $self = shift;
+	
+	# 保存先の参照
+	my @types = (
+		[ "csv file",[qw/.csv/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.csv',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jchar('コンコーダンス（KWIC）検索の結果を保存'),
+		-initialdir       => $::config_obj->cwd
+	);
+	
+	$self->{result_obj}->save_all(
+		path => $path,
+	) if $path;
+	
+	return 1;
+}
+
+#----------#
 #   集計   #
 #----------#
 
@@ -456,7 +491,6 @@ sub coloc{
 	my $view_win = gui_window::word_conc_coloc->open;
 	$view_win->view($self->{result_obj});
 }
-
 
 #----------#
 #   検索   #
@@ -482,6 +516,7 @@ sub search{
 	$self->{btn_prev}->configure(-state => 'disable');
 	$self->{btn_next}->configure(-state => 'disable');
 	$self->{btn_coloc}->configure(-state => 'disable');
+	$self->{btn_save}->configure(-state => 'disable');
 	$self->st_label->configure(
 		-text => 'Searching...',
 		-foreground => 'red',
@@ -612,6 +647,7 @@ sub display{
 		$self->{btn_next}->configure(-state => 'disable');
 	}
 	$self->{btn_coloc}->configure(-state => 'normal');
+	$self->{btn_save}->configure(-state => 'normal');
 	$self->win_obj->update;
 
 	# 表示のセンタリング
