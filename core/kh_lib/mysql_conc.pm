@@ -403,9 +403,55 @@ sub _format{                                      # 結果の出力
 		}
 		++$n;
 	}
-	
 	return $return;
 }
+
+sub save_all{
+	my $self = shift;
+	my %args = @_;
+	
+	# 文字列データ整理
+	my @result;
+	my $start = 1;
+	my $max   = $self->_count;
+	while ($start <= $max){
+		my $res = $self->_format($start);
+		@result = (@result, @{$res});
+		$start += 200;
+	}
+	
+	# ID情報の整理
+	my $st1 = mysql_exec->select("
+		SELECT h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt,temp_conc.id
+		FROM   temp_conc,temp_conc_sort,hyosobun
+		WHERE
+			    temp_conc.id = hyosobun.id
+			AND temp_conc.id = temp_conc_sort.conc_id
+		ORDER BY temp_conc_sort.id
+	",1)->hundle;
+	my $id = $st1->fetchall_arrayref;
+	
+	# 出力
+	open(KWICO,">$args{path}") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $args{path}
+		);
+	
+	print KWICO "h1,h2,h3,h4,h5,dan,bun,bun-No.,mp-No.,L,C,R\n";	
+	for (my $n = 0; $n < $max; ++$n){
+		my $line = "$id->[$n][0],$id->[$n][1],$id->[$n][2],$id->[$n][3],$id->[$n][4],$id->[$n][5],$id->[$n][6],$id->[$n][7],$id->[$n][8],";
+		$line .= kh_csv->value_conv($result[$n]->[0]).",";
+		$line .= kh_csv->value_conv($result[$n]->[1]).",";
+		$line .= kh_csv->value_conv($result[$n]->[2])."\n";
+		print KWICO $line;
+	}
+	close (KWICO);
+	kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
+	
+	return 1;
+}
+
 
 #------------------------#
 #   コロケーション集計   #
