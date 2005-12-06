@@ -12,10 +12,12 @@ sub _copy{
 	my $clip;
 
 	foreach my $i (@selected){
-		print "row: $i\n";
+		#print "row: $i\n";
 		for (my $c = 0; $c <= $cols; ++$c){
 			if ( $self->list->itemExists($i, $c) ){
-				$clip .= $self->list->itemCget($i, $c, -text)."\t";
+				my $cell = $self->list->itemCget($i, $c, -text);
+				chop $cell if $cell =~ /\r$/o;
+				$clip .= "$cell\t";
 			} else {
 				$clip .= "\t";
 			}
