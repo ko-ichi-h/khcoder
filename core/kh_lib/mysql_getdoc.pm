@@ -221,6 +221,8 @@ sub header{
 
 sub id_for_print{
 	my $self = shift;
+	my $debug = 0;
+	print "doc_id: $self->{doc_id}\n" if $debug;
 	
 	# 文書の位置情報を取得
 	my $sql = 'SELECT ';

@@ -69,11 +69,18 @@ sub doc_val{
 	if ($self->{tani} eq $args{tani}){
 		$doc_id = $args{doc_id};
 	} else {
-		$doc_id = mysql_exec->select("
-			SELECT $self->{tani}_id
-			FROM   $args{tani}
-			WHERE  id = $args{doc_id}
-		",1)->hundle->fetch->[0];
+		my $sql = "SELECT $self->{tani}.id\n";
+		$sql .=   "FROM   $args{tani}, $self->{tani}\n";
+		$sql .=   "WHERE\n";
+		$sql .=   "\t$args{tani}.id = $args{doc_id}\n";
+		
+		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+			$sql .= "\tAND $self->{tani}.$i"."_id = $args{tani}.$i"."_id\n";
+			last if $i eq $self->{tani};
+		}
+		$doc_id = mysql_exec->select("$sql",1)->hundle->fetch->[0];
+		print "$sql";
+		print "doc_id_var: $doc_id\n";
 	}
 	
 	return mysql_exec->select("
