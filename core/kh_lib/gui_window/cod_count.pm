@@ -31,8 +31,12 @@ sub _new{
 	)->pack(-fill => 'x');
 
 	# ルール・ファイル
+	my %pack4cod = (
+			-anchor => 'w',
+	);
 	$self->{codf_obj} = gui_widget::codf->open(
-		parent => $lf
+		parent => $lf,
+		pack   => \%pack4cod,
 	);
 
 	# コーディング単位

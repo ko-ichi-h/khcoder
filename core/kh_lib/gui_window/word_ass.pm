@@ -65,7 +65,7 @@ sub _new{
 	$self->{codf_obj} = gui_widget::codf->open(
 		parent   => $right,
 		command  => sub{$self->read_code;},
-		r_button => 1,
+		#r_button => 1,
 		pack     => \%pack0,
 	);
 
@@ -225,7 +225,6 @@ sub _new{
 		'ochi'=> 'Ochiai',
 	};
 
-
 	$f5->Label(
 		-text => $self->gui_jchar(' '),
 		-font => "TKFN",
@@ -246,6 +245,11 @@ sub _new{
 		-text       => $self->gui_jchar('  文書数：0'),
 		-font       => "TKFN",
 	)->pack(-side => 'left',);
+
+	$self->win_obj->bind(
+		'<FocusIn>',
+		sub { $self->activate; }
+	);
 
 	#--------------------------#
 	#   フィルタ設定の初期化   #
@@ -271,6 +275,29 @@ sub start{
 	$self->clist_check;
 }
 
+#------------------------------------#
+#   ルールファイルの更新をチェック   #
+
+sub activate{
+	my $self = shift;
+	return 1 unless $self->{codf_obj};
+	return 1 unless -e $self->cfile;
+	return 1 unless $self->{timestamp};
+	
+	unless ( ( stat($self->cfile) )[9] == $self->{timestamp} ){
+		print "reload: ".$self->cfile."\n";
+		my @selected = $self->{clist}->infoSelection;
+		$self->read_code;
+		$self->{clist}->selectionClear;
+		foreach my $i (@selected){
+			$self->{clist}->selectionSet($i)
+				if $self->{clist}->info('exists', $i);
+		}
+		$self->clist_check;
+	}
+	return $self;
+}
+
 #----------------------------#
 #   ルールファイル読み込み   #
 
@@ -286,7 +313,7 @@ sub read_code{
 		0,
 		-text  => $self->gui_jchar('＃直接入力'),
 	);
-	$self->{clist}->selectionClear;
+	#$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
 
 	# ルールファイルを読み込み
@@ -295,6 +322,7 @@ sub read_code{
 		return 0;
 	}
 	
+	$self->{timestamp} = ( stat($self->cfile) )[9];
 	my $cod_obj = kh_cod::asso->read_file($self->cfile);
 	unless (eval(@{$cod_obj->codes})){
 		$self->{code_obj} = kh_cod::asso->new;

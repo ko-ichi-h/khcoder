@@ -39,7 +39,7 @@ sub _new{
 		-font       => "TKFN",
 		-background => 'gray',
 		-width      => 17,
-	)->pack(-side => 'left',-padx => 2);
+	)->pack(-side => 'left',-padx => 2, -fill => 'x', -expand => '1');
 	gui_window->disabled_entry_configure($e1);
 	
 	$f1->DropSite(
