@@ -45,6 +45,7 @@ sub read_CodeFile_droped{
 sub get_filename_droped{
 	my($widget, $selection) = @_;
 	my $filename;
+	# print "sele: $selection\n";
 	eval {
 		if ($^O eq 'MSWin32') {
 			$filename = $widget->SelectionGet(
