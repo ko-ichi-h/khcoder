@@ -34,7 +34,6 @@ sub _new{
 		)->pack( -side => 'left', -padx => 2);
 	}
 	
-	
 	my $e1 = $f1->Entry(
 		-state      => 'disable',
 		-font       => "TKFN",
@@ -42,6 +41,11 @@ sub _new{
 		-width      => 17,
 	)->pack(-side => 'left',-padx => 2);
 	gui_window->disabled_entry_configure($e1);
+	
+	$f1->DropSite(
+		-dropcommand => sub{ $self->_drop(@_); },
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
 	
 	if ($::project_obj->last_codf){
 		my $path = $::project_obj->last_codf;
@@ -57,6 +61,42 @@ sub _new{
 	}
 	$self->{entry} = $e1;
 	return $self;
+}
+
+sub _drop{
+	my $self      = shift;
+	my $selection = shift;
+	
+	# print "selection: $selection\n";
+	my $path;
+	
+	eval {
+		if ($^O eq 'MSWin32') {
+			$path = $self->{win_obj}->SelectionGet(
+				-selection => $selection,
+				'STRING'
+			);
+			$path =~ tr/\\/\//;
+		} else {
+			$path = $self->{win_obj}->SelectionGet(
+				-selection => $selection,
+				'FILE_NAME'
+			);
+		}
+	};
+	if (-e $path) {
+		# print "Drop: $path\n";
+		$::project_obj->last_codf($path);
+		$self->{cfile} = $path;
+		substr($path, 0, rindex($path, '/') + 1 ) = '';
+		$self->entry->configure(-state,'normal');
+		$self->entry->delete(0, 'end');
+		$self->entry->insert('0',gui_window->gui_jchar("$path"));
+		$self->entry->configure(-state,'disable');
+		if (defined($self->{command})){
+			&{$self->{command}};
+		}
+	}
 }
 
 #------------------#
