@@ -45,6 +45,12 @@ sub _new{
 		-width => 20,
 		-background => 'white'
 	)->pack(-side => 'left',-padx => 2);
+	
+	$self->{entry}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
+	
 
 	# 読み込み単位の指定
 	my $fra4f = $fra4->Frame()->pack(-expand => 'y', -fill => 'x', -pady =>3);

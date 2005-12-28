@@ -11,9 +11,9 @@ sub _open{
 		if ($t =~ /^http/o){
 			$cmd = "start /MIN cmd.exe /c start $t";
 		} else {
-			$cmd = "start /MIN cmd.exe /c \"$t\"";
+			$cmd = "start /MIN cmd.exe /c \"\"$t\"\"";
 		}
-#		print "$cmd\n";
+		print "$cmd\n";
 		system $cmd;
 	} else {
 		system "start command.com /c start \"$t\"";
