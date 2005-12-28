@@ -79,8 +79,8 @@ sub doc_val{
 			last if $i eq $self->{tani};
 		}
 		$doc_id = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-		print "$sql";
-		print "doc_id_var: $doc_id\n";
+		# print "$sql";
+		# print "doc_id_var: $doc_id\n";
 	}
 	
 	return mysql_exec->select("

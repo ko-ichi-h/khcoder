@@ -388,6 +388,7 @@ sub clist_check{
 
 sub search{
 	my $self = shift;
+	$self->activate;
 	
 	# 選択のチェック
 	my @selected = $self->{clist}->info('selection');
