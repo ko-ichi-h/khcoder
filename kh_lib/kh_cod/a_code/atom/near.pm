@@ -6,6 +6,8 @@ use strict;
 use mysql_a_word;
 use POSIX qw(log10);
 
+my $debug = 0;
+
 my $num = 0;
 sub reset{
 	$num = 0;
@@ -56,47 +58,7 @@ my %sql_join = (
 	'h1' =>
 		'h1.h1_id = hyosobun.h1_id',
 );
-my %sql_join2 = (
-	'bun' =>
-		'bun.id = hb0.bun_idt',
-	'dan' =>
-		'
-			    dan.dan_id = hb0.dan_id
-			AND dan.h5_id = hb0.h5_id
-			AND dan.h4_id = hb0.h4_id
-			AND dan.h3_id = hb0.h3_id
-			AND dan.h2_id = hb0.h2_id
-			AND dan.h1_id = hb0.h1_id
-		',
-	'h5' =>
-		'
-			    h5.h5_id = hb0.h5_id
-			AND h5.h4_id = hb0.h4_id
-			AND h5.h3_id = hb0.h3_id
-			AND h5.h2_id = hb0.h2_id
-			AND h5.h1_id = hb0.h1_id
-		',
-	'h4' =>
-		'
-			    h4.h4_id = hb0.h4_id
-			AND h4.h3_id = hb0.h3_id
-			AND h4.h2_id = hb0.h2_id
-			AND h4.h1_id = hb0.h1_id
-		',
-	'h3' =>
-		'
-			    h3.h3_id = hb0.h3_id
-			AND h3.h2_id = hb0.h2_id
-			AND h3.h1_id = hb0.h1_id
-		',
-	'h2' =>
-		'
-			    h2.h2_id = hb0.h2_id
-			AND h2.h1_id = hb0.h1_id
-		',
-	'h1' =>
-		'h1.h1_id = hb0.h1_id',
-);
+
 my %sql_group = (
 	'bun' =>
 		'hyosobun.bun_idt',
@@ -155,9 +117,9 @@ sub idf{
 	return log10($dn->{$self->{tani}} / $df);
 }
 
-#---------------------------------------#
-#   コーディング準備（tmp table作成）   #
-#---------------------------------------#
+#----------------------#
+#   コーディング準備   #
+#----------------------#
 
 sub ready{
 	my $self = shift;
@@ -166,13 +128,31 @@ sub ready{
 	
 	# ルール指定の解釈
 	my @wlist;
-	my $max_dist = 5;
+	my $max_dist = 10;
+	my $option   = '';
 	if ($self->raw =~ /^near\((.+)\)$/o){                   # デフォルト
 		@wlist = split /\+/, $1;
 	}
-	elsif ( $self->raw =~ /^near\((.+)\)\[([0-9]+)\]$/o ){  # 距離指定
+	elsif ( $self->raw =~ /^near\((.+)\)\[(.+)\]$/o ){      # オプション
 		@wlist = split /\+/, $1;
-		$max_dist = $2;
+		if ($2 =~ /^([0-9]+)$/){
+			$max_dist = $1;
+		}
+		elsif ($2 =~ /^([bd])([0-9]+)$/){
+			$max_dist = $2;
+			$option = $1;
+			if ( ($option eq 'b') && ($tani eq 'bun') ){
+				$option = '';
+			}
+			if (($option eq 'd') && (($tani eq 'bun') || ($tani eq 'dan'))){
+				$option = '';
+			}
+		} else {
+			print "error: invalid option \"$2\" found in the NEAR statement\n";
+			return '';
+		}
+		print "max dist: $max_dist\n" if $debug;
+		print "option: $option\n" if $debug;
 	}
 	
 	# 各単語の出現文書リストを作製
@@ -184,7 +164,7 @@ sub ready{
 		$w2hyoso{$i} = $list->hyoso_id_s;
 		unless ( $w2hyoso{$i} ){
 			print Jcode->new(
-				"no such word in the text: \"".$self->raw."\"\n"
+				"warn: no such word in the text: \"".$self->raw."\"\n"
 			)->sjis;
 			return '';
 		}
@@ -253,12 +233,35 @@ sub ready{
 	mysql_exec->do("$sql",1);
 
 	# 近くに出現しているかどうかをチェック:  1. データの取り出し
-	$sql = '';
-	$sql .= "SELECT $tani.id, hyosobun.id, hyosobun.hyoso_id\n";
-	$sql .= "FROM $tani, ct_tmp_near, hyosobun\n";
+	$sql  = '';
+	$sql .= "SELECT $tani.id, hyosobun.id, hyosobun.hyoso_id";
+	if ($option eq 'b'){
+		$sql .= ", hyosobun.bun_idt\n";
+	}
+	elsif ( $option eq 'd' ){
+		$sql .= ", dan.id\n";
+	}
+	else {
+		$sql .= "\n";
+	}
+	$sql .= "FROM $tani, ct_tmp_near, hyosobun";
+	if ($option eq 'd'){
+		$sql .= ", dan\n";
+	}
+	else {
+		$sql .= "\n";
+	}
 	$sql .= "WHERE\n";
 	$sql .= "$sql_join{$tani}\n";
 	$sql .= "AND $tani.id = ct_tmp_near.id\n";
+	if ($option eq 'd'){
+		$sql .= "AND dan.dan_id = hyosobun.dan_id\n";
+		$sql .= "AND dan.h5_id = hyosobun.h5_id\n";
+		$sql .= "AND dan.h4_id = hyosobun.h4_id\n";
+		$sql .= "AND dan.h3_id = hyosobun.h3_id\n";
+		$sql .= "AND dan.h2_id = hyosobun.h2_id\n";
+		$sql .= "AND dan.h1_id = hyosobun.h1_id\n";
+	}
 	$sql .= "AND (\n";
 	my $n3 = 0;
 	foreach my $i (@wlist){
@@ -278,34 +281,49 @@ sub ready{
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	my @chk_data;
 	while (my $i = $sth->fetch){
-		push @chk_data, [$i->[0], $i->[1], $hyoso2w{$i->[2]} ];
+		push @chk_data, [
+			$i->[0],
+			$i->[1],
+			$hyoso2w{$i->[2]},
+			$i->[3]
+		];
 	}
 
 	# 近くに出現しているかどうかをチェック:  2. チェック実行
 	my %result = ();
-	my $debug = 1;
 	my $chk_data_rows = @chk_data - @wlist;
 	for (my $n = 0; $n <= $chk_data_rows; ++$n){
 		print Jcode->new("$n,$chk_data[$n]->[0],$chk_data[$n]->[1],$chk_data[$n]->[2]\n")->sjis if $debug;
 		
-		# 直後が同じ語の場合はスキップ
+		# 直後が同じ語の場合はチェックをスキップ
 		if ($chk_data[$n]->[2] eq $chk_data[$n+1]->[2]){
 			print "\tskip (0)\n" if $debug;
 			next;
 		}
 		
 		# 後続をチェック
-		my $w_count = 0;
+		my $w_count     = 0;
 		my %w_count_chk = ();
-		my $sn = $n;
-		my $pos_hb   = $chk_data[$n]->[1];
+		my $sn          = $n;
+		my $pos_hb      = $chk_data[$n]->[1];
+		my $pos_opt     = $chk_data[$n]->[3];
 		while ($chk_data[$sn]->[0] == $chk_data[$n]->[0]){
 			# 同じ文書内の後続をチェックしていく
-			print Jcode->new("\t$sn,$chk_data[$sn]->[0],$chk_data[$sn]->[1],$chk_data[$sn]->[2]\n")->sjis if $debug;
+			print Jcode->new("\t$sn,$chk_data[$sn]->[0],$chk_data[$sn]->[1],$chk_data[$sn]->[2],$chk_data[$sn]->[3]\n")->sjis if $debug;
 			
 			# 後続が離れすぎていれば中断
-			if ( $chk_data[$sn]->[1] - $pos_hb > $max_dist ){
+			if (                                                 # 語数
+				   ( $max_dist > 0 )
+				&& ( $chk_data[$sn]->[1] - $pos_hb > $max_dist )
+			){
 				print "\ttoo long!\n" if $debug;
+				last;
+			}
+			if (                                                 # 文・段落
+				   ( length($option) > 0 )
+				&! ( $pos_opt == $chk_data[$sn]->[3] )
+			){
+				print "\tnot in the same sentence/paragraph!\n" if $debug;
 				last;
 			}
 			
@@ -316,7 +334,7 @@ sub ready{
 				++$w_count;
 				$pos_hb= $chk_data[$sn]->[1];
 				if ($w_count >= @wlist){
-					print "\tcheck OK!!\n" if $debug;
+					print "\tCheck OK!!\n" if $debug;
 					++$result{$chk_data[$n]->[0]};
 					last;
 				}
