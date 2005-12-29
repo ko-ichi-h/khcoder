@@ -11,6 +11,7 @@ use kh_cod::a_code::atom::length;
 use kh_cod::a_code::atom::outvar_o;
 use kh_cod::a_code::atom::heading;
 use kh_cod::a_code::atom::phrase;
+use kh_cod::a_code::atom::near;
 
 use mysql_exec;
 use POSIX qw(log10);
@@ -44,6 +45,10 @@ BEGIN {
 	push @pattern, [
 		kh_cod::a_code::atom::code->pattern,
 		kh_cod::a_code::atom::code->name
+	];
+	push @pattern, [
+		kh_cod::a_code::atom::near->pattern,
+		kh_cod::a_code::atom::near->name
 	];
 	push @pattern, [
 		kh_cod::a_code::atom::phrase->pattern,
