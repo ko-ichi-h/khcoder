@@ -131,15 +131,15 @@ sub ready{
 	my $max_dist = 10;
 	my $option   = '';
 	if ($self->raw =~ /^near\((.+)\)$/o){                   # デフォルト
-		@wlist = split /\+/, $1;
+		@wlist = split /\-\-/, $1;
 	}
 	elsif ( $self->raw =~ /^near\((.+)\)\[(.+)\]$/o ){      # オプション
-		@wlist = split /\+/, $1;
+		@wlist = split /\-\-/, $1;
 		if ($2 =~ /^([0-9]+)$/){
 			$max_dist = $1;
 		}
-		elsif ($2 =~ /^([bd])([0-9]+)$/){
-			$max_dist = $2;
+		elsif ($2 =~ /^([bd])([0-9]*)$/){
+			$max_dist = $2 if length($2) > 0;
 			$option = $1;
 			if ( ($option eq 'b') && ($tani eq 'bun') ){
 				$option = '';
@@ -151,8 +151,15 @@ sub ready{
 			print "error: invalid option \"$2\" found in the NEAR statement\n";
 			return '';
 		}
-		print "max dist: $max_dist\n" if $debug;
-		print "option: $option\n" if $debug;
+		if ($debug){
+			print "words: ";
+			foreach my $i (@wlist){
+				print "$i, ";
+			}
+			print "\n";
+			print "max dist: $max_dist\n";
+			print "option: $option\n";
+		}
 	}
 	
 	# 各単語の出現文書リストを作製
@@ -388,7 +395,7 @@ sub parent_table{
 }
 
 sub pattern{
-	return 'near\(.+\+.+\)';
+	return 'near\(.+\-\-.+\)';
 }
 sub name{
 	return 'near';

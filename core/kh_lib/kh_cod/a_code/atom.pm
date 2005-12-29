@@ -125,6 +125,9 @@ sub when_read{
 sub hyosos{
 	return undef;
 }
+sub strings{
+	return undef;
+}
 
 
 1;

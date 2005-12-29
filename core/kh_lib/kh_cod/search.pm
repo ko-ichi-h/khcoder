@@ -335,10 +335,8 @@ sub search{
 			$sql .= "ORDER BY tf,$args{tani}.id";
 		}
 	}
-	
 	#print "\n$sql\n";
 	mysql_exec->do($sql,1);
-	
 	
 	# 検索に利用した語（表層）のリスト
 	print "kh_cod::search -> getting word list...\n";
@@ -354,6 +352,19 @@ sub search{
 	}
 	@words = (keys %words);
 	$self->{last_search_words} = \@words;
+	# 検索に利用した文字列のリスト
+	my (@strs, %strs);
+	foreach my $i (@{$args{selected}}){
+		next unless $self->{codes}[$i];
+		next unless $self->{codes}[$i]->res_table;
+		if ($self->{codes}[$i]->strings){
+			foreach my $h (@{$self->{codes}[$i]->strings}){
+				++$strs{$h};
+			}
+		}
+	}
+	@strs = (keys %strs);
+	$self->{last_search_strings} = \@strs;
 	
 	$self->{coded} = 1;
 	$last_tani  = $self->{tani};
@@ -369,6 +380,11 @@ sub last_search_words{
 	my $self = shift;
 	return $self->{last_search_words};
 }
+sub last_search_strings{
+	my $self = shift;
+	return $self->{last_search_strings};
+}
+
 sub total_hits{
 	my $self = shift;
 	
