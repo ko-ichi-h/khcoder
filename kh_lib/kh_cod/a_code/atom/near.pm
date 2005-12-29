@@ -1,6 +1,6 @@
 # 語のフレーズによる指定
 
-package kh_cod::a_code::atom::phrase;
+package kh_cod::a_code::atom::near;
 use base qw(kh_cod::a_code::atom);
 use strict;
 use mysql_a_word;
@@ -165,23 +165,34 @@ sub ready{
 	$self->{tani} = $tani;
 	
 	# ルール指定の解釈
-	my @wlist = split /\+/, $self->raw;
+	my @wlist;
+	my $max_dist = 5;
+	if ($self->raw =~ /^near\((.+)\)$/o){                   # デフォルト
+		@wlist = split /\+/, $1;
+	}
+	elsif ( $self->raw =~ /^near\((.+)\)\[([0-9]+)\]$/o ){  # 距離指定
+		@wlist = split /\+/, $1;
+		$max_dist = $2;
+	}
 	
 	# 各単語の出現文書リストを作製
-	my (%w2tab, %w2hyoso, @hyosos);
+	my (%w2tab, %w2hyoso, @hyosos, %hyoso2w);
 	foreach my $i (@wlist){
 		my $list = mysql_a_word->new(
 			genkei => $i
 		);
 		$w2hyoso{$i} = $list->hyoso_id_s;
-		$list = $list->genkei_ids;
 		unless ( $w2hyoso{$i} ){
 			print Jcode->new(
 				"no such word in the text: \"".$self->raw."\"\n"
 			)->sjis;
 			return '';
 		}
+		$list = $list->genkei_ids;
 		@hyosos = (@hyosos ,@{$w2hyoso{$i}});
+		foreach my $h (@{$w2hyoso{$i}}){
+			$hyoso2w{$h} = $i;
+		}
 		
 		foreach my $h (@{$list}){
 			my $table = 'ct_'."$tani".'_kihon_'. "$h";
@@ -210,13 +221,13 @@ sub ready{
 		}
 	}
 	
-	# AND検索による絞り込みを実施
-	mysql_exec->drop_table("ct_tmp_phrase");
+	# AND検索による絞り込み
+	mysql_exec->drop_table("ct_tmp_near");
 	mysql_exec->do("
-		CREATE TEMPORARY TABLE ct_tmp_phrase (id int) TYPE=HEAP
+		CREATE TEMPORARY TABLE ct_tmp_near (id int) TYPE=HEAP
 	",1);
 	my $sql = '';
-	$sql .= "INSERT INTO ct_tmp_phrase (id)\n";
+	$sql .= "INSERT INTO ct_tmp_near (id)\n";
 	$sql .= "SELECT $tani.id\n";
 	$sql .= "FROM $tani\n";
 	foreach my $i (@wlist){
@@ -241,8 +252,81 @@ sub ready{
 	$sql .= ")";
 	mysql_exec->do("$sql",1);
 
-	# TMPテーブルの作製
-	my $table = "ct_$tani"."_phrase_$num";
+	# 近くに出現しているかどうかをチェック:  1. データの取り出し
+	$sql = '';
+	$sql .= "SELECT $tani.id, hyosobun.id, hyosobun.hyoso_id\n";
+	$sql .= "FROM $tani, ct_tmp_near, hyosobun\n";
+	$sql .= "WHERE\n";
+	$sql .= "$sql_join{$tani}\n";
+	$sql .= "AND $tani.id = ct_tmp_near.id\n";
+	$sql .= "AND (\n";
+	my $n3 = 0;
+	foreach my $i (@wlist){
+		$sql .= "\tOR\n" if $n3;
+		my ($n4,$part) = (0,'');
+		foreach my $h (@{$w2hyoso{$i}}){
+			$part .= " OR " if $n4;
+			$part .= "hyosobun.hyoso_id = $h";
+			++$n4;
+		}
+		$part = ' ( '."$part".' ) ' if $n4 > 1;
+		$sql .= "\t\t$part\n";
+		++$n3;
+	}
+	$sql .= ")\n";
+	$sql .= "ORDER BY hyosobun.id";
+	my $sth = mysql_exec->select($sql,1)->hundle;
+	my @chk_data;
+	while (my $i = $sth->fetch){
+		push @chk_data, [$i->[0], $i->[1], $hyoso2w{$i->[2]} ];
+	}
+
+	# 近くに出現しているかどうかをチェック:  2. チェック実行
+	my %result = ();
+	my $debug = 1;
+	my $chk_data_rows = @chk_data - @wlist;
+	for (my $n = 0; $n <= $chk_data_rows; ++$n){
+		print Jcode->new("$n,$chk_data[$n]->[0],$chk_data[$n]->[1],$chk_data[$n]->[2]\n")->sjis if $debug;
+		
+		# 直後が同じ語の場合はスキップ
+		if ($chk_data[$n]->[2] eq $chk_data[$n+1]->[2]){
+			print "\tskip (0)\n" if $debug;
+			next;
+		}
+		
+		# 後続をチェック
+		my $w_count = 0;
+		my %w_count_chk = ();
+		my $sn = $n;
+		my $pos_hb   = $chk_data[$n]->[1];
+		while ($chk_data[$sn]->[0] == $chk_data[$n]->[0]){
+			# 同じ文書内の後続をチェックしていく
+			print Jcode->new("\t$sn,$chk_data[$sn]->[0],$chk_data[$sn]->[1],$chk_data[$sn]->[2]\n")->sjis if $debug;
+			
+			# 後続が離れすぎていれば中断
+			if ( $chk_data[$sn]->[1] - $pos_hb > $max_dist ){
+				print "\ttoo long!\n" if $debug;
+				last;
+			}
+			
+			# 未チェックの語が有ればカウントアップ
+			unless ($w_count_chk{$chk_data[$sn]->[2]}){
+				print "\tcount up!\n" if $debug;
+				$w_count_chk{$chk_data[$sn]->[2]} = 1;
+				++$w_count;
+				$pos_hb= $chk_data[$sn]->[1];
+				if ($w_count >= @wlist){
+					print "\tcheck OK!!\n" if $debug;
+					++$result{$chk_data[$n]->[0]};
+					last;
+				}
+			}
+			++$sn;
+		}
+	}
+
+	# 近くに出現しているかどうかをチェック:  3. 結果の書き出し
+	my $table = "ct_$tani"."_near_$num";
 	$self->{tables} = ["$table"];
 	++$num;
 	mysql_exec->drop_table($table);
@@ -252,33 +336,12 @@ sub ready{
 			num INT
 		)
 	",1);
-
-	# 連続して出現しているかどうかをチェック
-	my $n2 = @wlist - 1;
-	$sql = '';
-	$sql .= "INSERT INTO $table (id, num)\n";
-	$sql .= "SELECT $tani.id, count(*)\n";
-	$sql .= "FROM $tani, ct_tmp_phrase, hyosobun as hb0\n";
-	for (my $n = $n2; $n; --$n){
-		$sql .= "	LEFT JOIN hyosobun as hb$n ON hb0.id + $n = hb$n.id\n"
+	foreach my $i (keys %result){
+		mysql_exec->do (
+			"insert into $table (id, num) values ($i, $result{$i})",
+			1
+		);
 	}
-	$sql .= "WHERE\n";
-	$sql .= "$sql_join2{$tani}\n";
-	$sql .= "AND $tani.id = ct_tmp_phrase.id\n";
-	my $n3 = 0;
-	foreach my $i (@wlist){
-		my ($n4,$part) = (0,'');
-		foreach my $h (@{$w2hyoso{$i}}){
-			$part .= " OR " if $n4;
-			$part .= "hb$n3.hyoso_id = $h";
-			++$n4;
-		}
-		$part = ' ( '."$part".' ) ' if $n4 > 1;
-		$sql .= "AND $part\n";
-		++$n3;
-	}
-	$sql .= "GROUP BY $tani.id";
-	mysql_exec->do("$sql",1);
 	$self->{hyosos} = \@hyosos;
 }
 
@@ -307,10 +370,10 @@ sub parent_table{
 }
 
 sub pattern{
-	return '.+\+.+';
+	return 'near\(.+\+.+\)';
 }
 sub name{
-	return 'phrase';
+	return 'near';
 }
 
 1;
