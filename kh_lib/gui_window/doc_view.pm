@@ -228,6 +228,7 @@ sub view{
 	my $self = shift;
 	my %args = @_;
 	$self->{w_search} = $args{kyotyo};
+	$self->{s_search} = $args{s_search};
 	$self->{tani}     = $args{tani};
 	$self->{parent}   = $args{parent};
 	$self->{foot}     = $args{foot};
@@ -319,10 +320,15 @@ sub _str_color{
 	my $str  = shift;
 	
 	$str = Jcode->new($str)->euc;
-	foreach my $i (@{$self->{str_force}}){
+	foreach my $i (@{$self->{s_search}}, @{$self->{str_force}}){
 		my $pat = $i;
 		my $rep = "	start$i	end";
 		$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
+	}
+
+	my %s_search;
+	foreach my $i (@{$self->{s_search}}){
+		$s_search{$i} = 1;
 	}
 
 	my $pref = 0;
@@ -335,17 +341,21 @@ sub _str_color{
 				$self->gui_jchar(substr($str,$pref,$start - $pref),'euc'),
 				$color
 			);
-			#print Jcode->new(substr($str,$pref,$start - $pref))->sjis.", $color, ,$pref, $start\n";
+			# print Jcode->new(substr($str,$pref,$start - $pref))->sjis.", $color, ,$pref, $start\n";
 			$color = 'force';
 			$pref = $start + 6;
 		}
 		
-		$self->text->insert(            # endまで
+		my $color2 = 'force';           # endまで
+		if ( $s_search{substr($str, $pref, $pos - $pref)} ){
+			$color2 = 'search';
+		}
+		$self->text->insert(
 			'end',
 			$self->gui_jchar(substr($str, $pref, $pos - $pref),'euc'),
-			'force'
+			$color2
 		);
-		#print Jcode->new( substr($str, $pref, $pos - $pref) )->sjis.", nakami\n";
+		# print Jcode->new( substr($str, $pref, $pos - $pref) )->sjis.", nakami\n";
 		
 		$pref = $pos + 4;
 	}
@@ -354,7 +364,7 @@ sub _str_color{
 		'end',
 		$self->gui_jchar( substr($str, $pref, length($str) - $pref), 'euc')
 	);
-	#print Jcode->new( substr($str, $pref, length($str) - $pref) )->sjis.", nokori\n";
+	# print Jcode->new( substr($str, $pref, length($str) - $pref) )->sjis.", nokori\n";
 }
 
 # 再描画ルーチン

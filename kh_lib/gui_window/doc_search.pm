@@ -372,12 +372,13 @@ sub view_doc{
 	
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
-		doc_id  => $self->{result}[$selected][0],
-		tani    => $self->tani,
-		parent  => $self,
-		kyotyo  => $self->last_words,
-		kyotyo2 => $w,
-		foot    => $t,
+		doc_id   => $self->{result}[$selected][0],
+		tani     => $self->tani,
+		parent   => $self,
+		kyotyo   => $self->last_words,
+		kyotyo2  => $w,
+		s_search => $self->{last_strings},
+		foot     => $t,
 	);
 }
 
@@ -521,7 +522,8 @@ sub search{
 	);
 	
 	if ($query_ok){
-		$self->{last_words} = $self->{code_obj}->last_search_words;
+		$self->{last_words}   = $self->{code_obj}->last_search_words;
+		$self->{last_strings} = $self->{code_obj}->last_search_strings;
 		$self->display(1);
 	}
 	return $self;

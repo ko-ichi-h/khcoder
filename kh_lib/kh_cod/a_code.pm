@@ -65,20 +65,22 @@ sub code{
 		return 0;
 	}
 	
-	#if ($self->tables && $self->{parents}){          # 一時テーブルの削除
-	#	foreach my $i (@{$self->tables}){
-	#		print "$i,";
-	#		mysql_exec->drop_table($i);
-	#	}
-	#	print "\n";
-	#}
-	
 	my $check2 = mysql_exec->select(
 		"SELECT * FROM $self->{res_table} LIMIT 1"
 	)->hundle;
 	unless (my $ch = $check2->fetch){
 		$self->{res_table} = '';
 		return 0;
+	}
+	
+	# 検索に使用した文字列のリスト
+	foreach my $i (@{$self->{condition}}){
+		if ($i->name eq 'string'){
+			my $t = $i->raw;
+			chop $t;
+			substr($t, 0, 1) = '';
+			push @{$self->{strings}}, $t;
+		}
 	}
 	
 	# $self->{tani}.num が0だった場合のための手当
@@ -230,6 +232,10 @@ sub new{
 sub hyosos{
 	my $self = shift;
 	return $self->{hyosos};
+}
+sub strings{
+	my $self = shift;
+	return $self->{strings};
 }
 
 
