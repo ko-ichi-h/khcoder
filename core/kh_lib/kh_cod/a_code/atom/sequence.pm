@@ -1,6 +1,6 @@
 # 語のフレーズによる指定
 
-package kh_cod::a_code::atom::near;
+package kh_cod::a_code::atom::sequence;
 use base qw(kh_cod::a_code::atom);
 use strict;
 use mysql_a_word;
@@ -130,10 +130,10 @@ sub ready{
 	my @wlist;
 	my $max_dist = 10;
 	my $option   = '';
-	if ($self->raw =~ /^near\((.+)\)$/o){                   # デフォルト
+	if ($self->raw =~ /^seq\((.+)\)$/o){                   # デフォルト
 		@wlist = split /\-/, $1;
 	}
-	elsif ( $self->raw =~ /^near\((.+)\)\[(.+)\]$/o ){      # オプション
+	elsif ( $self->raw =~ /^seq\((.+)\)\[(.+)\]$/o ){      # オプション
 		@wlist = split /\-/, $1;
 		if ($2 =~ /^([0-9]+)$/){
 			$max_dist = $1;
@@ -148,7 +148,7 @@ sub ready{
 				$option = '';
 			}
 		} else {
-			print "error: invalid option \"$2\" found in the NEAR statement\n";
+			print "error: invalid option \"$2\" found in the SEQUENCE statement\n";
 			return '';
 		}
 		if ($debug){
@@ -209,12 +209,12 @@ sub ready{
 	}
 	
 	# AND検索による絞り込み
-	mysql_exec->drop_table("ct_tmp_near");
+	mysql_exec->drop_table("ct_tmp_sequence");
 	mysql_exec->do("
-		CREATE TEMPORARY TABLE ct_tmp_near (id int) TYPE=HEAP
+		CREATE TEMPORARY TABLE ct_tmp_sequence (id int) TYPE=HEAP
 	",1);
 	my $sql = '';
-	$sql .= "INSERT INTO ct_tmp_near (id)\n";
+	$sql .= "INSERT INTO ct_tmp_sequence (id)\n";
 	$sql .= "SELECT $tani.id\n";
 	$sql .= "FROM $tani\n";
 	foreach my $i (@wlist){
@@ -251,7 +251,7 @@ sub ready{
 	else {
 		$sql .= "\n";
 	}
-	$sql .= "FROM $tani, ct_tmp_near, hyosobun";
+	$sql .= "FROM $tani, ct_tmp_sequence, hyosobun";
 	if ($option eq 'd'){
 		$sql .= ", dan\n";
 	}
@@ -260,7 +260,7 @@ sub ready{
 	}
 	$sql .= "WHERE\n";
 	$sql .= "$sql_join{$tani}\n";
-	$sql .= "AND $tani.id = ct_tmp_near.id\n";
+	$sql .= "AND $tani.id = ct_tmp_sequence.id\n";
 	if ($option eq 'd'){
 		$sql .= "AND dan.dan_id = hyosobun.dan_id\n";
 		$sql .= "AND dan.h5_id = hyosobun.h5_id\n";
@@ -302,6 +302,11 @@ sub ready{
 	for (my $n = 0; $n <= $chk_data_rows; ++$n){
 		print Jcode->new("$n,$chk_data[$n]->[0],$chk_data[$n]->[1],$chk_data[$n]->[2]\n")->sjis if $debug;
 		
+		# 先頭後以外の場合はチェックをスキップ
+		unless ( $chk_data[$n]->[2] eq $wlist[0] ){
+			print "\tskip (1)\n" if $debug;
+			next;
+		}
 		# 直後が同じ語の場合はチェックをスキップ
 		if ($chk_data[$n]->[2] eq $chk_data[$n+1]->[2]){
 			print "\tskip (0)\n" if $debug;
@@ -311,6 +316,7 @@ sub ready{
 		# 後続をチェック
 		my $w_count     = 0;
 		my %w_count_chk = ();
+		my $wn          = 0;
 		my $sn          = $n;
 		my $pos_hb      = $chk_data[$n]->[1];
 		my $pos_opt     = $chk_data[$n]->[3];
@@ -334,11 +340,15 @@ sub ready{
 				last;
 			}
 			
-			# 未チェックの語が有ればカウントアップ
-			unless ($w_count_chk{$chk_data[$sn]->[2]}){
+			# 未チェックで順番通りの語が有ればカウントアップ
+			if (
+				   ($w_count_chk{$chk_data[$sn]->[2]} == 0) # 未チェック？
+				&& ($chk_data[$sn]->[2] eq $wlist[$wn])     # 順番通り？
+			){
 				print "\tcount up!\n" if $debug;
 				$w_count_chk{$chk_data[$sn]->[2]} = 1;
 				++$w_count;
+				++$wn;
 				$pos_hb= $chk_data[$sn]->[1];
 				if ($w_count >= @wlist){
 					print "\tCheck OK!!\n" if $debug;
@@ -351,7 +361,7 @@ sub ready{
 	}
 
 	# 近くに出現しているかどうかをチェック:  3. 結果の書き出し
-	my $table = "ct_$tani"."_near_$num";
+	my $table = "ct_$tani"."_sequence_$num";
 	$self->{tables} = ["$table"];
 	++$num;
 	mysql_exec->drop_table($table);
@@ -395,10 +405,10 @@ sub parent_table{
 }
 
 sub pattern{
-	return 'near\(.+\-.+\)';
+	return 'seq\(.+\-.+\)';
 }
 sub name{
-	return 'near';
+	return 'sequence';
 }
 
 1;
