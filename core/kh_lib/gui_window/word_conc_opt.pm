@@ -27,8 +27,8 @@ sub _new{
 	my @options = (
 		[ $self->gui_jchar('指定なし'),  '0'],
 		[ $self->gui_jchar('左右・1-5'), 'rl'],
-		[ $self->gui_jchar('左・1-5'),   'r'],
-		[ $self->gui_jchar('右・1-5'),   'l'],
+		[ $self->gui_jchar('左・1-5'),   'l'],
+		[ $self->gui_jchar('右・1-5'),   'r'],
 		[ $self->gui_jchar('左・5'),     'l5'],
 		[ $self->gui_jchar('左・4'),     'l4'],
 		[ $self->gui_jchar('左・3'),     'l3'],
