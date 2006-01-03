@@ -222,6 +222,7 @@ sub _tuika{
 		}
 		$sql .= "\t)\n";
 	}
+	# print "$sql\n";
 	mysql_exec->do($sql,1);
 	mysql_exec->drop_table("temp_conc_old");
 	
