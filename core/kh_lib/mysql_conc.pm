@@ -467,7 +467,7 @@ sub coloc{
 	my $res_atom;
 	foreach my $i (@cols){
 		my $st = mysql_exec->select("
-			SELECT genkei.id, count($i)
+			SELECT genkei.id, count(*)
 			FROM temp_conc, hyoso, genkei, hselection
 			WHERE
 				temp_conc.$i = hyoso.id
@@ -475,7 +475,7 @@ sub coloc{
 				AND genkei.khhinshi_id = hselection.khhinshi_id
 				AND hselection.ifuse = 1
 				AND genkei.nouse = 0
-			GROUP by $i
+			GROUP by genkei.id
 		",1)->hundle;
 		while ( my $h = $st->fetch ){
 			$words{$h->[0]} = 1;
