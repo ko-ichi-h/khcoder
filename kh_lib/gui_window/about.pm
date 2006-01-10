@@ -81,7 +81,7 @@ sub _new{
 		);
 
 	$wabtkh->Label(
-		-text => $self->gui_jchar('¡¡Copyright (C)2001-2005 Èõ¸ý¹Ì°ì','euc'),
+		-text => $self->gui_jchar('¡¡Copyright (C)2001-2006 Èõ¸ý¹Ì°ì','euc'),
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
