@@ -55,7 +55,7 @@ sub read_file{
 	close (FC);
 	my $icode = Jcode->new($check)->icode;
 	$check = '';
-	print "$icode\n";
+	#print "$icode\n";
 	
 	open (F,"$file") or 
 		gui_errormsg->open(
