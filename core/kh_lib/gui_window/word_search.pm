@@ -228,7 +228,7 @@ sub search{
 	my $self = shift;
 	
 	# 変数取得
-	my $query = Jcode->new($self->gui_jg($self->entry->get))->euc;
+	my $query = Jcode->new($self->gui_jg($self->entry->get),'sjis')->euc;
 
 	unless ($query){
 		return;

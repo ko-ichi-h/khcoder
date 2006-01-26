@@ -45,7 +45,6 @@ sub _new{
 		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-
 	$win->Label(
 		-text => 'Status:',
 		-font => "TKFN"
@@ -77,7 +76,8 @@ sub exec{
 	
 	my $all = Jcode->new(
 		$self->gui_jg(
-			$self->text->get("1.0","end")
+			$self->text->get("1.0","end"),
+			'sjis'
 		)
 	)->euc;
 	$all =~ s/\r\n/\n/g;

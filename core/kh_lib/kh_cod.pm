@@ -41,6 +41,21 @@ sub read_file{
 	my $self;
 	my $class = shift;
 	my $file = shift;
+
+	# 文字コード判別
+	open (FC,"$file") or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $file
+		);
+	my $check = '';
+	while (<FC>){
+		$check .= $_;
+	}
+	close (FC);
+	my $icode = Jcode->new($check)->icode;
+	$check = '';
+	print "$icode\n";
 	
 	open (F,"$file") or 
 		gui_errormsg->open(
@@ -57,7 +72,7 @@ sub read_file{
 			next;
 		}
 		
-		$_ = Jcode->new("$_")->euc;
+		$_ = Jcode->new("$_",$icode)->euc;
 		if ($_ =~ /^＊/o){
 			$head = $_;
 			push @codes, $head;

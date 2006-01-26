@@ -73,10 +73,10 @@ sub add_direct{
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			'＃直接入力',
-			Jcode->new($args{raw})->euc
+			Jcode->new($args{raw},'sjis')->euc
 		);
 	} else {                                      # 「AND」,「OR」の場合
-		$args{raw} = Jcode->new($args{raw})->tr('　',' ')->euc;
+		$args{raw} = Jcode->new($args{raw},'sjis')->tr('　',' ')->euc;
 		$args{raw} =~ tr/\t\n/  /;
 		my ($n, $t) = (0,'');
 		foreach my $i (split / /, $args{raw}){

@@ -111,16 +111,15 @@ sub _save{
 		if (
 			$self->{label}{$i}
 			eq
-			Jcode->new( $self->gui_jg($self->{entry}{$i}->get) )->euc
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc
 		){
 			next;
 		}
 		$self->{var_obj}->label_save(
 			Jcode->new($i)->euc,
-			Jcode->new( $self->gui_jg($self->{entry}{$i}->get) )->euc,
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc,
 		);
 	}
-	
 	$self->close;
 }
 

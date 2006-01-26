@@ -500,12 +500,12 @@ sub search{
 	my $self = shift;
 
 	# 変数取得
-	my $query = Jcode->new($self->gui_jg($self->entry->get))->euc;
+	my $query = Jcode->new($self->gui_jg($self->entry->get),'sjis')->euc;
 	unless ($query){
 		return;
 	}
-	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get))->euc;
-	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get))->euc;
+	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get),'sjis')->euc;
+	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get),'sjis')->euc;
 	my $length = $self->entry3->get;
 
 	# 表示の初期化
