@@ -21,19 +21,25 @@ sub _new{
 		-relief => 'sunken',
 		)->pack(-anchor => 'c');
 
-	$wabtkh->Label(
-		-text => $self->gui_jchar('¡¡Version¡§  '."$::kh_version  (Perl ".$]." / Tk $Tk::VERSION)",'euc'),
+	my $fra_r = $wabtkh->Frame()->pack(-anchor=>'w', -side => 'right');
+	my $fra_l = $wabtkh->Frame()->pack(-anchor=>'w', -side => 'left');
+
+	$fra_l->Label(
+		-text => '  Version:',
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
-	my $fra1 = $wabtkh->Frame() ->pack(-anchor=>'w');
-
-	$fra1->Label(
-		-text => $self->gui_jchar('¡¡Web page¡§','euc'),
+	$fra_r->Label(
+		-text => "$::kh_version  (Perl ".$]." / Tk $Tk::VERSION)",
 		-font => "TKFN",
-		)->pack(-anchor => 'w',-pady=>'0',-padx=>'2', -side=>'left');
+		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
-	$fra1->Button(-text => 'http://khc.sourceforge.net',
+	$fra_l->Label(
+		-text => '  Web page:',
+		-font => "TKFN",
+		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+
+	$fra_r->Button(-text => 'http://khc.sourceforge.net',
 		-font => "TKFN",
 		-foreground => 'blue',
 		-activeforeground => 'red',
@@ -48,37 +54,77 @@ sub _new{
 				}
 			);
 		}
-		)->pack(-side => 'right');
+	)->pack(-anchor => 'w');
 
-	my $fra2 = $wabtkh->Frame() ->pack(-anchor=>'w');
-
-	$fra2->Label(
-		-text => $self->gui_jchar('¡¡Thanks to¡§  ÀîÃ¼Î¼ ','euc'),
+	$fra_l->Label(
+		-text => '  Powered by:',
 		-font => "TKFN",
-		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2',-side=>'left');
+		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
-	my $kwebbutton = $fra2->Button(-image => $fra2->Photo(-file => $::config_obj->icon_image_file),
+	$fra_r->Button(
+		-text => 'ChaSen',
 		-font => "TKFN",
-	#	-activebackground => 'white',
-	#	-background => 'white',
-		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
+		-foreground => 'blue',
+		-activeforeground => 'red',
+		-borderwidth => '0',
+		-relief => 'flat',
+		-cursor => 'hand2',
+		-width => 6,
+		-command => sub{
+			$mw->after(
 				10,
 				sub {
-					gui_OtherWin->open(
-						'http://keisya.hus.osaka-u.ac.jp/kawabata/'
-					);
+					gui_OtherWin->open('http://chasen.naist.jp/');
 				}
 			);
 		}
-	)->pack(-side => 'right',-pady => '0');
+	)->pack(-side => 'left', -anchor => 'nw');
 
-	my $blhelp = $wabtkh->Balloon();
-	$blhelp->attach($kwebbutton,
-		-balloonmsg => "Visit his Web page.",
-		-font => "TKFN"
-		);
+	$fra_r->Label(
+		-text => '&',
+		-font => "TKFN",
+		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+
+	$fra_r->Button(
+		-text => 'MySQL',
+		-font => "TKFN",
+		-foreground => 'blue',
+		-activeforeground => 'red',
+		-borderwidth => '0',
+		-relief => 'flat',
+		-cursor => 'hand2',
+		-command => sub{
+			$mw->after(
+				10,
+				sub {
+					gui_OtherWin->open('http://www.mysql.com/');
+				}
+			);
+		}
+	)->pack(-anchor => 'nw');
+
+	$fra_l->Label(
+		-text => '  Thanks to:',
+		-font => "TKFN",
+		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+
+	$fra_r->Button(
+		-text => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
+		-font => "TKFN",
+		-foreground => 'blue',
+		-activeforeground => 'red',
+		-borderwidth => '0',
+		-relief => 'flat',
+		-cursor => 'hand2',
+		-command => sub{
+			$mw->after(
+				10,
+				sub {
+					gui_OtherWin->open('http://keisya.hus.osaka-u.ac.jp/kawabata/');
+				}
+			);
+		}
+	)->pack(-anchor => 'nw');
 
 	$wabtkh->Label(
 		-text => $self->gui_jchar('¡¡Copyright (C)2001-2006 Èõ¸ý¹Ì°ì','euc'),
