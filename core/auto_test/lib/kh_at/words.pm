@@ -31,7 +31,7 @@ sub _exec_test{
 	# ¥³¥ó¥³¡¼¥À¥ó¥¹
 	$self->{result} .= "¢£¥³¥ó¥³¡¼¥À¥ó¥¹\n";
 	
-	$self->{result} .= "¢¢¥Î¡¼¥Ş¥ë\n";
+	$self->{result} .= "¢¢Ãê½Ğ¸ì¡ÜÉÊ»ì\n";
 	$win_src->{optmenu_bk}->set_value('p');
 	$win_src->{entry}->delete(0,'end');
 	$win_src->{entry}->insert( 0, gui_window->gui_jchar('»à') );
@@ -41,13 +41,18 @@ sub _exec_test{
 	my $win_cnc = $::main_gui->get('w_word_conc');
 	$self->_wc_sort($win_cnc);
 	
-	$self->{result} .= "¢¢³èÍÑ·Á»ØÄê\n";
+	$self->{result} .= "¢¢Ãê½Ğ¸ì¡ÜÉÊ»ì¡Ü³èÍÑ·Á\n";
 	$win_src->list->selectionClear(0);
 	$win_src->list->selectionSet("0.4");
 	$win_src->conc;
 	$self->_wc_sort($win_cnc);
 	
-	$self->{result} .= "¢¢ÉÊ»ì»ØÄê\n";
+	$self->{result} .= "¢¢Ãê½Ğ¸ì¡ÜÉÊ»ì¡ÜÄÉ²Ã¾ò·ï\n";
+	$win_src->list->selectionClear("0.4");
+	$win_src->list->selectionSet(0);
+	$win_src->conc;
+	my $win_cnc_opt = gui_window::word_conc_opt->open;
+	
 	
 	
 	return $self;
@@ -134,7 +139,7 @@ sub _ws_AndOr{
 	# OR¸¡º÷
 	$win->{optmenu_andor}->set_value('OR');
 	$win->{entry}->delete(0,'end');
-	$win->{entry}->insert( 0, gui_window->gui_jchar('»à') );
+	$win->{entry}->insert( 0, gui_window->gui_jchar('¼Ô') );
 	$win->search;
 	$t .= "¡ûOR-1:\n".Jcode->new(
 		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )

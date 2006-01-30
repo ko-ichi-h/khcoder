@@ -294,6 +294,7 @@ sub _menu_check{
 			if ($n + 1 <= 3){
 				my $key = $n + 1;
 				$key = "menu"."$key";
+				$self->{$key}->set_value(0);
 				$self->{$key}->configure(-state, 'disable');
 			}
 		}
