@@ -21,8 +21,9 @@ sub _new{
 		-relief => 'sunken',
 		)->pack(-anchor => 'c');
 
-	my $fra_r = $wabtkh->Frame()->pack(-anchor=>'w', -side => 'right');
-	my $fra_l = $wabtkh->Frame()->pack(-anchor=>'w', -side => 'left');
+	my $fra_m = $wabtkh->Frame()->pack(-anchor=>'w');
+	my $fra_r = $fra_m->Frame()->pack(-anchor=>'w', -side => 'right');
+	my $fra_l = $fra_m->Frame()->pack(-anchor=>'w', -side => 'left');
 
 	$fra_l->Label(
 		-text => '  Version:',
@@ -30,7 +31,7 @@ sub _new{
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	$fra_r->Label(
-		-text => "$::kh_version  (Perl ".$]." / Tk $Tk::VERSION)",
+		-text => "$::kh_version  (Perl ".$].", Perl/Tk $Tk::VERSION)",
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
@@ -61,7 +62,10 @@ sub _new{
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
-	$fra_r->Button(
+	my $fra_r1 = $fra_r->Frame()->pack(-anchor=>'w');
+
+
+	$fra_r1->Button(
 		-text => 'ChaSen',
 		-font => "TKFN",
 		-foreground => 'blue',
@@ -80,12 +84,12 @@ sub _new{
 		}
 	)->pack(-side => 'left', -anchor => 'nw');
 
-	$fra_r->Label(
-		-text => '&',
+	$fra_r1->Label(
+		-text => '+',
 		-font => "TKFN",
 		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
 
-	$fra_r->Button(
+	$fra_r1->Button(
 		-text => 'MySQL',
 		-font => "TKFN",
 		-foreground => 'blue',
@@ -101,7 +105,31 @@ sub _new{
 				}
 			);
 		}
+	)->pack(-anchor => 'nw' , -side => 'left');
+
+	$fra_r1->Label(
+		-text => '+',
+		-font => "TKFN",
+		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+
+	$fra_r1->Button(
+		-text => 'Perl',
+		-font => "TKFN",
+		-foreground => 'blue',
+		-activeforeground => 'red',
+		-borderwidth => '0',
+		-relief => 'flat',
+		-cursor => 'hand2',
+		-command => sub{
+			$mw->after(
+				10,
+				sub {
+					gui_OtherWin->open('http://www.perl.com/');
+				}
+			);
+		}
 	)->pack(-anchor => 'nw');
+
 
 	$fra_l->Label(
 		-text => '  Thanks to:',
@@ -126,10 +154,15 @@ sub _new{
 		}
 	)->pack(-anchor => 'nw');
 
-	$wabtkh->Label(
-		-text => $self->gui_jchar('　Copyright (C)2001-2006 樋口耕一','euc'),
+	$fra_l->Label(
+		-text => '  Copyright:',
 		-font => "TKFN",
-		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+
+	$fra_r->Label(
+		-text => $self->gui_jchar('(C) 2001-2006 樋口耕一','euc'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$wabtkh->Button(
 		-text => $self->gui_jchar('閉じる'),
