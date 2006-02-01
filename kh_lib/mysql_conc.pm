@@ -98,7 +98,7 @@ sub _find{
 	my %args = %{$self};
 	my @hyoso = @{$_[0]};
 
-	print "\n1: Searching(1)...\n";
+	# print "\n1: Searching(1)...\n";
 
 	# Temp Table作成
 	mysql_exec->drop_table("temp_conc");
@@ -153,7 +153,7 @@ sub _find{
 
 sub _tuika{
 	my $self = shift;
-	print "\n1: Searching(2)...\n";
+	# print "\n1: Searching(2)...\n";
 	
 	# Temp Table作成
 	mysql_exec->drop_table("temp_conc_old");
@@ -240,7 +240,7 @@ sub _sort{                                        # ソート用テーブルの作成
 	my %args = %{$self};
 	my $sql = '';
 
-	print "2: Sorting...\n";
+	# print "2: Sorting...\n";
 	my ($group, $n);
 	foreach my $i ('sort1','sort2','sort3'){
 		mysql_exec->drop_table("temp_conc_$i");
@@ -323,7 +323,7 @@ sub _format{                                      # 結果の出力
 	my $self = shift;
 	my $start = shift;
 	
-	print "3: Formating...\n";
+	# print "3: Formating...\n";
 	
 	# 出力リスト作成（中央のID）;
 	my $st1 = mysql_exec->select("

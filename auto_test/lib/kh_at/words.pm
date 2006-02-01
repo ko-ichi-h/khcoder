@@ -2,8 +2,6 @@ package kh_at::words;
 use base qw(kh_at);
 use strict;
 
-# テスト出力数: 48 + 
-
 sub _exec_test{
 	my $self = shift;
 	$self->{result} = '';
@@ -52,9 +50,42 @@ sub _exec_test{
 	$win_src->list->selectionSet(0);
 	$win_src->conc;
 	my $win_cnc_opt = gui_window::word_conc_opt->open;
+	$win_cnc_opt->{menu1}->set_value('l2');
+	$win_cnc_opt->_menu_check;
+	$win_cnc_opt->{entry}{'1a'}->insert( 0, gui_window->gui_jchar('父') );
+	$win_cnc_opt->save;
+	$self->_wc_sort($win_cnc);
 	
+	# コロケーション統計
+	$win_cnc_opt = gui_window::word_conc_opt->open; # 現状(?)復帰
+	$win_cnc_opt->{menu1}->set_value(0);
+	$win_cnc_opt->_menu_check;
+	$win_cnc_opt->save;
+	$win_cnc->search;
+	$win_cnc->coloc;
+		# 未完！
 	
+	# 出現数 分布
+	$self->{result} .= "■出現数 分布\n";
+	my $win_freq = gui_window::word_freq->open;
+	$win_freq->count;
+	$self->{result} .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list1} ) )
+	)->euc;
+	$self->{result} .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list2} ) )
+	)->euc;
 	
+	# 品詞別 出現数順 リスト
+	$self->{result} .= "■品詞別 出現数順 リスト\n";
+	my $target = $::project_obj->file_WordList;
+	mysql_words->csv_list($target);
+	open (RFILE,"$target") or die;
+	while (<RFILE>){
+		$self->{result} .= Jcode->new($_)->euc;
+	}
+	close (RFILE);
+
 	return $self;
 }
 
