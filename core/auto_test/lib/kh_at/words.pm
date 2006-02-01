@@ -57,13 +57,21 @@ sub _exec_test{
 	$self->_wc_sort($win_cnc);
 	
 	# コロケーション統計
+	$self->{result} .= "■コロケーション統計\n";
+	
 	$win_cnc_opt = gui_window::word_conc_opt->open; # 現状(?)復帰
 	$win_cnc_opt->{menu1}->set_value(0);
 	$win_cnc_opt->_menu_check;
 	$win_cnc_opt->save;
+	
+	$win_cnc->{entry}->delete(0,'end');
+	$win_cnc->{entry4}->delete(0,'end');
+	$win_cnc->{entry}->insert(0, gui_window->gui_jchar('先生') );
 	$win_cnc->search;
 	$win_cnc->coloc;
-		# 未完！
+	
+	my $win_coloc = $::main_gui->get('w_word_conc_coloc');
+	$self->_wcl_filter($win_coloc);
 	
 	# 出現数 分布
 	$self->{result} .= "■出現数 分布\n";
@@ -88,6 +96,72 @@ sub _exec_test{
 
 	return $self;
 }
+
+#----------------------------------#
+#   コロケーション統計のパターン   #
+
+sub _wcl_filter{
+	my $self = shift;
+	my $win  = shift;
+	my $t = '';
+	
+	$self->{result} .= "●フィルタ無し\n";
+	$self->_wcl_sort($win);
+	
+	$self->{result} .= "●フィルタ有り\n";
+	my $win_filter = gui_window::word_conc_coloc_opt->open;
+	$win_filter->{ent_limit}->delete(0,'end');
+	$win_filter->{ent_limit}->insert( 0, '50' );
+	foreach my $i (%{$win_filter->{hinshi_obj}->{name}}){
+		if (
+			   $win_filter->{hinshi_obj}->{name}{$i} == 21
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 22
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 16
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 17
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 18
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 19
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 10
+			|| $win_filter->{hinshi_obj}->{name}{$i} == 12
+		){
+			$win_filter->{hinshi_obj}->{check_wigets}->[$i]->deselect;
+		}
+	}
+	$win_filter->save;
+	$self->_wcl_sort($win);
+
+	return $self;
+}
+
+sub _wcl_sort{
+	my $self = shift;
+	my $win  = shift;
+	my $t = '';
+	
+	$t .= "○ソート：スコア\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+	)->euc;
+	
+	$win->{menu1}->set_value('r2');
+	$win->view;
+	$t .= "○ソート：右2\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+	)->euc;
+	
+	$win->{menu1}->set_value('suml');
+	$win->view;
+	$t .= "○ソート：左合計\n".Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+	)->euc;
+	
+	$win->{menu1}->set_value('score');
+	$win->view;
+	
+	$self->{result} .= $t;
+	return $self;
+}
+
+#------------------------------#
+#   コンコーダンスのパターン   #
 
 sub _wc_sort{
 	my $self = shift;
@@ -138,6 +212,9 @@ sub _wc_sort{
 	$self->{result} .= $t;
 	return $self;
 }
+
+#--------------------------#
+#   抽出語検索のパターン   #
 
 sub _ws_BK{
 	my $self = shift;
