@@ -525,7 +525,7 @@ sub search{
 
 	# ¸¡º÷¼Â¹Ô
 	use Benchmark;
-	my $t0 = new Benchmark;
+	# my $t0 = new Benchmark;
 
 	# my ($result, $r_num)
 	$self->{result_obj} = mysql_conc->a_word(
@@ -555,8 +555,8 @@ sub search{
 		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
 	}
 	
-	my $t1 = new Benchmark;
-	print timestr(timediff($t1,$t0)),"\n";
+	#my $t1 = new Benchmark;
+	#print timestr(timediff($t1,$t0)),"\n";
 	
 	return $self;
 }

@@ -31,7 +31,7 @@ sub _new{
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	$fra_r->Label(
-		-text => "$::kh_version  (Perl ".$].", Perl/Tk $Tk::VERSION)",
+		-text => "$::kh_version  [Perl ".$].", Perl/Tk $Tk::VERSION]",
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
