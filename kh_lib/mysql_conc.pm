@@ -563,7 +563,7 @@ sub format_coloc{
 	
 	
 	$sql .= "\t)\n";
-	$sql .= "ORDER BY $args{sort} DESC\n";
+	$sql .= "ORDER BY $args{sort} DESC, genkei.name\n";
 	$sql .= "LIMIT $args{filter}->{limit}";
 	
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;

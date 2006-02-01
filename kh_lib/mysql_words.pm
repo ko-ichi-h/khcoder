@@ -52,7 +52,7 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC";
+		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, genkei.name";
 		my $t = mysql_exec->select($sql,1);
 		$result = $t->hundle->fetchall_arrayref;
 		
@@ -91,6 +91,7 @@ sub search{
 					WHERE
 						    hyoso.katuyo_id = katuyo.id
 						AND hyoso.genkei_id = $id
+					ORDER BY hyoso.num DESC, katuyo.name
 				",1)->hundle->fetchall_arrayref;
 				
 				foreach my $h (@{$r}){            # 活用語の追加
@@ -124,7 +125,7 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= ") \n ORDER BY hyoso.num DESC";
+		$sql .= ") \n ORDER BY hyoso.num DESC, hyoso.name";
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
