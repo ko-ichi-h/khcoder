@@ -33,6 +33,7 @@ sub first{
 	}
 
 		my $ta0 = new Benchmark;
+	kh_dictio->readin->mark;
 	kh_morpho->run;
 		my $ta1 = new Benchmark;
 		print "Morpho1\t",timestr(timediff($ta1,$ta0)),"\n";

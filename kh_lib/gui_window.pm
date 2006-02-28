@@ -93,10 +93,17 @@ sub open{
 		$::main_gui->opened($self->win_name,$self);
 
 		# Windowを閉じる際のバインド
-		$self->win_obj->bind(
-			'<Alt-Key-F4>',
-			sub{ $self->close; }
-		);
+		if ($self->win_name eq 'main_window'){
+			$self->win_obj->bind(
+				'<Alt-Key-F4>',
+				sub{ $self->close; }
+			);
+		} else {
+			$self->win_obj->bind(
+				'<Key-Escape>',
+				sub{ $self->close; }
+			);
+		}
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
 		# メインWindowsへ戻るためのキー・バインド
@@ -198,8 +205,5 @@ sub disabled_entry_configure{
 		-disabledforeground => 'black',
 	) if $Tk::VERSION >= 804;
 }
-
-
-
 
 1;
