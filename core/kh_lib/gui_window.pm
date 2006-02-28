@@ -44,6 +44,8 @@ use gui_window::outvar_list;
 use gui_window::outvar_detail;
 use gui_window::force_color;
 use gui_window::contxt_out;
+use gui_window::use_te;
+
 
 BEGIN{
 	if( $] > 5.008 ){
