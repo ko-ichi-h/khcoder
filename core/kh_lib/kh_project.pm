@@ -288,12 +288,6 @@ sub status_dan{
 #--------------------------#
 #   ファイル名・パス関連   #
 
-sub file_m_target{
-	my $self = shift;
-	my $temp = $self->file_datadir.'_mph.txt';
-	$temp = $::config_obj->os_path($temp);
-	return $temp;
-}
 
 sub file_backup{
 	my $self = shift;
@@ -315,14 +309,24 @@ sub file_MorphoOut{
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
-
-sub file_MorphoIn{
+sub file_MorphoOut_o{
+	my $self = shift;
+	my $temp = $self->file_datadir.'_cho.txt';
+	$temp = $::config_obj->os_path($temp);
+	return $temp;
+}
+sub file_m_target{
+	my $self = shift;
+	my $temp = $self->file_datadir.'_mph.txt';
+	$temp = $::config_obj->os_path($temp);
+	return $temp;
+}
+sub file_MorphoIn{ # file_m_targetと同じ
 	my $self = shift;
 	my $temp = $self->file_m_target;
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
-
 sub file_WordList{
 	my $self = shift;
 	my $list = $self->file_datadir.'_wl.csv';

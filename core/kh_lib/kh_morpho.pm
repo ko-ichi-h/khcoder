@@ -22,8 +22,6 @@ sub run{
 	};
 	bless $self, $class;
 
-	kh_dictio->readin->mark;
-
 	$self->_run;
 
 	return(1);

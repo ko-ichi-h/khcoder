@@ -129,7 +129,19 @@ sub make{
 				-label => gui_window->gui_jchar('TermExtract'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					gui_window::use_te->open;;
+					my $found = 1;;
+					eval "require TermExtract::Calc_Imp" or $found = 0;
+					eval "require TermExtract::Chasen"   or $found = 0;
+					if ($found){
+						gui_window::use_te->open;
+					} else {
+						$mw->messageBox(
+							-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
+							-title => 'KH Coder',
+							-type => 'OK',
+						);
+						return 0;
+					}
 				})},
 				-state => 'disable'
 			);
