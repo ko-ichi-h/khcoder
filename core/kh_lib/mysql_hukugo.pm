@@ -17,6 +17,31 @@ sub run_from_morpho{
 
 	# ·ÁÂÖÁÇ²òÀÏ
 	print "1. morpho\n";
+	
+	my $source = $::project_obj->file_target;
+	my $dist   = $::project_obj->file_m_target;
+	unlink($dist);
+	my $icode = kh_jchar->check_code($source);
+	open (MARKED,">$dist") or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $dist
+		);
+	open (SOURCE,"$source") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $source
+		);
+	while (<SOURCE>){
+		chomp;
+		my $text = Jcode->new($_,$icode)->h2z->euc;
+		$text =~ s/ /¡¡/go;
+		print MARKED "$text\n";
+	}
+	close (SOURCE);
+	close (MARKED);
+	kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
+	
 	$::config_obj->use_hukugo(1);
 	$::config_obj->save;
 	kh_morpho->run;

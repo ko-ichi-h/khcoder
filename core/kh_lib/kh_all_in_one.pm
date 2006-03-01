@@ -16,8 +16,6 @@ use strict;
 #	ユーザー設定: khc[khc], root[khcallinone]
 #	「khc.ini」も添付する
 
-# Win9xに対応？
-
 sub init{
 	# 茶筌のパス設定
 	$::config_obj->chasen_path($::config_obj->cwd.'\dep\chasen\chasen.exe')
