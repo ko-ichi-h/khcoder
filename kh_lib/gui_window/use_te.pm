@@ -78,7 +78,7 @@ sub _new{
 				10,
 				sub {
 					$self->close;
-					print "ok\n";
+					gui_window::use_te_g->open;
 				}
 			);
 		}
