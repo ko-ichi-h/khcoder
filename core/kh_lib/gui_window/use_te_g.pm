@@ -87,15 +87,7 @@ sub run{
 		rename($::project_obj->file_MorphoOut,$::project_obj->file_MorphoOut_o) or die;
 	}
 	
-	# TermExtractの使用
-	use TermExtract::Chasen;
-	my $te_obj = new TermExtract::Chasen;
-	
-	
-	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
-	
-	
-	# フィルタリング
+	# フィルタリング用に単名詞のリストを作成
 	my %is_alone = ();
 	open (CHASEN,$::project_obj->file_MorphoOut_o) or 
 			gui_errormsg->open(
@@ -107,19 +99,96 @@ sub run{
 	}
 	close (CHASEN);
 	
+	use TermExtract::Chasen;
 	
+	# 選択されていない重要度指標を一通り計算
+	my (%i_tf,%i_frq,%i_total,%i_uniq,%i_ppl);
+	if (1){
+		# Term Frequency
+		my $te_obj = new TermExtract::Chasen;
+		$te_obj->no_LR;
+		$te_obj->use_TF;
+		my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+		foreach my $i (@noun_list){
+			next if $i->[0] =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/; # 日付・時刻
+			next if $i->[0] =~ /^\d+$/;  # 数値のみ
+			next if $is_alone{$i->[0]};  # 単名詞
+			$i_tf{$i->[0]} = $i->[1];
+		}
+		undef $te_obj;
+		undef @noun_list;
+
+		# Frequency
+		$te_obj = new TermExtract::Chasen;
+		$te_obj->no_LR;
+		$te_obj->use_frq;
+		@noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+		foreach my $i (@noun_list){
+			next unless $i_tf{$i->[0]};
+			$i_frq{$i->[0]} = $i->[1];
+		}
+		undef $te_obj;
+		undef @noun_list;
+
+		# 延べ数の取得
+		$te_obj = new TermExtract::Chasen;
+		$te_obj->use_total;
+		$te_obj->no_frq;
+		@noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+		foreach my $i (@noun_list){
+			next unless $i_tf{$i->[0]};
+			$i_total{$i->[0]} = $i->[1];
+		}
+		undef $te_obj;
+		undef @noun_list;
+
+		# 異なり数の取得
+		$te_obj = new TermExtract::Chasen;
+		$te_obj->use_uniq;
+		$te_obj->no_frq;
+		@noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+		foreach my $i (@noun_list){
+			next unless $i_tf{$i->[0]};
+			$i_uniq{$i->[0]} = $i->[1];
+		}
+		undef $te_obj;
+		undef @noun_list;
+
+		# パープレキシティの取得
+		$te_obj = new TermExtract::Chasen;
+		$te_obj->use_Perplexity;
+		$te_obj->no_frq;
+		@noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+		foreach my $i (@noun_list){
+			next unless $i_tf{$i->[0]};
+			$i_ppl{$i->[0]} = $i->[1];
+		}
+		undef $te_obj;
+		undef @noun_list;
+	}
+
+	# 選択された指標を計算
+	my $te_obj = new TermExtract::Chasen;
+	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+	
+	# 出力
 	open (OUT,">hoge.csv") or die;
-	
+	print OUT 'キーワード,重要度,Term Frequency,Frequency,延べ数,異なり数,Perplexity',"\n";
 	foreach (@noun_list) {
-		# 日付・時刻は表示しない
-		next if $_->[0] =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/;
-		# 数値のみは表示しない
-		next if $_->[0] =~ /^\d+$/;
-		# 単名詞は表示しない
-		next if $is_alone{$_->[0]};
+		next if $_->[0] =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/; # 日付・時刻
+		next if $_->[0] =~ /^\d+$/;  # 数値のみ
+		next if $is_alone{$_->[0]};  # 単名詞
 
 		# 結果表示（$output_modeに応じて、出力様式を変更
-		print OUT "$_->[0],$_->[1]\n";
+		print OUT
+			"$_->[0]",",",
+			"$_->[1],",
+			"$i_tf{$_->[0]},",
+			"$i_frq{$_->[0]},",
+			"$i_total{$_->[0]},",
+			"$i_uniq{$_->[0]},",
+			"$i_ppl{$_->[0]}\n"
+		;
 	}
 	close (OUT);
 	kh_jchar->to_sjis("hoge.csv") if $::config_obj->os eq 'win32';
