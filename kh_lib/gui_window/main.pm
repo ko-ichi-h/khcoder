@@ -25,8 +25,8 @@ sub _new{
 	}
 
 	# Windowへの書き込み
-	$self->{mw}->title('KH Coder [MAIN WINDOW]');          # Windowタイトル
-	$self->make_font;                                      # フォント
+	$self->{mw}->title('KH Coder [MAIN WINDOW]');            # Windowタイトル
+	$self->make_font;                                        # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
 	#$self->{win_obj} = $mw;
@@ -171,7 +171,10 @@ sub close{
 	if ($::config_obj->all_in_one_pack){
 		kh_all_in_one->mysql_stop;
 	}
-	$::config_obj->R->stopR if $::config_obj->R;
+	if ($::config_obj->R){
+		# print "Stopping R...\n";
+		$::config_obj->R->stopR;
+	}
 	$self->win_obj->destroy;
 }
 
