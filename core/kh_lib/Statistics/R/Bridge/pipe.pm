@@ -114,7 +114,12 @@
     $cmd .= "\n" if $cmd !~ /\n$/ ;
     $cmd =~ s/\n/\r\n/gs ;
 
-    print "Statistics::R::Bridge::pipe::send cmd: $cmd" if $debug; # kh
+	unless ( length($this->{LOG_DIR}) ){
+		print "Statistics::R::Bridge::pipe::send, skipping cmd: $cmd" if $debug; # kh
+		return UNDEF;
+	}
+
+    print "Statistics::R::Bridge::pipe::send, cmd: $cmd" if $debug; # kh
     
     while ( $this->is_blocked ) { sleep(1) ;}
     
@@ -528,7 +533,7 @@
       for (1..3) { kill(9 , $pid_old) ;}
     }
     
-    $this->send(q`q("no",0,TRUE)`) if !$no_send ;    
+    $this->send(q`q("no",0,TRUE)`) if !$no_send ;
     
     if ( $pid ) {
       for (1..3) { kill(9 , $pid) ;}
