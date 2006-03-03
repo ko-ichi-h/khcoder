@@ -44,6 +44,7 @@ sub _new{
 
 sub run{
 	my $self = shift;
+	my $debug = 1;
 	
 	# 形態素解析が終わっていなければ実行
 	unless (
@@ -98,6 +99,8 @@ sub run{
 		$is_alone{(split /\t/, $_)[0]} = 1;
 	}
 	close (CHASEN);
+	print "done: scan for filtering\n" if $debug;
+	
 	
 	use TermExtract::Chasen;
 	
@@ -117,6 +120,7 @@ sub run{
 		}
 		undef $te_obj;
 		undef @noun_list;
+		print "done: TF\n" if $debug;
 
 		# Frequency
 		$te_obj = new TermExtract::Chasen;
@@ -129,6 +133,7 @@ sub run{
 		}
 		undef $te_obj;
 		undef @noun_list;
+		print "done: F\n" if $debug;
 
 		# 延べ数の取得
 		$te_obj = new TermExtract::Chasen;
@@ -141,6 +146,7 @@ sub run{
 		}
 		undef $te_obj;
 		undef @noun_list;
+		print "done: Total\n" if $debug;
 
 		# 異なり数の取得
 		$te_obj = new TermExtract::Chasen;
@@ -153,6 +159,7 @@ sub run{
 		}
 		undef $te_obj;
 		undef @noun_list;
+		print "done: Uniq\n" if $debug;
 
 		# パープレキシティの取得
 		$te_obj = new TermExtract::Chasen;
@@ -165,11 +172,13 @@ sub run{
 		}
 		undef $te_obj;
 		undef @noun_list;
+		print "done: PPL\n" if $debug;
 	}
 
 	# 選択された指標を計算
 	my $te_obj = new TermExtract::Chasen;
 	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut_o);
+	print "done: Select\n" if $debug;
 	
 	# 出力
 	open (OUT,">hoge.csv") or die;
