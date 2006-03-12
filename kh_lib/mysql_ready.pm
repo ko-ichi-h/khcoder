@@ -665,7 +665,7 @@ sub hyosobun{
 	# インデックスを貼る
 	mysql_exec->do("
 		alter table hyosobun
-			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id, dan_id),
 			add index index2 (bun_id, dan_id, bun_idt, hyoso_id),
 			add index index3 (hyoso_id),
 			add index index4 (bun_idt)

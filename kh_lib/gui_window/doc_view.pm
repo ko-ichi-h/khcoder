@@ -259,7 +259,6 @@ sub near{
 		$t = Jcode->new('・現在表示中の文書：  ')->sjis;
 	}
 	$self->{foot} = $t;
-	
 	my $doc = mysql_getdoc->get(
 		doc_id   => $id,
 		w_search => $self->{w_search},

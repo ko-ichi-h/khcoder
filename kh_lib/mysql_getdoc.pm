@@ -16,15 +16,19 @@ sub get{
 	my $self = \%args;
 	$class .= '::'."$args{tani}";
 	bless $self, $class;
+	my $debug = 0;
 
 	# 文書の特定
+	print "id..." if $debug;
 	unless ( length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
 	}
 
 	# 本文の取り出し
+	print "body..." if $debug;
 	my $d = $self->get_body;
 
+	print "color1..." if $debug;
 	my %for_color = ();                           # 強調指定の準備
 	foreach my $i (@{$self->{w_force}}){               # その他のコード
 		$for_color{$i} = "force";
@@ -35,7 +39,6 @@ sub get{
 	foreach my $i (@{$self->{w_search}}){              # 検索語
 		$for_color{$i} = "search";
 	}
-	#print "p2 ";
 	my $html = mysql_exec->select("                    # HTMLタグ
 		select hyoso.id
 		from  hselection,
@@ -48,7 +51,7 @@ sub get{
 		$for_color{$i->[0]} = 'html';
 	}
 	
-	#print "p3, ";
+	print "color2..." if $debug;
 	my @body = (); my $last = -1;                 # 改行付加＆検索語強調
 	my $lastw;
 	foreach my $i (@{$d}){
@@ -68,10 +71,10 @@ sub get{
 	$self->{body} = \@body;
 	
 	# 上位見出しの取り出し
-	#print "head\n";
+	print "header..." if $debug;
 	$self->{header} = $self->get_header;
 	
-	
+	print "done...\n" if $debug;
 	return $self;
 }
 
@@ -92,6 +95,7 @@ sub get_body{
 		if ($tani eq $i){last;}
 	}
 	$sql   .= "ORDER BY hyosobun.id";
+	# print "$sql\n";
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 }
 
