@@ -110,14 +110,14 @@ sub make{
 				-state => 'disable'
 			);
 
-		my $f_hukugo = $f->cascade(
-				-label => gui_window->gui_jchar('複合語の検出'),
-				-font => "TKFN",
-				-tearoff=>'no'
-			);
+		#my $f_hukugo = $f->cascade(
+		#		-label => gui_window->gui_jchar('複合語の検出'),
+		#		-font => "TKFN",
+		#		-tearoff=>'no'
+		#	);
 
-		$self->{m_b1_hukugo} = $f_hukugo->command(
-				-label => gui_window->gui_jchar('茶筌（複合名詞）'),
+		$self->{m_b1_hukugo} = $f->command(
+				-label => gui_window->gui_jchar('複合名詞のリスト（一部）'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					$self->mc_hukugo;
@@ -125,26 +125,26 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{m_b1_hukugo_te} = $f_hukugo->command(
-				-label => gui_window->gui_jchar('TermExtract'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					my $found = 1;;
-					eval "require TermExtract::Calc_Imp" or $found = 0;
-					eval "require TermExtract::Chasen"   or $found = 0;
-					if ($found){
-						gui_window::use_te->open;
-					} else {
-						$mw->messageBox(
-							-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
-							-title => 'KH Coder',
-							-type => 'OK',
-						);
-						return 0;
-					}
-				})},
-				-state => 'disable'
-			);
+		#$self->{m_b1_hukugo_te} = $f_hukugo->command(
+		#		-label => gui_window->gui_jchar('TermExtract'),
+		#		-font => "TKFN",
+		#		-command => sub {$mw->after(10,sub{
+		#			my $found = 1;;
+		#			eval "require TermExtract::Calc_Imp" or $found = 0;
+		#			eval "require TermExtract::Chasen"   or $found = 0;
+		#			if ($found){
+		#				gui_window::use_te->open;
+		#			} else {
+		#				$mw->messageBox(
+		#					-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
+		#					-title => 'KH Coder',
+		#					-type => 'OK',
+		#				);
+		#				return 0;
+		#			}
+		#		})},
+		#		-state => 'disable'
+		#	);
 
 		$f->separator();
 
@@ -632,7 +632,7 @@ sub refresh{
 		't_sql_do',
 		'm_b0_close',
 		'm_b1_hukugo',
-		'm_b1_hukugo_te',
+		#'m_b1_hukugo_te',
 	);
 
 	# 形態素解析が行われていればActive
