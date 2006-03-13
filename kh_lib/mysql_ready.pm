@@ -672,7 +672,12 @@ sub hyosobun{
 	",1);
 	mysql_exec->do("
 		alter table hyosobun_t
-			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index a1     (h1_id, h2_id, h3_id, h4_id, h5_id,dan_id),
+			add index a2     (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index a3     (h1_id, h2_id, h3_id, h4_id),
+			add index a4     (h1_id, h2_id, h3_id),
+			add index a5     (h1_id, h2_id),
+			add index a6     (h1_id),
 			add index index2 (bun_id, dan_id, bun_idt),
 			add index index4 (bun_idt)
 	",1);
@@ -720,7 +725,6 @@ sub tag_fix{
 	my $self = shift;
 	
 	# 表層語テーブル
-	
 	my $h = mysql_exec->select("
 		SELECT hyoso.id, hyoso.name
 		FROM hyoso, genkei, hselection
@@ -743,7 +747,6 @@ sub tag_fix{
 	$h->finish;
 	
 	# 基本形テーブル
-	
 	my $k = mysql_exec->select("
 		SELECT genkei.id, genkei.name
 		FROM genkei, hselection
@@ -751,7 +754,6 @@ sub tag_fix{
 			    genkei.khhinshi_id = hselection.khhinshi_id
 			AND hselection.name = \'タグ\'
 	",1)->hundle;
-	
 	while (my $i = $k->fetch){
 		my $name = $i->[1];
 		chop $name; substr($name,0,1) = '';
@@ -833,6 +835,8 @@ sub rowtxt{
 	}
 }
 
+#my $debug_print_frag = 0;
+
 sub rowtxt_sql{
 	my $self = shift;
 	my $d1   = shift;
@@ -847,6 +851,18 @@ sub rowtxt_sql{
 			AND hyosobun.id < $d2
 		ORDER BY hyosobun.id
 	";
+
+	#unless ($debug_print_frag){
+	#	print "$sql\n";
+	#	my $h = mysql_exec->select("explain\n$sql")->hundle;
+	#	while (my $i = $h->fetch){
+	#		foreach my $ii (@{$i}){
+	#			print "$ii: ";
+	#		}
+	#		print "\n";
+	#	}
+	#	$debug_print_frag = 1;
+	#}
 
 	return $sql;
 }
@@ -890,6 +906,11 @@ sub tanis{
 				bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE bun ADD INDEX test1 (
+		#		id,bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('bun');
 	}
 	
@@ -928,6 +949,11 @@ sub tanis{
 				dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE dan ADD INDEX test1 (
+		#		id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('dan');
 	} else {
 		$::project_obj->status_dan(0);
@@ -964,6 +990,11 @@ sub tanis{
 				h5_id,h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE h5 ADD INDEX test1 (
+		#		id,h5_id,h4_id,h3_id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('h5');
 	} else {
 		$::project_obj->status_h5(0);
@@ -998,6 +1029,11 @@ sub tanis{
 				h4_id,h3_id,h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE h4 ADD INDEX test1 (
+		#		id,h4_id,h3_id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('h4');
 	} else {
 		$::project_obj->status_h4(0);
@@ -1030,6 +1066,11 @@ sub tanis{
 				h3_id,h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE h3 ADD INDEX test1 (
+		#		id,h3_id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('h3');
 	} else {
 		$::project_obj->status_h3(0);
@@ -1060,6 +1101,11 @@ sub tanis{
 				h2_id,h1_id
 			)
 		",1);
+		#mysql_exec->do("
+		#	ALTER TABLE h2 ADD INDEX test1 (
+		#		id,h2_id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('h2');
 	} else {
 		$::project_obj->status_h2(0);
@@ -1083,6 +1129,11 @@ sub tanis{
 			ORDER BY h1_id
 		",1);
 		mysql_exec->do("ALTER TABLE h1 ADD INDEX index7 (h1_id)",1);
+		#mysql_exec->do("
+		#	ALTER TABLE h1 ADD INDEX test1 (
+		#		id,h1_id
+		#	)
+		#",1);
 		mysql_ready::doclength->make_each('h1');
 	} else {
 		$::project_obj->status_h1(0);

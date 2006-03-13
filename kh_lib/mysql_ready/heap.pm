@@ -55,7 +55,12 @@ sub hyosobun{
 	",1);
 	mysql_exec->do("
 		alter table hyosobun
-			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index a1     (h1_id, h2_id, h3_id, h4_id, h5_id,dan_id),
+			add index a2     (h1_id, h2_id, h3_id, h4_id, h5_id),
+			add index a3     (h1_id, h2_id, h3_id, h4_id),
+			add index a4     (h1_id, h2_id, h3_id),
+			add index a5     (h1_id, h2_id),
+			add index a6     (h1_id),
 			add index index2 (dan_id, bun_id, bun_idt),
 			add index index3 (hyoso_id),
 			add index index4 (bun_idt)

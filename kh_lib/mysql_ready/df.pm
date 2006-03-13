@@ -69,14 +69,25 @@ sub calc{
 			)
 		",1);
 		# 集計の実行
-		my $sql = "INSERT INTO df_$tani (genkei_id, f)\n";
-		$sql .= "SELECT genkei.id, COUNT(DISTINCT $tani.id)\n";
-		$sql .= "FROM hyosobun, $tani, hyoso, genkei\n";
-		$sql .= "WHERE\n$sql_join{$tani}";
-		$sql .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
-		$sql .= "\tAND hyoso.genkei_id = genkei.id\n";
-		$sql .= "GROUP BY genkei.id";
-		mysql_exec->do($sql,1);
+		my $sql1 = "INSERT INTO df_$tani (genkei_id, f)\n";
+		my $sql2 = "SELECT genkei.id, COUNT(DISTINCT $tani.id)\n";
+		$sql2 .= "FROM hyosobun, $tani, hyoso, genkei\n";
+		$sql2 .= "WHERE\n$sql_join{$tani}";
+		$sql2 .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
+		$sql2 .= "\tAND hyoso.genkei_id = genkei.id\n";
+		$sql2 .= "GROUP BY genkei.id";
+		
+		# 処理確認用のprint
+		#my $h = mysql_exec->select("explain\n$sql2")->hundle;
+		#print "\n$sql2\n";
+		#while (my $i = $h->fetch){
+		#	foreach my $ii (@{$i}){
+		#		print "$ii: ";
+		#	}
+		#	print "\n";
+		#}
+		
+		mysql_exec->do($sql1.$sql2,1);
 	}
 	
 }
