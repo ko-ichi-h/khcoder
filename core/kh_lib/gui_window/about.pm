@@ -148,7 +148,7 @@ sub _new{
 			$mw->after(
 				10,
 				sub {
-					gui_OtherWin->open('http://keisya.hus.osaka-u.ac.jp/kawabata/');
+					gui_OtherWin->open('http://free.jinbunshakai.net/kawabata/');
 				}
 			);
 		}
@@ -160,9 +160,27 @@ sub _new{
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$fra_r->Label(
-		-text => $self->gui_jchar('(C) 2001-2006 Èõ¸ı¹Ì°ì','euc'),
+		-text => $self->gui_jchar('(C) 2001-2006','euc'),
 		-font => "TKFN",
-	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
+
+	$fra_r->Button(
+		-text => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
+		-font => "TKFN",
+		-foreground => 'blue',
+		-activeforeground => 'red',
+		-borderwidth => '0',
+		-relief => 'flat',
+		-cursor => 'hand2',
+		-command => sub{
+			$mw->after(
+				10,
+				sub {
+					gui_OtherWin->open('http://koichi.nihon.to/psnl');
+				}
+			);
+		}
+	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
 
 	$wabtkh->Button(
 		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),

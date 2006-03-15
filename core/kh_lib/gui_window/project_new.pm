@@ -88,6 +88,8 @@ sub _make_new{
 	$self->close;
 
 	$new->open or die;
+	#use kh_CheckDataFile;
+	#kh_CheckDataFile->exec($new->file_target);
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
