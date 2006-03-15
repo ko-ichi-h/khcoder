@@ -50,6 +50,6 @@ kh_at::words->exec_test('words');                  # 抽出語メニュー
 
 
 kh_at->close_test_project;                        # プロジェクトを閉じる
-#kh_at->delete_test_project;                       # プロジェクトを削除
+kh_at->delete_test_project;                       # プロジェクトを削除
 
 MainLoop;
