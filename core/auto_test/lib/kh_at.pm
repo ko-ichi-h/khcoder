@@ -25,11 +25,16 @@ sub _check_output{
 	
 	my $diff = diff(
 		$self->file_test_output,
-		$self->file_test_ref
+		$self->file_test_ref,
+		{ STYLE => 'Context' }
 	);
 	
 	if ($diff){
 		print "NG\n";
+		my $file = 'auto_test/'.$self->test_name.'_diff.txt';
+		open(OUT,">$file") or die;
+		print OUT $diff;
+		close (OUT);
 	} else {
 		print "OK\n";
 	}
