@@ -28,6 +28,7 @@ sub _new{
 		-borderwidth => 2
 	)->pack(-expand=>'yes',-fill=>'both');
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$fra1->Label(
@@ -45,6 +46,24 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_sansyo;});},
 		-state => 'disable'
 	)->pack(-side => 'right',-padx => 2);
+
+	$fra3->Label(
+		-text => $self->gui_jchar('分析対象ファイルの文字コード：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	$self->{icode_menu} = gui_widget::optmenu->open(
+		parent  => $fra3,
+		pack    => { -side => 'right', -padx => 2},
+		options =>
+			[
+				[$self->gui_jchar('自動判別')  => ''],
+				[$self->gui_jchar('EUC') => 'euc'],
+				[$self->gui_jchar('JIS') => 'jis'],
+				[$self->gui_jchar('Shift-JIS') => 'sjis']
+			],
+		variable => \$self->{icode},
+	);
 
 	$fra2->Label(
 		-text => $self->gui_jchar('説明（メモ）：'),
@@ -70,10 +89,6 @@ sub _new{
 	)->pack(-side => 'right');
 
 	# ENTRYのバインド
-	#$e1->DropSite(
-	#	-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
-	#	-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
-	#);
 	$npro->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	
@@ -82,13 +97,19 @@ sub _new{
 	$e2->insert(0,$self->gui_jchar($self->project->comment));
 	$e1->configure(-state => 'disable');
 	$self->{e2}  = $e2;
+	$self->{icode_menu}->set_value($self->project->assigned_icode);
+	
 	#MainLoop;
 	return $self;
 }
 
 sub _edit{
 	my $self = shift;
-	$self->projects->edit($self->num,$self->gui_jg($self->e2->get));
+	$self->projects->edit(
+		$self->num,
+		$self->gui_jg($self->e2->get),
+		$self->gui_jg($self->{icode})
+	);
 	$self->close();
 	$self->mother->refresh;
 }

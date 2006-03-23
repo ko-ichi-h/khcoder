@@ -19,16 +19,36 @@ sub _new{
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$fra1->Label(
 		-text => $self->gui_jchar('分析対象ファイル：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
+
 	my $e1 = $fra1->Entry(
 		-font => "TKFN",
 		-background => 'white'
 	)->pack(-side => 'right');
+
+	$fra3->Label(
+		-text => $self->gui_jchar('分析対象ファイルの文字コード：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	$self->{icode_menu} = gui_widget::optmenu->open(
+		parent  => $fra3,
+		pack    => { -side => 'right', -padx => 2},
+		options =>
+			[
+				[$self->gui_jchar('自動判別')  => ''],
+				[$self->gui_jchar('EUC') => 'euc'],
+				[$self->gui_jchar('JIS') => 'jis'],
+				[$self->gui_jchar('Shift-JIS') => 'sjis']
+			],
+		variable => \$self->{icode},
+	);
 
 	$fra1->Button(
 		-text => $self->gui_jchar('参照'),
@@ -43,7 +63,7 @@ sub _new{
 	my $e2 = $fra2->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(-side => 'right');
+	)->pack(-side => 'right',-pady => 2);
 
 	$mw->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -83,6 +103,7 @@ sub _make_new{
 	my $new = kh_project->new(
 		target  => $self->gui_jg($self->e1->get),
 		comment => $self->gui_jg($self->e2->get),
+		icode   => $self->gui_jg($self->{icode}),
 	) or return 0;
 	kh_projects->read->add_new($new) or return 0;
 	$self->close;
