@@ -85,7 +85,7 @@ sub check_code{
 			return $chk;
 		}
 	}
-	print "checking icode...\n";
+	#print "checking icode...\n";
 	
 	open (TEMP,$the_file)
 		or &gui_errormsg->open(type => 'file',thefile => $the_file);
