@@ -116,6 +116,7 @@ sub edit{
 	my $edp = $self->a_project($_[0]);
 
 	$edp->comment($_[1]);
+	$edp->assigned_icode($_[2]);
 
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){

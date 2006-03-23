@@ -82,7 +82,7 @@ sub prepare_db{
 	',1);
 	mysql_exec->do("
 		INSERT INTO status_char (name, status)
-		VALUES ('last_tani',''),('last_codf','')
+		VALUES ('last_tani',''),('last_codf',''),('icode','$self->{icode}')
 	",1);
 }
 
@@ -116,6 +116,53 @@ sub open{
 #--------------#
 #   アクセサ   #
 #--------------#
+
+sub assigned_icode{
+	my $self = shift;
+	my $new = shift;
+	my $r;
+	
+	my $cu_project;
+	if ($::project_obj){
+		$cu_project = $::project_obj;
+		undef $::project_obj;
+	}
+	$self->open or die;                 # プロジェクトを一時的に開く
+	
+	if ( defined($new) ){                         # 新しい値を設定
+		my $h = mysql_exec->select("
+			SELECT status
+			FROM   status_char
+			WHERE  name= 'icode'
+		",1)->hundle;
+		if ($h->rows){
+			mysql_exec->do("
+				UPDATE status_char SET status='$new' WHERE name='icode'
+			",1);
+		} else {
+			mysql_exec->do("
+				INSERT INTO status_char (name, status)
+				VALUES ('icode','$new')
+			",1);
+		}
+		$r = $new;
+	} else {                                      # 現在の値を参照
+		my $h = mysql_exec->select("
+			SELECT status
+			FROM   status_char
+			WHERE  name= 'icode'
+		",1)->hundle;
+		if ($h->rows){
+			$r = $h->fetch->[0];
+		}
+	}
+	
+	undef $::project_obj;               # 一時的に開いたプロジェクトを閉じる
+	if ($cu_project){
+		$cu_project->open;
+	}
+	return $r;
+}
 
 sub status_morpho{
 	my $self = shift;

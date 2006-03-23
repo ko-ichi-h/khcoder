@@ -75,6 +75,18 @@ sub to_sjis{
 
 sub check_code{
 	my $the_file = $_[1];
+	
+	if ( defined($::project_obj) ){
+		my $chk = $::project_obj->assigned_icode;
+		if (
+			   ( $::project_obj->file_target eq $the_file )
+			&& ( $chk )
+		) {
+			return $chk;
+		}
+	}
+	print "checking icode...\n";
+	
 	open (TEMP,$the_file)
 		or &gui_errormsg->open(type => 'file',thefile => $the_file);
 	my $n = 0;
