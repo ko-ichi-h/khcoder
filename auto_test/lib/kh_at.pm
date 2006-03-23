@@ -31,7 +31,7 @@ sub _check_output{
 	
 	if ($diff){
 		print "NG\n";
-		my $file = 'auto_test/'.$self->test_name.'_diff.txt';
+		my $file = $self->file_test_output.'_diff.txt';
 		open(OUT,">$file") or die;
 		print OUT $diff;
 		close (OUT);
