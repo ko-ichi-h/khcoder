@@ -40,22 +40,12 @@ sub _new{
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
-	$fra_r->Button(-text => 'http://khc.sourceforge.net',
-		-font => "TKFN",
-		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					gui_OtherWin->open('http://khc.sourceforge.net');
-				}
-			);
-		}
-	)->pack(-anchor => 'w');
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('http://khc.sourceforge.net'),
+		url    => 'http://khc.sourceforge.net',
+		parent => $fra_r,
+		pack   => {-anchor => 'nw',-pady=>'2'},
+	);
 
 	$fra_l->Label(
 		-text => '  Powered by:',
@@ -64,95 +54,48 @@ sub _new{
 
 	my $fra_r1 = $fra_r->Frame()->pack(-anchor=>'w');
 
-
-	$fra_r1->Button(
-		-text => 'ChaSen',
-		-font => "TKFN",
-		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-width => 6,
-		-command => sub{
-			$mw->after(
-				10,
-				sub {
-					gui_OtherWin->open('http://chasen.naist.jp/');
-				}
-			);
-		}
-	)->pack(-side => 'left', -anchor => 'nw');
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('ChaSen'),
+		url    => 'http://chasen.naist.jp/',
+		parent => $fra_r1,
+		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
+	);
 
 	$fra_r1->Label(
 		-text => '+',
 		-font => "TKFN",
 		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
 
-	$fra_r1->Button(
-		-text => 'MySQL',
-		-font => "TKFN",
-		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-command => sub{
-			$mw->after(
-				10,
-				sub {
-					gui_OtherWin->open('http://www.mysql.com/');
-				}
-			);
-		}
-	)->pack(-anchor => 'nw' , -side => 'left');
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('MySQL'),
+		url    => 'http://www.mysql.com/',
+		parent => $fra_r1,
+		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
+	);
 
 	$fra_r1->Label(
 		-text => '+',
 		-font => "TKFN",
 		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
 
-	$fra_r1->Button(
-		-text => 'Perl',
-		-font => "TKFN",
-		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-command => sub{
-			$mw->after(
-				10,
-				sub {
-					gui_OtherWin->open('http://www.perl.com/');
-				}
-			);
-		}
-	)->pack(-anchor => 'nw');
-
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('Perl'),
+		url    => 'http://www.perl.com/',
+		parent => $fra_r1,
+		pack   => {-anchor => 'nw',-pady=>'2'},
+	);
 
 	$fra_l->Label(
 		-text => '  Thanks to:',
 		-font => "TKFN",
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
-	$fra_r->Button(
-		-text => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
-		-font => "TKFN",
-		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-command => sub{
-			$mw->after(
-				10,
-				sub {
-					gui_OtherWin->open('http://free.jinbunshakai.net/kawabata/');
-				}
-			);
-		}
-	)->pack(-anchor => 'nw');
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
+		url    => 'http://free.jinbunshakai.net/kawabata/',
+		parent => $fra_r,
+		pack   => {-anchor => 'nw',-pady=>'2'},
+	);
 
 	$fra_l->Label(
 		-text => '  Copyright:',
@@ -162,54 +105,14 @@ sub _new{
 	$fra_r->Label(
 		-text => $self->gui_jchar('(C) 2001-2006','euc'),
 		-font => "TKFN",
-	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
+	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 
-	my $bl_higuchi = $fra_r->Label(
-		-text => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
-		-font => "TKFN",
-		-foreground => 'blue',
-	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
-	$bl_higuchi->bind(
-		"<Button-1>",
-		sub{
-			$mw->after(
-				10,
-				sub {
-					gui_OtherWin->open('http://koichi.nihon.to/psnl');
-				}
-			);	
-		}
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
+		url    => 'http://koichi.nihon.to/psnl',
+		parent => $fra_r,
+		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
 	);
-	$bl_higuchi->bind(
-		"<Enter>",
-		sub{
-			$mw->after(
-				10,
-				sub {
-					$bl_higuchi->configure(-foreground => 'red');
-				}
-			);
-		}	
-	);
-
-
-	#$fra_r->Button(
-	#	-text => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
-	#	-font => "TKFN",
-	#	-foreground => 'blue',
-	#	-activeforeground => 'red',
-	#	-borderwidth => '0',
-	#	-relief => 'flat',
-	#	-cursor => 'hand2',
-	#	-command => sub{
-	#		$mw->after(
-	#			10,
-	#			sub {
-	#				gui_OtherWin->open('http://koichi.nihon.to/psnl');
-	#			}
-	#		);
-	#	}
-	#)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
 
 	$wabtkh->Button(
 		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),

@@ -7,6 +7,7 @@ use gui_widget::tani_and_o;
 use gui_widget::codf;
 use gui_widget::mail_config;
 use gui_widget::hinshi;
+use gui_widget::url_lab;
 
 sub open{
 	my $class = shift;
