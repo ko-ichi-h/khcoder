@@ -164,23 +164,52 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
 
-	$fra_r->Button(
+	my $bl_higuchi = $fra_r->Label(
 		-text => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
 		-font => "TKFN",
 		-foreground => 'blue',
-		-activeforeground => 'red',
-		-borderwidth => '0',
-		-relief => 'flat',
-		-cursor => 'hand2',
-		-command => sub{
+	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
+	$bl_higuchi->bind(
+		"<Button-1>",
+		sub{
 			$mw->after(
 				10,
 				sub {
 					gui_OtherWin->open('http://koichi.nihon.to/psnl');
 				}
-			);
+			);	
 		}
-	)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
+	);
+	$bl_higuchi->bind(
+		"<Enter>",
+		sub{
+			$mw->after(
+				10,
+				sub {
+					$bl_higuchi->configure(-foreground => 'red');
+				}
+			);
+		}	
+	);
+
+
+	#$fra_r->Button(
+	#	-text => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
+	#	-font => "TKFN",
+	#	-foreground => 'blue',
+	#	-activeforeground => 'red',
+	#	-borderwidth => '0',
+	#	-relief => 'flat',
+	#	-cursor => 'hand2',
+	#	-command => sub{
+	#		$mw->after(
+	#			10,
+	#			sub {
+	#				gui_OtherWin->open('http://koichi.nihon.to/psnl');
+	#			}
+	#		);
+	#	}
+	#)->pack(-anchor => 'w',-side => 'left', -pady=>'2');
 
 	$wabtkh->Button(
 		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),
