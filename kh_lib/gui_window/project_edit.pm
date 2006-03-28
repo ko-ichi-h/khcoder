@@ -43,6 +43,7 @@ sub _new{
 	$fra1->Button(
 		-text => $self->gui_jchar('»²¾È'),
 		-font => "TKFN",
+		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->_sansyo;});},
 		-state => 'disable'
 	)->pack(-side => 'right',-padx => 2);
