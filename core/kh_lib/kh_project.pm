@@ -120,7 +120,7 @@ sub open{
 sub assigned_icode{
 	my $self = shift;
 	my $new = shift;
-	my $r;
+	my $r = 0;
 	
 	my $cu_project;
 	if ($::project_obj){
