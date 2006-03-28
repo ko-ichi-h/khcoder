@@ -42,7 +42,7 @@ sub _new{
 		pack    => { -side => 'right', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('自動判別')  => ''],
+				[$self->gui_jchar('自動判別')  => 0],
 				[$self->gui_jchar('EUC') => 'euc'],
 				[$self->gui_jchar('JIS') => 'jis'],
 				[$self->gui_jchar('Shift-JIS') => 'sjis']
