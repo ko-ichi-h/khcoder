@@ -94,17 +94,10 @@ sub open{
 		$::main_gui->opened($self->win_name,$self);
 
 		# Windowを閉じる際のバインド
-		if ($self->win_name eq 'main_window'){
-			$self->win_obj->bind(
-				'<Alt-Key-F4>',
-				sub{ $self->close; }
-			);
-		} else {
-			$self->win_obj->bind(
-				'<Key-Escape>',
-				sub{ $self->close; }
-			);
-		}
+		$self->win_obj->bind(
+			'<Control-Key-q>',
+			sub{ $self->close; }
+		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
 		# メインWindowsへ戻るためのキー・バインド
