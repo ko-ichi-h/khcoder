@@ -335,10 +335,11 @@ sub count{
 	}
 	
 	# 1つでもコードが与えられた文書の数を取得
-	$self->cumulate if @{$self->{valid_codes}} > 30;
 	
 	my $least1 = 0;
 	if ($self->valid_codes){
+		$self->cumulate if @{$self->{valid_codes}} > 30;
+		
 		my $sql = "SELECT count(*)\nFROM $tani\n";
 		foreach my $i (@{$self->tables}){
 			$sql .= "LEFT JOIN $i ON $tani.id = $i.id\n";
