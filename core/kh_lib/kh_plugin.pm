@@ -11,10 +11,12 @@ sub read{
 		print "$_\n";
 		
 		unless (eval "use $_; 1"){
+			my $err = $@;
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => "プラグイン「".$_.".pm」の読み込みを中止しました。\nエラー内容：\n$@"
+				msg  => "プラグイン「".$_.".pm」の読み込みを中止しました。\nエラー：\n$err"
 			);
+			print "$err\n";
 			return 0;
 		}
 		
