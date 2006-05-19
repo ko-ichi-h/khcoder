@@ -7,7 +7,7 @@ BEGIN {
 	$kh_version = "2.beta.6";
 	use Cwd qw(cwd);
 	use lib cwd.'/kh_lib';
-	#use lib cwd.'/lib';
+	use lib cwd.'/plugin';
 	if ($^O eq 'MSWin32'){
 		require Tk::Splash;
 		$splash = Tk::Splash->Show(
