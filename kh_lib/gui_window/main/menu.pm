@@ -1,6 +1,51 @@
 package gui_window::main::menu;
 use strict;
 
+# メニューの設定：プロジェクトが選択されればActive
+my @menu0 = (
+	'm_b1_mark',
+	'm_b2_morpho',
+	't_sql_select',
+	't_sql_do',
+	'm_b0_close',
+	'm_b1_hukugo',
+);
+
+# メニューの設定：形態素解析が行われていればActive
+my @menu1 = (
+	't_word_search',
+	't_word_list',
+	't_word_freq',
+	't_word_ass',
+	't_word_conc',
+	'm_b3_check',
+	't_cod_count',
+	't_cod_tab',
+	't_cod_jaccard',
+	't_cod_out',
+	't_cod_outtab',
+	't_cod_out_spss',
+	't_cod_out_csv',
+	't_cod_out_tab',
+	't_cod_out_var',
+	't_txt_html2mod',
+	'm_b3_crossout',
+	'm_b3_crossout_csv',
+	'm_b3_crossout_spss',
+	'm_b3_crossout_tab',
+	'm_b3_crossout_var',
+	't_txt_pickup',
+	't_doc_search',
+	't_out_read',
+	't_out_read_csv',
+	't_out_read_tab',
+	't_out_list',
+	'm_b3_contxtout',
+	'm_b3_contxtout_spss',
+	'm_b3_contxtout_csv',
+	'm_b3_contxtout_tab',
+);
+
 #------------------#
 #   メニュー作成   #
 #------------------#
@@ -489,6 +534,52 @@ sub make{
 				-state => 'disable'
 			);
 
+	$f->separator();
+
+	my $f_p = $f->cascade(
+			-label => gui_window->gui_jchar('プラグイン'),
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+	# プラグインの読み込み
+	use File::Find;
+	find(\&read_each, $::config_obj->cwd.'/plugin');
+	sub read_each{
+		return if(-d $File::Find::name);
+		return unless $_ =~ /.+\.pm/;
+		substr($_, length($_) - 3, length($_)) = '';
+		unless (eval "use $_; 1"){
+			my $err = $@;
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => "プラグイン「".$_.".pm」の読み込みを中止しました。\nエラー：\n$err"
+			);
+			print "$err\n";
+			return 0;
+		}
+		my $conf = $_->plugin_config;
+		my $cu = $_;
+		my $tmp_menu = $f_p->command(
+				-label => gui_window->gui_jchar($conf->{name}),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					$cu->exec;
+				})},
+				-state => 'disable'
+		);
+		if ($conf->{menu_cnf} == 0){
+			$tmp_menu->configure(-state, 'normal');
+		}
+		elsif ($conf->{menu_cnf} == 1){
+			$self->{'t_plugin_'.$_} = $tmp_menu;
+			push @menu0, 't_plugin_'.$_;
+		}
+		elsif ($conf->{menu_cnf} == 1){
+			$self->{'t_plugin_'.$_} = $tmp_menu;
+			push @menu1, 't_plugin_'.$_;
+		}
+	}
 
 	$f->configure(
 		-label     => gui_window->gui_jm('ツール(T)'),
@@ -619,56 +710,10 @@ sub mc_hukugo_exec{
 #------------------------#
 #   メニューの状態変更   #
 #------------------------#
+
 sub refresh{
 	my $self = shift;
 	$self->disable_all;
-	
-	
-	# プロジェクトが選択されればActive
-	my @menu0 = (
-		'm_b1_mark',
-		'm_b2_morpho',
-		't_sql_select',
-		't_sql_do',
-		'm_b0_close',
-		'm_b1_hukugo',
-		#'m_b1_hukugo_te',
-	);
-
-	# 形態素解析が行われていればActive
-	my @menu1 = (
-		't_word_search',
-		't_word_list',
-		't_word_freq',
-		't_word_ass',
-		't_word_conc',
-		'm_b3_check',
-		't_cod_count',
-		't_cod_tab',
-		't_cod_jaccard',
-		't_cod_out',
-		't_cod_outtab',
-		't_cod_out_spss',
-		't_cod_out_csv',
-		't_cod_out_tab',
-		't_cod_out_var',
-		't_txt_html2mod',
-		'm_b3_crossout',
-		'm_b3_crossout_csv',
-		'm_b3_crossout_spss',
-		'm_b3_crossout_tab',
-		'm_b3_crossout_var',
-		't_txt_pickup',
-		't_doc_search',
-		't_out_read',
-		't_out_read_csv',
-		't_out_read_tab',
-		't_out_list',
-		'm_b3_contxtout',
-		'm_b3_contxtout_spss',
-		'm_b3_contxtout_csv',
-		'm_b3_contxtout_tab',
-	);
 
 	# 状態変更
 	if ($::project_obj){
