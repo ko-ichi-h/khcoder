@@ -9,6 +9,15 @@ sub read{
 		return unless $_ =~ /.+\.pm/;
 		substr($_, length($_) - 3, length($_)) = '';
 		print "$_\n";
+		
+		unless (eval "use $_; 1"){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => "プラグイン「".$_.".pm」の読み込みを中止しました。\nエラー内容：\n$@"
+			);
+			return 0;
+		}
+		
 	}
 }
 
