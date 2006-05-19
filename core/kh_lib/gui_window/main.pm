@@ -2,8 +2,6 @@ package gui_window::main;
 use base qw(gui_window);
 use strict;
 
-#use gui_window::main::linux;
-#use gui_window::main::win32;
 use gui_window::main::menu;
 use gui_window::main::inner;
 
@@ -29,7 +27,10 @@ sub _new{
 	$self->make_font;                                        # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
-	#$self->{win_obj} = $mw;
+	
+	# Pluginの読み込み
+	use kh_plugin;
+	kh_plugin::read();
 
 	#-----------------------#
 	#   KH Coder 開始処理   #
