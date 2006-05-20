@@ -24,6 +24,7 @@ sub exec{
 	
 	# GUIでも表示（Perl/Tkを使用）
 	my $mw = $::main_gui->mw;           # KH Coderのメイン・ウィンドウを取得
+
 	$mw->messageBox(                    # Tkのメッセージボックスを表示
 		-icon    => 'info',
 		-type    => 'OK',
