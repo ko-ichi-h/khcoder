@@ -113,7 +113,7 @@ sub _new{
 
 	# ラベルの表示(1)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' 出力ファイル： '.$args{path}),
+		-text => gui_window->gui_jchar(' 出力ファイル： '.$args{path},'euc'),
 	)->pack(-anchor => 'w');
 
 	# ラベルの表示(2)
