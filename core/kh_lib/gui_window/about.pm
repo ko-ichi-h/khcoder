@@ -118,7 +118,6 @@ sub _new{
 		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),
 		-font => "TKFN",
 		-width => 8,
-	#	-borderwidth => '1',
 		-command => sub{ $mw->after
 			(
 				10,
@@ -127,8 +126,7 @@ sub _new{
 				}
 			);
 		}
-	)->pack(-anchor => 'c',-pady => '0');
-	#$self->{win_obj} = $wabtkh;
+	)->pack(-anchor => 'c',-pady => '0')->focus;
 	return $self;
 }
 
