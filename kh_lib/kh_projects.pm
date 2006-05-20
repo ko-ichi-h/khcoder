@@ -32,8 +32,8 @@ sub read{
 		$self->{project}[$n] =
 			kh_project->temp(
 				target  => Jcode->new($r->[0])->sjis,
-				comment => Jcode->new($r->[1])->sjis,
-				dbname  => Jcode->new($r->[2])->sjis
+				comment => $r->[1],
+				dbname  => $r->[2]
 			);
 		++$n;
 	}

@@ -144,6 +144,7 @@ sub gui_jchar{ # GUI表示用の日本語
 	
 	if ( $] > 5.008 ) {
 		$code = Jcode->new($char)->icode unless $code;
+		# print "$char : $code\n";
 		$code = 'euc-jp'   if $code eq 'euc';
 		$code = 'shiftjis' if $code eq 'sjis';
 		$code = 'euc-jp' unless length($code);
