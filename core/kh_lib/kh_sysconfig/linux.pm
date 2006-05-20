@@ -156,6 +156,8 @@ sub save{
 			'DocView_WrapLength_on_Win9x',
 			'DocSrch_CutLength',
 			'app_html',
+			'app_csv',
+			'app_pdf',
 		);
 
 		my $f = $self->{ini_file};
