@@ -575,7 +575,7 @@ sub make{
 			$self->{'t_plugin_'.$_} = $tmp_menu;
 			push @menu0, 't_plugin_'.$_;
 		}
-		elsif ($conf->{menu_cnf} == 1){
+		elsif ($conf->{menu_cnf} == 2){
 			$self->{'t_plugin_'.$_} = $tmp_menu;
 			push @menu1, 't_plugin_'.$_;
 		}
@@ -715,14 +715,12 @@ sub refresh{
 	my $self = shift;
 	$self->disable_all;
 
-	# 状態変更
 	if ($::project_obj){
 		$self->normalize(\@menu0);
 		if ($::project_obj->status_morpho){
 			$self->normalize(\@menu1);
 		}
 	}
-
 }
 
 sub normalize{
@@ -732,8 +730,6 @@ sub normalize{
 	}
 }
 
-
-# 全てDisable
 sub disable_all{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
