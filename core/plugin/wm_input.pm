@@ -5,11 +5,11 @@ use strict;
 #   プラグインの設定   #
 
 sub plugin_config{
-	my $conf= {
+	return {
 		name     => '新規プロジェクト - 無記入・空白の行に対応',
 		menu_cnf => 0,
+		menu_grp => '入出力',
 	};
-	return $conf;
 }
 
 #----------------------------------------#
@@ -62,9 +62,9 @@ sub _new{
 		pack    => { -side => 'right', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('自動判別')  => 0],
-				[$self->gui_jchar('EUC') => 'euc'],
-				[$self->gui_jchar('JIS') => 'jis'],
+				[$self->gui_jchar('自動判別')  => 0     ],
+				[$self->gui_jchar('EUC')       => 'euc' ],
+				[$self->gui_jchar('JIS')       => 'jis' ],
 				[$self->gui_jchar('Shift-JIS') => 'sjis']
 			],
 		variable => \$self->{icode},
@@ -117,18 +117,15 @@ sub _new{
 # ファイル参照のためのルーチン
 sub _sansyo{
 	my $self = shift;
-
 	my @types = (
 		[ "text/html files",[qw/.txt .htm .html/] ],
 		["All files",'*']
 	);
-
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),
 		-initialdir => $::config_obj->cwd
 	);
-
 	if ($path){
 		$::config_obj->os_path($path);
 		$self->{e1}->delete('0','end');
@@ -167,7 +164,7 @@ sub _make_new{
 		);
 	while (<ORGF>){
 		chomp;
-		if (length($_)){
+		if ( length($_) ){
 			print NEWF "$_\n";
 		} else {
 			print NEWF "---無記入・空白---\n";
@@ -184,7 +181,6 @@ sub _make_new{
 	) or return 0;
 	kh_projects->read->add_new($new) or return 0;
 	$self->close;
-
 	$new->open or die;
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;

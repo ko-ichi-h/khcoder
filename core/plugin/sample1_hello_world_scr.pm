@@ -1,12 +1,12 @@
-package sample_hello_world1_scr;   # ←この行はファイル名にあわせて変更
+package sample1_hello_world_scr;   # ←この行はファイル名にあわせて変更
 use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 #--------------------------#
 #   このプラグインの設定   #
 
 sub plugin_config{
-	my $conf= {
-		name     => 'サンプル - Hello World - 画面', # メニューに表示される名前
+	return {
+		name     => 'Hello World - 画面',            # メニューに表示される名前
 		menu_cnf => 0,                               # メニューの設定(1)
 			# 0: いつでも実行可能
 			# 1: プロジェクトが開かれてさえいれば実行可能
@@ -15,7 +15,6 @@ sub plugin_config{
 			# メニューをグループ化したい場合にこの設定を行う。
 			# 必要ない場合は「'',」または「undef,」としておけば良い。
 	};
-	return $conf;
 }
 
 #----------------------------------------#
