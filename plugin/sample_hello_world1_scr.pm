@@ -6,7 +6,7 @@ use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 sub plugin_config{
 	my $conf= {
-		name     => 'サンプル：Hello World（画面）', # メニューに表示される名前
+		name     => 'サンプル - Hello World - 画面', # メニューに表示される名前
 		menu_cnf => 0,                               # メニューの設定
 			# 0: いつでも実行可能
 			# 1: プロジェクトが開かれてさえいれば実行可能
