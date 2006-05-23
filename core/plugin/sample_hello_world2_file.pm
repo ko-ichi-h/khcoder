@@ -6,7 +6,7 @@ use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 sub plugin_config{
 	my $conf= {
-		name     => 'サンプル：Hello World（ファイル）', # メニューに表示される
+		name     => 'サンプル - Hello World - ファイル', # メニューに表示される
 		                                                 #                 名前
 		menu_cnf => 1,                                   # メニューの設定
 				# 0: いつでも実行可能

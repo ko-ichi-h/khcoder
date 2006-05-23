@@ -45,10 +45,36 @@ sub sql3{
 	return $sql;
 }
 
+sub sql4{
+	my $self = shift;
+	my $d1   = shift;
+	my $d2   = shift;
+
+	my $sql;
+	$sql .= "SELECT $self->{tani}.id, genkei.name, genkei.nouse\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
+	$sql .= "WHERE\n";
+	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
+	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
+
+	my $flag = 0;
+	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+		if ($i eq $self->{tani}){ $flag = 1; }
+		if ($flag){
+			$sql .= "	AND hyosobun.$i"."_id = $self->{tani}.$i"."_id\n";
+		}
+	}
+	$sql .= "	AND $self->{tani}.id >= $d1\n";
+	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "ORDER BY hyosobun.id";
+	return $sql;
+}
+
+
 sub out2{
 	my $self = shift;
 	
-	# ƒZƒ‹“à—e‚Ìì»
+	# ¥»¥ëÆâÍÆ¤ÎºîÀ½(1)
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -62,10 +88,9 @@ sub out2{
 		unless ($sth->rows > 0){
 			last;
 		}
-		
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
-				# ‘‚«o‚µ
+				# ½ñ¤­½Ğ¤·
 				my $temp;
 				foreach my $h ( @{$self->{hinshi}} ){
 					if ($current{$h}){
@@ -77,17 +102,16 @@ sub out2{
 				}
 				chop $temp;
 				$data{$last} = $temp;
-				# ‰Šú‰»
+				# ½é´ü²½
 				%current = ();
 				$last = $i->[0];
 			}
-			# WŒv
+			# ½¸·×
 			$current{$i->[2]} .= "$i->[1] ";
 		}
 		$sth->finish;
 	}
-	
-	# ÅIs‚Ìo—Í
+	# ºÇ½ª¹Ô¤Î½ĞÎÏ
 	my $temp;
 	foreach my $h ( @{$self->{hinshi}} ){
 		if ($current{$h}){
@@ -99,14 +123,50 @@ sub out2{
 	}
 	chop $temp;
 	$data{$last} = $temp;
-
 	$self->{data} = \%data;
-
-	# Œ‡‘¹ƒP[ƒX—p
+	# ·çÂ»¥±¡¼¥¹ÍÑ
 	foreach my $h ( @{$self->{hinshi}} ){
 		$self->{data}{kesson} .= ',';
 	}
 	chop $self->{data}{kesson};
+	
+	
+	# ¥»¥ëÆâÍÆ¤ÎºîÀ½(2)
+	$id = 1;
+	$last = 1;
+	my $current;
+	my %data2;
+	while (1){
+		my $sth = mysql_exec->select(
+			$self->sql4($id, $id + 100),
+			1
+		)->hundle;
+		$id += 100;
+		unless ($sth->rows > 0){
+			last;
+		}
+		while (my $i = $sth->fetch){
+			if ($last != $i->[0]){
+				# ½ñ¤­½Ğ¤·
+				chop $current;
+				$data2{$last} = kh_csv->value_conv($current);
+				# ½é´ü²½
+				$current = '';
+				$last = $i->[0];
+			}
+			# ½¸·×
+			$current .= "$i->[1] "
+				unless ($i->[1] eq '---Ìµµ­Æş¡¦¶õÇò---' and $i->[2]);
+		}
+		$sth->finish;
+	}
+	# ºÇ½ª¹Ô¤Î½ĞÎÏ
+	if ( length($current) ){
+		chop $current;
+		$data2{$last} = kh_csv->value_conv($current);
+	}
+	$self->{data2} = \%data2;
+	
 	return $self;
 }
 
@@ -119,7 +179,7 @@ sub finish{
 			thefile => $self->{file},
 		);
 	
-	# ƒwƒbƒ_s‚Ìì»
+	# ¥Ø¥Ã¥À¹Ô¤ÎºîÀ½
 	my $head = ''; my @head;
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 		$head .= "$i,";
@@ -128,7 +188,7 @@ sub finish{
 			last;
 		}
 	}
-	$head .= "id,length_c,length_w,";
+	$head .= "id,length_c,length_w,Ããä¥½ĞÎÏ¡Ê´ğËÜ·Á¡Ë,";
 	foreach my $i (@{$self->{hinshi}}){
 		$head .= kh_csv->value_conv($self->{hName}{$i}).',';
 	}
@@ -136,7 +196,7 @@ sub finish{
 
 	print OUTF "$head\n";
 	
-	# ˆÊ’uî•ñ‚Æ‚Ìƒ}[ƒW
+	# °ÌÃÖ¾ğÊó¤È¤Î¥Ş¡¼¥¸
 	
 	my $sql;
 	$sql .= "SELECT ";
@@ -156,9 +216,9 @@ sub finish{
 			$head .= "$i,"
 		}
 		if ($self->{data}{$n}){
-			print OUTF "$head"."$self->{data}{$n}\n";
+			print OUTF "$head"."$self->{data2}{$n},$self->{data}{$n}\n";
 		} else {
-			print OUTF "$head"."$self->{data}{kesson}\n";
+			print OUTF "$head"."$self->{data2}{$n},$self->{data}{kesson}\n";
 		}
 		++$n;
 	}

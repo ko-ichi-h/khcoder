@@ -6,7 +6,7 @@ use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 sub plugin_config{
 	my $conf= {
-		name     => 'サンプル：SQL文の実行',      # メニューに表示される名前
+		name     => 'サンプル - SQL文の実行',      # メニューに表示される名前
 		menu_cnf => 2,                            # メニューの設定
 				# 0: いつでも実行可能
 				# 1: プロジェクトが開かれてさえいれば実行可能
@@ -20,67 +20,94 @@ sub plugin_config{
 
 sub exec{
 
-	#-----------------------------------#
-	#   GUIで出力先のファイル名を取得   #
+	#-------------------------#
+	#   実行するSQL文を準備   #
+	
+	# 頻出語（名詞）
+	my $sql1 .= "
+		SELECT genkei.name, genkei.num
+		FROM genkei, khhinshi
+		WHERE
+		  genkei.khhinshi_id = khhinshi.id
+		  AND khhinshi.name = '名詞'
+		ORDER BY genkei.num DESC
+		LIMIT 10
+	";
 
-	my $mw = $::main_gui->mw;           # KH Coderのメイン・ウィンドウを取得
+	# 頻出した品詞（KH Coder）
+	my $sql2 = "
+		SELECT khhinshi.name, count(*) as kotonari, sum(genkei.num) as sousu
+		FROM khhinshi, genkei
+		WHERE
+		  genkei.khhinshi_id = khhinshi.id
+		GROUP BY khhinshi.id
+		ORDER BY kotonari DESC
+		LIMIT 10
+	";
 
-	my $path = $mw->getSaveFile(        # Tkのファイル選択ダイアログ
-		-title            => gui_window->gui_jchar('メッセージの保存'),
-		-initialdir       => $::config_obj->cwd,
-		-defaultextension => '.txt',
-		-filetypes        => [
-			[ gui_window->gui_jchar("テキスト"),'.txt' ],
-			["All files",'*']
-		]
-	);
-		# gui_window->gui_jchar('文字列')で、文字コードをGUI用に変換
-		# $::config_obj->cwdで、KH Coderが存在するディレクトリを選択
+	# 頻出した品詞（茶筌）
+	my $sql3 = "
+		SELECT hinshi.name, count(*) as kotonari, sum(genkei.num) as sousu
+		FROM hinshi, genkei
+		WHERE
+		  genkei.hinshi_id = hinshi.id
+		GROUP BY hinshi.id
+		ORDER BY kotonari DESC
+		LIMIT 10
+	";
 
-	return 0 unless length($path);
+	#-----------------#
+	#   SQL文の実行   #
 
-	#------------------------------#
-	#   出力するメッセージを作成   #
+	my ($result1, $result2, $result3);
 
-	my $msg = '';
-	$msg .= '分析対象ファイル： ';
-	$msg .= $::project_obj->file_target;
-	$msg .= "\n";
-	$msg .= 'メモ： ';
-	$msg .= $::project_obj->comment;
-	$msg .= "\n";
-	$msg .= '前処理： ';
-
-	if ( $::project_obj->status_morpho ){
-		$msg .= '実行済み'
-	} else {
-		$msg .= '未実行'
+	my $h = mysql_exec->select($sql1)->hundle;
+	while (my $i = $h->fetch){
+		$result1 .= "\t$i->[0] ($i->[1])\n";
 	}
 
-	$msg .= "\n\n";
-	$msg .= '※KH Coderのサンプル・プラグインによるテスト出力';
+	$h = mysql_exec->select($sql2)->hundle;
+	while (my $i = $h->fetch){
+		$result2 .= "\t$i->[0] ($i->[1], $i->[2])\n";
+	}
 
-	#----------------------#
-	#   ファイルへの出力   #
+	$h = mysql_exec->select($sql3)->hundle;
+	while (my $i = $h->fetch){
+		$result3 .= "\t$i->[0] ($i->[1], $i->[2])\n";
+	}
 
-	open (SMPLOUT,">$path") or          # ファイルをオープン
-		gui_errormsg->open(             # オープン失敗時のエラー表示
-			type => 'file',
-			thefile => $path
-		);
+		# $h = mysql_exec->select("SQL文")->hundle; で、SQL文を実行。
+		# $i = $h->fetch; で、一行づつ結果を取得。
 
-	print SMPLOUT $msg;                 # ファイルへ書き出し
 
-	close (SMPLOUT);                    # ファイルのクローズ
+	#------------------------------#
+	#   表示するメッセージを作成   #
+
+	chop $sql1; chop $sql1; substr($sql1,0,1) = '';
+	chop $sql2; chop $sql2; substr($sql2,0,1) = '';
+	chop $sql3; chop $sql3; substr($sql3,0,1) = '';
+
+	my $msg;
+	
+	$msg .= "※テーブル名・カラム名については、マニュアルの4.1節をご覧下さい。\n\n";
+	$msg .= "■頻出した名詞トップ10\n";
+	$msg .= "□SQL文\n$sql1\n";
+	$msg .= "□結果 / カッコ内は出現数\n$result1\n";
+	$msg .= "■頻出した品詞トップ10（KH Coderの品詞分類で、異なり語数の順）\n";
+	$msg .= "□SQL文\n$sql2\n";
+	$msg .= "□結果 / カッコ内は異なり語数（種類数）と総出現数\n$result2\n";
+	$msg .= "■頻出した品詞トップ10（茶筌の品詞分類で、異なり語数の順）\n";
+	$msg .= "□SQL文\n$sql3\n";
+	$msg .= "□結果 / カッコ内は異なり語数（種類数）と総出現数\n$result3\n";
+
+	$msg =~ s/\t\t/\t/g;
 
 	#--------------------#
 	#   確認画面の表示   #
-	
+
 	gui_window::sample_sql->open(
-		msg  => $msg,
-		path => $path,
+		msg  => $msg
 	);
-	
 	return 1;
 }
 
@@ -100,34 +127,22 @@ sub _new{
 	my $mw = $self->win_obj; # Window（Tkオブジェクト）を取得して$mwに格納
 
 	# Windowのタイトルを設定
-	$mw->title( gui_window->gui_jchar('サンプル：Hello World（ファイル）') );
+	$mw->title( gui_window->gui_jchar('実行したSQL文とその結果') );
 
 	# ラベルの表示(0)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' ※ファイルへの出力が完了しました'),
+		-text => gui_window->gui_jchar(' 以下のSQL文を実行しました：'),
 	)->pack(
 		-anchor => 'w',
 		-pady => 5
-	);
-
-	# ラベルの表示(1)
-	$mw->Label(
-		-text => gui_window->gui_jchar(' 出力ファイル： '.$args{path},'euc'),
-	)->pack(-anchor => 'w');
-
-	# ラベルの表示(2)
-	$mw->Label(
-		-text => gui_window->gui_jchar(' 出力内容：'),
-	)->pack(
-		-anchor => 'w'
 	);
 
 	# テキストフィールド（Read Only）の表示
 	my $text_widget = $mw->Scrolled(
 		"ROText",
 		-scrollbars => 'osoe',
-		-height     => 5,
-		-width      => 64,
+		-height     => 20,
+		-width      => 46,
 	)->pack(
 		-padx   => 2,
 		-fill   => 'both',
@@ -154,7 +169,7 @@ sub _new{
 
 ## Windowの名称を設定
 sub win_name{                 
-	return 'w_sample_hello_world2_file'; # ←この行は「w_」で始まる適当な名称
+	return 'w_sample_sql';               # ←この行は「w_」で始まる適当な名称
 }	                                     #                             に変更
 
 1;
