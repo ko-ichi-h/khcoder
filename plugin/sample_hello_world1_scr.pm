@@ -29,7 +29,7 @@ sub exec{
 		-icon    => 'info',
 		-type    => 'OK',
 		-title   => 'KH Coder',
-		-message => gui_window->gui_jchar("Hello World!\n世界にこんにちは！"),
+		-message => gui_window->gui_jchar('Hello World! / こんにちは世界！'),
 		                                # gui_window->gui_jchar('文字列')で、
 		                                # 文字コードをGUI用に変換
 	);
