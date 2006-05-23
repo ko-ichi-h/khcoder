@@ -1,11 +1,11 @@
-package sample_sql;                # ←この行はファイル名にあわせて変更
+package sample3_exec_sql;          # ←この行はファイル名にあわせて変更
 use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 #--------------------------#
 #   このプラグインの設定   #
 
 sub plugin_config{
-	my $conf= {
+	return {
 		name     => 'SQL文の実行',                   # メニューに表示される名前
 		menu_cnf => 2,                               # メニューの設定(1)
 			# 0: いつでも実行可能
@@ -15,7 +15,6 @@ sub plugin_config{
 			# メニューをグループ化したい場合にこの設定を行う。
 			# 必要ない場合は「'',」または「undef,」としておけば良い。
 	};
-	return $conf;
 }
 
 #----------------------------------------#
@@ -145,7 +144,7 @@ sub _new{
 		"ROText",
 		-scrollbars => 'osoe',
 		-height     => 20,
-		-width      => 46,
+		-width      => 66,
 	)->pack(
 		-padx   => 2,
 		-fill   => 'both',

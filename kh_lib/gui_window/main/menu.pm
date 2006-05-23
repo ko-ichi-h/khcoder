@@ -538,8 +538,8 @@ sub make{
 
 	my $f_p = $f->cascade(
 			-label => gui_window->gui_jchar('プラグイン'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
+			-font => "TKFN",
+			-tearoff=>'no'
 		);
 
 	# プラグインの読み込み
@@ -560,7 +560,22 @@ sub make{
 		}
 		my $conf = $_->plugin_config;
 		my $cu = $_;
-		my $tmp_menu = $f_p->command(
+		my $mother = $f_p;
+		
+		# グループ指定に対応
+		if ( length($conf->{menu_grp}) ){
+			unless ( $self->{plugin_cascades}{$conf->{menu_grp}} ){
+				$self->{plugin_cascades}{$conf->{menu_grp}} = $f_p->cascade(
+					-label   => gui_window->gui_jchar($conf->{menu_grp}),
+					-font    => "TKFN",
+					-tearoff =>'no'
+				);
+			}
+			$mother = $self->{plugin_cascades}{$conf->{menu_grp}};
+		}
+		
+		# メニューコマンド作成
+		my $tmp_menu = $mother->command(
 				-label => gui_window->gui_jchar($conf->{name}),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -568,6 +583,8 @@ sub make{
 				})},
 				-state => 'disable'
 		);
+		
+		# メニュー設定
 		if ($conf->{menu_cnf} == 0){
 			$tmp_menu->configure(-state, 'normal');
 		}

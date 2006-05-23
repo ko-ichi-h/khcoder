@@ -1,11 +1,11 @@
-package sample_hello_world2_file;  # ←この行はファイル名にあわせて変更
+package sample2_hello_world_file;  # ←この行はファイル名にあわせて変更
 use strict;                        # ※ファイルの文字コードはEUCを推奨
 
 #--------------------------#
 #   このプラグインの設定   #
 
 sub plugin_config{
-	my $conf= {
+	return {
 		name     => 'Hello World - ファイル',        # メニューに表示される名前
 		menu_cnf => 1,                               # メニューの設定(1)
 			# 0: いつでも実行可能
@@ -15,7 +15,6 @@ sub plugin_config{
 			# メニューをグループ化したい場合にこの設定を行う。
 			# 必要ない場合は「'',」または「undef,」としておけば良い。
 	};
-	return $conf;
 }
 
 #----------------------------------------#
