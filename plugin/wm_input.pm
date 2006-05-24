@@ -208,7 +208,7 @@ sub _make_new{
 		if ( length($_) ){
 			print NEWF "$_\n";
 		} else {
-			print NEWF "---無記入・空白---\n";
+			print NEWF "---MISSING---\n";
 		}
 	}
 	close (ORGF);
@@ -229,8 +229,8 @@ sub _make_new{
 	
 	# 「---無記入・空白---」という語を無視するように設定
 	my $conf = kh_dictio->readin;
-	$conf->words_mk( ['---無記入・空白---'] );
-	$conf->words_st( ['---無記入・空白---'] );
+	$conf->words_mk( ['---MISSING---'] );
+	$conf->words_st( ['---MISSING---'] );
 	$conf->save;
 	
 	return 1;

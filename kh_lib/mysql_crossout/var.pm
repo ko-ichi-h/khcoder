@@ -156,7 +156,7 @@ sub out2{
 			}
 			# 集計
 			$current .= "$i->[1] "
-				unless ($i->[1] eq '---無記入・空白---' and $i->[2]);
+				unless ($i->[1] eq '---MISSING---' and $i->[2]);
 		}
 		$sth->finish;
 	}
