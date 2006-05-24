@@ -32,8 +32,8 @@ sub exec{
 		-initialdir       => $::config_obj->cwd,
 		-defaultextension => '.txt',
 		-filetypes        => [
-			[ gui_window->gui_jchar("テキスト"),'.txt' ],
-			["All files",'*']
+			[ gui_window->gui_jchar("テキストファイル"),'.txt' ],
+			["All files",                               '*'    ]
 		]
 	);
 		# gui_window->gui_jchar('文字列')で、文字コードをGUI用に変換
@@ -115,7 +115,9 @@ sub _new{
 	# ラベルの表示(1)
 	$mw->Label(
 		-text => gui_window->gui_jchar(' 出力ファイル： '.$args{path},'euc'),
-	)->pack(-anchor => 'w');
+	)->pack(
+		-anchor => 'w'
+	);
 
 	# ラベルの表示(2)
 	$mw->Label(

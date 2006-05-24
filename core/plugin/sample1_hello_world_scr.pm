@@ -36,7 +36,7 @@ sub exec{
 		                                # 文字コードをGUI用に変換
 	);
 
-		# Perl/Tkについては、こちらのページが大変参考になる
+		# Perl/Tkについては、こちらのページが大変参考に
 		# http://www.geocities.jp/m_hiroi/perl_tk/index.html
 
 	return 1;
