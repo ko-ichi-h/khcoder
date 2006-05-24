@@ -84,10 +84,11 @@ sub exec{
 
 	#------------------------------#
 	#   表示するメッセージを作成   #
-
-	chop $sql1; chop $sql1; substr($sql1,0,1) = '';
-	chop $sql2; chop $sql2; substr($sql2,0,1) = '';
-	chop $sql3; chop $sql3; substr($sql3,0,1) = '';
+	
+	foreach my $i ($sql1, $sql2, $sql3){
+		substr($i,0,1)  = '';
+		substr($i,-2,2) = '';
+	}
 
 	my $msg;
 	

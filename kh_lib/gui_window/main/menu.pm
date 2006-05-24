@@ -509,6 +509,7 @@ sub make{
 			-state => 'disable'
 		);
 
+	$f->separator();
 
 	my $f2 = $f->cascade(
 			-label => gui_window->gui_jchar('SQL文 入力'),
@@ -533,8 +534,6 @@ sub make{
 				})},
 				-state => 'disable'
 			);
-
-	$f->separator();
 
 	my $f_p = $f->cascade(
 			-label => gui_window->gui_jchar('プラグイン'),

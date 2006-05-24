@@ -30,37 +30,74 @@ use Tk;
 # Windowの作成
 sub _new{
 	my $self = shift;
-
 	my $mw = $self->{win_obj};
+
 	$mw->title(
 		$self->gui_jchar('新規プロジェクト（無記入・空白の行に対応）','euc')
 	);
-	my $lfra = $mw->LabFrame(-label => 'Entry',-labelside => 'acrosstop',
-		-borderwidth => 2,)
-		->pack(-expand=>'yes',-fill=>'both');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
+	# フレームの準備
+	my $lfra = $mw->LabFrame(
+		-label       => 'Entry',
+		-labelside   => 'acrosstop',
+		-borderwidth => 2
+	)->pack(
+		-expand => 'yes',
+		-fill   => 'both'
+	);
+	my $fra1 = $lfra->Frame()->pack(
+		-anchor => 'c',
+		-fill   => 'x',
+		-expand => 'yes'
+	);
+	my $fra3 = $lfra->Frame()->pack(
+		-anchor => 'c',
+		-fill   => 'x',
+		-expand => 'yes'
+	);
+	my $fra2 = $lfra->Frame()->pack(
+		-anchor => 'c',
+		-fill   => 'x',
+		-expand => 'yes'
+	);
+
+	# 設定項目の配置
 	$fra1->Label(
 		-text => $self->gui_jchar('分析対象ファイル：'),
 		-font => "TKFN"
-	)->pack(-side => 'left');
-
+	)->pack(
+		-side => 'left'
+	);
 	my $e1 = $fra1->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(-side => 'right');
+	)->pack(
+		-side => 'right'
+	);
+	$fra1->Button(
+		-text => $self->gui_jchar('参照'),
+		-font => "TKFN",
+		-borderwidth => 1,
+		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
+	)->pack(
+		-side => 'right',
+		-padx => 2
+	);
 
 	$fra3->Label(
 		-text => $self->gui_jchar('分析対象ファイルの文字コード：'),
 		-font => "TKFN"
-	)->pack(-side => 'left');
-
+	)->pack(
+		-side => 'left'
+	);
 	$self->{icode_menu} = gui_widget::optmenu->open(
 		parent  => $fra3,
-		pack    => { -side => 'right', -padx => 2},
-		options =>
+		pack    =>
+			{
+				-side => 'right',
+				-padx => 2
+			},
+		options => 
 			[
 				[$self->gui_jchar('自動判別')  => 0     ],
 				[$self->gui_jchar('EUC')       => 'euc' ],
@@ -70,36 +107,40 @@ sub _new{
 		variable => \$self->{icode},
 	);
 
-	$fra1->Button(
-		-text => $self->gui_jchar('参照'),
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
-	)->pack(-side => 'right',-padx => 2);
-
 	$fra2->Label(
 		-text => $self->gui_jchar('説明（メモ）：'),
 		-font => "TKFN"
-	)->pack(-side => 'left');
+	)->pack(
+		-side => 'left'
+	);
 	my $e2 = $fra2->Entry(
 		-font => "TKFN",
 		-background => 'white'
-	)->pack(-side => 'right',-pady => 2);
+	)->pack(
+		-side => 'right',
+		-pady => 2
+	);
 
+	# ボタン類の配置
 	$mw->Button(
-		-text => $self->gui_jchar('キャンセル'),
-		-font => "TKFN",
-		-width => 8,
+		-text    => $self->gui_jchar('キャンセル'),
+		-font    => "TKFN",
+		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
-	)->pack(-side => 'right',-padx => 2);
-
+	)->pack(
+		-side => 'right',
+		-padx => 2
+	);
 	$mw->Button(
-		-text => 'OK',
-		-width => 8,
-		-font => "TKFN",
+		-text    => 'OK',
+		-width   => 8,
+		-font    => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->_make_new;});}
-	)->pack(-side => 'right');
+	)->pack(
+		-side => 'right'
+	);
 
+	# 入力欄（Entry）の設定
 	$e1->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
@@ -107,7 +148,7 @@ sub _new{
 	$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->_make_new;});
-	
+
 	$self->{e1}  = $e1;
 	$self->{e2}  = $e2;
 
