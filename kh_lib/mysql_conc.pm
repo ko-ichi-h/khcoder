@@ -103,7 +103,8 @@ sub _find{
 	# Temp Table作成
 	mysql_exec->drop_table("temp_conc");
 	mysql_exec->do("
-		create temporary table temp_conc (
+		#create temporary table temp_conc (
+		create table temp_conc (
 			id int primary key not null,
 			l5 int,
 			l4 int,
@@ -172,7 +173,7 @@ sub _tuika{
 			r3 int,
 			r4 int,
 			r5 int
-		)  TYPE = HEAP
+		) TYPE = HEAP
 	",1);
 	
 	my $cols = {
@@ -244,18 +245,26 @@ sub _sort{                                        # ソート用テーブルの作成
 	my ($group, $n);
 	foreach my $i ('sort1','sort2','sort3'){
 		mysql_exec->drop_table("temp_conc_$i");
-		if ($args{$i} eq "id"){ last; }
-		mysql_exec->do("
-			create temporary table temp_conc_$i (
-				id int auto_increment primary key not null,
-				hyoso_id int not null,
-				count int not null,
-				temp0 int,
-				temp1 int
-			)
-		",1);
-
-		my $sql = '';
+		last if $args{$i} eq "id";
+		
+		my $sql = '';                                       # テーブル作成
+		#$sql .= "create temporary table temp_conc_$i (\n";
+		$sql .= "create table temp_conc_$i (\n";
+		$sql .= "	id int auto_increment primary key not null,\n";
+		$sql .= "	hyoso_id int not null,\n";
+		$sql .= "	count int not null";
+		if ($n){
+			my $l = $n - 1;
+			while ($l >= 0){
+				$sql .= ",\n";
+				$sql .= "	temp$l int";
+				--$l;
+			}
+		}
+		$sql .= "\n)";
+		mysql_exec->do($sql,1);
+		
+		$sql = '';                                          # 挿入
 		$sql .= "INSERT INTO temp_conc_$i ( ";
 		for (my $count = 0; $count < $n; ++$count){
 			$sql .= "temp$count, ";
@@ -266,6 +275,20 @@ sub _sort{                                        # ソート用テーブルの作成
 		$sql .= "GROUP BY $group $args{$i}\n";
 		$sql .= "ORDER BY count DESC";
 		mysql_exec->do($sql,1);
+		
+		$sql = '';                                          # インデックス
+		$sql .= "ALTER TABLE temp_conc_$i ADD INDEX index1 (hyoso_id,";
+		if ($n){
+			my $l = $n - 1;
+			while ($l >= 0){
+				$sql .= "temp$l,";
+				--$l;
+			}
+		}
+		$sql .= "count)";
+		print "$sql\n";
+		mysql_exec->do($sql,0);
+		
 		$group .= "$args{$i},";
 		++$n;
 	}
@@ -273,7 +296,8 @@ sub _sort{                                        # ソート用テーブルの作成
 	# 最終ソート・テーブル
 	mysql_exec->drop_table("temp_conc_sort");
 	mysql_exec->do("
-		create temporary table temp_conc_sort (
+		#create temporary table temp_conc_sort (
+		create table temp_conc_sort (
 			id int auto_increment primary key not null,
 			conc_id int not null
 		)
@@ -282,36 +306,30 @@ sub _sort{                                        # ソート用テーブルの作成
 	$sql = '';
 	$sql .= "INSERT INTO temp_conc_sort ( conc_id )\n";
 	$sql .= "SELECT temp_conc.id\n";
-	$sql .= "FROM   temp_conc,";
+	$sql .= "FROM   temp_conc\n";
 	my @temp;
 	foreach my $i ('sort1','sort2','sort3'){
-		if ($args{$i} eq "id"){ last; }
-		$sql .= "temp_conc_$i,";
-	}
-	chop $sql; $sql .= "\n";
-	my @temp; my $n = 0;
-	foreach my $i ('sort1','sort2','sort3'){
-		if ($args{$i} eq "id"){ last; }
-		if ($n == 0){
-			$sql .= "WHERE\n";
-			$sql .= "temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
-		} else {
-			$sql .= "AND temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
-		}
-		my $l = 0;
+		last if $args{$i} eq "id";
+		
+		$sql .= "	LEFT JOIN temp_conc_$i ON\n";
+		$sql .= "		temp_conc.$args{$i} = temp_conc_$i.hyoso_id\n";
+		
+		my $n = 0;
 		foreach my $h (@temp){
-			$sql .= "AND temp_conc.$h = temp_conc_$i.temp"."$l\n";
-			++$l;
+			$sql .= "		AND temp_conc.$h = temp_conc_$i.temp$n\n";
+			++$n;
 		}
 		push @temp, $args{$i};
-		++$n;
+		
+		$sql .= "		AND temp_conc_$i.count > 1\n";
 	}
-	$sql .= "ORDER BY ";
+	$sql .= "ORDER BY\n";
 	foreach my $i ('sort1','sort2','sort3'){
-		if ($args{$i} eq "id"){ last; }
-		$sql .= "temp_conc_"."$i".".id,";
+		last if $args{$i} eq "id";
+		$sql .= "	IFNULL(temp_conc_$i.id, 4294967295),\n";
 	}
-	$sql .= "temp_conc.id";
+	$sql .= "	temp_conc.id";
+	#print "$sql\n";
 	mysql_exec->do($sql,1);
 }
 

@@ -119,10 +119,12 @@ sub run_from_morpho{
 		);
 	print F "複合名詞,出現数\n";
 	
-	my $oh = mysql_exec->select(
-		"SELECT name, num FROM hukugo WHERE num > $mean ORDER BY num DESC",
-		1
-	)->hundle;
+	my $oh = mysql_exec->select("
+		SELECT name, num
+		FROM hukugo
+		WHERE num > $mean
+		ORDER BY num DESC, name
+	",1)->hundle;
 	
 	use kh_csv;
 	while (my $i = $oh->fetch){
