@@ -279,7 +279,7 @@ sub _make_list{
 					genkei.hinshi_id = hinshi.id
 					and khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY num DESC
+				ORDER BY num DESC, genkei.name
 			";
 		} else {
 			$sql  = "
@@ -287,7 +287,7 @@ sub _make_list{
 				WHERE
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY num DESC
+				ORDER BY num DESC, name
 			";
 		}
 		my $t = mysql_exec->select($sql,1);

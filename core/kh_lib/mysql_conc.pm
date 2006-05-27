@@ -103,8 +103,8 @@ sub _find{
 	# Temp Table作成
 	mysql_exec->drop_table("temp_conc");
 	mysql_exec->do("
-		#create temporary table temp_conc (
-		create table temp_conc (
+		create temporary table temp_conc (
+		#create table temp_conc (
 			id int primary key not null,
 			l5 int,
 			l4 int,
@@ -248,8 +248,8 @@ sub _sort{                                        # ソート用テーブルの作成
 		last if $args{$i} eq "id";
 		
 		my $sql = '';                                       # テーブル作成
-		#$sql .= "create temporary table temp_conc_$i (\n";
-		$sql .= "create table temp_conc_$i (\n";
+		$sql .= "create temporary table temp_conc_$i (\n";
+		#$sql .= "create table temp_conc_$i (\n";
 		$sql .= "	id int auto_increment primary key not null,\n";
 		$sql .= "	hyoso_id int not null,\n";
 		$sql .= "	count int not null";
@@ -273,7 +273,7 @@ sub _sort{                                        # ソート用テーブルの作成
 		$sql .= "SELECT $group $args{$i}, count(*) as count\n";
 		$sql .= "FROM temp_conc\n";
 		$sql .= "GROUP BY $group $args{$i}\n";
-		$sql .= "ORDER BY count DESC";
+		$sql .= "ORDER BY count DESC, $args{$i}";
 		mysql_exec->do($sql,1);
 		
 		$sql = '';                                          # インデックス
@@ -286,7 +286,7 @@ sub _sort{                                        # ソート用テーブルの作成
 			}
 		}
 		$sql .= "count)";
-		print "$sql\n";
+		#print "$sql\n";
 		mysql_exec->do($sql,0);
 		
 		$group .= "$args{$i},";
@@ -296,8 +296,8 @@ sub _sort{                                        # ソート用テーブルの作成
 	# 最終ソート・テーブル
 	mysql_exec->drop_table("temp_conc_sort");
 	mysql_exec->do("
-		#create temporary table temp_conc_sort (
-		create table temp_conc_sort (
+		create temporary table temp_conc_sort (
+		#create table temp_conc_sort (
 			id int auto_increment primary key not null,
 			conc_id int not null
 		)
@@ -557,7 +557,7 @@ sub format_coloc{
 	if ($args{sort} eq 'sum'){
 		$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
 	} else {
-		$sql .= "(l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 as score,";
+		$sql .= "truncate( (l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 + .005, 2 ) as score,";
 	}
 	$sql .= "l5+l4+l3+l2+l1 as suml,";
 	$sql .= "r1+r2+r3+r4+r5 as sumr,";
