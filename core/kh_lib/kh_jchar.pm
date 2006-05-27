@@ -16,7 +16,7 @@ BEGIN{
 	#print "Jcode conv: $converter\n";
 }
 
-# ファイル丸ごと変換
+# ･ﾕ･｡･､･�ｴﾝ､ｴ､ﾈﾊﾑｴｹ
 
 sub to_euc{
 	my $sjistoeuc = $_[1];
@@ -71,7 +71,7 @@ sub to_sjis{
 	rename ("temp.txt","$sjistoeuc");
 }
 
-# ファイルの文字コードを判別
+# ･ﾕ･｡･､･�､ﾎﾊｸｻ妺ｳ｡ｼ･ﾉ､ｽﾊﾌ
 
 sub check_code{
 	my $the_file = $_[1];
@@ -101,7 +101,7 @@ sub check_code{
 	return Jcode->new($t)->icode;
 }
 
-# 文字列変換
+# ﾊｸｻ昀ﾑｴｹ
 
 sub s2e{
 	my $conv = '_s2e_'.$kh_jchar::converter;
