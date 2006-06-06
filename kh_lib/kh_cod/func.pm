@@ -96,7 +96,7 @@ sub cod_out_spss{
 	my $self     = shift;
 	my $tani     = shift;
 	my $outfile  = shift;
-	my $outfile2 = "$outfile".".dat";
+	my $outfile2 = substr($outfile,0,length($outfile)-4).".dat";
 
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
@@ -150,7 +150,14 @@ sub cod_out_spss{
 	
 	# シンタックスファイル
 	my $spss;
-	$spss .= "file handle trgt1 /name=\'$outfile2\'\n";
+	$spss .= "file handle trgt1 /name=\'";
+	#if ($::config_obj->os eq 'win32'){
+	#	$spss .= Jcode->new($outfile2,'sjis')->euc;
+	#} else {
+	#	$spss .= $outfile2;
+	#}
+	$spss .= $outfile2;
+	$spss .= "\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
 	foreach my $i (@head){

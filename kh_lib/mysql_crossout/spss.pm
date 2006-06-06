@@ -13,7 +13,13 @@ sub finish{
 	# データ読み込み用シンタックス
 	
 	my $spss;
-	$spss .= "file handle trgt1 /name=\'$file_data\'\n";
+	$spss .= "file handle trgt1 /name=\'";
+	if ($::config_obj->os eq 'win32'){
+		$spss .= Jcode->new($file_data,'sjis')->euc;
+	} else {
+		$spss .= $file_data;
+	}
+	$spss .= "\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
 	my @head;
