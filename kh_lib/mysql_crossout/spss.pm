@@ -59,7 +59,7 @@ sub finish{
 	kh_jchar->to_sjis($self->{file});
 
 	# Label1 flip & recode
-	
+
 	$spss = '';
 	$spss .= "flip.\n";
 	$spss .= "STRING Ã±¸ì (A255) .\n";
