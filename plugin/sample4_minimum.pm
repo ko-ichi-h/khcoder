@@ -13,4 +13,4 @@ sub exec{
 	print "short sample\n";             # ここに必要な処理内容を記述
 }
 
-1;
+1;                                      # これも忘れずに…。

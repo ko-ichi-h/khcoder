@@ -2,6 +2,14 @@ package gui_jchar;
 #use strict;
 use Tk;
 
+my $sjis = q{
+	  [\x00-\x7F]
+	| [\x81-\x9F][\x40-\x7E]
+	| [\x81-\x9F][\x80-\xFC]
+	| [\xE0-\xEF][\x40-\x7E]
+	| [\xE0-\xEF][\x80-\xFC]
+};
+
 #------------#
 #   Text用   #
 #------------#
@@ -14,16 +22,7 @@ sub check_key{
 		return 1;
 	}
 
-	my $sjis = q{
-		  [\x00-\x7F]
-		| [\x81-\x9F][\x40-\x7E]
-		| [\x81-\x9F][\x80-\xFC]
-		| [\xE0-\xEF][\x40-\x7E]
-		| [\xE0-\xEF][\x80-\xFC]
-	};
-
 	my $t = ${$_[2]};
-
 	# print "$_[1]\n";
 
 	if($_[1] eq BackSpace){
@@ -79,14 +78,6 @@ sub check_mouse{
 		return 1;
 	}
 
-	my $sjis = q{
-		[\x00-\x7F]
-		| [\x81-\x9F][\x40-\x7E]
-		| [\x81-\x9F][\x80-\xFC]
-		| [\xE0-\xEF][\x40-\x7E]
-		| [\xE0-\xEF][\x80-\xFC]
-	};
-
 	my $t = ${$_[1]};
 
 	if($t->compare("insert", ">=", "insert lineend")){
@@ -113,13 +104,7 @@ sub check_key_e_d{
 	if ($] > 5.008){
 		return 1;
 	}
-	my $sjis = q{
-		  [\x00-\x7F]
-		| [\x81-\x9F][\x40-\x7E]
-		| [\x81-\x9F][\x80-\xFC]
-		| [\xE0-\xEF][\x40-\x7E]
-		| [\xE0-\xEF][\x80-\xFC]
-	};
+
 	my $t = shift;
 	my $l = $t->index('insert') + 1;            # カーソルを1つ右に
 	$t->icursor($l);
@@ -154,13 +139,7 @@ sub check_key_e{
 	if ($] > 5.008){
 		return 1;
 	}
-	my $sjis = q{
-		  [\x00-\x7F]
-		| [\x81-\x9F][\x40-\x7E]
-		| [\x81-\x9F][\x80-\xFC]
-		| [\xE0-\xEF][\x40-\x7E]
-		| [\xE0-\xEF][\x80-\xFC]
-	};
+
 	my $t = ${$_[2]};
 
 	if($_[1] eq 'BackSpace'){
