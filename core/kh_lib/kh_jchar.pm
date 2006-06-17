@@ -13,7 +13,7 @@ BEGIN{
 		use Jcode;
 		$converter = 'jcode';
 	}
-	print "Jcode conv: $converter\n";
+	# print "Jcode conv: $converter\n";
 }
 
 # ファイル丸ごと変換
