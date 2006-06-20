@@ -7,7 +7,7 @@ use strict;
 sub plugin_config{
 	return {
 		name => '「文書ｘ抽出語（表層語）」表の出力 - 不定長CSV（WordMiner）',
-		menu_cnf => 0,
+		menu_cnf => 2,
 		menu_grp => '入出力',
 	};
 }
