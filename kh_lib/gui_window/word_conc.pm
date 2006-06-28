@@ -606,19 +606,19 @@ sub display{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => $self->gui_jchar($i->[0],'euc'), #nkf('-s -E',$i->[0]),
+			-text  => $self->gui_jchar($i->[0],'euc'),
 			-style => $right_style
 		);
 		my $center = $self->list->itemCreate(
 			$row,
 			1,
-			-text  => $self->gui_jchar($i->[1],'euc'), #nkf('-s -E',$i->[1]),
+			-text  => $self->gui_jchar($i->[1],'euc'),
 			-style => $center_style
 		);
 		$self->list->itemCreate(
 			$row,
 			2,
-			-text  => $self->gui_jchar($i->[2],'euc'), #nkf('-s -E',$i->[2])
+			-text  => $self->gui_jchar($i->[2],'euc'),
 		);
 		++$row;
 	}
