@@ -116,36 +116,134 @@ sub _calc{
 	}
 	
 	# 集計の実行
-	
 	my $result;
 	unless ($result = kh_cod::func->read_file($self->cfile)){
 		$self->rtn;
 		return 0;
 	}
-	
-	unless ( $result = $result->jaccard($self->tani) ){
-		$self->rtn;
-		return 0;
+	#if ($self->{prox_opt} eq 'jac'){
+		unless ( $result = $result->jaccard($self->tani) ){
+			$self->rtn;
+			return 0;
+		}
+	#} else {
+	#	unless ( $result = $result->jaccard_a($self->tani) ){
+	#		$self->rtn;
+	#		return 0;
+	#	}
+	#}
+
+	# 結果表示用のHList作成
+	my $cols = @{$result->[0]};
+	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
+	$self->{list2}->destroy if $self->{list2};
+	$self->{sb1}->destroy if $self->{sb1};
+	$self->{sb2}->destroy if $self->{sb2};
+	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
+
+	$self->{list_flame_inner} = $self->{list_flame}->Frame( # 新たなリスト作成
+		-relief      => 'sunken',
+		-borderwidth => 2
+	);
+	$self->{list2} = $self->{list_flame_inner}->HList(
+		-header             => 1,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => 1,
+		-padx               => 2,
+		-background         => 'white',
+		-selectbackground   => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'extended',
+		-height             => 10,
+		-borderwidth        => 0,
+		-highlightthickness => 0,
+		#-selectborderwidth => 0,
+	);
+	$self->{list2}->header('create',0,-text => ' ');
+	$self->{list} = $self->{list_flame_inner}->HList(
+		-header             => 1,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => $cols - 1,
+		-padx               => 2,
+		-background         => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'extended',
+		-height             => 10,
+		-borderwidth        => 0,
+		-highlightthickness => 0,
+		#-selectborderwidth => 0,
+		#-sizecmd            => sub { $self->sb_chk; }
+	);
+
+	my $col = 0;                                            # Header作成
+	foreach my $i (@{$result->[0]}){
+		unless ($col){
+			++$col;
+			next;
+		}
+		my $w = $self->{list}->Label(
+			-text               => $self->gui_jchar($i),
+			-font               => "TKFN",
+			-foreground         => 'black',
+			-cursor             => 'hand2',
+			-padx               => 0,
+			-pady               => 0,
+			-borderwidth        => 0,
+			-highlightthickness => 0,
+		);
+		my $key = $col;
+		$w->bind(
+			"<Button-1>",
+			sub{
+				$w->after(10, sub { $self->sort($key); } );
+			}
+		);
+		$w->bind(
+			"<Enter>",
+			sub{
+				$w->after(10, sub { $w->configure(-foreground => 'blue'); } );
+			}
+		);
+		$w->bind(
+			"<Leave>",
+			sub{
+				$w->after(10, sub { $w->configure(-foreground => 'black'); } );
+			}
+		);
+		$self->list->header(
+			'create',
+			$col - 1,
+			-itemtype  => 'window',
+			-widget    => $w,
+		);
+		++$col;
 	}
+	shift @{$result};
+	$self->{result} = $result;
+
+	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
+		-orient  => 'v',
+		-command => [ \&multiscrolly, $self->{sb1}, [$self->{list}, $self->{list2}]]
+	);
+	my $sb2 = $self->{list_flame}->Scrollbar(
+		-orient => 'h',
+		-command => ['xview' => $self->{list}]
+	);
+	$self->{list}->configure( -yscrollcommand => ['set', $sb1] );
+	$self->{list}->configure( -xscrollcommand => ['set', $sb2] );
+	$self->{list2}->configure( -yscrollcommand => ['set', $sb1] );
+	$self->{sb1} = $sb1;
+	$self->{sb2} = $sb2;
+	
+	$sb1->pack(-side => 'right', -fill => 'y');             # Pack
+	$self->{list_flame_inner}->pack(-fill =>'both',-expand => 'yes');
+	$self->{list2}->pack(-side => 'left', -fill =>'y', -pady => 0);
+	$self->{list}->pack(-fill =>'both',-expand => 'yes', -pady => 0);
+	$sb2->pack(-fill => 'x');
 
 	# 結果の書き出し
-
-	my $cols = @{$result->[0]};
-	$self->list->destroy;
-	$self->{list} = $self->{list_flame}->Scrolled(
-		'HList',
-		-scrollbars       => 'osoe',
-		-header           => 0,
-		-itemtype         => 'text',
-		-font             => 'TKFN',
-		-columns          => $cols,
-		-padx             => 2,
-		-background       => 'white',
-		-selectforeground => 'black',
-		-selectmode       => 'extended',
-		-height           => 10,
-	)->pack(-fill =>'both',-expand => 'yes');
-	
 	my $right_style = $self->list->ItemStyle(
 		'text',
 		-font => "TKFN",
@@ -161,39 +259,29 @@ sub _calc{
 	my $row = 0;
 	foreach my $i (@{$result}){
 		$self->list->add($row,-at => "$row");
+		$self->{list2}->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			if ($row == 0){
+			if ($col){
 				$self->list->itemCreate(
 					$row,
-					$col,
-					-text  => $self->gui_jchar($h,'sjis'),
-					-style => $center_style
-				);
-			}
-			elsif ($col && $row){
-				$self->list->itemCreate(
-					$row,
-					$col,
+					$col - 1,
 					-text  => $h,
 					-style => $right_style
 				);
 			} else {
-				$self->list->itemCreate(
+				$self->{list2}->itemCreate(
 					$row,
-					$col,
+					0,
 					-text  => $self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;
 		}
-		++$row
-		;
+		++$row;
 	}
 	
-	
 	$self->rtn;
-
 }
 
 sub rtn{
@@ -202,6 +290,159 @@ sub rtn{
 		-text => 'Ready.',
 		-foreground => 'blue'
 	);
+}
+
+sub multiscrolly{
+	my ($sb,$wigs,@args) = @_;
+	my $w;
+	foreach $w (@$wigs){
+		$w->yview(@args);
+	}
+}
+
+sub sort{
+	my $self = shift;
+	my $key  = shift;
+	$key = 0 if $self->{last_sort_key} == $key;
+	
+	$self->{list}->delete('all');
+	$self->{list2}->delete('all');
+	
+	# ソート
+	my @temp;
+	if ($key){
+		@temp = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
+	} else {
+		@temp = @{$self->{result}};
+	}
+
+	# 出力
+	my $right_style = $self->list->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'e',
+	);
+	my $row = 0;
+	foreach my $i ( @temp ){
+		$self->list->add($row,-at => "$row");
+		$self->{list2}->add($row,-at => "$row");
+		my $col = 0;
+		foreach my $h (@{$i}){
+			if ($col){
+				$self->list->itemCreate(
+					$row,
+					$col - 1,
+					-text  => $h,
+					-style => $right_style
+				);
+			} else {
+				$self->{list2}->itemCreate(
+					$row,
+					0,
+					-text  => $self->gui_jchar($h,'sjis')
+				);
+			}
+			++$col;
+		}
+		++$row;
+	}
+	$self->{list}->yview(0);
+	$self->{list2}->yview(0);
+	
+	# ラベルの色を変更
+	if ($key){
+		my $w = $self->{list}->header(
+			'cget',
+			$key - 1,
+			'-widget'
+		);
+		$w->configure(
+			-foreground => 'blue',
+			-cursor => undef
+		);
+		$w->bind(
+			"<Leave>",
+			sub{
+				$w->after(
+					10,
+					sub { $w->configure(-foreground => 'blue'); }
+				);
+			}
+		);
+	}
+	
+	# 前回変更したラベルの色を元に戻す
+	if ($self->{last_sort_key}){
+		my $lw = $self->{list}->header(
+			'cget',
+			$self->{last_sort_key} - 1,
+			'-widget'
+		);
+		$lw->configure(
+			-foreground => 'black',
+			-cursor => 'hand2'
+		);
+		$lw->bind(
+			"<Leave>",
+			sub{
+				$lw->after(
+					10,
+					sub { $lw->configure(-foreground => 'black'); }
+				);
+			}
+		);
+	}
+	
+	$self->{last_sort_key} = $key;
+}
+
+sub copy{
+	my $self = shift;
+	
+	return 0 unless $self->{result};
+	
+	# 1行目
+	my $clip = "\t";
+	my $cols = @{$self->{result}->[0]} - 2;
+	for (my $n = 0; $n <= $cols; ++$n){
+		my $w = $self->{list}->header(
+			'cget',
+			$n,
+			'-widget'
+		);
+		$clip .= $w->cget('-text')."\t";
+	}
+	chop $clip;
+	$clip .= "\n";
+	
+	# 中身
+	my $rows = @{$self->{result}} - 2;
+	for (my $r = 0; $r <= $rows; ++$r){
+		# 1列目
+		if ($self->{list2}->itemExists($r, 0)){
+			my $cell = $self->{list2}->itemCget($r, 0, -text);
+			chop $cell if $cell =~ /\r$/o;
+			$clip .= "$cell\t";
+		} else {
+			$clip .= "\t";
+		}
+		# 2列目以降
+		for (my $c = 0; $c <= $cols; ++$c){
+			if ($self->{list}->itemExists($r, $c)){
+				my $cell = $self->{list}->itemCget($r, $c, -text);
+				chop $cell if $cell =~ /\r$/o;
+				$clip .= "$cell\t";
+			} else {
+				$clip .= "\t";
+			}
+		}
+		chop $clip;
+		$clip .= "\n";
+	}
+	
+	$clip = gui_window->gui_jg($clip);
+	my $CLIP = Win32::Clipboard();
+	$CLIP->Set("$clip");
 }
 
 #--------------#
