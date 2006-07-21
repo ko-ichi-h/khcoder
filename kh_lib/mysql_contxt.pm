@@ -208,7 +208,7 @@ sub _culc_each{
 			$sql .= "AND genkei.num <= $self->{max2}\n";
 		}
 		$sql .= "GROUP BY genkei.id";
-		print "$sql\n";
+		# print "$sql\n";
 		mysql_exec->do($sql,1);
 		
 		++$n;
