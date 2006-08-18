@@ -17,6 +17,10 @@ sub success{
 	
 	
 	my $smtp = Net::SMTP->new($::config_obj->mail_smtp);
+	unless ($smtp){
+		print "*Could not send a notification e-mail...\n";
+		return 0;
+	}
 	$smtp->mail($::config_obj->mail_from);
 	$smtp->to($::config_obj->mail_to);
 	$smtp->data();

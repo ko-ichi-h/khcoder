@@ -83,7 +83,7 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub{ $mw->after(10,sub { $self->copy; });} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
 	return $self;
@@ -358,7 +358,7 @@ sub sort{
 		);
 		$w->configure(
 			-foreground => 'blue',
-			-cursor => undef
+			#-cursor => undef
 		);
 		$w->bind(
 			"<Leave>",
@@ -380,7 +380,7 @@ sub sort{
 		);
 		$lw->configure(
 			-foreground => 'black',
-			-cursor => 'hand2'
+			#-cursor => 'hand2'
 		);
 		$lw->bind(
 			"<Leave>",
@@ -403,8 +403,15 @@ sub copy{
 	
 	# 1行目
 	my $clip = "\t";
+	
 	my $cols = @{$self->{result}->[0]} - 2;
 	for (my $n = 0; $n <= $cols; ++$n){
+		if ($self->{last_sort_key}){
+			unless ($n + 1 == $self->{last_sort_key}){
+				next;
+			}
+		}
+		
 		my $w = $self->{list}->header(
 			'cget',
 			$n,
@@ -428,6 +435,12 @@ sub copy{
 		}
 		# 2列目以降
 		for (my $c = 0; $c <= $cols; ++$c){
+			if ($self->{last_sort_key}){
+				unless ($c + 1 == $self->{last_sort_key}){
+					next;
+				}
+			}
+		
 			if ($self->{list}->itemExists($r, $c)){
 				my $cell = $self->{list}->itemCget($r, $c, -text);
 				chop $cell if $cell =~ /\r$/o;
