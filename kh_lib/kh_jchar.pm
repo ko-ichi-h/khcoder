@@ -98,7 +98,9 @@ sub check_code{
 	}
 	close (TEMP);
 	use Jcode;
-	return Jcode->new($t)->icode;
+	my $icode = Jcode->new($t)->icode;
+	print "char-set detection: $icode\n";
+	return $icode;
 }
 
 # 文字列変換
