@@ -5,6 +5,7 @@ use base qw(kh_cod::a_code::atom);
 use strict;
 use mysql_a_word;
 use POSIX qw(log10);
+use MIME::Base64;
 
 my $debug = 0;
 
@@ -208,6 +209,25 @@ sub ready{
 		}
 	}
 	
+	# テーブル名決定とキャッシュのチェック
+	my @c_c = $self->cache_check(
+		tani => $tani,
+		kind => 'near',
+		name => $self->raw
+	);
+	my $table_cache = 'ct_'."$tani"."_near_$c_c[1]";
+	$self->{tables} = ["$table_cache"];
+	$self->{hyosos} = \@hyosos;
+	
+	print "cache: $table_cache" if $debug;
+	if ($c_c[0]){
+		print " hit\n" if $debug;
+		return $self;
+	} else {
+		print "\n" if $debug;
+	}
+
+	
 	# AND検索による絞り込み
 	mysql_exec->drop_table("ct_tmp_near");
 	mysql_exec->do("
@@ -351,23 +371,21 @@ sub ready{
 	}
 
 	# 近くに出現しているかどうかをチェック:  3. 結果の書き出し
-	my $table = "ct_$tani"."_near_$num";
-	$self->{tables} = ["$table"];
 	++$num;
-	mysql_exec->drop_table($table);
+	mysql_exec->drop_table($table_cache);
 	mysql_exec->do("
-		CREATE TABLE $table (
+		CREATE TABLE $table_cache (
 			id INT primary key not null,
 			num INT
 		)
 	",1);
 	foreach my $i (keys %result){
 		mysql_exec->do (
-			"insert into $table (id, num) values ($i, $result{$i})",
+			"insert into $table_cache (id, num) values ($i, $result{$i})",
 			1
 		);
 	}
-	$self->{hyosos} = \@hyosos;
+	
 }
 
 #--------------#

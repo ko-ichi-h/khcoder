@@ -171,9 +171,9 @@ sub ready{
 		genkei => $self->raw
 	)->genkei_ids;
 	unless (defined($list) ){
-		#print Jcode->new(
-		#	"\tCould NOT find the word : \"".$self->raw."\"\n"
-		#)->sjis;
+		print Jcode->new(
+			"\tCould NOT find the word : \"".$self->raw."\"\n"
+		)->sjis;
 		return '';
 	}
 	$self->{list} = $list;
