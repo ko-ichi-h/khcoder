@@ -227,7 +227,6 @@ sub ready{
 		print "\n" if $debug;
 	}
 
-	
 	# AND検索による絞り込み
 	mysql_exec->drop_table("ct_tmp_near");
 	mysql_exec->do("
