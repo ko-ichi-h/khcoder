@@ -53,10 +53,7 @@ my %sql_join = (
 		'AND h1.h1_id = bun.h1_id'
 );
 
-my $num = 0;
-sub reset{
-	$num = 0;
-}
+sub reset{}
 
 my $dn;
 
@@ -109,10 +106,22 @@ sub ready{
 	my $tani = shift;
 	$self->{tani} = $tani;
 
-	# テーブル名
-	my $table = "ct_$tani"."_string_$num";
+	# クエリの取得
+	my $query = $self->raw;
+	chop $query;
+	substr($query,0,1) = '';
+
+	# キャッシュのチェックとテーブル名決定
+	my @c_c = $self->cache_check(
+		tani => $tani,
+		kind => 'string',
+		name => $query
+	);
+	my $table = "ct_$tani"."_string_$c_c[1]";
 	$self->{tables} = ["$table"];
-	++$num;
+	if ($c_c[0]){
+		return 1;
+	}
 	
 	# テーブル作製
 	mysql_exec->drop_table($table);
@@ -122,11 +131,6 @@ sub ready{
 			num INT
 		)
 	",1);
-
-	# クエリの取得
-	my $query = $self->raw;
-	chop $query;
-	substr($query,0,1) = '';
 
 	# INSERT
 	my $sql;
@@ -144,8 +148,6 @@ sub ready{
 		GROUP BY $tani.id
 	";
 	mysql_exec->do($sql,1);
-
-
 
 }
 
