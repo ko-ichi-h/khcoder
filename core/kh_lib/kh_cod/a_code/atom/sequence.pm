@@ -207,7 +207,25 @@ sub ready{
 			",1);
 		}
 	}
+
+	# テーブル名決定とキャッシュのチェック
+	my @c_c = $self->cache_check(
+		tani => $tani,
+		kind => 'sequence',
+		name => $self->raw
+	);
+	my $table = 'ct_'."$tani"."_sequence_$c_c[1]";
+	$self->{tables} = ["$table"];
+	$self->{hyosos} = \@hyosos;
 	
+	print "cache: $table" if $debug;
+	if ($c_c[0]){
+		print " hit\n" if $debug;
+		return $self;
+	} else {
+		print "\n" if $debug;
+	}
+
 	# AND検索による絞り込み
 	mysql_exec->drop_table("ct_tmp_sequence");
 	mysql_exec->do("
@@ -361,7 +379,7 @@ sub ready{
 	}
 
 	# 近くに出現しているかどうかをチェック:  3. 結果の書き出し
-	my $table = "ct_$tani"."_sequence_$num";
+	#my $table = "ct_$tani"."_sequence_$num";
 	$self->{tables} = ["$table"];
 	++$num;
 	mysql_exec->drop_table($table);
@@ -377,7 +395,6 @@ sub ready{
 			1
 		);
 	}
-	$self->{hyosos} = \@hyosos;
 }
 
 #--------------#
