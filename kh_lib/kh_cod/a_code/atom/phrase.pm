@@ -210,6 +210,25 @@ sub ready{
 		}
 	}
 	
+	# テーブル名決定とキャッシュのチェック
+	my $debug = 1;
+	my @c_c = $self->cache_check(
+		tani => $tani,
+		kind => 'phrase',
+		name => $self->raw
+	);
+	my $table = 'ct_'."$tani"."_phrase_$c_c[1]";
+	$self->{tables} = ["$table"];
+	$self->{hyosos} = \@hyosos;
+	
+	print "cache: $table" if $debug;
+	if ($c_c[0]){
+		print " hit\n" if $debug;
+		return $self;
+	} else {
+		print "\n" if $debug;
+	}
+
 	# AND検索による絞り込みを実施
 	mysql_exec->drop_table("ct_tmp_phrase");
 	mysql_exec->do("
@@ -242,7 +261,7 @@ sub ready{
 	mysql_exec->do("$sql",1);
 
 	# TMPテーブルの作製
-	my $table = "ct_$tani"."_phrase_$num";
+	#my $table = "ct_$tani"."_phrase_$num";
 	$self->{tables} = ["$table"];
 	++$num;
 	mysql_exec->drop_table($table);
@@ -279,7 +298,7 @@ sub ready{
 	}
 	$sql .= "GROUP BY $tani.id";
 	mysql_exec->do("$sql",1);
-	$self->{hyosos} = \@hyosos;
+	
 }
 
 #--------------#

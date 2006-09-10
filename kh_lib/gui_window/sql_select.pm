@@ -43,6 +43,11 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-fill=>'both',-expand=>'yes',-pady => 2);
 	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
+	# ドラッグ＆ドロップ
+	$t->DropSite(
+		-dropcommand => [\&Gui_DragDrop::read_TextFile_droped,$t],
+		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
 
 	$lf->Label(
 		-text => $self->gui_jchar('最大表示数:'),
