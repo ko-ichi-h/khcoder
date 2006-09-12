@@ -211,7 +211,7 @@ sub ready{
 	}
 	
 	# テーブル名決定とキャッシュのチェック
-	my $debug = 1;
+	my $debug = 0;
 	my @c_c = $self->cache_check(
 		tani => $tani,
 		kind => 'phrase',
