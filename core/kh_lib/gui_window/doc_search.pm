@@ -495,7 +495,7 @@ sub search{
 	$self->{hits_label}->configure(-text => $self->gui_jchar('  ヒット数： 0'));
 	$self->{status_label}->configure(
 		-foreground => 'red',
-		-text => 'Searcing...'
+		-text => 'Searching...'
 	);
 	$self->{rlist}->delete('all');
 	$self->win_obj->update;
