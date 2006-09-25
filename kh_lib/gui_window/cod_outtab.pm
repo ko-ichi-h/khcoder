@@ -113,11 +113,11 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$rf->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => $self->gui_jchar('コピー（表全体）'),
 		-font => "TKFN",
-		-width => 8,
+		#-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub{ $mw->after(10,sub { $self->copy; });} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
 	$self->fill;
@@ -211,25 +211,78 @@ sub _calc{
 		$self->rtn;
 		return 0;
 	}
-	
-	# 結果の書き出し
-	
+
+	# 結果表示用のHList作成
 	my $cols = @{$result->[0]};
-	$self->list->destroy;
-	$self->{list} = $self->{list_flame}->Scrolled(
-		'HList',
-		-scrollbars       => 'osoe',
-		-header           => 0,
-		-itemtype         => 'text',
-		-font             => 'TKFN',
-		-columns          => $cols,
-		-padx             => 2,
-		-background       => 'white',
-		-selectforeground => 'black',
-		-selectmode       => 'extended',
-		-height           => 10,
-	)->pack(-fill =>'both',-expand => 'yes');
+	my $width = 0;
+	foreach my $i (@{$result}){
+		if ( length($i->[0]) > $width ){
+			$width = length($i->[0]);
+		}
+	}
 	
+	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
+	$self->{list2}->destroy if $self->{list2};
+	$self->{sb1}->destroy if $self->{sb1};
+	$self->{sb2}->destroy if $self->{sb2};
+	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
+
+	my $cols = @{$result->[0]};                             # 新たなリスト作成
+	$self->{list_flame_inner} = $self->{list_flame}->Frame(
+		-relief      => 'sunken',
+		-borderwidth => 2
+	);
+	$self->{list2} = $self->{list_flame_inner}->HList(
+		-header             => 1,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => 1,
+		-padx               => 2,
+		-background         => 'white',
+		-selectbackground   => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'extended',
+		-height             => 10,
+		-width              => $width,
+		-borderwidth        => 0,
+		-highlightthickness => 0,
+	);
+	$self->{list2}->header('create',0,-text => ' ');
+	$self->{list} = $self->{list_flame_inner}->HList(
+		-header             => 1,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => $cols - 1,
+		-padx               => 2,
+		-background         => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'extended',
+		-height             => 10,
+		-borderwidth        => 0,
+		-highlightthickness => 0,
+	);
+
+	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
+		-orient  => 'v',
+		-command => [ \&multiscrolly, $self->{sb1}, [$self->{list}, $self->{list2}]]
+	);
+	my $sb2 = $self->{list_flame}->Scrollbar(
+		-orient => 'h',
+		-command => ['xview' => $self->{list}]
+	);
+	$self->{list}->configure( -yscrollcommand => ['set', $sb1] );
+	$self->{list}->configure( -xscrollcommand => ['set', $sb2] );
+	$self->{list2}->configure( -yscrollcommand => ['set', $sb1] );
+	$self->{sb1} = $sb1;
+	$self->{sb2} = $sb2;
+
+	$sb1->pack(-side => 'right', -fill => 'y');             # Pack
+	$self->{list_flame_inner}->pack(-fill =>'both',-expand => 'yes');
+	$self->{list2}->pack(-side => 'left', -fill =>'y', -pady => 0);
+	$self->{list}->pack(-fill =>'both',-expand => 'yes', -pady => 0);
+	$sb2->pack(-fill => 'x');
+
+	# 結果の書き出し
 	my $right_style = $self->list->ItemStyle(
 		'text',
 		-font => "TKFN",
@@ -242,30 +295,50 @@ sub _calc{
 		-background => 'white',
 	);
 	
+	# 一行目（Header）
+	my $col = 0;
+	foreach my $i (@{$result->[0]}){
+		if ($col){
+			my $w = $self->{list}->Label(
+				-text               => $self->gui_jchar($i),
+				-font               => "TKFN",
+				-foreground         => 'black',
+				#-background         => 'white',
+				-padx               => 0,
+				-pady               => 0,
+				-borderwidth        => 0,
+				-highlightthickness => 0,
+			);
+			$self->list->header(
+				'create',
+				$col - 1,
+				-itemtype  => 'window',
+				-widget    => $w,
+			);
+		}
+		++$col;
+	}
+	$self->{result} = $result;
+	my @result_inside = @{$result};
+	shift @result_inside;
+	
 	my $row = 0;
-	foreach my $i (@{$result}){
+	foreach my $i (@result_inside){
 		$self->list->add($row,-at => "$row");
+		$self->{list2}->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			if ($row == 0){
+			if ($col){
 				$self->list->itemCreate(
 					$row,
-					$col,
-					-text  => $self->gui_jchar($h,'sjis'),
-					-style => $center_style
-				);
-			}
-			elsif ($col && $row){
-				$self->list->itemCreate(
-					$row,
-					$col,
+					$col -1,
 					-text  => $h,
 					-style => $right_style
 				);
 			} else {
-				$self->list->itemCreate(
+				$self->{list2}->itemCreate(
 					$row,
-					$col,
+					0,
 					-text  => $self->gui_jchar($h,'sjis')
 				);
 			}
@@ -285,6 +358,31 @@ sub rtn{
 		-text => 'Ready.',
 		-foreground => 'blue'
 	);
+}
+
+sub copy{
+	my $self = shift;
+	my $t = '';
+	
+	foreach my $i (@{$self->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	my $CLIP = Win32::Clipboard();
+	$CLIP->Set("$t");
+}
+
+sub multiscrolly{
+	my ($sb,$wigs,@args) = @_;
+	my $w;
+	foreach $w (@$wigs){
+		$w->yview(@args);
+	}
 }
 
 #--------------#
