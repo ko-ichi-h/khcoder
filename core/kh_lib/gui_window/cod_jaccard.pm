@@ -78,10 +78,9 @@ sub _new{
 		-foreground => 'blue'
 	)->pack(-side => 'left');
 
-	$rf->Button(
-		-text => $self->gui_jchar('コピー'),
+	$self->{btn_copy} = $rf->Button(
+		-text => $self->gui_jchar('コピー（表全体）'),
 		-font => "TKFN",
-		-width => 8,
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub { $self->copy; });} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
@@ -135,6 +134,13 @@ sub _calc{
 
 	# 結果表示用のHList作成
 	my $cols = @{$result->[0]};
+	my $width = 0;
+	foreach my $i (@{$result}){
+		if ( length($i->[0]) > $width ){
+			$width = length($i->[0]);
+		}
+	}
+
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
 	$self->{list2}->destroy if $self->{list2};
 	$self->{sb1}->destroy if $self->{sb1};
@@ -156,9 +162,9 @@ sub _calc{
 		-selectforeground   => 'black',
 		-selectmode         => 'extended',
 		-height             => 10,
+		-width              => $width,
 		-borderwidth        => 0,
 		-highlightthickness => 0,
-		#-selectborderwidth => 0,
 	);
 	$self->{list2}->header('create',0,-text => ' ');
 	$self->{list} = $self->{list_flame_inner}->HList(
@@ -173,8 +179,6 @@ sub _calc{
 		-height             => 10,
 		-borderwidth        => 0,
 		-highlightthickness => 0,
-		#-selectborderwidth => 0,
-		#-sizecmd            => sub { $self->sb_chk; }
 	);
 
 	my $col = 0;                                            # Header作成
@@ -186,7 +190,7 @@ sub _calc{
 		my $w = $self->{list}->Label(
 			-text               => $self->gui_jchar($i),
 			-font               => "TKFN",
-			-foreground         => 'black',
+			-foreground         => 'blue',
 			-cursor             => 'hand2',
 			-padx               => 0,
 			-pady               => 0,
@@ -203,13 +207,13 @@ sub _calc{
 		$w->bind(
 			"<Enter>",
 			sub{
-				$w->after(10, sub { $w->configure(-foreground => 'blue'); } );
+				$w->after(10, sub { $w->configure(-foreground => 'red'); } );
 			}
 		);
 		$w->bind(
 			"<Leave>",
 			sub{
-				$w->after(10, sub { $w->configure(-foreground => 'black'); } );
+				$w->after(10, sub { $w->configure(-foreground => 'blue'); } );
 			}
 		);
 		$self->list->header(
@@ -312,8 +316,14 @@ sub sort{
 	my @temp;
 	if ($key){
 		@temp = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
+		$self->{btn_copy}->configure(
+			-text => $self->gui_jchar('コピー（選択列）')
+		);
 	} else {
 		@temp = @{$self->{result}};
+		$self->{btn_copy}->configure(
+			-text => $self->gui_jchar('コピー（表全体）')
+		);
 	}
 
 	# 出力
@@ -357,7 +367,7 @@ sub sort{
 			'-widget'
 		);
 		$w->configure(
-			-foreground => 'blue',
+			-foreground => 'red',
 			#-cursor => undef
 		);
 		$w->bind(
@@ -365,7 +375,7 @@ sub sort{
 			sub{
 				$w->after(
 					10,
-					sub { $w->configure(-foreground => 'blue'); }
+					sub { $w->configure(-foreground => 'red'); }
 				);
 			}
 		);
@@ -379,7 +389,7 @@ sub sort{
 			'-widget'
 		);
 		$lw->configure(
-			-foreground => 'black',
+			-foreground => 'blue',
 			#-cursor => 'hand2'
 		);
 		$lw->bind(
@@ -387,7 +397,7 @@ sub sort{
 			sub{
 				$lw->after(
 					10,
-					sub { $lw->configure(-foreground => 'black'); }
+					sub { $lw->configure(-foreground => 'blue'); }
 				);
 			}
 		);
