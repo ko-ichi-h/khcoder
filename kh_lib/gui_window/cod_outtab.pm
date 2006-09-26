@@ -227,8 +227,7 @@ sub _calc{
 	$self->{sb2}->destroy if $self->{sb2};
 	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
 
-	my $cols = @{$result->[0]};                             # 新たなリスト作成
-	$self->{list_flame_inner} = $self->{list_flame}->Frame(
+	$self->{list_flame_inner} = $self->{list_flame}->Frame( # 新たなリスト作成
 		-relief      => 'sunken',
 		-borderwidth => 2
 	);
