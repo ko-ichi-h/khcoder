@@ -116,7 +116,7 @@ sub code{
 	foreach my $i (@{$self->{codes}}){
 		my $res_table = "ct_$tani"."_dscode_$n";
 		++$n;
-		$i->ready($tani) or next;
+		$i->ready($tani,$self->{order}) or next;
 		$i->code($res_table,$self->{order});
 		if ($i->res_table){ push @{$self->{valid_codes}}, $i; }
 		
@@ -204,7 +204,6 @@ sub search{
 		};
 		$self->cumulate('ds') if @{$self->tables} > 30;
 	}
-	
 	
 	# 合致する文書のリストを作成
 	print "kh_cod::search -> searching...\n";

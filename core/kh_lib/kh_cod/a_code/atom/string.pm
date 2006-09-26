@@ -112,7 +112,7 @@ sub ready{
 	substr($query,0,1) = '';
 
 	# キャッシュのチェックとテーブル名決定
-	my @c_c = $self->cache_check(
+	my @c_c = kh_cod::a_code->cache_check(
 		tani => $tani,
 		kind => 'string',
 		name => $query

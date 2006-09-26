@@ -4,26 +4,132 @@ use gui_errormsg;
 use mysql_exec;
 use strict;
 
+my $debug = 0;
+
 #----------------------#
 #   コーディング実行   #
 
 sub code{
-	my $self           = shift;	
+	my $self           = shift;
+	$self->{res_table} = shift;
+	$self->{sort}      = shift;
 	$self->{if_done}   = 1;
-	#print "* Stage 3 started...\n";
+
+	print "* Coding: Checking conditions...\n" if $debug;
+	print "\tres_table: $self->{res_table}\n" if $debug;
 	unless ($self->{condition}){
+		$self->{res_table} = '';
 		return 0;
 	}
 	unless ($self->{row_condition}){
+		$self->{res_table} = '';
 		return 0;
 	}
 	unless ($self->tables){
 		$self->{tables} = [];
-		#return 0;
 	}
 
-	$self->{res_table} = shift;
-	$self->{sort} = shift;
+	# キャッシュの有無をチェック
+	my $raw = $self->{ed_condition};
+	$raw =~ s/'/\\'/g;
+	my $kind = 'code';
+	if ($self->{sort} eq 'tf*idf'){
+		$kind .= '_idf_m';
+	}
+	elsif ($self->{sort} eq 'tf/idf'){
+		$kind .= '_idf_d';
+	}
+	my $tani = $self->{tani};
+	my @c_c = kh_cod::a_code->cache_check(
+		tani => $tani,
+		kind => $kind,
+		name => $raw
+	);
+	my $cache_table = "ct_$tani"."_ccode_"."$c_c[1]";
+
+	#print "1st: $c_c[0]\n";
+	#print "2nd: $c_c[1]\n";
+	#print "table: $cache_table\n";
+	print "\tcache found[1]\n" if $c_c[0] && $debug;
+
+	# キャッシュが無い場合はまずキャッシュを作成
+	unless ($c_c[0]){
+
+		mysql_exec->drop_table($cache_table);               # テーブル作成
+		mysql_exec->do("
+			CREATE TABLE $cache_table (
+				id int not null primary key,
+				num float
+			)
+		",1);
+
+		my $sql = '';                                       # 条件チェック
+		$sql .= "INSERT INTO $cache_table (id, num)\n";
+		$sql .= "SELECT $self->{tani}.id, ";
+		my $nn = 0;
+		foreach my $i (@{$self->{condition}}){
+			if ($nn){ $sql .= " + "; } else { $nn = 1; }
+			$sql .= $i->num_expr($self->{sort});
+		}
+		$sql .= "\n";
+		$sql .= "FROM $self->{tani}\n";
+		foreach my $i (@{$self->tables}){
+			unless ($i){next;}
+			$sql .= "\tLEFT JOIN $i ON $self->{tani}.id = $i.id\n";
+		}
+		$sql .= "WHERE\n";
+		foreach my $i (@{$self->{condition}}){
+			$sql .= "\t".$i->expr()."\n";
+		}
+		
+		my $error_flag = 0;                                 # エラーチェック
+		my $check = mysql_exec->do($sql);
+		if ($check->err){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  =>
+					"コーディング・ルールの書式に誤りがありました。\n".
+					"誤りを含むコード： ".$self->name."\n".$check->err
+			);
+			$error_flag = 1;
+		}
+		unless ($error_flag){
+			my $check2 = mysql_exec->select(
+				"SELECT * FROM $cache_table LIMIT 1"
+			)->hundle;
+			unless (my $ch = $check2->fetch){
+				$self->{res_table} = '';
+				$error_flag = 1;
+			}
+		}
+		
+		my $words = '';                                     # キャッシュの登録
+		my $n =0;
+		foreach my $i (@{$self->{hyosos}}){
+			$words .= "\t";
+			$words .= $i;
+			++$n;
+		}
+		$words = '-1' if $error_flag;
+		$self->cache_regist(
+			tani   => $tani,
+			kind   => $kind,
+			name   => $raw,
+			hyosos => $words,
+		);
+	}
+	
+	# キャッシュを$self->{res_table}にコピー
+	my $chk = $self->cache_code_if_ok(
+			tani   => $tani,
+			kind   => $kind,
+			name   => $raw,
+	);
+	unless ($chk){
+		print "\nthis is an error code (cache)!\n" if $debug;
+		$self->{res_table} = '';
+		return 0;
+	}
 
 	mysql_exec->drop_table($self->{res_table});
 	mysql_exec->do("
@@ -32,46 +138,11 @@ sub code{
 			num float
 		) type = heap
 	",1);
-
-	my $sql = '';
-	$sql .= "INSERT INTO $self->{res_table} (id, num)\n";
-	$sql .= "SELECT $self->{tani}.id, ";
-	my $nn = 0;
-	foreach my $i (@{$self->{condition}}){
-		if ($nn){ $sql .= " + "; } else { $nn = 1; }
-		$sql .= $i->num_expr($self->{sort});
-	}
-	$sql .= "\n";
-	$sql .= "FROM $self->{tani}\n";
-	foreach my $i (@{$self->tables}){
-		unless ($i){next;}
-		$sql .= "\tLEFT JOIN $i ON $self->{tani}.id = $i.id\n";
-	}
-	$sql .= "WHERE\n";
-	foreach my $i (@{$self->{condition}}){
-		$sql .= "\t".$i->expr()."\n";
-	}
-	#print "$sql\n";
-	
-	my $check = mysql_exec->do($sql);             # 構文エラーがあった場合
-	if ($check->err){
-		$self->{res_table} = '';
-		gui_errormsg->open(
-			type => 'msg',
-			msg  =>
-				"コーディング・ルールの書式に誤りがありました。\n".
-				"誤りを含むコード： ".$self->name."\n".$check->err
-		);
-		return 0;
-	}
-	
-	my $check2 = mysql_exec->select(
-		"SELECT * FROM $self->{res_table} LIMIT 1"
-	)->hundle;
-	unless (my $ch = $check2->fetch){
-		$self->{res_table} = '';
-		return 0;
-	}
+	mysql_exec->do("
+		INSERT INTO $self->{res_table} (id, num)
+		SELECT id, num
+		FROM   $cache_table
+	",1);
 	
 	# 検索に使用した文字列のリスト
 	foreach my $i (@{$self->{condition}}){
@@ -90,6 +161,8 @@ sub code{
 		WHERE  num = 0
 	",1);
 	
+	#print " done\n" if $debug;
+
 	return $self;
 }
 
@@ -99,10 +172,42 @@ sub code{
 sub ready{
 	my $self = shift;
 	my $tani = shift;
-	#print "* Stage 1 started...\n";
+	my $sort = shift;
+	
+	print "***\n" if $debug;
+	print "* Coding: making tables for atoms...\n" if $debug;
+
 	$self->{tani} = $tani;
 	unless ($self->{condition}){
 		return 0;
+	}
+
+	# キャッシュのチェック
+	my $raw = $self->{ed_condition};
+	$raw =~ s/'/\\'/g;
+	my $kind = 'code';
+	if ($sort eq 'tf*idf'){
+		$kind .= '_idf_m';
+	}
+	elsif ($sort eq 'tf/idf'){
+		$kind .= '_idf_d';
+	}
+	my @c_c = kh_cod::a_code->cache_check(
+		tani => $tani,
+		kind => $kind,
+		name => $raw
+	);
+	
+	if ( $c_c[0] == 1 ) {                            # キャッシュ有りの場合
+		print "\tcache found[0]!\n" if $debug;
+		my $t = mysql_exec->select("
+			SELECT hyosos
+			FROM ct_cache_tables
+			WHERE id = $c_c[1]
+		",1)->hundle->fetch->[0];
+		my @words = split /\t/, $t;
+		$self->{hyosos} = \@words;
+		return $self;
 	}
 	
 	# ATOMごとのテーブルを作製
@@ -151,7 +256,7 @@ sub ready{
 	unless ($unique_check){return 1;}
 	
 	# ATOMテーブルをまとめる
-	#print "* Stage 2 started...\n";
+	print "* Coding: Joining the tables...\n" if $debug;
 	my $n = 0;
 	foreach my $i (@t){
 		# テーブル作製
@@ -215,18 +320,19 @@ sub new{
 	#print "$condition\n";
 	my @temp = split / /, $condition;
 	
+	my $n = 0;
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
-		#print Jcode->new("$i,")->sjis;
 		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
+		$self->{ed_condition} .= ' ' if $n;
+		$self->{ed_condition} .= $i;
+		++$n;
 	}
-	#print "\n";
 	
 	bless $self, $class;
 	return $self;
 }
-
 
 # 利用語のリストを返す
 sub hyosos{
@@ -237,7 +343,6 @@ sub strings{
 	my $self = shift;
 	return $self->{strings};
 }
-
 
 # 2回目以降のコーディングに備える
 sub clear{
@@ -254,6 +359,110 @@ sub clear{
 	}
 }
 
+#--------------------#
+#   キャッシュ管理   #
+#--------------------#
+
+sub cache_check{
+	my $self_ = shift;
+	my %args = @_;
+
+	# キャッシュリストが存在する場合
+	if ( mysql_exec->table_exists('ct_cache_tables') ){
+		# 既にキャッシュがあるかどうかを検索
+		my $h = mysql_exec->select("
+			SELECT id
+			FROM ct_cache_tables
+			WHERE 
+				    tani = \"$args{tani}\"
+				AND kind = \"$args{kind}\"
+				AND name = \"$args{name}\"
+		",1)->hundle;
+		my $n = $h->fetch;
+		if ($n){                        # キャッシュが存在した場合
+			#print "[list y, cache y]\n" if $debug;
+			return (1,$n->[0]);
+		} else {                        # キャッシュが存在しなかった場合
+			my $num = 0;
+			if ($args{kind} =~ /^code/ ){
+				# 番号を返す
+				$num = mysql_exec->select("
+					SELECT MAX(id)
+					FROM   ct_cache_tables
+				",1)->hundle->fetch->[0];
+				++$num;
+				#print "[list y, cache n, code y]\n" if $debug;
+			} else {
+				# 新規キャッシュとして登録
+				mysql_exec->do("
+					INSERT INTO ct_cache_tables (tani,kind,name)
+					VALUES (\"$args{tani}\", \"$args{kind}\",\"$args{name}\")
+				",1);
+				# 番号を返す
+				$num = mysql_exec->select("
+					SELECT MAX(id)
+					FROM   ct_cache_tables
+				",1)->hundle->fetch->[0];
+				#print "[list y, cache n, code n]\n"  if $debug;
+			}
+			return (0, $num);
+		}
+	}
+	# キャッシュリストが存在しなかった場合
+	else {
+		mysql_exec->do("
+			CREATE TABLE ct_cache_tables (
+				id     int auto_increment primary key not null,
+				tani   varchar(5),
+				kind   varchar(20),
+				name   text,
+				hyosos text
+			)
+		",1);
+		# 種類が「code」でなければ登録してしまう
+		mysql_exec->do("
+			INSERT INTO ct_cache_tables (tani,kind,name)
+			VALUES (\"$args{tani}\", \"$args{kind}\",\"$args{name}\")
+		",1) unless ($args{kind} =~ /^code/ );
+		return (0,1);
+	}
+}
+
+sub cache_regist{
+	my $self_ = shift;
+	my %args = @_;
+	
+	# 新規キャッシュとして登録
+	mysql_exec->do("
+		INSERT INTO ct_cache_tables (tani,kind,name,hyosos)
+		VALUES (
+			\"$args{tani}\",
+			\"$args{kind}\",
+			\"$args{name}\",
+			\"$args{hyosos}\"
+		)
+	",1);
+}
+
+sub cache_code_if_ok{
+	my $self_ = shift;
+	my %args = @_;
+
+	my $h = mysql_exec->select("
+		SELECT hyosos
+		FROM ct_cache_tables
+		WHERE 
+			    tani = \"$args{tani}\"
+			AND kind = \"$args{kind}\"
+			AND name = \"$args{name}\"
+	",1)->hundle;
+	my $t = $h->fetch;
+	$t = $t->[0];
+	#print "cache code chk: $t\n";
+	return 0 unless $t;
+	return 0 if $t eq '-1';
+	return 1;
+}
 
 #--------------#
 #   アクセサ   #
