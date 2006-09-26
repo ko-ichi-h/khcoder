@@ -106,7 +106,7 @@ sub code{
 		my $words = '';                                     # キャッシュの登録
 		my $n =0;
 		foreach my $i (@{$self->{hyosos}}){
-			$words .= "\t";
+			$words .= "\t" if $n;
 			$words .= $i;
 			++$n;
 		}
