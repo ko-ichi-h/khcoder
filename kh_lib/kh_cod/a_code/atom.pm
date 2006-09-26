@@ -97,7 +97,9 @@ sub num_expr{
 		$t .= " * ".$self->idf;
 	}
 	elsif ($sort eq 'tf/idf'){
-		$t .= " / ".$self->idf;
+		my $idf = $self->idf;
+		$idf = 1 unless $idf;
+		$t .= " / $idf";
 	}
 	#print Jcode->new("$sort : ".$self->raw." : $t \n")->sjis;
 	
@@ -133,61 +135,5 @@ sub hyosos{
 sub strings{
 	return undef;
 }
-
-sub cache_check{
-	my $self = shift;
-	my %args = @_;
-
-	# キャッシュリストが存在する場合
-	if ( mysql_exec->table_exists('ct_cache_tables') ){
-		# 既にキャッシュがあるかどうかを検索
-		my $h = mysql_exec->select("
-			SELECT id
-			FROM ct_cache_tables
-			WHERE 
-				    tani = \"$args{tani}\"
-				AND kind = \"$args{kind}\"
-				AND name = '$args{name}'
-		",1)->hundle;
-		my $n = $h->fetch;
-		# キャッシュが存在した場合
-		if ($n){
-			return (1,$n->[0]);
-		} 
-		# キャッシュが存在しなかった場合
-		else {
-			# 新規キャッシュとして登録
-			mysql_exec->do("
-				INSERT INTO ct_cache_tables (tani,kind,name)
-				VALUES (\"$args{tani}\", \"$args{kind}\",\"$args{name}\")
-			",1);
-			# 番号を返す
-			$n = mysql_exec->select("
-				SELECT MAX(id)
-				FROM   ct_cache_tables
-			",1)->hundle->fetch->[0];
-			return (0, $n);
-		}
-	}
-	# キャッシュリストが存在しなかった場合
-	else {
-		mysql_exec->do("
-			CREATE TABLE ct_cache_tables (
-				id   int auto_increment primary key not null,
-				tani varchar(5),
-				kind varchar(20),
-				name text
-			)
-		",1);
-		mysql_exec->do("
-			INSERT INTO ct_cache_tables (tani,kind,name)
-			VALUES (\"$args{tani}\", \"$args{kind}\",\"$args{name}\")
-		",1);
-		return (0,1);
-	}
-}
-
-
-
 
 1;

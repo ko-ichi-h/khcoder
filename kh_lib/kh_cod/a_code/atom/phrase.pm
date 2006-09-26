@@ -212,7 +212,7 @@ sub ready{
 	
 	# テーブル名決定とキャッシュのチェック
 	my $debug = 0;
-	my @c_c = $self->cache_check(
+	my @c_c = kh_cod::a_code->cache_check(
 		tani => $tani,
 		kind => 'phrase',
 		name => $self->raw
