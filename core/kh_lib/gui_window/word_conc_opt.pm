@@ -312,10 +312,10 @@ sub save{
 	foreach my $n (1,2,3){
 		if ($self->{"pos$n"}) {
 			$ad->{$n}{query}  = Jcode->new($self->gui_jg( $self->{entry}{"$n"."a"}->get ),'sjis')->euc;
-			unless (length($ad->{$n}{query})){
-				$ad->{$n} = undef;
-				next;
-			}
+			#unless (length($ad->{$n}{query})){
+			#	$ad->{$n} = undef;
+			#	next;
+			#}
 			$ad->{$n}{pos} = $self->{"pos$n"};
 			$ad->{$n}{hinshi} = Jcode->new($self->gui_jg( $self->{entry}{"$n"."b"}->get ),'sjis')->euc;
 			$ad->{$n}{katuyo} = Jcode->new($self->gui_jg( $self->{entry}{"$n"."c"}->get ),'sjis')->euc;

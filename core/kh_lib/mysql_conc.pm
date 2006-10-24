@@ -11,7 +11,7 @@ my $docs_per_once = 200;
 #----------------------------#
 
 sub initialize{
-	($l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika) = ('','','','')
+	($l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika) = ('','','','');
 }
 
 sub a_word{
@@ -25,23 +25,27 @@ sub a_word{
 	}
 
 	my $tuika_chk = 
-		 $args{tuika}->{1}{pos}
-		.$args{tuika}->{1}{query}
-		.$args{tuika}->{1}{hinshi}
-		.$args{tuika}->{1}{katuyo}
-		.$args{tuika}->{2}{pos}
-		.$args{tuika}->{2}{query}
-		.$args{tuika}->{2}{hinshi}
-		.$args{tuika}->{2}{katuyo}
-		.$args{tuika}->{3}{pos}
-		.$args{tuika}->{3}{query}
-		.$args{tuika}->{3}{hinshi}
-		.$args{tuika}->{4}{katuyo};
+		 "$args{tuika}->{1}{pos},"
+		."$args{tuika}->{1}{query},"
+		."$args{tuika}->{1}{hinshi},"
+		."$args{tuika}->{1}{katuyo},"
+		."$args{tuika}->{2}{pos},"
+		."$args{tuika}->{2}{query},"
+		."$args{tuika}->{2}{hinshi},"
+		."$args{tuika}->{2}{katuyo},"
+		."$args{tuika}->{3}{pos},"
+		."$args{tuika}->{3}{query},"
+		."$args{tuika}->{3}{hinshi},"
+		."$args{tuika}->{3}{katuyo}"
+	;
+	
+	my $abort = 0;
 
 	unless (
 		   ( $l_query eq $args{query} )
 		&& ( $l_hinshi eq $args{hinshi} )
 		&& ( $l_katuyo eq $args{katuyo} )
+		&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
 		&& ( $l_tuika eq $tuika_chk )
 	){
 		if (
@@ -49,44 +53,125 @@ sub a_word{
 				   ( $l_query eq $args{query} )
 				&& ( $l_hinshi eq $args{hinshi} )
 				&& ( $l_katuyo eq $args{katuyo} )
+				&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
 			)
-			or length($l_tuika)
+			or (length($l_tuika) > 11)
 		){
-			my $hyoso = $self->_hyoso;
-			return 0 unless $hyoso;
-			$self->_find($hyoso);
+			print "1st search\n";
+			$self->_hyoso_ext or $abort = 1;
+			$self->_find;
 			$l_query = $args{query};
 			$l_hinshi = $args{hinshi};
 			$l_katuyo = $args{katuyo};
 		}
-		$self->_tuika or return 0 if length($tuika_chk);
-		$l_tuika  = $tuika_chk;
+		if (length($tuika_chk) > 11 && $abort == 0){
+			print "2nd search\n";
+			$self->_tuika or $abort = 1;
+		}
+		$l_tuika = $tuika_chk;
 	}
-
-	$self->_sort;
-	return $self;
+	if ($abort == 0){
+		print "3. sort\n\n";
+		$self->_sort;
+		return $self;
+	} else {
+		($l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika) = ('','','','');
+		return 0;
+	}
 }
 
 sub last_words{
-	my $self;
-	my $class = shift;
-	my %args;
-	$args{query} = $l_query;
-	$args{hinshi} = $l_hinshi;
-	$args{katuyo} = $l_katuyo;
-	$self = \%args;
-	bless $self, $class;
-	return ($self->_hyoso);
+	my @r;
+	my $h = mysql_exec->select("
+		SELECT id
+		FROM   temp_conc_hyoso
+	")->hundle;
+	while (my $i = $h->fetch){
+		push @r, $i->[0];
+	}
+	return \@r;
 }
 
-sub _hyoso{
+#sub last_words{
+#	my $self;
+#	my $class = shift;
+#	my %args;
+#	
+#	$args{query} = $l_query;
+#	$args{hinshi} = $l_hinshi;
+#	$args{katuyo} = $l_katuyo;
+#	$self = \%args;
+#	bless $self, $class;
+#	return ($self->_hyoso);
+#}
+
+#sub _hyoso{
+#	my $self = shift;
+#	
+#	return mysql_a_word->new(
+#		genkei   => $self->{query},
+#		katuyo   => $self->{katuyo},
+#		khhinshi => $self->{hinshi}
+#	)->hyoso_id_s;
+#}
+
+sub _hyoso_ext{
 	my $self = shift;
+	my $r;
 	
-	return mysql_a_word->new(
-		genkei   => $self->{query},
-		katuyo   => $self->{katuyo},
-		khhinshi => $self->{hinshi}
-	)->hyoso_id_s;
+	mysql_exec->drop_table("temp_conc_hyoso");
+	mysql_exec->do("
+		create table temp_conc_hyoso(
+			id int primary key not null
+		)  TYPE = HEAP
+	",1);
+	
+	# 語が指定されている場合
+	if (length($self->{query})){
+		$r = mysql_a_word->new(
+			genkei   => $self->{query},
+			katuyo   => $self->{katuyo},
+			khhinshi => $self->{hinshi}
+		)->hyoso_id_s;
+		if ($r){
+			my $sql = "INSERT INTO temp_conc_hyoso (id)\n";
+			$sql .= "VALUES\n";
+			my $n = 0;
+				foreach my $i (@{$r}){
+					$sql .= "," if $n;
+					$sql .= "($i)";
+					++$n;
+				}
+			mysql_exec->do($sql,1);
+		} else {
+			return 0;
+		}
+	}
+	# 品詞・活用形での指定
+	elsif ( ( length($self->{katuyo}) ) || ( length($self->{hinshi}) ) ){
+		my $sql = '';
+		$sql .= "INSERT INTO temp_conc_hyoso (id)\n";
+		$sql .= "SELECT hyoso.id\n";
+		$sql .= "FROM   hyoso, genkei, khhinshi, katuyo\n";
+		$sql .= "WHERE\n";
+		$sql .= "	hyoso.genkei_id = genkei.id\n";
+		$sql .= "	AND genkei.khhinshi_id = khhinshi.id\n";
+		$sql .= "	AND hyoso.katuyo_id = katuyo.id\n";
+		if ( length($self->{katuyo}) ){
+			$sql .= "	AND katuyo.name = \'$self->{katuyo}\'\n";
+		}
+		if ( length($self->{hinshi}) ){
+			$sql .= "	AND khhinshi.name = \'$self->{hinshi}\'\n";
+		}
+		mysql_exec->do($sql,1);
+	} else {
+		return 0;
+	}
+	
+	return mysql_exec->select("
+		SELECT id
+		FROM   temp_conc_hyoso
+	",1)->hundle->rows;
 }
 
 #----------#
@@ -96,7 +181,7 @@ sub _hyoso{
 sub _find{
 	my $self = shift;
 	my %args = %{$self};
-	my @hyoso = @{$_[0]};
+	#my @hyoso = @{$_[0]};
 
 	# print "\n1: Searching(1)...\n";
 
@@ -125,7 +210,7 @@ sub _find{
 	$sql .= "INSERT INTO temp_conc\n";
 	$sql .= "(id, l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5)\n";
 	$sql .= "SELECT center.id, l5.hyoso_id,l4.hyoso_id,l3.hyoso_id,l2.hyoso_id,l1.hyoso_id,center.hyoso_id,r1.hyoso_id,r2.hyoso_id,r3.hyoso_id,r4.hyoso_id,r5.hyoso_id\n";
-	$sql .= "FROM hyosobun as center\n";
+	$sql .= "FROM temp_conc_hyoso, hyosobun as center\n";
 	$sql .= "\tLEFT JOIN hyosobun as l1 ON ( center.id - 1 ) = l1.id\n";
 	$sql .= "\tLEFT JOIN hyosobun as l2 ON ( center.id - 2 ) = l2.id\n";
 	$sql .= "\tLEFT JOIN hyosobun as l3 ON ( center.id - 3 ) = l3.id\n";
@@ -137,14 +222,16 @@ sub _find{
 	$sql .= "\tLEFT JOIN hyosobun as r4 ON ( center.id + 4 ) = r4.id\n";
 	$sql .= "\tLEFT JOIN hyosobun as r5 ON ( center.id + 5 ) = r5.id\n";
 	$sql .= "WHERE\n";
-	my $n = 0;
-	foreach my $i (@hyoso){
-		if ($n){
-			$sql .= 'OR ';
-		}
-		$sql .= "center.hyoso_id = $i\n";
-		++$n;
-	}
+	$sql .= "center.hyoso_id = temp_conc_hyoso.id";
+	
+	#my $n = 0;
+	#foreach my $i (@hyoso){
+	#	if ($n){
+	#		$sql .= 'OR ';
+	#	}
+	#	$sql .= "center.hyoso_id = $i\n";
+	#	++$n;
+	#}
 	mysql_exec->do($sql,1);
 }
 
@@ -155,6 +242,60 @@ sub _find{
 sub _tuika{
 	my $self = shift;
 	# print "\n1: Searching(2)...\n";
+	
+	# 絞り込みの準備
+	foreach my $i (1,2,3){
+		next unless $self->{tuika}{$i}{pos};
+		# テーブルの準備
+		mysql_exec->drop_table("temp_conc_hyoso_opt$i");
+		mysql_exec->do("
+			create table temp_conc_hyoso_opt$i(
+				id int primary key not null
+			)  TYPE = HEAP
+		",1);
+		# 語が指定されている場合
+		if ( length($self->{tuika}{$i}{query}) ){
+			my $r = mysql_a_word->new(
+				genkei   => $self->{tuika}{$i}{query},
+				katuyo   => $self->{tuika}{$i}{katuyo},
+				khhinshi => $self->{tuika}{$i}{hinshi}
+			)->hyoso_id_s;
+			if ($r){
+				my $sql = "INSERT INTO temp_conc_hyoso_opt$i (id)\n";
+				$sql .= "VALUES\n";
+				my $n = 0;
+				foreach my $i (@{$r}){
+					$sql .= "," if $n;
+					$sql .= "($i)";
+					++$n;
+				}
+				mysql_exec->do($sql,1);
+			}
+		}
+		# 品詞・活用形による指定
+		elsif (
+			   (length($self->{tuika}{$i}{katuyo}))
+			|| (length($self->{tuika}{$i}{hinshi}))
+		){
+			my $sql = '';
+			$sql .= "INSERT INTO temp_conc_hyoso_opt$i (id)\n";
+			$sql .= "SELECT hyoso.id\n";
+			$sql .= "FROM   hyoso, genkei, khhinshi, katuyo\n";
+			$sql .= "WHERE\n";
+			$sql .= "	hyoso.genkei_id = genkei.id\n";
+			$sql .= "	AND genkei.khhinshi_id = khhinshi.id\n";
+			$sql .= "	AND hyoso.katuyo_id = katuyo.id\n";
+			if ( length($self->{tuika}{$i}{katuyo}) ){
+				$sql .= "\tAND katuyo.name = \'$self->{tuika}{$i}{katuyo}\'\n";
+			}
+			if ( length($self->{tuika}{$i}{hinshi}) ){
+				$sql .= "\tAND khhinshi.name = \'$self->{tuika}{$i}{hinshi}\'\n";
+			}
+			mysql_exec->do($sql,1);
+		} else {
+			return 0;
+		}
+	}
 	
 	# Temp Table作成
 	mysql_exec->drop_table("temp_conc_old");
@@ -194,36 +335,31 @@ sub _tuika{
 	
 	my $sql = '';
 	$sql .= "INSERT INTO temp_conc (id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5)\n";
-	$sql .= "SELECT id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5\n";
-	$sql .= "FROM temp_conc_old\n";
+	$sql .= "SELECT temp_conc_old.id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5\n";
+	$sql .= "FROM temp_conc_old";
+	foreach my $i (1,2,3){
+		if ($self->{tuika}{$i}{pos}){
+			$sql .= ",temp_conc_hyoso_opt$i";
+		}
+	}
+	$sql .= "\n";
 	$sql .= "WHERE\n";
 	foreach my $i (1,2,3){
 		next unless $self->{tuika}{$i}{pos};
 		$sql .= "\tAND "if $i > 1;
 		$sql .= "\t(\n";
-		my $hyoso = mysql_a_word->new(
-			genkei   => $self->{tuika}{$i}{query},
-			katuyo   => $self->{tuika}{$i}{katuyo},
-			khhinshi => $self->{tuika}{$i}{hinshi}
-		)->hyoso_id_s;
-		unless ($hyoso){
-			$sql .= "\t\t0\n\t)\n";
-			next;
-		}
 		my $n = 0;
 		foreach my $p (@{$cols->{$self->{tuika}{$i}{pos}}}){
-			foreach my $w (@{$hyoso}){
-				if ($n){
-					$sql .= "\t\tOR $p = $w\n";
-				} else {
-					$sql .= "\t\t$p = $w\n";
-				}
-				++$n;
+			if ($n){
+				$sql .= "\t\tOR $p = temp_conc_hyoso_opt$i.id\n";
+			} else {
+				$sql .= "\t\t   $p = temp_conc_hyoso_opt$i.id\n";
 			}
+			++$n;
 		}
 		$sql .= "\t)\n";
 	}
-	# print "$sql\n";
+	#print "$sql\n";
 	mysql_exec->do($sql,1);
 	mysql_exec->drop_table("temp_conc_old");
 	
