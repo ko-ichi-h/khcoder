@@ -323,7 +323,7 @@ sub btn_check{
 	
 	if (
 		   $gui_window::word_conc::additional->{1}{pos}
-		&& length($gui_window::word_conc::additional->{1}{query})
+		#&& length($gui_window::word_conc::additional->{1}{query})
 	){
 		$self->{btn_tuika}->configure(-text => $self->gui_jchar('追加条件＊'));
 	} else {
@@ -501,9 +501,9 @@ sub search{
 
 	# 変数取得
 	my $query = Jcode->new($self->gui_jg($self->entry->get),'sjis')->euc;
-	unless ($query){
-		return;
-	}
+	#unless ($query){
+	#	return;
+	#}
 	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get),'sjis')->euc;
 	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get),'sjis')->euc;
 	my $length = $self->entry3->get;
@@ -525,7 +525,7 @@ sub search{
 
 	# 検索実行
 	use Benchmark;
-	# my $t0 = new Benchmark;
+	my $t0 = new Benchmark;
 
 	# my ($result, $r_num)
 	$self->{result_obj} = mysql_conc->a_word(
@@ -555,8 +555,8 @@ sub search{
 		$::main_gui->get('w_word_conc_coloc')->view($self->{result_obj});
 	}
 	
-	#my $t1 = new Benchmark;
-	#print timestr(timediff($t1,$t0)),"\n";
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n";
 	
 	return $self;
 }
