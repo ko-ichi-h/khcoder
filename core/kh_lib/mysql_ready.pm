@@ -532,7 +532,7 @@ sub hyosobun{
 
 
 		while (my $d = $t->fetch){
-			if ($d->[0] - $lastrow > 1){              # 改行のチェック
+			if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# 改行のチェック
 				++$dan;
 				$bun = 1;
 				unless ($maru){
