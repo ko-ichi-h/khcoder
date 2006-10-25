@@ -372,10 +372,44 @@ sub _tuika{
 #   ソート   #
 #------------#
 
-sub _sort{                                        # ソート用テーブルの作成
+sub _sort{
 	my $self = shift;
 	my %args = %{$self};
 	my $sql = '';
+
+	my @cols = ();
+	foreach my $i ('sort1','sort2','sort3'){
+		last if $args{$i} eq "id";
+		push @cols, $args{$i};
+	}
+	
+	if (@cols){                                   # ソートを行う場合
+		# 基本形のテーブルを作成
+		mysql_exec->drop_table("temp_conc_fs");
+		my $sql = '';
+		$sql .= "create table temp_conc_fs (\n";
+		$sql .= "	id int primary key not null,\n";
+		foreach my $i (@cols){
+			$sql .= "	$i int,\n";
+		}
+		chop $sql;
+		chop $sql;
+		$sql .= "\n)";
+		mysql_exec->do($sql,1);
+		
+		$sql = '';
+		$sql .= "ALTER TABLE temp_conc_fs ADD INDEX index1 (";
+		foreach my $i (@cols){
+			$sql .= "$i,";
+		}
+		chop $sql;
+		$sql .= ")";
+		mysql_exec->do($sql,1);
+		# 基本形を投入
+		
+	}
+
+
 
 	# print "2: Sorting...\n";
 	my ($group, $n);
