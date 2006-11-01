@@ -58,7 +58,7 @@ sub a_word{
 			)
 			or (length($l_tuika) > 11)
 		){
-			print "1st search\n";
+			#print "1st search\n";
 			$self->_hyoso_ext or $abort = 1;
 			$self->_find;
 			$l_query = $args{query};
@@ -66,13 +66,13 @@ sub a_word{
 			$l_katuyo = $args{katuyo};
 		}
 		if (length($tuika_chk) > 11 && $abort == 0){
-			print "2nd search\n";
+			#print "2nd search\n";
 			$self->_tuika or $abort = 1;
 		}
 		$l_tuika = $tuika_chk;
 	}
 	if ($abort == 0){
-		print "3. sort\n\n";
+		#print "3. sort\n\n";
 		$self->_sort;
 		return $self;
 	} else {
@@ -571,7 +571,7 @@ sub _sort{
 	}
 
 	my $t1 = new Benchmark;
-	print "Sort: ",timestr(timediff($t1,$t0)),"\n";
+	#print "Sort: ",timestr(timediff($t1,$t0)),"\n";
 }
 
 #--------------------------------#
