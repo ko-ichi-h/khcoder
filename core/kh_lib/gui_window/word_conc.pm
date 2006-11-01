@@ -556,7 +556,7 @@ sub search{
 	}
 	
 	my $t1 = new Benchmark;
-	print "Total: ",timestr(timediff($t1,$t0)),"\n";
+	#print "Total: ",timestr(timediff($t1,$t0)),"\n";
 	
 	return $self;
 }

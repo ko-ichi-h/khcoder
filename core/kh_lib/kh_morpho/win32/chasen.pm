@@ -12,6 +12,7 @@ sub _run_morpho{
 	my $cmdline = "chasen -o \"".$self->output."\" \"".$self->target."\"";
 	my $pos = rindex($path,"\\");
 	my $dir = substr($path,0,$pos);
+	#print "$cmdline\n";
 	
 	use Win32;
 	use Win32::Process;
