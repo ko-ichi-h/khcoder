@@ -78,6 +78,8 @@ sub save{
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
 		file   => $path,
 	)->run;
 	$w->end;
@@ -109,12 +111,13 @@ sub sql3{
 
 	my $sql;
 	$sql .= "SELECT $self->{tani}.id, hyoso.name, khhinshi.id\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, khhinshi, $self->{tani}\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei, df_$self->{tani}, khhinshi, $self->{tani}\n";
 	$sql .= "WHERE\n";
 
 	# テーブルの結合
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
+	$sql .= "	AND genkei.id = df_$self->{tani}.genkei_id\n";
 	$sql .= "	AND genkei.khhinshi_id = khhinshi.id\n";
 	my $flag = 0;
 	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
@@ -127,8 +130,12 @@ sub sql3{
 	# 最小・最大・「使用しない語」のチェック
 	$sql .= "	AND genkei.nouse = 0\n";
 	$sql .= "	AND genkei.num >= $self->{min}\n";
+	$sql .= "	AND df_$self->{tani}.f >= $self->{min_df}\n";
 	if ($self->{max}){
 		$sql .= "	AND genkei.num <= $self->{max}\n";
+	}
+	if ($self->{max_df}){
+		$sql .= "	AND df_$self->{tani}.f <= $self->{max_df}\n";
 	}
 
 	# 品詞による選択
