@@ -9,10 +9,11 @@ sub sql3{
 
 	my $sql;
 	$sql .= "SELECT $self->{tani}.id, genkei.name, khhinshi.id\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, khhinshi, $self->{tani}\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei, df_$self->{tani}, khhinshi, $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
+	$sql .= "	AND genkei.id = df_$self->{tani}.genkei_id\n";
 	$sql .= "	AND genkei.khhinshi_id = khhinshi.id\n";
 
 	my $flag = 0;
@@ -24,8 +25,12 @@ sub sql3{
 	}
 	$sql .= "	AND genkei.nouse = 0\n";
 	$sql .= "	AND genkei.num >= $self->{min}\n";
+	$sql .= "	AND df_$self->{tani}.f >= $self->{min_df}\n";
 	if ($self->{max}){
 		$sql .= "	AND genkei.num <= $self->{max}\n";
+	}
+	if ($self->{max_df}){
+		$sql .= "	AND df_$self->{tani}.f <= $self->{max_df}\n";
 	}
 	$sql .= "	AND (\n";
 	my $n = 0;
@@ -74,7 +79,7 @@ sub sql4{
 sub out2{
 	my $self = shift;
 	
-	# セル内容の作製(1)
+	# セル内容の作製1: データ内容
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -131,7 +136,7 @@ sub out2{
 	chop $self->{data}{kesson};
 	
 	
-	# セル内容の作製(2)
+	# セル内容の作製2: 茶筌による分かち書き結果
 	$id = 1;
 	$last = 1;
 	my $current;

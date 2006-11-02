@@ -146,11 +146,13 @@ sub make_list{
 	# 単語リストの作製
 	my $sql = "
 		SELECT genkei.id, genkei.name, hselection.khhinshi_id
-		FROM   genkei, hselection
+		FROM   genkei, hselection, df_$self->{tani}
 		WHERE
 			    genkei.khhinshi_id = hselection.khhinshi_id
 			AND genkei.num >= $self->{min}
 			AND genkei.nouse = 0
+			AND genkei.id = df_$self->{tani}.genkei_id
+			AND df_$self->{tani}.f >= $self->{min_df}
 			AND (
 	";
 	
@@ -163,6 +165,9 @@ sub make_list{
 	$sql .= ")\n";
 	if ($self->{max}){
 		$sql .= "AND genkei.num <= $self->{max}\n";
+	}
+	if ($self->{max_df}){
+		$sql .= "AND df_$self->{tani}.f <= $self->{max_df}\n";
 	}
 	$sql .= "ORDER BY khhinshi_id, 0 - genkei.num\n";
 	
@@ -208,11 +213,13 @@ sub wnum{
 	
 	my $sql = "
 		SELECT count(*)
-		FROM   genkei, hselection
+		FROM   genkei, hselection, df_$self->{tani}
 		WHERE
 			    genkei.khhinshi_id = hselection.khhinshi_id
 			AND genkei.num >= $self->{min}
 			AND genkei.nouse = 0
+			AND genkei.id = df_$self->{tani}.genkei_id
+			AND df_$self->{tani}.f >= $self->{min_df}
 			AND (
 	";
 	
@@ -226,9 +233,13 @@ sub wnum{
 	if ($self->{max}){
 		$sql .= "AND genkei.num <= $self->{max}\n";
 	}
+	if ($self->{max_df}){
+		$sql .= "AND df_$self->{tani}.f <= $self->{max_df}\n";
+	}
+	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/;
+	1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
 	return $_;
 }
 

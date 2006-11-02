@@ -51,6 +51,8 @@ sub save{
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
 		file   => $path,
 	)->run;
 	$w->end;
