@@ -458,8 +458,8 @@ sub cache_code_if_ok{
 	",1)->hundle;
 	my $t = $h->fetch;
 	$t = $t->[0];
-	#print "cache code chk: $t\n";
-	return 0 unless $t;
+	print "cache code chk: $t\n" if $debug;
+	#return 0 unless $t;
 	return 0 if $t eq '-1';
 	return 1;
 }

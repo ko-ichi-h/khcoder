@@ -95,7 +95,7 @@ sub _new{
 
 	$self->{list}    = $lis;
 	#$self->{win_obj} = $wmw;
-	$wmw->grab;
+	#$wmw->grab;
 	return $self;
 }
 

@@ -73,6 +73,32 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
 
+	# 最小・最大文書数
+	$left->Label(
+		-text => $self->gui_jchar('・最小/最大 文書数による語の取捨選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 5);
+	my $l3 = $left->Frame()->pack(-fill => 'x');
+	$l3->Label(
+		-text => $self->gui_jchar('　 　最小文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_min_df} = $l3->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$l3->Label(
+		-text => $self->gui_jchar('　 最大文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_max_df} = $l3->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$self->{ent_min_df}->insert(0,'1');
+
 	# 品詞による単語の取捨選択
 	$left->Label(
 		-text => $self->gui_jchar('・品詞による語の取捨選択'),
@@ -166,12 +192,13 @@ sub check{
 		return 0;
 	}
 	
-	
 	my $check = mysql_crossout->new(
 		tani   => $self->tani,
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
 	)->wnum;
 	
 	$self->{ent_check}->configure(-state => 'normal');
@@ -180,19 +207,25 @@ sub check{
 	$self->{ent_check}->configure(-state => 'disable');
 }
 
-
 #--------------#
 #   アクセサ   #
 
 sub min{
 	my $self = shift;
-	return $self->{ent_min}->get;
+	return $self->gui_jg( $self->{ent_min}->get );
 }
 sub max{
 	my $self = shift;
-	return $self->{ent_max}->get;
+	return $self->gui_jg( $self->{ent_max}->get );
 }
-
+sub min_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_min_df}->get );
+}
+sub max_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_max_df}->get );
+}
 sub tani{
 	my $self = shift;
 	return $self->{tani_obj}->tani;

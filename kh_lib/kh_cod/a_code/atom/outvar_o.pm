@@ -3,6 +3,7 @@
 package kh_cod::a_code::atom::outvar_o;
 use base qw(kh_cod::a_code::atom);
 use strict;
+my $debug = 0;
 
 sub expr{
 	my $self = shift;
@@ -27,6 +28,7 @@ sub ready{
 	if ($self->raw =~ /<>(.+)\-\->(.+)$/o){
 		$var = $1;
 		$val = $2;
+		print "atom-outvar_o: $var, $val\n" if $debug;
 	} else {
 		die("something wrong!");
 	}
@@ -37,6 +39,7 @@ sub ready{
 		$self->{valid} = 0;
 		return 1;
 	}
+	print "atom-outvar_o: the variable found\n" if $debug;
 	
 	# 集計単位が矛盾しないかどうか確認
 	$self->{valid} = 1;
@@ -52,11 +55,14 @@ sub ready{
 			return 1;
 		}
 		my $var_tani_num = substr($var_obj->{tani},1,1);
-		if ($var_tani_num < $1){
+		print "atom-outvar_o: $var_tani_num, $1\n" if $debug;
+		if ($var_tani_num > $1){
+			print "atom-outvar_o: tani looks NG\n" if $debug;
 			$self->{valid} = 0;
 			return 1;
 		}
 	}
+	print "atom-outvar_o: tani looks ok\n" if $debug;
 
 	# テーブル名決定
 	$val = $var_obj->real_val($val);
@@ -67,9 +73,11 @@ sub ready{
 	}
 	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"."$temp";
 	$self->{tables} = ["$table"];
+	print "atom-outvar_o: table: $table\n" if $debug;
 
 	# テーブル作成
 	if ( mysql_exec->table_exists($table) ){
+		print "atom-outvar_o: the table already exists\n" if $debug;
 		return 1;
 	}
 	mysql_exec->do("
@@ -79,14 +87,16 @@ sub ready{
 		)
 	",1);
 	if ($var_obj->{tani} eq $tani){          # 集計単位が同じ場合
-		mysql_exec->do("
+		my $sql = "
 			INSERT
 			INTO $table (id, num)
 			SELECT id, 1
 			FROM $var_obj->{table}
 			WHERE
 				$var_obj->{column} = \'$val\'
-		",1);
+		";
+		mysql_exec->do("$sql",1);
+		print "$sql" if $debug;
 	} else {                                 # 集計単位が異なる場合
 		my $sql;
 		$sql .= "INSERT INTO $table (id, num) SELECT $tani.id, 1 FROM\n";

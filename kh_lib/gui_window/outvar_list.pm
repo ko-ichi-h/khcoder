@@ -109,13 +109,17 @@ sub _delete{
 	my $confirm = $self->{win_obj}->messageBox(
 		-title   => 'KH Coder',
 		-type    => 'OKCancel',
-#		-default => 'OK',
+		#-default => 'OK',
 		-icon    => 'question',
 		-message => $self->gui_jchar('選択されている変数を削除しますか？'),
 	);
 	unless ($confirm =~ /^OK$/i){
 		return 0;
 	}
+	
+	# 既に詳細Windowが開いている場合はいったん閉じる
+	$::main_gui->get('w_outvar_detail')->close
+		if $::main_gui->if_opened('w_outvar_detail');
 	
 	# 削除実行
 	foreach my $i (@selection){
@@ -124,7 +128,6 @@ sub _delete{
 			name => $self->{var_list}[$i][1],
 		);
 	}
-	
 	$self->_fill;
 }
 
@@ -136,6 +139,10 @@ sub _open_var{
 		return 0;
 	}
 	
+	# 既に詳細Windowが開いている場合はいったん閉じる
+	$::main_gui->get('w_outvar_detail')->close
+		if $::main_gui->if_opened('w_outvar_detail');
+
 	gui_window::outvar_detail->open(
 		tani => $self->{var_list}[$selection[0]][0],
 		name => $self->{var_list}[$selection[0]][1],
