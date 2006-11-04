@@ -202,21 +202,73 @@ sub csv_list{
 
 sub freq_of_f{
 	my $class = shift;
-	
-	my $list = &_make_list;
-	
+	my $tani = shift;
+
+	my $h = mysql_exec->select("
+		select num
+		from genkei, hselection
+		where
+			genkei.khhinshi_id = hselection.khhinshi_id
+			and genkei.nouse = 0
+			and hselection.ifuse = 1
+	",1)->hundle;
+
 	my ($n, %freq, $sum, $sum_sq); 
-	foreach my $i (@{$list}){
-		foreach my $h (@{$i->[1]}){
-			++$freq{$h->[1]};
-			++$n;
-			$sum += $h->[1];
-			$sum_sq += $h->[1] ** 2;
-		}
+	while (my $i = $h->fetch){
+		++$freq{$i->[0]};
+		++$n;
+		$sum += $i->[0];
+		$sum_sq += $i->[0] ** 2;
 	}
 	my $mean = sprintf("%.2f", $sum / $n);
 	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
+
+	my @r1;
+	push @r1, ['異なり語数 (n)  ', $n];
+	push @r1, ['平均 出現数', $mean];
+	push @r1, ['標準偏差', $sd];
 	
+	my (@r2, $cum); 
+	foreach my $i (sort {$a <=> $b} keys %freq){
+		$cum += $freq{$i};
+		push @r2, [
+			$i,
+			$freq{$i},
+			sprintf("%.2f",($freq{$i} / $n) * 100),
+			$cum,
+			sprintf("%.2f",($cum / $n) * 100)
+		];
+	}
+	return(\@r1, \@r2);
+}
+
+#-------------------------#
+#   出現文書数 度数分布   #
+
+sub freq_of_df{
+	my $class = shift;
+	my $tani = shift;
+
+	my $h = mysql_exec->select("
+		select f
+		from genkei, hselection, df_$tani
+		where
+			genkei.khhinshi_id = hselection.khhinshi_id
+			and genkei.id = df_$tani.genkei_id
+			and genkei.nouse = 0
+			and hselection.ifuse = 1
+	",1)->hundle;
+
+	my ($n, %freq, $sum, $sum_sq); 
+	while (my $i = $h->fetch){
+		++$freq{$i->[0]};
+		++$n;
+		$sum += $i->[0];
+		$sum_sq += $i->[0] ** 2;
+	}
+	my $mean = sprintf("%.2f", $sum / $n);
+	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
+
 	my @r1;
 	push @r1, ['異なり語数 (n)  ', $n];
 	push @r1, ['平均 出現数', $mean];

@@ -27,6 +27,9 @@ use gui_window::word_conc_opt;
 use gui_window::word_conc_coloc;
 use gui_window::word_conc_coloc_opt;
 use gui_window::word_freq;
+use gui_window::word_freq_plot;
+use gui_window::word_df_freq;
+use gui_window::word_df_freq_plot;
 use gui_window::doc_view;
 use gui_window::doc_search;
 use gui_window::morpho_check;
@@ -44,6 +47,7 @@ use gui_window::outvar_list;
 use gui_window::outvar_detail;
 use gui_window::force_color;
 use gui_window::contxt_out;
+
 #use gui_window::use_te;
 #use gui_window::use_te_g;
 
