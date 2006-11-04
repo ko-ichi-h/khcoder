@@ -170,12 +170,14 @@
     }
 
 	unless ($has_quit){
-		print "Statistics::R::Bridge::pipe::send, checking output " if $debug;
-		while (-s $this->{OUTPUT_R} == $this->{OUTPUT_R_POS}){
-			print -s $this->{OUTPUT_R},"," if $debug;
-			sleep 1;
+		if ($Statistics::R::output_chk){
+			print "Statistics::R::Bridge::pipe::send, checking output " if $debug;
+			while (-s $this->{OUTPUT_R} == $this->{OUTPUT_R_POS}){
+				print -s $this->{OUTPUT_R},"," if $debug;
+				sleep 1;
+			}
+			print "...ok\n" if $debug;
 		}
-		print "...ok\n" if $debug;
 	}
 
     if ( $has_quit && !$this->{STOPING} ) { $this->stop(1) ;}

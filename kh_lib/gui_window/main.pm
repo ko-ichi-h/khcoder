@@ -56,7 +56,13 @@ sub _new{
 	$::config_obj->{R} = Statistics::R->new(
 		log_dir => $::config_obj->{cwd}.'/config/R-bridge'
 	);
-	$::config_obj->{R}->startR or $::config_obj->{R} = 0 if $::config_obj->{R};
+	if ($::config_obj->{R}){
+		$::config_obj->{R}->startR;
+		$::config_obj->{R}->output_chk(1);
+	} else {
+		$::config_obj->{R} = 0;
+	}
+	
 	chdir ($::config_obj->{cwd});
 	
 	# スプラッシュWindowを閉じる

@@ -21,7 +21,7 @@
 
 
 { package Statistics::R ;
-
+  use vars qw($output_chk);
   use strict qw(vars) ; no warnings ;
 
   my (%CLASS_HPLOO , $this) ;
@@ -38,6 +38,12 @@
     foreach my $Key ( keys %{$CLASS_HPLOO{ATTR}} ) {
     tie( $this->{$Key} => 'Class::HPLOO::TIESCALAR' , $CLASS_HPLOO{ATTR}{$Key}{tp} , $CLASS_HPLOO{ATTR}{$Key}{pr} , \$this->{CLASS_HPLOO_ATTR}{$Key} ) if !exists $this->{$Key} ;
     } } return $this ;
+  }
+
+  sub output_chk{
+    my $self = shift;
+    $output_chk = shift;
+    return $output_chk;
   }
 
 

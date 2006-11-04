@@ -16,6 +16,7 @@ my @menu1 = (
 	't_word_search',
 	't_word_list',
 	't_word_freq',
+	't_word_df_freq',
 	't_word_ass',
 	't_word_conc',
 	'm_b3_check',
@@ -239,13 +240,24 @@ sub make{
 		$f3->separator;
 		
 		$self->{t_word_freq} = $f3->command(
-				-label => gui_window->gui_jchar('出現回数 分布'),
+				-label => gui_window->gui_jchar('出現回数の分布'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_freq->open->count;
 				})},
 				-state => 'disable'
 			);
+
+		$self->{t_word_df_freq} = $f3->command(
+				-label => gui_window->gui_jchar('文書数の分布'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_df_freq->open->count;
+				})},
+				-state => 'disable'
+			);
+
+		$f3->separator;
 
 		$self->{t_word_list} = $f3->command(
 				-label => gui_window->gui_jchar('品詞別 出現回数順 リスト'),
