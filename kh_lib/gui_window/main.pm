@@ -41,29 +41,6 @@ sub _new{
 	#	'<Control-Key-h>',
 	#	sub { kh_hinshi->output; }
 	#);
-
-	# All-in-One Pack用の初期化処理
-	if (
-		   ($::config_obj->os eq 'win32')
-		&& $::config_obj->all_in_one_pack
-	){
-		use kh_all_in_one;
-		kh_all_in_one->init;
-	}
-	
-	# Rの初期化処理
-	use Statistics::R;
-	$::config_obj->{R} = Statistics::R->new(
-		log_dir => $::config_obj->{cwd}.'/config/R-bridge'
-	);
-	if ($::config_obj->{R}){
-		$::config_obj->{R}->startR;
-		$::config_obj->{R}->output_chk(1);
-	} else {
-		$::config_obj->{R} = 0;
-	}
-	
-	chdir ($::config_obj->{cwd});
 	
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){
