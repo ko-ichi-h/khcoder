@@ -239,7 +239,13 @@ sub make{
 
 		$f3->separator;
 		
-		$self->{t_word_freq} = $f3->command(
+		my $f_wd_stats = $f3->cascade(
+			-label => gui_window->gui_jchar('記述統計'),
+			-font => "TKFN",
+			-tearoff=>'no'
+		);
+		
+		$self->{t_word_freq} = $f_wd_stats->command(
 				-label => gui_window->gui_jchar('出現回数の分布'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -248,7 +254,7 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{t_word_df_freq} = $f3->command(
+		$self->{t_word_df_freq} = $f_wd_stats->command(
 				-label => gui_window->gui_jchar('文書数の分布'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -257,7 +263,15 @@ sub make{
 				-state => 'disable'
 			);
 
-		$f3->separator;
+		$self->{t_word_tf_df} = $f_wd_stats->command(
+				-label => gui_window->gui_jchar('出現回数ｘ文書数のプロット'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_tf_df->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_word_tf_df' if $::config_obj->R;
 
 		$self->{t_word_list} = $f3->command(
 				-label => gui_window->gui_jchar('品詞別 出現回数順 リスト'),
