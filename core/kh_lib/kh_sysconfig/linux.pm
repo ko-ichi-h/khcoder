@@ -1,5 +1,6 @@
 package kh_sysconfig::linux;
 use base qw(kh_sysconfig);
+use Tk::PNG;
 use strict;
 
 #------------------#
@@ -298,6 +299,15 @@ sub os_path{
 	return $c;
 }
 
+sub R_device{
+	my $self = shift;
+	my $path = shift;
+	$path .= '.png';
+	return 0 unless $::config_obj->R;
+	
+	$::config_obj->R->send("png(\"$path\")");
+	return $path;
+}
 
 1;
 

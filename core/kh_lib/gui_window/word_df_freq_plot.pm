@@ -65,7 +65,7 @@ sub renew{
 	my $self = shift;
 	
 	$self->{photo}->configure(
-		image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
+		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
 	);
 	$self->{photo}->update;
 }
