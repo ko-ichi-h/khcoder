@@ -1,6 +1,5 @@
 package kh_sysconfig::linux;
 use base qw(kh_sysconfig);
-use Tk::PNG;
 use strict;
 
 #------------------#
