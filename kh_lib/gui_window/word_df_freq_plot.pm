@@ -8,7 +8,7 @@ use base qw(gui_window);
 
 sub _new{
 	if ($::config_obj->os eq 'linux') {
-		use Tk::PNG;
+		require Tk::PNG;
 	}
 
 	my $self = shift;
