@@ -6,6 +6,10 @@ use gui_hlist;
 use mysql_words;
 
 sub _new{
+	if ($::config_obj->os eq 'linux') {
+		require Tk::PNG;
+	}
+
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
@@ -100,32 +104,32 @@ sub count{
 	$rcmd .= "), nrow=$n, ncol=2, byrow=TRUE)";
 	#print "$rcmd\n";
 	
-	my $path1 = $::project_obj->dir_CoderData.'words_TF_DF1.bmp';
-	my $path2 = $::project_obj->dir_CoderData.'words_TF_DF2.bmp';
-	my $path3 = $::project_obj->dir_CoderData.'words_TF_DF3.bmp';
+	my $path1 = $::project_obj->dir_CoderData.'words_TF_DF1';
+	my $path2 = $::project_obj->dir_CoderData.'words_TF_DF2';
+	my $path3 = $::project_obj->dir_CoderData.'words_TF_DF3';
 	$path1 =~ tr/\\/\//;
 	$path2 =~ tr/\\/\//;
 	$path3 =~ tr/\\/\//;
-	$self->{images} = [$path1,$path2,$path3];
 	
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send($rcmd);
 	# 通常
-	$::config_obj->R->send("bmp(\"$path1\")");
+	$path1 = $::config_obj->R_device($path1);
 	$::config_obj->R->send('plot(hage[,1],hage[,2],ylab="DF", xlab="TF")');
 	$::config_obj->R->send('dev.off()');
 	# x軸を対数に
-	$::config_obj->R->send("bmp(\"$path2\")");
+	$path2 = $::config_obj->R_device($path2);
 	$::config_obj->R->send('plot(hage[,1],hage[,2],log="x",ylab="DF", xlab="TF")');
 	$::config_obj->R->send('dev.off()');
 	# xy軸を対数に
-	$::config_obj->R->send("bmp(\"$path3\")");
+	$path3 = $::config_obj->R_device($path3);
 	$::config_obj->R->send('plot(hage[,1],hage[,2],log="xy",ylab="DF", xlab="TF")');
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
-	
+
+	$self->{images} = [$path1,$path2,$path3];
 	$self->renew;
 }
 

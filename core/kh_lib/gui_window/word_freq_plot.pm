@@ -7,6 +7,10 @@ use base qw(gui_window);
 #------------------#
 
 sub _new{
+	if ($::config_obj->os eq 'linux') {
+		require Tk::PNG;
+	}
+
 	my $self = shift;
 	my %args = @_;
 	my $mw = $::main_gui->mw;
