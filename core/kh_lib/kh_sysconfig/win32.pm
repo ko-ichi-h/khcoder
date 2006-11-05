@@ -183,11 +183,6 @@ sub save{
 	}
 }
 
-#--------------------------------#
-#   以下は設定値を返すルーチン   #
-#--------------------------------#
-
-
 #--------------------#
 #   形態素解析関係   #
 
@@ -244,6 +239,16 @@ sub os_path{
 	$c = Jcode->new("$c")->sjis;
 
 	return $c;
+}
+
+sub R_device{
+	my $self = shift;
+	my $path = shift;
+	$path .= '.bmp';
+	return 0 unless $::config_obj->R;
+	
+	$::config_obj->R->send("bmp(\"$path\")");
+	return $path;
 }
 
 

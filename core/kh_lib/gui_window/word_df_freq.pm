@@ -179,9 +179,9 @@ sub plot{
 	my $self = shift;
 	return 0 unless $::config_obj->R;
 	
-	my $path1 = $::project_obj->dir_CoderData.'words_DF_freq1.bmp';
-	my $path2 = $::project_obj->dir_CoderData.'words_DF_freq2.bmp';
-	my $path3 = $::project_obj->dir_CoderData.'words_DF_freq3.bmp';
+	my $path1 = $::project_obj->dir_CoderData.'words_DF_freq1';
+	my $path2 = $::project_obj->dir_CoderData.'words_DF_freq2';
+	my $path3 = $::project_obj->dir_CoderData.'words_DF_freq3';
 	$path1 =~ tr/\\/\//;
 	$path2 =~ tr/\\/\//;
 	$path3 =~ tr/\\/\//;
@@ -190,15 +190,15 @@ sub plot{
 	$::config_obj->R->lock;
 	$::config_obj->R->send($self->{rcmd});
 	# 通常
-	$::config_obj->R->send("bmp(\"$path1\")");
+	$path1 = $::config_obj->R_device($path1);
 	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="DF")');
 	$::config_obj->R->send('dev.off()');
 	# x軸を対数に
-	$::config_obj->R->send("bmp(\"$path2\")");
+	$path2 = $::config_obj->R_device($path2);
 	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="DF")');
 	$::config_obj->R->send('dev.off()');
 	# xy軸を対数に
-	$::config_obj->R->send("bmp(\"$path3\")");
+	$path3 = $::config_obj->R_device($path3);
 	$::config_obj->R->send('plot(hage[,1],hage[,3],log="xy",ylab="Freqency", xlab="DF")');
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
