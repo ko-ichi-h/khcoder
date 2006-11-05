@@ -134,7 +134,7 @@ sub renew{
 	return 0 unless $self->{optmenu};
 	
 	$self->{photo}->configure(
-		image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
+		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
 	);
 	$self->{photo}->update;
 }
