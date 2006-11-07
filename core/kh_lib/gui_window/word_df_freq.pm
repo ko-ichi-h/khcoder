@@ -57,7 +57,7 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 	
-	$lis2->header('create',0,-text => $self->gui_jchar('出現数'));
+	$lis2->header('create',0,-text => $self->gui_jchar('文書数'));
 	$lis2->header('create',1,-text => $self->gui_jchar('度数'));
 	$lis2->header('create',2,-text => $self->gui_jchar('パーセント'));
 	$lis2->header('create',3,-text => $self->gui_jchar('累積度数'));
@@ -191,11 +191,11 @@ sub plot{
 	$::config_obj->R->send($self->{rcmd});
 	# 通常
 	$path1 = $::config_obj->R_device($path1);
-	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="DF")');
+	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="DF")');
 	$::config_obj->R->send('dev.off()');
 	# x軸を対数に
 	$path2 = $::config_obj->R_device($path2);
-	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="DF")');
+	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="DF")');
 	$::config_obj->R->send('dev.off()');
 	# xy軸を対数に
 	$path3 = $::config_obj->R_device($path3);
