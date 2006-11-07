@@ -183,11 +183,11 @@ sub plot{
 	$::config_obj->R->send($self->{rcmd});
 	# 通常
 	$path1 = $::config_obj->R_device($path1);
-	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="TF")');
+	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="TF")');
 	$::config_obj->R->send('dev.off()');
 	# x軸を対数に
 	$path2 = $::config_obj->R_device($path2);
-	$::config_obj->R->send('matplot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="TF")');
+	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="TF")');
 	$::config_obj->R->send('dev.off()');
 	# xy軸を対数に
 	$path3 = $::config_obj->R_device($path3);
