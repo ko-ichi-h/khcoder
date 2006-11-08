@@ -66,7 +66,7 @@ sub ready{
 		++$num;
 		# テーブルをコピー
 		my $oldtab = $self->{the_code}->res_table;
-		print "\tatom-code: old-$oldtab, new-$table\n";
+		#print "\tatom-code: old-$oldtab, new-$table\n";
 		mysql_exec->drop_table($table);
 		mysql_exec->do("
 			CREATE TABLE $table (
