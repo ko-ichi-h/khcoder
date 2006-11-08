@@ -4,7 +4,7 @@ use gui_errormsg;
 use mysql_exec;
 use strict;
 
-my $debug = 0;
+my $debug = 1;
 
 #----------------------#
 #   コーディング実行   #
@@ -185,6 +185,7 @@ sub ready{
 	# キャッシュのチェック
 	my $raw = $self->{ed_condition};
 	$raw =~ s/'/\\'/g;
+	print Jcode->new("raw: $raw\n",'euc')->sjis if $debug;
 	my $kind = 'code';
 	if ($sort eq 'tf*idf'){
 		$kind .= '_idf_m';
@@ -324,9 +325,10 @@ sub new{
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
-		push @{$self->{condition}}, kh_cod::a_code::atom->new($i);
+		my $the_atom = kh_cod::a_code::atom->new($i);
+		push @{$self->{condition}}, $the_atom;
 		$self->{ed_condition} .= ' ' if $n;
-		$self->{ed_condition} .= $i;
+		$self->{ed_condition} .= $the_atom->raw_for_cache_chk;
 		++$n;
 	}
 	

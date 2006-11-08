@@ -127,6 +127,11 @@ sub raw{
 	return $self->{raw};
 }
 
+sub raw_for_cache_chk{
+	my $self = shift;
+	return $self->{raw};
+}
+
 sub when_read{
 	return 1;
 }

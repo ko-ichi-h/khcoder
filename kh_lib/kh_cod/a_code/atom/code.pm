@@ -131,6 +131,14 @@ sub parent_table{
 	return $self->{parent_table};
 }
 
+#--------------#
+#   アクセサ   #
+
+sub raw_for_cache_chk{
+	my $self = shift;
+	return "$self->{raw}".'{'."$self->{the_code}->{ed_condition}".'}';
+}
+
 sub hyosos{
 	my $self = shift;
 	return $self->{hyosos};

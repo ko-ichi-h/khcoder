@@ -112,6 +112,25 @@ sub ready{
 	}
 }
 
+#--------------#
+#   アクセサ   #
+
+sub raw_for_cache_chk{
+	my $self = shift;
+	
+	# 解釈
+	my ($var, $val);
+	if ($self->raw =~ /<>(.+)\-\->(.+)$/o){
+		$var = $1;
+		$val = $2;
+		print "atom-outvar_o: $var, $val\n" if $debug;
+	} else {
+		return $self->{raw}.'(invalid)';
+	}
+	my $var_obj = mysql_outvar::a_var->new($var);
+	return $self->{raw}."($var_obj->{table}".':'."$var_obj->{column})";
+}
+
 sub tables{
 	my $self = shift;
 	return $self->{tables};
