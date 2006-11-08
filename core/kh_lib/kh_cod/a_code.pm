@@ -4,7 +4,7 @@ use gui_errormsg;
 use mysql_exec;
 use strict;
 
-my $debug = 1;
+my $debug = 0;
 
 #----------------------#
 #   コーディング実行   #
