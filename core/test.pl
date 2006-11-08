@@ -5,7 +5,7 @@
 #---------------------------------------------#
 
 #----------------#
-#   決まり文句   # 
+#   決まり文句   #
 
 use strict;
 use vars qw($config_obj $project_obj $kh_version);
