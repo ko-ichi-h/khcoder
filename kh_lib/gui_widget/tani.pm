@@ -75,7 +75,8 @@ sub mb_refresh{
 	my $self = shift;
 	$self->{win_obj}->configure(-text,gui_window->gui_jchar($name{$self->{raw_opt}},'euc'));
 	$self->{win_obj}->update;
-	$::project_obj->last_tani($self->{raw_opt});
+	$::project_obj->last_tani($self->{raw_opt})
+		unless $self->{dont_remember};
 	if ( defined($self->{command}) && $_[0] != 5){
 		&{$self->{command}};
 	}

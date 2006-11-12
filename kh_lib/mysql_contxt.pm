@@ -187,25 +187,31 @@ sub _culc_each{
 		my $sql = "
 			INSERT INTO $table (word, num)
 			SELECT genkei.id, count(*)
-			FROM   $table_w, $tani, hyosobun, hyoso, genkei, hselection
+			FROM   $table_w, $tani, hyosobun,hyoso,genkei, df_$self->{tani_df2}
 			WHERE
 				    $table_w.id = $tani.id
 				AND $sql_join{$tani}
 				AND hyosobun.hyoso_id = hyoso.id
 				AND hyoso.genkei_id = genkei.id
-				AND genkei.khhinshi_id = hselection.khhinshi_id
+				AND genkei.id = df_$self->{tani_df2}.genkei_id
+				# AND genkei.khhinshi_id = hselection.khhinshi_id
 				AND genkei.num >= $self->{min2}
+				AND df_$self->{tani_df2}.f >= $self->{min_df2}
 				AND (
 		";
 		my $nn = 0;
 		foreach my $i ( @{$self->{hinshi2}} ){
 			if ($nn){ $sql .= ' OR '; }
-			$sql .= "hselection.khhinshi_id = $i\n";
+			$sql .= "genkei.khhinshi_id = $i\n";
+			# $sql .= "hselection.khhinshi_id = $i\n";
 			++$nn;
 		}
 		$sql .= ")\n";
 		if ($self->{max2}){
 			$sql .= "AND genkei.num <= $self->{max2}\n";
+		}
+		if ($self->{max_df2}){
+			$sql .= "AND df_$self->{tani_df2}.f <= $self->{max_df2}\n";
 		}
 		$sql .= "GROUP BY genkei.id";
 		# print "$sql\n";
@@ -225,10 +231,12 @@ sub wlist{
 	# 抽出語のリスト
 	my $sql = "
 		SELECT genkei.id, genkei.name, genkei.num
-		FROM   genkei, hselection
+		FROM   genkei, hselection, df_$self->{tani_df}
 		WHERE
 			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND genkei.id = df_$self->{tani_df}.genkei_id
 			AND genkei.num >= $self->{min}
+			AND df_$self->{tani_df}.f >= $self->{min_df}
 			AND genkei.nouse = 0
 			AND (
 	";
@@ -242,6 +250,9 @@ sub wlist{
 	$sql .= ")\n";
 	if ($self->{max}){
 		$sql .= "AND genkei.num <= $self->{max}\n";
+	}
+	if ($self->{max_df}){
+		$sql .= "AND df_$self->{tani_df}.f <= $self->{max_df}\n";
 	}
 	$sql .= "ORDER BY genkei.khhinshi_id, 0 - genkei.num\n";
 	
@@ -260,10 +271,12 @@ sub wlist{
 	# 文脈語のリスト
 	$sql = "
 		SELECT genkei.id, genkei.name
-		FROM   genkei, hselection
+		FROM   genkei, hselection, df_$self->{tani_df2}
 		WHERE
 			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND genkei.id = df_$self->{tani_df2}.genkei_id
 			AND genkei.num >= $self->{min2}
+			AND df_$self->{tani_df2}.f >= $self->{min_df2}
 			AND genkei.nouse = 0
 			AND (
 	";
@@ -277,6 +290,9 @@ sub wlist{
 	$sql .= ")\n";
 	if ($self->{max2}){
 		$sql .= "AND genkei.num <= $self->{max2}\n";
+	}
+	if ($self->{max_df2}){
+		$sql .= "AND df_$self->{tani_df2}.f <= $self->{max_df2}\n";
 	}
 	$sql .= "ORDER BY genkei.khhinshi_id, 0 - genkei.num\n";
 	
