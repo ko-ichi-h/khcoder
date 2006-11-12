@@ -211,6 +211,8 @@ sub make_list{
 sub wnum{
 	my $self = shift;
 	
+	$self->{min_df} = 0 unless length($self->{min_df});
+	
 	my $sql = "
 		SELECT count(*)
 		FROM   genkei, hselection, df_$self->{tani}

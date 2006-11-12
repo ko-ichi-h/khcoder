@@ -80,6 +80,7 @@ sub _new{
 		-text => $self->gui_jchar('・最小/最大 出現数による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
+	
 	my $r2 = $right->Frame()->pack(-fill => 'x');
 	$r2->Label(
 		-text => $self->gui_jchar('　 　最小出現数：'),
@@ -100,6 +101,48 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min2}->insert(0,'1');
+
+	# 最小・最大 文書数による選択
+	$right->Label(
+		-text => $self->gui_jchar('・最小/最大 文書数による語の選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 5);
+	my $r5 = $right->Frame()->pack(-fill => 'x');
+	$r5->Label(
+		-text => $self->gui_jchar('　 　最小文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_min_df2} = $r5->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$r5->Label(
+		-text => $self->gui_jchar('　 最大文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_max_df2} = $r5->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$self->{ent_min_df2}->insert(0,'1');
+	my $r6 = $right->Frame()->pack(-fill => 'x');
+	$r6->Label(
+		-text => $self->gui_jchar('　 　集計単位：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	my %pack = (
+		-side => 'left',
+		-pady => 2,
+	);
+	$self->{tani_obj_df2} = gui_widget::tani->open(
+		parent        => $r6,
+		pack          => \%pack,
+		dont_remember => 1,
+	);
+	$self->{tani_obj_df2}->{raw_opt} = 'bun';
+	$self->{tani_obj_df2}->mb_refresh;
 
 	# 品詞による単語の取捨選択
 	$right->Label(
@@ -195,6 +238,49 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
 
+	# 最小・最大文書数
+	$left->Label(
+		-text => $self->gui_jchar('・最小/最大 文書数による語の選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 5);
+	my $l5 = $left->Frame()->pack(-fill => 'x');
+	$l5->Label(
+		-text => $self->gui_jchar('　 　最小文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_min_df} = $l5->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$l5->Label(
+		-text => $self->gui_jchar('　 最大文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_max_df} = $l5->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$self->{ent_min_df}->insert(0,'1');
+	my $l6 = $left->Frame()->pack(-fill => 'x');
+	$l6->Label(
+		-text => $self->gui_jchar('　 　集計単位：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	my %pack = (
+		-side => 'left',
+		-pady => 2,
+	);
+	$self->{tani_obj_df} = gui_widget::tani->open(
+		parent        => $l6,
+		pack          => \%pack,
+		dont_remember => 1,
+	);
+	$self->{tani_obj_df}->{raw_opt} = 'bun';
+	$self->{tani_obj_df}->mb_refresh;
+	
+	
 	# 品詞による単語の取捨選択
 	$left->Label(
 		-text => $self->gui_jchar('・品詞による語の選択'),
@@ -304,10 +390,12 @@ sub check1{
 		return 0;
 	}
 	my $check = mysql_crossout->new(
-		# tani   => $self->tani,
+		tani   => $self->tani_df,
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
 	)->wnum;
 	
 	$self->{ent_check}->configure(-state => 'normal');
@@ -325,10 +413,12 @@ sub check2{
 		return 0;
 	}
 	my $check = mysql_crossout->new(
-		# tani   => $self->tani,
+		tani   => $self->tani_df2,
 		hinshi => $self->hinshi2,
 		max    => $self->max2,
 		min    => $self->min2,
+		max_df => $self->max_df2,
+		min_df => $self->min_df2,
 	)->wnum;
 	
 	$self->{ent_check2}->configure(-state => 'normal');
@@ -378,28 +468,52 @@ sub check{
 
 sub min{
 	my $self = shift;
-	return $self->{ent_min}->get;
+	return $self->gui_jg( $self->{ent_min}->get );
 }
 sub max{
 	my $self = shift;
-	return $self->{ent_max}->get;
+	return $self->gui_jg( $self->{ent_max}->get );
 }
 sub hinshi{
 	my $self = shift;
 	return $self->{hinshi_obj}->selected;
 }
+sub tani_df{
+	my $self = shift;
+	return $self->{tani_obj_df}->tani;
+}
+sub min_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_min_df}->get );
+}
+sub max_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_max_df}->get );
+}
+
 sub min2{
 	my $self = shift;
-	return $self->{ent_min2}->get;
+	return $self->gui_jg( $self->{ent_min2}->get );
 }
 sub max2{
 	my $self = shift;
-	return $self->{ent_max2}->get;
+	return $self->gui_jg( $self->{ent_max2}->get );
 }
 sub hinshi2{
 	my $self = shift;
 	return $self->{hinshi_obj2}->selected;
 }
-
+sub tani_df2{
+	my $self = shift;
+	return $self->{tani_obj_df2}->tani;
+}
+sub min_df2{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_min_df2}->get );
+}
+sub max_df2{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_max_df2}->get );
+}
 
 1;

@@ -14,13 +14,19 @@ sub go{
 	my $file = shift;
 	
 	mysql_contxt::spss->new(
-		tani    => $self->{tani_obj}->value,
-		hinshi2 => $self->hinshi2,
-		max2    => $self->gui_jg( $self->max2 ),
-		min2    => $self->gui_jg( $self->min2 ),
-		hinshi  => $self->hinshi,
-		max     => $self->gui_jg( $self->max ),
-		min     => $self->gui_jg( $self->min ),
+		tani     => $self->{tani_obj}->value,
+		hinshi   => $self->hinshi,
+		max      => $self->max,
+		min      => $self->min,
+		max_df   => $self->max_df,
+		min_df   => $self->min_df,
+		tani_df  => $self->tani_df,
+		hinshi2  => $self->hinshi2,
+		max2     => $self->max2,
+		min2     => $self->min2,
+		max_df2  => $self->max_df2,
+		min_df2  => $self->min_df2,
+		tani_df2 => $self->tani_df2,
 	)->culc->save($file);
 }
 
