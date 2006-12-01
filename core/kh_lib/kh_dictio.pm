@@ -138,6 +138,9 @@ sub mark{
 		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;
 		$text =~ s/ /°°/go;
+		$text =~ s/\\/°Ô/go;
+		$text =~ s/'/°«/go;
+		$text =~ s/"/°…/go;
 		while (1){
 			my %temp = (); my $f = 0;                      # ∞Ã√÷§ÚºË∆¿
 			foreach my $i (@keywords){

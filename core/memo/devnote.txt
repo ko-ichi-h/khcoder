@@ -38,25 +38,12 @@
 	・品詞体系： 「連体詞」の処理 (?)
 	・データファイルの先頭に改行があると前処理がエラーになるバグの修正
 
-[雑多なメモ]
-IDE-HDDな環境では、mysql_crossout::var->sql4を以下のようなstraight_joinに変更すると効率が大幅に上がる模様。SCSI環境でもテストしてから修正を。
+[2.b.11での改良点]
+	・データ中に半角「\」「"」「'」が含まれている場合、エラー回避のために、処理の前にこれらを全角に変換するようにした。
 
-SELECT h4.id, genkei.name, genkei.nouse
-FROM   hyosobun straight_join h4 straight_join hyoso straight_join genkei
-WHERE
-	hyosobun.hyoso_id = hyoso.id
-	AND hyoso.genkei_id = genkei.id
-	AND hyosobun.h4_id = h4.h4_id
-	AND hyosobun.h3_id = h4.h3_id
-	AND hyosobun.h2_id = h4.h2_id
-	AND hyosobun.h1_id = h4.h1_id
-	AND h4.id >= 301
-	AND h4.id <  401
-ORDER BY hyosobun.id
-
-[リリース]
-	・dep\mysql\data\khc0を削除
-	・「set-variable	= max_heap_table_size=32M」を追加
+[2.b.10での改良点]
+	・2.b.9に混入していたバグの修正
+		「抽出語x文脈ベクトル」表の出力コマンドが機能しないというバグを修正。同時に、このコマンドでも文書数で語を選択できるように改善
 
 [2.b.9での改良点]
 	・「文書x抽出語」出力機能の拡充
