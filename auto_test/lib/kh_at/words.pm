@@ -56,10 +56,28 @@ sub _exec_test{
 	$win_cnc_opt->save;
 	$self->_wc_sort($win_cnc);
 	
+	$self->{result} .= "□品詞\n";
+	$win_cnc_opt = gui_window::word_conc_opt->open; # 追加条件の削除
+	$win_cnc_opt->{menu1}->set_value(0);
+	$win_cnc_opt->_menu_check;
+	$win_cnc_opt->save;
+	$win_cnc->{entry}->delete(0, 'end');            # 検索条件のセット
+	$win_cnc->{entry4}->delete(0, 'end');
+	$win_cnc->{entry4}->insert(0, gui_window->gui_jchar('名詞'));
+	$self->_wc_sort($win_cnc);
+	
+	$self->{result} .= "□品詞＋追加条件（品詞）\n";
+	my $win_cnc_opt = gui_window::word_conc_opt->open;
+	$win_cnc_opt->{menu1}->set_value('l1');
+	$win_cnc_opt->_menu_check;
+	$win_cnc_opt->{entry}{'1b'}->insert( 0, gui_window->gui_jchar('形容詞') );
+	$win_cnc_opt->save;
+	$self->_wc_sort($win_cnc);
+	
 	# コロケーション統計
 	$self->{result} .= "■コロケーション統計\n";
 	
-	$win_cnc_opt = gui_window::word_conc_opt->open; # 現状(?)復帰
+	$win_cnc_opt = gui_window::word_conc_opt->open; # 追加条件の削除
 	$win_cnc_opt->{menu1}->set_value(0);
 	$win_cnc_opt->_menu_check;
 	$win_cnc_opt->save;
@@ -74,7 +92,7 @@ sub _exec_test{
 	$self->_wcl_filter($win_coloc);
 	
 	# 出現数 分布
-	$self->{result} .= "■出現数 分布\n";
+	$self->{result} .= "■出現回数 分布\n";
 	my $win_freq = gui_window::word_freq->open;
 	$win_freq->count;
 	$self->{result} .= Jcode->new(
@@ -82,6 +100,18 @@ sub _exec_test{
 	)->euc;
 	$self->{result} .= Jcode->new(
 		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list2} ) )
+	)->euc;
+	
+	# 文書数 分布
+	$self->{result} .= "■文書数 分布\n";
+	my $win_df = gui_window::word_df_freq->open;
+	$win_df->{tani_obj}->{raw_opt} = 'h2';
+	$win_df->{tani_obj}->mb_refresh;
+	$self->{result} .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list1} ) )
+	)->euc;
+	$self->{result} .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list2} ) )
 	)->euc;
 	
 	# 品詞別 出現数順 リスト

@@ -45,16 +45,20 @@ sub config_morph{
 	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 	
 	# 書き出し
-	open (GRAO,">temp.txt") or
+	my $temp_file = 'temp.txt';
+	while (-e $temp_file){
+		$temp_file .= '.tmp';
+	}
+	open (GRAO,">$temp_file") or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => 'temp.txt'
+			thefile => $temp_file
 		);
 	print GRAO "$temp";
 	close (GRAO);
 	
 	unlink $grammercha;
-	rename ("temp.txt","$grammercha");
+	rename ("$temp_file","$grammercha");
 	
 	my $chasenrc = $self->{chasenrc};
 	
@@ -102,15 +106,19 @@ sub config_morph{
 	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
-	open (GRAO,">temp.txt") or
+	$temp_file = 'temp.txt';
+	while (-e $temp_file){
+		$temp_file .= '.tmp';
+	}
+	open (GRAO,">$temp_file") or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => "temp.txt"
+			thefile => $temp_file
 		);
 	print GRAO "$temp";
 	close (GRAO);
 	unlink $chasenrc;
-	rename ("temp.txt","$chasenrc");
+	rename ("$temp_file","$chasenrc");
 }
 
 sub path_check{

@@ -20,10 +20,17 @@ BEGIN{
 
 sub to_euc{
 	my $sjistoeuc = $_[1];
+	
+	my $temp_file = 'temp.txt';
+	while (-e $temp_file){
+		$temp_file .= '.tmp';
+	}
+	#print "kh_jachar temp-file: $temp_file\n";
+	
 	open (EUC,"$sjistoeuc")
 		or &gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
-	open (TEMP,">temp.txt")
-		or &gui_errormsg->open(type => 'file',thefile => 'temp.txt');
+	open (TEMP,">$temp_file")
+		or &gui_errormsg->open(type => 'file',thefile => "$temp_file");
 	my $n = 0; my $temp = '';
 	while (<EUC>){
 		$temp .= $_;
@@ -41,15 +48,22 @@ sub to_euc{
 	close (EUC);
 	close (TEMP);
 	unlink ("$sjistoeuc");
-	rename ("temp.txt","$sjistoeuc");
+	rename ("$temp_file","$sjistoeuc");
 }
 
 sub to_sjis{
 	my $sjistoeuc = $_[1];
+
+	my $temp_file = 'temp.txt';
+	while (-e $temp_file){
+		$temp_file .= '.tmp';
+	}
+	#print "kh_jachar temp-file: $temp_file\n";
+
 	open (EUC,"$sjistoeuc")
 		or &gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
-	open (TEMP,">temp.txt")
-		or &gui_errormsg->open(type => 'file',thefile => 'temp.txt');
+	open (TEMP,">$temp_file")
+		or &gui_errormsg->open(type => 'file',thefile => "$temp_file");
 	my $n = 0; my $temp = '';
 	while (<EUC>){
 		$temp .= $_;
@@ -68,7 +82,7 @@ sub to_sjis{
 	close (EUC);
 	close (TEMP);
 	unlink ("$sjistoeuc");
-	rename ("temp.txt","$sjistoeuc");
+	rename ("$temp_file","$sjistoeuc");
 }
 
 # ファイルの文字コードを判別

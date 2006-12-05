@@ -5,6 +5,7 @@ use Text::Diff;
 use kh_at::project_new;
 use kh_at::pretreatment;
 use kh_at::words;
+use kh_at::out_var;
 
 sub exec_test{
 	my $class = shift;
@@ -101,5 +102,12 @@ sub file_test_ref{
 	my $file = cwd.'/auto_test/data_ref/'.$self->{file_base}.'.txt';
 	return $file;
 }
+
+sub file_outvar{
+	use Cwd qw(cwd);
+	my $file = cwd.'/auto_test/data_input/out_var.csv';
+	return $file;
+}
+
 
 1;
