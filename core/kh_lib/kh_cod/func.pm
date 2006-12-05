@@ -249,10 +249,14 @@ sub cod_out_tab{
 	my $tani    = shift;
 	my $outfile = shift;
 	
+	my $debug = 0;
+	print "1.\n" if $debug;
+	
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
+	print "2.\n" if $debug;
 
 	my ($sql,$head);
 	my $flag = 0;
@@ -281,6 +285,7 @@ sub cod_out_tab{
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	print "3. $outfile\n" if $debug;
 	
 	open(CODO,">$outfile") or
 		gui_errormsg->open(
@@ -298,6 +303,7 @@ sub cod_out_tab{
 		chop $current;
 		print CODO "$current\n";
 	}
+	print "4.\n" if $debug;
 	
 	close (CODO);
 }

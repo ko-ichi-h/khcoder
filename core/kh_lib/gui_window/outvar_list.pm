@@ -63,7 +63,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->close;});}
 	)->pack(-side => 'right',-padx => 2);
 
-	MainLoop;
+	#MainLoop;
 	
 	$self->{list}    = $lis;
 	#$self->{win_obj} = $wmw;

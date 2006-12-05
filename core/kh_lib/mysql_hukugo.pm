@@ -16,7 +16,7 @@ sub run_from_morpho{
 	my $t0 = new Benchmark;
 
 	# 形態素解析
-	print "1. morpho\n";
+	#print "1. morpho\n";
 	
 	my $source = $::project_obj->file_target;
 	my $dist   = $::project_obj->file_m_target;
@@ -54,7 +54,7 @@ sub run_from_morpho{
 	}
 	
 	# 読み込み
-	print "2. read\n";
+	#print "2. read\n";
 	mysql_exec->drop_table("rowdata_h");
 	mysql_exec->do("create table rowdata_h
 		(
@@ -89,7 +89,7 @@ sub run_from_morpho{
 	
 	
 	# 変形
-	print "3. reform\n";
+	#print "3. reform\n";
 	mysql_exec->drop_table("hukugo");
 	mysql_exec->do("
 		CREATE TABLE hukugo (
@@ -111,7 +111,7 @@ sub run_from_morpho{
 	)->hundle->fetch->[0];
 	
 	# 書き出し
-	print "4. print out\n";
+	#print "4. print out\n";
 	open (F,">$target") or
 		gui_errormsg->open(
 			type => 'file',
@@ -136,7 +136,7 @@ sub run_from_morpho{
 	kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
 	
 	my $t1 = new Benchmark;
-	print timestr(timediff($t1,$t0)),"\n";
+	#print timestr(timediff($t1,$t0)),"\n";
 }
 
 

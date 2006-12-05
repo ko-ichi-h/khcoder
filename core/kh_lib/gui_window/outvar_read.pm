@@ -84,7 +84,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_read;});}
 	)->pack(-side => 'right');
 
-	MainLoop;
+	#MainLoop;
 	
 	#$self->{win_obj} = $wmw;
 	return $self;
