@@ -98,6 +98,7 @@ sub _fill{
 
 sub _delete{
 	my $self = shift;
+	my %args = @_;
 	
 	# 選択確認
 	my @selection = $self->{list}->info('selection');
@@ -106,15 +107,17 @@ sub _delete{
 	}
 	
 	# 本当に削除するのか確認
-	my $confirm = $self->{win_obj}->messageBox(
-		-title   => 'KH Coder',
-		-type    => 'OKCancel',
-		#-default => 'OK',
-		-icon    => 'question',
-		-message => $self->gui_jchar('選択されている変数を削除しますか？'),
-	);
-	unless ($confirm =~ /^OK$/i){
-		return 0;
+	unless ( $args{no_conf} ){
+		my $confirm = $self->{win_obj}->messageBox(
+			-title   => 'KH Coder',
+			-type    => 'OKCancel',
+			#-default => 'OK',
+			-icon    => 'question',
+			-message => $self->gui_jchar('選択されている変数を削除しますか？'),
+		);
+		unless ($confirm =~ /^OK$/i){
+			return 0;
+		}
 	}
 	
 	# 既に詳細Windowが開いている場合はいったん閉じる

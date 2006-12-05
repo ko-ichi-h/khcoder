@@ -58,7 +58,7 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_save;});}
 	)->pack(-side => 'right');
 
-	MainLoop;
+	#MainLoop;
 
 	# 情報の取得と表示
 	$self->{var_obj} = mysql_outvar::a_var->new($args{name});
