@@ -54,10 +54,10 @@ kh_at::out_var->exec_test('out_var');              # 外部変数メニュー
 
 
 kh_at->close_test_project;                         # プロジェクトを閉じる
-kh_at->delete_test_project;                        # プロジェクトを削除
+#kh_at->delete_test_project;                        # プロジェクトを削除
 
 my $t1 = new Benchmark;
-print "\nDone! ",timestr(timediff($t1,$t0)),"\n";
+print "\nAll Done! ",timestr(timediff($t1,$t0)),"\n";
 
 
 MainLoop;
