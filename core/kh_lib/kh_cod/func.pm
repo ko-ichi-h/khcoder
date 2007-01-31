@@ -575,9 +575,8 @@ sub tab{
 	
 	$self->code($tani1) or return 0;
 	unless ($self->valid_codes){ return 0; }
-	
 	$self->cumulate if @{$self->{valid_codes}} > 30;
-
+	
 	my $result;
 
 	# 集計用SQL文の作製

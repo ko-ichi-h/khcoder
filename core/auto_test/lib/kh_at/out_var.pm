@@ -5,7 +5,7 @@ use strict;
 sub _exec_test{
 	my $self = shift;
 	
-	# 外部変数の読み込み
+	# 外部変数の読み込み (1)
 	my $win = gui_window::outvar_read::csv->open;
 	$win->{entry}->insert(0, $self->file_outvar );
 	$win->{tani_obj}->{raw_opt} = 'dan';
@@ -45,8 +45,14 @@ sub _exec_test{
 	$win_edit->{entry}{2}->insert(0, gui_window->gui_jchar('中') );
 	$win_edit->{entry}{3}->insert(0, gui_window->gui_jchar('下') );
 	$win_edit->_save;
-
 	# ラベル編集の結果は、コーディング結果からチェックする…。
+
+	# 外部変数の読み込み (2)
+	my $win = gui_window::outvar_read::csv->open;
+	$win->{entry}->insert(0, $self->file_outvar2 );
+	$win->{tani_obj}->{raw_opt} = 'h1';
+	$win->{tani_obj}->mb_refresh;
+	$win->_read;
 
 	return $self;
 }
