@@ -142,7 +142,7 @@ sub _cumulate{
 	my $salt  = shift;
 	
 	my $table = "ct_$self->{tani}_$salt"."code_cum_$n";
-	print "$table\n";
+	#print "$table\n";
 	
 	# テーブル作成
 	mysql_exec->drop_table($table);

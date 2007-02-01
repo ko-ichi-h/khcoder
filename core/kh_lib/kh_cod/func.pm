@@ -575,7 +575,7 @@ sub tab{
 	
 	$self->code($tani1) or return 0;
 	unless ($self->valid_codes){ return 0; }
-	$self->cumulate if @{$self->{valid_codes}} > 30;
+	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
 	my $result;
 
