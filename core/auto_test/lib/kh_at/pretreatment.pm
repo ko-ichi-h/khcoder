@@ -71,7 +71,7 @@ sub _exec_test{
 }
 
 sub test_name{
-	return 'Pretreatment-Menu commands...';
+	return 'pre-processing...';
 }
 
 1;

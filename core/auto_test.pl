@@ -43,6 +43,7 @@ use lib cwd.'/auto_test/lib';
 use kh_at;
 use Benchmark;
 
+print "Starting test procedures...\n";
 open (STDOUT,">stdout.txt") or die;
 my $t0 = new Benchmark;
 
@@ -59,7 +60,8 @@ kh_at->delete_test_project;                        # プロジェクトを削除
 
 my $t1 = new Benchmark;
 
+close (STDOUT);
 open(STDOUT,'>&STDERR') or die;
-print "\nall done: ",timestr(timediff($t1,$t0)),"\n";
+print "Tests complete: ",timestr(timediff($t1,$t0)),"\n";
 
 MainLoop;

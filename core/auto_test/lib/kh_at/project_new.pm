@@ -69,7 +69,7 @@ sub _exec_test{
 }
 
 sub test_name{
-	return 'Create / Close / Edit / Open project...';
+	return 'projects...';
 }
 
 

@@ -311,7 +311,7 @@ sub _ws_AndOr{
 }
 
 sub test_name{
-	return 'Words-Menu commands...';
+	return 'words...     ';
 }
 
 1;

@@ -24,7 +24,7 @@ sub exec_test{
 sub _check_output{
 	my $self = shift;
 	
-	my $print_buffer = ">>>>>>>> ";
+	my $print_buffer = ">>> ";
 	$print_buffer .= $self->test_name." ";
 	
 	my $diff = diff(
@@ -34,13 +34,13 @@ sub _check_output{
 	);
 	
 	if ($diff){
-		$print_buffer .= "NG\n";
+		$print_buffer .= "\tNG\n";
 		my $file = $self->file_test_output.'_diff.txt';
 		open(OUT,">$file") or die;
 		print OUT $diff;
 		close (OUT);
 	} else {
-		$print_buffer .= "OK\n";
+		$print_buffer .= "\tOK\n";
 	}
 	
 	print STDERR $print_buffer;

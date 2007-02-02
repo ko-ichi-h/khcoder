@@ -58,7 +58,7 @@ sub _exec_test{
 }
 
 sub test_name{
-	return 'Read & Edit Variables...';
+	return 'variables...';
 }
 
 
