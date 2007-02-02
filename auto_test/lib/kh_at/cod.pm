@@ -39,7 +39,7 @@ sub _exec_test{
 
 
 sub test_name{
-	return 'Coding...';
+	return 'coding rules...';
 }
 
 1;
