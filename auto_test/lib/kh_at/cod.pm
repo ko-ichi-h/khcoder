@@ -91,6 +91,121 @@ sub _exec_test{
 	$t = Jcode->new($t)->euc;
 	$self->{result} .= $t;
 	
+	# 外部変数とのクロス集計
+	my $win2 = gui_window::cod_outtab->open;
+	
+	$self->{result} .= "■外部変数とのクロス集計：段落―「h1」\n";
+	$win2->{tani_obj}->{raw_opt} = 'dan';
+	$win2->{tani_obj}->mb_refresh;
+	$win2->{opt_body}->{selection} = 1;
+	$win2->{opt_body}->mb_refresh;
+	$win2->_calc;
+	$t = '';
+	foreach my $i (@{$win2->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t)->euc;
+	$self->{result} .= $t;
+	
+	$self->{result} .= "■外部変数とのクロス集計：段落―「死ぬ」\n";
+	$win2->{tani_obj}->{raw_opt} = 'dan';
+	$win2->{tani_obj}->mb_refresh;
+	$win2->{opt_body}->{selection} = 3;
+	$win2->{opt_body}->mb_refresh;
+	$win2->_calc;
+	$t = '';
+	foreach my $i (@{$win2->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t)->euc;
+	$self->{result} .= $t;
+	
+	$self->{result} .= "■外部変数とのクロス集計：段落―「大見出し」\n";
+	$win2->{tani_obj}->{raw_opt} = 'dan';
+	$win2->{tani_obj}->mb_refresh;
+	$win2->{opt_body}->{selection} = 4;
+	$win2->{opt_body}->mb_refresh;
+	$win2->_calc;
+	$t = '';
+	foreach my $i (@{$win2->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t)->euc;
+	$self->{result} .= $t;
+	
+	$self->{result} .= "■外部変数とのクロス集計：h2―「大見出し」\n";
+	$win2->{tani_obj}->{raw_opt} = 'h2';
+	$win2->{tani_obj}->mb_refresh;
+	$win2->{opt_body}->{selection} = 4;
+	$win2->{opt_body}->mb_refresh;
+	$win2->_calc;
+	$t = '';
+	foreach my $i (@{$win2->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t)->euc;
+	$self->{result} .= $t;
+	
+	# コード間関連
+	my $win3 = gui_window::cod_jaccard->open;
+
+	$self->{result} .= "■コード間関連：h2\n";
+	$win3->{tani_obj}->{raw_opt} = 'h2';
+	$win3->{tani_obj}->mb_refresh;
+	$win3->_calc;
+	$t = '';
+	foreach my $i (@{$win3->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t,'sjis')->euc;
+	$self->{result} .= $t;
+
+	$self->{result} .= "■コード間関連：dan\n";
+	$win3->{tani_obj}->{raw_opt} = 'dan';
+	$win3->{tani_obj}->mb_refresh;
+	$win3->_calc;
+	$t = '';
+	foreach my $i (@{$win3->{result}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t,'sjis')->euc;
+	$self->{result} .= $t;
 	
 	return $self;
 }

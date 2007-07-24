@@ -103,7 +103,7 @@ sub _new{
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$fra_r->Label(
-		-text => $self->gui_jchar('(C) 2001-2006','euc'),
+		-text => $self->gui_jchar('(C) 2001-2007','euc'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 

@@ -147,6 +147,7 @@ sub fill{
 	foreach my $i (@{$h}){
 		if ($tani_check{$i->[0]}){
 			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
+			#print "varid: $i->[2]\n";
 		}
 	}
 	
