@@ -126,5 +126,11 @@ sub file_cod{
 	return $file;
 }
 
+sub file_out_tmp_base{
+	use Cwd qw(cwd);
+	my $file = cwd.'/auto_test/hoge';
+	return $file;
+}
+
 
 1;
