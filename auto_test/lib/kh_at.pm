@@ -2,11 +2,13 @@ package kh_at;
 
 use strict;
 use Text::Diff;
+use Digest::MD5;
 use kh_at::project_new;
 use kh_at::pretreatment;
 use kh_at::words;
 use kh_at::out_var;
 use kh_at::cod;
+use kh_at::transf;
 
 sub exec_test{
 	my $class = shift;
@@ -83,6 +85,21 @@ sub delete_test_project{
 	$win_opn->{g_list}->selectionSet($n);
 	$win_opn->delete;
 	$win_opn->close;
+}
+
+#----------------------#
+#   ユーティリティー   #
+
+sub get_md5{
+	my $self = shift;
+	my $path = shift;
+
+	open (CHKF,"$path") or die;
+	binmode(CHKF);
+	my $md5 = Digest::MD5->new->addfile(*CHKF)->hexdigest;
+	close (CHKF);
+
+	return $md5;
 }
 
 #--------------#
