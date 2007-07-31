@@ -52,6 +52,33 @@ sub _exec_test{
 
 	$self->{result} .= "□コーディングルールによる取り出し\n";
 
+	my $cod_obj = kh_cod::pickup->read_file($self->file_cod) or return 0;
+	$cod_obj->pick(
+		file     => $self->file_out_tmp_base."_pc1.txt",
+		selected => 2,
+		tani     => 'dan',
+		pick_hi  => 0,
+	);
+	$cod_obj->pick(
+		file     => $self->file_out_tmp_base."_pc2.txt",
+		selected => 2,
+		tani     => 'h2',
+		pick_hi  => 1,
+	);
+
+	$self->{result} .= 
+		"dan: "
+		.$self->get_md5($self->file_out_tmp_base."_pc1.txt")
+		."\n"
+	;
+	$self->{result} .= 
+		"H2: "
+		.$self->get_md5($self->file_out_tmp_base."_pc2.txt")
+		."\n"
+	;
+
+	unlink($self->file_out_tmp_base."_pc1.txt") or die;
+	unlink($self->file_out_tmp_base."_pc2.txt") or die;
 
 	return $self;
 }
