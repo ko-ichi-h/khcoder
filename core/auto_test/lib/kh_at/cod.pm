@@ -210,22 +210,15 @@ sub _exec_test{
 	# コーディング結果書き出し（SPSS）
 	my $cod_f_r;
 	$cod_f_r = kh_cod::func->read_file($self->file_cod) or die;
-	$cod_f_r->cod_out_spss('h2',$self->file_out_tmp_base.'.sps');
+	$cod_f_r->cod_out_csv('h2',$self->file_out_tmp_base.'.csv');
 
-	open (RFILE,$self->file_out_tmp_base.'.sps') or die;
+	open (RFILE,$self->file_out_tmp_base.'.csv') or die;
 	while (<RFILE>){
 		$self->{result} .= Jcode->new($_,'sjis')->euc;
 	}
 	close (RFILE);
 
-	open (RFILE,$self->file_out_tmp_base.'.dat') or die;
-	while (<RFILE>){
-		$self->{result} .= Jcode->new($_,'sjis')->euc;
-	}
-	close (RFILE);
-
-	unlink($self->file_out_tmp_base.'.sps');
-	unlink($self->file_out_tmp_base.'.dat');
+	unlink($self->file_out_tmp_base.'.csv');
 
 	# コーディング結果書き出し（WordMiner）
 	$cod_f_r = '';
