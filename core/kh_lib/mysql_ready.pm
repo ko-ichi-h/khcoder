@@ -169,6 +169,8 @@ sub readin{
 sub reform{
 	my $self = shift;
 
+	my $report_time = 1;
+	my $pt1 = new Benchmark;
 
 	# キャッシュ・テーブル作成
 	mysql_exec->drop_table("hgh");
@@ -197,6 +199,8 @@ sub reform{
 			GROUP BY rowdata.hyoso, rowdata.genkei, rowdata.hinshi
 	", 1);
 
+	my $pt2 = new Benchmark;
+	print "\tcache(hgh)\t",timestr(timediff($pt2,$pt1)),"\n" if $report_time;
 
 	# 品詞テーブル作成
 	my $len = $self->length('hinshi');
@@ -218,6 +222,8 @@ sub reform{
 	',1);
 	mysql_exec->do("alter table hinshi add index index1 (name)",1);
 
+	my $pt3 = new Benchmark;
+	print "\thinshi\t\t",timestr(timediff($pt3,$pt2)),"\n" if $report_time;
 
 	# 原形テーブル作成
 	$len = $self->length('genkei');                         # テーブル準備
@@ -343,6 +349,9 @@ sub reform{
 	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 	#mysql_exec->do('alter table genkei add index t1(id, nouse)',1);
 
+	my $pt4 = new Benchmark;
+	print "\tgenkei\t\t",timestr(timediff($pt4,$pt3)),"\n" if $report_time;
+
 	# KH_品詞テーブルの作成
 	mysql_exec->drop_table("khhinshi");
 	mysql_exec->do("
@@ -367,6 +376,9 @@ sub reform{
 		VALUES $con
 	",1);
 	mysql_exec->do('alter table khhinshi add index index1(name,id)',1);
+
+	my $pt5 = new Benchmark;
+	print "\tkh-hinshi\t",timestr(timediff($pt5,$pt4)),"\n" if $report_time;
 
 	# キャッシュテーブル(2)作成
 	mysql_exec->drop_table("hghi");
@@ -405,6 +417,9 @@ sub reform{
 		mysql_exec->do("alter table hghi add index index4 (katuyo)",1);
 	}
 
+	my $pt6 = new Benchmark;
+	print "\tcache(hghi)\t",timestr(timediff($pt6,$pt5)),"\n" if $report_time;
+
 	# 活用テーブル作成
 	mysql_exec->drop_table("katuyo");
 	mysql_exec->do ("
@@ -420,6 +435,8 @@ sub reform{
 	",1);
 	mysql_exec->do("alter table katuyo add index index1 (id, name)",1);
 
+	my $pt7 = new Benchmark;
+	print "\tkatuyo\t\t",timestr(timediff($pt7,$pt6)),"\n" if $report_time;
 
 	# 表層テーブル作成
 	mysql_exec->drop_table("hyoso");
@@ -442,6 +459,10 @@ sub reform{
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
 	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
+
+	my $pt8 = new Benchmark;
+	print "\thyoso\t\t",timestr(timediff($pt8,$pt7)),"\n" if $report_time;
+
 
 	mysql_ready::heap->rowdata_restore;
 }
