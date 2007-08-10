@@ -74,7 +74,7 @@ sub first{
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
-	mysql_exec->drop_table("hghi");
+	#mysql_exec->drop_table("hghi");
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
@@ -341,7 +341,7 @@ sub reform{
 	mysql_exec->do('alter table genkei add index index1(name,hinshi_id,khhinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
-
+	#mysql_exec->do('alter table genkei add index t1(id, nouse)',1);
 
 	# KH_品詞テーブルの作成
 	mysql_exec->drop_table("khhinshi");
@@ -367,7 +367,6 @@ sub reform{
 		VALUES $con
 	",1);
 	mysql_exec->do('alter table khhinshi add index index1(name,id)',1);
-
 
 	# キャッシュテーブル(2)作成
 	mysql_exec->drop_table("hghi");
@@ -443,6 +442,8 @@ sub reform{
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
 	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
+
+	mysql_ready::heap->rowdata_restore;
 }
 
 sub genkei_sql{
@@ -697,8 +698,8 @@ sub hyosobun_sql{
 				    rowdata.hyoso  = hghi.hyoso
 				AND rowdata.genkei = hghi.genkei
 				AND rowdata.hinshi = hghi.hinshi
-				AND hghi.genkei_id = genkei.id
 				AND hghi.hyoso_id  = hyoso.id
+				AND hghi.genkei_id = genkei.id
 				AND rowdata.id >= $d1
 				AND rowdata.id <  $d2
 		ORDER BY rowdata.id

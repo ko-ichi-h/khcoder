@@ -22,15 +22,22 @@ sub rowdata{
 		SELECT id,hyoso,genkei,hinshi,katuyo
 		FROM   rowdata_isam
 	",1);
+	#mysql_exec->do("
+	#	ALTER TABLE rowdata ADD INDEX t1 (hyoso, genkei, hinshi)
+	#",1);
+}
+
+sub rowdata_restore{
+	return 0 unless $::config_obj->use_heap;
+	mysql_exec->drop_table("rowdata");
+	mysql_exec->do("ALTER TABLE rowdata_isam RENAME rowdata",1);
 }
 
 sub hyosobun{
 	return 0 unless $::config_obj->use_heap;
 	
-	# rowdataテーブルを戻す
-	mysql_exec->drop_table("rowdata");
-	mysql_exec->do("ALTER TABLE rowdata_isam RENAME rowdata",1);
-
+	return 1; # 無効化…
+	
 	# hyosobunテーブルを読み込み
 	mysql_exec->drop_table("hyosobun_isam");
 	mysql_exec->do("ALTER TABLE hyosobun RENAME hyosobun_isam",1);
@@ -70,6 +77,8 @@ sub hyosobun{
 
 sub clear_heap{
 	return 0 unless $::config_obj->use_heap;
+
+	return 1; # 無効化…
 
 	mysql_exec->drop_table("hyosobun");
 	mysql_exec->do("ALTER TABLE hyosobun_isam RENAME hyosobun",1);

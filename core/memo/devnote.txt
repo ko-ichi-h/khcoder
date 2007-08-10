@@ -32,6 +32,9 @@
 	EXPORTの場合：
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc export -r HEAD core
 
+[パフォーマンス]
+	・データサイズが大きくなるにつれて「Format」にかかる時間の割合が増えていく
+
 [TO DO]
 	・入力データのチェックと自動修正の機能を追加（kh_CheckDataFile）
 	・連関規則の計算時に欠損値処理を行う (?)
