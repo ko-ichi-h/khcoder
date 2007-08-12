@@ -33,6 +33,7 @@
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc export -r HEAD core
 
 [パフォーマンス]
+	・データが小さいときは「Strat1」に（相対的に）時間がかかる
 	・データサイズが大きくなるにつれて「Format」にかかる時間の割合が増えていく
 
 [TO DO]
