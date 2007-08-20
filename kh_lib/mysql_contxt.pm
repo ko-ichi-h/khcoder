@@ -80,11 +80,17 @@ sub save{
 		foreach my $t (@{$self->{tani}}){
 			my $table = 'ct_'."$t->[0]".'_contxt_'."$i";
 			# 文書数（分母の取得）
-			my $r_num = mysql_exec->select("
+			my $r_num_hdl = mysql_exec->select("
 				SELECT num
 				FROM   $table
 				WHERE  word = -1
-			",1)->hundle->fetch->[0];
+			",1)->hundle->fetch;
+			my $r_num;
+			if ($r_num_hdl){
+				$r_num = $r_num_hdl->[0];
+			} else {
+				next;
+			}
 			# 期待値計算（割り算＆重み付け）
 			my $sth = mysql_exec->select("
 				SELECT word, num

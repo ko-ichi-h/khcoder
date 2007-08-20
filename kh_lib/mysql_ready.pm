@@ -169,7 +169,7 @@ sub readin{
 sub reform{
 	my $self = shift;
 
-	my $report_time = 1;
+	my $report_time = 0;
 	my $pt1 = new Benchmark;
 
 	# キャッシュ・テーブル作成
