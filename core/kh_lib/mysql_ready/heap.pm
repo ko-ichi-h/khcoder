@@ -6,6 +6,27 @@ sub rowdata{
 	return 0 unless $::config_obj->use_heap;
 	my $class = shift;
 	my $self = shift;
+
+	my $a_row =
+		  $self->length('hyoso')
+		+ $self->length('genkei')
+		+ $self->length('hinshi')
+		+ $self->length('katuyo')
+		+ 1 + 4 + 8;
+	my $rows = mysql_exec->select("
+		select count(*) from rowdata
+	")->hundle->fetch->[0];
+	my $memory_n = int($a_row * $rows / 1024 /1024);
+	my $max = mysql_exec->select("
+		SHOW VARIABLES like \"max_heap_table_size\"
+	")->hundle->fetch->[1];
+	$max = int($max / 1024 /1024);
+	print "\tThe HEAP table will eat approx. $memory_n"."MB; We have $max"."MB max.\n";
+	if ($memory_n > $max){
+		print "\tWe are going to use MyISAM instead of HEAP...\n";
+		return 0;
+	}
+
 	mysql_exec->drop_table("rowdata_isam");
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_isam",1);
 	mysql_exec->do("create table rowdata
@@ -17,18 +38,18 @@ sub rowdata{
 			id int primary key not null
 		) TYPE=HEAP
 	",1);
+
 	mysql_exec->do("
 		INSERT INTO rowdata (id, hyoso, genkei, hinshi, katuyo)
 		SELECT id,hyoso,genkei,hinshi,katuyo
 		FROM   rowdata_isam
 	",1);
-	#mysql_exec->do("
-	#	ALTER TABLE rowdata ADD INDEX t1 (hyoso, genkei, hinshi)
-	#",1);
 }
 
 sub rowdata_restore{
 	return 0 unless $::config_obj->use_heap;
+	return 0 unless mysql_exec->table_exists("rowdata_isam");
+	
 	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("ALTER TABLE rowdata_isam RENAME rowdata",1);
 }

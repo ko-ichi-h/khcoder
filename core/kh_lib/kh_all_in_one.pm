@@ -17,6 +17,14 @@ use strict;
 #	「khc.ini」も添付する
 
 sub init{
+	# 利用可能なメモリの量を取得
+	use Win32::SystemInfo;
+	my %mHash = (AvailPhys => 0);
+	Win32::SystemInfo::MemoryStatus(%mHash,'MB');
+	$mHash{AvailPhys} = 32 if $mHash{AvailPhys} < 32;
+	$mHash{AvailPhys} = int($mHash{AvailPhys});
+	print "Available Physical Memory: $mHash{AvailPhys}MB\n";
+
 	# 茶筌のパス設定
 	$::config_obj->chasen_path($::config_obj->cwd.'\dep\chasen\chasen.exe')
 		unless -e $::config_obj->chasen_path;
@@ -45,6 +53,13 @@ sub init{
 		}
 		elsif ($_ =~ /^datadir = (.+)$/){
 			print MYININ "datadir = $p2\n";
+		}
+		elsif ($_ =~ /set\-variable(\s*)=(\s*)max_heap_table_size/i){
+			print MYININ
+				"set-variable	= max_heap_table_size="
+				.$mHash{AvailPhys}
+				."M\n"
+			;
 		} else {
 			print MYININ "$_\n";
 		}
