@@ -60,8 +60,8 @@ print "Starting test procedures...\n";
 open (STDOUT,">stdout.txt") or die;
 my $t0 = new Benchmark;
 
-#kh_at::project_new->exec_test('project_new');      # テストファイル登録&前処理
-kh_at->open_test_project;
+kh_at::project_new->exec_test('project_new');      # テストファイル登録&前処理
+#kh_at->open_test_project;
 
 kh_at::pretreatment->exec_test('pretreatment');    # 前処理メニュー
 kh_at::words->exec_test('words');                  # 抽出語メニュー
@@ -70,7 +70,7 @@ kh_at::cod->exec_test('cod');                      # コーディング
 kh_at::transf->exec_test('transf');                # テキストファイル
 
 kh_at->close_test_project;                         # プロジェクトを閉じる
-#kh_at->delete_test_project;                        # プロジェクトを削除
+kh_at->delete_test_project;                        # プロジェクトを削除
 
 my $t1 = new Benchmark;
 

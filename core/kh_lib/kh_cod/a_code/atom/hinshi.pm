@@ -143,7 +143,10 @@ sub ready{
 			genkei => $1,
 			katuyo => $2
 		)->hyoso_id_s;
+	} else {
+		print "atom::hinshi, something wrong?\n";
 	}
+	
 	$self->{hyosos} = $list;
 	
 	unless ( $list ){
