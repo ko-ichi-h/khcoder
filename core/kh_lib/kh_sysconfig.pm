@@ -306,8 +306,12 @@ sub in_preprocessing{
 sub use_heap {
 	my $self = shift;
 	my $new = shift;
-	if ( length($new) ){
+	
+	if ( length($new) ){                     # 新しい値の指定
 		$self->{use_heap} = $new;
+	}
+	unless (defined($self->{use_heap})){     # デフォルト値
+		$self->{use_heap} = 1;
 	}
 	return $self->{use_heap};
 }
