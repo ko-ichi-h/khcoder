@@ -70,6 +70,8 @@ sub first{
 		my $t7 = new Benchmark;
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
+	$self->fix_katuyo;
+
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
@@ -80,6 +82,29 @@ sub first{
 	$::config_obj->in_preprocessing(0);
 }
 
+
+sub fix_katuyo{
+	my $self = shift;
+	mysql_exec->do("ALTER TABLE katuyo RENAME katuyo_old",1);
+	mysql_exec->do ("
+		create table katuyo (
+			id int auto_increment primary key not null,
+			name varchar(".$self->length('katuyo').")
+		)
+	",1);
+	my $sql = 'INSERT INTO katuyo (name) VALUES ';
+	my $h = mysql_exec->select("select name from katuyo_old",1)->hundle;
+	while (my $i = $h->fetch){
+		chomp $i->[0];
+		if ($i->[0] =~ /^(.*)\r$/){
+			$i->[0] = $1;
+		}
+		$sql .= "(\"$i->[0]\"),";
+	}
+	chop $sql;
+	mysql_exec->do("$sql",1);
+	mysql_exec->do("alter table katuyo add index index1 (id, name)",1);
+}
 
 #----------------------#
 #   データの読み込み   #
