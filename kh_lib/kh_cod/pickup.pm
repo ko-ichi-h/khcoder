@@ -108,7 +108,7 @@ sub sql{
 	my $sql;
 	if ($args{pick_hi}){
 		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
-		$sql .= "FROM bun, bun_r\n";
+		$sql .= "FROM bun_r, bun\n";
 		unless ($args{tani} eq 'bun'){
 			$sql .= "	LEFT JOIN $args{tani} ON\n";
 			my $flag = 0;
