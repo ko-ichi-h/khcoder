@@ -85,6 +85,7 @@ sub first{
 
 sub fix_katuyo{
 	my $self = shift;
+	mysql_exec->drop_table("katuyo_old");
 	mysql_exec->do("ALTER TABLE katuyo RENAME katuyo_old",1);
 	mysql_exec->do ("
 		create table katuyo (
@@ -130,6 +131,27 @@ sub readin{
 	my $thefile = "'".$::project_obj->file_MorphoOut."'";
 	$thefile =~ tr/\\/\//;
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
+
+	mysql_exec->drop_table("rowdata_org");
+	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_org",1);
+	mysql_exec->do("create table rowdata
+		(
+			hyoso varchar(255) not null,
+			yomi varchar(255) not null,
+			genkei varchar(255) not null,
+			hinshi varchar(255) not null,
+			katuyogata varchar(255) not null,
+			katuyo varchar(255) not null,
+			id int primary key not null
+		)
+	",1);
+	mysql_exec->do("	
+		INSERT INTO rowdata (hyoso, yomi, genkei, hinshi, katuyogata, katuyo, id)
+		SELECT hyoso, yomi, if( ((length(genkei) = 0) and not (hyoso = 'EOS')), hyoso, genkei), hinshi, katuyogata, katuyo, id
+		FROM rowdata_org
+		ORDER BY id
+	",1);
+	mysql_exec->drop_table("rowdata_org");
 
 	# フィールド長の取得
 	my $t = mysql_exec->select("
