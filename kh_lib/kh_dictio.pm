@@ -120,9 +120,9 @@ sub mark{
 		$priority{$i} = $n;
 		++$n;
 	}
-	
+
 	my $icode = kh_jchar->check_code($source);
-	
+
 	open (MARKED,">$dist") or 
 		gui_errormsg->open(
 			type => 'file',
@@ -133,7 +133,7 @@ sub mark{
 			type => 'file',
 			thefile => $source
 		);
-	
+
 	while (<SOURCE>){
 		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;

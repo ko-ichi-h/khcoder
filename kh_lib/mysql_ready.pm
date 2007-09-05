@@ -32,7 +32,7 @@ sub first{
 		$self->{type_heap} = '';
 	}
 
-		my $ta0 = new Benchmark;
+	my $ta0 = new Benchmark;
 	kh_dictio->readin->mark;
 	kh_morpho->run;
 		my $ta1 = new Benchmark;
@@ -132,6 +132,7 @@ sub readin{
 	$thefile =~ tr/\\/\//;
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
 
+	# 新しいバージョンの茶筌に対応するためのFix
 	mysql_exec->drop_table("rowdata_org");
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_org",1);
 	mysql_exec->do("create table rowdata
@@ -147,7 +148,7 @@ sub readin{
 	",1);
 	mysql_exec->do("	
 		INSERT INTO rowdata (hyoso, yomi, genkei, hinshi, katuyogata, katuyo, id)
-		SELECT hyoso, yomi, if( ((length(genkei) = 0) and not (hyoso = 'EOS')), hyoso, genkei), hinshi, katuyogata, katuyo, id
+		SELECT hyoso, yomi, if( ((length(genkei) = 0) and not (hyoso = 'EOS') and not (hyoso = 'EOS\r')), hyoso, genkei), hinshi, katuyogata, katuyo, id
 		FROM rowdata_org
 		ORDER BY id
 	",1);
