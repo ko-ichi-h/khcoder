@@ -122,12 +122,25 @@ sub assigned_icode{
 	my $new = shift;
 	my $r = 0;
 	
+	# プロジェクトを一時的に開く
+	my $tmp_open;
 	my $cu_project;
 	if ($::project_obj){
-		$cu_project = $::project_obj;
-		undef $::project_obj;
+		unless ($::project_obj->dbname eq $self->dbname){
+			# 現在開いているプロジェクトを一時的に閉じて、他のプロジェクトを
+			# 一時的に開く
+			$cu_project = $::project_obj;
+			undef $::project_obj;
+			$self->open or die;
+			$tmp_open = 1;
+		}
 	}
-	$self->open or die;                 # プロジェクトを一時的に開く
+	else {
+		# 何もプロジェクトを開いていなかった状態から、他のプロジェクトを一時
+		# 的に開く
+		$self->open or die;
+		$tmp_open = 1;
+	}
 	
 	if ( defined($new) ){                         # 新しい値を設定
 		my $h = mysql_exec->select("
@@ -157,10 +170,14 @@ sub assigned_icode{
 		}
 	}
 	
-	undef $::project_obj;               # 一時的に開いたプロジェクトを閉じる
+	# 一時的に開いたプロジェクトを閉じる
+	if ($tmp_open){
+		undef $::project_obj;
+	}
 	if ($cu_project){
 		$cu_project->open;
 	}
+	
 	return $r;
 }
 

@@ -89,7 +89,6 @@ sub to_sjis{
 
 sub check_code{
 	my $the_file = $_[1];
-	
 	if ( defined($::project_obj) ){
 		my $chk = $::project_obj->assigned_icode;
 		if (
@@ -111,6 +110,7 @@ sub check_code{
 		last if $n > 1000;
 	}
 	close (TEMP);
+
 	use Jcode;
 	my $icode = Jcode->new($t)->icode;
 	print "char-set detection: $icode\n";

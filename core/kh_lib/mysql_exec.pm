@@ -28,23 +28,58 @@ sub connect_db{
 		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+
+	# MySQLのバージョンチェック
+	my $t = $dbh->prepare("show variables like \"version\"");
+	$t->execute;
+	my $r = $t->fetch;
+	$r = $r->[1] if $r;
+	print "Connected to MySQL $r, $dbname\n";
+
+	# 文字コードの設定
+	if ( substr($r,0,1) > 3 ){
+		$dbh->do("SET NAMES ujis");
+		print "Performed \"SET NAMES ujis\"\n";
+	}
+
 	return $dbh;
 }
 
 # DBへの接続テスト
 sub connection_test{
+	# コンソールへのエラー出力抑制
+	my $temp_file = 'temp.txt';
+	while (-e $temp_file){
+		$temp_file .= '.tmp';
+	}
+	open (STDERR,">$temp_file");
+	
+	# テスト実行
 	print "Checking MySQL connection...\n";
+	my $if_error = 0;
 	my $dsn = 
 		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
-		or return 0;
-	my @r = $dbh->func('_ListDBs')
-		or return 0;
-	unless (@r){
-		return 0;
+		or $if_error = 1;
+	unless ($if_error){
+		my @r = $dbh->func('_ListDBs') or $if_error = 1;
+		if (@r){
+			$dbh->disconnect;
+		} else {
+			$if_error = 1;
+		}
 	}
-	$dbh->disconnect;
-	return 1;
+
+	# エラー出力抑制の解除
+	close (STDERR);
+	open(STDERR,'>&STDOUT') or die;
+	unlink($temp_file);
+	
+	if ($if_error){
+		return 0;
+	} else {
+		return 1;
+	}
 }
 
 # 新規DBの作成
