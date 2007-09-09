@@ -10,8 +10,7 @@ sub _run_morpho{
 	my $self = shift;
 
 	my $cmdline = "chasen -r ".$::config_obj->chasenrc_path." -o ".$self->output." ".$self->target;
-
-	print "$cmdline\n";
+	#print "$cmdline\n";
 	system "$cmdline";
 
 	return(1);

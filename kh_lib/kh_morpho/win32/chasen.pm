@@ -9,9 +9,11 @@ use base qw( kh_morpho::win32 );
 sub _run_morpho{
 	my $self = shift;	
 	my $path = $self->config->chasen_path;
-	my $cmdline = "chasen -o \"".$self->output."\" \"".$self->target."\"";
+	
 	my $pos = rindex($path,"\\");
 	my $dir = substr($path,0,$pos);
+	my $chasenrc = $dir."\\dic\\chasenrc";
+	my $cmdline = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
 	#print "$cmdline\n";
 	
 	use Win32;
