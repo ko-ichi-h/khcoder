@@ -8,8 +8,12 @@ sub config_morph{
 	my $pos = rindex($self->{chasen_path},'\\');
 	$self->{grammercha} = substr($self->{chasen_path},0,$pos);
 	$self->{chasenrc} = "$self->{grammercha}".'\\dic\chasenrc';
+	$self->{dic_dir} =  "$self->{grammercha}".'\\dic';
 	$self->{grammercha} .= '\dic\grammar.cha';
 	
+	$self->{dic_dir} =~ s/\\/\//g;
+	$self->{dic_dir} = Jcode->new($self->{dic_dir},'sjis')->euc;
+	#print "$self->{dic_dir}\n";
 	
 	# Grammer.chaファイルの変更
 	
@@ -42,7 +46,7 @@ sub config_morph{
 	# 編集
 	my $temp2 = '(複合名詞)'."\n".'(タグ)'."\n";
 	Jcode::convert(\$temp2,'sjis','euc');
-	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
+	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 	
 	# 書き出し
 	my $temp_file = 'temp.txt';
@@ -91,7 +95,8 @@ sub config_morph{
 	close (GRA);
 	
 	# 編集
-	$temp2 = '(注釈 (("<" ">") (タグ)) )'."\n";
+	$temp2  = "(文法ファイル  \"$self->{dic_dir}\")\n";
+	$temp2 .= '(注釈 (("<" ">") (タグ)) )'."\n";
 	if ($self->{use_hukugo}){
 		$temp2 .= '(連結品詞'."\n";
 		$temp2 .= "\t".'((複合名詞)'."\n";
@@ -103,7 +108,7 @@ sub config_morph{
 		$temp2 .= ')'."\n";
 	}
 	Jcode::convert(\$temp2,'sjis','euc');
-	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
+	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
 	$temp_file = 'temp.txt';
