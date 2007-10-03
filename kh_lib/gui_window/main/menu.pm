@@ -9,6 +9,7 @@ my @menu0 = (
 	't_sql_do',
 	'm_b0_close',
 	'm_b1_hukugo',
+	'm_b2_datacheck',
 );
 
 # メニューの設定：形態素解析が行われていればActive
@@ -126,6 +127,26 @@ sub make{
 		-underline => $::config_obj->underline_conv(7),
 		-tearoff=>'no'
 	);
+
+		$self->{m_b2_datacheck} = $f->command(
+				-label => gui_window->gui_jchar('分析対象ファイルのチェック'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $ans = $mw->messageBox(
+						-message => gui_window->gui_jchar
+							(
+							   "時間のかかる処理を実行しようとしています。\n".
+							   "続行してよろしいですか？"
+							),
+						-icon    => 'question',
+						-type    => 'OKCancel',
+						-title   => 'KH Coder'
+					);
+					unless ($ans =~ /ok/i){ return 0; }
+					$self->mc_datacheck;
+				})},
+				-state => 'disable'
+			);
 
 		$self->{m_b2_morpho} = $f->command(
 				-label => gui_window->gui_jchar('前処理の実行'),
@@ -705,6 +726,12 @@ sub mc_close_project{
 	undef $::project_obj;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
+}
+sub mc_datacheck{
+	my $w = gui_wait->start;
+	use kh_datacheck;
+	kh_datacheck->run;
+	$w->end;
 }
 sub mc_morpho{
 	my $self = shift;
