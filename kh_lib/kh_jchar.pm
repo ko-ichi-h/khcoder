@@ -98,7 +98,7 @@ sub check_code{
 			return $chk;
 		}
 	}
-	print "checking icode...(reading data)\n";
+	#print "checking icode...(reading data)\n";
 	
 	open (TEMP,$the_file)
 		or &gui_errormsg->open(type => 'file',thefile => $the_file);
@@ -111,7 +111,7 @@ sub check_code{
 	}
 	close (TEMP);
 
-	print "checking icode...(icode)\n";
+	#print "checking icode...(icode)\n";
 
 	use Jcode;
 	my $icode = Jcode->new($t)->icode;
