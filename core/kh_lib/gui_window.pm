@@ -48,6 +48,7 @@ use gui_window::outvar_list;
 use gui_window::outvar_detail;
 use gui_window::force_color;
 use gui_window::contxt_out;
+use gui_window::datacheck;
 
 #use gui_window::use_te;
 #use gui_window::use_te_g;

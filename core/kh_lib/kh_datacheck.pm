@@ -1,12 +1,13 @@
 package kh_datacheck;
 use strict;
 
-my %errors;
-$errors{error_m1} = '長すぎる見出し行があります（自動修正不可）';
-$errors{error_c1} = '文字化けを含む行があります';
-$errors{error_c2} = '望ましくない半角記号が含まれている行があります';
-$errors{error_n1a} = '長すぎる行があります';
-$errors{error_n1b} = '長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）';
+my %errors = (
+	'error_m1'  => '長すぎる見出し行があります（自動修正不可）',
+	'error_c1'  => '文字化けを含む行があります',
+	'error_c2'  => '望ましくない半角記号が含まれている行があります',
+	'error_n1a' => '長すぎる行があります',
+	'error_n1b' => '長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）',
+);
 
 sub run{
 	my $class = shift;
@@ -97,7 +98,7 @@ sub run{
 		}
 	}
 	if ($msg){
-		$msg = "分析対象ファイル内に以下の問題点が発見されました（要約）。\n".$msg;
+		$msg = "分析対象ファイル内に以下の問題点が発見されました（要約表示）：\n".$msg;
 		$self->{repo_sum} = $msg;
 	} else {
 		$msg = "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。";
@@ -106,16 +107,16 @@ sub run{
 			msg  => $msg,
 			icon => 'info',
 		);
-		unlink($self->{file_temp});
+		$self->clean_up;
 		return 1;
 	}
 	
 	# レポート（詳細）の作成
-	$msg = "分析対象ファイル内に以下の問題点が発見されました（詳細）。\n";
+	$msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
 	foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
-			$msg .= "■$errors{$i}： $num"."行\n";
+			$msg .= "\n■$errors{$i}： $num"."行\n";
 			
 			foreach my $h (@{$self->{$i}{array}}){
 				$msg .= "l. $h->[0]\t"; # 行番号
@@ -136,15 +137,19 @@ sub run{
 	}
 	$self->{repo_full} = $msg;
 	
-	
-	print Jcode->new("$msg",'euc')->sjis;
-	print "Let's start GUI...\n";
+	gui_window::datacheck->open($self);
 }
 
-
+#----------------------------------#
+#   終了処理：一時ファイルの削除   #
+sub clean_up{
+	my $self = shift;
+	unlink($self->{file_temp}) if -e $self->{file_temp};
+}
 
 #--------------------------------------------------------------#
 #   整形（文字化け部分削除・半角記号削除・折り返し）ルーチン   #
+#--------------------------------------------------------------#
 
 package my_cleaner;
 
