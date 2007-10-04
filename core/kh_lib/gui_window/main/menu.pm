@@ -120,7 +120,7 @@ sub make{
 
 	#------------#
 	#   前処理   #
-	
+
 	$f = $menubar->cascade(
 		-label => gui_window->gui_jm('前処理(B)'),
 		-font => "TKFN",
@@ -728,10 +728,10 @@ sub mc_close_project{
 	$::main_gui->inner->refresh;
 }
 sub mc_datacheck{
-	my $w = gui_wait->start;
+	#my $w = gui_wait->start;
 	use kh_datacheck;
 	kh_datacheck->run;
-	$w->end;
+	#$w->end;
 }
 sub mc_morpho{
 	my $self = shift;

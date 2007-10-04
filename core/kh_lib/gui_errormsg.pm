@@ -14,7 +14,7 @@ use gui_errormsg::print;
 #	type [msg,file,mysql]
 #	*thefile
 #   *sql
-#	*icon
+#	*icon [info,,, ]
 
 sub open{
 	my $class = shift;

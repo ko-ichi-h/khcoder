@@ -106,13 +106,28 @@ sub _new{
 
 sub _edit{
 	my $self = shift;
+	
+	my $t = $self->gui_jg($self->e2->get);
+	
 	$self->projects->edit(
 		$self->num,
-		$self->gui_jg($self->e2->get),
+		$t,
 		$self->gui_jg($self->{icode})
 	);
 	$self->close();
 	$self->mother->refresh;
+	
+	# 現在開いているプロジェクトを編集した場合
+	my $current_file;
+	eval{ $current_file = $::project_obj->file_target; };
+	if (
+		   $self->{projects}->a_project($self->{num})->file_target
+		eq $current_file
+	){
+		# コメントの編集をメインのWindowに反映させる
+		$::project_obj->comment( $t );
+		$::main_gui->inner->refresh;
+	}
 }
 
 

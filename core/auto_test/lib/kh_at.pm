@@ -9,6 +9,7 @@ use kh_at::words;
 use kh_at::out_var;
 use kh_at::cod;
 use kh_at::transf;
+use kh_at::docs;
 
 sub exec_test{
 	my $class = shift;

@@ -84,7 +84,7 @@ sub _exec_test{
 }
 
 sub test_name{
-	return 'file transfomation...';
+	return 'file transf...';
 }
 
 1;
