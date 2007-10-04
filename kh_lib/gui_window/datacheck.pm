@@ -74,6 +74,7 @@ sub _new{
 							'euc'
 						)
 					);
+					$text_widget->yview(moveto => 1);
 				}
 			);
 		}
@@ -97,10 +98,11 @@ sub _new{
 		-text => $self->gui_jchar('　　分析対象ファイルの自動修正：'),
 	)->pack(-anchor=>'w', -side => 'left');
 
-	$fr_act0->Button(
+	$self->{bt_exec} = $fr_act0->Button(
 		-text => $self->gui_jchar('実行'),
 		-font => "TKFN",
 		#-width => 8,
+		-state => 'disabled',
 		-command => sub{ $mw->after
 			(
 				10,
@@ -124,21 +126,95 @@ sub _new{
 			);
 		}
 	)->pack(-anchor => 'c',-pady => '0');
+	$self->{bt_exec}->configure(-state => 'normal')
+		if $self->{dacheck_obj}->{auto_ok};
 
+	$self->{text_widget} = $text_widget;
 	return $self;
 }
 
+#----------------------#
+#   結果の詳細を保存   #
+
 sub save{
-	
+	my $self = shift;
+
+	# ファイル名の取得
+	my @types = (
+		[ "text file",[qw/.txt/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.txt',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jchar('分析対象ファイル内に見つかった問題点の詳細を保存'),
+		-initialdir       => $::config_obj->cwd
+	);
+	unless ($path){
+		return 0;
+	}
+
+	# 保存
+	$self->{dacheck_obj}->save($path);
+
+	# 結果表示
+	$path = Jcode->new($path)->euc;
+	$self->{text_widget}->insert(
+		'end',
+		gui_window->gui_jchar(
+			"●見つかった問題点の詳細を次のファイルに保存しました：\n　$path\n\n",
+			'euc'
+		)
+	);
+	$self->{text_widget}->yview(moveto => 1);
 }
 
+#--------------#
+#   自動修正   #
 
+sub edit{
+	my $self = shift;
+	
+	$self->{dacheck_obj}->edit;
+	
+	# 結果表示
+	my $msg = '';
+	my $path  = Jcode->new( $self->{dacheck_obj}->{file_backup} )->euc;
+	my $path2 = Jcode->new( $self->{dacheck_obj}->{file_diff} )->euc;
+	$msg .= "●自動修正を行いました。\n\n";
+	$msg .= "○修正前の分析対象ファイルを次の場所にバックアップしました：\n";
+	$msg .= "　$path\n\n";
+	
+	$msg .= "○修正箇所のリスト（diff）を次のファイルに保存しました：\n";
+	$msg .= "　$path2\n\n";
+	
+	if ($self->{dacheck_obj}->{auto_ng}){
+		$msg .= "○自動的に修正できない問題点が残っています。分析対象ファイルを直接修正して下さい。\n\n";
+	} else {
+		$msg .= "○分析対象ファイル内に発見された既知の問題点はすべて修正されました。\n\n";
+	}
+	
+	$self->{text_widget}->insert(
+		'end',
+		gui_window->gui_jchar(
+			$msg,
+			'euc'
+		)
+	);
+	$self->{text_widget}->yview(moveto => 1);
+
+	$self->{bt_exec}->configure(-state => 'disable');
+
+}
+
+#--------------#
+#   終了処理   #
 
 sub end{
 	my $self = shift;
 	$self->{dacheck_obj}->clean_up;
 }
-
 
 #--------------#
 #   Window名   #

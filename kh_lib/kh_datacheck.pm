@@ -95,6 +95,12 @@ sub run{
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
 			$msg .= "　・$errors{$i}： $num"."行\n";
+			
+			if ( $errors{$i} =~ /自動修正不可/ ){
+				++$self->{auto_ng};
+			} else {
+				++$self->{auto_ok};
+			}
 		}
 	}
 	if ($msg){
@@ -140,8 +146,106 @@ sub run{
 	gui_window::datacheck->open($self);
 }
 
+#------------------------#
+#   詳細レポートを保存   #
+
+sub save{
+	my $self = shift;
+	my $path = shift;
+
+	open (REPORT,">$path") or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $path
+		);
+
+	print REPORT $self->{repo_full};
+
+	close (REPORT);
+	
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_sjis($path);
+	}
+}
+
+#--------------#
+#   自動修正   #
+
+sub edit{
+	my $self = shift;
+
+	# バックアップ作成
+	$self->{file_backup} = $::project_obj->file_backup;
+	rename($::project_obj->file_target,$self->{file_backup}) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $self->{file_backup}
+		);
+
+	# 修正（置換）
+	rename($self->{file_temp}, $::project_obj->file_target) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $::project_obj->file_target
+		);
+
+	# Diff作成
+	use Text::Diff;
+	my $diff = diff(
+		$self->{file_backup},
+		$::project_obj->file_target,
+		{STYLE => "OldStyle"}
+	);
+	$self->{file_diff} = $::project_obj->file_diff;
+	open (DIFFO, ">$self->{file_diff}") or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $self->{file_diff}
+		);
+	print DIFFO $diff;
+	close (DIFFO);
+
+	# レポート（詳細）の再作成
+	if ($self->{auto_ng}){
+		my $msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
+		foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
+			if ($self->{$i}{flag}){
+				unless ( $errors{$i} =~ /自動修正不可/ ){
+					next;
+				}
+				
+				my $num = @{$self->{$i}{array}};
+				$msg .= "\n■$errors{$i}： $num"."行\n";
+				
+				foreach my $h (@{$self->{$i}{array}}){
+					$msg .= "l. $h->[0]\t"; # 行番号
+					if (length($h->[1]) > 60 ){
+						my $n = 60;
+						while (
+							   substr($h->[1],0,$n) =~ /\x8F$/
+							or substr($h->[1],0,$n) =~ tr/\x8E\xA1-\xFE// % 2
+						) {
+							--$n;
+						}
+						$msg .= substr($h->[1],0,$n)."...\n";
+					} else {
+						$msg .= "$h->[1]\n";
+					}
+				}
+			}
+		}
+		$self->{repo_full} = $msg;
+	} else {
+		$self->{repo_full} = "既知の問題点はすべて修正されています。\n";
+	}
+
+
+	return $self;
+}
+
 #----------------------------------#
 #   終了処理：一時ファイルの削除   #
+
 sub clean_up{
 	my $self = shift;
 	unlink($self->{file_temp}) if -e $self->{file_temp};
