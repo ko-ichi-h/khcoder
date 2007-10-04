@@ -111,7 +111,7 @@ sub _new{
 
 sub edit{
 	my $self = shift;
-	$self->if_selected or return 0;
+	$self->if_selected_ed or return 0;
 	gui_window::project_edit->open($self->projects,$self->selected,$self);
 }
 
@@ -154,6 +154,22 @@ sub if_selected{
 			);
 			return 0;
 		}
+		$self->{selected} = $temp[0];
+		return 1;
+	} else {
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$self->win_obj,
+			msg    => "プロジェクトを選択してください"
+		);
+		return 0;
+	}
+}
+
+sub if_selected_ed{
+	my $self = shift;
+	my @temp = $self->list->infoSelection;
+	if (@temp == 1){
 		$self->{selected} = $temp[0];
 		return 1;
 	} else {

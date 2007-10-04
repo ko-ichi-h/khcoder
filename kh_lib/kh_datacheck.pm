@@ -9,13 +9,30 @@ $errors{error_n1a} = '長すぎる行があります';
 $errors{error_n1b} = '長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）';
 
 sub run{
+	my $class = shift;
 	my $self;
 	$self->{file_source} = $::project_obj->file_target;
 	$self->{file_temp}   = 'temp.txt';
 	while (-e $self->{file_temp}){
 		$self->{file_temp} .= '.tmp';
 	}
+	bless $self, $class;
 
+	# 文字コードのチェック
+	my $icode = kh_jchar->check_code($self->{file_source});
+	unless (
+		   $icode eq 'sjis'
+		|| $icode eq 'euc'
+		|| $icode eq 'jis'
+	) {
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => "分析対象ファイルの文字コード判別に失敗しました。\nプロジェクト編集画面で文字コードを指定して下さい。\nプロジェクト編集画面を開くには、メニューから「プロジェクト」→「開く」→「編集」をクリックします。"
+		);
+		return 0;
+	}
+
+	# 内容チェックの実行
 	open (SOURCE,"$self->{file_source}") or
 		gui_errormsg->open(
 			type => 'file',
@@ -26,17 +43,14 @@ sub run{
 			type => 'file',
 			thefile => $self->{file_temp}
 		);
-
 	binmode(SOURCE);
 
-	# チェックの実行
 	my $n = 1;
 	while (<SOURCE>){
 		s/\x0D\x0A|\x0D|\x0A/\n/g;
 		chomp;
 		
-		my $ci = $_;
-		#my $ci = Jcode->new($_,'sjis')->euc;
+		my $ci = Jcode->new($_,$icode)->euc;
 		
 		my $co = '';
 		my ($t_c1, $t_c2, $t_n1a, $t_n1b);
@@ -68,7 +82,7 @@ sub run{
 			push @{$self->{error_c2}{array}}, [$n, $ci];
 		}
 		++$n;
-		print EDITED "$co\n";
+		print EDITED Jcode->new($co,'euc')->$icode, "\n";
 	}
 	close (EDITED);
 	close (SOURCE);
@@ -76,24 +90,55 @@ sub run{
 	# レポート（概要）の作成
 	my $if_errors = 0;
 	my $msg = '';
-	foreach my $i ('error_m1','error_c1','error_c2','error_n1a','error_n1b'){
+	foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
-			$msg .= "　・$errors{$i}（$num"."行）\n";
+			$msg .= "　・$errors{$i}： $num"."行\n";
 		}
 	}
 	if ($msg){
-		$msg = "分析対象ファイル内に以下のエラーが発見されました：\n".$msg;
-		$if_errors = 1;
+		$msg = "分析対象ファイル内に以下の問題点が発見されました（要約）。\n".$msg;
+		$self->{repo_sum} = $msg;
 	} else {
-		$msg = "分析対象ファイル内にエラーは発見されませんでした。";
+		$msg = "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。";
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => $msg,
+			icon => 'info',
+		);
+		unlink($self->{file_temp});
+		return 1;
 	}
 	
-	gui_errormsg->open(
-		type => 'msg',
-		msg  => $msg
-	);
-
+	# レポート（詳細）の作成
+	$msg = "分析対象ファイル内に以下の問題点が発見されました（詳細）。\n";
+	foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
+		if ($self->{$i}{flag}){
+			my $num = @{$self->{$i}{array}};
+			$msg .= "■$errors{$i}： $num"."行\n";
+			
+			foreach my $h (@{$self->{$i}{array}}){
+				$msg .= "l. $h->[0]\t"; # 行番号
+				if (length($h->[1]) > 60 ){
+					my $n = 60;
+					while (
+						   substr($h->[1],0,$n) =~ /\x8F$/
+						or substr($h->[1],0,$n) =~ tr/\x8E\xA1-\xFE// % 2
+					) {
+						--$n;
+					}
+					$msg .= substr($h->[1],0,$n)."...\n";
+				} else {
+					$msg .= "$h->[1]\n";
+				}
+			}
+		}
+	}
+	$self->{repo_full} = $msg;
+	
+	
+	print Jcode->new("$msg",'euc')->sjis;
+	print "Let's start GUI...\n";
 }
 
 

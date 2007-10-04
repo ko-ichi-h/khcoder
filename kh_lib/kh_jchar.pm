@@ -98,7 +98,7 @@ sub check_code{
 			return $chk;
 		}
 	}
-	#print "checking icode...(reading data)\n";
+	print "Checking icode... ";
 	
 	open (TEMP,$the_file)
 		or &gui_errormsg->open(type => 'file',thefile => $the_file);
@@ -115,7 +115,7 @@ sub check_code{
 
 	use Jcode;
 	my $icode = Jcode->new($t)->icode;
-	print "char-set detection: $icode\n";
+	print "$icode\n";
 	return $icode;
 }
 
