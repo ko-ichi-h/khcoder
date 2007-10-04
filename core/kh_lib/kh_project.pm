@@ -355,7 +355,26 @@ sub status_dan{
 
 sub file_backup{
 	my $self = shift;
-	my $temp = $self->file_base.'.bak';
+	my $n = 0;
+	
+	while (-e $self->file_datadir."_bak$n.txt"){
+		++$n;
+	}
+	
+	my $temp = $self->file_datadir."_bak$n.txt";
+	$temp = $::config_obj->os_path($temp);
+	return $temp;
+}
+
+sub file_diff{
+	my $self = shift;
+	my $n = 0;
+	
+	while (-e $self->file_datadir."_diff$n.txt"){
+		++$n;
+	}
+	
+	my $temp = $self->file_datadir."_diff$n.txt";
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
