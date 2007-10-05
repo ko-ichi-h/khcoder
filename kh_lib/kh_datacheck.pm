@@ -7,6 +7,7 @@ my %errors = (
 	'error_c2'  => '望ましくない半角記号が含まれている行があります',
 	'error_n1a' => '長すぎる行があります',
 	'error_n1b' => '長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）',
+	'error_mn' => 'H1〜H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）',
 );
 
 sub run{
@@ -56,14 +57,17 @@ sub run{
 		my $co = '';
 		my ($t_c1, $t_c2, $t_n1a, $t_n1b);
 		
-		if ($ci =~ /^(<H[1-5]>)(.*)(<\/H[1-5]>)$/i){
+		# 見出し行
+		if ($ci =~ /^<H([1-5])>(.*)<\/H\1>$/i){
 			if (length($ci) > 8000){
 				$self->{error_m1}{flag} = 1;
 				push @{$self->{error_m1}{array}}, [$n, $ci];
 			}
 			( $co, $t_c1, $t_c2, $t_n1a, $t_n1b ) = &my_cleaner::exec($2);
-			$co = $1.$co.$3;
-		} else {
+			$co = "<H$1>$co</H$1>";
+		}
+		# 通常の行
+		else {
 			( $co, $t_c1, $t_c2, $t_n1a, $t_n1b ) = &my_cleaner::exec($ci);
 			if ($t_n1a and not $t_n1b){
 				$self->{error_n1a}{flag} = 1;
@@ -72,6 +76,10 @@ sub run{
 			if ($t_n1b){
 				$self->{error_n1b}{flag} = 1;
 				push @{$self->{error_n1b}{array}}, [$n, $ci];
+			}
+			if ($ci =~ /<H[1-5]>.+|.+<\/H[1-5]>/i){
+				$self->{error_mn}{flag} = 1;
+				push @{$self->{error_mn}{array}}, [$n, $ci];
 			}
 		}
 		if ($t_c1){
@@ -91,7 +99,7 @@ sub run{
 	# レポート（概要）の作成
 	my $if_errors = 0;
 	my $msg = '';
-	foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
+	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
 			$msg .= "　・$errors{$i}： $num"."行\n";
@@ -119,7 +127,7 @@ sub run{
 	
 	# レポート（詳細）の作成
 	$msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
-	foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
+	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
 			$msg .= "\n■$errors{$i}： $num"."行\n";
@@ -208,7 +216,7 @@ sub edit{
 	# レポート（詳細）の再作成
 	if ($self->{auto_ng}){
 		my $msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
-		foreach my $i ('error_m1','error_n1b','error_c1','error_c2','error_n1a'){
+		foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 			if ($self->{$i}{flag}){
 				unless ( $errors{$i} =~ /自動修正不可/ ){
 					next;
@@ -263,7 +271,6 @@ BEGIN{
 	$twoBytes        = '[\x8E\xA1-\xFE][\xA1-\xFE]';
 	$threeBytes      = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 	$ctrl            = '[[:cntrl:]]';                         # 制御文字
-	$rep             = ' ';                                   # 置換先
 	$character_undef = '(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|'  # 9-15,85-94区
 		. '\x8E[\xE0-\xFE]|'                                     # 半角カタカナ
 		. '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2区
@@ -296,13 +303,13 @@ sub exec{
 	#$t = Jcode->new($t,'sjis')->h2z->euc;
 	
 	# 半角記号の削除
-	$t =~ s/'/ /g;
-	$t =~ s/\\/ /g;
-	$t =~ s/"/ /g;
-	$t =~ s/\|/ /g;
-	$t =~ s/</ /g;
-	$t =~ s/>/ /g;
-	$t =~ s/$ctrl/$rep/g;
+	$t =~ s/'/’/g;
+	$t =~ s/\\/￥/g;
+	$t =~ s/"/”/g;
+	$t =~ s/\|/｜/g;
+	$t =~ s/</＜/g;
+	$t =~ s/>/＞/g;
+	$t =~ s/$ctrl/_/g;
 
 	# 一文字ずつ処理
 	my @chars = $t =~ /$ascii|$twoBytes|$threeBytes/og;
