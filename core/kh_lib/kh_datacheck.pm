@@ -318,7 +318,7 @@ sub exec{
 	my $r = '';
 	my $cu = '';
 	foreach my $i (@chars){
-		# 化けている文字はスキップ
+		# 化けている文字はスキップ（機種依存文字・3バイト文字もスキップ）
 		if (
 			   ($i =~ /$character_undef/o)
 			|| (
