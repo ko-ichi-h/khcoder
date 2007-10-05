@@ -135,7 +135,7 @@ sub make{
 					my $ans = $mw->messageBox(
 						-message => gui_window->gui_jchar
 							(
-							   "時間のかかる処理を実行しようとしています。\n".
+							   "この処理には時間がかかる場合があります。\n".
 							   "続行してよろしいですか？"
 							),
 						-icon    => 'question',
