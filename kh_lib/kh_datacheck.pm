@@ -365,6 +365,4 @@ sub exec{
 	return ($r,$flag_bake,$flag_hankaku,$flag_long,$flag_longlong);
 }
 
-
-
 1;
