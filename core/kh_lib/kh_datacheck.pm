@@ -58,13 +58,13 @@ sub run{
 		my ($t_c1, $t_c2, $t_n1a, $t_n1b);
 		
 		# 見出し行
-		if ($ci =~ /^<H([1-5])>(.*)<\/H\1>$/i){
+		if ($ci =~ /^<(H)([1-5])>(.*)<\/H\2>$/i){
 			if (length($ci) > 8000){
 				$self->{error_m1}{flag} = 1;
 				push @{$self->{error_m1}{array}}, [$n, $ci];
 			}
-			( $co, $t_c1, $t_c2, $t_n1a, $t_n1b ) = &my_cleaner::exec($2);
-			$co = "<H$1>$co</H$1>";
+			( $co, $t_c1, $t_c2, $t_n1a, $t_n1b ) = &my_cleaner::exec($3);
+			$co = "<$1$2>$co</$1$2>";
 		}
 		# 通常の行
 		else {
