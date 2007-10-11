@@ -299,8 +299,6 @@ sub exec{
 	if ($t =~ /'|\\|"|<|>|$ctrl|\|/){
 		$flag_hankaku = 1;
 	}
-
-	#$t = Jcode->new($t,'sjis')->h2z->euc;
 	
 	# »æ≥—µ≠πÊ§Œ∫ÔΩ¸
 	$t =~ s/'/°«/g;
@@ -328,6 +326,12 @@ sub exec{
 		){
 			$flag_bake = 1;
 			next;
+		}
+		
+		# »æ≥—•´• §ŒΩ§¿µ
+		if ($i =~ /(?:\x8E[\xA6-\xDF])/){ 
+			$i = Jcode->new($i,'euc')->h2z;
+			$flag_hankaku = 1;
 		}
 		
 		# ¿ﬁ§Í ÷§∑
