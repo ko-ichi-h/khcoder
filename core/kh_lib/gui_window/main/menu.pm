@@ -6,7 +6,6 @@ my @menu0 = (
 	'm_b1_mark',
 	'm_b2_morpho',
 	't_sql_select',
-	't_sql_do',
 	'm_b0_close',
 	'm_b1_hukugo',
 	'm_b2_datacheck',
@@ -558,30 +557,6 @@ sub make{
 
 	$f->separator();
 
-	my $f2 = $f->cascade(
-			-label => gui_window->gui_jchar('SQL文 入力'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
-	
-		$self->{t_sql_select} = $f2->command(
-				-label => gui_window->gui_jchar('SELECT'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::sql_select->open;
-				})},
-				-state => 'disable'
-			);
-
-		$self->{t_sql_do} = $f2->command(
-				-label => gui_window->gui_jchar('その他'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::sql_do->open;
-				})},
-				-state => 'disable'
-			);
-
 	my $f_p = $f->cascade(
 			-label => gui_window->gui_jchar('プラグイン'),
 			-font => "TKFN",
@@ -643,6 +618,15 @@ sub make{
 			push @menu1, 't_plugin_'.$_;
 		}
 	}
+
+	$self->{t_sql_select} = $f->command(
+			-label => gui_window->gui_jchar('SQL文の実行'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				gui_window::sql_select->open;
+			})},
+			-state => 'disable'
+		);
 
 	$f->configure(
 		-label     => gui_window->gui_jm('ツール(T)'),
