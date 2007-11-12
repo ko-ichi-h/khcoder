@@ -22,7 +22,7 @@ sub _new{
 
 	my $self = shift;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar('SQL文 (SELECT) 実行'));
+	$win->title($self->gui_jchar('SQL文の実行'));
 	#$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(
@@ -37,7 +37,7 @@ sub _new{
 		-spacing2 => 0,
 		-spacing3 => 0,
 		-scrollbars=> 'osoe',
-		-height => 8,
+		-height => 12,
 		-width => 48,
 		-wrap => 'none',
 		-font => "TKFN",
@@ -74,7 +74,7 @@ sub _new{
 		parent      => $win,
 		parent_name => $self->win_name,
 		tower       => $lf,
-		title       => $self->gui_jchar('SQL文 (SELECT) 結果'),
+		title       => $self->gui_jchar('SQL文の実行結果'),
 	);
 
 	my $lf2 = $plane->frame->LabFrame(
@@ -153,6 +153,12 @@ sub exec{
 			return 0;
 		}
 		$t = $tc;
+	}
+	
+	# 書き出すべき結果があるかどうかをチェック
+	unless ($t->hundle->{'NUM_OF_FIELDS'}){
+		$self->label->configure(-text,$self->gui_jchar('出力された行数: n/a'));
+		return 1;
 	}
 	
 	# 結果の書き出し
