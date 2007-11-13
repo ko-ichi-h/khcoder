@@ -467,9 +467,19 @@ sub outtab{
 		my @current_for_chisq;
 		my @c = @{$i};
 		my $nd = pop @c;
-		unless ( length($i->[0]) ){next;}
+		
+		next if
+			   length($i->[0]) == 0
+			or $c[0] eq '.'
+			or $c[0] eq '·çÂ»ÃÍ'
+			or $c[0] =~  /^missing$/i
+			or $var_obj->{labels}{$c[0]} eq '.'
+			or $var_obj->{labels}{$c[0]} eq '·çÂ»ÃÍ'
+			or $var_obj->{labels}{$c[0]} =~ /^missing$/i
+		;
+		
 		foreach my $h (@c){
-			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À
+			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À¡Ê1ÎóÌÜ¡Ë
 				if ( length($var_obj->{labels}{$h}) ){
 					push @current, Jcode->new($var_obj->{labels}{$h})->sjis;
 				} else {
