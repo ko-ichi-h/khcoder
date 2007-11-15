@@ -60,11 +60,31 @@ sub _new{
 	)->pack(-side => 'left');
 	$e->insert(0,'1000');
 
+
+	my $server = 'MySQL '
+		.mysql_exec->select("show variables like \"version\"")
+		->hundle->fetch->[1];
+
+	$lf->Label(
+		-text => $self->gui_jchar(
+			'  サーバー: '
+			.$server
+			.'  データベース名: '
+			.$::project_obj->dbname
+		),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
+
+
 	$lf->Button(
 		-text    => $self->gui_jchar('実行'),
 		-command => sub {$self->exec;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
+
+
+
+
 
 
 #----------------#
