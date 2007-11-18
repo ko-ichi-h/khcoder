@@ -115,6 +115,11 @@ sub check_code{
 
 	use Jcode;
 	my $icode = Jcode->new($t)->icode;
+
+	$icode = 'euc' if $icode eq 'euc-jp';
+	$icode = 'sjis' if $icode eq 'shiftjis';
+	$icode = 'jis' if  $icode eq '7bit-jis';	
+
 	print "$icode\n";
 	return $icode;
 }
