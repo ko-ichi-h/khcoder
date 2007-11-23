@@ -37,7 +37,6 @@ sub connect_db{
 	print "Connected to MySQL $r, $dbname\n";
 
 	# 文字コードの設定
-	print "ver: ".substr($r,0,3)."\n";
 	if ( substr($r,0,3) > 4 ){
 		$dbh->do("SET NAMES ujis");
 		print "Performed \"SET NAMES ujis\"\n";
