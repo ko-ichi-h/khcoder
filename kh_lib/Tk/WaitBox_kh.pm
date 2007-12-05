@@ -162,7 +162,7 @@ sub Show {
 sub unShow {
     my($wd) = @_;
 
-	print "shown: $wd->{Shown}\n";
+	# print "shown: $wd->{Shown}\n";
 
     return unless $wd->{Shown};
     $wd->{CanFrame}->destroy if defined($wd->{CanFrame});

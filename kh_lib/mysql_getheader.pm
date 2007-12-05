@@ -116,6 +116,7 @@ sub get_selected{
 		last if $self->{tani} eq $i;
 		$sql .= "\tand bun.$i"."_id = 0\n";
 	}
+	$sql .= "\tand bun.$self->{tani}"."_id >= 1\n";
 	$sql .= "order by bun.id";
 
 	my $sth = mysql_exec->select ("$sql",1)->hundle;
