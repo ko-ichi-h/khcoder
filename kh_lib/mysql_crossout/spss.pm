@@ -31,6 +31,9 @@ sub finish{
 		}
 	}
 	$spss .= "  id(f10.0)\n";
+	if ($self->{midashi}){
+		$spss .= "  name(a255)\n";
+	}
 	$spss .= "  length_c(f10.0)\n";
 	$spss .= "  length_w(f10.0)\n";
 	my $wn = 0;
@@ -106,7 +109,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"temp.dat") or die;
+	open (F,"$self->{file_temp}") or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;
@@ -118,7 +121,7 @@ sub finish{
 	}
 	close (F);
 	close (OUTF);
-	unlink('temp.dat');
+	unlink("$self->{file_temp}");
 }
 
 

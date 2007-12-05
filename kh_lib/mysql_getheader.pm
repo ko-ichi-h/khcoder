@@ -96,5 +96,49 @@ sub get_all{
 	}
 }
 
+sub get_selected{
+	my $class = shift;
+	my %args  = @_;
+	my $self = \%args;
+	
+	unless ($self->{tani} =~ /h[1-5]/i){
+		return 0;
+	}
+	
+	my $sql = '';
+	$sql .= "select rowtxt\n";
+	$sql .= "from bun_r, bun\n";
+	$sql .= "where\n";
+	$sql .= "\tbun_r.id = bun.id\n";
+	$sql .= "\tand bun.bun_id = 0\n";
+	$sql .= "\tand bun.dan_id = 0\n";
+	foreach my $i ("h5", "h4", "h3", "h2", "h1"){
+		last if $self->{tani} eq $i;
+		$sql .= "\tand bun.$i"."_id = 0\n";
+	}
+	$sql .= "order by bun.id";
+
+	my $sth = mysql_exec->select ("$sql",1)->hundle;
+	my @r = ();
+	while (my $i = $sth->fetch){
+		$i->[0] = $1 if $i->[0] =~ /^<h[1-5]>(.*)<\/h[1-5]>$/i;
+		push @r, $i->[0];
+	}
+	
+	# データチェック
+	my $chk = mysql_exec->select(
+		"select max(id) from $self->{tani}",
+		1
+	)->hundle;
+	my $num1 = $chk->fetch->[0] or die("oops..");
+	my $num2 = @r;
+	unless ($num1 == $num2){
+		die("oops... $num1, $num2");
+	}
+	
+	return \@r;
+}
+
+
 
 1;

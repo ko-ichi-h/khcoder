@@ -20,7 +20,12 @@ sub finish{
 			last;
 		}
 	}
-	$head .= 'id,length_c,length_w,';
+	if ($self->{midashi}){
+		$head .= 'id,name,length_c,length_w,';
+	} else {
+		$head .= 'id,length_c,length_w,';
+	}
+	
 	foreach my $i (@{$self->{wList}}){
 		$head .= kh_csv->value_conv($self->{wName}{$i}).',';
 	}
@@ -42,7 +47,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"temp.dat") or die;
+	open (F,"$self->{file_temp}") or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;
@@ -54,7 +59,7 @@ sub finish{
 	}
 	close (F);
 	close (OUTF);
-	unlink('temp.dat');
+	unlink("$self->{file_temp}");
 }
 
 

@@ -193,7 +193,11 @@ sub finish{
 			last;
 		}
 	}
-	$head .= "id,length_c,length_w,茶筌出力（基本形）,";
+	$head .= "id,";
+	if ($self->{midashi}){
+		$head .= "name,";
+	}
+	$head .= "length_c,length_w,茶筌出力（基本形）,";
 	foreach my $i (@{$self->{hinshi}}){
 		$head .= kh_csv->value_conv($self->{hName}{$i}).',';
 	}
@@ -216,10 +220,17 @@ sub finish{
 	
 	my $n = 1;
 	while (my $srow = $sth->fetch){
-		my $head;
-		foreach my $i (@{$srow}){
+		my @tmp = @{$srow};
+		my $head = shift @tmp;
+		my $midashi_id = shift @tmp;
+		$head .= ",$midashi_id,";
+		if ($self->{midashi}){
+			$head .= kh_csv->value_conv($self->{midashi}->[$midashi_id - 1]).",";
+		}
+		foreach my $i (@tmp){
 			$head .= "$i,"
 		}
+		
 		if ($self->{data}{$n}){
 			print OUTF "$head"."$self->{data2}{$n},$self->{data}{$n}\n";
 		} else {

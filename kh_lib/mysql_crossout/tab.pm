@@ -5,7 +5,7 @@ use strict;
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	open (F,">temp.dat") or die;
+	open (F,">$self->{file_temp}") or die("could not open $self->{file_temp}");
 	
 	# セル内容の作製
 	my $id = 1;
@@ -25,6 +25,12 @@ sub out2{                               # length作製をする
 			if ($last != $i->[0]){
 				# 書き出し
 				my $temp = "$last\t";
+				if ($self->{midashi}){
+					$temp .= Jcode->new(
+						kh_csv->value_conv_t($self->{midashi}->[$last - 1]),
+						'euc'
+					)->sjis."\t";
+				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 					if ($current{$h}){
 						$temp .= "$current{$h}\t";
@@ -58,7 +64,13 @@ sub out2{                               # length作製をする
 	}
 	
 	# 最終行の出力
-	my $temp = "$last,";
+	my $temp = "$last\t";
+	if ($self->{midashi}){
+		$temp .= Jcode->new(
+			kh_csv->value_conv_t($self->{midashi}->[$last - 1]),
+			'euc'
+		)->sjis."\t";
+	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 		if ($current{$h}){
 			$temp .= "$current{$h}\t";
@@ -89,7 +101,12 @@ sub finish{
 			last;
 		}
 	}
-	$head .= "id\tlength_c\tlength_w\t";
+	if ($self->{midashi}){
+		$head .= "id\tname\tlength_c\tlength_w\t";
+	} else {
+		$head .= "id\tlength_c\tlength_w\t";
+	}
+
 	foreach my $i (@{$self->{wList}}){
 		$head .= kh_csv->value_conv_t($self->{wName}{$i})."\t";
 	}
@@ -111,7 +128,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"temp.dat") or die;
+	open (F,"$self->{file_temp}") or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;
@@ -123,7 +140,7 @@ sub finish{
 	}
 	close (F);
 	close (OUTF);
-	unlink('temp.dat');
+	unlink("$self->{file_temp}");
 }
 
 
