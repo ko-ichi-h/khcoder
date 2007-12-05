@@ -24,6 +24,15 @@ sub run{
 	my $self = shift;
 	
 	use Benchmark;
+	
+	# 見出しの取得
+	$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani});
+
+	# 一時ファイルの命名
+	$self->{file_temp} = "temp.dat";
+	while (-e $self->{file_temp}){
+		$self->{file_temp} .= ".tmp";
+	}
 
 	$self->make_list;
 	
@@ -41,7 +50,7 @@ sub run{
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	open (F,">temp.dat") or die;
+	open (F,">$self->{file_temp}") or die;
 	
 	# セル内容の作製
 	my $id = 1;
@@ -61,6 +70,12 @@ sub out2{                               # length作製をする
 			if ($last != $i->[0]){
 				# 書き出し
 				my $temp = "$last,";
+				if ($self->{midashi}){
+					$temp .= Jcode->new(
+						kh_csv->value_conv($self->{midashi}->[$last - 1]),
+						'euc'
+					)->sjis.',';
+				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 					if ($current{$h}){
 						$temp .= "$current{$h},";
@@ -95,6 +110,12 @@ sub out2{                               # length作製をする
 	
 	# 最終行の出力
 	my $temp = "$last,";
+	if ($self->{midashi}){
+		$temp .= Jcode->new(
+			kh_csv->value_conv($self->{midashi}->[$last - 1]),
+			'euc'
+		)->sjis.',';
+	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 		if ($current{$h}){
 			$temp .= "$current{$h},";
@@ -105,8 +126,6 @@ sub out2{                               # length作製をする
 	chop $temp;
 	print F "$temp\n";
 	close (F);
-	
-
 }
 
 sub sql2{
