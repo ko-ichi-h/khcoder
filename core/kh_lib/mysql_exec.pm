@@ -34,7 +34,7 @@ sub connect_db{
 	$t->execute;
 	my $r = $t->fetch;
 	$r = $r->[1] if $r;
-	print "Connected to MySQL $r, $dbname, $dbh->{mysql_auto_reconnect};\n";
+	print "Connected to MySQL $r, $dbname.\n";
 
 	# 文字コードの設定
 	if ( substr($r,0,3) > 4 ){
