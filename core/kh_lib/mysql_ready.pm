@@ -120,7 +120,7 @@ sub readin{
 			file => $::project_obj->file_MorphoOut
 		);
 	my $max_rows = 0;
-	$max_rows += tr/\n/\n/ while read(RCNT, $_, 2 ** 16);
+	$max_rows += tr/\n/\n/ while read(RCNT, $_, 2 ** 16); # 行数カウント
 	close (RCNT);
 	$max_rows += 100;
 	$self->{max_rows} = "MAX_ROWS = $max_rows";
