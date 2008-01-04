@@ -113,6 +113,17 @@ sub fix_katuyo{
 sub readin{
 	my $self = shift;
 
+	# データファイルのサイズを確認
+	open (RCNT,$::project_obj->file_MorphoOut) or
+		gui_errormsg->open(
+			type => 'file',
+			file => $::project_obj->file_MorphoOut
+		);
+	my $max_rows = 0;
+	$max_rows += tr/\n/\n/ while read(RCNT, $_, 2 ** 16);
+	close (RCNT);
+	$max_rows += 100;
+	$self->{max_rows} = "MAX_ROWS = $max_rows";
 
 	# ローデータの読み込み
 	mysql_exec->drop_table("rowdata");
@@ -125,7 +136,7 @@ sub readin{
 			katuyogata varchar(255) not null,
 			katuyo varchar(255) not null,
 			id int auto_increment primary key not null
-		)
+		) $self->{max_rows}
 	",1);
 
 	my $thefile = "'".$::project_obj->file_MorphoOut."'";
@@ -144,7 +155,7 @@ sub readin{
 			katuyogata varchar(255) not null,
 			katuyo varchar(255) not null,
 			id int primary key not null
-		)
+		) $self->{max_rows}
 	",1);
 	mysql_exec->do("	
 		INSERT INTO rowdata (hyoso, yomi, genkei, hinshi, katuyogata, katuyo, id)
@@ -565,7 +576,7 @@ sub hyosobun{
 			dan_id INT not null,
 			bun_id INT not null,
 			bun_idt INT not null
-		)
+		) $self->{max_rows}
 	",1);
 	mysql_exec->drop_table("hyosobun_t");# 単位用キャッシュ・テーブル作成
 	mysql_exec->do("
