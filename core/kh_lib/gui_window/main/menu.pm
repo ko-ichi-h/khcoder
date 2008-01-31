@@ -239,6 +239,17 @@ sub make{
 			-tearoff=>'no'
 		);
 
+		$self->{t_word_list} = $f3->command(
+				-label => gui_window->gui_jchar('抽出語リスト（品詞別・出現回数順）'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $target = $::project_obj->file_WordList;
+					mysql_words->csv_list($target);
+					gui_OtherWin->open($target);
+				})},
+				-state => 'disable'
+			);
+
 		$self->{t_word_search} = $f3->command(
 				-label => gui_window->gui_jchar('抽出語検索'),
 				-font => "TKFN",
@@ -292,17 +303,6 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_word_tf_df' if $::config_obj->R;
-
-		$self->{t_word_list} = $f3->command(
-				-label => gui_window->gui_jchar('品詞別 出現回数順 リスト'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_WordList;
-					mysql_words->csv_list($target);
-					gui_OtherWin->open($target);
-				})},
-				-state => 'disable'
-			);
 
 	my $f8 = $f->cascade(
 			-label => gui_window->gui_jchar('文書'),
