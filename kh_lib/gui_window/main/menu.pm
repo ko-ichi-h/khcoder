@@ -9,6 +9,7 @@ my @menu0 = (
 	'm_b0_close',
 	'm_b1_hukugo',
 	'm_b2_datacheck',
+	'm_b1_hukugo_te'
 );
 
 # メニューの設定：形態素解析が行われていればActive
@@ -176,14 +177,14 @@ sub make{
 				-state => 'disable'
 			);
 
-		#my $f_hukugo = $f->cascade(
-		#		-label => gui_window->gui_jchar('複合語の検出'),
-		#		-font => "TKFN",
-		#		-tearoff=>'no'
-		#	);
+		my $f_hukugo = $f->cascade(
+				-label => gui_window->gui_jchar('複合語の検出'),
+				-font => "TKFN",
+				-tearoff=>'no'
+			);
 
-		$self->{m_b1_hukugo} = $f->command(
-				-label => gui_window->gui_jchar('複合名詞のリスト（一部）'),
+		$self->{m_b1_hukugo} = $f_hukugo->command(
+				-label => gui_window->gui_jchar('茶筌による連結'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					$self->mc_hukugo;
@@ -191,26 +192,26 @@ sub make{
 				-state => 'disable'
 			);
 
-		#$self->{m_b1_hukugo_te} = $f_hukugo->command(
-		#		-label => gui_window->gui_jchar('TermExtract'),
-		#		-font => "TKFN",
-		#		-command => sub {$mw->after(10,sub{
-		#			my $found = 1;;
-		#			eval "require TermExtract::Calc_Imp" or $found = 0;
-		#			eval "require TermExtract::Chasen"   or $found = 0;
-		#			if ($found){
-		#				gui_window::use_te->open;
-		#			} else {
-		#				$mw->messageBox(
-		#					-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
-		#					-title => 'KH Coder',
-		#					-type => 'OK',
-		#				);
-		#				return 0;
-		#			}
-		#		})},
-		#		-state => 'disable'
-		#	);
+		$self->{m_b1_hukugo_te} = $f_hukugo->command(
+				-label => gui_window->gui_jchar('TermExtractを利用'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $found = 1;;
+					eval "require TermExtract::Calc_Imp" or $found = 0;
+					eval "require TermExtract::Chasen"   or $found = 0;
+					if ($found){
+						gui_window::use_te->open;
+					} else {
+						$mw->messageBox(
+							-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
+							-title => 'KH Coder',
+							-type => 'OK',
+						);
+						return 0;
+					}
+				})},
+				-state => 'disable'
+			);
 
 		$f->separator();
 
@@ -734,29 +735,27 @@ sub mc_hukugo{
 	my $mw = $::main_gui->{win_obj};
 	
 	my $target = $::project_obj->file_HukugoList;
-	unless (-e $target){
-		my $ans = $mw->messageBox(
-			-message => gui_window->gui_jchar
-				(
-				   "時間のかかる処理を実行しようとしています。"
-				   ."（前処理よりは短時間で終了します）\n".
-				   "続行してよろしいですか？"
-				),
-			-icon    => 'question',
-			-type    => 'OKCancel',
-			-title   => 'KH Coder'
-		);
-		unless ($ans =~ /ok/i){ return 0; }
-		my $w = gui_wait->start;
-		$self->mc_hukugo_exec;
-		$w->end;
-	}
-	gui_OtherWin->open($target);
-}
-sub mc_hukugo_exec{
+
+	my $ans = $mw->messageBox(
+		-message => gui_window->gui_jchar
+			(
+			   "時間のかかる処理を実行しようとしています。"
+			   ."（前処理よりは短時間で終了します）\n".
+			   "続行してよろしいですか？"
+			),
+		-icon    => 'question',
+		-type    => 'OKCancel',
+		-title   => 'KH Coder'
+	);
+	unless ($ans =~ /ok/i){ return 0; }
+
+	my $w = gui_wait->start;
 	use mysql_hukugo;
-	my $target = $::project_obj->file_HukugoList;
-	mysql_hukugo->run_from_morpho($target);
+	my $target2 = $::project_obj->file_HukugoList;
+	mysql_hukugo->run_from_morpho($target2);
+	$w->end;
+
+	gui_OtherWin->open($target);
 }
 
 

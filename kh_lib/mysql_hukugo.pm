@@ -104,12 +104,6 @@ sub run_from_morpho{
 		GROUP BY genkei
 	",1);
 	
-	# 平均値を取得
-	my $mean = mysql_exec->select(
-		"select sum(num) / count(*)from hukugo",
-		1
-	)->hundle->fetch->[0];
-	
 	# 書き出し
 	#print "4. print out\n";
 	open (F,">$target") or
@@ -122,12 +116,19 @@ sub run_from_morpho{
 	my $oh = mysql_exec->select("
 		SELECT name, num
 		FROM hukugo
-		WHERE num > $mean
 		ORDER BY num DESC, name
 	",1)->hundle;
 	
 	use kh_csv;
 	while (my $i = $oh->fetch){
+
+		# 日付・時刻は表示しない
+		next if $i->[0] =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/;
+
+		# 数値のみは表示しない
+		my $tmp = Jcode->new($i->[0], 'euc')->tr('０-９','0-9');
+		next if $tmp =~ /^\d+$/;
+
 		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
 	}
 	
