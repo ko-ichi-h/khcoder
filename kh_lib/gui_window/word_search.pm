@@ -128,7 +128,7 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('単語'));
+	$lis->header('create',0,-text => $self->gui_jchar('抽出語'));
 	$lis->header('create',1,-text => $self->gui_jchar('品詞'));
 	$lis->header('create',2,-text => $self->gui_jchar('頻度'));
 
@@ -189,7 +189,7 @@ sub refresh{
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => $self->gui_jchar('単語'));
+		$self->list->header('create',0,-text => $self->gui_jchar('抽出語'));
 		if ( $gui_window::word_search::katuyo ){
 			$self->list->header('create',1,-text => $self->gui_jchar('品詞/活用'));
 		} else {
@@ -211,7 +211,7 @@ sub refresh{
 			-selectbackground => 'cyan',
 			-selectmode       => 'extended',
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => $self->gui_jchar('単語'));
+		$self->list->header('create',0,-text => $self->gui_jchar('形態素'));
 		$self->list->header('create',1,-text => $self->gui_jchar('品詞（茶筌）'));
 		$self->list->header('create',2,-text => $self->gui_jchar('活用'));
 		$self->list->header('create',3,-text => $self->gui_jchar('頻度'));
