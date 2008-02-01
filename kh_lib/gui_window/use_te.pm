@@ -10,7 +10,7 @@ sub _new{
 	$self->{win_obj}->title($self->gui_jchar('TermExtractの著作権について','euc'));;
 
 	$self->{win_obj}->Label(
-		-text => $self->gui_jchar('専門用語（キーワード）自動抽出用Perlモジュール"TermExtract"を利用します。','euc'),
+		-text => $self->gui_jchar('専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 	$self->{win_obj}->Label(
@@ -78,6 +78,37 @@ sub _new{
 				10,
 				sub {
 					$self->close;
+					# 処理実行
+					my $if_exec = 1;
+					if (-e $::project_obj->file_HukugoListTE){
+						my $t0 = (stat $::project_obj->file_target)[9];
+						my $t1 = (stat $::project_obj->file_HukugoListTE)[9];
+						#print "$t0\n$t1\n";
+						if ($t0 < $t1){
+							$if_exec = 0; # この場合だけ解析しない
+						}
+					}
+					
+					if ($if_exec){
+						my $ans = $::main_gui->mw->messageBox(
+							-message => gui_window->gui_jchar
+								(
+								   "時間のかかる処理を実行しようとしています。"
+								   ."（前処理よりは短時間で終了します）\n".
+								   "続行してよろしいですか？"
+								),
+							-icon    => 'question',
+							-type    => 'OKCancel',
+							-title   => 'KH Coder'
+						);
+						unless ($ans =~ /ok/i){ return 0; }
+						
+						my $w = gui_wait->start;
+						use mysql_hukugo_te;
+						mysql_hukugo_te->run_from_morpho;
+						$w->end;
+						
+					}
 					gui_window::use_te_g->open;
 				}
 			);

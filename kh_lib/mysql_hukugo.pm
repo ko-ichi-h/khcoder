@@ -11,7 +11,7 @@ use gui_errormsg;
 
 sub run_from_morpho{
 	my $class = shift;
-	my $target = shift;
+	my $target = $::project_obj->file_HukugoList;
 
 	my $t0 = new Benchmark;
 
@@ -75,7 +75,7 @@ sub run_from_morpho{
 	mysql_exec->drop_table("rowdata_h2");
 	mysql_exec->do("
 		create table rowdata_h2 (
-			genkei varchar(40) not null
+			genkei varchar(255) not null
 		)
 	",1);
 	mysql_exec->do("
@@ -84,7 +84,6 @@ sub run_from_morpho{
 		from rowdata_h
 		where
 			    hinshi = \'Ê£¹çÌ¾»ì\'
-			AND length(genkei) < 41
 	",1);
 	
 	
@@ -93,8 +92,8 @@ sub run_from_morpho{
 	mysql_exec->drop_table("hukugo");
 	mysql_exec->do("
 		CREATE TABLE hukugo (
-			num int,
-			name varchar(40)
+			name varchar(255),
+			num int
 		)
 	",1);
 	mysql_exec->do("
