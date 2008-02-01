@@ -733,29 +733,38 @@ sub mc_morpho_exec{
 sub mc_hukugo{
 	my $self = shift;
 	my $mw = $::main_gui->{win_obj};
-	
-	my $target = $::project_obj->file_HukugoList;
 
-	my $ans = $mw->messageBox(
-		-message => gui_window->gui_jchar
-			(
-			   "時間のかかる処理を実行しようとしています。"
-			   ."（前処理よりは短時間で終了します）\n".
-			   "続行してよろしいですか？"
-			),
-		-icon    => 'question',
-		-type    => 'OKCancel',
-		-title   => 'KH Coder'
-	);
-	unless ($ans =~ /ok/i){ return 0; }
+	my $if_exec = 1;
+	if (-e $::project_obj->file_HukugoListTE){
+		my $t0 = (stat $::project_obj->file_target)[9];
+		my $t1 = (stat $::project_obj->file_HukugoList)[9];
+		#print "$t0\n$t1\n";
+		if ($t0 < $t1){
+			$if_exec = 0; # この場合だけ解析しない
+		}
+	}
 
-	my $w = gui_wait->start;
-	use mysql_hukugo;
-	my $target2 = $::project_obj->file_HukugoList;
-	mysql_hukugo->run_from_morpho($target2);
-	$w->end;
+	if ($if_exec){
+		my $ans = $mw->messageBox(
+			-message => gui_window->gui_jchar
+				(
+				   "時間のかかる処理を実行しようとしています。"
+				   ."（前処理よりは短時間で終了します）\n".
+				   "続行してよろしいですか？"
+				),
+			-icon    => 'question',
+			-type    => 'OKCancel',
+			-title   => 'KH Coder'
+		);
+		unless ($ans =~ /ok/i){ return 0; }
 
-	gui_OtherWin->open($target);
+		my $w = gui_wait->start;
+		use mysql_hukugo;
+		mysql_hukugo->run_from_morpho;
+		$w->end;
+	}
+
+	gui_OtherWin->open($::project_obj->file_HukugoList);
 }
 
 
