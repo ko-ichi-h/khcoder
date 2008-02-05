@@ -36,6 +36,9 @@ sub run_from_morpho{
 		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;
 		$text =~ s/ /¡¡/go;
+		$text =~ s/\\/¡ï/go;
+		$text =~ s/'/¡Ç/go;
+		$text =~ s/"/¡É/go;
 		print MARKED "$text\n";
 	}
 	close (SOURCE);
@@ -121,12 +124,9 @@ sub run_from_morpho{
 	use kh_csv;
 	while (my $i = $oh->fetch){
 
-		# ÆüÉÕ¡¦»þ¹ï¤ÏÉ½¼¨¤·¤Ê¤¤
-		next if $i->[0] =~ /^(¾¼ÏÂ)*(Ê¿À®)*(\d+Ç¯)*(\d+·î)*(\d+Æü)*(¸áÁ°)*(¸á¸å)*(\d+»þ)*(\d+Ê¬)*(\d+ÉÃ)*$/;
-
-		# ¿ôÃÍ¤Î¤ß¤ÏÉ½¼¨¤·¤Ê¤¤
-		my $tmp = Jcode->new($i->[0], 'euc')->tr('£°-£¹','0-9');
-		next if $tmp =~ /^\d+$/;
+		my $tmp = Jcode->new($i->[0], 'euc')->tr('£°-£¹','0-9'); 
+		next if $tmp =~ /^(¾¼ÏÂ)*(Ê¿À®)*(\d+Ç¯)*(\d+·î)*(\d+Æü)*(¸áÁ°)*(¸á¸å)*(\d+»þ)*(\d+Ê¬)*(\d+ÉÃ)*$/o;   # ÆüÉÕ¡¦»þ¹ï
+		next if $tmp =~ /^\d+$/o;    # ¿ôÃÍ¤Î¤ß
 
 		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
 	}
