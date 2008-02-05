@@ -1,4 +1,4 @@
-# 複合名詞のリストを作製するためのロジック
+# 複合語を検出するためのロジック
 
 package mysql_hukugo_te;
 
@@ -9,12 +9,15 @@ use kh_jchar;
 use mysql_exec;
 use gui_errormsg;
 
+my $debug = 0;
+
 sub run_from_morpho{
 	my $class = shift;
 	#my $target = shift;
 
 	# 形態素解析
-	
+	my $t0 = new Benchmark;
+	print "01. Marking...\n" if $debug;
 	my $source = $::project_obj->file_target;
 	my $dist   = $::project_obj->file_m_target;
 	unlink($dist);
@@ -33,20 +36,26 @@ sub run_from_morpho{
 		chomp;
 		my $text = Jcode->new($_,$icode)->h2z->euc;
 		$text =~ s/ /　/go;
+		$text =~ s/\\/￥/go;
+		$text =~ s/'/’/go;
+		$text =~ s/"/”/go;
 		print MARKED "$text\n";
 	}
 	close (SOURCE);
 	close (MARKED);
+	
+	print "02. Converting Codes...\n" if $debug;
 	kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
 	
+	print "03. Chasen...\n" if $debug;
 	kh_morpho->run;
 
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_euc($::project_obj->file_MorphoOut);
-			my $ta2 = new Benchmark;
 	}
 
 	# フィルタリング用に単名詞のリストを作成
+	print "04. Making the Filter...\n" if $debug;
 	my %is_alone = ();
 	open (CHASEN,$::project_obj->file_MorphoOut) or 
 			gui_errormsg->open(
@@ -59,18 +68,15 @@ sub run_from_morpho{
 	close (CHASEN);
 
 	# TermExtractの実行
+	print "05. TermExtract...\n" if $debug;
 	use TermExtract::Chasen;
 	my $te_obj = new TermExtract::Chasen;
 	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut);
 
 	# 出力
-	my $target_csv = $::project_obj->file_HukugoListTE;
-	open (OUT,">$target_csv") or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $target_csv
-		);;
-	print OUT "キーワード,重要度\n";
+	print "06. Output...\n" if $debug;
+	my $data_out = '';
+	$data_out .= "キーワード,重要度\n";
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("
@@ -82,22 +88,33 @@ sub run_from_morpho{
 
 	foreach (@noun_list) {
 		next if $is_alone{$_->[0]};  # 単名詞
-		next if $_->[0] =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/; # 日付・時刻
-		my $tmp = Jcode->new($_->[0], 'euc')->tr('０-９','0-9'); # 数値のみ
-		next if $tmp =~ /^\d+$/;
+		
+		my $tmp = Jcode->new($_->[0], 'euc')->tr('０-９','0-9'); 
+		next if $tmp =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/o;   # 日付・時刻
+		next if $tmp =~ /^\d+$/o;    # 数値のみ
 
-		print OUT
-			kh_csv->value_conv($_->[0]),
-			",$_->[1]\n"
-		;
+		$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
 		mysql_exec->do("
 			INSERT INTO hukugo_te (name, num)
 			VALUES (\"$_->[0]\", $_->[1])
 		");
 	}
+
+	$data_out = Jcode->new($data_out, 'euc')->sjis
+		if $::config_obj->os eq 'win32';
+
+	my $target_csv = $::project_obj->file_HukugoListTE;
+	open (OUT,">$target_csv") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $target_csv
+		);
+	print OUT $data_out;
 	close (OUT);
-	kh_jchar->to_sjis("$target_csv") if $::config_obj->os eq 'win32';
 	
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n" if $debug;
+
 	return 1;
 }
 
