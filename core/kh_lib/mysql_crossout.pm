@@ -97,6 +97,10 @@ sub out2{                               # length作製をする
 			){
 				next;
 			}
+			# 未使用語を無視
+			if ($i->[3]){
+				next;
+			}
 			
 			# 集計
 			++$current{'length_w'};
@@ -135,7 +139,7 @@ sub sql2{
 
 
 	my $sql;
-	$sql .= "SELECT $self->{tani}.id, genkei.id, hyoso.name\n";
+	$sql .= "SELECT $self->{tani}.id, genkei.id, hyoso.name, genkei.nouse\n";
 	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
@@ -148,7 +152,7 @@ sub sql2{
 			$sql .= "	AND hyosobun.$i"."_id = $self->{tani}.$i"."_id\n";
 		}
 	}
-	$sql .= "	AND genkei.nouse = 0\n";
+	#$sql .= "	AND genkei.nouse = 0\n";
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id <  $d2\n";
 	$sql .= "ORDER BY hyosobun.id";
