@@ -598,7 +598,7 @@ sub hyosobun{
 	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
 		(1,1,0,0,0,0,0,0,0,1);
 	my ($temp, $c, $maru);
-	my ($temp_tani, $last_tani, $c_t, $lw, $lc);
+	my ($temp_tani, $last_tani, $c_t, $lw, $lc, $lt);
 	my $id = 1;
 	# 実行
 	while (1){
@@ -669,6 +669,7 @@ sub hyosobun{
 				$last_tani = "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1";
 				$lc = 0;
 				$lw = 0;
+				$lt = 0;
 				++$c_t;
 			}
 			
@@ -705,6 +706,7 @@ sub hyosobun{
 				$lc += $d->[2];
 				++$lw;
 			}
+			++$lt;
 
 			if ($IDs->{$d->[1]} eq '。'){              # 句読点のチェック
 				unless ($midashi){
@@ -730,7 +732,7 @@ sub hyosobun{
 					$temp
 		",1);
 	}
-	if ( ($lc) || ($lw) ){
+	if ( ($lc) || ($lw) || ($lt) ){
 		$temp_tani .= '('."$last_tani,$lc,$lw".'),';
 	}
 	if ($temp_tani){

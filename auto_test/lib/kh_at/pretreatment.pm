@@ -56,14 +56,14 @@ sub _exec_test{
 	)->euc."\n";
 
 	# 「複合名詞のリスト（一部）」
-	$::main_gui->{menu}->mc_hukugo_exec;
-	my $target = $::project_obj->file_HukugoList;
-	$t .= "■複合名詞のリスト:\n";
-	open (RFILE,"$target") or die;
-	while (<RFILE>){
-		$t .= Jcode->new($_)->euc;
-	}
-	close (RFILE);
+	#$::main_gui->{menu}->mc_hukugo_exec;
+	#my $target = $::project_obj->file_HukugoList;
+	#$t .= "■複合名詞のリスト:\n";
+	#open (RFILE,"$target") or die;
+	#while (<RFILE>){
+	#	$t .= Jcode->new($_)->euc;
+	#}
+	#close (RFILE);
 	
 	
 	$self->{result} = $t;
