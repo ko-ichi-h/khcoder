@@ -1,4 +1,4 @@
-# 複合語を検出するためのロジック
+# 複合語を検出・検索するためのロジック
 
 package mysql_hukugo_te;
 
@@ -10,6 +10,34 @@ use mysql_exec;
 use gui_errormsg;
 
 my $debug = 0;
+
+
+sub search{
+	my $class = shift;
+	
+	
+	my @r = @{&get_majority()};
+	
+
+	
+	
+	return \@r;
+}
+
+sub get_majority{
+	my $h = mysql_exec->select("
+		SELECT name, num
+		FROM hukugo_te
+		ORDER BY num DESC
+		LIMIT 1000
+	",1)->hundle;
+	
+	my @r = ();
+	while (my $i = $h->fetch){
+		push @r, [$i->[0], $i->[1]];
+	}
+	return \@r;
+}
 
 sub run_from_morpho{
 	my $class = shift;
