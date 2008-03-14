@@ -13,28 +13,6 @@ sub _new{
 		-text => $self->gui_jchar('専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
-	$self->{win_obj}->Label(
-		-text => $self->gui_jchar('TermExtractの著作権については以下をご覧下さい。','euc'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
-
-	my $txt = $self->{win_obj}->Scrolled(
-		"ROText",
-		spacing1 => 3,
-		spacing2 => 2,
-		spacing3 => 3,
-		-scrollbars=> 'osoe',
-		-height => 12,
-		-width => 64,
-		-wrap => 'word',
-		-font => "TKFN",
-		-background => 'white',
-		-foreground => 'black'
-	)->pack(-fill => 'both', -expand => 'yes', -pady=>'2',-padx=>'2');
-	$txt->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$txt]);
-	$txt->bind("<Button-1>",[\&gui_jchar::check_mouse,\$txt]);
-	$self->{text} = $txt;
-
 
 	my $f1 = $self->{win_obj}->Frame()->pack(-anchor => 'w');
 	$f1->Label(
@@ -59,6 +37,29 @@ sub _new{
 			);
 		}
 	)->pack(-side => 'left', -anchor => 'w');
+
+	$self->{win_obj}->Label(
+		-text => $self->gui_jchar('TermExtractの著作権：','euc'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
+
+	my $txt = $self->{win_obj}->Scrolled(
+		"ROText",
+		spacing1 => 3,
+		spacing2 => 2,
+		spacing3 => 3,
+		-scrollbars=> 'osoe',
+		-height => 12,
+		-width => 64,
+		-wrap => 'word',
+		-font => "TKFN",
+		-background => 'white',
+		-foreground => 'black'
+	)->pack(-fill => 'both', -expand => 'yes', -pady=>'2',-padx=>'2');
+	$txt->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$txt]);
+	$txt->bind("<Button-1>",[\&gui_jchar::check_mouse,\$txt]);
+	$self->{text} = $txt;
+
 	
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -129,6 +130,8 @@ sub put_info{
 		-underline  => 0
 	);
 	
+	$self->{text}->insert('end',$self->gui_jchar("「TermExtract」は、東京大学情報基盤センター図書館電子化部門・中川研究室にて公開されています。詳細は以下の通りです。\n") );
+	
 	$self->{text}->insert('end',"TermExtract::Calc_Imp.pm:\n",'red');
 	my $Calc_Imp_cr = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のExtract.pmを参考に、中川教授の教示を受け、１からコーディングし直したものである。
 　この作業は、東京大学・前田朗(maeda@lib.u-tokyo.ac.jp)が行った。
@@ -137,7 +140,8 @@ sub put_info{
 ２．学習機能（連接語統計情報のDBへの蓄積とその活用）を持つこと
 ３．重要度計算方法の切り替えができること
 ４．日本語パッチを当てたPerl (Jperl) だけではなく、オリジナルのPerlで動作すること
-５．信頼性の確保のためPerlのstrictモジュール及びperlの-wオプションに対応すること６．「窓関数」による、不要語の削除ルーチンをとりはずすこと
+５．信頼性の確保のためPerlのstrictモジュール及びperlの-wオプションに対応すること
+６．「窓関数」による、不要語の削除ルーチンをとりはずすこと
 ７．単名詞の連接回数の相乗平均を正しくとること。Extract.pmは連接回数の２乗を重要度としていた。なお、この設定はパタメータにより調整できる。Extract.pmと同じにするには、$obj->average_rate(0.5) とする
 ８．数値と任意の語を重要度計算の対象からはずせるようにすること
 ９．多言語に対応するため、Unicode(UTF-8)で動作すること
@@ -170,8 +174,6 @@ Extract.pm の作者は次のとおり。
 
 	return $self;
 }
-
-
 
 sub win_name{
 	return 'w_use_te';
