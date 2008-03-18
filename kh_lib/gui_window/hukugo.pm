@@ -1,6 +1,6 @@
-package gui_window::use_te_g;
+package gui_window::hukugo;
 use base qw(gui_window);
-use mysql_hukugo_te;
+use mysql_hukugo;
 use strict;
 use Tk;
 
@@ -10,7 +10,7 @@ use Tk;
 sub _new{
 	my $self = shift;
 	$self->{win_obj}->title(
-		$self->gui_jchar('複合語の検出（TermExtract）','euc')
+		$self->gui_jchar('複合語の検出（茶筌）','euc')
 	);
 
 	# エントリと検索ボタンのフレーム
@@ -94,7 +94,7 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => $self->gui_jchar('複合語'));
-	$lis->header('create',1,-text => $self->gui_jchar('スコア'));
+	$lis->header('create',1,-text => $self->gui_jchar('出現数'));
 
 	$fra5->Button(
 		-text => $self->gui_jchar('コピー'),
@@ -123,7 +123,7 @@ sub search{
 	my $self = shift;
 
 	# 検索実行
-	my $result = mysql_hukugo_te->search(
+	my $result = mysql_hukugo->search(
 		query  => $self->gui_jg( $self->{entry}->get ),
 		method => $self->gui_jg( $self->{and_or} ),
 		mode   => $self->gui_jg( $self->{s_mode} ),
@@ -149,7 +149,7 @@ sub search{
 		$self->{list}->itemCreate(
 			$cu,
 			1,
-			-text  => sprintf("%.3f",$i->[1]),
+			-text  => $i->[1],
 			-style => $numb_style
 		);
 		++$row;
@@ -161,7 +161,7 @@ sub open_full_list{
 	my $self = shift;
 	my $debug = 1;
 
-	my $target_csv = $::project_obj->file_HukugoListTE;
+	my $target_csv = $::project_obj->file_HukugoList;
 	gui_OtherWin->open($target_csv);
 }
 
@@ -175,6 +175,6 @@ sub start{
 #   アクセサ   #
 
 sub win_name{
-	return 'w_use_te_g';
+	return 'w_hukugo';
 }
 1;

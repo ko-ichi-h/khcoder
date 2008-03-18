@@ -183,15 +183,6 @@ sub make{
 				-tearoff=>'no'
 			);
 
-		$self->{m_b1_hukugo} = $f_hukugo->command(
-				-label => gui_window->gui_jchar('茶筌による連結'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					$self->mc_hukugo;
-				})},
-				-state => 'disable'
-			);
-
 		$self->{m_b1_hukugo_te} = $f_hukugo->command(
 				-label => gui_window->gui_jchar('TermExtractを利用'),
 				-font => "TKFN",
@@ -209,6 +200,15 @@ sub make{
 						);
 						return 0;
 					}
+				})},
+				-state => 'disable'
+			);
+
+		$self->{m_b1_hukugo} = $f_hukugo->command(
+				-label => gui_window->gui_jchar('茶筌による連結'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					$self->mc_hukugo;
 				})},
 				-state => 'disable'
 			);
@@ -735,7 +735,7 @@ sub mc_hukugo{
 	my $mw = $::main_gui->{win_obj};
 
 	my $if_exec = 1;
-	if (-e $::project_obj->file_HukugoListTE){
+	if (-e $::project_obj->file_HukugoList){
 		my $t0 = (stat $::project_obj->file_target)[9];
 		my $t1 = (stat $::project_obj->file_HukugoList)[9];
 		#print "$t0\n$t1\n";
@@ -764,7 +764,7 @@ sub mc_hukugo{
 		$w->end;
 	}
 
-	gui_OtherWin->open($::project_obj->file_HukugoList);
+	gui_window::hukugo->open;
 }
 
 

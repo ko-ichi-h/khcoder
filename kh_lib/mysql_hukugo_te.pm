@@ -14,21 +14,66 @@ my $debug = 0;
 
 sub search{
 	my $class = shift;
+	my %args = @_;
+	
+	if (length($args{query}) == 0){
+		my @r = @{&get_majority()};
+		return \@r;
+	}
+	
+	$args{query} = Jcode->new($args{query},'sjis')->euc;
+	$args{query} =~ s/　/ /g;
+	my @query = split(/ /, $args{query});
 	
 	
-	my @r = @{&get_majority()};
+	my $sql = '';
+	$sql .= "SELECT name, num\n";
+	$sql .= "FROM   hukugo_te\n";
+	$sql .= "WHERE\n";
 	
-
+	my $num = 0;
+	foreach my $i (@query){
+		next unless length($i);
+		
+		if ($num){
+			$sql .= "\t$args{method} ";
+		}
+		
+		if ($args{mode} eq 'p'){
+			$sql .= "\tname LIKE ".'"%'.$i.'%"';
+		}
+		elsif ($args{mode} eq 'c'){
+			$sql .= "\tname LIKE ".'"'.$i.'"';
+		}
+		elsif ($args{mode} eq 'z'){
+			$sql .= "\tname LIKE ".'"'.$i.'%"';
+		}
+		elsif ($args{mode} eq 'k'){
+			$sql .= "\tname LIKE ".'"%'.$i.'"';
+		}
+		else {
+			die('illegal parameter!');
+		}
+		$sql .= "\n";
+		++$num;
+	}
+	$sql .= "ORDER BY num DESC, name\n";
+	#print Jcode->new($sql)->sjis, "\n";
 	
-	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	my @r = ();
+	while (my $i = $h->fetch){
+		push @r, [$i->[0], $i->[1]];
+	}
 	return \@r;
 }
 
+# 検索文字列が指定されなかった場合
 sub get_majority{
 	my $h = mysql_exec->select("
 		SELECT name, num
 		FROM hukugo_te
-		ORDER BY num DESC
+		ORDER BY num DESC, name
 		LIMIT 1000
 	",1)->hundle;
 	

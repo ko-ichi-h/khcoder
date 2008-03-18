@@ -9,6 +9,78 @@ use kh_jchar;
 use mysql_exec;
 use gui_errormsg;
 
+sub search{
+	my $class = shift;
+	my %args = @_;
+	
+	if (length($args{query}) == 0){
+		my @r = @{&get_majority()};
+		return \@r;
+	}
+	
+	$args{query} = Jcode->new($args{query},'sjis')->euc;
+	$args{query} =~ s/　/ /g;
+	my @query = split(/ /, $args{query});
+	
+	
+	my $sql = '';
+	$sql .= "SELECT name, num\n";
+	$sql .= "FROM   hukugo\n";
+	$sql .= "WHERE\n";
+	
+	my $num = 0;
+	foreach my $i (@query){
+		next unless length($i);
+		
+		if ($num){
+			$sql .= "\t$args{method} ";
+		}
+		
+		if ($args{mode} eq 'p'){
+			$sql .= "\tname LIKE ".'"%'.$i.'%"';
+		}
+		elsif ($args{mode} eq 'c'){
+			$sql .= "\tname LIKE ".'"'.$i.'"';
+		}
+		elsif ($args{mode} eq 'z'){
+			$sql .= "\tname LIKE ".'"'.$i.'%"';
+		}
+		elsif ($args{mode} eq 'k'){
+			$sql .= "\tname LIKE ".'"%'.$i.'"';
+		}
+		else {
+			die('illegal parameter!');
+		}
+		$sql .= "\n";
+		++$num;
+	}
+	$sql .= "ORDER BY num DESC, name\n";
+	#print Jcode->new($sql)->sjis, "\n";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	my @r = ();
+	while (my $i = $h->fetch){
+		push @r, [$i->[0], $i->[1]];
+	}
+	return \@r;
+}
+
+# 検索文字列が指定されなかった場合
+sub get_majority{
+	my $h = mysql_exec->select("
+		SELECT name, num
+		FROM hukugo
+		ORDER BY num DESC, name
+		LIMIT 1000
+	",1)->hundle;
+	
+	my @r = ();
+	while (my $i = $h->fetch){
+		push @r, [$i->[0], $i->[1]];
+	}
+	return \@r;
+}
+
 sub run_from_morpho{
 	my $class = shift;
 	my $target = $::project_obj->file_HukugoList;
@@ -89,9 +161,8 @@ sub run_from_morpho{
 			    hinshi = \'複合名詞\'
 	",1);
 	
-	
-	# 変形
-	#print "3. reform\n";
+	# 書き出し
+	#print "4. print out\n";
 	mysql_exec->drop_table("hukugo");
 	mysql_exec->do("
 		CREATE TABLE hukugo (
@@ -99,15 +170,6 @@ sub run_from_morpho{
 			num int
 		)
 	",1);
-	mysql_exec->do("
-		INSERT INTO hukugo (num, name)
-		SELECT count(*), genkei
-		FROM rowdata_h2
-		GROUP BY genkei
-	",1);
-	
-	# 書き出し
-	#print "4. print out\n";
 	open (F,">$target") or
 		gui_errormsg->open(
 			type => 'file',
@@ -116,21 +178,25 @@ sub run_from_morpho{
 	print F "複合名詞,出現数\n";
 	
 	my $oh = mysql_exec->select("
-		SELECT name, num
-		FROM hukugo
-		ORDER BY num DESC, name
+		SELECT genkei, count(*) as hoge
+		FROM rowdata_h2
+		GROUP BY genkei
+		ORDER BY hoge DESC
 	",1)->hundle;
 	
 	use kh_csv;
 	while (my $i = $oh->fetch){
-
+		#print ".";
 		my $tmp = Jcode->new($i->[0], 'euc')->tr('０-９','0-9'); 
 		next if $tmp =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/o;   # 日付・時刻
 		next if $tmp =~ /^\d+$/o;    # 数値のみ
-
+		#print ",";
 		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
+		mysql_exec->do("
+			INSERT INTO hukugo (name, num) VALUES (\"$i->[0]\", $i->[1])
+		",1);
+		#print "!";
 	}
-	
 	close (F);
 	
 	kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
