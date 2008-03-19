@@ -18,7 +18,7 @@ sub _new{
 	$f1->Label(
 		-text => $self->gui_jchar('TermExtractのWebページ：','euc'),
 		-font => "TKFN",
-	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2', side => 'left');
+	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2', -side => 'left');
 
 	$f1->Button(
 		-text => 'http://gensen.dl.itc.u-tokyo.ac.jp/',
