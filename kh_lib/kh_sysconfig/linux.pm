@@ -207,7 +207,6 @@ sub grammarcha_path{
 	return $self->{grammarcha_path};
 }
 
-
 #sub juman_path{
 #	my $self = shift;
 #	my $new = shift;
@@ -230,7 +229,7 @@ sub app_html{
 	if ($self->{app_html}){
 		return $self->{app_html};
 	} else {
-		return 'gnome-moz-remote --newwin \'%s\'';
+		return 'firefox \'%s\'';
 	}
 }
 
@@ -256,7 +255,7 @@ sub app_csv{
 	if ($self->{app_csv}){
 		return $self->{app_csv};
 	} else {
-		return '/usr/local/starsuite6.0/program/scalc %s &';
+		return 'soffice -calc %s &';
 	}
 }
 
@@ -283,10 +282,8 @@ sub font_main{
 }
 
 
-
 #------------#
 #   ¤½¤ÎÂ¾   #
-
 
 sub os_path{
 	my $self = shift;
