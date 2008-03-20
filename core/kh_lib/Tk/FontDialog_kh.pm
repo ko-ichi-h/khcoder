@@ -2,7 +2,7 @@
 # -*- perl -*-
 
 #
-# $Id: FontDialog_kh.pm,v 1.2 2008-03-20 14:21:24 ko-ichi Exp $
+# $Id: FontDialog_kh.pm,v 1.3 2008-03-20 14:42:52 ko-ichi Exp $
 # Author: Slaven Rezic
 #
 # Copyright (C) 1998,1999,2003,2004,2005 Slaven Rezic. All rights reserved.
@@ -486,7 +486,8 @@ sub InsertFamilies {
 	    next if $fam eq '';
 	    next if $fixedfont
 	      and not $w->fontMetrics($w->Font(-family => $fam), '-fixed');
-	    (my $u_fam = $fam) =~ s/\b(.)/\u$1/g;
+	    # (my $u_fam = $fam) =~ s/\b(.)/\u$1/g;
+	    my $u_fam = $fam;
 	    $w->{'family_index'}[$i] = $fam;
 	    my $f_style = $famlb->ItemStyle
 	      ('text',
