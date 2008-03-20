@@ -2,10 +2,10 @@
 # -*- perl -*-
 
 #
-# $Id: FontDialog_kh.pm,v 1.1 2005-05-21 13:15:43 ko-ichi Exp $
+# $Id: FontDialog_kh.pm,v 1.2 2008-03-20 14:21:24 ko-ichi Exp $
 # Author: Slaven Rezic
 #
-# Copyright (C) 1998,1999,2003,2004 Slaven Rezic. All rights reserved.
+# Copyright (C) 1998,1999,2003,2004,2005 Slaven Rezic. All rights reserved.
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 #
@@ -16,6 +16,7 @@
 package Tk::FontDialog;
 
 use Tk 800; # new font function, Tk::ItemStyle
+use Tk::Font;
 
 use strict;
 use vars qw($VERSION @ISA);
@@ -23,7 +24,7 @@ use vars qw($VERSION @ISA);
 
 Construct Tk::Widget 'FontDialog';
 
-$VERSION = '0.09';
+$VERSION = '0.14';
 
 sub Populate {
     my($w, $args) = @_;
@@ -57,21 +58,21 @@ sub Populate {
 
     my $bold_font       = $w->fontCreate($w->fontActual($dialog_font),
 					 -weight => 'bold');
-    #my $italic_font     = $w->fontCreate($w->fontActual($dialog_font),
-	#				 -slant => 'italic');
-    #my $underline_font  = $w->fontCreate($w->fontActual($dialog_font),
-	#				 -underline => 1);
-    #my $overstrike_font = $w->fontCreate($w->fontActual($dialog_font),
-	#				 -overstrike => 1);
+#    my $italic_font     = $w->fontCreate($w->fontActual($dialog_font),
+#					 -slant => 'italic');
+#    my $underline_font  = $w->fontCreate($w->fontActual($dialog_font),
+#					 -underline => 1);
+#    my $overstrike_font = $w->fontCreate($w->fontActual($dialog_font),
+#					 -overstrike => 1);
 
     my $f1     = $w->Frame->pack(-expand => 1, -fill => 'both',
 				 -padx => 2, -pady => 2);
     my $ffam   = $f1->Frame->pack(-expand => 1, -fill => 'both',
+				  -padx => 2, -side => 'left');
+    my $fsize  = $f1->Frame->pack(-expand => 0, -fill => 'y',
+                                   -padx => 2, -side => 'left');
+    my $fstyle = $f1->Frame->pack(-expand => 0, -fill => 'both',
 				  -side => 'left');
-    my $fsize  = $f1->Frame->pack(-expand => 1, -fill => 'both',
-				  -side => 'left');
-    #my $fstyle = $f1->Frame->pack(-expand => 1, -fill => 'both',
-	#			  -side => 'left');
 
     my(%family_res) = _get_label(delete $args->{'-familylabel'}
 				 || '~Family:');
@@ -102,11 +103,15 @@ sub Populate {
     my $sizelb = $fsize->Scrolled
       ('HList',
        -scrollbars => 'oe',
-       -width => 3,
+       #-font => 'System 14', XXX this is MSWin32 specific
+       -width => 4,
        -bg => 'white',
        -selectmode => 'single',
        -browsecmd => sub { $w->UpdateFont(-size => $_[0]) },
-      )->pack(-expand => 1, -fill => 'both', -anchor => 'w');
+      )->pack(-expand => 1,
+              # Expand vertically but keep width constant:
+              -fill => 'y',
+              -anchor => 'w');
     $w->Advertise('size_list' => $sizelb);
     $sizelb->bind("<3>" => [ $w, '_custom_size' ]);
 
@@ -117,7 +122,7 @@ sub Populate {
 	@fontsizes = qw(0 2 3 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
 			23 24 25 26 27 28 29 30 33 34 36 40 44 48 50 56 64 72);
     }
-    my $curr_size = $w->fontActual($w->{'curr_font'}, -size);
+    my $curr_size = $w->FontGetPoints($w->fontActual($w->{'curr_font'}, -size));
     foreach my $size (@fontsizes) {
 	$sizelb->add($size, -text => $size);
 	if ($size == $curr_size) {
@@ -126,13 +131,19 @@ sub Populate {
 	    $sizelb->see($size);
 	}
     }
-
-    #$fstyle->Label->pack; # dummy, placeholder
-    #my $fstyle2 = $fstyle->Frame->pack(-expand => 1, -fill => 'both',
-	#			       -side => 'left');
+    my %hs_checkbox_pack_args = (
+				 -anchor => 'w',
+				 -expand => 0,
+				 -padx => 3,
+				 -pady => 3,
+				 # -fill => 'x',
+				);
+    # This Label is above the style buttons:
+    #$fstyle->Label->pack;
+    #my $fstyle2 = $fstyle->Frame->pack(-side => 'top');
 
     #my(%weight_res) = _get_label(delete $args->{-weightlabel}
-	#			 || '~Bold');
+    #				 || '~Bold');
     #my $weight = $w->fontActual($w->{'curr_font'}, -weight);
     #my $wcb = $fstyle2->Checkbutton
     #  (-variable => \$weight,
@@ -141,10 +152,10 @@ sub Populate {
     #   -offvalue => 'normal',
     #   @{$weight_res{'args'}},
     #   -command => sub { $w->UpdateFont(-weight => $weight) }
-    #  )->pack(-anchor => 'w', -expand => 1);
+    #  )->pack(%hs_checkbox_pack_args);
 
     #my(%slant_res) = _get_label(delete $args->{-slantlabel}
-	#			 || '~Italic');
+    #				 || '~Italic');
     #my $slant = $w->fontActual($w->{'curr_font'}, -slant);
     #my $scb = $fstyle2->Checkbutton
     #  (-variable => \$slant,
@@ -153,10 +164,10 @@ sub Populate {
     #   -offvalue => 'roman',
     #   @{$slant_res{'args'}},
     #   -command => sub { $w->UpdateFont(-slant => $slant) }
-    #  )->pack(-anchor => 'w', -expand => 1);
+    #  )->pack(%hs_checkbox_pack_args);
 
     #my(%underline_res) = _get_label(delete $args->{-underlinelabel}
-	#			    || '~Underline');
+    #				    || '~Underline');
     #my $underline = $w->fontActual($w->{'curr_font'}, -underline);
     #my $ucb = $fstyle2->Checkbutton
     #  (-variable => \$underline,
@@ -165,10 +176,10 @@ sub Populate {
     #   -offvalue => 0,
     #   @{$underline_res{'args'}},
     #   -command => sub { $w->UpdateFont(-underline => $underline) }
-    #  )->pack(-anchor => 'w', -expand => 1);
+    #  )->pack(%hs_checkbox_pack_args);
 
     #my(%overstrike_res) = _get_label(delete $args->{-overstrikelabel}
-	#			     || 'O~verstrike');
+    #			     || 'O~verstrike');
     #my $overstrike = $w->fontActual($w->{'curr_font'}, -overstrike);
     #my $ocb = $fstyle2->Checkbutton
     #  (-variable => \$overstrike,
@@ -177,10 +188,12 @@ sub Populate {
     #   -offvalue => 0,
     #   @{$overstrike_res{'args'}},
     #   -command => sub { $w->UpdateFont(-overstrike => $overstrike) }
-    #  )->pack(-anchor => 'w', -expand => 1);
+    #  )->pack(%hs_checkbox_pack_args);
 
-    my $c = $w->Canvas
-      (-height => 36,
+    my $c = $w->Scrolled
+      ('Canvas',
+       -scrollbars => 'osoe',
+       -height => 36,
        -bg => 'white',
        -relief => 'sunken',
        -bd => 2,
@@ -243,7 +256,7 @@ sub Populate {
 	  (@{$nicefonts_res{'args'}},
 	   -variable => \$w->{Configure}{-nicefont},
 	   -command => sub { $w->InsertFamilies; },
-	  )->grid(-column => 4, -row => 1,
+	  )->grid(-column => 5, -row => 0,
 		  -sticky => 'w', -padx => 5);
     }
     delete $args->{'-nicefontsbutton'};
@@ -256,7 +269,7 @@ sub Populate {
 	  (@{$fixedfonts_res{'args'}},
 	   -variable => \$w->{Configure}{-fixedfont},
 	   -command => sub { $w->InsertFamilies; },
-	  )->grid(-column => 5, -row => 0,
+	  )->grid(-column => 6, -row => 0,
 		  -sticky => 'w', -padx => 5);
     }
     delete $args->{'-fixedfontsbutton'};
@@ -271,14 +284,14 @@ sub Populate {
     $w->bind("<$size_res{'key'}>"   => sub { $sizelb->focus })
       if $size_res{'key'};
 
-    #$w->bind("<$weight_res{'key'}>"     => sub { $wcb->invoke })
-    #  if $weight_res{'key'};
-    #$w->bind("<$slant_res{'key'}>"      => sub { $scb->invoke })
-    #  if $slant_res{'key'};
-    #$w->bind("<$underline_res{'key'}>"  => sub { $ucb->invoke })
-    #  if $underline_res{'key'};
-    #$w->bind("<$overstrike_res{'key'}>" => sub { $ocb->invoke })
-    #  if $overstrike_res{'key'};
+#    $w->bind("<$weight_res{'key'}>"     => sub { $wcb->invoke })
+#      if $weight_res{'key'};
+#    $w->bind("<$slant_res{'key'}>"      => sub { $scb->invoke })
+#      if $slant_res{'key'};
+#    $w->bind("<$underline_res{'key'}>"  => sub { $ucb->invoke })
+#      if $underline_res{'key'};
+#    $w->bind("<$overstrike_res{'key'}>" => sub { $ocb->invoke })
+#      if $overstrike_res{'key'};
 
     $w->bind("<$ok_res{'key'}>"      => sub { $okb->invoke })
       if $ok_res{'key'};
@@ -332,10 +345,17 @@ sub UpdateFont {
 	my $ch_width  = $w->fontMeasure($w->{'curr_font'}, 'M');
 	my $ch_height = $w->fontMetrics($w->{'curr_font'}, -linespace);
 	if ($w->{'alt_sample'}) {
+	    my $x_margin = 4;
 	    my $x;
 	    my $y = 4;
 	    for(my $i = 32; $i < 256; $i+=16) {
-		$x = 4;
+		$x = $x_margin;
+		if ($Tk::VERSION >= 804) {
+		    # Tk804 operates on Unicode codepoints
+		    # and there are no printable characters
+		    # in this region
+		    next if $i >= 128 && $i < 160;
+		}
 		for my $j (0 .. 15) {
 		    next if $i+$j == 127;
 		    my $ch = chr($i + $j);
@@ -349,6 +369,22 @@ sub UpdateFont {
 		}
 		$y += $ch_height;
 	    }
+	    if ($Tk::VERSION >= 804) {
+		$y += 5;
+		for my $string ("Latin2: "   . join("", map { chr } 0x010c,0x010d,0x010e,0x010f,0x0141,0x0142),
+				"Cyrillic: " . join("", map { chr } 0x410..0x414,0x0430..0x434),
+				"Greek: "    . join("", map { chr } 0x0391..0x0395,0x03B1..0x03B5),
+				"Hebrew: "   . join("", map { chr } 0x05D0..0x05D4),
+				"Arabic: "   . join("", map { chr($_). " " } 0x0627..0x062B),
+			       ) {
+		    $c->createText($x_margin, $y, -anchor => 'nw',
+				   -text => $string,
+				   -font => $w->{'curr_font'},
+				   -tags => 'font',
+				  );
+		    $y += $ch_height;
+		}
+	    }
 	} else {
 	    $c->createText(4, 4,
 			   -anchor => 'nw',
@@ -356,6 +392,7 @@ sub UpdateFont {
 			   -font => $w->{'curr_font'},
 			   -tags => 'font');
 	}
+	$c->configure(-scrollregion => [$c->bbox("all")]);
     };
     warn $@ if $@;
 #    $w->Unbusy;
@@ -437,7 +474,9 @@ sub InsertFamilies {
 	$w->{'family_index'} = [];
 	my $nicefont = $w->cget(-nicefont); # XXX name?
 	my $fixedfont = $w->cget(-fixedfont);
-	my $curr_family = $w->fontActual($w->{'curr_font'}, -family);
+	my %fa = $w->fontActual($w->{'curr_font'});
+	my $curr_family = $fa{'-family'};
+	my $curr_size = $fa{'-size'};
 	my $famlb = $w->Subwidget('family_list');
 	$famlb->delete('all');
 	my @fam = sort $w->fontFamilies;
@@ -447,12 +486,11 @@ sub InsertFamilies {
 	    next if $fam eq '';
 	    next if $fixedfont
 	      and not $w->fontMetrics($w->Font(-family => $fam), '-fixed');
-	    my $u_fam = $fam;
-	    #(my $u_fam = $fam) =~ s/\b(.)/\u$1/g;
+	    (my $u_fam = $fam) =~ s/\b(.)/\u$1/g;
 	    $w->{'family_index'}[$i] = $fam;
 	    my $f_style = $famlb->ItemStyle
 	      ('text',
-	       ($nicefont ? (-font => "{$fam}") : ()),
+	       ($nicefont ? (-font => "{$fam} $curr_size") : ()),
 	       -background => $bg,
 	      );
 	    $famlb->add($i, -text => $u_fam, -style => $f_style);
@@ -534,6 +572,20 @@ sub _custom_size {
     $t->destroy;
 }
 
+# Perl version of TkFontGetPoints
+sub FontGetPoints {
+    my($w, $size) = @_;
+
+    if ($size >= 0) {
+	return $size;
+    }
+
+    my $d = -$size * 72.0 / 25.4;
+    $d *= $w->screenmmwidth;
+    $d /= $w->screenwidth;
+    return int($d + 0.5);
+}
+
 # put some dirt into Tk::Widget...
 package       # hide from CPAN indexer
   Tk::Widget;
@@ -562,6 +614,28 @@ sub RefontTree {
     }
 }
 
+sub GetDescriptiveFontName {
+    my($w, $fontname) = @_;
+
+    my %fa = $w->fontActual($fontname);
+
+    my $fontdescriptive = "{$fa{-family}} $fa{-size}";
+    if ($fa{-weight} ne "normal") {
+	$fontdescriptive .= " $fa{-weight}";
+    }
+    if ($fa{-slant} ne "roman") {
+	$fontdescriptive .= " $fa{-slant}";
+    }
+    if ($fa{-underline}) {
+	$fontdescriptive .= " underline";
+    }
+    if ($fa{-overstrike}) {
+	$fontdescriptive .= " overstrike";
+    }
+
+    $fontdescriptive;
+}
+
 1;
 
 __END__
@@ -579,6 +653,13 @@ Tk::FontDialog - a font dialog widget for perl/Tk
 
 Tk::FontDialog implements a font dialog widget.
 
+The dialog is displayed by calling the B<Show> method. The returned
+value is either the selected font (if the dialog was closed with the
+Ok button) or undef (otherwise). The exact type of the return value is
+either a L<Tk::Font> object (in Tk800) or a font name string (usually
+something like C<font1>). Both can be used as values in Tk C<-font>
+options. See L</GetDescriptiveFontName>
+
 In the Family and Size listboxes, the font family and font size can be
 specified. The checkbuttons on the right turn on bold, italic,
 underlined and overstriked variants of the chosen font. A sample of
@@ -593,6 +674,7 @@ of fonts are installed or for 16 bit fonts.
 
 A click with the right button in the font size listbox pops up a
 window to enter arbitrary font sizes.
+
 
 =head1 WIDGET-SPECIFIC OPTIONS
 
@@ -677,6 +759,32 @@ setting:
 
 =back
 
+=head1 METHODS IN Tk::Widget
+
+=over
+
+=item B<RefontTree>(-font => I<$font>)
+
+Additionaly, the convenience method B<RefontTree> is defined in the
+L<Tk::Widget> namespace. Using this method a font definition could be
+applied to a complete subtree of a widget. This is similar to the
+method B<RecolorTree>. Calling B<RefontTree> looks like this:
+
+    $font = $mw->FontDialog->Show;
+    $mainwindow->RefontTree(-font => $font) if defined $font;
+
+By default RefontTree does not change the font of canvas elements.
+This can be done by specifying C<-canvas => 1>.
+
+=item B<GetDescriptiveFontName>(I<$fontname>)
+
+Return a "descriptive" font name (just like form [3] as described in
+L<Tk::Font>). The return value from the Show() method has the
+disadvantage that it is only valid for the current Tk session. A
+"descriptive" font name may be stored and reused later.
+
+=back
+
 =head1 CAVEAT
 
 Note that font names with whitespace like "New century schoolbook" or
@@ -684,6 +792,48 @@ Note that font names with whitespace like "New century schoolbook" or
 solution is to put the names in Tcl-like braces, like
 
     -font => "{New century schoolbook} 10"
+
+=head1 EXAMPLES
+
+To apply a selected font to a specific widget, use the following
+snippet:
+
+    $font = $mw->FontDialog->Show;
+    if (defined $font) {
+        $button->configure(-font => $font);
+    }
+
+This example uses the convenience method B<RefontTree> to apply the
+new font to the whole application:
+
+    use Tk;
+    use Tk::FontDialog;
+    $mw = tkinit;
+    $mw->Label(-text => "Test")->pack;
+    $mw->Button(-text => "Another test")->pack;
+    $mw->Button(-text => "Use Tk::FontDialog",
+    	        -command => sub {
+    		    my $font = $mw->FontDialog->Show;
+    		    if (defined $font) {
+    		        $mw->RefontTree(-font => $font);
+    		    }
+    	        })->pack;
+    MainLoop;
+
+To get the "descriptive" font name:
+
+    $font = $mw->FontDialog->Show;
+    if (defined $font) {
+	$font_descriptive = $mw->GetDescriptiveFontName($font);
+	print $font_descriptive, "\n";
+    }
+
+=head1 AVAILABILITY
+
+The latest released version is available from cpan (e.g.
+L<http://search.cpan.org/~srezic/>). The latest development version is
+available from SourceForge CVS (e.g.
+L<http://cvs.sourceforge.net/viewcvs.py/srezic/Tk-FontDialog/>).
 
 =head1 BUGS/TODO
 
@@ -696,17 +846,18 @@ solution is to put the names in Tcl-like braces, like
 
 =head1 SEE ALSO
 
-L<Tk::font|Tk::font>
+L<Tk::Font>
 
 =head1 AUTHOR
 
 Slaven Rezic <slaven@rezic.de>
 
-Suggestions by Michael Houghton <herveus@Radix.Net>.
+Suggestions by Michael Houghton, Martin Thurn, Jack, Justin Kozlowitz
+and others.
 
 =head1 COPYRIGHT
 
-Copyright (c) 1998,1999,2003 Slaven Rezic. All rights reserved.
+Copyright (c) 1998,1999,2003,2004,2005 Slaven Rezic. All rights reserved.
 This module is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
