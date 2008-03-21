@@ -30,8 +30,12 @@ sub _new{
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
+	my $version_perl = $];
+	$version_perl =~ s/00/\./g;
+	$version_perl =~ s/\.\./\./g;
+
 	$fra_r->Label(
-		-text => "$::kh_version  [Perl ".$].", Perl/Tk $Tk::VERSION]",
+		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $Tk::VERSION]",
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
@@ -56,7 +60,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('ChaSen'),
-		url    => 'http://chasen.naist.jp/',
+		url    => 'http://chasen-legacy.sourceforge.jp/',
 		parent => $fra_r1,
 		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
 	);
@@ -92,7 +96,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
-		url    => 'http://free.jinbunshakai.net/kawabata/',
+		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484&seq=181',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
