@@ -229,7 +229,7 @@ sub app_html{
 	if ($self->{app_html}){
 		return $self->{app_html};
 	} else {
-		return 'firefox \'%s\'';
+		return 'firefox \'%s\' &';
 	}
 }
 
