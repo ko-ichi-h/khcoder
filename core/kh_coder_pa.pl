@@ -1,10 +1,24 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
+
+=head1 COPYRIGHT
+
+Copyright (C) 2008 樋口耕一 <http://koichi.nihon.to/psnl>
+
+本プログラムはフリー・ソフトウェアです。
+
+あなたは、Free Software Foundation が公表したGNU一般公有使用許諾書（The GNU General Public License）の「バージョン2」或いはそれ以降の各バージョンの中からいずれかを選択し、そのバージョンが定める条項に従って本プログラムを使用、再頒布、または変更することができます。
+
+本プログラムは有用とは思いますが、頒布に当たっては、市場性及び特定目的適合性についての暗黙の保証を含めて、いかなる保証も行いません。
+
+詳細についてはGNU一般公有使用許諾書をお読み下さい。GNU一般公有使用許諾書は本プログラムのマニュアルの末尾に添付されています。あるいは<http://www.gnu.org/licenses/>でも、GNU一般公有使用許諾書を閲覧することができます。
+
+=cut
 
 use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
-	$kh_version = "2.beta.12pre";
+	$kh_version = "2.beta.12";
 	use Cwd qw(cwd);
 	use lib cwd.'/kh_lib';
 	use lib cwd.'/plugin';

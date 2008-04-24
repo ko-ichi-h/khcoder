@@ -149,7 +149,7 @@ sub run_from_morpho{
 	# 出力
 	print "06. Output...\n" if $debug;
 	my $data_out = '';
-	$data_out .= "キーワード,重要度\n";
+	$data_out .= "複合語,スコア\n";
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("

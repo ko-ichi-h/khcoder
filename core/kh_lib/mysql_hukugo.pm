@@ -175,7 +175,7 @@ sub run_from_morpho{
 			type => 'file',
 			thefile => $target
 		);
-	print F "複合名詞,出現数\n";
+	print F "複合語,出現数\n";
 	
 	my $oh = mysql_exec->select("
 		SELECT genkei, count(*) as hoge
