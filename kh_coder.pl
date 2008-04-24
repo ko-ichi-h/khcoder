@@ -18,7 +18,7 @@ use strict;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 BEGIN {
-	$kh_version = "2.beta.12pre";
+	$kh_version = "2.beta.12";
 	use Cwd qw(cwd);
 	use lib cwd.'/kh_lib';
 	use lib cwd.'/plugin';
