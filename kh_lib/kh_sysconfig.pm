@@ -129,6 +129,7 @@ sub color_DocView_info{
 		return $i;
 	} else {
 		my @h = split /,/, $i;
+		$h[2] = 0 unless length($h[2]);
 		return @h;
 	}
 }
@@ -143,6 +144,7 @@ sub color_DocView_search{
 		return $i;
 	} else {
 		my @h = split /,/, $i;
+		$h[2] = 0 unless length($h[2]);
 		return @h;
 	}
 }
@@ -157,6 +159,7 @@ sub color_DocView_force{
 		return $i;
 	} else {
 		my @h = split /,/, $i;
+		$h[2] = 0 unless length($h[2]);
 		return @h;
 	}
 }
@@ -171,6 +174,7 @@ sub color_DocView_html{
 		return $i;
 	} else {
 		my @h = split /,/, $i;
+		$h[2] = 0 unless length($h[2]);
 		return @h;
 	}
 }
@@ -185,6 +189,7 @@ sub color_DocView_CodeW{
 		return $i;
 	} else {
 		my @h = split /,/, $i;
+		$h[2] = 0 unless length($h[2]);
 		return @h;
 	}
 }
