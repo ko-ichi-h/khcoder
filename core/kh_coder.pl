@@ -23,6 +23,31 @@ BEGIN {
 	use lib cwd.'/kh_lib';
 	use lib cwd.'/plugin';
 	if ($^O eq 'MSWin32'){
+		use Win32::Console;
+		Win32::Console->new->Title('Console of KH Coder');
+		# コンソールを最小化
+		if (substr($PerlApp::VERSION,0,1) >= 7 ){
+			use Win32::API;
+			my $win = Win32::API->new(
+				'user32.dll',
+				'FindWindow',
+				'NP',
+				'N'
+			)->Call(
+				0,
+				"Console of KH Coder"
+			);
+			Win32::API->new(
+				'user32.dll',
+				'ShowWindow',
+				'NN',
+				'N'
+			)->Call(
+				$win,
+				2
+			);
+		}
+		# スプラッシュ
 		require Tk::Splash;
 		$splash = Tk::Splash->Show(
 			Tk->findINC('kh_logo.bmp'),
