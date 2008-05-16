@@ -1,0 +1,37 @@
+#!C:\apps\ActiveState Perl Dev Kit 7.2\bin\lib\pai.exe
+PAP-Version: 1.0
+Packer: C:\apps\ActiveState Perl Dev Kit 7.2\bin\perlapp.exe
+Script: kh_coder.pl
+Cwd: C:\home\ko-ichi\core
+Add: Encode::Guess
+Add: Encode::JP::H2Z
+Add: Encode::JP
+Add: feature
+Clean: 0
+Date: 2008-05-16 20:28:38
+Debug: 
+Dependent: 0
+Dyndll: 0
+Exe: kh_coder.exe
+Force: 1
+Gui: 0
+Hostname: vr-dev
+Icon: memo\1.ico
+Lib: lib:C:\home\ko-ichi\core\kh_lib
+No-Compress: 0
+No-Logo: 0
+Runlib: 
+Shared: none
+Tmpdir: 
+Verbose: 1
+Version-Comments: 
+Version-CompanyName: 
+Version-FileDescription: 
+Version-FileVersion: 
+Version-InternalName: 
+Version-LegalCopyright: 
+Version-LegalTrademarks: 
+Version-OriginalFilename: 
+Version-ProductName: 
+Version-ProductVersion: 
+Xclude: 0
