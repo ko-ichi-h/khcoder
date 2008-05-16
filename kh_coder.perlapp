@@ -8,7 +8,7 @@ Add: Encode::JP::H2Z
 Add: Encode::JP
 Add: feature
 Clean: 0
-Date: 2008-05-16 20:28:38
+Date: 2008-05-16 22:56:15
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -26,12 +26,12 @@ Tmpdir:
 Verbose: 1
 Version-Comments: 
 Version-CompanyName: 
-Version-FileDescription: 
-Version-FileVersion: 
-Version-InternalName: 
-Version-LegalCopyright: 
+Version-FileDescription: KH Coder
+Version-FileVersion: 2
+Version-InternalName: kh_coder.exe
+Version-LegalCopyright: HIGUCHI, Koichi
 Version-LegalTrademarks: 
-Version-OriginalFilename: 
-Version-ProductName: 
-Version-ProductVersion: 
+Version-OriginalFilename: kh_coder.exe
+Version-ProductName: KH Coder
+Version-ProductVersion: 2
 Xclude: 0
