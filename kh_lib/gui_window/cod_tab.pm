@@ -270,12 +270,15 @@ sub _calc{
 		my $col = 0;
 		foreach my $h (@{$i}){
 			if ($col){
+				#require Encode;
+				#print "is_utf8:b: ",Encode::is_utf8($h),"\n";
 				$self->list->itemCreate(
 					$row,
 					$col -1,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
+				#print "is_utf8:a: ",Encode::is_utf8($h),"\n";
 			} else {
 				$self->{list2}->itemCreate(
 					$row,
