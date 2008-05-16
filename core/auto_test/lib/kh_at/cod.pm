@@ -40,17 +40,23 @@ sub _exec_test{
 	$win1->{tani_obj}->{opt2}->update;
 	$win1->_calc;
 	$self->{result} .= "■章・節・段落ごと：段落―H1単位\n";
+	#require Encode;
 	my $t = '';
 	foreach my $i (@{$win1->{result}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
 			$t .= $h;
+			#print "$h, ";
+			#print "is_utf8: ",Encode::is_utf8($h),"\n";
 			++$n;
 		}
 		$t .= "\n";
+		print "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	
+	
+	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
 	$win1->{tani_obj}->{raw_opt} = gui_window->gui_jchar('H2','euc');
@@ -69,7 +75,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
 	$win1->{tani_obj}->{raw_opt} = gui_window->gui_jchar('文','euc');
@@ -88,7 +94,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new($t, 'sjis')->euc;
 	$self->{result} .= $t;
 	
 	# 外部変数とのクロス集計
@@ -110,7 +116,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new( $t, 'sjis' )->euc;
 	$self->{result} .= $t;
 	
 	$self->{result} .= "■外部変数とのクロス集計：段落―「死ぬ」\n";
@@ -129,7 +135,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
 	$self->{result} .= "■外部変数とのクロス集計：段落―「大見出し」\n";
@@ -148,7 +154,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
 	$self->{result} .= "■外部変数とのクロス集計：h2―「大見出し」\n";
@@ -167,7 +173,7 @@ sub _exec_test{
 		}
 		$t .= "\n";
 	}
-	$t = Jcode->new($t)->euc;
+	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
 	# コード間関連

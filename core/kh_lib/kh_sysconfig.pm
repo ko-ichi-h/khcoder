@@ -123,7 +123,7 @@ sub color_DocView_info{
 	my $self = shift;
 	my $i    = $self->{color_DocView_info};
 	unless ( defined($i) ){
-		$i = "#008000,white";
+		$i = "#008000,white,0";
 	}
 	if ($_[1]){
 		return $i;
@@ -137,7 +137,7 @@ sub color_DocView_search{
 	my $self = shift;
 	my $i    = $self->{color_DocView_search};
 	unless ( defined($i) ){
-		$i = "black,yellow";
+		$i = "black,yellow,0";
 	}
 	if ($_[1]){
 		return $i;
@@ -151,7 +151,7 @@ sub color_DocView_force{
 	my $self = shift;
 	my $i    = $self->{color_DocView_force};
 	unless ( defined($i) ){
-		$i = "black,cyan";
+		$i = "black,cyan,0";
 	}
 	if ($_[1]){
 		return $i;
@@ -165,7 +165,7 @@ sub color_DocView_html{
 	my $self = shift;
 	my $i    = $self->{color_DocView_html};
 	unless ( defined($i) ){
-		$i = "red,white";
+		$i = "red,white,0";
 	}
 	if ($_[1]){
 		return $i;

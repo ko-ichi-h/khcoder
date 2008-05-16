@@ -270,7 +270,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col - 1,
-					-text  => $h,
+					-text  => $self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
 			} else {
