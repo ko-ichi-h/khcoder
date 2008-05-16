@@ -31,8 +31,20 @@ sub _new{
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	my $version_perl = $];
-	$version_perl =~ s/00/\./g;
-	$version_perl =~ s/\.\./\./g;
+	
+	my $version_perl_p1 = substr($version_perl,2,3);
+	while (substr($version_perl_p1,0,1) eq '0'){
+		substr($version_perl_p1,0,1) = '';
+	}
+	$version_perl_p1 = '0' unless length($version_perl_p1);
+
+	my $version_perl_p2 = substr($version_perl,5,3);
+	while (substr($version_perl_p2,0,1) eq '0'){
+		substr($version_perl_p2,0,1) = '';
+	}
+	$version_perl_p2 = '0' unless length($version_perl_p2);
+
+	$version_perl = substr($version_perl,0,2).$version_perl_p1.'.'.$version_perl_p2;
 
 	$fra_r->Label(
 		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $Tk::VERSION]",
