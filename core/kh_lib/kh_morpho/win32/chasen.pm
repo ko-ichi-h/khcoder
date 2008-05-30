@@ -11,10 +11,9 @@ sub _run_morpho{
 	my $path = $self->config->chasen_path;
 	
 	my $pos = rindex($path,"\\");
-	my $dir = substr($path,0,$pos);
-	my $chasenrc = $dir."\\dic\\chasenrc";
-	my $cmdline = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
-	#print "$cmdline\n";
+	$self->{dir} = substr($path,0,$pos);
+	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
+	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
 	
 	use Win32;
 	use Win32::Process;
@@ -22,10 +21,10 @@ sub _run_morpho{
 	Win32::Process::Create(
 		$ChasenObj,
 		$path,
-		$cmdline,
+		$self->{cmdline},
 		0,
 		CREATE_NO_WINDOW,
-		$dir,
+		$self->{dir},
 	) || $self->Exec_Error("Wi32::Process can not start");
 	$ChasenObj->Wait(INFINITE)
 		|| $self->Exec_Error("Wi32::Process can not wait");

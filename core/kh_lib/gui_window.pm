@@ -151,7 +151,8 @@ sub gui_jchar{ # GUI表示用の日本語
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
 		$code = 'euc-jp'   if $code eq 'euc';
-		$code = 'shiftjis' if $code eq 'sjis';
+		$code = 'cp932' if $code eq 'sjis';
+		$code = 'cp932' if $code eq 'shiftjis';
 		$code = 'euc-jp' unless length($code);
 		return Encode::decode($code,$char);
 	} else {
@@ -188,7 +189,7 @@ sub gui_jg{ # 入力された文字列の変換
 	my $char = $_[1];
 	
 	if ($] > 5.008){
-		return Encode::encode('shiftjis',$char);
+		return Encode::encode('cp932',$char);
 	} else {
 		return $char;
 	}

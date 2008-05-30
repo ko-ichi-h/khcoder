@@ -33,9 +33,13 @@ sub init{
 	my $p1 = $::config_obj->cwd.'\dep\mysql\\';
 	my $p2 = $::config_obj->cwd.'\dep\mysql\data\\';
 	my $p3 = $p1; chop $p3;
+	$p1 = Jcode->new($p1,'sjis')->euc;
+	$p2 = Jcode->new($p2,'sjis')->euc;
 	$p1 =~ s/\\/\//g;
 	$p2 =~ s/\\/\//g;
-	
+	$p1 = Jcode->new($p1,'euc')->sjis;
+	$p2 = Jcode->new($p2,'euc')->sjis;
+
 	open (MYINI,$::config_obj->cwd.'\dep\mysql\khc.ini') or 
 		gui_errormsg->open(
 			type    => 'file',

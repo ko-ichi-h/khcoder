@@ -101,6 +101,16 @@ sub _new{
 
 sub _make_new{
 	my $self = shift;
+	
+	my $t = $self->e1->get;
+	
+	print "0: $t\n";
+	
+	$t = $self->gui_jg($t);
+	
+	print "1: $t";
+	
+	
 	my $new = kh_project->new(
 		target  => $self->gui_jg($self->e1->get),
 		comment => $self->gui_jg($self->e2->get),
@@ -123,18 +133,19 @@ sub _sansyo{
 		["All files",'*']
 	);
 
+	print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),
-		-initialdir => $::config_obj->cwd
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 
 	if ($path){
-		$::config_obj->os_path($path);
+		$path = $self->gui_jg($path);
+		$::config_obj->os_path($path,'sjis');
 		$self->e1->delete('0','end');
-		$self->e1->insert(0,$path);
-		#print "$path\n";
-		#print Encode::encode('shiftjis',$path)."\n";
+		$self->e1->insert(0,$self->gui_jchar($path));
+		#print "-1: $path\n";
 	}
 }
 

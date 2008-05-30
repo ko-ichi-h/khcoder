@@ -47,6 +47,8 @@ sub Exec_Error{
 	print EOUT "target: ".$self->target."\n";
 	print EOUT "output: ".$self->output."\n";
 	print EOUT "path: ".$self->config->chasen_path."\n";
+	print EOUT "dir: $self->{dir}\n";
+	print EOUT "cmd: $self->{cmdline}\n";
 	
 	if (-d $self->t_obj->dir_CoderData){
 		print EOUT "datadir: ready\n";

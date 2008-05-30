@@ -129,7 +129,13 @@
     $CLASS_HPLOO = undef ;
     
     my ( $dir , $cut , $r , $f ) = @_ ;
+    
+    my $icode = Jcode::getcode($dir);
+    $dir = Jcode->new($dir)->euc;
     $dir =~ s/\\/\//g ;
+    $dir = Jcode->new($dir)->$icode;
+    
+    print "$dir\n";
     
     my @files ;
     

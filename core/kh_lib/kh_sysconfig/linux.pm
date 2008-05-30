@@ -286,10 +286,11 @@ sub font_main{
 #   ¤½¤ÎÂ¾   #
 
 sub os_path{
-	my $self = shift;
-	my $c = shift;
+	my $self  = shift;
+	my $c     = shift;
+	my $icode = shift;
 
-	$c = Jcode->new("$c")->euc;
+	$c = Jcode->new("$c",$icode)->euc;
 	$c =~ tr/\\/\//;
 
 	return $c;

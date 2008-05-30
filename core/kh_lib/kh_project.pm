@@ -260,15 +260,18 @@ sub last_codf{
 	my $new  = shift;
 	
 	if ($new){
+		$new = Jcode->new($new)->euc if $::config_obj->os eq 'win32';
 		mysql_exec->do(
 			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_codf\'"
 		,1);
 		return $new;
 	} else {
-		return mysql_exec
+		my $lst = mysql_exec
 			->select("
 				SELECT status FROM status_char WHERE name = 'last_codf'",1
 			)->hundle->fetch->[0];
+		$lst = Jcode->new($lst)->sjis if $::config_obj->os eq 'win32';
+		return $lst;
 	}
 }
 
@@ -477,8 +480,10 @@ sub file_datadir{
 sub file_target{
 	my $self = shift;
 	my $t = $self->{target};
+	my $icode = Jcode::getcode($t);
+	$t = Jcode->new($t)->euc;
 	$t =~ tr/\\/\//;
-#	$t = $::config_obj->os_path($t);
+	$t = Jcode->new($t)->$icode;
 	return($t);
 }
 

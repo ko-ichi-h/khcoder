@@ -95,7 +95,8 @@ sub __new{
 	# 文字化け回避用バインド
 	$inis->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$entry1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$entry1]);
-	$entry1->insert(0,$::config_obj->chasen_path);
+	
+	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
 	$self->gui_switch;
 
 	return $self;
@@ -150,14 +151,15 @@ sub gui_get_exe{
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar($self->open_msg),
-		-initialdir => $::config_obj->cwd
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
 	my $entry = $self->entry;
 	if ($path){
-		$path =~ tr/\//\\/;
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
 		$entry->delete('0','end');
-		$entry->insert(0,$path);
+		$entry->insert(0,$self->gui_jchar($path));
 	}
 }
 

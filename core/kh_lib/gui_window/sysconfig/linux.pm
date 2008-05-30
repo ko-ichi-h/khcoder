@@ -213,8 +213,8 @@ sub ok{
 	
 	my $oldfont = $::config_obj->font_main;
 	
-	$::config_obj->chasenrc_path($self->entry1->get());
-	$::config_obj->grammarcha_path($self->entry2->get());
+	$::config_obj->chasenrc_path( $::config_obj->os_path( $self->gui_jg( $self->entry1->get() ) ) );
+	$::config_obj->grammarcha_path( $::config_obj->os_path( $self->gui_jg( $self->entry2->get() ) ) );
 	$::config_obj->app_html($self->e_html->get());
 	$::config_obj->app_pdf($self->e_pdf->get());
 	$::config_obj->app_csv($self->e_csv->get());
@@ -263,9 +263,10 @@ sub gui_get_exe{
 
 	my $entry = $self->{$ent};
 	if ($path){
+		$path = $self->gui_jg($path);
 		$path = $::config_obj->os_path($path);
 		$entry->delete('0','end');
-		$entry->insert(0,$path);
+		$entry->insert(0,$self->gui_jchar($path) );
 	}
 }
 
