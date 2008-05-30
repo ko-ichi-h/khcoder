@@ -15,13 +15,33 @@ Copyright (C) 2008 樋口耕一 <http://koichi.nihon.to/psnl>
 =cut
 
 use strict;
+use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
+$kh_version = "2.beta.12";
+
 BEGIN {
-	$kh_version = "2.beta.12";
-	use Cwd qw(cwd);
-	use lib cwd.'/kh_lib';
-	use lib cwd.'/plugin';
+	# Cwd.pmの上書き
+	sub Cwd::_win32_cwd {
+	    if (defined &DynaLoader::boot_DynaLoader) {
+		$ENV{'PWD'} = Win32::GetCwd();
+	    }
+	    else { # miniperl
+		chomp($ENV{'PWD'} = `cd`);
+	    }
+	    use Jcode;
+	    $ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
+	    $ENV{'PWD'} =~ s:\\:/:g ;
+	    $ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;
+	    #print "hoge\n";
+	    return $ENV{'PWD'};
+	};
+	*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = \&Cwd::_win32_cwd;
+
+	# モジュールのパスを追加
+	push @INC, &cwd.'/kh_lib';
+	push @INC, &cwd.'/plugin';
+
 	if ($^O eq 'MSWin32'){
 		use Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
@@ -58,8 +78,7 @@ BEGIN {
 	} else {
 		push @INC, cwd.'/dummy_lib';
 	}
-	
-	use kh_sysconfig;
+	require kh_sysconfig;
 	$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
 }
 
@@ -93,6 +112,7 @@ if ($::config_obj->{R}){
 	$::config_obj->{R} = 0;
 }
 chdir ($::config_obj->{cwd});
+
 
 # GUIの開始
 $main_gui = gui_window::main->open;

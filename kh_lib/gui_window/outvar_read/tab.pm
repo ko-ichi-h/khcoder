@@ -24,6 +24,7 @@ sub file{
 	);
 	
 	if ($path){
+		$path = $self->gui_jg($path);
 		$self->{entry}->delete(0, 'end');
 		$self->{entry}->insert('0',$self->gui_jchar("$path"));
 	}
@@ -37,7 +38,7 @@ sub __read{
 	my $self = shift;
 
 	return mysql_outvar::read::tab->new(
-		file => $self->{entry}->get,
+		file => $self->gui_jg( $self->{entry}->get ),
 		tani => $self->{tani_obj}->tani,
 	)->read;
 }

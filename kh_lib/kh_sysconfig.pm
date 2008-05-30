@@ -12,6 +12,13 @@ sub readin{
 	$self->{cwd} = shift;
 	bless $self, $class;
 
+	# cwdのチェック
+	if ( utf8::is_utf8($self->{cwd}) ){
+		warn "Error: Unexpected UTF8 Flag!";
+	}
+	#print "kh_sysconfig: $self->{cwd}\n";
+	
+
 	# 設定ファイルが揃っているか確認
 	if (
 		   ! -e "$self->{ini_file}"
@@ -22,6 +29,7 @@ sub readin{
 	}
 
 	# iniファイル
+	#print "kh_sysconfig: $self->{ini_file}\n";
 	open (CINI,"$self->{ini_file}") or
 		gui_errormsg->open(
 			type    => 'file',

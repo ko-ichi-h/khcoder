@@ -604,10 +604,15 @@
     open (my $fh,">$this->{START_R}") ;
     
     my $process_r = $this->{PROCESS_R} ;
+    my $icode = Jcode::getcode($process_r);
+    $process_r = Jcode->new($process_r)->euc;
     $process_r =~ s/\\/\\\\/g ;
+    $process_r = Jcode->new($process_r)->$icode;
     
     my $pid_r = $this->{PID_R} ;
+    $pid_r = Jcode->new($pid_r)->euc;
     $pid_r =~ s/\\/\\\\/g ;    
+    $pid_r = Jcode->new($pid_r)->$icode;
     
 	my $r_start_cmd;
 	$r_start_cmd .= "print(\"Statistics::R - Perl bridge started!\")\n\n";
@@ -633,18 +638,21 @@
 	$r_start_cmd .= qq`while(1) {`."\n";
 	$r_start_cmd .= qq`  PERLINPUTFILEX = PERLINPUTFILEX + 1 ;`."\n";
 
-	$r_start_cmd .= qq`  ##print(PERLINPUTFILEX) ;`."\n";
+	$r_start_cmd .= "print(\"mark1\")\n";
+	$r_start_cmd .= qq`  print(PERLINPUTFILEX) ;`."\n"; ###
 	$r_start_cmd .= qq`  cat(PERLINPUTFILEX , "\\n" , file=PERLOUTPUTFILE)`."\n";
 
 	$r_start_cmd .= qq`  PERLINPUTFILE <- paste("input.", PERLINPUTFILEX , ".r" , sep="") ;`."\n";
 
-	$r_start_cmd .= qq`  ##print(PERLINPUTFILE) ;`."\n";
+	$r_start_cmd .= "print(\"mark2\")\n";
+	$r_start_cmd .= qq`  print(PERLINPUTFILE) ;`."\n"; ###
 
 	$r_start_cmd .= qq`  PERLSLEEPDELAY = 0.01`."\n";
 	$r_start_cmd .= qq`  PERLSLEEPDELAYX = 0 ;`."\n";
 
 	$r_start_cmd .= qq`  while( file.access(PERLINPUTFILE, mode=0) ) {`."\n";
-	$r_start_cmd .= qq`    ##print(PERLINPUTFILE);`."\n";
+	$r_start_cmd .= "print(\"mark3\")\n";
+	$r_start_cmd .= qq`    print(PERLINPUTFILE);`."\n"; ###
 	$r_start_cmd .= qq`    Sys.sleep(PERLSLEEPDELAY) ;`."\n";
 
 	$r_start_cmd .= qq`    ## Change the delays to process fast consecutive files,`."\n";

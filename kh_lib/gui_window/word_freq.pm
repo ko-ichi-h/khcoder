@@ -171,12 +171,14 @@ sub plot{
 	my $self = shift;
 	return 0 unless $::config_obj->R;
 	
-	my $path1 = $::project_obj->dir_CoderData.'words_TF_freq1';
-	my $path2 = $::project_obj->dir_CoderData.'words_TF_freq2';
-	my $path3 = $::project_obj->dir_CoderData.'words_TF_freq3';
-	$path1 =~ tr/\\/\//;
-	$path2 =~ tr/\\/\//;
-	$path3 =~ tr/\\/\//;
+	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
+	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
+	$dir =~ tr/\\/\//;
+	$dir = Jcode->new($dir,'euc')->$icode;
+	
+	my $path1 = $dir.'words_TF_freq1';
+	my $path2 = $dir.'words_TF_freq2';
+	my $path3 = $dir.'words_TF_freq3';
 	
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;

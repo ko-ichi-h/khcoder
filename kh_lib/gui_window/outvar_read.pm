@@ -98,7 +98,7 @@ sub _read{
 	my $self = shift;
 
 	# 入力チェック
-	unless (-e $self->{entry}->get){
+	unless (-e $self->gui_jg( $self->{entry}->get ) ){
 		gui_errormsg->open(
 			type   => 'msg',
 			msg    => $self->gui_jchar('ファイルを正しく指定して下さい。'),

@@ -11,8 +11,8 @@ sub config_morph{
 	$self->{dic_dir} =  "$self->{grammercha}".'\\dic';
 	$self->{grammercha} .= '\dic\grammar.cha';
 	
-	$self->{dic_dir} =~ s/\\/\//g;
 	$self->{dic_dir} = Jcode->new($self->{dic_dir},'sjis')->euc;
+	$self->{dic_dir} =~ s/\\/\//g;
 	#print "$self->{dic_dir}\n";
 	
 	# Grammer.chaファイルの変更

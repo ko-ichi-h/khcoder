@@ -231,13 +231,18 @@ sub font_main{
 
 
 sub os_path{
-	my $self = shift;
-	my $c = shift;
+	my $self  = shift;
+	my $c     = shift;
+	my $icode = shift;
 
-	$c = Jcode->new("$c")->euc;
+	print "kh_sysconfig::win32::os_path[1]:  $c\n";
+
+	$c = Jcode->new("$c",$icode)->euc;
 	$c =~ tr/\//\\/;
-	$c = Jcode->new("$c")->sjis;
-
+	$c = Jcode->new("$c",'euc')->sjis;
+	
+	print "kh_sysconfig::win32::os_path[2]:  $c\n";
+	
 	return $c;
 }
 
