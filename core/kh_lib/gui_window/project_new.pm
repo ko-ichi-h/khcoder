@@ -101,18 +101,15 @@ sub _new{
 
 sub _make_new{
 	my $self = shift;
-	
-	my $t = $self->e1->get;
-	
-	print "0: $t\n";
-	
-	$t = $self->gui_jg($t);
-	
-	print "1: $t";
-	
+
+	my $t = $::config_obj->os_path(
+		$self->gui_jg(
+			$self->e1->get
+		)
+	);
 	
 	my $new = kh_project->new(
-		target  => $self->gui_jg($self->e1->get),
+		target  => $t,
 		comment => $self->gui_jg($self->e2->get),
 		icode   => $self->gui_jg($self->{icode}),
 	) or return 0;
@@ -144,7 +141,7 @@ sub _sansyo{
 		$path = $self->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->e1->delete('0','end');
-		$self->e1->insert(0,$self->gui_jchar($path));
+		$self->e1->insert(0,$self->gui_jchar($path,'sjis'));
 		#print "-1: $path\n";
 	}
 }

@@ -117,6 +117,7 @@ sub _sansyo{
 	
 	if ($path){
 		$path = gui_window->gui_jg($path);
+		$path = $::config_obj->os_path($path);
 		$::project_obj->last_codf($path);
 		$self->{cfile} = $path;
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
