@@ -149,11 +149,12 @@ sub save{
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jchar('分析対象ファイル内に見つかった問題点の詳細を保存'),
-		-initialdir       => $::config_obj->cwd
+		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
 		return 0;
 	}
+	$path = gui_window->gui_jg($path);
 
 	# 保存
 	$self->{dacheck_obj}->save($path);

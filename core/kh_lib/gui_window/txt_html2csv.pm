@@ -79,11 +79,12 @@ sub save{
 			-filetypes        => \@types,
 			-title            =>
 				$self->gui_jchar('テキストファイルの変形：名前を付けて保存'),
-			-initialdir       => $::config_obj->cwd
+			-initialdir       => gui_window->gui_jchar($::config_obj->cwd)
 		)
 	);
 	
 	if ($path){
+		$path = gui_window->gui_jg($path);
 		mysql_html2csv->exec(
 			tani => $self->tani,
 			file => $path,

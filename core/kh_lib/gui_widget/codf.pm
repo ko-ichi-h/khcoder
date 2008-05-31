@@ -120,7 +120,7 @@ sub _sansyo{
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => gui_window->gui_jchar('コーディング・ルール・ファイルを選択してください'),
-		-initialdir => $::config_obj->cwd
+		-initialdir => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	
 	if ($path){

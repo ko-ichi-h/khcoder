@@ -20,7 +20,7 @@ sub file{
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar('外部変数ファイルを選択してください'),
-		-initialdir => $::config_obj->cwd
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
 	if ($path){
