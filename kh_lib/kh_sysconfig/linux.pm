@@ -296,6 +296,8 @@ sub os_path{
 	return $c;
 }
 
+*os_cod_path = \&os_path;
+
 sub R_device{
 	my $self = shift;
 	my $path = shift;
