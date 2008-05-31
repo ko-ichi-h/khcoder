@@ -13,8 +13,10 @@ sub readin{
 	bless $self, $class;
 
 	# cwdのチェック
-	if ( utf8::is_utf8($self->{cwd}) ){
-		warn "Error: Unexpected UTF8 Flag!";
+	if ( $] > 5.008 ) {
+		if ( utf8::is_utf8($self->{cwd}) ){
+			warn "Error: Unexpected UTF8 Flag!";
+		}
 	}
 	#print "kh_sysconfig: $self->{cwd}\n";
 	

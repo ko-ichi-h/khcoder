@@ -142,7 +142,7 @@ sub _sansyo{
 
 	if ($path){
 		$path = $self->gui_jg($path);
-		$::config_obj->os_path($path,'sjis');
+		$::config_obj->os_path($path);
 		$self->e1->delete('0','end');
 		$self->e1->insert(0,$self->gui_jchar($path));
 		#print "-1: $path\n";
