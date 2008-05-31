@@ -258,7 +258,7 @@ sub gui_get_exe{
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes => \@types,
 		-title => $self->gui_jchar("「$file」を開いてください"),
-		-initialdir => $::config_obj->cwd
+		-initialdir => $self->gui_jchar($::config_obj->cwd)
 	);
 
 	my $entry = $self->{$ent};

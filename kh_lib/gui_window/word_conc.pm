@@ -470,11 +470,11 @@ sub save{
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jchar('コンコーダンス（KWIC）検索の結果を保存'),
-		-initialdir       => $::config_obj->cwd
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
 	$self->{result_obj}->save_all(
-		path => $path,
+		path => $self->gui_jg($path),
 	) if $path;
 	
 	return 1;
