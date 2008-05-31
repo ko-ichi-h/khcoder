@@ -168,6 +168,7 @@ sub _sansyo{
 		-initialdir => $::config_obj->cwd
 	);
 	if ($path){
+		$path = gui_window->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->{e1}->delete('0','end');
 		$self->{e1}->insert(0,$path);
