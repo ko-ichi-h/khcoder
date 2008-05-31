@@ -473,8 +473,11 @@ sub save{
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
+	$path = $self->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	
 	$self->{result_obj}->save_all(
-		path => $self->gui_jg($path),
+		path => $path,
 	) if $path;
 	
 	return 1;

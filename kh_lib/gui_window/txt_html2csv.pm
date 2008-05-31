@@ -85,6 +85,7 @@ sub save{
 	
 	if ($path){
 		$path = gui_window->gui_jg($path);
+		$path = $::config_obj->os_path($path);
 		mysql_html2csv->exec(
 			tani => $self->tani,
 			file => $path,

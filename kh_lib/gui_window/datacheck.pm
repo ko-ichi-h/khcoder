@@ -155,6 +155,7 @@ sub save{
 		return 0;
 	}
 	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
 
 	# ÊİÂ¸
 	$self->{dacheck_obj}->save($path);
