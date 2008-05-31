@@ -47,7 +47,7 @@ sub save{
 	);
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.txt',
-		-initialdir       => $::config_obj->cwd,
+		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		-title            =>
 			$self->gui_jchar('「文書ｘ抽出語」表（表層語）：名前を付けて保存'),
 		-filetypes        =>
@@ -57,6 +57,8 @@ sub save{
 			],
 	);
 	return 0 unless $path;
+	$path = $self->gui_jg($path);
+	$path = $::config_obj->os_path($path);
 
 	# 実行確認
 	my $ans = $self->win_obj->messageBox(

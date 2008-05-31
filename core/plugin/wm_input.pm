@@ -165,13 +165,13 @@ sub _sansyo{
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),
-		-initialdir => $::config_obj->cwd
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	if ($path){
 		$path = gui_window->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->{e1}->delete('0','end');
-		$self->{e1}->insert(0,$path);
+		$self->{e1}->insert(0,gui_window->gui_jchar($path));
 	}
 }
 
