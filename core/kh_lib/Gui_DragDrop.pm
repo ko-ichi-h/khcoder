@@ -71,7 +71,7 @@ sub get_filename_droped{
 	
 	if (-e $filename) {
 		$widget->delete('0','end');
-		$widget->insert(0,$filename);
+		$widget->insert(0,gui_window->gui_jchar($filename));
 	}
 }
 

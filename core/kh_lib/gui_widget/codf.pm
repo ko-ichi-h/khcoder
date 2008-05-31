@@ -53,7 +53,7 @@ sub _new{
 		$self->{cfile} = $path;
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
 		$e1->configure(-state,'normal');
-		$e1->insert('0',"$path");
+		$e1->insert('0',gui_window->gui_jchar($path));
 		$e1->configure(-state,'disable');
 	} else {
 		$e1->configure(-state,'normal');
