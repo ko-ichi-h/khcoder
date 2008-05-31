@@ -22,6 +22,11 @@ sub read_CodeFile_droped{
 			);
 		}
 	};
+	
+	if ($] > 5.008){
+		utf8::decode($filename);
+	}
+	
 	if (-e $filename) {
 		$args{selected} = $filename;
 		my @args_for_code = %args;
@@ -59,6 +64,11 @@ sub get_filename_droped{
 			);
 		}
 	};
+	
+	if ($] > 5.008){
+		utf8::decode($filename);
+	}
+	
 	if (-e $filename) {
 		$widget->delete('0','end');
 		$widget->insert(0,$filename);
@@ -92,6 +102,11 @@ sub read_TextFile_droped{
 			);
 		}
 	};
+	
+	if ($] > 5.008){
+		utf8::decode($filename);
+	}
+	
 	if (-e $filename) {
 		open (DROPED,"$filename") or
 			gui_errormsg->open(

@@ -87,9 +87,9 @@ sub _drop{
 	if ($] > 5.008){
 		utf8::decode($path);
 	}
-	#else {
-	#	$path = gui_window->gui_jg($path);
-	#}
+	# else {
+	# 	$path = gui_window->gui_jg($path);
+	# }
 
 	$path = $::config_obj->os_cod_path($path);
 
@@ -111,12 +111,12 @@ sub _drop{
 #   参照ルーチン   #
 sub _sansyo{
 	my $self = shift;
-	
+
 	my @types = (
 		[ "coding rule files",[qw/.txt .cod/] ],
 		["All files",'*']
 	);
-	
+
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => gui_window->gui_jchar('コーディング・ルール・ファイルを選択してください'),
