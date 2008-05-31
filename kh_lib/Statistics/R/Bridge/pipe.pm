@@ -607,12 +607,12 @@
     my $icode = Jcode::getcode($process_r);
     $process_r = Jcode->new($process_r)->euc;
     $process_r =~ s/\\/\\\\/g ;
-    $process_r = Jcode->new($process_r)->$icode;
+    $process_r = Jcode->new($process_r)->$icode unless $icode eq 'ascii';
     
     my $pid_r = $this->{PID_R} ;
     $pid_r = Jcode->new($pid_r)->euc;
     $pid_r =~ s/\\/\\\\/g ;    
-    $pid_r = Jcode->new($pid_r)->$icode;
+    $pid_r = Jcode->new($pid_r)->$icode unless $icode eq 'ascii';
     
 	my $r_start_cmd;
 	$r_start_cmd .= "print(\"Statistics::R - Perl bridge started!\")\n\n";

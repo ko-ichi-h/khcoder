@@ -108,7 +108,7 @@ sub count{
 	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
 	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
 	$dir =~ tr/\\/\//;
-	$dir = Jcode->new($dir,'euc')->$icode;
+	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
 	
 	my $path1 = $dir.'words_TF_DF1';
 	my $path2 = $dir.'words_TF_DF2';

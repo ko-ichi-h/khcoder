@@ -133,9 +133,7 @@
     my $icode = Jcode::getcode($dir);
     $dir = Jcode->new($dir)->euc;
     $dir =~ s/\\/\//g ;
-    $dir = Jcode->new($dir)->$icode;
-    
-    print "$dir\n";
+    $dir = Jcode->new($dir)->$icode unless $icode eq 'ascii';
     
     my @files ;
     
