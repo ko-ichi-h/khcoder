@@ -27,11 +27,13 @@ sub save{
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jchar('「文書ｘ抽出語」表：名前を付けて保存'),
-		-initialdir       => $::config_obj->cwd
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	unless ($path){
 		return 0;
 	}
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
 	
 	my $ans = $self->win_obj->messageBox(
 		-message => $self->gui_jchar

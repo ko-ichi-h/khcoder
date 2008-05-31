@@ -298,15 +298,17 @@ sub get_path{
 		[ "text file",[qw/.txt/] ],
 		["All files",'*']
 	);
-	return $self->gui_jg(
-		$self->win_obj->getSaveFile(
+	
+	my $path = $self->win_obj->getSaveFile(
 			-defaultextension => '.txt',
 			-filetypes        => \@types,
 			-title            =>
 				$self->gui_jchar('部分テキストの取り出し：名前を付けて保存'),
-			-initialdir       => $::config_obj->cwd
-		)
+			-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	return $path;
 }
 
 

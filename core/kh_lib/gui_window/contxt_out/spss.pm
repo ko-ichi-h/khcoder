@@ -44,11 +44,13 @@ sub file_name{
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jchar('「抽出語ｘ文脈ベクトル」表：名前を付けて保存'),
-		-initialdir       => $::config_obj->cwd
+		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
 		return 0;
 	}
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
 	return $path;
 }
 

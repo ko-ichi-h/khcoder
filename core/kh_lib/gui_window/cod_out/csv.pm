@@ -26,11 +26,13 @@ sub _save{
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jchar('コーディング結果（CSV）：名前を付けて保存'),
-		-initialdir       => $::config_obj->cwd
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
 	# 保存を実行
 	if ($path){
+		$path = gui_window->gui_jg($path);
+		$path = $::config_obj->os_path($path);
 		my $result;
 		unless ( $result = kh_cod::func->read_file($self->cfile) ){
 			return 0;
