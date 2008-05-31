@@ -29,7 +29,7 @@ sub exec{
 
 	my $path = $mw->getSaveFile(        # Tkのファイル選択ダイアログ
 		-title            => gui_window->gui_jchar('メッセージの保存'),
-		-initialdir       => $::config_obj->cwd,
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 		-defaultextension => '.txt',
 		-filetypes        => [
 			[ gui_window->gui_jchar("テキストファイル"),'.txt' ],
@@ -41,15 +41,18 @@ sub exec{
 
 	return 0 unless length($path);
 
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+
 	#------------------------------#
 	#   出力するメッセージを作成   #
 
 	my $msg = '';
 	$msg .= '分析対象ファイル： ';
-	$msg .= $::project_obj->file_target;
+	$msg .= Jcode->new($::project_obj->file_target)->euc;
 	$msg .= "\n";
 	$msg .= 'メモ： ';
-	$msg .= $::project_obj->comment;
+	$msg .= Jcode->new($::project_obj->comment)->euc;
 	$msg .= "\n";
 	$msg .= '前処理： ';
 
@@ -114,7 +117,7 @@ sub _new{
 
 	# ラベルの表示(1)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' 出力ファイル： '.$args{path},'euc'),
+		-text => gui_window->gui_jchar(' 出力ファイル： '.Jcode->new($args{path})->euc),
 	)->pack(
 		-anchor => 'w'
 	);
