@@ -219,8 +219,19 @@
     
     my @lines = split(/(?:\r\n?|\n)/s , $data) ;
     
-    return @lines if wantarray ;
-    return join("\n", @lines) ;
+    my @lines2 = ();
+    foreach my $i (@lines){
+    	if (
+    		   $i =~ /\"input\.[0-9]+\.r\"/
+    		|| $i =~ /\"mark[0-9]+\"/
+    	){
+    		next;
+    	}
+    	push @lines2, $i;
+    }
+    
+    return @lines2 if wantarray ;
+    return join("\n", @lines2) ;
   }
   
   sub clean_log_dir { 
