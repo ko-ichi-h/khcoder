@@ -21,31 +21,33 @@ use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 $kh_version = "2.beta.12";
 
 BEGIN {
-	# Cwd.pmの上書き
-	sub Cwd::_win32_cwd {
-	    if (defined &DynaLoader::boot_DynaLoader) {
-		$ENV{'PWD'} = Win32::GetCwd();
-	    }
-	    else { # miniperl
-		chomp($ENV{'PWD'} = `cd`);
-	    }
-	    use Jcode;
-	    $ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
-	    $ENV{'PWD'} =~ s:\\:/:g ;
-	    $ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;
-	    #print "hoge\n";
-	    return $ENV{'PWD'};
-	};
-	*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = \&Cwd::_win32_cwd;
+	# Cwd.pmの上書き（Windows向け）
+	if ($^O eq 'MSWin32'){
+		sub Cwd::_win32_cwd {
+			if (defined &DynaLoader::boot_DynaLoader) {
+				$ENV{'PWD'} = Win32::GetCwd();
+			}
+			else { # miniperl
+				chomp($ENV{'PWD'} = `cd`);
+			}
+			use Jcode;
+			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
+			$ENV{'PWD'} =~ s:\\:/:g ;
+			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;
+			#print "hoge\n";
+			return $ENV{'PWD'};
+		};
+		*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = *Cwd::_NT_cwd = \&Cwd::_win32_cwd;
+	}
 
 	# モジュールのパスを追加
-	push @INC, &cwd.'/kh_lib';
-	push @INC, &cwd.'/plugin';
+	push @INC, cwd.'/kh_lib';
+	push @INC, cwd.'/plugin';
 
 	if ($^O eq 'MSWin32'){
+		# コンソールを最小化（Windows向け）
 		use Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
-		# コンソールを最小化
 		if (substr($PerlApp::VERSION,0,1) >= 7 ){
 			use Win32::API;
 			my $win = Win32::API->new(
@@ -67,7 +69,7 @@ BEGIN {
 				2
 			);
 		}
-		# スプラッシュ
+		# スプラッシュ（Windows向け）
 		require Tk::Splash;
 		$splash = Tk::Splash->Show(
 			Tk->findINC('kh_logo.bmp'),
@@ -78,6 +80,8 @@ BEGIN {
 	} else {
 		push @INC, cwd.'/dummy_lib';
 	}
+	
+	# 設定の読み込み
 	require kh_sysconfig;
 	$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);
 }
