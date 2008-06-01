@@ -235,13 +235,13 @@ sub os_path{
 	my $c     = shift;
 	my $icode = shift;
 
-	print "kh_sysconfig::win32::os_path[1]:  $c\n";
+	#print "kh_sysconfig::win32::os_path[1]:  $c\n";
 
 	$c = Jcode->new("$c",$icode)->euc;
 	$c =~ tr/\//\\/;
 	$c = Jcode->new("$c",'euc')->sjis;
 	
-	print "kh_sysconfig::win32::os_path[2]:  $c\n";
+	#print "kh_sysconfig::win32::os_path[2]:  $c\n";
 	
 	return $c;
 }
