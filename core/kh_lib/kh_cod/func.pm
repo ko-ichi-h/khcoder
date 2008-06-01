@@ -560,16 +560,18 @@ sub outtab{
 			#	print "input: $ret\n";
 			#}
 			
-			$::config_obj->R->send('print (chi$p.value)');
-			my $p = $::config_obj->R->read;
-			#print "p: $p :\n";
-			substr($p, 0, 4) = '';
-			if ($p < 0.01){
-				$ret_mod .= '**';
+			if ($ret_mod > 0){
+				$::config_obj->R->send('print (chi$p.value)');
+				my $p = $::config_obj->R->read;
+				substr($p, 0, 4) = '';
+				if ($p < 0.01){
+					$ret_mod .= '**';
+				}
+				elsif ($p < 0.05){
+					$ret_mod .= '*';
+				}
 			}
-			elsif ($p < 0.05){
-				$ret_mod .= '*';
-			}
+			
 			push @chisq, $ret_mod;
 		}
 		$::config_obj->R->unlock;
@@ -741,17 +743,19 @@ sub tab{
 			#	print "input: $ret\n";
 			#}
 			
-			print 'send: print (chi$p.value) ...' if $R_debug;
-			$::config_obj->R->send('print (chi$p.value)');
-			print "ok\n" if $R_debug;
-			my $p = $::config_obj->R->read(3);
-			print "read: $p\n" if $R_debug;
-			substr($p, 0, 4) = '';
-			if ($p < 0.01){
-				$ret_mod .= '**';
-			}
-			elsif ($p < 0.05){
-				$ret_mod .= '*';
+			if ($ret_mod > 0){
+				print 'send: print (chi$p.value) ...' if $R_debug;
+				$::config_obj->R->send('print (chi$p.value)');
+				print "ok\n" if $R_debug;
+				my $p = $::config_obj->R->read(3);
+				print "read: $p\n" if $R_debug;
+				substr($p, 0, 4) = '';
+				if ($p < 0.01){
+					$ret_mod .= '**';
+				}
+				elsif ($p < 0.05){
+					$ret_mod .= '*';
+				}
 			}
 			push @chisq, $ret_mod;
 		}
