@@ -199,8 +199,11 @@ sub _new{
 	$self->{ent_check2} = $cf2->Entry(
 		-font       => "TKFN",
 		-background => 'gray',
-		-state      => 'disable'
+		-foreground  => 'black',
+		-state      => 'disable',
 	)->pack(-side => 'left',-fill => 'x', -expand => '1');
+	$self->disabled_entry_configure($self->{ent_check2});
+
 
 	#------------------#
 	#   抽出語の選択   #
@@ -336,8 +339,11 @@ sub _new{
 	$self->{ent_check} = $cf->Entry(
 		-font       => "TKFN",
 		-background => 'gray',
+		-foreground  => 'black',
 		-state      => 'disable'
 	)->pack(-side => 'left',-fill => 'x', -expand => '1');
+	$self->disabled_entry_configure($self->{ent_check});
+
 
 	#----------------#
 	#   実行ボタン   #

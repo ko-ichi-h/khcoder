@@ -548,6 +548,7 @@ sub outtab{
 			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
 			$::config_obj->R->send($cmd);
 			my $ret = $::config_obj->R->read;
+			print "chi: $ret :\n";
 			unless (length($ret)){
 				push @chisq, '';
 				next;
@@ -557,6 +558,7 @@ sub outtab{
 			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
 			$::config_obj->R->send('print (chi$p.value)');
 			my $p = $::config_obj->R->read;
+			print "p: $p :\n";
 			substr($p, 0, 4) = '';
 			if ($p < 0.01){
 				$ret .= '**';
