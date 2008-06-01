@@ -548,25 +548,29 @@ sub outtab{
 			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
 			$::config_obj->R->send($cmd);
 			my $ret = $::config_obj->R->read;
-			print "chi: $ret :\n";
+			#print "chi: $ret :\n";
 			unless (length($ret)){
 				push @chisq, '';
 				next;
 			}
-
 			chop $ret;
-			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			my $ret_mod = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			
+			#if ($ret_mod == 0){
+			#	print "input: $ret\n";
+			#}
+			
 			$::config_obj->R->send('print (chi$p.value)');
 			my $p = $::config_obj->R->read;
-			print "p: $p :\n";
+			#print "p: $p :\n";
 			substr($p, 0, 4) = '';
 			if ($p < 0.01){
-				$ret .= '**';
+				$ret_mod .= '**';
 			}
 			elsif ($p < 0.05){
-				$ret .= '*';
+				$ret_mod .= '*';
 			}
-			push @chisq, $ret;
+			push @chisq, $ret_mod;
 		}
 		$::config_obj->R->unlock;
 		push @chisq, ' ';
@@ -731,7 +735,12 @@ sub tab{
 			}
 
 			chop $ret;
-			$ret = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			my $ret_mod = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
+			
+			#if ($ret_mod == 0){
+			#	print "input: $ret\n";
+			#}
+			
 			print 'send: print (chi$p.value) ...' if $R_debug;
 			$::config_obj->R->send('print (chi$p.value)');
 			print "ok\n" if $R_debug;
@@ -739,12 +748,12 @@ sub tab{
 			print "read: $p\n" if $R_debug;
 			substr($p, 0, 4) = '';
 			if ($p < 0.01){
-				$ret .= '**';
+				$ret_mod .= '**';
 			}
 			elsif ($p < 0.05){
-				$ret .= '*';
+				$ret_mod .= '*';
 			}
-			push @chisq, $ret;
+			push @chisq, $ret_mod;
 		}
 		$::config_obj->R->unlock;
 		push @chisq, ' ';
