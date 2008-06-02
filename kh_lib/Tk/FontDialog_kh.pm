@@ -2,7 +2,7 @@
 # -*- perl -*-
 
 #
-# $Id: FontDialog_kh.pm,v 1.4 2008-06-02 15:16:33 ko-ichi Exp $
+# $Id: FontDialog_kh.pm,v 1.5 2008-06-02 15:22:52 ko-ichi Exp $
 # Author: Slaven Rezic
 #
 # Copyright (C) 1998,1999,2003,2004,2005 Slaven Rezic. All rights reserved.
@@ -480,6 +480,7 @@ sub InsertFamilies {
 	my $famlb = $w->Subwidget('family_list');
 	$famlb->delete('all');
 
+	# Win9x & Perl/Tk 804—p‚Ì“ÁŽêˆ—
 	my $flg = 0;
 	if (
 		        ( $] > 5.008 )

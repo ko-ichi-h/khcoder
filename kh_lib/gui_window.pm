@@ -187,7 +187,7 @@ sub gui_jm{ # メニューのトップ部分用日本語
 	}
 }
 
-sub gui_jt{ # Windowタイトル部分の日本語
+sub gui_jt{ # Windowタイトル部分の日本語 （Win9x & Perl/Tk 804用の特殊処理）
 	my $char = $_[1];
 	my $code = $_[2];
 	

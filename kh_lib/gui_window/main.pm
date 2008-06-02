@@ -67,6 +67,7 @@ sub make_font{
 	my $self = shift;
 	my @font = split /,/, $::config_obj->font_main;
 
+	# Win9x & Perl/Tk 804用の特殊処理
 	my $flg = 0;
 	if (
 		        ( $] > 5.008 )

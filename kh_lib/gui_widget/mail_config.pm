@@ -148,16 +148,17 @@ sub font_change{
 	)->Show;
 	return unless $font;
 
-	print "1: ", $font->configure(-family), "\n";
+	#print "1: ", $font->configure(-family), "\n";
 
-	#my $font_conf = $font->configure(-family);
+	my $font_conf = $font->configure(-family);
 	
+	# Win9x & Perl/Tk 804用の特殊処理
 	if (
 		        ( $] > 5.008 )
 		and     ( $^O eq 'MSWin32' )
 		and not ( Win32::IsWinNT() )
 	){
-		#utf8::encode($font_conf);
+		# 変換なし
 	} else {
 		$font_conf = gui_window->gui_jg($font_conf);
 	}
