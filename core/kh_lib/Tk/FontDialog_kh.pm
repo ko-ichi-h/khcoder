@@ -2,7 +2,7 @@
 # -*- perl -*-
 
 #
-# $Id: FontDialog_kh.pm,v 1.3 2008-03-20 14:42:52 ko-ichi Exp $
+# $Id: FontDialog_kh.pm,v 1.4 2008-06-02 15:16:33 ko-ichi Exp $
 # Author: Slaven Rezic
 #
 # Copyright (C) 1998,1999,2003,2004,2005 Slaven Rezic. All rights reserved.
@@ -479,6 +479,16 @@ sub InsertFamilies {
 	my $curr_size = $fa{'-size'};
 	my $famlb = $w->Subwidget('family_list');
 	$famlb->delete('all');
+
+	my $flg = 0;
+	if (
+		        ( $] > 5.008 )
+		and     ( $^O eq 'MSWin32' )
+		and not ( Win32::IsWinNT() )
+	){
+		$flg = 1;
+	}
+
 	my @fam = sort $w->fontFamilies;
 	my $bg = $w->cget(-subbg);
 	my $i = 0;
@@ -494,7 +504,15 @@ sub InsertFamilies {
 	       ($nicefont ? (-font => "{$fam} $curr_size") : ()),
 	       -background => $bg,
 	      );
-	    $famlb->add($i, -text => $u_fam, -style => $f_style);
+	    $famlb->add(
+	    	$i,
+	    	-text  =>
+	    		($flg ? 
+	    			(gui_window->gui_jchar($u_fam,'sjis')) : ($u_fam)
+	    		),
+	    	-style => $f_style,
+	    );
+	    #print gui_window->gui_jchar($u_fam), "\n";
 	    if ($curr_family eq $fam) {
 		$famlb->selectionSet($i);
 		$famlb->anchorSet($i);

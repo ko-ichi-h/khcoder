@@ -27,7 +27,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $self->{win_obj};
-	$bunhyojiwin->title($self->gui_jchar('文書表示'));
+	$bunhyojiwin->title($self->gui_jt('文書表示'));
 
 	my $srtxt = $bunhyojiwin->Scrolled(
 		"ROText",

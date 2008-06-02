@@ -10,7 +10,7 @@ sub wrap{
 	
 	my $self = shift;
 	my $line = 1;
-	my $wrap = $::config_obj->DocView_WrapLength_on_Win9x;
+	my $wrap = int($::config_obj->DocView_WrapLength_on_Win9x / 2);
 	my $wrap2;
 	my $sjis = q{
 		  [\x00-\x7F]

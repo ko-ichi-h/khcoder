@@ -20,7 +20,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar($self->label));
+	$win->title($self->gui_jt($self->label));
 
 	my $lf = $win->LabFrame(
 		-label => 'Option',

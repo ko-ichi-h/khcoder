@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar('部分テキストの取り出し'));
+	$win->title($self->gui_jt('部分テキストの取り出し'));
 	#$self->{win_obj} = $win;
 
 	#----------------------#

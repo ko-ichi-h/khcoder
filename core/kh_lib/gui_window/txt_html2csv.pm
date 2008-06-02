@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar('CSV形式のテキストファイルを作成'));
+	$win->title($self->gui_jt('CSV形式のテキストファイルを作成'));
 	
 	#$self->{win_obj} = $win;
 

@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar('コーディング・章 節 段落ごとの集計'));
+	$win->title($self->gui_jt('コーディング・章 節 段落ごとの集計'));
 	
 	#------------------------#
 	#   オプション入力部分   #

@@ -17,7 +17,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar($self->win_label));
+	$win->title($self->gui_jt($self->win_label));
 
 	my $lf = $win->LabFrame(
 		-label => 'Entry',

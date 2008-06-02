@@ -14,7 +14,7 @@ sub _new{
 	my $win = $self->{win_obj};
 	#$win->focus;
 	$win->grab;
-	$win->title($self->gui_jchar('コロケーション統計 フィルタ設定'));
+	$win->title($self->gui_jt('コロケーション統計 フィルタ設定'));
 	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);

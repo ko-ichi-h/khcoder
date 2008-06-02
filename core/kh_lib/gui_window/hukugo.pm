@@ -10,7 +10,7 @@ use Tk;
 sub _new{
 	my $self = shift;
 	$self->{win_obj}->title(
-		$self->gui_jchar('複合語の検出（茶筌）','euc')
+		$self->gui_jt('複合語の検出（茶筌）','euc')
 	);
 
 	# エントリと検索ボタンのフレーム

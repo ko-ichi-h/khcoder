@@ -156,7 +156,7 @@ sub refresh{
 			$title = $::project_obj->file_short_name;
 		}
 		$title .= ' - KH Coder';
-		$mw->title(gui_window->gui_jchar($title));
+		$mw->title(gui_window->gui_jt($title));
 		$self->entry('e_curent_project', gui_window->gui_jchar($::project_obj->file_short_name));
 		$self->entry('e_project_memo', gui_window->gui_jchar($::project_obj->comment));
 		

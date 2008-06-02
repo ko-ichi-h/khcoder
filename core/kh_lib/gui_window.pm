@@ -148,6 +148,8 @@ sub gui_jchar{ # GUI表示用の日本語
 	my $code = $_[2];
 	
 	if ( $] > 5.008 ) {
+		#return $char if utf8::is_utf8($char);
+		
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
 		$code = 'euc-jp'   if $code eq 'euc';
@@ -176,6 +178,35 @@ sub gui_jm{ # メニューのトップ部分用日本語
 	}
 	elsif ($] > 5.008){
 		return Jcode->new($char,$code)->sjis;
+	} else {
+		if ($code eq 'sjis'){
+			return $char;
+		} else {
+			return Jcode->new($char,$code)->sjis;
+		}
+	}
+}
+
+sub gui_jt{ # Windowタイトル部分の日本語
+	my $char = $_[1];
+	my $code = $_[2];
+	
+	if ( $] > 5.008 ) {
+		$code = Jcode->new($char)->icode unless $code;
+		# print "$char : $code\n";
+		$code = 'euc-jp'   if $code eq 'euc';
+		$code = 'cp932' if $code eq 'sjis';
+		$code = 'cp932' if $code eq 'shiftjis';
+		$code = 'euc-jp' unless length($code);
+		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+			if ($code eq 'sjis'){
+				return $char;
+			} else {
+				return Jcode->new($char,$code)->sjis;
+			}
+		} else {
+			return Encode::decode($code,$char);
+		}
 	} else {
 		if ($code eq 'sjis'){
 			return $char;

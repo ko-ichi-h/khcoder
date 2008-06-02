@@ -7,7 +7,7 @@ use gui_jchar;
 # Windowを開く
 sub _new{
 	my $self = shift;
-	$self->{win_obj}->title($self->gui_jchar('TermExtractの著作権について','euc'));;
+	$self->{win_obj}->title($self->gui_jt('TermExtractの著作権について','euc'));;
 
 	$self->{win_obj}->Label(
 		-text => $self->gui_jchar('専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc'),

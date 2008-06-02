@@ -25,7 +25,7 @@ sub __new{
 
 #	$inis->focus;
 	$inis->grab;
-	$inis->title($self->gui_jchar('KH Coderの設定'));
+	$inis->title($self->gui_jt('KH Coderの設定'));
 
 	my $lfra = $inis->LabFrame(
 		-label => 'ChaSen',

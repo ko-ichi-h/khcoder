@@ -16,7 +16,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jchar("変数詳細： "."$args{name}"));
+	$wmw->title($self->gui_jt("変数詳細： "."$args{name}"));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Variables',

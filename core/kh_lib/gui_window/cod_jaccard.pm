@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar('コーディング・コード間関連'));
+	$win->title($self->gui_jt('コーディング・コード間関連'));
 	
 	#------------------------#
 	#   オプション入力部分   #

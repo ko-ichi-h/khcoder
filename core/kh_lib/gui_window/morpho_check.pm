@@ -14,7 +14,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jchar('語の抽出結果'));
+	$wmw->title($self->gui_jt('語の抽出結果'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',

@@ -16,7 +16,7 @@ sub _new{
 	$self->{parent} = $args{parent};
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar('強調する言葉'));
+	$win->title($self->gui_jt('強調する言葉'));
 
 	# リスト用フレーム
 	my $lf = $win->LabFrame(
