@@ -13,7 +13,7 @@ sub _new{
 	my $self = shift;
 
 	my $mw = $self->{win_obj};
-	$mw->title($self->gui_jchar('新規プロジェクト','euc'));
+	$mw->title($self->gui_jt('新規プロジェクト','euc'));
 	#$self->{win_obj} = $mw;
 	my $lfra = $mw->LabFrame(-label => 'Entry',-labelside => 'acrosstop',
 		-borderwidth => 2,)

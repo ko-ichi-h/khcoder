@@ -20,7 +20,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jchar('Ãê½Ğ¸ì¸¡º÷'));
+	$wmw->title($self->gui_jt('Ãê½Ğ¸ì¸¡º÷'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',

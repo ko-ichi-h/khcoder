@@ -13,7 +13,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
-	$win->title($self->gui_jchar('出現回数と文書数'));
+	$win->title($self->gui_jt('出現回数と文書数'));
 
 	$self->{photo} = $win->Label(
 		-image => $win->Photo(-file => $self->{images}[1]),

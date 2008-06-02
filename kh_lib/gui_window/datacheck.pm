@@ -14,7 +14,7 @@ sub _new{
 
 	my $mw = $self->win_obj;
 
-	$mw->title( $self->gui_jchar('分析対象ファイルのチェックと修正','euc') );
+	$mw->title( $self->gui_jt('分析対象ファイルのチェックと修正','euc') );
 
 	my $fr_res = $mw->LabFrame(
 		-label       => 'Results & Messages',

@@ -18,7 +18,7 @@ sub _new{
 	
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jchar('分析に使用する語の取捨選択'));
+	$wmw->title($self->gui_jt('分析に使用する語の取捨選択'));
 	
 	my $base = $wmw->Frame()->pack(-expand => '1', -fill => 'both');
 

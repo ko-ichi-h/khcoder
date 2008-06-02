@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar('追加条件：コンコーダンス（KWIC）'));
+	$win->title($self->gui_jt('追加条件：コンコーダンス（KWIC）'));
 	#$self->{win_obj} = $win;
 
 	$win->Label(

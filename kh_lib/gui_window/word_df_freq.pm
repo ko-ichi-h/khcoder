@@ -11,7 +11,7 @@ sub _new{
 	my $wmw= $self->{win_obj};
 	#$self->{win_obj} = $wmw;
 	#$wmw->focus;
-	$wmw->title($self->gui_jchar('文書数：分布'));
+	$wmw->title($self->gui_jt('文書数：分布'));
 	
 	$wmw->Label(
 		-text => $self->gui_jchar('■記述統計'),

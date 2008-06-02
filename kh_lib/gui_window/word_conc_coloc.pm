@@ -15,7 +15,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$self->{win_obj} = $wmw;
-	$wmw->title($self->gui_jchar('コロケーション統計'));
+	$wmw->title($self->gui_jt('コロケーション統計'));
 	
 	# Nord Wordの情報表示部分
 	

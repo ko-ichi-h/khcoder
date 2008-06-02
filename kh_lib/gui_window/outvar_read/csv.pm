@@ -56,7 +56,7 @@ sub file_label{
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jchar('外部変数の読み込み： CSVファイル');
+	return $self->gui_jt('外部変数の読み込み： CSVファイル');
 }
 
 sub win_name{

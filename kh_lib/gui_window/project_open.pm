@@ -19,7 +19,7 @@ sub _new{
 	#$self->{win_obj} = $few;
 	#$few->focus;
 	#$few->grab;
-	$few->title($self->gui_jchar('プロジェクト・マネージャ'));
+	$few->title($self->gui_jt('プロジェクト・マネージャ'));
 
 	# リスト作成
 	my $plis = $few->Scrolled(

@@ -54,7 +54,7 @@ sub file_label{
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jchar('外部変数の読み込み： タブ区切り');
+	return $self->gui_jt('外部変数の読み込み： タブ区切り');
 }
 
 sub win_name{

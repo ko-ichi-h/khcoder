@@ -17,7 +17,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar('文書検索'));
+	$win->title($self->gui_jt('文書検索'));
 	
 	#--------------------#
 	#   検索オプション   #

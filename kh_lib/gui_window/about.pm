@@ -13,7 +13,8 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $self->{win_obj};
 	#$wabtkh->resizable(0, 0);
-	$wabtkh->title($self->gui_jchar('KH Coderについて','euc'));
+
+	$wabtkh->title($self->gui_jt('KH Coderについて','euc'));
 
 	$wabtkh->Label(
 		-image => $wabtkh->Photo(-file => $::config_obj->logo_image_file),

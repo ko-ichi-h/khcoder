@@ -67,6 +67,15 @@ sub make_font{
 	my $self = shift;
 	my @font = split /,/, $::config_obj->font_main;
 
+	my $flg = 0;
+	if (
+		        ( $] > 5.008 )
+		and     ( $^O eq 'MSWin32' )
+		and not ( Win32::IsWinNT() )
+	){
+		$flg = 1;
+	}
+
 	if ($Tk::VERSION < 804 && $::config_obj->os eq 'linux'){
 		$self->mw->fontCreate('TKFN',
 			-compound => [
@@ -76,7 +85,9 @@ sub make_font{
 		);
 	} else {
 		$self->mw->fontCreate('TKFN',
-			-family => $self->gui_jchar($font[0]),
+			-family => (
+				$flg ? Jcode->new($font[0])->sjis : $self->gui_jchar($font[0])
+			),
 			-size   => $font[1],
 		);
 	}

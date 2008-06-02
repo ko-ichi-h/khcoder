@@ -12,7 +12,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jchar('コーディング・外部変数とのクロス集計'));
+	$win->title($self->gui_jt('コーディング・外部変数とのクロス集計'));
 	
 	#------------------------#
 	#   オプション入力部分   #

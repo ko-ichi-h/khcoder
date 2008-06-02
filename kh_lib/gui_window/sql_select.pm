@@ -22,7 +22,7 @@ sub _new{
 
 	my $self = shift;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jchar('SQL文の実行'));
+	$win->title($self->gui_jt('SQL文の実行'));
 	#$self->{win_obj} = $win;
 
 	my $lf = $win->LabFrame(

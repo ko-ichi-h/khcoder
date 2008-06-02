@@ -30,7 +30,7 @@ sub __new{
 
 #	$inis->focus;
 #	$inis->grab;
-	$inis->title( $self->gui_jchar('KH Coderの設定','euc') );
+	$inis->title( $self->gui_jt('KH Coderの設定','euc') );
 	my $lfra = $inis->LabFrame(
 		-label => 'ChaSen',
 		-labelside => 'acrosstop',

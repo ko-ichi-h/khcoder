@@ -16,7 +16,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 
-	$win->title($self->gui_jchar('出現回数：分布：プロット','euc'));
+	$win->title($self->gui_jt('出現回数：分布：プロット','euc'));
 	
 	#print "image: $args{images}->[1]\n";
 	

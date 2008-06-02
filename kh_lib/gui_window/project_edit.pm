@@ -18,7 +18,7 @@ sub _new{
 	$npro->focus();
 	$npro->grab();
 
-	$npro->title( $self->gui_jchar('説明（メモ）の編集') );
+	$npro->title( $self->gui_jt('説明（メモ）の編集') );
 
 	# $self->{win_obj} = $npro;
 

@@ -10,7 +10,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $self->{win_obj};
-	$bunhyojiwin->title($self->gui_jchar('語の抽出結果：詳細'));
+	$bunhyojiwin->title($self->gui_jt('語の抽出結果：詳細'));
 
 	$self->{list} = $bunhyojiwin->Scrolled(
 		'HList',
