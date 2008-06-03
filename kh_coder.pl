@@ -46,10 +46,10 @@ BEGIN {
 
 	if ($^O eq 'MSWin32'){
 		# コンソールを最小化（Windows向け）
-		use Win32::Console;
+		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
 		if (substr($PerlApp::VERSION,0,1) >= 7 ){
-			use Win32::API;
+			require Win32::API;
 			my $win = Win32::API->new(
 				'user32.dll',
 				'FindWindow',
