@@ -31,7 +31,7 @@ sub read{
 	while (my $r = $st->fetch){
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => Jcode->new($r->[0])->sjis,
+				target  => $::config_obj->os_path($r->[0]),
 				comment => $r->[1],
 				dbname  => $r->[2]
 			);
