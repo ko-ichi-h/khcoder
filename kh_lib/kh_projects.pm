@@ -92,16 +92,16 @@ sub add_new{
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
-	$sql .= "'".$new->file_target."',";
+	$sql .= "'".Jcode->new($new->file_target)->euc."',";
 	if ($new->comment){
-		$sql .= "'".$new->comment."',";
+		$sql .= "'".Jcode->new($new->comment)->euc."',";
 	} else {
 		$sql .= "'no description',";
 		$new->comment('no description');
 	}
 	$sql .= "'".$new->dbname."'";
 	$sql .= ')';
-	$sql = Jcode->new($sql)->euc;
+	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 
 	return 1;
