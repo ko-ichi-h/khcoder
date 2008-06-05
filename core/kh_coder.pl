@@ -79,6 +79,8 @@ BEGIN {
 		);
 	} else {
 		push @INC, cwd.'/dummy_lib';
+		require Tk::FBox;
+		require Tk::FBox_kh;
 	}
 	
 	# 設定の読み込み
