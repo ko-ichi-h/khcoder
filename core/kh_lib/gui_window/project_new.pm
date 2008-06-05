@@ -130,7 +130,7 @@ sub _sansyo{
 		["All files",'*']
 	);
 
-	print $::config_obj->cwd, "\n";
+	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),

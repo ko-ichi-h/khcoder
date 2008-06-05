@@ -44,8 +44,9 @@ BEGIN {
 	push @INC, cwd.'/kh_lib';
 	push @INC, cwd.'/plugin';
 
+	# for Windows
 	if ($^O eq 'MSWin32'){
-		# コンソールを最小化（Windows向け）
+		# コンソールを最小化
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
 		if (substr($PerlApp::VERSION,0,1) >= 7 ){
@@ -69,7 +70,7 @@ BEGIN {
 				2
 			);
 		}
-		# スプラッシュ（Windows向け）
+		# スプラッシュ
 		require Tk::Splash;
 		$splash = Tk::Splash->Show(
 			Tk->findINC('kh_logo.bmp'),
@@ -77,12 +78,16 @@ BEGIN {
 			109,
 			'',
 		);
-	} else {
+	} 
+	# for Linux & Others
+	else {
 		push @INC, cwd.'/dummy_lib';
-		require Tk::FBox;
-		require Tk::FBox_kh;
+		if ($] > 5.008){
+			require Tk::FBox;
+			require Tk::FBox_kh;
+		}
 	}
-	
+
 	# 設定の読み込み
 	require kh_sysconfig;
 	$config_obj = kh_sysconfig->readin('./config/coder.ini',&cwd);

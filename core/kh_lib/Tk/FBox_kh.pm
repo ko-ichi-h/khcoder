@@ -39,7 +39,9 @@ require Tk::Toplevel;
 use strict;
 use vars qw($VERSION $updirImage $folderImage $fileImage);
 
-#$VERSION = sprintf '4.%03d', q$Revision: 1.1 $ =~ /\D(\d+)\s*$/;
+my $debug_kh = 0; 
+
+#$VERSION = sprintf '4.%03d', q$Revision: 1.2 $ =~ /\D(\d+)\s*$/;
 $VERSION = '4.019';
 
 use base qw(Tk::Toplevel);
@@ -410,7 +412,7 @@ sub Update {
 	# should have been checked before tkFDialog_Update is called, so
 	# we normally won't come to here. Anyways, give an error and abort
 	# action.
-	print "Tk::Fbox::Update3: ", $w->_get_select_path, "\n";
+	print "Tk::Fbox::Update3: ", $w->_get_select_path, "\n" if $debug_kh;
 	$w->messageBox(-type => 'OK',
 		       -message => 'Cannot change to the directory "' .
 		       $w->_get_select_path . "\".\nPermission denied.",
@@ -443,9 +445,9 @@ sub Update {
 	if (ref $flt eq 'CODE') {
 	    $fltcb = $flt;
 	} else {
-	    print "Tk::FBox::Update0a: $flt\n";
+	    print "Tk::FBox::Update0a: $flt\n" if $debug_kh;
 	    $flt = _rx_to_glob($flt);
-	    print "Tk::FBox::Update0b: $flt\n";
+	    print "Tk::FBox::Update0b: $flt\n" if $debug_kh;
 	}
 	my $type_dir = $w->cget(-type) eq 'dir';
 	foreach my $f (sort $sortcmd readdir(FDIR)) {
@@ -457,7 +459,7 @@ sub Update {
 		next if !-d $f && $f !~ m!$flt!;
 	    }
 
-		print "Tk::FBox::Update1: $f\n";
+		print "Tk::FBox::Update1: $f\n" if $debug_kh;
 		my $f_gui = $w->_decode_filename($f);
 
 	    if (-d $f) {
@@ -470,7 +472,7 @@ sub Update {
 	$icons->Add($file, @files);
     }
 
-    print "Tk::FBox::Update: chk0\n";
+    print "Tk::FBox::Update: chk0\n" if $debug_kh;
     $icons->Arrange;
 
     # Update the Directory: option menu
@@ -478,12 +480,12 @@ sub Update {
     my $dir = '';
     foreach my $subdir (TclFileSplit($w->_get_select_path)) {
 	$dir = TclFileJoin($dir, $subdir);
-	print "Tk::FBox::Update::TclFileSplit: $dir\n";
+	print "Tk::FBox::Update::TclFileSplit: $dir\n" if $debug_kh;
 	push @list, $w->_decode_filename($dir);
     }
     my $dirMenu = $w->{'dirMenu'};
     $dirMenu->configure(-options => \@list);
-    print "Tk::FBox::Update: chk1\n";
+    print "Tk::FBox::Update: chk1\n" if $debug_kh;
 
     # Restore the PWD to the application's PWD
     ext_chdir($appPWD);
@@ -492,7 +494,7 @@ sub Update {
     if ($w->cget(-type) eq 'save') {
 	$w->{'okBtn'}->configure(-text => 'Save');
     }
-    print "Tk::FBox::Update: chk2\n";
+    print "Tk::FBox::Update: chk2\n" if $debug_kh;
 
     # turn off the busy cursor.
     $ent->configure(-cursor => $entCursor);
@@ -526,7 +528,7 @@ sub SetPath {
 	$w->{'selectPath'} = $new_path;
     }
 
-    print "Tk::FBox::SetPath: $w->{'selectPath'}\n";
+    print "Tk::FBox::SetPath: $w->{'selectPath'}\n" if $debug_kh;
     $w->UpdateWhenIdle;
 }
 
@@ -826,12 +828,12 @@ sub OkCmd {
     $filename = "" if !defined $filename;
     if ($w->cget('-type') eq 'dir' && $from ne "iconlist") {
 	my $file = $filename eq '' ? $w->_get_select_path : JoinFile($w->_get_select_path, $filename);
-	print "Tk::FBox::OkCmd: a: $file\n";
+	print "Tk::FBox::OkCmd: a: $file\n" if $debug_kh;
 	$w->Done($file);
     } elsif ((@$filenames && !$w->cget('-multiple')) ||
 	($w->cget('-multiple') && @$filenames == 1)) {
 	my $file = JoinFile($w->_get_select_path, $filename);
-	print "Tk::FBox::OkCmd: b: $file\n";
+	print "Tk::FBox::OkCmd: b: $file\n" if $debug_kh;
 	if (-d $file) {
 	    $w->ListInvoke($filename);
 	    return;
@@ -864,12 +866,7 @@ sub ListBrowse {
 	my $newtext = [];
 	for my $file (@$text) {
 	    my $fullfile = JoinFile($w->_get_select_path, $file);
-	    print "Tk::Fbox::ListBrowse0a1: $fullfile, $file\n";       # kh
-	    #$fullfile = gui_window->gui_jg($fullfile);                 # kh
-	    #$fullfile = $::config_obj->os_path($fullfile);             # kh
-	    #$file = gui_window->gui_jg($file);                         # kh
-	    #$file = $::config_obj->os_path($file);                     # kh
-	    #print "Tk::Fbox::ListBrowse0a2: $fullfile, $file\n";       # kh
+	    print "Tk::Fbox::ListBrowse0a1: $fullfile, $file\n" if $debug_kh;
 	    if (!-d $fullfile) {
 		push @$newtext, $file;
 	    }
@@ -878,10 +875,7 @@ sub ListBrowse {
 	$isDir = 0;
     } else {
 	my $file = JoinFile($w->_get_select_path, $text->[0]);
-	print "Tk::Fbox::ListBrowse0b1: $file\n";                       # kh
-	#$file = gui_window->gui_jg($file);                              # kh
-	#$file = $::config_obj->os_path($file);                          # kh
-	#print "Tk::Fbox::ListBrowse0b2: $file\n";                       # kh
+	print "Tk::Fbox::ListBrowse0b1: $file\n" if $debug_kh;
 	$isDir = -d $file;
     }
     my $ent = $w->{'ent'};
@@ -889,9 +883,9 @@ sub ListBrowse {
     if (!$isDir) {
 
 	my $t_gui = $text->[0]; # 複数ファイル選択には未対応
-	print "Tk::Fbox::ListBrowse: 1: $t_gui\n";
+	print "Tk::Fbox::ListBrowse: 1: $t_gui\n" if $debug_kh;
 	$t_gui = $w->_decode_filename($t_gui) unless utf8::is_utf8($t_gui);
-	print "Tk::Fbox::ListBrowse: 1: $t_gui\n";
+	print "Tk::Fbox::ListBrowse: 1: $t_gui\n" if $debug_kh;
 
 	$ent->delete(qw(0 end));
 	$ent->insert(0, $t_gui); # XXX quote!
@@ -913,18 +907,18 @@ sub ListInvoke {
     my($w, @filenames) = @_;
     return if !@filenames;
     my $file = JoinFile($w->_get_select_path, $filenames[0]);
-    print "Tk::FBox::ListInvoke: $file\n";
+    print "Tk::FBox::ListInvoke: $file\n" if $debug_kh;
     if (-d $file) {
 	my $appPWD = _cwd();
 	if (!ext_chdir($file)) {
-	    print "Tk::FBox::ListInvoke: a\n";
+	    print "Tk::FBox::ListInvoke: a\n" if $debug_kh;
 	    $w->messageBox(-type => 'OK',
 			   -message => "Cannot change to the directory \"$file\".\nPermission denied.",
 			   -icon => 'warning');
 	} else {
-	    print "Tk::FBox::ListInvoke: b0\n";
+	    print "Tk::FBox::ListInvoke: b0\n" if $debug_kh;
 	    ext_chdir($appPWD);
-	    print "Tk::FBox::ListInvoke: b1\n";
+	    print "Tk::FBox::ListInvoke: b1\n" if $debug_kh;
 	    $w->SetPath($file);
 	}
     } else {
@@ -1108,17 +1102,17 @@ sub _get_select_path {
 
 sub _encode_filename {
     my($w, $filename) = @_;
-    print "Tk::FBox::_encode_filename0: $filename\n";
+    print "Tk::FBox::_encode_filename0: $filename\n" if $debug_kh;
     $filename = $w->{encoding}->encode($filename);
-    print "Tk::FBox::_encode_filename1: $filename\n";
+    print "Tk::FBox::_encode_filename1: $filename\n" if $debug_kh;
     $filename;
 }
 
 sub _decode_filename {
     my($w, $filename) = @_;
-    print "Tk::FBox::_decode_filename0: $filename\n";
+    print "Tk::FBox::_decode_filename0: $filename\n" if $debug_kh;
     $filename = $w->{encoding}->decode($filename);
-    print "Tk::FBox::_decode_filename1: $filename\n";
+    print "Tk::FBox::_decode_filename1: $filename\n" if $debug_kh;
     $filename;
 }
 
