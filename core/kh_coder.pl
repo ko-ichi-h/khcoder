@@ -21,8 +21,9 @@ use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 $kh_version = "2.beta.12";
 
 BEGIN {
-	# Cwd.pmの上書き（Windows向け）
+	# for Windows [1]
 	if ($^O eq 'MSWin32'){
+		# Cwd.pmの上書き
 		sub Cwd::_win32_cwd {
 			if (defined &DynaLoader::boot_DynaLoader) {
 				$ENV{'PWD'} = Win32::GetCwd();
@@ -44,7 +45,7 @@ BEGIN {
 	push @INC, cwd.'/kh_lib';
 	push @INC, cwd.'/plugin';
 
-	# for Windows
+	# for Windows [2]
 	if ($^O eq 'MSWin32'){
 		# コンソールを最小化
 		require Win32::Console;
