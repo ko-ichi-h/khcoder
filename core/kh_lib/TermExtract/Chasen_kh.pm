@@ -52,16 +52,23 @@ sub get_noun_frq {
         @$terms  = ();
     };
 
+    # 入力が常にファイルと仮定し、大規模ファイルにも対応できるよう、ファイル
+    # 内容を1行ずつ読み込んで処理するように変更（樋口耕一 2008 02/05）
+    # print "TermExtract::Chasen Over-writed! (kh)\n";
+
     # 入力がファイルの場合
-    if ($mode ne 'var') {
-        local($/) = undef;
-        open (IN, $data) || die "Can not open input file. $!";
-        $data = <IN>;
-        close IN;
-    }
+    #if ($mode ne 'var') {                                       # higuchi
+    #    local($/) = undef;                                      # higuchi
+    #    open (IN, $data) || die "Can not open input file. $!";  # higuchi
+    #    $data = <IN>;                                           # higuchi
+    #    close IN;                                               # higuchi
+    #}                                                           # higuchi
 
     # 単名詞の連結処理
-    foreach my $morph ((split "\n", $data)) {
+    # foreach my $morph ((split "\n", $data)) {                  # higuchi
+    open (IN, $data) || die "Can not open input file. $!";       # higuchi
+    while (<IN>){                                                # higuchi
+        my $morph = $_;                                          # higuchi
         chomp $morph;
 	    my ($noun, $part_of_speach) = (split(/\t/, $morph))[0,3];
         $part_of_speach = "" unless defined $part_of_speach;  # 品詞
@@ -140,6 +147,7 @@ sub get_noun_frq {
         @terms = () if $must;
         $must = 0;
     }
+    close IN;                                                    # higuchi
 
     return \%cmp_noun_list;
 }

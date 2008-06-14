@@ -188,8 +188,9 @@ sub make{
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $found = 1;;
-					eval "require TermExtract::Calc_Imp" or $found = 0;
-					eval "require TermExtract::Chasen"   or $found = 0;
+					eval "require TermExtract::Calc_Imp"  or $found = 0;
+					eval "require TermExtract::Chasen"    or $found = 0;
+					eval "require TermExtract::Chasen_kh" or $found = 0;
 					if ($found){
 						gui_window::use_te->open;
 					} else {
