@@ -144,7 +144,7 @@ sub search{
 		$self->{list}->itemCreate(
 			$cu,
 			0,
-			-text  => $self->gui_jchar($i->[0]),
+			-text  => $self->gui_jchar($i->[0],'euc'),
 		);
 		$self->{list}->itemCreate(
 			$cu,

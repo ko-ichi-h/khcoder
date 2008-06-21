@@ -21,7 +21,7 @@ sub search{
 	
 	my %d;
 	while (my $i = $h->fetch){
-		if ( length($d{$i->[1]}) ){
+		if ( defined($d{$i->[1]}) && length($d{$i->[1]}) ){
 			$d{$i->[1]} .= " / $i->[0]";
 		} else {
 			$d{$i->[1]} .= $i->[0];

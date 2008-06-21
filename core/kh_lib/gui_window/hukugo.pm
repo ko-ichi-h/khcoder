@@ -30,7 +30,7 @@ sub _new{
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => $self->gui_jchar('検索'),
+		-text => $self->gui_jchar('検索','euc'),
 		-font => "TKFN",
 		-command => sub{ $self->{win_obj}->after(10,sub{$self->search;});} 
 	)->pack(-side => 'right', -padx => '2');
@@ -50,8 +50,8 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('OR検索') , 'OR'],
-				[$self->gui_jchar('AND検索'), 'AND'],
+				[$self->gui_jchar('OR検索','euc') , 'OR'],
+				[$self->gui_jchar('AND検索','euc'), 'AND'],
 			],
 		variable => \$self->{and_or},
 	);
@@ -61,10 +61,10 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
 		options =>
 			[
-				[$self->gui_jchar('部分一致')  => 'p'],
-				[$self->gui_jchar('完全一致') => 'c'],
-				[$self->gui_jchar('前方一致') => 'z'],
-				[$self->gui_jchar('後方一致') => 'k']
+				[$self->gui_jchar('部分一致','euc')  => 'p'],
+				[$self->gui_jchar('完全一致','euc') => 'c'],
+				[$self->gui_jchar('前方一致','euc') => 'z'],
+				[$self->gui_jchar('後方一致','euc') => 'k']
 			],
 		variable => \$self->{s_mode},
 	);
@@ -93,18 +93,18 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('複合語'));
-	$lis->header('create',1,-text => $self->gui_jchar('出現数'));
+	$lis->header('create',0,-text => $self->gui_jchar('複合語','euc'));
+	$lis->header('create',1,-text => $self->gui_jchar('出現数','euc'));
 
 	$fra5->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => $self->gui_jchar('コピー','euc'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $self->{win_obj}->after(10,sub {gui_hlist->copy($self->{list});});} 
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => $self->gui_jchar('全複合語のリスト'),
+		-text => $self->gui_jchar('全複合語のリスト','euc'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $self->{win_obj}->after(10,sub {$self->open_full_list;});} 
@@ -144,7 +144,7 @@ sub search{
 		$self->{list}->itemCreate(
 			$cu,
 			0,
-			-text  => $self->gui_jchar($i->[0]),
+			-text  => $self->gui_jchar($i->[0],,'euc'),
 		);
 		$self->{list}->itemCreate(
 			$cu,
