@@ -1,6 +1,5 @@
 package TermExtract::Chasen;
 use TermExtract::Calc_Imp;
-
 use strict;
 use Exporter ();
 use vars qw(@ISA $VERSION @EXPORT);
@@ -17,6 +16,7 @@ $VERSION = "2.17";
 #  Over-write TermExtract::Calc_Imp::get_noun_frq
 #
 # ========================================================================
+no warnings 'redefine';
 sub get_noun_frq {
     my $self = shift;
     my $data = shift;           # 入力データ
@@ -151,6 +151,7 @@ sub get_noun_frq {
 
     return \%cmp_noun_list;
 }
+use warnings 'redefine';
 
 1;
 

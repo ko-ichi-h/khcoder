@@ -140,7 +140,7 @@ sub detail{
 		return;
 	}
 	my $selected = $selected[0];
-	my $selected = $self->list->itemCget($selected, 0, -text);
+	$selected = $self->list->itemCget($selected, 0, -text);
 	my $view_win = gui_window::morpho_detail->open;
 	$view_win->view(
 		query  => $selected,

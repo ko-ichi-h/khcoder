@@ -1,6 +1,6 @@
 package gui_window::word_search;
 use base qw(gui_window);
-use vars qw($method,$kihon,$katuyo);
+use vars qw($method $kihon $katuyo);
 use strict;
 use Tk;
 use Tk::HList;

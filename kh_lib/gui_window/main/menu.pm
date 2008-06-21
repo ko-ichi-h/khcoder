@@ -557,18 +557,16 @@ sub make{
 			-state => 'disable'
 		);
 
-	$f->separator();
 
+	# プラグインの読み込み
+	$f->separator();
 	my $f_p = $f->cascade(
 			-label => gui_window->gui_jchar('プラグイン'),
 			-font => "TKFN",
 			-tearoff=>'no'
 		);
 
-	# プラグインの読み込み
-	use File::Find;
-	find(\&read_each, $::config_obj->cwd.'/plugin');
-	sub read_each{
+	my $read_each = sub {
 		return if(-d $File::Find::name);
 		return unless $_ =~ /.+\.pm/;
 		substr($_, length($_) - 3, length($_)) = '';
@@ -608,6 +606,7 @@ sub make{
 		);
 		
 		# メニュー設定
+		$conf->{menu_cnf} = 0 unless defined($conf->{menu_cnf});
 		if ($conf->{menu_cnf} == 0){
 			$tmp_menu->configure(-state, 'normal');
 		}
@@ -619,7 +618,10 @@ sub make{
 			$self->{'t_plugin_'.$_} = $tmp_menu;
 			push @menu1, 't_plugin_'.$_;
 		}
-	}
+	};
+
+	use File::Find;
+	find($read_each, $::config_obj->cwd.'/plugin');
 
 	$self->{t_sql_select} = $f->command(
 			-label => gui_window->gui_jchar('SQL文の実行'),

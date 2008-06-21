@@ -223,7 +223,7 @@ sub sql_username{
 	my $self = shift;
 	my $new  = shift;
 	
-	if (length($new)){
+	if (defined($new) && length($new)){
 		$self->{sql_username} = $new;
 	}
 	return $self->{sql_username};
@@ -233,7 +233,7 @@ sub sql_password{
 	my $self = shift;
 	my $new  = shift;
 	
-	if (length($new)){
+	if (defined($new) && length($new)){
 		$self->{sql_password} = $new;
 	}
 	return $self->{sql_password};
@@ -243,7 +243,7 @@ sub sql_port{
 	my $self = shift;
 	my $new  = shift;
 	
-	if (length($new)){
+	if (defined($new) && length($new)){
 		$self->{sql_port} = $new;
 	}
 	return $self->{sql_port};
@@ -253,7 +253,7 @@ sub sql_host{
 	my $self = shift;
 	my $new  = shift;
 	
-	if (length($new)){
+	if (defined($new) && length($new)){
 		$self->{sql_host} = $new;
 	}
 	if ( defined($self->{sql_host}) ){
@@ -267,7 +267,7 @@ sub sqllog{
 	my $self = shift;
 	my $new = shift;
 	
-	if ( length($new) ){
+	if ( defined($new) && length($new) ){
 		$self->{sqllog} = $new;
 	}
 
@@ -322,7 +322,7 @@ sub use_heap {
 	my $self = shift;
 	my $new = shift;
 	
-	if ( length($new) ){                     # 新しい値の指定
+	if ( defined($new) && length($new) ){                     # 新しい値の指定
 		$self->{use_heap} = $new;
 	}
 	unless (defined($self->{use_heap})){     # デフォルト値
@@ -334,7 +334,7 @@ sub use_heap {
 sub mail_if{
 	my $self = shift;
 	my $new = shift;
-	if ( length($new) ){
+	if ( defined($new) && length($new) ){
 		$self->{mail_if} = $new;
 	}
 	return $self->{mail_if};

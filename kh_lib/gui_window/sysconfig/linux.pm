@@ -147,12 +147,12 @@ sub __new{
 	)->pack( -side => 'right' );
 
 	# PDFビューア
-	my $appf2 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
-	$appf2->Label(
+	my $appf3 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
+	$appf3->Label(
 		-text => $self->gui_jchar('PDFビューア'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
-	my $ent_pdf = $appf2->Entry(
+	my $ent_pdf = $appf3->Entry(
 		-font => 'TKFN',
 		-background => 'white',
 		-width => 26

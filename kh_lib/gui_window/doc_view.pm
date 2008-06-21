@@ -417,7 +417,7 @@ sub _init{
 	
 	# 強調文字列の取得
 	$self->{str_force} = undef;
-	my $h = mysql_exec->select(
+	$h = mysql_exec->select(
 		"SELECT name FROM d_force WHERE type=0 ORDER BY id",
 		1
 	)->hundle;

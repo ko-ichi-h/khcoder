@@ -105,7 +105,7 @@ sub config_morph{
 	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
-	my $temp_file = 'temp.txt';
+	$temp_file = 'temp.txt';
 	while (-e $temp_file){
 		$temp_file .= '.tmp';
 	}

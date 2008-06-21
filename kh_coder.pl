@@ -15,6 +15,7 @@ Copyright (C) 2008 樋口耕一 <http://koichi.nihon.to/psnl>
 =cut
 
 use strict;
+#use warnings;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
@@ -24,6 +25,7 @@ BEGIN {
 	# for Windows [1]
 	if ($^O eq 'MSWin32'){
 		# Cwd.pmの上書き
+		no warnings 'redefine';
 		sub Cwd::_win32_cwd {
 			if (defined &DynaLoader::boot_DynaLoader) {
 				$ENV{'PWD'} = Win32::GetCwd();
@@ -39,6 +41,7 @@ BEGIN {
 			return $ENV{'PWD'};
 		};
 		*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = *Cwd::_NT_cwd = \&Cwd::_win32_cwd;
+		use warnings 'redefine';
 	}
 
 	# モジュールのパスを追加
@@ -50,7 +53,7 @@ BEGIN {
 		# コンソールを最小化
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
-		if (substr($PerlApp::VERSION,0,1) >= 7 ){
+		if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
 			require Win32::API;
 			my $win = Win32::API->new(
 				'user32.dll',

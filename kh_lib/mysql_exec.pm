@@ -17,6 +17,11 @@ my $password = $::config_obj->sql_password;
 my $host     = $::config_obj->sql_host;
 my $port     = $::config_obj->sql_port;
 
+$username = '' unless defined ($username);
+$password = '' unless defined ($password);
+$host     = '' unless defined ($host);
+$port     = '' unless defined ($port);
+
 #------------#
 #   DB¡‡∫Ó   #
 #------------#

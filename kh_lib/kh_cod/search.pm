@@ -422,10 +422,6 @@ sub fetch_results{
 	return \@result;
 }
 
-sub docs_per_once{
-	return $docs_per_once;
-}
-
 #-----------------------------------------#
 #   1つの文書に与えられたコードのリスト   #
 

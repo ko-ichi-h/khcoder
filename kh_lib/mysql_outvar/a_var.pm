@@ -9,7 +9,7 @@ sub new{
 	$self->{id}   = shift;
 	bless $self, $class;
 	
-	if ( length($self->{name}) ){                 # 変数名から他の情報を取得
+	if (defined($self->{name}) && length($self->{name}) ){# 変数名から他の情報を取得
 		my $i = mysql_exec->select("
 			SELECT tab, col, tani, id
 			FROM outvar

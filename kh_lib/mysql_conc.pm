@@ -621,7 +621,7 @@ sub _format{                                      # 結果の出力
 	
 	# フォーマット
 	my $return;
-	my $n = 0;
+	$n = 0;
 	foreach my $i (@{$dlist}){
 		# 中央
 		$return->[$n][3] = $i->[0];
@@ -719,7 +719,7 @@ sub save_all{
 
 sub coloc{
 	my $self = shift;
-	my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5',);
+	my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5');
 	
 	# 列ごとにカウント
 	my %words;
@@ -775,6 +775,7 @@ sub coloc{
 	
 	# テーブル投入用ルーチン
 	sub coloc_insert{
+		my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5');
 		my $value = shift;
 		chop $value;
 		

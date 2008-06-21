@@ -468,6 +468,9 @@ sub outtab{
 		my @c = @{$i};
 		my $nd = pop @c;
 		
+		$var_obj->{labels}{$c[0]} = ''
+			unless defined($var_obj->{labels}{$c[0]});
+		
 		next if
 			   length($i->[0]) == 0
 			or $c[0] eq '.'
@@ -548,22 +551,37 @@ sub outtab{
 			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
 			$::config_obj->R->send($cmd);
 			my $ret = $::config_obj->R->read;
-			#print "chi: $ret :\n";
+			#print "input: $ret :\n";
 			unless (length($ret)){
 				push @chisq, '';
 				next;
 			}
-			chop $ret;
-			my $ret_mod = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
-			
-			#if ($ret_mod == 0){
-			#	print "input: $ret\n";
-			#}
+
+			my $ret_mod = $ret;
+			$ret_mod =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+			$ret_mod =~ s/ //g;
+			warn "Could not read the output of R.\n$ret\n"
+				if index($ret_mod,"X-squared\n") == -1;
+			substr(
+				$ret_mod,
+				0,
+				index($ret_mod,"X-squared\n") + 10
+			) = '';
+			if ($ret_mod =~ /^(.+)\n\[[0-9]+\]/){
+				$ret_mod = $1;
+			}
+			$ret_mod = sprintf("%.3f", $ret_mod);
+			if ($ret_mod == 0 and not $ret =~ /NaN/){
+				warn "Could not read the output of R.\n$ret\n";
+			}
 			
 			if ($ret_mod > 0){
 				$::config_obj->R->send('print (chi$p.value)');
 				my $p = $::config_obj->R->read;
 				substr($p, 0, 4) = '';
+				if ($p =~ /^(.+)\n\[[0-9]+\]/){
+					$p = $1;
+				}
 				if ($p < 0.01){
 					$ret_mod .= '**';
 				}
@@ -688,7 +706,8 @@ sub tab{
 	}
 	# ¹ç·×¹Ô
 	my @c = @sum;
-	my @current; my $n = 0;
+	my @current;
+	$n = 0;
 	foreach my $i (@sum){
 		if ($n == 0){
 			push @current, $i;
@@ -736,13 +755,24 @@ sub tab{
 				next;
 			}
 
-			chop $ret;
-			my $ret_mod = sprintf("%.3f", substr($ret, index($ret,"\n") + 1, length($ret) - index($ret,"\n") -1));
-			
-			#if ($ret_mod == 0){
-			#	print "input: $ret\n";
-			#}
-			
+			my $ret_mod = $ret;
+			$ret_mod =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+			$ret_mod =~ s/ //g;
+			warn "Could not read the output of R.\n$ret\n"
+				if index($ret_mod,"X-squared\n") == -1;
+			substr(
+				$ret_mod,
+				0,
+				index($ret_mod,"X-squared\n") + 10
+			) = '';
+			if ($ret_mod =~ /^(.+)\n\[[0-9]+\]/){
+				$ret_mod = $1;
+			}
+			$ret_mod = sprintf("%.3f", $ret_mod);
+			if ($ret_mod == 0 and not $ret =~ /NaN/){
+				warn "Could not read the output of R.\n$ret\n";
+			}
+
 			if ($ret_mod > 0){
 				print 'send: print (chi$p.value) ...' if $R_debug;
 				$::config_obj->R->send('print (chi$p.value)');
@@ -750,6 +780,9 @@ sub tab{
 				my $p = $::config_obj->R->read(3);
 				print "read: $p\n" if $R_debug;
 				substr($p, 0, 4) = '';
+				if ($p =~ /^(.+)\n\[[0-9]+\]/){
+					$p = $1;
+				}
 				if ($p < 0.01){
 					$ret_mod .= '**';
 				}

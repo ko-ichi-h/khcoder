@@ -138,7 +138,7 @@ sub count{
 		-font => "TKFN"
 	);
 	my $rcmd = 'hage <- matrix( c(';
-	my $row = 0;
+	$row = 0;
 	foreach my $i (@{$r2}){
 		$rcmd .= "$i->[0],$i->[3],$i->[1],";
 		$self->list2->add($row,-at => "$row");
