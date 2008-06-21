@@ -25,7 +25,9 @@
   use strict qw(vars) ; no warnings ;
 
   my (%CLASS_HPLOO , $this) ;
-  my $debug = 0; # kh
+  my $debug  = 0;     # kh
+  my $debug2 = 0;     # kh
+  my $flag_retry = 0; # kh
 
   sub new { 
     my $class = shift ;
@@ -126,6 +128,8 @@
     my $n = $this->read_processR ;
     $n = 1 if $n eq '0' || $n eq '' ;
     
+    print "Statistics::R::Bridge::pipe::send, n: $n\n" if $debug2;
+    
     my $file = "$this->{LOG_DIR}/input.$n.r" ;
     
     while( -e $file || -e "$file._" ) {
@@ -157,7 +161,7 @@
 		&& $this->is_started( !$this->{STOPING} )
 	) {
       ++$x ;
-      print "sleep $file\n" if $debug;
+      print "sleep $xx $file\n" if $debug;
       select(undef,undef,undef,$delay) ;
       if ( $x == 20 ) {
         my (undef , $data) = $this->read_processR ;
@@ -166,7 +170,11 @@
         ++$xx ;
         $delay = 0.5 ;
       }
-      if ( $xx > 5 ) { $status = undef ;} ## xx > 5 = x > 50
+      if ( $xx > 5 ) {
+      	$status = undef ;
+      	warn "Could not send the command to R! (Statistics::R::Bridge::pipe::send)\n";
+      	last;
+      }
     }
 
 	unless ($has_quit){
@@ -589,17 +597,36 @@
     
     my $s = -s $this->{PROCESS_R} ;
     
-    open(my $fh , $this->{PROCESS_R}) ;
+    open(my $fh , $this->{PROCESS_R});# or warn "Failed to open PROCESS_R file! (Statistics::R::Bridge::pipe::read_processR)\n";
     seek($fh, ($s-100) ,0) ;
     
     my $data ;
     my $r = read($fh , $data , 1000) ;
     close($fh) ;
+	print "Statistics::R::Bridge::pipe::read_processR, r: $r\n" if $debug2;
+	print "Statistics::R::Bridge::pipe::read_processR, d: $data\n" if $debug2;
 
     return if !$r ;
     
     my ($n) = ( $data =~ /(\d+)\s*$/gi );
-    $n = 1 if $n eq '' ;
+    if ($n eq ''){
+    	if ($flag_retry){
+    		print "Statistics::R::Bridge::pipe::read_processR, Sleep and Retry!\n";
+    		sleep(1);
+    		my $s = -s $this->{PROCESS_R} ;
+    		open(my $fh , $this->{PROCESS_R});
+    		seek($fh, ($s-100) ,0) ;
+    		my $data ;
+    		my $r = read($fh , $data , 1000) ;
+    		close($fh) ;
+    		($n) = ( $data =~ /(\d+)\s*$/gi );
+    		print "Statistics::R::Bridge::pipe::read_processR, Retry: $n\n";
+    	} else {
+    		$n = 1;
+    	}
+    }
+    
+    $flag_retry = 1 if $n > 1;
     
     return( $n , $data ) if wantarray ;
     return $n ;
