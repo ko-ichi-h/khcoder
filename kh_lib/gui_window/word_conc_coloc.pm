@@ -353,9 +353,9 @@ sub view{
 		foreach my $h (@{$i}){
 			if ($col > 2){              # ¿ô»ú
 				my $style;
-				if ($col == 3 &! $self->{sort} eq 'sum'){
+				if ( ($col == 3) and not ($self->{sort} eq 'sum') ){
 					$style = $right_style;
-					$h = sprintf("%.3f",$h);
+					$h = sprintf("%.2f",$h);
 				}
 				if ($col < 6){
 					$style = $right_style;
