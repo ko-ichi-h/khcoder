@@ -274,7 +274,7 @@ BEGIN{
 	$character_undef = '(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|'  # 9-15,85-94¶è
 		. '\x8E[\xE0-\xFE]|'                                     # È¾³Ñ¥«¥¿¥«¥Ê
 		. '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2¶è
-		. '\xA3[\XA1-\xAF\xBA-\xC0\xDB-\xE0\xFB-\xFE]|'          # 3¶è
+		. '\xA3[\xA1-\xAF\xBA-\xC0\xDB-\xE0\xFB-\xFE]|'          # 3¶è
 		. '\xA4[\xF4-\xFE]|'                                     # 4¶è
 		. '\xA5[\xF7-\xFE]|'                                     # 5¶è
 		. '\xA6[\xB9-\xC0\xD9-\xFE]|'                            # 6¶è

@@ -148,13 +148,14 @@ sub _new{
 sub _fill_in{
 	my $self = shift;
 	$self->{config} = kh_dictio->readin;
-	
+
 	# 品詞リスト
 	my $row = 0;
 	my @selection;
 	my $right = $self->hlist->ItemStyle('window',-anchor => 'w');
 	if ($self->config->hinshi_list){
 		foreach my $i (@{$self->config->hinshi_list}){
+			#print Jcode->new("$i\n",'euc')->sjis;
 			$selection[$row] = $self->config->ifuse_this($i);
 			my $c = $self->hlist->Checkbutton(
 				-text     => '',
@@ -167,22 +168,22 @@ sub _fill_in{
 				-style => $right,
 				-widget    => $c,
 			);
-			
-			#print Jcode->new("$i\n",'euc')->sjis;
 			$self->hlist->itemCreate(
 				$row,1,
 				-itemtype => 'text',
-				-text     => $self->gui_jchar($i)
+				-text     => $self->gui_jchar($i,'euc')
 			);
 			++$row;
 		}
 		$self->{checks} = \@selection;
 	}
 
+
 	# 強制抽出
 	if ($self->config->words_mk){
 		foreach my $i (@{$self->config->words_mk}){
 #			print "$i\n";
+			next unless length($i);
 			my $t = $self->gui_jchar($i);
 			$self->t1->insert('end',"$t\n");
 		}
@@ -190,10 +191,12 @@ sub _fill_in{
 	# 使用しない語
 	if ($self->config->words_st){
 		foreach my $i (@{$self->config->words_st}){
+			next unless length($i);
 			my $t = $self->gui_jchar($i);
 			$self->t2->insert('end',"$t\n");
 		}
 	}
+
 }
 
 sub unselect{
