@@ -33,10 +33,10 @@ sub code{
 	my $raw = $self->{ed_condition};
 	$raw =~ s/'/\\'/g;
 	my $kind = 'code';
-	if ($self->{sort} eq 'tf*idf'){
+	if (defined($self->{sort}) && $self->{sort} eq 'tf*idf'){
 		$kind .= '_idf_m';
 	}
-	elsif ($self->{sort} eq 'tf/idf'){
+	elsif (defined($self->{sort}) && $self->{sort} eq 'tf/idf'){
 		$kind .= '_idf_d';
 	}
 	my $tani = $self->{tani};
@@ -187,10 +187,10 @@ sub ready{
 	$raw =~ s/'/\\'/g;
 	print Jcode->new("raw: $raw\n",'euc')->sjis if $debug;
 	my $kind = 'code';
-	if ($sort eq 'tf*idf'){
+	if (defined($sort) && $sort eq 'tf*idf'){
 		$kind .= '_idf_m';
 	}
-	elsif ($sort eq 'tf/idf'){
+	elsif (defined($sort) && $sort eq 'tf/idf'){
 		$kind .= '_idf_d';
 	}
 	my @c_c = kh_cod::a_code->cache_check(
@@ -258,7 +258,7 @@ sub ready{
 	
 	# ATOMテーブルをまとめる
 	print "* Coding: Joining the tables...\n" if $debug;
-	my $n = 0;
+	$n = 0;
 	foreach my $i (@t){
 		# テーブル作製
 		mysql_exec->drop_table("ct_$tani"."_$n");
@@ -487,7 +487,7 @@ sub tani{                     # コーディング単位
 sub res_table{                # コーディング結果を保存したテーブル
 	my $self = shift;         # $self->code("テーブル名")で指定されたもの
 	my $val  = shift;
-	if ( length($val) ){
+	if ( defined($val) && length($val) ){
 		$self->{res_table} = $val;
 	}
 	return $self->{res_table};
@@ -496,11 +496,11 @@ sub res_table{                # コーディング結果を保存したテーブル
 sub res_col{                  # コーディング結果を保存したカラム
 	my $self = shift;
 	my $val  = shift;
-	if ( length($val) ){
+	if ( defined($val) && length($val) ){
 		$self->{res_col} = $val;
 	}
 	
-	if (length($self->{res_col})){
+	if ( defined($self->{res_col}) && length($self->{res_col}) ){
 		return $self->{res_col};
 	} else {
 		return 'num';

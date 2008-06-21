@@ -154,7 +154,7 @@ sub _new{
 		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
-	my %pack = (
+	%pack = (
 			-anchor => 'w',
 			-side   => 'left',
 			-pady   => 1,
@@ -271,7 +271,7 @@ sub _new{
 		-text => $self->gui_jchar('　 　集計単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
-	my %pack = (
+	%pack = (
 		-side => 'left',
 		-pady => 2,
 	);

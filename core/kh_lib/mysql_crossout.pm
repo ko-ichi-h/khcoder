@@ -217,7 +217,7 @@ sub make_list{
 		$sql .= "khhinshi_id = $i\n";
 		++$n;
 	}
-	my $sth = mysql_exec->select($sql, 1)->hundle;
+	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
 		if ($i->[1] eq 'HTML¥¿¥°'){

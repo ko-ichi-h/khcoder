@@ -165,12 +165,16 @@ sub save{
 				thefile => ">$f"
 			);
 		foreach my $i (@outlist){
-			print INI "$i\t".$self->$i( undef,'1')."\n";
+			my $value = $self->$i( undef,'1');
+			$value = '' unless defined($value);
+			print INI "$i\t".$value."\n";
 			# print  "$i\t".$self->$i( undef,'1')."\n";
 		}
 		foreach my $i (keys %{$self}){
 			if ( index($i,'w_') == 0 ){
-				print INI "$i\t".$self->win_gmtry($i)."\n";
+				my $value = $self->win_gmtry($i);
+				$value = '' unless defined($value);
+				print INI "$i\t".$value."\n";
 			}
 		}
 		if ($self->{main_window}){
@@ -221,7 +225,7 @@ sub mw_entry_length{
 sub font_main{
 	my $self = shift;
 	my $new  = shift;
-	$self->{font_main} = $new         if length($new);
+	$self->{font_main} = $new         if defined($new) && length($new);
 	$self->{font_main} = 'MS UI Gothic,10'  unless length($self->{font_main});
 	return $self->{font_main};
 }

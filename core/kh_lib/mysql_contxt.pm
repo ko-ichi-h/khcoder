@@ -302,7 +302,7 @@ sub wlist{
 	}
 	$sql .= "ORDER BY genkei.khhinshi_id, 0 - genkei.num\n";
 	
-	my $sth = mysql_exec->select($sql, 1)->hundle;
+	$sth = mysql_exec->select($sql, 1)->hundle;
 	my (@list2, %name2, %ID2Num);
 	while (my $i = $sth->fetch) {
 		push @list2,        $i->[0];

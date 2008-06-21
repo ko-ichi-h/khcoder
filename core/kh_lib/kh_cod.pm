@@ -148,7 +148,7 @@ sub _cumulate{
 	mysql_exec->drop_table($table);
 	my $sql = "CREATE TABLE $table (\n";
 	$sql .= "	id int not null primary key,\n";
-	my $n = 0;
+	$n = 0;
 	my $col_list;
 	foreach my $i (@{$codes}){
 		$sql .= "	c$n int,\n";

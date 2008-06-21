@@ -340,6 +340,7 @@ sub reform{
 		while (my $d = $td->fetch){                             # 振り分け
 			my $kh_hinshi = '9999';
 			foreach my $i (@{$rule}){
+				$i->[2] = '' unless defined($i->[2]);
 				if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
 					if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
 						if ($d->[0] =~ /^(\xA4[\xA1-\xF3])+$/o){
@@ -621,49 +622,53 @@ sub hyosobun{
 				}
 			}
 			$lastrow = $d->[0];
-			if (                                      # HTML開始タグのチェック
-				   $IDs->{$d->[1]} eq '<h1>' 
-				|| $IDs->{$d->[1]} eq '<H1>'
-			){
-				++$h1;
-				($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
-					= (0,0,0,0,0,0,1);
-			}
-			elsif (
-				   $IDs->{$d->[1]} eq '<h2>'
-				|| $IDs->{$d->[1]} eq '<H2>'
-			){
-				++$h2;
-				($h3,$h4,$h5,$dan,$bun,$midashi)
-					= (0,0,0,0,0,1)
-			}
-			elsif (
-				   $IDs->{$d->[1]} eq '<h3>'
-				|| $IDs->{$d->[1]} eq '<H3>'
-			){
-				++$h3;
-				($h4,$h5,$dan,$bun,$midashi)
-					= (0,0,0,0,1)
-			}
-			elsif (
-				   $IDs->{$d->[1]} eq '<h4>'
-				|| $IDs->{$d->[1]} eq '<H4>'
-			){
-				++$h4;
-				($h5,$dan,$bun,$midashi)=(0,0,0,1)
-			}
-			elsif (
-				   $IDs->{$d->[1]} eq '<h5>'
-				|| $IDs->{$d->[1]} eq '<H5>'
-			){
-				++$h5;
-				($dan,$bun,$midashi)=(0,0,1)
+			if ( defined($IDs->{$d->[1]}) ){           # HTML開始タグのチェック
+				if (
+					   $IDs->{$d->[1]} eq '<h1>' 
+					|| $IDs->{$d->[1]} eq '<H1>'
+				){
+					++$h1;
+					($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,0,0,1);
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h2>'
+					|| $IDs->{$d->[1]} eq '<H2>'
+				){
+					++$h2;
+					($h3,$h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h3>'
+					|| $IDs->{$d->[1]} eq '<H3>'
+				){
+					++$h3;
+					($h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h4>'
+					|| $IDs->{$d->[1]} eq '<H4>'
+				){
+					++$h4;
+					($h5,$dan,$bun,$midashi)=(0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h5>'
+					|| $IDs->{$d->[1]} eq '<H5>'
+				){
+					++$h5;
+					($dan,$bun,$midashi)=(0,0,1)
+				}
+			} else {
+				$IDs->{$d->[1]} = '';
 			}
 
 			                                          # DBに書き込み
 			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
-			unless ($last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
-				if (length($last_tani)){
+			unless (defined($last_tani) && $last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
+				if (defined($last_tani) && length($last_tani)){
 					$temp_tani .= '('."$last_tani,$lc,$lw".'),';
 				}
 				$last_tani = "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1";

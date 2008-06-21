@@ -12,6 +12,7 @@ sub open{
 	bless $self, $class;
 	
 	# width¤Î·èÄê
+	$self->{width} = 0 unless defined($self->{width});
 	foreach my $i (@{$self->{options}}){
 		my $len;
 		if ($] > 5.008){

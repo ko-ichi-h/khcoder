@@ -144,8 +144,11 @@ sub if_selected{
 		my $current_file;
 		eval{ $current_file = $::project_obj->file_target; };
 		if (
-			   $self->projects->a_project("$temp[0]")->file_target
-			eq $current_file
+			( defined($current_file) )
+			&& (
+				   $self->projects->a_project("$temp[0]")->file_target
+				eq $current_file
+			)
 		){
 			gui_errormsg->open(
 				type   => 'msg',

@@ -104,8 +104,8 @@ sub _new{
 		-text => $self->gui_jchar('・品詞による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
-	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
-	$l3->Label(
+	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1);
+	$l5->Label(
 		-text => $self->gui_jchar('　　'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
@@ -117,10 +117,10 @@ sub _new{
 			-expand => 1
 	);
 	$self->{hinshi_obj} = gui_widget::hinshi->open(
-		parent => $l3,
+		parent => $l5,
 		pack   => \%pack
 	);
-	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
+	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
 		-text => $self->gui_jchar('全て選択'),
 		-width => 8,
@@ -158,7 +158,7 @@ sub _new{
 		-background  => 'gray',
 		-foreground  => 'black',
 		-state       => 'disable',
-	)->pack(-side => 'left',-fill => x);
+	)->pack(-side => 'left',-fill => 'x');
 	$self->disabled_entry_configure($self->{ent_check});
 
 	$win->Button(

@@ -77,7 +77,7 @@ sub mb_refresh{
 	$self->{win_obj}->update;
 	$::project_obj->last_tani($self->{raw_opt})
 		unless $self->{dont_remember};
-	if ( defined($self->{command}) && $_[0] != 5){
+	if ( defined($self->{command}) and not (defined($_[0]) && $_[0] == 5) ){
 		&{$self->{command}};
 	}
 }
