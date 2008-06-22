@@ -5,6 +5,7 @@ use strict;
 # usage: kh_csv->value_conv("value");
 sub value_conv{
 	my $v = $_[1];
+	return '' unless defined($v);
 	if (
 		   ($v =~ s/"/""/g )
 		or ($v =~ /\r|\n|,/o )

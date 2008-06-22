@@ -181,8 +181,10 @@ sub csv_list{
 		my $line = '';
 		my $check;
 		foreach my $i (@{$list}){
+			$i->[1][$row][1] = '' unless defined($i->[1][$row][1]);
+			$i->[1][$row][0] = '' unless defined($i->[1][$row][0]);
 			$line .=kh_csv->value_conv($i->[1][$row][0]).",$i->[1][$row][1],";
-			$check += $i->[1][$row][1];
+			$check += $i->[1][$row][1] if $i->[1][$row][1];
 		}
 		chop $line;
 		unless ($check){
