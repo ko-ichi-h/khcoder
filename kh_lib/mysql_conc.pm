@@ -25,6 +25,19 @@ sub a_word{
 		$args{length} = 20;
 	}
 
+	$args{tuika}->{1}{pos}    = '' unless defined( $args{tuika}->{1}{pos} );
+	$args{tuika}->{1}{query}  = '' unless defined( $args{tuika}->{1}{query} );
+	$args{tuika}->{1}{hinshi} = '' unless defined( $args{tuika}->{1}{hinshi} );
+	$args{tuika}->{1}{katuyo} = '' unless defined( $args{tuika}->{1}{katuyo} );
+	$args{tuika}->{2}{pos}    = '' unless defined( $args{tuika}->{2}{pos} );
+	$args{tuika}->{2}{query}  = '' unless defined( $args{tuika}->{2}{query} );
+	$args{tuika}->{2}{hinshi} = '' unless defined( $args{tuika}->{2}{hinshi} );
+	$args{tuika}->{2}{katuyo} = '' unless defined( $args{tuika}->{2}{katuyo} );
+	$args{tuika}->{3}{pos}    = '' unless defined( $args{tuika}->{3}{pos} );
+	$args{tuika}->{3}{query}  = '' unless defined( $args{tuika}->{3}{query} );
+	$args{tuika}->{3}{hinshi} = '' unless defined( $args{tuika}->{3}{hinshi} );
+	$args{tuika}->{3}{katuyo} = '' unless defined( $args{tuika}->{3}{katuyo} );
+
 	my $tuika_chk = 
 		 "$args{tuika}->{1}{pos},"
 		."$args{tuika}->{1}{query},"
@@ -630,6 +643,7 @@ sub _format{                                      # 結果の出力
 		# 左側
 		my $l_dan = 0;
 		for (my $m = $i->[0] - $self->{length}; $m < $i->[0]; ++$m){
+			next unless defined($res->{$m}[0]);
 			if ( 
 				   ( $l_dan != $res->{$m}[1] )
 				&& ( $l_dan > 0 )
@@ -651,6 +665,7 @@ sub _format{                                      # 結果の出力
 		
 		# 右側
 		for (my $m = $i->[0] + 1; $m <= $i->[0] + $self->{length}; ++$m){
+			next unless defined($res->{$m}[0]);
 			if ( 
 				   ( $l_dan != $res->{$m}[1] )
 				&& ( $l_dan > 0 )
