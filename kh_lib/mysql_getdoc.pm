@@ -20,7 +20,7 @@ sub get{
 
 	# 文書の特定
 	print "id..." if $debug;
-	unless ( length($self->{doc_id}) ){
+	unless ( defined($self->{doc_id}) && length($self->{doc_id}) ){
 		$self->{doc_id} = $self->get_doc_id;
 	}
 
@@ -53,7 +53,7 @@ sub get{
 	
 	print "color2..." if $debug;
 	my @body = (); my $last = -1;                 # 改行付加＆検索語強調
-	my $lastw;
+	my $lastw = '';
 	foreach my $i (@{$d}){
 		unless ($i->[2] == $last){
 			$last = $i->[2];
@@ -64,7 +64,7 @@ sub get{
 		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/o){ push @body, ["\n",'']; }
 		
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
-		push @body, [Jcode->new("$i->[0]")->sjis, $k];
+		push @body, [Jcode->new("$i->[0]",'euc')->sjis, $k];
 		$lastw = $i->[0];
 		
 	}
@@ -189,7 +189,7 @@ sub get_header{
 			}
 			$sql   .= "LIMIT 1";
 			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			$h = Jcode->new($h)->sjis;
+			$h = Jcode->new($h,'euc')->sjis;
 			$headers .= "$h\n";
 		}
 	}
@@ -275,8 +275,8 @@ sub id_for_print{
 			tani   => $self->{tani}
 		);
 		$val = $i->print_val($val);
-		$r .= Jcode->new($i->{name})->sjis;
-		$r .= " = ".Jcode->new($val)->sjis.",  ";
+		$r .= Jcode->new($i->{name},'euc')->sjis;
+		$r .= " = ".Jcode->new($val,'euc')->sjis.",  ";
 	}
 	chop $r;
 	chop $r;

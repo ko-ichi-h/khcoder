@@ -28,8 +28,10 @@ sub _copy{
 
 	$clip = gui_window->gui_jg($clip);
 
-	$CLIP->Empty();
-	$CLIP->Set("$clip");
+	if (defined($clip) && length($clip)){
+		$CLIP->Empty();
+		$CLIP->Set("$clip");
+	}
 }
 1;
 

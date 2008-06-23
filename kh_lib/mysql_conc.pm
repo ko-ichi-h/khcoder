@@ -25,16 +25,16 @@ sub a_word{
 		$args{length} = 20;
 	}
 
-	$args{tuika}->{1}{pos}    = '' unless defined( $args{tuika}->{1}{pos} );
-	$args{tuika}->{1}{query}  = '' unless defined( $args{tuika}->{1}{query} );
+	$args{tuika}->{1}{pos}    = '' unless defined( $args{tuika}->{1}{pos}    );
+	$args{tuika}->{1}{query}  = '' unless defined( $args{tuika}->{1}{query}  );
 	$args{tuika}->{1}{hinshi} = '' unless defined( $args{tuika}->{1}{hinshi} );
 	$args{tuika}->{1}{katuyo} = '' unless defined( $args{tuika}->{1}{katuyo} );
-	$args{tuika}->{2}{pos}    = '' unless defined( $args{tuika}->{2}{pos} );
-	$args{tuika}->{2}{query}  = '' unless defined( $args{tuika}->{2}{query} );
+	$args{tuika}->{2}{pos}    = '' unless defined( $args{tuika}->{2}{pos}    );
+	$args{tuika}->{2}{query}  = '' unless defined( $args{tuika}->{2}{query}  );
 	$args{tuika}->{2}{hinshi} = '' unless defined( $args{tuika}->{2}{hinshi} );
 	$args{tuika}->{2}{katuyo} = '' unless defined( $args{tuika}->{2}{katuyo} );
-	$args{tuika}->{3}{pos}    = '' unless defined( $args{tuika}->{3}{pos} );
-	$args{tuika}->{3}{query}  = '' unless defined( $args{tuika}->{3}{query} );
+	$args{tuika}->{3}{pos}    = '' unless defined( $args{tuika}->{3}{pos}    );
+	$args{tuika}->{3}{query}  = '' unless defined( $args{tuika}->{3}{query}  );
 	$args{tuika}->{3}{hinshi} = '' unless defined( $args{tuika}->{3}{hinshi} );
 	$args{tuika}->{3}{katuyo} = '' unless defined( $args{tuika}->{3}{katuyo} );
 
@@ -609,6 +609,8 @@ sub _format{                                      # 結果の出力
 	my $dlist = $st1->fetchall_arrayref;
 	$st1->finish;
 	
+	#print "mysql_conc::_format, dlist: @{$dlist}\n";
+	
 	# データをMySQLから取り出す
 	my $sql = '';
 	$sql .= "SELECT hyosobun.id, hyoso.name, hyosobun.dan_id\n";
@@ -616,6 +618,7 @@ sub _format{                                      # 結果の出力
 	$sql .= "WHERE hyosobun.hyoso_id = hyoso.id \n AND (";
 	my $n = 0;
 	foreach my $i (sort {$a->[0] <=> $b->[0]} @{$dlist}){
+		#print "mysql_conc::_format, \$i->[0]: $i->[0]\n";
 		$sql .= "OR " if $n;
 		$sql .= "( ";
 		$sql .= "hyosobun.id >= $i->[0] - $self->{length}";
