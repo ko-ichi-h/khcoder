@@ -187,7 +187,7 @@ sub make{
 				-label => gui_window->gui_jchar('TermExtract¤òÍøÍÑ'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					my $found = 1;;
+					my $found = 1;
 					eval "require TermExtract::Calc_Imp"  or $found = 0;
 					eval "require TermExtract::Chasen"    or $found = 0;
 					eval "require TermExtract::Chasen_kh" or $found = 0;
@@ -738,7 +738,10 @@ sub mc_hukugo{
 	my $mw = $::main_gui->{win_obj};
 
 	my $if_exec = 1;
-	if (-e $::project_obj->file_HukugoList){
+	if (
+		   ( -e $::project_obj->file_HukugoList )
+		&& ( mysql_exec->table_exists('hukugo') )
+	){
 		my $t0 = (stat $::project_obj->file_target)[9];
 		my $t1 = (stat $::project_obj->file_HukugoList)[9];
 		#print "$t0\n$t1\n";
