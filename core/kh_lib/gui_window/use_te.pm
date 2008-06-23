@@ -81,7 +81,10 @@ sub _new{
 					$self->close;
 					# 処理実行
 					my $if_exec = 1;
-					if (-e $::project_obj->file_HukugoListTE){
+					if (
+						   ( -e $::project_obj->file_HukugoListTE)
+						&& ( mysql_exec->table_exists('hukugo_te') )
+					){
 						my $t0 = (stat $::project_obj->file_target)[9];
 						my $t1 = (stat $::project_obj->file_HukugoListTE)[9];
 						#print "$t0\n$t1\n";
