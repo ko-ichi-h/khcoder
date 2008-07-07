@@ -281,6 +281,8 @@ sub search{
 		++$row;
 	}
 	$self->{last_search} = $result;
+	
+	gui_hlist->update4scroll($self->list);
 }
 
 #----------------------------#

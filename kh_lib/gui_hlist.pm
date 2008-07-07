@@ -18,6 +18,18 @@ sub copy{
 	$self->_copy;
 }
 
+sub update4scroll{
+	my $class = shift;
+	my $self;
+	$self->{list} = shift;
+	bless $self, "$class"."::".$::config_obj->os;
+	
+	$self->{list}->update;
+	$self->{list}->yview(moveto => 0);
+	$self->{list}->yview('scroll', 1,'units');
+	$self->{list}->yview('scroll',-1,'units');
+}
+
 sub get_all{
 	my $class = shift;
 	my $self;

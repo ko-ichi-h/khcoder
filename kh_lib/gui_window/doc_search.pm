@@ -323,7 +323,7 @@ sub read_code{
 		0,
 		-text  => $self->gui_jchar('＃コード無し'),
 	);
-	
+	gui_hlist->update4scroll($self->{clist});
 	$self->clist_check;
 	return $self;
 }
@@ -556,6 +556,8 @@ sub display{
 		$self->{result} = [];
 	}
 	
+	gui_hlist->update4scroll($self->{rlist});
+
 	# ラベルの更新
 	my $num_total = $self->{code_obj}->total_hits;
 	my $num_disp  = $start + kh_cod::search->docs_per_once - 1;
@@ -566,7 +568,6 @@ sub display{
 		$num_disp2 = $num_total;
 	}
 	if ($num_total == 0){$start = 0;}
-	$self->{rlist}->yview(0);
 	$self->{hits_label}->configure(-text => $self->gui_jchar("  ヒット数： $num_total  表示： $start"."-$num_disp2"));
 
 	# ボタンの更新

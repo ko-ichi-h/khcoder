@@ -187,6 +187,7 @@ sub _calc{
 		);
 		++$row;
 	}
+	gui_hlist->update4scroll($self->list);
 
 	$self->label->configure(
 		-text => 'Ready.',

@@ -19,7 +19,7 @@ use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.12";
+$kh_version = "2.beta.13pre";
 
 BEGIN {
 	# for Windows [1]

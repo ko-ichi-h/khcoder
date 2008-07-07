@@ -8,7 +8,7 @@ Add: Encode::JP::H2Z
 Add: Encode::JP
 Add: feature
 Clean: 0
-Date: 2008-05-16 22:56:15
+Date: 2008-07-07 19:29:54
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -25,11 +25,11 @@ Shared: none
 Tmpdir: 
 Verbose: 1
 Version-Comments: 
-Version-CompanyName: 
+Version-CompanyName: Ritsumeikan Univ.
 Version-FileDescription: KH Coder
 Version-FileVersion: 2
 Version-InternalName: kh_coder.exe
-Version-LegalCopyright: HIGUCHI, Koichi
+Version-LegalCopyright: Higuchi Koichi
 Version-LegalTrademarks: 
 Version-OriginalFilename: kh_coder.exe
 Version-ProductName: KH Coder

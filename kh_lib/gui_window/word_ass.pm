@@ -349,6 +349,8 @@ sub read_code{
 		-text  => $self->gui_jchar('＃コード無し'),
 	);
 	
+	gui_hlist->update4scroll($self->{clist});
+	
 	$self->clist_check;
 	return $self;
 }
@@ -514,7 +516,7 @@ sub display{
 	
 	# ラベルの更新
 	my $num_total = $self->{code_obj}->doc_num;
-	$self->{rlist}->yview(0);
+	gui_hlist->update4scroll($self->{rlist});
 	$self->{hits_label}->configure(-text => $self->gui_jchar("  文書数： $num_total"));
 
 	return $self;

@@ -386,6 +386,7 @@ sub view{
 		}
 		++$row;
 	}
+	gui_hlist->update4scroll($self->list);
 }
 
 
