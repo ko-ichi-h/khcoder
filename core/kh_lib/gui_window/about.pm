@@ -109,7 +109,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
-		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484&seq=181',
+		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
