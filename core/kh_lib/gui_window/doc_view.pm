@@ -34,7 +34,7 @@ sub _new{
 		spacing1 => 3,
 		spacing2 => 2,
 		spacing3 => 3,
-		-scrollbars=> 'osoe',
+		-scrollbars=> 'ose',
 		-height => 20,
 		-width => 64,
 		-wrap => 'word',
@@ -308,9 +308,17 @@ sub _view_doc{
 	$self->text->insert('end',$self->gui_jchar($self->{foot},'sjis'),'info');
 	$self->text->insert('end',"No. ".$doc->doc_id."\n",'info');
 	$self->text->insert('end',$self->gui_jchar('  '.$doc->id_for_print),'info');
-	
+
 	$self->wrap;
 	$self->update_buttons;
+
+	# スクロールバーを表示するための挙動
+	#$self->win_obj->update;
+	#$self->text->yview(moveto => 0);
+	#$self->text->yview('scroll', 1,'units');
+	#$self->win_obj->update;
+	#$self->text->yview(moveto => 0);
+	#$self->text->yview('scroll',-1,'units');
 }
 
 # 文字列強調ルーチン
