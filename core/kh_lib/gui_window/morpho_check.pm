@@ -126,7 +126,7 @@ sub search{
 		++$row;
 	}
 	$self->label->configure(-foreground => 'black', -text => "    Ready.");
-	$self->list->yview(0);
+	gui_hlist->update4scroll($self->list);
 	$self->{result} = $result;
 }
 

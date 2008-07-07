@@ -91,7 +91,7 @@ sub _view{
 		$self->list->itemCreate($row,5,-text  => $self->gui_jchar("$i->[4]",'euc'));
 		++$row;
 	}
-	$self->list->yview(0);
+	gui_hlist->update4scroll($self->list);
 	$self->update_buttons;
 }
 sub update_buttons{
