@@ -25,7 +25,7 @@ sub _save{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('コーディング結果：名前を付けて保存'),
+			$self->gui_jt('コーディング結果：名前を付けて保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	

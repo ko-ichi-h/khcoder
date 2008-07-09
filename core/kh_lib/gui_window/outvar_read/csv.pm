@@ -19,7 +19,7 @@ sub file{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jchar('外部変数ファイルを選択してください'),
+		-title      => $self->gui_jt('外部変数ファイルを選択してください'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	

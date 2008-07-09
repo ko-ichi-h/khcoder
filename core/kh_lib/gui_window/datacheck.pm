@@ -148,7 +148,7 @@ sub save{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('分析対象ファイル内に見つかった問題点の詳細を保存'),
+			$self->gui_jt('分析対象ファイル内に見つかった問題点の詳細を保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){

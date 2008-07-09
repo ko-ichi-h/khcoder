@@ -26,7 +26,7 @@ sub save{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('「文書ｘ抽出語」表：名前を付けて保存'),
+			$self->gui_jt('「文書ｘ抽出語」表：名前を付けて保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
