@@ -78,7 +78,7 @@ sub save{
 			-defaultextension => '.csv',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jchar('テキストファイルの変形：名前を付けて保存'),
+				$self->gui_jt('テキストファイルの変形：名前を付けて保存'),
 			-initialdir       => gui_window->gui_jchar($::config_obj->cwd)
 		)
 	);

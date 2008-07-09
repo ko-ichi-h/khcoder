@@ -469,7 +469,7 @@ sub save{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('コンコーダンス（KWIC）検索の結果を保存'),
+			$self->gui_jt('コンコーダンス（KWIC）検索の結果を保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	

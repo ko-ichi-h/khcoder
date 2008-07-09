@@ -43,7 +43,7 @@ sub file_name{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jchar('「抽出語ｘ文脈ベクトル」表：名前を付けて保存'),
+			$self->gui_jt('「抽出語ｘ文脈ベクトル」表：名前を付けて保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){

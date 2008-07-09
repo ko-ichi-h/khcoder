@@ -133,7 +133,7 @@ sub _sansyo{
 	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jchar('分析対象ファイルを選択してください'),
+		-title      => $self->gui_jt('分析対象ファイルを選択してください'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 

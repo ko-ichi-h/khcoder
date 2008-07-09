@@ -303,7 +303,7 @@ sub get_path{
 			-defaultextension => '.txt',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jchar('部分テキストの取り出し：名前を付けて保存'),
+				$self->gui_jt('部分テキストの取り出し：名前を付けて保存'),
 			-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	$path = gui_window->gui_jg($path);

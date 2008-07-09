@@ -150,7 +150,7 @@ sub gui_get_exe{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jchar($self->open_msg),
+		-title      => $self->gui_jt($self->open_msg),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	

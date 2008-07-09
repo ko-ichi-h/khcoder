@@ -119,7 +119,7 @@ sub _sansyo{
 
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => gui_window->gui_jchar('コーディング・ルール・ファイルを選択してください'),
+		-title      => gui_window->gui_jt('コーディング・ルール・ファイルを選択してください'),
 		-initialdir => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	
