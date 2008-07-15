@@ -156,6 +156,7 @@ sub gui_get_exe{
 	
 	my $entry = $self->entry;
 	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$path = $::config_obj->os_path($path);
 		$entry->delete('0','end');

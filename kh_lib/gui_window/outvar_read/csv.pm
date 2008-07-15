@@ -24,6 +24,7 @@ sub file{
 	);
 	
 	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$self->{entry}->delete(0, 'end');
 		$self->{entry}->insert('0',$self->gui_jchar("$path"));

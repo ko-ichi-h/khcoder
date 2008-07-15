@@ -138,6 +138,7 @@ sub _sansyo{
 	);
 
 	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->e1->delete('0','end');
