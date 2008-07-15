@@ -31,6 +31,7 @@ sub _save{
 	
 	# 保存を実行
 	if ($path){
+		$path = gui_window->gui_jg_filename_win98($path);
 		$path = gui_window->gui_jg($path);
 		$path = $::config_obj->os_path($path);
 		my $result;

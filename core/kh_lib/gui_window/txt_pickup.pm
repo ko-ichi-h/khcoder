@@ -306,6 +306,7 @@ sub get_path{
 				$self->gui_jt('部分テキストの取り出し：名前を付けて保存'),
 			-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
+	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	return $path;

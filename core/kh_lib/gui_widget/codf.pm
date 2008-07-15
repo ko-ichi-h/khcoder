@@ -124,6 +124,7 @@ sub _sansyo{
 	);
 	
 	if ($path){
+		$path = gui_window->gui_jg_filename_win98($path);
 		$path = gui_window->gui_jg($path);
 		$path = $::config_obj->os_cod_path($path);
 

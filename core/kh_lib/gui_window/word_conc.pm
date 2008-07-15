@@ -473,6 +473,7 @@ sub save{
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
+	$path = $self->gui_jg_filename_win98($path);
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	

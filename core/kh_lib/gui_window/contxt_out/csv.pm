@@ -49,6 +49,7 @@ sub file_name{
 	unless ($path){
 		return 0;
 	}
+	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	return $path;

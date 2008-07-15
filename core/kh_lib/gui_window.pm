@@ -217,6 +217,23 @@ sub gui_jt{ # Windowタイトル部分の日本語 （Win9x & Perl/Tk 804用の特殊処理）
 	}
 }
 
+
+sub gui_jg_filename_win98{ # 全角文字を含むパスの処理 （Win9x & Perl/Tk 804用の特殊処理）
+	my $char = $_[1];
+	
+	if (
+		    ( $] > 5.008 )
+		and ( $^O eq 'MSWin32' )
+		and not ( Win32::IsWinNT() )
+	){
+		$char =~ s/\//\\/g;
+		$char = Encode::decode('cp932',$char);
+		$char = Encode::encode('cp932',$char);
+	}
+	
+	return $char;
+}
+
 sub gui_jg{ # 入力された文字列の変換
 	my $char = $_[1];
 	
