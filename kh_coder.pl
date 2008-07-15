@@ -19,9 +19,12 @@ use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.13";
+$kh_version = "2.beta.14";
 
 BEGIN {
+	use Jcode;
+	require kh_lib::Jcode_kh if $] > 5.008;
+
 	# for Windows [1]
 	if ($^O eq 'MSWin32'){
 		# Cwd.pmの上書き
@@ -33,7 +36,6 @@ BEGIN {
 			else { # miniperl
 				chomp($ENV{'PWD'} = `cd`);
 			}
-			use Jcode;
 			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
 			$ENV{'PWD'} =~ s:\\:/:g ;
 			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;

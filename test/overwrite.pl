@@ -1,5 +1,5 @@
 use overwrite_org;
-use overwrite_kh;
+require overwrite_kh;
 
 use overwrite_org;
 

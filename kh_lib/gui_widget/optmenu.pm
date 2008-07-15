@@ -16,7 +16,7 @@ sub open{
 	foreach my $i (@{$self->{options}}){
 		my $len;
 		if ($] > 5.008){
-			$len = length(Encode::encode('shiftjis',$i->[0]));
+			$len = length(Encode::encode('cp932',$i->[0]));
 		} else {
 			$len = length($i->[0]);
 		}

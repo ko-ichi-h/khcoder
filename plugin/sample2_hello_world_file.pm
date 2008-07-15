@@ -41,6 +41,7 @@ sub exec{
 
 	return 0 unless length($path);
 
+	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 
