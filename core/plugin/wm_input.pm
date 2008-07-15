@@ -168,6 +168,7 @@ sub _sansyo{
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	if ($path){
+		$path = gui_window->gui_jg_filename_win98($path);
 		$path = gui_window->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->{e1}->delete('0','end');

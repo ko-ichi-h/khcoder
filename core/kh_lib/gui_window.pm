@@ -152,10 +152,10 @@ sub gui_jchar{ # GUI表示用の日本語
 		
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
-		$code = 'euc-jp'   if $code eq 'euc';
+		$code = 'eucJP-ms'   if $code eq 'euc';
 		$code = 'cp932' if $code eq 'sjis';
 		$code = 'cp932' if $code eq 'shiftjis';
-		$code = 'euc-jp' unless length($code);
+		$code = 'eucJP-ms' unless length($code);
 		return Encode::decode($code,$char);
 	} else {
 		if (defined($code) && $code eq 'sjis'){
@@ -172,8 +172,8 @@ sub gui_jm{ # メニューのトップ部分用日本語
 	
 	if ( $] > 5.008 && $::config_obj->os eq 'linux' ) {
 		$code = Jcode->new($char)->icode unless $code;
-		$code = 'euc-jp'   if $code eq 'euc';
-		$code = 'shiftjis' if $code eq 'sjis';
+		$code = 'eucJP-ms'   if $code eq 'euc';
+		$code = 'cp932' if $code eq 'sjis';
 		return Encode::decode($code,$char);
 	}
 	elsif ($] > 5.008){
@@ -195,10 +195,10 @@ sub gui_jt{ # Windowタイトル部分の日本語 （Win9x & Perl/Tk 804用の特殊処理）
 	if ( $] > 5.008 ) {
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
-		$code = 'euc-jp'   if $code eq 'euc';
+		$code = 'eucJP-ms'   if $code eq 'euc';
 		$code = 'cp932' if $code eq 'sjis';
 		$code = 'cp932' if $code eq 'shiftjis';
-		$code = 'euc-jp' unless length($code);
+		$code = 'eucJP-ms' unless length($code);
 		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
 			if ($code eq 'sjis'){
 				return $char;

@@ -117,7 +117,9 @@ sub check_code{
 	my $icode = Jcode->new($t)->icode;
 
 	$icode = 'euc' if $icode eq 'euc-jp';
+	$icode = 'euc' if $icode eq 'eucJP-ms';
 	$icode = 'sjis' if $icode eq 'shiftjis';
+	$icode = 'sjis' if $icode eq 'cp932';
 	$icode = 'jis' if  $icode eq '7bit-jis';	
 
 	print "$icode\n";
@@ -134,7 +136,7 @@ sub _s2e_nkf{
 	return NKF::nkf('-e -S',$_[1]);
 }
 sub _s2e_encode{
-	Encode::from_to($_[1],'shiftjis','euc-jp');
+	Encode::from_to($_[1],'cp932','eucJP-ms');
 	return $_[1];
 }
 sub _s2e_jcode{
@@ -150,7 +152,7 @@ sub _e2s_nkf{
 	return NKF::nkf('-s -E',$_[1]);
 }
 sub _e2s_encode{
-	Encode::from_to($_[1],'euc-jp','shiftjis');
+	Encode::from_to($_[1],'eucJP-ms','cp932');
 	return $_[1];
 }
 sub _e2s_jcode{

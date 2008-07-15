@@ -29,7 +29,7 @@ sub _new{
 
 	my $text_widget = $fr_res->Scrolled(
 		"ROText",
-		-scrollbars => 'osoe',
+		-scrollbars => 'ose',
 		-height     => 12,
 		-width      => 80,
 	)->pack(

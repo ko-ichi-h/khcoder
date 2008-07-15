@@ -7,8 +7,9 @@ Add: Encode::Guess
 Add: Encode::JP::H2Z
 Add: Encode::JP
 Add: feature
+Add: Encode::EUCJPMS
 Clean: 0
-Date: 2008-07-07 19:29:54
+Date: 2008-07-16 03:24:08
 Debug: 
 Dependent: 0
 Dyndll: 0
