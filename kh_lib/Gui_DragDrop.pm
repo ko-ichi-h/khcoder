@@ -102,8 +102,11 @@ sub read_TextFile_droped{
 			);
 		}
 	};
-	
+
 	if ($] > 5.008){
+		# UTF8フラグ付なのに、Windowsのコマンドプロンプトにprintしても文字化
+		# けしないという変なものが帰ってくるので、それに対応。なぜこれでうま
+		# くいくのか今ひとつよく分からないのだが...
 		utf8::decode($filename);
 	}
 	
@@ -115,13 +118,8 @@ sub read_TextFile_droped{
 			);
 		while (<DROPED>){
 			chomp;
-			#unless ($_){
-			#	next;
-			#}
-			#if (substr("$_",'0','1') eq '#'){
-			#	next;
-			#}
-			$widget->insert('end',"$_\n");
+			my $t = gui_window->gui_jchar($_);
+			$widget->insert('end',"$t\n");
 		}
 		close (DROPED);
 	}
