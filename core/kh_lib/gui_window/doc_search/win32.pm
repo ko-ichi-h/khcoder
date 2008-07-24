@@ -26,7 +26,7 @@ sub _copy{
 		$t .= "\n";
 	}
 	
-	use Win32::Clipboard;
+	require Win32::Clipboard;
 	my $CLIP = Win32::Clipboard();
 	$CLIP->Empty();
 	$CLIP->Set("$t");

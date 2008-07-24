@@ -9,6 +9,7 @@ use base qw(kh_morpho::win32);
 sub _run_morpho{
 	my $self = shift;
 	my $cmd;
+	require Win32;
 	if ( Win32::IsWinNT() ){
 		$cmd = $ENV{'WINDIR'};
 		$cmd .= '\system32\cmd.exe';
@@ -31,8 +32,7 @@ sub _run_morpho{
 #	print "$run_juman\n";
 #	print "$cmdline\n";
 
-	use Win32;
-	use Win32::Process;
+	require Win32::Process;
 	my $ChasenObj;
 	Win32::Process::Create(
 		$ChasenObj,
