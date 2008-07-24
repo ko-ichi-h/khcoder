@@ -20,7 +20,7 @@ sub init{
 	# 利用可能なメモリの量を取得
 	require Win32::SystemInfo;
 	my %mHash = (AvailPhys => 0);
-	Win32::SystemInfo::MemoryStatus(%mHash,'MB');
+	Win32::SystemInfo::MemoryStatus(\%mHash,'MB');
 	$mHash{AvailPhys} = 32 if $mHash{AvailPhys} < 32;
 	$mHash{AvailPhys} = int($mHash{AvailPhys});
 	print "Available Physical Memory: $mHash{AvailPhys}MB\n";
@@ -103,7 +103,7 @@ sub init{
 		$mysql_pass,
 		$cmd_line,
 		0,
-		'CREATE_NO_WINDOW',
+		Win32::Process->CREATE_NO_WINDOW,
 		$p3,
 	) or gui_errormsg->open(
 		type => 'mysql',

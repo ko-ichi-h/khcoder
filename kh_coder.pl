@@ -87,7 +87,6 @@ BEGIN {
 	} 
 	# for Linux & Others
 	else {
-		push @INC, cwd.'/dummy_lib';
 		if ($] > 5.008){
 			require Tk::FBox;
 			require Tk::FBox_kh;
