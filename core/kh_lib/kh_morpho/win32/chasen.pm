@@ -14,19 +14,20 @@ sub _run_morpho{
 	$self->{dir} = substr($path,0,$pos);
 	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
 	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
-	
-	require Win32;
+
 	require Win32::Process;
+	# Win32::Process->import; # これではうまくいかない？
+
 	my $ChasenObj;
 	Win32::Process::Create(
 		$ChasenObj,
 		$path,
 		$self->{cmdline},
 		0,
-		CREATE_NO_WINDOW,
+		Win32::Process->CREATE_NO_WINDOW,
 		$self->{dir},
 	) || $self->Exec_Error("Wi32::Process can not start");
-	$ChasenObj->Wait(INFINITE)
+	$ChasenObj->Wait( Win32::Process->INFINITE )
 		|| $self->Exec_Error("Wi32::Process can not wait");
 	
 	return(1);

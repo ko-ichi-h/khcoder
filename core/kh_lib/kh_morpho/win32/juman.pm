@@ -39,10 +39,10 @@ sub _run_morpho{
 		$run_juman,
 		$cmdline,
 		0,
-		"NORMAL_PRIORITY_CLASS",
+		Win32::Process->NORMAL_PRIORITY_CLASS,
 		$cudir,
 	) || $self->Exec_Error("Wi32::Process can not start");
-	$ChasenObj->Wait("INFINITE")
+	$ChasenObj->Wait(Win32::Process->INFINITE)
 		|| $self->Exec_Error("Wi32::Process can not wait");
 
 	return(1);
