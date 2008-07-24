@@ -464,6 +464,7 @@ sub copy{
 	}
 	
 	$clip = gui_window->gui_jg($clip);
+	require Win32::Clipboard;
 	my $CLIP = Win32::Clipboard();
 	$CLIP->Set("$clip");
 }

@@ -373,6 +373,7 @@ sub copy{
 		}
 		$t .= "\n";
 	}
+	require Win32::Clipboard;
 	my $CLIP = Win32::Clipboard();
 	$CLIP->Set("$t");
 }

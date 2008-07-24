@@ -1,7 +1,7 @@
 package gui_window::main::win32;
 use base qw(gui_window::main);
 use strict;
-use Win32;
+#use Win32;
 
 sub make_font{
 	my $self = shift;

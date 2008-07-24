@@ -15,8 +15,8 @@ sub _run_morpho{
 	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
 	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
 	
-	use Win32;
-	use Win32::Process;
+	require Win32;
+	require Win32::Process;
 	my $ChasenObj;
 	Win32::Process::Create(
 		$ChasenObj,

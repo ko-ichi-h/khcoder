@@ -1,9 +1,9 @@
 package gui_window::doc_view::win32;
 use base qw(gui_window::doc_view);
 use strict;
-use Win32;
 
 sub wrap{
+	require Win32;
 	if ( Win32::IsWinNT() ){
 		return;
 	}

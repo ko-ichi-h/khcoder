@@ -18,7 +18,7 @@ use strict;
 
 sub init{
 	# 利用可能なメモリの量を取得
-	use Win32::SystemInfo;
+	require Win32::SystemInfo;
 	my %mHash = (AvailPhys => 0);
 	Win32::SystemInfo::MemoryStatus(%mHash,'MB');
 	$mHash{AvailPhys} = 32 if $mHash{AvailPhys} < 32;
@@ -86,8 +86,8 @@ sub init{
 	# MySQLの起動
 	return 1 if mysql_exec->connection_test;
 	print "Starting MySQL...\n";
-	use Win32;
-	use Win32::Process;
+	require Win32;
+	require Win32::Process;
 	my $obj;
 	my ($mysql_pass, $cmd_line);
 	

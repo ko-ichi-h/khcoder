@@ -1,13 +1,12 @@
 package gui_hlist::win32;
 use base qw(gui_hlist);
-use Win32::Clipboard;
 use strict;
 
 sub _copy{
 	my $self = shift;
 	my @selected = $self->list->infoSelection;
 	my $cols = pop @{$self->list->configure(-columns)}; --$cols;      # Îó¿ôÄ´¤Ù
-
+	require Win32::Clipboard;
 	my $CLIP = Win32::Clipboard();
 	my $clip;
 
