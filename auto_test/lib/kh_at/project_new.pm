@@ -6,6 +6,7 @@ use strict;
 
 sub _exec_test{
 	my $self = shift;
+	my $t = '';
 	
 	# プロジェクトの作成
 	gui_window::project_new->open;
@@ -21,9 +22,30 @@ sub _exec_test{
 	$win_dic->{t2}->insert('end',gui_window->gui_jchar("１つ\n考え"));
 	$win_dic->save;
 	
+	# データのチェック
+	$::main_gui->{menu}->mc_datacheck;
+	my $win_chk = $::main_gui->get('w_datacheck');
+	$win_chk->{dacheck_obj}->save($self->file_out_tmp_base."_chk.txt");
+	
+	# 結果の取得
+	my $chk_result = gui_window->gui_jg(
+		$win_chk->{text_widget}->get('1.0','end')
+	);
+	$chk_result = Jcode->new($chk_result)->euc;
+	$t .= "■データチェックの結果\n";
+	$t .= "$chk_result\n";
+	
+	$t .= "□保存ファイルのMD5: ";
+	$t .= $self->get_md5($self->file_out_tmp_base."_chk.txt")."\n";
+	unlink($self->file_out_tmp_base."_chk.txt");
+	
+	$t .= "□修正済みファイルのMD5: ";
+	$win_chk->edit;
+	$t .= $self->get_md5($::project_obj->file_target)."\n\n";
+	
 	# 前処理の実行
 	$::main_gui->{menu}->mc_morpho_exec;
-	
+
 	# いったんプロジェクトを閉じる
 	$::main_gui->{menu}->mc_close_project;
 	
@@ -46,7 +68,6 @@ sub _exec_test{
 	$win_opn->_open;
 
 	# テスト結果の取得
-	my $t = '';
 	$t .= "■project_name:\t".Jcode->new(
 		gui_window->gui_jg( $::main_gui->inner->{e_curent_project}->get )
 	)->euc."\n";
@@ -63,8 +84,14 @@ sub _exec_test{
 		gui_window->gui_jg( gui_hlist->get_all( $::main_gui->inner->hlist ) )
 	)->euc;
 
-	$self->{result} = $t;
+	# 自動修正したファイルを元に戻しておく
+	unlink($::project_obj->file_target);
+	rename(
+		$win_chk->{dacheck_obj}->{file_backup},
+		$::project_obj->file_target
+	) or die("fuck!!");
 
+	$self->{result} = $t;
 	return $self;
 }
 
