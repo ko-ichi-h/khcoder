@@ -246,8 +246,8 @@ sub edit{
 	} else {
 		$self->{repo_full} = "既知の問題点はすべて修正されています。\n";
 	}
-
-
+	
+	#print "back up [0]: $self->{file_backup}\n";
 	return $self;
 }
 

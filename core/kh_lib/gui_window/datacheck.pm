@@ -60,7 +60,7 @@ sub _new{
 		-text => $self->gui_jchar('見つかった問題点の詳細：'),
 	)->pack(-anchor=>'w', -side => 'left');
 
-	$fr_act0->Button(
+	$self->{bttn_details_print} = $fr_act0->Button(
 		-text => $self->gui_jchar('画面に表示'),
 		-font => "TKFN",
 		-command => sub{ $mw->after
@@ -80,7 +80,7 @@ sub _new{
 		}
 	)->pack(-anchor=>'w', -side => 'left',-padx => 1);
 
-	$fr_act0->Button(
+	$self->{bttn_details_save} = $fr_act0->Button(
 		-text => $self->gui_jchar('ファイルに保存'),
 		-font => "TKFN",
 		#-width => 8,
@@ -98,7 +98,7 @@ sub _new{
 		-text => $self->gui_jchar('　　分析対象ファイルの自動修正：'),
 	)->pack(-anchor=>'w', -side => 'left');
 
-	$self->{bt_exec} = $fr_act0->Button(
+	$self->{bttn_auto_collect} = $self->{bt_exec} = $fr_act0->Button(
 		-text => $self->gui_jchar('実行'),
 		-font => "TKFN",
 		#-width => 8,
@@ -208,6 +208,8 @@ sub edit{
 	$self->{text_widget}->yview(moveto => 1);
 
 	$self->{bt_exec}->configure(-state => 'disable');
+	
+	return $self;
 
 }
 
