@@ -15,7 +15,6 @@ Copyright (C) 2008 Èõ¸ý¹Ì°ì <http://koichi.nihon.to/psnl>
 =cut
 
 use strict;
-#use warnings;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
