@@ -1,10 +1,12 @@
 #
-# $Id: Jcode_kh.pm,v 1.1 2008-07-15 19:18:48 ko-ichi Exp $
+# $Id: Jcode_kh.pm,v 1.2 2008-07-28 07:39:28 ko-ichi Exp $
 #
 
 # kh
 # shiftjisをcp932に、euc-jpをeucJP-msに変換した。
 # Encode::EUCJPMSモジュールが必要
+
+no warnings 'redefine';
 
 package Jcode;
 use 5.005; # fair ?
@@ -12,8 +14,8 @@ use Carp;
 use strict;
 use vars qw($RCSID $VERSION $DEBUG);
 
-$RCSID = q$Id: Jcode_kh.pm,v 1.1 2008-07-15 19:18:48 ko-ichi Exp $;
-$VERSION = do { my @r = (q$Revision: 1.1 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$RCSID = q$Id: Jcode_kh.pm,v 1.2 2008-07-28 07:39:28 ko-ichi Exp $;
+$VERSION = do { my @r = (q$Revision: 1.2 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 $DEBUG = 0;
 
 # we no longer use Exporter
@@ -27,6 +29,7 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT_OK   = qw($RCSID $VERSION $DEBUG);
 %EXPORT_TAGS = ( all       => [ @EXPORT, @EXPORT_OK ] );
 
+no warnings 'all';
 use overload 
     q("") => sub { $_[0]->euc },
     q(==) => sub { overload::StrVal($_[0]) eq overload::StrVal($_[1]) },

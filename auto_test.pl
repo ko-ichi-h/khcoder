@@ -1,7 +1,6 @@
 #!/usr/local/bin/perl
 
 use strict;
-#use warnings;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
