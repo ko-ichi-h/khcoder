@@ -55,16 +55,23 @@ sub _exec_test{
 		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get )
 	)->euc."\n";
 
-	# 「複合名詞のリスト（一部）」
-	#$::main_gui->{menu}->mc_hukugo_exec;
-	#my $target = $::project_obj->file_HukugoList;
-	#$t .= "■複合名詞のリスト:\n";
-	#open (RFILE,"$target") or die;
-	#while (<RFILE>){
-	#	$t .= Jcode->new($_)->euc;
-	#}
-	#close (RFILE);
+	# 「複合語の検出」→「TermExtract」
+	use mysql_hukugo_te;
+	mysql_hukugo_te->run_from_morpho;
+	my $win_hukugo_te = gui_window::use_te_g->open;
+	$t .= "■複合語の検出（TermExtract）\n";
+	$t .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_te->{list}) )
+	)->euc;
 	
+	# 「複合語の検出」→「茶筌」
+	use mysql_hukugo;
+	mysql_hukugo->run_from_morpho;
+	my $win_hukugo_ch = gui_window::hukugo->open;
+	$t .= "■複合語の検出（茶筌）\n";
+	$t .= Jcode->new(
+		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_ch->{list}) )
+	)->euc;
 	
 	$self->{result} = $t;
 	return $self;
