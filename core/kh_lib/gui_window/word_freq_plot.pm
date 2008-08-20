@@ -21,7 +21,7 @@ sub _new{
 	#print "image: $args{images}->[1]\n";
 	
 	$self->{photo} = $win->Label(
-		-image => $win->Photo(-file => $args{images}->[1]),
+		-image => $win->Photo(-file => $args{images}->[1]->path),
 		-borderwidth => 2,
 		-relief => 'sunken',
 	)->pack(-anchor => 'c');
@@ -60,16 +60,67 @@ sub _new{
 			);
 		}
 	)->pack(-side => 'right');
-	
+
+	$f1->Button(
+		-text => $self->gui_jchar('保存'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->save();
+				}
+			);
+		}
+	)->pack(-side => 'right', -padx => 2);
+
 	$self->{images} = $args{images};
 	return $self;
+}
+
+sub save{
+	my $self = shift;
+	
+	# 保存先の参照
+	my @types = (
+		[ "Encapsulated PostScript",[qw/.eps/] ],
+		[ "Enhanced Metafile",[qw/.emf/] ],
+		[ "PNG",[qw/.png/] ],
+	#	[ "BMP",[qw/.bmp/] ],
+		[ "R Source",[qw/.r/] ],
+	);
+
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.eps',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt('プロットを保存'),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+
+	$path = $self->gui_jg_filename_win98($path);
+	$path = $self->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+
+	$self->{images}[$self->{ax}]->save($path) if $path;
+
+	return 1;
 }
 
 sub renew{
 	my $self = shift;
 	
+	my $plot_obj = $self->{images}[$self->{ax}];
+	
+	print $plot_obj->path, "\n";
+	
 	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
+		-image =>
+			$self->{win_obj}->Photo(
+				-file => $self->{images}[$self->{ax}]->path
+			)
 	);
 	$self->{photo}->update;
 }
