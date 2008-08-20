@@ -74,7 +74,7 @@ sub _new{
 				}
 			);
 		}
-	)->pack(-side => 'right', -padx => 2);
+	)->pack(-side => 'right', -padx => 4);
 
 	$self->{images} = $args{images};
 	return $self;
@@ -112,16 +112,13 @@ sub save{
 sub renew{
 	my $self = shift;
 	
-	my $plot_obj = $self->{images}[$self->{ax}];
-	
-	print $plot_obj->path, "\n";
-	
 	$self->{photo}->configure(
 		-image =>
 			$self->{win_obj}->Photo(
 				-file => $self->{images}[$self->{ax}]->path
 			)
 	);
+	
 	$self->{photo}->update;
 }
 

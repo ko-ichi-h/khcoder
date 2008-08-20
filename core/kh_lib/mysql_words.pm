@@ -227,7 +227,7 @@ sub freq_of_f{
 
 	my @r1;
 	push @r1, ['異なり語数 (n)  ', $n];
-	push @r1, ['平均 出現数', $mean];
+	push @r1, ['平均 出現回数', $mean];
 	push @r1, ['標準偏差', $sd];
 	
 	my (@r2, $cum); 
