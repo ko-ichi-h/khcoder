@@ -57,7 +57,7 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 	
-	$lis2->header('create',0,-text => $self->gui_jchar('出現数'));
+	$lis2->header('create',0,-text => $self->gui_jchar('出現回数'));
 	$lis2->header('create',1,-text => $self->gui_jchar('度数'));
 	$lis2->header('create',2,-text => $self->gui_jchar('パーセント'));
 	$lis2->header('create',3,-text => $self->gui_jchar('累積度数'));
