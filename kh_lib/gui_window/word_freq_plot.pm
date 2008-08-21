@@ -86,11 +86,13 @@ sub save{
 	# 保存先の参照
 	my @types = (
 		[ "Encapsulated PostScript",[qw/.eps/] ],
-		[ "Enhanced Metafile",[qw/.emf/] ],
+		[ "Adobe PDF",[qw/.pdf/] ],
 		[ "PNG",[qw/.png/] ],
-	#	[ "BMP",[qw/.bmp/] ],
 		[ "R Source",[qw/.r/] ],
 	);
+
+	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
+		if $::config_obj->os eq 'win32';
 
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.eps',
