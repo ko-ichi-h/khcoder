@@ -91,6 +91,7 @@ sub _save_pdf{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	#$self->_pdf_font;
 	$::config_obj->R->send(
 		 "pdf(file=\"$path\", height = 7, width = 7,"
 		."family=\"Japan1GothicBBB\")"
@@ -111,6 +112,7 @@ sub _save_eps{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	#$self->_pdf_font;
 	$::config_obj->R->send(
 		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
 		."paper = \"special\", height = 7, width = 7,"
