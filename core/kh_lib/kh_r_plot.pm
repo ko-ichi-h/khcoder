@@ -1,6 +1,8 @@
 package kh_r_plot;
 use strict;
 
+my $if_font = 0;
+
 sub new{
 	my $class = shift;
 	my %args = @_;
@@ -20,6 +22,17 @@ sub new{
 	$self->{command_f} = Jcode->new($self->{command_f})->sjis
 		if $::config_obj->os eq 'win32';
 	
+	# Linux用フォント設定
+	system('xset fp rehash');
+	if ($::config_obj->os ne 'win32' and not $if_font){
+		$::config_obj->R->send(
+			 'options(X11fonts = c('
+			.'"-*-gothic-%s-%s-normal--%d-*-*-*-*-*-*-*",'
+			.'"-adobe-symbol-*-*-*-*-%d-*-*-*-*-*-*-*"))'
+		);
+		$if_font = 1;
+	}
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;

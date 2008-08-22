@@ -176,24 +176,24 @@ sub plot{
 		name      => 'words_TF_freq1',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="Freqency",'
-			.'xlab="TF")',
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
+			.'xlab="出現回数")',
 	);
 	
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_TF_freq2',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="Freqency",'
-			.'xlab="TF", log="x")',
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
+			.'xlab="出現回数", log="x")',
 	);
 	
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_TF_freq3',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="Freqency",'
-			.'xlab="TF", log="xy")',
+			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="度数",'
+			.'xlab="出現回数", log="xy")',
 	);
 	
 	if ($::main_gui->if_opened('w_word_freq_plot')){
