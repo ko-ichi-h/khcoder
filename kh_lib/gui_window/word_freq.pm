@@ -176,8 +176,8 @@ sub plot{
 		name      => 'words_TF_freq1',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
-			.'xlab="出現回数")',
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="Freqency",'
+			.'xlab="TF")',
 	);
 	
 	my $plot2 = kh_r_plot->new(

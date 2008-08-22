@@ -82,15 +82,14 @@ sub _new{
 
 sub save{
 	my $self = shift;
-	
+
 	# 保存先の参照
 	my @types = (
 		[ "Encapsulated PostScript",[qw/.eps/] ],
-		[ "Adobe PDF",[qw/.pdf/] ],
+		#[ "Adobe PDF",[qw/.pdf/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "R Source",[qw/.r/] ],
 	);
-
 	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
 		if $::config_obj->os eq 'win32';
 
