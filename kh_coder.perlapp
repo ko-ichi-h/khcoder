@@ -9,7 +9,7 @@ Add: Encode::JP
 Add: feature
 Add: Encode::EUCJPMS
 Clean: 0
-Date: 2008-07-16 03:24:08
+Date: 2008-08-12 18:43:34
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -22,8 +22,8 @@ Lib: lib:C:\home\ko-ichi\core\kh_lib
 No-Compress: 0
 No-Logo: 0
 Runlib: 
-Shared: none
-Tmpdir: 
+Shared: private
+Tmpdir: config
 Verbose: 1
 Version-Comments: 
 Version-CompanyName: Ritsumeikan Univ.

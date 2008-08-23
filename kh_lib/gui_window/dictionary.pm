@@ -51,7 +51,7 @@ sub _new{
 		-indicator => 0,
 		-command            => sub{$wmw->after(10,sub{$self->unselect;});},
 		-highlightthickness => 0,
-		-columns            => 2,
+		-columns            => 1,
 		-borderwidth        => 0,
 	)->pack(-expand => '1', -fill => 'both');
 
@@ -158,21 +158,22 @@ sub _fill_in{
 			#print Jcode->new("$i\n",'euc')->sjis;
 			$selection[$row] = $self->config->ifuse_this($i);
 			my $c = $self->hlist->Checkbutton(
-				-text     => '',
+				-text     => $self->gui_jchar($i,'euc'),
 				-variable => \$selection[$row],
+				-anchor   => 'w',
 			);
 			$self->hlist->add($row,-at => $row,);
 			$self->hlist->itemCreate(
 				$row,0,
-				-itemtype  => 'window',
-				-style => $right,
-				-widget    => $c,
+				-itemtype => 'window',
+				-style    => $right,
+				-widget   => $c,
 			);
-			$self->hlist->itemCreate(
-				$row,1,
-				-itemtype => 'text',
-				-text     => $self->gui_jchar($i,'euc')
-			);
+			#$self->hlist->itemCreate(
+			#	$row,1,
+			#	-itemtype => 'text',
+			#	-text     => $self->gui_jchar($i,'euc')
+			#);
 			++$row;
 		}
 		$self->{checks} = \@selection;
