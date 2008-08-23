@@ -30,24 +30,26 @@ my %value = (
 sub _new{
 	my $self = shift;
 	
-	$self->{win_obj} = $self->parent->Frame();
+	$self->{win_obj} = $self->parent->Frame(
+		-relief             => 'sunken',
+		-borderwidth        => 2,
+	);
 	
 	$self->{hlist} = $self->{win_obj}->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
-		-relief             => 'sunken',
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator          => 0,
 		-highlightthickness => 0,
-		-columns            => 3,
-		-borderwidth        => 2,
+		-columns            => 2,
+		-borderwidth        => 0,
 		-height             => 6,
 	)->pack();
 	
 	my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
 	my $row = 0;
-	my $right = $self->{hlist}->ItemStyle('window',-anchor => 'e');
+	my $right = $self->{hlist}->ItemStyle('window',-anchor => 'w');
 	foreach my $i (@list0){
 		if (
 			mysql_exec->select(
@@ -55,9 +57,10 @@ sub _new{
 			)->hundle->fetch->[0]
 		){
 			my $c = $self->{hlist}->Checkbutton(
-				-text     => '',
+				-text     => gui_window->gui_jchar($name{$i}),
 				-variable => \$self->{check}{$i},
-				-command  => sub {$self->refresh;}
+				-command  => sub {$self->refresh;},
+				-anchor   => 'w',
 			);
 			$self->{entry}{$i} = $self->{hlist}->Entry(
 				-width => 3,
@@ -70,13 +73,13 @@ sub _new{
 				-style => $right,
 				-widget    => $c,
 			);
+			#$self->{hlist}->itemCreate(
+			#	$row,1,
+			#	-itemtype  => 'text',
+			#	-text      => gui_window->gui_jchar($name{$i}.' ¡¡'),
+			#);
 			$self->{hlist}->itemCreate(
 				$row,1,
-				-itemtype  => 'text',
-				-text      => gui_window->gui_jchar($name{$i}.' ¡¡'),
-			);
-			$self->{hlist}->itemCreate(
-				$row,2,
 				-itemtype  => 'window',
 				-widget    => $self->{entry}{$i},
 			);

@@ -13,17 +13,25 @@ sub _new{
 		$height = $self->{height};
 	}
 	
-	$self->{hlist} = $self->parent->Scrolled(
+	my $win = $self->parent->Frame(
+		-borderwidth        => 2,
+		-relief             => 'sunken',
+	);
+	
+	$self->{hlist} = $win->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
-		-relief             => 'sunken',
+		#-relief             => 'sunken',
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator => 0,
 		-highlightthickness => 0,
 		-columns            => 1,
-		-borderwidth        => 2,
+		-borderwidth        => 0,
 		-height             => $height,
+	)->pack(
+		-fill   => 'both',
+		-expand => 1
 	);
 	
 	
@@ -48,6 +56,7 @@ sub _new{
 		my $c = $self->hlist->Checkbutton(
 			-text     => gui_window->gui_jchar($i->[0],'euc'),
 			-variable => \$selection[$row],
+			-anchor => 'w',
 		);
 		push @{$self->{check_wigets}}, $c;
 		$self->hlist->add($row,-at => $row,);
@@ -66,8 +75,7 @@ sub _new{
 	}
 	$self->{checks} = \@selection;
 	
-	
-	$self->{win_obj} = $self->{hlist};
+	$self->{win_obj} = $win;
 	return $self;
 }
 
