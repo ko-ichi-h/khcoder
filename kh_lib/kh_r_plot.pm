@@ -11,29 +11,32 @@ sub new{
 	
 	return undef unless $::config_obj->R;
 	
-	# ƒtƒHƒ‹ƒ_–¼
+	# ¥Õ¥©¥ë¥ÀÌ¾
 	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
 	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
 	$dir =~ tr/\\/\//;
 	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
 	$self->{path} = $dir.$self->{name};
 	
-	# ƒRƒ}ƒ“ƒh
+	# ¥³¥Ş¥ó¥É
 	$self->{command_f} = Jcode->new($self->{command_f})->sjis
 		if $::config_obj->os eq 'win32';
 	
-	# Linux—pƒtƒHƒ“ƒgİ’è
-	system('xset fp rehash');
-	if ($::config_obj->os ne 'win32' and not $if_font){
+	# LinuxÍÑ¥Õ¥©¥ó¥ÈÀßÄê
+	if ( ($::config_obj->os ne 'win32') and ($if_font == 0) ){
+		system('xset fp rehash');
+		
+		# R 2.7°Ê¹ß¤Î¾ì¹ç¤Ï¤³¤Î¥³¥Ş¥ó¥É¤Ç¤Ï¤À¤á¤«¤â¡©
 		$::config_obj->R->send(
 			 'options(X11fonts = c('
 			.'"-*-gothic-%s-%s-normal--%d-*-*-*-*-*-*-*",'
 			.'"-adobe-symbol-*-*-*-*-%d-*-*-*-*-*-*-*"))'
 		);
+		
 		$if_font = 1;
 	}
 
-	# ƒvƒƒbƒgì¬
+	# ¥×¥í¥Ã¥ÈºîÀ®
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$self->{path} = $::config_obj->R_device($self->{path});
@@ -83,7 +86,7 @@ sub _save_emf{
 	my $self = shift;
 	my $path = shift;
 	
-	# ƒvƒƒbƒgì¬
+	# ¥×¥í¥Ã¥ÈºîÀ®
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
@@ -101,7 +104,7 @@ sub _save_pdf{
 	my $self = shift;
 	my $path = shift;
 	
-	# ƒvƒƒbƒgì¬
+	# ¥×¥í¥Ã¥ÈºîÀ®
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
@@ -121,7 +124,7 @@ sub _save_eps{
 	my $self = shift;
 	my $path = shift;
 	
-	# ƒvƒƒbƒgì¬
+	# ¥×¥í¥Ã¥ÈºîÀ®
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
@@ -141,7 +144,7 @@ sub _save_png{
 	my $self = shift;
 	my $path = shift;
 	
-	# ƒvƒƒbƒgì¬
+	# ¥×¥í¥Ã¥ÈºîÀ®
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send("png(\"$path\")");

@@ -21,7 +21,7 @@ sub _new{
 	#print "image: $args{images}->[1]\n";
 	
 	$self->{photo} = $win->Label(
-		-image => $win->Photo(-file => $args{images}->[1]),
+		-image => $win->Photo(-file => $args{images}->[1]->path),
 		-borderwidth => 2,
 		-relief => 'sunken',
 	)->pack(-anchor => 'c');
@@ -38,8 +38,8 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
 		options =>
 			[
-				[$self->gui_jchar('出現回数(X)')  => 1],
-				[$self->gui_jchar('出現回数(X)と度数(Y)') => 2],
+				[$self->gui_jchar('文書数(X)')  => 1],
+				[$self->gui_jchar('文書数(X)と度数(Y)') => 2],
 				[$self->gui_jchar('なし') => 0],
 			],
 		variable => \$self->{ax},
@@ -60,7 +60,22 @@ sub _new{
 			);
 		}
 	)->pack(-side => 'right');
-	
+
+	$f1->Button(
+		-text => $self->gui_jchar('保存'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->save();
+				}
+			);
+		}
+	)->pack(-side => 'right', -padx => 4);
+
 	$self->{images} = $args{images};
 	return $self;
 }
@@ -69,9 +84,39 @@ sub renew{
 	my $self = shift;
 	
 	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
+		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}]->path)
 	);
 	$self->{photo}->update;
+}
+
+sub save{
+	my $self = shift;
+
+	# 保存先の参照
+	my @types = (
+		[ "Encapsulated PostScript",[qw/.eps/] ],
+		#[ "Adobe PDF",[qw/.pdf/] ],
+		[ "PNG",[qw/.png/] ],
+		[ "R Source",[qw/.r/] ],
+	);
+	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
+		if $::config_obj->os eq 'win32';
+
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.eps',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt('プロットを保存'),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+
+	$path = $self->gui_jg_filename_win98($path);
+	$path = $self->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+
+	$self->{images}[$self->{ax}]->save($path) if $path;
+
+	return 1;
 }
 
 #--------------#

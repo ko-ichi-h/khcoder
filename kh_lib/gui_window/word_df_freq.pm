@@ -145,7 +145,7 @@ sub count{
 		-anchor => 'e',
 		-font => "TKFN"
 	);
-	my $rcmd = 'hage <- matrix( c(';
+	my $rcmd = 'hoge <- matrix( c(';
 	$row = 0;
 	foreach my $i (@{$r2}){
 		$rcmd .= "$i->[0],$i->[3],$i->[1],";
@@ -178,39 +178,37 @@ sub plot{
 	# プロットを作成してから表示用Windowを開く
 	my $self = shift;
 	return 0 unless $::config_obj->R;
+
+	use kh_r_plot;
+	my $plot1 = kh_r_plot->new(
+		name      => 'words_DF_freq1',
+		command_f => 
+			"$self->{rcmd}\n"
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
+			.'xlab="文書数")',
+	);
+
+	my $plot2 = kh_r_plot->new(
+		name      => 'words_DF_freq2',
+		command_f => 
+			"$self->{rcmd}\n"
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
+			.'xlab="文書数", log="x")',
+	);
 	
-	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
-	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
-	$dir =~ tr/\\/\//;
-	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
-	
-	my $path1 = $dir.'words_DF_freq1';
-	my $path2 = $dir.'words_DF_freq2';
-	my $path3 = $dir.'words_DF_freq3';
-	
-	$::config_obj->R->output_chk(0);
-	$::config_obj->R->lock;
-	$::config_obj->R->send($self->{rcmd});
-	# 通常
-	$path1 = $::config_obj->R_device($path1);
-	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,ylab="Freqency", xlab="DF")');
-	$::config_obj->R->send('dev.off()');
-	# x軸を対数に
-	$path2 = $::config_obj->R_device($path2);
-	$::config_obj->R->send('plot(hage[,1],hage[,3],type="b",lty=1,pch=1,log="x",ylab="Freqency", xlab="DF")');
-	$::config_obj->R->send('dev.off()');
-	# xy軸を対数に
-	$path3 = $::config_obj->R_device($path3);
-	$::config_obj->R->send('plot(hage[,1],hage[,3],log="xy",ylab="Freqency", xlab="DF")');
-	$::config_obj->R->send('dev.off()');
-	$::config_obj->R->unlock;
-	$::config_obj->R->output_chk(1);
+	my $plot3 = kh_r_plot->new(
+		name      => 'words_DF_freq3',
+		command_f => 
+			"$self->{rcmd}\n"
+			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="度数",'
+			.'xlab="文書数", log="xy")',
+	);
 	
 	if ($::main_gui->if_opened('w_word_df_freq_plot')){
 		$::main_gui->get('w_word_df_freq_plot')->renew;
 	} else {
 		gui_window::word_df_freq_plot->open(
-			images => [$path1,$path2,$path3]
+			images => [$plot1,$plot2,$plot3]
 		);
 	}
 }
