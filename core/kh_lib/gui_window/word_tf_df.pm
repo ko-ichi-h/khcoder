@@ -58,6 +58,22 @@ sub _new{
 		command  => sub {$self->renew;},
 	);
 
+	$f1->Button(
+		-text => $self->gui_jchar('保存'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->save();
+				}
+			);
+		}
+	)->pack(-side => 'right');
+
+
 	#$win->Button(
 	#	-text => $self->gui_jchar('閉じる'),
 	#	-font => "TKFN",
@@ -85,7 +101,7 @@ sub count{
 	
 	my $tani = $self->{tani_obj}->tani;
 	my $h = mysql_exec->select("
-		select num,f
+		select num, f, genkei.name
 		from genkei, hselection, df_$tani
 		where
 			genkei.khhinshi_id = hselection.khhinshi_id
@@ -94,45 +110,38 @@ sub count{
 			and hselection.ifuse = 1
 	",1)->hundle;
 	
-	my $rcmd = 'hage <- matrix( c(';
+	my $rcmd = 'hoge <- matrix( c(';
 	my $n = 0;
 	while (my $i = $h->fetch){
-		$rcmd .= "$i->[0],$i->[1],";
+		$rcmd .= "$i->[0],$i->[1],\"$i->[2]\",";
 		++$n;
 	}
 	chop $rcmd;
-	$rcmd .= "), nrow=$n, ncol=2, byrow=TRUE)";
-	#print "$rcmd\n";
+	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
+	use kh_r_plot;
+	my $plot1 = kh_r_plot->new(
+		name      => 'words_TF_DF1',
+		command_f => 
+			"$rcmd\n"
+			.'plot(hoge[,1],hoge[,2],ylab="文書数", xlab="出現回数")',
+	);
 
-	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
-	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
-	$dir =~ tr/\\/\//;
-	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
-	
-	my $path1 = $dir.'words_TF_DF1';
-	my $path2 = $dir.'words_TF_DF2';
-	my $path3 = $dir.'words_TF_DF3';
+	my $plot2 = kh_r_plot->new(
+		name      => 'words_TF_DF2',
+		command_f => 
+			"$rcmd\n"
+			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="x")',
+	);
 
-	$::config_obj->R->output_chk(0);
-	$::config_obj->R->lock;
-	$::config_obj->R->send($rcmd);
-	# 通常
-	$path1 = $::config_obj->R_device($path1);
-	$::config_obj->R->send('plot(hage[,1],hage[,2],ylab="DF", xlab="TF")');
-	$::config_obj->R->send('dev.off()');
-	# x軸を対数に
-	$path2 = $::config_obj->R_device($path2);
-	$::config_obj->R->send('plot(hage[,1],hage[,2],log="x",ylab="DF", xlab="TF")');
-	$::config_obj->R->send('dev.off()');
-	# xy軸を対数に
-	$path3 = $::config_obj->R_device($path3);
-	$::config_obj->R->send('plot(hage[,1],hage[,2],log="xy",ylab="DF", xlab="TF")');
-	$::config_obj->R->send('dev.off()');
-	$::config_obj->R->unlock;
-	$::config_obj->R->output_chk(1);
+	my $plot3 = kh_r_plot->new(
+		name      => 'words_TF_DF3',
+		command_f => 
+			"$rcmd\n"
+			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="xy")',
+	);
 
-	$self->{images} = [$path1,$path2,$path3];
+	$self->{images} = [$plot1,$plot2,$plot3];
 	$self->renew;
 }
 
@@ -141,9 +150,39 @@ sub renew{
 	return 0 unless $self->{optmenu};
 	
 	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}])
+		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}]->path)
 	);
 	$self->{photo}->update;
+}
+
+sub save{
+	my $self = shift;
+
+	# 保存先の参照
+	my @types = (
+		[ "Encapsulated PostScript",[qw/.eps/] ],
+		#[ "Adobe PDF",[qw/.pdf/] ],
+		[ "PNG",[qw/.png/] ],
+		[ "R Source",[qw/.r/] ],
+	);
+	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
+		if $::config_obj->os eq 'win32';
+
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.eps',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt('プロットを保存'),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+
+	$path = $self->gui_jg_filename_win98($path);
+	$path = $self->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+
+	$self->{images}[$self->{ax}]->save($path) if $path;
+
+	return 1;
 }
 
 #--------------#
