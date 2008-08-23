@@ -21,7 +21,7 @@ sub _new{
 		-selectmode         => 'none',
 		-indicator => 0,
 		-highlightthickness => 0,
-		-columns            => 2,
+		-columns            => 1,
 		-borderwidth        => 2,
 		-height             => $height,
 	);
@@ -46,7 +46,7 @@ sub _new{
 		}
 		$self->{name}{$row} = $i->[1];
 		my $c = $self->hlist->Checkbutton(
-			-text     => '',
+			-text     => gui_window->gui_jchar($i->[0],'euc'),
 			-variable => \$selection[$row],
 		);
 		push @{$self->{check_wigets}}, $c;
@@ -57,11 +57,11 @@ sub _new{
 			-style => $right,
 			-widget    => $c,
 		);
-		$self->hlist->itemCreate(
-			$row,1,
-			-itemtype => 'text',
-			-text     => gui_window->gui_jchar($i->[0],'euc')
-		);
+		#$self->hlist->itemCreate(
+		#	$row,1,
+		#	-itemtype => 'text',
+		#	-text     => gui_window->gui_jchar($i->[0],'euc')
+		#);
 		++$row;
 	}
 	$self->{checks} = \@selection;
