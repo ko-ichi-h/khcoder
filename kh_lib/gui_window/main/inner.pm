@@ -12,108 +12,162 @@ sub make{
 	my $mw = ${$gui}->mw;
 
 	# プロジェクト情報
-	my $fra1 = $mw->LabFrame(
+	my $lab_fra1 = $mw->LabFrame(
 		-label       => 'Project',
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(
 		-fill   => 'x',
-		-expand => '0',
+		-expand => 0,
 		-anchor => 'n',
-		-side   => 'top'
 	);
 
-	my $fra1a = $fra1->Frame(-borderwidth => 2) ->pack(-fill => 'x');
-	my $fra1b = $fra1->Frame(-borderwidth => 2) ->pack(-fill => 'x');
+	my $fra1 = $lab_fra1->Frame()->pack(
+		-fill => 'both',
+		-expand => 1,
+	);
 	
-	my $msg = gui_window->gui_jchar('現在のプロジェクト：','euc');
-	$fra1a->Label(
-		-text => "$msg",
+	$fra1->Label(
+		-text => gui_window->gui_jchar('現在のプロジェクト：','euc'),
 		-font => "TKFN"
-	)->pack(-anchor=>'w',-side=>'left');
+	)->grid(
+		-column => 0,
+		-row    => 0,
+		-sticky => 'w',
+		-in     => $fra1,
+	);
 	
-	my $cupro = $fra1a->Entry(
+	my $cupro = $fra1->Entry(
 		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
-	)->pack(-anchor=>'e',-side=>'right');
+	)->grid(
+		-column => 1,
+		-row    => 0,
+		-sticky => 'ew',
+		-in     => $fra1,
+		-pady   => 1,
+	);
 	gui_window->disabled_entry_configure($cupro);
 	
-	$msg = gui_window->gui_jchar('説明（メモ）：','euc');
-	$fra1b->Label(
-		-text => "$msg",
+	$fra1->Label(
+		-text => gui_window->gui_jchar('説明（メモ）：','euc'),
 		-font => "TKFN"
-	)->pack(-anchor=>'w',-side=>'left');
+	)->grid(
+		-column => 0,
+		-row    => 1,
+		-sticky => 'w',
+		-in     => $fra1,
+	);
 
-	my $cuprom = $fra1b->Entry(
+	my $cuprom = $fra1->Entry(
 		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
-	)->pack(-anchor=>'e',-side=>'right');
+	)->grid(
+		-column => 1,
+		-row    => 1,
+		-sticky => 'ew',
+		-in     => $fra1,
+		-pady   => 1,
+	);
 	gui_window->disabled_entry_configure($cuprom);
+	$fra1->gridColumnconfigure(1, -weight => 1);
+
 
 	# データベース情報
-	my $fra2 = $mw->LabFrame(
+	my $lab_fra2 = $mw->LabFrame(
 		-label       => 'Database Stats',
 		-labelside   => 'acrosstop',
 		-borderwidth => '2'
 	)->pack(
 		-fill   => 'both',
-		-expand => 'yes',
+		-expand => 1,
 		-anchor => 'n'
 	);
 
-	my $fra2_1 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
-	$fra2_1->Label(
+	my $fra2 = $lab_fra2->Frame()->pack(
+		-fill => 'both',
+		-expand => 1,
+	);
+
+	$fra2->Label(
 		-text => gui_window->gui_jchar('総抽出語数：','euc'),
 		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_num1} = $fra2_1->Entry(
+	)->grid(
+		-column => 0,
+		-row    => 0,
+		-sticky => 'w',
+	);
+	$self->{ent_num1} = $fra2->Entry(
 		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
-	)->pack(-anchor=>'e',-side=>'right');
+	)->grid(
+		-column => 1,
+		-row    => 0,
+		-sticky => 'we',
+		-pady   => 1,
+	);
 	gui_window->disabled_entry_configure($self->{ent_num1});
 
-	my $fra2_2 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'x');
-	$fra2_2->Label(
+	$fra2->Label(
 		-font => "TKFN",
 		-text => gui_window->gui_jchar('異なり語数（使用）：','euc')
-	)->pack(-side => 'left');
-	$self->{ent_num2} = $fra2_2->Entry(
+	)->grid(
+		-column => 0,
+		-row    => 1,
+		-sticky => 'w',
+	);
+	$self->{ent_num2} = $fra2->Entry(
 		-width      => $::config_obj->mw_entry_length,
 		-background => 'gray',
 		-font       => 'TKFN',
 		-state      => 'disable',
-	)->pack(-anchor=>'e',-side=>'right');
+	)->grid(
+		-column => 1,
+		-row    => 1,
+		-sticky => 'ew',
+		-pady   => 1,
+	);
 	gui_window->disabled_entry_configure($self->{ent_num2});
 
-	my $fra2_3 = $fra2->Frame(-borderwidth => 2)->pack(-fill => 'both', -expand => 'y');
-	$fra2_3->Label(
+	$fra2->Label(
 		-font => "TKFN",
 		-text => gui_window->gui_jchar('文書の単純集計：','euc')
-	)->pack(-side => 'left');
+	)->grid(
+		-column => 0,
+		-row    => 2,
+		-sticky => 'w',
+	);
 
-	my $hlist = $fra2_3->Scrolled(
+	my $hlist = $fra2->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator          => 0,
 		-command            => sub{$mw->after(10,sub{$self->unselect;});},
-		#-highlightthickness => 0,
+		-highlightthickness => 0,
 		-columns            => 2,
-		#-borderwidth        => 0,
-		-height             => 3,
+		-borderwidth        => 2,
+		-height             => 8,
 		-header             => 1,
 		-width      => $::config_obj->mw_entry_length - 2,
-	)->pack(-side => 'right', -anchor => 'e', -fill => 'y');
+	)->grid(
+		-column => 1,
+		-row    => 2,
+		-sticky => 'nswe',
+		-pady   => 1,
+	);
 
-	$hlist->header('create',0,-text => gui_window->gui_jchar('集計単位','euc'));
-	$hlist->header('create',1,-text => gui_window->gui_jchar('ケース数','euc'));
+	$hlist->header('create',0,-text=>gui_window->gui_jchar('集計単位','euc'));
+	$hlist->header('create',1,-text=>gui_window->gui_jchar('ケース数','euc'));
+	$fra2->gridColumnconfigure(1, -weight => 1, -minsize => 30);
+	$fra2->gridRowconfigure(2, -weight => 1);
 
 	sub unselect{
 		my $self = shift;
