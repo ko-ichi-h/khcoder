@@ -41,11 +41,18 @@ sub new{
 	$::config_obj->R->lock;
 	$self->{path} = $::config_obj->R_device($self->{path});
 	$::config_obj->R->send($self->{command_f});
+	$self->{r_msg} = $::config_obj->R->read;
+	
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
 	
 	return $self;
+}
+
+sub r_msg{
+	my $self = shift;
+	return $self->{r_msg};
 }
 
 sub path{

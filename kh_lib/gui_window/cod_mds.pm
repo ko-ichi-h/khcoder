@@ -271,6 +271,7 @@ sub _calc{
 			msg    => "出現数が0のコードは利用できません。"
 		);
 		$self->close();
+		return 0;
 	}
 	
 	# MDS実行のためのRコマンド
@@ -288,16 +289,34 @@ sub _calc{
 	$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
 	$r_command .= 'text(c$points, rownames(c$points))'."\n";
 
-	open (HOGE,'>hoge_mds.r') or die;
-	print HOGE $r_command;
-	close (HOGE);
-
+	#open (HOGE,'>hoge_mds.r') or die;
+	#print HOGE $r_command;
+	#close (HOGE);
 
 	use kh_r_plot;
-	my $plot1 = kh_r_plot->new(
+	my $plot = kh_r_plot->new(
 		name      => 'codes_MDS',
 		command_f => $r_command,
 	);
+
+	if (
+		   ( $plot->r_msg =~ /error/i )
+		or ( index($plot->r_msg,'エラー') > -1 )
+		or ( index($plot->r_msg,Jcode->new('エラー','euc')->sjis) > -1 )
+	){
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$self->win_obj,
+			msg    => "推定できませんでした：\n\n".$plot->r_msg
+		);
+		$self->close();
+		return 0;
+	}
+
+	#print $plot->r_msg, "\n";
+
+
+
 
 	$self->close;
 }

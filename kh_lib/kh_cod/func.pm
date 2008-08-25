@@ -235,7 +235,7 @@ sub cod_out_csv{
 	my $self    = shift;
 	my $tani    = shift;
 	my $outfile = shift;
-	
+
 	# コーディングとコーディング結果のチェック
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
