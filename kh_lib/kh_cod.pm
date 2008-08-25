@@ -132,6 +132,8 @@ sub cumulate{
 		$self->_cumulate(\@temp,$cycle,$salt);
 	}
 	
+	#print "cumulated!\n";
+	
 	return 1;
 }
 

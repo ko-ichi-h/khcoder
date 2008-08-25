@@ -180,6 +180,54 @@ sub cod_out_spss{
 	close (CODO);
 }
 
+sub out2r_selected{
+	my $self     = shift;
+	my $tani     = shift;
+	my $selected = shift;
+
+	# コーディングとコーディング結果のチェック
+	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 30;
+
+	# SQL文
+	my %tables = ();
+	foreach my $i (@{$selected}){
+		return 0 unless $i->res_table;
+		++$tables{$i->res_table};
+	}
+	my $sql = "SELECT ";
+	foreach my $i (@{$selected}){
+		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+	}
+	chop $sql;
+	$sql .= "\nFROM ".$self->tani."\n";
+	foreach my $i (keys %tables){
+		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
+	}
+	#print "$sql\n";
+	
+	# データ取り出し
+	my $r_command = '';
+	my $nrow = 0;
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		my $current;
+		foreach my $j (@{$i}){
+			$r_command .= "$j,";
+		}
+		++$nrow;
+	}
+	chop $r_command;
+	
+	my $ncol = @{$selected};
+	$r_command =
+		"d <- matrix( c($r_command), ncol=$ncol, nrow=$nrow, byrow=TRUE)";
+	#print "$r_command\n";
+	
+	return $r_command;
+}
+
 #-----------------------------------#
 #   コーディング結果の出力（CSV）   #
 
