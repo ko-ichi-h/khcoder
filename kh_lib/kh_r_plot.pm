@@ -11,14 +11,15 @@ sub new{
 	
 	return undef unless $::config_obj->R;
 	
-	# フォルダ名
+	# ファイル名
 	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
 	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
 	$dir =~ tr/\\/\//;
 	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
 	$self->{path} = $dir.$self->{name};
+	unlink($self->{path}) if -e $self->{path};
 	
-	# コマンド
+	# コマンドの文字コード
 	$self->{command_f} = Jcode->new($self->{command_f})->sjis
 		if $::config_obj->os eq 'win32';
 	
@@ -42,10 +43,25 @@ sub new{
 	$self->{path} = $::config_obj->R_device($self->{path});
 	$::config_obj->R->send($self->{command_f});
 	$self->{r_msg} = $::config_obj->R->read;
-	
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
+	
+	# 結果のチェック
+	if (
+		not (-e $self->{path})
+		or ( $self->{r_msg} =~ /error/i )
+		or ( index($self->{r_msg},'エラー') > -1 )
+		or ( index($self->{r_msg},Jcode->new('エラー','euc')->sjis) > -1 )
+	) {
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$::main_gui->mw,
+			msg    => "推定または描画に失敗しました\n\n".$self->{r_msg}
+		);
+		return 0;
+	}
+	
 	
 	return $self;
 }
