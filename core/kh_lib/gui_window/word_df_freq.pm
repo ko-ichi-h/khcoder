@@ -186,7 +186,7 @@ sub plot{
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
 			.'xlab="文書数")',
-	);
+	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_DF_freq2',
@@ -194,7 +194,7 @@ sub plot{
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
 			.'xlab="文書数", log="x")',
-	);
+	) or return 0;
 	
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_DF_freq3',
@@ -202,7 +202,7 @@ sub plot{
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="度数",'
 			.'xlab="文書数", log="xy")',
-	);
+	) or return 0;
 	
 	if ($::main_gui->if_opened('w_word_df_freq_plot')){
 		$::main_gui->get('w_word_df_freq_plot')->renew;

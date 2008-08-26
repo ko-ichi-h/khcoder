@@ -134,6 +134,30 @@ sub _new{
 		-padx   => 4,
 	);
 
+	# コーディング単位
+	my $f4 = $lf->Frame()->pack(
+		-fill => 'x',
+		-padx => 2,
+		-pady => 2
+	);
+	$f4->Label(
+		-text => $self->gui_jchar('アルゴリズム：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Classical', 'C'],
+				['Kruskal',   'K'],
+				['Sammon',    'S'],
+			],
+		variable => \$self->{method_opt},
+	);
+	$widget->set_value('K');
+
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
@@ -249,11 +273,7 @@ sub select_none{
 	return $self;
 }
 
-
-
-#------------------#
-#   集計ルーチン   #
-
+# プロット作成＆表示
 sub _calc{
 	my $self = shift;
 
@@ -279,49 +299,108 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
-		$r_command .= '"'.$i->{name}->name.'",'
-			if $i->{check};
+		my $name = $i->{name}->name;
+		substr($name, 0, 2) = ''
+			if index($name,'＊') == 0
+		;
+		$r_command .= '"'.$name.'",'
+			if $i->{check}
+		;
 	}
 	chop $r_command;
 	$r_command .= ")\n";
-	$r_command .= "library(MASS)\n";
-	$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
-	$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
-	$r_command .= 'text(c$points, rownames(c$points))'."\n";
-
-	#open (HOGE,'>hoge_mds.r') or die;
-	#print HOGE $r_command;
-	#close (HOGE);
-
+	
+	# アルゴリズム別のコマンド
+	my $r_command_d  = '';
+	my $r_command_dt = '';
+	if ($self->{method_opt} eq 'K'){
+		$r_command .= "library(MASS)\n";
+		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
+		
+		$r_command_d = $r_command;
+		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		
+		$r_command_dt = $r_command;
+		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+		
+		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+	}
+	elsif ($self->{method_opt} eq 'S'){
+		$r_command .= "library(MASS)\n";
+		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
+		
+		$r_command_d = $r_command;
+		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		
+		$r_command_dt = $r_command;
+		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+		
+		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+	}
+	elsif ($self->{method_opt} eq 'C'){
+		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
+		
+		$r_command_d = $r_command;
+		$r_command_d .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
+		
+		$r_command_dt = $r_command;
+		$r_command_dt .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_dt .= 'text(c, rownames(c), cex=0.8)'."\n";
+		
+		$r_command .= 'plot(c, type="n", xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c, rownames(c), cex=0.8)'."\n";
+	}
+	
+	# プロット作成
 	use kh_r_plot;
-	my $plot = kh_r_plot->new(
+	my $plot1 = kh_r_plot->new(
 		name      => 'codes_MDS',
 		command_f => $r_command,
-	);
+	) or return 0;
+	my $plot2 = kh_r_plot->new(
+		name      => 'codes_MDS_d',
+		command_f => $r_command_d,
+	) or return 0;
+	#my $plot3 = kh_r_plot->new(
+	#	name      => 'codes_MDS_dt',
+	#	command_f => $r_command_dt,
+	#) or return 0;
 
-	if (
-		   ( $plot->r_msg =~ /error/i )
-		or ( index($plot->r_msg,'エラー') > -1 )
-		or ( index($plot->r_msg,Jcode->new('エラー','euc')->sjis) > -1 )
-	){
-		gui_errormsg->open(
-			type   => 'msg',
-			window  => \$self->win_obj,
-			msg    => "推定できませんでした：\n\n".$plot->r_msg
+	# ストレス値の取得
+	my $stress;
+	if ($self->{method_opt} eq 'K' or $self->{method_opt} eq 'S'){
+		$::config_obj->R->send(
+			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
+			.'print(str)'
 		);
-		$self->close();
-		return 0;
+		$stress = $::config_obj->R->read;
+
+		if ($stress =~ /"khcoder(.+)"/){
+			$stress = $1;
+			$stress /= 100 if $self->{method_opt} eq 'K';
+			$stress = sprintf("%.3f",$stress);
+		} else {
+			$stress = undef;
+		}
 	}
 
-	#print $plot->r_msg, "\n";
-
-
-
-
+	# プロットWindowを開く
+	if ($::main_gui->if_opened('w_cod_mds_plot')){
+		$::main_gui->get('w_cod_mds_plot')->close;
+	}
 	$self->close;
+	gui_window::cod_mds_plot->open(
+		plots   => [$plot1, $plot2],
+		#plots   => [$plot1, $plot2, $plot3],
+		stress => $stress,
+	);
+	
+	return 1;
 }
-
-
 
 #--------------#
 #   アクセサ   #

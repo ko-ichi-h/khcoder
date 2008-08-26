@@ -125,21 +125,21 @@ sub count{
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数", xlab="出現回数")',
-	);
+	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_TF_DF2',
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="x")',
-	);
+	) or return 0;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_TF_DF3',
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="xy")',
-	);
+	) or return 0;
 
 	$self->{images} = [$plot1,$plot2,$plot3];
 	$self->renew;
