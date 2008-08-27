@@ -463,6 +463,15 @@ sub make{
 			);
 		push @menu1, 't_cod_mds' if $::config_obj->R;
 
+		$self->{t_cod_cls} = $self->{t_cod_multi}->command(
+				-label => gui_window->gui_jchar('クラスター分析'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::cod_cls->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_cod_cls' if $::config_obj->R;
 
 		$f5->separator();
 
