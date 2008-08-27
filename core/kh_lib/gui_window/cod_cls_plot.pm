@@ -96,7 +96,7 @@ sub renew{
 	my $self = shift;
 	return 0 unless $self->{optmenu};
 	
-	print "selection: $self->{ax}\n";
+	#print "selection: $self->{ax}\n";
 	
 	$self->{photo}->configure(
 		-image => $self->{win_obj}->Photo(-file => $self->{plots}[$self->{ax}]->path)
