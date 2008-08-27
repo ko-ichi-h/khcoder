@@ -1,4 +1,4 @@
-package gui_window::cod_mds;
+package gui_window::cod_cls;
 use base qw(gui_window);
 
 use strict;
@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・多次元尺度法'));
+	$win->title($self->gui_jt('コーディング・クラスター分析'));
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
@@ -127,7 +127,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => $self->gui_jchar('　　※コードを5つ以上選択して下さい。','euc'),
+		-text => $self->gui_jchar('　　※コードを3つ以上選択して下さい。','euc'),
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -135,28 +135,29 @@ sub _new{
 	);
 
 	# コーディング単位
-	my $f4 = $lf->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 2
-	);
-	$f4->Label(
-		-text => $self->gui_jchar('方法：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	my $widget = gui_widget::optmenu->open(
-		parent  => $f4,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				['Classical', 'C'],
-				['Kruskal',   'K'],
-				['Sammon',    'S'],
-			],
-		variable => \$self->{method_opt},
-	);
-	$widget->set_value('K');
+	#my $f4 = $lf->Frame()->pack(
+	#	-fill => 'x',
+	#	-padx => 2,
+	#	-pady => 2
+	#);
+	#$f4->Label(
+	#	-text => $self->gui_jchar('アルゴリズム：'),
+	#	-font => "TKFN",
+	#)->pack(-side => 'left');
+	#
+	#my $widget = gui_widget::optmenu->open(
+	#	parent  => $f4,
+	#	pack    => {-side => 'left'},
+	#	options =>
+	#		[
+	#			[$self->gui_jchar('群平均法','euc'), 'average' ],
+	#			[$self->gui_jchar('最近隣法','euc'), 'single'  ],
+	#			[$self->gui_jchar('最遠隣法','euc'), 'complete'],
+	#			#[$self->gui_jchar('McQuitty法','euc'), 'mcquitty'],
+	#		],
+	#	variable => \$self->{method_opt},
+	#);
+	#$widget->set_value('average');
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
@@ -238,7 +239,7 @@ sub read_cfile{
 	return $self;
 }
 
-# コードが5つ以上選択されているかチェック
+# コードが1つ以上選択されているかチェック
 sub check_selected_num{
 	my $self = shift;
 	
@@ -247,7 +248,7 @@ sub check_selected_num{
 		++$selected_num if $i->{check};
 	}
 	
-	if ($selected_num >= 5){
+	if ($selected_num >= 3){
 		$self->{ok_btn}->configure(-state => 'normal');
 	} else {
 		$self->{ok_btn}->configure(-state => 'disable');
@@ -312,93 +313,50 @@ sub _calc{
 	chop $r_command;
 	$r_command .= ")\n";
 	
-	# アルゴリズム別のコマンド
-	my $r_command_d  = '';
-	my $r_command_dt = '';
-	if ($self->{method_opt} eq 'K'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-	}
-	elsif ($self->{method_opt} eq 'S'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-	}
-	elsif ($self->{method_opt} eq 'C'){
-		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
-		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c, rownames(c), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c, rownames(c), cex=0.8)'."\n";
-	}
-	
+	my $r_command_2 = 
+		 $r_command
+		.'plot(hclust(dist(d,method="binary"),method="'
+		.'single'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離")'
+	;
+
+	my $r_command_3 = 
+		 $r_command
+		.'plot(hclust(dist(d,method="binary"),method="'
+		.'complete'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離")'
+	;
+
+	$r_command .=
+		'plot(hclust(dist(d,method="binary"),method="'
+		.'average'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離")'
+	;
+
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
-		name      => 'codes_MDS',
+		name      => 'codes_CLS1',
 		command_f => $r_command,
 	) or return 0;
+
 	my $plot2 = kh_r_plot->new(
-		name      => 'codes_MDS_d',
-		command_f => $r_command_d,
+		name      => 'codes_CLS2',
+		command_f => $r_command_2,
 	) or return 0;
-	#my $plot3 = kh_r_plot->new(
-	#	name      => 'codes_MDS_dt',
-	#	command_f => $r_command_dt,
-	#) or return 0;
 
-	# ストレス値の取得
-	my $stress;
-	if ($self->{method_opt} eq 'K' or $self->{method_opt} eq 'S'){
-		$::config_obj->R->send(
-			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
-			.'print(str)'
-		);
-		$stress = $::config_obj->R->read;
-
-		if ($stress =~ /"khcoder(.+)"/){
-			$stress = $1;
-			$stress /= 100 if $self->{method_opt} eq 'K';
-			$stress = sprintf("%.3f",$stress);
-		} else {
-			$stress = undef;
-		}
-	}
+	my $plot3 = kh_r_plot->new(
+		name      => 'codes_CLS3',
+		command_f => $r_command_3,
+	) or return 0;
 
 	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_cod_mds_plot')){
-		$::main_gui->get('w_cod_mds_plot')->close;
+	if ($::main_gui->if_opened('w_cod_cls_plot')){
+		$::main_gui->get('w_cod_cls_plot')->close;
 	}
 	$self->close;
-	gui_window::cod_mds_plot->open(
-		plots   => [$plot1, $plot2],
-		#plots   => [$plot1, $plot2, $plot3],
-		stress => $stress,
+	gui_window::cod_cls_plot->open(
+		plots   => [$plot1,$plot2,$plot3],
 	);
 	
 	return 1;
@@ -417,6 +375,6 @@ sub tani{
 }
 
 sub win_name{
-	return 'w_cod_mds';
+	return 'w_cod_cls';
 }
 1;
