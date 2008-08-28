@@ -132,12 +132,22 @@ sub _new{
 	$lis->header('create',1,-text => $self->gui_jchar('品詞'));
 	$lis->header('create',2,-text => $self->gui_jchar('頻度'));
 
-	$fra5->Button(
+	$self->{copy_btn} = $fra5->Button(
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right');
+
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{copy_btn}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{copy_btn},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
 
 	$self->{conc_button} = $fra5->Button(
 		-text => $self->gui_jchar('コンコーダンス'),

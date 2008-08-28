@@ -63,22 +63,34 @@ sub _new{
 	$lis2->header('create',3,-text => $self->gui_jchar('累積度数'));
 	$lis2->header('create',4,-text => $self->gui_jchar('累積パーセント'));
 	
-	$wmw->Button(
+	$self->{copy_btn} = $wmw->Button(
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list2);});} 
 	)->pack(-side => 'left',-padx => 5);
 
-	if ($::config_obj->R){
-		$wmw->Button(
-			-text => $self->gui_jchar('プロット'),
-			-font => "TKFN",
-			-borderwidth => '1',
-			-command => sub{ $mw->after(10,sub {
-				$self->plot;
-			});} 
-		)->pack(-side => 'left');
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{copy_btn}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{copy_btn},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
+
+	my $btn = $wmw->Button(
+		-text => $self->gui_jchar('プロット'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after(10,sub {
+			$self->plot;
+		});} 
+	)->pack(-side => 'left');
+	
+	unless ($::config_obj->R){
+		$btn->configure(-state => 'disable');
 	}
 
 	$wmw->Button(

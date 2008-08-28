@@ -182,13 +182,23 @@ sub _new{
 		-foreground => 'blue'
 	)->pack(-side => 'right');
 
-	$f5->Button(
+	$self->{copy_btn} = $f5->Button(
 		-font    => "TKFN",
 		-text    => $self->gui_jchar('¥³¥Ô¡¼'),
 		-width   => 8,
 		-command => sub{ $win->after(10,sub{$self->copy;});},
 		-borderwidth => 1
 	)->pack(-side => 'left');
+
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{copy_btn}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{copy_btn},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
 
 	$f5->Button(
 		-font    => "TKFN",
