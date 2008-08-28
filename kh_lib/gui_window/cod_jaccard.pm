@@ -85,6 +85,16 @@ sub _new{
 		-command => sub{ $mw->after(10,sub { $self->copy; });} 
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{btn_copy}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{btn_copy},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
+
 	return $self;
 }
 

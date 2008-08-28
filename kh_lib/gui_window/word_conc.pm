@@ -92,7 +92,7 @@ sub _new{
 	my $blhelp = $wmw->Balloon();
 	$blhelp->attach(
 		$sbutton,
-		-balloonmsg => '"ENTER" key',
+		-balloonmsg => 'ENTER',
 		-font => "TKFN"
 	);
 
@@ -205,13 +205,23 @@ sub _new{
 		-command          => sub {$mw->after(10,sub{$self->view_doc;});}
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$fra5->Button(
+	$self->{copy_btn} = $fra5->Button(
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
+
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{copy_btn}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{copy_btn},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
 
 	$fra5->Button(
 		-text => $self->gui_jchar('文書表示'),

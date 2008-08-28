@@ -97,13 +97,23 @@ sub _new{
 		-foreground => 'blue'
 	)->pack(-side => 'left');
 
-	$rf->Button(
+	$self->{copy_btn} = $rf->Button(
 		-text => $self->gui_jchar('¥³¥Ô¡¼'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
 		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-side => 'right', -anchor => 'e', -pady => 1);
+
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $self->{copy_btn}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{copy_btn},
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
 
 	$self->{label} = $label;
 	$self->{list}  = $lis;
