@@ -333,6 +333,21 @@ sub _calc{
 		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",cex=0.8)'
 	;
 
+	# 対応分析の場合
+	#d <- t(d)
+	#d <- subset(d, rowSums(d) > 0)
+	#library(MASS)
+	#c <- corresp(d, nf=2)
+	#
+	## 寄与率【単位はパーセント】を表示
+	#k <- 100*(c$cor^2)/sum(c$cor^2)
+	#print(k <- round(k, 2))
+	#
+	## コードのみプロット
+	#plot(c$cscore, type="n", xlab="成分1", ylab="成分2")
+	#text(c$cscore,rownames(c$cscore), cex=0.8)
+
+
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
