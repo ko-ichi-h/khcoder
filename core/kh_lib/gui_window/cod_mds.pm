@@ -314,63 +314,49 @@ sub _calc{
 	
 	# アルゴリズム別のコマンド
 	my $r_command_d  = '';
-	my $r_command_dt = '';
 	if ($self->{method_opt} eq 'K'){
 		$r_command .= "library(MASS)\n";
 		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_d .= 'plot(c$points,type="n",xlab="次元1",ylab="次元2")'."\n";
+		$r_command_d .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
 		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+		$r_command .= 'plot(c$points,xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c$points, rownames(c$points), cex=0.8,pos=1)'."\n";
 	}
 	elsif ($self->{method_opt} eq 'S'){
 		$r_command .= "library(MASS)\n";
 		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_d .= 'plot(c$points,type="n",xlab="次元1",ylab="次元2")'."\n";
+		$r_command_d .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
 		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c$points, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c$points, rownames(c$points), cex=0.8)'."\n";
+		$r_command .= 'plot(c$points, xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c$points, rownames(c$points), cex=0.8,pos=1)'."\n";
 	}
 	elsif ($self->{method_opt} eq 'C'){
 		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
+		$r_command_d .= 'plot(c, type="n", xlab="次元1", ylab="次元2")'."\n";
+		$r_command_d .= 'text(c, rownames(c), cex=0.8)'."\n";
 		
-		$r_command_dt = $r_command;
-		$r_command_dt .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_dt .= 'text(c, rownames(c), cex=0.8)'."\n";
-		
-		$r_command .= 'plot(c, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command .= 'text(c, rownames(c), cex=0.8)'."\n";
+		$r_command .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
+		$r_command .= 'text(c, rownames(c), cex=0.8, pos=1)'."\n";
 	}
 	
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_MDS',
-		command_f => $r_command,
+		command_f => $r_command_d,
 	) or return 0;
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_MDS_d',
-		command_f => $r_command_d,
+		command_f => $r_command,
 	) or return 0;
-	#my $plot3 = kh_r_plot->new(
-	#	name      => 'codes_MDS_dt',
-	#	command_f => $r_command_dt,
-	#) or return 0;
 
 	# ストレス値の取得
 	my $stress;
