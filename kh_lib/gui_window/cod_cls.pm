@@ -317,20 +317,20 @@ sub _calc{
 		 $r_command
 		.'plot(hclust(dist(d,method="binary"),method="'
 		.'single'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违")'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违",cex=0.8)'
 	;
 
 	my $r_command_3 = 
 		 $r_command
 		.'plot(hclust(dist(d,method="binary"),method="'
 		.'complete'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违")'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违",cex=0.8)'
 	;
 
 	$r_command .=
 		'plot(hclust(dist(d,method="binary"),method="'
 		.'average'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违")'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="调违",cex=0.8)'
 	;
 
 	# プロット侯喇
