@@ -186,7 +186,7 @@ sub out2r_selected{
 	my $selected = shift;
 
 	# コーディングとコーディング結果のチェック
-	$self->code($tani) or return 0;
+	$self->code($tani) or return 0 unless $self->valid_codes;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
 
