@@ -22,6 +22,16 @@ sub new{
 	# コマンドの文字コード
 	$self->{command_f} = Jcode->new($self->{command_f})->sjis
 		if $::config_obj->os eq 'win32';
+	$self->{command_a} = Jcode->new($self->{command_a})->sjis
+		if $::config_obj->os eq 'win32' and length($self->{command_a});
+	my $command = '';
+	
+	if (length($self->{command_a})){
+		$command = $self->{command_a};
+		#print "com_a: $command\n";
+	} else {
+		$command = $self->{command_f};
+	}
 	
 	# Linux用フォント設定
 	if ( ($::config_obj->os ne 'win32') and ($if_font == 0) ){
@@ -41,7 +51,7 @@ sub new{
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$self->{path} = $::config_obj->R_device($self->{path});
-	$::config_obj->R->send($self->{command_f});
+	$::config_obj->R->send($command);
 	$self->{r_msg} = $::config_obj->R->read;
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;

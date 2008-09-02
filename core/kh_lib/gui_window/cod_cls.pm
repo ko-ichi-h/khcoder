@@ -132,7 +132,34 @@ sub _new{
 	)->pack(
 		-anchor => 'w',
 		-padx   => 4,
+		-pady   => 2,
 	);
+
+	# フォントサイズ
+	my $ff = $lf->Frame()->pack(
+		-fill => 'x',
+		-padx => 2,
+		-pady => 4,
+	);
+
+	$ff->Label(
+		-text => $self->gui_jchar('フォントサイズ：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_font_size} = $ff->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_font_size}->insert(0,'100');
+
+	$ff->Label(
+		-text => $self->gui_jchar('%'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+
 
 	# コーディング単位
 	#my $f4 = $lf->Frame()->pack(
@@ -239,7 +266,7 @@ sub read_cfile{
 	return $self;
 }
 
-# コードが1つ以上選択されているかチェック
+# コードが3つ以上選択されているかチェック
 sub check_selected_num{
 	my $self = shift;
 	
@@ -285,6 +312,9 @@ sub _calc{
 		push @selected, $i->{name} if $i->{check};
 	}
 
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
+
 	# データ取得
 	my $r_command;
 	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
@@ -293,7 +323,7 @@ sub _calc{
 			window  => \$self->win_obj,
 			msg    => "出現数が0のコードは利用できません。"
 		);
-		$self->close();
+		#$self->close();
 		return 0;
 	}
 	
@@ -313,24 +343,27 @@ sub _calc{
 	chop $r_command;
 	$r_command .= ")\n";
 	
-	my $r_command_2 = 
-		 $r_command
-		.'plot(hclust(dist(d,method="binary"),method="'
+	my $r_command_2a = 
+		 'plot(hclust(dist(d,method="binary"),method="'
 		.'single'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",cex=0.8)'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",'
+		."cex=$fontsize )"
 	;
+	my $r_command_2 = $r_command.$r_command_2a;
 
-	my $r_command_3 = 
-		 $r_command
-		.'plot(hclust(dist(d,method="binary"),method="'
+	my $r_command_3a = 
+		 'plot(hclust(dist(d,method="binary"),method="'
 		.'complete'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",cex=0.8)'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",'
+		."cex=$fontsize )"
 	;
+	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
 		'plot(hclust(dist(d,method="binary"),method="'
 		.'average'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",cex=0.8)'
+		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",'
+		."cex=$fontsize )"
 	;
 
 	# 対応分析の場合
@@ -357,11 +390,13 @@ sub _calc{
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_CLS2',
+		command_a => $r_command_2a,
 		command_f => $r_command_2,
 	) or return 0;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'codes_CLS3',
+		command_a => $r_command_3a,
 		command_f => $r_command_3,
 	) or return 0;
 
