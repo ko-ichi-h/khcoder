@@ -175,7 +175,7 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,'100');
+	$self->{entry_font_size}->insert(0,'80');
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),

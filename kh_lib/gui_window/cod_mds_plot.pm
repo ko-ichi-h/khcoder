@@ -53,7 +53,7 @@ sub _new{
 
 	if (length($args{stress})){
 		$f1->Label(
-			-text => "   Stress = ".$args{stress}
+			-text => "  Stress = ".$args{stress}
 		)->pack(-side => 'left');
 	}
 

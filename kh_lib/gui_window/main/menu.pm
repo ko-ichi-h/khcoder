@@ -472,7 +472,9 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_cls' if $::config_obj->R;
-
+		
+		$self->{t_cod_multi}->separator();
+		
 		$self->{t_cod_corresp} = $self->{t_cod_multi}->command(
 				-label => gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
@@ -698,7 +700,7 @@ sub make{
 			},
 		);
 		
-		$msg = gui_window->gui_jchar('最新情報','euc');
+		$msg = gui_window->gui_jchar('最新情報（Web）','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
