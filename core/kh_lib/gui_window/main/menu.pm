@@ -473,6 +473,16 @@ sub make{
 			);
 		push @menu1, 't_cod_cls' if $::config_obj->R;
 
+		$self->{t_cod_corresp} = $self->{t_cod_multi}->command(
+				-label => gui_window->gui_jchar('ÂÐ±þÊ¬ÀÏ'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::cod_corresp->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_cod_corresp' if $::config_obj->R;
+
 		$f5->separator();
 
 		$self->{t_cod_out} = $f5->cascade(
