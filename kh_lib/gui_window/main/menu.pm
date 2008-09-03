@@ -688,7 +688,7 @@ sub make{
 		-tearoff=>'no'
 	);
 	
-		$msg = gui_window->gui_jchar('使用説明書（PDF形式）','euc');
+		$msg = gui_window->gui_jchar('使用説明書（PDF）','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
