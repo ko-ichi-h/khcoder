@@ -43,6 +43,8 @@ use gui_window::cod_mds;
 use gui_window::cod_mds_plot;
 use gui_window::cod_cls;
 use gui_window::cod_cls_plot;
+use gui_window::cod_corresp;
+use gui_window::cod_corresp_plot;
 use gui_window::cod_out;
 use gui_window::txt_html2csv;
 use gui_window::txt_pickup;

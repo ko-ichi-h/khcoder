@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・クラスター分析'));
+	$win->title($self->gui_jt('コーディング・クラスター分析（オプション）'));
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
