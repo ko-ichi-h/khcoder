@@ -232,7 +232,7 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,'100');
+	$self->{entry_font_size}->insert(0,'80');
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -695,7 +695,6 @@ sub _calc{
 		;
 	}
 
-
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
@@ -709,6 +708,32 @@ sub _calc{
 		command_f => $r_command_2,
 	) or return 0;
 
+	# 寄与率の取得
+	$::config_obj->R->send(
+		'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
+	);
+	my $count = $::config_obj->R->read;
+	my $kiyo;
+	if ($count =~ /"khcoder(.+)"/){
+		$count = $1;
+	} else {
+		$count = -1;
+	}
+	$count = 10;
+	while ($count > 0){
+		$::config_obj->R->send(
+			 'print( paste("khcoder",round(c$cor^2/sum(corresp(d, nf='
+			.$count
+			.')$cor^2) * 100,2), sep=""))'
+		);
+		my $t = $::config_obj->R->read;
+		if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
+			$kiyo = "$1, $2";
+			last;
+		}
+		--$count;
+	}
+
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_cod_corresp_plot')){
 		$::main_gui->get('w_cod_corresp_plot')->close;
@@ -716,8 +741,9 @@ sub _calc{
 	$self->close;
 	gui_window::cod_corresp_plot->open(
 		plots   => [$plot1,$plot2],
+		kiyo    => $kiyo,
 	);
-	
+
 	return 1;
 }
 
@@ -732,7 +758,6 @@ sub tani{
 	my $self = shift;
 	return $self->{tani_obj}->tani;
 }
-
 sub win_name{
 	return 'w_cod_corresp';
 }

@@ -51,9 +51,9 @@ sub _new{
 	);
 	$self->{optmenu}->set_value(0);
 
-	if (length($args{stress})){
+	if (length($args{kiyo})){
 		$f1->Label(
-			-text => "   Stress = ".$args{stress}
+			-text => $self->gui_jchar("  ´óÍ¿Î¨¡§ ".$args{kiyo})
 		)->pack(-side => 'left');
 	}
 
