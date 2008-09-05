@@ -24,7 +24,7 @@ my @menu1 = (
 	't_cod_count',
 	't_cod_tab',
 	't_cod_jaccard',
-	't_cod_multi',
+	#'t_cod_multi',
 	't_cod_out',
 	't_cod_outtab',
 	't_cod_out_spss',
@@ -438,44 +438,7 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_cod_multi} = $f5->cascade(
-			-label => gui_window->gui_jchar('コード間関連'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
-
-		$self->{t_cod_jaccard} = $self->{t_cod_multi}->command(
-			-label => gui_window->gui_jchar('Jaccard係数'),
-			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
-					gui_window::cod_jaccard->open;
-				})},
-			-state => 'disable'
-		);
-
-		$self->{t_cod_mds} = $self->{t_cod_multi}->command(
-				-label => gui_window->gui_jchar('多次元尺度法'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::cod_mds->open;
-				})},
-				-state => 'disable'
-			);
-		push @menu1, 't_cod_mds' if $::config_obj->R;
-
-		$self->{t_cod_cls} = $self->{t_cod_multi}->command(
-				-label => gui_window->gui_jchar('クラスター分析（樹状図）'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::cod_cls->open;
-				})},
-				-state => 'disable'
-			);
-		push @menu1, 't_cod_cls' if $::config_obj->R;
-		
-		$self->{t_cod_multi}->separator();
-		
-		$self->{t_cod_corresp} = $self->{t_cod_multi}->command(
+		$self->{t_cod_corresp} = $f5->command(
 				-label => gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
@@ -484,6 +447,43 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_corresp' if $::config_obj->R;
+
+		#$self->{t_cod_multi} = $f5->cascade(
+		#	-label => gui_window->gui_jchar('コード間関連'),
+		#	 -font => "TKFN",
+		#	 -tearoff=>'no'
+		#);
+
+		$f5->separator();
+
+		$self->{t_cod_jaccard} = $f5->command(
+			-label => gui_window->gui_jchar('コード間関連（Jaccard係数）'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::cod_jaccard->open;
+				})},
+			-state => 'disable'
+		);
+
+		$self->{t_cod_mds} = $f5->command(
+				-label => gui_window->gui_jchar('多次元尺度構成法'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::cod_mds->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_cod_mds' if $::config_obj->R;
+
+		$self->{t_cod_cls} = $f5->command(
+				-label => gui_window->gui_jchar('階層的クラスター分析'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::cod_cls->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_cod_cls' if $::config_obj->R;
 
 		$f5->separator();
 
