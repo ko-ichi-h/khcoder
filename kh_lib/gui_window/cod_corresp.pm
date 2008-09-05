@@ -215,6 +215,49 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 	$self->refresh;
 
+	# 成分
+	my $fd = $lf->Frame()->pack(
+		-fill => 'x',
+		-padx => 2,
+		-pady => 4,
+	);
+
+	$fd->Label(
+		-text => $self->gui_jchar('成分数：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_d_n} = $fd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_d_n}->insert(0,'2');
+
+	$fd->Label(
+		-text => $self->gui_jchar('  x軸の成分：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_d_x} = $fd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_d_x}->insert(0,'1');
+
+	$fd->Label(
+		-text => $self->gui_jchar('  y軸の成分：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_d_y} = $fd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_d_y}->insert(0,'2');
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -516,6 +559,10 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
+	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
+	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
+
 	# データ取得
 	my $r_command;
 	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
@@ -662,43 +709,105 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	
 	$r_command .= "library(MASS)\n";
-	$r_command .= "c <- corresp(d, nf=2)\n";
+	$r_command .= "c <- corresp(d, nf=$d_n)\n";
 	
+	my $r_command_tmp = $r_command;
+	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
+		if $::config_obj->os eq 'win32';
+	$::config_obj->R->send($r_command_tmp);
+
+	# 寄与率の取得
+	$::config_obj->R->send(
+		'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
+	);
+	my $count = $::config_obj->R->read;
+	my $kiyo1;
+	my $kiyo2;
+	if ($count =~ /"khcoder(.+)"/){
+		$count = $1;
+	} else {
+		$count = -1;
+	}
+	while ($count > 0){
+		#print "$count\n";
+		$::config_obj->R->send(
+			 'print( paste("khcoder",round('
+			."c(c\$cor[$d_x], c\$cor[$d_y])^2"
+			.'/sum(corresp(d, nf='
+			.$count
+			.')$cor^2) * 100,2), sep=""))'
+		);
+		my $t = $::config_obj->R->read;
+		if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
+			$kiyo1 = $1;
+			$kiyo2 = $2;
+			last;
+		}
+		--$count;
+	}
+
 	# プロットのためのRコマンド
-	my ($r_command_2a, $r_command_2);
+	my ($r_command_2a, $r_command_2, $r_command_a);
 	if ($self->{radio} == 0){                     # 同時布置なし
+		$r_command .= 
+		
 		$r_command_2a = 
-			 'plot(c$cscore, xlab="成分1", ylab="成分2")'."\n"
-			.'text(c$cscore, rownames(c$cscore), pos=1, cex='.$fontsize.')'
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'xlab="成分'.$d_x
+				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
+				."\n"
+			."text(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'rownames(c$cscore), pos=1, cex='.$fontsize.')'
+				."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
-
-		$r_command .=
-			 'plot(c$cscore, type="n", xlab="成分1", ylab="成分2")'."\n"
-			.'text(c$cscore, rownames(c$cscore), cex='.$fontsize.')'
+		
+		$r_command_a .=
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'type="n", xlab="成分'.$d_x
+				.' ('.$kiyo1.'%)", ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
+				."\n"
+			."text(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'rownames(c$cscore), cex='.$fontsize.')'
 		;
 	} else {                                      # 同時布置あり
 		$r_command_2a .= 'c$cscore <- cbind(c$cscore, 1)'."\n";
 		$r_command_2a .= 'c$rscore <- cbind(c$rscore, 2)'."\n";
 
 		$r_command_2a .= 
-			 'plot(cb <- rbind(c$cscore, c$rscore), xlab="成分1", ylab="成分2", pch=c(1,3)[cb[,3]] )'."\n"
-			.'text(c$cscore,rownames(c$cscore),pos=1,cex='.$fontsize.')'."\n"
-			.'text(c$rscore,rownames(c$rscore),pos=1, cex='.$fontsize.', )'
+			 'plot(cb <- rbind('
+				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
+				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
+				.'), xlab="成分'.$d_x.' ('.$kiyo1
+				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
+				.'%)", pch=c(1,15)[cb[,3]] )'."\n"
+			.'text('
+				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'rownames(c$cscore),pos=1,cex='.$fontsize.')'."\n"
+			.'text('
+				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y]),"
+				.'rownames(c$rscore),pos=1, cex='.$fontsize.', )'
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 
-		$r_command .=
-			 'plot(rbind(c$cscore, c$rscore), type="n", xlab="成分1", ylab="成分2")'."\n"
+		$r_command_a .=
+			 'plot(rbind('
+				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y])"
+				.'), type="n", xlab="成分'.$d_x.' ('.$kiyo1
+				.'%)", ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
+				."\n"
 			.'text(c$cscore, rownames(c$cscore), cex='.$fontsize.')'."\n"
 			.'text(c$rscore, rownames(c$rscore), cex='.$fontsize.', col="red")'
 		;
 	}
+	$r_command .= $r_command_a;
 
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_CORRESP1',
+		command_a => $r_command_a,
 		command_f => $r_command,
 	) or return 0;
 
@@ -708,32 +817,6 @@ sub _calc{
 		command_f => $r_command_2,
 	) or return 0;
 
-	# 寄与率の取得
-	$::config_obj->R->send(
-		'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
-	);
-	my $count = $::config_obj->R->read;
-	my $kiyo;
-	if ($count =~ /"khcoder(.+)"/){
-		$count = $1;
-	} else {
-		$count = -1;
-	}
-	$count = 10;
-	while ($count > 0){
-		$::config_obj->R->send(
-			 'print( paste("khcoder",round(c$cor^2/sum(corresp(d, nf='
-			.$count
-			.')$cor^2) * 100,2), sep=""))'
-		);
-		my $t = $::config_obj->R->read;
-		if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
-			$kiyo = "$1, $2";
-			last;
-		}
-		--$count;
-	}
-
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_cod_corresp_plot')){
 		$::main_gui->get('w_cod_corresp_plot')->close;
@@ -741,7 +824,7 @@ sub _calc{
 	$self->close;
 	gui_window::cod_corresp_plot->open(
 		plots   => [$plot1,$plot2],
-		kiyo    => $kiyo,
+		#kiyo    => $kiyo,
 	);
 
 	return 1;
