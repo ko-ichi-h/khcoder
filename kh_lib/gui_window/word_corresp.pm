@@ -1,6 +1,8 @@
 package gui_window::word_corresp;
 use base qw(gui_window);
 
+use strict;
+
 use Tk;
 
 use gui_widget::tani;
@@ -562,6 +564,9 @@ sub calc{
 		max_df => $self->max_df,
 		min_df => $self->min_df,
 	)->wnum;
+	
+	$check_num =~ s/,//g;
+	print "$check_num\n";
 
 	if ($check_num < 3){
 		gui_errormsg->open(
@@ -609,7 +614,6 @@ sub calc{
 		min    => $self->min,
 		max_df => $self->max_df,
 		min_df => $self->min_df,
-		file   => $path,
 	)->run;
 
 	# 外部変数の付与
