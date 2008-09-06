@@ -555,18 +555,21 @@ sub calc{
 		return 0;
 	}
 
+	my $rownames = 0;
+	$rownames = 1 if ($self->{radio} == 0 and $self->{biplot} == 1);
+
 	my $check_num = mysql_crossout::r_com->new(
-		tani   => $self->tani,
-		tani2  => $tani2,
-		hinshi => $self->hinshi,
-		max    => $self->max,
-		min    => $self->min,
-		max_df => $self->max_df,
-		min_df => $self->min_df,
+		tani     => $self->tani,
+		tani2    => $tani2,
+		hinshi   => $self->hinshi,
+		max      => $self->max,
+		min      => $self->min,
+		max_df   => $self->max_df,
+		min_df   => $self->min_df,
 	)->wnum;
 	
 	$check_num =~ s/,//g;
-	print "$check_num\n";
+	#print "$check_num\n";
 
 	if ($check_num < 3){
 		gui_errormsg->open(
@@ -614,6 +617,7 @@ sub calc{
 		min    => $self->min,
 		max_df => $self->max_df,
 		min_df => $self->min_df,
+		rownames => $rownames,
 	)->run;
 
 	# 外部変数の付与
