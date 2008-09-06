@@ -301,10 +301,19 @@ sub os_path{
 sub R_device{
 	my $self = shift;
 	my $path = shift;
+	my $width = shift;
+	my $height = shift;
+	$path .= '.bmp';
+	
+	$width  = 480 unless $width;
+	$height = 480 unless $height;
+
 	$path .= '.png';
 	return 0 unless $::config_obj->R;
 	
-	$::config_obj->R->send("png(\"$path\")");
+	$::config_obj->R->send(
+		"png(\"$path\" width=$width, height=$height, unit=\"px\" )"
+	);
 	return $path;
 }
 

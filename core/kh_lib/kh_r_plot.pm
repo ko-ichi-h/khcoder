@@ -50,7 +50,11 @@ sub new{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
-	$self->{path} = $::config_obj->R_device($self->{path});
+	$self->{path} = $::config_obj->R_device(
+		$self->{path},
+		$self->{width},
+		$self->{height},
+	);
 	$::config_obj->R->send($command);
 	$self->{r_msg} = $::config_obj->R->read;
 	$::config_obj->R->send('dev.off()');
@@ -177,10 +181,16 @@ sub _save_png{
 	my $self = shift;
 	my $path = shift;
 	
+	$self->{width}  = 480 unless $self->{width};
+	$self->{height} = 480 unless $self->{height};
+	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
-	$::config_obj->R->send("png(\"$path\")");
+	$::config_obj->R->send(
+		 "png(\"$path\", width=$self->{width},"
+		."height=$self->{height}, unit=\"px\")"
+	);
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;

@@ -23,7 +23,7 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf = $win->LabFrame(
-		-label => 'Option',
+		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1);

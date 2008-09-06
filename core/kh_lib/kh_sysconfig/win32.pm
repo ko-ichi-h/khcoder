@@ -272,12 +272,20 @@ sub os_cod_path{
 
 
 sub R_device{
-	my $self = shift;
-	my $path = shift;
+	my $self  = shift;
+	my $path  = shift;
+	my $width = shift;
+	my $height = shift;
 	$path .= '.bmp';
+	
+	$width  = 480 unless $width;
+	$height = 480 unless $height;
+
 	return 0 unless $::config_obj->R;
 	
-	$::config_obj->R->send("bmp(\"$path\")");
+	$::config_obj->R->send(
+		"bmp(\"$path\", width=$width, height=$height, unit=\"px\")"
+	);
 	return $path;
 }
 
