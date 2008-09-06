@@ -253,26 +253,6 @@ sub make{
 				-state => 'disable'
 			);
 
-		$self->{t_word_search} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語検索'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_search->open;
-				})},
-				-state => 'disable'
-			);
-
-		$self->{t_word_conc} = $f3->command(
-				-label => gui_window->gui_jchar('コンコーダンス（KWIC）'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_conc->open;
-				})},
-				-state => 'disable'
-			);
-
-		$f3->separator;
-		
 		my $f_wd_stats = $f3->cascade(
 			-label => gui_window->gui_jchar('記述統計'),
 			-font => "TKFN",
@@ -306,6 +286,38 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_word_tf_df' if $::config_obj->R;
+
+		$f3->separator;
+
+		$self->{t_word_search} = $f3->command(
+				-label => gui_window->gui_jchar('抽出語検索'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_search->open;
+				})},
+				-state => 'disable'
+			);
+
+		$self->{t_word_conc} = $f3->command(
+				-label => gui_window->gui_jchar('コンコーダンス（KWIC）'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_conc->open;
+				})},
+				-state => 'disable'
+			);
+
+		$f3->separator;
+
+		$self->{t_word_corresp} = $f3->command(
+				-label => gui_window->gui_jchar('対応分析'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_corresp->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_word_corresp' if $::config_obj->R;
 
 	my $f8 = $f->cascade(
 			-label => gui_window->gui_jchar('文書'),

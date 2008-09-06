@@ -1,7 +1,11 @@
-package gui_window::cod_corresp;
+package gui_window::word_corresp;
 use base qw(gui_window);
 
-use strict;
+use Tk;
+
+use gui_widget::tani;
+use gui_widget::hinshi;
+use mysql_crossout;
 
 #-------------#
 #   GUI作製   #
@@ -10,138 +14,162 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・対応分析（オプション）'));
+	$win->title($self->gui_jt($self->label));
 
 	my $lf = $win->LabFrame(
-		-label       => 'Options',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2
-	)->pack(
-		-fill   => 'both',
-		-expand => 1
-	);
+		-label => 'Words',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 1);
 
-	# ルール・ファイル
-	my %pack0 = (
-		-anchor => 'w',
-		#-padx => 2,
-		#-pady => 2,
-		-fill => 'x',
-		-expand => 0,
-	);
-	$self->{codf_obj} = gui_widget::codf->open(
-		parent  => $lf,
-		pack    => \%pack0,
-		command => sub{$self->read_cfile;},
-	);
-	
-	# コーディング単位
-	my $f1 = $lf->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4
-	);
-	$f1->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
-		-font => "TKFN",
+	my $left = $lf->Frame()->pack(-fill => 'both', -expand => 1);
+	# my $right = $lf->Frame()->pack(-side => 'right', -fill => 'x');
+
+	# 最小・最大出現数
+	$left->Label(
+		-text => $self->gui_jchar('・最小/最大 出現数による語の取捨選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 2);
+	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
+	$l2->Label(
+		-text => $self->gui_jchar('　 　最小出現数：'),
+		-font => "TKFN"
 	)->pack(-side => 'left');
-	my %pack1 = (
-		-anchor => 'w',
-		-padx => 2,
-		-pady => 2,
+	$self->{ent_min} = $l2->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$l2->Label(
+		-text => $self->gui_jchar('　 最大出現数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_max} = $l2->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$self->{ent_min}->insert(0,'1');
+
+	# 最小・最大文書数
+	$left->Label(
+		-text => $self->gui_jchar('・最小/最大 文書数による語の取捨選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 2);
+
+	# 集計単位の選択
+	my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
+	$l1->Label(
+		-text => $self->gui_jchar('　 　文書と見なす単位：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	my %pack = (
+			-anchor => 'e',
+			-pady   => 0,
+			-side   => 'left'
 	);
 	$self->{tani_obj} = gui_widget::tani->open(
-		parent => $f1,
-		command => sub { $self->refresh; },
-		pack   => \%pack1,
+		parent => $l1,
+		pack   => \%pack,
+		dont_remember => 1,
 	);
 
-	# コード選択
-	$lf->Label(
-		-text => $self->gui_jchar('コード選択：'),
-		-font => "TKFN",
-	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
-
-	my $f2 = $lf->Frame()->pack(
-		-fill   => 'both',
-		-expand => 1,
-		-padx   => 2,
-		-pady   => 2
-	);
-
-	$f2->Label(
-		-text => $self->gui_jchar('　　','euc'),
+	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
+	$l3->Label(
+		-text => $self->gui_jchar('　 　最小文書数：'),
 		-font => "TKFN"
-	)->pack(
-		-anchor => 'w',
-		-side   => 'left',
-	);
+	)->pack(-side => 'left');
+	$self->{ent_min_df} = $l3->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$l3->Label(
+		-text => $self->gui_jchar('　 最大文書数：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	$self->{ent_max_df} = $l3->Entry(
+		-font       => "TKFN",
+		-width      => 6,
+		-background => 'white',
+	)->pack(-side => 'left');
+	$self->{ent_min_df}->insert(0,'1');
 
-	my $f2_1 = $f2->Frame(
-		-borderwidth        => 2,
-		-relief             => 'sunken',
-	)->pack(
+	# 品詞による単語の取捨選択
+	$left->Label(
+		-text => $self->gui_jchar('・品詞による語の取捨選択'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -pady => 2);
+	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
+	$l5->Label(
+		-text => $self->gui_jchar('　　'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
+	%pack = (
 			-anchor => 'w',
 			-side   => 'left',
-			-pady   => 2,
-			-padx   => 2,
-			-fill   => 'both',
+			-pady   => 1,
+			-fill   => 'y',
 			-expand => 1
 	);
-
-	# コード選択用HList
-	$self->{hlist} = $f2_1->Scrolled(
-		'HList',
-		-scrollbars         => 'osoe',
-		#-relief             => 'sunken',
-		-font               => 'TKFN',
-		-selectmode         => 'none',
-		-indicator => 0,
-		-highlightthickness => 0,
-		-columns            => 1,
-		-borderwidth        => 0,
-		-height             => 12,
-	)->pack(
-		-fill   => 'both',
-		-expand => 1
+	$self->{hinshi_obj} = gui_widget::hinshi->open(
+		parent => $l5,
+		pack   => \%pack
 	);
-
-	my $f2_2 = $f2->Frame()->pack(
-		-fill   => 'x',
-		-expand => 0,
-		-side   => 'left'
-	);
-	$f2_2->Button(
+	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
+	$l4->Button(
 		-text => $self->gui_jchar('全て選択'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->select_all;});}
+		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
 	)->pack(-pady => 3);
-	$f2_2->Button(
+	$l4->Button(
 		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->select_none;});}
+		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
 	)->pack();
 
-	$lf->Label(
-		-text => $self->gui_jchar('　　※コードを3つ以上選択して下さい。','euc'),
+	# チェック部分
+	my $cf = $lf->Frame(
+		#-label => 'Check',
+		#-labelside => 'acrosstop',
+		#-borderwidth => 2,
+	)->pack(-fill => 'x', -pady => 2);
+
+	$cf->Label(
+		-text => $self->gui_jchar('・布置される語の数：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
+	$cf->Button(
+		-text => $self->gui_jchar('チェック'),
 		-font => "TKFN",
-	)->pack(
-		-anchor => 'w',
-		-padx   => 4,
-		-pady   => 2,
-	);
+		-borderwidth => 1,
+		-command => sub{ $mw->after(10,sub{$self->check;});}
+	)->pack(-side => 'left', -padx => 2);
+	$self->{ent_check} = $cf->Entry(
+		-font        => "TKFN",
+		-background  => 'gray',
+		-foreground  => 'black',
+		-state       => 'disable',
+	)->pack(-side => 'left',-fill => 'x');
+	$self->disabled_entry_configure($self->{ent_check});
+
+	my $lf2 = $win->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'x', -expand => 0);
 
 	# 入力データの設定
-	$lf->Label(
-		-text => $self->gui_jchar('分析に使用するクロス表の種類：'),
+	$lf2->Label(
+		-text => $self->gui_jchar('・分析に使用するクロス表の種類：'),
 		-font => "TKFN",
-	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
+	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
-	my $fi = $lf->Frame()->pack(
+	my $fi = $lf2->Frame()->pack(
 		-fill   => 'x',
 		-expand => 0,
 		-padx   => 2,
@@ -170,42 +198,64 @@ sub _new{
 
 	$self->{radio} = 0;
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 文書（同時布置なし）'),
+		-text             => $self->gui_jchar('抽出語 ｘ 文書'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
 
-	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 上位の章・節・段落'),
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 1,
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w');
-
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
+	$fi_2->Label(
+		-text => $self->gui_jchar('　　','euc'),
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
 	$self->{label_high} = $fi_2->Label(
-		-text => $self->gui_jchar('　　集計単位：','euc'),
+		-text => $self->gui_jchar('集計単位：','euc'),
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
 		-side   => 'left',
 	);
 	$self->{opt_frame_high} = $fi_2;
+	
+	my $fi_4 = $fi_1->Frame()->pack(-anchor => 'w');
+	$fi_4->Label(
+		-text => $self->gui_jchar('　　','euc'),
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
+	$self->{label_high2} = $fi_4->Checkbutton(
+		-text     => $self->gui_jchar('見出しまたは文書番号を同時布置'),
+		-variable => \$self->{biplot},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
 
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 外部変数'),
+		-text             => $self->gui_jchar('抽出語 ｘ 外部変数'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
-		-value            => 2,
+		-value            => 1,
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
 
 	my $fi_3 = $fi_1->Frame()->pack(-anchor => 'w');
+	$fi_3->Label(
+		-text => $self->gui_jchar('　　','euc'),
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
 	$self->{label_var} = $fi_3->Label(
-		-text => $self->gui_jchar('　　変数：','euc'),
+		-text => $self->gui_jchar('変数：','euc'),
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -215,14 +265,14 @@ sub _new{
 	$self->refresh;
 
 	# 成分
-	my $fd = $lf->Frame()->pack(
+	my $fd = $lf2->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+		#-padx => 2,
+		-pady => 2,
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('成分数：'),
+		-text => $self->gui_jchar('・成分数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -258,14 +308,14 @@ sub _new{
 	$self->{entry_d_y}->insert(0,'2');
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
+	my $ff = $lf2->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
+		#-padx => 2,
 		-pady => 4,
 	);
 
 	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
+		-text => $self->gui_jchar('・フォントサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -291,35 +341,63 @@ sub _new{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
+	$self->{entry_plot_size}->insert(0,'640');
 
-
-
-	# OK・キャンセル
-	my $f3 = $win->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 2
-	);
-
-	$f3->Button(
+	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
-	)->pack(-side => 'right',-padx => 2);
+	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
-	$self->{ok_btn} = $f3->Button(
+	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-state => 'disable',
-		-command => sub{ $mw->after(10,sub{$self->_calc;});}
-	)->pack(-side => 'right');
+		-command => sub{ $mw->after(10,sub{$self->calc;});}
+	)->pack(-side => 'right', -pady => 2);
 
-	$self->read_cfile;
 
 	return $self;
+}
+
+#--------------#
+#   チェック   #
+sub check{
+	my $self = shift;
+	
+	unless ( eval(@{$self->hinshi}) ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '品詞が1つも選択されていません。',
+		);
+		return 0;
+	}
+	
+	my $tani2 = '';
+	if ($self->{radio} == 0){
+		$tani2 = $self->gui_jg($self->{high});
+	}
+	elsif ($self->{radio} == 1){
+		if ( length($self->{var_id}) ){
+			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
+		}
+	}
+	
+	my $check = mysql_crossout::r_com->new(
+		tani   => $self->tani,
+		tani2  => $tani2,
+		hinshi => $self->hinshi,
+		max    => $self->max,
+		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
+	)->wnum;
+	
+	$self->{ent_check}->configure(-state => 'normal');
+	$self->{ent_check}->delete(0,'end');
+	$self->{ent_check}->insert(0,$check);
+	$self->{ent_check}->configure(-state => 'disable');
 }
 
 # ラジオボタン関連
@@ -330,34 +408,15 @@ sub refresh{
 	#------------------------#
 	#   外部変数選択Widget   #
 
-	unless ($self->{last_tani} eq $self->tani){
-		my @options = ();
-		my @tanis   = ();
+	my @options = ();
+	my @tanis   = ();
 
-		if ($self->{opt_body_var}){
-			$self->{opt_body_var}->destroy;
-		}
-
+	unless ($self->{opt_body_var}){
 		# 利用できる変数があるかどうかチェック
-		my %tani_check = ();
-		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-			$tani_check{$i} = 1;
-			last if ($self->tani eq $i);
-		}
-		if ($self->tani eq 'bun'){
-			%tani_check = ();
-			$tani_check{'bun'} = 1;
-		}
-		
-		$self->{last_tani} = $self->tani;
-		
 		my $h = mysql_outvar->get_list;
 		my @options = ();
 		foreach my $i (@{$h}){
-			if ($tani_check{$i->[0]}){
-				push @options, [$self->gui_jchar($i->[1]), $i->[2]];
-				#print "varid: $i->[2]\n";
-			}
+			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
 		}
 		
 		if (@options){
@@ -380,13 +439,12 @@ sub refresh{
 			);
 			$self->{opt_body_var_ok} = 0;
 		}
+	}
 
 	#------------------------------#
 	#   上位の文書単位選択Widget   #
 
-		if ($self->{opt_body_high}){
-			$self->{opt_body_high}->destroy;
-		}
+	unless ($self->{opt_body_high}){
 
 		my %tani_name = (
 			"bun" => "文",
@@ -400,8 +458,6 @@ sub refresh{
 
 		@tanis = ();
 		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-			last if ($self->tani eq $i);
-			
 			if (
 				mysql_exec->select(
 					"select status from status where name = \'$i\'",1
@@ -437,26 +493,21 @@ sub refresh{
 	#   Widgetの有効・無効を切り替え   #
 
 	if ($self->{radio} == 0){
-		$self->{opt_body_high}->configure(-state => 'disable');
-		$self->{label_high}->configure(-foreground => 'gray');
-		
-		$self->{opt_body_var}->configure(-state => 'disable');
-		$self->{label_var}->configure(-foreground => 'gray');
-	}
-	elsif ($self->{radio} == 1){
 		if ($self->{opt_body_high_ok}){
 			$self->{opt_body_high}->configure(-state => 'normal');
 		} else {
 			$self->{opt_body_high}->configure(-state => 'disable');
 		}
 		$self->{label_high}->configure(-foreground => 'black');
+		$self->{label_high2}->configure(-state => 'normal');
 		
 		$self->{opt_body_var}->configure(-state => 'disable');
 		$self->{label_var}->configure(-foreground => 'gray');
 	}
-	elsif ($self->{radio} == 2){
+	elsif ($self->{radio} == 1){
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
+		$self->{label_high2}->configure(-state => 'disable');
 
 		if ($self->{opt_body_var_ok}){
 			$self->{opt_body_var}->configure(-state => 'normal');
@@ -469,202 +520,100 @@ sub refresh{
 	return 1;
 }
 
+#----------#
+#   実行   #
 
-# コーディングルール・ファイルの読み込み
-sub read_cfile{
+sub calc{
 	my $self = shift;
 	
-	$self->{hlist}->delete('all');
-	
-	unless (-e $self->cfile ){
-		$self->{code_obj} = undef;
-		return 0;
-	}
-	
-	my $cod_obj = kh_cod::func->read_file($self->cfile);
-	
-	unless (eval(@{$cod_obj->codes})){
-		$self->{code_obj} = undef;
-		return 0;
-	}
-
-	my $left = $self->{hlist}->ItemStyle('window',-anchor => 'w');
-
-	my $row = 0;
-	foreach my $i (@{$cod_obj->codes}){
-		
-		$self->{checks}[$row]{check} = 1;
-		$self->{checks}[$row]{name}  = $i;
-		
-		my $c = $self->{hlist}->Checkbutton(
-			-text     => gui_window->gui_jchar($i->name,'euc'),
-			-variable => \$self->{checks}[$row]{check},
-			-command  => sub{ 
-				$self->win_obj->after(10,sub{ $self->check_selected_num; });
-			},
-			-anchor => 'w',
-		);
-		
-		$self->{checks}[$row]{widget} = $c;
-		
-		$self->{hlist}->add($row,-at => "$row");
-		$self->{hlist}->itemCreate(
-			$row,0,
-			-itemtype  => 'window',
-			-style     => $left,
-			-widget    => $c,
-		);
-		++$row;
-	}
-	$self->{code_obj} = $cod_obj;
-	
-	$self->check_selected_num;
-	
-	return $self;
-}
-
-# コードが3つ以上選択されているかチェック
-sub check_selected_num{
-	my $self = shift;
-	
-	my $selected_num = 0;
-	foreach my $i (@{$self->{checks}}){
-		++$selected_num if $i->{check};
-	}
-	
-	if ($selected_num >= 3){
-		$self->{ok_btn}->configure(-state => 'normal');
-	} else {
-		$self->{ok_btn}->configure(-state => 'disable');
-	}
-	return $self;
-}
-
-# すべて選択
-sub select_all{
-	my $self = shift;
-	foreach my $i (@{$self->{checks}}){
-		$i->{widget}->select;
-	}
-	$self->check_selected_num;
-	return $self;
-}
-
-# クリア
-sub select_none{
-	my $self = shift;
-	foreach my $i (@{$self->{checks}}){
-		$i->{widget}->deselect;
-	}
-	$self->check_selected_num;
-	return $self;
-}
-
-# プロット作成＆表示
-sub _calc{
-	my $self = shift;
-
-	my @selected = ();
-	foreach my $i (@{$self->{checks}}){
-		push @selected, $i->{name} if $i->{check};
-	}
-
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
-	my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
-	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
-	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
-
-	# データ取得
-	my $r_command;
-	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
+	# 入力のチェック
+	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
-			type   => 'msg',
-			window  => \$self->win_obj,
-			msg    => "出現数が0のコードは利用できません。"
+			type => 'msg',
+			msg  => '品詞が1つも選択されていません。',
 		);
-		#$self->close();
+		return 0;
+	}
+	
+	my $tani2 = '';
+	if ($self->{radio} == 0){
+		$tani2 = $self->gui_jg($self->{high});
+	}
+	elsif ($self->{radio} == 1){
+		if ( length($self->{var_id}) ){
+			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
+		}
+	}
+
+	unless ($tani2){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '集計単位または変数の選択が不正です。',
+		);
 		return 0;
 	}
 
-	# データ整形
-	$r_command .= "\n";
-	$r_command .= "d <- t(d)\n";
-	$r_command .= "row.names(d) <- c(";
-	foreach my $i (@{$self->{checks}}){
-		my $name = $i->{name}->name;
-		substr($name, 0, 2) = ''
-			if index($name,'＊') == 0
-		;
-		$r_command .= '"'.$name.'",'
-			if $i->{check}
-		;
+	my $check_num = mysql_crossout::r_com->new(
+		tani   => $self->tani,
+		tani2  => $tani2,
+		hinshi => $self->hinshi,
+		max    => $self->max,
+		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
+	)->wnum;
+
+	if ($check_num < 3){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '少なくとも3つ以上の抽出語を布置して下さい。',
+		);
+		return 0;
 	}
-	chop $r_command;
-	$r_command .= ")\n";
-	$r_command .= "d <- t(d)\n";
-	
-	# 上位見出しの付与
-	if ($self->{radio} == 1){
-		my $tani_low  = $self->tani;
-		my $tani_high = $self->{high};
-		
-		unless ($tani_high){
-			gui_errormsg->open(
-				type   => 'msg',
-				window  => \$self->win_obj,
-				msg    => "集計単位の選択が不正です。"
-			);
-			return 0;
-		}
-		
-		my $sql = '';
-		$sql .= "SELECT $tani_high.id\n";
-		$sql .= "FROM $tani_high, $tani_low\n";
-		$sql .= "WHERE\n";
-		my $n = 0;
-		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-			$sql .= "AND " if $n;
-			$sql .= "$tani_low.$i"."_id = $tani_high.$i"."_id\n";
-			++$n;
-			if ($i eq $tani_high){
-				last;
-			}
-		}
-		$sql .= "ORDER BY $tani_low.id\n";
-		
-		my $max = mysql_exec->select("SELECT MAX(id) FROM $tani_high",1)
-			->hundle->fetch->[0];
-		my %names = ();
-		my $n = 1;
-		while ($n <= $max){
-			$names{$n} = Jcode->new(
-				mysql_getheader->get($tani_high, $n),
-				'sjis'
-			)->euc;
-			++$n;
-		}
-		
-		$r_command .= "v <- c(";
-		my $h = mysql_exec->select($sql,1)->hundle;
-		while (my $i = $h->fetch){
-			if (length($names{$i->[0]})){
-				$names{$i->[0]} =~ s/"/ /g;
-				$r_command .= "\"$names{$i->[0]}\",";
-			} else {
-				$r_command .= "$i->[0],";
-			}
-		}
-		chop $r_command;
-		$r_command .= ")\n";
-		$r_command .= "d <- aggregate(d,list(name = v), sum)\n";
-		$r_command .= 'row.names(d) <- d$name'."\n";
-		$r_command .= 'd$name <- NULL'."\n";
+
+	if ($check_num > 200){
+		my $ans = $self->win_obj->messageBox(
+			-message => $self->gui_jchar
+				(
+					 '現在の設定では'.$check_num.'語が布置されます。'
+					."\n"
+					.'布置する語の数は100〜150程度におさえることを推奨します。'
+					."\n"
+					.'続行してよろしいですか？'
+				),
+			-icon    => 'question',
+			-type    => 'OKCancel',
+			-title   => 'KH Coder'
+		);
+		unless ($ans =~ /ok/i){ return 0; }
 	}
-	
+
+	#my $ans = $self->win_obj->messageBox(
+	#	-message => $self->gui_jchar
+	#		(
+	#		   "この処理には時間がかかることがあります。\n".
+	#		   "続行してよろしいですか？"
+	#		),
+	#	-icon    => 'question',
+	#	-type    => 'OKCancel',
+	#	-title   => 'KH Coder'
+	#);
+	#unless ($ans =~ /ok/i){ return 0; }
+
+	# データの取り出し
+	my $r_command = mysql_crossout::r_com->new(
+		tani   => $self->tani,
+		tani2  => $tani2,
+		hinshi => $self->hinshi,
+		max    => $self->max,
+		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
+		file   => $path,
+	)->run;
+
 	# 外部変数の付与
-	if ($self->{radio} == 2){
+	if ($self->{radio} == 1){
 		unless ($self->{var_id}){
 			gui_errormsg->open(
 				type   => 'msg',
@@ -673,24 +622,11 @@ sub _calc{
 			);
 			return 0;
 		}
-		my $tani = $self->tani;
+		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_id});
 		
 		my $sql = '';
-		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_id});
-		if ( $var_obj->{tani} eq $tani){
-			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
-			$sql .= "ORDER BY id";
-		} else {
-			$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
-			$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
-			$sql .= "WHERE\n";
-			$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
-			foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-				$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
-				last if ($var_obj->{tani} eq $i);
-			}
-			$sql .= "ORDER BY $tani.id";
-		}
+		$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+		$sql .= "ORDER BY id";
 		
 		$r_command .= "v <- c(";
 		my $h = mysql_exec->select($sql,1)->hundle;
@@ -705,7 +641,7 @@ sub _calc{
 			}
 			++$n;
 		}
-		#print "num1: $n\n";
+		
 		chop $r_command;
 		$r_command .= ")\n";
 		$r_command .= "d <- aggregate(d,list(name = v), sum)\n";
@@ -714,16 +650,20 @@ sub _calc{
 		
 		$r_command .= 'd <- subset(d,row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing")'."\n";
 	}
-	
-	# MDS実行のためのRコマンド
+
+	# 対応分析を実行するためのコマンド
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
-	
+
+	my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
+	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
+	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
+
 	$r_command .= "library(MASS)\n";
 	$r_command .= "c <- corresp(d, nf=$d_n)\n";
-	
+
 	my $r_command_tmp = $r_command;
 	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
 		if $::config_obj->os eq 'win32';
@@ -760,10 +700,11 @@ sub _calc{
 	}
 
 	# プロットのためのRコマンド
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
+
 	my ($r_command_2a, $r_command_2, $r_command_a);
-	if ($self->{radio} == 0){                     # 同時布置なし
-		$r_command .= 
-		
+	if ($self->{radio} == 0 and $self->{biplot} == 0){      # 同時布置なし
 		$r_command_2a = 
 			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
 				.'xlab="成分'.$d_x
@@ -783,10 +724,7 @@ sub _calc{
 			."text(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
 				.'rownames(c$cscore), cex='.$fontsize.')'
 		;
-	} else {                                      # 同時布置あり
-		#$r_command_2a .= 'c$cscore <- cbind(c$cscore, 1)'."\n";
-		#$r_command_2a .= 'c$rscore <- cbind(c$rscore, 2)'."\n";
-
+	} else {
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
@@ -814,12 +752,13 @@ sub _calc{
 			.'text(c$rscore, rownames(c$rscore), cex='.$fontsize.', col="red")'
 		;
 	}
+
 	$r_command .= $r_command_a;
 
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
-		name      => 'codes_CORRESP1',
+		name      => 'words_CORRESP1',
 		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -827,7 +766,7 @@ sub _calc{
 	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
-		name      => 'codes_CORRESP2',
+		name      => 'words_CORRESP2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -835,30 +774,53 @@ sub _calc{
 	) or return 0;
 
 	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_cod_corresp_plot')){
-		$::main_gui->get('w_cod_corresp_plot')->close;
+	if ($::main_gui->if_opened('w_word_corresp_plot')){
+		$::main_gui->get('w_word_corresp_plot')->close;
 	}
 	$self->close;
-	gui_window::cod_corresp_plot->open(
+	gui_window::word_corresp_plot->open(
 		plots       => [$plot1,$plot2],
 		no_geometry => 1,
 	);
-
-	return 1;
 }
 
 #--------------#
 #   アクセサ   #
 
-sub cfile{
+
+sub label{
+	return '抽出語・対応分析（オプション）';
+}
+
+sub win_name{
+	return 'w_word_corresp';
+}
+
+sub min{
 	my $self = shift;
-	return $self->{codf_obj}->cfile;
+	return $self->gui_jg( $self->{ent_min}->get );
+}
+sub max{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_max}->get );
+}
+sub min_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_min_df}->get );
+}
+sub max_df{
+	my $self = shift;
+	return $self->gui_jg( $self->{ent_max_df}->get );
 }
 sub tani{
 	my $self = shift;
 	return $self->{tani_obj}->tani;
 }
-sub win_name{
-	return 'w_cod_corresp';
+sub hinshi{
+	my $self = shift;
+	return $self->{hinshi_obj}->selected;
 }
+
+
+
 1;

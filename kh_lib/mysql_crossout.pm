@@ -6,6 +6,7 @@ use mysql_crossout::csv;
 use mysql_crossout::spss;
 use mysql_crossout::tab;
 use mysql_crossout::var;
+use mysql_crossout::r_com;
 
 sub new{
 	my $class = shift;

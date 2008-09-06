@@ -159,7 +159,17 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$ff->Label(
+		-text => $self->gui_jchar('  プロットサイズ：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
 
+	$self->{entry_plot_size} = $ff->Entry(
+		-font       => "TKFN",
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_plot_size}->insert(0,'480');
 
 	# コーディング単位
 	#my $f4 = $lf->Frame()->pack(
@@ -386,18 +396,24 @@ sub _calc{
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_CLS1',
 		command_f => $r_command,
+		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		height    => 480,
 	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_CLS2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
+		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		height    => 480,
 	) or return 0;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'codes_CLS3',
 		command_a => $r_command_3a,
 		command_f => $r_command_3,
+		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		height    => 480,
 	) or return 0;
 
 	# プロットWindowを開く
@@ -406,7 +422,8 @@ sub _calc{
 	}
 	$self->close;
 	gui_window::cod_cls_plot->open(
-		plots   => [$plot1,$plot2,$plot3],
+		plots       => [$plot1,$plot2,$plot3],
+		no_geometry => 1,
 	);
 	
 	return 1;

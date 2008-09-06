@@ -31,6 +31,8 @@ use gui_window::word_freq_plot;
 use gui_window::word_df_freq;
 use gui_window::word_df_freq_plot;
 use gui_window::word_tf_df;
+use gui_window::word_corresp;
+use gui_window::word_corresp_plot;
 use gui_window::doc_view;
 use gui_window::doc_search;
 use gui_window::morpho_check;
@@ -69,6 +71,7 @@ sub open{
 	my $class = shift;
 	my $self;
 	my @arg = @_;
+	my %arg = @arg;
 	$self->{dummy} = 1;
 	bless $self, $class;
 
@@ -89,7 +92,7 @@ sub open{
 			$self->win_obj->focus;
 			# Windowサイズと位置の指定
 			my $g = $::config_obj->win_gmtry($self->win_name);
-			if ($g){
+			if ($g and not $arg{no_geometry}){
 				$self->win_obj->geometry($g);
 				#print "win_size: $g\n";
 			}

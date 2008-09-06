@@ -182,6 +182,18 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$ff->Label(
+		-text => $self->gui_jchar('  プロットサイズ：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_plot_size} = $ff->Entry(
+		-font       => "TKFN",
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_plot_size}->insert(0,'480');
+
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
@@ -392,11 +404,15 @@ sub _calc{
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_MDS',
 		command_f => $r_command_d,
+		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
 	) or return 0;
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_MDS_d',
 		command_a => $r_command_a,
 		command_f => $r_command,
+		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
 	) or return 0;
 
 	# ストレス値の取得
@@ -423,9 +439,9 @@ sub _calc{
 	}
 	$self->close;
 	gui_window::cod_mds_plot->open(
-		plots   => [$plot1, $plot2],
-		#plots   => [$plot1, $plot2, $plot3],
-		stress => $stress,
+		plots       => [$plot1, $plot2],
+		stress      => $stress,
+		no_geometry => 1,
 	);
 	
 	return 1;
