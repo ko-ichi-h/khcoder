@@ -129,7 +129,7 @@ sub _new{
 	$self->{ent_min_df2}->insert(0,'1');
 	my $r6 = $right->Frame()->pack(-fill => 'x');
 	$r6->Label(
-		-text => $self->gui_jchar('　 　集計単位：'),
+		-text => $self->gui_jchar('　 　文書と見なす単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my %pack = (
@@ -268,7 +268,7 @@ sub _new{
 	$self->{ent_min_df}->insert(0,'1');
 	my $l6 = $left->Frame()->pack(-fill => 'x');
 	$l6->Label(
-		-text => $self->gui_jchar('　 　集計単位：'),
+		-text => $self->gui_jchar('　 　文書と見なす単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	%pack = (

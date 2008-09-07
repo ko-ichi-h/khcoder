@@ -68,23 +68,6 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 
-	# 集計単位の選択
-	my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
-	$l1->Label(
-		-text => $self->gui_jchar('　 　文書と見なす単位：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	my %pack = (
-			-anchor => 'e',
-			-pady   => 0,
-			-side   => 'left'
-	);
-	$self->{tani_obj} = gui_widget::tani->open(
-		parent => $l1,
-		pack   => \%pack,
-		dont_remember => 1,
-	);
-
 	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l3->Label(
 		-text => $self->gui_jchar('　 　最小文書数：'),
@@ -108,6 +91,23 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
+
+	# 集計単位の選択
+	my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
+	$l1->Label(
+		-text => $self->gui_jchar('　 　文書と見なす単位：'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+	my %pack = (
+			-anchor => 'e',
+			-pady   => 0,
+			-side   => 'left'
+	);
+	$self->{tani_obj} = gui_widget::tani->open(
+		parent => $l1,
+		pack   => \%pack,
+		dont_remember => 1,
+	);
 
 	# 品詞による単語の取捨選択
 	$left->Label(
@@ -154,26 +154,31 @@ sub _new{
 
 	my $cf = $lf->Frame()->pack(-fill => 'x', -pady => 2);
 
-	$self->{ent_check} = $cf->Entry(
-		-font        => "TKFN",
-		-background  => 'gray',
-		-foreground  => 'black',
-		-state       => 'disable',
-	)->pack(-side => 'right');
-	$self->disabled_entry_configure($self->{ent_check});
+	$cf->Label(
+		-text => $self->gui_jchar('　 　'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left');
 
 	$cf->Button(
 		-text => $self->gui_jchar('チェック'),
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->check;});}
-	)->pack(-side => 'right', -padx => 2);
+	)->pack(-side => 'left', -padx => 2);
 
 	my $lf2 = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x', -expand => 0);
+
+	$self->{ent_check} = $cf->Entry(
+		-font        => "TKFN",
+		-background  => 'gray',
+		-foreground  => 'black',
+		-state       => 'disable',
+	)->pack(-side => 'left', -fill => 'x', -expand => 1);
+	$self->disabled_entry_configure($self->{ent_check});
 
 	# 入力データの設定
 
