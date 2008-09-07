@@ -176,6 +176,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
+	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -193,6 +194,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'480');
+	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
@@ -350,6 +352,7 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+	$r_command .= "# END: DATA\n";
 	
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
