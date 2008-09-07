@@ -29,6 +29,7 @@ sub start{
 
 sub end{
 	my $self = shift;
+	my %args = @_;
 	my $e = timelocal(localtime) - $self->{started};
 	
 	my ($h, $m, $s);
@@ -62,7 +63,7 @@ sub end{
 		msg  => "処理が完了しました。\n経過時間： $h:$m:$s",
 		type => 'msg',
 		icon => 'info'
-	);
+	) unless $args{no_dialog};
 	
 	$self->{win}->unShow;
 }

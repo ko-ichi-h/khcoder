@@ -40,7 +40,7 @@ sub _new{
 	
 	$self->{optmenu} = gui_widget::optmenu->open(
 		parent  => $f1,
-		pack    => {-side => 'left'},
+		pack    => {-side => 'left', -padx => 2},
 		options =>
 			[
 				[$self->gui_jchar('╥╡й©╤як║','euc'), 0],
@@ -53,11 +53,21 @@ sub _new{
 	);
 	$self->{optmenu}->set_value(0);
 
-	if (length($args{stress})){
-		$f1->Label(
-			-text => "   Stress = ".$args{stress}
-		)->pack(-side => 'left');
-	}
+	$f1->Button(
+		-text => $self->gui_jchar('д╢ю╟'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					gui_window::cod_cls_plot_opt->open(
+						command_f => $self->{plots}[$self->{ax}]->command_f
+					);
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Button(
 		-text => $self->gui_jchar('йд╓╦╓К'),

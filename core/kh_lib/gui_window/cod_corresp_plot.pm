@@ -40,7 +40,7 @@ sub _new{
 	
 	$self->{optmenu} = gui_widget::optmenu->open(
 		parent  => $f1,
-		pack    => {-side => 'left'},
+		pack    => {-side => 'left', -padx => 2},
 		options =>
 			[
 				[$self->gui_jchar('コード名','euc'), 0],
@@ -51,11 +51,21 @@ sub _new{
 	);
 	$self->{optmenu}->set_value(0);
 
-	if (length($args{kiyo})){
-		$f1->Label(
-			-text => $self->gui_jchar("  寄与率： ".$args{kiyo})
-		)->pack(-side => 'left');
-	}
+	$f1->Button(
+		-text => $self->gui_jchar('調整'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					gui_window::cod_corresp_plot_opt->open(
+						command_f => $self->{plots}[$self->{ax}]->command_f
+					);
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Button(
 		-text => $self->gui_jchar('閉じる'),

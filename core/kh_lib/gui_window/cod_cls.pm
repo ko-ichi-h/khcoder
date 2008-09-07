@@ -337,7 +337,7 @@ sub _calc{
 		return 0;
 	}
 	
-	# MDS実行のためのRコマンド
+	# クラスター分析実行のためのRコマンド
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
@@ -352,6 +352,7 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+	$r_command .= "# END: DATA\n";
 	
 	my $r_command_2a = 
 		 'plot(hclust(dist(d,method="binary"),method="'
@@ -375,21 +376,6 @@ sub _calc{
 		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="距離",'
 		."cex=$fontsize )"
 	;
-
-	# 対応分析の場合
-	#d <- t(d)
-	#d <- subset(d, rowSums(d) > 0)
-	#library(MASS)
-	#c <- corresp(d, nf=2)
-	#
-	## 寄与率【単位はパーセント】を表示
-	#k <- 100*(c$cor^2)/sum(c$cor^2)
-	#print(k <- round(k, 2))
-	#
-	## コードのみプロット
-	#plot(c$cscore, type="n", xlab="成分1", ylab="成分2")
-	#text(c$cscore,rownames(c$cscore), cex=0.8)
-
 
 	# プロット作成
 	use kh_r_plot;

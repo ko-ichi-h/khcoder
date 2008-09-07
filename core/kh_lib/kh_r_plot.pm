@@ -214,4 +214,9 @@ sub _save_r{
 	return 1;
 }
 
+sub command_f{
+	my $self = shift;
+	return $self->{command_f};
+}
+
 1;

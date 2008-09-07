@@ -40,7 +40,7 @@ sub _new{
 	
 	$self->{optmenu} = gui_widget::optmenu->open(
 		parent  => $f1,
-		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
+		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		options =>
 			[
 				[$self->gui_jchar('コード名') => 0],
@@ -51,9 +51,25 @@ sub _new{
 		command  => sub {$self->renew;},
 	);
 
+	$f1->Button(
+		-text => $self->gui_jchar('調整'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					gui_window::cod_mds_plot_opt->open(
+						command_f => $self->{plots}[$self->{ax}]->command_f
+					);
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
+
 	if (length($args{stress})){
 		$f1->Label(
-			-text => "  Stress = ".$args{stress}
+			-text => " Stress = ".$args{stress}
 		)->pack(-side => 'left');
 	}
 

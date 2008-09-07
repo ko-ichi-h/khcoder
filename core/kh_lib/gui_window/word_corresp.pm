@@ -22,10 +22,16 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
 	my $left = $lf->Frame()->pack(-fill => 'both', -expand => 1);
 	# my $right = $lf->Frame()->pack(-side => 'right', -fill => 'x');
+
+	$left->Label(
+		-text => $self->gui_jchar('■布置する語の選択'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
 	# 最小・最大出現数
 	$left->Label(
@@ -42,6 +48,9 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->{ent_min}->insert(0,'1');
+	$self->{ent_min}->bind("<Key-Return>",sub{$self->check;});
+	
 	$l2->Label(
 		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
@@ -51,7 +60,7 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
-	$self->{ent_min}->insert(0,'1');
+	$self->{ent_max}->bind("<Key-Return>",sub{$self->check;});
 
 	# 最小・最大文書数
 	$left->Label(
@@ -86,6 +95,9 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->{ent_min_df}->insert(0,'1');
+	$self->{ent_min_df}->bind("<Key-Return>",sub{$self->check;});
+
 	$l3->Label(
 		-text => $self->gui_jchar('　 最大文書数：'),
 		-font => "TKFN"
@@ -95,7 +107,7 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
-	$self->{ent_min_df}->insert(0,'1');
+	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
 
 	# 品詞による単語の取捨選択
 	$left->Label(
@@ -135,29 +147,27 @@ sub _new{
 	)->pack();
 
 	# チェック部分
-	my $cf = $lf->Frame(
-		#-label => 'Check',
-		#-labelside => 'acrosstop',
-		#-borderwidth => 2,
-	)->pack(-fill => 'x', -pady => 2);
-
-	$cf->Label(
-		-text => $self->gui_jchar('・布置される語の数：'),
+	$lf->Label(
+		-text => $self->gui_jchar('・現在の設定で布置される語の数：'),
 		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left');
-	$cf->Button(
-		-text => $self->gui_jchar('チェック'),
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->check;});}
-	)->pack(-side => 'left', -padx => 2);
+	)->pack(-anchor => 'w');
+
+	my $cf = $lf->Frame()->pack(-fill => 'x', -pady => 2);
+
 	$self->{ent_check} = $cf->Entry(
 		-font        => "TKFN",
 		-background  => 'gray',
 		-foreground  => 'black',
 		-state       => 'disable',
-	)->pack(-side => 'left',-fill => 'x');
+	)->pack(-side => 'right');
 	$self->disabled_entry_configure($self->{ent_check});
+
+	$cf->Button(
+		-text => $self->gui_jchar('チェック'),
+		-font => "TKFN",
+		-borderwidth => 1,
+		-command => sub{ $mw->after(10,sub{$self->check;});}
+	)->pack(-side => 'right', -padx => 2);
 
 	my $lf2 = $win->LabFrame(
 		-label => 'Options',
@@ -166,6 +176,13 @@ sub _new{
 	)->pack(-fill => 'x', -expand => 0);
 
 	# 入力データの設定
+
+	$lf2->Label(
+		-text => $self->gui_jchar('■対応分析の設定'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
+
 	$lf2->Label(
 		-text => $self->gui_jchar('・分析に使用するクロス表の種類：'),
 		-font => "TKFN",
@@ -284,6 +301,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_n}->insert(0,'2');
+	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
 
 	$fd->Label(
 		-text => $self->gui_jchar('  x軸の成分：'),
@@ -296,6 +314,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_x}->insert(0,'1');
+	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->calc;});
 
 	$fd->Label(
 		-text => $self->gui_jchar('  y軸の成分：'),
@@ -308,6 +327,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_y}->insert(0,'2');
+	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
 
 	# フォントサイズ
 	my $ff = $lf2->Frame()->pack(
@@ -327,6 +347,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
+	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -344,20 +365,21 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'640');
+	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
-	)->pack(-side => 'right',-padx => 2, -pady => 2);
+	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->calc;});}
-	)->pack(-side => 'right', -pady => 2);
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
 
 	return $self;
@@ -596,17 +618,19 @@ sub calc{
 		unless ($ans =~ /ok/i){ return 0; }
 	}
 
-	#my $ans = $self->win_obj->messageBox(
-	#	-message => $self->gui_jchar
-	#		(
-	#		   "この処理には時間がかかることがあります。\n".
-	#		   "続行してよろしいですか？"
-	#		),
-	#	-icon    => 'question',
-	#	-type    => 'OKCancel',
-	#	-title   => 'KH Coder'
-	#);
-	#unless ($ans =~ /ok/i){ return 0; }
+	my $ans = $self->win_obj->messageBox(
+		-message => $self->gui_jchar
+			(
+			   "この処理には時間がかかることがあります。\n".
+			   "続行してよろしいですか？"
+			),
+		-icon    => 'question',
+		-type    => 'OKCancel',
+		-title   => 'KH Coder'
+	);
+	unless ($ans =~ /ok/i){ return 0; }
+
+	my $w = gui_wait->start;
 
 	# データの取り出し
 	my $r_command = mysql_crossout::r_com->new(
@@ -780,6 +804,8 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
 	) or return 0;
+
+	$w->end(no_dialog => 1);
 
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_word_corresp_plot')){
