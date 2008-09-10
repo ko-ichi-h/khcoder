@@ -718,7 +718,7 @@ sub _calc{
 		$r_command .= 'd <- subset(d,row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing")'."\n";
 	}
 	
-	# MDS実行のためのRコマンド
+	# 対応分析実行のためのRコマンド
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
