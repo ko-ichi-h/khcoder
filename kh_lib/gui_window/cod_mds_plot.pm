@@ -43,8 +43,8 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('コード名') => 0],
-				[$self->gui_jchar('コード名とドット')   => 1],
+				[$self->gui_jchar('コード名とドット') => 0],
+				[$self->gui_jchar('ドット')   => 1],
 				#[$self->gui_jchar('コード名＋ドット') => 2],
 			],
 		variable => \$self->{ax},
