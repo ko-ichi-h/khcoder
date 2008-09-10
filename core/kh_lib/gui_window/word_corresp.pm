@@ -744,7 +744,7 @@ sub calc{
 	if ($self->{radio} == 0 and $self->{biplot} == 0){      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"blue\","
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"red\","
 				.'pch=20,xlab="成分'.$d_x
 				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
@@ -756,12 +756,12 @@ sub calc{
 		
 		# ドットのみプロット
 		$r_command_a .=
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"blue\","
-				.'pch=20,xlab="成分'.$d_x
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				.'xlab="成分'.$d_x
 				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
 		;
-	} else {                                                # 同時布置あり
+	} else {                                      # 同時布置あり
 		# ラベルとドットをプロット
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
@@ -769,13 +769,13 @@ sub calc{
 				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
 				.'), xlab="成分'.$d_x.' ('.$kiyo1
 				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,15)[cb[,3]], col=c("blue","blue")[cb[,3]] )'."\n"
+				.'%)",pch=c(20,0)[cb[,3]], col=c("red","red")[cb[,3]] )'."\n"
 			."library(maptools)\n"
 			."pointLabel("
 				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
 				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]])"
+				."cex=$fontsize, col=c(\"black\",\"blue\")[cb[,3]])"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
@@ -786,7 +786,7 @@ sub calc{
 				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
 				.'), xlab="成分'.$d_x.' ('.$kiyo1
 				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,0)[cb[,3]], col=c("blue","red")[cb[,3]] )'."\n"
+				.'%)",pch=c(1,15)[cb[,3]] )'."\n"
 		;
 	}
 

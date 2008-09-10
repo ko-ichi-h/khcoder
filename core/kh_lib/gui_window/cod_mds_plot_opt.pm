@@ -127,14 +127,19 @@ sub calc{
 		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points,type="n",xlab="次元1",ylab="次元2")'."\n";
-		$r_command_d .= 'text(c$points, rownames(c$points),';
-		$r_command_d .= "cex=$fontsize)\n";
+		$r_command_d .=
+			 'plot(c$points,pch=20,col="red",'
+				.'xlab="次元1",ylab="次元2")'."\n"
+			."library(maptools)\n"
+			.'pointLabel('
+				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
+				."cex=$fontsize)\n";
+		;
 		
-		$r_command_a .= 'plot(c$points,xlab="次元1", ylab="次元2")'."\n";
-		$r_command_a .= 'text(c$points, rownames(c$points),pos=1,';
-		$r_command_a .= "cex=$fontsize)\n";
-		
+		$r_command_a .= 
+			 'plot(c$points,'
+				.'xlab="次元1",ylab="次元2")'."\n"
+		;
 		$r_command .= $r_command_a;
 	}
 	elsif ($self->{method_opt} eq 'S'){
@@ -142,28 +147,38 @@ sub calc{
 		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c$points,type="n",xlab="次元1",ylab="次元2")'."\n";
-		$r_command_d .= 'text(c$points, rownames(c$points),';
-		$r_command_d .= "cex=$fontsize)\n";
+		$r_command_d .=
+			 'plot(c$points,pch=20,col="red",'
+				.'xlab="次元1",ylab="次元2")'."\n"
+			."library(maptools)\n"
+			.'pointLabel('
+				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
+				."cex=$fontsize)\n";
+		;
 		
-		$r_command_a .= 'plot(c$points,xlab="次元1", ylab="次元2")'."\n";
-		$r_command_a .= 'text(c$points, rownames(c$points),pos=1,';
-		$r_command_a .= "cex=$fontsize)\n";
-		
+		$r_command_a .= 
+			 'plot(c$points,'
+				.'xlab="次元1",ylab="次元2")'."\n"
+		;
 		$r_command .= $r_command_a;
 	}
 	elsif ($self->{method_opt} eq 'C'){
 		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
 		
 		$r_command_d = $r_command;
-		$r_command_d .= 'plot(c, type="n", xlab="次元1", ylab="次元2")'."\n";
-		$r_command_d .= 'text(c, rownames(c),';
-		$r_command_d .= "cex=$fontsize)\n";
+		$r_command_d .=
+			 'plot(c,pch=20,col="red",'
+				.'xlab="次元1",ylab="次元2")'."\n"
+			."library(maptools)\n"
+			.'pointLabel('
+				.'x=c[,1], y=c[,2], labels=rownames(c),'
+				."cex=$fontsize)\n";
+		;
 		
-		$r_command_a .= 'plot(c, xlab="次元1", ylab="次元2")'."\n";
-		$r_command_a .= 'text(c, rownames(c),pos=1,';
-		$r_command_a .= "cex=$fontsize)\n";
-
+		$r_command_a .=
+			 'plot(c$points,'
+				.'xlab="次元1",ylab="次元2")'."\n"
+		;
 		$r_command .= $r_command_a;
 	}
 

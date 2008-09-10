@@ -43,8 +43,8 @@ sub _new{
 		pack    => {-side => 'left', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('コード名','euc'), 0],
-				[$self->gui_jchar('コード名とドット','euc'), 1],
+				[$self->gui_jchar('コード名とドット','euc'), 0],
+				[$self->gui_jchar('ドット','euc'), 1],
 			],
 		variable => \$self->{ax},
 		command  => sub {$self->renew;},
