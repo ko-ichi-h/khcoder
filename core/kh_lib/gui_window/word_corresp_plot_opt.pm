@@ -185,52 +185,52 @@ sub calc{
 	$fontsize /= 100;
 
 	my ($r_command_2a, $r_command_2, $r_command_a);
-	if (not ($self->{command_f} =~ /rscore/)){              # 同時布置なし
+	if ( not ($self->{command_f} =~ /rscore/) ){      # 同時布置なし
+		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'xlab="成分'.$d_x
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"blue\","
+				.'pch=20,xlab="成分'.$d_x
 				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
-			."text(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'rownames(c$cscore), pos=1, cex='.$fontsize.')'
-				."\n"
+			."library(maptools)\n"
+			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y], offset=0,"
+				."labels=rownames(c\$cscore), cex=$fontsize)\n";
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
+		# ドットのみプロット
 		$r_command_a .=
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'type="n", xlab="成分'.$d_x
-				.' ('.$kiyo1.'%)", ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"blue\","
+				.'pch=20,xlab="成分'.$d_x
+				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
-			."text(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'rownames(c$cscore), cex='.$fontsize.')'
 		;
-	} else {
+	} else {                                                # 同時布置あり
+		# ラベルとドットをプロット
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
 				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
 				.'), xlab="成分'.$d_x.' ('.$kiyo1
 				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)", pch=c(1,15)[cb[,3]] )'."\n"
-			.'text('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'rownames(c$cscore),pos=1,cex='.$fontsize.')'."\n"
-			.'text('
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y]),"
-				.'rownames(c$rscore),pos=1, cex='.$fontsize.', )'
+				.'%)",pch=c(20,15)[cb[,3]], col=c("blue","blue")[cb[,3]] )'."\n"
+			."library(maptools)\n"
+			."pointLabel("
+				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
+				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
+				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
+				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]])"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
-
+		
+		# ドットのみをプロット
 		$r_command_a .=
-			 'plot(rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y])"
-				.'), type="n", xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
-				."\n"
-			.'text(c$cscore, rownames(c$cscore), cex='.$fontsize.')'."\n"
-			.'text(c$rscore, rownames(c$rscore), cex='.$fontsize.', col="red")'
+			 'plot(cb <- rbind('
+				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
+				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
+				.'), xlab="成分'.$d_x.' ('.$kiyo1
+				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
+				.'%)",pch=c(20,0)[cb[,3]], col=c("blue","red")[cb[,3]] )'."\n"
 		;
 	}
 
@@ -260,7 +260,7 @@ sub calc{
 	}
 	$self->close;
 	gui_window::word_corresp_plot->open(
-		plots       => [$plot1,$plot2],
+		plots       => [$plot2,$plot1],
 		no_geometry => 1,
 	);
 }

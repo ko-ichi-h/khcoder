@@ -11,7 +11,6 @@ sub _new{
 	}
 
 	my $self = shift;
-
 	my %args = @_;
 	$self->{plots} = $args{plots};
 	
@@ -43,8 +42,8 @@ sub _new{
 		pack    => {-side => 'left', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('抽出語','euc'), 0],
-				[$self->gui_jchar('抽出語とドット','euc'), 1],
+				[$self->gui_jchar('抽出語とドット','euc'), 0],
+				[$self->gui_jchar('ドット','euc'), 1],
 			],
 		variable => \$self->{ax},
 		command  => sub {$self->renew;},
