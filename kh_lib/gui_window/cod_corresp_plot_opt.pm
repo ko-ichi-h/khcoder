@@ -194,7 +194,7 @@ sub calc{
 				.' ('.$kiyo1.'%)",ylab="À®Ê¬'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
 			."library(maptools)\n"
-			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y], offset=0,"
+			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y],"
 				."labels=rownames(c\$cscore), cex=$fontsize, offset=0)\n";
 		;
 		$r_command_2 = $r_command.$r_command_2a;
