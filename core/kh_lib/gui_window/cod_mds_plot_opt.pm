@@ -128,7 +128,7 @@ sub calc{
 		
 		$r_command_d = $r_command;
 		$r_command_d .=
-			 'plot(c$points,pch=20,col="red",'
+			 'plot(c$points,pch=20,col="mediumaquamarine",'
 				.'xlab="次元1",ylab="次元2")'."\n"
 			."library(maptools)\n"
 			.'pointLabel('
@@ -148,7 +148,7 @@ sub calc{
 		
 		$r_command_d = $r_command;
 		$r_command_d .=
-			 'plot(c$points,pch=20,col="red",'
+			 'plot(c$points,pch=20,col="mediumaquamarine",'
 				.'xlab="次元1",ylab="次元2")'."\n"
 			."library(maptools)\n"
 			.'pointLabel('
@@ -167,7 +167,7 @@ sub calc{
 		
 		$r_command_d = $r_command;
 		$r_command_d .=
-			 'plot(c,pch=20,col="red",'
+			 'plot(c,pch=20,col="mediumaquamarine",'
 				.'xlab="次元1",ylab="次元2")'."\n"
 			."library(maptools)\n"
 			.'pointLabel('

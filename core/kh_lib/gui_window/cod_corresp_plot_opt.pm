@@ -188,7 +188,8 @@ sub calc{
 	if (not ($self->{command_f} =~ /rscore/)){              # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),col=\"red\","
+			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+				."col=\"mediumaquamarine\","
 				.'pch=20,xlab="成分'.$d_x
 				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
 				."\n"
@@ -213,13 +214,14 @@ sub calc{
 				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
 				.'), xlab="成分'.$d_x.' ('.$kiyo1
 				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,0)[cb[,3]], col=c("red","red")[cb[,3]] )'."\n"
+				.'%)",pch=c(20,0)[cb[,3]],'
+				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]] )'."\n"
 			."library(maptools)\n"
 			."pointLabel("
 				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
 				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize, col=c(\"black\",\"blue\")[cb[,3]])"
+				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]])"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
