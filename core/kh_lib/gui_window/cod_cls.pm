@@ -356,25 +356,25 @@ sub _calc{
 	
 	my $r_command_2a = 
 		 'plot(hclust(dist(d,method="binary"),method="'
-		.'single'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="µ÷Î¥",'
-		."cex=$fontsize )"
+			.'single'
+			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
+			."cex=$fontsize, hang=-1)\n"
 	;
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
 		 'plot(hclust(dist(d,method="binary"),method="'
-		.'complete'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="µ÷Î¥",'
-		."cex=$fontsize )"
+			.'complete'
+			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
+			."cex=$fontsize, hang=-1)\n"
 	;
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
 		'plot(hclust(dist(d,method="binary"),method="'
-		.'average'
-		.'"),labels=rownames(d), main="", sub="", xlab="",ylab="µ÷Î¥",'
-		."cex=$fontsize )"
+			.'average'
+			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
+			."cex=$fontsize, hang=-1)\n"
 	;
 
 	# ¥×¥í¥Ã¥ÈºîÀ®
