@@ -751,7 +751,7 @@ sub calc{
 				."\n"
 			."library(maptools)\n"
 			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y], offset=0,"
-				."labels=rownames(c\$cscore), cex=$fontsize)\n";
+				."labels=rownames(c\$cscore), cex=$fontsize, offset=0)\n";
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
@@ -777,7 +777,7 @@ sub calc{
 				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
 				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]])"
+				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]], offset=0)"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		

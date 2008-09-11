@@ -133,7 +133,7 @@ sub calc{
 			."library(maptools)\n"
 			.'pointLabel('
 				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize)\n";
+				."cex=$fontsize, offset=0)\n";
 		;
 		
 		$r_command_a .= 
@@ -153,7 +153,7 @@ sub calc{
 			."library(maptools)\n"
 			.'pointLabel('
 				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize)\n";
+				."cex=$fontsize, offset=0)\n";
 		;
 		
 		$r_command_a .= 
@@ -172,7 +172,7 @@ sub calc{
 			."library(maptools)\n"
 			.'pointLabel('
 				.'x=c[,1], y=c[,2], labels=rownames(c),'
-				."cex=$fontsize)\n";
+				."cex=$fontsize, offset=0)\n";
 		;
 		
 		$r_command_a .=
