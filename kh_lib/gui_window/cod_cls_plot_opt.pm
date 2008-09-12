@@ -15,6 +15,25 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'x', -expand => 0);
 
+	# クラスター数
+	my $f4 = $lf->Frame()->pack(
+		-fill => 'x',
+		-padx => 2,
+		-pady => 2
+	);
+	$f4->Label(
+		-text => $self->gui_jchar('クラスター数：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_cluster_number} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_cluster_number}->insert(0,'0');
+	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -93,28 +112,46 @@ sub calc{
 
 	$r_command .= "# END: DATA\n";
 
+	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
+
 	my $r_command_2a = 
 		 'plot(hclust(dist(d,method="binary"),method="'
 			.'single'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1 )\n"
+			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command_2a .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'single'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
+	
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
 		 'plot(hclust(dist(d,method="binary"),method="'
 			.'complete'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1 )\n"
+			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command_3a .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'complete'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
 		'plot(hclust(dist(d,method="binary"),method="'
 			.'average'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1 )\n"
+			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'average'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
 
 	# プロット作成
 	use kh_r_plot;
