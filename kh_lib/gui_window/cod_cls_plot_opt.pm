@@ -187,9 +187,8 @@ sub calc{
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
 	);
-	
-	return 1;
 
+	return 1;
 }
 
 sub win_name{
