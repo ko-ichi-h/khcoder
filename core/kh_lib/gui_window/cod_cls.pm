@@ -135,6 +135,25 @@ sub _new{
 		-pady   => 2,
 	);
 
+	# クラスター数
+	my $f4 = $lf->Frame()->pack(
+		-fill => 'x',
+		-padx => 2,
+		-pady => 2
+	);
+	$f4->Label(
+		-text => $self->gui_jchar('クラスター数：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_cluster_number} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_cluster_number}->insert(0,'0');
+	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->_calc;});
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -153,6 +172,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
+	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -170,31 +190,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'480');
-
-	# コーディング単位
-	#my $f4 = $lf->Frame()->pack(
-	#	-fill => 'x',
-	#	-padx => 2,
-	#	-pady => 2
-	#);
-	#$f4->Label(
-	#	-text => $self->gui_jchar('アルゴリズム：'),
-	#	-font => "TKFN",
-	#)->pack(-side => 'left');
-	#
-	#my $widget = gui_widget::optmenu->open(
-	#	parent  => $f4,
-	#	pack    => {-side => 'left'},
-	#	options =>
-	#		[
-	#			[$self->gui_jchar('群平均法','euc'), 'average' ],
-	#			[$self->gui_jchar('最近隣法','euc'), 'single'  ],
-	#			[$self->gui_jchar('最遠隣法','euc'), 'complete'],
-	#			#[$self->gui_jchar('McQuitty法','euc'), 'mcquitty'],
-	#		],
-	#	variable => \$self->{method_opt},
-	#);
-	#$widget->set_value('average');
+	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
@@ -325,6 +321,8 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
+
 	# データ取得
 	my $r_command;
 	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
@@ -360,6 +358,12 @@ sub _calc{
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command_2a .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'single'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
+	
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
@@ -368,6 +372,11 @@ sub _calc{
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command_3a .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'complete'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
@@ -376,6 +385,11 @@ sub _calc{
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
 	;
+	$r_command .= 
+		'rect.hclust(hclust(dist(d,method="binary"),method="'
+			.'average'
+			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		if $cluster_number > 1;
 
 	# プロット作成
 	use kh_r_plot;
