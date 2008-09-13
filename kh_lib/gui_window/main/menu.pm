@@ -319,6 +319,16 @@ sub make{
 			);
 		push @menu1, 't_word_corresp' if $::config_obj->R;
 
+		$self->{t_word_cls} = $f3->command(
+				-label => gui_window->gui_jchar('階層的クラスター分析'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_cls->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_word_cls' if $::config_obj->R;
+
 	my $f8 = $f->cascade(
 			-label => gui_window->gui_jchar('文書'),
 			 -font => "TKFN",
