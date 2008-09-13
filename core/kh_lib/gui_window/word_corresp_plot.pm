@@ -108,7 +108,8 @@ sub _new{
 				10,
 				sub {
 					gui_window::word_corresp_plot_opt->open(
-						command_f => $self->{plots}[$self->{ax}]->command_f
+						command_f => $self->{plots}[$self->{ax}]->command_f,
+						size      => $self->{photo}->cget(-image)->height,
 					);
 				}
 			);
