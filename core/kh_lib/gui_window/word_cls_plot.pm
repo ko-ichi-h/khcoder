@@ -191,7 +191,7 @@ sub renew{
 	my $img = $self->win_obj->Photo(
 		-file => $self->{plots}[$self->{ax}]->path
 	);
-	$img->rotate(270);
+	#$img->rotate(270);
 	
 	$self->{photo}->configure(
 		-image => $img,
