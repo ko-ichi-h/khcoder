@@ -1,5 +1,6 @@
 package kh_r_plot;
 use strict;
+use Image::Magick;
 
 my $if_font = 0;
 
@@ -47,6 +48,18 @@ sub new{
 		$if_font = 1;
 	}
 
+	# width・heightのチェック
+	unless (
+		   (length($self->{width} ) == 0 || $self->{width}  =~ /^[0-9]+$/)
+		&& (length($self->{height}) == 0 || $self->{height} =~ /^[0-9]+$/)
+	){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => 'プロットサイズの指定が不正です。',
+		);
+		return 0;
+	}
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -55,6 +68,7 @@ sub new{
 		$self->{width},
 		$self->{height},
 	);
+	$self->set_par;
 	$::config_obj->R->send($command);
 	$self->{r_msg} = $::config_obj->R->read;
 	$::config_obj->R->send('dev.off()');
@@ -75,8 +89,17 @@ sub new{
 		);
 		return 0;
 	}
+	print "$self->{r_msg}\n";
 	
-	
+	return $self;
+}
+
+sub rotate{
+	my $self = shift;
+	my $p = Image::Magick->new;
+	$p->Read($self->path);
+	$p->Rotate(degrees=>-90);
+	$p->Write($self->path);
 	return $self;
 }
 
@@ -88,6 +111,14 @@ sub r_msg{
 sub path{
 	my $self = shift;
 	return $self->{path};
+}
+
+sub set_par{
+	my $self = shift;
+	$::config_obj->R->send(
+		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
+	);
+	return $self;
 }
 
 sub save{

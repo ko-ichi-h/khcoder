@@ -350,6 +350,7 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+	$r_command .= "par(mai=c(0,0,0,0), mar=c(1,2,1,1), omi=c(0,0,0,0), oma=c(0,0,0,0) )\n";
 	$r_command .= "# END: DATA\n";
 	
 	my $r_command_2a = 
