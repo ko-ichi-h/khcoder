@@ -156,6 +156,7 @@ sub rotate_cls{
 	
 	if ($bmp_flg){ 
 		$p->Write(filename=>"bmp:$self->{path}", compression=>'None');
+		unlink($temp_png);
 	} else {
 		$p->Write($temp_png);
 		rename($temp_png, $path_png);

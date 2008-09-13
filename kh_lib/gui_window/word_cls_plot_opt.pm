@@ -190,6 +190,7 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot1->rotate_cls;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_CLS2',
@@ -198,6 +199,7 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot2->rotate_cls;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_CLS3',
@@ -206,6 +208,7 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot3->rotate_cls;
 
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_word_cls_plot')){
