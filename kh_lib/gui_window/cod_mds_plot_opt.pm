@@ -39,7 +39,15 @@ sub _new{
 			],
 		variable => \$self->{method_opt},
 	);
-	$widget->set_value('K');
+
+	my $method = 'C';
+	if ($args{command_f} =~ /isoMDS/){
+		$method = 'K';
+	}
+	elsif ($args{command_f} =~ /sammon/){
+		$method = 'S';
+	}
+	$widget->set_value($method);
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -57,7 +65,14 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,'80');
+	
+	if ($args{command_f} =~ /cex=([0-9\.]+)[, \)]/){
+		my $cex = $1;
+		$cex *= 100;
+		$self->{entry_font_size}->insert(0,$cex);
+	} else {
+		$self->{entry_font_size}->insert(0,'80');
+	}
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
 
 	$ff->Label(
@@ -75,8 +90,13 @@ sub _new{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
+	if ($args{size}){
+		$self->{entry_plot_size}->insert(0,$args{size});
+	} else {
+		$self->{entry_plot_size}->insert(0,'480');
+	}
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
+
 	
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -176,7 +196,7 @@ sub calc{
 		;
 		
 		$r_command_a .=
-			 'plot(c$points,'
+			 'plot(c,'
 				.'xlab="次元1",ylab="次元2")'."\n"
 		;
 		$r_command .= $r_command_a;

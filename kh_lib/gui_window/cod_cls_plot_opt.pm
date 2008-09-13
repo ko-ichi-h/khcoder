@@ -31,8 +31,14 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cluster_number}->insert(0,'0');
+	if ( $args{command_f} =~ /rect\.hclust.+k=([0-9]+)[, \)]/ ){
+		$self->{entry_cluster_number}->insert(0,$1);
+	} else {
+		$self->{entry_cluster_number}->insert(0,'0');
+	}
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+
+
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -50,7 +56,14 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,'80');
+	
+	if ($args{command_f} =~ /cex=([0-9\.]+)[, \)]/){
+		my $cex = $1;
+		$cex *= 100;
+		$self->{entry_font_size}->insert(0,$cex);
+	} else {
+		$self->{entry_font_size}->insert(0,'80');
+	}
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
 
 	$ff->Label(
@@ -68,9 +81,15 @@ sub _new{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
+	if ($args{size}){
+		$self->{entry_plot_size}->insert(0,$args{size});
+	} else {
+		$self->{entry_plot_size}->insert(0,'480');
+	}
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
-	
+
+
+
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",

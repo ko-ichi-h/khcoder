@@ -33,7 +33,11 @@ sub _new{
 		-width      => 2,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_n}->insert(0,'2');
+	if ($args{command_f} =~ /corresp\(d, nf=([0-9]+)\)/){
+		$self->{entry_d_n}->insert(0,$1);
+	} else {
+		$self->{entry_d_n}->insert(0,'2');
+	}
 	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
 
 	$fd->Label(
@@ -46,7 +50,6 @@ sub _new{
 		-width      => 2,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_x}->insert(0,'1');
 	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->calc;});
 
 	$fd->Label(
@@ -59,8 +62,18 @@ sub _new{
 		-width      => 2,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_y}->insert(0,'2');
 	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
+	
+	if (
+		$args{command_f} =~
+			/cbind\(c\$cscore\[,([0-9]+)\],.*c\$cscore\[,([0-9]+)\]/
+	) {
+		$self->{entry_d_x}->insert(0,$1);
+		$self->{entry_d_y}->insert(0,$2);
+	} else {
+		$self->{entry_d_x}->insert(0,'1');
+		$self->{entry_d_y}->insert(0,'2');
+	}
 	
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -78,7 +91,14 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,'80');
+	
+	if ($args{command_f} =~ /cex=([0-9\.]+)[, \)]/){
+		my $cex = $1;
+		$cex *= 100;
+		$self->{entry_font_size}->insert(0,$cex);
+	} else {
+		$self->{entry_font_size}->insert(0,'80');
+	}
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
 
 	$ff->Label(
@@ -96,8 +116,13 @@ sub _new{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'640');
+	if ($args{size}){
+		$self->{entry_plot_size}->insert(0,$args{size});
+	} else {
+		$self->{entry_plot_size}->insert(0,'480');
+	}
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
+
 	
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),
