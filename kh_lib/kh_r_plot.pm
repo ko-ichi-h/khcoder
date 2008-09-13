@@ -89,28 +89,9 @@ sub new{
 		);
 		return 0;
 	}
-	print "$self->{r_msg}\n";
+	#print "$self->{r_msg}\n";
 	
 	return $self;
-}
-
-sub rotate{
-	my $self = shift;
-	my $p = Image::Magick->new;
-	$p->Read($self->path);
-	$p->Rotate(degrees=>-90);
-	$p->Write($self->path);
-	return $self;
-}
-
-sub r_msg{
-	my $self = shift;
-	return $self->{r_msg};
-}
-
-sub path{
-	my $self = shift;
-	return $self->{path};
 }
 
 sub set_par{
@@ -118,6 +99,68 @@ sub set_par{
 	$::config_obj->R->send(
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
+	return $self;
+}
+
+sub rotate_cls{
+	my $self = shift;
+	my $path_png = $self->{path};
+	my $bmp_flg = 0;
+	
+	if ($path_png =~ /\.bmp$/){
+		chop $path_png;
+		chop $path_png;
+		chop $path_png;
+		$path_png .= 'png';
+		
+		$self->{width}  = 480 unless $self->{width};
+		$self->{height} = 480 unless $self->{height};
+
+		my $command = '';
+		if (length($self->{command_a})){
+			$command = $self->{command_a};
+		} else {
+			$command = $self->{command_f};
+		}
+
+		# プロット作成
+		$::config_obj->R->output_chk(0);
+		$::config_obj->R->lock;
+		$::config_obj->R->send(
+			 "png(\"$path_png\", width=$self->{width},"
+			."height=$self->{height}, unit=\"px\")"
+		);
+		$::config_obj->R->send($command);
+		$::config_obj->R->send('dev.off()');
+		$::config_obj->R->unlock;
+		$::config_obj->R->output_chk(1);
+		$bmp_flg = 1;
+	}
+	
+	my $temp_png = "hoge";
+	my $n = 0;
+	while (-e "$temp_png$n.png"){
+		++$n;
+	}
+	$temp_png = "$temp_png$n.png";
+	rename($path_png, $temp_png);
+	
+	my $p = Image::Magick->new;
+	$p->Read($temp_png);
+	$p->Rotate(degrees=>90);
+	
+	if ($self->{width} > 1000){
+		my $cut = int( $self->{width} - $self->{width} * 0.032 + 5);
+		$p->Crop(geometry=> $self->{height}."x".$cut."+0+0");
+	}
+	
+	if ($bmp_flg){ 
+		$p->Write(filename=>"bmp:$self->{path}", compression=>'None');
+	} else {
+		$p->Write($temp_png);
+		rename($temp_png, $path_png);
+	}
+	
 	return $self;
 }
 
@@ -248,6 +291,16 @@ sub _save_r{
 sub command_f{
 	my $self = shift;
 	return $self->{command_f};
+}
+
+sub r_msg{
+	my $self = shift;
+	return $self->{r_msg};
+}
+
+sub path{
+	my $self = shift;
+	return $self->{path};
 }
 
 1;
