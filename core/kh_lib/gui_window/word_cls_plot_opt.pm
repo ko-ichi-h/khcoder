@@ -210,6 +210,8 @@ sub calc{
 	) or return 0;
 	$plot3->rotate_cls;
 
+	my $size = $self->gui_jg( $self->{entry_plot_size}->get );
+
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_word_cls_plot')){
 		$::main_gui->get('w_word_cls_plot')->close;
@@ -218,6 +220,7 @@ sub calc{
 	gui_window::word_cls_plot->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
+		plot_size   => $size,
 	);
 
 	return 1;

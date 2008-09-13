@@ -150,7 +150,7 @@ sub rotate_cls{
 	$p->Rotate(degrees=>90);
 	
 	if ($self->{width} > 1000){
-		my $cut = int( $self->{width} - $self->{width} * 0.032 + 5);
+		my $cut = int( $self->{width} - $self->{width} * 0.032 + 7);
 		$p->Crop(geometry=> $self->{height}."x".$cut."+0+0");
 	}
 	

@@ -421,7 +421,7 @@ sub calc{
 
 	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
 	if ($plot_size =~ /auto/i){
-		$plot_size = int( ($check_num * 25 + 33) / 0.9344 );
+		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
 		$plot_size = 640 if $plot_size < 640;
 	}
 
@@ -461,6 +461,7 @@ sub calc{
 	gui_window::word_cls_plot->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
+		plot_size   => $plot_size,
 	);
 
 	return 1;

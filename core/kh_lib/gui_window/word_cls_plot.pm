@@ -18,6 +18,7 @@ sub _new{
 
 	my %args = @_;
 	$self->{plots} = $args{plots};
+	$self->{plot_size} = $args{plot_size};
 	
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
@@ -78,7 +79,7 @@ sub _new{
 	);
 
 	my $f1 = $win->Frame()->pack(
-		-expand => 1,
+		-expand => 0,
 		-fill   => 'x',
 		-pady   => 2,
 		-padx   => 2,
@@ -115,7 +116,7 @@ sub _new{
 				sub {
 					gui_window::word_cls_plot_opt->open(
 						command_f => $self->{plots}[$self->{ax}]->command_f,
-						size      => $self->{photo}->cget(-image)->height,
+						size      => $self->{plot_size},
 					);
 				}
 			);

@@ -78,7 +78,7 @@ sub _new{
 	);
 
 	my $f1 = $win->Frame()->pack(
-		-expand => 1,
+		-expand => 0,
 		-fill   => 'x',
 		-pady   => 2,
 		-padx   => 2,
