@@ -65,6 +65,7 @@ sub _new{
 			$self->{entry}{$i} = $self->{hlist}->Entry(
 				-width => 3,
 			);
+			gui_window->config_entry_focusin($self->{entry}{$i});
 			
 			$self->{hlist}->add($row,-at => $row,);
 			$self->{hlist}->itemCreate(

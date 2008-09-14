@@ -82,6 +82,29 @@ sub _new{
 		-anchor => 's',
 	);
 
+	# カーソルキーによるスクロール
+	$self->win_obj->bind( '<Up>'    =>
+		sub {
+			$self->{photo_pane}->yview(scroll => -0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Down>'  =>
+		sub {
+			$self->{photo_pane}->yview(scroll =>  0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Left>'  =>
+		sub {
+			$self->{photo_pane}->xview(scroll => -0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Right>' =>
+		sub {
+			$self->{photo_pane}->xview(scroll =>  0.1, 'pages');
+		}
+	);
+
+
 	$f1->Label(
 		-text => $self->gui_jchar(' 表示：'),
 		-font => "TKFN"

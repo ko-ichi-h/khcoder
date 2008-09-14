@@ -209,6 +209,18 @@ sub _new{
 		-background => 'gray'
 	)->pack(-side => 'left');
 	
+	$self->config_entry_focusin($self->{entry}{'1a'});
+	$self->config_entry_focusin($self->{entry}{'1b'});
+	$self->config_entry_focusin($self->{entry}{'1c'});
+
+	$self->config_entry_focusin($self->{entry}{'2a'});
+	$self->config_entry_focusin($self->{entry}{'2b'});
+	$self->config_entry_focusin($self->{entry}{'2c'});
+
+	$self->config_entry_focusin($self->{entry}{'3a'});
+	$self->config_entry_focusin($self->{entry}{'3b'});
+	$self->config_entry_focusin($self->{entry}{'3c'});
+
 	# OK & Cancel
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),

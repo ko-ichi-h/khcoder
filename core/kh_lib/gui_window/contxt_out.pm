@@ -91,6 +91,8 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->config_entry_focusin($self->{ent_min2});
+	
 	$r2->Label(
 		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
@@ -101,6 +103,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min2}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_max2});
 
 	# 最小・最大 文書数による選択
 	$right->Label(
@@ -117,6 +120,7 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->config_entry_focusin($self->{ent_min_df2});
 	$r5->Label(
 		-text => $self->gui_jchar('　 最大文書数：'),
 		-font => "TKFN"
@@ -127,6 +131,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min_df2}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_max_df2});
 	my $r6 = $right->Frame()->pack(-fill => 'x');
 	$r6->Label(
 		-text => $self->gui_jchar('　 　文書と見なす単位：'),
@@ -230,6 +235,7 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->config_entry_focusin($self->{ent_min});
 	$l2->Label(
 		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
@@ -240,6 +246,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_max});
 
 	# 最小・最大文書数
 	$left->Label(
@@ -256,6 +263,7 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->config_entry_focusin($self->{ent_min_df});
 	$l5->Label(
 		-text => $self->gui_jchar('　 最大文書数：'),
 		-font => "TKFN"
@@ -266,6 +274,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min_df}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_max_df});
 	my $l6 = $left->Frame()->pack(-fill => 'x');
 	$l6->Label(
 		-text => $self->gui_jchar('　 　文書と見なす単位：'),
