@@ -192,6 +192,12 @@ sub _new{
 	$self->{entry_plot_size}->insert(0,'Auto');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 
+	$self->{entry_plot_size}->bind(
+		"<Button-1>",
+		sub{$self->{entry_plot_size}->selectionRange(0,'end');}
+	);
+	
+
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
