@@ -133,8 +133,18 @@ sub calc{
 
 	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
 
+	my $par = 
+		"par(
+			mai=c(0,0,0,0),
+			mar=c(1,2,1,0),
+			omi=c(0,0,0,0),
+			oma=c(0,0,0,0) 
+		)\n"
+	;
+
 	my $r_command_2a = 
-		 'plot(hclust(dist(d,method="binary"),method="'
+		 $par
+		 .'plot(hclust(dist(d,method="binary"),method="'
 			.'single'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -148,7 +158,8 @@ sub calc{
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
-		 'plot(hclust(dist(d,method="binary"),method="'
+		$par
+		.'plot(hclust(dist(d,method="binary"),method="'
 			.'complete'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -161,7 +172,8 @@ sub calc{
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
-		'plot(hclust(dist(d,method="binary"),method="'
+		$par
+		.'plot(hclust(dist(d,method="binary"),method="'
 			.'average'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -180,6 +192,7 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot1->rotate_cls;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_CLS2',
@@ -188,6 +201,7 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot2->rotate_cls;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'codes_CLS3',
@@ -196,6 +210,9 @@ sub calc{
 		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
 		height    => 480,
 	) or return 0;
+	$plot3->rotate_cls;
+
+	my $size = $self->gui_jg( $self->{entry_plot_size}->get );
 
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_cod_cls_plot')){
@@ -205,6 +222,7 @@ sub calc{
 	gui_window::cod_cls_plot->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
+		plot_size   => $size,
 	);
 
 	return 1;

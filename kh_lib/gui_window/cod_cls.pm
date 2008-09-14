@@ -189,7 +189,7 @@ sub _new{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
+	$self->{entry_plot_size}->insert(0,'Auto');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 
 	# OK・キャンセル
@@ -314,8 +314,10 @@ sub _calc{
 	my $self = shift;
 
 	my @selected = ();
+	my $check_num = 0;
 	foreach my $i (@{$self->{checks}}){
 		push @selected, $i->{name} if $i->{check};
+		++$check_num;
 	}
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
@@ -350,11 +352,20 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
-	$r_command .= "par(mai=c(0,0,0,0), mar=c(1,2,1,1), omi=c(0,0,0,0), oma=c(0,0,0,0) )\n";
 	$r_command .= "# END: DATA\n";
 	
+	my $par = 
+		"par(
+			mai=c(0,0,0,0),
+			mar=c(1,2,1,0),
+			omi=c(0,0,0,0),
+			oma=c(0,0,0,0) 
+		)\n"
+	;
+	
 	my $r_command_2a = 
-		 'plot(hclust(dist(d,method="binary"),method="'
+		 $par
+		 .'plot(hclust(dist(d,method="binary"),method="'
 			.'single'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -368,7 +379,8 @@ sub _calc{
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
-		 'plot(hclust(dist(d,method="binary"),method="'
+		 $par
+		 .'plot(hclust(dist(d,method="binary"),method="'
 			.'complete'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -381,7 +393,8 @@ sub _calc{
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
-		'plot(hclust(dist(d,method="binary"),method="'
+		$par
+		.'plot(hclust(dist(d,method="binary"),method="'
 			.'average'
 			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
 			."cex=$fontsize, hang=-1)\n"
@@ -392,30 +405,39 @@ sub _calc{
 			.'"), k='.$cluster_number.', border="#FF8B00FF")'
 		if $cluster_number > 1;
 
+	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
+	if ($plot_size =~ /auto/i){
+		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
+		$plot_size = 480 if $plot_size < 480;
+	}
+
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_CLS1',
 		command_f => $r_command,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $plot_size,
 		height    => 480,
 	) or return 0;
+	$plot1->rotate_cls;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_CLS2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $plot_size,
 		height    => 480,
 	) or return 0;
+	$plot2->rotate_cls;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'codes_CLS3',
 		command_a => $r_command_3a,
 		command_f => $r_command_3,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $plot_size,
 		height    => 480,
 	) or return 0;
+	$plot3->rotate_cls;
 
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_cod_cls_plot')){
@@ -425,6 +447,7 @@ sub _calc{
 	gui_window::cod_cls_plot->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
+		plot_size   => $plot_size,
 	);
 
 	return 1;
