@@ -104,49 +104,27 @@ sub set_par{
 
 sub rotate_cls{
 	my $self = shift;
-	my $path_png = $self->{path};
-	my $bmp_flg = 0;
 	
-	if ($path_png =~ /\.bmp$/){
-		chop $path_png;
-		chop $path_png;
-		chop $path_png;
-		$path_png .= 'png';
-		
-		$self->{width}  = 480 unless $self->{width};
-		$self->{height} = 480 unless $self->{height};
-
-		my $command = '';
-		if (length($self->{command_a})){
-			$command = $self->{command_a};
-		} else {
-			$command = $self->{command_f};
-		}
-
-		# プロット作成
-		$::config_obj->R->output_chk(0);
-		$::config_obj->R->lock;
-		$::config_obj->R->send(
-			 "png(\"$path_png\", width=$self->{width},"
-			."height=$self->{height}, unit=\"px\")"
-		);
-		$::config_obj->R->send($command);
-		$::config_obj->R->send('dev.off()');
-		$::config_obj->R->unlock;
-		$::config_obj->R->output_chk(1);
-		$bmp_flg = 1;
+	# tempファイルの名前
+	my $type = '';
+	if ($self->{path} =~ /\.bmp$/){
+		$type = 'bmp';
+	} else {
+		$type = 'png';
 	}
 	
-	my $temp_png = "hoge";
+	# tempファイルにリネーム
+	my $temp = "hoge";
 	my $n = 0;
-	while (-e "$temp_png$n.png"){
+	while (-e "$temp$n.$type"){
 		++$n;
 	}
-	$temp_png = "$temp_png$n.png";
-	rename($path_png, $temp_png);
+	$temp = "$temp$n.$type";
+	rename($self->{path}, $temp);
 	
+	# 画像操作
 	my $p = Image::Magick->new;
-	$p->Read($temp_png);
+	$p->Read($temp);
 	$p->Rotate(degrees=>90);
 	
 	if ($self->{width} > 1000){
@@ -154,16 +132,16 @@ sub rotate_cls{
 		$p->Crop(geometry=> $self->{height}."x".$cut."+0+0");
 	}
 	
-	if ($bmp_flg){ 
-		$p->Write(filename=>"bmp:$self->{path}", compression=>'None');
-		unlink($temp_png);
+	if ($type eq 'bmp'){ 
+		$p->Write(filename=>"$temp", compression=>'None');
 	} else {
-		$p->Write($temp_png);
-		rename($temp_png, $path_png);
+		$p->Write($temp);
 	}
-	
+	rename($temp, $self->{path});
+
 	return $self;
 }
+
 
 sub save{
 	my $self = shift;

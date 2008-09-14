@@ -7,7 +7,6 @@ use mysql_words;
 
 use Tk;
 use Tk::Pane;
-use Tk::PhotoRotate;
 
 sub _new{
 	if ($::config_obj->os eq 'linux') {
@@ -18,6 +17,7 @@ sub _new{
 
 	my %args = @_;
 	$self->{plots} = $args{plots};
+	$self->{plot_size} = $args{plot_size};
 	
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
@@ -25,7 +25,7 @@ sub _new{
 
 	# 画像サイズをチェック
 	my $img = $win->Photo(-file => $self->{plots}[$self->{ax}]->path);
-	$img->rotate(270);
+	#$img->rotate(270);
 	
 	$self->{img_height} = $img->height;
 	$self->{img_width}  = $img->width;
@@ -115,7 +115,7 @@ sub _new{
 				sub {
 					gui_window::cod_cls_plot_opt->open(
 						command_f => $self->{plots}[$self->{ax}]->command_f,
-						size      => $self->{photo}->cget(-image)->height,
+						size      => $self->{plot_size},
 					);
 				}
 			);
@@ -191,7 +191,6 @@ sub renew{
 	my $img = $self->win_obj->Photo(
 		-file => $self->{plots}[$self->{ax}]->path
 	);
-	$img->rotate(270);
 	
 	$self->{photo}->configure(
 		-image => $img,
