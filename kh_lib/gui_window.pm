@@ -266,9 +266,9 @@ sub gui_jg{ # 入力された文字列の変換
 	}
 }
 
-#------------------------#
-#   Tkのバージョン関係   #
-#------------------------#
+#----------------#
+#   共通の処理   #
+#----------------#
 
 sub disabled_entry_configure{
 	my $ent = $_[1];
@@ -276,6 +276,16 @@ sub disabled_entry_configure{
 		-disabledbackground => 'gray',
 		-disabledforeground => 'black',
 	) if $Tk::VERSION >= 804;
+}
+
+sub config_entry_focusin{
+	my $ent = $_[1];
+	$ent->configure(
+		-validate => 'focusin',
+		-validatecommand => sub{
+			$ent->selectionRange(0,'end');
+		}
+	);
 }
 
 1;
