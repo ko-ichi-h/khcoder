@@ -153,6 +153,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_cluster_number}->insert(0,'0');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->config_entry_focusin($self->{entry_cluster_number});
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -173,6 +174,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
+$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -191,12 +193,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'Auto');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
-
-	$self->{entry_plot_size}->bind(
-		"<Button-1>",
-		sub{$self->{entry_plot_size}->selectionRange(0,'end');}
-	);
-	
+	$self->config_entry_focusin($self->{entry_plot_size});
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(

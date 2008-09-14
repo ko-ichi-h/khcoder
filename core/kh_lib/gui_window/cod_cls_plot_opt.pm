@@ -37,6 +37,7 @@ sub _new{
 		$self->{entry_cluster_number}->insert(0,'0');
 	}
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_cluster_number});
 
 
 
@@ -65,6 +66,7 @@ sub _new{
 		$self->{entry_font_size}->insert(0,'80');
 	}
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -87,8 +89,7 @@ sub _new{
 		$self->{entry_plot_size}->insert(0,'480');
 	}
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
-
-
+	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),
