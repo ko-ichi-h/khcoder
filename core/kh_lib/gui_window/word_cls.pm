@@ -60,6 +60,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
 	$self->{ent_min}->bind("<Key-Return>",sub{$self->check;});
+	$self->config_entry_focusin($self->{ent_min});
 	
 	$l2->Label(
 		-text => $self->gui_jchar('　 最大出現数：'),
@@ -71,6 +72,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_max}->bind("<Key-Return>",sub{$self->check;});
+	$self->config_entry_focusin($self->{ent_max});
 
 	# 最小・最大文書数
 	$left->Label(
@@ -90,6 +92,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min_df}->insert(0,'1');
 	$self->{ent_min_df}->bind("<Key-Return>",sub{$self->check;});
+	$self->config_entry_focusin($self->{ent_min_df});
 
 	$l3->Label(
 		-text => $self->gui_jchar('　 最大文書数：'),
@@ -101,6 +104,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
+	$self->config_entry_focusin($self->{ent_max_df});
 
 	# 品詞による単語の取捨選択
 	$left->Label(
@@ -185,6 +189,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_cluster_number}->insert(0,'0');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_cluster_number});
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -205,6 +210,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -223,6 +229,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'Auto');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),

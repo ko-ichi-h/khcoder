@@ -39,6 +39,7 @@ sub _new{
 		$self->{entry_d_n}->insert(0,'2');
 	}
 	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
 		-text => $self->gui_jchar('  x軸の成分：'),
@@ -51,6 +52,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
 		-text => $self->gui_jchar('  y軸の成分：'),
@@ -63,6 +65,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_d_y});
 	
 	if (
 		$args{command_f} =~
@@ -100,6 +103,7 @@ sub _new{
 		$self->{entry_font_size}->insert(0,'80');
 	}
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -122,7 +126,7 @@ sub _new{
 		$self->{entry_plot_size}->insert(0,'480');
 	}
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
-
+	$self->config_entry_focusin($self->{entry_plot_size});
 	
 	$self->{win_obj}->Button(
 		-text => $self->gui_jchar('キャンセル'),

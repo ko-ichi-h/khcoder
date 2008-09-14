@@ -177,6 +177,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_font_size}->insert(0,'80');
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
 		-text => $self->gui_jchar('%'),
@@ -194,7 +195,8 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_plot_size}->insert(0,'480');
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->config_entry_focusin($self->{entry_plot_size});
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
