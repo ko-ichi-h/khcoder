@@ -73,6 +73,7 @@ sub _new{
 		-font  => "TKFN",
 		-width => 6,
 	)->pack(-anchor => 'w',-pady => 5);
+	$self->config_entry_focusin($self->{ent_total});
 
 	# 表示数のLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
@@ -90,6 +91,7 @@ sub _new{
 		-font  => "TKFN",
 		-width => 6,
 	)->pack(-anchor => 'w',-pady => 5);
+	$self->config_entry_focusin($self->{ent_limit});
 	
 	# OK & Cancel
 	$win->Button(

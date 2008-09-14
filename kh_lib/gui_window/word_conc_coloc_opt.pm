@@ -73,7 +73,8 @@ sub _new{
 		-font  => "TKFN",
 		-width => 6,
 	)->pack(-anchor => 'w',-pady => 5);
-	
+	$self->config_entry_focusin($self->{ent_limit});
+
 	# OK & Cancel
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),

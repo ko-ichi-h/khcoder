@@ -43,6 +43,7 @@ sub _new{
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
+	$self->config_entry_focusin($e1);
 
 	$fra4e->Label(
 		-text => $self->gui_jchar('　品詞：'),
@@ -56,6 +57,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
 	$e4->bind("<Key-Return>",sub{$self->search;});
+	$self->config_entry_focusin($e4);
 
 	$fra4e->Label(
 		-text => $self->gui_jchar('　活用形：'),
@@ -69,6 +71,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->search;});
+	$self->config_entry_focusin($e2);
 
 	$fra4e->Label(
 		-text => $self->gui_jchar('　　'),
@@ -168,6 +171,7 @@ sub _new{
 		-background => 'white'
 	)->pack(-side => 'left');
 	$e3->insert('end','20');
+	$self->config_entry_focusin($e3);
 
 	$fra4h->Label(
 		-text => $self->gui_jchar('語を表示）'),

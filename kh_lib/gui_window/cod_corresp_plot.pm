@@ -74,6 +74,27 @@ sub _new{
 		]
 	);
 
+	# カーソルキーによるスクロール
+	$self->win_obj->bind( '<Up>'    =>
+		sub {
+			$self->{photo_pane}->yview(scroll => -0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Down>'  =>
+		sub {
+			$self->{photo_pane}->yview(scroll =>  0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Left>'  =>
+		sub {
+			$self->{photo_pane}->xview(scroll => -0.1, 'pages');
+		}
+	);
+	$self->win_obj->bind( '<Right>' =>
+		sub {
+			$self->{photo_pane}->xview(scroll =>  0.1, 'pages');
+		}
+	);
 
 	my $f1 = $win->Frame()->pack(
 		-expand => 0,

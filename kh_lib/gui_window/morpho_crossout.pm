@@ -62,6 +62,8 @@ sub _new{
 		-width      => 6,
 		-background => 'white',
 	)->pack(-side => 'left');
+	$self->config_entry_focusin($self->{ent_min});
+	
 	$l2->Label(
 		-text => $self->gui_jchar('　 最大出現数：'),
 		-font => "TKFN"
@@ -72,6 +74,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_max});
 
 	# 最小・最大文書数
 	$left->Label(
@@ -98,6 +101,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_min_df}->insert(0,'1');
+	$self->config_entry_focusin($self->{ent_min_df});
 
 	# 品詞による単語の取捨選択
 	$left->Label(
