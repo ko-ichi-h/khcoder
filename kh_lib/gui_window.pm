@@ -32,11 +32,7 @@ use gui_window::word_df_freq;
 use gui_window::word_df_freq_plot;
 use gui_window::word_tf_df;
 use gui_window::word_corresp;
-use gui_window::word_corresp_plot;
-use gui_window::word_corresp_plot_opt;
 use gui_window::word_cls;
-use gui_window::word_cls_plot;
-use gui_window::word_cls_plot_opt;
 use gui_window::doc_view;
 use gui_window::doc_search;
 use gui_window::morpho_check;
@@ -67,6 +63,8 @@ use gui_window::datacheck;
 use gui_window::use_te;
 use gui_window::use_te_g;
 use gui_window::hukugo;
+use gui_window::r_plot;
+use gui_window::r_plot_opt;
 
 BEGIN{
 	if( $] > 5.008 ){

@@ -697,15 +697,40 @@ sub calc{
 		$r_command .= 'd <- subset(d,row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing")'."\n";
 	}
 
-	# 対応分析を実行するためのコマンド
+	# 空の行・空の列を削除
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
 
-	my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
-	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
-	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
+	my $biplot = 1;
+	$biplot = 0 if $self->{radio} == 0 and $self->{biplot} == 0;
+
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
+
+	&make_plot(
+		base_win  => $self,
+		d_n       => $self->gui_jg( $self->{entry_d_n}->get ),
+		d_x       => $self->gui_jg( $self->{entry_d_x}->get ),
+		d_y       => $self->gui_jg( $self->{entry_d_y}->get ),
+		biplot    => $biplot,
+		plot_size => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size => $fontsize,
+		r_command => $r_command,
+	);
+}
+
+
+sub make_plot{
+	my %args = @_;
+
+	my $d_n = $args{d_n};
+	my $d_x = $args{d_x};
+	my $d_y = $args{d_y};
+	my $fontsize = $args{font_size};
+	my $r_command = $args{r_command};
+
 
 	$r_command .= "library(MASS)\n";
 	$r_command .= "c <- corresp(d, nf=$d_n)\n";
@@ -746,11 +771,9 @@ sub calc{
 	}
 
 	# プロットのためのRコマンド
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
 
 	my ($r_command_2a, $r_command_2, $r_command_a);
-	if ($self->{radio} == 0 and $self->{biplot} == 0){      # 同時布置なし
+	if ($args{biplot} == 0){      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
 			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
@@ -809,16 +832,16 @@ sub calc{
 		name      => 'words_CORRESP1',
 		command_a => $r_command_a,
 		command_f => $r_command,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $args{plot_size},
+		height    => $args{plot_size},
 	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_CORRESP2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $args{plot_size},
+		height    => $args{plot_size},
 	) or return 0;
 
 	#$w->end(no_dialog => 1);
@@ -827,12 +850,15 @@ sub calc{
 	if ($::main_gui->if_opened('w_word_corresp_plot')){
 		$::main_gui->get('w_word_corresp_plot')->close;
 	}
-	$self->close;
-	gui_window::word_corresp_plot->open(
+	$args{base_win}->close;
+	gui_window::r_plot::word_corresp->open(
 		plots       => [$plot2,$plot1],
 		no_geometry => 1,
 	);
+
 }
+
+
 
 #--------------#
 #   アクセサ   #

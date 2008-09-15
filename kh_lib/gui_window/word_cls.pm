@@ -375,6 +375,28 @@ sub calc{
 	$fontsize /= 100;
 	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
 
+	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
+	if ($plot_size =~ /auto/i){
+		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
+		$plot_size = 640 if $plot_size < 640;
+	}
+
+	&make_plot(
+		base_win       => $self,
+		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
+		font_size      => $fontsize,
+		plot_size      => $plot_size,
+		r_command      => $r_command,
+	);
+}
+
+sub make_plot{
+	my %args = @_;
+
+	my $fontsize = $args{font_size};
+	my $r_command = $args{r_command};
+	my $cluster_number = $args{cluster_number};
+
 	my $par = 
 		"par(
 			mai=c(0,0,0,0),
@@ -426,18 +448,12 @@ sub calc{
 			.'"), k='.$cluster_number.', border="#FF8B00FF")'
 		if $cluster_number > 1;
 
-	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
-	if ($plot_size =~ /auto/i){
-		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
-		$plot_size = 640 if $plot_size < 640;
-	}
-
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => 'words_CLS1',
 		command_f => $r_command,
-		width     => $plot_size,
+		width     => $args{plot_size},
 		height    => 480,
 	) or return 0;
 	$plot1->rotate_cls;
@@ -446,7 +462,7 @@ sub calc{
 		name      => 'words_CLS2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $plot_size,
+		width     => $args{plot_size},
 		height    => 480,
 	) or return 0;
 	$plot2->rotate_cls;
@@ -455,7 +471,7 @@ sub calc{
 		name      => 'words_CLS3',
 		command_a => $r_command_3a,
 		command_f => $r_command_3,
-		width     => $plot_size,
+		width     => $args{plot_size},
 		height    => 480,
 	) or return 0;
 	$plot3->rotate_cls;
@@ -464,11 +480,11 @@ sub calc{
 	if ($::main_gui->if_opened('w_word_cls_plot')){
 		$::main_gui->get('w_word_cls_plot')->close;
 	}
-	$self->close;
-	gui_window::word_cls_plot->open(
+	$args{base_win}->close;
+	gui_window::r_plot::word_cls->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
-		plot_size   => $plot_size,
+		plot_size   => $args{plot_size},
 	);
 
 	return 1;
