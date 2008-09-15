@@ -3,6 +3,7 @@ use base qw(gui_window);
 
 use gui_window::r_plot::word_cls;
 use gui_window::r_plot::word_corresp;
+use gui_window::r_plot::word_mds;
 use gui_window::r_plot::cod_cls;
 use gui_window::r_plot::cod_corresp;
 use gui_window::r_plot::cod_mds;

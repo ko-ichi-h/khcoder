@@ -1,4 +1,4 @@
-package gui_window::r_plot_opt::cod_mds;
+package gui_window::r_plot_opt::word_mds;
 use base qw(gui_window::r_plot_opt);
 
 sub innner{
@@ -71,13 +71,13 @@ sub calc{
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->{method_opt},
 		r_command      => $r_command,
-		plotwin_name   => 'cod_mds',
+		plotwin_name   => 'word_mds',
 	);
 
 }
 
 sub win_title{
-	return 'コーディング・多次元尺度法の調整';
+	return '抽出語・多次元尺度法の調整';
 }
 
 sub win_name{

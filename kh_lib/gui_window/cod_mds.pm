@@ -356,7 +356,7 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	&make_plot(
+	&gui_window::word_mds::make_plot(
 		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -365,125 +365,6 @@ sub _calc{
 		plotwin_name   => 'cod_mds',
 	);
 
-}
-
-sub make_plot{
-	my %args = @_;
-	
-	my $fontsize = $args{font_size};
-	my $r_command = $args{r_command};
-
-	# アルゴリズム別のコマンド
-	my $r_command_d = '';
-	my $r_command_a = '';
-	if ($args{method} eq 'K'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .=
-			 'plot(c$points,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		
-		$r_command_a .= 
-			 'plot(c$points,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-		$r_command .= $r_command_a;
-	}
-	elsif ($args{method} eq 'S'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .=
-			 'plot(c$points,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		
-		$r_command_a .= 
-			 'plot(c$points,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-		$r_command .= $r_command_a;
-	}
-	elsif ($args{method} eq 'C'){
-		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .=
-			 'plot(c,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=c[,1], y=c[,2], labels=rownames(c),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		
-		$r_command_a .=
-			 'plot(c,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-		$r_command .= $r_command_a;
-	}
-	
-	# プロット作成
-	use kh_r_plot;
-	my $plot1 = kh_r_plot->new(
-		name      => 'codes_MDS',
-		command_f => $r_command_d,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or return 0;
-	my $plot2 = kh_r_plot->new(
-		name      => 'codes_MDS_d',
-		command_a => $r_command_a,
-		command_f => $r_command,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or return 0;
-
-	# ストレス値の取得
-	my $stress;
-	if ($args{method} eq 'K' or $args{method} eq 'S'){
-		$::config_obj->R->send(
-			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
-			.'print(str)'
-		);
-		$stress = $::config_obj->R->read;
-
-		if ($stress =~ /"khcoder(.+)"/){
-			$stress = $1;
-			$stress /= 100 if $args{method} eq 'K';
-			$stress = sprintf("%.3f",$stress);
-		} else {
-			$stress = undef;
-		}
-	}
-
-	# プロットWindowを開く
-	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
-	if ($::main_gui->if_opened($plotwin_id)){
-		$::main_gui->get($plotwin_id)->close;
-	}
-	$args{base_win}->close;
-	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
-	$plotwin->open(
-		plots       => [$plot1, $plot2],
-		stress      => $stress,
-		no_geometry => 1,
-	);
-	
-	return 1;
 }
 
 #--------------#
