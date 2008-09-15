@@ -5,6 +5,7 @@ use gui_window::r_plot_opt::word_cls;
 use gui_window::r_plot_opt::word_corresp;
 use gui_window::r_plot_opt::cod_cls;
 use gui_window::r_plot_opt::cod_corresp;
+use gui_window::r_plot_opt::cod_mds;
 
 sub _new{
 	my $self = shift;

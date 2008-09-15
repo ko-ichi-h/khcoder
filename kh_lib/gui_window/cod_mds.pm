@@ -324,9 +324,6 @@ sub _calc{
 		push @selected, $i->{name} if $i->{check};
 	}
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	# データ取得
 	my $r_command;
 	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
@@ -339,7 +336,7 @@ sub _calc{
 		return 0;
 	}
 	
-	# MDS実行のためのRコマンド
+	# データ整理
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
@@ -355,11 +352,31 @@ sub _calc{
 	chop $r_command;
 	$r_command .= ")\n";
 	$r_command .= "# END: DATA\n";
+
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
+
+	&make_plot(
+		base_win       => $self,
+		font_size      => $fontsize,
+		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
+		method         => $self->{method_opt},
+		r_command      => $r_command,
+		plotwin_name   => 'cod_mds',
+	);
+
+}
+
+sub make_plot{
+	my %args = @_;
 	
+	my $fontsize = $args{font_size};
+	my $r_command = $args{r_command};
+
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
-	if ($self->{method_opt} eq 'K'){
+	if ($args{method} eq 'K'){
 		$r_command .= "library(MASS)\n";
 		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
 		
@@ -379,7 +396,7 @@ sub _calc{
 		;
 		$r_command .= $r_command_a;
 	}
-	elsif ($self->{method_opt} eq 'S'){
+	elsif ($args{method} eq 'S'){
 		$r_command .= "library(MASS)\n";
 		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
 		
@@ -399,7 +416,7 @@ sub _calc{
 		;
 		$r_command .= $r_command_a;
 	}
-	elsif ($self->{method_opt} eq 'C'){
+	elsif ($args{method} eq 'C'){
 		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
 		
 		$r_command_d = $r_command;
@@ -424,20 +441,20 @@ sub _calc{
 	my $plot1 = kh_r_plot->new(
 		name      => 'codes_MDS',
 		command_f => $r_command_d,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $args{plot_size},
+		height    => $args{plot_size},
 	) or return 0;
 	my $plot2 = kh_r_plot->new(
 		name      => 'codes_MDS_d',
 		command_a => $r_command_a,
 		command_f => $r_command,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		width     => $args{plot_size},
+		height    => $args{plot_size},
 	) or return 0;
 
 	# ストレス値の取得
 	my $stress;
-	if ($self->{method_opt} eq 'K' or $self->{method_opt} eq 'S'){
+	if ($args{method} eq 'K' or $args{method} eq 'S'){
 		$::config_obj->R->send(
 			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
 			.'print(str)'
@@ -446,7 +463,7 @@ sub _calc{
 
 		if ($stress =~ /"khcoder(.+)"/){
 			$stress = $1;
-			$stress /= 100 if $self->{method_opt} eq 'K';
+			$stress /= 100 if $args{method} eq 'K';
 			$stress = sprintf("%.3f",$stress);
 		} else {
 			$stress = undef;
@@ -454,11 +471,13 @@ sub _calc{
 	}
 
 	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_cod_mds_plot')){
-		$::main_gui->get('w_cod_mds_plot')->close;
+	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
+	if ($::main_gui->if_opened($plotwin_id)){
+		$::main_gui->get($plotwin_id)->close;
 	}
-	$self->close;
-	gui_window::cod_mds_plot->open(
+	$args{base_win}->close;
+	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
+	$plotwin->open(
 		plots       => [$plot1, $plot2],
 		stress      => $stress,
 		no_geometry => 1,
