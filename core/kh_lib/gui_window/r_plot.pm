@@ -154,6 +154,12 @@ sub _new{
 		}
 	)->pack(-side => 'left', -padx => 2);
 
+	if (length($args{msg})){
+		$f1->Label(
+			-text => $self->gui_jchar($args{msg},'euc')
+		)->pack(-side => 'left');
+	}
+
 	$f1->Button(
 		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),
 		-font => "TKFN",
