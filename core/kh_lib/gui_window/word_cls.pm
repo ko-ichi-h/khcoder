@@ -387,6 +387,7 @@ sub calc{
 		font_size      => $fontsize,
 		plot_size      => $plot_size,
 		r_command      => $r_command,
+		plotwin_name   => 'word_cls',
 	);
 }
 
@@ -477,11 +478,14 @@ sub make_plot{
 	$plot3->rotate_cls;
 
 	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_word_cls_plot')){
-		$::main_gui->get('w_word_cls_plot')->close;
+	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
+	if ($::main_gui->if_opened($plotwin_id)){
+		$::main_gui->get($plotwin_id)->close;
 	}
 	$args{base_win}->close;
-	gui_window::r_plot::word_cls->open(
+	
+	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
+	$plotwin->open(
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
 		plot_size   => $args{plot_size},
