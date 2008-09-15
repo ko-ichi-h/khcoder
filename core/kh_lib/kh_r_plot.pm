@@ -128,8 +128,18 @@ sub rotate_cls{
 	$p->Rotate(degrees=>90);
 	
 	if ($self->{width} > 1000){
-		my $cut = int( $self->{width} - $self->{width} * 0.032 + 7);
-		$p->Crop(geometry=> $self->{height}."x".$cut."+0+0");
+		# スケール部分切り出し
+		$p->Crop(geometry=> "$self->{height}x35+0+0");
+		
+		# 本体切り出し
+		$p->Read($temp);
+		$p->[1]->Rotate(degrees=>90);
+		my $start = int( $self->{width} * 0.033 + 33 - 10 );
+		my $height = int( $self->{width} - $self->{width} * 0.033 +10)-$start;
+		$p->[1]->Crop(geometry=> "$self->{height}x$height+0+$start");
+		
+		# 貼り合わせ
+		$p = $p->append(stack => "true");
 	}
 	
 	if ($type eq 'bmp'){ 
