@@ -17,7 +17,6 @@ use gui_window::project_open;
 use gui_window::project_edit;
 use gui_window::sysconfig;
 use gui_window::sql_select;
-#use gui_window::sql_do;
 use gui_window::word_search;
 use gui_window::dictionary;
 use gui_window::word_ass_opt;
