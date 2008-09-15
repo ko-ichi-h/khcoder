@@ -129,7 +129,7 @@ sub rotate_cls{
 	
 	if ($self->{width} > 1000){
 		# スケール部分切り出し
-		$p->Crop(geometry=> "$self->{height}x35+0+0");
+		$p->Crop(geometry=> "$self->{height}x41+0+0");
 		
 		# 本体切り出し
 		$p->Read($temp);
