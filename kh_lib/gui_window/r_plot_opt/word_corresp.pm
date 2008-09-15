@@ -95,14 +95,15 @@ sub calc{
 	$fontsize /= 100;
 
 	&gui_window::word_corresp::make_plot(
-		base_win  => $self,
-		d_n       => $self->gui_jg( $self->{entry_d_n}->get ),
-		d_x       => $self->gui_jg( $self->{entry_d_x}->get ),
-		d_y       => $self->gui_jg( $self->{entry_d_y}->get ),
-		biplot    => $biplot,
-		plot_size => $self->gui_jg( $self->{entry_plot_size}->get ),
-		font_size => $fontsize,
-		r_command => $r_command,
+		base_win     => $self,
+		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
+		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		biplot       => $biplot,
+		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size    => $fontsize,
+		r_command    => $r_command,
+		plotwin_name => 'word_corresp',
 	);
 }
 

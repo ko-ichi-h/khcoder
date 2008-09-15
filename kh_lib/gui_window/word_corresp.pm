@@ -710,14 +710,15 @@ sub calc{
 	$fontsize /= 100;
 
 	&make_plot(
-		base_win  => $self,
-		d_n       => $self->gui_jg( $self->{entry_d_n}->get ),
-		d_x       => $self->gui_jg( $self->{entry_d_x}->get ),
-		d_y       => $self->gui_jg( $self->{entry_d_y}->get ),
-		biplot    => $biplot,
-		plot_size => $self->gui_jg( $self->{entry_plot_size}->get ),
-		font_size => $fontsize,
-		r_command => $r_command,
+		base_win     => $self,
+		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
+		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		biplot       => $biplot,
+		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size    => $fontsize,
+		r_command    => $r_command,
+		plotwin_name => 'word_corresp',
 	);
 }
 
@@ -847,11 +848,13 @@ sub make_plot{
 	#$w->end(no_dialog => 1);
 
 	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_word_corresp_plot')){
-		$::main_gui->get('w_word_corresp_plot')->close;
+	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
+	if ($::main_gui->if_opened($plotwin_id)){
+		$::main_gui->get($plotwin_id)->close;
 	}
 	$args{base_win}->close;
-	gui_window::r_plot::word_corresp->open(
+	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
+	$plotwin->open(
 		plots       => [$plot2,$plot1],
 		no_geometry => 1,
 	);

@@ -1,4 +1,4 @@
-package gui_window::r_plot_opt::word_cls;
+package gui_window::r_plot_opt::cod_cls;
 use base qw(gui_window::r_plot_opt);
 
 sub innner{
@@ -62,18 +62,18 @@ sub calc{
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
-		plotwin_name   => 'word_cls',
+		plotwin_name   => 'cod_cls',
 	);
 
 	return 1;
 }
 
 sub win_title{
-	return '抽出語・クラスター分析の調整';
+	return 'コーディング・クラスター分析の調整';
 }
 
 sub win_name{
-	return 'w_word_cls_plot_opt';
+	return 'w_cod_cls_plot_opt';
 }
 
 1;

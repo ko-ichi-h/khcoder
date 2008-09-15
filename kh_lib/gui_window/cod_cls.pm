@@ -323,11 +323,6 @@ sub _calc{
 		++$check_num;
 	}
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
-	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
-
 	# データ取得
 	my $r_command;
 	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
@@ -356,57 +351,9 @@ sub _calc{
 	chop $r_command;
 	$r_command .= ")\n";
 	$r_command .= "# END: DATA\n";
-	
-	my $par = 
-		"par(
-			mai=c(0,0,0,0),
-			mar=c(1,2,1,0),
-			omi=c(0,0,0,0),
-			oma=c(0,0,0,0) 
-		)\n"
-	;
-	
-	my $r_command_2a = 
-		 $par
-		 .'plot(hclust(dist(d,method="binary"),method="'
-			.'single'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
-	;
-	$r_command_2a .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'single'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
-		if $cluster_number > 1;
-	
-	my $r_command_2 = $r_command.$r_command_2a;
 
-	my $r_command_3a = 
-		 $par
-		 .'plot(hclust(dist(d,method="binary"),method="'
-			.'complete'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
-	;
-	$r_command_3a .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'complete'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
-		if $cluster_number > 1;
-	my $r_command_3 = $r_command.$r_command_3a;
-
-	$r_command .=
-		$par
-		.'plot(hclust(dist(d,method="binary"),method="'
-			.'average'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
-	;
-	$r_command .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'average'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
-		if $cluster_number > 1;
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
 
 	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
 	if ($plot_size =~ /auto/i){
@@ -414,46 +361,15 @@ sub _calc{
 		$plot_size = 480 if $plot_size < 480;
 	}
 
-	# プロット作成
-	use kh_r_plot;
-	my $plot1 = kh_r_plot->new(
-		name      => 'codes_CLS1',
-		command_f => $r_command,
-		width     => $plot_size,
-		height    => 480,
-	) or return 0;
-	$plot1->rotate_cls;
-
-	my $plot2 = kh_r_plot->new(
-		name      => 'codes_CLS2',
-		command_a => $r_command_2a,
-		command_f => $r_command_2,
-		width     => $plot_size,
-		height    => 480,
-	) or return 0;
-	$plot2->rotate_cls;
-
-	my $plot3 = kh_r_plot->new(
-		name      => 'codes_CLS3',
-		command_a => $r_command_3a,
-		command_f => $r_command_3,
-		width     => $plot_size,
-		height    => 480,
-	) or return 0;
-	$plot3->rotate_cls;
-
-	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_cod_cls_plot')){
-		$::main_gui->get('w_cod_cls_plot')->close;
-	}
-	$self->close;
-	gui_window::cod_cls_plot->open(
-		plots       => [$plot1,$plot2,$plot3],
-		no_geometry => 1,
-		plot_size   => $plot_size,
+	&gui_window::word_cls::make_plot(
+		base_win       => $self,
+		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
+		font_size      => $fontsize,
+		plot_size      => $plot_size,
+		r_command      => $r_command,
+		plotwin_name   => 'cod_cls',
 	);
 
-	return 1;
 }
 
 #--------------#
