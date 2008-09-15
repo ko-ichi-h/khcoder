@@ -1,5 +1,10 @@
-package gui_window::cod_corresp_plot;
+package gui_window::r_plot;
 use base qw(gui_window);
+
+use gui_window::r_plot::word_cls;
+use gui_window::r_plot::word_corresp;
+use gui_window::r_plot::cod_cls;
+use gui_window::r_plot::cod_corresp;
 
 use strict;
 use gui_hlist;
@@ -14,13 +19,15 @@ sub _new{
 	}
 
 	my $self = shift;
-
 	my %args = @_;
+
 	$self->{plots} = $args{plots};
-	
+
+	$self->{original_plot_size} = $args{plot_size} if $args{plot_size};
+
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・対応分析'));
+	$win->title($self->gui_jt( $self->win_title ));
 
 	# 画像サイズをチェック
 	my $img = $win->Photo(-file => $self->{plots}[$self->{ax}]->path);
@@ -38,13 +45,14 @@ sub _new{
 		$size = $win->screenheight - 180;
 		$cursor = 'fleur';
 	}
+	$self->{photo_pane_height} = $size;
 
 	# 画像表示用ペイン
 	$self->{photo_pane} = $win->Scrolled(
 		'Pane',
 		-scrollbars => 'osoe',
-		-width      => $size,
-		-height     => $size,
+		-width      => $self->photo_pane_width,
+		-height     => $self->photo_pane_height,
 		-relief => 'sunken',
 		-borderwidth => 2,
 	)->pack(
@@ -105,22 +113,27 @@ sub _new{
 	);
 
 	$f1->Label(
-		-text => $self->gui_jchar(' 表示：'),
+		-text => $self->gui_jchar($self->option1_name),
 		-font => "TKFN",
 	)->pack(-side => 'left');
-	
+
+	my @opt = ();
+	my $n = 0;
+	foreach my $i (@{$self->option1_options}){
+		push @opt, [$self->gui_jchar($i,'euc'),$n];
+		++$n;
+	}
+
 	$self->{optmenu} = gui_widget::optmenu->open(
 		parent  => $f1,
 		pack    => {-side => 'left', -padx => 2},
-		options =>
-			[
-				[$self->gui_jchar('コード名とドット','euc'), 0],
-				[$self->gui_jchar('ドット','euc'), 1],
-			],
+		options => \@opt,
 		variable => \$self->{ax},
 		command  => sub {$self->renew;},
 	);
 	$self->{optmenu}->set_value(0);
+
+	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
 
 	$f1->Button(
 		-text => $self->gui_jchar('調整'),
@@ -130,9 +143,9 @@ sub _new{
 			(
 				10,
 				sub {
-					gui_window::cod_corresp_plot_opt->open(
+					$base_name->open(
 						command_f => $self->{plots}[$self->{ax}]->command_f,
-						size      => $self->{photo}->cget(-image)->height,
+						size      => $self->original_plot_size,
 					);
 				}
 			);
@@ -209,7 +222,10 @@ sub renew{
 		-image => $self->{win_obj}->Photo(-file => $self->{plots}[$self->{ax}]->path)
 	);
 	$self->{photo}->update;
+	$self->renew_command;
 }
+
+sub renew_command{}
 
 sub save{
 	my $self = shift;
@@ -241,12 +257,24 @@ sub save{
 	return 1;
 }
 
-#--------------#
-#   アクセサ   #
+sub photo_pane_height{
+	my $self = shift;
+	return $self->{photo_pane_height};
+}
 
+sub photo_pane_width{
+	my $self = shift;
+	return $self->{photo_pane_height};
+}
 
-sub win_name{
-	return 'w_cod_corresp_plot';
+sub original_plot_size{
+	my $self = shift;
+	
+	if ($self->{original_plot_size}){
+		return $self->{original_plot_size};
+	} else {
+		return $self->{photo}->cget(-image)->height;
+	}
 }
 
 1;

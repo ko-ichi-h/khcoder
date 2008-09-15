@@ -728,128 +728,22 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
-	
-	$r_command .= "library(MASS)\n";
-	$r_command .= "c <- corresp(d, nf=$d_n)\n";
-	
-	my $r_command_tmp = $r_command;
-	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
-		if $::config_obj->os eq 'win32';
-	$::config_obj->R->send($r_command_tmp);
 
-	# 寄与率の取得
-	$::config_obj->R->send(
-		'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
-	);
-	my $count = $::config_obj->R->read;
-	my $kiyo1;
-	my $kiyo2;
-	if ($count =~ /"khcoder(.+)"/){
-		$count = $1;
-	} else {
-		$count = -1;
-	}
-	while ($count > 0){
-		#print "$count\n";
-		$::config_obj->R->send(
-			 'print( paste("khcoder",round('
-			."c(c\$cor[$d_x], c\$cor[$d_y])^2"
-			.'/sum(corresp(d, nf='
-			.$count
-			.')$cor^2) * 100,2), sep=""))'
-		);
-		my $t = $::config_obj->R->read;
-		if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
-			$kiyo1 = $1;
-			$kiyo2 = $2;
-			last;
-		}
-		--$count;
-	}
+	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
+	$fontsize /= 100;
 
-	# プロットのためのRコマンド
-	my ($r_command_2a, $r_command_2, $r_command_a);
-	if ($self->{radio} == 0){                     # 同時布置なし
-		# ラベルとドットをプロット
-		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				."col=\"mediumaquamarine\","
-				.'pch=20,xlab="成分'.$d_x
-				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
-				."\n"
-			."library(maptools)\n"
-			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y],"
-				."labels=rownames(c\$cscore), cex=$fontsize, offset=0)\n";
-		;
-		$r_command_2 = $r_command.$r_command_2a;
-		
-		# ドットのみプロット
-		$r_command_a .=
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'xlab="成分'.$d_x
-				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
-				."\n"
-		;
-	} else {                                      # 同時布置あり
-		# ラベルとドットをプロット
-		$r_command_2a .= 
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
-				.'), xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,0)[cb[,3]],'
-				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]] )'."\n"
-			."library(maptools)\n"
-			."pointLabel("
-				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
-				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
-				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]], offset=0)"
-		;
-		$r_command_2 = $r_command.$r_command_2a;
-		
-		# ドットのみをプロット
-		$r_command_a .=
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
-				.'), xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(1,15)[cb[,3]] )'."\n"
-		;
-	}
-	$r_command .= $r_command_a;
-
-	# プロット作成
-	use kh_r_plot;
-	my $plot1 = kh_r_plot->new(
-		name      => 'codes_CORRESP1',
-		command_a => $r_command_a,
-		command_f => $r_command,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
-	) or return 0;
-
-	my $plot2 = kh_r_plot->new(
-		name      => 'codes_CORRESP2',
-		command_a => $r_command_2a,
-		command_f => $r_command_2,
-		width     => $self->gui_jg( $self->{entry_plot_size}->get ),
-		height    => $self->gui_jg( $self->{entry_plot_size}->get ),
-	) or return 0;
-
-	# プロットWindowを開く
-	if ($::main_gui->if_opened('w_cod_corresp_plot')){
-		$::main_gui->get('w_cod_corresp_plot')->close;
-	}
-	$self->close;
-	gui_window::cod_corresp_plot->open(
-		plots       => [$plot2,$plot1],
-		no_geometry => 1,
+	&gui_window::word_corresp::make_plot(
+		base_win     => $self,
+		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
+		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		biplot       => $self->{radio},
+		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size    => $fontsize,
+		r_command    => $r_command,
+		plotwin_name => 'cod_corresp',
 	);
 
-	return 1;
 }
 
 #--------------#
