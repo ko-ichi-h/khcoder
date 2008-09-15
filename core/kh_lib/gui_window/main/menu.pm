@@ -319,6 +319,16 @@ sub make{
 			);
 		push @menu1, 't_word_corresp' if $::config_obj->R;
 
+		$self->{t_word_mds} = $f3->command(
+				-label => gui_window->gui_jchar('多次元尺度構成法'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_mds->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_word_mds' if $::config_obj->R;
+
 		$self->{t_word_cls} = $f3->command(
 				-label => gui_window->gui_jchar('階層的クラスター分析'),
 				-font => "TKFN",
