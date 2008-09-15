@@ -41,8 +41,6 @@ use gui_window::cod_tab;
 use gui_window::cod_outtab;
 use gui_window::cod_jaccard;
 use gui_window::cod_mds;
-use gui_window::cod_mds_plot;
-use gui_window::cod_mds_plot_opt;
 use gui_window::cod_cls;
 use gui_window::cod_corresp;
 use gui_window::cod_out;
