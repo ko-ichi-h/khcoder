@@ -12,8 +12,8 @@ sub photo_pane_width{
 
 sub option1_options{
 	return [
+		'WardË¡',
 		'·²Ê¿¶ÑË¡',
-		'ºÇ¶áÎÙË¡',
 		'ºÇ±óÎÙË¡'
 	];
 }

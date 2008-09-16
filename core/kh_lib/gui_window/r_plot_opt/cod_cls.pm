@@ -8,9 +8,9 @@ sub innner{
 	# クラスター数
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
 		-pady => 2
 	);
+
 	$f4->Label(
 		-text => $self->gui_jchar('クラスター数：'),
 		-font => "TKFN",
@@ -18,7 +18,7 @@ sub innner{
 
 	$self->{entry_cluster_number} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 3,
+		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	if ( $self->{command_f} =~ /rect\.hclust.+k=([0-9]+)[, \)]/ ){
@@ -48,6 +48,17 @@ sub calc{
 		);
 		print "$self->{command_f}\n";
 		$self->close;
+		return 0;
+	}
+
+	if (
+		   $self->gui_jg( $self->{entry_cluster_number}->get ) =~ /Auto/i
+		|| $self->gui_jg( $self->{entry_plot_size}->get )      =~ /Auto/i
+	) {
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => "このWindowでは「Auto」指定はできません。数値を入力してください",
+		);
 		return 0;
 	}
 

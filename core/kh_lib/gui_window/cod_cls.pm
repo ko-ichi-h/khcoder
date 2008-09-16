@@ -138,9 +138,9 @@ sub _new{
 	# クラスター数
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
 		-pady => 2
 	);
+
 	$f4->Label(
 		-text => $self->gui_jchar('クラスター数：'),
 		-font => "TKFN",
@@ -148,10 +148,10 @@ sub _new{
 
 	$self->{entry_cluster_number} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 3,
+		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cluster_number}->insert(0,'0');
+	$self->{entry_cluster_number}->insert(0,'Auto');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_cluster_number});
 
@@ -355,19 +355,14 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
-	if ($plot_size =~ /auto/i){
-		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
-		$plot_size = 480 if $plot_size < 480;
-	}
-
 	&gui_window::word_cls::make_plot(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
-		plot_size      => $plot_size,
+		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
+		data_number    => $check_num,
 	);
 
 }
