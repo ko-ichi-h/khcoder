@@ -38,6 +38,28 @@ sub innner{
 	}
 	$widget->set_value($method);
 
+	$fd->Label(
+		-text => $self->gui_jchar('  µ÷Î¥¡§'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $fd,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	if ( $self->{command_f} =~ /euclid/ ){
+		$widget_dist->set_value('euclid');
+	} else {
+		$widget_dist->set_value('binary');
+	}
+
+
 	return $self;
 }
 
@@ -70,6 +92,7 @@ sub calc{
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->{method_opt},
+		method_dist    => $self->{method_dist},
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 	);

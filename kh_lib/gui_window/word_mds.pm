@@ -40,7 +40,7 @@ sub _new{
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $l1,
 		pack   => \%pack,
-		dont_remember => 1,
+		#dont_remember => 1,
 	);
 
 	# 最小・最大出現数
@@ -194,6 +194,23 @@ sub _new{
 		variable => \$self->{method_opt},
 	);
 	$widget->set_value('K');
+
+	$f4->Label(
+		-text => $self->gui_jchar('  距離：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	$widget_dist->set_value('binary');
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -383,6 +400,7 @@ sub calc{
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->{method_opt},
+		method_dist    => $self->{method_dist},
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 	);
@@ -394,19 +412,26 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
-	my $d_chk = '
+	$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
+
+	my $d_chk = "
 check4mds <- function(d){
-	jm <- as.matrix(dist(d, method="binary"))
+	jm <- as.matrix(dist(d, method=\"$args{method_dist}\"))
 	jm[upper.tri(jm,diag=TRUE)] <- NA
 	return( which(jm==0, arr.ind=TRUE)[,1][1] )
 }
 
 while ( is.na(check4mds(d)) == 0 ){
 	n <-  check4mds(d)
-	print( paste( "Dropped object:", row.names(d)[n]) )
+	print( paste( \"Dropped object:\", row.names(d)[n]) )
 	d <- d[-n,]
 }
-';
+";
+
+	if ($args{method_dist} eq 'euclid'){
+		$r_command .= "d <- t( scale( t(d) ) )\n";
+	}
+	$r_command .= "dj <- dist(d,method=\"$args{method_dist}\")\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
@@ -414,7 +439,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ($args{method} eq 'K'){
 		$r_command .= $d_chk;
 		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- isoMDS(dist(d, method = "binary"), k=2)'."\n";
+		$r_command .= 'c <- isoMDS(dj, k=2)'."\n";
 		
 		$r_command_d = $r_command;
 		$r_command_d .=
@@ -435,7 +460,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	elsif ($args{method} eq 'S'){
 		$r_command .= $d_chk;
 		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- sammon(dist(d, method = "binary"), k=2)'."\n";
+		$r_command .= 'c <- sammon(dj, k=2)'."\n";
 		
 		$r_command_d = $r_command;
 		$r_command_d .=
@@ -454,7 +479,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		$r_command .= $r_command_a;
 	}
 	elsif ($args{method} eq 'C'){
-		$r_command .= 'c <- cmdscale( dist(d, method = "binary") )'."\n";
+		$r_command .= 'c <- cmdscale( dj )'."\n";
 		
 		$r_command_d = $r_command;
 		$r_command_d .=

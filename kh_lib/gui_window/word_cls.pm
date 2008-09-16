@@ -40,7 +40,7 @@ sub _new{
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $l1,
 		pack   => \%pack,
-		dont_remember => 1,
+		#dont_remember => 1,
 	);
 
 	# 最小・最大出現数
@@ -174,20 +174,38 @@ sub _new{
 	# クラスター数
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
 		-pady => 2
 	);
+
 	$f4->Label(
-		-text => $self->gui_jchar('・クラスター数：'),
+		-text => $self->gui_jchar('・距離：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	$widget_dist->set_value('binary');
+
+
+	$f4->Label(
+		-text => $self->gui_jchar('  クラスター数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$self->{entry_cluster_number} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 3,
+		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cluster_number}->insert(0,'0');
+	$self->{entry_cluster_number}->insert(0,'Auto');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_cluster_number});
 
@@ -375,19 +393,15 @@ sub calc{
 	$fontsize /= 100;
 	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
 
-	my $plot_size = $self->gui_jg( $self->{entry_plot_size}->get );
-	if ($plot_size =~ /auto/i){
-		$plot_size = int( ($check_num * (32 * $fontsize) + 33) / 0.9344 );
-		$plot_size = 640 if $plot_size < 640;
-	}
-
 	&make_plot(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
-		plot_size      => $plot_size,
+		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_cls',
+		data_number    => $check_num,
+		method_dist    => $self->{method_dist},
 	);
 }
 
@@ -398,6 +412,21 @@ sub make_plot{
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 
+	if ($args{plot_size} =~ /auto/i){
+		$args{plot_size} =
+			int( ($args{data_number} * (28 * $fontsize) + 33) / 0.9344 );
+		if ($args{plot_size} < 480){
+			$args{plot_size} = 480;
+		}
+		elsif ($args{plot_size} < 640){
+			$args{plot_size} = 640;
+		}
+	}
+
+	if ($cluster_number =~ /auto/i){
+		$cluster_number = int($args{data_number} / 10 + 0.5)
+	}
+
 	my $par = 
 		"par(
 			mai=c(0,0,0,0),
@@ -407,46 +436,41 @@ sub make_plot{
 		)\n"
 	;
 
+	if ($args{method_dist} eq 'euclid'){
+		$r_command .= "d <- t( scale( t(d) ) )\n";
+		$r_command .= "dj <- dist(d,method=\"euclid\")\n";
+	} else {
+		$r_command .= "dj <- dist(d,method=\"binary\")\n";
+	}
+
 	my $r_command_2a = 
 		"$par"
-		.'plot(hclust(dist(d,method="binary"),method="'
-			.'single'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
+		.'hcl <- hclust(dj, method="average")'."\n"
+		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
 	;
 	$r_command_2a .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'single'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
 		if $cluster_number > 1;
 	
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
 		"$par"
-		.'plot(hclust(dist(d,method="binary"),method="'
-			.'complete'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
+		.'hcl <- hclust(dj, method="complete")'."\n"
+		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
 	;
 	$r_command_3a .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'complete'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
 		if $cluster_number > 1;
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
 		"$par"
-		.'plot(hclust(dist(d,method="binary"),method="'
-			.'average'
-			.'"),labels=rownames(d), main="", sub="", xlab="",ylab="",'
-			."cex=$fontsize, hang=-1)\n"
+		.'hcl <- hclust(dj, method="ward")'."\n"
+		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
 	;
 	$r_command .= 
-		'rect.hclust(hclust(dist(d,method="binary"),method="'
-			.'average'
-			.'"), k='.$cluster_number.', border="#FF8B00FF")'
+		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
 		if $cluster_number > 1;
 
 	# プロット作成
