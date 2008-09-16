@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt('コンコーダンス （KWIC）'));
+	$wmw->title($self->gui_jt('KWICコンコーダンス'));
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
