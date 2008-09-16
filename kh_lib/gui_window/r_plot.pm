@@ -50,24 +50,34 @@ sub _new{
 	$self->{photo_pane_height} = $size;
 
 	# 画像表示用ペイン
-	$self->{photo_pane} = $win->Scrolled(
-		'Pane',
-		-scrollbars => 'osoe',
-		-width      => $self->photo_pane_width,
-		-height     => $self->photo_pane_height,
-		-relief => 'sunken',
+	my $fp = $win->Frame(
 		-borderwidth => 2,
+		-relief      => 'sunken',
 	)->pack(
 		-anchor => 'c',
-		-fill => 'both',
-		-expand => 1
+		-fill   => 'both',
+		-expand => 1,
+	);
+	
+	$self->{photo_pane} = $fp->Scrolled(
+		'Pane',
+		-scrollbars  => 'osoe',
+		-width       => $self->photo_pane_width,
+		-height      => $self->photo_pane_height,
+		-background  => 'white',
+		-borderwidth => 0,
+	)->pack(
+		-anchor => 'c',
+		-fill   => 'both',
+		-expand => 1,
 	);
 	$self->{photo} = $self->{photo_pane}->Label(
-		-image  => $img,
-		-cursor => $cursor,
+		-image       => $img,
+		-cursor      => $cursor,
+		-borderwidth => 0,
 	)->pack(
 		-expand => 1,
-		-fill => 'both',
+		-fill   => 'both',
 	);
 
 	# 画像のドラッグ
