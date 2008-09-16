@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('Ãê½Ð¸ì Ï¢´Øµ¬Â§'));
+	$win->title($self->gui_jt('´ØÏ¢¸ìÃµº÷'));
 	#$self->{win_obj} = $win;
 	
 	#--------------------#

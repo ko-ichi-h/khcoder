@@ -299,7 +299,7 @@ sub make{
 			);
 
 		$self->{t_word_conc} = $f3->command(
-				-label => gui_window->gui_jchar('コンコーダンス（KWIC）'),
+				-label => gui_window->gui_jchar('KWICコンコーダンス'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_conc->open;
@@ -308,6 +308,15 @@ sub make{
 			);
 
 		$f3->separator;
+
+		$self->{t_word_ass} = $f3->command(
+				-label => gui_window->gui_jchar('関連語探索'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::word_ass->open;
+				})},
+				-state => 'disable'
+			);
 
 		$self->{t_word_corresp} = $f3->command(
 				-label => gui_window->gui_jchar('対応分析'),
@@ -350,15 +359,6 @@ sub make{
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::doc_search->open;
-				})},
-				-state => 'disable'
-			);
-
-		$self->{t_word_ass} = $f8->command(
-				-label => gui_window->gui_jchar('抽出語 連関規則'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					gui_window::word_ass->open;
 				})},
 				-state => 'disable'
 			);
@@ -470,6 +470,8 @@ sub make{
 			-state => 'disable'
 		);
 
+		$f5->separator();
+
 		$self->{t_cod_corresp} = $f5->command(
 				-label => gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
@@ -486,10 +488,8 @@ sub make{
 		#	 -tearoff=>'no'
 		#);
 
-		$f5->separator();
-
 		$self->{t_cod_jaccard} = $f5->command(
-			-label => gui_window->gui_jchar('コード間関連（Jaccard係数）'),
+			-label => gui_window->gui_jchar('類似度行列'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 					gui_window::cod_jaccard->open;
