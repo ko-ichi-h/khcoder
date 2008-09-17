@@ -59,6 +59,38 @@ sub innner{
 		$widget_dist->set_value('binary');
 	}
 
+	# 次元の数
+	my $fnd = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 4,
+	);
+
+	$fnd->Label(
+		-text => $self->gui_jchar('次元：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $fnd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_dim_number});
+	if ( $self->{command_f} =~ /k=([123])[\), ]/ ){
+		$self->{entry_dim_number}->insert(0,$1);
+	} else {
+		$self->{entry_dim_number}->insert(0,'2');
+	}
+
+	$fnd->Label(
+		-text => $self->gui_jchar('（1から3までの範囲で指定）'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+
+
 
 	return $self;
 }
@@ -95,6 +127,7 @@ sub calc{
 		method_dist    => $self->{method_dist},
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
+		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 	);
 
 }
@@ -104,7 +137,7 @@ sub win_title{
 }
 
 sub win_name{
-	return 'w_cod_corresp_plot_opt';
+	return 'w_word_mds_plot_opt';
 }
 
 1;

@@ -158,6 +158,21 @@ sub _new{
 	);
 	$widget->set_value('K');
 
+	$f4->Label(
+		-text => $self->gui_jchar('  次元：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_dim_number}->insert(0,'2');
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->config_entry_focusin($self->{entry_dim_number});
+
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -363,6 +378,7 @@ sub _calc{
 		method         => $self->{method_opt},
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
+		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 	);
 
 }
