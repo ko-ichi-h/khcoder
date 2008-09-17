@@ -174,7 +174,6 @@ sub _new{
 	# アルゴリズム選択
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
 		-pady => 2
 	);
 	$f4->Label(
@@ -212,11 +211,37 @@ sub _new{
 	);
 	$widget_dist->set_value('binary');
 
+
+	# 次元の数
+	my $fnd = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 4,
+	);
+
+	$fnd->Label(
+		-text => $self->gui_jchar('・次元：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $fnd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_dim_number}->insert(0,'2');
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_dim_number});
+
+	$fnd->Label(
+		-text => $self->gui_jchar('（1から3までの範囲で指定）'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
-		#-padx => 2,
-		-pady => 4,
+		-pady => 2,
 	);
 
 	$ff->Label(
@@ -401,6 +426,7 @@ sub calc{
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->{method_opt},
 		method_dist    => $self->{method_dist},
+		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 	);
@@ -412,9 +438,17 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
+	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => "次元の指定が不正です。1から3までの数値を指定して下さい。",
+		);
+		return 0;
+	}
+
 	$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
 
-	my $d_chk = "
+	$r_command .= "
 check4mds <- function(d){
 	jm <- as.matrix(dist(d, method=\"$args{method_dist}\"))
 	jm[upper.tri(jm,diag=TRUE)] <- NA
@@ -437,67 +471,76 @@ while ( is.na(check4mds(d)) == 0 ){
 	my $r_command_d = '';
 	my $r_command_a = '';
 	if ($args{method} eq 'K'){
-		$r_command .= $d_chk;
 		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- isoMDS(dj, k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .=
-			 'plot(c$points,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		
-		$r_command_a .= 
-			 'plot(c$points,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-		$r_command .= $r_command_a;
+		$r_command .= "c <- isoMDS(dj, k=$args{dim_number})\n";
+		$r_command .= "cl <- c\$points\n";
 	}
 	elsif ($args{method} eq 'S'){
-		$r_command .= $d_chk;
 		$r_command .= "library(MASS)\n";
-		$r_command .= 'c <- sammon(dj, k=2)'."\n";
-		
-		$r_command_d = $r_command;
-		$r_command_d .=
-			 'plot(c$points,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=c$points[,1], y=c$points[,2], labels=rownames(c$points),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		
-		$r_command_a .= 
-			 'plot(c$points,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-		$r_command .= $r_command_a;
+		$r_command .= "c <- sammon(dj, k=$args{dim_number})\n";
+		$r_command .= "cl <- c\$points\n";
 	}
 	elsif ($args{method} eq 'C'){
-		$r_command .= 'c <- cmdscale( dj )'."\n";
-		
-		$r_command_d = $r_command;
+		$r_command .= "c <- cmdscale(dj, k=$args{dim_number})\n";
+		$r_command .= "cl <- c\n";
+	}
+
+	# プロット用のコマンド（次元別）
+	$r_command_d = $r_command;
+	if ($args{dim_number} == 1){
 		$r_command_d .=
-			 'plot(c,pch=20,col="mediumaquamarine",'
+			 "cl <- cbind(cl,0)\n"
+			.'plot(cl, pch=20, col="mediumaquamarine",'
+				.'xlab="次元1",ylab="")'."\n"
+			."library(maptools)\n"
+			.'pointLabel('
+				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
+				."cex=$fontsize, offset=0)\n";
+		;
+		$r_command_a .=
+			 'plot(cl,'
+				.'xlab="次元1",ylab="")'."\n"
+		;
+	}
+	elsif ($args{dim_number} == 2){
+		$r_command_d .=
+			 'plot(cl,pch=20,col="mediumaquamarine",'
 				.'xlab="次元1",ylab="次元2")'."\n"
 			."library(maptools)\n"
 			.'pointLabel('
-				.'x=c[,1], y=c[,2], labels=rownames(c),'
+				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
 				."cex=$fontsize, offset=0)\n";
 		;
-		
 		$r_command_a .=
-			 'plot(c,'
+			 'plot(cl,'
 				.'xlab="次元1",ylab="次元2")'."\n"
 		;
-		$r_command .= $r_command_a;
 	}
-	
+	elsif ($args{dim_number} == 3){
+		$r_command_d .=
+			"library(scatterplot3d)\n"
+			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
+				."highlight.3d=FALSE, color=\"#FFA200FF\", "
+				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
+				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
+				."mar=c(3,3,0,2), lty.hide=\"dashed\" )\n"
+			."cl2 <- s3d\$xyz.convert(cl)\n"
+			."library(maptools)\n"
+			."pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
+				."cex=$fontsize, offset=0, col=\"black\")\n"
+		;
+		$r_command_a .=
+			 "library(scatterplot3d)\n"
+			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
+				."highlight.3d=TRUE, mar=c(3,3,0,2), "
+				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
+				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
+				."lty.hide=\"dashed\" )\n"
+		;
+	}
+
+	$r_command .= $r_command_a;
+
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(

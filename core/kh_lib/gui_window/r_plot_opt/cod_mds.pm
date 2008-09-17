@@ -38,6 +38,25 @@ sub innner{
 	}
 	$widget->set_value($method);
 
+	$fd->Label(
+		-text => $self->gui_jchar('  ¼¡¸µ¡§'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $fd->Entry(
+		-font       => "TKFN",
+		-width      => 2,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_dim_number});
+	if ( $self->{command_f} =~ /k=([123])[\), ]/ ){
+		$self->{entry_dim_number}->insert(0,$1);
+	} else {
+		$self->{entry_dim_number}->insert(0,'2');
+	}
+
 	return $self;
 }
 
@@ -72,6 +91,7 @@ sub calc{
 		method         => $self->{method_opt},
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
+		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 	);
 
 }
@@ -81,7 +101,7 @@ sub win_title{
 }
 
 sub win_name{
-	return 'w_cod_corresp_plot_opt';
+	return 'w_cod_mds_plot_opt';
 }
 
 1;
