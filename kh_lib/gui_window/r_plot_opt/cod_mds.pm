@@ -39,11 +39,38 @@ sub innner{
 	$widget->set_value($method);
 
 	$fd->Label(
-		-text => $self->gui_jchar('  次元：'),
+		-text => $self->gui_jchar('  距離：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_dim_number} = $fd->Entry(
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $fd,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	if ( $self->{command_f} =~ /euclid/ ){
+		$widget_dist->set_value('euclid');
+	} else {
+		$widget_dist->set_value('binary');
+	}
+
+	# 次元の数
+	my $fnd = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 4,
+	);
+
+	$fnd->Label(
+		-text => $self->gui_jchar('次元：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $fnd->Entry(
 		-font       => "TKFN",
 		-width      => 2,
 		-background => 'white',
@@ -56,6 +83,11 @@ sub innner{
 	} else {
 		$self->{entry_dim_number}->insert(0,'2');
 	}
+
+	$fnd->Label(
+		-text => $self->gui_jchar('（1から3までの範囲で指定）'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
 
 	return $self;
 }
@@ -92,6 +124,7 @@ sub calc{
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
+		method_dist    => $self->{method_dist},
 	);
 
 }

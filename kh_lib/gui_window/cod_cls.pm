@@ -142,7 +142,24 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('クラスター数：'),
+		-text => $self->gui_jchar('距離：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	$widget_dist->set_value('binary');
+
+	$f4->Label(
+		-text => $self->gui_jchar('  クラスター数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -363,6 +380,7 @@ sub _calc{
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
 		data_number    => $check_num,
+		method_dist    => $self->{method_dist},
 	);
 
 }

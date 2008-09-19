@@ -12,7 +12,28 @@ sub innner{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('クラスター数：'),
+		-text => $self->gui_jchar('距離：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	if ( $self->{command_f} =~ /euclid/ ){
+		$widget_dist->set_value('euclid');
+	} else {
+		$widget_dist->set_value('binary');
+	}
+
+	$f4->Label(
+		-text => $self->gui_jchar('  クラスター数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -74,6 +95,7 @@ sub calc{
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
+		method_dist    => $self->{method_dist},
 	);
 
 	return 1;
