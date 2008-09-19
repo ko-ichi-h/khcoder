@@ -438,7 +438,7 @@ sub make_plot{
 
 	if ($args{method_dist} eq 'euclid'){
 		$r_command .= "d <- t( scale( t(d) ) )\n";
-		$r_command .= "dj <- dist(d,method=\"euclid\")\n";
+		$r_command .= "dj <- dist(d,method=\"euclid\")^2\n";
 	} else {
 		$r_command .= "dj <- dist(d,method=\"binary\")\n";
 	}

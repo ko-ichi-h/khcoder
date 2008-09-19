@@ -159,19 +159,47 @@ sub _new{
 	$widget->set_value('K');
 
 	$f4->Label(
-		-text => $self->gui_jchar('  次元：'),
+		-text => $self->gui_jchar('  距離：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_dim_number} = $f4->Entry(
+	my $widget_dist = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_dist},
+	);
+	$widget_dist->set_value('binary');
+
+
+	# 次元の数
+	my $fnd = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 4,
+	);
+
+	$fnd->Label(
+		-text => $self->gui_jchar('次元：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_dim_number} = $fnd->Entry(
 		-font       => "TKFN",
 		-width      => 2,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_dim_number}->insert(0,'2');
-	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_dim_number});
 
+	$fnd->Label(
+		-text => $self->gui_jchar('（1から3までの範囲で指定）'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -376,6 +404,7 @@ sub _calc{
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->{method_opt},
+		method_dist    => $self->{method_dist},
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
