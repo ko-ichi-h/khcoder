@@ -363,6 +363,16 @@ sub make{
 				-state => 'disable'
 			);
 
+		$self->{t_doc_cls} = $f8->command(
+				-label => gui_window->gui_jchar('クラスター分析'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					gui_window::doc_cls->open;
+				})},
+				-state => 'disable'
+			);
+		push @menu1, 't_doc_cls' if $::config_obj->R;
+
 		$f8->separator;
 
 		$self->{m_b3_crossout} = $f8->cascade(

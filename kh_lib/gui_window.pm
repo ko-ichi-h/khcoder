@@ -35,6 +35,8 @@ use gui_window::word_cls;
 use gui_window::word_mds;
 use gui_window::doc_view;
 use gui_window::doc_search;
+use gui_window::doc_cls;
+use gui_window::doc_cls_res;
 use gui_window::morpho_check;
 use gui_window::morpho_detail;
 use gui_window::cod_count;
