@@ -84,7 +84,12 @@ sub read{
 			INSERT INTO outvar (name, tab, col, tani)
 			VALUES (\'$i\', \'$table\', \'$col\', \'$self->{tani}\')
 		",1);
-		$cols .= "\t\t\t$col varchar(255),\n";
+		
+		if ($self->{var_type} eq 'INT') {
+			$cols .= "\t\t\t$col INT,\n";
+		} else {
+			$cols .= "\t\t\t$col varchar(255),\n";
+		}
 		$cols2 .= "$col,";
 	}
 	chop $cols2;
