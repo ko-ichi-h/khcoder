@@ -31,15 +31,21 @@ sub _new{
 		-font             => 'TKFN',
 		-columns          => 2,
 		-padx             => 2,
+		#-command          => sub{$self->cls_docs},
 		-background       => 'white',
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
-		-selectmode       => 'extended',
+		#-selectmode       => 'extended',
 		-height           => 10,
 		-width            => 10,
 	)->pack(-fill =>'both',-expand => 'yes',-side => 'left');
 	$lis2->header('create',0,-text => $self->gui_jchar('クラスター番号'));
 	$lis2->header('create',1,-text => $self->gui_jchar('文書数'));
+
+	$lis2->bind("<Shift-Double-1>",sub{$self->cls_words;});
+	
+	$lis2->bind("<Double-1>",sub{$self->cls_docs;});
+	$lis2->bind("<Key-Return>",sub{$self->cls_docs;});
 
 	my $fhl = $fh->Frame->pack(-fill => 'x', -side => 'left');
 
@@ -101,7 +107,12 @@ sub _new{
 		-text => $self->gui_jchar('調整'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub{ $mw->after(10,sub {
+			gui_window::doc_cls_res_opt->open(
+				command_f => $self->{command_f},
+				tani      => $self->{tani},
+			);
+		});} 
 	)->pack(-side => 'left',-padx => 5);
 
 	$self->win_obj->bind(
@@ -118,7 +129,11 @@ sub _new{
 		-text => $self->gui_jchar('保存'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->save;});} 
+		-command => sub{ $mw->after(10,sub {
+			gui_window::doc_cls_res_sav->open(
+				var_from => $self->{tmp_out_var}
+			);
+		});} 
 	)->pack(-side => 'right');
 
 	$self->{list} = $lis2;
@@ -231,6 +246,14 @@ sub cls_docs{
 	$win->{direct_w_e}->insert('end',$query);
 	$win->win_obj->focus;
 	$win->search;
+}
+
+sub end{
+	foreach my $i (@{mysql_outvar->get_list}){
+		if ($i->[1] =~ /^_cluster_tmp_[wac]$/){
+			mysql_outvar->delete(name => $i->[1]);
+		}
+	}
 }
 
 

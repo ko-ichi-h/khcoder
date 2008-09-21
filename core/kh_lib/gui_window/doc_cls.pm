@@ -408,7 +408,10 @@ sub calc_exec{
 		return 0;
 	}
 
-
+	$args{base_win}->close;
+	if ($::main_gui->if_opened('w_doc_cls_res')){
+		$::main_gui->get('w_doc_cls_res')->close;
+	}
 
 	# Rの計算結果を外部変数として読み込む
 	foreach my $i (@{mysql_outvar->get_list}){
@@ -423,12 +426,8 @@ sub calc_exec{
 		tani     => $args{tani},
 		var_type => 'INT',
 	)->read;
-
-	$args{base_win}->close;
 	
-	if ($::main_gui->if_opened('w_doc_cls_res')){
-		$::main_gui->get('w_doc_cls_res')->close;
-	}
+
 	gui_window::doc_cls_res->open(
 		command_f => $r_command,
 		tani      => $args{tani},
@@ -442,7 +441,7 @@ sub calc_exec{
 
 
 sub label{
-	return '文書・クラスター分析（オプション）';
+	return '文書・クラスター分析：オプション';
 }
 
 sub win_name{

@@ -30,9 +30,20 @@ sub read{
 	}
 	close (CSVD);
 	
+	&save(
+		data     => \@data,
+		tani     => $self->{tani},
+		var_type => $self->{var_type},
+	);
+}
+
+sub save{
+	my %args = @_;
+	my @data = @{$args{data}};
+
 	# ケース数のチェック
 	my $cases_in_file = @data; --$cases_in_file;
-	my $cases = mysql_exec->select("SELECT COUNT(*) from $self->{tani}",1)
+	my $cases = mysql_exec->select("SELECT COUNT(*) from $args{tani}",1)
 		->hundle->fetch->[0];
 	unless ($cases == $cases_in_file){
 		gui_errormsg->open(
@@ -61,7 +72,7 @@ sub read{
 			return 0;
 		}
 	}
-	
+
 	# 保存用テーブル名の決定
 	my $n = 0;
 	while (1){
@@ -82,10 +93,10 @@ sub read{
 		my $col = 'col'."$cn"; ++$cn;
 		mysql_exec->do("
 			INSERT INTO outvar (name, tab, col, tani)
-			VALUES (\'$i\', \'$table\', \'$col\', \'$self->{tani}\')
+			VALUES (\'$i\', \'$table\', \'$col\', \'$args{tani}\')
 		",1);
 		
-		if ($self->{var_type} eq 'INT') {
+		if ($args{var_type} eq 'INT') {
 			$cols .= "\t\t\t$col INT,\n";
 		} else {
 			$cols .= "\t\t\t$col varchar(255),\n";
