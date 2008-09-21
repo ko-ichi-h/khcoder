@@ -46,6 +46,36 @@ sub new{
 	return $self;
 }
 
+sub copy {
+	my $self = shift;
+	my $name = shift;
+	
+	my @data;
+	
+	push @data, [ $name ];
+	
+	my $sql = '';
+	$sql .= "SELECT $self->{column} FROM $self->{table} ";
+	$sql .= "ORDER BY id";
+
+	my $type = 'INT';
+
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		push @data, [ $i->[0] ];
+		if ( $i->[0] =~ /[^0-9]/ ){
+			$type = '';
+		}
+	}
+	
+	&mysql_outvar::read::save(
+		data     => \@data,
+		tani     => $self->{tani},
+		var_type => $type,
+	) or return 0;
+	return 1;
+}
+
 # 値ラベルもしくは値を与えられた時に、値を返す
 sub real_val{
 	my $self = shift;
