@@ -86,21 +86,25 @@ sub open{
 	if ( $check ){
 		$self = $::main_gui->get($self->win_name);
 	} else {
-		
 		# Windowオープン
 		if ($self->win_name eq 'main_window'){
 			$self->{win_obj} = MainWindow->new;
 		} else {
-			$self->{win_obj} = $::main_gui->mw->Toplevel;
-			$self->win_obj->focus;
-			# Windowサイズと位置の指定
-			my $g = $::config_obj->win_gmtry($self->win_name);
-			if ($g and not $arg{no_geometry}){
-				$self->win_obj->geometry($g);
-				print "win_size: $g\n";
-			} else {
-				print "win_size: not changed\n";
-			}
+			$self->{win_obj} = $::main_gui->mw->Toplevel();
+			#$self->win_obj->focus;
+		}
+
+		# Windowアイコンのセット
+		my $icon = $self->win_obj->Photo(
+			-file =>   Tk->findINC('acre.gif')
+		);
+		$self->win_obj->iconimage($icon);
+		#$self->win_obj->Icon(-image => $icon);
+
+		# Windowサイズと位置の指定
+		my $g = $::config_obj->win_gmtry($self->win_name);
+		if ($g and not $arg{no_geometry}){
+			$self->win_obj->geometry($g);
 		}
 
 		# Windowの中身作成
@@ -123,11 +127,6 @@ sub open{
 		# 特殊処理に対応
 		$self->start;
 
-		# Windowアイコンのセット
-		my $icon = $self->win_obj->Photo(
-			-file =>   Tk->findINC('acre.gif')
-		);
-		$self->win_obj->Icon(-image => $icon);
 	}
 	return $self;
 }
