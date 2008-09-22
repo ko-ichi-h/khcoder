@@ -18,7 +18,7 @@ sub _new{
 	$::main_gui = $self;
 
 	# Windowへの書き込み
-	$self->{mw}->title('KH Coder [MAIN WINDOW]');            # Windowタイトル
+	$self->{mw}->title('KH Coder');                          # Windowタイトル
 	$self->make_font;                                        # フォント
 	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
 	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
@@ -40,10 +40,18 @@ sub _new{
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){
 		$::splash->Destroy;
+		$self->{win_obj}->focus;
 	}
 
 	return $self;
 }
+
+sub start {
+	# Windowsではここでiconをセットしないとフォーカスが来ない?!
+	my $self = shift;
+	$self->position_icon;
+}
+
 
 #------------------#
 #   フォント設定   #
