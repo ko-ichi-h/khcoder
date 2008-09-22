@@ -94,18 +94,18 @@ sub open{
 			#$self->win_obj->focus;
 		}
 
+		# Windowサイズと位置の指定
+		my $g = $::config_obj->win_gmtry($self->win_name);
+		if ($g and not $arg{no_geometry}){
+			$self->win_obj->geometry($g);
+		}
+
 		# Windowアイコンのセット
 		my $icon = $self->win_obj->Photo(
 			-file =>   Tk->findINC('acre.gif')
 		);
 		$self->win_obj->iconimage($icon);
 		#$self->win_obj->Icon(-image => $icon);
-
-		# Windowサイズと位置の指定
-		my $g = $::config_obj->win_gmtry($self->win_name);
-		if ($g and not $arg{no_geometry}){
-			$self->win_obj->geometry($g);
-		}
 
 		# Windowの中身作成
 		$self = $self->_new(@arg);

@@ -17,11 +17,6 @@ sub _new{
 	$self->{mw} = $self->{win_obj};
 	$::main_gui = $self;
 
-	# Windowサイズと位置の指定
-	if ( my $g = $::config_obj->win_gmtry($self->win_name) ){
-		$self->win_obj->geometry($g);
-	}
-
 	# Windowへの書き込み
 	$self->{mw}->title('KH Coder [MAIN WINDOW]');            # Windowタイトル
 	$self->make_font;                                        # フォント
@@ -49,15 +44,6 @@ sub _new{
 
 	return $self;
 }
-
-#sub start{
-#	my $self = shift;
-#	# Windowアイコンのセット
-#	my $icon = $self->win_obj->Photo(
-#		-file =>   Tk->findINC('acre.gif')
-#	);
-#	$self->win_obj->Icon(-image => $icon);
-#}
 
 #------------------#
 #   フォント設定   #
