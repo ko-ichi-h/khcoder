@@ -91,8 +91,8 @@ sub open{
 			$self->{win_obj} = MainWindow->new;
 		} else {
 			$self->{win_obj} = $::main_gui->mw->Toplevel();
-			$self->win_obj->focus;
 		}
+		$self->win_obj->focus;
 
 		# Windowサイズと位置の指定
 		my $g = $::config_obj->win_gmtry($self->win_name);
