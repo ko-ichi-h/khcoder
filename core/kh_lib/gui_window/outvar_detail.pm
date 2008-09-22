@@ -33,10 +33,12 @@ sub _new{
 		-columns          => 3,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'brown',
-		-selectbackground => 'cyan',
-		-selectmode       => 'none',
-		-command          => sub {$self->_open_var;},
+		-selectforeground => 'black',
+		-selectbackground => 'white',
+		#-activebackground => 'white',
+		-selectmode       => 'single',
+		-selectborderwidth=> 0,
+		#-command          => sub {$self->_open_var;},
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
@@ -64,7 +66,11 @@ sub _new{
 	$self->{var_obj} = mysql_outvar::a_var->new($args{name});
 	my $v = $self->{var_obj}->detail_tab;
 	my $n = 0;
-	my $right = $lis->ItemStyle('text',-anchor => 'e',-background => 'white');
+	my $right = $lis->ItemStyle('text',
+		-anchor => 'e',
+		-background => 'white',
+		-selectbackground => 'white',
+	);
 	foreach my $i (@{$v}){
 		$lis->add($n,-at => "$n");
 		$lis->itemCreate($n,0,-text => $self->gui_jchar($i->[0]),);

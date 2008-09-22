@@ -134,6 +134,8 @@ sub print_val{
 sub detail_tab{
 	my $self = shift;
 	
+	my $names = '';
+	
 	# 度数（単純集計）取得
 	my $f = mysql_exec->select("
 		SELECT $self->{column}, COUNT(*)
@@ -142,13 +144,23 @@ sub detail_tab{
 	",1)->hundle;
 	while (my $i = $f->fetch){
 		$self->{freqs}{$i->[0]} = $i->[1];
+		$names .= $i->[0];
 	}
 	
 	# リターンする表を作成
 	my @data;
-	foreach my $i (sort keys %{$self->{freqs}}){
-		push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+	
+	if ($names =~ /\A[0-9]+\Z/){
+		foreach my $i (sort {$a <=> $b} keys %{$self->{freqs}}){
+			push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+		}
+	} else {
+		foreach my $i (sort keys %{$self->{freqs}}){
+			push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+		}
 	}
+	
+
 	
 	return \@data;
 }

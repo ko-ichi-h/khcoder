@@ -8,7 +8,7 @@
 □保存ファイルのMD5: 98e91062e11add6709bee9c249e282e5
 □修正済みファイルのMD5: fff2667ed31fe4f3db554a49b0ec1d2e
 
-■project_name:	kokoro2.txt
+■project_name:	kokoro2_.txt
 ■project_comment:	自動テスト用Project［編］
 ■words_all:	106,344
 ■project_kinds:	6,191 (5,491)

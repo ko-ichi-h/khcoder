@@ -34,6 +34,7 @@ sub _new{
 		-background       => 'white',
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
+		-selectborderwidth=> 0,
 		-selectmode       => 'extended',
 		-command          => sub {$self->_open_var;},
 		-height           => 10,
