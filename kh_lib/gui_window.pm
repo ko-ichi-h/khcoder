@@ -73,8 +73,7 @@ BEGIN{
 sub open{
 	my $class = shift;
 	my $self;
-	my @arg = @_;
-	my %arg = @arg;
+	my %arg = @_;
 	$self->{dummy} = 1;
 	bless $self, $class;
 
@@ -91,24 +90,12 @@ sub open{
 			$self->{win_obj} = MainWindow->new;
 		} else {
 			$self->{win_obj} = $::main_gui->mw->Toplevel();
+			$self->win_obj->focus;
+			$self->position_icon(@_);
 		}
-		$self->win_obj->focus;
-
-		# Windowサイズと位置の指定
-		my $g = $::config_obj->win_gmtry($self->win_name);
-		if ($g and not $arg{no_geometry}){
-			$self->win_obj->geometry($g);
-		}
-
-		# Windowアイコンのセット
-		my $icon = $self->win_obj->Photo(
-			-file =>   Tk->findINC('acre.gif')
-		);
-		$self->win_obj->iconimage($icon);
-		#$self->win_obj->Icon(-image => $icon);
 
 		# Windowの中身作成
-		$self = $self->_new(@arg);
+		$self = $self->_new(@_);
 		$::main_gui->opened($self->win_name,$self);
 
 		# Windowを閉じる際のバインド
@@ -126,9 +113,29 @@ sub open{
 
 		# 特殊処理に対応
 		$self->start;
-
 	}
 	return $self;
+}
+
+sub position_icon{
+	my $self = shift;
+	my %arg = @_;
+	
+	# Windowサイズと位置の指定
+	my $g = $::config_obj->win_gmtry($self->win_name);
+	if ($g and not $arg{no_geometry}){
+		$self->win_obj->geometry($g);
+	}
+
+	# Windowアイコンのセット
+	my $icon = $self->win_obj->Photo(
+		-file =>   Tk->findINC('acre.gif')
+	);
+	if ( $::config_obj->os eq 'win32' ) {
+		$self->win_obj->Icon(-image => $icon);
+	} else {
+		$self->win_obj->iconimage($icon);
+	}
 }
 
 
