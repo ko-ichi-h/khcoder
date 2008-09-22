@@ -50,27 +50,27 @@ sub _new{
 	my $fhl = $fh->Frame->pack(-fill => 'x', -side => 'left');
 
 	$fhl->Button(
-		-text => $self->gui_jchar('文書'),
-		-font => "TKFN",
+		-text        => $self->gui_jchar('文書'),
+		-font        => "TKFN",
 		-borderwidth => '1',
-		-width => 3,
-		-command => sub{ $mw->after(10,sub {$self->cls_docs;}); }
+		-width       => 4,
+		-command     => sub{ $mw->after(10,sub {$self->cls_docs;}); }
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
 
 	$fhl->Button(
-		-text => $self->gui_jchar('特徴'),
-		-font => "TKFN",
+		-text        => $self->gui_jchar('特徴'),
+		-font        => "TKFN",
 		-borderwidth => '1',
-		-width => 3,
-		-command => sub{ $mw->after(10,sub {$self->cls_words;}); }
+		-width       => 4,
+		-command     => sub{ $mw->after(10,sub {$self->cls_words;}); }
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
 	
 	$self->{copy_btn} = $fhl->Button(
-		-text => $self->gui_jchar('コピー'),
-		-font => "TKFN",
+		-text        => $self->gui_jchar('コピー'),
+		-font        => "TKFN",
 		-borderwidth => '1',
-		-width => 3,
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-width       => 4,
+		-command     => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
 	)->pack(-padx => 2, -pady => 10, -anchor => 'c');
 
 	$self->win_obj->bind(
@@ -180,6 +180,9 @@ sub renew{
 		);
 		++$row;
 	}
+	
+	gui_hlist->update4scroll($self->list);
+	return 1;
 }
 
 sub cls_words{
