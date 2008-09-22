@@ -8,6 +8,11 @@ sub _exec_test{
 	my $self = shift;
 	my $t = '';
 	
+	# 初期化
+	use File::Copy;
+	unlink($self->file_testdata) if -e $self->file_testdata;
+	copy($self->file_testdata_org, $self->file_testdata);
+	
 	# プロジェクトの作成
 	gui_window::project_new->open;
 	my $win_np = $::main_gui->get('w_new_pro');

@@ -106,9 +106,15 @@ sub get_md5{
 #--------------#
 #   アクセサ   #
 
-sub file_testdata{
+sub file_testdata_org{
 	use Cwd qw(cwd);
 	my $file = cwd.'/auto_test/data_input/kokoro2.txt';
+	return $file;
+}
+
+sub file_testdata{
+	use Cwd qw(cwd);
+	my $file = cwd.'/auto_test/data_input/kokoro2_.txt';
 	return $file;
 }
 
