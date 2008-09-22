@@ -3,6 +3,7 @@ use strict;
 use Image::Magick;
 
 my $if_font = 0;
+my $if_lt25 = 0;
 
 sub new{
 	my $class = shift;
@@ -46,6 +47,30 @@ sub new{
 		);
 		
 		$if_font = 1;
+	}
+
+	# Rのバージョンが2.5.0より小さい場合の対処
+	unless ($if_lt25){
+		$::config_obj->R->send(
+			'print( paste("khcoder", R.Version()$major, R.Version()$minor , sep="") )'
+		);
+		my $v1 = $::config_obj->R->read;
+		if ($v1 =~ /"khcoder(.+)"/){
+			$v1 = $1;
+		} else {
+			$v1 = 2;
+			warn "something wrong at kh_r_plot.pm\n";
+		}
+		chop $v1;
+		chop $v1;
+		print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
+		unless ($v1 >= 25){
+			$::config_obj->R->send(
+				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
+			);
+			print "as.graphicsAnnot defined.\n";
+		}
+		$if_lt25 = 1;
 	}
 
 	# width・heightのチェック
