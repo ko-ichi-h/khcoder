@@ -303,7 +303,7 @@ sub R_device{
 	my $path = shift;
 	my $width = shift;
 	my $height = shift;
-	$path .= '.bmp';
+	#$path .= '.bmp';
 	
 	$width  = 480 unless $width;
 	$height = 480 unless $height;
@@ -312,7 +312,7 @@ sub R_device{
 	return 0 unless $::config_obj->R;
 	
 	$::config_obj->R->send(
-		"png(\"$path\" width=$width, height=$height, unit=\"px\" )"
+		"png(\"$path\", width=$width, height=$height, unit=\"px\" )"
 	);
 	return $path;
 }

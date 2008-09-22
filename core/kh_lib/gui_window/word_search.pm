@@ -227,7 +227,7 @@ sub refresh{
 		$self->list->header('create',2,-text => $self->gui_jchar('³èÍÑ'));
 		$self->list->header('create',3,-text => $self->gui_jchar('ÉÑÅÙ'));
 	}
-	
+	$self->list->update;
 }
 
 

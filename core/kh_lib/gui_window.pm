@@ -97,13 +97,10 @@ sub open{
 			my $g = $::config_obj->win_gmtry($self->win_name);
 			if ($g and not $arg{no_geometry}){
 				$self->win_obj->geometry($g);
-				#print "win_size: $g\n";
+				print "win_size: $g\n";
+			} else {
+				print "win_size: not changed\n";
 			}
-			# Windowアイコンのセット
-			my $icon = $self->win_obj->Photo(
-				-file =>   Tk->findINC('acre.gif')
-			);
-			$self->win_obj->Icon(-image => $icon);
 		}
 
 		# Windowの中身作成
@@ -125,6 +122,12 @@ sub open{
 
 		# 特殊処理に対応
 		$self->start;
+
+		# Windowアイコンのセット
+		my $icon = $self->win_obj->Photo(
+			-file =>   Tk->findINC('acre.gif')
+		);
+		$self->win_obj->Icon(-image => $icon);
 	}
 	return $self;
 }

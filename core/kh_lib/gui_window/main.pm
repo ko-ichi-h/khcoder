@@ -50,14 +50,14 @@ sub _new{
 	return $self;
 }
 
-sub start{
-	my $self = shift;
-	# Windowアイコンのセット
-	my $icon = $self->win_obj->Photo(
-		-file =>   Tk->findINC('acre.gif')
-	);
-	$self->win_obj->Icon(-image => $icon);
-}
+#sub start{
+#	my $self = shift;
+#	# Windowアイコンのセット
+#	my $icon = $self->win_obj->Photo(
+#		-file =>   Tk->findINC('acre.gif')
+#	);
+#	$self->win_obj->Icon(-image => $icon);
+#}
 
 #------------------#
 #   フォント設定   #
