@@ -116,8 +116,6 @@ if (
 }
 
 # Rの初期化
-print $::config_obj->{cwd}, "\n", $::config_obj->r_path, "\n", $::config_obj->r_dir, "\n";
-
 use Statistics::R;
 $::config_obj->{R} = Statistics::R->new(
 	r_bin   => $::config_obj->r_path,
