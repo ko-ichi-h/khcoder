@@ -45,6 +45,7 @@
 
 
   use IO::Select ;
+  use File::Copy;
   
   use vars qw($VERSION $HOLD_PIPE_X) ;
   
@@ -143,6 +144,17 @@
     chmod(0777 , "$file._") ;
     $this->{OUTPUT_R_POS} = -s $this->{OUTPUT_R} ;
 
+	# Win9xではいったん他のファイルにコピーしないとサイズを読めない
+	if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+		unlink("$this->{LOG_DIR}/temp_out")
+			if -e "$this->{LOG_DIR}/temp_out";
+		if (-e $this->{OUTPUT_R}) {
+			copy($this->{OUTPUT_R}, "$this->{LOG_DIR}/temp_out")
+				or warn("i/o error 1: $cmd\n");
+			$this->{OUTPUT_R_POS} = -s "$this->{LOG_DIR}/temp_out" ;
+		}
+	}
+
 	print "Statistics::R::Bridge::pipe::send, size: $this->{OUTPUT_R_POS}\n" if $debug; # kh
 
     rename("$file._" , $file) ;
@@ -179,10 +191,33 @@
 
 	unless ($has_quit){
 		if ($Statistics::R::output_chk){
-			print "Statistics::R::Bridge::pipe::send, checking output " if $debug;
-			while (-s $this->{OUTPUT_R} == $this->{OUTPUT_R_POS}){
-				print -s $this->{OUTPUT_R},"," if $debug;
+			print "Statistics::R::Bridge::pipe::send, checking output "
+				if $debug;
+			my $rtc = 0;
+			while (1){
+				my $s = -s $this->{OUTPUT_R};
+				
+				# Win9xではいったん他のファイルにコピーしないとサイズを読めない
+				if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+					unlink("$this->{LOG_DIR}/temp_out")
+						if -e "$this->{LOG_DIR}/temp_out";
+					if (-e $this->{OUTPUT_R}) {
+						copy($this->{OUTPUT_R}, "$this->{LOG_DIR}/temp_out")
+							or warn("i/o error 2\n");
+						$s = -s "$this->{LOG_DIR}/temp_out" ;
+					}
+				}
+				
+				if ($s > $this->{OUTPUT_R_POS}){
+					last;
+				}
+				print "$s," if $debug;
 				sleep 1;
+				++$rtc;
+				if ($rtc > 20){
+					print "Statistics::R::Bridge::pipe::send: Could not check output...\n";
+					last;
+				}
 			}
 			print "...ok\n" if $debug;
 		}
@@ -214,7 +249,20 @@
 
     while( $x == 0 || (time-$time) <= $timeout ) {
       ++$x ;
+      
       my $s = -s $this->{OUTPUT_R} ;
+
+		# Win9xではいったん他のファイルにコピーしないとサイズを読めない
+		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+			unlink("$this->{LOG_DIR}/temp_out")
+				if -e "$this->{LOG_DIR}/temp_out";
+			if (-e $this->{OUTPUT_R}) {
+				copy($this->{OUTPUT_R}, "$this->{LOG_DIR}/temp_out")
+					or warn("i/o error 3\n");
+				$s = -s "$this->{LOG_DIR}/temp_out" ;
+			}
+		}
+
       my $r = read($fh , $data , ($s - $this->{OUTPUT_R_POS}) , length($data) ) ;
 	print "Statistics::R::Bridge::pipe::read, size: $s, start: $this->{OUTPUT_R_POS}, read: $r, timeout: $timeout \n" if $debug; # kh
 	
@@ -597,7 +645,7 @@
     
     my $s = -s $this->{PROCESS_R} ;
     
-    open(my $fh , $this->{PROCESS_R});# or warn "Failed to open PROCESS_R file! (Statistics::R::Bridge::pipe::read_processR)\n";
+    open(my $fh , $this->{PROCESS_R}); # or warn "Failed to open PROCESS_R file! (Statistics::R::Bridge::pipe::read_processR)\n";
     seek($fh, ($s-100) ,0) ;
     
     my $data ;

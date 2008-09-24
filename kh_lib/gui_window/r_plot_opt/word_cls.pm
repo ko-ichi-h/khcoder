@@ -103,7 +103,7 @@ sub calc{
 }
 
 sub win_title{
-	return '抽出語・クラスター分析の調整';
+	return '抽出語・クラスター分析：調整';
 }
 
 sub win_name{

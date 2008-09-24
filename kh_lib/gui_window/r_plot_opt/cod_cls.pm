@@ -102,7 +102,7 @@ sub calc{
 }
 
 sub win_title{
-	return 'コーディング・クラスター分析の調整';
+	return 'コーディング・クラスター分析：調整';
 }
 
 sub win_name{

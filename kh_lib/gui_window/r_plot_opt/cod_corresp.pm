@@ -108,7 +108,7 @@ sub calc{
 }
 
 sub win_title{
-	return 'コーディング・対応分析の調整';
+	return 'コーディング・対応分析：調整';
 }
 
 sub win_name{

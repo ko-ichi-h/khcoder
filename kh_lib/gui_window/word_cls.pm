@@ -523,7 +523,7 @@ sub make_plot{
 
 
 sub label{
-	return '抽出語・クラスター分析（オプション）';
+	return '抽出語・クラスター分析：オプション';
 }
 
 sub win_name{
