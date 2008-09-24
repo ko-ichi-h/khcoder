@@ -29,6 +29,10 @@ sub init{
 	$::config_obj->chasen_path($::config_obj->cwd.'\dep\chasen\chasen.exe')
 		unless -e $::config_obj->chasen_path;
 	
+	# Rのパス設定
+	$::config_obj->r_path($::config_obj->cwd.'\dep\R\bin\Rterm.exe')
+		unless -e $::config_obj->r_path;
+	
 	# MySQL設定ファイル修正（khc.ini）
 	my $p1 = $::config_obj->cwd.'\dep\mysql\\';
 	my $p2 = $::config_obj->cwd.'\dep\mysql\data\\';

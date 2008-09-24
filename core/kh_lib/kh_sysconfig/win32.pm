@@ -136,6 +136,7 @@ sub save{
 			'chasen_path',
 			'juman_path',
 			'c_or_j',
+			'r_path',
 			'sqllog',
 			'sql_username',
 			'sql_password',

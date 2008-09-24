@@ -193,7 +193,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_dim_number}->insert(0,'2');
-	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_dim_number});
 
 	$fnd->Label(

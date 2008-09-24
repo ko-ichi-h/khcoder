@@ -116,10 +116,12 @@ if (
 }
 
 # Rの初期化
+print $::config_obj->{cwd}, "\n", $::config_obj->r_path, "\n", $::config_obj->r_dir, "\n";
+
 use Statistics::R;
 $::config_obj->{R} = Statistics::R->new(
-	r_bin => "",
-	r_dir => "",
+	r_bin   => $::config_obj->r_path,
+	r_dir   => $::config_obj->r_dir,
 	log_dir => $::config_obj->{cwd}.'/config/R-bridge',
 	tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
 );

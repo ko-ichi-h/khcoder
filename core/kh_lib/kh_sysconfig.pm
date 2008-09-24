@@ -309,6 +309,30 @@ sub R{
 	return $self->{R};
 }
 
+sub r_path{
+	my $self = shift;
+	my $new = shift;
+	if ( length($new) && -e $new ){
+		$self->{r_path} = $new;
+	}
+	return $self->{r_path};
+}
+
+sub r_dir{
+	my $self = shift;
+	if ( -e $self->{r_path} ) {
+		if ( $self->{r_path} =~ /\A(.+)Rterm\.exe/i){
+			my $v = $1;
+			chop $v;
+			chop $v;
+			chop $v;
+			chop $v;
+			chop $v;
+			return $v;
+		}
+	}
+}
+
 sub in_preprocessing{
 	my $self = shift;
 	my $new = shift;
