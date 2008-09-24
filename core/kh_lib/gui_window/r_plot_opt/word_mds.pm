@@ -133,7 +133,7 @@ sub calc{
 }
 
 sub win_title{
-	return '抽出語・多次元尺度法の調整';
+	return '抽出語・多次元尺度法：調整';
 }
 
 sub win_name{

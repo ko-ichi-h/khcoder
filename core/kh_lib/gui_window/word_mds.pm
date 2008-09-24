@@ -615,7 +615,7 @@ while ( is.na(check4mds(d)) == 0 ){
 
 
 sub label{
-	return '抽出語・多次元尺度法（オプション）';
+	return '抽出語・多次元尺度法：オプション';
 }
 
 sub win_name{

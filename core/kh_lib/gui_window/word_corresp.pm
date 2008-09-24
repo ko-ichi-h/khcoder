@@ -868,7 +868,7 @@ sub make_plot{
 
 
 sub label{
-	return '抽出語・対応分析（オプション）';
+	return '抽出語・対応分析：オプション';
 }
 
 sub win_name{

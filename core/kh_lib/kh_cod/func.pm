@@ -845,7 +845,6 @@ sub tab{
 		push @result, \@chisq;
 	}
 
-	
 	return \@result;
 }
 

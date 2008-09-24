@@ -130,7 +130,7 @@ sub calc{
 }
 
 sub win_title{
-	return 'コーディング・多次元尺度法の調整';
+	return 'コーディング・多次元尺度法：調整';
 }
 
 sub win_name{

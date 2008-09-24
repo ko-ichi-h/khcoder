@@ -10,7 +10,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・対応分析（オプション）'));
+	$win->title($self->gui_jt('コーディング・対応分析：オプション'));
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
