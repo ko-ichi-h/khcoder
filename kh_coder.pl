@@ -118,7 +118,10 @@ if (
 # Rの初期化
 use Statistics::R;
 $::config_obj->{R} = Statistics::R->new(
-	log_dir => $::config_obj->{cwd}.'/config/R-bridge'
+	r_bin => "",
+	r_dir => "",
+	log_dir => $::config_obj->{cwd}.'/config/R-bridge',
+	tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
 );
 if ($::config_obj->{R}){
 	$::config_obj->{R}->startR;
