@@ -113,7 +113,7 @@
     $this->{R_DIR}   = Jcode->new($this->{R_DIR},   'euc')->sjis;
     $this->{TMP_DIR} = Jcode->new($this->{TMP_DIR}, 'euc')->sjis;
     
-    print "rd: $this->{R_DIR}\n";
+    # print "rd: $this->{R_DIR}\n";
     
     my $exec = $this->{R_BIN} ;
     $exec = "\"$exec\"" if $exec =~ /\s/ ;
