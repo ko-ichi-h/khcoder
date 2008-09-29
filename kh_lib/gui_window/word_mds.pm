@@ -145,7 +145,7 @@ sub _new{
 
 	# チェック部分
 	$lf->Label(
-		-text => $self->gui_jchar('・現在の設定で分類される語の数：'),
+		-text => $self->gui_jchar('・現在の設定で布置される語の数：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
