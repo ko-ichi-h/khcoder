@@ -117,12 +117,18 @@ if (
 
 # Rの初期化
 use Statistics::R;
-$::config_obj->{R} = Statistics::R->new(
-	r_bin   => $::config_obj->r_path,
-	r_dir   => $::config_obj->r_dir,
-	log_dir => $::config_obj->{cwd}.'/config/R-bridge',
-	tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
-);
+if (
+	   ( length($::config_obj->r_path) && -e $::config_obj->r_path )
+	|| ( length($::config_obj->r_path) == 0 )
+){
+	$::config_obj->{R} = Statistics::R->new(
+		r_bin   => $::config_obj->r_path,
+		r_dir   => $::config_obj->r_dir,
+		log_dir => $::config_obj->{cwd}.'/config/R-bridge',
+		tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
+	);
+}
+
 if ($::config_obj->{R}){
 	$::config_obj->{R}->startR;
 	$::config_obj->{R}->output_chk(1);
