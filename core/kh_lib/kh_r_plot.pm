@@ -14,12 +14,11 @@ sub new{
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
-	my $icode = Jcode::getcode($::project_obj->dir_CoderData);
-	my $dir   = Jcode->new($::project_obj->dir_CoderData, $icode)->euc;
+	my $icode = Jcode::getcode($::project_obj->file_datadir);
+	my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
 	$dir =~ tr/\\/\//;
 	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
-	$self->{path} = $dir.$self->{name};
-	unlink($self->{path}) if -e $self->{path};
+	$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード
 	$self->{command_f} = Jcode->new($self->{command_f})->sjis
@@ -63,7 +62,7 @@ sub new{
 		}
 		chop $v1;
 		chop $v1;
-		print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
+		#print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
 		unless ($v1 >= 25){
 			$::config_obj->R->send(
 				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
