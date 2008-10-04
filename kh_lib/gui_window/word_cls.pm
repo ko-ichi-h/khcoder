@@ -391,7 +391,6 @@ sub calc{
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
-	my $cluster_number = $self->gui_jg( $self->{entry_cluster_number}->get );
 
 	&make_plot(
 		base_win       => $self,
@@ -401,7 +400,7 @@ sub calc{
 		r_command      => $r_command,
 		plotwin_name   => 'word_cls',
 		data_number    => $check_num,
-		method_dist    => $self->{method_dist},
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 }
 

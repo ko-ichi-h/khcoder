@@ -309,6 +309,20 @@ sub R{
 	return $self->{R};
 }
 
+sub r_plot_debug{
+	my $self = shift;
+	my $new = shift;
+	if ( defined($new) ){
+		$self->{r_plot_debug} = $new;
+	}
+	
+	if ( length($self->{r_plot_debug}) ){
+		return $self->{r_plot_debug};
+	} else {
+		return 0;
+	}
+}
+
 sub r_path{
 	my $self = shift;
 	my $new = shift;

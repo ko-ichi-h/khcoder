@@ -137,6 +137,7 @@ sub save{
 #			'juman_path',
 			'c_or_j',
 			'r_path',
+			'r_plot_debug',
 			'sqllog',
 			'sql_username',
 			'sql_password',

@@ -366,6 +366,16 @@ sub _calc{
 	foreach my $i (@{$self->{checks}}){
 		push @selected, $i->{name} if $i->{check};
 	}
+	my $selected_num = @selected;
+	if ($selected_num < 5){
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$self->win_obj,
+			msg    => 'コードを5つ以上選択してください。'
+		);
+		return 0;
+	}
+
 
 	# データ取得
 	my $r_command;
@@ -403,8 +413,8 @@ sub _calc{
 		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		method         => $self->{method_opt},
-		method_dist    => $self->{method_dist},
+		method         => $self->gui_jg( $self->{method_opt} ),
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),

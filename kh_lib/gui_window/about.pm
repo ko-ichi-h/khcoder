@@ -99,6 +99,18 @@ sub _new{
 		label  => $self->gui_jchar('Perl'),
 		url    => 'http://www.perl.com/',
 		parent => $fra_r1,
+		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
+	);
+
+	$fra_r1->Label(
+		-text => '+',
+		-font => "TKFN",
+		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('R'),
+		url    => 'http://www.r-project.org/',
+		parent => $fra_r1,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
 
