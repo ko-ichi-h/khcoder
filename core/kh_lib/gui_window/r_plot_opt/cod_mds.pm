@@ -120,11 +120,11 @@ sub calc{
 		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		method         => $self->{method_opt},
+		method         => $self->gui_jg( $self->{method_opt}  ),
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
-		method_dist    => $self->{method_dist},
 	);
 
 }

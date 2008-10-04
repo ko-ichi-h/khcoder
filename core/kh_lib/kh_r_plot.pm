@@ -21,17 +21,34 @@ sub new{
 	$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード
-	$self->{command_f} = Jcode->new($self->{command_f})->sjis
+	$self->{command_f} = Jcode->new($self->{command_f},'euc')->sjis
 		if $::config_obj->os eq 'win32';
-	$self->{command_a} = Jcode->new($self->{command_a})->sjis
+	$self->{command_a} = Jcode->new($self->{command_a},'euc')->sjis
 		if $::config_obj->os eq 'win32' and length($self->{command_a});
+
 	my $command = '';
-	
 	if (length($self->{command_a})){
 		$command = $self->{command_a};
-		#print "com_a: $command\n";
 	} else {
 		$command = $self->{command_f};
+	}
+	
+	# Debug用出力
+	if ($::config_obj->r_plot_debug){
+		my $file_debug = $self->{path}.'.r';
+		open (RDEBUG, ">$file_debug") or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $file_debug,
+			)
+		;
+		print RDEBUG
+			"# command_f\n",
+			$self->{command_f},
+			"\n\n# command_a\n",
+			$self->{command_a}
+		;
+		close (RDEBUG)
 	}
 	
 	# Linux用フォント設定
@@ -108,8 +125,10 @@ sub new{
 	) {
 		gui_errormsg->open(
 			type   => 'msg',
-			window  => \$::main_gui->mw,
-			msg    => "推定または描画に失敗しました\n\n".$self->{r_msg}
+			window => \$::main_gui->mw,
+			msg    =>
+				"推定または描画に失敗しました\n\n"
+				.Jcode->new($self->{r_msg})->euc
 		);
 		return 0;
 	}

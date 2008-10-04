@@ -737,7 +737,7 @@ sub _calc{
 		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
-		biplot       => $self->{radio},
+		biplot       => $self->gui_jg( $self->{radio} ),
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
 		r_command    => $r_command,

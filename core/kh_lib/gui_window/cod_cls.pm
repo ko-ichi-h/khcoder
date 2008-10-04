@@ -334,10 +334,17 @@ sub _calc{
 	my $self = shift;
 
 	my @selected = ();
-	my $check_num = 0;
 	foreach my $i (@{$self->{checks}}){
 		push @selected, $i->{name} if $i->{check};
-		++$check_num;
+	}
+	my $selected_num = @selected;
+	if ($selected_num < 3){
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$self->win_obj,
+			msg    => 'コードを3つ以上選択してください。'
+		);
+		return 0;
 	}
 
 	# データ取得
@@ -379,8 +386,8 @@ sub _calc{
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
-		data_number    => $check_num,
-		method_dist    => $self->{method_dist},
+		data_number    => $selected_num,
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
 }

@@ -95,7 +95,7 @@ sub calc{
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
-		method_dist    => $self->{method_dist},
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
 	return 1;
