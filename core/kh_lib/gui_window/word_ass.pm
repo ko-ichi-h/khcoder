@@ -226,7 +226,7 @@ sub _new{
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
-	);
+	)->set_value('jac');
 
 	$order_name = {
 		'sa'  => $self->gui_jchar('³ÎÎ¨º¹'),
