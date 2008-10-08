@@ -544,13 +544,13 @@ while ( is.na(check4mds(d)) == 0 ){
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
-		name      => 'codes_MDS',
+		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command_d,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
 	my $plot2 = kh_r_plot->new(
-		name      => 'codes_MDS_d',
+		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},

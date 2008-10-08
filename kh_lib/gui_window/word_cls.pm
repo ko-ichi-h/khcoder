@@ -475,7 +475,7 @@ sub make_plot{
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
-		name      => 'words_CLS1',
+		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => 480,
@@ -483,7 +483,7 @@ sub make_plot{
 	$plot1->rotate_cls;
 
 	my $plot2 = kh_r_plot->new(
-		name      => 'words_CLS2',
+		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
 		width     => $args{plot_size},
@@ -492,7 +492,7 @@ sub make_plot{
 	$plot2->rotate_cls;
 
 	my $plot3 = kh_r_plot->new(
-		name      => 'words_CLS3',
+		name      => $args{plotwin_name}.'_3',
 		command_a => $r_command_3a,
 		command_f => $r_command_3,
 		width     => $args{plot_size},

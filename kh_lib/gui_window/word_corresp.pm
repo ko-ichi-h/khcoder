@@ -774,7 +774,8 @@ sub make_plot{
 	# プロットのためのRコマンド
 
 	my ($r_command_2a, $r_command_2, $r_command_a);
-	if ($args{biplot} == 0){      # 同時布置なし
+	my ($r_com_gray, $r_com_gray_a);
+	if ($args{biplot} == 0){                      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
 			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
@@ -806,14 +807,69 @@ sub make_plot{
 				.'%)",pch=c(20,0)[cb[,3]],'
 				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]] )'."\n"
 			."library(maptools)\n"
-			."pointLabel("
+			."labcd <- pointLabel("
 				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
 				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize, col=c(\"black\",\"red\")[cb[,3]], offset=0)"
+				."cex=$fontsize,offset=0,doPlot=F)\n"
+			.'text('
+				.'labcd$x, labcd$y, rownames(cb),'
+				."cex=$fontsize,"
+				.'offset=0,'
+				.'col=c("black","red")[cb[,3]]'
+				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
+		# グレースケールのプロット
+		$r_com_gray_a .= &slab_my;
+		$r_com_gray_a .= 
+			 'plot(cb <- rbind('
+				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
+				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
+				.'), xlab="成分'.$d_x.' ('.$kiyo1
+				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
+				.'%)",pch=c(20,0)[cb[,3]],'
+				.'col=c("gray65","gray50")[cb[,3]] )'."\n"
+		;
+		$r_com_gray =                             # command_fにのみ追加
+			 $r_command
+			.$r_com_gray_a
+			."library(maptools)\n"
+			."labcd <- pointLabel("
+				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
+				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
+				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
+				."cex=$fontsize,offset=0,doPlot=F)\n"
+		;
+		my $temp_cmd =                            # _f・_aに共通
+			 "cb  <- cbind(cb, labcd\$x, labcd\$y)\n"
+			."cb1 <-  subset(cb, cb[,3]==1)\n"
+			."cb2 <-  subset(cb, cb[,3]==2)\n"
+			.'text('
+				.'cb1[,4], cb1[,5], rownames(cb1),'
+				.'cex=0.8,'
+				.'offset=0,'
+				.'col="black",'
+				.')'."\n"
+			."library(ade4)\n"
+			.'s.label_my(cb2, xax=4, yax=5, label=rownames(cb2),'
+				.'boxes=T,'
+				.'clabel=0.8,'
+				.'addaxes=F,'
+				.'include.origin=F,'
+				.'grid=F,'
+				.'cpoint=0,'
+				.'cneig=0,'
+				.'cgrid=0,'
+				.'add.plot=T,'
+				.')'."\n"
+			.'points(cb2[,1], cb2[,2], pch=0, col="gray50")'."\n"
+			.'write.table(cb,"c:/temp.txt")'."\n"
+		;
+		$r_com_gray   .= $temp_cmd;
+		$r_com_gray_a .= $temp_cmd;
+
 		# ドットのみをプロット
 		$r_command_a .=
 			 'plot(cb <- rbind('
@@ -830,7 +886,7 @@ sub make_plot{
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
-		name      => 'words_CORRESP1',
+		name      => $args{plotwin_name}.'_1',
 		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
@@ -838,12 +894,27 @@ sub make_plot{
 	) or return 0;
 
 	my $plot2 = kh_r_plot->new(
-		name      => 'words_CORRESP2',
+		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
+
+	my $plotg;
+	my @plots = ();
+	if ($r_com_gray_a){
+		my $plotg = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_g',
+			command_a => $r_com_gray_a,
+			command_f => $r_com_gray,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or return 0;
+		@plots = ($plot2,$plotg,$plot1);
+	} else {
+		@plots = ($plot2,$plot1);
+	}
 
 	#$w->end(no_dialog => 1);
 
@@ -854,15 +925,62 @@ sub make_plot{
 	}
 	$args{base_win}->close;
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
+	
+	
 	$plotwin->open(
-		plots       => [$plot2,$plot1],
+		plots       => \@plots,
 		no_geometry => 1,
 	);
 
 }
 
 
+sub slab_my{
+	return '
+# 枠付きプロット関数の設定
+s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
+    clabel = 1, 
+    pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 
+    neig = NULL, cneig = 2, xlim = NULL, ylim = NULL, grid = TRUE, 
+    addaxes = TRUE, cgrid = 1, include.origin = TRUE, origin = c(0, 
+        0), sub = "", csub = 1.25, possub = "bottomleft", pixmap = NULL, 
+    contour = NULL, area = NULL, add.plot = FALSE) 
+{
+    dfxy <- data.frame(dfxy)
+    opar <- par(mar = par("mar"))
+    on.exit(par(opar))
+    par(mar = c(0.1, 0.1, 0.1, 0.1))
+    coo <- scatterutil.base(dfxy = dfxy, xax = xax, yax = yax, 
+        xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, 
+        cgrid = cgrid, include.origin = include.origin, origin = origin, 
+        sub = sub, csub = csub, possub = possub, pixmap = pixmap, 
+        contour = contour, area = area, add.plot = add.plot)
+    if (!is.null(neig)) {
+        if (is.null(class(neig))) 
+            neig <- NULL
+        if (class(neig) != "neig") 
+            neig <- NULL
+        deg <- attr(neig, "degrees")
+        if ((length(deg)) != (length(coo$x))) 
+            neig <- NULL
+    }
+    if (!is.null(neig)) {
+        fun <- function(x, coo) {
+            segments(coo$x[x[1]], coo$y[x[1]], coo$x[x[2]], coo$y[x[2]], 
+                lwd = par("lwd") * cneig)
+        }
+        apply(unclass(neig), 1, fun, coo = coo)
+    }
+    if (clabel > 0) 
+        scatterutil.eti(coo$x, coo$y, label, clabel, boxes)
+    if (cpoint > 0 & clabel < 1e-06) 
+        points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
+    #box()
+    invisible(match.call())
+}
+';
 
+}
 #--------------#
 #   アクセサ   #
 
