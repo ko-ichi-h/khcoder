@@ -2,10 +2,20 @@ package gui_window::r_plot::cod_corresp;
 use base qw(gui_window::r_plot);
 
 sub option1_options{
-	return [
-		'抽出語とドット',
-		'ドット',
-	] ;
+	my $self = shift;
+
+	if (@{$self->{plots}} == 2){
+		return [
+			'抽出語とドット',
+			'ドット',
+		] ;
+	} else {
+		return [
+			'抽出語とドット',
+			'抽出語とドット（グレー）',
+			'ドット',
+		] ;
+	}
 }
 
 sub option1_name{
