@@ -364,7 +364,18 @@ sub calc_exec{
 	my $cluster_number = $args{cluster_number};
 
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
-	$file =~ s/\\/\\\\/g;
+	
+	my $icode;
+	if ($::config_obj->os eq 'win32'){
+		$file = Jcode->new($file,'sjis')->euc;
+		$file =~ s/\\/\\\\/g;
+		#$file = Jcode->new($file,'euc')->sjis;
+	} else {
+		$icode = Jcode::getcode($file);
+		$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
+		$file =~ s/\\/\\\\/g;
+		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
+	}
 
 	# Rによる計算
 	if ($args{method_dist} eq 'euclid'){
@@ -421,12 +432,17 @@ sub calc_exec{
 	}
 
 	$file =~ s/\\\\/\\/g;
+	if ($::config_obj->os eq 'win32'){
+		$file = Jcode->new($file,'euc')->sjis;
+	} else {
+		$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
+	}
+
 	mysql_outvar::read::tab->new(
 		file     => $file,
 		tani     => $args{tani},
 		var_type => 'INT',
 	)->read;
-	
 
 	gui_window::doc_cls_res->open(
 		command_f => $r_command,
