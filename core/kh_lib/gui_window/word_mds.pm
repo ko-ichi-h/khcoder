@@ -452,7 +452,11 @@ sub make_plot{
 check4mds <- function(d){
 	jm <- as.matrix(dist(d, method=\"$args{method_dist}\"))
 	jm[upper.tri(jm,diag=TRUE)] <- NA
-	return( which(jm==0, arr.ind=TRUE)[,1][1] )
+	if ( length( which(jm==0, arr.ind=TRUE) ) ){
+		return( which(jm==0, arr.ind=TRUE)[,1][1] )
+	} else {
+		return( NA )
+	}
 }
 
 while ( is.na(check4mds(d)) == 0 ){
