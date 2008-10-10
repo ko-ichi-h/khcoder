@@ -221,7 +221,7 @@ sub underline_conv{
 }
 
 sub mw_entry_length{
-	return 20;
+	return 21;
 }
 
 sub font_main{
