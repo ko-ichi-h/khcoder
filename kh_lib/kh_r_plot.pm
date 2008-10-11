@@ -84,7 +84,7 @@ sub new{
 			$::config_obj->R->send(
 				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
 			);
-			print "as.graphicsAnnot defined.\n";
+			#print "as.graphicsAnnot defined.\n";
 		}
 		$if_lt25 = 1;
 	}
