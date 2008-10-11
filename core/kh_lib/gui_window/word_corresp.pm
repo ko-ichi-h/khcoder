@@ -865,7 +865,6 @@ sub make_plot{
 				.'add.plot=T,'
 				.')'."\n"
 			.'points(cb2[,1], cb2[,2], pch=0, col="gray50")'."\n"
-			.'write.table(cb,"c:/temp.txt")'."\n"
 		;
 		$r_com_gray   .= $temp_cmd;
 		$r_com_gray_a .= $temp_cmd;
