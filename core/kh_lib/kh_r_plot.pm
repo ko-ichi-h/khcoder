@@ -79,7 +79,7 @@ sub new{
 		}
 		chop $v1;
 		chop $v1;
-		#print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
+		print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
 		unless ($v1 >= 25){
 			$::config_obj->R->send(
 				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
