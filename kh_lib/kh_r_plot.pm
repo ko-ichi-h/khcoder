@@ -235,6 +235,7 @@ sub _save_emf{
 	$::config_obj->R->send(
 		 "win.metafile(filename=\"$path\", width = 7, height = 7 )"
 	);
+	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -254,6 +255,7 @@ sub _save_pdf{
 		 "pdf(file=\"$path\", height = 7, width = 7,"
 		."family=\"Japan1GothicBBB\")"
 	);
+	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -275,6 +277,7 @@ sub _save_eps{
 		."paper = \"special\", height = 7, width = 7,"
 		."family=\"Japan1GothicBBB\" )"
 	);
+	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -297,6 +300,7 @@ sub _save_png{
 		 "png(\"$path\", width=$self->{width},"
 		."height=$self->{height}, unit=\"px\")"
 	);
+	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
