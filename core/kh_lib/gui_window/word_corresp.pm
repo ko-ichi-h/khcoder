@@ -24,165 +24,17 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
-	my $left = $lf->Frame()->pack(-fill => 'both', -expand => 1);
-	# my $right = $lf->Frame()->pack(-side => 'right', -fill => 'x');
-
-	$left->Label(
-		-text => $self->gui_jchar('■布置する語の選択'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
-
-	# 最小・最大出現数
-	$left->Label(
-		-text => $self->gui_jchar('・最小/最大 出現数による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 2);
-	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
-	$l2->Label(
-		-text => $self->gui_jchar('　 　最小出現数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_min} = $l2->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_min}->insert(0,'1');
-	$self->{ent_min}->bind("<Key-Return>",sub{$self->check;});
-	$self->config_entry_focusin($self->{ent_min});
-	
-	$l2->Label(
-		-text => $self->gui_jchar('　 最大出現数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_max} = $l2->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_max}->bind("<Key-Return>",sub{$self->check;});
-	$self->config_entry_focusin($self->{ent_max});
-
-	# 最小・最大文書数
-	$left->Label(
-		-text => $self->gui_jchar('・最小/最大 文書数による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 2);
-
-	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
-	$l3->Label(
-		-text => $self->gui_jchar('　 　最小文書数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_min_df} = $l3->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_min_df}->insert(0,'1');
-	$self->{ent_min_df}->bind("<Key-Return>",sub{$self->check;});
-	$self->config_entry_focusin($self->{ent_min_df});
-
-	$l3->Label(
-		-text => $self->gui_jchar('　 最大文書数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_max_df} = $l3->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
-	$self->config_entry_focusin($self->{ent_max_df});
-
-	# 集計単位の選択
-	my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
-	$l1->Label(
-		-text => $self->gui_jchar('　 　文書と見なす単位：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	my %pack = (
-			-anchor => 'e',
-			-pady   => 0,
-			-side   => 'left'
-	);
-	$self->{tani_obj} = gui_widget::tani->open(
-		parent => $l1,
-		pack   => \%pack,
-		dont_remember => 1,
+	$self->{words_obj} = gui_widget::words->open(
+		parent => $lf,
+		type   => 'corresp',
 	);
 
-	# 品詞による単語の取捨選択
-	$left->Label(
-		-text => $self->gui_jchar('・品詞による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 2);
-	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
-	$l5->Label(
-		-text => $self->gui_jchar('　　'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
-	%pack = (
-			-anchor => 'w',
-			-side   => 'left',
-			-pady   => 1,
-			-fill   => 'y',
-			-expand => 1
-	);
-	$self->{hinshi_obj} = gui_widget::hinshi->open(
-		parent => $l5,
-		pack   => \%pack
-	);
-	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
-	$l4->Button(
-		-text => $self->gui_jchar('全て選択'),
-		-width => 8,
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
-	)->pack(-pady => 3);
-	$l4->Button(
-		-text => $self->gui_jchar('クリア'),
-		-width => 8,
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
-	)->pack();
-
-	# チェック部分
-	$lf->Label(
-		-text => $self->gui_jchar('・現在の設定で布置される語の数：'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w');
-
-	my $cf = $lf->Frame()->pack(-fill => 'x', -pady => 2);
-
-	$cf->Label(
-		-text => $self->gui_jchar('　 　'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$cf->Button(
-		-text => $self->gui_jchar('チェック'),
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->check;});}
-	)->pack(-side => 'left', -padx => 2);
 
 	my $lf2 = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x', -expand => 0);
-
-	$self->{ent_check} = $cf->Entry(
-		-font        => "TKFN",
-		-background  => 'gray',
-		-foreground  => 'black',
-		-state       => 'disable',
-	)->pack(-side => 'left', -fill => 'x', -expand => 1);
-	$self->disabled_entry_configure($self->{ent_check});
 
 	# 入力データの設定
 
@@ -395,95 +247,75 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->calc;});}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
-	$self->_setting_load;
+	$self->_settings_load;
 
 	return $self;
 }
 
-sub _setting_save{
+sub _settings_save{
 	my $self = shift;
 	my $settings;
-	
-	$settings->{min}    = $self->min;
-	$settings->{max}    = $self->max;
-	$settings->{min_df} = $self->min_df;
-	$settings->{max_df} = $self->max_df;
-	$settings->{tani}   = $self->tani;
-	$settings->{hinshi} = $self->{hinshi_obj}->selection_get;
 
-	$settings->{radio}  = $self->{radio};
-	$settings->{tani2}  = $self->gui_jg($self->{high});
-	$settings->{biplot} = $self->{biplot};
-	$settings->{var_id} = $self->{var_id};
+	$settings->{radio}     = $self->{radio};
+	$settings->{tani2}     = $self->gui_jg($self->{high});
+	$settings->{biplot}    = $self->{biplot};
+	$settings->{var_id}    = $self->{var_id};
 
-	$settings->{d_n}       => $self->gui_jg( $self->{entry_d_n}->get );
-	$settings->{d_x}       => $self->gui_jg( $self->{entry_d_x}->get );
-	$settings->{d_y}       => $self->gui_jg( $self->{entry_d_y}->get );
-	$settings->{plot_size} => $self->gui_jg( $self->{entry_plot_size}->get );
-	$settings->{font_size} => $self->gui_jg( $self->{entry_font_size}->get );
+	$settings->{d_n}       = $self->gui_jg( $self->{entry_d_n}->get );
+	$settings->{d_x}       = $self->gui_jg( $self->{entry_d_x}->get );
+	$settings->{d_y}       = $self->gui_jg( $self->{entry_d_y}->get );
+	$settings->{plot_size} = $self->gui_jg( $self->{entry_plot_size}->get );
+	$settings->{font_size} = $self->gui_jg( $self->{entry_font_size}->get );
 
-	use Data::Dumper;
-	$Data::Dumper::Terse = 1;
-	$Data::Dumper::Indent = 0;
+	$::project_obj->save_dmp(
+		name => $self->win_name,
+		var  => $settings,
+	);
 
-	my $save_data = Dumper($settings);
-
-	$save_data =~ s/\s//g;
-	$save_data = mysql_exec->quote($save_data);
-
-	print "length: ", length($save_data), "\n";
-	print "$save_data\n";
+	# 抽出語選択の設定も保存しておく
+	# （読み込みは自動だが、保存は手動…）
+	$self->{words_obj}->settings_save;
 
 	return $self;
 }
 
-sub _setting_load{
-
-}
-
-#--------------#
-#   チェック   #
-sub check{
+sub _settings_load{
 	my $self = shift;
-	
-	unless ( eval(@{$self->hinshi}) ){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
-		);
-		return 0;
-	}
-	
-	my $tani2 = '';
-	if ($self->{radio} == 0){
-		$tani2 = $self->gui_jg($self->{high});
-	}
-	elsif ($self->{radio} == 1){
-		if ( length($self->{var_id}) ){
-			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
+
+	my $settings = $::project_obj->load_dmp(
+		name => $self->win_name,
+	) or return 0;
+
+	# エントリー
+	foreach my $i ('d_n', 'd_x', 'd_y', 'plot_size', 'font_size'){
+		if ( length($settings->{$i}) ){
+			$self->{'entry_'.$i}->delete(0,'end');
+			$self->{'entry_'.$i}->insert(0,$settings->{$i});
 		}
 	}
-	
-	my $check = mysql_crossout::r_com->new(
-		tani   => $self->tani,
-		tani2  => $tani2,
-		hinshi => $self->hinshi,
-		max    => $self->max,
-		min    => $self->min,
-		max_df => $self->max_df,
-		min_df => $self->min_df,
-	)->wnum;
-	
-	$self->{ent_check}->configure(-state => 'normal');
-	$self->{ent_check}->delete(0,'end');
-	$self->{ent_check}->insert(0,$check);
-	$self->{ent_check}->configure(-state => 'disable');
+
+	$self->{radio} = $settings->{radio};
+	$self->refresh;
+
+	if ( $self->{radio} == 0 ){         # 「抽出語ｘ文書」の場合
+		$self->{opt_body_high}->set_value( $settings->{tani2} );
+		if ($settings->{biplot}){
+			$self->{label_high2}->select;
+		} else {
+			$self->{label_high2}->deselect;
+		}
+	}
+	elsif ( $self->{radio} == 1 ) {     # 「抽出語ｘ外部変数」の場合
+		$self->{opt_body_var}->set_value( $settings->{var_id} );
+	}
+
 }
+
 
 # ラジオボタン関連
 sub refresh{
 	my $self = shift;
-	unless ($self->{tani_obj}){return 0;}
+	unless ($self->tani){return 0;}
 
 	#------------------------#
 	#   外部変数選択Widget   #
@@ -674,7 +506,7 @@ sub calc{
 		unless ($ans =~ /ok/i){ return 0; }
 	}
 
-	$self->_setting_save;
+	$self->_settings_save;
 
 	my $ans = $self->win_obj->messageBox(
 		-message => $self->gui_jchar
@@ -1038,27 +870,27 @@ sub win_name{
 
 sub min{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_min}->get );
+	return $self->{words_obj}->min;
 }
 sub max{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_max}->get );
+	return $self->{words_obj}->max;
 }
 sub min_df{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_min_df}->get );
+	return $self->{words_obj}->min_df;
 }
 sub max_df{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_max_df}->get );
+	return $self->{words_obj}->max_df;
 }
 sub tani{
 	my $self = shift;
-	return $self->{tani_obj}->tani;
+	return $self->{words_obj}->tani;
 }
 sub hinshi{
 	my $self = shift;
-	return $self->{hinshi_obj}->selected;
+	return $self->{words_obj}->hinshi;
 }
 
 
