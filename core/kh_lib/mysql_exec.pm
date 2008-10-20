@@ -250,6 +250,14 @@ sub print_error{
 	gui_errormsg->open(type => 'mysql',sql => $self->err);
 }
 
+sub quote{
+	my $class = shift;
+	my $input = shift;
+
+	return $::project_obj->dbh->quote($input);
+}
+
+
 #-------------------------------#
 #   ログファイルにSQL文を記録   #
 sub log{

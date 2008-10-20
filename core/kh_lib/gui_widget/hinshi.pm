@@ -105,6 +105,17 @@ sub selected{
 	return \@r;
 }
 
+sub selection_get{
+	my $self = shift;
+	my $r;
+	my $row = 0;
+	foreach my $i (@{$self->{checks}}){
+		$r->{$self->{name}{$row}} = $i;
+		++$row;
+	}
+	return $r;
+}
+
 
 #--------------#
 #   アクセサ   #

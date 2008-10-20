@@ -395,8 +395,50 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->calc;});}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
+	$self->_setting_load;
 
 	return $self;
+}
+
+sub _setting_save{
+	my $self = shift;
+	my $settings;
+	
+	$settings->{min}    = $self->min;
+	$settings->{max}    = $self->max;
+	$settings->{min_df} = $self->min_df;
+	$settings->{max_df} = $self->max_df;
+	$settings->{tani}   = $self->tani;
+	$settings->{hinshi} = $self->{hinshi_obj}->selection_get;
+
+	$settings->{radio}  = $self->{radio};
+	$settings->{tani2}  = $self->gui_jg($self->{high});
+	$settings->{biplot} = $self->{biplot};
+	$settings->{var_id} = $self->{var_id};
+
+	$settings->{d_n}       => $self->gui_jg( $self->{entry_d_n}->get );
+	$settings->{d_x}       => $self->gui_jg( $self->{entry_d_x}->get );
+	$settings->{d_y}       => $self->gui_jg( $self->{entry_d_y}->get );
+	$settings->{plot_size} => $self->gui_jg( $self->{entry_plot_size}->get );
+	$settings->{font_size} => $self->gui_jg( $self->{entry_font_size}->get );
+
+	use Data::Dumper;
+	$Data::Dumper::Terse = 1;
+	$Data::Dumper::Indent = 0;
+
+	my $save_data = Dumper($settings);
+
+	$save_data =~ s/\s//g;
+	$save_data = mysql_exec->quote($save_data);
+
+	print "length: ", length($save_data), "\n";
+	print "$save_data\n";
+
+	return $self;
+}
+
+sub _setting_load{
+
 }
 
 #--------------#
@@ -631,6 +673,8 @@ sub calc{
 		);
 		unless ($ans =~ /ok/i){ return 0; }
 	}
+
+	$self->_setting_save;
 
 	my $ans = $self->win_obj->messageBox(
 		-message => $self->gui_jchar
