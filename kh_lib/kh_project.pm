@@ -77,7 +77,7 @@ sub prepare_db{
 	mysql_exec->do('
 		create table status_char (
 			name   varchar(255) not null,
-			status varchar(255)
+			status text
 		)
 	',1);
 	mysql_exec->do("
@@ -108,10 +108,31 @@ sub open{
 	
 	# データベースを開く
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
-
 	$::project_obj = $self;
+	
+	$self->check_up;
+	
 	return $self;
 }
+
+sub check_up{
+	my $self = shift;
+	
+	# status_char.statusをvarcharからtextへ
+	my $chk = mysql_exec->select(
+		'show columns from status_char like \'status\'',
+		1
+	)->hundle->fetch->[1];
+	if ($chk =~ /varchar/){
+		mysql_exec->do(
+			'ALTER TABLE status_char MODIFY status TEXT'
+			,1
+		);
+		print "Converted \"status_char.status\" to TEXT\n";
+	}
+
+}
+
 
 #--------------#
 #   アクセサ   #
