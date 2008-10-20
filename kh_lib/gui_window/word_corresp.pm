@@ -252,6 +252,7 @@ sub _new{
 	return $self;
 }
 
+# 設定の保存（「OK」をクリックして実行する時に）
 sub _settings_save{
 	my $self = shift;
 	my $settings;
@@ -279,8 +280,13 @@ sub _settings_save{
 	return $self;
 }
 
+# 設定の読み込み（画面を開く時に）
 sub _settings_load{
 	my $self = shift;
+
+	return 1; # この機能でのみ設定がすべて保存されるようにすると、
+	          # 他の機能とのバランスが悪そうなので、保存してある
+	          # 設定を敢えて読み込まないことに…。
 
 	my $settings = $::project_obj->load_dmp(
 		name => $self->win_name,
@@ -294,10 +300,12 @@ sub _settings_load{
 		}
 	}
 
+	# 「抽出語ｘ文書」 or 「抽出語ｘ外部変数」
 	$self->{radio} = $settings->{radio};
 	$self->refresh;
 
-	if ( $self->{radio} == 0 ){         # 「抽出語ｘ文書」の場合
+	# 「抽出語ｘ文書」の場合
+	if ( $self->{radio} == 0 ){
 		$self->{opt_body_high}->set_value( $settings->{tani2} );
 		if ($settings->{biplot}){
 			$self->{label_high2}->select;
@@ -305,7 +313,9 @@ sub _settings_load{
 			$self->{label_high2}->deselect;
 		}
 	}
-	elsif ( $self->{radio} == 1 ) {     # 「抽出語ｘ外部変数」の場合
+
+	# 「抽出語ｘ外部変数」の場合
+	elsif ( $self->{radio} == 1 ) {
 		$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
 
