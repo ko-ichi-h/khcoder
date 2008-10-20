@@ -116,6 +116,22 @@ sub selection_get{
 	return $r;
 }
 
+sub selection_set{
+	my $self      = shift;
+	my $selection = shift;
+
+	my $row = 0;
+	foreach my $i (@{$self->{check_wigets}}){
+		if ($selection->{$self->{name}{$row}}){
+			$i->select;
+		} else {
+			$i->deselect;
+		}
+		++$row;
+	}
+
+
+}
 
 #--------------#
 #   アクセサ   #

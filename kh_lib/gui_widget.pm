@@ -8,6 +8,7 @@ use gui_widget::codf;
 use gui_widget::mail_config;
 use gui_widget::hinshi;
 use gui_widget::url_lab;
+use gui_widget::words;
 
 sub open{
 	my $class = shift;

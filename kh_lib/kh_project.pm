@@ -298,6 +298,62 @@ sub last_codf{
 	}
 }
 
+sub save_dmp{
+	my $self = shift;
+	my %args = @_;
+	
+	use Data::Dumper;
+	$Data::Dumper::Terse = 1;
+	$Data::Dumper::Indent = 0;
+
+	$args{var}  = Dumper($args{var});
+	$args{var}  =~ s/\s//g;
+	$args{var}  = mysql_exec->quote($args{var});
+	$args{name} = mysql_exec->quote($args{name});
+	
+	if (
+		mysql_exec->select(
+			"SELECT * FROM status_char WHERE name = $args{name}",
+			1
+		)->hundle->rows > 0
+	) {                                 # 既にエントリ（行）がある場合
+		mysql_exec->do(
+			"UPDATE status_char SET status=$args{var} WHERE name=$args{name}",
+			1
+		);
+		# print "update: $args{var}\n";
+	} else {                            # エントリ（行）を新たに作成
+		mysql_exec->do(
+			"INSERT INTO status_char (name, status)
+			VALUES ($args{name}, $args{var})",
+			1,
+		);
+		# print "new: $args{var}\n";
+	}
+}
+
+sub load_dmp{
+	my $self = shift;
+	my %args = @_;
+	
+	$args{name} = mysql_exec->quote($args{name});
+	
+	if (
+		mysql_exec->select(
+			"SELECT * FROM status_char WHERE name = $args{name}",
+			1
+		)->hundle->rows > 0
+	) {
+		my $raw = mysql_exec->select(
+			"SELECT status FROM status_char WHERE name = $args{name}",
+			1
+		)->hundle->fetch->[0];
+		return eval($raw);
+	} else {
+		return undef;
+	}
+}
+
 sub status_h5{
 	my $self = shift; my $new  = shift;
 	if ( defined($new) ){
