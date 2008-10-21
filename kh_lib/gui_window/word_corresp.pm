@@ -24,8 +24,15 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
+	$lf->Label(
+		-text => gui_window->gui_jchar('■布置する語の選択'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
+
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf,
+		verb   => '布置',
 		type   => 'corresp',
 	);
 

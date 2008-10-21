@@ -13,6 +13,8 @@ sub go{
 	my $self = shift;
 	my $file = shift;
 	
+	$self->{words_obj}->settings_save;
+	
 	mysql_contxt::tab->new(
 		tani     => $self->{tani_obj}->value,
 		hinshi   => $self->hinshi,

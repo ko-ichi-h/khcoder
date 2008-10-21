@@ -8,20 +8,33 @@ sub _new{
 
 	my $left = $self->parent->Frame()->pack(-fill => 'both', -expand => 1);
 
-	$left->Label(
-		-text => gui_window->gui_jchar('Å°ïzíuÇ∑ÇÈåÍÇÃëIë'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
+	# Ω∏∑◊√±∞Ã§Œ¡™¬Ú
+	unless ($self->{type} eq 'corresp'){
+		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
+		$l1->Label(
+			-text => gui_window->gui_jchar('°¶Ω∏∑◊√±∞Ã°ß'),
+			-font => "TKFN"
+		)->pack(-side => 'left');
+		my %pack = (
+				-anchor => 'e',
+				-pady   => 0,
+				-side   => 'left'
+		);
+		$self->{tani_obj} = gui_widget::tani->open(
+			parent => $l1,
+			pack   => \%pack,
+			#dont_remember => 1,
+		);
+	}
 
-	# ç≈è¨ÅEç≈ëÂèoåªêî
+	# ∫«æÆ°¶∫«¬ÁΩ–∏ΩøÙ
 	$left->Label(
-		-text => gui_window->gui_jchar('ÅEç≈è¨/ç≈ëÂ èoåªêîÇ…ÇÊÇÈåÍÇÃéÊéÃëIë'),
+		-text => gui_window->gui_jchar('°¶∫«æÆ/∫«¬Á Ω–∏ΩøÙ§À§Ë§Î∏Ï§ŒºËºŒ¡™¬Ú'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l2->Label(
-		-text => gui_window->gui_jchar('Å@ Å@ç≈è¨èoåªêîÅF'),
+		-text => gui_window->gui_jchar('°° °°∫«æÆΩ–∏ΩøÙ°ß'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min} = $l2->Entry(
@@ -34,7 +47,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min});
 	
 	$l2->Label(
-		-text => gui_window->gui_jchar('Å@ ç≈ëÂèoåªêîÅF'),
+		-text => gui_window->gui_jchar('°° ∫«¬ÁΩ–∏ΩøÙ°ß'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max} = $l2->Entry(
@@ -45,15 +58,15 @@ sub _new{
 	$self->{ent_max}->bind("<Key-Return>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max});
 
-	# ç≈è¨ÅEç≈ëÂï∂èëêî
+	# ∫«æÆ°¶∫«¬Á ∏ΩÒøÙ
 	$left->Label(
-		-text => gui_window->gui_jchar('ÅEç≈è¨/ç≈ëÂ ï∂èëêîÇ…ÇÊÇÈåÍÇÃéÊéÃëIë'),
+		-text => gui_window->gui_jchar('°¶∫«æÆ/∫«¬Á  ∏ΩÒøÙ§À§Ë§Î∏Ï§ŒºËºŒ¡™¬Ú'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 
 	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l3->Label(
-		-text => gui_window->gui_jchar('Å@ Å@ç≈è¨ï∂èëêîÅF'),
+		-text => gui_window->gui_jchar('°° °°∫«æÆ ∏ΩÒøÙ°ß'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min_df} = $l3->Entry(
@@ -66,7 +79,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min_df});
 
 	$l3->Label(
-		-text => gui_window->gui_jchar('Å@ ç≈ëÂï∂èëêîÅF'),
+		-text => gui_window->gui_jchar('°° ∫«¬Á ∏ΩÒøÙ°ß'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max_df} = $l3->Entry(
@@ -77,7 +90,7 @@ sub _new{
 	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max_df});
 
-	# èWåvíPà ÇÃëIëÅiëŒâûï™êÕópÅj
+	# Ω∏∑◊√±∞Ã§Œ¡™¬Ú° ¬–±˛ ¨¿œÕ—°À
 	my %pack = (
 		-anchor => 'e',
 		-pady   => 0,
@@ -86,7 +99,7 @@ sub _new{
 	if ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => gui_window->gui_jchar('Å@ Å@ï∂èëÇ∆å©Ç»Ç∑íPà ÅF'),
+			-text => gui_window->gui_jchar('°° °° ∏ΩÒ§»∏´§ §π√±∞Ã°ß'),
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		$self->{tani_obj} = gui_widget::tani->open(
@@ -96,14 +109,14 @@ sub _new{
 		);
 	}
 
-	# ïiéåÇ…ÇÊÇÈíPåÍÇÃéÊéÃëIë
+	# … ªÏ§À§Ë§Î√±∏Ï§ŒºËºŒ¡™¬Ú
 	$left->Label(
-		-text => gui_window->gui_jchar('ÅEïiéåÇ…ÇÊÇÈåÍÇÃéÊéÃëIë'),
+		-text => gui_window->gui_jchar('°¶… ªÏ§À§Ë§Î∏Ï§ŒºËºŒ¡™¬Ú'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
 	$l5->Label(
-		-text => gui_window->gui_jchar('Å@Å@'),
+		-text => gui_window->gui_jchar('°°°°'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -119,35 +132,39 @@ sub _new{
 	);
 	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => gui_window->gui_jchar('ëSÇƒëIë'),
+		-text => gui_window->gui_jchar('¡¥§∆¡™¬Ú'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $self->parent->after(10,sub{$self->{hinshi_obj}->select_all;});}
 	)->pack(-pady => 3);
 	$l4->Button(
-		-text => gui_window->gui_jchar('ÉNÉäÉA'),
+		-text => gui_window->gui_jchar('•Ø•Í•¢'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $self->parent->after(10,sub{$self->{hinshi_obj}->select_none;});}
 	)->pack();
 
-	# É`ÉFÉbÉNïîï™
+	# •¡•ß•√•Ø…Ù ¨
 	$self->parent->Label(
-		-text => gui_window->gui_jchar('ÅEåªç›ÇÃê›íËÇ≈ïzíuÇ≥ÇÍÇÈåÍÇÃêîÅF'),
+		-text => gui_window->gui_jchar(
+			 '°¶∏Ω∫ﬂ§Œ¿ﬂƒÍ§«'
+			.$self->{verb}
+			.'§µ§Ï§Î∏Ï§ŒøÙ°ß'
+		),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
 	my $cf = $self->parent->Frame()->pack(-fill => 'x', -pady => 2);
 
 	$cf->Label(
-		-text => gui_window->gui_jchar('Å@ Å@'),
+		-text => gui_window->gui_jchar('°° °°'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$cf->Button(
-		-text => gui_window->gui_jchar('É`ÉFÉbÉN'),
+		-text => gui_window->gui_jchar('•¡•ß•√•Ø'),
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $self->parent->after(10,sub{$self->check;});}
@@ -167,14 +184,14 @@ sub _new{
 }
 
 #--------------#
-#   É`ÉFÉbÉN   #
+#   •¡•ß•√•Ø   #
 sub check{
 	my $self = shift;
 	
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'ïiéåÇ™1Ç¬Ç‡ëIëÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅB',
+			msg  => '… ªÏ§¨1§ƒ§‚¡™¬Ú§µ§Ï§∆§§§ﬁ§ª§Û°£',
 		);
 		return 0;
 	}
@@ -234,9 +251,9 @@ sub settings_load{
 	$self->min( $settings->{min} );
 	$self->max( $settings->{max} );
 	
-	# íPà ÇÃê›íËÇÕì«Ç›çûÇ‹Ç»Ç¢
-	# Åió]èäÇ≈à·Ç§ílÇ…ê›íËÇ≥ÇÍÇΩÇÁÅAÇªÇÍÇ…Ç†ÇÌÇπÇÈÅB
-	# Å@Ç‹ÇΩÇªÇÃèÍçáÇÕÅuï∂èëêîÅvÇÃê›íËÇ‡ì«Ç›çûÇ‹Ç»Ç¢Åj
+	# √±∞Ã§Œ¿ﬂƒÍ§œ∆…§ﬂπ˛§ﬁ§ §§
+	# ° ÕæΩÍ§«∞„§¶√Õ§À¿ﬂƒÍ§µ§Ï§ø§È°¢§Ω§Ï§À§¢§Ô§ª§Î°£
+	# °°§ﬁ§ø§Ω§ŒæÏπÁ§œ°÷ ∏ΩÒøÙ°◊§Œ¿ﬂƒÍ§‚∆…§ﬂπ˛§ﬁ§ §§°À
 	if ( $self->tani eq $settings->{tani} ){
 		$self->min_df( $settings->{min_df} );
 		$self->max_df( $settings->{max_df} );
@@ -246,7 +263,7 @@ sub settings_load{
 
 
 #--------------#
-#   ÉAÉNÉZÉT   #
+#   •¢•Ø•ª•µ   #
 
 sub min{
 	my $self = shift;
