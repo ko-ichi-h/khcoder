@@ -286,7 +286,7 @@ sub _settings_load{
 
 	return 1; # この機能でのみ設定がすべて保存されるようにすると、
 	          # 他の機能とのバランスが悪そうなので、保存してある
-	          # 設定を敢えて読み込まないことに…。
+	          # 設定を（今の所）敢えて読み込まないことに…。
 
 	my $settings = $::project_obj->load_dmp(
 		name => $self->win_name,
@@ -318,9 +318,7 @@ sub _settings_load{
 	elsif ( $self->{radio} == 1 ) {
 		$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
-
 }
-
 
 # ラジオボタン関連
 sub refresh{
