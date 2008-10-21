@@ -36,6 +36,8 @@ sub save{
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	
+	$self->{words_obj}->settings_save;
+	
 	my $ans = $self->win_obj->messageBox(
 		-message => $self->gui_jchar
 			(

@@ -12,7 +12,6 @@ use gui_window::morpho_crossout::spss;
 use gui_window::morpho_crossout::tab;
 use gui_window::morpho_crossout::var;
 
-
 #-------------#
 #   GUI作製   #
 
@@ -23,147 +22,15 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf = $win->LabFrame(
-		-label => 'Options',
+		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1);
 
-	my $left = $lf->Frame()->pack(-fill => 'both', -expand => 1);
-	# my $right = $lf->Frame()->pack(-side => 'right', -fill => 'x');
-	
-	# 集計単位の選択
-	my $l1 = $left->Frame()->pack(-fill => 'x');
-	$l1->Label(
-		-text => $self->gui_jchar('・集計単位の選択： '),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	my %pack = (
-			-anchor => 'e',
-			-pady   => 2,
-			-side   => 'left'
+	$self->{words_obj} = gui_widget::words->open(
+		parent => $lf,
+		verb   => '出力',
 	);
-	$self->{tani_obj} = gui_widget::tani->open(
-		parent => $l1,
-		pack   => \%pack
-	);
-
-	# 最小・最大出現数
-	$left->Label(
-		-text => $self->gui_jchar('・最小/最大 出現数による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 5);
-	my $l2 = $left->Frame()->pack(-fill => 'x');
-	$l2->Label(
-		-text => $self->gui_jchar('　 　最小出現数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_min} = $l2->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->config_entry_focusin($self->{ent_min});
-	
-	$l2->Label(
-		-text => $self->gui_jchar('　 最大出現数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_max} = $l2->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_min}->insert(0,'1');
-	$self->config_entry_focusin($self->{ent_max});
-
-	# 最小・最大文書数
-	$left->Label(
-		-text => $self->gui_jchar('・最小/最大 文書数による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 5);
-	my $l3 = $left->Frame()->pack(-fill => 'x');
-	$l3->Label(
-		-text => $self->gui_jchar('　 　最小文書数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_min_df} = $l3->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$l3->Label(
-		-text => $self->gui_jchar('　 最大文書数：'),
-		-font => "TKFN"
-	)->pack(-side => 'left');
-	$self->{ent_max_df} = $l3->Entry(
-		-font       => "TKFN",
-		-width      => 6,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_min_df}->insert(0,'1');
-	$self->config_entry_focusin($self->{ent_min_df});
-
-	# 品詞による単語の取捨選択
-	$left->Label(
-		-text => $self->gui_jchar('・品詞による語の取捨選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -pady => 5);
-	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1);
-	$l5->Label(
-		-text => $self->gui_jchar('　　'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
-	%pack = (
-			-anchor => 'w',
-			-side   => 'left',
-			-pady   => 1,
-			-fill   => 'y',
-			-expand => 1
-	);
-	$self->{hinshi_obj} = gui_widget::hinshi->open(
-		parent => $l5,
-		pack   => \%pack
-	);
-	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
-	$l4->Button(
-		-text => $self->gui_jchar('全て選択'),
-		-width => 8,
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
-	)->pack(-pady => 3);
-	$l4->Button(
-		-text => $self->gui_jchar('クリア'),
-		-width => 8,
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
-	)->pack();
-	
-	# チェック部分
-	my $cf = $win->LabFrame(
-		-label => 'Check',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'x');
-
-	$cf->Label(
-		-text => $self->gui_jchar('出力される語の数：'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left');
-	$cf->Button(
-		-text => $self->gui_jchar('チェック'),
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->check;});}
-	)->pack(-side => 'left', -padx => 2);
-	$self->{ent_check} = $cf->Entry(
-		-font        => "TKFN",
-		-background  => 'gray',
-		-foreground  => 'black',
-		-state       => 'disable',
-	)->pack(-side => 'left',-fill => 'x');
-	$self->disabled_entry_configure($self->{ent_check});
 
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -184,61 +51,31 @@ sub _new{
 }
 
 #--------------#
-#   チェック   #
-sub check{
-	my $self = shift;
-	
-	unless ( eval(@{$self->hinshi}) ){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
-		);
-		return 0;
-	}
-	
-	my $check = mysql_crossout->new(
-		tani   => $self->tani,
-		hinshi => $self->hinshi,
-		max    => $self->max,
-		min    => $self->min,
-		max_df => $self->max_df,
-		min_df => $self->min_df,
-	)->wnum;
-	
-	$self->{ent_check}->configure(-state => 'normal');
-	$self->{ent_check}->delete(0,'end');
-	$self->{ent_check}->insert(0,$check);
-	$self->{ent_check}->configure(-state => 'disable');
-}
-
-#--------------#
 #   アクセサ   #
 
 sub min{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_min}->get );
+	return $self->{words_obj}->min;
 }
 sub max{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_max}->get );
+	return $self->{words_obj}->max;
 }
 sub min_df{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_min_df}->get );
+	return $self->{words_obj}->min_df;
 }
 sub max_df{
 	my $self = shift;
-	return $self->gui_jg( $self->{ent_max_df}->get );
+	return $self->{words_obj}->max_df;
 }
 sub tani{
 	my $self = shift;
-	return $self->{tani_obj}->tani;
+	return $self->{words_obj}->tani;
 }
 sub hinshi{
 	my $self = shift;
-	return $self->{hinshi_obj}->selected;
+	return $self->{words_obj}->hinshi;
 }
-
-
 
 1;
