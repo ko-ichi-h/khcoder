@@ -118,11 +118,11 @@ sub print_values{
 	}
 	
 	# ¥½¡¼¥È
-	if ($names =~ /\A[0-9]+\Z/){
-		@v = sort {$a <=> $b} @v;
-	} else {
-		@v = sort @v;
-	}
+	#if ($names =~ /\A[0-9]+\Z/){
+	#	@v = sort {$a <=> $b} @v;
+	#} else {
+	#	@v = sort @v;
+	#}
 	return \@v;
 }
 
