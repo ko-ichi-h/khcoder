@@ -76,6 +76,58 @@ sub copy {
 	return 1;
 }
 
+# 値のリストを返す（生の値を返す）
+sub values{
+	my $self = shift;
+
+	my @v = ();
+	my $names = '';
+
+	# 値リストの取得
+	my $f = mysql_exec->select("
+		SELECT $self->{column}
+		FROM   $self->{table}
+		GROUP BY $self->{column}
+	",1)->hundle;
+	while (my $i = $f->fetch){
+		push @v, $i->[0];
+		$names .= $i->[0];
+	}
+
+	# ソート
+	if ($names =~ /\A[0-9]+\Z/){
+		@v = sort {$a <=> $b} @v;
+	} else {
+		@v = sort @v;
+	}
+
+	return \@v;
+}
+
+# 値のリストを返す（値ラベルがある場合はラベルを返す）
+sub print_values{
+	my $self = shift;
+	
+	# リストの取得
+	my $raw_values = $self->values;
+	my @v = ();
+	my $names = '';
+	foreach my $i (@{$raw_values}){
+		push @v, $self->print_val($i);
+		$names .= $self->print_val($i);
+	}
+	
+	# ソート
+	if ($names =~ /\A[0-9]+\Z/){
+		@v = sort {$a <=> $b} @v;
+	} else {
+		@v = sort @v;
+	}
+	return \@v;
+}
+
+
+
 # 値ラベルもしくは値を与えられた時に、値を返す
 sub real_val{
 	my $self = shift;

@@ -498,7 +498,16 @@ sub file_WordList{
 	$list = $::config_obj->os_path($list);
 	return $list;
 }
-
+sub file_TempCSV{
+	my $self = shift;
+	my $n = 0;
+	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
+		++$n;
+	}
+	my $f = $self->file_datadir.'_temp'.$n.'.csv';
+	$f = $::config_obj->os_path($f);
+	return $f;
+}
 sub file_HukugoList{
 	my $self = shift;
 	my $list = $self->file_datadir.'_hl.csv';
