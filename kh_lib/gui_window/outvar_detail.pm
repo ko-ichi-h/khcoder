@@ -15,7 +15,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	#$wmw->focus;
+
 	$wmw->title($self->gui_jt("変数詳細： "."$args{name}"));
 
 	my $fra4 = $wmw->LabFrame(
@@ -82,8 +82,6 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->_save;});}
 	)->pack(-side => 'right');
 
-	#MainLoop;
-
 	# 情報の取得と表示
 	$self->{var_obj} = mysql_outvar::a_var->new($args{name});
 	my $v = $self->{var_obj}->detail_tab;
@@ -133,7 +131,13 @@ sub _new{
 	}
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 
-	$self->{list}    = $lis;
+	# マニュアルに記載のない機能
+	$self->win_obj->bind(
+		'<Control-Key-h>',
+		sub { $self->v_words_list; }
+	);
+
+	$self->{list} = $lis;
 	return $self;
 }
 
@@ -209,6 +213,99 @@ sub v_words{
 	$win->search;
 }
 
+sub v_words_list{
+	my $self = shift;
+	
+	# 値のリスト
+	my $values = $self->{var_obj}->print_values;
+	
+	# リモートウィンドウの準備
+	my $win;
+	if ($::main_gui->if_opened('w_doc_ass')){
+		$win = $::main_gui->get('w_doc_ass');
+	} else {
+		$win = gui_window::word_ass->open;
+	}
+	
+	my $d;
+	# 値ごとに特徴的な語を取得
+	foreach my $i (@{$values}){
+		# クエリー作成
+		my $query = '<>'.$self->{var_obj}->{name}.'-->'.$i;
+		$query = $self->gui_jchar($query,'euc');
+		
+		# リモートウィンドウの操作
+		$win->{tani_obj}->{raw_opt} = $self->{var_obj}->{tani};
+		$win->{tani_obj}->mb_refresh;
+		
+		$win->{clist}->selectionClear;
+		$win->{clist}->selectionSet(0);
+		$win->clist_check;
+		
+		$win->{direct_w_e}->delete(0,'end');
+		$win->{direct_w_e}->insert('end',$query);
+		$win->win_obj->focus;
+		$win->search;
+		
+		# 値の取得
+		my $n = 0;
+		while ($win->{rlist}->info('exists', $n)){
+			if ( $win->{rlist}->itemExists($n, 1) ){
+				$d->{$i}[$n][0] = kh_csv->value_conv(
+					Jcode->new(
+						$self->gui_jg(
+								$win->{rlist}->itemCget($n, 1, -text)
+						),
+						'sjis'
+					)->euc
+				);
+			}
+			if ( $win->{rlist}->itemExists($n, 5) ){
+				$d->{$i}[$n][1] = kh_csv->value_conv(
+					Jcode->new(
+						$self->gui_jg(
+							$win->{rlist}->itemCget($n, 5, -text)
+						),
+						'sjis'
+					)->euc
+				);
+			}
+			++$n;
+			last if $n > 10;
+		}
+	}
+	
+	# 出力用の整理
+	my $t = '';
+	foreach my $i (@{$values}){                             # ヘッダ
+		$t .= kh_csv->value_conv($i).",,";
+	}
+	chop $t;
+	$t .= "\n";
+	print "head: $t\n\n";
+	for (my $n = 0; $n <= 10; ++$n){                        # 中身
+		foreach my $i (@{$values}){
+			$t .= "$d->{$i}[$n][0],";
+			$t .= "$d->{$i}[$n][1],";
+		}
+		chop $t;
+		$t .= "\n";
+	}
+	$t = Jcode->new($t,'euc')->sjis if $::config_obj->os eq 'win32';
+	
+	# ファイルへ出力
+	my $f = $::project_obj->file_TempCSV;
+	open (TEMPCSV,">$f") or
+		gui_errormsg->open(
+			type => 'file',
+			file => $f
+		)
+	;
+	print TEMPCSV $t;
+	close(TEMPCSV);
+	
+	gui_OtherWin->open($f);
+}
 
 sub _save{
 	my $self = shift;
