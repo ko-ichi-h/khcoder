@@ -215,9 +215,16 @@ sub v_words{
 
 sub v_words_list{
 	my $self = shift;
+	$self->save;
 	
 	# 値のリスト
-	my $values = $self->{var_obj}->print_values;
+	my $values;
+	foreach my $i (@{$self->{var_obj}->print_values}){
+		if ( $i eq '.' || $i =~ /missing/i || $i eq '欠損値' ){
+			next;
+		}
+		push @{$values}, $i;
+	}
 	
 	# リモートウィンドウの準備
 	my $win;
@@ -276,21 +283,28 @@ sub v_words_list{
 	}
 	
 	# 出力用の整理
+	my $b_row_max = @{$values};
+	$b_row_max /= 4;
+	$b_row_max = int($b_row_max) + 1 if $b_row_max > int($b_row_max);
+	
 	my $t = '';
-	foreach my $i (@{$values}){                             # ヘッダ
-		$t .= kh_csv->value_conv($i).",,";
-	}
-	chop $t;
-	$t .= "\n";
-	print "head: $t\n\n";
-	for (my $n = 0; $n <= 10; ++$n){                        # 中身
-		foreach my $i (@{$values}){
-			$t .= "$d->{$i}[$n][0],";
-			$t .= "$d->{$i}[$n][1],";
+	for (my $b_row = 0; $b_row < $b_row_max; ++$b_row){
+		my @c = ($b_row * 4, $b_row * 4 + 1, $b_row * 4 + 2, $b_row * 4 + 3);
+		foreach my $i (@c){                                 # ヘッダ
+			$t .= kh_csv->value_conv($values->[$i]).",,";
 		}
 		chop $t;
 		$t .= "\n";
+		for (my $n = 0; $n <= 10; ++$n){                    # 中身
+			foreach my $i (@c){
+				$t .= "$d->{$values->[$i]}[$n][0],";
+				$t .= "$d->{$values->[$i]}[$n][1],";
+			}
+			chop $t;
+			$t .= "\n";
+		}
 	}
+	
 	$t = Jcode->new($t,'euc')->sjis if $::config_obj->os eq 'win32';
 	
 	# ファイルへ出力
@@ -303,9 +317,30 @@ sub v_words_list{
 	;
 	print TEMPCSV $t;
 	close(TEMPCSV);
-	
+
 	gui_OtherWin->open($f);
 }
+
+sub _temp{
+	use Spreadsheet::WriteExcel;
+	use Unicode::String qw(utf8 utf16);
+
+	my $workbook  = Spreadsheet::WriteExcel->new("simple.xls");
+	$workbook->{_formats}->[15]->set_properties(
+		font  => "MS PGothic",
+		size  => 9,
+		align => 'vcenter',
+	);
+	my $worksheet = $workbook->add_worksheet(
+		utf8( Jcode->new('シート1')->utf8 )->utf16,
+		1
+	);
+
+	$worksheet->write_unicode(0, 0, utf8( Jcode->new('こんにちわ Excel!')->utf8 )->utf16 );
+
+	$workbook->close;
+}
+
 
 sub _save{
 	my $self = shift;
