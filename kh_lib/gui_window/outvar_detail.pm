@@ -215,8 +215,11 @@ sub v_words{
 
 sub v_words_list{
 	my $self = shift;
-	$self->save;
 	
+	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
+	$self->__save;
+	$self->{var_obj} = mysql_outvar::a_var->new( $self->{var_obj}->{name} );
+
 	# 値のリスト
 	my $values;
 	foreach my $i (@{$self->{var_obj}->print_values}){
@@ -225,7 +228,7 @@ sub v_words_list{
 		}
 		push @{$values}, $i;
 	}
-	
+
 	# リモートウィンドウの準備
 	my $win;
 	if ($::main_gui->if_opened('w_doc_ass')){
@@ -233,7 +236,7 @@ sub v_words_list{
 	} else {
 		$win = gui_window::word_ass->open;
 	}
-	
+
 	my $d;
 	# 値ごとに特徴的な語を取得
 	foreach my $i (@{$values}){
@@ -258,30 +261,39 @@ sub v_words_list{
 		my $n = 0;
 		while ($win->{rlist}->info('exists', $n)){
 			if ( $win->{rlist}->itemExists($n, 1) ){
-				$d->{$i}[$n][0] = kh_csv->value_conv(
+				$d->{$i}[$n][0] = 
 					Jcode->new(
 						$self->gui_jg(
 								$win->{rlist}->itemCget($n, 1, -text)
 						),
 						'sjis'
 					)->euc
-				);
+				;
 			}
 			if ( $win->{rlist}->itemExists($n, 5) ){
-				$d->{$i}[$n][1] = kh_csv->value_conv(
+				$d->{$i}[$n][1] = 
 					Jcode->new(
 						$self->gui_jg(
 							$win->{rlist}->itemCget($n, 5, -text)
 						),
 						'sjis'
 					)->euc
-				);
+				;
 			}
 			++$n;
 			last if $n > 10;
 		}
 	}
 	
+	$self->_write_csv($values,$d);
+	
+}
+
+sub _write_csv{
+	my $self   = shift;
+	my $values = shift;
+	my $d      = shift;
+
 	# 出力用の整理
 	my $b_row_max = @{$values};
 	$b_row_max /= 4;
@@ -297,7 +309,7 @@ sub v_words_list{
 		$t .= "\n";
 		for (my $n = 0; $n <= 10; ++$n){                    # 中身
 			foreach my $i (@c){
-				$t .= "$d->{$values->[$i]}[$n][0],";
+				$t .= kh_csv->value_conv($d->{$values->[$i]}[$n][0]).",";
 				$t .= "$d->{$values->[$i]}[$n][1],";
 			}
 			chop $t;
@@ -317,9 +329,9 @@ sub v_words_list{
 	;
 	print TEMPCSV $t;
 	close(TEMPCSV);
-
 	gui_OtherWin->open($f);
 }
+
 
 sub _temp{
 	use Spreadsheet::WriteExcel;
@@ -344,7 +356,13 @@ sub _temp{
 
 sub _save{
 	my $self = shift;
-	
+	$self->__save;
+	$self->close;
+}
+
+sub __save{
+	my $self = shift;
+
 	# 変更されたラベルを保存
 	foreach my $i (keys %{$self->{label}}){
 		if (
@@ -352,15 +370,21 @@ sub _save{
 			eq
 			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc
 		){
+			# print "skip: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
 			next;
 		}
 		$self->{var_obj}->label_save(
-			Jcode->new($i)->euc,
+			$i,
 			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc,
 		);
+		$self->{label}{$i} = Jcode->new(
+			$self->gui_jg($self->{entry}{$i}->get), 'sjis'
+		)->euc;
+		# print "saved: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
 	}
-	$self->close;
+	return $self;
 }
+
 
 #--------------#
 #   アクセサ   #

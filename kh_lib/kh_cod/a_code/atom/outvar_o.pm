@@ -128,7 +128,9 @@ sub raw_for_cache_chk{
 		return $self->{raw}.'(invalid)';
 	}
 	my $var_obj = mysql_outvar::a_var->new($var);
-	return $self->{raw}."($var_obj->{table}".':'."$var_obj->{column})";
+	return 
+		$self->{raw}
+		."($var_obj->{table}:$var_obj->{column}:".$var_obj->real_val($val).")";
 }
 
 sub tables{
