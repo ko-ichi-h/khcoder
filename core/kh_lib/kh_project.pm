@@ -508,6 +508,16 @@ sub file_TempCSV{
 	$f = $::config_obj->os_path($f);
 	return $f;
 }
+sub file_TempExcel{
+	my $self = shift;
+	my $n = 0;
+	while (-e $self->file_datadir.'_temp'.$n.'.xls'){
+		++$n;
+	}
+	my $f = $self->file_datadir.'_temp'.$n.'.xls';
+	$f = $::config_obj->os_path($f);
+	return $f;
+}
 sub file_HukugoList{
 	my $self = shift;
 	my $list = $self->file_datadir.'_hl.csv';

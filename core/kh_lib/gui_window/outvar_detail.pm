@@ -281,12 +281,12 @@ sub v_words_list{
 				;
 			}
 			++$n;
-			last if $n > 10;
+			last if $n >= 10;
 		}
 	}
 	
-	$self->_write_csv($values,$d);
-	
+	#$self->_write_csv($values,$d);
+	$self->_write_xls($values,$d);
 }
 
 sub _write_csv{
@@ -333,24 +333,92 @@ sub _write_csv{
 }
 
 
-sub _temp{
+sub _write_xls{
+	my $self   = shift;
+	my $values = shift;
+	my $d      = shift;
+
 	use Spreadsheet::WriteExcel;
 	use Unicode::String qw(utf8 utf16);
 
-	my $workbook  = Spreadsheet::WriteExcel->new("simple.xls");
-	$workbook->{_formats}->[15]->set_properties(
-		font  => "MS PGothic",
-		size  => 9,
-		align => 'vcenter',
-	);
+	my $f    = $::project_obj->file_TempExcel;
+	my $workbook  = Spreadsheet::WriteExcel->new($f);
 	my $worksheet = $workbook->add_worksheet(
 		utf8( Jcode->new('シート1')->utf8 )->utf16,
 		1
 	);
 
-	$worksheet->write_unicode(0, 0, utf8( Jcode->new('こんにちわ Excel!')->utf8 )->utf16 );
+	my $font = '';
+	if ($] > 5.008){
+		$font = $self->gui_jchar('ＭＳ Ｐ明朝', 'euc');
+	} else {
+		$font = 'MS PMincho';
+	}
+	$workbook->{_formats}->[15]->set_properties(
+		font   => $font,
+		size   => 9,
+		valign => 'vcenter',
+		align  => 'center',
+	);
+	my $format_n = $workbook->add_format(
+		num_format => '.000',
+		font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(
+		font       => $font,
+		align      => 'left',
+	);
+
+
+	my $big_row = 0;
+	my $col     = 0;
+	
+	foreach my $i (@{$values}){
+		my $row = $big_row * 11;
+		
+		# ヘッダ
+		$worksheet->write_unicode(
+			$row,
+			$col,
+			utf8( Jcode->new($i,'euc')->utf8 )->utf16
+		);
+		$worksheet->merge_range(
+			$row,
+			$col,
+			$row,
+			$col + 1,
+			#'hoge'
+		);
+		++$row;
+		
+		# データ
+		foreach my $h (@{$d->{$i}}){
+			$worksheet->write_unicode(
+				$row,
+				$col,
+				utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+				$format_c
+			);
+			$worksheet->write_number(
+				$row,
+				$col + 1,
+				$h->[1],
+				$format_n
+			);
+			++$row;
+		}
+		
+		# 位置調整
+		$col += 3;
+		if ($col > 10){
+			$col = 0;
+			++$big_row;
+		}
+	}
 
 	$workbook->close;
+	gui_OtherWin->open($f);
 }
 
 
