@@ -355,41 +355,61 @@ sub _write_xls{
 		$font = 'MS PMincho';
 	}
 	$workbook->{_formats}->[15]->set_properties(
-		font   => $font,
-		size   => 9,
-		valign => 'vcenter',
-		align  => 'center',
+		font       => $font,
+		size       => 9,
+		valign     => 'vcenter',
+		align      => 'center',
 	);
 	my $format_n = $workbook->add_format(
 		num_format => '.000',
+		size       => 9,
 		font       => $font,
 		align      => 'right',
 	);
 	my $format_c = $workbook->add_format(
 		font       => $font,
+		size       => 9,
 		align      => 'left',
 	);
-
+	my $format_l = $workbook->add_format(
+		font       => $font,
+		size       => 9,
+		top        => 1,
+		align      => 'center',
+	);
 
 	my $big_row = 0;
 	my $col     = 0;
 	
 	foreach my $i (@{$values}){
-		my $row = $big_row * 11;
+		my $row = $big_row * 11 + 1;
 		
 		# ヘッダ
+		my $format_m = $workbook->add_format(
+			font          => $font,
+			size          => 9,
+			bottom        => 1,
+			top           => 1,
+			#align         => 'center',
+			center_across => 1
+		);
 		$worksheet->write_unicode(
 			$row,
 			$col,
-			utf8( Jcode->new($i,'euc')->utf8 )->utf16
+			utf8( Jcode->new($i,'euc')->utf8 )->utf16,
+			$format_m
 		);
-		$worksheet->merge_range(
-			$row,
-			$col,
+		$worksheet->write_blank(
 			$row,
 			$col + 1,
-			#'hoge'
+			$format_m
 		);
+		
+		if ($col - 1 > 0){
+			$worksheet->set_column($col - 1,$col - 1, 1);
+			$worksheet->write_blank($row, $col - 1, $format_l);
+		}
+		
 		++$row;
 		
 		# データ
