@@ -133,6 +133,9 @@ sub real_val{
 	my $self = shift;
 	my $val  = shift;
 	
+	# print "val: $val\n";
+	# print "val-sjis: ", Jcode->new($val,'euc')->sjis, "\n";
+	
 	foreach my $i (keys %{$self->{labels}}){
 		if ($val eq $self->{labels}{$i}){
 			$val = $i;
