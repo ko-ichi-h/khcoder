@@ -80,12 +80,12 @@ sub _new{
 
 	$mb->command(
 		-command => sub {$self->v_words_list('xls')},
-		-label   => 'Excel',
+		-label   => $self->gui_jchar('Excel形式'),
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('csv')},
-		-label   => 'CSV',
+		-label   => $self->gui_jchar('CSV形式'),
 	);
 
 	$wmw->Button(

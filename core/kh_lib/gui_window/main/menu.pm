@@ -246,7 +246,7 @@ sub make{
 				-label => gui_window->gui_jchar('抽出語リスト（品詞別・出現回数順）'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_WordList;
+					my $target = $::project_obj->file_TempCSV;
 					mysql_words->csv_list($target);
 					gui_OtherWin->open($target);
 				})},
