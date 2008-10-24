@@ -360,18 +360,31 @@ sub _write_xls{
 		valign     => 'vcenter',
 		align      => 'center',
 	);
-	my $format_n = $workbook->add_format(
+	my $format_n = $workbook->add_format(         # 数値
 		num_format => '.000',
 		size       => 9,
 		font       => $font,
 		align      => 'right',
 	);
-	my $format_c = $workbook->add_format(
+	my $format_nl = $workbook->add_format(        # 数値・下に罫線
+		num_format => '.000',
+		size       => 9,
+		font       => $font,
+		align      => 'right',
+		bottom     => 1,
+	);
+	my $format_c = $workbook->add_format(         # 文字列
 		font       => $font,
 		size       => 9,
 		align      => 'left',
 	);
-	my $format_l = $workbook->add_format(
+	my $format_cl = $workbook->add_format(        # 文字列・下に罫線
+		font       => $font,
+		size       => 9,
+		align      => 'left',
+		bottom     => 1,
+	);
+	my $format_l = $workbook->add_format(         # 上に罫線
 		font       => $font,
 		size       => 9,
 		top        => 1,
@@ -380,7 +393,7 @@ sub _write_xls{
 
 	my $big_row = 0;
 	my $col     = 0;
-	
+	my $n       = 0;
 	foreach my $i (@{$values}){
 		my $row = $big_row * 11 + 1;
 		
@@ -413,20 +426,46 @@ sub _write_xls{
 		++$row;
 		
 		# データ
+		my $row_cu = 0;
 		foreach my $h (@{$d->{$i}}){
-			$worksheet->write_unicode(
-				$row,
-				$col,
-				utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
-				$format_c
-			);
-			$worksheet->write_number(
-				$row,
-				$col + 1,
-				$h->[1],
-				$format_n
-			);
+			if ($row_cu == 9 && $n + 5 > @{$values}){       # 下に罫線あり
+				$worksheet->write_unicode(
+					$row,
+					$col,
+					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					$format_cl
+				);
+				$worksheet->write_number(
+					$row,
+					$col + 1,
+					$h->[1],
+					$format_nl
+				);
+			} else {                                        # 罫線無し
+				$worksheet->write_unicode(
+					$row,
+					$col,
+					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					$format_c
+				);
+				$worksheet->write_number(
+					$row,
+					$col + 1,
+					$h->[1],
+					$format_n
+				);
+			}
 			++$row;
+			++$row_cu;
+		}
+		
+		# 下線(1)
+		if ( $col - 1 > 0 && $n + 5 > @{$values} ){
+			$worksheet->write_blank(
+				$row - 1,
+				$col - 1,
+				$format_cl
+			);
 		}
 		
 		# 位置調整
@@ -435,7 +474,22 @@ sub _write_xls{
 			$col = 0;
 			++$big_row;
 		}
+		++$n;
 	}
+
+	# 下線(2)
+	if ($col > 0 && $col - 1 < 9 && $big_row > 0){
+		$col -= 1;
+		while ($col <= 10){
+			$worksheet->write_blank(
+				$big_row * 11 + 11,
+				$col,
+				$format_cl
+			);
+			++$col;
+		}
+	}
+
 
 	$workbook->close;
 	gui_OtherWin->open($f);
