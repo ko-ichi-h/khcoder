@@ -190,7 +190,7 @@ sub _new{
 		-text => $self->gui_jchar('・現在の設定で計算に使用される語の数'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
-	my $cf2 = $right->Frame->pack(-fill => 'x', -expand => '1');
+	my $cf2 = $right->Frame->pack(-fill => 'x',  -pady => 2);
 	$cf2->Label(
 		-text => $self->gui_jchar('　 　'),
 		-font => "TKFN"
@@ -206,7 +206,7 @@ sub _new{
 		-background => 'gray',
 		-foreground  => 'black',
 		-state      => 'disable',
-	)->pack(-side => 'left',-fill => 'x', -expand => '1');
+	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 	$self->disabled_entry_configure($self->{ent_check2});
 
 

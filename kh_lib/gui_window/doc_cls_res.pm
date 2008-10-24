@@ -35,7 +35,7 @@ sub _new{
 		-background       => 'white',
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
-		#-selectmode       => 'extended',
+		-selectmode       => 'extended',
 		-height           => 10,
 		-width            => 10,
 	)->pack(-fill =>'both',-expand => 'yes',-side => 'left');
@@ -103,7 +103,7 @@ sub _new{
 	);
 	$self->{optmenu}->set_value('_cluster_tmp_w');
 	
-	$self->{copy_btn} = $wmw->Button(
+	$wmw->Button(
 		-text => $self->gui_jchar('Ä´À°'),
 		-font => "TKFN",
 		-borderwidth => '1',

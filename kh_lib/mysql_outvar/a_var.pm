@@ -112,17 +112,22 @@ sub print_values{
 	my $raw_values = $self->values;
 	my @v = ();
 	my $names = '';
+	my $names_v = '';
 	foreach my $i (@{$raw_values}){
 		push @v, $self->print_val($i);
 		$names .= $self->print_val($i);
+		$names_v .= $i;
 	}
 	
 	# ソート
-	#if ($names =~ /\A[0-9]+\Z/){
-	#	@v = sort {$a <=> $b} @v;
-	#} else {
-	#	@v = sort @v;
-	#}
+	unless ( $names_v =~ /\A[0-9]*\.*[0-9]*\Z/ ) {# 値が数値のみなら値でソート
+		if ($names =~ /\A[0-9]+\Z/){
+			@v = sort {$a <=> $b} @v;
+		} else {
+			@v = sort @v;
+		}
+	}
+
 	return \@v;
 }
 

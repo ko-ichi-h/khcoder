@@ -33,7 +33,7 @@ sub _new{
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'both');
 
 	# クラスター数
 	my $f4 = $lf->Frame()->pack(

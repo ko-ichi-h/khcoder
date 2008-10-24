@@ -37,7 +37,7 @@ sub _new{
 		-background       => 'white',
 		-selectforeground => 'black',
 		-selectbackground => 'white',
-		-selectmode       => 'single',
+		-selectmode       => 'extended',
 		-selectborderwidth=> 0,
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes', -side => 'left');
@@ -67,6 +67,26 @@ sub _new{
 		-width       => 4,
 		-command     => sub{ $mw->after(10,sub {$self->v_words;}); }
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
+
+	my $mb = $fhl->Menubutton(
+		-text        => $self->gui_jchar('一覧'),
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-width       => $self->{width},
+		-borderwidth => 1,
+	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
+
+	$mb->command(
+		-command => sub {$self->v_words_list('xls')},
+		-label   => 'Excel',
+	);
+
+	$mb->command(
+		-command => sub {$self->v_words_list('csv')},
+		-label   => 'CSV',
+	);
 
 	$wmw->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -214,7 +234,8 @@ sub v_words{
 }
 
 sub v_words_list{
-	my $self = shift;
+	my $self      = shift;
+	my $file_type = shift;
 	
 	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
 	$self->__save;
@@ -285,8 +306,8 @@ sub v_words_list{
 		}
 	}
 	
-	#$self->_write_csv($values,$d);
-	$self->_write_xls($values,$d);
+	$file_type = '_write_'.$file_type;
+	$self->$file_type($values,$d);
 }
 
 sub _write_csv{
@@ -332,7 +353,6 @@ sub _write_csv{
 	gui_OtherWin->open($f);
 }
 
-
 sub _write_xls{
 	my $self   = shift;
 	my $values = shift;
@@ -350,9 +370,9 @@ sub _write_xls{
 
 	my $font = '';
 	if ($] > 5.008){
-		$font = $self->gui_jchar('ＭＳ Ｐ明朝', 'euc');
+		$font = $self->gui_jchar('ＭＳ Ｐゴシック', 'euc');
 	} else {
-		$font = 'MS PMincho';
+		$font = 'MS PGothic';
 	}
 	$workbook->{_formats}->[15]->set_properties(
 		font       => $font,
@@ -377,12 +397,14 @@ sub _write_xls{
 		font       => $font,
 		size       => 9,
 		align      => 'left',
+		num_format => '@'
 	);
 	my $format_cl = $workbook->add_format(        # 文字列・下に罫線
 		font       => $font,
 		size       => 9,
 		align      => 'left',
 		bottom     => 1,
+		num_format => '@'
 	);
 	my $format_l = $workbook->add_format(         # 上に罫線
 		font       => $font,
@@ -404,7 +426,8 @@ sub _write_xls{
 			bottom        => 1,
 			top           => 1,
 			#align         => 'center',
-			center_across => 1
+			center_across => 1,
+			num_format    => '@'
 		);
 		$worksheet->write_unicode(
 			$row,
