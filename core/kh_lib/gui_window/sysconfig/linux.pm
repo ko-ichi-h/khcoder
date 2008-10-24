@@ -137,7 +137,7 @@ sub __new{
 	# 表計算
 	my $appf2 = $afra->Frame()->pack(-expand => 1, -fill => 'x');
 	$appf2->Label(
-		-text => $self->gui_jchar('表計算（CSVビューア）：'),
+		-text => $self->gui_jchar('表計算（CSV/Excel）：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 	my $ent_csv = $appf2->Entry(
