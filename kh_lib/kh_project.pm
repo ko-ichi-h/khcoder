@@ -131,6 +131,18 @@ sub check_up{
 		print "Converted \"status_char.status\" to TEXT\n";
 	}
 
+	# 一時ファイル群を削除
+	my $n;
+	$n = 0;
+	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
+		unlink($self->file_datadir.'_temp'.$n.'.csv');
+		++$n;
+	}
+	$n = 0;
+	while (-e $self->file_datadir.'_temp'.$n.'.xls'){
+		unlink($self->file_datadir.'_temp'.$n.'.xls');
+		++$n;
+	}
 }
 
 
@@ -491,12 +503,6 @@ sub file_MorphoIn{ # file_m_targetと同じ
 	my $temp = $self->file_m_target;
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
-}
-sub file_WordList{
-	my $self = shift;
-	my $list = $self->file_datadir.'_wl.csv';
-	$list = $::config_obj->os_path($list);
-	return $list;
 }
 sub file_TempCSV{
 	my $self = shift;
