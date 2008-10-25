@@ -151,12 +151,6 @@ sub _new{
 	}
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 
-	# マニュアルに記載のない機能
-	$self->win_obj->bind(
-		'<Control-Key-h>',
-		sub { $self->v_words_list; }
-	);
-
 	$self->{list} = $lis;
 	return $self;
 }
