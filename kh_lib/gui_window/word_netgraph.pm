@@ -328,24 +328,33 @@ sub make_plot{
 	#	height    => $args{plot_size},
 	#) or return 0;
 
-	# ストレス値の取得
-	#my $stress;
-	#if ($args{method} eq 'K' or $args{method} eq 'S'){
-	#	$::config_obj->R->send(
-	#		 'str <- paste("khcoder",c$stress, sep = "")'."\n"
-	#		.'print(str)'
-	#	);
-	#	$stress = $::config_obj->R->read;
-	#
-	#	if ($stress =~ /"khcoder(.+)"/){
-	#		$stress = $1;
-	#		$stress /= 100 if $args{method} eq 'K';
-	#		$stress = sprintf("%.3f",$stress);
-	#		$stress = "  stress = $stress";
-	#	} else {
-	#		$stress = undef;
-	#	}
-	#}
+	# 情報の取得
+	my $info;
+	$::config_obj->R->send('
+		print(
+			paste(
+				"khcoder  nodes: ",
+				length(get.vertex.attribute(n2,"name")),
+				" (",
+				length(get.vertex.attribute(n,"name")),
+				"),  edges: ",
+				length(get.edgelist(n2,name=T)[,1]),
+				" (",
+				length(get.edgelist(n,name=T)[,1]),
+				"),  density: ",
+				round( graph.density(n2), 3 ),
+				#", min. jaccard: ",
+				#round( th, 3 ),
+				sep=""
+			)
+		)
+	');
+	$info = $::config_obj->R->read;
+	if ($info =~ /"khcoder(.+)"/){
+		$info = $1;
+	} else {
+		$info = undef;
+	}
 
 	# プロットWindowを開く
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
@@ -356,7 +365,7 @@ sub make_plot{
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
 		plots       => [$plot1],
-		#msg         => $stress,
+		msg         => $info,
 		no_geometry => 1,
 	);
 	
@@ -394,7 +403,7 @@ if (th == 0){
 }
 
 # edgeを間引いてネットワークグラフを再作成 
-el2 <- subset(el, el[,3] >= th)
+el2 <- subset(el, el[,3] > th)
 n2  <- graph.edgelist(
 	as.matrix(el2)[,1:2],
 	directed	=F
