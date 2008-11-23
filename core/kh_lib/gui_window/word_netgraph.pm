@@ -35,9 +35,35 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both');
 
+	# カラー
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
+
+	$f5->Label(
+		-text => $self->gui_jchar('・カラー：'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	my $widget = gui_widget::optmenu->open(
+		parent  => $f5,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[$self->gui_jchar('中心性（媒介）'),             'cnt-b'],
+				[$self->gui_jchar('中心性（次数）'),             'cnt-d'],
+				[$self->gui_jchar('グループ検出（媒介）'),       'com-b'],
+				[$self->gui_jchar('グループ検出（modularity）'), 'com-g'],
+			],
+		variable => \$self->{color_opt},
+	);
+	$widget->set_value('cnt-b');
+
+
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('・表示するedgeの指定'),
+		-text => $self->gui_jchar('・グラフ描画に使用するedge'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -46,57 +72,50 @@ sub _new{
 		-pady => 2
 	);
 
-	$self->{radio} = 0;
-
 	$f4->Label(
 		-text => '  ',
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	$self->{radio} = 'n';
 	$f4->Radiobutton(
-		-text             => $self->gui_jchar('edgeの数：'),
+		-text             => $self->gui_jchar('使用数：'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
-		-value            => 0,
+		-value            => 'n',
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{entry_edges_number} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 5,
+		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_edges_number}->insert(0,'60');
 	$self->{entry_edges_number}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_edges_number});
 
-
-	my $f5 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
-	);
-
-	$f5->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$f5->Radiobutton(
-		-text             => $self->gui_jchar('Jaccard係数の最小値：'),
+	$f4->Radiobutton(
+		-text             => $self->gui_jchar('Jaccard係数：'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
-		-value            => 1,
+		-value            => 'k',
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$self->{entry_edges_jac} = $f5->Entry(
+	$self->{entry_edges_jac} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 5,
+		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_edges_jac}->insert(0,'0.2');
 	$self->{entry_edges_jac}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_edges_jac});
+
+	$f4->Label(
+		-text => $self->gui_jchar('以上'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -159,7 +178,7 @@ sub refresh{
 	my $self = shift;
 		
 	my ($dis, $nor);
-	if ($self->{radio} == 0){
+	if ($self->{radio} eq 'n'){
 		$nor = $self->{entry_edges_number};
 		$dis = $self->{entry_edges_jac};
 	} else {
@@ -265,9 +284,10 @@ sub calc{
 		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		#method         => $self->gui_jg( $self->{method_opt}  ),
-		#method_dist    => $self->gui_jg( $self->{method_dist} ),
-		#dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
+		color_opt      => $self->gui_jg( $self->{color_opt}  ),
+		n_or_j         => $self->gui_jg( $self->{radio} ),
+		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
+		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_netgraph',
 	);
@@ -275,169 +295,57 @@ sub calc{
 
 sub make_plot{
 	my %args = @_;
-	
-	my $fontsize = $args{font_size};
+
 	my $r_command = $args{r_command};
 
-	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => "次元の指定が不正です。1から3までの数値を指定して下さい。",
-		);
-		return 0;
+	# パラメーター設定部分
+	if ( $args{n_or_j} eq 'j'){
+		$r_command .= "edges <- 0\n";
+		$r_command .= "th    <- $args{edges_jac}\n";
 	}
+	elsif ( $args{n_or_j} eq 'n'){
+		$r_command .= "edges <- $args{edges_num}\n";
+		$r_command .= "th    <- 0\n";
+	}
+	$r_command .= "com_method <- \"$args{color_opt}\"\n";
+	$r_command .= "cex        <- $args{font_size}\n";
 
-	$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
-
-	$r_command .= "
-check4mds <- function(d){
-	jm <- as.matrix(dist(d, method=\"$args{method_dist}\"))
-	jm[upper.tri(jm,diag=TRUE)] <- NA
-	if ( length( which(jm==0, arr.ind=TRUE) ) ){
-		return( which(jm==0, arr.ind=TRUE)[,1][1] )
-	} else {
-		return( NA )
-	}
-}
-
-while ( is.na(check4mds(d)) == 0 ){
-	n <-  check4mds(d)
-	print( paste( \"Dropped object:\", row.names(d)[n]) )
-	d <- d[-n,]
-}
-";
-
-	if ($args{method_dist} eq 'euclid'){
-		$r_command .= "d <- t( scale( t(d) ) )\n";
-	}
-	$r_command .= "dj <- dist(d,method=\"$args{method_dist}\")\n";
-
-	# アルゴリズム別のコマンド
-	my $r_command_d = '';
-	my $r_command_a = '';
-	if ($args{method} eq 'K'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- isoMDS(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'S'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- sammon(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'C'){
-		$r_command .= "c <- cmdscale(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\n";
-	}
-
-	# プロット用のコマンド（次元別）
-	$r_command_d = $r_command;
-	if ($args{dim_number} == 1){
-		$r_command_d .=
-			 "cl <- cbind(cl,0)\n"
-			.'plot(cl, pch=20, col="mediumaquamarine",'
-				.'xlab="次元1",ylab="")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		$r_command_a .=
-			 'plot(cl,'
-				.'xlab="次元1",ylab="")'."\n"
-		;
-	}
-	elsif ($args{dim_number} == 2){
-		$r_command_d .=
-			 'plot(cl,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		$r_command_a .=
-			 'plot(cl,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
-	}
-	elsif ($args{dim_number} == 3){
-		$r_command_d .=
-			"library(scatterplot3d)\n"
-			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
-				."highlight.3d=FALSE, color=\"#FFA200FF\", "
-				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
-				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
-				."mar=c(3,3,0,2), lty.hide=\"dashed\" )\n"
-			."cl2 <- s3d\$xyz.convert(cl)\n"
-			."library(maptools)\n"
-			."pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
-				."cex=$fontsize, offset=0, col=\"black\")\n"
-		;
-		$r_command_a .=
-			 "library(scatterplot3d)\n"
-			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
-				."highlight.3d=TRUE, mar=c(3,3,0,2), "
-				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
-				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
-				."lty.hide=\"dashed\" )\n"
-		;
-	}
-
-	$r_command .= $r_command_a;
+	$r_command .= &r_plot_cmd;
 
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
-		command_f => $r_command_d,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or return 0;
-	my $plot2 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_2',
-		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
-
-	# 分析から省かれた語／コードをチェック
-	my $dropped = '';
-	foreach my $i (split /\n/, $plot1->r_msg){
-		if ($i =~ /"Dropped object: (.+)"/){
-			$dropped .= "$1, ";
-		}
-	}
-	if ( length($dropped) ){
-		chop $dropped;
-		chop $dropped;
-		$dropped = Jcode->new($dropped,'sjis')->euc
-			if $::config_obj->os eq 'win32';
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => "以下の抽出語／コードは分析から省かれました：\n$dropped",
-		);
-	}
+	#my $plot2 = kh_r_plot->new(
+	#	name      => $args{plotwin_name}.'_2',
+	#	command_a => $r_command_a,
+	#	command_f => $r_command,
+	#	width     => $args{plot_size},
+	#	height    => $args{plot_size},
+	#) or return 0;
 
 	# ストレス値の取得
-	my $stress;
-	if ($args{method} eq 'K' or $args{method} eq 'S'){
-		$::config_obj->R->send(
-			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
-			.'print(str)'
-		);
-		$stress = $::config_obj->R->read;
-
-		if ($stress =~ /"khcoder(.+)"/){
-			$stress = $1;
-			$stress /= 100 if $args{method} eq 'K';
-			$stress = sprintf("%.3f",$stress);
-			$stress = "  stress = $stress";
-		} else {
-			$stress = undef;
-		}
-	}
+	#my $stress;
+	#if ($args{method} eq 'K' or $args{method} eq 'S'){
+	#	$::config_obj->R->send(
+	#		 'str <- paste("khcoder",c$stress, sep = "")'."\n"
+	#		.'print(str)'
+	#	);
+	#	$stress = $::config_obj->R->read;
+	#
+	#	if ($stress =~ /"khcoder(.+)"/){
+	#		$stress = $1;
+	#		$stress /= 100 if $args{method} eq 'K';
+	#		$stress = sprintf("%.3f",$stress);
+	#		$stress = "  stress = $stress";
+	#	} else {
+	#		$stress = undef;
+	#	}
+	#}
 
 	# プロットWindowを開く
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
@@ -447,17 +355,188 @@ while ( is.na(check4mds(d)) == 0 ){
 	$args{base_win}->close;
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
-		plots       => [$plot1, $plot2],
-		msg         => $stress,
+		plots       => [$plot1],
+		#msg         => $stress,
 		no_geometry => 1,
 	);
 	
 	return 1;
 }
 
+sub r_plot_cmd{
+	return '
+
+# 類似度計算 
+d <- dist(d,method="binary")
+d <- as.matrix(d)
+d <- 1 - d;
+
+# ネットワークグラフ作成 
+library(igraph)
+n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
+n <- set.vertex.attribute(n,"name", 0:length(d[1,])-1, rownames(d))
+
+# edgeを間引く準備 
+el <- data.frame(
+	edge1            = get.edgelist(n,name=T)[,1],
+	edge2            = get.edgelist(n,name=T)[,2],
+	weight           = get.edge.attribute(n, "weight"),
+	stringsAsFactors = FALSE
+)
+
+# 閾値を計算 
+if (th == 0){
+	th = quantile(
+		el$weight,
+		names = F,
+		probs = 1 - edges / length(el[,1])
+	)
+}
+
+# edgeを間引いてネットワークグラフを再作成 
+el2 <- subset(el, el[,3] >= th)
+n2  <- graph.edgelist(
+	as.matrix(el2)[,1:2],
+	directed	=F
+)
+n2 <- set.edge.attribute(
+	n2, "weight", 0:length(get.edgelist(n2)[,1])-1, el2[,3]
+)
+
+# 中心性
+if ( com_method == "cnt-b" || com_method == "cnt-d"){
+	if (com_method == "cnt-b"){                   # 媒介
+		ccol <- betweenness(
+			n2, v=0:(length(get.vertex.attribute(n2,"name"))-1), directed=F
+		)
+	}
+	if (com_method == "cnt-d"){                   # 次数
+		ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
+	}
+	ccol <- ccol - min(ccol)                      # 色の設定
+	ccol <- ccol * 100 / max(ccol)
+	ccol <- trunc(ccol + 1)
+	ccol <- cm.colors(101)[ccol]
+}
+
+# クリーク検出
+if ( com_method == "com-b" || com_method == "com-g"){
+	merge_step <- function(n2, m){                # 共通利用の関数
+		for ( i in 1:(length( m ) / 2) ){
+			temp_csize <- community.to.membership(n2, m,i)$csize
+			num_max   <- max( temp_csize )
+			num_alone <- sum( temp_csize[ temp_csize == 1 ] )
+			if (
+				num_max / length(get.vertex.attribute(n2,"name")) >= 0.25
+				&& num_max > num_alone
+			){
+				#print( paste(num_max, num_alone) )
+				return(i)
+			} 
+		}
+	}
+
+	if (com_method == "com-b"){                   # 媒介性（betweenness）
+		com   <- edge.betweenness.community(n2, directed=F)    
+		com_m <- community.to.membership(
+			n2, com$merges, merge_step(n2,com$merges)
+		)
+	}
+
+	if (com_method == "com-g"){                   # Modularity
+		com   <- fastgreedy.community   (n2, merges=TRUE, modularity=TRUE)    
+		com_m <- community.to.membership(
+			n2, com$merges, merge_step(n2,com$merges)
+		)
+	}
+
+	com_col <- NULL # vertex frame                # Vertexの色（12色まで）
+	ccol    <- NULL # vertex
+	col_num <- 1
+	library( RColorBrewer )
+	for (i in com_m$csize ){
+		if ( i == 1){
+			ccol    <- c( ccol, "white" )
+			com_col <- c( com_col, "gray40" )
+		} else {
+			if (col_num <= 12){
+				ccol    <- c( ccol, brewer.pal(12, "Set3")[col_num] )
+				com_col <- c( com_col, "gray40" )
+			} else {
+				ccol    <- c( ccol, "white" )
+				com_col <- c( com_col, "blue" )
+			}
+			col_num <- col_num + 1
+		}
+	}
+	com_col_v <- com_col[com_m$membership + 1]
+	ccol      <- ccol[com_m$membership + 1]
+
+	edg_lty <- NULL                               # edgeの色と形状
+	edg_col <- NULL
+	for (i in 1:length(el2$edge1)){
+		if (
+			   com_m$membership[ get.edgelist(n2,name=F)[i,1] + 1 ]
+			== com_m$membership[ get.edgelist(n2,name=F)[i,2] + 1 ]
+		){
+			edg_col <- c( edg_col, "gray55" )
+			edg_lty <- c( edg_lty, 1 )
+		} else {
+			edg_col <- c( edg_col, "gray" )
+			edg_lty <- c( edg_lty, 3 )
+		}
+	}
+} else {
+	com_col_v <- "gray40"
+	edg_col   <- "darkgray"
+	edg_lty   <- 1
+}
+
+# plot用の初期配置
+lay <-  cmdscale( as.dist( shortest.paths(n2) ), k=2 )
+check4fr <- function(d){
+	chk <- 0
+	for (i in combn( length(d[,1]), 2, simplify=F ) ){
+		if (
+			   d[i[1],1] == d[i[2],1]
+			&& d[i[1],2] == d[i[2],2]
+		){
+			return( i[1] )
+		}
+	}
+	return( NA )
+}
+while ( is.na(check4fr(lay)) == 0 ){
+	mv <-  check4fr(lay)
+	lay[mv,1] <- lay[mv,1] + 0.001
+	#print( paste( "Moved:", mv ) )
+}
+
+# プロット
+par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+plot.igraph(
+	n2,
+	vertex.label       =get.vertex.attribute(n2,"name"),
+	vertex.label.cex   =cex,
+	vertex.label.color ="black",
+	vertex.color       =ccol,
+	vertex.frame.color =com_col_v,
+	edge.color         =edg_col,
+	edge.lty           =edg_lty,
+	layout             =layout.fruchterman.reingold(
+	                       n2,
+	                       start     = lay,
+                           weights   = get.edge.attribute(n2, "weight")
+                       )
+)
+
+
+	';
+}
+
+
 #--------------#
 #   アクセサ   #
-
 
 sub label{
 	return '抽出語・共起ネットワーク：オプション';
@@ -466,7 +545,6 @@ sub label{
 sub win_name{
 	return 'w_word_netgraph';
 }
-
 
 sub min{
 	my $self = shift;
