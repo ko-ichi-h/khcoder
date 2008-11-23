@@ -33,6 +33,7 @@ use gui_window::word_tf_df;
 use gui_window::word_corresp;
 use gui_window::word_cls;
 use gui_window::word_mds;
+use gui_window::word_netgraph;
 use gui_window::doc_view;
 use gui_window::doc_search;
 use gui_window::doc_cls;
