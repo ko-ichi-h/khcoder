@@ -4,6 +4,7 @@ use base qw(gui_window);
 use gui_window::r_plot::word_cls;
 use gui_window::r_plot::word_corresp;
 use gui_window::r_plot::word_mds;
+use gui_window::r_plot::word_netgraph;
 use gui_window::r_plot::cod_cls;
 use gui_window::r_plot::cod_corresp;
 use gui_window::r_plot::cod_mds;
@@ -124,26 +125,29 @@ sub _new{
 		-anchor => 's',
 	);
 
-	$f1->Label(
-		-text => $self->gui_jchar($self->option1_name),
-		-font => "TKFN",
-	)->pack(-side => 'left');
+	my $chk_n = @{$self->option1_options};
+	if ($chk_n > 1){
+		$f1->Label(
+			-text => $self->gui_jchar($self->option1_name),
+			-font => "TKFN",
+		)->pack(-side => 'left');
 
-	my @opt = ();
-	my $n = 0;
-	foreach my $i (@{$self->option1_options}){
-		push @opt, [$self->gui_jchar($i,'euc'),$n];
-		++$n;
+		my @opt = ();
+		my $n = 0;
+		foreach my $i (@{$self->option1_options}){
+			push @opt, [$self->gui_jchar($i,'euc'),$n];
+			++$n;
+		}
+
+		$self->{optmenu} = gui_widget::optmenu->open(
+			parent  => $f1,
+			pack    => {-side => 'left', -padx => 2},
+			options => \@opt,
+			variable => \$self->{ax},
+			command  => sub {$self->renew;},
+		);
+		$self->{optmenu}->set_value(0);
 	}
-
-	$self->{optmenu} = gui_widget::optmenu->open(
-		parent  => $f1,
-		pack    => {-side => 'left', -padx => 2},
-		options => \@opt,
-		variable => \$self->{ax},
-		command  => sub {$self->renew;},
-	);
-	$self->{optmenu}->set_value(0);
 
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
 
