@@ -4,6 +4,7 @@ use base qw(gui_window);
 use gui_window::r_plot_opt::word_cls;
 use gui_window::r_plot_opt::word_corresp;
 use gui_window::r_plot_opt::word_mds;
+use gui_window::r_plot_opt::word_netgraph;
 use gui_window::r_plot_opt::cod_cls;
 use gui_window::r_plot_opt::cod_corresp;
 use gui_window::r_plot_opt::cod_mds;
@@ -42,7 +43,10 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	
-	if ($args{command_f} =~ /cex=([0-9\.]+)[, \)]/){
+	if (
+		   $args{command_f} =~ /cex=([0-9\.]+)[, \)]/
+		|| $args{command_f} =~ /cex <- ([0-9\.]+)\n/
+	){
 		my $cex = $1;
 		$cex *= 100;
 		$self->{entry_font_size}->insert(0,$cex);
