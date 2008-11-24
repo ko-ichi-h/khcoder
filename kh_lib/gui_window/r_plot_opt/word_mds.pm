@@ -89,9 +89,6 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-
-
-
 	return $self;
 }
 

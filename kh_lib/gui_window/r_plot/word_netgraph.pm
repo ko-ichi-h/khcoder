@@ -3,12 +3,16 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	return [
-		'カラー',
+		'中心性（媒介）',
+		'中心性（次数）',
+		'サブグラフ（媒介）',
+		'サブグラフ（modularity）',
+		'なし',
 	];
 }
 
 sub option1_name{
-	return ' 表示：';
+	return ' カラー：';
 }
 
 sub win_title{

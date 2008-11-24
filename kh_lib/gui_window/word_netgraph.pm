@@ -35,35 +35,9 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both');
 
-	# カラー
-	my $f5 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
-	);
-
-	$f5->Label(
-		-text => $self->gui_jchar('・カラー：'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	my $widget = gui_widget::optmenu->open(
-		parent  => $f5,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				[$self->gui_jchar('中心性（媒介）'),             'cnt-b'],
-				[$self->gui_jchar('中心性（次数）'),             'cnt-d'],
-				[$self->gui_jchar('グループ検出（媒介）'),       'com-b'],
-				[$self->gui_jchar('グループ検出（modularity）'), 'com-g'],
-			],
-		variable => \$self->{color_opt},
-	);
-	$widget->set_value('cnt-b');
-
-
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('・グラフ描画に使用するedge'),
+		-text => $self->gui_jchar('・グラフに描画する抽出語間の共起関係'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -79,7 +53,7 @@ sub _new{
 
 	$self->{radio} = 'n';
 	$f4->Radiobutton(
-		-text             => $self->gui_jchar('使用数：'),
+		-text             => $self->gui_jchar('描画数：'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 'n',
@@ -99,13 +73,13 @@ sub _new{
 		-text             => $self->gui_jchar('Jaccard係数：'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
-		-value            => 'k',
+		-value            => 'j',
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{entry_edges_jac} = $f4->Entry(
 		-font       => "TKFN",
-		-width      => 3,
+		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_edges_jac}->insert(0,'0.2');
@@ -284,7 +258,6 @@ sub calc{
 		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		color_opt      => $self->gui_jg( $self->{color_opt}  ),
 		n_or_j         => $self->gui_jg( $self->{radio} ),
 		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
@@ -301,47 +274,95 @@ sub make_plot{
 	# パラメーター設定部分
 	if ( $args{n_or_j} eq 'j'){
 		$r_command .= "edges <- 0\n";
-		$r_command .= "th    <- $args{edges_jac}\n";
+		$r_command .= "th <- $args{edges_jac}\n";
 	}
 	elsif ( $args{n_or_j} eq 'n'){
 		$r_command .= "edges <- $args{edges_num}\n";
-		$r_command .= "th    <- 0\n";
+		$r_command .= "th <- 0\n";
 	}
-	$r_command .= "com_method <- \"$args{color_opt}\"\n";
-	$r_command .= "cex        <- $args{font_size}\n";
+	$r_command .= "cex <- $args{font_size}\n";
 
-	$r_command .= &r_plot_cmd;
+	$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
-		command_f => $r_command,
+		command_f =>
+			 $r_command
+			."\ncom_method <- \"cnt-b\"\n"
+			.&r_plot_cmd_p2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
-	#my $plot2 = kh_r_plot->new(
-	#	name      => $args{plotwin_name}.'_2',
-	#	command_a => $r_command_a,
-	#	command_f => $r_command,
-	#	width     => $args{plot_size},
-	#	height    => $args{plot_size},
-	#) or return 0;
+
+	my $plot2 = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_2',
+		command_f =>
+			 $r_command
+			."\ncom_method <- \"cnt-d\"\n"
+			.&r_plot_cmd_p2,
+		command_a =>
+			 "com_method <- \"cnt-d\"\n"
+			.&r_plot_cmd_p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or return 0;
+
+	my $plot3 = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_3',
+		command_f =>
+			 $r_command
+			."\ncom_method <- \"com-b\"\n"
+			.&r_plot_cmd_p2,
+		command_a =>
+			 "com_method <- \"com-b\"\n"
+			.&r_plot_cmd_p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or return 0;
+
+	my $plot4 = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_4',
+		command_f =>
+			 $r_command
+			."\ncom_method <- \"com-g\"\n"
+			.&r_plot_cmd_p2,
+		command_a =>
+			 "com_method <- \"com-g\"\n"
+			.&r_plot_cmd_p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or return 0;
+
+	my $plot5 = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_5',
+		command_f =>
+			 $r_command
+			."\ncom_method <- \"none\"\n"
+			.&r_plot_cmd_p2,
+		command_a =>
+			 "com_method <- \"none\"\n"
+			.&r_plot_cmd_p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or return 0;
+
 
 	# 情報の取得
 	my $info;
 	$::config_obj->R->send('
 		print(
 			paste(
-				"khcoder  nodes: ",
+				"khcoderN: ",
 				length(get.vertex.attribute(n2,"name")),
-				" (",
+				"(",
 				length(get.vertex.attribute(n,"name")),
-				"),  edges: ",
+				"), E: ",
 				length(get.edgelist(n2,name=T)[,1]),
-				" (",
+				"(",
 				length(get.edgelist(n,name=T)[,1]),
-				"),  density: ",
+				"), D: ",
 				round( graph.density(n2), 3 ),
 				#", min. jaccard: ",
 				#round( th, 3 ),
@@ -356,6 +377,22 @@ sub make_plot{
 		$info = undef;
 	}
 
+	my ($info_edges, $info_jac);
+	if ($info =~ /E: ([0-9]+)\([0-9]+\), D:/){
+		$info_edges = $1;
+	}
+
+	# edgeの数・最小のjaccard係数などの情報をcommand_fに付加
+	$::config_obj->R->send('print( paste( "khcoderJac", th, "ok", sep="" ) )');
+	$info_jac = $::config_obj->R->read;
+	if ($info_jac =~ /"khcoderJac(.+)ok"/){
+		$info_jac = $1;
+	}
+	foreach my $i ($plot1, $plot2, $plot3, $plot4, $plot5){
+		$i->{command_f} .= "\n# edges: $info_edges\n";
+		$i->{command_f} .= "\n# min. jaccard: $info_jac\n";
+	}
+
 	# プロットWindowを開く
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
@@ -364,7 +401,7 @@ sub make_plot{
 	$args{base_win}->close;
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
-		plots       => [$plot1],
+		plots       => [ $plot1, $plot2, $plot3, $plot4, $plot5],
 		msg         => $info,
 		no_geometry => 1,
 	);
@@ -372,7 +409,7 @@ sub make_plot{
 	return 1;
 }
 
-sub r_plot_cmd{
+sub r_plot_cmd_p1{
 	return '
 
 # 類似度計算 
@@ -403,7 +440,7 @@ if (th == 0){
 }
 
 # edgeを間引いてネットワークグラフを再作成 
-el2 <- subset(el, el[,3] > th)
+el2 <- subset(el, el[,3] >= th)
 n2  <- graph.edgelist(
 	as.matrix(el2)[,1:2],
 	directed	=F
@@ -411,7 +448,13 @@ n2  <- graph.edgelist(
 n2 <- set.edge.attribute(
 	n2, "weight", 0:length(get.edgelist(n2)[,1])-1, el2[,3]
 )
+	';
+}
 
+sub r_plot_cmd_p2{
+
+return 
+'
 # 中心性
 if ( com_method == "cnt-b" || com_method == "cnt-d"){
 	if (com_method == "cnt-b"){                   # 媒介
@@ -501,6 +544,10 @@ if ( com_method == "com-b" || com_method == "com-g"){
 	edg_lty   <- 1
 }
 
+if (com_method == "none"){
+	ccol <- "white"
+}
+
 # plot用の初期配置
 lay <-  cmdscale( as.dist( shortest.paths(n2) ), k=2 )
 check4fr <- function(d){
@@ -538,9 +585,9 @@ plot.igraph(
                            weights   = get.edge.attribute(n2, "weight")
                        )
 )
+';
 
 
-	';
 }
 
 
