@@ -595,7 +595,7 @@ plot.igraph(
 #   アクセサ   #
 
 sub label{
-	return '抽出語・共起ネットワーク：オプション';
+	return '抽出語・共起ネットワークグラフ：オプション';
 }
 
 sub win_name{

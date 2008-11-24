@@ -20,7 +20,7 @@ sub _run{
 	}
 
 	bless $self, 'kh_morpho::win32::'.$::config_obj->c_or_j;
- 	$self->_run_morpho;
+	$self->_run_morpho;
 
 	if (! -e $self->output){
 		$self->Exec_Error("No output file.");

@@ -5,8 +5,8 @@ sub option1_options{
 	return [
 		'中心性（媒介）',
 		'中心性（次数）',
-		'サブグラフ（媒介）',
-		'サブグラフ（modularity）',
+		'サブグラフ検出（媒介）',
+		'サブグラフ検出（modularity）',
 		'なし',
 	];
 }
@@ -16,7 +16,7 @@ sub option1_name{
 }
 
 sub win_title{
-	return '抽出語・共起ネットワーク';
+	return '抽出語・共起ネットワークグラフ';
 }
 
 sub win_name{
