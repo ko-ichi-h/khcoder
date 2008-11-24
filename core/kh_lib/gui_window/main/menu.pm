@@ -349,7 +349,7 @@ sub make{
 		push @menu1, 't_word_cls' if $::config_obj->R;
 
 		$self->{t_word_netgraph} = $f3->command(
-				-label => gui_window->gui_jchar('共起ネットワーク'),
+				-label => gui_window->gui_jchar('共起ネットワークグラフ'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_netgraph->open;
