@@ -37,7 +37,7 @@ sub _new{
 
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('・グラフに描画する抽出語間の共起関係'),
+		-text => $self->gui_jchar('・グラフに描画する共起関係（edge）'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -587,9 +587,7 @@ plot.igraph(
 )
 ';
 
-
 }
-
 
 #--------------#
 #   アクセサ   #
