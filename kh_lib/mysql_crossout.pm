@@ -195,8 +195,6 @@ sub make_list{
 	}
 	$sql .= "ORDER BY khhinshi_id, genkei.num DESC, genkei.name\n";
 	
-	print "hoge?\n";
-	
 	my $sth = mysql_exec->select($sql, 1)->hundle;
 	my (@list, %name, %hinshi);
 	while (my $i = $sth->fetch) {
