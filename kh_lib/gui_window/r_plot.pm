@@ -8,6 +8,7 @@ use gui_window::r_plot::word_netgraph;
 use gui_window::r_plot::cod_cls;
 use gui_window::r_plot::cod_corresp;
 use gui_window::r_plot::cod_mds;
+use gui_window::r_plot::cod_netg;
 
 use strict;
 use gui_hlist;

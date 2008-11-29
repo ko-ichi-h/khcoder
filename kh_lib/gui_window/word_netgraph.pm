@@ -432,6 +432,9 @@ el <- data.frame(
 
 # ïçÃÍ¤ò·×»» 
 if (th == 0){
+	if(edges > length(el[,1])){
+		edges <- length(el[,1])
+	}
 	th = quantile(
 		el$weight,
 		names = F,

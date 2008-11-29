@@ -8,6 +8,7 @@ use gui_window::r_plot_opt::word_netgraph;
 use gui_window::r_plot_opt::cod_cls;
 use gui_window::r_plot_opt::cod_corresp;
 use gui_window::r_plot_opt::cod_mds;
+use gui_window::r_plot_opt::cod_netg;
 
 sub _new{
 	my $self = shift;
