@@ -445,7 +445,7 @@ if (th == 0){
 # edgeを間引いてネットワークグラフを再作成 
 el2 <- subset(el, el[,3] >= th)
 n2  <- graph.edgelist(
-	as.matrix(el2)[,1:2],
+	matrix( as.matrix(el2)[,1:2], ncol=2 ),
 	directed	=F
 )
 n2 <- set.edge.attribute(
@@ -458,6 +458,10 @@ sub r_plot_cmd_p2{
 
 return 
 '
+if (length(get.vertex.attribute(n2,"name")) < 2){
+	com_method <- "none"
+}
+
 # 中心性
 if ( com_method == "cnt-b" || com_method == "cnt-d"){
 	if (com_method == "cnt-b"){                   # 媒介
@@ -552,42 +556,48 @@ if (com_method == "none"){
 }
 
 # plot用の初期配置
-lay <-  cmdscale( as.dist( shortest.paths(n2) ), k=2 )
-check4fr <- function(d){
-	chk <- 0
-	for (i in combn( length(d[,1]), 2, simplify=F ) ){
-		if (
-			   d[i[1],1] == d[i[2],1]
-			&& d[i[1],2] == d[i[2],2]
-		){
-			return( i[1] )
+if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
+	lay <-  cmdscale( as.dist( shortest.paths(n2) ), k=2 )
+	check4fr <- function(d){
+		chk <- 0
+		for (i in combn( length(d[,1]), 2, simplify=F ) ){
+			if (
+				   d[i[1],1] == d[i[2],1]
+				&& d[i[1],2] == d[i[2],2]
+			){
+				return( i[1] )
+			}
 		}
+		return( NA )
 	}
-	return( NA )
-}
-while ( is.na(check4fr(lay)) == 0 ){
-	mv <-  check4fr(lay)
-	lay[mv,1] <- lay[mv,1] + 0.001
-	#print( paste( "Moved:", mv ) )
+	while ( is.na(check4fr(lay)) == 0 ){
+		mv <-  check4fr(lay)
+		lay[mv,1] <- lay[mv,1] + 0.001
+		#print( paste( "Moved:", mv ) )
+	}
+} else {
+	lay <- NULL
 }
 
 # プロット
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-plot.igraph(
-	n2,
-	vertex.label       =get.vertex.attribute(n2,"name"),
-	vertex.label.cex   =cex,
-	vertex.label.color ="black",
-	vertex.color       =ccol,
-	vertex.frame.color =com_col_v,
-	edge.color         =edg_col,
-	edge.lty           =edg_lty,
-	layout             =layout.fruchterman.reingold(
-	                       n2,
-	                       start     = lay,
-                           weights   = get.edge.attribute(n2, "weight")
-                       )
-)
+if ( length(get.vertex.attribute(n2,"name")) > 1 ){
+	plot.igraph(
+		n2,
+		vertex.label       =get.vertex.attribute(n2,"name"),
+		vertex.label.cex   =cex,
+		vertex.label.color ="black",
+		vertex.color       =ccol,
+		vertex.frame.color =com_col_v,
+		edge.color         =edg_col,
+		edge.lty           =edg_lty,
+		layout             =layout.fruchterman.reingold(
+		                       n2,
+		                       start     = lay,
+		                       weights   = get.edge.attribute(n2, "weight")
+		                   )
+	)
+}
 ';
 
 }
