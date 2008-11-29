@@ -253,6 +253,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$self->read_cfile;
+	$self->refresh(3);
 
 	return $self;
 }
@@ -310,7 +311,7 @@ sub read_cfile{
 	return $self;
 }
 
-# コードが5つ以上選択されているかチェック
+# コードが3つ以上選択されているかチェック
 sub check_selected_num{
 	my $self = shift;
 	
@@ -345,6 +346,25 @@ sub select_none{
 	}
 	$self->check_selected_num;
 	return $self;
+}
+
+# チェックボックス選択時の動作
+sub refresh{
+	my $self = shift;
+		
+	my ($dis, $nor);
+	if ($self->{radio} eq 'n'){
+		$nor = $self->{entry_edges_number};
+		$dis = $self->{entry_edges_jac};
+	} else {
+		$nor = $self->{entry_edges_jac};
+		$dis = $self->{entry_edges_number};
+	}
+
+	$nor->configure(-state => 'normal' , -background => 'white');
+	$dis->configure(-state => 'disable', -background => 'gray' );
+	
+	$nor->focus unless $_[0] == 3;
 }
 
 # プロット作成＆表示
