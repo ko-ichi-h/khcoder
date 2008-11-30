@@ -594,6 +594,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		vertex.label       =get.vertex.attribute(n2,"name"),
 		vertex.label.cex   =cex,
 		vertex.label.color ="black",
+		vertex.label.family= "",
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
 		edge.color         =edg_col,
