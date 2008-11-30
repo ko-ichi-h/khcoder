@@ -557,7 +557,14 @@ if (com_method == "none"){
 
 # plot用の初期配置
 if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
-	lay <-  cmdscale( as.dist( shortest.paths(n2) ), k=2 )
+	d4l <- as.dist( shortest.paths(n2) )
+	if ( min(d4l) < 1 ){
+		d4l <- as.dist( shortest.paths(n2, weights=NA ) )
+	}
+	if ( max(d4l) == Inf){
+		d4l[d4l == Inf] <- vcount(n2)
+	}
+	lay <-  cmdscale( d4l, k=2 )
 	check4fr <- function(d){
 		chk <- 0
 		for (i in combn( length(d[,1]), 2, simplify=F ) ){
