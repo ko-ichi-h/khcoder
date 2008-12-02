@@ -349,23 +349,17 @@ sub make_plot{
 	) or return 0;
 
 
-	# 情報の取得
+	# 情報の取得（短いバージョン）
 	my $info;
 	$::config_obj->R->send('
 		print(
 			paste(
-				"khcoderN: ",
+				"khcoderN ",
 				length(get.vertex.attribute(n2,"name")),
-				"(",
-				length(get.vertex.attribute(n,"name")),
-				"), E: ",
+				", E ",
 				length(get.edgelist(n2,name=T)[,1]),
-				"(",
-				length(get.edgelist(n,name=T)[,1]),
-				"), D: ",
-				round( graph.density(n2), 3 ),
-				#", min. jaccard: ",
-				#round( th, 3 ),
+				", D ",
+				substr(paste( round( graph.density(n2), 3 ) ), 2, 5 ),
 				sep=""
 			)
 		)
@@ -377,12 +371,39 @@ sub make_plot{
 		$info = undef;
 	}
 
-	my ($info_edges, $info_jac);
-	if ($info =~ /E: ([0-9]+)\([0-9]+\), D:/){
-		$info_edges = $1;
+	# 情報の取得（長いバージョン）
+	my $info_long;
+	$::config_obj->R->send('
+		print(
+			paste(
+				"khcoderNodes ",
+				length(get.vertex.attribute(n2,"name")),
+				" (",
+				length(get.vertex.attribute(n,"name")),
+				"), Edges ",
+				length(get.edgelist(n2,name=T)[,1]),
+				" (",
+				length(get.edgelist(n,name=T)[,1]),
+				"), Density ",
+				substr(paste( round( graph.density(n2), 3 ) ), 2, 5 ),
+				", Min. Jaccard ",
+				substr( paste( round( th, 3 ) ), 2, 5),
+				sep=""
+			)
+		)
+	');
+	$info_long = $::config_obj->R->read;
+	if ($info_long =~ /"khcoder(.+)"/){
+		$info_long = $1;
+	} else {
+		$info_long = undef;
 	}
 
 	# edgeの数・最小のjaccard係数などの情報をcommand_fに付加
+	my ($info_edges, $info_jac);
+	if ($info =~ /E ([0-9]+), D/){
+		$info_edges = $1;
+	}
 	$::config_obj->R->send('print( paste( "khcoderJac", th, "ok", sep="" ) )');
 	$info_jac = $::config_obj->R->read;
 	if ($info_jac =~ /"khcoderJac(.+)ok"/){
@@ -403,6 +424,7 @@ sub make_plot{
 	$plotwin->open(
 		plots       => [ $plot1, $plot2, $plot3, $plot4, $plot5],
 		msg         => $info,
+		msg_long    => $info_long,
 		no_geometry => 1,
 	);
 	
