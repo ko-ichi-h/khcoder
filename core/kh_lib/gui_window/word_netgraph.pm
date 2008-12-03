@@ -9,6 +9,8 @@ use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
 
+my $bench = 0;
+
 #-------------#
 #   GUI作製   #
 
@@ -285,13 +287,19 @@ sub make_plot{
 	$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
+	
+	use Benchmark;
+	my $t0 = new Benchmark;
+	
 	use kh_r_plot;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f =>
 			 $r_command
 			."\ncom_method <- \"cnt-b\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p3
+			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
@@ -301,10 +309,13 @@ sub make_plot{
 		command_f =>
 			 $r_command
 			."\ncom_method <- \"cnt-d\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p3
+			.&r_plot_cmd_p4,
 		command_a =>
 			 "com_method <- \"cnt-d\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
@@ -314,10 +325,13 @@ sub make_plot{
 		command_f =>
 			 $r_command
 			."\ncom_method <- \"com-b\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p3
+			.&r_plot_cmd_p4,
 		command_a =>
 			 "com_method <- \"com-b\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
@@ -327,10 +341,13 @@ sub make_plot{
 		command_f =>
 			 $r_command
 			."\ncom_method <- \"com-g\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p3
+			.&r_plot_cmd_p4,
 		command_a =>
 			 "com_method <- \"com-g\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
@@ -340,14 +357,19 @@ sub make_plot{
 		command_f =>
 			 $r_command
 			."\ncom_method <- \"none\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p3
+			.&r_plot_cmd_p4,
 		command_a =>
 			 "com_method <- \"none\"\n"
-			.&r_plot_cmd_p2,
+			.&r_plot_cmd_p2
+			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or return 0;
 
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n" if $bench;
 
 	# 情報の取得（短いバージョン）
 	my $info;
@@ -576,8 +598,16 @@ if ( com_method == "com-b" || com_method == "com-g"){
 if (com_method == "none"){
 	ccol <- "white"
 }
+';
 
-# plot用の初期配置
+}
+
+
+sub r_plot_cmd_p3{
+
+return 
+'
+# 初期配置
 if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	d4l <- as.dist( shortest.paths(n2) )
 	if ( min(d4l) < 1 ){
@@ -608,6 +638,18 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	lay <- NULL
 }
 
+# 配置
+lay_f <- layout.fruchterman.reingold(n2,
+	start   = lay,
+	weights = get.edge.attribute(n2, "weight")
+)
+'
+}
+
+sub r_plot_cmd_p4{
+
+return 
+'
 # プロット
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
@@ -621,15 +663,10 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		vertex.frame.color =com_col_v,
 		edge.color         =edg_col,
 		edge.lty           =edg_lty,
-		layout             =layout.fruchterman.reingold(
-		                       n2,
-		                       start     = lay,
-		                       weights   = get.edge.attribute(n2, "weight")
-		                   )
+		layout             =lay_f
 	)
 }
-';
-
+'
 }
 
 #--------------#
