@@ -2,7 +2,6 @@ package gui_window::word_netgraph;
 use base qw(gui_window);
 
 use strict;
-
 use Tk;
 
 use gui_widget::tani;
@@ -234,8 +233,6 @@ sub calc{
 		-title   => 'KH Coder'
 	);
 	unless ($ans =~ /ok/i){ return 0; }
-
-	#my $w = gui_wait->start;
 
 	# データの取り出し
 	my $r_command = mysql_crossout::r_com->new(
