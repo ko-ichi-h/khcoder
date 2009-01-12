@@ -408,7 +408,7 @@ sub search{
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => $self->gui_jchar('コードが選択されていません'),
+			msg    => 'コードが選択されていません',
 			window => \$win,
 		);
 		return 0;
