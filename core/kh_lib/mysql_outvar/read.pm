@@ -48,11 +48,11 @@ sub save{
 	unless ($cases == $cases_in_file){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => Jcode->new("ケース数が一致しません。\n読み込み処理を中断します。")->sjis,
+			msg    => "ケース数が一致しません。\n読み込み処理を中断します。",
 		);
 		return 0;
 	}
-	
+
 	# 同じ変数名が無いかチェック
 	my %name_check;
 	my $h = mysql_exec->select("
@@ -67,7 +67,7 @@ sub save{
 		if ($name_check{$i}){
 			gui_errormsg->open(
 				type   => 'msg',
-				msg    => Jcode->new("同じ名前の変数が既に読み込まれています。\n読み込み処理を中断します。")->sjis,
+				msg    => "同じ名前の変数が既に読み込まれています。\n読み込み処理を中断します。",
 			);
 			return 0;
 		}

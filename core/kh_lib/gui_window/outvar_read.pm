@@ -101,7 +101,7 @@ sub _read{
 	unless (-e $self->gui_jg( $self->{entry}->get ) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => $self->gui_jchar('ファイルを正しく指定して下さい。'),
+			msg    => 'ファイルを正しく指定して下さい。',
 			window => \$self->{win_obj},
 		);
 		return 0;

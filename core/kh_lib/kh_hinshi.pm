@@ -233,7 +233,7 @@ sub output{
 
 
 	gui_errormsg->open(
-		msg  => Jcode->new('品詞情報を出力しました')->sjis,
+		msg  => '品詞情報を出力しました',
 		type => 'msg',
 		icon => 'info',
 	);

@@ -293,7 +293,7 @@ sub exec{
 	my $flag_long     = 0;
 	my $flag_longlong = 0;
 
-	if (length($t) > 16000){
+	if (length($t) > 8000){
 		$flag_long = 1;
 	}
 	if ($t =~ /'|\\|"|<|>|$ctrl|\|/){
@@ -350,7 +350,7 @@ sub exec{
 		){
 			$cu .= "$i\n";
 			$r .= $cu;
-			if (length($cu) > 16000){
+			if (length($cu) > 8000){
 				$flag_longlong = 1;
 			}
 			$cu = '';
@@ -360,7 +360,7 @@ sub exec{
 		}
 		++$n;
 	}
-	if (length($cu) > 16000){
+	if (length($cu) > 8000){
 		$flag_longlong = 1;
 	}
 	$r .= "$cu";
