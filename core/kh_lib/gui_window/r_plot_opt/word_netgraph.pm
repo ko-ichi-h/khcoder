@@ -150,7 +150,7 @@ sub calc{
 }
 
 sub win_title{
-	return '抽出語・共起ネットワークグラフ：調整';
+	return '抽出語・共起ネットワーク：調整';
 }
 
 sub win_name{
