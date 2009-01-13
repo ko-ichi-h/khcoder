@@ -13,7 +13,7 @@ sub _run_morpho{
 	my $pos = rindex($path,"\\");
 	$self->{dir} = substr($path,0,$pos);
 	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
-	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" -j \"".$self->target."\"";
+	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
 
 	require Win32::Process;
 	# Win32::Process->import; # これではうまくいかない？
