@@ -16,7 +16,7 @@ sub option1_name{
 }
 
 sub win_title{
-	return '抽出語・共起ネットワークグラフ';
+	return '抽出語・共起ネットワーク';
 }
 
 sub win_name{

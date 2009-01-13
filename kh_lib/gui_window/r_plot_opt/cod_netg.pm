@@ -150,7 +150,7 @@ sub calc{
 }
 
 sub win_title{
-	return 'コーディング・共起ネットワークグラフ：調整';
+	return 'コーディング・共起ネットワーク：調整';
 }
 
 sub win_name{

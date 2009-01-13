@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・共起ネットワークグラフ：オプション'));
+	$win->title($self->gui_jt('コーディング・共起ネットワーク：オプション'));
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
@@ -136,7 +136,7 @@ sub _new{
 
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('グラフに描画する共起関係（edge）'),
+		-text => $self->gui_jchar('描画する共起関係（edge）'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 

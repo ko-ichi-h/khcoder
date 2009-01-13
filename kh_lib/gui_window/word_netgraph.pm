@@ -38,7 +38,7 @@ sub _new{
 
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('・グラフに描画する共起関係（edge）'),
+		-text => $self->gui_jchar('・描画する共起関係（edge）'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -458,7 +458,7 @@ d <- dist(d,method="binary")
 d <- as.matrix(d)
 d <- 1 - d;
 
-# ネットワークグラフ作成 
+# グラフ作成 
 library(igraph)
 n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
 n <- set.vertex.attribute(n,"name", 0:length(d[1,])-1, rownames(d))
@@ -483,7 +483,7 @@ if (th == 0){
 	)
 }
 
-# edgeを間引いてネットワークグラフを再作成 
+# edgeを間引いてグラフを再作成 
 el2 <- subset(el, el[,3] >= th)
 n2  <- graph.edgelist(
 	matrix( as.matrix(el2)[,1:2], ncol=2 ),
@@ -670,7 +670,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 #   アクセサ   #
 
 sub label{
-	return '抽出語・共起ネットワークグラフ：オプション';
+	return '抽出語・共起ネットワーク：オプション';
 }
 
 sub win_name{

@@ -16,7 +16,7 @@ sub option1_name{
 }
 
 sub win_title{
-	return 'コーディング・共起ネットワークグラフ';
+	return 'コーディング・共起ネットワーク';
 }
 
 sub win_name{
