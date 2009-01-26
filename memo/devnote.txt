@@ -14,11 +14,8 @@
 	・Ctrl + Hで品詞別の頻度などを段落単位で集計・出力
 		（強制抽出無し、HTMLタグ無視。大隅先生向け）
 
-[Tk 804.xx対応について]
-	・日本語表示のための置換（秀丸の正規表現）
-		From: Jcode->new\(\f.*\f\)->sjis
-		To:   $self->gui_jchar(\1)
-	・getSaveFile / getOpenFileの手当てが必要・・・（日本語ファイル名対策）
+[Mac OS X対応について]
+	・kh_project::last_codf, kh_sysconfig::linux::os_path, Tk::FBox_kh
 
 [Anonymous CVSのコマンド]
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core

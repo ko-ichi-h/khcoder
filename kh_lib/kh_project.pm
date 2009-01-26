@@ -294,7 +294,8 @@ sub last_codf{
 	
 	if ($new){
 		$new = Jcode->new($new,'sjis')->euc if $::config_obj->os eq 'win32';
-		#print "new: $new\n";
+		$new = Jcode->new($new,'utf8')->euc if $^O eq 'darwin';
+		print "new: $new\n", Jcode->new($new)->icode, "\n";
 		mysql_exec->do(
 			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_codf\'"
 		,1);
@@ -304,8 +305,9 @@ sub last_codf{
 			->select("
 				SELECT status FROM status_char WHERE name = 'last_codf'",1
 			)->hundle->fetch->[0];
-		$lst = Jcode->new($lst,'euc')->sjis if $::config_obj->os eq 'win32';
+		#$lst = Jcode->new($lst,'euc')->sjis if $::config_obj->os eq 'win32';
 		#print "lst: $lst\n";
+                $lst = $::config_obj->os_path($lst,'euc');
 		return $lst;
 	}
 }

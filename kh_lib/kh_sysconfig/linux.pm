@@ -292,8 +292,12 @@ sub os_path{
 	my $c     = shift;
 	my $icode = shift;
 
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\\/\//;
+        if ($^O eq 'darwin'){ # Mac OS X
+            $c = Jcode->new("$c",$icode)->utf8;
+        } else {
+            $c = Jcode->new("$c",$icode)->euc;
+	    $c =~ tr/\\/\//;
+        }
 
 	return $c;
 }
