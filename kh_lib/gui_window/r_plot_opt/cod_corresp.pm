@@ -105,6 +105,8 @@ sub calc{
 		r_command    => $r_command,
 		plotwin_name => 'cod_corresp',
 	);
+
+	$self->close
 }
 
 sub win_title{

@@ -303,6 +303,13 @@ sub _new{
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
+
+	$win->Checkbutton(
+			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-variable => \$self->{check_rm_open},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
@@ -733,7 +740,6 @@ sub _calc{
 	$fontsize /= 100;
 
 	&gui_window::word_corresp::make_plot(
-		base_win     => $self,
 		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
@@ -743,6 +749,10 @@ sub _calc{
 		r_command    => $r_command,
 		plotwin_name => 'cod_corresp',
 	);
+
+	unless ( $self->{check_rm_open} ){
+		$self->close;
+	}
 
 }
 

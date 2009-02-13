@@ -137,7 +137,6 @@ sub calc{
 	$fontsize /= 100;
 
 	&gui_window::word_netgraph::make_plot(
-		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j         => $self->gui_jg( $self->{radio} ),
@@ -147,6 +146,7 @@ sub calc{
 		plotwin_name   => 'word_netgraph',
 	);
 
+	$self->close;
 }
 
 sub win_title{
