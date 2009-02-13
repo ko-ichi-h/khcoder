@@ -307,8 +307,6 @@ sub make{
 				-state => 'disable'
 			);
 
-		$f3->separator;
-
 		$self->{t_word_ass} = $f3->command(
 				-label => gui_window->gui_jchar('関連語探索'),
 				-font => "TKFN",
@@ -317,6 +315,8 @@ sub make{
 				})},
 				-state => 'disable'
 			);
+
+		$f3->separator;
 
 		$self->{t_word_corresp} = $f3->command(
 				-label => gui_window->gui_jchar('対応分析'),
@@ -490,6 +490,15 @@ sub make{
 			-state => 'disable'
 		);
 
+		$self->{t_cod_jaccard} = $f5->command(
+			-label => gui_window->gui_jchar('類似度行列'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+					gui_window::cod_jaccard->open;
+				})},
+			-state => 'disable'
+		);
+
 		$f5->separator();
 
 		$self->{t_cod_corresp} = $f5->command(
@@ -507,15 +516,6 @@ sub make{
 		#	 -font => "TKFN",
 		#	 -tearoff=>'no'
 		#);
-
-		$self->{t_cod_jaccard} = $f5->command(
-			-label => gui_window->gui_jchar('類似度行列'),
-			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
-					gui_window::cod_jaccard->open;
-				})},
-			-state => 'disable'
-		);
 
 		$self->{t_cod_mds} = $f5->command(
 				-label => gui_window->gui_jchar('多次元尺度構成法'),

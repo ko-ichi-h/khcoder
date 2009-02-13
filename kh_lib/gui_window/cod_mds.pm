@@ -137,7 +137,7 @@ sub _new{
 	# アルゴリズム選択
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-padx => 2,
+		#-padx => 2,
 		-pady => 2
 	);
 	$f4->Label(
@@ -240,6 +240,12 @@ sub _new{
 	$self->{entry_plot_size}->insert(0,'480');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
+
+	$win->Checkbutton(
+			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-variable => \$self->{check_rm_open},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
 
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
@@ -410,7 +416,6 @@ sub _calc{
 	$fontsize /= 100;
 
 	&gui_window::word_mds::make_plot(
-		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->gui_jg( $self->{method_opt} ),
@@ -419,6 +424,10 @@ sub _calc{
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 	);
+
+	unless ( $self->{check_rm_open} ){
+		$self->close;
+	}
 
 }
 

@@ -143,6 +143,12 @@ sub _new{
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
+	$win->Checkbutton(
+			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-variable => \$self->{check_rm_open},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
@@ -187,7 +193,6 @@ sub calc{
 	)->wnum;
 	
 	$check_num =~ s/,//g;
-	#print "$check_num\n";
 
 	if ($check_num < 5){
 		gui_errormsg->open(
@@ -197,13 +202,13 @@ sub calc{
 		return 0;
 	}
 
-	if ($check_num > 200){
+	if ($check_num > 150){
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
 					 '現在の設定では'.$check_num.'語が布置されます。'
 					."\n"
-					.'布置する語の数は100〜150程度におさえることを推奨します。'
+					.'布置する語の数は100程度以下におさえることを推奨します。'
 					."\n"
 					.'続行してよろしいですか？'
 				),
@@ -250,7 +255,7 @@ sub calc{
 	$fontsize /= 100;
 
 	&make_plot(
-		base_win       => $self,
+		#base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->gui_jg( $self->{method_opt}  ),
@@ -259,6 +264,10 @@ sub calc{
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 	);
+	
+	unless ( $self->{check_rm_open} ){
+		$self->close;
+	}
 }
 
 sub make_plot{
@@ -432,7 +441,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
-	$args{base_win}->close;
+	#$args{base_win}->close;
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
 		plots       => [$plot1, $plot2],
