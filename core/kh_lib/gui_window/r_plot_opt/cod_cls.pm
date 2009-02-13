@@ -89,7 +89,6 @@ sub calc{
 	$fontsize /= 100;
 
 	&gui_window::word_cls::make_plot(
-		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -98,6 +97,7 @@ sub calc{
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
+	$self->close;
 	return 1;
 }
 

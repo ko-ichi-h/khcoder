@@ -117,7 +117,6 @@ sub calc{
 	$fontsize /= 100;
 
 	&gui_window::word_mds::make_plot(
-		base_win       => $self,
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		method         => $self->gui_jg( $self->{method_opt}  ),
@@ -126,6 +125,8 @@ sub calc{
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 	);
+
+	$self->close;
 
 }
 

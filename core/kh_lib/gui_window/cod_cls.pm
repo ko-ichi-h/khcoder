@@ -212,6 +212,12 @@ $self->config_entry_focusin($self->{entry_font_size});
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
+	$win->Checkbutton(
+			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-variable => \$self->{check_rm_open},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# OK・キャンセル
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
@@ -380,7 +386,6 @@ sub _calc{
 	$fontsize /= 100;
 
 	&gui_window::word_cls::make_plot(
-		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -389,6 +394,10 @@ sub _calc{
 		data_number    => $selected_num,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
+
+	unless ( $self->{check_rm_open} ){
+		$self->close;
+	}
 
 }
 

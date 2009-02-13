@@ -113,6 +113,12 @@ sub _new{
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
+	$win->Checkbutton(
+			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-variable => \$self->{check_rm_open},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
@@ -220,7 +226,7 @@ sub calc{
 	$fontsize /= 100;
 
 	&make_plot(
-		base_win       => $self,
+		#base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -229,6 +235,11 @@ sub calc{
 		data_number    => $check_num,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
+
+	unless ( $self->{check_rm_open} ){
+		$self->close;
+	}
+
 }
 
 sub make_plot{
@@ -332,7 +343,6 @@ sub make_plot{
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
-	$args{base_win}->close;
 	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
