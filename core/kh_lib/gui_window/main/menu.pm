@@ -115,7 +115,14 @@ sub make{
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
-			-command => sub{ $mw->after(10,sub{exit;});},
+			-command => sub{
+				$mw->after(
+					10,
+					sub{
+						$::main_gui->get('main_window')->close or exit;
+					}
+				);
+			},
 			-accelerator => 'Ctrl+Q'
 		);
 

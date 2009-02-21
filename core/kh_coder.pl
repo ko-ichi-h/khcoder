@@ -75,6 +75,7 @@ BEGIN {
 				2
 			);
 		}
+		$SIG{QUIT} = sub{ exit; }; # $::main_gui->get('main_window')->close
 		# スプラッシュ
 		require Tk::Splash;
 		$splash = Tk::Splash->Show(

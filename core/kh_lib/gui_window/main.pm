@@ -158,10 +158,10 @@ sub close{
 		kh_all_in_one->mysql_stop;
 	}
 	if ($::config_obj->R){
-		# print "Stopping R...\n";
 		$::config_obj->R->stopR;
 	}
 	$self->win_obj->destroy;
+	exit;
 }
 
 sub close_all{
