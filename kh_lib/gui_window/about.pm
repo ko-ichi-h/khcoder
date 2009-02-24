@@ -97,7 +97,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('Perl'),
-		url    => 'http://www.perl.com/',
+		url    => 'http://www.cpan.org/',
 		parent => $fra_r1,
 		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
 	);
@@ -132,7 +132,7 @@ sub _new{
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	$fra_r->Label(
-		-text => $self->gui_jchar('(C) 2001-2008','euc'),
+		-text => $self->gui_jchar('(C) 2001-2009','euc'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 
