@@ -1,7 +1,7 @@
 package gui_window::sql_select;
 use base qw(gui_window);
 use gui_jchar;
-use gui_airborne;
+#use gui_airborne;
 use gui_hlist;
 use mysql_exec;
 
@@ -29,7 +29,7 @@ sub _new{
 		-label => 'Entry',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both',-expand => 'y');
+	)->pack(-fill => 'x',-expand => 0);
 
 	my $t = $lf->Scrolled(
 		'Text',
@@ -82,27 +82,22 @@ sub _new{
 		-font    => "TKFN"
 	)->pack(-side => "right");
 
-
-
-
-
-
 #----------------#
 #   結果表示部   #
 
-	my $plane = gui_airborne->make(
-		parent      => $win,
-		parent_name => $self->win_name,
-		tower       => $lf,
-		title       => $self->gui_jchar('SQL文の実行結果'),
-	);
+#	my $plane = gui_airborne->make(
+#		parent      => $win,
+#		parent_name => $self->win_name,
+#		tower       => $lf,
+#		title       => $self->gui_jchar('SQL文の実行結果'),
+#	);
 
-	my $lf2 = $plane->frame->LabFrame(
+	my $lf2 = $win->LabFrame(
 		-label       => 'Result',
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both',-expand => 'y');
-	my $field = $lf2->Frame()->pack(-fill => 'both', -expand => 'y');
+	my $field = $lf2->Frame()->pack(-fill => 'both', -expand => 1);
 
 	my $list = $field->Scrolled('HList',
 		-scrollbars       => 'osoe',
@@ -112,8 +107,8 @@ sub _new{
 		-columns          => '1',
 		-padx             => '2',
 		-background       => 'white',
-		-height           => '4',
-	)->pack(-fill=>'both',-expand => 'yes');
+		-height           => '15',
+	)->pack(-fill=>'both',-expand => 1);
 
 	my $frame = $lf2->Frame()->pack(-fill => 'x', -expand => '0');
 
@@ -128,13 +123,13 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$plane->make_control($frame);
+	#$plane->make_control($frame);
 
 	$self->{entry} = $e;
 	$self->{text}  = $t;
 	$self->{list}  = $list;
 	$self->{label} = $label;
-	$self->{plane} = $plane;
+	#$self->{plane} = $plane;
 	$self->{field} = $field;
 	
 	return $self;
@@ -224,20 +219,21 @@ sub exec{
 	}
 	$self->label->configure(-text,$self->gui_jchar('出力された行数: '."$row"));
 	
-	$self->plane->frame->focus;
+	#$self->plane->frame->focus;
 }
 
 
-sub close{
-	my $self = shift;
-	$self->plane->close;
-}
+#sub close{
+#	my $self = shift;
+#	$self->plane->close;
+#}
 
-sub start{
-	my $self = shift;
-	$self->plane->start;
-	$self->text->focus;
-}
+#sub start{
+#	my $self = shift;
+#	$self->plane->start;
+#	$self->text->focus;
+#}
+
 #--------------#
 #   アクセサ   #
 #--------------#
@@ -272,10 +268,10 @@ sub win_name{
 	return 'w_tool_sql_select';
 }
 
-sub plane{
-	my $self = shift;
-	return $self->{plane};
-}
+#sub plane{
+#	my $self = shift;
+#	return $self->{plane};
+#}
 
 
 1;
