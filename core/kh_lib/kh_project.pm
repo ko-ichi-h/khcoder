@@ -604,12 +604,23 @@ sub file_base{
 
 sub file_short_name{
 	my $self = shift;
-	return basename($self->file_target);
+	
+	my $pos = rindex($self->file_target,'/'); ++$pos;
+	return substr(
+		$self->file_target,
+		$pos,
+		length($self->file_target) - $pos
+	);
+
+	# return basename($self->file_target);
 }
 
 sub file_dir{
 	my $self = shift;
-	return dirname($self->file_target);
+	my $pos = rindex($self->file_target,'/');
+	return substr($self->file_target,0,"$pos");
+
+	#return dirname($self->file_target);
 }
 
 1;
