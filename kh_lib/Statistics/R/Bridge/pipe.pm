@@ -182,7 +182,7 @@
         ++$xx ;
         $delay = 0.5 ;
       }
-      if ( $xx > 5 ) {
+      if ( $xx > 10000 ) {
       	$status = undef ;
       	warn "Could not send the command to R! (Statistics::R::Bridge::pipe::send)\n";
       	last;
