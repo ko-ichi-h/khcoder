@@ -538,12 +538,19 @@ if ( com_method == "com-b" || com_method == "com-g"){
 			num_cls   <- length( temp_csize[temp_csize > 1] )
 			#print( paste(i, "a", num_alone, "max", num_max, "cls", num_cls) )
 			if (
-				   num_max / length(get.vertex.attribute(n2,"name")) >= 0.25
+				# 最大コミュニティサイズが全ノード数の22.5%以上
+				   num_max / length(get.vertex.attribute(n2,"name")) >= 0.225
+				# かつ、最大コミュニティサイズが単独ノード数よりも大きい
 				&& num_max > num_alone
+				# かつ、サイズが2以上のコミュニティ数が12未満
 				&& num_cls < 12
 			){
 				return(i)
-			} 
+			}
+			# 最大コミュニティサイズがノード数の40%を越える直前で打ち切り
+			if (num_max / length(get.vertex.attribute(n2,"name")) >= 0.4 ){
+				return(i-1)
+			}
 		}
 		return( trunc(length( m ) / 2) )
 	}
