@@ -111,6 +111,7 @@ sub read_TextFile_droped{
 	}
 	
 	if (-e $filename) {
+		my $icode = kh_jchar->check_code($filename);
 		open (DROPED,"$filename") or
 			gui_errormsg->open(
 				type    => 'file',
@@ -118,7 +119,7 @@ sub read_TextFile_droped{
 			);
 		while (<DROPED>){
 			chomp;
-			my $t = gui_window->gui_jchar($_);
+			my $t = gui_window->gui_jchar($_, $icode);
 			$widget->insert('end',"$t\n");
 		}
 		close (DROPED);
