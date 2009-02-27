@@ -65,7 +65,7 @@ sub _new{
 	)->pack(-anchor=>'w');
 	my $t1 = $f_mark->Scrolled(
 		'Text',
-		-scrollbars => 'osoe',
+		-scrollbars => 'se',
 		-background => 'white',
 		-height     => 18,
 		-width      => 14,
@@ -83,7 +83,7 @@ sub _new{
 	)->pack(-anchor=>'w');
 	my $t2 = $f_stop->Scrolled(
 		'Text',
-		-scrollbars => 'osoe',
+		-scrollbars => 'se',
 		-height     => 18,
 		-width      => 14,
 		-wrap       => 'none',
