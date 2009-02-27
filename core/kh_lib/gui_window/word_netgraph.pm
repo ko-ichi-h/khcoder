@@ -531,18 +531,21 @@ if ( com_method == "cnt-b" || com_method == "cnt-d"){
 # クリーク検出
 if ( com_method == "com-b" || com_method == "com-g"){
 	merge_step <- function(n2, m){                # 共通利用の関数
-		for ( i in 1:(length( m ) / 2) ){
+		for ( i in 1:( trunc( length( m ) / 2 ) ) ){
 			temp_csize <- community.to.membership(n2, m,i)$csize
 			num_max   <- max( temp_csize )
 			num_alone <- sum( temp_csize[ temp_csize == 1 ] )
+			num_cls   <- length( temp_csize[temp_csize > 1] )
+			#print( paste(i, "a", num_alone, "max", num_max, "cls", num_cls) )
 			if (
-				num_max / length(get.vertex.attribute(n2,"name")) >= 0.25
+				   num_max / length(get.vertex.attribute(n2,"name")) >= 0.25
 				&& num_max > num_alone
+				&& num_cls < 12
 			){
-				#print( paste(num_max, num_alone) )
 				return(i)
 			} 
 		}
+		return( trunc(length( m ) / 2) )
 	}
 
 	if (com_method == "com-b"){                   # 媒介性（betweenness）
