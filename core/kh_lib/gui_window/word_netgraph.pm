@@ -470,7 +470,12 @@ d <- 1 - d;
 # グラフ作成 
 library(igraph)
 n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
-n <- set.vertex.attribute(n,"name", 0:length(d[1,])-1, rownames(d))
+n <- set.vertex.attribute(
+	n,
+	"name",
+	0:(length(d[1,])-1),
+	as.character( 1:length(d[1,]) )
+)
 
 # edgeを間引く準備 
 el <- data.frame(
@@ -671,7 +676,8 @@ par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 	plot.igraph(
 		n2,
-		vertex.label       =get.vertex.attribute(n2,"name"),
+		vertex.label       =colnames(d)
+		                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 		vertex.label.cex   =cex,
 		vertex.label.color ="black",
 		vertex.label.family= "",
