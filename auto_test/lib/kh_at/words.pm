@@ -116,7 +116,7 @@ sub _exec_test{
 	
 	# 品詞別 出現数順 リスト
 	$self->{result} .= "■品詞別 出現数順 リスト\n";
-	my $target = $::project_obj->file_WordList;
+	my $target = $::project_obj->file_TempCSV;
 	mysql_words->csv_list($target);
 	open (RFILE,"$target") or die;
 	while (<RFILE>){
