@@ -276,7 +276,7 @@ sub reform{
 		INTO hinshi (name)
 		SELECT (hinshi)
 			FROM hgh
-			WHERE length(genkei) > 0
+			WHERE (length(genkei) > 0) and (length(hinshi) > 0)
 			GROUP BY hinshi
 	',1);
 	mysql_exec->do("alter table hinshi add index index1 (name)",1);
