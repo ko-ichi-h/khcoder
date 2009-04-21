@@ -1,4 +1,5 @@
 package kh_project_io;
+
 use strict;
 use MySQL::Backup_kh;
 use MIME::Base64;
@@ -59,6 +60,73 @@ sub export{
 
 	print "OK\n";
 }
+
+sub import{
+	my $file_save   = shift;
+	my $file_target = shift;
+
+	# プロジェクトを開いている場合はクローズ
+	$::main_gui->close_all;
+	undef $::project_obj;
+	$::main_gui->menu->refresh;
+	$::main_gui->inner->refresh;
+
+	# 分析対象ファイルの解凍
+	my $zip = Archive::Zip->new();
+	unless ( $zip->read( $file_save ) == "AZ_OK" ) {
+		return undef;
+	}
+	unless ( $zip->extractMember('target',$file_target) == "AZ__OK" ){
+		return undef;
+	}
+
+	# プロジェクトの登録
+	my $info = &get_info($file_save);
+	
+	my $new = kh_project->new(
+		target  => $file_target,
+		comment => Jcode->new($info->{comment})->sjis,
+		icode   => 0,
+	) or return 0;
+	kh_projects->read->add_new($new) or return 0;
+
+	# MySQLデータベースの準備（クリア）
+	print "db: ", $new->dbname, "\n";
+	my $dbh = mysql_exec->connect_db($new->dbname);
+
+	# MySQLデータベースの復帰
+
+
+
+
+
+
+}
+
+
+sub get_info{
+	my $file = shift;
+	
+	# 解凍
+	my $zip = Archive::Zip->new();
+	unless ( $zip->read( $file ) == "AZ_OK" ) {
+		return undef;
+	}
+	my $file_temp_info = $::config_obj->file_temp;
+	unless ( $zip->extractMember('info',$file_temp_info) == "AZ__OK" ){
+		return undef;
+	}
+
+	# 解釈
+	my %info = LoadFile($file_temp_info) or return undef;
+	foreach my $i (keys %info){
+		$info{$i} = decode_base64($info{$i})
+	}
+	unlink($file_temp_info);
+
+	return \%info;
+}
+
 
 
 
