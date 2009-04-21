@@ -137,7 +137,8 @@ sub make{
 			-command => 
 				sub{ $mw->after(10,sub{gui_window::sysconfig->open;});},
 		);
-		$f->separator();
+		#$f->separator();
+		
 		$msg = gui_window->gui_jchar('½ªÎ»','euc');
 		$f->command(
 			-label => $msg,
