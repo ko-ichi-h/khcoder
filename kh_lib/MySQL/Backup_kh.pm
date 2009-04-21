@@ -130,93 +130,96 @@ sub table_desc{ #creates a structure of the inputed table
 }
 
 sub create_structure{ #creates a structure of the current DB
-    my $self = shift;
-    my @arr;
-    my $sql;
+	my $self = shift;
+	my $fh = shift;
+	my $sql = '';
 
-    unless($self->{'param'}->{'tables'}){
-      my $sth = $self->run_sql("SHOW TABLES");
-      while(my @temp = $sth->fetchrow_array()){
-        push @arr, $temp[0];
-      }
+	my @arr;
+	if ($self->{'param'}->{'tables'}){
+		@arr = @{$self->{'param'}->{'tables'}};
+	} else {
+		my $sth = $self->run_sql("SHOW TABLES");
+		while(my @temp = $sth->fetchrow_array()){
+			push @arr, $temp[0];
+		}
+	}
 
-      foreach my $temp(@arr){
-        $sql .= $self->table_desc($temp)."\n";
-      }
-    }
-    else{
-      @arr = @{$self->{'param'}->{'tables'}};
-      foreach my $temp(@arr){
-        $sql .= $self->table_desc($temp)."\n";
-      }
-    }
+	foreach my $temp(@arr){
+		if ($fh){
+			print $fh $self->table_desc($temp)."\n";
+		} else {
+			$sql .=   $self->table_desc($temp)."\n";
+		}
+	}
 
-    return $sql;
+	if ($fh){
+		return 1;
+	} else {
+		return $sql;
+	}
 }
 
 sub get_table_data{
+	my ($self, $table, $fh) = @_;
+	my $data;
 
-    my ($self, $table) = @_;
-    my $data;
-    my @temp = $self->arr_hash("SELECT * FROM $table WHERE 1");
 
-    foreach my $ref (@temp){
-      my @keys = keys %$ref;
-      my $key_list = '`'.join('`, `', @keys).'`';
-      my @values;
-      for(my $i=0; $i<=$#keys; $i++){
-        push @values, $self->{'DBH_OBJ'}->quote($ref->{$keys[$i]});
-      }
-      my $value_list = join(', ', @values);
-      if($self->{'param'}->{'USE_REPLACE'}){
-        $data .= "REPLACE INTO `$table` ($key_list) VALUES ($value_list);\n";
-      }
-      else{
-        $data .= "INSERT INTO `$table` ($key_list) VALUES ($value_list);\n";
-      }
-    }
+	my $sth = $self->run_sql("SELECT * FROM $table WHERE 1");
+	while ( my $ref = $sth->fetchrow_hashref() ){
+		my @keys = keys %$ref;
+		my $key_list = '`'.join('`, `', @keys).'`';
+		my @values;
+		for(my $i=0; $i<=$#keys; $i++){
+			push @values, $self->{'DBH_OBJ'}->quote($ref->{$keys[$i]});
+		}
+		my $value_list = join(', ', @values);
+		if($self->{'param'}->{'USE_REPLACE'}){
+			$data .= "REPLACE INTO `$table` ($key_list) VALUES ($value_list);\n";
+		} else{
+			$data .= "INSERT INTO `$table` ($key_list) VALUES ($value_list);\n";
+		}
+		if ($fh){
+			print $fh $data;
+			$data = '';
+		}
+	}
 
-    return $data;
+	return $data;
 }
 
 sub data_backup{ #get all data from current database
+	my $self = shift;
+	my $fh   = shift;
+	my $sql = '';
 
-    my $self = shift;
-    #my $sth = $self->run_sql("SHOW TABLES");
-    #my (@tables, @tables_for_lock);
-    #while(my $temp = $sth->fetchrow_array()){
-    #  push @tables, "$temp";
-    #  push @tables_for_lock, "$temp WRITE";
-    #}
-    #$self->run_sql("LOCK TABLES ".join(', ', @tables_for_lock));
-    my @arr;
-    my $sql = '';
-    #foreach my $temp(@tables){
-    #  $sql .= $self->get_table_data($temp);
-    #}
+	my @arr;
+	if ($self->{'param'}->{'tables'}){
+		@arr = @{$self->{'param'}->{'tables'}};
+	} else {
+		my $sth = $self->run_sql("SHOW TABLES");
+		while(my @temp = $sth->fetchrow_array()){
+			push @arr, $temp[0];
+		}
+	}
 
-    unless($self->{'param'}->{'tables'}){
-      my $sth = $self->run_sql("SHOW TABLES");
-      while(my @temp = $sth->fetchrow_array()){
-        push @arr, $temp[0];
-      }
+	foreach my $temp(@arr){
+		if ( ($self->{'param'}->{'SHOW_TABLE_NAMES'}) ){
+			if ($fh){
+				print $fh "/* $temp */\n";
+			} else {
+				$sql .= "/* $temp */\n";
+			}
+		}
+		
+		my $table_data = $self->get_table_data($temp,$fh);
+		$sql .= $table_data if $table_data;
+	}
 
-      foreach my $temp(@arr){
-        my $table_data = $self->get_table_data($temp);
-        $sql .= "/* $temp */\n" if (($self->{'param'}->{'SHOW_TABLE_NAMES'})and($table_data));
-        $sql .= $table_data if $table_data;
-      }
-    }
-    else{
-      foreach my $temp(@{$self->{'param'}->{'tables'}}){
-        my $table_data = $self->get_table_data($temp);
-        $sql .= "/* $temp */\n" if (($self->{'param'}->{'SHOW_TABLE_NAMES'})and($table_data));
-        $sql .= $table_data if $table_data;
-      }
-    }
-
-    #$self->run_sql("UNLOCK TABLES");
-    return $sql;
+	if ($fh){
+		return 1;
+	} else {
+		return $sql;
+	}
 }
 
 sub run_restore_script{

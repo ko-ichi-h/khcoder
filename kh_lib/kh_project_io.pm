@@ -19,15 +19,16 @@ sub export{
 			file => $file_temp_mysql
 		)
 	;
-	print MYSQLO $mb->create_structure();
-	print MYSQLO $mb->data_backup();
+	$mb->create_structure(*MYSQLO);
+	$mb->data_backup(*MYSQLO);
 	close (MYSQLO);
 
+	return 1;
+
 	# MySQL::Backupはいろいろと修正する必要がある
-	# 1. ファイルハンドルを渡して、そこに書き込ませる形にしないとメモリがパンク
-	# 2. 複合Indexに対応していない
-	#    →primary key以外のindexは、データをinsertした後に作成するように
-	# 3. リストアするときもファイル全体を一気に読まず、1行づつに
+	#   1. ファイルハンドルを渡して一行ずつの出力に変更   → OK
+	#   2. 複合Indexに対応                                → これから
+	#   3. ファイルから一行ずつ読み込んでのリストアに変更 → これから
 
 	# 情報ファイルを作成
 	my $file_temp_info = $::config_obj->file_temp;
@@ -88,19 +89,24 @@ sub import{
 		comment => Jcode->new($info->{comment})->sjis,
 		icode   => 0,
 	) or return 0;
-	kh_projects->read->add_new($new) or return 0;
+	kh_projects->read->add_new($new) or return 0; # このプロジェクトが開かれる
 
 	# MySQLデータベースの準備（クリア）
-	print "db: ", $new->dbname, "\n";
-	my $dbh = mysql_exec->connect_db($new->dbname);
+	my @tables = mysql_exec->table_list;
+	foreach my $i (@tables){
+		mysql_exec->drop_table($i);
+	}
 
 	# MySQLデータベースの復帰
+	my $file_temp_mysql = $::config_obj->file_temp;
+	unless ( $zip->extractMember('mysql',$file_temp_mysql) == "AZ__OK" ){
+		return undef;
+	}
+	my $mb = new_from_DBH MySQL::Backup_kh($::project_obj->dbh);
+	$mb->run_restore_script($file_temp_mysql);
+	unlink($file_temp_mysql);
 
-
-
-
-
-
+	undef $::project_obj;
 }
 
 
