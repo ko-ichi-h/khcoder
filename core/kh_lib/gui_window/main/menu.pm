@@ -846,6 +846,8 @@ sub make{
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
 sub mc_import_project{
+	require kh_project_io;
+
 	# KHCファイルのパス
 	my @types = (
 		['KH Coder',[qw/.khc/] ],
@@ -866,17 +868,35 @@ sub mc_import_project{
 	$path = $::config_obj->os_path($path);
 	
 	# 分析対象ファイルの保存場所
-	# -initialfile
-	
-	
+	my $info = &kh_project_io::get_info($path);
+	return undef unless length($info->{file_name});
+	@types = (
+		['Data Files',[qw/.txt .html .htm/] ],
+		["All Files",'*']
+	);
+	my $path_s = $::main_gui->mw->getSaveFile(
+		-defaultextension => '.khc',
+		-filetypes        =>  \@types,
+		-title            =>
+			gui_window->gui_jt('分析対象ファイルを置く場所を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）'),
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
+		-initialfile      => gui_window->gui_jchar($info->{file_name})
+	);
+	unless ($path_s){
+		return 0;
+	}
+	$path_s = gui_window->gui_jg_filename_win98($path_s);
+	$path_s = gui_window->gui_jg($path_s);
+	$path_s = $::config_obj->os_path($path_s);
 	
 	# 実行
 	my $w = gui_wait->start;
-	use kh_project_io;
-	#&kh_project_io::export($path);
+	&kh_project_io::import($path,$path_s);
 	$w->end;
 }
 sub mc_export_project{
+	require kh_project_io;
+
 	# ファイル名
 	my @types = (
 		['KH Coder',[qw/.khc/] ],
@@ -898,7 +918,6 @@ sub mc_export_project{
 	
 	# 実行
 	my $w = gui_wait->start;
-	use kh_project_io;
 	&kh_project_io::export($path);
 	$w->end;
 }
