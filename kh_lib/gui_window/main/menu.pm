@@ -47,6 +47,7 @@ my @menu1 = (
 	'm_b3_contxtout_spss',
 	'm_b3_contxtout_csv',
 	'm_b3_contxtout_tab',
+	'm_b0_export',
 );
 
 #------------------#
@@ -103,6 +104,32 @@ sub make{
 		);
 		
 		$f->separator();
+		
+		$f->command(
+			-label => gui_window->gui_jchar('インポート'),
+			-font => "TKFN",
+			-command =>
+				sub{
+					$mw->after(10,sub{
+						$self->mc_close_project;
+					});
+				},
+		);
+		
+		$self->{m_b0_export} = $f->command(
+			-label => gui_window->gui_jchar('エクスポート'),
+			-font => "TKFN",
+			-state => 'disable',
+			-command =>
+				sub{
+					$mw->after(10,sub{
+						$self->mc_export_project;
+					});
+				},
+		);
+		
+		$f->separator();
+		
 		$msg = gui_window->gui_jchar('設定','euc');
 		$f->command(
 			-label => $msg,
@@ -817,6 +844,26 @@ sub make{
 #------------------------------------#
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
+sub mc_export_project{
+	# ファイル名
+	my $path = $::main_gui->mw->getSaveFile(
+		-defaultextension => '.txt',
+		-filetypes        => [[ "KH Coder",[qw/.khc/] ]],
+		-title            =>
+			gui_window->gui_jt('プロジェクトを*.khcファイルにエクスポート'),
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	
+	# 実行
+	use kh_project_io;
+	&kh_project_io::export($path);
+}
 sub mc_close_project{
 	$::main_gui->close_all;
 	undef $::project_obj;
