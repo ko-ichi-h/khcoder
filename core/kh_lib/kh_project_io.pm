@@ -25,14 +25,11 @@ sub export{
 	print MYSQLO $mb->data_backup();
 	close (MYSQLO);
 
-
 	# MySQL::Backupはいろいろと修正する必要がある
-
 	# 1. ファイルハンドルを渡して、そこに書き込ませる形にしないとメモリがパンク
 	# 2. 複合Indexに対応していない
 	#    →primary key以外のindexは、データをinsertした後に作成するように
 	# 3. リストアするときもファイル全体を一気に読まず、1行づつに
-
 
 
 
