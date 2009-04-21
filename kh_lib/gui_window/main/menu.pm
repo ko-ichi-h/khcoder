@@ -104,18 +104,18 @@ sub make{
 		);
 		
 		$f->separator();
-		
+
 		$f->command(
 			-label => gui_window->gui_jchar('インポート'),
 			-font => "TKFN",
 			-command =>
 				sub{
 					$mw->after(10,sub{
-						$self->mc_close_project;
+						$self->mc_import_project;
 					});
 				},
 		);
-		
+
 		$self->{m_b0_export} = $f->command(
 			-label => gui_window->gui_jchar('エクスポート'),
 			-font => "TKFN",
@@ -127,7 +127,7 @@ sub make{
 					});
 				},
 		);
-		
+
 		$f->separator();
 		
 		$msg = gui_window->gui_jchar('設定','euc');
@@ -845,13 +845,48 @@ sub make{
 #------------------------------------#
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
+sub mc_import_project{
+	# KHCファイルのパス
+	my @types = (
+		['KH Coder',[qw/.khc/] ],
+		["All Files",'*']
+	);
+	my $path = $::main_gui->mw->getOpenFile(
+		-defaultextension => '.khc',
+		-filetypes        =>  \@types,
+		-title            =>
+			gui_window->gui_jt('KHC形式のファイルからプロジェクトをインポート'),
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	
+	# 分析対象ファイルの保存場所
+	# -initialfile
+	
+	
+	
+	# 実行
+	my $w = gui_wait->start;
+	use kh_project_io;
+	#&kh_project_io::export($path);
+	$w->end;
+}
 sub mc_export_project{
 	# ファイル名
+	my @types = (
+		['KH Coder',[qw/.khc/] ],
+		["All Files",'*']
+	);
 	my $path = $::main_gui->mw->getSaveFile(
-		-defaultextension => '.txt',
-		-filetypes        => [[ "KH Coder",[qw/.khc/] ]],
+		-defaultextension => '.khc',
+		-filetypes        =>  \@types,
 		-title            =>
-			gui_window->gui_jt('プロジェクトを*.khcファイルにエクスポート'),
+			gui_window->gui_jt('現在のプロジェクトをKHC形式のファイルにエクスポート'),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -862,8 +897,10 @@ sub mc_export_project{
 	$path = $::config_obj->os_path($path);
 	
 	# 実行
+	my $w = gui_wait->start;
 	use kh_project_io;
 	&kh_project_io::export($path);
+	$w->end;
 }
 sub mc_close_project{
 	$::main_gui->close_all;

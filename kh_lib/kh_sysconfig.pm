@@ -52,6 +52,18 @@ sub readin{
 
 	return $self;
 }
+
+#------------------#
+#   Tempファイル   #
+
+sub file_temp{
+	my $n = 0;
+	while (-e '.khc'.$n.'.tmp'){
+		++$n;
+	}
+	return '.khc'.$n.'.tmp';
+}
+
 #--------------------#
 #   形態素解析関係   #
 
