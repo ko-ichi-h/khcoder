@@ -2,7 +2,7 @@ package kh_project_io;
 use strict;
 use MySQL::Backup_kh;
 use MIME::Base64;
-use YAML::XS qw(DumpFile LoadFile);               # XSのままで良い？
+use YAML qw(DumpFile LoadFile);
 use Archive::Zip;
 
 sub export{
