@@ -293,7 +293,7 @@ sub run_restore_script{
       $dbh->do("DROP TABLE IF EXISTS `$temp`");
     }
 
-    open(FILE, $file);
+	open(FILE, $file) or die("cannot open file: $file\n");
 
 	while (<FILE>){
 		s/\x0D\x0A/\n/g;
@@ -302,6 +302,8 @@ sub run_restore_script{
 		chop;
 		$self->run_sql($_);
 	}
+
+	close (FILE);
 
     return 1;
 }
