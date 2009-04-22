@@ -878,7 +878,7 @@ sub mc_import_project{
 		-defaultextension => '.khc',
 		-filetypes        =>  \@types,
 		-title            =>
-			gui_window->gui_jt('分析対象ファイルを置く場所を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）'),
+			gui_window->gui_jt('分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）'),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 		-initialfile      => gui_window->gui_jchar($info->{file_name})
 	);
@@ -893,6 +893,10 @@ sub mc_import_project{
 	my $w = gui_wait->start;
 	&kh_project_io::import($path,$path_s);
 	$w->end;
+	
+	# プロジェクトマネージャーを表示
+	gui_window::project_open->open;
+
 }
 sub mc_export_project{
 	require kh_project_io;

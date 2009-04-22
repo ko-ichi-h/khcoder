@@ -159,10 +159,68 @@ sub create_structure{ #creates a structure of the current DB
 	}
 }
 
+sub table_idx_desc{ #creates a index structure of the inputed table
+	my ($self, $table) = @_;
+
+	my %keys;
+	foreach my $ref( $self->arr_hash("SHOW KEYS FROM $table") ){
+		if ($ref->{'Key_name'} =~ m/PRIMARY/i){
+			next;
+		}
+		push @{$keys{ $ref->{'Key_name'} }->{member}}, $ref->{'Column_name'};
+		$keys{ $ref->{'Key_name'} }->{Non_unique} = $ref->{'Non_unique'};
+		$keys{ $ref->{'Key_name'} }->{Index_type} = $ref->{'Index_type'};
+	}
+
+	my $sql = '';
+	foreach my $i (keys %keys){
+		$sql .= 'CREATE ';
+		$sql .= 'UNIQUE '   if ( $keys{$i}->{Non_unique} =~ m/0/i );
+		$sql .= 'FULLTEXT ' if ( $keys{$i}->{Index_type} =~ m/FULLTEXT/i );
+		$sql .= "INDEX `$i` ON `$table` (";
+		foreach my $h ( @{$keys{$i}->{member}} ){
+			$sql .= "`$h`,";
+		}
+		chop $sql;
+		$sql .= ");\n";
+	}
+
+	return $sql;
+}
+
+sub create_index_structure{ #creates a index structure of the current DB
+	my $self = shift;
+	my $fh = shift;
+	my $sql = '';
+
+	my @arr;
+	if ($self->{'param'}->{'tables'}){
+		@arr = @{$self->{'param'}->{'tables'}};
+	} else {
+		my $sth = $self->run_sql("SHOW TABLES");
+		while(my @temp = $sth->fetchrow_array()){
+			push @arr, $temp[0];
+		}
+	}
+
+	foreach my $temp(@arr){
+		if ($fh){
+			print $fh $self->table_idx_desc($temp);
+		} else {
+			$sql .=   $self->table_idx_desc($temp);
+		}
+	}
+
+	if ($fh){
+		return 1;
+	} else {
+		return $sql;
+	}
+}
+
 sub get_table_data{
 	my ($self, $table, $fh) = @_;
 	my $data;
-
 
 	my $sth = $self->run_sql("SELECT * FROM $table WHERE 1");
 	while ( my $ref = $sth->fetchrow_hashref() ){
@@ -231,39 +289,21 @@ sub run_restore_script{
       push @tables, "$temp";
       push @tables_for_lock, "$temp WRITE";
     }
-    #$self->run_sql("LOCK TABLES ".join(', ', @tables_for_lock));
-       #$sth = run_sql("FLUSH TABLES");
     foreach my $temp(@tables){
       $dbh->do("DROP TABLE IF EXISTS `$temp`");
     }
 
     open(FILE, $file);
-    my $fline = readline(*FILE); # kh
-    if ($fline =~ m/\r\n/){
-         $/ = ";\r\n";
-    }
-    elsif($fline =~ m/\n\r/){
-         $/ = ";\n\r";
-    }
-    elsif($fline =~ m/\r/){
-         $/ = ";\r";
-    }
-    else{ 
-         $/ = ";\n";
-    }
-    my @sql = <FILE>;
-    unshift @sql, $fline;
-    $/= "\n";
-    close(FILE);
 
-    foreach my $sql(@sql){
-      chomp $sql;
-      $self->run_sql($sql);
-    }
+	while (<FILE>){
+		s/\x0D\x0A/\n/g;
+		tr/\x0D\x0A/\n\n/;
+		chomp;
+		chop;
+		$self->run_sql($_);
+	}
 
-    #$dbh->do("RESET MASTER");
-    #$self->run_sql("UNLOCK TABLES");
-    return \@sql;
+    return 1;
 }
 
 sub run_upgrade_script{

@@ -21,14 +21,13 @@ sub export{
 	;
 	$mb->create_structure(*MYSQLO);
 	$mb->data_backup(*MYSQLO);
+	$mb->create_index_structure(*MYSQLO);
 	close (MYSQLO);
 
-	return 1;
-
-	# MySQL::Backupはいろいろと修正する必要がある
-	#   1. ファイルハンドルを渡して一行ずつの出力に変更   → OK
-	#   2. 複合Indexに対応                                → これから
-	#   3. ファイルから一行ずつ読み込んでのリストアに変更 → これから
+	# MySQL::Backupはいろいろと修正する必要があった
+	#   1. バックアップの挙動を、一行ずつの出力に変更       → OK
+	#   2. 複合Indexに対応                                  → OK
+	#   3. リストアの挙動も、一行ずつ読み込んでの実行に変更 → OK
 
 	# 情報ファイルを作成
 	my $file_temp_info = $::config_obj->file_temp;
