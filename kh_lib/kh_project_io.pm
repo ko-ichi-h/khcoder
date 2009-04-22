@@ -59,7 +59,7 @@ sub export{
 	# 一時ファイルを削除
 	unlink ($file_temp_mysql, $file_temp_info);
 
-	print "OK\n";
+	return 1;
 }
 
 sub import{
