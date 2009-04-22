@@ -222,15 +222,20 @@ sub get_table_data{
 	my ($self, $table, $fh) = @_;
 	my $data;
 
-	my $sth = $self->run_sql("SELECT * FROM $table WHERE 1");
-	while ( my $ref = $sth->fetchrow_hashref() ){
-		my @keys = keys %$ref;
-		my $key_list = '`'.join('`, `', @keys).'`';
-		my @values;
-		for(my $i=0; $i<=$#keys; $i++){
-			push @values, $self->{'DBH_OBJ'}->quote($ref->{$keys[$i]});
+	my $key_list = '';
+	foreach my $i ($self->arr_hash("SHOW COLUMNS FROM $table")){
+		$key_list .= '`'.$i->{Field}.'`,';
+	}
+	chop $key_list;
+
+	my $sth = $self->run_sql("SELECT $key_list FROM $table WHERE 1");
+	while ( my $i = $sth->fetch() ){
+		my $value_list;
+		foreach my $h (@{$i}){
+			$value_list .= $self->{'DBH_OBJ'}->quote($h).',';
 		}
-		my $value_list = join(', ', @values);
+		chop $value_list;
+
 		if($self->{'param'}->{'USE_REPLACE'}){
 			$data .= "REPLACE INTO `$table` ($key_list) VALUES ($value_list);\n";
 		} else{
