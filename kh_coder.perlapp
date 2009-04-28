@@ -8,8 +8,9 @@ Add: Encode::JP::H2Z
 Add: Encode::JP
 Add: feature
 Add: Encode::EUCJPMS
+Add: kh_project_io
 Clean: 0
-Date: 2008-08-12 18:43:34
+Date: 2009-04-28 20:05:59
 Debug: 
 Dependent: 0
 Dyndll: 0
