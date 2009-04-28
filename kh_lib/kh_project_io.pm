@@ -75,11 +75,22 @@ sub import{
 	# 分析対象ファイルの解凍
 	my $zip = Archive::Zip->new();
 	unless ( $zip->read( $file_save ) == "AZ_OK" ) {
+		print "Could not open zip file!\n";
 		return undef;
 	}
-	unless ( $zip->extractMember('target',$file_target) == "AZ__OK" ){
+
+	my $file_temp_target = $::config_obj->file_temp;
+	unless ( $zip->extractMember('target',$file_temp_target) == "AZ__OK" ){
+		print "Could not extract target file!\n";
 		return undef;
 	}
+	rename($file_temp_target, $file_target) or
+		gui_errormsg->open(
+			type => 'file',
+			file => $file_target
+		)
+	;	# 2バイト文字（駄目文字）がファイル名に含まれていると、解凍に失敗する！
+		# ので、いったんtempファイルに解凍してからリネーム
 
 	# プロジェクトの登録
 	my $info = &get_info($file_save);
