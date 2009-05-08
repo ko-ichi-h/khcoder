@@ -28,38 +28,10 @@ sub new{
 
 sub prepare_db{
 	my $self   = shift;
-	my $hinshi = shift;
 	$self->{dbname} = mysql_exec->create_new_db;
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
 	$::project_obj = $self;
 	
-	# 品詞選択テーブル
-	mysql_exec->do('
-		create table hselection(
-			khhinshi_id int primary key not null,
-			ifuse       int,
-			name        varchar(20) not null
-		)
-	',1);
-	my %temp_h;
-	my $sql4 = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
-	foreach my $i (@{$hinshi}){
-		if ($temp_h{$i->[0]}){
-			next;
-		} else {
-			$temp_h{$i->[0]} = 1;
-		}
-		#if ($i->[1] eq "複合名詞"){
-		#	$sql4 .= "($i->[0],0,'$i->[1]'),";
-		#} 
-		if ($i->[1] eq "HTMLタグ"){
-			$sql4 .= "($i->[0],0,'$i->[1]'),";
-		} else {
-			$sql4 .= "($i->[0],1,'$i->[1]'),";
-		}
-	}
-	$sql4 .= "(9999,0,'その他')";
-	mysql_exec->do($sql4,1);
 	# 辞書テーブル
 	mysql_exec->do('create table dmark ( name varchar(200) not null )',1);
 	mysql_exec->do('create table dstop ( name varchar(200) not null )',1);
@@ -85,6 +57,65 @@ sub prepare_db{
 		VALUES ('last_tani',''),('last_codf',''),('icode','$self->{icode}')
 	",1);
 }
+
+sub read_hinshi_setting{
+	my $self = shift;
+	
+	my $dbh_csv = DBI->connect("DBI:CSV:f_dir=./config");
+	
+	# 品詞設定の読み込み
+	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
+	$sql .= $::config_obj->c_or_j;
+	my $h = $dbh_csv->prepare($sql) or die("dbh_csv error 1");
+	$h->execute or die("dbh_csv error 2");
+	my $hinshi = $h->fetchall_arrayref or die ("dbh_csv error 3");
+
+	# プロジェクト内へコピー(1)
+	mysql_exec->drop_table('hselection');
+	mysql_exec->do('
+		create table hselection(
+			khhinshi_id int primary key not null,
+			ifuse       int,
+			name        varchar(20) not null
+		)
+	',1);
+	$sql = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
+	my %temp_h = ();
+	foreach my $i (@{$hinshi}){
+		if ($temp_h{$i->[0]}){
+			next;
+		} else {
+			$temp_h{$i->[0]} = 1;
+		}
+		if ($i->[1] eq "HTMLタグ"){
+			$sql .= "($i->[0],0,'$i->[1]'),";
+		} else {
+			$sql .= "($i->[0],1,'$i->[1]'),";
+		}
+	}
+	$sql .= "(9999,0,'その他')";
+	mysql_exec->do($sql,1);
+
+	# プロジェクト内へコピー(2)
+	mysql_exec->drop_table('hinshi_setting');
+	mysql_exec->do('
+		create table hinshi_setting(
+			khhinshi_id int not null,
+			khhinshi    varchar(255) not null,
+			condition1  varchar(255) not null,
+			condition2  varchar(255)
+		)
+	',1);
+	$sql = "INSERT INTO hinshi_setting (khhinshi_id,khhinshi,condition1,condition2)\nVALUES ";
+	foreach my $i (@{$hinshi}){
+		$sql .= "($i->[0],'$i->[1]','$i->[2]','$i->[3]'),";
+	}
+	chop $sql;
+	mysql_exec->do($sql,1);
+
+	return 1;
+}
+
 
 sub temp{
 	my $class = shift;

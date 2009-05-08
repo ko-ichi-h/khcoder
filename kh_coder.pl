@@ -2,7 +2,7 @@
 
 =head1 COPYRIGHT
 
-Copyright (C) 2008 樋口耕一 <http://koichi.nihon.to/psnl>
+Copyright (C) 2009 樋口耕一 <http://koichi.nihon.to/psnl>
 
 本プログラムはフリー・ソフトウェアです。
 

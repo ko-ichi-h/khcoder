@@ -1,5 +1,5 @@
-package sample2_hello_world_file;  # ←この行はファイル名にあわせて変更
-use strict;                        # ※ファイルの文字コードはEUCを推奨
+package p1_sample2_hello_world_file;  # ←この行はファイル名にあわせて変更
+use strict;                           # ※ファイルの文字コードはEUCを推奨
 
 #--------------------------#
 #   このプラグインの設定   #

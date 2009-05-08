@@ -1,6 +1,6 @@
 # 最小限（に近い）プラグイン構成
 
-package sample4_minimum;
+package p1_sample4_minimum;
 
 sub plugin_config{
 	return {

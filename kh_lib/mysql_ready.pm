@@ -298,13 +298,22 @@ sub reform{
 		)
 	",1);
 
-	my $dbhh = DBI->connect("DBI:CSV:f_dir=./config");      # Ê¬Îàµ¬Â§½àÈ÷
-	my $th = $dbhh->prepare("
-		SELECT kh_hinshi,condition1,condition2,hinshi_id
-		FROM hinshi_chasen
-	") or die;
-	$th->execute or die;
-	my $rule = $th->fetchall_arrayref;
+	my $rule;                                               # Ê¬Îàµ¬Â§½àÈ÷
+	if (mysql_exec->table_exists('hinshi_setting')){
+		$rule = mysql_exec->select(
+			 "SELECT khhinshi,condition1,condition2,khhinshi_id "
+			."FROM hinshi_setting",
+			1
+		)->hundle->fetchall_arrayref;
+	} else {
+		my $dbhh = DBI->connect("DBI:CSV:f_dir=./config");      
+		my $th = $dbhh->prepare("
+			SELECT kh_hinshi,condition1,condition2,hinshi_id
+			FROM hinshi_chasen
+		") or die;
+		$th->execute or die;
+		$rule = $th->fetchall_arrayref;
+	}
 
                                                             # ¥Ç¡¼¥¿½àÈ÷
 	mysql_exec->drop_table("hgh2");
