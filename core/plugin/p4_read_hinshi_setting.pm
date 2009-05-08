@@ -19,7 +19,10 @@ sub exec{
 	$::project_obj->read_hinshi_setting;
 	
 	gui_errormsg->open(
-		msg  => '品詞設定の変更を反映するには（再度）前処理を実行して下さい。',
+		msg  => 
+			 '現在開いているプロジェクトの品詞設定を更新しました。'
+			."\n"
+			.'品詞設定の変更を反映するには（再度）前処理を実行して下さい。',
 		type => 'msg',
 		icon => 'info',
 	);
