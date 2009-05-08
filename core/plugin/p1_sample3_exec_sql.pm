@@ -1,5 +1,5 @@
-package sample3_exec_sql;          # ←この行はファイル名にあわせて変更
-use strict;                        # ※ファイルの文字コードはEUCを推奨
+package p1_sample3_exec_sql;          # ←この行はファイル名にあわせて変更
+use strict;                           # ※ファイルの文字コードはEUCを推奨
 
 #--------------------------#
 #   このプラグインの設定   #

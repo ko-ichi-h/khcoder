@@ -1,4 +1,4 @@
-package wm_input;
+package p2_io1_wm_input;
 use strict;
 
 #----------------------#

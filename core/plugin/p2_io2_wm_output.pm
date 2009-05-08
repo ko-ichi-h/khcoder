@@ -1,4 +1,4 @@
-package wm_output;
+package p2_io2_wm_output;
 use strict;
 
 #----------------------#

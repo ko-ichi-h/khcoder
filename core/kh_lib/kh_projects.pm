@@ -80,15 +80,9 @@ sub add_new{
 		}
 	}
 
-	# デフォルトの品詞選択情報を取得
-	my $sql2 = "SELECT hinshi_id, kh_hinshi FROM hinshi_";  # 品詞リスト取得
-	$sql2 .= $::config_obj->c_or_j;
-	my $hst = $self->dbh->prepare($sql2) or die(dbh error 1);
-	$hst->execute or die(dbh error 2);
-	my $data = $hst->fetchall_arrayref or die (dbh error 3);
-
 	# MySQL DBの整備
-	$new->prepare_db($data);
+	$new->prepare_db;
+	$new->read_hinshi_setting;
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
