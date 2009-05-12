@@ -6,7 +6,7 @@ use strict;
 
 sub plugin_config{
 	return {
-		name     => '品詞設定の読み込み',
+		name     => '品詞設定をプロジェクトに読み込む',
 		menu_cnf => 1,
 		menu_grp => '',
 	};
@@ -16,6 +16,23 @@ sub plugin_config{
 #   メニュー選択時に実行されるルーチン   #
 
 sub exec{
+
+	
+	my $ans = $::main_gui->mw->messageBox(
+		-message => gui_window->gui_jchar
+			(
+				 "KH Coderの品詞設定を、現在開いているプロジェクトに読み込みます。\n\n"
+				."※KH Coderの品詞設定を変更しても、この操作を行わないかぎり、\n"
+				."既存のプロジェクトの品詞設定は更新されません。\n\n"
+				."続行してよろしいですか？"
+			),
+		-icon    => 'question',
+		-type    => 'OKCancel',
+		-title   => 'KH Coder'
+	);
+	unless ($ans =~ /ok/i){ return 0; }
+
+
 	$::project_obj->read_hinshi_setting;
 	
 	gui_errormsg->open(
