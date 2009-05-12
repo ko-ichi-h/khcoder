@@ -17,7 +17,6 @@ sub plugin_config{
 
 sub exec{
 
-	
 	my $ans = $::main_gui->mw->messageBox(
 		-message => gui_window->gui_jchar
 			(
@@ -30,11 +29,10 @@ sub exec{
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
 	);
-	unless ($ans =~ /ok/i){ return 0; }
-
+	return 0 unless $ans =~ /ok/i;
 
 	$::project_obj->read_hinshi_setting;
-	
+
 	gui_errormsg->open(
 		msg  => 
 			 '現在開いているプロジェクトの品詞設定を更新しました。'
