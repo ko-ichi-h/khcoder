@@ -70,6 +70,11 @@ BEGIN{
 	if( $] > 5.008 ){
 		require Encode;
 	}
+	if ($^O eq 'darwin'){ # Mac OS X
+				
+		require Unicode::Normalize;
+		
+	}
 }
 
 sub open{
@@ -263,6 +268,13 @@ sub gui_jg{ # 入力された文字列の変換
 	if ($] > 5.008){
 		if ( utf8::is_utf8($char) ){
 			#print "utf8\n";
+			if ($^O eq 'darwin'){ # Mac OS X
+				
+				$char = Unicode::Normalize::NFC($char);
+		
+			}
+		
+			
 			return Encode::encode('cp932',$char);
 		} else {
 			#print "not utf8\n";

@@ -142,8 +142,8 @@ sub _sansyo{
 		$path = $self->gui_jg($path);
 		$::config_obj->os_path($path);
 		$self->e1->delete('0','end');
-		$self->e1->insert(0,$self->gui_jchar($path,'sjis'));
-		#print "-1: $path\n";
+		$self->e1->insert(0,$self->gui_jchar($path));
+		#print Jcode->new($path)->euc, "\n";
 	}
 }
 
