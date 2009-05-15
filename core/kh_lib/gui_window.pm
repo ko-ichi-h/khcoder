@@ -72,7 +72,8 @@ BEGIN{
 	}
 	if ($^O eq 'darwin'){ # Mac OS X
 				
-		require Unicode::Normalize;
+		#require Unicode::Normalize;
+		require Text::Iconv;
 		
 	}
 }
@@ -269,8 +270,10 @@ sub gui_jg{ # 入力された文字列の変換
 		if ( utf8::is_utf8($char) ){
 			#print "utf8\n";
 			if ($^O eq 'darwin'){ # Mac OS X
+				#$char = Unicode::Normalize::NFC($char);
+				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
+				return Jcode->new($char,'utf8')->sjis;
 				
-				$char = Unicode::Normalize::NFC($char);
 		
 			}
 		

@@ -601,17 +601,13 @@ sub dir_CoderData{
 
 sub file_datadir{
 	my $self = shift;
-	my $pos = rindex($self->file_target,'/'); ++$pos;
-	my $datadir = substr($self->file_target,0,"$pos");
-	$datadir .= 'coder_data/';
 	
-	my $temp = $self->file_target;
-	substr($temp,0,$pos) = '';
-	$pos = rindex($temp,'.');
-	$temp = substr($temp,0,$pos);
-	$datadir .= $temp;
-	$datadir = $::config_obj->os_path($datadir);
-	return $datadir;
+
+	
+	my $temp = $self->file_short_name;
+	$temp = substr($temp,0,rindex($temp,'.'));
+
+	return $self->dir_CoderData.$temp;
 }
 
 sub file_target{
