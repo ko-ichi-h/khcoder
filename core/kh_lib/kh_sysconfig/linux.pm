@@ -292,28 +292,28 @@ sub os_path{
 	my $c     = shift;
 	my $icode = shift;
 
-        if ($^O eq 'darwin'){ # Mac OS X
-            $c = Jcode->new("$c",$icode)->euc;
-
+	if ($^O eq 'darwin'){ # Mac OS X
+		
+		$c = Jcode->new("$c",$icode)->euc;
 		my $ascii = '[\x00-\x7F]';
 		my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
 		my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
-		my $character_undef = '(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|' # 9-15,85-94区
- 			 . '\x8E[\xE0-\xFE]|' # 半角カタカナ
- 			 . '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2区
+		my $character_undef =
+			'(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|' # 9-15,85-94区
+			  . '\x8E[\xE0-\xFE]|' # 半角カタカナ
+			  . '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2区
 			  . '\xA3[\XA1-\xAF\xBA-\xC0\xDB-\xE0\xFB-\xFE]|' # 3区
 			  . '\xA4[\xF4-\xFE]|' # 4区
 			  . '\xA5[\xF7-\xFE]|' # 5区
 			  . '\xA6[\xB9-\xC0\xD9-\xFE]|' # 6区
- 			 . '\xA7[\xC2-\xD0\xF2-\xFE]|' # 7区
+			 . '\xA7[\xC2-\xD0\xF2-\xFE]|' # 7区
 			  . '\xA8[\xC1-\xFE]|' # 8区
 			  . '\xCF[\xD4-\xFE]|' # 47区
 			  . '\xF4[\xA7-\xFE]|' # 84区
- 			 . '\x8F[\xA1-\xFE][\xA1-\xFE])'; # 3バイト文字
+			  . '\x8F[\xA1-\xFE][\xA1-\xFE])'; # 3バイト文字
+
 		foreach my $i ($c =~ /$ascii|$twoBytes|$threeBytes/og){
-	
 			if ($i =~ /$character_undef/){
-		
 				gui_errormsg->open(
 					type   => 'msg',
 					msg    => "未対応文字がファイル名またはフォルダ名に含まれています。\n現在のところ、EUCに変換できない文字には未対応です。"
@@ -322,11 +322,11 @@ sub os_path{
 			}
 		}
 
-            $c = Jcode->new("$c",'euc')->utf8;
-        } else {
-            $c = Jcode->new("$c",$icode)->euc;
-	    $c =~ tr/\\/\//;
-        }
+		$c = Jcode->new("$c",'euc')->utf8;
+	} else {
+		$c = Jcode->new("$c",$icode)->euc;
+		$c =~ tr/\\/\//;
+	}
 
 	return $c;
 }
