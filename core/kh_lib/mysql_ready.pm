@@ -141,11 +141,11 @@ sub readin{
 
 	my $thefile = "'".$::project_obj->file_MorphoOut."'";
 	
-	my $icode = Jcode->new($thefile)->icode;
-	$thefile = Jcode->new($thefile,$icode)->euc;
+	#my $icode = Jcode->new($thefile)->icode;
+	#$thefile = Jcode->new($thefile,$icode)->euc;
 	$thefile =~ tr/\\/\//;
-	$thefile = Jcode->new($thefile,'euc')->$icode;
-	print "$thefile\n";
+	#$thefile = Jcode->new($thefile,'euc')->$icode;
+	#print "$thefile\n";
 	
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
 
