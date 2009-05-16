@@ -2,8 +2,10 @@ package gui_window::about;
 use strict;
 use base qw(gui_window);
 
+use utf8;
+
 #------------------#
-#   Window¤ò³«¤¯   #
+#   Windowã‚’é–‹ã   #
 #------------------#
 
 sub _new{
@@ -14,7 +16,7 @@ sub _new{
 	my $wabtkh = $self->{win_obj};
 	#$wabtkh->resizable(0, 0);
 
-	$wabtkh->title($self->gui_jt('KH Coder¤Ë¤Ä¤¤¤Æ','euc'));
+	$wabtkh->title($self->gui_jt('KH Coderã«ã¤ã„ã¦'));
 
 	$wabtkh->Label(
 		-image => $wabtkh->Photo(-file => $::config_obj->logo_image_file),
@@ -120,7 +122,7 @@ sub _new{
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('ÀîÃ¼Î¼','euc'),
+		label  => $self->gui_jchar('å·ç«¯äº®'),
 		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
@@ -131,20 +133,27 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
+	my $copy_mark;
+	if( $] > 5.008 ){
+		$copy_mark = 'Â©';
+	} else {
+		$copy_mark = '(C) ';
+	}
+
 	$fra_r->Label(
-		-text => $self->gui_jchar('(C) 2001-2009','euc'),
+		-text => $self->gui_jchar($copy_mark.'2001-2009'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('Èõ¸ı¹Ì°ì','euc'),
+		label  => $self->gui_jchar('æ¨‹å£è€•ä¸€'),
 		url    => 'http://koichi.nihon.to/psnl',
 		parent => $fra_r,
 		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
 	);
 
 	$wabtkh->Button(
-		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),
+		-text => $self->gui_jchar('é–‰ã˜ã‚‹'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after
@@ -160,7 +169,7 @@ sub _new{
 }
 
 #--------------#
-#   WindowÌ¾   #
+#   Windowå   #
 
 sub win_name{
 	return 'w_about';

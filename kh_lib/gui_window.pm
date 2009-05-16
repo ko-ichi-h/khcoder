@@ -1,5 +1,7 @@
 package gui_window;
 
+my $debug = 1;
+
 use strict;
 use Tk;
 use Tk::LabFrame;
@@ -177,7 +179,10 @@ sub gui_jchar{ # GUI表示用の日本語
 	my $code = $_[2];
 	
 	if ( $] > 5.008 ) {
-		#return $char if utf8::is_utf8($char);
+		if ( utf8::is_utf8($char) ){
+			print "already decoded: ", Encode::encode('cp932',$char), "\n";
+			return $char if $debug;
+		}
 		
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
@@ -190,6 +195,12 @@ sub gui_jchar{ # GUI表示用の日本語
 		if (defined($code) && $code eq 'sjis'){
 			return $char;
 		} else {
+			# UTF-8フラグを落とさないと文字化け？
+			if (Jcode->new($char)->icode eq 'utf8'){
+				use Unicode::String qw(utf8);
+				$char = utf8($char)->as_string;
+			}
+
 			return Jcode->new($char,$code)->sjis;
 		}
 	}
@@ -235,12 +246,22 @@ sub gui_jt{ # Windowタイトル部分の日本語 （Win9x & Perl/Tk 804用の特殊処理）
 				return Jcode->new($char,$code)->sjis;
 			}
 		} else {
-			return Encode::decode($code,$char);
+			if (utf8::is_utf8($char)){
+				return $char;
+			} else {
+				return Encode::decode($code,$char);
+			}
 		}
 	} else {
 		if ($code eq 'sjis'){
 			return $char;
 		} else {
+			# UTF-8フラグを落とさないと文字化け？
+			if (Jcode->new($char)->icode eq 'utf8'){
+				use Unicode::String qw(utf8);
+				$char = utf8($char)->as_string;
+			}
+
 			return Jcode->new($char,$code)->sjis;
 		}
 	}
@@ -273,11 +294,8 @@ sub gui_jg{ # 入力された文字列の変換
 				#$char = Unicode::Normalize::NFC($char);
 				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
 				return Jcode->new($char,'utf8')->sjis;
-				
-		
 			}
-		
-			
+
 			return Encode::encode('cp932',$char);
 		} else {
 			#print "not utf8\n";
