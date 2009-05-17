@@ -7,12 +7,24 @@ sub rowdata{
 	my $class = shift;
 	my $self = shift;
 
+	my $sizeof_char = 4;
 	my $a_row =
 		  $self->length('hyoso')
 		+ $self->length('genkei')
 		+ $self->length('hinshi')
 		+ $self->length('katuyo')
-		+ 1 + 4 + 8;
+		+ 1
+	;
+	if ($a_row % $sizeof_char) {
+		$a_row += $sizeof_char - ( $a_row % $sizeof_char );
+	}
+
+	if (mysql_exec->version_number > 4 ){    # MySQL 5.x 以上
+		$a_row += 4 + $sizeof_char * 4;
+	} else {                                 # MySQL 4.x 以下
+		$a_row += 4 + $sizeof_char * 2;
+	}
+
 	my $rows = mysql_exec->select("
 		select count(*) from rowdata
 	")->hundle->fetch->[0];
@@ -31,10 +43,10 @@ sub rowdata{
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_isam",1);
 	mysql_exec->do("create table rowdata
 		(
-			hyoso  varchar(".$self->length('hyoso').") not null,
-			genkei varchar(".$self->length('genkei').") not null,
-			hinshi varchar(".$self->length('hinshi').") not null,
-			katuyo varchar(".$self->length('katuyo').") not null,
+			hyoso  char(".$self->length('hyoso').") not null,
+			genkei char(".$self->length('genkei').") not null,
+			hinshi char(".$self->length('hinshi').") not null,
+			katuyo char(".$self->length('katuyo').") not null,
 			id int primary key not null
 		) TYPE=HEAP
 	",1);
@@ -49,7 +61,7 @@ sub rowdata{
 sub rowdata_restore{
 	return 0 unless $::config_obj->use_heap;
 	return 0 unless mysql_exec->table_exists("rowdata_isam");
-	
+
 	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("ALTER TABLE rowdata_isam RENAME rowdata",1);
 }
