@@ -257,6 +257,16 @@ sub quote{
 	return $::project_obj->dbh->quote($input);
 }
 
+sub version_number{
+	my $t = $::project_obj->dbh->prepare("show variables like \"version\"");
+	$t->execute;
+	my $r = $t->fetch;
+	$r = $r->[1] if $r;
+	if ($r =~ /^([0-9]+\.[0-9]+)\./){
+		$r = $1;
+	}
+	return $r;
+}
 
 #-------------------------------#
 #   ログファイルにSQL文を記録   #
