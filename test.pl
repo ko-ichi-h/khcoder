@@ -1,7 +1,4 @@
-require Encode;
+$a = 8;
+$char = 4;
 
-my $alpha = "\x{3b1}";
-
-Encode::encode(undef , $alpha);
-
-print $alpha;
+print $char - ( $a % $char );
