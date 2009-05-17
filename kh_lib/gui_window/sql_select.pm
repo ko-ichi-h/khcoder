@@ -179,7 +179,7 @@ sub exec{
 	# 結果の書き出し
 	$self->list->destroy;                                   # 入れ物
 	$self->{list} = $self->field->Scrolled('HList',
-		-scrollbars       => 'oe',
+		-scrollbars       => 'osoe',
 		-header           => '1',
 		-itemtype         => 'text',
 		-font             => 'TKFN',
