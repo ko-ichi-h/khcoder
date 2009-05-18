@@ -7,22 +7,18 @@ sub rowdata{
 	my $class = shift;
 	my $self = shift;
 
-	my $l_hyoso  = $self->length('hyoso' );
-	my $l_genkei = $self->length('genkei');
-	my $l_hinshi = $self->length('hinshi');
-	my $l_katuyo = $self->length('katuyo');
-
 	my $sizeof_char = 4;
 	my $a_row = 0;
-
+	
+	my $a_row = 0;
 	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 以上
-		# prep
-		$l_hyoso  = int( ($l_hyoso  + 1) / 2);
-		$l_genkei = int( ($l_genkei + 1) / 2);
-		$l_hinshi = int( ($l_hinshi + 1) / 2);
-		$l_katuyo = int( ($l_katuyo + 1) / 2);
 		# data
-		$a_row = ($l_hyoso + $l_genkei + $l_hinshi + $l_katuyo) * 3 + 4 + 1;
+		$a_row =
+			  $self->length('hyoso')  * 3
+			+ $self->length('genkei') * 3
+			+ $self->length('hinshi') * 3
+			+ $self->length('katuyo') * 3
+			+ 4 + 1;
 		if ($a_row % $sizeof_char) {
 			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
 		}
@@ -30,9 +26,15 @@ sub rowdata{
 		$a_row += $sizeof_char * 2;
 		# margin
 		$a_row += 3;
+		print "a_row: $a_row\n";
 	} else {                                 # MySQL 3.x 以下
 		# data
-		$a_row = $l_hyoso + $l_genkei + $l_hinshi + $l_katuyo + 4 + 1;
+		$a_row =
+			  $self->length('hyoso')
+			+ $self->length('genkei')
+			+ $self->length('hinshi')
+			+ $self->length('katuyo')
+			+ 4 + 1;
 		if ($a_row % $sizeof_char) {
 			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
 		}
@@ -45,7 +47,7 @@ sub rowdata{
 	my $rows = mysql_exec->select("
 		select count(*) from rowdata
 	")->hundle->fetch->[0];
-	my $memory_n = int($a_row * $rows / 1024 /1024);
+	my $memory_n = int($a_row * $rows / 1024 /1024) + 1;
 	my $max = mysql_exec->select("
 		SHOW VARIABLES like \"max_heap_table_size\"
 	")->hundle->fetch->[1];
@@ -61,10 +63,10 @@ sub rowdata{
 	mysql_exec->do("create table rowdata
 		(
 			id int primary key not null,
-			hyoso  char($l_hyoso ) not null,
-			genkei char($l_genkei) not null,
-			hinshi char($l_hinshi) not null,
-			katuyo char($l_katuyo) not null
+			hyoso  varchar(".$self->length('hyoso').") not null,
+			genkei varchar(".$self->length('genkei').") not null,
+			hinshi varchar(".$self->length('hinshi').") not null,
+			katuyo varchar(".$self->length('katuyo').") not null
 		) TYPE=HEAP
 	",1);
 

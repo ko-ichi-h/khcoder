@@ -172,23 +172,37 @@ sub readin{
 	mysql_exec->drop_table("rowdata_org");
 
 	# フィールド長の取得
-	my $t = mysql_exec->select("
-		SELECT
-			MAX( LENGTH(hyoso) ) AS hyoso,
-			MAX( LENGTH(genkei) ) AS genkei,
-			MAX( LENGTH(hinshi) ) AS hinshi,
-			MAX( LENGTH(katuyo) ) AS katuyo
-		FROM rowdata
-	",1)->hundle;
-	my $r = $t->fetchrow_hashref;
-	$t->finish;
-	my $total_length;
-	my $sql_temp;
-	foreach my $key (keys %{$r}){
-		mysql_ready::dump->word_length if $r->{$key} == 255;
-		my $len = $r->{$key} + 4;
-		$len = 255 if $len > 255;
-		$self->length($key,$len);
+	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 以上
+		my $t = mysql_exec->select("
+			SELECT
+				MAX( CHAR_LENGTH(hyoso) )  AS hyoso,
+				MAX( CHAR_LENGTH(genkei) ) AS genkei,
+				MAX( CHAR_LENGTH(hinshi) ) AS hinshi,
+				MAX( CHAR_LENGTH(katuyo) ) AS katuyo
+			FROM rowdata
+		",1)->hundle;
+		my $r = $t->fetchrow_hashref;
+		$t->finish;
+		foreach my $key (keys %{$r}){
+			$self->length($key,$r->{$key});
+		}
+	} else {                                 # MySQL 3.x 以下
+		my $t = mysql_exec->select("
+			SELECT
+				MAX( LENGTH(hyoso) ) AS hyoso,
+				MAX( LENGTH(genkei) ) AS genkei,
+				MAX( LENGTH(hinshi) ) AS hinshi,
+				MAX( LENGTH(katuyo) ) AS katuyo
+			FROM rowdata
+		",1)->hundle;
+		my $r = $t->fetchrow_hashref;
+		$t->finish;
+		foreach my $key (keys %{$r}){
+			mysql_ready::dump->word_length if $r->{$key} == 255;
+			my $len = $r->{$key} + 4;
+			$len = 255 if $len > 255;
+			$self->length($key,$len);
+		}
 	}
 
 	mysql_ready::heap->rowdata($self);
