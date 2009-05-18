@@ -178,8 +178,9 @@ sub gui_jchar{ # GUI表示用の日本語
 	
 	if ( $] > 5.008 ) {
 		if ( utf8::is_utf8($char) ){
-			print "already decoded: ", Encode::encode('cp932',$char), "\n";
-			return $char if $debug;
+			print "already decoded: ", Encode::encode('cp932',$char), "\n"
+				if $debug;
+			return $char;
 		}
 		
 		$code = Jcode->new($char)->icode unless $code;

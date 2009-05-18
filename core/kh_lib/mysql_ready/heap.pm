@@ -7,22 +7,39 @@ sub rowdata{
 	my $class = shift;
 	my $self = shift;
 
-	my $sizeof_char = 4;
-	my $a_row =
-		  $self->length('hyoso')
-		+ $self->length('genkei')
-		+ $self->length('hinshi')
-		+ $self->length('katuyo')
-		+ 1
-	;
-	if ($a_row % $sizeof_char) {
-		$a_row += $sizeof_char - ( $a_row % $sizeof_char );
-	}
+	my $l_hyoso  = $self->length('hyoso' );
+	my $l_genkei = $self->length('genkei');
+	my $l_hinshi = $self->length('hinshi');
+	my $l_katuyo = $self->length('katuyo');
 
-	if (mysql_exec->version_number > 4 ){    # MySQL 5.x 以上
-		$a_row += 4 + $sizeof_char * 4;
-	} else {                                 # MySQL 4.x 以下
+	my $sizeof_char = 4;
+	my $a_row = 0;
+
+	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 以上
+		# prep
+		$l_hyoso  = int( ($l_hyoso  + 1) / 2);
+		$l_genkei = int( ($l_genkei + 1) / 2);
+		$l_hinshi = int( ($l_hinshi + 1) / 2);
+		$l_katuyo = int( ($l_katuyo + 1) / 2);
+		# data
+		$a_row = ($l_hyoso + $l_genkei + $l_hinshi + $l_katuyo) * 3 + 4 + 1;
+		if ($a_row % $sizeof_char) {
+			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
+		}
+		# index
+		$a_row += $sizeof_char * 2;
+		# margin
+		$a_row += 3;
+	} else {                                 # MySQL 3.x 以下
+		# data
+		$a_row = $l_hyoso + $l_genkei + $l_hinshi + $l_katuyo + 4 + 1;
+		if ($a_row % $sizeof_char) {
+			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
+		}
+		# index
 		$a_row += 4 + $sizeof_char * 2;
+		# margin
+		$a_row += 3;
 	}
 
 	my $rows = mysql_exec->select("
@@ -43,11 +60,11 @@ sub rowdata{
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_isam",1);
 	mysql_exec->do("create table rowdata
 		(
-			hyoso  char(".$self->length('hyoso').") not null,
-			genkei char(".$self->length('genkei').") not null,
-			hinshi char(".$self->length('hinshi').") not null,
-			katuyo char(".$self->length('katuyo').") not null,
-			id int primary key not null
+			id int primary key not null,
+			hyoso  char($l_hyoso ) not null,
+			genkei char($l_genkei) not null,
+			hinshi char($l_hinshi) not null,
+			katuyo char($l_katuyo) not null
 		) TYPE=HEAP
 	",1);
 
@@ -61,7 +78,7 @@ sub rowdata{
 sub rowdata_restore{
 	return 0 unless $::config_obj->use_heap;
 	return 0 unless mysql_exec->table_exists("rowdata_isam");
-
+	
 	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("ALTER TABLE rowdata_isam RENAME rowdata",1);
 }
