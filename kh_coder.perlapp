@@ -1,25 +1,27 @@
-#!C:\apps\ActiveState Perl Dev Kit 7.2\bin\lib\pai.exe
+#!F:\apps\pdk7.3\bin\lib\pai.exe
 PAP-Version: 1.0
-Packer: C:\apps\ActiveState Perl Dev Kit 7.2\bin\perlapp.exe
+Packer: F:\apps\pdk7.3\bin\perlapp.exe
 Script: kh_coder.pl
-Cwd: C:\home\ko-ichi\core
+Cwd: F:\home\Koichi\Study\perl\core
 Add: Encode::Guess
 Add: Encode::JP::H2Z
 Add: Encode::JP
 Add: feature
 Add: Encode::EUCJPMS
 Add: kh_project_io
+Add: YAML::Dumper
+Add: YAML::Loader
 Clean: 0
-Date: 2009-04-28 20:05:59
+Date: 2009-05-18 21:22:09
 Debug: 
 Dependent: 0
 Dyndll: 0
 Exe: kh_coder.exe
 Force: 1
 Gui: 0
-Hostname: vr-dev
+Hostname: FORTUNA
 Icon: memo\1.ico
-Lib: lib:C:\home\ko-ichi\core\kh_lib
+Lib: lib:.\kh_lib
 No-Compress: 0
 No-Logo: 0
 Runlib: 
@@ -36,4 +38,5 @@ Version-LegalTrademarks:
 Version-OriginalFilename: kh_coder.exe
 Version-ProductName: KH Coder
 Version-ProductVersion: 2
+Warnings: 0
 Xclude: 0
