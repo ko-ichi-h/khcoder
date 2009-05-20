@@ -74,7 +74,6 @@ BEGIN{
 	}
 	if ($^O eq 'darwin'){ # Mac OS X
 		require Text::Iconv;
-		
 	}
 }
 
