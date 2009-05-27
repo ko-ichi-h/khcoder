@@ -2,9 +2,9 @@ package gui_window::word_corresp;
 use base qw(gui_window);
 
 use strict;
-
 use Tk;
 
+use kh_r_plot;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
@@ -633,6 +633,7 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
+	kh_r_plot->clear_env;
 
 	$r_command .= "library(MASS)\n";
 	$r_command .= "c <- corresp(d, nf=$d_n)\n";
@@ -784,14 +785,14 @@ sub make_plot{
 	$r_command .= $r_command_a;
 
 	# プロット作成
-	use kh_r_plot;
+	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
@@ -799,7 +800,7 @@ sub make_plot{
 		command_f => $r_command_2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plotg;
 	my @plots = ();
@@ -810,7 +811,7 @@ sub make_plot{
 			command_f => $r_com_gray,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
-		) or return 0;
+		) or $flg_error = 1;
 		@plots = ($plot2,$plotg,$plot1);
 	} else {
 		@plots = ($plot2,$plot1);
@@ -819,12 +820,14 @@ sub make_plot{
 	#$w->end(no_dialog => 1);
 
 	# プロットWindowを開く
+	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	
+	return 0 if $flg_error;
 	
 	$plotwin->open(
 		plots       => \@plots,

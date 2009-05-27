@@ -2,12 +2,12 @@ package gui_window::word_cls;
 use base qw(gui_window);
 
 use strict;
-
 use Tk;
 
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
+use kh_r_plot;
 
 #-------------#
 #   GUI作製   #
@@ -245,6 +245,8 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
+	kh_r_plot->clear_env;
+
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
@@ -311,13 +313,13 @@ sub make_plot{
 		if $cluster_number > 1;
 
 	# プロット作成
-	use kh_r_plot;
+	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => 480,
-	) or return 0;
+	) or $flg_error = 1;
 	$plot1->rotate_cls;
 
 	my $plot2 = kh_r_plot->new(
@@ -326,7 +328,7 @@ sub make_plot{
 		command_f => $r_command_2,
 		width     => $args{plot_size},
 		height    => 480,
-	) or return 0;
+	) or $flg_error = 1;
 	$plot2->rotate_cls;
 
 	my $plot3 = kh_r_plot->new(
@@ -335,14 +337,17 @@ sub make_plot{
 		command_f => $r_command_3,
 		width     => $args{plot_size},
 		height    => 480,
-	) or return 0;
+	) or $flg_error = 1;
 	$plot3->rotate_cls;
 
 	# プロットWindowを開く
+	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
+	
+	return 0 if $flg_error;
 	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
