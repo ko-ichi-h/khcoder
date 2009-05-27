@@ -132,9 +132,29 @@ sub new{
 		);
 		return 0;
 	}
-	#print "$self->{r_msg}\n";
+	# print "R-msg: $self->{r_msg}\n";
 	
 	return $self;
+}
+
+sub clear_env{
+	#$::config_obj->R->send('print( ls() )');
+	#print "before: ", $::config_obj->R->read, "\n";
+
+	$::config_obj->R->output_chk(0);
+	$::config_obj->R->send("
+		the_list <- ls()
+		the_list <- the_list[substring(the_list,0,4) != \"PERL\"]
+		if ( length(the_list) > 0 ){
+			rm(list=the_list)
+		}
+		rm(the_list)
+	");
+	$::config_obj->R->output_chk(1);
+
+	#$::config_obj->R->send('print( ls() )');
+	#print "after: ", $::config_obj->R->read, "\n";
+	print "R env has been cleared.\n";
 }
 
 sub set_par{

@@ -120,26 +120,32 @@ sub count{
 	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
 	use kh_r_plot;
+	kh_r_plot->clear_env;
+	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => 'words_TF_DF1',
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数", xlab="出現回数")',
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_TF_DF2',
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="x")',
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_TF_DF3',
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="xy")',
-	) or return 0;
+	) or $flg_error = 0;
+
+	if ($flg_error){
+		$self->close;
+	}
 
 	$self->{images} = [$plot1,$plot2,$plot3];
 	$self->renew;

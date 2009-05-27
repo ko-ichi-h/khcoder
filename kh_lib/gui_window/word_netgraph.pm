@@ -7,6 +7,7 @@ use Tk;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
+use kh_r_plot;
 
 my $bench = 0;
 
@@ -278,6 +279,8 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
+	kh_r_plot->clear_env;
+
 	my $r_command = $args{r_command};
 
 	# パラメーター設定部分
@@ -298,7 +301,7 @@ sub make_plot{
 	use Benchmark;
 	my $t0 = new Benchmark;
 	
-	use kh_r_plot;
+	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f =>
@@ -309,7 +312,7 @@ sub make_plot{
 			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
@@ -325,7 +328,7 @@ sub make_plot{
 			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot3 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
@@ -341,7 +344,7 @@ sub make_plot{
 			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot4 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_4',
@@ -357,7 +360,7 @@ sub make_plot{
 			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $plot5 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_5',
@@ -373,7 +376,7 @@ sub make_plot{
 			.&r_plot_cmd_p4,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n" if $bench;
@@ -444,10 +447,14 @@ sub make_plot{
 	}
 
 	# プロットWindowを開く
+	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
+	
+	return 0 if $flg_error;
+	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
 		plots       => [ $plot1, $plot2, $plot3, $plot4, $plot5],

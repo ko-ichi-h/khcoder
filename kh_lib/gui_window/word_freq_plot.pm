@@ -18,8 +18,6 @@ sub _new{
 
 	$win->title($self->gui_jt('出現回数：分布：プロット','euc'));
 	
-	#print "image: $args{images}->[1]\n";
-	
 	$self->{photo} = $win->Label(
 		-image => $win->Photo(-file => $args{images}->[1]->path),
 		-borderwidth => 2,

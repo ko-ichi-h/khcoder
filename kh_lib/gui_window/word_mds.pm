@@ -8,6 +8,7 @@ use Tk;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
+use kh_r_plot;
 
 #-------------#
 #   GUI作製   #
@@ -276,6 +277,8 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
+	kh_r_plot->clear_env;
+
 	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
 		gui_errormsg->open(
 			type => 'msg',
@@ -384,20 +387,20 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command .= $r_command_a;
 
 	# プロット作成
-	use kh_r_plot;
+	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command_d,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 	my $plot2 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
-	) or return 0;
+	) or $flg_error = 1;
 
 	# 分析から省かれた語／コードをチェック
 	my $dropped = '';
@@ -437,11 +440,14 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 
 	# プロットWindowを開く
+	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
-	#$args{base_win}->close;
+	
+	return 0 if $flg_error;
+	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
 		plots       => [$plot1, $plot2],
