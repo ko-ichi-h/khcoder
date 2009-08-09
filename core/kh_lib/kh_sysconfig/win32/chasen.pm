@@ -49,7 +49,7 @@ sub config_morph{
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 	
 	# 書き出し
-	my $temp_file = 'temp.txt';
+	my $temp_file = 'grammercha.tmp';
 	while (-e $temp_file){
 		$temp_file .= '.tmp';
 	}
@@ -111,7 +111,7 @@ sub config_morph{
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
-	$temp_file = 'temp.txt';
+	$temp_file = 'chasenrc.tmp';
 	while (-e $temp_file){
 		$temp_file .= '.tmp';
 	}
