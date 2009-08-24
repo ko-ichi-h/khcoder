@@ -129,64 +129,72 @@ sub _readin{
 
 sub save{
 	my $self = shift;
+
 	$self = $self->refine_cj;
 	if ($self->path_check){
 		$self->config_morph;
-		my @outlist = (
-			'chasen_path',
-			'juman_path',
-			'c_or_j',
-			'r_path',
-			'r_plot_debug',
-			'sqllog',
-			'sql_username',
-			'sql_password',
-			'sql_host',
-			'sql_port',
-			'mail_if',
-			'mail_smtp',
-			'mail_from',
-			'mail_to',
-			'use_heap',
-			'all_in_one_pack',
-			'font_main',
-			'kaigyo_kigou',
-			'color_DocView_info',
-			'color_DocView_search',
-			'color_DocView_force',
-			'color_DocView_html',
-			'color_DocView_CodeW',
-			'DocView_WrapLength_on_Win9x',
-			'DocSrch_CutLength',
+	}
+	
+	$self->save_ini;
+	
+	return 1;
+}
+
+sub save_ini{
+	my $self = shift;
+
+	my @outlist = (
+		'chasen_path',
+		'juman_path',
+		'c_or_j',
+		'r_path',
+		'r_plot_debug',
+		'sqllog',
+		'sql_username',
+		'sql_password',
+		'sql_host',
+		'sql_port',
+		'mail_if',
+		'mail_smtp',
+		'mail_from',
+		'mail_to',
+		'use_heap',
+		'all_in_one_pack',
+		'font_main',
+		'kaigyo_kigou',
+		'color_DocView_info',
+		'color_DocView_search',
+		'color_DocView_force',
+		'color_DocView_html',
+		'color_DocView_CodeW',
+		'DocView_WrapLength_on_Win9x',
+		'DocSrch_CutLength',
+	);
+	
+	my $f = $self->{ini_file};
+	open (INI,">$f") or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => ">$f"
 		);
-		
-		my $f = $self->{ini_file};
-		open (INI,">$f") or
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => ">$f"
-			);
-		foreach my $i (@outlist){
-			my $value = $self->$i( undef,'1');
+	foreach my $i (@outlist){
+		my $value = $self->$i( undef,'1');
+		$value = '' unless defined($value);
+		print INI "$i\t".$value."\n";
+	}
+	foreach my $i (keys %{$self}){
+		if ( index($i,'w_') == 0 ){
+			my $value = $self->win_gmtry($i);
 			$value = '' unless defined($value);
 			print INI "$i\t".$value."\n";
-			# print  "$i\t".$self->$i( undef,'1')."\n";
 		}
-		foreach my $i (keys %{$self}){
-			if ( index($i,'w_') == 0 ){
-				my $value = $self->win_gmtry($i);
-				$value = '' unless defined($value);
-				print INI "$i\t".$value."\n";
-			}
-		}
-		if ($self->{main_window}){
-			print INI "main_window\t$self->{main_window}";
-		}
-		close (INI);
-		return 1;
-	} else {
-		return 0;
 	}
+	if ($self->{main_window}){
+		print INI "main_window\t$self->{main_window}";
+	}
+	close (INI);
+	return 1;
+
 }
 
 #--------------------#

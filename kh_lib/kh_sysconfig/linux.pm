@@ -125,62 +125,71 @@ sub _readin{
 
 sub save{
 	my $self = shift;
-	$self = $self->refine_cj;
 
+	$self = $self->refine_cj;
 	if ($self->path_check){
 		$self->config_morph;
 	}
 
-		my @outlist = (
-			'chasenrc_path',
-			'grammarcha_path',
-#			'juman_path',
-			'c_or_j',
-			'r_path',
-			'r_plot_debug',
-			'sqllog',
-			'sql_username',
-			'sql_password',
-			'sql_host',
-			'sql_port',
-			'mail_if',
-			'mail_smtp',
-			'mail_from',
-			'mail_to',
-			'use_heap',
-			'font_main',
-			'kaigyo_kigou',
-			'color_DocView_info',
-			'color_DocView_search',
-			'color_DocView_force',
-			'color_DocView_html',
-			'color_DocView_CodeW',
-			'DocView_WrapLength_on_Win9x',
-			'DocSrch_CutLength',
-			'app_html',
-			'app_csv',
-			'app_pdf',
-		);
+	$self->save_ini;
+	
+	return 1;
+}
 
-		my $f = $self->{ini_file};
-		open (INI,">$f") or
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => ">$f"
-			);
-		foreach my $i (@outlist){
-			print INI "$i\t".$self->$i(undef,'1')."\n";
+sub save_ini{
+	my $self = shift;
+	$self = $self->refine_cj;
+
+	my @outlist = (
+		'chasenrc_path',
+		'grammarcha_path',
+		#'juman_path',
+		'c_or_j',
+		'r_path',
+		'r_plot_debug',
+		'sqllog',
+		'sql_username',
+		'sql_password',
+		'sql_host',
+		'sql_port',
+		'mail_if',
+		'mail_smtp',
+		'mail_from',
+		'mail_to',
+		'use_heap',
+		'font_main',
+		'kaigyo_kigou',
+		'color_DocView_info',
+		'color_DocView_search',
+		'color_DocView_force',
+		'color_DocView_html',
+		'color_DocView_CodeW',
+		'DocView_WrapLength_on_Win9x',
+		'DocSrch_CutLength',
+		'app_html',
+		'app_csv',
+		'app_pdf',
+	);
+
+	my $f = $self->{ini_file};
+	open (INI,">$f") or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => ">$f"
+		);
+	foreach my $i (@outlist){
+		print INI "$i\t".$self->$i(undef,'1')."\n";
+	}
+	foreach my $i (keys %{$self}){
+		if ( index($i,'w_') == 0 ){
+			print INI "$i\t".$self->win_gmtry($i)."\n";
 		}
-		foreach my $i (keys %{$self}){
-			if ( index($i,'w_') == 0 ){
-				print INI "$i\t".$self->win_gmtry($i)."\n";
-			}
-		}
-		if ($self->{main_window}){
-			print INI "main_window\t$self->{main_window}";
-		}
-		close (INI);
-		return 1;
+	}
+	if ($self->{main_window}){
+		print INI "main_window\t$self->{main_window}";
+	}
+	close (INI);
+	return 1;
 
 }
 
