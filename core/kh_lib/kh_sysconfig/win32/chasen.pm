@@ -13,9 +13,9 @@ sub config_morph{
 	
 	$self->{dic_dir} = Jcode->new($self->{dic_dir},'sjis')->euc;
 	$self->{dic_dir} =~ s/\\/\//g;
-	#print "$self->{dic_dir}\n";
 	
-	# Grammer.chaファイルの変更
+	#-------------------------------#
+	#   Grammer.chaファイルの変更   #
 	
 	# 読み込み
 	my $grammercha = $self->{grammercha};
@@ -61,14 +61,34 @@ sub config_morph{
 	print GRAO "$temp";
 	close (GRAO);
 	
-	unlink $grammercha;
-	rename ("$temp_file","$grammercha");
+	# もとファイルの待避
+	my $n = 0;
+	while (-e $grammercha.".$n.tmp"){
+		++$n;
+	}
+	rename($grammercha, $grammercha.".$n.tmp") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $grammercha.".$n.tmp"
+		)
+	;
 	
+	# 新ファイルのコピー
+	rename ("$temp_file","$grammercha") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $grammercha
+		)
+	;
+
+	# 待避ファイルを削除
+	unlink($grammercha.".$n.tmp");
+
+	#-----------------------------#
+	#   chasen.rcファイルの変更   #
+
 	my $chasenrc = $self->{chasenrc};
-	
-	
-	# chasen.rcファイルの変更
-	
+
 	# 読み込み
 	$temp = ''; $khflg = 0;
 	open (GRA,"$chasenrc") or
@@ -122,8 +142,31 @@ sub config_morph{
 		);
 	print GRAO "$temp";
 	close (GRAO);
-	unlink $chasenrc;
-	rename ("$temp_file","$chasenrc");
+	
+	# もとファイルの待避
+	my $n = 0;
+	while (-e $chasenrc.".$n.tmp"){
+		++$n;
+	}
+	rename($chasenrc, $chasenrc.".$n.tmp") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "Rename: ".$chasenrc.".$n.tmp"
+		)
+	;
+	
+	# 新ファイルのコピー
+	rename ("$temp_file","$chasenrc") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "Rename: ".$chasenrc
+		)
+	;
+
+	# 待避先ファイルの削除
+	unlink($chasenrc.".$n.tmp");
+
+	return 1;
 }
 
 sub path_check{

@@ -150,7 +150,7 @@ sub close{
 	my $self = shift;
 	$self->end; # 特殊処理に対応
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
-	$::config_obj->save;
+	$::config_obj->save_ini;
 	$self->win_obj->destroy;
 }
 
