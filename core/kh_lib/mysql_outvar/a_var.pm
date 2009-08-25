@@ -15,10 +15,13 @@ sub new{
 			FROM outvar
 			where name = \'$self->{name}\'
 		",1)->hundle->fetch;
-		$self->{table}  = $i->[0];
-		$self->{column} = $i->[1];
-		$self->{tani}   = $i->[2];
-		$self->{id}     = $i->[3];
+		
+		if ($i){
+			$self->{table}  = $i->[0];
+			$self->{column} = $i->[1];
+			$self->{tani}   = $i->[2];
+			$self->{id}     = $i->[3];
+		}
 	} else {                                      # 変数IDから他の情報を取得
 		my $i = mysql_exec->select("
 			SELECT tab, col, tani, name
