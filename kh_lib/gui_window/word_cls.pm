@@ -4,8 +4,7 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
-use gui_widget::tani;
-use gui_widget::hinshi;
+use gui_widget::words;
 use mysql_crossout;
 use kh_r_plot;
 

@@ -167,7 +167,11 @@ sub fill{
 			pack    => {-side => 'left', -padx => 2},
 			options => \@options,
 			variable => \$self->{var_id},
+			command  => sub{$self->rem_ov;},
 		);
+		if ( length($self->{last_var_id}) ){
+			$self->{opt_body}->set_value( $self->{last_var_id} );
+		}
 	} else {
 		$self->{opt_body} = gui_widget::optmenu->open(
 			parent  => $self->{opt_frame},
@@ -180,6 +184,11 @@ sub fill{
 		);
 		$self->{opt_body}->configure(-state => 'disable');
 	}
+}
+
+sub rem_ov{
+	my $self = shift;
+	$self->{last_var_id} = $self->{var_id};
 }
 
 #------------------#

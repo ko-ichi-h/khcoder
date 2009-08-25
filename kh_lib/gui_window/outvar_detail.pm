@@ -52,7 +52,7 @@ sub _new{
 
 	my $fhl = $fh->Frame->pack(-fill => 'x', -side => 'left');
 
-	$fhl->Button(
+	my $btn_doc = $fhl->Button(
 		-text        => $self->gui_jchar('文書'),
 		-font        => "TKFN",
 		-borderwidth => '1',
@@ -60,13 +60,25 @@ sub _new{
 		-command     => sub{ $mw->after(10,sub {$self->v_docs;}); }
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
 
-	$fhl->Button(
+	$wmw->Balloon()->attach(
+		$btn_doc,
+		-balloonmsg => $self->gui_jchar('特定の値を持つ文書を検索します'),
+		-font       => "TKFN"
+	);
+
+	my $btn_aso = $fhl->Button(
 		-text        => $self->gui_jchar('特徴'),
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-width       => 4,
 		-command     => sub{ $mw->after(10,sub {$self->v_words;}); }
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
+
+	$wmw->Balloon()->attach(
+		$btn_aso,
+		-balloonmsg => $self->gui_jchar('特定の値を持つ文書を取り出し、それらの文書に特徴的な語を探索します'),
+		-font       => "TKFN"
+	);
 
 	my $mb = $fhl->Menubutton(
 		-text        => $self->gui_jchar('一覧'),
@@ -86,6 +98,12 @@ sub _new{
 	$mb->command(
 		-command => sub {$self->v_words_list('csv')},
 		-label   => $self->gui_jchar('CSV形式'),
+	);
+
+	$wmw->Balloon()->attach(
+		$mb,
+		-balloonmsg => $self->gui_jchar('この変数の値によって文書をグループ分けし、それぞれのグループに特徴的な語を一覧表にまとめます'),
+		-font       => "TKFN"
 	);
 
 	$wmw->Button(

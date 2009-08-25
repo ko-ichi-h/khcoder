@@ -48,6 +48,7 @@ my @menu1 = (
 	'm_b3_contxtout_csv',
 	'm_b3_contxtout_tab',
 	'm_b0_export',
+	't_bayes_learn',
 );
 
 #------------------#
@@ -417,6 +418,39 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_doc_cls' if $::config_obj->R;
+
+		my $f_bayes = $f8->cascade(
+			-label => gui_window->gui_jchar('ベイズ分類'),
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+		$self->{t_bayes_learn} = $f_bayes->command(
+			-label => gui_window->gui_jchar('外部変数から学習'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				gui_window::bayes_learn->open;
+			})},
+			-state => 'disable'
+		);
+
+		$self->{t_bayes_view} = $f_bayes->command(
+			-label => gui_window->gui_jchar('学習データの内容確認'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				gui_window::bayes_learn->open;
+			})},
+			-state => 'disable'
+		);
+
+		$self->{t_bayes_exec} = $f_bayes->command(
+			-label => gui_window->gui_jchar('学習データを用いた自動分類'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				gui_window::doc_search->open;
+			})},
+			-state => 'disable'
+		);
 
 		$f8->separator;
 
