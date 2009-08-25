@@ -68,6 +68,7 @@ use gui_window::hukugo;
 use gui_window::r_plot;
 use gui_window::r_plot_opt;
 use gui_window::bayes_learn;
+use gui_window::bayes_predict;
 
 BEGIN{
 	if( $] > 5.008 ){

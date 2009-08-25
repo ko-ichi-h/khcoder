@@ -12,7 +12,7 @@ sub _new{
 	unless ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => gui_window->gui_jchar('・集計単位：'),
+			-text => gui_window->gui_jchar('・分類の単位：'),
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		my %pack = (

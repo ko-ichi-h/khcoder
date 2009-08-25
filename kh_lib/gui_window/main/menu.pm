@@ -49,6 +49,7 @@ my @menu1 = (
 	'm_b3_contxtout_tab',
 	'm_b0_export',
 	't_bayes_learn',
+	't_bayes_predict',
 );
 
 #------------------#
@@ -435,7 +436,7 @@ sub make{
 		);
 
 		$self->{t_bayes_view} = $f_bayes->command(
-			-label => gui_window->gui_jchar('学習データの内容確認'),
+			-label => gui_window->gui_jchar('学習結果の内容を確認'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				gui_window::bayes_learn->open;
@@ -443,11 +444,11 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_bayes_exec} = $f_bayes->command(
-			-label => gui_window->gui_jchar('学習データを用いた自動分類'),
+		$self->{t_bayes_predict} = $f_bayes->command(
+			-label => gui_window->gui_jchar('学習結果を用いた自動分類'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
-				gui_window::doc_search->open;
+				gui_window::bayes_predict->open;
 			})},
 			-state => 'disable'
 		);

@@ -16,13 +16,13 @@ sub file{
 		[ $self->gui_jchar("タブ区切りファイル"),[qw/.dat .txt/] ],
 		["All files",'*']
 	);
-	
+
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jt('外部変数ファイルを選択してください'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
-	
+
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);

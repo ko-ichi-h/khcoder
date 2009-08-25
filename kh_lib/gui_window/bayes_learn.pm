@@ -83,14 +83,14 @@ sub calc{
 
 	# 保存先の参照
 	my @types = (
-		[ "KH Coder: Naive Bayes",[qw/.knb/] ],
+		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
 		["All files",'*']
 	);
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.knb',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('学習データの保存先'),
+			$self->gui_jt('学習結果ファイルに名前を付けて保存'),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
