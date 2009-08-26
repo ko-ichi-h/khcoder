@@ -6,10 +6,10 @@ use Algorithm::NaiveBayes;
 use Algorithm::NaiveBayes::Model::Frequency;
 
 # 学習関連
-# ・学習時のクロスバリデーション（fold 10）
 # ・学習結果の内容を確認
 # ・外部変数の出力機能
 # ・分類結果の詳細をログに出力する機能
+# ※このファイルのリファクタリング: オブジェクト化／カプセル化
 
 #----------#
 #   学習   #
@@ -58,26 +58,62 @@ sub learn_from_ov{
 	# use Data::Dumper;
 	# print Dumper($self->{cls});
 
-	my $n = $self->{cls}->instances;
-	$self->{cls} = undef;
+	my $n   = $self->{cls}->instances;
+	my $n_c = $self->{train_cnt};
 
 	# 交差妥当化
+	my ($tested, $correct, $kappa);
 	if ( $self->{cross_vl} ){
+		my @labels = $self->{cls}->labels;
+		
 		print "Cross validation:\n";
 		$self->cross_validate;
 		
-		my $tested  = @{$self->{test_result}};
-		my $correct = 0;
+		$tested  = @{$self->{test_result}};
+		$correct = 0;
 		foreach my $i (@{$self->{test_result}}){
 			++$correct if $i;
 		}
 		
-		print "Tested: $tested, Correctly Classified: $correct\n";
+		# kappaの計算
+		my (%outvar, $outvar_n);
+		foreach my $h (values %{$self->{outvar_cnt}}){
+			unless (
+				   length($h) == 0
+				|| $h eq '.'
+				|| $h eq '欠損値'
+				|| $h =~ /missing/io
+			){
+				++$outvar{$h};
+				++$outvar_n;
+			}
+		}
 		
+		my (%test, $test_n);
+		foreach my $i ( @{$self->{test_result_raw}} ){
+			++$test{$i};
+			++$test_n;
+		}
+		
+		my $pe = 0;
+		foreach my $i (@labels){
+			$pe += ($outvar{$i} / $outvar_n) * ( $test{$i} / $test_n );
+		}
+		
+		my $pa = $correct / $tested;
+		$kappa = ( $pa - $pe ) / ( 1 - $pe );
+		
+		print "Tested: $correct / $tested, kappa: $kappa\n";
 	}
 
 	undef $self;
-	return $n;
+	return {
+		instances       => $n_c,
+		instances_all   => $n,
+		cross_vl_tested => $tested,
+		cross_vl_ok     => $correct,
+		kappa           => $kappa,
+	};
 }
 
 sub add{
@@ -113,7 +149,7 @@ sub cross_validate{
 	my $self = shift;
 	
 	# グループ分け
-	my $groups = 10; # いくつのグループに分けるか
+	my $groups = $self->{cross_fl}; # いくつのグループに分けるか
 	
 	my $member_order;
 	foreach my $i (keys %{$self->{outvar_cnt}}){
@@ -140,6 +176,7 @@ sub cross_validate{
 	
 	# 交差ループ
 	$self->{test_result} = undef;
+	$self->{test_result_raw} = undef;
 	for (my $c = 1; $c <= $groups; ++$c){
 		$self->{cross_vl_c} = $c;
 		$self->{cls} = Algorithm::NaiveBayes->new;
@@ -154,7 +191,7 @@ sub cross_validate{
 		};
 		$self->out2;
 		$self->{cls}->train;
-		print "training ", $self->{cls}->instances, ", ";
+		print "training ", $self->{cls}->instances, ",\t";
 
 		# テストフェーズ
 		$self->{test_count} = 0;
@@ -166,7 +203,7 @@ sub cross_validate{
 			$self->prd_p($current,$last);
 		};
 		$self->out2;
-		print "test $self->{test_count}, hit $self->{test_count_hit}";
+		print "test $self->{test_count_hit} / $self->{test_count}";
 		print "\n";
 	}
 	
@@ -201,6 +238,7 @@ sub prd_p{
 		   $cnt == 1
 		&& $max >= 0.8
 	) {
+		push @{$self->{test_result_raw}}, $max_lab;
 		if ( $max_lab eq $self->{outvar_cnt}{$last} ){
 			push @{$self->{test_result}}, 1;
 			++$self->{test_count_hit};
@@ -208,6 +246,7 @@ sub prd_p{
 			push @{$self->{test_result}}, 0;
 		}
 	} else {
+		push @{$self->{test_result_raw}}, '.';
 		push @{$self->{test_result}}, 0;
 	}
 	
@@ -230,8 +269,6 @@ sub add_p{
 	}
 	return 1;
 }
-
-
 
 #----------#
 #   分類   #

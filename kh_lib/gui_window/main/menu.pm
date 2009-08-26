@@ -421,7 +421,7 @@ sub make{
 		push @menu1, 't_doc_cls' if $::config_obj->R;
 
 		my $f_bayes = $f8->cascade(
-			-label => gui_window->gui_jchar('ベイズ分類'),
+			-label => gui_window->gui_jchar('ベイズ学習による分類'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
