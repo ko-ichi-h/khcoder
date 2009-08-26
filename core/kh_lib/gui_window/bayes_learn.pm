@@ -33,43 +33,55 @@ sub _new{
 			-command => sub {$self->w_status;},
 	)->pack(-anchor => 'w');
 
-	$self->{chkw_cross} = $lf_x->Checkbutton(
+	my $fcv = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
+
+	$self->{chkw_cross} = $fcv->Checkbutton(
 			-text     => $self->gui_jchar('交差妥当化を行う','euc'),
 			-variable => \$self->{check_cross},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
-	)->pack(-anchor => 'w');
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{label_fold} = $fcv->Label(
+		-text       => '  Folds:',
+		#-foreground => 'gray',
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{entry_fold} = $fcv->Entry(
+		-width      => 3,
+		-state      => 'normal',
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{entry_fold}->insert(0,10);
+	# gui_window->disabled_entry_configure($self->{entry_fold});
+	$self->{entry_fold}->configure(-state => 'disable');
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
-		-font => "TKFN",
-		-width => 8,
+		-text    => $self->gui_jchar('キャンセル'),
+		-font    => "TKFN",
+		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
-		-text => 'OK',
-		-width => 8,
-		-font => "TKFN",
+		-text    => 'OK',
+		-width   => 8,
+		-font    => "TKFN",
 		-command => sub{ $mw->after(10,sub{$self->calc;});}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
+	$self->w_status;
 	return $self;
 }
 
 	sub w_status{
-		return 1;
-		# 追記と交差を排他にするなら以下のコードを活かす
 		my $self = shift;
-		if ($self->{check_overwrite}){
-			$self->{chkw_cross}->configure(-state => 'disable');
-		} else {
-			$self->{chkw_cross}->configure(-state => 'normal');
-		}
 		if ( $self->{check_cross} ){
-			$self->{chkw_over}->configure(-state => 'disable');
+			$self->{entry_fold}->configure(-state => 'normal');
+			$self->{label_fold}->configure(-state => 'normal');
 		} else {
-			$self->{chkw_over}->configure(-state => 'normal');
+			$self->{entry_fold}->configure(-state => 'disable');
+			$self->{label_fold}->configure(-state => 'disable');
 		}
 	}
 
@@ -78,6 +90,19 @@ sub calc{
 	
 	#------------------#
 	#   入力チェック   #
+
+	my $fold = $self->gui_jg( $self->{entry_fold}->get );
+	if (
+		   $fold =~ /[^0-9]/o
+		|| $fold < 2
+		|| $fold > 20
+	){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => 'Foldには2から20までの値を指定して下さい。',
+		);
+		return 0;
+	}
 
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
@@ -154,7 +179,7 @@ sub calc{
 
 	use kh_nbayes;
 
-	my $n = kh_nbayes->learn_from_ov(
+	my $r = kh_nbayes->learn_from_ov(
 		tani     => $self->tani,
 		outvar   => $self->outvar,
 		hinshi   => $self->hinshi,
@@ -165,11 +190,30 @@ sub calc{
 		path     => $path,
 		add_data => $self->{check_overwrite},
 		cross_vl => $self->{check_cross},
+		cross_fl => $fold,
 	);
+
+	my $msg = '';
+	$msg .= "ナイーブベイズ分類器の学習が完了しました。\n\n";
+	$msg .= "今回学習した文書: $r->{instances}";
+	if ($self->{check_overwrite}){
+		$msg .= ", 文書の総数: $r->{instances_all}\n";
+	} else {
+		$msg .= "\n";
+	}
+	if ($self->{check_cross}){
+		$msg .= "分類の正確さ: $r->{cross_vl_ok} / $r->{cross_vl_tested} (";
+		$msg .= sprintf("%.1f",$r->{cross_vl_ok}/$r->{cross_vl_tested}*100);
+		$msg .= "%),  ";
+		$msg .= "Kappa: ";
+		$msg .= sprintf("%.3f",$r->{kappa});
+		
+	}
 
 	gui_errormsg->open(
 		type => 'msg',
-		msg  => "学習が完了しました。\n学習に用いた文書の数: $n",
+		msg  => $msg,
+		icon => 'info',
 	);
 
 	$self->close;

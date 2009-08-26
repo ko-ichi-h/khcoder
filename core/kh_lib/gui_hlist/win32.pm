@@ -15,7 +15,10 @@ sub _copy{
 		for (my $c = 0; $c <= $cols; ++$c){
 			if ( $self->list->itemExists($i, $c) ){
 				my $cell = $self->list->itemCget($i, $c, -text);
-				chop $cell if $cell =~ /\r$/o;
+				$cell =  gui_window->gui_jg($cell);
+				while ($cell =~ /\s$/o){
+					chop $cell
+				}
 				$clip .= "$cell\t";
 			} else {
 				$clip .= "\t";
@@ -24,8 +27,6 @@ sub _copy{
 		chop $clip;
 		$clip .= "\n";
 	}
-
-	$clip = gui_window->gui_jg($clip);
 
 	if (defined($clip) && length($clip)){
 		$CLIP->Empty();
