@@ -55,6 +55,12 @@ sub _new{
 		-background => 'white'
 	)->pack(-side => 'left',-padx => 2, -fill => 'x', -expand => 1);
 
+	$self->{entry}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
+	
+
 	# 変数名の指定
 	my $fra4g = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady =>3);
 	$fra4g->Label(
@@ -174,7 +180,13 @@ sub _calc{
 		tani   => $self->tani,
 		outvar => $var_new,
 	);
-	
+
+	# 「外部変数リスト」が開いている場合は更新
+	my $win_list = $::main_gui->get('w_outvar_list');
+	if ( defined($win_list) ){
+		$win_list->_fill;
+	}
+
 	$self->close;
 }
 

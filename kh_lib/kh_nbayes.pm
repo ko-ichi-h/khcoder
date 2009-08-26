@@ -1,11 +1,18 @@
 package kh_nbayes;
 
 use strict;
+use List::Util qw(max sum);
 use Algorithm::NaiveBayes;
+use Algorithm::NaiveBayes::Model::Frequency;
 
 # 学習関連
-# ・外部変数の単位と分類単位が一致しない場合用の手当てを: get_ov
-# ・学習に使用される語の数の正確な算出: ...
+# ・学習時のクロスバリデーション（fold 10）
+# ・学習結果の内容を確認
+# ・外部変数の出力機能
+# ・分類結果の詳細をログに出力する機能
+
+#----------#
+#   学習   #
 
 sub learn_from_ov{
 	my $class = shift;
@@ -17,7 +24,15 @@ sub learn_from_ov{
 		$self->{max} = 0;
 	}
 
-	# 学習モードを指定
+	# 既存のファイルに追加するかどうか
+	if ($self->{add_data}){
+		$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
+		rename($self->{path}, $self->{path}.'.tmp');
+	} else {
+		$self->{cls} = Algorithm::NaiveBayes->new(purge => 0);
+	}
+
+	# 学習モードにセット
 	$self->{mode} = 't';
 	$self->{command} = sub {
 		my $current = shift;
@@ -31,19 +46,38 @@ sub learn_from_ov{
 
 	# 実行
 	print "Start training... ";
-	$self->{cls} = Algorithm::NaiveBayes->new;
+	$self->{train_cnt} = 0;
 	$self->out2;
 	$self->{cls}->train;
 	print $self->{cls}->instances, " instances. ok.\n";
 
 	unlink($self->{path}) if -e $self->{path};
 	$self->{cls}->save_state($self->{path});
+	unlink($self->{path}.'.tmp');
 
-	#use Data::Dumper;
-	#print Dumper($self->{cls});
+	# use Data::Dumper;
+	# print Dumper($self->{cls});
+
+	my $n = $self->{cls}->instances;
+	$self->{cls} = undef;
+
+	# 交差妥当化
+	if ( $self->{cross_vl} ){
+		print "Cross validation:\n";
+		$self->cross_validate;
+		
+		my $tested  = @{$self->{test_result}};
+		my $correct = 0;
+		foreach my $i (@{$self->{test_result}}){
+			++$correct if $i;
+		}
+		
+		print "Tested: $tested, Correctly Classified: $correct\n";
+		
+	}
 
 	undef $self;
-	return 1;
+	return $n;
 }
 
 sub add{
@@ -54,23 +88,153 @@ sub add{
 		   length($self->{outvar_cnt}{$last}) == 0
 		|| $self->{outvar_cnt}{$last} eq '.'
 		|| $self->{outvar_cnt}{$last} eq '欠損値'
-		|| $self->{outvar_cnt}{$last} =~ /missing/i
+		|| $self->{outvar_cnt}{$last} =~ /missing/io
 	){
 		$self->{cls}->add_instance(
 			attributes => $current,
 			label      => $self->{outvar_cnt}{$last},
 		);
+		++$self->{train_cnt};
 		
 		# テストプリント
-		 print "out: $last\n";
-		 print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
-		 foreach my $h (keys %{$current}){
-		 	print Jcode->new("at: $h, $current->{$h}\n", 'euc')->sjis;
-		 }
+		# print "out: $last\n";
+		# print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
+		# foreach my $h (keys %{$current}){
+		# 	print Jcode->new("at: $h, $current->{$h}\n", 'euc')->sjis;
+		# }
 	}
 	return 1;
 }
 
+#----------------#
+#   交差妥当化   #
+
+sub cross_validate{
+	my $self = shift;
+	
+	# グループ分け
+	my $groups = 10; # いくつのグループに分けるか
+	
+	my $member_order;
+	foreach my $i (keys %{$self->{outvar_cnt}}){
+		unless (
+			   length($self->{outvar_cnt}{$i}) == 0
+			|| $self->{outvar_cnt}{$i} eq '.'
+			|| $self->{outvar_cnt}{$i} eq '欠損値'
+			|| $self->{outvar_cnt}{$i} =~ /missing/io
+		){
+			$member_order->{$i} = rand();
+		}
+	}
+	
+	my $n = 1;
+	foreach my $i (
+		sort { $member_order->{$a} <=> $member_order->{$b} }
+		keys %{$member_order}
+	){
+		$self->{member_group}{$i} = $n;
+		# print "$i\t$n\n";
+		++$n;
+		$n = 1 if $n > $groups;
+	}
+	
+	# 交差ループ
+	$self->{test_result} = undef;
+	for (my $c = 1; $c <= $groups; ++$c){
+		$self->{cross_vl_c} = $c;
+		$self->{cls} = Algorithm::NaiveBayes->new;
+		print "  fold $c: ";
+		
+		# 学習フェーズ
+		$self->{mode} = 't';
+		$self->{command} = sub {
+			my $current = shift;
+			my $last    = shift;
+			$self->add_p($current,$last);
+		};
+		$self->out2;
+		$self->{cls}->train;
+		print "training ", $self->{cls}->instances, ", ";
+
+		# テストフェーズ
+		$self->{test_count} = 0;
+		$self->{test_count_hit} = 0;
+		$self->{mode} = 'p';
+		$self->{command} = sub {
+			my $current = shift;
+			my $last    = shift;
+			$self->prd_p($current,$last);
+		};
+		$self->out2;
+		print "test $self->{test_count}, hit $self->{test_count_hit}";
+		print "\n";
+	}
+	
+	return $self;
+}
+
+sub prd_p{
+	my $self = shift;
+	my $current = shift;
+	my $last    = shift;
+	
+	unless ( $self->{cross_vl_c} == $self->{member_group}{$last} ){
+		return 0;
+	}
+	
+	my $r = $self->{cls}->predict(
+		attributes => $current
+	);
+	
+	my $cnt     = 0;
+	my $max     = 0;
+	my $max_lab = 0;
+	foreach my $i (keys %{$r}){
+		++$cnt if $r->{$i} >= 0.6;
+		if ($max < $r->{$i}){
+			$max = $r->{$i};
+			$max_lab = $i;
+		}
+	}
+	
+	if (
+		   $cnt == 1
+		&& $max >= 0.8
+	) {
+		if ( $max_lab eq $self->{outvar_cnt}{$last} ){
+			push @{$self->{test_result}}, 1;
+			++$self->{test_count_hit};
+		} else {
+			push @{$self->{test_result}}, 0;
+		}
+	} else {
+		push @{$self->{test_result}}, 0;
+	}
+	
+	++$self->{test_count};
+	return 1;
+}
+
+sub add_p{
+	my $self = shift;
+	my $current = shift;
+	my $last    = shift;
+	if (
+		    $self->{member_group}{$last}
+		and $self->{cross_vl_c} != $self->{member_group}{$last}
+	){
+		$self->{cls}->add_instance(
+			attributes => $current,
+			label      => $self->{outvar_cnt}{$last},
+		);
+	}
+	return 1;
+}
+
+
+
+#----------#
+#   分類   #
 
 sub predict{
 	my $class = shift;
@@ -78,12 +242,9 @@ sub predict{
 	bless $self, $class;
 	
 	# 学習結果の読み込み
-	use Algorithm::NaiveBayes::Model::Frequency;
 	$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 	
-	#print "$self->{path}, $self->{tani}, $self->{outvar}\n";
-	
-	# 分類モードを指定
+	# 分類モードにセット
 	$self->{mode} = 'p';
 	$self->{command} = sub {
 		my $current = shift;
@@ -102,7 +263,8 @@ sub predict{
 	# 保存
 	my $type = 'INT';
 	foreach my $i ($self->{cls}->labels){
-		if ($i =~ /^[0-9]/){
+		print "labels: $i\n";
+		if ($i =~ /[^0-9]/){
 			$type = 'varchar';
 			last;
 		}
@@ -120,8 +282,6 @@ sub prd{
 	my $current = shift;
 	my $last    = shift;
 	
-	use List::Util qw(max sum);
-	
 	my $r = $self->{cls}->predict(
 		attributes => $current
 	);
@@ -137,26 +297,98 @@ sub prd{
 		}
 	}
 	
-	print "$last: ";
+	#print "$last: ";
 	if (
 		   $cnt == 1
 		&& $max >= 0.8
 	) {
 		push @{$self->{result}}, [$max_lab];
-		print "$max_lab\n";
+		#print "$max_lab\n";
 	} else {
-		push @{$self->{result}}, '.';
-		print ".\n";
+		push @{$self->{result}}, ['.'];
+		#print ".\n";
 	}
 	
 	return 1;
 }
 
+#--------------------------#
+#   学習に使用する語の数   #
+
+# 効率化の余地がだいぶあるかも…
+
+sub wnum{
+	my $class = shift;
+	my $self = {@_};
+	bless $self, $class;
+
+	return undef unless length($self->{tani});
+	return undef unless length($self->{outvar});
+
+	my $missing = 0;
+	$self->get_ov;
+	foreach my $i (values %{$self->{outvar_cnt}}){
+		if (
+			   length($i) == 0
+			|| $i eq '.'
+			|| $i eq '欠損値'
+			|| $i =~ /missing/io
+		){
+			$missing = 1;
+			last;
+		}
+	}
+	
+	if ( $missing == 0 ){     # 外部変数に欠損値がない場合
+		my $check = mysql_crossout::r_com->new(
+			tani   => $self->{tani},
+			hinshi => $self->{hinshi},
+			max    => $self->{max},
+			min    => $self->{min},
+			max_df => $self->{max_df},
+			min_df => $self->{min_df},
+		)->wnum;
+		return $check;
+	} else {                  # 外部変数に欠損値がある場合
+
+		# カウントモードにセット
+		$self->{mode} = 't';
+		$self->{command} = sub {
+			my $current = shift;
+			my $last    = shift;
+			$self->cnt($current,$last);
+		} ;
+
+		$self->make_list;
+		$self->out2;
+
+		$_ = keys %{$self->{count}};
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
+		return $_;
+	}
+}
+
+sub cnt{
+	my $self = shift;
+	my $current = shift;
+	my $last    = shift;
+	unless (
+		   length($self->{outvar_cnt}{$last}) == 0
+		|| $self->{outvar_cnt}{$last} eq '.'
+		|| $self->{outvar_cnt}{$last} eq '欠損値'
+		|| $self->{outvar_cnt}{$last} =~ /missing/io
+	){
+		foreach my $k (keys %{$current}) {
+			$self->{count}{$k} += $current->{$k};
+		}
+	}
+	return $self;
+}
 
 #----------------#
-#   データ作製   #
+#   データ操作   #
 
-sub out2{                               # length作製をする
+sub out2{
 	my $self = shift;
 	
 	# セル内容の作製
@@ -240,17 +472,31 @@ sub get_ov{
 	my $self = shift;
 
 	my $var_obj = mysql_outvar::a_var->new(undef,$self->{outvar});
-		
+	
 	my $sql = '';
-	$sql .= "SELECT id, $var_obj->{column} FROM $var_obj->{table} ";
-	$sql .= "ORDER BY id";
+	
+	if ($self->{tani} eq $var_obj->{tani}){
+		$sql .= "SELECT id, $var_obj->{column} FROM $var_obj->{table} ";
+		$sql .= "ORDER BY id";
+	} else {
+		my $tani = $self->{tani};
+		$sql .= "SELECT $tani.id, $var_obj->{table}.$var_obj->{column}\n";
+		$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
+		$sql .= "WHERE\n";
+		$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+			$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+			last if ($var_obj->{tani} eq $i);
+		}
+		$sql .= "ORDER BY $tani.id";
+	}
 
 	my $h = mysql_exec->select($sql,1)->hundle;
 
 	my $outvar;
 	while (my $i = $h->fetch){
 		if ( length( $var_obj->{labels}{$i->[1]} ) ){
-			$outvar->{$i->{0}} = $var_obj->{labels}{$i->[1]};
+			$outvar->{$i->[0]} = $var_obj->{labels}{$i->[1]};
 		} else {
 			$outvar->{$i->[0]} = $i->[1];
 		}

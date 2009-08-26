@@ -10,7 +10,7 @@ sub _new{
 	$win->title($self->gui_jt('外部変数から学習'));
 
 	my $lf_w = $win->LabFrame(
-		-label => 'Setting',
+		-label => 'Basic Settings',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1);
@@ -19,6 +19,26 @@ sub _new{
 		parent => $lf_w,
 		verb   => '学習に使用',
 	);
+
+	my $lf_x = $win->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'x', -expand => 0);
+
+	$self->{chkw_over} = $lf_x->Checkbutton(
+			-text     => $self->gui_jchar('既存の学習結果ファイルに今回の内容を追加する','euc'),
+			-variable => \$self->{check_overwrite},
+			-anchor => 'w',
+			-command => sub {$self->w_status;},
+	)->pack(-anchor => 'w');
+
+	$self->{chkw_cross} = $lf_x->Checkbutton(
+			-text     => $self->gui_jchar('交差妥当化を行う','euc'),
+			-variable => \$self->{check_cross},
+			-anchor => 'w',
+			-command => sub {$self->w_status;},
+	)->pack(-anchor => 'w');
 
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
@@ -36,6 +56,22 @@ sub _new{
 
 	return $self;
 }
+
+	sub w_status{
+		return 1;
+		# 追記と交差を排他にするなら以下のコードを活かす
+		my $self = shift;
+		if ($self->{check_overwrite}){
+			$self->{chkw_cross}->configure(-state => 'disable');
+		} else {
+			$self->{chkw_cross}->configure(-state => 'normal');
+		}
+		if ( $self->{check_cross} ){
+			$self->{chkw_over}->configure(-state => 'disable');
+		} else {
+			$self->{chkw_over}->configure(-state => 'normal');
+		}
+	}
 
 sub calc{
 	my $self = shift;
@@ -59,14 +95,6 @@ sub calc{
 		return 0;
 	}
 
-	unless ( $self->{words_obj}->check > 0 ){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => '現在の設定内容では、使用できる語がありません。',
-		);
-		return 0;
-	}
-
 	$self->{words_obj}->settings_save;
 
 	my $ans = $self->win_obj->messageBox(
@@ -86,13 +114,26 @@ sub calc{
 		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
 		["All files",'*']
 	);
-	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.knb',
-		-filetypes        => \@types,
-		-title            =>
-			$self->gui_jt('学習結果ファイルに名前を付けて保存'),
-		-initialdir       => $self->gui_jchar($::config_obj->cwd),
-	);
+
+	my $path;
+	if ( $self->{check_overwrite} ){
+		$path = $self->win_obj->getOpenFile(
+			-defaultextension => '.knb',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jt('今回の学習内容を追加するファイルを選択'),
+			-initialdir       => $self->gui_jchar($::config_obj->cwd),
+		);
+	} else {
+		$path = $self->win_obj->getSaveFile(
+			-defaultextension => '.knb',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jt('学習結果を新規ファイルに保存'),
+			-initialdir       => $self->gui_jchar($::config_obj->cwd),
+		);
+	}
+
 	unless ($path){
 		return 0;
 	}
@@ -103,17 +144,32 @@ sub calc{
 	#----------#
 	#   実行   #
 
+	unless ( $self->{words_obj}->check > 0 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '現在の設定内容では、使用できる語がありません。',
+		);
+		return 0;
+	}
+
 	use kh_nbayes;
 
-	kh_nbayes->learn_from_ov(
-		tani   => $self->tani,
-		outvar => $self->outvar,
-		hinshi => $self->hinshi,
-		max    => $self->max,
-		min    => $self->min,
-		max_df => $self->max_df,
-		min_df => $self->min_df,
-		path   => $path,
+	my $n = kh_nbayes->learn_from_ov(
+		tani     => $self->tani,
+		outvar   => $self->outvar,
+		hinshi   => $self->hinshi,
+		max      => $self->max,
+		min      => $self->min,
+		max_df   => $self->max_df,
+		min_df   => $self->min_df,
+		path     => $path,
+		add_data => $self->{check_overwrite},
+		cross_vl => $self->{check_cross},
+	);
+
+	gui_errormsg->open(
+		type => 'msg',
+		msg  => "学習が完了しました。\n学習に用いた文書の数: $n",
 	);
 
 	$self->close;
