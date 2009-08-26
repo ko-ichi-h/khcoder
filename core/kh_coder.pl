@@ -84,6 +84,9 @@ BEGIN {
 			109,
 			'',
 		);
+		# ÀßÄê
+		require Tk::Clipboard;
+		require Tk::Clipboard_kh;
 	} 
 	# for Linux & Others
 	else {
