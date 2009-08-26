@@ -89,7 +89,7 @@ sub _new{
 	)->pack(-side => 'left');
 	
 	my @opt = (
-		[$self->gui_jchar('Ward法','euc'), '_cluster_tmp_w'],
+		[$self->gui_jchar('Ward法','euc'),   '_cluster_tmp_w'],
 		[$self->gui_jchar('群平均法','euc'), '_cluster_tmp_a'],
 		[$self->gui_jchar('最遠隣法','euc'), '_cluster_tmp_c'],
 	);
@@ -256,6 +256,11 @@ sub end{
 		if ($i->[1] =~ /^_cluster_tmp_[wac]$/){
 			mysql_outvar->delete(name => $i->[1]);
 		}
+	}
+	# 「外部変数リスト」が開いている場合は更新
+	my $win_list = $::main_gui->get('w_outvar_list');
+	if ( defined($win_list) ){
+		$win_list->_fill;
 	}
 }
 

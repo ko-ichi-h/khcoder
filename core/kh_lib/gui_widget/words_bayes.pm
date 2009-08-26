@@ -273,15 +273,21 @@ sub check{
 		}
 	}
 	
-	my $check = mysql_crossout::r_com->new(
+	$self->{ent_check}->configure(-state => 'normal');
+	$self->{ent_check}->delete(0,'end');
+	$self->{ent_check}->insert(0,'counting...');
+	$self->{ent_check}->configure(-state => 'disable');
+	$self->{ent_check}->update;
+	
+	my $check = kh_nbayes->wnum(
 		tani   => $self->tani,
-		tani2  => $tani2,
+		outvar => $self->outvar,
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
 		max_df => $self->max_df,
 		min_df => $self->min_df,
-	)->wnum;
+	);
 	
 	$self->{ent_check}->configure(-state => 'normal');
 	$self->{ent_check}->delete(0,'end');
