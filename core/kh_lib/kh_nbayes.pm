@@ -3,7 +3,8 @@ package kh_nbayes;
 use strict;
 use List::Util qw(max sum);
 use Algorithm::NaiveBayes;
-use Algorithm::NaiveBayes::Model::Frequency;
+require Algorithm::NaiveBayes::Model::Frequency;
+require Algorithm::NaiveBayes::Model::Frequency_kh;
 
 use kh_nbayes::predict;
 use kh_nbayes::cv_train;
@@ -12,7 +13,6 @@ use kh_nbayes::wnum;
 
 # 学習関連
 # ・学習結果の内容を確認
-# ・外部変数の出力機能
 # ・分類結果の詳細をログに出力する機能
 # ※交差妥当化にはいくぶん効率化の余地がある
 
@@ -55,8 +55,8 @@ sub learn_from_ov{
 	$self->{cls}->save_state($self->{path});
 	unlink($self->{path}.'.tmp');
 
-	# use Data::Dumper;
-	# print Dumper($self->{cls});
+	use Data::Dumper;
+	print Dumper($self->{cls});
 
 	my $n   = $self->{cls}->instances;
 	my $n_c = $self->{train_cnt};
@@ -202,7 +202,7 @@ sub predict{
 	# 保存
 	my $type = 'INT';
 	foreach my $i ($self->{cls}->labels){
-		print "labels: $i\n";
+		# print "labels: $i\n";
 		if ($i =~ /[^0-9]/){
 			$type = 'varchar';
 			last;

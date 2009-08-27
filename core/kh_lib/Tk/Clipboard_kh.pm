@@ -5,7 +5,7 @@ package Tk::Clipboard;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = sprintf '4.%03d', q$Revision: 1.1 $ =~ /\D(\d+)\s*$/;
+$VERSION = sprintf '4.%03d', q$Revision: 1.2 $ =~ /\D(\d+)\s*$/;
 
 use AutoLoader qw(AUTOLOAD);
 use Tk qw(catch);
@@ -61,7 +61,7 @@ sub clipboardGet
  my $chk = $w->SelectionGet('-selection','CLIPBOARD',@_);
 
  if ( ref($chk) eq 'ARRAY' ){
-   print "array\n";
+   # print "array\n";
    foreach my $i (@{$chk}){
      unless ( utf8::is_utf8($i) ){
        $i = Encode::decode('utf8', $i);
