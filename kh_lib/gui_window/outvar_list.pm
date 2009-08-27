@@ -51,6 +51,17 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$wmw->Button(
+		-text => $self->gui_jchar('出力'),
+		-font => "TKFN",
+#		-width => 8,
+		-command => sub{ $mw->after(10,sub{$self->_save;});}
+	)->pack(-side => 'left');
+
+	$wmw->Label(
+		-text => '  ',
+	)->pack(-side => 'left');
+
+	$wmw->Button(
 		-text => $self->gui_jchar('削除'),
 		-font => "TKFN",
 #		-width => 8,
@@ -104,6 +115,10 @@ sub _delete{
 	# 選択確認
 	my @selection = $self->{list}->info('selection');
 	unless (@selection){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '削除する変数を選択してください。',
+		);
 		return 0;
 	}
 	
@@ -134,6 +149,61 @@ sub _delete{
 	}
 	$self->_fill;
 }
+
+sub _save{
+	my $self = shift;
+	
+	# 選択確認
+	my @selection = $self->{list}->info('selection');
+	unless (@selection){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => '出力する変数を選択してください。',
+		);
+		return 0;
+	}
+	my @vars = (); my $last = '';
+	foreach my $i (@selection){
+		push @vars, $self->{var_list}[$i][1];
+		
+		$last = $self->{var_list}[$i][0] unless length($last);
+		
+		unless ($last eq $self->{var_list}[$i][0]){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => '集計単位の異なる変数群を一度に保存することはできません。',
+			);
+			return 0;
+		}
+	}
+
+	# 保存先ファイル名
+	my @types = (
+		['CSV Files',[qw/.csv/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.csv',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt('「文書ｘ抽出語」表：名前を付けて保存'),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+
+	mysql_outvar->save(
+		path => $path,
+		vars => \@vars,
+	);
+
+	return 1;
+}
+
 
 sub _open_var{
 	my $self = shift;

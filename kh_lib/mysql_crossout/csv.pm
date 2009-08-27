@@ -47,7 +47,11 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"$self->{file_temp}") or die;
+	open (F,"$self->{file_temp}") or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$self->{file_temp}",
+		);
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;
