@@ -5,11 +5,16 @@ use List::Util qw(max sum);
 use Algorithm::NaiveBayes;
 use Algorithm::NaiveBayes::Model::Frequency;
 
+use kh_nbayes::predict;
+use kh_nbayes::cv_train;
+use kh_nbayes::cv_predict;
+use kh_nbayes::wnum;
+
 # 学習関連
 # ・学習結果の内容を確認
 # ・外部変数の出力機能
 # ・分類結果の詳細をログに出力する機能
-# ※このファイルのリファクタリング: オブジェクト化／カプセル化
+# ※交差妥当化にはいくぶん効率化の余地がある
 
 #----------#
 #   学習   #
@@ -34,11 +39,6 @@ sub learn_from_ov{
 
 	# 学習モードにセット
 	$self->{mode} = 't';
-	$self->{command} = sub {
-		my $current = shift;
-		my $last    = shift;
-		$self->add($current,$last);
-	} ;
 
 	# 準備
 	$self->make_list;
@@ -47,7 +47,7 @@ sub learn_from_ov{
 	# 実行
 	print "Start training... ";
 	$self->{train_cnt} = 0;
-	$self->out2;
+	$self->scan_each;
 	$self->{cls}->train;
 	print $self->{cls}->instances, " instances. ok.\n";
 
@@ -116,31 +116,6 @@ sub learn_from_ov{
 	};
 }
 
-sub add{
-	my $self = shift;
-	my $current = shift;
-	my $last    = shift;
-	unless (
-		   length($self->{outvar_cnt}{$last}) == 0
-		|| $self->{outvar_cnt}{$last} eq '.'
-		|| $self->{outvar_cnt}{$last} eq '欠損値'
-		|| $self->{outvar_cnt}{$last} =~ /missing/io
-	){
-		$self->{cls}->add_instance(
-			attributes => $current,
-			label      => $self->{outvar_cnt}{$last},
-		);
-		++$self->{train_cnt};
-		
-		# テストプリント
-		# print "out: $last\n";
-		# print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
-		# foreach my $h (keys %{$current}){
-		# 	print Jcode->new("at: $h, $current->{$h}\n", 'euc')->sjis;
-		# }
-	}
-	return 1;
-}
 
 #----------------#
 #   交差妥当化   #
@@ -184,12 +159,8 @@ sub cross_validate{
 		
 		# 学習フェーズ
 		$self->{mode} = 't';
-		$self->{command} = sub {
-			my $current = shift;
-			my $last    = shift;
-			$self->add_p($current,$last);
-		};
-		$self->out2;
+		bless $self, 'kh_nbayes::cv_train';
+		$self->scan_each;
 		$self->{cls}->train;
 		print "training ", $self->{cls}->instances, ",\t";
 
@@ -197,77 +168,13 @@ sub cross_validate{
 		$self->{test_count} = 0;
 		$self->{test_count_hit} = 0;
 		$self->{mode} = 'p';
-		$self->{command} = sub {
-			my $current = shift;
-			my $last    = shift;
-			$self->prd_p($current,$last);
-		};
-		$self->out2;
+		bless $self, 'kh_nbayes::cv_predict';
+		$self->scan_each;
 		print "test $self->{test_count_hit} / $self->{test_count}";
 		print "\n";
 	}
 	
 	return $self;
-}
-
-sub prd_p{
-	my $self = shift;
-	my $current = shift;
-	my $last    = shift;
-	
-	unless ( $self->{cross_vl_c} == $self->{member_group}{$last} ){
-		return 0;
-	}
-	
-	my $r = $self->{cls}->predict(
-		attributes => $current
-	);
-	
-	my $cnt     = 0;
-	my $max     = 0;
-	my $max_lab = 0;
-	foreach my $i (keys %{$r}){
-		++$cnt if $r->{$i} >= 0.6;
-		if ($max < $r->{$i}){
-			$max = $r->{$i};
-			$max_lab = $i;
-		}
-	}
-	
-	if (
-		   $cnt == 1
-		&& $max >= 0.8
-	) {
-		push @{$self->{test_result_raw}}, $max_lab;
-		if ( $max_lab eq $self->{outvar_cnt}{$last} ){
-			push @{$self->{test_result}}, 1;
-			++$self->{test_count_hit};
-		} else {
-			push @{$self->{test_result}}, 0;
-		}
-	} else {
-		push @{$self->{test_result_raw}}, '.';
-		push @{$self->{test_result}}, 0;
-	}
-	
-	++$self->{test_count};
-	return 1;
-}
-
-sub add_p{
-	my $self = shift;
-	my $current = shift;
-	my $last    = shift;
-	if (
-		    $self->{member_group}{$last}
-		and $self->{cross_vl_c} != $self->{member_group}{$last}
-	){
-		$self->{cls}->add_instance(
-			attributes => $current,
-			label      => $self->{outvar_cnt}{$last},
-		);
-	}
-	return 1;
 }
 
 #----------#
@@ -276,18 +183,13 @@ sub add_p{
 sub predict{
 	my $class = shift;
 	my $self = {@_};
-	bless $self, $class;
+	bless $self, $class."::predict";
 	
 	# 学習結果の読み込み
 	$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 	
 	# 分類モードにセット
 	$self->{mode} = 'p';
-	$self->{command} = sub {
-		my $current = shift;
-		my $last    = shift;
-		$self->prd($current,$last);
-	} ;
 	
 	# 準備
 	$self->make_hinshi_list;
@@ -295,7 +197,7 @@ sub predict{
 	push @{$self->{result}}, [$self->{outvar}];
 	
 	# 実行
-	$self->out2;
+	$self->scan_each;
 	
 	# 保存
 	my $type = 'INT';
@@ -314,40 +216,7 @@ sub predict{
 	return 1;
 }
 
-sub prd{
-	my $self = shift;
-	my $current = shift;
-	my $last    = shift;
-	
-	my $r = $self->{cls}->predict(
-		attributes => $current
-	);
-	
-	my $cnt     = 0;
-	my $max     = 0;
-	my $max_lab = 0;
-	foreach my $i (keys %{$r}){
-		++$cnt if $r->{$i} >= 0.6;
-		if ($max < $r->{$i}){
-			$max = $r->{$i};
-			$max_lab = $i;
-		}
-	}
-	
-	#print "$last: ";
-	if (
-		   $cnt == 1
-		&& $max >= 0.8
-	) {
-		push @{$self->{result}}, [$max_lab];
-		#print "$max_lab\n";
-	} else {
-		push @{$self->{result}}, ['.'];
-		#print ".\n";
-	}
-	
-	return 1;
-}
+
 
 #--------------------------#
 #   学習に使用する語の数   #
@@ -357,7 +226,7 @@ sub prd{
 sub wnum{
 	my $class = shift;
 	my $self = {@_};
-	bless $self, $class;
+	bless $self, $class.'::wnum';
 
 	return undef unless length($self->{tani});
 	return undef unless length($self->{outvar});
@@ -387,45 +256,16 @@ sub wnum{
 		)->wnum;
 		return $check;
 	} else {                  # 外部変数に欠損値がある場合
-
-		# カウントモードにセット
-		$self->{mode} = 't';
-		$self->{command} = sub {
-			my $current = shift;
-			my $last    = shift;
-			$self->cnt($current,$last);
-		} ;
-
-		$self->make_list;
-		$self->out2;
-
-		$_ = keys %{$self->{count}};
+		$_ = $self->_get_wnum;
 		1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
 		return $_;
 	}
 }
 
-sub cnt{
-	my $self = shift;
-	my $current = shift;
-	my $last    = shift;
-	unless (
-		   length($self->{outvar_cnt}{$last}) == 0
-		|| $self->{outvar_cnt}{$last} eq '.'
-		|| $self->{outvar_cnt}{$last} eq '欠損値'
-		|| $self->{outvar_cnt}{$last} =~ /missing/io
-	){
-		foreach my $k (keys %{$current}) {
-			$self->{count}{$k} += $current->{$k};
-		}
-	}
-	return $self;
-}
-
 #----------------#
-#   データ操作   #
+#   データ走査   #
 
-sub out2{
+sub scan_each{
 	my $self = shift;
 	
 	# セル内容の作製
@@ -445,7 +285,8 @@ sub out2{
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
 				# 書き出し
-				&{$self->{command}}(\%current, $last);
+				#&{$self->{command}}(\%current, $last);
+				$self->each(\%current, $last);
 				
 				# 初期化
 				%current = ();
@@ -468,11 +309,35 @@ sub out2{
 	}
 	
 	# 最終行の書き出し
-	&{$self->{command}}(\%current, $last);
-
-
+	$self->each(\%current, $last);
 
 	return $self;
+}
+
+sub each{
+	my $self = shift;
+	my $current = shift;
+	my $last    = shift;
+	unless (
+		   length($self->{outvar_cnt}{$last}) == 0
+		|| $self->{outvar_cnt}{$last} eq '.'
+		|| $self->{outvar_cnt}{$last} eq '欠損値'
+		|| $self->{outvar_cnt}{$last} =~ /missing/io
+	){
+		$self->{cls}->add_instance(
+			attributes => $current,
+			label      => $self->{outvar_cnt}{$last},
+		);
+		++$self->{train_cnt};
+		
+		# テストプリント
+		# print "out: $last\n";
+		# print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
+		# foreach my $h (keys %{$current}){
+		# 	print Jcode->new("at: $h, $current->{$h}\n", 'euc')->sjis;
+		# }
+	}
+	return 1;
 }
 
 sub sql2{
