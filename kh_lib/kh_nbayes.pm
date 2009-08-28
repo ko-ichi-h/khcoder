@@ -1,5 +1,8 @@
 package kh_nbayes;
 
+# 交差妥当化の結果をもう少し詳しく示す？
+# 交差妥当化にはいくぶん効率化の余地あり
+
 use strict;
 use List::Util qw(max sum);
 use Algorithm::NaiveBayes;
@@ -11,9 +14,7 @@ use kh_nbayes::cv_train;
 use kh_nbayes::cv_predict;
 use kh_nbayes::wnum;
 
-# 学習関連
-# ・学習結果の内容を確認
-# ※交差妥当化にはいくぶん効率化の余地がある
+use kh_nbayes::Util;
 
 #----------#
 #   学習   #
@@ -88,10 +89,11 @@ sub learn_from_ov{
 			}
 		}
 		
-		my (%test, $test_n);
-		foreach my $i ( @{$self->{test_result_raw}} ){
-			++$test{$i};
+		my (%test, $test_n, $cross);
+		foreach my $i ( keys %{$self->{test_result_raw}} ){
+			++$test{$self->{test_result_raw}{$i}};
 			++$test_n;
+			++$cross->{$self->{outvar_cnt}{$i}}{$self->{test_result_raw}{$i}};
 		}
 		
 		my $pe = 0;
@@ -102,7 +104,50 @@ sub learn_from_ov{
 		my $pa = $correct / $tested;
 		$kappa = ( $pa - $pe ) / ( 1 - $pe );
 		
-		print "Tested: $correct / $tested, kappa: $kappa\n";
+		print "Tested: $correct / $tested, kappa: $kappa\n\n";
+		
+		# クロス集計
+		my $out; # Correct: $correct / $tested, kappa: $kappa\n
+		#$out .= "Confusion Matrix:\n";
+		$out .= ",,ベイズ学習による分類\n,,";
+		foreach my $i ($self->{cls}->labels){
+			$out .= kh_csv->value_conv($i).',';
+		}
+		chop $out;
+		$out .= "\n";
+		$out .= "正解,";
+		
+		my $n = 0;
+		foreach my $i ($self->{cls}->labels){
+			$out .= "," if $n;
+			$out .= kh_csv->value_conv($i).',';
+			foreach my $h ($self->{cls}->labels){
+				if ($cross->{$i}{$h}){
+					$out .= "$cross->{$i}{$h},";
+				} else {
+					$out .= "0,";
+				}
+			}
+			chop $out;
+			$out .= "\n";
+			++$n;
+		}
+		
+		# 出力
+		$out .= "\n\n正解を得た数： $correct / $tested (";
+		$out .= sprintf("%.1f", $correct / $tested * 100)."%)\n";
+		$out .= "Kappa 統計量： ". sprintf("%.3f", $kappa);
+		my $temp_file = $::project_obj->file_TempCSV;
+		open (TOUT,">$temp_file") or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => "$temp_file",
+			);
+		print TOUT $out;
+		close (TOUT);
+		kh_jchar->to_sjis($temp_file) if $::config_obj->os eq 'win32';
+		gui_OtherWin->open($temp_file);
+		
 	}
 
 	undef $self;
@@ -222,8 +267,6 @@ sub predict{
 
 	return 1;
 }
-
-
 
 #--------------------------#
 #   学習に使用する語の数   #

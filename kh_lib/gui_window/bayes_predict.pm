@@ -212,11 +212,9 @@ sub _calc{
 		save_path => $path,
 	);
 
-	# 「外部変数リスト」が開いている場合は更新
-	my $win_list = $::main_gui->get('w_outvar_list');
-	if ( defined($win_list) ){
-		$win_list->_fill;
-	}
+	# 「外部変数リスト」を開く
+	my $win_list = gui_window::outvar_list->open;
+	$win_list->_fill;
 
 	$self->close;
 }

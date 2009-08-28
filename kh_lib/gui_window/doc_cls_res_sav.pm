@@ -76,11 +76,9 @@ sub save{
 	my $var_obj = mysql_outvar::a_var->new($self->{var_from})->copy($name)
 		or return 0;
 
-	# 「外部変数リスト」が開いている場合は更新
-	my $win_list = $::main_gui->get('w_outvar_list');
-	if ( defined($win_list) ){
-		$win_list->_fill;
-	}
+	# 「外部変数リスト」を開く
+	my $win_list = gui_window::outvar_list->open;
+	$win_list->_fill;
 
 	$self->close;
 	return 1;

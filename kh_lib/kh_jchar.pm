@@ -28,9 +28,9 @@ sub to_euc{
 	#print "kh_jachar temp-file: $temp_file\n";
 	
 	open (EUC,"$sjistoeuc")
-		or &gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
+		or gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
 	open (TEMP,">$temp_file")
-		or &gui_errormsg->open(type => 'file',thefile => "$temp_file");
+		or gui_errormsg->open(type => 'file',thefile => "$temp_file");
 	my $n = 0; my $temp = '';
 	while (<EUC>){
 		$temp .= $_;
@@ -61,9 +61,9 @@ sub to_sjis{
 	#print "kh_jachar temp-file: $temp_file\n";
 
 	open (EUC,"$sjistoeuc")
-		or &gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
+		or gui_errormsg->open(type => 'file',thefile => "$sjistoeuc");
 	open (TEMP,">$temp_file")
-		or &gui_errormsg->open(type => 'file',thefile => "$temp_file");
+		or gui_errormsg->open(type => 'file',thefile => "$temp_file");
 	my $n = 0; my $temp = '';
 	while (<EUC>){
 		$temp .= $_;
@@ -101,7 +101,7 @@ sub check_code{
 	print "Checking icode... ";
 	
 	open (TEMP,$the_file)
-		or &gui_errormsg->open(type => 'file',thefile => $the_file);
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
 	my $n = 0;
 	my $t;
 	while (<TEMP>){

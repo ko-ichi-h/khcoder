@@ -19,7 +19,6 @@ sub readin{
 		}
 	}
 	#print "kh_sysconfig: $self->{cwd}\n";
-	
 
 	# 設定ファイルが揃っているか確認
 	if (
