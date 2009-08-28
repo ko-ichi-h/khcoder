@@ -77,8 +77,15 @@ sub _new{
 	$self->{entry_ovn}->bind("<Key-Return>",sub{$self->_calc;});
 
 	$lf->Label(
-		-text => $self->gui_jchar('    ↑分類の結果は外部変数として保存されます'),
+		-text => $self->gui_jchar('    （分類の結果は外部変数として保存されます）'),
 		-font => "TKFN"
+	)->pack(-anchor => 'w');
+
+	my $lff = $win->Frame()->pack(-fill => 'x', -expand => 0);
+	$self->{chkw_savelog} = $lff->Checkbutton(
+			-text     => $self->gui_jchar('分類ログをファイルに保存','euc'),
+			-variable => \$self->{check_savelog},
+			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 
@@ -173,12 +180,36 @@ sub _calc{
 	);
 	unless ($ans =~ /ok/i){ return 0; }
 
+	# 保存先の参照
+	my $path;
+	if ($self->{check_savelog}) {
+		my @types = (
+			[ "KH Coder: Naive Bayes logs",[qw/.log/] ],
+			["All files",'*']
+		);
+
+		$path = $self->win_obj->getSaveFile(
+			-defaultextension => '.log',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jt('分類ログをファイルに保存'),
+			-initialdir       => $self->gui_jchar($::config_obj->cwd),
+		);
+	}
+	if ($path){
+		$path = gui_window->gui_jg_filename_win98($path);
+		$path = gui_window->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+	}
+
 	use kh_nbayes;
-	
+
 	kh_nbayes->predict(
-		path   => $self->gui_jg( $self->{entry}->get ),
-		tani   => $self->tani,
-		outvar => $var_new,
+		path      => $self->gui_jg( $self->{entry}->get ),
+		tani      => $self->tani,
+		outvar    => $var_new,
+		save_log  => $self->{check_savelog},
+		save_path => $path,
 	);
 
 	# 「外部変数リスト」が開いている場合は更新

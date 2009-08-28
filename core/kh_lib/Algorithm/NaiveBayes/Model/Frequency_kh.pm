@@ -58,22 +58,44 @@ sub do_predict {
   my ($self, $m, $newattrs) = @_;
   
   # Note that we're using the log(prob) here.  That's why we add instead of multiply.
+
+  # 分類プロセスの保存用
+  my $spd = $self->save_prediction_detail;
+  my $kh_process if $spd;
   
   my %scores = %{$m->{prior_probs}};
   while (my ($feature, $value) = each %$newattrs) {
     next unless exists $m->{attributes}{$feature};  # Ignore totally unseen features
     while (my ($label, $attributes) = each %{$m->{probs}}) {
       $scores{$label} += ($attributes->{$feature} || $m->{smoother}{$label})*$value;   # P($feature|$label)**$value
-      
-      # 分類結果の詳細を保存できるようにするには、このあたりをさわる
-      # print Jcode->new("$label, $feature, $value * ( $attributes->{$feature} || $m->{smoother}{$label} )\n")->sjis;
+ 
+      # 分類プロセスの保存用
+      if ($spd){
+        $kh_process->{$feature}{v} = $value;
+        $kh_process->{$feature}{l}{$label} = ( $attributes->{$feature} || $m->{smoother}{$label} );
+      }
+
     }
   }
-  
+
   rescale(\%scores);
 
+  if ($spd){
+    return (\%scores, $kh_process);
+  } else {
+    return (\%scores, undef);
+  }
+}
 
-  return \%scores;
+sub save_prediction_detail{
+	my $self = shift;
+	my $new =  shift;
+	
+	if ( defined($new) ){
+		$self->{save_prediction_detail} = $new;
+	}
+	
+	return $self->{save_prediction_detail};
 }
 
 1;

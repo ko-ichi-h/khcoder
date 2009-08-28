@@ -12,7 +12,7 @@ sub each{
 		return 0;
 	}
 	
-	my $r = $self->{cls}->predict(
+	my ($r, $r2) = $self->{cls}->predict(
 		attributes => $current
 	);
 	

@@ -11,13 +11,12 @@ use kh_nbayes::cv_train;
 use kh_nbayes::cv_predict;
 use kh_nbayes::wnum;
 
-# ŠwKŠÖ˜A
-# EŠwKŒ‹‰Ê‚Ì“à—e‚ðŠm”F
-# E•ª—ÞŒ‹‰Ê‚ÌÚ×‚ðƒƒO‚Éo—Í‚·‚é‹@”\
-# ¦Œð·‘Ã“–‰»‚É‚Í‚¢‚­‚Ô‚ñŒø—¦‰»‚Ì—]’n‚ª‚ ‚é
+# ³Ø½¬´ØÏ¢
+# ¡¦³Ø½¬·ë²Ì¤ÎÆâÍÆ¤ò³ÎÇ§
+# ¢¨¸òº¹ÂÅÅö²½¤Ë¤Ï¤¤¤¯¤Ö¤ó¸úÎ¨²½¤ÎÍ¾ÃÏ¤¬¤¢¤ë
 
 #----------#
-#   ŠwK   #
+#   ³Ø½¬   #
 
 sub learn_from_ov{
 	my $class = shift;
@@ -29,7 +28,7 @@ sub learn_from_ov{
 		$self->{max} = 0;
 	}
 
-	# Šù‘¶‚Ìƒtƒ@ƒCƒ‹‚É’Ç‰Á‚·‚é‚©‚Ç‚¤‚©
+	# ´ûÂ¸¤Î¥Õ¥¡¥¤¥ë¤ËÄÉ²Ã¤¹¤ë¤«¤É¤¦¤«
 	if ($self->{add_data}){
 		$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 		rename($self->{path}, $self->{path}.'.tmp');
@@ -37,14 +36,14 @@ sub learn_from_ov{
 		$self->{cls} = Algorithm::NaiveBayes->new(purge => 0);
 	}
 
-	# ŠwKƒ‚[ƒh‚ÉƒZƒbƒg
+	# ³Ø½¬¥â¡¼¥É¤Ë¥»¥Ã¥È
 	$self->{mode} = 't';
 
-	# €”õ
+	# ½àÈ÷
 	$self->make_list;
 	$self->get_ov;
 
-	# ŽÀs
+	# ¼Â¹Ô
 	print "Start training... ";
 	$self->{train_cnt} = 0;
 	$self->scan_each;
@@ -55,13 +54,13 @@ sub learn_from_ov{
 	$self->{cls}->save_state($self->{path});
 	unlink($self->{path}.'.tmp');
 
-	use Data::Dumper;
-	print Dumper($self->{cls});
+	#use Data::Dumper;
+	#print Dumper($self->{cls});
 
 	my $n   = $self->{cls}->instances;
 	my $n_c = $self->{train_cnt};
 
-	# Œð·‘Ã“–‰»
+	# ¸òº¹ÂÅÅö²½
 	my ($tested, $correct, $kappa);
 	if ( $self->{cross_vl} ){
 		my @labels = $self->{cls}->labels;
@@ -75,13 +74,13 @@ sub learn_from_ov{
 			++$correct if $i;
 		}
 		
-		# kappa‚ÌŒvŽZ
+		# kappa¤Î·×»»
 		my (%outvar, $outvar_n);
 		foreach my $h (values %{$self->{outvar_cnt}}){
 			unless (
 				   length($h) == 0
 				|| $h eq '.'
-				|| $h eq 'Œ‡‘¹’l'
+				|| $h eq '·çÂ»ÃÍ'
 				|| $h =~ /missing/io
 			){
 				++$outvar{$h};
@@ -118,20 +117,20 @@ sub learn_from_ov{
 
 
 #----------------#
-#   Œð·‘Ã“–‰»   #
+#   ¸òº¹ÂÅÅö²½   #
 
 sub cross_validate{
 	my $self = shift;
 	
-	# ƒOƒ‹[ƒv•ª‚¯
-	my $groups = $self->{cross_fl}; # ‚¢‚­‚Â‚ÌƒOƒ‹[ƒv‚É•ª‚¯‚é‚©
+	# ¥°¥ë¡¼¥×Ê¬¤±
+	my $groups = $self->{cross_fl}; # ¤¤¤¯¤Ä¤Î¥°¥ë¡¼¥×¤ËÊ¬¤±¤ë¤«
 	
 	my $member_order;
 	foreach my $i (keys %{$self->{outvar_cnt}}){
 		unless (
 			   length($self->{outvar_cnt}{$i}) == 0
 			|| $self->{outvar_cnt}{$i} eq '.'
-			|| $self->{outvar_cnt}{$i} eq 'Œ‡‘¹’l'
+			|| $self->{outvar_cnt}{$i} eq '·çÂ»ÃÍ'
 			|| $self->{outvar_cnt}{$i} =~ /missing/io
 		){
 			$member_order->{$i} = rand();
@@ -149,7 +148,7 @@ sub cross_validate{
 		$n = 1 if $n > $groups;
 	}
 	
-	# Œð·ƒ‹[ƒv
+	# ¸òº¹¥ë¡¼¥×
 	$self->{test_result} = undef;
 	$self->{test_result_raw} = undef;
 	for (my $c = 1; $c <= $groups; ++$c){
@@ -157,14 +156,14 @@ sub cross_validate{
 		$self->{cls} = Algorithm::NaiveBayes->new;
 		print "  fold $c: ";
 		
-		# ŠwKƒtƒF[ƒY
+		# ³Ø½¬¥Õ¥§¡¼¥º
 		$self->{mode} = 't';
 		bless $self, 'kh_nbayes::cv_train';
 		$self->scan_each;
 		$self->{cls}->train;
 		print "training ", $self->{cls}->instances, ",\t";
 
-		# ƒeƒXƒgƒtƒF[ƒY
+		# ¥Æ¥¹¥È¥Õ¥§¡¼¥º
 		$self->{test_count} = 0;
 		$self->{test_count_hit} = 0;
 		$self->{mode} = 'p';
@@ -178,28 +177,32 @@ sub cross_validate{
 }
 
 #----------#
-#   •ª—Þ   #
+#   Ê¬Îà   #
 
 sub predict{
 	my $class = shift;
 	my $self = {@_};
 	bless $self, $class."::predict";
 	
-	# ŠwKŒ‹‰Ê‚Ì“Ç‚Ýž‚Ý
+	# ³Ø½¬·ë²Ì¤ÎÆÉ¤ß¹þ¤ß
 	$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 	
-	# •ª—Þƒ‚[ƒh‚ÉƒZƒbƒg
+	# Ê¬Îà¥â¡¼¥É¤Ë¥»¥Ã¥È
 	$self->{mode} = 'p';
 	
-	# €”õ
+	# ½àÈ÷
 	$self->make_hinshi_list;
 	$self->{result} = undef;
 	push @{$self->{result}}, [$self->{outvar}];
-	
-	# ŽÀs
+	if ($self->{save_log}){
+		$self->{cls}->save_prediction_detail(1);
+		$self->{result_log} = undef;
+	}
+
+	# ¼Â¹Ô
 	$self->scan_each;
 	
-	# •Û‘¶
+	# ÊÝÂ¸
 	my $type = 'INT';
 	foreach my $i ($self->{cls}->labels){
 		# print "labels: $i\n";
@@ -213,15 +216,88 @@ sub predict{
 		tani     => $self->{tani},
 		var_type => $type,
 	) or return 0;
+
+	# ¥í¥°¤Î½ñ¤­½Ð¤·
+	if ($self->{save_log}){
+		my $fixer = 0;
+		foreach my $i (values %{$self->{cls}{model}{smoother}}){
+			#print "fx: $i\n";
+			$fixer = $i if $fixer > $i;
+		}
+		my @labels = $self->{cls}->labels;
+		
+		open (LOUT,">$self->{save_path}") or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => "$self->{save_path}",
+			);
+		
+		
+		# $i = Ê¸½ñ No.
+		foreach my $i (sort {$a <=> $b} keys %{$self->{result_log}} ){
+			print LOUT "Ê¸½ñ No. $i\n\n";
+
+			my @rows;
+			my %scores;
+			# $h = Ãê½Ð¸ì
+			foreach my $h (keys %{$self->{result_log}{$i}} ){
+				my $current = [$h, $self->{result_log}{$i}{$h}{v}];
+				foreach my $j (@labels){
+					push @{$current}, 
+						  ( $self->{result_log}{$i}{$h}{l}{$j} - $fixer )
+						* $self->{result_log}{$i}{$h}{v};
+					$scores{$j} += 
+						  ( $self->{result_log}{$i}{$h}{l}{$j} - $fixer )
+						* $self->{result_log}{$i}{$h}{v};
+				}
+				push @rows, $current;
+			}
+
+			print LOUT "¥¹¥³¥¢¡§\n";
+			my ($max, $max_ord, $n) = (0, 0, 0);
+			foreach my $h (@labels){
+				print LOUT "\t$h\t$scores{$h}\n";
+				if ($max < $scores{$h}){
+					$max = $scores{$h};
+					$max_ord = $n;
+				}
+				++$n;
+			}
+			$max_ord += 2;
+
+			print LOUT "\n³ÆÃê½Ð¸ì¤Î¥¹¥³¥¢¡§\n";
+			print LOUT "\tÃê½Ð¸ì\tÉÑÅÙ";
+			foreach my $h (@labels){
+				print LOUT "\t$h";
+			}
+			print LOUT "\n";
+			
+			my $tt = '';
+			foreach my $h (sort {$b->[$max_ord] <=> $a->[$max_ord]} @rows){
+				my $t = "\t";
+				foreach my $k (@{$h}){
+					$t .= "$k\t";
+				}
+				chop $t;
+				$tt .= "$t\n";
+			}
+			print LOUT "$tt";
+			print LOUT "-------------------------------------------------------------------------------\n\n"
+		}
+		close (LOUT);
+		
+	}
+
+
 	return 1;
 }
 
 
 
 #--------------------------#
-#   ŠwK‚ÉŽg—p‚·‚éŒê‚Ì”   #
+#   ³Ø½¬¤Ë»ÈÍÑ¤¹¤ë¸ì¤Î¿ô   #
 
-# Œø—¦‰»‚Ì—]’n‚ª‚¾‚¢‚Ô‚ ‚é‚©‚àc
+# ¸úÎ¨²½¤ÎÍ¾ÃÏ¤¬¤À¤¤¤Ö¤¢¤ë¤«¤â¡Ä
 
 sub wnum{
 	my $class = shift;
@@ -237,7 +313,7 @@ sub wnum{
 		if (
 			   length($i) == 0
 			|| $i eq '.'
-			|| $i eq 'Œ‡‘¹’l'
+			|| $i eq '·çÂ»ÃÍ'
 			|| $i =~ /missing/io
 		){
 			$missing = 1;
@@ -245,7 +321,7 @@ sub wnum{
 		}
 	}
 	
-	if ( $missing == 0 ){     # ŠO•”•Ï”‚ÉŒ‡‘¹’l‚ª‚È‚¢ê‡
+	if ( $missing == 0 ){     # ³°ÉôÊÑ¿ô¤Ë·çÂ»ÃÍ¤¬¤Ê¤¤¾ì¹ç
 		my $check = mysql_crossout::r_com->new(
 			tani   => $self->{tani},
 			hinshi => $self->{hinshi},
@@ -255,20 +331,20 @@ sub wnum{
 			min_df => $self->{min_df},
 		)->wnum;
 		return $check;
-	} else {                  # ŠO•”•Ï”‚ÉŒ‡‘¹’l‚ª‚ ‚éê‡
+	} else {                  # ³°ÉôÊÑ¿ô¤Ë·çÂ»ÃÍ¤¬¤¢¤ë¾ì¹ç
 		$_ = $self->_get_wnum;
-		1 while s/(.*\d)(\d\d\d)/$1,$2/; # ˆÊŽæ‚è—p‚ÌƒRƒ“ƒ}‚ð‘}“ü
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # °Ì¼è¤êÍÑ¤Î¥³¥ó¥Þ¤òÁÞÆþ
 		return $_;
 	}
 }
 
 #----------------#
-#   ƒf[ƒ^‘–¸   #
+#   ¥Ç¡¼¥¿Áöºº   #
 
 sub scan_each{
 	my $self = shift;
 	
-	# ƒZƒ‹“à—e‚Ìì»
+	# ¥»¥ëÆâÍÆ¤ÎºîÀ½
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -284,11 +360,11 @@ sub scan_each{
 		
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
-				# ‘‚«o‚µ
+				# ½ñ¤­½Ð¤·
 				#&{$self->{command}}(\%current, $last);
 				$self->each(\%current, $last);
 				
-				# ‰Šú‰»
+				# ½é´ü²½
 				%current = ();
 				$last = $i->[0];
 			}
@@ -308,7 +384,7 @@ sub scan_each{
 		$sth->finish;
 	}
 	
-	# ÅIs‚Ì‘‚«o‚µ
+	# ºÇ½ª¹Ô¤Î½ñ¤­½Ð¤·
 	$self->each(\%current, $last);
 
 	return $self;
@@ -321,7 +397,7 @@ sub each{
 	unless (
 		   length($self->{outvar_cnt}{$last}) == 0
 		|| $self->{outvar_cnt}{$last} eq '.'
-		|| $self->{outvar_cnt}{$last} eq 'Œ‡‘¹’l'
+		|| $self->{outvar_cnt}{$last} eq '·çÂ»ÃÍ'
 		|| $self->{outvar_cnt}{$last} =~ /missing/io
 	){
 		$self->{cls}->add_instance(
@@ -330,7 +406,7 @@ sub each{
 		);
 		++$self->{train_cnt};
 		
-		# ƒeƒXƒgƒvƒŠƒ“ƒg
+		# ¥Æ¥¹¥È¥×¥ê¥ó¥È
 		# print "out: $last\n";
 		# print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
 		# foreach my $h (keys %{$current}){
@@ -368,7 +444,7 @@ sub sql2{
 }
 
 #------------------------#
-#   ŠO•”•Ï”‚Ì’l‚ðŽæ“¾   #
+#   ³°ÉôÊÑ¿ô¤ÎÃÍ¤ò¼èÆÀ   #
 
 sub get_ov{
 	my $self = shift;
@@ -411,12 +487,12 @@ sub get_ov{
 
 
 #------------------------------------#
-#   o—Í‚·‚é’PŒêE•iŽŒƒŠƒXƒg‚Ìì»   #
+#   ½ÐÎÏ¤¹¤ëÃ±¸ì¡¦ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½   #
 
 sub make_list{
 	my $self = shift;
 	
-	# ’PŒêƒŠƒXƒg‚Ìì»
+	# Ã±¸ì¥ê¥¹¥È¤ÎºîÀ½
 	my $sql = "
 		SELECT genkei.id, genkei.name, hselection.khhinshi_id
 		FROM   genkei, hselection, df_$self->{tani}
@@ -456,7 +532,7 @@ sub make_list{
 	$self->{wName}   = \%name;
 	$self->{wHinshi} = \%hinshi;
 	
-	# •iŽŒƒŠƒXƒg‚Ìì»
+	# ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
 	$sql .= "FROM   hselection\n";
@@ -470,7 +546,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTMLƒ^ƒO'){
+		if ($i->[1] eq 'HTML¥¿¥°'){
 			$self->{use_html} = 1;
 		}
 	}
