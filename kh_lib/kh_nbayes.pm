@@ -218,76 +218,7 @@ sub predict{
 	) or return 0;
 
 	# ログの書き出し
-	if ($self->{save_log}){
-		my $fixer = 0;
-		foreach my $i (values %{$self->{cls}{model}{smoother}}){
-			#print "fx: $i\n";
-			$fixer = $i if $fixer > $i;
-		}
-		my @labels = $self->{cls}->labels;
-		
-		open (LOUT,">$self->{save_path}") or 
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => "$self->{save_path}",
-			);
-		
-		
-		# $i = 文書 No.
-		foreach my $i (sort {$a <=> $b} keys %{$self->{result_log}} ){
-			print LOUT "文書 No. $i\n\n";
-
-			my @rows;
-			my %scores;
-			# $h = 抽出語
-			foreach my $h (keys %{$self->{result_log}{$i}} ){
-				my $current = [$h, $self->{result_log}{$i}{$h}{v}];
-				foreach my $j (@labels){
-					push @{$current}, 
-						  ( $self->{result_log}{$i}{$h}{l}{$j} - $fixer )
-						* $self->{result_log}{$i}{$h}{v};
-					$scores{$j} += 
-						  ( $self->{result_log}{$i}{$h}{l}{$j} - $fixer )
-						* $self->{result_log}{$i}{$h}{v};
-				}
-				push @rows, $current;
-			}
-
-			print LOUT "スコア：\n";
-			my ($max, $max_ord, $n) = (0, 0, 0);
-			foreach my $h (@labels){
-				print LOUT "\t$h\t$scores{$h}\n";
-				if ($max < $scores{$h}){
-					$max = $scores{$h};
-					$max_ord = $n;
-				}
-				++$n;
-			}
-			$max_ord += 2;
-
-			print LOUT "\n各抽出語のスコア：\n";
-			print LOUT "\t抽出語\t頻度";
-			foreach my $h (@labels){
-				print LOUT "\t$h";
-			}
-			print LOUT "\n";
-			
-			my $tt = '';
-			foreach my $h (sort {$b->[$max_ord] <=> $a->[$max_ord]} @rows){
-				my $t = "\t";
-				foreach my $k (@{$h}){
-					$t .= "$k\t";
-				}
-				chop $t;
-				$tt .= "$t\n";
-			}
-			print LOUT "$tt";
-			print LOUT "-------------------------------------------------------------------------------\n\n"
-		}
-		close (LOUT);
-		
-	}
-
+	$self->make_log_file if $self->{save_log};
 
 	return 1;
 }
