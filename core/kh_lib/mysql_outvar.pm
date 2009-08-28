@@ -94,7 +94,7 @@ sub save{
 	}
 	close(VOUT);
 
-	kh_jchar->to_sjis($args{path});
+	kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
 
 
 }

@@ -50,6 +50,7 @@ my @menu1 = (
 	'm_b0_export',
 	't_bayes_learn',
 	't_bayes_predict',
+	't_bayes_view',
 );
 
 #------------------#
@@ -435,20 +436,22 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_bayes_view} = $f_bayes->command(
-			-label => gui_window->gui_jchar('学習結果の内容を確認'),
-			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
-				gui_window::bayes_learn->open;
-			})},
-			-state => 'disable'
-		);
-
 		$self->{t_bayes_predict} = $f_bayes->command(
 			-label => gui_window->gui_jchar('学習結果を用いた自動分類'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				gui_window::bayes_predict->open;
+			})},
+			-state => 'disable'
+		);
+
+		$f_bayes->separator;
+
+		$self->{t_bayes_view} = $f_bayes->command(
+			-label => gui_window->gui_jchar('学習結果の内容を閲覧'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				$self->mc_view_knb;
 			})},
 			-state => 'disable'
 		);
@@ -880,6 +883,31 @@ sub make{
 #------------------------------------#
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
+sub mc_view_knb{
+	my @types = (
+		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
+		["All files",'*']
+	);
+	my $path = $::main_gui->mw->getOpenFile(
+		-defaultextension => '.knb',
+		-filetypes        => \@types,
+		-title            =>
+			gui_window->gui_jt('閲覧する学習結果ファイルを選択'),
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	my $dist = $::project_obj->file_TempCSV;
+	kh_nbayes::Util->knb2csv(
+		path => $path,
+		csv  => $dist,
+	);
+	gui_OtherWin->open($dist);
+}
 sub mc_import_project{
 	require kh_project_io;
 

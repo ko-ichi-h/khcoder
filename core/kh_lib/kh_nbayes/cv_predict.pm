@@ -42,8 +42,9 @@ sub each{
 	#	push @{$self->{test_result_raw}}, '.';
 	#	push @{$self->{test_result}}, 0;
 	#}
-	
-	push @{$self->{test_result_raw}}, $max_lab;
+
+	$self->{test_result_raw}{$last} = $max_lab;
+
 	if ( $max_lab eq $self->{outvar_cnt}{$last} ){
 		push @{$self->{test_result}}, 1;
 		++$self->{test_count_hit};
