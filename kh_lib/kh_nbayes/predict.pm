@@ -10,7 +10,7 @@ sub each{
 	my $current = shift;
 	my $last    = shift;
 	
-	my $r = $self->{cls}->predict(
+	my ($r, $p) = $self->{cls}->predict(
 		attributes => $current
 	);
 	
@@ -23,6 +23,10 @@ sub each{
 			$max = $r->{$i};
 			$max_lab = $i;
 		}
+	}
+
+	if ($self->{save_log}){
+		$self->{result_log}{$last} = $p;
 	}
 
 	#if (
