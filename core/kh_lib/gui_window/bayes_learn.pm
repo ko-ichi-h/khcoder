@@ -194,7 +194,7 @@ sub calc{
 	);
 
 	my $msg = '';
-	$msg .= "ナイーブベイズ分類器の学習が完了しました。\n\n";
+	$msg .= "ナイーブベイズモデルの学習が完了しました。\n\n";
 	$msg .= "今回学習した文書: $r->{instances}";
 	if ($self->{check_overwrite}){
 		$msg .= ", 文書の総数: $r->{instances_all}\n";

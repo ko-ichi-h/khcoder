@@ -69,6 +69,7 @@ use gui_window::r_plot;
 use gui_window::r_plot_opt;
 use gui_window::bayes_learn;
 use gui_window::bayes_predict;
+use gui_window::bayes_view_log;
 
 BEGIN{
 	if( $] > 5.008 ){
