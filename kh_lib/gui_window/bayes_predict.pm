@@ -88,7 +88,6 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-
 	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
@@ -184,12 +183,12 @@ sub _calc{
 	my $path;
 	if ($self->{check_savelog}) {
 		my @types = (
-			[ "KH Coder: Naive Bayes logs",[qw/.log/] ],
+			[ "KH Coder: Naive Bayes logs",[qw/.nbl/] ],
 			["All files",'*']
 		);
 
 		$path = $self->win_obj->getSaveFile(
-			-defaultextension => '.log',
+			-defaultextension => '.nbl',
 			-filetypes        => \@types,
 			-title            =>
 				$self->gui_jt('分類ログをファイルに保存'),

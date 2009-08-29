@@ -51,7 +51,22 @@ sub make_log_file{
 		$fixer = $i if $fixer > $i;
 	}
 	my @labels = $self->{cls}->labels;
-	
+
+	my $obj;
+	$obj->{labels}     = \@labels;
+	$obj->{fixer}      = $fixer;
+	$obj->{tani}       = $self->{tani};
+	$obj->{file_model} = $self->{path};
+	$obj->{outvar}     = $self->{outvar};
+	$obj->{log}        = $self->{result_log};
+
+	Storable::nstore($obj, $self->{save_path});
+
+	return 1;
+
+	#------------------#
+	#   以下は残骸…   #
+
 	open (LOUT,">$self->{save_path}") or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -118,10 +133,23 @@ sub make_each_log_table{
 	# $h = 抽出語
 	foreach my $h (keys %{$d} ){
 		my $current = [$h, $d->{$h}{v}];
+		my $sum = 0;
 		foreach my $j (@{$labels}){
-			push @{$current}, ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
-			$scores{$j} +=    ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
+			push @{$current}, sprintf(
+				"%.2f",
+				( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v}
+			);
+			$scores{$j} += ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
+			$sum +=        ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
 		}
+		push @{$current}, '  ';
+		foreach my $j (@{$labels}){
+			push @{$current}, sprintf(
+				"%.2f",
+				( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v} / $sum * 100
+			);
+		}
+		
 		push @rows, $current;
 	}
 	

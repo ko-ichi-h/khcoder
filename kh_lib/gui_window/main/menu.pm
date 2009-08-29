@@ -51,6 +51,7 @@ my @menu1 = (
 	't_bayes_learn',
 	't_bayes_predict',
 	't_bayes_view',
+	't_bayes_view_log',
 );
 
 #------------------#
@@ -452,6 +453,15 @@ sub make{
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				$self->mc_view_knb;
+			})},
+			-state => 'disable'
+		);
+
+		$self->{t_bayes_view_log} = $f_bayes->command(
+			-label => gui_window->gui_jchar('分類ログを閲覧'),
+			-font => "TKFN",
+			-command => sub {$mw->after(10,sub{
+				$self->mc_view_nbl;
 			})},
 			-state => 'disable'
 		);
@@ -883,6 +893,26 @@ sub make{
 #------------------------------------#
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
+sub mc_view_nbl{
+	my @types = (
+		[ "KH Coder: Naive Bayes Logs",[qw/.nbl/] ],
+		["All files",'*']
+	);
+	my $path = $::main_gui->mw->getOpenFile(
+		-defaultextension => '.knb',
+		-filetypes        => \@types,
+		-title            =>
+			gui_window->gui_jt('閲覧する分類ログを選択'),
+		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	gui_window::bayes_view_log->open($path);
+}
 sub mc_view_knb{
 	my @types = (
 		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
