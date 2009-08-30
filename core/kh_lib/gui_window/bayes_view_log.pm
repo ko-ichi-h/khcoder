@@ -18,7 +18,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('分類ログ'));
+	$win->title($self->gui_jt('分類ログファイル'));
 
 	$self->{path} = shift;
 
@@ -190,7 +190,7 @@ sub start{
 	my $fl = gui_window->gui_jchar($self->{path});
 	$fl = File::Basename::basename($fl);
 	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
-	$self->{win_obj}->title($self->gui_jt("分類ログ： $fl"));
+	$self->{win_obj}->title($self->gui_jt("分類ログファイル： $fl"));
 
 	# 表示する文書の選択
 	my $w_doc_view = $::main_gui->get('w_doc_view');
