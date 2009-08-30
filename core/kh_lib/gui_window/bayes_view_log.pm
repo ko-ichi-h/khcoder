@@ -515,9 +515,19 @@ sub view{
 		$key = $n if $selected_by_bayes eq $i;
 		++$n;
 	}
-	
 	$self->sort($key);
+	return $self;
+}
 
+sub multiscrolly{
+	my $self = shift;
+	
+	my $from = ( $self->{sb1}->get() )[0];
+	
+	$self->{list}->yview('moveto', $_[1]);
+	
+
+	print "multiscrolly to $_[1] from $from\n" if $debug_ms;
 	
 	return $self;
 }
@@ -690,19 +700,6 @@ sub sort{
 	}
 	
 	$self->{last_sort_key} = $key;
-	return $self;
-}
-
-sub multiscrolly{
-	my $self = shift;
-	
-	my $from = ( $self->{sb1}->get() )[0];
-	
-	$self->{list}->yview('moveto', $_[1]);
-	
-
-	print "multiscrolly to $_[1] from $from\n" if $debug_ms;
-	
 	return $self;
 }
 
