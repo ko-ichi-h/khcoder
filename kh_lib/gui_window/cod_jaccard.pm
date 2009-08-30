@@ -3,6 +3,7 @@ use base qw(gui_window);
 
 use strict;
 
+my $debug_ms = 0;
 
 #-------------#
 #   GUI作製   #
@@ -239,15 +240,80 @@ sub _calc{
 
 	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
 		-orient  => 'v',
-		-command => [ \&multiscrolly, $self->{sb1}, [$self->{list}, $self->{list2}]]
+		-command => sub {
+			$self->multiscrolly(@_);
+		},
 	);
 	my $sb2 = $self->{list_flame}->Scrollbar(
 		-orient => 'h',
 		-command => ['xview' => $self->{list}]
 	);
-	$self->{list}->configure( -yscrollcommand => ['set', $sb1] );
+
+	$self->{list}->configure(
+		-yscrollcommand => sub{
+			$sb1->set(@_);
+			# もう一方のリストが追随していなければ同期させる
+			my $p1 = $_[0];
+			my @t = $self->{list2}->yview;
+			my $p2 = $t[0];
+			
+			if (
+				   defined($self->{list_moveto})
+				&& $self->{list_moveto} == $p1 
+			){
+					print "list1: pass\n" if $debug_ms;
+					return 1;
+			}
+			
+			if ($p1 == $p2){
+				print "list1: list2 ok\n" if $debug_ms;
+			} else {
+				if ($self->{list2_moveto} == $p1){
+					print "list1: already moved?\n" if $debug_ms;
+					return 1
+				}
+				print "list1: change list2 to $p1 from $p2\n" if $debug_ms;
+				$self->{list2_moveto} = $p1;
+				$self->{list2}->yview(
+					moveto => $p1,
+				);
+			}
+		},
+	);
+
+	$self->{list2}->configure(
+		-yscrollcommand => sub{
+			$sb1->set(@_);
+			# もう一方のリストが追随していなければ同期させる
+			my $p1 = $_[0];
+			my @t = $self->{list}->yview;
+			my $p2 = $t[0];
+			
+			if (
+				   defined($self->{list2_moveto})
+				&& $self->{list2_moveto} == $p1 
+			){
+				print "list2: pass\n" if $debug_ms;
+				return 1;
+			}
+			
+			if ($p1 == $p2){
+				print "list2: list1 ok\n" if $debug_ms;
+			} else {
+				if ($self->{list_moveto} == $p1){
+					print "list2: already moved?\n" if $debug_ms;
+					return 1
+				}
+				print "list2: change list1 to $p1 from $p2\n" if $debug_ms;
+				$self->{list_moveto} = $p1;
+				$self->{list}->yview(
+					moveto => $p1,
+				);
+			}
+		},
+	);
+
 	$self->{list}->configure( -xscrollcommand => ['set', $sb2] );
-	$self->{list2}->configure( -yscrollcommand => ['set', $sb1] );
 	$self->{sb1} = $sb1;
 	$self->{sb2} = $sb2;
 	
@@ -307,11 +373,12 @@ sub rtn{
 }
 
 sub multiscrolly{
-	my ($sb,$wigs,@args) = @_;
-	my $w;
-	foreach $w (@$wigs){
-		$w->yview(@args);
-	}
+	my $self = shift;
+	my $from = ( $self->{sb1}->get() )[0];
+	
+	$self->{list}->yview('moveto', $_[1]);
+	print "multiscrolly to $_[1] from $from\n" if $debug_ms;
+	return $self;
 }
 
 sub sort{

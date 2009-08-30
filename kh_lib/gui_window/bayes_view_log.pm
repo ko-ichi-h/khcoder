@@ -9,7 +9,7 @@ my $ascii = '[\x00-\x7F]';
 my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
 my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 
-my $debug_ms = 1;
+my $debug_ms = 0;
 
 #-------------#
 #   GUIºîÀ½   #
@@ -246,7 +246,8 @@ sub view{
 			&kh_nbayes::predict::make_each_log_table(
 				$self->{log_obj}{log}{$self->{current}},
 				$self->{log_obj}{labels},
-				$self->{log_obj}{fixer}
+				$self->{log_obj}{fixer},
+				$self->{log_obj}{prior_probs},
 			)
 		;
 		

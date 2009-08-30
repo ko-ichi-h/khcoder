@@ -449,7 +449,7 @@ sub make{
 		$f_bayes->separator;
 
 		$self->{t_bayes_view} = $f_bayes->command(
-			-label => gui_window->gui_jchar('学習結果の内容を閲覧'),
+			-label => gui_window->gui_jchar('学習結果ファイルの内容を見る'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				$self->mc_view_knb;
@@ -458,7 +458,7 @@ sub make{
 		);
 
 		$self->{t_bayes_view_log} = $f_bayes->command(
-			-label => gui_window->gui_jchar('分類ログを閲覧'),
+			-label => gui_window->gui_jchar('分類ログファイルの内容を見る'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				$self->mc_view_nbl;
@@ -893,6 +893,7 @@ sub make{
 #------------------------------------#
 #   一行を越えるメニュー・コマンド   #
 #------------------------------------#
+
 sub mc_view_nbl{
 	my @types = (
 		[ "KH Coder: Naive Bayes Logs",[qw/.nbl/] ],
@@ -902,7 +903,7 @@ sub mc_view_nbl{
 		-defaultextension => '.knb',
 		-filetypes        => \@types,
 		-title            =>
-			gui_window->gui_jt('閲覧する分類ログを選択'),
+			gui_window->gui_jt('閲覧する分類ログファイルを選択'),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -913,6 +914,7 @@ sub mc_view_nbl{
 	$path = $::config_obj->os_path($path);
 	gui_window::bayes_view_log->open($path);
 }
+
 sub mc_view_knb{
 	my @types = (
 		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
