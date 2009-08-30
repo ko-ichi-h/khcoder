@@ -48,6 +48,7 @@ my @menu1 = (
 	'm_b3_contxtout_csv',
 	'm_b3_contxtout_tab',
 	'm_b0_export',
+	't_cas_bayes',
 	't_bayes_learn',
 	't_bayes_predict',
 	't_bayes_view',
@@ -422,13 +423,13 @@ sub make{
 			);
 		push @menu1, 't_doc_cls' if $::config_obj->R;
 
-		my $f_bayes = $f8->cascade(
+		$self->{t_cas_bayes} = $f8->cascade(
 			-label => gui_window->gui_jchar('ベイズ学習による分類'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
-		$self->{t_bayes_learn} = $f_bayes->command(
+		$self->{t_bayes_learn} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('外部変数から学習'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
@@ -437,7 +438,7 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_bayes_predict} = $f_bayes->command(
+		$self->{t_bayes_predict} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('学習結果を用いた自動分類'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
@@ -446,9 +447,9 @@ sub make{
 			-state => 'disable'
 		);
 
-		$f_bayes->separator;
+		$self->{t_cas_bayes}->separator;
 
-		$self->{t_bayes_view} = $f_bayes->command(
+		$self->{t_bayes_view} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('学習結果ファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
@@ -457,7 +458,7 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_bayes_view_log} = $f_bayes->command(
+		$self->{t_bayes_view_log} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('分類ログファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
