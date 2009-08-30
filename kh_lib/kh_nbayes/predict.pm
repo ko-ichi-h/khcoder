@@ -3,6 +3,7 @@ package kh_nbayes::predict;
 use base qw(kh_nbayes);
 
 use strict;
+use List::Util qw(max sum);
 
 sub each{
 	my $self = shift;
@@ -130,11 +131,13 @@ sub make_each_log_table{
 	
 	my @rows;
 	my %scores;
+	my $cases = @{$labels};
+	
 	# $h = 抽出語
 	foreach my $h (keys %{$d} ){
 		my $current = [$h, $d->{$h}{v}];
 		my $sum = 0;
-		foreach my $j (@{$labels}){
+		foreach my $j (@{$labels}){                         # スコア
 			push @{$current}, sprintf(
 				"%.2f",
 				( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v}
@@ -142,42 +145,29 @@ sub make_each_log_table{
 			$scores{$j} += ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
 			$sum +=        ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v};
 		}
-		push @{$current}, '  ';
+		
+		my $s = 0;                                          # 分散
 		foreach my $j (@{$labels}){
+			$s += 
+				(
+					  ( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v}
+					- ( $sum / $cases )
+				) ** 2
+			;
+		}
+		push @{$current}, sprintf("%.2f", $s / $cases);
+
+		foreach my $j (@{$labels}){                         # パーセント
 			push @{$current}, sprintf(
 				"%.2f",
 				( $d->{$h}{l}{$j} - $fixer ) * $d->{$h}{v} / $sum * 100
 			);
 		}
-		
 		push @rows, $current;
 	}
-	
+
+	@rows = sort {sum( @{$b}[1..$cases] ) <=> sum( @{$a}[1..$cases] )} @rows;
 	return (\@rows, \%scores);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 1;
