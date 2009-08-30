@@ -60,6 +60,7 @@ sub make_log_file{
 	$obj->{file_model} = $self->{path};
 	$obj->{outvar}     = $self->{outvar};
 	$obj->{log}        = $self->{result_log};
+	$obj->{prior_probs}= $self->{cls}{model}{prior_probs};
 
 	Storable::nstore($obj, $self->{save_path});
 
@@ -128,10 +129,16 @@ sub make_each_log_table{
 	my $d      = shift;
 	my $labels = shift;
 	my $fixer  = shift;
+	my $prior  = shift;
 	
 	my @rows;
 	my %scores;
 	my $cases = @{$labels};
+	
+	$d->{'[事前確率]'}{v} = 1;
+	foreach my $i (@{$labels}){
+		$d->{'[事前確率]'}{l}{$i} = $prior->{$i};
+	}
 	
 	# $h = 抽出語
 	foreach my $h (keys %{$d} ){
@@ -165,6 +172,11 @@ sub make_each_log_table{
 		}
 		push @rows, $current;
 	}
+
+
+	
+	
+	
 
 	@rows = sort {sum( @{$b}[1..$cases] ) <=> sum( @{$a}[1..$cases] )} @rows;
 	return (\@rows, \%scores);

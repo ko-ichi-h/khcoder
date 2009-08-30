@@ -37,6 +37,13 @@ sub knb2csv{
 		}
 	}
 	
+	# 事前確率
+	my $prior_probs = ['[事前確率]'];
+	foreach my $i (@labels){
+		push @{$prior_probs}, $self->{cls}{model}{prior_probs}{$i} - $fixer;
+	}
+	push @rows, $prior_probs;
+	
 	# 書き出し
 	open (COUT,">$self->{csv}") or 
 		gui_errormsg->open(
@@ -55,7 +62,7 @@ sub knb2csv{
 	foreach my $i (@labels){
 		$header .= kh_csv->value_conv($i).',';
 	}
-	$header .= ',';
+	$header .= '分散,';
 	foreach my $i (@labels){
 		$header .= kh_csv->value_conv($i).',';
 	}
@@ -73,9 +80,16 @@ sub knb2csv{
 			$t .= "$h,";
 		}
 		
-		# 行の%
-		$t .= ',';
+		# 分散
 		my $sum = sum( @{$i}[1..$c] );
+		my $s = 0;
+		foreach my $h ( @{$i}[1..$c] ){
+			$s += ( $sum / $c - $h ) ** 2;
+		}
+		$s /= $c;
+		$t .= "$s,";
+		
+		# 行の%
 		foreach my $h ( @{$i}[1..$c] ){
 			$t .= $h / $sum * 100;
 			$t .= ',';
