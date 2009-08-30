@@ -449,7 +449,7 @@ sub make{
 		$f_bayes->separator;
 
 		$self->{t_bayes_view} = $f_bayes->command(
-			-label => gui_window->gui_jchar('学習結果ファイルの内容を見る'),
+			-label => gui_window->gui_jchar('学習結果ファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				$self->mc_view_knb;
@@ -458,7 +458,7 @@ sub make{
 		);
 
 		$self->{t_bayes_view_log} = $f_bayes->command(
-			-label => gui_window->gui_jchar('分類ログファイルの内容を見る'),
+			-label => gui_window->gui_jchar('分類ログファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub {$mw->after(10,sub{
 				$self->mc_view_nbl;
