@@ -312,6 +312,12 @@ sub _view_doc{
 	$self->wrap;
 	$self->update_buttons;
 
+	# 他のWindowとの同期
+	my $win_o = $::main_gui->get('w_bayes_view_log');
+	if ( defined($win_o) ){
+		$win_o->from_doc_view($self->{tani},$self->{doc_id});
+	}
+
 	# スクロールバーを表示するための挙動
 	#$self->win_obj->update;
 	#$self->text->yview(moveto => 0);

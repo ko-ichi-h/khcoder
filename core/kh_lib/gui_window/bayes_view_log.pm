@@ -5,9 +5,11 @@ use strict;
 use Jcode;
 use List::Util qw(max sum);
 
-# 「文書表示」Windowとの連動
-# 抽出語の検索
-# ホイールでスクロールすると片方だけスクロールしてしまう問題
+my $ascii = '[\x00-\x7F]';
+my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
+my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
+
+my $debug_ms = 1;
 
 #-------------#
 #   GUI作製   #
@@ -62,12 +64,13 @@ sub _new{
 
 	$self->{entry_dno} = $lf->Entry(
 		-width => 6,
+		-background => 'gray',
 	)->pack(-side => 'left');
 
-	$lf->Button(
-		-text => gui_window->gui_jchar('表示'),
-		-command => sub{ $mw->after(10,sub { $self->select_doc; });} 
-	)->pack(-side => 'left', -padx => 2);
+	#$lf->Button(
+	#	-text => gui_window->gui_jchar('表示'),
+	#	-command => sub{ $mw->after(10,sub { $self->select_doc; });} 
+	#)->pack(-side => 'left', -padx => 2);
 	$self->{entry_dno}->bind("<Key-Return>",sub{$self->select_doc;});
 
 
@@ -96,18 +99,32 @@ sub _new{
 	#------------------#
 	#   操作ボタン類   #
 
-	my $f1 = $lf1->Frame()->pack(-fill => 'x');
+	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 
 	$f1->Label(
-		-text => gui_window->gui_jchar('抽出語検索：'),
+		-text => gui_window->gui_jchar('抽出語の検索：'),
 	)->pack(-side => 'left');
 
 	$self->{entry_wsearch} = $f1->Entry(
 		-width => 15,
 	)->pack(-side => 'left', -fill => 'x', -expand => 1);
 
+	$self->{entry_wsearch}->bind(
+		"<Key-Return>",
+		sub{
+			my $key = $self->{last_sort_key};
+			$self->{last_sort_key} = undef;
+			$self->sort($key);
+		}
+	);
+
 	$f1->Button(
 		-text => gui_window->gui_jchar('検索'),
+		-command => sub{
+			my $key = $self->{last_sort_key};
+			$self->{last_sort_key} = undef;
+			$self->sort($key);
+		}
 	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Label(
@@ -176,7 +193,13 @@ sub start{
 	$self->{win_obj}->title($self->gui_jt("分類ログ： $fl"));
 
 	# 表示する文書の選択
-	$self->{current} = 1;
+	my $w_doc_view = $::main_gui->get('w_doc_view');
+	if (defined($w_doc_view)){
+		$self->{current} = $w_doc_view->{doc_id};
+	} else {
+		$self->{current} = 1;
+	}
+	
 	$self->view;
 	
 	return $self;
@@ -184,6 +207,21 @@ sub start{
 
 #----------------------#
 #   文書の情報を表示   #
+
+sub from_doc_view{
+	my $self = shift;
+	my $tani = shift;
+	my $id   = shift;
+	
+	if ($tani eq  $self->{log_obj}{tani}){
+		$self->{entry_dno}->delete(0,'end');
+		$self->{entry_dno}->insert(0,$id);
+	
+		$self->{current} = $id;
+		$self->view;
+	}
+	
+}
 
 sub select_doc{
 	my $self = shift;
@@ -336,7 +374,7 @@ sub view{
 		push @temp, $i.' (%)';
 	}
 	foreach my $i (
-		'抽出語', '頻度', @{$self->{log_obj}{labels}}, '  ', @temp
+		'抽出語', '頻度', @{$self->{log_obj}{labels}}, '分散', @temp
 	){
 		unless ($col){
 			++$col;
@@ -384,15 +422,81 @@ sub view{
 
 	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
 		-orient  => 'v',
-		-command => [ \&multiscrolly, $self->{sb1}, [$self->{list}, $self->{list2}]]
+		-command => sub {
+			$self->multiscrolly(@_);
+		},
 	);
+
 	my $sb2 = $self->{list_flame}->Scrollbar(
 		-orient => 'h',
 		-command => ['xview' => $self->{list}]
 	);
-	$self->{list}->configure( -yscrollcommand => ['set', $sb1] );
+
+	$self->{list}->configure(
+		-yscrollcommand => sub{
+			$sb1->set(@_);
+			# もう一方のリストが追随していなければ同期させる
+			my $p1 = $_[0];
+			my @t = $self->{list2}->yview;
+			my $p2 = $t[0];
+			
+			if (
+				   defined($self->{list_moveto})
+				&& $self->{list_moveto} == $p1 
+			){
+					print "list1: pass\n" if $debug_ms;
+					return 1;
+			}
+			
+			if ($p1 == $p2){
+				print "list1: list2 ok\n" if $debug_ms;
+			} else {
+				if ($self->{list2_moveto} == $p1){
+					print "list1: already moved?\n" if $debug_ms;
+					return 1
+				}
+				print "list1: change list2 to $p1 from $p2\n" if $debug_ms;
+				$self->{list2_moveto} = $p1;
+				$self->{list2}->yview(
+					moveto => $p1,
+				);
+			}
+		},
+	);
+
+	$self->{list2}->configure(
+		-yscrollcommand => sub{
+			$sb1->set(@_);
+			# もう一方のリストが追随していなければ同期させる
+			my $p1 = $_[0];
+			my @t = $self->{list}->yview;
+			my $p2 = $t[0];
+			
+			if (
+				   defined($self->{list2_moveto})
+				&& $self->{list2_moveto} == $p1 
+			){
+				print "list2: pass\n" if $debug_ms;
+				return 1;
+			}
+			
+			if ($p1 == $p2){
+				print "list2: list1 ok\n" if $debug_ms;
+			} else {
+				if ($self->{list_moveto} == $p1){
+					print "list2: already moved?\n" if $debug_ms;
+					return 1
+				}
+				print "list2: change list1 to $p1 from $p2\n" if $debug_ms;
+				$self->{list_moveto} = $p1;
+				$self->{list}->yview(
+					moveto => $p1,
+				);
+			}
+		},
+	);
+	
 	$self->{list}->configure( -xscrollcommand => ['set', $sb2] );
-	$self->{list2}->configure( -yscrollcommand => ['set', $sb1] );
 	$self->{sb1} = $sb1;
 	$self->{sb2} = $sb2;
 	
@@ -430,17 +534,50 @@ sub sort{
 	$self->{list2}->delete('all');
 	
 	# ソート
-	my @temp;
+	my @sort;
 	if ($key){
-		@temp = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
+		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
 		#$self->{btn_copy}->configure(
 		#	-text => $self->gui_jchar('コピー（選択列）')
 		#);
 	} else {
-		@temp = @{$self->{result}};
+		@sort = @{$self->{result}};
 		#$self->{btn_copy}->configure(
 		#	-text => $self->gui_jchar('コピー（表全体）')
 		#);
+	}
+
+	# 検索ルーチン
+	my $s_method = 'AND';
+	my $search = $self->gui_jg( $self->{entry_wsearch}->get );
+	$search = Jcode->new($search, 'sjis')->euc;
+	$search =~ s/　/ /go;
+	$search = [ split / /, $search ]; # /
+
+	my @temp = ();
+	if ( @{$search} ){
+		foreach my $i (@sort){
+			my $cnt = 0;
+			foreach my $j (@{$search}){
+				if ($i->[0] =~ /^(?:$ascii|$twoBytes|$threeBytes)*?(?:$j)/) {
+					if ($s_method eq 'OR'){
+						push @temp, $i;
+						last;
+					} else {
+						++$cnt;
+					}
+				} else {
+					if ($s_method eq 'AND'){
+						last;
+					}
+				}
+			}
+			if ($s_method eq 'AND' && $cnt == @{$search}){
+				push @temp, $i;
+			}
+		}
+	} else {
+		@temp = @sort;
 	}
 
 	# 出力
@@ -449,18 +586,50 @@ sub sort{
 		-font => "TKFN",
 		-anchor => 'e',
 	);
+	my $right_style_g = $self->{list}->ItemStyle(
+		'text',
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-foreground       => '#B22222',
+		-selectforeground => '#B22222',
+		#-background       => 'white'
+	);
+	my $right_style_o = $self->{list}->ItemStyle(
+		'text',
+		-font             => "TKFN",
+		-anchor           => 'e',
+		-foreground       => '#2A4596',
+		-selectforeground => '#2A4596',
+		#-background       => 'white'
+	);
+
 	my $row = 0;
 	foreach my $i ( @temp ){
+		my $len = ( @{$i} - 3 ) / 2;
+
+		my $max1 = max( @{$i}[2..1+$len] );
+		my $max2 = max( @{$i}[3+$len..2+$len+$len] );
+
 		$self->{list}->add($row,-at => "$row");
 		$self->{list2}->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
 			if ($col){
+				my $style = $right_style;
+				if     ($col >= 2 && $col <= 1+$len && $h == $max1){
+					$style = $right_style_g;
+				} elsif ($col >= 3+$len && $col <= 2+$len+$len && $h == $max2){
+					$style = $right_style_g;
+				} elsif ($col == 2 + $len){
+					$style = $right_style_o;
+				}
+
+
 				$self->{list}->itemCreate(
 					$row,
 					$col - 1,
 					-text  => $h,
-					-style => $right_style
+					-style => $style
 				);
 			} else {
 				$self->{list2}->itemCreate(
@@ -525,11 +694,16 @@ sub sort{
 }
 
 sub multiscrolly{
-	my ($sb,$wigs,@args) = @_;
-	my $w;
-	foreach $w (@$wigs){
-		$w->yview(@args);
-	}
+	my $self = shift;
+	
+	my $from = ( $self->{sb1}->get() )[0];
+	
+	$self->{list}->yview('moveto', $_[1]);
+	
+
+	print "multiscrolly to $_[1] from $from\n" if $debug_ms;
+	
+	return $self;
 }
 
 sub copy{
