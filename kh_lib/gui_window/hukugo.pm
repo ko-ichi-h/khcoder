@@ -71,7 +71,7 @@ sub _new{
 
 	# 結果表示部分
 	my $fra5 = $self->{win_obj}->LabFrame(
-		-label => 'Result',
+		-label => 'Result (Top 500)',
 		-labelside => 'acrosstop',
 		-borderwidth => 2
 	)->pack(-expand=>'yes',-fill=>'both');

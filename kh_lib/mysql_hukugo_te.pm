@@ -58,6 +58,7 @@ sub search{
 		++$num;
 	}
 	$sql .= "ORDER BY num DESC, name\n";
+	$sql .= "LIMIT 500\n";
 	#print Jcode->new($sql)->sjis, "\n";
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
@@ -74,7 +75,7 @@ sub get_majority{
 		SELECT name, num
 		FROM hukugo_te
 		ORDER BY num DESC, name
-		LIMIT 1000
+		LIMIT 500
 	",1)->hundle;
 	
 	my @r = ();
