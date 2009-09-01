@@ -934,12 +934,15 @@ sub mc_view_knb{
 	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
-	my $dist = $::project_obj->file_TempCSV;
-	kh_nbayes::Util->knb2csv(
-		path => $path,
-		csv  => $dist,
-	);
-	gui_OtherWin->open($dist);
+	
+	gui_window::bayes_view_knb->open($path);
+	
+	# my $dist = $::project_obj->file_TempCSV;
+	# kh_nbayes::Util->knb2csv(
+	# 	path => $path,
+	# 	csv  => $dist,
+	# );
+	# gui_OtherWin->open($dist);
 }
 sub mc_import_project{
 	require kh_project_io;
