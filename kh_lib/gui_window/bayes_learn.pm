@@ -53,8 +53,35 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$self->{entry_fold}->insert(0,10);
-	# gui_window->disabled_entry_configure($self->{entry_fold});
 	$self->{entry_fold}->configure(-state => 'disable');
+	$self->{entry_fold}->bind("<Key-Return>",sub{$self->calc;});
+	gui_window->config_entry_focusin( $self->{entry_fold} );
+
+	$self->{chkw_savel} = $lf_x->Checkbutton(
+			-text     => $self->gui_jchar('分類ログをファイルに保存','euc'),
+			-variable => \$self->{check_savel},
+			-anchor => 'w',
+			-command => sub {$self->w_status;},
+	)->pack(-anchor => 'w');
+
+	$self->{chkw_savev} = $lf_x->Checkbutton(
+			-text     => $self->gui_jchar('分類結果を外部変数に保存','euc'),
+			-variable => \$self->{check_savev},
+			-anchor => 'w',
+			-command => sub {$self->w_status;},
+	)->pack(-anchor => 'w');
+
+	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
+	$self->{label_vname} = $fcv2->Label(
+		-text       => $self->gui_jchar('変数名：'),
+		#-foreground => 'gray',
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{entry_vname} = $fcv2->Entry(
+		-width      => 10,
+		-state      => 'normal',
+	)->pack(-anchor => 'w', -side => 'left', -fill => 'x', -expand => 1);
+	$self->{entry_vname}->bind("<Key-Return>",sub{$self->calc;});
 
 	$win->Button(
 		-text    => $self->gui_jchar('キャンセル'),
@@ -76,12 +103,28 @@ sub _new{
 
 	sub w_status{
 		my $self = shift;
-		if ( $self->{check_cross} ){
+		if ( $self->{check_cross} && $self->{check_savev} ){
 			$self->{entry_fold}->configure(-state => 'normal');
 			$self->{label_fold}->configure(-state => 'normal');
+			$self->{chkw_savel}->configure(-state => 'normal');
+			$self->{chkw_savev}->configure(-state => 'normal');
+			$self->{label_vname}->configure(-state => 'normal');
+			$self->{entry_vname}->configure(-state => 'normal');
+		}
+		elsif ( $self->{check_cross} ){
+			$self->{entry_fold}->configure(-state => 'normal');
+			$self->{label_fold}->configure(-state => 'normal');
+			$self->{chkw_savel}->configure(-state => 'normal');
+			$self->{chkw_savev}->configure(-state => 'normal');
+			$self->{label_vname}->configure(-state => 'disable');
+			$self->{entry_vname}->configure(-state => 'disable');
 		} else {
 			$self->{entry_fold}->configure(-state => 'disable');
 			$self->{label_fold}->configure(-state => 'disable');
+			$self->{chkw_savel}->configure(-state => 'disable');
+			$self->{chkw_savev}->configure(-state => 'disable');
+			$self->{label_vname}->configure(-state => 'disable');
+			$self->{entry_vname}->configure(-state => 'disable');
 		}
 	}
 
@@ -118,6 +161,35 @@ sub calc{
 			msg  => '外部変数の設定が不正です。。',
 		);
 		return 0;
+	}
+
+	my ($varname1, $varname2);
+	if ($self->{check_savev}){
+		$varname1 = $self->gui_jg( $self->{entry_vname}->get );
+		$varname1 = Jcode->new($varname1,'sjis')->euc;
+		unless (length($varname1)){
+			gui_errormsg->open(
+				type   => 'msg',
+				msg    => '変数名を指定して下さい。',
+				window => \$self->{win_obj},
+			);
+			return 0;
+		}
+		
+		$varname2 = $varname1;
+		$varname1 .= '-分類';
+		$varname2 .= '-正否';
+		foreach my $i ($varname1, $varname2){
+			my $chk = mysql_outvar::a_var->new($i);
+			if ( defined($chk->{id}) ){
+				gui_errormsg->open(
+					type   => 'msg',
+					msg    => '指定された名前の変数がすでに存在します。',
+					window => \$self->{win_obj},
+				);
+				return 0;
+			}
+		}
 	}
 
 	$self->{words_obj}->settings_save;
@@ -166,6 +238,27 @@ sub calc{
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 
+	my $cross_path = '';
+	if ( $self->{check_savel} ){
+		@types = (
+			[ "KH Coder: Naive Bayes logs",[qw/.knl/] ],
+			["All files",'*']
+		);
+		$cross_path = $self->win_obj->getSaveFile(
+			-defaultextension => '.knb',
+			-filetypes        => \@types,
+			-title            =>
+				$self->gui_jt('分類ログをファイルに保存'),
+			-initialdir       => $self->gui_jchar($::config_obj->cwd),
+		);
+		unless ($cross_path){
+			return 0;
+		}
+		$cross_path = gui_window->gui_jg_filename_win98($cross_path);
+		$cross_path = gui_window->gui_jg($cross_path);
+		$cross_path = $::config_obj->os_path($cross_path);
+	}
+
 	#----------#
 	#   実行   #
 
@@ -180,17 +273,22 @@ sub calc{
 	use kh_nbayes;
 
 	my $r = kh_nbayes->learn_from_ov(
-		tani     => $self->tani,
-		outvar   => $self->outvar,
-		hinshi   => $self->hinshi,
-		max      => $self->max,
-		min      => $self->min,
-		max_df   => $self->max_df,
-		min_df   => $self->min_df,
-		path     => $path,
-		add_data => $self->{check_overwrite},
-		cross_vl => $self->{check_cross},
-		cross_fl => $fold,
+		tani        => $self->tani,
+		outvar      => $self->outvar,
+		hinshi      => $self->hinshi,
+		max         => $self->max,
+		min         => $self->min,
+		max_df      => $self->max_df,
+		min_df      => $self->min_df,
+		path        => $path,
+		add_data    => $self->gui_jg( $self->{check_overwrite} ),
+		cross_vl    => $self->gui_jg( $self->{check_cross} ),
+		cross_fl    => $fold,
+		cross_savel => $self->gui_jg( $self->{check_savel} ),
+		cross_savev => $self->gui_jg( $self->{check_savev} ),
+		cross_vn1   => $varname1,
+		cross_vn2   => $varname2,
+		cross_path  => $cross_path,
 	);
 
 	my $msg = '';
