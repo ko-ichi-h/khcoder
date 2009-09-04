@@ -26,22 +26,11 @@ sub each{
 			$max_lab = $i;
 		}
 	}
-	
-	#if (
-	#	   $cnt == 1
-	#	&& $max >= 0.8
-	#) {
-	#	push @{$self->{test_result_raw}}, $max_lab;
-	#	if ( $max_lab eq $self->{outvar_cnt}{$last} ){
-	#		push @{$self->{test_result}}, 1;
-	#		++$self->{test_count_hit};
-	#	} else {
-	#		push @{$self->{test_result}}, 0;
-	#	}
-	#} else {
-	#	push @{$self->{test_result_raw}}, '.';
-	#	push @{$self->{test_result}}, 0;
-	#}
+
+	# ログ保存
+	if ($self->{cross_savel}){
+		$self->{result_log}{$last} = $r2;
+	}
 
 	$self->{test_result_raw}{$last} = $max_lab;
 
@@ -56,5 +45,47 @@ sub each{
 	return $self;
 }
 
+
+sub make_log_file{
+	my $self = shift;
+
+	my %labels;
+	my $fixer = 0;
+	foreach my $i (values %{$self->{result_log}}){  # $i = ログ
+		foreach my $h (values %{$i}){               # $h = 抽出語別
+			foreach my $j (keys %{$h->{l}}){        # $j = ラベル
+				$labels{$j} = 1 unless $labels{$j} = 1;
+				$fixer = $h->{l}{$j} if $fixer > $h->{l}{$j};
+			}
+		}
+	}
+	my @labels = sort (keys %labels);
+
+	my $obj;
+	$obj->{labels}     = \@labels;
+	$obj->{fixer}      = $fixer;
+	$obj->{tani}       = $self->{tani};
+	$obj->{file_model} = '（交差妥当化）';
+	$obj->{outvar}     = '（交差妥当化）';
+	$obj->{log}        = $self->{result_log};
+	$obj->{prior_probs}= undef;
+
+	Storable::nstore($obj, $self->{cross_path});
+
+	return 1;
+}
+
+sub push_prior_probs{
+	my $self = shift;
+	
+	foreach my $i (keys %{$self->{result_log}}){
+		unless ( $self->{result_log}{$i}{'[事前確率]'}{v} ){
+			$self->{result_log}{$i}{'[事前確率]'}{v} = 1;
+			$self->{result_log}{$i}{'[事前確率]'}{l} = 
+				$self->{cls}{model}{prior_probs};
+		}
+	}
+	return $self;
+}
 
 1;

@@ -913,6 +913,10 @@ sub mc_view_nbl{
 	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
+	
+	my $win = $::main_gui->get('w_bayes_view_log');
+	$win->close if defined($win);
+	
 	gui_window::bayes_view_log->open($path);
 }
 
@@ -934,6 +938,9 @@ sub mc_view_knb{
 	$path = gui_window->gui_jg_filename_win98($path);
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
+	
+	my $win = $::main_gui->get('w_bayes_view_knb');
+	$win->close if defined($win);
 	
 	gui_window::bayes_view_knb->open($path);
 	
