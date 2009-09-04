@@ -224,7 +224,7 @@ sub cross_validate{
 		print "test $self->{test_count_hit} / $self->{test_count}";
 		print "\n";
 		if ($self->{cross_savel}){
-			$self->push_prior_probs;
+			$self->push_prior_probs; # テスト別に事前確率を保存
 		}
 	}
 	

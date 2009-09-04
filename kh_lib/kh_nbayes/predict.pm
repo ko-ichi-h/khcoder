@@ -135,9 +135,16 @@ sub make_each_log_table{
 	my %scores;
 	my $cases = @{$labels};
 	
-	$d->{'[ªˆ¡∞≥ŒŒ®]'}{v} = 1;
-	foreach my $i (@{$labels}){
-		$d->{'[ªˆ¡∞≥ŒŒ®]'}{l}{$i} = $prior->{$i};
+	# ∑Á¬ª¬–∫ˆ
+	unless ( defined($d) ){
+		return undef;
+	}
+	
+	unless ( $d->{'[ªˆ¡∞≥ŒŒ®]'}{v} ){
+		$d->{'[ªˆ¡∞≥ŒŒ®]'}{v} = 1;
+		foreach my $i (@{$labels}){
+			$d->{'[ªˆ¡∞≥ŒŒ®]'}{l}{$i} = $prior->{$i};
+		}
 	}
 	
 	# $h = √ÍΩ–∏Ï
@@ -172,11 +179,6 @@ sub make_each_log_table{
 		}
 		push @rows, $current;
 	}
-
-
-	
-	
-	
 
 	@rows = sort {sum( @{$b}[1..$cases] ) <=> sum( @{$a}[1..$cases] )} @rows;
 	return (\@rows, \%scores);

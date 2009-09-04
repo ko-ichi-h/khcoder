@@ -49,6 +49,7 @@ sub each{
 sub make_log_file{
 	my $self = shift;
 
+	# 最小値を$fixerとする
 	my %labels;
 	my $fixer = 0;
 	foreach my $i (values %{$self->{result_log}}){  # $i = ログ
@@ -75,6 +76,7 @@ sub make_log_file{
 	return 1;
 }
 
+# テスト別に事前確率を保存
 sub push_prior_probs{
 	my $self = shift;
 	
