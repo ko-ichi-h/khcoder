@@ -241,11 +241,11 @@ sub calc{
 	my $cross_path = '';
 	if ( $self->{check_savel} ){
 		@types = (
-			[ "KH Coder: Naive Bayes logs",[qw/.knl/] ],
+			[ "KH Coder: Naive Bayes logs",[qw/.nbl/] ],
 			["All files",'*']
 		);
 		$cross_path = $self->win_obj->getSaveFile(
-			-defaultextension => '.knb',
+			-defaultextension => '.nbl',
 			-filetypes        => \@types,
 			-title            =>
 				$self->gui_jt('分類ログをファイルに保存'),
@@ -290,6 +290,12 @@ sub calc{
 		cross_vn2   => $varname2,
 		cross_path  => $cross_path,
 	);
+
+	# 「外部変数リスト」を開く
+	if ($self->{check_savev}){
+		my $win_list = gui_window::outvar_list->open;
+		$win_list->_fill;
+	}
 
 	my $msg = '';
 	$msg .= "ナイーブベイズモデルの学習が完了しました。\n\n";

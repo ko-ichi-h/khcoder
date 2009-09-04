@@ -193,6 +193,10 @@ sub cross_validate{
 		$n = 1 if $n > $groups;
 	}
 	
+	if ($self->{cross_savel}){
+		$self->{result_log} = undef;
+	}
+	
 	# 交差ループ
 	$self->{test_result} = undef;
 	$self->{test_result_raw} = undef;
@@ -206,6 +210,9 @@ sub cross_validate{
 		bless $self, 'kh_nbayes::cv_train';
 		$self->scan_each;
 		$self->{cls}->train;
+		if ($self->{cross_savel}){
+			$self->{cls}->save_prediction_detail(1);
+		}
 		print "training ", $self->{cls}->instances, ",\t";
 
 		# テストフェーズ
@@ -216,6 +223,40 @@ sub cross_validate{
 		$self->scan_each;
 		print "test $self->{test_count_hit} / $self->{test_count}";
 		print "\n";
+		if ($self->{cross_savel}){
+			$self->push_prior_probs;
+		}
+	}
+	
+	# ログの書き出し
+	$self->make_log_file if $self->{cross_savel};
+	
+	# 変数保存
+	if ($self->{cross_savev}){
+		my @data = ( [$self->{cross_vn1}, $self->{cross_vn2}] );
+		
+		foreach my $i (sort {$a <=> $b} keys %{$self->{outvar_cnt}} ){
+			my ($v, $s);
+			if ( ! defined($self->{test_result_raw}{$i}) ){
+				$s = '.';
+				$v = '.';
+			}
+			elsif ($self->{test_result_raw}{$i} eq $self->{outvar_cnt}{$i}){
+				$s = '正';
+				$v = $self->{test_result_raw}{$i};
+			}
+			else {
+				$s = '否';
+				$v = $self->{test_result_raw}{$i};
+			}
+			push @data, [$v,$s];
+		}
+
+		&mysql_outvar::read::save(
+			data     => \@data,
+			tani     => $self->{tani},
+			type     => 'varchar',
+		) or return 0;
 	}
 	
 	return $self;
