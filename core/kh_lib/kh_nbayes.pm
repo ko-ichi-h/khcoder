@@ -376,7 +376,6 @@ sub scan_each{
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
 				# 書き出し
-				#&{$self->{command}}(\%current, $last);
 				$self->each(\%current, $last);
 				
 				# 初期化
