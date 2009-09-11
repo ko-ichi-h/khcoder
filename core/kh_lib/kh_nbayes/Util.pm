@@ -141,7 +141,7 @@ sub make_csv{
 			if ($c){
 				$t .= "$h,";
 			} else {
-				$t .= kh_csv->value_conv($h);
+				$t .= kh_csv->value_conv($h).',';
 			}
 			++$c;
 		}

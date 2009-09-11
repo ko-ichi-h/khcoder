@@ -1,5 +1,7 @@
 package gui_window::main::menu;
+
 use strict;
+use Tk;
 
 # メニューの設定：プロジェクトが選択されればActive
 my @menu0 = (
@@ -915,7 +917,7 @@ sub mc_view_nbl{
 	$path = $::config_obj->os_path($path);
 	
 	my $win = $::main_gui->get('w_bayes_view_log');
-	$win->close if defined($win);
+	$win->close if Exists( $win->{win_obj} );
 	
 	gui_window::bayes_view_log->open($path);
 }
@@ -940,7 +942,7 @@ sub mc_view_knb{
 	$path = $::config_obj->os_path($path);
 	
 	my $win = $::main_gui->get('w_bayes_view_knb');
-	$win->close if defined($win);
+	$win->close if Exists( $win->{win_obj} );
 	
 	gui_window::bayes_view_knb->open($path);
 	
