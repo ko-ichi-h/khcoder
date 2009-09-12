@@ -52,6 +52,7 @@ sub knb2lst{
 
 	# データ整形[2]
 	my $c = @labels;
+	my @sort;
 	foreach my $i (
 		sort { sum( @{$b}[1..$c] ) <=> sum( @{$a}[1..$c] ) } 
 		@rows
@@ -76,10 +77,11 @@ sub knb2lst{
 			push @current, $h / $sum * 100;
 		}
 		
-		$i = \@current;
+		push @sort, \@current;
 	}
+	undef @rows;
 
-	$self->{rows} = \@rows;
+	$self->{rows} = \@sort;
 	return $self;
 }
 

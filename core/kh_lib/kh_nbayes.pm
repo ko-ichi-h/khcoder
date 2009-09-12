@@ -383,6 +383,7 @@ sub scan_each{
 				$last = $i->[0];
 			}
 
+			# 学習に使う抽出語を選択する場合
 			if (
 				   ( $self->{mode} eq 't' && $self->{wName}{$i->[1]} )
 				|| ( $self->{mode} eq 'p' && $self->{hName}{$i->[3]} )
@@ -391,9 +392,15 @@ sub scan_each{
 				$t .= $i->[2];
 				$t .= '-';
 				$t .= $self->{hName}{$i->[3]};
-				
 				++$current{$t};
 			}
+			#elsif ( $self->{mode} eq 't' ){
+			#	my $t = '<ignored>';
+			#	$t .= $i->[2];
+			#	$t .= '-';
+			#	$t .= $i->[4];
+			#	++$current{$t};
+			#}
 		}
 		$sth->finish;
 	}
@@ -437,11 +444,12 @@ sub sql2{
 
 
 	my $sql;
-	$sql .= "SELECT $self->{tani}.id, genkei.id, genkei.name, genkei.khhinshi_id\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
+	$sql .= "SELECT $self->{tani}.id, genkei.id, genkei.name, genkei.khhinshi_id, hinshi.name\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei, hinshi, $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
+	$sql .= "	AND genkei.hinshi_id = hinshi.id\n";
 	
 	my $flag = 0;
 	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
