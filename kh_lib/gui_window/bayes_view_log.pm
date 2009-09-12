@@ -242,7 +242,6 @@ sub view{
 	unless ( $self->{current} == $self->{ready} ){
 		# テーブルの準備
 		my $scores;
-		print "1";
 		($self->{result}, $scores) =
 			&kh_nbayes::predict::make_each_log_table(
 				$self->{log_obj}{log}{$self->{current}},
@@ -251,12 +250,10 @@ sub view{
 				$self->{log_obj}{prior_probs},
 			)
 		;
-		print "2";
 		
 		# 文書番号の表示
 		$self->{entry_dno}->delete(0,'end');
 		$self->{entry_dno}->insert(0, $self->{current});
-		print "3";
 		
 		# スコアの表示
 		$self->{frame_scores_a}->destroy if $self->{frame_scores_a};
@@ -316,7 +313,6 @@ sub view{
 		$self->{frame_scores_a}->Label(
 			-text => $self->gui_jchar(' ※左からスコアの高い順に表示'),
 		)->pack(-side => 'left');
-		print "4";
 		
 		$self->{last_sort_key} = undef;
 		$self->{ready} = $self->{current};
