@@ -312,7 +312,7 @@ sub settings_save{
 	$settings->{hinshi} = $self->{hinshi_obj}->selection_get;
 	
 	$::project_obj->save_dmp(
-		name => 'widget_words',
+		name => 'widget_words_bayes',
 		var  => $settings,
 	);
 }
@@ -321,7 +321,7 @@ sub settings_load{
 	my $self = shift;
 	
 	my $settings = $::project_obj->load_dmp(
-		name => 'widget_words',
+		name => 'widget_words_bayes',
 	) or return 0;
 	
 	$self->{hinshi_obj}->selection_set($settings->{hinshi});
