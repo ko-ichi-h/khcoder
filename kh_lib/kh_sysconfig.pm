@@ -109,6 +109,30 @@ sub use_sonota{
 	}
 }
 
+sub hukugo_chasenrc{
+	my $self = shift;
+	my $new = shift;
+	
+	if ( defined($new) ){
+		$self->{hukugo_chasenrc} = $new;
+	}
+	
+	if ( length($self->{hukugo_chasenrc}) ){
+		return $self->{hukugo_chasenrc};
+	} else {
+		my $t = '';
+		$t .= '(連結品詞'."\n";
+		$t .= "\t".'((複合名詞)'."\n";
+		$t .= "\t\t".'(名詞)'."\n";
+		$t .= "\t\t".'(接頭詞 名詞接続)'."\n";
+		$t .= "\t\t".'(接頭詞 数接続)'."\n";
+		$t .= "\t\t".'(記号 一般)'."\n";
+		$t .= "\t".')'."\n";
+		$t .= ')'."\n";
+		return $t;
+	}
+}
+
 
 #-------------#
 #   GUI関係   #
