@@ -118,14 +118,8 @@ sub config_morph{
 	$temp2  = "(文法ファイル  \"$self->{dic_dir}\")\n";
 	$temp2 .= '(注釈 (("<" ">") (タグ)) )'."\n";
 	if ($self->{use_hukugo}){
-		$temp2 .= '(連結品詞'."\n";
-		$temp2 .= "\t".'((複合名詞)'."\n";
-		$temp2 .= "\t\t".'(名詞)'."\n";
-		$temp2 .= "\t\t".'(接頭詞名詞接続)'."\n";
-		$temp2 .= "\t\t".'(接頭詞数接続)'."\n";
-		$temp2 .= "\t\t".'(記号 一般)'."\n";
-		$temp2 .= "\t".')'."\n";
-		$temp2 .= ')'."\n";
+		$temp2 .= $self->hukugo_chasenrc;
+		print Jcode->new($self->hukugo_chasenrc)->sjis;
 	}
 	Jcode::convert(\$temp2,'sjis','euc');
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';

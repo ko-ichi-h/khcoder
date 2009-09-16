@@ -1068,7 +1068,6 @@ sub mc_hukugo{
 	){
 		my $t0 = (stat $::project_obj->file_target)[9];
 		my $t1 = (stat $::project_obj->file_HukugoList)[9];
-		#print "$t0\n$t1\n";
 		if ($t0 < $t1){
 			$if_exec = 0; # この場合だけ解析しない
 		}

@@ -9,6 +9,9 @@ use kh_jchar;
 use mysql_exec;
 use gui_errormsg;
 
+use TermExtract::Chasen;
+use TermExtract::Chasen_kh;
+
 my $debug = 0;
 
 
@@ -143,8 +146,6 @@ sub run_from_morpho{
 
 	# TermExtract¤Î¼Â¹Ô
 	print "05. TermExtract...\n" if $debug;
-	use TermExtract::Chasen;
-	use TermExtract::Chasen_kh;
 	my $te_obj = new TermExtract::Chasen;
 	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut);
 

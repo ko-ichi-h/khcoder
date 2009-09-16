@@ -117,6 +117,8 @@ sub init{
 		type => 'mysql',
 		sql  => 'Start'
 	);
+	
+	$::config_obj->save;
 	return 1;
 }
 
