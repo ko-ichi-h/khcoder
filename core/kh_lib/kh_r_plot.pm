@@ -80,13 +80,16 @@ sub new{
 		chop $v1;
 		chop $v1;
 		print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
-		unless ($v1 >= 25){
+		
+		if ($v1 >= 25){
+			$if_lt25 = 1;
+		} else {
 			$::config_obj->R->send(
 				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
 			);
+			$if_lt25 = 2;
 			#print "as.graphicsAnnot defined.\n";
 		}
-		$if_lt25 = 1;
 	}
 
 	# width・heightのチェック
@@ -151,6 +154,12 @@ sub clear_env{
 		rm(the_list)
 	");
 	$::config_obj->R->output_chk(1);
+
+	if ( $if_lt25 == 2 ){
+		$::config_obj->R->send(
+			'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
+		);
+	}
 
 	#$::config_obj->R->send('print( ls() )');
 	#print "after: ", $::config_obj->R->read, "\n";
