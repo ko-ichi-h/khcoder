@@ -13,25 +13,25 @@ sub innner{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('成分数：'),
+		-text => $self->gui_jchar('プロットする成分'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_d_n} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	if ($self->{command_f} =~ /corresp\(d, nf=([0-9]+)\)/){
-		$self->{entry_d_n}->insert(0,$1);
-	} else {
-		$self->{entry_d_n}->insert(0,'2');
-	}
-	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_n});
+	#$self->{entry_d_n} = $fd->Entry(
+	#	-font       => "TKFN",
+	#	-width      => 2,
+	#	-background => 'white',
+	#)->pack(-side => 'left', -padx => 2);
+	#if ($self->{command_f} =~ /corresp\(d, nf=([0-9]+)\)/){
+	#	$self->{entry_d_n}->insert(0,$1);
+	#} else {
+	#	$self->{entry_d_n}->insert(0,'2');
+	#}
+	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
+	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸の成分：'),
+		-text => $self->gui_jchar('  x軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -44,7 +44,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸の成分：'),
+		-text => $self->gui_jchar('  y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -58,7 +58,7 @@ sub innner{
 	
 	if (
 		$self->{command_f} =~
-			/cbind\(c\$cscore\[,([0-9]+)\],.*c\$cscore\[,([0-9]+)\]/
+			/^d_x <- ([0-9]+)\nd_y <- ([0-9]+)\n/
 	) {
 		$self->{entry_d_x}->insert(0,$1);
 		$self->{entry_d_y}->insert(0,$2);
@@ -96,7 +96,7 @@ sub calc{
 
 	&gui_window::word_corresp::make_plot(
 		base_win     => $self,
-		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		biplot       => $biplot,

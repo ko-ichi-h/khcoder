@@ -222,21 +222,21 @@ sub _new{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('成分数：'),
+		-text => $self->gui_jchar('プロットする成分'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_d_n} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_n}->insert(0,'2');
-	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_d_n});
+	#$self->{entry_d_n} = $fd->Entry(
+	#	-font       => "TKFN",
+	#	-width      => 2,
+	#	-background => 'white',
+	#)->pack(-side => 'left', -padx => 2);
+	#$self->{entry_d_n}->insert(0,'2');
+	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->_calc;});
+	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸の成分：'),
+		-text => $self->gui_jchar('  x軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -250,7 +250,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸の成分：'),
+		-text => $self->gui_jchar('  y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -587,7 +587,7 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
+	#my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
@@ -740,7 +740,7 @@ sub _calc{
 	$fontsize /= 100;
 
 	&gui_window::word_corresp::make_plot(
-		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		biplot       => $self->gui_jg( $self->{radio} ),

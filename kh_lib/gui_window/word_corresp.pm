@@ -159,21 +159,21 @@ sub _new{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('・成分数：'),
+		-text => $self->gui_jchar('・プロットする成分'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_d_n} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_n}->insert(0,'2');
-	$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_n});
+	#$self->{entry_d_n} = $fd->Entry(
+	#	-font       => "TKFN",
+	#	-width      => 2,
+	#	-background => 'white',
+	#)->pack(-side => 'left', -padx => 2);
+	#$self->{entry_d_n}->insert(0,'2');
+	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
+	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸の成分：'),
+		-text => $self->gui_jchar('  x軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -187,7 +187,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸の成分：'),
+		-text => $self->gui_jchar('  y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -275,7 +275,7 @@ sub _settings_save{
 	$settings->{biplot}    = $self->{biplot};
 	$settings->{var_id}    = $self->{var_id};
 
-	$settings->{d_n}       = $self->gui_jg( $self->{entry_d_n}->get );
+	#$settings->{d_n}       = $self->gui_jg( $self->{entry_d_n}->get );
 	$settings->{d_x}       = $self->gui_jg( $self->{entry_d_x}->get );
 	$settings->{d_y}       = $self->gui_jg( $self->{entry_d_y}->get );
 	$settings->{plot_size} = $self->gui_jg( $self->{entry_plot_size}->get );
@@ -607,7 +607,7 @@ sub calc{
 	$fontsize /= 100;
 
 	&make_plot(
-		d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
+		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		biplot       => $biplot,
@@ -627,51 +627,58 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
-	my $d_n = $args{d_n};
-	my $d_x = $args{d_x};
-	my $d_y = $args{d_y};
+	#my $d_n = $args{d_n};
+	#my $d_x = $args{d_x};
+	#my $d_y = $args{d_y};
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
 	kh_r_plot->clear_env;
 
 	$r_command .= "library(MASS)\n";
-	$r_command .= "c <- corresp(d, nf=$d_n)\n";
+	$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
 
+	$r_command .= "k <- c\$cor^2\n";
+	$r_command .= "k <- round(100*k / sum(k),2)\n";
+	$r_command .= "k <- round(100*k / sum(k),2)\n";
+	$r_command .= "d_x <- $args{d_x}\n";
+	$r_command .= "d_y <- $args{d_y}\n";
+
+	# ここまでをいったん実行
 	my $r_command_tmp = $r_command;
 	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
 		if $::config_obj->os eq 'win32';
 	$::config_obj->R->send($r_command_tmp);
 
 	# 寄与率の取得
-	$::config_obj->R->send(
-		'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
-	);
-	my $count = $::config_obj->R->read;
-	my $kiyo1;
-	my $kiyo2;
-	if ($count =~ /"khcoder(.+)"/){
-		$count = $1;
-	} else {
-		$count = -1;
-	}
-	while ($count > 0){
+	#$::config_obj->R->send(
+	#	'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
+	#);
+	#my $count = $::config_obj->R->read;
+	#my $kiyo1;
+	#my $kiyo2;
+	#if ($count =~ /"khcoder(.+)"/){
+	#	$count = $1;
+	#} else {
+	#	$count = -1;
+	#}
+	#while ($count > 0){
 		#print "$count\n";
-		$::config_obj->R->send(
-			 'print( paste("khcoder",round('
-			."c(c\$cor[$d_x], c\$cor[$d_y])^2"
-			.'/sum(corresp(d, nf='
-			.$count
-			.')$cor^2) * 100,2), sep=""))'
-		);
-		my $t = $::config_obj->R->read;
-		if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
-			$kiyo1 = $1;
-			$kiyo2 = $2;
-			last;
-		}
-		--$count;
-	}
+	#	$::config_obj->R->send(
+	#		 'print( paste("khcoder",round('
+	#		."c(c\$cor[$d_x], c\$cor[$d_y])^2"
+	#		.'/sum(corresp(d, nf='
+	#		.$count
+	#		.')$cor^2) * 100,2), sep=""))'
+	#	);
+	#	my $t = $::config_obj->R->read;
+	#	if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
+	#		$kiyo1 = $1;
+	#		$kiyo2 = $2;
+	#		last;
+	#	}
+	#	--$count;
+	#}
 
 	# プロットのためのRコマンド
 
@@ -680,38 +687,41 @@ sub make_plot{
 	if ($args{biplot} == 0){                      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
+			 "plot(cbind(c\$cscore[,d_x], c\$cscore[,d_y]),"
 				."col=\"mediumaquamarine\","
-				.'pch=20,xlab="成分'.$d_x
-				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
-				."\n"
+				.'pch=20,'
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.")\n"
 			."library(maptools)\n"
-			."pointLabel(x=c\$cscore[,$d_x], y=c\$cscore[,$d_y],"
+			."pointLabel(x=c\$cscore[,d_x], y=c\$cscore[,d_y],"
 				."labels=rownames(c\$cscore), cex=$fontsize, offset=0)\n";
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
 		# ドットのみプロット
 		$r_command_a .=
-			 "plot(cbind(c\$cscore[,$d_x], c\$cscore[,$d_y]),"
-				.'xlab="成分'.$d_x
-				.' ('.$kiyo1.'%)",ylab="成分'.$d_y.' ('.$kiyo2.'%)")'
-				."\n"
+			 "plot(cbind(c\$cscore[,d_x], c\$cscore[,d_y]),"
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.")\n"
 		;
 	} else {                                      # 同時布置あり
 		# ラベルとドットをプロット
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
-				.'), xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,0)[cb[,3]],'
-				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]] )'."\n"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				.'),'
+				.'pch=c(20,0)[cb[,3]],'
+				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]],'
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
-				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
-				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
+				."x=c(c\$cscore[,d_x], c\$rscore[,d_x]),"
+				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
 				."cex=$fontsize,offset=0,doPlot=F)\n"
 			.'text('
@@ -727,20 +737,22 @@ sub make_plot{
 		$r_com_gray_a .= &slab_my;
 		$r_com_gray_a .= 
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
-				.'), xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(20,0)[cb[,3]],'
-				.'col=c("gray65","gray50")[cb[,3]] )'."\n"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				.'),'
+				.'pch=c(20,0)[cb[,3]],'
+				.'col=c("gray65","gray50")[cb[,3]],'
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.")\n"
 		;
 		$r_com_gray =                             # command_fにのみ追加
 			 $r_command
 			.$r_com_gray_a
 			."library(maptools)\n"
 			."labcd <- pointLabel("
-				."x=c(c\$cscore[,$d_x], c\$rscore[,$d_x]),"
-				."y=c(c\$cscore[,$d_y], c\$rscore[,$d_y]),"
+				."x=c(c\$cscore[,d_x], c\$rscore[,d_x]),"
+				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
 				."cex=$fontsize,offset=0,doPlot=F)\n"
 		;
@@ -774,11 +786,13 @@ sub make_plot{
 		# ドットのみをプロット
 		$r_command_a .=
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,$d_x], c\$cscore[,$d_y], 1),"
-				."cbind(c\$rscore[,$d_x], c\$rscore[,$d_y], 2)"
-				.'), xlab="成分'.$d_x.' ('.$kiyo1
-				.'%)", ylab="成分'.$d_y.' ('.$kiyo2
-				.'%)",pch=c(1,15)[cb[,3]] )'."\n"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				.'),'
+				.'pch=c(1,15)[cb[,3]],'
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.")\n"
 		;
 	}
 
