@@ -56,14 +56,17 @@ sub innner{
 	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_d_y});
 	
+	my ( $d_x, $d_y ) = ( 0, 0 );
+	if ( $self->{command_f} =~ /\nd_x <\- ([0-9]+)\n/ ){
+		$d_x = $1;
+	}
+	if ( $self->{command_f} =~ /\nd_y <\- ([0-9]+)\n/ ){
+		$d_y = $1;
+	}
 
-	if (
-		$self->{command_f} =~
-			/\nd_x <\- ([0-9]+)\nd_y <\- ([0-9]+)\n/
-	) {
-		$self->{entry_d_x}->insert(0,$1);
-		$self->{entry_d_y}->insert(0,$2);
-		print "$self->{command_f}\n\nx: $1\ny: $2,$3,$4\n\n$&\n\n";
+	if ( $d_x && $d_y ) {
+		$self->{entry_d_x}->insert(0,$d_x);
+		$self->{entry_d_y}->insert(0,$d_y);
 	} else {
 		$self->{entry_d_x}->insert(0,'1');
 		$self->{entry_d_y}->insert(0,'2');
