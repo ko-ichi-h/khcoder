@@ -9,9 +9,8 @@ sub finish{
 	my $file_data = substr($self->{file},0,length($self->{file})-4).".dat";
 	my $file_la =substr($self->{file},0,length($self->{file})-4)."_Conv.sps";
 
-	
 	# データ読み込み用シンタックス
-	
+
 	my $spss;
 	$spss .= "file handle trgt1 /name=\'";
 	if ($::config_obj->os eq 'win32'){
@@ -61,36 +60,6 @@ sub finish{
 	close (SOUT);
 	kh_jchar->to_sjis($self->{file});
 
-	# Label1 flip & recode
-
-	$spss = '';
-	$spss .= "flip.\n";
-	$spss .= "STRING 単語 (A255) .\n";
-	$spss .= "recode case_lbl\n";
-	$wn = 0;
-	foreach my $i (@{$self->{wList}}){
-		$spss .= "  (\'W$wn\'=\'$self->{wName}{$i}\')\n";
-		++$wn;
-	}
-	$spss .= "into 単語 .\n";
-	$spss .= "STRING 品詞 (A10) .\n";
-	$spss .= "recode case_lbl\n";
-	$wn = 0;
-	foreach my $i (@{$self->{wList}}){
-		$spss .= "  (\'W$wn\'=\'$self->{hName}{$self->{wHinshi}{$i}}\')\n";
-		++$wn;
-	}
-	$spss .= "into 品詞 .\n";
-	$spss .= "Execute.\n";
-	open (SOUT,">$file_la") or 
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => "$file_la",
-		);
-	print SOUT $spss;
-	close (SOUT);
-	kh_jchar->to_sjis($file_la);
-	
 	# データファイル作製（位置情報とのマージ）
 
 	open (OUTF,">$file_data") or 
@@ -109,6 +78,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
+	my $nc = 0;
 	open (F,"$self->{file_temp}") or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
@@ -118,10 +88,60 @@ sub finish{
 			$head .= ',';
 		}
 		print OUTF "$head"."$_";
+		++$nc;
 	}
 	close (F);
 	close (OUTF);
 	unlink("$self->{file_temp}");
+
+	# データ変形用シンタックス
+	$spss = '';
+	
+	$spss .= "MATCH FILES FILE=* /DROP id length_w length_c";
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$spss .= " $i";
+		if ($self->{tani} eq $i){
+			last;
+		}
+	}
+	$spss .= " name" if $self->{tani} =~ /h[1-5]/i;
+	$spss .= ".\n";
+	
+	$spss .= "FLIP.\n";
+	$spss .= "STRING 単語 (A255) .\n";
+	$wn = 0;
+	foreach my $i (@{$self->{wList}}){
+		$spss .= "if case_lbl = 'W$wn' 単語 = '$self->{wName}{$i}'.\n";
+		$spss .= "if case_lbl = 'w$wn' 単語 = '$self->{wName}{$i}'.\n";
+		++$wn;
+	}
+	$spss .= "STRING 品詞 (A10) .\n";
+	$wn = 0;
+	foreach my $i (@{$self->{wList}}){
+		$spss .= "if case_lbl = 'W$wn' 品詞 = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
+		$spss .= "if case_lbl = 'w$wn' 品詞 = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
+		++$wn;
+	}
+
+	if ($nc < 10){
+		$nc = '00'.$nc;
+	}
+	elsif ($nc < 100){
+		$nc = '0'.$nc;
+	}
+	$spss .= "MATCH FILES FILE=* /KEEP case_lbl 単語 品詞 var001 to var$nc.\n";
+	$spss .= "FORMATS var001 to var$nc (f8.0).\n";
+	$spss .= "EXECUTE.\n";
+	open (SOUT,">$file_la") or 
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$file_la",
+		);
+	print SOUT $spss;
+	close (SOUT);
+	kh_jchar->to_sjis($file_la);
+
+
 }
 
 
