@@ -111,8 +111,22 @@ sub create_new_db{
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
-	$dbh->func("createdb", $new_db_name,$host,$username,$password,'admin')
+	# Check MySQL Ver.
+	my $t = $dbh->prepare("show variables like \"version\"");
+	$t->execute;
+	my $r = $t->fetch;
+	$t->finish;
+	$r = $r->[1] if $r;
+	print "Connected to MySQL $r. Creating new DB...\n";
+
+	my $sql = '';
+	$sql .= "create database $new_db_name";
+	$sql .= " default character set ujis" if substr($r,0,3) >= 4.1;
+	$dbh->do($sql)
 		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
+
+#	$dbh->func("createdb", $new_db_name,$host,$username,$password,'admin')
+#		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
 	$dbh->disconnect;
 	
 	return $new_db_name;
