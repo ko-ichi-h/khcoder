@@ -163,6 +163,12 @@ sub run_from_morpho{
 	",1);
 
 	foreach (@noun_list) {
+		# 単名詞のスコアをprintしてチェック…
+		#if ($is_alone{$_->[0]}){
+		#	print Jcode->new("$_->[0], $_->[1]\n")->sjis
+		#		if $_->[1] > 1;
+		#}
+
 		next if $is_alone{$_->[0]};  # 単名詞
 		
 		my $tmp = Jcode->new($_->[0], 'euc')->tr('０-９','0-9'); 
