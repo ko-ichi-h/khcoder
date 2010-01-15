@@ -762,14 +762,14 @@ sub make_plot{
 			."cb2 <-  subset(cb, cb[,3]==2)\n"
 			.'text('
 				.'cb1[,4], cb1[,5], rownames(cb1),'
-				.'cex=0.8,'
+				."cex=$fontsize,"
 				.'offset=0,'
 				.'col="black",'
 				.')'."\n"
 			."library(ade4)\n"
 			.'s.label_my(cb2, xax=4, yax=5, label=rownames(cb2),'
 				.'boxes=T,'
-				.'clabel=0.8,'
+				."clabel=$fontsize,"
 				.'addaxes=F,'
 				.'include.origin=F,'
 				.'grid=F,'
