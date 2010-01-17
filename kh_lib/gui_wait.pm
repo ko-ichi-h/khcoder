@@ -3,7 +3,7 @@ use strict;
 use Tk;
 use Tk::WaitBox_kh;
 use Time::Local;
-use Time::CTime;    # Time-modules¤ËÆ±º­
+use POSIX 'strftime';
 use gui_errormsg;
 
 sub start{
@@ -12,7 +12,7 @@ sub start{
 	my $d = [localtime];
 	$self->{win} = $::main_gui->mw->WaitBox_kh(
 		-title      => 'KH Coder is processing data...',
-		-txt1       => "Start: ".strftime("%Y %m/%d %T",@{$d}),
+		-txt1       => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}),
 		-background => 'white',
 		-takefocus  => 0
 	);
