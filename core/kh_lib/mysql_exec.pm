@@ -2,7 +2,6 @@ package mysql_exec;
 use DBI;
 use strict;
 use Time::Local;
-use Time::CTime;    # Time-modulesに同梱
 use kh_project;
 
 # 備考: MySQLとのやりとりはすべて、このクラスを通して行う
@@ -287,6 +286,7 @@ sub version_number{
 sub log{
 	return 1 unless $::config_obj->sqllog;
 	
+	use POSIX 'strftime';
 	my $self = shift;
 	my $logfile = $::config_obj->sqllog_file;
 	open (LOG,">>$logfile") or 
@@ -294,7 +294,7 @@ sub log{
 			type    => 'file',
 			thefile => "$logfile"
 		);
-	my $d = strftime("%Y %m/%d %T",localtime);
+	my $d = strftime('%Y %m/%d %H:%M:%S',localtime);
 	print LOG "$d\n";
 	print LOG $self->sql."\n\n";
 	close LOG;
