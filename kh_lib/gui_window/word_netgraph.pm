@@ -132,6 +132,12 @@ sub _new{
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('出現数の多い語ほど大きく描画','euc'),
+			-variable => \$self->{check_use_freq_as_size},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
 			-variable => \$self->{check_rm_open},
@@ -261,13 +267,14 @@ sub calc{
 	$fontsize /= 100;
 
 	&make_plot(
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		n_or_j         => $self->gui_jg( $self->{radio} ),
-		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
-		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
-		r_command      => $r_command,
-		plotwin_name   => 'word_netgraph',
+		font_size        => $fontsize,
+		plot_size        => $self->gui_jg( $self->{entry_plot_size}->get ),
+		n_or_j           => $self->gui_jg( $self->{radio} ),
+		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
+		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
+		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		r_command        => $r_command,
+		plotwin_name     => 'word_netgraph',
 	);
 
 	unless ( $self->{check_rm_open} ){
@@ -293,6 +300,11 @@ sub make_plot{
 		$r_command .= "th <- 0\n";
 	}
 	$r_command .= "cex <- $args{font_size}\n";
+
+	unless ( $args{use_freq_as_size} ){
+		$args{use_freq_as_size} = 0;
+	}
+	$r_command .= "use_freq_as_size <- $args{use_freq_as_size}\n";
 
 	$r_command .= &r_plot_cmd_p1;
 
@@ -468,6 +480,12 @@ sub make_plot{
 
 sub r_plot_cmd_p1{
 	return '
+
+# 頻度計算
+freq <- NULL
+for (i in 1:length( rownames(d) )) {
+	freq[i] = sum( d[i,] )
+}
 
 # 類似度計算 
 d <- dist(d,method="binary")
@@ -678,6 +696,17 @@ sub r_plot_cmd_p4{
 
 return 
 '
+# Vertex.Size可変の場合は平均を12に設定
+v_mean <- 12
+
+# Vertex.Sizeを計算
+if ( use_freq_as_size == 1 ){
+	v_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	v_size <- v_size / max(v_size) * 18 + 7 + v_mean - mean( v_size / max(v_size) * 18 + 7 )
+} else {
+	v_size <- 15
+}
+
 # プロット
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
@@ -690,6 +719,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		vertex.label.family= "",
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
+		vertex.size        =v_size,
 		edge.color         =edg_col,
 		edge.lty           =edg_lty,
 		layout             =lay_f
