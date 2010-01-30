@@ -138,6 +138,12 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-variable => \$self->{check_use_weight_as_width},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
 			-variable => \$self->{check_rm_open},
@@ -273,6 +279,8 @@ sub calc{
 		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_weight_as_width =>
+			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command        => $r_command,
 		plotwin_name     => 'word_netgraph',
 	);
@@ -305,6 +313,11 @@ sub make_plot{
 		$args{use_freq_as_size} = 0;
 	}
 	$r_command .= "use_freq_as_size <- $args{use_freq_as_size}\n";
+
+	unless ( $args{use_weight_as_width} ){
+		$args{use_weight_as_width} = 0;
+	}
+	$r_command .= "use_weight_as_width <- $args{use_weight_as_width}\n";
 
 	$r_command .= &r_plot_cmd_p1;
 
@@ -529,7 +542,7 @@ n2  <- graph.edgelist(
 	directed	=F
 )
 n2 <- set.edge.attribute(
-	n2, "weight", 0:length(get.edgelist(n2)[,1])-1, el2[,3]
+	n2, "weight", 0:(length(get.edgelist(n2)[,1])-1), el2[,3]
 )
 	';
 }
@@ -696,16 +709,30 @@ sub r_plot_cmd_p4{
 
 return 
 '
-# Vertex.Size可変の場合は平均を12に設定
-v_mean <- 12
 
-# Vertex.Sizeを計算
+# vertex.sizeを計算
 if ( use_freq_as_size == 1 ){
 	v_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-	v_size <- v_size / max(v_size) * 18 + 7 + v_mean - mean( v_size / max(v_size) * 18 + 7 )
+	v_size <- v_size / sd(v_size)
+	v_size <- v_size - mean(v_size)
+	v_size <- v_size * 3 + 12 # 分散 = 3, 平均 = 12
 } else {
 	v_size <- 15
 }
+
+# edge.widthを計算
+if ( use_weight_as_width == 1 ){
+	edg_width <- el2[,3]
+	edg_width <- edg_width / sd( edg_width )
+	edg_width <- edg_width - mean( edg_width )
+	edg_width <- edg_width * 0.6 + 2 # 分散 = 0.5, 平均 = 2
+} else {
+	edg_width <- 1
+}
+
+# 値が負になった場合の対処
+
+
 
 # プロット
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
@@ -722,6 +749,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		vertex.size        =v_size,
 		edge.color         =edg_col,
 		edge.lty           =edg_lty,
+		edge.width         =edg_width,
 		layout             =lay_f
 	)
 }
