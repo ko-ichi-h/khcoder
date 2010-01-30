@@ -163,7 +163,8 @@ sub clear_env{
 
 	#$::config_obj->R->send('print( ls() )');
 	#print "after: ", $::config_obj->R->read, "\n";
-	print "R env has been cleared.\n";
+
+	#print "R env has been cleared.\n";
 }
 
 sub set_par{

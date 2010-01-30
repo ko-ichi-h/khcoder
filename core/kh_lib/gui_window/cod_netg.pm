@@ -190,6 +190,18 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-variable => \$self->{check_use_weight_as_width},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('出現数の多いコードほど大きく描画','euc'),
+			-variable => \$self->{check_use_freq_as_size},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -430,6 +442,9 @@ sub _calc{
 		n_or_j         => $self->gui_jg( $self->{radio} ),
 		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
+		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_weight_as_width =>
+			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_netg',
 	);
