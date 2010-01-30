@@ -17,6 +17,16 @@ sub innner{
 	} else {
 		die("cannot get configuration: th");
 	}
+	if ($self->{command_f} =~ /use_freq_as_size <- ([01])\n/){
+		$self->{check_use_freq_as_size} = $1;
+	} else {
+		die("cannot get configuration: use_freq_as_size");
+	}
+	if ($self->{command_f} =~ /use_weight_as_width <- ([01])\n/){
+		$self->{check_use_weight_as_width} = $1;
+	} else {
+		die("cannot get configuration: $use_weight_as_width");
+	}
 
 	if ($edges == 0){
 		$self->{radio} = 'j';
@@ -89,6 +99,17 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-variable => \$self->{check_use_weight_as_width},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('出現数の多いコードほど大きく描画','euc'),
+			-variable => \$self->{check_use_freq_as_size},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
 
 	$self->refresh(3);
 	return $self;
@@ -142,6 +163,9 @@ sub calc{
 		n_or_j         => $self->gui_jg( $self->{radio} ),
 		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
+		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_weight_as_width =>
+			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command      => $r_command,
 		plotwin_name   => 'cod_netg',
 	);

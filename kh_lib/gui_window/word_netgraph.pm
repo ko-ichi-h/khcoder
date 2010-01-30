@@ -93,6 +93,18 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-variable => \$self->{check_use_weight_as_width},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
+	$lf->Checkbutton(
+			-text     => $self->gui_jchar('出現数の多い語ほど大きく描画','euc'),
+			-variable => \$self->{check_use_freq_as_size},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -131,18 +143,6 @@ sub _new{
 	$self->{entry_plot_size}->insert(0,'640');
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
-
-	$lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きく描画','euc'),
-			-variable => \$self->{check_use_freq_as_size},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
-
-	$lf->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
-			-variable => \$self->{check_use_weight_as_width},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
 
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -702,13 +702,19 @@ lay_f <- layout.fruchterman.reingold(n2,
 	start   = lay,
 	weights = get.edge.attribute(n2, "weight")
 )
-'
+
+# 負の値を0に変換する関数
+neg_to_zero <- function(nums){
+  temp <- NULL
+  for (i in 1:length(nums) ){
+    if (nums[i] < 0){
+      temp[i] <- 0
+    } else {
+      temp[i] <-  nums[i]
+    }
+  }
+  return(temp)
 }
-
-sub r_plot_cmd_p4{
-
-return 
-'
 
 # vertex.sizeを計算
 if ( use_freq_as_size == 1 ){
@@ -716,6 +722,7 @@ if ( use_freq_as_size == 1 ){
 	v_size <- v_size / sd(v_size)
 	v_size <- v_size - mean(v_size)
 	v_size <- v_size * 3 + 12 # 分散 = 3, 平均 = 12
+	v_size <- neg_to_zero(v_size)
 } else {
 	v_size <- 15
 }
@@ -726,14 +733,17 @@ if ( use_weight_as_width == 1 ){
 	edg_width <- edg_width / sd( edg_width )
 	edg_width <- edg_width - mean( edg_width )
 	edg_width <- edg_width * 0.6 + 2 # 分散 = 0.5, 平均 = 2
+	edg_width <- neg_to_zero(edg_width)
 } else {
 	edg_width <- 1
 }
+'
+}
 
-# 値が負になった場合の対処
+sub r_plot_cmd_p4{
 
-
-
+return 
+'
 # プロット
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
