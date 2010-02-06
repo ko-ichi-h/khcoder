@@ -44,7 +44,7 @@ sub _new{
 		-pady => 2
 	);
 	$f4->Label(
-		-text => $self->gui_jchar('・方法：'),
+		-text => $self->gui_jchar('方法：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -86,7 +86,7 @@ sub _new{
 	);
 
 	$fnd->Label(
-		-text => $self->gui_jchar('・次元：'),
+		-text => $self->gui_jchar('次元：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -112,7 +112,7 @@ sub _new{
 	);
 
 	$ff->Label(
-		-text => $self->gui_jchar('・フォントサイズ：'),
+		-text => $self->gui_jchar('フォントサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 

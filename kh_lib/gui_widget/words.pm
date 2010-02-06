@@ -12,7 +12,7 @@ sub _new{
 	unless ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => gui_window->gui_jchar('・集計単位：'),
+			-text => gui_window->gui_jchar('集計単位：'),
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		my %pack = (
@@ -29,7 +29,7 @@ sub _new{
 
 	# 最小・最大出現数
 	$left->Label(
-		-text => gui_window->gui_jchar('・最小/最大 出現数による語の取捨選択'),
+		-text => gui_window->gui_jchar('最小/最大 出現数による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
@@ -60,7 +60,7 @@ sub _new{
 
 	# 最小・最大文書数
 	$left->Label(
-		-text => gui_window->gui_jchar('・最小/最大 文書数による語の取捨選択'),
+		-text => gui_window->gui_jchar('最小/最大 文書数による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 
@@ -111,7 +111,7 @@ sub _new{
 
 	# 品詞による単語の取捨選択
 	$left->Label(
-		-text => gui_window->gui_jchar('・品詞による語の取捨選択'),
+		-text => gui_window->gui_jchar('品詞による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
@@ -149,7 +149,7 @@ sub _new{
 	# チェック部分
 	$self->parent->Label(
 		-text => gui_window->gui_jchar(
-			 '・現在の設定で'
+			 '現在の設定で'
 			.$self->{verb}
 			.'される語の数：'
 		),
