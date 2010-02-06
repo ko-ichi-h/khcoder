@@ -52,7 +52,7 @@ sub _new{
 	)->pack(-anchor => 'w', -pady => 2);
 
 	$lf2->Label(
-		-text => $self->gui_jchar('・分析に使用するクロス表の種類：'),
+		-text => $self->gui_jchar('分析に使用するクロス表の種類：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
@@ -159,7 +159,7 @@ sub _new{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('・プロットする成分'),
+		-text => $self->gui_jchar('プロットする成分'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -208,7 +208,7 @@ sub _new{
 	);
 
 	$ff->Label(
-		-text => $self->gui_jchar('・フォントサイズ：'),
+		-text => $self->gui_jchar('フォントサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 

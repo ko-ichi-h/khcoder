@@ -37,9 +37,9 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both');
 
-	# edge選択
+	# Edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('・描画する共起関係（edge）'),
+		-text => $self->gui_jchar('描画する共起関係（edge）'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -93,16 +93,46 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	# Edgeの太さ・Nodeの大きさ
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
 			-variable => \$self->{check_use_weight_as_width},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
+	my $w_use_freq_as_fsize;
+
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きく描画','euc'),
+			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor => 'w',
+			-command =>
+				sub{
+					return unless $w_use_freq_as_fsize;
+					if ($self->{check_use_freq_as_size}){
+						$w_use_freq_as_fsize->configure(-state, "normal");
+					} else {
+						$w_use_freq_as_fsize->configure(-state, "disabled");
+					}
+				},
+	)->pack(-anchor => 'w');
+
+	my $fontsize_frame = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 0,
+		-padx => 0,
+	);
+
+	$fontsize_frame->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
+			-text     => $self->gui_jchar('フォントも大きくする','euc'),
+			-variable => \$self->{check_use_freq_as_fsize},
+			-anchor => 'w',
+			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
 	# フォントサイズ
@@ -112,7 +142,7 @@ sub _new{
 	);
 
 	$ff->Label(
-		-text => $self->gui_jchar('・フォントサイズ：'),
+		-text => $self->gui_jchar('フォントサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -279,6 +309,7 @@ sub calc{
 		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command        => $r_command,
@@ -313,6 +344,11 @@ sub make_plot{
 		$args{use_freq_as_size} = 0;
 	}
 	$r_command .= "use_freq_as_size <- $args{use_freq_as_size}\n";
+
+	unless ( $args{use_freq_as_fsize} && $args{use_freq_as_size}){
+		$args{use_freq_as_fsize} = 0;
+	}
+	$r_command .= "use_freq_as_fontsize <- $args{use_freq_as_fsize}\n";
 
 	unless ( $args{use_weight_as_width} ){
 		$args{use_weight_as_width} = 0;
@@ -727,6 +763,22 @@ if ( use_freq_as_size == 1 ){
 	v_size <- 15
 }
 
+# vertex.label.cexを計算
+if ( use_freq_as_fontsize ==1 ){
+	f_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	f_size <- f_size / sd(f_size)
+	f_size <- f_size - mean(f_size)
+	f_size <- f_size * 0.2 + cex
+
+	for (i in 1:length(f_size) ){
+	  if (f_size[i] < 0.6 ){
+	    f_size[i] <- 0.6
+	  }
+	}
+} else {
+	f_size <- cex
+}
+
 # edge.widthを計算
 if ( use_weight_as_width == 1 ){
 	edg_width <- el2[,3]
@@ -751,7 +803,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		n2,
 		vertex.label       =colnames(d)
 		                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-		vertex.label.cex   =cex,
+		vertex.label.cex   =f_size,
 		vertex.label.color ="black",
 		vertex.label.family= "",
 		vertex.color       =ccol,

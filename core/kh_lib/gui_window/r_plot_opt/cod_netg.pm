@@ -22,6 +22,11 @@ sub innner{
 	} else {
 		die("cannot get configuration: use_freq_as_size");
 	}
+	if ($self->{command_f} =~ /use_freq_as_fontsize <- ([01])\n/){
+		$self->{check_use_freq_as_fsize} = $1;
+	} else {
+		die("cannot get configuration: use_freq_as_fsize");
+	}
 	if ($self->{command_f} =~ /use_weight_as_width <- ([01])\n/){
 		$self->{check_use_weight_as_width} = $1;
 	} else {
@@ -99,17 +104,50 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	# Edgeの太さ・Nodeの大きさ
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太く描画','euc'),
+			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
 			-variable => \$self->{check_use_weight_as_width},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
+	my $w_use_freq_as_fsize;
+
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多いコードほど大きく描画','euc'),
+			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor => 'w',
+			-command =>
+				sub{
+					return unless $w_use_freq_as_fsize;
+					if ($self->{check_use_freq_as_size}){
+						$w_use_freq_as_fsize->configure(-state, "normal");
+					} else {
+						$w_use_freq_as_fsize->configure(-state, "disabled");
+					}
+				},
 	)->pack(-anchor => 'w');
+
+	my $fontsize_frame = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 0,
+		-padx => 0,
+	);
+
+	$fontsize_frame->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
+			-text     => $self->gui_jchar('フォントも大きくする','euc'),
+			-variable => \$self->{check_use_freq_as_fsize},
+			-anchor => 'w',
+			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
+	$w_use_freq_as_fsize->configure(-state => 'normal')
+		if $self->{check_use_freq_as_size};
 
 	$self->refresh(3);
 	return $self;
@@ -164,6 +202,7 @@ sub calc{
 		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command      => $r_command,
