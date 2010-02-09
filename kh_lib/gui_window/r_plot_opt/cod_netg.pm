@@ -140,7 +140,7 @@ sub innner{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※印刷やEMF・EPS出力向き','euc'),
+			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSの出力・印刷向き','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
