@@ -47,7 +47,7 @@
 
   use vars qw($VERSION) ;
   
-  $VERSION = 0.01 ;
+  $VERSION = 0.02 ;
   
   sub Linux { 
     my $CLASS_HPLOO ;
@@ -58,13 +58,16 @@
     my %args = @_ ;
     @_ = () ;
     
-    $this->{R_BIN} = $args{r_bin} || $args{R_bin} ;
-    $this->{R_DIR} = $args{r_dir} || $args{R_dir} ;
+    $this->{R_BIN}   = $args{r_bin} || $args{R_bin} ;
+    $this->{R_DIR}   = $args{r_dir} || $args{R_dir} ;
     $this->{TMP_DIR} = $args{tmp_dir} ;
     
     if ( !-s $this->{R_BIN} ) {
       my @files = qw(R R-project Rproject) ;
-      my @path = (split(";" , $ENV{PATH} || $ENV{Path} || $ENV{path} ) , '/usr/lib/R/bin' , '/usr/lib/R/bin' ) ;
+      ## my @path = (split(":" , $ENV{PATH} || $ENV{Path} || $ENV{path} ) , '/usr/lib/R/bin' , '/usr/lib/R/bin' ) ;
+    # CHANGE MADE BY CTBROWN 2008-06-16
+    # RESPONSE TO RT BUG#23948: bug in Statistics::R
+      my @path = (split(":" , $ENV{PATH} || $ENV{Path} || $ENV{path} ) , '/usr/lib/R/bin' ) ;
       
       my $bin ;
       while( !$bin && @files ) {
@@ -95,7 +98,7 @@
     if ( !-s $this->{R_BIN} ) { $this->error("Can'find R binary!") ; return UNDEF ;}
     if ( !-d $this->{R_DIR} ) { $this->error("Can'find R directory!") ; return UNDEF ;}
     
-    $this->{START_CMD} = "$this->{R_BIN} --slave --vanilla" ;
+    $this->{START_CMD} = "$this->{R_BIN} --slave --vanilla " ;
     
     if ( !$args{log_dir} ) { $args{log_dir} = "$this->{TMP_DIR}/Statistics-R" ;}
     
