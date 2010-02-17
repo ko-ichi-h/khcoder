@@ -583,67 +583,8 @@ sub outtab{
 	push @result, \@current;
 
 	# chi-square test
-	if ($::config_obj->R){
-		my @chisq = (Jcode->new('カイ2乗値')->sjis);
-		$n = @current - 2;
-		$::config_obj->R->lock;
-		for (my $c = 0; $c < $n; ++$c){
-			my $cmd = 'chi <- chisq.test(matrix( c(';
-			my $nrow = 0;
-			foreach my $i (@for_chisq){
-				$cmd .= "$i->[$c][0],";
-				$cmd .= "$i->[$c][1], ";
-				++$nrow;
-			}
-			chop $cmd; chop $cmd;
-			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
-			$::config_obj->R->send($cmd);
-			my $ret = $::config_obj->R->read;
-			#print "input: $ret :\n";
-			unless (length($ret)){
-				push @chisq, '';
-				next;
-			}
-
-			my $ret_mod = $ret;
-			$ret_mod =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
-			$ret_mod =~ s/ //g;
-			warn "Could not read the output of R.\n$ret\n"
-				if index($ret_mod,"X-squared\n") == -1;
-			substr(
-				$ret_mod,
-				0,
-				index($ret_mod,"X-squared\n") + 10
-			) = '';
-			if ($ret_mod =~ /^(.+)\n\[[0-9]+\]/){
-				$ret_mod = $1;
-			}
-			$ret_mod = sprintf("%.3f", $ret_mod);
-			if ($ret_mod == 0 and not $ret =~ /NaN/){
-				warn "Could not read the output of R.\n$ret\n";
-			}
-			
-			if ($ret_mod > 0){
-				$::config_obj->R->send('print (chi$p.value)');
-				my $p = $::config_obj->R->read;
-				substr($p, 0, 4) = '';
-				if ($p =~ /^(.+)\n\[[0-9]+\]/){
-					$p = $1;
-				}
-				if ($p < 0.01){
-					$ret_mod .= '**';
-				}
-				elsif ($p < 0.05){
-					$ret_mod .= '*';
-				}
-			}
-			
-			push @chisq, $ret_mod;
-		}
-		$::config_obj->R->unlock;
-		push @chisq, ' ';
-		push @result, \@chisq;
-	}
+	my @chisq = &_chisq_test(\@current, \@for_chisq);
+	push @result, \@chisq if @chisq;
 	
 	return \@result;
 }
@@ -778,10 +719,22 @@ sub tab{
 	push @result, \@current;
 
 	# chi-square test
-	my $R_debug = 0;
+	my @chisq = &_chisq_test(\@current, \@for_chisq);
+	push @result, \@chisq if @chisq;
+
+	return \@result;
+}
+
+
+sub _chisq_test{
+	my @current   = @{$_[0]};
+	my @for_chisq = @{$_[1]};
+	my @chisq = ();
+	
+	my $R_debug = 1;
 	if ($::config_obj->R){
-		my @chisq = (Jcode->new('カイ2乗値')->sjis);
-		$n = @current - 2;
+		@chisq = (Jcode->new('カイ2乗値')->sjis);
+		my $n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
 			my $cmd = 'chi <- chisq.test(matrix( c(';
@@ -792,45 +745,52 @@ sub tab{
 				++$nrow;
 			}
 			chop $cmd; chop $cmd;
-			$cmd .= "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n".'print (chi$statistic)';
+			$cmd .= 
+				"), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n"
+				.'print ( paste( "khc:", chi$statistic, ":khcend", sep= "") )';
 			print "send: $cmd ..." if $R_debug;
 			$::config_obj->R->send($cmd);
 			print "ok\n" if $R_debug;
 			my $ret = $::config_obj->R->read(3);
 			print "read: $ret\n" if $R_debug;
-			unless (length($ret)){
-				push @chisq, '';
+			if ( $ret =~ /khc:(.+):khcend/ ){
+				$ret = $1;
+			} else {
+				warn "Could not read the output of R.\n$ret\n";
+				push @chisq, '---';
 				next;
 			}
 
 			my $ret_mod = $ret;
 			$ret_mod =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 			$ret_mod =~ s/ //g;
-			warn "Could not read the output of R.\n$ret\n"
-				if index($ret_mod,"X-squared\n") == -1;
-			substr(
-				$ret_mod,
-				0,
-				index($ret_mod,"X-squared\n") + 10
-			) = '';
-			if ($ret_mod =~ /^(.+)\n\[[0-9]+\]/){
-				$ret_mod = $1;
-			}
 			$ret_mod = sprintf("%.3f", $ret_mod);
-			if ($ret_mod == 0 and not $ret =~ /NaN/){
-				warn "Could not read the output of R.\n$ret\n";
+			if ( $ret =~ /na/i ){
+				push @chisq, $ret;
+				next;
 			}
 
 			if ($ret_mod > 0){
 				print 'send: print (chi$p.value) ...' if $R_debug;
-				$::config_obj->R->send('print (chi$p.value)');
+				$::config_obj->R->send(
+					'print ( paste( "khc:", chi$p.value, ":khcend", sep="" ))'
+				);
 				print "ok\n" if $R_debug;
 				my $p = $::config_obj->R->read(3);
 				print "read: $p\n" if $R_debug;
-				substr($p, 0, 4) = '';
-				if ($p =~ /^(.+)\n\[[0-9]+\]/){
+				
+				if ($p =~ /khc:(.+):khcend/){
 					$p = $1;
+				} else {
+					warn "Could not read the output of R.\n$p\n";
+					push @chisq, '---';
+					next;
 				}
+				
+				#substr($p, 0, 4) = '';
+				#if ($p =~ /^(.+)\n\[[0-9]+\]/){
+				#	$p = $1;
+				#}
 				if ($p < 0.01){
 					$ret_mod .= '**';
 				}
@@ -842,11 +802,11 @@ sub tab{
 		}
 		$::config_obj->R->unlock;
 		push @chisq, ' ';
-		push @result, \@chisq;
 	}
 
-	return \@result;
+	return @chisq;
 }
+
 
 #------------------------------#
 #   ジャッカードの類似性測度   #

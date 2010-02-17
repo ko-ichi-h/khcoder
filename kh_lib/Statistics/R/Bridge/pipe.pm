@@ -101,8 +101,9 @@
   sub send {
 	if ($::config_obj){                                   # kh
 		if ($::config_obj->os eq 'linux'){                # kh
-			require Time::HiRes;                          # kh
-			Time::HiRes::sleep(0.05);                     # kh
+			require Time::HiRes;                              # kh
+			Time::HiRes::sleep(0.05);                         # kh
+			#print "waiting: sleep(0.05)\n";                  # kh
 		}                                                 # kh
 	}                                                     # kh
 
@@ -700,82 +701,80 @@
     $pid_r =~ s/\\/\\\\/g ;    
     $pid_r = Jcode->new($pid_r)->$icode unless $icode eq 'ascii';
     
-	my $r_start_cmd;
-	$r_start_cmd .= "print(\"Statistics::R - Perl bridge started!\")\n\n";
-	$r_start_cmd .= 'PERLINPUTFILEX = 0'."\n";
-	$r_start_cmd .= 'PERLINPUTFILE = ""'."\n";
+    print $fh qq`
+      print("Statistics::R - Perl bridge started!") ;
+      
+      PERLINPUTFILEX = 0 ;
+      PERLINPUTFILE = "" ;
 
-	$r_start_cmd .= "PERLOUTPUTFILE <- file(\"$process_r\",\"w\")\n";
-	$r_start_cmd .= 'cat(0 , "\\n" , file=PERLOUTPUTFILE)'."\n";
+      PERLOUTPUTFILE <- file("$process_r","w")
+      cat(0 , "\\n" , file=PERLOUTPUTFILE)
+      
+      .Last <- function(x) {
+        cat("/\\n" , file=PERLOUTPUTFILE)
+        unlink(PERLINPUTFILE) ;
+        print("QUIT") ;
+        close(PERLOUTPUTFILE) ;
+        unlink("$process_r") ;
+        unlink("$pid_r") ;
+      }
+      
+      PERLPIDFILE <- file("$pid_r","w")
+      cat( Sys.getpid() , "\\n" , file=PERLPIDFILE)
+      close(PERLPIDFILE) ;
+      
+      while(1) {
+        PERLINPUTFILEX = PERLINPUTFILEX + 1 ;
+        
+        ##print(PERLINPUTFILEX) ;
+        cat(PERLINPUTFILEX , "\\n" , file=PERLOUTPUTFILE)
+        
+        PERLINPUTFILE <- paste("input.", PERLINPUTFILEX , ".r" , sep="") ;
+        
+        ##print(PERLINPUTFILE) ;
+        
+        PERLSLEEPDELAY = 0.01
+        PERLSLEEPDELAYX = 0 ;
+        
+        while( file.access(PERLINPUTFILE, mode=0) ) {
+          ##print(PERLINPUTFILE);
+          Sys.sleep(PERLSLEEPDELAY) ;
+          
+          ## Change the delays to process fast consecutive files,
+          ## but without has a small sleep() time after some time
+          ## without process files, soo, will save CPU.
+          
+          if ( PERLSLEEPDELAYX < 165 ) {
+            PERLSLEEPDELAYX = PERLSLEEPDELAYX + 1 ;
+            if      (PERLSLEEPDELAYX == 50)  { PERLSLEEPDELAY = 0.1 } ## 0.5s
+            else if (PERLSLEEPDELAYX == 100) { PERLSLEEPDELAY = 0.5 } ## 5.5s
+            else if (PERLSLEEPDELAYX == 120) { PERLSLEEPDELAY = 1 }   ## 15.5s
+            else if (PERLSLEEPDELAYX == 165) { PERLSLEEPDELAY = 2 }   ## 60.5s
+            else if (PERLSLEEPDELAYX == 195) { PERLSLEEPDELAY = 3 }   ## 120.5s
+          }
+        }
+        
+        cat("...\\n" , file=PERLOUTPUTFILE)
+        
+        tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;
+        
+        ## Ensure that device is off after execute the input file.
+        # tryCatch( dev.off() , error = function(e) {} ) ;
 
-	$r_start_cmd .= qq`.Last <- function(x) {`."\n";
-	$r_start_cmd .= qq`  cat("/\\n" , file=PERLOUTPUTFILE)`."\n";
-	$r_start_cmd .= qq`  unlink(PERLINPUTFILE) ;`."\n";
-	$r_start_cmd .= qq`  print("QUIT") ;`."\n";
-	$r_start_cmd .= qq`  close(PERLOUTPUTFILE) ;`."\n";
-	$r_start_cmd .= qq`  unlink("$process_r") ;`."\n";
-	$r_start_cmd .= qq`  unlink("$pid_r") ;`."\n";
-	$r_start_cmd .= qq`}`."\n";
+        cat("/\\n" , file=PERLOUTPUTFILE)
+        
+        unlink(PERLINPUTFILE) ;
+      
+        if (PERLINPUTFILEX > 1000) {
+          PERLINPUTFILEX = 0 ;
+          close(PERLOUTPUTFILE) ;
+          PERLOUTPUTFILE <- file("$process_r","w") ;
+        }
+      }
+      
+      close(PERLOUTPUTFILE) ;
+    ` ;
 
-	$r_start_cmd .= qq`PERLPIDFILE <- file("$pid_r","w")`."\n";
-	$r_start_cmd .= qq`cat( Sys.getpid() , "\\n" , file=PERLPIDFILE)`."\n";
-	$r_start_cmd .= qq`close(PERLPIDFILE) ;`."\n";
-
-	$r_start_cmd .= qq`while(1) {`."\n";
-	$r_start_cmd .= qq`  PERLINPUTFILEX = PERLINPUTFILEX + 1 ;`."\n";
-
-	$r_start_cmd .= "print(\"mark1\")\n";
-	$r_start_cmd .= qq`  print(PERLINPUTFILEX) ;`."\n"; ###
-	$r_start_cmd .= qq`  cat(PERLINPUTFILEX , "\\n" , file=PERLOUTPUTFILE)`."\n";
-
-	$r_start_cmd .= qq`  PERLINPUTFILE <- paste("input.", PERLINPUTFILEX , ".r" , sep="") ;`."\n";
-
-	$r_start_cmd .= "print(\"mark2\")\n";
-	$r_start_cmd .= qq`  print(PERLINPUTFILE) ;`."\n"; ###
-
-	$r_start_cmd .= qq`  PERLSLEEPDELAY = 0.01`."\n";
-	$r_start_cmd .= qq`  PERLSLEEPDELAYX = 0 ;`."\n";
-
-	$r_start_cmd .= qq`  while( file.access(PERLINPUTFILE, mode=0) ) {`."\n";
-	$r_start_cmd .= "print(\"mark3\")\n";
-	$r_start_cmd .= qq`    print(PERLINPUTFILE);`."\n"; ###
-	$r_start_cmd .= qq`    Sys.sleep(PERLSLEEPDELAY) ;`."\n";
-
-	$r_start_cmd .= qq`    ## Change the delays to process fast consecutive files,`."\n";
-	$r_start_cmd .= qq`    ## but without has a small sleep() time after some time`."\n";
-	$r_start_cmd .= qq`    ## without process files, soo, will save CPU.`."\n";
-
-	$r_start_cmd .= qq`    if ( PERLSLEEPDELAYX < 165 ) {`."\n";
-	$r_start_cmd .= qq`      PERLSLEEPDELAYX = PERLSLEEPDELAYX + 1 ;`."\n";
-	$r_start_cmd .= qq`      if      (PERLSLEEPDELAYX == 50)  { PERLSLEEPDELAY = 0.1 } ## 0.5s`."\n";
-	$r_start_cmd .= qq`      else if (PERLSLEEPDELAYX == 100) { PERLSLEEPDELAY = 0.5 } ## 5.5s`."\n";
-	$r_start_cmd .= qq`      else if (PERLSLEEPDELAYX == 120) { PERLSLEEPDELAY = 1 }   ## 15.5s`."\n";
-	$r_start_cmd .= qq`      else if (PERLSLEEPDELAYX == 165) { PERLSLEEPDELAY = 2 }   ## 60.5s`."\n";
-	$r_start_cmd .= qq`      else if (PERLSLEEPDELAYX == 195) { PERLSLEEPDELAY = 3 }   ## 120.5s`."\n";
-	$r_start_cmd .= qq`    }`."\n";
-	$r_start_cmd .= qq`  }`."\n";
-
-	$r_start_cmd .= qq`  cat("...\\n" , file=PERLOUTPUTFILE)`."\n";
-
-	$r_start_cmd .= qq`  tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;`."\n";
-
-  ## Ensure that device is off after execute the input file.
-  ##tryCatch( dev.off() , error = function(e) {} ) ;
-
-	$r_start_cmd .= qq`  cat("/\\n" , file=PERLOUTPUTFILE)`."\n";
-
-	$r_start_cmd .= qq`  unlink(PERLINPUTFILE) ;`."\n";
-
-	$r_start_cmd .= qq`  if (PERLINPUTFILEX > 1000) {`."\n";
-	$r_start_cmd .= qq`    PERLINPUTFILEX = 0 ;`."\n";
-	$r_start_cmd .= qq`    close(PERLOUTPUTFILE) ;`."\n";
-	$r_start_cmd .= qq`    PERLOUTPUTFILE <- file("$process_r","w") ;`."\n";
-	$r_start_cmd .= qq`  }`."\n";
-	$r_start_cmd .= qq`}`."\n";
-
-	$r_start_cmd .= qq`close(PERLOUTPUTFILE) ;`."\n";
-
-	print $fh $r_start_cmd;
     close($fh) ;
     chmod(0777 , $this->{START_R}) ;
   }
