@@ -731,7 +731,7 @@ sub _chisq_test{
 	my @for_chisq = @{$_[1]};
 	my @chisq = ();
 	
-	my $R_debug = 1;
+	my $R_debug = 0;
 	if ($::config_obj->R){
 		@chisq = (Jcode->new('¥«¥¤2¾èÃÍ')->sjis);
 		my $n = @current - 2;
