@@ -56,12 +56,13 @@ sub new{
 		system('xset fp rehash');
 		
 		# R 2.7以降の場合はこのコマンドではだめかも？
+		$::config_obj->R->output_chk(0);
 		$::config_obj->R->send(
 			 'options(X11fonts = c('
 			.'"-*-gothic-%s-%s-normal--%d-*-*-*-*-*-*-*",'
 			.'"-adobe-symbol-*-*-*-*-%d-*-*-*-*-*-*-*"))'
 		);
-		
+		$::config_obj->R->output_chk(1);
 		$if_font = 1;
 	}
 
@@ -84,9 +85,11 @@ sub new{
 		if ($v1 >= 25){
 			$if_lt25 = 1;
 		} else {
+			$::config_obj->R->output_chk(0);
 			$::config_obj->R->send(
 				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
 			);
+			$::config_obj->R->output_chk(1);
 			$if_lt25 = 2;
 			#print "as.graphicsAnnot defined.\n";
 		}
@@ -153,13 +156,13 @@ sub clear_env{
 		}
 		rm(the_list)
 	");
-	$::config_obj->R->output_chk(1);
 
 	if ( $if_lt25 == 2 ){
 		$::config_obj->R->send(
 			'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
 		);
 	}
+	$::config_obj->R->output_chk(1);
 
 	#$::config_obj->R->send('print( ls() )');
 	#print "after: ", $::config_obj->R->read, "\n";
