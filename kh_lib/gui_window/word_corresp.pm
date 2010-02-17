@@ -648,7 +648,7 @@ sub make_plot{
 	my $r_command_tmp = $r_command;
 	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
 		if $::config_obj->os eq 'win32';
-	$::config_obj->R->send($r_command_tmp);
+	#$::config_obj->R->send($r_command_tmp);
 
 	# ´óÍ¿Î¨¤Î¼èÆÀ
 	#$::config_obj->R->send(
@@ -802,7 +802,7 @@ sub make_plot{
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
-		command_a => $r_command_a,
+		#command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
