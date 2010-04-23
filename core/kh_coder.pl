@@ -21,6 +21,9 @@ use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 $kh_version = "2.beta.22+";
 
 BEGIN {
+	# デバッグ用…
+	#open (STDERR,">stderr.txt") or die;
+
 	use Jcode;
 	require kh_lib::Jcode_kh if $] > 5.008;
 
