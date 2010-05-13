@@ -159,7 +159,7 @@ sub check_up{
 			'ALTER TABLE status_char MODIFY status TEXT'
 			,1
 		);
-		print "Converted \"status_char.status\" to TEXT\n";
+		# print "Converted \"status_char.status\" to TEXT\n";
 	}
 
 	# プロジェクト情報をMySQL内にも保存
@@ -178,8 +178,7 @@ sub check_up{
 			INSERT INTO status_char (name,status)
 			VALUES (\"target\", \"$target\")
 		",1);
-		
-		print "target: ", Jcode->new($target)->sjis, "\n";
+		# print "target: ", Jcode->new($target)->sjis, "\n";
 	}
 
 	my $chk_c = 0;
@@ -200,7 +199,7 @@ sub check_up{
 			INSERT INTO status_char (name,status)
 			VALUES (\"comment\", \"".$self->comment."\")
 		",1);
-		print "comment: ", Jcode->new($self->comment)->sjis, "\n";
+		# print "comment: ", Jcode->new($self->comment)->sjis, "\n";
 	}
 	
 
