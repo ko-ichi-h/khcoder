@@ -262,7 +262,7 @@ sub make_plot{
 	}
 
 	if ($cluster_number =~ /auto/i){
-		$cluster_number = int($args{data_number} / 10 + 0.5)
+		$cluster_number = int( sqrt( $args{data_number} ) + 0.5)
 	}
 
 	my $par = 
