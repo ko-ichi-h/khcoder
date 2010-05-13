@@ -476,5 +476,15 @@ sub os{
 	}
 }
 
+sub file_temp{
+	my $n = 0;
+	while (-e "temp$n.txt"){
+		++$n;
+	}
+	open   (KH_SYSCNF_TEMP, ">temp$n.txt");
+	close  (KH_SYSCNF_TEMP);
+	return ("temp$n.txt");
+}
+
 
 1;
