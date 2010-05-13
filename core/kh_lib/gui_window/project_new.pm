@@ -107,7 +107,7 @@ sub _make_new{
 			$self->e1->get
 		)
 	);
-	
+
 	my $new = kh_project->new(
 		target  => $t,
 		comment => $self->gui_jg($self->e2->get),

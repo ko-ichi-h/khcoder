@@ -23,7 +23,7 @@ sub read{
 		$self->create_project_list;
 	}
 
-	# 読み込み                                    # euc-->sjis変換を
+	# 読み込み                                    # euc-->sjis変換？
 	my $st = $dbh->prepare("SELECT target,comment,dbname FROM projects")
 		or die;
 	$st->execute or die;
@@ -42,6 +42,37 @@ sub read{
 
 sub create_project_list{
 	my $self = shift;
+	
+	# ファイルが存在する場合は中止
+	if (-e $::config_obj->history_file){
+		print
+			"kh_projects::create_project_list: Aborted!\n",
+			"\tThe file exists.\n";
+		return 0;
+	}
+	
+	# SQLのSELECTでデータが帰ってくる場合も中止
+	my $file_temp = $::config_obj->file_temp;     # エラー出力抑制
+	open (STDERR,">$file_temp");
+	
+	my $st = $self->{dbh}->prepare(
+		"SELECT target,comment,dbname FROM projects"
+	);
+	$st->execute;
+	while (my $r = $st->fetch){
+		if ( length($r->[0]) ){
+			print
+				"kh_projects::create_project_list: Aborted!\n",
+				"\tSELECT command returned some data.\n";
+			return 0;
+		}
+	}
+	
+	close (STDERR);                               # エラー出力復帰
+	open(STDERR,'>&STDOUT') or die;
+	unlink($file_temp);
+	
+	# テーブル作成
 	print "creating project list... ";
 	$self->dbh->do(                                 # ルーチン化？
 		"CREATE TABLE projects (
@@ -84,6 +115,8 @@ sub add_new{
 	$new->prepare_db;
 	$new->read_hinshi_setting;
 
+	# print "1: ", $new->file_target, "\n";
+
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
 	$sql .= "'".Jcode->new($new->file_target)->euc."',";
@@ -98,6 +131,8 @@ sub add_new{
 	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 
+	$new->{comment} = Jcode->new($new->comment)->euc;
+
 	return 1;
 }
 
@@ -109,12 +144,12 @@ sub edit{
 	my $self = shift;
 	my $edp = $self->a_project($_[0]);
 
-	$edp->comment($_[1]);
+	$edp->comment( Jcode->new($_[1])->euc );
 	$edp->assigned_icode($_[2]);
 
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){
-		$sql .= "'".$edp->comment."'";
+		$sql .= "'".$_[1]."'";
 	} else {
 		$sql .= 'undef';
 	}

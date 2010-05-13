@@ -162,6 +162,48 @@ sub check_up{
 		print "Converted \"status_char.status\" to TEXT\n";
 	}
 
+	# プロジェクト情報をMySQL内にも保存
+	my $chk_t = 0;
+	my $st = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = \"target\""
+	)->hundle;
+	if (my $i = $st->fetch){
+		if ( length( $i->[0] ) ){
+			$chk_t = 1;
+		}
+	}
+	unless ($chk_t){
+		my $target = Jcode->new($self->file_target)->euc;
+		mysql_exec->do("
+			INSERT INTO status_char (name,status)
+			VALUES (\"target\", \"$target\")
+		",1);
+		
+		print "target: ", Jcode->new($target)->sjis, "\n";
+	}
+
+	my $chk_c = 0;
+	my $st0 = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = \"comment\""
+	)->hundle;
+	if (my $i = $st0->fetch){
+		if ( $i->[0] eq $self->comment ){
+			$chk_c = 1;
+		}
+	}
+	unless ($chk_c){
+		mysql_exec->do("
+			DELETE FROM status_char
+			WHERE name = \"comment\"
+		",1);
+		mysql_exec->do("
+			INSERT INTO status_char (name,status)
+			VALUES (\"comment\", \"".$self->comment."\")
+		",1);
+		print "comment: ", Jcode->new($self->comment)->sjis, "\n";
+	}
+	
+
 	# 一時ファイル群を削除
 	my $n;
 	$n = 0;
