@@ -24,18 +24,30 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
+
+	$lf_w->Label(
+		-text => gui_window->gui_jchar('■利用する語の選択'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => '布置',
+		verb   => '利用',
 	);
 
 	my $lf = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both');
+	)->pack(-fill => 'x', -expand => 0);
+
+	$lf->Label(
+		-text => $self->gui_jchar('■共起ネットワークの設定'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
 	# Edge選択
 	$lf->Label(
@@ -129,7 +141,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSの出力・印刷向き','euc'),
+			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向き','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
