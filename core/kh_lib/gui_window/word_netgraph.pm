@@ -698,6 +698,7 @@ if ( com_method == "com-b" || com_method == "com-g"){
 	}
 } else {
 	com_col_v <- "gray40"
+	# com_col_v <- "black" # 印刷する際はグレーよりも黒にしてしまった方が綺麗？
 	edg_col   <- "darkgray"
 	edg_lty   <- 1
 }
