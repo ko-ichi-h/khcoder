@@ -200,7 +200,7 @@ sub _new{
 	my $w_use_freq_as_fsize;
 
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
+			-text     => $self->gui_jchar('出現数の多いコードほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor => 'w',
 			-command =>
@@ -226,7 +226,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSの出力・印刷向き','euc'),
+			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
