@@ -18,6 +18,7 @@ my @menu0 = (
 my @menu1 = (
 	't_word_search',
 	't_word_list',
+	't_word_list_cf',
 	't_word_freq',
 	't_word_df_freq',
 	't_word_ass',
@@ -285,11 +286,22 @@ sub make{
 		);
 
 		$self->{t_word_list} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語リスト（品詞別・出現回数順）'),
+				-label => gui_window->gui_jchar('抽出語リスト - 品詞別・出現回数順'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					my $target = $::project_obj->file_TempCSV;
 					mysql_words->csv_list($target);
+					gui_OtherWin->open($target);
+				})},
+				-state => 'disable'
+			);
+
+		$self->{t_word_list_cf} = $f3->command(
+				-label => gui_window->gui_jchar('抽出語リスト - 頻出150語'),
+				-font => "TKFN",
+				-command => sub {$mw->after(10,sub{
+					my $target = $::project_obj->file_TempCSV;
+					mysql_words->csv_list_150($target);
 					gui_OtherWin->open($target);
 				})},
 				-state => 'disable'

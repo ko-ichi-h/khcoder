@@ -199,6 +199,72 @@ sub csv_list{
 	}
 }
 
+sub csv_list_150{
+	use kh_csv;
+	my $class = shift;
+	my $target = shift;
+
+	my $t = mysql_exec->select('
+		SELECT
+		  genkei.name   as W,
+		  genkei.num    as TF
+		FROM genkei, hselection
+		WHERE
+		      genkei.khhinshi_id = hselection.khhinshi_id
+		  and hselection.name != "否定助動詞"
+		  and hselection.name != "未知語"
+		  and hselection.name != "否定"
+		  and hselection.name != "名詞B"
+		  and hselection.name != "形容詞B"
+		  and hselection.name != "動詞B"
+		  and hselection.name != "副詞B"
+		  and hselection.name != "感動詞"
+		  and hselection.name != "その他"
+		  and hselection.name != "HTMLタグ"
+		  and hselection.ifuse = 1
+		ORDER BY TF DESC, W
+		LIMIT 150
+	',1)->hundle;
+
+	# リスト構造作成
+	my @data = ();
+	$data[0] = ['抽出語','出現数','','抽出語','出現数','','抽出語','出現数'];
+	my $row = 1;
+	my $col = 1;
+	while (my $i = $t->fetch){
+		push @{$data[$row]}, $i->[0];
+		push @{$data[$row]}, $i->[1];
+		push @{$data[$row]}, '' if $col <= 2;
+		++$row;
+		if ($row >= 51){
+			$row = 1;
+			++$col;
+		}
+	}
+
+	# リスト構造をテキストに出力
+	open (LIST,">$target") or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$target"
+		);
+
+	foreach my $i (@data){
+		my $c = 0;
+		foreach my $h (@{$i}){
+			print LIST ',' if $c;
+			print LIST kh_csv->value_conv($h);
+			++$c;
+		}
+		print LIST "\n";
+	}
+
+	close (LIST);
+	if ($::config_obj->os eq 'win32'){
+		kh_jchar->to_sjis($target);
+	}
+}
+
 #-----------------------#
 #   出現回数 度数分布   #
 
