@@ -297,12 +297,13 @@ sub make{
 			);
 
 		$self->{t_word_list_cf} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語リスト - 頻出150語'),
+				-label => gui_window->gui_jchar('抽出語リスト - カスタム'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_TempCSV;
-					mysql_words->csv_list_150($target);
-					gui_OtherWin->open($target);
+					gui_window::word_list->open;
+					#my $target = $::project_obj->file_TempCSV;
+					#mysql_words->csv_list_150($target);
+					#gui_OtherWin->open($target);
 				})},
 				-state => 'disable'
 			);
