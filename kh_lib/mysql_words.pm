@@ -159,7 +159,6 @@ sub csv_list{
 	my $class = shift;
 	my $target = shift;
 	
-	
 	my $list = &_make_list;
 	
 	open (LIST,">$target") or
@@ -199,10 +198,25 @@ sub csv_list{
 	}
 }
 
-sub csv_list_150{
+#----------------------#
+#   各種抽出語リスト   #
+
+sub word_list_custom{
 	use kh_csv;
 	my $class = shift;
-	my $target = shift;
+	my $self = { @_ };
+	bless $self, $class;
+
+	my $method = "_make_wl_".$self->{type};
+	my $table_data = $self->$method;
+
+
+
+
+
+
+
+
 
 	my $t = mysql_exec->select('
 		SELECT
@@ -242,6 +256,8 @@ sub csv_list_150{
 		}
 	}
 
+	my $target;
+
 	# リスト構造をテキストに出力
 	open (LIST,">$target") or
 		gui_errormsg->open(
@@ -264,6 +280,14 @@ sub csv_list_150{
 		kh_jchar->to_sjis($target);
 	}
 }
+
+sub _make_wl_150{
+	print "OK\n";
+	
+	exit;
+	
+}
+
 
 #-----------------------#
 #   出現回数 度数分布   #
