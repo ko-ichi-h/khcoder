@@ -210,62 +210,26 @@ sub word_list_custom{
 	my $method = "_make_wl_".$self->{type};
 	my $table_data = $self->$method;
 
+	my $method_out = "_out_file_".$self->{ftype};
+	my $target = $self->$method_out($table_data);
+	
+	return $target;
+}
 
-
-
-
-
-
-
-
-	my $t = mysql_exec->select('
-		SELECT
-		  genkei.name   as W,
-		  genkei.num    as TF
-		FROM genkei, hselection
-		WHERE
-		      genkei.khhinshi_id = hselection.khhinshi_id
-		  and hselection.name != "否定助動詞"
-		  and hselection.name != "未知語"
-		  and hselection.name != "否定"
-		  and hselection.name != "名詞B"
-		  and hselection.name != "形容詞B"
-		  and hselection.name != "動詞B"
-		  and hselection.name != "副詞B"
-		  and hselection.name != "感動詞"
-		  and hselection.name != "その他"
-		  and hselection.name != "HTMLタグ"
-		  and hselection.ifuse = 1
-		ORDER BY TF DESC, W
-		LIMIT 150
-	',1)->hundle;
-
-	# リスト構造作成
-	my @data = ();
-	$data[0] = ['抽出語','出現数','','抽出語','出現数','','抽出語','出現数'];
-	my $row = 1;
-	my $col = 1;
-	while (my $i = $t->fetch){
-		push @{$data[$row]}, $i->[0];
-		push @{$data[$row]}, $i->[1];
-		push @{$data[$row]}, '' if $col <= 2;
-		++$row;
-		if ($row >= 51){
-			$row = 1;
-			++$col;
-		}
-	}
-
-	my $target;
+sub _out_file_csv{
+	my $self       = shift;
+	my $table_data = shift;
 
 	# リスト構造をテキストに出力
+	my $target = $::project_obj->file_TempCSV;
+
 	open (LIST,">$target") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
 		);
 
-	foreach my $i (@data){
+	foreach my $i (@{$table_data}){
 		my $c = 0;
 		foreach my $h (@{$i}){
 			print LIST ',' if $c;
@@ -279,13 +243,87 @@ sub word_list_custom{
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_sjis($target);
 	}
+	
+	return $target;
 }
 
 sub _make_wl_150{
-	print "OK\n";
+	my $self = shift;
 	
-	exit;
-	
+	my $t;
+	my @data = ();
+	if ($self->{num} eq 'tf'){
+		$t = mysql_exec->select('
+			SELECT
+			  genkei.name   as W,
+			  genkei.num    as TF
+			FROM genkei, hselection
+			WHERE
+			      genkei.khhinshi_id = hselection.khhinshi_id
+			  and hselection.name != "否定助動詞"
+			  and hselection.name != "未知語"
+			  and hselection.name != "否定"
+			  and hselection.name != "名詞B"
+			  and hselection.name != "形容詞B"
+			  and hselection.name != "動詞B"
+			  and hselection.name != "副詞B"
+			  and hselection.name != "感動詞"
+			  and hselection.name != "その他"
+			  and hselection.name != "HTMLタグ"
+			  and hselection.ifuse = 1
+			ORDER BY TF DESC, W
+			LIMIT 150
+		',1)->hundle;
+		$data[0] = ['抽出語','出現数','','抽出語','出現数','','抽出語','出現数'];
+	} else {
+		$t = mysql_exec->select('
+			SELECT
+			  genkei.name   as W,
+			  f             as DF
+			FROM genkei, hselection
+			  LEFT JOIN df_'.$self->{tani}.' ON genkei_id = genkei.id
+			WHERE
+			      genkei.khhinshi_id = hselection.khhinshi_id
+			  and hselection.name != "否定助動詞"
+			  and hselection.name != "未知語"
+			  and hselection.name != "否定"
+			  and hselection.name != "名詞B"
+			  and hselection.name != "形容詞B"
+			  and hselection.name != "動詞B"
+			  and hselection.name != "副詞B"
+			  and hselection.name != "感動詞"
+			  and hselection.name != "その他"
+			  and hselection.name != "HTMLタグ"
+			ORDER BY DF DESC, W
+			LIMIT 150
+		',1)->hundle;
+		
+		my $tani = $self->{tani};
+		$tani = '文'   if $self->{tani} eq 'bun';
+		$tani = '段落' if $self->{tani} eq 'dan';
+		
+		$data[0] = [
+			   '抽出語','文書数（'.$tani.'）',
+			'','抽出語','文書数（'.$tani.'）',
+			'','抽出語','文書数（'.$tani.'）',
+		];
+	}
+
+	# リスト構造作成
+	my $row = 1;
+	my $col = 1;
+	while (my $i = $t->fetch){
+		push @{$data[$row]}, $i->[0];
+		push @{$data[$row]}, $i->[1];
+		push @{$data[$row]}, '' if $col <= 2;
+		++$row;
+		if ($row >= 51){
+			$row = 1;
+			++$col;
+		}
+	}
+
+	return \@data;
 }
 
 
