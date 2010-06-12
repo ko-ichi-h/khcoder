@@ -17,7 +17,7 @@ my @menu0 = (
 # メニューの設定：形態素解析が行われていればActive
 my @menu1 = (
 	't_word_search',
-	't_word_list',
+	#'t_word_list',
 	't_word_list_cf',
 	't_word_freq',
 	't_word_df_freq',
@@ -285,25 +285,22 @@ sub make{
 			-tearoff=>'no'
 		);
 
-		$self->{t_word_list} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語リスト - 品詞別・出現回数順'),
-				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
-					my $target = $::project_obj->file_TempCSV;
-					mysql_words->csv_list($target);
-					gui_OtherWin->open($target);
-				})},
-				-state => 'disable'
-			);
+		#$self->{t_word_list} = $f3->command(
+		#		-label => gui_window->gui_jchar('抽出語リスト - 品詞別・出現回数順'),
+		#		-font => "TKFN",
+		#		-command => sub {$mw->after(10,sub{
+		#			my $target = $::project_obj->file_TempCSV;
+		#			mysql_words->csv_list($target);
+		#			gui_OtherWin->open($target);
+		#		})},
+		#		-state => 'disable'
+		#	);
 
 		$self->{t_word_list_cf} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語リスト - カスタム'),
+				-label => gui_window->gui_jchar('抽出語リスト'),
 				-font => "TKFN",
 				-command => sub {$mw->after(10,sub{
 					gui_window::word_list->open;
-					#my $target = $::project_obj->file_TempCSV;
-					#mysql_words->csv_list_150($target);
-					#gui_OtherWin->open($target);
 				})},
 				-state => 'disable'
 			);
