@@ -198,6 +198,8 @@ sub csv_list{
 	}
 }
 
+
+
 #----------------------#
 #   各種抽出語リスト   #
 
@@ -214,6 +216,118 @@ sub word_list_custom{
 	my $target = $self->$method_out($table_data);
 	
 	return $target;
+}
+
+sub _out_file_xls{
+	my $self = shift;
+	my $table_data = shift;
+
+	#----------------#
+	#   出力の準備   #
+
+	use Spreadsheet::WriteExcel;
+	use Unicode::String qw(utf8 utf16);
+
+	my $f    = $::project_obj->file_TempExcel;
+	my $workbook  = Spreadsheet::WriteExcel->new($f);
+	my $worksheet = $workbook->add_worksheet(
+		utf8( Jcode->new('シート1')->utf8 )->utf16,
+		1
+	);
+
+	my $font = '';
+	if ($] > 5.008){
+		$font = gui_window->gui_jchar('ＭＳ Ｐゴシック', 'euc');
+	} else {
+		$font = 'MS PGothic';
+	}
+	$workbook->{_formats}->[15]->set_properties(
+		font       => $font,
+		size       => 11,
+		valign     => 'vcenter',
+		align      => 'center',
+	);
+	my $format_n = $workbook->add_format(         # 数値
+		num_format => '0',
+		size       => 11,
+		font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(         # 文字列
+		font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@'
+	);
+
+	#----------#
+	#   出力   #
+
+	my $row = 0;
+	foreach my $i (@{$table_data}){
+		my $col = 0;
+		foreach my $h (@{$i}){
+			unless ( defined($h) ){
+				++$col;
+				next;
+			}
+			unless ( length($h) ){
+				++$col;
+				next;
+			}
+		
+			if ($h =~ /^[0-9]+$/o ){
+				$worksheet->write_number(
+					$row,
+					$col,
+					$h,
+					$format_n
+				);
+			} else {
+				$worksheet->write(
+					$row,
+					$col,
+					gui_window->gui_jchar($h, 'euc'), # Perl 5.8以降が必須
+					#utf8( Jcode->new($h,'euc')->utf8 )->utf16,
+					$format_c
+				);
+			}
+			++$col;
+		}
+		++$row;
+	}
+
+	#------------#
+	#   装飾等   #
+	
+	$worksheet->freeze_panes(1, 0);
+
+	my $format_n_btm = $workbook->add_format(         # 数値
+		num_format => '0',
+		size       => 11,
+		font       => $font,
+		align      => 'right',
+		bottom     => 1,
+	);
+	my $format_c_btm = $workbook->add_format(         # 文字列
+		font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@',
+		bottom     => 1,
+	);
+
+	if ($self->{type} eq '150'){
+		# 列の幅
+		$worksheet->set_column(2, 2, 2);
+		$worksheet->set_column(5, 5, 2);
+		
+		# 罫線？
+		
+	}
+
+	$workbook->close;
+	return $f;
 }
 
 sub _out_file_csv{
@@ -245,6 +359,96 @@ sub _out_file_csv{
 	}
 	
 	return $target;
+}
+
+sub _make_wl_1c{
+	my $self = shift;
+
+	my $list;
+	if ($self->{num} eq 'tf'){
+		$list = &_make_list;
+	} else {
+		$list = &_make_list_df($self->{tani});
+	}
+
+	my @data;
+	foreach my $i (@{$list}){
+		foreach my $h (@{$i->[1]}){
+			push @data, [ $h->[0], $i->[0] ,$h->[1]  ];
+		}
+	}
+
+	@data = sort { 
+		   $b->[2] <=> $a->[2]
+		or $a->[0] cmp $b->[0]
+		or $a->[1] cmp $b->[1]
+	} @data;
+
+	my $num_lab = '';
+	if ($self->{num} eq 'tf'){
+		$num_lab = '出現回数';
+	} else {
+		my $tani = $self->{tani};
+		$tani = '文'   if $self->{tani} eq 'bun';
+		$tani = '段落' if $self->{tani} eq 'dan';
+		$num_lab = '文書数（'.$tani.'）';
+	}
+
+	my @data = (['抽出語', '品詞', $num_lab], @data);
+
+	return \@data;
+}
+
+sub _make_wl_def{
+	my $self = shift;
+	
+	my $list;
+	if ($self->{num} eq 'tf'){
+		$list = &_make_list;
+	} else {
+		$list = &_make_list_df($self->{tani});
+	}
+
+	my $num_lab = '';
+	if ($self->{num} eq 'tf'){
+		$num_lab = '';
+	} else {
+		my $tani = $self->{tani};
+		$tani = '文'   if $self->{tani} eq 'bun';
+		$tani = '段落' if $self->{tani} eq 'dan';
+		$num_lab = '文書数（'.$tani.'）';
+	}
+
+	my @data;
+
+	# 1行目
+	my @line = ();
+	foreach my $i (@{$list}){
+		push @line, $i->[0];
+		push @line, $num_lab;
+	}
+	push @data, \@line;
+
+	# 2行目以降
+	my $row = 0;
+	while (1){
+		my @line = ();
+		my $check;
+		foreach my $i (@{$list}){
+			$i->[1][$row][1] = '' unless defined($i->[1][$row][1]);
+			$i->[1][$row][0] = '' unless defined($i->[1][$row][0]);
+			push @line, $i->[1][$row][0];
+			push @line, $i->[1][$row][1];
+			$check += $i->[1][$row][1] if $i->[1][$row][1];
+		}
+		unless ($check){
+			last;
+		}
+		push @data, \@line;
+		++$row;
+	}
+	
+	return \@data;
 }
 
 sub _make_wl_150{
@@ -444,7 +648,7 @@ sub _make_list{
 
 	my $temp = &_make_hinshi_list;
 	unless (eval (@{$temp})){
-		print "oh, well, I don't know...\n";
+		print "oh, well, I don't know what to do...\n";
 		return;
 	}
 
@@ -470,6 +674,47 @@ sub _make_list{
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
 				ORDER BY num DESC, name
+			";
+		}
+		my $t = mysql_exec->select($sql,1);
+		push @result, ["$i->[0]", $t->hundle->fetchall_arrayref];
+	}
+	return \@result;
+}
+
+sub _make_list_df{
+	my $tani = shift;
+
+	my $temp = &_make_hinshi_list;
+	unless (eval (@{$temp})){
+		print "oh, well, I don't know what to do...\n";
+		return;
+	}
+
+	my @hinshi = @{$temp};
+	# 単語リストアップ
+	my @result = ();
+	foreach my $i (@hinshi){
+		my $sql;
+		if ($i->[0] eq 'その他'){
+			$sql  = "
+				SELECT concat(genkei.name,'(',hinshi.name,')'), f
+				FROM hinshi, genkei
+					LEFT JOIN df_$tani ON genkei_id = genkei.id
+				WHERE
+					genkei.hinshi_id = hinshi.id
+					and khhinshi_id = $i->[1]
+					and genkei.nouse = 0
+				ORDER BY f DESC, genkei.name
+			";
+		} else {
+			$sql  = "
+				SELECT name, f FROM genkei
+					LEFT JOIN df_$tani ON genkei_id = genkei.id
+				WHERE
+					khhinshi_id = $i->[1]
+					and genkei.nouse = 0
+				ORDER BY f DESC, name
 			";
 		}
 		my $t = mysql_exec->select($sql,1);
