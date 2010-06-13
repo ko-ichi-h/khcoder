@@ -265,6 +265,14 @@ sub _out_file_xls{
 
 	my $row = 0;
 	foreach my $i (@{$table_data}){
+		if ($row >= 65536 ){
+			gui_errormsg->open(
+				msg  => "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。",
+				type => 'msg',
+			);
+			last;
+		}
+		
 		my $col = 0;
 		foreach my $h (@{$i}){
 			unless ( defined($h) ){
@@ -284,7 +292,7 @@ sub _out_file_xls{
 					$format_n
 				);
 			} else {
-				$worksheet->write(
+				$worksheet->write_string(
 					$row,
 					$col,
 					gui_window->gui_jchar($h, 'euc'), # Perl 5.8以降が必須
