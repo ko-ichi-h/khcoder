@@ -212,7 +212,7 @@ sub word_list_custom{
 	my $method = "_make_wl_".$self->{type};
 	my $table_data = $self->$method;
 
-	my $method_out = "_out_file_".$self->{ftype};
+	my $method_out = "_out_file_".$self->{ftype}."_".$self->{type};
 	my $target = $self->$method_out($table_data);
 	
 	return $target;
@@ -307,32 +307,106 @@ sub _out_file_xls{
 
 	#------------#
 	#   Áõ¾þÅù   #
-	
 	$worksheet->freeze_panes(1, 0);
 
-	my $format_n_btm = $workbook->add_format(         # ¿ôÃÍ
-		num_format => '0',
-		size       => 11,
+	$workbook->close;
+	return $f;
+}
+
+*_out_file_xls_def = *_out_file_xls_1c = \&_out_file_xls;
+
+sub _out_file_xls_150{
+	my $self = shift;
+	my $table_data = shift;
+
+	#----------------#
+	#   ½ÐÎÏ¤Î½àÈ÷   #
+
+	use Spreadsheet::WriteExcel;
+	use Unicode::String qw(utf8 utf16);
+
+	my $f    = $::project_obj->file_TempExcel;
+	my $workbook  = Spreadsheet::WriteExcel->new($f);
+	my $worksheet = $workbook->add_worksheet(
+		utf8( Jcode->new('¥·¡¼¥È1')->utf8 )->utf16,
+		1
+	);
+
+	my $font = '';
+	if ($] > 5.008){
+		$font = gui_window->gui_jchar('£Í£Ó £Ð¥´¥·¥Ã¥¯', 'euc');
+	} else {
+		$font = 'MS PGothic';
+	}
+	$workbook->{_formats}->[15]->set_properties(
 		font       => $font,
-		align      => 'right',
+		size       => 11,
+		valign     => 'vcenter',
+		align      => 'center',
+	);
+
+	my $format_n = $workbook->add_format(
+		font       => $font,
+		size       => 11,
+	);
+	my $format_t = $workbook->add_format(
+		font       => $font,
+		size       => 11,
+		top        => 1,
+	);
+	my $format_tb = $workbook->add_format(
+		font       => $font,
+		size       => 11,
+		top        => 1,
 		bottom     => 1,
 	);
-	my $format_c_btm = $workbook->add_format(         # Ê¸»úÎó
+	my $format_b = $workbook->add_format(
 		font       => $font,
 		size       => 11,
-		align      => 'left',
-		num_format => '@',
 		bottom     => 1,
 	);
 
-	if ($self->{type} eq '150'){
-		# Îó¤ÎÉý
-		$worksheet->set_column(2, 2, 2);
-		$worksheet->set_column(5, 5, 2);
-		
-		# ·ÓÀþ¡©
-		
+
+	#----------#
+	#   ½ÐÎÏ   #
+
+	my $row = 0;
+	foreach my $i (@{$table_data}){
+		my $col = 0;
+		foreach my $h (@{$i}){
+			$h = gui_window->gui_jchar($h, 'euc') unless $h =~ /^[0-9]+$/o;
+
+			my $f;
+			if ($row == 0){
+				if ($col == 2 || $col == 5){
+					$f = $format_t;
+				} else {
+					$f = $format_tb;
+				}
+			}
+			elsif ($row == 50){
+				$f = $format_b;
+			} else {
+				$f = $format_n;
+			}
+
+			$worksheet->write(
+				$row,
+				$col,
+				$h,
+				$f
+			);
+
+			++$col;
+		}
+		++$row;
 	}
+
+	#------------#
+	#   Áõ¾þÅù   #
+	#$worksheet->freeze_panes(1, 0);
+	$worksheet->set_column(2, 2, 2);
+	$worksheet->set_column(5, 5, 2);
 
 	$workbook->close;
 	return $f;
