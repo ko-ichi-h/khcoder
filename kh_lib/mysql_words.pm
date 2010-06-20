@@ -296,7 +296,8 @@ sub _out_file_xls{
 					$row,
 					$col,
 					gui_window->gui_jchar($h, 'euc'), # Perl 5.8以降が必須
-					#utf8( Jcode->new($h,'euc')->utf8 )->utf16,
+					# Perl 5.6の場合：
+					# utf8( Jcode->new($h,'euc')->utf8 )->utf16,
 					$format_c
 				);
 			}
@@ -307,7 +308,11 @@ sub _out_file_xls{
 
 	#------------#
 	#   装飾等   #
-	$worksheet->freeze_panes(1, 0);
+	$worksheet->freeze_panes(1, 0);     # 「Window枠の固定」
+
+	if ( $self->{type} eq '1c' ){       # 「1列」のリストにはオートフィルタを
+		$worksheet->autofilter(0, 1, $row - 1, 1);
+	}
 
 	$workbook->close;
 	return $f;

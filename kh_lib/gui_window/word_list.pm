@@ -27,7 +27,7 @@ sub _new{
 	)->pack(-fill => 'x');
 
 	$lf0->Label(
-		-text => $self->gui_jchar('表の形式：'),
+		-text => $self->gui_jchar('抽出語リストの形式：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -109,7 +109,7 @@ sub _new{
 	#   ファイル形式   #
 
 	$lf0->Label(
-		-text => $self->gui_jchar('ファイルの形式：'),
+		-text => $self->gui_jchar('出力するファイルの形式：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
