@@ -585,6 +585,7 @@ sub _make_wl_150{
 			  and hselection.name != "感動詞"
 			  and hselection.name != "その他"
 			  and hselection.name != "HTMLタグ"
+			  and hselection.ifuse = 1
 			ORDER BY DF DESC, W
 			LIMIT 150
 		',1)->hundle;
