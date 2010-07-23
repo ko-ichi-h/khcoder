@@ -307,7 +307,7 @@ sub exec{
 	$t =~ s/\|/｜/g;
 	$t =~ s/</＜/g;
 	$t =~ s/>/＞/g;
-	$t =~ s/$ctrl/_/g;
+	$t =~ s/$ctrl/ /g;
 
 	# 一文字ずつ処理
 	my @chars = $t =~ /$ascii|$twoBytes|$threeBytes/og;
