@@ -30,7 +30,7 @@ sub run{
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	$self->{r_command} = 'd <- matrix( c(';
+	$self->{r_command} = "d <- NULL\n";
 	my $row_names = '';
 	
 	
@@ -63,8 +63,8 @@ sub out2{                               # length作製をする
 						$temp .= "0,";
 					}
 				}
-				#chop $temp;
-				$self->{r_command} .= "$temp";
+				chop $temp;
+				$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
 				# 初期化
 				%current = ();
 				$last = $i->[0];
@@ -105,15 +105,9 @@ sub out2{                               # length作製をする
 			$temp .= "0,";
 		}
 	}
-	$self->{r_command} .= "$temp";
-	chop $self->{r_command};
+	chop $temp;
+	$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
 	chop $row_names;
-
-	my $ncol = @{$self->{wList}} + 1;
-	my $nrow = mysql_exec->select("SELECT count(*) FROM $self->{tani}",1)
-		->hundle->fetch->[0];
-
-	$self->{r_command} .= "), nrow=$nrow , ncol=$ncol , byrow=TRUE)\n";
 	
 	if ($self->{rownames}){
 		if ($self->{midashi}){
