@@ -37,6 +37,7 @@ sub _new{
 			[
 				['Jaccard', 'binary'],
 				['Euclid',  'euclid'],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
@@ -117,7 +118,7 @@ sub calc{
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
-		method_dist    => $self->{method_dist},
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		tani           => $self->{tani},
 	);
 

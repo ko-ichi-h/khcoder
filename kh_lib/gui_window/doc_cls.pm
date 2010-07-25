@@ -53,6 +53,7 @@ sub _new{
 			[
 				['Jaccard', 'binary'],
 				['Euclid',  'euclid'],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
@@ -216,7 +217,7 @@ sub calc{
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
-		method_dist    => $self->{method_dist},
+		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		tani           => $self->tani,
 	);
 }
@@ -227,13 +228,12 @@ sub calc_exec{
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 
+	# クラスター分析の結果を納めるファイル名
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
-	
 	my $icode;
 	if ($::config_obj->os eq 'win32'){
 		$file = Jcode->new($file,'sjis')->euc;
 		$file =~ s/\\/\\\\/g;
-		#$file = Jcode->new($file,'euc')->sjis;
 	} else {
 		$icode = Jcode::getcode($file);
 		$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
@@ -241,33 +241,133 @@ sub calc_exec{
 		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
 	}
 
-	# Rによる計算
+	# 類似度行列の作成（Rコマンド）
+	$r_command .= "library(amap)\n";
 	if ($args{method_dist} eq 'euclid'){
-		$r_command .= "d <- scale( d )\n";
-		$r_command .= "dj <- dist(d,method=\"euclid\")^2\n";
+		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
+		$r_command .= "d <- t( scale( t(d) ) )\n";
+		$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
 	} else {
-		$r_command .= "dj <- dist(d,method=\"binary\")\n";
+		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
+	
+	# 結合水準のプロット（Rコマンド）
+	my $r_command_height ='
+		# 結合水準を取得
+		det <- dcls$merge
+		det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
+		colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
-	$r_command .= "dcls <- hclust(dj, method=\"ward\")\n";
-	$r_command .= "r    <- cutree(dcls,k=$cluster_number)\n";
+		# プロットの準備開始
+		pp_focus  <- 50     # 最後の50回の結合をプロット
+		pp_kizami <-  5     # クラスター数を5個おきに表示するか
 
-	$r_command .= "dcls <- hclust(dj, method=\"average\")\n";
-	$r_command .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+		# 必要な部分の結合を取得
+		n_start <- nrow(det) - pp_focus + 1
+		if (n_start < 1){ n_start <- 1 }
+		det <- det[nrow(det):n_start,]
 
-	$r_command .= "dcls <- hclust(dj, method=\"complete\")\n";
-	$r_command .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+		# クラスター数のマーカーを入れる準備
+		p_type <- NULL
+		p_nums <- NULL
+		for (i in 1:nrow(det)){
+			if ( (i %%  pp_kizami == 0) | (i == 1)){
+				p_type <- c(p_type, 16)
+				p_nums <- c(p_nums, i)
+			} else {
+				p_type <- c(p_type, 1)
+				p_nums <- c(p_nums, "")
+			}
+		}
 
+		# プロット
+		par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+		plot(
+			det[,"u_n"],
+			det[,"height"],
+			type = "b",
+			pch  = p_type,
+			xlab = paste("クラスター結合回数（最後の",pp_focus,"回）",sep = ""),
+			ylab = "結合水準（非類似度）"
+		)
 
-	$r_command .= "colnames(r) <- 
+		text(
+			x      = det[,"u_n"],
+			y      = det[,"height"]
+			         - ( max(det[,"height"]) - min(det[,"height"]) ) / 40,
+			labels = p_nums,
+			pos    = 4,
+			offset = .2,
+			cex    = .8
+		)
+
+		legend(
+			min(det[,"u_n"]),
+			max(det[,"height"]),
+			legend = c("※プロット内の数値ラベルは\n　結合後のクラスター数"),
+			#pch = c(16),
+			cex = .8,
+			box.lty = 0
+		)
+	';
+	
+	# クラスター化（Rコマンド）
+	my $r_command_ward;
+	$r_command_ward .= "dcls <- hclust(dj, method=\"ward\")\n";
+	$r_command_ward .= "r    <- cutree(dcls,k=$cluster_number)\n";
+
+	my $r_command_ave;
+	$r_command_ave .= "dcls <- hclust(dj, method=\"average\")\n";
+	$r_command_ave .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+
+	my $r_command_cmp;
+	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
+	$r_command_cmp .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+
+	# kh_r_plotモジュールにはEUCのRコマンドを渡す
+	kh_r_plot->clear_env;
+	my $plot_ward = kh_r_plot->new(
+		name      => 'doc_cls_height_ward',
+		command_f =>  $r_command
+		             .$r_command_ward
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	my $plot_ave = kh_r_plot->new(
+		name      => 'doc_cls_height_ave',
+		command_f =>  $r_command
+		             .$r_command_ave
+		             .$r_command_height,
+		command_a =>  $r_command_ave
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	my $plot_cmp = kh_r_plot->new(
+		name      => 'doc_cls_height_cmp',
+		command_f =>  $r_command
+		             .$r_command_cmp
+		             .$r_command_height,
+		command_a =>  $r_command_cmp
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+	
+	# クラスター番号の書き出し（Rコマンド）
+	my $r_command_fin = '';
+	$r_command_fin .= "colnames(r) <- 
 		c(\"_cluster_tmp_w\",\"_cluster_tmp_a\",\"_cluster_tmp_c\")\n";
-	$r_command .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
-	$r_command .= "print(\"ok\")\n";
+	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
+	$r_command_fin .= "print(\"ok\")\n";
 
-	$r_command = Jcode->new($r_command,'euc')->sjis
+	$r_command_fin = Jcode->new($r_command_fin,'euc')->sjis
 		if $::config_obj->os eq 'win32';
 
-	$::config_obj->R->send($r_command);
+	$::config_obj->R->send($r_command_fin);
 	my $r = $::config_obj->R->read;
 
 	if (
@@ -282,6 +382,7 @@ sub calc_exec{
 		);
 		return 0;
 	}
+	kh_r_plot->clear_env;
 
 	$args{base_win}->close;
 	if ($::main_gui->if_opened('w_doc_cls_res')){
