@@ -196,10 +196,10 @@ sub calc{
 	);
 	unless ($ans =~ /ok/i){ return 0; }
 
-	#my $w = gui_wait->start;
-
 	# データの取り出し
-	my $r_command = mysql_crossout::r_com->new(
+	my $file_csv = $::project_obj->file_TempCSV;
+	mysql_crossout::csv->new(
+		file   => $file_csv,
 		tani   => $self->tani,
 		tani2  => $self->tani,
 		hinshi => $self->hinshi,
@@ -207,11 +207,29 @@ sub calc{
 		min    => $self->min,
 		max_df => $self->max_df,
 		min_df => $self->min_df,
-		rownames => 0,
 	)->run;
 
-	# クラスター分析を実行するためのコマンド
-	$r_command .= "# END: DATA\n";
+	my $icode = Jcode->new($file_csv)->icode;
+	$file_csv = Jcode->new($file_csv)->euc
+		unless $icode eq 'euc' or $icode eq 'ascii';
+	$file_csv =~ s/\\/\\\\/g;
+	$file_csv = Jcode->new($file_csv)->$icode
+		unless $icode eq 'euc' or $icode eq 'ascii';
+	print "$file_csv\n";
+
+	my $r_command = "d <- read.csv(\"$file_csv\")\n";
+	$r_command .= '
+		n_cut <- NULL
+		for (i in 1:12){
+			if ( colnames(d)[i] == "length_w" ){
+				n_cut <- i
+				break
+			}
+		}
+		n_cut <- n_cut * -1
+		d <- d[,-1:n_cut]';
+
+	$r_command .= "\n# END: DATA\n";
 
 	&calc_exec(
 		base_win       => $self,
