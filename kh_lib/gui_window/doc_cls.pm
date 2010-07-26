@@ -415,27 +415,33 @@ sub hinshi{
 sub r_command_height{
 	my $t = << 'END_OF_the_R_COMMAND';
 
+pp_type <- "last" # first, last, all
+
+# プロットの準備開始
+pp_focus  <- 50     # 最初・最後の50回の併合をプロット
+pp_kizami <-  5     # クラスター数を5個おきに表示するか
+
 # 併合水準を取得
 det <- dcls$merge
 det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
-# プロットの準備開始
-pp_focus  <- 50     # 最後の50回の併合をプロット
-pp_kizami <-  5     # クラスター数を5個おきに表示するか
-
 # 必要な部分の併合を取得
-n_start <- nrow(det) - pp_focus + 1
-if (n_start < 1){ n_start <- 1 }
-det <- det[nrow(det):n_start,]
+if (pp_type == "last"){
+	n_start <- nrow(det) - pp_focus + 1
+	if (n_start < 1){ n_start <- 1 }
+	det <- det[nrow(det):n_start,]
+} else if (pp_type == "first") {
+	det <- det[pp_focus:1,]
+}
 
 # クラスター数のマーカーを入れる準備
 p_type <- NULL
 p_nums <- NULL
 for (i in 1:nrow(det)){
-	if ( (i %%  pp_kizami == 0) | (i == 1)){
+	if ( (det[i,"cls_n"] %%  pp_kizami == 0) | (det[i,"cls_n"] == 1)){
 		p_type <- c(p_type, 16)
-		p_nums <- c(p_nums, i)
+		p_nums <- c(p_nums, det[i,"cls_n"])
 	} else {
 		p_type <- c(p_type, 1)
 		p_nums <- c(p_nums, "")
