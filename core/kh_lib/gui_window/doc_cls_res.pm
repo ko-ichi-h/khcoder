@@ -10,11 +10,12 @@ sub _new{
 	my %args = @_;
 	$self->{tani} = $args{tani};
 	$self->{command_f} = $args{command_f};
+	$self->{plots} = $args{plots};
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 
-	$wmw->title($self->gui_jt('文書・クラスター分析'));
+	$wmw->title($self->gui_jt('文書のクラスター分析'));
 	
 	$wmw->Label(
 		-text => $self->gui_jchar('■各クラスターに含まれる文書数'),
@@ -115,6 +116,24 @@ sub _new{
 		});} 
 	)->pack(-side => 'left',-padx => 5);
 
+	$wmw->Button(
+		-text => $self->gui_jchar('併合水準'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ $mw->after(10,sub {
+			if ($::main_gui->if_opened('w_doc_cls_height')){
+				$::main_gui->get('w_doc_cls_height')->renew(
+					$self->{tmp_out_var}
+				);
+			} else {
+				gui_window::doc_cls_height->open(
+					plots => $self->{plots},
+					type  => $self->{tmp_out_var},
+				);
+			}
+		});} 
+	)->pack(-side => 'left',-padx => 5);
+
 	$self->win_obj->bind(
 		'<Control-Key-c>',
 		sub{ $self->{copy_btn}->invoke; }
@@ -179,6 +198,12 @@ sub renew{
 			-style => $numb_style
 		);
 		++$row;
+	}
+	
+	if ($::main_gui->if_opened('w_doc_cls_height')){
+		$::main_gui->get('w_doc_cls_height')->renew(
+			$self->{tmp_out_var}
+		);
 	}
 	
 	gui_hlist->update4scroll($self->list);
@@ -261,6 +286,10 @@ sub end{
 	my $win_list = $::main_gui->get('w_outvar_list');
 	if ( defined($win_list) ){
 		$win_list->_fill;
+	}
+	# 「併合水準」が開いている場合は閉じる
+	if ($::main_gui->if_opened('w_doc_cls_height')){
+		$::main_gui->get('w_doc_cls_height')->close;
 	}
 }
 

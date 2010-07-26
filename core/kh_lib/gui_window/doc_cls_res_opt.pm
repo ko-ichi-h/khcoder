@@ -43,6 +43,8 @@ sub _new{
 	);
 	if ( $self->{command_f} =~ /euclid/ ){
 		$widget_dist->set_value('euclid');
+	elsif ($self->{command_f} =~ /pearson/){
+		$widget_dist->set_value('pearson');
 	} else {
 		$widget_dist->set_value('binary');
 	}

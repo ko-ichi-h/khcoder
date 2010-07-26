@@ -43,6 +43,7 @@ use gui_window::doc_cls;
 use gui_window::doc_cls_res;
 use gui_window::doc_cls_res_opt;
 use gui_window::doc_cls_res_sav;
+use gui_window::doc_cls_height;
 use gui_window::morpho_check;
 use gui_window::morpho_detail;
 use gui_window::cod_count;
