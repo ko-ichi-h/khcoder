@@ -218,16 +218,9 @@ sub calc{
 	print "$file_csv\n";
 
 	my $r_command = "d <- read.csv(\"$file_csv\")\n";
-	$r_command .= '
-		n_cut <- NULL
-		for (i in 1:12){
-			if ( colnames(d)[i] == "length_w" ){
-				n_cut <- i
-				break
-			}
-		}
-		n_cut <- n_cut * -1
-		d <- d[,-1:n_cut]';
+	$r_command .= &r_command_fix_d;
+
+
 
 	$r_command .= "\n# END: DATA\n";
 
@@ -269,65 +262,8 @@ sub calc_exec{
 		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
 	
-	# 結合水準のプロット（Rコマンド）
-	my $r_command_height ='
-		# 結合水準を取得
-		det <- dcls$merge
-		det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
-		colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
-
-		# プロットの準備開始
-		pp_focus  <- 50     # 最後の50回の結合をプロット
-		pp_kizami <-  5     # クラスター数を5個おきに表示するか
-
-		# 必要な部分の結合を取得
-		n_start <- nrow(det) - pp_focus + 1
-		if (n_start < 1){ n_start <- 1 }
-		det <- det[nrow(det):n_start,]
-
-		# クラスター数のマーカーを入れる準備
-		p_type <- NULL
-		p_nums <- NULL
-		for (i in 1:nrow(det)){
-			if ( (i %%  pp_kizami == 0) | (i == 1)){
-				p_type <- c(p_type, 16)
-				p_nums <- c(p_nums, i)
-			} else {
-				p_type <- c(p_type, 1)
-				p_nums <- c(p_nums, "")
-			}
-		}
-
-		# プロット
-		par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-		plot(
-			det[,"u_n"],
-			det[,"height"],
-			type = "b",
-			pch  = p_type,
-			xlab = paste("クラスター結合回数（最後の",pp_focus,"回）",sep = ""),
-			ylab = "結合水準（非類似度）"
-		)
-
-		text(
-			x      = det[,"u_n"],
-			y      = det[,"height"]
-			         - ( max(det[,"height"]) - min(det[,"height"]) ) / 40,
-			labels = p_nums,
-			pos    = 4,
-			offset = .2,
-			cex    = .8
-		)
-
-		legend(
-			min(det[,"u_n"]),
-			max(det[,"height"]),
-			legend = c("※プロット内の数値ラベルは\n　結合後のクラスター数"),
-			#pch = c(16),
-			cex = .8,
-			box.lty = 0
-		)
-	';
+	# 併合水準のプロット（Rコマンド）
+	my $r_command_height = &r_command_height;
 	
 	# クラスター化（Rコマンド）
 	my $r_command_ward;
@@ -344,7 +280,9 @@ sub calc_exec{
 
 	# kh_r_plotモジュールにはEUCのRコマンドを渡す
 	kh_r_plot->clear_env;
-	my $plot_ward = kh_r_plot->new(
+	my $plots;
+	
+	$plots->{_cluster_tmp_w} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward',
 		command_f =>  $r_command
 		             .$r_command_ward
@@ -353,7 +291,8 @@ sub calc_exec{
 		height    => 480,
 	);
 
-	my $plot_ave = kh_r_plot->new(
+
+	$plots->{_cluster_tmp_a} = kh_r_plot->new(
 		name      => 'doc_cls_height_ave',
 		command_f =>  $r_command
 		             .$r_command_ave
@@ -364,7 +303,7 @@ sub calc_exec{
 		height    => 480,
 	);
 
-	my $plot_cmp = kh_r_plot->new(
+	$plots->{_cluster_tmp_c} = kh_r_plot->new(
 		name      => 'doc_cls_height_cmp',
 		command_f =>  $r_command
 		             .$r_command_cmp
@@ -430,6 +369,7 @@ sub calc_exec{
 	gui_window::doc_cls_res->open(
 		command_f => $r_command,
 		tani      => $args{tani},
+		plots     => $plots,
 	);
 
 	return 1;
@@ -472,7 +412,85 @@ sub hinshi{
 	return $self->{words_obj}->hinshi;
 }
 
+sub r_command_height{
+	my $t = << 'END_OF_the_R_COMMAND';
 
+# 併合水準を取得
+det <- dcls$merge
+det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
+colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
+# プロットの準備開始
+pp_focus  <- 50     # 最後の50回の併合をプロット
+pp_kizami <-  5     # クラスター数を5個おきに表示するか
+
+# 必要な部分の併合を取得
+n_start <- nrow(det) - pp_focus + 1
+if (n_start < 1){ n_start <- 1 }
+det <- det[nrow(det):n_start,]
+
+# クラスター数のマーカーを入れる準備
+p_type <- NULL
+p_nums <- NULL
+for (i in 1:nrow(det)){
+	if ( (i %%  pp_kizami == 0) | (i == 1)){
+		p_type <- c(p_type, 16)
+		p_nums <- c(p_nums, i)
+	} else {
+		p_type <- c(p_type, 1)
+		p_nums <- c(p_nums, "")
+	}
+}
+
+# プロット
+par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+plot(
+	det[,"u_n"],
+	det[,"height"],
+	type = "b",
+	pch  = p_type,
+	xlab = paste("クラスター併合の段階（最後の",pp_focus,"回）",sep = ""),
+	ylab = "併合水準（非類似度）"
+)
+
+text(
+	x      = det[,"u_n"],
+	y      = det[,"height"]
+	         - ( max(det[,"height"]) - min(det[,"height"]) ) / 40,
+	labels = p_nums,
+	pos    = 4,
+	offset = .2,
+	cex    = .8
+)
+
+legend(
+	min(det[,"u_n"]),
+	max(det[,"height"]),
+	legend = c("※プロット内の数値ラベルは\n　併合後のクラスター総数"),
+	#pch = c(16),
+	cex = .8,
+	box.lty = 0
+)
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_fix_d{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+n_cut <- NULL
+for (i in 1:12){
+	if ( colnames(d)[i] == "length_w" ){
+		n_cut <- i
+		break
+	}
+}
+n_cut <- n_cut * -1
+d <- d[,-1:n_cut]
+
+END_OF_the_R_COMMAND
+return $t;
+}
 
 1;
