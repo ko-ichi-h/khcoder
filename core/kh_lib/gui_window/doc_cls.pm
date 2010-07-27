@@ -220,8 +220,6 @@ sub calc{
 	my $r_command = "d <- read.csv(\"$file_csv\")\n";
 	$r_command .= &r_command_fix_d;
 
-
-
 	$r_command .= "\n# END: DATA\n";
 
 	&calc_exec(
@@ -278,42 +276,121 @@ sub calc_exec{
 	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
 	$r_command_cmp .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
 
-	# kh_r_plotモジュールにはEUCのRコマンドを渡す
+	# kh_r_plotモジュールにはEUCのRコマンドを渡すこと
 	kh_r_plot->clear_env;
 	my $plots;
 	
-	$plots->{_cluster_tmp_w} = kh_r_plot->new(
-		name      => 'doc_cls_height_ward',
+	# ward
+	$plots->{_cluster_tmp_w}{last} = kh_r_plot->new(
+		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
 		             .$r_command_ward
+		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
 	);
 
+	$plots->{_cluster_tmp_w}{first} = kh_r_plot->new(
+		name      => 'doc_cls_height_ward_first',
+		command_f =>  $r_command
+		             .$r_command_ward
+		             ."pp_type <- \"first\"\n"
+		             .$r_command_height,
+		command_a =>  "pp_type <- \"first\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
 
-	$plots->{_cluster_tmp_a} = kh_r_plot->new(
-		name      => 'doc_cls_height_ave',
+	$plots->{_cluster_tmp_w}{all} = kh_r_plot->new(
+		name      => 'doc_cls_height_ward_all',
+		command_f =>  $r_command
+		             .$r_command_ward
+		             ."pp_type <- \"all\"\n"
+		             .$r_command_height,
+		command_a =>  "pp_type <- \"all\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	# average
+	$plots->{_cluster_tmp_a}{last} = kh_r_plot->new(
+		name      => 'doc_cls_height_ave_last',
 		command_f =>  $r_command
 		             .$r_command_ave
+		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		command_a =>  $r_command_ave
+		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
 	);
 
-	$plots->{_cluster_tmp_c} = kh_r_plot->new(
-		name      => 'doc_cls_height_cmp',
+	$plots->{_cluster_tmp_a}{first} = kh_r_plot->new(
+		name      => 'doc_cls_height_ave_first',
 		command_f =>  $r_command
-		             .$r_command_cmp
+		             .$r_command_ave
+		             ."pp_type <- \"first\"\n"
 		             .$r_command_height,
-		command_a =>  $r_command_cmp
+		command_a =>  "pp_type <- \"first\"\n"
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
 	);
-	
+
+	$plots->{_cluster_tmp_a}{all} = kh_r_plot->new(
+		name      => 'doc_cls_height_ave_all',
+		command_f =>  $r_command
+		             .$r_command_ave
+		             ."pp_type <- \"first\"\n"
+		             .$r_command_height,
+		command_a =>  "pp_type <- \"all\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	# complete
+	$plots->{_cluster_tmp_c}{last} = kh_r_plot->new(
+		name      => 'doc_cls_height_cmp_last',
+		command_f =>  $r_command
+		             .$r_command_cmp
+		             ."pp_type <- \"last\"\n"
+		             .$r_command_height,
+		command_a =>  $r_command_cmp
+		             ."pp_type <- \"last\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	$plots->{_cluster_tmp_c}{first} = kh_r_plot->new(
+		name      => 'doc_cls_height_cmp_first',
+		command_f =>  $r_command
+		             .$r_command_cmp
+		             ."pp_type <- \"first\"\n"
+		             .$r_command_height,
+		command_a =>  "pp_type <- \"first\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
+	$plots->{_cluster_tmp_c}{all} = kh_r_plot->new(
+		name      => 'doc_cls_height_cmp_all',
+		command_f =>  $r_command
+		             .$r_command_cmp
+		             ."pp_type <- \"all\"\n"
+		             .$r_command_height,
+		command_a =>  "pp_type <- \"all\"\n"
+		             .$r_command_height,
+		width     => 640,
+		height    => 480,
+	);
+
 	# クラスター番号の書き出し（Rコマンド）
 	my $r_command_fin = '';
 	$r_command_fin .= "colnames(r) <- 
@@ -380,7 +457,7 @@ sub calc_exec{
 
 
 sub label{
-	return '文書・クラスター分析：オプション';
+	return '文書のクラスター分析：オプション';
 }
 
 sub win_name{
@@ -415,24 +492,32 @@ sub hinshi{
 sub r_command_height{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-pp_type <- "last" # first, last, all
-
 # プロットの準備開始
 pp_focus  <- 50     # 最初・最後の50回の併合をプロット
-pp_kizami <-  5     # クラスター数を5個おきに表示するか
+pp_kizami <-  5     # クラスター数のきざみ（5個おきに表示）
 
 # 併合水準を取得
 det <- dcls$merge
 det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
-# 必要な部分の併合を取得
+# タイプ別の処理：必要な部分の併合データ切出し・表記・クラスター数表示のきざみ
 if (pp_type == "last"){
 	n_start <- nrow(det) - pp_focus + 1
 	if (n_start < 1){ n_start <- 1 }
 	det <- det[nrow(det):n_start,]
+	
+	str_xlab <- paste("（最後の",pp_focus,"回）",sep="")
 } else if (pp_type == "first") {
 	det <- det[pp_focus:1,]
+	
+	str_xlab <- paste("（最初の",pp_focus,"回）",sep="")
+} else if (pp_type == "all") {
+	det <- det[nrow(det):1,]
+	pp_kizami <- nrow(det) / 8
+	pp_kizami <- pp_kizami - ( pp_kizami %% 5 ) + 5
+	
+	str_xlab <- ""
 }
 
 # クラスター数のマーカーを入れる準備
@@ -455,7 +540,7 @@ plot(
 	det[,"height"],
 	type = "b",
 	pch  = p_type,
-	xlab = paste("クラスター併合の段階（最後の",pp_focus,"回）",sep = ""),
+	xlab = paste("クラスター併合の段階",str_xlab,sep = ""),
 	ylab = "併合水準（非類似度）"
 )
 

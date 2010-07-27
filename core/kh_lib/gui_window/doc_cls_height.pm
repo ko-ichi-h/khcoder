@@ -17,17 +17,37 @@ sub _new{
 	my $win = $self->{win_obj};
 	$self->{plots} = $args{plots};
 	$self->{type}  = $args{type};
+	$self->{range} = 'last';
 
 	$win->title($self->gui_jt('文書のクラスター分析：併合水準','euc'));
 	
 	$self->{photo} = $win->Label(
-		-image => $win->Photo(-file => $args{plots}->{$args{type}}->path),
+		-image => $win->Photo(
+			-file => $args{plots}->{$args{type}}{$self->{range}}->path
+		),
 		-borderwidth => 2,
 		-relief => 'sunken',
 	)->pack(-anchor => 'c');
 
 	my $f1 = $win->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
+	$f1->Label(
+		-text => $self->gui_jchar(' プロット範囲：'),
+		-font => "TKFN"
+	)->pack(-anchor => 'e', -side => 'left');
+
+	$self->{optmenu} = gui_widget::optmenu->open(
+		parent  => $f1,
+		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
+		options =>
+			[
+				[$self->gui_jchar('最後50')  => 'last' ],
+				[$self->gui_jchar('最初50')  => 'first'],
+				[$self->gui_jchar('全体')    => 'all'  ],
+			],
+		variable => \$self->{range},
+		command  => sub {$self->renew;},
+	);
 
 	$f1->Button(
 		-text => $self->gui_jchar('閉じる'),
@@ -103,7 +123,7 @@ sub renew{
 	$self->{photo}->configure(
 		-image =>
 			$self->{win_obj}->Photo(
-				-file => $self->{plots}->{$self->{type}}->path
+				-file => $self->{plots}->{$self->{type}}{$self->{range}}->path
 			)
 	);
 	
