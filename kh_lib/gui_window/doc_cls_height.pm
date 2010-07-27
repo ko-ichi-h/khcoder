@@ -32,22 +32,83 @@ sub _new{
 	my $f1 = $win->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	$f1->Label(
-		-text => $self->gui_jchar(' プロット範囲：'),
+		-text => $self->gui_jchar(' プロット範囲： '),
 		-font => "TKFN"
 	)->pack(-anchor => 'e', -side => 'left');
 
-	$self->{optmenu} = gui_widget::optmenu->open(
-		parent  => $f1,
-		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
-		options =>
-			[
-				[$self->gui_jchar('最後50')  => 'last' ],
-				[$self->gui_jchar('最初50')  => 'first'],
-				[$self->gui_jchar('全体')    => 'all'  ],
-			],
-		variable => \$self->{range},
-		command  => sub {$self->renew;},
-	);
+	#$self->{optmenu} = gui_widget::optmenu->open(
+	#	parent  => $f1,
+	#	pack    => {-anchor=>'e', -side => 'left', -padx => 0},
+	#	options =>
+	#		[
+	#			[$self->gui_jchar('最後50')  => 'last' ],
+	#			[$self->gui_jchar('最初50')  => 'first'],
+	#			[$self->gui_jchar('全体')    => 'all'  ],
+	#		],
+	#	variable => \$self->{range},
+	#	command  => sub {$self->renew;},
+	#);
+
+	$self->{btn_first} = $f1->Button(
+		-text => $self->gui_jchar('<< 最初50'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->{range} = 'first';
+					$self->renew;
+					$self->{btn_first}->configure(-state => 'disabled');
+					$self->{btn_all}->configure(  -state => 'normal'  );
+					$self->{btn_last}->configure( -state => 'normal'  );
+					return $self;
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
+
+	$self->{btn_all} = $f1->Button(
+		-text => $self->gui_jchar('全体'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->{range} = 'all';
+					$self->renew;
+					$self->{btn_first}->configure(-state => 'normal'  );
+					$self->{btn_all}->configure(  -state => 'disabled');
+					$self->{btn_last}->configure( -state => 'normal'  );
+					return $self;
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
+
+	$self->{btn_last} = $f1->Button(
+		-text => $self->gui_jchar('最後50 >>'),
+		-font => "TKFN",
+		#-width => 8,
+		-borderwidth => '1',
+		-state => 'disabled',
+		-command => sub{ $mw->after
+			(
+				10,
+				sub {
+					$self->{range} = 'last';
+					$self->renew;
+					$self->{btn_first}->configure(-state => 'normal'  );
+					$self->{btn_all}->configure(  -state => 'normal'  );
+					$self->{btn_last}->configure( -state => 'disabled');
+					return $self;
+				}
+			);
+		}
+	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Button(
 		-text => $self->gui_jchar('閉じる'),
