@@ -55,19 +55,31 @@ sub _new{
 
 	my $fhl = $fr_dcs->Frame->pack(-fill => 'x');
 
-	$fhl->Button(
+	my $btn_ds = $fhl->Button(
 		-text        => $self->gui_jchar('文書検索'),
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub{ $mw->after(10,sub {$self->cls_docs;}); }
 	)->pack(-side => 'left', -padx => 2, -pady => 2, -anchor => 'c');
 
-	$fhl->Button(
+	$wmw->Balloon()->attach(
+		$btn_ds,
+		-balloonmsg => $self->gui_jchar("[ダブルクリック]\nクラスターに含まれる文書を検索"),
+		-font       => "TKFN"
+	);
+
+	my $btn_ass = $fhl->Button(
 		-text        => $self->gui_jchar('特徴語'),
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub{ $mw->after(10,sub {$self->cls_words;}); }
 	)->pack(-side => 'left', -padx => 2, -pady => 2, -anchor => 'c');
+	
+	$wmw->Balloon()->attach(
+		$btn_ass,
+		-balloonmsg => $self->gui_jchar("[Shift + ダブルクリック]\nクラスターの特徴をあらわす語を検索"),
+		-font       => "TKFN"
+	);
 	
 	$self->{copy_btn} = $fhl->Button(
 		-text        => $self->gui_jchar('コピー'),
@@ -120,6 +132,37 @@ sub _new{
 	
 	my $fhr = $fr_cls->Frame->pack(-fill => 'x');
 
+	my $mb = $fhr->Menubutton(
+		-text        => $self->gui_jchar('文書検索'),
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-width       => $self->{width},
+		-borderwidth => 1,
+	)->pack(-side => 'left',-padx => 2, -pady => 2);
+
+	$mb->command(
+		-command => sub {$self->merge_docs();},
+		-label   => $self->gui_jchar('1と2'),
+	);
+
+	$mb->command(
+		-command => sub {$self->merge_docs('l');},
+		-label   => $self->gui_jchar('1のみ'),
+	);
+
+	$mb->command(
+		-command => sub {$self->merge_docs('r');},
+		-label   => $self->gui_jchar('2のみ'),
+	);
+
+	$wmw->Balloon()->attach(
+		$mb,
+		-balloonmsg => $self->gui_jchar("[ダブルクリック]\n併合したクラスターに含まれる文書を検索"),
+		-font       => "TKFN"
+	);
+
 	$self->{btn_prev} = $fhr->Button(
 		-text => $self->gui_jchar('前200'),
 		-font => "TKFN",
@@ -145,7 +188,15 @@ sub _new{
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub{ $mw->after(10,sub {
-			gui_hlist->copy_all($self->list2);
+			return 0 unless $::config_obj->os eq 'win32';
+			my $t = '';
+			foreach my $i (@{$self->{merge}}){
+				$t .= "$i->[0]\t$i->[1]\t$i->[2]\t$i->[3]\n";
+			}
+			require Win32::Clipboard;
+			my $CLIP = Win32::Clipboard();
+			$CLIP->Empty();
+			$CLIP->Set("$t");
 		});} 
 	)->pack(-side => 'right', -padx => 2, -pady => 2);
 	
@@ -171,7 +222,9 @@ sub _new{
 	#----------------#
 	#   Window下部   #
 	
-	$wmw->Label(
+	my $fb = $wmw->Frame()->pack(-fill => 'x', -padx => 2, -pady => 2);
+	
+	$fb->Label(
 		-text => $self->gui_jchar('方法：',),
 		-font => "TKFN",
 	)->pack(-side => 'left');
@@ -183,7 +236,7 @@ sub _new{
 	);
 	
 	$self->{optmenu} = gui_widget::optmenu->open(
-		parent  => $wmw,
+		parent  => $fb,
 		pack    => {-side => 'left', -padx => 2},
 		options => \@opt,
 		variable => \$self->{tmp_out_var},
@@ -191,7 +244,7 @@ sub _new{
 	);
 	$self->{optmenu}->set_value('_cluster_tmp_w');
 	
-	$wmw->Button(
+	$fb->Button(
 		-text => $self->gui_jchar('調整'),
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -203,7 +256,7 @@ sub _new{
 		});} 
 	)->pack(-side => 'left',-padx => 5);
 
-	$wmw->Button(
+	$fb->Button(
 		-text => $self->gui_jchar('分類結果の保存'),
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -356,6 +409,7 @@ sub fill_list2{
 
 sub merge_docs{
 	my $self = shift;
+	my $opt  = shift;
 	
 	# 選択箇所を取得
 	my @selected = $self->list2->infoSelection;
@@ -367,15 +421,30 @@ sub merge_docs{
 	# 文書番号を探索
 	my (@docs, @cls);
 	
-	if ($self->{merge}[$n][1] > 0){
-		push @cls, $self->{merge}[$n][1];
-	} else {
-		push @docs, $self->{merge}[$n][1] * -1;
+	if ($opt eq 'l'){
+		if ($self->{merge}[$n][1] > 0){
+			push @cls, $self->{merge}[$n][1];
+		} else {
+			push @docs, $self->{merge}[$n][1] * -1;
+		}
 	}
-	if ($self->{merge}[$n][2] > 0){
-		push @cls, $self->{merge}[$n][2];
+	elsif ($opt eq 'r'){
+		if ($self->{merge}[$n][2] > 0){
+			push @cls, $self->{merge}[$n][2];
+		} else {
+			push @docs, $self->{merge}[$n][2] * -1;
+		}
 	} else {
-		push @docs, $self->{merge}[$n][2] * -1;
+		if ($self->{merge}[$n][1] > 0){
+			push @cls, $self->{merge}[$n][1];
+		} else {
+			push @docs, $self->{merge}[$n][1] * -1;
+		}
+		if ($self->{merge}[$n][2] > 0){
+			push @cls, $self->{merge}[$n][2];
+		} else {
+			push @docs, $self->{merge}[$n][2] * -1;
+		}
 	}
 	
 	while (@cls){
@@ -397,22 +466,89 @@ sub merge_docs{
 	
 	$n = @docs;
 	if ($n > 200){
-		my $msg = "$nの文書が選択されましたが、本機能で検索できる文書の数は200までです。\n検索を中止します。ご不便をおかけして申し訳ありません。";
-		$msg = $self->gui_jchar($msg);
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => $msg
-		);
-		return 0;
+		$self->search_byov(\@docs);
+	} else {
+		$self->search_direct(\@docs);
+	}
+}
+
+sub search_byov{
+	my $self = shift;
+	my $docs = shift;
+	
+	# データ準備
+	my %doc;
+	foreach my $i (@{$docs}){
+		$doc{$i} = 1;
 	}
 	
+	my $n_doc = mysql_exec->select("SELECT count(*) FROM $self->{tani}")
+		->hundle->fetch->[0];
+	my $t = "_temp_for_search\n";
+	for (my $n = 1; $n <= $n_doc; ++$n){
+		if ($doc{$n}){
+			$t .= "1\n";
+		} else {
+			$t .= "0\n";
+		}
+	}
+	chomp $t;
+	
+	# ファイルに書き出し
+	my $file = $::project_obj->file_TempCSV;
+	open (OVOUT,">$file") or 
+		gui_errormsg->open(
+			type => 'file',
+			file => $file,
+		);
+	print OVOUT $t;
+	close (OVOUT);
+	
+	# 外部変数として読み込み
+	foreach my $i (@{mysql_outvar->get_list}){
+		if ($i->[1] eq '_temp_for_search'){
+			mysql_outvar->delete(name => '_temp_for_search');
+		}
+	}
+	mysql_outvar::read::tab->new(
+		file     => $file,
+		tani     => $self->{tani},
+		var_type => 'INT',
+	)->read;
+	
+	# リモートウィンドウの操作
+	my $win;
+	if ($::main_gui->if_opened('w_doc_search')){
+		$win = $::main_gui->get('w_doc_search');
+	} else {
+		$win = gui_window::doc_search->open;
+	}
+	
+	$win->{tani_obj}->{raw_opt} = $self->{tani};
+	$win->{tani_obj}->mb_refresh;
+	
+	$win->{clist}->selectionClear;
+	$win->{clist}->selectionSet(0);
+	$win->clist_check;
+	
+	$win->{direct_w_o}->set_value('code');
+	
+	$win->{direct_w_e}->delete(0,'end');
+	$win->{direct_w_e}->insert('end','<>_temp_for_search-->1');
+	$win->win_obj->focus;
+	$win->search;
+}
+
+sub search_direct{
+	my $self = shift;
+	my $docs = shift;
+	
 	my $q = '';
-	foreach my $i (@docs){
+	foreach my $i (@{$docs}){
 		$q .= " | " if length($q);
 		$q .= "No. == $i";
 	}
 	
-	print "$q\n";
 	# リモートウィンドウの操作
 	my $win;
 	if ($::main_gui->if_opened('w_doc_search')){
@@ -434,8 +570,6 @@ sub merge_docs{
 	$win->{direct_w_e}->insert('end',$q);
 	$win->win_obj->focus;
 	$win->search;
-
-
 }
 
 
@@ -510,12 +644,16 @@ sub end{
 		if ($i->[1] =~ /^_cluster_tmp_[wac]$/){
 			mysql_outvar->delete(name => $i->[1]);
 		}
+		if ($i->[1] eq '_temp_for_search'){
+			mysql_outvar->delete(name => '_temp_for_search');
+		}
 	}
 	# 「外部変数リスト」が開いている場合は更新
-	my $win_list = $::main_gui->get('w_outvar_list');
-	if ( defined($win_list) ){
-		$win_list->_fill;
+	if ($::main_gui->if_opened('w_outvar_list')){
+		my $win_list = $::main_gui->get('w_outvar_list');
+		$win_list->_fill if defined($win_list);
 	}
+	
 	# 「併合水準」が開いている場合は閉じる
 	if ($::main_gui->if_opened('w_doc_cls_height')){
 		$::main_gui->get('w_doc_cls_height')->close;
