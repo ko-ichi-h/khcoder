@@ -33,5 +33,22 @@ sub _copy{
 		$CLIP->Set("$clip");
 	}
 }
-1;
 
+sub _copy_all{
+	my $self = shift;
+	my $clip = gui_hlist->get_all($self->list);
+
+	$clip = gui_window->gui_jg($clip);
+
+	#print "$clip\n";
+
+	require Win32::Clipboard;
+	my $CLIP = Win32::Clipboard();
+
+	if (defined($clip) && length($clip)){
+		$CLIP->Empty();
+		$CLIP->Set("$clip");
+	}
+}
+
+1;

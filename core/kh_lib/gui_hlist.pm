@@ -18,6 +18,14 @@ sub copy{
 	$self->_copy;
 }
 
+sub copy_all{
+	my $class = shift;
+	my $self;
+	$self->{list} = shift;
+	bless $self, "$class"."::".$::config_obj->os;
+	$self->_copy_all;
+}
+
 sub update4scroll{
 	my $class = shift;
 	my $self;

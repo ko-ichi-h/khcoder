@@ -8,4 +8,11 @@ sub _copy{
 		type => 'msg',
 	);
 }
+
+sub _copy_all{
+	gui_errormsg->open(
+		msg => 'Linux上でのコピーは現在サポートしていません。',
+		type => 'msg',
+	);
+}
 1;
