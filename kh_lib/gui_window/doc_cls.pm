@@ -213,9 +213,11 @@ sub calc{
 	$file_csv = Jcode->new($file_csv)->euc
 		unless $icode eq 'euc' or $icode eq 'ascii';
 	$file_csv =~ s/\\/\\\\/g;
-	$file_csv = Jcode->new($file_csv)->$icode
-		unless $icode eq 'euc' or $icode eq 'ascii';
-	print "$file_csv\n";
+	
+	# RコマンドはEUCで渡す（sjisに戻さない）
+	#$file_csv = Jcode->new($file_csv)->$icode
+	#	unless $icode eq 'euc' or $icode eq 'ascii';
+	#print "$file_csv\n";
 
 	my $r_command = "d <- read.csv(\"$file_csv\")\n";
 	$r_command .= &r_command_fix_d;
@@ -244,9 +246,10 @@ sub calc_exec{
 		$file = Jcode->new($file,'sjis')->euc;
 		$file =~ s/\\/\\\\/g;
 	} else {
-		$icode = Jcode::getcode($file);
-		$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
-		$file =~ s/\\/\\\\/g;
+		# たぶん変換は不要
+		#$icode = Jcode::getcode($file);
+		#$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
+		#$file =~ s/\\/\\\\/g;
 		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
 	}
 
@@ -276,6 +279,12 @@ sub calc_exec{
 	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
 	$r_command_cmp .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
 
+	# 併合過程を保存するファイル群
+	my $merges;
+	$merges->{_cluster_tmp_w} = $::project_obj->file_TempCSV;
+	$merges->{_cluster_tmp_a} = $::project_obj->file_TempCSV;
+	$merges->{_cluster_tmp_c} = $::project_obj->file_TempCSV;
+
 	# kh_r_plotモジュールにはEUCのRコマンドを渡すこと
 	kh_r_plot->clear_env;
 	my $plots;
@@ -285,6 +294,7 @@ sub calc_exec{
 		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
 		             .$r_command_ward
+		             .&r_command_mout($merges->{_cluster_tmp_w})
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		width     => 640,
@@ -323,6 +333,7 @@ sub calc_exec{
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		command_a =>  $r_command_ave
+		             .&r_command_mout($merges->{_cluster_tmp_a})
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		width     => 640,
@@ -361,6 +372,7 @@ sub calc_exec{
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		command_a =>  $r_command_cmp
+		             .&r_command_mout($merges->{_cluster_tmp_c})
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		width     => 640,
@@ -444,9 +456,10 @@ sub calc_exec{
 	)->read;
 
 	gui_window::doc_cls_res->open(
-		command_f => $r_command,
-		tani      => $args{tani},
-		plots     => $plots,
+		command_f   => $r_command,
+		tani        => $args{tani},
+		plots       => $plots,
+		merge_files => $merges,
 	);
 
 	return 1;
@@ -582,6 +595,18 @@ d <- d[,-1:n_cut]
 
 END_OF_the_R_COMMAND
 return $t;
+}
+
+sub r_command_mout{
+	my $file = shift;
+	if ($::config_obj->os eq 'win32'){
+		$file = Jcode->new($file,'sjis')->euc;
+		$file =~ s/\\/\\\\/g;
+	}
+	
+	my $t = '';
+	$t .= 'mout <- cbind(1:nrow(dcls$merge), dcls$merge, dcls$height)'."\n";
+	$t .= "write.table(mout, file=\"$file\", col.names=FALSE, row.names=FALSE, sep=\",\")\n"
 }
 
 1;

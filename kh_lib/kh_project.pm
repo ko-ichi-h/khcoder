@@ -586,6 +586,11 @@ sub file_TempCSV{
 	}
 	my $f = $self->file_datadir.'_temp'.$n.'.csv';
 	$f = $::config_obj->os_path($f);
+	
+	# 空ファイルを作成しておく
+	open (TOUT, ">$f");
+	close (TOUT);
+	
 	return $f;
 }
 sub file_TempExcel{
