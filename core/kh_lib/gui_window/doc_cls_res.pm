@@ -97,7 +97,7 @@ sub _new{
 	#	-balloonmsg => 'Ctrl + C',
 	#	-font => "TKFN"
 	#);
-	
+
 	#--------------------------#
 	#   クラスター併合の過程   #
 	
@@ -303,10 +303,13 @@ sub renew{
 	$self->list->delete('all');
 	my $row = 0;
 	foreach my $i (sort {$a<=>$b} keys %v){
+		my $t = $self->gui_jchar('クラスター'.$i, 'euc');
+		$t = $self->gui_jchar('分類不可', 'euc') if $i eq '.';
+		
 		$self->list->add($row,-at => "$row");
 		$self->list->itemCreate(
 			$row, 0,
-			-text  => $self->gui_jchar('クラスター'.$i, 'euc'),
+			-text  => $t,
 		);
 		$self->list->itemCreate(
 			$row, 1,
@@ -582,7 +585,11 @@ sub cls_words{
 		return 0;
 	}
 	my $query = $self->gui_jg( $self->list->itemCget($selected[0], 0, -text) );
-	substr($query, 0, 10) = '';
+	if ($query eq Jcode->new('分類不可')->sjis){
+		$query = '.';
+	} else {
+		substr($query, 0, 10) = '';
+	}
 	$query = '<>'.$self->{tmp_out_var}.'-->'.$query;
 	
 	# リモートウィンドウの操作
@@ -615,7 +622,11 @@ sub cls_docs{
 		return 0;
 	}
 	my $query = $self->gui_jg( $self->list->itemCget($selected[0], 0, -text) );
-	substr($query, 0, 10) = '';
+	if ($query eq Jcode->new('分類不可')->sjis){
+		$query = '.';
+	} else {
+		substr($query, 0, 10) = '';
+	}
 	$query = '<>'.$self->{tmp_out_var}.'-->'.$query;
 	
 	# リモートウィンドウの操作

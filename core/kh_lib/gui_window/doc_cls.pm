@@ -255,6 +255,9 @@ sub calc_exec{
 
 	# 類似度行列の作成（Rコマンド）
 	$r_command .= "library(amap)\n";
+	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
+	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
+	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	if ($args{method_dist} eq 'euclid'){
 		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
 		$r_command .= "d <- t( scale( t(d) ) )\n";
@@ -294,9 +297,9 @@ sub calc_exec{
 		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
 		             .$r_command_ward
-		             .&r_command_mout($merges->{_cluster_tmp_w})
 		             ."pp_type <- \"last\"\n"
-		             .$r_command_height,
+		             .$r_command_height
+		             .&r_command_mout($merges->{_cluster_tmp_w}),
 		width     => 640,
 		height    => 480,
 	);
@@ -333,9 +336,9 @@ sub calc_exec{
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		command_a =>  $r_command_ave
-		             .&r_command_mout($merges->{_cluster_tmp_a})
 		             ."pp_type <- \"last\"\n"
-		             .$r_command_height,
+		             .$r_command_height
+		             .&r_command_mout($merges->{_cluster_tmp_a}),
 		width     => 640,
 		height    => 480,
 	);
@@ -372,9 +375,9 @@ sub calc_exec{
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height,
 		command_a =>  $r_command_cmp
-		             .&r_command_mout($merges->{_cluster_tmp_c})
 		             ."pp_type <- \"last\"\n"
-		             .$r_command_height,
+		             .$r_command_height
+		             .&r_command_mout($merges->{_cluster_tmp_c}),
 		width     => 640,
 		height    => 480,
 	);
@@ -404,7 +407,7 @@ sub calc_exec{
 	);
 
 	# クラスター番号の書き出し（Rコマンド）
-	my $r_command_fin = '';
+	my $r_command_fin = &r_command_fix_r;
 	$r_command_fin .= "colnames(r) <- 
 		c(\"_cluster_tmp_w\",\"_cluster_tmp_a\",\"_cluster_tmp_c\")\n";
 	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
@@ -452,7 +455,7 @@ sub calc_exec{
 	mysql_outvar::read::tab->new(
 		file     => $file,
 		tani     => $args{tani},
-		var_type => 'INT',
+		#var_type => 'INT',
 	)->read;
 
 	gui_window::doc_cls_res->open(
@@ -510,7 +513,25 @@ pp_focus  <- 50     # 最初・最後の50回の併合をプロット
 pp_kizami <-  5     # クラスター数のきざみ（5個おきに表示）
 
 # 併合水準を取得
-det <- dcls$merge
+mergep <- dcls$merge
+if ( nrow(d) < n_org ){
+	merge_tmp <- NULL
+	for (i in 1:nrow(dcls$merge)){
+		if (dcls$merge[i,1] < 0){
+			c1 <- as.numeric( row.names(d)[dcls$merge[i,1] * -1] ) * -1
+		} else {
+			c1 <- dcls$merge[i,1]
+		}
+		if (dcls$merge[i,2] < 0){
+			c2 <- as.numeric( row.names(d)[dcls$merge[i,2] * -1] ) * -1
+		} else {
+			c2 <- dcls$merge[i,2]
+		}
+		merge_tmp <- rbind( merge_tmp, c(c1, c2) )
+	}
+	mergep <- merge_tmp
+}
+det <- mergep
 det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
@@ -605,8 +626,36 @@ sub r_command_mout{
 	}
 	
 	my $t = '';
-	$t .= 'mout <- cbind(1:nrow(dcls$merge), dcls$merge, dcls$height)'."\n";
+	$t .= 'mout <- cbind(1:nrow(mergep), mergep, dcls$height)'."\n";
 	$t .= "write.table(mout, file=\"$file\", col.names=FALSE, row.names=FALSE, sep=\",\")\n"
+}
+
+sub r_command_fix_r{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+if ( nrow(d) < n_org ){
+	r_temp <- NULL
+	fixed  <- 0
+	for ( i in 1:nrow(r) ){
+		if (
+			   ( i         != as.numeric( row.names(r)[i] ) )
+			&& ( i + fixed != as.numeric( row.names(r)[i] ) )
+		){
+			gap <- as.numeric( row.names(r)[i] ) - i - fixed
+			#print(paste("gap", gap, "fixed", fixed))
+			for (h in 1:gap){
+				r_temp <- rbind(r_temp, c(".",".","."))
+				fixed <- fixed + 1
+			}
+		}
+		#print (paste(i,row.names(r)[i]))
+		r_temp <- rbind(r_temp, r[i,])
+	}
+	r <- r_temp
+}
+
+END_OF_the_R_COMMAND
+return $t;
 }
 
 1;
