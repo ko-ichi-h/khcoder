@@ -155,10 +155,16 @@ sub save{
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 
-	# R Sourceを保存する場合には対策が必要？
-	$self->{plots}->{$self->{type}}->save($path) if $path;
-
+	$self->_save($path) if length($path);
 	return 1;
+}
+
+sub _save{
+	my $self = shift;
+	my $path = shift;
+	
+	# R Sourceを保存する場合には対策が必要？
+	$self->{plots}{$self->{type}}{$self->{range}}->save($path) if $path;
 }
 
 sub renew{
@@ -171,7 +177,7 @@ sub renew{
 	$self->{photo}->configure(
 		-image =>
 			$self->{win_obj}->Photo(
-				-file => $self->{plots}->{$self->{type}}{$self->{range}}->path
+				-file => $self->{plots}{$self->{type}}{$self->{range}}->path
 			)
 	);
 	
