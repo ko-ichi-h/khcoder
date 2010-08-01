@@ -325,7 +325,7 @@ sub make_plot{
 	$plot1->rotate_cls;
 
 	foreach my $i ('last','first','all'){
-		$merges->{$args{plotwin_name}}[0]{$i} = kh_r_plot->new(
+		$merges->{0}{$i} = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_1_'.$i,
 			command_f =>  $r_command
 			             ."pp_type <- \"$i\"\n"
@@ -348,7 +348,7 @@ sub make_plot{
 	$plot2->rotate_cls;
 
 	foreach my $i ('last','first','all'){
-		$merges->{$args{plotwin_name}}[1]{$i} = kh_r_plot->new(
+		$merges->{1}{$i} = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_2_'.$i,
 			command_f =>  $r_command_2
 			             ."pp_type <- \"$i\"\n"
@@ -371,7 +371,7 @@ sub make_plot{
 	$plot3->rotate_cls;
 
 	foreach my $i ('last','first','all'){
-		$merges->{$args{plotwin_name}}[2]{$i} = kh_r_plot->new(
+		$merges->{2}{$i} = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_3_'.$i,
 			command_f =>  $r_command_3
 			             ."pp_type <- \"$i\"\n"

@@ -200,7 +200,7 @@ sub _new{
 					$self->{tmp_out_var}
 				);
 			} else {
-				gui_window::doc_cls_height->open(
+				gui_window::cls_height::doc->open(
 					plots => $self->{plots},
 					type  => $self->{tmp_out_var},
 				);
