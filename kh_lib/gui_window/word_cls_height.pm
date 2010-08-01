@@ -17,7 +17,6 @@ sub _new{
 	my $win = $self->{win_obj};
 	$self->{plots} = $args{plots};
 	$self->{type}  = $args{type};
-	$self->{w_c}   = $args{w_c};
 	$self->{range} = 'last';
 
 	#print "plots: $self->{plots}\n";
@@ -28,7 +27,7 @@ sub _new{
 
 	$self->{photo} = $win->Label(
 		-image => $win->Photo(
-			-file => $self->{plots}{$self->{w_c}}[$self->{type}]{$self->{range}}->path
+			-file => $self->{plots}{$self->{type}}{$self->{range}}->path
 		),
 		-borderwidth => 2,
 		-relief => 'sunken',
