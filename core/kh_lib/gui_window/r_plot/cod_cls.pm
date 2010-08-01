@@ -43,9 +43,8 @@ sub start{
 							$self->{ax}
 						);
 					} else {
-						gui_window::cod_cls_height->open(
+						gui_window::cls_height::cod->open(
 							plots => $self->{merges},
-							w_c   => $self->base_name,
 							type  => $self->{ax},
 						);
 					}
@@ -53,6 +52,12 @@ sub start{
 			);
 		}
 	)->pack(-side => 'left',-padx => 2);
+}
+
+sub end{
+	if ($::main_gui->if_opened('w_cod_cls_height')){
+		$::main_gui->get('w_cod_cls_height')->close;
+	}
 }
 
 sub win_title{
