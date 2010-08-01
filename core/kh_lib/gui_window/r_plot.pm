@@ -25,9 +25,11 @@ sub _new{
 	my $self = shift;
 	my %args = @_;
 
-	$self->{plots} = $args{plots};
-
 	$self->{original_plot_size} = $args{plot_size} if $args{plot_size};
+	foreach my $key (keys %args){
+		next if $key eq 'plot_size';
+		$self->{$key} = $args{$key};
+	}
 
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
@@ -213,6 +215,7 @@ sub _new{
 		}
 	)->pack(-side => 'right',-padx => 4);
 
+	$self->{bottom_frame} = $f1;
 	return $self;
 }
 
