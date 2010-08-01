@@ -50,8 +50,9 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				['Jaccard', 'binary'],
-				['Euclid',  'euclid'],
+				['Jaccard', 'binary' ],
+				['Euclid',  'euclid' ],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
@@ -276,10 +277,9 @@ sub make_plot{
 
 	if ($args{method_dist} eq 'euclid'){
 		$r_command .= "d <- t( scale( t(d) ) )\n";
-		$r_command .= "dj <- dist(d,method=\"euclid\")^2\n";
-	} else {
-		$r_command .= "dj <- dist(d,method=\"binary\")\n";
 	}
+	$r_command .= "library(amap)\n";
+	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 
 	my $r_command_2a = 
 		"$par"
@@ -313,6 +313,9 @@ sub make_plot{
 
 	# プロット作成
 	my $flg_error = 0;
+	my $merges;
+	
+	# Ward法
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
@@ -321,6 +324,20 @@ sub make_plot{
 	) or $flg_error = 1;
 	$plot1->rotate_cls;
 
+	foreach my $i ('last','first','all'){
+		$merges->{$args{plotwin_name}}[0]{$i} = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_1_'.$i,
+			command_f =>  $r_command
+			             ."pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			command_a =>  "pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			width     => 640,
+			height    => 480,
+		);
+	}
+
+	# 群平均法
 	my $plot2 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
@@ -330,14 +347,41 @@ sub make_plot{
 	) or $flg_error = 1;
 	$plot2->rotate_cls;
 
+	foreach my $i ('last','first','all'){
+		$merges->{$args{plotwin_name}}[1]{$i} = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_2_'.$i,
+			command_f =>  $r_command_2
+			             ."pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			command_a =>  "pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			width     => 640,
+			height    => 480,
+		);
+	}
+
+	# 最遠隣法
 	my $plot3 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
-		command_a => $r_command_3a,
+		command_a => $r_command_3,
 		command_f => $r_command_3,
 		width     => $args{plot_size},
 		height    => 480,
 	) or $flg_error = 1;
 	$plot3->rotate_cls;
+
+	foreach my $i ('last','first','all'){
+		$merges->{$args{plotwin_name}}[2]{$i} = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_3_'.$i,
+			command_f =>  $r_command_3
+			             ."pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			command_a =>  "pp_type <- \"$i\"\n"
+			             .&r_command_height,
+			width     => 640,
+			height    => 480,
+		);
+	}
 
 	# プロットWindowを開く
 	kh_r_plot->clear_env;
@@ -353,6 +397,7 @@ sub make_plot{
 		plots       => [$plot1,$plot2,$plot3],
 		no_geometry => 1,
 		plot_size   => $args{plot_size},
+		merges      => $merges,
 	);
 
 	return 1;
@@ -394,6 +439,85 @@ sub hinshi{
 	my $self = shift;
 	return $self->{words_obj}->hinshi;
 }
+sub r_command_height{
+	my $t = << 'END_OF_the_R_COMMAND';
 
+# プロットの準備開始
+pp_focus  <- 50     # 最初・最後の50回の併合をプロット
+pp_kizami <-  5     # クラスター数のきざみ（5個おきに表示）
+
+# 併合水準を取得
+det <- hcl$merge
+det <- cbind(1:nrow(det), nrow(det):1, det, hcl$height)
+colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
+
+# タイプ別の処理：必要な部分の併合データ切出し・表記・クラスター数表示のきざみ
+if (pp_type == "last"){
+	n_start <- nrow(det) - pp_focus + 1
+	if (n_start < 1){ n_start <- 1 }
+	det <- det[nrow(det):n_start,]
+	
+	str_xlab <- paste("（最後の",pp_focus,"回）",sep="")
+} else if (pp_type == "first") {
+	if ( pp_focus > nrow(det) ){
+		pp_focus <- nrow(det)
+	}
+	det <- det[pp_focus:1,]
+	
+	str_xlab <- paste("（最初の",pp_focus,"回）",sep="")
+} else if (pp_type == "all") {
+	det <- det[nrow(det):1,]
+	pp_kizami <- nrow(det) / 8
+	pp_kizami <- pp_kizami - ( pp_kizami %% 5 ) + 5
+	
+	str_xlab <- ""
+}
+
+# クラスター数のマーカーを入れる準備
+p_type <- NULL
+p_nums <- NULL
+for (i in 1:nrow(det)){
+	if ( (det[i,"cls_n"] %%  pp_kizami == 0) | (det[i,"cls_n"] == 1)){
+		p_type <- c(p_type, 16)
+		p_nums <- c(p_nums, det[i,"cls_n"])
+	} else {
+		p_type <- c(p_type, 1)
+		p_nums <- c(p_nums, "")
+	}
+}
+
+# プロット
+par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+plot(
+	det[,"u_n"],
+	det[,"height"],
+	type = "b",
+	pch  = p_type,
+	xlab = paste("クラスター併合の段階",str_xlab,sep = ""),
+	ylab = "併合水準（非類似度）"
+)
+
+text(
+	x      = det[,"u_n"],
+	y      = det[,"height"]
+	         - ( max(det[,"height"]) - min(det[,"height"]) ) / 40,
+	labels = p_nums,
+	pos    = 4,
+	offset = .2,
+	cex    = .8
+)
+
+legend(
+	min(det[,"u_n"]),
+	max(det[,"height"]),
+	legend = c("※プロット内の数値ラベルは\n　併合後のクラスター総数"),
+	#pch = c(16),
+	cex = .8,
+	box.lty = 0
+)
+
+END_OF_the_R_COMMAND
+return $t;
+}
 
 1;

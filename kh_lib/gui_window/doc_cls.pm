@@ -2,7 +2,6 @@ package gui_window::doc_cls;
 use base qw(gui_window);
 
 use strict;
-
 use Tk;
 
 use gui_widget::tani;
@@ -543,6 +542,9 @@ if (pp_type == "last"){
 	
 	str_xlab <- paste("（最後の",pp_focus,"回）",sep="")
 } else if (pp_type == "first") {
+	if ( pp_focus > nrow(det) ){
+		pp_focus <- nrow(det)
+	}
 	det <- det[pp_focus:1,]
 	
 	str_xlab <- paste("（最初の",pp_focus,"回）",sep="")

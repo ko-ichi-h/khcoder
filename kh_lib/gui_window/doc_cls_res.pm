@@ -12,16 +12,16 @@ sub _new{
 	$self->{command_f} = $args{command_f};
 	$self->{plots} = $args{plots};
 	$self->{merge_files} = $args{merge_files};
-	
+
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	$wmw->title($self->gui_jt('文書のクラスター分析'));
-	
+
 	#--------------------------------#
 	#   各クラスターに含まれる文書   #
-	
+
 	my $fr_top = $wmw->Frame()->pack(-fill => 'both', -expand => 'yes');
-	
+
 	my $fr_dcs = $fr_top->LabFrame(
 		-label => $self->gui_jchar('各クラスターに含まれる文書'),
 		-labelside => 'acrosstop',
@@ -87,16 +87,6 @@ sub _new{
 		-borderwidth => '1',
 		-command     => sub{ $mw->after(10,sub {gui_hlist->copy_all($self->list);});} 
 	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
-
-	#$self->win_obj->bind(
-	#	'<Control-Key-c>',
-	#	sub{ $self->{copy_btn}->invoke; }
-	#);
-	#$self->win_obj->Balloon()->attach(
-	#	$self->{copy_btn},
-	#	-balloonmsg => 'Ctrl + C',
-	#	-font => "TKFN"
-	#);
 
 	#--------------------------#
 	#   クラスター併合の過程   #

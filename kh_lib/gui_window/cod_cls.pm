@@ -151,8 +151,9 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				['Jaccard', 'binary'],
-				['Euclid',  'euclid'],
+				['Jaccard', 'binary' ],
+				['Euclid',  'euclid' ],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
