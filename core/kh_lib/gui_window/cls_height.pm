@@ -170,7 +170,7 @@ sub _save{
 sub renew{
 	my $self = shift;
 	
-	if ($_[0]){
+	if (defined($_[0])){
 		$self->{type} = shift;
 	}
 	
