@@ -280,6 +280,7 @@ sub make_plot{
 	}
 	$r_command .= "library(amap)\n";
 	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
+	$r_command .= "library(flashClust)\n";
 
 	my $r_command_2a = 
 		"$par"
