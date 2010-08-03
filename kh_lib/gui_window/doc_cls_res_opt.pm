@@ -44,10 +44,10 @@ sub _new{
 	if ( $self->{command_f} =~ /euclid/ ){
 		$widget_dist->set_value('euclid');
 	}
-	elsif ($self->{command_f} =~ /pearson/){
-		$widget_dist->set_value('pearson');
-	} else {
+	elsif ($self->{command_f} =~ /binary/){
 		$widget_dist->set_value('binary');
+	} else {
+		$widget_dist->set_value('pearson');
 	}
 
 	$f4->Label(
