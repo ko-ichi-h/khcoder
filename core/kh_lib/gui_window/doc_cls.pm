@@ -87,7 +87,6 @@ sub _new{
 		-command => sub{ $mw->after(10,sub{$self->calc;});}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
-
 	return $self;
 }
 
@@ -253,7 +252,7 @@ sub calc_exec{
 	}
 
 	# 類似度行列の作成（Rコマンド）
-	$r_command .= "library(amap)\n";
+	#$r_command .= "library(amap)\n";
 	$r_command .= "library(flashClust)\n";
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
@@ -261,9 +260,12 @@ sub calc_exec{
 	if ($args{method_dist} eq 'euclid'){
 		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
 		$r_command .= "d <- t( scale( t(d) ) )\n";
-		$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
+		$r_command .= "dj <- dist(d,method=\"euclid\")^2\n";
+	}
+	elsif ($args{method_dist} eq 'pearson') {
+		$r_command .= &r_command_cosine;
 	} else {
-		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
+		$r_command .= "dj <- dist(d,method=\"$args{method_dist}\")\n";
 	}
 	
 	# 併合水準のプロット（Rコマンド）
@@ -660,5 +662,25 @@ if ( nrow(d) < n_org ){
 END_OF_the_R_COMMAND
 return $t;
 }
+
+sub r_command_cosine{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+my.cosine <- function(x)
+{
+	x <- as.matrix(x)
+	x <- t(x)
+	ss <- 1/sqrt(colSums(x^2))
+	col.similarity <- t(x) %*% x*outer(ss, ss)
+	colnames(col.similarity) <- rownames(col.similarity) <- colnames(x)
+	return(as.dist(1 - col.similarity))
+}
+dj <- my.cosine(d)
+gc()
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
 
 1;
