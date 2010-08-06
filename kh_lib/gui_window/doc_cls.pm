@@ -257,6 +257,9 @@ sub calc_exec{
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
+	
+	$r_command .= &r_command_tfidf;
+	
 	if ($args{method_dist} eq 'euclid'){
 		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
 		$r_command .= "d <- t( scale( t(d) ) )\n";
@@ -677,6 +680,31 @@ my.cosine <- function(x)
 }
 dj <- my.cosine(d)
 gc()
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+
+sub r_command_tfidf{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# binary termfrequency
+lw_bintf <- function(m) {
+    return( (m>0)*1 )
+}
+
+# inverse document frequency
+# from Dumais (1992), Nakov (2001) uses log not log2
+gw_idf <- function(m) {
+    df = rowSums(lw_bintf(m), na.rm=TRUE)
+    return ( ( log2(ncol(m)/df) + 1 ) )
+}
+
+d <- t(d)
+d <- subset(d, rowSums(d) > 0) # 出現数0の語をカット
+d <- d * gw_idf(d)
+d <- t(d)
 
 END_OF_the_R_COMMAND
 return $t;

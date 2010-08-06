@@ -41,10 +41,10 @@ sub _new{
 			],
 		variable => \$self->{method_dist},
 	);
-	if ( $self->{command_f} =~ /euclid/ ){
+	if ( $self->{command_f} =~ /method=\"euclid\"/ ){
 		$widget_dist->set_value('euclid');
 	}
-	elsif ($self->{command_f} =~ /binary/){
+	elsif ($self->{command_f} =~ /method=\"binary\"/){
 		$widget_dist->set_value('binary');
 	} else {
 		$widget_dist->set_value('pearson');
