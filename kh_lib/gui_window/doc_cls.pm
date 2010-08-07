@@ -252,7 +252,7 @@ sub calc_exec{
 	}
 
 	# 類似度行列の作成（Rコマンド）
-	#$r_command .= "library(amap)\n";
+	$r_command .= "library(amap)\n";
 	$r_command .= "library(flashClust)\n";
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
@@ -263,12 +263,9 @@ sub calc_exec{
 	if ($args{method_dist} eq 'euclid'){
 		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
 		$r_command .= "d <- t( scale( t(d) ) )\n";
-		$r_command .= "dj <- dist(d,method=\"euclid\")^2\n";
-	}
-	elsif ($args{method_dist} eq 'pearson') {
-		$r_command .= &r_command_cosine;
+		$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
 	} else {
-		$r_command .= "dj <- dist(d,method=\"$args{method_dist}\")\n";
+		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
 	
 	# 併合水準のプロット（Rコマンド）
@@ -307,7 +304,7 @@ sub calc_exec{
 		             .&r_command_mout($merges->{_cluster_tmp_w}),
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_w}{first} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_first',
@@ -319,7 +316,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_w}{all} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_all',
@@ -331,7 +328,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	# average
 	$plots->{_cluster_tmp_a}{last} = kh_r_plot->new(
@@ -346,7 +343,7 @@ sub calc_exec{
 		             .&r_command_mout($merges->{_cluster_tmp_a}),
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_a}{first} = kh_r_plot->new(
 		name      => 'doc_cls_height_ave_first',
@@ -358,7 +355,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_a}{all} = kh_r_plot->new(
 		name      => 'doc_cls_height_ave_all',
@@ -370,7 +367,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	# complete
 	$plots->{_cluster_tmp_c}{last} = kh_r_plot->new(
@@ -385,7 +382,7 @@ sub calc_exec{
 		             .&r_command_mout($merges->{_cluster_tmp_c}),
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_c}{first} = kh_r_plot->new(
 		name      => 'doc_cls_height_cmp_first',
@@ -397,7 +394,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	$plots->{_cluster_tmp_c}{all} = kh_r_plot->new(
 		name      => 'doc_cls_height_cmp_all',
@@ -409,7 +406,7 @@ sub calc_exec{
 		             .$r_command_height,
 		width     => 640,
 		height    => 480,
-	);
+	) or return 0;
 
 	# クラスター番号の書き出し（Rコマンド）
 	my $r_command_fin = &r_command_fix_r;
