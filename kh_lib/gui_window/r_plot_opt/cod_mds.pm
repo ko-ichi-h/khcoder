@@ -50,13 +50,18 @@ sub innner{
 			[
 				['Jaccard', 'binary'],
 				['Euclid',  'euclid'],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
 	if ( $self->{command_f} =~ /euclid/ ){
 		$widget_dist->set_value('euclid');
-	} else {
+	}
+	elsif  ( $self->{command_f} =~ /binary/ ){
 		$widget_dist->set_value('binary');
+	}
+	else {
+		$widget_dist->set_value('pearson');
 	}
 
 	# 次元の数

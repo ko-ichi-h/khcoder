@@ -170,6 +170,7 @@ sub _new{
 			[
 				['Jaccard', 'binary'],
 				['Euclid',  'euclid'],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
