@@ -2,7 +2,6 @@ package gui_window::word_mds;
 use base qw(gui_window);
 
 use strict;
-
 use Tk;
 
 use gui_widget::tani;
@@ -73,6 +72,7 @@ sub _new{
 			[
 				['Jaccard', 'binary'],
 				['Euclid',  'euclid'],
+				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
 	);
@@ -287,11 +287,12 @@ sub make_plot{
 		return 0;
 	}
 
-	$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
+	#$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
 
 	$r_command .= "
+library(amap)
 check4mds <- function(d){
-	jm <- as.matrix(dist(d, method=\"$args{method_dist}\"))
+	jm <- as.matrix(Dist(d, method=\"$args{method_dist}\"))
 	jm[upper.tri(jm,diag=TRUE)] <- NA
 	if ( length( which(jm==0, arr.ind=TRUE) ) ){
 		return( which(jm==0, arr.ind=TRUE)[,1][1] )
@@ -310,7 +311,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ($args{method_dist} eq 'euclid'){
 		$r_command .= "d <- t( scale( t(d) ) )\n";
 	}
-	$r_command .= "dj <- dist(d,method=\"$args{method_dist}\")\n";
+	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
