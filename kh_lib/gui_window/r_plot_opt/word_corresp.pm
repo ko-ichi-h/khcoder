@@ -5,6 +5,40 @@ sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
+	# 特徴語に注目
+	my $fs = $lf->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+
+	$fs->Checkbutton(
+		-text     => $self->gui_jchar('特徴的な語に注目'),
+		-variable => \$self->{check_filter},
+		-command  => sub{ $self->refresh_flt;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flt_l1} = $fs->Label(
+		-text => $self->gui_jchar(' → 上位：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_flt} = $fs->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flt});
+
+	$self->{entry_flt_l2} = $fs->Label(
+		-text => $self->gui_jchar('語'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
 	# 成分
 	my $fd = $lf->Frame()->pack(
 		-fill => 'x',
@@ -17,21 +51,8 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	#$self->{entry_d_n} = $fd->Entry(
-	#	-font       => "TKFN",
-	#	-width      => 2,
-	#	-background => 'white',
-	#)->pack(-side => 'left', -padx => 2);
-	#if ($self->{command_f} =~ /corresp\(d, nf=([0-9]+)\)/){
-	#	$self->{entry_d_n}->insert(0,$1);
-	#} else {
-	#	$self->{entry_d_n}->insert(0,'2');
-	#}
-	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
-	#$self->config_entry_focusin($self->{entry_d_n});
-
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸：'),
+		-text => $self->gui_jchar(' → X軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -44,7 +65,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸：'),
+		-text => $self->gui_jchar('  Y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -65,6 +86,32 @@ sub innner{
 		$self->{entry_d_y}->insert(0,'2');
 	}
 
+	if ( $self->{command_f} =~ /\nflt <\- ([0-9]+)\n/ ){
+		if ($1){
+			$self->{check_filter} = 1;
+			$self->{entry_flt}->insert(0,$1);
+		} else {
+			$self->{check_filter} = 0;
+			$self->{entry_flt}->insert(0,'50');
+		}
+		$self->refresh_flt;
+	}
+
+	return $self;
+}
+
+# 「特徴語に注目」のチェックボックス
+sub refresh_flt{
+	my $self = shift;
+	if ( $self->{check_filter} ){
+		$self->{entry_flt}   ->configure(-state => 'normal');
+		$self->{entry_flt_l1}->configure(-state => 'normal');
+		$self->{entry_flt_l2}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flt}   ->configure(-state => 'disabled');
+		$self->{entry_flt_l1}->configure(-state => 'disabled');
+		$self->{entry_flt_l2}->configure(-state => 'disabled');
+	}
 	return $self;
 }
 
@@ -72,7 +119,7 @@ sub calc{
 	my $self = shift;
 
 	my $r_command = '';
-	if ($self->{command_f} =~ /\A(.+)library\(MASS\).+/s){
+	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
 		#print "chk: $r_command\n";
 		$r_command = Jcode->new($r_command)->euc
@@ -86,16 +133,23 @@ sub calc{
 		$self->close;
 		return 0;
 	}
+	$r_command .= "# END: DATA\n";
 
 	my $biplot = 0;
 	$biplot = 1 if $self->{command_f} =~ /rscore/;
+
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $filter = 0;
+	if ( $self->{check_filter} ){
+		$filter = $self->gui_jg( $self->{entry_flt}->get );
+	}
+
 	&gui_window::word_corresp::make_plot(
-		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		flt          => $filter,
 		biplot       => $biplot,
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
