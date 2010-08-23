@@ -214,6 +214,38 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 	$self->refresh;
 
+	# 特徴語に注目
+	my $fs = $lf->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+
+	$fs->Checkbutton(
+		-text     => $self->gui_jchar('特徴的なコードに注目'),
+		-variable => \$self->{check_filter},
+		-command  => sub{ $self->refresh_flt;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flt_l1} = $fs->Label(
+		-text => $self->gui_jchar(' → 上位：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_flt} = $fs->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	$self->{entry_flt}->insert(0,'50');
+	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flt});
+
+	$self->refresh_flt;
+
 	# 成分
 	my $fd = $lf->Frame()->pack(
 		-fill => 'x',
@@ -226,17 +258,8 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	#$self->{entry_d_n} = $fd->Entry(
-	#	-font       => "TKFN",
-	#	-width      => 2,
-	#	-background => 'white',
-	#)->pack(-side => 'left', -padx => 2);
-	#$self->{entry_d_n}->insert(0,'2');
-	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->_calc;});
-	#$self->config_entry_focusin($self->{entry_d_n});
-
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸：'),
+		-text => $self->gui_jchar(' → X軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -250,7 +273,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸：'),
+		-text => $self->gui_jchar('  Y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -334,6 +357,21 @@ sub _new{
 
 	$self->read_cfile;
 
+	return $self;
+}
+
+# 「特徴語に注目」のチェックボックス
+sub refresh_flt{
+	my $self = shift;
+	if ( $self->{check_filter} ){
+		$self->{entry_flt}   ->configure(-state => 'normal');
+		$self->{entry_flt_l1}->configure(-state => 'normal');
+		#$self->{entry_flt_l2}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flt}   ->configure(-state => 'disabled');
+		$self->{entry_flt_l1}->configure(-state => 'disabled');
+		#$self->{entry_flt_l2}->configure(-state => 'disabled');
+	}
 	return $self;
 }
 
@@ -735,14 +773,20 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
+	$r_command .= "# END: DATA\n";
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $filter = 0;
+	if ( $self->{check_filter} ){
+		$filter = $self->gui_jg( $self->{entry_flt}->get );
+	}
+
 	&gui_window::word_corresp::make_plot(
-		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		flt          => $filter,
 		biplot       => $self->gui_jg( $self->{radio} ),
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,

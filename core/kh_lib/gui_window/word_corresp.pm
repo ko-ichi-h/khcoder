@@ -151,6 +151,42 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 	$self->refresh;
 
+	# 特徴語に注目
+	my $fs = $lf2->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+
+	$fs->Checkbutton(
+		-text     => $self->gui_jchar('特徴的な語に注目'),
+		-variable => \$self->{check_filter},
+		-command  => sub{ $self->refresh_flt;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flt_l1} = $fs->Label(
+		-text => $self->gui_jchar(' → 上位：'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_flt} = $fs->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	$self->{entry_flt}->insert(0,'50');
+	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flt});
+
+	$self->{entry_flt_l2} = $fs->Label(
+		-text => $self->gui_jchar('語'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	$self->refresh_flt;
+
 	# 成分
 	my $fd = $lf2->Frame()->pack(
 		-fill => 'x',
@@ -173,7 +209,7 @@ sub _new{
 	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  x軸：'),
+		-text => $self->gui_jchar(' → X軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -187,7 +223,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  y軸：'),
+		-text => $self->gui_jchar('  Y軸：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -331,6 +367,21 @@ sub _settings_load{
 	elsif ( $self->{radio} == 1 ) {
 		$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
+}
+
+# 「特徴語に注目」のチェックボックス
+sub refresh_flt{
+	my $self = shift;
+	if ( $self->{check_filter} ){
+		$self->{entry_flt}   ->configure(-state => 'normal');
+		$self->{entry_flt_l1}->configure(-state => 'normal');
+		$self->{entry_flt_l2}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flt}   ->configure(-state => 'disabled');
+		$self->{entry_flt_l1}->configure(-state => 'disabled');
+		$self->{entry_flt_l2}->configure(-state => 'disabled');
+	}
+	return $self;
 }
 
 # ラジオボタン関連
@@ -599,6 +650,7 @@ sub calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
+	$r_command .= "# END: DATA\n";
 
 	my $biplot = 1;
 	$biplot = 0 if $self->{radio} == 0 and $self->{biplot} == 0;
@@ -606,10 +658,16 @@ sub calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $filter = 0;
+	if ( $self->{check_filter} ){
+		$filter = $self->gui_jg( $self->{entry_flt}->get );
+	}
+
 	&make_plot(
 		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		flt          => $filter,
 		biplot       => $biplot,
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
@@ -626,59 +684,27 @@ sub calc{
 
 sub make_plot{
 	my %args = @_;
+	$args{flt} = 0 unless $args{flt};
 
-	#my $d_n = $args{d_n};
-	#my $d_x = $args{d_x};
-	#my $d_y = $args{d_y};
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
 	kh_r_plot->clear_env;
 
+	$r_command .= "d_x <- $args{d_x}\n";
+	$r_command .= "d_y <- $args{d_y}\n";
+	$r_command .= "flt <- $args{flt}\n";
+
 	$r_command .= "library(MASS)\n";
 	$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
+
+	$r_command .= &r_command_filter;
 
 	$r_command .= "k <- c\$cor^2\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
-	$r_command .= "d_x <- $args{d_x}\n";
-	$r_command .= "d_y <- $args{d_y}\n";
 
-	# ここまでをいったん実行
-	my $r_command_tmp = $r_command;
-	$r_command_tmp = Jcode->new($r_command_tmp)->sjis
-		if $::config_obj->os eq 'win32';
-	#$::config_obj->R->send($r_command_tmp);
 
-	# 寄与率の取得
-	#$::config_obj->R->send(
-	#	'print( paste("khcoder", min(nrow(d), ncol(d)), sep="" ) )'
-	#);
-	#my $count = $::config_obj->R->read;
-	#my $kiyo1;
-	#my $kiyo2;
-	#if ($count =~ /"khcoder(.+)"/){
-	#	$count = $1;
-	#} else {
-	#	$count = -1;
-	#}
-	#while ($count > 0){
-		#print "$count\n";
-	#	$::config_obj->R->send(
-	#		 'print( paste("khcoder",round('
-	#		."c(c\$cor[$d_x], c\$cor[$d_y])^2"
-	#		.'/sum(corresp(d, nf='
-	#		.$count
-	#		.')$cor^2) * 100,2), sep=""))'
-	#	);
-	#	my $t = $::config_obj->R->read;
-	#	if ($t =~ /"khcoder(.+)".*"khcoder(.+)"/){
-	#		$kiyo1 = $1;
-	#		$kiyo2 = $2;
-	#		last;
-	#	}
-	#	--$count;
-	#}
 
 	# プロットのためのRコマンド
 
@@ -734,7 +760,7 @@ sub make_plot{
 		$r_command_2 = $r_command.$r_command_2a;
 		
 		# グレースケールのプロット
-		$r_com_gray_a .= &slab_my;
+		$r_com_gray_a .= &r_command_slab_my;
 		$r_com_gray_a .= 
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
@@ -850,8 +876,26 @@ sub make_plot{
 
 }
 
+sub r_command_filter{
+	my $t = << 'END_OF_the_R_COMMAND';
 
-sub slab_my{
+# 特徴的な語／コードに注目
+if ( (flt > 0) && (flt < nrow(c$cscore)) ){
+	sort <- NULL
+	for (i in 1:nrow(c$cscore) ){
+		sort <- c(sort, c$cscore[i,d_x] ^ 2 + c$cscore[i,d_y] ^ 2 )
+	}
+	d <- d[,order(sort,decreasing=T)]
+	d <- d[,1:flt]
+	c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
+}
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+
+sub r_command_slab_my{
 	return '
 # 枠付きプロット関数の設定
 s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
