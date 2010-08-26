@@ -48,6 +48,16 @@ sub init{
 	$p1 = Jcode->new($p1,'euc')->sjis;
 	$p2 = Jcode->new($p2,'euc')->sjis;
 
+	my $p4 = $p1.'tmp/';
+	unless (-e $p4){
+		mkdir($p4) or
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => "$p4"
+			)
+		;
+	}
+
 	open (MYINI,$::config_obj->cwd.'\dep\mysql\khc.ini') or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -65,6 +75,9 @@ sub init{
 		}
 		elsif ($_ =~ /^datadir = (.+)$/){
 			print MYININ "datadir = $p2\n";
+		}
+		elsif ($_ =~ /^tmpdir = (.+)$/){
+			print MYININ "tmpdir = $p4\n";
 		}
 		elsif ($_ =~ /set\-variable(\s*)=(\s*)max_heap_table_size/i){
 			print MYININ

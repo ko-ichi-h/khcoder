@@ -5,3 +5,4 @@ perlapp --add Encode::Guess;Encode::JP::H2Z;Encode::JP;feature;Encode::EUCJPMS;k
 move plugin_bak plugin
 move CVS_bak kh_lib\Tk\CVS
 attrib +h kh_lib\Tk\CVS
+pause
