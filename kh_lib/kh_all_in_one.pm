@@ -23,6 +23,7 @@ sub init{
 	Win32::SystemInfo::MemoryStatus(\%mHash,'MB');
 	$mHash{AvailPhys} = 32 if $mHash{AvailPhys} < 32;
 	$mHash{AvailPhys} = int($mHash{AvailPhys});
+	$mHash{AvailPhys} = 2046 if $mHash{AvailPhys} > 2046;
 	print "Available Physical Memory: $mHash{AvailPhys}MB\n";
 
 	# 茶筌のパス設定

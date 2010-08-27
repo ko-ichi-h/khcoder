@@ -26,8 +26,10 @@ sub first{
 	bless $self, $class;
 
 	$::config_obj->in_preprocessing(1);
+
 	if ($::config_obj->use_heap) {
-		$self->{type_heap} = ' TYPE=HEAP ';
+		# $self->{type_heap} = ' TYPE=HEAP ';
+		$self->{type_heap} = '';        # 安全第一 / heapではなくmyisamで
 	} else {
 		$self->{type_heap} = '';
 	}
@@ -76,7 +78,7 @@ sub first{
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
-	#mysql_exec->drop_table("hghi");
+	mysql_exec->drop_table("hghi");
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
