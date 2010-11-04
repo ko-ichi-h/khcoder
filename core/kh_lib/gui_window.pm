@@ -313,6 +313,15 @@ sub gui_jg{ # 入力された文字列の変換
 #   共通の処理   #
 #----------------#
 
+sub check_entry_input{
+	my $char = $_[1];
+	# 末尾に改行文字が入っていれば削除（主にExcelからのコピペ対策）
+	if ($char =~ /^([^\n]+)\n\Z/){
+		$char = $1;
+	}
+	return $char;
+}
+
 sub disabled_entry_configure{
 	my $ent = $_[1];
 	$ent->configure(
