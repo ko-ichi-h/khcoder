@@ -526,6 +526,10 @@ sub search{
 	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get),'sjis')->euc;
 	my $length = $self->entry3->get;
 
+	$query  = $self->check_entry_input($query);
+	$katuyo = $self->check_entry_input($katuyo);
+	$hinshi = $self->check_entry_input($hinshi);
+
 	# 表示の初期化
 	$self->hit_label->configure(
 		-text => $self->gui_jchar("  ヒット数：")
