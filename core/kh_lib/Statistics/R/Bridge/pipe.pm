@@ -694,12 +694,14 @@
     my $icode = Jcode::getcode($process_r);
     $process_r = Jcode->new($process_r)->euc;
     $process_r =~ s/\\/\\\\/g ;
-    $process_r = Jcode->new($process_r)->$icode unless $icode eq 'ascii';
+    $process_r = Jcode->new($process_r)->$icode
+    	if ( length($icode) and ( $icode ne 'ascii' ) );
     
     my $pid_r = $this->{PID_R} ;
     $pid_r = Jcode->new($pid_r)->euc;
     $pid_r =~ s/\\/\\\\/g ;    
-    $pid_r = Jcode->new($pid_r)->$icode unless $icode eq 'ascii';
+    $pid_r = Jcode->new($pid_r)->$icode
+    	if ( length($icode) and ( $icode ne 'ascii' ) );
     
     print $fh qq`
       print("Statistics::R - Perl bridge started!") ;

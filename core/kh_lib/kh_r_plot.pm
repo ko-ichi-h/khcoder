@@ -17,7 +17,8 @@ sub new{
 	my $icode = Jcode::getcode($::project_obj->file_datadir);
 	my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
 	$dir =~ tr/\\/\//;
-	$dir = Jcode->new($dir,'euc')->$icode unless $icode eq 'ascii';
+	$dir = Jcode->new($dir,'euc')->$icode
+		if ( length($icode) and ( $icode ne 'ascii' ) );
 	$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード

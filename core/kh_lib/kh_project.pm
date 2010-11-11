@@ -662,7 +662,8 @@ sub file_target{
 	my $icode = Jcode::getcode($t);
 	$t = Jcode->new($t)->euc;
 	$t =~ tr/\\/\//;
-	$t = Jcode->new($t)->$icode unless $icode eq 'ascii';
+	$t = Jcode->new($t)->$icode
+		if ( length($icode) and ( $icode ne 'ascii' ) );
 	return($t);
 }
 
