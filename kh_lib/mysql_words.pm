@@ -571,7 +571,7 @@ sub _make_wl_150{
 			SELECT
 			  genkei.name   as W,
 			  f             as DF
-			FROM genkei, hselection
+			FROM hselection, genkei
 			  LEFT JOIN df_'.$self->{tani}.' ON genkei_id = genkei.id
 			WHERE
 			      genkei.khhinshi_id = hselection.khhinshi_id

@@ -451,7 +451,10 @@ sub calc_exec{
 	if ($::config_obj->os eq 'win32'){
 		$file = Jcode->new($file,'euc')->sjis;
 	} else {
-		$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
+		if ( length($icode) and ( $icode ne 'ascii' ) ){
+			# print "icode: $icode\n";
+			$file = Jcode->new($file,'euc')->$icode;
+		}
 	}
 
 	mysql_outvar::read::tab->new(
