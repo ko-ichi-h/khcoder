@@ -1,4 +1,4 @@
-package kh_morpho::win32::chasen;
+package kh_morpho::win32::mecab;
 # use strict;
 use base qw( kh_morpho::win32 );
 
@@ -8,7 +8,7 @@ use base qw( kh_morpho::win32 );
 
 sub _run_morpho{
 	my $self = shift;	
-	my $path = $self->config->chasen_path;
+	my $path = $self->config->mecab_path;
 	
 	unless (-e $path){
 		gui_errormsg->open(
@@ -18,10 +18,12 @@ sub _run_morpho{
 		exit;
 	}
 	
-	my $pos = rindex($path,"\\");
+	my $pos = rindex($path,"\\bin\\");
 	$self->{dir} = substr($path,0,$pos);
-	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
-	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
+	my $chasenrc = $self->{dir}."\\etc\\mecabrc";
+	$self->{cmdline} = "mecab -Ochasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
+
+	print "morpho: $self->{cmdline}\n";
 
 	require Win32::Process;
 	# Win32::Process->import; # これではうまくいかない？
@@ -42,7 +44,7 @@ sub _run_morpho{
 }
 
 sub exec_error_mes{
-	return "KH Coder Error!!\n茶筌の起動に失敗しました！";
+	return "KH Coder Error!!\nMeCabの起動に失敗しました！";
 }
 
 

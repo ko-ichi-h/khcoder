@@ -831,6 +831,7 @@ sub num_kinds{
 		$sql .= "khhinshi_id=$i->[1]\n";
 		++$n;
 	}
+	$sql .= " 1 " unless $n;
 	$sql .= " )";
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
