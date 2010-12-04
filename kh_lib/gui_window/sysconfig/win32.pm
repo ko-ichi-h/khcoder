@@ -6,7 +6,7 @@ use Tk;
 use gui_jchar;
 use Gui_DragDrop;
 use gui_window::sysconfig::win32::chasen;
-use gui_window::sysconfig::win32::juman;
+use gui_window::sysconfig::win32::mecab;
 
 #------------------#
 #   Windowを開く   #
@@ -18,30 +18,29 @@ sub __new{
 	my $inis = $self->{win_obj};
 
 	$self->{c_or_j}      = $::config_obj->c_or_j;
-#	$self->{use_hukugo}  = $::config_obj->use_hukugo;
-#	$self->{use_sonota}  = $::config_obj->use_sonota;
-#	$self->{win_obj}     = $inis;
-	$self = $self->refine_cj;
 
-#	$inis->focus;
-	$inis->grab;
+	# $inis->focus;
+	# $inis->grab;
 	$inis->title($self->gui_jt('KH Coderの設定'));
 
 	my $lfra = $inis->LabFrame(
-		-label => 'ChaSen',
+		-label => $self->gui_jchar('形態素解析の設定'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
-	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	#my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
-	$fra0->Label(
-		-text => $self->gui_jchar('・茶筌の設定'),
-		-font => 'TKFN'
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('茶筌を利用'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'chasen',
+		-command  => sub{ $self = $self->refine_cj },
 	)->pack(-anchor => 'w');
+
+	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb1} = $fra1->Label(
 		-text => $self->gui_jchar('Chasen.exeのパス：'),
@@ -61,10 +60,48 @@ sub __new{
 		-font => 'TKFN',
 		-command => sub{ $mw->after
 			(10,
-				sub { $self->gui_get_exe(); }
+				sub { $self->gui_get_exe( $self->{entry1} ); }
 			);
 		}
 	)->pack(-padx => '2',-side => 'right');
+
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('MeCabを利用'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'mecab',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
+	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+
+	$self->{lb2} = $fra2->Label(
+		-text => $self->gui_jchar('MeCab.exeのパス：'),
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+
+	my $entry2 = $fra2->Entry(-font => 'TKFN')->pack(-side => 'right');
+	$self->{entry2} = $entry2;
+
+	$entry2->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $entry2,],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	);
+
+	$self->{btn2} = $fra2->Button(
+		-text => $self->gui_jchar('参照'),
+		-font => 'TKFN',
+		-command => sub{ $mw->after
+			(10,
+				sub { $self->gui_get_exe( $self->{entry2} ); }
+			);
+		}
+	)->pack(-padx => '2',-side => 'right');
+	
+	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
+	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
+	
+	$self = $self->refine_cj;
 
 	$self->{mail_obj} = gui_widget::mail_config->open(
 		parent => $inis,
@@ -96,8 +133,8 @@ sub __new{
 	$inis->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$entry1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$entry1]);
 	
-	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
-	$self->gui_switch;
+	
+	#$self->gui_switch;
 
 	return $self;
 }
@@ -113,12 +150,15 @@ sub ok{
 	my $oldfont = $::config_obj->font_main;
 	
 	$::config_obj->chasen_path( $self->gui_jg( $self->entry1->get() ) );
-	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
-	$::config_obj->mail_if(   $self->{mail_obj}->if      );
-	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
-	$::config_obj->mail_from( $self->{mail_obj}->from    );
-	$::config_obj->mail_to(   $self->{mail_obj}->to      );
-	$::config_obj->font_main( Jcode->new($self->{mail_obj}->font)->euc );
+	$::config_obj->mecab_path(  $self->gui_jg( $self->entry2->get() ) );
+	$::config_obj->c_or_j(      $self->gui_jg( $self->{c_or_j}      ) );
+	
+	$::config_obj->use_heap(    $self->{mail_obj}->if_heap );
+	$::config_obj->mail_if(     $self->{mail_obj}->if      );
+	$::config_obj->mail_smtp(   $self->{mail_obj}->smtp    );
+	$::config_obj->mail_from(   $self->{mail_obj}->from    );
+	$::config_obj->mail_to(     $self->{mail_obj}->to      );
+	$::config_obj->font_main(   Jcode->new($self->{mail_obj}->font)->euc );
 	
 	if ($::config_obj->save){
 		$self->close;
@@ -141,7 +181,8 @@ sub ok{
 
 # ファイル・オープン・ダイアログ
 sub gui_get_exe{
-	my $self = shift;
+	my $self  = shift;
+	my $entry = shift;
 
 	my @types =
 		(["exe files",           [qw/.exe/]],
@@ -154,7 +195,6 @@ sub gui_get_exe{
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
-	my $entry = $self->entry;
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
@@ -168,6 +208,7 @@ sub gui_get_exe{
 sub refine_cj{
 	my $self = shift;
 	bless $self, 'gui_window::sysconfig::win32::'.$self->{c_or_j};
+	$self->gui_switch;
 	return $self;
 }
 

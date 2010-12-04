@@ -76,7 +76,7 @@ sub reset_parm{
 sub _readin{
 	use Jcode;
 	use kh_sysconfig::win32::chasen;
-	use kh_sysconfig::win32::juman;
+	use kh_sysconfig::win32::mecab;
 
 	my $self = shift;
 
@@ -145,7 +145,7 @@ sub save_ini{
 
 	my @outlist = (
 		'chasen_path',
-		'juman_path',
+		'mecab_path',
 		'c_or_j',
 		'r_path',
 		'r_plot_debug',
@@ -210,13 +210,13 @@ sub chasen_path{
 	return $self->{chasen_path};
 }
 
-sub juman_path{
+sub mecab_path{
 	my $self = shift;
 	my $new = shift;
 	if ($new){
-		$self->{juman_path} = $new;
+		$self->{mecab_path} = $new;
 	}
-	return $self->{juman_path};
+	return $self->{mecab_path};
 }
 
 #-------------#
