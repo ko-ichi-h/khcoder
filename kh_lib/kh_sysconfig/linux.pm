@@ -9,7 +9,7 @@ use strict;
 sub _readin{
 	use Jcode;
 	use kh_sysconfig::linux::chasen;
-	use kh_sysconfig::linux::juman;
+	use kh_sysconfig::linux::mecab;
 
 	my $self = shift;
 

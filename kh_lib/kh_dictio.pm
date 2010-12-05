@@ -135,7 +135,9 @@ sub mark{
 		);
 
 	while (<SOURCE>){
+		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ²þ¹Ô¥³¡¼¥ÉÅý°ì
 		chomp;
+
 		my $text = Jcode->new($_,$icode)->h2z->euc;
 		$text =~ s/ /¡¡/go;
 		$text =~ s/\\/¡ï/go;
