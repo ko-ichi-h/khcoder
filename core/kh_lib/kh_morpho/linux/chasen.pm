@@ -9,6 +9,16 @@ use base qw( kh_morpho::linux );
 sub _run_morpho{
 	my $self = shift;
 
+	unless (-e $::config_obj->chasenrc_path){
+		my $msg = "事前にKH Coderの設定を行ってください";
+
+		gui_errormsg->open(
+			msg => $msg,
+			type => 'msg'
+		);
+		exit;
+	}
+
 	my $cmdline = "chasen -r ".$::config_obj->chasenrc_path." -o ".$self->output." ".$self->target;
 	#print "$cmdline\n";
 	system "$cmdline";

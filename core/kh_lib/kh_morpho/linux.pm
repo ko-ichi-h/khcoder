@@ -2,23 +2,12 @@ package kh_morpho::linux;
 use base qw(kh_morpho);
 use strict;
 
-#use kh_morpho::linux::juman;
+use kh_morpho::linux::mecab;
 use kh_morpho::linux::chasen;
 
 
 sub _run{
 	my $self = shift;
-
-	unless (-e $::config_obj->chasenrc_path){
-		my $msg = "事前にKH Coderの設定を行ってください";
-		Jcode::convert(\$msg,'sjis','euc');
-
-		gui_errormsg->open(
-			msg => $msg,
-			type => 'msg'
-		);
-		exit;
-	}
 
 	bless $self, 'kh_morpho::linux::'.$::config_obj->c_or_j;
  	$self->_run_morpho;

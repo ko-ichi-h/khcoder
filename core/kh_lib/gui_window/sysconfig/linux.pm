@@ -7,7 +7,7 @@ use Tk::HList;
 use gui_jchar;
 use Gui_DragDrop;
 use gui_window::sysconfig::linux::chasen;
-use gui_window::sysconfig::linux::juman;
+use gui_window::sysconfig::linux::mecab;
 
 #------------------#
 #   Windowを開く   #
@@ -32,20 +32,23 @@ sub __new{
 #	$inis->grab;
 	$inis->title( $self->gui_jt('KH Coderの設定','euc') );
 	my $lfra = $inis->LabFrame(
-		-label => 'ChaSen',
+		-label => $self->gui_jchar('語を抽出する方法'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
-	my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	#my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
-	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
-	$fra0->Label(
-		-text => $self->gui_jchar('・茶筌の利用に必要な情報','euc'),
-		-font => 'TKFN'
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('茶筌を利用／日本語データ'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'chasen',
+		-command  => sub{ $self = $self->refine_cj; },
 	)->pack(-anchor => 'w');
+
+	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb1} = $fra1->Label(
 		-text => $self->gui_jchar('"chasenrc"のパス：'),
@@ -73,12 +76,14 @@ sub __new{
 		}
 	)->pack(-padx => '2',-side => 'right');
 
-	$self->{lb2} = $lfra->Label(
+	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+
+	$self->{lb2} = $fra2->Label(
 		-text => $self->gui_jchar('"grammar.cha"のパス：','euc'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry2 = $lfra->Entry(
+	my $entry2 = $fra2->Entry(
 		-font => 'TKFN',
 		-background => 'white'
 	)->pack(-side => 'right');
@@ -89,7 +94,7 @@ sub __new{
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-	$self->{btn2} = $lfra->Button(
+	$self->{btn2} = $fra2->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
 		-command => sub{ $mw->after
@@ -100,7 +105,13 @@ sub __new{
 		}
 	)->pack(-padx => '2',-side => 'right');
 
-
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('MeCabを利用／日本語データ'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'mecab',
+		-command  => sub{ $self = $self->refine_cj; },
+	)->pack(-anchor => 'w');
 
 #----------------------#
 #   外部アプリの設定   #
@@ -193,12 +204,21 @@ sub __new{
 	$self->{e_csv} = $ent_csv;
 	$self->{e_pdf} = $ent_pdf;
 
+	$self = $self->refine_cj;
 	return $self;
 }
 
 #--------------------#
 #   ファンクション   #
 #--------------------#
+
+# chasenとjumanの切り替え
+sub refine_cj{
+	my $self = shift;
+	bless $self, 'gui_window::sysconfig::linux::'.$self->{c_or_j};
+	$self->gui_switch;
+	return $self;
+}
 
 sub unselect{
 	my $self = shift;
@@ -218,6 +238,8 @@ sub ok{
 	$::config_obj->app_html($self->e_html->get());
 	$::config_obj->app_pdf($self->e_pdf->get());
 	$::config_obj->app_csv($self->e_csv->get());
+
+	$::config_obj->c_or_j(    $self->gui_jg( $self->{c_or_j} ) );
 
 	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(   $self->{mail_obj}->if      );
