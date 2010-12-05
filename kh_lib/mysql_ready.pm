@@ -35,6 +35,7 @@ sub first{
 	}
 
 	my $ta0 = new Benchmark;
+	$::project_obj->read_hinshi_setting;
 	kh_dictio->readin->mark;
 	kh_morpho->run;
 		my $ta1 = new Benchmark;

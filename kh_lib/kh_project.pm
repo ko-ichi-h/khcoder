@@ -66,9 +66,21 @@ sub read_hinshi_setting{
 	# 品詞設定の読み込み
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
 	$sql .= $::config_obj->c_or_j;
-	my $h = $dbh_csv->prepare($sql) or die("dbh_csv error 1");
-	$h->execute or die("dbh_csv error 2");
-	my $hinshi = $h->fetchall_arrayref or die ("dbh_csv error 3");
+	my $h = $dbh_csv->prepare($sql) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $sql,
+		);
+	$h->execute or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $sql,
+		);
+	my $hinshi = $h->fetchall_arrayref or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $sql,
+		);
 
 	# プロジェクト内へコピー(1)
 	mysql_exec->drop_table('hselection');

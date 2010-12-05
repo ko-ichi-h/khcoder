@@ -24,7 +24,7 @@ sub __new{
 	$inis->title($self->gui_jt('KH Coderの設定'));
 
 	my $lfra = $inis->LabFrame(
-		-label => $self->gui_jchar('形態素解析の設定'),
+		-label => $self->gui_jchar('語を抽出する方法'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
@@ -33,7 +33,7 @@ sub __new{
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('茶筌を利用'),
+		-text     => $self->gui_jchar('茶筌を利用／日本語データ'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'chasen',
@@ -43,7 +43,7 @@ sub __new{
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb1} = $fra1->Label(
-		-text => $self->gui_jchar('Chasen.exeのパス：'),
+		-text => $self->gui_jchar('chasen.exeのパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
@@ -65,8 +65,14 @@ sub __new{
 		}
 	)->pack(-padx => '2',-side => 'right');
 
+	
+	my $msg = 'MeCabを利用／日本語データ';
+	if ($::config_obj->all_in_one_pack && ! -e $::config_obj->mecab_path){
+		$msg .= '／要・別途インストール';
+	}
+
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('MeCabを利用'),
+		-text     => $self->gui_jchar($msg),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'mecab',
@@ -76,7 +82,7 @@ sub __new{
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb2} = $fra2->Label(
-		-text => $self->gui_jchar('MeCab.exeのパス：'),
+		-text => $self->gui_jchar('mecab.exeのパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
