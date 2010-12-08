@@ -7,7 +7,7 @@ sub _new{
 	my $self = shift;
 
 	my $lf = $self->parent->LabFrame(
-		-label => 'Other Settings',
+		-label => gui_window->gui_jchar('[その他の設定]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
