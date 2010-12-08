@@ -24,7 +24,7 @@ sub __new{
 	$inis->title($self->gui_jt('KH Coderの設定'));
 
 	my $lfra = $inis->LabFrame(
-		-label => $self->gui_jchar('語を抽出する方法'),
+		-label => $self->gui_jchar('[語を抽出する方法]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
