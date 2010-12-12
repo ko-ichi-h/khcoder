@@ -234,40 +234,22 @@ sub _exec{
 			$t .= $_;
 			++$n;
 			if ($n == 1000){
-				$icode = &print_out($t, $icode);
+				$icode = &print_out($t, $icode, $fh, $self->{if_conv});
 				$n = 0;
 				$t = '';
 			}
 		}
-		&print_out($t,$icode);
+		&print_out($t,$icode, $fh, $self->{if_conv});
 		close (TEMP);
-		
-		# 踏五請仄
-		sub print_out{
-			my $t     = shift;
-			my $icode = shift;
-			unless ( length($t) ){
-				#print "empty!?";
-				return 1;
-			}
-			unless ($icode){
-				$icode = Jcode->new($t)->icode;
-				#print "$icode\n";
-			}
-			my $t = Jcode->new($t,$icode)->euc;
-			if ($self->{if_conv}){
-				$t =~ s/</～/g;
-				$t =~ s/>/∩/g;
-			}
-			print $fh $t;
-			return $icode;
-		}
 		print $fh "\n";
 	};
+
+
 
 	use File::Find;
 	find($read_each, $path);
 	close($fh);
+	$fh = undef;
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_sjis($save);
 	}
@@ -288,6 +270,29 @@ sub _exec{
 	$self->close;
 }
 
+# 踏五請仄
+sub print_out{
+	my $t       = shift;
+	my $icode   = shift;
+	my $fh      = shift;
+	my $if_conv = shift;
+
+	unless ( length($t) ){
+		print "empty!? ";
+		return 1;
+	}
+	unless ($icode){
+		$icode = Jcode->new($t)->icode;
+		#print "$icode\n";
+	}
+	my $t = Jcode->new($t,$icode)->euc;
+	if ($if_conv){
+		$t =~ s/</～/g;
+		$t =~ s/>/∩/g;
+	}
+	print $fh $t;
+	return $icode;
+}
 
 sub win_name{
 	return 'w_concat_txt';
