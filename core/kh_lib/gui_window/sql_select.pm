@@ -193,7 +193,7 @@ sub exec{
 	)->pack(-fill=>'both',-expand => 'yes');
 	my $n = 0;
 	foreach my $i (@{$t->hundle->{NAME}}){
-		$self->list->header('create',$n,-text => $i);
+		$self->list->header('create',$n,-text => $self->gui_jchar($i) );
 		++$n;
 	}
 	
