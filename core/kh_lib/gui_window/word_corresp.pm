@@ -704,8 +704,6 @@ sub make_plot{
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
-
-
 	# プロットのためのRコマンド
 
 	my ($r_command_2a, $r_command_2, $r_command_a);
