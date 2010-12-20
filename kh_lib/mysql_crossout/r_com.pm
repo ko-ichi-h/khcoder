@@ -33,6 +33,7 @@ sub out2{                               # length作製をする
 	$self->{r_command} = "d <- NULL\n";
 	my $row_names = '';
 	
+	my $length = 'doc_length_mtr <- matrix( c( ';
 	
 	# セル内容の作製
 	my $id = 1;
@@ -65,6 +66,7 @@ sub out2{                               # length作製をする
 				}
 				chop $temp;
 				$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+				$length .= "$current{length_c},$current{length_w},";
 				# 初期化
 				%current = ();
 				$last = $i->[0];
@@ -83,8 +85,8 @@ sub out2{                               # length作製をする
 			}
 			
 			# 集計
-			#++$current{'length_w'};
-			#$current{'length_c'} += (length($i->[2]) / 2);
+			++$current{'length_w'};
+			$current{'length_c'} += (length($i->[2]) / 2);
 			if ($self->{wName}{$i->[1]}){
 				++$current{$i->[1]};
 			}
@@ -107,6 +109,7 @@ sub out2{                               # length作製をする
 	}
 	chop $temp;
 	$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+	$length .= "$current{length_c},$current{length_w},";
 	chop $row_names;
 	
 	if ($self->{rownames}){
@@ -127,6 +130,11 @@ sub out2{                               # length作製をする
 	}
 	chop $self->{r_command};
 	$self->{r_command} .= ")\n";
+
+	chop $length;
+	$length .= "), ncol=2, byrow=T)\n";
+	$length .= "colnames(doc_length_mtr) <- c(\"length_c\", \"length_w\")\n";
+	$self->{r_command} .= $length;
 
 	return $self;
 }
