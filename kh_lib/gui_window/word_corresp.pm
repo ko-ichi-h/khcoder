@@ -759,7 +759,10 @@ sub make_plot{
 	$r_command .= &r_command_filter;
 
 	$r_command .= "k <- c\$cor^2\n";
-	$r_command .= "k <- round(100*k / sum(k),2)\n";
+	$r_command .=
+		"txt <- cbind( 1:nrow(d), round(k,4), round(100*k / sum(k),2) )\n";
+	$r_command .= "colnames(txt) <- c('成分','固有値','寄与率')\n";
+	$r_command .= "print(txt)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
 	# プロットのためのRコマンド
@@ -913,7 +916,13 @@ sub make_plot{
 		@plots = ($plot2,$plot1);
 	}
 
-	#$w->end(no_dialog => 1);
+	my $txt = $plot1->r_msg;
+	if ( length($txt) ){
+		$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
+		print "-------------------------[Begin]-------------------------[R]\n";
+		print "$txt\n";
+		print "---------------------------------------------------------[R]\n";
+	}
 
 	# プロットWindowを開く
 	kh_r_plot->clear_env;

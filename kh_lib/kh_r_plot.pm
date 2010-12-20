@@ -139,7 +139,15 @@ sub new{
 		);
 		return 0;
 	}
-	# print "R-msg: $self->{r_msg}\n";
+	
+	# テキスト出力
+	#my $txt = $self->{r_msg};
+	#if ( length($txt) ){
+	#	$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
+	#	print "[Begin]--------------------------------------------------[R]\n";
+	#	print "$txt\n";
+	#	print "[End]----------------------------------------------------[R]\n";
+	#}
 	
 	return $self;
 }
