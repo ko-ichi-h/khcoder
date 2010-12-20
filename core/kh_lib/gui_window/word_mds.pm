@@ -421,6 +421,14 @@ while ( is.na(check4mds(d)) == 0 ){
 		);
 	}
 
+	my $txt = $plot1->r_msg;
+	if ( length($txt) ){
+		$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
+		print "-------------------------[Begin]-------------------------[R]\n";
+		print "$txt\n";
+		print "---------------------------------------------------------[R]\n";
+	}
+
 	# ストレス値の取得
 	my $stress;
 	if ($args{method} eq 'K' or $args{method} eq 'S'){
