@@ -158,7 +158,7 @@ sub _new{
 	);
 
 	$fsw->Checkbutton(
-		-text     => $self->gui_jchar('差異の顕著な語だけを分析：'),
+		-text     => $self->gui_jchar('差異が顕著な語を分析に使用：'),
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -167,9 +167,9 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => $self->gui_jchar(' 上位'),
+		-text => $self->gui_jchar('上位'),
 		-font => "TKFN",
-	)->pack(-side => 'left');
+	)->pack(-side => 'left', -padx => 0);
 
 	$self->{entry_flw} = $fsw->Entry(
 		-font       => "TKFN",
@@ -183,7 +183,7 @@ sub _new{
 	$self->{entry_flw_l2} = $fsw->Label(
 		-text => $self->gui_jchar('語'),
 		-font => "TKFN",
-	)->pack(-side => 'left');
+	)->pack(-side => 'left', -padx => 0);
 	$self->refresh_flw;
 
 	# 特徴的な語のみラベル表示
@@ -194,7 +194,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('特徴的な語のみラベル表示：'),
+		-text     => $self->gui_jchar('原点から離れた語のラベルを表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -203,7 +203,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar(' 上位'),
+		-text => $self->gui_jchar('上位'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -940,7 +940,6 @@ doc_length_mtr <- aggregate(doc_length_mtr,list(name = v), sum)
 
 row.names(d) <- d$name
 d$name <- NULL
-
 row.names(doc_length_mtr) <- doc_length_mtr$name
 doc_length_mtr$name <- NULL
 
@@ -951,7 +950,6 @@ doc_length_mtr <- subset(
 	doc_length_mtr,
 	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
 )
-
 d <- subset(
 	d,
 	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
