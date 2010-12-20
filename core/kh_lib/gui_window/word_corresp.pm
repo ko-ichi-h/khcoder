@@ -151,7 +151,42 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 	$self->refresh;
 
-	# 特徴語に注目
+	# 差異の顕著な語のみ分析
+	my $fsw = $lf2->Frame()->pack(
+		-fill => 'x',
+		-pady => 2,
+	);
+
+	$fsw->Checkbutton(
+		-text     => $self->gui_jchar('差異の顕著な語だけを分析：'),
+		-variable => \$self->{check_filter_w},
+		-command  => sub{ $self->refresh_flw;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flw_l1} = $fsw->Label(
+		-text => $self->gui_jchar(' 上位'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_flw} = $fsw->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	$self->{entry_flw}->insert(0,'50');
+	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flw});
+
+	$self->{entry_flw_l2} = $fsw->Label(
+		-text => $self->gui_jchar('語'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	$self->refresh_flw;
+
+	# 特徴的な語のみラベル表示
 	my $fs = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -159,7 +194,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('特徴的な語に注目'),
+		-text     => $self->gui_jchar('特徴的な語のみラベル表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -168,7 +203,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar(' → 上位：'),
+		-text => $self->gui_jchar(' 上位'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -195,7 +230,7 @@ sub _new{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分'),
+		-text => $self->gui_jchar('プロットする成分：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -209,7 +244,7 @@ sub _new{
 	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => $self->gui_jchar(' → X軸：'),
+		-text => $self->gui_jchar(' X軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -223,7 +258,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  Y軸：'),
+		-text => $self->gui_jchar(' Y軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -383,6 +418,21 @@ sub refresh_flt{
 	}
 	return $self;
 }
+
+sub refresh_flw{
+	my $self = shift;
+	if ( $self->{check_filter_w} ){
+		$self->{entry_flw}   ->configure(-state => 'normal');
+		$self->{entry_flw_l1}->configure(-state => 'normal');
+		$self->{entry_flw_l2}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flw}   ->configure(-state => 'disabled');
+		$self->{entry_flw_l1}->configure(-state => 'disabled');
+		$self->{entry_flw_l2}->configure(-state => 'disabled');
+	}
+	return $self;
+}
+
 
 # ラジオボタン関連
 sub refresh{
@@ -638,15 +688,15 @@ sub calc{
 		
 		chop $r_command;
 		$r_command .= ")\n";
-		$r_command .= "d <- aggregate(d,list(name = v), sum)\n";
-		$r_command .= 'row.names(d) <- d$name'."\n";
-		$r_command .= 'd$name <- NULL'."\n";
-		
-		$r_command .= 'd <- subset(d,row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing")'."\n";
+		$r_command .= &r_command_aggr;
 	}
 
 	# 空の行・空の列を削除
-	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
+	$r_command .=
+		"doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)\n";
+	$r_command .=
+		"d              <- subset(d,              rowSums(d) > 0)\n";
+	$r_command .= "n_total <- doc_length_mtr[,2]\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
@@ -663,11 +713,17 @@ sub calc{
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
 	}
 
+	my $filter_w = 0;
+	if ( $self->{check_filter_w} ){
+		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+	}
+
 	&make_plot(
 		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		flt          => $filter,
+		flw          => $filter_w,
 		biplot       => $biplot,
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
@@ -685,6 +741,7 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 	$args{flt} = 0 unless $args{flt};
+	$args{flw} = 0 unless $args{flw};
 
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
@@ -694,9 +751,10 @@ sub make_plot{
 	$r_command .= "d_x <- $args{d_x}\n";
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
+	$r_command .= "flw <- $args{flw}\n";
 
 	$r_command .= "library(MASS)\n";
-	$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
+	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
 
 	$r_command .= &r_command_filter;
 
@@ -874,18 +932,74 @@ sub make_plot{
 
 }
 
+sub r_command_aggr{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+d              <- aggregate(d,list(name = v), sum)
+doc_length_mtr <- aggregate(doc_length_mtr,list(name = v), sum)
+
+row.names(d) <- d$name
+d$name <- NULL
+
+row.names(doc_length_mtr) <- doc_length_mtr$name
+doc_length_mtr$name <- NULL
+
+d              <- d[              order(rownames(d             )), ]
+doc_length_mtr <- doc_length_mtr[ order(rownames(doc_length_mtr)), ]
+
+doc_length_mtr <- subset(
+	doc_length_mtr,
+	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+)
+
+d <- subset(
+	d,
+	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+)
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
 sub r_command_filter{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-# 特徴的な語／コードに注目
+# 差異の顕著な語のみ分析に使用
+if ( (flw > 0) && (flw < ncol(d)) ){
+	sort  <- NULL
+	for (i in 1:ncol(d) ){
+		sort <- c(
+			sort, 
+			chisq.test( cbind(d[,i], n_total - d[,i]) )$statistic
+		)
+	}
+	d <- d[,order(sort,decreasing=T)]
+	d <- d[,1:flw]
+}
+
+c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
+
+# 特徴的な語のみラベル表示
 if ( (flt > 0) && (flt < nrow(c$cscore)) ){
-	sort <- NULL
+	sort  <- NULL
+	limit <- NULL
+	names <- NULL
+	
+	# 原点からの距離を計算
 	for (i in 1:nrow(c$cscore) ){
 		sort <- c(sort, c$cscore[i,d_x] ^ 2 + c$cscore[i,d_y] ^ 2 )
 	}
-	d <- d[,order(sort,decreasing=T)]
-	d <- d[,1:flt]
-	c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
+	
+	# 上位のもののみラベル付け
+	limit <- sort[order(sort,decreasing=T)][flt]
+	for (i in 1:nrow(c$cscore) ){
+		if ( sort[i] >= limit ){
+			names <- c(names, rownames(c$cscore)[i])
+		} else {
+			names <- c(names, NA)
+		}
+	}
+	rownames(c$cscore) <- names;
 }
 
 END_OF_the_R_COMMAND
