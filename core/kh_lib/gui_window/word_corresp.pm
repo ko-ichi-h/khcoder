@@ -194,7 +194,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れた語のラベルを表示：'),
+		-text     => $self->gui_jchar('原点から離れた語のみラベル表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -762,7 +762,7 @@ sub make_plot{
 	$r_command .=
 		"txt <- cbind( 1:nrow(d), round(k,4), round(100*k / sum(k),2) )\n";
 	$r_command .= "colnames(txt) <- c('成分','固有値','寄与率')\n";
-	$r_command .= "print(txt)\n";
+	$r_command .= "print( txt )\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
 	# プロットのためのRコマンド
@@ -772,9 +772,9 @@ sub make_plot{
 	if ($args{biplot} == 0){                      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cbind(c\$cscore[,d_x], c\$cscore[,d_y]),"
-				."col=\"mediumaquamarine\","
-				.'pch=20,'
+			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
+				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
+				.'pch=c(20,0,1)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -786,7 +786,8 @@ sub make_plot{
 		
 		# ドットのみプロット
 		$r_command_a .=
-			 "plot(cbind(c\$cscore[,d_x], c\$cscore[,d_y]),"
+			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
+				.'pch=c(1,15,4)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -795,11 +796,11 @@ sub make_plot{
 		# ラベルとドットをプロット
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
 				.'),'
-				.'pch=c(20,0)[cb[,3]],'
-				.'col=c("mediumaquamarine","mediumaquamarine")[cb[,3]],'
+				.'pch=c(20,0,1)[cb[,3]],'
+				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				." )\n"
@@ -813,7 +814,7 @@ sub make_plot{
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
 				.'offset=0,'
-				.'col=c("black","red")[cb[,3]]'
+				.'col=c("black","red","black")[cb[,3]]'
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
@@ -822,11 +823,11 @@ sub make_plot{
 		$r_com_gray_a .= &r_command_slab_my;
 		$r_com_gray_a .= 
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
 				.'),'
-				.'pch=c(20,0)[cb[,3]],'
-				.'col=c("gray65","gray50")[cb[,3]],'
+				.'pch=c(20,0,1)[cb[,3]],'
+				.'col=c("gray65","gray50","gray65")[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -871,10 +872,10 @@ sub make_plot{
 		# ドットのみをプロット
 		$r_command_a .=
 			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], 1),"
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
 				.'),'
-				.'pch=c(1,15)[cb[,3]],'
+				.'pch=c(1,15,4)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -991,6 +992,7 @@ if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 	sort  <- NULL
 	limit <- NULL
 	names <- NULL
+	ptype <- NULL
 	
 	# 原点からの距離を計算
 	for (i in 1:nrow(c$cscore) ){
@@ -1002,11 +1004,15 @@ if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 	for (i in 1:nrow(c$cscore) ){
 		if ( sort[i] >= limit ){
 			names <- c(names, rownames(c$cscore)[i])
+			ptype <- c(ptype, 1)
 		} else {
 			names <- c(names, NA)
+			ptype <- c(ptype, 3)
 		}
 	}
 	rownames(c$cscore) <- names;
+} else {
+	ptype <- 1
 }
 
 END_OF_the_R_COMMAND

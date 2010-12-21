@@ -48,7 +48,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れた語のラベルを表示：'),
+		-text     => $self->gui_jchar('原点から離れた語のみラベル表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
