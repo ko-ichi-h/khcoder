@@ -84,12 +84,12 @@ sub innner{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分'),
+		-text => $self->gui_jchar('プロットする成分：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$fd->Label(
-		-text => $self->gui_jchar(' → X軸：'),
+		-text => $self->gui_jchar(' X軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -102,7 +102,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  Y軸：'),
+		-text => $self->gui_jchar(' Y軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
