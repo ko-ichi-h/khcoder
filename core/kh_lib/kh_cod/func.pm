@@ -194,13 +194,26 @@ sub out2r_selected{
 		print "no valid codes\n";
 		return 0;
 	}
-	print "coding: ok\n";
 	$self->cumulate if @{$self->{valid_codes}} > 30;
+
+	# 選択されたコードをリストアップ
+	my %if_selected = ();
+	foreach my $i (@{$selected}){
+		$if_selected{$i} = 1;
+	}
+	my @codes = ();
+	foreach my $i (@{$self->codes}){
+		push @codes, $i if $if_selected{$i->name};
+	}
+	$selected = \@codes;
 
 	# SQL文
 	my %tables = ();
 	foreach my $i (@{$selected}){
-		return 0 unless $i->res_table;
+		unless ($i->res_table){
+			print "no result table!\n";
+			return 0;
+		}
 		++$tables{$i->res_table};
 	}
 	my $sql = "SELECT ";

@@ -574,14 +574,12 @@ sub read_cfile{
 	$self->{hlist}->delete('all');
 	
 	unless (-e $self->cfile ){
-		#$self->{code_obj} = undef;
 		return 0;
 	}
 	
 	my $cod_obj = kh_cod::func->read_file($self->cfile);
 	
 	unless (eval(@{$cod_obj->codes})){
-		#$self->{code_obj} = undef;
 		return 0;
 	}
 
@@ -591,7 +589,7 @@ sub read_cfile{
 	foreach my $i (@{$cod_obj->codes}){
 		
 		$self->{checks}[$row]{check} = 1;
-		$self->{checks}[$row]{name}  = $i;
+		$self->{checks}[$row]{name}  = $i->name; # 修正！ 2010 12/24
 		
 		my $c = $self->{hlist}->Checkbutton(
 			-text     => gui_window->gui_jchar($i->name,'euc'),
@@ -613,7 +611,6 @@ sub read_cfile{
 		);
 		++$row;
 	}
-	#$self->{code_obj} = $cod_obj;
 	
 	$self->check_selected_num;
 	
@@ -673,14 +670,9 @@ sub _calc{
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
-	print "tani: ", $self->tani, "\n";
-	my $cod_obj = kh_cod::func->read_file($self->cfile) or print("Could not read the coding-rule file!\n");
-	my $hoge = $cod_obj->out2r_selected($self->tani,\@selected) or print("Could not get coding result!\n");
-	print "$hoge\n";
-
 	# データ取得
 	my $r_command = '';
-	unless ( $r_command = $cod_obj->out2r_selected($self->tani,\@selected) ){
+	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){ # 修正！ 2010 12/24
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
@@ -695,7 +687,7 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
-		my $name = $i->{name}->name;
+		my $name = $i->{name};
 		substr($name, 0, 2) = ''
 			if index($name,'＊') == 0
 		;
