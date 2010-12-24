@@ -976,6 +976,7 @@ sub r_command_filter{
 if ( (flw > 0) && (flw < ncol(d)) ){
 	sort  <- NULL
 	for (i in 1:ncol(d) ){
+		# print( paste(colnames(d)[i], chisq.test( cbind(d[,i], n_total - d[,i]) )$statistic) )
 		sort <- c(
 			sort, 
 			chisq.test( cbind(d[,i], n_total - d[,i]) )$statistic
@@ -983,6 +984,7 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	}
 	d <- d[,order(sort,decreasing=T)]
 	d <- d[,1:flw]
+	d <- subset(d, rowSums(d) > 0)
 }
 
 c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
