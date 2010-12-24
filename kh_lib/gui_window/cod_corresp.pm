@@ -214,7 +214,40 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 	$self->refresh;
 
-	# 特徴語に注目
+
+
+	# 差異の顕著な語のみ分析
+	my $fsw = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2,
+	);
+
+	$fsw->Checkbutton(
+		-text     => $self->gui_jchar('差異が顕著なコードを分析に使用：'),
+		-variable => \$self->{check_filter_w},
+		-command  => sub{ $self->refresh_flw;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flw_l1} = $fsw->Label(
+		-text => $self->gui_jchar('上位'),
+		-font => "TKFN",
+	)->pack(-side => 'left', -padx => 0);
+
+	$self->{entry_flw} = $fsw->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	$self->{entry_flw}->insert(0,'50');
+	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flw});
+
+	$self->refresh_flw;
+
+	# 特徴的な語のみラベル表示
 	my $fs = $lf->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -222,7 +255,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('特徴的なコードに注目'),
+		-text     => $self->gui_jchar('原点から離れたコードのみラベル表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -231,7 +264,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar(' → 上位：'),
+		-text => $self->gui_jchar('上位'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -366,14 +399,25 @@ sub refresh_flt{
 	if ( $self->{check_filter} ){
 		$self->{entry_flt}   ->configure(-state => 'normal');
 		$self->{entry_flt_l1}->configure(-state => 'normal');
-		#$self->{entry_flt_l2}->configure(-state => 'normal');
 	} else {
 		$self->{entry_flt}   ->configure(-state => 'disabled');
 		$self->{entry_flt_l1}->configure(-state => 'disabled');
-		#$self->{entry_flt_l2}->configure(-state => 'disabled');
 	}
 	return $self;
 }
+
+sub refresh_flw{
+	my $self = shift;
+	if ( $self->{check_filter_w} ){
+		$self->{entry_flw}   ->configure(-state => 'normal');
+		$self->{entry_flw_l1}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flw}   ->configure(-state => 'disabled');
+		$self->{entry_flw_l1}->configure(-state => 'disabled');
+	}
+	return $self;
+}
+
 
 # ラジオボタン関連
 sub refresh{
@@ -530,14 +574,14 @@ sub read_cfile{
 	$self->{hlist}->delete('all');
 	
 	unless (-e $self->cfile ){
-		$self->{code_obj} = undef;
+		#$self->{code_obj} = undef;
 		return 0;
 	}
 	
 	my $cod_obj = kh_cod::func->read_file($self->cfile);
 	
 	unless (eval(@{$cod_obj->codes})){
-		$self->{code_obj} = undef;
+		#$self->{code_obj} = undef;
 		return 0;
 	}
 
@@ -569,7 +613,7 @@ sub read_cfile{
 		);
 		++$row;
 	}
-	$self->{code_obj} = $cod_obj;
+	#$self->{code_obj} = $cod_obj;
 	
 	$self->check_selected_num;
 	
@@ -629,9 +673,14 @@ sub _calc{
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
+	print "tani: ", $self->tani, "\n";
+	my $cod_obj = kh_cod::func->read_file($self->cfile) or print("Could not read the coding-rule file!\n");
+	my $hoge = $cod_obj->out2r_selected($self->tani,\@selected) or print("Could not get coding result!\n");
+	print "$hoge\n";
+
 	# データ取得
-	my $r_command;
-	unless ( $r_command = $self->{code_obj}->out2r_selected($self->tani,\@selected) ){
+	my $r_command = '';
+	unless ( $r_command = $cod_obj->out2r_selected($self->tani,\@selected) ){
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
@@ -711,9 +760,7 @@ sub _calc{
 		}
 		chop $r_command;
 		$r_command .= ")\n";
-		$r_command .= "d <- aggregate(d,list(name = v), sum)\n";
-		$r_command .= 'row.names(d) <- d$name'."\n";
-		$r_command .= 'd$name <- NULL'."\n";
+		$r_command .= &r_command_aggr_str;
 	}
 	
 	# 外部変数の付与
@@ -761,11 +808,7 @@ sub _calc{
 		#print "num1: $n\n";
 		chop $r_command;
 		$r_command .= ")\n";
-		$r_command .= "d <- aggregate(d,list(name = v), sum)\n";
-		$r_command .= 'row.names(d) <- d$name'."\n";
-		$r_command .= 'd$name <- NULL'."\n";
-		
-		$r_command .= 'd <- subset(d,row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing")'."\n";
+		$r_command .= &r_command_aggr_var;
 	}
 	
 	# 対応分析実行のためのRコマンド
@@ -798,6 +841,48 @@ sub _calc{
 		$self->close;
 	}
 
+}
+
+sub r_command_aggr_var{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# aggregate
+n_total <- table(v)
+d <- aggregate(d,list(name = v), sum)
+row.names(d) <- d$name
+d$name <- NULL
+d       <- d[       order(rownames(d      )), ]
+n_total <- n_total[ order(rownames(n_total))  ]
+#------------------------------------------------------------------------------
+n_total <- subset(
+	n_total,
+	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+)
+d <- subset(
+	d,
+	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+)
+#------------------------------------------------------------------------------
+n_total <- subset(n_total,rowSums(d) > 0)
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_aggr_str{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# aggregate
+n_total <- table(v)
+d <- aggregate(d,list(name = v), sum)
+row.names(d) <- d$name
+d$name <- NULL
+d       <- d[       order(rownames(d      )), ]
+n_total <- n_total[ order(rownames(n_total))  ]
+n_total <- subset(n_total,rowSums(d) > 0)
+
+END_OF_the_R_COMMAND
+return $t;
 }
 
 #--------------#

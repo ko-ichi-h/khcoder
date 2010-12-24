@@ -186,8 +186,15 @@ sub out2r_selected{
 	my $selected = shift;
 
 	# コーディングとコーディング結果のチェック
-	$self->code($tani) or return 0 unless $self->valid_codes;
-	unless ($self->valid_codes){ return 0; }
+	unless ($self->code($tani)){
+		print "could not perform coding\n";
+		return 0;
+	}
+	unless ($self->valid_codes){
+		print "no valid codes\n";
+		return 0;
+	}
+	print "coding: ok\n";
 	$self->cumulate if @{$self->{valid_codes}} > 30;
 
 	# SQL文
