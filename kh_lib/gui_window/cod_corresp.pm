@@ -212,9 +212,6 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{opt_frame_var} = $fi_3;
-	$self->refresh;
-
-
 
 	# 差異の顕著な語のみ分析
 	my $fsw = $lf->Frame()->pack(
@@ -222,7 +219,7 @@ sub _new{
 		-pady => 2,
 	);
 
-	$fsw->Checkbutton(
+	$self->{check_filter_w_widget} = $fsw->Checkbutton(
 		-text     => $self->gui_jchar('差異が顕著なコードを分析に使用：'),
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
@@ -278,6 +275,9 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->refresh_flt;
+
+	$self->refresh;
+
 
 	# 成分
 	my $fd = $lf->Frame()->pack(
@@ -539,6 +539,10 @@ sub refresh{
 		
 		$self->{opt_body_var}->configure(-state => 'disable');
 		$self->{label_var}->configure(-foreground => 'gray');
+		
+		$self->{check_filter_w_widget}->configure(-state => 'disabled');
+		$self->{entry_flw}   ->configure(-state => 'disabled');
+		$self->{entry_flw_l1}->configure(-state => 'disabled');
 	}
 	elsif ($self->{radio} == 1){
 		if ($self->{opt_body_high_ok}){
@@ -550,6 +554,11 @@ sub refresh{
 		
 		$self->{opt_body_var}->configure(-state => 'disable');
 		$self->{label_var}->configure(-foreground => 'gray');
+
+		$self->{check_filter_w_widget}->configure(-state => 'normal');
+		$self->refresh_flw;
+		#$self->{entry_flw}   ->configure(-state => 'normal');
+		#$self->{entry_flw_l1}->configure(-state => 'normal');
 	}
 	elsif ($self->{radio} == 2){
 		$self->{opt_body_high}->configure(-state => 'disable');
@@ -561,6 +570,11 @@ sub refresh{
 			$self->{opt_body_var}->configure(-state => 'disable');
 		}
 		$self->{label_var}->configure(-foreground => 'black');
+
+		$self->{check_filter_w_widget}->configure(-state => 'normal');
+		$self->refresh_flw;
+		#$self->{entry_flw}   ->configure(-state => 'normal');
+		#$self->{entry_flw_l1}->configure(-state => 'normal');
 	}
 	
 	return 1;
@@ -818,10 +832,16 @@ sub _calc{
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
 	}
 
+	my $filter_w = 0;
+	if ( $self->{check_filter_w} && $self->{radio} != 0){
+		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+	}
+
 	&gui_window::word_corresp::make_plot(
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		flt          => $filter,
+		flw          => $filter_w,
 		biplot       => $self->gui_jg( $self->{radio} ),
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,

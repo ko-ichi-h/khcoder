@@ -5,7 +5,36 @@ sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
-	# 特徴語に注目
+	# 差異の顕著な語のみ分析
+	my $fsw = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2,
+	);
+
+	$self->{check_filter_w_widget} = $fsw->Checkbutton(
+		-text     => $self->gui_jchar('差異が顕著なコードを分析に使用：'),
+		-variable => \$self->{check_filter_w},
+		-command  => sub{ $self->refresh_flw;},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
+
+	$self->{entry_flw_l1} = $fsw->Label(
+		-text => $self->gui_jchar('上位'),
+		-font => "TKFN",
+	)->pack(-side => 'left', -padx => 0);
+
+	$self->{entry_flw} = $fsw->Entry(
+		-font       => "TKFN",
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 0);
+	#$self->{entry_flw}->insert(0,'50');
+	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_flw});
+
+	# 特徴的な語のみラベル表示
 	my $fs = $lf->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -13,7 +42,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('特徴的なコードに注目'),
+		-text     => $self->gui_jchar('原点から離れたコードのみラベル表示：'),
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -22,7 +51,7 @@ sub innner{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar(' → 上位：'),
+		-text => $self->gui_jchar('上位'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -31,13 +60,11 @@ sub innner{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 0);
+	#$self->{entry_flt}->insert(0,'50');
 	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_flt});
 
-	$self->{entry_flt_l2} = $fs->Label(
-		-text => $self->gui_jchar('語'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
+	#$self->refresh_flt;
 
 	# 成分
 	my $fd = $lf->Frame()->pack(
@@ -47,12 +74,12 @@ sub innner{
 	);
 
 	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分'),
+		-text => $self->gui_jchar('プロットする成分：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$fd->Label(
-		-text => $self->gui_jchar(' → X軸：'),
+		-text => $self->gui_jchar(' X軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -65,7 +92,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => $self->gui_jchar('  Y軸：'),
+		-text => $self->gui_jchar(' Y軸'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -97,6 +124,21 @@ sub innner{
 		$self->refresh_flt;
 	}
 
+	if ( $self->{command_f} =~ /\nflw <\- ([0-9]+)\n/ ){
+		if ($1 > 0){
+			$self->{check_filter_w} = 1;
+			$self->{entry_flw}->insert(0,$1);
+		} else {
+			$self->{check_filter_w} = 0;
+			$self->{entry_flw}->insert(0,'50');
+		}
+		$self->refresh_flw;
+	}
+	
+	unless ($self->{command_f} =~ /\n# aggregate\n/){
+		$self->{check_filter_w_widget}->configure(-state => 'disabled');
+	}
+
 	return $self;
 }
 
@@ -111,6 +153,18 @@ sub refresh_flt{
 		$self->{entry_flt}   ->configure(-state => 'disabled');
 		$self->{entry_flt_l1}->configure(-state => 'disabled');
 		#$self->{entry_flt_l2}->configure(-state => 'disabled');
+	}
+	return $self;
+}
+
+sub refresh_flw{
+	my $self = shift;
+	if ( $self->{check_filter_w} ){
+		$self->{entry_flw}   ->configure(-state => 'normal');
+		$self->{entry_flw_l1}->configure(-state => 'normal');
+	} else {
+		$self->{entry_flw}   ->configure(-state => 'disabled');
+		$self->{entry_flw_l1}->configure(-state => 'disabled');
 	}
 	return $self;
 }
@@ -146,11 +200,17 @@ sub calc{
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
 	}
 
+	my $filter_w = 0;
+	if ( $self->{check_filter_w} ){
+		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+	}
+
 	&gui_window::word_corresp::make_plot(
 		base_win     => $self,
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
 		flt          => $filter,
+		flw          => $filter_w,
 		biplot       => $biplot,
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
