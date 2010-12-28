@@ -81,13 +81,14 @@ sub _mecab_run{
 	my $self = shift;
 	my $t    = shift;
 
+	# ここまでのデータをファイルへ書き出し out: $self->{target_temp}
 	$self->_mecab_store($t) if length($t);
 	$self->_mecab_store_out;
 
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
 
-	# MeCabの実行
+	# MeCabによる処理 in: $self->{target_temp}, out: $self->{output_temp}
 	require Win32::Process;
 	my $ChasenObj;
 	Win32::Process::Create(
@@ -112,7 +113,8 @@ sub _mecab_run{
 		$cut_eos = 1;
 	}
 	
-	# 結果の取り出し
+	# MeCabの処理結果を収集 in: $self->{output_temp} out: $self->output
+	# →ここでMecabの出力を修正
 	open (OTEMP,"$self->{output_temp}") or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
@@ -171,6 +173,7 @@ sub _mecab_outer{
 	close (OTPT);
 }
 
+# MeCabで処理する前のデータを蓄積
 sub _mecab_store{
 	my $self = shift;
 	my $t    = shift;
@@ -187,7 +190,7 @@ sub _mecab_store{
 	return $self;
 }
 
-
+# MeCabで処理する前のデータをファイルに書き出し
 sub _mecab_store_out{
 	my $self = shift;
 
