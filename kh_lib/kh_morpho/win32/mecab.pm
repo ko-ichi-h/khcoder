@@ -81,7 +81,7 @@ sub _mecab_run{
 	my $self = shift;
 	my $t    = shift;
 
-	# ここまでのデータをファイルへ書き出し out: $self->{target_temp}
+	# ここまでの処理前データをファイルへ書き出し out: $self->{target_temp}
 	$self->_mecab_store($t) if length($t);
 	$self->_mecab_store_out;
 
