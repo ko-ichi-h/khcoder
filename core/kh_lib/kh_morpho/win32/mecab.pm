@@ -114,7 +114,7 @@ sub _mecab_run{
 	}
 	
 	# MeCabの処理結果を収集 in: $self->{output_temp} out: $self->output
-	# →ここでMecabの出力を修正
+	# ↓ここでMecabの出力を修正↓
 	open (OTEMP,"$self->{output_temp}") or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
@@ -127,14 +127,42 @@ sub _mecab_run{
 		);
 	
 	my $last_line = '';
+	my $maru   = Jcode->new('。',euc)->sjis;
+	my $danpen = Jcode->new('記号-一般',euc)->sjis;
+	my $kuten  = Jcode->new('記号-句点',euc)->sjis;
+	
+		# 句点「。」が必ず1語になるよう修正
 	while( <OTEMP> ){
 		if ( length($last_line) > 0 ){
-			print OTPT $last_line;
+			if (
+				   index($last_line,$maru) > -1
+				&& length( (split /\t/, $last_line)[0] ) > 2
+			){
+				my $w = (split /\t/, $last_line)[0];
+				# print "w: $w, ";
+				$w = Jcode->new($w,'sjis')->euc;
+				
+				while ( index($w,'。') > -1 ){
+					if ( index($w,'。') > 0 ){
+						my $pre = substr($w, 0, index($w,'。'));
+						$pre = Jcode->new($pre,'euc')->sjis;
+						# print "pre: $pre, ";
+						print OTPT "$pre\t$pre\t$pre\t$danpen\t\t\n";
+					}
+					# print "$maru, ";
+					print OTPT "$maru\t$maru\t$maru\t$kuten\t\t\n";
+					substr($w, 0, index($w,'。') + 2) = '';
+				}
+				$w = Jcode->new($w,'sjis')->euc;
+				# print "l: $w\n";
+				print OTPT "$w\t$w\t$w\t$danpen\t\t\n";
+			} else {
+				print OTPT $last_line;
+			}
 		}
-		
 		$last_line = $_;
 	}
-	
+		# 最後に余分な「EOS」が付くのを削除
 	if ($last_line =~ /^EOS\n/o && $cut_eos){
 	
 	} else {
