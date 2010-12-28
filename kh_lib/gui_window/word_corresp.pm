@@ -760,7 +760,7 @@ sub make_plot{
 
 	$r_command .= "k <- c\$cor^2\n";
 	$r_command .=
-		"txt <- cbind( 1:nrow(d), round(k,4), round(100*k / sum(k),2) )\n";
+		"txt <- cbind( 1:length(k), round(k,4), round(100*k / sum(k),2) )\n";
 	$r_command .= "colnames(txt) <- c('À®Ê¬','¸ÇÍ­ÃÍ','´óÍ¿Î¨')\n";
 	$r_command .= "print( txt )\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
