@@ -153,8 +153,8 @@ sub _mecab_run{
 					print OTPT "$maru\t$maru\t$maru\t$kuten\t\t\n";
 					substr($w, 0, index($w,'¡£') + 2) = '';
 				}
-				$w = Jcode->new($w,'sjis')->euc;
-				# print "l: $w\n";
+				$w = Jcode->new($w,'euc')->sjis;
+				print "l: $w\n";
 				print OTPT "$w\t$w\t$w\t$danpen\t\t\n";
 			} else {
 				print OTPT $last_line;
