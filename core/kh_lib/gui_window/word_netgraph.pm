@@ -112,21 +112,14 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	my $w_use_freq_as_fsize;
-
-	$lf->Checkbutton(
+	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
 			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
-			-anchor => 'w',
-			-command =>
-				sub{
-					return unless $w_use_freq_as_fsize;
-					if ($self->{check_use_freq_as_size}){
-						$w_use_freq_as_fsize->configure(-state, "normal");
-					} else {
-						$w_use_freq_as_fsize->configure(-state, "disabled");
-					}
-				},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_smaller_nodes} = 0;
+				$self->refresh(3);
+			},
 	)->pack(-anchor => 'w');
 
 	my $fontsize_frame = $lf->Frame()->pack(
@@ -140,11 +133,21 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 	
-	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
+	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
 			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
+	$self->{wc_smaller_nodes} = $lf->Checkbutton(
+			-text     => $self->gui_jchar('すべての語を小さめの円で描画','euc'),
+			-variable => \$self->{check_smaller_nodes},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_use_freq_as_size} = 0;
+				$self->refresh(3);
+			},
 	)->pack(-anchor => 'w');
 
 	# フォントサイズ
@@ -212,20 +215,40 @@ sub _new{
 
 sub refresh{
 	my $self = shift;
-		
-	my ($dis, $nor);
+
+	my (@dis, @nor);
 	if ($self->{radio} eq 'n'){
-		$nor = $self->{entry_edges_number};
-		$dis = $self->{entry_edges_jac};
+		push @nor, $self->{entry_edges_number};
+		push @dis, $self->{entry_edges_jac};
 	} else {
-		$nor = $self->{entry_edges_jac};
-		$dis = $self->{entry_edges_number};
+		push @nor, $self->{entry_edges_jac};
+		push @dis, $self->{entry_edges_number};
 	}
 
-	$nor->configure(-state => 'normal' , -background => 'white');
-	$dis->configure(-state => 'disable', -background => 'gray' );
+	if ($self->{check_use_freq_as_size}){
+		push @nor, $self->{wc_use_freq_as_fsize};
+		push @dis, $self->{wc_smaller_nodes};
+	} else {
+		push @dis, $self->{wc_use_freq_as_fsize};
+		push @nor, $self->{wc_smaller_nodes};
+	}
+
+	if ($self->{check_smaller_nodes}){
+		push @dis, $self->{wc_use_freq_as_size};
+		push @dis, $self->{wc_use_freq_as_fsize};
+	} else {
+		push @nor, $self->{wc_use_freq_as_size};
+	}
+
+	foreach my $i (@nor){
+		$i->configure(-state => 'normal');
+	}
+
+	foreach my $i (@dis){
+		$i->configure(-state => 'disabled');
+	}
 	
-	$nor->focus unless $_[0] == 3;
+	$nor[0]->focus unless $_[0] == 3;
 }
 
 #----------#
@@ -322,6 +345,7 @@ sub calc{
 		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
+		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command        => $r_command,
@@ -366,6 +390,11 @@ sub make_plot{
 		$args{use_weight_as_width} = 0;
 	}
 	$r_command .= "use_weight_as_width <- $args{use_weight_as_width}\n";
+
+	unless ( $args{smaller_nodes} ){
+		$args{smaller_nodes} = 0;
+	}
+	$r_command .= "smaller_nodes <- $args{smaller_nodes}\n";
 
 	$r_command .= &r_plot_cmd_p1;
 
@@ -803,6 +832,15 @@ if ( use_freq_as_fontsize ==1 ){
 	f_size <- cex
 }
 
+# 小さめの円で描画
+if (smaller_nodes ==1){
+	f_size <- cex
+	v_size <- 5
+	vertex_label_dist <- 0.75
+} else {
+	vertex_label_dist <- 0
+}
+
 # edge.widthを計算
 if ( use_weight_as_width == 1 ){
 	edg_width <- el2[,3]
@@ -829,7 +867,8 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 		vertex.label.cex   =f_size,
 		vertex.label.color ="black",
-		vertex.label.family= "", # Linux/Mac環境では必須
+		vertex.label.family= "", # Linux・Mac環境では必須
+		vertex.label.dist  =vertex_label_dist,
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
 		vertex.size        =v_size,
