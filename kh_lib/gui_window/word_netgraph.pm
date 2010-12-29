@@ -829,7 +829,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 		vertex.label.cex   =f_size,
 		vertex.label.color ="black",
-		#vertex.label.family= "",
+		vertex.label.family= "", # Linux/Mac´Ä¶­¤Ç¤ÏÉ¬¿Ü
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
 		vertex.size        =v_size,
