@@ -30,11 +30,11 @@
 	・データサイズが大きくなるにつれて「Format」にかかる時間の割合が増えていく
 
 [「その他」に割り振られた品詞チェック]
-select hinshi.id, hinshi.name, count(*), genkei.name
-from genkei, hinshi
-where genkei.hinshi_id = hinshi.id
-	AND khhinshi_id = 9999
-group by hinshi.id
+	SELECT hinshi.id, hinshi.name, COUNT(*), genkei.name
+	FROM genkei, hinshi
+	WHERE genkei.hinshi_id = hinshi.id
+		  AND khhinshi_id = 9999
+	GROUP BY hinshi.id
 
 [TO DO]
 	・マニュアル
@@ -43,7 +43,6 @@ group by hinshi.id
 		外部変数の制限: 半角255文字まで
 		関連語探索: 条件付き確率が下がる語は除外
 	・共起ネットワーク
-		・「ノードを小さな円で描画」オプションを追加
 		・特定の語（群）を中心としたネットワーク
 	・英語対応（ロジック／インターフェイス／チュートリアル／マニュアル）
 	・連関規則の計算時に欠損値処理を行う (?)
