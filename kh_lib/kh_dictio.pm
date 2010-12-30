@@ -146,12 +146,26 @@ sub mark{
 		while (1){
 			my %temp = (); my $f = 0;                      # 位置を取得
 			foreach my $i (@keywords){
+				# 当該の行内に文字列$iが存在すれば…
 				if (index($text,$i) > -1){
-					my $pos = index($text,$i);
-					my $str = substr($text,0,$pos);
-					unless ($str =~ /\x8F$/ or $str =~ tr/\x8E\xA1-\xFE// % 2){
-						$temp{$i} = $pos;
-						++$f;
+					my @pos = ();
+					my $pos = -1;
+					# $iのすべての開始位置を取得
+					while ( index($text, $i, $pos) > -1 ){
+						push @pos, index($text, $i, $pos);
+						$pos = index($text, $i, $pos) + 1;
+					}
+					# 前から順にずれた場所でマッチしていないかチェック
+					foreach my $h (@pos){
+						my $str = substr($text,0,$h);
+						if ($str =~ /\x8F$/ or $str =~ tr/\x8E\xA1-\xFE// % 2){
+							print Jcode->new("str: $str\n", 'euc')->sjis;
+						} else {
+							# ずれていなければマーキング候補として登録して終了
+							$temp{$i} = $h;
+							++$f;
+							last;
+						}
 					}
 				}
 			}
