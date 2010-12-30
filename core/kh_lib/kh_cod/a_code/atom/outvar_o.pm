@@ -66,14 +66,10 @@ sub ready{
 
 	# テーブル名決定
 	$val = $var_obj->real_val($val);
-	my @temp = unpack "C*", $val;
-	my $temp;
-	foreach my $i (@temp){
-		$temp .= $i;
-	}
-	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"."$temp";
+	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"
+		.$var_obj->real_val_id($val);
+	print Jcode->new("atom-outvar_o: table: $val: $table\n")->sjis if $debug;
 	$self->{tables} = ["$table"];
-	print "atom-outvar_o: table: $table\n" if $debug;
 
 	# テーブル作成
 	if ( mysql_exec->table_exists($table) ){

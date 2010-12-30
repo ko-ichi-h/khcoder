@@ -159,7 +159,7 @@ sub mark{
 					foreach my $h (@pos){
 						my $str = substr($text,0,$h);
 						if ($str =~ /\x8F$/ or $str =~ tr/\x8E\xA1-\xFE// % 2){
-							print Jcode->new("str: $str\n", 'euc')->sjis;
+							#print Jcode->new("str: $str\n", 'euc')->sjis;
 						} else {
 							# ずれていなければマーキング候補として登録して終了
 							$temp{$i} = $h;
