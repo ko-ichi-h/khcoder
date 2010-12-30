@@ -30,7 +30,12 @@ sub innner{
 	if ($self->{command_f} =~ /use_weight_as_width <- ([01])\n/){
 		$self->{check_use_weight_as_width} = $1;
 	} else {
-		die("cannot get configuration: $use_weight_as_width");
+		die("cannot get configuration: use_weight_as_width");
+	}
+	if ($self->{command_f} =~ /smaller_nodes <- ([01])\n/){
+		$self->{check_smaller_nodes} = $1;
+	} else {
+		die("cannot get configuration: smaller_nodes\n");
 	}
 
 	if ($edges == 0){
@@ -111,21 +116,14 @@ sub innner{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	my $w_use_freq_as_fsize;
-
-	$lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
+	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
+			-text     => $self->gui_jchar('出現数の多いコードほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
-			-anchor => 'w',
-			-command =>
-				sub{
-					return unless $w_use_freq_as_fsize;
-					if ($self->{check_use_freq_as_size}){
-						$w_use_freq_as_fsize->configure(-state, "normal");
-					} else {
-						$w_use_freq_as_fsize->configure(-state, "disabled");
-					}
-				},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_smaller_nodes} = 0;
+				$self->refresh(3);
+			},
 	)->pack(-anchor => 'w');
 
 	my $fontsize_frame = $lf->Frame()->pack(
@@ -139,15 +137,23 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 	
-	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
+	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
 			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
-	$w_use_freq_as_fsize->configure(-state => 'normal')
-		if $self->{check_use_freq_as_size};
+	$self->{wc_smaller_nodes} = $lf->Checkbutton(
+			-text     => $self->gui_jchar('すべてのコードを小さめの円で描画','euc'),
+			-variable => \$self->{check_smaller_nodes},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_use_freq_as_size} = 0;
+				$self->refresh(3);
+			},
+	)->pack(-anchor => 'w');
+
 
 	$self->refresh(3);
 	return $self;
@@ -155,20 +161,40 @@ sub innner{
 
 sub refresh{
 	my $self = shift;
-		
-	my ($dis, $nor);
+
+	my (@dis, @nor);
 	if ($self->{radio} eq 'n'){
-		$nor = $self->{entry_edges_number};
-		$dis = $self->{entry_edges_jac};
+		push @nor, $self->{entry_edges_number};
+		push @dis, $self->{entry_edges_jac};
 	} else {
-		$nor = $self->{entry_edges_jac};
-		$dis = $self->{entry_edges_number};
+		push @nor, $self->{entry_edges_jac};
+		push @dis, $self->{entry_edges_number};
 	}
 
-	$nor->configure(-state => 'normal' , -background => 'white');
-	$dis->configure(-state => 'disable', -background => 'gray' );
+	if ($self->{check_use_freq_as_size}){
+		push @nor, $self->{wc_use_freq_as_fsize};
+		push @dis, $self->{wc_smaller_nodes};
+	} else {
+		push @dis, $self->{wc_use_freq_as_fsize};
+		push @nor, $self->{wc_smaller_nodes};
+	}
+
+	if ($self->{check_smaller_nodes}){
+		push @dis, $self->{wc_use_freq_as_size};
+		push @dis, $self->{wc_use_freq_as_fsize};
+	} else {
+		push @nor, $self->{wc_use_freq_as_size};
+	}
+
+	foreach my $i (@nor){
+		$i->configure(-state => 'normal');
+	}
+
+	foreach my $i (@dis){
+		$i->configure(-state => 'disabled');
+	}
 	
-	$nor->focus unless $_[0] == 3;
+	$nor[0]->focus unless $_[0] == 3;
 }
 
 sub calc{
@@ -196,17 +222,18 @@ sub calc{
 	$fontsize /= 100;
 
 	&gui_window::word_netgraph::make_plot(
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		n_or_j         => $self->gui_jg( $self->{radio} ),
-		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
-		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
-		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
-		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
+		font_size         => $fontsize,
+		plot_size         => $self->gui_jg( $self->{entry_plot_size}->get ),
+		n_or_j            => $self->gui_jg( $self->{radio} ),
+		edges_num         => $self->gui_jg( $self->{entry_edges_number}->get ),
+		edges_jac         => $self->gui_jg( $self->{entry_edges_jac}->get ),
+		use_freq_as_size  => $self->gui_jg( $self->{check_use_freq_as_size} ),
+		use_freq_as_fsize => $self->gui_jg( $self->{check_use_freq_as_fsize} ),
+		smaller_nodes     => $self->gui_jg( $self->{check_smaller_nodes} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
-		r_command      => $r_command,
-		plotwin_name   => 'cod_netg',
+		r_command         => $r_command,
+		plotwin_name      => 'cod_netg',
 	);
 
 	$self->close;

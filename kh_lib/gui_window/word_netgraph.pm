@@ -859,7 +859,11 @@ sub r_plot_cmd_p4{
 return 
 '
 # プロット
-par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+if (smaller_nodes ==1){
+	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+} else {
+	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+}
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 	plot.igraph(
 		n2,
