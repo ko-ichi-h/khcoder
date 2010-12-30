@@ -197,21 +197,14 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	my $w_use_freq_as_fsize;
-
-	$lf->Checkbutton(
+	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
 			-text     => $self->gui_jchar('出現数の多いコードほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
-			-anchor => 'w',
-			-command =>
-				sub{
-					return unless $w_use_freq_as_fsize;
-					if ($self->{check_use_freq_as_size}){
-						$w_use_freq_as_fsize->configure(-state, "normal");
-					} else {
-						$w_use_freq_as_fsize->configure(-state, "disabled");
-					}
-				},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_smaller_nodes} = 0;
+				$self->refresh(3);
+			},
 	)->pack(-anchor => 'w');
 
 	my $fontsize_frame = $lf->Frame()->pack(
@@ -225,11 +218,21 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 	
-	$w_use_freq_as_fsize = $fontsize_frame->Checkbutton(
+	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
 			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
+	$self->{wc_smaller_nodes} = $lf->Checkbutton(
+			-text     => $self->gui_jchar('すべてのコードを小さめの円で描画','euc'),
+			-variable => \$self->{check_smaller_nodes},
+			-anchor   => 'w',
+			-command  => sub{
+				$self->{check_use_freq_as_size} = 0;
+				$self->refresh(3);
+			},
 	)->pack(-anchor => 'w');
 
 	# フォントサイズ
@@ -396,20 +399,40 @@ sub select_none{
 # チェックボックス選択時の動作
 sub refresh{
 	my $self = shift;
-		
-	my ($dis, $nor);
+
+	my (@dis, @nor);
 	if ($self->{radio} eq 'n'){
-		$nor = $self->{entry_edges_number};
-		$dis = $self->{entry_edges_jac};
+		push @nor, $self->{entry_edges_number};
+		push @dis, $self->{entry_edges_jac};
 	} else {
-		$nor = $self->{entry_edges_jac};
-		$dis = $self->{entry_edges_number};
+		push @nor, $self->{entry_edges_jac};
+		push @dis, $self->{entry_edges_number};
 	}
 
-	$nor->configure(-state => 'normal' , -background => 'white');
-	$dis->configure(-state => 'disable', -background => 'gray' );
+	if ($self->{check_use_freq_as_size}){
+		push @nor, $self->{wc_use_freq_as_fsize};
+		push @dis, $self->{wc_smaller_nodes};
+	} else {
+		push @dis, $self->{wc_use_freq_as_fsize};
+		push @nor, $self->{wc_smaller_nodes};
+	}
+
+	if ($self->{check_smaller_nodes}){
+		push @dis, $self->{wc_use_freq_as_size};
+		push @dis, $self->{wc_use_freq_as_fsize};
+	} else {
+		push @nor, $self->{wc_use_freq_as_size};
+	}
+
+	foreach my $i (@nor){
+		$i->configure(-state => 'normal');
+	}
+
+	foreach my $i (@dis){
+		$i->configure(-state => 'disabled');
+	}
 	
-	$nor->focus unless $_[0] == 3;
+	$nor[0]->focus unless $_[0] == 3;
 }
 
 # プロット作成＆表示
@@ -471,6 +494,7 @@ sub _calc{
 		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
+		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command      => $r_command,
