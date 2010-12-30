@@ -153,6 +153,33 @@ sub real_val{
 	return $val;
 }
 
+# 値ラベルもしくは値を与えられた時に、値ID（何番目の値かを示す番号）を返す
+sub real_val_id{
+	my $self = shift;
+	my $val  = shift;
+	
+	# print "val: $val\n";
+	# print "val-sjis: ", Jcode->new($val,'euc')->sjis, "\n";
+	
+	foreach my $i (keys %{$self->{labels}}){
+		if ($val eq $self->{labels}{$i}){
+			$val = $i;
+			last;
+		}
+	}
+
+	my $values = $self->values;
+	my $n = 0;
+	foreach my $i (@{$values}){
+		if ($i eq $val){
+			last;
+		}
+		++$n;
+	}
+	
+	return $n;
+}
+
 # 特定の文書に与えられた値を返す
 sub doc_val{
 	my $self = shift;
