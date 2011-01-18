@@ -216,7 +216,10 @@ sub gui_jm{ # メニューのトップ部分用日本語
 	
 	if (
 		$] > 5.008
-		&& ( $::config_obj->os eq 'linux' || $Tk::VERSION >= 804.029 )
+		&& (
+			$::config_obj->os eq 'linux'
+			|| ( $Tk::VERSION >= 804.029 && Win32::IsWinNT() )
+		)
 	) {
 		$code = Jcode->new($char)->icode unless $code;
 		$code = 'eucJP-ms'   if $code eq 'euc';
