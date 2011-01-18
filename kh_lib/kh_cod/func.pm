@@ -51,6 +51,7 @@ sub cod_out_var{
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	$sql .= "ORDER BY ".$self->tani.".id";
 	
 	# 出力開始
 	open(CODO,">$outfile") or
@@ -129,6 +130,7 @@ sub cod_out_spss{
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	$sql .= "ORDER BY ".$self->tani.".id";
 	
 	# データファイル
 	open(CODO,">$outfile2") or
@@ -225,6 +227,7 @@ sub out2r_selected{
 	foreach my $i (keys %tables){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	$sql .= "ORDER BY ".$self->tani.".id";
 	#print "$sql\n";
 	
 	# データ取り出し
@@ -288,6 +291,7 @@ sub cod_out_csv{
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	$sql .= "ORDER BY ".$self->tani.".id";
 	
 	open(CODO,">$outfile") or
 		gui_errormsg->open(
@@ -353,6 +357,7 @@ sub cod_out_tab{
 	foreach my $i (@{$self->tables}){
 		$sql .= "LEFT JOIN $i ON ".$self->tani.".id = $i.id\n";
 	}
+	$sql .= "ORDER BY ".$self->tani.".id";
 	print "3. $outfile\n" if $debug;
 	
 	open(CODO,">$outfile") or

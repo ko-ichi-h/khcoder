@@ -16,6 +16,8 @@ my $password = $::config_obj->sql_password;
 my $host     = $::config_obj->sql_host;
 my $port     = $::config_obj->sql_port;
 
+my $mysql_version;
+
 $username = '' unless defined ($username);
 $password = '' unless defined ($password);
 $host     = '' unless defined ($host);
@@ -38,6 +40,7 @@ sub connect_db{
 	$t->execute;
 	my $r = $t->fetch;
 	$r = $r->[1] if $r;
+	$mysql_version = $r;
 	print "Connected to MySQL $r, $dbname.\n";
 
 	# 文字コードの設定
@@ -230,6 +233,7 @@ sub do{
 	$self->{critical} = shift;
 	bless $self, $class;
 
+	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig if $mysql_version >= 5.5;
 	$self->log;
 
 	$::project_obj->dbh->do($self->sql)
@@ -244,6 +248,7 @@ sub select{
 	$self->{critical} = shift;
 	bless $self, $class;
 	
+	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig if $mysql_version >= 5.5;
 	$self->log;
 	
 	my $t = $::project_obj->dbh->prepare($self->sql) or $self->print_error;
