@@ -233,7 +233,11 @@ sub do{
 	$self->{critical} = shift;
 	bless $self, $class;
 
-	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig if $mysql_version >= 5.5;
+	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
+		if $mysql_version >= 5.5;
+	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
+		unless Win32::IsWinNT; # for Win9x
+	
 	$self->log;
 
 	$::project_obj->dbh->do($self->sql)
@@ -248,7 +252,11 @@ sub select{
 	$self->{critical} = shift;
 	bless $self, $class;
 	
-	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig if $mysql_version >= 5.5;
+	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
+		if $mysql_version >= 5.5;
+	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
+		unless Win32::IsWinNT; # for Win9x
+
 	$self->log;
 	
 	my $t = $::project_obj->dbh->prepare($self->sql) or $self->print_error;
