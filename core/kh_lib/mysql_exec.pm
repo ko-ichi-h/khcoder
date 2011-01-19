@@ -17,6 +17,7 @@ my $host     = $::config_obj->sql_host;
 my $port     = $::config_obj->sql_port;
 
 my $mysql_version;
+my $win_9x = 0;
 
 $username = '' unless defined ($username);
 $password = '' unless defined ($password);
@@ -42,6 +43,11 @@ sub connect_db{
 	$r = $r->[1] if $r;
 	$mysql_version = $r;
 	print "Connected to MySQL $r, $dbname.\n";
+
+	# OSのバージョンチェック
+	if ($::config_obj->os eq 'win32'){
+		$win_9x = 1 unless Win32::IsWinNT();
+	}
 
 	# 文字コードの設定
 	if ( substr($r,0,3) > 4 ){
@@ -236,7 +242,7 @@ sub do{
 	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
 		if $mysql_version >= 5.5;
 	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
-		unless Win32::IsWinNT; # for Win9x
+		if $win_9x; # for Win9x
 	
 	$self->log;
 
@@ -255,7 +261,7 @@ sub select{
 	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
 		if $mysql_version >= 5.5;
 	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
-		unless Win32::IsWinNT; # for Win9x
+		if $win_9x; # for Win9x
 
 	$self->log;
 	
