@@ -448,6 +448,8 @@ sub _out_file_csv{
 	return $target;
 }
 
+*_out_file_csv_def = *_out_file_csv_1c = *_out_file_csv_150 = \&_out_file_csv;
+
 sub _make_wl_1c{
 	my $self = shift;
 
