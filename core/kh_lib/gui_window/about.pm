@@ -49,8 +49,13 @@ sub _new{
 
 	$version_perl = substr($version_perl,0,2).$version_perl_p1.'.'.$version_perl_p2;
 
+	my $version_tk = $Tk::VERSION;
+	if (length($version_tk) > 7){
+		$version_tk = substr($version_tk,0,7);
+	}
+
 	$fra_r->Label(
-		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $Tk::VERSION]",
+		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $version_tk]",
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
