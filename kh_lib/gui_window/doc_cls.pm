@@ -253,7 +253,7 @@ sub calc_exec{
 
 	# 類似度行列の作成（Rコマンド）
 	$r_command .= "library(amap)\n";
-	$r_command .= "library(flashClust)\n";
+	$r_command .= "try( library(flashClust) )\n";
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
