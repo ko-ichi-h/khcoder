@@ -39,7 +39,7 @@ sub _new{
 	
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){
-		$::splash->Destroy;
+		$::splash->Destroy if $::splash;
 		$self->{win_obj}->focus;
 	}
 

@@ -12,6 +12,9 @@ sub _new{
 	my $self = shift;
 	use Tk::Balloon;
 	
+	# threadsのテスト用
+	# my_threads->exec( 'print " exec!!!\n";' );
+	
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $self->{win_obj};
 	#$wabtkh->resizable(0, 0);

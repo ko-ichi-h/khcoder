@@ -87,6 +87,13 @@ BEGIN {
 			109,
 			'',
 		);
+		# TkをInvokeしないマルチスレッド用のスプラッシュ
+		#require Tk::Splash;
+		#require Win32::GUI::SplashScreen;
+		#Win32::GUI::SplashScreen::Show(
+		#	-file => Tk->findINC('kh_logo.bmp'),
+		#	-mintime => 3,
+		#);
 		# 設定
 		require Tk::Clipboard;
 		require Tk::Clipboard_kh;
