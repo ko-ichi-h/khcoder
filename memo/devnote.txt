@@ -14,9 +14,6 @@
 	・Ctrl + Hで品詞別の頻度などを段落単位で集計・出力
 		（強制抽出無し、HTMLタグ無視。大隅先生向け）
 
-[Mac OS X対応について]
-	・kh_project::last_codf, kh_sysconfig::linux::os_path, Tk::FBox_kh
-
 [Anonymous CVSのコマンド]
 	cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/khc checkout core
 	cd core
@@ -28,6 +25,19 @@
 [パフォーマンス]
 	・データが小さいときは「Strat1」に（相対的に）時間がかかる
 	・データサイズが大きくなるにつれて「Format」にかかる時間の割合が増えていく
+
+[マルチスレッドについて]
+	・「my_thread.pm」で少し実験した
+	・kh_coder.plのGUI開始直前にworker threadを起動する
+		use my_thread;
+		my_thread->init;
+	・あとは任意の場所でworker threadに仕事をさせる
+		my_thread->exec( "Perl code" );
+	・仕事が終わるのを待つ場合は
+		my_thread->wait;
+	・注意事項として、
+		・worker thread内でMySQLにコネクトし直す必要がある
+		・MySQL 3.23で同時実行すると、確かに複数のコアが動くが、トータルの時間は長くなる…。ここでいったん今回の実験を中止。新しいバージョンのMySQLならあるいは？
 
 [「その他」に割り振られた品詞チェック]
 	SELECT hinshi.id, hinshi.name, COUNT(*), genkei.name
