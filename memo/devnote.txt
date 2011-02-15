@@ -28,7 +28,7 @@
 
 [マルチスレッドについて]
 	・「my_thread.pm」で少し実験した
-	・kh_coder.plのGUI開始直前にworker threadを起動する
+	・kh_coder.plのGUI開始直前にworker threadを起動する ※TkをInvokeする前でなければならない
 		use my_thread;
 		my_thread->init;
 	・あとは任意の場所でworker threadに仕事をさせる
@@ -38,6 +38,9 @@
 	・注意事項として、
 		・worker thread内でMySQLにコネクトし直す必要がある
 		・MySQL 3.23で同時実行すると、確かに複数のコアが動くが、トータルの時間は長くなる…。ここでいったん今回の実験を中止。新しいバージョンのMySQLならあるいは？
+
+[英語UIについて]
+	・メニューのトップレベルの下線の場所の設定（kh_sysconfig::win32::underline_conv）は変更の要あり
 
 [「その他」に割り振られた品詞チェック]
 	SELECT hinshi.id, hinshi.name, COUNT(*), genkei.name

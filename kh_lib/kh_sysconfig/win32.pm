@@ -158,6 +158,10 @@ sub mecab_path{
 sub underline_conv{
 	my $self = shift;
 	my $n    = shift;
+	
+	if ($Tk::VERSION >= 804.029){
+		$n = ( ($n - 1) / 2 ) + 1;
+	}
 	return $n;
 }
 
