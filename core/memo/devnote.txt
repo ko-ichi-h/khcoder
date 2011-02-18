@@ -29,12 +29,12 @@
 [マルチスレッドについて]
 	・「my_thread.pm」で少し実験した
 	・kh_coder.plのGUI開始直前にworker threadを起動する ※TkをInvokeする前でなければならない
-		use my_thread;
-		my_thread->init;
+		use my_threads;
+		my_threads->init;
 	・あとは任意の場所でworker threadに仕事をさせる
-		my_thread->exec( "Perl code" );
+		my_threads->exec( "Perl code" );
 	・仕事が終わるのを待つ場合は
-		my_thread->wait;
+		my_threads->wait;
 	・注意事項として、
 		・worker thread内でMySQLにコネクトし直す必要がある
 		・MySQL 3.23で同時実行すると、確かに複数のコアが動くが、トータルの時間は長くなる…。ここでいったん今回の実験を中止。新しいバージョンのMySQLならあるいは？

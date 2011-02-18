@@ -57,13 +57,17 @@ sub first{
 	$self->hyosobun;
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
+	
+	my_threads->exec("mysql_ready::df->calc;");
+	my_threads->wait;
+	
 	$self->rowtxt;
 		my $t3 = new Benchmark;
 		print "RawTXT\t",timestr(timediff($t3,$t2)),"\n";
 	$self->tanis;
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t3)),"\n";
-	mysql_ready::df->calc;
+	#mysql_ready::df->calc;
 		my $t5 = new Benchmark;
 		print "df\t",timestr(timediff($t5,$t4)),"\n";
 	mysql_ready::fc->calc_by_db;
@@ -72,6 +76,8 @@ sub first{
 	mysql_ready::check->do;
 		my $t7 = new Benchmark;
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
+
+	my_threads->wait;
 
 	$self->fix_katuyo;
 
