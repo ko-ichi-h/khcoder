@@ -59,7 +59,7 @@ sub first{
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	
 	my_threads->exec("mysql_ready::df->calc;");
-	my_threads->wait;
+	#my_threads->wait;
 	
 	$self->rowtxt;
 		my $t3 = new Benchmark;
@@ -77,8 +77,6 @@ sub first{
 		my $t7 = new Benchmark;
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
-	my_threads->wait;
-
 	$self->fix_katuyo;
 
 	# データベース内の一時テーブルをクリア
@@ -86,6 +84,8 @@ sub first{
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	mysql_exec->drop_table("hghi");
+	
+	my_threads->wait;
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
@@ -719,24 +719,29 @@ sub hyosobun{
 			
 			++$c;
 			if ($c == $data_per_1ins){
+				#print "d";
 				chop $temp;
-				mysql_exec->do("
-					INSERT INTO hyosobun
-					(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
-					VALUES
-						$temp
-				",1);
+				my_threads->exec("
+					mysql_exec->do(\"
+						INSERT INTO hyosobun
+						(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
+						VALUES
+							$temp
+					\",1);
+				");
 				$temp = '';
 				$c    = 0;
 			}
 			if ($c_t == $data_per_1ins){
 				chop $temp_tani;
-				mysql_exec->do("
-					INSERT INTO hyosobun_t
-					(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
-					VALUES
-						$temp_tani
-				",1);
+				my_threads->exec("
+					mysql_exec->do(\"
+						INSERT INTO hyosobun_t
+						(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+						VALUES
+							$temp_tani
+					\",1);
+				");
 				$temp_tani = '';
 				$c_t = 0;
 			}
@@ -766,28 +771,36 @@ sub hyosobun{
 	$t->finish;
 	}
 
+
+
 	# 残りをDBに投入
 	if ($temp){
 		chop $temp;
-		mysql_exec->do("
-			INSERT INTO hyosobun
-			   (bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
-				VALUES
-					$temp
-		",1);
+		my_threads->exec("
+			mysql_exec->do(\"
+				INSERT INTO hyosobun
+				   (bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
+					VALUES
+						$temp
+			\",1);
+		");
 	}
 	if ( ($lc) || ($lw) || ($lt) ){
 		$temp_tani .= '('."$last_tani,$lc,$lw".'),';
 	}
 	if ($temp_tani){
 		chop $temp_tani;
-		mysql_exec->do("
-			INSERT INTO hyosobun_t
-			(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
-			VALUES
-				$temp_tani
-		",1);
+		my_threads->exec("
+			mysql_exec->do(\"
+				INSERT INTO hyosobun_t
+				(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+				VALUES
+					$temp_tani
+			\",1);
+		");
 	}
+
+	my_threads->wait;
 
 	# インデックスを貼る
 	mysql_exec->do("
