@@ -80,20 +80,20 @@ BEGIN {
 		}
 		$SIG{TERM} = $SIG{QUIT} = sub{ exit; };
 		# スプラッシュ
-		require Tk::Splash;
-		$splash = Tk::Splash->Show(
-			Tk->findINC('kh_logo.bmp'),
-			400,
-			109,
-			'',
-		);
-		# TkをInvokeしないマルチスレッド用のスプラッシュ
 		#require Tk::Splash;
-		#require Win32::GUI::SplashScreen;
-		#Win32::GUI::SplashScreen::Show(
-		#	-file => Tk->findINC('kh_logo.bmp'),
-		#	-mintime => 3,
+		#$splash = Tk::Splash->Show(
+		#	Tk->findINC('kh_logo.bmp'),
+		#	400,
+		#	109,
+		#	'',
 		#);
+		# TkをInvokeしないマルチスレッド用のスプラッシュ
+		require Tk::Splash;
+		require Win32::GUI::SplashScreen;
+		Win32::GUI::SplashScreen::Show(
+			-file => Tk->findINC('kh_logo.bmp'),
+			-mintime => 3,
+		);
 		# 設定
 		require Tk::Clipboard;
 		require Tk::Clipboard_kh;
@@ -151,6 +151,9 @@ if ($::config_obj->{R}){
 }
 chdir ($::config_obj->{cwd});
 
+# Workerスレッドの開始
+use my_threads;
+my_threads->init;
 
 # GUIの開始
 $main_gui = gui_window::main->open;

@@ -153,6 +153,8 @@ sub open{
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
 	$::project_obj = $self;
 	
+	my_threads->open_project;
+	
 	$self->check_up;
 	
 	return $self;
