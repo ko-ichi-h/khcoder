@@ -62,12 +62,19 @@ BEGIN {
 			);
 		}
 		# スプラッシュ
+		#require Tk::Splash;
+		#$splash = Tk::Splash->Show(
+		#	Tk->findINC('kh_logo.bmp'),
+		#	400,
+		#	109,
+		#	'',
+		#);
+		# TkをInvokeしないマルチスレッド用のスプラッシュ
 		require Tk::Splash;
-		$splash = Tk::Splash->Show(
-			Tk->findINC('kh_logo.bmp'),
-			400,
-			109,
-			'',
+		require Win32::GUI::SplashScreen;
+		Win32::GUI::SplashScreen::Show(
+			-file => Tk->findINC('kh_logo.bmp'),
+			-mintime => 3,
 		);
 	} 
 	# for Linux & Others
@@ -124,12 +131,25 @@ if ($::config_obj->{R}){
 }
 chdir ($::config_obj->{cwd});
 
+# Workerスレッドの開始
+use my_threads;
+my_threads->init;
+
 # GUIの開始
 $main_gui = gui_window::main->open;
 
+$main_gui->win_obj->bind(
+	'<Control-Key-g>',
+	\&test
+);
+print "Hit Ctrl-G to start test procedures.\n";
+
+MainLoop;
 
 #--------------------#
 #   テスト用コード   #
+
+sub test{
 
 use Cwd qw(cwd);
 use lib cwd.'/auto_test/lib';
@@ -157,5 +177,7 @@ my $t1 = new Benchmark;
 close (STDOUT);
 open(STDOUT,'>&STDERR') or die;
 print "Tests complete: ",timestr(timediff($t1,$t0)),"\n";
+
+}
 
 MainLoop;
