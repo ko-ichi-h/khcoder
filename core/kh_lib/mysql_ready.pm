@@ -57,12 +57,12 @@ sub first{
 	$self->hyosobun;
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
-
 	$self->tanis;
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t2)),"\n";
 	
 	my_threads->exec("mysql_ready::df->calc;");
+	#my_threads->wait;
 
 	$self->rowtxt;
 		my $t3 = new Benchmark;
@@ -636,185 +636,13 @@ sub hyosobun{
 	",1);
 
 	# 初期化
-
+	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
+		(1,1,0,0,0,0,0,0,0,1);
+	my ($temp, $c, $maru);
+	my ($temp_tani, $last_tani, $c_t, $lw, $lc, $lt);
 	my $id = 1;
-	
-	%my_threads::IDs = %{$IDs};
-	
-	my_threads->exec1('
-		print "wkr: starting...\n";
-		
-		my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
-		my $data_per_1ins =   200;     # 一度にINSERTする値の数
-		
-		my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
-			(1,1,0,0,0,0,0,0,0,1);
-		my ($temp, $c, $maru);
-		my ($temp_tani, $last_tani, $c_t, $lw, $lc, $lt);
-		
-		my $IDs = \%my_threads::IDs;
-		
-		while (my ($data) = $my_threads::que_any1->dequeue() ){
-			unless ($data){ # 終了処理
-				# 残りをDBに投入
-				if ($temp){
-					chop $temp;
-					my_threads->exec2("
-						mysql_exec->do(\"
-							INSERT INTO hyosobun
-							   (bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
-								VALUES
-									$temp
-						\",1);
-					");
-				}
-				if ( ($lc) || ($lw) || ($lt) ){
-					$temp_tani .= "("."$last_tani,$lc,$lw"."),";
-				}
-				if ($temp_tani){
-					chop $temp_tani;
-					my_threads->exec2("
-						mysql_exec->do(\"
-							INSERT INTO hyosobun_t
-							(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
-							VALUES
-								$temp_tani
-						\",1);
-					");
-				}
-				# ループを抜ける
-				last;
-			}
-			
-			foreach my $d (@{$data}){
-				if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# 改行のチェック
-					++$dan;
-					$bun = 1;
-					unless ($maru){
-						++$bun2;
-					}
-				}
-				$lastrow = $d->[0];
-				if ( defined($IDs->{$d->[1]}) ){           # HTML開始タグのチェック
-					if (
-						   $IDs->{$d->[1]} eq "<h1>" 
-						|| $IDs->{$d->[1]} eq "<H1>"
-					){
-						++$h1;
-						($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
-							= (0,0,0,0,0,0,1);
-					}
-					elsif (
-						   $IDs->{$d->[1]} eq "<h2>"
-						|| $IDs->{$d->[1]} eq "<H2>"
-					){
-						++$h2;
-						($h3,$h4,$h5,$dan,$bun,$midashi)
-							= (0,0,0,0,0,1)
-					}
-					elsif (
-						   $IDs->{$d->[1]} eq "<h3>"
-						|| $IDs->{$d->[1]} eq "<H3>"
-					){
-						++$h3;
-						($h4,$h5,$dan,$bun,$midashi)
-							= (0,0,0,0,1)
-					}
-					elsif (
-						   $IDs->{$d->[1]} eq "<h4>"
-						|| $IDs->{$d->[1]} eq "<H4>"
-					){
-						++$h4;
-						($h5,$dan,$bun,$midashi)=(0,0,0,1)
-					}
-					elsif (
-						   $IDs->{$d->[1]} eq "<h5>"
-						|| $IDs->{$d->[1]} eq "<H5>"
-					){
-						++$h5;
-						($dan,$bun,$midashi)=(0,0,1)
-					}
-				} else {
-					$IDs->{$d->[1]} = "";
-				}
-
-				                                          # DBに書き込み
-				$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
-				unless (defined($last_tani) && $last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
-					if (defined($last_tani) && length($last_tani)){
-						$temp_tani .= "("."$last_tani,$lc,$lw"."),";
-					}
-					$last_tani = "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1";
-					$lc = 0;
-					$lw = 0;
-					$lt = 0;
-					++$c_t;
-				}
-				
-				++$c;
-				if ($c == $data_per_1ins){
-					#print "d";
-					chop $temp;
-					my_threads->exec2("
-						mysql_exec->do(\"
-							INSERT INTO hyosobun
-							(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
-							VALUES
-								$temp
-						\",1);
-					");
-					$temp = "";
-					$c    = 0;
-				}
-				if ($c_t == $data_per_1ins){
-					chop $temp_tani;
-					my_threads->exec2("
-						mysql_exec->do(\"
-							INSERT INTO hyosobun_t
-							(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
-							VALUES
-								$temp_tani
-						\",1);
-					");
-					$temp_tani = "";
-					$c_t = 0;
-				}
-
-				if (
-					   ($d->[2])
-					and not ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o)
-					and not ($IDs->{$d->[1]} =~ /<[Hh][1-5]>/o)
-					and not ($d->[3])
-				){
-					$lc += $d->[2];
-					++$lw;
-				}
-				++$lt;
-
-				if ($IDs->{$d->[1]} eq "。"){              # 句読点のチェック
-					unless ($midashi){
-						++$bun; ++$bun2; $maru = 1;
-					}
-				} else {
-					$maru = 0;
-				}
-				if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
-						$midashi = 0;
-				}
-
-
-
-			}
-		}
-		print "wkr: ending?!\n";
-	');
-	
-
-	
-	
 	# 実行
 	while (1){
-		# MySQLからデータ取りだし
 		my $t = mysql_exec->select(
 			$self->hyosobun_sql($id, $id + $rows_per_once),
 			1
@@ -824,15 +652,156 @@ sub hyosobun{
 		}
 		$id += $rows_per_once;
 
-		# 整形してMySQLに再投入
-		my_threads->que_any1_enqueue( $t->fetchall_arrayref );
-		$t->finish;
-	
+
+		while (my $d = $t->fetch){
+			if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# 改行のチェック
+				++$dan;
+				$bun = 1;
+				unless ($maru){
+					++$bun2;
+				}
+			}
+			$lastrow = $d->[0];
+			if ( defined($IDs->{$d->[1]}) ){           # HTML開始タグのチェック
+				if (
+					   $IDs->{$d->[1]} eq '<h1>' 
+					|| $IDs->{$d->[1]} eq '<H1>'
+				){
+					++$h1;
+					($h2,$h3,$h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,0,0,1);
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h2>'
+					|| $IDs->{$d->[1]} eq '<H2>'
+				){
+					++$h2;
+					($h3,$h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h3>'
+					|| $IDs->{$d->[1]} eq '<H3>'
+				){
+					++$h3;
+					($h4,$h5,$dan,$bun,$midashi)
+						= (0,0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h4>'
+					|| $IDs->{$d->[1]} eq '<H4>'
+				){
+					++$h4;
+					($h5,$dan,$bun,$midashi)=(0,0,0,1)
+				}
+				elsif (
+					   $IDs->{$d->[1]} eq '<h5>'
+					|| $IDs->{$d->[1]} eq '<H5>'
+				){
+					++$h5;
+					($dan,$bun,$midashi)=(0,0,1)
+				}
+			} else {
+				$IDs->{$d->[1]} = '';
+			}
+
+			                                          # DBに書き込み
+			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
+			unless (defined($last_tani) && $last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
+				if (defined($last_tani) && length($last_tani)){
+					$temp_tani .= '('."$last_tani,$lc,$lw".'),';
+				}
+				$last_tani = "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1";
+				$lc = 0;
+				$lw = 0;
+				$lt = 0;
+				++$c_t;
+			}
+			
+			++$c;
+			if ($c == $data_per_1ins){
+				#print "d";
+				chop $temp;
+				my_threads->exec("
+					mysql_exec->do(\"
+						INSERT INTO hyosobun
+						(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
+						VALUES
+							$temp
+					\",1);
+				");
+				$temp = '';
+				$c    = 0;
+			}
+			if ($c_t == $data_per_1ins){
+				chop $temp_tani;
+				my_threads->exec("
+					mysql_exec->do(\"
+						INSERT INTO hyosobun_t
+						(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+						VALUES
+							$temp_tani
+					\",1);
+				");
+				$temp_tani = '';
+				$c_t = 0;
+			}
+
+			if (
+				   ($d->[2])
+				and not ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o)
+				and not ($IDs->{$d->[1]} =~ /<[Hh][1-5]>/o)
+				and not ($d->[3])
+			){
+				$lc += $d->[2];
+				++$lw;
+			}
+			++$lt;
+
+			if ($IDs->{$d->[1]} eq '。'){              # 句読点のチェック
+				unless ($midashi){
+					++$bun; ++$bun2; $maru = 1;
+				}
+			} else {
+				$maru = 0;
+			}
+			if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
+					$midashi = 0;
+			}
+		}
+	$t->finish;
 	}
 
-	my_threads->que_any1_enqueue( undef );
-	my_threads->wait1;
-	my_threads->wait2;
+
+
+	# 残りをDBに投入
+	if ($temp){
+		chop $temp;
+		my_threads->exec("
+			mysql_exec->do(\"
+				INSERT INTO hyosobun
+				   (bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id,hyoso_id)
+					VALUES
+						$temp
+			\",1);
+		");
+	}
+	if ( ($lc) || ($lw) || ($lt) ){
+		$temp_tani .= '('."$last_tani,$lc,$lw".'),';
+	}
+	if ($temp_tani){
+		chop $temp_tani;
+		my_threads->exec("
+			mysql_exec->do(\"
+				INSERT INTO hyosobun_t
+				(bun_idt, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id, lc, lw)
+				VALUES
+					$temp_tani
+			\",1);
+		");
+	}
+
+	my_threads->wait;
 
 	# インデックスを貼る
 	mysql_exec->do("
