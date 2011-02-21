@@ -11,10 +11,17 @@ use utf8;
 sub _new{
 	my $self = shift;
 	use Tk::Balloon;
-	
-	# threadsのテスト用
+
+
+	# テスト用
 	# my_threads->exec( 'print " exec!!!\n";' );
-	
+	#use Benchmark;
+	#my $t0 = new Benchmark;
+	#mysql_ready::df->calc;
+	#my $t1 = new Benchmark;
+	#print "df\t",timestr(timediff($t1,$t0)),"\n";
+
+
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $self->{win_obj};
 	#$wabtkh->resizable(0, 0);

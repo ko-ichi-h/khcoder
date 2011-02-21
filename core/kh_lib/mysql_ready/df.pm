@@ -1,5 +1,6 @@
 package mysql_ready::df;
 use strict;
+use Benchmark;
 
 my %sql_join = (
 	'bun' =>
@@ -62,6 +63,98 @@ sub calc{
 		){
 			next;
 		}
+		
+		my $heap = '';
+		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
+		
+		#print "DF: $tani\n";
+		# 文以外の単位では中間テーブルを作成
+		my $tain_hb = '';
+		unless ($tani eq 'bun'){
+			my $t0 = new Benchmark;
+			$tain_hb = $tani.'_hb';
+			mysql_exec->drop_table("$tain_hb");
+			mysql_exec->do("
+				CREATE TABLE $tain_hb(
+					hyosobun_id INT primary key,
+					tid         INT
+				) $heap
+			",1);
+			mysql_exec->do("
+				INSERT INTO $tain_hb (hyosobun_id, tid)
+				SELECT hyosobun.id, $tani.id
+				FROM hyosobun, $tani
+				WHERE
+					$sql_join{$tani}
+			",1);
+			my $t1 = new Benchmark;
+			#print "TMP\t",timestr(timediff($t1,$t0)),"\n";
+		}
+		
+		# テーブル作製
+		my $t0 = new Benchmark;
+		mysql_exec->drop_table("df_$tani");
+		mysql_exec->do("
+			CREATE TABLE df_$tani(
+				genkei_id INT primary key,
+				f         INT
+			)
+		",1);
+
+		# 集計の実行
+		if ($tani eq 'bun'){  # 文単位
+			mysql_exec->do("
+				INSERT INTO df_$tani (genkei_id, f)
+				SELECT genkei.id, COUNT(DISTINCT $tani.id)
+				FROM hyosobun, $tani, hyoso, genkei
+				WHERE
+					$sql_join{$tani}
+					AND hyosobun.hyoso_id = hyoso.id
+					AND hyoso.genkei_id = genkei.id
+				GROUP BY genkei.id
+			",1);
+		} else {              # それ以外の単位
+			mysql_exec->do("
+				INSERT INTO df_$tani (genkei_id, f)
+				SELECT genkei.id, COUNT(DISTINCT tid)
+				FROM hyosobun, $tain_hb, hyoso, genkei
+				WHERE
+					    hyosobun.id = $tain_hb.hyosobun_id
+					AND hyosobun.hyoso_id = hyoso.id
+					AND hyoso.genkei_id = genkei.id
+				GROUP BY genkei.id
+			",1);
+		}
+
+		# 中間テーブルをHEAPからMyISAMへ
+		if ($tani ne 'bun' && length($heap) != 0){
+			my $heap_table = $tain_hb.'_heap';
+			mysql_exec->drop_table($heap_table);
+			mysql_exec->do("ALTER TABLE $tain_hb RENAME $heap_table",1);
+			mysql_exec->do("
+				CREATE TABLE $tain_hb(
+					hyosobun_id INT primary key,
+					tid         INT
+				)
+			",1);
+			mysql_exec->do("
+				INSERT INTO $tain_hb (hyosobun_id, tid)
+				SELECT hyosobun_id, tid
+				FROM $heap_table
+			",1);
+			mysql_exec->drop_table($heap_table);
+		}
+
+		my $t1 = new Benchmark;
+		#print "Main\t",timestr(timediff($t1,$t0)),"\n";
+	}
+	
+	return 1;
+}
+
+sub old{
+		my $tani;
+		
 		# テーブル作製
 		mysql_exec->drop_table("df_$tani");
 		mysql_exec->do("
@@ -78,33 +171,6 @@ sub calc{
 		$sql2 .= "\tAND hyosobun.hyoso_id = hyoso.id\n";
 		$sql2 .= "\tAND hyoso.genkei_id = genkei.id\n";
 		$sql2 .= "GROUP BY genkei.id";
-		
-		# 処理確認用のprint
-		#my $h = mysql_exec->select("explain\n$sql2")->hundle;
-		#print "\n$sql2\n";
-		#while (my $i = $h->fetch){
-		#	foreach my $ii (@{$i}){
-		#		print "$ii: ";
-		#	}
-		#	print "\n";
-		#}
-		
-		mysql_exec->do($sql1.$sql2,1);
-		
-		#if ($switch){
-		#	my_threads->exec1("mysql_exec->do(\"$sql1 $sql2\",1);");
-		#	$switch = 0;
-		#} else {
-		#	my_threads->exec2("mysql_exec->do(\"$sql1 $sql2\",1);");
-		#	$switch = 1;
-		#}
-	}
-	
-	#my_threads->wait1;
-	#my_threads->wait2;
-	return 1;
 }
-
-
 
 1;

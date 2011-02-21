@@ -960,7 +960,8 @@ sub rowtxt{
 			}
 			
 			if ($c == $data_per_1ins){
-				chop $values; mysql_exec->do("$sql $values",1);
+				chop $values;
+				mysql_exec->do("$sql $values",1);
 				$c = 0; $values = '';
 			}
 		}
@@ -972,7 +973,8 @@ sub rowtxt{
 			$temp =~ s/'/\\'/go;
 			$values .= "(\'$temp\'),";
 		}
-		chop $values; mysql_exec->do("$sql $values",1);
+		chop $values;
+		mysql_exec->do("$sql $values",1);
 	}
 }
 
