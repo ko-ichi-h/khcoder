@@ -15,7 +15,7 @@ my $que2 = new Thread::Queue;
 my $cur2 :shared = '';
 
 use vars qw($que_any1 %IDs);
-$que_any1 = new Thread::Queue;
+$que_any1 = new Thread::Queue::Any;
 share(%IDs);
 
 sub init{

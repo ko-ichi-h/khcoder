@@ -46,6 +46,8 @@ my %sql_join = (
 
 sub calc{
 	
+	my $switch = 0;
+	
 	foreach my $tani ('bun','dan','h1','h2','h3','h4','h5'){
 		# 見出しが存在するかどうかをチェック
 		my $check_col = '';
@@ -88,8 +90,19 @@ sub calc{
 		#}
 		
 		mysql_exec->do($sql1.$sql2,1);
+		
+		#if ($switch){
+		#	my_threads->exec1("mysql_exec->do(\"$sql1 $sql2\",1);");
+		#	$switch = 0;
+		#} else {
+		#	my_threads->exec2("mysql_exec->do(\"$sql1 $sql2\",1);");
+		#	$switch = 1;
+		#}
 	}
 	
+	#my_threads->wait1;
+	#my_threads->wait2;
+	return 1;
 }
 
 
