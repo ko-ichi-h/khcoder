@@ -39,33 +39,36 @@ sub open_project{
 }
 
 sub worker_thread1{
-	while ( $cur1 = $que1->dequeue() ) {
+	while ( my $cmd = $que1->dequeue() ) {
+		$cur1 = 1;
 		#my $t0 = new Benchmark;
-		eval( $cur1 );
+		eval( $cmd );
 		if ($@){
 			die("Error in the thread: $@\n");
 		}
 		
 		#my $t1 = new Benchmark;
 		#print "Worker: Done: \t",timestr(timediff($t1,$t0)),"\n";
-		$cur1 = '';
+		$cur1 = 0;
 	}
 }
 
 sub worker_thread2{
-	while ( $cur2 = $que2->dequeue() ) {
+	while ( my $cmd = $que2->dequeue() ) {
+		$cur2 = 1;
 		#my $t0 = new Benchmark;
-		eval( $cur2 );
+		eval( $cmd );
 		if ($@){
 			die("Error in the thread: $@\n");
 		}
 		#my $t1 = new Benchmark;
 		#print "Worker: Done: \t",timestr(timediff($t1,$t0)),"\n";
-		$cur2 = '';
+		$cur2 = 0;
 	}
 }
 
 sub exec1{
+	$cur1 = 1;
 	my $class = shift;
 	my $cmd   = shift;
 	$que1->enqueue($cmd);
@@ -73,6 +76,7 @@ sub exec1{
 }
 
 sub exec2{
+	$cur2 = 1;
 	my $class = shift;
 	my $cmd   = shift;
 	$que2->enqueue($cmd);
@@ -83,9 +87,9 @@ sub exec2{
 sub wait1{
 	print "Worker1: Waiting...\n";
 	my $t0 = new Benchmark;
-	while ($que1->pending > 0 || length($cur1) > 0 ){
+	while ($que1->pending > 0 || $cur1 ){
 		sleep 0.1;
-		last if $que1->pending == 0 && length($cur1) == 0;
+		last if $que1->pending == 0 && $cur1 == 0;
 	}
 	my $t1 = new Benchmark;
 	print "Worker1: Wainting: Done: ", timestr(timediff($t1,$t0)), "\n";
@@ -95,9 +99,9 @@ sub wait1{
 sub wait2{
 	print "Worker2: Waiting...\n";
 	my $t0 = new Benchmark;
-	while ($que2->pending > 0 || length($cur2) > 0 ){
+	while ($que2->pending > 0 || $cur2 ){
 		sleep 0.1;
-		last if $que2->pending == 0 && length($cur2) == 0;
+		last if $que2->pending == 0 && $cur2 == 0;
 	}
 	my $t1 = new Benchmark;
 	print "Worker2: Wainting: Done: ", timestr(timediff($t1,$t0)), "\n";
