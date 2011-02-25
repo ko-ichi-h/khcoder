@@ -68,7 +68,7 @@ sub calc{
 		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
 		
 		#print "DF: $tani\n";
-		# 文以外の単位では中間テーブルを作成
+		# 文以外の単位では中間テーブルを作成（hyosobun.idと各単位.idを直結）
 		my $tain_hb = '';
 		unless ($tani eq 'bun'){
 			my $t0 = new Benchmark;
