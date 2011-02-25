@@ -61,14 +61,14 @@ sub first{
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t2)),"\n";
 	
-	my_threads->exec("mysql_ready::df->calc;");
+	#my_threads->exec("mysql_ready::df->calc;");
 	#my_threads->wait;
 
 	$self->rowtxt;
 		my $t3 = new Benchmark;
 		print "RawTXT\t",timestr(timediff($t3,$t4)),"\n";
 
-	#mysql_ready::df->calc;
+	mysql_ready::df->calc;
 		my $t5 = new Benchmark;
 		print "df\t",timestr(timediff($t5,$t3)),"\n";
 	mysql_ready::fc->calc_by_db;
@@ -86,7 +86,7 @@ sub first{
 	mysql_exec->drop_table("hyosobun_t");
 	mysql_exec->drop_table("hghi");
 	
-	my_threads->wait;
+	#my_threads->wait;
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
