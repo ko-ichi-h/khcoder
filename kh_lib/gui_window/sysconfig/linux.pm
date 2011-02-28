@@ -41,7 +41,7 @@ sub __new{
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('茶筌を利用／日本語データ'),
+		-text     => $self->gui_jchar('茶筌を利用'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'chasen',
@@ -106,7 +106,7 @@ sub __new{
 	)->pack(-padx => '2',-side => 'right');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('MeCabを利用／日本語データ'),
+		-text     => $self->gui_jchar('MeCabを利用'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'mecab',

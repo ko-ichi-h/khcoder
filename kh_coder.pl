@@ -18,7 +18,7 @@ use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.24.plus4";
+$kh_version = "2.beta.24.p4";
 
 BEGIN {
 	# デバッグ用…
@@ -151,7 +151,7 @@ if ($::config_obj->{R}){
 }
 chdir ($::config_obj->{cwd});
 
-# Workerスレッドの開始
+# マルチスレッド処理の準備
 use my_threads;
 my_threads->init;
 

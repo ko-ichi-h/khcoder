@@ -32,7 +32,7 @@ sub open_project{
 	my $dbname = $::project_obj->dbname;
 	my $cmd = 
 		'undef $::project_obj;'."\n"
-		.'$::project_obj->{dbh} = mysql_exec->connect_db("'.$dbname.'");'."\n"
+		.'$::project_obj->{dbh} = mysql_exec->connect_db("'.$dbname.'",1);'."\n"
 		.'bless $::project_obj, "kh_project"'."\n";
 	my_threads->exec1($cmd);
 	my_threads->exec2($cmd);
