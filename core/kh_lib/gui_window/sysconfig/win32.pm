@@ -33,7 +33,7 @@ sub __new{
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('茶筌を利用／日本語データ'),
+		-text     => $self->gui_jchar('茶筌を利用'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'chasen',
@@ -66,9 +66,9 @@ sub __new{
 	)->pack(-padx => '2',-side => 'right');
 
 	
-	my $msg = 'MeCabを利用／日本語データ';
+	my $msg = 'MeCabを利用';
 	if ($::config_obj->all_in_one_pack && ! -e $::config_obj->mecab_path){
-		$msg .= '／要・別途インストール';
+		$msg .= '  要・別途インストール';
 	}
 
 	$lfra->Radiobutton(

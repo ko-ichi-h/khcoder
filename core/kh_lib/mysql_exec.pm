@@ -30,7 +30,8 @@ $port     = '' unless defined ($port);
 
 # 既存DBにConnect
 sub connect_db{
-	my $dbname = $_[1];
+	my $dbname     = $_[1];
+	my $no_verbose = $_[2];
 	my $dsn = 
 		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
@@ -42,7 +43,7 @@ sub connect_db{
 	my $r = $t->fetch;
 	$r = $r->[1] if $r;
 	$mysql_version = $r;
-	print "Connected to MySQL $r, $dbname.\n";
+	print "Connected to MySQL $r, $dbname.\n" unless $no_verbose;
 
 	# OSのバージョンチェック
 	if ($::config_obj->os eq 'win32'){
@@ -52,7 +53,7 @@ sub connect_db{
 	# 文字コードの設定
 	if ( substr($r,0,3) > 4 ){
 		$dbh->do("SET NAMES ujis");
-		print "Performed \"SET NAMES ujis\"\n";
+		print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
 	}
 
 	return $dbh;
