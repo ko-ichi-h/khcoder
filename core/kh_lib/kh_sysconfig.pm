@@ -439,6 +439,20 @@ sub R{
 	return $self->{R};
 }
 
+sub multi_threads{
+	my $self = shift;
+	my $new = shift;
+	if ( defined($new) ){
+		$self->{multi_threads} = $new;
+	}
+	
+	if ( length($self->{multi_threads}) ){
+		return $self->{multi_threads};
+	} else {
+		return 0;
+	}
+}
+
 sub r_plot_debug{
 	my $self = shift;
 	my $new = shift;

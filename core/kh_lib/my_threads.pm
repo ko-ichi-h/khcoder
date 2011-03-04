@@ -4,7 +4,7 @@ use strict;
 use Config;
 
 BEGIN{
-	if ( $Config{useithreads} ){
+	if ( $Config{useithreads} && $::config_obj->multi_threads){
 		require my_threads::multi;
 		import  my_threads::multi;
 	} else {
