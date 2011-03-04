@@ -84,6 +84,7 @@ sub save_ini{
 		'sql_password',
 		'sql_host',
 		'sql_port',
+		'multi_threads',
 		'mail_if',
 		'mail_smtp',
 		'mail_from',

@@ -87,6 +87,7 @@ sub save_ini{
 		'sql_password',
 		'sql_host',
 		'sql_port',
+		'multi_threads',
 		'mail_if',
 		'mail_smtp',
 		'mail_from',
@@ -159,7 +160,9 @@ sub underline_conv{
 	my $self = shift;
 	my $n    = shift;
 	
-	if ($Tk::VERSION >= 804.029){
+	require Win32;
+	
+	if ($Tk::VERSION >= 804.029 && Win32::IsWinNT() ){
 		$n = ( ($n - 1) / 2 ) + 1;
 	}
 	return $n;
