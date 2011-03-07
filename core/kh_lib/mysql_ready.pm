@@ -61,16 +61,16 @@ sub first{
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t2)),"\n";
 
-	my_threads->exec("mysql_ready::df->calc;");
-	my_threads->wait unless $::config_obj->multi_threads >= 2;
+	#my_threads->exec("mysql_ready::df->calc;");
+	#my_threads->wait unless $::config_obj->multi_threads >= 2;
 
 	$self->rowtxt;
 		my $t3 = new Benchmark;
 		print "RawTXT\t",timestr(timediff($t3,$t4)),"\n";
 
-	#mysql_ready::df->calc;
+	mysql_ready::df->calc;
 		my $t5 = new Benchmark;
-		#print "df\t",timestr(timediff($t5,$t3)),"\n";
+		print "df\t",timestr(timediff($t5,$t3)),"\n";
 	mysql_ready::fc->calc_by_db;
 		my $t6 = new Benchmark;
 		print "fc\t",timestr(timediff($t6,$t5)),"\n";

@@ -46,9 +46,8 @@ my %sql_join = (
 
 
 sub calc{
-	
-	my $switch = 0;
-	
+
+	my @avail = ();
 	foreach my $tani ('bun','dan','h1','h2','h3','h4','h5'){
 		# 見出しが存在するかどうかをチェック
 		my $check_col = '';
@@ -64,6 +63,11 @@ sub calc{
 			next;
 		}
 		
+		push @avail, $tani;
+	}
+
+	my $switch = 'exec1';
+	foreach my $tani (@avail){
 		my $heap = '';
 		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
 		
@@ -73,81 +77,120 @@ sub calc{
 		unless ($tani eq 'bun'){
 			my $t0 = new Benchmark;
 			$tain_hb = $tani.'_hb';
-			mysql_exec->drop_table("$tain_hb");
-			mysql_exec->do("
-				CREATE TABLE $tain_hb(
-					hyosobun_id INT primary key,
-					tid         INT
-				) $heap
-			",1);
-			mysql_exec->do("
-				INSERT INTO $tain_hb (hyosobun_id, tid)
-				SELECT hyosobun.id, $tani.id
-				FROM hyosobun, $tani
-				WHERE
-					$sql_join{$tani}
-			",1);
+			
+			my_threads->$switch("
+				mysql_exec->drop_table(\"$tain_hb\");
+				mysql_exec->do(\"
+					CREATE TABLE $tain_hb(
+						hyosobun_id INT primary key,
+						tid         INT
+					) $heap
+				\",1);
+				mysql_exec->do(\"
+					INSERT INTO $tain_hb (hyosobun_id, tid)
+					SELECT hyosobun.id, $tani.id
+					FROM hyosobun, $tani
+					WHERE
+						$sql_join{$tani}
+				\",1);
+			");
+			
 			my $t1 = new Benchmark;
 			#print "TMP\t",timestr(timediff($t1,$t0)),"\n";
 		}
 		
 		# テーブル作製
 		my $t0 = new Benchmark;
-		mysql_exec->drop_table("df_$tani");
-		mysql_exec->do("
-			CREATE TABLE df_$tani(
-				genkei_id INT primary key,
-				f         INT
-			)
-		",1);
+		my_threads->$switch("
+			mysql_exec->drop_table(\"df_$tani\");
+			mysql_exec->do(\"
+				CREATE TABLE df_$tani(
+					genkei_id INT primary key,
+					f         INT
+				)
+			\",1);
+		");
 
 		# 集計の実行
 		if ($tani eq 'bun'){  # 文単位
-			mysql_exec->do("
-				INSERT INTO df_$tani (genkei_id, f)
-				SELECT genkei.id, COUNT(DISTINCT $tani.id)
-				FROM hyosobun, $tani, hyoso, genkei
-				WHERE
-					$sql_join{$tani}
-					AND hyosobun.hyoso_id = hyoso.id
-					AND hyoso.genkei_id = genkei.id
-				GROUP BY genkei.id
-			",1);
+			my_threads->$switch("
+				mysql_exec->do(\"
+					INSERT INTO df_$tani (genkei_id, f)
+					SELECT genkei.id, COUNT(DISTINCT $tani.id)
+					FROM hyosobun, $tani, hyoso, genkei
+					WHERE
+						$sql_join{$tani}
+						AND hyosobun.hyoso_id = hyoso.id
+						AND hyoso.genkei_id = genkei.id
+					GROUP BY genkei.id
+				\",1);
+			");
 		} else {              # それ以外の単位
-			mysql_exec->do("
-				INSERT INTO df_$tani (genkei_id, f)
-				SELECT genkei.id, COUNT(DISTINCT tid)
-				FROM hyosobun, $tain_hb, hyoso, genkei
-				WHERE
-					    hyosobun.id = $tain_hb.hyosobun_id
-					AND hyosobun.hyoso_id = hyoso.id
-					AND hyoso.genkei_id = genkei.id
-				GROUP BY genkei.id
-			",1);
-		}
-
-		# 中間テーブルをHEAPからMyISAMへ
-		if ($tani ne 'bun' && length($heap) != 0){
-			my $heap_table = $tain_hb.'_heap';
-			mysql_exec->drop_table($heap_table);
-			mysql_exec->do("ALTER TABLE $tain_hb RENAME $heap_table",1);
-			mysql_exec->do("
-				CREATE TABLE $tain_hb(
-					hyosobun_id INT primary key,
-					tid         INT
-				)
-			",1);
-			mysql_exec->do("
-				INSERT INTO $tain_hb (hyosobun_id, tid)
-				SELECT hyosobun_id, tid
-				FROM $heap_table
-			",1);
-			mysql_exec->drop_table($heap_table);
+			my_threads->$switch("
+				mysql_exec->do(\"
+					INSERT INTO df_$tani (genkei_id, f)
+					SELECT genkei.id, COUNT(DISTINCT tid)
+					FROM hyosobun, $tain_hb, hyoso, genkei
+					WHERE
+						    hyosobun.id = $tain_hb.hyosobun_id
+						AND hyosobun.hyoso_id = hyoso.id
+						AND hyoso.genkei_id = genkei.id
+					GROUP BY genkei.id
+				\",1);
+			");
 		}
 
 		my $t1 = new Benchmark;
 		#print "Main\t",timestr(timediff($t1,$t0)),"\n";
+
+		print "$switch\n";		
+		if ($switch eq 'exec1'){
+			$switch = 'exec2';
+		} else {
+			$switch = 'exec1';
+		}
 	}
+	
+	my_threads->wait1;
+	my_threads->wait2;
+	
+	$switch = 'exec1';
+	foreach my $tani (@avail){
+		my $heap = '';
+		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
+		my $tain_hb = $tani.'_hb';
+
+		# 中間テーブルをHEAPからMyISAMへ
+		if ($tani ne 'bun' && length($heap) != 0){
+			my $heap_table = $tain_hb.'_heap';
+			my_threads->$switch("
+				mysql_exec->drop_table(\"$heap_table\");
+				mysql_exec->do(\"ALTER TABLE $tain_hb RENAME $heap_table\",1);
+				mysql_exec->do(\"
+					CREATE TABLE $tain_hb(
+						hyosobun_id INT primary key,
+						tid         INT
+					)
+				\",1);
+				mysql_exec->do(\"
+					INSERT INTO $tain_hb (hyosobun_id, tid)
+					SELECT hyosobun_id, tid
+					FROM $heap_table
+				\",1);
+				mysql_exec->drop_table(\"$heap_table\");
+			");
+		}
+		print "$switch\n";		
+		if ($switch eq 'exec1'){
+			#$switch = 'exec2';
+		} else {
+			#$switch = 'exec1';
+		}
+	}
+	
+	my_threads->wait1;
+	my_threads->wait2;
+	
 	
 	return 1;
 }
