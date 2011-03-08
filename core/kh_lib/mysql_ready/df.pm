@@ -47,31 +47,21 @@ my %sql_join = (
 
 sub calc{
 
+	# 見出しが存在するかどうかをチェック
 	my @avail = ();
 	foreach my $tani ('bun','dan','h1','h2','h3','h4','h5'){
-		# 見出しが存在するかどうかをチェック
-		my $check_col = '';
-		if ($tani eq 'bun'){
-			$check_col = 'bun_idt';
-		} else {
-			$check_col = "$tani".'_id';
+		if ( mysql_exec->table_exists($tani) ){
+			push @avail, $tani;
+			#print "t: $tani\n";
 		}
-		unless (
-			mysql_exec->select("select max($check_col) from hyosobun",1)
-			->hundle->fetch->[0]
-		){
-			next;
-		}
-		
-		push @avail, $tani;
 	}
 
+	# 集計の準備と実行
 	my $switch = 'exec1';
 	foreach my $tani (@avail){
 		my $heap = '';
 		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
 		
-		#print "DF: $tani\n";
 		# 文以外の単位では中間テーブルを作成（hyosobun.idと各単位.idを直結）
 		my $tain_hb = '';
 		unless ($tani eq 'bun'){
@@ -99,7 +89,7 @@ sub calc{
 			#print "TMP\t",timestr(timediff($t1,$t0)),"\n";
 		}
 		
-		# テーブル作製
+		# テーブル準備
 		my $t0 = new Benchmark;
 		my_threads->$switch("
 			mysql_exec->drop_table(\"df_$tani\");
@@ -125,7 +115,7 @@ sub calc{
 					GROUP BY genkei.id
 				\",1);
 			");
-		} else {              # それ以外の単位
+		} else {              # 文以外の単位
 			my_threads->$switch("
 				mysql_exec->do(\"
 					INSERT INTO df_$tani (genkei_id, f)
@@ -143,7 +133,7 @@ sub calc{
 		my $t1 = new Benchmark;
 		#print "Main\t",timestr(timediff($t1,$t0)),"\n";
 
-		print "$switch\n";		
+		#print "$switch\n";		
 		if ($switch eq 'exec1'){
 			$switch = 'exec2';
 		} else {
@@ -154,14 +144,14 @@ sub calc{
 	my_threads->wait1;
 	my_threads->wait2;
 	
-	$switch = 'exec1';
-	foreach my $tani (@avail){
-		my $heap = '';
-		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
-		my $tain_hb = $tani.'_hb';
-
-		# 中間テーブルをHEAPからMyISAMへ
-		if ($tani ne 'bun' && length($heap) != 0){
+	# 中間テーブルをHEAPからMyISAMに変換
+	$switch = 'exec1';                            # スレッド固定で順次処理
+	if ($::config_obj->use_heap){
+		foreach my $tani (@avail){
+			if ($tani eq 'bun' ){
+				next;
+			}
+			my $tain_hb = $tani.'_hb';
 			my $heap_table = $tain_hb.'_heap';
 			my_threads->$switch("
 				mysql_exec->drop_table(\"$heap_table\");
@@ -180,17 +170,8 @@ sub calc{
 				mysql_exec->drop_table(\"$heap_table\");
 			");
 		}
-		print "$switch\n";		
-		if ($switch eq 'exec1'){
-			#$switch = 'exec2';
-		} else {
-			#$switch = 'exec1';
-		}
+		my_threads->wait1;                        # スレッド固定で順次処理
 	}
-	
-	my_threads->wait1;
-	my_threads->wait2;
-	
 	
 	return 1;
 }

@@ -13,11 +13,11 @@ use Thread::Queue::Any;
 use Benchmark;
 use Time::HiRes qw(sleep);
 
-my $que1 = new Thread::Queue;
-my $cur1 :shared = '';
-
-my $que2 = new Thread::Queue;
-my $cur2 :shared = '';
+use vars qw($que1 $que2 $cur1 $cur2);
+$que1 = new Thread::Queue;
+$que2 = new Thread::Queue;
+share $cur1;
+share $cur2;
 
 use vars qw($que_any1);
 $que_any1 = new Thread::Queue::Any;
@@ -45,22 +45,19 @@ sub open_project{
 
 sub worker_thread1{
 	while ( my $cmd = $que1->dequeue() ) {
-		$cur1 = 1;
 		#my $t0 = new Benchmark;
+		#print "cmd: $cmd\n";
 		eval( $cmd );
 		if ($@){
 			die("Error in the thread: $@\n");
 		}
-		
 		#my $t1 = new Benchmark;
 		#print "Worker: Done: \t",timestr(timediff($t1,$t0)),"\n";
-		$cur1 = 0;
 	}
 }
 
 sub worker_thread2{
 	while ( my $cmd = $que2->dequeue() ) {
-		$cur2 = 1;
 		#my $t0 = new Benchmark;
 		eval( $cmd );
 		if ($@){
@@ -68,12 +65,10 @@ sub worker_thread2{
 		}
 		#my $t1 = new Benchmark;
 		#print "Worker: Done: \t",timestr(timediff($t1,$t0)),"\n";
-		$cur2 = 0;
 	}
 }
 
 sub exec1{
-	$cur1 = 1;
 	my $class = shift;
 	my $cmd   = shift;
 	$que1->enqueue($cmd);
@@ -81,34 +76,40 @@ sub exec1{
 }
 
 sub exec2{
-	$cur2 = 1;
 	my $class = shift;
 	my $cmd   = shift;
 	$que2->enqueue($cmd);
 	return 1;
 }
 
+
 sub wait1{
-	print "Worker1: Waiting...\n";
 	my $t0 = new Benchmark;
-	while ($que1->pending > 0 || $cur1 ){
+	
+	$cur1 = 1;
+	$que1->enqueue('$cur1 = 0;');
+
+	#print "Worker1: Waiting...\n";
+	while ($cur1){
 		sleep 0.1;
-		last if $que1->pending == 0 && $cur1 == 0;
 	}
 	my $t1 = new Benchmark;
-	print "Worker1: Wainting: Done: ", timestr(timediff($t1,$t0)), "\n";
+	print "Worker1: Done: ", timestr(timediff($t1,$t0)), "\n";
 	return 1;
 }
 
 sub wait2{
-	print "Worker2: Waiting...\n";
 	my $t0 = new Benchmark;
-	while ($que2->pending > 0 || $cur2 ){
+	
+	$cur2 = 1;
+	$que2->enqueue('$cur2 = 0;');
+
+	#print "Worker2: Waiting...\n";
+	while ($cur2){
 		sleep 0.1;
-		last if $que2->pending == 0 && $cur2 == 0;
 	}
 	my $t1 = new Benchmark;
-	print "Worker2: Wainting: Done: ", timestr(timediff($t1,$t0)), "\n";
+	print "Worker2: Done: ", timestr(timediff($t1,$t0)), "\n";
 	return 1;
 }
 
