@@ -14,12 +14,11 @@ sub _new{
 
 
 	# テスト用
-	# my_threads->exec( 'print " exec!!!\n";' );
-	use Benchmark;
-	my $t0 = new Benchmark;
-	mysql_ready::df->calc;
-	my $t1 = new Benchmark;
-	print "df\t",timestr(timediff($t1,$t0)),"\n";
+	#use Benchmark;
+	#my $t0 = new Benchmark;
+	#mysql_ready::df->calc;
+	#my $t1 = new Benchmark;
+	#print "df\t",timestr(timediff($t1,$t0)),"\n";
 
 
 	my $mw = $::main_gui->mw;
