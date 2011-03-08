@@ -60,14 +60,9 @@ sub first{
 	$self->tanis;
 		my $t4 = new Benchmark;
 		print "Strat2\t",timestr(timediff($t4,$t2)),"\n";
-
-	#my_threads->exec("mysql_ready::df->calc;");
-	#my_threads->wait unless $::config_obj->multi_threads >= 2;
-
 	$self->rowtxt;
 		my $t3 = new Benchmark;
 		print "RawTXT\t",timestr(timediff($t3,$t4)),"\n";
-
 	mysql_ready::df->calc;
 		my $t5 = new Benchmark;
 		print "df\t",timestr(timediff($t5,$t3)),"\n";
@@ -85,8 +80,6 @@ sub first{
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	mysql_exec->drop_table("hghi");
-	
-	my_threads->wait;
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
@@ -652,7 +645,6 @@ sub hyosobun{
 		}
 		$id += $rows_per_once;
 
-
 		while (my $d = $t->fetch){
 			if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# 改行のチェック
 				++$dan;
@@ -771,8 +763,6 @@ sub hyosobun{
 		}
 	$t->finish;
 	}
-
-
 
 	# 残りをDBに投入
 	if ($temp){

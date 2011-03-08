@@ -12,14 +12,14 @@ sub _new{
 	my $self = shift;
 	use Tk::Balloon;
 
-
 	# テスト用
 	#use Benchmark;
 	#my $t0 = new Benchmark;
-	#mysql_ready::df->calc;
+	#
+	# ここにテスト処理
+	#
 	#my $t1 = new Benchmark;
 	#print "df\t",timestr(timediff($t1,$t0)),"\n";
-
 
 	my $mw = $::main_gui->mw;
 	my $wabtkh = $self->{win_obj};

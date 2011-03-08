@@ -85,7 +85,6 @@ sub exec2{
 
 sub wait1{
 	my $t0 = new Benchmark;
-	
 	$cur1 = 1;
 	$que1->enqueue('$cur1 = 0;');
 
@@ -100,7 +99,6 @@ sub wait1{
 
 sub wait2{
 	my $t0 = new Benchmark;
-	
 	$cur2 = 1;
 	$que2->enqueue('$cur2 = 0;');
 
