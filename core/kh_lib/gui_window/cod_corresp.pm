@@ -13,13 +13,20 @@ sub _new{
 	$win->title($self->gui_jt('コーディング・対応分析：オプション'));
 
 	my $lf = $win->LabFrame(
-		-label       => 'Options',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2
-	)->pack(
-		-fill   => 'both',
-		-expand => 1
-	);
+		-label => 'Codes',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+
+	my $rf = $win->Frame()
+		->pack(-fill => 'both', -expand => 1);
+
+	my $lf2 = $rf->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 1);
+
 
 	# ルール・ファイル
 	my %pack0 = (
@@ -136,14 +143,14 @@ sub _new{
 	);
 
 	# 入力データの設定
-	$lf->Label(
+	$lf2->Label(
 		-text => $self->gui_jchar('分析に使用するデータ表の種類：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
-	my $fi = $lf->Frame()->pack(
-		-fill   => 'x',
-		-expand => 0,
+	my $fi = $lf2->Frame()->pack(
+		-fill   => 'both',
+		-expand => 1,
 		-padx   => 2,
 		-pady   => 2
 	);
@@ -164,8 +171,8 @@ sub _new{
 		-side   => 'left',
 		-pady   => 2,
 		-padx   => 2,
-		-fill   => 'x',
-		-expand => 0
+		-fill   => 'both',
+		-expand => 1
 	);
 
 	$self->{radio} = 0;
@@ -205,7 +212,7 @@ sub _new{
 
 	my $fi_3 = $fi_1->Frame()->pack(-anchor => 'w');
 	$self->{label_var} = $fi_3->Label(
-		-text => $self->gui_jchar('　　変数：','euc'),
+		-text => $self->gui_jchar('　　','euc'),
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -214,7 +221,7 @@ sub _new{
 	$self->{opt_frame_var} = $fi_3;
 
 	# 差異の顕著な語のみ分析
-	my $fsw = $lf->Frame()->pack(
+	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
 	);
@@ -239,13 +246,13 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 0);
 	$self->{entry_flw}->insert(0,'50');
-	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_flw}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->refresh_flw;
 
 	# 特徴的な語のみラベル表示
-	my $fs = $lf->Frame()->pack(
+	my $fs = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
 		-pady => 2,
@@ -271,7 +278,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 0);
 	$self->{entry_flt}->insert(0,'50');
-	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_flt}->bind("<Key-Return>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->refresh_flt;
@@ -280,7 +287,7 @@ sub _new{
 
 
 	# 成分
-	my $fd = $lf->Frame()->pack(
+	my $fd = $lf2->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4,
@@ -320,7 +327,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_y});
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
+	my $ff = $lf2->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4,
@@ -360,14 +367,14 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_plot_size});
 
 
-	$win->Checkbutton(
+	$rf->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	# OK・キャンセル
-	my $f3 = $win->Frame()->pack(
+	my $f3 = $rf->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 2
@@ -435,7 +442,7 @@ sub refresh{
 			$self->{opt_body_var}->destroy;
 		}
 
-		# 利用できる変数があるかどうかチェック
+		# 利用できる変数をチェック
 		my %tani_check = ();
 		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 			$tani_check{$i} = 1;
@@ -456,27 +463,20 @@ sub refresh{
 				#print "varid: $i->[2]\n";
 			}
 		}
-		
-		if (@options){
-			$self->{opt_body_var} = gui_widget::optmenu->open(
-				parent  => $self->{opt_frame_var},
-				pack    => {-side => 'left', -padx => 2},
-				options => \@options,
-				variable => \$self->{var_id},
-			);
-			$self->{opt_body_var_ok} = 1;
-		} else {
-			$self->{opt_body_var} = gui_widget::optmenu->open(
-				parent  => $self->{opt_frame_var},
-				pack    => {-side => 'left', -padx => 2},
-				options => 
-					[
-						[$self->gui_jchar('利用不可'), undef],
-					],
-				variable => \$self->{var_id},
-			);
-			$self->{opt_body_var_ok} = 0;
-		}
+
+		# リスト表示
+		$self->{opt_body_var} = gui_widget::chklist->open(
+			parent  => $self->{opt_frame_var},
+			options => \@options,
+			default => 0,
+			pack    => {
+				-side   => 'left',
+				-padx   => 2,
+				-fill   => 'both',
+				-expand => 1
+			},
+		);
+		$self->{opt_body_var_ok} = 1;
 
 	#------------------------------#
 	#   上位の文書単位選択Widget   #
@@ -537,8 +537,7 @@ sub refresh{
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 		
-		$self->{opt_body_var}->configure(-state => 'disable');
-		$self->{label_var}->configure(-foreground => 'gray');
+		$self->{opt_body_var}->disable;
 		
 		$self->{check_filter_w_widget}->configure(-state => 'disabled');
 		$self->{entry_flw}   ->configure(-state => 'disabled');
@@ -552,8 +551,7 @@ sub refresh{
 		}
 		$self->{label_high}->configure(-foreground => 'black');
 		
-		$self->{opt_body_var}->configure(-state => 'disable');
-		$self->{label_var}->configure(-foreground => 'gray');
+		$self->{opt_body_var}->disable;
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
 		$self->refresh_flw;
@@ -564,12 +562,7 @@ sub refresh{
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 
-		if ($self->{opt_body_var_ok}){
-			$self->{opt_body_var}->configure(-state => 'normal');
-		} else {
-			$self->{opt_body_var}->configure(-state => 'disable');
-		}
-		$self->{label_var}->configure(-foreground => 'black');
+		$self->{opt_body_var}->enable;
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
 		$self->refresh_flw;
@@ -677,10 +670,40 @@ sub _calc{
 		push @selected, $i->{name} if $i->{check};
 	}
 
+	my $vars;
+	if ($self->{radio} == 2){
+		$vars = $self->{opt_body_var}->selected;
+		unless ( @{$vars} ){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => '外部変数を1つ以上選択してください。',
+			);
+			return 0;
+		}
+		
+		my $tani2 = '';
+		foreach my $i (@{$vars}){
+			if ($tani2){
+				unless (
+					$tani2
+					eq mysql_outvar::a_var->new(undef,$i)->{tani}
+				){
+					gui_errormsg->open(
+						type => 'msg',
+						msg  => '現在の所、集計単位が異なる外部変数を同時に使用することはできません。',
+					);
+					return 0;
+				}
+			} else {
+				$tani2 = mysql_outvar::a_var->new(undef,$i)
+					->{tani};
+			}
+		}
+	}
+
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	#my $d_n = $self->gui_jg( $self->{entry_d_n}->get );
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
@@ -768,55 +791,60 @@ sub _calc{
 		$r_command .= ")\n";
 		$r_command .= &r_command_aggr_str;
 	}
-	
+
 	# 外部変数の付与
+	$r_command .= "v_count <- 0\n";
+	$r_command .= "v_pch   <- NULL\n";
 	if ($self->{radio} == 2){
-		unless ($self->{var_id}){
-			gui_errormsg->open(
-				type   => 'msg',
-				window  => \$self->win_obj,
-				msg    => "外部変数の選択が不正です。"
-			);
-			return 0;
-		}
 		my $tani = $self->tani;
 		
-		my $sql = '';
-		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_id});
-		if ( $var_obj->{tani} eq $tani){
-			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
-			$sql .= "ORDER BY id";
-		} else {
-			$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
-			$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
-			$sql .= "WHERE\n";
-			$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
-			foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-				$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
-				last if ($var_obj->{tani} eq $i);
-			}
-			$sql .= "ORDER BY $tani.id";
-		}
-		
-		$r_command .= "v <- c(";
-		my $h = mysql_exec->select($sql,1)->hundle;
-		my $n = 0;
-		while (my $i = $h->fetch){
-			if ( length( $var_obj->{labels}{$i->[0]} ) ){
-				my $t = $var_obj->{labels}{$i->[0]};
-				$t =~ s/"/ /g;
-				$r_command .= "\"$t\",";
+		my $n_v = 0;
+		foreach my $i (@{$vars}){
+			my $var_obj = mysql_outvar::a_var->new(undef,$i);
+			my $sql = '';
+			if ( $var_obj->{tani} eq $tani){
+				$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+				$sql .= "ORDER BY id";
 			} else {
-				$r_command .= "\"$i->[0]\",";
+				$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
+				$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
+				$sql .= "WHERE\n";
+				$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+				foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+					$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+					last if ($var_obj->{tani} eq $i);
+				}
+				$sql .= "ORDER BY $tani.id";
 			}
-			++$n;
+		
+			$r_command .= "v$n_v <- c(";
+			my $h = mysql_exec->select($sql,1)->hundle;
+			my $n = 0;
+			while (my $i = $h->fetch){
+				if ( length( $var_obj->{labels}{$i->[0]} ) ){
+					my $t = $var_obj->{labels}{$i->[0]};
+					$t =~ s/"/ /g;
+					$r_command .= "\"$t\",";
+				} else {
+					$r_command .= "\"$i->[0]\",";
+				}
+				++$n;
+			}
+			#print "num1: $n\n";
+			chop $r_command;
+			$r_command .= ")\n";
+			++$n_v;
 		}
-		#print "num1: $n\n";
-		chop $r_command;
-		$r_command .= ")\n";
-		$r_command .= &r_command_aggr_var;
+		$r_command .= &r_command_aggr_var($n_v);
 	}
-	
+	# 外部変数が無かった場合
+	$r_command .= '
+		if ( length(v_pch) == 0 ) {
+			v_pch   <- 3
+			v_count <- 1
+		}
+	';
+
 	# 対応分析実行のためのRコマンド
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
@@ -855,7 +883,7 @@ sub _calc{
 
 }
 
-sub r_command_aggr_var{
+sub r_command_aggr_var_old{
 	my $t = << 'END_OF_the_R_COMMAND';
 
 # aggregate
@@ -880,6 +908,77 @@ n_total <- subset(n_total,rowSums(d) > 0)
 END_OF_the_R_COMMAND
 return $t;
 }
+
+sub r_command_aggr_var{
+	my $n_v = shift;
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# aggregate
+aggregate_with_var <- function(d, doc_length_mtr, v) {
+	d       <- aggregate(d,list(name = v), sum)
+	n_total <- as.matrix( table(v) )
+
+	row.names(d) <- d$name
+	d$name <- NULL
+
+	d       <- d[       order(rownames(d      )), ]
+	n_total <- n_total[ order(rownames(n_total)), ]
+
+	n_total <- subset(
+		n_total,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+	)
+	d <- subset(
+		d,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+	)
+	n_total <- as.matrix(n_total)
+	return( list(d, n_total) )
+}
+
+dd <- NULL
+nn <- NULL
+
+END_OF_the_R_COMMAND
+
+	$t .= "for (i in list(";
+	for (my $i = 0; $i < $n_v; ++$i){
+		$t .= "v$i,";
+	}
+	chop $t;
+	$t .= ")){\n";
+
+	$t .= << 'END_OF_the_R_COMMAND2';
+
+	cur <- aggregate_with_var(d, doc_length_mtr, i)
+	dd <- rbind(dd, cur[[1]])
+	nn <- rbind(nn, cur[[2]])
+	v_count <- v_count + 1
+	v_pch <- c( v_pch, rep(v_count + 2, nrow(cur[[1]]) ) )
+}
+
+d       <- dd
+
+n_total <- nn
+n_total <- subset(n_total, rowSums(d) > 0)
+n_total <- n_total[,1]
+
+END_OF_the_R_COMMAND2
+
+	return $t;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 sub r_command_aggr_str{
 	my $t = << 'END_OF_the_R_COMMAND';
