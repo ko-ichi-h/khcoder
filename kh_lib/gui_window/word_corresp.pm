@@ -22,7 +22,16 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1, -side => 'left');
+	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+
+	my $rf = $win->Frame()
+		->pack(-fill => 'both', -expand => 1);
+
+	my $lf2 = $rf->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 1);
 
 	$lf->Label(
 		-text => gui_window->gui_jchar('■布置する語の選択'),
@@ -36,13 +45,6 @@ sub _new{
 		type   => 'corresp',
 	);
 
-
-	my $lf2 = $win->LabFrame(
-		-label => 'Options',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'x', -expand => 0);
-
 	# 入力データの設定
 
 	$lf2->Label(
@@ -52,13 +54,13 @@ sub _new{
 	)->pack(-anchor => 'w', -pady => 2);
 
 	$lf2->Label(
-		-text => $self->gui_jchar('分析に使用するクロス表の種類：'),
+		-text => $self->gui_jchar('分析に使用するデータ表の種類：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
 	my $fi = $lf2->Frame()->pack(
-		-fill   => 'x',
-		-expand => 0,
+		-fill   => 'both',
+		-expand => 1,
 		-padx   => 2,
 		-pady   => 2
 	);
@@ -79,8 +81,8 @@ sub _new{
 		-side   => 'left',
 		-pady   => 2,
 		-padx   => 2,
-		-fill   => 'x',
-		-expand => 0
+		-fill   => 'both',
+		-expand => 1
 	);
 
 	$self->{radio} = 0;
@@ -133,7 +135,12 @@ sub _new{
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
 
-	my $fi_3 = $fi_1->Frame()->pack(-anchor => 'w');
+	my $fi_3 = $fi_1->Frame()->pack(
+		-anchor => 'w',
+		-fill   => 'both',
+		-expand => 1,
+	);
+	
 	$fi_3->Label(
 		-text => $self->gui_jchar('　　','euc'),
 		-font => "TKFN"
@@ -141,14 +148,15 @@ sub _new{
 		-anchor => 'w',
 		-side   => 'left',
 	);
-	$self->{label_var} = $fi_3->Label(
-		-text => $self->gui_jchar('変数：','euc'),
-		-font => "TKFN"
-	)->pack(
-		-anchor => 'w',
-		-side   => 'left',
-	);
+	#$self->{label_var} = $fi_3->Label(
+	#	-text => $self->gui_jchar('変数：','euc'),
+	#	-font => "TKFN"
+	#)->pack(
+	#	-anchor => 'w',
+	#	-side   => 'left',
+	#);
 	$self->{opt_frame_var} = $fi_3;
+	
 	$self->refresh;
 
 	# 差異の顕著な語のみ分析
@@ -311,20 +319,20 @@ sub _new{
 	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_plot_size});
 
-	$win->Checkbutton(
+	$rf->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	$win->Button(
+	$rf->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
-	$win->Button(
+	$rf->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
@@ -400,7 +408,7 @@ sub _settings_load{
 
 	# 「抽出語ｘ外部変数」の場合
 	elsif ( $self->{radio} == 1 ) {
-		$self->{opt_body_var}->set_value( $settings->{var_id} );
+		#$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
 }
 
@@ -446,33 +454,26 @@ sub refresh{
 	my @tanis   = ();
 
 	unless ($self->{opt_body_var}){
-		# 利用できる変数があるかどうかチェック
+		# 利用できる変数をチェック
 		my $h = mysql_outvar->get_list;
 		my @options = ();
 		foreach my $i (@{$h}){
 			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
 		}
 		
-		if (@options){
-			$self->{opt_body_var} = gui_widget::optmenu->open(
-				parent  => $self->{opt_frame_var},
-				pack    => {-side => 'left', -padx => 2},
-				options => \@options,
-				variable => \$self->{var_id},
-			);
-			$self->{opt_body_var_ok} = 1;
-		} else {
-			$self->{opt_body_var} = gui_widget::optmenu->open(
-				parent  => $self->{opt_frame_var},
-				pack    => {-side => 'left', -padx => 2},
-				options => 
-					[
-						[$self->gui_jchar('利用不可'), undef],
-					],
-				variable => \$self->{var_id},
-			);
-			$self->{opt_body_var_ok} = 0;
-		}
+		# リスト表示
+		$self->{opt_body_var} = gui_widget::chklist->open(
+			parent  => $self->{opt_frame_var},
+			options => \@options,
+			default => 0,
+			pack    => {
+				-side   => 'left',
+				-padx   => 2,
+				-fill   => 'both',
+				-expand => 1
+			},
+		);
+		$self->{opt_body_var_ok} = 1;
 	}
 
 	#------------------------------#
@@ -535,20 +536,22 @@ sub refresh{
 		$self->{label_high}->configure(-foreground => 'black');
 		$self->{label_high2}->configure(-state => 'normal');
 		
-		$self->{opt_body_var}->configure(-state => 'disable');
-		$self->{label_var}->configure(-foreground => 'gray');
+		$self->{opt_body_var}->disable;
+		#$self->{label_var}->configure(-foreground => 'gray');
 	}
 	elsif ($self->{radio} == 1){
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 		$self->{label_high2}->configure(-state => 'disable');
 
-		if ($self->{opt_body_var_ok}){
-			$self->{opt_body_var}->configure(-state => 'normal');
-		} else {
-			$self->{opt_body_var}->configure(-state => 'disable');
-		}
-		$self->{label_var}->configure(-foreground => 'black');
+		$self->{opt_body_var}->enable;
+
+		#if ($self->{opt_body_var_ok}){
+		#	#$self->{opt_body_var}->configure(-state => 'normal');
+		#} else {
+		#	#$self->{opt_body_var}->configure(-state => 'disable');
+		#}
+		#$self->{label_var}->configure(-foreground => 'black');
 	}
 	
 	return 1;
@@ -568,23 +571,26 @@ sub calc{
 		);
 		return 0;
 	}
-	
+
 	my $tani2 = '';
 	if ($self->{radio} == 0){
 		$tani2 = $self->gui_jg($self->{high});
 	}
 	elsif ($self->{radio} == 1){
+		my $vars = $self->{opt_body_var}->selected;
+		unless ( @{$vars} ){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => '外部変数を1つ以上選択してください。',
+			);
+			return 0;
+		}
+		
+		# 選択されている最初の変数を使用　※一時しのぎ
+		$self->{var_id} = $vars->[0];
 		if ( length($self->{var_id}) ){
 			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
 		}
-	}
-
-	unless ($tani2){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => '集計単位または変数の選択が不正です。',
-		);
-		return 0;
 	}
 
 	my $rownames = 0;
@@ -599,7 +605,7 @@ sub calc{
 		max_df   => $self->max_df,
 		min_df   => $self->min_df,
 	)->wnum;
-	
+
 	$check_num =~ s/,//g;
 	#print "$check_num\n";
 

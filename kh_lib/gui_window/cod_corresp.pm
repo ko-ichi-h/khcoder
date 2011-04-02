@@ -137,7 +137,7 @@ sub _new{
 
 	# 入力データの設定
 	$lf->Label(
-		-text => $self->gui_jchar('分析に使用するクロス表の種類：'),
+		-text => $self->gui_jchar('分析に使用するデータ表の種類：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
