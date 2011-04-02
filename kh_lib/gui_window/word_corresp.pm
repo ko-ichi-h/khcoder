@@ -573,11 +573,12 @@ sub calc{
 	}
 
 	my $tani2 = '';
+	my $vars;
 	if ($self->{radio} == 0){
 		$tani2 = $self->gui_jg($self->{high});
 	}
 	elsif ($self->{radio} == 1){
-		my $vars = $self->{opt_body_var}->selected;
+		$vars = $self->{opt_body_var}->selected;
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
@@ -586,10 +587,22 @@ sub calc{
 			return 0;
 		}
 		
-		# 選択されている最初の変数を使用　※一時しのぎ
-		$self->{var_id} = $vars->[0];
-		if ( length($self->{var_id}) ){
-			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
+		foreach my $i (@{$vars}){
+			if ($tani2){
+				unless (
+					$tani2
+					eq mysql_outvar::a_var->new(undef,$i)->{tani}
+				){
+					gui_errormsg->open(
+						type => 'msg',
+						msg  => '現在の所、集計単位が異なる外部変数を同時に使用することはできません。',
+					);
+					return 0;
+				}
+			} else {
+				$tani2 = mysql_outvar::a_var->new(undef,$i)
+					->{tani};
+			}
 		}
 	}
 
@@ -661,41 +674,49 @@ sub calc{
 		min_df => $self->min_df,
 		rownames => $rownames,
 	)->run;
+	$r_command .= "v_count <- 0\n";
+	$r_command .= "v_pch   <- NULL\n";
 
 	# 外部変数の付与
 	if ($self->{radio} == 1){
-		unless ($self->{var_id}){
-			gui_errormsg->open(
-				type   => 'msg',
-				window  => \$self->win_obj,
-				msg    => "外部変数の選択が不正です。"
-			);
-			return 0;
-		}
-		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_id});
 		
-		my $sql = '';
-		$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
-		$sql .= "ORDER BY id";
-		
-		$r_command .= "v <- c(";
-		my $h = mysql_exec->select($sql,1)->hundle;
-		my $n = 0;
-		while (my $i = $h->fetch){
-			if ( length( $var_obj->{labels}{$i->[0]} ) ){
-				my $t = $var_obj->{labels}{$i->[0]};
-				$t =~ s/"/ /g;
-				$r_command .= "\"$t\",";
-			} else {
-				$r_command .= "\"$i->[0]\",";
+		my $n_v = 0;
+		foreach my $i (@{$vars}){
+			my $var_obj = mysql_outvar::a_var->new(undef,$i);
+			
+			my $sql = '';
+			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+			$sql .= "ORDER BY id";
+			
+			$r_command .= "v$n_v <- c(";
+			my $h = mysql_exec->select($sql,1)->hundle;
+			my $n = 0;
+			while (my $i = $h->fetch){
+				if ( length( $var_obj->{labels}{$i->[0]} ) ){
+					my $t = $var_obj->{labels}{$i->[0]};
+					$t =~ s/"/ /g;
+					$r_command .= "\"$t\",";
+				} else {
+					$r_command .= "\"$i->[0]\",";
+				}
+				++$n;
 			}
-			++$n;
+			
+			chop $r_command;
+			$r_command .= ")\n";
+			++$n_v;
 		}
 		
-		chop $r_command;
-		$r_command .= ")\n";
-		$r_command .= &r_command_aggr;
+		$r_command .= &r_command_aggr($n_v);
 	}
+
+	# 外部変数が無かった場合
+	$r_command .= '
+		if ( length(v_pch) == 0 ) {
+			v_pch   <- 3
+			v_count <- 1
+		}
+	';
 
 	# 空の行・空の列を削除
 	$r_command .=
@@ -780,7 +801,7 @@ sub make_plot{
 		$r_command_2a = 
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
-				.'pch=c(20,0,1)[cb[,3]],'
+				.'pch=c(20,1)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -793,7 +814,7 @@ sub make_plot{
 		# ドットのみプロット
 		$r_command_a .=
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				.'pch=c(1,15,4)[cb[,3]],'
+				.'pch=c(1,3)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -803,10 +824,10 @@ sub make_plot{
 		$r_command_2a .= 
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
-				.'pch=c(20,0,1)[cb[,3]],'
-				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
+				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
+				.'col=c("#66CCCC","#ADD8E6",rep( "#996666", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				." )\n"
@@ -820,7 +841,7 @@ sub make_plot{
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
 				.'offset=0,'
-				.'col=c("black","red","black")[cb[,3]]'
+				.'col=c("black",NA,rep("red",v_count) )[cb[,3]]' # #336666
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
@@ -830,10 +851,10 @@ sub make_plot{
 		$r_com_gray_a .= 
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
-				.'pch=c(20,0,1)[cb[,3]],'
-				.'col=c("gray65","gray50","gray65")[cb[,3]],'
+				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
+				.'col=c("gray65","gray65",rep( "gray30", v_count))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -851,7 +872,7 @@ sub make_plot{
 		my $temp_cmd =                            # _f・_aに共通
 			 "cb  <- cbind(cb, labcd\$x, labcd\$y)\n"
 			."cb1 <-  subset(cb, cb[,3]==1)\n"
-			."cb2 <-  subset(cb, cb[,3]==2)\n"
+			."cb2 <-  subset(cb, cb[,3]>=3)\n"
 			.'text('
 				.'cb1[,4], cb1[,5], rownames(cb1),'
 				."cex=$fontsize,"
@@ -870,7 +891,7 @@ sub make_plot{
 				.'cgrid=0,'
 				.'add.plot=T,'
 				.')'."\n"
-			.'points(cb2[,1], cb2[,2], pch=0, col="gray50")'."\n"
+			.'points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")'."\n"
 		;
 		$r_com_gray   .= $temp_cmd;
 		$r_com_gray_a .= $temp_cmd;
@@ -879,9 +900,9 @@ sub make_plot{
 		$r_command_a .=
 			 'plot(cb <- rbind('
 				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], 2)"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
-				.'pch=c(1,15,4)[cb[,3]],'
+				.'pch=c(1,3,0,2,4:15)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
 				.")\n"
@@ -949,30 +970,63 @@ sub make_plot{
 }
 
 sub r_command_aggr{
+	my $n_v = shift;
 	my $t = << 'END_OF_the_R_COMMAND';
 
-d              <- aggregate(d,list(name = v), sum)
-doc_length_mtr <- aggregate(doc_length_mtr,list(name = v), sum)
+aggregate_with_var <- function(d, doc_length_mtr, v) {
+	d              <- aggregate(d,list(name = v), sum)
+	doc_length_mtr <- aggregate(doc_length_mtr,list(name = v), sum)
 
-row.names(d) <- d$name
-d$name <- NULL
-row.names(doc_length_mtr) <- doc_length_mtr$name
-doc_length_mtr$name <- NULL
+	row.names(d) <- d$name
+	d$name <- NULL
+	row.names(doc_length_mtr) <- doc_length_mtr$name
+	doc_length_mtr$name <- NULL
 
-d              <- d[              order(rownames(d             )), ]
-doc_length_mtr <- doc_length_mtr[ order(rownames(doc_length_mtr)), ]
+	d              <- d[              order(rownames(d             )), ]
+	doc_length_mtr <- doc_length_mtr[ order(rownames(doc_length_mtr)), ]
 
-doc_length_mtr <- subset(
-	doc_length_mtr,
-	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
-)
-d <- subset(
-	d,
-	row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
-)
+	doc_length_mtr <- subset(
+		doc_length_mtr,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+	)
+	d <- subset(
+		d,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+	)
+
+	# doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+	# d              <- subset(d,              rowSums(d) > 0)
+
+	return( list(d, doc_length_mtr) )
+}
+
+dd <- NULL
+nn <- NULL
 
 END_OF_the_R_COMMAND
-return $t;
+
+	$t .= "for (i in list(";
+	for (my $i = 0; $i < $n_v; ++$i){
+		$t .= "v$i,";
+	}
+	chop $t;
+	$t .= ")){\n";
+
+	$t .= << 'END_OF_the_R_COMMAND2';
+
+	cur <- aggregate_with_var(d, doc_length_mtr, i)
+	dd <- rbind(dd, cur[[1]])
+	nn <- rbind(nn, cur[[2]])
+	v_count <- v_count + 1
+	v_pch <- c( v_pch, rep(v_count + 2, nrow(cur[[1]]) ) )
+}
+
+d              <- dd
+doc_length_mtr <- nn
+
+END_OF_the_R_COMMAND2
+
+	return $t;
 }
 
 sub r_command_filter{
@@ -1015,7 +1069,7 @@ if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 			ptype <- c(ptype, 1)
 		} else {
 			names <- c(names, NA)
-			ptype <- c(ptype, 3)
+			ptype <- c(ptype, 2)
 		}
 	}
 	rownames(c$cscore) <- names;
