@@ -7,6 +7,7 @@ use gui_widget::tani_and_o;
 use gui_widget::codf;
 use gui_widget::mail_config;
 use gui_widget::hinshi;
+use gui_widget::chklist;
 use gui_widget::url_lab;
 use gui_widget::words;
 use gui_widget::words_bayes;
