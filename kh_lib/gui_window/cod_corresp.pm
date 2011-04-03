@@ -210,7 +210,11 @@ sub _new{
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
 
-	my $fi_3 = $fi_1->Frame()->pack(-anchor => 'w');
+	my $fi_3 = $fi_1->Frame()->pack(
+		-anchor => 'w',
+		-fill   => 'both',
+		-expand => 1,
+	);
 	$self->{label_var} = $fi_3->Label(
 		-text => $self->gui_jchar('¡¡¡¡','euc'),
 		-font => "TKFN"

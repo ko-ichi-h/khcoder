@@ -794,6 +794,7 @@ sub make_plot{
 
 	# プロットのためのRコマンド
 
+	my ($r_command_3a, $r_command_3);
 	my ($r_command_2a, $r_command_2, $r_command_a);
 	my ($r_com_gray, $r_com_gray_a);
 	if ($args{biplot} == 0){                      # 同時布置なし
@@ -845,6 +846,32 @@ sub make_plot{
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
+		
+		# 変数のみのプロット
+		$r_command_3a .= 
+			 'plot(cb <- rbind('
+				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
+				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
+				.'),'
+				.'pch=c(1,1,0,2,4:15)[cb[,3]],'
+				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
+				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				." )\n"
+			."library(maptools)\n"
+			."labcd <- pointLabel("
+				."x=c\$rscore[,d_x],"
+				."y=c\$rscore[,d_y],"
+				."labels=rownames(c\$rscore),"
+				."cex=$fontsize,offset=0,doPlot=F)\n"
+			.'text('
+				.'labcd$x, labcd$y, rownames(c$rscore),'
+				."cex=$fontsize,"
+				.'offset=0,'
+				.'col="black"' # #336666
+				.')'."\n"
+		;
+		$r_command_3 = $r_command.$r_command_3a;
 		
 		# グレースケールのプロット
 		$r_com_gray_a .= &r_command_slab_my;
@@ -939,7 +966,15 @@ sub make_plot{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
-		@plots = ($plot2,$plotg,$plot1);
+		
+		my $plotv = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_v',
+			command_a => $r_command_3a,
+			command_f => $r_command_3,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
+		@plots = ($plot2,$plotg,$plotv,$plot1);
 	} else {
 		@plots = ($plot2,$plot1);
 	}

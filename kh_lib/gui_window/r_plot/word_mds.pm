@@ -3,8 +3,8 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	return [
-		'抽出語とドット',
-		'ドット',
+		'デフォルト・カラー',
+		'ドットのみ',
 	];
 }
 
