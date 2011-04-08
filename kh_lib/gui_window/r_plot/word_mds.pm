@@ -3,7 +3,7 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	return [
-		'デフォルト・カラー',
+		'ドットとラベル',
 		'ドットのみ',
 	];
 }
