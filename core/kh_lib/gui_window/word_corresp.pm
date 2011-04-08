@@ -828,9 +828,10 @@ sub make_plot{
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
 				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
-				.'col=c("#66CCCC","#ADD8E6",rep( "#996666", v_count ))[cb[,3]],'
+				.'col=c("#66CCCC","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'cex=c(1,1,rep( 1.25, v_count ))[cb[,3]]'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
@@ -842,7 +843,7 @@ sub make_plot{
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
 				.'offset=0,'
-				.'col=c("black",NA,rep("red",v_count) )[cb[,3]]' # #336666
+				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
@@ -856,7 +857,8 @@ sub make_plot{
 				.'pch=c(1,1,0,2,4:15)[cb[,3]],'
 				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'cex=c(1,1,rep( 1.25, v_count ))[cb[,3]]'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
