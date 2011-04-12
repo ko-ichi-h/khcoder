@@ -831,7 +831,7 @@ sub make_plot{
 				.'col=c("#66CCCC","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
-				.'cex=c(1,1,rep( 1.25, v_count ))[cb[,3]]'
+				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
@@ -858,7 +858,7 @@ sub make_plot{
 				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
-				.'cex=c(1,1,rep( 1.25, v_count ))[cb[,3]]'
+				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
@@ -1112,6 +1112,11 @@ if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 	rownames(c$cscore) <- names;
 } else {
 	ptype <- 1
+}
+
+pch_cex <- 1
+if ( v_count > 1 ){
+	pch_cex <- 1.25
 }
 
 END_OF_the_R_COMMAND
