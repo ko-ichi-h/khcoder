@@ -59,15 +59,18 @@ sub end{
 		$s = $e;
 	}
 	
-	gui_errormsg->open(
-		msg  => "処理が完了しました。\n経過時間： $h:$m:$s",
-		type => 'msg',
-		icon => 'info'
-	) unless $args{no_dialog};
+	if ( $args{no_dialog} ){
+		print "done:  $h:$m:$s\n";
+	} else {
+		gui_errormsg->open(
+			msg  => "処理が完了しました。\n経過時間： $h:$m:$s",
+			type => 'msg',
+			icon => 'info'
+		);
+	}
 	
 	$self->{win}->unShow;
 }
-
 
 
 1;

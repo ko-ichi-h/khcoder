@@ -170,9 +170,10 @@ sub _new{
 		parent => $r3,
 		pack   => \%pack
 	);
+	$self->{hinshi_obj2}->select_all;
 	my $r4 = $r3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$r4->Button(
-		-text => $self->gui_jchar('全て選択'),
+		-text => $self->gui_jchar('すべて'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
