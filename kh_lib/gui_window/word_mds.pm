@@ -222,19 +222,7 @@ sub calc{
 
 	$self->{words_obj}->settings_save;
 
-	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行してよろしいですか？"
-			),
-		-icon    => 'question',
-		-type    => 'OKCancel',
-		-title   => 'KH Coder'
-	);
-	unless ($ans =~ /ok/i){ return 0; }
-
-	#my $w = gui_wait->start;
+	my $w = gui_wait->start;
 
 	# データの取り出し
 	my $r_command = mysql_crossout::r_com->new(
@@ -265,6 +253,8 @@ sub calc{
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 	);
+	
+	$w->end(no_dialog => 1);
 	
 	unless ( $self->{check_rm_open} ){
 		$self->close;

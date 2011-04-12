@@ -43,19 +43,26 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => $self->gui_jchar('全て選択'),
+		-text => $self->gui_jchar('すべて'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
-	)->pack(-pady => 3);
+	)->pack(-pady => 2);
+	$l4->Button(
+		-text => $self->gui_jchar('既定値'),
+		-width => 8,
+		-font => "TKFN",
+		-borderwidth => 1,
+		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_default;});}
+	)->pack(-pady => 2);
 	$l4->Button(
 		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
-	)->pack();
+	)->pack(-pady => 2);
 
 	# 全体での出現数
 	my $left2 = $win->Frame()->pack(-fill => 'x', -expand => 0);

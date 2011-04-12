@@ -34,10 +34,10 @@ sub _new{
 		-expand => 1
 	);
 	
-	
 	my $right = $self->hlist->ItemStyle('window',-anchor => 'w');
 	my $row = 0;
 	my @selection;
+	my %default;
 	
 	my $sth = mysql_exec->select("
 		SELECT  name,khhinshi_id
@@ -46,11 +46,25 @@ sub _new{
 		ORDER BY khhinshi_id
 	",1)->hundle;
 	
+	#use Data::Dumper;
+	#print Dumper($self->{selection});
+	
 	while (my $i = $sth->fetch){
+		if (
+			   $i->[0] =~ /B$/
+			|| $i->[0] eq '»›ƒÍΩı∆∞ªÏ'
+			|| $i->[0] eq '∑¡Õ∆ªÏ° »Ûº´Œ©°À'
+		){
+			$default{$i->[1]} = 0;
+		} else {
+			$default{$i->[1]} = 1;
+		}
+	
 		if ( defined($self->{selection}) ){
 			$selection[$row] = $self->{selection}{$i->[1]};
+			#print "$i->[1]: $self->{selection}{$i->[1]}\n";
 		} else {
-			$selection[$row] = 1;
+			$selection[$row]  = $default{$i->[1]};
 		}
 		$self->{name}{$row} = $i->[1];
 		my $c = $self->hlist->Checkbutton(
@@ -74,6 +88,7 @@ sub _new{
 		++$row;
 	}
 	$self->{checks} = \@selection;
+	$self->{default} = \%default;
 	
 	$self->{win_obj} = $win;
 	return $self;
@@ -90,6 +105,10 @@ sub select_none{
 	foreach my $i (@{$self->{check_wigets}}){
 		$i->deselect;
 	}
+}
+sub select_default{
+	my $self = shift;
+	$self->selection_set( $self->{default} );
 }
 
 sub selected{
@@ -134,7 +153,7 @@ sub selection_set{
 }
 
 #--------------#
-#   ÉAÉNÉZÉT   #
+#   •¢•Ø•ª•µ   #
 
 sub hlist{
 	my $self = shift;

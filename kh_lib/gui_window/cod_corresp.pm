@@ -119,7 +119,7 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => $self->gui_jchar('全て選択'),
+		-text => $self->gui_jchar('すべて'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,

@@ -182,17 +182,7 @@ sub calc{
 	#	unless ($ans =~ /ok/i){ return 0; }
 	#}
 
-	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行してよろしいですか？"
-			),
-		-icon    => 'question',
-		-type    => 'OKCancel',
-		-title   => 'KH Coder'
-	);
-	unless ($ans =~ /ok/i){ return 0; }
+	my $wait_window = gui_wait->start;
 
 	# データの取り出し
 	my $file_csv = $::project_obj->file_TempCSV;
@@ -229,6 +219,8 @@ sub calc{
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		tani           => $self->tani,
 	);
+	
+	$wait_window->end(no_dialog => 1);
 }
 
 sub calc_exec{

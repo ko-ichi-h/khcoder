@@ -138,9 +138,10 @@ sub _new{
 		parent => $l5,
 		pack   => \%pack
 	);
+	$self->{hinshi_obj}->select_all;
 	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => gui_window->gui_jchar('全て選択'),
+		-text => gui_window->gui_jchar('すべて'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,

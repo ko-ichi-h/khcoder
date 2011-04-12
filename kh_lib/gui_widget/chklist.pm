@@ -31,7 +31,7 @@ sub _new{
 	
 
 	$self->{button_all} = $win4buttons->Button(
-		-text => gui_window->gui_jchar('‘S‚Ä‘I‘ð'),
+		-text => gui_window->gui_jchar('‚·‚×‚Ä'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,

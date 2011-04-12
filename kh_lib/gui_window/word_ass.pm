@@ -268,14 +268,22 @@ sub _new{
 	$filter->{limit}   = 200;                  # LIMIT数
 	$filter->{min_doc} = 1;                    # 最低文書数
 	my $h = mysql_exec->select("               # 品詞によるフィルタ
-		SELECT khhinshi_id
+		SELECT name, khhinshi_id
 		FROM   hselection
 		WHERE  ifuse = 1
 	",1)->hundle;
 	while (my $i = $h->fetch){
-		$filter->{hinshi}{$i->[0]} = 1;
+		if (
+			   $i->[0] =~ /B$/
+			|| $i->[0] eq '否定助動詞'
+			|| $i->[0] eq '形容詞（非自立）'
+		){
+			$filter->{hinshi}{$i->[1]} = 0;
+		} else {
+			$filter->{hinshi}{$i->[1]} = 1;
+		}
 	}
-
+	
 	return $self;
 }
 
