@@ -338,6 +338,28 @@ sub asso{
 #   結果の取り出し   #
 #--------------------#
 
+sub fetch_query_words_name{
+	my $self = shift;
+	
+	my  $sql = "select name from genkei where\n";
+	
+	my $n = 0;
+	foreach my $i ( @{$self->{query_words}} ){
+		$sql .= "	";
+		$sql .= "OR " if $n;
+		$sql .= "id = $i\n";
+		++$n;
+	}
+	
+	my @words = ();
+	my $h = mysql_exec->select($sql,1)->hundle;
+	while (my $i = $h->fetch){
+		push @words, $i->[0];
+	}
+	
+	return \@words;
+}
+
 sub fetch_Doc_IDs{
 	my $self = shift;
 	

@@ -563,6 +563,8 @@ sub net_calc{
 	unless ( $self->{code_obj}          ) {return undef;}
 	unless ( $self->{code_obj}->doc_num ) {return undef;}
 	
+	my $wait_window = gui_wait->start;
+	
 	# ネットワーク描画に使用する語の基本形IDリスト
 	my @words = @{$self->{code_obj}{query_words}};
 	
@@ -596,12 +598,21 @@ sub net_calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n\n";
 
+	# 検索語のリスト（強調用）
+	my $qw_name = $self->{code_obj}->fetch_query_words_name;
+	$r_command .= "target_words <- c(";
+	foreach my $i ( @{$qw_name} ){
+		$r_command .= "\"$i\",";
+	}
+	chop $r_command;
+	$r_command .= ")\n";
+
 	# 仮の描画？
 	&gui_window::word_netgraph::make_plot(
 		font_size           => 0.8,
 		plot_size           => 640,
 		n_or_j              => "n",
-		edges_num           => 80,
+		edges_num           => 60,
 		edges_jac           => 0,
 		use_freq_as_size    => 0,
 		use_freq_as_fsize   => 0,
@@ -610,7 +621,8 @@ sub net_calc{
 		r_command           => $r_command,
 		plotwin_name        => 'cod_netg',
 	);
-
+	
+	$wait_window->end(no_dialog => 1);
 }
 
 #----------------------------#
