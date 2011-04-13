@@ -843,6 +843,7 @@ if ( use_weight_as_width == 1 ){
 } else {
 	edg_width <- 1
 }
+
 '
 }
 
@@ -850,6 +851,24 @@ sub r_plot_cmd_p4{
 
 return 
 '
+# 語の強調
+target_ids   <- NULL                              # IDの取得
+for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
+	for (w in target_words){
+		if (
+			colnames(d)[ as.numeric(get.vertex.attribute(n2,"name")[i]) ]
+			== w
+		){
+			target_ids <- c(target_ids, i)
+		}
+	}
+}
+
+if (length(com_col_v) == 1){
+	com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
+}
+com_col_v[target_ids] <- "red"
+
 # プロット
 if (smaller_nodes ==1){
 	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
