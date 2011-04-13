@@ -203,7 +203,7 @@ sub _new{
 	$f5->Button(
 		-font    => "TKFN",
 		#-width   => 8,
-		-text    => $self->gui_jchar('コンコーダンス'),
+		-text    => 'KWIC',
 		-command => sub{ $win->after(10,sub{$self->conc;});},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
@@ -218,6 +218,7 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
+				[$self->gui_jchar('共起') ,   'fr'  ],
 				[$self->gui_jchar('確率差') , 'sa'  ],
 				[$self->gui_jchar('確率比') , 'hi'  ],
 				['Jaccard'                  , 'jac' ],
@@ -229,6 +230,7 @@ sub _new{
 	)->set_value('jac');
 
 	$order_name = {
+		'fr'  => $self->gui_jchar('共起'),
 		'sa'  => $self->gui_jchar('確率差'),
 		'hi'  => $self->gui_jchar('確率比'),
 		'jac' => 'Jaccard',
@@ -251,8 +253,19 @@ sub _new{
 		-state       => 'normal',
 	)->pack(-side => 'left',-padx => 2);
 
+	$self->{btn_prev} = $f5->Button(
+		-text        => $self->gui_jchar('共起ネット'),
+		-font        => "TKFN",
+		-command     =>
+			sub{
+				$self->net_calc;
+			},
+		-borderwidth => 1,
+		-state       => 'normal',
+	)->pack(-side => 'left',-padx => 2);
+
 	$self->{hits_label} = $f5->Label(
-		-text       => $self->gui_jchar('  文書数：0'),
+		-text       => $self->gui_jchar(' 文書数：0'),
 		-font       => "TKFN",
 	)->pack(-side => 'left',);
 
@@ -265,7 +278,7 @@ sub _new{
 	#   フィルタ設定の初期化   #
 
 	$filter = undef;
-	$filter->{limit}   = 200;                  # LIMIT数
+	$filter->{limit}   = 75;                   # LIMIT数
 	$filter->{min_doc} = 1;                    # 最低文書数
 	my $h = mysql_exec->select("               # 品詞によるフィルタ
 		SELECT name, khhinshi_id
@@ -423,7 +436,7 @@ sub search{
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => $self->gui_jchar('  文書数： 0'));
+	$self->{hits_label}->configure(-text => $self->gui_jchar(' 文書数： 0'));
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searching...'
@@ -452,6 +465,7 @@ sub search{
 	);
 	
 	if ($query_ok){
+		$self->{code_obj} = $query_ok;
 		$self->display;
 	}
 	return $self;
@@ -535,14 +549,73 @@ sub display{
 	# ラベルの更新
 	my $num_total = $self->{code_obj}->doc_num;
 	gui_hlist->update4scroll($self->{rlist});
-	$self->{hits_label}->configure(-text => $self->gui_jchar("  文書数： $num_total"));
+	$self->{hits_label}->configure(-text => $self->gui_jchar(" 文書数： $num_total"));
 
 	return $self;
 }
 
 #----------------------------#
-#   コンコーダンス呼び出し   #
+#   共起ネットワークを描画   #
+
+sub net_calc{
+	my $self = shift;
+	
+	unless ( $self->{code_obj}          ) {return undef;}
+	unless ( $self->{code_obj}->doc_num ) {return undef;}
+	
+	# ネットワーク描画に使用する語の基本形IDリスト
+	my @words = @{$self->{code_obj}{query_words}};
+	
+	my $r = $self->{code_obj}->fetch_results(
+		order   => $self->{opt_order},
+		filter  => $filter,
+		for_net => 1,
+	);
+
+	foreach my $i (@{$r}){
+		push @words, $i->[0];
+	}
+
+	# 「文書 x 抽出語」データの取り出し
+	my $r_command = mysql_crossout::selected::r_com->new(
+		tani  => $self->{code_obj}->{tani},
+		words => \@words,
+	)->run;
+
+	# 該当する文書だけを選択
+	my $docs = $self->{code_obj}->fetch_Doc_IDs;
+	$r_command .= "target_docs <- c(";
+	foreach my $i (@{$docs}){
+		$r_command .= "$i,";
+	}
+	chop $r_command;
+	$r_command .= ")\n";
+
+	$r_command .= "d <- d[target_docs,]\n";
+
+	$r_command .= "d <- t(d)\n";
+	$r_command .= "# END: DATA\n\n";
+
+	# 仮の描画？
+	&gui_window::word_netgraph::make_plot(
+		font_size           => 0.8,
+		plot_size           => 640,
+		n_or_j              => "n",
+		edges_num           => 80,
+		edges_jac           => 0,
+		use_freq_as_size    => 0,
+		use_freq_as_fsize   => 0,
+		smaller_nodes       => 0,
+		use_weight_as_width => 0,
+		r_command           => $r_command,
+		plotwin_name        => 'cod_netg',
+	);
+
+}
+
 #----------------------------#
+#   コンコーダンス呼び出し   #
+
 sub conc{
 	use gui_window::word_conc;
 	my $self = shift;
@@ -570,7 +643,6 @@ sub conc{
 
 #--------------#
 #   アクセサ   #
-#--------------#
 
 sub last_words{
 	my $self = shift;
