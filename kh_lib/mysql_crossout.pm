@@ -8,6 +8,8 @@ use mysql_crossout::tab;
 use mysql_crossout::var;
 use mysql_crossout::r_com;
 
+use mysql_crossout::selected;
+
 sub new{
 	my $class = shift;
 	my %args  = @_;

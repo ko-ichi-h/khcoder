@@ -286,7 +286,7 @@ sub asso{
 	mysql_exec->do($sql,1);
 
 	print "3: delete unnecessary words...\n";
-	my (@words, %words);                          # 表層リストを取得
+	my %words;                                    # 表層リストを取得
 	foreach my $i (@{$args{selected}}){
 		next unless $self->{codes}[$i];
 		next unless $self->{codes}[$i]->res_table;
@@ -296,7 +296,7 @@ sub asso{
 			}
 		}
 	}
-	@words = (keys %words);                       # 表層リストを基本形リストに
+	my @words = (keys %words);                    # 表層リストを基本形リストに
 	$sql =  "SELECT genkei.id\n";                 #                       変換
 	$sql .= "FROM genkei, hyoso\n";
 	$sql .= "WHERE\n";
@@ -328,16 +328,37 @@ sub asso{
 		mysql_exec->do($sql,1);
 	}
 
+	$self->{query_words} = \@words;
+
 	print "done\n";
-	return 1;
+	return $self;
 }
 
 #--------------------#
 #   結果の取り出し   #
 #--------------------#
+
+sub fetch_Doc_IDs{
+	my $self = shift;
+	
+	my @docs = ();
+	my $h = mysql_exec->select("select id from temp_word_ass",1)->hundle;
+	while (my $i = $h->fetch){
+		push @docs, $i->[0];
+	}
+	
+	return \@docs;
+}
+
 sub fetch_results{
 	my $self = shift;
 	my %args = @_;
+
+	# print "query words: ";
+	# foreach my $i ( @{$self->{query_words}} ){
+	# 	print "$i ";
+	# }
+	# print "\n";
 
 	my $denom1 = mysql_exec->select("SELECT count(*) from temp_word_ass",1)
 		->hundle->fetch->[0];                     # 条件付き確立の分母
@@ -346,6 +367,7 @@ sub fetch_results{
 
 	# ソート値
 	my %lift = (
+		'fr'  => "ct_ass_p.p",
 		'sa'  => "ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2",
 		'hi'  => "(ct_ass_p.p / $denom1) / (df_$self->{tani}.f / $denom2)",
 		'jac' => "
@@ -406,26 +428,50 @@ sub fetch_results{
 	$hselection .= "\t)";
 	unless ($n){return undef;}
 
-	my $sql ="
-		SELECT
-			genkei.name,
-			khhinshi.name,
-			df_$self->{tani}.f,
-			ROUND(df_$self->{tani}.f / $denom2, 3),
-			ct_ass_p.p,
-			ROUND(ct_ass_p.p / $denom1, 3),
-			ROUND($lift{$args{order}}, 15) as lift
-		FROM genkei, khhinshi, ct_ass_p, df_$self->{tani}
-		WHERE
-			    genkei.khhinshi_id = khhinshi.id
-			AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
-			AND ct_ass_p.genkei_id = genkei.id
-			AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
-			AND df_$self->{tani}.f >= $args{filter}->{min_doc}
-			$hselection
-		ORDER BY lift DESC, ct_ass_p.p DESC
-		LIMIT $args{filter}->{limit}
-	";
+	my $sql;
+	if ( $args{for_net} ){
+		$sql = "
+			SELECT
+				genkei.id, # ここだけ変更
+				khhinshi.name,
+				df_$self->{tani}.f,
+				ROUND(df_$self->{tani}.f / $denom2, 3),
+				ct_ass_p.p,
+				ROUND(ct_ass_p.p / $denom1, 3),
+				ROUND($lift{$args{order}}, 15) as lift
+			FROM genkei, khhinshi, ct_ass_p, df_$self->{tani}
+			WHERE
+				    genkei.khhinshi_id = khhinshi.id
+				AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
+				AND ct_ass_p.genkei_id = genkei.id
+				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
+				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
+				$hselection
+			ORDER BY lift DESC, ct_ass_p.p DESC
+			LIMIT $args{filter}->{limit}
+		";
+	} else {
+		$sql = "
+			SELECT
+				genkei.name,
+				khhinshi.name,
+				df_$self->{tani}.f,
+				ROUND(df_$self->{tani}.f / $denom2, 3),
+				ct_ass_p.p,
+				ROUND(ct_ass_p.p / $denom1, 3),
+				ROUND($lift{$args{order}}, 15) as lift
+			FROM genkei, khhinshi, ct_ass_p, df_$self->{tani}
+			WHERE
+				    genkei.khhinshi_id = khhinshi.id
+				AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
+				AND ct_ass_p.genkei_id = genkei.id
+				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
+				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
+				$hselection
+			ORDER BY lift DESC, ct_ass_p.p DESC
+			LIMIT $args{filter}->{limit}
+		";
+	}
 
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 
