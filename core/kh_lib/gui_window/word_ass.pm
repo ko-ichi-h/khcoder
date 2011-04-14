@@ -619,7 +619,7 @@ sub net_calc{
 		smaller_nodes       => 0,
 		use_weight_as_width => 0,
 		r_command           => $r_command,
-		plotwin_name        => 'cod_netg',
+		plotwin_name        => 'selected_netgraph',
 	);
 	
 	$wait_window->end(no_dialog => 1);
