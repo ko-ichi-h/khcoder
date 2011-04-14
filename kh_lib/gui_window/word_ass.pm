@@ -596,7 +596,6 @@ sub net_calc{
 	$r_command .= "d <- d[target_docs,]\n";
 
 	$r_command .= "d <- t(d)\n";
-	$r_command .= "# END: DATA\n\n";
 
 	# 検索語のリスト（強調用）
 	my $qw_name = $self->{code_obj}->fetch_query_words_name;
@@ -608,6 +607,7 @@ sub net_calc{
 	$r_command .= ")\n";
 
 	# 仮の描画？
+	$r_command .= "# END: DATA\n\n";
 	&gui_window::word_netgraph::make_plot(
 		font_size           => 0.8,
 		plot_size           => 640,
