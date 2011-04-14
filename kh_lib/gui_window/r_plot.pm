@@ -9,6 +9,8 @@ use gui_window::r_plot::cod_cls;
 use gui_window::r_plot::cod_corresp;
 use gui_window::r_plot::cod_mds;
 use gui_window::r_plot::cod_netg;
+use gui_window::r_plot::selected_netgraph;
+
 
 use strict;
 use gui_hlist;

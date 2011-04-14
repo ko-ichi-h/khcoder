@@ -9,6 +9,7 @@ use gui_window::r_plot_opt::cod_cls;
 use gui_window::r_plot_opt::cod_corresp;
 use gui_window::r_plot_opt::cod_mds;
 use gui_window::r_plot_opt::cod_netg;
+use gui_window::r_plot_opt::selected_netgraph;
 
 sub _new{
 	my $self = shift;
