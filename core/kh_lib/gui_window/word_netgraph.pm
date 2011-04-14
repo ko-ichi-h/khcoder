@@ -675,7 +675,7 @@ if ( com_method == "com-b" || com_method == "com-g"){
 	}
 
 	if (com_method == "com-g"){                   # Modularity
-		com   <- fastgreedy.community   (n2, merges=TRUE, modularity=TRUE)    
+		com   <- fastgreedy.community   (n2, merges=TRUE, modularity=TRUE)
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
 		)
@@ -852,22 +852,47 @@ sub r_plot_cmd_p4{
 return 
 '
 # 語の強調
-target_ids   <- NULL                              # IDの取得
-for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
-	for (w in target_words){
-		if (
-			colnames(d)[ as.numeric(get.vertex.attribute(n2,"name")[i]) ]
-			== w
-		){
-			target_ids <- c(target_ids, i)
+v_shape    <- "circle"
+target_ids <-  NULL
+if ( exists("target_words") ){
+	# IDの取得
+	for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
+		for (w in target_words){
+			if (
+				colnames(d)[ as.numeric(get.vertex.attribute(n2,"name")[i]) ]
+				== w
+			){
+				target_ids <- c(target_ids, i)
+			}
 		}
 	}
+	# 形状
+	if (length(v_shape) == 1){
+		v_shape <- rep(v_shape, length( get.vertex.attribute(n2,"name") ) )
+	}
+	v_shape[target_ids] <- "square"
+	# 枠線の色
+	if (length(com_col_v) == 1){
+		com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
+	}
+	com_col_v[target_ids] <- "black"
+	# 小さな円で描画している場合
+	if (smaller_nodes == 1){
+		# ラベルの距離
+		if (length( vertex_label_dist ) == 1){
+			vertex_label_dist <- rep(
+				vertex_label_dist,
+				length( get.vertex.attribute(n2,"name") )
+			)
+		}
+		vertex_label_dist[target_ids] <- 0
+		# サイズ
+		if (length( v_size ) == 1){
+			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
+		}
+		v_size[target_ids] <- 10
+	}
 }
-
-if (length(com_col_v) == 1){
-	com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
-}
-com_col_v[target_ids] <- "red"
 
 # プロット
 if (smaller_nodes ==1){
@@ -887,6 +912,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
 		vertex.size        =v_size,
+		vertex.shape       =v_shape,
 		edge.color         =edg_col,
 		edge.lty           =edg_lty,
 		edge.width         =edg_width,
