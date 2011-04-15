@@ -46,10 +46,16 @@ sub _new{
 	return $self;
 }
 
-sub start {
+sub start{
 	# Windowsではここでiconをセットしないとフォーカスが来ない?!
 	my $self = shift;
 	$self->position_icon;
+	
+	# メイン画面だけはESCキーで閉じない
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ return 1; }
+	);
 }
 
 

@@ -351,6 +351,8 @@ sub fetch_query_words_name{
 		++$n;
 	}
 	
+	return undef unless $n;
+	
 	my @words = ();
 	my $h = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $h->fetch){
