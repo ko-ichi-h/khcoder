@@ -784,6 +784,10 @@ lay_f <- layout.fruchterman.reingold(n2,
 	weights = get.edge.attribute(n2, "weight")
 )
 
+lay_f <- scale(lay_f)
+lay_f[,1] <- lay_f[,1] / max( abs( lay_f[,1] ) )
+lay_f[,2] <- lay_f[,2] / max( abs( lay_f[,2] ) )
+
 # 負の値を0に変換する関数
 neg_to_zero <- function(nums){
   temp <- NULL
@@ -876,7 +880,13 @@ if ( exists("target_words") ){
 		com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
 	}
 	com_col_v[target_ids] <- "black"
+	# サイズ
+	if (length( v_size ) == 1){
+		v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
+	}
+	v_size[target_ids] <- 15
 	# 小さな円で描画している場合
+	rect_size <- 0.095
 	if (smaller_nodes == 1){
 		# ラベルの距離
 		if (length( vertex_label_dist ) == 1){
@@ -891,6 +901,7 @@ if ( exists("target_words") ){
 			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
 		}
 		v_size[target_ids] <- 10
+		rect_size <- 0.07
 	}
 }
 
@@ -916,8 +927,16 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		edge.color         =edg_col,
 		edge.lty           =edg_lty,
 		edge.width         =edg_width,
-		layout             =lay_f
+		layout             =lay_f,
+		rescale            =F
 	)
+
+if ( exists("target_words") ){
+	rect(
+		lay_f[target_ids,1] - rect_size, lay_f[target_ids,2] - rect_size,
+		lay_f[target_ids,1] + rect_size, lay_f[target_ids,2] + rect_size,
+	)
+}
 }
 '
 }
