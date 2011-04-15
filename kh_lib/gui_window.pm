@@ -116,11 +116,19 @@ sub open{
 			'<Control-Key-q>',
 			sub{ $self->close; }
 		);
+		$self->win_obj->bind(
+			'<Key-Escape>',
+			sub{ $self->close; }
+		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
 		# メインWindowsへ戻るためのキー・バインド
 		$self->win_obj->bind(
 			'<Alt-Key-m>',
+			sub { $::main_gui->{main_window}->win_obj->focus; }
+		);
+		$self->win_obj->bind(
+			'<Control-Key-m>',
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 

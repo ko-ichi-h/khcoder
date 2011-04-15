@@ -108,7 +108,7 @@ sub _new{
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
 		$self->{btn_search},
-		-balloonmsg => '"Shinf + Enter"',
+		-balloonmsg => 'Enter',
 		-font       => "TKFN"
 	);
 
@@ -253,7 +253,7 @@ sub _new{
 		-state       => 'normal',
 	)->pack(-side => 'left',-padx => 2);
 
-	$self->{btn_prev} = $f5->Button(
+	$self->{btn_net} = $f5->Button(
 		-text        => $self->gui_jchar('共起ネット'),
 		-font        => "TKFN",
 		-command     =>
@@ -263,6 +263,16 @@ sub _new{
 		-borderwidth => 1,
 		-state       => 'normal',
 	)->pack(-side => 'left',-padx => 2);
+
+	$self->win_obj->bind(
+		'<Control-Key-n>',
+		sub{ $self->{btn_net}->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$self->{btn_net},
+		-balloonmsg => 'Ctrl + N',
+		-font => "TKFN"
+	);
 
 	$self->{hits_label} = $f5->Label(
 		-text       => $self->gui_jchar(' 文書数：0'),
@@ -599,14 +609,16 @@ sub net_calc{
 
 	# 検索語のリスト（強調用）
 	my $qw_name = $self->{code_obj}->fetch_query_words_name;
-	$r_command .= "target_words <- c(";
-	foreach my $i ( @{$qw_name} ){
-		$r_command .= "\"$i\",";
+	if ($qw_name){
+		$r_command .= "target_words <- c(";
+		foreach my $i ( @{$qw_name} ){
+			$r_command .= "\"$i\",";
+		}
+		chop $r_command;
+		$r_command .= ")\n";
 	}
-	chop $r_command;
-	$r_command .= ")\n";
 
-	# 仮の描画？
+	# デフォルト値で描画
 	$r_command .= "# END: DATA\n\n";
 	&gui_window::word_netgraph::make_plot(
 		font_size           => 0.8,
