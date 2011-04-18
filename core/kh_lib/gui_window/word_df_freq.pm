@@ -191,6 +191,21 @@ sub plot{
 	my $self = shift;
 	return 0 unless $::config_obj->R;
 
+	my $tani = $self->{tani_obj}->tani;
+	my %tani_name = (
+		'bun' => '文',
+		'dan' => '段落',
+		'h1'  => 'H1',
+		'h2'  => 'H2',
+		'h3'  => 'H3',
+		'h4'  => 'H4',
+		'h5'  => 'H5',
+	);
+	my $tani_name = $tani;
+	if ( $tani_name{$tani} ){
+		$tani_name = $tani_name{$tani};
+	}
+
 	use kh_r_plot;
 	kh_r_plot->clear_env;
 	my $flg_error = 0;
@@ -199,7 +214,7 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数")',
+			.'xlab="文書数（'.$tani_name.'）")',
 	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
@@ -207,7 +222,7 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数", log="x")',
+			.'xlab="文書数（'.$tani_name.'）", log="x")',
 	) or $flg_error = 1;
 	
 	my $plot3 = kh_r_plot->new(
@@ -215,7 +230,7 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数", log="xy")',
+			.'xlab="文書数（'.$tani_name.'）", log="xy")',
 	) or $flg_error = 1;
 	
 	kh_r_plot->clear_env;

@@ -213,6 +213,8 @@ sub calc{
 		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
 	}
 
+	my $wait_window = gui_wait->start;
+
 	&gui_window::word_corresp::make_plot(
 		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
 		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
@@ -225,6 +227,7 @@ sub calc{
 		plotwin_name => 'word_corresp',
 	);
 	
+	$wait_window->end(no_dialog => 1);
 	$self->close;
 }
 

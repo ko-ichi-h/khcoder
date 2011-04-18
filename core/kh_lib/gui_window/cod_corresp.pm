@@ -711,6 +711,8 @@ sub _calc{
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
+	my $wait_window = gui_wait->start;
+
 	# データ取得
 	my $r_command = '';
 	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){ # 修正！ 2010 12/24
@@ -720,6 +722,7 @@ sub _calc{
 			msg    => "出現数が0のコードは利用できません。"
 		);
 		#$self->close();
+		$wait_window->end(no_dialog => 1);
 		return 0;
 	}
 
@@ -881,6 +884,7 @@ sub _calc{
 		plotwin_name => 'cod_corresp',
 	);
 
+	$wait_window->end(no_dialog => 1);
 	unless ( $self->{check_rm_open} ){
 		$self->close;
 	}
