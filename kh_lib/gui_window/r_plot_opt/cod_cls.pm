@@ -93,6 +93,7 @@ sub calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $wait_window = gui_wait->start;
 	&gui_window::word_cls::make_plot(
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		font_size      => $fontsize,
@@ -101,7 +102,7 @@ sub calc{
 		plotwin_name   => 'cod_cls',
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
-
+	$wait_window->end(no_dialog => 1);
 	$self->close;
 	return 1;
 }

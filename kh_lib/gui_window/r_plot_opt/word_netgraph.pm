@@ -222,6 +222,7 @@ sub calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	my $wait_window = gui_wait->start;
 	&gui_window::word_netgraph::make_plot(
 		font_size         => $fontsize,
 		plot_size         => $self->gui_jg( $self->{entry_plot_size}->get ),
@@ -236,7 +237,7 @@ sub calc{
 		r_command         => $r_command,
 		plotwin_name      => 'word_netgraph',
 	);
-
+	$wait_window->end(no_dialog => 1);
 	$self->close;
 }
 

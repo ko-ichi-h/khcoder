@@ -119,6 +119,20 @@ sub count{
 	chop $rcmd;
 	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
+	my %tani_name = (
+		'bun' => '文',
+		'dan' => '段落',
+		'h1'  => 'H1',
+		'h2'  => 'H2',
+		'h3'  => 'H3',
+		'h4'  => 'H4',
+		'h5'  => 'H5',
+	);
+	my $tani_name = $tani;
+	if ( $tani_name{$tani} ){
+		$tani_name = $tani_name{$tani};
+	}
+
 	use kh_r_plot;
 	kh_r_plot->clear_env;
 	my $flg_error = 0;
@@ -126,21 +140,21 @@ sub count{
 		name      => 'words_TF_DF1',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数", xlab="出現回数")',
+			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）", xlab="出現回数")',
 	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_TF_DF2',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="x")',
+			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）",xlab="出現回数",log="x")',
 	) or $flg_error = 1;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_TF_DF3',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数",xlab="出現回数",log="xy")',
+			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）",xlab="出現回数",log="xy")',
 	) or $flg_error = 0;
 
 	if ($flg_error){

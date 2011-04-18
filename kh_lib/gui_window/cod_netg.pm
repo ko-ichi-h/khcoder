@@ -453,6 +453,7 @@ sub _calc{
 		return 0;
 	}
 
+	my $wait_window = gui_wait->start;
 
 	# データ取得
 	my $r_command;
@@ -462,10 +463,11 @@ sub _calc{
 			window  => \$self->win_obj,
 			msg    => "出現数が0のコードは利用できません。"
 		);
-		$self->close();
+		#$self->close();
+		$wait_window->end(no_dialog => 1);
 		return 0;
 	}
-	
+
 	# データ整理
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
@@ -501,6 +503,7 @@ sub _calc{
 		plotwin_name   => 'cod_netg',
 	);
 
+	$wait_window->end(no_dialog => 1);
 	unless ( $self->{check_rm_open} ){
 		$self->close;
 	}

@@ -351,6 +351,8 @@ sub _calc{
 		return 0;
 	}
 
+	my $wait_window = gui_wait->start;
+
 	# データ取得
 	my $r_command;
 	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){
@@ -360,6 +362,7 @@ sub _calc{
 			msg    => "出現数が0のコードは利用できません。"
 		);
 		#$self->close();
+		$wait_window->end(no_dialog => 1);
 		return 0;
 	}
 	
@@ -393,6 +396,7 @@ sub _calc{
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
+	$wait_window->end(no_dialog => 1);
 	unless ( $self->{check_rm_open} ){
 		$self->close;
 	}
