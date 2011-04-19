@@ -818,7 +818,7 @@ sub make_plot{
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
 				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
-				.'col=c("#66CCCC","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
+				.'col=c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
 				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]'
@@ -833,7 +833,7 @@ sub make_plot{
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
 				.'offset=0,'
-				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666
+				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666（緑） #FF6347（朱） #FF8B00FF（オレンジ）
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
