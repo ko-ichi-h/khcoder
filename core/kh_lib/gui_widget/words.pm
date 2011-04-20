@@ -188,6 +188,7 @@ sub _new{
 	gui_window->disabled_entry_configure($self->{ent_check});
 
 	$self->{win_obj} = $left; # ?
+	$self->{win_obj}->update;
 	$self->settings_load;
 	return $self;
 }
@@ -205,19 +206,19 @@ sub check{
 		return 0;
 	}
 	
-	my $tani2 = '';
-	if ($self->{radio} == 0){
-		$tani2 = gui_window->gui_jg($self->{high});
-	}
-	elsif ($self->{radio} == 1){
-		if ( length($self->{var_id}) ){
-			$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
-		}
-	}
+	#my $tani2 = '';
+	#if ($self->{radio} == 0){
+	#	$tani2 = gui_window->gui_jg($self->{high});
+	#}
+	#elsif ($self->{radio} == 1){
+	#	if ( length($self->{var_id}) ){
+	#		$tani2 = mysql_outvar::a_var->new(undef,$self->{var_id})->{tani};
+	#	}
+	#}
 	
 	my $check = mysql_crossout::r_com->new(
 		tani   => $self->tani,
-		tani2  => $tani2,
+		#tani2  => $tani2,
 		hinshi => $self->hinshi,
 		max    => $self->max,
 		min    => $self->min,
@@ -253,21 +254,38 @@ sub settings_load{
 	
 	my $settings = $::project_obj->load_dmp(
 		name => 'widget_words',
-	) or return 0;
+	);
 	
-	$self->{hinshi_obj}->selection_set($settings->{hinshi});
-	
-	$self->min( $settings->{min} );
-	$self->max( $settings->{max} );
-	
-	# 単位の設定は読み込まない
-	# （余所で違う値に設定されたら、それにあわせる。
-	# 　またその場合は「文書数」の設定も読み込まない）
-	if ( $self->tani eq $settings->{tani} ){
-		$self->min_df( $settings->{min_df} );
-		$self->max_df( $settings->{max_df} );
+	if ($settings){
+		$self->{hinshi_obj}->selection_set($settings->{hinshi});
+		
+		$self->min( $settings->{min} );
+		$self->max( $settings->{max} );
+		
+		# 単位の設定は読み込まない
+		# （余所で違う値に設定されたら、それにあわせる。
+		# 　またその場合は「文書数」の設定も読み込まない）
+		if ( $self->tani eq $settings->{tani} ){
+			$self->min_df( $settings->{min_df} );
+			$self->max_df( $settings->{max_df} );
+		}
+		$self->check;
+	} else {
+		# print "Getting the default min-freq value...\n";
+		my $target = 75;
+		my $freq = mysql_crossout::r_com->new(
+			tani   => $self->tani,
+			hinshi => $self->hinshi,
+			max    => $self->max,
+			min    => $self->min,
+			max_df => $self->max_df,
+			min_df => $self->min_df,
+		)->get_default_freq(75);
+		
+		$self->min( $freq );
+		
+		$self->check;
 	}
-	$self->check;
 }
 
 
