@@ -272,6 +272,64 @@ sub wnum{
 }
 
 
+sub get_default_freq{
+	my $self = shift;
+	my $target = shift;
+	
+	$self->{min_df} = 0 unless length($self->{min_df});
+	
+	my $sql = "
+		SELECT num, count(*)
+		FROM   genkei, hselection, df_$self->{tani}
+		WHERE
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			# AND genkei.num >= $self->{min}
+			AND genkei.nouse = 0
+			AND genkei.id = df_$self->{tani}.genkei_id
+			AND df_$self->{tani}.f >= $self->{min_df}
+			AND (
+	";
+	
+	my $n = 0;
+	foreach my $i ( @{$self->{hinshi}} ){
+		if ($n){ $sql .= ' OR '; }
+		$sql .= "hselection.khhinshi_id = $i\n";
+		++$n;
+	}
+	$sql .= ")\n";
+	if ($self->{max}){
+		$sql .= "AND genkei.num <= $self->{max}\n";
+	}
+	if ($self->{max_df}){
+		$sql .= "AND df_$self->{tani}.f <= $self->{max_df}\n";
+	}
+	$sql .= "GROUP BY genkei.num\n";
+	$sql .= "ORDER BY genkei.num DESC\n";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+
+	my $lf  = 0;
+	my $cum = 0;
+	my $r   = 1;
+	while (my $i = $h->fetch){
+		if ($i->[0] % 5 ==0){
+			if ($cum + $i->[1] >= $target){
+				# print "$lf->[1]: ", $target - $lf->[1], ", ", $cum + $i->[1], ": ", $cum + $i->[1] - $target, "\n";
+				if ( ( $target - $lf->[1] ) >= ( $cum + $i->[1] - $target ) ){
+					$r = $i->[0];
+				} else {
+					$r = $lf->[0];
+				}
+				last;
+			}
+			$lf  =  [$i->[0], $cum + $i->[1]]; # 1つ前のを保存
+		}
+		$cum += $i->[1]; # 累積
+	}
+
+	return $r;
+}
+
 1;
 
 

@@ -40,9 +40,9 @@ sub _new{
 	)->pack(-anchor => 'w', -pady => 2);
 
 	$self->{words_obj} = gui_widget::words->open(
-		parent => $lf,
-		verb   => '布置',
-		type   => 'corresp',
+		parent       => $lf,
+		verb         => '布置',
+		type         => 'corresp',
 	);
 
 	# 入力データの設定
@@ -160,6 +160,7 @@ sub _new{
 	$self->refresh;
 
 	# 差異の顕著な語のみ分析
+	$self->{check_filter_w} = 1;                  # デフォルトでON
 	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
@@ -184,7 +185,7 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 0);
-	$self->{entry_flw}->insert(0,'50');
+	$self->{entry_flw}->insert(0,'60');
 	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_flw});
 
@@ -220,7 +221,7 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 0);
-	$self->{entry_flt}->insert(0,'50');
+	$self->{entry_flt}->insert(0,'60');
 	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_flt});
 
@@ -521,6 +522,19 @@ sub refresh{
 				variable => \$self->{high},
 			);
 			$self->{opt_body_high_ok} = 0;
+		}
+		
+		#print "ok0\n";
+		if ($self->{high} =~ /h[1-5]/){
+			my $chk =
+				mysql_exec->select("select max(id) from $self->{high} ")
+					->hundle->fetch->[0];
+			#print "ok1\n";
+			if ($chk <= 20){
+				$self->{biplot} = 1;
+				$self->{label_high2}->update;
+				#print "ok2\n";
+			}
 		}
 	}
 
