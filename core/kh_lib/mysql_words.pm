@@ -563,6 +563,7 @@ sub _make_wl_150{
 			  and hselection.name != "感動詞"
 			  and hselection.name != "その他"
 			  and hselection.name != "HTMLタグ"
+			  and hselection.name != "形容詞（非自立）"
 			  and hselection.ifuse = 1
 			ORDER BY TF DESC, W
 			LIMIT 150
