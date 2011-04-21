@@ -32,7 +32,7 @@ sub __new{
 #	$inis->grab;
 	$inis->title( $self->gui_jt('KH Coderの設定','euc') );
 	my $lfra = $inis->LabFrame(
-		-label => $self->gui_jchar('語を抽出する方法'),
+		-label => $self->gui_jchar('[語を抽出する方法]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
@@ -117,17 +117,17 @@ sub __new{
 #   外部アプリの設定   #
 
 	my $afra = $inis->LabFrame(
-		-label       => 'External Apps',
+		-label       => $self->gui_jchar('[外部アプリケーション]'),
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-expand=>'yes',-fill=>'both');
 
+	#$afra->Label(
+	#	-text => $self->gui_jchar('・その他の外部アプリケーション'),
+	#	-font => 'TKFN'
+	#)->pack(-anchor => 'w');
 	$afra->Label(
-		-text => $self->gui_jchar('・その他の外部アプリケーション'),
-		-font => 'TKFN'
-	)->pack(-anchor => 'w');
-	$afra->Label(
-		-text => $self->gui_jchar('　（%sはファイル名やURLで置き換えられます）'),
+		-text => $self->gui_jchar('※ %sはファイル名やURLで置き換えられます'),
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 
