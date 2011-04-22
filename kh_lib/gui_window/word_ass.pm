@@ -573,6 +573,19 @@ sub net_calc{
 	unless ( $self->{code_obj}          ) {return undef;}
 	unless ( $self->{code_obj}->doc_num ) {return undef;}
 	
+	my $n = 0;
+	while ($self->{rlist}->info('exists', $n)){
+		++$n;
+	}
+	if ($n < 4){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => 'リストアップされている語の数が5未満のため、処理を中止します。',
+		);
+		return undef;
+	}
+	
+	
 	my $wait_window = gui_wait->start;
 	
 	# ネットワーク描画に使用する語の基本形IDリスト
