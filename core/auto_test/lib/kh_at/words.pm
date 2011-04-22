@@ -135,8 +135,8 @@ sub _wcl_filter{
 	my $win  = shift;
 	my $t = '';
 	
-	$self->{result} .= "●フィルタ無し\n";
-	$self->_wcl_sort($win);
+	# $self->{result} .= "●フィルタ無し\n";
+	# $self->_wcl_sort($win);
 	
 	$self->{result} .= "●フィルタ有り\n";
 	my $win_filter = gui_window::word_conc_coloc_opt->open;
