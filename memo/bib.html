@@ -113,11 +113,11 @@
 <!--
 	document.write(
 		'<center><table cellspacing="0" style="margin-bottom: 15px; margin-top: 3px">',
-		'<tr><td><span id="SMf">出版年：&nbsp;</span></td>',
+		'<tr><td><span class="SMf">出版年：&nbsp;</span></td>',
 		'<td>',
 		'	<ul id="SearchMenuY" class="lamp">',
 		'		<li><a href="#">すべて</a></li>',
-		'		<li><a href="#">～2005</a></li>',
+		'		<li><a href="#">~2005</a></li>',
 		'		<li><a href="#">2006</a></li>',
 		'		<li><a href="#">2007</a></li>',
 		'		<li><a href="#">2008</a></li>',
@@ -126,20 +126,20 @@
 		'		<li><a href="#">2011</a></li>',
 		'	</ul>',
 		'</td></tr>',
-		'<tr><td id="SMftab"><span id="SMf" >著者名：&nbsp;</span></td>',
-		'<td id="SMftab">',
+		'<tr><td class="SMftab"><span class="SMf" >著者名：&nbsp;</span></td>',
+		'<td class="SMftab">',
 		'	<ul id="SearchMenu" class="lamp">',
-		'		<li><a href="#">すべて</a></li>',
-		'		<li><a href="#">あ</a></li>',
-		'		<li><a href="#">か</a></li>',
-		'		<li><a href="#">さ</a></li>',
-		'		<li><a href="#">た</a></li>',
-		'		<li><a href="#">な</a></li>',
-		'		<li><a href="#">は</a></li>',
-		'		<li><a href="#">ま</a></li>',
-		'		<li><a href="#">や</a></li>',
-		'		<li><a href="#">ら</a></li>',
-		'		<li><a href="#">わ</a></li>',
+		'		<li><a style="padding: 0px 3px;"  href="#">すべて</a></li>',
+		'		<li><a style="padding: 0px 5px;" href="#">あ</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">か</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">さ</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">た</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">な</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">は</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">ま</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">や</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">ら</a></li>',
+		'		<li><a style="padding: 0px 5px;"  href="#">わ</a></li>',
 		'	</ul>',
 		'</td></tr>',
 		'<tr><td colspan=2><div id="SearchresultN">&nbsp;</div></td></tr>',
@@ -705,15 +705,16 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 	// メニューの設定
 	$(function() {
 		$('#SearchMenu').lavaLamp({
-			fx: 'easeInOut' + 'Expo',
+			fx: 'easeInOut' + 'Quart',
 			speed: 500,
 			click: function(event, menuItem){
 				var t = menuItem.innerHTML;
 				t = t.replace(/<\/a>/g,'');
-				t = t.replace(/<a href="#">/g,'');
+				t = t.replace(/<a style=".+" href="#">/g,'');
 			
 				t = t.replace(/<\/A>/g,'');
-				t = t.replace(/<A href="#">/g,'');
+				t = t.replace(/<A style=".+" href="#">/g,'');
+				
 				
 				t = t.replace(/ /g,'');
 				t = t.replace(/\n/g,'');
@@ -730,7 +731,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 
 	$(function() {
 		$('#SearchMenuY').lavaLamp({
-			fx: 'easeInOut' + 'Expo',
+			fx: 'easeInOut' + 'Quart',
 			speed: 500,
 			click: function(event, menuItem){
 				var t = menuItem.innerHTML;
@@ -746,7 +747,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 				if (t == 'すべて'){
 					t = 'all';
 				}
-				if (t == '～2005'){
+				if (t == '~2005'){
 					t = '2005';
 				}
 				
@@ -756,7 +757,6 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 			}
 		});
 	});
-
 
 	// データの取得
 	var bibs = new Array();
@@ -801,7 +801,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 			n_sele = '0' + n_sele;
 		}
 		
-		var n = "<div align=\"right\" ><div id=\"SMfnb\">件数： " + n_sele + "</div>";
+		var n = "<div align=\"right\" ><div class=\"SMfnb\">件数： " + n_sele + "</div>";
 		
 		document.getElementById('SearchresultN').innerHTML = n;
 		
