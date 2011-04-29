@@ -726,13 +726,8 @@ if ( com_method == "com-b" || com_method == "com-g"){
 # カラーリング「なし」の場合の線の色（2010 12/4）
 if (com_method == "none"){
 	com_col_v <- "black"
-	if ( use_weight_as_width == 1 ){
-		edg_lty <- 1
-		edg_col   <- "gray40"
-	} else {
-		edg_lty <- 3
-		edg_col   <- "black"
-	}
+	edg_lty <- 1
+	edg_col   <- "gray40"
 }
 
 if (com_method == "none"){
