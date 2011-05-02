@@ -148,7 +148,7 @@
 		'</td></tr>',
 		'<tr><td colspan=2><div id="SearchresultN">&nbsp;</div></td></tr>',
 		'</table></center>',
-		'<div id="Searchresult">Now Loading...</div>'
+		'<div id="Searchresult">Loading...</div>'
 	);
 	document.close();
 // -->
@@ -768,14 +768,22 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 
 	// データの取得
 	var bibs = new Array();
-	jQuery.get(
-		"bib.tsv",
-		function(data) {
+	$.ajax({
+		url: "bib.tsv",
+		dataType: "text",
+		// cache: false,
+		success: function(data, status) {
 			bibs = jQuery.csv("\t")(data);
-			// alert(bibs[5][0] + bibs[5][1] + bibs[5][2]);
-			search_bibs();
+			if (bibs[0].length == 1){
+				print("<p>文献リストの読み込みに失敗しました（エラーコード01: " + status + "）。</p><p>このページの再読み込みを試してみるか、JavaScriptを無効にしてみて下さい。</p>");
+			} else {
+				search_bibs();
+			}
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			print("<p>文献リストの読み込みに失敗しました（エラーコード02: " + textStatus + ': ' + errorThrown + "）。</p><p>このページの再読み込みを試してみるか、JavaScriptを無効にしてみて下さい。</p>");
 		}
-	);
+	});
 
 	// 検索＆表示
 	function search_bibs() {
