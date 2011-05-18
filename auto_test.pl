@@ -144,6 +144,8 @@ $main_gui->win_obj->bind(
 );
 print "Hit Ctrl-G to start test procedures.\n";
 
+&test;
+
 MainLoop;
 
 #--------------------#
