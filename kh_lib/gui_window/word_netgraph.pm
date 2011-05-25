@@ -927,10 +927,12 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 	)
 
 if ( exists("target_words") ){
-	rect(
-		lay_f[target_ids,1] - rect_size, lay_f[target_ids,2] - rect_size,
-		lay_f[target_ids,1] + rect_size, lay_f[target_ids,2] + rect_size,
-	)
+	if ( is.null(target_ids) == FALSE){
+		rect(
+			lay_f[target_ids,1] - rect_size, lay_f[target_ids,2] - rect_size,
+			lay_f[target_ids,1] + rect_size, lay_f[target_ids,2] + rect_size,
+		)
+	}
 }
 }
 '
