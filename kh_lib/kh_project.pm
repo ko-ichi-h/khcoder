@@ -82,6 +82,16 @@ sub read_hinshi_setting{
 			thefile => $sql,
 		);
 
+	# プロジェクト内の既存の品詞選択を取得
+	my %current = ();
+	if ( mysql_exec->table_exists('hselection') ){
+		my $h =
+			mysql_exec->select('SELECT name, ifuse FROM hselection')->hundle;
+		while (my $i = $h->fetch){
+			$current{$i->[0]} = $i->[1];
+		}
+	}
+
 	# プロジェクト内へコピー(1)
 	mysql_exec->drop_table('hselection');
 	mysql_exec->do('
@@ -93,19 +103,24 @@ sub read_hinshi_setting{
 	',1);
 	$sql = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
 	my %temp_h = ();
-	foreach my $i (@{$hinshi}){
+	foreach my $i (@{$hinshi}, [9999,'その他']){
+		# 2重にInsertしないようにチェック
 		if ($temp_h{$i->[0]}){
 			next;
 		} else {
 			$temp_h{$i->[0]} = 1;
 		}
-		if ($i->[1] eq "HTMLタグ"){
-			$sql .= "($i->[0],0,'$i->[1]'),";
+		# 使う設定にするかどうか
+		my $val = 1;
+		if ( defined($current{$i->[1]}) ){
+			$val = $current{$i->[1]};
 		} else {
-			$sql .= "($i->[0],1,'$i->[1]'),";
+			$val = 0 if $i->[1] eq "HTMLタグ";
+			$val = 0 if $i->[1] eq "その他";
 		}
+		$sql .= "($i->[0],$val,'$i->[1]'),";
 	}
-	$sql .= "(9999,0,'その他')";
+	chop $sql;
 	mysql_exec->do($sql,1);
 
 	# プロジェクト内へコピー(2)
