@@ -21,6 +21,8 @@ sub run{
 	my $t1 = new Benchmark;
 	print "\n",timestr(timediff($t1,$t0)),"\n";
 	
+	print "Data matrix for R: $self->{num_w} words x $self->{num_r} docs\n";
+	
 	return $self->{r_command};
 }
 
@@ -34,6 +36,8 @@ sub out2{                               # length作製をする
 	my $row_names = '';
 	
 	my $length = 'doc_length_mtr <- matrix( c( ';
+	
+	my $num_r = 0;
 	
 	# セル内容の作製
 	my $id = 1;
@@ -70,6 +74,7 @@ sub out2{                               # length作製をする
 				# 初期化
 				%current = ();
 				$last = $i->[0];
+				++$num_r;
 			}
 			
 			# HTMLタグを無視
@@ -111,7 +116,9 @@ sub out2{                               # length作製をする
 	$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
 	$length .= "$current{length_c},$current{length_w},";
 	chop $row_names;
+	++$num_r;
 	
+	# データ整形
 	if ($self->{rownames}){
 		if ($self->{midashi}){
 			$self->{r_command} .= "row.names(d) <- c($row_names)\n";
@@ -135,6 +142,8 @@ sub out2{                               # length作製をする
 	$length .= "), ncol=2, byrow=T)\n";
 	$length .= "colnames(doc_length_mtr) <- c(\"length_c\", \"length_w\")\n";
 	$self->{r_command} .= $length;
+
+	$self->{num_r} = $num_r;
 
 	return $self;
 }
@@ -243,6 +252,7 @@ sub make_list{
 	$self->{wList}   = \@list;
 	$self->{wName}   = \%name;
 	$self->{wHinshi} = \%hinshi;
+	$self->{num_w} = @list;
 	
 	# 品詞リストの作製
 	$sql = '';
