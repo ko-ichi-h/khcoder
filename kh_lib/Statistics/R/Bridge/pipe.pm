@@ -666,12 +666,15 @@
 	#print "Statistics::R::Bridge::pipe::read_processR, d: $data\n" if $debug2;
 
     return if !$r;
-
+	
+	require Time::HiRes;
+	
     my ($n) = ( $data =~ /(\d+)\s*$/gi );
     if ($n eq ''){
     	if ($flag_retry){
     		print "Statistics::R::Bridge::pipe::read_processR, Sleep and Retry!\n";
-    		sleep(1);
+    		Time::HiRes::sleep(0.5);
+    		#sleep(1);
     		print "Statistics::R::Bridge::pipe::read_processR, slept\n";
     		my $s = -s $this->{PROCESS_R};
     		print "Statistics::R::Bridge::pipe::read_processR, size\n";
