@@ -26,7 +26,7 @@
 
   my (%CLASS_HPLOO , $this) ;
   my $debug  = 0;     # kh
-  my $debug2 = 0;     # kh
+  my $debug2 = 1;     # kh
   my $flag_retry = 0; # kh
 
   sub new { 
@@ -178,7 +178,10 @@
       select(undef,undef,undef,$delay) ;
       if ( $x == 20 ) {
         my (undef , $data) = $this->read_processR ;
-        if ( $data =~ /\s$n\s+\.\.\.\s+\// ) { last ;}
+        if ( $data =~ /\s$n\s+\.\.\.\s+\// ) {
+        	print "Statistics::R::Bridge::pipe::send, signal from read_processR\n";
+        	last;
+        }
         $x = 0 ;
         ++$xx ;
         $delay = 0.5 ;
@@ -646,28 +649,45 @@
     
     my $s = -s $this->{PROCESS_R} ;
     
-    open(my $fh , $this->{PROCESS_R}); # or warn "Failed to open PROCESS_R file! (Statistics::R::Bridge::pipe::read_processR)\n";
+    my $chk_opn1 = 1;
+    open(my $fh, '<', $this->{PROCESS_R}) or $chk_opn1 = 0;
+    unless ($chk_opn1) {
+    	print "Statistics::R::Bridge::pipe::read_processR, could not open file!\n" if $debug2;
+    	return('','') if wantarray ;
+    	return '';
+    }
+    
     seek($fh, ($s-100) ,0) ;
     
     my $data ;
     my $r = read($fh , $data , 1000) ;
     close($fh) ;
 	print "Statistics::R::Bridge::pipe::read_processR, r: $r\n" if $debug2;
-	print "Statistics::R::Bridge::pipe::read_processR, d: $data\n" if $debug2;
+	#print "Statistics::R::Bridge::pipe::read_processR, d: $data\n" if $debug2;
 
-    return if !$r ;
-    
+    return if !$r;
+
     my ($n) = ( $data =~ /(\d+)\s*$/gi );
     if ($n eq ''){
     	if ($flag_retry){
     		print "Statistics::R::Bridge::pipe::read_processR, Sleep and Retry!\n";
     		sleep(1);
-    		my $s = -s $this->{PROCESS_R} ;
-    		open(my $fh , $this->{PROCESS_R});
+    		print "Statistics::R::Bridge::pipe::read_processR, slept\n";
+    		my $s = -s $this->{PROCESS_R};
+    		print "Statistics::R::Bridge::pipe::read_processR, size\n";
+    		my $chk_opn2 = 1;
+    		open(my $fh , '<', $this->{PROCESS_R}) or $chk_opn2 = 0;
+			unless ($chk_opn2) {
+				print "Statistics::R::Bridge::pipe::read_processR, could not open file!\n" if $debug2;
+				return('','') if wantarray ;
+				return '';
+			}
+			print "Statistics::R::Bridge::pipe::read_processR, opened\n";
     		seek($fh, ($s-100) ,0) ;
     		my $data ;
     		my $r = read($fh , $data , 1000) ;
     		close($fh) ;
+    		print "Statistics::R::Bridge::pipe::read_processR, closed\n";
     		($n) = ( $data =~ /(\d+)\s*$/gi );
     		print "Statistics::R::Bridge::pipe::read_processR, Retry: $n\n";
     	} else {

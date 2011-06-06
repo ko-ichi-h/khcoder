@@ -156,7 +156,7 @@ sub _new{
 
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
 
-	$f1->Button(
+	$self->{button_config} = $f1->Button(
 		-text => $self->gui_jchar('Ä´À°'),
 		-font => "TKFN",
 		-borderwidth => '1',
