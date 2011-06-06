@@ -157,22 +157,41 @@ my_threads->init;
 
 # GUIの開始
 $main_gui = gui_window::main->open;
-MainLoop;
+#MainLoop;
 
-__END__
+#__END__
 
 # テスト用プロジェクトを開く
 kh_project->temp(
 	target  =>
-		'F:/home/Koichi/Study/perl/test_data/kokoro/kokoro.txt',
+		'E:/home/higuchi/perl/core/data/SalaryMan/both_all.txt',
 	dbname  =>
-		'khc4',
+		'khc2',
 )->open;
 $::main_gui->close_all;
 $::main_gui->menu->refresh;
 $::main_gui->inner->refresh;
 
-# 特定の（テスト用）Windowを開く
-gui_window::word_ass->open;
+# 共起ネットワーク作成
+my $win_net = gui_window::word_netgraph->open;
+$win_net->calc;
+
+# 共起ネットワークの「調整」を繰り返す
+my $n = 0;
+while (1){
+	my $c = $::main_gui->get('w_word_netgraph_plot');
+
+	my $cc = gui_window::r_plot_opt::word_netgraph->open(
+		command_f => $c->{plots}[$c->{ax}]->command_f,
+		size      => $c->original_plot_size,
+	);
+	
+	$cc->calc;
+	
+	++$n;
+	print "#### $n ####\n";
+	sleep 1;
+}
 
 MainLoop;
+

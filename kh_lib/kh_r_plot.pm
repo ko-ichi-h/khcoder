@@ -5,6 +5,8 @@ use Image::Magick;
 my $if_font = 0;
 my $if_lt25 = 0;
 
+my $debug = 0;
+
 sub new{
 	my $class = shift;
 	my %args = @_;
@@ -111,16 +113,23 @@ sub new{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	print "kh_r_plot::new lock ok.\n" if $debug;
 	$self->{path} = $::config_obj->R_device(
 		$self->{path},
 		$self->{width},
 		$self->{height},
 	);
+	print "kh_r_plot::new R.device ok.\n" if $debug;
 	$self->set_par;
+	print "kh_r_plot::new set_par ok.\n" if $debug;
 	$::config_obj->R->send($command);
+	print "kh_r_plot::new send ok.\n" if $debug;
 	$self->{r_msg} = $::config_obj->R->read;
+	print "kh_r_plot::new read ok.\n" if $debug;
 	$::config_obj->R->send('dev.off()');
+	print "kh_r_plot::new dev.off ok.\n" if $debug;
 	$::config_obj->R->unlock;
+	print "kh_r_plot::new unlock ok.\n" if $debug;
 	$::config_obj->R->output_chk(1);
 	
 	# 結果のチェック
