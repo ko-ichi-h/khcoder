@@ -164,8 +164,10 @@ $main_gui = gui_window::main->open;
 # テスト用プロジェクトを開く
 kh_project->temp(
 	target  =>
+	#	'E:/home/higuchi/perl/core/data/kokoro/kokoro.txt',
 		'E:/home/higuchi/perl/core/data/SalaryMan/both_all.txt',
 	dbname  =>
+	#	'khc6',
 		'khc2',
 )->open;
 $::main_gui->close_all;
@@ -186,11 +188,17 @@ while (1){
 		size      => $c->original_plot_size,
 	);
 	
+	my $en = 100 + int( rand(50) );
+	$cc->{entry_edges_number}->delete(0,'end');
+	$cc->{entry_edges_number}->insert(0,$en);
+	
 	$cc->calc;
 	
 	++$n;
 	print "#### $n ####\n";
-	sleep 1;
+	
+	my $sn = int(rand(5));
+	sleep $sn;
 }
 
 MainLoop;
