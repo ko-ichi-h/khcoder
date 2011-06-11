@@ -37,6 +37,12 @@ sub init{
 	){
 		$::config_obj->r_path($::config_obj->cwd.'\dep\R\bin\Rterm.exe');
 	}
+	if (
+		not -e $::config_obj->r_path
+		and -e $::config_obj->cwd.'\dep\R\bin\i386\Rterm.exe'
+	){
+		$::config_obj->r_path($::config_obj->cwd.'\dep\R\bin\i386\Rterm.exe');
+	}
 	
 	# MySQL設定ファイル修正（khc.ini）
 	my $p1 = $::config_obj->cwd.'\dep\mysql\\';

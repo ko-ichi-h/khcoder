@@ -24,9 +24,12 @@
 
   use strict qw(vars) ; no warnings ;
 
+	require Time::HiRes; # kh
+
   my (%CLASS_HPLOO , $this) ;
   my $debug  = 0;     # kh
-  my $debug2 = 1;     # kh
+  my $debug2 = 0;     # kh
+  my $debug3 = 0;     # kh
   my $flag_retry = 0; # kh
 
   sub new { 
@@ -667,17 +670,15 @@
 
     return if !$r;
 	
-	require Time::HiRes;
-	
     my ($n) = ( $data =~ /(\d+)\s*$/gi );
     if ($n eq ''){
     	if ($flag_retry){
     		print "Statistics::R::Bridge::pipe::read_processR, Sleep and Retry!\n";
-    		Time::HiRes::sleep(0.5);
+    		Time::HiRes::sleep(0.8);
     		#sleep(1);
-    		print "Statistics::R::Bridge::pipe::read_processR, slept\n";
+    		print "Statistics::R::Bridge::pipe::read_processR, slept\n" if $debug3;
     		my $s = -s $this->{PROCESS_R};
-    		print "Statistics::R::Bridge::pipe::read_processR, size\n";
+    		print "Statistics::R::Bridge::pipe::read_processR, size\n" if $debug3;
     		my $chk_opn2 = 1;
     		open(my $fh , '<', $this->{PROCESS_R}) or $chk_opn2 = 0;
 			unless ($chk_opn2) {
@@ -685,12 +686,12 @@
 				return('','') if wantarray ;
 				return '';
 			}
-			print "Statistics::R::Bridge::pipe::read_processR, opened\n";
+			print "Statistics::R::Bridge::pipe::read_processR, opened\n" if $debug3;
     		seek($fh, ($s-100) ,0) ;
     		my $data ;
     		my $r = read($fh , $data , 1000) ;
     		close($fh) ;
-    		print "Statistics::R::Bridge::pipe::read_processR, closed\n";
+    		print "Statistics::R::Bridge::pipe::read_processR, closed\n" if $debug3;
     		($n) = ( $data =~ /(\d+)\s*$/gi );
     		print "Statistics::R::Bridge::pipe::read_processR, Retry: $n\n";
     	} else {
