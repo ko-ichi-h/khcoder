@@ -491,6 +491,12 @@ sub r_dir{
 	}
 }
 
+sub r_default_font_size{
+	my $self = shift;
+	
+	return 100;
+}
+
 sub in_preprocessing{
 	my $self = shift;
 	my $new = shift;

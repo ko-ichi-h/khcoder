@@ -81,20 +81,26 @@ sub new{
 			$v1 = 2;
 			warn "something wrong at kh_r_plot.pm\n";
 		}
-		chop $v1;
-		chop $v1;
-		print "R Version: ".substr($v1,0,1).".".substr($v1,1,1)."\n";
 		
-		if ($v1 >= 25){
-			$if_lt25 = 1;
+		if ($v1 =~ /([0-9])([0-9]+)\./){
+			print "R Version: $1.$2\n";
+			
+			my $v2 = $1 * 100 + $2;
+			
+			if ($v2 > 205){
+				$if_lt25 = 1;
+			} else {
+				$::config_obj->R->output_chk(0);
+				$::config_obj->R->send(
+					'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
+				);
+				$::config_obj->R->output_chk(1);
+				$if_lt25 = 2;
+				#print "as.graphicsAnnot defined.\n";
+			}
+			
 		} else {
-			$::config_obj->R->output_chk(0);
-			$::config_obj->R->send(
-				'as.graphicsAnnot <- function(x) if (is.language(x) || !is.object(x)) x else as.character(x)'
-			);
-			$::config_obj->R->output_chk(1);
-			$if_lt25 = 2;
-			#print "as.graphicsAnnot defined.\n";
+			print "v1: $v1\n";
 		}
 	}
 
