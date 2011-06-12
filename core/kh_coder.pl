@@ -20,7 +20,7 @@ use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.25c";
+$kh_version = "2.beta.25d";
 
 BEGIN {
 	# デバッグ用…
@@ -133,6 +133,8 @@ if (
 
 # Rの初期化
 use Statistics::R;
+*Statistics::R::output_chk = sub {return 1};
+
 if (
 	   ( length($::config_obj->r_path) && -e $::config_obj->r_path )
 	|| ( length($::config_obj->r_path) == 0 )
