@@ -780,7 +780,18 @@
           }
         }
         
-        cat("...\\n" , file=PERLOUTPUTFILE)
+        cat("...\\n" , file=PERLOUTPUTFILE) ;
+        
+        # Wait for getting the file permission...
+        FILETESTX <- 0 ;
+        while( file.access(PERLINPUTFILE, mode=2) ) {
+        	Sys.sleep(0.2) ;
+        	FILETESTX <- FILETESTX + 1 ;
+        	if (FILETESTX >= 600){
+        		print("The file was exist, but cannot get write permission...") ;
+        		break ;
+        	}
+        }
         
         tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;
         
@@ -790,7 +801,18 @@
         cat("/\\n" , file=PERLOUTPUTFILE)
         
         unlink(PERLINPUTFILE) ;
-      
+        
+        # Wait for unlinking the file...
+        FILETESTX <- 0 ;
+        while( file.access(PERLINPUTFILE, mode=0) == 0 ) {
+        	Sys.sleep(0.2) ;
+        	FILETESTX <- FILETESTX + 1 ;
+        	if (FILETESTX >= 600){
+        		print("Could not unlink input file...") ;
+        		break ;
+        	}
+        }
+        
         if (PERLINPUTFILEX > 1000) {
           PERLINPUTFILEX = 0 ;
           close(PERLOUTPUTFILE) ;
