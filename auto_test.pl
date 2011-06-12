@@ -111,6 +111,8 @@ if (
 
 # R‚Ì‰Šú‰»
 use Statistics::R;
+*Statistics::R::output_chk = sub {return 1};
+
 if (
 	   ( length($::config_obj->r_path) && -e $::config_obj->r_path )
 	|| ( length($::config_obj->r_path) == 0 )
