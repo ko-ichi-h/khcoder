@@ -228,7 +228,7 @@ sub R_device{
 	my $height = shift;
 	
 	$path .= '.bmp';
-	unlink($path) if -e $path;
+	# unlink($path) if -e $path;
 	
 	$width  = 480 unless $width;
 	$height = 480 unless $height;
