@@ -14,11 +14,13 @@ Copyright (C) 2009 樋口耕一 <http://koichi.nihon.to/psnl>
 
 =cut
 
+$| = 1;
+
 use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.25b";
+$kh_version = "2.beta.25c";
 
 BEGIN {
 	# デバッグ用…
