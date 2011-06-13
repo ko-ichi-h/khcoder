@@ -759,10 +759,17 @@
         
         ##print(PERLINPUTFILE) ;
         
-        PERLSLEEPDELAY = 0.01
+        PERLSLEEPDELAY = 0.01 ;
         PERLSLEEPDELAYX = 0 ;
         
-        while( file.access(PERLINPUTFILE, mode=0) ) {
+        options(warn=-1);
+        while(
+			tryCatch(
+				test_open <- file(PERLINPUTFILE,"r") ,
+				error = function(e) { return(0) }
+			)
+			== 0
+        ) {
           ##print(PERLINPUTFILE);
           Sys.sleep(PERLSLEEPDELAY) ;
           
@@ -780,18 +787,30 @@
           }
         }
         
+        try( close(test_open), silent=T );
+        try( rm(test_open), silent=T  );
+        
         cat("...\\n" , file=PERLOUTPUTFILE) ;
         
-        # Wait for getting the file permission...
+        # We have to be sure...
         FILETESTX <- 0 ;
-        while( file.access(PERLINPUTFILE, mode=2) ) {
+        while(
+			tryCatch(
+				test_open <- file(PERLINPUTFILE,"r") ,
+				error = function(e) { return(0) }
+			)
+			== 0
+        ) {
         	Sys.sleep(0.2) ;
         	FILETESTX <- FILETESTX + 1 ;
-        	if (FILETESTX >= 600){
-        		print("The file was exist, but cannot get write permission...") ;
+        	if (FILETESTX >= 300){
+        		print("The file is gone???") ;
         		break ;
         	}
         }
+        try( close(test_open), silent=T );
+        try( rm(test_open), silent=T  );
+        options(warn=0);
         
         tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;
         
