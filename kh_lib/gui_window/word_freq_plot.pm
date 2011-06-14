@@ -1,5 +1,6 @@
 package gui_window::word_freq_plot;
 use strict;
+use Tk::PNG;
 use base qw(gui_window);
 
 #------------------#
@@ -7,10 +8,6 @@ use base qw(gui_window);
 #------------------#
 
 sub _new{
-	if ($::config_obj->os eq 'linux') {
-		require Tk::PNG;
-	}
-
 	my $self = shift;
 	my %args = @_;
 	my $mw = $::main_gui->mw;
