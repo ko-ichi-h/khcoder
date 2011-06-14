@@ -18,11 +18,9 @@ use mysql_words;
 
 use Tk;
 use Tk::Pane;
+use Tk::PNG;
 
 sub _new{
-	if ($::config_obj->os eq 'linux') {
-		require Tk::PNG;
-	}
 
 	my $self = shift;
 	my %args = @_;

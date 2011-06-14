@@ -1,15 +1,13 @@
 package gui_window::word_tf_df;
+
 use base qw(gui_window);
 
 use strict;
+use Tk::PNG;
 use gui_hlist;
 use mysql_words;
 
 sub _new{
-	if ($::config_obj->os eq 'linux') {
-		require Tk::PNG;
-	}
-
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};

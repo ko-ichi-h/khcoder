@@ -1,5 +1,6 @@
 package gui_window::cls_height;
 use strict;
+use Tk::PNG;
 use base qw(gui_window);
 
 use gui_window::cls_height::doc;
@@ -11,10 +12,6 @@ use gui_window::cls_height::cod;
 #------------------#
 
 sub _new{
-	if ($::config_obj->os eq 'linux') {
-		require Tk::PNG;
-	}
-
 	my $self = shift;
 	my %args = @_;
 	my $mw = $::main_gui->mw;
