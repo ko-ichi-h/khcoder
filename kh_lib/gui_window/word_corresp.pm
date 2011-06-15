@@ -231,6 +231,35 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->refresh_flt;
 
+	$lf2->Checkbutton(
+		-text     => $self->gui_jchar('語の出現数を円の大きさで表現（バブル）'),
+		-variable => \$self->{check_bubble},
+		-command  => sub{ $self->refresh_std_radius;},
+	)->pack(
+		-anchor => 'w',
+	);
+
+	my $frm_std_radius = $lf2->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+
+	$frm_std_radius->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{chk_std_radius} = 1;
+	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-variable => \$self->{chk_std_radius},
+			-anchor => 'w',
+			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
+
+
 	# 成分
 	my $fd = $lf2->Frame()->pack(
 		-fill => 'x',
@@ -440,6 +469,15 @@ sub refresh_flw{
 		$self->{entry_flw_l2}->configure(-state => 'disabled');
 	}
 	return $self;
+}
+
+sub refresh_std_radius{
+	my $self = shift;
+	if ( $self->{check_bubble} ){
+		$self->{chkw_std_radius}->configure(-state => 'normal');
+	} else {
+		$self->{chkw_std_radius}->configure(-state => 'disabled');
+	}
 }
 
 
@@ -757,6 +795,8 @@ sub calc{
 		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
 		font_size    => $fontsize,
 		r_command    => $r_command,
+		bubble       => $self->gui_jg( $self->{check_bubble} ),
+		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
 		plotwin_name => 'word_corresp',
 	);
 
@@ -801,6 +841,9 @@ sub make_plot{
 	my ($r_command_3a, $r_command_3);
 	my ($r_command_2a, $r_command_2, $r_command_a);
 	my ($r_com_gray, $r_com_gray_a);
+	
+	if ( $args{bubble} == 0 ){
+	
 	if ($args{biplot} == 0){                      # 同時布置なし
 		# ラベルとドットをプロット
 		$r_command_2a = 
@@ -941,14 +984,44 @@ sub make_plot{
 				.")\n"
 		;
 	}
-
 	$r_command .= $r_command_a;
+
+	# バブル表現を行う場合
+	} else {
+		# 初期化
+		$r_command .= &r_command_slab_my;
+		$r_command .= "font_size <- $fontsize\n";
+		$r_command .= "biplot <- $args{biplot}\n";
+		$r_command .= "std_radius <- $args{std_radius}\n";
+		$r_command .= "labcd <- NULL\n\n";
+		my $common = $r_command;
+		
+		# カラー
+		$r_command .= "plot_mode <- \"dots\"\n";
+		$r_command .= &r_command_bubble;
+
+		# ドットのみ
+		$r_command_2a .= "plot_mode <- \"color\"\n";
+		$r_command_2a .= &r_command_bubble;
+		$r_command_2  = $common.$r_command_2a;
+
+		if ($args{biplot}){
+			# 変数のみ
+			$r_command_3a .= "plot_mode <- \"vars\"\n";
+			$r_command_3a .= &r_command_bubble;
+			$r_command_3  = $common.$r_command_3a;
+			
+			# グレースケール
+			$r_com_gray_a .= "plot_mode <- \"gray\"\n";
+			$r_com_gray_a .= &r_command_bubble;
+			$r_com_gray = $common.$r_com_gray_a;
+		}
+	}
 
 	# プロット作成
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
-		#command_a => $r_command_a,
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
@@ -962,10 +1035,10 @@ sub make_plot{
 		height    => $args{plot_size},
 	) or $flg_error = 1;
 
-	my $plotg;
+	my ($plotg, $plotv);
 	my @plots = ();
 	if ($r_com_gray_a){
-		my $plotg = kh_r_plot->new(
+		$plotg = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_g',
 			command_a => $r_com_gray_a,
 			command_f => $r_com_gray,
@@ -973,7 +1046,7 @@ sub make_plot{
 			height    => $args{plot_size},
 		) or $flg_error = 1;
 		
-		my $plotv = kh_r_plot->new(
+		$plotv = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_v',
 			command_a => $r_command_3a,
 			command_f => $r_command_3,
@@ -1007,7 +1080,9 @@ sub make_plot{
 		plots       => \@plots,
 		no_geometry => 1,
 	);
-
+	
+	#(@plots,$plot2,$plotg,$plotv,$plot1) = undef;
+	return 1;
 }
 
 sub r_command_aggr{
@@ -1125,6 +1200,166 @@ if ( v_count > 1 ){
 
 END_OF_the_R_COMMAND
 return $t;
+}
+
+sub r_command_bubble{
+	return '
+
+if (plot_mode == "color"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "#DC143C"
+	col_dot_words <- "#00CED1"
+	col_dot_vars  <- "#FF6347"
+}
+
+if (plot_mode == "gray"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+	col_dot_words <- "gray55"
+	col_dot_vars  <- "gray30"
+}
+
+if (plot_mode == "vars"){
+	col_txt_words <- NA
+	col_txt_vars  <- "black"
+	col_dot_words <- "#ADD8E6"
+	col_dot_vars  <- "red"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_txt_vars  <- NA
+	col_dot_words <- "black"
+	col_dot_vars  <- "black"
+}
+
+# バブルのサイズを決定
+neg_to_zero <- function(nums){
+  temp <- NULL
+  for (i in 1:length(nums) ){
+    if (nums[i] < 1){
+      temp[i] <- 1
+    } else {
+      temp[i] <-  nums[i]
+    }
+  }
+  return(temp)
+}
+
+b_size <- NULL
+for (i in rownames(c$cscore)){
+	b_size <- c( b_size, sum( d[,i] ) )
+}
+
+b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
+
+if (std_radius){ # 円の大小をデフォルメ
+	b_size <- b_size / sd(b_size)
+	b_size <- b_size - mean(b_size)
+	b_size <- b_size * 8 + 10
+	b_size <- neg_to_zero(b_size)
+}
+
+# バブル描画
+plot(
+	rbind(
+		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+	),
+	pch=NA,
+	col="black",
+	xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),
+	ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")
+)
+
+symbols(
+	c$cscore[,d_x],
+	c$cscore[,d_y],
+	circles=b_size,
+	inches=0.75,
+	fg=col_dot_words,
+	add=T,
+)
+
+# 点を描画
+if (biplot){
+	points(
+		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
+		pch=c(20,1,0,2,4:15)[cbb[,3]],
+		col=c("#66CCCC","#ADD8E6",rep( col_dot_vars, v_count ))[cbb[,3]],
+		cex=pch_cex,
+	)
+}
+
+# ラベル位置を決定
+if (biplot){
+	cb <- rbind(
+		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+	)
+} else {
+	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
+}
+
+if ( is.null(labcd) ){
+	library(maptools)
+	labcd <- pointLabel(
+		x=cb[,1],
+		y=cb[,2],
+		labels=cb[,3],
+		cex=font_size,
+		offset=0,
+		doPlot=F
+	)
+}
+
+# ラベル描画
+if (plot_mode == "gray"){
+	cb  <- cbind(cb, labcd$x, labcd$y)
+	cb1 <-  subset(cb, cb[,3]==1)
+	cb2 <-  subset(cb, cb[,3]>=3)
+	text(cb1[,4], cb1[,5], rownames(cb1),cex=font_size,offset=0,col="black",)
+	library(ade4)
+	s.label_my(
+		cb2,
+		xax=4,
+		yax=5,
+		label=rownames(cb2),
+		boxes=T,
+		clabel=font_size,
+		addaxes=F,
+		include.origin=F,
+		grid=F,
+		cpoint=0,
+		cneig=0,
+		cgrid=0,
+		add.plot=T,
+	)
+	points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
+} else if (plot_mode == "vars") {
+	cb  <- cbind(cb, labcd$x, labcd$y)
+	cb2 <-  subset(cb, cb[,3]>=3)
+	text(
+		cb2[,4],
+		cb2[,5],
+		rownames(cb2),
+		cex=font_size,
+		offset=0,
+		col=col_txt_vars
+	)
+} else if (plot_mode == "color") {
+	text(
+		labcd$x,
+		labcd$y,
+		rownames(cb),
+		cex=font_size,
+		offset=0,
+		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
+	)
+}
+
+
+';
 }
 
 
