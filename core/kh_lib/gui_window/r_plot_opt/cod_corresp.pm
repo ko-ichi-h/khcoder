@@ -66,6 +66,31 @@ sub innner{
 
 	#$self->refresh_flt;
 
+	$lf->Checkbutton(
+		-text     => $self->gui_jchar('コードの出現数を円の大きさで表現（バブル）'),
+		-variable => \$self->{check_bubble},
+		-command  => sub{ $self->refresh_std_radius;},
+	)->pack(
+		-anchor => 'w',
+	);
+
+	my $frm_std_radius = $lf->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+
+	$frm_std_radius->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-variable => \$self->{chk_std_radius},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# 成分
 	my $fd = $lf->Frame()->pack(
 		-fill => 'x',
@@ -135,6 +160,19 @@ sub innner{
 		$self->refresh_flw;
 	}
 	
+	if ( $self->{command_f} =~ /symbols\(/ ){
+		$self->{check_bubble} = 1;
+	} else {
+		$self->{check_bubble} = 0;
+	}
+
+	if ( $self->{command_f} =~ /std_radius <\- ([0-9]+)\n/ ){
+		$self->{chk_std_radius} = $1;
+	} else {
+		$self->{chk_std_radius} = 1;
+	}
+	$self->refresh_std_radius;
+
 	unless ($self->{command_f} =~ /\n# aggregate\n/){
 		$self->{check_filter_w_widget}->configure(-state => 'disabled');
 	}
@@ -167,6 +205,15 @@ sub refresh_flw{
 		$self->{entry_flw_l1}->configure(-state => 'disabled');
 	}
 	return $self;
+}
+
+sub refresh_std_radius{
+	my $self = shift;
+	if ( $self->{check_bubble} ){
+		$self->{chkw_std_radius}->configure(-state => 'normal');
+	} else {
+		$self->{chkw_std_radius}->configure(-state => 'disabled');
+	}
 }
 
 sub calc{
@@ -217,6 +264,8 @@ sub calc{
 		font_size    => $fontsize,
 		r_command    => $r_command,
 		plotwin_name => 'cod_corresp',
+		bubble       => $self->gui_jg( $self->{check_bubble} ),
+		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close
