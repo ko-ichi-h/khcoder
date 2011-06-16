@@ -104,6 +104,7 @@ sub _new{
 	}
 	$self->{checks} = \@selection;
 	
+	
 	$self->{win_obj} = $win;
 	$self->{win_obj2} = $win4buttons;
 	$self->{win_obj3} = $win4hlist;

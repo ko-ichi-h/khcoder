@@ -18,23 +18,35 @@ sub _new{
 	my $win = $self->{win_obj};
 	$win->title($self->gui_jt($self->label));
 
+
 	my $lf_w = $win->LabFrame(
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
+
+	$lf_w->Label(
+		-text => gui_window->gui_jchar('■集計単位と語の選択'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
 		verb   => '布置',
 	);
 
-
 	my $lf = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both');
+	)->pack(-fill => 'x', -expand => 0);
+
+	$lf->Label(
+		-text => $self->gui_jchar('■多次元尺度構成法の設定'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
 
 	# アルゴリズム選択
@@ -105,6 +117,32 @@ sub _new{
 	)->pack(-side => 'left');
 
 
+	# バブル表現
+	$lf->Checkbutton(
+		-text     => $self->gui_jchar('語の出現数を円の大きさで表現（バブル）'),
+		-variable => \$self->{check_bubble},
+		-command  => sub{ $self->refresh_std_radius;},
+	)->pack(
+		-anchor => 'w',
+	);
+	my $frm_std_radius = $lf->Frame()->pack(
+		-fill => 'x',
+		#-padx => 2,
+		-pady => 2,
+	);
+	$frm_std_radius->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{chk_std_radius} = 1;
+	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-variable => \$self->{chk_std_radius},
+			-anchor => 'w',
+			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -166,6 +204,15 @@ sub _new{
 
 
 	return $self;
+}
+
+sub refresh_std_radius{
+	my $self = shift;
+	if ( $self->{check_bubble} ){
+		$self->{chkw_std_radius}->configure(-state => 'normal');
+	} else {
+		$self->{chkw_std_radius}->configure(-state => 'disabled');
+	}
 }
 
 #----------#
@@ -252,6 +299,8 @@ sub calc{
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
+		bubble       => $self->gui_jg( $self->{check_bubble} ),
+		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
 	);
 	
 	$w->end(no_dialog => 1);
@@ -339,18 +388,31 @@ while ( is.na(check4mds(d)) == 0 ){
 		;
 	}
 	elsif ($args{dim_number} == 2){
-		$r_command_d .=
-			 'plot(cl,pch=20,col="mediumaquamarine",'
-				.'xlab="次元1",ylab="次元2")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		$r_command_a .=
-			 'plot(cl,'
-				.'xlab="次元1",ylab="次元2")'."\n"
-		;
+		if ( $args{bubble} == 0 ){
+			$r_command_d .=
+				 'plot(cl,pch=20,col="mediumaquamarine",'
+					.'xlab="次元1",ylab="次元2")'."\n"
+				."library(maptools)\n"
+				.'pointLabel('
+					.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
+					."cex=$fontsize, offset=0)\n";
+			;
+			$r_command_a .=
+				 'plot(cl,'
+					.'xlab="次元1",ylab="次元2")'."\n"
+			;
+		} else {
+			# バブル表現を行う場合
+			$r_command_d .= "std_radius <- $args{std_radius}\n";
+			$r_command_d .= "font_size <- $fontsize\n";
+			$r_command_d .= "plot_mode <- \"color\"\n";
+			$r_command_d .= &r_command_bubble;
+
+			$r_command_a .= "std_radius <- $args{std_radius}\n";
+			$r_command_a .= "font_size <- $fontsize\n";
+			$r_command_a .= "plot_mode <- \"dots\"\n";
+			$r_command_a .= &r_command_bubble;
+		}
 	}
 	elsif ($args{dim_number} == 3){
 		$r_command_d .=
@@ -496,6 +558,96 @@ sub hinshi{
 }
 
 
+sub r_command_bubble{
+	return '
+
+if (plot_mode == "color"){
+	col_txt_words <- "black"
+	col_dot_words <- "#00CED1"
+	col_dot_vars  <- "#FF6347"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_dot_words <- "black"
+	col_dot_vars  <- "black"
+}
+
+# バブルのサイズを決定
+neg_to_zero <- function(nums){
+  temp <- NULL
+  for (i in 1:length(nums) ){
+    if (nums[i] < 1){
+      temp[i] <- 1
+    } else {
+      temp[i] <-  nums[i]
+    }
+  }
+  return(temp)
+}
+
+b_size <- NULL
+for (i in rownames(cl)){
+	if ( is.na(i) || is.null(i) || is.nan(i) ){
+		b_size <- c( b_size, 1 )
+	} else {
+		b_size <- c( b_size, sum( d[i,] ) )
+	}
+}
+
+b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
+
+if (std_radius){ # 円の大小をデフォルメ
+	b_size <- b_size / sd(b_size)
+	b_size <- b_size - mean(b_size)
+	b_size <- b_size * 8 + 10
+	b_size <- neg_to_zero(b_size)
+}
+
+# バブル描画
+plot(
+	cl,
+	pch=NA,
+	col="black",
+	xlab="次元1",
+	ylab="次元2",
+)
+
+symbols(
+	cl[,1],
+	cl[,2],
+	circles=b_size,
+	inches=0.75,
+	fg=col_dot_words,
+	add=T,
+)
+
+# ラベル位置を決定
+library(maptools)
+labcd <- pointLabel(
+	x=cl[,1],
+	y=cl[,2],
+	labels=rownames(cl),
+	cex=font_size,
+	offset=0,
+	doPlot=F
+)
+
+# ラベル描画
+if (plot_mode == "color") {
+	text(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=font_size,
+		offset=0,
+		col=col_txt_words,
+	)
+}
+
+
+';
+}
 
 
 1;

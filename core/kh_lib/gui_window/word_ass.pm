@@ -634,7 +634,7 @@ sub net_calc{
 	# デフォルト値で描画
 	$r_command .= "# END: DATA\n\n";
 	&gui_window::word_netgraph::make_plot(
-		font_size           => 0.8,
+		font_size           => $::config_obj->r_default_font_size / 100,
 		plot_size           => 640,
 		n_or_j              => "n",
 		edges_num           => 60,

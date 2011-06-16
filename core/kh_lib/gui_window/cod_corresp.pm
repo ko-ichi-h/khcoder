@@ -517,7 +517,6 @@ sub refresh{
 		);
 		$self->{opt_body_var_ok} = 1;
 
-
 	#------------------------------#
 	#   上位の文書単位選択Widget   #
 
@@ -604,6 +603,7 @@ sub refresh{
 		$self->{label_high}->configure(-foreground => 'gray');
 
 		$self->{opt_body_var}->enable;
+		gui_hlist->update4scroll( $self->{opt_body_var}{hlist} );
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
 		$self->refresh_flw;
