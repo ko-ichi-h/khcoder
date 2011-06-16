@@ -439,6 +439,38 @@ sub R{
 	return $self->{R};
 }
 
+sub R_version{
+	my $self = shift;
+	
+	if ( $self->{R} ){
+		if ( $self->{R_version} ){
+			return $self->{R_version};
+		} else {
+			$::config_obj->R->send(
+				'print( paste("khcoder", R.Version()$major, R.Version()$minor , sep="") )'
+			);
+			my $v1 = $::config_obj->R->read;
+			if ($v1 =~ /"khcoder(.+)"/){
+				$v1 = $1;
+			} else {
+				warn "could not get Version Number of R...\n";
+				return 0;
+			}
+			
+			if ($v1 =~ /([0-9])([0-9]+)\./){
+				print "R Version: $1.$2\n";
+				$self->{R_version} = $1 * 100 + $2;
+				return $self->{R_version};
+			} else {
+				warn "could not get Version Number of R...\n";
+				return 0;
+			}
+		}
+	} else {
+		return 0;
+	}
+}
+
 sub multi_threads{
 	my $self = shift;
 	my $new = shift;
@@ -494,7 +526,11 @@ sub r_dir{
 sub r_default_font_size{
 	my $self = shift;
 	
-	return 100;
+	if ($self->R_version > 210){
+		return 100;
+	} else {
+		return 80;
+	}
 }
 
 sub in_preprocessing{

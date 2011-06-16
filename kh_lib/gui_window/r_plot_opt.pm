@@ -45,16 +45,25 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	
+	my $font_percent;
 	if (
 		   $args{command_f} =~ /cex=([0-9\.]+)[, \)]/
 		|| $args{command_f} =~ /cex <- ([0-9\.]+)\n/
 	){
-		my $cex = $1;
-		$cex *= 100;
-		$self->{entry_font_size}->insert(0,$cex);
+		$font_percent = $1;
+		$font_percent *= 100;
+	}
+	if ( $args{command_f} =~ /font_size <- ([0-9\.]+)\n/ ){
+		$font_percent = $1;
+		$font_percent *= 100;
+	}
+	
+	if ($font_percent){
+		$self->{entry_font_size}->insert(0,$font_percent);
 	} else {
 		$self->{entry_font_size}->insert(0,'80');
 	}
+
 	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_font_size});
 
