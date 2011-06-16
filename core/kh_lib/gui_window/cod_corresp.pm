@@ -473,8 +473,8 @@ sub refresh{
 	#   外部変数選択Widget   #
 
 	unless ($self->{last_tani} eq $self->tani){
+
 		my @options = ();
-		my @tanis   = ();
 
 		if ($self->{opt_body_var}){
 			$self->{opt_body_var}->destroy;
@@ -486,10 +486,11 @@ sub refresh{
 			$tani_check{$i} = 1;
 			last if ($self->tani eq $i);
 		}
-		if ($self->tani eq 'bun'){
-			%tani_check = ();
-			$tani_check{'bun'} = 1;
-		}
+		# これ何だろう？ 2011 06/16
+		#if ($self->tani eq 'bun'){
+		#	%tani_check = ();
+		#	$tani_check{'bun'} = 1;
+		#}
 		
 		$self->{last_tani} = $self->tani;
 		
@@ -516,9 +517,11 @@ sub refresh{
 		);
 		$self->{opt_body_var_ok} = 1;
 
+
 	#------------------------------#
 	#   上位の文書単位選択Widget   #
 
+		my @tanis   = ();
 		if ($self->{opt_body_high}){
 			$self->{opt_body_high}->destroy;
 		}
@@ -848,14 +851,29 @@ sub _calc{
 				$sql .= "ORDER BY id";
 			} else {
 				$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
-				$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
-				$sql .= "WHERE\n";
-				$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+				
+				$sql .= "FROM $tani\n";
+				$sql .= "LEFT JOIN $var_obj->{tani} ON\n";
+				my $n = 0;
 				foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-					$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+					$sql .= "\t";
+					$sql .= "and " if $n;
+					$sql .= "$var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+					++$n;
 					last if ($var_obj->{tani} eq $i);
 				}
+				$sql .= "LEFT JOIN $var_obj->{table} ON $var_obj->{tani}.id = $var_obj->{table}.id\n";
+				
+				#$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
+				#$sql .= "WHERE\n";
+				#$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+				#foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+				#	$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+				#	last if ($var_obj->{tani} eq $i);
+				#}
+				
 				$sql .= "ORDER BY $tani.id";
+				print "$sql\n";
 			}
 		
 			$r_command .= "v$n_v <- c(";
@@ -970,11 +988,11 @@ aggregate_with_var <- function(d, doc_length_mtr, v) {
 
 	n_total <- subset(
 		n_total,
-		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
 	)
 	d <- subset(
 		d,
-		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
 	)
 	n_total <- as.matrix(n_total)
 	return( list(d, n_total) )

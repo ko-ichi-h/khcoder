@@ -1248,7 +1248,11 @@ neg_to_zero <- function(nums){
 
 b_size <- NULL
 for (i in rownames(c$cscore)){
-	b_size <- c( b_size, sum( d[,i] ) )
+	if ( is.na(i) || is.null(i) || is.nan(i) ){
+		b_size <- c( b_size, 1 )
+	} else {
+		b_size <- c( b_size, sum( d[,i] ) )
+	}
 }
 
 b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
@@ -1277,7 +1281,7 @@ symbols(
 	c$cscore[,d_y],
 	circles=b_size,
 	inches=0.75,
-	fg=col_dot_words,
+	fg=c(col_dot_words,"#ADD8E6")[ptype],
 	add=T,
 )
 

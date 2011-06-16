@@ -4,7 +4,6 @@ use strict;
 use Tk;
 use Jcode;
 
-
 sub _new{
 	my $self = shift;
 	
@@ -106,6 +105,9 @@ sub _new{
 	$self->{checks} = \@selection;
 	
 	$self->{win_obj} = $win;
+	$self->{win_obj2} = $win4buttons;
+	$self->{win_obj3} = $win4hlist;
+	
 	return $self;
 }
 
@@ -185,6 +187,15 @@ sub selection_set{
 	}
 
 
+}
+
+sub destroy{
+	my $self = shift;
+	$self->{win_obj}->destroy;
+	$self->{win_obj2}->destroy;
+	$self->{win_obj3}->destroy;
+	$self = undef;
+	return 1;
 }
 
 #--------------#
