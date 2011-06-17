@@ -154,6 +154,7 @@ if ($::config_obj->{R}){
 	$::config_obj->{R} = 0;
 }
 chdir ($::config_obj->{cwd});
+$::config_obj->R_version;
 
 # マルチスレッド処理の準備
 use my_threads;
