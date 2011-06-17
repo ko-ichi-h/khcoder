@@ -11,6 +11,7 @@ use gui_widget::chklist;
 use gui_widget::url_lab;
 use gui_widget::words;
 use gui_widget::words_bayes;
+use gui_widget::bubble;
 
 sub open{
 	my $class = shift;
