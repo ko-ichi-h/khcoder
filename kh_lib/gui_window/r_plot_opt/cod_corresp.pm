@@ -66,8 +66,9 @@ sub innner{
 
 	#$self->refresh_flt;
 
+	# バブルプロット関連
 	$lf->Checkbutton(
-		-text     => $self->gui_jchar('コードの出現数を円の大きさで表現（バブル）'),
+		-text     => $self->gui_jchar('出現数の多いコードほど大きく描画（バブルプロット）'),
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -84,11 +85,19 @@ sub innner{
 		-text => '  ',
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
-	
+
+	$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
+			-variable => \$self->{chk_resize_vars},
+			-anchor => 'w',
+			-state => 'disabled',
+	)->pack(-anchor => 'w');
+
 	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
 			-variable => \$self->{chk_std_radius},
 			-anchor => 'w',
+			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
 	# 成分
@@ -171,6 +180,13 @@ sub innner{
 	} else {
 		$self->{chk_std_radius} = 1;
 	}
+
+	if ( $self->{command_f} =~ /resize_vars <\- ([0-9]+)\n/ ){
+		$self->{chk_resize_vars} = $1;
+	} else {
+		$self->{chk_resize_vars} = 1;
+	}
+
 	$self->refresh_std_radius;
 
 	unless ($self->{command_f} =~ /\n# aggregate\n/){
@@ -211,8 +227,10 @@ sub refresh_std_radius{
 	my $self = shift;
 	if ( $self->{check_bubble} ){
 		$self->{chkw_std_radius}->configure(-state => 'normal');
+		$self->{chkw_resize_vars}->configure(-state => 'normal');
 	} else {
 		$self->{chkw_std_radius}->configure(-state => 'disabled');
+		$self->{chkw_resize_vars}->configure(-state => 'disabled');
 	}
 }
 
@@ -266,6 +284,7 @@ sub calc{
 		plotwin_name => 'cod_corresp',
 		bubble       => $self->gui_jg( $self->{check_bubble} ),
 		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
+		resize_vars  => $self->gui_jg( $self->{chk_resize_vars} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close

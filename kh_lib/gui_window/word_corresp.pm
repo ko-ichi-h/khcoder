@@ -231,8 +231,9 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->refresh_flt;
 
+	# バブルプロット関連
 	$lf2->Checkbutton(
-		-text     => $self->gui_jchar('語の出現数を円の大きさで表現（バブル）'),
+		-text     => $self->gui_jchar('出現数の多い語ほど大きく描画（バブルプロット）'),
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -249,16 +250,21 @@ sub _new{
 		-text => '  ',
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{chk_std_radius} = 1;
-	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
-			-variable => \$self->{chk_std_radius},
+	$self->{chk_resize_vars} = 1;
+	$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
+			-variable => \$self->{chk_resize_vars},
 			-anchor => 'w',
 			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
-
+	$self->{chk_std_radius} = 1;
+	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
+			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
+			-variable => \$self->{chk_std_radius},
+			-anchor => 'w',
+			-state => 'disabled',
+	)->pack(-anchor => 'w');
 
 	# 成分
 	my $fd = $lf2->Frame()->pack(
@@ -475,8 +481,10 @@ sub refresh_std_radius{
 	my $self = shift;
 	if ( $self->{check_bubble} ){
 		$self->{chkw_std_radius}->configure(-state => 'normal');
+		$self->{chkw_resize_vars}->configure(-state => 'normal');
 	} else {
 		$self->{chkw_std_radius}->configure(-state => 'disabled');
+		$self->{chkw_resize_vars}->configure(-state => 'disabled');
 	}
 }
 
@@ -797,6 +805,7 @@ sub calc{
 		r_command    => $r_command,
 		bubble       => $self->gui_jg( $self->{check_bubble} ),
 		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
+		resize_vars  => $self->gui_jg( $self->{chk_resize_vars} ),
 		plotwin_name => 'word_corresp',
 	);
 
@@ -993,6 +1002,7 @@ sub make_plot{
 		$r_command .= "font_size <- $fontsize\n";
 		$r_command .= "biplot <- $args{biplot}\n";
 		$r_command .= "std_radius <- $args{std_radius}\n";
+		$r_command .= "resize_vars <- $args{resize_vars}\n";
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 		
@@ -1285,8 +1295,23 @@ symbols(
 	add=T,
 )
 
+
+
 # 点を描画
 if (biplot){
+	# 点のサイズを計算
+	if (resize_vars){
+		pch_cex <- sqrt(n_total);
+		pch_cex <- pch_cex * ( 12 / max(pch_cex) )
+		if (std_radius){ # 点の大小をデフォルメ
+			pch_cex <- pch_cex / sd(pch_cex)
+			pch_cex <- pch_cex - mean(pch_cex)
+			pch_cex <- pch_cex * 5 + 10
+			pch_cex <- neg_to_zero(pch_cex)
+			pch_cex <- pch_cex * ( 12 / max(pch_cex) )
+		}
+	}
+	# 点をプロット
 	points(
 		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
 		pch=c(20,1,0,2,4:15)[cbb[,3]],
@@ -1339,7 +1364,9 @@ if (plot_mode == "gray"){
 		cgrid=0,
 		add.plot=T,
 	)
-	points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
+	if (resize_vars == 0){
+		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
+	}
 } else if (plot_mode == "vars") {
 	cb  <- cbind(cb, labcd$x, labcd$y)
 	cb2 <-  subset(cb, cb[,3]>=3)
