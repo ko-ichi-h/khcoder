@@ -119,7 +119,7 @@ sub _new{
 
 	# バブル表現
 	$lf->Checkbutton(
-		-text     => $self->gui_jchar('語の出現数を円の大きさで表現（バブル）'),
+		-text     => $self->gui_jchar('出現数の多い語ほど大きく描画（バブルチャート）'),
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -137,7 +137,7 @@ sub _new{
 	
 	$self->{chk_std_radius} = 1;
 	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
 			-variable => \$self->{chk_std_radius},
 			-anchor => 'w',
 			-state => 'disabled',
@@ -600,7 +600,7 @@ b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 if (std_radius){ # 円の大小をデフォルメ
 	b_size <- b_size / sd(b_size)
 	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 8 + 10
+	b_size <- b_size * 5 + 10
 	b_size <- neg_to_zero(b_size)
 }
 
@@ -617,7 +617,7 @@ symbols(
 	cl[,1],
 	cl[,2],
 	circles=b_size,
-	inches=0.75,
+	inches=0.5,
 	fg=col_dot_words,
 	add=T,
 )
