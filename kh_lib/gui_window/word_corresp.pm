@@ -1270,7 +1270,7 @@ b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 if (std_radius){ # 円の大小をデフォルメ
 	b_size <- b_size / sd(b_size)
 	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 8 + 10
+	b_size <- b_size * 5 + 10
 	b_size <- neg_to_zero(b_size)
 }
 
@@ -1290,7 +1290,7 @@ symbols(
 	c$cscore[,d_x],
 	c$cscore[,d_y],
 	circles=b_size,
-	inches=0.75,
+	inches=0.5,
 	fg=c(col_dot_words,"#ADD8E6")[ptype],
 	add=T,
 )
@@ -1302,13 +1302,13 @@ if (biplot){
 	# 点のサイズを計算
 	if (resize_vars){
 		pch_cex <- sqrt(n_total);
-		pch_cex <- pch_cex * ( 12 / max(pch_cex) )
+		pch_cex <- pch_cex * ( 10 / max(pch_cex) )
 		if (std_radius){ # 点の大小をデフォルメ
 			pch_cex <- pch_cex / sd(pch_cex)
 			pch_cex <- pch_cex - mean(pch_cex)
 			pch_cex <- pch_cex * 5 + 10
 			pch_cex <- neg_to_zero(pch_cex)
-			pch_cex <- pch_cex * ( 12 / max(pch_cex) )
+			pch_cex <- pch_cex * ( 10 / max(pch_cex) )
 		}
 	}
 	# 点をプロット

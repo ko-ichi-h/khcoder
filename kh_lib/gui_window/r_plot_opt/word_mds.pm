@@ -100,7 +100,7 @@ sub innner{
 
 	# バブル表現
 	$lf->Checkbutton(
-		-text     => $self->gui_jchar('語の出現数を円の大きさで表現（バブル）'),
+		-text     => $self->gui_jchar('出現数の多い語ほど大きく描画（バブルチャート）'),
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -116,7 +116,7 @@ sub innner{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('円の大きさを標準化','euc'),
+			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
 			-variable => \$self->{chk_std_radius},
 			-anchor => 'w',
 			-state => 'disabled',
