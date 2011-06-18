@@ -771,6 +771,8 @@ sub calc{
 		bubble       => $self->{bubble_obj}->check_bubble,
 		std_radius   => $self->{bubble_obj}->chk_std_radius,
 		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
+		bubble_size  => $self->{bubble_obj}->size,
+		bubble_var   => $self->{bubble_obj}->var,
 		plotwin_name => 'word_corresp',
 	);
 
@@ -968,6 +970,8 @@ sub make_plot{
 		$r_command .= "biplot <- $args{biplot}\n";
 		$r_command .= "std_radius <- $args{std_radius}\n";
 		$r_command .= "resize_vars <- $args{resize_vars}\n";
+		$r_command .= "bubble_size <- $args{bubble_size}\n";
+		$r_command .= "bubble_var <- $args{bubble_var}\n";
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 		
@@ -1235,7 +1239,7 @@ b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 if (std_radius){ # 円の大小をデフォルメ
 	b_size <- b_size / sd(b_size)
 	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 5 + 10
+	b_size <- b_size * 5 * bubble_var / 100 + 10
 	b_size <- neg_to_zero(b_size)
 }
 
@@ -1255,7 +1259,7 @@ symbols(
 	c$cscore[,d_x],
 	c$cscore[,d_y],
 	circles=b_size,
-	inches=0.5,
+	inches=0.5 * bubble_size / 100,
 	fg=c(col_dot_words,"#ADD8E6")[ptype],
 	add=T,
 )
