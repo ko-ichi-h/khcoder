@@ -76,39 +76,46 @@ sub innner{
 	)->pack(-side => 'left');
 	#$self->refresh_flt;
 
-	# バブルプロット関連
-	$lf->Checkbutton(
-		-text     => $self->gui_jchar('出現数の多い語ほど大きく描画（バブルプロット）'),
-		-variable => \$self->{check_bubble},
-		-command  => sub{ $self->refresh_std_radius;},
-	)->pack(
-		-anchor => 'w',
-	);
+	# バブルプロット用のパラメーター
+	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var)
+		= (0,1,1,100,100);
 
-	my $frm_std_radius = $lf->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 2,
-	);
+	if ( $self->{command_f} =~ /symbols\(/ ){
+		$check_bubble = 1;
+	} else {
+		$check_bubble = 0;
+	}
 
-	$frm_std_radius->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
+	if ( $self->{command_f} =~ /std_radius <\- ([0-9]+)\n/ ){
+		$chk_std_radius = $1;
+	}
+	
+	if ( $self->{command_f} =~ /resize_vars <\- ([0-9]+)\n/ ){
+		$self->{chk_resize_vars} = $1;
+	}
 
-	$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
-			-variable => \$self->{chk_resize_vars},
+	if ( $self->{command_f} =~ /bubble_size <\- ([0-9]+)\n/ ){
+		$num_size = $1;
+	}
+
+	if ( $self->{command_f} =~ /bubble_var <\- ([0-9]+)\n/ ){
+		$num_var = $1;
+	}
+
+	# バブルプロット
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent          => $lf,
+		type            => 'corresp',
+		command         => sub{ $self->calc; },
+		check_bubble    => $check_bubble,
+		chk_resize_vars => $chk_resize_vars,
+		chk_std_radius  => $chk_std_radius,
+		num_size        => $num_size,
+		num_var         => $num_var,
+		pack            => {
 			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
-
-	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
-			-variable => \$self->{chk_std_radius},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
+		},
+	);
 
 	# 成分
 	my $fd = $lf->Frame()->pack(
@@ -179,27 +186,6 @@ sub innner{
 		$self->refresh_flw;
 	}
 
-	if ( $self->{command_f} =~ /symbols\(/ ){
-		$self->{check_bubble} = 1;
-	} else {
-		$self->{check_bubble} = 0;
-	}
-
-	if ( $self->{command_f} =~ /std_radius <\- ([0-9]+)\n/ ){
-		$self->{chk_std_radius} = $1;
-	} else {
-		$self->{chk_std_radius} = 1;
-	}
-	
-	if ( $self->{command_f} =~ /resize_vars <\- ([0-9]+)\n/ ){
-		$self->{chk_resize_vars} = $1;
-	} else {
-		$self->{chk_resize_vars} = 1;
-	}
-	
-	$self->refresh_std_radius;
-
-
 	return $self;
 }
 
@@ -230,17 +216,6 @@ sub refresh_flw{
 		$self->{entry_flw_l2}->configure(-state => 'disabled');
 	}
 	return $self;
-}
-
-sub refresh_std_radius{
-	my $self = shift;
-	if ( $self->{check_bubble} ){
-		$self->{chkw_std_radius}->configure(-state => 'normal');
-		$self->{chkw_resize_vars}->configure(-state => 'normal');
-	} else {
-		$self->{chkw_std_radius}->configure(-state => 'disabled');
-		$self->{chkw_resize_vars}->configure(-state => 'disabled');
-	}
 }
 
 sub calc{
@@ -291,9 +266,11 @@ sub calc{
 		font_size    => $fontsize,
 		r_command    => $r_command,
 		plotwin_name => 'word_corresp',
-		bubble       => $self->gui_jg( $self->{check_bubble} ),
-		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
-		resize_vars  => $self->gui_jg( $self->{chk_resize_vars} ),
+		bubble       => $self->{bubble_obj}->check_bubble,
+		std_radius   => $self->{bubble_obj}->chk_std_radius,
+		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
+		bubble_size  => $self->{bubble_obj}->size,
+		bubble_var   => $self->{bubble_obj}->var,
 	);
 	
 	$wait_window->end(no_dialog => 1);

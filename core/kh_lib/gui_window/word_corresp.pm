@@ -231,10 +231,11 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->refresh_flt;
 
-	# バブルプロット関連
+	# バブルプロット
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf2,
 		type         => 'corresp',
+		command      => sub{ $self->calc; },
 		pack    => {
 			-anchor   => 'w',
 		},
