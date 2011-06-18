@@ -9,8 +9,13 @@ sub _new{
 	
 	my $win = $self->parent->Frame();
 	
-	
 	my $f1 = $win->Frame()->pack(-fill => 'x');
+	
+	$self->{check_bubble}    = 0   unless defined $self->{check_bubble};
+	$self->{chk_resize_vars} = 1   unless defined $self->{chk_resize_vars};
+	$self->{chk_std_radius}  = 1   unless defined $self->{chk_std_radius};
+	$self->{num_size}        = 100 unless defined $self->{num_size};
+	$self->{num_var}         = 100 unless defined $self->{num_var};
 	
 	$f1->Checkbutton(
 		-text     => gui_window->gui_jchar('バブルプロット：'),
@@ -31,8 +36,11 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left');
-	$self->{ent_size}->insert(0,'100');
+	$self->{ent_size}->insert(0,$self->{num_size});
 	gui_window->config_entry_focusin($self->{ent_size});
+	$self->{ent_size}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
+
 
 	$self->{lab_size2} = $f1->Label(
 		-text => '%',
@@ -50,7 +58,6 @@ sub _new{
 			-font => "TKFN",
 		)->pack(-anchor => 'w', -side => 'left');
 
-		$self->{chk_resize_vars} = 1;
 		$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
 				-text     => gui_window->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
 				-variable => \$self->{chk_resize_vars},
@@ -68,7 +75,6 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$self->{chk_std_radius} = 1;
 	$self->{chkw_std_radius} = $f2->Checkbutton(
 		-text     => gui_window->gui_jchar('バブルの大きさを標準化：','euc'),
 		-variable => \$self->{chk_std_radius},
@@ -86,9 +92,10 @@ sub _new{
 		-width      => 3,
 		-background => 'white',
 	)->pack(-side => 'left');
-	$self->{ent_var}->insert(0,'100');
+	$self->{ent_var}->insert(0,$self->{num_var});
 	gui_window->config_entry_focusin($self->{ent_var});
-
+	$self->{ent_var}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
 
 	$self->{lab_var2} = $f2->Label(
 		-text => '%',
