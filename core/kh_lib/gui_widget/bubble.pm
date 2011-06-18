@@ -80,6 +80,7 @@ sub _new{
 		-variable => \$self->{chk_std_radius},
 		-anchor => 'w',
 		-state => 'disabled',
+		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{lab_var1} = $f2->Label(
@@ -117,7 +118,7 @@ sub refresh_std_radius{
 		$self->{lab_size1},
 		$self->{lab_size2},
 		$self->{ent_size},
-		$self->{lab_vaar1},
+		$self->{lab_var1},
 		$self->{lab_var2},
 		$self->{ent_var},
 	);
@@ -127,8 +128,13 @@ sub refresh_std_radius{
 	
 	foreach my $i (@temp){
 		$i->configure(-state => $state) if $i;
-	} 
+	}
 
+	if ( $self->{check_bubble} == 1 && $self->{chk_std_radius} == 0 ){
+		foreach my $i ($self->{lab_var1},$self->{lab_var2},$self->{ent_var}){
+			$i->configure(-state => 'disable') if $i;
+		}
+	}
 }
 
 
@@ -147,7 +153,7 @@ sub chk_resize_vars{
 
 sub chk_std_radius{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{chk_resize_vars} );
+	return gui_window->gui_jg( $self->{chk_std_radius} );
 }
 
 sub size{

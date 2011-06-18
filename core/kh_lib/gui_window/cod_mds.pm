@@ -202,31 +202,15 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	# バブル表現
-	$lf->Checkbutton(
-		-text     => $self->gui_jchar('出現数の多いコードほど大きく描画（バブルチャート）'),
-		-variable => \$self->{check_bubble},
-		-command  => sub{ $self->refresh_std_radius;},
-	)->pack(
-		-anchor => 'w',
+	# バブルプロット
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent       => $lf,
+		type         => 'mds',
+		command      => sub{ $self->_calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
 	);
-	my $frm_std_radius = $lf->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 2,
-	);
-	$frm_std_radius->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{chk_std_radius} = 1;
-	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
-			-variable => \$self->{chk_std_radius},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -301,14 +285,7 @@ sub _new{
 	return $self;
 }
 
-sub refresh_std_radius{
-	my $self = shift;
-	if ( $self->{check_bubble} ){
-		$self->{chkw_std_radius}->configure(-state => 'normal');
-	} else {
-		$self->{chkw_std_radius}->configure(-state => 'disabled');
-	}
-}
+
 
 # コーディングルール・ファイルの読み込み
 sub read_cfile{
@@ -458,8 +435,10 @@ sub _calc{
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
-		bubble       => $self->gui_jg( $self->{check_bubble} ),
-		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
+		bubble       => $self->{bubble_obj}->check_bubble,
+		std_radius   => $self->{bubble_obj}->chk_std_radius,
+		bubble_size  => $self->{bubble_obj}->size,
+		bubble_var   => $self->{bubble_obj}->var,
 	);
 
 	$wait_window->end(no_dialog => 1);

@@ -1280,6 +1280,7 @@ if (biplot){
 			pch_cex <- neg_to_zero(pch_cex)
 			pch_cex <- pch_cex * ( 10 / max(pch_cex) )
 		}
+		pch_cex <- pch_cex * bubble_size / 100
 	}
 	# 点をプロット
 	points(

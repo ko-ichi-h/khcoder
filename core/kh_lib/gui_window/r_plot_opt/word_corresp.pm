@@ -239,7 +239,9 @@ sub calc{
 	$r_command .= "# END: DATA\n";
 
 	my $biplot = 0;
-	$biplot = 1 if $self->{command_f} =~ /rscore/;
+	if ( $self->{command_f} =~ /biplot <\- ([0-9]+)\n/ ){
+		$biplot = $1;
+	}
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
