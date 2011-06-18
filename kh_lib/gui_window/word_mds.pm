@@ -117,31 +117,15 @@ sub _new{
 	)->pack(-side => 'left');
 
 
-	# バブル表現
-	$lf->Checkbutton(
-		-text     => $self->gui_jchar('出現数の多い語ほど大きく描画（バブルチャート）'),
-		-variable => \$self->{check_bubble},
-		-command  => sub{ $self->refresh_std_radius;},
-	)->pack(
-		-anchor => 'w',
+	# バブルプロット
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent       => $lf,
+		type         => 'mds',
+		command      => sub{ $self->calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
 	);
-	my $frm_std_radius = $lf->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 2,
-	);
-	$frm_std_radius->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{chk_std_radius} = 1;
-	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
-			-variable => \$self->{chk_std_radius},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -204,15 +188,6 @@ sub _new{
 
 
 	return $self;
-}
-
-sub refresh_std_radius{
-	my $self = shift;
-	if ( $self->{check_bubble} ){
-		$self->{chkw_std_radius}->configure(-state => 'normal');
-	} else {
-		$self->{chkw_std_radius}->configure(-state => 'disabled');
-	}
 }
 
 #----------#
@@ -299,8 +274,10 @@ sub calc{
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
-		bubble       => $self->gui_jg( $self->{check_bubble} ),
-		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
+		bubble       => $self->{bubble_obj}->check_bubble,
+		std_radius   => $self->{bubble_obj}->chk_std_radius,
+		bubble_size  => $self->{bubble_obj}->size,
+		bubble_var   => $self->{bubble_obj}->var,
 	);
 	
 	$w->end(no_dialog => 1);
@@ -406,11 +383,15 @@ while ( is.na(check4mds(d)) == 0 ){
 			$r_command_d .= "std_radius <- $args{std_radius}\n";
 			$r_command_d .= "font_size <- $fontsize\n";
 			$r_command_d .= "plot_mode <- \"color\"\n";
+			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
+			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
 			$r_command_d .= &r_command_bubble;
 
 			$r_command_a .= "std_radius <- $args{std_radius}\n";
 			$r_command_a .= "font_size <- $fontsize\n";
 			$r_command_a .= "plot_mode <- \"dots\"\n";
+			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
+			$r_command_a .= "bubble_var <- $args{bubble_var}\n";
 			$r_command_a .= &r_command_bubble;
 		}
 	}
@@ -600,7 +581,7 @@ b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 if (std_radius){ # 円の大小をデフォルメ
 	b_size <- b_size / sd(b_size)
 	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 5 + 10
+	b_size <- b_size * 5 * bubble_var / 100 + 10
 	b_size <- neg_to_zero(b_size)
 }
 
@@ -617,7 +598,7 @@ symbols(
 	cl[,1],
 	cl[,2],
 	circles=b_size,
-	inches=0.5,
+	inches=0.5 * bubble_size / 100,
 	fg=col_dot_words,
 	add=T,
 )

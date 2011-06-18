@@ -289,41 +289,15 @@ sub _new{
 
 	$self->refresh;
 
-	# バブルプロット関連
-	$lf2->Checkbutton(
-		-text     => $self->gui_jchar('出現数の多いコードほど大きく描画（バブルプロット）'),
-		-variable => \$self->{check_bubble},
-		-command  => sub{ $self->refresh_std_radius;},
-	)->pack(
-		-anchor => 'w',
+	# バブルプロット
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent       => $lf2,
+		type         => 'corresp',
+		command      => sub{ $self->_calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
 	);
-
-	my $frm_std_radius = $lf2->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 2,
-	);
-
-	$frm_std_radius->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	$self->{chk_resize_vars} = 1;
-	$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
-			-variable => \$self->{chk_resize_vars},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
-
-	$self->{chk_std_radius} = 1;
-	$self->{chkw_std_radius} = $frm_std_radius->Checkbutton(
-			-text     => $self->gui_jchar('バブルの大きさを標準化する','euc'),
-			-variable => \$self->{chk_std_radius},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
-
 
 	# 成分
 	my $fd = $lf2->Frame()->pack(
@@ -464,16 +438,7 @@ sub refresh_flw{
 	return $self;
 }
 
-sub refresh_std_radius{
-	my $self = shift;
-	if ( $self->{check_bubble} ){
-		$self->{chkw_std_radius}->configure(-state => 'normal');
-		$self->{chkw_resize_vars}->configure(-state => 'normal');
-	} else {
-		$self->{chkw_std_radius}->configure(-state => 'disabled');
-		$self->{chkw_resize_vars}->configure(-state => 'disabled');
-	}
-}
+
 
 # ラジオボタン関連
 sub refresh{
@@ -945,9 +910,11 @@ sub _calc{
 		font_size    => $fontsize,
 		r_command    => $r_command,
 		plotwin_name => 'cod_corresp',
-		bubble       => $self->gui_jg( $self->{check_bubble} ),
-		std_radius   => $self->gui_jg( $self->{chk_std_radius} ),
-		resize_vars  => $self->gui_jg( $self->{chk_resize_vars} ),
+		bubble       => $self->{bubble_obj}->check_bubble,
+		std_radius   => $self->{bubble_obj}->chk_std_radius,
+		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
+		bubble_size  => $self->{bubble_obj}->size,
+		bubble_var   => $self->{bubble_obj}->var,
 	);
 
 	$wait_window->end(no_dialog => 1);
