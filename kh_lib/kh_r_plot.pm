@@ -401,4 +401,9 @@ sub path{
 	return $self->{path};
 }
 
+#sub DESTROY{
+#	my $self = shift;
+#	print "DESTROYed: $self->{name}\n";
+#}
+
 1;

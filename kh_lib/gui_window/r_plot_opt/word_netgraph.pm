@@ -223,7 +223,8 @@ sub calc{
 	$fontsize /= 100;
 
 	my $wait_window = gui_wait->start;
-	&gui_window::word_netgraph::make_plot(
+	use plotR::network;
+	my $plotR = plotR::network->new(
 		font_size         => $fontsize,
 		plot_size         => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j            => $self->gui_jg( $self->{radio} ),
@@ -237,8 +238,29 @@ sub calc{
 		r_command         => $r_command,
 		plotwin_name      => 'word_netgraph',
 	);
+
+	# プロットWindowを開く
 	$wait_window->end(no_dialog => 1);
+	
+	if ($::main_gui->if_opened('w_word_netgraph_plot')){
+		$::main_gui->get('w_word_netgraph_plot')->close;
+	}
+
+	return 0 unless $plotR;
+
+	gui_window::r_plot::word_netgraph->open(
+		plots       => $plotR->{result_plots},
+		msg         => $plotR->{result_info},
+		msg_long    => $plotR->{result_info_long},
+		no_geometry => 1,
+	);
+
+	$plotR = undef;
+
 	$self->close;
+	undef $self;
+
+	return 1;
 }
 
 sub win_title{
