@@ -800,6 +800,7 @@ sub make_plot{
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
 	$r_command .= "flw <- $args{flw}\n";
+	$r_command .= "biplot <- $args{biplot}\n";
 
 	$r_command .= "library(MASS)\n";
 	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
@@ -968,7 +969,6 @@ sub make_plot{
 		# ½é´ü²½
 		$r_command .= &r_command_slab_my;
 		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "biplot <- $args{biplot}\n";
 		$r_command .= "std_radius <- $args{std_radius}\n";
 		$r_command .= "resize_vars <- $args{resize_vars}\n";
 		$r_command .= "bubble_size <- $args{bubble_size}\n";
