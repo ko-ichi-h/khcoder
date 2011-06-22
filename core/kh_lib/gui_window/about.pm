@@ -27,8 +27,10 @@ sub _new{
 
 	$wabtkh->title($self->gui_jt('KH Coderについて'));
 
+	$self->{img} = $wabtkh->Photo(-file => $::config_obj->logo_image_file);
+
 	$wabtkh->Label(
-		-image => $wabtkh->Photo(-file => $::config_obj->logo_image_file),
+		-image => $self->{img},
 		-borderwidth => 2,
 		-relief => 'sunken',
 		)->pack(-anchor => 'c');
@@ -180,6 +182,11 @@ sub _new{
 		}
 	)->pack(-anchor => 'c',-pady => '0')->focus;
 	return $self;
+}
+
+sub end{
+	my $self = shift;
+	$self->{img}->delete;
 }
 
 #--------------#

@@ -30,16 +30,17 @@ sub _new{
 		next if $key eq 'plot_size';
 		$self->{$key} = $args{$key};
 	}
+	%args = undef;
 
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
 	$win->title($self->gui_jt( $self->win_title ));
 
 	# 画像サイズをチェック
-	my $img = $win->Photo(-file => $self->{plots}[$self->{ax}]->path);
-	$self->{img_height} = $img->height;
-	$self->{img_width}  = $img->width;
-	my $size = $img->height;
+	$self->{img} = $win->Photo(-file => $self->{plots}[$self->{ax}]->path);
+	$self->{img_height} = $self->{img}->height;
+	$self->{img_width}  = $self->{img}->width;
+	my $size = $self->{img}->height;
 	$size += 10;
 	$size = 490 if $size < 490;
 	my $cursor = undef;
@@ -76,7 +77,7 @@ sub _new{
 		-expand => 1,
 	);
 	$self->{photo} = $self->{photo_pane}->Label(
-		-image       => $img,
+		-image       => $self->{img},
 		-cursor      => $cursor,
 		-borderwidth => 0,
 	)->pack(
@@ -171,15 +172,15 @@ sub _new{
 		}
 	)->pack(-side => 'left', -padx => 2);
 
-	if (length($args{msg})){
+	if (length($self->{msg})){
 		my $info_label = $f1->Label(
-			-text => $self->gui_jchar($args{msg},'euc')
+			-text => $self->gui_jchar($self->{msg},'euc')
 		)->pack(-side => 'left');
 
-		if ( length($args{msg_long}) ){
+		if ( length($self->{msg_long}) ){
 			my $blhelp = $mw->Balloon();
 			$blhelp->attach( $info_label,
-				-balloonmsg => $self->gui_jchar($args{msg_long},'euc'),
+				-balloonmsg => $self->gui_jchar($self->{msg_long},'euc'),
 				-font       => "TKFN"
 			);
 		}
@@ -251,12 +252,22 @@ sub drag {
 sub renew{
 	my $self = shift;
 	return 0 unless $self->{optmenu};
+
+	$self->{img}->read($self->{plots}[$self->{ax}]->path);
+	$self->{img}->update;
 	
-	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{plots}[$self->{ax}]->path)
-	);
-	$self->{photo}->update;
 	$self->renew_command;
+}
+
+# メモリ・リークの防止用
+sub end{
+	my $self = shift;
+	
+	#print "deleting img...\n";
+	$self->{img}->delete;
+
+	#print "deleting plot-objcts 2...\n";
+	$self->{plots} = undef;
 }
 
 sub renew_command{}

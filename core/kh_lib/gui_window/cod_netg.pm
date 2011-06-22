@@ -488,7 +488,8 @@ sub _calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	&gui_window::word_netgraph::make_plot(
+	use plotR::network;
+	my $plotR = plotR::network->new(
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j         => $self->gui_jg( $self->{radio} ),
@@ -503,10 +504,29 @@ sub _calc{
 		plotwin_name   => 'cod_netg',
 	);
 
+	# プロットWindowを開く
 	$wait_window->end(no_dialog => 1);
+	
+	if ($::main_gui->if_opened('w_cod_netg_plot')){
+		$::main_gui->get('w_cod_netg_plot')->close;
+	}
+
+	return 0 unless $plotR;
+
+	gui_window::r_plot::cod_netg->open(
+		plots       => $plotR->{result_plots},
+		msg         => $plotR->{result_info},
+		msg_long    => $plotR->{result_info_long},
+		no_geometry => 1,
+	);
+
+	$plotR = undef;
+
 	unless ( $self->{check_rm_open} ){
 		$self->close;
+		undef $self;
 	}
+	return 1;
 
 }
 
