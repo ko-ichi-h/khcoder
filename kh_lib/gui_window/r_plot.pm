@@ -11,7 +11,6 @@ use gui_window::r_plot::cod_mds;
 use gui_window::r_plot::cod_netg;
 use gui_window::r_plot::selected_netgraph;
 
-
 use strict;
 use gui_hlist;
 use mysql_words;
@@ -19,6 +18,8 @@ use mysql_words;
 use Tk;
 use Tk::Pane;
 use Tk::PNG;
+
+my $imgs;
 
 sub _new{
 
@@ -37,10 +38,19 @@ sub _new{
 	$win->title($self->gui_jt( $self->win_title ));
 
 	# 画像サイズをチェック
-	$self->{img} = $win->Photo(-file => $self->{plots}[$self->{ax}]->path);
-	$self->{img_height} = $self->{img}->height;
-	$self->{img_width}  = $self->{img}->width;
-	my $size = $self->{img}->height;
+	if ( $imgs->{$self->win_name} ){
+		print "img: read\n";
+		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
+	} else {
+		print "img: new\n";
+		$imgs->{$self->win_name} = 
+			$win->Photo('photo_'.$self->win_name,
+				-file => $self->{plots}[$self->{ax}]->path
+			);
+	}
+	$self->{img_height} = $imgs->{$self->win_name}->height;
+	$self->{img_width}  = $imgs->{$self->win_name}->width;
+	my $size = $imgs->{$self->win_name}->height;
 	$size += 10;
 	$size = 490 if $size < 490;
 	my $cursor = undef;
@@ -77,7 +87,7 @@ sub _new{
 		-expand => 1,
 	);
 	$self->{photo} = $self->{photo_pane}->Label(
-		-image       => $self->{img},
+		-image       => $imgs->{$self->win_name},
 		-cursor      => $cursor,
 		-borderwidth => 0,
 	)->pack(
@@ -253,8 +263,8 @@ sub renew{
 	my $self = shift;
 	return 0 unless $self->{optmenu};
 
-	$self->{img}->read($self->{plots}[$self->{ax}]->path);
-	$self->{img}->update;
+	$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
+	$imgs->{$self->win_name}->update;
 	
 	$self->renew_command;
 }
@@ -262,9 +272,34 @@ sub renew{
 # メモリ・リークの防止用
 sub end{
 	my $self = shift;
-	
+
 	#print "deleting img...\n";
-	$self->{img}->delete;
+	#$imgs->{$self->win_name}->delete;
+	
+	use Data::Dumper;
+
+	require Tk::Image;
+
+	my @images = $self->{win_obj}->imageNames;
+	my $n = @images;
+	print "images: $n\n";
+	foreach my $i (@images){
+		print $i->width, ' x ', $i->height;
+		
+		if ( $i->width == 1 && $i->height == 1){
+			$i->delete;
+			print " d";
+		}
+		if ( $i->width == 6 && $i->height == 6){
+			$i->delete;
+			print " d";
+		}
+		
+		print "\n";
+	}
+	
+	#$imgs->{$self->win_name}->delete;
+	#$imgs->{$self->win_name} = undef;
 
 	#print "deleting plot-objcts 2...\n";
 	$self->{plots} = undef;

@@ -1,6 +1,7 @@
 package gui_window;
 
 my $debug = 0;
+my $icon;
 
 use strict;
 use Tk;
@@ -149,9 +150,13 @@ sub position_icon{
 	}
 
 	# Windowアイコンのセット
-	my $icon = $self->win_obj->Photo(
-		-file =>   Tk->findINC('acre.gif')
-	);
+	unless ($icon){
+		$icon = $self->win_obj->Photo('window_icon',
+			-file =>   Tk->findINC('acre.gif')
+		);
+		print "Tk::Photo: Icon created.\n";
+	}
+	
 	if ( $::config_obj->os eq 'win32' ) {
 		$self->win_obj->Icon(-image => $icon);
 	} else {

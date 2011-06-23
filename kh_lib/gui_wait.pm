@@ -16,10 +16,10 @@ sub start{
 		-background => 'white',
 		-takefocus  => 0
 	);
-	my $icon = $self->{win}->Photo(
-		-file =>   Tk->findINC('acre.gif')
-	);
-	$self->{win}->Icon(-image => $icon);
+	#my $icon = $self->{win}->Photo(
+	#	-file =>   Tk->findINC('acre.gif')
+	#);
+	$self->{win}->Icon(-image => 'window_icon');
 	$self->{win}->Show;
 	
 	$self->{started} = timelocal(@{$d});
