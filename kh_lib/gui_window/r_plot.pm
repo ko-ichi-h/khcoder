@@ -287,6 +287,9 @@ sub end{
 		print $i->width, ' x ', $i->height;
 		
 		if ( $i->width == 1 && $i->height == 1){
+			
+			print "\n", Dumper($i->configure()), "\n";
+			
 			$i->delete;
 			print " d";
 		}
