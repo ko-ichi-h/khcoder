@@ -86,9 +86,10 @@ sub _new{
 		-fill   => 'both',
 		-expand => 1,
 	);
+	
 	$self->{photo} = $self->{photo_pane}->Label(
 		-image       => $imgs->{$self->win_name},
-		#-cursor      => $cursor,
+		-cursor      => $cursor,
 		-borderwidth => 0,
 	)->pack(
 		-expand => 1,
@@ -188,8 +189,8 @@ sub _new{
 		)->pack(-side => 'left');
 
 		if ( length($self->{msg_long}) ){
-			my $blhelp = $mw->Balloon();
-			$blhelp->attach( $info_label,
+			$self->{blhelp} = $mw->Balloon();
+			$self->{blhelp}->attach( $info_label,
 				-balloonmsg => $self->gui_jchar($self->{msg_long},'euc'),
 				-font       => "TKFN"
 			);
@@ -269,58 +270,25 @@ sub renew{
 	$self->renew_command;
 }
 
+
+sub renew_command{}
+
 # メモリ・リークの防止用
 sub end{
 	my $self = shift;
 
-	#print "deleting img...\n";
-	#$imgs->{$self->win_name}->delete;
-	
-	use Data::Dumper;
-
-	require Tk::Image;
-
-	my @images = $self->{win_obj}->imageNames;
-	my $n = @images;
-	print "images: $n\n";
-	
-	
-	my $twin = $::main_gui->mw->Toplevel();
-	
-	
-	
-	foreach my $i (@images){
-		print $i->width, ' x ', $i->height;
-		
-		if ( $i->width == 1 && $i->height == 1){
-			
-			#print "\n", Dumper($i->configure()), "\n";
-			
-			#$i->delete;
-			#print " d";
-		}
-		if ( $i->width == 6 && $i->height == 6){
-			#$i->delete;
-			#print " d";
-		}
-		
-		if ($i->width < 32){
-			$twin->Label(
-				-image => $i,
-			)->pack();
-		}
-		
-		print "\n";
+	# バルーンヘルプ
+	if ( $self->{blhelp} ){
+		 $self->{blhelp}->destroy;
 	}
-	
-	#$imgs->{$self->win_name}->delete;
-	#$imgs->{$self->win_name} = undef;
 
-	#print "deleting plot-objcts 2...\n";
+	# Rのプロット・オブジェクト
 	$self->{plots} = undef;
-}
 
-sub renew_command{}
+	my @n = $self->{win_obj}->imageNames;
+	print "images: ", $#n + 1, "\n";
+
+}
 
 sub save{
 	my $self = shift;

@@ -258,7 +258,6 @@ sub calc{
 	$plotR = undef;
 
 	$self->close;
-	undef $self;
 
 	return 1;
 }
