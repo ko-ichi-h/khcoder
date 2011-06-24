@@ -175,6 +175,7 @@ sub close{
 }
 
 sub end{
+	return 1;
 }
 
 sub win_obj{
