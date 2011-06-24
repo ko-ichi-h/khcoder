@@ -174,13 +174,12 @@ sub close{
 	undef $self;
 }
 
+sub end{
+}
+
 sub win_obj{
 	my $self = shift;
 	return $self->{win_obj};
-}
-
-sub end{
-	return 1;
 }
 
 sub start{
