@@ -88,7 +88,7 @@ sub _new{
 	);
 	$self->{photo} = $self->{photo_pane}->Label(
 		-image       => $imgs->{$self->win_name},
-		-cursor      => $cursor,
+		#-cursor      => $cursor,
 		-borderwidth => 0,
 	)->pack(
 		-expand => 1,
@@ -283,19 +283,31 @@ sub end{
 	my @images = $self->{win_obj}->imageNames;
 	my $n = @images;
 	print "images: $n\n";
+	
+	
+	my $twin = $::main_gui->mw->Toplevel();
+	
+	
+	
 	foreach my $i (@images){
 		print $i->width, ' x ', $i->height;
 		
 		if ( $i->width == 1 && $i->height == 1){
 			
-			print "\n", Dumper($i->configure()), "\n";
+			#print "\n", Dumper($i->configure()), "\n";
 			
-			$i->delete;
-			print " d";
+			#$i->delete;
+			#print " d";
 		}
 		if ( $i->width == 6 && $i->height == 6){
-			$i->delete;
-			print " d";
+			#$i->delete;
+			#print " d";
+		}
+		
+		if ($i->width < 32){
+			$twin->Label(
+				-image => $i,
+			)->pack();
 		}
 		
 		print "\n";
