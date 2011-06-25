@@ -6,21 +6,28 @@ use Time::Local;
 use POSIX 'strftime';
 use gui_errormsg;
 
+my $win;
+
 sub start{
 	my $class = shift;
 	my $self;
 	my $d = [localtime];
-	$self->{win} = $::main_gui->mw->WaitBox_kh(
-		-title      => 'KH Coder is processing data...',
-		-txt1       => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}),
-		-background => 'white',
-		-takefocus  => 0
-	);
-	#my $icon = $self->{win}->Photo(
-	#	-file =>   Tk->findINC('acre.gif')
-	#);
-	$self->{win}->Icon(-image => 'window_icon');
-	$self->{win}->Show;
+	
+	if ($win){
+		$win->configure(-txt1 => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}));
+		print "re-using...\n";
+	} else {
+		$win = $::main_gui->mw->WaitBox_kh(
+			-title      => 'KH Coder is processing data...',
+			-txt1       => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}),
+			-background => 'white',
+			-takefocus  => 0
+		);
+		$win->Icon(-image => 'window_icon');
+	}
+	
+	
+	$win->Show;
 	
 	$self->{started} = timelocal(@{$d});
 	bless $self, $class;
@@ -69,7 +76,7 @@ sub end{
 		);
 	}
 	
-	$self->{win}->unShow;
+	$win->unShow;
 }
 
 
