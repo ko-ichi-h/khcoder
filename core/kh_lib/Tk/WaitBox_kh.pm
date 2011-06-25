@@ -60,9 +60,6 @@ sub Populate {
     ### Set up the status
     $cw->{Shown} = 0;
 
-    ### Set up the cancel button and text
-    $cw->{cancelroutine} = undef if !defined($cw->{cancelroutine});
-    $cw->{canceltext} = 'Cancel' if !defined($cw->{canceltext});
 
     ### OK, create the dialog
     ### Start with the upper frame (which contains two messages)
@@ -116,22 +113,10 @@ sub Show {
     ## Do last minute configuration and Show the dialog
     my($wd, @args) = @_;
 
-    if ( defined($wd->{Configure}{-cancelroutine}) &&
-	!defined($wd->{CanFrame})) {
-	my($canFrame) = $wd->Frame (-background => $wd->cget('-background'));
-	$wd->{CanFrame} = $canFrame;
-	$canFrame->pack(-side => 'top', @wd_packtop, -fill => 'both');
-	$canFrame->configure(-cursor => 'top_left_arrow');
-	$canFrame->Button(-text => $wd->{Configure}{-canceltext},
-			  -command => $wd->{Configure}{-cancelroutine})
-		->pack(-padx => 5, -pady => 5,
-		       -ipadx => 5, -ipady => 5);
-    }
-
     ## Grab the input queue and focus
-    $wd->parent->configure(-cursor => 'watch') if $wd->{Configure}{-takefocus};
-    $wd->configure(-cursor => 'watch');
-    $wd->update;
+    #$wd->parent->configure(-cursor => 'watch') if $wd->{Configure}{-takefocus};
+    #$wd->configure(-cursor => 'watch');
+    #$wd->update;
 
     my($x) = int( ($wd->screenwidth
 		 - $wd->reqwidth)/2
@@ -149,10 +134,7 @@ sub Show {
     $wd->deiconify;
     $wd->tkwait('visibility', $wd);
 
-    if ($wd->{Configure}{-takefocus}) {
-	$wd->focus();
-	$wd->grab();
-    }
+    $wd->focus();
     $wd->update;
 
     return $wd;
@@ -165,9 +147,7 @@ sub unShow {
 	# print "shown: $wd->{Shown}\n";
 
     return unless $wd->{Shown};
-    $wd->{CanFrame}->destroy if defined($wd->{CanFrame});
-    $wd->{CanFrame} = undef;
-    $wd->parent->configure(-cursor => 'top_left_arrow');
+    #$wd->parent->configure(-cursor => 'top_left_arrow');
 
     #$wd->grab('release');
     $wd->withdraw;
