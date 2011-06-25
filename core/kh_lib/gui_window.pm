@@ -154,7 +154,7 @@ sub position_icon{
 		$icon = $self->win_obj->Photo('window_icon',
 			-file =>   Tk->findINC('acre.gif')
 		);
-		print "Tk::Photo: Icon created.\n";
+		#print "Tk::Photo: Icon created.\n";
 	}
 	
 	if ( $::config_obj->os eq 'win32' ) {

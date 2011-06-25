@@ -39,10 +39,10 @@ sub _new{
 
 	# 画像をロード
 	if ( $imgs->{$self->win_name} ){
-		print "img: read\n";
+		#print "img: read\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
 	} else {
-		print "img: new\n";
+		#print "img: new\n";
 		$imgs->{$self->win_name} = 
 			$win->Photo('photo_'.$self->win_name,
 				-file => $self->{plots}[$self->{ax}]->path
