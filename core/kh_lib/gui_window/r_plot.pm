@@ -291,8 +291,8 @@ sub end{
 	#$imgs->{$self->win_name}->destroy;
 	#$imgs->{$self->win_name} = undef;
 
-	my @n = $self->{win_obj}->imageNames;
-	print "images: ", $#n + 1, "\n";
+	#my @n = $self->{win_obj}->imageNames;
+	#print "images: ", $#n + 1, "\n";
 
 }
 
