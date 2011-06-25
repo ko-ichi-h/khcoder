@@ -13,8 +13,10 @@ sub _new{
 	my $win= $self->{win_obj};
 	$win->title($self->gui_jt('出現回数と文書数'));
 
+	$self->{img} = $win->Photo();
+
 	$self->{photo} = $win->Label(
-		-image => $win->Photo(-file => $self->{images}[1]),
+		-image => $self->{img},
 		-borderwidth => 2,
 		-relief => 'sunken',
 	)->pack(-anchor => 'c');
@@ -97,6 +99,8 @@ sub count{
 	my $self = shift;
 	return 0 unless $self->{tani_obj};
 	
+	$self->{images} = undef;
+	
 	my $tani = $self->{tani_obj}->tani;
 	my $h = mysql_exec->select("
 		select num, f, genkei.name
@@ -167,10 +171,15 @@ sub renew{
 	my $self = shift;
 	return 0 unless $self->{optmenu};
 	
-	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}]->path)
-	);
+	$self->{img}->read( $self->{images}[$self->{ax}]->path );
+	
 	$self->{photo}->update;
+}
+
+sub end{
+	my $self = shift;
+	$self->{images} = undef;
+	$self->{img}->delete;
 }
 
 sub save{

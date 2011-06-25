@@ -15,10 +15,10 @@ sub _new{
 
 	$win->title($self->gui_jt('文書数：分布：プロット','euc'));
 	
-	#print "image: $args{images}->[1]\n";
+	$self->{img} = $win->Photo(-file => $args{images}->[1]->path);
 	
 	$self->{photo} = $win->Label(
-		-image => $win->Photo(-file => $args{images}->[1]->path),
+		-image => $self->{img},
 		-borderwidth => 2,
 		-relief => 'sunken',
 	)->pack(-anchor => 'c');
@@ -80,10 +80,15 @@ sub _new{
 sub renew{
 	my $self = shift;
 	
-	$self->{photo}->configure(
-		-image => $self->{win_obj}->Photo(-file => $self->{images}[$self->{ax}]->path)
-	);
+	$self->{img}->read( $self->{images}[$self->{ax}]->path );
+	
 	$self->{photo}->update;
+}
+
+sub end{
+	my $self = shift;
+	$self->{images} = undef;
+	$self->{img}->delete;
 }
 
 sub save{
