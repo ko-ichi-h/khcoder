@@ -287,10 +287,9 @@ sub end{
 	# Rのプロット・オブジェクト
 	$self->{plots} = undef;
 
-
-	$imgs->{$self->win_name}->delete;
-	$imgs->{$self->win_name}->destroy;
-	$imgs->{$self->win_name} = undef;
+	#$imgs->{$self->win_name}->delete;
+	#$imgs->{$self->win_name}->destroy;
+	#$imgs->{$self->win_name} = undef;
 
 	my @n = $self->{win_obj}->imageNames;
 	print "images: ", $#n + 1, "\n";

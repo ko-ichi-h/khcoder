@@ -15,7 +15,7 @@ sub start{
 	
 	if ($win){
 		$win->configure(-txt1 => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}));
-		print "re-using...\n";
+		# print "re-using...\n";
 	} else {
 		$win = $::main_gui->mw->WaitBox_kh(
 			-title      => 'KH Coder is processing data...',
