@@ -222,7 +222,7 @@ sub calc{
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
-	my $wait_window = gui_wait->start;
+	#my $wait_window = gui_wait->start;
 	use plotR::network;
 	my $plotR = plotR::network->new(
 		font_size         => $fontsize,
@@ -240,7 +240,7 @@ sub calc{
 	);
 
 	# プロットWindowを開く
-	$wait_window->end(no_dialog => 1);
+	#$wait_window->end(no_dialog => 1);
 	
 	if ($::main_gui->if_opened('w_word_netgraph_plot')){
 		$::main_gui->get('w_word_netgraph_plot')->close;

@@ -37,7 +37,7 @@ sub _new{
 	my $win= $self->{win_obj};
 	$win->title($self->gui_jt( $self->win_title ));
 
-	# 画像サイズをチェック
+	# 画像をロード
 	if ( $imgs->{$self->win_name} ){
 		print "img: read\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
@@ -48,6 +48,8 @@ sub _new{
 				-file => $self->{plots}[$self->{ax}]->path
 			);
 	}
+	
+	# 画像サイズをチェック
 	$self->{img_height} = $imgs->{$self->win_name}->height;
 	$self->{img_width}  = $imgs->{$self->win_name}->width;
 	my $size = $imgs->{$self->win_name}->height;
@@ -284,6 +286,11 @@ sub end{
 
 	# Rのプロット・オブジェクト
 	$self->{plots} = undef;
+
+
+	$imgs->{$self->win_name}->delete;
+	$imgs->{$self->win_name}->destroy;
+	$imgs->{$self->win_name} = undef;
 
 	my @n = $self->{win_obj}->imageNames;
 	print "images: ", $#n + 1, "\n";
