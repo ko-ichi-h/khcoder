@@ -63,7 +63,7 @@ sub first{
 	$self->rowtxt;
 		my $t3 = new Benchmark;
 		print "RawTXT\t",timestr(timediff($t3,$t4)),"\n";
-	mysql_ready::df->calc;
+	mysql_ready::df->calc($self);
 		my $t5 = new Benchmark;
 		print "df\t",timestr(timediff($t5,$t3)),"\n";
 	mysql_ready::fc->calc_by_db;
