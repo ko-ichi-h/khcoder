@@ -53,10 +53,13 @@ sub rowdata{
 	")->hundle->fetch->[1];
 	$max = int($max / 1024 /1024);
 	print "\tThe HEAP table will eat approx. $memory_n"."MB; We have $max"."MB max.\n";
+	
 	if ($memory_n > $max){
 		print "\tWe are going to use MyISAM instead of HEAP...\n";
-		return 0;
+		$self->{use_heap_act} = 0;
+		return $self;
 	}
+	$self->{use_heap_act} = 1;
 
 	mysql_exec->drop_table("rowdata_isam");
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_isam",1);
@@ -75,6 +78,8 @@ sub rowdata{
 		SELECT id,hyoso,genkei,hinshi,katuyo
 		FROM   rowdata_isam
 	",1);
+	
+	return $self;
 }
 
 sub rowdata_restore{

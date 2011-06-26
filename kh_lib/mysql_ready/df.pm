@@ -46,6 +46,8 @@ my %sql_join = (
 
 
 sub calc{
+	my $class = shift;
+	my $self = shift;
 
 	# 見出しが存在するかどうかをチェック
 	my @avail = ();
@@ -60,7 +62,10 @@ sub calc{
 	my $switch = 'exec1';
 	foreach my $tani (@avail){
 		my $heap = '';
-		$heap = 'TYPE=HEAP' if $::config_obj->use_heap;
+		if ( $::config_obj->use_heap && $self->{use_heap_act} ){
+			$heap = 'TYPE=HEAP';
+			print " df: heap ";
+		}
 		
 		# 文以外の単位では中間テーブルを作成（hyosobun.idと各単位.idを直結）
 		my $tain_hb = '';
