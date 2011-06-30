@@ -605,6 +605,9 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 		var reg =   new RegExp(bib_key, "i");
 		var reg_c = new RegExp(bib_key, "ig");
 		
+		var ed = '';
+		var pos = 0;
+		
 		for (i in bibs){
 			if (bibs[i][0] && bibs[i][1] && bibs[i][2]){
 				n_total = n_total + 1;
@@ -637,22 +640,49 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 							}
 						}
 						// すべての文字列について置換処理
-						for (h in matches_unique){
-							var reg_cc = new RegExp(h, "g");
-							chk = chk + ', ' + h;
-							c = c.replace(
-								reg_cc,
-								'<span class="keyw">' +  h + '</span>'
-							);
+						ed = '';
+						pos = 0;
+						var safety = 0;
+						while (1){
+							// 置換対象を前から検索
+							var t_pos = c.length;
+							var t_wrd = '';
+							for (h in matches_unique){
+								// 見つかれば
+								if ( c.indexOf(h,pos) > -1 ){
+									// 前にあるものを優先
+									if ( c.indexOf(h,pos) < t_pos ){
+										t_pos = c.indexOf(h,pos);
+										t_wrd = h;
+									}
+								}
+							}
+							
+							// 見つからなかったら or 安全基準を超えたらbreak
+							safety = safety + 1;
+							if (t_wrd.length == 0 || safety > 500){
+								ed = ed + c.substring(pos,c.length);
+								break;
+							}
+							
+							// 置換を実施
+								//前をコピー
+							ed = ed + c.substring(pos,t_pos);
+								//置換部分
+							ed = ed + '<span class="keyw">' +  t_wrd + '</span>';
+								//検索対象のカウンタを進める
+							pos = t_pos + t_wrd.length;
+							//alert("pos: " + pos);
 						}
-						// alert(chk);
+					} else {
+						ed = c;
 					}
 					
 					var d = '';
 					if (bibs[i][3]){
 						d = bibs[i][3];
 					}
-					t = t  + '<div class="bib">' + c + d + "</div>\n";
+					t = t  + '<div class="bib">' + ed + d + "</div>\n";
 					n_sele = n_sele + 1;
 				}
 			}
