@@ -585,7 +585,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 	$.ajax({
 		url: "bib.tsv",
 		dataType: "text",
-		// cache: false,
+		cache: false,
 		success: function(data, status) {
 			bibs = jQuery.csv("\t")(data);
 			if (bibs[0].length == 1){
