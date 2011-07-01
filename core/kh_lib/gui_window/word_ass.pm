@@ -633,7 +633,8 @@ sub net_calc{
 
 	# デフォルト値で描画
 	$r_command .= "# END: DATA\n\n";
-	&gui_window::word_netgraph::make_plot(
+	use plotR::network;
+	my $plotR = plotR::network->new(
 		font_size           => $::config_obj->r_default_font_size / 100,
 		plot_size           => 640,
 		n_or_j              => "n",
@@ -648,6 +649,24 @@ sub net_calc{
 	);
 	
 	$wait_window->end(no_dialog => 1);
+
+	if ($::main_gui->if_opened('w_selected_netgraph_plot')){
+		$::main_gui->get('w_selected_netgraph_plot')->close;
+	}
+
+	return 0 unless $plotR;
+
+	gui_window::r_plot::selected_netgraph->open(
+		plots       => $plotR->{result_plots},
+		msg         => $plotR->{result_info},
+		msg_long    => $plotR->{result_info_long},
+		no_geometry => 1,
+	);
+
+	$plotR = undef;
+
+
+
 }
 
 #----------------------------#
