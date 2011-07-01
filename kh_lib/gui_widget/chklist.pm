@@ -147,6 +147,7 @@ sub enable{
 	){
 		$i->configure(-state => 'normal');
 	}
+	gui_hlist->update4scroll($self->hlist);
 }
 
 sub selected{
