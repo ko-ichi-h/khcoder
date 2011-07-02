@@ -225,6 +225,24 @@ d <- dist(d,method="binary")
 d <- as.matrix(d)
 d <- 1 - d;
 
+# 不要なedgeを削除して標準化
+if ( exists("com_method") ){
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		d[1:n_words,] <- 0
+
+		std <- d[(n_words+1):nrow(d),1:n_words]
+		std <- t(std)
+		std <- scale(std, center=T, scale=F)
+		std <- t(std)
+
+		if ( min(std) < 0 ){
+			std <- std - min(std);
+		}
+		std <- std / max(std)
+		d[(n_words+1):nrow(d),1:n_words] <- std
+	}
+}
+
 # グラフ作成 
 library(igraph)
 n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
@@ -289,6 +307,10 @@ if ( com_method == "cnt-b" || com_method == "cnt-d"){
 	ccol <- ccol * 100 / max(ccol)
 	ccol <- trunc(ccol + 1)
 	ccol <- cm.colors(101)[ccol]
+
+	com_col_v <- "gray40"
+	edg_col   <- "gray65"
+	edg_lty   <- 1
 }
 
 # クリーク検出
@@ -368,22 +390,39 @@ if ( com_method == "com-b" || com_method == "com-g"){
 			edg_lty <- c( edg_lty, 3 )
 		}
 	}
-} else { # 中心性でカラーリングする場合の線の色
+}
+
+# 変数・見出しを利用する場合のカラー
+if (com_method == "twomode_c"){
+	var_select <- substring(
+		colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ],
+		1,
+		2
+	) == "<>"
+
+	ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
+	ccol[5 < ccol] <- 5
+	ccol <- ccol + 3
+	
+	library( RColorBrewer )
+	ccol <- brewer.pal(8, "Spectral")[ccol]
+
+	ccol[var_select] <- "#FB8072" # #FB8072 #DEEBF7 #FF9966 #FFDAB9 "#F46D43"
+
 	com_col_v <- "gray40"
 	edg_col   <- "gray65"
 	edg_lty   <- 1
+
 }
 
 # カラーリング「なし」の場合の線の色（2010 12/4）
-if (com_method == "none"){
+if (com_method == "none" || com_method == "twomode_g"){
+	ccol <- "white"
 	com_col_v <- "black"
 	edg_lty <- 1
 	edg_col   <- "gray40"
 }
 
-if (com_method == "none"){
-	ccol <- "white"
-}
 ';
 
 }
@@ -494,6 +533,53 @@ if ( use_weight_as_width == 1 ){
 	edg_width <- 1
 }
 
+# 外部変数・見出しを使う場合の形状やサイズ
+if (com_method == "twomode_c" || com_method == "twomode_g"){
+	# ノードの形
+	v_shape <- rep("circle", length( get.vertex.attribute(n2,"name") ) )
+	v_shape[var_select] <- "square"
+
+	# ノードのサイズ
+	if (length( v_size ) != 1){
+		v_size[var_select] <- 15
+	}
+
+	# ノードのフォントサイズ
+	if (length( f_size ) != 1){
+		f_size[var_select] <- cex
+	}
+
+	# 小さな円で描画している場合のノードサイズ
+	if (smaller_nodes == 1){
+		# ラベルの距離
+		if (length( vertex_label_dist ) == 1){
+			vertex_label_dist <- rep(
+				vertex_label_dist,
+				length( get.vertex.attribute(n2,"name") )
+			)
+		}
+		vertex_label_dist[var_select] <- 0
+		# サイズ
+		if (length( v_size ) == 1){
+			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
+		}
+		v_size[var_select] <- 10
+	}
+
+	# 識別用の「<>」を外す
+	colnames(d)[
+		substring(colnames(d), 1, 2) == "<>"
+	] <- substring(
+		colnames(d)[
+			substring(colnames(d), 1, 2) == "<>"
+		],
+		3,
+		length(colnames(d)[
+			substring(colnames(d), 1, 2) == "<>"
+		])
+	)
+}
+
 '
 }
 
@@ -502,7 +588,9 @@ sub r_plot_cmd_p4{
 return 
 '
 # 語の強調
-v_shape    <- "circle"
+if ( exists("v_shape") == FALSE ){
+	v_shape    <- "circle"
+}
 target_ids <-  NULL
 if ( exists("target_words") ){
 	# IDの取得
