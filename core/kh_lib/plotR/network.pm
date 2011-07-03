@@ -278,6 +278,7 @@ if ( exists("com_method") ){
 			std <- std - min(std);
 		}
 		std <- std / max(std)
+		
 		d[(n_words+1):nrow(d),1:n_words] <- std
 	}
 }
@@ -505,14 +506,29 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 }
 
 # 配置
-lay_f <- layout.fruchterman.reingold(n2,
-	start   = lay,
-	weights = get.edge.attribute(n2, "weight")
-)
+if (
+	   (com_method == "twomode_c" || com_method == "twomode_g")
+	&& ( is.connected(n2) )
+){
+	lay_f <- layout.kamada.kawai(
+		n2,
+		start   = lay,
+		weights = get.edge.attribute(n2, "weight")
+	)
+} else {
+	lay_f <- layout.fruchterman.reingold(
+		n2,
+		start   = lay,
+		weights = get.edge.attribute(n2, "weight")
+	)
+}
 
-lay_f <- scale(lay_f)
-lay_f[,1] <- lay_f[,1] / max( abs( lay_f[,1] ) )
-lay_f[,2] <- lay_f[,2] / max( abs( lay_f[,2] ) )
+lay_f <- scale(lay_f,center=T, scale=F)
+for (i in 1:2){
+	lay_f[,i] <- lay_f[,i] - min(lay_f[,i]); # 最小を0に
+	lay_f[,i] <- lay_f[,i] / max(lay_f[,i]); # 最大を1に
+	lay_f[,i] <- ( lay_f[,i] - 0.5 ) * 1.96;
+}
 
 # 負の値を0に変換する関数
 neg_to_zero <- function(nums){
