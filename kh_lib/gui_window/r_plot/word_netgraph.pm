@@ -2,13 +2,23 @@ package gui_window::r_plot::word_netgraph;
 use base qw(gui_window::r_plot);
 
 sub option1_options{
-	return [
-		'中心性（媒介）',
-		'中心性（次数）',
-		'サブグラフ検出（媒介）',
-		'サブグラフ検出（modularity）',
-		'なし',
-	];
+	my $self = shift;
+	
+	if (@{$self->{plots}} == 2){
+		return [
+			'カラー',
+			'グレースケール',
+		] ;
+	} else {
+		return [
+			'中心性（媒介）',
+			'中心性（次数）',
+			'サブグラフ検出（媒介）',
+			'サブグラフ検出（modularity）',
+			'なし',
+		];
+	}
+
 }
 
 sub option1_name{

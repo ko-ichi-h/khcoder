@@ -396,6 +396,96 @@ sub calc{
 		rownames => 0,
 	)->run;
 
+
+	# 見出しの取り出し
+	if (
+		   $self->{radio_type} eq 'twomode'
+		&& $self->{var_obj}->var_id =~ /h[1-5]/
+	) {
+		my $tani1 = $self->tani;
+		my $tani2 = $self->{var_obj}->var_id;
+		
+		# 見出しリスト作成
+		my $max = mysql_exec->select("SELECT max(id) FROM $tani2")
+			->hundle->fetch->[0];
+		my %heads = ();
+		for (my $n = 1; $n <= $max; ++$n){
+			$heads{$n} = Jcode->new(mysql_getheader->get($tani2, $n),'sjis')->euc;
+		}
+
+		my $sql = '';
+		$sql .= "SELECT $tani2.id\n";
+		$sql .= "FROM   $tani1, $tani2\n";
+		$sql .= "WHERE \n";
+		foreach my $i ("h1","h2","h3","h4","h5"){
+			$sql .= " AND " unless $i eq "h1";
+			$sql .= "$tani1.$i"."_id = $tani2.$i"."_id\n";
+			if ($i eq $tani2){
+				last;
+			}
+		}
+		$sql .= "ORDER BY $tani1.id \n";
+		my $h = mysql_exec->select($sql,1)->hundle;
+
+		$r_command .= "\nv0 <- c(";
+		while (my $i = $h->fetch){
+			$r_command .= "\"$heads{$i->[0]}\",";
+		}
+		chop $r_command;
+		$r_command .= ")\n";
+	}
+
+	# 外部変数の取り出し
+	if (
+		   $self->{radio_type} eq 'twomode'
+		&& $self->{var_obj}->var_id =~ /^[0-9]+$/
+	) {
+		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_obj}->var_id);
+		
+		my $sql = '';
+		if ($var_obj->{tani} eq $self->tani){
+			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+			$sql .= "ORDER BY id";
+		} else {
+			my $tani1 = $self->tani;
+			my $tani2 = $var_obj->{tani};
+			$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
+			$sql .= "FROM   $tani1, $tani2,$var_obj->{table}\n";
+			$sql .= "WHERE \n";
+			foreach my $i ("h1","h2","h3","h4","h5"){
+				$sql .= " AND " unless $i eq "h1";
+				$sql .= "$tani1.$i"."_id = $tani2.$i"."_id\n";
+				if ($i eq $tani2){
+					last;
+				}
+			}
+			$sql .= " AND $tani2.id = $var_obj->{table}.id \n";
+			$sql .= "ORDER BY $tani1.id \n";
+		}
+		
+		$r_command .= "v0 <- c(";
+		my $h = mysql_exec->select($sql,1)->hundle;
+		my $n = 0;
+		while (my $i = $h->fetch){
+			if ( length( $var_obj->{labels}{$i->[0]} ) ){
+				my $t = $var_obj->{labels}{$i->[0]};
+				$t =~ s/"/ /g;
+				$r_command .= "\"$t\",";
+			} else {
+				$r_command .= "\"$i->[0]\",";
+			}
+			++$n;
+		}
+		
+		chop $r_command;
+		$r_command .= ")\n";
+	}
+
+	# 外部変数・見出しデータの統合
+	if ($self->{radio_type} eq 'twomode'){
+		$r_command .= &r_command_concat;
+	}
+
 	# データ整理
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
@@ -405,6 +495,7 @@ sub calc{
 
 	use plotR::network;
 	my $plotR = plotR::network->new(
+		edge_type        => $self->gui_jg( $self->{radio_type} ),
 		font_size        => $fontsize,
 		plot_size        => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j           => $self->gui_jg( $self->{radio} ),
@@ -480,6 +571,45 @@ sub tani{
 sub hinshi{
 	my $self = shift;
 	return $self->{words_obj}->hinshi;
+}
+
+sub r_command_concat{
+	return '
+# 1つの外部変数が入ったベクトルを0-1マトリクスに変換
+mk.dummy <- function(dat){
+	dat  <- factor(dat)
+	cols <- length(levels(dat))
+	ret <- NULL
+	for (i in 1:length( dat ) ){
+		c <- numeric(cols)
+		c[as.numeric(dat)[i]] <- 1
+		ret <- rbind(ret, c)
+	}
+	colnames(ret) <- paste( "<>", levels(dat), sep="" )
+	rownames(ret) <- NULL
+	return(ret)
+}
+v1 <- mk.dummy(v0)
+
+# 抽出語と外部変数を接合
+n_words <- ncol(d)
+d <- cbind(d, v1)
+
+d <- subset(
+	d,
+	v0 != "欠損値" & v0 != "." & v0 != "missing"
+)
+v0 <- NULL
+v1 <- NULL
+
+d <- t(d)
+d <- subset(
+	d,
+	rownames(d) != "<>欠損値" & rownames(d) != "<>." & rownames(d) != "<>missing"
+)
+d <- t(d)
+
+';
 }
 
 1;

@@ -48,90 +48,129 @@ sub new{
 	}
 	$r_command .= "smaller_nodes <- $args{smaller_nodes}\n";
 
-	$r_command .= &r_plot_cmd_p1;
+	#$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
 	
 	#use Benchmark;
 	#my $t0 = new Benchmark;
 	
+	my @plots = ();
 	my $flg_error = 0;
-	my $plot1 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_1',
-		command_f =>
-			 $r_command
-			."\ncom_method <- \"cnt-b\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p3
-			.&r_plot_cmd_p4,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+	
+	if ($self->{edge_type} eq 'twomode'){
+		$plots[0] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_1',
+			command_f =>
+				 $r_command
+				."com_method <- \"twomode_c\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
 
-	my $plot2 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_2',
-		command_f =>
-			 $r_command
-			."\ncom_method <- \"cnt-d\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p3
-			.&r_plot_cmd_p4,
-		command_a =>
-			 "com_method <- \"cnt-d\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p4,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+		$plots[1] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_2',
+			command_f =>
+				 $r_command
+				."com_method <- \"twomode_g\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"twomode_g\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
+	} else {
+		$plots[0] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_1',
+			command_f =>
+				 $r_command
+				.&r_plot_cmd_p1
+				."\ncom_method <- \"cnt-b\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
 
-	my $plot3 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_3',
-		command_f =>
-			 $r_command
-			."\ncom_method <- \"com-b\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p3
-			.&r_plot_cmd_p4,
-		command_a =>
-			 "com_method <- \"com-b\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p4,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+		$plots[1] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_2',
+			command_f =>
+				 $r_command
+				."\ncom_method <- \"cnt-d\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"cnt-d\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
 
-	my $plot4 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_4',
-		command_f =>
-			 $r_command
-			."\ncom_method <- \"com-g\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p3
-			.&r_plot_cmd_p4,
-		command_a =>
-			 "com_method <- \"com-g\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p4,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+		$plots[2] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_3',
+			command_f =>
+				 $r_command
+				."\ncom_method <- \"com-b\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"com-b\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
 
-	my $plot5 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_5',
-		command_f =>
-			 $r_command
-			."\ncom_method <- \"none\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p3
-			.&r_plot_cmd_p4,
-		command_a =>
-			 "com_method <- \"none\"\n"
-			.&r_plot_cmd_p2
-			.&r_plot_cmd_p4,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+		$plots[3] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_4',
+			command_f =>
+				 $r_command
+				."\ncom_method <- \"com-g\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"com-g\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
 
+		$plots[4] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_5',
+			command_f =>
+				 $r_command
+				."\ncom_method <- \"none\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"none\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
+	}
+	
 	#my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n" if $bench;
 
@@ -195,7 +234,7 @@ sub new{
 	if ($info_jac =~ /"khcoderJac(.+)ok"/){
 		$info_jac = $1;
 	}
-	foreach my $i ($plot1, $plot2, $plot3, $plot4, $plot5){
+	foreach my $i (@plots){
 		$i->{command_f} .= "\n# edges: $info_edges\n";
 		$i->{command_f} .= "\n# min. jaccard: $info_jac\n";
 	}
@@ -203,7 +242,7 @@ sub new{
 	kh_r_plot->clear_env;
 	$self = undef;
 	%args = undef;
-	$self->{result_plots} = [$plot1, $plot2, $plot3, $plot4, $plot5];
+	$self->{result_plots} = \@plots;
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;
 	
@@ -393,13 +432,15 @@ if ( com_method == "com-b" || com_method == "com-g"){
 }
 
 # 変数・見出しを利用する場合のカラー
-if (com_method == "twomode_c"){
+if (com_method == "twomode_c" || com_method == "twomode_g"){
 	var_select <- substring(
 		colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ],
 		1,
 		2
 	) == "<>"
+}
 
+if (com_method == "twomode_c"){
 	ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
 	ccol[5 < ccol] <- 5
 	ccol <- ccol + 3
@@ -574,9 +615,9 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 			substring(colnames(d), 1, 2) == "<>"
 		],
 		3,
-		length(colnames(d)[
+		nchar(colnames(d)[
 			substring(colnames(d), 1, 2) == "<>"
-		])
+		],type="c")
 	)
 }
 
