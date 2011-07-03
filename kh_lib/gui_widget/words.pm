@@ -23,6 +23,7 @@ sub _new{
 		$self->{tani_obj} = gui_widget::tani->open(
 			parent => $l1,
 			pack   => \%pack,
+			command => $self->{tani_command},
 			#dont_remember => 1,
 		);
 	}
