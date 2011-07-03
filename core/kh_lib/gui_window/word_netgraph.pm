@@ -34,6 +34,11 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
+		tani_command => sub{
+			if ($self->{var_obj}){
+				$self->{var_obj}->new_tani($self->tani);
+			}
+		},
 		verb   => '利用',
 	);
 
@@ -48,6 +53,68 @@ sub _new{
 		-font => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w', -pady => 2);
+
+	# 共起関係の種類
+	$lf->Label(
+		-text => $self->gui_jchar('共起関係（edge）の種類'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w');
+
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 1
+	);
+
+	$f5->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	unless ( defined( $self->{radio_type} ) ){
+		$self->{radio_type} = 'words';
+	}
+
+	$f5->Radiobutton(
+		-text             => $self->gui_jchar('語 <---> 語'),
+		-font             => "TKFN",
+		-variable         => \$self->{radio_type},
+		-value            => 'words',
+		-command          => sub{ $self->refresh(3);},
+	)->pack(-anchor => 'nw', -side => 'left');
+
+	$f5->Label(
+		-text => ' ',
+		-font => "TKFN",
+	)->pack(-anchor => 'nw', -side => 'left');
+
+	$f5->Radiobutton(
+		-text             => $self->gui_jchar('語 <---> 外部変数・見出し'),
+		-font             => "TKFN",
+		-variable         => \$self->{radio_type},
+		-value            => 'twomode',
+		-command          => sub{ $self->refresh(3);},
+	)->pack(-anchor => 'nw');
+
+	my $f6 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 1
+	);
+
+	$f6->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{var_lab} = $f6->Label(
+		-text => $self->gui_jchar('外部変数・見出し：'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{var_obj} = gui_widget::select_a_var->open(
+		parent        => $f6,
+		tani          => $self->tani,
+		show_headings => 1,
+	);
 
 	# Edge選択
 	$lf->Label(
@@ -239,6 +306,15 @@ sub refresh{
 	} else {
 		push @nor, $self->{wc_use_freq_as_size};
 	}
+
+	if ( $self->{radio_type} eq 'words' ){
+		push @dis, $self->{var_lab};
+		$self->{var_obj}->disable;
+	} else {
+		push @nor, $self->{var_lab};
+		$self->{var_obj}->enable;
+	}
+
 
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal');

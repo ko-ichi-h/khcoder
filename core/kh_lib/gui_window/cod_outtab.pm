@@ -142,53 +142,19 @@ sub fill{
 	my $self = shift;
 	unless ($self->{tani_obj}){return 0;}
 	
-	if ($self->{opt_body}){
-		$self->{opt_body}->destroy;
-	}
-	
-	# 利用できる変数があるかどうかチェック
-	my %tani_check = ();
-	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-		$tani_check{$i} = 1;
-		last if ($self->tani eq $i);
-	}
-	my $h = mysql_outvar->get_list;
-	my @options;
-	foreach my $i (@{$h}){
-		if ($tani_check{$i->[0]}){
-			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
-			#print "varid: $i->[2]\n";
-		}
-	}
-	
-	if (@options){
-		$self->{opt_body} = gui_widget::optmenu->open(
-			parent  => $self->{opt_frame},
-			pack    => {-side => 'left', -padx => 2},
-			options => \@options,
-			variable => \$self->{var_id},
-			command  => sub{$self->rem_ov;},
+	if ( ! $self->{var_obj} ){
+		$self->{var_obj} =  gui_widget::select_a_var->open(
+			parent        => $self->{opt_frame},
+			tani          => $self->tani,
 		);
-		if ( length($self->{last_var_id}) ){
-			$self->{opt_body}->set_value( $self->{last_var_id} );
-		}
 	} else {
-		$self->{opt_body} = gui_widget::optmenu->open(
-			parent  => $self->{opt_frame},
-			pack    => {-side => 'left', -padx => 2},
-			options => 
-				[
-					[$self->gui_jchar('利用不可'), -1],
-				],
-			variable => \$self->{var_id},
-		);
-		$self->{opt_body}->configure(-state => 'disable');
+		$self->{var_obj}->new_tani( $self->tani );
 	}
 }
 
-sub rem_ov{
+sub var_id{
 	my $self = shift;
-	$self->{last_var_id} = $self->{var_id};
+	return $self->{var_obj}->var_id;
 }
 
 #------------------#
@@ -203,7 +169,7 @@ sub _calc{
 	$self->win_obj->update;
 	
 	# 入力内容チェック
-	unless ( $self->tani && -e $self->cfile && $self->{var_id} > -1){
+	unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			msg => "指定された条件での集計は行えません。",
@@ -224,7 +190,7 @@ sub _calc{
 	unless (
 		$result = $result->outtab(
 			$self->tani,
-			$self->{var_id},
+			$self->var_id,
 			$self->{cell_opt}
 		)
 	){
