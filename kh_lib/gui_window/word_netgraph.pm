@@ -75,7 +75,7 @@ sub _new{
 	}
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 <---> 語'),
+		-text             => $self->gui_jchar('語 ― 語'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'words',
@@ -88,7 +88,7 @@ sub _new{
 	)->pack(-anchor => 'nw', -side => 'left');
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 <---> 外部変数・見出し'),
+		-text             => $self->gui_jchar('語 ― 外部変数・見出し'),
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'twomode',
@@ -118,7 +118,7 @@ sub _new{
 
 	# Edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('描画する共起関係（edge）'),
+		-text => $self->gui_jchar('描画する共起関係（edge）の絞り込み'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -273,7 +273,7 @@ sub _new{
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->calc;});}
+		-command => sub{$self->calc;},
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
 	$self->refresh(3);
