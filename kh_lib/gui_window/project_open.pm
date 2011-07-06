@@ -27,7 +27,7 @@ sub _new{
 		-scrollbars=> 'osoe',
 		-header => 1,
 		-width => 55,
-		-command => sub{ $mw->after(10,sub{$self->_open;});},
+		-command => sub{$self->_open;},
 		-itemtype => 'text',
 		-font => 'TKFN',
 		-columns => 3,
@@ -48,28 +48,28 @@ sub _new{
 		-text => $self->gui_jchar('ºï½ü'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->delete;}); }
+		-command => sub{$self->delete;}
 	)->pack(-side => 'left',-padx => 2,-pady => 1);
 	my $b2 = $few->Button(
 		-text => $self->gui_jchar('ÊÔ½¸'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->edit;}); }
+		-command => sub{$self->edit;}
 	)->pack(-side => 'left',-pady => 1);
 	$few->Button(
 		-text => $self->gui_jchar('¿·µ¬'),-padx => 2,
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{
+		-command => sub{
 			$self->close;
 			gui_window::project_new->open;
-		}); }
+		}
 	)->pack(-side => 'left',-padx => 3,,-pady => 1);
 	my $b3 = $few->Button(
 		-text => $self->gui_jchar('³«¤¯'),-padx => 3,
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->_open;}); }
+		-command => sub{$self->_open;}
 	)->pack(-anchor => 'w',-side => 'right',-padx => 2,,-pady => 1);
 	$self->{g_buttons} = [$b1,$b2,$b3];
 	

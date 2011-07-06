@@ -104,7 +104,7 @@ sub _new{
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
 		-text    => $self->gui_jchar('集計'),
-		-command => sub{ $win->after(10,sub{$self->search;});}
+		-command => sub{$self->search;}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
 		$self->{btn_search},
@@ -186,7 +186,7 @@ sub _new{
 		-font    => "TKFN",
 		-text    => $self->gui_jchar('コピー'),
 		#-width   => 8,
-		-command => sub{ $win->after(10,sub{gui_hlist->copy($self->{rlist});});},
+		-command => sub{gui_hlist->copy($self->{rlist});},
 		-borderwidth => 1
 	)->pack(-side => 'left');
 
@@ -204,7 +204,7 @@ sub _new{
 		-font    => "TKFN",
 		#-width   => 8,
 		-text    => 'KWIC',
-		-command => sub{ $win->after(10,sub{$self->conc;});},
+		-command => sub{$self->conc;},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
 

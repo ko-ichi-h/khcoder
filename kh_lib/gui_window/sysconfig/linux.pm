@@ -69,11 +69,7 @@ sub __new{
 	$self->{btn1} = $fra1->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub{ $mw->after
-			(10,
-				sub { $self->gui_get_exe('chasenrc','entry1'); }
-			);
-		}
+		-command => sub { $self->gui_get_exe('chasenrc','entry1'); }
 	)->pack(-padx => '2',-side => 'right');
 
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
@@ -97,12 +93,7 @@ sub __new{
 	$self->{btn2} = $fra2->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub { $self->gui_get_exe('grammar.cha','entry2'); }
-			);
-		}
+		-command => sub { $self->gui_get_exe('grammar.cha','entry2'); }
 	)->pack(-padx => '2',-side => 'right');
 
 	$lfra->Radiobutton(
@@ -177,21 +168,14 @@ sub __new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{
-			$inis->after(10,sub{$self->close;})
-		}
+		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
 
 	$inis->Button(
 		-text => 'OK',
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {$self->ok }
-			);
-		}
+		-command => sub {$self->ok }
 	)->pack(-side => 'right');
 
 	$entry1->insert(0,$::config_obj->chasenrc_path);

@@ -18,7 +18,7 @@ sub _new{
 		-text => gui_window->gui_jchar('参照'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $f1->after(10,sub{$self->_sansyo;});}
+		-command => sub{$self->_sansyo;}
 	)->pack( -side => 'left');
 	
 	if ($self->{r_button}){
@@ -26,11 +26,11 @@ sub _new{
 			-text => gui_window->gui_jchar('リロード'),
 			-font => "TKFN",
 			-borderwidth => '1',
-			-command => sub{ $f1->after(10,sub{
+			-command => sub{
 				if (defined($self->{command})){
 					&{$self->{command}};
 				}
-			});}
+			}
 		)->pack( -side => 'left', -padx => 2);
 	}
 	

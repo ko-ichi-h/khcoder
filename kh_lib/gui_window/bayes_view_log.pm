@@ -69,7 +69,7 @@ sub _new{
 
 	#$lf->Button(
 	#	-text => gui_window->gui_jchar('表示'),
-	#	-command => sub{ $mw->after(10,sub { $self->select_doc; });} 
+	#	-command => sub { $self->select_doc; }
 	#)->pack(-side => 'left', -padx => 2);
 	$self->{entry_dno}->bind("<Key-Return>",sub{$self->select_doc;});
 
@@ -133,7 +133,7 @@ sub _new{
 
 	my $btn = $f1->Button(
 		-text => gui_window->gui_jchar('コピー（表全体）'),
-		-command => sub{ $mw->after(10,sub { $self->copy; });} 
+		-command => sub { $self->copy; }
 	)->pack(-side => 'left', -padx => 2);
 	
 	$self->win_obj->bind(
@@ -395,21 +395,15 @@ sub view{
 		unless ( $i eq '  ' ){
 			$w->bind(
 				"<Button-1>",
-				sub{
-					$w->after(10, sub { $self->sort($key); } );
-				}
+				sub { $self->sort($key); }
 			);
 			$w->bind(
 				"<Enter>",
-				sub{
-					$w->after(10, sub { $w->configure(-foreground => 'red'); } );
-				}
+				sub { $w->configure(-foreground => 'red'); }
 			);
 			$w->bind(
 				"<Leave>",
-				sub{
-					$w->after(10, sub { $w->configure(-foreground => 'blue'); } );
-				}
+				sub { $w->configure(-foreground => 'blue'); }
 			);
 		}
 		$self->{list}->header(
@@ -669,12 +663,7 @@ sub sort{
 		);
 		$w->bind(
 			"<Leave>",
-			sub{
-				$w->after(
-					10,
-					sub { $w->configure(-foreground => 'red'); }
-				);
-			}
+			sub { $w->configure(-foreground => 'red'); }
 		);
 	}
 	
@@ -691,12 +680,7 @@ sub sort{
 		);
 		$lw->bind(
 			"<Leave>",
-			sub{
-				$lw->after(
-					10,
-					sub { $lw->configure(-foreground => 'blue'); }
-				);
-			}
+			sub { $lw->configure(-foreground => 'blue'); }
 		);
 	}
 	

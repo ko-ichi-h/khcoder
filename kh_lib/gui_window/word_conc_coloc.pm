@@ -90,7 +90,7 @@ sub _new{
 		#-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-height           => 20,
-		#-command          => sub {$mw->after(10,sub{$self->view_doc;});}
+		#-command          => sub{$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	my $style_blue = $lis->ItemStyle(
@@ -171,7 +171,7 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
 
 	$self->win_obj->bind(
@@ -212,7 +212,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{sort},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->view;});} 
+		command  => sub{$self->view;}
 	);
 
 	$fra5->Label(
@@ -224,7 +224,7 @@ sub _new{
 		-text => $self->gui_jchar('フィルタ設定'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_window::word_conc_coloc_opt->open;});}
+		-command => sub {gui_window::word_conc_coloc_opt->open;}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
 
 	# フィルタ設定の初期化

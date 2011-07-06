@@ -46,14 +46,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $self->{win_obj}->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
 	$self->{win_obj}->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $self->{win_obj}->after(10,sub{$self->save;});}
+		-command => sub{$self->save;}
 	)->pack(-side => 'right', -pady => 2);
 
 	return $self;

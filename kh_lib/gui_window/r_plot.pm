@@ -172,15 +172,10 @@ sub _new{
 		-text => $self->gui_jchar('Ä´À°'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$base_name->open(
-						command_f => $self->{plots}[$self->{ax}]->command_f,
-						size      => $self->original_plot_size,
-					);
-				}
+		-command => sub {
+			$base_name->open(
+				command_f => $self->{plots}[$self->{ax}]->command_f,
+				size      => $self->original_plot_size,
 			);
 		}
 	)->pack(-side => 'left', -padx => 2);
@@ -204,13 +199,8 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->close();
-				}
-			);
+		-command => sub {
+			$self->close();
 		}
 	)->pack(-side => 'right');
 
@@ -219,13 +209,8 @@ sub _new{
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->save();
-				}
-			);
+		-command => sub {
+			$self->save();
 		}
 	)->pack(-side => 'right',-padx => 4);
 

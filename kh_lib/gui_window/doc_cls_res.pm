@@ -59,7 +59,7 @@ sub _new{
 		-text        => $self->gui_jchar('文書検索'),
 		-font        => "TKFN",
 		-borderwidth => '1',
-		-command     => sub{ $mw->after(10,sub {$self->cls_docs;}); }
+		-command     => sub {$self->cls_docs;}
 	)->pack(-side => 'left', -padx => 2, -pady => 2, -anchor => 'c');
 
 	$wmw->Balloon()->attach(
@@ -72,7 +72,7 @@ sub _new{
 		-text        => $self->gui_jchar('特徴語'),
 		-font        => "TKFN",
 		-borderwidth => '1',
-		-command     => sub{ $mw->after(10,sub {$self->cls_words;}); }
+		-command     => sub {$self->cls_words;}
 	)->pack(-side => 'left', -padx => 2, -pady => 2, -anchor => 'c');
 	
 	$wmw->Balloon()->attach(
@@ -85,7 +85,7 @@ sub _new{
 		-text        => $self->gui_jchar('コピー'),
 		-font        => "TKFN",
 		-borderwidth => '1',
-		-command     => sub{ $mw->after(10,sub {gui_hlist->copy_all($self->list);});} 
+		-command     => sub {gui_hlist->copy_all($self->list);}
 	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
 
 	#--------------------------#
@@ -157,27 +157,27 @@ sub _new{
 		-text => $self->gui_jchar('前200'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			$self->{start} = $self->{start} - 200;
 			$self->fill_list2;
-		});} 
+		}
 	)->pack(-side => 'left',-padx => 2, -pady => 2);
 
 	$self->{btn_next} = $fhr->Button(
 		-text => $self->gui_jchar('次200'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			$self->{start} = $self->{start} + 200;
 			$self->fill_list2;
-		});} 
+		}
 	)->pack(-side => 'left',-padx => 2, -pady => 2);
 
 	$fhr->Button(
 		-text        => $self->gui_jchar('コピー'),
 		-font        => "TKFN",
 		-borderwidth => '1',
-		-command     => sub{ $mw->after(10,sub {
+		-command     => sub {
 			return 0 unless $::config_obj->os eq 'win32';
 			my $t = '';
 			foreach my $i (@{$self->{merge}}){
@@ -187,14 +187,14 @@ sub _new{
 			my $CLIP = Win32::Clipboard();
 			$CLIP->Empty();
 			$CLIP->Set("$t");
-		});} 
+		}
 	)->pack(-side => 'right', -padx => 2, -pady => 2);
 	
 	$fhr->Button(
 		-text => $self->gui_jchar('プロット'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			if ($::main_gui->if_opened('w_doc_cls_height')){
 				$::main_gui->get('w_doc_cls_height')->renew(
 					$self->{tmp_out_var}
@@ -205,7 +205,7 @@ sub _new{
 					type  => $self->{tmp_out_var},
 				);
 			}
-		});} 
+		}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 	
 	
@@ -238,23 +238,23 @@ sub _new{
 		-text => $self->gui_jchar('調整'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			gui_window::doc_cls_res_opt->open(
 				command_f => $self->{command_f},
 				tani      => $self->{tani},
 			);
-		});} 
+		}
 	)->pack(-side => 'left',-padx => 5);
 
 	$fb->Button(
 		-text => $self->gui_jchar('分類結果の保存'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			gui_window::doc_cls_res_sav->open(
 				var_from => $self->{tmp_out_var}
 			);
-		});} 
+		}
 	)->pack(-side => 'right');
 
 	$self->{list}  = $lis2;

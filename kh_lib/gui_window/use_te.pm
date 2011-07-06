@@ -28,14 +28,9 @@ sub _new{
 		-borderwidth => '0',
 		-relief => 'flat',
 		-cursor => 'hand2',
-		-command => sub{
-			$self->{win_obj}->after(
-				10,
-				sub {
+		-command => sub {
 					gui_OtherWin->open('http://gensen.dl.itc.u-tokyo.ac.jp/');
 				}
-			);
-		}
 	)->pack(-side => 'left', -anchor => 'w');
 
 	$self->{win_obj}->Label(
@@ -65,22 +60,15 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{
-			$self->{win_obj}->after(10,sub{$self->close;})
-		}
+		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
 
 	my $ok_btn = $self->{win_obj}->Button(
 		-text  => 'OK',
 		-font  => 'TKFN',
 		-width => 8,
-		-command => sub{ $self->{win_obj}->after
-			(
-				10,
-				sub {
-					$self->_exec;
-				}
-			);
+		-command => sub {
+			$self->_exec;
 		}
 	)->pack(-anchor => 'e',-side => 'right',  -pady => 2);
 	

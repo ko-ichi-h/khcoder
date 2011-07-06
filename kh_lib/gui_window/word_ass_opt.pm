@@ -47,21 +47,21 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_all;});}
+		-command => sub{ $self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 	$l4->Button(
 		-text => $self->gui_jchar('既定値'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_default;});}
+		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 	$l4->Button(
 		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj}->select_none;});}
+		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack(-pady => 2);
 
 	# 全体での出現数
@@ -105,14 +105,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->save;});}
+		-command => sub{$self->save;}
 	)->pack(-side => 'right');
 	
 	# 値の入力

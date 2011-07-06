@@ -47,14 +47,14 @@ sub _new{
 		-text => $self->gui_jchar('詳細'),
 		-font => "TKFN",
 #		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->_open_var;});}
+		-command => sub{$self->_open_var;}
 	)->pack(-side => 'left');
 
 	$wmw->Button(
 		-text => $self->gui_jchar('出力'),
 		-font => "TKFN",
 #		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->_save;});}
+		-command => sub{$self->_save;}
 	)->pack(-side => 'left');
 
 	$wmw->Label(
@@ -65,14 +65,14 @@ sub _new{
 		-text => $self->gui_jchar('削除'),
 		-font => "TKFN",
 #		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->_delete;});}
+		-command => sub{$self->_delete;}
 	)->pack(-side => 'left',-padx => 2);
 
 	$wmw->Button(
 		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	#MainLoop;

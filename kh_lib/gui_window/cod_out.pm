@@ -50,14 +50,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->_save;});}
+		-command => sub{$self->_save;}
 	)->pack(-side => 'right');
 	
 	return $self;

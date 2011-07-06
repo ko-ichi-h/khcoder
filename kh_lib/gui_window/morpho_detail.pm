@@ -38,29 +38,29 @@ sub _new{
 		-text => $self->gui_jchar('前の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			my $n = $self->{parent}->prev;
 			unless ($n > 0){return;}
 			$self->_view($n);
-		});} 
+		}
 	)->pack(-side => 'left',-pady   => 1,);
 
 	$self->{nxt_btn} = $bunhyojiwin->Button(
 		-text => $self->gui_jchar('次の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			my $n = $self->{parent}->next;
 			unless ($n > 0){return;}
 			$self->_view($n);
-		});} 
+		}
 	)->pack(-side => 'left',-pady   => 1,);
 
 	$bunhyojiwin->Button(
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'right',-pady   => 1,);
 
 	#$self->{win_obj} = $bunhyojiwin;

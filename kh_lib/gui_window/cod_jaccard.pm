@@ -44,7 +44,7 @@ sub _new{
 		-text    => $self->gui_jchar('集計'),
 		-font    => "TKFN",
 		-width   => 8,
-		-command => sub{ $mw->after(10,sub{$self->_calc;});}
+		-command => sub{$self->_calc;}
 	)->pack( -anchor => 'e', -side => 'right');
 	
 	#------------------#
@@ -83,7 +83,7 @@ sub _new{
 		-text => $self->gui_jchar('コピー（表全体）'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub { $self->copy; });} 
+		-command => sub { $self->copy; }
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
 	$self->win_obj->bind(
@@ -211,21 +211,15 @@ sub _calc{
 		my $key = $col;
 		$w->bind(
 			"<Button-1>",
-			sub{
-				$w->after(10, sub { $self->sort($key); } );
-			}
+			sub { $self->sort($key); }
 		);
 		$w->bind(
 			"<Enter>",
-			sub{
-				$w->after(10, sub { $w->configure(-foreground => 'red'); } );
-			}
+			sub { $w->configure(-foreground => 'red'); }
 		);
 		$w->bind(
 			"<Leave>",
-			sub{
-				$w->after(10, sub { $w->configure(-foreground => 'blue'); } );
-			}
+			sub { $w->configure(-foreground => 'blue'); }
 		);
 		$self->list->header(
 			'create',
@@ -449,12 +443,7 @@ sub sort{
 		);
 		$w->bind(
 			"<Leave>",
-			sub{
-				$w->after(
-					10,
-					sub { $w->configure(-foreground => 'red'); }
-				);
-			}
+			sub { $w->configure(-foreground => 'red')}
 		);
 	}
 	
@@ -471,12 +460,7 @@ sub sort{
 		);
 		$lw->bind(
 			"<Leave>",
-			sub{
-				$lw->after(
-					10,
-					sub { $lw->configure(-foreground => 'blue'); }
-				);
-			}
+			sub { $lw->configure(-foreground => 'blue'); }
 		);
 	}
 	

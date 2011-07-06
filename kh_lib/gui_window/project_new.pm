@@ -54,7 +54,7 @@ sub _new{
 		-text => $self->gui_jchar('参照'),
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
+		-command => sub{$self->_sansyo;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$fra2->Label(
@@ -70,14 +70,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $mw->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->_make_new;});}
+		-command => sub{$self->_make_new;}
 	)->pack(-side => 'right');
 
 	# ENTRYのバインド

@@ -172,14 +172,10 @@ sub _new{
 		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->close();
-				}
-			);
-		}
+		-command => 
+			sub {
+				$self->close();
+			}
 	)->pack(-anchor => 'c',-pady => '0')->focus;
 	return $self;
 }

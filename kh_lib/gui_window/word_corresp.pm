@@ -340,14 +340,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$rf->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->calc;});}
+		-command => sub{$self->calc;}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
 	$self->_settings_load;

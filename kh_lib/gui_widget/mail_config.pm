@@ -72,11 +72,7 @@ sub _new{
 	$f4->Button(
 		-text  => gui_window->gui_jchar('สันน'),
 		-font  => "TKFN",
-		-command => sub{ $self->parent->after
-			(10,
-				sub { $self->font_change(); }
-			)
-		}
+		-command => sub { $self->font_change(); }
 	)->pack(-padx => '2',-side => 'right');
 	
 	$self->fill_in;

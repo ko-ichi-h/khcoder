@@ -40,7 +40,7 @@ sub _new{
 	my $sbutton = $fra4e->Button(
 		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->search;});} 
+		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
 	# 結果表示部分
@@ -64,7 +64,7 @@ sub _new{
 		-selectforeground => 'brown',
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
-		-command          => sub {$mw->after(10, sub{$self->detail;});},
+		-command          => sub{$self->detail;},
 		-height           => 20,
 		-width            => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
@@ -76,14 +76,14 @@ sub _new{
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
 		-text => $self->gui_jchar('詳細表示'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->detail;});} 
+		-command => sub {$self->detail;}
 	)->pack(-side => 'left');
 	
 	$self->{label} = $fra5->Label(

@@ -43,7 +43,7 @@ sub _new{
 	my $sbutton = $fra4e->Button(
 		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->search;});} 
+		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $wmw->Balloon();
@@ -60,14 +60,14 @@ sub _new{
 		-text     => $self->gui_jchar('抽出語検索'),
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
-		-command  => sub { $mw->after(10,sub{$self->refresh}); }
+		-command  => sub{$self->refresh;}
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
 		-text     => $self->gui_jchar('活用形を表示'),
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
-		-command  => sub { $mw->after(10,sub{$self->refresh}); }
+		-command  => sub{$self->refresh;}
 	)->pack(-side => 'left');
 
 	unless (defined($gui_window::word_search::katuyo)){
@@ -137,7 +137,7 @@ sub _new{
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'right');
 
 	$self->win_obj->bind(
@@ -154,7 +154,7 @@ sub _new{
 		-text => $self->gui_jchar('コンコーダンス'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->conc;});} 
+		-command => sub {$self->conc;}
 	)->pack(-side => 'left');
 	
 	$self->{list_f} = $hlist_fra;
