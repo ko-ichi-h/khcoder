@@ -34,7 +34,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->select_all;});}
+		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 
 	$self->{button_none} = $win4buttons->Button(
@@ -42,7 +42,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->select_none;});}
+		-command => sub{$self->select_none;}
 	)->pack();
 	
 	$self->{hlist} = $win4hlist->Scrolled(

@@ -14,36 +14,21 @@ sub _new{
 	
 	$l->bind(
 		"<Button-1>",
-		sub{
-			$l->after(
-				10,
-				sub {
-					gui_OtherWin->open($self->{url});
-				}
-			);	
+		sub {
+			gui_OtherWin->open($self->{url});
 		}
 	);
 	$l->bind(
 		"<Enter>",
-		sub{
-			$l->after(
-				10,
-				sub {
-					$l->configure(-foreground => 'red');
-				}
-			);
-		}	
+		sub {
+			$l->configure(-foreground => 'red');
+		}
 	);
 	$l->bind(
 		"<Leave>",
-		sub{
-			$l->after(
-				10,
-				sub {
-					$l->configure(-foreground => 'blue');
-				}
-			);
-		}	
+		sub {
+			$l->configure(-foreground => 'blue');
+		}
 	);
 	
 	

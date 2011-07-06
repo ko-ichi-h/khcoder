@@ -87,7 +87,7 @@ sub make{
 			-label => $msg,
 			-font => "TKFN",
 			-command =>
-				sub{ $mw->after(10,sub{gui_window::project_new->open;});},
+				sub{gui_window::project_new->open;},
 			-accelerator => 'Ctrl+N'
 		);
 		$msg = gui_window->gui_jchar('開く','euc');
@@ -95,7 +95,7 @@ sub make{
 			-label => $msg,
 			-font => "TKFN",
 			-command =>
-				sub{ $mw->after(10,sub{gui_window::project_open->open;});},
+				sub{gui_window::project_open->open;},
 			-accelerator => 'Ctrl+O'
 		);
 		$self->{m_b0_close} = $f->command(
@@ -104,10 +104,8 @@ sub make{
 			-state => 'disable',
 			-command =>
 				sub{
-					$mw->after(10,sub{
 						$self->mc_close_project;
-					});
-				},
+					},
 			-accelerator => 'Ctrl+W'
 		);
 		
@@ -118,10 +116,8 @@ sub make{
 			-font => "TKFN",
 			-command =>
 				sub{
-					$mw->after(10,sub{
 						$self->mc_import_project;
-					});
-				},
+					},
 		);
 
 		$self->{m_b0_export} = $f->command(
@@ -130,10 +126,8 @@ sub make{
 			-state => 'disable',
 			-command =>
 				sub{
-					$mw->after(10,sub{
 						$self->mc_export_project;
-					});
-				},
+					},
 		);
 
 		$f->separator();
@@ -143,7 +137,7 @@ sub make{
 			-label => $msg,
 			-font => "TKFN",
 			-command => 
-				sub{ $mw->after(10,sub{gui_window::sysconfig->open;});},
+				sub{gui_window::sysconfig->open;},
 		);
 		#$f->separator();
 		
@@ -152,13 +146,8 @@ sub make{
 			-label => $msg,
 			-font => "TKFN",
 			-command => sub{
-				$mw->after(
-					10,
-					sub{
 						$::main_gui->get('main_window')->close or exit;
-					}
-				);
-			},
+					},
 			-accelerator => 'Ctrl+Q'
 		);
 
@@ -175,7 +164,7 @@ sub make{
 		$self->{m_b2_datacheck} = $f->command(
 				-label => gui_window->gui_jchar('分析対象ファイルのチェック'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					my $ans = $mw->messageBox(
 						-message => gui_window->gui_jchar
 							(
@@ -188,14 +177,14 @@ sub make{
 					);
 					unless ($ans =~ /ok/i){ return 0; }
 					$self->mc_datacheck;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{m_b2_morpho} = $f->command(
 				-label => gui_window->gui_jchar('前処理の実行'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					my $ans = $mw->messageBox(
 						-message => gui_window->gui_jchar
 							(
@@ -208,16 +197,16 @@ sub make{
 					);
 					unless ($ans =~ /ok/i){ return 0; }
 					$self->mc_morpho;
-				})},
+				},
 				-state => 'disable'
 			);
 		$f->separator();
 		$self->{m_b1_mark} = $f->command(
 				-label => gui_window->gui_jchar('語の取捨選択'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::dictionary->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
@@ -230,7 +219,7 @@ sub make{
 		$self->{m_b1_hukugo_te} = $f_hukugo->command(
 				-label => gui_window->gui_jchar('TermExtractを利用'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					my $found = 1;
 					eval "require TermExtract::Calc_Imp"  or $found = 0;
 					eval "require TermExtract::Chasen"    or $found = 0;
@@ -245,16 +234,16 @@ sub make{
 						);
 						return 0;
 					}
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{m_b1_hukugo} = $f_hukugo->command(
 				-label => gui_window->gui_jchar('茶筌による連結'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					$self->mc_hukugo;
-				})},
+				},
 				-state => 'disable'
 			);
 
@@ -263,9 +252,9 @@ sub make{
 		$self->{m_b3_check} = $f->command(
 				-label => gui_window->gui_jchar('語の抽出結果を確認'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::morpho_check->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
@@ -285,23 +274,12 @@ sub make{
 			-tearoff=>'no'
 		);
 
-		#$self->{t_word_list} = $f3->command(
-		#		-label => gui_window->gui_jchar('抽出語リスト - 品詞別・出現回数順'),
-		#		-font => "TKFN",
-		#		-command => sub {$mw->after(10,sub{
-		#			my $target = $::project_obj->file_TempCSV;
-		#			mysql_words->csv_list($target);
-		#			gui_OtherWin->open($target);
-		#		})},
-		#		-state => 'disable'
-		#	);
-
 		$self->{t_word_list_cf} = $f3->command(
 				-label => gui_window->gui_jchar('抽出語リスト'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_list->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
@@ -314,27 +292,27 @@ sub make{
 		$self->{t_word_freq} = $f_wd_stats->command(
 				-label => gui_window->gui_jchar('出現回数の分布'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_freq->open->count;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{t_word_df_freq} = $f_wd_stats->command(
 				-label => gui_window->gui_jchar('文書数の分布'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_df_freq->open->count;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{t_word_tf_df} = $f_wd_stats->command(
 				-label => gui_window->gui_jchar('出現回数ｘ文書数のプロット'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_tf_df->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_word_tf_df' if $::config_obj->R;
@@ -344,27 +322,27 @@ sub make{
 		$self->{t_word_search} = $f3->command(
 				-label => gui_window->gui_jchar('抽出語検索'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_search->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{t_word_conc} = $f3->command(
 				-label => gui_window->gui_jchar('KWICコンコーダンス'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_conc->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{t_word_ass} = $f3->command(
 				-label => gui_window->gui_jchar('関連語探索'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_ass->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
@@ -373,9 +351,9 @@ sub make{
 		$self->{t_word_corresp} = $f3->command(
 				-label => gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_corresp->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_word_corresp' if $::config_obj->R;
@@ -383,9 +361,9 @@ sub make{
 		$self->{t_word_mds} = $f3->command(
 				-label => gui_window->gui_jchar('多次元尺度構成法'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_mds->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_word_mds' if $::config_obj->R;
@@ -393,9 +371,9 @@ sub make{
 		$self->{t_word_cls} = $f3->command(
 				-label => gui_window->gui_jchar('階層的クラスター分析'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_cls->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_word_cls' if $::config_obj->R;
@@ -403,9 +381,9 @@ sub make{
 		$self->{t_word_netgraph} = $f3->command(
 				-label => gui_window->gui_jchar('共起ネットワーク'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::word_netgraph->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_word_netgraph' if $::config_obj->R;
@@ -419,18 +397,18 @@ sub make{
 		$self->{t_doc_search} = $f8->command(
 				-label => gui_window->gui_jchar('文書検索'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::doc_search->open;
-				})},
+				},
 				-state => 'disable'
 			);
 
 		$self->{t_doc_cls} = $f8->command(
 				-label => gui_window->gui_jchar('クラスター分析'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::doc_cls->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_doc_cls' if $::config_obj->R;
@@ -444,18 +422,18 @@ sub make{
 		$self->{t_bayes_learn} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('外部変数から学習'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 				gui_window::bayes_learn->open;
-			})},
+			},
 			-state => 'disable'
 		);
 
 		$self->{t_bayes_predict} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('学習結果を用いた自動分類'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 				gui_window::bayes_predict->open;
-			})},
+			},
 			-state => 'disable'
 		);
 
@@ -464,18 +442,18 @@ sub make{
 		$self->{t_bayes_view} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('学習結果ファイルの内容を確認'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 				$self->mc_view_knb;
-			})},
+			},
 			-state => 'disable'
 		);
 
 		$self->{t_bayes_view_log} = $self->{t_cas_bayes}->command(
 			-label => gui_window->gui_jchar('分類ログファイルの内容を確認'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 				$self->mc_view_nbl;
-			})},
+			},
 			-state => 'disable'
 		);
 
@@ -491,25 +469,25 @@ sub make{
 			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
 				-label => gui_window->gui_jchar("CSVファイル"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::morpho_crossout::csv->open;
-				})},
+				},
 			);
 
 			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
 				-label => gui_window->gui_jchar("SPSSファイル"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::morpho_crossout::spss->open;
-				})},
+				},
 			);
 
 			$self->{m_b3_crossout_tab} = $self->{m_b3_crossout}->command(
 				-label => gui_window->gui_jchar("タブ区切り"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::morpho_crossout::tab->open;
-				})},
+				},
 			);
 
 			$self->{m_b3_crossout}->separator;
@@ -517,9 +495,9 @@ sub make{
 			$self->{m_b3_crossout_var} = $self->{m_b3_crossout}->command(
 				-label => gui_window->gui_jchar("不定長CSV （WordMiner）"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::morpho_crossout::var->open;
-				})},
+				},
 			);
 
 		$self->{m_b3_contxtout} = $f8->cascade(
@@ -532,25 +510,25 @@ sub make{
 			$self->{m_b3_contxtout_csv} = $self->{m_b3_contxtout}->command(
 				-label => gui_window->gui_jchar("CSVファイル"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::contxt_out::csv->open;
-				})},
+				},
 			);
 
 			$self->{m_b3_contxtout_spss} = $self->{m_b3_contxtout}->command(
 				-label => gui_window->gui_jchar("SPSSファイル"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::contxt_out::spss->open;
-				})},
+				},
 			);
 
 			$self->{m_b3_contxtout_tab} = $self->{m_b3_contxtout}->command(
 				-label => gui_window->gui_jchar("タブ区切り"),
 				-font  => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::contxt_out::tab->open;
-				})},
+				},
 			);
 
 	my $f5 = $f->cascade(
@@ -562,36 +540,36 @@ sub make{
 		$self->{t_cod_count} = $f5->command(
 			-label => gui_window->gui_jchar('単純集計'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::cod_count->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
 		$self->{t_cod_tab} = $f5->command(
 			-label => gui_window->gui_jchar('章・節・段落ごとの集計'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::cod_tab->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
 		$self->{t_cod_outtab} = $f5->command(
 			-label => gui_window->gui_jchar('外部変数とのクロス集計'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::cod_outtab->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
 		$self->{t_cod_jaccard} = $f5->command(
 			-label => gui_window->gui_jchar('類似度行列'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::cod_jaccard->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
@@ -600,9 +578,9 @@ sub make{
 		$self->{t_cod_corresp} = $f5->command(
 				-label => gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::cod_corresp->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_corresp' if $::config_obj->R;
@@ -616,9 +594,9 @@ sub make{
 		$self->{t_cod_mds} = $f5->command(
 				-label => gui_window->gui_jchar('多次元尺度構成法'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::cod_mds->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_mds' if $::config_obj->R;
@@ -626,9 +604,9 @@ sub make{
 		$self->{t_cod_cls} = $f5->command(
 				-label => gui_window->gui_jchar('階層的クラスター分析'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::cod_cls->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_cls' if $::config_obj->R;
@@ -636,9 +614,9 @@ sub make{
 		$self->{t_cod_netg} = $f5->command(
 				-label => gui_window->gui_jchar('共起ネットワーク'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					gui_window::cod_netg->open;
-				})},
+				},
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_netg' if $::config_obj->R;
@@ -654,27 +632,27 @@ sub make{
 			$self->{t_cod_out_csv} = $self->{t_cod_out}->command(
 				-label => gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::cod_out::csv->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
 			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
 				-label => gui_window->gui_jchar('SPSSファイル'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::cod_out::spss->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
 			$self->{t_cod_out_tab} = $self->{t_cod_out}->command(
 				-label => gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::cod_out::tab->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
@@ -683,9 +661,9 @@ sub make{
 			$self->{t_cod_out_var} = $self->{t_cod_out}->command(
 				-label => gui_window->gui_jchar('不定長CSV （WordMiner）'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::cod_out::var->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
@@ -706,27 +684,27 @@ sub make{
 			$self->{t_out_read_csv} = $self->{t_out_read}->command(
 				-label => gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::outvar_read::csv->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
 			$self->{t_out_read_tab} = $self->{t_out_read}->command(
 				-label => gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 						gui_window::outvar_read::tab->open;
-					})},
+					},
 				-state => 'disable'
 			);
 
 		$self->{t_out_list} = $f_out_var->command(
 			-label => gui_window->gui_jchar('変数リスト・値ラベル'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::outvar_list->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
@@ -739,18 +717,18 @@ sub make{
 		$self->{t_txt_pickup} = $f6->command(
 			-label => gui_window->gui_jchar('部分テキストの取り出し'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::txt_pickup->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
 		$self->{t_txt_html2mod} = $f6->command(
 			-label => gui_window->gui_jchar('HTMLからCSVに変換'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 					gui_window::txt_html2csv->open;
-				})},
+				},
 			-state => 'disable'
 		);
 
@@ -796,9 +774,9 @@ sub make{
 		my $tmp_menu = $mother->command(
 				-label => gui_window->gui_jchar($conf->{name}),
 				-font => "TKFN",
-				-command => sub {$mw->after(10,sub{
+				-command => sub{
 					$cu->exec;
-				})},
+				},
 				-state => 'disable'
 		);
 		
@@ -823,9 +801,9 @@ sub make{
 	$self->{t_sql_select} = $f->command(
 			-label => gui_window->gui_jchar('SQL文の実行'),
 			-font => "TKFN",
-			-command => sub {$mw->after(10,sub{
+			-command => sub{
 				gui_window::sql_select->open;
-			})},
+			},
 			-state => 'disable'
 		);
 
@@ -850,32 +828,22 @@ sub make{
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
-			-command => sub{ $mw->after
-				(
-					10,
-					sub { gui_OtherWin->open('khcoder_manual.pdf'); }
-				);
-			},
+			-command => sub { gui_OtherWin->open('khcoder_manual.pdf'); },
 		);
 		
 		$msg = gui_window->gui_jchar('最新情報（Web）','euc');
 		$f->command(
 			-label => $msg,
 			-font => "TKFN",
-			-command =>sub{ $mw->after
-				(
-					10,
-					sub {
+			-command => sub {
 					 gui_OtherWin->open('http://khc.sourceforge.net');
-					}
-				);
-			},
+					},
 		);
 		
 		$msg = gui_window->gui_jchar('KH Coderについて','euc');
 		$f->command(
 			-label => $msg,
-			-command => sub{ $mw->after(10, sub{gui_window::about->open;});},
+			-command => sub{gui_window::about->open;},
 			-font => "TKFN",
 		);
 
@@ -884,19 +852,19 @@ sub make{
 	
 	$mw->bind(
 		'<Control-Key-o>',
-		sub{ $mw->after(10,sub{gui_window::project_open->open;});}
+		sub{gui_window::project_open->open;}
 	);
 	$mw->bind(
 		'<Control-Key-n>',
-		sub{ $mw->after(10,sub{gui_window::project_new->open;});}
+		sub{gui_window::project_new->open;}
 	);
 	$mw->bind(
 		'<Control-Key-v>',
-		sub{ $mw->after(10,sub{gui_window::about->open;});}
+		sub{gui_window::about->open;}
 	);
 	$mw->bind(
 		'<Control-Key-w>',
-		sub{ $mw->after(10,sub{$self->mc_close_project;});}
+		sub{$self->mc_close_project;}
 	);
 
 	bless $self, $class;

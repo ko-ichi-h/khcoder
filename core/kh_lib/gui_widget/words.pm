@@ -137,7 +137,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->{hinshi_obj}->select_all;});}
+		-command => sub{$self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 
 	$l4->Button(
@@ -145,7 +145,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->{hinshi_obj}->select_default;});}
+		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 
 	$l4->Button(
@@ -153,7 +153,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->{hinshi_obj}->select_none;});}
+		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack(-pady => 2);
 
 	# チェック部分
@@ -177,7 +177,7 @@ sub _new{
 		-text => gui_window->gui_jchar('チェック'),
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $self->parent->after(10,sub{$self->check;});}
+		-command => sub{$self->check;}
 	)->pack(-side => 'left', -padx => 2);
 
 	$self->{ent_check} = $cf->Entry(

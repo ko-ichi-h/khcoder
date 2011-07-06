@@ -63,20 +63,15 @@ sub _new{
 	$self->{bttn_details_print} = $fr_act0->Button(
 		-text => $self->gui_jchar('画面に表示'),
 		-font => "TKFN",
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$text_widget->insert(
-						'end',
-						gui_window->gui_jchar(
-							'■■'.$self->{dacheck_obj}->{repo_full}."\n",
-							'euc'
-						)
-					);
-					$text_widget->yview(moveto => 1);
-				}
+		-command => sub {
+			$text_widget->insert(
+				'end',
+				gui_window->gui_jchar(
+					'■■'.$self->{dacheck_obj}->{repo_full}."\n",
+					'euc'
+				)
 			);
+			$text_widget->yview(moveto => 1);
 		}
 	)->pack(-anchor=>'w', -side => 'left',-padx => 1);
 
@@ -84,13 +79,8 @@ sub _new{
 		-text => $self->gui_jchar('ファイルに保存'),
 		-font => "TKFN",
 		#-width => 8,
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->save();
-				}
-			);
+		-command => sub {
+			$self->save();
 		}
 	)->pack(-anchor=>'w', -side => 'left', -padx => 1);
 
@@ -103,13 +93,8 @@ sub _new{
 		-font => "TKFN",
 		#-width => 8,
 		-state => 'disabled',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->edit();
-				}
-			);
+		-command => sub {
+			$self->edit();
 		}
 	)->pack(-anchor=>'w', -side => 'left');
 
@@ -117,13 +102,8 @@ sub _new{
 		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->close();
-				}
-			);
+		-command => sub {
+			$self->close();
 		}
 	)->pack(-anchor => 'c',-pady => '0');
 	$self->{bt_exec}->configure(-state => 'normal')

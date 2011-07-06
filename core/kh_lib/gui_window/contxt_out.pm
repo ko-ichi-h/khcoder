@@ -177,14 +177,14 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj2}->select_all;});}
+		-command => sub{$self->{hinshi_obj2}->select_all;}
 	)->pack(-pady => 3);
 	$r4->Button(
 		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->{hinshi_obj2}->select_none;});}
+		-command => sub{$self->{hinshi_obj2}->select_none;}
 	)->pack();
 
 	$right->Label(
@@ -200,7 +200,7 @@ sub _new{
 		-text => $self->gui_jchar('チェック'),
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->check2;});}
+		-command => sub{$self->check2;}
 	)->pack(-side => 'left', -padx => 2);
 	$self->{ent_check2} = $cf2->Entry(
 		-font       => "TKFN",
@@ -233,14 +233,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$bf->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{
+		-command => sub{
 			$self->check or return;
 			my $file = $self->file_name or return;
 			my $ans = $self->win_obj->messageBox(
@@ -258,7 +258,7 @@ sub _new{
 			$self->go($file);
 			$w->end;
 			$self->close;
-		});}
+		}
 	)->pack(-side => 'right');
 
 	return $self;

@@ -49,7 +49,7 @@ sub _new{
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator => 0,
-		-command            => sub{$wmw->after(10,sub{$self->unselect;});},
+		-command            => sub{$self->unselect;},
 		-highlightthickness => 0,
 		-columns            => 1,
 		-borderwidth        => 0,
@@ -117,25 +117,20 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{
-			$wmw->after(10,sub{$self->close;})
-		}
+		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $wmw->Button(
 		-text => 'OK',
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{
-			$wmw->after(10,sub{$self->save;})
-		}
+		-command => sub{$self->save;}
 	)->pack(-anchor=>'e',-side => 'right');
 
 	$self->{t1} = $t1;
 	$self->{t2} = $t2;
 	$self->{hlist} = $hlist;
 	
-	#$wmw->after(10,sub{$self->_fill_in;});
 	$self->_fill_in;
 
 	return $self;

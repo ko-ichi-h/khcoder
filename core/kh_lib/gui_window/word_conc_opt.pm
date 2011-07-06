@@ -61,7 +61,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{pos1},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 	
 	$f2->Label(
@@ -117,7 +117,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{pos2},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 
 	$f3->Label(
@@ -173,7 +173,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{pos3},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 
 	$f4->Label(
@@ -226,14 +226,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->save;});}
+		-command => sub{$self->save;}
 	)->pack(-side => 'right');
 	
 	return $self;

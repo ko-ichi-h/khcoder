@@ -34,22 +34,17 @@ sub start{
 		-text => $self->gui_jchar('Ê»¹ç¿å½à'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $self->win_obj->after
-			(
-				10,
-				sub {
-					if ($::main_gui->if_opened('w_word_cls_height')){
-						$::main_gui->get('w_word_cls_height')->renew(
-							$self->{ax}
-						);
-					} else {
-						gui_window::cls_height::word->open(
-							plots => $self->{merges},
-							type  => $self->{ax},
-						);
-					}
-				}
-			);
+		-command => sub {
+			if ($::main_gui->if_opened('w_word_cls_height')){
+				$::main_gui->get('w_word_cls_height')->renew(
+					$self->{ax}
+				);
+			} else {
+				gui_window::cls_height::word->open(
+					plots => $self->{merges},
+					type  => $self->{ax},
+				);
+			}
 		}
 	)->pack(-side => 'left',-padx => 2);
 }

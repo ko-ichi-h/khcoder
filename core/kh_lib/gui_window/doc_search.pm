@@ -103,7 +103,7 @@ sub _new{
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
 		-text    => $self->gui_jchar('検索'),
-		-command => sub{ $win->after(10,sub{$self->search;});}
+		-command => sub{$self->search;}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
 		$self->{btn_search},
@@ -186,7 +186,7 @@ sub _new{
 		-font    => "TKFN",
 		-text    => $self->gui_jchar('コピー'),
 		-width   => 8,
-		-command => sub{ $win->after(10,sub{$self->copy;});},
+		-command => sub{$self->copy;},
 		-borderwidth => 1
 	)->pack(-side => 'left');
 
@@ -204,7 +204,7 @@ sub _new{
 		-font    => "TKFN",
 		-width   => 8,
 		-text    => $self->gui_jchar('文書表示'),
-		-command => sub{ $win->after(10,sub{$self->view_doc;});},
+		-command => sub{$self->view_doc;},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
 

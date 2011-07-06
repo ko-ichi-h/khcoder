@@ -38,7 +38,6 @@ sub _new{
 		-scrollbars=> 'osoe',
 		-header => 1,
 		-width => 30,
-		#-command => sub{ $mw->after(10,sub{$self->_open;});},
 		-itemtype => 'text',
 		-font => 'TKFN',
 		-columns => 2,
@@ -54,7 +53,7 @@ sub _new{
 	$lf->Button(
 		-text => $self->gui_jchar('選択した言葉を削除'),
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->delete;});}
+		-command => sub{$self->delete;}
 	)->pack(-anchor => 'e');
 
 	# 追加用フレーム
@@ -101,14 +100,14 @@ sub _new{
 	$lf2->Button(
 		-text => $self->gui_jchar('追加'),
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->add;});}
+		-command => sub{$self->add;}
 	)->pack(-anchor => 'e');
 
 	$win->Button(
 		-text => $self->gui_jchar('閉じる'),
 		#-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-anchor => 'c',);
 	
 	$self->{list}    = $plis;

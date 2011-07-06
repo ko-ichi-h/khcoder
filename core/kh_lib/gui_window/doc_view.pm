@@ -53,14 +53,10 @@ sub _new{
 		-text => $self->gui_jchar('直前の文書'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $mw->after
-			(10,
-				sub {
-					my $id = $self->{doc_id};
-					--$id;
-					$self->near($id);
-				}
-			);
+		-command => sub {
+			my $id = $self->{doc_id};
+			--$id;
+			$self->near($id);
 		}
 	)->pack(-side => 'left',-pady => '0');
 
@@ -68,14 +64,10 @@ sub _new{
 		-text => $self->gui_jchar('直後の文書'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $mw->after
-			(10,
-				sub {
-					my $id = $self->{doc_id};
-					++$id;
-					$self->near($id);
-				}
-			);
+		-command => sub {
+			my $id = $self->{doc_id};
+			++$id;
+			$self->near($id);
 		}
 	)->pack(-side => 'left',-pady => '0');
 
@@ -88,26 +80,22 @@ sub _new{
 		-text => $self->gui_jchar('前の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $mw->after
-			(10,
-				sub {
-					my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->prev;
-					if ( ! defined($doc_id) && $hyosobun_id <= 0){
-						return;
-					}
-					$self->{foot} = $foot;
-					$self->{doc} = mysql_getdoc->get(
-						hyosobun_id => $hyosobun_id,
-						doc_id      => $doc_id,
-						w_search    => $self->{w_search},
-						w_force     => $self->{w_force},
-						w_other     => $w,
-						tani        => $self->{tani},
-					);
-					$self->{doc_id} = $self->{doc}->{doc_id};
-					$self->_view_doc($self->{doc});
-				}
+		-command => sub {
+			my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->prev;
+			if ( ! defined($doc_id) && $hyosobun_id <= 0){
+				return;
+			}
+			$self->{foot} = $foot;
+			$self->{doc} = mysql_getdoc->get(
+				hyosobun_id => $hyosobun_id,
+				doc_id      => $doc_id,
+				w_search    => $self->{w_search},
+				w_force     => $self->{w_force},
+				w_other     => $w,
+				tani        => $self->{tani},
 			);
+			$self->{doc_id} = $self->{doc}->{doc_id};
+			$self->_view_doc($self->{doc});
 		}
 	)->pack(-side => 'left',-pady => '0');
 
@@ -115,26 +103,22 @@ sub _new{
 		-text => $self->gui_jchar('次の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $mw->after
-			(10,
-				sub {
-					my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->next;
-					if ( ! defined($doc_id) && $hyosobun_id <= 0){
-						return;
-					}
-					$self->{foot} = $foot;
-					$self->{doc} = mysql_getdoc->get(
-						hyosobun_id => $hyosobun_id,
-						doc_id      => $doc_id,
-						w_search    => $self->{w_search},
-						w_force     => $self->{w_force},
-						w_other     => $w,
-						tani        => $self->{tani},
-					);
-					$self->{doc_id} = $self->{doc}->{doc_id};
-					$self->_view_doc($self->{doc});
-				}
+		-command => sub {
+			my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->next;
+			if ( ! defined($doc_id) && $hyosobun_id <= 0){
+				return;
+			}
+			$self->{foot} = $foot;
+			$self->{doc} = mysql_getdoc->get(
+				hyosobun_id => $hyosobun_id,
+				doc_id      => $doc_id,
+				w_search    => $self->{w_search},
+				w_force     => $self->{w_force},
+				w_other     => $w,
+				tani        => $self->{tani},
 			);
+			$self->{doc_id} = $self->{doc}->{doc_id};
+			$self->_view_doc($self->{doc});
 		}
 	)->pack(-side => 'left',-pady => '0');
 
@@ -147,12 +131,8 @@ sub _new{
 		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(10,
-				sub {
-					$self->close;
-				}
-			);
+		-command => sub {
+			$self->close;
 		}
 	)->pack(-side => 'right',-pady => '0');
 
@@ -165,13 +145,9 @@ sub _new{
 		-text => $self->gui_jchar('強調'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(10,
-				sub {
-					gui_window::force_color->open(
-						parent => $self
-					);
-				}
+		-command => sub {
+			gui_window::force_color->open(
+				parent => $self
 			);
 		}
 	)->pack(-side => 'right',-pady => '0', -padx => 2);

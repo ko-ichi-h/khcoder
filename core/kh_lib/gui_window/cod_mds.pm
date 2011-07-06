@@ -116,14 +116,14 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->select_all;});}
+		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
 		-text => $self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->select_none;});}
+		-command => sub{$self->select_none;}
 	)->pack();
 
 	$lf->Label(
@@ -269,7 +269,7 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $f3->Button(
@@ -277,7 +277,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
-		-command => sub{ $mw->after(10,sub{$self->_calc;});}
+		-command => sub{$self->_calc;}
 	)->pack(-side => 'right');
 
 	$self->read_cfile;
@@ -314,9 +314,7 @@ sub read_cfile{
 		my $c = $self->{hlist}->Checkbutton(
 			-text     => gui_window->gui_jchar($i->name,'euc'),
 			-variable => \$self->{checks}[$row]{check},
-			-command  => sub{ 
-				$self->win_obj->after(10,sub{ $self->check_selected_num; });
-			},
+			-command  => sub{ $self->check_selected_num; },
 			-anchor => 'w',
 		);
 		

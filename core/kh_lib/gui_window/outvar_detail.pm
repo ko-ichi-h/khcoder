@@ -57,7 +57,7 @@ sub _new{
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-width       => 4,
-		-command     => sub{ $mw->after(10,sub {$self->v_docs;}); }
+		-command     => sub {$self->v_docs;}
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
 
 	$wmw->Balloon()->attach(
@@ -71,7 +71,7 @@ sub _new{
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-width       => 4,
-		-command     => sub{ $mw->after(10,sub {$self->v_words;}); }
+		-command     => sub {$self->v_words;}
 	)->pack(-padx => 2, -pady => 2, -anchor => 'c');
 
 	$wmw->Balloon()->attach(
@@ -110,14 +110,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$wmw->Button(
 		-text => $self->gui_jchar('OK'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->_save;});}
+		-command => sub{$self->_save;}
 	)->pack(-side => 'right');
 
 	# 情報の取得と表示

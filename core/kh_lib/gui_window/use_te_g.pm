@@ -32,7 +32,7 @@ sub _new{
 	my $sbutton = $fra4e->Button(
 		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
-		-command => sub{ $self->{win_obj}->after(10,sub{$self->search;});} 
+		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $self->{win_obj}->Balloon();
@@ -100,14 +100,14 @@ sub _new{
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $self->{win_obj}->after(10,sub {gui_hlist->copy($self->{list});});} 
+		-command => sub {gui_hlist->copy($self->{list});}
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
 		-text => $self->gui_jchar('全複合語のリスト'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $self->{win_obj}->after(10,sub {$self->open_full_list;});} 
+		-command => sub {$self->open_full_list;}
 	)->pack(-side => 'left');
 	
 	$self->{list}  = $lis;

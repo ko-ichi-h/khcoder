@@ -58,11 +58,7 @@ sub __new{
 	$self->{btn1} = $fra1->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub{ $mw->after
-			(10,
-				sub { $self->gui_get_exe( $self->{entry1} ); }
-			);
-		}
+		-command => sub { $self->gui_get_exe( $self->{entry1} ); }
 	)->pack(-padx => '2',-side => 'right');
 
 	
@@ -97,11 +93,7 @@ sub __new{
 	$self->{btn2} = $fra2->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub{ $mw->after
-			(10,
-				sub { $self->gui_get_exe( $self->{entry2} ); }
-			);
-		}
+		-command => sub { $self->gui_get_exe( $self->{entry2} ); }
 	)->pack(-padx => '2',-side => 'right');
 	
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
@@ -118,21 +110,14 @@ sub __new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
-		-command => sub{
-			$inis->after(10,sub{$self->close;})
-		}
+		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
 
 	$inis->Button(
 		-text  => 'OK',
 		-font  => 'TKFN',
 		-width => 8,
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {$self->ok }
-			);
-		}
+		-command => sub {$self->ok;}
 	)->pack(-anchor => 'e',-side => 'right',  -pady => 2);
 
 	# 文字化け回避用バインド

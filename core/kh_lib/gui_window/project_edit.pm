@@ -44,7 +44,7 @@ sub _new{
 		-text => $self->gui_jchar('参照'),
 		-font => "TKFN",
 		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->_sansyo;});},
+		-command => sub{$self->_sansyo;},
 		-state => 'disable'
 	)->pack(-side => 'right',-padx => 2);
 
@@ -79,14 +79,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->close();});}
+		-command => sub{$self->close();}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $npro->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->_edit;});},
+		-command => sub{$self->_edit;},
 	)->pack(-side => 'right');
 
 	# ENTRYのバインド

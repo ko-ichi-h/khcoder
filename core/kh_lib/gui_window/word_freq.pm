@@ -67,7 +67,7 @@ sub _new{
 		-text => $self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list2);});} 
+		-command => sub {gui_hlist->copy($self->list2);}
 	)->pack(-side => 'left',-padx => 5);
 
 	$self->win_obj->bind(
@@ -84,9 +84,9 @@ sub _new{
 		-text => $self->gui_jchar('プロット'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {
+		-command => sub {
 			$self->plot;
-		});} 
+		}
 	)->pack(-side => 'left');
 	
 	unless ($::config_obj->R){
@@ -97,14 +97,14 @@ sub _new{
 		-text => $self->gui_jchar('再計算'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->count;});} 
+		-command => sub {$self->count;}
 	)->pack(-side => 'left',-padx => 5);
 
 	$wmw->Button(
 		-text => $self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->close;});} 
+		-command => sub {$self->close;}
 	)->pack(-side => 'right');
 
 

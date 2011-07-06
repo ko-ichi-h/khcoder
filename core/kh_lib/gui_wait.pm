@@ -77,6 +77,7 @@ sub end{
 	}
 	
 	$win->unShow;
+	return 1;
 }
 
 

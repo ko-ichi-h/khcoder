@@ -150,7 +150,7 @@ sub make{
 		-font               => 'TKFN',
 		-selectmode         => 'none',
 		-indicator          => 0,
-		-command            => sub{$mw->after(10,sub{$self->unselect;});},
+		-command            => sub{$self->unselect;},
 		-highlightthickness => 0,
 		-columns            => 2,
 		-borderwidth        => 2,

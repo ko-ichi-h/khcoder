@@ -46,7 +46,7 @@ sub _new{
 	$fra4e->Button(
 		-text    => $self->gui_jchar('参照'),
 		-font    => "TKFN",
-		-command => sub {$mw->after(10,sub { $self->file; });},
+		-command => sub { $self->file; },
 	)->pack(-side => 'left');
 	
 	$self->{entry} = $fra4e->Entry(
@@ -92,14 +92,14 @@ sub _new{
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
+		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->_calc;});}
+		-command => sub{$self->_calc;}
 	)->pack(-side => 'right');
 	
 	return $self;

@@ -64,7 +64,7 @@ sub _new{
 		-text    => $self->gui_jchar('½¸·×'),
 		-font    => "TKFN",
 		-width   => 8,
-		-command => sub{ $mw->after(10,sub{$self->_calc;});}
+		-command => sub{$self->_calc;}
 	)->pack( -anchor => 'e', -side => 'right');
 	
 	#------------------#
@@ -104,7 +104,7 @@ sub _new{
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub { $self->copy; });}
+		-command => sub { $self->copy; }
 	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
 
 	$self->win_obj->bind(

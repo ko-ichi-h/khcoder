@@ -48,14 +48,9 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
+		-command => sub {
 					$self->close();
 				}
-			);
-		}
 	)->pack(-side => 'right');
 
 	$f1->Button(
@@ -63,14 +58,9 @@ sub _new{
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
+		-command => sub {
 					$self->save();
 				}
-			);
-		}
 	)->pack(-side => 'right', -padx => 4);
 
 	$self->{images} = $args{images};

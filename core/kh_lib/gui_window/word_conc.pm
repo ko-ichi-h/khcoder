@@ -82,14 +82,14 @@ sub _new{
 		-text => $self->gui_jchar('追加条件'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_window::word_conc_opt->open;});} 
+		-command => sub{ gui_window::word_conc_opt->open;}
 	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
 		-text => $self->gui_jchar('検索'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{ $mw->after(10,sub{$self->search;});} 
+		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $wmw->Balloon();
@@ -128,7 +128,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{sort1},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 
 	$fra4h->Label(
@@ -142,7 +142,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{sort2},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 
 	$fra4h->Label(
@@ -156,7 +156,7 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{sort3},
 		width    => 6,
-		command  => sub{ $mw->after(10,sub{$self->_menu_check;});} 
+		command  => sub{$self->_menu_check;}
 	);
 	$self->_menu_check;
 
@@ -206,7 +206,7 @@ sub _new{
 		-selectbackground => 'cyan',
 		-selectmode       => 'extended',
 		-height           => 20,
-		-command          => sub {$mw->after(10,sub{$self->view_doc;});}
+		-command          => sub{$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{copy_btn} = $fra5->Button(
@@ -214,7 +214,7 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {gui_hlist->copy($self->list);});} 
+		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
 
 	$self->win_obj->bind(
@@ -232,7 +232,7 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after(10,sub {$self->view_doc;});} 
+		-command => sub {$self->view_doc;}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
 	$fra5->Label(
@@ -288,7 +288,7 @@ sub _new{
 	$self->{btn_coloc} = $fra5->Button(
 		-text        => $self->gui_jchar('集計','euc'),
 		-font        => "TKFN",
-		-command     => sub{ $mw->after(10,sub{$self->coloc;});},
+		-command     => sub{$self->coloc;},
 		-borderwidth => 1,
 		-state       => 'disable'
 	)->pack(-side => 'right');
@@ -296,7 +296,7 @@ sub _new{
 	$self->{btn_save} = $fra5->Button(
 		-text        => $self->gui_jchar('保存','euc'),
 		-font        => "TKFN",
-		-command     => sub{ $mw->after(10,sub{$self->save;});},
+		-command     => sub{$self->save;},
 		-borderwidth => 1,
 		-state       => 'disable'
 	)->pack(-side => 'right',-padx => 2);

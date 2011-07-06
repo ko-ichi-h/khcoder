@@ -41,18 +41,13 @@ sub _new{
 		-text => $self->gui_jchar('<< 最初50'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->{range} = 'first';
-					$self->renew;
-					$self->{btn_first}->configure(-state => 'disabled');
-					$self->{btn_all}->configure(  -state => 'normal'  );
-					$self->{btn_last}->configure( -state => 'normal'  );
-					return $self;
-				}
-			);
+		-command => sub {
+			$self->{range} = 'first';
+			$self->renew;
+			$self->{btn_first}->configure(-state => 'disabled');
+			$self->{btn_all}->configure(  -state => 'normal'  );
+			$self->{btn_last}->configure( -state => 'normal'  );
+			return $self;
 		}
 	)->pack(-side => 'left', -padx => 2);
 
@@ -60,18 +55,13 @@ sub _new{
 		-text => $self->gui_jchar('全体'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->{range} = 'all';
-					$self->renew;
-					$self->{btn_first}->configure(-state => 'normal'  );
-					$self->{btn_all}->configure(  -state => 'disabled');
-					$self->{btn_last}->configure( -state => 'normal'  );
-					return $self;
-				}
-			);
+		-command => sub {
+			$self->{range} = 'all';
+			$self->renew;
+			$self->{btn_first}->configure(-state => 'normal'  );
+			$self->{btn_all}->configure(  -state => 'disabled');
+			$self->{btn_last}->configure( -state => 'normal'  );
+			return $self;
 		}
 	)->pack(-side => 'left', -padx => 2);
 
@@ -80,18 +70,13 @@ sub _new{
 		-font => "TKFN",
 		-borderwidth => '1',
 		-state => 'disabled',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->{range} = 'last';
-					$self->renew;
-					$self->{btn_first}->configure(-state => 'normal'  );
-					$self->{btn_all}->configure(  -state => 'normal'  );
-					$self->{btn_last}->configure( -state => 'disabled');
-					return $self;
-				}
-			);
+		-command => sub {
+			$self->{range} = 'last';
+			$self->renew;
+			$self->{btn_first}->configure(-state => 'normal'  );
+			$self->{btn_all}->configure(  -state => 'normal'  );
+			$self->{btn_last}->configure( -state => 'disabled');
+			return $self;
 		}
 	)->pack(-side => 'left', -padx => 2);
 
@@ -100,14 +85,7 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->close();
-				}
-			);
-		}
+		-command => sub { $self->close(); }
 	)->pack(-side => 'right');
 
 	$f1->Button(
@@ -115,14 +93,7 @@ sub _new{
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
-		-command => sub{ $mw->after
-			(
-				10,
-				sub {
-					$self->save();
-				}
-			);
-		}
+		-command => sub { $self->save(); }
 	)->pack(-side => 'right', -padx => 4);
 
 	return $self;
