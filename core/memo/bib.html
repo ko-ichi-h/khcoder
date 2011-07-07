@@ -150,7 +150,7 @@
 		'	</ul>',
 		'</td></tr>',
 		'<tr><td colspan=2><div align="right">',
-		'	<span class="SMfnb">絞り込みキーワード：</span><input class="SMinp" type="text" id="keyword">&nbsp;',
+		'	<span class="SMfnb">絞り込み：</span><input class="SMinp" type="text" id="keyword">&nbsp;',
 		'	<span id="SearchresultN">&nbsp;</span>',
 		'</div></td></tr>',
 		'</table></center>',
@@ -702,7 +702,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 			n_sele = '0' + n_sele;
 		}
 		
-		var n = "<span class=\"SMfnb\">件数： " + n_sele + "</span>";
+		var n = "<span class=\"SMfnb\">件数：" + n_sele + " / " + n_total + "</span>";
 		
 		document.getElementById('SearchresultN').innerHTML = n;
 		
