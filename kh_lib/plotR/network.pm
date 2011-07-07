@@ -546,10 +546,17 @@ neg_to_zero <- function(nums){
 # vertex.size¤ò·×»»
 if ( use_freq_as_size == 1 ){
 	v_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		v_size <- v_size[var_select==FALSE]
+	}
 	v_size <- v_size / sd(v_size)
 	v_size <- v_size - mean(v_size)
 	v_size <- v_size * 3 + 12 # Ê¬»¶ = 3, Ê¿¶Ñ = 12
 	v_size <- neg_to_zero(v_size)
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		v_size[var_select==FALSE] <- v_size
+		v_size[var_select] <- 15
+	}
 } else {
 	v_size <- 15
 }
@@ -557,6 +564,9 @@ if ( use_freq_as_size == 1 ){
 # vertex.label.cex¤ò·×»»
 if ( use_freq_as_fontsize ==1 ){
 	f_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		f_size <- f_size[var_select==FALSE]
+	}
 	f_size <- f_size / sd(f_size)
 	f_size <- f_size - mean(f_size)
 	f_size <- f_size * 0.2 + cex
@@ -565,6 +575,10 @@ if ( use_freq_as_fontsize ==1 ){
 	  if (f_size[i] < 0.6 ){
 	    f_size[i] <- 0.6
 	  }
+	}
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		f_size[var_select==FALSE] <- f_size
+		f_size[var_select] <- cex
 	}
 } else {
 	f_size <- cex
