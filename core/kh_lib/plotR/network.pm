@@ -610,16 +610,6 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 	v_shape <- rep("circle", length( get.vertex.attribute(n2,"name") ) )
 	v_shape[var_select] <- "square"
 
-	# ノードのサイズ
-	if (length( v_size ) != 1){
-		v_size[var_select] <- 15
-	}
-
-	# ノードのフォントサイズ
-	if (length( f_size ) != 1){
-		f_size[var_select] <- cex
-	}
-
 	# 小さな円で描画している場合のノードサイズ
 	if (smaller_nodes == 1){
 		# ラベルの距離
