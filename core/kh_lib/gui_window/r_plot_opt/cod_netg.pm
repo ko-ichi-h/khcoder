@@ -37,6 +37,12 @@ sub innner{
 	} else {
 		die("cannot get configuration: smaller_nodes\n");
 	}
+	if ($self->{command_f} =~ /com_method <\- "twomode/){
+		$self->{edge_type} = "twomode";
+	} else {
+		$self->{edge_type} = "words";
+	}
+
 
 	if ($edges == 0){
 		$self->{radio} = 'j';
@@ -224,6 +230,7 @@ sub calc{
 	my $wait_window = gui_wait->start;
 	use plotR::network;
 	my $plotR = plotR::network->new(
+		edge_type         => $self->{edge_type},
 		font_size         => $fontsize,
 		plot_size         => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j            => $self->gui_jg( $self->{radio} ),

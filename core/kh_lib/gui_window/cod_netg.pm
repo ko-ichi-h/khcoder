@@ -19,14 +19,14 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
 
-	my $rf = $win->Frame()
-		->pack(-fill => 'both', -expand => 1);
+	#my $rf = $win->Frame()
+	#	->pack(-fill => 'both', -expand => 1);
 
-	my $lf2 = $rf->LabFrame(
+	my $lf2 = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'x', -expand => 0, -anchor => 'n');
 
 	# ルール・ファイル
 	my %pack0 = (
@@ -206,23 +206,6 @@ sub _new{
 	);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	# edge選択
 	$lf2->Label(
 		-text => $self->gui_jchar('描画する共起関係（edge）の絞り込み'),
@@ -367,30 +350,24 @@ sub _new{
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
 			-variable => \$self->{check_rm_open},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
+			#-anchor => 'nw',
+	)->pack(-anchor => 'nw');
 
 	# OK・キャンセル
-	my $f3 = $win->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 2
-	);
-
-	$f3->Button(
+	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
-	)->pack(-side => 'right',-padx => 2);
+	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
-	$self->{ok_btn} = $f3->Button(
+	$self->{ok_btn} = $win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
 		-command => sub{$self->_calc;}
-	)->pack(-side => 'right');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
 	$self->read_cfile;
 	$self->refresh(3);
@@ -577,8 +554,6 @@ sub _calc{
 	chop $r_command;
 	$r_command .= ")\n";
 
-	print "ok1";
-
 	# 見出しの取り出し
 	if (
 		   $self->{radio_type} eq 'twomode'
@@ -587,8 +562,6 @@ sub _calc{
 		my $tani1 = $self->tani;
 		my $tani2 = $self->{var_obj}->var_id;
 		
-		print "t: $tani1, $tani2\n";
-		
 		# 見出しリスト作成
 		my $max = mysql_exec->select("SELECT max(id) FROM $tani2")
 			->hundle->fetch->[0];
@@ -596,8 +569,6 @@ sub _calc{
 		for (my $n = 1; $n <= $max; ++$n){
 			$heads{$n} = Jcode->new(mysql_getheader->get($tani2, $n),'sjis')->euc;
 		}
-
-		print "ok: 1a\n";
 
 		my $sql = '';
 		$sql .= "SELECT $tani2.id\n";
@@ -612,8 +583,6 @@ sub _calc{
 		}
 		$sql .= "ORDER BY $tani1.id \n";
 		
-		print "$sql\n";
-		
 		my $h = mysql_exec->select($sql,1)->hundle;
 
 		$r_command .= "\nv0 <- c(";
@@ -623,7 +592,6 @@ sub _calc{
 		chop $r_command;
 		$r_command .= ")\n";
 		
-		print "ok: 1b\n";
 	}
 
 	# 外部変数の取り出し
@@ -632,8 +600,6 @@ sub _calc{
 		&& $self->{var_obj}->var_id =~ /^[0-9]+$/
 	) {
 		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_obj}->var_id);
-		
-		print "ok: 1c\n";
 		
 		my $sql = '';
 		if ($var_obj->{tani} eq $self->tani){
@@ -687,8 +653,6 @@ sub _calc{
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
-
-	print "ok2";
 
 	use plotR::network;
 	my $plotR = plotR::network->new(
