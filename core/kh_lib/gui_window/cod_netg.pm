@@ -14,18 +14,24 @@ sub _new{
 	$win->title($self->gui_jt('コーディング・共起ネットワーク：オプション'));
 
 	my $lf = $win->LabFrame(
-		-label       => 'Options',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2
-	)->pack(
-		-fill   => 'both',
-		-expand => 1
-	);
+		-label => 'Codes',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+
+	my $rf = $win->Frame()
+		->pack(-fill => 'both', -expand => 1);
+
+	my $lf2 = $rf->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 1);
 
 	# ルール・ファイル
 	my %pack0 = (
 		-anchor => 'w',
-		#-padx => 2,
+		-padx => 2,
 		#-pady => 2,
 		-fill => 'x',
 		-expand => 0,
@@ -134,13 +140,96 @@ sub _new{
 		-padx   => 4,
 	);
 
-	# edge選択
-	$lf->Label(
-		-text => $self->gui_jchar('描画する共起関係（edge）'),
+
+
+
+	# 共起関係の種類
+	$lf2->Label(
+		-text => $self->gui_jchar('共起関係（edge）の種類'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
-	my $f4 = $lf->Frame()->pack(
+	my $f5 = $lf2->Frame()->pack(
+		-fill => 'x',
+		-pady => 1
+	);
+
+	$f5->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	unless ( defined( $self->{radio_type} ) ){
+		$self->{radio_type} = 'words';
+	}
+
+	$f5->Radiobutton(
+		-text             => $self->gui_jchar('語 ― 語'),
+		-font             => "TKFN",
+		-variable         => \$self->{radio_type},
+		-value            => 'words',
+		-command          => sub{ $self->refresh(3);},
+	)->pack(-anchor => 'nw', -side => 'left');
+
+	$f5->Label(
+		-text => ' ',
+		-font => "TKFN",
+	)->pack(-anchor => 'nw', -side => 'left');
+
+	$f5->Radiobutton(
+		-text             => $self->gui_jchar('語 ― 外部変数・見出し'),
+		-font             => "TKFN",
+		-variable         => \$self->{radio_type},
+		-value            => 'twomode',
+		-command          => sub{ $self->refresh(3);},
+	)->pack(-anchor => 'nw');
+
+	my $f6 = $lf2->Frame()->pack(
+		-fill => 'x',
+		-pady => 1
+	);
+
+	$f6->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{var_lab} = $f6->Label(
+		-text => $self->gui_jchar('外部変数・見出し：'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{var_obj} = gui_widget::select_a_var->open(
+		parent        => $f6,
+		tani          => $self->tani,
+		show_headings => 1,
+	);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	# edge選択
+	$lf2->Label(
+		-text => $self->gui_jchar('描画する共起関係（edge）の絞り込み'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w');
+
+	my $f4 = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
@@ -191,13 +280,13 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	# Edgeの太さ・Nodeの大きさ
-	$lf->Checkbutton(
+	$lf2->Checkbutton(
 			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
 			-variable => \$self->{check_use_weight_as_width},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
+	$self->{wc_use_freq_as_size} = $lf2->Checkbutton(
 			-text     => $self->gui_jchar('出現数の多いコードほど大きい円で描画','euc'),
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor   => 'w',
@@ -207,7 +296,7 @@ sub _new{
 			},
 	)->pack(-anchor => 'w');
 
-	my $fontsize_frame = $lf->Frame()->pack(
+	my $fontsize_frame = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 0,
 		-padx => 0,
@@ -225,7 +314,7 @@ sub _new{
 			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
-	$self->{wc_smaller_nodes} = $lf->Checkbutton(
+	$self->{wc_smaller_nodes} = $lf2->Checkbutton(
 			-text     => $self->gui_jchar('すべてのコードを小さめの円で描画','euc'),
 			-variable => \$self->{check_smaller_nodes},
 			-anchor   => 'w',
@@ -236,7 +325,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
+	my $ff = $lf2->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4,
@@ -422,6 +511,15 @@ sub refresh{
 		push @nor, $self->{wc_use_freq_as_size};
 	}
 
+	if ( $self->{radio_type} eq 'words' ){
+		push @dis, $self->{var_lab};
+		$self->{var_obj}->disable;
+	} else {
+		push @nor, $self->{var_lab};
+		$self->{var_obj}->enable;
+	}
+
+
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal');
 	}
@@ -466,10 +564,7 @@ sub _calc{
 		return 0;
 	}
 
-	# データ整理
-	$r_command .= "\n";
-	$r_command .= "d <- t(d)\n";
-	$r_command .= "row.names(d) <- c(";
+	$r_command .= "\ncolnames(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
 		my $name = $i->{name};
 		substr($name, 0, 2) = ''
@@ -481,13 +576,123 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+
+	print "ok1";
+
+	# 見出しの取り出し
+	if (
+		   $self->{radio_type} eq 'twomode'
+		&& $self->{var_obj}->var_id =~ /h[1-5]/
+	) {
+		my $tani1 = $self->tani;
+		my $tani2 = $self->{var_obj}->var_id;
+		
+		print "t: $tani1, $tani2\n";
+		
+		# 見出しリスト作成
+		my $max = mysql_exec->select("SELECT max(id) FROM $tani2")
+			->hundle->fetch->[0];
+		my %heads = ();
+		for (my $n = 1; $n <= $max; ++$n){
+			$heads{$n} = Jcode->new(mysql_getheader->get($tani2, $n),'sjis')->euc;
+		}
+
+		print "ok: 1a\n";
+
+		my $sql = '';
+		$sql .= "SELECT $tani2.id\n";
+		$sql .= "FROM   $tani1, $tani2\n";
+		$sql .= "WHERE \n";
+		foreach my $i ("h1","h2","h3","h4","h5"){
+			$sql .= " AND " unless $i eq "h1";
+			$sql .= "$tani1.$i"."_id = $tani2.$i"."_id\n";
+			if ($i eq $tani2){
+				last;
+			}
+		}
+		$sql .= "ORDER BY $tani1.id \n";
+		
+		print "$sql\n";
+		
+		my $h = mysql_exec->select($sql,1)->hundle;
+
+		$r_command .= "\nv0 <- c(";
+		while (my $i = $h->fetch){
+			$r_command .= "\"$heads{$i->[0]}\",";
+		}
+		chop $r_command;
+		$r_command .= ")\n";
+		
+		print "ok: 1b\n";
+	}
+
+	# 外部変数の取り出し
+	if (
+		   $self->{radio_type} eq 'twomode'
+		&& $self->{var_obj}->var_id =~ /^[0-9]+$/
+	) {
+		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_obj}->var_id);
+		
+		print "ok: 1c\n";
+		
+		my $sql = '';
+		if ($var_obj->{tani} eq $self->tani){
+			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+			$sql .= "ORDER BY id";
+		} else {
+			my $tani1 = $self->tani;
+			my $tani2 = $var_obj->{tani};
+			$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
+			$sql .= "FROM   $tani1, $tani2,$var_obj->{table}\n";
+			$sql .= "WHERE \n";
+			foreach my $i ("h1","h2","h3","h4","h5"){
+				$sql .= " AND " unless $i eq "h1";
+				$sql .= "$tani1.$i"."_id = $tani2.$i"."_id\n";
+				if ($i eq $tani2){
+					last;
+				}
+			}
+			$sql .= " AND $tani2.id = $var_obj->{table}.id \n";
+			$sql .= "ORDER BY $tani1.id \n";
+		}
+		
+		$r_command .= "v0 <- c(";
+		my $h = mysql_exec->select($sql,1)->hundle;
+		my $n = 0;
+		while (my $i = $h->fetch){
+			if ( length( $var_obj->{labels}{$i->[0]} ) ){
+				my $t = $var_obj->{labels}{$i->[0]};
+				$t =~ s/"/ /g;
+				$r_command .= "\"$t\",";
+			} else {
+				$r_command .= "\"$i->[0]\",";
+			}
+			++$n;
+		}
+		
+		chop $r_command;
+		$r_command .= ")\n";
+	}
+
+	# 外部変数・見出しデータの統合
+	if ($self->{radio_type} eq 'twomode'){
+		$r_command .= &r_command_concat;
+	}
+
+
+	# データ整理
+	$r_command .= "\n";
+	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
 	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
 	$fontsize /= 100;
 
+	print "ok2";
+
 	use plotR::network;
 	my $plotR = plotR::network->new(
+		edge_type      => $self->gui_jg( $self->{radio_type} ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		n_or_j         => $self->gui_jg( $self->{radio} ),
@@ -543,4 +748,44 @@ sub tani{
 sub win_name{
 	return 'w_cod_netg';
 }
+
+sub r_command_concat{
+	return '
+# 1つの外部変数が入ったベクトルを0-1マトリクスに変換
+mk.dummy <- function(dat){
+	dat  <- factor(dat)
+	cols <- length(levels(dat))
+	ret <- NULL
+	for (i in 1:length( dat ) ){
+		c <- numeric(cols)
+		c[as.numeric(dat)[i]] <- 1
+		ret <- rbind(ret, c)
+	}
+	colnames(ret) <- paste( "<>", levels(dat), sep="" )
+	rownames(ret) <- NULL
+	return(ret)
+}
+v1 <- mk.dummy(v0)
+
+# 抽出語と外部変数を接合
+n_words <- ncol(d)
+d <- cbind(d, v1)
+
+d <- subset(
+	d,
+	v0 != "欠損値" & v0 != "." & v0 != "missing"
+)
+v0 <- NULL
+v1 <- NULL
+
+d <- t(d)
+d <- subset(
+	d,
+	rownames(d) != "<>欠損値" & rownames(d) != "<>." & rownames(d) != "<>missing"
+)
+d <- t(d)
+
+';
+}
+
 1;
