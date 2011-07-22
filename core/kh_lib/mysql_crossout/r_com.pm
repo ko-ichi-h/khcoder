@@ -70,6 +70,8 @@ sub out2{                               # length作製をする
 				}
 				chop $temp;
 				$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+				$current{length_c} = "0" unless length($current{length_c});
+				$current{length_w} = "0" unless length($current{length_w});
 				$length .= "$current{length_c},$current{length_w},";
 				# 初期化
 				%current = ();
