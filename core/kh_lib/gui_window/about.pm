@@ -102,6 +102,18 @@ sub _new{
 		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
 
 	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('MeCab'),
+		url    => 'http://mecab.sourceforge.net/',
+		parent => $fra_r1,
+		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
+	);
+
+	$fra_r1->Label(
+		-text => '+',
+		-font => "TKFN",
+		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+
+	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('MySQL'),
 		url    => 'http://www.mysql.com/',
 		parent => $fra_r1,
