@@ -5,8 +5,8 @@ use Tk;
 
 use gui_jchar;
 use Gui_DragDrop;
-use gui_window::sysconfig::win32::chasen;
-use gui_window::sysconfig::win32::mecab;
+#use gui_window::sysconfig::win32::chasen;
+#use gui_window::sysconfig::win32::mecab;
 
 #------------------#
 #   Windowを開く   #
@@ -58,7 +58,7 @@ sub __new{
 	$self->{btn1} = $fra1->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub { $self->gui_get_exe( $self->{entry1} ); }
+		-command => sub { $self->browse_chasen(); }
 	)->pack(-padx => '2',-side => 'right');
 
 	
@@ -93,7 +93,7 @@ sub __new{
 	$self->{btn2} = $fra2->Button(
 		-text => $self->gui_jchar('参照'),
 		-font => 'TKFN',
-		-command => sub { $self->gui_get_exe( $self->{entry2} ); }
+		-command => sub { $self->browse_mecab(); }
 	)->pack(-padx => '2',-side => 'right');
 	
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
@@ -169,11 +169,9 @@ sub ok{
 
 }
 
-
-# ファイル・オープン・ダイアログ
-sub gui_get_exe{
+# Mecab.exeの参照
+sub browse_mecab{
 	my $self  = shift;
-	my $entry = shift;
 
 	my @types =
 		(["exe files",           [qw/.exe/]],
@@ -182,7 +180,7 @@ sub gui_get_exe{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt($self->open_msg),
+		-title      => $self->gui_jt('Mecab.exeを開いてください'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
@@ -190,16 +188,57 @@ sub gui_get_exe{
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$path = $::config_obj->os_path($path);
-		$entry->delete('0','end');
-		$entry->insert(0,$self->gui_jchar($path));
+		$self->entry2->delete('0','end');
+		$self->entry2->insert(0,$self->gui_jchar($path));
+	}
+}
+
+# Chasen.exeの参照
+sub browse_chasen{
+	my $self  = shift;
+
+	my @types =
+		(["exe files",           [qw/.exe/]],
+		["All files",		'*']
+	);
+	
+	my $path = $self->win_obj->getOpenFile(
+		-filetypes  => \@types,
+		-title      => $self->gui_jt('Chasen.exeを開いてください'),
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
+	);
+	
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+		$self->entry1->delete('0','end');
+		$self->entry1->insert(0,$self->gui_jchar($path));
 	}
 }
 
 # chasenとjumanの切り替え
 sub refine_cj{
 	my $self = shift;
-	bless $self, 'gui_window::sysconfig::win32::'.$self->{c_or_j};
-	$self->gui_switch;
+
+	if ($self->{c_or_j} eq 'chasen'){
+		$self->entry1->configure(-state => 'normal');
+		$self->btn1->configure(-state => 'normal');
+		$self->lb1->configure(-state => 'normal');
+		
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
+	} else {
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+		
+		$self->entry2->configure(-state => 'normal');
+		$self->btn2->configure(-state => 'normal');
+		$self->lb2->configure(-state => 'normal');
+	}
+
 	return $self;
 }
 

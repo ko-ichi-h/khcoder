@@ -6,8 +6,8 @@ use Tk::HList;
 
 use gui_jchar;
 use Gui_DragDrop;
-use gui_window::sysconfig::linux::chasen;
-use gui_window::sysconfig::linux::mecab;
+#use gui_window::sysconfig::linux::chasen;
+#use gui_window::sysconfig::linux::mecab;
 
 #------------------#
 #   Windowを開く   #
@@ -199,8 +199,26 @@ sub __new{
 # chasenとjumanの切り替え
 sub refine_cj{
 	my $self = shift;
-	bless $self, 'gui_window::sysconfig::linux::'.$self->{c_or_j};
-	$self->gui_switch;
+	#bless $self, 'gui_window::sysconfig::linux::'.$self->{c_or_j};
+	#$self->gui_switch;
+
+	if ($self->{c_or_j} eq 'chasen'){
+	$self->entry1->configure(-state => 'normal');
+		$self->btn1->configure(-state => 'normal');
+		$self->lb1->configure(-state => 'normal');
+
+		$self->entry2->configure(-state => 'normal');
+		$self->btn2->configure(-state => 'normal');
+		$self->lb2->configure(-state => 'normal');
+	} else {
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
+	}
 	return $self;
 }
 
