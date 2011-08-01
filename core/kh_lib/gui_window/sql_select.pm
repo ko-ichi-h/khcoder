@@ -8,6 +8,7 @@ use mysql_exec;
 use strict;
 use Tk;
 use Tk::HList;
+use Tk::Adjuster;
 use DBI;
 use Jcode;
 
@@ -25,11 +26,32 @@ sub _new{
 	$win->title($self->gui_jt('SQL文の実行'));
 	#$self->{win_obj} = $win;
 
-	my $lf = $win->LabFrame(
-		-label => 'Entry',
-		-labelside => 'acrosstop',
+	my $lf = $win->Frame(
+		#-label => 'Entry',
+		#-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'x',-expand => 0);
+		-height      => 200,
+	)->pack(-side => 'top', -fill => 'x', -expand => 1);
+
+	my $adj = $win->Adjuster(
+		-widget => $lf,
+		-side   => 'top',
+		#-restore => 0,
+	)->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+
+	my $lf2 = $win->Frame(
+		#-label       => 'Result',
+		#-labelside   => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-side => 'top', -fill => 'both', -expand => 1);
+
+	$lf->Label(
+		-text => 'SQL Statement:'
+	)->pack(-anchor => 'w');
+	
+	$lf2->Label(
+		-text => 'Result:'
+	)->pack(-anchor => 'w');
 
 	my $t = $lf->Scrolled(
 		'Text',
@@ -37,12 +59,17 @@ sub _new{
 		-spacing2 => 0,
 		-spacing3 => 0,
 		-scrollbars=> 'osoe',
-		-height => 12,
+		-height => 10,
 		-width => 48,
 		-wrap => 'none',
 		-font => "TKFN",
 	)->pack(-fill=>'both',-expand=>'yes',-pady => 2);
-	$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
+	#$t->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t]);
+	$t->bind("<Shift-Key-Return>", sub {$self->exec;});
+	$t->bind("Tk::Text", "<Shift-Key-Return>", sub {});
+	$t->bind("Tk::Text", "<Shift-KeyRelease-Return>", sub {});
+	$t->focus;
+	
 	# ドラッグ＆ドロップ
 	$t->DropSite(
 		-dropcommand => [\&Gui_DragDrop::read_TextFile_droped,$t],
@@ -75,12 +102,18 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
-
-	$lf->Button(
+	my $sbutton = $lf->Button(
 		-text    => $self->gui_jchar('実行'),
 		-command => sub {$self->exec;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
+
+	my $blhelp = $win->Balloon();
+	$blhelp->attach(
+		$sbutton,
+		-balloonmsg => '"Shift + Enter" key',
+		-font => "TKFN"
+	);
 
 #----------------#
 #   結果表示部   #
@@ -92,16 +125,12 @@ sub _new{
 #		title       => $self->gui_jchar('SQL文の実行結果'),
 #	);
 
-	my $lf2 = $win->LabFrame(
-		-label       => 'Result',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'both',-expand => 'y');
+
 	my $field = $lf2->Frame()->pack(-fill => 'both', -expand => 1);
 
 	my $list = $field->Scrolled('HList',
 		-scrollbars       => 'osoe',
-		-header           => '1',
+		-header           => '0',
 		-itemtype         => 'text',
 		-font             => 'TKFN',
 		-columns          => '1',
