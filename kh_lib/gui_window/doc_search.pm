@@ -19,23 +19,44 @@ sub _new{
 	my $win = $self->{win_obj};
 	$win->title($self->gui_jt('文書検索'));
 	
+	my $lf = $win->Frame(
+		#-label => 'Search Entry',
+		#-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-side => 'top', -fill => 'x', -expand => 1);
+
+	my $adj = $win->Adjuster(
+		-widget => $lf,
+		-side   => 'top',
+		#-restore => 0,
+	)->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+
+	my $rf = $win->Frame(
+		#-label => 'Result',
+		#-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-side => 'top', -fill => 'both', -expand => 1);
+
+	$lf->Label(
+		-text => 'Search Entry:'
+	)->pack(-anchor => 'w');
+	
+	$rf->Label(
+		-text => 'Result:'
+	)->pack(-anchor => 'w');
+
+
 	#--------------------#
 	#   検索オプション   #
-	
-	my $lf = $win->LabFrame(
-		-label => 'Search Entry',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'x');
 
-	my $left = $lf->Frame()->pack(-side => 'left', -fill => 'x', -expand => 1);
-	my $right = $lf->Frame()->pack(-side => 'right');
+	my $left = $lf->Frame()->pack(-side => 'left', -fill => 'both', -expand => 1);
+	my $right = $lf->Frame()->pack(-side => 'right', -anchor => 'nw');
 	
 	# コード選択
-	$left->Label(
-		-text => $self->gui_jchar('・コード選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w');
+	#$left->Label(
+	#	-text => $self->gui_jchar('・コード選択'),
+	#	-font => "TKFN"
+	#)->pack(-anchor => 'w');
 	
 	$self->{clist} = $left->Scrolled(
 		'HList',
@@ -151,12 +172,6 @@ sub _new{
 
 	#--------------#
 	#   検索結果   #
-	
-	my $rf = $win->LabFrame(
-		-label => 'Result',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'both',-expand => 'yes',-anchor => 'n');
 
 	$self->{rlist} = $rf->Scrolled(
 		'HList',
@@ -172,7 +187,7 @@ sub _new{
 		-selectmode       => 'extended',
 		-height           => 10,
 		-command          => sub {$self->view_doc;}
-	)->pack(-fill =>'both',-expand => 'yes');
+	)->pack(-fill =>'both',-expand => 1);
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
