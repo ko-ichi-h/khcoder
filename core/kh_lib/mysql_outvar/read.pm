@@ -77,8 +77,9 @@ sub save{
 			$msg .= ", " if length($msg);
 			$msg .= $i;
 		}
-		$msg  = "同じ名前の変数が既に読み込まれています：\n$msg\n\n";
-		$msg .= "これらの変数を上書きしますか？";
+		$msg  = "同じ名前の変数がすでに読み込まれています：\n\n$msg\n\n";
+		
+		$msg .= "すでに読み込まれている変数データを破棄し、\n指定したファイル内のデータで上書きしますか？";
 
 		my $ans = $::main_gui->mw->messageBox(
 			-message => gui_window->gui_jchar($msg),

@@ -5,10 +5,10 @@ my $icon;
 
 use strict;
 use Tk;
+use Tk::ErrorDialog;
 use Tk::LabFrame;
 use Tk::ItemStyle;
 use Tk::DropSite;
-require Tk::ErrorDialog;
 
 use gui_wait;
 use gui_OtherWin;
