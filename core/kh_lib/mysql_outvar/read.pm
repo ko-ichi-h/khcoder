@@ -53,7 +53,7 @@ sub save{
 		return 0;
 	}
 
-	# 同じ変数名が無いかチェック
+	# 同じ変数名が無いかチェック（本当はこの部分はUI側へ回した方が良い…）
 	my %name_check;
 	my $h = mysql_exec->select("
 		SELECT name
@@ -63,13 +63,36 @@ sub save{
 	while (my $i = $h->fetch){
 			$name_check{$i->[0]} = 1;
 	}
+	my @exts = ();
 	foreach my $i (@{$data[0]}){
 		if ($name_check{$i}){
-			gui_errormsg->open(
-				type   => 'msg',
-				msg    => "同じ名前の変数が既に読み込まれています。\n読み込み処理を中断します。",
+			push @exts, $i;
+		}
+	}
+	
+	if (@exts){
+		# 既存の変数を上書きして良いかどうか問い合わせ
+		my $msg = '';
+		foreach my $i (@exts){
+			$msg .= ", " if length($msg);
+			$msg .= $i;
+		}
+		$msg  = "同じ名前の変数が既に読み込まれています：\n$msg\n\n";
+		$msg .= "これらの変数を上書きしますか？";
+
+		my $ans = $::main_gui->mw->messageBox(
+			-message => gui_window->gui_jchar($msg),
+			-icon    => 'question',
+			-type    => 'OKCancel',
+			-title   => 'KH Coder'
+		);
+		unless ($ans =~ /ok/i){ return 0; }
+
+		# 上書きする場合は既存の変数を削除
+		foreach my $i (@exts){
+			mysql_outvar->delete(
+				name => $i,
 			);
-			return 0;
 		}
 	}
 
