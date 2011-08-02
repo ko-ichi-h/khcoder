@@ -68,7 +68,8 @@ sub _new{
 	$fra_r->Label(
 		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $version_tk]",
 		-font => "TKFN",
-		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
+		-hoge => 'hoge',
+	)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
 
 	$fra_l->Label(
 		-text => '  Web page:',
