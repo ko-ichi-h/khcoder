@@ -5,6 +5,10 @@ use Tk;
 
 use mysql_outvar;
 
+# ラベル・エントリーにバインドを設定
+# 「閉じる」を「読み込み」に
+
+
 #---------------------#
 #   Window オープン   #
 #---------------------#
@@ -28,7 +32,7 @@ sub _new{
 	#   変数リスト   #
 
 	$fra4->Label(
-		-text => $self->gui_jchar('■変数と見出しのリスト'),
+		-text => $self->gui_jchar('■変数リスト'),
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
@@ -91,9 +95,16 @@ sub _new{
 	#----------------#
 	#   変数の詳細   #
 
-	$self->{label_name} = $fra5->Label(
-		-text => $self->gui_jchar('■変数・見出しの詳細'),
-	)->pack(-anchor => 'nw');
+	my $fra5lab = $fra5->Frame()->pack(-anchor => 'w');
+
+	$fra5lab->Label(
+		-text => $self->gui_jchar('■選択した変数の値とラベル：'),
+	)->pack(-side => 'left');
+
+	$self->{label_name} = $fra5lab->Label(
+		-text       => $self->gui_jchar('  '),
+		-foreground => 'blue',
+	)->pack(-side => 'left');
 
 	my $lis = $fra5->Scrolled(
 		'HList',
@@ -123,7 +134,7 @@ sub _new{
 	$self->{list_val} = $lis;
 
 	my $fra5_ets = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
-	my $fra5_bts = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
+	my $fra5_bts = $fra5->Frame()->pack( -expand => 0, -anchor => 'w');
 	$self->{opt_tani_fra} = $fra5_bts;
 
 	#$fra5_ets->Label(
@@ -174,6 +185,21 @@ sub _new{
 	#	-font       => "TKFN"
 	#);
 
+	$fra5_bts->Label(
+		-text => $self->gui_jchar('集計単位：')
+	)->pack(-side => 'left');
+
+	# ダミーを作っておく...
+	$self->{opt_tani} = gui_widget::optmenu->open(
+		parent  => $self->{opt_tani_fra},
+		pack    => {-side => 'left', -padx => 2, -pady => 2},
+		options => [
+			[$self->gui_jchar('段落'), 'dan'],
+			[$self->gui_jchar('文'  ), 'bun']
+		],
+		variable => \$self->{calc_tani},
+	);
+
 	my $mb = $fra5_bts->Menubutton(
 		-text        => $self->gui_jchar('特徴語'),
 		-tearoff     => 'no',
@@ -182,42 +208,27 @@ sub _new{
 		-font        => "TKFN",
 		#-width       => $self->{width},
 		-borderwidth => 1,
-	)->pack(-padx => 2, -pady => 2, -side => 'left');
+	)->pack(-padx => 2, -pady => 2, -side => 'right');
 
 	$mb->command(
 		-command => sub {$self->v_words;},
-		-label   => $self->gui_jchar('選択した値のみ'),
+		-label   => $self->gui_jchar('選択した値の特徴'),
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('xls')},
-		-label   => $self->gui_jchar('一覧（Excel形式）'),
+		-label   => $self->gui_jchar('一覧： Excel'),
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('csv')},
-		-label   => $self->gui_jchar('一覧（CSV形式）'),
+		-label   => $self->gui_jchar('一覧： CSV'),
 	);
 
 	$wmw->Balloon()->attach(
 		$mb,
 		-balloonmsg => $self->gui_jchar("特定の値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
 		-font       => "TKFN"
-	);
-
-	$fra5_bts->Label(
-		-text => $self->gui_jchar('集計単位：')
-	)->pack(-side => 'left');
-
-	# ダミー
-	$self->{opt_tani} = gui_widget::optmenu->open(
-		parent  => $self->{opt_tani_fra},
-		pack    => {-side => 'left', -padx => 2},
-		options => [
-			[$self->gui_jchar('段落'), 'dan'],
-			[$self->gui_jchar('文'  ), 'bun']
-		],
-		variable => \$self->{calc_tani},
 	);
 
 	#$fra4_bts->Button(
@@ -836,8 +847,7 @@ sub _open_var{
 	# 変数名の表示
 	$self->{label_name}->configure(
 		-text => $self->gui_jchar(
-			'■変数・見出しの詳細： '
-			.$self->{var_list}[$selection[0]][1]
+			$self->{var_list}[$selection[0]][1]
 		)
 	);
 
@@ -949,7 +959,7 @@ sub _clear_values{
 	$self->{label} = undef;
 	
 	$self->{label_name}->configure(
-		-text => $self->gui_jchar('■変数・見出しの詳細')
+		-text => '  '
 	);
 	
 	#$self->{label_num}->configure(
