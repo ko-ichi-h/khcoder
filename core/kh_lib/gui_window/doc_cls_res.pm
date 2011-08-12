@@ -64,7 +64,7 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$btn_ds,
-		-balloonmsg => $self->gui_jchar("[ダブルクリック]\nクラスターに含まれる文書を検索"),
+		-balloonmsg => $self->gui_jchar("クラスターに含まれる文書を検索\n[クラスターをダブルクリック]"),
 		-font       => "TKFN"
 	);
 
@@ -77,7 +77,7 @@ sub _new{
 	
 	$wmw->Balloon()->attach(
 		$btn_ass,
-		-balloonmsg => $self->gui_jchar("[Shift + ダブルクリック]\nクラスターの特徴をあらわす語を検索"),
+		-balloonmsg => $self->gui_jchar("クラスターの特徴をあらわす語を検索\n[Shift + クラスターをダブルクリック]"),
 		-font       => "TKFN"
 	);
 	
