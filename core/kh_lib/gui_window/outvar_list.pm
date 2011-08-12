@@ -253,6 +253,7 @@ sub _fill{
 		# print "$chk, $i->[1]\n";
 	}
 	$self->{var_list} = $h;
+	gui_hlist->update4scroll($self->{list});
 	return $self;
 }
 
