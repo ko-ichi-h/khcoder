@@ -14,21 +14,21 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jt('外部変数リスト'));
-
-	#----------------#
-	#   変数リスト   #
+	$wmw->title($self->gui_jt('外部変数と見出し'));
 
 	my $fra4 = $wmw->Frame();
 	my $adj  = $wmw->Adjuster(-widget => $fra4, -side => 'left');
 	my $fra5 = $wmw->Frame();
 
 	$fra4->pack(-side => 'left', -fill => 'both', -expand => 1, -padx => 2);
-	$adj->pack (-side => 'left', -fill => 'y', -padx => 2);
+	$adj->pack (-side => 'left', -fill => 'y', -padx => 2, -pady => 2);
 	$fra5->pack(-side => 'left', -fill => 'both', -expand => 1, -padx => 2);
 
+	#----------------#
+	#   変数リスト   #
+
 	$fra4->Label(
-		-text => $self->gui_jchar('■変数リスト'),
+		-text => $self->gui_jchar('■変数と見出しのリスト'),
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
@@ -92,7 +92,7 @@ sub _new{
 	#   変数の詳細   #
 
 	$self->{label_name} = $fra5->Label(
-		-text => $self->gui_jchar('■変数の詳細'),
+		-text => $self->gui_jchar('■変数・見出しの詳細'),
 	)->pack(-anchor => 'nw');
 
 	my $lis = $fra5->Scrolled(
@@ -106,7 +106,7 @@ sub _new{
 		-background       => 'white',
 		-selectforeground => 'black',
 		-selectbackground => '#F0E68C',
-		-selectmode       => 'single',
+		-selectmode       => 'browse',
 		-selectborderwidth=> 0,
 		-highlightthickness => 0,
 		-height           => 10,
@@ -122,7 +122,7 @@ sub _new{
 
 	$self->{list_val} = $lis;
 
-	#my $fra5_ets = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
+	my $fra5_ets = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
 	my $fra5_bts = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
 	$self->{opt_tani_fra} = $fra5_bts;
 
@@ -137,12 +137,16 @@ sub _new{
 	#	-disabledforeground => 'black',
 	#)->pack(-side => 'left', -fill => 'x', -expand => 1);
 
-	$fra5_bts->Button(
+	$fra5_ets->Button(
 		-text        => $self->gui_jchar('ラベルの変更を保存'),
 		-font        => "TKFN",
 		-borderwidth => '1',
-		-command     => sub {$self->v_docs;}
-	)->pack(-padx => 2, -pady => 2, -anchor => 'e');
+		-command     => sub {$self->_save;}
+	)->pack(-padx => 2, -pady => 2, -side => 'left');
+
+	$self->{label_num} = $fra5_ets->Label(
+		-text => $self->gui_jchar('値の種類：000')
+	)->pack(-padx => 2, -pady => 2, -side => 'left');
 
 	my $btn_doc = $fra5_bts->Button(
 		-text        => $self->gui_jchar('文書検索'),
@@ -153,7 +157,7 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$btn_doc,
-		-balloonmsg => $self->gui_jchar('特定の値を持つ文書を検索します'),
+		-balloonmsg => $self->gui_jchar("特定の値を持つ文書を検索します\n[値をダブルクリック]"),
 		-font       => "TKFN"
 	);
 
@@ -197,12 +201,12 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$mb,
-		-balloonmsg => $self->gui_jchar('特定の値を持つ文書に特徴的な語を探索します'),
+		-balloonmsg => $self->gui_jchar("特定の値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
 		-font       => "TKFN"
 	);
 
 	$fra5_bts->Label(
-		-text => $self->gui_jchar('集計単位：')
+		-text => $self->gui_jchar('単位：')
 	)->pack(-side => 'left');
 
 	# ダミー
@@ -231,9 +235,408 @@ sub _new{
 	return $self;
 }
 
-#--------------------#
-#   ファンクション   #
-#--------------------#
+#----------------------------#
+#   値関系のファンクション   #
+#----------------------------#
+
+sub _save{
+	my $self = shift;
+
+	return 0 unless $self->{selected_var_obj};
+
+	# 変更されたラベルを保存
+	foreach my $i (keys %{$self->{label}}){
+		if (
+			$self->{label}{$i}
+			eq
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc
+		){
+			#print "skip: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
+			next;
+		}
+		$self->{selected_var_obj}->label_save(
+			$i,
+			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc,
+		);
+		$self->{label}{$i} = Jcode->new(
+			$self->gui_jg($self->{entry}{$i}->get), 'sjis'
+		)->euc;
+		#print "saved: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
+	}
+	return $self;
+}
+
+
+sub v_docs{
+	my $self = shift;
+	
+	return 0 unless $self->{selected_var_obj};
+	
+	# クエリー作成
+	my @selected = $self->{list_val}->infoSelection;
+	unless(@selected){
+		$self->{list_val}->selectionSet(0);
+		@selected = $self->{list_val}->infoSelection;
+	}
+	my $query = $self->gui_jg( $self->{list_val}->itemCget($selected[0], 0, -text) );
+	$query = Jcode->new($query, 'sjis')->euc;
+	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+	$query = $self->gui_jchar($query,'euc');
+	
+	# リモートウィンドウの操作
+	my $win;
+	if ($::main_gui->if_opened('w_doc_search')){
+		$win = $::main_gui->get('w_doc_search');
+	} else {
+		$win = gui_window::doc_search->open;
+	}
+	
+	$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
+	$win->{tani_obj}->mb_refresh;
+	
+	$win->{clist}->selectionClear;
+	$win->{clist}->selectionSet(0);
+	$win->clist_check;
+	
+	$win->{direct_w_e}->delete(0,'end');
+	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->focus;
+	$win->search;
+}
+
+sub v_words{
+	my $self = shift;
+	
+	return 0 unless $self->{selected_var_obj};
+	
+	# クエリー作成
+	my @selected = $self->{list_val}->infoSelection;
+	unless(@selected){
+		$self->{list_val}->selectionSet(0);
+		@selected = $self->{list_val}->infoSelection;
+	}
+	my $query = $self->gui_jg(
+		$self->{list_val}->itemCget($selected[0], 0, -text)
+	);
+	$query = Jcode->new($query, 'sjis')->euc;
+	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+	$query = $self->gui_jchar($query,'euc');
+	
+	# リモートウィンドウの操作
+	my $win;
+	if ($::main_gui->if_opened('w_doc_ass')){
+		$win = $::main_gui->get('w_doc_ass');
+	} else {
+		$win = gui_window::word_ass->open;
+	}
+	
+	$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
+	$win->{tani_obj}->mb_refresh;
+	
+	$win->{clist}->selectionClear;
+	$win->{clist}->selectionSet(0);
+	$win->clist_check;
+	
+	$win->{direct_w_e}->delete(0,'end');
+	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->focus;
+	$win->search;
+}
+
+
+sub v_words_list{
+	my $self      = shift;
+	my $file_type = shift;
+	
+	return 0 unless $self->{selected_var_obj};
+	
+	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
+	$self->_save;
+	$self->{selected_var_obj} = mysql_outvar::a_var->new(
+		$self->{selected_var_obj}->{name}
+	);
+
+	# 値のリスト
+	my $values;
+	foreach my $i (@{$self->{selected_var_obj}->print_values}){
+		if ( $i eq '.' || $i =~ /missing/i || $i eq '欠損値' ){
+			next;
+		}
+		push @{$values}, $i;
+	}
+
+	# リモートウィンドウの準備
+	my $win;
+	if ($::main_gui->if_opened('w_doc_ass')){
+		$win = $::main_gui->get('w_doc_ass');
+	} else {
+		$win = gui_window::word_ass->open;
+	}
+
+	my $d;
+	# 値ごとに特徴的な語を取得
+	foreach my $i (@{$values}){
+		# クエリー作成
+		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
+		$query = $self->gui_jchar($query,'euc');
+		
+		# リモートウィンドウの操作
+		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
+		$win->{tani_obj}->mb_refresh;
+		
+		$win->{clist}->selectionClear;
+		$win->{clist}->selectionSet(0);
+		$win->clist_check;
+		
+		$win->{direct_w_e}->delete(0,'end');
+		$win->{direct_w_e}->insert('end',$query);
+		$win->win_obj->focus;
+		$win->search;
+		
+		# 値の取得
+		my $n = 0;
+		while ($win->{rlist}->info('exists', $n)){
+			if ( $win->{rlist}->itemExists($n, 1) ){
+				$d->{$i}[$n][0] = 
+					Jcode->new(
+						$self->gui_jg(
+								$win->{rlist}->itemCget($n, 1, -text)
+						),
+						'sjis'
+					)->euc
+				;
+			}
+			if ( $win->{rlist}->itemExists($n, 5) ){
+				$d->{$i}[$n][1] = 
+					Jcode->new(
+						$self->gui_jg(
+							$win->{rlist}->itemCget($n, 5, -text)
+						),
+						'sjis'
+					)->euc
+				;
+			}
+			++$n;
+			last if $n >= 10;
+		}
+	}
+	
+	$file_type = '_write_'.$file_type;
+	$self->$file_type($values,$d);
+}
+
+sub _write_csv{
+	my $self   = shift;
+	my $values = shift;
+	my $d      = shift;
+
+	# 出力用の整理
+	my $b_row_max = @{$values};
+	$b_row_max /= 4;
+	$b_row_max = int($b_row_max) + 1 if $b_row_max > int($b_row_max);
+	
+	my $t = '';
+	for (my $b_row = 0; $b_row < $b_row_max; ++$b_row){
+		my @c = ($b_row * 4, $b_row * 4 + 1, $b_row * 4 + 2, $b_row * 4 + 3);
+		foreach my $i (@c){                                 # ヘッダ
+			$t .= kh_csv->value_conv($values->[$i]).",,";
+		}
+		chop $t;
+		$t .= "\n";
+		for (my $n = 0; $n <= 10; ++$n){                    # 中身
+			foreach my $i (@c){
+				$t .= kh_csv->value_conv($d->{$values->[$i]}[$n][0]).",";
+				$t .= "$d->{$values->[$i]}[$n][1],";
+			}
+			chop $t;
+			$t .= "\n";
+		}
+	}
+	
+	$t = Jcode->new($t,'euc')->sjis if $::config_obj->os eq 'win32';
+	
+	# ファイルへ出力
+	my $f = $::project_obj->file_TempCSV;
+	open (TEMPCSV,">$f") or
+		gui_errormsg->open(
+			type => 'file',
+			file => $f
+		)
+	;
+	print TEMPCSV $t;
+	close(TEMPCSV);
+	gui_OtherWin->open($f);
+}
+
+sub _write_xls{
+	my $self   = shift;
+	my $values = shift;
+	my $d      = shift;
+
+	use Spreadsheet::WriteExcel;
+	use Unicode::String qw(utf8 utf16);
+
+	my $f    = $::project_obj->file_TempExcel;
+	my $workbook  = Spreadsheet::WriteExcel->new($f);
+	my $worksheet = $workbook->add_worksheet(
+		utf8( Jcode->new('シート1')->utf8 )->utf16,
+		1
+	);
+
+	my $font = '';
+	if ($] > 5.008){
+		$font = $self->gui_jchar('ＭＳ Ｐゴシック', 'euc');
+	} else {
+		$font = 'MS PGothic';
+	}
+	$workbook->{_formats}->[15]->set_properties(
+		font       => $font,
+		size       => 9,
+		valign     => 'vcenter',
+		align      => 'center',
+	);
+	my $format_n = $workbook->add_format(         # 数値
+		num_format => '.000',
+		size       => 9,
+		font       => $font,
+		align      => 'right',
+	);
+	my $format_nl = $workbook->add_format(        # 数値・下に罫線
+		num_format => '.000',
+		size       => 9,
+		font       => $font,
+		align      => 'right',
+		bottom     => 1,
+	);
+	my $format_c = $workbook->add_format(         # 文字列
+		font       => $font,
+		size       => 9,
+		align      => 'left',
+		num_format => '@'
+	);
+	my $format_cl = $workbook->add_format(        # 文字列・下に罫線
+		font       => $font,
+		size       => 9,
+		align      => 'left',
+		bottom     => 1,
+		num_format => '@'
+	);
+	my $format_l = $workbook->add_format(         # 上に罫線
+		font       => $font,
+		size       => 9,
+		top        => 1,
+		align      => 'center',
+	);
+
+	my $big_row = 0;
+	my $col     = 0;
+	my $n       = 0;
+	foreach my $i (@{$values}){
+		my $row = $big_row * 11 + 1;
+		
+		# ヘッダ
+		my $format_m = $workbook->add_format(
+			font          => $font,
+			size          => 9,
+			bottom        => 1,
+			top           => 1,
+			#align         => 'center',
+			center_across => 1,
+			num_format    => '@'
+		);
+		$worksheet->write_unicode(
+			$row,
+			$col,
+			utf8( Jcode->new($i,'euc')->utf8 )->utf16,
+			$format_m
+		);
+		$worksheet->write_blank(
+			$row,
+			$col + 1,
+			$format_m
+		);
+		
+		if ($col - 1 > 0){
+			$worksheet->set_column($col - 1,$col - 1, 1);
+			$worksheet->write_blank($row, $col - 1, $format_l);
+		}
+		
+		++$row;
+		
+		# データ
+		my $row_cu = 0;
+		foreach my $h (@{$d->{$i}}){
+			if ($row_cu == 9 && $n + 5 > @{$values}){       # 下に罫線あり
+				$worksheet->write_unicode(
+					$row,
+					$col,
+					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					$format_cl
+				);
+				$worksheet->write_number(
+					$row,
+					$col + 1,
+					$h->[1],
+					$format_nl
+				);
+			} else {                                        # 罫線無し
+				$worksheet->write_unicode(
+					$row,
+					$col,
+					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					$format_c
+				);
+				$worksheet->write_number(
+					$row,
+					$col + 1,
+					$h->[1],
+					$format_n
+				);
+			}
+			++$row;
+			++$row_cu;
+		}
+		
+		# 下線(1)
+		if ( $col - 1 > 0 && $n + 5 > @{$values} ){
+			$worksheet->write_blank(
+				$row - 1,
+				$col - 1,
+				$format_cl
+			);
+		}
+		
+		# 位置調整
+		$col += 3;
+		if ($col > 10){
+			$col = 0;
+			++$big_row;
+		}
+		++$n;
+	}
+
+	# 下線(2)
+	if ($col > 0 && $col - 1 < 9 && $big_row > 0){
+		$col -= 1;
+		while ($col <= 10){
+			$worksheet->write_blank(
+				$big_row * 11 + 11,
+				$col,
+				$format_cl
+			);
+			++$col;
+		}
+	}
+
+
+	$workbook->close;
+	gui_OtherWin->open($f);
+}
+
+
+#----------------------------#
+#   変数系のファンクション   #
+#----------------------------#
 
 sub _fill{
 	my $self = shift;
@@ -360,11 +763,13 @@ sub _export{
 sub _delayed_open_var{
 	my $self = shift;
 
+	#$self->{list}->anchorClear;
+
 	my @selection = $self->{list}->info('selection');
 	my $current = $self->{var_list}[$selection[0]][1];
 	my $cn = @selection;
 
-	$self->win_obj->after(100,sub{ $self->_chk1_open_var($current, $cn) });
+	$self->win_obj->after(80,sub{ $self->_chk1_open_var($current, $cn) });
 }
 
 sub _chk1_open_var{
@@ -379,7 +784,7 @@ sub _chk1_open_var{
 	#print Jcode->new("1: $chk, $chk_n, $current, $cn\n")->sjis ;
 	
 	if ($chk eq $current && $chk_n == $cn){
-		$self->win_obj->after(200,sub{ $self->_chk2_open_var($current, $cn) });
+		$self->win_obj->after(120,sub{ $self->_chk2_open_var($current, $cn) });
 	}
 }
 
@@ -431,12 +836,13 @@ sub _open_var{
 	# 変数名の表示
 	$self->{label_name}->configure(
 		-text => $self->gui_jchar(
-			'■変数の詳細： '
+			'■変数・見出しの詳細： '
 			.$self->{var_list}[$selection[0]][1]
 		)
 	);
 
 	# 値とラベルの表示
+	$self->{label} = undef;
 	$self->{list_val}->delete('all');
 	$self->{selected_var_obj} = mysql_outvar::a_var->new($self->{var_list}[$selection[0]][1]);
 	my $v = $self->{selected_var_obj}->detail_tab;
@@ -485,6 +891,10 @@ sub _open_var{
 		++$n;
 	}
 	gui_hlist->update4scroll($self->{list_val});
+
+	$self->{label_num}->configure(
+		-text => $self->gui_jchar("値の種類：$n")
+	);
 
 	# 集計単位
 	my @tanis   = ();
@@ -536,9 +946,14 @@ sub _clear_values{
 	my $self = shift;
 	
 	$self->{selected_var_obj} = undef;
+	$self->{label} = undef;
 	
 	$self->{label_name}->configure(
-		-text => $self->gui_jchar('■変数の詳細')
+		-text => $self->gui_jchar('■変数・見出しの詳細')
+	);
+	
+	$self->{label_num}->configure(
+		-text => $self->gui_jchar('値の種類：000')
 	);
 	
 	$self->{list_val}->delete('all');

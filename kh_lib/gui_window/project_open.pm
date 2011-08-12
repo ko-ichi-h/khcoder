@@ -33,9 +33,10 @@ sub _new{
 		-columns => 3,
 		-padx => 2,
 		-background=> 'white',
+		-indicator => 0,
 		-selectforeground=> 'brown',
 		-selectbackground=> 'cyan',
-#		-selectmode => 'single',
+		-selectmode => 'single',
 	)->pack(-fill=>'both',-expand => 'yes');
 	$self->{g_list} = $plis;
 

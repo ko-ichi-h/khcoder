@@ -61,7 +61,6 @@ use gui_window::txt_pickup;
 use gui_window::morpho_crossout;
 use gui_window::outvar_read;
 use gui_window::outvar_list;
-use gui_window::outvar_detail;
 use gui_window::force_color;
 use gui_window::contxt_out;
 use gui_window::datacheck;
