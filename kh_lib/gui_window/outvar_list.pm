@@ -142,11 +142,11 @@ sub _new{
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->_save;}
-	)->pack(-padx => 2, -pady => 2, -side => 'left');
+	)->pack(-padx => 2, -pady => 2, -fill => 'x');
 
-	$self->{label_num} = $fra5_ets->Label(
-		-text => $self->gui_jchar('値の種類：000')
-	)->pack(-padx => 2, -pady => 2, -side => 'left');
+	#$self->{label_num} = $fra5_ets->Label(
+	#	-text => $self->gui_jchar('値の種類： 000')
+	#)->pack(-padx => 2, -pady => 2, -side => 'left');
 
 	my $btn_doc = $fra5_bts->Button(
 		-text        => $self->gui_jchar('文書検索'),
@@ -206,7 +206,7 @@ sub _new{
 	);
 
 	$fra5_bts->Label(
-		-text => $self->gui_jchar('単位：')
+		-text => $self->gui_jchar('集計単位：')
 	)->pack(-side => 'left');
 
 	# ダミー
@@ -892,9 +892,9 @@ sub _open_var{
 	}
 	gui_hlist->update4scroll($self->{list_val});
 
-	$self->{label_num}->configure(
-		-text => $self->gui_jchar("値の種類：$n")
-	);
+	#$self->{label_num}->configure(
+	#	-text => $self->gui_jchar("値の種類： $n")
+	#);
 
 	# 集計単位
 	my @tanis   = ();
@@ -952,9 +952,9 @@ sub _clear_values{
 		-text => $self->gui_jchar('■変数・見出しの詳細')
 	);
 	
-	$self->{label_num}->configure(
-		-text => $self->gui_jchar('値の種類：000')
-	);
+	#$self->{label_num}->configure(
+	#	-text => $self->gui_jchar('値の種類： 000')
+	#);
 	
 	$self->{list_val}->delete('all');
 	
