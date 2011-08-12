@@ -293,4 +293,9 @@ sub label_save{
 	}
 }
 
+sub tani{
+	my $self = shift;
+	return $self->{tani};
+}
+
 1;
