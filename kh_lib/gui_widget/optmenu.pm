@@ -27,6 +27,7 @@ sub open{
 	}
 
 	# 本体作製
+	#$self->{status4test} = "start";
 	$self->{win_obj} = $self->{parent}->Menubutton(
 		-text        => '',
 		-tearoff     => 'no',
@@ -51,6 +52,8 @@ sub open{
 	# デフォルト値を適用
 	$self->{selection} = $self->{options}[0][1];
 	$self->mb_refresh(5);
+	
+	#$self->{status4test} = "done";
 	
 	return $self;
 }
@@ -84,6 +87,8 @@ sub configure{
 
 sub destroy{
 	my $self = shift;
+	#print "status4test: $self->{status4test}\n";
+	
 	$self->{win_obj}->destroy;
 	undef $self;
 }
