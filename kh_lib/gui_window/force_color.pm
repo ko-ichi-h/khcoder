@@ -43,8 +43,10 @@ sub _new{
 		-columns => 2,
 		-padx => 2,
 		-background=> 'white',
-		-selectforeground=> 'brown',
-		-selectbackground=> 'cyan',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
 		-selectmode => 'extended',
 	)->pack(-fill=>'both',-expand => 'yes',-pady => 2);
 	$plis->header('create',0,-text => $self->gui_jchar('　言葉　'));

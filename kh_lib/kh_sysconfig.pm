@@ -274,6 +274,29 @@ sub color_DocView_info{
 	}
 }
 
+sub color_ListHL_fore{
+	my $self = shift;
+	
+	
+	if( defined( $self->{color_ListHL_fore} ) ){
+		return $self->{color_ListHL_fore};
+	} else {
+		return 'black';
+	}
+}
+
+sub color_ListHL_back{
+	my $self = shift;
+	
+	
+	if( defined( $self->{color_ListHL_back} ) ){
+		return $self->{color_ListHL_back};
+	} else {
+		return '#AFEEEE';
+	}
+}
+
+
 sub color_DocView_search{
 	my $self = shift;
 	my $i    = $self->{color_DocView_search};

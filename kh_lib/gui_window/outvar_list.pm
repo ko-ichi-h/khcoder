@@ -45,7 +45,7 @@ sub _new{
 		-padx             => 2,
 		-background       => 'white',
 		-selectmode       => 'extended',
-		#-selectforeground   => '#800000',
+		-selectforeground   => 'black',
 		-selectbackground   => '#AFEEEE', # AFEEEE B0E0E6
 		-selectborderwidth  => 0,
 		-highlightthickness => 0,
@@ -83,13 +83,25 @@ sub _new{
 		-command => sub{$self->_export;}
 	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left');
 
-	$fra4_bts->Button(
-		-text => $self->gui_jchar('閉じる'),
-		-font => "TKFN",
-#		-width => 8,
-		-borderwidth => '1',
-		-command => sub{$self->close;}
-	)->pack(-padx => 2, -pady => 2, -anchor => 'ne', -side => 'right');
+	my $mb1 = $fra4_bts->Menubutton(
+		-text        => $self->gui_jchar('読み込み'),
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-width       => $self->{width},
+		-borderwidth => 1,
+	)->pack(-padx => 2, -pady => 2, -side => 'right');
+
+	$mb1->command(
+		-command => sub {gui_window::outvar_read::csv->open;},
+		-label   => $self->gui_jchar('CSVファイル'),
+	);
+
+	$mb1->command(
+		-command => sub {gui_window::outvar_read::tab->open;},
+		-label   => $self->gui_jchar('タブ区切りファイル'),
+	);
 
 	#----------------#
 	#   変数の詳細   #
@@ -147,7 +159,7 @@ sub _new{
 	#	-disabledforeground => 'black',
 	#)->pack(-side => 'left', -fill => 'x', -expand => 1);
 
-	$fra5_ets->Button(
+	$self->{btn_save} = $fra5_ets->Button(
 		-text        => $self->gui_jchar('ラベルの変更を保存'),
 		-font        => "TKFN",
 		-borderwidth => '1',
@@ -913,7 +925,14 @@ sub _open_var{
 			-widget    => $c,
 		);
 		$c->insert(0,$self->gui_jchar($i->[1]));
-		$c->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$c]);
+		#$c->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$c]);
+		$c->bind(
+			"<Key-Return>",
+			sub{
+				$self->{btn_save}->focus;
+				#$self->{btn_save}->invoke;
+			}
+		);
 		
 		$self->{entry}{$i->[0]} = $c;
 		$self->{label}{$i->[0]} = $i->[1];

@@ -90,9 +90,10 @@ sub _new{
 		-background       => 'white',
 		-height           => '6',
 		-width            => '20',
-		-selectforeground => 'brown',
-		-selectbackground => 'cyan',
-	#	-activebackground=> 'cyan',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
 		-selectmode=> 'single'
 	)->pack(-anchor => 'w', -padx => '4',-pady => '2', -fill => 'y',-expand => 1);
 

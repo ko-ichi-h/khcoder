@@ -29,14 +29,14 @@ sub _new{
 		-width => 55,
 		-command => sub{$self->_open;},
 		-itemtype => 'text',
-		-font => 'TKFN',
 		-columns => 3,
 		-padx => 2,
 		-background=> 'white',
-		-indicator => 0,
-		-selectforeground=> 'brown',
-		-selectbackground=> 'cyan',
-		-selectmode => 'single',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
+		#-selectmode => 'single',
 	)->pack(-fill=>'both',-expand => 'yes');
 	$self->{g_list} = $plis;
 
@@ -81,26 +81,27 @@ sub _new{
 		'<Key-Return>',
 		sub {$self->_open}
 	);
-	$self->win_obj->bind(
-		'<Key-Down>',
-		sub {
-			my @s = $self->list->infoSelection;
-			if ($self->{max} > $s[0]){
-				$self->list->selectionClear;
-				$self->list->selectionSet($s[0] + 1);
-			}
-		}
-	);
-	$self->win_obj->bind(
-		'<Key-Up>',
-		sub {
-			my @s = $self->list->infoSelection;
-			if ($s[0] > 0){
-				$self->list->selectionClear;
-				$self->list->selectionSet($s[0] - 1);
-			}
-		}
-	);
+
+	#$self->win_obj->bind(
+	#	'<Key-Down>',
+	#	sub {
+	#		my @s = $self->list->infoSelection;
+	#		if ($self->{max} > $s[0]){
+	#			$self->list->selectionClear;
+	#			$self->list->selectionSet($s[0] + 1);
+	#		}
+	#	}
+	#);
+	#$self->win_obj->bind(
+	#	'<Key-Up>',
+	#	sub {
+	#		my @s = $self->list->infoSelection;
+	#		if ($s[0] > 0){
+	#			$self->list->selectionClear;
+	#			$self->list->selectionSet($s[0] - 1);
+	#		}
+	#	}
+	#);
 	
 	#MainLoop;
 	return $self;
@@ -211,7 +212,10 @@ sub refresh{
 	
 	$self->{max} = $n - 1;
 	if ($n){
+		#$self->list->selectionSet(0);
+		$self->list->anchorSet(0);
 		$self->list->selectionSet(0);
+		$self->list->focus;
 	}
 	
 }

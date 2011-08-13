@@ -97,6 +97,8 @@ sub save_ini{
 		'color_DocView_force',
 		'color_DocView_html',
 		'color_DocView_CodeW',
+		'color_ListHL_fore',
+		'color_ListHL_fore',
 		'DocView_WrapLength_on_Win9x',
 		'DocSrch_CutLength',
 		'app_html',
