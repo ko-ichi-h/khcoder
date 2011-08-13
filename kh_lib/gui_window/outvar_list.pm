@@ -746,6 +746,19 @@ sub _delete{
 		return 0;
 	}
 	
+	# 見出しが混ざっていないかチェック。
+	foreach my $i (@selection){
+		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
+			$self->win_obj->messageBox(
+				-message => $self->gui_jchar("現在のところ、このコマンドで見出しを削除することはできません。\n分析対象ファイルを直接修正してください。"),
+				-icon    => 'info',
+				-type    => 'Ok',
+				-title   => 'KH Coder'
+			);
+			return 0;
+		}
+	}
+	
 	# 本当に削除するのか確認
 	unless ( $args{no_conf} ){
 		my $confirm = $self->{win_obj}->messageBox(
@@ -766,16 +779,6 @@ sub _delete{
 	
 	# 削除実行
 	foreach my $i (@selection){
-		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
-			$self->win_obj->messageBox(
-				-message => $self->gui_jchar('見出しを削除することはできません'),
-				-icon    => 'info',
-				-type    => 'Ok',
-				-title   => 'KH Coder'
-			);
-			return 0;
-		}
-		
 		mysql_outvar->delete(
 			tani => $self->{var_list}[$i][0],
 			name => $self->{var_list}[$i][1],
@@ -812,7 +815,7 @@ sub _export{
 		}
 		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
 			$self->win_obj->messageBox(
-				-message => $self->gui_jchar("現在のところ、このコマンドから見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。"),
+				-message => $self->gui_jchar("現在のところ、このコマンドで見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。"),
 				-icon    => 'info',
 				-type    => 'Ok',
 				-title   => 'KH Coder'

@@ -176,8 +176,10 @@ sub _new{
 		-columns          => 6,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'brown',
-		-selectbackground => 'cyan',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
 		-selectmode       => 'extended',
 		-height           => 10,
 		-command          => sub {$self->conc;}
