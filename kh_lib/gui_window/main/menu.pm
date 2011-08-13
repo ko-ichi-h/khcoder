@@ -670,13 +670,22 @@ sub make{
 	$f->separator();
 	
 	my $f_out_var = $f->cascade(
-		-label => gui_window->gui_jchar('外部変数'),
+		-label => gui_window->gui_jchar('外部変数と見出し'),
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
 
+		$self->{t_out_list} = $f_out_var->command(
+			-label => gui_window->gui_jchar('確認と編集'),
+			-font => "TKFN",
+			-command => sub{
+					gui_window::outvar_list->open;
+				},
+			-state => 'disable'
+		);
+
 		$self->{t_out_read} = $f_out_var->cascade(
-			-label => gui_window->gui_jchar('読み込み'),
+			-label => gui_window->gui_jchar('外部変数の読み込み'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
@@ -698,15 +707,6 @@ sub make{
 					},
 				-state => 'disable'
 			);
-
-		$self->{t_out_list} = $f_out_var->command(
-			-label => gui_window->gui_jchar('変数リスト・値ラベル'),
-			-font => "TKFN",
-			-command => sub{
-					gui_window::outvar_list->open;
-				},
-			-state => 'disable'
-		);
 
 	my $f6 = $f->cascade(
 		-label => gui_window->gui_jchar('テキストファイルの変形'),
