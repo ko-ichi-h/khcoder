@@ -3,6 +3,7 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
+use gui_window::outvar_list::midashi;
 use mysql_outvar;
 
 # ラベル・エントリーにバインドを設定
@@ -32,7 +33,7 @@ sub _new{
 	#   変数リスト   #
 
 	$fra4->Label(
-		-text => $self->gui_jchar('■変数リスト'),
+		-text => $self->gui_jchar('■リスト'),
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
@@ -109,7 +110,7 @@ sub _new{
 	my $fra5lab = $fra5->Frame()->pack(-anchor => 'w');
 
 	$fra5lab->Label(
-		-text => $self->gui_jchar('■選択した変数の値とラベル：'),
+		-text => $self->gui_jchar('■値とラベル：'),
 	)->pack(-side => 'left');
 
 	$self->{label_name} = $fra5lab->Label(
@@ -223,7 +224,7 @@ sub _new{
 
 	$mb->command(
 		-command => sub {$self->v_words;},
-		-label   => $self->gui_jchar('選択した値の特徴'),
+		-label   => $self->gui_jchar('選択した値の特徴語'),
 	);
 
 	$mb->command(
@@ -264,7 +265,15 @@ sub _new{
 sub _save{
 	my $self = shift;
 
-	return 0 unless $self->{selected_var_obj};
+	unless ($self->{selected_var_obj}){
+		$self->win_obj->messageBox(
+			-message => $self->gui_jchar('変数が選択されていません'),
+			-icon    => 'info',
+			-type    => 'Ok',
+			-title   => 'KH Coder'
+		);
+		return 0;
+	}
 
 	# 変更されたラベルを保存
 	foreach my $i (keys %{$self->{label}}){
@@ -682,11 +691,32 @@ sub _error_no_var{
 
 sub _fill{
 	my $self = shift;
-	
-	my $h = mysql_outvar->get_list;
-	
-	$self->{list}->delete('all');
+
 	my $n = 0;
+	$self->{list}->delete('all');
+	$self->{var_list} = undef;
+
+	# 見出し
+	foreach my $i ('h1','h2','h3','h4','h5'){
+		if (
+			mysql_exec->select(
+				"select status from status where name = \'$i\'",1
+			)->hundle->fetch->[0]
+		){
+			$self->{list}->add($n,-at => "$n");
+			$self->{list}->itemCreate($n,0,-text => $i);
+			$self->{list}->itemCreate(
+				$n,
+				1,
+				-text => $self->gui_jchar( '見出し'.substr($i,1,1) ),
+			);
+			push @{$self->{var_list}}, [$i, '見出し'.substr($i,1,1)];
+			++$n;
+		}
+	}
+	
+	# 外部変数
+	my $h = mysql_outvar->get_list;
 	foreach my $i (@{$h}){
 		if ($i->[0] eq 'dan'){$i->[0] = '段落';}
 		if ($i->[0] eq 'bun'){$i->[0] = '文';}
@@ -697,7 +727,7 @@ sub _fill{
 		# my $chk = Jcode->new($i->[1])->icode;
 		# print "$chk, $i->[1]\n";
 	}
-	$self->{var_list} = $h;
+	$self->{var_list} = [ @{$self->{var_list}}, @{$h} ];
 	gui_hlist->update4scroll($self->{list});
 	return $self;
 }
@@ -731,11 +761,21 @@ sub _delete{
 	}
 	
 	# 既に詳細Windowが開いている場合はいったん閉じる
-	$::main_gui->get('w_outvar_detail')->close
-		if $::main_gui->if_opened('w_outvar_detail');
+	#$::main_gui->get('w_outvar_detail')->close
+	#	if $::main_gui->if_opened('w_outvar_detail');
 	
 	# 削除実行
 	foreach my $i (@selection){
+		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
+			$self->win_obj->messageBox(
+				-message => $self->gui_jchar('見出しを削除することはできません'),
+				-icon    => 'info',
+				-type    => 'Ok',
+				-title   => 'KH Coder'
+			);
+			return 0;
+		}
+		
 		mysql_outvar->delete(
 			tani => $self->{var_list}[$i][0],
 			name => $self->{var_list}[$i][1],
@@ -767,6 +807,15 @@ sub _export{
 			gui_errormsg->open(
 				type => 'msg',
 				msg  => '集計単位の異なる変数群を一度に保存することはできません。',
+			);
+			return 0;
+		}
+		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
+			$self->win_obj->messageBox(
+				-message => $self->gui_jchar("現在のところ、このコマンドから見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。"),
+				-icon    => 'info',
+				-type    => 'Ok',
+				-title   => 'KH Coder'
 			);
 			return 0;
 		}
@@ -811,10 +860,13 @@ sub _delayed_open_var{
 	my $current = $self->{var_list}[$selection[0]][1];
 	my $cn = @selection;
 
-	$self->win_obj->after(80,sub{ $self->_chk1_open_var($current, $cn) });
+	$self->win_obj->after(
+		80,
+		sub{ $self->_delay_chk1_open_var($current, $cn) }
+	);
 }
 
-sub _chk1_open_var{
+sub _delay_chk1_open_var{
 	my $self   = shift;
 	my $chk    = shift;
 	my $chk_n  = shift;
@@ -826,11 +878,14 @@ sub _chk1_open_var{
 	#print Jcode->new("1: $chk, $chk_n, $current, $cn\n")->sjis ;
 	
 	if ($chk eq $current && $chk_n == $cn){
-		$self->win_obj->after(120,sub{ $self->_chk2_open_var($current, $cn) });
+		$self->win_obj->after(
+			120,
+			sub{ $self->_delay_chk2_open_var($current, $cn) }
+		);
 	}
 }
 
-sub _chk2_open_var{
+sub _delay_chk2_open_var{
 	my $self   = shift;
 	my $chk    = shift;
 	my $chk_n  = shift;
@@ -842,11 +897,14 @@ sub _chk2_open_var{
 	#print Jcode->new("2: $chk, $chk_n, $current, $cn\n")->sjis ;
 
 	if ($chk eq $current && $chk_n == $cn){
-		$self->win_obj->after(50,sub{ $self->_chk3_open_var($current, $cn) });
+		$self->win_obj->after(
+			50,
+			sub{ $self->_delay_chk3_open_var($current, $cn) }
+		);
 	}
 }
 
-sub _chk3_open_var{
+sub _delay_chk3_open_var{
 	my $self   = shift;
 	my $chk    = shift;
 	my $chk_n  = shift;
@@ -858,6 +916,12 @@ sub _chk3_open_var{
 	#print Jcode->new("2: $chk, $chk_n, $current, $cn\n")->sjis ;
 
 	if ($chk eq $current && $chk_n == $cn){
+		my $class = 'gui_window::outvar_list';
+		if ($self->{var_list}[$selection[0]][1] =~ /^見出し[1-5]$/){
+			$class .= '::midashi';
+		}
+		bless $self, $class;
+
 		$self->_open_var;
 	}
 }
@@ -983,6 +1047,8 @@ sub _open_var{
 			variable => \$self->{calc_tani},
 		);
 	}
+
+	$self->{btn_save}->configure(-state => 'normal');
 
 	#gui_window::outvar_detail->open(
 	#	tani => $self->{var_list}[$selection[0]][0],
