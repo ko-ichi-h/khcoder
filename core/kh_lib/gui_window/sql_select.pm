@@ -216,8 +216,10 @@ sub exec{
 		-padx             => '2',
 		-background       => 'white',
 		-height           => '4',
-		-selectforeground => 'brown',
-		-selectbackground => 'cyan',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
 		-selectmode       => 'extended'
 	)->pack(-fill=>'both',-expand => 'yes');
 	my $n = 0;

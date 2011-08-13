@@ -103,8 +103,8 @@ sub _exec_test{
 	$self->{result} .= "■外部変数とのクロス集計：段落―「h1」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{opt_body}->{selection} = 1;
-	$win2->{opt_body}->mb_refresh;
+	$win2->{var_obj}->{opt_body}->{selection} = 3;
+	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
 	foreach my $i (@{$win2->{result}}){
@@ -122,8 +122,8 @@ sub _exec_test{
 	$self->{result} .= "■外部変数とのクロス集計：段落―「死ぬ」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{opt_body}->{selection} = 3;
-	$win2->{opt_body}->mb_refresh;
+	$win2->{var_obj}->{opt_body}->{selection} = 3;
+	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
 	foreach my $i (@{$win2->{result}}){
@@ -141,8 +141,8 @@ sub _exec_test{
 	$self->{result} .= "■外部変数とのクロス集計：段落―「大見出し」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{opt_body}->{selection} = 4;
-	$win2->{opt_body}->mb_refresh;
+	$win2->{var_obj}->{opt_body}->{selection} = 3;
+	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
 	foreach my $i (@{$win2->{result}}){
@@ -160,8 +160,8 @@ sub _exec_test{
 	$self->{result} .= "■外部変数とのクロス集計：h2―「大見出し」\n";
 	$win2->{tani_obj}->{raw_opt} = 'h2';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{opt_body}->{selection} = 4;
-	$win2->{opt_body}->mb_refresh;
+	$win2->{var_obj}->{opt_body}->{selection} = 3;
+	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
 	foreach my $i (@{$win2->{result}}){

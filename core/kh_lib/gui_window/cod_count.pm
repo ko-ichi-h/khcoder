@@ -81,8 +81,10 @@ sub _new{
 		-columns          => 3,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'black',
-		-selectbackground => 'cyan',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
 		-selectmode       => 'extended',
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');

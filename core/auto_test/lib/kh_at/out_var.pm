@@ -32,19 +32,19 @@ sub _exec_test{
 	# ラベル編集(1)
 	$win->{list}->selectionSet(1);
 	$win->_open_var;
-	my $win_edit = $::main_gui->get('w_outvar_detail');
-	$win_edit->{entry}{0}->insert(0, gui_window->gui_jchar('なし') );
-	$win_edit->{entry}{1}->insert(0, gui_window->gui_jchar('あり') );
-	$win_edit->_save;
+	#my $win_edit = $::main_gui->get('w_outvar_detail');
+	$win->{entry}{0}->insert(0, gui_window->gui_jchar('なし') );
+	$win->{entry}{1}->insert(0, gui_window->gui_jchar('あり') );
+	$win->_save;
 
 	# ラベル編集(2)
 	$win->{list}->selectionSet(0);
 	$win->_open_var;
-	my $win_edit = $::main_gui->get('w_outvar_detail');
-	$win_edit->{entry}{1}->insert(0, gui_window->gui_jchar('上') );
-	$win_edit->{entry}{2}->insert(0, gui_window->gui_jchar('中') );
-	$win_edit->{entry}{3}->insert(0, gui_window->gui_jchar('下') );
-	$win_edit->_save;
+	#my $win_edit = $::main_gui->get('w_outvar_detail');
+	$win->{entry}{1}->insert(0, gui_window->gui_jchar('上') );
+	$win->{entry}{2}->insert(0, gui_window->gui_jchar('中') );
+	$win->{entry}{3}->insert(0, gui_window->gui_jchar('下') );
+	$win->_save;
 	# ラベル編集の結果は、コーディング結果からチェックする…。
 
 	# 外部変数の読み込み (2)
