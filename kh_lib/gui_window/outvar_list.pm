@@ -44,13 +44,12 @@ sub _new{
 		-columns          => 2,
 		-padx             => 2,
 		-background       => 'white',
-		#-selectforeground => 'brown',
-		-selectbackground => '#AFEEEE',
-		-selectborderwidth=> 0,
 		-selectmode       => 'extended',
-		#-selectborderwidth => 0,
-		#-indicator => 0,
+		#-selectforeground   => '#800000',
+		-selectbackground   => '#AFEEEE', # AFEEEE B0E0E6
+		-selectborderwidth  => 0,
 		-highlightthickness => 0,
+		#-indicator => 0,
 		#-command          => sub {$self->_open_var;},
 		-browsecmd        => sub {$self->_delayed_open_var;},
 		-height           => 10,
@@ -281,7 +280,10 @@ sub _save{
 sub v_docs{
 	my $self = shift;
 	
-	return 0 unless $self->{selected_var_obj};
+	unless ($self->{selected_var_obj}){
+		$self->_error_no_var;
+		return 0;
+	}
 	
 	# クエリー作成
 	my @selected = $self->{list_val}->infoSelection;
@@ -318,7 +320,10 @@ sub v_docs{
 sub v_words{
 	my $self = shift;
 	
-	return 0 unless $self->{selected_var_obj};
+	unless ($self->{selected_var_obj}){
+		$self->_error_no_var;
+		return 0;
+	}
 	
 	# クエリー作成
 	my @selected = $self->{list_val}->infoSelection;
@@ -359,7 +364,10 @@ sub v_words_list{
 	my $self      = shift;
 	my $file_type = shift;
 	
-	return 0 unless $self->{selected_var_obj};
+	unless ($self->{selected_var_obj}){
+		$self->_error_no_var;
+		return 0;
+	}
 	
 	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
 	$self->_save;
@@ -644,6 +652,17 @@ sub _write_xls{
 	gui_OtherWin->open($f);
 }
 
+sub _error_no_var{
+	my $self = shift;
+
+	$self->win_obj->messageBox(
+		-message => $self->gui_jchar('変数または見出しを選択してください。'),
+		-icon    => 'info',
+		-type    => 'Ok',
+		-title   => 'KH Coder'
+	);
+
+}
 
 #----------------------------#
 #   変数系のファンクション   #
