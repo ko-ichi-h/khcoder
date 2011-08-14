@@ -33,7 +33,7 @@ sub _new{
 	#   変数リスト   #
 
 	$fra4->Label(
-		-text => $self->gui_jchar('■リスト'),
+		-text => $self->gui_jchar('■変数リスト'),
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
