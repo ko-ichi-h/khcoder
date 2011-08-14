@@ -74,7 +74,7 @@ sub _new{
 #		-width => 8,
 		-borderwidth => '1',
 		-command => sub{$self->_delete;}
-	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left');
+	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	$fra4_bts->Button(
 		-text => $self->gui_jchar('出力'),
@@ -82,10 +82,10 @@ sub _new{
 #		-width => 8,
 		-borderwidth => '1',
 		-command => sub{$self->_export;}
-	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left');
+	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	my $mb1 = $fra4_bts->Menubutton(
-		-text        => $self->gui_jchar('読み込み'),
+		-text        => $self->gui_jchar('▽読み込み'),
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -145,9 +145,9 @@ sub _new{
 
 	$self->{list_val} = $lis;
 
-	my $fra5_ets = $fra5->Frame()->pack(-fill => 'x', -expand => 0);
-	my $fra5_bts = $fra5->Frame()->pack( -expand => 0, -anchor => 'w');
-	$self->{opt_tani_fra} = $fra5_bts;
+	my $fra5_ets = $fra5->Frame()->pack(-fill => 'x');
+	my $fra5_bts = $fra5->Frame()->pack(-fill => 'x');
+	#my $fra5_btm = $fra5->Frame()->pack(-fill => 'x');
 
 	#$fra5_ets->Label(
 	#	-text => $self->gui_jchar('変数名（単位）：')
@@ -161,49 +161,80 @@ sub _new{
 	#)->pack(-side => 'left', -fill => 'x', -expand => 1);
 
 	$self->{btn_save} = $fra5_ets->Button(
-		-text        => $self->gui_jchar('ラベルの変更を保存'),
+		-text        => $self->gui_jchar('ラベルを保存'),
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->_save;}
-	)->pack(-padx => 2, -pady => 2, -fill => 'x');
-
-	#$self->{label_num} = $fra5_ets->Label(
-	#	-text => $self->gui_jchar('値の種類： 000')
-	#)->pack(-padx => 2, -pady => 2, -side => 'left');
+	)->pack(
+		-padx => 2,
+		-pady => 2,
+		-fill => 'x',
+		-side => 'left',
+		-expand => 1,
+	);
 
 	my $btn_doc = $fra5_bts->Button(
 		-text        => $self->gui_jchar('文書検索'),
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->v_docs;}
-	)->pack(-padx => 2, -pady => 2, -side => 'left');
-
-	$wmw->Balloon()->attach(
-		$btn_doc,
-		-balloonmsg => $self->gui_jchar("特定の値を持つ文書を検索します\n[値をダブルクリック]"),
-		-font       => "TKFN"
-	);
+	)->pack(-padx => 2, -pady => 2, -side => 'left', -fill => 'y');
 
 	#my $btn_aso = $fra5_bts->Button(
 	#	-text        => $self->gui_jchar('特徴語'),
 	#	-font        => "TKFN",
 	#	-borderwidth => '1',
-	#	-command     => sub {$self->v_words;}
-	#)->pack(-padx => 2, -pady => 2, -side => 'left');
+	#	-command     => sub {$self->v_words;},
+	#	-height      => 1,
+	#)->pack(-padx => 2, -pady => 2, -side => 'left', -fill => 'y');
 	#
 	#$wmw->Balloon()->attach(
 	#	$btn_aso,
-	#	-balloonmsg => $self->gui_jchar('特定の値を持つ文書を検索し、それらの文書に特徴的な語を探索します'),
+	#	-balloonmsg => $self->gui_jchar("選択した値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
 	#	-font       => "TKFN"
 	#);
 
+	my $mb = $fra5_bts->Menubutton(
+		-text        => $self->gui_jchar('▽特徴語'),
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-width       => $self->{width},
+		-borderwidth => 1,
+		-height => 1,
+	)->pack(-padx => 2, -pady => 2, -side => 'left');
+
+	$mb->command(
+		-command => sub {$self->v_words;},
+		-label   => $self->gui_jchar('選択した値'),
+	);
+
+	$mb->command(
+		-command => sub {$self->v_words_list('xls')},
+		-label   => $self->gui_jchar('一覧（Excel形式）'),
+	);
+
+	$mb->command(
+		-command => sub {$self->v_words_list('csv')},
+		-label   => $self->gui_jchar('一覧（CSV形式）'),
+	);
+
+	$wmw->Balloon()->attach(
+		$mb,
+		-balloonmsg => $self->gui_jchar("選択した値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
+		-font       => "TKFN"
+	);
+
+
 	$fra5_bts->Label(
-		-text => $self->gui_jchar('集計単位：')
+		-text => $self->gui_jchar('単位：')
 	)->pack(-side => 'left');
 
 	# ダミーを作っておく...
+	$self->{opt_tani_fra} = $fra5_bts; #->Frame()->pack(-side => 'left');
 	$self->{opt_tani} = gui_widget::optmenu->open(
-		parent  => $self->{opt_tani_fra},
+		parent  => $fra5_bts,
 		pack    => {-side => 'left', -padx => 2, -pady => 2},
 		options => [
 			[$self->gui_jchar('段落'), 'dan'],
@@ -212,34 +243,10 @@ sub _new{
 		variable => \$self->{calc_tani},
 	);
 
-	my $mb = $fra5_bts->Menubutton(
-		-text        => $self->gui_jchar('特徴語'),
-		-tearoff     => 'no',
-		-relief      => 'raised',
-		-indicator   => 'no',
-		-font        => "TKFN",
-		#-width       => $self->{width},
-		-borderwidth => 1,
-	)->pack(-padx => 2, -pady => 2, -side => 'right');
-
-	$mb->command(
-		-command => sub {$self->v_words;},
-		-label   => $self->gui_jchar('選択した値の特徴語'),
-	);
-
-	$mb->command(
-		-command => sub {$self->v_words_list('xls')},
-		-label   => $self->gui_jchar('一覧： Excel'),
-	);
-
-	$mb->command(
-		-command => sub {$self->v_words_list('csv')},
-		-label   => $self->gui_jchar('一覧： CSV'),
-	);
 
 	$wmw->Balloon()->attach(
-		$mb,
-		-balloonmsg => $self->gui_jchar("特定の値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
+		$btn_doc,
+		-balloonmsg => $self->gui_jchar("選択した値を持つ文書を検索します\n[値をダブルクリック]"),
 		-font       => "TKFN"
 	);
 
