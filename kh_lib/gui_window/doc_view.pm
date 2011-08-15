@@ -31,16 +31,19 @@ sub _new{
 
 	my $srtxt = $bunhyojiwin->Scrolled(
 		"ROText",
-		spacing1 => 3,
-		spacing2 => 2,
-		spacing3 => 3,
+		-spacing1 => 4,
+		-spacing2 => 2,
+		-spacing3 => 3,
 		-scrollbars=> 'ose',
 		-height => 20,
 		-width => 64,
 		-wrap => 'word',
 		-font => "TKFN",
 		-background => 'white',
-		-foreground => 'black'
+		-foreground => 'black',
+		-exportselection => 1,
+		-selectborderwidth => 2,
+		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 'yes');
 
 	$srtxt->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$srtxt]);
