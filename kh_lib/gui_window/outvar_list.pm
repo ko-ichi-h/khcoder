@@ -46,8 +46,8 @@ sub _new{
 		-padx             => 2,
 		-background       => 'white',
 		-selectmode       => 'extended',
-		-selectforeground   => 'black',
-		-selectbackground   => '#AFEEEE', # AFEEEE B0E0E6
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
 		-selectborderwidth  => 0,
 		-highlightthickness => 0,
 		#-indicator => 0,
@@ -127,10 +127,9 @@ sub _new{
 		-columns          => 3,
 		-padx             => 2,
 		-background       => 'white',
-		-selectforeground => 'black',
-		-selectbackground => '#F0E68C',
-		-selectmode       => 'browse',
-		-selectborderwidth=> 0,
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
 		-highlightthickness => 0,
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
@@ -529,6 +528,7 @@ sub _write_xls{
 		utf8( Jcode->new('¥·¡¼¥È1')->utf8 )->utf16,
 		1
 	);
+	$worksheet->hide_gridlines(1);
 
 	my $font = '';
 	if ($] > 5.008){

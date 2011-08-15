@@ -43,6 +43,8 @@ sub _new{
 		-foreground => 'black',
 		-exportselection => 1,
 		-selectborderwidth => 2,
+		-selectforeground => $::config_obj->color_ListHL_fore,
+		-selectbackground => $::config_obj->color_ListHL_back, 
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 'yes');
 

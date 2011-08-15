@@ -163,7 +163,7 @@ sub refresh{
 		$self->{l_c_2}->configure(-foreground => 'black');
 		$self->{ch_w_high}->configure(-state => 'normal');
 		$self->{clist}->configure(-background => 'white');
-		$self->{clist}->configure(-selectbackground => 'cyan');
+		$self->{clist}->configure(-selectbackground => $::config_obj->color_ListHL_back);
 		$self->{tani_obj}->normal;
 		$self->{codf_obj}->normal;
 		$self->read_code;

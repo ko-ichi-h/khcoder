@@ -700,7 +700,7 @@ sub make{
 			);
 
 		$self->{t_out_list} = $f_out_var->command(
-			-label => gui_window->gui_jchar('リスト確認・管理'),
+			-label => gui_window->gui_jchar('リストの確認・管理'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::outvar_list->open;
