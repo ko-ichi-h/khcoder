@@ -234,6 +234,7 @@ sub _out_file_xls{
 		utf8( Jcode->new('シート1')->utf8 )->utf16,
 		1
 	);
+	$worksheet->hide_gridlines(1);
 
 	my $font = '';
 	if ($] > 5.008){
@@ -336,6 +337,7 @@ sub _out_file_xls_150{
 		utf8( Jcode->new('シート1')->utf8 )->utf16,
 		1
 	);
+	$worksheet->hide_gridlines(1);
 
 	my $font = '';
 	if ($] > 5.008){
