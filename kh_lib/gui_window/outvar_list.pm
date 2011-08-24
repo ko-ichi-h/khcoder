@@ -734,7 +734,11 @@ sub _fill{
 		# my $chk = Jcode->new($i->[1])->icode;
 		# print "$chk, $i->[1]\n";
 	}
-	$self->{var_list} = [ @{$self->{var_list}}, @{$h} ];
+	if( $self->{var_list} ){
+		$self->{var_list} = [ @{$self->{var_list}}, @{$h} ];
+	} else {
+		$self->{var_list} = $h;
+	}
 	gui_hlist->update4scroll($self->{list});
 	return $self;
 }
