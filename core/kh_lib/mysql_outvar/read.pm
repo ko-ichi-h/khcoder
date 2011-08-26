@@ -53,6 +53,9 @@ sub save{
 		return 0;
 	}
 
+
+
+
 	# 同じ変数名が無いかチェック（本当はこの部分はUI側へ回した方が良い…）
 	my %name_check;
 	my $h = mysql_exec->select("
@@ -70,6 +73,19 @@ sub save{
 		}
 	}
 	
+	# 不正な変数名が無いかチェック
+	foreach my $i (@{$data[0]}){
+		if ($i =~ /見出し[1-5]/){
+			gui_errormsg->open(
+				icon => 'info',
+				msg  => "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。",
+				type => 'msg',
+			);
+			return 0;
+		}
+	}
+	
+	# 同じ変数名があった場合
 	if (@exts){
 		# 既存の変数を上書きして良いかどうか問い合わせ
 		my $msg = '';
