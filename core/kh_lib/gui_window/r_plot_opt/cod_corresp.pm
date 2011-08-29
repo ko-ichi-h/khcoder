@@ -81,7 +81,7 @@ sub innner{
 	}
 	
 	if ( $self->{command_f} =~ /resize_vars <\- ([0-9]+)\n/ ){
-		$self->{chk_resize_vars} = $1;
+		$chk_resize_vars = $1;
 	}
 
 	if ( $self->{command_f} =~ /bubble_size <\- ([0-9]+)\n/ ){

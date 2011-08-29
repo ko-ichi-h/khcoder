@@ -148,7 +148,7 @@ sub check_bubble{
 
 sub chk_resize_vars{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{check_bubble} );
+	return gui_window->gui_jg( $self->{chk_resize_vars} );
 }
 
 sub chk_std_radius{
