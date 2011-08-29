@@ -1244,7 +1244,7 @@ if (std_radius){ # 円の大小をデフォルメ
 	b_size <- neg_to_zero(b_size)
 }
 
-# バブル描画
+# プロット領域を設定
 plot(
 	rbind(
 		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
@@ -1256,6 +1256,7 @@ plot(
 	ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")
 )
 
+# バブル描画（語）
 symbols(
 	c$cscore[,d_x],
 	c$cscore[,d_y],
@@ -1265,9 +1266,7 @@ symbols(
 	add=T,
 )
 
-
-
-# 点を描画
+# バブル描画（変数・見出し）
 if (biplot){
 	# 点のサイズを計算
 	if (resize_vars){
