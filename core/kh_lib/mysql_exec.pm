@@ -272,6 +272,11 @@ sub select{
 	return $self;
 }
 
+sub selected_rows{
+	my $self = shift;
+	return $self->{hundle}->rows;
+}
+
 sub print_error{
 	my $self = shift;
 	$self->{err} =
