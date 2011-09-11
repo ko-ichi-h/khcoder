@@ -198,7 +198,16 @@ sub doc_val{
 			$sql .= "\tAND $self->{tani}.$i"."_id = $args{tani}.$i"."_id\n";
 			last if $i eq $self->{tani};
 		}
-		$doc_id = mysql_exec->select("$sql",1)->hundle->fetch->[0];
+		$doc_id = mysql_exec->select("$sql",1);
+		
+		if ($doc_id->selected_rows){
+			$doc_id = $doc_id->hundle->fetch->[0];
+		} else {
+			# 段落単位の変数の値を、文単位で見ようとする場合、
+			# 見出し文では「該当なし（undef）」に
+			return undef;
+		}
+		
 		# print "$sql";
 		# print "doc_id_var: $doc_id\n";
 	}
