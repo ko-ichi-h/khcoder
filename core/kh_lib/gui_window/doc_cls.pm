@@ -41,7 +41,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('・距離：'),
+		-text => $self->gui_jchar('距離：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -253,7 +253,10 @@ sub calc_exec{
 	$r_command .= &r_command_tfidf;
 	
 	if ($args{method_dist} eq 'euclid'){
-		# 文書ごとに標準化（文書のサイズ差による分類にならないように…）
+		# 文書ごとに標準化
+			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
+			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
+			# の用をなさなくなる場合がまま見られる。
 		$r_command .= "d <- t( scale( t(d) ) )\n";
 		$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
 	} else {
