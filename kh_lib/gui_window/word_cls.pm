@@ -266,10 +266,18 @@ sub make_plot{
 	;
 
 	if ($args{method_dist} eq 'euclid'){
+		# 抽出語ごとに標準化
+			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
+			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
+			# の用をなさなくなる場合がまま見られる。
 		$r_command .= "d <- t( scale( t(d) ) )\n";
 	}
 	$r_command .= "library(amap)\n";
 	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
+	if ($args{method_dist} eq 'euclid'){
+		$r_command .= "dj <- dj^2\n";
+	}
+	
 	$r_command .= "try( library(flashClust) )\n";
 
 	my $r_command_2a = 
