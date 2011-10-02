@@ -39,7 +39,7 @@ sub _new{
 
 	# 画像をロード
 	if ( $imgs->{$self->win_name} ){
-		#print "img: read\n";
+		warn "img: read: ".$self->win_name."\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
 	} else {
 		#print "img: new\n";
@@ -272,9 +272,11 @@ sub end{
 	# Rのプロット・オブジェクト
 	$self->{plots} = undef;
 
-	#$imgs->{$self->win_name}->delete;
-	#$imgs->{$self->win_name}->destroy;
-	#$imgs->{$self->win_name} = undef;
+	# Imageオブジェクトのクリア
+	print "clearing: ".$self->win_name."\n";
+	$imgs->{$self->win_name}->delete;
+	$imgs->{$self->win_name}->destroy;
+	$imgs->{$self->win_name} = undef;
 
 	#my @n = $self->{win_obj}->imageNames;
 	#print "images: ", $#n + 1, "\n";
