@@ -50,9 +50,13 @@ sub start{
 }
 
 sub end{
+	my $self = shift;
+	
 	if ($::main_gui->if_opened('w_word_cls_height')){
 		$::main_gui->get('w_word_cls_height')->close;
 	}
+	
+	&gui_window::r_plot::end($self);
 }
 
 sub win_title{
