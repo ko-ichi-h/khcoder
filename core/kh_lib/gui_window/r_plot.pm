@@ -39,7 +39,7 @@ sub _new{
 
 	# 画像をロード
 	if ( $imgs->{$self->win_name} ){
-		warn "img: read: ".$self->win_name."\n";
+		#print "img: read: ".$self->win_name."\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
 	} else {
 		#print "img: new\n";
