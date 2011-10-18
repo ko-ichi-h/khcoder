@@ -296,18 +296,33 @@ sub exec{
 	if (length($t) > 8000){
 		$flag_long = 1;
 	}
-	if ($t =~ /'|\\|"|<|>|$ctrl|\|/){
-		$flag_hankaku = 1;
-	}
 	
-	# È¾³Ñµ­¹æ¤Îºï½ü
-	$t =~ s/'/¡Ç/g;
-	$t =~ s/\\/¡ï/g;
-	$t =~ s/"/¡É/g;
-	$t =~ s/\|/¡Ã/g;
-	$t =~ s/</¡ã/g;
-	$t =~ s/>/¡ä/g;
-	$t =~ s/$ctrl/ /g;
+	# morpho_analyzer
+	if (
+		   $::config_obj->c_or_j eq 'chasen'
+		|| $::config_obj->c_or_j eq 'mecab'
+	){                                            # chasen¡¦mecab¤ò»È¤¦¾ì¹ç
+		if ($t =~ /'|\\|"|<|>|$ctrl|\|/){
+			$flag_hankaku = 1;
+		}
+		# È¾³Ñµ­¹æ¤Îºï½ü
+		$t =~ s/'/¡Ç/g;
+		$t =~ s/\\/¡ï/g;
+		$t =~ s/"/¡É/g;
+		$t =~ s/\|/¡Ã/g;
+		$t =~ s/</¡ã/g;
+		$t =~ s/>/¡ä/g;
+		$t =~ s/$ctrl/ /g;
+	} else {                                      # chasen¡¦mecab°Ê³°¤Î¾ì¹ç
+		if ($t =~ /<|>|$ctrl/){
+			$flag_hankaku = 1;
+		}
+		# È¾³Ñµ­¹æ¤Îºï½ü
+		$t =~ s/</¡ã/g;
+		$t =~ s/>/¡ä/g;
+		$t =~ s/$ctrl/ /g;
+	}
+
 
 	# °ìÊ¸»ú¤º¤Ä½èÍý
 	my @chars = $t =~ /$ascii|$twoBytes|$threeBytes/og;

@@ -596,6 +596,16 @@ sub _format{                                      # 結果の出力
 	my $start = shift;
 	
 	# print "3: Formating...\n";
+	my $morpho = $::project_obj->morpho_analyzer;
+	my $spacer = '';
+	if (
+		   $morpho eq 'chasen'
+		|| $morpho eq 'mecab'
+	){
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
 	
 	# 出力リスト作成（中央のID）;
 	my $st1 = mysql_exec->select("
@@ -655,6 +665,7 @@ sub _format{                                      # 結果の出力
 				$return->[$n][0] .= $::config_obj->kaigyo_kigou;
 			}
 			$l_dan = $res->{$m}[1];
+			$return->[$n][0] .= $spacer if length($return->[$n][0]);
 			$return->[$n][0] .= $res->{$m}[0];
 		}
 		if (
@@ -677,6 +688,7 @@ sub _format{                                      # 結果の出力
 				$return->[$n][2] .= $::config_obj->kaigyo_kigou;
 			}
 			$l_dan = $res->{$m}[1];
+			$return->[$n][2] .= $spacer if length($return->[$n][2]);
 			$return->[$n][2] .= $res->{$m}[0];
 		}
 		++$n;

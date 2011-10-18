@@ -266,16 +266,28 @@ sub _view_doc{
 		);
 	}
 	
+	my $morpho = $::project_obj->morpho_analyzer; # スペーサー設定
+	my $spacer = '';
+	if (
+		   $morpho eq 'chasen'
+		|| $morpho eq 'mecab'
+	){
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+	
 	$self->text->delete('0.0','end');             # 見出し書き出し
 	$self->text->insert('end',$self->gui_jchar($doc->header,'sjis'),'info');
 	
 	my $t;
 	my $buffer;                                   # 本文書き出し
 	foreach my $i (@{$doc->body}){      # 強調語の場合
+		$buffer .= $spacer if $buffer && $buffer ne $spacer;
 		if ($i->[1]){
 			if (length($buffer)){
 				$self->_str_color($buffer);
-				$buffer = '';
+				$buffer = $spacer;
 			}
 			$self->text->insert('end',$self->gui_jchar("$i->[0]",'sjis'),$i->[1]);
 		} else {                        # 強調語以外：バッファに蓄積

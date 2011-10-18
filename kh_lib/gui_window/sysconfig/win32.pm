@@ -33,7 +33,7 @@ sub __new{
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('茶筌を利用'),
+		-text     => $self->gui_jchar('茶筌（日本語）'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'chasen',
@@ -62,9 +62,9 @@ sub __new{
 	)->pack(-padx => '2',-side => 'right');
 
 	
-	my $msg = 'MeCabを利用';
+	my $msg = 'MeCab（日本語）';
 	if ($::config_obj->all_in_one_pack && ! -e $::config_obj->mecab_path){
-		$msg .= '  要・別途インストール';
+		$msg .= '※別途インストールが必要';
 	}
 
 	$lfra->Radiobutton(
@@ -99,6 +99,14 @@ sub __new{
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
 	
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('Porter Stemmer（英語）'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'stemming',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
 	$self = $self->refine_cj;
 
 	$self->{mail_obj} = gui_widget::mail_config->open(
@@ -229,7 +237,8 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
-	} else {
+	}
+	elsif ($self->{c_or_j} eq 'mecab') {
 		$self->entry1->configure(-state => 'disable');
 		$self->btn1->configure(-state => 'disable');
 		$self->lb1->configure(-state => 'disable');
@@ -237,6 +246,16 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'normal');
 		$self->btn2->configure(-state => 'normal');
 		$self->lb2->configure(-state => 'normal');
+	}
+	
+	elsif ($self->{c_or_j} eq 'stemming') {
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+		
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
 	}
 
 	return $self;

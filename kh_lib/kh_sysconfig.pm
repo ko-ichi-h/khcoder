@@ -25,6 +25,7 @@ sub readin{
 		   ! -e "$self->{ini_file}"
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
+		|| ! -e "./config/hinshi_stemming"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -142,6 +143,27 @@ sub reset_parm{
 						( $i )
 				") or die($i);
 			}
+		}
+
+		# Stemming用
+		unless (-e "./config/hinshi_stemming"){
+			$dbh->do(
+				"CREATE TABLE hinshi_stemming (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			$dbh->do("
+				INSERT INTO hinshi_stemming
+					(hinshi_id, kh_hinshi, condition1, condition2 )
+				VALUES
+					( 1, 'ALL', 'ALL', '' ),
+					(99999,'HTMLタグ','タグ','HTML'),
+					(11,'タグ','タグ','')
+					
+			") or die();
 		}
 
 		$dbh->disconnect;
