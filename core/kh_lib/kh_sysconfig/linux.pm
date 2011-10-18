@@ -10,6 +10,7 @@ sub _readin{
 	use Jcode;
 	use kh_sysconfig::linux::chasen;
 	use kh_sysconfig::linux::mecab;
+	use kh_sysconfig::linux::stemming;
 
 	my $self = shift;
 

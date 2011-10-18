@@ -139,10 +139,18 @@ sub mark{
 		chomp;
 
 		my $text = Jcode->new($_,$icode)->h2z->euc;
-		$text =~ s/ /°°/go;
-		$text =~ s/\\/°Ô/go;
-		$text =~ s/'/°«/go;
-		$text =~ s/"/°…/go;
+		
+		# morpho_analyzer
+		if (
+			   $::config_obj->c_or_j eq 'chasen'
+			|| $::config_obj->c_or_j eq 'mecab'
+		){
+			$text =~ s/ /°°/go;
+			$text =~ s/\\/°Ô/go;
+			$text =~ s/'/°«/go;
+			$text =~ s/"/°…/go;
+		}
+		
 		while (1){
 			my %temp = (); my $f = 0;                      # ∞Ã√÷§ÚºË∆¿
 			foreach my $i (@keywords){

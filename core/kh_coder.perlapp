@@ -1,6 +1,6 @@
-#!F:\apps\pdk7.3\bin\lib\pai.exe
+#!C:\Program Files\ActiveState Perl Dev Kit 8.1\bin\perlapp-gui.exe
 PAP-Version: 1.0
-Packer: F:\apps\pdk7.3\bin\perlapp.exe
+Packer: C:\Program Files\ActiveState Perl Dev Kit 8.1\bin\perlapp.exe
 Script: kh_coder.pl
 Cwd: F:\home\Koichi\Study\perl\core
 Add: Encode::Guess
@@ -11,8 +11,14 @@ Add: Encode::EUCJPMS
 Add: kh_project_io
 Add: YAML::Dumper
 Add: YAML::Loader
+Add: Lingua::EN::Tagger
+Bind: Lingua/EN/Tagger/pos_tags.hash[file=C:\apps\Perl\site\lib\Lingua\EN\Tagger\pos_tags.hash]
+Bind: Lingua/EN/Tagger/pos_words.hash[file=C:\apps\Perl\site\lib\Lingua\EN\Tagger\pos_words.hash]
+Bind: Lingua/EN/Tagger/tags.yml[file=C:\apps\Perl\site\lib\Lingua\EN\Tagger\tags.yml,text]
+Bind: Lingua/EN/Tagger/unknown.yml[file=C:\apps\Perl\site\lib\Lingua\EN\Tagger\unknown.yml,text]
+Bind: Lingua/EN/Tagger/words.yml[file=C:\apps\Perl\site\lib\Lingua\EN\Tagger\words.yml,text]
 Clean: 0
-Date: 2009-05-18 21:22:09
+Date: 2011-10-19 04:02:16
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -22,6 +28,7 @@ Gui: 0
 Hostname: FORTUNA
 Icon: memo\1.ico
 Lib: lib:.\kh_lib
+Manifest: 
 No-Compress: 0
 No-Logo: 0
 Runlib: 

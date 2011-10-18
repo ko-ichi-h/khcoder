@@ -10,6 +10,7 @@ sub _readin{
 	use Jcode;
 	use kh_sysconfig::win32::chasen;
 	use kh_sysconfig::win32::mecab;
+	use kh_sysconfig::win32::stemming;
 
 	my $self = shift;
 
