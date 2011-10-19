@@ -40,10 +40,10 @@
 。		その他		記号-句点	
 ■品詞選択（変更）:
 words_all:	106,344
-project_kinds:	6,190 (5,478)
+project_kinds:	6,098 (5,471)
 ■品詞選択（再変更）:
 words_all:	106,344
-project_kinds:	6,190 (5,492)
+project_kinds:	6,098 (5,485)
 ■複合語の検出（TermExtract）
 先生先生	59.867
 西洋人	39.799

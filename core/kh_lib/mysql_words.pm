@@ -32,12 +32,12 @@ sub search{
 		my $sql;
 		$sql = '
 			SELECT
-				genkei.name, hselection.name, genkei.num, genkei.id, hinshi.name
+				genkei.name, hselection.name, genkei.num, genkei.id
 			FROM
-				genkei, hselection, hinshi
+				genkei, hselection
 			WHERE
 				    genkei.khhinshi_id = hselection.khhinshi_id
-				AND genkei.hinshi_id = hinshi.id
+				#AND genkei.hinshi_id = hinshi.id
 				AND hselection.ifuse = 1
 				AND genkei.nouse = 0'."\n";
 		$sql .= "\t\t\tAND (\n";
@@ -72,18 +72,18 @@ sub search{
 		if ( ! $args{katuyo} ){         # 活用語なしの場合
 			foreach my $i (@{$result}){
 				pop @{$i};
-				pop @{$i};
+				#pop @{$i};
 			}
 		} else {                        # 活用語ありの場合
 			my $result2;
 			foreach my $i (@{$result}){
-				my $hinshi = pop @{$i};
+				#my $hinshi = pop @{$i};
 				my $id = pop @{$i};
 				push @{$result2}, $i;
 				
-				if ( index("$hinshi",'名詞-') == 0 ){
-					next;
-				}
+				#if ( index("$hinshi",'名詞-') == 0 ){
+				#	next;
+				#}
 				
 				my $r = mysql_exec->select("      # 活用語を探す
 					SELECT hyoso.name, katuyo.name, hyoso.num
@@ -112,7 +112,7 @@ sub search{
 			FROM hyoso, genkei, hinshi, katuyo
 			WHERE
 				    hyoso.genkei_id = genkei.id
-				AND genkei.hinshi_id = hinshi.id
+				AND hyoso.hinshi_id = hinshi.id
 				AND hyoso.katuyo_id = katuyo.id AND (
 		';
 		foreach my $i (@query){
@@ -752,17 +752,17 @@ sub _make_list{
 	my @result = ();
 	foreach my $i (@hinshi){
 		my $sql;
-		if ($i->[0] eq 'その他'){
-			$sql  = "
-				SELECT concat(genkei.name,'(',hinshi.name,')'), genkei.num
-				FROM genkei, hinshi
-				WHERE
-					genkei.hinshi_id = hinshi.id
-					and khhinshi_id = $i->[1]
-					and genkei.nouse = 0
-				ORDER BY num DESC, genkei.name
-			";
-		} else {
+		#if ($i->[0] eq 'その他'){
+		#	$sql  = "
+		#		SELECT concat(genkei.name,'(',hinshi.name,')'), genkei.num
+		#		FROM genkei, hinshi
+		#		WHERE
+		#			genkei.hinshi_id = hinshi.id
+		#			and khhinshi_id = $i->[1]
+		#			and genkei.nouse = 0
+		#		ORDER BY num DESC, genkei.name
+		#	";
+		#} else {
 			$sql  = "
 				SELECT name, num FROM genkei
 				WHERE
@@ -770,7 +770,7 @@ sub _make_list{
 					and genkei.nouse = 0
 				ORDER BY num DESC, name
 			";
-		}
+		#}
 		my $t = mysql_exec->select($sql,1);
 		push @result, ["$i->[0]", $t->hundle->fetchall_arrayref];
 	}
@@ -791,18 +791,18 @@ sub _make_list_df{
 	my @result = ();
 	foreach my $i (@hinshi){
 		my $sql;
-		if ($i->[0] eq 'その他'){
-			$sql  = "
-				SELECT concat(genkei.name,'(',hinshi.name,')'), f
-				FROM hinshi, genkei
-					LEFT JOIN df_$tani ON genkei_id = genkei.id
-				WHERE
-					genkei.hinshi_id = hinshi.id
-					and khhinshi_id = $i->[1]
-					and genkei.nouse = 0
-				ORDER BY f DESC, genkei.name
-			";
-		} else {
+		#if ($i->[0] eq 'その他'){
+		#	$sql  = "
+		#		SELECT concat(genkei.name,'(',hinshi.name,')'), f
+		#		FROM hinshi, genkei
+		#			LEFT JOIN df_$tani ON genkei_id = genkei.id
+		#		WHERE
+		#			genkei.hinshi_id = hinshi.id
+		#			and khhinshi_id = $i->[1]
+		#			and genkei.nouse = 0
+		#		ORDER BY f DESC, genkei.name
+		#	";
+		#} else {
 			$sql  = "
 				SELECT name, f FROM genkei
 					LEFT JOIN df_$tani ON genkei_id = genkei.id
@@ -811,7 +811,7 @@ sub _make_list_df{
 					and genkei.nouse = 0
 				ORDER BY f DESC, name
 			";
-		}
+		#}
 		my $t = mysql_exec->select($sql,1);
 		push @result, ["$i->[0]", $t->hundle->fetchall_arrayref];
 	}

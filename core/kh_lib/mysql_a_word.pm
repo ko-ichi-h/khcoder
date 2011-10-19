@@ -23,10 +23,9 @@ sub new{
 
 	my $sql = "
 		SELECT genkei.id
-		FROM genkei, hselection, hinshi
+		FROM genkei, hselection #, hinshi
 		WHERE
 			    genkei.khhinshi_id = hselection.khhinshi_id
-			and genkei.hinshi_id = hinshi.id
 			and hselection.ifuse = 1
 			and genkei.nouse = 0
 			and genkei.name = \'$args{genkei}\'
@@ -35,7 +34,7 @@ sub new{
 		$sql .= "			and hselection.name = \'$args{khhinshi}\'";
 	}
 	if ($args{hinshi}){
-		$sql .= "			and hinshi.name = \'$args{hinshi}\'";
+		die("unknown parameter \"hinshi\"!");
 	}
 	
 	my $t = mysql_exec->select($sql,1)->hundle;
@@ -59,10 +58,14 @@ sub hyoso_id_s{
 	}
 	
 	my $sql = "SELECT hyoso.id\n";
-	$sql .= "FROM hyoso, genkei ";
+	$sql .= "FROM hyoso, genkei";
 	if ($self->{katuyo}){ $sql .= ",katuyo "; }
 	$sql .= "\n";
 	$sql .= "WHERE\n\tgenkei.id = hyoso.genkei_id\n";
+	#if ($self->{hinshi}){
+	#	$sql .= "\tAND hyoso.hinshi_id = hinshi.id\n";
+	#	$sql .= "\tAND hinshi.name = $self->{hinshi}\n";
+	#}
 	if ($self->{katuyo}){
 		$sql .= "\tAND hyoso.katuyo_id = katuyo.id\n";
 		$sql .= "\tAND katuyo.name = '$self->{katuyo}\'\n";
@@ -87,7 +90,7 @@ sub hyoso_id_s{
 		push @result, $i->[0];
 	}
 	if (@result){
-		# print "@result";
+		print "@result";
 		return \@result;
 	} else {
 		return 0;

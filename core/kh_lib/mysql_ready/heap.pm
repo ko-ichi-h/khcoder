@@ -67,9 +67,9 @@ sub rowdata{
 		(
 			id int primary key not null,
 			hyoso  varchar(".$self->length('hyoso').") binary not null,
-			genkei varchar(".$self->length('genkei').") binary not null,
-			hinshi varchar(".$self->length('hinshi').") binary not null,
-			katuyo varchar(".$self->length('katuyo').") binary not null
+			genkei varchar(".$self->length('genkei').") not null,
+			hinshi varchar(".$self->length('hinshi').") not null,
+			katuyo varchar(".$self->length('katuyo').") not null
 		) TYPE=HEAP
 	",1);
 

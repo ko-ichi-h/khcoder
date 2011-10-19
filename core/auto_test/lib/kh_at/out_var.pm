@@ -20,7 +20,7 @@ sub _exec_test{
 	)->euc;
 
 	# 外部変数を1つ削除
-	$win->{list}->selectionSet(1);
+	$win->{list}->selectionSet(3);
 	$win->_delete(
 		no_conf => 1,
 	);
@@ -30,7 +30,7 @@ sub _exec_test{
 	)->euc;
 
 	# ラベル編集(1)
-	$win->{list}->selectionSet(1);
+	$win->{list}->selectionSet(3);
 	$win->_open_var;
 	#my $win_edit = $::main_gui->get('w_outvar_detail');
 	$win->{entry}{0}->insert(0, gui_window->gui_jchar('なし') );
@@ -38,7 +38,7 @@ sub _exec_test{
 	$win->_save;
 
 	# ラベル編集(2)
-	$win->{list}->selectionSet(0);
+	$win->{list}->selectionSet(2);
 	$win->_open_var;
 	#my $win_edit = $::main_gui->get('w_outvar_detail');
 	$win->{entry}{1}->insert(0, gui_window->gui_jchar('上') );
