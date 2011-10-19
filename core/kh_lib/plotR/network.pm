@@ -711,14 +711,16 @@ if (smaller_nodes ==1){
 	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 }
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
+	# ネットワークを描画
 	plot.igraph(
 		n2,
-		vertex.label       =colnames(d)
-		                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-		vertex.label.cex   =f_size,
-		vertex.label.color ="black",
-		vertex.label.family= "", # Linux・Mac環境では必須
-		vertex.label.dist  =vertex_label_dist,
+		vertex.label        = "",
+		#vertex.label       =colnames(d)
+		#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+		#vertex.label.cex   =f_size,
+		#vertex.label.color ="black",
+		#vertex.label.family= "", # Linux・Mac環境では必須
+		#vertex.label.dist  =vertex_label_dist,
 		vertex.color       =ccol,
 		vertex.frame.color =com_col_v,
 		vertex.size        =v_size,
@@ -729,6 +731,38 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		layout             =lay_f,
 		rescale            =F
 	)
+
+	# 語のラベルを追加
+	lay_f_adj <- NULL
+	if (smaller_nodes ==1){
+		# [2011 10/19]
+		# 小さいノードで表示する際にplot.igraph関数のvertex.label.distを指定
+		# すると、長い（文字数が多い）語が離れすぎて綺麗でなかったので、手動
+		# でラベルを追加. R 2.12.2 / igraph 0.5.5-2 
+		if ( is.null(lay_f_adj) == 1){
+			lay_f_adj <- cbind(lay_f_adj, lay_f[,1])
+			lay_f_adj <- cbind(lay_f_adj, lay_f[,2] + ( max(lay_f[,2]) - min(lay_f[,2]) ) / 38 )
+		}
+		text(
+			lay_f_adj,
+			labels = colnames(d)
+			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+			pos = 4,
+			offset = 0.25,
+			cex = f_size,
+			col = "black"
+		)
+	} else {
+		text(
+			lay_f,
+			labels = colnames(d)
+			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+			#pos = 4,
+			#offset = 1,
+			cex = f_size,
+			col = "black"
+		)
+	}
 
 if ( exists("target_words") ){
 	if ( is.null(target_ids) == FALSE){
