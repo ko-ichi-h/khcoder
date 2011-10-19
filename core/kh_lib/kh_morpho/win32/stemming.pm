@@ -2,9 +2,15 @@ package kh_morpho::win32::stemming;
 use strict;
 use base qw( kh_morpho::win32 );
 
-#---------------------#
-#   MeCabの実行関係   #
-#---------------------#
+use Lingua::Sentence;
+#use Lingua::Stem;
+use Lingua::Stem::Snowball;
+use Lingua::EN::Tagger;
+
+
+#-----------------------#
+#   Stemmerの実行関係   #
+#-----------------------#
 
 sub _run_morpho{
 	my $self = shift;	
@@ -29,8 +35,12 @@ sub _run_morpho{
 			type => 'file'
 		);
 
-	use Lingua::EN::Tagger;
-	
+	# 言語別の設定が必要
+	$self->{splitter} = Lingua::Sentence->new('en');
+	$self->{stemmer} = Lingua::Stem::Snowball->new( lang => 'en' );
+	#$self->{stemmer} = Lingua::Stem->new(-locale => 'EN');
+	#$self->{stemmer}->stem_caching({ -level => 2 });
+
 	# Perlapp用にTaggerのデータを解凍
 	unless (-e $Lingua::EN::Tagger::word_path){
 		my $cwd = $::config_obj->cwd;
@@ -59,13 +69,12 @@ sub _run_morpho{
 		PerlApp::extract_bound_file('Lingua/EN/Tagger/words.yml');
 	}
 	
-	print "1: $Lingua::EN::Tagger::word_path\n";
-	print "2: $Lingua::EN::Tagger::tag_path\n";
-	print "3: $Lingua::EN::Tagger::lexpath\n";
+	#print "1: $Lingua::EN::Tagger::word_path\n";
+	#print "2: $Lingua::EN::Tagger::tag_path\n";
+	#print "3: $Lingua::EN::Tagger::lexpath\n";
 
 	$self->{tagger} = new Lingua::EN::Tagger;
 	print "ok 0\n";
-	
 
 	# 処理開始
 	while ( <TRGT> ){
@@ -128,10 +137,15 @@ sub _sentence{
 	my $self = shift;
 	my $t    = shift;
 	my $fh   = shift;
-
-	use Lingua::EN::Sentence qw(get_sentences);
-	my $sentences = get_sentences($t);
-	foreach my $i (@{$sentences}) {
+	
+	unless (length($t)){
+		#print "Empty!\n";
+		return 1;
+	}
+	
+	my @sentences = $self->{splitter}->split_array($t);
+	
+	foreach my $i (@sentences) {
 		$self->_tokenize_stem($i, $fh);
 		print $fh "。\t。\t。\tALL\tSP\n";
 	}
@@ -168,17 +182,12 @@ sub _tokenize_stem{
 	}
 	
 	# Stemming
-	use Lingua::Stem::En;
-	my $words_stem = Lingua::Stem::En::stem(
-		{
-			-words => \@words_hyoso,
-			-locale => 'en',
-		}
-	);
+	my @words_stem = $self->{stemmer}->stem(\@words_hyoso) ;
+	#my @words_stem = @{ $self->{stemmer}->stem(@words_hyoso) };
 	
 	# Stemming結果のチェック
 	my $n1 = @words_hyoso;
-	my $n2 = @{$words_stem};
+	my $n2 = @words_stem;
 	unless ($n1 == $n2){
 		print "t: $t\n";
 		gui_errormsg->open(
@@ -188,13 +197,27 @@ sub _tokenize_stem{
 		exit;
 	}
 	
+	# Stemming結果の前後に記号がついている場合は落とす
+	foreach my $i (@words_stem){
+		if ($i =~ /^(\w+)\W+$/o){
+			$i = $1;
+		}
+		elsif ($i =~ /^\W+(\w+)$/o){
+			$i = $1;
+		}
+		#elsif ($i =~ /\w\W/o || $i =~ /\W\w/o){
+		#	print "$i,";
+		#}
+	}
+	
+	
 	# Print
 	my $n = 0;
 	foreach my $i (@words_hyoso){
-		unless (length($words_stem->[$n])){
-			$words_stem->[$n] = $i;
+		unless (length($words_stem[$n])){
+			$words_stem[$n] = $i;
 		}
-		print $fh "$i\t$i\t$words_stem->[$n]\tALL\t\t$words_pos[$n]\n";
+		print $fh "$i\t$i\t$words_stem[$n]\tALL\t\t$words_pos[$n]\n";
 		++$n;
 	}
 	

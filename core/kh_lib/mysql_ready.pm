@@ -55,6 +55,7 @@ sub first{
 		print "Format\t",timestr(timediff($t15,$t1)),"\n";
 	kh_dictio->readin->save;
 	$self->hyosobun;
+	kh_dictio->readin->save;
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	$self->tanis;
@@ -833,6 +834,10 @@ sub hyosobun{
 		",1);
 		mysql_exec->do("
 			DELETE FROM genkei
+			WHERE name = '¡£'
+		",1);
+		mysql_exec->do("
+			DELETE FROM genkei_fin
 			WHERE name = '¡£'
 		",1);
 		mysql_exec->do("

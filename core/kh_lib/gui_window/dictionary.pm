@@ -108,7 +108,7 @@ sub _new{
 	);
 
 	$wmw->Label(
-		-text => $self->gui_jchar("(*) 「強制抽出する語」や「使用しない語」の指定を変更した場合、\n　　それらの変更は再度前処理を行うまで反映されません。"),
+		-text => $self->gui_jchar("(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"),
 		-font => 'TKFN',
 		-justify => 'left',
 	)->pack(-anchor => 'w', -side => 'left');
