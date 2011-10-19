@@ -77,6 +77,24 @@ order by genkei_t.id
 
 [2.b.27]
 	・英語データの分析に対応
+		・Stopwordsをコーディングで指定出来ないのは不便?　コーディング時に必要ならば、その都度、Stopwordsリストから抜けばよい?!
+		・下記7言語はLingua::SentenceとLingua::Stem::Snowballで対応可能？
+			Dutch
+			English
+			French
+			German
+			Italian
+			Portuguese
+			Spanish
+		・文の分割が不正確でも良ければLingua::Stem::Snowballは以下にも対応
+			Danish
+			Finnish
+			Hungarian
+			Norwegian
+			Romanian
+			Swedish
+		
+		
 		・日英切り替え部分には「# morpho_analyzer」というコメントでマーク
 		・「複合語の検出」は日本語以外では無効に
 	
