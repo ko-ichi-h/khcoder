@@ -444,12 +444,11 @@ sub sql2{
 
 
 	my $sql;
-	$sql .= "SELECT $self->{tani}.id, genkei.id, genkei.name, genkei.khhinshi_id, hinshi.name\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, hinshi, $self->{tani}\n";
+	$sql .= "SELECT $self->{tani}.id, genkei.id, genkei.name, genkei.khhinshi_id\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei,  $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
-	$sql .= "	AND genkei.hinshi_id = hinshi.id\n";
 	
 	my $flag = 0;
 	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){

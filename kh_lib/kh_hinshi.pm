@@ -1,6 +1,9 @@
 package kh_hinshi;
 use strict;
 
+# もう今は使っていないライブラリ
+# 「genkei.hinshi_id」の箇所を直さないとエラーで動かない
+
 sub output{
 	
 	my $file_cha1 = $::project_obj->file_base.'_chasen1.csv';

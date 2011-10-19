@@ -94,7 +94,7 @@ sub fix_katuyo{
 	mysql_exec->do ("
 		create table katuyo (
 			id int auto_increment primary key not null,
-			name varchar(".$self->length('katuyo').") binary
+			name varchar(".$self->length('katuyo').")
 		)
 	",1);
 	my $sql = 'INSERT INTO katuyo (name) VALUES ';
@@ -134,11 +134,11 @@ sub readin{
 	mysql_exec->do("create table rowdata
 		(
 			hyoso varchar(255) binary not null,
-			yomi varchar(255) binary not null,
-			genkei varchar(255) binary not null,
-			hinshi varchar(255) binary not null,
-			katuyogata varchar(255) binary not null,
-			katuyo varchar(255) binary not null,
+			yomi varchar(255) not null,
+			genkei varchar(255) not null,
+			hinshi varchar(255) not null,
+			katuyogata varchar(255) not null,
+			katuyo varchar(255) not null,
 			id int auto_increment primary key not null
 		) $self->{max_rows}
 	",1);
@@ -159,11 +159,11 @@ sub readin{
 	mysql_exec->do("create table rowdata
 		(
 			hyoso varchar(255) binary not null,
-			yomi varchar(255) binary not null,
-			genkei varchar(255) binary not null,
-			hinshi varchar(255) binary not null,
-			katuyogata varchar(255) binary not null,
-			katuyo varchar(255) binary not null,
+			yomi varchar(255) not null,
+			genkei varchar(255) not null,
+			hinshi varchar(255) not null,
+			katuyogata varchar(255) not null,
+			katuyo varchar(255) not null,
 			id int primary key not null
 		) $self->{max_rows}
 	",1);
@@ -215,10 +215,10 @@ sub readin{
 	unless ( mysql_exec->table_exists('outvar') ){
 		mysql_exec->do("create table outvar
 			(
-				name varchar(255) binary not null,
-				tab varchar(255) binary not null,
-				col varchar(255) binary not null,
-				tani varchar(10) binary not null,
+				name varchar(255) not null,
+				tab varchar(255) not null,
+				col varchar(255) not null,
+				tani varchar(10) not null,
 				id int auto_increment primary key not null
 			)
 		",1);
@@ -227,8 +227,8 @@ sub readin{
 		mysql_exec->do("create table outvar_lab
 			(
 				var_id int not null,
-				val varchar(255) binary not null,
-				lab varchar(255) binary not null,
+				val varchar(255) not null,
+				lab varchar(255) not null,
 				id int auto_increment primary key not null
 			)
 		",1);
@@ -239,7 +239,7 @@ sub readin{
 		mysql_exec->do("create table d_force
 			(
 				id int auto_increment primary key not null,
-				name varchar(255) binary not null,
+				name varchar(255) not null,
 				type int not null
 			)
 		",1);
@@ -268,9 +268,9 @@ sub reform{
 			id int auto_increment primary key not null,
 			num int not null,
 			hyoso varchar($len[0]) binary not null,
-			genkei varchar($len[1]) binary not null,
-			hinshi varchar($len[2]) binary not null,
-			katuyo varchar($len[3]) binary not null
+			genkei varchar($len[1]) not null,
+			hinshi varchar($len[2]) not null,
+			katuyo varchar($len[3]) not null
 		)
 	", 1);
 	mysql_exec->do("
@@ -291,7 +291,7 @@ sub reform{
 	mysql_exec->do("
 		create table hinshi (
 			id int auto_increment primary key not null,
-			name varchar($len) binary not null
+			name varchar($len) not null
 		)
 	",1);
 		
@@ -314,7 +314,7 @@ sub reform{
 	mysql_exec->do("
 		create table genkei (
 			id int auto_increment primary key not null,
-			name varchar($len) binary not null,
+			name varchar($len) not null,
 			num int not null,
 			hinshi_id int not null,
 			khhinshi_id int not null,
@@ -344,10 +344,10 @@ sub reform{
 	mysql_exec->do("
 		create table hgh2 (
 			id INT auto_increment primary key not null,
-			genkei varchar($len) binary not null,
+			genkei varchar($len) not null,
 			sum INT,
 			h_id INT,
-			h_name varchar(".$self->length('hinshi').") binary
+			h_name varchar(".$self->length('hinshi').")
 		)
 	",1);
 	mysql_exec->do("
@@ -438,10 +438,33 @@ sub reform{
 			VALUES $con
 		",1);
 	}
-	mysql_exec->do('alter table genkei add index index1(name,hinshi_id,khhinshi_id)',1);
+	mysql_exec->do('alter table genkei add index index1(name,khhinshi_id,hinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
-	#mysql_exec->do('alter table genkei add index t1(id, nouse)',1);
+
+
+	# 原形テーブルの仕上げ(1)
+	mysql_exec->drop_table("genkei_fin");
+	mysql_exec->do("
+		create table genkei_fin (
+			id int auto_increment primary key not null,
+			name varchar($len) not null,
+			num int not null,
+			khhinshi_id int not null,
+			nouse int not null default 0
+		)
+	",1);
+
+	mysql_exec->do("
+		INSERT INTO genkei_fin (name, num, khhinshi_id)
+		SELECT name, sum(num), khhinshi_id
+		FROM   genkei
+		GROUP BY name, khhinshi_id
+	",1);
+
+	mysql_exec->do('alter table genkei_fin add index index1(name,khhinshi_id)',1);
+	mysql_exec->do('alter table genkei_fin add index index2(khhinshi_id)',1);
+
 
 	my $pt4 = new Benchmark;
 	print "\tgenkei\t\t",timestr(timediff($pt4,$pt3)),"\n" if $report_time;
@@ -451,7 +474,7 @@ sub reform{
 	mysql_exec->do("
 		create table khhinshi (
 			id int primary key not null,
-			name varchar(20) binary not null
+			name varchar(20) not null
 		)
 	",1);
 
@@ -479,9 +502,9 @@ sub reform{
 	mysql_exec->do("
 		create table hghi (
 			hyoso varchar($len[0]) binary not null,
-			genkei varchar($len[1]) binary not null,
-			hinshi varchar($len[2]) binary not null,
-			katuyo varchar($len[3]) binary not null,
+			genkei varchar($len[1]) not null,
+			hinshi varchar($len[2]) not null,
+			katuyo varchar($len[3]) not null,
 			hyoso_id int not null primary key,
 			genkei_id int not null,
 			hinshi_id int not null,
@@ -498,7 +521,7 @@ sub reform{
 				AND hgh.hinshi = hinshi.name
 				AND genkei.hinshi_id = hinshi.id
 	',1); 
-	#mysql_exec->drop_table("hgh");
+	mysql_exec->drop_table("hgh");
 	if ($len[0] + $len[1] + $len[2] <= 500){
 		mysql_exec->do(
 			"alter table hghi add index index1 (hyoso, genkei, hinshi)",
@@ -519,7 +542,7 @@ sub reform{
 	mysql_exec->do ("
 		create table katuyo (
 			id int auto_increment primary key not null,
-			name varchar($len[3]) binary
+			name varchar($len[3])
 		)
 	",1);
 	mysql_exec->do("
@@ -537,26 +560,30 @@ sub reform{
 	mysql_exec->do("
 		create table hyoso (
 			id int not null primary key,
-			name varchar($len[0]) binary not null,
+			name varchar($len[0]) not null,
 			len int not null,
 			katuyo_id int not null,
+			hinshi_id int not null,
 			genkei_id int not null,
 			num int not null
 		)
 	",1);
 	mysql_exec->do("
 		INSERT
-		INTO hyoso (id, name, len, genkei_id, num, katuyo_id)
-		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_id, num, katuyo.id
-			FROM hghi, katuyo
-			WHERE hghi.katuyo = katuyo.name
+		INTO hyoso (id, name, len, genkei_id, num, katuyo_id, hinshi_id)
+		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_fin.id, hghi.num, katuyo.id, genkei.hinshi_id
+			FROM hghi, katuyo, genkei, genkei_fin
+			WHERE
+				    hghi.katuyo = katuyo.name
+				AND hghi.genkei_id = genkei.id
+				AND genkei.name = genkei_fin.name
+				AND genkei.khhinshi_id = genkei_fin.khhinshi_id
 	",1);
 	mysql_exec->do("alter table hyoso add index index1 (name, genkei_id)",1);
 	mysql_exec->do("alter table hyoso add index index2 (genkei_id)",1);
 
 	my $pt8 = new Benchmark;
 	print "\thyoso\t\t",timestr(timediff($pt8,$pt7)),"\n" if $report_time;
-
 
 	mysql_ready::heap->rowdata_restore;
 }
@@ -862,7 +889,12 @@ sub hyosobun{
 			add index index2 (bun_id, dan_id, bun_idt),
 			add index index4 (bun_idt)
 	",1);
-	
+
+	# 原形テーブルの仕上げ(2)
+	mysql_exec->drop_table("genkei");
+	mysql_exec->do(" RENAME TABLE genkei_fin TO genkei",1);
+
+
 	mysql_ready::heap->hyosobun;
 }
 
@@ -928,7 +960,7 @@ sub tag_fix{
 	}
 	$h->finish;
 	
-	# 基本形テーブル
+	# 基本形テーブル(1)
 	my $k = mysql_exec->select("
 		SELECT genkei.id, genkei.name
 		FROM genkei, hselection
@@ -946,33 +978,54 @@ sub tag_fix{
 			WHERE id = $i->[0]
 		",1);
 	}
+	
+	# 基本形テーブル(2)
+	my $k = mysql_exec->select("
+		SELECT genkei_fin.id, genkei_fin.name
+		FROM genkei_fin, hselection
+		WHERE 
+			    genkei_fin.khhinshi_id = hselection.khhinshi_id
+			AND hselection.name = \'タグ\'
+	",1)->hundle;
+	while (my $i = $k->fetch){
+		my $name = $i->[1];
+		chop $name; substr($name,0,1) = '';
+		$name =~ s/'/\\'/go;
+		mysql_exec->do("
+			UPDATE genkei_fin
+			SET name = \'$name\'
+			WHERE id = $i->[0]
+		",1);
+	}
+	
+	
 	$k->finish;
 	
 	# HTMLタグを小文字に統一する
-	
-	foreach my $i ("h1","h2","h3","h4","h5"){
-		my $uc = uc $i;
-		mysql_exec->do("
-			UPDATE genkei
-			SET    name = \"<$i>\"
-			WHERE  name = \"<$uc>\"
-		",1);
-		mysql_exec->do("
-			UPDATE genkei
-			SET    name = \"</$i>\"
-			WHERE  name = \"</$uc>\"
-		",1);
-		mysql_exec->do("
-			UPDATE hyoso
-			SET    name = \"<$i>\"
-			WHERE  name = \"<$uc>\"
-		",1);
-		mysql_exec->do("
-			UPDATE hyoso
-			SET    name = \"</$i>\"
-			WHERE  name = \"</$uc>\"
-		",1);
-	}
+	#
+	#foreach my $i ("h1","h2","h3","h4","h5"){
+	#	my $uc = uc $i;
+	#	mysql_exec->do("
+	#		UPDATE genkei
+	#		SET    name = \"<$i>\"
+	#		WHERE  name = \"<$uc>\"
+	#	",1);
+	#	mysql_exec->do("
+	#		UPDATE genkei
+	#		SET    name = \"</$i>\"
+	#		WHERE  name = \"</$uc>\"
+	#	",1);
+	#	mysql_exec->do("
+	#		UPDATE hyoso
+	#		SET    name = \"<$i>\"
+	#		WHERE  name = \"<$uc>\"
+	#	",1);
+	#	mysql_exec->do("
+	#		UPDATE hyoso
+	#		SET    name = \"</$i>\"
+	#		WHERE  name = \"</$uc>\"
+	#	",1);
+	#}
 	
 }
 
