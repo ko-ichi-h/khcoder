@@ -27,7 +27,7 @@ BEGIN {
 	#open (STDERR,">stderr.txt") or die;
 
 	use Jcode;
-	require kh_lib::Jcode_kh if $] > 5.008;
+	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
 	# for Windows [1]
 	if ($^O eq 'MSWin32'){
@@ -90,12 +90,13 @@ BEGIN {
 		#	'',
 		#);
 		# TkをInvokeしないマルチスレッド用のスプラッシュ
-		require Tk::Splash;
-		require Win32::GUI::SplashScreen;
-		Win32::GUI::SplashScreen::Show(
-			-file => Tk->findINC('kh_logo.bmp'),
-			-mintime => 3,
-		);
+		if (eval 'require Win32::GUI::SplashScreen'){
+			require Tk::Splash; # findINC関数を得るため
+			Win32::GUI::SplashScreen::Show(
+				-file => Tk->findINC('kh_logo.bmp'),
+				-mintime => 3,
+			);
+		}
 		# 設定
 		require Tk::Clipboard;
 		require Tk::Clipboard_kh;

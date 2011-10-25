@@ -2,6 +2,15 @@ package kh_jchar;
 use strict;
 use vars qw($converter);
 
+my %char_code = ();
+if (eval 'require Encode::EUCJPMS'){
+	$char_code{euc}  = 'eucJP-ms';
+	$char_code{sjis} = 'cp932';
+} else {
+	$char_code{euc}  = 'euc-jp';
+	$char_code{sjis} = 'shiftjis';
+}
+
 BEGIN{
 	if (eval 'require NKF'){
 		$converter = 'nkf';
@@ -136,7 +145,7 @@ sub _s2e_nkf{
 	return NKF::nkf('-e -S',$_[1]);
 }
 sub _s2e_encode{
-	Encode::from_to($_[1],'cp932','eucJP-ms');
+	Encode::from_to($_[1],$char_code{sjis},$char_code{euc});
 	return $_[1];
 }
 sub _s2e_jcode{
@@ -152,7 +161,7 @@ sub _e2s_nkf{
 	return NKF::nkf('-s -E',$_[1]);
 }
 sub _e2s_encode{
-	Encode::from_to($_[1],'eucJP-ms','cp932');
+	Encode::from_to($_[1],$char_code{euc},$char_code{sjis});
 	return $_[1];
 }
 sub _e2s_jcode{
