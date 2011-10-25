@@ -3,6 +3,15 @@ package gui_window;
 my $debug = 0;
 my $icon;
 
+my %char_code = ();
+if (eval 'require Encode::EUCJPMS'){
+	$char_code{euc}  = 'eucJP-ms';
+	$char_code{sjis} = 'cp932';
+} else {
+	$char_code{euc}  = 'euc-jp';
+	$char_code{sjis} = 'shiftjis';
+}
+
 use strict;
 use Tk;
 use Tk::ErrorDialog;
@@ -196,17 +205,17 @@ sub gui_jchar{ # GUIÉ½¼¨ÍÑ¤ÎÆüËÜ¸ì
 	
 	if ( $] > 5.008 ) {
 		if ( utf8::is_utf8($char) ){
-			print "already decoded: ", Encode::encode('cp932',$char), "\n"
+			print "already decoded: ", Encode::encode($char_code{sjis},$char), "\n"
 				if $debug;
 			return $char;
 		}
 		
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
-		$code = 'eucJP-ms'   if $code eq 'euc';
-		$code = 'cp932' if $code eq 'sjis';
-		$code = 'cp932' if $code eq 'shiftjis';
-		$code = 'eucJP-ms' unless length($code);
+		$code = $char_code{euc}  if $code eq 'euc';
+		$code = $char_code{sjis} if $code eq 'sjis';
+		$code = $char_code{sjis} if $code eq 'shiftjis';
+		$code = $char_code{euc}  unless length($code);
 		return Encode::decode($code,$char);
 	} else {
 		if (defined($code) && $code eq 'sjis'){
@@ -235,8 +244,8 @@ sub gui_jm{ # ¥á¥Ë¥å¡¼¤Î¥È¥Ã¥×ÉôÊ¬ÍÑÆüËÜ¸ì
 		)
 	) {
 		$code = Jcode->new($char)->icode unless $code;
-		$code = 'eucJP-ms'   if $code eq 'euc';
-		$code = 'cp932' if $code eq 'sjis';
+		$code = $char_code{euc}  if $code eq 'euc';
+		$code = $char_code{sjis} if $code eq 'sjis';
 		return Encode::decode($code,$char);
 	}
 	elsif ($] > 5.008){
@@ -258,10 +267,10 @@ sub gui_jt{ # Window¥¿¥¤¥È¥ëÉôÊ¬¤ÎÆüËÜ¸ì ¡ÊWin9x & Perl/Tk 804ÍÑ¤ÎÆÃ¼ì½èÍý¡Ë
 	if ( $] > 5.008 ) {
 		$code = Jcode->new($char)->icode unless $code;
 		# print "$char : $code\n";
-		$code = 'eucJP-ms'   if $code eq 'euc';
-		$code = 'cp932' if $code eq 'sjis';
-		$code = 'cp932' if $code eq 'shiftjis';
-		$code = 'eucJP-ms' unless length($code);
+		$code = $char_code{euc}  if $code eq 'euc';
+		$code = $char_code{sjis} if $code eq 'sjis';
+		$code = $char_code{sjis} if $code eq 'shiftjis';
+		$code = $char_code{euc}  unless length($code);
 		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
 			if ($code eq 'sjis'){
 				return $char;
@@ -300,8 +309,8 @@ sub gui_jg_filename_win98{ # Á´³ÑÊ¸»ú¤ò´Þ¤à¥Ñ¥¹¤Î½èÍý ¡ÊWin9x & Perl/Tk 804ÍÑ¤ÎÆ
 		and not ( Win32::IsWinNT() )
 	){
 		$char =~ s/\//\\/g;
-		$char = Encode::decode('cp932',$char);
-		$char = Encode::encode('cp932',$char);
+		$char = Encode::decode($char_code{sjis},$char);
+		$char = Encode::encode($char_code{sjis},$char);
 	}
 	
 	return $char;
@@ -318,7 +327,7 @@ sub gui_jg{ # ÆþÎÏ¤µ¤ì¤¿Ê¸»úÎó¤ÎÊÑ´¹
 				return Jcode->new($char,'utf8')->sjis;
 			}
 
-			return Encode::encode('cp932',$char);
+			return Encode::encode($char_code{sjis},$char);
 		} else {
 			#print "not utf8\n";
 			return $char;

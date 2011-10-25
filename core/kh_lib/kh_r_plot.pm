@@ -1,6 +1,5 @@
 package kh_r_plot;
 use strict;
-use Image::Magick;
 
 my $if_font = 0;
 my $if_lt25 = 0;
@@ -194,6 +193,11 @@ sub set_par{
 
 sub rotate_cls{
 	my $self = shift;
+	
+	unless (eval 'require Image::Magick;'){
+		print "Could not rotate the dendrogram: No Image-Magick.\n";
+		return $self;
+	}
 	
 	# tempファイルの名前
 	my $type = '';
