@@ -100,12 +100,43 @@ sub __new{
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
 	
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('Porter Stemmer¡Ê±Ñ¸ì¡Ë'),
+		-text     => $self->gui_jchar('Snowball Stemmer'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'stemming',
 		-command  => sub{ $self = $self->refine_cj },
 	)->pack(-anchor => 'w');
+
+	my $fra_stem = $lfra->Frame()->pack(-anchor => 'w');
+	
+	$self->{label_stem1} = $fra_stem->Label(
+		-text => 'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{opt_stem} = gui_widget::optmenu->open(
+		parent  => $fra_stem,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				[English  => 'en'],
+			],
+		variable => \$self->{opt_stem_val},
+	);
+
+	$self->{label_stem2} = $fra_stem->Label(
+		-text => '  Stop Words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{btn_stem} = $fra_stem->Button(
+		-text => 'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::stemming_";
+			$class   .= "$self->{opt_stem_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
 
 	$self = $self->refine_cj;
 
@@ -148,9 +179,10 @@ sub ok{
 	
 	my $oldfont = $::config_obj->font_main;
 	
-	$::config_obj->chasen_path( $self->gui_jg( $self->entry1->get() ) );
-	$::config_obj->mecab_path(  $self->gui_jg( $self->entry2->get() ) );
-	$::config_obj->c_or_j(      $self->gui_jg( $self->{c_or_j}      ) );
+	$::config_obj->chasen_path(  $self->gui_jg( $self->entry1->get() ) );
+	$::config_obj->mecab_path(   $self->gui_jg( $self->entry2->get() ) );
+	$::config_obj->c_or_j(       $self->gui_jg( $self->{c_or_j}      ) );
+	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
 	
 	$::config_obj->use_heap(    $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(     $self->{mail_obj}->if      );
@@ -237,6 +269,12 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+		
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
+		
 	}
 	elsif ($self->{c_or_j} eq 'mecab') {
 		$self->entry1->configure(-state => 'disable');
@@ -246,6 +284,11 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'normal');
 		$self->btn2->configure(-state => 'normal');
 		$self->lb2->configure(-state => 'normal');
+
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
 	}
 	
 	elsif ($self->{c_or_j} eq 'stemming') {
@@ -256,6 +299,11 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+
+		$self->{label_stem1}->configure(-state => 'normal');
+		$self->{label_stem2}->configure(-state => 'normal');
+		$self->{opt_stem}->configure(-state => 'normal');
+		$self->{btn_stem}->configure(-state => 'normal');
 	}
 
 	return $self;

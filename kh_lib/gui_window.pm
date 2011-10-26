@@ -82,6 +82,7 @@ use gui_window::bayes_learn;
 use gui_window::bayes_predict;
 use gui_window::bayes_view_log;
 use gui_window::bayes_view_knb;
+use gui_window::stop_words;
 
 BEGIN{
 	if( $] > 5.008 ){

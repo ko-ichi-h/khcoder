@@ -81,6 +81,7 @@ sub save_ini{
 		'chasen_path',
 		'mecab_path',
 		'c_or_j',
+		'stemming_lang',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',

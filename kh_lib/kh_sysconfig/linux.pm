@@ -78,6 +78,7 @@ sub save_ini{
 		'grammarcha_path',
 		#'juman_path',
 		'c_or_j',
+		'stemming_lang',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',

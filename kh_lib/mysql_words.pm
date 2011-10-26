@@ -57,17 +57,17 @@ sub search{
 		$result = $t->hundle->fetchall_arrayref;
 		
 		# 「その他」対策
-		if (
-			mysql_exec->select("
-				SELECT ifuse FROM hselection WHERE name = \'その他\'
-			",1)->hundle->fetch->[0]
-		){
-			foreach my $i (@{$result}){
-				if ($i->[1] eq 'その他'){
-					$i->[0] = "$i->[0]($i->[4])";
-				}
-			}
-		}
+		#if (
+		#	mysql_exec->select("
+		#		SELECT ifuse FROM hselection WHERE name = \'その他\'
+		#	",1)->hundle->fetch->[0]
+		#){
+		#	foreach my $i (@{$result}){
+		#		if ($i->[1] eq 'その他'){
+		#			$i->[0] = "$i->[0]($i->[4])";
+		#		}
+		#	}
+		#}
 		
 		if ( ! $args{katuyo} ){         # 活用語なしの場合
 			foreach my $i (@{$result}){

@@ -162,7 +162,6 @@ sub reset_parm{
 					( 1, 'ALL', 'ALL', '' ),
 					(99999,'HTMLタグ','タグ','HTML'),
 					(11,'タグ','タグ','')
-					
 			") or die();
 		}
 
@@ -210,6 +209,97 @@ sub c_or_j{
 	} else {
 		return 'chasen';
 	}
+}
+
+sub stemming_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stemming_lang} = $new;
+	}
+
+	if (length($self->{stemming_lang}) > 0) {
+		return $self->{stemming_lang};
+	} else {
+		return 'en';
+	}
+}
+
+sub stopwords{
+	my $self = shift;
+	my %args = @_;
+
+	unless ( length($args{locale}) ){
+		$args{locale} = 'd';
+	}
+
+	my $type = $args{method}.'_'.$args{locale};
+
+	if ( defined( $args{stopwords} ) ){
+		# データ保存
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		if (-e "./config/stopwords_$type"){
+			$dbh->do("
+				DROP TABLE stopwords_$type
+			") or die;
+		}
+		
+		$dbh->do("
+			CREATE TABLE stopwords_$type (name CHAR(225))
+		") or die;
+		
+		my $sth = $dbh->prepare(
+			"INSERT INTO stopwords_$type (name) VALUES (?)"
+		) or die;
+		
+		foreach my $i (@{$args{stopwords}}){
+			$sth->execute($i);
+		}
+		
+		$dbh->disconnect;
+		return $args{stopwords};
+	} else {
+		# データ読み出し
+		my @words = ();
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		if (-e "./config/stopwords_$type"){
+			my $sth = $dbh->prepare("
+				SELECT name FROM stopwords_$type
+			") or die;
+			$sth->execute;
+			while (my $i = $sth->fetch){
+				push @words, $i->[0];
+			}
+		}
+		$dbh->disconnect;
+		return \@words;
+	}
+}
+
+sub stopwords_current{
+	my $self = shift;
+
+	my $type = $self->c_or_j;
+	
+	if ($self->c_or_j eq 'stemming'){
+		$type .= '_'.$self->stemming_lang;
+	} else {
+		$type .= '_d';
+	}
+	
+	my @words = ();
+	my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+	if (-e "./config/stopwords_$type"){
+		my $sth = $dbh->prepare("
+			SELECT name FROM stopwords_$type
+		") or die;
+		$sth->execute;
+		while (my $i = $sth->fetch){
+			push @words, $i->[0];
+		}
+	}
+	$dbh->disconnect;
+	return \@words;
 }
 
 sub use_sonota{

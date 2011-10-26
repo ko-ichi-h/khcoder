@@ -340,6 +340,11 @@ sub reform{
 		$rule = $th->fetchall_arrayref;
 	}
 
+	my %stopwords = ();
+	foreach my $i (@{$::config_obj->stopwords_current}){
+		$stopwords{$i} = 1;
+	}
+
                                                             # データ準備
 	mysql_exec->drop_table("hgh2");
 	mysql_exec->do("
@@ -414,6 +419,11 @@ sub reform{
 					}
 				}
 			}
+			
+			if ($stopwords{$d->[0]}){
+				$kh_hinshi = '9999';
+			}
+			
 			$d->[0] =~ s/'/\\'/go;
 			$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
 			++$num;
