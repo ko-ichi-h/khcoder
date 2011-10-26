@@ -8,12 +8,12 @@ sub new{
 	my %args = @_;
 
 	# 「その他」品詞対策
-	if ($args{genkei} =~ /\((.*)\)/){
-		$args{hinshi} = $1;
-		$args{genkei} = substr( $args{genkei}, 0, index($args{genkei},'(') );
-		use Jcode;
-		print Jcode->new("$args{genkei}, $args{hinshi}\n")->sjis;
-	}
+	#if ($args{genkei} =~ /\((.*)\)/){
+	#	$args{hinshi} = $1;
+	#	$args{genkei} = substr( $args{genkei}, 0, index($args{genkei},'(') );
+	#	use Jcode;
+	#	print Jcode->new("$args{genkei}, $args{hinshi}\n")->sjis;
+	#}
 
 	# エスケープ
 	$args{genkei} =~ s/'/\\'/go;
@@ -90,7 +90,7 @@ sub hyoso_id_s{
 		push @result, $i->[0];
 	}
 	if (@result){
-		print "@result";
+		#print "@result";
 		return \@result;
 	} else {
 		return 0;
