@@ -9,7 +9,7 @@ if (eval 'require Encode::EUCJPMS'){
 	$char_code{sjis} = 'cp932';
 } else {
 	$char_code{euc}  = 'euc-jp';
-	$char_code{sjis} = 'shiftjis';
+	$char_code{sjis} = 'cp932';
 }
 
 use strict;
