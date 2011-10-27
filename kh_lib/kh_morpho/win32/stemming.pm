@@ -3,7 +3,6 @@ use strict;
 use base qw( kh_morpho::win32 );
 
 use Lingua::Sentence;
-#use Lingua::Stem;
 use Lingua::Stem::Snowball;
 use Lingua::EN::Tagger;
 
@@ -35,13 +34,44 @@ sub _run_morpho{
 			type => 'file'
 		);
 
+	# Perlapp用にLingua::Sentenceのデータを解凍
+	if(defined(&PerlApp::extract_bound_file)){
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.el',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.en',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.es',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.fr',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl',
+		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt',
+		);
+	}
+
 	# 言語別の設定が必要
 	$self->{splitter} = Lingua::Sentence->new('en');
 	$self->{stemmer} = Lingua::Stem::Snowball->new( lang => 'en' );
 	#$self->{stemmer} = Lingua::Stem->new(-locale => 'EN');
 	#$self->{stemmer}->stem_caching({ -level => 2 });
 
-	# Perlapp用にTaggerのデータを解凍
+	# Perlapp用にLingua::En::Taggerのデータを解凍
 	unless (-e $Lingua::EN::Tagger::word_path){
 		my $cwd = $::config_obj->cwd;
 		$cwd = Jcode->new($cwd,'sjis')->euc;
@@ -68,13 +98,8 @@ sub _run_morpho{
 		PerlApp::extract_bound_file('Lingua/EN/Tagger/unknown.yml');
 		PerlApp::extract_bound_file('Lingua/EN/Tagger/words.yml');
 	}
-	
-	#print "1: $Lingua::EN::Tagger::word_path\n";
-	#print "2: $Lingua::EN::Tagger::tag_path\n";
-	#print "3: $Lingua::EN::Tagger::lexpath\n";
 
 	$self->{tagger} = new Lingua::EN::Tagger;
-	print "ok 0\n";
 
 	# 処理開始
 	while ( <TRGT> ){
@@ -225,7 +250,7 @@ sub _tokenize_stem{
 }
 
 sub exec_error_mes{
-	return "KH Coder Error!!\nPorter Stemmerによる処理に失敗しました。";
+	return "KH Coder Error!!\nStemmerによる処理に失敗しました。";
 }
 
 
