@@ -131,7 +131,7 @@ sub __new{
 	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
 
 	$self->{label_stem2} = $fra_stem->Label(
-		-text => '  Stop Words:'
+		-text => '  Stop words:'
 	)->pack(-side => 'left',-anchor => 'w');
 
 	$self->{btn_stem} = $fra_stem->Button(
