@@ -2,7 +2,13 @@ package gui_window::stop_words;
 use strict;
 use base qw(gui_window);
 
+use gui_window::stop_words::stemming_de;
 use gui_window::stop_words::stemming_en;
+use gui_window::stop_words::stemming_es;
+use gui_window::stop_words::stemming_fr;
+use gui_window::stop_words::stemming_it;
+use gui_window::stop_words::stemming_nl;
+use gui_window::stop_words::stemming_pt;
 
 #------------------#
 #   Window¤ò³«¤¯   #

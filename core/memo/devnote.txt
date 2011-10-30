@@ -72,27 +72,32 @@ order by genkei_t.id
 	・品詞体系: 「連体詞」の処理 (?)
 	・データファイルの先頭に改行があると前処理がエラーになるバグの修正??
 
+[言語]
+          	lc	snt	stm
+Dutch     	nl	ok	ok
+English   	en	ok	ok
+French    	fr	ok	ok
+German    	de	ok	ok
+Italian   	it	ok	ok
+Portuguese	pt	ok	ok
+Spanish   	es	ok	ok
+
+Catalan   		ok	
+Greek     		ok	
+
+Danish    			ok
+Hungarian 			ok
+Norwegian 			ok
+Romanian  			ok
+Russian*  			ok
+Swedish   			ok
+Turkish*  			ok
+
 [リリース時には]
 	・マルチスレッドのオプション？
 
 [2.b.27]
 	・英語データの分析に対応
-		・Stopwordsをコーディングで指定出来ないのは不便?　コーディング時に必要ならば、その都度、Stopwordsリストから抜けばよい?!
-		・下記7言語はLingua::SentenceとLingua::Stem::Snowballで対応可能？
-			Dutch
-			English
-			French
-			German
-			Italian
-			Portuguese
-			Spanish
-		・文の分割が不正確でも良ければLingua::Stem::Snowballは以下にも対応
-			Danish
-			Finnish
-			Hungarian
-			Norwegian
-			Romanian
-			Swedish
 		
 		・日英切り替え部分には「# morpho_analyzer」というコメントでマーク
 		・「複合語の検出」は日本語以外では無効にする必要あり

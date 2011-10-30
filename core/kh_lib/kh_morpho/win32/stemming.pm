@@ -4,15 +4,31 @@ use base qw( kh_morpho::win32 );
 
 use Lingua::Sentence;
 use Lingua::Stem::Snowball;
-use Lingua::EN::Tagger;
 
+use Text::Unaccent::PurePerl qw(unac_string);
+
+use kh_morpho::win32::stemming::de;
+use kh_morpho::win32::stemming::en;
+use kh_morpho::win32::stemming::es;
+use kh_morpho::win32::stemming::fr;
+use kh_morpho::win32::stemming::it;
+use kh_morpho::win32::stemming::nl;
+use kh_morpho::win32::stemming::pt;
+
+use utf8;
+use Encode;
+
+my $sjis = find_encoding('shiftjis');
 
 #-----------------------#
-#   Stemmer¤Î¼Â¹Ô´Ø·¸   #
+#   Stemmerã®å®Ÿè¡Œé–¢ä¿‚   #
 #-----------------------#
 
 sub _run_morpho{
 	my $self = shift;	
+
+	my $class = "kh_morpho::win32::stemming::".$::config_obj->stemming_lang;
+	bless $self, $class;
 
 	if (-e $self->output){
 		unlink $self->output or 
@@ -34,7 +50,7 @@ sub _run_morpho{
 			type => 'file'
 		);
 
-	# PerlappÍÑ¤ËLingua::Sentence¤Î¥Ç¡¼¥¿¤ò²òÅà
+	# Perlappç”¨ã«Lingua::Sentenceã®ãƒ‡ãƒ¼ã‚¿ã‚’è§£å‡
 	if(defined(&PerlApp::extract_bound_file)){
 		PerlApp::extract_bound_file(
 			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca',
@@ -65,53 +81,19 @@ sub _run_morpho{
 		);
 	}
 
-	# ¸À¸ìÊÌ¤ÎÀßÄê¤¬É¬Í×
-	$self->{splitter} = Lingua::Sentence->new('en');
-	$self->{stemmer} = Lingua::Stem::Snowball->new( lang => 'en' );
-	#$self->{stemmer} = Lingua::Stem->new(-locale => 'EN');
-	#$self->{stemmer}->stem_caching({ -level => 2 });
+	$self->init;
 
-	# PerlappÍÑ¤ËLingua::En::Tagger¤Î¥Ç¡¼¥¿¤ò²òÅà
-	unless (-e $Lingua::EN::Tagger::word_path){
-		my $cwd = $::config_obj->cwd;
-		$cwd = Jcode->new($cwd,'sjis')->euc;
-		$cwd =~ tr/\\/\//;
-		$cwd = Jcode->new($cwd,'euc')->sjis.'/';
-		
-		$Lingua::EN::Tagger::word_path
-			= $cwd
-			.PerlApp::extract_bound_file('Lingua/EN/Tagger/pos_words.hash');
-		$Lingua::EN::Tagger::word_path =~ tr/config\\/config\//;
-		$Lingua::EN::Tagger::tag_path
-			= $cwd
-			.PerlApp::extract_bound_file('Lingua/EN/Tagger/pos_tags.hash');
-		$Lingua::EN::Tagger::tag_path =~ tr/config\\/config\//;
-		$Lingua::EN::Tagger::lexpath
-			= substr(
-				$Lingua::EN::Tagger::word_path,
-				0,
-				length($Lingua::EN::Tagger::word_path) - 15
-			);
-		$Lingua::EN::Tagger::lexpath =~ tr/config\\/config\//;
-		
-		PerlApp::extract_bound_file('Lingua/EN/Tagger/tags.yml');
-		PerlApp::extract_bound_file('Lingua/EN/Tagger/unknown.yml');
-		PerlApp::extract_bound_file('Lingua/EN/Tagger/words.yml');
-	}
-
-	$self->{tagger} = new Lingua::EN::Tagger;
-
-	# ½èÍı³«»Ï
+	# å‡¦ç†é–‹å§‹
 	while ( <TRGT> ){
 		chomp;
-		my $t   = $_;
-		#$t =~ tr/(?:\x81\x40)/ /; # SJIS¤ÎÁ´³Ñ¥¹¥Ú¡¼¥¹¤òÈ¾³Ñ¤ËÊÑ´¹¡ÊWin32¡Ë
+		my $t   = decode("latin1",$_);
+		#$t =~ tr/(?:\x81\x40)/ /; # SJISã®å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’åŠè§’ã«å¤‰æ›ï¼ˆWin32ï¼‰
 		
-		# ¸«½Ğ¤·¹Ô
+		# è¦‹å‡ºã—è¡Œ
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out "$1\t$1\t$1\t¥¿¥°\n";
+			print $fh_out $sjis->encode("$1\t$1\t$1\tã‚¿ã‚°\n");
 			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out "$3\t$3\t$3\t¥¿¥°\n";
+			print $fh_out $sjis->encode("$3\t$3\t$3\tã‚¿ã‚°\n");
 		} else {
 			while ( index($t,'<') > -1){
 				my $pre = substr($t,0,index($t,'<'));
@@ -122,7 +104,7 @@ sub _run_morpho{
 				);
 				unless ( index($t,'>') > -1 ){
 					gui_errormsg->open(
-						msg => '»³¥«¥Ã¥³¡Ê<>¡Ë¤Ë¤è¤ëÀµ¤·¤¯¤Ê¤¤¥Ş¡¼¥­¥ó¥°¤¬¤¢¤ê¤Ş¤·¤¿¡£',
+						msg => 'å±±ã‚«ãƒƒã‚³ï¼ˆ<>ï¼‰ã«ã‚ˆã‚‹æ­£ã—ããªã„ãƒãƒ¼ã‚­ãƒ³ã‚°ãŒã‚ã‚Šã¾ã—ãŸã€‚',
 						type => 'msg'
 					);
 					exit;
@@ -136,14 +118,17 @@ sub _run_morpho{
 			}
 			$self->_sentence($t, $fh_out);
 		}
-		print $fh_out "EOS\n";
+		print $fh_out $sjis->encode("EOS\n");
 	}
 	close (TRGT);
 	close ($fh_out);
 
-	# ½ĞÎÏ¥Õ¥¡¥¤¥ë¤òSJIS¤ËÊÑ´¹¡ÊWin32¡Ë
-	kh_jchar->to_sjis($self->output);
+	#exit;
 
+	# å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ASCIIã«å¤‰æ›
+	#$self->to_ascii($self->output);
+	
+	#kh_jchar->to_sjis($self->output);
 
 	return 1;
 }
@@ -154,7 +139,11 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
-	print $fh "$t\t$t\t$t\t¥¿¥°\n";
+	print $fh $sjis->encode(
+		unac_string(
+			"$t\t$t\t$t\tã‚¿ã‚°\n"
+		)
+	);
 
 }
 
@@ -172,7 +161,7 @@ sub _sentence{
 	
 	foreach my $i (@sentences) {
 		$self->_tokenize_stem($i, $fh);
-		print $fh "¡£\t¡£\t¡£\tALL\tSP\n";
+		print $fh $sjis->encode("ã€‚\tã€‚\tã€‚\tALL\tSP\n");
 	}
 
 	return 1;
@@ -184,46 +173,55 @@ sub _tokenize_stem{
 	my $t    = shift;
 	my $fh   = shift;
 	
-	## Tokenize
-	##my $tb = $t;
-	#use ptb_tokenizer_en;
-	#$t = ptb_tokenizer_en::Run($t);
-	##my @words = split / /, $t;
-	
-	# POS Tagging
-	$t =~ s/[Cc]annot/can not/go;
-	my $t = $self->{tagger}->add_tags($t);
-	
-	my @words_raw = split / /, $t;
 	my @words_hyoso;
 	my @words_pos;
-	foreach my $i (@words_raw){
-		if ($i =~ /^<(.+)>(.+)<\/\1>$/o){
-			push @words_pos,   $1;
-			push @words_hyoso, $2;
-		} else {
-			warn("error in tagger? $i\n");
-		}
-	}
+	
+	my ($words_hyoso, $words_pos) = $self->tokenize($t);
 	
 	# Stemming
-	my @words_stem = $self->{stemmer}->stem(\@words_hyoso) ;
-	#my @words_stem = @{ $self->{stemmer}->stem(@words_hyoso) };
+	my $words_stem = $self->stemming($words_hyoso);
 	
-	# Stemming·ë²Ì¤Î¥Á¥§¥Ã¥¯
-	my $n1 = @words_hyoso;
-	my $n2 = @words_stem;
+	# Stemmingçµæœã®ãƒã‚§ãƒƒã‚¯
+	my $n1 = @{$words_hyoso};
+	my $n2 = @{$words_stem};
 	unless ($n1 == $n2){
 		print "t: $t\n";
 		gui_errormsg->open(
-			msg  => "Something wrong: porter stemmer's output",
+			msg  => "Something wrong: stemmer's output",
 			type => 'msg',
 		);
 		exit;
 	}
 	
-	# Stemming·ë²Ì¤ÎÁ°¸å¤Ëµ­¹æ¤¬¤Ä¤¤¤Æ¤¤¤ë¾ì¹ç¤ÏÍî¤È¤¹
-	foreach my $i (@words_stem){
+	# Print
+	my $n = 0;
+	
+	
+	foreach my $i (@{$words_hyoso}){
+		unless (length($words_stem->[$n])){
+			$words_stem->[$n] = $i;
+		}
+		my $pos = '.';
+		$pos = $words_pos->[$n] if $words_pos;
+		print $fh $sjis->encode(
+			unac_string(
+				"$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n"
+			)
+		);
+		++$n;
+	}
+	
+	return 1;
+}
+
+sub stemming{
+	my $self = shift;
+	my $words_hyoso = shift;
+		
+	my $words_stem = [$self->{stemmer}->stem($words_hyoso)];
+	
+	# Stemmingçµæœã®å‰å¾Œã«è¨˜å·ãŒã¤ã„ã¦ã„ã‚‹å ´åˆã¯è½ã¨ã™
+	foreach my $i (@{$words_stem}){
 		if ($i =~ /^(\w+)\W+$/o){
 			$i = $1;
 		}
@@ -234,23 +232,77 @@ sub _tokenize_stem{
 		#	print "$i,";
 		#}
 	}
+	return $words_stem;
+}
+
+sub to_ascii{
+	my $self = shift;
+	my $file = shift;
 	
+	use Text::Unaccent::PurePerl qw(unac_string);
 	
-	# Print
+	open (TEMP,$self->target)
+		or gui_errormsg->open(type => 'file',thefile => $file);
 	my $n = 0;
-	foreach my $i (@words_hyoso){
-		unless (length($words_stem[$n])){
-			$words_stem[$n] = $i;
-		}
-		print $fh "$i\t$i\t$words_stem[$n]\tALL\t\t$words_pos[$n]\n";
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
 		++$n;
+		last if $n > 1000;
 	}
+	close (TEMP);
+	
+	use Encode::Guess;
+	my $enc = guess_encoding($t, qw/ascii latin1/);
+	ref($enc) or die "illegal char-code!";
+	
+	print "name: ".$enc->name."\n";
+	
+	if ($enc->name eq 'ascii'){
+		return 1;
+	}
+	
+	my $temp_file = $::config_obj->file_temp;
+	
+	open (FROMF,$file)
+		or gui_errormsg->open(type => 'file',thefile => "$file");
+	open (TEMP,">$temp_file")
+		or gui_errormsg->open(type => 'file',thefile => "$temp_file");
+
+	while (<FROMF>){
+		my $temp = $_;
+		if ($temp =~ /ã€‚\tã€‚\tã€‚\t/o || $temp =~ /ã‚¿ã‚°/o){
+			Encode::from_to(
+				$temp,
+				'euc-jp',
+				'utf8'
+			);
+			print TEMP $temp;
+		} else {
+			#$temp = unac_string('latin1', $temp);
+			Encode::from_to(
+				$temp,
+				'latin1',
+				'utf8'
+			);
+			print TEMP $temp;
+		}
+	}
+
+	close (FROMF);
+	close (TEMP);
+	unlink ("$file");
+	rename ("$temp_file","$file");
+	
+	exit;
 	
 	return 1;
 }
 
+
+
 sub exec_error_mes{
-	return "KH Coder Error!!\nStemmer¤Ë¤è¤ë½èÍı¤Ë¼ºÇÔ¤·¤Ş¤·¤¿¡£";
+	return "KH Coder Error!!\nStemmerã«ã‚ˆã‚‹å‡¦ç†ã«å¤±æ•—ã—ã¾ã—ãŸã€‚";
 }
 
 
