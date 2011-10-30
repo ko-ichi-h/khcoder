@@ -5,7 +5,8 @@ use base qw( kh_morpho::win32 );
 use Lingua::Sentence;
 use Lingua::Stem::Snowball;
 
-use Text::Unaccent::PurePerl qw(unac_string);
+#use Text::Unaccent::PurePerl qw(unac_string);
+use Text::Unidecode;
 
 use kh_morpho::win32::stemming::de;
 use kh_morpho::win32::stemming::en;
@@ -18,7 +19,7 @@ use kh_morpho::win32::stemming::pt;
 use utf8;
 use Encode;
 
-my $sjis = find_encoding('shiftjis');
+my $sjis = find_encoding('cp932');
 
 #-----------------------#
 #   Stemmerの実行関係   #
@@ -139,10 +140,10 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
+	$t = unidecode($t);
+	
 	print $fh $sjis->encode(
-		unac_string(
 			"$t\t$t\t$t\tタグ\n"
-		)
 	);
 
 }
@@ -204,7 +205,7 @@ sub _tokenize_stem{
 		my $pos = '.';
 		$pos = $words_pos->[$n] if $words_pos;
 		print $fh $sjis->encode(
-			unac_string(
+			unidecode(
 				"$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n"
 			)
 		);
@@ -217,7 +218,7 @@ sub _tokenize_stem{
 sub stemming{
 	my $self = shift;
 	my $words_hyoso = shift;
-		
+	
 	my $words_stem = [$self->{stemmer}->stem($words_hyoso)];
 	
 	# Stemming結果の前後に記号がついている場合は落とす
@@ -239,7 +240,7 @@ sub to_ascii{
 	my $self = shift;
 	my $file = shift;
 	
-	use Text::Unaccent::PurePerl qw(unac_string);
+	#use Text::Unaccent::PurePerl qw(unac_string);
 	
 	open (TEMP,$self->target)
 		or gui_errormsg->open(type => 'file',thefile => $file);

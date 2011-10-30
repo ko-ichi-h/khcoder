@@ -2,8 +2,6 @@ package kh_morpho::win32::stemming::en;
 use strict;
 use base qw( kh_morpho::win32::stemming );
 
-
-
 sub init{
 	my $self = shift;
 	
