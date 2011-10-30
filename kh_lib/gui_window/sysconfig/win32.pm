@@ -118,10 +118,17 @@ sub __new{
 		pack    => {-anchor=>'w', -side => 'left'},
 		options =>
 			[
-				[English  => 'en'],
+				['English'      => 'en'],
+				['Dutch *'      => 'nl'],
+				['French *'     => 'fr'],
+				['German *'     => 'de'],
+				['Italian *'    => 'it'],
+				['Portuguese *' => 'pt'],
+				['Spanish *'    => 'es'],
 			],
 		variable => \$self->{opt_stem_val},
 	);
+	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
 
 	$self->{label_stem2} = $fra_stem->Label(
 		-text => '  Stop Words:'

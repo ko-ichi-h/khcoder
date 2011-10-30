@@ -95,7 +95,7 @@ sub search{
 				",1)->hundle->fetchall_arrayref;
 				
 				foreach my $h (@{$r}){            # 活用語の追加
-					if ( length($h->[1]) > 1 ){
+					if ( length($h->[1]) > 0 ){
 						$h->[1] = '   '.$h->[1];
 						unshift @{$h}, 'katuyo';
 						push @{$result2}, $h;

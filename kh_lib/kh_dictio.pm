@@ -138,17 +138,20 @@ sub mark{
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ²þ¹Ô¥³¡¼¥ÉÅý°ì
 		chomp;
 
-		my $text = Jcode->new($_,$icode)->h2z->euc;
-		
+		my $text;
+
 		# morpho_analyzer
 		if (
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		){
+			$text = Jcode->new($_,$icode)->h2z->euc;
 			$text =~ s/ /¡¡/go;
 			$text =~ s/\\/¡ï/go;
 			$text =~ s/'/¡Ç/go;
 			$text =~ s/"/¡É/go;
+		} else {
+			$text = $_;
 		}
 		
 		while (1){
@@ -208,7 +211,12 @@ sub mark{
 	close (SOURCE);
 	close (MARKED);
 	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($dist);
+		if ( # morpho_analyzer
+			   $::config_obj->c_or_j eq 'chasen'
+			|| $::config_obj->c_or_j eq 'mecab'
+		){
+			kh_jchar->to_sjis($dist);
+		}
 	}
 }
 

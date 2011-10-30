@@ -41,7 +41,7 @@ sub first{
 		my $ta1 = new Benchmark;
 		print "Morpho1\t",timestr(timediff($ta1,$ta0)),"\n";
 	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($::project_obj->file_MorphoOut);
+			kh_jchar->to_euc($::project_obj->file_MorphoOut);
 			my $ta2 = new Benchmark;
 			print "Morpho2\t",timestr(timediff($ta2,$ta1)),"\n";
 	}
@@ -105,7 +105,8 @@ sub fix_katuyo{
 		if ($i->[0] =~ /^(.*)\r$/){
 			$i->[0] = $1;
 		}
-		$sql .= "(\"$i->[0]\"),";
+		my $t = mysql_exec->quote($i->[0]);
+		$sql .= "($t),";
 	}
 	chop $sql;
 	mysql_exec->do("$sql",1);

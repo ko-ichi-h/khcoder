@@ -98,6 +98,8 @@ sub to_sjis{
 
 sub check_code{
 	my $the_file = $_[1];
+	my $silent   = $_[2];
+	
 	if ( defined($::project_obj) ){
 		my $chk = $::project_obj->assigned_icode;
 		if (
@@ -107,7 +109,7 @@ sub check_code{
 			return $chk;
 		}
 	}
-	print "Checking icode... ";
+	print "Checking icode... " unless $silent;
 	
 	open (TEMP,$the_file)
 		or gui_errormsg->open(type => 'file',thefile => $the_file);
@@ -131,7 +133,7 @@ sub check_code{
 	$icode = 'sjis' if $icode eq 'cp932';
 	$icode = 'jis' if  $icode eq '7bit-jis';	
 
-	print "$icode\n";
+	print "$icode\n" unless $silent;
 	return $icode;
 }
 
