@@ -7,7 +7,7 @@ sub init{
 	
 	# Perlapp用にLingua::En::Taggerのデータを解凍
 	require Lingua::EN::Tagger;
-	unless (-e $Lingua::EN::Tagger::word_path){
+	if (defined(&PerlApp::extract_bound_file)){
 		my $cwd = $::config_obj->cwd;
 		$cwd = Jcode->new($cwd,'sjis')->euc;
 		$cwd =~ tr/\\/\//;
