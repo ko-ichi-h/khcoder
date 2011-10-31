@@ -5,7 +5,6 @@ use base qw( kh_morpho::win32 );
 use Lingua::Sentence;
 use Lingua::Stem::Snowball;
 
-#use Text::Unaccent::PurePerl qw(unac_string);
 use Text::Unidecode;
 
 use kh_morpho::win32::stemming::de;
@@ -88,7 +87,6 @@ sub _run_morpho{
 	while ( <TRGT> ){
 		chomp;
 		my $t   = decode("latin1",$_);
-		#$t =~ tr/(?:\x81\x40)/ /; # SJISの全角スペースを半角に変換（Win32）
 		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
@@ -128,7 +126,6 @@ sub _run_morpho{
 
 	# 出力ファイルをASCIIに変換
 	#$self->to_ascii($self->output);
-	
 	#kh_jchar->to_sjis($self->output);
 
 	return 1;
@@ -197,7 +194,6 @@ sub _tokenize_stem{
 	# Print
 	my $n = 0;
 	
-	
 	foreach my $i (@{$words_hyoso}){
 		unless (length($words_stem->[$n])){
 			$words_stem->[$n] = $i;
@@ -235,72 +231,6 @@ sub stemming{
 	}
 	return $words_stem;
 }
-
-sub to_ascii{
-	my $self = shift;
-	my $file = shift;
-	
-	#use Text::Unaccent::PurePerl qw(unac_string);
-	
-	open (TEMP,$self->target)
-		or gui_errormsg->open(type => 'file',thefile => $file);
-	my $n = 0;
-	my $t;
-	while (<TEMP>){
-		$t .= $_;
-		++$n;
-		last if $n > 1000;
-	}
-	close (TEMP);
-	
-	use Encode::Guess;
-	my $enc = guess_encoding($t, qw/ascii latin1/);
-	ref($enc) or die "illegal char-code!";
-	
-	print "name: ".$enc->name."\n";
-	
-	if ($enc->name eq 'ascii'){
-		return 1;
-	}
-	
-	my $temp_file = $::config_obj->file_temp;
-	
-	open (FROMF,$file)
-		or gui_errormsg->open(type => 'file',thefile => "$file");
-	open (TEMP,">$temp_file")
-		or gui_errormsg->open(type => 'file',thefile => "$temp_file");
-
-	while (<FROMF>){
-		my $temp = $_;
-		if ($temp =~ /。\t。\t。\t/o || $temp =~ /タグ/o){
-			Encode::from_to(
-				$temp,
-				'euc-jp',
-				'utf8'
-			);
-			print TEMP $temp;
-		} else {
-			#$temp = unac_string('latin1', $temp);
-			Encode::from_to(
-				$temp,
-				'latin1',
-				'utf8'
-			);
-			print TEMP $temp;
-		}
-	}
-
-	close (FROMF);
-	close (TEMP);
-	unlink ("$file");
-	rename ("$temp_file","$file");
-	
-	exit;
-	
-	return 1;
-}
-
-
 
 sub exec_error_mes{
 	return "KH Coder Error!!\nStemmerによる処理に失敗しました。";

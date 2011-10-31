@@ -16,27 +16,6 @@ sub init{
 	return $self;
 }
 
-sub stemming{
-	my $self = shift;
-	my $words_hyoso = shift;
-		
-	my $words_stem = [$self->{stemmer}->stem($words_hyoso)];
-	
-	# Stemming結果の前後に記号がついている場合は落とす
-	foreach my $i (@{$words_stem}){
-		if ($i =~ /^(\w+)\W+$/o){
-			$i = $1;
-		}
-		elsif ($i =~ /^\W+(\w+)$/o){
-			$i = $1;
-		}
-		#elsif ($i =~ /\w\W/o || $i =~ /\W\w/o){
-		#	print "$i,";
-		#}
-	}
-	return $words_stem;
-}
-
 sub tokenize{
 	my $self = shift;
 	my $t    = shift;
