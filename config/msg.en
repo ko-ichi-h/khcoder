@@ -1,0 +1,6 @@
+---
+gui_window::about->win_title: About KH Coder
+gui_window::about->kawabata:  KAWABATA, Akira
+gui_window::about->higuchi:   HIGUCHI, Koichi
+gui_window::about->close:     close
+

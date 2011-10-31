@@ -1,0 +1,5 @@
+---
+gui_window::about->win_title: KH Coderについて
+gui_window::about->kawabata:  川端亮
+gui_window::about->higuchi:   樋口耕一
+gui_window::about->close:     閉じる
