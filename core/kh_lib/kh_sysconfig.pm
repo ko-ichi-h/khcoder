@@ -225,6 +225,20 @@ sub stemming_lang{
 	}
 }
 
+sub msg_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{msg_lang} = $new;
+	}
+
+	if (length($self->{msg_lang}) > 0) {
+		return $self->{msg_lang};
+	} else {
+		return 'jp';
+	}
+}
+
 sub stopwords{
 	my $self = shift;
 	my %args = @_;

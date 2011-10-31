@@ -2,6 +2,8 @@ package gui_window::about;
 use strict;
 use base qw(gui_window);
 
+use kh_msg;
+
 use utf8;
 
 #------------------#
@@ -25,7 +27,7 @@ sub _new{
 	my $wabtkh = $self->{win_obj};
 	#$wabtkh->resizable(0, 0);
 
-	$wabtkh->title($self->gui_jt('KH Coderについて'));
+	$wabtkh->title( $self->gui_jt( kh_msg->get('win_title') ) );
 
 	$self->{img} = $wabtkh->Photo(-file => $::config_obj->logo_image_file);
 
@@ -150,7 +152,7 @@ sub _new{
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('川端亮'),
+		label  => kh_msg->get('kawabata'),
 		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
@@ -174,14 +176,14 @@ sub _new{
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('樋口耕一'),
+		label  => kh_msg->get('higuchi'),
 		url    => 'http://koichi.nihon.to/psnl',
 		parent => $fra_r,
 		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
 	);
 
 	$wabtkh->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->get('close'),
 		-font => "TKFN",
 		-width => 8,
 		-command => 
