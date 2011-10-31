@@ -1,6 +1,12 @@
 ---
-gui_window::about->win_title: About KH Coder
-gui_window::about->kawabata:  KAWABATA, Akira
-gui_window::about->higuchi:   HIGUCHI, Koichi
-gui_window::about->close:     close
-
+global->copy:                           Copy
+gui_window::about->win_title:           About KH Coder
+gui_window::about->kawabata:            KAWABATA, Akira
+gui_window::about->higuchi:             HIGUCHI, Koichi
+gui_window::about->close:               Close
+gui_window::sql_select->win_title:      Execute SQL Statements
+gui_window::sql_select->max_rows:       Max rows to display:
+gui_window::sql_select->Server:         '  Connected to: '
+gui_window::sql_select->exec:           Execute
+gui_window::sql_select->rows:           '  Rows: '
+gui_window::sql_select->sql_error:      An Error in the SQL Statement.

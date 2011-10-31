@@ -1,5 +1,12 @@
 ---
-gui_window::about->win_title: KH Coderについて
-gui_window::about->kawabata:  川端亮
-gui_window::about->higuchi:   樋口耕一
-gui_window::about->close:     閉じる
+global->copy:                           コピー
+gui_window::about->win_title:           KH Coderについて
+gui_window::about->kawabata:            川端亮
+gui_window::about->higuchi:             樋口耕一
+gui_window::about->close:               閉じる
+gui_window::sql_select->win_title:      SQL文の実行
+gui_window::sql_select->max_rows:       最大表示数：
+gui_window::sql_select->Server:         '  サーバー： '
+gui_window::sql_select->exec:           実行
+gui_window::sql_select->rows:           '  出力された行数： '
+gui_window::sql_select->sql_error:      SQL文にエラーがありました。

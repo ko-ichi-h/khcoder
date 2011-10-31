@@ -23,7 +23,7 @@ sub _new{
 
 	my $self = shift;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('SQL文の実行'));
+	$win->title($self->gui_jt( kh_msg->get('win_title') ));
 	#$self->{win_obj} = $win;
 
 	my $lf = $win->Frame(
@@ -77,7 +77,7 @@ sub _new{
 	);
 
 	$lf->Label(
-		-text => $self->gui_jchar('最大表示数:'),
+		-text => kh_msg->get('max_rows'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -93,17 +93,17 @@ sub _new{
 		->hundle->fetch->[1];
 
 	$lf->Label(
-		-text => $self->gui_jchar(
-			'  サーバー: '
+		-text => 
+			kh_msg->get('Server')
 			.$server
-			.'  データベース名: '
+			.', '
 			.$::project_obj->dbname
-		),
+		,
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
 	my $sbutton = $lf->Button(
-		-text    => $self->gui_jchar('実行'),
+		-text    => kh_msg->get('exec'),
 		-command => sub {$self->exec;},
 		-font    => "TKFN"
 	)->pack(-side => "right");
@@ -125,7 +125,6 @@ sub _new{
 #		title       => $self->gui_jchar('SQL文の実行結果'),
 #	);
 
-
 	my $field = $lf2->Frame()->pack(-fill => 'both', -expand => 1);
 
 	my $list = $field->Scrolled('HList',
@@ -142,13 +141,13 @@ sub _new{
 	my $frame = $lf2->Frame()->pack(-fill => 'x', -expand => '0');
 
 	$frame->Button(
-		-text    => $self->gui_jchar('コピー'),
+		-text    => kh_msg->gget('copy'),
 		-command => sub {gui_hlist->copy($self->list);},
 		-font    => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
 	my $label = $frame->Label(
-		-text => $self->gui_jchar('　出力された行数: '),
+		-text => kh_msg->get('rows'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -187,7 +186,7 @@ sub exec{
 		my $tc = mysql_exec->select($i);
 		# エラーチェック
 		if ( $tc->err ){
-			my $msg = "SQL文にエラーがありました。\n\n".$tc->err;
+			my $msg = kh_msg->get('sql_error')."\n\n".$self->gui_jchar($tc->err);
 			my $w = $self->win_obj;
 			gui_errormsg->open(
 				type   => 'msg',
@@ -201,7 +200,9 @@ sub exec{
 	
 	# 書き出すべき結果があるかどうかをチェック
 	unless ($t->hundle->{'NUM_OF_FIELDS'}){
-		$self->label->configure(-text,$self->gui_jchar('出力された行数: n/a'));
+		$self->label->configure(
+			-text, kh_msg->get('rows').'n/a'
+		);
 		return 1;
 	}
 	
@@ -248,7 +249,7 @@ sub exec{
 			++$row;
 		}
 	}
-	$self->label->configure(-text,$self->gui_jchar('出力された行数: '."$row"));
+	$self->label->configure(-text,kh_msg->get('rows')."$row");
 	
 	#$self->plane->frame->focus;
 }
