@@ -280,7 +280,7 @@ sub selected_rows{
 sub print_error{
 	my $self = shift;
 	$self->{err} =
-		"SQL入力:\n".$self->sql."\nエラー出力:\n".
+		"SQL Input:\n".$self->sql."\nError:\n".
 		$::project_obj->dbh->{'mysql_error'};
 	unless ($self->critical){
 		return 0;
