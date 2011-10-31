@@ -1,15 +1,15 @@
-package kh_morpho::win32::stemming::pt;
+package kh_morpho::perl::stemming::de;
 use strict;
-use base qw( kh_morpho::win32::stemming );
+use base qw( kh_morpho::perl::stemming );
 
 sub init{
 	my $self = shift;
 	
 	$self->{icode} = kh_jchar->check_code($self->target,1);
 	
-	$self->{splitter} = Lingua::Sentence->new('pt');
+	$self->{splitter} = Lingua::Sentence->new('de');
 	$self->{stemmer}  = Lingua::Stem::Snowball->new(
-		lang     => 'pt',
+		lang     => 'de',
 		encoding => 'UTF-8'
 	);
 	
