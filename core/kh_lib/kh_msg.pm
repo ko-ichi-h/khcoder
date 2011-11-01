@@ -30,7 +30,9 @@ sub get{
 		$t = 'error: no msg!';
 	}
 	
-	$t = Encode::decode('utf8',$t);
+	unless ( utf8::is_utf8($t) ){
+		$t = Encode::decode('utf8',$t);
+	}
 	return $t;
 }
 
@@ -56,7 +58,9 @@ sub gget{
 		$t = 'error: no msg!';
 	}
 	
-	$t = Encode::decode('utf8',$t);
+	unless ( utf8::is_utf8($t) ){
+		$t = Encode::decode('utf8',$t);
+	}
 	return $t;
 }
 
