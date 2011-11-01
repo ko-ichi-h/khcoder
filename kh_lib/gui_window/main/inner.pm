@@ -28,7 +28,7 @@ sub make{
 	);
 	
 	$fra1->Label(
-		-text => gui_window->gui_jchar('現在のプロジェクト：','euc'),
+		-text => kh_msg->get('target'),#gui_window->gui_jchar('現在のプロジェクト：','euc'),
 		-font => "TKFN"
 	)->grid(
 		-column => 0,
@@ -52,7 +52,7 @@ sub make{
 	gui_window->disabled_entry_configure($cupro);
 	
 	$fra1->Label(
-		-text => gui_window->gui_jchar('説明（メモ）：','euc'),
+		-text => kh_msg->get('memo'),#gui_window->gui_jchar('説明（メモ）：','euc'),
 		-font => "TKFN"
 	)->grid(
 		-column => 0,
@@ -94,7 +94,7 @@ sub make{
 	);
 
 	$fra2->Label(
-		-text => gui_window->gui_jchar('総抽出語数：','euc'),
+		-text => kh_msg->get('tokens'),#gui_window->gui_jchar('総抽出語数：','euc'),
 		-font => "TKFN"
 	)->grid(
 		-column => 0,
@@ -116,7 +116,7 @@ sub make{
 
 	$fra2->Label(
 		-font => "TKFN",
-		-text => gui_window->gui_jchar('異なり語数（使用）：','euc')
+		-text => kh_msg->get('types'),#gui_window->gui_jchar('異なり語数（使用）：','euc')
 	)->grid(
 		-column => 0,
 		-row    => 1,
@@ -137,7 +137,7 @@ sub make{
 
 	$fra2->Label(
 		-font => "TKFN",
-		-text => gui_window->gui_jchar('文書の単純集計：','euc')
+		-text => kh_msg->get('docs'),#gui_window->gui_jchar('文書の単純集計：','euc')
 	)->grid(
 		-column => 0,
 		-row    => 2,
@@ -164,8 +164,16 @@ sub make{
 		-pady   => 1,
 	);
 
-	$hlist->header('create',0,-text=>gui_window->gui_jchar('集計単位','euc'));
-	$hlist->header('create',1,-text=>gui_window->gui_jchar('ケース数','euc'));
+	$hlist->header(
+		'create',
+		0,
+		-text=>kh_msg->get('units'),#gui_window->gui_jchar('集計単位','euc')
+	);
+	$hlist->header(
+		'create',
+		1,
+		-text => kh_msg->get('cases'),#gui_window->gui_jchar('ケース数','euc')
+	);
 	$fra2->gridColumnconfigure(1, -weight => 1, -minsize => 30);
 	$fra2->gridRowconfigure(2, -weight => 1);
 
@@ -220,8 +228,8 @@ sub refresh{
 			$self->entry('ent_num2', num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")") );
 			# 集計単位
 			my %name = (
-				"bun" => "文",
-				"dan" => "段落",
+				"bun" => kh_msg->gget('sentence'),#"文",
+				"dan" => kh_msg->gget('paragraph'),#"段落",
 				"h5"  => "H5",
 				"h4"  => "H4",
 				"h3"  => "H3",

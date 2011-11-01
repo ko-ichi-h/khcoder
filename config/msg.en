@@ -1,12 +1,84 @@
 ---
-global->copy:                           Copy
-gui_window::about->win_title:           About KH Coder
-gui_window::about->kawabata:            KAWABATA, Akira
-gui_window::about->higuchi:             HIGUCHI, Koichi
-gui_window::about->close:               Close
-gui_window::sql_select->win_title:      Execute SQL Statements
-gui_window::sql_select->max_rows:       Max rows to display:
-gui_window::sql_select->Server:         '  Connected to: '
-gui_window::sql_select->exec:           Execute
-gui_window::sql_select->rows:           '  Rows: '
-gui_window::sql_select->sql_error:      An Error in the SQL Statement.
+global->copy:                                     Copy
+global->sentence:                                 Sentences
+global->paragraph:                                Paragraphs
+global->csv_f:                                    CSV File
+global->spss_f:                                   SPSS File
+global->tab_f:                                    Tab Delimited
+global->wm_f:                                     Variable-length CSV: for WordMiner
+global->cont_big_pros:                            "It may take a while.\nMay I continue?"
+gui_window::about->win_title:                     About KH Coder
+gui_window::about->kawabata:                      KAWABATA, Akira
+gui_window::about->higuchi:                       HIGUCHI, Koichi
+gui_window::about->close:                         Close
+gui_window::sql_select->win_title:                Execute SQL Statements
+gui_window::sql_select->max_rows:                 Max rows to display:
+gui_window::sql_select->Server:                   '  Connected to: '
+gui_window::sql_select->exec:                     Execute
+gui_window::sql_select->rows:                     '  Rows: '
+gui_window::sql_select->sql_error:                An Error in the SQL Statement.
+gui_window::main::menu->project:                  Project
+gui_window::main::menu->new:                      New
+gui_window::main::menu->open:                     Open
+gui_window::main::menu->close:                    Close
+gui_window::main::menu->import:                   Import
+gui_window::main::menu->export:                   Export
+gui_window::main::menu->config:                   Options
+gui_window::main::menu->exit:                     Exit
+gui_window::main::menu->prep:                     PRe-Processing
+gui_window::main::menu->check:                    Check the Target File
+gui_window::main::menu->run_prep:                 Run Pre-Processing
+gui_window::main::menu->words_selection:          Select Words to Analyze
+gui_window::main::menu->words_cluster:            Word Cluster
+gui_window::main::menu->use_termextract:          use TermExtract
+gui_window::main::menu->use_chasen:               use ChaSen
+gui_window::main::menu->check_morpho:             Check the Result of Word Extraction
+gui_window::main::menu->tools:                    Tools
+gui_window::main::menu->words:                    Words
+gui_window::main::menu->word_freq:                Frequency List
+gui_window::main::menu->desc_stats:               Descriptive Stats
+gui_window::main::menu->freq_tf:                  Term Frequency Distribution
+gui_window::main::menu->freq_df:                  Document Frequency Distribution
+gui_window::main::menu->tf_df:                    TF-DF Plot
+gui_window::main::menu->word_search:              Search Words
+gui_window::main::menu->kwic:                     KWIC Concordance
+gui_window::main::menu->word_ass:                 Word Association
+gui_window::main::menu->corresp:                  Correspondence Analysis
+gui_window::main::menu->mds:                      Multi-Dimensional Scaling
+gui_window::main::menu->h_cluster:                Hierarchical Cluster Analysis
+gui_window::main::menu->netg:                     Co-Occurrence Network
+gui_window::main::menu->docs:                     Documents
+gui_window::main::menu->doc_search:               Search Documents
+gui_window::main::menu->cluster:                  Cluster Analysis
+gui_window::main::menu->docs_bayes:               Naive Bayes Classifier
+gui_window::main::menu->bayes_learn:              Learn from Variables
+gui_window::main::menu->bayes_classi:             Classify
+gui_window::main::menu->check_learning:           View Learning Result
+gui_window::main::menu->check_classi:             View Classification Log
+gui_window::main::menu->doc_term_mtrx:            Output Document-Term Matrix
+gui_window::main::menu->term_vec_mtrx:            Output Term-Context Matrix
+gui_window::main::menu->coding:                   Coding
+gui_window::main::menu->freq:                     Frequency
+gui_window::main::menu->cross_st:                 Crosstab with Headings
+gui_window::main::menu->cross_vr:                 Crosstab with Variables
+gui_window::main::menu->jac_mtrx:                 Similarity Matrix
+gui_window::main::menu->output_cod:               Output Document-code Matrix
+gui_window::main::menu->vars_heads:               Variables & Headings
+gui_window::main::menu->read:                     Read from a File
+gui_window::main::menu->var_list:                 Listing & Manipulation
+gui_window::main::menu->text_format:              Convert the Target File
+gui_window::main::menu->partial:                  Extract Partial Text
+gui_window::main::menu->to_csv:                   Convert from HTML to CSV
+gui_window::main::menu->plugin:                   Plugin
+gui_window::main::menu->exec_sql:                 Execute SQL Statements
+gui_window::main::menu->help:                     Help
+gui_window::main::menu->man:                      Manual (PDF)
+gui_window::main::menu->web:                      Latest Info (Web)
+gui_window::main::menu->about:                    About KH Coder
+gui_window::main::inner->target:                  'Target File:   '
+gui_window::main::inner->memo:                    Memo:
+gui_window::main::inner->tokens:                  Tokens:
+gui_window::main::inner->types:                   Types (using):
+gui_window::main::inner->docs:                    Documents:
+gui_window::main::inner->units:                   Units
+gui_window::main::inner->cases:                   Cases

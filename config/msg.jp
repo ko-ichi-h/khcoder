@@ -1,5 +1,7 @@
 ---
 global->copy:                                     コピー
+global->sentence:                                 文
+global->paragraph:                                段落
 global->csv_f:                                    CSVファイル
 global->spss_f:                                   SPSSファイル
 global->tab_f:                                    タブ区切り
@@ -55,3 +57,28 @@ gui_window::main::menu->check_learning:           学習結果ファイルの内
 gui_window::main::menu->check_classi:             分類ログファイルの内容を確認
 gui_window::main::menu->doc_term_mtrx:            「文書ｘ抽出語」表の出力
 gui_window::main::menu->term_vec_mtrx:            「抽出語ｘ文脈ベクトル」表の出力
+gui_window::main::menu->coding:                   コーディング
+gui_window::main::menu->freq:                     単純集計
+gui_window::main::menu->cross_st:                 章・節・段落ごとの集計
+gui_window::main::menu->cross_vr:                 外部変数とのクロス集計
+gui_window::main::menu->jac_mtrx:                 類似度行列
+gui_window::main::menu->output_cod:               コーディング結果の出力
+gui_window::main::menu->vars_heads:               外部変数と見出し
+gui_window::main::menu->read:                     読み込み
+gui_window::main::menu->var_list:                 リストと管理
+gui_window::main::menu->text_format:              テキストファイルの変形
+gui_window::main::menu->partial:                  部分テキストの取り出し
+gui_window::main::menu->to_csv:                   HTMLからCSVに変換
+gui_window::main::menu->plugin:                   プラグイン
+gui_window::main::menu->exec_sql:                 SQL文の実行
+gui_window::main::menu->help:                     ヘルプ(H)
+gui_window::main::menu->man:                      マニュアル(PDF)
+gui_window::main::menu->web:                      最新情報(Web)
+gui_window::main::menu->about:                    KH Coderについて
+gui_window::main::inner->target:                  現在のプロジェクト：
+gui_window::main::inner->memo:                    説明（メモ）：
+gui_window::main::inner->tokens:                  総抽出語数
+gui_window::main::inner->types:                   異なり語数（使用）：
+gui_window::main::inner->docs:                    文書の単純集計：
+gui_window::main::inner->units:                   集計単位
+gui_window::main::inner->cases:                   ケース数
