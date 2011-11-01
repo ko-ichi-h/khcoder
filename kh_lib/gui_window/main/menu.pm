@@ -74,32 +74,30 @@ sub make{
 	#------------------#
 	#   プロジェクト   #
 
-	my $msg = gui_window->gui_jm('プロジェクト(P)','euc');
+	my $msg = gui_window->gui_jm( kh_msg->get('project') );
 	my $f = $menubar->cascade(
-		-label => "$msg",
+		-label => $msg,
 		-font => "TKFN",
-		-underline => $::config_obj->underline_conv(13),
+		-underline => index($msg, 'P'),
 		-tearoff=>'no'
 	);
 
-		$msg = gui_window->gui_jchar('新規','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('new'),
 			-font => "TKFN",
 			-command =>
 				sub{gui_window::project_new->open;},
 			-accelerator => 'Ctrl+N'
 		);
-		$msg = gui_window->gui_jchar('開く','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('open'),
 			-font => "TKFN",
 			-command =>
 				sub{gui_window::project_open->open;},
 			-accelerator => 'Ctrl+O'
 		);
 		$self->{m_b0_close} = $f->command(
-			-label => gui_window->gui_jchar('閉じる'),
+			-label => kh_msg->get('close'),
 			-font => "TKFN",
 			-state => 'disable',
 			-command =>
@@ -112,7 +110,7 @@ sub make{
 		$f->separator();
 
 		$f->command(
-			-label => gui_window->gui_jchar('インポート'),
+			-label => kh_msg->get('import'),
 			-font => "TKFN",
 			-command =>
 				sub{
@@ -121,7 +119,7 @@ sub make{
 		);
 
 		$self->{m_b0_export} = $f->command(
-			-label => gui_window->gui_jchar('エクスポート'),
+			-label => kh_msg->get('export'),
 			-font => "TKFN",
 			-state => 'disable',
 			-command =>
@@ -132,18 +130,16 @@ sub make{
 
 		$f->separator();
 		
-		$msg = gui_window->gui_jchar('設定','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('config'),
 			-font => "TKFN",
 			-command => 
 				sub{gui_window::sysconfig->open;},
 		);
 		#$f->separator();
 		
-		$msg = gui_window->gui_jchar('終了','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('exit'),
 			-font => "TKFN",
 			-command => sub{
 						$::main_gui->get('main_window')->close or exit;
@@ -155,22 +151,18 @@ sub make{
 	#   前処理   #
 
 	$f = $menubar->cascade(
-		-label => gui_window->gui_jm('前処理(B)'),
+		-label => gui_window->gui_jm( kh_msg->get('prep') ),
 		-font => "TKFN",
-		-underline => $::config_obj->underline_conv(7),
+		-underline => index(kh_msg->get('prep'), 'R'),
 		-tearoff=>'no'
 	);
 
 		$self->{m_b2_datacheck} = $f->command(
-				-label => gui_window->gui_jchar('分析対象ファイルのチェック'),
+				-label => kh_msg->get('check'),
 				-font => "TKFN",
 				-command => sub{
 					my $ans = $mw->messageBox(
-						-message => gui_window->gui_jchar
-							(
-							   "この処理には時間がかかる場合があります。\n".
-							   "続行してよろしいですか？"
-							),
+						-message => kh_msg->gget('cont_big_pros'),
 						-icon    => 'question',
 						-type    => 'OKCancel',
 						-title   => 'KH Coder'
@@ -182,15 +174,11 @@ sub make{
 			);
 
 		$self->{m_b2_morpho} = $f->command(
-				-label => gui_window->gui_jchar('前処理の実行'),
+				-label => kh_msg->get('run_prep'),
 				-font => "TKFN",
 				-command => sub{
 					my $ans = $mw->messageBox(
-						-message => gui_window->gui_jchar
-							(
-							   "時間のかかる処理を実行しようとしています。\n".
-							   "続行してよろしいですか？"
-							),
+						-message => kh_msg->gget('cont_big_pros'),
 						-icon    => 'question',
 						-type    => 'OKCancel',
 						-title   => 'KH Coder'
@@ -202,7 +190,7 @@ sub make{
 			);
 		$f->separator();
 		$self->{m_b1_mark} = $f->command(
-				-label => gui_window->gui_jchar('語の取捨選択'),
+				-label => kh_msg->get('words_selection'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::dictionary->open;
@@ -211,35 +199,22 @@ sub make{
 			);
 
 		my $f_hukugo = $f->cascade(
-				-label => gui_window->gui_jchar('複合語の検出'),
+				-label => kh_msg->get('words_cluster'),
 				-font => "TKFN",
 				-tearoff=>'no'
 			);
 
 		$self->{m_b1_hukugo_te} = $f_hukugo->command(
-				-label => gui_window->gui_jchar('TermExtractを利用'),
+				-label => kh_msg->get('use_termextract'),
 				-font => "TKFN",
 				-command => sub{
-					my $found = 1;
-					eval "require TermExtract::Calc_Imp"  or $found = 0;
-					eval "require TermExtract::Chasen"    or $found = 0;
-					eval "require TermExtract::Chasen_kh" or $found = 0;
-					if ($found){
 						gui_window::use_te->open;
-					} else {
-						$mw->messageBox(
-							-message => gui_window->gui_jchar('TermExtractがインストールされていません。'),
-							-title => 'KH Coder',
-							-type => 'OK',
-						);
-						return 0;
-					}
 				},
 				-state => 'disable'
 			);
 
 		$self->{m_b1_hukugo} = $f_hukugo->command(
-				-label => gui_window->gui_jchar('茶筌による連結'),
+				-label => kh_msg->get('use_chasen'), #gui_window->gui_jchar('茶筌による連結'),
 				-font => "TKFN",
 				-command => sub{
 					$self->mc_hukugo;
@@ -250,7 +225,7 @@ sub make{
 		$f->separator();
 
 		$self->{m_b3_check} = $f->command(
-				-label => gui_window->gui_jchar('語の抽出結果を確認'),
+				-label => kh_msg->get('check_morpho'), #gui_window->gui_jchar('語の抽出結果を確認'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::morpho_check->open;
@@ -262,20 +237,20 @@ sub make{
 	#   ツール   #
 
 	$f = $menubar->cascade(
-		-label => gui_window->gui_jchar('Tools(T)','euc'),
+		-label => kh_msg->get('tools'),#gui_window->gui_jchar('Tools(T)','euc'),
 		-font => "TKFN",
-		-underline => 6,
+		-underline => index(kh_msg->get('tools'),'T'),
 		-tearoff=>'no'
 	);
 
 	my $f3 = $f->cascade(
-			-label => gui_window->gui_jchar('抽出語'),
+			-label => kh_msg->get('words'),#gui_window->gui_jchar('抽出語'),
 			-font => "TKFN",
 			-tearoff=>'no'
 		);
 
 		$self->{t_word_list_cf} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語リスト'),
+				-label => kh_msg->get('word_freq'), #gui_window->gui_jchar('抽出語リスト'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_list->open;
@@ -284,13 +259,13 @@ sub make{
 			);
 
 		my $f_wd_stats = $f3->cascade(
-			-label => gui_window->gui_jchar('記述統計'),
+			-label => kh_msg->get('desc_stats'),
 			-font => "TKFN",
 			-tearoff=>'no'
 		);
 		
 		$self->{t_word_freq} = $f_wd_stats->command(
-				-label => gui_window->gui_jchar('出現回数の分布'),
+				-label => kh_msg->get('freq_tf'),#gui_window->gui_jchar('出現回数の分布'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_freq->open->count;
@@ -299,7 +274,7 @@ sub make{
 			);
 
 		$self->{t_word_df_freq} = $f_wd_stats->command(
-				-label => gui_window->gui_jchar('文書数の分布'),
+				-label => kh_msg->get('freq_df'),#gui_window->gui_jchar('文書数の分布'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_df_freq->open->count;
@@ -308,7 +283,7 @@ sub make{
 			);
 
 		$self->{t_word_tf_df} = $f_wd_stats->command(
-				-label => gui_window->gui_jchar('出現回数ｘ文書数のプロット'),
+				-label => kh_msg->get('tf_df'),#gui_window->gui_jchar('出現回数ｘ文書数のプロット'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_tf_df->open;
@@ -320,7 +295,7 @@ sub make{
 		$f3->separator;
 
 		$self->{t_word_search} = $f3->command(
-				-label => gui_window->gui_jchar('抽出語検索'),
+				-label => kh_msg->get('word_search'),#gui_window->gui_jchar('抽出語検索'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_search->open;
@@ -329,7 +304,7 @@ sub make{
 			);
 
 		$self->{t_word_conc} = $f3->command(
-				-label => gui_window->gui_jchar('KWICコンコーダンス'),
+				-label => kh_msg->get('kwic'),#gui_window->gui_jchar('KWICコンコーダンス'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_conc->open;
@@ -338,7 +313,7 @@ sub make{
 			);
 
 		$self->{t_word_ass} = $f3->command(
-				-label => gui_window->gui_jchar('関連語探索'),
+				-label => kh_msg->get('word_ass'),#gui_window->gui_jchar('関連語探索'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_ass->open;
@@ -349,7 +324,7 @@ sub make{
 		$f3->separator;
 
 		$self->{t_word_corresp} = $f3->command(
-				-label => gui_window->gui_jchar('対応分析'),
+				-label => kh_msg->get('corresp'),#gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_corresp->open;
@@ -359,7 +334,7 @@ sub make{
 		push @menu1, 't_word_corresp' if $::config_obj->R;
 
 		$self->{t_word_mds} = $f3->command(
-				-label => gui_window->gui_jchar('多次元尺度構成法'),
+				-label => kh_msg->get('mds'),#gui_window->gui_jchar('多次元尺度構成法'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_mds->open;
@@ -369,7 +344,7 @@ sub make{
 		push @menu1, 't_word_mds' if $::config_obj->R;
 
 		$self->{t_word_cls} = $f3->command(
-				-label => gui_window->gui_jchar('階層的クラスター分析'),
+				-label => kh_msg->get('h_cluster'),#gui_window->gui_jchar('階層的クラスター分析'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_cls->open;
@@ -379,7 +354,7 @@ sub make{
 		push @menu1, 't_word_cls' if $::config_obj->R;
 
 		$self->{t_word_netgraph} = $f3->command(
-				-label => gui_window->gui_jchar('共起ネットワーク'),
+				-label => kh_msg->get('netg'),#gui_window->gui_jchar('共起ネットワーク'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_netgraph->open;
@@ -389,13 +364,13 @@ sub make{
 		push @menu1, 't_word_netgraph' if $::config_obj->R;
 
 	my $f8 = $f->cascade(
-			-label => gui_window->gui_jchar('文書'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
+			-label => kh_msg->get('docs'),#gui_window->gui_jchar('文書'),
+			-font => "TKFN",
+			-tearoff=>'no'
 		);
 
 		$self->{t_doc_search} = $f8->command(
-				-label => gui_window->gui_jchar('文書検索'),
+				-label => kh_msg->get('doc_search'),#gui_window->gui_jchar('文書検索'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::doc_search->open;
@@ -404,7 +379,7 @@ sub make{
 			);
 
 		$self->{t_doc_cls} = $f8->command(
-				-label => gui_window->gui_jchar('クラスター分析'),
+				-label => kh_msg->get('cluster'),#gui_window->gui_jchar('クラスター分析'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::doc_cls->open;
@@ -414,13 +389,13 @@ sub make{
 		push @menu1, 't_doc_cls' if $::config_obj->R;
 
 		$self->{t_cas_bayes} = $f8->cascade(
-			-label => gui_window->gui_jchar('ベイズ学習による分類'),
+			-label => kh_msg->get('docs_bayes'),#gui_window->gui_jchar('ベイズ学習による分類'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 		$self->{t_bayes_learn} = $self->{t_cas_bayes}->command(
-			-label => gui_window->gui_jchar('外部変数から学習'),
+			-label => kh_msg->get('bayes_learn'),#gui_window->gui_jchar('外部変数から学習'),
 			-font => "TKFN",
 			-command => sub{
 				gui_window::bayes_learn->open;
@@ -429,7 +404,7 @@ sub make{
 		);
 
 		$self->{t_bayes_predict} = $self->{t_cas_bayes}->command(
-			-label => gui_window->gui_jchar('学習結果を用いた自動分類'),
+			-label => kh_msg->get('bayes_classi'),#gui_window->gui_jchar('学習結果を用いた自動分類'),
 			-font => "TKFN",
 			-command => sub{
 				gui_window::bayes_predict->open;
@@ -440,7 +415,7 @@ sub make{
 		$self->{t_cas_bayes}->separator;
 
 		$self->{t_bayes_view} = $self->{t_cas_bayes}->command(
-			-label => gui_window->gui_jchar('学習結果ファイルの内容を確認'),
+			-label => kh_msg->get('check_learning'),#gui_window->gui_jchar('学習結果ファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub{
 				$self->mc_view_knb;
@@ -449,7 +424,7 @@ sub make{
 		);
 
 		$self->{t_bayes_view_log} = $self->{t_cas_bayes}->command(
-			-label => gui_window->gui_jchar('分類ログファイルの内容を確認'),
+			-label => kh_msg->get('check_classi'),#gui_window->gui_jchar('分類ログファイルの内容を確認'),
 			-font => "TKFN",
 			-command => sub{
 				$self->mc_view_nbl;
@@ -460,14 +435,14 @@ sub make{
 		$f8->separator;
 
 		$self->{m_b3_crossout} = $f8->cascade(
-				-label => gui_window->gui_jchar("「文書ｘ抽出語」表の出力",'euc'),
+				-label => kh_msg->get('doc_term_mtrx'),#gui_window->gui_jchar("「文書ｘ抽出語」表の出力",'euc'),
 				-font => "TKFN",
 				-state => 'disable',
 				-tearoff=>'no'
 			);
 
 			$self->{m_b3_crossout_csv} = $self->{m_b3_crossout}->command(
-				-label => gui_window->gui_jchar("CSVファイル"),
+				-label => kh_msg->gget('csv_f'),#gui_window->gui_jchar("CSVファイル"),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::morpho_crossout::csv->open;
@@ -475,7 +450,7 @@ sub make{
 			);
 
 			$self->{m_b3_crossout_spss} = $self->{m_b3_crossout}->command(
-				-label => gui_window->gui_jchar("SPSSファイル"),
+				-label => kh_msg->gget('spss_f'),#gui_window->gui_jchar("SPSSファイル"),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::morpho_crossout::spss->open;
@@ -483,7 +458,7 @@ sub make{
 			);
 
 			$self->{m_b3_crossout_tab} = $self->{m_b3_crossout}->command(
-				-label => gui_window->gui_jchar("タブ区切り"),
+				-label => kh_msg->gget('tab_f'),#gui_window->gui_jchar("タブ区切り"),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::morpho_crossout::tab->open;
@@ -493,7 +468,7 @@ sub make{
 			$self->{m_b3_crossout}->separator;
 
 			$self->{m_b3_crossout_var} = $self->{m_b3_crossout}->command(
-				-label => gui_window->gui_jchar("不定長CSV （WordMiner）"),
+				-label => kh_msg->gget('wm_f'),#gui_window->gui_jchar("不定長CSV （WordMiner）"),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::morpho_crossout::var->open;
@@ -501,14 +476,14 @@ sub make{
 			);
 
 		$self->{m_b3_contxtout} = $f8->cascade(
-				-label => gui_window->gui_jchar("「抽出語ｘ文脈ベクトル」表の出力",'euc'),
+				-label => kh_msg->get('term_vec_mtrx'),#gui_window->gui_jchar("「抽出語ｘ文脈ベクトル」表の出力",'euc'),
 				-font => "TKFN",
 				-state => 'disable',
 				-tearoff=>'no'
 			);
 
 			$self->{m_b3_contxtout_csv} = $self->{m_b3_contxtout}->command(
-				-label => gui_window->gui_jchar("CSVファイル"),
+				-label => kh_msg->gget('csv_f'),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::contxt_out::csv->open;
@@ -516,7 +491,7 @@ sub make{
 			);
 
 			$self->{m_b3_contxtout_spss} = $self->{m_b3_contxtout}->command(
-				-label => gui_window->gui_jchar("SPSSファイル"),
+				-label => kh_msg->gget('spss_f'),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::contxt_out::spss->open;
@@ -524,7 +499,7 @@ sub make{
 			);
 
 			$self->{m_b3_contxtout_tab} = $self->{m_b3_contxtout}->command(
-				-label => gui_window->gui_jchar("タブ区切り"),
+				-label => kh_msg->gget('tab_f'),
 				-font  => "TKFN",
 				-command => sub{
 					gui_window::contxt_out::tab->open;

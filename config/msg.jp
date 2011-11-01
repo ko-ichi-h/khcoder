@@ -1,12 +1,57 @@
 ---
-global->copy:                           コピー
-gui_window::about->win_title:           KH Coderについて
-gui_window::about->kawabata:            川端亮
-gui_window::about->higuchi:             樋口耕一
-gui_window::about->close:               閉じる
-gui_window::sql_select->win_title:      SQL文の実行
-gui_window::sql_select->max_rows:       最大表示数：
-gui_window::sql_select->Server:         '  サーバー： '
-gui_window::sql_select->exec:           実行
-gui_window::sql_select->rows:           '  出力された行数： '
-gui_window::sql_select->sql_error:      SQL文にエラーがありました。
+global->copy:                                     コピー
+global->csv_f:                                    CSVファイル
+global->spss_f:                                   SPSSファイル
+global->tab_f:                                    タブ区切り
+global->wm_f:                                     不定長CSV （WordMiner）
+global->cont_big_pros:                            "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
+gui_window::about->win_title:                     KH Coderについて
+gui_window::about->kawabata:                      川端亮
+gui_window::about->higuchi:                       樋口耕一
+gui_window::about->close:                         閉じる
+gui_window::sql_select->win_title:                SQL文の実行
+gui_window::sql_select->max_rows:                 最大表示数：
+gui_window::sql_select->Server:                   '  サーバー： '
+gui_window::sql_select->exec:                     実行
+gui_window::sql_select->rows:                     '  出力された行数： '
+gui_window::sql_select->sql_error:                SQL文にエラーがありました。
+gui_window::main::menu->project:                  プロジェクト(P)
+gui_window::main::menu->new:                      新規
+gui_window::main::menu->open:                     開く
+gui_window::main::menu->close:                    閉じる
+gui_window::main::menu->import:                   インポート
+gui_window::main::menu->export:                   エクスポート
+gui_window::main::menu->config:                   設定
+gui_window::main::menu->exit:                     閉じる
+gui_window::main::menu->prep:                     前処理(R)
+gui_window::main::menu->check:                    分析対象ファイルのチェック
+gui_window::main::menu->run_prep:                 前処理の実行
+gui_window::main::menu->words_selection:          語の取捨選択
+gui_window::main::menu->words_cluster:            複合語の検出
+gui_window::main::menu->use_termextract:          TermExtractを利用
+gui_window::main::menu->use_chasen:               茶筌を利用
+gui_window::main::menu->check_morpho:             語の抽出結果を確認
+gui_window::main::menu->tools:                    ツール(T)
+gui_window::main::menu->words:                    抽出語
+gui_window::main::menu->word_freq:                抽出語リスト
+gui_window::main::menu->desc_stats:               記述統計
+gui_window::main::menu->freq_tf:                  出現回数(TF)の分布
+gui_window::main::menu->freq_df:                  出現文書数(DF)の分布
+gui_window::main::menu->tf_df:                    出現回数ｘ文書数のプロット
+gui_window::main::menu->word_search:              抽出語検索
+gui_window::main::menu->kwic:                     KWICコンコーダンス
+gui_window::main::menu->word_ass:                 関連語検索
+gui_window::main::menu->corresp:                  対応分析
+gui_window::main::menu->mds:                      多次元尺度構成法
+gui_window::main::menu->h_cluster:                階層的クラスター分析
+gui_window::main::menu->netg:                     共起ネットワーク
+gui_window::main::menu->docs:                     文書
+gui_window::main::menu->doc_search:               文書検索
+gui_window::main::menu->cluster:                  クラスター分析
+gui_window::main::menu->docs_bayes:               ベイズ学習による分類
+gui_window::main::menu->bayes_learn:              外部変数から学習
+gui_window::main::menu->bayes_classi:             学習結果を用いた自動分類
+gui_window::main::menu->check_learning:           学習結果ファイルの内容を確認
+gui_window::main::menu->check_classi:             分類ログファイルの内容を確認
+gui_window::main::menu->doc_term_mtrx:            「文書ｘ抽出語」表の出力
+gui_window::main::menu->term_vec_mtrx:            「抽出語ｘ文脈ベクトル」表の出力

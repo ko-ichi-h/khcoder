@@ -244,10 +244,14 @@ sub gui_jm{ # メニューのトップ部分用日本語
 			|| ( $Tk::VERSION >= 804.029 && Win32::IsWinNT() )
 		)
 	) {
-		$code = Jcode->new($char)->icode unless $code;
-		$code = $char_code{euc}  if $code eq 'euc';
-		$code = $char_code{sjis} if $code eq 'sjis';
-		return Encode::decode($code,$char);
+		if (utf8::is_utf8($char)){
+			return $char;
+		} else {
+			$code = Jcode->new($char)->icode unless $code;
+			$code = $char_code{euc}  if $code eq 'euc';
+			$code = $char_code{sjis} if $code eq 'sjis';
+			return Encode::decode($code,$char);
+		}
 	}
 	elsif ($] > 5.008){
 		return Jcode->new($char,$code)->sjis;
