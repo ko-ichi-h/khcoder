@@ -9,9 +9,9 @@ my @menu0 = (
 	'm_b2_morpho',
 	't_sql_select',
 	'm_b0_close',
-	'm_b1_hukugo',
+	#'m_b1_hukugo',
+	#'m_b1_hukugo_te',
 	'm_b2_datacheck',
-	'm_b1_hukugo_te'
 );
 
 # メニューの設定：形態素解析が行われていればActive
@@ -57,6 +57,7 @@ my @menu1 = (
 	't_bayes_view',
 	't_bayes_view_log',
 );
+
 
 #------------------#
 #   メニュー作成   #
@@ -507,13 +508,13 @@ sub make{
 			);
 
 	my $f5 = $f->cascade(
-			-label => gui_window->gui_jchar('コーディング'),
+			-label => kh_msg->get('coding'),#gui_window->gui_jchar('コーディング'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 		$self->{t_cod_count} = $f5->command(
-			-label => gui_window->gui_jchar('単純集計'),
+			-label => kh_msg->get('freq'),#gui_window->gui_jchar('単純集計'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::cod_count->open;
@@ -522,7 +523,7 @@ sub make{
 		);
 
 		$self->{t_cod_tab} = $f5->command(
-			-label => gui_window->gui_jchar('章・節・段落ごとの集計'),
+			-label => kh_msg->get('cross_st'),#gui_window->gui_jchar('章・節・段落ごとの集計'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::cod_tab->open;
@@ -531,7 +532,7 @@ sub make{
 		);
 
 		$self->{t_cod_outtab} = $f5->command(
-			-label => gui_window->gui_jchar('外部変数とのクロス集計'),
+			-label => kh_msg->get('cross_vr'),#gui_window->gui_jchar('外部変数とのクロス集計'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::cod_outtab->open;
@@ -540,7 +541,7 @@ sub make{
 		);
 
 		$self->{t_cod_jaccard} = $f5->command(
-			-label => gui_window->gui_jchar('類似度行列'),
+			-label => kh_msg->get('jac_mtrx'),#gui_window->gui_jchar('類似度行列'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::cod_jaccard->open;
@@ -551,7 +552,7 @@ sub make{
 		$f5->separator();
 
 		$self->{t_cod_corresp} = $f5->command(
-				-label => gui_window->gui_jchar('対応分析'),
+				-label => kh_msg->get('corresp'),#gui_window->gui_jchar('対応分析'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::cod_corresp->open;
@@ -567,7 +568,7 @@ sub make{
 		#);
 
 		$self->{t_cod_mds} = $f5->command(
-				-label => gui_window->gui_jchar('多次元尺度構成法'),
+				-label => kh_msg->get('mds'),#gui_window->gui_jchar('多次元尺度構成法'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::cod_mds->open;
@@ -577,7 +578,7 @@ sub make{
 		push @menu1, 't_cod_mds' if $::config_obj->R;
 
 		$self->{t_cod_cls} = $f5->command(
-				-label => gui_window->gui_jchar('階層的クラスター分析'),
+				-label => kh_msg->get('h_cluster'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::cod_cls->open;
@@ -587,7 +588,7 @@ sub make{
 		push @menu1, 't_cod_cls' if $::config_obj->R;
 
 		$self->{t_cod_netg} = $f5->command(
-				-label => gui_window->gui_jchar('共起ネットワーク'),
+				-label => kh_msg->get('netg'),#gui_window->gui_jchar('共起ネットワーク'),
 				-font => "TKFN",
 				-command => sub{
 					gui_window::cod_netg->open;
@@ -599,13 +600,13 @@ sub make{
 		$f5->separator();
 
 		$self->{t_cod_out} = $f5->cascade(
-			-label => gui_window->gui_jchar('コーディング結果の出力'),
+			-label => kh_msg->get('output_cod'),#gui_window->gui_jchar('コーディング結果の出力'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 			$self->{t_cod_out_csv} = $self->{t_cod_out}->command(
-				-label => gui_window->gui_jchar('CSVファイル'),
+				-label => kh_msg->gget('csv_f'),#gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::cod_out::csv->open;
@@ -614,7 +615,7 @@ sub make{
 			);
 
 			$self->{t_cod_out_spss} = $self->{t_cod_out}->command(
-				-label => gui_window->gui_jchar('SPSSファイル'),
+				-label => kh_msg->gget('spss_f'),#gui_window->gui_jchar('SPSSファイル'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::cod_out::spss->open;
@@ -623,7 +624,7 @@ sub make{
 			);
 
 			$self->{t_cod_out_tab} = $self->{t_cod_out}->command(
-				-label => gui_window->gui_jchar('タブ区切り'),
+				-label => kh_msg->gget('tab_f'),#gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::cod_out::tab->open;
@@ -634,7 +635,7 @@ sub make{
 			$self->{t_cod_out}->separator();
 
 			$self->{t_cod_out_var} = $self->{t_cod_out}->command(
-				-label => gui_window->gui_jchar('不定長CSV （WordMiner）'),
+				-label => kh_msg->gget('wm_f'),#gui_window->gui_jchar('不定長CSV （WordMiner）'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::cod_out::var->open;
@@ -645,19 +646,19 @@ sub make{
 	$f->separator();
 	
 	my $f_out_var = $f->cascade(
-		-label => gui_window->gui_jchar('外部変数と見出し'),
+		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('外部変数と見出し'),
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
 
 		$self->{t_out_read} = $f_out_var->cascade(
-			-label => gui_window->gui_jchar('読み込み'),
+			-label => kh_msg->get('read'),#gui_window->gui_jchar('読み込み'),
 			 -font => "TKFN",
 			 -tearoff=>'no'
 		);
 
 			$self->{t_out_read_csv} = $self->{t_out_read}->command(
-				-label => gui_window->gui_jchar('CSVファイル'),
+				-label => kh_msg->gget('csv_f'),#gui_window->gui_jchar('CSVファイル'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::outvar_read::csv->open;
@@ -666,7 +667,7 @@ sub make{
 			);
 
 			$self->{t_out_read_tab} = $self->{t_out_read}->command(
-				-label => gui_window->gui_jchar('タブ区切り'),
+				-label => kh_msg->gget('tab_f'),#gui_window->gui_jchar('タブ区切り'),
 				-font => "TKFN",
 				-command => sub{
 						gui_window::outvar_read::tab->open;
@@ -675,7 +676,7 @@ sub make{
 			);
 
 		$self->{t_out_list} = $f_out_var->command(
-			-label => gui_window->gui_jchar('リストの確認・管理'),
+			-label => kh_msg->get('var_list'),#gui_window->gui_jchar('リストの確認・管理'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::outvar_list->open;
@@ -684,13 +685,13 @@ sub make{
 		);
 
 	my $f6 = $f->cascade(
-		-label => gui_window->gui_jchar('テキストファイルの変形'),
+		-label => kh_msg->get('text_format'),#gui_window->gui_jchar('テキストファイルの変形'),
 		 -font => "TKFN",
 		 -tearoff=>'no'
 	);
 
 		$self->{t_txt_pickup} = $f6->command(
-			-label => gui_window->gui_jchar('部分テキストの取り出し'),
+			-label => kh_msg->get('partial'),#gui_window->gui_jchar('部分テキストの取り出し'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::txt_pickup->open;
@@ -699,7 +700,7 @@ sub make{
 		);
 
 		$self->{t_txt_html2mod} = $f6->command(
-			-label => gui_window->gui_jchar('HTMLからCSVに変換'),
+			-label => kh_msg->get('to_csv'),#gui_window->gui_jchar('HTMLからCSVに変換'),
 			-font => "TKFN",
 			-command => sub{
 					gui_window::txt_html2csv->open;
@@ -711,7 +712,7 @@ sub make{
 	# プラグインの読み込み
 	$f->separator();
 	my $f_p = $f->cascade(
-			-label => gui_window->gui_jchar('プラグイン'),
+			-label => kh_msg->get('plugin'),#gui_window->gui_jchar('プラグイン'),
 			-font => "TKFN",
 			-tearoff=>'no'
 		);
@@ -774,7 +775,7 @@ sub make{
 	find($read_each, $::config_obj->cwd.'/plugin');
 
 	$self->{t_sql_select} = $f->command(
-			-label => gui_window->gui_jchar('SQL文の実行'),
+			-label => kh_msg->get('exec_sql'),#gui_window->gui_jchar('SQL文の実行'),
 			-font => "TKFN",
 			-command => sub{
 				gui_window::sql_select->open;
@@ -782,42 +783,32 @@ sub make{
 			-state => 'disable'
 		);
 
-	$f->configure(
-		-label     => gui_window->gui_jm('ツール(T)'),
-		-underline => $::config_obj->underline_conv(7),
-	);
-
-
 	#------------#
 	#   ヘルプ   #
 	
-	$msg = gui_window->gui_jm('ヘルプ(H)','euc');
 	$f = $menubar->cascade(
-		-label => "$msg",
+		-label => gui_window->gui_jm( kh_msg->get('help') ),#"$msg",
 		-font => "TKFN",
-		-underline => $::config_obj->underline_conv(7),
+		-underline => index(kh_msg->get('help'),'H'),
 		-tearoff=>'no'
 	);
 	
-		$msg = gui_window->gui_jchar('使用説明書（PDF）','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('man'),
 			-font => "TKFN",
 			-command => sub { gui_OtherWin->open('khcoder_manual.pdf'); },
 		);
 		
-		$msg = gui_window->gui_jchar('最新情報（Web）','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('web'),
 			-font => "TKFN",
 			-command => sub {
 					 gui_OtherWin->open('http://khc.sourceforge.net');
 					},
 		);
 		
-		$msg = gui_window->gui_jchar('KH Coderについて','euc');
 		$f->command(
-			-label => $msg,
+			-label => kh_msg->get('about'),
 			-command => sub{gui_window::about->open;},
 			-font => "TKFN",
 		);
@@ -1060,6 +1051,20 @@ sub refresh{
 
 	if ($::project_obj){
 		$self->normalize(\@menu0);
+		
+		# morpho_analyzer
+		if ($::config_obj->c_or_j eq 'chasen'){
+			$self->normalize([
+				'm_b1_hukugo',
+				'm_b1_hukugo_te',
+			]);
+		}
+		elsif ($::config_obj->c_or_j eq 'mecab'){
+			$self->normalize([
+				'm_b1_hukugo_te',
+			]);
+		}
+		
 		if ($::project_obj->status_morpho){
 			$self->normalize(\@menu1);
 		}
