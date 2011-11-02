@@ -3,7 +3,6 @@ use strict;
 
 use Lingua::Sentence;
 use Lingua::Stem::Snowball;
-
 use Text::Unidecode;
 
 use kh_morpho::perl::stemming::de;
@@ -17,7 +16,12 @@ use kh_morpho::perl::stemming::pt;
 use utf8;
 use Encode;
 
-my $sjis = find_encoding('cp932');
+my $output_code;
+if ($::config_obj->os eq 'win32'){
+	$output_code = find_encoding('cp932');
+} else {
+	$output_code = find_encoding('euc-jp');
+}
 
 #-----------------------#
 #   Stemmerの実行関係   #
@@ -89,9 +93,9 @@ sub run{
 		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out $sjis->encode("$1\t$1\t$1\tタグ\n");
+			print $fh_out $output_code->encode("$1\t$1\t$1\tタグ\n");
 			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out $sjis->encode("$3\t$3\t$3\tタグ\n");
+			print $fh_out $output_code->encode("$3\t$3\t$3\tタグ\n");
 		} else {
 			while ( index($t,'<') > -1){
 				my $pre = substr($t,0,index($t,'<'));
@@ -116,7 +120,7 @@ sub run{
 			}
 			$self->_sentence($t, $fh_out);
 		}
-		print $fh_out $sjis->encode("EOS\n");
+		print $fh_out $output_code->encode("EOS\n");
 	}
 	close (TRGT);
 	close ($fh_out);
@@ -138,7 +142,7 @@ sub _tag{
 	$t =~ tr/ /_/;
 	$t = unidecode($t);
 	
-	print $fh $sjis->encode(
+	print $fh $output_code->encode(
 			"$t\t$t\t$t\tタグ\n"
 	);
 
@@ -158,7 +162,7 @@ sub _sentence{
 	
 	foreach my $i (@sentences) {
 		$self->_tokenize_stem($i, $fh);
-		print $fh $sjis->encode("。\t。\t。\tALL\tSP\n");
+		print $fh $output_code->encode("。\t。\t。\tALL\tSP\n");
 	}
 
 	return 1;
@@ -208,7 +212,7 @@ sub _tokenize_stem{
 		}
 		$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
 		
-		print $fh $sjis->encode($line);
+		print $fh $output_code->encode($line);
 		++$n;
 	}
 	
