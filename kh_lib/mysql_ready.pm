@@ -344,7 +344,9 @@ sub reform{
 	my %stopwords = ();
 	foreach my $i (@{$::config_obj->stopwords_current}){
 		$stopwords{$i} = 1;
+		#print "$i, ";
 	}
+	#print "\n";
 
                                                             # データ準備
 	mysql_exec->drop_table("hgh2");
