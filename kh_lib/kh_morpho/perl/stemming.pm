@@ -1,10 +1,6 @@
 package kh_morpho::perl::stemming;
 use strict;
 
-use Lingua::Sentence;
-use Lingua::Stem::Snowball;
-use Text::Unidecode;
-
 use kh_morpho::perl::stemming::de;
 use kh_morpho::perl::stemming::en;
 use kh_morpho::perl::stemming::es;
@@ -32,6 +28,10 @@ sub run{
 	my %args  = @_;
 	my $self  = \%args;
 	bless $self, $class;
+
+	require Lingua::Sentence;
+	require Lingua::Stem::Snowball;
+	require Text::Unidecode;
 
 	if (-e $self->output){
 		unlink $self->output or 
@@ -140,7 +140,7 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
-	$t = unidecode($t);
+	$t = Text::Unidecode::unidecode($t);
 	
 	print $fh $output_code->encode(
 			"$t\t$t\t$t\tタグ\n"
@@ -204,7 +204,7 @@ sub _tokenize_stem{
 		my $pos = '.';
 		$pos = $words_pos->[$n] if $words_pos;
 		
-		my $line = unidecode("$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n");
+		my $line = Text::Unidecode::unidecode("$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n");
 		
 		# Unidecodeによって空白になってしまった場合に対応
 		if ($line =~ /^\t/o){
