@@ -91,6 +91,9 @@ gui_window::sysconfig->chasen:                    ChaSen: for Japanese data
 gui_window::sysconfig->mecab:                     MeCab: for Japanese data
 gui_window::sysconfig->p_chasenrc:                'path of "chasenrc":'
 gui_window::sysconfig->p_grammer.cha:             'path of "grammar.cha":'
+gui_window::sysconfig->p_chasen.exe:              'path of "chasen.exe":'
+gui_window::sysconfig->p_mecab.exe:               'path of "mecab.exe":'
+gui_window::sysconfig->need_inst:                 ※you must install it by yourself
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
 gui_window::sysconfig->lang:                      Language:
 gui_window::sysconfig->stopwords:                 '  Stop words:'

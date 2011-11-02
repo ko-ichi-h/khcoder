@@ -91,6 +91,9 @@ gui_window::sysconfig->chasen:                    茶筌（日本語）
 gui_window::sysconfig->mecab:                     MeCab（日本語）
 gui_window::sysconfig->p_chasenrc:                '"chasenrc"のパス：'
 gui_window::sysconfig->p_grammer.cha:             '"grammar.cha"のパス：'
+gui_window::sysconfig->p_chasen.exe:              'chasen.exeのパス：'
+gui_window::sysconfig->p_mecab.exe:               'mecab.exeのパス：'
+gui_window::sysconfig->need_inst:                 ※別途インストールが必要
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
 gui_window::sysconfig->lang:                      Language:
 gui_window::sysconfig->stopwords:                 '  Stop words:'

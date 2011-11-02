@@ -21,10 +21,10 @@ sub __new{
 
 	# $inis->focus;
 	# $inis->grab;
-	$inis->title($self->gui_jt('KH Coderの設定'));
+	$inis->title($self->gui_jt( kh_msg->get('win_title') ));
 
 	my $lfra = $inis->LabFrame(
-		-label => $self->gui_jchar('[語を抽出する方法]'),
+		-label => kh_msg->get('words_ext'),#$self->gui_jchar('[語を抽出する方法]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,)
 		->pack(-expand=>'yes',-fill=>'both');
@@ -33,7 +33,7 @@ sub __new{
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('茶筌（日本語）'),
+		-text     => kh_msg->get('chasen'),#$self->gui_jchar('茶筌（日本語）'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'chasen',
@@ -43,7 +43,7 @@ sub __new{
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb1} = $fra1->Label(
-		-text => $self->gui_jchar('chasen.exeのパス：'),
+		-text => kh_msg->get('p_chasen.exe'),#$self->gui_jchar('chasen.exeのパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
@@ -56,18 +56,18 @@ sub __new{
 	);
 
 	$self->{btn1} = $fra1->Button(
-		-text => $self->gui_jchar('参照'),
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
 		-font => 'TKFN',
 		-command => sub { $self->browse_chasen(); }
 	)->pack(-padx => '2',-side => 'right');
 
-	my $msg = 'MeCab（日本語）';
+	my $msg = kh_msg->get('mecab');#'MeCab（日本語）';
 	if ($::config_obj->all_in_one_pack){
-		$msg .= '※別途インストールが必要';
+		$msg .= kh_msg->get('need_inst');#'※別途インストールが必要';
 	}
 
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar($msg),
+		-text     => $msg,
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'mecab',
@@ -77,7 +77,7 @@ sub __new{
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$self->{lb2} = $fra2->Label(
-		-text => $self->gui_jchar('mecab.exeのパス：'),
+		-text => kh_msg->get('p_mecab.exe'),#$self->gui_jchar('mecab.exeのパス：'),
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
@@ -90,7 +90,7 @@ sub __new{
 	);
 
 	$self->{btn2} = $fra2->Button(
-		-text => $self->gui_jchar('参照'),
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
 		-font => 'TKFN',
 		-command => sub { $self->browse_mecab(); }
 	)->pack(-padx => '2',-side => 'right');
@@ -99,7 +99,7 @@ sub __new{
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
 	
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('Stemming with "Snowball"'),
+		-text     => kh_msg->get('stemming'),#$self->gui_jchar('Stemming with "Snowball"'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'stemming',
@@ -109,7 +109,7 @@ sub __new{
 	my $fra_stem = $lfra->Frame()->pack(-anchor => 'w');
 	
 	$self->{label_stem1} = $fra_stem->Label(
-		-text => 'Language:'
+		-text => kh_msg->get('lang'),#'Language:'
 	)->pack(-side => 'left',-anchor => 'w');
 
 	$self->{opt_stem} = gui_widget::optmenu->open(
@@ -117,24 +117,24 @@ sub __new{
 		pack    => {-anchor=>'w', -side => 'left'},
 		options =>
 			[
-				['English'      => 'en'],
-				['Dutch *'      => 'nl'],
-				['French *'     => 'fr'],
-				['German *'     => 'de'],
-				['Italian *'    => 'it'],
-				['Portuguese *' => 'pt'],
-				['Spanish *'    => 'es'],
+				[ kh_msg->get('l_en') => 'en'],#'English'
+				[ kh_msg->get('l_nl') => 'nl'],#'Dutch *'
+				[ kh_msg->get('l_fr') => 'fr'],#'French *'
+				[ kh_msg->get('l_de') => 'de'],#'German *'
+				[ kh_msg->get('l_it') => 'it'],#'Italian *'
+				[ kh_msg->get('l_pt') => 'pt'],#'Portuguese *'
+				[ kh_msg->get('l_es') => 'es'],#'Spanish *'
 			],
 		variable => \$self->{opt_stem_val},
 	);
 	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
 
 	$self->{label_stem2} = $fra_stem->Label(
-		-text => '  Stop words:'
+		-text => kh_msg->get('stopwords'),#'  Stop words:'
 	)->pack(-side => 'left',-anchor => 'w');
 
 	$self->{btn_stem} = $fra_stem->Button(
-		-text => 'config',
+		-text => kh_msg->get('config'),#'config',
 		-borderwidth => 1,
 		-command => sub {
 			my $class = "gui_window::stop_words::stemming_";
@@ -143,23 +143,21 @@ sub __new{
 		}
 	)->pack(-side => 'left');
 
-
 	$self = $self->refine_cj;
 
 	$self->{mail_obj} = gui_widget::mail_config->open(
 		parent => $inis,
 	);
 
-
 	$inis->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
 
 	$inis->Button(
-		-text  => 'OK',
+		-text  => kh_msg->gget('ok'),
 		-font  => 'TKFN',
 		-width => 8,
 		-command => sub {$self->ok;}
