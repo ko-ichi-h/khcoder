@@ -61,9 +61,8 @@ sub __new{
 		-command => sub { $self->browse_chasen(); }
 	)->pack(-padx => '2',-side => 'right');
 
-	
 	my $msg = 'MeCab（日本語）';
-	if ($::config_obj->all_in_one_pack && ! -e $::config_obj->mecab_path){
+	if ($::config_obj->all_in_one_pack){
 		$msg .= '※別途インストールが必要';
 	}
 
@@ -100,7 +99,7 @@ sub __new{
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
 	
 	$lfra->Radiobutton(
-		-text     => $self->gui_jchar('Snowball Stemmer'),
+		-text     => $self->gui_jchar('Stemming with "Snowball"'),
 		-font     => 'TKFN',
 		-variable => \$self->{c_or_j},
 		-value    => 'stemming',
@@ -185,6 +184,7 @@ sub ok{
 	my $self = shift;
 	
 	my $oldfont = $::config_obj->font_main;
+	my $old_c_or_j = $::config_obj->c_or_j;
 	
 	$::config_obj->chasen_path(  $self->gui_jg( $self->entry1->get() ) );
 	$::config_obj->mecab_path(   $self->gui_jg( $self->entry2->get() ) );
@@ -200,6 +200,10 @@ sub ok{
 	
 	if ($::config_obj->save){
 		$self->close;
+	}
+	
+	unless ($old_c_or_j eq $::config_obj->c_or_j) {
+		$::main_gui->menu->refresh;
 	}
 	
 	unless ($oldfont eq $::config_obj->font_main){

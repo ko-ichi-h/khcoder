@@ -4,7 +4,7 @@ use strict;
 
 use kh_morpho::linux::mecab;
 use kh_morpho::linux::chasen;
-
+use kh_morpho::linux::stemming;
 
 sub _run{
 	my $self = shift;

@@ -4,6 +4,9 @@ use strict;
 use YAML qw(LoadFile);
 
 use utf8;
+use Encode;
+
+my $utf8 = find_encoding('utf8');
 
 my $msg;
 my $msg_fb;
@@ -14,8 +17,6 @@ sub get{
 	my $key = shift;
 	$key = (caller)[0].'->'.$key;
 	
-	print "key: $key\n";
-	
 	# メッセージをロード
 	&load unless $msg;
 
@@ -26,12 +27,14 @@ sub get{
 	}
 	elsif ( length($msg_fb->{$key}) ) {
 		$t = $msg_fb->{$key};
+		print "kh_msg: fall back: $key\n";
 	} else {
 		$t = 'error: no msg!';
+		print "kh_msg: no msg: $key\n";
 	}
 	
 	unless ( utf8::is_utf8($t) ){
-		$t = Encode::decode('utf8',$t);
+		$t = $utf8->decode($t);
 	}
 	return $t;
 }
@@ -42,8 +45,6 @@ sub gget{
 	my $key = shift;
 	$key = 'global->'.$key;
 	
-	print "key: $key\n";
-	
 	# メッセージをロード
 	&load unless $msg;
 
@@ -54,12 +55,14 @@ sub gget{
 	}
 	elsif ( length($msg_fb->{$key}) ) {
 		$t = $msg_fb->{$key};
+		print "kh_msg: fall back: $key\n";
 	} else {
 		$t = 'error: no msg!';
+		print "kh_msg: no msg: $key\n";
 	}
 	
 	unless ( utf8::is_utf8($t) ){
-		$t = Encode::decode('utf8',$t);
+		$t = $utf8->decode($t);
 	}
 	return $t;
 }
