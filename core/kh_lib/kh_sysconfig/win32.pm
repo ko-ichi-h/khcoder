@@ -82,6 +82,7 @@ sub save_ini{
 		'mecab_path',
 		'c_or_j',
 		'stemming_lang',
+		'stanford_lang',
 		'msg_lang',
 		'r_path',
 		'r_plot_debug',

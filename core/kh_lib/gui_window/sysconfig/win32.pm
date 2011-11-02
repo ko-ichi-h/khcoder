@@ -98,6 +98,8 @@ sub __new{
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
 	
+	# Stemming
+	
 	$lfra->Radiobutton(
 		-text     => kh_msg->get('stemming'),#$self->gui_jchar('Stemming with "Snowball"'),
 		-font     => 'TKFN',
@@ -142,6 +144,91 @@ sub __new{
 			$class->open();
 		}
 	)->pack(-side => 'left');
+
+	# POS Tagger
+
+	$lfra->Radiobutton(
+		-text     => kh_msg->get('stanford'),#$self->gui_jchar('Stemming with "Snowball"'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'stanford',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
+	# POS Taggerの*.jarファイル
+	my $fra_jar = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes',-pady => 1);
+
+	$self->{label_stan3} = $fra_jar->Label(
+		-text => kh_msg->get('p_stanford_jar'),
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+
+	$self->{entry_stan1} = $fra_jar->Entry(-font => 'TKFN')->pack(-side => 'right');
+
+	$self->{entry_stan1}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan1},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	);
+
+	$self->{btn_stan2} = $fra_jar->Button(
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
+		-font => 'TKFN',
+		-command => sub { $self->browse_stanford_jar(); }
+	)->pack(-padx => '2',-side => 'right');
+
+	# POS Taggerの*.taggerファイル
+	my $fra_tag = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes');
+
+	$self->{label_stan4} = $fra_tag->Label(
+		-text => kh_msg->get('p_stanford_tag'),
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+
+	$self->{entry_stan2} = $fra_tag->Entry(-font => 'TKFN')->pack(-side => 'right');
+
+	$self->{entry_stan2}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan2},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	);
+
+	$self->{btn_stan3} = $fra_tag->Button(
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
+		-font => 'TKFN',
+		-command => sub { $self->browse_stanford_tag(); }
+	)->pack(-padx => '2',-side => 'right');
+
+	# POS Taggerのその他の設定
+	my $fra_stan = $lfra->Frame()->pack(-anchor => 'w',-pady => 1);
+	
+	$self->{label_stan1} = $fra_stan->Label(
+		-text => kh_msg->get('lang'),#'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{opt_stan} = gui_widget::optmenu->open(
+		parent  => $fra_stan,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				[ kh_msg->get('l_en') => 'en'],#'English'
+			],
+		variable => \$self->{opt_stan_val},
+	);
+	$self->{opt_stan}->set_value( $::config_obj->stanford_lang );
+
+	$self->{label_stan2} = $fra_stan->Label(
+		-text => kh_msg->get('stopwords'),#'  Stop words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{btn_stan1} = $fra_stan->Button(
+		-text => kh_msg->get('config'),#'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::stanford_";
+			$class   .= "$self->{opt_stan_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
 
 	$self = $self->refine_cj;
 
@@ -283,7 +370,17 @@ sub refine_cj{
 		$self->{label_stem2}->configure(-state => 'disable');
 		$self->{opt_stem}->configure(-state => 'disable');
 		$self->{btn_stem}->configure(-state => 'disable');
-		
+
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
 	}
 	elsif ($self->{c_or_j} eq 'mecab') {
 		$self->entry1->configure(-state => 'disable');
@@ -298,6 +395,17 @@ sub refine_cj{
 		$self->{label_stem2}->configure(-state => 'disable');
 		$self->{opt_stem}->configure(-state => 'disable');
 		$self->{btn_stem}->configure(-state => 'disable');
+
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
 	}
 	
 	elsif ($self->{c_or_j} eq 'stemming') {
@@ -313,6 +421,42 @@ sub refine_cj{
 		$self->{label_stem2}->configure(-state => 'normal');
 		$self->{opt_stem}->configure(-state => 'normal');
 		$self->{btn_stem}->configure(-state => 'normal');
+
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
+	}
+	elsif ($self->{c_or_j} eq 'stanford') {
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+		
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
+
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
+
+		$self->{label_stan1}->configure(-state => 'normal');
+		$self->{label_stan2}->configure(-state => 'normal');
+		$self->{label_stan3}->configure(-state => 'normal');
+		$self->{label_stan4}->configure(-state => 'normal');
+		$self->{opt_stan}->configure(-state => 'normal');
+		$self->{btn_stan1}->configure(-state => 'normal');
+		$self->{btn_stan2}->configure(-state => 'normal');
+		$self->{btn_stan3}->configure(-state => 'normal');
+		$self->{entry_stan1}->configure(-state => 'normal');
+		$self->{entry_stan2}->configure(-state => 'normal');
 	}
 
 	return $self;
