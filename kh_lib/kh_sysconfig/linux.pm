@@ -79,6 +79,7 @@ sub save_ini{
 		#'juman_path',
 		'c_or_j',
 		'stemming_lang',
+		'msg_lang',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',

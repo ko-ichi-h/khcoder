@@ -255,7 +255,13 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'normal');
 		$self->btn2->configure(-state => 'normal');
 		$self->lb2->configure(-state => 'normal');
-	} else {
+
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
+	}
+	elsif ($self->{c_or_j} eq 'mecab') {
 		$self->entry1->configure(-state => 'disable');
 		$self->btn1->configure(-state => 'disable');
 		$self->lb1->configure(-state => 'disable');
@@ -263,6 +269,25 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
+	}
+	elsif ($self->{c_or_j} eq 'stemming'){
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
+
+		$self->{label_stem1}->configure(-state => 'normal');
+		$self->{label_stem2}->configure(-state => 'normal');
+		$self->{opt_stem}->configure(-state => 'normal');
+		$self->{btn_stem}->configure(-state => 'normal');
 	}
 	return $self;
 }
@@ -279,7 +304,8 @@ sub ok{
 	my $self = shift;
 	
 	my $oldfont = $::config_obj->font_main;
-	
+	my $old_c_or_j = $::config_obj->c_or_j;
+
 	$::config_obj->chasenrc_path( $::config_obj->os_path( $self->gui_jg( $self->entry1->get() ) ) );
 	$::config_obj->grammarcha_path( $::config_obj->os_path( $self->gui_jg( $self->entry2->get() ) ) );
 	$::config_obj->app_html($self->e_html->get());
@@ -287,6 +313,7 @@ sub ok{
 	$::config_obj->app_csv($self->e_csv->get());
 
 	$::config_obj->c_or_j(    $self->gui_jg( $self->{c_or_j} ) );
+	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
 
 	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(   $self->{mail_obj}->if      );
@@ -297,6 +324,9 @@ sub ok{
 
 	if ($::config_obj->save){
 		$self->close;
+	}
+	unless ($old_c_or_j eq $::config_obj->c_or_j) {
+		$::main_gui->menu->refresh;
 	}
 
 	unless ($oldfont eq $::config_obj->font_main){

@@ -155,14 +155,19 @@ sub reset_parm{
 					condition2 CHAR(225)
 				)"
 			) or die;
-			$dbh->do("
-				INSERT INTO hinshi_stemming
-					(hinshi_id, kh_hinshi, condition1, condition2 )
-				VALUES
-					( 1, 'ALL', 'ALL', '' ),
-					(99999,'HTMLタグ','タグ','HTML'),
-					(11,'タグ','タグ','')
-			") or die();
+			my @table = (
+				"1, 'ALL', 'ALL', ''",
+				"99999,'HTMLタグ','タグ','HTML'",
+				"11,'タグ','タグ',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_stemming
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
 
 		$dbh->disconnect;
