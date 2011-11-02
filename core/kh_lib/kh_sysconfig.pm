@@ -334,9 +334,13 @@ sub stopwords_current{
 	
 	if ($self->c_or_j eq 'stemming'){
 		$type .= '_'.$self->stemming_lang;
+	}
+	elsif ($self->c_or_j eq 'stanford'){
+		$type .= '_'.$self->stanford_lang;
 	} else {
 		$type .= '_d';
 	}
+	#print "type: $type\n";
 	
 	my @words = ();
 	my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
