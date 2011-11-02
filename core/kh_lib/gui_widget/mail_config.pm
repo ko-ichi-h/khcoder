@@ -7,7 +7,7 @@ sub _new{
 	my $self = shift;
 
 	my $lf = $self->parent->LabFrame(
-		-label => gui_window->gui_jchar('[その他の設定]'),
+		-label => kh_msg->get('other'),#$gui_window->gui_jchar('[その他の設定]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
@@ -15,21 +15,21 @@ sub _new{
 
 	$self->{check2} = $lf->Checkbutton(
 		-variable => \$self->{if_heap},
-		-text     => gui_window->gui_jchar('前処理効率化のためにデータをRAMに読み出す'),
+		-text     => kh_msg->get('use_heap'),#$gui_window->gui_jchar('前処理効率化のためにデータをRAMに読み出す'),
 		-font     => "TKFN",
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 
 	$self->{check} = $lf->Checkbutton(
 		-variable => \$self->{if_mail},
-		-text     => gui_window->gui_jchar('前処理の完了をメールで通知する'),
+		-text     => kh_msg->get('sendmail'),#$gui_window->gui_jchar('前処理の完了をメールで通知する'),
 		-font     => "TKFN",
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 	
 	my $f1 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab1} = $f1->Label(
-		-text => '    SMTP Server: ',
+		-text => kh_msg->get('smtp'),#$'    SMTP Server: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e1} = $f1->Entry(
@@ -39,7 +39,7 @@ sub _new{
 	
 	my $f2 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab2} = $f2->Label(
-		-text => '    From: ',
+		-text => kh_msg->get('from'),#$'    From: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e2} = $f2->Entry(
@@ -49,7 +49,7 @@ sub _new{
 
 	my $f3 = $lf->Frame()->pack(-fill => 'x');
 	$self->{lab3} = $f3->Label(
-		-text => '    To: ',
+		-text => kh_msg->get('to'),#$'    To: ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e3} = $f3->Entry(
@@ -59,7 +59,7 @@ sub _new{
 	
 	my $f4 = $lf->Frame()->pack(-fill => 'x', -pady => 2);
 	$f4->Label(
-		-text => gui_window->gui_jchar('フォント設定：','euc'),
+		-text => kh_msg->get('font'),#$gui_window->gui_jchar('フォント設定：','euc'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e_font} = $f4->Entry(
@@ -70,7 +70,7 @@ sub _new{
 		-foreground => 'black',
 	)->pack(-side => 'right');
 	$f4->Button(
-		-text  => gui_window->gui_jchar('変更'),
+		-text  => kh_msg->get('config'),#$gui_window->gui_jchar('変更'),
 		-font  => "TKFN",
 		-command => sub { $self->font_change(); }
 	)->pack(-padx => '2',-side => 'right');
@@ -132,14 +132,14 @@ sub font_change{
 	use Tk::FontDialog_kh;
 	
 	my $font = $self->parent->FontDialog(
-		-title            => gui_window->gui_jt('フォントの変更'),
-		-familylabel      => gui_window->gui_jchar('フォント：'),
-		-sizelabel        => gui_window->gui_jchar('サイズ：'),
-		-cancellabel      => gui_window->gui_jchar('キャンセル'),
+		-title            => gui_window->gui_jt(kh_msg->get('change_font')),#$'フォントの変更'),
+		-familylabel      => kh_msg->get('select_font'),#$gui_window->gui_jchar('フォント：'),
+		-sizelabel        => kh_msg->get('size'),#$gui_window->gui_jchar('サイズ：'),
+		-cancellabel      => kh_msg->gget('cancel'),#$gui_window->gui_jchar('キャンセル'),
 		-nicefontsbutton  => 0,
 		-fixedfontsbutton => 0,
 		-fontsizes        => [8,9,10,11,12,13,14,15,16,17,18,19,20],
-		-sampletext       => gui_window->gui_jchar('KH Coderは計量テキスト分析を実践するためのツールです。'),
+		-sampletext       => kh_msg->get('note_fs'),#$gui_window->gui_jchar('KH Coderは計量テキスト分析を実践するためのツールです。'),
 		-initfont         => ,"TKFN"
 	)->Show;
 	return unless $font;

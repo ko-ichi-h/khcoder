@@ -1,5 +1,8 @@
 ---
 global->copy:                                     コピー
+global->browse:                                   参照
+global->ok:                                       OK
+global->cancel:                                   キャンセル
 global->sentence:                                 文
 global->paragraph:                                段落
 global->csv_f:                                    CSVファイル
@@ -82,3 +85,37 @@ gui_window::main::inner->types:                   異なり語数（使用）：
 gui_window::main::inner->docs:                    文書の単純集計：
 gui_window::main::inner->units:                   集計単位
 gui_window::main::inner->cases:                   ケース数
+gui_window::sysconfig->win_title:                 KH Coderの設定
+gui_window::sysconfig->words_ext:                 語を抽出する方法
+gui_window::sysconfig->chasen:                    茶筌（日本語）
+gui_window::sysconfig->mecab:                     MeCab（日本語）
+gui_window::sysconfig->p_chasenrc:                '"chasenrc"のパス：'
+gui_window::sysconfig->p_grammer.cha:             '"grammar.cha"のパス：'
+gui_window::sysconfig->stemming:                  Stemming with "Snowball"
+gui_window::sysconfig->lang:                      Language:
+gui_window::sysconfig->stopwords:                 '  Stop words:'
+gui_window::sysconfig->config:                    config
+gui_window::sysconfig->l_en:                      English
+gui_window::sysconfig->l_nl:                      Dutch *
+gui_window::sysconfig->l_fr:                      French *
+gui_window::sysconfig->l_de:                      German *
+gui_window::sysconfig->l_it:                      Italian *
+gui_window::sysconfig->l_pt:                      Portuguese *
+gui_window::sysconfig->l_es:                      Spanish *
+gui_window::sysconfig->apps:                      外部アプリケーション
+gui_window::sysconfig->web_browser:               Webブラウザ：
+gui_window::sysconfig->s_sheet:                   表計算（CSV/Excel）：
+gui_window::sysconfig->pdf:                       PDFビューア：
+gui_window::sysconfig->note_s:                    '※ %sはファイル名やURLで置き換えられます'
+gui_widget::mail_config->other:                   その他の設定
+gui_widget::mail_config->use_heap:                前処理効率化のためにデータをRAMに読み出す
+gui_widget::mail_config->sendmail:                前処理の完了をメールで通知する
+gui_widget::mail_config->smtp:                    '    SMTP Server: '
+gui_widget::mail_config->from:                    '    From: '
+gui_widget::mail_config->to:                      '    To: '
+gui_widget::mail_config->font:                    フォント設定：
+gui_widget::mail_config->config:                  変更
+gui_widget::mail_config->change_font:             フォントの変更
+gui_widget::mail_config->select_font:             フォント：
+gui_widget::mail_config->size:                    サイズ：
+gui_widget::mail_config->note_fs:                 KH Coderは計量テキスト分析を実践するためのツールです。
