@@ -149,6 +149,98 @@ sub __new{
 		}
 	)->pack(-side => 'left');
 
+	# POS Tagger
+
+	$lfra->Radiobutton(
+		-text     => kh_msg->get('stanford'),#$self->gui_jchar('Stemming with "Snowball"'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'stanford',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
+	# POS Taggerの*.jarファイル
+	my $fra_jar = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes',-pady => 1);
+
+	$self->{label_stan3} = $fra_jar->Label(
+		-text => kh_msg->get('p_stanford_jar'),
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+
+	$self->{entry_stan1} = $fra_jar->Entry(-font => 'TKFN')->pack(-side => 'right');
+
+	$self->{entry_stan1}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan1},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	);
+
+	$self->{btn_stan2} = $fra_jar->Button(
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
+		-font => 'TKFN',
+		-command => sub { $self->browse_stanford_jar(); }
+	)->pack(-padx => '2',-side => 'right');
+
+	# POS Taggerの*.taggerファイル
+	my $fra_tag = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes');
+
+	$self->{label_stan4} = $fra_tag->Label(
+		-text => kh_msg->get('p_stanford_tag'),
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+
+	$self->{entry_stan2} = $fra_tag->Entry(-font => 'TKFN')->pack(-side => 'right');
+
+	$self->{entry_stan2}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan2},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+	);
+
+	$self->{btn_stan3} = $fra_tag->Button(
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
+		-font => 'TKFN',
+		-command => sub { $self->browse_stanford_tag(); }
+	)->pack(-padx => '2',-side => 'right');
+
+	$self->{entry_stan1}->insert(
+		0, $self->gui_jchar($::config_obj->stanf_jar_path)
+	);
+	$self->{entry_stan2}->insert(
+		0, $self->gui_jchar($::config_obj->stanf_tagger_path)
+	);
+
+	# POS Taggerのその他の設定
+	my $fra_stan = $lfra->Frame()->pack(-anchor => 'w',-pady => 1);
+	
+	$self->{label_stan1} = $fra_stan->Label(
+		-text => kh_msg->get('lang'),#'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{opt_stan} = gui_widget::optmenu->open(
+		parent  => $fra_stan,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				[ kh_msg->get('l_en') => 'en'],#'English'
+			],
+		variable => \$self->{opt_stan_val},
+	);
+	$self->{opt_stan}->set_value( $::config_obj->stanford_lang );
+
+	$self->{label_stan2} = $fra_stan->Label(
+		-text => kh_msg->get('stopwords'),#'  Stop words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{btn_stan1} = $fra_stan->Button(
+		-text => kh_msg->get('config'),#'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::stanford_";
+			$class   .= "$self->{opt_stan_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
+
 #----------------------#
 #   外部アプリの設定   #
 
@@ -259,6 +351,17 @@ sub refine_cj{
 		$self->{label_stem2}->configure(-state => 'disable');
 		$self->{opt_stem}->configure(-state => 'disable');
 		$self->{btn_stem}->configure(-state => 'disable');
+
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
 	}
 	elsif ($self->{c_or_j} eq 'mecab') {
 		$self->entry1->configure(-state => 'disable');
@@ -273,6 +376,17 @@ sub refine_cj{
 		$self->{label_stem2}->configure(-state => 'disable');
 		$self->{opt_stem}->configure(-state => 'disable');
 		$self->{btn_stem}->configure(-state => 'disable');
+
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
 	}
 	elsif ($self->{c_or_j} eq 'stemming'){
 		$self->entry1->configure(-state => 'disable');
@@ -283,10 +397,22 @@ sub refine_cj{
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
 
-		$self->{label_stem1}->configure(-state => 'normal');
-		$self->{label_stem2}->configure(-state => 'normal');
-		$self->{opt_stem}->configure(-state => 'normal');
-		$self->{btn_stem}->configure(-state => 'normal');
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
+
+
+		$self->{label_stan1}->configure(-state => 'normal');
+		$self->{label_stan2}->configure(-state => 'normal');
+		$self->{label_stan3}->configure(-state => 'normal');
+		$self->{label_stan4}->configure(-state => 'normal');
+		$self->{opt_stan}->configure(-state => 'normal');
+		$self->{btn_stan1}->configure(-state => 'normal');
+		$self->{btn_stan2}->configure(-state => 'normal');
+		$self->{btn_stan3}->configure(-state => 'normal');
+		$self->{entry_stan1}->configure(-state => 'normal');
+		$self->{entry_stan2}->configure(-state => 'normal');
 	}
 	return $self;
 }
@@ -313,6 +439,14 @@ sub ok{
 
 	$::config_obj->c_or_j(    $self->gui_jg( $self->{c_or_j} ) );
 	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
+	$::config_obj->stanford_lang($self->gui_jg( $self->{opt_stan_val}) );
+
+	$::config_obj->stanf_tagger_path(
+		$self->gui_jg( $self->{entry_stan2}->get() ) 
+	);
+	$::config_obj->stanf_jar_path(
+		$self->gui_jg( $self->{entry_stan1}->get() )
+	);
 
 	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(   $self->{mail_obj}->if      );
@@ -335,7 +469,7 @@ sub ok{
 		$::config_obj->ClearGeometries;
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。",
+			msg  => kh_msg->get('note_font'),
 		);
 		
 	}
@@ -355,7 +489,7 @@ sub gui_get_exe{
 
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes => \@types,
-		-title => $self->gui_jchar("「$file」を開いてください"),
+		-title => $file.kh_msg->get('browse_'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd)
 	);
 

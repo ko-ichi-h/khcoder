@@ -10,6 +10,8 @@ use gui_window::stop_words::stemming_it;
 use gui_window::stop_words::stemming_nl;
 use gui_window::stop_words::stemming_pt;
 
+use gui_window::stop_words::stanford_en;
+
 #------------------#
 #   Window¤ò³«¤¯   #
 #------------------#

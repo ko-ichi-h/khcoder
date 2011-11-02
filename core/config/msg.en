@@ -87,15 +87,15 @@ gui_window::main::inner->units:                   Units
 gui_window::main::inner->cases:                   Cases
 gui_window::sysconfig->win_title:                 Global Settings
 gui_window::sysconfig->words_ext:                 Words Extraction
-gui_window::sysconfig->chasen:                    ChaSen: for Japanese data
-gui_window::sysconfig->mecab:                     MeCab: for Japanese data
-gui_window::sysconfig->p_chasenrc:                'path of "chasenrc":'
-gui_window::sysconfig->p_grammer.cha:             'path of "grammar.cha":'
-gui_window::sysconfig->p_chasen.exe:              'path of "chasen.exe":'
-gui_window::sysconfig->p_mecab.exe:               'path of "mecab.exe":'
+gui_window::sysconfig->chasen:                    '"ChaSen" for Japanese data'
+gui_window::sysconfig->mecab:                     '"MeCab" for Japanese data'
+gui_window::sysconfig->p_chasenrc:                '    path of "chasenrc":'
+gui_window::sysconfig->p_grammer.cha:             '    path of "grammar.cha":'
+gui_window::sysconfig->p_chasen.exe:              '    path of "chasen.exe":'
+gui_window::sysconfig->p_mecab.exe:               '    path of "mecab.exe":'
 gui_window::sysconfig->need_inst:                 ※you must install it by yourself
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
-gui_window::sysconfig->lang:                      Language:
+gui_window::sysconfig->lang:                      '    Language:'
 gui_window::sysconfig->stopwords:                 '  Stop words:'
 gui_window::sysconfig->config:                    config
 gui_window::sysconfig->l_en:                      English
@@ -110,6 +110,18 @@ gui_window::sysconfig->web_browser:               Web Browser:
 gui_window::sysconfig->s_sheet:                   Spreadsheets (CSV/Excel):
 gui_window::sysconfig->pdf:                       PDF Viewer:
 gui_window::sysconfig->note_s:                    '※ %s will be replaced by filenames of URLs'
+gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
+gui_window::sysconfig->p_stanford_jar:            '    path of *.JAR:'
+gui_window::sysconfig->p_stanford_tag:            '    path of *.TAGGER:'
+gui_window::sysconfig->note_font:                 "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
+gui_window::sysconfig->browse_chasen:             Please open ChaSen.exe
+gui_window::sysconfig->browse_mecab:              Please open MeCab.exe
+gui_window::sysconfig->browse_stanford_jar:       Please open stanford-postagger.jar
+gui_window::sysconfig->browse_stanford_tag:       Please open a model file
+gui_window::sysconfig->browse_:                   ' '
+kh_sysconfig::chasen->path_error:                 Cannot find Chasen.exe!
+kh_sysconfig::mecab->path_error:                  Cannot find MeCab.exe!
+kh_sysconfig::stanford->path_error:               Cannot find Stanford POS Tagger!
 gui_widget::mail_config->other:                   Other
 gui_widget::mail_config->use_heap:                Load data into memory to speedup pre-processing
 gui_widget::mail_config->sendmail:                Send an e-mail when pre-processing is done
