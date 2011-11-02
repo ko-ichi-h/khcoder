@@ -89,13 +89,13 @@ gui_window::sysconfig->win_title:                 KH Coderの設定
 gui_window::sysconfig->words_ext:                 語を抽出する方法
 gui_window::sysconfig->chasen:                    茶筌（日本語）
 gui_window::sysconfig->mecab:                     MeCab（日本語）
-gui_window::sysconfig->p_chasenrc:                '"chasenrc"のパス：'
-gui_window::sysconfig->p_grammer.cha:             '"grammar.cha"のパス：'
-gui_window::sysconfig->p_chasen.exe:              'chasen.exeのパス：'
-gui_window::sysconfig->p_mecab.exe:               'mecab.exeのパス：'
+gui_window::sysconfig->p_chasenrc:                '    "chasenrc"のパス：'
+gui_window::sysconfig->p_grammer.cha:             '    "grammar.cha"のパス：'
+gui_window::sysconfig->p_chasen.exe:              '    chasen.exeのパス：'
+gui_window::sysconfig->p_mecab.exe:               '    mecab.exeのパス：'
 gui_window::sysconfig->need_inst:                 ※別途インストールが必要
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
-gui_window::sysconfig->lang:                      Language:
+gui_window::sysconfig->lang:                      '    Language:'
 gui_window::sysconfig->stopwords:                 '  Stop words:'
 gui_window::sysconfig->config:                    config
 gui_window::sysconfig->l_en:                      English
@@ -110,6 +110,9 @@ gui_window::sysconfig->web_browser:               Webブラウザ：
 gui_window::sysconfig->s_sheet:                   表計算（CSV/Excel）：
 gui_window::sysconfig->pdf:                       PDFビューア：
 gui_window::sysconfig->note_s:                    '※ %sはファイル名やURLで置き換えられます'
+gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
+gui_window::sysconfig->p_stanford_jar:            '    *.JARファイル：'
+gui_window::sysconfig->p_stanford_tag:            '    *.TAGGERファイル：'
 gui_widget::mail_config->other:                   その他の設定
 gui_widget::mail_config->use_heap:                前処理効率化のためにデータをRAMに読み出す
 gui_widget::mail_config->sendmail:                前処理の完了をメールで通知する

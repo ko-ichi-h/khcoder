@@ -230,6 +230,20 @@ sub stemming_lang{
 	}
 }
 
+sub stanford_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanford_lang} = $new;
+	}
+
+	if (length($self->{stanford_lang}) > 0) {
+		return $self->{stanford_lang};
+	} else {
+		return 'en';
+	}
+}
+
 sub msg_lang{
 	my $self = shift;
 	my $new = shift;
