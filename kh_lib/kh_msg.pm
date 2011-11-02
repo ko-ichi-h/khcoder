@@ -16,7 +16,8 @@ sub get{
 	          shift;
 	my $key = shift;
 	$key = (caller)[0].'->'.$key;
-	
+	$key =~ s/::(linux|win32)//go;
+
 	# メッセージをロード
 	&load unless $msg;
 
