@@ -199,11 +199,16 @@ sub _tokenize_stem{
 		}
 		my $pos = '.';
 		$pos = $words_pos->[$n] if $words_pos;
-		print $fh $sjis->encode(
-			unidecode(
-				"$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n"
-			)
-		);
+		
+		my $line = unidecode("$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n");
+		
+		# Unidecodeによって空白になってしまった場合に対応
+		if ($line =~ /^\t/o){
+			$line = '???'.$line;
+		}
+		$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
+		
+		print $fh $sjis->encode($line);
 		++$n;
 	}
 	

@@ -35,6 +35,8 @@ sub tokenize{
 	# フランス語特有 「l'語」「s'語」「c'語」「d'語」
 	$t =~ s/(\s|^)([l|s|c|d]')(\S)/\1\2 \3/gio;
 
+	# 重複しているスペースを削除
+	$t =~ s/  */ /go;
 
 	my @words_hyoso = split / /, $t;
 

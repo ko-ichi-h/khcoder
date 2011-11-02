@@ -104,6 +104,51 @@ sub __new{
 		-command  => sub{ $self = $self->refine_cj; },
 	)->pack(-anchor => 'w');
 
+	$lfra->Radiobutton(
+		-text     => $self->gui_jchar('Stemming with "Snowball"'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'stemming',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
+	my $fra_stem = $lfra->Frame()->pack(-anchor => 'w');
+	
+	$self->{label_stem1} = $fra_stem->Label(
+		-text => 'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{opt_stem} = gui_widget::optmenu->open(
+		parent  => $fra_stem,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				['English'      => 'en'],
+				['Dutch *'      => 'nl'],
+				['French *'     => 'fr'],
+				['German *'     => 'de'],
+				['Italian *'    => 'it'],
+				['Portuguese *' => 'pt'],
+				['Spanish *'    => 'es'],
+			],
+		variable => \$self->{opt_stem_val},
+	);
+	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
+
+	$self->{label_stem2} = $fra_stem->Label(
+		-text => '  Stop words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{btn_stem} = $fra_stem->Button(
+		-text => 'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::stemming_";
+			$class   .= "$self->{opt_stem_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
 #----------------------#
 #   外部アプリの設定   #
 
