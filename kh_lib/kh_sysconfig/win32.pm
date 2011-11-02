@@ -11,6 +11,7 @@ sub _readin{
 	use kh_sysconfig::win32::chasen;
 	use kh_sysconfig::win32::mecab;
 	use kh_sysconfig::win32::stemming;
+	use kh_sysconfig::win32::stanford;
 
 	my $self = shift;
 
@@ -80,6 +81,8 @@ sub save_ini{
 	my @outlist = (
 		'chasen_path',
 		'mecab_path',
+		'stanf_jar_path',
+		'stanf_tagger_path',
 		'c_or_j',
 		'stemming_lang',
 		'stanford_lang',

@@ -19,6 +19,55 @@ sub _new{
 	return $self;
 }
 
+# .jarの参照
+sub browse_stanford_jar{
+	my $self  = shift;
+
+	my @types =
+		(["jar files",           [qw/.jar/]],
+		["All files",		'*']
+	);
+	
+	my $path = $self->win_obj->getOpenFile(
+		-filetypes  => \@types,
+		-title      => $self->gui_jt( kh_msg->get('browse_stanford_jar') ),
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
+	);
+	
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+		$self->{entry_stan1}->delete('0','end');
+		$self->{entry_stan1}->insert(0,$self->gui_jchar($path));
+	}
+}
+
+# *.taggerの参照
+sub browse_stanford_tag{
+	my $self  = shift;
+
+	my @types =
+		(["Tagger files",           [qw/.tagger/]],
+		["All files",		'*']
+	);
+	
+	my $path = $self->win_obj->getOpenFile(
+		-filetypes  => \@types,
+		-title      => $self->gui_jt( kh_msg->get('browse_stanford_tag') ),
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
+	);
+	
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+		$self->{entry_stan2}->delete('0','end');
+		$self->{entry_stan2}->insert(0,$self->gui_jchar($path));
+	}
+}
+
+
 sub win_name{
 	return 'w_sysconfig';
 }

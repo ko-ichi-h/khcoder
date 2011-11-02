@@ -113,6 +113,15 @@ gui_window::sysconfig->note_s:                    '※ %sはファイル名やUR
 gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
 gui_window::sysconfig->p_stanford_jar:            '    *.JARファイル：'
 gui_window::sysconfig->p_stanford_tag:            '    *.TAGGERファイル：'
+gui_window::sysconfig->note_font:                 "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。"
+gui_window::sysconfig->browse_chasen:             ChaSen.exeを開いてください
+gui_window::sysconfig->browse_mecab:              MeCab.exeを開いてください
+gui_window::sysconfig->browse_stanford_jar:       stanford-postagger.jarを開いてください。
+gui_window::sysconfig->browse_stanford_tag:       モデルファイルを開いてください。
+gui_window::sysconfig->browse_:                   を開いてください。
+kh_sysconfig::chasen->path_error:                 Chasen.exeのパスが不正です
+kh_sysconfig::mecab->path_error:                  MeCab.exeのパスが不正です
+kh_sysconfig::stanford->path_error:               Stanford POS Taggerのパスが不正です
 gui_widget::mail_config->other:                   その他の設定
 gui_widget::mail_config->use_heap:                前処理効率化のためにデータをRAMに読み出す
 gui_widget::mail_config->sendmail:                前処理の完了をメールで通知する

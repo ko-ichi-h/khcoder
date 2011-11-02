@@ -197,6 +197,13 @@ sub __new{
 		-command => sub { $self->browse_stanford_tag(); }
 	)->pack(-padx => '2',-side => 'right');
 
+	$self->{entry_stan1}->insert(
+		0, $self->gui_jchar($::config_obj->stanf_jar_path)
+	);
+	$self->{entry_stan2}->insert(
+		0, $self->gui_jchar($::config_obj->stanf_tagger_path)
+	);
+
 	# POS Taggerのその他の設定
 	my $fra_stan = $lfra->Frame()->pack(-anchor => 'w',-pady => 1);
 	
@@ -275,7 +282,15 @@ sub ok{
 	$::config_obj->mecab_path(   $self->gui_jg( $self->entry2->get() ) );
 	$::config_obj->c_or_j(       $self->gui_jg( $self->{c_or_j}      ) );
 	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
-	
+	$::config_obj->stanford_lang($self->gui_jg( $self->{opt_stan_val}) );
+
+	$::config_obj->stanf_tagger_path(
+		$self->gui_jg( $self->{entry_stan2}->get() ) 
+	);
+	$::config_obj->stanf_jar_path(
+		$self->gui_jg( $self->{entry_stan1}->get() )
+	);
+
 	$::config_obj->use_heap(    $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(     $self->{mail_obj}->if      );
 	$::config_obj->mail_smtp(   $self->{mail_obj}->smtp    );
@@ -298,7 +313,7 @@ sub ok{
 		$::config_obj->ClearGeometries;
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。",
+			msg  => kh_msg->get('note_font'),
 		);
 		
 	}
@@ -316,7 +331,7 @@ sub browse_mecab{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('Mecab.exeを開いてください'),
+		-title      => $self->gui_jt( kh_msg->get('browse_mecab') ),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
@@ -340,7 +355,7 @@ sub browse_chasen{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('Chasen.exeを開いてください'),
+		-title      => $self->gui_jt( kh_msg->get('browse_chasen') ),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
@@ -352,6 +367,7 @@ sub browse_chasen{
 		$self->entry1->insert(0,$self->gui_jchar($path));
 	}
 }
+
 
 # chasenとjumanの切り替え
 sub refine_cj{

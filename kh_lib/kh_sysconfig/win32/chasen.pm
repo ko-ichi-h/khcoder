@@ -175,7 +175,7 @@ sub path_check{
 		gui_errormsg->open(
 			type   => 'msg',
 			window => \$gui_sysconfig::inis,
-			msg    => "Chasen.exeのパスが不正です"
+			msg    => kh_msg->get('path_error'),
 		);
 		return 0;
 	}

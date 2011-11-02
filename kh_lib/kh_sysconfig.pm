@@ -230,6 +230,24 @@ sub stemming_lang{
 	}
 }
 
+sub stanf_tagger_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_tagger_path} = $new;
+	}
+	return $self->{stanf_tagger_path};
+}
+
+sub stanf_jar_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_jar_path} = $new;
+	}
+	return $self->{stanf_jar_path};
+}
+
 sub stanford_lang{
 	my $self = shift;
 	my $new = shift;

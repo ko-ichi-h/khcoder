@@ -11,6 +11,7 @@ sub _readin{
 	use kh_sysconfig::linux::chasen;
 	use kh_sysconfig::linux::mecab;
 	use kh_sysconfig::linux::stemming;
+	use kh_sysconfig::linux::stanford;
 
 	my $self = shift;
 
@@ -76,6 +77,8 @@ sub save_ini{
 	my @outlist = (
 		'chasenrc_path',
 		'grammarcha_path',
+		'stanf_jar_path',
+		'stanf_tagger_path',
 		#'juman_path',
 		'c_or_j',
 		'stemming_lang',
