@@ -188,6 +188,20 @@ sub set_par{
 	$::config_obj->R->send(
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
+
+	# 日本語以外の場合は「sans」フォントに # morpho_analyzer
+	$::config_obj->R->output_chk(0);
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	) {
+		$::config_obj->R->send("par(\"family\"=\"\")");
+	} else {
+		print "family: sans\n";
+		$::config_obj->R->send("par(\"family\"=\"sans\")");
+	}
+	$::config_obj->R->output_chk(1);
+
 	return $self;
 }
 

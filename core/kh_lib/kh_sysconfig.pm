@@ -26,6 +26,7 @@ sub readin{
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
 		|| ! -e "./config/hinshi_stemming"
+		|| ! -e "./config/hinshi_stanford"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -163,6 +164,38 @@ sub reset_parm{
 			foreach my $i (@table){
 				$dbh->do("
 					INSERT INTO hinshi_stemming
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+
+		# Stanford POS Tagger用
+		unless (-e "./config/hinshi_stanford"){
+			$dbh->do(
+				"CREATE TABLE hinshi_stanford (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'NNP', ''",
+				"1, 'Noun',  'NN', ''",
+				"3, 'Foreign',  'FW', ''",
+				"20, 'PRP',  'PRP', ''",
+				"25, 'Adj',  'JJ', ''",
+				"30, 'Adv',  'RB', ''",
+				"35, 'Verb',  'VB', ''",
+				"40, 'W',  'W', ''",
+				"99999,'HTMLタグ','タグ','HTML'",
+				"11,'タグ','タグ',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_stanford
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )
