@@ -10,7 +10,7 @@ sub _run_morpho{
 	my $self = shift;
 
 	unless (-e $::config_obj->chasenrc_path){
-		my $msg = "事前にKH Coderの設定を行ってください";
+		my $msg = kh_msg->('error_confg');
 
 		gui_errormsg->open(
 			msg => $msg,
@@ -27,7 +27,7 @@ sub _run_morpho{
 }
 
 sub exec_error_mes{
-	return "KH Coder Error!!\n茶筌の起動に失敗しました！";
+	return kh_msg->get('error');
 }
 
 

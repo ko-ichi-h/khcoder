@@ -70,7 +70,7 @@ sub end{
 		print "done:  $h:$m:$s\n";
 	} else {
 		gui_errormsg->open(
-			msg  => "処理が完了しました。\n経過時間： $h:$m:$s",
+			msg  => kh_msg->get('done')." $h:$m:$s",#"処理が完了しました。\n経過時間： 
 			type => 'msg',
 			icon => 'info'
 		);

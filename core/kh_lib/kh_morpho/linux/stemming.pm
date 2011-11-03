@@ -21,7 +21,7 @@ sub _run_morpho{
 
 
 sub exec_error_mes{
-	return "KH Coder Error!!\nStemmerによる処理に失敗しました。";
+	return kh_msg->get('error');
 }
 
 

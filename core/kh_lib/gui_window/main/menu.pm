@@ -909,7 +909,7 @@ sub mc_import_project{
 		-defaultextension => '.khc',
 		-filetypes        =>  \@types,
 		-title            =>
-			gui_window->gui_jt('KHC形式のファイルからプロジェクトをインポート'),
+			gui_window->gui_jt( kh_msg->get('import_win_title') ),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -930,7 +930,7 @@ sub mc_import_project{
 		-defaultextension => '.khc',
 		-filetypes        =>  \@types,
 		-title            =>
-			gui_window->gui_jt('分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）'),
+			gui_window->gui_jt( kh_msg->get('import_save_path') ),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 		-initialfile      => gui_window->gui_jchar($info->{file_name})
 	);
@@ -962,7 +962,7 @@ sub mc_export_project{
 		-defaultextension => '.khc',
 		-filetypes        =>  \@types,
 		-title            =>
-			gui_window->gui_jt('現在のプロジェクトをKHC形式のファイルにエクスポート'),
+			gui_window->gui_jt( kh_msg->get('export_win_title') ),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){

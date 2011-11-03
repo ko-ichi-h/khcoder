@@ -33,14 +33,30 @@ sub _run_morpho{
 		unless utf8::is_utf8( $java_path );
 
 	unless (-e $java_path && length($java_path)){
-		$self->Exec_Error("Can't find java.exe");
+		gui_errormsg->open(
+			msg => kh_msg->('no_java'),
+			type => 'msg'
+		);
 		exit;
 	}
+
+	#unless (-e $java_path && length($java_path)){
+	#	$self->Exec_Error("Can't find java.exe");
+	#	exit;
+	#}
 
 	my $p1 = $sjis->decode($::config_obj->stanf_jar_path)
 		unless utf8::is_utf8( $::config_obj->stanf_jar_path );
 	my $p2 = $sjis->decode($::config_obj->stanf_tagger_path)
 		unless utf8::is_utf8( $::config_obj->stanf_tagger_path );
+	
+	unless (-e $p1 && -e $p2){
+		gui_errormsg->open(
+			msg => kh_msg->('error_confg'),
+			type => 'msg'
+		);
+		exit;
+	}
 	
 	my $cmd_line  =
 		 'java  -mx300m  -cp "'
@@ -253,7 +269,7 @@ sub _tokenize_stem{
 
 
 sub exec_error_mes{
-	return "KH Coder Error!!\nStanford POS Taggerによる処理に失敗しました。";
+	return kh_msg->get('error');
 }
 
 

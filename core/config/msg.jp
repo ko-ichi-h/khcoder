@@ -93,7 +93,7 @@ gui_window::sysconfig->p_chasenrc:                '    "chasenrc"のパス：'
 gui_window::sysconfig->p_grammer.cha:             '    "grammar.cha"のパス：'
 gui_window::sysconfig->p_chasen.exe:              '    chasen.exeのパス：'
 gui_window::sysconfig->p_mecab.exe:               '    mecab.exeのパス：'
-gui_window::sysconfig->need_inst:                 ※別途インストールが必要
+gui_window::sysconfig->need_inst:                 （要・別途インストール）
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
 gui_window::sysconfig->lang:                      '    Language:'
 gui_window::sysconfig->stopwords:                 '  Stop words:'
@@ -134,3 +134,15 @@ gui_widget::mail_config->change_font:             フォントの変更
 gui_widget::mail_config->select_font:             フォント：
 gui_widget::mail_config->size:                    サイズ：
 gui_widget::mail_config->note_fs:                 KH Coderは計量テキスト分析を実践するためのツールです。
+kh_morpho::chasen->error:                         茶筌の起動に失敗しました。
+kh_morpho::chasen->error_config:                  事前にKH Coderの設定（茶筌関連）を行ってください。
+kh_morpho::mecab->error:                          MeCabの起動に失敗しました。
+kh_morpho::mecab->error_config:                   事前にKH Coderの設定（MeCab関連）を行ってください。
+kh_morpho::stanford->error:                       Stanford POS Taggerの起動に失敗しました。
+kh_morpho::stanford->no_java:                     "java.exeが見つかりませんでした。\n事前にJAVAをインストールしてください。"
+kh_morpho::stanford->error_config:                事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。
+kh_morpho::stemming->error:                       Stemmerによる処理に失敗しました。
+gui_window::main::menu->export_win_title:         現在のプロジェクトをKHC形式のファイルにエクスポート。
+gui_window::main::menu->import_win_title:         KHC形式のファイルからプロジェクトをインポート。
+gui_window::main::menu->import_save_path:         分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）
+gui_wait->done:                                   "処理が完了しました。\n経過時間： "

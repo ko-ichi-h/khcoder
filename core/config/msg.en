@@ -77,7 +77,7 @@ gui_window::main::menu->exec_sql:                 Execute SQL Statements
 gui_window::main::menu->help:                     Help
 gui_window::main::menu->man:                      Manual (PDF)
 gui_window::main::menu->web:                      Latest Info (Web)
-gui_window::main::menu->about:                    About KH Coder
+gui_window::main::menu->about:                    About
 gui_window::main::inner->target:                  'Target File:   '
 gui_window::main::inner->memo:                    Memo:
 gui_window::main::inner->tokens:                  Tokens:
@@ -93,7 +93,7 @@ gui_window::sysconfig->p_chasenrc:                '    path of "chasenrc":'
 gui_window::sysconfig->p_grammer.cha:             '    path of "grammar.cha":'
 gui_window::sysconfig->p_chasen.exe:              '    path of "chasen.exe":'
 gui_window::sysconfig->p_mecab.exe:               '    path of "mecab.exe":'
-gui_window::sysconfig->need_inst:                 ※you must install it by yourself
+gui_window::sysconfig->need_inst:                 '* you must install it by yourself'
 gui_window::sysconfig->stemming:                  Stemming with "Snowball"
 gui_window::sysconfig->lang:                      '    Language:'
 gui_window::sysconfig->stopwords:                 '  Stop words:'
@@ -109,7 +109,7 @@ gui_window::sysconfig->apps:                      Applications
 gui_window::sysconfig->web_browser:               Web Browser:
 gui_window::sysconfig->s_sheet:                   Spreadsheets (CSV/Excel):
 gui_window::sysconfig->pdf:                       PDF Viewer:
-gui_window::sysconfig->note_s:                    '※ %s will be replaced by filenames of URLs'
+gui_window::sysconfig->note_s:                    '* %s will be replaced by filenames of URLs'
 gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
 gui_window::sysconfig->p_stanford_jar:            '    path of *.JAR:'
 gui_window::sysconfig->p_stanford_tag:            '    path of *.TAGGER:'
@@ -134,3 +134,15 @@ gui_widget::mail_config->change_font:             Font Config
 gui_widget::mail_config->select_font:             Font family:
 gui_widget::mail_config->size:                    Size:
 gui_widget::mail_config->note_fs:                 KH Coder is a tool for Quantitative Text Analysis.
+kh_morpho::chasen->error:                         Fatal error: Could not execute ChaSen.
+kh_morpho::chasen->error_config:                  Fatal error: Could not find ChaSen.
+kh_morpho::mecab->error:                          Fatal error: Could not execute MeCab.
+kh_morpho::mecab->error_config:                   Fatal error: Could not find MeCab.
+kh_morpho::stanford->error:                       Fatal error: Could not execute Stanford POS Tagger.
+kh_morpho::stanford->no_java:                     Fatal error: Could not find JAVA.
+kh_morpho::stanford->error_config:                Fatal error: Could not find JStanford POS Tagger.
+kh_morpho::stemming->error:                       Fatal error: Could not perform stemming.
+gui_window::main::menu->export_win_title:         Export current project to a *.khc file.
+gui_window::main::menu->import_win_title:         Import a project from a *.khc file.
+gui_window::main::menu->import_save_path:         "Saving the target text file (\"coder_data\" folder will be created at the same path)."
+gui_wait->done:                                   "The processing is complete.\nElapsed time:"
