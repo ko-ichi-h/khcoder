@@ -241,7 +241,7 @@ sub _tokenize_stem{
 	while ( not $self->{client}->open ){
 		++$n;
 		sleep 1;
-		print " . ";
+		print " .";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
 	$self->{client}->print($t);
@@ -249,6 +249,7 @@ sub _tokenize_stem{
 	$self->{client}->close;
 	
 	# 結果の書き出し
+	$n = 0;
 	foreach my $i (@lines){
 		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
 			my $line = Text::Unidecode::unidecode(
@@ -262,8 +263,14 @@ sub _tokenize_stem{
 			$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
 			
 			print $fh $output_code->encode($line);
+			++$n;
 		}
 	}
+	
+	if ($n == 0 && $t =~ /\S/o){
+		die("t: $t\nFatal: Something wrong with the POS Tagger!\n");
+	}
+	
 	return 1;
 }
 
