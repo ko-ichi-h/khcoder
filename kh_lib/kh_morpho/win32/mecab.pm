@@ -13,7 +13,7 @@ sub _run_morpho{
 	# 初期化
 	unless (-e $path){
 		gui_errormsg->open(
-			msg => '事前にKH Coderの設定（形態素解析）を行ってください',
+			msg => kh_msg->('error_confg'),
 			type => 'msg'
 		);
 		exit;
@@ -239,7 +239,7 @@ sub _mecab_store_out{
 
 
 sub exec_error_mes{
-	return "KH Coder Error!!\nMeCabの起動に失敗しました！";
+	return kh_msg->get('error');
 }
 
 

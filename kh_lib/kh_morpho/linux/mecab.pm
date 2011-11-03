@@ -208,10 +208,8 @@ sub _mecab_store_out{
 	return $self;
 }
 
-
-
 sub exec_error_mes{
-	return "KH Coder Error!!\nMeCabの起動に失敗しました！";
+	return kh_msg->get('error');
 }
 
 
