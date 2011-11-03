@@ -86,7 +86,7 @@ gui_window::main::inner->docs:                    Documents:
 gui_window::main::inner->units:                   Units
 gui_window::main::inner->cases:                   Cases
 gui_window::sysconfig->win_title:                 Global Settings
-gui_window::sysconfig->words_ext:                 Words Extraction
+gui_window::sysconfig->words_ext:                 Word Extraction
 gui_window::sysconfig->chasen:                    '"ChaSen" for Japanese data'
 gui_window::sysconfig->mecab:                     '"MeCab" for Japanese data'
 gui_window::sysconfig->p_chasenrc:                '    path of "chasenrc":'

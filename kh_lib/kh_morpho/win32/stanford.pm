@@ -32,7 +32,10 @@ sub _run_morpho{
 	$java_path = $sjis->decode($java_path)
 		unless utf8::is_utf8( $java_path );
 
-	# javaが無かった場合はエラーメッセージを
+	unless (-e $java_path && length($java_path)){
+		$self->Exec_Error("Can't find java.exe");
+		exit;
+	}
 
 	my $p1 = $sjis->decode($::config_obj->stanf_jar_path)
 		unless utf8::is_utf8( $::config_obj->stanf_jar_path );
@@ -57,7 +60,7 @@ sub _run_morpho{
 		$::config_obj->cwd,
 	) || $self->Exec_Error("Wi32::Process can not start");
 	
-	print "Starting tagger server, Process id: ", $process->GetProcessID(), ", Connecting.";
+	print "Starting server, pid: ", $process->GetProcessID(), ", Connecting.";
 
 	# Stanford POS Taggerのクライアントを準備
 	$self->{client} = undef;
@@ -74,7 +77,7 @@ sub _run_morpho{
 		sleep 1;
 		print ".";
 	}
-	print " ok.\n";
+	print " ok. Now POS Tagging...";
 	$self->{client}->close;
 	#$self->{client}->errmode('die');
 
@@ -171,14 +174,8 @@ sub _run_morpho{
 	close (TRGT);
 	close ($fh_out);
 
-	print "Looks ok\n";
+	print " Done.\n";
 	$process->Kill(1);
-
-	#exit;
-
-	# 出力ファイルをASCIIに変換
-	#$self->to_ascii($self->output);
-	#kh_jchar->to_sjis($self->output);
 
 	return 1;
 }
@@ -228,7 +225,7 @@ sub _tokenize_stem{
 	while ( not $self->{client}->open ){
 		++$n;
 		sleep 1;
-		print "retry. ";
+		print " . ";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
 	$self->{client}->print($t);
