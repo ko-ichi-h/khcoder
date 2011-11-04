@@ -78,10 +78,10 @@ gui_window::main::menu->help:                     Help
 gui_window::main::menu->man:                      Manual (PDF)
 gui_window::main::menu->web:                      Latest Info (Web)
 gui_window::main::menu->about:                    About
-gui_window::main::inner->target:                  'Target File:   '
+gui_window::main::inner->target:                  'The Target File:'
 gui_window::main::inner->memo:                    Memo:
 gui_window::main::inner->tokens:                  Tokens:
-gui_window::main::inner->types:                   Types (using):
+gui_window::main::inner->types:                   'Types (using):   '
 gui_window::main::inner->docs:                    Documents:
 gui_window::main::inner->units:                   Units
 gui_window::main::inner->cases:                   Cases
@@ -146,3 +146,24 @@ gui_window::main::menu->export_win_title:         Export current project to a *.
 gui_window::main::menu->import_win_title:         Import a project from a *.khc file.
 gui_window::main::menu->import_save_path:         "Saving the target text file (\"coder_data\" folder will be created at the same path)."
 gui_wait->done:                                   "The processing is complete.\nElapsed time:"
+gui_window::project_new->win_title:               New Project
+gui_window::project_new->target_file:             The Target File:
+gui_window::project_new->target_char_code:        Encoding of the target file:
+gui_window::project_new->auto_detect:             Auto detect
+gui_window::project_new->memo:                    Memo:
+gui_window::project_new->browse_target:           Please select the target text File
+gui_window::project_open->win_title:              Project Manager
+gui_window::project_open->target_file:            target file
+gui_window::project_open->memo:                   memo
+gui_window::project_open->dir:                    dir
+gui_window::project_open->del:                    delete
+gui_window::project_open->edit:                   edit
+gui_window::project_open->new:                    new
+gui_window::project_open->open:                   Open
+gui_window::project_open->opened:                 "The project is currently opened.\nCannot perform the specified action."
+gui_window::project_open->select_one:             Please select a project.
+gui_window::project_edit->win_title:              New Project
+gui_window::project_edit->target_file:            The Target File:
+gui_window::project_edit->target_char_code:       Encoding of the target file:
+gui_window::project_edit->auto_detect:            Auto detect
+gui_window::project_edit->memo:                   Memo:

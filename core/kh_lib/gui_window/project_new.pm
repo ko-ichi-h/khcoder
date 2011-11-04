@@ -13,7 +13,7 @@ sub _new{
 	my $self = shift;
 
 	my $mw = $self->{win_obj};
-	$mw->title($self->gui_jt('新規プロジェクト','euc'));
+	$mw->title($self->gui_jt( kh_msg->get('win_title') ) );
 	#$self->{win_obj} = $mw;
 	my $lfra = $mw->LabFrame(-label => 'Entry',-labelside => 'acrosstop',
 		-borderwidth => 2,)
@@ -23,7 +23,7 @@ sub _new{
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$fra1->Label(
-		-text => $self->gui_jchar('分析対象ファイル：'),
+		-text => kh_msg->get('target_file'),#$self->gui_jchar('分析対象ファイル：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -33,7 +33,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$fra3->Label(
-		-text => $self->gui_jchar('分析対象ファイルの文字コード：'),
+		-text => kh_msg->get('target_char_code'),#$self->gui_jchar('分析対象ファイルの文字コード：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -42,7 +42,7 @@ sub _new{
 		pack    => { -side => 'right', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('自動判別')  => 0],
+				[kh_msg->get('auto_detect')  => 0], #$self->gui_jchar('自動判別')
 				[$self->gui_jchar('EUC') => 'euc'],
 				[$self->gui_jchar('JIS') => 'jis'],
 				[$self->gui_jchar('Shift-JIS') => 'sjis']
@@ -51,14 +51,14 @@ sub _new{
 	);
 
 	$fra1->Button(
-		-text => $self->gui_jchar('参照'),
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->_sansyo;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$fra2->Label(
-		-text => $self->gui_jchar('説明（メモ）：'),
+		-text => kh_msg->get('memo'),#$self->gui_jchar('説明（メモ）：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my $e2 = $fra2->Entry(
@@ -67,14 +67,14 @@ sub _new{
 	)->pack(-side => 'right',-pady => 2);
 
 	$mw->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $mw->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->_make_new;}
@@ -133,7 +133,7 @@ sub _sansyo{
 	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('分析対象ファイルを選択してください'),
+		-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 
