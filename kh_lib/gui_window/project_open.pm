@@ -19,7 +19,7 @@ sub _new{
 	#$self->{win_obj} = $few;
 	#$few->focus;
 	#$few->grab;
-	$few->title($self->gui_jt('プロジェクト・マネージャ'));
+	$few->title($self->gui_jt( kh_msg->get('win_title') ));
 
 	# リスト作成
 	my $plis = $few->Scrolled(
@@ -40,25 +40,26 @@ sub _new{
 	)->pack(-fill=>'both',-expand => 'yes');
 	$self->{g_list} = $plis;
 
-	$plis->header('create',0,-text => $self->gui_jchar('対象ファイル'));
-	$plis->header('create',1,-text => $self->gui_jchar('説明（メモ）'));
-	$plis->header('create',2,-text => $self->gui_jchar('ディレクトリ'));
+	$plis->header('create',0,-text => kh_msg->get('target_file') ); # $self->gui_jchar('対象ファイル')
+	$plis->header('create',1,-text => kh_msg->get('memo')); # $self->gui_jchar('説明（メモ）')
+	$plis->header('create',2,-text => kh_msg->get('dir')); # $self->gui_jchar('ディレクトリ')
 
 	# ボタン
 	my $b1 = $few->Button(
-		-text => $self->gui_jchar('削除'),
+		-text => kh_msg->get('del'), #$self->gui_jchar('削除'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->delete;}
 	)->pack(-side => 'left',-padx => 2,-pady => 1);
 	my $b2 = $few->Button(
-		-text => $self->gui_jchar('編集'),
+		-text => kh_msg->get('edit'),#$self->gui_jchar('編集'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->edit;}
 	)->pack(-side => 'left',-pady => 1);
 	$few->Button(
-		-text => $self->gui_jchar('新規'),-padx => 2,
+		-text => kh_msg->get('new'),#$self->gui_jchar('新規'),
+		-padx => 2,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{
@@ -67,7 +68,8 @@ sub _new{
 		}
 	)->pack(-side => 'left',-padx => 3,,-pady => 1);
 	my $b3 = $few->Button(
-		-text => $self->gui_jchar('開く'),-padx => 3,
+		-text => kh_msg->get('open'),#$self->gui_jchar('開く'),
+		-padx => 3,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->_open;}
@@ -155,7 +157,7 @@ sub if_selected{
 			gui_errormsg->open(
 				type   => 'msg',
 				window  => \$self->win_obj,
-				msg    => "そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
+				msg    => kh_msg->get('opened'),#"そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
 			);
 			return 0;
 		}
@@ -165,7 +167,7 @@ sub if_selected{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => "プロジェクトを選択してください"
+			msg    => kh_msg->get('select_one'),#"プロジェクトを選択してください"
 		);
 		return 0;
 	}
@@ -181,7 +183,7 @@ sub if_selected_ed{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => "プロジェクトを選択してください"
+			msg    => kh_msg->get('select_one'),#"プロジェクトを選択してください"
 		);
 		return 0;
 	}

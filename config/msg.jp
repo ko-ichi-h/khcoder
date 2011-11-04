@@ -146,3 +146,24 @@ gui_window::main::menu->export_win_title:         現在のプロジェクトを
 gui_window::main::menu->import_win_title:         KHC形式のファイルからプロジェクトをインポート。
 gui_window::main::menu->import_save_path:         分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）
 gui_wait->done:                                   "処理が完了しました。\n経過時間： "
+gui_window::project_new->win_title:               新規プロジェクト
+gui_window::project_new->target_file:             分析対象ファイル：
+gui_window::project_new->target_char_code:        分析対象ファイルの文字コード：
+gui_window::project_new->auto_detect:             自動判別
+gui_window::project_new->memo:                    説明（メモ）：
+gui_window::project_new->browse_target:           分析対象ファイルを選択してください
+gui_window::project_open->win_title:              プロジェクト・マネージャ
+gui_window::project_open->target_file:            対象ファイル
+gui_window::project_open->memo:                   説明（メモ）
+gui_window::project_open->dir:                    ディレクトリ
+gui_window::project_open->del:                    削除
+gui_window::project_open->edit:                   編集
+gui_window::project_open->new:                    新規
+gui_window::project_open->open:                   開く
+gui_window::project_open->opened:                 "そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
+gui_window::project_open->select_one:             プロジェクトを選択してください。
+gui_window::project_edit->win_title:               説明（メモ）の編集
+gui_window::project_edit->target_file:             分析対象ファイル：
+gui_window::project_edit->target_char_code:        分析対象ファイルの文字コード：
+gui_window::project_edit->auto_detect:             自動判別
+gui_window::project_edit->memo:                    説明（メモ）：
