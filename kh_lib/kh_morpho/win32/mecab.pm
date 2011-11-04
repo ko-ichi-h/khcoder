@@ -13,7 +13,7 @@ sub _run_morpho{
 	# ½é´ü²½
 	unless (-e $path){
 		gui_errormsg->open(
-			msg => kh_msg->('error_confg'),
+			msg => kh_msg->get('error_confg'),
 			type => 'msg'
 		);
 		exit;

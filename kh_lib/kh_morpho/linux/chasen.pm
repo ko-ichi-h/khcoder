@@ -10,7 +10,7 @@ sub _run_morpho{
 	my $self = shift;
 
 	unless (-e $::config_obj->chasenrc_path){
-		my $msg = kh_msg->('error_confg');
+		my $msg = kh_msg->get('error_confg');
 
 		gui_errormsg->open(
 			msg => $msg,
