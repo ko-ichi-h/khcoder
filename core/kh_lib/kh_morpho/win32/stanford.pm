@@ -34,7 +34,7 @@ sub _run_morpho{
 
 	unless (-e $java_path && length($java_path)){
 		gui_errormsg->open(
-			msg => kh_msg->('no_java'),
+			msg => kh_msg->get('no_java'),
 			type => 'msg'
 		);
 		exit;
@@ -52,7 +52,7 @@ sub _run_morpho{
 	
 	unless (-e $p1 && -e $p2){
 		gui_errormsg->open(
-			msg => kh_msg->('error_confg'),
+			msg => kh_msg->get('error_confg'),
 			type => 'msg'
 		);
 		exit;
@@ -93,7 +93,7 @@ sub _run_morpho{
 		sleep 1;
 		print ".";
 	}
-	print " ok. Now POS Tagging...";
+	print " ok. Tagging...";
 	$self->{client}->close;
 	#$self->{client}->errmode('die');
 
@@ -190,7 +190,7 @@ sub _run_morpho{
 	close (TRGT);
 	close ($fh_out);
 
-	print " Done.\n";
+	print " ok.\n";
 	$process->Kill(1);
 
 	return 1;
