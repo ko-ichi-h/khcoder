@@ -65,7 +65,7 @@ gui_window::main::menu->freq:                     Frequency
 gui_window::main::menu->cross_st:                 Crosstab with Headings
 gui_window::main::menu->cross_vr:                 Crosstab with Variables
 gui_window::main::menu->jac_mtrx:                 Similarity Matrix
-gui_window::main::menu->output_cod:               Output Document-code Matrix
+gui_window::main::menu->output_cod:               Output Document-Code Matrix
 gui_window::main::menu->vars_heads:               Variables & Headings
 gui_window::main::menu->read:                     Read from a File
 gui_window::main::menu->var_list:                 Listing & Manipulation
