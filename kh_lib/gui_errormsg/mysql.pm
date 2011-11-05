@@ -4,14 +4,12 @@ use base qw(gui_errormsg);
 
 sub get_msg{
 	my $self = shift;
-	my $msg = "MySQLデータベースの処理に失敗しました。\n";
-	$msg .= "KH Coderを終了します。\n";
+	my $msg = kh_msg->get('fatal');
 	
 	if ($self->sql){
-		$msg .= "\n";
-		$msg .= $self->sql;
+		$msg .= "\n\n";
+		$msg .= gui_window->gui_jchar($self->sql);
 	}
-	Jcode::convert(\$msg,'sjis');
 	
 	return $msg;
 }

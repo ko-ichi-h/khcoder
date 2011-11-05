@@ -11,7 +11,7 @@ my @menu0 = (
 	'm_b0_close',
 	#'m_b1_hukugo',
 	#'m_b1_hukugo_te',
-	'm_b2_datacheck',
+	#'m_b2_datacheck',
 );
 
 # メニューの設定：形態素解析が行われていればActive
@@ -1057,11 +1057,13 @@ sub refresh{
 			$self->normalize([
 				'm_b1_hukugo',
 				'm_b1_hukugo_te',
+				'm_b2_datacheck',
 			]);
 		}
 		elsif ($::config_obj->c_or_j eq 'mecab'){
 			$self->normalize([
 				'm_b1_hukugo_te',
+				'm_b2_datacheck',
 			]);
 		}
 		

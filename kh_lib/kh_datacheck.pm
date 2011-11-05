@@ -1,13 +1,14 @@
 package kh_datacheck;
 use strict;
+use kh_msg;
 
 my %errors = (
-	'error_m1'  => '長すぎる見出し行があります（自動修正不可）',
-	'error_c1'  => '文字化けを含む行があります',
-	'error_c2'  => '望ましくない半角記号が含まれている行があります',
-	'error_n1a' => '長すぎる行があります',
-	'error_n1b' => '長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）',
-	'error_mn' => 'H1〜H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）',
+	'error_m1'  => kh_msg->get('error_m1'),#'長すぎる見出し行があります（自動修正不可）',
+	'error_c1'  => kh_msg->get('error_c1'),#'文字化けを含む行があります',
+	'error_c2'  => kh_msg->get('error_c2'),#'望ましくない半角記号が含まれている行があります',
+	'error_n1a' => kh_msg->get('error_n1a'),#'長すぎる行があります',
+	'error_n1b' => kh_msg->get('error_n1b'),#'長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）',
+	'error_mn' => kh_msg->get('error_mn'),#'H1〜H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）',
 );
 
 sub run{
@@ -29,7 +30,7 @@ sub run{
 	) {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => "分析対象ファイルの文字コード判別に失敗しました。\nプロジェクト編集画面で文字コードを指定して下さい。\nプロジェクト編集画面を開くには、メニューから「プロジェクト」→「開く」→「編集」をクリックします。"
+			msg  => ('error_mn')#"分析対象ファイルの文字コード判別に失敗しました。\nプロジェクト編集画面で文字コードを指定して下さい。\nプロジェクト編集画面を開くには、メニューから「プロジェクト」→「開く」→「編集」をクリックします。"
 		);
 		return 0;
 	}
@@ -102,9 +103,14 @@ sub run{
 	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
-			$msg .= "　・$errors{$i}： $num"."行\n";
+			$msg .= "  * $errors{$i}: $num".kh_msg->get('lines')."\n";
 			
-			if ( $errors{$i} =~ /自動修正不可/ ){
+			# 自動修正できるかどうかで分ける
+			if (
+				   $i eq 'error_m1'
+				|| $i eq 'error_n1b'
+				|| $i eq 'error_mn'
+			){
 				++$self->{auto_ng};
 			} else {
 				++$self->{auto_ok};
@@ -112,10 +118,10 @@ sub run{
 		}
 	}
 	if ($msg){
-		$msg = "分析対象ファイル内に以下の問題点が発見されました（要約表示）：\n".$msg;
+		$msg = kh_msg->get('errors_summary')."\n".$msg; # "分析対象ファイル内に以下の問題点が発見されました（要約表示）："
 		$self->{repo_sum} = $msg;
 	} else {
-		$msg = "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。";
+		$msg = kh_msg->get('looks_good'); #"分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。";
 		gui_errormsg->open(
 			type => 'msg',
 			msg  => $msg,
@@ -126,14 +132,15 @@ sub run{
 	}
 	
 	# レポート（詳細）の作成
-	$msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
+	$msg = kh_msg->get('errors_detail')."\n";#"分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
 	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
-			$msg .= "\n■$errors{$i}： $num"."行\n";
+			$msg .= "\n* $errors{$i}: $num".kh_msg->get('lines')."\n";
 			
 			foreach my $h (@{$self->{$i}{array}}){
 				$msg .= "l. $h->[0]\t"; # 行番号
+				my $line;
 				if (length($h->[1]) > 60 ){
 					my $n = 60;
 					while (
@@ -142,10 +149,12 @@ sub run{
 					) {
 						--$n;
 					}
-					$msg .= substr($h->[1],0,$n)."...\n";
+					$line = substr($h->[1],0,$n)."...\n";
 				} else {
-					$msg .= "$h->[1]\n";
+					$line .= "$h->[1]\n";
 				}
+				$line = gui_window->gui_jchar($line,'euc');
+				$msg .= $line;
 			}
 		}
 	}
@@ -167,7 +176,7 @@ sub save{
 			thefile => $path
 		);
 
-	print REPORT $self->{repo_full};
+	print REPORT Jcode->new( $self->{repo_full} )->euc;
 
 	close (REPORT);
 	
@@ -215,18 +224,29 @@ sub edit{
 
 	# レポート（詳細）の再作成
 	if ($self->{auto_ng}){
-		my $msg = "分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
+		my $msg = kh_msg->get('errors_detail')."\n";#"分析対象ファイル内に以下の問題点が発見されました（詳細表示）：\n";
 		foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 			if ($self->{$i}{flag}){
-				unless ( $errors{$i} =~ /自動修正不可/ ){
+			
+				# 自動修正できるかどうかで分ける
+				if (
+					   $i eq 'error_m1'
+					|| $i eq 'error_n1b'
+					|| $i eq 'error_mn'
+				){
 					next;
 				}
 				
+				#unless ( $errors{$i} =~ /自動修正不可/ ){
+				#	next;
+				#}
+				
 				my $num = @{$self->{$i}{array}};
-				$msg .= "\n■$errors{$i}： $num"."行\n";
+				$msg .= "\n* $errors{$i}： $num".kh_msg->get('lines')."\n";
 				
 				foreach my $h (@{$self->{$i}{array}}){
 					$msg .= "l. $h->[0]\t"; # 行番号
+					my $line;
 					if (length($h->[1]) > 60 ){
 						my $n = 60;
 						while (
@@ -235,16 +255,18 @@ sub edit{
 						) {
 							--$n;
 						}
-						$msg .= substr($h->[1],0,$n)."...\n";
+						$line = substr($h->[1],0,$n)."...\n";
 					} else {
-						$msg .= "$h->[1]\n";
+						$line = "$h->[1]\n";
 					}
+					$line = gui_window->gui_jchar($line,'euc');
+					$msg .= $line;
 				}
 			}
 		}
 		$self->{repo_full} = $msg;
 	} else {
-		$self->{repo_full} = "既知の問題点はすべて修正されています。\n";
+		$self->{repo_full} = kh_msg->get('corrected')."\n"; #"既知の問題点はすべて修正されています。\n";
 	}
 	
 	#print "back up [0]: $self->{file_backup}\n";

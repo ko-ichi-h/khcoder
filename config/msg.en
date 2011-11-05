@@ -167,3 +167,29 @@ gui_window::project_edit->target_file:            The Target File:
 gui_window::project_edit->target_char_code:       Encoding of the target file:
 gui_window::project_edit->auto_detect:            Auto detect
 gui_window::project_edit->memo:                   Memo:
+gui_window::datacheck->win_title:                 Checking the target file
+gui_window::datacheck->headmark:                  '*** '
+gui_window::datacheck->details:                   Detailed info on problems:
+gui_window::datacheck->print:                     Print
+gui_window::datacheck->save_as:                   Save as
+gui_window::datacheck->auto_correct:              '   Auto correction of the target file:'
+gui_window::datacheck->close:                     Close
+gui_window::datacheck->exec:                      Execute!
+gui_window::datacheck->save_as_win:               Saving the detailed info on problems
+gui_window::datacheck->saved:                     '*** Detailed info on problems saved:'
+gui_window::datacheck->correction_done:           '*** Auto correction was performed:'
+gui_window::datacheck->file_backup:               '* Back-up of target file was saved as:'
+gui_window::datacheck->file_diff:                 '* Modification list (diff) was saved as:'
+gui_window::datacheck->not_complete:              '* Could not correct some errors. Please correct it manually.'
+gui_window::datacheck->looks_complete:            All known problems are corrected.
+kh_datacheck->error_m1:                           Too long heading line (cannot correct automatically)
+kh_datacheck->error_c1:                           Some lines contain Mojibake
+kh_datacheck->error_c2:                           Unsuitable symbols
+kh_datacheck->error_n1a:                          Too long lines
+kh_datacheck->error_n1b:                          Too long lines (cannot correct automatically)
+kh_datacheck->error_mn:                           Incorrect use of H1 - H5 tags (cannot correct automatically)
+kh_datacheck->errors_summary:                     Following probrems were found (summary):
+kh_datacheck->errors_detail:                      Following probrems were found (details):
+kh_datacheck->looks_good:                         "We found no known problems.\nPlease proceed to pre-processing."
+kh_datacheck->corrected:                          All known problems are corrected.
+kh_datacheck->lines:                              " line(s)"

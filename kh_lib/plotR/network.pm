@@ -48,6 +48,13 @@ sub new{
 	}
 	$r_command .= "smaller_nodes <- $args{smaller_nodes}\n";
 
+	if ($args{font_bold} == 1){
+		$args{font_bold} = 2;
+	} else {
+		$args{font_bold} = 1;
+	}
+	$r_command .= "text_font <- $args{font_bold}\n";
+
 	#$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
@@ -749,6 +756,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 			pos = 4,
 			offset = 0.25,
+			font = text_font,
 			cex = f_size,
 			col = "black"
 		)
@@ -759,6 +767,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 			#pos = 4,
 			#offset = 1,
+			font = text_font,
 			cex = f_size,
 			col = "black"
 		)

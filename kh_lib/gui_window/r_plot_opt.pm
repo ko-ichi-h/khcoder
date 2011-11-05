@@ -72,8 +72,23 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+
+	if ( $args{command_f} =~ /text_font <\- ([0-9]+)\n/ ){
+		if ($1 == 2 ){
+			$self->{check_bold_text} = 1;
+		} else {
+			$self->{check_bold_text} = 0;
+		}
+		
+		$ff->Checkbutton(
+				-text     => $self->gui_jchar('太字','euc'),
+				-variable => \$self->{check_bold_text},
+				-anchor => 'w',
+		)->pack(-anchor => 'w', -side => 'left');
+	}
+
 	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
+		-text => $self->gui_jchar(' プロットサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
