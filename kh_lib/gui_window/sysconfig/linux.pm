@@ -171,7 +171,7 @@ sub __new{
 
 	$self->{entry_stan1}->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan1},],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
 	$self->{btn_stan2} = $fra_jar->Button(
@@ -192,7 +192,7 @@ sub __new{
 
 	$self->{entry_stan2}->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan2},],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['KDE', 'XDND', 'Sun'])
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
 	$self->{btn_stan3} = $fra_tag->Button(
@@ -397,11 +397,35 @@ sub refine_cj{
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
 
-		$self->{label_stem1}->configure(-state => 'disable');
-		$self->{label_stem2}->configure(-state => 'disable');
-		$self->{opt_stem}->configure(-state => 'disable');
-		$self->{btn_stem}->configure(-state => 'disable');
+		$self->{label_stem1}->configure(-state => 'normal');
+		$self->{label_stem2}->configure(-state => 'normal');
+		$self->{opt_stem}->configure(-state => 'normal');
+		$self->{btn_stem}->configure(-state => 'normal');
 
+		$self->{label_stan1}->configure(-state => 'disable');
+		$self->{label_stan2}->configure(-state => 'disable');
+		$self->{label_stan3}->configure(-state => 'disable');
+		$self->{label_stan4}->configure(-state => 'disable');
+		$self->{opt_stan}->configure(-state => 'disable');
+		$self->{btn_stan1}->configure(-state => 'disable');
+		$self->{btn_stan2}->configure(-state => 'disable');
+		$self->{btn_stan3}->configure(-state => 'disable');
+		$self->{entry_stan1}->configure(-state => 'disable');
+		$self->{entry_stan2}->configure(-state => 'disable');
+	}
+	elsif ($self->{c_or_j} eq 'stanford'){
+		$self->entry1->configure(-state => 'disable');
+		$self->btn1->configure(-state => 'disable');
+		$self->lb1->configure(-state => 'disable');
+
+		$self->entry2->configure(-state => 'disable');
+		$self->btn2->configure(-state => 'disable');
+		$self->lb2->configure(-state => 'disable');
+
+		$self->{label_stem1}->configure(-state => 'normal');
+		$self->{label_stem2}->configure(-state => 'normal');
+		$self->{opt_stem}->configure(-state => 'normal');
+		$self->{btn_stem}->configure(-state => 'normal');
 
 		$self->{label_stan1}->configure(-state => 'normal');
 		$self->{label_stan2}->configure(-state => 'normal');
