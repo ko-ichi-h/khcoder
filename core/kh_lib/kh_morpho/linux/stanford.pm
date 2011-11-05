@@ -1,7 +1,7 @@
-package kh_morpho::win32::stanford;
+package kh_morpho::linux::stanford;
 
-use base qw(kh_morpho::win32);
-use kh_morpho::win32::stanford::en;
+use base qw(kh_morpho::linux);
+use kh_morpho::linux::stanford::en;
 
 use strict;
 use Net::Telnet ();
@@ -23,32 +23,14 @@ sub _run_morpho{
 	require Text::Unidecode;
 
 	my $self = shift;	
-	my $class = "kh_morpho::win32::stanford::".$::config_obj->stanford_lang;
+	my $class = "kh_morpho::linux::stanford::".$::config_obj->stanford_lang;
 	bless $self, $class;
 
 	# Stanford POS Taggerのサーバーを起動
-	require Win32::SearchPath;
-	my $java_path = Win32::SearchPath::SearchPath('java');
-	$java_path = $sjis->decode($java_path)
-		unless utf8::is_utf8( $java_path );
-
-	unless (-e $java_path && length($java_path)){
-		gui_errormsg->open(
-			msg => kh_msg->get('no_java'),
-			type => 'msg'
-		);
-		exit;
-	}
-
-	my $p1 = $sjis->decode($::config_obj->stanf_jar_path)
-		unless utf8::is_utf8( $::config_obj->stanf_jar_path );
-	my $p2 = $sjis->decode($::config_obj->stanf_tagger_path)
-		unless utf8::is_utf8( $::config_obj->stanf_tagger_path );
+	my $p1 = $::config_obj->stanf_jar_path;
+	my $p2 = $::config_obj->stanf_tagger_path;
 	
-	unless (
-		    -e $::config_obj->stanf_jar_path
-		&& -e $::config_obj->stanf_tagger_path
-	){
+	unless (-e $p1 && -e $p2){
 		gui_errormsg->open(
 			msg => kh_msg->get('error_confg'),
 			type => 'msg'
@@ -58,24 +40,16 @@ sub _run_morpho{
 	
 	my $cmd_line  =
 		 'java  -mx300m  -cp "'
-		.$p1
+		.$::config_obj->stanf_jar_path
 		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
-		.$2
-		.'"'
-	;
+		.$::config_obj->stanf_tagger_path
+		.'"';
 	
-	require Win32::Process;
-	my $process;
-	Win32::Process::Create(
-		$process,
-		$sjis->encode($java_path),
-		$sjis->encode($cmd_line),
-		0,
-		Win32::Process->CREATE_NO_WINDOW,
-		$::config_obj->cwd,
-	) || $self->Exec_Error("Wi32::Process can not start");
+	require Proc::Background;
+	my $process = Proc::Background->new($cmd_line)
+		|| $self->Exec_Error("Wi32::Process can not start");
 	
-	print "Starting server, pid: ", $process->GetProcessID(), ", Connecting.";
+	print "Starting server, pid: ", $process->pid(), ", Connecting.";
 
 	# Stanford POS Taggerのクライアントを準備
 	$self->{client} = undef;
@@ -190,7 +164,7 @@ sub _run_morpho{
 	close ($fh_out);
 
 	print " ok.\n";
-	$process->Kill(1);
+	$process->die;
 
 	return 1;
 }

@@ -162,8 +162,35 @@ gui_window::project_open->new:                    新規
 gui_window::project_open->open:                   開く
 gui_window::project_open->opened:                 "そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
 gui_window::project_open->select_one:             プロジェクトを選択してください。
-gui_window::project_edit->win_title:               説明（メモ）の編集
-gui_window::project_edit->target_file:             分析対象ファイル：
-gui_window::project_edit->target_char_code:        分析対象ファイルの文字コード：
-gui_window::project_edit->auto_detect:             自動判別
-gui_window::project_edit->memo:                    説明（メモ）：
+gui_window::project_edit->win_title:              説明（メモ）の編集
+gui_window::project_edit->target_file:            分析対象ファイル：
+gui_window::project_edit->target_char_code:       分析対象ファイルの文字コード：
+gui_window::project_edit->auto_detect:            自動判別
+gui_window::project_edit->memo:                   説明（メモ）：
+gui_window::datacheck->win_title:                 分析対象ファイルのチェックと修正
+gui_window::datacheck->headmark:                  '■■ '
+gui_window::datacheck->details:                   見つかった問題点の詳細：
+gui_window::datacheck->print:                     画面に表示
+gui_window::datacheck->save_as:                   ファイルに保存
+gui_window::datacheck->auto_correct:              '   分析対象ファイルの自動修正：'
+gui_window::datacheck->close:                     閉じる
+gui_window::datacheck->exec:                      実行
+gui_window::datacheck->save_as_win:               分析対象ファイル内に見つかった問題点の詳細を保存
+gui_window::datacheck->saved:                     ●見つかった問題点の詳細を次のファイルに保存しました：
+gui_window::datacheck->correction_done:           ●自動修正を行いました。
+gui_window::datacheck->file_backup:               ○修正前の分析対象ファイルを次の場所にバックアップしました：
+gui_window::datacheck->file_diff:                 ○修正箇所のリスト（diff）を次のファイルに保存しました：
+gui_window::datacheck->not_complete:              ○自動的に修正できない箇所が残っています。分析対象ファイルを直接修正して下さい。
+gui_window::datacheck->looks_complete:            ○分析対象ファイル内に発見された既知の問題点はすべて修正されました。
+kh_datacheck->error_m1:                           長すぎる見出し行があります（自動修正不可）
+kh_datacheck->error_c1:                           文字化けを含む行があります
+kh_datacheck->error_c2:                           望ましくない半角記号が含まれている行があります
+kh_datacheck->error_n1a:                          長すぎる行があります
+kh_datacheck->error_n1b:                          長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）
+kh_datacheck->error_mn:                           H1～H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）
+kh_datacheck->errors_summary:                     分析対象ファイル内に以下の問題点が発見されました（要約表示）：
+kh_datacheck->looks_good:                         "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。"
+kh_datacheck->errors_detail:                      分析対象ファイル内に以下の問題点が発見されました（詳細表示）：
+kh_datacheck->corrected:                          既知の問題点はすべて修正されています。
+kh_datacheck->lines:                              行
+gui_errormsg::mysql->fatal:                       "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"

@@ -4,8 +4,10 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
+use utf8;
+
 #------------------#
-#   Window¤ò³«¤¯   #
+#   Windowã‚’é–‹ã   #
 #------------------#
 
 sub _new{
@@ -14,7 +16,7 @@ sub _new{
 
 	my $mw = $self->win_obj;
 
-	$mw->title( $self->gui_jt('Ê¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¤Î¥Á¥§¥Ã¥¯¤È½¤Àµ','euc') );
+	$mw->title( $self->gui_jt( kh_msg->get('win_title') ) ); # 'åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒã‚§ãƒƒã‚¯ã¨ä¿®æ­£','euc'
 
 	my $fr_res = $mw->LabFrame(
 		-label       => 'Results & Messages',
@@ -41,7 +43,9 @@ sub _new{
 
 	$text_widget->insert(
 		'end',
-		gui_window->gui_jchar( '¢£¢£'.$self->{dacheck_obj}->{repo_sum}."\n", 'euc' )
+		kh_msg->get('headmark') # â– â–  
+		.$self->{dacheck_obj}->{repo_sum}
+		."\n"
 	);
 
 	my $fr_act = $mw->LabFrame(
@@ -57,17 +61,18 @@ sub _new{
 
 	my $fr_act0 = $fr_act->Frame()->pack(-fill => 'x');
 	$fr_act0->Label(
-		-text => $self->gui_jchar('¸«¤Ä¤«¤Ã¤¿ÌäÂêÅÀ¤Î¾ÜºÙ¡§'),
+		-text => kh_msg->get('details'),#gui_jchar('è¦‹ã¤ã‹ã£ãŸå•é¡Œç‚¹ã®è©³ç´°ï¼š'),
 	)->pack(-anchor=>'w', -side => 'left');
 
 	$self->{bttn_details_print} = $fr_act0->Button(
-		-text => $self->gui_jchar('²èÌÌ¤ËÉ½¼¨'),
+		-text => kh_msg->get('print'),#$self->gui_jchar('ç”»é¢ã«è¡¨ç¤º'),
 		-font => "TKFN",
 		-command => sub {
 			$text_widget->insert(
 				'end',
-				gui_window->gui_jchar(
-					'¢£¢£'.$self->{dacheck_obj}->{repo_full}."\n",
+				kh_msg->get('headmark')
+				.gui_window->gui_jchar(
+					$self->{dacheck_obj}->{repo_full}."\n",
 					'euc'
 				)
 			);
@@ -76,7 +81,7 @@ sub _new{
 	)->pack(-anchor=>'w', -side => 'left',-padx => 1);
 
 	$self->{bttn_details_save} = $fr_act0->Button(
-		-text => $self->gui_jchar('¥Õ¥¡¥¤¥ë¤ËÊİÂ¸'),
+		-text => kh_msg->get('save_as'),#$self->gui_jchar('ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜'),
 		-font => "TKFN",
 		#-width => 8,
 		-command => sub {
@@ -85,11 +90,11 @@ sub _new{
 	)->pack(-anchor=>'w', -side => 'left', -padx => 1);
 
 	$fr_act0->Label(
-		-text => $self->gui_jchar('¡¡¡¡Ê¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¤Î¼«Æ°½¤Àµ¡§'),
+		-text => kh_msg->get('auto_correct'),#$self->gui_jchar('ã€€ã€€åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã®è‡ªå‹•ä¿®æ­£ï¼š'),
 	)->pack(-anchor=>'w', -side => 'left');
 
 	$self->{bttn_auto_collect} = $self->{bt_exec} = $fr_act0->Button(
-		-text => $self->gui_jchar('¼Â¹Ô'),
+		-text => kh_msg->get('exec'),#$self->gui_jchar('å®Ÿè¡Œ'),
 		-font => "TKFN",
 		#-width => 8,
 		-state => 'disabled',
@@ -99,7 +104,7 @@ sub _new{
 	)->pack(-anchor=>'w', -side => 'left');
 
 	$mw->Button(
-		-text => $self->gui_jchar('ÊÄ¤¸¤ë'),
+		-text => kh_msg->get('close'),#$self->gui_jchar('é–‰ã˜ã‚‹'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub {
@@ -114,12 +119,12 @@ sub _new{
 }
 
 #----------------------#
-#   ·ë²Ì¤Î¾ÜºÙ¤òÊİÂ¸   #
+#   çµæœã®è©³ç´°ã‚’ä¿å­˜   #
 
 sub save{
 	my $self = shift;
 
-	# ¥Õ¥¡¥¤¥ëÌ¾¤Î¼èÆÀ
+	# ãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾—
 	my @types = (
 		[ "text file",[qw/.txt/] ],
 		["All files",'*']
@@ -128,7 +133,9 @@ sub save{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('Ê¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ëÆâ¤Ë¸«¤Ä¤«¤Ã¤¿ÌäÂêÅÀ¤Î¾ÜºÙ¤òÊİÂ¸'),
+			$self->gui_jt(
+				kh_msg->get('save_as_win')#'åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«å†…ã«è¦‹ã¤ã‹ã£ãŸå•é¡Œç‚¹ã®è©³ç´°ã‚’ä¿å­˜'
+			),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -138,52 +145,57 @@ sub save{
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 
-	# ÊİÂ¸
+	# ä¿å­˜
 	$self->{dacheck_obj}->save($path);
 
-	# ·ë²ÌÉ½¼¨
+	# çµæœè¡¨ç¤º
 	$path = Jcode->new($path)->euc;
 	$self->{text_widget}->insert(
 		'end',
-		gui_window->gui_jchar(
-			"¡ü¸«¤Ä¤«¤Ã¤¿ÌäÂêÅÀ¤Î¾ÜºÙ¤ò¼¡¤Î¥Õ¥¡¥¤¥ë¤ËÊİÂ¸¤·¤Ş¤·¤¿¡§\n¡¡$path\n\n",
-			'euc'
-		)
+		kh_msg->get('saved')#"â—è¦‹ã¤ã‹ã£ãŸå•é¡Œç‚¹ã®è©³ç´°ã‚’æ¬¡ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜ã—ã¾ã—ãŸï¼š"
+		."\nã€€$path\n\n",
 	);
 	$self->{text_widget}->yview(moveto => 1);
 }
 
 #--------------#
-#   ¼«Æ°½¤Àµ   #
+#   è‡ªå‹•ä¿®æ­£   #
 
 sub edit{
 	my $self = shift;
 	
 	$self->{dacheck_obj}->edit;
 	
-	# ·ë²ÌÉ½¼¨
+	# çµæœè¡¨ç¤º
 	my $msg = '';
-	my $path  = Jcode->new( $self->{dacheck_obj}->{file_backup} )->euc;
-	my $path2 = Jcode->new( $self->{dacheck_obj}->{file_diff} )->euc;
-	$msg .= "¡ü¼«Æ°½¤Àµ¤ò¹Ô¤¤¤Ş¤·¤¿¡£\n\n";
-	$msg .= "¡û½¤ÀµÁ°¤ÎÊ¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¤ò¼¡¤Î¾ì½ê¤Ë¥Ğ¥Ã¥¯¥¢¥Ã¥×¤·¤Ş¤·¤¿¡§\n";
-	$msg .= "¡¡$path\n\n";
+	my $path  = gui_window->gui_jchar( $self->{dacheck_obj}->{file_backup} );
+	my $path2 = gui_window->gui_jchar( $self->{dacheck_obj}->{file_diff} );
+	#$msg .= kh_msg->get('headmark');#"â—è‡ªå‹•ä¿®æ­£ã‚’è¡Œã„ã¾ã—ãŸã€‚\n\n";
+	$msg .= kh_msg->get('correction_done');
+	$msg .= "\n\n";
+	$msg .= kh_msg->get('file_backup');
+	$msg .= "\n";
+	#$msg .= "â—‹ä¿®æ­£å‰ã®åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¬¡ã®å ´æ‰€ã«ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã—ã¾ã—ãŸï¼š\n";
+	$msg .= "ã€€$path\n\n";
 	
-	$msg .= "¡û½¤Àµ²Õ½ê¤Î¥ê¥¹¥È¡Êdiff¡Ë¤ò¼¡¤Î¥Õ¥¡¥¤¥ë¤ËÊİÂ¸¤·¤Ş¤·¤¿¡§\n";
-	$msg .= "¡¡$path2\n\n";
+	$msg .= kh_msg->get('file_diff');
+	$msg .= "\n";
+	#$msg .= "â—‹ä¿®æ­£ç®‡æ‰€ã®ãƒªã‚¹ãƒˆï¼ˆdiffï¼‰ã‚’æ¬¡ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜ã—ã¾ã—ãŸï¼š\n";
+	$msg .= "ã€€$path2\n\n";
 	
 	if ($self->{dacheck_obj}->{auto_ng}){
-		$msg .= "¡û¼«Æ°Åª¤Ë½¤Àµ¤Ç¤­¤Ê¤¤²Õ½ê¤¬»Ä¤Ã¤Æ¤¤¤Ş¤¹¡£Ê¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¤òÄ¾ÀÜ½¤Àµ¤·¤Æ²¼¤µ¤¤¡£\n\n";
+		$msg .= kh_msg->get('not_complete');
+		#$msg .= "â—‹è‡ªå‹•çš„ã«ä¿®æ­£ã§ããªã„ç®‡æ‰€ãŒæ®‹ã£ã¦ã„ã¾ã™ã€‚åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç›´æ¥ä¿®æ­£ã—ã¦ä¸‹ã•ã„ã€‚\n\n";
+		$msg .= "\n\n";
 	} else {
-		$msg .= "¡ûÊ¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ëÆâ¤ËÈ¯¸«¤µ¤ì¤¿´ûÃÎ¤ÎÌäÂêÅÀ¤Ï¤¹¤Ù¤Æ½¤Àµ¤µ¤ì¤Ş¤·¤¿¡£\n\n";
+		$msg .= kh_msg->get('looks_complete');
+		#$msg .= "â—‹åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«å†…ã«ç™ºè¦‹ã•ã‚ŒãŸæ—¢çŸ¥ã®å•é¡Œç‚¹ã¯ã™ã¹ã¦ä¿®æ­£ã•ã‚Œã¾ã—ãŸã€‚\n\n";
+		$msg .= "\n";
 	}
 	
 	$self->{text_widget}->insert(
 		'end',
-		gui_window->gui_jchar(
-			$msg,
-			'euc'
-		)
+		$msg,
 	);
 	$self->{text_widget}->yview(moveto => 1);
 
@@ -194,7 +206,7 @@ sub edit{
 }
 
 #--------------#
-#   ½ªÎ»½èÍı   #
+#   çµ‚äº†å‡¦ç†   #
 
 sub end{
 	my $self = shift;
@@ -202,7 +214,7 @@ sub end{
 }
 
 #--------------#
-#   WindowÌ¾   #
+#   Windowå   #
 
 sub win_name{
 	return 'w_datacheck';

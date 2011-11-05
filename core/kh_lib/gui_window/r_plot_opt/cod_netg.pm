@@ -239,6 +239,7 @@ sub calc{
 		use_freq_as_size  => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize => $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		smaller_nodes     => $self->gui_jg( $self->{check_smaller_nodes} ),
+		font_bold        => $self->gui_jg( $self->{check_bold_text} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command         => $r_command,

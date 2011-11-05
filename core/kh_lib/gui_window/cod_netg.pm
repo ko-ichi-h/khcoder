@@ -333,8 +333,14 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$ff->Checkbutton(
+			-text     => $self->gui_jchar('太字','euc'),
+			-variable => \$self->{check_bold_text},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
 	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
+		-text => $self->gui_jchar(' プロットサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -665,6 +671,7 @@ sub _calc{
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
+		font_bold        => $self->gui_jg( $self->{check_bold_text} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command      => $r_command,
