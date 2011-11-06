@@ -423,10 +423,10 @@ sub refine_cj{
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
 
-		$self->{label_stem1}->configure(-state => 'normal');
-		$self->{label_stem2}->configure(-state => 'normal');
-		$self->{opt_stem}->configure(-state => 'normal');
-		$self->{btn_stem}->configure(-state => 'normal');
+		$self->{label_stem1}->configure(-state => 'disable');
+		$self->{label_stem2}->configure(-state => 'disable');
+		$self->{opt_stem}->configure(-state => 'disable');
+		$self->{btn_stem}->configure(-state => 'disable');
 
 		$self->{label_stan1}->configure(-state => 'normal');
 		$self->{label_stan2}->configure(-state => 'normal');
