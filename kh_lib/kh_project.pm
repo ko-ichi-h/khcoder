@@ -66,6 +66,12 @@ sub read_hinshi_setting{
 	# 品詞設定の読み込み
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
 	$sql .= $::config_obj->c_or_j;
+	
+	# Stanford POS Taggerの場合は言語ごとに異なる品詞設定ファイルを読む
+	if ($::config_obj->c_or_j eq 'stanford'){
+		$sql .= '_'.$::config_obj->stanford_lang;
+	}
+	
 	my $h = $dbh_csv->prepare($sql) or
 		gui_errormsg->open(
 			type => 'file',

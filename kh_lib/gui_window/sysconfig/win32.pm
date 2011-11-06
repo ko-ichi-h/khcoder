@@ -170,6 +170,7 @@ sub __new{
 		options =>
 			[
 				[ kh_msg->get('l_en') => 'en'],#'English'
+				#[ kh_msg->get('l_de') => 'de'],#'German *'
 			],
 		variable => \$self->{opt_stan_val},
 	);
