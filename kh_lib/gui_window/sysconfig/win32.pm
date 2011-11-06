@@ -97,53 +97,6 @@ sub __new{
 	
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
-	
-	# Stemming
-	
-	$lfra->Radiobutton(
-		-text     => kh_msg->get('stemming'),#$self->gui_jchar('Stemming with "Snowball"'),
-		-font     => 'TKFN',
-		-variable => \$self->{c_or_j},
-		-value    => 'stemming',
-		-command  => sub{ $self = $self->refine_cj },
-	)->pack(-anchor => 'w');
-
-	my $fra_stem = $lfra->Frame()->pack(-anchor => 'w');
-	
-	$self->{label_stem1} = $fra_stem->Label(
-		-text => kh_msg->get('lang'),#'Language:'
-	)->pack(-side => 'left',-anchor => 'w');
-
-	$self->{opt_stem} = gui_widget::optmenu->open(
-		parent  => $fra_stem,
-		pack    => {-anchor=>'w', -side => 'left'},
-		options =>
-			[
-				[ kh_msg->get('l_en') => 'en'],#'English'
-				[ kh_msg->get('l_nl') => 'nl'],#'Dutch *'
-				[ kh_msg->get('l_fr') => 'fr'],#'French *'
-				[ kh_msg->get('l_de') => 'de'],#'German *'
-				[ kh_msg->get('l_it') => 'it'],#'Italian *'
-				[ kh_msg->get('l_pt') => 'pt'],#'Portuguese *'
-				[ kh_msg->get('l_es') => 'es'],#'Spanish *'
-			],
-		variable => \$self->{opt_stem_val},
-	);
-	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
-
-	$self->{label_stem2} = $fra_stem->Label(
-		-text => kh_msg->get('stopwords'),#'  Stop words:'
-	)->pack(-side => 'left',-anchor => 'w');
-
-	$self->{btn_stem} = $fra_stem->Button(
-		-text => kh_msg->get('config'),#'config',
-		-borderwidth => 1,
-		-command => sub {
-			my $class = "gui_window::stop_words::stemming_";
-			$class   .= "$self->{opt_stem_val}";
-			$class->open();
-		}
-	)->pack(-side => 'left');
 
 	# POS Tagger
 
@@ -232,6 +185,53 @@ sub __new{
 		-command => sub {
 			my $class = "gui_window::stop_words::stanford_";
 			$class   .= "$self->{opt_stan_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
+	# Stemming
+	
+	$lfra->Radiobutton(
+		-text     => kh_msg->get('stemming'),#$self->gui_jchar('Stemming with "Snowball"'),
+		-font     => 'TKFN',
+		-variable => \$self->{c_or_j},
+		-value    => 'stemming',
+		-command  => sub{ $self = $self->refine_cj },
+	)->pack(-anchor => 'w');
+
+	my $fra_stem = $lfra->Frame()->pack(-anchor => 'w');
+	
+	$self->{label_stem1} = $fra_stem->Label(
+		-text => kh_msg->get('lang'),#'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{opt_stem} = gui_widget::optmenu->open(
+		parent  => $fra_stem,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				[ kh_msg->get('l_en') => 'en'],#'English'
+				[ kh_msg->get('l_nl') => 'nl'],#'Dutch *'
+				[ kh_msg->get('l_fr') => 'fr'],#'French *'
+				[ kh_msg->get('l_de') => 'de'],#'German *'
+				[ kh_msg->get('l_it') => 'it'],#'Italian *'
+				[ kh_msg->get('l_pt') => 'pt'],#'Portuguese *'
+				[ kh_msg->get('l_es') => 'es'],#'Spanish *'
+			],
+		variable => \$self->{opt_stem_val},
+	);
+	$self->{opt_stem}->set_value($::config_obj->stemming_lang);
+
+	$self->{label_stem2} = $fra_stem->Label(
+		-text => kh_msg->get('stopwords'),#'  Stop words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$self->{btn_stem} = $fra_stem->Button(
+		-text => kh_msg->get('config'),#'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::stemming_";
+			$class   .= "$self->{opt_stem_val}";
 			$class->open();
 		}
 	)->pack(-side => 'left');
