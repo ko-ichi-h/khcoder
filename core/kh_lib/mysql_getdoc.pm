@@ -45,7 +45,10 @@ sub get{
 			genkei LEFT JOIN hyoso ON hyoso.genkei_id = genkei.id
 		where
 			genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = 'HTMLタグ'
+			AND (
+				   hselection.name = 'HTMLタグ'
+				|| hselection.name = 'HTML_TAG'
+			)
 	",1)->hundle;
 	while (my $i = $html->fetch){
 		$for_color{$i->[0]} = 'html';

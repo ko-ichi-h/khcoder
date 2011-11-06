@@ -499,7 +499,17 @@ sub reform{
 			$temp{$i->[0]} = 1;
 		}
 	}
-	$con .= "(9999,'その他')";
+	
+	# morpho_analyzer
+	my $other_hinshi = 'OTHER';
+	if (
+		   $::config_obj->c_or_j eq 'chasen'
+		|| $::config_obj->c_or_j eq 'mecab'
+	){
+		$other_hinshi = 'その他';
+	}
+	
+	$con .= "(9999,'$other_hinshi')";
 
 	mysql_exec->do("
 		INSERT
@@ -963,7 +973,10 @@ sub tag_fix{
 		WHERE 
 			    hyoso.genkei_id = genkei.id
 			AND genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = \'タグ\'
+			AND (
+				   hselection.name = \'タグ\'
+				|| hselection.name = \'TAG\'
+			)
 	",1)->hundle;
 	while (my $i = $h->fetch){
 		my $name = $i->[1];
@@ -984,7 +997,10 @@ sub tag_fix{
 		FROM genkei, hselection
 		WHERE 
 			    genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = \'タグ\'
+			AND (
+				   hselection.name = \'タグ\'
+				|| hselection.name = \'TAG\'
+			)
 	",1)->hundle;
 	while (my $i = $k->fetch){
 		my $name = $i->[1];
@@ -1003,7 +1019,10 @@ sub tag_fix{
 		FROM genkei_fin, hselection
 		WHERE 
 			    genkei_fin.khhinshi_id = hselection.khhinshi_id
-			AND hselection.name = \'タグ\'
+			AND (
+				   hselection.name = \'タグ\'
+				|| hselection.name = \'TAG\'
+			)
 	",1)->hundle;
 	while (my $i = $k->fetch){
 		my $name = $i->[1];

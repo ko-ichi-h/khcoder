@@ -270,7 +270,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTMLタグ'){
+		if ($i->[1] eq 'HTMLタグ' || $i->[1] eq 'HTML_TAG'){
 			$self->{use_html} = 1;
 		}
 	}

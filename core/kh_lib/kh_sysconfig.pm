@@ -158,8 +158,8 @@ sub reset_parm{
 			) or die;
 			my @table = (
 				"1, 'ALL', 'ALL', ''",
-				"99999,'HTMLタグ','タグ','HTML'",
-				"11,'タグ','タグ',''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
 			);
 			foreach my $i (@table){
 				$dbh->do("
@@ -190,8 +190,8 @@ sub reset_parm{
 				"30, 'Adv',  'RB', ''",
 				"35, 'Verb',  'VB', ''",
 				"40, 'W',  'W', ''",
-				"99999,'HTMLタグ','タグ','HTML'",
-				"11,'タグ','タグ',''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
 			);
 			foreach my $i (@table){
 				$dbh->do("
@@ -390,19 +390,19 @@ sub stopwords_current{
 	return \@words;
 }
 
-sub use_sonota{
-	my $self = shift;
-	my $new = shift;
-	if ( length($new) > 0 ){
-		$self->{use_sonota} = $new;
-	}
-
-	if ( $self->{use_sonota} ){
-		return $self->{use_sonota};
-	} else {
-		return 0;
-	}
-}
+#sub use_sonota{
+#	my $self = shift;
+#	my $new = shift;
+#	if ( length($new) > 0 ){
+#		$self->{use_sonota} = $new;
+#	}
+#
+#	if ( $self->{use_sonota} ){
+#		return $self->{use_sonota};
+#	} else {
+#		return 0;
+#	}
+#}
 
 sub hukugo_chasenrc{
 	my $self = shift;
