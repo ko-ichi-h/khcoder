@@ -26,7 +26,8 @@ sub readin{
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
 		|| ! -e "./config/hinshi_stemming"
-		|| ! -e "./config/hinshi_stanford"
+		|| ! -e "./config/hinshi_stanford_en"
+		|| ! -e "./config/hinshi_stanford_de"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -171,10 +172,10 @@ sub reset_parm{
 			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
 
-		# Stanford POS Tagger用
-		unless (-e "./config/hinshi_stanford"){
+		# Stanford POS Tagger用（英語）
+		unless (-e "./config/hinshi_stanford_en"){
 			$dbh->do(
-				"CREATE TABLE hinshi_stanford (
+				"CREATE TABLE hinshi_stanford_en (
 					hinshi_id INTEGER,
 					kh_hinshi CHAR(225),
 					condition1 CHAR(225),
@@ -195,13 +196,87 @@ sub reset_parm{
 			);
 			foreach my $i (@table){
 				$dbh->do("
-					INSERT INTO hinshi_stanford
+					INSERT INTO hinshi_stanford_en
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )
 				") or die($i);
 			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
+
+		# Stanford POS Tagger用（ドイツ語）
+		unless (-e "./config/hinshi_stanford_de"){
+			$dbh->do(
+				"CREATE TABLE hinshi_stanford_de (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'ADJA', 'ADJA', ''",
+				"2, 'ADJD', 'ADJD', ''",
+				"3, 'ADV', 'ADV', ''",
+				"4, 'APPR', 'APPR', ''",
+				"5, 'APPRART', 'APPRART', ''",
+				"6, 'APPO', 'APPO', ''",
+				"7, 'APZR', 'APZR', ''",
+				"8, 'ART', 'ART', ''",
+				"9, 'CARD', 'CARD', ''",
+				"10, 'FM', 'FM', ''",
+				"11, 'ITJ', 'ITJ', ''",
+				"12, 'KOUI', 'KOUI', ''",
+				"13, 'KOUS', 'KOUS', ''",
+				"14, 'KON', 'KON', ''",
+				"15, 'KOKOM', 'KOKOM', ''",
+				"16, 'NN', 'NN', ''",
+				"17, 'NE', 'NE', ''",
+				"18, 'PDS', 'PDS', ''",
+				"19, 'PDAT', 'PDAT', ''",
+				"20, 'PIS', 'PIS', ''",
+				"21, 'PIAT', 'PIAT', ''",
+				"22, 'PIDAT', 'PIDAT', ''",
+				"23, 'PPER', 'PPER', ''",
+				"24, 'PPOSS', 'PPOSS', ''",
+				"25, 'PPOSAT', 'PPOSAT', ''",
+				"26, 'PRELS', 'PRELS', ''",
+				"27, 'PRELAT', 'PRELAT', ''",
+				"28, 'PRF', 'PRF', ''",
+				"29, 'PWS', 'PWS', ''",
+				"30, 'PWAT', 'PWAT', ''",
+				"31, 'PWAV', 'PWAV', ''",
+				"32, 'PAV', 'PAV', ''",
+				"33, 'PTKZU', 'PTKZU', ''",
+				"34, 'PTKNEG', 'PTKNEG', ''",
+				"35, 'PTKVZ', 'PTKVZ', ''",
+				"36, 'PTKANT', 'PTKANT', ''",
+				"37, 'PTKA', 'PTKA', ''",
+				"38, 'TRUNC', 'TRUNC', ''",
+				"39, 'VVFIN', 'VVFIN', ''",
+				"40, 'VVIMP', 'VVIMP', ''",
+				"41, 'VVINF', 'VVINF', ''",
+				"42, 'VVIZU', 'VVIZU', ''",
+				"43, 'VVPP', 'VVPP', ''",
+				"44, 'VAFIN', 'VAFIN', ''",
+				"45, 'VAIMP', 'VAIMP', ''",
+				"46, 'VAINF', 'VAINF', ''",
+				"47, 'VAPP', 'VAPP', ''",
+				"48, 'VMFIN', 'VMFIN', ''",
+				"49, 'VMINF', 'VMINF', ''",
+				"50, 'VMPP', 'VMPP', ''",
+				"51, 'XY', 'XY', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_stanford_de
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+
 
 		$dbh->disconnect;
 }

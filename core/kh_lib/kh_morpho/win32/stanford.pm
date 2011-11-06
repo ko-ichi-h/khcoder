@@ -2,6 +2,7 @@ package kh_morpho::win32::stanford;
 
 use base qw(kh_morpho::win32);
 use kh_morpho::win32::stanford::en;
+use kh_morpho::win32::stanford::de;
 
 use strict;
 use Net::Telnet ();
@@ -60,9 +61,11 @@ sub _run_morpho{
 		 'java  -mx300m  -cp "'
 		.$p1
 		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
-		.$2
+		.$p2
 		.'"'
 	;
+	
+	#print "cmd: $cmd_line\n";
 	
 	require Win32::Process;
 	my $process;
@@ -71,7 +74,7 @@ sub _run_morpho{
 		$sjis->encode($java_path),
 		$sjis->encode($cmd_line),
 		0,
-		Win32::Process->CREATE_NO_WINDOW,
+		'',#Win32::Process->CREATE_NO_WINDOW,
 		$::config_obj->cwd,
 	) || $self->Exec_Error("Wi32::Process can not start");
 	
@@ -243,7 +246,7 @@ sub _tokenize_stem{
 		print " .";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
-	$self->{client}->print($t);
+	$self->{client}->print( $t );
 	my @lines = $self->{client}->getlines;
 	$self->{client}->close;
 	
