@@ -194,3 +194,10 @@ kh_datacheck->errors_detail:                      分析対象ファイル内に
 kh_datacheck->corrected:                          既知の問題点はすべて修正されています。
 kh_datacheck->lines:                              行
 gui_errormsg::mysql->fatal:                       "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
+gui_window::dictionary->win_title:                分析に使用する語の取捨選択
+gui_window::dictionary->pos:                      品詞による語の選択：
+gui_window::dictionary->force_pick:               強制抽出する語の指定：
+gui_window::dictionary->one_line1:                （複数の場合は改行で区切る）
+gui_window::dictionary->one_line2:                （複数の場合は改行で区切る）
+gui_window::dictionary->force_ignore:             使用しない語の指定：
+gui_window::dictionary->note1:                    "(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"

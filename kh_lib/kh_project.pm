@@ -103,7 +103,17 @@ sub read_hinshi_setting{
 	',1);
 	$sql = "INSERT INTO hselection (khhinshi_id,ifuse,name)\nVALUES ";
 	my %temp_h = ();
-	foreach my $i (@{$hinshi}, [9999,'その他']){
+	
+	# morpho_analyzer
+	my $other_hinshi = 'OTHER';
+	if (
+		   $::config_obj->c_or_j eq 'chasen'
+		|| $::config_obj->c_or_j eq 'mecab'
+	){
+		$other_hinshi = 'その他';
+	}
+	
+	foreach my $i (@{$hinshi}, [9999,$other_hinshi]){
 		# 2重にInsertしないようにチェック
 		if ($temp_h{$i->[0]}){
 			next;
@@ -115,8 +125,8 @@ sub read_hinshi_setting{
 		if ( defined($current{$i->[1]}) ){
 			$val = $current{$i->[1]};
 		} else {
-			$val = 0 if $i->[1] eq "HTMLタグ";
-			$val = 0 if $i->[1] eq "その他";
+			$val = 0 if $i->[1] eq "HTMLタグ" || $i->[1] eq "HTML_TAG";
+			$val = 0 if $i->[1] eq "その他"   || $i->[1] eq "OTHER";
 		}
 		$sql .= "($i->[0],$val,'$i->[1]'),";
 	}
@@ -369,14 +379,15 @@ sub use_hukugo{
 	#;
 	return 0;
 }
-sub use_sonota{
-	return mysql_exec
-		->select("SELECT ifuse FROM hselection where name = 'その他'",1)
-			->hundle
-				->fetch
-					->[0]
-	;
-}
+
+#sub use_sonota{
+#	return mysql_exec
+#		->select("SELECT ifuse FROM hselection where name = 'その他'",1)
+#			->hundle
+#				->fetch
+#					->[0]
+#	;
+#}
 
 sub comment{
 	my $self = shift;

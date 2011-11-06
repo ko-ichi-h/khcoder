@@ -24,7 +24,6 @@ sub __new{
 
 	$self->{c_or_j}      = $::config_obj->c_or_j;
 #	$self->{use_hukugo}  = $::config_obj->use_hukugo;
-#	$self->{use_sonota}  = $::config_obj->use_sonota;
 #	$self->{win_obj}     = $inis;
 #	$self = $self->refine_cj;
 

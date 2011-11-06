@@ -193,3 +193,10 @@ kh_datacheck->errors_detail:                      Following probrems were found 
 kh_datacheck->looks_good:                         "We found no known problems.\nPlease proceed to pre-processing."
 kh_datacheck->corrected:                          All known problems are corrected.
 kh_datacheck->lines:                              " line(s)"
+gui_window::dictionary->win_title:                Select Words to Analyze
+gui_window::dictionary->pos:                      Select by Parts of Speech:
+gui_window::dictionary->force_pick:               "Pick up following strings as words:"
+gui_window::dictionary->one_line1:                (one string in each line)
+gui_window::dictionary->one_line2:                (one word in each line)
+gui_window::dictionary->force_ignore:             Force ignore following words:
+gui_window::dictionary->note1:                    "(*) Changes in \"force pick up\" will take effect when\n you invoke the \"Run Preprocessing\" command (again)."

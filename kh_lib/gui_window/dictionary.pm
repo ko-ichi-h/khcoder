@@ -18,12 +18,12 @@ sub _new{
 	
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt('分析に使用する語の取捨選択'));
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # '分析に使用する語の取捨選択'
 	
 	my $base = $wmw->Frame()->pack(-expand => '1', -fill => 'both');
 
 	my $f_hinshi = $base->LabFrame(
-		-label =>'word class',
+		-label =>'parts of speech',
 		-labelside => 'acrosstop'
 	)->pack(-side => 'left', -expand => '1', -fill => 'both');
 
@@ -39,7 +39,7 @@ sub _new{
 
 
 	$f_hinshi->Label(
-		-text => $self->gui_jchar('・品詞による語の選択'),
+		-text => kh_msg->get('pos'),#$self->gui_jchar('・品詞による語の選択'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $hlist = $f_hinshi->Scrolled(
@@ -56,11 +56,11 @@ sub _new{
 	)->pack(-expand => '1', -fill => 'both');
 
 	$f_mark->Label(
-		-text => $self->gui_jchar('・強制抽出する語の指定'),
+		-text => kh_msg->get('force_pick'),#$self->gui_jchar('・強制抽出する語の指定'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	$f_mark->Label(
-		-text => $self->gui_jchar('　（複数の場合は改行で区切る）'),
+		-text => kh_msg->get('one_line1'),#$self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $t1 = $f_mark->Scrolled(
@@ -74,11 +74,11 @@ sub _new{
 	)->pack(-expand => 1, -fill => 'both');
 
 	$f_stop->Label(
-		-text => $self->gui_jchar('・使用しない語の指定'),
+		-text => kh_msg->get('force_ignore'),#$self->gui_jchar('・使用しない語の指定'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	$f_stop->Label(
-		-text => $self->gui_jchar('　（複数の場合は改行で区切る）'),
+		-text => kh_msg->get('one_line2'),#$self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
 	my $t2 = $f_stop->Scrolled(
@@ -108,20 +108,20 @@ sub _new{
 	);
 
 	$wmw->Label(
-		-text => $self->gui_jchar("(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"),
+		-text => kh_msg->get('note1'),#$self->gui_jchar("(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"),
 		-font => 'TKFN',
 		-justify => 'left',
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$wmw->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $wmw->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),#'OK',
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->save;}
