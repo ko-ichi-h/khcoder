@@ -197,7 +197,7 @@ sub set_par{
 	) {
 		$::config_obj->R->send("par(\"family\"=\"\")");
 	} else {
-		print "family: sans\n";
+		#print "family: sans\n";
 		$::config_obj->R->send("par(\"family\"=\"sans\")");
 	}
 	$::config_obj->R->output_chk(1);

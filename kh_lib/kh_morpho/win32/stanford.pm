@@ -251,8 +251,21 @@ sub _tokenize_stem{
 	$n = 0;
 	foreach my $i (@lines){
 		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
+			my $base  = $2;
+			my $hyoso = $3;
+			my $pos   = $1;
+
+			# 基本形の前後に記号がついている場合は落とす
+			if ($base =~ /^(\w+)\W+$/o){
+				$base = $1;
+			}
+			elsif ($base =~ /^\W+(\w+)$/o){
+				$base = $1;
+			}
+			
+			# 出力する行を作成
 			my $line = Text::Unidecode::unidecode(
-				"$3\t$3\t$2\t$1\t\t$1\n"
+				"$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n"
 			);
 			
 			# Unidecodeによって空白になってしまった場合に対応
