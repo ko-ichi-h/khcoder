@@ -94,12 +94,24 @@ sub search{
 					ORDER BY hyoso.num DESC, katuyo.name
 				",1)->hundle->fetchall_arrayref;
 				
+				my @katuyo = ();
+				my $n = 0;
 				foreach my $h (@{$r}){            # 活用語の追加
 					if ( length($h->[1]) > 0 ){
 						$h->[1] = '   '.$h->[1];
 						unshift @{$h}, 'katuyo';
-						push @{$result2}, $h;
+						#push @{$result2}, $h;
+						push @katuyo, $h;
+						++$n;
 					}
+				}
+
+				if (                              # 以下の条件を満たせば追加
+					   $n > 1                     # 活用形が複数あるか
+					|| $katuyo[0]->[2] ne '   .'  # 活用名が「.」でないか
+					|| $katuyo[0]->[1] ne $i->[0] # 活用形が基本形と異なるか
+				){
+					@{$result2} = (@{$result2},@katuyo);
 				}
 			}
 			$result = $result2
