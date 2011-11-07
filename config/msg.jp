@@ -1,4 +1,5 @@
 ---
+global->search:                                   検索
 global->copy:                                     コピー
 global->browse:                                   参照
 global->ok:                                       OK
@@ -201,3 +202,15 @@ gui_window::dictionary->one_line1:                （複数の場合は改行で
 gui_window::dictionary->one_line2:                （複数の場合は改行で区切る）
 gui_window::dictionary->force_ignore:             使用しない語の指定：
 gui_window::dictionary->note1:                    "(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"
+gui_window::morpho_check->win_title:              語の抽出結果
+gui_window::morpho_check->note:                   '語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい'
+gui_window::morpho_check->details:                詳細表示
+gui_window::morpho_check->sentence:               文（分割済み）
+gui_window::morpho_detail->win_title:             語の抽出結果：詳細
+gui_window::morpho_detail->hyoso:                 表層語
+gui_window::morpho_detail->base:                  基本形
+gui_window::morpho_detail->pos_kh:                品詞
+gui_window::morpho_detail->pos_cha:               茶筌-品詞
+gui_window::morpho_detail->katuyo:                茶筌-活用
+gui_window::morpho_detail->previous:              前の検索結果
+gui_window::morpho_detail->next:                  次の検索結果

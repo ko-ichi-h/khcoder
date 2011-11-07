@@ -10,7 +10,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $self->{win_obj};
-	$bunhyojiwin->title($self->gui_jt('語の抽出結果：詳細'));
+	$bunhyojiwin->title(  $self->gui_jt( kh_msg->get('win_title') )); # '語の抽出結果：詳細'
 
 	$self->{list} = $bunhyojiwin->Scrolled(
 		'HList',
@@ -29,15 +29,15 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 	
-	$self->{list}->header('create',0,-text => $self->gui_jchar('表層語'));
-	$self->{list}->header('create',1,-text => $self->gui_jchar('基本形'));
-	$self->{list}->header('create',2,-text => $self->gui_jchar('品詞'));
+	$self->{list}->header('create',0,-text => kh_msg->get('hyoso') ); # $self->gui_jchar('表層語')
+	$self->{list}->header('create',1,-text => kh_msg->get('base') ); # $self->gui_jchar('基本形')
+	$self->{list}->header('create',2,-text => kh_msg->get('pos_kh') ); # $self->gui_jchar('品詞')
 	$self->{list}->header('create',3,-text =>' ');
-	$self->{list}->header('create',4,-text => $self->gui_jchar('茶筌-品詞'));
-	$self->{list}->header('create',5,-text => $self->gui_jchar('茶筌-活用'));
+	$self->{list}->header('create',4,-text => kh_msg->get('pos_cha') ); # $self->gui_jchar('茶筌-品詞')
+	$self->{list}->header('create',5,-text => kh_msg->get('katuyo') ); # $self->gui_jchar('茶筌-活用')
 
 	$self->{pre_btn} = $bunhyojiwin->Button(
-		-text => $self->gui_jchar('前の検索結果'),
+		-text => kh_msg->get('previous'),#$self->gui_jchar('前の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -48,7 +48,7 @@ sub _new{
 	)->pack(-side => 'left',-pady   => 1,);
 
 	$self->{nxt_btn} = $bunhyojiwin->Button(
-		-text => $self->gui_jchar('次の検索結果'),
+		-text => kh_msg->get('next'),#$self->gui_jchar('次の検索結果'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -59,7 +59,7 @@ sub _new{
 	)->pack(-side => 'left',-pady   => 1,);
 
 	$bunhyojiwin->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list);}
@@ -90,6 +90,11 @@ sub _view{
 		}
 		$self->list->itemCreate($row,2,-text  => $self->gui_jchar("$i->[2]",'euc'));
 		$self->list->itemCreate($row,4,-text  => $self->gui_jchar("$i->[3]",'euc'));
+		
+		if ($i->[4] eq $i->[3]){
+			$i->[4] = '';
+		}
+		
 		$self->list->itemCreate($row,5,-text  => $self->gui_jchar("$i->[4]",'euc'));
 		++$row;
 	}

@@ -1,4 +1,5 @@
 ---
+global->search:                                   Search
 global->copy:                                     Copy
 global->browse:                                   Browse
 global->ok:                                       OK
@@ -200,3 +201,15 @@ gui_window::dictionary->one_line1:                (one string in each line)
 gui_window::dictionary->one_line2:                (one word in each line)
 gui_window::dictionary->force_ignore:             Force ignore following words:
 gui_window::dictionary->note1:                    "(*) Changes in \"force pick up\" will take effect when\n you invoke the \"Run Preprocessing\" command (again)."
+gui_window::morpho_check->win_title:              Results of Word Extraction
+gui_window::morpho_check->note:                   Input a string or phrase to check.
+gui_window::morpho_check->details:                Details
+gui_window::morpho_check->sentence:               The splited sentence
+gui_window::morpho_detail->win_title:             Results of Word Extraction: Details
+gui_window::morpho_detail->hyoso:                 word
+gui_window::morpho_detail->base:                  lemma / stem
+gui_window::morpho_detail->pos_kh:                POS of KH Coder
+gui_window::morpho_detail->pos_cha:               POS of Tagger 1
+gui_window::morpho_detail->katuyo:                POS of Tagger 2
+gui_window::morpho_detail->previous:              Previous
+gui_window::morpho_detail->next:                  Next
