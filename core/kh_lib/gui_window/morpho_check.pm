@@ -14,7 +14,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jt('語の抽出結果'));
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # '語の抽出結果'
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -23,7 +23,7 @@ sub _new{
 	)->pack(-fill=>'x');
 
 	$fra4->Label(
-		-text => $self->gui_jchar('・語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい'),
+		-text => kh_msg->get('note'),#$self->gui_jchar('・語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -38,7 +38,7 @@ sub _new{
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => $self->gui_jchar('検索'),
+		-text => kh_msg->gget('search'),#$self->gui_jchar('検索'),
 		-font => "TKFN",
 		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
@@ -72,17 +72,17 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => 'ID');
-	$lis->header('create',1,-text => $self->gui_jchar('文（分割済み）'));
+	$lis->header('create',1,-text => kh_msg->get('sentence')); # $self->gui_jchar('文（分割済み）')
 
 	$fra5->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => $self->gui_jchar('詳細表示'),
+		-text => kh_msg->get('details'),#$self->gui_jchar('詳細表示'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {$self->detail;}
