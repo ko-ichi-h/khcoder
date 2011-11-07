@@ -130,6 +130,14 @@ sub ready{
 			katuyo => $3
 		)->hyoso_id_s;
 	}
+	if ($self->raw =~ /^(.+)\-\->(.+)=>(.+)$/o) {   # 墒混□山霖 回年
+		#print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
+		$list = mysql_a_word->new(
+			genkei => $1,
+			khhinshi => $2,
+			hyoso => $3
+		)->hyoso_id_s;
+	}
 	elsif ($self->raw =~ /^(.+)\-\->(.+)$/o) {      # 墒混回年
 		#print Jcode->new("g: $1, h: $2\n")->sjis;
 		$list = mysql_a_word->new(
@@ -143,7 +151,15 @@ sub ready{
 			genkei => $1,
 			katuyo => $2
 		)->hyoso_id_s;
-	} else {
+	}
+	elsif ($self->raw =~ /^(.+)=>(.+)$/o) {       # 山霖回年
+		#print Jcode->new("g: $1, k: $2\n")->sjis;
+		$list = mysql_a_word->new(
+			genkei => $1,
+			hyoso => $2
+		)->hyoso_id_s;
+	}
+	else {
 		print "atom::hinshi, something wrong?\n";
 	}
 	
@@ -221,7 +237,7 @@ sub hyosos{
 }
 
 sub pattern{
-	return '.+\->.+';
+	return '.+\->.+|.+=>.+';
 }
 sub name{
 	return 'hinshi';
