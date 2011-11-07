@@ -378,7 +378,7 @@ sub cache_check{
 			WHERE 
 				    tani = \"$args{tani}\"
 				AND kind = \"$args{kind}\"
-				AND name = \"$args{name}\"
+				AND name = binary \"$args{name}\"
 		",1)->hundle;
 		my $n = $h->fetch;
 		if ($n){                        # キャッシュが存在した場合

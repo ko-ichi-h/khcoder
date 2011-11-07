@@ -33,9 +33,9 @@ sub new{
 	if ($args{khhinshi}){
 		$sql .= "			and hselection.name = \'$args{khhinshi}\'";
 	}
-	if ($args{hinshi}){
-		die("unknown parameter \"hinshi\"!");
-	}
+	#if ($args{hinshi}){
+	#	die("unknown parameter \"hinshi\"!");
+	#}
 	
 	my $t = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $t->fetch){
@@ -66,9 +66,13 @@ sub hyoso_id_s{
 	#	$sql .= "\tAND hyoso.hinshi_id = hinshi.id\n";
 	#	$sql .= "\tAND hinshi.name = $self->{hinshi}\n";
 	#}
-	if ($self->{katuyo}){
+	if ( length($self->{katuyo}) ){
 		$sql .= "\tAND hyoso.katuyo_id = katuyo.id\n";
 		$sql .= "\tAND katuyo.name = '$self->{katuyo}\'\n";
+	}
+	
+	if ( length($self->{hyoso}) ){
+		$sql .= "\tAND hyoso.name = binary '$self->{hyoso}'\n";
 	}
 	
 	$sql .= "\tAND (\n";
