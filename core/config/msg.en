@@ -146,7 +146,7 @@ kh_morpho::stemming->error:                       Fatal error: Could not perform
 gui_window::main::menu->export_win_title:         Export current project to a *.khc file.
 gui_window::main::menu->import_win_title:         Import a project from a *.khc file.
 gui_window::main::menu->import_save_path:         "Saving the target text file (\"coder_data\" folder will be created at the same path)."
-gui_wait->done:                                   "The processing is complete.\nElapsed time:"
+gui_wait->done:                                   "The process is complete.\nElapsed time:"
 gui_window::project_new->win_title:               New Project
 gui_window::project_new->target_file:             The Target File:
 gui_window::project_new->target_char_code:        Encoding of the target file:
