@@ -90,6 +90,8 @@ sub _new{
 	$self->{checks} = \@selection;
 	$self->{default} = \%default;
 	
+	#gui_hlist->update4scroll($self->hlist);
+	
 	$self->{win_obj} = $win;
 	return $self;
 }

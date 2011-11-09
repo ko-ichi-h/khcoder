@@ -130,6 +130,23 @@ sub new{
 			name      => $args{plotwin_name}.'_3',
 			command_f =>
 				 $r_command
+				."\ncom_method <- \"cnt-e\"\n"
+				.&r_plot_cmd_p1
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p3
+				.&r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"cnt-e\"\n"
+				.&r_plot_cmd_p2
+				.&r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
+
+		$plots[3] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_4',
+			command_f =>
+				 $r_command
 				."\ncom_method <- \"com-b\"\n"
 				.&r_plot_cmd_p1
 				.&r_plot_cmd_p2
@@ -143,8 +160,8 @@ sub new{
 			height    => $args{plot_size},
 		) or $flg_error = 1;
 
-		$plots[3] = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_4',
+		$plots[4] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_5',
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"com-g\"\n"
@@ -160,8 +177,8 @@ sub new{
 			height    => $args{plot_size},
 		) or $flg_error = 1;
 
-		$plots[4] = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_5',
+		$plots[5] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_6',
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"none\"\n"
@@ -341,7 +358,8 @@ if (length(get.vertex.attribute(n2,"name")) < 2){
 }
 
 # 中心性
-if ( com_method == "cnt-b" || com_method == "cnt-d"){
+if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
+	ccol <- NULL
 	if (com_method == "cnt-b"){                   # 媒介
 		ccol <- betweenness(
 			n2, v=0:(length(get.vertex.attribute(n2,"name"))-1), directed=F
@@ -349,6 +367,12 @@ if ( com_method == "cnt-b" || com_method == "cnt-d"){
 	}
 	if (com_method == "cnt-d"){                   # 次数
 		ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
+	}
+	if (com_method == "cnt-e"){                   # 固有ベクトル
+		try(
+			ccol <- evcent(n2)$vector,
+			silent = T
+		)
 	}
 	ccol <- ccol - min(ccol)                      # 色の設定
 	ccol <- ccol * 100 / max(ccol)
