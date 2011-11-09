@@ -191,6 +191,9 @@ sub _new{
 	$self->{win_obj} = $left; # ?
 	$self->{win_obj}->update;
 	$self->settings_load;
+
+	gui_hlist->update4scroll($self->{hinshi_obj}->hlist);
+
 	return $self;
 }
 
