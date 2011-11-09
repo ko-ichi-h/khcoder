@@ -98,17 +98,17 @@ sub _new{
 		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
 	);
 
-	$fra_r1->Label(
-		-text => '+',
-		-font => "TKFN",
-		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+	#$fra_r1->Label(
+	#	-text => '+',
+	#	-font => "TKFN",
+	#	)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
 
-	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('MeCab'),
-		url    => 'http://mecab.sourceforge.net/',
-		parent => $fra_r1,
-		pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
-	);
+	#gui_widget::url_lab->open(
+	#	label  => $self->gui_jchar('MeCab'),
+	#	url    => 'http://mecab.sourceforge.net/',
+	#	parent => $fra_r1,
+	#	pack   => {-side => 'left', -anchor => 'nw',-pady=>'2'},
+	#);
 
 	$fra_r1->Label(
 		-text => '+',
@@ -142,6 +142,18 @@ sub _new{
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('R'),
 		url    => 'http://www.r-project.org/',
+		parent => $fra_r1,
+		pack   => {-anchor => 'nw',-pady=>'2', -side => 'left'},
+	);
+
+	$fra_r1->Label(
+		-text => '+',
+		-font => "TKFN",
+		)->pack(-anchor => 'nw',-pady=>'2',-side=>'left');
+
+	gui_widget::url_lab->open(
+		label  => $self->gui_jchar('more'),
+		url    => 'http://khc.sourceforge.net/link.html',
 		parent => $fra_r1,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
