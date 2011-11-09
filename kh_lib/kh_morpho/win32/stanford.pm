@@ -84,7 +84,7 @@ sub _run_morpho{
 	$self->{client} = undef;
 	while (not $self->{client}){
 		$self->{client} = new Net::Telnet(
-			Host => 'localhost',
+			Host => '127.0.0.1',
 			Port => 2020,
 			Errmode => 'return',
 		);
