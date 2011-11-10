@@ -112,8 +112,8 @@ gui_window::sysconfig->s_sheet:                   表計算（CSV/Excel）：
 gui_window::sysconfig->pdf:                       PDFビューア：
 gui_window::sysconfig->note_s:                    '※ %sはファイル名やURLで置き換えられます'
 gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
-gui_window::sysconfig->p_stanford_jar:            '    *.JARファイル：'
-gui_window::sysconfig->p_stanford_tag:            '    *.TAGGERファイル：'
+gui_window::sysconfig->p_stanford_jar:            '    *.JAR file path:'
+gui_window::sysconfig->p_stanford_tag:            '    *.TAGGER file path:'
 gui_window::sysconfig->note_font:                 "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。"
 gui_window::sysconfig->browse_chasen:             ChaSen.exeを開いてください
 gui_window::sysconfig->browse_mecab:              MeCab.exeを開いてください
