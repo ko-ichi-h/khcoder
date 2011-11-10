@@ -63,7 +63,6 @@ order by genkei_t.id
 
 [TO DO]
 	→マニュアル
-		・Linuxの設定画面
 		・データベース構成（ER図）
 
 	→英語インターフェイス
