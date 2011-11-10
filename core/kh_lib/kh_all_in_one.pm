@@ -27,10 +27,34 @@ sub init{
 	print "Available Physical Memory: $mHash{AvailPhys}MB\n";
 
 	# 茶筌のパス設定
-	$::config_obj->chasen_path($::config_obj->cwd.'\dep\chasen\chasen.exe')
-		unless -e $::config_obj->chasen_path;
+	if (
+		not -e $::config_obj->chasen_path
+		and -e $::config_obj->cwd.'\dep\chasen\chasen.exe'
+	) { 
+		$::config_obj->chasen_path(
+			$::config_obj->cwd.'\dep\chasen\chasen.exe'
+		);
+	}
 
-	# Rのパス設定（見つかる場合のみ修正）
+	# Stanford POS Taggerのパス設定
+	if (
+		not -e $::config_obj->stanf_tagger_path
+		and -e $::config_obj->cwd.'\dep\stanford-postagger\models\left3words-wsj-0-18.tagger'
+	) {
+		$::config_obj->stanf_tagger_path(
+			$::config_obj->cwd.'\dep\stanford-postagger\models\left3words-wsj-0-18.tagger'
+		);
+	}
+	if (
+		not -e $::config_obj->stanf_jar_path
+		and -e $::config_obj->cwd.'\dep\stanford-postagger\stanford-postagger.jar'
+	) {
+		$::config_obj->stanf_jar_path(
+			$::config_obj->cwd.'\dep\stanford-postagger\stanford-postagger.jar'
+		);
+	}
+
+	# Rのパス設定
 	if (
 		not -e $::config_obj->r_path
 		and -e $::config_obj->cwd.'\dep\R\bin\Rterm.exe'
