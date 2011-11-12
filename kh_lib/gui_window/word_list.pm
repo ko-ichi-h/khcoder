@@ -15,7 +15,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('抽出語リスト - オプション'));
+	$win->title($self->gui_jt( kh_msg->get('win_title') )); # '抽出語リスト - オプション'
 
 	#--------------#
 	#   表の形式   #
@@ -27,7 +27,7 @@ sub _new{
 	)->pack(-fill => 'x');
 
 	$lf0->Label(
-		-text => $self->gui_jchar('抽出語リストの形式：'),
+		-text => kh_msg->get('type'),#$self->gui_jchar('抽出語リストの形式：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -39,21 +39,21 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Radiobutton(
-		-text             => $self->gui_jchar('品詞別'),
+		-text             => kh_msg->get('hinshi'),#$self->gui_jchar('品詞別'),
 		-font             => "TKFN",
 		-variable         => \$radio_type,
 		-value            => 'def',
 	)->pack(-side => 'left', -padx => 4);
 
 	$f1->Radiobutton(
-		-text             => $self->gui_jchar('頻出150語'),
+		-text             => kh_msg->get('top150'),#$self->gui_jchar('頻出150語'),
 		-font             => "TKFN",
 		-variable         => \$radio_type,
 		-value            => '150',
 	)->pack(-side => 'left', -padx => 4);
 
 	$f1->Radiobutton(
-		-text             => $self->gui_jchar('1列'),
+		-text             => kh_msg->get('single'),#$self->gui_jchar('1列'),
 		-font             => "TKFN",
 		-variable         => \$radio_type,
 		-value            => '1c',
@@ -63,7 +63,7 @@ sub _new{
 	#   数値   #
 
 	$lf0->Label(
-		-text => $self->gui_jchar('記入する数値：'),
+		-text => kh_msg->get('count'),#$self->gui_jchar('記入する数値：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -75,7 +75,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	my $inv0 = $f2->Radiobutton(
-		-text             => $self->gui_jchar('出現回数（TF）'),
+		-text             => kh_msg->get('tf'),#$self->gui_jchar('出現回数（TF）'),
 		-font             => "TKFN",
 		-variable         => \$radio_num,
 		-value            => 'tf',
@@ -85,7 +85,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 4);
 
 	$f2->Radiobutton(
-		-text             => $self->gui_jchar('文書数（DF）'),
+		-text             => kh_msg->get('df'),#$self->gui_jchar('文書数（DF）'),
 		-font             => "TKFN",
 		-variable         => \$radio_num,
 		-value            => 'df',
@@ -109,7 +109,7 @@ sub _new{
 	#   ファイル形式   #
 
 	$lf0->Label(
-		-text => $self->gui_jchar('出力するファイルの形式：'),
+		-text => kh_msg->get('file_type'),#$self->gui_jchar('出力するファイルの形式：'),
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -121,14 +121,14 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$f3->Radiobutton(
-		-text             => $self->gui_jchar('カンマ区切り (*.csv)'),
+		-text             => kh_msg->get('csv'),#$self->gui_jchar('カンマ区切り (*.csv)'),
 		-font             => "TKFN",
 		-variable         => \$radio_ftype,
 		-value            => 'csv',
 	)->pack(-side => 'left', -padx => 4);
 
 	$f3->Radiobutton(
-		-text             => $self->gui_jchar('Excel (*.xls)'),
+		-text             => kh_msg->get('xls'),#$self->gui_jchar('Excel (*.xls)'),
 		-font             => "TKFN",
 		-variable         => \$radio_ftype,
 		-value            => 'xls',
@@ -136,14 +136,14 @@ sub _new{
 
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),#'OK',
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}

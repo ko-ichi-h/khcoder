@@ -213,3 +213,18 @@ gui_window::morpho_detail->pos_cha:               POS of Tagger 1
 gui_window::morpho_detail->katuyo:                POS of Tagger 2
 gui_window::morpho_detail->previous:              Previous
 gui_window::morpho_detail->next:                  Next
+gui_window::word_list->win_title:                 Frequency List: Options
+gui_window::word_list->type:                      Type of the list:
+gui_window::word_list->hinshi:                    By POS tags
+gui_window::word_list->top150:                    Top 150
+gui_window::word_list->single:                    Single column
+gui_window::word_list->count:                     What to count:
+gui_window::word_list->tf:                        Term frequency
+gui_window::word_list->df:                        Document frequency
+gui_window::word_list->file_type:                 File types:
+gui_window::word_list->csv:                       Comma separated (*.csv)
+gui_window::word_list->xls:                       Excel (*.xls)
+mysql_words->tf:                                  TF
+mysql_words->df:                                  DF
+mysql_words->words:                               Words
+mysql_words->pos:                                 POS

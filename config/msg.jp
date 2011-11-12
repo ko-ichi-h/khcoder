@@ -214,3 +214,20 @@ gui_window::morpho_detail->pos_cha:               茶筌-品詞
 gui_window::morpho_detail->katuyo:                茶筌-活用
 gui_window::morpho_detail->previous:              前の検索結果
 gui_window::morpho_detail->next:                  次の検索結果
+gui_window::word_list->win_title:                 抽出語リスト - オプション
+gui_window::word_list->type:                      抽出語リストの形式：
+gui_window::word_list->hinshi:                    品詞別
+gui_window::word_list->top150:                    頻出150語
+gui_window::word_list->single:                    1列
+gui_window::word_list->count:                     記入する数値：
+gui_window::word_list->tf:                        出現回数（TF）
+gui_window::word_list->df:                        文書数（DF）
+gui_window::word_list->file_type:                 出力するファイルの形式：
+gui_window::word_list->csv:                       カンマ区切り (*.csv)
+gui_window::word_list->xls:                       Excel (*.xls)
+mysql_words->tf:                                  出現回数
+mysql_words->df:                                  文書数
+mysql_words->words:                               抽出語
+mysql_words->pos:                                 品詞
+
+
