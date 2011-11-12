@@ -5,8 +5,8 @@ use Tk;
 use Jcode;
 
 my %name = (
-	"bun" => "文",
-	"dan" => "段落",
+	"bun" => kh_msg->gget('sentence'),
+	"dan" => kh_msg->gget('paragraph'),
 	"h5"  => "H5",
 	"h4"  => "H4",
 	"h3"  => "H3",
@@ -15,8 +15,8 @@ my %name = (
 );
 
 my %value = (
-	"文" => "bun",
-	"段落" => "dan",
+	kh_msg->gget('sentence') => "bun",
+	kh_msg->gget('paragraph') => "dan",
 	"H5"  => "h5",
 	"H4"  => "h4",
 	"H3"  => "h3",
@@ -45,7 +45,7 @@ sub _new{
 		-relief      => 'raised',
 		-indicator   => 'yes',
 		-font        => "TKFN",
-		-width       => 4,
+		#-width       => 4,
 		-borderwidth => 1,
 	)->pack();
 	foreach my $i (@list1){

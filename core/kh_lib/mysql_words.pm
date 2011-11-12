@@ -489,15 +489,22 @@ sub _make_wl_1c{
 
 	my $num_lab = '';
 	if ($self->{num} eq 'tf'){
-		$num_lab = '出現回数';
+		$num_lab = kh_msg->get('tf'); #'出現回数'
 	} else {
 		my $tani = $self->{tani};
-		$tani = '文'   if $self->{tani} eq 'bun';
-		$tani = '段落' if $self->{tani} eq 'dan';
-		$num_lab = '文書数（'.$tani.'）';
+		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
+		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
-	my @data = (['抽出語', '品詞', $num_lab], @data);
+	my @data = (
+		[
+			kh_msg->get('words'),# 抽出語
+			kh_msg->get('pos'),#'品詞',
+			$num_lab
+		],
+		@data
+	);
 
 	return \@data;
 }
@@ -517,9 +524,9 @@ sub _make_wl_def{
 		$num_lab = '';
 	} else {
 		my $tani = $self->{tani};
-		$tani = '文'   if $self->{tani} eq 'bun';
-		$tani = '段落' if $self->{tani} eq 'dan';
-		$num_lab = '文書数（'.$tani.'）';
+		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
+		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
 	my @data;
@@ -585,7 +592,16 @@ sub _make_wl_150{
 			ORDER BY TF DESC, W
 			LIMIT 150
 		',1)->hundle;
-		$data[0] = ['抽出語','出現数','','抽出語','出現数','','抽出語','出現数'];
+		$data[0] = [
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
+			'',
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
+			'',
+			kh_msg->get('words'),
+			kh_msg->get('tf')
+		];
 	} else {
 		$t = mysql_exec->select('
 			SELECT
@@ -614,13 +630,18 @@ sub _make_wl_150{
 		',1)->hundle;
 		
 		my $tani = $self->{tani};
-		$tani = '文'   if $self->{tani} eq 'bun';
-		$tani = '段落' if $self->{tani} eq 'dan';
+		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
+		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
 		
 		$data[0] = [
-			   '抽出語','文書数（'.$tani.'）',
-			'','抽出語','文書数（'.$tani.'）',
-			'','抽出語','文書数（'.$tani.'）',
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
+			'',
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
+			'',
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')'
 		];
 	}
 
