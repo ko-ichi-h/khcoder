@@ -34,7 +34,7 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'both');
 
-	# クラスター数
+	# 距離
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
@@ -58,13 +58,18 @@ sub _new{
 	);
 	$widget_dist->set_value('binary');
 
+	# クラスター数
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
 
-	$f4->Label(
-		-text => $self->gui_jchar('  クラスター数：'),
+	$f5->Label(
+		-text => $self->gui_jchar('クラスター数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_cluster_number} = $f4->Entry(
+	$self->{entry_cluster_number} = $f5->Entry(
 		-font       => "TKFN",
 		-width      => 4,
 		-background => 'white',
@@ -72,6 +77,19 @@ sub _new{
 	$self->{entry_cluster_number}->insert(0,'Auto');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_cluster_number});
+
+	$f5->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{check_color_cls} = 1;
+	$f5->Checkbutton(
+			-text     => $self->gui_jchar('クラスターの色分け','euc'),
+			-variable => \$self->{check_color_cls},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
 
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
@@ -216,6 +234,7 @@ sub calc{
 	&make_plot(
 		#base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
+		cluster_color  => $self->gui_jg( $self->{check_color_cls} ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
@@ -235,13 +254,16 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
-	my $old_simple_style = 0;
-
 	kh_r_plot->clear_env;
 
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
+
+	my $old_simple_style = 0;
+	if ( $args{cluster_color} == 0 ){
+		$old_simple_style = 1;
+	}
 
 	my $bonus = 0;
 	$bonus = 8 if $old_simple_style;
