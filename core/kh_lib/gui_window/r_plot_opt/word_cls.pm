@@ -48,7 +48,7 @@ sub innner{
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	if ( $self->{command_f} =~ /rect\.hclust.+k=([0-9]+)[, \)]/ ){
+	if ( $self->{command_f} =~ /n_cls <- ([0-9]+)\n/ ){
 		$self->{entry_cluster_number}->insert(0,$1);
 	} else {
 		$self->{entry_cluster_number}->insert(0,'0');

@@ -298,12 +298,16 @@ sub _save_emf{
 	if ($self->{width} > $self->{height}){
 		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
 	}
+	my $h = 7;
+	if ($self->{height} > $self->{width}){
+		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+	}
 	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
-		 "win.metafile(filename=\"$path\", width = $w, height = 7 )"
+		 "win.metafile(filename=\"$path\", width = $w, height = $h )"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -322,12 +326,16 @@ sub _save_pdf{
 	if ($self->{width} > $self->{height}){
 		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
 	}
+	my $h = 7;
+	if ($self->{height} > $self->{width}){
+		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+	}
 
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
-		 "pdf(file=\"$path\", height = 7, width = $w,"
+		 "pdf(file=\"$path\", height = $h, width = $w,"
 		."family=\"Japan1GothicBBB\")"
 	);
 	$self->set_par;
@@ -348,13 +356,17 @@ sub _save_eps{
 	if ($self->{width} > $self->{height}){
 		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
 	}
+	my $h = 7;
+	if ($self->{height} > $self->{width}){
+		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+	}
 
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
 		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
-		."paper = \"special\", height = 7, width = $w,"
+		."paper = \"special\", height = $h, width = $w,"
 		."family=\"Japan1GothicBBB\" )"
 	);
 	$self->set_par;

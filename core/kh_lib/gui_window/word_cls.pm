@@ -235,15 +235,20 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
+	my $old_simple_style = 0;
+
 	kh_r_plot->clear_env;
 
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 
+	my $bonus = 0;
+	$bonus = 8 if $old_simple_style;
+
 	if ($args{plot_size} =~ /auto/i){
 		$args{plot_size} =
-			int( ($args{data_number} * (28 * $fontsize) + 33) / 0.9344 );
+			int( ($args{data_number} * ( (20 + $bonus) * $fontsize) + 45) * 1 );
 		if ($args{plot_size} < 480){
 			$args{plot_size} = 480;
 		}
@@ -265,6 +270,12 @@ sub make_plot{
 		)\n"
 	;
 
+	$r_command .= "n_cls <- $cluster_number\n";
+	$r_command .= "font_size <- $fontsize\n";
+	
+	$r_command .= "labels <- rownames(d)\n";
+	$r_command .= "rownames(d) <- NULL\n";
+
 	if ($args{method_dist} eq 'euclid'){
 		# 抽出語ごとに標準化
 			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
@@ -283,45 +294,50 @@ sub make_plot{
 	my $r_command_2a = 
 		"$par"
 		.'hcl <- hclust(dj, method="average")'."\n"
-		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
+		.&r_command_plot($old_simple_style)
 	;
-	$r_command_2a .= 
-		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-		if $cluster_number > 1;
+
+	#$r_command_2a .= 
+	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
+	#	if $cluster_number > 1;
 	
 	my $r_command_2 = $r_command.$r_command_2a;
 
 	my $r_command_3a = 
 		"$par"
 		.'hcl <- hclust(dj, method="complete")'."\n"
-		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
+		.&r_command_plot($old_simple_style)
 	;
-	$r_command_3a .= 
-		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-		if $cluster_number > 1;
+	#$r_command_3a .= 
+	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
+	#	if $cluster_number > 1;
 	my $r_command_3 = $r_command.$r_command_3a;
 
 	$r_command .=
 		"$par"
 		.'hcl <- hclust(dj, method="ward")'."\n"
-		."plot(hcl,ann=0,cex=$fontsize, hang=-1)\n"
+		.&r_command_plot($old_simple_style)
 	;
-	$r_command .= 
-		"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-		if $cluster_number > 1;
+	#$r_command .= 
+	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
+	#	if $cluster_number > 1;
+
 
 	# プロット作成
 	my $flg_error = 0;
 	my $merges;
 	
+	my ($w,$h) = (480,$args{plot_size});
+	($w,$h) = ($h,$w) if $old_simple_style;
+	
 	# Ward法
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
-		width     => $args{plot_size},
-		height    => 480,
+		width     => $w,
+		height    => $h,
 	) or $flg_error = 1;
-	$plot1->rotate_cls;
+	$plot1->rotate_cls if $old_simple_style;
 
 	foreach my $i ('last','first','all'){
 		$merges->{0}{$i} = kh_r_plot->new(
@@ -341,10 +357,10 @@ sub make_plot{
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $args{plot_size},
-		height    => 480,
+		width     => $w,
+		height    => $h,
 	) or $flg_error = 1;
-	$plot2->rotate_cls;
+	$plot2->rotate_cls if $old_simple_style;
 
 	foreach my $i ('last','first','all'){
 		$merges->{1}{$i} = kh_r_plot->new(
@@ -364,10 +380,10 @@ sub make_plot{
 		name      => $args{plotwin_name}.'_3',
 		command_a => $r_command_3,
 		command_f => $r_command_3,
-		width     => $args{plot_size},
-		height    => 480,
+		width     => $w,
+		height    => $h,
 	) or $flg_error = 1;
-	$plot3->rotate_cls;
+	$plot3->rotate_cls if $old_simple_style;
 
 	foreach my $i ('last','first','all'){
 		$merges->{2}{$i} = kh_r_plot->new(
@@ -514,6 +530,146 @@ legend(
 	cex = .8,
 	box.lty = 0
 )
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_plot{
+	my $simple = shift;
+	my $t;
+	if ($simple){
+		$t = &r_command_plot_simple;
+	} else {
+		$t = &r_command_plot_ggplot2;
+	}
+	return $t;
+}
+
+
+sub r_command_plot_simple{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+hcl$labels <- labels
+plot(hcl,ann=0,cex=font_size, hang=-1)
+if (n_cls > 1){
+	rect.hclust(hcl, k=n_cls, border="#FF8B00FF")
+}
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_plot_ggplot2{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+#plot(hcl,ann=0,cex=1, hang=-1)
+
+library(ggplot2)
+library(ggdendro)
+
+ddata <- dendro_data(as.dendrogram(hcl), type="rectangle")
+
+p <- NULL
+p <- ggplot()
+
+p <- p + geom_segment(
+	data=segment(ddata),
+	aes_string(x="x0", y="y0", xend="x1", yend="y1")
+)
+
+if (n_cls > 1){
+	memb <- cutree(hcl,k=n_cls)
+	p <- p + scale_colour_hue(l=45, c=100)
+	p <- p + geom_hline(
+		yintercept = mean(
+			c(
+				rev(hcl$height)[n_cls-1],
+				rev(hcl$height)[n_cls]
+			)
+		),
+		colour="red",
+		linetype=5,
+		size=0.5
+	)
+} else {
+	memb <- rep( c("a"), length(labels) )
+	p <- p + scale_colour_manual(values=c("black"))
+}
+
+p <- p + geom_text(
+	data=data.frame(                    # ラベル変換
+		x=label(ddata)$x,
+		y=label(ddata)$y,
+		text=labels[ as.numeric( as.vector( label(ddata)$text ) ) ],
+		cols=as.character( memb[ as.numeric( as.vector( label(ddata)$text ) ) ] )
+	),
+	aes_string(
+		x="x",
+		y="y",
+		label="text",
+		colour="cols"
+	),
+	hjust=1,
+	angle =0,
+	size = 5 * 0.85 * font_size
+)
+
+p <- p + coord_flip()
+p <- p + scale_x_reverse( expand = c(0.01,0.01) )
+p <- p + scale_y_continuous(expand = c(0.2,0))
+
+p <- p + ggplot2::opts(
+	axis.title.y = theme_blank(),
+	axis.title.x = theme_blank(),
+	axis.ticks   = theme_segment(colour="gray60"),
+	axis.text.y  = theme_text(size=12,family="sans",colour="gray40"),
+	axis.text.x  = theme_text(size=12,family="sans",colour="gray40"),
+	legend.position="none"
+)
+
+if (n_cls <= 1){
+	p <- p + ggplot2::opts(
+		axis.text.y  = theme_blank(),
+		axis.text.x  = theme_text(size=12,family="sans",colour="black"),
+		axis.ticks = theme_segment(colour="black"),
+		#panel.grid.major = theme_blank(),
+		#panel.grid.minor = theme_blank(),
+		#panel.background = theme_blank(),
+		axis.line = theme_segment(colour = 'black')
+	)
+}
+
+# Save the original definition of guide_grid
+guide_grid_orig <- guide_grid
+
+# Create the replacement function
+guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
+  ggname("grill", grobTree(
+    theme_render(theme, "panel.background"),
+    theme_render(
+      theme, "panel.grid.minor", name = "x",
+      x = rep(x.minor, each=2), y = rep(0:1, length(x.minor)),
+      id.lengths = rep(2, length(x.minor))
+    ),
+    theme_render(
+      theme, "panel.grid.major", name = "x",
+      x = rep(x.major, each=2), y = rep(0:1, length(x.major)),
+      id.lengths = rep(2, length(x.major))
+    )
+  ))
+}
+
+# Assign the function inside ggplot2
+assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
+
+print(p)
+if (n_cls > 1) {
+	grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="sans",fontface="bold"))
+} else {
+	grid.remove(gPath("axis_v"), grep=TRUE)
+}
+assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
 
 END_OF_the_R_COMMAND
 return $t;
