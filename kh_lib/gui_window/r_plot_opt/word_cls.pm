@@ -37,24 +37,51 @@ sub innner{
 		$widget_dist->set_value('pearson');
 	}
 
+	# クラスター数
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
 
-	$f4->Label(
+	$f5->Label(
 		-text => $self->gui_jchar('クラスター数：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_cluster_number} = $f4->Entry(
+	$self->{entry_cluster_number} = $f5->Entry(
 		-font       => "TKFN",
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->config_entry_focusin($self->{entry_cluster_number});
+
+	$f5->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	
+	$f5->Checkbutton(
+			-text     => $self->gui_jchar('クラスターの色分け','euc'),
+			-variable => \$self->{check_color_cls},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
+	# 設定の読み取り
 	if ( $self->{command_f} =~ /n_cls <- ([0-9]+)\n/ ){
 		$self->{entry_cluster_number}->insert(0,$1);
 	} else {
 		$self->{entry_cluster_number}->insert(0,'0');
 	}
-	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_cluster_number});
+
+	if ( $self->{command_f} =~ /ggplot2/ ){
+		$self->{check_color_cls} = 1;
+	} else {
+		$self->{check_color_cls} = 0;
+	}
+
+
 
 	return $self;
 }
@@ -98,6 +125,7 @@ sub calc{
 
 	&gui_window::word_cls::make_plot(
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
+		cluster_color  => $self->gui_jg( $self->{check_color_cls} ),
 		font_size      => $fontsize,
 		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
 		r_command      => $r_command,
