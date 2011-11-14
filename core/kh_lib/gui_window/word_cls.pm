@@ -628,7 +628,14 @@ if (n_cls > 1){
 		new_col
 	)
 	colnames(col_tab) <- c("org","new")
-	col_vec <- as.character( col_tab[order(col_tab[,1]),2] )
+	col_vec <- NULL
+	for (i in col_tab[order(col_tab[,1]),2]){
+		c <- as.character(i)
+		while (nchar(c) < 3){
+			c <- paste('0',c,sep='')
+		}
+		col_vec <- c(col_vec, c)
+	}
 } else {
 	memb <- rep( c("a"), length(labels) )
 	p <- p + scale_colour_manual(values=c("black"))
