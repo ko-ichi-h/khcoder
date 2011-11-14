@@ -614,6 +614,21 @@ if (n_cls > 1){
 		linetype=5,
 		size=0.5
 	)
+
+	n <- length( unique(memb[hcl$order]) )
+	new_col <- NULL
+	for (i in 1:ceiling(n / 2) ){
+		new_col <- c(new_col, i)
+		if (i + ceiling(n / 2) <= n){
+			new_col <- c(new_col, i + ceiling(n / 2))
+		}
+	}
+	col_tab <- cbind(
+		unique(memb[hcl$order]),
+		new_col
+	)
+	colnames(col_tab) <- c("org","new")
+	col_vec <- as.character( col_tab[order(col_tab[,1]),2] )
 } else {
 	memb <- rep( c("a"), length(labels) )
 	p <- p + scale_colour_manual(values=c("black"))
@@ -624,7 +639,7 @@ p <- p + geom_text(
 		x=label(ddata)$x,
 		y=label(ddata)$y,
 		text=labels[ as.numeric( as.vector( label(ddata)$text ) ) ],
-		cols=as.character( memb[ as.numeric( as.vector( label(ddata)$text ) ) ] )
+		cols= col_vec[ memb[ as.numeric( as.vector( label(ddata)$text ) ) ] ]
 	),
 	aes_string(
 		x="x",
