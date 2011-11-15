@@ -595,26 +595,26 @@ ddata <- dendro_data(as.dendrogram(hcl), type="rectangle")
 p <- NULL
 p <- ggplot()
 
-p <- p + geom_segment(
-	data=segment(ddata),
-	aes_string(x="x0", y="y0", xend="x1", yend="y1")
-)
+# クラスターごとのカラー設定
 
 if (n_cls > 1){
 	memb <- cutree(hcl,k=n_cls)
-	p <- p + scale_colour_hue(l=45, c=100)
+	# 全体の色設定
+	p <- p + scale_colour_hue(l=40, c=100)
+	# 切り離し線
+	cutpoint <- mean(
+		c(
+			rev(hcl$height)[n_cls-1],
+			rev(hcl$height)[n_cls]
+		)
+	)
 	p <- p + geom_hline(
-		yintercept = mean(
-			c(
-				rev(hcl$height)[n_cls-1],
-				rev(hcl$height)[n_cls]
-			)
-		),
+		yintercept = cutpoint,
 		colour="red",
 		linetype=5,
 		size=0.5
 	)
-
+	# 色の順番を決定
 	n <- length( unique(memb[hcl$order]) )
 	new_col <- NULL
 	for (i in 1:ceiling(n / 2) ){
@@ -623,6 +623,7 @@ if (n_cls > 1){
 			new_col <- c(new_col, i + ceiling(n / 2))
 		}
 	}
+	# クラスター番号→色名の変換用ベクトル作成（col_vec）
 	col_tab <- cbind(
 		unique(memb[hcl$order]),
 		new_col
@@ -636,10 +637,67 @@ if (n_cls > 1){
 		}
 		col_vec <- c(col_vec, c)
 	}
+	# 線の色分け
+	seg_bl <- NULL
+	seg_cl <- NULL
+	for ( i in 1:nrow( segment(ddata) ) ) {
+		if (
+			   segment(ddata)$y0[i] > cutpoint
+			|| segment(ddata)$y1[i] > cutpoint
+		) {
+			seg_bl <- rbind(
+				seg_bl,
+				c(
+					segment(ddata)$x0[i],
+					segment(ddata)$y0[i],
+					segment(ddata)$x1[i],
+					segment(ddata)$y1[i]
+				)
+			)
+		} else {
+			seg_cl <- rbind(
+				seg_cl,
+				c(
+					segment(ddata)$x0[i],
+					segment(ddata)$y0[i],
+					segment(ddata)$x1[i],
+					segment(ddata)$y1[i],
+					#col_vec[
+						memb[hcl$order][
+							floor(
+								mean(
+									segment(ddata)$x0[i],
+									segment(ddata)$x1[i]) 
+								)
+						]
+					#]
+				)
+			)
+		}
+	}
+	colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
+	colnames(seg_cl) <- c("x0", "y0", "x1", "y1", "c")
+	seg_bl <- as.data.frame(seg_bl)
+	seg_cl <- as.data.frame(seg_cl)
+	seg_cl$c <- col_vec[seg_cl$c]
+	p <- p + geom_segment(
+		data=seg_cl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1", colour="c"),
+		size=0.5
+	)
 } else {
 	memb <- rep( c("a"), length(labels) )
 	p <- p + scale_colour_manual(values=c("black"))
+	seg_bl <- segment(ddata)
 }
+
+p <- p + geom_segment(
+	data=seg_bl,
+	aes_string(x="x0", y="y0", xend="x1", yend="y1"),
+	color="gray50",
+	linetype=1,
+)
+
 
 p <- p + geom_text(
 	data=data.frame(                    # ラベル変換
