@@ -21,6 +21,15 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+
+	my $rf = $win->Frame()
+		->pack(-fill => 'both', -expand => 1);
+
+	my $lf = $rf->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1);
 
 	$self->{words_obj} = gui_widget::words->open(
@@ -28,11 +37,11 @@ sub _new{
 		verb   => 'Ê¬Îà',
 	);
 
-	my $lf = $win->LabFrame(
-		-label => 'Options',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'both');
+	#my $lf = $win->LabFrame(
+	#	-label => 'Options',
+	#	-labelside => 'acrosstop',
+	#	-borderwidth => 2,
+	#)->pack(-fill => 'both');
 
 	# µ÷Î¥
 	my $f4 = $lf->Frame()->pack(
@@ -610,7 +619,7 @@ if (n_cls > 1){
 	)
 	p <- p + geom_hline(
 		yintercept = cutpoint,
-		colour="red",
+		colour="black",
 		linetype=5,
 		size=0.5
 	)
