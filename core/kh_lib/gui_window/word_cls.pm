@@ -21,16 +21,26 @@ sub _new{
 		-label => 'Words',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
-	my $rf = $win->Frame()
-		->pack(-fill => 'both', -expand => 1);
+	$lf_w->Label(
+		-text => gui_window->gui_jchar('■集計単位と語の選択'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
 
-	my $lf = $rf->LabFrame(
+	my $lf = $win->LabFrame(
 		-label => 'Options',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'both', -expand => 0);
+
+	$lf->Label(
+		-text => $self->gui_jchar('■クラスター分析の設定'),
+		-font => "TKFN",
+		-foreground => 'blue'
+	)->pack(-anchor => 'w', -pady => 2);
+
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
