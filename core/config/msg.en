@@ -9,6 +9,9 @@ global->paragraph:                                Paragraphs
 global->csv_f:                                    CSV File
 global->spss_f:                                   SPSS File
 global->tab_f:                                    Tab Delimited
+global->plot:                                     Plot
+global->close:                                    Close
+global->save:                                     Save
 global->wm_f:                                     Variable-length CSV: for WordMiner
 global->cont_big_pros:                            "It may take a while.\nMay I continue?"
 gui_window::about->win_title:                     About KH Coder
@@ -228,3 +231,21 @@ mysql_words->tf:                                  TF
 mysql_words->df:                                  DF
 mysql_words->words:                               Words
 mysql_words->pos:                                 POS
+gui_window::word_freq->win_title:                 Term Frequency Distribution
+gui_window::word_freq->descr:                     Descriptives
+gui_window::word_freq->freq_tab:                  Frequency Table
+gui_window::word_freq->tf:                        TF
+gui_window::word_freq->freq:                      Frequency
+gui_window::word_freq->pcnt:                      Percent
+gui_window::word_freq->c_freq:                    "Cumulative\nFrequency"
+gui_window::word_freq->c_pcnt:                    "Cumulative\nPercent"
+gui_window::word_freq->refresh:                   Refresh
+mysql_words->types:                               Types of Terms (n)
+mysql_words->mean_tf:                             Mean of TF
+mysql_words->std_dev_tf:                          Std. Deciation of TF
+gui_window::word_freq_plot->win_title:            Term Frequency Distribution Plot
+gui_window::word_freq_plot->log:                  Logarithmic axes:
+gui_window::word_freq_plot->x:                    TF (X)
+gui_window::word_freq_plot->xy:                   TF (X) and Frequency (Y)
+gui_window::word_freq_plot->none:                 None
+gui_window::word_freq_plot->saving:               Save the plot as...

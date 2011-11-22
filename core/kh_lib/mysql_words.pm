@@ -690,9 +690,9 @@ sub freq_of_f{
 	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
 
 	my @r1;
-	push @r1, ['異なり語数 (n)  ', $n];
-	push @r1, ['平均 出現回数', $mean];
-	push @r1, ['標準偏差', $sd];
+	push @r1, [kh_msg->get('types'), $n]; # '異なり語数 (n)  '
+	push @r1, [kh_msg->get('mean_tf'), $mean]; # '平均 出現回数'
+	push @r1, [kh_msg->get('std_dev_tf'), $sd]; # '標準偏差'
 	
 	my (@r2, $cum); 
 	foreach my $i (sort {$a <=> $b} keys %freq){

@@ -10,6 +10,9 @@ global->csv_f:                                    CSVファイル
 global->spss_f:                                   SPSSファイル
 global->tab_f:                                    タブ区切り
 global->wm_f:                                     不定長CSV （WordMiner）
+global->plot:                                     プロット
+global->close:                                    閉じる
+global->save:                                     保存
 global->cont_big_pros:                            "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
 gui_window::about->win_title:                     KH Coderについて
 gui_window::about->kawabata:                      川端亮
@@ -28,7 +31,7 @@ gui_window::main::menu->close:                    閉じる
 gui_window::main::menu->import:                   インポート
 gui_window::main::menu->export:                   エクスポート
 gui_window::main::menu->config:                   設定
-gui_window::main::menu->exit:                     閉じる
+gui_window::main::menu->exit:                     終了
 gui_window::main::menu->prep:                     前処理(R)
 gui_window::main::menu->check:                    分析対象ファイルのチェック
 gui_window::main::menu->run_prep:                 前処理の実行
@@ -229,5 +232,21 @@ mysql_words->tf:                                  出現回数
 mysql_words->df:                                  文書数
 mysql_words->words:                               抽出語
 mysql_words->pos:                                 品詞
-
-
+gui_window::word_freq->win_title:                 出現回数：分布
+gui_window::word_freq->descr:                     ■記述統計
+gui_window::word_freq->freq_tab:                  ■度数分布表
+gui_window::word_freq->tf:                        出現回数
+gui_window::word_freq->freq:                      度数
+gui_window::word_freq->pcnt:                      パーセント
+gui_window::word_freq->c_freq:                    累積度数
+gui_window::word_freq->c_pcnt:                    累積パーセント
+gui_window::word_freq->refresh:                   再計算
+mysql_words->types:                               異なり語数 (n)
+mysql_words->mean_tf:                             出現回数の平均
+mysql_words->std_dev_tf:                          出現回数の標準偏差
+gui_window::word_freq_plot->win_title:            出現回数：分布：プロット
+gui_window::word_freq_plot->log:                  対数軸の使用：
+gui_window::word_freq_plot->x:                    出現回数(X)
+gui_window::word_freq_plot->xy:                   出現回数(X)と度数(Y)
+gui_window::word_freq_plot->none:                 なし
+gui_window::word_freq_plot->saving:               プロットを保存
