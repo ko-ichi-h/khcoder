@@ -97,7 +97,12 @@ sub search{
 				my @katuyo = ();
 				my $n = 0;
 				foreach my $h (@{$r}){            # 活用語の追加
-					if ( length($h->[1]) > 0 ){
+					if (
+						   length($h->[1]) > 0
+						&& length($h->[0]) > 0
+						&& $h->[2] =~ /[0-9]+/
+						&& $h->[2] > 0
+					){
 						$h->[1] = '   '.$h->[1];
 						unshift @{$h}, 'katuyo';
 						#push @{$result2}, $h;
@@ -107,9 +112,12 @@ sub search{
 				}
 
 				if (                              # 以下の条件を満たせば追加
-					   $n > 1                     # 活用形が複数あるか
-					|| $katuyo[0]->[2] ne '   .'  # 活用名が「.」でないか
-					|| $katuyo[0]->[1] ne $i->[0] # 活用形が基本形と異なるか
+					   $n > 0
+					&& (
+						   $n > 1                     # 活用形が複数ある
+						|| $katuyo[0]->[2] ne '   .'  # 活用名が「.」でない
+						|| $katuyo[0]->[1] ne $i->[0] # 活用形が基本形と異なる
+					)
 				){
 					@{$result2} = (@{$result2},@katuyo);
 				}

@@ -84,8 +84,12 @@ sub add_direct{
 	} else {                                      # 「AND」,「OR」の場合
 		$args{raw} = Jcode->new($args{raw},'sjis')->tr('　',' ')->euc;
 		$args{raw} =~ tr/\t\n/  /;
+		
+		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
+		my @temp = ($args{raw} =~ /("(?:[^"]|"")*"|[^ ]*) /g);
+		
 		my ($n, $t) = (0,'');
-		foreach my $i (split / /, $args{raw}){
+		foreach my $i (@temp){
 			unless ( length($i) ){next;}
 			if ($n){$t .= " $args{mode} ";}
 			$t .= "$i";

@@ -321,6 +321,10 @@ sub v_docs{
 	my $query = $self->gui_jg( $self->{list_val}->itemCget($selected[0], 0, -text) );
 	$query = Jcode->new($query, 'sjis')->euc;
 	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+
+	$query =~ s/"/""/g;
+	$query = '"'.$query.'"' if $query =~ / |"/;
+
 	$query = $self->gui_jchar($query,'euc');
 	
 	# リモートウィンドウの操作
@@ -363,6 +367,10 @@ sub v_words{
 	);
 	$query = Jcode->new($query, 'sjis')->euc;
 	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+	
+	$query =~ s/"/""/g;
+	$query = '"'.$query.'"' if $query =~ / |"/;
+	
 	$query = $self->gui_jchar($query,'euc');
 	
 	# リモートウィンドウの操作
@@ -396,6 +404,8 @@ sub v_words_list{
 		return 0;
 	}
 	
+	print "ok! 0\n";
+	
 	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
 	$self->_save;
 	$self->{selected_var_obj} = mysql_outvar::a_var->new(
@@ -424,6 +434,10 @@ sub v_words_list{
 	foreach my $i (@{$values}){
 		# クエリー作成
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
+
+		$query =~ s/"/""/g;
+		$query = '"'.$query.'"' if $query =~ / |"/;
+
 		$query = $self->gui_jchar($query,'euc');
 		
 		# リモートウィンドウの操作

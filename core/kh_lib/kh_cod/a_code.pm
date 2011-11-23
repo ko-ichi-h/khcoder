@@ -318,19 +318,26 @@ sub new{
 	
 	my $condition = Jcode->new($self->{row_condition},'euc')->tr('　',' ');
 	$condition =~ tr/\t\n\r/   /;
+
+	$condition =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
+	my @temp = map{/^"(.*)"$/ ? scalar($_ = $1, s/""/"/g, $_) : $_}
+		($condition =~ /("(?:[^"]|"")*"|[^ ]*) /g);
+	
 	#print "$condition\n";
-	my @temp = split / /, $condition;
+	#my @temp = split / /, $condition;
 	
 	my $n = 0;
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
+		#print "$i,";
 		my $the_atom = kh_cod::a_code::atom->new($i);
 		push @{$self->{condition}}, $the_atom;
 		$self->{ed_condition} .= ' ' if $n;
 		$self->{ed_condition} .= $the_atom->raw_for_cache_chk;
 		++$n;
 	}
+	#print "\n";
 	
 	bless $self, $class;
 	return $self;
@@ -372,6 +379,7 @@ sub cache_check{
 	# キャッシュリストが存在する場合
 	if ( mysql_exec->table_exists('ct_cache_tables') ){
 		# 既にキャッシュがあるかどうかを検索
+		$args{name} = mysql_exec->quote($args{name});
 		my $h = mysql_exec->select("
 			SELECT id
 			FROM ct_cache_tables
@@ -433,6 +441,7 @@ sub cache_check{
 sub cache_regist{
 	my $self_ = shift;
 	my %args = @_;
+	$args{name} = mysql_exec->quote($args{name});
 	
 	# 新規キャッシュとして登録
 	mysql_exec->do("
@@ -449,6 +458,7 @@ sub cache_regist{
 sub cache_code_if_ok{
 	my $self_ = shift;
 	my %args = @_;
+	$args{name} = mysql_exec->quote($args{name});
 
 	my $h = mysql_exec->select("
 		SELECT hyosos
