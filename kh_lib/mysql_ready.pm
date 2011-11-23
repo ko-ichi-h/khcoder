@@ -1122,6 +1122,10 @@ sub rowtxt{
 				}
 				# エスケープ
 				$temp =~ s/'/\\'/go;
+				if ($spacer eq ' '){
+					$temp =~ s/^(<h[1-5]>) /$1/i;
+					$temp =~ s/ (<\/h[1-5]>)$/$1/i;
+				}
 				
 				$values .= "(\'$temp\'),";
 				$temp = $i->[1];

@@ -37,10 +37,13 @@ sub new{
 	#	die("unknown parameter \"hinshi\"!");
 	#}
 	
+	#print "genkei ids: ";
 	my $t = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $t->fetch){
+		#print "$i->[0],";
 		push @{$self->{genkei_id_s}}, $i->[0];
 	}
+	#print "\n";
 	return $self;
 }
 
@@ -85,16 +88,20 @@ sub hyoso_id_s{
 	}
 	$sql .= "\t) ";
 	
-	#print "$sql\n";
+	print "$sql\n";
 	#return 0;
 	
 	my $t = mysql_exec->select($sql,1)->hundle;
 	my @result;
+	#print "hyoso ids: ";
 	while (my $i = $t->fetch){
+		#print "$i->[0],";
 		push @result, $i->[0];
 	}
+	#print "\n";
 	if (@result){
 		#print "@result";
+		#print "hyoso id ok!\n";
 		return \@result;
 	} else {
 		return 0;

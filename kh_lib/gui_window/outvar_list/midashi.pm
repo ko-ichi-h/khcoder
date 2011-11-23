@@ -42,6 +42,10 @@ sub v_words_list{
 	foreach my $i (@{$values}){
 		# クエリー作成
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
+
+		$query =~ s/"/""/g;
+		$query = '"'.$query.'"' if $query =~ / |"/;
+
 		$query = $self->gui_jchar($query,'euc');
 		
 		# リモートウィンドウの操作

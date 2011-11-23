@@ -49,6 +49,7 @@ sub ready{
 		die("something wrong!");
 	}
 	
+	
 	# 集計単位が矛盾しないかどうか確認
 	$self->{valid} = 1;
 	if ($tani =~ /h([1-5])/i){

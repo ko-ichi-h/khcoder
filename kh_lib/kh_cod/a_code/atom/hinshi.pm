@@ -122,16 +122,17 @@ sub ready{
 	
 	# 表層語リスト作成
 	my $list;
-	if ($self->raw =~ /^(.+)\-\->(.+)->(.+)$/o) {   # 品詞＆活用 指定
+	if ($self->raw =~ /^(.+)\-\->(.+)\->(.+)$/o) {   # 品詞＆活用 指定
 		#print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
+		
 		$list = mysql_a_word->new(
 			genkei => $1,
 			khhinshi => $2,
 			katuyo => $3
 		)->hyoso_id_s;
 	}
-	if ($self->raw =~ /^(.+)\-\->(.+)=>(.+)$/o) {   # 品詞＆表層 指定
-		#print Jcode->new("g: $1, h: $2, k: $3\n")->sjis;
+	elsif ($self->raw =~ /^(.+)\-\->(.+)\=>(.+)$/o) {   # 品詞＆表層 指定
+		#print Jcode->new("g: $1, h: $2, hs: $3\n")->sjis;
 		$list = mysql_a_word->new(
 			genkei => $1,
 			khhinshi => $2,
