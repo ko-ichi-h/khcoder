@@ -88,7 +88,7 @@ sub hyoso_id_s{
 	}
 	$sql .= "\t) ";
 	
-	print "$sql\n";
+	#print "$sql\n";
 	#return 0;
 	
 	my $t = mysql_exec->select($sql,1)->hundle;
