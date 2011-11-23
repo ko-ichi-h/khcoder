@@ -404,7 +404,7 @@ sub v_words_list{
 		return 0;
 	}
 	
-	print "ok! 0\n";
+	#print "ok! 0\n";
 	
 	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
 	$self->_save;
