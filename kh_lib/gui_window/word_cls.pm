@@ -786,7 +786,11 @@ assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
 
 print(p)
 if (n_cls > 1) {
-	grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="sans",fontface="bold"))
+	if ( par("family") == "sans" ){
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="sans",fontface="bold"))
+	} else {
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontface="bold"))
+	}
 } else {
 	grid.remove(gPath("axis_v"), grep=TRUE)
 }
