@@ -238,7 +238,7 @@ sub make{
 	#   ¥Ä¡¼¥ë   #
 
 	$f = $menubar->cascade(
-		-label => kh_msg->get('tools'),#gui_window->gui_jchar('Tools(T)','euc'),
+		-label => gui_window->gui_jm( kh_msg->get('tools') ),
 		-font => "TKFN",
 		-underline => index(kh_msg->get('tools'),'T'),
 		-tearoff=>'no'
