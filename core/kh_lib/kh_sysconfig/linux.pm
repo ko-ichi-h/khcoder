@@ -324,7 +324,7 @@ sub R_device{
 	if ($chk =~ /CairoOn/){
 		$path .= ".tiff";
 	} else {
-		$path .= $format;
+		$path .= ".$format";
 	}
 
 	return $path;
