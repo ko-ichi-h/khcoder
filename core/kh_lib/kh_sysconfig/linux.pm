@@ -291,9 +291,6 @@ sub R_device{
 	my $height = shift;
 
 	my $format = 'tiff';
-	#if ($^O =~ "darwin" && $::config_obj->R_version > 10){
-	#	$format = "tiff";
-	#}
 
 	$path .= '.'.$format;
 	unlink($path) if -e $path;
@@ -303,10 +300,13 @@ sub R_device{
 
 	return 0 unless $::config_obj->R;
 
-	$::config_obj->R->send(
-		#"$format(\"$path\", width=$width, height=$height, unit=\"px\" )"
-		"Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"tiff\")"
-	);
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"tiff\")
+		} else {
+			tiff(\"$path\", width=$width, height=$height, unit=\"px\" )
+		}
+	");
 	return $path;
 }
 
