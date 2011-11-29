@@ -290,10 +290,10 @@ sub R_device{
 	my $width = shift;
 	my $height = shift;
 
-	my $format = 'png';
-	if ($^O =~ "darwin" && $::config_obj->R_version > 10){
-		$format = "tiff";
-	}
+	my $format = 'tiff';
+	#if ($^O =~ "darwin" && $::config_obj->R_version > 10){
+	#	$format = "tiff";
+	#}
 
 	$path .= '.'.$format;
 	unlink($path) if -e $path;

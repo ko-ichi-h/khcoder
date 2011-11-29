@@ -14,7 +14,10 @@ sub _new{
 	my $win = $self->{win_obj};
 
 	$win->title($self->gui_jt('文書数：分布：プロット','euc'));
-	
+
+	if ($::config_obj->os eq "linux"){
+		require Tk::TIFF;
+	}
 	$self->{img} = $win->Photo(-file => $args{images}->[1]->path);
 	
 	$self->{photo} = $win->Label(
