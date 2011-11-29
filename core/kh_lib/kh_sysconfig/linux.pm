@@ -313,11 +313,18 @@ sub R_device{
 		}
 	");
 
-	if (-e $path.".$format"){
-		$path .= ".$format";
-	}
-	if (-e $path.".tiff"){
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			print(\"CairoOn\")
+		} else {
+			print(\"CairoOff\")
+		}
+	");
+	my $chk = $::config_obj->R->read;
+	if ($chk =~ /CairoOn/){
 		$path .= ".tiff";
+	} else {
+		$path .= $format;
 	}
 
 	return $path;
