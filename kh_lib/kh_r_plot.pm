@@ -76,13 +76,13 @@ sub new{
 
 		# Cairo
 		$::config_obj->R->send(
-			 "library(Cairo)\n"
-			."CairoFonts(\n"
+			 "try( library(Cairo) )\n"
+			."try( CairoFonts(\n"
 			."	regular    =\"IPAPGothic:style=Regular\",\n"
 			."	bold       =\"IPAPGothic:style=Regular,Bold\",\n"
 			."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
 			."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
-			.")"
+			."))"
 		);
 
 		$::config_obj->R->output_chk(1);
@@ -204,16 +204,16 @@ sub set_par{
 	);
 
 	# 日本語以外の場合は「sans」フォントに # morpho_analyzer
-	#if (
-	#	   $::project_obj->morpho_analyzer eq 'chasen'
-	#	|| $::project_obj->morpho_analyzer eq 'mecab'
-	#) {
-	#	$::config_obj->R->send("par(\"family\"=\"\")");
-	#} else {
-	#	print "family: sans\n";
-	#	$::config_obj->R->send("par(\"family\"=\"sans\")");
-	#}
-	#$::config_obj->R->output_chk(1);
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	) {
+		$::config_obj->R->send("par(\"family\"=\"\")");
+	} else {
+		#print "family: sans\n";
+		$::config_obj->R->send("par(\"family\"=\"sans\")");
+	}
+	$::config_obj->R->output_chk(1);
 
 	return $self;
 }
