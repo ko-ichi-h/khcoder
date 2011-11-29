@@ -83,8 +83,6 @@ sub new{
 			."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
 			."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
 			.")"
-			#."CairoFonts(italic=\"IPAPGothic:style=Regular,Italic\")\n"
-			#."CairoFonts(bolditalic=\"IPAPGothic:style=Regular,BoldItalic\")\n"
 		);
 
 		$::config_obj->R->output_chk(1);

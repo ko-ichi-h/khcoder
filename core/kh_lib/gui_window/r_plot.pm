@@ -18,7 +18,6 @@ use mysql_words;
 use Tk;
 use Tk::Pane;
 use Tk::PNG;
-use Tk::TIFF;
 
 my $imgs;
 
@@ -39,6 +38,9 @@ sub _new{
 	$win->title($self->gui_jt( $self->win_title ));
 
 	# 画像をロード
+	if ($::config_obj->os eq "linux"){
+		require Tk::TIFF;
+	}
 	if ( $imgs->{$self->win_name} ){
 		#print "img: read: ".$self->win_name."\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
