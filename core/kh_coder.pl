@@ -104,8 +104,8 @@ BEGIN {
 	# for Linux & Others
 	else {
 		if ($] > 5.008){
-			require Tk::FBox;
-			require Tk::FBox_kh;
+			#require Tk::FBox;
+			#require Tk::FBox_kh;
 		}
 	}
 
