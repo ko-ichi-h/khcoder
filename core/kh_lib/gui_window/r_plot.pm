@@ -18,6 +18,7 @@ use mysql_words;
 use Tk;
 use Tk::Pane;
 use Tk::PNG;
+use Tk::TIFF;
 
 my $imgs;
 
@@ -45,7 +46,7 @@ sub _new{
 		#print "img: new\n";
 		$imgs->{$self->win_name} = 
 			$win->Photo('photo_'.$self->win_name,
-				-file => $self->{plots}[$self->{ax}]->path
+				-file => $self->{plots}[$self->{ax}]->path,
 			);
 	}
 	
