@@ -292,7 +292,7 @@ sub R_device{
 
 	my $format = 'png';
 	if ($^O =~ "darwin" && $::config_obj->R_version > 10){
-		$format = "bmp";
+		$format = "tiff";
 	}
 
 	$path .= '.'.$format;
@@ -304,7 +304,8 @@ sub R_device{
 	return 0 unless $::config_obj->R;
 
 	$::config_obj->R->send(
-		"$format(\"$path\", width=$width, height=$height, unit=\"px\" )"
+		#"$format(\"$path\", width=$width, height=$height, unit=\"px\" )"
+		"Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"tiff\")"
 	);
 	return $path;
 }

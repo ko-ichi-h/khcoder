@@ -73,6 +73,20 @@ sub new{
 			);
 		}
 		$::config_obj->R->send('options("bitmapType"="Xlib")'); # MacÍÑ
+
+		# Cairo
+		$::config_obj->R->send(
+			 "library(Cairo)\n"
+			."CairoFonts(\n"
+			."	regular    =\"IPAPGothic:style=Regular\",\n"
+			."	bold       =\"IPAPGothic:style=Regular,Bold\",\n"
+			."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
+			."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
+			.")"
+			#."CairoFonts(italic=\"IPAPGothic:style=Regular,Italic\")\n"
+			#."CairoFonts(bolditalic=\"IPAPGothic:style=Regular,BoldItalic\")\n"
+		);
+
 		$::config_obj->R->output_chk(1);
 		
 		$if_font = 1;
