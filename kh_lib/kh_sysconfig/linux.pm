@@ -290,10 +290,15 @@ sub R_device{
 	my $width = shift;
 	my $height = shift;
 
-	my $format = 'tiff';
+	my $format = 'png';
+	$format = 'bmp' if $^O =~ /darwin/;
 
-	$path .= '.'.$format;
-	unlink($path) if -e $path;
+	if (-e $path.".$format"){
+		unlink($path.".$format");
+	}
+	if (-e $path.".tiff"){
+		unlink($path.".tiff");
+	}
 
 	$width  = 480 unless $width;
 	$height = 480 unless $height;
@@ -302,11 +307,19 @@ sub R_device{
 
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
-			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"tiff\")
+			Cairo(width=$width, height=$height, unit=\"px\", file=paste(\"$path\",\".tiff\", sep=\"\"), bg = \"white\", type=\"tiff\")
 		} else {
-			tiff(\"$path\", width=$width, height=$height, unit=\"px\" )
+			$format(paste(\"$path\",\".$format\", sep=\"\"), width=$width, height=$height, unit=\"px\" )
 		}
 	");
+
+	if (-e $path.".$format"){
+		$path .= ".$format";
+	}
+	if (-e $path.".tiff"){
+		$path .= ".tiff";
+	}
+
 	return $path;
 }
 
