@@ -41,7 +41,7 @@ use vars qw($VERSION $updirImage $folderImage $fileImage);
 
 my $debug_kh = 0; 
 
-#$VERSION = sprintf '4.%03d', q$Revision: 1.4 $ =~ /\D(\d+)\s*$/;
+#$VERSION = sprintf '4.%03d', q$Revision: 1.5 $ =~ /\D(\d+)\s*$/;
 $VERSION = '4.019';
 
 use base qw(Tk::Toplevel);
@@ -84,7 +84,7 @@ sub Populate {
     if ($^O eq 'darwin'){ # for Mac OS X
         $w->{'encoding'} = $w->getEncoding('utf8');
     } else {              # for Linux
-        $w->{'encoding'} = $w->getEncoding('eucJP-ms');
+        $w->{'encoding'} = $w->getEncoding('eucjp');
     }
 
     # f1: the frame with the directory option menu
