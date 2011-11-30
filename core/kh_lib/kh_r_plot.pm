@@ -401,10 +401,22 @@ sub _save_png{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
-	$::config_obj->R->send(
-		 "png(\"$path\", width=$self->{width},"
-		."height=$self->{height}, unit=\"px\")"
-	);
+
+	if ($::config_obj->os eq 'win32'){
+		$::config_obj->R->send(
+			 "png(\"$path\", width=$self->{width},"
+			."height=$self->{height}, unit=\"px\")"
+		);
+	} else {
+		$::config_obj->R->send("
+			if ( exists(\"Cairo\") ){
+				Cairo(width=$self->{width}, height=$self->{height}, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\")
+			} else {
+				png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\")
+			}
+		");
+	}
+
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
