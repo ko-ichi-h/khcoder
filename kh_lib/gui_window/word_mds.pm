@@ -364,53 +364,47 @@ while ( is.na(check4mds(d)) == 0 ){
 	$args{cls_raw} = 0 unless ( length($args{cls_raw}) );
 	
 	$r_command_d = $r_command;
-	if ($args{dim_number} == 1){
-		$r_command_d .=
-			 "cl <- cbind(cl,0)\n"
-			.'plot(cl, pch=20, col="mediumaquamarine",'
-				.'xlab="次元1",ylab="")'."\n"
-			."library(maptools)\n"
-			.'pointLabel('
-				.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-				."cex=$fontsize, offset=0)\n";
-		;
-		$r_command_a .=
-			 'plot(cl,'
-				.'xlab="次元1",ylab="")'."\n"
-		;
-	}
-	elsif ($args{dim_number} == 2){
+
+	$r_command_d .= "plot_mode <- \"color\"\n";
+	$r_command_d .= "font_size <- $fontsize\n";
+	$r_command_d .= "n_cls <- $args{n_cls}\n";
+	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
+	$r_command_d .= "dim_n <- $args{dim_number}\n";
+	
+	$r_command_a .= "plot_mode <- \"dots\"\n";
+	$r_command_a .= "font_size <- $fontsize\n";
+	$r_command_a .= "n_cls <- $args{n_cls}\n";
+	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
+	$r_command_a .= "dim_n <- $args{dim_number}\n";
+
+
+	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
-			$r_command_d .=
-				 'plot(cl,pch=20,col="mediumaquamarine",'
-					.'xlab="次元1",ylab="次元2")'."\n"
-				."library(maptools)\n"
-				.'pointLabel('
-					.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-					."cex=$fontsize, offset=0)\n";
-			;
-			$r_command_a .=
-				 'plot(cl,'
-					.'xlab="次元1",ylab="次元2")'."\n"
-			;
+			$r_command_d .= &r_command_plot;
+			$r_command_a .= &r_command_plot;
+		
+			#$r_command_d .=
+			#	 'plot(cl,pch=20,col="mediumaquamarine",'
+			#		.'xlab="次元1",ylab="次元2")'."\n"
+			#	."library(maptools)\n"
+			#	.'pointLabel('
+			#		.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
+			#		."cex=$fontsize, offset=0)\n";
+			#;
+			#$r_command_a .=
+			#	 'plot(cl,'
+			#		.'xlab="次元1",ylab="次元2")'."\n"
+			#;
 		} else {
 			# バブル表現を行う場合
 			$r_command_d .= "std_radius <- $args{std_radius}\n";
-			$r_command_d .= "font_size <- $fontsize\n";
-			$r_command_d .= "plot_mode <- \"color\"\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
 			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_d .= "n_cls <- $args{n_cls}\n";
-			$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 			$r_command_d .= &r_command_bubble;
 
 			$r_command_a .= "std_radius <- $args{std_radius}\n";
-			$r_command_a .= "font_size <- $fontsize\n";
-			$r_command_a .= "plot_mode <- \"dots\"\n";
 			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
 			$r_command_a .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_a .= "n_cls <- $args{n_cls}\n";
-			$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 			$r_command_a .= &r_command_bubble;
 		}
 	}
@@ -557,9 +551,76 @@ sub hinshi{
 	return $self->{words_obj}->hinshi;
 }
 
+sub r_command_plot{
+	return '
+
+ylab_text <- ""
+if ( dim_n == 2 ){
+	ylab_text <- "次元2"
+}
+if ( dim_n == 1 ){
+	cl <- cbind(cl[,1],cl[,1])
+}
+
+col_base <- "mediumaquamarine"
+
+# クラスター分析
+if (n_cls > 0){
+	library( RColorBrewer )
+	if (cls_raw == 1){
+		hcl <- hclust( dj, method="ward" )
+	} else {
+		hcl <- hclust( dist(cl,method="euclid")^2, method="ward" )
+	}
+	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
+	col_base <- NA
+}
+
+plot(
+	cl,
+	pch=20,
+	col=col_base,
+	xlab="次元1",
+	ylab=ylab_text
+)
+
+if (n_cls > 0){
+	symbols(
+		cl[,1],
+		cl[,2],
+		circles=rep(1,length(cl[,1])),
+		inches=0.1,
+		fg="gray40",
+		bg=col_bg_words,
+		add=T,
+	)
+}
+
+if ( plot_mode == "color" ){
+	library(maptools)
+	pointLabel(
+		x=cl[,1],
+		y=cl[,2],
+		labels=rownames(cl),
+		cex=font_size,
+		offset=0
+	)
+}
+
+';
+}
 
 sub r_command_bubble{
 	return '
+
+ylab_text <- ""
+if ( dim_n == 2 ){
+	ylab_text <- "次元2"
+}
+if ( dim_n == 1 ){
+	cl <- cbind(cl[,1],cl[,1])
+}
+
 
 if (plot_mode == "color"){
 	col_txt_words <- "black"
@@ -628,7 +689,7 @@ plot(
 	pch=NA,
 	col="black",
 	xlab="次元1",
-	ylab="次元2",
+	ylab=ylab_text,
 )
 
 symbols(
