@@ -57,7 +57,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{check_cls_raw_w} = $fcls2->Checkbutton(
-			-text     => gui_window->gui_jchar('クラスター化にロー・データを使用','euc'),
+			-text     => gui_window->gui_jchar('ロー・データを使ってクラスター化','euc'),
 			-variable => \$self->{check_cls_raw},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
