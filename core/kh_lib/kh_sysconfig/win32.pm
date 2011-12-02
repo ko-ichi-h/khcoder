@@ -246,6 +246,7 @@ sub R_device{
 	
 	$::config_obj->R->send(
 		"png(\"$path\", width=$width, height=$height, unit=\"px\")"
+		#"bitmap(\"$path\", type=\"png16m\", width=$width, height=$height, unit=\"px\", gaa = 4)"
 	);
 	return $path;
 }
