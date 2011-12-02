@@ -829,7 +829,8 @@ sub make_plot{
 				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
 				.'pch=c(20,1)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				#.'bty="l"'
 				.")\n"
 			."library(maptools)\n"
 			."pointLabel(x=c\$cscore[,d_x], y=c\$cscore[,d_y],"
@@ -842,7 +843,8 @@ sub make_plot{
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				.'pch=c(1,3)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				#.'bty="l"'
 				.")\n"
 		;
 	} else {                                      # 同時布置あり
@@ -856,7 +858,8 @@ sub make_plot{
 				.'col=c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
-				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]'
+				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
+				#.'bty="l"'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
@@ -883,7 +886,8 @@ sub make_plot{
 				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
 				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
-				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]'
+				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
+				#.'bty="l"'
 				." )\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel("
@@ -910,7 +914,8 @@ sub make_plot{
 				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
 				.'col=c("gray65","gray65",rep( "gray30", v_count))[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				#.'bty="l"'
 				.")\n"
 		;
 		$r_com_gray =                             # command_fにのみ追加
@@ -958,7 +963,8 @@ sub make_plot{
 				.'),'
 				.'pch=c(1,3,0,2,4:15)[cb[,3]],'
 				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")'
+				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				#.'bty="l"'
 				.")\n"
 		;
 	}
@@ -1253,7 +1259,8 @@ plot(
 	pch=NA,
 	col="black",
 	xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),
-	ylab=paste("成分",d_y,"（",k[d_y],"%）",sep="")
+	ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),
+	#bty="l"
 )
 
 # バブル描画（語）

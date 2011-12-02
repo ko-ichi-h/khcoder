@@ -581,7 +581,8 @@ plot(
 	pch=20,
 	col=col_base,
 	xlab="次元1",
-	ylab=ylab_text
+	ylab=ylab_text,
+	#bty="l",
 )
 
 if (n_cls > 0){
@@ -690,6 +691,7 @@ plot(
 	col="black",
 	xlab="次元1",
 	ylab=ylab_text,
+	#bty="l"
 )
 
 symbols(
