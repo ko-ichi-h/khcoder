@@ -127,6 +127,15 @@ sub _new{
 		},
 	);
 
+	# クラスター化
+	$self->{cls_obj} = gui_widget::cls4mds->open(
+		parent       => $lf,
+		command      => sub{ $self->calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
+	);
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -278,6 +287,8 @@ sub calc{
 		std_radius   => $self->{bubble_obj}->chk_std_radius,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		n_cls        => $self->{cls_obj}->n,
+		cls_raw      => $self->{cls_obj}->raw,
 	);
 	
 	$w->end(no_dialog => 1);
@@ -325,9 +336,10 @@ while ( is.na(check4mds(d)) == 0 ){
 ";
 
 	if ($args{method_dist} eq 'euclid'){
-		$r_command .= "d <- t( scale( t(d) ) )\n";
+		$r_command .= "dj <- Dist(t( scale( t(d) ) ),method=\"$args{method_dist}\")\n";
+	} else {
+		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
-	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
@@ -348,6 +360,9 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 
 	# プロット用のコマンド（次元別）
+	$args{n_cls} = 0 unless ( length($args{n_cls}) );
+	$args{cls_raw} = 0 unless ( length($args{cls_raw}) );
+	
 	$r_command_d = $r_command;
 	if ($args{dim_number} == 1){
 		$r_command_d .=
@@ -385,6 +400,8 @@ while ( is.na(check4mds(d)) == 0 ){
 			$r_command_d .= "plot_mode <- \"color\"\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
 			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
+			$r_command_d .= "n_cls <- $args{n_cls}\n";
+			$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 			$r_command_d .= &r_command_bubble;
 
 			$r_command_a .= "std_radius <- $args{std_radius}\n";
@@ -392,6 +409,8 @@ while ( is.na(check4mds(d)) == 0 ){
 			$r_command_a .= "plot_mode <- \"dots\"\n";
 			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
 			$r_command_a .= "bubble_var <- $args{bubble_var}\n";
+			$r_command_a .= "n_cls <- $args{n_cls}\n";
+			$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 			$r_command_a .= &r_command_bubble;
 		}
 	}
@@ -546,23 +565,29 @@ if (plot_mode == "color"){
 	col_txt_words <- "black"
 	col_dot_words <- "#00CED1"
 	col_dot_vars  <- "#FF6347"
+	col_bg_words  <- "white"
 }
 
 if (plot_mode == "dots"){
 	col_txt_words <- NA
 	col_dot_words <- "black"
 	col_dot_vars  <- "black"
+	col_bg_words  <- "white"
 }
 
 # バブルのサイズを決定
 neg_to_zero <- function(nums){
   temp <- NULL
   for (i in 1:length(nums) ){
-    if (nums[i] < 1){
+    if ( is.na( nums[i] ) ){
       temp[i] <- 1
     } else {
-      temp[i] <-  nums[i]
-    }
+	    if (nums[i] < 1){
+	      temp[i] <- 1
+	    } else {
+	      temp[i] <-  nums[i]
+	    }
+	}
   }
   return(temp)
 }
@@ -585,6 +610,18 @@ if (std_radius){ # 円の大小をデフォルメ
 	b_size <- neg_to_zero(b_size)
 }
 
+# クラスター分析
+if (n_cls > 0){
+	library( RColorBrewer )
+	if (cls_raw == 1){
+		hcl <- hclust( dj, method="ward" )
+	} else {
+		hcl <- hclust( dist(cl,method="euclid")^2, method="ward" )
+	}
+	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
+	col_dot_words <- "gray40"
+}
+
 # バブル描画
 plot(
 	cl,
@@ -600,6 +637,7 @@ symbols(
 	circles=b_size,
 	inches=0.5 * bubble_size / 100,
 	fg=col_dot_words,
+	bg=col_bg_words,
 	add=T,
 )
 
