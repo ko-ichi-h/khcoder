@@ -789,7 +789,12 @@ if (n_cls > 1) {
 	if ( par("family") == "sans" ){
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="sans",fontface="bold"))
 	} else {
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontface="bold"))
+		if ( grepl("darwin", R.version$platform) ){
+			quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
+		} else {
+			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontface="bold"))
+		}
 	}
 } else {
 	grid.remove(gPath("axis_v"), grep=TRUE)
