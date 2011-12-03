@@ -1408,11 +1408,46 @@ s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
         apply(unclass(neig), 1, fun, coo = coo)
     }
     if (clabel > 0) 
-        scatterutil.eti(coo$x, coo$y, label, clabel, boxes)
+        scatterutil.eti_my(coo$x, coo$y, label, clabel, boxes)
     if (cpoint > 0 & clabel < 1e-06) 
         points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
     #box()
     invisible(match.call())
+}
+scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1, length(x)), 
+    horizontal = TRUE) 
+{
+    if (length(label) == 0) 
+        return(invisible())
+    if (is.null(label)) 
+        return(invisible())
+    if (any(label == "")) 
+        return(invisible())
+    cex0 <- par("cex") * clabel
+    for (i in 1:(length(x))) {
+        cha <- as.character(label[i])
+        cha2 <- paste( " ", cha, " ", sep = "")
+        x1 <- x[i]
+        y1 <- y[i]
+        xh <- strwidth(cha2, cex = cex0)
+        yh <- strheight(cha, cex = cex0) * 5/3
+        if (!horizontal) {
+            tmp <- scatterutil.convrot90(xh, yh)
+            xh <- tmp[1]
+            yh <- tmp[2]
+        }
+        if (boxes) {
+            rect(x1 - xh/2, y1 - yh/2, x1 + xh/2, y1 + yh/2, 
+                col = "white", border = coul[i])
+        }
+        if (horizontal) {
+            text(x1, y1, cha, cex = cex0, col = coul[i])
+            print("looks ok...")
+        }
+        else {
+            text(x1, y1, cha, cex = cex0, col = coul[i], srt = 90)
+        }
+    }
 }
 ';
 

@@ -291,7 +291,6 @@ sub R_device{
 	my $height = shift;
 
 	my $format = 'png';
-	$format = 'bmp' if $^O =~ /darwin/;
 
 	if (-e $path.".$format"){
 		unlink($path.".$format");

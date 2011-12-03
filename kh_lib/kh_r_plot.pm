@@ -72,18 +72,19 @@ sub new{
 				.'"-adobe-symbol-*-*-*-*-%d-*-*-*-*-*-*-*"))'
 			);
 		}
-		$::config_obj->R->send('options("bitmapType"="Xlib")'); # MacÍÑ
 
 		# Cairo
-		$::config_obj->R->send(
-			 "try( library(Cairo) )\n"
-			."try( CairoFonts(\n"
-			."	regular    =\"IPAPGothic:style=Regular\",\n"
-			."	bold       =\"IPAPGothic:style=Regular,Bold\",\n"
-			."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
-			."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
-			."))"
-		);
+		unless ($^O =~ /darwin/i ){
+			$::config_obj->R->send(
+				 "try( library(Cairo) )\n"
+				."try( CairoFonts(\n"
+				."	regular    =\"IPAPGothic:style=Regular\",\n"
+				."	bold       =\"IPAPGothic:style=Regular,Bold\",\n"
+				."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
+				."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
+				."))"
+			);
+		}
 
 		$::config_obj->R->output_chk(1);
 		
@@ -208,11 +209,24 @@ sub set_par{
 		   $::project_obj->morpho_analyzer eq 'chasen'
 		|| $::project_obj->morpho_analyzer eq 'mecab'
 	) {
-		$::config_obj->R->send("par(\"family\"=\"\")");
+		$::config_obj->R->send("
+			if ( grepl(\"darwin\", R.version\$platform) ){
+				par(family=\"Hiragino Kaku Gothic Pro W3\")
+			} else {
+				par(family=\"\")
+			}
+		");
 	} else {
 		#print "family: sans\n";
-		$::config_obj->R->send("par(\"family\"=\"sans\")");
+		$::config_obj->R->send("
+			if ( grepl(\"darwin\", R.version\$platform) ){
+				par(family=\"Hiragino Kaku Gothic Pro W3\")
+			} else {
+				par(family=\"sans\")
+			}
+		");
 	}
+
 	$::config_obj->R->output_chk(1);
 
 	return $self;
