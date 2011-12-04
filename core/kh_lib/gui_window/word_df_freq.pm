@@ -11,10 +11,10 @@ sub _new{
 	my $wmw= $self->{win_obj};
 	#$self->{win_obj} = $wmw;
 	#$wmw->focus;
-	$wmw->title($self->gui_jt('文書数：分布'));
+	$wmw->title( $self->gui_jt( kh_msg->get('win_title') ) ); #'文書数：分布'
 	
 	$wmw->Label(
-		-text => $self->gui_jchar('■記述統計'),
+		-text => kh_msg->get('descr'), #$self->gui_jchar('■記述統計'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	
@@ -38,7 +38,7 @@ sub _new{
 	)->pack();
 	
 	$wmw->Label(
-		-text => $self->gui_jchar('■度数分布表'),
+		-text => kh_msg->get('freq_tab'), #$self->gui_jchar('■度数分布表'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
@@ -56,15 +56,15 @@ sub _new{
 		-selectmode       => 'extended',
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
-	
-	$lis2->header('create',0,-text => $self->gui_jchar('文書数'));
-	$lis2->header('create',1,-text => $self->gui_jchar('度数'));
-	$lis2->header('create',2,-text => $self->gui_jchar('パーセント'));
-	$lis2->header('create',3,-text => $self->gui_jchar('累積度数'));
-	$lis2->header('create',4,-text => $self->gui_jchar('累積パーセント'));
-	
+
+	$lis2->header('create',0,-text => kh_msg->get('df')); #$self->gui_jchar('文書数'));
+	$lis2->header('create',1,-text => kh_msg->get('freq'));#$self->gui_jchar('度数'));
+	$lis2->header('create',2,-text => kh_msg->get('pcnt')); #$self->gui_jchar('パーセント'));
+	$lis2->header('create',3,-text => kh_msg->get('c_freq')); #$self->gui_jchar('累積度数'));
+	$lis2->header('create',4,-text => kh_msg->get('c_pcnt')); #$self->gui_jchar('累積パーセント'));
+
 	$self->{copy_btn} = $wmw->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list2);}
@@ -81,7 +81,7 @@ sub _new{
 	);
 
 	my $btn = $wmw->Button(
-		-text => $self->gui_jchar('プロット'),
+		-text => kh_msg->gget('plot'),#$self->gui_jchar('プロット'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -94,7 +94,7 @@ sub _new{
 	}
 
 	$wmw->Label(
-		-text => $self->gui_jchar('  集計単位：'),
+		-text => kh_msg->get('units'), #$self->gui_jchar('  集計単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -110,7 +110,7 @@ sub _new{
 	);
 
 	$wmw->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'), #$self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {$self->close;}
@@ -193,8 +193,8 @@ sub plot{
 
 	my $tani = $self->{tani_obj}->tani;
 	my %tani_name = (
-		'bun' => '文',
-		'dan' => '段落',
+		'bun' => kh_msg->gget('sentence'),
+		'dan' => kh_msg->gget('paragraph'),
 		'h1'  => 'H1',
 		'h2'  => 'H2',
 		'h3'  => 'H3',
@@ -213,24 +213,36 @@ sub plot{
 		name      => 'words_DF_freq1',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数（'.$tani_name.'）")',
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
+			.kh_msg->get('freq')
+			.'",'
+			.'xlab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.')")',
 	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_DF_freq2',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数（'.$tani_name.'）", log="x")',
+			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
+			.kh_msg->get('freq')
+			.'",'
+			.'xlab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.')", log="x")',
 	) or $flg_error = 1;
 	
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_DF_freq3',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="度数",'
-			.'xlab="文書数（'.$tani_name.'）", log="xy")',
+			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="'
+			.kh_msg->get('freq')
+			.'",'
+			.'xlab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.')", log="xy")',
 	) or $flg_error = 1;
 	
 	kh_r_plot->clear_env;

@@ -242,10 +242,27 @@ gui_window::word_freq->c_pcnt:                    "Cumulative\nPercent"
 gui_window::word_freq->refresh:                   Refresh
 mysql_words->types:                               Types of Terms (n)
 mysql_words->mean_tf:                             Mean of TF
-mysql_words->std_dev_tf:                          Std. Deciation of TF
+mysql_words->std_dev_tf:                          Std. Deviation of TF
 gui_window::word_freq_plot->win_title:            Term Frequency Distribution Plot
 gui_window::word_freq_plot->log:                  Logarithmic axes:
 gui_window::word_freq_plot->x:                    TF (X)
 gui_window::word_freq_plot->xy:                   TF (X) and Frequency (Y)
 gui_window::word_freq_plot->none:                 None
 gui_window::word_freq_plot->saving:               Save the plot as...
+gui_window::word_df_freq->win_title:              Document Frequency Distribution
+gui_window::word_df_freq->descr:                  Descriptives
+gui_window::word_df_freq->freq_tab:               Frequency Table
+gui_window::word_df_freq->df:                     DF
+gui_window::word_df_freq->freq:                   Frequency
+gui_window::word_df_freq->pcnt:                   Percent
+gui_window::word_df_freq->c_freq:                 "Cumulative\nFrequency"
+gui_window::word_df_freq->c_pcnt:                 "Cumulative\nPercent"
+gui_window::word_df_freq->units:                  '  Counting Units:'
+mysql_words->mean_df:                             Mean of DF
+mysql_words->std_dev_df:                          Std. Deviation of TF
+gui_window::word_df_freq_plot->win_title:         Document Frequency Distribution Plot
+gui_window::word_df_freq_plot->log:               Logarithmic axes:
+gui_window::word_df_freq_plot->x:                 DF (X)
+gui_window::word_df_freq_plot->xy:                DF (X) and Frequency (Y)
+gui_window::word_df_freq_plot->none:              None
+gui_window::word_df_freq_plot->saving:            Save the plot as...
