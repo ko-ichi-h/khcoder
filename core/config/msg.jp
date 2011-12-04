@@ -268,3 +268,12 @@ gui_window::word_df_freq_plot->x:                 文書数(X)
 gui_window::word_df_freq_plot->xy:                文書数(X)と度数(Y)
 gui_window::word_df_freq_plot->none:              なし
 gui_window::word_df_freq_plot->saving:            名前を付けてプロットを保存
+gui_window::word_tf_df->win_title:                出現回数と文書数
+gui_window::word_tf_df->units:                    集計単位：
+gui_window::word_tf_df->log:                      対数軸の使用：
+gui_window::word_tf_df->x:                        出現回数(X)
+gui_window::word_tf_df->xy:                       出現回数(X)と文書数(Y)
+gui_window::word_tf_df->none:                     なし
+gui_window::word_tf_df->tf:                       出現回数
+gui_window::word_tf_df->df:                       文書数
+gui_window::word_tf_df->saving:                   名前を付けてプロットを保存

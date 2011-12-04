@@ -266,3 +266,12 @@ gui_window::word_df_freq_plot->x:                 DF (X)
 gui_window::word_df_freq_plot->xy:                DF (X) and Frequency (Y)
 gui_window::word_df_freq_plot->none:              None
 gui_window::word_df_freq_plot->saving:            Save the plot as...
+gui_window::word_tf_df->win_title:                TF-DF Plot
+gui_window::word_tf_df->units:                    Counting Units:
+gui_window::word_tf_df->log:                      '  Logarithmic axes:'
+gui_window::word_tf_df->x:                        TF(X)
+gui_window::word_tf_df->xy:                       TF(X) and DF(Y)
+gui_window::word_tf_df->none:                     None
+gui_window::word_tf_df->tf:                       Term Frequency
+gui_window::word_tf_df->df:                       Document Frequency
+gui_window::word_tf_df->saving:                   Save the plot as...

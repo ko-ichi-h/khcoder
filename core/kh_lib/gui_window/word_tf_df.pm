@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
-	$win->title($self->gui_jt('出現回数と文書数'));
+	$win->title($self->gui_jt( kh_msg->get('win_title') )); # '出現回数と文書数'
 
 	if ($::config_obj->os eq "linux"){
 		require Tk::TIFF;
@@ -33,7 +33,7 @@ sub _new{
 	);
 
 	$f1->Label(
-		-text => $self->gui_jchar('集計単位：'),
+		-text => kh_msg->get('units'), #$self->gui_jchar('集計単位：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'e', -side => 'left');
 	my %pack = (-side => 'left');
@@ -44,7 +44,7 @@ sub _new{
 	);
 
 	$f1->Label(
-		-text => $self->gui_jchar('  対数軸の使用：'),
+		-text => kh_msg->get('log'), #$self->gui_jchar('  対数軸の使用：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'e', -side => 'left');
 	
@@ -53,16 +53,19 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
 		options =>
 			[
-				[$self->gui_jchar('出現回数(X)')  => 1],
-				[$self->gui_jchar('出現回数(X)と文書数(Y)') => 2],
-				[$self->gui_jchar('なし') => 0],
+				[kh_msg->get('x')  => 1],
+				[kh_msg->get('xy') => 2],
+				[kh_msg->get('none') => 0],
+				#[$self->gui_jchar('出現回数(X)')  => 1],
+				#[$self->gui_jchar('出現回数(X)と文書数(Y)') => 2],
+				#[$self->gui_jchar('なし') => 0],
 			],
 		variable => \$self->{ax},
 		command  => sub {$self->renew;},
 	);
 
 	$f1->Button(
-		-text => $self->gui_jchar('保存'),
+		-text => kh_msg->gget('save'),
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -114,9 +117,12 @@ sub count{
 	chop $rcmd;
 	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
+	# Decoding input from MySQL
+	$rcmd = Encode::decode("eucjp", $rcmd);
+
 	my %tani_name = (
-		'bun' => '文',
-		'dan' => '段落',
+		'bun' => kh_msg->gget('sentence'),
+		'dan' => kh_msg->gget('paragraph'),
 		'h1'  => 'H1',
 		'h2'  => 'H2',
 		'h3'  => 'H3',
@@ -135,21 +141,33 @@ sub count{
 		name      => 'words_TF_DF1',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）", xlab="出現回数")',
+			.'plot(hoge[,1],hoge[,2],ylab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.') ", xlab="'
+			.kh_msg->get('tf')
+			.'")',
 	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
 		name      => 'words_TF_DF2',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）",xlab="出現回数",log="x")',
+			.'plot(hoge[,1],hoge[,2],ylab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.')",xlab="'
+			.kh_msg->get('tf')
+			.'",log="x")',
 	) or $flg_error = 1;
 
 	my $plot3 = kh_r_plot->new(
 		name      => 'words_TF_DF3',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="文書数（'.$tani_name.'）",xlab="出現回数",log="xy")',
+			.'plot(hoge[,1],hoge[,2],ylab="'
+			.kh_msg->get('df')
+			.' ('.$tani_name.')",xlab="'
+			.kh_msg->get('tf')
+			.'",log="xy")',
 	) or $flg_error = 0;
 
 	if ($flg_error){
@@ -192,7 +210,7 @@ sub save{
 		-defaultextension => '.eps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('プロットを保存'),
+			$self->gui_jt( kh_msg->get('saving') ),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 
