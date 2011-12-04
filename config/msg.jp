@@ -249,4 +249,22 @@ gui_window::word_freq_plot->log:                  対数軸の使用：
 gui_window::word_freq_plot->x:                    出現回数(X)
 gui_window::word_freq_plot->xy:                   出現回数(X)と度数(Y)
 gui_window::word_freq_plot->none:                 なし
-gui_window::word_freq_plot->saving:               プロットを保存
+gui_window::word_freq_plot->saving:               名前を付けてプロットを保存
+gui_window::word_df_freq->win_title:              文書数：分布
+gui_window::word_df_freq->descr:                  ■記述統計
+gui_window::word_df_freq->freq_tab:               ■度数分布表
+gui_window::word_df_freq->df:                     文書数
+gui_window::word_df_freq->freq:                   度数
+gui_window::word_df_freq->pcnt:                   パーセント
+gui_window::word_df_freq->c_freq:                 累積度数
+gui_window::word_df_freq->c_pcnt:                 累積パーセント
+gui_window::word_df_freq->units:                  '  集計単位：'
+gui_window::word_df_freq->win_title:              文書数：分布
+mysql_words->mean_df:                             文書数の平均
+mysql_words->std_dev_df:                          文書数の標準偏差
+gui_window::word_df_freq_plot->win_title:         文書数：分布：プロット
+gui_window::word_df_freq_plot->log:               対数軸の使用：
+gui_window::word_df_freq_plot->x:                 文書数(X)
+gui_window::word_df_freq_plot->xy:                文書数(X)と度数(Y)
+gui_window::word_df_freq_plot->none:              なし
+gui_window::word_df_freq_plot->saving:            名前を付けてプロットを保存

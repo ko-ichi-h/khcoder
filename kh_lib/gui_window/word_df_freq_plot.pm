@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 
-	$win->title($self->gui_jt('文書数：分布：プロット','euc'));
+	$win->title($self->gui_jt( kh_msg->get('win_title') )); # '文書数：分布：プロット'
 
 	if ($::config_obj->os eq "linux"){
 		require Tk::TIFF;
@@ -29,7 +29,7 @@ sub _new{
 	my $f1 = $win->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	$f1->Label(
-		-text => $self->gui_jchar(' 対数軸の使用：'),
+		-text => kh_msg->get('log'), #$self->gui_jchar(' 対数軸の使用：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'e', -side => 'left');
 	
@@ -38,16 +38,16 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 0},
 		options =>
 			[
-				[$self->gui_jchar('文書数(X)')  => 1],
-				[$self->gui_jchar('文書数(X)と度数(Y)') => 2],
-				[$self->gui_jchar('なし') => 0],
+				[kh_msg->get('x')  => 1],
+				[kh_msg->get('xy') => 2],
+				[kh_msg->get('none') => 0],
 			],
 		variable => \$self->{ax},
 		command  => sub {$self->renew;},
 	);
 
 	$f1->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -57,7 +57,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$f1->Button(
-		-text => $self->gui_jchar('保存'),
+		-text => kh_msg->gget('save'),
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -101,7 +101,7 @@ sub save{
 		-defaultextension => '.eps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('プロットを保存'),
+			$self->gui_jt( kh_msg->get('saving') ),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 
