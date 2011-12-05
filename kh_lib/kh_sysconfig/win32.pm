@@ -102,6 +102,7 @@ sub save_ini{
 		'use_heap',
 		'all_in_one_pack',
 		'font_main',
+		'font_plot',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
@@ -189,6 +190,15 @@ sub font_main{
 	return $self->{font_main};
 }
 
+sub font_plot{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot} = $new         if defined($new) && length($new);
+	$self->{font_plot} = 'Meiryo UI'  unless length($self->{font_plot});
+	return $self->{font_plot};
+}
+
+
 #------------#
 #   ¤½¤ÎÂ¾   #
 
@@ -237,17 +247,20 @@ sub R_device{
 	my $height = shift;
 	
 	$path .= '.png';
-	# unlink($path) if -e $path;
+	unlink($path) if -e $path;
 	
 	$width  = 480 unless $width;
 	$height = 480 unless $height;
 
 	return 0 unless $::config_obj->R;
 	
-	$::config_obj->R->send(
-		"png(\"$path\", width=$width, height=$height, unit=\"px\")"
-		#"bitmap(\"$path\", type=\"png16m\", width=$width, height=$height, unit=\"px\", gaa = 4)"
-	);
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
+		} else {
+			png(paste(\"$path\",\".png\", sep=\"\"), width=$width, height=$height, unit=\"px\" )
+		}
+	");
 	return $path;
 }
 
