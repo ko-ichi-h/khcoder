@@ -774,12 +774,22 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			lay_f_adj <- cbind(lay_f_adj, lay_f[,1])
 			lay_f_adj <- cbind(lay_f_adj, lay_f[,2] + ( max(lay_f[,2]) - min(lay_f[,2]) ) / 38 )
 		}
+
+		label_pos <- 4
+		label_off <- 0.25
+		if ( exists("target_words") ){
+			label_pos <- rep(label_pos,length( get.vertex.attribute(n2,"name") ))
+			label_pos[target_ids] <- 1
+			label_off <- rep(label_off,length( get.vertex.attribute(n2,"name") ))
+			label_off[target_ids] <- 0
+		}
+
 		text(
 			lay_f_adj,
 			labels = colnames(d)
 			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-			pos = 4,
-			offset = 0.25,
+			pos = label_pos,
+			offset = label_off,
 			font = text_font,
 			cex = f_size,
 			col = "black"
