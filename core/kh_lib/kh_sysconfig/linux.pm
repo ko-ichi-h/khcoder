@@ -304,13 +304,10 @@ sub R_device{
 	my $width = shift;
 	my $height = shift;
 
-	my $format = 'png';
+	$path .= '.png';
 
-	if (-e $path.".$format"){
-		unlink($path.".$format");
-	}
-	if (-e $path.".tiff"){
-		unlink($path.".tiff");
+	if (-e $path){
+		unlink($path);
 	}
 
 	$width  = 480 unless $width;
@@ -320,25 +317,11 @@ sub R_device{
 
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
-			Cairo(width=$width, height=$height, unit=\"px\", file=paste(\"$path\",\".tiff\", sep=\"\"), bg = \"white\", type=\"tiff\")
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
 		} else {
-			$format(paste(\"$path\",\".$format\", sep=\"\"), width=$width, height=$height, unit=\"px\" )
+			png(\"$path\", width=$width, height=$height, unit=\"px\" )
 		}
 	");
-
-	$::config_obj->R->send("
-		if ( exists(\"Cairo\") ){
-			print(\"CairoOn\")
-		} else {
-			print(\"CairoOff\")
-		}
-	");
-	my $chk = $::config_obj->R->read;
-	if ($chk =~ /CairoOn/){
-		$path .= ".tiff";
-	} else {
-		$path .= ".$format";
-	}
 
 	return $path;
 }

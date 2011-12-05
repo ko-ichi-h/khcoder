@@ -13,9 +13,6 @@ sub _new{
 	my $win= $self->{win_obj};
 	$win->title($self->gui_jt( kh_msg->get('win_title') )); # '出現回数と文書数'
 
-	if ($::config_obj->os eq "linux"){
-		require Tk::TIFF;
-	}
 	$self->{img} = $win->Photo();
 
 	$self->{photo} = $win->Label(

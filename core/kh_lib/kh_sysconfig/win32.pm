@@ -258,7 +258,7 @@ sub R_device{
 		if ( exists(\"Cairo\") ){
 			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
 		} else {
-			png(paste(\"$path\",\".png\", sep=\"\"), width=$width, height=$height, unit=\"px\" )
+			png(\"$path\", width=$width, height=$height, unit=\"px\" )
 		}
 	");
 	return $path;
