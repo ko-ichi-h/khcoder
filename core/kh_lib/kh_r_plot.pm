@@ -75,19 +75,27 @@ sub new{
 
 		# Cairo
 		unless ($^O =~ /darwin/i ){
+			my $f = $::config_obj->font_plot;
 			$::config_obj->R->send(
 				 "try( library(Cairo) )\n"
 				."try( CairoFonts(\n"
-				."	regular    =\"IPAPGothic:style=Regular\",\n"
-				."	bold       =\"IPAPGothic:style=Regular,Bold\",\n"
-				."	italic     =\"IPAPGothic:style=Regular,Italic\",\n"
-				."	bolditalic =\"IPAPGothic:style=Regular,Bold Italic,BoldItalic\"\n"
+				."	regular    =\"$f:style=Regular\",\n"
+				."	bold       =\"$f:style=Regular,Bold\",\n"
+				."	italic     =\"$f:style=Regular,Italic\",\n"
+				."	bolditalic =\"$f:style=Regular,Bold Italic,BoldItalic\"\n"
 				."))"
 			);
 		}
-
 		$::config_obj->R->output_chk(1);
-		
+		$if_font = 1;
+	}
+
+	# Windows用の設定
+	if ( ($::config_obj->os eq 'win32') and ($if_font == 0) ){
+		print "loading Cairo...\n";
+		$::config_obj->R->output_chk(0);
+		$::config_obj->R->send( "try( library(Cairo) )" );
+		$::config_obj->R->output_chk(1);
 		$if_font = 1;
 	}
 
@@ -204,28 +212,11 @@ sub set_par{
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
 
-	# 日本語以外の場合は「sans」フォントに # morpho_analyzer
-	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	) {
-		$::config_obj->R->send("
-			if ( grepl(\"darwin\", R.version\$platform) ){
-				par(family=\"Hiragino Kaku Gothic Pro W3\")
-			} else {
-				par(family=\"\")
-			}
-		");
-	} else {
-		#print "family: sans\n";
-		$::config_obj->R->send("
-			if ( grepl(\"darwin\", R.version\$platform) ){
-				par(family=\"Hiragino Kaku Gothic Pro W3\")
-			} else {
-				par(family=\"sans\")
-			}
-		");
-	}
+	$::config_obj->R->send(
+		 'par(family="'
+		.$::config_obj->font_plot
+		.'")'
+	);
 
 	$::config_obj->R->output_chk(1);
 
@@ -416,20 +407,14 @@ sub _save_png{
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 
-	if ($::config_obj->os eq 'win32'){
-		$::config_obj->R->send(
-			 "png(\"$path\", width=$self->{width},"
-			."height=$self->{height}, unit=\"px\")"
-		);
-	} else {
-		$::config_obj->R->send("
-			if ( exists(\"Cairo\") ){
-				Cairo(width=$self->{width}, height=$self->{height}, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\")
-			} else {
-				png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\")
-			}
-		");
-	}
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=$self->{width}, height=$self->{height}, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\")
+		} else {
+			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\")
+		}
+	");
+
 
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});

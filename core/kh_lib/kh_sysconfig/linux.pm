@@ -98,6 +98,7 @@ sub save_ini{
 		'mail_to',
 		'use_heap',
 		'font_main',
+		'font_plot',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
@@ -234,6 +235,19 @@ sub font_main{
 	return $self->{font_main};
 }
 
+sub font_plot{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot} = $new         if defined($new) && length($new);
+	unless ( length($self->{font_plot}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot} = 'Hiragino Kaku Gothic Pro W3';
+		} else {
+			$self->{font_plot} = 'IPAPGothic';
+		}
+	}
+	return $self->{font_plot};
+}
 
 #------------#
 #   ¤½¤ÎÂ¾   #

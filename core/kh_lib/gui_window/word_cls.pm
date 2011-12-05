@@ -602,7 +602,7 @@ return $t;
 }
 
 sub r_command_plot_ggplot2{
-	my $t = << 'END_OF_the_R_COMMAND';
+	my $t = '
 
 #plot(hcl,ann=0,cex=1, hang=-1)
 
@@ -652,7 +652,7 @@ if (n_cls > 1){
 	for (i in col_tab[order(col_tab[,1]),2]){
 		c <- as.character(i)
 		while (nchar(c) < 3){
-			c <- paste('0',c,sep='')
+			c <- paste("0",c,sep="")
 		}
 		col_vec <- c(col_vec, c)
 	}
@@ -757,7 +757,7 @@ if (n_cls <= 1){
 		#panel.grid.major = theme_blank(),
 		#panel.grid.minor = theme_blank(),
 		#panel.background = theme_blank(),
-		axis.line = theme_segment(colour = 'black')
+		axis.line = theme_segment(colour = "black")
 	)
 }
 
@@ -793,15 +793,16 @@ if (n_cls > 1) {
 			quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
 		} else {
-			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontface="bold"))
+			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
 		}
 	}
 } else {
 	grid.remove(gPath("axis_v"), grep=TRUE)
 }
 assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
+';
 
-END_OF_the_R_COMMAND
+
 return $t;
 }
 
