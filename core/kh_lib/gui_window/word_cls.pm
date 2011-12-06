@@ -620,18 +620,12 @@ if (n_cls > 1){
 	memb <- cutree(hcl,k=n_cls)
 	# 全体の色設定
 	p <- p + scale_colour_hue(l=40, c=100)
-	# 切り離し線
+	# 切り離し線(1)
 	cutpoint <- mean(
 		c(
 			rev(hcl$height)[n_cls-1],
 			rev(hcl$height)[n_cls]
 		)
-	)
-	p <- p + geom_hline(
-		yintercept = cutpoint,
-		colour="black",
-		linetype=5,
-		size=0.5
 	)
 	# 色の順番を決定
 	n <- length( unique(memb[hcl$order]) )
@@ -663,6 +657,10 @@ if (n_cls > 1){
 		if (
 			   segment(ddata)$y0[i] > cutpoint
 			|| segment(ddata)$y1[i] > cutpoint
+			|| (
+				   segment(ddata)$y0[i] >= cutpoint
+				&& segment(ddata)$y1[i] >= cutpoint
+			   )
 		) {
 			seg_bl <- rbind(
 				seg_bl,
@@ -694,9 +692,20 @@ if (n_cls > 1){
 			)
 		}
 	}
-	colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
+	if (is.null(seg_bl) == F){
+		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
+		seg_bl <- as.data.frame(seg_bl)
+		# 切り離し線(2)
+		if ( max(seg_bl$y1) > cutpoint ){
+			p <- p + geom_hline(
+				yintercept = cutpoint,
+				colour="black",
+				linetype=5,
+				size=0.5
+			)
+		}
+	}
 	colnames(seg_cl) <- c("x0", "y0", "x1", "y1", "c")
-	seg_bl <- as.data.frame(seg_bl)
 	seg_cl <- as.data.frame(seg_cl)
 	seg_cl$c <- col_vec[seg_cl$c]
 	p <- p + geom_segment(
@@ -708,15 +717,17 @@ if (n_cls > 1){
 	memb <- rep( c("a"), length(labels) )
 	p <- p + scale_colour_manual(values=c("black"))
 	seg_bl <- segment(ddata)
+	col_vec <- c("001")
 }
 
-p <- p + geom_segment(
-	data=seg_bl,
-	aes_string(x="x0", y="y0", xend="x1", yend="y1"),
-	color="gray50",
-	linetype=1,
-)
-
+if (is.null(seg_bl) == F){
+	p <- p + geom_segment(
+		data=seg_bl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1"),
+		color="gray50",
+		linetype=1,
+	)
+}
 
 p <- p + geom_text(
 	data=data.frame(                    # ラベル変換
@@ -744,15 +755,15 @@ p <- p + ggplot2::opts(
 	axis.title.y = theme_blank(),
 	axis.title.x = theme_blank(),
 	axis.ticks   = theme_segment(colour="gray60"),
-	axis.text.y  = theme_text(size=12,family="sans",colour="gray40"),
-	axis.text.x  = theme_text(size=12,family="sans",colour="gray40"),
+	axis.text.y  = theme_text(size=12,colour="gray40"),
+	axis.text.x  = theme_text(size=12,colour="gray40"),
 	legend.position="none"
 )
 
 if (n_cls <= 1){
 	p <- p + ggplot2::opts(
 		axis.text.y  = theme_blank(),
-		axis.text.x  = theme_text(size=12,family="sans",colour="black"),
+		axis.text.x  = theme_text(size=12,colour="black"),
 		axis.ticks = theme_segment(colour="black"),
 		#panel.grid.major = theme_blank(),
 		#panel.grid.minor = theme_blank(),
@@ -785,19 +796,14 @@ guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
 assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
 
 print(p)
-if (n_cls > 1) {
-	if ( par("family") == "sans" ){
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="sans",fontface="bold"))
+
+if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
 	} else {
-		if ( grepl("darwin", R.version$platform) ){
-			quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
-			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
-		} else {
-			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
-		}
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
 	}
-} else {
-	grid.remove(gPath("axis_v"), grep=TRUE)
 }
 assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
 ';
