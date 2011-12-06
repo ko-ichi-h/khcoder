@@ -130,7 +130,7 @@ sub new{
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	print "kh_r_plot::new lock ok.\n" if $debug;
-	$self->{path} = $::config_obj->R_device(
+	$self->{path} = $self->R_device(
 		$self->{path},
 		$self->{width},
 		$self->{height},
@@ -205,9 +205,11 @@ sub clear_env{
 }
 
 sub set_par{
-	my $self = shift;
+	my $self    = shift;
+	my $no_font = shift;
+
 	$::config_obj->R->output_chk(0);
-	
+
 	$::config_obj->R->send(
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
@@ -278,7 +280,6 @@ sub rotate_cls{
 	return $self;
 }
 
-
 sub save{
 	my $self = shift;
 	my $path = shift;
@@ -307,6 +308,31 @@ sub save{
 		warn "The file type is not supported yet:\n$path\n";
 	}
 }
+
+sub R_device{
+	my $self  = shift;
+	my $path  = shift;
+	my $width = shift;
+	my $height = shift;
+	
+	$path .= '.png';
+	unlink($path) if -e $path;
+	
+	$width  = 480 unless $width;
+	$height = 480 unless $height;
+
+	return 0 unless $::config_obj->R;
+	
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
+		} else {
+			png(\"$path\", width=$width, height=$height, unit=\"px\" )
+		}
+	");
+	return $path;
+}
+
 
 sub _save_emf{
 	my $self = shift;
@@ -349,6 +375,9 @@ sub _save_pdf{
 		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
 	}
 
+	my $font = $::config_obj->font_plot;
+	$::config_obj->font_plot("Japan1GothicBBB");
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -361,6 +390,8 @@ sub _save_pdf{
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
+	
+	$::config_obj->font_plot($font);
 	
 	return 1;
 }
@@ -379,6 +410,9 @@ sub _save_eps{
 		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
 	}
 
+	my $font = $::config_obj->font_plot;
+	$::config_obj->font_plot("Japan1GothicBBB");
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -392,6 +426,8 @@ sub _save_eps{
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
+
+	$::config_obj->font_plot($font);
 	
 	return 1;
 }

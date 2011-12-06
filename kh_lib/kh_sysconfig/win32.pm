@@ -239,32 +239,6 @@ sub os_cod_path{
 	return $c;
 }
 
-
-sub R_device{
-	my $self  = shift;
-	my $path  = shift;
-	my $width = shift;
-	my $height = shift;
-	
-	$path .= '.png';
-	unlink($path) if -e $path;
-	
-	$width  = 480 unless $width;
-	$height = 480 unless $height;
-
-	return 0 unless $::config_obj->R;
-	
-	$::config_obj->R->send("
-		if ( exists(\"Cairo\") ){
-			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
-		} else {
-			png(\"$path\", width=$width, height=$height, unit=\"px\" )
-		}
-	");
-	return $path;
-}
-
-
 1;
 
 __END__
