@@ -20,7 +20,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt('Ãê½Ğ¸ì¸¡º÷'));
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'Ãê½Ğ¸ì¸¡º÷'
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -41,7 +41,7 @@ sub _new{
 	$self->config_entry_focusin($e1);
 
 	my $sbutton = $fra4e->Button(
-		-text => $self->gui_jchar('¸¡º÷'),
+		-text => kh_msg->get('search'),#$self->gui_jchar('¸¡º÷'),
 		-font => "TKFN",
 		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
@@ -57,14 +57,14 @@ sub _new{
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
 	$fra4h->Checkbutton(
-		-text     => $self->gui_jchar('Ãê½Ğ¸ì¸¡º÷'),
+		-text     => kh_msg->get('baseform'),#$self->gui_jchar('Ãê½Ğ¸ì¸¡º÷'),
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
 		-command  => sub{$self->refresh;}
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => $self->gui_jchar('³èÍÑ·Á¤òÉ½¼¨'),
+		-text     => kh_msg->get('view_conj'),#$self->gui_jchar('³èÍÑ·Á¤òÉ½¼¨'),
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
 		-command  => sub{$self->refresh;}
@@ -83,8 +83,8 @@ sub _new{
 		#width   => 7,
 		options =>
 			[
-				[$self->gui_jchar('OR¸¡º÷') , 'OR'],
-				[$self->gui_jchar('AND¸¡º÷'), 'AND'],
+				[kh_msg->get('or') , 'OR'], # $self->gui_jchar('OR¸¡º÷')
+				[kh_msg->get('and'), 'AND'], # $self->gui_jchar('AND¸¡º÷')
 			],
 		variable => \$gui_window::word_search::method,
 	);
@@ -95,10 +95,10 @@ sub _new{
 		#width   => 8,
 		options =>
 			[
-				[$self->gui_jchar('ÉôÊ¬°ìÃ×')  => 'p'],
-				[$self->gui_jchar('´°Á´°ìÃ×') => 'c'],
-				[$self->gui_jchar('Á°Êı°ìÃ×') => 'z'],
-				[$self->gui_jchar('¸åÊı°ìÃ×') => 'k']
+				[kh_msg->get('part') => 'p'], # $self->gui_jchar('ÉôÊ¬°ìÃ×')
+				[kh_msg->get('comp') => 'c'], # $self->gui_jchar('´°Á´°ìÃ×')
+				[kh_msg->get('forw') => 'z'], # $self->gui_jchar('Á°Êı°ìÃ×')
+				[kh_msg->get('back') => 'k'] #$self->gui_jchar('¸åÊı°ìÃ×')
 			],
 		variable => \$gui_window::word_search::s_mode,
 	);
@@ -131,12 +131,12 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('Ãê½Ğ¸ì'));
-	$lis->header('create',1,-text => $self->gui_jchar('ÉÊ»ì'));
-	$lis->header('create',2,-text => $self->gui_jchar('ÉÑÅÙ'));
+	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('Ãê½Ğ¸ì')
+	$lis->header('create',1,-text => kh_msg->get('pos')); # $self->gui_jchar('ÉÊ»ì')
+	$lis->header('create',2,-text => kh_msg->get('freq')); # $self->gui_jchar('ÉÑÅÙ')
 
 	$self->{copy_btn} = $fra5->Button(
-		-text => $self->gui_jchar('¥³¥Ô¡¼'),
+		-text => kh_msg->gget('copy'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list);}
@@ -153,7 +153,7 @@ sub _new{
 	);
 
 	$self->{conc_button} = $fra5->Button(
-		-text => $self->gui_jchar('¥³¥ó¥³¡¼¥À¥ó¥¹'),
+		-text => kh_msg->get('kwic'),#$self->gui_jchar('¥³¥ó¥³¡¼¥À¥ó¥¹'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {$self->conc;}
@@ -204,13 +204,13 @@ sub refresh{
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => $self->gui_jchar('Ãê½Ğ¸ì'));
+		$self->list->header('create',0,-text => kh_msg->get('word'));#$self->gui_jchar('Ãê½Ğ¸ì')
 		if ( $gui_window::word_search::katuyo ){
-			$self->list->header('create',1,-text => $self->gui_jchar('ÉÊ»ì/³èÍÑ'));
+			$self->list->header('create',1,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('ÉÊ»ì/³èÍÑ')
 		} else {
-			$self->list->header('create',1,-text => $self->gui_jchar('ÉÊ»ì'));
+			$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('ÉÊ»ì')
 		}
-		$self->list->header('create',2,-text => $self->gui_jchar('ÉÑÅÙ'));
+		$self->list->header('create',2,-text => kh_msg->get('freq'));#$self->gui_jchar('ÉÑÅÙ')
 	} else {
 		$self->list->destroy;
 		$self->{list} = $self->list_f->Scrolled(
@@ -228,10 +228,10 @@ sub refresh{
 			-highlightthickness => 0,
 			-selectmode       => 'extended',
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => $self->gui_jchar('·ÁÂÖÁÇ'));
-		$self->list->header('create',1,-text => $self->gui_jchar('ÉÊ»ì¡ÊÃãä¥¡Ë'));
-		$self->list->header('create',2,-text => $self->gui_jchar('³èÍÑ'));
-		$self->list->header('create',3,-text => $self->gui_jchar('ÉÑÅÙ'));
+		$self->list->header('create',0,-text => kh_msg->get('morph'));#$self->gui_jchar('·ÁÂÖÁÇ')
+		$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('ÉÊ»ì¡ÊÃãä¥¡Ë')
+		$self->list->header('create',2,-text => kh_msg->get('conj'));#$self->gui_jchar('³èÍÑ')
+		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('ÉÑÅÙ')
 	}
 	$self->list->update;
 }

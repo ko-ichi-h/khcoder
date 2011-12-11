@@ -275,3 +275,20 @@ gui_window::word_tf_df->none:                     None
 gui_window::word_tf_df->tf:                       Term Frequency
 gui_window::word_tf_df->df:                       Document Frequency
 gui_window::word_tf_df->saving:                   Save the plot as...
+gui_window::word_search->win_title:               Search Words
+gui_window::word_search->search:                  Search
+gui_window::word_search->baseform:                Search Baseform
+gui_window::word_search->view_conj:               View Conj.
+gui_window::word_search->or:                      OR
+gui_window::word_search->and:                     AND
+gui_window::word_search->part:                    Partial Match
+gui_window::word_search->comp:                    Complete Match
+gui_window::word_search->forw:                    Forward Match
+gui_window::word_search->back:                    Backward Match
+gui_window::word_search->word:                    Word
+gui_window::word_search->pos:                     POS
+gui_window::word_search->freq:                    Frequency
+gui_window::word_search->kwic:                    KWIC Concordance
+gui_window::word_search->pos_conj:                POS / Conj.
+gui_window::word_search->morph:                   Word
+gui_window::word_search->conj:                    Conj.
