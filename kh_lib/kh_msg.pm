@@ -10,6 +10,7 @@ my $utf8 = find_encoding('utf8');
 
 my $msg;
 my $msg_fb;
+my $debug = 1;
 
 sub get{
 	# キー作成
@@ -87,7 +88,32 @@ sub load{
 			.'jp'
 		;
 		$msg_fb = LoadFile($file_fb) or die;
+		
+		if ($debug){
+			# 足りないメッセージや重複をチェック
+			my %chk = ();
+			foreach my $i (keys %{$msg_fb}){
+				++$chk{$i};
+				unless ($chk{$i} == 1){
+					print "Duplicated msg in ".$::config_obj->msg_lang.".msg: $i\n";
+				}
+				unless ( length( $msg->{$i} ) ){
+					print "Missing from ".$::config_obj->msg_lang.".msg: $i\n";
+				}
+			}
+			%chk = ();
+			foreach my $i (keys %{$msg}){
+				++$chk{$i};
+				unless ($chk{$i} == 1){
+					print "Duplicated msg in jp.msg: $i\n";
+				}
+				unless ( length( $msg_fb->{$i} ) ){
+					print "Missing from jp.msg: $i\n";
+				}
+			}
+		}
 	}
+
 }
 
 

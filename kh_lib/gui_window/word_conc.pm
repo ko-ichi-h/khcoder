@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt('KWICコンコーダンス'));
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'KWICコンコーダンス'
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -31,7 +31,7 @@ sub _new{
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	$fra4e->Label(
-		-text => $self->gui_jchar('抽出語：'),
+		-text => kh_msg->get('word'), #$self->gui_jchar('抽出語：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -46,7 +46,7 @@ sub _new{
 	$self->config_entry_focusin($e1);
 
 	$fra4e->Label(
-		-text => $self->gui_jchar('　品詞：'),
+		-text => kh_msg->get('pos'), #self->gui_jchar('　品詞：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -60,7 +60,7 @@ sub _new{
 	$self->config_entry_focusin($e4);
 
 	$fra4e->Label(
-		-text => $self->gui_jchar('　活用形：'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('　活用形：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -74,19 +74,19 @@ sub _new{
 	$self->config_entry_focusin($e2);
 
 	$fra4e->Label(
-		-text => $self->gui_jchar('　　'),
+		-text => $self->gui_jchar('    '),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	$self->{btn_tuika} = $fra4e->Button(
-		-text => $self->gui_jchar('追加条件'),
+		-text => kh_msg->get('additional'), #$self->gui_jchar('追加条件'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ gui_window::word_conc_opt->open;}
 	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
-		-text => $self->gui_jchar('検索'),
+		-text => kh_msg->get('search'), #$self->gui_jchar('検索'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->search;}
@@ -103,22 +103,22 @@ sub _new{
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	my @options = (
-		[ $self->gui_jchar('出現順'), 'id'],
-		[ $self->gui_jchar('左・5'),  'l5'],
-		[ $self->gui_jchar('左・4'),  'l4'],
-		[ $self->gui_jchar('左・3'),  'l3'],
-		[ $self->gui_jchar('左・2'),  'l2'],
-		[ $self->gui_jchar('左・1'),  'l1'],
-		[ $self->gui_jchar('活用形'), 'center'],
-		[ $self->gui_jchar('右・1'),  'r1'],
-		[ $self->gui_jchar('右・2'),  'r2'],
-		[ $self->gui_jchar('右・3'),  'r3'],
-		[ $self->gui_jchar('右・4'),  'r4'],
-		[ $self->gui_jchar('右・5'),  'r5']
+		[ kh_msg->get('ns'), 'id'], # $self->gui_jchar('出現順')
+		[ kh_msg->get('l5'),  'l5'], # $self->gui_jchar('左・5')
+		[ kh_msg->get('l4'),  'l4'], # $self->gui_jchar('左・4')
+		[ kh_msg->get('l3'),  'l3'], # $self->gui_jchar('左・3')
+		[ kh_msg->get('l2'),  'l2'], # $self->gui_jchar('左・2')
+		[ kh_msg->get('l1'),  'l1'], # $self->gui_jchar('左・1')
+		[ kh_msg->get('center'), 'center'], # $self->gui_jchar('活用形')
+		[ kh_msg->get('r1'),  'r1'], # $self->gui_jchar('右・1')
+		[ kh_msg->get('r2'),  'r2'], # $self->gui_jchar('右・2')
+		[ kh_msg->get('r3'),  'r3'], # $self->gui_jchar('右・3')
+		[ kh_msg->get('r4'),  'r4'], # $self->gui_jchar('右・4')
+		[ kh_msg->get('r5'),  'r5'] # $self->gui_jchar('右・5')
 	);
 
 	$fra4h->Label(
-		-text => $self->gui_jchar('ソート1：'),
+		-text => kh_msg->get('sort1'), #$self->gui_jchar('ソート1：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -132,7 +132,7 @@ sub _new{
 	);
 
 	$fra4h->Label(
-		-text => $self->gui_jchar('　ソート2：'),
+		-text => kh_msg->get('sort2'),#$self->gui_jchar('　ソート2：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -146,7 +146,7 @@ sub _new{
 	);
 
 	$fra4h->Label(
-		-text => $self->gui_jchar('　ソート3：'),
+		-text => kh_msg->get('sort3'),#$self->gui_jchar('　ソート3：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -162,7 +162,7 @@ sub _new{
 
 
 	$fra4h->Label(
-		-text => $self->gui_jchar('　（前後'),
+		-text => kh_msg->get('retrieveNum1'),#$self->gui_jchar('　（前後'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -174,7 +174,7 @@ sub _new{
 	$self->config_entry_focusin($e3);
 
 	$fra4h->Label(
-		-text => $self->gui_jchar('語を表示）'),
+		-text => kh_msg->get('retrieveNum2'),#$self->gui_jchar('語を表示）'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -212,9 +212,9 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{copy_btn} = $fra5->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
-		-width => 8,
+		#-width => 8,
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
@@ -230,15 +230,15 @@ sub _new{
 	);
 
 	$fra5->Button(
-		-text => $self->gui_jchar('文書表示'),
+		-text => kh_msg->get('viewDoc'),#$self->gui_jchar('文書表示'),
 		-font => "TKFN",
-		-width => 8,
+		#-width => 8,
 		-borderwidth => '1',
 		-command => sub {$self->view_doc;}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
 	$fra5->Label(
-		-text => $self->gui_jchar(' 表示単位：'),
+		-text => kh_msg->get('viewingUnit'),#$self->gui_jchar(' 表示単位：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
@@ -257,7 +257,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $fra5->Button(
-		-text        => $self->gui_jchar('前'.mysql_conc->docs_per_once,'euc'),
+		-text        => kh_msg->get('prev').mysql_conc->docs_per_once,#$self->gui_jchar('前'.mysql_conc->docs_per_once,'euc'),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -270,7 +270,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $fra5->Button(
-		-text        => $self->gui_jchar('次'.mysql_conc->docs_per_once,'euc'),
+		-text        => kh_msg->get('next').mysql_conc->docs_per_once,#$self->gui_jchar('次'.mysql_conc->docs_per_once,'euc'),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -283,12 +283,12 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $hits = $fra5->Label(
-		-text => $self->gui_jchar('  ヒット数：'),
+		-text => kh_msg->get('hits'),#$self->gui_jchar('  ヒット数：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	$self->{btn_coloc} = $fra5->Button(
-		-text        => $self->gui_jchar('集計','euc'),
+		-text        => kh_msg->get('stats'),#$self->gui_jchar('集計','euc'),
 		-font        => "TKFN",
 		-command     => sub{$self->coloc;},
 		-borderwidth => 1,
@@ -296,7 +296,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$self->{btn_save} = $fra5->Button(
-		-text        => $self->gui_jchar('保存','euc'),
+		-text        => kh_msg->gget('save'),#$self->gui_jchar('保存','euc'),
 		-font        => "TKFN",
 		-command     => sub{$self->save;},
 		-borderwidth => 1,
@@ -341,9 +341,9 @@ sub btn_check{
 		   $gui_window::word_conc::additional->{1}{pos}
 		#&& length($gui_window::word_conc::additional->{1}{query})
 	){
-		$self->{btn_tuika}->configure(-text => $self->gui_jchar('追加条件＊'));
+		$self->{btn_tuika}->configure(-text => kh_msg->get('additional').'*'); # $self->gui_jchar('追加条件＊')
 	} else {
-		$self->{btn_tuika}->configure(-text => $self->gui_jchar('追加条件'));
+		$self->{btn_tuika}->configure(-text => kh_msg->get('additional') );
 	}
 }
 
@@ -363,7 +363,7 @@ sub view_doc{
 
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
-	$foot = "・現在表示中の検索結果： $selected / "."$foot,  ";
+	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  "; #"・現在表示中の検索結果： 
 	$foot = Jcode->new($foot)->sjis;
 
 	my $view_win = gui_window::doc_view->open;
@@ -399,7 +399,7 @@ sub next{
 	
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
-	$foot = "・現在表示中の検索結果： $selected / "."$foot,  ";
+	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  ";
 	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
@@ -427,7 +427,7 @@ sub prev{
 	
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
-	$foot = "・現在表示中の検索結果： $selected / "."$foot,  ";
+	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  ";
 	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
@@ -485,7 +485,7 @@ sub save{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('コンコーダンス（KWIC）検索の結果を保存'),
+			$self->gui_jt( kh_msg->get('saving')), # 'コンコーダンス（KWIC）検索の結果を保存'
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
@@ -534,7 +534,7 @@ sub search{
 
 	# 表示の初期化
 	$self->hit_label->configure(
-		-text => $self->gui_jchar("  ヒット数：")
+		-text => kh_msg->get('hits'),#$self->gui_jchar("  ヒット数：")
 	);
 	$self->list->delete('all');
 	$self->{btn_prev}->configure(-state => 'disable');
@@ -657,7 +657,14 @@ sub display{
 		$num_disp2 = $num_total;
 	}
 	if ($num_total == 0){$start = 0;}
-	$self->hit_label->configure(-text => $self->gui_jchar("  ヒット数： $num_total  表示： $start"."-$num_disp2"));
+	$self->hit_label->configure(
+		-text => 
+			 kh_msg->get('hits')
+			."$num_total"
+			.kh_msg->get('viewing')
+			."$start".
+			"-$num_disp2"
+		);
 	
 	# ボタンの更新
 	if ($start > 1){

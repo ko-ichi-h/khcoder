@@ -197,6 +197,7 @@ kh_datacheck->errors_detail:                      Following probrems were found 
 kh_datacheck->looks_good:                         "We found no known problems.\nPlease proceed to pre-processing."
 kh_datacheck->corrected:                          All known problems are corrected.
 kh_datacheck->lines:                              " line(s)"
+gui_errormsg::mysql->fatal:                       "Failed to deal with MySQL database system.\nKH Coder will exit now."
 gui_window::dictionary->win_title:                Select Words to Analyze
 gui_window::dictionary->pos:                      Select by Parts of Speech:
 gui_window::dictionary->force_pick:               "Pick up following strings as words:"
@@ -292,3 +293,35 @@ gui_window::word_search->kwic:                    KWIC Concordance
 gui_window::word_search->pos_conj:                POS / Conj.
 gui_window::word_search->morph:                   Word
 gui_window::word_search->conj:                    Conj.
+gui_window::word_conc->win_title:                 KWIC Concordance
+gui_window::word_conc->word:                      Word:
+gui_window::word_conc->pos:                       '  POS:'
+gui_window::word_conc->conj:                      '  Conj.:'
+gui_window::word_conc->additional:                Additional Options
+gui_window::word_conc->search:                    Search
+gui_window::word_conc->ns:                        None
+gui_window::word_conc->l5:                        L 5
+gui_window::word_conc->l4:                        L 4
+gui_window::word_conc->l3:                        L 3
+gui_window::word_conc->l2:                        L 2
+gui_window::word_conc->l1:                        L 1
+gui_window::word_conc->r5:                        R 5
+gui_window::word_conc->r4:                        R 4
+gui_window::word_conc->r3:                        R 3
+gui_window::word_conc->r2:                        R 2
+gui_window::word_conc->r1:                        R 1
+gui_window::word_conc->center:                    Conj.
+gui_window::word_conc->sort1:                     '  Sort 1:'
+gui_window::word_conc->sort2:                     '  Sort 2:'
+gui_window::word_conc->sort3:                     '  Sort 3:'
+gui_window::word_conc->retrieveNum1:              '  (Retrieve LR '
+gui_window::word_conc->retrieveNum2:              Words)
+gui_window::word_conc->viewDoc:                   View Doc
+gui_window::word_conc->viewingUnit:               ' Units:'
+gui_window::word_conc->prev:                      P
+gui_window::word_conc->next:                      N
+gui_window::word_conc->hits:                      '  Hits: '
+gui_window::word_conc->currentDoc:                '* Search Result: '
+gui_window::word_conc->saving:                    Saving the result of KWIC concordance...
+gui_window::word_conc->viewing:                   ', View: '
+gui_window::word_conc->stats:                     Stats

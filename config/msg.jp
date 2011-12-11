@@ -294,3 +294,35 @@ gui_window::word_search->kwic:                    KWICコンコーダンス
 gui_window::word_search->pos_conj:                品詞/活用
 gui_window::word_search->morph:                   形態素
 gui_window::word_search->conj:                    活用
+gui_window::word_conc->win_title:                 KWICコンコーダンス
+gui_window::word_conc->word:                      抽出語：
+gui_window::word_conc->pos:                       '    品詞：'
+gui_window::word_conc->conj:                      '    活用形：'
+gui_window::word_conc->additional:                追加条件
+gui_window::word_conc->search:                    検索
+gui_window::word_conc->ns:                        出現順
+gui_window::word_conc->l5:                        左・5
+gui_window::word_conc->l4:                        左・4
+gui_window::word_conc->l3:                        左・3
+gui_window::word_conc->l2:                        左・2
+gui_window::word_conc->l1:                        左・1
+gui_window::word_conc->r5:                        右・5
+gui_window::word_conc->r4:                        右・4
+gui_window::word_conc->r3:                        右・3
+gui_window::word_conc->r2:                        右・2
+gui_window::word_conc->r1:                        右・1
+gui_window::word_conc->center:                    活用形
+gui_window::word_conc->sort1:                     '  ソート1：'
+gui_window::word_conc->sort2:                     '  ソート2：'
+gui_window::word_conc->sort3:                     '  ソート3：'
+gui_window::word_conc->retrieveNum1:              '  （前後'
+gui_window::word_conc->retrieveNum2:              語を表示）
+gui_window::word_conc->viewDoc:                   文書表示
+gui_window::word_conc->viewingUnit:               ' 表示単位：'
+gui_window::word_conc->prev:                      前
+gui_window::word_conc->next:                      次
+gui_window::word_conc->hits:                      '  ヒット数：'
+gui_window::word_conc->currentDoc:                '・現在表示中の検索結果： '
+gui_window::word_conc->saving:                    KWICコンコーダンスの結果を保存
+gui_window::word_conc->viewing:                   ', 表示：'
+gui_window::word_conc->stats:                     集計
