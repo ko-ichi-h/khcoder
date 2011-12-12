@@ -13,20 +13,20 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->grab;
-	$win->title($self->gui_jt('コロケーション統計 フィルタ設定'));
+	#$win->grab;
+	$win->title($self->gui_jt( kh_msg->get('win_title') ));# 'コロケーション統計 フィルタ設定'
 	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 
 	# 品詞による単語の取捨選択
 	$left->Label(
-		-text => $self->gui_jchar('・品詞による語の取捨選択'),
+		-text => kh_msg->get('filter_by_pos'),#$self->gui_jchar('・品詞による語の取捨選択'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
 	$l3->Label(
-		-text => $self->gui_jchar('　　'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -43,21 +43,21 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => $self->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'),#$self->gui_jchar('すべて'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => $self->gui_jchar('既定値'),
+		-text => kh_msg->gget('default'),#$self->gui_jchar('既定値'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => $self->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'),#$self->gui_jchar('クリア'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -67,12 +67,12 @@ sub _new{
 	# 表示数のLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
-		-text => $self->gui_jchar('・表示する語の数'),
+		-text => kh_msg->get('view'),#$self->gui_jchar('・表示する語の数'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left3->Label(
-		-text => $self->gui_jchar('　　　上位：'),
+		-text => kh_msg->get('top'),#$self->gui_jchar('　　　上位：'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -84,14 +84,14 @@ sub _new{
 
 	# OK & Cancel
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}

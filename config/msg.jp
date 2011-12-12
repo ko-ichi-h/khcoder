@@ -13,6 +13,9 @@ global->wm_f:                                     不定長CSV （WordMiner）
 global->plot:                                     プロット
 global->close:                                    閉じる
 global->save:                                     保存
+global->all:                                      すべて
+global->default:                                  既定値
+global->clear:                                    クリア
 global->cont_big_pros:                            "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
 gui_window::about->win_title:                     KH Coderについて
 gui_window::about->kawabata:                      川端亮
@@ -301,16 +304,16 @@ gui_window::word_conc->conj:                      '    活用形：'
 gui_window::word_conc->additional:                追加条件
 gui_window::word_conc->search:                    検索
 gui_window::word_conc->ns:                        出現順
-gui_window::word_conc->l5:                        左・5
-gui_window::word_conc->l4:                        左・4
-gui_window::word_conc->l3:                        左・3
-gui_window::word_conc->l2:                        左・2
-gui_window::word_conc->l1:                        左・1
-gui_window::word_conc->r5:                        右・5
-gui_window::word_conc->r4:                        右・4
-gui_window::word_conc->r3:                        右・3
-gui_window::word_conc->r2:                        右・2
-gui_window::word_conc->r1:                        右・1
+gui_window::word_conc->l5:                        左5
+gui_window::word_conc->l4:                        左4
+gui_window::word_conc->l3:                        左3
+gui_window::word_conc->l2:                        左2
+gui_window::word_conc->l1:                        左1
+gui_window::word_conc->r5:                        右5
+gui_window::word_conc->r4:                        右4
+gui_window::word_conc->r3:                        右3
+gui_window::word_conc->r2:                        右2
+gui_window::word_conc->r1:                        右1
 gui_window::word_conc->center:                    活用形
 gui_window::word_conc->sort1:                     '  ソート1：'
 gui_window::word_conc->sort2:                     '  ソート2：'
@@ -326,3 +329,33 @@ gui_window::word_conc->currentDoc:                '・現在表示中の検索�
 gui_window::word_conc->saving:                    KWICコンコーダンスの結果を保存
 gui_window::word_conc->viewing:                   ', 表示：'
 gui_window::word_conc->stats:                     集計
+gui_window::word_conc_coloc->win_title:           コロケーション統計
+gui_window::word_conc_coloc->word:                '抽出語：'
+gui_window::word_conc_coloc->pos:                 '  品詞：'
+gui_window::word_conc_coloc->conj:                '  活用形：'
+gui_window::word_conc_coloc->hits:                '  ヒット数：'
+gui_window::word_conc_coloc->h_word:              抽出語
+gui_window::word_conc_coloc->h_pos:               品詞
+gui_window::word_conc_coloc->h_score:             スコア
+gui_window::word_conc_coloc->h_l_total:           左合計
+gui_window::word_conc_coloc->h_r_total:           右合計
+gui_window::word_conc_coloc->l_total:             左合計
+gui_window::word_conc_coloc->r_total:             右合計
+gui_window::word_conc_coloc->l5:                  左5
+gui_window::word_conc_coloc->l4:                  左4
+gui_window::word_conc_coloc->l3:                  左3
+gui_window::word_conc_coloc->l2:                  左2
+gui_window::word_conc_coloc->l1:                  左1
+gui_window::word_conc_coloc->r5:                  右5
+gui_window::word_conc_coloc->r4:                  右4
+gui_window::word_conc_coloc->r3:                  右3
+gui_window::word_conc_coloc->r2:                  右2
+gui_window::word_conc_coloc->r1:                  右1
+gui_window::word_conc_coloc->total:               合計
+gui_window::word_conc_coloc->sort:                '  ソート：'
+gui_window::word_conc_coloc->filter:              フィルタ設定
+gui_window::word_conc_coloc->additional:          '  ＋追加条件'
+gui_window::word_conc_coloc_opt->win_title:       コロケーション統計・フィルタ設定
+gui_window::word_conc_coloc_opt->filter_by_pos:   品詞による語の取捨選択：
+gui_window::word_conc_coloc_opt->view:            表示する語の数：
+gui_window::word_conc_coloc_opt->top:             '　　　上位'

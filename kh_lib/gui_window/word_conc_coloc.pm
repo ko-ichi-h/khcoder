@@ -15,7 +15,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$self->{win_obj} = $wmw;
-	$wmw->title($self->gui_jt('コロケーション統計'));
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); #'コロケーション統計'
 	
 	# Nord Wordの情報表示部分
 	
@@ -26,7 +26,7 @@ sub _new{
 	)->pack(-fill=>'x');
 	
 	$fra4->Label(
-		-text => $self->gui_jchar('　抽出語：'),
+		-text => kh_msg->get('word'),#$self->gui_jchar('　抽出語：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
@@ -38,7 +38,7 @@ sub _new{
 	)->pack(-side => 'left');
 	
 	$fra4->Label(
-		-text => $self->gui_jchar('　品詞：'),
+		-text => kh_msg->get('pos'),#$self->gui_jchar('　品詞：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
@@ -50,7 +50,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$fra4->Label(
-		-text => $self->gui_jchar('　活用形：'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('　活用形：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -62,7 +62,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{label} = $fra4->Label(
-		-text => $self->gui_jchar('  ヒット数：'),
+		-text => kh_msg->get('hits'),#$self->gui_jchar('  ヒット数：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -107,67 +107,67 @@ sub _new{
 	);
 
 	$lis->header('create',0,-text  => 'N');
-	$lis->header('create',1,-text  => $self->gui_jchar('抽出語'));
-	$lis->header('create',2,-text  => $self->gui_jchar('品詞'));
-	$lis->header('create',3,-text  => $self->gui_jchar('スコア'));
-	$lis->header('create',4,-text  => $self->gui_jchar('左合計'));
-	$lis->header('create',5,-text  => $self->gui_jchar('右合計'));
+	$lis->header('create',1,-text  => kh_msg->get('h_word')); #$self->gui_jchar('抽出語')
+	$lis->header('create',2,-text  => kh_msg->get('h_pos')); #$self->gui_jchar('品詞')
+	$lis->header('create',3,-text  => kh_msg->get('h_score')); #$self->gui_jchar('スコア')
+	$lis->header('create',4,-text  => kh_msg->get('h_l_total')); #$self->gui_jchar('左合計')
+	$lis->header('create',5,-text  => kh_msg->get('h_r_total')); #$self->gui_jchar('右合計')
 	$lis->header(
 		'create', 6,
-		-text  => $self->gui_jchar('左5'),
+		-text  => kh_msg->get('l5'),#$self->gui_jchar('左5'),
 		-style => $style_blue
 	);
 	$lis->header(
 		'create',7,
-		-text  => $self->gui_jchar('左4'),
+		-text  => kh_msg->get('l4'),#$self->gui_jchar('左4'),
 		-style => $style_blue
 	);
 	$lis->header(
 		'create',8,
-		-text  => $self->gui_jchar('左3'),
+		-text  => kh_msg->get('l3'),#$self->gui_jchar('左3'),
 		-style => $style_blue
 	);
 	$lis->header(
 		'create',9,
-		-text  => $self->gui_jchar('左2'),
+		-text  => kh_msg->get('l2'),#$self->gui_jchar('左2'),
 		-style => $style_blue
 	);
 	$lis->header(
 		'create',10,
-		-text  => $self->gui_jchar('左1'),
+		-text  => kh_msg->get('l1'),#$self->gui_jchar('左1'),
 		-style => $style_blue
 	);
 	#$lis->header('create',11,-text => $self->gui_jchar('*'));
 	$lis->header(
 		'create',11,
-		-text => $self->gui_jchar('右1'),
+		-text => kh_msg->get('r1'),#$self->gui_jchar('右1'),
 		-style => $style_green
 	);
 	$lis->header(
 		'create',12,
-		-text => $self->gui_jchar('右2'),
+		-text => kh_msg->get('r2'),#$self->gui_jchar('右2'),
 		-style => $style_green
 	);
 	$lis->header(
 		'create',13,
-		-text => $self->gui_jchar('右3'),
+		-text => kh_msg->get('r3'),#$self->gui_jchar('右3'),
 		-style => $style_green
 	);
 	$lis->header(
 		'create',14,
-		-text => $self->gui_jchar('右4'),
+		-text => kh_msg->get('r4'),#$self->gui_jchar('右4'),
 		-style => $style_green
 	);
 	$lis->header(
 		'create',15,
-		-text => $self->gui_jchar('右5'),
+		-text => kh_msg->get('r5'),#$self->gui_jchar('右5'),
 		-style => $style_green
 	);
 
 	# 結果操作用のボタン類
 
 	$self->{copy_btn} = $fra5->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -185,25 +185,25 @@ sub _new{
 	);
 
 	$fra5->Label(
-		-text => $self->gui_jchar('　ソート：'),
+		-text => kh_msg->get('sort'),#$self->gui_jchar('　ソート：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	my @options = (
-		[ $self->gui_jchar('スコア'), 'score'],
-		[ $self->gui_jchar('合計'),   'sum'],
-		[ $self->gui_jchar('左合計'), 'suml'],
-		[ $self->gui_jchar('右合計'), 'sumr'],
-		[ $self->gui_jchar('左・5'),  'l5'],
-		[ $self->gui_jchar('左・4'),  'l4'],
-		[ $self->gui_jchar('左・3'),  'l3'],
-		[ $self->gui_jchar('左・2'),  'l2'],
-		[ $self->gui_jchar('左・1'),  'l1'],
-		[ $self->gui_jchar('右・1'),  'r1'],
-		[ $self->gui_jchar('右・2'),  'r2'],
-		[ $self->gui_jchar('右・3'),  'r3'],
-		[ $self->gui_jchar('右・4'),  'r4'],
-		[ $self->gui_jchar('右・5'),  'r5']
+		[ kh_msg->get('h_score'), 'score'],
+		[ kh_msg->get('total'),   'sum'], # 合計
+		[ kh_msg->get('l_total'), 'suml'],
+		[ kh_msg->get('r_total'), 'sumr'],
+		[ kh_msg->get('l5'),  'l5'],
+		[ kh_msg->get('l4'),  'l4'],
+		[ kh_msg->get('l3'),  'l3'],
+		[ kh_msg->get('l2'),  'l2'],
+		[ kh_msg->get('l1'),  'l1'],
+		[ kh_msg->get('r1'),  'r1'],
+		[ kh_msg->get('r2'),  'r2'],
+		[ kh_msg->get('r3'),  'r3'],
+		[ kh_msg->get('r4'),  'r4'],
+		[ kh_msg->get('r5'),  'r5']
 	);
 
 	$self->{menu1} = gui_widget::optmenu->open(
@@ -221,7 +221,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$fra5->Button(
-		-text => $self->gui_jchar('フィルタ設定'),
+		-text => kh_msg->get('filter'),#self->gui_jchar('フィルタ設定'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_window::word_conc_coloc_opt->open;}
@@ -271,9 +271,9 @@ sub view{
 	$self->{result_obj} = shift if defined($_[0]);
 	
 	if ($self->{sort} eq 'sum'){
-		$self->list->header('create',3,-text  => $self->gui_jchar('合計'));
+		$self->list->header('create',3,-text  => kh_msg->get('total'));
 	} else {
-		$self->list->header('create',3,-text  => $self->gui_jchar('スコア'));
+		$self->list->header('create',3,-text  => kh_msg->get('h_score'));
 	}
 	
 	# nord word 情報の表示
@@ -307,10 +307,13 @@ sub view{
 		   $gui_window::word_conc::additional->{1}{pos}
 		&& length($gui_window::word_conc::additional->{1}{query})
 	){
-		$if_tuika = '  ＋追加条件';
+		$if_tuika = kh_msg->get('additional'); #'  ＋追加条件';
 	}
 	$self->{label}->configure(
-		-text => $self->gui_jchar("$if_tuika  ヒット数： $hit_numb")
+		-text => 
+			"$if_tuika  "
+			.kh_msg->get('hits')
+			.$hit_numb
 	);
 	
 	$self->list->delete('all');
