@@ -12,6 +12,9 @@ global->tab_f:                                    Tab Delimited
 global->plot:                                     Plot
 global->close:                                    Close
 global->save:                                     Save
+global->all:                                      All
+global->default:                                  Default
+global->clear:                                    Clear
 global->wm_f:                                     Variable-length CSV: for WordMiner
 global->cont_big_pros:                            "It may take a while.\nMay I continue?"
 gui_window::about->win_title:                     About KH Coder
@@ -300,16 +303,16 @@ gui_window::word_conc->conj:                      '  Conj.:'
 gui_window::word_conc->additional:                Additional Options
 gui_window::word_conc->search:                    Search
 gui_window::word_conc->ns:                        None
-gui_window::word_conc->l5:                        L 5
-gui_window::word_conc->l4:                        L 4
-gui_window::word_conc->l3:                        L 3
-gui_window::word_conc->l2:                        L 2
-gui_window::word_conc->l1:                        L 1
-gui_window::word_conc->r5:                        R 5
-gui_window::word_conc->r4:                        R 4
-gui_window::word_conc->r3:                        R 3
-gui_window::word_conc->r2:                        R 2
-gui_window::word_conc->r1:                        R 1
+gui_window::word_conc->l5:                        L5
+gui_window::word_conc->l4:                        L4
+gui_window::word_conc->l3:                        L3
+gui_window::word_conc->l2:                        L2
+gui_window::word_conc->l1:                        L1
+gui_window::word_conc->r5:                        R5
+gui_window::word_conc->r4:                        R4
+gui_window::word_conc->r3:                        R3
+gui_window::word_conc->r2:                        R2
+gui_window::word_conc->r1:                        R1
 gui_window::word_conc->center:                    Conj.
 gui_window::word_conc->sort1:                     '  Sort 1:'
 gui_window::word_conc->sort2:                     '  Sort 2:'
@@ -322,6 +325,36 @@ gui_window::word_conc->prev:                      P
 gui_window::word_conc->next:                      N
 gui_window::word_conc->hits:                      '  Hits: '
 gui_window::word_conc->currentDoc:                '* Search Result: '
-gui_window::word_conc->saving:                    Saving the result of KWIC concordance...
+gui_window::word_conc->saving:                    Saving the Result of KWIC Concordance...
 gui_window::word_conc->viewing:                   ', View: '
 gui_window::word_conc->stats:                     Stats
+gui_window::word_conc_coloc->win_title:           Collocation Stats
+gui_window::word_conc_coloc->word:                'Word:'
+gui_window::word_conc_coloc->pos:                 '  POS:'
+gui_window::word_conc_coloc->conj:                '  Conj.:'
+gui_window::word_conc_coloc->hits:                '  Hits: '
+gui_window::word_conc_coloc->h_word:              Word
+gui_window::word_conc_coloc->h_pos:               POS
+gui_window::word_conc_coloc->h_score:             Score
+gui_window::word_conc_coloc->h_l_total:           LT
+gui_window::word_conc_coloc->h_r_total:           RT
+gui_window::word_conc_coloc->l_total:             Left Total
+gui_window::word_conc_coloc->r_total:             Right Total
+gui_window::word_conc_coloc->l5:                  L5
+gui_window::word_conc_coloc->l4:                  L4
+gui_window::word_conc_coloc->l3:                  L3
+gui_window::word_conc_coloc->l2:                  L2
+gui_window::word_conc_coloc->l1:                  L1
+gui_window::word_conc_coloc->r5:                  R5
+gui_window::word_conc_coloc->r4:                  R4
+gui_window::word_conc_coloc->r3:                  R3
+gui_window::word_conc_coloc->r2:                  R2
+gui_window::word_conc_coloc->r1:                  R1
+gui_window::word_conc_coloc->total:               Total
+gui_window::word_conc_coloc->sort:                '  Sort:'
+gui_window::word_conc_coloc->filter:              Filter
+gui_window::word_conc_coloc->additional:          '  + Additional Options'
+gui_window::word_conc_coloc_opt->win_title:       Filter: Collocation Stats
+gui_window::word_conc_coloc_opt->filter_by_pos:   Filter by POS:
+gui_window::word_conc_coloc_opt->view:            View:
+gui_window::word_conc_coloc_opt->top:             '      Top '
