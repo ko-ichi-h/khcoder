@@ -12,46 +12,46 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('追加条件：KWICコンコーダンス'));
+	$win->title($self->gui_jt( kh_msg->get('win_title') )); # '追加条件：KWICコンコーダンス'
 	#$self->{win_obj} = $win;
 
 	$win->Label(
-		-text => $self->gui_jchar("・「左右（前後）に特定の語が出現していること」という条件を追加でます。"),
+		-text => kh_msg->get('preface1'),#$self->gui_jchar("・「左右（前後）に特定の語が出現していること」という条件を追加でます。"),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	$win->Label(
-		-text => $self->gui_jchar("　条件を追加するには、まず「位置」を指定して下さい。"),
+		-text => kh_msg->get('preface2'),#$self->gui_jchar("　条件を追加するには、まず「位置」を指定して下さい。"),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
 	my @options = (
-		[ $self->gui_jchar('指定なし'),  '0'],
-		[ $self->gui_jchar('左右・1-5'), 'rl'],
-		[ $self->gui_jchar('左・1-5'),   'l'],
-		[ $self->gui_jchar('右・1-5'),   'r'],
-		[ $self->gui_jchar('左・5'),     'l5'],
-		[ $self->gui_jchar('左・4'),     'l4'],
-		[ $self->gui_jchar('左・3'),     'l3'],
-		[ $self->gui_jchar('左・2'),     'l2'],
-		[ $self->gui_jchar('左・1'),     'l1'],
-		[ $self->gui_jchar('右・1'),     'r1'],
-		[ $self->gui_jchar('右・2'),     'r2'],
-		[ $self->gui_jchar('右・3'),     'r3'],
-		[ $self->gui_jchar('右・4'),     'r4'],
-		[ $self->gui_jchar('右・5'),     'r5']
+		[ kh_msg->get('0'),  '0'],#$self->gui_jchar('指定なし')
+		[ kh_msg->get('rl'), 'rl'],#$self->gui_jchar('左右・1-5')
+		[ kh_msg->get('l'),   'l'],#$self->gui_jchar('左・1-5')
+		[ kh_msg->get('r'),   'r'],#$self->gui_jchar('右・1-5')
+		[ kh_msg->get('l5'),     'l5'],
+		[ kh_msg->get('l4'),     'l4'],
+		[ kh_msg->get('l3'),     'l3'],
+		[ kh_msg->get('l2'),     'l2'],
+		[ kh_msg->get('l1'),     'l1'],
+		[ kh_msg->get('r1'),     'r1'],
+		[ kh_msg->get('r2'),     'r2'],
+		[ kh_msg->get('r3'),     'r3'],
+		[ kh_msg->get('r4'),     'r4'],
+		[ kh_msg->get('r5'),     'r5']
 	);
 
 	#-----------#
 	#   1つ目   #
 
 	my $f2 = $win->LabFrame(
-		-label => $self->gui_jchar('追加条件1'),
+		-label => kh_msg->get('opt1'),#$self->gui_jchar('追加条件1'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
 	$f2->Label(
-		-text => $self->gui_jchar('位置：'),
+		-text => kh_msg->get('position'),#$self->gui_jchar('位置：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -65,7 +65,7 @@ sub _new{
 	);
 	
 	$f2->Label(
-		-text => $self->gui_jchar('　抽出語：'),
+		-text => kh_msg->get('word'),#$self->gui_jchar('　抽出語：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -76,7 +76,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f2->Label(
-		-text => $self->gui_jchar('　品詞：'),
+		-text => kh_msg->get('pos'),#$self->gui_jchar('　品詞：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -87,7 +87,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f2->Label(
-		-text => $self->gui_jchar('　活用形：'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('　活用形：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -101,13 +101,13 @@ sub _new{
 	#   2つ目   #
 	
 	my $f3 = $win->LabFrame(
-		-label => $self->gui_jchar('追加条件2'),
+		-label => kh_msg->get('opt2'),#$self->gui_jchar('追加条件2'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
 	$f3->Label(
-		-text => $self->gui_jchar('位置：'),
+		-text => kh_msg->get('position'),#$self->gui_jchar('位置：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -121,7 +121,7 @@ sub _new{
 	);
 
 	$f3->Label(
-		-text => $self->gui_jchar('　抽出語：'),
+		-text => kh_msg->get('word'),#$self->gui_jchar('　抽出語：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -132,7 +132,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f3->Label(
-		-text => $self->gui_jchar('　品詞：'),
+		-text => kh_msg->get('pos'),#$self->gui_jchar('　品詞：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -143,7 +143,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f3->Label(
-		-text => $self->gui_jchar('　活用形：'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('　活用形：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -157,13 +157,13 @@ sub _new{
 	#   3つ目   #
 	
 	my $f4 = $win->LabFrame(
-		-label => $self->gui_jchar('追加条件3'),
+		-label => kh_msg->get('opt3'),#$self->gui_jchar('追加条件3'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
 	$f4->Label(
-		-text => $self->gui_jchar('位置：'),
+		-text => kh_msg->get('position'),#$self->gui_jchar('位置：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -177,7 +177,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('　抽出語：'),
+		-text => kh_msg->get('word'),#$self->gui_jchar('　抽出語：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -188,7 +188,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f4->Label(
-		-text => $self->gui_jchar('　品詞：'),
+		-text => kh_msg->get('pos'),#$self->gui_jchar('　品詞：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -199,7 +199,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f4->Label(
-		-text => $self->gui_jchar('　活用形：'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('　活用形：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -223,14 +223,14 @@ sub _new{
 
 	# OK & Cancel
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}
@@ -272,7 +272,7 @@ sub start {
 	}
 	
 	$self->_menu_check;
-	$self->{win_obj}->grab;
+	#$self->{win_obj}->grab;
 }
 
 #----------------------#

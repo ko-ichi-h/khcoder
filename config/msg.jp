@@ -359,3 +359,27 @@ gui_window::word_conc_coloc_opt->win_title:       コロケーション統計・
 gui_window::word_conc_coloc_opt->filter_by_pos:   品詞による語の取捨選択：
 gui_window::word_conc_coloc_opt->view:            表示する語の数：
 gui_window::word_conc_coloc_opt->top:             '　　　上位'
+gui_window::word_conc_opt->win_title:             追加条件（KWICコンコーダンス）
+gui_window::word_conc_opt->preface1:              「左右（前後）に特定の語が出現していること」という条件を追加でます。
+gui_window::word_conc_opt->preface2:              '  条件を追加するには、まず「位置」を指定して下さい。'
+gui_window::word_conc_opt->l5:                    左5
+gui_window::word_conc_opt->l4:                    左4
+gui_window::word_conc_opt->l3:                    左3
+gui_window::word_conc_opt->l2:                    左2
+gui_window::word_conc_opt->l1:                    左1
+gui_window::word_conc_opt->r5:                    右5
+gui_window::word_conc_opt->r4:                    右4
+gui_window::word_conc_opt->r3:                    右3
+gui_window::word_conc_opt->r2:                    右2
+gui_window::word_conc_opt->r1:                    右1
+gui_window::word_conc_opt->rl:                    左右1-5
+gui_window::word_conc_opt->r:                     右1-5
+gui_window::word_conc_opt->l:                     左1-5
+gui_window::word_conc_opt->0:                     指定なし
+gui_window::word_conc_opt->opt1:                  追加条件1
+gui_window::word_conc_opt->opt2:                  追加条件2
+gui_window::word_conc_opt->opt3:                  追加条件3
+gui_window::word_conc_opt->position:              位置：
+gui_window::word_conc_opt->word:                  '  抽出語：'
+gui_window::word_conc_opt->pos:                   '  品詞：'
+gui_window::word_conc_opt->conj:                  '  活用形：'
