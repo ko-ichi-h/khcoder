@@ -358,3 +358,27 @@ gui_window::word_conc_coloc_opt->win_title:       Filter: Collocation Stats
 gui_window::word_conc_coloc_opt->filter_by_pos:   Filter by POS:
 gui_window::word_conc_coloc_opt->view:            View:
 gui_window::word_conc_coloc_opt->top:             '      Top '
+gui_window::word_conc_opt->win_title:             Additional Options of KWIC Concordance
+gui_window::word_conc_opt->preface1:              You can add search conditions like "There is word A at L1."
+gui_window::word_conc_opt->preface2:              'To add conditions, please specify "Position" first.'
+gui_window::word_conc_opt->l5:                    L5
+gui_window::word_conc_opt->l4:                    L4
+gui_window::word_conc_opt->l3:                    L3
+gui_window::word_conc_opt->l2:                    L2
+gui_window::word_conc_opt->l1:                    L1
+gui_window::word_conc_opt->r5:                    R5
+gui_window::word_conc_opt->r4:                    R4
+gui_window::word_conc_opt->r3:                    R3
+gui_window::word_conc_opt->r2:                    R2
+gui_window::word_conc_opt->r1:                    R1
+gui_window::word_conc_opt->rl:                    LR1-5
+gui_window::word_conc_opt->r:                     R1-5
+gui_window::word_conc_opt->l:                     L1-5
+gui_window::word_conc_opt->0:                     None
+gui_window::word_conc_opt->opt1:                  Condition 1
+gui_window::word_conc_opt->opt2:                  Condition 2
+gui_window::word_conc_opt->opt3:                  Condition 3
+gui_window::word_conc_opt->position:              Position:
+gui_window::word_conc_opt->word:                  '  Word:'
+gui_window::word_conc_opt->pos:                   '  POS:'
+gui_window::word_conc_opt->conj:                  '  Conj.:'
