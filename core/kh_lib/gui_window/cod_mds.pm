@@ -212,6 +212,15 @@ sub _new{
 		},
 	);
 
+	# クラスター化
+	$self->{cls_obj} = gui_widget::cls4mds->open(
+		parent       => $lf,
+		command      => sub{ $self->_calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
+	);
+
 	# フォントサイズ
 	my $ff = $lf->Frame()->pack(
 		-fill => 'x',
@@ -238,8 +247,14 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$ff->Checkbutton(
+			-text     => $self->gui_jchar('太字','euc'),
+			-variable => \$self->{check_bold_text},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
 	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
+		-text => $self->gui_jchar(' プロットサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -437,6 +452,9 @@ sub _calc{
 		std_radius   => $self->{bubble_obj}->chk_std_radius,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		n_cls          => $self->{cls_obj}->n,
+		cls_raw        => $self->{cls_obj}->raw,
+		font_bold      => $self->gui_jg( $self->{check_bold_text} ),
 	);
 
 	$wait_window->end(no_dialog => 1);
