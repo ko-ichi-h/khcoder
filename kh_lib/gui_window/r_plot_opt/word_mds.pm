@@ -98,7 +98,7 @@ sub innner{
 	my ($check_bubble, $chk_std_radius, $num_size, $num_var)
 		= (0,1,100,100);
 
-	if ( $self->{command_f} =~ /symbols\(/ ){
+	if ( $self->{command_f} =~ /b_size/ ){
 		$check_bubble = 1;
 	} else {
 		$check_bubble = 0;

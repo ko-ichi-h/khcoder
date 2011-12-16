@@ -65,7 +65,7 @@ sub _new{
 	}
 
 	$self->{check_cls_raw_w} = $fcls2->Checkbutton(
-			-text     => gui_window->gui_jchar('隣接メンバーをクラスター化','euc'),
+			-text     => gui_window->gui_jchar('隣接クラスター','euc'),
 			-variable => \$self->{check_nei},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
