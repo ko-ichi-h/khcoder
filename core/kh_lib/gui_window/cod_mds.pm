@@ -14,13 +14,19 @@ sub _new{
 	$win->title($self->gui_jt('コーディング・多次元尺度法：オプション'));
 
 	my $lf = $win->LabFrame(
-		-label       => 'Options',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2
-	)->pack(
-		-fill   => 'both',
-		-expand => 1
-	);
+		-label => 'Codes',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
+
+	#my $rf = $win->Frame()
+	#	->pack(-fill => 'both', -expand => 1);
+
+	my $lf2 = $win->LabFrame(
+		-label => 'Options',
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'x', -expand => 0, -anchor => 'n');
 
 	# ルール・ファイル
 	my %pack0 = (
@@ -135,7 +141,7 @@ sub _new{
 	);
 
 	# アルゴリズム選択
-	my $f4 = $lf->Frame()->pack(
+	my $f4 = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
 		-pady => 2
@@ -178,7 +184,7 @@ sub _new{
 
 
 	# 次元の数
-	my $fnd = $lf->Frame()->pack(
+	my $fnd = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 4,
 	);
@@ -204,7 +210,7 @@ sub _new{
 
 	# バブルプロット
 	$self->{bubble_obj} = gui_widget::bubble->open(
-		parent       => $lf,
+		parent       => $lf2,
 		type         => 'mds',
 		command      => sub{ $self->_calc; },
 		pack    => {
@@ -214,7 +220,7 @@ sub _new{
 
 	# クラスター化
 	$self->{cls_obj} = gui_widget::cls4mds->open(
-		parent       => $lf,
+		parent       => $lf2,
 		command      => sub{ $self->_calc; },
 		pack    => {
 			-anchor   => 'w',
@@ -222,7 +228,7 @@ sub _new{
 	);
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
+	my $ff = $lf2->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4,
@@ -274,26 +280,20 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	# OK・キャンセル
-	my $f3 = $win->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 2
-	);
-
-	$f3->Button(
+	$win->Button(
 		-text => $self->gui_jchar('キャンセル'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
-	)->pack(-side => 'right',-padx => 2);
+	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
-	$self->{ok_btn} = $f3->Button(
+	$self->{ok_btn} = $win->Button(
 		-text => 'OK',
 		-width => 8,
 		-font => "TKFN",
-		-state => 'disable',
+		#-state => 'disable',
 		-command => sub{$self->_calc;}
-	)->pack(-side => 'right');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
 
 	$self->read_cfile;
 
