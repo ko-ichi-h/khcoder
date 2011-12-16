@@ -9,6 +9,10 @@ sub _new{
 	
 	my $win = $self->parent->Frame();
 
+	$self->{check_cls} = 0 unless defined $self->{check_cls};
+	$self->{check_nei} = 1 unless defined $self->{check_nei};
+	$self->{cls_n}     = 7 unless defined $self->{cls_n};
+
 	$win->Checkbutton(
 			-text     => gui_window->gui_jchar('クラスター化と色分け','euc'),
 			-variable => \$self->{check_cls},
@@ -36,7 +40,7 @@ sub _new{
 		-width      => 2,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cls_num}->insert(0,5);
+	$self->{entry_cls_num}->insert(0,$self->{cls_n});
 	$self->{entry_cls_num}->bind("<Key-Return>", $self->{command})
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cls_num});
@@ -56,9 +60,13 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	unless ( defined($self->{check_cls_raw}) ){
+		$self->{check_cls_raw} = 1;
+	}
+
 	$self->{check_cls_raw_w} = $fcls2->Checkbutton(
-			-text     => gui_window->gui_jchar('ロー・データを使ってクラスター化','euc'),
-			-variable => \$self->{check_cls_raw},
+			-text     => gui_window->gui_jchar('隣接メンバーをクラスター化','euc'),
+			-variable => \$self->{check_nei},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
@@ -99,7 +107,13 @@ sub n{
 
 sub raw{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{check_cls_raw} );
+	my $v = gui_window->gui_jg( $self->{check_nei} );
+	if ($v){
+		$v = 0;
+	} else {
+		$v = 1;
+	}
+	return $v;
 }
 
 

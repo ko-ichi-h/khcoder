@@ -54,10 +54,10 @@ sub innner{
 			],
 		variable => \$self->{method_dist},
 	);
-	if ( $self->{command_f} =~ /euclid/ ){
+	if ( $self->{command_f} =~ /dj .+euclid/ ){
 		$widget_dist->set_value('euclid');
 	}
-	elsif  ( $self->{command_f} =~ /binary/ ){
+	elsif  ( $self->{command_f} =~ /dj .+binary/ ){
 		$widget_dist->set_value('binary');
 	}
 	else {
@@ -130,6 +130,39 @@ sub innner{
 		},
 	);
 
+	# クラスター化のパラメーター
+	if ( $self->{command_f} =~ /n_cls <\- ([0-9]+)\n/ ){
+		$self->{cls_if} = $1;
+		if ( $self->{cls_if} ){
+			$self->{cls_n} = $self->{cls_if};
+			$self->{cls_if} = 1;
+		} else {
+			$self->{cls_n} = 7;
+		}
+	} else {
+		$self->{cls_if} = 0;
+		$self->{cls_n}  = 7;
+	}
+	if ( $self->{command_f} =~ /cls_raw <\- ([0-9]+)\n/ ){
+		my $v = $1;
+		if ($v == 1){
+			$self->{cls_nei} = 0;
+		} else {
+			$self->{cls_nei} = 1;
+		}
+		print "cls_nei: $self->{cls_nei}, v: $v,\n";
+	}
+	$self->{cls_obj} = gui_widget::cls4mds->open(
+		parent       => $lf,
+		command      => sub{ $self->calc; },
+		pack    => {
+			-anchor  => 'w',
+		},
+		check_cls    => $self->{cls_if},
+		cls_n        => $self->{cls_n},
+		check_nei    => $self->{cls_nei},
+	);
+
 	return $self;
 }
 
@@ -179,6 +212,9 @@ sub calc{
 		std_radius   => $self->{bubble_obj}->chk_std_radius,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		n_cls          => $self->{cls_obj}->n,
+		cls_raw        => $self->{cls_obj}->raw,
+		font_bold      => $self->gui_jg( $self->{check_bold_text} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close;

@@ -161,8 +161,14 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$ff->Checkbutton(
+			-text     => $self->gui_jchar('太字','euc'),
+			-variable => \$self->{check_bold_text},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
 	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
+		-text => $self->gui_jchar(' プロットサイズ：'),
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -283,12 +289,13 @@ sub calc{
 		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
-		bubble       => $self->{bubble_obj}->check_bubble,
-		std_radius   => $self->{bubble_obj}->chk_std_radius,
-		bubble_size  => $self->{bubble_obj}->size,
-		bubble_var   => $self->{bubble_obj}->var,
-		n_cls        => $self->{cls_obj}->n,
-		cls_raw      => $self->{cls_obj}->raw,
+		bubble         => $self->{bubble_obj}->check_bubble,
+		std_radius     => $self->{bubble_obj}->chk_std_radius,
+		bubble_size    => $self->{bubble_obj}->size,
+		bubble_var     => $self->{bubble_obj}->var,
+		n_cls          => $self->{cls_obj}->n,
+		cls_raw        => $self->{cls_obj}->raw,
+		font_bold      => $self->gui_jg( $self->{check_bold_text} ),
 	);
 	
 	$w->end(no_dialog => 1);
@@ -377,6 +384,13 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
 
+	if ($args{font_bold} == 1){
+		$args{font_bold} = 2;
+	} else {
+		$args{font_bold} = 1;
+	}
+	$r_command_d .= "text_font <- $args{font_bold}\n";
+	$r_command_a .= "text_font <- $args{font_bold}\n";
 
 	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
@@ -419,7 +433,7 @@ while ( is.na(check4mds(d)) == 0 ){
 			."cl2 <- s3d\$xyz.convert(cl)\n"
 			."library(maptools)\n"
 			."pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
-				."cex=$fontsize, offset=0, col=\"black\")\n"
+				."cex=$fontsize, offset=0, col=\"black\", font = text_font)\n"
 		;
 		$r_command_a .=
 			 "library(scatterplot3d)\n"
@@ -604,6 +618,7 @@ if ( plot_mode == "color" ){
 		y=cl[,2],
 		labels=rownames(cl),
 		cex=font_size,
+		font = text_font,
 		offset=0
 	)
 }
@@ -723,6 +738,7 @@ if (plot_mode == "color") {
 		rownames(cl),
 		cex=font_size,
 		offset=0,
+		font = text_font,
 		col=col_txt_words,
 	)
 }
