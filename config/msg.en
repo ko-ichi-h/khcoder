@@ -65,14 +65,14 @@ gui_window::main::menu->bayes_learn:              Learn from Variables
 gui_window::main::menu->bayes_classi:             Classify
 gui_window::main::menu->check_learning:           View Learning Result
 gui_window::main::menu->check_classi:             View Classification Log
-gui_window::main::menu->doc_term_mtrx:            Output Document-Term Matrix
-gui_window::main::menu->term_vec_mtrx:            Output Term-Context Matrix
+gui_window::main::menu->doc_term_mtrx:            Export Document-Term Matrix
+gui_window::main::menu->term_vec_mtrx:            Export Term-Context Matrix
 gui_window::main::menu->coding:                   Coding
 gui_window::main::menu->freq:                     Frequency
 gui_window::main::menu->cross_st:                 Crosstab with Headings
 gui_window::main::menu->cross_vr:                 Crosstab with Variables
 gui_window::main::menu->jac_mtrx:                 Similarity Matrix
-gui_window::main::menu->output_cod:               Output Document-Code Matrix
+gui_window::main::menu->output_cod:               Export Document-Code Matrix
 gui_window::main::menu->vars_heads:               Variables & Headings
 gui_window::main::menu->read:                     Read from a File
 gui_window::main::menu->var_list:                 Listing & Manipulation
