@@ -383,3 +383,12 @@ gui_window::word_conc_opt->position:              位置：
 gui_window::word_conc_opt->word:                  '  抽出語：'
 gui_window::word_conc_opt->pos:                   '  品詞：'
 gui_window::word_conc_opt->conj:                  '  活用形：'
+gui_window::doc_view->win_title:                  文書表示
+gui_window::doc_view->in_the_file:                ファイル内：
+gui_window::doc_view->p1:                         << 前
+gui_window::doc_view->n1:                         後 >>
+gui_window::doc_view->in_the_results:             '  検索結果：'
+gui_window::doc_view->p2:                         << 前
+gui_window::doc_view->n2:                         次 >>
+gui_window::doc_view->highlight:                  強調
+gui_window::doc_view->current_doc:                '・現在表示中の文書：  '
