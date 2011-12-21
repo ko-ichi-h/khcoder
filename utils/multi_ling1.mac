@@ -1,0 +1,36 @@
+moveto 0,0;
+#num_r = 0;
+while (1){
+	replacedown 
+		"$self\\->gui_jt\\('(.+)'\\)(.*)\\n",
+		"$self->gui_jt(kh_msg\\->get\\('" + str(#num_r) + "'\\))\\2 # \\1\\n",
+		regular
+	;
+	if( !result ) break;
+	#num_r = #num_r + 1;
+}
+
+moveto 0,0;
+while (1){
+	replacedown 
+		"$self\\->gui_jchar\\('(.+)'\\)(.*)\\n",
+		"kh_msg\\->get\\('" + str(#num_r) + "'\\)\\2 # \\1\\n",
+		regular
+	;
+	if( !result ) break;
+	#num_r = #num_r + 1;
+}
+
+moveto 0,0;
+while (1){
+	replacedown 
+		"gui_window\\->gui_jchar\\('(.+)'\\)(.*)\\n",
+		"kh_msg\\->get\\('" + str(#num_r) + "'\\)\\2 # \\1\\n",
+		regular
+	;
+	if( !result ) break;
+	#num_r = #num_r + 1;
+}
+
+moveto 0,0;
+searchdown "kh_msg->get(";

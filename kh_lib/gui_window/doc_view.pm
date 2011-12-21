@@ -27,7 +27,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $self->{win_obj};
-	$bunhyojiwin->title($self->gui_jt('文書表示'));
+	$bunhyojiwin->title($self->gui_jt( kh_msg->get('win_title') )); # '文書表示'
 
 	my $srtxt = $bunhyojiwin->Scrolled(
 		"ROText",
@@ -54,8 +54,12 @@ sub _new{
 	my $bframe = $bunhyojiwin->Frame(-borderwidth => 2) ->pack(
 		-fill => 'x',-expand => 'no');
 
+	$bframe->Label(
+		-text => kh_msg->get('in_the_file'),#'ファイル内：'
+	)->pack(-side => 'left');
+
 	$self->{pre_btn} = $bframe->Button(
-		-text => $self->gui_jchar('直前の文書'),
+		-text => kh_msg->get('p1'),#$self->gui_jchar('<< 前'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -63,10 +67,10 @@ sub _new{
 			--$id;
 			$self->near($id);
 		}
-	)->pack(-side => 'left',-pady => '0');
+	)->pack(-side => 'left',-padx => '0');
 
 	$self->{nxt_btn} = $bframe->Button(
-		-text => $self->gui_jchar('直後の文書'),
+		-text => kh_msg->get('n1'),#$self->gui_jchar('後 >>'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -74,15 +78,14 @@ sub _new{
 			++$id;
 			$self->near($id);
 		}
-	)->pack(-side => 'left',-pady => '0');
+	)->pack(-side => 'left',-padx => '2');
 
 	$bframe->Label(
-		-text => $self->gui_jchar('　'),
-		-font => "TKFN"
-	)->pack(-anchor=>'w',-side => 'left');
+		-text => kh_msg->get('in_the_results'),#'  検索結果：'
+	)->pack(-side => 'left');
 
 	$self->{pre_result_btn} = $bframe->Button(
-		-text => $self->gui_jchar('前の検索結果'),
+		-text => kh_msg->get('p2'),#$self->gui_jchar('<< 前'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -102,10 +105,10 @@ sub _new{
 			$self->{doc_id} = $self->{doc}->{doc_id};
 			$self->_view_doc($self->{doc});
 		}
-	)->pack(-side => 'left',-pady => '0');
+	)->pack(-side => 'left',-padx => '1');
 
 	$self->{nxt_result_btn} = $bframe->Button(
-		-text => $self->gui_jchar('次の検索結果'),
+		-text => kh_msg->get('n2'),#$self->gui_jchar('次 >>'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -125,7 +128,7 @@ sub _new{
 			$self->{doc_id} = $self->{doc}->{doc_id};
 			$self->_view_doc($self->{doc});
 		}
-	)->pack(-side => 'left',-pady => '0');
+	)->pack(-side => 'left',-padx => '2');
 
 	$bframe->Label(
 		-text => $self->gui_jchar('　'),
@@ -133,13 +136,13 @@ sub _new{
 	)->pack(-anchor=>'w',-side => 'left');
 
 	$bframe->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'),#$self->gui_jchar('閉じる'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
 			$self->close;
 		}
-	)->pack(-side => 'right',-pady => '0');
+	)->pack(-side => 'right',-pady => '1');
 
 	$bframe->Label(
 		-text => ' ',
@@ -147,7 +150,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$bframe->Button(
-		-text => $self->gui_jchar('強調'),
+		-text => kh_msg->get('highlight'),#$self->gui_jchar('強調'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -237,7 +240,7 @@ sub near{
 	if ($self->{parent}{code_obj}){
 		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
 	} else {
-		$t = Jcode->new('・現在表示中の文書：  ')->sjis;
+		$t = kh_msg->get('current_doc');#Jcode->new('・現在表示中の文書：  ')->sjis;
 	}
 	$self->{foot} = $t;
 	my $doc = mysql_getdoc->get(

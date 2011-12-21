@@ -382,3 +382,12 @@ gui_window::word_conc_opt->position:              Position:
 gui_window::word_conc_opt->word:                  '  Word:'
 gui_window::word_conc_opt->pos:                   '  POS:'
 gui_window::word_conc_opt->conj:                  '  Conj.:'
+gui_window::doc_view->win_title:                  Document
+gui_window::doc_view->in_the_file:                In the File:
+gui_window::doc_view->p1:                         '<<'
+gui_window::doc_view->n1:                         '>>'
+gui_window::doc_view->in_the_results:             '  In the Results:'
+gui_window::doc_view->p2:                         '<<'
+gui_window::doc_view->n2:                         '>>'
+gui_window::doc_view->highlight:                  highlight
+gui_window::doc_view->current_doc:                '* Current Document: '
