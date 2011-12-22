@@ -16,7 +16,7 @@ sub _new{
 	$self->{parent} = $args{parent};
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('強調する言葉'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 強調する言葉
 
 	# リスト用フレーム
 	my $lf = $win->LabFrame(
@@ -26,7 +26,7 @@ sub _new{
 	)->pack(-fill => 'both',-expand => 'y');
 
 	$lf->Label(
-		-text => $self->gui_jchar('■以下の言葉が常に強調されます。'),
+		-text => kh_msg->get('desc'), # ■以下の言葉が常に強調されます。
 		-font => "TKFN",
 	)->pack(
 		-anchor =>'w',
@@ -49,11 +49,11 @@ sub _new{
 		-highlightthickness => 0,
 		-selectmode => 'extended',
 	)->pack(-fill=>'both',-expand => 'yes',-pady => 2);
-	$plis->header('create',0,-text => $self->gui_jchar('　言葉　'));
-	$plis->header('create',1,-text => $self->gui_jchar('　種類　'));
+	$plis->header('create',0,-text => kh_msg->get('highlight_h')); # 　言葉　
+	$plis->header('create',1,-text => kh_msg->get('type_h')); # 　種類　
 
 	$lf->Button(
-		-text => $self->gui_jchar('選択した言葉を削除'),
+		-text => kh_msg->get('delete'), # 選択した言葉を削除
 		-font => "TKFN",
 		-command => sub{$self->delete;}
 	)->pack(-anchor => 'e');
@@ -67,7 +67,7 @@ sub _new{
 	my $lf2a = $lf2->Frame()->pack(-fill => 'x',-expand => 'y');
 
 	$lf2a->Label(
-		-text => $self->gui_jchar('言葉：'),
+		-text => kh_msg->get('highlight'), # 言葉：
 		-font => "TKFN",
 	)->pack(
 		-side => 'left',
@@ -84,7 +84,7 @@ sub _new{
 	$self->{entry}->bind("<Key-Return>",sub{$self->add;});
 
 	$lf2->Label(
-		-text => $self->gui_jchar('種類：'),
+		-text => kh_msg->get('type'), # 種類：
 		-font => "TKFN",
 	)->pack(
 		-side => 'left'
@@ -94,19 +94,19 @@ sub _new{
 		width   => 6,
 		pack    => {-side => 'left'},
 		options => [
-			[$self->gui_jchar('抽出語'), '1'],
-			[$self->gui_jchar('文字列'), '0'],
+			[kh_msg->get('word'), '1'], # 抽出語
+			[kh_msg->get('string'), '0'], # 文字列
 		],
 		variable => \$self->{type},
 	);
 	$lf2->Button(
-		-text => $self->gui_jchar('追加'),
+		-text => kh_msg->get('add'), # 追加
 		-font => "TKFN",
 		-command => sub{$self->add;}
 	)->pack(-anchor => 'e');
 
 	$win->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'), # 閉じる
 		#-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->close;}
@@ -139,13 +139,13 @@ sub refresh{
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => $self->gui_jchar('抽出語')
+				-text => kh_msg->get('word') # 抽出語
 			);
 		} else {
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => $self->gui_jchar('文字列')
+				-text => kh_msg->get('string') # 文字列
 			);
 		}
 		++$row;
@@ -170,7 +170,7 @@ sub add{
 	# 入力があるかどうかをチェック
 	unless (length($word)){
 		gui_errormsg->open(
-			msg    => '言葉が入力されていません。',
+			msg    => kh_msg->get('no_word'),# 言葉が入力されていません。
 			type   => 'msg',
 			window => \$self->{win_obj},
 		);
@@ -183,7 +183,7 @@ sub add{
 	",1)->hundle->rows;
 	if ($chk){
 		gui_errormsg->open(
-			msg    => 'その言葉は既に登録されています。',
+			msg    => kh_msg->get('exists'),# その言葉は既に登録されています。
 			type   => 'msg',
 			window => \$self->{win_obj},
 		);
@@ -220,7 +220,7 @@ sub delete{
 		my $type = Jcode->new(
 			$self->gui_jg($self->list->itemCget($i,1,-text))
 		)->euc;
-		if ($type eq '抽出語'){
+		if ($type eq '抽出語' || $type eq 'word'){
 			$type = 1;
 		} else {
 			$type = 0;
