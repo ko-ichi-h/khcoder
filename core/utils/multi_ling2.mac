@@ -1,0 +1,26 @@
+Change_search:    //検索状態を変更
+if ( !searchmode ) {     // 検索状態を範囲選択に変更
+    openreg "CURRENTUSER", "Software\\Hidemaruo\\Hidemaru\\Env";
+    writeregnum "SelectFound", 1;
+    #modechanged = 1;
+    envchanged;
+}
+
+// パッケージ名の取得
+
+moveto 0,0;
+$id = "";
+
+searchdown
+	"package (.+);\\n",
+	regular,
+	loop
+;
+
+
+Reset_search:   //検索状態を元に戻す
+if ( #modechanged ) {
+    writeregnum "SelectFound", 0;
+    envchanged;
+    closereg;
+}
