@@ -43,21 +43,21 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => kh_msg->get('all'), # すべて
+		-text => kh_msg->gget('all'), # すべて
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->get('default'), # 既定値
+		-text => kh_msg->gget('default'), # 既定値
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->get('clear'), # クリア
+		-text => kh_msg->gget('clear'), # クリア
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
