@@ -228,50 +228,14 @@ sub _new{
 	);
 
 	# フォントサイズ
-	my $ff = $lf2->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent    => $lf2,
+		command   => sub{ $self->_calc; },
+		pack      => { -anchor   => 'w' },
+		font_size => $::config_obj->r_default_font_size,
+		show_bold => 1,
+		plot_size => 480,
 	);
-
-	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,$::config_obj->r_default_font_size);
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => $self->gui_jchar('%'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$ff->Checkbutton(
-			-text     => $self->gui_jchar('太字','euc'),
-			-variable => \$self->{check_bold_text},
-			-anchor => 'w',
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$ff->Label(
-		-text => $self->gui_jchar(' プロットサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -437,12 +401,10 @@ sub _calc{
 	$r_command .= ")\n";
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	&gui_window::word_mds::make_plot(
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size         => $self->{font_obj}->font_size,
+		font_bold         => $self->{font_obj}->check_bold_text,
+		plot_size         => $self->{font_obj}->plot_size,
 		method         => $self->gui_jg( $self->{method_opt} ),
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		r_command      => $r_command,
@@ -454,7 +416,6 @@ sub _calc{
 		bubble_var   => $self->{bubble_obj}->var,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
-		font_bold      => $self->gui_jg( $self->{check_bold_text} ),
 	);
 
 	$wait_window->end(no_dialog => 1);

@@ -192,44 +192,14 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent    => $lf,
+		command   => sub{ $self->_calc; },
+		pack      => { -anchor   => 'w' },
+		font_size => $::config_obj->r_default_font_size,
+		show_bold => 0,
+		plot_size => 'Auto',
 	);
-
-	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,$::config_obj->r_default_font_size);
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
-$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => $self->gui_jchar('%'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'Auto');
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -399,14 +369,12 @@ sub _calc{
 	$r_command .= ")\n";
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	&gui_window::word_cls::make_plot(
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		cluster_color  => $self->gui_jg( $self->{check_color_cls} ),
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size      => $self->{font_obj}->font_size,
+		font_bold      => $self->{font_obj}->check_bold_text,
+		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
 		data_number    => $selected_num,

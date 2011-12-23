@@ -273,7 +273,7 @@ sub end{
 	$self->{plots} = undef;
 
 	# Imageオブジェクトのクリア
-	print "clearing: ".$self->win_name."\n";
+	#print "clearing: ".$self->win_name."\n";
 	$imgs->{$self->win_name}->delete;
 	$imgs->{$self->win_name}->destroy;
 	$imgs->{$self->win_name} = undef;

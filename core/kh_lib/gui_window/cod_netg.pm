@@ -308,50 +308,14 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	# フォントサイズ
-	my $ff = $lf2->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent    => $lf2,
+		command   => sub{ $self->_calc; },
+		pack      => { -anchor   => 'w' },
+		font_size => $::config_obj->r_default_font_size,
+		show_bold => 1,
+		plot_size => 480,
 	);
-
-	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,$::config_obj->r_default_font_size);
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => $self->gui_jchar('%'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$ff->Checkbutton(
-			-text     => $self->gui_jchar('太字','euc'),
-			-variable => \$self->{check_bold_text},
-			-anchor => 'w',
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$ff->Label(
-		-text => $self->gui_jchar(' プロットサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$win->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -657,25 +621,22 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	use plotR::network;
 	my $plotR = plotR::network->new(
-		edge_type      => $self->gui_jg( $self->{radio_type} ),
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
-		n_or_j         => $self->gui_jg( $self->{radio} ),
-		edges_num      => $self->gui_jg( $self->{entry_edges_number}->get ),
-		edges_jac      => $self->gui_jg( $self->{entry_edges_jac}->get ),
+		edge_type        => $self->gui_jg( $self->{radio_type} ),
+		font_size        => $self->{font_obj}->font_size,
+		font_bold        => $self->{font_obj}->check_bold_text,
+		plot_size        => $self->{font_obj}->plot_size,
+		n_or_j           => $self->gui_jg( $self->{radio} ),
+		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
+		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
-		font_bold        => $self->gui_jg( $self->{check_bold_text} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
-		r_command      => $r_command,
-		plotwin_name   => 'cod_netg',
+		r_command        => $r_command,
+		plotwin_name     => 'cod_netg',
 	);
 
 	# プロットWindowを開く

@@ -291,44 +291,14 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_y});
 
 	# フォントサイズ
-	my $ff = $lf2->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent    => $lf2,
+		command   => sub{ $self->calc; },
+		pack      => { -anchor   => 'w' },
+		font_size => $::config_obj->r_default_font_size,
+		show_bold => 0,
+		plot_size => 640,
 	);
-
-	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,$::config_obj->r_default_font_size);
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => $self->gui_jchar('%'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'640');
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
 
 	$rf->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -368,8 +338,8 @@ sub _settings_save{
 	#$settings->{d_n}       = $self->gui_jg( $self->{entry_d_n}->get );
 	$settings->{d_x}       = $self->gui_jg( $self->{entry_d_x}->get );
 	$settings->{d_y}       = $self->gui_jg( $self->{entry_d_y}->get );
-	$settings->{plot_size} = $self->gui_jg( $self->{entry_plot_size}->get );
-	$settings->{font_size} = $self->gui_jg( $self->{entry_font_size}->get );
+	$settings->{plot_size} = $self->{font_obj}->plot_size,
+	$settings->{font_size} = $self->{font_obj}->font_size,
 
 	$::project_obj->save_dmp(
 		name => $self->win_name,
@@ -746,9 +716,6 @@ sub calc{
 	my $biplot = 1;
 	$biplot = 0 if $self->{radio} == 0 and $self->{biplot} == 0;
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $filter = 0;
 	if ( $self->{check_filter} ){
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
@@ -766,8 +733,9 @@ sub calc{
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,
-		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
-		font_size    => $fontsize,
+		font_size    => $self->{font_obj}->font_size,
+		font_bold    => $self->{font_obj}->check_bold_text,
+		plot_size    => $self->{font_obj}->plot_size,
 		r_command    => $r_command,
 		bubble       => $self->{bubble_obj}->check_bubble,
 		std_radius   => $self->{bubble_obj}->chk_std_radius,
