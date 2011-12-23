@@ -12,7 +12,7 @@ sub _new{
 	unless ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => gui_window->gui_jchar('集計単位：'),
+			-text => kh_msg->get('unit'), # 集計単位：
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		my %pack = (
@@ -30,12 +30,12 @@ sub _new{
 
 	# 最小・最大出現数
 	$left->Label(
-		-text => gui_window->gui_jchar('最小/最大 出現数による語の取捨選択'),
+		-text => kh_msg->get('by_tf'), # 最小/最大 出現数による語の取捨選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l2->Label(
-		-text => gui_window->gui_jchar('　 　最小出現数：'),
+		-text => kh_msg->get('min_tf'), # 　 　最小出現数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min} = $l2->Entry(
@@ -48,7 +48,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min});
 	
 	$l2->Label(
-		-text => gui_window->gui_jchar('　 最大出現数：'),
+		-text => kh_msg->get('max_tf'), # 　 最大出現数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max} = $l2->Entry(
@@ -61,13 +61,13 @@ sub _new{
 
 	# 最小・最大文書数
 	$left->Label(
-		-text => gui_window->gui_jchar('最小/最大 文書数による語の取捨選択'),
+		-text => kh_msg->get('by_df'), # 最小/最大 文書数による語の取捨選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 
 	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l3->Label(
-		-text => gui_window->gui_jchar('　 　最小文書数：'),
+		-text => kh_msg->get('min_df'), #      最小文書数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min_df} = $l3->Entry(
@@ -80,7 +80,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min_df});
 
 	$l3->Label(
-		-text => gui_window->gui_jchar('　 最大文書数：'),
+		-text => kh_msg->get('max_df'), #    最大文書数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max_df} = $l3->Entry(
@@ -100,7 +100,7 @@ sub _new{
 	if ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => gui_window->gui_jchar('　 　文書と見なす単位：'),
+			-text => kh_msg->get('df_unit'), #      文書と見なす単位：
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		$self->{tani_obj} = gui_widget::tani->open(
@@ -112,12 +112,12 @@ sub _new{
 
 	# 品詞による単語の取捨選択
 	$left->Label(
-		-text => gui_window->gui_jchar('品詞による語の取捨選択'),
+		-text => kh_msg->get('by_pos'), # 品詞による語の取捨選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
 	$l5->Label(
-		-text => gui_window->gui_jchar('　　'),
+		-text => '     ',
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -133,7 +133,7 @@ sub _new{
 	);
 	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => gui_window->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'), # すべて
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -141,7 +141,7 @@ sub _new{
 	)->pack(-pady => 2);
 
 	$l4->Button(
-		-text => gui_window->gui_jchar('既定値'),
+		-text => kh_msg->gget('default'), # 既定値
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -149,7 +149,7 @@ sub _new{
 	)->pack(-pady => 2);
 
 	$l4->Button(
-		-text => gui_window->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'), # クリア
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -158,23 +158,23 @@ sub _new{
 
 	# チェック部分
 	$self->parent->Label(
-		-text => gui_window->gui_jchar(
-			 '現在の設定で'
+		-text =>
+			 kh_msg->get('check_desc1') # 現在の設定で
 			.$self->{verb}
-			.'される語の数：'
-		),
+			.kh_msg->get('check_desc2') # される語の数：
+		,
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
 	my $cf = $self->parent->Frame()->pack(-fill => 'x', -pady => 2);
 
 	$cf->Label(
-		-text => gui_window->gui_jchar('　 　'),
+		-text => '     ',
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$cf->Button(
-		-text => gui_window->gui_jchar('チェック'),
+		-text => kh_msg->get('check'), # チェック
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->check;}
@@ -205,7 +205,7 @@ sub check{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('no_pos_selected'), # 品詞が1つも選択されていません。
 		);
 		return 0;
 	}
