@@ -169,7 +169,7 @@ sub _new{
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
 
 	$self->{button_config} = $f1->Button(
-		-text => $self->gui_jchar('調整'),
+		-text => kh_msg->get('options'), # 調整
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -195,7 +195,7 @@ sub _new{
 	}
 
 	$f1->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'), # 閉じる
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -205,7 +205,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$f1->Button(
-		-text => $self->gui_jchar('保存'),
+		-text => kh_msg->gget('save'), # 保存
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -300,7 +300,7 @@ sub save{
 		-defaultextension => '.eps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('プロットを保存'),
+			$self->gui_jt(kh_msg->get('saving')), # プロットを保存
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 

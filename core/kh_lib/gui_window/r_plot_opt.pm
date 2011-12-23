@@ -35,7 +35,7 @@ sub _new{
 	);
 
 	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
+		-text => kh_msg->get('font_size'), # フォントサイズ：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -68,7 +68,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(
-		-text => $self->gui_jchar('%'),
+		-text => kh_msg->get('pcnt'), # %
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -81,14 +81,14 @@ sub _new{
 		}
 		
 		$ff->Checkbutton(
-				-text     => $self->gui_jchar('太字','euc'),
+				-text     => kh_msg->get('bold'), # 太字
 				-variable => \$self->{check_bold_text},
 				-anchor => 'w',
 		)->pack(-anchor => 'w', -side => 'left');
 	}
 
 	$ff->Label(
-		-text => $self->gui_jchar(' プロットサイズ：'),
+		-text => kh_msg->get('plot_size'), #  プロットサイズ：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -107,14 +107,14 @@ sub _new{
 
 
 	$self->{win_obj}->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
 	$self->{win_obj}->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
