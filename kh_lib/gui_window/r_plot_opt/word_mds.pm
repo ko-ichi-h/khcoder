@@ -188,13 +188,11 @@ sub calc{
 
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $wait_window = gui_wait->start;
 	&gui_window::word_mds::make_plot(
-		font_size      => $fontsize,
-		plot_size      => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size         => $self->{font_obj}->font_size,
+		font_bold         => $self->{font_obj}->check_bold_text,
+		plot_size         => $self->{font_obj}->plot_size,
 		method         => $self->gui_jg( $self->{method_opt}  ),
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		r_command      => $r_command,
@@ -206,7 +204,6 @@ sub calc{
 		bubble_var   => $self->{bubble_obj}->var,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
-		font_bold      => $self->gui_jg( $self->{check_bold_text} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close;

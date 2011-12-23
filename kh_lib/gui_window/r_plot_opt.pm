@@ -29,83 +29,17 @@ sub _new{
 	$self->innner;
 
 	# フォントサイズ
-	my $ff = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent       => $lf,
+		command      => sub{ $self->calc; },
+		pack    => {
+			-anchor   => 'w',
+		},
+		r_com     => $args{command_f},
+		plot_size => $args{size},
 	);
 
-	$ff->Label(
-		-text => kh_msg->get('font_size'), # フォントサイズ：
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	
-	my $font_percent;
-	if (
-		   $args{command_f} =~ /cex=([0-9\.]+)[, \)]/
-		|| $args{command_f} =~ /cex <- ([0-9\.]+)\n/
-	){
-		$font_percent = $1;
-		$font_percent *= 100;
-	}
-	if ( $args{command_f} =~ /font_size <- ([0-9\.]+)\n/ ){
-		$font_percent = $1;
-		$font_percent *= 100;
-	}
-	
-	if ($font_percent){
-		$self->{entry_font_size}->insert(0,$font_percent);
-	} else {
-		$self->{entry_font_size}->insert(0,'80');
-	}
-
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => kh_msg->get('pcnt'), # %
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-
-	if ( $args{command_f} =~ /text_font <\- ([0-9]+)\n/ ){
-		if ($1 == 2 ){
-			$self->{check_bold_text} = 1;
-		} else {
-			$self->{check_bold_text} = 0;
-		}
-		
-		$ff->Checkbutton(
-				-text     => kh_msg->get('bold'), # 太字
-				-variable => \$self->{check_bold_text},
-				-anchor => 'w',
-		)->pack(-anchor => 'w', -side => 'left');
-	}
-
-	$ff->Label(
-		-text => kh_msg->get('plot_size'), #  プロットサイズ：
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	if ($args{size}){
-		$self->{entry_plot_size}->insert(0,$args{size});
-	} else {
-		$self->{entry_plot_size}->insert(0,'480');
-	}
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
-
-
+	# OK, Cancel
 	$self->{win_obj}->Button(
 		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",

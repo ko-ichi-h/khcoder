@@ -14,6 +14,7 @@ use gui_widget::words_bayes;
 use gui_widget::bubble;
 use gui_widget::cls4mds;
 use gui_widget::select_a_var;
+use gui_widget::r_font;
 
 sub open{
 	my $class = shift;

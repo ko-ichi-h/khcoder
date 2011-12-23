@@ -243,9 +243,6 @@ sub calc{
 		$biplot = $1;
 	}
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $filter = 0;
 	if ( $self->{check_filter} ){
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
@@ -264,8 +261,9 @@ sub calc{
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,
-		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
-		font_size    => $fontsize,
+		font_size         => $self->{font_obj}->font_size,
+		font_bold         => $self->{font_obj}->check_bold_text,
+		plot_size         => $self->{font_obj}->plot_size,
 		r_command    => $r_command,
 		plotwin_name => 'word_corresp',
 		bubble       => $self->{bubble_obj}->check_bubble,
