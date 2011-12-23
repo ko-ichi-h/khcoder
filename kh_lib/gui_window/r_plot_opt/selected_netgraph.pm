@@ -56,7 +56,7 @@ sub innner{
 
 	# edge選択
 	$lf->Label(
-		-text => $self->gui_jchar('描画する共起関係（edge）'),
+		-text => kh_msg->gget('r_net_edges'), # 描画する共起関係（edge）
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -71,7 +71,7 @@ sub innner{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$f4->Radiobutton(
-		-text             => $self->gui_jchar('描画数：'),
+		-text             => kh_msg->gget('r_net_num'), # 描画数：
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 'n',
@@ -88,7 +88,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_edges_number});
 
 	$f4->Radiobutton(
-		-text             => $self->gui_jchar('Jaccard係数：'),
+		-text             => kh_msg->gget('r_net_jac'), # Jaccard係数：
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 'j',
@@ -105,19 +105,19 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_edges_jac});
 
 	$f4->Label(
-		-text => $self->gui_jchar('以上'),
+		-text => kh_msg->gget('r_net_ijou'), # 以上
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
 	# Edgeの太さ・Nodeの大きさ
 	$lf->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
+			-text     => kh_msg->gget('r_net_jac_width'), # 強い共起関係ほど太い線で描画','euc
 			-variable => \$self->{check_use_weight_as_width},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
+			-text     => kh_msg->gget('r_net_freq_size'), # 出現数の多い語ほど大きい円で描画','euc
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor   => 'w',
 			-command  => sub{
@@ -138,14 +138,14 @@ sub innner{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
+			-text     => kh_msg->gget('r_net_font_too'), # フォントも大きく ※EMFやEPSでの出力・印刷向け','euc
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
 	)->pack(-anchor => 'w');
 
 	$self->{wc_smaller_nodes} = $lf->Checkbutton(
-			-text     => $self->gui_jchar('すべての語を小さめの円で描画','euc'),
+			-text     => kh_msg->gget('r_net_smaller'), # すべての語を小さめの円で描画','euc
 			-variable => \$self->{check_smaller_nodes},
 			-anchor   => 'w',
 			-command  => sub{
@@ -210,7 +210,7 @@ sub calc{
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '調整に失敗しましました。',
+			msg  => kh_msg->gget('r_net_msg_fail'), # 調整に失敗しましました。
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -235,6 +235,7 @@ sub calc{
 		smaller_nodes     => $self->gui_jg( $self->{check_smaller_nodes} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
+		font_bold        => $self->gui_jg( $self->{check_bold_text} ),
 		r_command         => $r_command,
 		plotwin_name      => 'selected_netgraph',
 	);
@@ -262,7 +263,7 @@ sub calc{
 }
 
 sub win_title{
-	return '関連語・共起ネットワーク：調整';
+	return kh_msg->get('win_title'); # 関連語・共起ネットワーク：調整
 }
 
 sub win_name{

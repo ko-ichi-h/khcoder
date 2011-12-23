@@ -3,20 +3,21 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	return [
-		'中心性（媒介）',
-		'中心性（次数）',
-		'サブグラフ検出（媒介）',
-		'サブグラフ検出（modularity）',
-		'なし',
+		kh_msg->gget('r_net_col_cnt_b'), # 中心性（媒介）
+		kh_msg->gget('r_net_col_cnt_d'), # 中心性（次数）
+		kh_msg->gget('r_net_col_cnt_v'), # 中心性（固有ベクトル）
+		kh_msg->gget('r_net_col_com_b'), # サブグラフ検出（媒介）
+		kh_msg->gget('r_net_col_com_m'), # サブグラフ検出（modularity）
+		kh_msg->gget('r_net_col_none'),  # なし
 	];
 }
 
 sub option1_name{
-	return ' カラー：';
+	return kh_msg->get('color'); #  カラー：
 }
 
 sub win_title{
-	return '関連語・共起ネットワーク';
+	return kh_msg->get('win_title'); # 関連語・共起ネットワーク
 }
 
 sub win_name{

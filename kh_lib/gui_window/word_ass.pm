@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('関連語探索'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 関連語探索
 	#$self->{win_obj} = $win;
 
 	
@@ -55,12 +55,6 @@ sub _new{
 	my $left = $lf->Frame()->pack(-side => 'left', -fill => 'both', -expand => 1);
 	my $right = $lf->Frame()->pack(-side => 'right',-anchor => 'nw');
 	
-	# コード選択
-	#$left->Label(
-	#	-text => $self->gui_jchar('コード選択'),
-	#	-font => "TKFN"
-	#)->pack(-anchor => 'w');
-	
 	$self->{clist} = $left->Scrolled(
 		'HList',
 		-scrollbars       => 'osoe',
@@ -95,7 +89,7 @@ sub _new{
 	# 直接入力フレーム
 	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
 	$self->{direct_w_l} = $f3->Label(
-		-text => $self->gui_jchar('直接入力：'),
+		-text => kh_msg->get('direct'), # 直接入力：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -126,7 +120,7 @@ sub _new{
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => $self->gui_jchar('集計'),
+		-text    => kh_msg->get('go'), # 集計
 		-command => sub{$self->search;}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
@@ -147,7 +141,7 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		-text => $self->gui_jchar('集計単位：'),
+		-text => kh_msg->get('unit'), # 集計単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'right');
 
@@ -158,8 +152,8 @@ sub _new{
 		pack    => {-pady => '1', -side => 'right'},
 		options =>
 			[
-				[$self->gui_jchar('AND検索'), 'and'],
-				[$self->gui_jchar('OR検索') , 'or']
+				[kh_msg->get('and'), 'and'], # AND検索
+				[kh_msg->get('or') , 'or'] # OR検索
 			],
 		variable => \$self->{opt_method1},
 	);
@@ -186,12 +180,11 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 1);
 
 	$self->{rlist}->header('create',0,-text => 'N');
-	$self->{rlist}->header('create',1,-text => $self->gui_jchar('抽出語'));
-	$self->{rlist}->header('create',2,-text => $self->gui_jchar('品詞'));
-	$self->{rlist}->header('create',3,-text => $self->gui_jchar('全体'));
-	$self->{rlist}->header('create',4,-text => $self->gui_jchar('共起'));
-	#$self->{rlist}->header('create',5,-text => $self->gui_jchar('条件付き確立'));
-	$self->{rlist}->header('create',5,-text => $self->gui_jchar(' ソート'));
+	$self->{rlist}->header('create',1,-text => kh_msg->get('word_h')); # 抽出語
+	$self->{rlist}->header('create',2,-text => kh_msg->get('pos_h')); # 品詞
+	$self->{rlist}->header('create',3,-text => kh_msg->get('prob_h')); # 全体
+	$self->{rlist}->header('create',4,-text => kh_msg->get('cond_h')); # 共起
+	$self->{rlist}->header('create',5,-text => kh_msg->get('sort_h')); #  ソート
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
@@ -203,7 +196,7 @@ sub _new{
 
 	$self->{copy_btn} = $f5->Button(
 		-font    => "TKFN",
-		-text    => $self->gui_jchar('コピー'),
+		-text    => kh_msg->gget('copy'), # コピー
 		#-width   => 8,
 		-command => sub{gui_hlist->copy($self->{rlist});},
 		-borderwidth => 1
@@ -228,7 +221,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$f5->Label(
-		-text => $self->gui_jchar(' ソート：'),
+		-text => kh_msg->get('sort'), #  ソート：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -237,32 +230,32 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[$self->gui_jchar('共起') ,   'fr'  ],
-				[$self->gui_jchar('確率差') , 'sa'  ],
-				[$self->gui_jchar('確率比') , 'hi'  ],
+				[kh_msg->get('fr') ,   'fr'  ], # 共起
+				[kh_msg->get('sa') , 'sa'  ], # 確率差
+				[kh_msg->get('hi') , 'hi'  ], # 確率比
 				['Jaccard'                  , 'jac' ],
 				['Ochiai'                   , 'ochi'],
-				#[$self->gui_jchar('χ2乗') , 'chi'],
+				#[kh_msg->get('18') , 'chi'], # χ2乗
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
 	)->set_value('jac');
 
 	$order_name = {
-		'fr'  => $self->gui_jchar('共起'),
-		'sa'  => $self->gui_jchar('確率差'),
-		'hi'  => $self->gui_jchar('確率比'),
+		'fr'  => kh_msg->get('fr'), # 共起
+		'sa'  => kh_msg->get('sa'), # 確率差
+		'hi'  => kh_msg->get('hi'), # 確率比
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
 	};
 
 	$f5->Label(
-		-text => $self->gui_jchar(' '),
+		-text => ' ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => $self->gui_jchar('フィルタ設定'),
+		-text        => kh_msg->get('filter'), # フィルタ設定
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -273,7 +266,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_net} = $f5->Button(
-		-text        => $self->gui_jchar('共起ネット'),
+		-text        => kh_msg->get('net'), # 共起ネット
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -294,7 +287,7 @@ sub _new{
 	);
 
 	$self->{hits_label} = $f5->Label(
-		-text       => $self->gui_jchar(' 文書数：0'),
+		-text       => kh_msg->get('hits0'), #  文書数：0
 		-font       => "TKFN",
 	)->pack(-side => 'left',);
 
@@ -371,7 +364,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		0,
 		0,
-		-text  => $self->gui_jchar('＃直接入力'),
+		-text  => kh_msg->get('direct_code'), # ＃直接入力
 	);
 	#$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
@@ -406,7 +399,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		$row,
 		0,
-		-text  => $self->gui_jchar('＃コード無し'),
+		-text  => kh_msg->get('no_code'), # ＃コード無し
 	);
 	
 	gui_hlist->update4scroll($self->{clist});
@@ -465,7 +458,7 @@ sub search{
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => $self->gui_jchar(' 文書数： 0'));
+	$self->{hits_label}->configure(-text => kh_msg->get('hits0')); #  文書数： 0
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searching...'
@@ -578,8 +571,12 @@ sub display{
 	# ラベルの更新
 	my $num_total = $self->{code_obj}->doc_num;
 	gui_hlist->update4scroll($self->{rlist});
-	$self->{hits_label}->configure(-text => $self->gui_jchar(" 文書数： $num_total"));
-
+	$self->{hits_label}->configure(
+		-text => $self->gui_jchar(
+			kh_msg->get('hits') # 文書数： 
+			.$num_total
+		)
+	);
 	return $self;
 }
 
@@ -599,7 +596,7 @@ sub net_calc{
 	if ($n < 4){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'リストアップされている語の数が5未満のため、処理を中止します。',
+			msg  => kh_msg->get('msg_l5') # リストアップされている語の数が5未満のため、処理を中止します。
 		);
 		return undef;
 	}
