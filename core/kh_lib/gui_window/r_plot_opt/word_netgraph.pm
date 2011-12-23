@@ -225,22 +225,19 @@ sub calc{
 
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $wait_window = gui_wait->start;
 	use plotR::network;
 	my $plotR = plotR::network->new(
 		edge_type         => $self->{edge_type},
-		font_size         => $fontsize,
-		plot_size         => $self->gui_jg( $self->{entry_plot_size}->get ),
+		font_size         => $self->{font_obj}->font_size,
+		font_bold         => $self->{font_obj}->check_bold_text,
+		plot_size         => $self->{font_obj}->plot_size,
 		n_or_j            => $self->gui_jg( $self->{radio} ),
 		edges_num         => $self->gui_jg( $self->{entry_edges_number}->get ),
 		edges_jac         => $self->gui_jg( $self->{entry_edges_jac}->get ),
 		use_freq_as_size  => $self->gui_jg( $self->{check_use_freq_as_size} ),
 		use_freq_as_fsize => $self->gui_jg( $self->{check_use_freq_as_fsize} ),
 		smaller_nodes     => $self->gui_jg( $self->{check_smaller_nodes} ),
-		font_bold        => $self->gui_jg( $self->{check_bold_text} ),
 		use_weight_as_width =>
 			$self->gui_jg( $self->{check_use_weight_as_width} ),
 		r_command         => $r_command,
