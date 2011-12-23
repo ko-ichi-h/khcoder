@@ -22,12 +22,12 @@ sub _new{
 		){
 			$self->{font_size} = $1;
 			$self->{font_size} *= 100;
-			print "font size: $self->{font_size}\n";
+			#print "font size: $self->{font_size}\n";
 		}
 		if ( $self->{r_com} =~ /font_size <- ([0-9\.]+)\n/ ){
 			$self->{font_size} = $1;
 			$self->{font_size} *= 100;
-			print "font size: $self->{font_size}\n";
+			#print "font size: $self->{font_size}\n";
 		}
 		if ( $self->{r_com} =~ /text_font <\- ([0-9]+)\n/ ){
 			if ($1 == 2 ){

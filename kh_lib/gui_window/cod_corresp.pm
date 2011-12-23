@@ -340,45 +340,14 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_d_y});
 
 	# フォントサイズ
-	my $ff = $lf2->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+	$self->{font_obj} = gui_widget::r_font->open(
+		parent    => $lf2,
+		command   => sub{ $self->_calc; },
+		pack      => { -anchor   => 'w' },
+		font_size => $::config_obj->r_default_font_size,
+		show_bold => 0,
+		plot_size => 480,
 	);
-
-	$ff->Label(
-		-text => $self->gui_jchar('フォントサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_font_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_font_size}->insert(0,$::config_obj->r_default_font_size);
-	$self->{entry_font_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_font_size});
-
-	$ff->Label(
-		-text => $self->gui_jchar('%'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$ff->Label(
-		-text => $self->gui_jchar('  プロットサイズ：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_plot_size} = $ff->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_plot_size}->insert(0,'480');
-	$self->{entry_plot_size}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_plot_size});
-
 
 	$rf->Checkbutton(
 			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
@@ -716,9 +685,6 @@ sub _calc{
 		}
 	}
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
 	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
 
@@ -885,9 +851,6 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	my $fontsize = $self->gui_jg( $self->{entry_font_size}->get );
-	$fontsize /= 100;
-
 	my $filter = 0;
 	if ( $self->{check_filter} ){
 		$filter = $self->gui_jg( $self->{entry_flt}->get );
@@ -904,8 +867,9 @@ sub _calc{
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $self->gui_jg( $self->{radio} ),
-		plot_size    => $self->gui_jg( $self->{entry_plot_size}->get ),
-		font_size    => $fontsize,
+		font_size         => $self->{font_obj}->font_size,
+		font_bold         => $self->{font_obj}->check_bold_text,
+		plot_size         => $self->{font_obj}->plot_size,
 		r_command    => $r_command,
 		plotwin_name => 'cod_corresp',
 		bubble       => $self->{bubble_obj}->check_bubble,
