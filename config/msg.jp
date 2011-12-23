@@ -392,3 +392,17 @@ gui_window::doc_view->p2:                         << 前
 gui_window::doc_view->n2:                         次 >>
 gui_window::doc_view->highlight:                  強調
 gui_window::doc_view->current_doc:                '・現在表示中の文書：  '
+gui_window::force_color->win_title:               '強調する言葉'
+gui_window::force_color->desc:                    '■以下の言葉が常に強調されます。'
+gui_window::force_color->highlight_h:             '　言葉　'
+gui_window::force_color->type_h:                  '　種類　'
+gui_window::force_color->delete:                  '選択した言葉を削除'
+gui_window::force_color->highlight:               '言葉：'
+gui_window::force_color->type:                    '種類：'
+gui_window::force_color->word:                    '抽出語'
+gui_window::force_color->string:                  '文字列'
+gui_window::force_color->add:                     '追加'
+gui_window::force_color->word:                    '抽出語'
+gui_window::force_color->string:                  '文字列'
+gui_window::force_color->no_word:                 '言葉が入力されていません。'
+gui_window::force_color->exists:                  'その言葉は既に登録されています。'

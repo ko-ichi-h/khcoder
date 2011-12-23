@@ -1,4 +1,5 @@
-Change_search:    //検索状態を変更
+//検索状態を変更
+Change_search:
 if ( !searchmode ) {     // 検索状態を範囲選択に変更
     openreg "CURRENTUSER", "Software\\Hidemaruo\\Hidemaru\\Env";
     writeregnum "SelectFound", 1;
@@ -7,18 +8,45 @@ if ( !searchmode ) {     // 検索状態を範囲選択に変更
 }
 
 // パッケージ名の取得
-
 moveto 0,0;
-$id = "";
-
 searchdown
-	"package (.+);\\n",
+	"package (.+);",
 	regular,
 	loop
 ;
+if( !result ){
+	message "パッケージ名の取得に失敗しました";
+	endmacro;
+}
+$id = gettext(seltopx,seltopy,selendx,selendy);
+$id = midstr($id, 8, strlen($id) - 9 );
+$id = $id + "->";
+//message $id;
+
+// grepして編集を実施
+localgrep "kh_msg->get";
+replaceall
+	"^.*kh_msg\\->get\\('(.+)'\\).*# (.+)\\n",
+	$id + "\\1: '\\2\'\n",
+	regular
+;
+
+moveto 0,0;
+while (1){
+	searchdown 
+		"\->[a-z0-9_-]+: ",
+		regular
+	;
+	if( !result ) break;
+	right;
+	while (x < 50){
+		insert " ";
+	}
+}
 
 
-Reset_search:   //検索状態を元に戻す
+//検索状態を元に戻す
+Reset_search:
 if ( #modechanged ) {
     writeregnum "SelectFound", 0;
     envchanged;
