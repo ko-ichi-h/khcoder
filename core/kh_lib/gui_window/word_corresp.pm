@@ -242,53 +242,11 @@ sub _new{
 	);
 
 	# 成分
-	my $fd = $lf2->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 2,
+	$self->{xy_obj} = gui_widget::r_xy->open(
+		parent    => $lf2,
+		command   => sub{ $self->calc; },
+		pack      => { -anchor => 'w', -pady => 2 },
 	);
-
-	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	#$self->{entry_d_n} = $fd->Entry(
-	#	-font       => "TKFN",
-	#	-width      => 2,
-	#	-background => 'white',
-	#)->pack(-side => 'left', -padx => 2);
-	#$self->{entry_d_n}->insert(0,'2');
-	#$self->{entry_d_n}->bind("<Key-Return>",sub{$self->calc;});
-	#$self->config_entry_focusin($self->{entry_d_n});
-
-	$fd->Label(
-		-text => $self->gui_jchar(' X軸'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_x} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_x}->insert(0,'1');
-	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_x});
-
-	$fd->Label(
-		-text => $self->gui_jchar(' Y軸'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_y} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_y}->insert(0,'2');
-	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_y});
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -336,8 +294,8 @@ sub _settings_save{
 	$settings->{var_id}    = $self->{var_id};
 
 	#$settings->{d_n}       = $self->gui_jg( $self->{entry_d_n}->get );
-	$settings->{d_x}       = $self->gui_jg( $self->{entry_d_x}->get );
-	$settings->{d_y}       = $self->gui_jg( $self->{entry_d_y}->get );
+	$settings->{d_x}       = $self->{xy_obj}->x,
+	$settings->{d_y}       = $self->{xy_obj}->y,
 	$settings->{plot_size} = $self->{font_obj}->plot_size,
 	$settings->{font_size} = $self->{font_obj}->font_size,
 
@@ -728,8 +686,8 @@ sub calc{
 
 	&make_plot(
 		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
-		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
-		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		d_x          => $self->{xy_obj}->x,
+		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,
