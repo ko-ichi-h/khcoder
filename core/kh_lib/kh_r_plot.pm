@@ -23,10 +23,20 @@ sub new{
 	$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード
-	$self->{command_f} = Jcode->new($self->{command_f},'euc')->sjis
-		if $::config_obj->os eq 'win32';
-	$self->{command_a} = Jcode->new($self->{command_a},'euc')->sjis
-		if $::config_obj->os eq 'win32' and length($self->{command_a});
+	if ( utf8::is_utf8($self->{command_f}) ){
+		if ( $::config_obj->os eq 'win32' ){
+			$self->{command_f}  = Encode::encode('cp932',$self->{command_f});
+			$self->{command_a}  = Encode::encode('cp932',$self->{command_a});
+		} else {
+			$self->{command_f}  = Encode::encode('euc-jp',$self->{command_f});
+			$self->{command_a}  = Encode::encode('euc-jp',$self->{command_a});
+		}
+	} else {
+		$self->{command_f} = Jcode->new($self->{command_f},'euc')->sjis
+			if $::config_obj->os eq 'win32';
+		$self->{command_a} = Jcode->new($self->{command_a},'euc')->sjis
+			if $::config_obj->os eq 'win32' and length($self->{command_a});
+	}
 
 	my $command = '';
 	if (length($self->{command_a})){
