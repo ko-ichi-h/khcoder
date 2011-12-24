@@ -15,6 +15,7 @@ use gui_widget::bubble;
 use gui_widget::cls4mds;
 use gui_widget::select_a_var;
 use gui_widget::r_font;
+use gui_widget::r_xy;
 
 sub open{
 	my $class = shift;

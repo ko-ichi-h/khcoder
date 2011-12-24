@@ -118,51 +118,12 @@ sub innner{
 	);
 
 	# 成分
-	my $fd = $lf->Frame()->pack(
-		-fill => 'x',
-		#-padx => 2,
-		-pady => 4,
+	$self->{xy_obj} = gui_widget::r_xy->open(
+		parent    => $lf,
+		command   => sub{ $self->calc; },
+		pack      => { -anchor => 'w', -pady => 2 },
+		r_cmd     => $self->{command_f},
 	);
-
-	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$fd->Label(
-		-text => $self->gui_jchar(' X軸'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_x} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_x});
-
-	$fd->Label(
-		-text => $self->gui_jchar(' Y軸'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_y} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_d_y});
-
-	if ( $self->{command_f} =~ /\nd_x <\- ([0-9]+)\nd_y <\- ([0-9]+)\n/ ){
-		my ($d_x, $d_y) = ($1, $2);
-		$self->{entry_d_x}->insert(0,$d_x);
-		$self->{entry_d_y}->insert(0,$d_y);
-	} else {
-		$self->{entry_d_x}->insert(0,'1');
-		$self->{entry_d_y}->insert(0,'2');
-	}
 
 	if ( $self->{command_f} =~ /\nflt <\- ([0-9]+)\n/ ){
 		if ($1 > 0){
@@ -256,8 +217,8 @@ sub calc{
 	my $wait_window = gui_wait->start;
 
 	&gui_window::word_corresp::make_plot(
-		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
-		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		d_x          => $self->{xy_obj}->x,
+		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,
