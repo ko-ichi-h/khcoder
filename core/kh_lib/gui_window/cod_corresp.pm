@@ -300,44 +300,11 @@ sub _new{
 	);
 
 	# 成分
-	my $fd = $lf2->Frame()->pack(
-		-fill => 'x',
-		-padx => 2,
-		-pady => 4,
+	$self->{xy_obj} = gui_widget::r_xy->open(
+		parent    => $lf2,
+		command   => sub{ $self->_calc; },
+		pack      => { -anchor => 'w', -pady => 2 },
 	);
-
-	$fd->Label(
-		-text => $self->gui_jchar('プロットする成分'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$fd->Label(
-		-text => $self->gui_jchar(' → X軸：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_x} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_x}->insert(0,'1');
-	$self->{entry_d_x}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_d_x});
-
-	$fd->Label(
-		-text => $self->gui_jchar('  Y軸：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_d_y} = $fd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_d_y}->insert(0,'2');
-	$self->{entry_d_y}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_d_y});
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -685,8 +652,8 @@ sub _calc{
 		}
 	}
 
-	my $d_x = $self->gui_jg( $self->{entry_d_x}->get );
-	my $d_y = $self->gui_jg( $self->{entry_d_y}->get );
+	my $d_x = $self->{xy_obj}->x;
+	my $d_y = $self->{xy_obj}->y;
 
 	my $wait_window = gui_wait->start;
 
@@ -862,8 +829,8 @@ sub _calc{
 	}
 
 	&gui_window::word_corresp::make_plot(
-		d_x          => $self->gui_jg( $self->{entry_d_x}->get ),
-		d_y          => $self->gui_jg( $self->{entry_d_y}->get ),
+		d_x          => $self->{xy_obj}->x,
+		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $self->gui_jg( $self->{radio} ),
