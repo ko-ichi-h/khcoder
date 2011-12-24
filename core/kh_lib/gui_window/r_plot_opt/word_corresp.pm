@@ -12,7 +12,7 @@ sub innner{
 	);
 
 	$fsw->Checkbutton(
-		-text     => $self->gui_jchar('差異が顕著な語を分析に使用：'),
+		-text     => kh_msg->get('flw'), # 差異が顕著な語を分析に使用：
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -21,7 +21,7 @@ sub innner{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -35,7 +35,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => $self->gui_jchar('語'),
+		-text => kh_msg->get('words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	#$self->refresh_flw;
@@ -48,7 +48,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れた語のみラベル表示：'),
+		-text     => kh_msg->get('flt'), # 原点から離れた語のみラベル表示：
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -57,7 +57,7 @@ sub innner{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -71,7 +71,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => $self->gui_jchar('語'),
+		-text => kh_msg->get('words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	#$self->refresh_flt;
@@ -191,7 +191,7 @@ sub calc{
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '調整に失敗しましました。',
+			msg  => kh_msg->gget('r_net_msg_fail'), # 調整に失敗しましました。
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -239,7 +239,7 @@ sub calc{
 }
 
 sub win_title{
-	return '抽出語・対応分析：調整';
+	return kh_msg->get('win_title'); # 抽出語・対応分析：調整
 }
 
 sub win_name{

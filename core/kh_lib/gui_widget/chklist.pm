@@ -30,7 +30,7 @@ sub _new{
 	
 
 	$self->{button_all} = $win4buttons->Button(
-		-text => gui_window->gui_jchar('‚·‚×‚Ä'),
+		-text => kh_msg->gget('all'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -38,7 +38,7 @@ sub _new{
 	)->pack(-pady => 3);
 
 	$self->{button_none} = $win4buttons->Button(
-		-text => gui_window->gui_jchar('ƒNƒŠƒA'),
+		-text => kh_msg->gget('clear'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,

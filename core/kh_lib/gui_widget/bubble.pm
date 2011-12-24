@@ -18,7 +18,7 @@ sub _new{
 	$self->{num_var}         = 100 unless defined $self->{num_var};
 	
 	$f1->Checkbutton(
-		-text     => gui_window->gui_jchar('バブルプロット：'),
+		-text     => kh_msg->get('bubble'), # バブルプロット：
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -27,7 +27,7 @@ sub _new{
 	);
 
 	$self->{lab_size1} = $f1->Label(
-		-text => gui_window->gui_jchar('バブルの大きさ'),
+		-text => kh_msg->get('size'), # バブルの大きさ
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -59,7 +59,7 @@ sub _new{
 		)->pack(-anchor => 'w', -side => 'left');
 
 		$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-				-text     => gui_window->gui_jchar('変数の値 / 見出しの大きさも可変に','euc'),
+				-text     => kh_msg->get('variable'), # 変数の値 / 見出しの大きさも可変に','euc
 				-variable => \$self->{chk_resize_vars},
 				-anchor => 'w',
 				-state => 'disabled',
@@ -76,7 +76,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{chkw_std_radius} = $f2->Checkbutton(
-		-text     => gui_window->gui_jchar('バブルの大きさを標準化：','euc'),
+		-text     => kh_msg->get('standardize'), # バブルの大きさを標準化：','euc
 		-variable => \$self->{chk_std_radius},
 		-anchor => 'w',
 		-state => 'disabled',
@@ -84,7 +84,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{lab_var1} = $f2->Label(
-		-text => gui_window->gui_jchar('分散'),
+		-text => kh_msg->get('variance'), # 分散
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 

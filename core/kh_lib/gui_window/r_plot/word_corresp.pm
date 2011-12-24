@@ -6,25 +6,25 @@ sub option1_options{
 
 	if (@{$self->{plots}} == 2){
 		return [
-			'ドットとラベル',
-			'ドットのみ',
+			kh_msg->get('d_l'), # ドットとラベル
+			kh_msg->get('d'), # ドットのみ
 		] ;
 	} else {
 		return [
-			'カラー',
-			'グレースケール',
-			'変数のみ',
-			'ドットのみ',
+			kh_msg->get('col'), # カラー
+			kh_msg->get('gray'), # グレースケール
+			kh_msg->get('var'), # 変数のみ
+			kh_msg->get('d'), # ドットのみ
 		] ;
 	}
 }
 
 sub option1_name{
-	return ' 表示：';
+	return kh_msg->get('view'); #  表示：
 }
 
 sub win_title{
-	return '抽出語・対応分析';
+	return kh_msg->get('win_title'); # 抽出語・対応分析
 }
 
 sub win_name{
