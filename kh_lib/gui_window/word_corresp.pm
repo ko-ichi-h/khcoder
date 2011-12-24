@@ -41,7 +41,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent       => $lf,
-		verb         => 'ÉÛÃÖ',
+		verb         => kh_msg->get('plot'), # ÉÛÃÖ
 		type         => 'corresp',
 	);
 
@@ -269,7 +269,7 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
-	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->_settings_load;
 
@@ -416,8 +416,8 @@ sub refresh{
 	unless ($self->{opt_body_high}){
 
 		my %tani_name = (
-			"bun" => "Ê¸",
-			"dan" => "ÃÊÍî",
+			"bun" => kh_msg->gget('sentence'),
+			"dan" => kh_msg->gget('paragraph'),
 			"h5"  => "H5",
 			"h4"  => "H4",
 			"h3"  => "H3",
@@ -728,7 +728,6 @@ sub make_plot{
 	$r_command .= "name_dim <- '".kh_msg->get('dim')."'\n"; # À®Ê¬
 	$r_command .= "name_eig <- '".kh_msg->get('eig')."'\n"; # ¸ÇÍ­ÃÍ
 	$r_command .= "name_exp <- '".kh_msg->get('exp')."'\n"; # ´óÍ¿Î¨
-	$r_command .= "name_nav <- '".kh_msg->get('nav')."'\n"; # ·çÂ»ÃÍ
 
 	$r_command .= "library(MASS)\n";
 	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
@@ -1001,7 +1000,8 @@ sub make_plot{
 
 sub r_command_aggr{
 	my $n_v = shift;
-	my $t = << 'END_OF_the_R_COMMAND';
+	my $t = "name_nav <- '".kh_msg->get('nav')."'\n"; # ·çÂ»ÃÍ
+	$t .= << 'END_OF_the_R_COMMAND';
 
 aggregate_with_var <- function(d, doc_length_mtr, v) {
 	d              <- aggregate(d,list(name = v), sum)
