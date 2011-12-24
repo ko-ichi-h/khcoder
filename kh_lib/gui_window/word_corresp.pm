@@ -34,7 +34,7 @@ sub _new{
 	)->pack(-fill => 'both', -expand => 1);
 
 	$lf->Label(
-		-text => gui_window->gui_jchar('■布置する語の選択'),
+		-text => kh_msg->get('option_words'), # ■布置する語の選択
 		-font => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w', -pady => 2);
@@ -48,13 +48,13 @@ sub _new{
 	# 入力データの設定
 
 	$lf2->Label(
-		-text => $self->gui_jchar('■対応分析の設定'),
+		-text => kh_msg->get('option_ca'), # ■対応分析の設定
 		-font => "TKFN",
 		-foreground => 'blue'
 	)->pack(-anchor => 'w', -pady => 2);
 
 	$lf2->Label(
-		-text => $self->gui_jchar('分析に使用するデータ表の種類：'),
+		-text => kh_msg->get('matrix'), # 分析に使用するデータ表の種類：
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
@@ -66,7 +66,7 @@ sub _new{
 	);
 
 	$fi->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -87,7 +87,7 @@ sub _new{
 
 	$self->{radio} = 0;
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('抽出語 ｘ 文書'),
+		-text             => kh_msg->get('w_d'), # 抽出語 ｘ 文書
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
@@ -96,14 +96,14 @@ sub _new{
 
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
 	$fi_2->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
 		-side   => 'left',
 	);
 	$self->{label_high} = $fi_2->Label(
-		-text => $self->gui_jchar('集計単位：','euc'),
+		-text => kh_msg->get('unit'), # 集計単位：','euc
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -113,14 +113,14 @@ sub _new{
 	
 	my $fi_4 = $fi_1->Frame()->pack(-anchor => 'w');
 	$fi_4->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
 		-side   => 'left',
 	);
 	$self->{label_high2} = $fi_4->Checkbutton(
-		-text     => $self->gui_jchar('見出しまたは文書番号を同時布置'),
+		-text     => kh_msg->get('biplot'), # 見出しまたは文書番号を同時布置
 		-variable => \$self->{biplot},
 	)->pack(
 		-anchor => 'w',
@@ -128,7 +128,7 @@ sub _new{
 	);
 
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('抽出語 ｘ 外部変数'),
+		-text             => kh_msg->get('w_v'), # 抽出語 ｘ 外部変数
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
@@ -142,19 +142,12 @@ sub _new{
 	);
 	
 	$fi_3->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
 		-side   => 'left',
 	);
-	#$self->{label_var} = $fi_3->Label(
-	#	-text => $self->gui_jchar('変数：','euc'),
-	#	-font => "TKFN"
-	#)->pack(
-	#	-anchor => 'w',
-	#	-side   => 'left',
-	#);
 	$self->{opt_frame_var} = $fi_3;
 	
 	$self->refresh;
@@ -167,7 +160,7 @@ sub _new{
 	);
 
 	$fsw->Checkbutton(
-		-text     => $self->gui_jchar('差異が顕著な語を分析に使用：'),
+		-text     => kh_msg->get('flw'), # 差異が顕著な語を分析に使用：
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -176,7 +169,7 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -190,7 +183,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => $self->gui_jchar('語'),
+		-text => kh_msg->get('words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	$self->refresh_flw;
@@ -203,7 +196,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れた語のみラベル表示：'),
+		-text     => kh_msg->get('flt'), # 原点から離れた語のみラベル表示：
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -212,7 +205,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -226,7 +219,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => $self->gui_jchar('語'),
+		-text => kh_msg->get('words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->refresh_flt;
@@ -259,20 +252,20 @@ sub _new{
 	);
 
 	$rf->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$rf->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$rf->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
@@ -457,7 +450,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => 
 					[
-						[$self->gui_jchar('利用不可'), undef],
+						[kh_msg->get('na'), undef], # 利用不可
 					],
 				variable => \$self->{high},
 			);
@@ -521,7 +514,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('select_pos'), # 品詞が1つも選択されていません。
 		);
 		return 0;
 	}
@@ -536,7 +529,7 @@ sub calc{
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => '外部変数を1つ以上選択してください。',
+				msg  => kh_msg->get('select_var'), # 外部変数を1つ以上選択してください。
 			);
 			return 0;
 		}
@@ -549,7 +542,7 @@ sub calc{
 				){
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => '現在の所、集計単位が異なる外部変数を同時に使用することはできません。',
+						msg  => kh_msg->get('check_var_unit'), # 現在の所、集計単位が異なる外部変数を同時に使用することはできません。
 					);
 					return 0;
 				}
@@ -579,7 +572,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '少なくとも3つ以上の抽出語を布置して下さい。',
+			msg  => kh_msg->get('select_3words'), # 少なくとも3つ以上の抽出語を布置して下さい。
 		);
 		return 0;
 	}
@@ -588,11 +581,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					 '現在の設定では'.$check_num.'語が布置されます。'
+					kh_msg->get('too_many1') # 現在の設定では
+					.$check_num
+					.kh_msg->get('too_many2') # 語が布置されます。
 					."\n"
-					.'布置する語の数は100〜150程度におさえることを推奨します。'
+					.kh_msg->get('too_many3') # 布置する語の数は100〜150程度におさえることを推奨します。
 					."\n"
-					.'続行してよろしいですか？'
+					.kh_msg->get('too_many4') # 続行してよろしいですか？
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -727,6 +722,7 @@ sub make_plot{
 	$r_command .= "flt <- $args{flt}\n";
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
+
 
 	$r_command .= "library(MASS)\n";
 	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
@@ -1383,7 +1379,7 @@ scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1,
 
 
 sub label{
-	return '抽出語・対応分析：オプション';
+	return kh_msg->get('win_title'); # 抽出語・対応分析：オプション
 }
 
 sub win_name{
