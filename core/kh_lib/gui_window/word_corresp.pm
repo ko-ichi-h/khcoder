@@ -715,6 +715,8 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
+	$r_command = Encode::decode('euc-jp', $r_command);
+
 	kh_r_plot->clear_env;
 
 	$r_command .= "d_x <- $args{d_x}\n";
@@ -723,6 +725,10 @@ sub make_plot{
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
 
+	$r_command .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 成分
+	$r_command .= "name_eig <- '".kh_msg->get('eig')."'\n"; # 固有値
+	$r_command .= "name_exp <- '".kh_msg->get('exp')."'\n"; # 寄与率
+	$r_command .= "name_nav <- '".kh_msg->get('nav')."'\n"; # 欠損値
 
 	$r_command .= "library(MASS)\n";
 	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
@@ -732,7 +738,7 @@ sub make_plot{
 	$r_command .= "k <- c\$cor^2\n";
 	$r_command .=
 		"txt <- cbind( 1:length(k), round(k,4), round(100*k / sum(k),2) )\n";
-	$r_command .= "colnames(txt) <- c('成分','固有値','寄与率')\n";
+	$r_command .= "colnames(txt) <- c(name_dim,name_eig,name_exp)\n";
 	$r_command .= "print( txt )\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
@@ -750,8 +756,8 @@ sub make_plot{
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
 				.'pch=c(20,1)[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				#.'bty="l"'
 				.")\n"
 			."library(maptools)\n"
@@ -764,8 +770,8 @@ sub make_plot{
 		$r_command_a .=
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
 				.'pch=c(1,3)[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				#.'bty="l"'
 				.")\n"
 		;
@@ -778,8 +784,8 @@ sub make_plot{
 				.'),'
 				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
 				.'col=c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
 				#.'bty="l"'
 				." )\n"
@@ -793,7 +799,7 @@ sub make_plot{
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
 				.'offset=0,'
-				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666（緑） #FF6347（朱） #FF8B00FF（オレンジ）
+				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666（green） #FF6347（vermilion） #FF8B00FF（orange）
 				.')'."\n"
 		;
 		$r_command_2 = $r_command.$r_command_2a;
@@ -806,8 +812,8 @@ sub make_plot{
 				.'),'
 				.'pch=c(1,1,0,2,4:15)[cb[,3]],'
 				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
 				#.'bty="l"'
 				." )\n"
@@ -835,8 +841,8 @@ sub make_plot{
 				.'),'
 				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
 				.'col=c("gray65","gray65",rep( "gray30", v_count))[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				#.'bty="l"'
 				.")\n"
 		;
@@ -884,8 +890,8 @@ sub make_plot{
 				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
 				.'),'
 				.'pch=c(1,3,0,2,4:15)[cb[,3]],'
-				.'xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),'
-				.'ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),'
+				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
+				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				#.'bty="l"'
 				.")\n"
 		;
@@ -1011,11 +1017,11 @@ aggregate_with_var <- function(d, doc_length_mtr, v) {
 
 	doc_length_mtr <- subset(
 		doc_length_mtr,
-		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
 	)
 	d <- subset(
 		d,
-		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
 	)
 
 	# doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
@@ -1056,7 +1062,7 @@ END_OF_the_R_COMMAND2
 sub r_command_filter{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-# 差異の顕著な語のみ分析に使用
+# Filter words by chi-square value
 if ( (flw > 0) && (flw < ncol(d)) ){
 	sort  <- NULL
 	for (i in 1:ncol(d) ){
@@ -1073,19 +1079,19 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 
 c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
 
-# 特徴的な語のみラベル表示
+# Dilplay Labels only for distinctive words
 if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 	sort  <- NULL
 	limit <- NULL
 	names <- NULL
 	ptype <- NULL
 	
-	# 原点からの距離を計算
+	# compute distance from (0,0)
 	for (i in 1:nrow(c$cscore) ){
 		sort <- c(sort, c$cscore[i,d_x] ^ 2 + c$cscore[i,d_y] ^ 2 )
 	}
 	
-	# 上位のもののみラベル付け
+	# Put labels to top words
 	limit <- sort[order(sort,decreasing=T)][flt]
 	for (i in 1:nrow(c$cscore) ){
 		if ( sort[i] >= limit ){
@@ -1141,7 +1147,7 @@ if (plot_mode == "dots"){
 	col_dot_vars  <- "black"
 }
 
-# バブルのサイズを決定
+# Bubble size
 neg_to_zero <- function(nums){
   temp <- NULL
   for (i in 1:length(nums) ){
@@ -1163,16 +1169,16 @@ for (i in rownames(c$cscore)){
 	}
 }
 
-b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
+b_size <- sqrt( b_size / pi ) # adjust bubble size: frequency ratio = square measure ratio
 
-if (std_radius){ # 円の大小をデフォルメ
+if (std_radius){ # standardize (enphasize) bubble size
 	b_size <- b_size / sd(b_size)
 	b_size <- b_size - mean(b_size)
 	b_size <- b_size * 5 * bubble_var / 100 + 10
 	b_size <- neg_to_zero(b_size)
 }
 
-# プロット領域を設定
+# set plot area
 plot(
 	rbind(
 		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
@@ -1180,12 +1186,12 @@ plot(
 	),
 	pch=NA,
 	col="black",
-	xlab=paste("成分",d_x,"（",k[d_x],"%）",sep=""),
-	ylab=paste("成分",d_y,"（",k[d_y],"%）",sep=""),
+	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
+	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
 	#bty="l"
 )
 
-# バブル描画（語）
+# draw bubbles of words
 symbols(
 	c$cscore[,d_x],
 	c$cscore[,d_y],
@@ -1195,13 +1201,13 @@ symbols(
 	add=T,
 )
 
-# バブル描画（変数・見出し）
+# draw bubbles of variables
 if (biplot){
-	# 点のサイズを計算
+	# bubble size
 	if (resize_vars){
 		pch_cex <- sqrt(n_total);
 		pch_cex <- pch_cex * ( 10 / max(pch_cex) )
-		if (std_radius){ # 点の大小をデフォルメ
+		if (std_radius){ # standardize (enphasize) bubble size
 			pch_cex <- pch_cex / sd(pch_cex)
 			pch_cex <- pch_cex - mean(pch_cex)
 			pch_cex <- pch_cex * 5 + 10
@@ -1210,7 +1216,7 @@ if (biplot){
 		}
 		pch_cex <- pch_cex * bubble_size / 100
 	}
-	# 点をプロット
+	# plot points of variables
 	points(
 		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
 		pch=c(20,1,0,2,4:15)[cbb[,3]],
@@ -1219,7 +1225,7 @@ if (biplot){
 	)
 }
 
-# ラベル位置を決定
+# compute label positions
 if (biplot){
 	cb <- rbind(
 		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
@@ -1241,7 +1247,7 @@ if ( is.null(labcd) ){
 	)
 }
 
-# ラベル描画
+# draw labels
 if (plot_mode == "gray"){
 	cb  <- cbind(cb, labcd$x, labcd$y)
 	cb1 <-  subset(cb, cb[,3]==1)
@@ -1295,7 +1301,7 @@ if (plot_mode == "gray"){
 
 sub r_command_slab_my{
 	return '
-# 枠付きプロット関数の設定
+# configure the slab function
 s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
     clabel = 1, 
     pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 
