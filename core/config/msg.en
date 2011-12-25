@@ -1,533 +1,587 @@
 ---
-global->search:                                   Search
-global->copy:                                     Copy
-global->browse:                                   Browse
-global->ok:                                       OK
-global->cancel:                                   Cancel
-global->sentence:                                 Sentences
-global->paragraph:                                Paragraphs
-global->csv_f:                                    CSV File
-global->spss_f:                                   SPSS File
-global->tab_f:                                    Tab Delimited
-global->plot:                                     Plot
-global->close:                                    Close
-global->save:                                     Save
-global->all:                                      All
-global->default:                                  Default
-global->clear:                                    Clear
-global->wm_f:                                     Variable-length CSV: for WordMiner
-global->cont_big_pros:                            "It may take a while.\nMay I continue?"
-global->r_dont_close:                             Keep this window open
-global->r_net_col_cnt_b:                          'Centrality: betweenness'
-global->r_net_col_cnt_d:                          'Centrality: degree'
-global->r_net_col_cnt_v:                          'Centrality: eigenvector'
-global->r_net_col_com_b:                          'Community: betweenness'
-global->r_net_col_com_m:                          'Community: modularity'
-global->r_net_col_none:                           'None'
-global->r_net_edges:                              'Edge Selection:'
-global->r_net_num:                                'N:'
-global->r_net_jac:                                'Jaccard coef. >= '
-global->r_net_ijou:                               ' '
-global->r_net_jac_width:                          'Thicker lines for stronger edges'
-global->r_net_freq_size:                          'Larger nodes for higher frequency words'
-global->r_net_font_too:                           'Variable font size *For printing with EMF/EPS/PDF'
-global->r_net_smaller:                            'Smaller Nodes'
-global->r_net_msg_fail:                         'Error: could not set the options.'
-gui_window::about->win_title:                     About KH Coder
-gui_window::about->kawabata:                      KAWABATA, Akira
-gui_window::about->higuchi:                       HIGUCHI, Koichi
-gui_window::about->close:                         Close
-gui_window::sql_select->win_title:                Execute SQL Statements
-gui_window::sql_select->max_rows:                 Max rows to display:
-gui_window::sql_select->Server:                   '  Connected to: '
-gui_window::sql_select->exec:                     Execute
-gui_window::sql_select->rows:                     '  Rows: '
-gui_window::sql_select->sql_error:                An Error in the SQL Statement.
-gui_window::main::menu->project:                  Project
-gui_window::main::menu->new:                      New
-gui_window::main::menu->open:                     Open
-gui_window::main::menu->close:                    Close
-gui_window::main::menu->import:                   Import
-gui_window::main::menu->export:                   Export
-gui_window::main::menu->config:                   Settings
-gui_window::main::menu->exit:                     Exit
-gui_window::main::menu->prep:                     PRe-Processing
-gui_window::main::menu->check:                    Check the Target File
-gui_window::main::menu->run_prep:                 Run Pre-Processing
-gui_window::main::menu->words_selection:          Select Words to Analyze
-gui_window::main::menu->words_cluster:            Word Cluster
-gui_window::main::menu->use_termextract:          use TermExtract
-gui_window::main::menu->use_chasen:               use ChaSen
-gui_window::main::menu->check_morpho:             Check the Result of Word Extraction
-gui_window::main::menu->tools:                    Tools
-gui_window::main::menu->words:                    Words
-gui_window::main::menu->word_freq:                Frequency List
-gui_window::main::menu->desc_stats:               Descriptive Stats
-gui_window::main::menu->freq_tf:                  Term Frequency Distribution
-gui_window::main::menu->freq_df:                  Document Frequency Distribution
-gui_window::main::menu->tf_df:                    TF-DF Plot
-gui_window::main::menu->word_search:              Search Words
-gui_window::main::menu->kwic:                     KWIC Concordance
-gui_window::main::menu->word_ass:                 Word Association
-gui_window::main::menu->corresp:                  Correspondence Analysis
-gui_window::main::menu->mds:                      Multi-Dimensional Scaling
-gui_window::main::menu->h_cluster:                Hierarchical Cluster Analysis
-gui_window::main::menu->netg:                     Co-Occurrence Network
-gui_window::main::menu->docs:                     Documents
-gui_window::main::menu->doc_search:               Search Documents
-gui_window::main::menu->cluster:                  Cluster Analysis
-gui_window::main::menu->docs_bayes:               Naive Bayes Classifier
-gui_window::main::menu->bayes_learn:              Learn from Variables
-gui_window::main::menu->bayes_classi:             Classify
-gui_window::main::menu->check_learning:           View Learning Result
-gui_window::main::menu->check_classi:             View Classification Log
-gui_window::main::menu->doc_term_mtrx:            Export Document-Term Matrix
-gui_window::main::menu->term_vec_mtrx:            Export Term-Context Matrix
-gui_window::main::menu->coding:                   Coding
-gui_window::main::menu->freq:                     Frequency
-gui_window::main::menu->cross_st:                 Crosstab with Headings
-gui_window::main::menu->cross_vr:                 Crosstab with Variables
-gui_window::main::menu->jac_mtrx:                 Similarity Matrix
-gui_window::main::menu->output_cod:               Export Document-Code Matrix
-gui_window::main::menu->vars_heads:               Variables & Headings
-gui_window::main::menu->read:                     Read from a File
-gui_window::main::menu->var_list:                 Listing & Manipulation
-gui_window::main::menu->text_format:              Convert the Target File
-gui_window::main::menu->partial:                  Extract Partial Text
-gui_window::main::menu->to_csv:                   Convert from HTML to CSV
-gui_window::main::menu->plugin:                   Plugin
-gui_window::main::menu->exec_sql:                 Execute SQL Statements
-gui_window::main::menu->help:                     Help
-gui_window::main::menu->man:                      Manual (PDF)
-gui_window::main::menu->web:                      Latest Info (Web)
-gui_window::main::menu->about:                    About
-gui_window::main::inner->target:                  'The Target File:'
-gui_window::main::inner->memo:                    Memo:
-gui_window::main::inner->tokens:                  Tokens:
-gui_window::main::inner->types:                   'Types (using):   '
-gui_window::main::inner->docs:                    Documents:
-gui_window::main::inner->units:                   Units
-gui_window::main::inner->cases:                   Cases
-gui_window::sysconfig->win_title:                 Global Settings
-gui_window::sysconfig->words_ext:                 Word Extraction
-gui_window::sysconfig->chasen:                    '"ChaSen" for Japanese data'
-gui_window::sysconfig->mecab:                     '"MeCab" for Japanese data'
-gui_window::sysconfig->p_chasenrc:                '    path of "chasenrc":'
-gui_window::sysconfig->p_grammer.cha:             '    path of "grammar.cha":'
-gui_window::sysconfig->p_chasen.exe:              '    path of "chasen.exe":'
-gui_window::sysconfig->p_mecab.exe:               '    path of "mecab.exe":'
-gui_window::sysconfig->need_inst:                 '* you must install it by yourself'
-gui_window::sysconfig->stemming:                  Stemming with "Snowball"
-gui_window::sysconfig->lang:                      '    Language:'
-gui_window::sysconfig->stopwords:                 '  Stop words:'
-gui_window::sysconfig->config:                    config
-gui_window::sysconfig->l_en:                      English
-gui_window::sysconfig->l_nl:                      Dutch *
-gui_window::sysconfig->l_fr:                      French *
-gui_window::sysconfig->l_de:                      German *
-gui_window::sysconfig->l_it:                      Italian *
-gui_window::sysconfig->l_pt:                      Portuguese *
-gui_window::sysconfig->l_es:                      Spanish *
-gui_window::sysconfig->apps:                      Applications
-gui_window::sysconfig->web_browser:               Web Browser:
-gui_window::sysconfig->s_sheet:                   Spreadsheets (CSV/Excel):
-gui_window::sysconfig->pdf:                       PDF Viewer:
-gui_window::sysconfig->note_s:                    '* %s will be replaced by filenames of URLs'
-gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
-gui_window::sysconfig->p_stanford_jar:            '    path of *.JAR:'
-gui_window::sysconfig->p_stanford_tag:            '    path of *.TAGGER:'
-gui_window::sysconfig->note_font:                 "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
-gui_window::sysconfig->browse_chasen:             Please open ChaSen.exe
-gui_window::sysconfig->browse_mecab:              Please open MeCab.exe
-gui_window::sysconfig->browse_stanford_jar:       Please open stanford-postagger.jar
-gui_window::sysconfig->browse_stanford_tag:       Please open a model file
-gui_window::sysconfig->browse_:                   ' '
-kh_sysconfig::chasen->path_error:                 Cannot find Chasen.exe!
-kh_sysconfig::mecab->path_error:                  Cannot find MeCab.exe!
-kh_sysconfig::stanford->path_error:               Cannot find Stanford POS Tagger!
-gui_widget::mail_config->other:                   Other
-gui_widget::mail_config->use_heap:                Load data into memory to speedup pre-processing
-gui_widget::mail_config->sendmail:                Send an e-mail when pre-processing is done
-gui_widget::mail_config->smtp:                    '    SMTP Server: '
-gui_widget::mail_config->from:                    '    From: '
-gui_widget::mail_config->to:                      '    To: '
-gui_widget::mail_config->font:                    Font settings:
-gui_widget::mail_config->config:                  config
-gui_widget::mail_config->change_font:             Font Config
-gui_widget::mail_config->select_font:             Font family:
-gui_widget::mail_config->size:                    Size:
-gui_widget::mail_config->note_fs:                 KH Coder is a tool for Quantitative Text Analysis.
-kh_morpho::chasen->error:                         Fatal error: Could not execute ChaSen.
-kh_morpho::chasen->error_config:                  Fatal error: Could not find ChaSen.
-kh_morpho::mecab->error:                          Fatal error: Could not execute MeCab.
-kh_morpho::mecab->error_config:                   Fatal error: Could not find MeCab.
-kh_morpho::stanford->error:                       Fatal error: Could not execute Stanford POS Tagger.
-kh_morpho::stanford->no_java:                     Fatal error: Could not find JAVA.
-kh_morpho::stanford->error_config:                Fatal error: Could not find JStanford POS Tagger.
-kh_morpho::stemming->error:                       Fatal error: Could not perform stemming.
-gui_window::main::menu->export_win_title:         Export current project to a *.khc file.
-gui_window::main::menu->import_win_title:         Import a project from a *.khc file.
-gui_window::main::menu->import_save_path:         "Saving the target text file (\"coder_data\" folder will be created at the same path)."
-gui_wait->done:                                   "The process is complete.\nElapsed time:"
-gui_window::project_new->win_title:               New Project
-gui_window::project_new->target_file:             The Target File:
-gui_window::project_new->target_char_code:        Encoding of the target file:
-gui_window::project_new->auto_detect:             Auto detect
-gui_window::project_new->memo:                    Memo:
-gui_window::project_new->browse_target:           Please select the target text File
-gui_window::project_open->win_title:              Project Manager
-gui_window::project_open->target_file:            target file
-gui_window::project_open->memo:                   memo
-gui_window::project_open->dir:                    dir
-gui_window::project_open->del:                    delete
-gui_window::project_open->edit:                   edit
-gui_window::project_open->new:                    new
-gui_window::project_open->open:                   Open
-gui_window::project_open->opened:                 "The project is currently opened.\nCannot perform the specified action."
-gui_window::project_open->select_one:             Please select a project.
-gui_window::project_edit->win_title:              New Project
-gui_window::project_edit->target_file:            The Target File:
-gui_window::project_edit->target_char_code:       Encoding of the target file:
-gui_window::project_edit->auto_detect:            Auto detect
-gui_window::project_edit->memo:                   Memo:
-gui_window::datacheck->win_title:                 Checking the target file
-gui_window::datacheck->headmark:                  '*** '
-gui_window::datacheck->details:                   Detailed info on problems:
-gui_window::datacheck->print:                     Print
-gui_window::datacheck->save_as:                   Save as
-gui_window::datacheck->auto_correct:              '   Auto correction of the target file:'
-gui_window::datacheck->close:                     Close
-gui_window::datacheck->exec:                      Execute!
-gui_window::datacheck->save_as_win:               Saving the detailed info on problems
-gui_window::datacheck->saved:                     '*** Detailed info on problems saved:'
-gui_window::datacheck->correction_done:           '*** Auto correction was performed:'
-gui_window::datacheck->file_backup:               '* Back-up of target file was saved as:'
-gui_window::datacheck->file_diff:                 '* Modification list (diff) was saved as:'
-gui_window::datacheck->not_complete:              '* Could not correct some errors. Please correct it manually.'
-gui_window::datacheck->looks_complete:            All known problems are corrected.
-kh_datacheck->error_m1:                           Too long heading line (cannot correct automatically)
-kh_datacheck->error_c1:                           Some lines contain Mojibake
-kh_datacheck->error_c2:                           Unsuitable symbols
-kh_datacheck->error_n1a:                          Too long lines
-kh_datacheck->error_n1b:                          Too long lines (cannot correct automatically)
-kh_datacheck->error_mn:                           Incorrect use of H1 - H5 tags (cannot correct automatically)
-kh_datacheck->errors_summary:                     Following probrems were found (summary):
-kh_datacheck->errors_detail:                      Following probrems were found (details):
-kh_datacheck->looks_good:                         "We found no known problems.\nPlease proceed to pre-processing."
-kh_datacheck->corrected:                          All known problems are corrected.
-kh_datacheck->lines:                              " line(s)"
-gui_errormsg::mysql->fatal:                       "Failed to deal with MySQL database system.\nKH Coder will exit now."
-gui_window::dictionary->win_title:                Select Words to Analyze
-gui_window::dictionary->pos:                      Select by Parts of Speech:
-gui_window::dictionary->force_pick:               "Pick up following strings as words:"
-gui_window::dictionary->one_line1:                (one string in each line)
-gui_window::dictionary->one_line2:                (one word in each line)
-gui_window::dictionary->force_ignore:             Force ignore following words:
-gui_window::dictionary->note1:                    "(*) Changes in \"force pick up\" will take effect when\n you invoke the \"Run Preprocessing\" command (again)."
-gui_window::morpho_check->win_title:              Results of Word Extraction
-gui_window::morpho_check->note:                   Input a string or phrase to check.
-gui_window::morpho_check->details:                Details
-gui_window::morpho_check->sentence:               The splited sentence
-gui_window::morpho_detail->win_title:             Results of Word Extraction: Details
-gui_window::morpho_detail->hyoso:                 word
-gui_window::morpho_detail->base:                  lemma / stem
-gui_window::morpho_detail->pos_kh:                POS of KH Coder
-gui_window::morpho_detail->pos_cha:               POS of Tagger 1
-gui_window::morpho_detail->katuyo:                POS of Tagger 2
-gui_window::morpho_detail->previous:              Previous
-gui_window::morpho_detail->next:                  Next
-gui_window::word_list->win_title:                 Frequency List: Options
-gui_window::word_list->type:                      Type of the list:
-gui_window::word_list->hinshi:                    By POS tags
-gui_window::word_list->top150:                    Top 150
-gui_window::word_list->single:                    Single column
-gui_window::word_list->count:                     What to count:
-gui_window::word_list->tf:                        Term frequency
-gui_window::word_list->df:                        Document frequency
-gui_window::word_list->file_type:                 File types:
-gui_window::word_list->csv:                       Comma separated (*.csv)
-gui_window::word_list->xls:                       Excel (*.xls)
-mysql_words->tf:                                  TF
-mysql_words->df:                                  DF
-mysql_words->words:                               Words
-mysql_words->pos:                                 POS
-gui_window::word_freq->win_title:                 Term Frequency Distribution
-gui_window::word_freq->descr:                     Descriptives
-gui_window::word_freq->freq_tab:                  Frequency Table
-gui_window::word_freq->tf:                        TF
-gui_window::word_freq->freq:                      Frequency
-gui_window::word_freq->pcnt:                      Percent
-gui_window::word_freq->c_freq:                    "Cumulative\nFrequency"
-gui_window::word_freq->c_pcnt:                    "Cumulative\nPercent"
-gui_window::word_freq->refresh:                   Refresh
-mysql_words->types:                               Types of Terms (n)
-mysql_words->mean_tf:                             Mean of TF
-mysql_words->std_dev_tf:                          Std. Deviation of TF
-gui_window::word_freq_plot->win_title:            Term Frequency Distribution Plot
-gui_window::word_freq_plot->log:                  Logarithmic axes:
-gui_window::word_freq_plot->x:                    TF (X)
-gui_window::word_freq_plot->xy:                   TF (X) and Frequency (Y)
-gui_window::word_freq_plot->none:                 None
-gui_window::word_freq_plot->saving:               Save the plot as...
-gui_window::word_df_freq->win_title:              Document Frequency Distribution
-gui_window::word_df_freq->descr:                  Descriptives
-gui_window::word_df_freq->freq_tab:               Frequency Table
-gui_window::word_df_freq->df:                     DF
-gui_window::word_df_freq->freq:                   Frequency
-gui_window::word_df_freq->pcnt:                   Percent
-gui_window::word_df_freq->c_freq:                 "Cumulative\nFrequency"
-gui_window::word_df_freq->c_pcnt:                 "Cumulative\nPercent"
-gui_window::word_df_freq->units:                  '  Counting Units:'
-mysql_words->mean_df:                             Mean of DF
-mysql_words->std_dev_df:                          Std. Deviation of TF
-gui_window::word_df_freq_plot->win_title:         Document Frequency Distribution Plot
-gui_window::word_df_freq_plot->log:               Logarithmic axes:
-gui_window::word_df_freq_plot->x:                 DF (X)
-gui_window::word_df_freq_plot->xy:                DF (X) and Frequency (Y)
-gui_window::word_df_freq_plot->none:              None
-gui_window::word_df_freq_plot->saving:            Save the plot as...
-gui_window::word_tf_df->win_title:                TF-DF Plot
-gui_window::word_tf_df->units:                    Counting Units:
-gui_window::word_tf_df->log:                      '  Logarithmic axes:'
-gui_window::word_tf_df->x:                        TF(X)
-gui_window::word_tf_df->xy:                       TF(X) and DF(Y)
-gui_window::word_tf_df->none:                     None
-gui_window::word_tf_df->tf:                       Term Frequency
-gui_window::word_tf_df->df:                       Document Frequency
-gui_window::word_tf_df->saving:                   Save the plot as...
-gui_window::word_search->win_title:               Search Words
-gui_window::word_search->search:                  Search
-gui_window::word_search->baseform:                Search Baseform
-gui_window::word_search->view_conj:               View Conj.
-gui_window::word_search->or:                      OR
-gui_window::word_search->and:                     AND
-gui_window::word_search->part:                    Partial Match
-gui_window::word_search->comp:                    Complete Match
-gui_window::word_search->forw:                    Forward Match
-gui_window::word_search->back:                    Backward Match
-gui_window::word_search->word:                    Word
-gui_window::word_search->pos:                     POS
-gui_window::word_search->freq:                    Frequency
-gui_window::word_search->kwic:                    KWIC Concordance
-gui_window::word_search->pos_conj:                POS / Conj.
-gui_window::word_search->morph:                   Word
-gui_window::word_search->conj:                    Conj.
-gui_window::word_conc->win_title:                 KWIC Concordance
-gui_window::word_conc->word:                      Word:
-gui_window::word_conc->pos:                       '  POS:'
-gui_window::word_conc->conj:                      '  Conj.:'
-gui_window::word_conc->additional:                Additional Options
-gui_window::word_conc->search:                    Search
-gui_window::word_conc->ns:                        None
-gui_window::word_conc->l5:                        L5
-gui_window::word_conc->l4:                        L4
-gui_window::word_conc->l3:                        L3
-gui_window::word_conc->l2:                        L2
-gui_window::word_conc->l1:                        L1
-gui_window::word_conc->r5:                        R5
-gui_window::word_conc->r4:                        R4
-gui_window::word_conc->r3:                        R3
-gui_window::word_conc->r2:                        R2
-gui_window::word_conc->r1:                        R1
-gui_window::word_conc->center:                    Conj.
-gui_window::word_conc->sort1:                     '  Sort 1:'
-gui_window::word_conc->sort2:                     '  Sort 2:'
-gui_window::word_conc->sort3:                     '  Sort 3:'
-gui_window::word_conc->retrieveNum1:              '  (Retrieve LR '
-gui_window::word_conc->retrieveNum2:              Words)
-gui_window::word_conc->viewDoc:                   View Doc
-gui_window::word_conc->viewingUnit:               ' Units:'
-gui_window::word_conc->prev:                      P
-gui_window::word_conc->next:                      N
-gui_window::word_conc->hits:                      '  Hits: '
-gui_window::word_conc->currentDoc:                '* Search Result: '
-gui_window::word_conc->saving:                    Saving the Result of KWIC Concordance...
-gui_window::word_conc->viewing:                   ', View: '
-gui_window::word_conc->stats:                     Stats
-gui_window::word_conc_coloc->win_title:           Collocation Stats
-gui_window::word_conc_coloc->word:                'Word:'
-gui_window::word_conc_coloc->pos:                 '  POS:'
-gui_window::word_conc_coloc->conj:                '  Conj.:'
-gui_window::word_conc_coloc->hits:                '  Hits: '
-gui_window::word_conc_coloc->h_word:              Word
-gui_window::word_conc_coloc->h_pos:               POS
-gui_window::word_conc_coloc->h_score:             Score
-gui_window::word_conc_coloc->h_l_total:           LT
-gui_window::word_conc_coloc->h_r_total:           RT
-gui_window::word_conc_coloc->l_total:             Left Total
-gui_window::word_conc_coloc->r_total:             Right Total
-gui_window::word_conc_coloc->l5:                  L5
-gui_window::word_conc_coloc->l4:                  L4
-gui_window::word_conc_coloc->l3:                  L3
-gui_window::word_conc_coloc->l2:                  L2
-gui_window::word_conc_coloc->l1:                  L1
-gui_window::word_conc_coloc->r5:                  R5
-gui_window::word_conc_coloc->r4:                  R4
-gui_window::word_conc_coloc->r3:                  R3
-gui_window::word_conc_coloc->r2:                  R2
-gui_window::word_conc_coloc->r1:                  R1
-gui_window::word_conc_coloc->total:               Total
-gui_window::word_conc_coloc->sort:                '  Sort:'
-gui_window::word_conc_coloc->filter:              Filter
-gui_window::word_conc_coloc->additional:          '  + Additional Options'
-gui_window::word_conc_coloc_opt->win_title:       Filter: Collocation Stats
-gui_window::word_conc_coloc_opt->filter_by_pos:   Filter by POS:
-gui_window::word_conc_coloc_opt->view:            View:
-gui_window::word_conc_coloc_opt->top:             '      Top '
-gui_window::word_conc_opt->win_title:             Additional Options of KWIC Concordance
-gui_window::word_conc_opt->preface1:              You can add search conditions like "There is word A at L1."
-gui_window::word_conc_opt->preface2:              'To add conditions, please specify "Position" first.'
-gui_window::word_conc_opt->l5:                    L5
-gui_window::word_conc_opt->l4:                    L4
-gui_window::word_conc_opt->l3:                    L3
-gui_window::word_conc_opt->l2:                    L2
-gui_window::word_conc_opt->l1:                    L1
-gui_window::word_conc_opt->r5:                    R5
-gui_window::word_conc_opt->r4:                    R4
-gui_window::word_conc_opt->r3:                    R3
-gui_window::word_conc_opt->r2:                    R2
-gui_window::word_conc_opt->r1:                    R1
-gui_window::word_conc_opt->rl:                    LR1-5
-gui_window::word_conc_opt->r:                     R1-5
-gui_window::word_conc_opt->l:                     L1-5
-gui_window::word_conc_opt->0:                     None
-gui_window::word_conc_opt->opt1:                  Condition 1
-gui_window::word_conc_opt->opt2:                  Condition 2
-gui_window::word_conc_opt->opt3:                  Condition 3
-gui_window::word_conc_opt->position:              Position:
-gui_window::word_conc_opt->word:                  '  Word:'
-gui_window::word_conc_opt->pos:                   '  POS:'
-gui_window::word_conc_opt->conj:                  '  Conj.:'
-gui_window::doc_view->win_title:                  Document
-gui_window::doc_view->in_the_file:                In the File:
-gui_window::doc_view->p1:                         '<<'
-gui_window::doc_view->n1:                         '>>'
-gui_window::doc_view->in_the_results:             '  In the Results:'
-gui_window::doc_view->p2:                         '<<'
-gui_window::doc_view->n2:                         '>>'
-gui_window::doc_view->highlight:                  highlight
-gui_window::doc_view->current_doc:                '* Current Document: '
-gui_window::force_color->win_title:               'Highlight Words/Strings'
-gui_window::force_color->desc:                    'Followin words/strings will be highlighted:'
-gui_window::force_color->highlight_h:             'highlight'
-gui_window::force_color->type_h:                  'type'
-gui_window::force_color->delete:                  'Delete'
-gui_window::force_color->highlight:               'Highlight:'
-gui_window::force_color->type:                    'Type:'
-gui_window::force_color->word:                    'word'
-gui_window::force_color->string:                  'string'
-gui_window::force_color->add:                     'Add'
-gui_window::force_color->no_word:                 'Please insert words/strings to be hilighted.'
-gui_window::force_color->exists:                  'The word/string already exists.'
-gui_window::word_ass->win_title:                  'Word Association'
-gui_window::word_ass->direct:                     'Direct:'
-gui_window::word_ass->go:                         'Run'
-gui_window::word_ass->unit:                       'Unit:'
-gui_window::word_ass->and:                        'AND'
-gui_window::word_ass->or:                         'OR'
-gui_window::word_ass->word_h:                     'word'
-gui_window::word_ass->pos_h:                      'POS'
-gui_window::word_ass->prob_h:                     'unconditional'
-gui_window::word_ass->cond_h:                     'conditional'
-gui_window::word_ass->sort_h:                     'sort'
-gui_window::word_ass->sort:                       ' Sort:'
-gui_window::word_ass->fr:                         'Frequency'
-gui_window::word_ass->sa:                         'Differential'
-gui_window::word_ass->hi:                         'Lift'
-gui_window::word_ass->18:                         'chi square'
-gui_window::word_ass->filter:                     'Filter'
-gui_window::word_ass->net:                        'Network'
-gui_window::word_ass->direct_code:                '#direct'
-gui_window::word_ass->no_code:                    '#none'
-gui_window::word_ass->hits0:                      ' Hits: 0'
-gui_window::word_ass->hits:                       ' Hits: '
-gui_window::word_ass->msg_l5:                     'Less than 5 words founds. I quit processing now.'
-gui_widget::codf->cod_rule_f:                     'Coding Rule File:'
-gui_widget::codf->reload:                         'Reload'
-gui_widget::codf->no_file:                        'No File Selected'
-gui_widget::codf->browse_title:                   'Please select a coding rule file.'
-gui_window::r_plot::selected_netgraph->color:     ' Color:'
-gui_window::r_plot::selected_netgraph->win_title: 'Co-Occurrence Network (selected words)'
-gui_window::r_plot->options:                      'Config'
-gui_window::r_plot->saving:                       'Save the Plot as:'
-gui_window::r_plot_opt::selected_netgraph->win_title: 'Configure: Co-Occurrence Network (selected words)'
-gui_window::word_ass_opt->win_title:              'Filter: Word Association'
-gui_window::word_ass_opt->by_pos:                 'Filter by POS:'
-gui_window::word_ass_opt->by_df:                  'Filter by DF:'
-gui_window::word_ass_opt->min_df:                 '    Min. DF '
-gui_window::word_ass_opt->view:                   'View:'
-gui_window::word_ass_opt->top:                    '    Top '
-gui_widget::r_font->font_size:                    'Font size:'
-gui_widget::r_font->pcnt:                         '% '
-gui_widget::r_font->bold:                         'Bold'
-gui_widget::r_font->plot_size:                    '  Plot size:'
-gui_widget::words->unit:                          'Unit:'
-gui_widget::words->by_tf:                         'Filter by Term Frequency'
-gui_widget::words->min_tf:                        '    Min. TF:'
-gui_widget::words->max_tf:                        '  Max. TF:'
-gui_widget::words->by_df:                         'Filter by Document Frequency'
-gui_widget::words->min_df:                        '    Min. DF:'
-gui_widget::words->max_df:                        '  Max. DF:'
-gui_widget::words->df_unit:                       '    Document Unit:'
-gui_widget::words->by_pos:                        'Filter by POS'
-gui_widget::words->check:                         'Check'
-gui_widget::words->no_pos_selected:               'Error: No POS is selected.'
-gui_widget::words->check_desc1:                   'Number of selected words'
-gui_widget::words->check_desc2:                   ' '
-gui_widget::r_xy->cmp_plot:                       'Dimensions of the Plot: '
-gui_widget::r_xy->x:                              ' X'
-gui_widget::r_xy->y:                              ' Y'
-gui_window::word_corresp->option_words:           '* Select Words'
-gui_window::word_corresp->option_ca:              '* Correspondence Analysis Options'
-gui_window::word_corresp->matrix:                 'Input Data Matrix:'
-gui_window::word_corresp->w_d:                    'Words x Documents'
-gui_window::word_corresp->unit:                   'Unit:'
-gui_window::word_corresp->biplot:                 'Biplot'
-gui_window::word_corresp->w_v:                    'Words x Variable(s)'
-gui_window::word_corresp->flw:                    'Filter words by chi-square value:'
-gui_window::word_corresp->flt:                    'Show labels only for distinctive words:'
-gui_window::word_corresp->top:                    'Top'
-gui_window::word_corresp->words:                  ' '
-gui_window::word_corresp->na:                     'Not Available'
-gui_window::word_corresp->select_pos:             'Error: Please select at least 1 POS.'
-gui_window::word_corresp->select_var:             'Error: Please select at least 1 variable.'
-gui_window::word_corresp->check_var_unit:         'Error: Please select variables with same unit.'
-gui_window::word_corresp->select_3words:          'Error Please select at least 3 words.'
-gui_window::word_corresp->too_many1:              ' '
-gui_window::word_corresp->too_many2:              'words will be plotted.'
-gui_window::word_corresp->too_many3:              'It is recommended that you keep the number of words arround 100 or 150.'
-gui_window::word_corresp->too_many4:              'May I continue?'
-gui_window::word_corresp->win_title:              'Correspondence Analysis of Words: Options'
-gui_window::word_corresp->dim:                    'Dimension '
-gui_window::word_corresp->exp:                    'Explained'
-gui_window::word_corresp->nav:                    'missing'
-gui_window::word_corresp->eig:                    'Cor ^2'
-gui_window::word_corresp->plot:                   ' '
-gui_window::r_plot_opt::word_corresp->win_title:  'Configure: Correspondence Analysis of Words'
-gui_widget::bubble->bubble:                       'Bubble plot:'
-gui_widget::bubble->size:                         ' Size of bubbles '
-gui_widget::bubble->variable:                     'Size of variables also reflect word counts'
-gui_widget::bubble->standardize:                  'Standardize the size:'
-gui_widget::bubble->variance:                     'Variance '
-gui_window::r_plot::word_corresp->d_l:            'dots and labels'
-gui_window::r_plot::word_corresp->d:              'dots'
-gui_window::r_plot::word_corresp->col:            'color'
-gui_window::r_plot::word_corresp->gray:           'grayscale'
-gui_window::r_plot::word_corresp->var:            'variables'
-gui_window::r_plot::word_corresp->view:           ' View:'
-gui_window::r_plot::word_corresp->win_title:      'Correspondence Analysis of Words'
-gui_window::cod_corresp->win_title:               'Correspondence Analysis of Codes: Options'
-gui_window::cod_corresp->coding_unit:             'Coding unit:'
-gui_window::cod_corresp->select_codes:            'Select code:'
-gui_window::cod_corresp->sel3:                    '    * Please select at least 3 codes.'
-gui_window::cod_corresp->matrix_type:             'Input Data Matrix:'
-gui_window::cod_corresp->c_d:                     'Codes x Documents (no biplot)'
-gui_window::cod_corresp->c_dd:                    'Codes x Upper unit'
-gui_window::cod_corresp->ag_unit:                 '    Upper unit:'
-gui_window::cod_corresp->c_v:                     'Codes x Variables'
-gui_window::cod_corresp->flw:                     'Filter codes by chi-square value:'
-gui_window::cod_corresp->top:                     'Top'
-gui_window::cod_corresp->flt:                     'Show labels only for distinctive codes:'
-gui_window::cod_corresp->na:                      'Not Available'
-gui_window::r_plot_opt::cod_corresp->win_title:   'Configure: Correspondence Analysis of Codes'
-gui_window::r_plot::cod_corresp->win_title:       'Correspondence Analysis of Codes'
+global:
+    all:                      All
+    browse:                   Browse
+    cancel:                   Cancel
+    clear:                    Clear
+    close:                    Close
+    cont_big_pros:            "It may take a while.\nMay I continue?"
+    copy:                     Copy
+    csv_f:                    CSV File
+    default:                  Default
+    ok:                       OK
+    paragraph:                Paragraphs
+    plot:                     Plot
+    r_dont_close:             Keep this window open
+    r_net_col_cnt_b:          'Centrality: betweenness'
+    r_net_col_cnt_d:          'Centrality: degree'
+    r_net_col_cnt_v:          'Centrality: eigenvector'
+    r_net_col_com_b:          'Community: betweenness'
+    r_net_col_com_m:          'Community: modularity'
+    r_net_col_none:           None
+    r_net_edges:              'Edge Selection:'
+    r_net_font_too:           Variable font size *For printing with EMF/EPS/PDF
+    r_net_freq_size:          Larger nodes for higher frequency words
+    r_net_ijou:               ' '
+    r_net_jac:                'Jaccard coef. >= '
+    r_net_jac_width:          Thicker lines for stronger edges
+    r_net_msg_fail:           'Error: could not set the options.'
+    r_net_num:                'N:'
+    r_net_smaller:            Smaller Nodes
+    save:                     Save
+    search:                   Search
+    sentence:                 Sentences
+    spss_f:                   SPSS File
+    tab_f:                    Tab Delimited
+    wm_f:                     'Variable-length CSV: for WordMiner'
+gui_errormsg::mysql:
+    fatal:                   "Failed to deal with MySQL database system.\nKH Coder will exit now."
+gui_wait:
+    done:                    "The process is complete.\nElapsed time:"
+gui_widget::bubble:
+    bubble:                   'Bubble plot:'
+    size:                     ' Size of bubbles '
+    standardize:              'Standardize the size:'
+    variable:                 Size of variables also reflect word counts
+    variance:                 'Variance '
+gui_widget::codf:
+    browse_title:             Please select a coding rule file.
+    cod_rule_f:               'Coding Rule File:'
+    no_file:                  No File Selected
+    reload:                   Reload
+gui_widget::mail_config:
+    change_font:              Font Config
+    config:                   config
+    font:                     'Font settings:'
+    from:                     '    From: '
+    note_fs:                  KH Coder is a tool for Quantitative Text Analysis.
+    other:                    Other
+    select_font:              'Font family:'
+    sendmail:                 Send an e-mail when pre-processing is done
+    size:                     'Size:'
+    smtp:                     '    SMTP Server: '
+    to:                       '    To: '
+    use_heap:                 Load data into memory to speedup pre-processing
+gui_widget::r_font:
+    bold:                     Bold
+    font_size:                'Font size:'
+    pcnt:                     '% '
+    plot_size:                '  Plot size:'
+gui_widget::r_xy:
+    cmp_plot:                 'Dimensions of the Plot: '
+    x:                        ' X'
+    y:                        ' Y'
+gui_widget::words:
+    by_df:                    Filter by Document Frequency
+    by_pos:                   Filter by POS
+    by_tf:                    Filter by Term Frequency
+    check:                    Check
+    check_desc1:              Number of selected words
+    check_desc2:              ' '
+    df_unit:                  '    Document Unit:'
+    max_df:                   '  Max. DF:'
+    max_tf:                   '  Max. TF:'
+    min_df:                   '    Min. DF:'
+    min_tf:                   '    Min. TF:'
+    no_pos_selected:          'Error: No POS is selected.'
+    unit:                     'Unit:'
+gui_window::about:
+    close:                    Close
+    higuchi:                  'HIGUCHI, Koichi'
+    kawabata:                 'KAWABATA, Akira'
+    win_title:                About KH Coder
+gui_window::cod_corresp:
+    ag_unit:                  '    Upper unit:'
+    c_d:                      Codes x Documents (no biplot)
+    c_dd:                     Codes x Upper unit
+    c_v:                      Codes x Variables
+    coding_unit:              'Coding unit:'
+    flt:                      'Show labels only for distinctive codes:'
+    flw:                      'Filter codes by chi-square value:'
+    matrix_type:              'Input Data Matrix:'
+    na:                       Not Available
+    sel3:                     '    * Please select at least 3 codes.'
+    select_codes:             'Select code:'
+    top:                      Top
+    win_title:                'Correspondence Analysis of Codes: Options'
+gui_window::datacheck:
+    auto_correct:             '   Auto correction of the target file:'
+    close:                    Close
+    correction_done:          '*** Auto correction was performed:'
+    details:                  'Detailed info on problems:'
+    exec:                     Execute!
+    file_backup:              '* Back-up of target file was saved as:'
+    file_diff:                '* Modification list (diff) was saved as:'
+    headmark:                 '*** '
+    looks_complete:           All known problems are corrected.
+    not_complete:             '* Could not correct some errors. Please correct it manually.'
+    print:                    Print
+    save_as:                  Save as
+    save_as_win:              Saving the detailed info on problems
+    saved:                    '*** Detailed info on problems saved:'
+    win_title:                Checking the target file
+gui_window::dictionary:
+    force_ignore:             'Force ignore following words:'
+    force_pick:               'Pick up following strings as words:'
+    note1:                   "(*) Changes in \"force pick up\" will take effect when\nyou invoke the \"Run Preprocessing\" command (again)."
+    one_line1:                (one string in each line)
+    one_line2:                (one word in each line)
+    pos:                      'Select by Parts of Speech:'
+    win_title:                Select Words to Analyze
+gui_window::doc_view:
+    current_doc:              '* Current Document: '
+    highlight:                highlight
+    in_the_file:              'In the File:'
+    in_the_results:           '  In the Results:'
+    n1:                       '>>'
+    n2:                       '>>'
+    p1:                       <<
+    p2:                       <<
+    win_title:                Document
+gui_window::force_color:
+    add:                      Add
+    delete:                   Delete
+    desc:                     'Followin words/strings will be highlighted:'
+    exists:                   The word/string already exists.
+    highlight:                'Highlight:'
+    highlight_h:              highlight
+    no_word:                  Please insert words/strings to be hilighted.
+    string:                   string
+    type:                     'Type:'
+    type_h:                   type
+    win_title:                Highlight Words/Strings
+    word:                     word
+gui_window::main::inner:
+    cases:                    Cases
+    docs:                     'Documents:'
+    memo:                     'Memo:'
+    target:                   'The Target File:'
+    tokens:                   'Tokens:'
+    types:                    'Types (using):   '
+    units:                    Units
+gui_window::main::menu:
+    about:                    About
+    bayes_classi:             Classify
+    bayes_learn:              Learn from Variables
+    check:                    Check the Target File
+    check_classi:             View Classification Log
+    check_learning:           View Learning Result
+    check_morpho:             Check the Result of Word Extraction
+    close:                    Close
+    cluster:                  Cluster Analysis
+    coding:                   Coding
+    config:                   Settings
+    corresp:                  Correspondence Analysis
+    cross_st:                 Crosstab with Headings
+    cross_vr:                 Crosstab with Variables
+    desc_stats:               Descriptive Stats
+    doc_search:               Search Documents
+    doc_term_mtrx:            Export Document-Term Matrix
+    docs:                     Documents
+    docs_bayes:               Naive Bayes Classifier
+    exec_sql:                 Execute SQL Statements
+    exit:                     Exit
+    export:                   Export
+    export_win_title:         Export current project to a *.khc file.
+    freq:                     Frequency
+    freq_df:                  Document Frequency Distribution
+    freq_tf:                  Term Frequency Distribution
+    h_cluster:                Hierarchical Cluster Analysis
+    help:                     Help
+    import:                   Import
+    import_save_path:         Saving the target text file ("coder_data" folder will be created at the same path).
+    import_win_title:         Import a project from a *.khc file.
+    jac_mtrx:                 Similarity Matrix
+    kwic:                     KWIC Concordance
+    man:                      Manual (PDF)
+    mds:                      Multi-Dimensional Scaling
+    netg:                     Co-Occurrence Network
+    new:                      New
+    open:                     Open
+    output_cod:               Export Document-Code Matrix
+    partial:                  Extract Partial Text
+    plugin:                   Plugin
+    prep:                     PRe-Processing
+    project:                  Project
+    read:                     Read from a File
+    run_prep:                 Run Pre-Processing
+    term_vec_mtrx:            Export Term-Context Matrix
+    text_format:              Convert the Target File
+    tf_df:                    TF-DF Plot
+    to_csv:                   Convert from HTML to CSV
+    tools:                    Tools
+    use_chasen:               use ChaSen
+    use_termextract:          use TermExtract
+    var_list:                 Listing & Manipulation
+    vars_heads:               Variables & Headings
+    web:                      Latest Info (Web)
+    word_ass:                 Word Association
+    word_freq:                Frequency List
+    word_search:              Search Words
+    words:                    Words
+    words_cluster:            Word Cluster
+    words_selection:          Select Words to Analyze
+gui_window::morpho_check:
+    details:                  Details
+    note:                     Input a string or phrase to check.
+    sentence:                 The splited sentence
+    win_title:                Results of Word Extraction
+gui_window::morpho_detail:
+    base:                     lemma / stem
+    hyoso:                    word
+    katuyo:                   POS of Tagger 2
+    next:                     Next
+    pos_cha:                  POS of Tagger 1
+    pos_kh:                   POS of KH Coder
+    previous:                 Previous
+    win_title:                'Results of Word Extraction: Details'
+gui_window::project_edit:
+    auto_detect:              Auto detect
+    memo:                     'Memo:'
+    target_char_code:         'Encoding of the target file:'
+    target_file:              'The Target File:'
+    win_title:                New Project
+gui_window::project_new:
+    auto_detect:              Auto detect
+    browse_target:            Please select the target text File
+    memo:                     'Memo:'
+    target_char_code:         'Encoding of the target file:'
+    target_file:              'The Target File:'
+    win_title:                New Project
+gui_window::project_open:
+    del:                      delete
+    dir:                      dir
+    edit:                     edit
+    memo:                     memo
+    new:                      new
+    open:                     Open
+    opened:                   "The project is currently opened.\nCannot perform the specified action."
+    select_one:               Please select a project.
+    target_file:              target file
+    win_title:                Project Manager
+gui_window::r_plot:
+    options:                  Config
+    saving:                   'Save the Plot as:'
+gui_window::r_plot::cod_corresp:
+    win_title:                Correspondence Analysis of Codes
+gui_window::r_plot::selected_netgraph:
+    color:                    ' Color:'
+    win_title:                Co-Occurrence Network (selected words)
+gui_window::r_plot::word_corresp:
+    col:                      color
+    d:                        dots
+    d_l:                      dots and labels
+    gray:                     grayscale
+    var:                      variables
+    view:                     ' View:'
+    win_title:                Correspondence Analysis of Words
+gui_window::r_plot_opt::cod_corresp:
+    win_title:                'Configure: Correspondence Analysis of Codes'
+gui_window::r_plot_opt::selected_netgraph:
+    win_title:                'Configure: Co-Occurrence Network (selected words)'
+gui_window::r_plot_opt::word_corresp:
+    win_title:                'Configure: Correspondence Analysis of Words'
+gui_window::sql_select:
+    Server:                   '  Connected to: '
+    exec:                     Execute
+    max_rows:                 'Max rows to display:'
+    rows:                     '  Rows: '
+    sql_error:                An Error in the SQL Statement.
+    win_title:                Execute SQL Statements
+gui_window::sysconfig:
+    apps:                     Applications
+    browse_:                  ' '
+    browse_chasen:            Please open ChaSen.exe
+    browse_mecab:             Please open MeCab.exe
+    browse_stanford_jar:      Please open stanford-postagger.jar
+    browse_stanford_tag:      Please open a model file
+    chasen:                   '"ChaSen" for Japanese data'
+    config:                   config
+    l_de:                     German *
+    l_en:                     English
+    l_es:                     Spanish *
+    l_fr:                     French *
+    l_it:                     Italian *
+    l_nl:                     Dutch *
+    l_pt:                     Portuguese *
+    lang:                     '    Language:'
+    mecab:                    '"MeCab" for Japanese data'
+    need_inst:                '* you must install it by yourself'
+    note_font:               "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
+    note_s:                   '* %s will be replaced by filenames of URLs'
+    p_chasen.exe:             '    path of "chasen.exe":'
+    p_chasenrc:               '    path of "chasenrc":'
+    p_grammer.cha:            '    path of "grammar.cha":'
+    p_mecab.exe:              '    path of "mecab.exe":'
+    p_stanford_jar:           '    path of *.JAR:'
+    p_stanford_tag:           '    path of *.TAGGER:'
+    pdf:                      'PDF Viewer:'
+    s_sheet:                  'Spreadsheets (CSV/Excel):'
+    stanford:                 Lemmatization with "Stanford POS Tagger"
+    stemming:                 Stemming with "Snowball"
+    stopwords:                '  Stop words:'
+    web_browser:              'Web Browser:'
+    win_title:                Global Settings
+    words_ext:                Word Extraction
+gui_window::word_ass:
+    18:                       chi square
+    and:                      AND
+    cond_h:                   conditional
+    direct:                   'Direct:'
+    direct_code:              '#direct'
+    filter:                   Filter
+    fr:                       Frequency
+    go:                       Run
+    hi:                       Lift
+    hits:                     ' Hits: '
+    hits0:                    ' Hits: 0'
+    msg_l5:                   Less than 5 words founds. I quit processing now.
+    net:                      Network
+    no_code:                  '#none'
+    or:                       OR
+    pos_h:                    POS
+    prob_h:                   unconditional
+    sa:                       Differential
+    sort:                     ' Sort:'
+    sort_h:                   sort
+    unit:                     'Unit:'
+    win_title:                Word Association
+    word_h:                   word
+gui_window::word_ass_opt:
+    by_df:                    'Filter by DF:'
+    by_pos:                   'Filter by POS:'
+    min_df:                   '    Min. DF '
+    top:                      '    Top '
+    view:                     'View:'
+    win_title:                'Filter: Word Association'
+gui_window::word_conc:
+    additional:               Additional Options
+    center:                   Conj.
+    conj:                     '  Conj.:'
+    currentDoc:               '* Search Result: '
+    hits:                     '  Hits: '
+    l1:                       L1
+    l2:                       L2
+    l3:                       L3
+    l4:                       L4
+    l5:                       L5
+    next:                     N
+    ns:                       None
+    pos:                      '  POS:'
+    prev:                     P
+    r1:                       R1
+    r2:                       R2
+    r3:                       R3
+    r4:                       R4
+    r5:                       R5
+    retrieveNum1:             '  (Retrieve LR '
+    retrieveNum2:             Words)
+    saving:                   Saving the Result of KWIC Concordance...
+    search:                   Search
+    sort1:                    '  Sort 1:'
+    sort2:                    '  Sort 2:'
+    sort3:                    '  Sort 3:'
+    stats:                    Stats
+    viewDoc:                  View Doc
+    viewing:                  ', View: '
+    viewingUnit:              ' Units:'
+    win_title:                KWIC Concordance
+    word:                     'Word:'
+gui_window::word_conc_coloc:
+    additional:               '  + Additional Options'
+    conj:                     '  Conj.:'
+    filter:                   Filter
+    h_l_total:                LT
+    h_pos:                    POS
+    h_r_total:                RT
+    h_score:                  Score
+    h_word:                   Word
+    hits:                     '  Hits: '
+    l1:                       L1
+    l2:                       L2
+    l3:                       L3
+    l4:                       L4
+    l5:                       L5
+    l_total:                  Left Total
+    pos:                      '  POS:'
+    r1:                       R1
+    r2:                       R2
+    r3:                       R3
+    r4:                       R4
+    r5:                       R5
+    r_total:                  Right Total
+    sort:                     '  Sort:'
+    total:                    Total
+    win_title:                Collocation Stats
+    word:                     'Word:'
+gui_window::word_conc_coloc_opt:
+    filter_by_pos:            'Filter by POS:'
+    top:                      '      Top '
+    view:                     'View:'
+    win_title:                'Filter: Collocation Stats'
+gui_window::word_conc_opt:
+    0:                        None
+    conj:                     '  Conj.:'
+    l:                        L1-5
+    l1:                       L1
+    l2:                       L2
+    l3:                       L3
+    l4:                       L4
+    l5:                       L5
+    opt1:                     Condition 1
+    opt2:                     Condition 2
+    opt3:                     Condition 3
+    pos:                      '  POS:'
+    position:                 'Position:'
+    preface1:                 You can add search conditions like "There is word A at L1."
+    preface2:                 'To add conditions, please specify "Position" first.'
+    r:                        R1-5
+    r1:                       R1
+    r2:                       R2
+    r3:                       R3
+    r4:                       R4
+    r5:                       R5
+    rl:                       LR1-5
+    win_title:                Additional Options of KWIC Concordance
+    word:                     '  Word:'
+gui_window::word_corresp:
+    biplot:                   Biplot
+    check_var_unit:           'Error: Please select variables with same unit.'
+    dim:                      'Dimension '
+    eig:                      Cor ^2
+    exp:                      Explained
+    flt:                      'Show labels only for distinctive words:'
+    flw:                      'Filter words by chi-square value:'
+    matrix:                   'Input Data Matrix:'
+    na:                       Not Available
+    nav:                      missing
+    option_ca:                '* Correspondence Analysis Options'
+    option_words:             '* Select Words'
+    plot:                     ' '
+    select_3words:            Error Please select at least 3 words.
+    select_pos:               'Error: Please select at least 1 POS.'
+    select_var:               'Error: Please select at least 1 variable.'
+    too_many1:                ' '
+    too_many2:                words will be plotted.
+    too_many3:                It is recommended that you keep the number of words arround 100 or 150.
+    too_many4:                May I continue?
+    top:                      Top
+    unit:                     'Unit:'
+    w_d:                      Words x Documents
+    w_v:                      Words x Variable(s)
+    win_title:                'Correspondence Analysis of Words: Options'
+    words:                    ' '
+gui_window::word_df_freq:
+    c_freq:                   "Cumulative\nFrequency"
+    c_pcnt:                   "Cumulative\nPercent"
+    descr:                    Descriptives
+    df:                       DF
+    freq:                     Frequency
+    freq_tab:                 Frequency Table
+    pcnt:                     Percent
+    units:                    '  Counting Units:'
+    win_title:                Document Frequency Distribution
+gui_window::word_df_freq_plot:
+    log:                      'Logarithmic axes:'
+    none:                     None
+    saving:                   Save the plot as...
+    win_title:                Document Frequency Distribution Plot
+    x:                        DF (X)
+    xy:                       DF (X) and Frequency (Y)
+gui_window::word_freq:
+    c_freq:                   "Cumulative\nFrequency"
+    c_pcnt:                   "Cumulative\nPercent"
+    descr:                    Descriptives
+    freq:                     Frequency
+    freq_tab:                 Frequency Table
+    pcnt:                     Percent
+    refresh:                  Refresh
+    tf:                       TF
+    win_title:                Term Frequency Distribution
+gui_window::word_freq_plot:
+    log:                      'Logarithmic axes:'
+    none:                     None
+    saving:                   Save the plot as...
+    win_title:                Term Frequency Distribution Plot
+    x:                        TF (X)
+    xy:                       TF (X) and Frequency (Y)
+gui_window::word_list:
+    count:                    'What to count:'
+    csv:                      Comma separated (*.csv)
+    df:                       Document frequency
+    file_type:                'File types:'
+    hinshi:                   By POS tags
+    single:                   Single column
+    tf:                       Term frequency
+    top150:                   Top 150
+    type:                     'Type of the list:'
+    win_title:                'Frequency List: Options'
+    xls:                      Excel (*.xls)
+gui_window::word_search:
+    and:                      AND
+    back:                     Backward Match
+    baseform:                 Search Baseform
+    comp:                     Complete Match
+    conj:                     Conj.
+    forw:                     Forward Match
+    freq:                     Frequency
+    kwic:                     KWIC Concordance
+    morph:                    Word
+    or:                       OR
+    part:                     Partial Match
+    pos:                      POS
+    pos_conj:                 POS / Conj.
+    search:                   Search
+    view_conj:                View Conj.
+    win_title:                Search Words
+    word:                     Word
+gui_window::word_tf_df:
+    df:                       Document Frequency
+    log:                      '  Logarithmic axes:'
+    none:                     None
+    saving:                   Save the plot as...
+    tf:                       Term Frequency
+    units:                    'Counting Units:'
+    win_title:                TF-DF Plot
+    x:                        TF(X)
+    xy:                       TF(X) and DF(Y)
+kh_datacheck:
+    corrected:                All known problems are corrected.
+    error_c1:                 Some lines contain Mojibake
+    error_c2:                 Unsuitable symbols
+    error_m1:                 Too long heading line (cannot correct automatically)
+    error_mn:                 'Incorrect use of H1 - H5 tags (cannot correct automatically)'
+    error_n1a:                Too long lines
+    error_n1b:                Too long lines (cannot correct automatically)
+    errors_detail:            'Following probrems were found (details):'
+    errors_summary:           'Following probrems were found (summary):'
+    lines:                    ' line(s)'
+    looks_good:              "We found no known problems.\nPlease proceed to pre-processing."
+kh_morpho::chasen:
+    error:                    'Fatal error: Could not execute ChaSen.'
+    error_config:             'Fatal error: Could not find ChaSen.'
+kh_morpho::mecab:
+    error:                    'Fatal error: Could not execute MeCab.'
+    error_config:             'Fatal error: Could not find MeCab.'
+kh_morpho::stanford:
+    error:                    'Fatal error: Could not execute Stanford POS Tagger.'
+    error_config:             'Fatal error: Could not find JStanford POS Tagger.'
+    no_java:                  'Fatal error: Could not find JAVA.'
+kh_morpho::stemming:
+    error:                    'Fatal error: Could not perform stemming.'
+kh_sysconfig::chasen:
+    path_error:               Cannot find Chasen.exe!
+kh_sysconfig::mecab:
+    path_error:               Cannot find MeCab.exe!
+kh_sysconfig::stanford:
+    path_error:               Cannot find Stanford POS Tagger!
+mysql_words:
+    df:                       DF
+    mean_df:                  Mean of DF
+    mean_tf:                  Mean of TF
+    pos:                      POS
+    std_dev_df:               Std. Deviation of TF
+    std_dev_tf:               Std. Deviation of TF
+    tf:                       TF
+    types:                    Types of Terms (n)
+    words:                    Words

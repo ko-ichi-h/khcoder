@@ -18,25 +18,33 @@ sub get{
 	my $key = shift;
 	my $caller = shift;
 	
+	if ( length($caller) ){
+	#	print "kh_msg: caller is specified: $caller, $key\n" if $debug;
+	}
 	$caller = (caller)[0]    unless length($caller);
-	$key = $caller.'->'.$key unless $key =~ /.+\->.+/;
 	
-	$key =~ s/::(linux|win32)//go;
+	if ($key =~ /^(.+)\->(.+)$/){
+		$key    = $2;
+		$caller = $1;
+		#print "kh_msg: caller is specified: $caller, $key\n" if $debug;
+	}
+		
+	$caller =~ s/::(linux|win32)//go;
 
 	# メッセージをロード
 	&load unless $msg;
 
 	# メッセージを返す
 	my $t = '';
-	if ( length( $msg->{$key} ) ){
-		$t = $msg->{$key};
+	if ( length( $msg->{$caller}{$key} ) ){
+		$t = $msg->{$caller}{$key};
 	}
-	elsif ( length($msg_fb->{$key}) ) {
-		$t = $msg_fb->{$key};
-		print "kh_msg: fall back: $key\n";
+	elsif ( length($msg_fb->{$caller}{$key}) ) {
+		$t = $msg_fb->{$caller}{$key};
+		print "kh_msg: fall back: $caller, $key\n";
 	} else {
 		$t = 'error: no msg!';
-		print "kh_msg: no msg: $key\n";
+		print "kh_msg: no msg: $caller, $key\n";
 	}
 	
 	unless ( utf8::is_utf8($t) ){
@@ -49,22 +57,22 @@ sub gget{
 	# キー作成
 	          shift;
 	my $key = shift;
-	$key = 'global->'.$key;
+	my $caller = 'global';
 	
 	# メッセージをロード
 	&load unless $msg;
 
 	# メッセージを返す
 	my $t = '';
-	if ( length( $msg->{$key} ) ){
-		$t = $msg->{$key};
+	if ( length( $msg->{$caller}{$key} ) ){
+		$t = $msg->{$caller}{$key};
 	}
-	elsif ( length($msg_fb->{$key}) ) {
-		$t = $msg_fb->{$key};
-		print "kh_msg: fall back: $key\n";
+	elsif ( length($msg_fb->{$caller}{$key}) ) {
+		$t = $msg_fb->{$caller}{$key};
+		print "kh_msg: fall back: $caller, $key\n";
 	} else {
 		$t = 'error: no msg!';
-		print "kh_msg: no msg: $key\n";
+		print "kh_msg: no msg: $caller, $key\n";
 	}
 	
 	unless ( utf8::is_utf8($t) ){
