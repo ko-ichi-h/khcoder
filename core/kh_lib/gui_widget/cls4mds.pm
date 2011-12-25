@@ -14,7 +14,7 @@ sub _new{
 	$self->{cls_n}     = 7 unless defined $self->{cls_n};
 
 	$win->Checkbutton(
-			-text     => gui_window->gui_jchar('クラスター化と色分け','euc'),
+			-text     => kh_msg->get('cluster_color'), # クラスター化と色分け
 			-variable => \$self->{check_cls},
 			-command  => sub{$self->refresh_cls},
 			-anchor => 'w',
@@ -31,7 +31,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{label_cls1} = $fcls1->Label(
-		-text => gui_window->gui_jchar('クラスター数：'),
+		-text => kh_msg->get('cls_num'), # クラスター数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -46,7 +46,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
 	$self->{label_cls2} = $fcls1->Label(
-		-text => gui_window->gui_jchar('（2から12まで）'),
+		-text => kh_msg->get('2_12'), # （2から12まで）
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -65,7 +65,7 @@ sub _new{
 	}
 
 	$self->{check_cls_raw_w} = $fcls2->Checkbutton(
-			-text     => gui_window->gui_jchar('隣接クラスター','euc'),
+			-text     => kh_msg->get('adj'), # 隣接クラスター
 			-variable => \$self->{check_nei},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
