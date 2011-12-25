@@ -51,6 +51,12 @@ sub open{
 	
 	# デフォルト値を適用
 	$self->{selection} = $self->{options}[0][1];
+	if ( defined( $self->{variable} ) ){
+		if ( length( ${$self->{variable}} ) ){
+			$self->{selection} = ${$self->{variable}};
+		}
+	}
+	
 	$self->mb_refresh(5);
 	
 	#$self->{status4test} = "done";

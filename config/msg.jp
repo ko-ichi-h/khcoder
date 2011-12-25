@@ -455,8 +455,8 @@ gui_window::word_corresp:
     matrix:                   分析に使用するデータ表の種類：
     na:                       利用不可
     nav:                      欠損値
-    option_ca:                ■対応分析の設定
-    option_words:             ■布置する語の選択
+    option_ca:                対応分析のオプション
+    option_words:             抽出語の選択
     plot:                     布置
     select_3words:            少なくとも3つ以上の抽出語を布置して下さい。
     select_pos:               品詞が1つも選択されていません。
@@ -585,3 +585,26 @@ mysql_words:
     tf:                       出現回数
     types:                    異なり語数 (n)
     words:                    抽出語
+gui_widget::cls4mds:
+    cluster_color:            'クラスター化と色分け'
+    cls_num:                  'クラスター数：'
+    2_12:                     '（2から12まで）'
+    adj:                      '隣接クラスター'
+gui_widget::r_mds:
+    method:                   '方法：'
+    dist:                     '  距離：'
+    dim:                      '次元：'
+    1_3:                      '（1から3までの範囲で指定）'
+gui_window::word_mds:
+    units_words:              '集計単位と抽出語の選択'
+    mds_opt:                  '多次元尺度法のオプション'
+    plot:                     '布置'
+    win_title:                '抽出語・多次元尺度法：オプション'
+    select_5words:            少なくとも5つ以上の抽出語を布置して下さい。
+    error_dim:                '次元の指定が不正です。1から3までの数値を指定して下さい。'
+    dim:                      '次元'
+    omit:                     '以下の抽出語／コードは分析から省かれました：\n'
+gui_window::r_plot_opt::word_mds:
+    win_title:                '抽出語・多次元尺度法：調整'
+gui_window::r_plot::word_mds:
+    win_title:                '抽出語・多次元尺度法'

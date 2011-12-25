@@ -103,7 +103,7 @@ gui_window::cod_corresp:
     sel3:                     '    * Please select at least 3 codes.'
     select_codes:             'Select code:'
     top:                      Top
-    win_title:                'Correspondence Analysis of Codes: Options'
+    win_title:                'Options: Correspondence Analysis of Codes'
 gui_window::datacheck:
     auto_correct:             '   Auto correction of the target file:'
     close:                    Close
@@ -455,8 +455,8 @@ gui_window::word_corresp:
     matrix:                   'Input Data Matrix:'
     na:                       Not Available
     nav:                      missing
-    option_ca:                '* Correspondence Analysis Options'
-    option_words:             '* Select Words'
+    option_ca:                'Correspondence Analysis Options'
+    option_words:             'Select Words'
     plot:                     ' '
     select_3words:            Error Please select at least 3 words.
     select_pos:               'Error: Please select at least 1 POS.'
@@ -469,7 +469,7 @@ gui_window::word_corresp:
     unit:                     'Unit:'
     w_d:                      Words x Documents
     w_v:                      Words x Variable(s)
-    win_title:                'Correspondence Analysis of Words: Options'
+    win_title:                'Options: Correspondence Analysis of Words'
     words:                    ' '
 gui_window::word_df_freq:
     c_freq:                   "Cumulative\nFrequency"
@@ -515,7 +515,7 @@ gui_window::word_list:
     tf:                       Term frequency
     top150:                   Top 150
     type:                     'Type of the list:'
-    win_title:                'Frequency List: Options'
+    win_title:                'Options: Frequency List'
     xls:                      Excel (*.xls)
 gui_window::word_search:
     and:                      AND
@@ -585,3 +585,26 @@ mysql_words:
     tf:                       TF
     types:                    Types of Terms (n)
     words:                    Words
+gui_widget::cls4mds:
+    cluster_color:            'Indicate clusters by different colors'
+    cls_num:                  'Number of clusters:'
+    2_12:                     '(from 2 to 12)'
+    adj:                      'Adjacent clusters'
+gui_widget::r_mds:
+    method:                   'Method:'
+    dist:                     '  Distance:'
+    dim:                      'Dimensions:'
+    1_3:                      '(from 1 to 3)'
+gui_window::word_mds:
+    units_words:              'Select units & words'
+    mds_opt:                  'Multi-Dimensional Scaling Options'
+    plot:                     ' '
+    win_title:                'Options: Multi-Dimensional Scaling of Words'
+    select_5words:            Error: Please select at least 5 words.
+    error_dim:                Error: Please specify from 1 to 3 as the number of dimensions
+    dim:                      Dimension
+    omit:                     "Following words/codes are omited from analysis:\n"
+gui_window::r_plot_opt::word_mds:
+    win_title:                'Configure: Multi-Dimensional Scaling of Words'
+gui_window::r_plot::word_mds:
+    win_title:                'Multi-Dimensional Scaling of Words'

@@ -18,104 +18,31 @@ sub _new{
 	my $win = $self->{win_obj};
 	$win->title($self->gui_jt($self->label));
 
-
 	my $lf_w = $win->LabFrame(
-		-label => 'Words',
+		-label => kh_msg->get('units_words'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
-
-	$lf_w->Label(
-		-text => gui_window->gui_jchar('■集計単位と語の選択'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => '布置',
+		verb   => kh_msg->get('plot'), # 布置
 	);
 
 	my $lf = $win->LabFrame(
-		-label => 'Options',
+		-label => kh_msg->get('mds_opt'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-fill => 'x', -expand => 0);
 
-	$lf->Label(
-		-text => $self->gui_jchar('■多次元尺度構成法の設定'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
-
-
 	# アルゴリズム選択
-	my $f4 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
+	$self->{mds_obj} = gui_widget::r_mds->open(
+		parent       => $lf,
+		command      => sub{ $self->calc; },
+		pack    => { -anchor   => 'w'},
 	);
-	$f4->Label(
-		-text => $self->gui_jchar('方法：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	my $widget = gui_widget::optmenu->open(
-		parent  => $f4,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				['Classical', 'C'],
-				['Kruskal',   'K'],
-				['Sammon',    'S'],
-			],
-		variable => \$self->{method_opt},
-	);
-	$widget->set_value('K');
-
-	$f4->Label(
-		-text => $self->gui_jchar('  距離：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	my $widget_dist = gui_widget::optmenu->open(
-		parent  => $f4,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				['Jaccard', 'binary'],
-				['Euclid',  'euclid'],
-				['Cosine',  'pearson'],
-			],
-		variable => \$self->{method_dist},
-	);
-	$widget_dist->set_value('binary');
-
-
-	# 次元の数
-	my $fnd = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 4,
-	);
-
-	$fnd->Label(
-		-text => $self->gui_jchar('次元：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_dim_number} = $fnd->Entry(
-		-font       => "TKFN",
-		-width      => 2,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_dim_number}->insert(0,'2');
-	$self->{entry_dim_number}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_dim_number});
-
-	$fnd->Label(
-		-text => $self->gui_jchar('（1から3までの範囲で指定）'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
 
 	# バブルプロット
 	$self->{bubble_obj} = gui_widget::bubble->open(
@@ -147,24 +74,24 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
-	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 
 	return $self;
@@ -180,7 +107,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_window::word_corresp->select_pos'),
 		);
 		return 0;
 	}
@@ -200,7 +127,7 @@ sub calc{
 	if ($check_num < 5){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '少なくとも5つ以上の抽出語を選択して下さい。',
+			msg  => kh_msg->get('select_5words'),
 		);
 		return 0;
 	}
@@ -209,11 +136,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					 '現在の設定では'.$check_num.'語が布置されます。'
+					kh_msg->get('gui_window::word_corresp->too_many1')
+					.$check_num
+					.kh_msg->get('gui_window::word_corresp->too_many2')
 					."\n"
-					.'布置する語の数は100程度以下におさえることを推奨します。'
+					.kh_msg->get('gui_window::word_corresp->too_many3')
 					."\n"
-					.'続行してよろしいですか？'
+					.kh_msg->get('gui_window::word_corresp->too_many4')
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -247,9 +176,9 @@ sub calc{
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
-		method         => $self->gui_jg( $self->{method_opt}  ),
-		method_dist    => $self->gui_jg( $self->{method_dist} ),
-		dim_number     => $self->gui_jg( $self->{entry_dim_number}->get ),
+		method         => $self->{mds_obj}->method,
+		method_dist    => $self->{mds_obj}->method_dist,
+		dim_number     => $self->{mds_obj}->dim_number,
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 		bubble         => $self->{bubble_obj}->check_bubble,
@@ -271,14 +200,14 @@ sub make_plot{
 	my %args = @_;
 	
 	my $fontsize = $args{font_size};
-	my $r_command = $args{r_command};
+	my $r_command = Encode::decode('euc-jp', $args{r_command});
 
 	kh_r_plot->clear_env;
 
 	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => "次元の指定が不正です。1から3までの数値を指定して下さい。",
+			msg  => kh_msg->get('error_dim'), # 次元の指定が不正です。1から3までの数値を指定して下さい。
 		);
 		return 0;
 	}
@@ -339,12 +268,22 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_d .= "dim_n <- $args{dim_number}\n";
+	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 次元
+	
+	$r_command_d .= "name_dim1 <- paste(name_dim,'1')\n";
+	$r_command_d .= "name_dim2 <- paste(name_dim,'2')\n";
+	$r_command_d .= "name_dim3 <- paste(name_dim,'3')\n";
 	
 	$r_command_a .= "plot_mode <- \"dots\"\n";
 	$r_command_a .= "font_size <- $fontsize\n";
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
+	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 次元
+
+	$r_command_a .= "name_dim1 <- paste(name_dim,'1')\n";
+	$r_command_a .= "name_dim2 <- paste(name_dim,'2')\n";
+	$r_command_a .= "name_dim3 <- paste(name_dim,'3')\n";
 
 	if ($args{font_bold} == 1){
 		$args{font_bold} = 2;
@@ -358,19 +297,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		if ( $args{bubble} == 0 ){
 			$r_command_d .= &r_command_plot;
 			$r_command_a .= &r_command_plot;
-		
-			#$r_command_d .=
-			#	 'plot(cl,pch=20,col="mediumaquamarine",'
-			#		.'xlab="次元1",ylab="次元2")'."\n"
-			#	."library(maptools)\n"
-			#	.'pointLabel('
-			#		.'x=cl[,1], y=cl[,2], labels=rownames(cl),'
-			#		."cex=$fontsize, offset=0)\n";
-			#;
-			#$r_command_a .=
-			#	 'plot(cl,'
-			#		.'xlab="次元1",ylab="次元2")'."\n"
-			#;
+
 		} else {
 			# バブル表現を行う場合
 			$r_command_d .= "std_radius <- $args{std_radius}\n";
@@ -389,8 +316,8 @@ while ( is.na(check4mds(d)) == 0 ){
 			"library(scatterplot3d)\n"
 			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
 				."highlight.3d=FALSE, color=\"#FFA200FF\", "
-				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
-				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
+				."col.grid=\"gray\", col.lab=\"black\", xlab=name_dim1,"
+				."ylab=name_dim2, zlab=name_dim3, col.axis=\"#000099\","
 				."mar=c(3,3,0,2), lty.hide=\"dashed\" )\n"
 			."cl2 <- s3d\$xyz.convert(cl)\n"
 			."library(maptools)\n"
@@ -401,8 +328,8 @@ while ( is.na(check4mds(d)) == 0 ){
 			 "library(scatterplot3d)\n"
 			."s3d <- scatterplot3d(cl, type=\"h\", box=TRUE, pch=16,"
 				."highlight.3d=TRUE, mar=c(3,3,0,2), "
-				."col.grid=\"gray\", col.lab=\"black\", xlab=\"次元1\","
-				."ylab=\"次元2\", zlab=\"次元3\", col.axis=\"#000099\","
+				."col.grid=\"gray\", col.lab=\"black\", xlab=name_dim1,"
+				."ylab=name_dim2, zlab=name_dim3, col.axis=\"#000099\","
 				."lty.hide=\"dashed\" )\n"
 		;
 	}
@@ -439,7 +366,9 @@ while ( is.na(check4mds(d)) == 0 ){
 			if $::config_obj->os eq 'win32';
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => "以下の抽出語／コードは分析から省かれました：\n$dropped",
+			msg  =>
+				kh_msg->get('omit') # 以下の抽出語／コードは分析から省かれました：\n
+				.$dropped
 		);
 	}
 
@@ -494,7 +423,7 @@ while ( is.na(check4mds(d)) == 0 ){
 
 
 sub label{
-	return '抽出語・多次元尺度法：オプション';
+	return kh_msg->get('win_title'); # 抽出語・多次元尺度法：オプション
 }
 
 sub win_name{
@@ -532,7 +461,7 @@ sub r_command_plot{
 
 ylab_text <- ""
 if ( dim_n == 2 ){
-	ylab_text <- "次元2"
+	ylab_text <- name_dim2
 }
 if ( dim_n == 1 ){
 	cl <- cbind(cl[,1],cl[,1])
@@ -556,7 +485,7 @@ plot(
 	cl,
 	pch=20,
 	col=col_base,
-	xlab="次元1",
+	xlab=name_dim1,
 	ylab=ylab_text,
 	#bty="l",
 )
@@ -593,7 +522,7 @@ sub r_command_bubble{
 
 ylab_text <- ""
 if ( dim_n == 2 ){
-	ylab_text <- "次元2"
+	ylab_text <- name_dim2
 }
 if ( dim_n == 1 ){
 	cl <- cbind(cl[,1],cl[,1])
@@ -666,7 +595,7 @@ plot(
 	cl,
 	pch=NA,
 	col="black",
-	xlab="次元1",
+	xlab=name_dim2,
 	ylab=ylab_text,
 	#bty="l"
 )

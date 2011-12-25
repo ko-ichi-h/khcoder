@@ -19,25 +19,21 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf = $win->LabFrame(
-		-label => 'Words',
+		-label => kh_msg->get('option_words'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-fill => 'both', -expand => 0, -side => 'left',-anchor => 'w');
 
 	my $rf = $win->Frame()
 		->pack(-fill => 'both', -expand => 1);
 
 	my $lf2 = $rf->LabFrame(
-		-label => 'Options',
+		-label => kh_msg->get('option_ca'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-fill => 'both', -expand => 1);
-
-	$lf->Label(
-		-text => kh_msg->get('option_words'), # ■布置する語の選択
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent       => $lf,
@@ -46,13 +42,6 @@ sub _new{
 	);
 
 	# 入力データの設定
-
-	$lf2->Label(
-		-text => kh_msg->get('option_ca'), # ■対応分析の設定
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
-
 	$lf2->Label(
 		-text => kh_msg->get('matrix'), # 分析に使用するデータ表の種類：
 		-font => "TKFN",
