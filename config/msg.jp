@@ -1,536 +1,587 @@
 ---
-global->search:                                   検索
-global->copy:                                     コピー
-global->browse:                                   参照
-global->ok:                                       OK
-global->cancel:                                   キャンセル
-global->sentence:                                 文
-global->paragraph:                                段落
-global->csv_f:                                    CSVファイル
-global->spss_f:                                   SPSSファイル
-global->tab_f:                                    タブ区切り
-global->wm_f:                                     不定長CSV （WordMiner）
-global->plot:                                     プロット
-global->close:                                    閉じる
-global->save:                                     保存
-global->all:                                      すべて
-global->default:                                  既定値
-global->clear:                                    クリア
-global->cont_big_pros:                            "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
-global->r_dont_close:                             実行時にこの画面を閉じない
-global->r_net_col_cnt_b:                          '中心性（媒介）'
-global->r_net_col_cnt_d:                          '中心性（次数）'
-global->r_net_col_cnt_v:                          '中心性（固有ベクトル）'
-global->r_net_col_com_b:                          'サブグラフ検出（媒介）'
-global->r_net_col_com_m:                          'サブグラフ検出（modularity）'
-global->r_net_col_none:                           'なし'
-global->r_net_edges:                              '描画する共起関係（edge）'
-global->r_net_num:                                '描画数：'
-global->r_net_jac:                                'Jaccard係数：'
-global->r_net_ijou:                               '以上'
-global->r_net_jac_width:                          '強い共起関係ほど太い線で描画'
-global->r_net_freq_size:                          '出現数の多い語ほど大きい円で描画'
-global->r_net_font_too:                           'フォントも大きく ※EMFやEPSでの出力・印刷向け'
-global->r_net_smaller:                            'すべての語を小さめの円で描画'
-global->r_net_msg_fail:                         '調整に失敗しましました。'
-gui_window::about->win_title:                     KH Coderについて
-gui_window::about->kawabata:                      川端亮
-gui_window::about->higuchi:                       樋口耕一
-gui_window::about->close:                         閉じる
-gui_window::sql_select->win_title:                SQL文の実行
-gui_window::sql_select->max_rows:                 最大表示数：
-gui_window::sql_select->Server:                   '  サーバー： '
-gui_window::sql_select->exec:                     実行
-gui_window::sql_select->rows:                     '  出力された行数： '
-gui_window::sql_select->sql_error:                SQL文にエラーがありました。
-gui_window::main::menu->project:                  プロジェクト(P)
-gui_window::main::menu->new:                      新規
-gui_window::main::menu->open:                     開く
-gui_window::main::menu->close:                    閉じる
-gui_window::main::menu->import:                   インポート
-gui_window::main::menu->export:                   エクスポート
-gui_window::main::menu->config:                   設定
-gui_window::main::menu->exit:                     終了
-gui_window::main::menu->prep:                     前処理(R)
-gui_window::main::menu->check:                    分析対象ファイルのチェック
-gui_window::main::menu->run_prep:                 前処理の実行
-gui_window::main::menu->words_selection:          語の取捨選択
-gui_window::main::menu->words_cluster:            複合語の検出
-gui_window::main::menu->use_termextract:          TermExtractを利用
-gui_window::main::menu->use_chasen:               茶筌を利用
-gui_window::main::menu->check_morpho:             語の抽出結果を確認
-gui_window::main::menu->tools:                    ツール(T)
-gui_window::main::menu->words:                    抽出語
-gui_window::main::menu->word_freq:                抽出語リスト
-gui_window::main::menu->desc_stats:               記述統計
-gui_window::main::menu->freq_tf:                  出現回数(TF)の分布
-gui_window::main::menu->freq_df:                  出現文書数(DF)の分布
-gui_window::main::menu->tf_df:                    出現回数ｘ文書数のプロット
-gui_window::main::menu->word_search:              抽出語検索
-gui_window::main::menu->kwic:                     KWICコンコーダンス
-gui_window::main::menu->word_ass:                 関連語検索
-gui_window::main::menu->corresp:                  対応分析
-gui_window::main::menu->mds:                      多次元尺度構成法
-gui_window::main::menu->h_cluster:                階層的クラスター分析
-gui_window::main::menu->netg:                     共起ネットワーク
-gui_window::main::menu->docs:                     文書
-gui_window::main::menu->doc_search:               文書検索
-gui_window::main::menu->cluster:                  クラスター分析
-gui_window::main::menu->docs_bayes:               ベイズ学習による分類
-gui_window::main::menu->bayes_learn:              外部変数から学習
-gui_window::main::menu->bayes_classi:             学習結果を用いた自動分類
-gui_window::main::menu->check_learning:           学習結果ファイルの内容を確認
-gui_window::main::menu->check_classi:             分類ログファイルの内容を確認
-gui_window::main::menu->doc_term_mtrx:            「文書ｘ抽出語」表の出力
-gui_window::main::menu->term_vec_mtrx:            「抽出語ｘ文脈ベクトル」表の出力
-gui_window::main::menu->coding:                   コーディング
-gui_window::main::menu->freq:                     単純集計
-gui_window::main::menu->cross_st:                 章・節・段落ごとの集計
-gui_window::main::menu->cross_vr:                 外部変数とのクロス集計
-gui_window::main::menu->jac_mtrx:                 類似度行列
-gui_window::main::menu->output_cod:               コーディング結果の出力
-gui_window::main::menu->vars_heads:               外部変数と見出し
-gui_window::main::menu->read:                     読み込み
-gui_window::main::menu->var_list:                 リストと管理
-gui_window::main::menu->text_format:              テキストファイルの変形
-gui_window::main::menu->partial:                  部分テキストの取り出し
-gui_window::main::menu->to_csv:                   HTMLからCSVに変換
-gui_window::main::menu->plugin:                   プラグイン
-gui_window::main::menu->exec_sql:                 SQL文の実行
-gui_window::main::menu->help:                     ヘルプ(H)
-gui_window::main::menu->man:                      マニュアル(PDF)
-gui_window::main::menu->web:                      最新情報(Web)
-gui_window::main::menu->about:                    KH Coderについて
-gui_window::main::inner->target:                  現在のプロジェクト：
-gui_window::main::inner->memo:                    説明（メモ）：
-gui_window::main::inner->tokens:                  総抽出語数
-gui_window::main::inner->types:                   異なり語数（使用）：
-gui_window::main::inner->docs:                    文書の単純集計：
-gui_window::main::inner->units:                   集計単位
-gui_window::main::inner->cases:                   ケース数
-gui_window::sysconfig->win_title:                 KH Coderの設定
-gui_window::sysconfig->words_ext:                 語を抽出する方法
-gui_window::sysconfig->chasen:                    茶筌（日本語）
-gui_window::sysconfig->mecab:                     MeCab（日本語）
-gui_window::sysconfig->p_chasenrc:                '    "chasenrc"のパス：'
-gui_window::sysconfig->p_grammer.cha:             '    "grammar.cha"のパス：'
-gui_window::sysconfig->p_chasen.exe:              '    chasen.exeのパス：'
-gui_window::sysconfig->p_mecab.exe:               '    mecab.exeのパス：'
-gui_window::sysconfig->need_inst:                 （要・別途インストール）
-gui_window::sysconfig->stemming:                  Stemming with "Snowball"
-gui_window::sysconfig->lang:                      '    Language:'
-gui_window::sysconfig->stopwords:                 '  Stop words:'
-gui_window::sysconfig->config:                    config
-gui_window::sysconfig->l_en:                      English
-gui_window::sysconfig->l_nl:                      Dutch *
-gui_window::sysconfig->l_fr:                      French *
-gui_window::sysconfig->l_de:                      German *
-gui_window::sysconfig->l_it:                      Italian *
-gui_window::sysconfig->l_pt:                      Portuguese *
-gui_window::sysconfig->l_es:                      Spanish *
-gui_window::sysconfig->apps:                      外部アプリケーション
-gui_window::sysconfig->web_browser:               Webブラウザ：
-gui_window::sysconfig->s_sheet:                   表計算（CSV/Excel）：
-gui_window::sysconfig->pdf:                       PDFビューア：
-gui_window::sysconfig->note_s:                    '※ %sはファイル名やURLで置き換えられます'
-gui_window::sysconfig->stanford:                  'Lemmatization with "Stanford POS Tagger"'
-gui_window::sysconfig->p_stanford_jar:            '    *.JAR file path:'
-gui_window::sysconfig->p_stanford_tag:            '    *.TAGGER file path:'
-gui_window::sysconfig->note_font:                 "フォントが変更されました。\n変更を有効にするために、KH Coderを再起動してください。"
-gui_window::sysconfig->browse_chasen:             ChaSen.exeを開いてください
-gui_window::sysconfig->browse_mecab:              MeCab.exeを開いてください
-gui_window::sysconfig->browse_stanford_jar:       stanford-postagger.jarを開いてください。
-gui_window::sysconfig->browse_stanford_tag:       モデルファイルを開いてください。
-gui_window::sysconfig->browse_:                   を開いてください。
-kh_sysconfig::chasen->path_error:                 Chasen.exeのパスが不正です
-kh_sysconfig::mecab->path_error:                  MeCab.exeのパスが不正です
-kh_sysconfig::stanford->path_error:               Stanford POS Taggerのパスが不正です
-gui_widget::mail_config->other:                   その他の設定
-gui_widget::mail_config->use_heap:                前処理効率化のためにデータをRAMに読み出す
-gui_widget::mail_config->sendmail:                前処理の完了をメールで通知する
-gui_widget::mail_config->smtp:                    '    SMTP Server: '
-gui_widget::mail_config->from:                    '    From: '
-gui_widget::mail_config->to:                      '    To: '
-gui_widget::mail_config->font:                    フォント設定：
-gui_widget::mail_config->config:                  変更
-gui_widget::mail_config->change_font:             フォントの変更
-gui_widget::mail_config->select_font:             フォント：
-gui_widget::mail_config->size:                    サイズ：
-gui_widget::mail_config->note_fs:                 KH Coderは計量テキスト分析を実践するためのツールです。
-kh_morpho::chasen->error:                         茶筌の起動に失敗しました。
-kh_morpho::chasen->error_config:                  事前にKH Coderの設定（茶筌関連）を行ってください。
-kh_morpho::mecab->error:                          MeCabの起動に失敗しました。
-kh_morpho::mecab->error_config:                   事前にKH Coderの設定（MeCab関連）を行ってください。
-kh_morpho::stanford->error:                       Stanford POS Taggerの起動に失敗しました。
-kh_morpho::stanford->no_java:                     "java.exeが見つかりませんでした。\n事前にJAVAをインストールしてください。"
-kh_morpho::stanford->error_config:                事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。
-kh_morpho::stemming->error:                       Stemmerによる処理に失敗しました。
-gui_window::main::menu->export_win_title:         現在のプロジェクトをKHC形式のファイルにエクスポート。
-gui_window::main::menu->import_win_title:         KHC形式のファイルからプロジェクトをインポート。
-gui_window::main::menu->import_save_path:         分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）
-gui_wait->done:                                   "処理が完了しました。\n経過時間： "
-gui_window::project_new->win_title:               新規プロジェクト
-gui_window::project_new->target_file:             分析対象ファイル：
-gui_window::project_new->target_char_code:        分析対象ファイルの文字コード：
-gui_window::project_new->auto_detect:             自動判別
-gui_window::project_new->memo:                    説明（メモ）：
-gui_window::project_new->browse_target:           分析対象ファイルを選択してください
-gui_window::project_open->win_title:              プロジェクト・マネージャ
-gui_window::project_open->target_file:            対象ファイル
-gui_window::project_open->memo:                   説明（メモ）
-gui_window::project_open->dir:                    ディレクトリ
-gui_window::project_open->del:                    削除
-gui_window::project_open->edit:                   編集
-gui_window::project_open->new:                    新規
-gui_window::project_open->open:                   開く
-gui_window::project_open->opened:                 "そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
-gui_window::project_open->select_one:             プロジェクトを選択してください。
-gui_window::project_edit->win_title:              説明（メモ）の編集
-gui_window::project_edit->target_file:            分析対象ファイル：
-gui_window::project_edit->target_char_code:       分析対象ファイルの文字コード：
-gui_window::project_edit->auto_detect:            自動判別
-gui_window::project_edit->memo:                   説明（メモ）：
-gui_window::datacheck->win_title:                 分析対象ファイルのチェックと修正
-gui_window::datacheck->headmark:                  '■■ '
-gui_window::datacheck->details:                   見つかった問題点の詳細：
-gui_window::datacheck->print:                     画面に表示
-gui_window::datacheck->save_as:                   ファイルに保存
-gui_window::datacheck->auto_correct:              '   分析対象ファイルの自動修正：'
-gui_window::datacheck->close:                     閉じる
-gui_window::datacheck->exec:                      実行
-gui_window::datacheck->save_as_win:               分析対象ファイル内に見つかった問題点の詳細を保存
-gui_window::datacheck->saved:                     ●見つかった問題点の詳細を次のファイルに保存しました：
-gui_window::datacheck->correction_done:           ●自動修正を行いました。
-gui_window::datacheck->file_backup:               ○修正前の分析対象ファイルを次の場所にバックアップしました：
-gui_window::datacheck->file_diff:                 ○修正箇所のリスト（diff）を次のファイルに保存しました：
-gui_window::datacheck->not_complete:              ○自動的に修正できない箇所が残っています。分析対象ファイルを直接修正して下さい。
-gui_window::datacheck->looks_complete:            ○分析対象ファイル内に発見された既知の問題点はすべて修正されました。
-kh_datacheck->error_m1:                           長すぎる見出し行があります（自動修正不可）
-kh_datacheck->error_c1:                           文字化けを含む行があります
-kh_datacheck->error_c2:                           望ましくない半角記号が含まれている行があります
-kh_datacheck->error_n1a:                          長すぎる行があります
-kh_datacheck->error_n1b:                          長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）
-kh_datacheck->error_mn:                           H1～H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）
-kh_datacheck->errors_summary:                     分析対象ファイル内に以下の問題点が発見されました（要約表示）：
-kh_datacheck->looks_good:                         "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。"
-kh_datacheck->errors_detail:                      分析対象ファイル内に以下の問題点が発見されました（詳細表示）：
-kh_datacheck->corrected:                          既知の問題点はすべて修正されています。
-kh_datacheck->lines:                              行
-gui_errormsg::mysql->fatal:                       "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
-gui_window::dictionary->win_title:                分析に使用する語の取捨選択
-gui_window::dictionary->pos:                      品詞による語の選択：
-gui_window::dictionary->force_pick:               強制抽出する語の指定：
-gui_window::dictionary->one_line1:                （複数の場合は改行で区切る）
-gui_window::dictionary->one_line2:                （複数の場合は改行で区切る）
-gui_window::dictionary->force_ignore:             使用しない語の指定：
-gui_window::dictionary->note1:                    "(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"
-gui_window::morpho_check->win_title:              語の抽出結果
-gui_window::morpho_check->note:                   '語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい'
-gui_window::morpho_check->details:                詳細表示
-gui_window::morpho_check->sentence:               文（分割済み）
-gui_window::morpho_detail->win_title:             語の抽出結果：詳細
-gui_window::morpho_detail->hyoso:                 表層語
-gui_window::morpho_detail->base:                  基本形
-gui_window::morpho_detail->pos_kh:                品詞
-gui_window::morpho_detail->pos_cha:               茶筌-品詞
-gui_window::morpho_detail->katuyo:                茶筌-活用
-gui_window::morpho_detail->previous:              前の検索結果
-gui_window::morpho_detail->next:                  次の検索結果
-gui_window::word_list->win_title:                 抽出語リスト - オプション
-gui_window::word_list->type:                      抽出語リストの形式：
-gui_window::word_list->hinshi:                    品詞別
-gui_window::word_list->top150:                    頻出150語
-gui_window::word_list->single:                    1列
-gui_window::word_list->count:                     記入する数値：
-gui_window::word_list->tf:                        出現回数（TF）
-gui_window::word_list->df:                        文書数（DF）
-gui_window::word_list->file_type:                 出力するファイルの形式：
-gui_window::word_list->csv:                       カンマ区切り (*.csv)
-gui_window::word_list->xls:                       Excel (*.xls)
-mysql_words->tf:                                  出現回数
-mysql_words->df:                                  文書数
-mysql_words->words:                               抽出語
-mysql_words->pos:                                 品詞
-gui_window::word_freq->win_title:                 出現回数：分布
-gui_window::word_freq->descr:                     ■記述統計
-gui_window::word_freq->freq_tab:                  ■度数分布表
-gui_window::word_freq->tf:                        出現回数
-gui_window::word_freq->freq:                      度数
-gui_window::word_freq->pcnt:                      パーセント
-gui_window::word_freq->c_freq:                    累積度数
-gui_window::word_freq->c_pcnt:                    累積パーセント
-gui_window::word_freq->refresh:                   再計算
-mysql_words->types:                               異なり語数 (n)
-mysql_words->mean_tf:                             出現回数の平均
-mysql_words->std_dev_tf:                          出現回数の標準偏差
-gui_window::word_freq_plot->win_title:            出現回数：分布：プロット
-gui_window::word_freq_plot->log:                  対数軸の使用：
-gui_window::word_freq_plot->x:                    出現回数(X)
-gui_window::word_freq_plot->xy:                   出現回数(X)と度数(Y)
-gui_window::word_freq_plot->none:                 なし
-gui_window::word_freq_plot->saving:               名前を付けてプロットを保存
-gui_window::word_df_freq->win_title:              文書数：分布
-gui_window::word_df_freq->descr:                  ■記述統計
-gui_window::word_df_freq->freq_tab:               ■度数分布表
-gui_window::word_df_freq->df:                     文書数
-gui_window::word_df_freq->freq:                   度数
-gui_window::word_df_freq->pcnt:                   パーセント
-gui_window::word_df_freq->c_freq:                 累積度数
-gui_window::word_df_freq->c_pcnt:                 累積パーセント
-gui_window::word_df_freq->units:                  '  集計単位：'
-gui_window::word_df_freq->win_title:              文書数：分布
-mysql_words->mean_df:                             文書数の平均
-mysql_words->std_dev_df:                          文書数の標準偏差
-gui_window::word_df_freq_plot->win_title:         文書数：分布：プロット
-gui_window::word_df_freq_plot->log:               対数軸の使用：
-gui_window::word_df_freq_plot->x:                 文書数(X)
-gui_window::word_df_freq_plot->xy:                文書数(X)と度数(Y)
-gui_window::word_df_freq_plot->none:              なし
-gui_window::word_df_freq_plot->saving:            名前を付けてプロットを保存
-gui_window::word_tf_df->win_title:                出現回数と文書数
-gui_window::word_tf_df->units:                    集計単位：
-gui_window::word_tf_df->log:                      対数軸の使用：
-gui_window::word_tf_df->x:                        出現回数(X)
-gui_window::word_tf_df->xy:                       出現回数(X)と文書数(Y)
-gui_window::word_tf_df->none:                     なし
-gui_window::word_tf_df->tf:                       出現回数
-gui_window::word_tf_df->df:                       文書数
-gui_window::word_tf_df->saving:                   名前を付けてプロットを保存
-gui_window::word_search->win_title:               抽出語検索
-gui_window::word_search->search:                  検索
-gui_window::word_search->baseform:                抽出語検索
-gui_window::word_search->view_conj:               活用形を表示
-gui_window::word_search->or:                      OR検索
-gui_window::word_search->and:                     AND検索
-gui_window::word_search->part:                    部分一致
-gui_window::word_search->comp:                    完全一致
-gui_window::word_search->forw:                    前方一致
-gui_window::word_search->back:                    後方一致
-gui_window::word_search->word:                    抽出語
-gui_window::word_search->pos:                     品詞
-gui_window::word_search->freq:                    頻度
-gui_window::word_search->kwic:                    KWICコンコーダンス
-gui_window::word_search->pos_conj:                品詞/活用
-gui_window::word_search->morph:                   形態素
-gui_window::word_search->conj:                    活用
-gui_window::word_conc->win_title:                 KWICコンコーダンス
-gui_window::word_conc->word:                      抽出語：
-gui_window::word_conc->pos:                       '    品詞：'
-gui_window::word_conc->conj:                      '    活用形：'
-gui_window::word_conc->additional:                追加条件
-gui_window::word_conc->search:                    検索
-gui_window::word_conc->ns:                        出現順
-gui_window::word_conc->l5:                        左5
-gui_window::word_conc->l4:                        左4
-gui_window::word_conc->l3:                        左3
-gui_window::word_conc->l2:                        左2
-gui_window::word_conc->l1:                        左1
-gui_window::word_conc->r5:                        右5
-gui_window::word_conc->r4:                        右4
-gui_window::word_conc->r3:                        右3
-gui_window::word_conc->r2:                        右2
-gui_window::word_conc->r1:                        右1
-gui_window::word_conc->center:                    活用形
-gui_window::word_conc->sort1:                     '  ソート1：'
-gui_window::word_conc->sort2:                     '  ソート2：'
-gui_window::word_conc->sort3:                     '  ソート3：'
-gui_window::word_conc->retrieveNum1:              '  （前後'
-gui_window::word_conc->retrieveNum2:              語を表示）
-gui_window::word_conc->viewDoc:                   文書表示
-gui_window::word_conc->viewingUnit:               ' 表示単位：'
-gui_window::word_conc->prev:                      前
-gui_window::word_conc->next:                      次
-gui_window::word_conc->hits:                      '  ヒット数：'
-gui_window::word_conc->currentDoc:                '・現在表示中の検索結果： '
-gui_window::word_conc->saving:                    KWICコンコーダンスの結果を保存
-gui_window::word_conc->viewing:                   ', 表示：'
-gui_window::word_conc->stats:                     集計
-gui_window::word_conc_coloc->win_title:           コロケーション統計
-gui_window::word_conc_coloc->word:                '抽出語：'
-gui_window::word_conc_coloc->pos:                 '  品詞：'
-gui_window::word_conc_coloc->conj:                '  活用形：'
-gui_window::word_conc_coloc->hits:                '  ヒット数：'
-gui_window::word_conc_coloc->h_word:              抽出語
-gui_window::word_conc_coloc->h_pos:               品詞
-gui_window::word_conc_coloc->h_score:             スコア
-gui_window::word_conc_coloc->h_l_total:           左合計
-gui_window::word_conc_coloc->h_r_total:           右合計
-gui_window::word_conc_coloc->l_total:             左合計
-gui_window::word_conc_coloc->r_total:             右合計
-gui_window::word_conc_coloc->l5:                  左5
-gui_window::word_conc_coloc->l4:                  左4
-gui_window::word_conc_coloc->l3:                  左3
-gui_window::word_conc_coloc->l2:                  左2
-gui_window::word_conc_coloc->l1:                  左1
-gui_window::word_conc_coloc->r5:                  右5
-gui_window::word_conc_coloc->r4:                  右4
-gui_window::word_conc_coloc->r3:                  右3
-gui_window::word_conc_coloc->r2:                  右2
-gui_window::word_conc_coloc->r1:                  右1
-gui_window::word_conc_coloc->total:               合計
-gui_window::word_conc_coloc->sort:                '  ソート：'
-gui_window::word_conc_coloc->filter:              フィルタ設定
-gui_window::word_conc_coloc->additional:          '  ＋追加条件'
-gui_window::word_conc_coloc_opt->win_title:       コロケーション統計・フィルタ設定
-gui_window::word_conc_coloc_opt->filter_by_pos:   品詞による語の取捨選択：
-gui_window::word_conc_coloc_opt->view:            表示する語の数：
-gui_window::word_conc_coloc_opt->top:             '　　　上位'
-gui_window::word_conc_opt->win_title:             追加条件（KWICコンコーダンス）
-gui_window::word_conc_opt->preface1:              「左右（前後）に特定の語が出現していること」という条件を追加でます。
-gui_window::word_conc_opt->preface2:              '  条件を追加するには、まず「位置」を指定して下さい。'
-gui_window::word_conc_opt->l5:                    左5
-gui_window::word_conc_opt->l4:                    左4
-gui_window::word_conc_opt->l3:                    左3
-gui_window::word_conc_opt->l2:                    左2
-gui_window::word_conc_opt->l1:                    左1
-gui_window::word_conc_opt->r5:                    右5
-gui_window::word_conc_opt->r4:                    右4
-gui_window::word_conc_opt->r3:                    右3
-gui_window::word_conc_opt->r2:                    右2
-gui_window::word_conc_opt->r1:                    右1
-gui_window::word_conc_opt->rl:                    左右1-5
-gui_window::word_conc_opt->r:                     右1-5
-gui_window::word_conc_opt->l:                     左1-5
-gui_window::word_conc_opt->0:                     指定なし
-gui_window::word_conc_opt->opt1:                  追加条件1
-gui_window::word_conc_opt->opt2:                  追加条件2
-gui_window::word_conc_opt->opt3:                  追加条件3
-gui_window::word_conc_opt->position:              位置：
-gui_window::word_conc_opt->word:                  '  抽出語：'
-gui_window::word_conc_opt->pos:                   '  品詞：'
-gui_window::word_conc_opt->conj:                  '  活用形：'
-gui_window::doc_view->win_title:                  文書表示
-gui_window::doc_view->in_the_file:                ファイル内：
-gui_window::doc_view->p1:                         << 前
-gui_window::doc_view->n1:                         後 >>
-gui_window::doc_view->in_the_results:             '  検索結果：'
-gui_window::doc_view->p2:                         << 前
-gui_window::doc_view->n2:                         次 >>
-gui_window::doc_view->highlight:                  強調
-gui_window::doc_view->current_doc:                '・現在表示中の文書：  '
-gui_window::force_color->win_title:               '強調する言葉'
-gui_window::force_color->desc:                    '■以下の言葉が常に強調されます。'
-gui_window::force_color->highlight_h:             '　言葉　'
-gui_window::force_color->type_h:                  '　種類　'
-gui_window::force_color->delete:                  '選択した言葉を削除'
-gui_window::force_color->highlight:               '言葉：'
-gui_window::force_color->type:                    '種類：'
-gui_window::force_color->word:                    '抽出語'
-gui_window::force_color->string:                  '文字列'
-gui_window::force_color->add:                     '追加'
-gui_window::force_color->word:                    '抽出語'
-gui_window::force_color->string:                  '文字列'
-gui_window::force_color->no_word:                 '言葉が入力されていません。'
-gui_window::force_color->exists:                  'その言葉は既に登録されています。'
-gui_window::word_ass->win_title:                  '関連語探索'
-gui_window::word_ass->direct:                     '直接入力：'
-gui_window::word_ass->go:                         '集計'
-gui_window::word_ass->unit:                       '集計単位：'
-gui_window::word_ass->and:                        'AND検索'
-gui_window::word_ass->or:                         'OR検索'
-gui_window::word_ass->word_h:                     '抽出語'
-gui_window::word_ass->pos_h:                      '品詞'
-gui_window::word_ass->prob_h:                     '全体'
-gui_window::word_ass->cond_h:                     '共起'
-gui_window::word_ass->sort_h:                     'ソート'
-gui_window::word_ass->sort:                       ' ソート：'
-gui_window::word_ass->fr:                         '共起'
-gui_window::word_ass->sa:                         '確率差'
-gui_window::word_ass->hi:                         '確率比'
-gui_window::word_ass->18:                         'χ2乗'
-gui_window::word_ass->filter:                     'フィルタ設定'
-gui_window::word_ass->net:                        '共起ネット'
-gui_window::word_ass->direct_code:                '＃直接入力'
-gui_window::word_ass->no_code:                    '＃コード無し'
-gui_window::word_ass->hits0:                      ' 文書数： 0'
-gui_window::word_ass->hits:                       '文書数： '
-gui_window::word_ass->msg_l5:                     'リストアップされている語の数が5未満のため、処理を中止します。'
-gui_widget::codf->cod_rule_f:                     'コーディングルール・ファイル：'
-gui_widget::codf->reload:                         'リロード'
-gui_widget::codf->no_file:                        '選択ファイル無し'
-gui_widget::codf->browse_title:                   'コーディング・ルール・ファイルを選択してください'
-gui_window::r_plot::selected_netgraph->color:     ' カラー：'
-gui_window::r_plot::selected_netgraph->win_title: '関連語・共起ネットワーク'
-gui_window::r_plot->options:                      '調整'
-gui_window::r_plot->saving:                       'プロットを保存'
-gui_window::r_plot_opt::selected_netgraph->win_title: '関連語・共起ネットワーク：調整'
-gui_window::word_ass_opt->win_title:              '関連語探索・フィルタ設定'
-gui_window::word_ass_opt->by_pos:                 '・品詞による語の取捨選択'
-gui_window::word_ass_opt->by_df:                  '・全体での出現数による語の取捨選択'
-gui_window::word_ass_opt->min_df:                 '　　　最低文書数：'
-gui_window::word_ass_opt->view:                   '・表示する語の数'
-gui_window::word_ass_opt->top:                    '　　　上位：'
-gui_widget::r_font->font_size:                    'フォントサイズ：'
-gui_widget::r_font->pcnt:                         '% '
-gui_widget::r_font->bold:                         '太字'
-gui_widget::r_font->plot_size:                    ' プロットサイズ：'
-gui_widget::words->unit:                          '集計単位：'
-gui_widget::words->by_tf:                         '最小/最大 出現数による語の取捨選択'
-gui_widget::words->min_tf:                        '    最小出現数：'
-gui_widget::words->max_tf:                        '  最大出現数：'
-gui_widget::words->by_df:                         '最小/最大 文書数による語の取捨選択'
-gui_widget::words->min_df:                        '    最小文書数：'
-gui_widget::words->max_df:                        '  最大文書数：'
-gui_widget::words->df_unit:                       '    文書と見なす単位：'
-gui_widget::words->by_pos:                        '品詞による語の取捨選択'
-gui_widget::words->check:                         'チェック'
-gui_widget::words->no_pos_selected:               '品詞が1つも選択されていません。'
-gui_widget::words->check_desc1:                   '現在の設定で'
-gui_widget::words->check_desc2:                   'される語の数：'
-gui_widget::r_xy->cmp_plot:                       'プロットする成分：'
-gui_widget::r_xy->x:                              ' X軸'
-gui_widget::r_xy->y:                              ' Y軸'
-gui_window::word_corresp->option_words:           '■布置する語の選択'
-gui_window::word_corresp->option_ca:              '■対応分析の設定'
-gui_window::word_corresp->matrix:                 '分析に使用するデータ表の種類：'
-gui_window::word_corresp->w_d:                    '抽出語 × 文書'
-gui_window::word_corresp->unit:                   '集計単位：'
-gui_window::word_corresp->biplot:                 '見出しまたは文書番号を同時布置'
-gui_window::word_corresp->w_v:                    '抽出語 × 外部変数'
-gui_window::word_corresp->flw:                    '差異が顕著な語を分析に使用：'
-gui_window::word_corresp->flt:                    '原点から離れた語のみラベル表示：'
-gui_window::word_corresp->top:                    '上位'
-gui_window::word_corresp->words:                  '語'
-gui_window::word_corresp->na:                     '利用不可'
-gui_window::word_corresp->select_pos:             '品詞が1つも選択されていません。'
-gui_window::word_corresp->select_var:             '外部変数を1つ以上選択してください。'
-gui_window::word_corresp->check_var_unit:         '現在の所、集計単位が異なる外部変数を同時に使用することはできません。'
-gui_window::word_corresp->select_3words:          '少なくとも3つ以上の抽出語を布置して下さい。'
-gui_window::word_corresp->too_many1:              '現在の設定では'
-gui_window::word_corresp->too_many2:              '語が布置されます。'
-gui_window::word_corresp->too_many3:              '布置する語の数は100～150程度におさえることを推奨します。'
-gui_window::word_corresp->too_many4:              '続行してよろしいですか？'
-gui_window::word_corresp->win_title:              '抽出語・対応分析：オプション'
-gui_window::word_corresp->dim:                    '成分'
-gui_window::word_corresp->exp:                    '寄与率'
-gui_window::word_corresp->nav:                    '欠損値'
-gui_window::word_corresp->eig:                    '固有値'
-gui_window::word_corresp->plot:                   '布置'
-gui_window::r_plot_opt::word_corresp->win_title:  '抽出語・対応分析：調整'
-gui_widget::bubble->bubble:                       'バブルプロット：'
-gui_widget::bubble->size:                         'バブルの大きさ'
-gui_widget::bubble->variable:                     '変数の値 / 見出しの大きさも可変に'
-gui_widget::bubble->standardize:                  'バブルの大きさを標準化：'
-gui_widget::bubble->variance:                     '分散'
-gui_window::r_plot::word_corresp->d_l:            'ドットとラベル'
-gui_window::r_plot::word_corresp->d:              'ドットのみ'
-gui_window::r_plot::word_corresp->col:            'カラー'
-gui_window::r_plot::word_corresp->gray:           'グレースケール'
-gui_window::r_plot::word_corresp->var:            '変数のみ'
-gui_window::r_plot::word_corresp->view:           ' 表示：'
-gui_window::r_plot::word_corresp->win_title:      '抽出語・対応分析'
-gui_window::cod_corresp->win_title:               'コーディング・対応分析：オプション'
-gui_window::cod_corresp->coding_unit:             'コーディング単位：'
-gui_window::cod_corresp->select_codes:            'コード選択：'
-gui_window::cod_corresp->sel3:                    '    ※コードを3つ以上選択して下さい。'
-gui_window::cod_corresp->matrix_type:             '分析に使用するデータ表の種類：'
-gui_window::cod_corresp->c_d:                     'コード ｘ 文書（同時布置なし）'
-gui_window::cod_corresp->c_dd:                    'コード ｘ 上位の章・節・段落'
-gui_window::cod_corresp->ag_unit:                 '    集計単位：'
-gui_window::cod_corresp->c_v:                     'コード ｘ 外部変数'
-gui_window::cod_corresp->flw:                     '差異が顕著なコードを分析に使用：'
-gui_window::cod_corresp->top:                     '上位'
-gui_window::cod_corresp->flt:                     '原点から離れたコードのみラベル表示：'
-gui_window::cod_corresp->na:                      '利用不可'
-gui_window::r_plot_opt::cod_corresp->win_title:   'コーディング・対応分析：調整'
-gui_window::r_plot::cod_corresp->win_title:       'コーディング・対応分析'
+global:
+    all:                      すべて
+    browse:                   参照
+    cancel:                   キャンセル
+    clear:                    クリア
+    close:                    閉じる
+    cont_big_pros:           "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
+    copy:                     コピー
+    csv_f:                    CSVファイル
+    default:                  既定値
+    ok:                       OK
+    paragraph:                段落
+    plot:                     プロット
+    r_dont_close:             実行時にこの画面を閉じない
+    r_net_col_cnt_b:          中心性（媒介）
+    r_net_col_cnt_d:          中心性（次数）
+    r_net_col_cnt_v:          中心性（固有ベクトル）
+    r_net_col_com_b:          サブグラフ検出（媒介）
+    r_net_col_com_m:          サブグラフ検出（modularity）
+    r_net_col_none:           なし
+    r_net_edges:              描画する共起関係（edge）
+    r_net_font_too:           フォントも大きく ※EMFやEPSでの出力・印刷向け
+    r_net_freq_size:          出現数の多い語ほど大きい円で描画
+    r_net_ijou:               以上
+    r_net_jac:                Jaccard係数：
+    r_net_jac_width:          強い共起関係ほど太い線で描画
+    r_net_msg_fail:           調整に失敗しましました。
+    r_net_num:                描画数：
+    r_net_smaller:            すべての語を小さめの円で描画
+    save:                     保存
+    search:                   検索
+    sentence:                 文
+    spss_f:                   SPSSファイル
+    tab_f:                    タブ区切り
+    wm_f:                     不定長CSV （WordMiner）
+gui_errormsg::mysql:
+    fatal:                   "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
+gui_wait:
+    done:                    "処理が完了しました。\n経過時間： "
+gui_widget::bubble:
+    bubble:                   バブルプロット：
+    size:                     バブルの大きさ
+    standardize:              バブルの大きさを標準化：
+    variable:                 変数の値 / 見出しの大きさも可変に
+    variance:                 分散
+gui_widget::codf:
+    browse_title:             コーディング・ルール・ファイルを選択してください
+    cod_rule_f:               コーディングルール・ファイル：
+    no_file:                  選択ファイル無し
+    reload:                   リロード
+gui_widget::mail_config:
+    change_font:              フォントの変更
+    config:                   変更
+    font:                     フォント設定：
+    from:                     '    From: '
+    note_fs:                  KH Coderは計量テキスト分析を実践するためのツールです。
+    other:                    その他の設定
+    select_font:              フォント：
+    sendmail:                 前処理の完了をメールで通知する
+    size:                     サイズ：
+    smtp:                     '    SMTP Server: '
+    to:                       '    To: '
+    use_heap:                 前処理効率化のためにデータをRAMに読み出す
+gui_widget::r_font:
+    bold:                     太字
+    font_size:                フォントサイズ：
+    pcnt:                     '% '
+    plot_size:                ' プロットサイズ：'
+gui_widget::r_xy:
+    cmp_plot:                 プロットする成分：
+    x:                        ' X軸'
+    y:                        ' Y軸'
+gui_widget::words:
+    by_df:                    最小/最大 文書数による語の取捨選択
+    by_pos:                   品詞による語の取捨選択
+    by_tf:                    最小/最大 出現数による語の取捨選択
+    check:                    チェック
+    check_desc1:              現在の設定で
+    check_desc2:              される語の数：
+    df_unit:                  '    文書と見なす単位：'
+    max_df:                   '  最大文書数：'
+    max_tf:                   '  最大出現数：'
+    min_df:                   '    最小文書数：'
+    min_tf:                   '    最小出現数：'
+    no_pos_selected:          品詞が1つも選択されていません。
+    unit:                     集計単位：
+gui_window::about:
+    close:                    閉じる
+    higuchi:                  樋口耕一
+    kawabata:                 川端亮
+    win_title:                KH Coderについて
+gui_window::cod_corresp:
+    ag_unit:                  '    集計単位：'
+    c_d:                      コード ｘ 文書（同時布置なし）
+    c_dd:                     コード ｘ 上位の章・節・段落
+    c_v:                      コード ｘ 外部変数
+    coding_unit:              コーディング単位：
+    flt:                      原点から離れたコードのみラベル表示：
+    flw:                      差異が顕著なコードを分析に使用：
+    matrix_type:              分析に使用するデータ表の種類：
+    na:                       利用不可
+    sel3:                     '    ※コードを3つ以上選択して下さい。'
+    select_codes:             コード選択：
+    top:                      上位
+    win_title:                コーディング・対応分析：オプション
+gui_window::datacheck:
+    auto_correct:             '   分析対象ファイルの自動修正：'
+    close:                    閉じる
+    correction_done:          ●自動修正を行いました。
+    details:                  見つかった問題点の詳細：
+    exec:                     実行
+    file_backup:              ○修正前の分析対象ファイルを次の場所にバックアップしました：
+    file_diff:                ○修正箇所のリスト（diff）を次のファイルに保存しました：
+    headmark:                 '■■ '
+    looks_complete:           ○分析対象ファイル内に発見された既知の問題点はすべて修正されました。
+    not_complete:             ○自動的に修正できない箇所が残っています。分析対象ファイルを直接修正して下さい。
+    print:                    画面に表示
+    save_as:                  ファイルに保存
+    save_as_win:              分析対象ファイル内に見つかった問題点の詳細を保存
+    saved:                    ●見つかった問題点の詳細を次のファイルに保存しました：
+    win_title:                分析対象ファイルのチェックと修正
+gui_window::dictionary:
+    force_ignore:             使用しない語の指定：
+    force_pick:               強制抽出する語の指定：
+    note1:                    "(*) 「強制抽出する語」の指定は、再度\n    前処理を行うまで反映されません。"
+    one_line1:                （複数の場合は改行で区切る）
+    one_line2:                （複数の場合は改行で区切る）
+    pos:                      品詞による語の選択：
+    win_title:                分析に使用する語の取捨選択
+gui_window::doc_view:
+    current_doc:              '・現在表示中の文書：  '
+    highlight:                強調
+    in_the_file:              ファイル内：
+    in_the_results:           '  検索結果：'
+    n1:                       '後 >>'
+    n2:                       '次 >>'
+    p1:                       << 前
+    p2:                       << 前
+    win_title:                文書表示
+gui_window::force_color:
+    add:                      追加
+    delete:                   選択した言葉を削除
+    desc:                     ■以下の言葉が常に強調されます。
+    exists:                   その言葉は既に登録されています。
+    highlight:                言葉：
+    highlight_h:              　言葉　
+    no_word:                  言葉が入力されていません。
+    string:                   文字列
+    type:                     種類：
+    type_h:                   　種類　
+    win_title:                強調する言葉
+    word:                     抽出語
+gui_window::main::inner:
+    cases:                    ケース数
+    docs:                     文書の単純集計：
+    memo:                     説明（メモ）：
+    target:                   現在のプロジェクト：
+    tokens:                   総抽出語数
+    types:                    異なり語数（使用）：
+    units:                    集計単位
+gui_window::main::menu:
+    about:                    KH Coderについて
+    bayes_classi:             学習結果を用いた自動分類
+    bayes_learn:              外部変数から学習
+    check:                    分析対象ファイルのチェック
+    check_classi:             分類ログファイルの内容を確認
+    check_learning:           学習結果ファイルの内容を確認
+    check_morpho:             語の抽出結果を確認
+    close:                    閉じる
+    cluster:                  クラスター分析
+    coding:                   コーディング
+    config:                   設定
+    corresp:                  対応分析
+    cross_st:                 章・節・段落ごとの集計
+    cross_vr:                 外部変数とのクロス集計
+    desc_stats:               記述統計
+    doc_search:               文書検索
+    doc_term_mtrx:            「文書ｘ抽出語」表の出力
+    docs:                     文書
+    docs_bayes:               ベイズ学習による分類
+    exec_sql:                 SQL文の実行
+    exit:                     終了
+    export:                   エクスポート
+    export_win_title:         現在のプロジェクトをKHC形式のファイルにエクスポート。
+    freq:                     単純集計
+    freq_df:                  出現文書数(DF)の分布
+    freq_tf:                  出現回数(TF)の分布
+    h_cluster:                階層的クラスター分析
+    help:                     ヘルプ(H)
+    import:                   インポート
+    import_save_path:         分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）
+    import_win_title:         KHC形式のファイルからプロジェクトをインポート。
+    jac_mtrx:                 類似度行列
+    kwic:                     KWICコンコーダンス
+    man:                      マニュアル(PDF)
+    mds:                      多次元尺度構成法
+    netg:                     共起ネットワーク
+    new:                      新規
+    open:                     開く
+    output_cod:               コーディング結果の出力
+    partial:                  部分テキストの取り出し
+    plugin:                   プラグイン
+    prep:                     前処理(R)
+    project:                  プロジェクト(P)
+    read:                     読み込み
+    run_prep:                 前処理の実行
+    term_vec_mtrx:            「抽出語ｘ文脈ベクトル」表の出力
+    text_format:              テキストファイルの変形
+    tf_df:                    出現回数ｘ文書数のプロット
+    to_csv:                   HTMLからCSVに変換
+    tools:                    ツール(T)
+    use_chasen:               茶筌を利用
+    use_termextract:          TermExtractを利用
+    var_list:                 リストと管理
+    vars_heads:               外部変数と見出し
+    web:                      最新情報(Web)
+    word_ass:                 関連語検索
+    word_freq:                抽出語リスト
+    word_search:              抽出語検索
+    words:                    抽出語
+    words_cluster:            複合語の検出
+    words_selection:          語の取捨選択
+gui_window::morpho_check:
+    details:                  詳細表示
+    note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい
+    sentence:                 文（分割済み）
+    win_title:                語の抽出結果
+gui_window::morpho_detail:
+    base:                     基本形
+    hyoso:                    表層語
+    katuyo:                   茶筌-活用
+    next:                     次の検索結果
+    pos_cha:                  茶筌-品詞
+    pos_kh:                   品詞
+    previous:                 前の検索結果
+    win_title:                語の抽出結果：詳細
+gui_window::project_edit:
+    auto_detect:              自動判別
+    memo:                     説明（メモ）：
+    target_char_code:         分析対象ファイルの文字コード：
+    target_file:              分析対象ファイル：
+    win_title:                説明（メモ）の編集
+gui_window::project_new:
+    auto_detect:              自動判別
+    browse_target:            分析対象ファイルを選択してください
+    memo:                     説明（メモ）：
+    target_char_code:         分析対象ファイルの文字コード：
+    target_file:              分析対象ファイル：
+    win_title:                新規プロジェクト
+gui_window::project_open:
+    del:                      削除
+    dir:                      ディレクトリ
+    edit:                     編集
+    memo:                     説明（メモ）
+    new:                      新規
+    open:                     開く
+    opened:                   "そのプロジェクトは現在開かれています。\n指定された操作を実行できません。"
+    select_one:               プロジェクトを選択してください。
+    target_file:              対象ファイル
+    win_title:                プロジェクト・マネージャ
+gui_window::r_plot:
+    options:                  調整
+    saving:                   プロットを保存
+gui_window::r_plot::cod_corresp:
+    win_title:                コーディング・対応分析
+gui_window::r_plot::selected_netgraph:
+    color:                    ' カラー：'
+    win_title:                関連語・共起ネットワーク
+gui_window::r_plot::word_corresp:
+    col:                      カラー
+    d:                        ドットのみ
+    d_l:                      ドットとラベル
+    gray:                     グレースケール
+    var:                      変数のみ
+    view:                     ' 表示：'
+    win_title:                抽出語・対応分析
+gui_window::r_plot_opt::cod_corresp:
+    win_title:                コーディング・対応分析：調整
+gui_window::r_plot_opt::selected_netgraph:
+    win_title:                関連語・共起ネットワーク：調整
+gui_window::r_plot_opt::word_corresp:
+    win_title:                抽出語・対応分析：調整
+gui_window::sql_select:
+    Server:                   '  サーバー： '
+    exec:                     実行
+    max_rows:                 最大表示数：
+    rows:                     '  出力された行数： '
+    sql_error:                SQL文にエラーがありました。
+    win_title:                SQL文の実行
+gui_window::sysconfig:
+    apps:                     外部アプリケーション
+    browse_:                  を開いてください。
+    browse_chasen:            ChaSen.exeを開いてください
+    browse_mecab:             MeCab.exeを開いてください
+    browse_stanford_jar:      stanford-postagger.jarを開いてください。
+    browse_stanford_tag:      モデルファイルを開いてください。
+    chasen:                   茶筌（日本語）
+    config:                   config
+    l_de:                     German *
+    l_en:                     English
+    l_es:                     Spanish *
+    l_fr:                     French *
+    l_it:                     Italian *
+    l_nl:                     Dutch *
+    l_pt:                     Portuguese *
+    lang:                     '    Language:'
+    mecab:                    MeCab（日本語）
+    need_inst:                （要・別途インストール）
+    note_font:               "フォントが変更されました。変更を有効にするために、KH Coderを再起動してください。"
+    note_s:                   ※ %sはファイル名やURLで置き換えられます
+    p_chasen.exe:             '    chasen.exeのパス：'
+    p_chasenrc:               '    "chasenrc"のパス：'
+    p_grammer.cha:            '    "grammar.cha"のパス：'
+    p_mecab.exe:              '    mecab.exeのパス：'
+    p_stanford_jar:           '    *.JAR file path:'
+    p_stanford_tag:           '    *.TAGGER file path:'
+    pdf:                      PDFビューア：
+    s_sheet:                  表計算（CSV/Excel）：
+    stanford:                 Lemmatization with "Stanford POS Tagger"
+    stemming:                 Stemming with "Snowball"
+    stopwords:                '  Stop words:'
+    web_browser:              Webブラウザ：
+    win_title:                KH Coderの設定
+    words_ext:                語を抽出する方法
+gui_window::word_ass:
+    18:                       χ2乗
+    and:                      AND検索
+    cond_h:                   共起
+    direct:                   直接入力：
+    direct_code:              ＃直接入力
+    filter:                   フィルタ設定
+    fr:                       共起
+    go:                       集計
+    hi:                       確率比
+    hits:                     '文書数： '
+    hits0:                    ' 文書数： 0'
+    msg_l5:                   リストアップされている語の数が5未満のため、処理を中止します。
+    net:                      共起ネット
+    no_code:                  ＃コード無し
+    or:                       OR検索
+    pos_h:                    品詞
+    prob_h:                   全体
+    sa:                       確率差
+    sort:                     ' ソート：'
+    sort_h:                   ソート
+    unit:                     集計単位：
+    win_title:                関連語探索
+    word_h:                   抽出語
+gui_window::word_ass_opt:
+    by_df:                    ・全体での出現数による語の取捨選択
+    by_pos:                   ・品詞による語の取捨選択
+    min_df:                   　　　最低文書数：
+    top:                      　　　上位：
+    view:                     ・表示する語の数
+    win_title:                関連語探索・フィルタ設定
+gui_window::word_conc:
+    additional:               追加条件
+    center:                   活用形
+    conj:                     '    活用形：'
+    currentDoc:               '・現在表示中の検索結果： '
+    hits:                     '  ヒット数：'
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    next:                     次
+    ns:                       出現順
+    pos:                      '    品詞：'
+    prev:                     前
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    retrieveNum1:             '  （前後'
+    retrieveNum2:             語を表示）
+    saving:                   KWICコンコーダンスの結果を保存
+    search:                   検索
+    sort1:                    '  ソート1：'
+    sort2:                    '  ソート2：'
+    sort3:                    '  ソート3：'
+    stats:                    集計
+    viewDoc:                  文書表示
+    viewing:                  ', 表示：'
+    viewingUnit:              ' 表示単位：'
+    win_title:                KWICコンコーダンス
+    word:                     抽出語：
+gui_window::word_conc_coloc:
+    additional:               '  ＋追加条件'
+    conj:                     '  活用形：'
+    filter:                   フィルタ設定
+    h_l_total:                左合計
+    h_pos:                    品詞
+    h_r_total:                右合計
+    h_score:                  スコア
+    h_word:                   抽出語
+    hits:                     '  ヒット数：'
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    l_total:                  左合計
+    pos:                      '  品詞：'
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    r_total:                  右合計
+    sort:                     '  ソート：'
+    total:                    合計
+    win_title:                コロケーション統計
+    word:                     抽出語：
+gui_window::word_conc_coloc_opt:
+    filter_by_pos:            品詞による語の取捨選択：
+    top:                      　　　上位
+    view:                     表示する語の数：
+    win_title:                コロケーション統計・フィルタ設定
+gui_window::word_conc_opt:
+    0:                        指定なし
+    conj:                     '  活用形：'
+    l:                        左1-5
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    opt1:                     追加条件1
+    opt2:                     追加条件2
+    opt3:                     追加条件3
+    pos:                      '  品詞：'
+    position:                 位置：
+    preface1:                 「左右（前後）に特定の語が出現していること」という条件を追加でます。
+    preface2:                 '  条件を追加するには、まず「位置」を指定して下さい。'
+    r:                        右1-5
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    rl:                       左右1-5
+    win_title:                追加条件（KWICコンコーダンス）
+    word:                     '  抽出語：'
+gui_window::word_corresp:
+    biplot:                   見出しまたは文書番号を同時布置
+    check_var_unit:           現在の所、集計単位が異なる外部変数を同時に使用することはできません。
+    dim:                      成分
+    eig:                      固有値
+    exp:                      寄与率
+    flt:                      原点から離れた語のみラベル表示：
+    flw:                      差異が顕著な語を分析に使用：
+    matrix:                   分析に使用するデータ表の種類：
+    na:                       利用不可
+    nav:                      欠損値
+    option_ca:                ■対応分析の設定
+    option_words:             ■布置する語の選択
+    plot:                     布置
+    select_3words:            少なくとも3つ以上の抽出語を布置して下さい。
+    select_pos:               品詞が1つも選択されていません。
+    select_var:               外部変数を1つ以上選択してください。
+    too_many1:                現在の設定では
+    too_many2:                語が布置されます。
+    too_many3:                布置する語の数は100～150程度におさえることを推奨します。
+    too_many4:                続行してよろしいですか？
+    top:                      上位
+    unit:                     集計単位：
+    w_d:                      抽出語 × 文書
+    w_v:                      抽出語 × 外部変数
+    win_title:                抽出語・対応分析：オプション
+    words:                    語
+gui_window::word_df_freq:
+    c_freq:                   累積度数
+    c_pcnt:                   累積パーセント
+    descr:                    ■記述統計
+    df:                       文書数
+    freq:                     度数
+    freq_tab:                 ■度数分布表
+    pcnt:                     パーセント
+    units:                    '  集計単位：'
+    win_title:                文書数：分布
+gui_window::word_df_freq_plot:
+    log:                      対数軸の使用：
+    none:                     なし
+    saving:                   名前を付けてプロットを保存
+    win_title:                文書数：分布：プロット
+    x:                        文書数(X)
+    xy:                       文書数(X)と度数(Y)
+gui_window::word_freq:
+    c_freq:                   累積度数
+    c_pcnt:                   累積パーセント
+    descr:                    ■記述統計
+    freq:                     度数
+    freq_tab:                 ■度数分布表
+    pcnt:                     パーセント
+    refresh:                  再計算
+    tf:                       出現回数
+    win_title:                出現回数：分布
+gui_window::word_freq_plot:
+    log:                      対数軸の使用：
+    none:                     なし
+    saving:                   名前を付けてプロットを保存
+    win_title:                出現回数：分布：プロット
+    x:                        出現回数(X)
+    xy:                       出現回数(X)と度数(Y)
+gui_window::word_list:
+    count:                    記入する数値：
+    csv:                      カンマ区切り (*.csv)
+    df:                       文書数（DF）
+    file_type:                出力するファイルの形式：
+    hinshi:                   品詞別
+    single:                   1列
+    tf:                       出現回数（TF）
+    top150:                   頻出150語
+    type:                     抽出語リストの形式：
+    win_title:                '抽出語リスト - オプション'
+    xls:                      Excel (*.xls)
+gui_window::word_search:
+    and:                      AND検索
+    back:                     後方一致
+    baseform:                 抽出語検索
+    comp:                     完全一致
+    conj:                     活用
+    forw:                     前方一致
+    freq:                     頻度
+    kwic:                     KWICコンコーダンス
+    morph:                    形態素
+    or:                       OR検索
+    part:                     部分一致
+    pos:                      品詞
+    pos_conj:                 品詞/活用
+    search:                   検索
+    view_conj:                活用形を表示
+    win_title:                抽出語検索
+    word:                     抽出語
+gui_window::word_tf_df:
+    df:                       文書数
+    log:                      対数軸の使用：
+    none:                     なし
+    saving:                   名前を付けてプロットを保存
+    tf:                       出現回数
+    units:                    集計単位：
+    win_title:                出現回数と文書数
+    x:                        出現回数(X)
+    xy:                       出現回数(X)と文書数(Y)
+kh_datacheck:
+    corrected:                既知の問題点はすべて修正されています。
+    error_c1:                 文字化けを含む行があります
+    error_c2:                 望ましくない半角記号が含まれている行があります
+    error_m1:                 長すぎる見出し行があります（自動修正不可）
+    error_mn:                 H1～H5タグを使った見出し作成に失敗している可能性があります（自動修正不可）
+    error_n1a:                長すぎる行があります
+    error_n1b:                長すぎる上に、スペース・句点等が適当な位置に含まれていない行があります（自動修正不可）
+    errors_detail:            分析対象ファイル内に以下の問題点が発見されました（詳細表示）：
+    errors_summary:           分析対象ファイル内に以下の問題点が発見されました（要約表示）：
+    lines:                    行
+    looks_good:              "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。"
+kh_morpho::chasen:
+    error:                    茶筌の起動に失敗しました。
+    error_config:             事前にKH Coderの設定（茶筌関連）を行ってください。
+kh_morpho::mecab:
+    error:                    MeCabの起動に失敗しました。
+    error_config:             事前にKH Coderの設定（MeCab関連）を行ってください。
+kh_morpho::stanford:
+    error:                    Stanford POS Taggerの起動に失敗しました。
+    error_config:             事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。
+    no_java:                 "java.exeが見つかりませんでした。\n事前にJAVAをインストールしてください。"
+kh_morpho::stemming:
+    error:                    Stemmerによる処理に失敗しました。
+kh_sysconfig::chasen:
+    path_error:               Chasen.exeのパスが不正です
+kh_sysconfig::mecab:
+    path_error:               MeCab.exeのパスが不正です
+kh_sysconfig::stanford:
+    path_error:               Stanford POS Taggerのパスが不正です
+mysql_words:
+    df:                       文書数
+    mean_df:                  文書数の平均
+    mean_tf:                  出現回数の平均
+    pos:                      品詞
+    std_dev_df:               文書数の標準偏差
+    std_dev_tf:               出現回数の標準偏差
+    tf:                       出現回数
+    types:                    異なり語数 (n)
+    words:                    抽出語
