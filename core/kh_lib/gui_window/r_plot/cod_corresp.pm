@@ -6,25 +6,25 @@ sub option1_options{
 
 	if (@{$self->{plots}} == 2){
 		return [
-			'ドットとラベル',
-			'ドットのみ',
+			kh_msg->get('gui_window::r_plot::word_corresp->d_l'), # ドットとラベル
+			kh_msg->get('gui_window::r_plot::word_corresp->d'), # ドットのみ
 		] ;
 	} else {
 		return [
-			'カラー',
-			'グレースケール',
-			'変数のみ',
-			'ドットのみ',
+			kh_msg->get('gui_window::r_plot::word_corresp->col'), # カラー
+			kh_msg->get('gui_window::r_plot::word_corresp->gray'), # グレースケール
+			kh_msg->get('gui_window::r_plot::word_corresp->var'), # 変数のみ
+			kh_msg->get('gui_window::r_plot::word_corresp->d'), # ドットのみ
 		] ;
 	}
 }
 
 sub option1_name{
-	return ' 表示：';
+	return kh_msg->get('gui_window::r_plot::word_corresp->view'); #  表示：
 }
 
 sub win_title{
-	return 'コーディング・対応分析';
+	return kh_msg->get('win_title'); # コーディング・対応分析
 }
 
 sub win_name{

@@ -10,7 +10,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・対応分析：オプション'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # コーディング・対応分析：オプション
 
 	my $lf = $win->LabFrame(
 		-label => 'Codes',
@@ -49,7 +49,7 @@ sub _new{
 		-pady => 4
 	);
 	$f1->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
+		-text => kh_msg->get('coding_unit'), # コーディング単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -65,7 +65,7 @@ sub _new{
 
 	# コード選択
 	$lf->Label(
-		-text => $self->gui_jchar('コード選択：'),
+		-text => kh_msg->get('select_codes'), # コード選択：
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -77,7 +77,7 @@ sub _new{
 	);
 
 	$f2->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -119,14 +119,14 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => $self->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
-		-text => $self->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'),,
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -134,7 +134,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => $self->gui_jchar('　　※コードを3つ以上選択して下さい。','euc'),
+		-text => kh_msg->get('sel3'), # 　　※コードを3つ以上選択して下さい。
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -144,7 +144,7 @@ sub _new{
 
 	# 入力データの設定
 	$lf2->Label(
-		-text => $self->gui_jchar('分析に使用するデータ表の種類：'),
+		-text => kh_msg->get('matrix_type'), # 分析に使用するデータ表の種類：
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -156,7 +156,7 @@ sub _new{
 	);
 
 	$fi->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -177,7 +177,7 @@ sub _new{
 
 	$self->{radio} = 0;
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 文書（同時布置なし）'),
+		-text             => kh_msg->get('c_d'), # コード ｘ 文書（同時布置なし）
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
@@ -185,7 +185,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 上位の章・節・段落'),
+		-text             => kh_msg->get('c_dd'), # コード ｘ 上位の章・節・段落
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
@@ -194,7 +194,7 @@ sub _new{
 
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
 	$self->{label_high} = $fi_2->Label(
-		-text => $self->gui_jchar('　　集計単位：','euc'),
+		-text => kh_msg->get('ag_unit'), # 　　集計単位：
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -203,7 +203,7 @@ sub _new{
 	$self->{opt_frame_high} = $fi_2;
 
 	$fi_1->Radiobutton(
-		-text             => $self->gui_jchar('コード ｘ 外部変数'),
+		-text             => kh_msg->get('c_v'), # コード ｘ 外部変数
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 2,
@@ -216,7 +216,7 @@ sub _new{
 		-expand => 1,
 	);
 	$self->{label_var} = $fi_3->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -231,7 +231,7 @@ sub _new{
 	);
 
 	$self->{check_filter_w_widget} = $fsw->Checkbutton(
-		-text     => $self->gui_jchar('差異が顕著なコードを分析に使用：'),
+		-text     => kh_msg->get('flw'), # 差異が顕著なコードを分析に使用：
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -240,7 +240,7 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -263,7 +263,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れたコードのみラベル表示：'),
+		-text     => kh_msg->get('flt'), # 原点から離れたコードのみラベル表示：
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -272,7 +272,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -317,7 +317,7 @@ sub _new{
 	);
 
 	$rf->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'),
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
@@ -330,19 +330,20 @@ sub _new{
 	);
 
 	$f3->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $f3->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
 		-command => sub{$self->_calc;}
 	)->pack(-side => 'right');
+	$self->{ok_btn}->focus;
 
 	$self->read_cfile;
 
@@ -474,7 +475,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => 
 					[
-						[$self->gui_jchar('利用不可'), undef],
+						[kh_msg->get('na'), undef], # 利用不可
 					],
 				variable => \$self->{high},
 			);
@@ -627,7 +628,7 @@ sub _calc{
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => '外部変数を1つ以上選択してください。',
+				msg  => kh_msg->get('gui_window::word_corresp->select_var'), # 外部変数を1つ以上選択してください。
 			);
 			return 0;
 		}
@@ -641,7 +642,7 @@ sub _calc{
 				){
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => '現在の所、集計単位が異なる外部変数を同時に使用することはできません。',
+						msg  => kh_msg->get('gui_window::word_corresp->check_var_unit'), # '現在の所、集計単位が異なる外部変数を同時に使用することはできません。',
 					);
 					return 0;
 				}
@@ -663,7 +664,7 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => "出現数が0のコードは利用できません。"
+			msg    => kh_msg->get('er_zero'), # 出現数が0のコードは利用できません。
 		);
 		#$self->close();
 		$wait_window->end(no_dialog => 1);
@@ -696,7 +697,7 @@ sub _calc{
 			gui_errormsg->open(
 				type   => 'msg',
 				window  => \$self->win_obj,
-				msg    => "集計単位の選択が不正です。"
+				msg    => kh_msg->get('er_unit'), # 集計単位の選択が不正です。
 			);
 			return 0;
 		}
@@ -937,17 +938,6 @@ END_OF_the_R_COMMAND2
 
 	return $t;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 sub r_command_aggr_str{

@@ -12,7 +12,7 @@ sub innner{
 	);
 
 	$self->{check_filter_w_widget} = $fsw->Checkbutton(
-		-text     => $self->gui_jchar('差異が顕著なコードを分析に使用：'),
+		-text     => kh_msg->get('gui_window::cod_corresp->flw'), # 差異が顕著なコードを分析に使用：
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -21,7 +21,7 @@ sub innner{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('gui_window::cod_corresp->top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -42,7 +42,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => $self->gui_jchar('原点から離れたコードのみラベル表示：'),
+		-text     => kh_msg->get('gui_window::cod_corresp->flt'), # 原点から離れたコードのみラベル表示：
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -51,7 +51,7 @@ sub innner{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => $self->gui_jchar('上位'),
+		-text => kh_msg->get('gui_window::cod_corresp->top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -241,7 +241,7 @@ sub calc{
 }
 
 sub win_title{
-	return kh_msg->get(win_title); # コーディング・対応分析：調整
+	return kh_msg->get('win_title'); # コーディング・対応分析：調整
 }
 
 sub win_name{
