@@ -12,7 +12,7 @@ sub innner{
 	);
 
 	$fsw->Checkbutton(
-		-text     => kh_msg->get('flw'), # 差異が顕著な語を分析に使用：
+		-text     => kh_msg->get('gui_window::word_corresp->flw'), # 差異が顕著な語を分析に使用：
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -21,7 +21,7 @@ sub innner{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => kh_msg->get('top'), # 上位
+		-text => kh_msg->get('gui_window::word_corresp->top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -35,7 +35,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => kh_msg->get('words'), # 語
+		-text => kh_msg->get('gui_window::word_corresp->words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	#$self->refresh_flw;
@@ -48,7 +48,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => kh_msg->get('flt'), # 原点から離れた語のみラベル表示：
+		-text     => kh_msg->get('gui_window::word_corresp->flt'), # 原点から離れた語のみラベル表示：
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -57,7 +57,7 @@ sub innner{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => kh_msg->get('top'), # 上位
+		-text => kh_msg->get('gui_window::word_corresp->top'), # 上位
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -71,7 +71,7 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => kh_msg->get('words'), # 語
+		-text => kh_msg->get('gui_window::word_corresp->words'), # 語
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	#$self->refresh_flt;

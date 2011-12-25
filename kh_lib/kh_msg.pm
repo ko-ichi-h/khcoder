@@ -16,7 +16,11 @@ sub get{
 	# キー作成
 	          shift;
 	my $key = shift;
-	$key = (caller)[0].'->'.$key;
+	my $caller = shift;
+	
+	$caller = (caller)[0]    unless length($caller);
+	$key = $caller.'->'.$key unless $key =~ /.+\->.+/;
+	
 	$key =~ s/::(linux|win32)//go;
 
 	# メッセージをロード
