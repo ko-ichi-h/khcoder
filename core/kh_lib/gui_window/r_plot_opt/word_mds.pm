@@ -98,7 +98,7 @@ sub calc{
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '調整に失敗しましました。',
+			msg  => kh_msg->gget('r_net_msg_fail'),
 		);
 		print "$self->{command_f}\n";
 		$self->close;

@@ -13,7 +13,7 @@ sub option1_name{
 }
 
 sub win_title{
-	return kh_msg->get('win_title'), # '抽出語・多次元尺度法';
+	return kh_msg->get('win_title'); # 抽出語・多次元尺度法
 }
 
 sub win_name{
