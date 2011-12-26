@@ -608,3 +608,11 @@ gui_window::r_plot_opt::word_mds:
     win_title:                'Configure: Multi-Dimensional Scaling of Words'
 gui_window::r_plot::word_mds:
     win_title:                'Multi-Dimensional Scaling of Words'
+gui_window::cod_mds:
+    win_title:                'Options: Multi-Dimensional Scaling of Codes'
+    sel5:                     '    * Please select at least 5 codes.'
+    sel5_e:                   Error Please select at least 5 codes.
+gui_window::r_plot::cod_mds:
+    win_title:                'Multi-Dimensional Scaling of Codes'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                'Configure: Multi-Dimensional Scaling of Codes'
