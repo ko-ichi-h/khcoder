@@ -104,6 +104,8 @@ gui_window::cod_corresp:
     select_codes:             コード選択：
     top:                      上位
     win_title:                コーディング・対応分析：オプション
+    er_zero:                  '出現数が0のコードは利用できません。'
+    er_unit:                  '集計単位の選択が不正です。'
 gui_window::datacheck:
     auto_correct:             '   分析対象ファイルの自動修正：'
     close:                    閉じる
@@ -608,3 +610,11 @@ gui_window::r_plot_opt::word_mds:
     win_title:                '抽出語・多次元尺度法：調整'
 gui_window::r_plot::word_mds:
     win_title:                '抽出語・多次元尺度法'
+gui_window::cod_mds:
+    win_title:                'コーディング・多次元尺度法：オプション'
+    sel5:                     '    ※コードを5つ以上選択して下さい。'
+    sel5_e:                   'コードを5つ以上選択してください。'
+gui_window::r_plot::cod_mds:
+    win_title:                'コーディング・多次元尺度法'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                'コーディング・多次元尺度法：調整'
