@@ -618,3 +618,37 @@ gui_window::r_plot::cod_mds:
     win_title:                'コーディング・多次元尺度法'
 gui_window::r_plot_opt::cod_mds:
     win_title:                'コーディング・多次元尺度法：調整'
+gui_widget::r_cls:
+    dist:                     '距離：'
+    n_cls:                    'クラスター数：'
+    color:                    'クラスターの色分け'
+gui_window::word_cls:
+    u_w:                      '集計単位と抽出語の選択'
+    opt:                      'クラスター分析のオプション'
+    cluster:                  '分類'
+    win_title:                '抽出語・クラスター分析：オプション'
+    last1:                    '最後の'
+    last2:                    '回'
+    first1:                   '最初の'
+    first2:                   '回'
+    agglomer:                 'クラスター併合の段階'
+    hight:                    '併合水準（非類似度）'
+    note1:                    "※プロット内の数値ラベルは\n　併合後のクラスター総数"
+gui_window::r_plot::word_cls:
+    ward:                     'Ward法'
+    ave:                      '群平均法'
+    clink:                    '最遠隣法'
+    method:                   ' 方法：'
+    agglomer:                 '併合水準'
+    win_title:                '抽出語・クラスター分析'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              'このWindowでは「Auto」指定はできません。数値を入力してください'
+    win_title:                '抽出語・クラスター分析：調整'
+gui_window::cls_height::word:
+    win_title:                '抽出語のクラスター分析：併合水準'
+gui_window::cls_height:
+    plotting:                 ' プロット範囲： '
+    f50:                      '<< 最初50'
+    all:                      '全体'
+    l50:                      '最後50 >>'
+    save_as:                  'プロットを保存'

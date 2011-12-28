@@ -18,20 +18,20 @@ sub photo_pane_width{
 
 sub option1_options{
 	return [
-		'Ward法',
-		'群平均法',
-		'最遠隣法'
+		kh_msg->get('ward'), # Ward法
+		kh_msg->get('ave'), # 群平均法
+		kh_msg->get('clink'), # 最遠隣法
 	];
 }
 
 sub option1_name{
-	return ' 方法：';
+	return kh_msg->get('method'); #  方法：
 }
 
 sub start{
 	my $self = shift;
 	$self->{bottom_frame}->Button(
-		-text => $self->gui_jchar('併合水準'),
+		-text => kh_msg->get('agglomer'), # 併合水準
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -60,7 +60,7 @@ sub end{
 }
 
 sub win_title{
-	return '抽出語・クラスター分析';
+	return kh_msg->get('win_title'); # 抽出語・クラスター分析
 }
 
 sub win_name{

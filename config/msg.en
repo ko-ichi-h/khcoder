@@ -616,3 +616,37 @@ gui_window::r_plot::cod_mds:
     win_title:                'Multi-Dimensional Scaling of Codes'
 gui_window::r_plot_opt::cod_mds:
     win_title:                'Configure: Multi-Dimensional Scaling of Codes'
+gui_widget::r_cls:
+    dist:                     'Distance:'
+    n_cls:                    'N of clusters:'
+    color:                    'Different colors'
+gui_window::word_cls:
+    u_w:                      'Select units & words'
+    opt:                      'Cluster Analysis Options'
+    cluster:                  ' '
+    win_title:                'Options: Hierarchical Cluster Analysis of Words'
+    last1:                    'last '
+    last2:                    ''
+    first1:                   'first '
+    first2:                   ''
+    agglomer:                 'Agglomeration Stages'
+    hight:                    'Coefficients (dissimilarity)'
+    note1:                    "* Numerical values in the plot indicate\n  number of clusters at each stage"
+gui_window::r_plot::word_cls:
+    ward:                     'ward'
+    ave:                      'average'
+    clink:                    'clink'
+    method:                   ' method:'
+    agglomer:                 'Agglomeration'
+    win_title:                'Hierarchical Cluster Analysis of Words'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              'You cannot specify "Auto" in this window. Please specify numerical values.'
+    win_title:                'Configure: Hierarchical Cluster Analysis of Words'
+gui_window::cls_height::word:
+    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Words'
+gui_window::cls_height:
+    plotting:                 ' Stages: '
+    f50:                      '<< first 50'
+    all:                      'all'
+    l50:                      'last 50 >>'
+    save_as:                  'Save the plot as:'

@@ -33,12 +33,12 @@ sub _new{
 	my $f1 = $win->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	$f1->Label(
-		-text => $self->gui_jchar(' プロット範囲： '),
+		-text => kh_msg->get('plotting'), #  プロット範囲： 
 		-font => "TKFN"
 	)->pack(-anchor => 'e', -side => 'left');
 
 	$self->{btn_first} = $f1->Button(
-		-text => $self->gui_jchar('<< 最初50'),
+		-text => kh_msg->get('f50'), # << 最初50
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -52,7 +52,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$self->{btn_all} = $f1->Button(
-		-text => $self->gui_jchar('全体'),
+		-text => kh_msg->get('all'), # 全体
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -66,7 +66,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$self->{btn_last} = $f1->Button(
-		-text => $self->gui_jchar('最後50 >>'),
+		-text => kh_msg->get('l50'), # 最後50 >>
 		-font => "TKFN",
 		-borderwidth => '1',
 		-state => 'disabled',
@@ -81,7 +81,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$f1->Button(
-		-text => $self->gui_jchar('閉じる'),
+		-text => kh_msg->gget('close'), # 閉じる
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -89,7 +89,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$f1->Button(
-		-text => $self->gui_jchar('保存'),
+		-text => kh_msg->gget('save'), # 保存
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -115,7 +115,7 @@ sub save{
 		-defaultextension => '.eps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('プロットを保存'),
+			$self->gui_jt(kh_msg->get('save_as')), # プロットを保存
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 

@@ -4,7 +4,7 @@ use base qw(gui_window::cls_height);
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt('抽出語のクラスター分析：併合水準','euc');
+	return $self->gui_jt( kh_msg->get('win_title') ); # '抽出語のクラスター分析：併合水準'
 }
 
 sub win_name{
