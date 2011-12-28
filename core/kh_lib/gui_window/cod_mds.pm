@@ -196,7 +196,7 @@ sub _new{
 		-font => "TKFN",
 		#-state => 'disable',
 		-command => sub{$self->_calc;}
-	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->read_cfile;
 

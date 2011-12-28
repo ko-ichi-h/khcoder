@@ -36,10 +36,10 @@ sub get{
 
 	# メッセージを返す
 	my $t = '';
-	if ( length( $msg->{$caller}{$key} ) ){
+	if ( defined( $msg->{$caller}{$key} ) ){
 		$t = $msg->{$caller}{$key};
 	}
-	elsif ( length($msg_fb->{$caller}{$key}) ) {
+	elsif ( defined($msg_fb->{$caller}{$key}) ) {
 		$t = $msg_fb->{$caller}{$key};
 		print "kh_msg: fall back: $caller, $key\n";
 	} else {
@@ -64,10 +64,10 @@ sub gget{
 
 	# メッセージを返す
 	my $t = '';
-	if ( length( $msg->{$caller}{$key} ) ){
+	if ( defined( $msg->{$caller}{$key} ) ){
 		$t = $msg->{$caller}{$key};
 	}
-	elsif ( length($msg_fb->{$caller}{$key}) ) {
+	elsif ( defined($msg_fb->{$caller}{$key}) ) {
 		$t = $msg_fb->{$caller}{$key};
 		print "kh_msg: fall back: $caller, $key\n";
 	} else {

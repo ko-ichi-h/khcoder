@@ -18,97 +18,30 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf_w = $win->LabFrame(
-		-label => 'Words',
-		-labelside => 'acrosstop',
+		-label       => kh_msg->get('u_w'), # 集計単位と抽出語の選択
+		-labelside   => 'acrosstop',
 		-borderwidth => 2,
+		-foreground  => 'blue',
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
-	$lf_w->Label(
-		-text => gui_window->gui_jchar('■集計単位と語の選択'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
-
 	my $lf = $win->LabFrame(
-		-label => 'Options',
-		-labelside => 'acrosstop',
+		-label       => kh_msg->get('opt'), # クラスター分析のオプション
+		-labelside   => 'acrosstop',
 		-borderwidth => 2,
+		-foreground  => 'blue',
 	)->pack(-fill => 'both', -expand => 0);
-
-	$lf->Label(
-		-text => $self->gui_jchar('■クラスター分析の設定'),
-		-font => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
-
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => '分類',
+		verb   => kh_msg->get('cluster'), # 分類
 	);
-
-	#my $lf = $win->LabFrame(
-	#	-label => 'Options',
-	#	-labelside => 'acrosstop',
-	#	-borderwidth => 2,
-	#)->pack(-fill => 'both');
 
 	# 距離
-	my $f4 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
+	$self->{cls_obj} = gui_widget::r_cls->open(
+		parent       => $lf,
+		command      => sub{ $self->calc; },
+		pack    => { -anchor   => 'w'},
 	);
-
-	$f4->Label(
-		-text => $self->gui_jchar('距離：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	my $widget_dist = gui_widget::optmenu->open(
-		parent  => $f4,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				['Jaccard', 'binary' ],
-				['Euclid',  'euclid' ],
-				['Cosine',  'pearson'],
-			],
-		variable => \$self->{method_dist},
-	);
-	$widget_dist->set_value('binary');
-
-	# クラスター数
-	my $f5 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
-	);
-
-	$f5->Label(
-		-text => $self->gui_jchar('クラスター数：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_cluster_number} = $f5->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cluster_number}->insert(0,'Auto');
-	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_cluster_number});
-
-	$f5->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{check_color_cls} = 1;
-	$f5->Checkbutton(
-			-text     => $self->gui_jchar('クラスターの色分け','euc'),
-			-variable => \$self->{check_color_cls},
-			-anchor => 'w',
-	)->pack(-anchor => 'w', -side => 'left');
-
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -121,25 +54,24 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'),
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
-	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
-
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	return $self;
 }
@@ -154,7 +86,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # '品詞が1つも選択されていません。',
 		);
 		return 0;
 	}
@@ -175,7 +107,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '少なくとも3つ以上の抽出語を選択して下さい。',
+			msg  => kh_msg->get('gui_window::word_corresp->select_3words'), #'少なくとも3つ以上の抽出語を選択して下さい。',
 		);
 		return 0;
 	}
@@ -184,11 +116,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					 '現在の設定では'.$check_num.'語が使用されます。'
+					kh_msg->get('gui_window::word_corresp->too_many1')
+					.$check_num
+					.kh_msg->get('gui_window::word_corresp->too_many2')
 					."\n"
-					.'使用する語の数は200〜300程度におさえることを推奨します。'
+					.kh_msg->get('gui_window::word_corresp->too_many3')
 					."\n"
-					.'続行してよろしいですか？'
+					.kh_msg->get('gui_window::word_corresp->too_many4')
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -219,15 +153,15 @@ sub calc{
 
 	&make_plot(
 		#base_win       => $self,
-		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
-		cluster_color  => $self->gui_jg( $self->{check_color_cls} ),
-		font_size    => $self->{font_obj}->font_size,
-		font_bold    => $self->{font_obj}->check_bold_text,
-		plot_size    => $self->{font_obj}->plot_size,
+		cluster_number => $self->{cls_obj}->cluster_number,
+		cluster_color  => $self->{cls_obj}->cluster_color,
+		method_dist    => $self->{cls_obj}->method_dist,
+		font_size      => $self->{font_obj}->font_size,
+		font_bold      => $self->{font_obj}->check_bold_text,
+		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
 		plotwin_name   => 'word_cls',
 		data_number    => $check_num,
-		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
 	$w->end(no_dialog => 1);
@@ -432,7 +366,7 @@ sub make_plot{
 
 
 sub label{
-	return '抽出語・クラスター分析：オプション';
+	return kh_msg->get('win_title'); # 抽出語・クラスター分析：オプション
 }
 
 sub win_name{
@@ -464,7 +398,7 @@ sub hinshi{
 	return $self->{words_obj}->hinshi;
 }
 sub r_command_height{
-	my $t = << 'END_OF_the_R_COMMAND';
+	my $t = '
 
 # プロットの準備開始
 pp_focus  <- 50     # 最初・最後の50回の併合をプロット
@@ -481,14 +415,22 @@ if (pp_type == "last"){
 	if (n_start < 1){ n_start <- 1 }
 	det <- det[nrow(det):n_start,]
 	
-	str_xlab <- paste("（最後の",pp_focus,"回）",sep="")
+	str_xlab <- paste(" ('
+	.kh_msg->get('last1') # 最後の
+	.'",pp_focus,"'
+	.kh_msg->get('last2') # 回
+	.')",sep="")
 } else if (pp_type == "first") {
 	if ( pp_focus > nrow(det) ){
 		pp_focus <- nrow(det)
 	}
 	det <- det[pp_focus:1,]
 	
-	str_xlab <- paste("（最初の",pp_focus,"回）",sep="")
+	str_xlab <- paste(" ('
+	.kh_msg->get('first1') # 最初の
+	.'",pp_focus,"'
+	.kh_msg->get('first2') # 回
+	.')",sep="")
 } else if (pp_type == "all") {
 	det <- det[nrow(det):1,]
 	pp_kizami <- nrow(det) / 8
@@ -517,8 +459,12 @@ plot(
 	det[,"height"],
 	type = "b",
 	pch  = p_type,
-	xlab = paste("クラスター併合の段階",str_xlab,sep = ""),
-	ylab = "併合水準（非類似度）"
+	xlab = paste("'
+	.kh_msg->get('agglomer') # クラスター併合の段階
+	.'",str_xlab,sep = ""),
+	ylab = "'
+	.kh_msg->get('hight') # 併合水準（非類似度）
+	.'"
 )
 
 text(
@@ -534,13 +480,15 @@ text(
 legend(
 	min(det[,"u_n"]),
 	max(det[,"height"]),
-	legend = c("※プロット内の数値ラベルは\n　併合後のクラスター総数"),
+	legend = c("'
+	.kh_msg->get('note1') # ※プロット内の数値ラベルは\n　併合後のクラスター総数
+	.'"),
 	#pch = c(16),
-	cex = .8,
+	cex = .9,
 	box.lty = 0
 )
 
-END_OF_the_R_COMMAND
+';
 return $t;
 }
 
