@@ -650,3 +650,11 @@ gui_window::cls_height:
     all:                      'all'
     l50:                      'last 50 >>'
     save_as:                  'Save the plot as:'
+gui_window::cod_cls:
+    win_titile:               'Options: Hierarchical Cluster Analysis of Codes'
+gui_window::r_plot_opt::cod_cls:
+    win_title:                'Configure: Hierarchical Cluster Analysis of Codes'
+gui_window::r_plot::cod_cls:
+    win_titile:               'Hierarchical Cluster Analysis of Codes'
+gui_window::cls_height::cod:
+    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Codes'

@@ -5,7 +5,7 @@ use base qw(gui_window::cls_height);
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt('コードのクラスター分析：併合水準','euc');
+	return $self->gui_jt( kh_msg->get('win_title') ); # コードのクラスター分析：併合水準
 }
 
 sub win_name{

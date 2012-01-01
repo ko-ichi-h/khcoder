@@ -652,3 +652,11 @@ gui_window::cls_height:
     all:                      '全体'
     l50:                      '最後50 >>'
     save_as:                  'プロットを保存'
+gui_window::cod_cls:
+    win_titile:               'コーディング・クラスター分析：オプション'
+gui_window::r_plot_opt::cod_cls:
+    win_title:                'コーディング・クラスター分析：調整'
+gui_window::r_plot::cod_cls:
+    win_titile:               'コーディング・クラスター分析'
+gui_window::cls_height::cod:
+    win_title:                'コードのクラスター分析：併合水準'

@@ -18,20 +18,20 @@ sub photo_pane_width{
 
 sub option1_options{
 	return [
-		'Ward法',
-		'群平均法',
-		'最遠隣法'
+		kh_msg->get('gui_window::r_plot::word_cls->ward'), # Ward法
+		kh_msg->get('gui_window::r_plot::word_cls->ave'), # 群平均法
+		kh_msg->get('gui_window::r_plot::word_cls->clink'), # 最遠隣法
 	];
 }
 
 sub option1_name{
-	return ' 方法：';
+	return kh_msg->get('gui_window::r_plot::word_cls->method');;
 }
 
 sub start{
 	my $self = shift;
 	$self->{bottom_frame}->Button(
-		-text => $self->gui_jchar('併合水準'),
+		-text => kh_msg->get('gui_window::r_plot::word_cls->agglomer'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -60,7 +60,7 @@ sub end{
 }
 
 sub win_title{
-	return 'コーディング・クラスター分析';
+	return kh_msg->get('win_titile') # コーディング・クラスター分析
 }
 
 sub win_name{
