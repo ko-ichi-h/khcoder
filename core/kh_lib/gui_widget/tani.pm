@@ -28,6 +28,8 @@ sub _new{
 	my $self = shift;
 	my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
 
+	my $len = 0;
+
 	my @list1;
 	foreach my $i (@list0){
 		if (
@@ -36,8 +38,11 @@ sub _new{
 			)->hundle->fetch->[0]
 		){
 			push @list1, $i;
+			$len = length( Encode::encode('cp932',$name{$i}) )
+				if $len < length( Encode::encode('cp932',$name{$i}) );
 		}
 	}
+	#print "len: $len\n";
 
 	$self->{win_obj} = $self->parent->Menubutton(
 		-text        => '',
@@ -45,7 +50,7 @@ sub _new{
 		-relief      => 'raised',
 		-indicator   => 'yes',
 		-font        => "TKFN",
-		#-width       => 4,
+		-width       => $len,
 		-borderwidth => 1,
 	)->pack();
 	foreach my $i (@list1){
