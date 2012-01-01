@@ -36,7 +36,7 @@ sub _new{
 		verb   => kh_msg->get('cluster'), # 分類
 	);
 
-	# 距離
+	# クラスター分析のオプション
 	$self->{cls_obj} = gui_widget::r_cls->open(
 		parent       => $lf,
 		command      => sub{ $self->calc; },

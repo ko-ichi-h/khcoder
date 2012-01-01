@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・クラスター分析：オプション'));
+	$win->title($self->gui_jt(kh_msg->get('win_titile'))); # コーディング・クラスター分析：オプション
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
@@ -43,7 +43,7 @@ sub _new{
 		-pady => 4
 	);
 	$f1->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
+		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # コーディング単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -58,7 +58,7 @@ sub _new{
 
 	# コード選択
 	$lf->Label(
-		-text => $self->gui_jchar('コード選択：'),
+		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # コード選択：
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -70,7 +70,7 @@ sub _new{
 	);
 
 	$f2->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -112,14 +112,14 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => $self->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'), # すべて
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
-		-text => $self->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'), # クリア
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -127,7 +127,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => $self->gui_jchar('　　※コードを3つ以上選択して下さい。','euc'),
+		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # 　　※コードを3つ以上選択して下さい。','euc
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -135,61 +135,12 @@ sub _new{
 		-pady   => 2,
 	);
 
-	# クラスター数
-	my $f4 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
+	# クラスター分析のオプション
+	$self->{cls_obj} = gui_widget::r_cls->open(
+		parent       => $lf,
+		command      => sub{ $self->_calc; },
+		pack    => { -anchor   => 'w'},
 	);
-
-	$f4->Label(
-		-text => $self->gui_jchar('距離：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	my $widget_dist = gui_widget::optmenu->open(
-		parent  => $f4,
-		pack    => {-side => 'left'},
-		options =>
-			[
-				['Jaccard', 'binary' ],
-				['Euclid',  'euclid' ],
-				['Cosine',  'pearson'],
-			],
-		variable => \$self->{method_dist},
-	);
-	$widget_dist->set_value('binary');
-
-	# クラスター数
-	my $f5 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
-	);
-
-	$f5->Label(
-		-text => $self->gui_jchar('クラスター数：'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{entry_cluster_number} = $f5->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_cluster_number}->insert(0,'Auto');
-	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_cluster_number});
-
-	$f5->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$self->{check_color_cls} = 1;
-	$f5->Checkbutton(
-			-text     => $self->gui_jchar('クラスターの色分け','euc'),
-			-variable => \$self->{check_color_cls},
-			-anchor => 'w',
-	)->pack(-anchor => 'w', -side => 'left');
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -202,7 +153,7 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
@@ -215,19 +166,20 @@ sub _new{
 	);
 
 	$f3->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $f3->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
 		-command => sub{$self->_calc;}
 	)->pack(-side => 'right');
+	$self->{ok_btn}->focus;
 
 	$self->read_cfile;
 
@@ -332,7 +284,7 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => 'コードを3つ以上選択してください。'
+			msg    => kh_msg->get('gui_window::cod_corresp->sel3'), # 'コードを3つ以上選択してください。'
 		);
 		return 0;
 	}
@@ -344,8 +296,8 @@ sub _calc{
 	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			window  => \$self->win_obj,
-			msg    => "出現数が0のコードは利用できません。"
+			window => \$self->win_obj,
+			msg    => kh_msg->get('gui_window::cod_corresp->er_zero'),
 		);
 		#$self->close();
 		$wait_window->end(no_dialog => 1);
@@ -370,15 +322,15 @@ sub _calc{
 	$r_command .= "# END: DATA\n";
 
 	&gui_window::word_cls::make_plot(
-		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
-		cluster_color  => $self->gui_jg( $self->{check_color_cls} ),
+		cluster_number => $self->{cls_obj}->cluster_number,
+		cluster_color  => $self->{cls_obj}->cluster_color,
+		method_dist    => $self->{cls_obj}->method_dist,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
 		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
 		plotwin_name   => 'cod_cls',
 		data_number    => $selected_num,
-		method_dist    => $self->gui_jg( $self->{method_dist} ),
 	);
 
 	$wait_window->end(no_dialog => 1);
