@@ -42,7 +42,18 @@ sub exec{
 			bun_r.id = bun.id
 		order by bun.id
 	",1)->hundle;
-	
+
+	# morpho_analyzer
+	my $spacer;
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	){
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+
 	my $current; my %h;
 	my $last = 0;
 	my $the_tani;
@@ -56,6 +67,7 @@ sub exec{
 		if ($i->{"$args{tani}"."_id"}){           # 本文の場合
 			# print "$i->{$the_tani},";
 			if ($i->{$the_tani} == $last){             # 継ぎ足し
+				$current .= $spacer if length($current);
 				$current .= $i->{rowtxt};
 			} else {                                   # 書き出し（連続）
 				unless (length($current)){
