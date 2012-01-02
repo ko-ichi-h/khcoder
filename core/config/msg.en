@@ -72,9 +72,9 @@ gui_widget::r_xy:
     x:                        ' X'
     y:                        ' Y'
 gui_widget::words:
-    by_df:                    Filter by Document Frequency
-    by_pos:                   Filter by POS
-    by_tf:                    Filter by Term Frequency
+    by_df:                    Filter words by Document Frequency
+    by_pos:                   Filter words by POS
+    by_tf:                    Filter words by Term Frequency
     check:                    Check
     check_desc1:              Number of selected words
     check_desc2:              ' '
@@ -348,8 +348,8 @@ gui_window::word_ass:
     win_title:                Word Association
     word_h:                   word
 gui_window::word_ass_opt:
-    by_df:                    'Filter by DF:'
-    by_pos:                   'Filter by POS:'
+    by_df:                    'Filter words by DF:'
+    by_pos:                   'Filter words by POS:'
     min_df:                   '    Min. DF '
     top:                      '    Top '
     view:                     'View:'
@@ -415,7 +415,7 @@ gui_window::word_conc_coloc:
     win_title:                Collocation Stats
     word:                     'Word:'
 gui_window::word_conc_coloc_opt:
-    filter_by_pos:            'Filter by POS:'
+    filter_by_pos:            'Filter words by POS:'
     top:                      '      Top '
     view:                     'View:'
     win_title:                'Filter: Collocation Stats'
@@ -596,7 +596,7 @@ gui_widget::r_mds:
     dim:                      'Dimensions:'
     1_3:                      '(from 1 to 3)'
 gui_window::word_mds:
-    units_words:              'Select units & words'
+    units_words:              'Select the unit & words'
     mds_opt:                  'Multi-Dimensional Scaling Options'
     plot:                     ' '
     win_title:                'Options: Multi-Dimensional Scaling of Words'
@@ -621,7 +621,7 @@ gui_widget::r_cls:
     n_cls:                    'N of clusters:'
     color:                    'Different colors'
 gui_window::word_cls:
-    u_w:                      'Select units & words'
+    u_w:                      'Select the unit & words'
     opt:                      'Cluster Analysis Options'
     cluster:                  ' '
     win_title:                'Options: Hierarchical Cluster Analysis of Words'
@@ -658,3 +658,34 @@ gui_window::r_plot::cod_cls:
     win_titile:               'Hierarchical Cluster Analysis of Codes'
 gui_window::cls_height::cod:
     win_title:                'Agglomeration: Hierarchical Cluster Analysis of Codes'
+gui_widget::r_net:
+    filter_edges:             'Filter edges:'
+    e_top_n:                  'Top'
+    e_jac:                    'Jaccard coef. >= '
+    or_more:                  ''
+    thicker:                  'Thicker lines for stronger edges'
+    larger:                   'Larger nodes for higher frequency words'
+    larger_font:              'Variable font size *For printing with EMF/EPS/PDF'
+    smaller:                  'Smaller Nodes'
+gui_window::word_netgraph:
+    u_w:                      'Select the unit & words'
+    use:                      ''
+    net_opt:                  'Co-Occurrence Network Options'
+    e_type:                   'Type of edges:'
+    w_w:                      'words - words'
+    w_v:                      'words - variables / headings'
+    var:                      'Variable / Headings:'
+    win_title:                'Options: Co-Occurrence Network of Words'
+gui_window::r_plot_opt::word_netgraph:
+    win_title:                'Configure: Co-Occurrence Network of Words'
+gui_window::r_plot::word_netgraph:
+    col:                      'color'
+    gray:                     'grayscale'
+    cnt_b:                    'Centrality: betweenness'
+    cnt_d:                    'Centrality: degree'
+    cnt_v:                    'Centrality: eigenvector'
+    com_b:                    'Community: betweenness'
+    com_m:                    'Community: modularity'
+    none:                     None
+    color:                    ' color:'
+    win_title:                'Co-Occurrence Network of Words'

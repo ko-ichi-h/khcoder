@@ -21,16 +21,11 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf_w = $win->LabFrame(
-		-label => 'Words',
+		-label => kh_msg->get('u_w'), # 集計単位と抽出語の選択
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1, -side => 'left');
-
-	$lf_w->Label(
-		-text => gui_window->gui_jchar('■集計単位と語の選択'),
-		-font => "TKFN",
 		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
@@ -39,24 +34,19 @@ sub _new{
 				$self->{var_obj}->new_tani($self->tani);
 			}
 		},
-		verb   => '利用',
+		verb   => kh_msg->get('use'), # 利用
 	);
 
 	my $lf = $win->LabFrame(
-		-label => 'Options',
+		-label => kh_msg->get('net_opt'), # ■共起ネットワークの設定
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'x', -expand => 0);
-
-	$lf->Label(
-		-text => $self->gui_jchar('■共起ネットワークの詳細設定'),
-		-font => "TKFN",
 		-foreground => 'blue'
-	)->pack(-anchor => 'w', -pady => 2);
+	)->pack(-fill => 'x', -expand => 0);
 
 	# 共起関係の種類
 	$lf->Label(
-		-text => $self->gui_jchar('共起関係（edge）の種類'),
+		-text => kh_msg->get('e_type'), # 共起関係（edge）の種類
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -75,7 +65,7 @@ sub _new{
 	}
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 ― 語'),
+		-text             => kh_msg->get('w_w'), # 語 ― 語
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'words',
@@ -88,7 +78,7 @@ sub _new{
 	)->pack(-anchor => 'nw', -side => 'left');
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 ― 外部変数・見出し'),
+		-text             => kh_msg->get('w_v'), # 語 ― 外部変数・見出し
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'twomode',
@@ -106,7 +96,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{var_lab} = $f6->Label(
-		-text => $self->gui_jchar('外部変数・見出し：'),
+		-text => kh_msg->get('var'), # 外部変数・見出し：
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -116,106 +106,12 @@ sub _new{
 		show_headings => 1,
 	);
 
-	# Edge選択
-	$lf->Label(
-		-text => $self->gui_jchar('描画する共起関係（edge）の絞り込み'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w');
-
-	my $f4 = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
+	# 共起ネットワークのオプション
+	$self->{net_obj} = gui_widget::r_net->open(
+		parent  => $lf,
+		command => sub{ $self->calc; },
+		pack    => { -anchor   => 'w'},
 	);
-
-	$f4->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{radio} = 'n';
-	$f4->Radiobutton(
-		-text             => $self->gui_jchar('描画数：'),
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 'n',
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{entry_edges_number} = $f4->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_edges_number}->insert(0,'60');
-	$self->{entry_edges_number}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_edges_number});
-
-	$f4->Radiobutton(
-		-text             => $self->gui_jchar('Jaccard係数：'),
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 'j',
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{entry_edges_jac} = $f4->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_edges_jac}->insert(0,'0.2');
-	$self->{entry_edges_jac}->bind("<Key-Return>",sub{$self->calc;});
-	$self->config_entry_focusin($self->{entry_edges_jac});
-
-	$f4->Label(
-		-text => $self->gui_jchar('以上'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	# Edgeの太さ・Nodeの大きさ
-	$lf->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
-			-variable => \$self->{check_use_weight_as_width},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
-
-	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多い語ほど大きい円で描画','euc'),
-			-variable => \$self->{check_use_freq_as_size},
-			-anchor   => 'w',
-			-command  => sub{
-				$self->{check_smaller_nodes} = 0;
-				$self->refresh(3);
-			},
-	)->pack(-anchor => 'w');
-
-	my $fontsize_frame = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 0,
-		-padx => 0,
-	);
-
-	$fontsize_frame->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
-			-variable => \$self->{check_use_freq_as_fsize},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
-
-	$self->{wc_smaller_nodes} = $lf->Checkbutton(
-			-text     => $self->gui_jchar('すべての語を小さめの円で描画','euc'),
-			-variable => \$self->{check_smaller_nodes},
-			-anchor   => 'w',
-			-command  => sub{
-				$self->{check_use_freq_as_size} = 0;
-				$self->refresh(3);
-			},
-	)->pack(-anchor => 'w');
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -228,24 +124,24 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;},
-	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
+	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->refresh(3);
 	return $self;
@@ -255,29 +151,6 @@ sub refresh{
 	my $self = shift;
 
 	my (@dis, @nor);
-	if ($self->{radio} eq 'n'){
-		push @nor, $self->{entry_edges_number};
-		push @dis, $self->{entry_edges_jac};
-	} else {
-		push @nor, $self->{entry_edges_jac};
-		push @dis, $self->{entry_edges_number};
-	}
-
-	if ($self->{check_use_freq_as_size}){
-		push @nor, $self->{wc_use_freq_as_fsize};
-		push @dis, $self->{wc_smaller_nodes};
-	} else {
-		push @dis, $self->{wc_use_freq_as_fsize};
-		push @nor, $self->{wc_smaller_nodes};
-	}
-
-	if ($self->{check_smaller_nodes}){
-		push @dis, $self->{wc_use_freq_as_size};
-		push @dis, $self->{wc_use_freq_as_fsize};
-	} else {
-		push @nor, $self->{wc_use_freq_as_size};
-	}
-
 	if ( $self->{radio_type} eq 'words' ){
 		push @dis, $self->{var_lab};
 		$self->{var_obj}->disable;
@@ -285,7 +158,6 @@ sub refresh{
 		push @nor, $self->{var_lab};
 		$self->{var_obj}->enable;
 	}
-
 
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal');
@@ -295,7 +167,7 @@ sub refresh{
 		$i->configure(-state => 'disabled');
 	}
 	
-	$nor[0]->focus unless $_[0] == 3;
+	#$nor[0]->focus unless $_[0] == 3;
 }
 
 #----------#
@@ -308,7 +180,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # '品詞が1つも選択されていません。',
 		);
 		return 0;
 	}
@@ -329,7 +201,7 @@ sub calc{
 	if ($check_num < 5){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '少なくとも5つ以上の抽出語を選択して下さい。',
+			msg  => kh_msg->get('gui_window::word_mds->select_3words'), # '少なくとも5つ以上の抽出語を選択して下さい。',
 		);
 		return 0;
 	}
@@ -338,11 +210,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					 '現在の設定では'.$check_num.'語が分析に利用されます。'
+					kh_msg->get('gui_window::word_corresp->too_many1') # 現在の設定では
+					.$check_num
+					.kh_msg->get('gui_window::word_corresp->too_many2') # 語が布置されます。
 					."\n"
-					.'分析に用いる語の数は100〜150程度におさえることを推奨します。'
+					.kh_msg->get('gui_window::word_corresp->too_many3') # 布置する語の数は100〜150程度におさえることを推奨します。
 					."\n"
-					.'続行してよろしいですか？'
+					.kh_msg->get('gui_window::word_corresp->too_many4') # 続行してよろしいですか？
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -464,17 +338,16 @@ sub calc{
 	use plotR::network;
 	my $plotR = plotR::network->new(
 		edge_type        => $self->gui_jg( $self->{radio_type} ),
-		font_size         => $self->{font_obj}->font_size,
-		font_bold         => $self->{font_obj}->check_bold_text,
-		plot_size         => $self->{font_obj}->plot_size,
-		n_or_j           => $self->gui_jg( $self->{radio} ),
-		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
-		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
-		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
-		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
-		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
-		use_weight_as_width =>
-			$self->gui_jg( $self->{check_use_weight_as_width} ),
+		font_size        => $self->{font_obj}->font_size,
+		font_bold        => $self->{font_obj}->check_bold_text,
+		plot_size        => $self->{font_obj}->plot_size,
+		n_or_j              => $self->{net_obj}->n_or_j,
+		edges_num           => $self->{net_obj}->edges_num,
+		edges_jac           => $self->{net_obj}->edges_jac,
+		use_freq_as_size    => $self->{net_obj}->use_freq_as_size,
+		use_freq_as_fsize   => $self->{net_obj}->use_freq_as_fsize,
+		smaller_nodes       => $self->{net_obj}->smaller_nodes,
+		use_weight_as_width => $self->{net_obj}->use_weight_as_width,
 		r_command        => $r_command,
 		plotwin_name     => 'word_netgraph',
 	);
@@ -510,7 +383,7 @@ sub calc{
 #   アクセサ   #
 
 sub label{
-	return '抽出語・共起ネットワーク：オプション';
+	return kh_msg->get('win_title'); # 抽出語・共起ネットワーク：オプション
 }
 
 sub win_name{
@@ -566,7 +439,9 @@ d <- cbind(d, v1)
 
 d <- subset(
 	d,
-	v0 != "欠損値" & v0 != "." & v0 != "missing"
+	v0 != "'
+	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.'" & v0 != "." & v0 != "missing"
 )
 v0 <- NULL
 v1 <- NULL
@@ -574,7 +449,9 @@ v1 <- NULL
 d <- t(d)
 d <- subset(
 	d,
-	rownames(d) != "<>欠損値" & rownames(d) != "<>." & rownames(d) != "<>missing"
+	rownames(d) != "<>'
+	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
 )
 d <- t(d)
 
