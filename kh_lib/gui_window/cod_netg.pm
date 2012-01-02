@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・共起ネットワーク：オプション'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # コーディング・共起ネットワーク：オプション
 
 	my $lf = $win->LabFrame(
 		-label => 'Codes',
@@ -49,7 +49,7 @@ sub _new{
 		-pady => 4
 	);
 	$f1->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
+		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # コーディング単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -64,7 +64,7 @@ sub _new{
 
 	# コード選択
 	$lf->Label(
-		-text => $self->gui_jchar('コード選択：'),
+		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # コード選択：
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -76,7 +76,7 @@ sub _new{
 	);
 
 	$f2->Label(
-		-text => $self->gui_jchar('　　','euc'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -118,14 +118,14 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => $self->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'), # すべて
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
-		-text => $self->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'), # クリア
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -133,19 +133,16 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => $self->gui_jchar('　　※コードを3つ以上選択して下さい。','euc'),
+		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # 　　※コードを3つ以上選択して下さい。','euc
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
 		-padx   => 4,
 	);
 
-
-
-
 	# 共起関係の種類
 	$lf2->Label(
-		-text => $self->gui_jchar('共起関係（edge）の種類'),
+		-text => kh_msg->get('gui_window::word_netgraph->e_type'), # 共起関係（edge）の種類
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -164,7 +161,7 @@ sub _new{
 	}
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 ― 語'),
+		-text             => kh_msg->get('c_c'), # 語 ― 語
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'words',
@@ -177,7 +174,7 @@ sub _new{
 	)->pack(-anchor => 'nw', -side => 'left');
 
 	$f5->Radiobutton(
-		-text             => $self->gui_jchar('語 ― 外部変数・見出し'),
+		-text             => kh_msg->get('c_v'), # 語 ― 外部変数・見出し
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'twomode',
@@ -195,7 +192,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{var_lab} = $f6->Label(
-		-text => $self->gui_jchar('外部変数・見出し：'),
+		-text => kh_msg->get('gui_window::word_netgraph->var'), # 外部変数・見出し：
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -205,107 +202,13 @@ sub _new{
 		show_headings => 1,
 	);
 
-
-	# edge選択
-	$lf2->Label(
-		-text => $self->gui_jchar('描画する共起関係（edge）の絞り込み'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w');
-
-	my $f4 = $lf2->Frame()->pack(
-		-fill => 'x',
-		-pady => 2
+	# 共起ネットワークのオプション
+	$self->{net_obj} = gui_widget::r_net->open(
+		parent  => $lf2,
+		command => sub{ $self->_calc; },
+		pack    => { -anchor   => 'w'},
+		type    => 'codes',
 	);
-
-	$f4->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{radio} = 'n';
-	$f4->Radiobutton(
-		-text             => $self->gui_jchar('描画数：'),
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 'n',
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{entry_edges_number} = $f4->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_edges_number}->insert(0,'60');
-	$self->{entry_edges_number}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_edges_number});
-
-	$f4->Radiobutton(
-		-text             => $self->gui_jchar('Jaccard係数：'),
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 'j',
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{entry_edges_jac} = $f4->Entry(
-		-font       => "TKFN",
-		-width      => 4,
-		-background => 'white',
-	)->pack(-side => 'left', -padx => 2);
-	$self->{entry_edges_jac}->insert(0,'0.2');
-	$self->{entry_edges_jac}->bind("<Key-Return>",sub{$self->_calc;});
-	$self->config_entry_focusin($self->{entry_edges_jac});
-
-	$f4->Label(
-		-text => $self->gui_jchar('以上'),
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	# Edgeの太さ・Nodeの大きさ
-	$lf2->Checkbutton(
-			-text     => $self->gui_jchar('強い共起関係ほど太い線で描画','euc'),
-			-variable => \$self->{check_use_weight_as_width},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
-
-	$self->{wc_use_freq_as_size} = $lf2->Checkbutton(
-			-text     => $self->gui_jchar('出現数の多いコードほど大きい円で描画','euc'),
-			-variable => \$self->{check_use_freq_as_size},
-			-anchor   => 'w',
-			-command  => sub{
-				$self->{check_smaller_nodes} = 0;
-				$self->refresh(3);
-			},
-	)->pack(-anchor => 'w');
-
-	my $fontsize_frame = $lf2->Frame()->pack(
-		-fill => 'x',
-		-pady => 0,
-		-padx => 0,
-	);
-
-	$fontsize_frame->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
-			-text     => $self->gui_jchar('フォントも大きく ※EMFやEPSでの出力・印刷向け','euc'),
-			-variable => \$self->{check_use_freq_as_fsize},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
-
-	$self->{wc_smaller_nodes} = $lf2->Checkbutton(
-			-text     => $self->gui_jchar('すべてのコードを小さめの円で描画','euc'),
-			-variable => \$self->{check_smaller_nodes},
-			-anchor   => 'w',
-			-command  => sub{
-				$self->{check_use_freq_as_size} = 0;
-				$self->refresh(3);
-			},
-	)->pack(-anchor => 'w');
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -318,26 +221,27 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => $self->gui_jchar('実行時にこの画面を閉じない','euc'),
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
 			-variable => \$self->{check_rm_open},
 			#-anchor => 'nw',
 	)->pack(-anchor => 'nw');
 
 	# OK・キャンセル
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$self->{ok_btn} = $win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
 		-command => sub{$self->_calc;}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se');
+	$self->{ok_btn}->focus;
 
 	$self->read_cfile;
 	$self->refresh(3);
@@ -435,28 +339,6 @@ sub refresh{
 	my $self = shift;
 
 	my (@dis, @nor);
-	if ($self->{radio} eq 'n'){
-		push @nor, $self->{entry_edges_number};
-		push @dis, $self->{entry_edges_jac};
-	} else {
-		push @nor, $self->{entry_edges_jac};
-		push @dis, $self->{entry_edges_number};
-	}
-
-	if ($self->{check_use_freq_as_size}){
-		push @nor, $self->{wc_use_freq_as_fsize};
-		push @dis, $self->{wc_smaller_nodes};
-	} else {
-		push @dis, $self->{wc_use_freq_as_fsize};
-		push @nor, $self->{wc_smaller_nodes};
-	}
-
-	if ($self->{check_smaller_nodes}){
-		push @dis, $self->{wc_use_freq_as_size};
-		push @dis, $self->{wc_use_freq_as_fsize};
-	} else {
-		push @nor, $self->{wc_use_freq_as_size};
-	}
 
 	if ( $self->{radio_type} eq 'words' ){
 		push @dis, $self->{var_lab};
@@ -470,7 +352,6 @@ sub refresh{
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal');
 	}
-
 	foreach my $i (@dis){
 		$i->configure(-state => 'disabled');
 	}
@@ -491,7 +372,7 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => 'コードを3つ以上選択してください。'
+			msg    => 'error: please select at least 3 codes'
 		);
 		return 0;
 	}
@@ -504,7 +385,7 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => "出現数が0のコードは利用できません。"
+			msg    => kh_msg->get('gui_window::cod_corresp->er_zero'),
 		);
 		#$self->close();
 		$wait_window->end(no_dialog => 1);
@@ -612,6 +493,7 @@ sub _calc{
 
 	# 外部変数・見出しデータの統合
 	if ($self->{radio_type} eq 'twomode'){
+		$r_command = Encode::decode('euc-jp',$r_command);
 		$r_command .= &r_command_concat;
 	}
 
@@ -627,14 +509,13 @@ sub _calc{
 		font_size        => $self->{font_obj}->font_size,
 		font_bold        => $self->{font_obj}->check_bold_text,
 		plot_size        => $self->{font_obj}->plot_size,
-		n_or_j           => $self->gui_jg( $self->{radio} ),
-		edges_num        => $self->gui_jg( $self->{entry_edges_number}->get ),
-		edges_jac        => $self->gui_jg( $self->{entry_edges_jac}->get ),
-		use_freq_as_size => $self->gui_jg( $self->{check_use_freq_as_size} ),
-		use_freq_as_fsize=> $self->gui_jg( $self->{check_use_freq_as_fsize} ),
-		smaller_nodes    => $self->gui_jg( $self->{check_smaller_nodes} ),
-		use_weight_as_width =>
-			$self->gui_jg( $self->{check_use_weight_as_width} ),
+		n_or_j              => $self->{net_obj}->n_or_j,
+		edges_num           => $self->{net_obj}->edges_num,
+		edges_jac           => $self->{net_obj}->edges_jac,
+		use_freq_as_size    => $self->{net_obj}->use_freq_as_size,
+		use_freq_as_fsize   => $self->{net_obj}->use_freq_as_fsize,
+		smaller_nodes       => $self->{net_obj}->smaller_nodes,
+		use_weight_as_width => $self->{net_obj}->use_weight_as_width,
 		r_command        => $r_command,
 		plotwin_name     => 'cod_netg',
 	);
@@ -705,7 +586,9 @@ d <- cbind(d, v1)
 
 d <- subset(
 	d,
-	v0 != "欠損値" & v0 != "." & v0 != "missing"
+	v0 != "'
+	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.'" & v0 != "." & v0 != "missing"
 )
 v0 <- NULL
 v1 <- NULL
@@ -713,7 +596,9 @@ v1 <- NULL
 d <- t(d)
 d <- subset(
 	d,
-	rownames(d) != "<>欠損値" & rownames(d) != "<>." & rownames(d) != "<>missing"
+	rownames(d) != "<>'
+	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
 )
 d <- t(d)
 

@@ -12,28 +12,14 @@ global:
     ok:                       OK
     paragraph:                段落
     plot:                     プロット
-    r_dont_close:             実行時にこの画面を閉じない
-    r_net_col_cnt_b:          中心性（媒介）
-    r_net_col_cnt_d:          中心性（次数）
-    r_net_col_cnt_v:          中心性（固有ベクトル）
-    r_net_col_com_b:          サブグラフ検出（媒介）
-    r_net_col_com_m:          サブグラフ検出（modularity）
-    r_net_col_none:           なし
-    r_net_edges:              描画する共起関係（edge）
-    r_net_font_too:           フォントも大きく ※EMFやEPSでの出力・印刷向け
-    r_net_freq_size:          出現数の多い語ほど大きい円で描画
-    r_net_ijou:               以上
-    r_net_jac:                Jaccard係数：
-    r_net_jac_width:          強い共起関係ほど太い線で描画
-    r_net_msg_fail:           調整に失敗しましました。
-    r_net_num:                描画数：
-    r_net_smaller:            すべての語を小さめの円で描画
     save:                     保存
     search:                   検索
     sentence:                 文
     spss_f:                   SPSSファイル
     tab_f:                    タブ区切り
     wm_f:                     不定長CSV （WordMiner）
+    r_dont_close:             実行時にこの画面を閉じない
+    r_net_msg_fail:           調整に失敗しましました。
 gui_errormsg::mysql:
     fatal:                   "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
 gui_wait:
@@ -667,6 +653,7 @@ gui_widget::r_net:
     or_more:                  '以上'
     thicker:                  '強い共起関係ほど太い線で描画'
     larger:                   '出現数の多い語ほど大きい円で描画'
+    larger_c:                 '出現数の多いコードほど大きい円で描画'
     larger_font:              'フォントも大きく ※EMFやEPSでの出力・印刷向け'
     smaller:                  'すべての語を小さめの円で描画'
 gui_window::word_netgraph:
@@ -691,3 +678,11 @@ gui_window::r_plot::word_netgraph:
     none:                     'なし'
     color:                    ' カラー：'
     win_title:                '抽出語・共起ネットワーク'
+gui_window::cod_netg:
+    win_title:                'コーディング・共起ネットワーク：オプション'
+    c_c:                      '語 ― 語'
+    c_v:                      '語 ― 外部変数・見出し'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                'コーディング・共起ネットワーク：調整'
+gui_window::r_plot::cod_netg:
+    win_title:                'コーディング・共起ネットワーク'
