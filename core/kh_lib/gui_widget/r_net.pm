@@ -140,14 +140,21 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	# Edgeの太さ・Nodeの大きさ
+	my $msg;
+	if ($self->{type} eq 'codes'){
+		$msg = kh_msg->get('larger_c');
+	} else {
+		$msg = kh_msg->get('larger');
+	}
+	
 	$lf->Checkbutton(
-			-text     => kh_msg->get('thicker'), # 強い共起関係ほど太い線で描画','euc
+			-text     => kh_msg->get('thicker'),
 			-variable => \$self->{check_use_weight_as_width},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
-			-text     => kh_msg->get('larger'), # 出現数の多い語ほど大きい円で描画','euc
+			-text     => $msg, # 出現数の多い語ほど大きい円で描画','euc
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor   => 'w',
 			-command  => sub{

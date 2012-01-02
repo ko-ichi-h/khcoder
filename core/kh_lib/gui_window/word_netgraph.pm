@@ -328,6 +328,7 @@ sub calc{
 
 	# 外部変数・見出しデータの統合
 	if ($self->{radio_type} eq 'twomode'){
+		$r_command = Encode::decode('euc-jp',$r_command);
 		$r_command .= &r_command_concat;
 	}
 

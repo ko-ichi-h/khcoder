@@ -12,28 +12,14 @@ global:
     ok:                       OK
     paragraph:                Paragraphs
     plot:                     Plot
-    r_dont_close:             Keep this window open
-    r_net_col_cnt_b:          'Centrality: betweenness'
-    r_net_col_cnt_d:          'Centrality: degree'
-    r_net_col_cnt_v:          'Centrality: eigenvector'
-    r_net_col_com_b:          'Community: betweenness'
-    r_net_col_com_m:          'Community: modularity'
-    r_net_col_none:           None
-    r_net_edges:              'Edge Selection:'
-    r_net_font_too:           Variable font size *For printing with EMF/EPS/PDF
-    r_net_freq_size:          Larger nodes for higher frequency words
-    r_net_ijou:               ' '
-    r_net_jac:                'Jaccard coef. >= '
-    r_net_jac_width:          Thicker lines for stronger edges
-    r_net_msg_fail:           'Error: could not set the options.'
-    r_net_num:                'N:'
-    r_net_smaller:            Smaller Nodes
     save:                     Save
     search:                   Search
     sentence:                 Sentences
     spss_f:                   SPSS File
     tab_f:                    Tab Delimited
     wm_f:                     'Variable-length CSV: for WordMiner'
+    r_dont_close:             Keep this window open
+    r_net_msg_fail:           'Error: could not configure the options.'
 gui_errormsg::mysql:
     fatal:                   "Failed to deal with MySQL database system.\nKH Coder will exit now."
 gui_wait:
@@ -665,6 +651,7 @@ gui_widget::r_net:
     or_more:                  ''
     thicker:                  'Thicker lines for stronger edges'
     larger:                   'Larger nodes for higher frequency words'
+    larger_c:                 'Larger nodes for higher frequency codes'
     larger_font:              'Variable font size *For printing with EMF/EPS/PDF'
     smaller:                  'Smaller Nodes'
 gui_window::word_netgraph:
@@ -689,3 +676,11 @@ gui_window::r_plot::word_netgraph:
     none:                     None
     color:                    ' color:'
     win_title:                'Co-Occurrence Network of Words'
+gui_window::cod_netg:
+    win_title:                'Options: Co-Occurrence Network of Codes'
+    c_c:                      'codes - codes'
+    c_v:                      'codes - variables / headings'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                'Configure: Co-Occurrence Network of Codes'
+gui_window::r_plot::cod_netg:
+    win_title:                'Co-Occurrence Network of Codes'
