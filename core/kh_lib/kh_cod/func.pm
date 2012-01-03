@@ -441,12 +441,12 @@ sub count{
 	}
 	
 	push @{$result}, [
-		'＃コード無し',
+		kh_msg->get('no_codes'), # ＃コード無し
 		$total - $least1,
 		sprintf("%.2f",( ($total - $least1) / $total ) * 100)."%"
 	];
 	push @{$result}, [
-		'（文書数）',
+		kh_msg->get('n_docs'), # （文書数）
 		$total,
 		''
 	];
