@@ -684,3 +684,13 @@ gui_window::r_plot_opt::cod_netg:
     win_title:                'Configure: Co-Occurrence Network of Codes'
 gui_window::r_plot::cod_netg:
     win_title:                'Co-Occurrence Network of Codes'
+gui_window::cod_count:
+    win_title:                'Frequency of Codes'
+    go_c:                     'Run'
+    h_code:                   'codes'
+    h_freq:                   'freq'
+    h_pcnt:                   'percent'
+    error_cod_f:              'Error: Please select a coding rule file.'
+kh_cod::func:
+    no_codes:                 '#no_codes'
+    n_docs:                   'N of Documents'

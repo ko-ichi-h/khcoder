@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('コーディング・単純集計'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # コーディング・単純集計
 	
 	#------------------------#
 	#   オプション入力部分   #
@@ -42,7 +42,7 @@ sub _new{
 	# コーディング単位
 	my $f2 = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 3);
 	$f2->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
+		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # コーディング単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
@@ -56,7 +56,7 @@ sub _new{
 	);
 
 	$f2->Button(
-		-text    => $self->gui_jchar('集計'),
+		-text    => kh_msg->get('go_c'), # 集計
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
@@ -89,9 +89,9 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('コード名'));
-	$lis->header('create',1,-text => $self->gui_jchar('頻度'));
-	$lis->header('create',2,-text => $self->gui_jchar('パーセント'));
+	$lis->header('create',0,-text => kh_msg->get('h_code')); # コード名
+	$lis->header('create',1,-text => kh_msg->get('h_freq')); # 頻度
+	$lis->header('create',2,-text => kh_msg->get('h_pcnt')); # パーセント
 
 	my $label = $rf->Label(
 		-text       => 'Ready.',
@@ -100,7 +100,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{copy_btn} = $rf->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'), # コピー
 		-font => "TKFN",
 		-width => 8,
 		-borderwidth => '1',
@@ -141,7 +141,7 @@ sub _calc{
 	unless (-e $codf){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "コーディング・ルール・ファイルが選択されていません。",
+			msg => kh_msg->get('error_cod_f'), # コーディング・ルール・ファイルが選択されていません。
 			window => \$win,
 			type => 'msg',
 		);

@@ -686,3 +686,13 @@ gui_window::r_plot_opt::cod_netg:
     win_title:                'コーディング・共起ネットワーク：調整'
 gui_window::r_plot::cod_netg:
     win_title:                'コーディング・共起ネットワーク'
+gui_window::cod_count:
+    win_title:                'コーディング・単純集計'
+    go_c:                     '集計'
+    h_code:                   'コード名'
+    h_freq:                   '頻度'
+    h_pcnt:                   'パーセント'
+    error_cod_f:              'コーディング・ルール・ファイルが選択されていません。'
+kh_cod::func:
+    no_codes:                 '＃コード無し'
+    n_docs:                   '（文書数）'
