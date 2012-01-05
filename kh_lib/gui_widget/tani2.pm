@@ -5,8 +5,8 @@ use Tk;
 use Jcode;
 
 my %name = (
-	"bun" => "文",
-	"dan" => "段落",
+	"bun" => kh_msg->gget('sentence'),
+	"dan" => kh_msg->gget('paragraph'),
 	"h5"  => "H5",
 	"h4"  => "H4",
 	"h3"  => "H3",
@@ -15,8 +15,8 @@ my %name = (
 );
 
 my %value = (
-	"文" => "bun",
-	"段落" => "dan",
+	kh_msg->gget('sentence') => "bun",
+	kh_msg->gget('paragraph') => "dan",
 	"H5"  => "h5",
 	"H4"  => "h4",
 	"H3"  => "h3",
@@ -29,17 +29,19 @@ sub _new{
 	my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
 	
 
-	my (@list1, @list2_1);
+	my (@list1, @list2_1, $width);
 	foreach my $i (@list0){
 		if (
 			mysql_exec->select(
 				"select status from status where name = \'$i\'",1
 			)->hundle->fetch->[0]
 		){
-			push @list1, gui_window->gui_jchar($name{$i},'euc');
+			push @list1, $name{$i};
 			unless ($i eq 'bun'){
-				push @list2_1, gui_window->gui_jchar($name{$i},'euc');
+				push @list2_1, $name{$i};
 			}
+			$width = length( Encode::encode('euc-jp',$name{$i}) )
+				if $width < length( Encode::encode('euc-jp',$name{$i}) );
 		}
 	}
 	
@@ -47,7 +49,7 @@ sub _new{
 	$self->{win_obj} = $f1;
 	
 	$f1->Label(
-		-text => gui_window->gui_jchar('コーディング単位：','euc'),
+		-text => kh_msg->get('unit_c'), # コーディング単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
@@ -66,7 +68,7 @@ sub _new{
 		-relief      => 'raised',
 		-indicator   => 'yes',
 		-font        => "TKFN",
-		-width       => 4,
+		-width       => $width,
 		-borderwidth => 1,
 	)->pack(-side=>'left',-pady => 2);
 	foreach my $i (@list1){
@@ -81,7 +83,7 @@ sub _new{
 	$self->{raw_opt} = gui_window->gui_jchar($name{$::project_obj->last_tani},'euc');
 
 	$f1->Label(
-		-text => gui_window->gui_jchar('    集計単位：','euc'),
+		-text => kh_msg->get('unit_t'), #     集計単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -89,7 +91,7 @@ sub _new{
 		-options=> \@list2_1,
 		-font => "TKFN",
 		-borderwidth => '1',
-		-width => 4,
+		#-width => 4,
 		-variable => \$self->{raw_opt2},
 	)->pack(-side=>'left');
 
@@ -110,11 +112,14 @@ sub check{
 	
 	$self->{mb}->configure(-text,$self->{raw_opt});
 	$self->{mb}->update;
-	$::project_obj->last_tani($value{Jcode->new( gui_window->gui_jg($self->{raw_opt}) )->euc});
+	$::project_obj->last_tani( $value{$self->{raw_opt}} );
 	
 	unless (Exists($self->opt2)){
 		return 0;
 	}
+	
+	my $old    = $self->{raw_opt2};
+	my $old_ok = 0;
 	
 	$self->opt2->destroy;
 	
@@ -133,11 +138,18 @@ sub check{
 				)->hundle->fetch->[0]
 			)
 		){
-			push @list, gui_window->gui_jchar($name{$i},'euc');
+			push @list, $name{$i};
+			if ($old eq $name{$i}){
+				$old_ok = 1;
+			}
 		}
 	}
 	
+	@list = reverse( @list );
+	
 	$self->{raw_opt2} = '';
+	$self->{raw_opt2} = $old if $old_ok;
+	
 	$self->{opt2} = $self->win_obj->Optionmenu(
 		-options=> \@list,
 		-font => "TKFN",
@@ -154,13 +166,14 @@ sub check{
 
 sub tani1{
 	my $self = shift;
-	my $opt = Jcode->new( gui_window->gui_jg($self->{raw_opt}) )->euc;
+	my $opt = $self->{raw_opt};
 
 	return $value{$opt};
 }
+
 sub tani2{
 	my $self = shift;
-	my $opt = Jcode->new( gui_window->gui_jg($self->{raw_opt2}) )->euc;
+	my $opt  = $self->{raw_opt2};
 
 	return $value{$opt};
 }

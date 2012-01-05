@@ -675,12 +675,13 @@ sub tab{
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
-		push @head, Jcode->new($i->name)->sjis;
+		push @head, Encode::decode('euc-jp',$i->name);
 	}
-	push @head, Jcode->new('ケース数')->sjis;
+	push @head, kh_msg->get('n_cases'); # ケース数
 	push @result, \@head;
+
 	# 中身
-	my @sum = (Jcode->new('合計')->sjis);
+	my @sum = (kh_msg->get('total')); # 合計
 	my $total;
 	while (my $i = $h->fetch){
 		my $n = 0;
@@ -692,7 +693,7 @@ sub tab{
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ
 				if (index($tani2,'h') == 0){
-					push @current, mysql_getheader->get($tani2, $h);
+					push @current, Encode::decode('cp932',mysql_getheader->get($tani2, $h)); # Decoding
 				} else {
 					push @current, $h;
 				}
@@ -758,7 +759,7 @@ sub _chisq_test{
 	
 	my $R_debug = 0;
 	if ($::config_obj->R){
-		@chisq = (Jcode->new('カイ2乗値')->sjis);
+		@chisq = ( kh_msg->get('chisq') ); # カイ2乗値
 		my $n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){

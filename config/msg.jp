@@ -7,6 +7,7 @@ global:
     close:                    閉じる
     cont_big_pros:           "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
     copy:                     コピー
+    copy_all:                 コピー（表全体）
     csv_f:                    CSVファイル
     default:                  既定値
     ok:                       OK
@@ -696,3 +697,17 @@ gui_window::cod_count:
 kh_cod::func:
     no_codes:                 '＃コード無し'
     n_docs:                   '（文書数）'
+    n_cases:                  'ケース数'
+    total:                    '合計'
+    chisq:                    'カイ2乗値'
+gui_window::cod_tab:
+    win_title:                'コーディング・章 節 段落ごとの集計'
+    cells:                    '　　セル内容：'
+    f_p:                      '度数とパーセント'
+    f:                        '度数のみ'
+    p:                        'パーセントのみ'
+    run:                      '集計'
+    er_ill:                   '指定された条件での集計は行えません。'
+gui_widget::tani2:
+    unit_c:                   'コーディング単位：'
+    unit_t:                   '    集計単位：'
