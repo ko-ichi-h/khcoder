@@ -7,6 +7,7 @@ global:
     close:                    Close
     cont_big_pros:            "It may take a while.\nMay I continue?"
     copy:                     Copy
+    copy_all:                 Copy
     csv_f:                    CSV File
     default:                  Default
     ok:                       OK
@@ -688,9 +689,23 @@ gui_window::cod_count:
     win_title:                'Frequency of Codes'
     go_c:                     'Run'
     h_code:                   'codes'
-    h_freq:                   'freq'
+    h_freq:                   'frequency'
     h_pcnt:                   'percent'
     error_cod_f:              'Error: Please select a coding rule file.'
 kh_cod::func:
     no_codes:                 '#no_codes'
     n_docs:                   'N of Documents'
+    n_cases:                  'N of Documents'
+    total:                    'Total'
+    chisq:                    'chi-square'
+gui_window::cod_tab:
+    win_title:                'Coding: Crosstab with Headings'
+    cells:                    '    Cells:'
+    f_p:                      'both'
+    f:                        'frequency'
+    p:                        'percent'
+    run:                      'Run'
+    er_ill:                   'Error: illegal parameters!'
+gui_widget::tani2:
+    unit_c:                   'Coding Unit:'
+    unit_t:                   '    Tabulating Unit:'

@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('コーディング・章 節 段落ごとの集計'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # コーディング・章 節 段落ごとの集計
 	
 	#------------------------#
 	#   オプション入力部分   #
@@ -31,7 +31,7 @@ sub _new{
 	);
 	# セル内容選択
 	$f0->Label(
-		-text => $self->gui_jchar('　　セル内容：'),
+		-text => kh_msg->get('cells'), # 　　セル内容：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -40,9 +40,9 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[$self->gui_jchar('度数とパーセント') , 0],
-				[$self->gui_jchar('度数のみ')         , 1],
-				[$self->gui_jchar('パーセントのみ')   , 2],
+				[kh_msg->get('f_p') , 0], # 度数とパーセント
+				[kh_msg->get('f')         , 1], # 度数のみ
+				[kh_msg->get('p')   , 2], # パーセントのみ
 			],
 		variable => \$self->{cell_opt},
 	);
@@ -59,9 +59,8 @@ sub _new{
 		pack   => \%pack,
 	);
 
-	
 	$f1->Button(
-		-text    => $self->gui_jchar('集計'),
+		-text    => kh_msg->get('run'), # 集計
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
@@ -102,7 +101,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{copy_btn} = $rf->Button(
-		-text => $self->gui_jchar('コピー（表全体）'),
+		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -141,7 +140,7 @@ sub _calc{
 	){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "指定された条件での集計は行えません。",
+			msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
 			window => \$win,
 			type => 'msg',
 		);
@@ -170,8 +169,8 @@ sub _calc{
 	my $cols = @{$result->[0]};
 	my $width = 0;
 	foreach my $i (@{$result}){
-		if ( length($i->[0]) > $width ){
-			$width = length($i->[0]);
+		if ( length( Encode::encode('euc-jp',$i->[0]) ) > $width ){
+			$width = length( Encode::encode('euc-jp',$i->[0]) );
 		}
 	}
 	
@@ -287,7 +286,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col -1,
-					-text  => $self->gui_jchar($h,'sjis'),
+					-text  => $h,
 					-style => $right_style
 				);
 				#print "is_utf8:a: ",Encode::is_utf8($h),"\n";
@@ -295,7 +294,7 @@ sub _calc{
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'sjis')
+					-text  => $h,
 				);
 			}
 			++$col;
