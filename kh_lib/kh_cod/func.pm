@@ -527,12 +527,12 @@ sub outtab{
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
-		push @head, Jcode->new($i->name)->sjis;
+		push @head, gui_window->gui_jchar($i->name);
 	}
-	push @head, Jcode->new('ケース数')->sjis;
+	push @head, kh_msg->get('n_cases');
 	push @result, \@head;
 	# 中身
-	my @sum = (Jcode->new('合計')->sjis);
+	my @sum = ( kh_msg->get('total') );
 	my $total;
 	while (my $i = $h->fetch){
 		my $n = 0;
@@ -557,9 +557,11 @@ sub outtab{
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ（1列目）
 				if ( length($var_obj->{labels}{$h}) ){
-					push @current, Jcode->new($var_obj->{labels}{$h})->sjis;
+					push @current, (
+						gui_window->gui_jchar($var_obj->{labels}{$h})
+					);
 				} else {
-					push @current, Jcode->new($h,'euc')->sjis;
+					push @current, gui_window->gui_jchar($h,'euc');
 				}
 			} else {                              # 中身
 				$sum[$n] += $h;
@@ -675,7 +677,7 @@ sub tab{
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
-		push @head, Encode::decode('euc-jp',$i->name);
+		push @head, gui_window->gui_jchar($i->name,'euc');
 	}
 	push @head, kh_msg->get('n_cases'); # ケース数
 	push @result, \@head;
@@ -693,7 +695,7 @@ sub tab{
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ
 				if (index($tani2,'h') == 0){
-					push @current, Encode::decode('cp932',mysql_getheader->get($tani2, $h)); # Decoding
+					push @current, gui_window->gui_jchar(mysql_getheader->get($tani2, $h),'cp932'); # Decoding
 				} else {
 					push @current, $h;
 				}
