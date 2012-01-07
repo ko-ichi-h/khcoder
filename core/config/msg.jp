@@ -711,3 +711,7 @@ gui_window::cod_tab:
 gui_widget::tani2:
     unit_c:                   'コーディング単位：'
     unit_t:                   '    集計単位：'
+gui_window::cod_outtab:
+    win_title:                'コーディング・外部変数とのクロス集計'
+    unit_cod:                 'コーディング単位：'
+    var:                      ' 　クロスする変数：'

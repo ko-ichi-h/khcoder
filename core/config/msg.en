@@ -709,3 +709,7 @@ gui_window::cod_tab:
 gui_widget::tani2:
     unit_c:                   'Coding Unit:'
     unit_t:                   '    Tabulating Unit:'
+gui_window::cod_outtab:
+    win_title:                'Coding: Crosstab with Variables'
+    unit_cod:                 'Coding Unit:'
+    var:                      '   Variable:'
