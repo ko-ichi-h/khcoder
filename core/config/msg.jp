@@ -32,7 +32,7 @@ gui_widget::bubble:
     variable:                 変数の値 / 見出しの大きさも可変に
     variance:                 分散
 gui_widget::codf:
-    browse_title:             コーディング・ルール・ファイルを選択してください
+    browse_title:             コーディングルール・ファイルを選択してください
     cod_rule_f:               コーディングルール・ファイル：
     no_file:                  選択ファイル無し
     reload:                   リロード
@@ -693,7 +693,7 @@ gui_window::cod_count:
     h_code:                   'コード名'
     h_freq:                   '頻度'
     h_pcnt:                   'パーセント'
-    error_cod_f:              'コーディング・ルール・ファイルが選択されていません。'
+    error_cod_f:              'コーディングルール・ファイルが選択されていません。'
 kh_cod::func:
     no_codes:                 '＃コード無し'
     n_docs:                   '（文書数）'
@@ -715,3 +715,20 @@ gui_window::cod_outtab:
     win_title:                'コーディング・外部変数とのクロス集計'
     unit_cod:                 'コーディング単位：'
     var:                      ' 　クロスする変数：'
+gui_window::cod_jaccard:
+    win_title:                'コーディング・類似度行列（Jaccard係数）'
+    unit_cod:                 '　コーディング単位：'
+    copy_sel:                 'コピー（選択列）'
+gui_window::cod_out::csv:
+    save_as:                  'コーディング結果（CSV）：名前を付けて保存'
+    win_title:                'コーディング結果の出力：CSVファイル'
+gui_window::cod_out::spss:
+    save_as:                  'コーディング結果（SPSS）：名前を付けて保存'
+    win_title:                'コーディング結果の出力：SPSSファイル'
+gui_window::cod_out::tab:
+    save_as:                  'コーディング結果：名前を付けて保存'
+    win_title:                'コーディング結果の出力： タブ区切り'
+    tab_delimited:            'タブ区切り'
+gui_window::cod_out::var:
+    save_as:                  'コーディング結果：不定長CSV：名前を付けて保存'
+    win_title:                'コーディング結果の出力：不定長CSV'

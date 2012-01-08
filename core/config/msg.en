@@ -7,7 +7,7 @@ global:
     close:                    Close
     cont_big_pros:            "It may take a while.\nMay I continue?"
     copy:                     Copy
-    copy_all:                 Copy
+    copy_all:                 Copy (all)
     csv_f:                    CSV File
     default:                  Default
     ok:                       OK
@@ -713,3 +713,20 @@ gui_window::cod_outtab:
     win_title:                'Coding: Crosstab with Variables'
     unit_cod:                 'Coding Unit:'
     var:                      '   Variable:'
+gui_window::cod_jaccard:
+    win_title:                'Coding: Jaccard Coefficients'
+    unit_cod:                 '  Coding Unit:'
+    copy_sel:                 'Copy (selected)'
+gui_window::cod_out::csv:
+    save_as:                  'Save the Document-Code Matrix As *.csv'
+    win_title:                'Export Document-Code Matrix: CSV'
+gui_window::cod_out::spss:
+    save_as:                  'Save the Document-Code Matrix As *.sps'
+    win_title:                'Export Document-Code Matrix: SPSS'
+gui_window::cod_out::tab:
+    save_as:                  'Save the Document-Code Matrix As *.txt'
+    win_title:                'Export Document-Code Matrix: Tab delimited'
+    tab_delimited:            'Tab Delimited'
+gui_window::cod_out::var:
+    save_as:                  'Save the Document-Code Matrix As *.cvs'
+    win_title:                'Export Document-Code Matrix: Variable Length CSV'

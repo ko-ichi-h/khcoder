@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('コーディング・類似度行列（Jaccard係数）'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # コーディング・類似度行列（Jaccard係数）
 
 	#------------------------#
 	#   オプション入力部分   #
@@ -32,7 +32,7 @@ sub _new{
 	);
 	# コーディング単位
 	$lf->Label(
-		-text => $self->gui_jchar('　コーディング単位：'),
+		-text => kh_msg->get('unit_cod'), # 　コーディング単位：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{tani_obj} = gui_widget::tani->open(
@@ -41,7 +41,7 @@ sub _new{
 	);
 
 	$lf->Button(
-		-text    => $self->gui_jchar('集計'),
+		-text    => kh_msg->get('gui_window::cod_tab->run'), # 集計
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
@@ -82,7 +82,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_copy} = $rf->Button(
-		-text => $self->gui_jchar('コピー（表全体）'),
+		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $self->copy; }
@@ -390,12 +390,12 @@ sub sort{
 	if ($key){
 		@temp = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
 		$self->{btn_copy}->configure(
-			-text => $self->gui_jchar('コピー（選択列）')
+			-text => kh_msg->get('copy_sel') # コピー（選択列）
 		);
 	} else {
 		@temp = @{$self->{result}};
 		$self->{btn_copy}->configure(
-			-text => $self->gui_jchar('コピー（表全体）')
+			-text => kh_msg->gget('copy_all') # コピー（表全体）
 		);
 	}
 
