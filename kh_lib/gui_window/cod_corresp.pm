@@ -175,14 +175,14 @@ sub _new{
 		-expand => 1
 	);
 
-	$self->{radio} = 0;
-	$fi_1->Radiobutton(
-		-text             => kh_msg->get('c_d'), # コード ｘ 文書（同時布置なし）
-		-font             => "TKFN",
-		-variable         => \$self->{radio},
-		-value            => 0,
-		-command          => sub{ $self->refresh;},
-	)->pack(-anchor => 'w');
+	$self->{radio} = 1;
+	#$fi_1->Radiobutton(
+	#	-text             => kh_msg->get('c_d'), # コード ｘ 文書（同時布置なし）
+	#	-font             => "TKFN",
+	#	-variable         => \$self->{radio},
+	#	-value            => 0,
+	#	-command          => sub{ $self->refresh;},
+	#)->pack(-anchor => 'w');
 
 	$fi_1->Radiobutton(
 		-text             => kh_msg->get('c_dd'), # コード ｘ 上位の章・節・段落
@@ -193,14 +193,38 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
+	$fi_2->Label(
+		-text => '    ',
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
 	$self->{label_high} = $fi_2->Label(
-		-text => kh_msg->get('ag_unit'), # 　　集計単位：
+		-text => kh_msg->get('gui_window::word_corresp->unit'), # 集計単位：
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
 		-side   => 'left',
 	);
 	$self->{opt_frame_high} = $fi_2;
+
+	my $fi_4 = $fi_1->Frame()->pack(-anchor => 'w');
+	$fi_4->Label(
+		-text => '    ',
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
+	$self->{biplot} = 1;
+	$self->{label_high2} = $fi_4->Checkbutton(
+		-text     => kh_msg->get('gui_window::word_corresp->biplot'), # 見出しまたは文書番号を同時布置
+		-variable => \$self->{biplot},
+	)->pack(
+		-anchor => 'w',
+		-side  => 'left',
+	);
 
 	$fi_1->Radiobutton(
 		-text             => kh_msg->get('c_v'), # コード ｘ 外部変数
@@ -230,6 +254,7 @@ sub _new{
 		-pady => 2,
 	);
 
+	$self->{check_filter_w} = 1;
 	$self->{check_filter_w_widget} = $fsw->Checkbutton(
 		-text     => kh_msg->get('flw'), # 差異が顕著なコードを分析に使用：
 		-variable => \$self->{check_filter_w},
@@ -375,6 +400,17 @@ sub refresh_flw{
 	return $self;
 }
 
+sub refresh_same_doc_unit{
+	my $self = shift;
+	if ( $self->tani eq $self->{high} ){
+		$self->{check_filter_w_widget}->configure(-state => 'disabled');
+		$self->{entry_flw}   ->configure(-state => 'disabled');
+		$self->{entry_flw_l1}->configure(-state => 'disabled');
+	} else {
+		$self->{check_filter_w_widget}->configure(-state => 'normal');
+		$self->refresh_flw;
+	}
+}
 
 
 # ラジオボタン関連
@@ -439,8 +475,8 @@ sub refresh{
 		}
 
 		my %tani_name = (
-			"bun" => "文",
-			"dan" => "段落",
+			"bun" => kh_msg->gget('sentence'), # 文
+			"dan" => kh_msg->gget('paragraph'), # 段落
 			"h5"  => "H5",
 			"h4"  => "H4",
 			"h3"  => "H3",
@@ -449,17 +485,28 @@ sub refresh{
 		);
 
 		@tanis = ();
+		my $if_old_v_is_valid = 0;
 		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-			last if ($self->tani eq $i);
-			
 			if (
 				mysql_exec->select(
 					"select status from status where name = \'$i\'",1
 				)->hundle->fetch->[0]
 			){
-				push @tanis, [$self->gui_jchar($tani_name{$i}),$i];
+				# コーディング単位が「文」の場合、「段落」単位での集計は不可
+				if (
+					   $i eq 'dan'
+					&& $self->tani eq 'bun'
+					&& @tanis
+				) {
+					next;
+				}
+				
+				push @tanis, [ $tani_name{$i}, $i ];
+				$if_old_v_is_valid = 1 if $i eq $self->{high};
 			}
+			last if ($self->tani eq $i);
 		}
+		$self->{high} = undef unless $if_old_v_is_valid;
 
 		if (@tanis){
 			$self->{opt_body_high} = gui_widget::optmenu->open(
@@ -467,6 +514,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => \@tanis,
 				variable => \$self->{high},
+				command => sub{$self->refresh_same_doc_unit;},
 			);
 			$self->{opt_body_high_ok} = 1;
 		} else {
@@ -507,12 +555,17 @@ sub refresh{
 		$self->{opt_body_var}->disable;
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
+		$self->{label_high2}->configure(-state => 'normal');
 		$self->refresh_flw;
+		$self->refresh_flt;
+		
+		$self->refresh_same_doc_unit;
 		#$self->{entry_flw}   ->configure(-state => 'normal');
 		#$self->{entry_flw_l1}->configure(-state => 'normal');
 	}
 	elsif ($self->{radio} == 2){
 		$self->{opt_body_high}->configure(-state => 'disable');
+		$self->{label_high2}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 
 		$self->{opt_body_var}->enable;
@@ -617,6 +670,13 @@ sub select_none{
 sub _calc{
 	my $self = shift;
 
+	#if ( $self->{radio} == 1 ){
+	#	if ( $self->tani eq $self->{high} ){
+	#		# この場合は上位見出しを取得しない
+	#		$self->{radio} = 0;
+	#	}
+	#}
+
 	my @selected = ();
 	foreach my $i (@{$self->{checks}}){
 		push @selected, $i->{name} if $i->{check};
@@ -703,46 +763,68 @@ sub _calc{
 		}
 		
 		my $sql = '';
-		$sql .= "SELECT $tani_high.id\n";
-		$sql .= "FROM $tani_high, $tani_low\n";
-		$sql .= "WHERE\n";
-		my $n = 0;
-		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
-			$sql .= "AND " if $n;
-			$sql .= "$tani_low.$i"."_id = $tani_high.$i"."_id\n";
-			++$n;
-			if ($i eq $tani_high){
-				last;
+		if ($tani_low eq $tani_high){
+			$sql .= "SELECT $tani_high.id\n";
+			$sql .= "FROM $tani_high\n";
+			$sql .= "ORDER BY $tani_high.id\n";
+		} else {
+			$sql .= "SELECT $tani_high.id\n";
+			$sql .= "FROM $tani_high, $tani_low\n";
+			$sql .= "WHERE\n";
+			my $n = 0;
+			foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+				$sql .= "AND " if $n;
+				$sql .= "$tani_low.$i"."_id = $tani_high.$i"."_id\n";
+				++$n;
+				if ($i eq $tani_high){
+					last;
+				}
 			}
+			$sql .= "ORDER BY $tani_low.id\n";
 		}
-		$sql .= "ORDER BY $tani_low.id\n";
+		
 		
 		my $max = mysql_exec->select("SELECT MAX(id) FROM $tani_high",1)
 			->hundle->fetch->[0];
 		my %names = ();
 		my $n = 1;
+		my $headings = "hn <- c(";
 		while ($n <= $max){
 			$names{$n} = Jcode->new(
 				mysql_getheader->get($tani_high, $n),
 				'sjis'
 			)->euc;
+
+			if (length($names{$n})){
+				$names{$n} =~ s/"/ /g;
+				$headings .= "\"$names{$n}\",";
+			}
+
 			++$n;
 		}
-		
+		chop $headings;
+
 		$r_command .= "v <- c(";
 		my $h = mysql_exec->select($sql,1)->hundle;
 		while (my $i = $h->fetch){
-			if (length($names{$i->[0]})){
-				$names{$i->[0]} =~ s/"/ /g;
-				$r_command .= "\"$names{$i->[0]}\",";
-			} else {
-				$r_command .= "$i->[0],";
-			}
+			$r_command .= "$i->[0],";
 		}
 		chop $r_command;
 		$r_command .= ")\n";
+
 		$r_command .= &r_command_aggr_str;
+
+		if ( length($headings) > 7 ){
+			$headings .= ")\n";
+			#print Jcode->new($headings)->sjis, "\n";
+			$r_command .= $headings;
+			$r_command .= "d <- as.matrix(d)\n";
+			$r_command .= "rownames(d) <- hn[as.numeric( rownames(d) )]\n";
+		}
 	}
+
+
+
 
 	# 外部変数の付与
 	$r_command .= "v_count <- 0\n";
@@ -829,12 +911,17 @@ sub _calc{
 		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
 	}
 
+	my $biplot = 1;
+	if ($self->{radio} == 1){
+		$biplot = $self->{biplot};
+	}
+
 	&gui_window::word_corresp::make_plot(
 		d_x          => $self->{xy_obj}->x,
 		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
 		flw          => $filter_w,
-		biplot       => $self->gui_jg( $self->{radio} ),
+		biplot       => $biplot,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
@@ -848,6 +935,11 @@ sub _calc{
 	);
 
 	$wait_window->end(no_dialog => 1);
+	
+	unless ( $self->{radio} ){
+		$self->{radio} = 1;
+	}
+	
 	unless ( $self->{check_rm_open} ){
 		$self->close;
 	}
