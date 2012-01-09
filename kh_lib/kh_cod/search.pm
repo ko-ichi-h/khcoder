@@ -434,15 +434,14 @@ sub check_a_doc{
 	my $doc_id = shift;
 	
 	# コーディング結果の読み出し
-	my $text = 
-		"・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）\n";
+	my $text = kh_msg->get('codes')."\n"; # ・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）
 	my (@words, %words, $n);
 	foreach my $i (@{$self->{codes}}){
 		unless ($i->res_table){next;}
 		my $sql .= 
 			"SELECT ".$i->res_col." FROM ".$i->res_table." WHERE id = $doc_id";
 		if (mysql_exec->select($sql,1)->hundle->rows){
-			$text .= "    ".$i->name."\n";
+			$text .= "    ".gui_window->gui_jchar( $i->name )."\n";
 			if ($i->hyosos){
 				foreach my $h (@{$i->hyosos}){
 					++$words{$h};
@@ -453,7 +452,7 @@ sub check_a_doc{
 	}
 	@words = (keys %words);
 	unless ($n){
-		$text .= "    ＃コード無し\n";
+		$text .= "    ".kh_msg->get('no_codes')."\n"; # ＃コード無し
 	}
 	$text .= "\n";
 	
@@ -468,12 +467,12 @@ sub check_a_doc{
 	){
 		$rnum = $rnum->[0];
 		$rnum_all = $self->total_hits;
-		$text .= "・現在表示中の検索結果： $rnum / $rnum_all,  ";
+		$text .= kh_msg->get('gui_window::word_conc->currentDoc')."$rnum / $rnum_all,  ";
 	} else {
-		$text .= "・現在表示中の文書：  ";
+		$text .= kh_msg->get('gui_window::doc_view->current_doc'); # ・現在表示中の文書：  
 	}
 	
-	$text = Jcode->new($text)->sjis;
+	$text = Encode::encode('cp932', $text);
 	return ($text,\@words);
 }
 
