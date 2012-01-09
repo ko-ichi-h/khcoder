@@ -78,9 +78,7 @@ gui_window::about:
     kawabata:                 川端亮
     win_title:                KH Coderについて
 gui_window::cod_corresp:
-    ag_unit:                  '    集計単位：'
-    c_d:                      コード ｘ 文書（同時布置なし）
-    c_dd:                     コード ｘ 上位の章・節・段落
+    c_dd:                     コード ｘ 文書
     c_v:                      コード ｘ 外部変数
     coding_unit:              コーディング単位：
     flt:                      原点から離れたコードのみラベル表示：

@@ -78,9 +78,7 @@ gui_window::about:
     kawabata:                 'KAWABATA, Akira'
     win_title:                About KH Coder
 gui_window::cod_corresp:
-    ag_unit:                  '    Upper unit:'
-    c_d:                      Codes x Documents (no biplot)
-    c_dd:                     Codes x Upper unit
+    c_dd:                     Codes x Documents
     c_v:                      Codes x Variables
     coding_unit:              'Coding unit:'
     flt:                      'Show labels only for distinctive codes:'
@@ -453,7 +451,7 @@ gui_window::word_corresp:
     too_many3:                It is recommended that you keep the number of words arround 100 or 150.
     too_many4:                May I continue?
     top:                      Top
-    unit:                     'Unit:'
+    unit:                     'Tabulating Unit:'
     w_d:                      Words x Documents
     w_v:                      Words x Variable(s)
     win_title:                'Options: Correspondence Analysis of Words'
