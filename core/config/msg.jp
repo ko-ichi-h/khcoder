@@ -730,3 +730,15 @@ gui_window::cod_out::tab:
 gui_window::cod_out::var:
     save_as:                  'コーディング結果：不定長CSV：名前を付けて保存'
     win_title:                'コーディング結果の出力：不定長CSV'
+gui_window::doc_search:
+    win_title:                '文書検索'
+    run:                      '検索'
+    unit:                     '検索単位：'
+    no_sort:                  '出現順'
+    tf:                       'tf順'
+    tf_M_idf:                 'tf*idf順'
+    tf_D_idf:                 'tf/idf順'
+    error_no_code:            'コードが選択されていません'
+kh_cod::search:
+    codes:                    '・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）'
+    no_codes:                 '＃コード無し'

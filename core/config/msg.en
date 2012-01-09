@@ -312,7 +312,7 @@ gui_window::word_ass:
     18:                       chi square
     and:                      AND
     cond_h:                   conditional
-    direct:                   'Direct:'
+    direct:                   '#direct:'
     direct_code:              '#direct'
     filter:                   Filter
     fr:                       Frequency
@@ -728,3 +728,15 @@ gui_window::cod_out::tab:
 gui_window::cod_out::var:
     save_as:                  'Save the Document-Code Matrix As *.cvs'
     win_title:                'Export Document-Code Matrix: Variable Length CSV'
+gui_window::doc_search:
+    win_title:                'Search Documents'
+    run:                      'Run'
+    unit:                     'Unit:'
+    no_sort:                  'no sort'
+    tf:                       'tf'
+    tf_M_idf:                 'tf*idf'
+    tf_D_idf:                 'tf/idf'
+    error_no_code:            'Please select at least 1 code.'
+kh_cod::search:
+    codes:                    '* Codes added to this document (in the current coding rule file):'
+    no_codes:                 '#none'

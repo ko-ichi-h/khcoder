@@ -17,7 +17,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('文書検索'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 文書検索
 	
 	my $lf = $win->Frame(
 		#-label => 'Search Entry',
@@ -54,7 +54,7 @@ sub _new{
 	
 	# コード選択
 	#$left->Label(
-	#	-text => $self->gui_jchar('・コード選択'),
+	#	-text => kh_msg->get('1'), # ・コード選択
 	#	-font => "TKFN"
 	#)->pack(-anchor => 'w');
 	
@@ -94,7 +94,7 @@ sub _new{
 	# 直接入力フレーム
 	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
 	$self->{direct_w_l} = $f3->Label(
-		-text => $self->gui_jchar('直接入力：'),
+		-text => kh_msg->get('gui_window::word_ass->direct'), # 直接入力：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -125,7 +125,7 @@ sub _new{
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => $self->gui_jchar('検索'),
+		-text    => kh_msg->get('run'), # 検索
 		-command => sub{$self->search;}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
@@ -144,7 +144,7 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		-text => $self->gui_jchar('検索単位：'),
+		-text => kh_msg->get('unit'), # 検索単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'right');
 
@@ -153,8 +153,8 @@ sub _new{
 		pack    => {-pady => '1', -side => 'left'},
 		options =>
 			[
-				[$self->gui_jchar('AND検索'), 'and'],
-				[$self->gui_jchar('OR検索') , 'or']
+				[kh_msg->get('gui_window::word_ass->and'), 'and'], # AND検索
+				[kh_msg->get('gui_window::word_ass->or') , 'or'] # OR検索
 			],
 		variable => \$self->{opt_method1},
 	);
@@ -164,10 +164,10 @@ sub _new{
 		pack    => {-padx => 8, -pady => 1},
 		options =>
 			[
-				[$self->gui_jchar('出現順')   , 'by'    ],
-				[$self->gui_jchar('tf順')     , 'tf'    ],
-				[$self->gui_jchar('tf*idf順') , 'tf*idf'],
-				[$self->gui_jchar('tf/idf順') , 'tf/idf']
+				[kh_msg->get('no_sort')   , 'by'    ], # 出現順
+				[kh_msg->get('tf')     , 'tf'    ], # tf順
+				[kh_msg->get('tf_M_idf') , 'tf*idf'], # tf*idf順
+				[kh_msg->get('tf_D_idf') , 'tf/idf'] # tf/idf順
 			],
 		variable => \$self->{opt_order},
 	);
@@ -203,7 +203,7 @@ sub _new{
 
 	$self->{copy_btn} = $f5->Button(
 		-font    => "TKFN",
-		-text    => $self->gui_jchar('コピー'),
+		-text    => kh_msg->gget('copy'), # コピー
 		-width   => 8,
 		-command => sub{$self->copy;},
 		-borderwidth => 1
@@ -222,7 +222,7 @@ sub _new{
 	$f5->Button(
 		-font    => "TKFN",
 		-width   => 8,
-		-text    => $self->gui_jchar('文書表示'),
+		-text    => kh_msg->get('gui_window::word_conc->viewDoc'), # 文書表示
 		-command => sub{$self->view_doc;},
 		-borderwidth => 1
 	)->pack(-side => 'left',-padx => 2);
@@ -233,7 +233,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => $self->gui_jchar('前'.kh_cod::search->docs_per_once),
+		-text        => kh_msg->get('gui_window::word_conc->next').kh_cod::search->docs_per_once,
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -246,7 +246,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $f5->Button(
-		-text        => $self->gui_jchar('次'.kh_cod::search->docs_per_once),
+		-text        => kh_msg->get('gui_window::word_conc->prev').kh_cod::search->docs_per_once,
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -259,7 +259,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{hits_label} = $f5->Label(
-		-text       => $self->gui_jchar('  ヒット数：0'),
+		-text       => kh_msg->get('gui_window::word_conc->hits'), #   ヒット数：0
 		-font       => "TKFN",
 	)->pack(-side => 'left',);
 
@@ -314,7 +314,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		0,
 		0,
-		-text  => $self->gui_jchar('＃直接入力'),
+		-text  => kh_msg->get('gui_window::word_ass->direct_code'), # ＃直接入力
 	);
 	#$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
@@ -350,7 +350,7 @@ sub read_code{
 	$self->{clist}->itemCreate(
 		$row,
 		0,
-		-text  => $self->gui_jchar('＃コード無し'),
+		-text  => kh_msg->get('gui_window::word_ass->no_code'), # ＃コード無し
 	);
 	gui_hlist->update4scroll($self->{clist});
 	$self->clist_check;
@@ -514,14 +514,14 @@ sub search{
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => 'コードが選択されていません',
+			msg    => kh_msg->get('error_no_code'), # コードが選択されていません'
 			window => \$win,
 		);
 		return 0;
 	}
 	
 	# ラベルの変更
-	$self->{hits_label}->configure(-text => $self->gui_jchar('  ヒット数： 0'));
+	$self->{hits_label}->configure(-text => kh_msg->get('gui_window::word_conc->hits').'0'); #   ヒット数： 0
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searching...'
@@ -597,7 +597,13 @@ sub display{
 		$num_disp2 = $num_total;
 	}
 	if ($num_total == 0){$start = 0;}
-	$self->{hits_label}->configure(-text => $self->gui_jchar("  ヒット数： $num_total  表示： $start"."-$num_disp2"));
+	$self->{hits_label}->configure(
+		-text => kh_msg->get('gui_window::word_conc->hits')
+			.$num_total
+			.kh_msg->get('gui_window::word_conc->viewing')
+			."$start"
+			."-$num_disp2"
+	);
 
 	# ボタンの更新
 	if ($start > 1){
