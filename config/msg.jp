@@ -742,3 +742,6 @@ gui_window::doc_search:
 kh_cod::search:
     codes:                    '・この文書にヒットしたコード （現在開いているコーディング・ルールファイルの中で）'
     no_codes:                 '＃コード無し'
+gui_widget::select_a_var:
+    heading:                  '見出し'
+    na:                       '利用不可'
