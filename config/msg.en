@@ -743,3 +743,36 @@ kh_cod::search:
 gui_widget::select_a_var:
     heading:                  'Heading '
     na:                       'n / a '
+gui_window::doc_cls:
+    verb:                     ''
+    dist:                     'Distance:'
+    n_cls:                    '  N of clusters:'
+    select_3words:            'Please select at least 3 words.'
+    fail:                     'Failed to compute clusters.'
+    win_title:                'Options: Cluster Analysis of Documents'
+gui_window::doc_cls_res:
+    win_title:                'Cluster Analysis of Documents'
+    docs_in_clusters:         'Documents in each cluster'
+    h_cls_id:                 'cluster'
+    h_doc_num:                'documents'
+    docs:                     'Documents'
+    bal_docs:                 "Search documents in the cluster.\n[double click]"
+    words:                    'Words'
+    bal_words:                "Search distinctive words of the cluster\n[shift + double click]"
+    agglm:                    'Agglomeration Stages'
+    h_stage:                  'stage'
+    h_cls1:                   'cluster 1'
+    h_cls2:                   'cluster 2'
+    h_coeff:                  'coefficients'
+    both:                     '1 & 2'
+    only1:                    '1 only'
+    only2:                    '2 only'
+    bal_agg_docs:             "Search documents in the stage\n[double click]"
+    m_wrd:                    'Ward'
+    m_ave:                    'Average'
+    m_clk:                    'CLink'
+    config:                   'Config'
+    save:                     'Save the result as a variable'
+    cluster:                  'Cluster'
+    na:                       'n/a'
+    method:                   'Method:'

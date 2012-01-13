@@ -15,7 +15,7 @@ sub _new{
 
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jt('文書のクラスター分析'));
+	$wmw->title($self->gui_jt(kh_msg->get('win_title'))); # 文書のクラスター分析
 
 	#--------------------------------#
 	#   各クラスターに含まれる文書   #
@@ -23,7 +23,7 @@ sub _new{
 	my $fr_top = $wmw->Frame()->pack(-fill => 'both', -expand => 'yes');
 
 	my $fr_dcs = $fr_top->LabFrame(
-		-label => $self->gui_jchar('各クラスターに含まれる文書'),
+		-label => kh_msg->get('docs_in_clusters'), # 各クラスターに含まれる文書
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'both', -expand => 1, -padx => 2, -pady => 2, -side => 'left');
@@ -46,8 +46,8 @@ sub _new{
 		-height           => 10,
 		-width            => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
-	$lis2->header('create',0,-text => $self->gui_jchar('クラスター番号'));
-	$lis2->header('create',1,-text => $self->gui_jchar('文書数'));
+	$lis2->header('create',0,-text => kh_msg->get('h_cls_id')); # クラスター番号
+	$lis2->header('create',1,-text => kh_msg->get('h_doc_num')); # 文書数
 
 	$lis2->bind("<Shift-Double-1>",sub{$self->cls_words;});
 	$lis2->bind("<ButtonPress-3>",sub{$self->cls_words;});
@@ -58,7 +58,7 @@ sub _new{
 	my $fhl = $fr_dcs->Frame->pack(-fill => 'x');
 
 	my $btn_ds = $fhl->Button(
-		-text        => $self->gui_jchar('文書検索'),
+		-text        => kh_msg->get('docs'), # 文書検索
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->cls_docs;}
@@ -66,12 +66,12 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$btn_ds,
-		-balloonmsg => $self->gui_jchar("クラスターに含まれる文書を検索\n[クラスターをダブルクリック]"),
+		-balloonmsg => kh_msg->get('bal_docs'), # クラスターに含まれる文書を検索\n[クラスターをダブルクリック]
 		-font       => "TKFN"
 	);
 
 	my $btn_ass = $fhl->Button(
-		-text        => $self->gui_jchar('特徴語'),
+		-text        => kh_msg->get('words'), # 特徴語
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->cls_words;}
@@ -79,12 +79,12 @@ sub _new{
 	
 	$wmw->Balloon()->attach(
 		$btn_ass,
-		-balloonmsg => $self->gui_jchar("クラスターの特徴をあらわす語を検索\n[Shift + クラスターをダブルクリック]"),
+		-balloonmsg => kh_msg->get('bal_words'), # クラスターの特徴をあらわす語を検索\n[Shift + クラスターをダブルクリック]
 		-font       => "TKFN"
 	);
 	
 	$self->{copy_btn} = $fhl->Button(
-		-text        => $self->gui_jchar('コピー'),
+		-text        => kh_msg->gget('copy'), # コピー
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {gui_hlist->copy_all($self->list);}
@@ -94,7 +94,7 @@ sub _new{
 	#   クラスター併合の過程   #
 	
 	my $fr_cls = $fr_top->LabFrame(
-		-label => $self->gui_jchar('クラスター併合の過程'),
+		-label => kh_msg->get('agglm'), # クラスター併合の過程
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'both', -expand => 1, -padx => 2, -pady => 2, -side => 'right');
@@ -117,17 +117,17 @@ sub _new{
 		-height           => 10,
 		-width            => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
-	$lis_f->header('create',0,-text => $self->gui_jchar('段階'));
-	$lis_f->header('create',1,-text => $self->gui_jchar('併合1'));
-	$lis_f->header('create',2,-text => $self->gui_jchar('併合2'));
-	$lis_f->header('create',3,-text => $self->gui_jchar('併合水準'));
+	$lis_f->header('create',0,-text => kh_msg->get('h_stage')); # 段階
+	$lis_f->header('create',1,-text => kh_msg->get('h_cls1')); # 併合1
+	$lis_f->header('create',2,-text => kh_msg->get('h_cls2')); # 併合2
+	$lis_f->header('create',3,-text => kh_msg->get('h_coeff')); # 併合水準
 	
 	$lis_f->bind("<Double-1>",sub{$self->merge_docs;});
 	
 	my $fhr = $fr_cls->Frame->pack(-fill => 'x');
 
 	my $mb = $fhr->Menubutton(
-		-text        => $self->gui_jchar('文書検索'),
+		-text        => kh_msg->get('docs'), # 文書検索
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -138,27 +138,27 @@ sub _new{
 
 	$mb->command(
 		-command => sub {$self->merge_docs();},
-		-label   => $self->gui_jchar('1と2'),
+		-label   => kh_msg->get('both'), # 1と2
 	);
 
 	$mb->command(
 		-command => sub {$self->merge_docs('l');},
-		-label   => $self->gui_jchar('1のみ'),
+		-label   => kh_msg->get('only1'), # 1のみ
 	);
 
 	$mb->command(
 		-command => sub {$self->merge_docs('r');},
-		-label   => $self->gui_jchar('2のみ'),
+		-label   => kh_msg->get('only2'), # 2のみ
 	);
 
 	$wmw->Balloon()->attach(
 		$mb,
-		-balloonmsg => $self->gui_jchar("[ダブルクリック]\n併合したクラスターに含まれる文書を検索"),
+		-balloonmsg => kh_msg->get('bal_agg_docs'), # [ダブルクリック]\n併合したクラスターに含まれる文書を検索
 		-font       => "TKFN"
 	);
 
 	$self->{btn_prev} = $fhr->Button(
-		-text => $self->gui_jchar('前200'),
+		-text => kh_msg->get('gui_window::word_conc->prev').'200', # 前200
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -168,7 +168,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2, -pady => 2);
 
 	$self->{btn_next} = $fhr->Button(
-		-text => $self->gui_jchar('次200'),
+		-text => kh_msg->get('gui_window::word_conc->next').'200', # 次200
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -178,7 +178,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2, -pady => 2);
 
 	$fhr->Button(
-		-text        => $self->gui_jchar('コピー'),
+		-text        => kh_msg->gget('copy'), # コピー
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {
@@ -195,7 +195,7 @@ sub _new{
 	)->pack(-side => 'right', -padx => 2, -pady => 2);
 	
 	$fhr->Button(
-		-text => $self->gui_jchar('プロット'),
+		-text => kh_msg->gget('plot'), # プロット
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -219,14 +219,14 @@ sub _new{
 	my $fb = $wmw->Frame()->pack(-fill => 'x', -padx => 2, -pady => 2);
 	
 	$fb->Label(
-		-text => $self->gui_jchar('方法：',),
+		-text => kh_msg->get('method'), # 方法：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
 	my @opt = (
-		[$self->gui_jchar('Ward法','euc'),   '_cluster_tmp_w'],
-		[$self->gui_jchar('群平均法','euc'), '_cluster_tmp_a'],
-		[$self->gui_jchar('最遠隣法','euc'), '_cluster_tmp_c'],
+		[kh_msg->get('m_wrd'),   '_cluster_tmp_w'], # Ward法','euc
+		[kh_msg->get('m_ave'), '_cluster_tmp_a'], # 群平均法','euc
+		[kh_msg->get('m_clk'), '_cluster_tmp_c'], # 最遠隣法','euc
 	);
 	
 	$self->{optmenu} = gui_widget::optmenu->open(
@@ -239,7 +239,7 @@ sub _new{
 	$self->{optmenu}->set_value('_cluster_tmp_w');
 	
 	$fb->Button(
-		-text => $self->gui_jchar('調整'),
+		-text => kh_msg->get('config'), # 調整
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -251,7 +251,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 5);
 
 	$fb->Button(
-		-text => $self->gui_jchar('分類結果の保存'),
+		-text => kh_msg->get('save'), # 分類結果の保存
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -297,8 +297,8 @@ sub renew{
 	$self->list->delete('all');
 	my $row = 0;
 	foreach my $i (sort {$a<=>$b} keys %v){
-		my $t = $self->gui_jchar('クラスター'.$i, 'euc');
-		$t = $self->gui_jchar('分類不可', 'euc') if $i eq '.';
+		my $t = kh_msg->get('cluster').$i; # クラスター
+		$t = kh_msg->get('na') if $i eq '.'; # 分類不可
 		
 		$self->list->add($row,-at => "$row");
 		$self->list->itemCreate(
@@ -578,13 +578,14 @@ sub cls_words{
 	unless(@selected){
 		return 0;
 	}
-	my $query = $self->gui_jg( $self->list->itemCget($selected[0], 0, -text) );
-	if ($query eq Jcode->new('分類不可')->sjis){
-		$query = '.';
+	my $query = $self->list->itemCget($selected[0], 0, -text);
+	
+	my $cls = kh_msg->get('cluster');
+	if ($query =~ /$cls([0-9]+)/){
+		$query = '<>'.$self->{tmp_out_var}.'-->'.$1;
 	} else {
-		substr($query, 0, 10) = '';
+		$query = '<>'.$self->{tmp_out_var}.'-->.';
 	}
-	$query = '<>'.$self->{tmp_out_var}.'-->'.$query;
 	
 	# リモートウィンドウの操作
 	my $win;
@@ -616,12 +617,12 @@ sub cls_docs{
 		return 0;
 	}
 	my $query = $self->gui_jg( $self->list->itemCget($selected[0], 0, -text) );
-	if ($query eq Jcode->new('分類不可')->sjis){
-		$query = '.';
+	my $cls = kh_msg->get('cluster');
+	if ($query =~ /$cls([0-9]+)/){
+		$query = '<>'.$self->{tmp_out_var}.'-->'.$1;
 	} else {
-		substr($query, 0, 10) = '';
+		$query = '<>'.$self->{tmp_out_var}.'-->.';
 	}
-	$query = '<>'.$self->{tmp_out_var}.'-->'.$query;
 	
 	# リモートウィンドウの操作
 	my $win;
