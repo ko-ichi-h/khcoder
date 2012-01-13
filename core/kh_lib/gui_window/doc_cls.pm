@@ -25,7 +25,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => '使用',
+		verb   => kh_msg->get('verb'), # 使用
 	);
 
 	my $lf = $win->LabFrame(
@@ -41,7 +41,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('距離：'),
+		-text => kh_msg->get('dist'), # 距離：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -60,7 +60,7 @@ sub _new{
 
 
 	$f4->Label(
-		-text => $self->gui_jchar('  クラスター数：'),
+		-text => kh_msg->get('n_cls'), #   クラスター数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -74,7 +74,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_cluster_number});
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -98,7 +98,7 @@ sub check{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # 品詞が1つも選択されていません。
 		);
 		return 0;
 	}
@@ -139,7 +139,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),# '品詞が1つも選択されていません。',
 		);
 		return 0;
 	}
@@ -160,7 +160,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '少なくとも3つ以上の抽出語を選択して下さい。',
+			msg  => kh_msg->get('select_3words'), # 少なくとも3つ以上の抽出語を選択して下さい。
 		);
 		return 0;
 	}
@@ -424,7 +424,7 @@ sub calc_exec{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$::main_gui->mw,
-			msg    => "計算に失敗しました\n\n".$r
+			msg    => kh_msg->get('fail')."\n\n".$r # 計算に失敗しました
 		);
 		return 0;
 	}
@@ -473,7 +473,7 @@ sub calc_exec{
 
 
 sub label{
-	return '文書のクラスター分析：オプション';
+	return kh_msg->get('win_title'), # 文書のクラスター分析：オプション
 }
 
 sub win_name{

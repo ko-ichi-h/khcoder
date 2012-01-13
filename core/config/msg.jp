@@ -745,3 +745,36 @@ kh_cod::search:
 gui_widget::select_a_var:
     heading:                  '見出し'
     na:                       '利用不可'
+gui_window::doc_cls:
+    verb:                     '使用'
+    dist:                     '距離：'
+    n_cls:                    '  クラスター数：'
+    select_3words:            '少なくとも3つ以上の抽出語を選択して下さい。'
+    fail:                     '計算に失敗しました'
+    win_title:                '文書のクラスター分析：オプション'
+gui_window::doc_cls_res:
+    win_title:                '文書のクラスター分析'
+    docs_in_clusters:         '各クラスターに含まれる文書'
+    h_cls_id:                 'クラスター番号'
+    h_doc_num:                '文書数'
+    docs:                     '文書検索'
+    bal_docs:                 "クラスターに含まれる文書を検索\n[クラスターをダブルクリック]"
+    words:                    '特徴語'
+    bal_words:                "クラスターの特徴をあらわす語を検索\n[Shift + クラスターをダブルクリック]"
+    agglm:                    'クラスター併合の過程'
+    h_stage:                  '段階'
+    h_cls1:                   '併合1'
+    h_cls2:                   '併合2'
+    h_coeff:                  '併合水準'
+    both:                     '1と2'
+    only1:                    '1のみ'
+    only2:                    '2のみ'
+    bal_agg_docs:             "[ダブルクリック]\n併合したクラスターに含まれる文書を検索"
+    m_wrd:                    'Ward法'
+    m_ave:                    '群平均法'
+    m_clk:                    '最遠隣法'
+    config:                   '調整'
+    save:                     '分類結果の保存'
+    cluster:                  'クラスター'
+    na:                       '分類不可'
+    method:                   '方法：'

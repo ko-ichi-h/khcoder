@@ -233,7 +233,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => kh_msg->get('gui_window::word_conc->next').kh_cod::search->docs_per_once,
+		-text        => kh_msg->get('gui_window::word_conc->prev').kh_cod::search->docs_per_once,
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -246,7 +246,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $f5->Button(
-		-text        => kh_msg->get('gui_window::word_conc->prev').kh_cod::search->docs_per_once,
+		-text        => kh_msg->get('gui_window::word_conc->next').kh_cod::search->docs_per_once,
 		-font        => "TKFN",
 		-command     =>
 			sub{
