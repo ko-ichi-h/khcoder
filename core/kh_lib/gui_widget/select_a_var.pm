@@ -28,8 +28,8 @@ sub fill{
 				)->hundle->fetch->[0]
 			){
 				my $t = substr($i,1,1);
-				$t = '見出し'.$t;
-				push @options, [gui_window->gui_jchar($t), $i];
+				$t = kh_msg->get('heading').$t; # 見出し
+				push @options, [$t, $i];
 				$vars{$i} = 1;
 			}
 			if ($i eq $self->{tani}){
@@ -80,7 +80,7 @@ sub fill{
 			pack    => {-side => 'left', -padx => 2},
 			options => 
 				[
-					[gui_window->gui_jchar('利用不可'), -1],
+					[ kh_msg->get('na') , -1], # 利用不可
 				],
 			variable => \$self->{var_id},
 		);

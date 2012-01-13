@@ -740,3 +740,6 @@ gui_window::doc_search:
 kh_cod::search:
     codes:                    '* Codes added to this document (in the current coding rule file):'
     no_codes:                 '#none'
+gui_widget::select_a_var:
+    heading:                  'Heading '
+    na:                       'n / a '
