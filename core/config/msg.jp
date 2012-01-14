@@ -778,3 +778,13 @@ gui_window::doc_cls_res:
     cluster:                  'クラスター'
     na:                       '分類不可'
     method:                   '方法：'
+gui_window::doc_cls_res_sav:
+    desc:                     '分類結果を外部変数として保存します。'
+    name:                     '変数名：'
+    specify_var:              '変数名を指定してください'
+    win_title:                '文書・クラスター分析：保存'
+gui_window::doc_cls_res_opt:
+    win_title:                '文書・クラスター分析：調整'
+gui_window::cls_height::doc:
+    win_title:                '文書のクラスター分析：併合水準'
+    overwr:                   'このファイルを上書きしてよろしいですか：'

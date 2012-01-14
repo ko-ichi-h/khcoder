@@ -105,6 +105,7 @@ sub save{
 	# 保存先の参照
 	my @types = (
 		[ "Encapsulated PostScript",[qw/.eps/] ],
+		[ "PDF",[qw/.pdf/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "R Source",[qw/.r/] ],
 	);

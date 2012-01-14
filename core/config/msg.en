@@ -776,3 +776,13 @@ gui_window::doc_cls_res:
     cluster:                  'Cluster'
     na:                       'n/a'
     method:                   'Method:'
+gui_window::doc_cls_res_sav:
+    desc:                     'Saving cluster analysis result as a variable.'
+    name:                     'Variable name:'
+    specify_var:              'Specify the name of new variable'
+    win_title:                'Save Cluster as New Variable'
+gui_window::doc_cls_res_opt:
+    win_title:                'Configure: Cluster Analysis of Documents'
+gui_window::cls_height::doc:
+    win_title:                'Agglomeration: Cluster Analysis of Documents'
+    overwr:                   'May I overwrite this file: '
