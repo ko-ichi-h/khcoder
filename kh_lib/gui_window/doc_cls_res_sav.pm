@@ -19,7 +19,7 @@ sub _new{
 	#$self->innner;
 
 	$lf->Label(
-		-text => $self->gui_jchar('分類結果を外部変数として保存します。'),
+		-text => kh_msg->get('desc'), # 分類結果を外部変数として保存します。
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -30,7 +30,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('変数名：'),
+		-text => kh_msg->get('name'), # 変数名：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -43,14 +43,14 @@ sub _new{
 	$self->{entry_name}->bind("<Key-Return>",sub{$self->save;});
 
 	$self->{win_obj}->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
 	$self->{win_obj}->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),,
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}
@@ -68,7 +68,7 @@ sub save{
 	unless ( length($name) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '変数名を指定してください',
+			msg  => kh_msg->get('specify_var'),# 変数名を指定してください
 		);
 		return 0;
 	}
@@ -85,7 +85,7 @@ sub save{
 }
 
 sub win_title{
-	return '文書・クラスター分析：保存';
+	return kh_msg->get('win_title'); # 文書・クラスター分析：保存
 }
 
 sub win_name{

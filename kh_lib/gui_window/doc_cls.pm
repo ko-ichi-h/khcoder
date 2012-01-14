@@ -285,7 +285,7 @@ sub calc_exec{
 	$merges->{_cluster_tmp_a} = $::project_obj->file_TempCSV;
 	$merges->{_cluster_tmp_c} = $::project_obj->file_TempCSV;
 
-	# kh_r_plotモジュールにはEUCのRコマンドを渡すこと
+	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡す…
 	kh_r_plot->clear_env;
 	my $plots;
 	
@@ -506,13 +506,13 @@ sub hinshi{
 }
 
 sub r_command_height{
-	my $t = << 'END_OF_the_R_COMMAND';
+	my $t = '
 
-# プロットの準備開始
-pp_focus  <- 50     # 最初・最後の50回の併合をプロット
-pp_kizami <-  5     # クラスター数のきざみ（5個おきに表示）
+# Preparing the plot
+pp_focus  <- 50     # plot first & last 50 stages
+pp_kizami <-  5     # indicator of N of clusters
 
-# 併合水準を取得
+# Calcurate coeff.
 mergep <- dcls$merge
 if ( nrow(d) < n_org ){
 	merge_tmp <- NULL
@@ -535,20 +535,28 @@ det <- mergep
 det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
-# タイプ別の処理：必要な部分の併合データ切出し・表記・クラスター数表示のきざみ
+# all, first, last
 if (pp_type == "last"){
 	n_start <- nrow(det) - pp_focus + 1
 	if (n_start < 1){ n_start <- 1 }
 	det <- det[nrow(det):n_start,]
 	
-	str_xlab <- paste("（最後の",pp_focus,"回）",sep="")
+	str_xlab <- paste(" ('
+	.kh_msg->get('gui_window::word_cls->last1') # 最後の
+	.'",pp_focus,"'
+	.kh_msg->get('gui_window::word_cls->last2') # 回
+	.') ",sep="")
 } else if (pp_type == "first") {
 	if ( pp_focus > nrow(det) ){
 		pp_focus <- nrow(det)
 	}
 	det <- det[pp_focus:1,]
 	
-	str_xlab <- paste("（最初の",pp_focus,"回）",sep="")
+	str_xlab <- paste(" ('
+	.kh_msg->get('gui_window::word_cls->first1') # 最初の
+	.'",pp_focus,"'
+	.kh_msg->get('gui_window::word_cls->first2') # 回
+	.') ",sep="")
 } else if (pp_type == "all") {
 	det <- det[nrow(det):1,]
 	pp_kizami <- nrow(det) / 8
@@ -557,7 +565,7 @@ if (pp_type == "last"){
 	str_xlab <- ""
 }
 
-# クラスター数のマーカーを入れる準備
+# Indication of "N of clusters"
 p_type <- NULL
 p_nums <- NULL
 for (i in 1:nrow(det)){
@@ -570,15 +578,19 @@ for (i in 1:nrow(det)){
 	}
 }
 
-# プロット
+# Plot
 par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 plot(
 	det[,"u_n"],
 	det[,"height"],
 	type = "b",
 	pch  = p_type,
-	xlab = paste("クラスター併合の段階",str_xlab,sep = ""),
-	ylab = "併合水準（非類似度）"
+	xlab = paste("'
+	.kh_msg->get('gui_window::word_cls->agglomer') # クラスター併合の段階
+	.'",str_xlab,sep = ""),
+	ylab = "'
+	.kh_msg->get('gui_window::word_cls->hight') # 併合水準（非類似度）
+	.'"
 )
 
 text(
@@ -594,13 +606,15 @@ text(
 legend(
 	min(det[,"u_n"]),
 	max(det[,"height"]),
-	legend = c("※プロット内の数値ラベルは\n　併合後のクラスター総数"),
+	legend = c("'
+	.kh_msg->get('gui_window::word_cls->note1') # ※プロット内の数値ラベルは\n　併合後のクラスター総数
+	.'"),
 	#pch = c(16),
 	cex = .8,
 	box.lty = 0
 )
 
-END_OF_the_R_COMMAND
+';
 return $t;
 }
 

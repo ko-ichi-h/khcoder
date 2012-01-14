@@ -26,8 +26,9 @@ sub _save{
 			my $ans = $self->win_obj->messageBox(
 				-message => $self->gui_jchar
 					(
-					   "このファイルを上書きしてよろしいですか：\n".
-					   "$file_csv"
+					   kh_msg->get('overwr') # このファイルを上書きしてよろしいですか：
+					   ."\n"
+					   ."$file_csv"
 					),
 				-icon    => 'question',
 				-type    => 'OKCancel',
@@ -60,7 +61,7 @@ sub _save{
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt('文書のクラスター分析：併合水準','euc');
+	return $self->gui_jt(kh_msg->get('win_title')); # 文書のクラスター分析：併合水準','euc
 }
 
 sub win_name{

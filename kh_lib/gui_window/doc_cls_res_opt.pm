@@ -26,7 +26,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => $self->gui_jchar('距離：'),
+		-text => kh_msg->get('gui_window::doc_cls->dist'), # 距離：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -51,7 +51,7 @@ sub _new{
 	}
 
 	$f4->Label(
-		-text => $self->gui_jchar('  クラスター数：'),
+		-text => kh_msg->get('gui_window::doc_cls->n_cls'), #   クラスター数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -70,14 +70,14 @@ sub _new{
 
 
 	$self->{win_obj}->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
 	$self->{win_obj}->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->calc;}
@@ -98,7 +98,7 @@ sub calc{
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '調整に失敗しましました。',
+			msg  => kh_msg->gget('r_net_msg_fail') # 調整に失敗しましました。
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -129,7 +129,7 @@ sub calc{
 }
 
 sub win_title{
-	return '文書・クラスター分析：調整';
+	return kh_msg->get('win_title'); # 文書・クラスター分析：調整
 }
 
 sub win_name{

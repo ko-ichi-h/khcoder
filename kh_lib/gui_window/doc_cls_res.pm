@@ -616,7 +616,7 @@ sub cls_docs{
 	unless(@selected){
 		return 0;
 	}
-	my $query = $self->gui_jg( $self->list->itemCget($selected[0], 0, -text) );
+	my $query = $self->list->itemCget($selected[0], 0, -text);
 	my $cls = kh_msg->get('cluster');
 	if ($query =~ /$cls([0-9]+)/){
 		$query = '<>'.$self->{tmp_out_var}.'-->'.$1;
