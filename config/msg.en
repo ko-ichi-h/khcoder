@@ -799,3 +799,15 @@ gui_window::morpho_crossout::tab:
     win_title:                'Export Document-Word Matrix: Tab Delimited'
 gui_window::morpho_crossout::var:
     win_title:                'Export Document-Word Matrix: Variable Length CSV'
+gui_window::contxt_out:
+    words:                    'Words'
+    words4cntxt:              'Words for Calculating Context Vectors'
+    options:                  'Units & Weights'
+    use:                      ''
+gui_window::contxt_out::csv:
+    saving:                   'Save Word-Context Matrix as:'
+    win_title:                'Export Word-Context Matrix: CSV'
+gui_window::contxt_out::spss:
+    win_title:                'Export Word-Context Matrix: SPSS'
+gui_window::contxt_out::tab:
+    win_title:                'Export Word-Context Matrix: Tab Delimited'

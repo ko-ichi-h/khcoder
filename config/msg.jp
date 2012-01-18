@@ -801,3 +801,15 @@ gui_window::morpho_crossout::tab:
     win_title:                '「文書ｘ抽出語」表の出力： タブ区切り'
 gui_window::morpho_crossout::var:
     win_title:                '「文書ｘ抽出語」表の出力： 不定長CSV'
+gui_window::contxt_out:
+    words:                    '抽出語'
+    words4cntxt:              '文脈ベクトルの計算に用いる抽出語'
+    options:                  '集計単位と重み付け'
+    use:                      '使用'
+gui_window::contxt_out::csv:
+    saving:                   '「抽出語ｘ文脈ベクトル」表：名前を付けて保存'
+    win_title:                '「抽出語ｘ文脈ベクトル」表の出力： CSV'
+gui_window::contxt_out::spss:
+    win_title:                '「抽出語ｘ文脈ベクトル」表の出力： SPSS'
+gui_window::contxt_out::tab:
+    win_title:                '「抽出語ｘ文脈ベクトル」表の出力： タブ区切り'

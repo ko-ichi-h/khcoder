@@ -45,7 +45,7 @@ sub file_name{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('「抽出語ｘ文脈ベクトル」表：名前を付けて保存'),
+			$self->gui_jt(kh_msg->get('gui_window::contxt_out::csv->saving')),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -59,7 +59,7 @@ sub file_name{
 
 # Windowラベル
 sub label{
-	return '「抽出語ｘ文脈ベクトル」表の出力： タブ区切り';
+	return kh_msg->get('win_title') # 「抽出語ｘ文脈ベクトル」表の出力： タブ区切り
 }
 
 sub win_name{

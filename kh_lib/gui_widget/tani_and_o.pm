@@ -5,8 +5,8 @@ use Tk;
 use Jcode;
 
 my %name = (
-	"bun" => "文",
-	"dan" => "段落",
+	"bun" => kh_msg->gget('sentence'), # 文
+	"dan" => kh_msg->gget('paragraph'), # 段落
 	"h5"  => "H5",
 	"h4"  => "H4",
 	"h3"  => "H3",
@@ -15,8 +15,8 @@ my %name = (
 );
 
 my %value = (
-	"文" => "bun",
-	"段落" => "dan",
+	kh_msg->gget('sentence') => "bun",
+	kh_msg->gget('paragraph') => "dan",
 	"H5"  => "h5",
 	"H4"  => "h4",
 	"H3"  => "h3",
@@ -57,7 +57,7 @@ sub _new{
 			)->hundle->fetch->[0]
 		){
 			my $c = $self->{hlist}->Checkbutton(
-				-text     => gui_window->gui_jchar($name{$i}),
+				-text     => $name{$i},
 				-variable => \$self->{check}{$i},
 				-command  => sub {$self->refresh;},
 				-anchor   => 'w',

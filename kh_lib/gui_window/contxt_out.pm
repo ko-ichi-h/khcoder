@@ -25,18 +25,21 @@ sub _new{
 	# 各種フレーム
 	my $wf = $win->Frame()->pack(-fill => 'both', -expand => 1);
 	my $lf = $wf->LabFrame(
-		-label => 'Words',
+		-label => kh_msg->get('words'), # 抽出語
 		-labelside => 'acrosstop',
+		-foreground => 'blue',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 	my $rf = $wf->LabFrame(
-		-label => 'Words for Context',
+		-label => kh_msg->get('words4cntxt'), # 文脈ベクトルの計算に用いる抽出語
 		-labelside => 'acrosstop',
+		-foreground => 'blue',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 	my $of = $win ->LabFrame(
-		-label => 'Optins',
+		-label => kh_msg->get('options'), # 集計単位と重み付け
 		-labelside => 'acrosstop',
+		-foreground => 'blue',
 		-borderwidth => 2,
 	)->pack(-anchor => 'w', -side => 'left');
 	my $bf = $win ->Frame(
@@ -47,12 +50,7 @@ sub _new{
 	#   集計オプション   #
 
 	$of->Label(
-		-text       => $self->gui_jchar('・集計単位と重み付けの設定'),
-		-font       => "TKFN",
-	)->pack(-anchor => 'w');
-
-	$of->Label(
-		-text => $self->gui_jchar('　　'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(-side => 'left',-fill => 'y',-expand => 1);
 
@@ -69,21 +67,17 @@ sub _new{
 	#   文脈計算に使用する語の選択   #
 
 	my $right = $rf->Frame()->pack(-fill => 'both', -expand => 1);
-	$right->Label(
-		-text       => $self->gui_jchar('■文脈ベクトルの計算に使用する語の取捨選択'),
-		-font       => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w');
+
 	
 	# 最小・最大出現数
 	$right->Label(
-		-text => $self->gui_jchar('・最小/最大 出現数による語の選択'),
+		-text => kh_msg->get('gui_widget::words->by_tf'), # 最小/最大 出現数による語の選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	
 	my $r2 = $right->Frame()->pack(-fill => 'x');
 	$r2->Label(
-		-text => $self->gui_jchar('　 　最小出現数：'),
+		-text => kh_msg->get('gui_widget::words->min_tf'), #      最小出現数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min2} = $r2->Entry(
@@ -94,7 +88,7 @@ sub _new{
 	$self->config_entry_focusin($self->{ent_min2});
 	
 	$r2->Label(
-		-text => $self->gui_jchar('　 最大出現数：'),
+		-text => kh_msg->get('gui_widget::words->max_tf'), # 　 最大出現数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max2} = $r2->Entry(
@@ -107,12 +101,12 @@ sub _new{
 
 	# 最小・最大 文書数による選択
 	$right->Label(
-		-text => $self->gui_jchar('・最小/最大 文書数による語の選択'),
+		-text => kh_msg->get('gui_widget::words->by_df'), # ・最小/最大 文書数による語の選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $r5 = $right->Frame()->pack(-fill => 'x');
 	$r5->Label(
-		-text => $self->gui_jchar('　 　最小文書数：'),
+		-text => kh_msg->get('gui_widget::words->min_df'), # 　 　最小文書数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min_df2} = $r5->Entry(
@@ -122,7 +116,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->config_entry_focusin($self->{ent_min_df2});
 	$r5->Label(
-		-text => $self->gui_jchar('　 最大文書数：'),
+		-text => kh_msg->get('gui_widget::words->max_df'), # 　 最大文書数：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max_df2} = $r5->Entry(
@@ -134,7 +128,7 @@ sub _new{
 	$self->config_entry_focusin($self->{ent_max_df2});
 	my $r6 = $right->Frame()->pack(-fill => 'x');
 	$r6->Label(
-		-text => $self->gui_jchar('　 　文書と見なす単位：'),
+		-text => kh_msg->get('gui_widget::words->df_unit'), # 　 　文書と見なす単位：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	my %pack = (
@@ -151,12 +145,12 @@ sub _new{
 
 	# 品詞による単語の取捨選択
 	$right->Label(
-		-text => $self->gui_jchar('・品詞による語の選択'),
+		-text => kh_msg->get('gui_widget::words->by_pos'), # ・品詞による語の選択
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 5);
 	my $r3 = $right->Frame()->pack(-fill => 'both',-expand => 1);
 	$r3->Label(
-		-text => $self->gui_jchar('　　'),
+		-text => '    ',
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -173,14 +167,14 @@ sub _new{
 	$self->{hinshi_obj2}->select_all;
 	my $r4 = $r3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$r4->Button(
-		-text => $self->gui_jchar('すべて'),
+		-text => kh_msg->gget('all'), # すべて
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj2}->select_all;}
 	)->pack(-pady => 3);
 	$r4->Button(
-		-text => $self->gui_jchar('クリア'),
+		-text => kh_msg->gget('clear'), # クリア
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -188,16 +182,19 @@ sub _new{
 	)->pack();
 
 	$right->Label(
-		-text => $self->gui_jchar('・現在の設定で計算に使用される語の数'),
+		-text => 
+			 kh_msg->get('gui_widget::words->check_desc1')
+			.kh_msg->get('use') # 使用
+			.kh_msg->get('gui_widget::words->check_desc2'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $cf2 = $right->Frame->pack(-fill => 'x',  -pady => 2);
 	$cf2->Label(
-		-text => $self->gui_jchar('　 　'),
+		-text => '   ',
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	$cf2->Button(
-		-text => $self->gui_jchar('チェック'),
+		-text => kh_msg->get('gui_widget::words->check'), # チェック
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->check2;}
@@ -213,16 +210,10 @@ sub _new{
 
 	#------------------#
 	#   抽出語の選択   #
-
-	$lf->Label(
-		-text       => $self->gui_jchar('■抽出語の取捨選択'),
-		-font       => "TKFN",
-		-foreground => 'blue'
-	)->pack(-anchor => 'w');
 	
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf,
-		verb   => '出力',
+		verb   => kh_msg->get('use'),
 		type   => 'corresp',
 	);
 
@@ -230,7 +221,7 @@ sub _new{
 	#   実行ボタン   #
 
 	$bf->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -244,11 +235,7 @@ sub _new{
 			$self->check or return;
 			my $file = $self->file_name or return;
 			my $ans = $self->win_obj->messageBox(
-				-message => $self->gui_jchar
-					(
-					   "この処理には時間がかかることがあります。\n".
-					   "続行してよろしいですか？"
-					),
+				-message => kh_msg->gget('cont_big_pros'),
 				-icon    => 'question',
 				-type    => 'OKCancel',
 				-title   => 'KH Coder'
@@ -272,7 +259,7 @@ sub check2{
 	unless ( eval(@{$self->hinshi2}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),
 		);
 		return 0;
 	}
@@ -301,14 +288,14 @@ sub check{
 	unless ( eval(@{$self->hinshi2}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),
 		);
 		return 0;
 	}
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),
 		);
 		return 0;
 	}
@@ -318,7 +305,7 @@ sub check{
 	unless ($n){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '集計単位が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),
 		);
 		return 0;
 	}
