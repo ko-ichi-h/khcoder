@@ -12,7 +12,7 @@ sub save{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_window::morpho_crossout::csv->er_no_pos'),
 		);
 		return 0;
 	}
@@ -26,7 +26,7 @@ sub save{
 		-defaultextension => '.sps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('「文書ｘ抽出語」表：名前を付けて保存'),
+			$self->gui_jt(kh_msg->get('gui_window::morpho_crossout::csv->saving')),
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
@@ -39,11 +39,7 @@ sub save{
 	$self->{words_obj}->settings_save;
 	
 	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行してよろしいですか？"
-			),
+		-message => kh_msg->gget('cont_big_pros'),
 		-icon    => 'question',
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
@@ -70,7 +66,7 @@ sub save{
 
 
 sub label{
-	return '「文書ｘ抽出語」表の出力： SPSS';
+	return kh_msg->get('win_title'); # 「文書ｘ抽出語」表の出力： SPSS
 }
 
 sub win_name{

@@ -161,7 +161,7 @@ gui_window::main::menu:
     cross_vr:                 Crosstab with Variables
     desc_stats:               Descriptive Stats
     doc_search:               Search Documents
-    doc_term_mtrx:            Export Document-Term Matrix
+    doc_term_mtrx:            Export Document-Word Matrix
     docs:                     Documents
     docs_bayes:               Naive Bayes Classifier
     exec_sql:                 Execute SQL Statements
@@ -190,7 +190,7 @@ gui_window::main::menu:
     project:                  Project
     read:                     Read from a File
     run_prep:                 Run Pre-Processing
-    term_vec_mtrx:            Export Term-Context Matrix
+    term_vec_mtrx:            Export Word-Context Matrix
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
     to_csv:                   Convert from HTML to CSV
@@ -568,7 +568,7 @@ mysql_words:
     std_dev_df:               Std. Deviation of TF
     std_dev_tf:               Std. Deviation of TF
     tf:                       TF
-    types:                    Types of Terms (n)
+    types:                    Types of Words (n)
     words:                    Words
 gui_widget::cls4mds:
     cluster_color:            'Indicate clusters by different colors'
@@ -786,3 +786,16 @@ gui_window::doc_cls_res_opt:
 gui_window::cls_height::doc:
     win_title:                'Agglomeration: Cluster Analysis of Documents'
     overwr:                   'May I overwrite this file: '
+gui_window::morpho_crossout:
+    output:                   ''
+gui_window::morpho_crossout::csv:
+    er_no_pos:                'Error: Please select at least 1 POS'
+    saving:                   'Save document-word matrix as:'
+    win_title:                'Export Document-Word Matrix: CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                'Export Document-Word Matrix: SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   'Tab Delimited'
+    win_title:                'Export Document-Word Matrix: Tab Delimited'
+gui_window::morpho_crossout::var:
+    win_title:                'Export Document-Word Matrix: Variable Length CSV'

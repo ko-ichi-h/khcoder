@@ -12,7 +12,7 @@ sub save{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('er_no_pos'), # 品詞が1つも選択されていません。
 		);
 		return 0;
 	}
@@ -25,8 +25,8 @@ sub save{
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
-		-title            =>
-			$self->gui_jt('「文書ｘ抽出語」表：名前を付けて保存'),
+		-title            => 
+			$self->gui_jt( kh_msg->get('saving') ), # 「文書ｘ抽出語」表：名前を付けて保存
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	unless ($path){
@@ -39,11 +39,7 @@ sub save{
 	$self->{words_obj}->settings_save;
 	
 	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行してよろしいですか？"
-			),
+		-message => kh_msg->gget('cont_big_pros'),
 		-icon    => 'question',
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
@@ -70,7 +66,7 @@ sub save{
 
 
 sub label{
-	return '「文書ｘ抽出語」表の出力： CSV';
+	return kh_msg->get('win_title'); # 「文書ｘ抽出語」表の出力： CSV
 }
 
 sub win_name{

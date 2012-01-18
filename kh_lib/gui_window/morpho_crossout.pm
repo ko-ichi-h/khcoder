@@ -29,18 +29,18 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf,
-		verb   => '出力',
+		verb   => kh_msg->get('output'), # 出力
 	);
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}

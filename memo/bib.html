@@ -130,7 +130,7 @@
 		'		<li><a href="#">2008</a></li>',
 		'		<li><a href="#">2009</a></li>',
 		'		<li><a href="#">2010</a></li>',
-		'		<li><a href="#">2011</a></li>',
+		'		<li><a href="#">2011-</a></li>',
 		'	</ul>',
 		'</td></tr>',
 		'<tr><td class="SMftab"><span class="SMf" >著者名：&nbsp;</span></td>',
@@ -617,6 +617,9 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 				if (t == '-2005'){
 					t = '2005';
 				}
+				if (t == '2011-'){
+					t = '2011';
+				}
 				
 				bib_year = t;
 				search_bibs();
@@ -686,6 +689,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 					   	   ( bib_year == "all" )
 					   	|| ( bib_year == bibs[i][1] )
 					   	|| ( (bib_year == 2005) && (bibs[i][1] <= 2005) )
+					   	|| ( (bib_year == 2011) && (bibs[i][1] == 2012) )
 					   )
 					&& ( ( bib_auth == "all" ) || ( bib_auth == bibs[i][0] ) )
 					&& (
