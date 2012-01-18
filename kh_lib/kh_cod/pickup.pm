@@ -29,8 +29,7 @@ sub pick{
 		return 0;
 	}
 
-	# 書き出し
-
+	# 書き出し（テキスト）
 	open (F,">$args{file}") or 
 		gui_errormsg->open(
 			thefile => $args{file},
@@ -94,11 +93,109 @@ sub pick{
 	close (F);
 	my $t1 = new Benchmark;                           # 時間計測用
 	print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
-	
+
 	if ($::config_obj->os eq 'win32'){
 		kh_jchar->to_sjis($args{file});
 	}
 
+	# 書き出し（外部変数）
+	my $var_file = $args{file};                   # 出力ファイル名
+	if ($var_file =~ /(.+)\.txt/){
+		$var_file = $1."_var.csv";
+	} else {
+		$var_file .= "_var.csv";
+	}
+	
+	my @vars = ();                                # 変数のリストを作成
+	my %tani_check = ();
+	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+		$tani_check{$i} = 1;
+		last if ($args{tani} eq $i);
+	}
+	my $h = mysql_outvar->get_list;
+	my @options = ();
+	foreach my $i (@{$h}){
+		if ($tani_check{$i->[0]}){
+			push @vars, $i->[2];
+		}
+	}
+	my $tani = $args{tani};
+	
+	if (@vars){
+		my $vd;                                       # 変数データを読み出し
+		my @vnames = ();
+		foreach my $i (@vars){
+			my $var_obj = mysql_outvar::a_var->new(undef,$i);
+			push @vnames, $var_obj->{name};
+			my $sql = '';
+			if ( $var_obj->{tani} eq $tani){
+				$sql .= "SELECT $var_obj->{column}\n";
+				$sql .= "FROM $var_obj->{table}, ct_pickup\n";
+				$sql .= "WHERE $var_obj->{table}.id = ct_pickup.id\n";
+				$sql .= "    AND ct_pickup.num >= 1\n";
+				$sql .= "ORDER BY $var_obj->{table}.id";
+			} else {
+				$sql .= "SELECT $var_obj->{table}.$var_obj->{column}\n";
+				
+				$sql .= "FROM ct_pickup, $tani\n";
+				$sql .= "LEFT JOIN $var_obj->{tani} ON\n";
+				my $n = 0;
+				foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+					$sql .= "\t";
+					$sql .= "and " if $n;
+					$sql .= "$var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+					++$n;
+					last if ($var_obj->{tani} eq $i);
+				}
+				$sql .= "LEFT JOIN $var_obj->{table} ON $var_obj->{tani}.id = $var_obj->{table}.id\n";
+				$sql .= "WHERE $tani.id = ct_pickup.id\n";
+				$sql .= "    AND ct_pickup.num >= 1\n";
+				$sql .= "ORDER BY $tani.id";
+				#print "\n$sql\n";
+			}
+		
+			my $h = mysql_exec->select($sql,1)->hundle;
+			while (my $i = $h->fetch){
+				if ( length( $var_obj->{labels}{$i->[0]} ) ){
+					push
+						@{$vd->{$var_obj->{name}}},
+						$var_obj->{labels}{$i->[0]}
+					;
+				} else {
+					push @{$vd->{$var_obj->{name}}}, $i->[0];
+				}
+			}
+		}
+		
+		open my $fh, '>' ,$var_file or                # ファイルへ書き出し
+			gui_errormsg->open(
+				thefile => $var_file,
+				type    => 'file'
+			);
+		
+		my $t = '';                                             # 1行目
+		foreach my $i (@vnames){
+			$t .= kh_csv->value_conv($i).',';
+		}
+		chop $t;
+		print $fh "$t\n";
+		
+		my $n = @{$vd->{$vnames[0]}} - 1;                        # 2行目以降
+		for (my $i = 0; $i <= $n; ++$i){
+			my $t = '';
+			foreach my $name (@vnames){
+				$t .= kh_csv->value_conv( $vd->{$name}[$i] ).',';
+			}
+			chop $t;
+			print $fh "$t\n";
+		}
+		close($fh);
+		if ($::config_obj->os eq 'win32'){
+			kh_jchar->to_sjis($var_file);
+		}
+	}
+	
+	return 1;
 }
 
 sub sql{
