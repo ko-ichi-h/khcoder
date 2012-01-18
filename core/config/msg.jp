@@ -788,3 +788,16 @@ gui_window::doc_cls_res_opt:
 gui_window::cls_height::doc:
     win_title:                '文書のクラスター分析：併合水準'
     overwr:                   'このファイルを上書きしてよろしいですか：'
+gui_window::morpho_crossout:
+    output:                   '出力'
+gui_window::morpho_crossout::csv:
+    er_no_pos:                '品詞が1つも選択されていません。'
+    saving:                   '「文書ｘ抽出語」表：名前を付けて保存'
+    win_title:                '「文書ｘ抽出語」表の出力： CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                '「文書ｘ抽出語」表の出力： SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   'タブ区切り'
+    win_title:                '「文書ｘ抽出語」表の出力： タブ区切り'
+gui_window::morpho_crossout::var:
+    win_title:                '「文書ｘ抽出語」表の出力： 不定長CSV'
