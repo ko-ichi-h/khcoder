@@ -13,14 +13,14 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('部分テキストの取り出し'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 部分テキストの取り出し
 	#$self->{win_obj} = $win;
 
 	#----------------------#
 	#   見出しの取り出し   #
 
 	my $radio_head = $win->Radiobutton(
-		-text             => $self->gui_jchar('見出し文だけを取り出す'),
+		-text             => kh_msg->get('headings'), # 見出し文だけを取り出す
 		-font             => "TKFN",
 		-foreground       => 'blue',
 		-activeforeground => 'red',
@@ -30,23 +30,24 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	my $lf = $win->LabFrame(
-		-label => 'Heading',
+		-label => 'Select Headings',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'x');
 	
-	$self->{l_h_1} = $lf->Label(
-		-text => $self->gui_jchar('・取り出す見出しの選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w');
+	#$self->{l_h_1} = $lf->Label(
+	#	-text => kh_msg->get('3'), # ・取り出す見出しの選択
+	#	-font => "TKFN"
+	#)->pack(-anchor => 'w');
+	
 	my $f1 = $lf->Frame->pack(-fill => 'x');
-	$f1->Label(
-		-text => $self->gui_jchar('　　'),
-		-font => "TKFN",
-	)->pack(-side => 'left', -padx => 2);
+	#$f1->Label(
+	#	-text => '    ',
+	#	-font => "TKFN",
+	#)->pack(-side => 'left', -padx => 2);
 	foreach my $i ('H1','H2','H3','H4','H5'){
 		$self->{"check_w_"."$i"} = $f1->Checkbutton(
-			-text     => "$i".$self->gui_jchar('見出し','euc'),
+			-text     => "$i".kh_msg->get('headings_name'), # 見出し
 			-font     => "TKFN",
 			-variable => \$self->{"check_v_"."$i"},
 		)->pack(-side => 'left', -padx => 4)
@@ -56,7 +57,7 @@ sub _new{
 	#   コーディング・ルール   #
 	
 	$win->Radiobutton(
-		-text             => $self->gui_jchar('特定のコードが与えられた文書だけを取り出す'),
+		-text             => kh_msg->get('codes'), # 特定のコードが与えられた文書だけを取り出す
 		-font             => "TKFN",
 		-foreground       => 'blue',
 		-activeforeground => 'red',
@@ -66,7 +67,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	my $cf = $win->LabFrame(
-		-label => 'Coded doc',
+		-label => 'Select a Code',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 'y');
@@ -74,10 +75,10 @@ sub _new{
 	my $left = $cf->Frame()->pack(-side => 'left',-fill=>'y',-expand => 1);
 	my $right = $cf->Frame()->pack(-side => 'right');
 
-	$self->{l_c_1} = $left->Label(
-		-text => $self->gui_jchar('・コード選択'),
-		-font => "TKFN"
-	)->pack(-anchor => 'w');
+	#$self->{l_c_1} = $left->Label(
+	#	-text => kh_msg->get('7'), # ・コード選択
+	#	-font => "TKFN"
+	#)->pack(-anchor => 'w');
 	
 	$self->{clist} = $left->Scrolled(
 		'HList',
@@ -103,7 +104,7 @@ sub _new{
 	);
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 8);
 	$self->{l_c_2} = $f2->Label(
-		-text => $self->gui_jchar('コーディング単位：'),
+		-text => kh_msg->get('unit'), # コーディング単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
@@ -116,7 +117,7 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{ch_w_high} = $right->Checkbutton(
-		-text     => $self->gui_jchar('より上位の見出しを新規テキストファイルに含める'),
+		-text     => kh_msg->get('higher'), # より上位の見出しを新規テキストファイルに含める
 		-font     => "TKFN",
 		-variable => \$self->{ch_v_high},
 	)->pack(-anchor => 'w');
@@ -125,14 +126,14 @@ sub _new{
 
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}
@@ -149,8 +150,8 @@ sub refresh{
 	my $self = shift;
 	
 	if ($self->{radio} eq 'head') {
-		$self->{l_h_1}->configure(-foreground => 'black');
-		$self->{l_c_1}->configure(-foreground => 'gray');
+		#$self->{l_h_1}->configure(-foreground => 'black');
+		#$self->{l_c_1}->configure(-foreground => 'gray');
 		$self->{l_c_2}->configure(-foreground => 'gray');
 		$self->{ch_w_high}->configure(-state => 'disable');
 		$self->{clist}->configure(-background => 'gray');
@@ -158,8 +159,8 @@ sub refresh{
 		$self->{tani_obj}->disable;
 		$self->{codf_obj}->disable;
 	} else {
-		$self->{l_h_1}->configure(-foreground => 'gray');
-		$self->{l_c_1}->configure(-foreground => 'black');
+		#$self->{l_h_1}->configure(-foreground => 'gray');
+		#$self->{l_c_1}->configure(-foreground => 'black');
 		$self->{l_c_2}->configure(-foreground => 'black');
 		$self->{ch_w_high}->configure(-state => 'normal');
 		$self->{clist}->configure(-background => 'white');
@@ -236,7 +237,7 @@ sub _cod{
 	if ( $self->{clist}->info('selection') eq '' ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'コードが選択されていません。'
+			msg  => kh_msg->get('gui_window::doc_search->error_no_code'),
 		);
 		return 0;
 	}
@@ -274,7 +275,7 @@ sub _head{
 	unless ($n){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '取り出す見出しが選択されていません。'
+			msg  => kh_msg->get('error_no_headings'),
 		);
 		return 0;
 	}
@@ -304,7 +305,7 @@ sub get_path{
 			-defaultextension => '.txt',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('部分テキストの取り出し：名前を付けて保存'),
+				$self->gui_jt(kh_msg->get('saving')), # 部分テキストの取り出し：名前を付けて保存
 			-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	$path = gui_window->gui_jg_filename_win98($path);
