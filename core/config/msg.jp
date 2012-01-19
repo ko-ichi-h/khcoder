@@ -813,3 +813,12 @@ gui_window::contxt_out::spss:
     win_title:                '「抽出語ｘ文脈ベクトル」表の出力： SPSS'
 gui_window::contxt_out::tab:
     win_title:                '「抽出語ｘ文脈ベクトル」表の出力： タブ区切り'
+gui_window::txt_pickup:
+    win_title:                '部分テキストの取り出し'
+    headings:                 '見出し文だけを取り出す'
+    headings_name:            '見出し'
+    codes:                    '特定のコードが与えられた文書だけを取り出す'
+    unit:                     'コーディング単位：'
+    higher:                   'より上位の見出しを新規テキストファイルに含める'
+    error_no_headings:        '見出しを選択してください'
+    saving:                   '部分テキストの取り出し：名前を付けて保存'

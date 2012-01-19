@@ -811,3 +811,12 @@ gui_window::contxt_out::spss:
     win_title:                'Export Word-Context Matrix: SPSS'
 gui_window::contxt_out::tab:
     win_title:                'Export Word-Context Matrix: Tab Delimited'
+gui_window::txt_pickup:
+    win_title:                'Extract Partial Text'
+    headings:                 'Extract Headings'
+    headings_name:            '  '
+    codes:                    'Extract Documents with Specific Code'
+    unit:                     'Coding unit'
+    higher:                   'Include higher level headings'
+    error_no_headings:        'Please select at least 1 headings'
+    saving:                   'Extract Partial Text: Save as'
