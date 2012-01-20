@@ -13,7 +13,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt('CSV形式のテキストファイルを作成'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # CSVファイルに変換
 	
 	#$self->{win_obj} = $win;
 
@@ -24,14 +24,14 @@ sub _new{
 	)->pack(-fill => 'x');
 	
 	$lf->Label(
-		-text => $self->gui_jchar('どの単位を1行（1ケース）として出力しますか？'),
+		-text => kh_msg->get('unit'), # どの単位を1行（1ケース）として出力しますか？
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	
 	my $f1 = $lf->Frame()->pack(-fill => 'x',-pady => 3);
 	
 	$f1->Label(
-		-text => $self->gui_jchar('　選択：'),
+		-text => kh_msg->get('select'), #   選択：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	
@@ -46,14 +46,14 @@ sub _new{
 	);
 	
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->save;}
@@ -78,7 +78,7 @@ sub save{
 			-defaultextension => '.csv',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('テキストファイルの変形：名前を付けて保存'),
+				$self->gui_jt(kh_msg->get('saving')), # CSVファイルの保存
 			-initialdir       => gui_window->gui_jchar($::config_obj->cwd)
 		)
 	);
