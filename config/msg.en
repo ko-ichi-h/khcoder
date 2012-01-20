@@ -193,7 +193,7 @@ gui_window::main::menu:
     term_vec_mtrx:            Export Word-Context Matrix
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
-    to_csv:                   Convert from HTML to CSV
+    to_csv:                   Convert to CSV
     tools:                    Tools
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract
@@ -820,3 +820,8 @@ gui_window::txt_pickup:
     higher:                   'Include higher level headings'
     error_no_headings:        'Please select at least 1 headings'
     saving:                   'Extract Partial Text: Save as'
+gui_window::txt_html2csv:
+    win_title:                'Convert to CSV'
+    unit:                     'Which unit should be considered as row/case of CSV'
+    select:                   'Selection:'
+    saving:                   'Save CSV file as'

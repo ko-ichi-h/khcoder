@@ -96,6 +96,7 @@ sub exec{
 			foreach my $g (reverse @h){                # 見出しの変更
 				if ( $i->{"$g"."_id"} ){
 					$h{$g} = $i->{rowtxt};
+					$h{$g} =~ s#<h[1-5]>(.*)</h[1-5]>#$1#i;
 					last;
 				}
 			}

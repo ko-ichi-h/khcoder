@@ -822,3 +822,8 @@ gui_window::txt_pickup:
     higher:                   'より上位の見出しを新規テキストファイルに含める'
     error_no_headings:        '見出しを選択してください'
     saving:                   '部分テキストの取り出し：名前を付けて保存'
+gui_window::txt_html2csv:
+    win_title:                'CSVファイルに変換'
+    unit:                     'どの単位を1行（1ケース）として出力しますか？'
+    select:                   '  選択：'
+    saving:                   'CSVファイルの保存'
