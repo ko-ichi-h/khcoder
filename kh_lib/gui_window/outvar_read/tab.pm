@@ -13,13 +13,13 @@ sub file{
 	my $self = shift;
 
 	my @types = (
-		[ $self->gui_jchar("タブ区切りファイル"),[qw/.dat .txt/] ],
+		[ kh_msg->get('tabdelf'),[qw/.dat .txt/] ], # タブ区切りファイル
 		["All files",'*']
 	);
 
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('外部変数ファイルを選択してください'),
+		-title      => $self->gui_jt(kh_msg->get('open')), # 外部変数ファイルを選択してください
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 
@@ -50,12 +50,12 @@ sub __read{
 
 sub file_label{
 	my $self = shift;
-	return $self->gui_jchar('タブ区切りファイル');
+	return kh_msg->get('tabdel'); # タブ区切りファイル
 }
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt('外部変数の読み込み： タブ区切り');
+	return $self->gui_jt(kh_msg->get('win_title')); # 外部変数の読み込み： タブ区切り
 }
 
 sub win_name{

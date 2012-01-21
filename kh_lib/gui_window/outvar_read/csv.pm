@@ -16,10 +16,10 @@ sub file{
 		[ $self->gui_jchar("CSVファイル"),[qw/.csv/] ],
 		["All files",'*']
 	);
-	
+
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('外部変数ファイルを選択してください'),
+		-title      => $self->gui_jt(kh_msg->get('open')), # 外部変数ファイルを選択してください
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
@@ -52,12 +52,12 @@ sub __read{
 
 sub file_label{
 	my $self = shift;
-	$self->gui_jchar('CSVファイル');
+	kh_msg->get('csv'); # CSVファイル
 }
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt('外部変数の読み込み： CSVファイル');
+	return $self->gui_jt(kh_msg->get('win_title')); # 外部変数の読み込み： CSVファイル
 }
 
 sub win_name{

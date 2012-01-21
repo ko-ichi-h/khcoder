@@ -41,12 +41,10 @@ sub v_words_list{
 	# 値ごとに特徴的な語を取得
 	foreach my $i (@{$values}){
 		# クエリー作成
-		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
+		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'. $self->gui_jchar($i,'euc');
 
 		$query =~ s/"/""/g;
 		$query = '"'.$query.'"' if $query =~ / |"/;
-
-		$query = $self->gui_jchar($query,'euc');
 		
 		# リモートウィンドウの操作
 		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
@@ -207,8 +205,8 @@ sub _open_var{
 	}
 
 	my %tani_name = (
-		"bun" => "文",
-		"dan" => "段落",
+		"bun" => kh_msg->gget('sentence'),  # "文",
+		"dan" => kh_msg->gget('paragraph'), # "段落",
 		"h5"  => "H5",
 		"h4"  => "H4",
 		"h3"  => "H3",

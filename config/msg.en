@@ -188,7 +188,7 @@ gui_window::main::menu:
     plugin:                   Plugin
     prep:                     PRe-Processing
     project:                  Project
-    read:                     Read from a File
+    read:                     Import Variables
     run_prep:                 Run Pre-Processing
     term_vec_mtrx:            Export Word-Context Matrix
     text_format:              Convert the Target File
@@ -197,7 +197,7 @@ gui_window::main::menu:
     tools:                    Tools
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract
-    var_list:                 Listing & Manipulation
+    var_list:                 List
     vars_heads:               Variables & Headings
     web:                      Latest Info (Web)
     word_ass:                 Word Association
@@ -825,3 +825,47 @@ gui_window::txt_html2csv:
     unit:                     'Which unit should be considered as row/case of CSV'
     select:                   'Selection:'
     saving:                   'Save CSV file as'
+gui_window::outvar_read:
+    unit:                     'Unit of Variables:'
+    no_such_file:             'Error: Could not find the file!'
+gui_window::outvar_read::csv:
+    open:                     'Select the file that contains variables'
+    csv:                      'CSV File:'
+    win_title:                'Read variables from the CSV file'
+gui_window::outvar_read::tab:
+    tabdelf:                  'Tab Delimited File'
+    open:                     'Select the file that contains variables'
+    tabdel:                   'Tab Delimited File'
+    win_title:                'Read variables from the Tab Delimited file'
+gui_window::outvar_list:
+    win_title:                'List of Variables & Headings'
+    headings:                 'Heading'
+    vars:                     'Variables'
+    h_unit:                   'unit'
+    h_name:                   'variable'
+    del:                      'Delete'
+    export:                   'Export'
+    read:                     '*Import'
+    csv:                      'CSV File'
+    tabdel:                   'Tab Delimited'
+    values:                   'Values & Value labels: '
+    h_value:                  'value'
+    h_label:                  'label'
+    h_freq:                   'frequency'
+    save:                     'Save labels'
+    docs:                     'Documents'
+    words:                    '*Words'
+    selected:                 'selected value'
+    catalogue_xls:            'catalogue: Excel'
+    catalogue_csv:            'catalogue: CSV'
+    help_words:               "Search distinctive words of the value.\n[Shift + DoubleClick]"
+    unit:                     'Unit:'
+    help_docs:                "Search documents with the selected value\n[DoubleClick]"
+    error_sel_a_var:          'Error: Please select a variable.'
+    mspgoth:                  'MS PGothic'
+    error_sel_a_vv:           'Error: Please select a variable and a value.'
+    error_hd1:                'Cannot delete headings.\nPlease directly modify the target file.'
+    del_ok:                   'Delete selected variables?'
+    error_units:              'Cannot export variables with multiple units.'
+    error_hd2:                'Cannot export headings.\nPlease consider using "Extract Partial Text" command'
+    saving:                   'Save variables as'
