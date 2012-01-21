@@ -9,6 +9,7 @@ use mysql_outvar;
 # ラベル・エントリーにバインドを設定
 # 「閉じる」を「読み込み」に
 
+my $headings = kh_msg->get('headings');
 
 #---------------------#
 #   Window オープン   #
@@ -19,7 +20,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jt('外部変数と見出し'));
+	$wmw->title($self->gui_jt(kh_msg->get('win_title'))); # 外部変数と見出し
 
 	my $fra4 = $wmw->Frame();
 	my $adj  = $wmw->Adjuster(-widget => $fra4, -side => 'left');
@@ -33,7 +34,7 @@ sub _new{
 	#   変数リスト   #
 
 	$fra4->Label(
-		-text => $self->gui_jchar('■変数リスト'),
+		-text => kh_msg->get('vars'), # ■変数リスト
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
@@ -56,20 +57,13 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 1);
 
-	$lis_vr->header('create',0,-text => $self->gui_jchar('文書単位'));
-	$lis_vr->header('create',1,-text => $self->gui_jchar('変数名'));
+	$lis_vr->header('create',0,-text => kh_msg->get('h_unit')); # 文書単位
+	$lis_vr->header('create',1,-text => kh_msg->get('h_name')); # 変数名
 
 	my $fra4_bts = $fra4->Frame()->pack(-fill => 'x', -expand => 0);
 
-	#$fra4_bts->Button(
-	#	-text => $self->gui_jchar('詳細'),
-	#	-font => "TKFN",
-#	#	-width => 8,
-	#	-command => sub{$self->_open_var;}
-	#)->pack(-anchor => 'ne', -side => 'right');
-
 	$fra4_bts->Button(
-		-text => $self->gui_jchar('削除'),
+		-text => kh_msg->get('del'), # 削除
 		-font => "TKFN",
 #		-width => 8,
 		-borderwidth => '1',
@@ -77,7 +71,7 @@ sub _new{
 	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	$fra4_bts->Button(
-		-text => $self->gui_jchar('出力'),
+		-text => kh_msg->get('export'), # 出力
 		-font => "TKFN",
 #		-width => 8,
 		-borderwidth => '1',
@@ -85,7 +79,7 @@ sub _new{
 	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	my $mb1 = $fra4_bts->Menubutton(
-		-text        => $self->gui_jchar('▽読み込み'),
+		-text        => kh_msg->get('read'), # ▽読み込み
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -96,12 +90,12 @@ sub _new{
 
 	$mb1->command(
 		-command => sub {gui_window::outvar_read::csv->open;},
-		-label   => $self->gui_jchar('CSVファイル'),
+		-label   => kh_msg->get('csv'), # CSVファイル
 	);
 
 	$mb1->command(
 		-command => sub {gui_window::outvar_read::tab->open;},
-		-label   => $self->gui_jchar('タブ区切りファイル'),
+		-label   => kh_msg->get('tabdel'), # タブ区切りファイル
 	);
 
 	#----------------#
@@ -110,11 +104,11 @@ sub _new{
 	my $fra5lab = $fra5->Frame()->pack(-anchor => 'w');
 
 	$fra5lab->Label(
-		-text => $self->gui_jchar('■値とラベル：'),
+		-text => kh_msg->get('values'), # ■値とラベル：
 	)->pack(-side => 'left');
 
 	$self->{label_name} = $fra5lab->Label(
-		-text       => $self->gui_jchar('  '),
+		-text       => '  ',
 		-foreground => 'blue',
 	)->pack(-side => 'left');
 
@@ -134,9 +128,9 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('値'));
-	$lis->header('create',1,-text => $self->gui_jchar('ラベル'));
-	$lis->header('create',2,-text => $self->gui_jchar('度数'));
+	$lis->header('create',0,-text => kh_msg->get('h_value')); # 値
+	$lis->header('create',1,-text => kh_msg->get('h_label')); # ラベル
+	$lis->header('create',2,-text => kh_msg->get('h_freq')); # 度数
 
 	$lis->bind("<Shift-Double-1>", sub{$self->v_words;});
 	$lis->bind("<Double-1>",       sub{$self->v_docs ;});
@@ -148,19 +142,8 @@ sub _new{
 	my $fra5_bts = $fra5->Frame()->pack(-fill => 'x');
 	#my $fra5_btm = $fra5->Frame()->pack(-fill => 'x');
 
-	#$fra5_ets->Label(
-	#	-text => $self->gui_jchar('変数名（単位）：')
-	#)->pack(-side => 'left');
-	#
-	#$self->{entry_name} = $fra5_ets->Entry(
-	#	-state => 'disabled',
-	#	-disabledbackground => 'gray',
-	#	-background => 'gray',
-	#	-disabledforeground => 'black',
-	#)->pack(-side => 'left', -fill => 'x', -expand => 1);
-
 	$self->{btn_save} = $fra5_ets->Button(
-		-text        => $self->gui_jchar('ラベルを保存'),
+		-text        => kh_msg->get('save'), # ラベルを保存
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->_save;}
@@ -173,28 +156,14 @@ sub _new{
 	);
 
 	my $btn_doc = $fra5_bts->Button(
-		-text        => $self->gui_jchar('文書検索'),
+		-text        => kh_msg->get('docs'), # 文書検索
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->v_docs;}
 	)->pack(-padx => 2, -pady => 2, -side => 'left', -fill => 'y');
 
-	#my $btn_aso = $fra5_bts->Button(
-	#	-text        => $self->gui_jchar('特徴語'),
-	#	-font        => "TKFN",
-	#	-borderwidth => '1',
-	#	-command     => sub {$self->v_words;},
-	#	-height      => 1,
-	#)->pack(-padx => 2, -pady => 2, -side => 'left', -fill => 'y');
-	#
-	#$wmw->Balloon()->attach(
-	#	$btn_aso,
-	#	-balloonmsg => $self->gui_jchar("選択した値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
-	#	-font       => "TKFN"
-	#);
-
 	my $mb = $fra5_bts->Menubutton(
-		-text        => $self->gui_jchar('▽特徴語'),
+		-text        => kh_msg->get('words'), # ▽特徴語
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -206,28 +175,28 @@ sub _new{
 
 	$mb->command(
 		-command => sub {$self->v_words;},
-		-label   => $self->gui_jchar('選択した値'),
+		-label   => kh_msg->get('selected'), # 選択した値
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('xls')},
-		-label   => $self->gui_jchar('一覧（Excel形式）'),
+		-label   => kh_msg->get('catalogue_xls'), # 一覧（Excel形式）
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('csv')},
-		-label   => $self->gui_jchar('一覧（CSV形式）'),
+		-label   => kh_msg->get('catalogue_csv'), # 一覧（CSV形式）
 	);
 
 	$wmw->Balloon()->attach(
 		$mb,
-		-balloonmsg => $self->gui_jchar("選択した値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]"),
+		-balloonmsg => kh_msg->get('help_words'), # 選択した値を持つ文書に特徴的な語を探索します\n[Shift + 値をダブルクリック]
 		-font       => "TKFN"
 	);
 
 
 	$fra5_bts->Label(
-		-text => $self->gui_jchar('単位：')
+		-text => kh_msg->get('unit') # 単位：
 	)->pack(-side => 'left');
 
 	# ダミーを作っておく...
@@ -236,8 +205,8 @@ sub _new{
 		parent  => $fra5_bts,
 		pack    => {-side => 'left', -padx => 2, -pady => 2},
 		options => [
-			[$self->gui_jchar('段落'), 'dan'],
-			[$self->gui_jchar('文'  ), 'bun']
+			[kh_msg->gget('paragraph'), 'dan'], # 段落
+			[kh_msg->gget('sentence'),  'bun']
 		],
 		variable => \$self->{calc_tani},
 	);
@@ -245,16 +214,9 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$btn_doc,
-		-balloonmsg => $self->gui_jchar("選択した値を持つ文書を検索します\n[値をダブルクリック]"),
+		-balloonmsg => kh_msg->get('help_docs'), # 選択した値を持つ文書を検索します\n[値をダブルクリック]
 		-font       => "TKFN"
 	);
-
-	#$fra4_bts->Button(
-	#	-text => $self->gui_jchar('閉じる'),
-	#	-font => "TKFN",
-	#	-width => 8,
-	#	-command => sub{$self->close;}
-	#)->pack(-side => 'right',-padx => 2);
 
 	#MainLoop;
 	
@@ -273,7 +235,7 @@ sub _save{
 
 	unless ($self->{selected_var_obj}){
 		$self->win_obj->messageBox(
-			-message => $self->gui_jchar('変数が選択されていません'),
+			-message => kh_msg->get('error_sel_a_var'), # 変数が選択されていません
 			-icon    => 'info',
 			-type    => 'Ok',
 			-title   => 'KH Coder'
@@ -318,14 +280,12 @@ sub v_docs{
 		$self->{list_val}->selectionSet(0);
 		@selected = $self->{list_val}->infoSelection;
 	}
-	my $query = $self->gui_jg( $self->{list_val}->itemCget($selected[0], 0, -text) );
-	$query = Jcode->new($query, 'sjis')->euc;
-	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+	my $query = $self->{list_val}->itemCget($selected[0], 0, -text);
+	$query = '<>'.$self->gui_jchar($self->{selected_var_obj}->{name}).'-->'.$query;
 
 	$query =~ s/"/""/g;
 	$query = '"'.$query.'"' if $query =~ / |"/;
 
-	$query = $self->gui_jchar($query,'euc');
 	
 	# リモートウィンドウの操作
 	my $win;
@@ -362,16 +322,11 @@ sub v_words{
 		$self->{list_val}->selectionSet(0);
 		@selected = $self->{list_val}->infoSelection;
 	}
-	my $query = $self->gui_jg(
-		$self->{list_val}->itemCget($selected[0], 0, -text)
-	);
-	$query = Jcode->new($query, 'sjis')->euc;
-	$query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$query;
+	my $query = $self->{list_val}->itemCget($selected[0], 0, -text);
+	$query = '<>'.$self->gui_jchar($self->{selected_var_obj}->{name}).'-->'.$query;
 	
 	$query =~ s/"/""/g;
 	$query = '"'.$query.'"' if $query =~ / |"/;
-	
-	$query = $self->gui_jchar($query,'euc');
 	
 	# リモートウィンドウの操作
 	my $win;
@@ -546,7 +501,7 @@ sub _write_xls{
 
 	my $font = '';
 	if ($] > 5.008){
-		$font = $self->gui_jchar('ＭＳ Ｐゴシック', 'euc');
+		$font = kh_msg->get('mspgoth'); # ＭＳ Ｐゴシック
 	} else {
 		$font = 'MS PGothic';
 	}
@@ -698,7 +653,7 @@ sub _error_no_var{
 	my $self = shift;
 
 	$self->win_obj->messageBox(
-		-message => $self->gui_jchar('変数または見出しを選択してください。'),
+		-message => kh_msg->get('error_sel_a_vv'), # 変数または見出しを選択してください。
 		-icon    => 'info',
 		-type    => 'Ok',
 		-title   => 'KH Coder'
@@ -729,9 +684,9 @@ sub _fill{
 			$self->{list}->itemCreate(
 				$n,
 				1,
-				-text => $self->gui_jchar( '見出し'.substr($i,1,1) ),
+				-text => $headings.substr($i,1,1), # 見出し
 			);
-			push @{$self->{var_list}}, [$i, '見出し'.substr($i,1,1)];
+			push @{$self->{var_list}}, [$i, $headings.substr($i,1,1)];
 			++$n;
 		}
 	}
@@ -766,16 +721,16 @@ sub _delete{
 	unless (@selection){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '削除する変数を選択してください。',
+			msg  => kh_msg->get('error_sel_a_var'),
 		);
 		return 0;
 	}
 	
 	# 見出しが混ざっていないかチェック。
 	foreach my $i (@selection){
-		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
+		if ($self->{var_list}[$i][1] =~ /^$headings[1-5]$/){
 			$self->win_obj->messageBox(
-				-message => $self->gui_jchar("現在のところ、このコマンドで見出しを削除することはできません。\n分析対象ファイルを直接修正してください。"),
+				-message => kh_msg->get('error_hd1'), # 現在のところ、このコマンドで見出しを削除することはできません。\n分析対象ファイルを直接修正してください。
 				-icon    => 'info',
 				-type    => 'Ok',
 				-title   => 'KH Coder'
@@ -791,7 +746,7 @@ sub _delete{
 			-type    => 'OKCancel',
 			#-default => 'OK',
 			-icon    => 'question',
-			-message => $self->gui_jchar('選択されている変数を削除しますか？'),
+			-message => kh_msg->get('del_ok'), # 選択されている変数を削除しますか？
 		);
 		unless ($confirm =~ /^OK$/i){
 			return 0;
@@ -821,7 +776,7 @@ sub _export{
 	unless (@selection){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '出力する変数を選択してください。',
+			msg  => kh_msg->get('error_sel_a_var'),
 		);
 		return 0;
 	}
@@ -834,13 +789,13 @@ sub _export{
 		unless ($last eq $self->{var_list}[$i][0]){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => '集計単位の異なる変数群を一度に保存することはできません。',
+				msg  => kh_msg->get('error_units'), # 集計単位の異なる変数群を一度に保存することはできません。
 			);
 			return 0;
 		}
-		if ($self->{var_list}[$i][1] =~ /^見出し[1-5]$/){
+		if ($self->{var_list}[$i][1] =~ /^$headings[1-5]$/){
 			$self->win_obj->messageBox(
-				-message => $self->gui_jchar("現在のところ、このコマンドで見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。"),
+				-message => kh_msg->get('error_hd2'), # 現在のところ、このコマンドで見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。
 				-icon    => 'info',
 				-type    => 'Ok',
 				-title   => 'KH Coder'
@@ -858,7 +813,7 @@ sub _export{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('「文書ｘ抽出語」表：名前を付けて保存'),
+			$self->gui_jt(kh_msg->get('saving')), # 外部変数：名前を付けて保存
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	unless ($path){
@@ -945,7 +900,7 @@ sub _delay_chk3_open_var{
 
 	if ($chk eq $current && $chk_n == $cn){
 		my $class = 'gui_window::outvar_list';
-		if ($self->{var_list}[$selection[0]][1] =~ /^見出し[1-5]$/){
+		if ($self->{var_list}[$selection[0]][1] =~ /^$headings[1-5]$/){
 			$class .= '::midashi';
 		}
 		bless $self, $class;
@@ -1044,8 +999,8 @@ sub _open_var{
 	}
 
 	my %tani_name = (
-		"bun" => "文",
-		"dan" => "段落",
+		"bun" => kh_msg->gget('sentence'),# "文",
+		"dan" => kh_msg->gget('paragraph'),# "段落",
 		"h5"  => "H5",
 		"h4"  => "H4",
 		"h3"  => "H3",
@@ -1093,11 +1048,7 @@ sub _clear_values{
 	$self->{label_name}->configure(
 		-text => '  '
 	);
-	
-	#$self->{label_num}->configure(
-	#	-text => $self->gui_jchar('値の種類： 000')
-	#);
-	
+		
 	$self->{list_val}->delete('all');
 	
 	$self->{opt_tani}->destroy;

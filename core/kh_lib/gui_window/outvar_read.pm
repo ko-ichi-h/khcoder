@@ -35,7 +35,7 @@ sub _new{
 	)->pack(-side => 'left');
 	
 	$fra4e->Button(
-		-text    => $self->gui_jchar('参照'),
+		-text    => kh_msg->gget('browse'), # 参照
 		-font    => "TKFN",
 		-command => sub { $self->file; },
 	)->pack(-side => 'left');
@@ -56,7 +56,7 @@ sub _new{
 	my $fra4f = $fra4->Frame()->pack(-expand => 'y', -fill => 'x', -pady =>3);
 	
 	$fra4f->Label(
-		-text => $self->gui_jchar('読み込み単位：'),
+		-text => kh_msg->get('unit'), # 読み込み単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -71,14 +71,14 @@ sub _new{
 	);
 
 	$wmw->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$wmw->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->_read;}
@@ -101,7 +101,7 @@ sub _read{
 	unless (-e $self->gui_jg( $self->{entry}->get ) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => 'ファイルを正しく指定して下さい。',
+			msg    => kh_msg->get('no_such_file'), # ファイルを正しく指定して下さい。
 			window => \$self->{win_obj},
 		);
 		return 0;
