@@ -869,3 +869,9 @@ gui_window::outvar_list:
     error_units:              'Cannot export variables with multiple units.'
     error_hd2:                'Cannot export headings.\nPlease consider using "Extract Partial Text" command'
     saving:                   'Save variables as'
+gui_window::hukugo:
+    win_title:                'Word Cluster (ChaSen)'
+    run:                      'Run'
+    h_huku:                   'cluster'
+    h_freq:                   'frequency'
+    whole:                    'Whole list'

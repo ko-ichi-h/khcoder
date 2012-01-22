@@ -119,7 +119,7 @@ sub config_morph{
 	$temp2 .= '(√Ìº· (("<" ">") (•ø•∞)) )'."\n";
 	if ($self->{use_hukugo}){
 		$temp2 .= $self->hukugo_chasenrc;
-		print Jcode->new($self->hukugo_chasenrc)->sjis;
+		#print Jcode->new($self->hukugo_chasenrc)->sjis;
 	}
 	Jcode::convert(\$temp2,'sjis','euc');
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
