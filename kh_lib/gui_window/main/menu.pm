@@ -1019,12 +1019,7 @@ sub mc_hukugo{
 
 	if ($if_exec){
 		my $ans = $mw->messageBox(
-			-message => gui_window->gui_jchar
-				(
-				   "時間のかかる処理を実行しようとしています。"
-				   ."（前処理よりは短時間で終了します）\n".
-				   "続行してよろしいですか？"
-				),
+			-message => kh_msg->gget('cont_big_pros'),
 			-icon    => 'question',
 			-type    => 'OKCancel',
 			-title   => 'KH Coder'

@@ -871,3 +871,9 @@ gui_window::outvar_list:
     error_units:              '集計単位の異なる変数群を一度に保存することはできません。'
     error_hd2:                '現在のところ、このコマンドで見出しを出力することはできません。\n「テキストファイルの変形」メニューをご利用ください。'
     saving:                   '外部変数：名前を付けて保存'
+gui_window::hukugo:
+    win_title:                '複合語の検出（茶筌）'
+    run:                      '検索'
+    h_huku:                   '複合語'
+    h_freq:                   '出現数'
+    whole:                    '全複合語のリスト'
