@@ -40,9 +40,9 @@ sub ready{
 	
 	# ルール指定の解釈
 	my ($var, $val);
-	if ($self->raw =~ /<>見出し([1-5])\-\->(.+)$/o){
-		$var = $1;
-		$val = $2;
+	if ($self->raw =~ /<>(見出し|heading)([1-5])\-\->(.+)$/io){
+		$var = $2;
+		$val = $3;
 		$val = '\'<h'."$var".'>'."$val".'</h'."$var".'>\'';
 		$self->{heading_tani} = "h"."$var";
 	} else {
@@ -135,7 +135,7 @@ sub parent_table{
 
 
 sub pattern{
-	return '^<>見出し[1-5]\-\->.+';
+	return '^<>見出し[1-5]\-\->.+|^<>heading[1-5]\-\->.+';
 }
 sub name{
 	return 'heading';

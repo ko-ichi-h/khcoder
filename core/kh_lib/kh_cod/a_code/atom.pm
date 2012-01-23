@@ -75,7 +75,7 @@ sub new{
 	$self->{raw} = shift;
 	
 	foreach my $i (@pattern){
-		if ($self->{raw} =~ /$i->[0]/){
+		if ($self->{raw} =~ /$i->[0]/i){
 			# print Jcode->new("$self->{raw}, $i->[1]\n")->sjis;
 			# print "atom-class: $i->[1]\n";
 			$class .= '::'."$i->[1]";

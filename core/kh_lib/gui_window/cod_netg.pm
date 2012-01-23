@@ -395,9 +395,12 @@ sub _calc{
 	$r_command .= "\ncolnames(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
 		my $name = $i->{name};
-		substr($name, 0, 2) = ''
-			if index($name,'¡ö') == 0
-		;
+		if (index($name,'¡ö') == 0){
+			substr($name, 0, 2) = '';
+		}
+		elsif (index($name,'*') == 0){
+			substr($name, 0, 1) = ''
+		}
 		$r_command .= '"'.$name.'",'
 			if $i->{check}
 		;
