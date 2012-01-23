@@ -10,7 +10,7 @@ use Tk;
 sub _new{
 	my $self = shift;
 	$self->{win_obj}->title(
-		$self->gui_jt('複合語の検出（TermExtract）','euc')
+		$self->gui_jt(kh_msg->get('win_title')) # 複合語の検出（TermExtract）','euc
 	);
 
 	# エントリと検索ボタンのフレーム
@@ -30,7 +30,7 @@ sub _new{
 	$e1->bind("<Key-Return>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
-		-text => $self->gui_jchar('検索'),
+		-text => kh_msg->get('run'), # 検索
 		-font => "TKFN",
 		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
@@ -50,8 +50,8 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
 		options =>
 			[
-				[$self->gui_jchar('OR検索') , 'OR'],
-				[$self->gui_jchar('AND検索'), 'AND'],
+				[kh_msg->get('gui_window::word_search->or') , 'OR'], # OR検索
+				[kh_msg->get('gui_window::word_search->and'), 'AND'], # AND検索
 			],
 		variable => \$self->{and_or},
 	);
@@ -61,10 +61,10 @@ sub _new{
 		pack    => {-anchor=>'e', -side => 'left', -padx => 12},
 		options =>
 			[
-				[$self->gui_jchar('部分一致')  => 'p'],
-				[$self->gui_jchar('完全一致') => 'c'],
-				[$self->gui_jchar('前方一致') => 'z'],
-				[$self->gui_jchar('後方一致') => 'k']
+				[kh_msg->get('gui_window::word_search->part')  => 'p'], # 部分一致
+				[kh_msg->get('gui_window::word_search->comp') => 'c'], # 完全一致
+				[kh_msg->get('gui_window::word_search->forw') => 'z'], # 前方一致
+				[kh_msg->get('gui_window::word_search->back') => 'k'] # 後方一致
 			],
 		variable => \$self->{s_mode},
 	);
@@ -95,18 +95,18 @@ sub _new{
 		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => $self->gui_jchar('複合語'));
-	$lis->header('create',1,-text => $self->gui_jchar('スコア'));
+	$lis->header('create',0,-text => kh_msg->get('h_hukugo')); # 複合語
+	$lis->header('create',1,-text => kh_msg->get('h_score')); # スコア
 
 	$fra5->Button(
-		-text => $self->gui_jchar('コピー'),
+		-text => kh_msg->gget('copy'), # コピー
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->{list});}
 	)->pack(-side => 'right');
 
 	$self->{conc_button} = $fra5->Button(
-		-text => $self->gui_jchar('全複合語のリスト'),
+		-text => kh_msg->get('gui_window::hukugo->whole'), # 全複合語のリスト
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {$self->open_full_list;}

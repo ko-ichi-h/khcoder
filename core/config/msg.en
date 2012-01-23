@@ -178,7 +178,7 @@ gui_window::main::menu:
     import_win_title:         Import a project from a *.khc file.
     jac_mtrx:                 Similarity Matrix
     kwic:                     KWIC Concordance
-    man:                      Manual (PDF)
+    man:                      Manual (PDF, in Japanese)
     mds:                      Multi-Dimensional Scaling
     netg:                     Co-Occurrence Network
     new:                      New
@@ -875,3 +875,13 @@ gui_window::hukugo:
     h_huku:                   'cluster'
     h_freq:                   'frequency'
     whole:                    'Whole list'
+gui_window::use_te:
+    win_title:                'Copyright of TermExtract'
+    desc:                     'TermExtract will be utilized in this function.'
+    web:                      'Web page of TermExtract:'
+    about:                    'About TermExtract:'
+gui_window::use_te_g:
+    win_title:                'Word Cluster (TermExtract)'
+    run:                      'Run'
+    h_hukugo:                 'cluster'
+    h_score:                  'score'

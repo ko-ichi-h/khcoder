@@ -7,16 +7,16 @@ use gui_jchar;
 # Windowを開く
 sub _new{
 	my $self = shift;
-	$self->{win_obj}->title($self->gui_jt('TermExtractの著作権について','euc'));;
+	$self->{win_obj}->title($self->gui_jt(kh_msg->get('win_title')));; # TermExtractの著作権について
 
 	$self->{win_obj}->Label(
-		-text => $self->gui_jchar('専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc'),
+		-text => kh_msg->get('desc'), # 専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	my $f1 = $self->{win_obj}->Frame()->pack(-anchor => 'w');
 	$f1->Label(
-		-text => $self->gui_jchar('TermExtractのWebページ：','euc'),
+		-text => kh_msg->get('web'), # TermExtractのWebページ：
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2', -side => 'left');
 
@@ -34,7 +34,7 @@ sub _new{
 	)->pack(-side => 'left', -anchor => 'w');
 
 	$self->{win_obj}->Label(
-		-text => $self->gui_jchar('TermExtractについて：','euc'),
+		-text => kh_msg->get('about'), # TermExtractについて：
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
@@ -57,14 +57,14 @@ sub _new{
 
 	
 	$self->{win_obj}->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
 
 	my $ok_btn = $self->{win_obj}->Button(
-		-text  => 'OK',
+		-text  => kh_msg->gget('ok'),
 		-font  => 'TKFN',
 		-width => 8,
 		-command => sub {
@@ -149,12 +149,7 @@ sub _exec{
 	
 	if ($if_exec){
 		my $ans = $::main_gui->mw->messageBox(
-			-message => gui_window->gui_jchar
-				(
-				   "時間のかかる処理を実行しようとしています。"
-				   ."（前処理よりは短時間で終了します）\n".
-				   "続行してよろしいですか？"
-				),
+			-message => kh_msg->gget('cont_big_pros'),
 			-icon    => 'question',
 			-type    => 'OKCancel',
 			-title   => 'KH Coder'
@@ -165,7 +160,6 @@ sub _exec{
 		use mysql_hukugo_te;
 		mysql_hukugo_te->run_from_morpho;
 		$w->end;
-		
 	}
 	$self->close;
 	gui_window::use_te_g->open;

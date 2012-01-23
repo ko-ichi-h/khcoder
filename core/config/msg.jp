@@ -877,3 +877,13 @@ gui_window::hukugo:
     h_huku:                   '複合語'
     h_freq:                   '出現数'
     whole:                    '全複合語のリスト'
+gui_window::use_te:
+    win_title:                'TermExtractの著作権について'
+    desc:                     '専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。'
+    web:                      'TermExtractのWebページ：'
+    about:                    'TermExtractについて：'
+gui_window::use_te_g:
+    win_title:                '複合語の検出（TermExtract）'
+    run:                      '検索'
+    h_hukugo:                 '複合語'
+    h_score:                  'スコア'
