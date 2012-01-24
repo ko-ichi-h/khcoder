@@ -875,7 +875,7 @@ sub mc_view_knb{
 		-defaultextension => '.knb',
 		-filetypes        => \@types,
 		-title            =>
-			gui_window->gui_jt('閲覧する学習結果ファイルを選択'),
+			gui_window->gui_jt( kh_msg->get('open_knb') ), # 閲覧する学習結果ファイルを選択
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){

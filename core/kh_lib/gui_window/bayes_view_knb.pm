@@ -18,7 +18,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('学習結果ファイル'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 学習結果ファイル：
 
 	$self->{path} = shift;
 
@@ -33,7 +33,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => gui_window->gui_jchar('学習した文書：'),
+		-text => kh_msg->get('n_docs'), # 学習した文書：
 	)->pack(-side => 'left');
 
 	$self->{entry_instances} = $lf->Entry(
@@ -42,7 +42,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => gui_window->gui_jchar(' 異なり語数：'),
+		-text => kh_msg->get('n_types'), #  異なり語数：
 	)->pack(-side => 'left');
 
 	$self->{entry_words} = $lf->Entry(
@@ -65,10 +65,6 @@ sub _new{
 
 	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 
-	#$f1->Label(
-	#	-text => gui_window->gui_jchar('抽出語の検索：'),
-	#)->pack(-side => 'left');
-
 	$self->{entry_wsearch} = $f1->Entry(
 		-width => 15,
 	)->pack(-side => 'left', -fill => 'x', -expand => 1);
@@ -83,7 +79,7 @@ sub _new{
 	);
 
 	$f1->Button(
-		-text => gui_window->gui_jchar('検索'),
+		-text => kh_msg->get('search'), # 検索
 		-command => sub{
 			my $key = $self->{last_sort_key};
 			$self->{last_sort_key} = undef;
@@ -96,12 +92,12 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $btn = $f1->Button(
-		-text => gui_window->gui_jchar('全抽出語のリスト'),
+		-text => kh_msg->get('whole'), # 全抽出語のリスト
 		-command => sub { $self->list_all; }
 	)->pack(-side => 'left', -padx => 2);
 
 	my $btn = $f1->Button(
-		-text => gui_window->gui_jchar('コピー（表全体）'),
+		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-command => sub { $self->copy; }
 	)->pack(-side => 'left', -padx => 2);
 	
@@ -129,7 +125,10 @@ sub start{
 	my $fl = gui_window->gui_jchar($self->{path});
 	$fl = File::Basename::basename($fl);
 	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
-	$self->{win_obj}->title($self->gui_jt("学習結果ファイル： $fl"));
+	$self->{win_obj}->title(
+		$self->gui_jt(
+			kh_msg->get('win_title')." $fl"
+		));
 
 
 	# 文書数
@@ -223,7 +222,7 @@ sub view{
 		push @temp, $i.' (%)';
 	}
 	foreach my $i (
-		'抽出語', $self->{knb_obj}->labels, '分散', @temp
+		kh_msg->gget('words'), $self->{knb_obj}->labels, kh_msg->get('variance'), @temp # 分散
 	){
 		unless ($col){
 			++$col;
@@ -384,14 +383,8 @@ sub sort{
 	my @sort;
 	if ($key){
 		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{knb_obj}->rows};
-		#$self->{btn_copy}->configure(
-		#	-text => $self->gui_jchar('コピー（選択列）')
-		#);
 	} else {
 		@sort = @{$self->{knb_obj}->rows};
-		#$self->{btn_copy}->configure(
-		#	-text => $self->gui_jchar('コピー（表全体）')
-		#);
 	}
 
 	# 検索ルーチン

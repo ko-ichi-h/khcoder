@@ -42,7 +42,7 @@ sub knb2lst{
 	$self->{info}{labels} = \@labels;
 
 	# 事前確率
-	my $prior_probs = ['[事前確率]'];
+	my $prior_probs = [kh_msg->get('prior')]; # [事前確率]
 	foreach my $i (@labels){
 		push @{$prior_probs}, $self->{cls}{model}{prior_probs}{$i} - $fixer;
 	}
