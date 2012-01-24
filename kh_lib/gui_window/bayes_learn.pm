@@ -7,27 +7,30 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('外部変数から学習'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 外部変数から学習
 
 	my $lf_w = $win->LabFrame(
-		-label => 'Basic Settings',
-		-labelside => 'acrosstop',
+		-label       => 'Basic Settings',
+		-labelside   => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+		-foreground  => 'blue',
+	)->pack(-fill => 'both', -expand => 1, -side => 'left');
+
+	my $lf_x = $win->LabFrame(
+		-label       => 'Options',
+		-labelside   => 'acrosstop',
+		-borderwidth => 2,
+		-foreground  => 'blue',
+	)->pack(-fill => 'both', -expand => 0);
+
 
 	$self->{words_obj} = gui_widget::words_bayes->open(
 		parent => $lf_w,
-		verb   => '学習に使用',
+		verb   => kh_msg->get('verb4wid'), # 学習に使用
 	);
 
-	my $lf_x = $win->LabFrame(
-		-label => 'Options',
-		-labelside => 'acrosstop',
-		-borderwidth => 2,
-	)->pack(-fill => 'x', -expand => 0);
-
 	$self->{chkw_over} = $lf_x->Checkbutton(
-			-text     => $self->gui_jchar('既存の学習結果ファイルに今回の内容を追加する','euc'),
+			-text     => kh_msg->get('add2exists'), # 既存の学習結果ファイルに今回の内容を追加する','euc
 			-variable => \$self->{check_overwrite},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -36,7 +39,7 @@ sub _new{
 	my $fcv = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
 
 	$self->{chkw_cross} = $fcv->Checkbutton(
-			-text     => $self->gui_jchar('交差妥当化を行う','euc'),
+			-text     => kh_msg->get('cr_validate'), # 交差妥当化を行う','euc
 			-variable => \$self->{check_cross},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -58,14 +61,14 @@ sub _new{
 	gui_window->config_entry_focusin( $self->{entry_fold} );
 
 	$self->{chkw_savel} = $lf_x->Checkbutton(
-			-text     => $self->gui_jchar('分類ログをファイルに保存','euc'),
+			-text     => kh_msg->get('savelog'), # 分類ログをファイルに保存','euc
 			-variable => \$self->{check_savel},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
 	)->pack(-anchor => 'w');
 
 	$self->{chkw_savev} = $lf_x->Checkbutton(
-			-text     => $self->gui_jchar('分類結果を外部変数に保存','euc'),
+			-text     => kh_msg->get('savecls'), # 分類結果を外部変数に保存','euc
 			-variable => \$self->{check_savev},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -73,7 +76,7 @@ sub _new{
 
 	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
 	$self->{label_vname} = $fcv2->Label(
-		-text       => $self->gui_jchar('変数名：'),
+		-text       => kh_msg->get('vname'), # 変数名：
 		#-foreground => 'gray',
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -84,14 +87,14 @@ sub _new{
 	$self->{entry_vname}->bind("<Key-Return>",sub{$self->calc;});
 
 	$win->Button(
-		-text    => $self->gui_jchar('キャンセル'),
+		-text    => kh_msg->gget('cancel'), # キャンセル
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
-		-text    => 'OK',
+		-text    => kh_msg->gget('ok'),
 		-width   => 8,
 		-font    => "TKFN",
 		-command => sub{$self->calc;}
@@ -142,7 +145,7 @@ sub calc{
 	){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'Foldには2から20までの値を指定して下さい。',
+			msg  => kh_msg->get('error_f20'), # Foldには2から20までの値を指定して下さい。
 		);
 		return 0;
 	}
@@ -150,7 +153,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '品詞が1つも選択されていません。',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # 品詞が1つも選択されていません。
 		);
 		return 0;
 	}
@@ -158,7 +161,7 @@ sub calc{
 	if ( $self->outvar == -1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '外部変数の設定が不正です。。',
+			msg  => kh_msg->get('error_var'), # 外部変数の設定が不正です。
 		);
 		return 0;
 	}
@@ -170,7 +173,7 @@ sub calc{
 		unless (length($varname1)){
 			gui_errormsg->open(
 				type   => 'msg',
-				msg    => '変数名を指定して下さい。',
+				msg    => kh_msg->get('error_var'), # 変数名を指定して下さい。
 				window => \$self->{win_obj},
 			);
 			return 0;
@@ -184,7 +187,7 @@ sub calc{
 			if ( defined($chk->{id}) ){
 				gui_errormsg->open(
 					type   => 'msg',
-					msg    => '指定された名前の変数がすでに存在します。',
+					msg    => kh_msg->get('error_exists'), # 指定された名前の変数がすでに存在します。
 					window => \$self->{win_obj},
 				);
 				return 0;
@@ -195,11 +198,7 @@ sub calc{
 	$self->{words_obj}->settings_save;
 
 	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行しますか？"
-			),
+		-message => kh_msg->gget('cont_big_pros'),
 		-icon    => 'question',
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
@@ -208,7 +207,7 @@ sub calc{
 
 	# 保存先の参照
 	my @types = (
-		[ "KH Coder: Naive Bayes Moldels",[qw/.knb/] ],
+		[ "KH Coder: Naive Bayes Models",[qw/.knb/] ],
 		["All files",'*']
 	);
 
@@ -218,7 +217,7 @@ sub calc{
 			-defaultextension => '.knb',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('今回の学習内容を追加するファイルを選択'),
+				$self->gui_jt(kh_msg->get('select_exist')), # 今回の学習内容を追加するファイルを選択
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 	} else {
@@ -226,7 +225,7 @@ sub calc{
 			-defaultextension => '.knb',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('学習結果を新規ファイルに保存'),
+				$self->gui_jt(kh_msg->get('saving_new')), # 学習結果を新規ファイルに保存
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 	}
@@ -248,7 +247,7 @@ sub calc{
 			-defaultextension => '.nbl',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('分類ログをファイルに保存'),
+				$self->gui_jt(kh_msg->get('saving_log')), # 分類ログをファイルに保存
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 		unless ($cross_path){
@@ -265,7 +264,7 @@ sub calc{
 	unless ( $self->{words_obj}->check > 0 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '現在の設定内容では、使用できる語がありません。',
+			msg  => kh_msg->get('error_no_words'), # 現在の設定内容では、使用できる語がありません。
 		);
 		return 0;
 	}
@@ -298,15 +297,16 @@ sub calc{
 	}
 
 	my $msg = '';
-	$msg .= "ナイーブベイズモデルの学習が完了しました。\n\n";
-	$msg .= "今回学習した文書: $r->{instances}";
+	$msg .= kh_msg->get('done')."\n\n"; # ナイーブベイズモデルの学習が完了しました。
+	$msg .= kh_msg->get('docs')." $r->{instances}"; # 今回学習した文書：
 	if ($self->{check_overwrite}){
-		$msg .= ", 文書の総数: $r->{instances_all}\n";
+		$msg .= ", ".kh_msg->get('docs_total')." $r->{instances_all}\n"; # 文書の総数：
 	} else {
 		$msg .= "\n";
 	}
 	if ($self->{check_cross}){
-		$msg .= "分類の正確さ: $r->{cross_vl_ok} / $r->{cross_vl_tested} (";
+		$msg .= kh_msg->get('accuracy'); # 分類の正確さ：
+		$msg .= " $r->{cross_vl_ok} / $r->{cross_vl_tested} (";
 		$msg .= sprintf("%.1f",$r->{cross_vl_ok}/$r->{cross_vl_tested}*100);
 		$msg .= "%),  ";
 		$msg .= "Kappa: ";
