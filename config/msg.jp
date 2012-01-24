@@ -21,6 +21,7 @@ global:
     wm_f:                     不定長CSV （WordMiner）
     r_dont_close:             実行時にこの画面を閉じない
     r_net_msg_fail:           調整に失敗しましました。
+    words:                    抽出語
 gui_errormsg::mysql:
     fatal:                   "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
 gui_wait:
@@ -147,6 +148,7 @@ gui_window::main::inner:
     types:                    異なり語数（使用）：
     units:                    集計単位
 gui_window::main::menu:
+    open_knb:                 '閲覧する学習結果ファイルを選択'
     about:                    KH Coderについて
     bayes_classi:             学習結果を用いた自動分類
     bayes_learn:              外部変数から学習
@@ -911,3 +913,12 @@ gui_widget::words_bayes:
     unit:                     '分類の単位：'
     var:                      '学習する外部変数：'
     n_a:                      '利用不可'
+gui_window::bayes_view_knb:
+    win_title:                '学習結果ファイル：'
+    n_docs:                   '学習した文書：'
+    n_types:                  ' 異なり語数：'
+    search:                   '検索'
+    whole:                    '全抽出語のリスト'
+    variance:                 分散
+kh_nbayes::Util:
+    prior:                    '[事前確率]'
