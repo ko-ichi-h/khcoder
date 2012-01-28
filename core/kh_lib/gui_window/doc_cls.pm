@@ -197,11 +197,12 @@ sub calc{
 		min_df => $self->min_df,
 	)->run;
 
-	my $icode = Jcode->new($file_csv)->icode;
+	my $icode = Jcode->new($file_csv)->icode; # もとの文字コードを保存
 	$file_csv = Jcode->new($file_csv)->euc
 		unless $icode eq 'euc' or $icode eq 'ascii';
 	$file_csv =~ s/\\/\\\\/g;
-	
+	$file_csv = gui_window->gui_jchar($file_csv);
+
 	# RコマンドはEUCで渡す（sjisに戻さない）
 	#$file_csv = Jcode->new($file_csv)->$icode
 	#	unless $icode eq 'euc' or $icode eq 'ascii';
@@ -281,9 +282,15 @@ sub calc_exec{
 
 	# 併合過程を保存するファイル群
 	my $merges;
-	$merges->{_cluster_tmp_w} = $::project_obj->file_TempCSV;
-	$merges->{_cluster_tmp_a} = $::project_obj->file_TempCSV;
-	$merges->{_cluster_tmp_c} = $::project_obj->file_TempCSV;
+	$merges->{_cluster_tmp_w} = gui_window->gui_jchar(
+		$::project_obj->file_TempCSV()
+	);
+	$merges->{_cluster_tmp_a} = gui_window->gui_jchar(
+		$::project_obj->file_TempCSV()
+	);
+	$merges->{_cluster_tmp_c} = gui_window->gui_jchar(
+		$::project_obj->file_TempCSV()
+	);
 
 	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡す…
 	kh_r_plot->clear_env;
@@ -638,7 +645,7 @@ return $t;
 sub r_command_mout{
 	my $file = shift;
 	if ($::config_obj->os eq 'win32'){
-		$file = Jcode->new($file,'sjis')->euc;
+		#$file = Jcode->new($file,'sjis')->euc;
 		$file =~ s/\\/\\\\/g;
 	}
 	
