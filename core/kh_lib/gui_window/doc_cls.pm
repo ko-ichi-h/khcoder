@@ -197,16 +197,8 @@ sub calc{
 		min_df => $self->min_df,
 	)->run;
 
-	my $icode = Jcode->new($file_csv)->icode; # もとの文字コードを保存
-	$file_csv = Jcode->new($file_csv)->euc
-		unless $icode eq 'euc' or $icode eq 'ascii';
-	$file_csv =~ s/\\/\\\\/g;
 	$file_csv = gui_window->gui_jchar($file_csv);
-
-	# RコマンドはEUCで渡す（sjisに戻さない）
-	#$file_csv = Jcode->new($file_csv)->$icode
-	#	unless $icode eq 'euc' or $icode eq 'ascii';
-	#print "$file_csv\n";
+	$file_csv =~ s/\\/\\\\/g;
 
 	my $r_command = "d <- read.csv(\"$file_csv\")\n";
 	$r_command .= &r_command_fix_d;
@@ -232,6 +224,7 @@ sub calc_exec{
 
 	# クラスター分析の結果を納めるファイル名
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
+	my $file_org = $file;
 	my $icode;
 	if ($::config_obj->os eq 'win32'){
 		$file = Jcode->new($file,'sjis')->euc;
@@ -270,26 +263,37 @@ sub calc_exec{
 	# クラスター化（Rコマンド）
 	my $r_command_ward;
 	$r_command_ward .= "dcls <- hclust(dj, method=\"ward\")\n";
-	$r_command_ward .= "r    <- cutree(dcls,k=$cluster_number)\n";
+	$r_command_ward .= "q <- cutree(dcls,k=$cluster_number)\n";
+	$r_command_ward .= "q <- check_cutree(q, n_org)\n";
+	$r_command_ward .= "r <- NULL\n";
+	$r_command_ward .= "r <- cbind(r, q)\n";
 
 	my $r_command_ave;
 	$r_command_ave .= "dcls <- hclust(dj, method=\"average\")\n";
-	$r_command_ave .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+	$r_command_ave .= "q <- cutree(dcls,k=$cluster_number)\n";
+	$r_command_ave .= "q <- check_cutree(q, n_org)\n";
+	$r_command_ave .= "r <- cbind(r, q)\n";
 
 	my $r_command_cmp;
 	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
-	$r_command_cmp .= "r    <- cbind(r, cutree(dcls,k=$cluster_number))\n";
+	$r_command_cmp .= "q <- cutree(dcls,k=$cluster_number)\n";
+	$r_command_cmp .= "q <- check_cutree(q, n_org)\n";
+	$r_command_cmp .= "r <- cbind(r, q)\n";
 
 	# 併合過程を保存するファイル群
-	my $merges;
+	my ($merges, $merges_org);
+	$merges_org->{_cluster_tmp_w} = $::project_obj->file_TempCSV();
+	$merges_org->{_cluster_tmp_a} = $::project_obj->file_TempCSV();
+	$merges_org->{_cluster_tmp_c} = $::project_obj->file_TempCSV();
+
 	$merges->{_cluster_tmp_w} = gui_window->gui_jchar(
-		$::project_obj->file_TempCSV()
+		$merges_org->{_cluster_tmp_w}
 	);
 	$merges->{_cluster_tmp_a} = gui_window->gui_jchar(
-		$::project_obj->file_TempCSV()
+		$merges_org->{_cluster_tmp_a}
 	);
 	$merges->{_cluster_tmp_c} = gui_window->gui_jchar(
-		$::project_obj->file_TempCSV()
+		$merges_org->{_cluster_tmp_c}
 	);
 
 	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡す…
@@ -411,7 +415,8 @@ sub calc_exec{
 	) or return 0;
 
 	# クラスター番号の書き出し（Rコマンド）
-	my $r_command_fin = &r_command_fix_r;
+	#my $r_command_fin = &r_command_fix_r;
+	my $r_command_fin;
 	$r_command_fin .= "colnames(r) <- 
 		c(\"_cluster_tmp_w\",\"_cluster_tmp_a\",\"_cluster_tmp_c\")\n";
 	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
@@ -449,18 +454,8 @@ sub calc_exec{
 		}
 	}
 
-	$file =~ s/\\\\/\\/g;
-	if ($::config_obj->os eq 'win32'){
-		$file = Jcode->new($file,'euc')->sjis;
-	} else {
-		if ( length($icode) and ( $icode ne 'ascii' ) ){
-			# print "icode: $icode\n";
-			$file = Jcode->new($file,'euc')->$icode;
-		}
-	}
-
 	mysql_outvar::read::tab->new(
-		file     => $file,
+		file     => $file_org,
 		tani     => $args{tani},
 		#var_type => 'INT',
 	)->read;
@@ -469,7 +464,7 @@ sub calc_exec{
 		command_f   => $r_command,
 		tani        => $args{tani},
 		plots       => $plots,
-		merge_files => $merges,
+		merge_files => $merges_org,
 	);
 
 	return 1;
@@ -637,6 +632,21 @@ for (i in 1:12){
 }
 n_cut <- n_cut * -1
 d <- d[,-1:n_cut]
+
+check_cutree <- function(r, n_org) {
+	q <- NULL
+	if ( nrow(d) < n_org ){
+		for (i in 1:n_org){
+			if ( is.na(r[as.character(i)]) ){
+				q <- c(q, ".")
+			} else {
+				q <- c(q, as.character( r[as.character(i)]) )
+			}
+		}
+		r <- q
+	}
+	return (r)
+}
 
 END_OF_the_R_COMMAND
 return $t;
