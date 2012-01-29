@@ -49,10 +49,12 @@ sub exec{
 
 	# …—Ω–§∑§ø… ªÏ° √„‰•°À
 	my $sql3 = "
-		SELECT hinshi.name, count(*) as kotonari, sum(genkei.num) as sousu
-		FROM hinshi, genkei
+		SELECT hinshi.name, count(distinct genkei.id) as kotonari, count(*) as sousu
+		FROM hyosobun, hyoso, genkei, hinshi
 		WHERE
-		  genkei.hinshi_id = hinshi.id
+		        hyosobun.hyoso_id = hyoso.id
+		    AND hyoso.genkei_id   = genkei.id
+		    AND hyoso.hinshi_id   = hinshi.id
 		GROUP BY hinshi.id
 		ORDER BY kotonari DESC
 		LIMIT 10
