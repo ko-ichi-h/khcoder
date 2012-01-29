@@ -257,6 +257,9 @@ sub calc_exec{
 		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
 	
+	$r_command .= "d_names <- row.names(d)\n";
+	$r_command .= "d <- NULL\n";
+	
 	# 併合水準のプロット（Rコマンド）
 	my $r_command_height = &r_command_height;
 	
@@ -269,12 +272,14 @@ sub calc_exec{
 	$r_command_ward .= "r <- cbind(r, q)\n";
 
 	my $r_command_ave;
+	$r_command_ave .= "dcls <- NULL\n";
 	$r_command_ave .= "dcls <- hclust(dj, method=\"average\")\n";
 	$r_command_ave .= "q <- cutree(dcls,k=$cluster_number)\n";
 	$r_command_ave .= "q <- check_cutree(q, n_org)\n";
 	$r_command_ave .= "r <- cbind(r, q)\n";
 
 	my $r_command_cmp;
+	$r_command_cmp .= "dcls <- NULL\n";
 	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
 	$r_command_cmp .= "q <- cutree(dcls,k=$cluster_number)\n";
 	$r_command_cmp .= "q <- check_cutree(q, n_org)\n";
@@ -516,16 +521,16 @@ pp_kizami <-  5     # indicator of N of clusters
 
 # Calcurate coeff.
 mergep <- dcls$merge
-if ( nrow(d) < n_org ){
+if ( length(d_names) < n_org ){
 	merge_tmp <- NULL
 	for (i in 1:nrow(dcls$merge)){
 		if (dcls$merge[i,1] < 0){
-			c1 <- as.numeric( row.names(d)[dcls$merge[i,1] * -1] ) * -1
+			c1 <- as.numeric( d_names[dcls$merge[i,1] * -1] ) * -1
 		} else {
 			c1 <- dcls$merge[i,1]
 		}
 		if (dcls$merge[i,2] < 0){
-			c2 <- as.numeric( row.names(d)[dcls$merge[i,2] * -1] ) * -1
+			c2 <- as.numeric( d_names[dcls$merge[i,2] * -1] ) * -1
 		} else {
 			c2 <- dcls$merge[i,2]
 		}
@@ -635,7 +640,7 @@ d <- d[,-1:n_cut]
 
 check_cutree <- function(r, n_org) {
 	q <- NULL
-	if ( nrow(d) < n_org ){
+	if ( length(r) < n_org ){
 		for (i in 1:n_org){
 			if ( is.na(r[as.character(i)]) ){
 				q <- c(q, ".")
