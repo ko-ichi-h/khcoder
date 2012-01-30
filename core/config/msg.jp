@@ -148,6 +148,7 @@ gui_window::main::inner:
     types:                    異なり語数（使用）：
     units:                    集計単位
 gui_window::main::menu:
+    open_nbl:                 '閲覧する分類ログファイルを選択'
     open_knb:                 '閲覧する学習結果ファイルを選択'
     about:                    KH Coderについて
     bayes_classi:             学習結果を用いた自動分類
@@ -922,3 +923,28 @@ gui_window::bayes_view_knb:
     variance:                 分散
 kh_nbayes::Util:
     prior:                    '[事前確率]'
+gui_window::bayes_predict:
+    win_title:                '学習結果を用いた自動分類'
+    unit:                     '分類の単位：'
+    model_file:               '学習結果ファイル：'
+    var_name:                 '変数名：'
+    var_desc:                 '    （分類の結果は外部変数として保存されます）'
+    save_log:                 '分類ログをファイルに保存'
+    opening_model:            '学習結果ファイルを選択してください'
+    er_no_such_file:          'ファイルを正しく指定して下さい。'
+    er_specify_name:          '変数名を指定して下さい。'
+    er_exists:                '指定された名前の変数がすでに存在します。'
+    saving_log:               '分類ログをファイルに保存'
+gui_window::bayes_view_log:
+    win_title:                '分類ログファイル：'
+    model_file:               '学習結果：'
+    saved_var:                ' 保存先変数：'
+    unit:                     ' 分類単位：'
+    doc_id:                   ' 文書No.'
+    search_words:             '抽出語の検索：'
+    class:                    '分類：'
+    higher_left:              ' ※左からスコアの高い順に表示'
+    word:                     '抽出語'
+    freq:                     '頻度'
+    variance:                 '分散'
+    run:                      '検索'

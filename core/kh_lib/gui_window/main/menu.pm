@@ -847,10 +847,10 @@ sub mc_view_nbl{
 		["All files",'*']
 	);
 	my $path = $::main_gui->mw->getOpenFile(
-		-defaultextension => '.knb',
+		-defaultextension => '.nbl',
 		-filetypes        => \@types,
 		-title            =>
-			gui_window->gui_jt('閲覧する分類ログファイルを選択'),
+			gui_window->gui_jt( kh_msg->get('open_nbl') ), # 閲覧する分類ログファイルを選択
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 	);
 	unless ($path){
