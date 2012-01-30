@@ -18,7 +18,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('分類ログファイル'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 分類ログファイル：
 
 	$self->{path} = shift;
 
@@ -33,7 +33,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => gui_window->gui_jchar('学習結果：'),
+		-text => kh_msg->get('model_file'), # 学習結果：
 	)->pack(-side => 'left');
 
 	$self->{entry_file_model} = $lf->Entry(
@@ -42,7 +42,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => gui_window->gui_jchar(' 保存先変数：'),
+		-text => kh_msg->get('saved_var'), #  保存先変数：
 	)->pack(-side => 'left');
 
 	$self->{entry_outvar} = $lf->Entry(
@@ -51,7 +51,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => gui_window->gui_jchar(' 分類単位：'),
+		-text => kh_msg->get('unit'), #  分類単位：
 	)->pack(-side => 'left');
 
 	$self->{entry_tani} = $lf->Entry(
@@ -59,7 +59,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$lf->Label(
-		-text => gui_window->gui_jchar(' 文書No.'),
+		-text => kh_msg->get('doc_id'), #  文書No.
 	)->pack(-side => 'left');
 
 	$self->{entry_dno} = $lf->Entry(
@@ -67,12 +67,7 @@ sub _new{
 		-background => 'gray',
 	)->pack(-side => 'left');
 
-	#$lf->Button(
-	#	-text => gui_window->gui_jchar('表示'),
-	#	-command => sub { $self->select_doc; }
-	#)->pack(-side => 'left', -padx => 2);
 	$self->{entry_dno}->bind("<Key-Return>",sub{$self->select_doc;});
-
 
 	gui_window->disabled_entry_configure( $self->{entry_file_model} );
 	gui_window->disabled_entry_configure( $self->{entry_outvar}     );
@@ -102,7 +97,7 @@ sub _new{
 	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 
 	$f1->Label(
-		-text => gui_window->gui_jchar('抽出語の検索：'),
+		-text => kh_msg->get('search_words'), # 抽出語の検索：
 	)->pack(-side => 'left');
 
 	$self->{entry_wsearch} = $f1->Entry(
@@ -119,7 +114,7 @@ sub _new{
 	);
 
 	$f1->Button(
-		-text => gui_window->gui_jchar('検索'),
+		-text => kh_msg->get('run'), # 検索
 		-command => sub{
 			my $key = $self->{last_sort_key};
 			$self->{last_sort_key} = undef;
@@ -132,7 +127,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $btn = $f1->Button(
-		-text => gui_window->gui_jchar('コピー（表全体）'),
+		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-command => sub { $self->copy; }
 	)->pack(-side => 'left', -padx => 2);
 	
@@ -176,8 +171,8 @@ sub start{
 
 	# 単位
 	my $tani = $self->{log_obj}{tani};
-	$tani = '文'   if $tani eq 'bun';
-	$tani = '段落' if $tani eq 'dan';
+	$tani = kh_msg->gget('sentence') if $tani eq 'bun';
+	$tani = kh_msg->gget('paragraph') if $tani eq 'dan';
 
 	$self->{entry_tani}->configure(-state => 'normal');
 	$self->{entry_tani}->delete(0,'end');
@@ -190,7 +185,9 @@ sub start{
 	my $fl = gui_window->gui_jchar($self->{path});
 	$fl = File::Basename::basename($fl);
 	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
-	$self->{win_obj}->title($self->gui_jt("分類ログファイル： $fl"));
+	$self->{win_obj}->title($self->gui_jt(
+		kh_msg->get('win_title').$self->gui_jchar(" $fl")
+	));
 
 	# 表示する文書の選択
 	my $w_doc_view = $::main_gui->get('w_doc_view');
@@ -268,7 +265,7 @@ sub view{
 			
 			unless ($n + 1){
 				$self->{frame_scores_a}->Label(
-					-text => $self->gui_jchar('分類：'),
+					-text => kh_msg->get('class'), # 分類：
 				)->pack(-side => 'left');
 				
 				my @len;
@@ -311,7 +308,7 @@ sub view{
 			#last if $n >= 5;
 		}
 		$self->{frame_scores_a}->Label(
-			-text => $self->gui_jchar(' ※左からスコアの高い順に表示'),
+			-text => kh_msg->get('higher_left'), #  ※左からスコアの高い順に表示
 		)->pack(-side => 'left');
 		
 		$self->{last_sort_key} = undef;
@@ -377,7 +374,11 @@ sub view{
 		push @temp, $i.' (%)';
 	}
 	foreach my $i (
-		'抽出語', '頻度', @{$self->{log_obj}{labels}}, '分散', @temp
+		kh_msg->get('word'), # 抽出語
+		kh_msg->get('freq'), # 頻度
+		@{$self->{log_obj}{labels}},
+		kh_msg->get('variance'), # 分散
+		@temp
 	){
 		unless ($col){
 			++$col;
@@ -544,14 +545,8 @@ sub sort{
 	my @sort;
 	if ($key){
 		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
-		#$self->{btn_copy}->configure(
-		#	-text => $self->gui_jchar('コピー（選択列）')
-		#);
 	} else {
 		@sort = @{$self->{result}};
-		#$self->{btn_copy}->configure(
-		#	-text => $self->gui_jchar('コピー（表全体）')
-		#);
 	}
 
 	# 検索ルーチン

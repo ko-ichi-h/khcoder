@@ -11,7 +11,7 @@ sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt('学習結果を用いた自動分類'));
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # 学習結果を用いた自動分類
 
 	my $lf = $win->LabFrame(
 		-label => 'Entry',
@@ -22,7 +22,7 @@ sub _new{
 	# 分類単位の指定
 	my $f2 = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady => 3);
 	$f2->Label(
-		-text => $self->gui_jchar('・分類の単位：'),
+		-text => kh_msg->get('unit'), # 分類の単位：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 	my %pack = (
@@ -39,12 +39,12 @@ sub _new{
 	my $fra4e = $lf->Frame()->pack(-expand => 'y', -fill => 'x',-pady => 3);
 	
 	$fra4e->Label(
-		-text => $self->gui_jchar('・学習結果ファイル：'),
+		-text => kh_msg->get('model_file'), # 学習結果ファイル：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
 	$fra4e->Button(
-		-text    => $self->gui_jchar('参照'),
+		-text    => kh_msg->gget('browse'), # 参照
 		-font    => "TKFN",
 		-command => sub { $self->file; },
 	)->pack(-side => 'left');
@@ -64,7 +64,7 @@ sub _new{
 	# 変数名の指定
 	my $fra4g = $lf->Frame()->pack(-expand => 'y', -fill => 'x', -pady =>3);
 	$fra4g->Label(
-		-text => $self->gui_jchar('・変数名：'),
+		-text => kh_msg->get('var_name'), # 変数名：
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -77,26 +77,26 @@ sub _new{
 	$self->{entry_ovn}->bind("<Key-Return>",sub{$self->_calc;});
 
 	$lf->Label(
-		-text => $self->gui_jchar('    （分類の結果は外部変数として保存されます）'),
+		-text => kh_msg->get('var_desc'), #     （分類の結果は外部変数として保存されます）
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 
 	my $lff = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$self->{chkw_savelog} = $lff->Checkbutton(
-			-text     => $self->gui_jchar('分類ログをファイルに保存','euc'),
+			-text     => kh_msg->get('save_log'), # 分類ログをファイルに保存
 			-variable => \$self->{check_savelog},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => $self->gui_jchar('キャンセル'),
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
-		-text => 'OK',
+		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->_calc;}
@@ -115,7 +115,7 @@ sub file{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		-title      => $self->gui_jt('学習結果ファイルを選択してください'),
+		-title      => $self->gui_jt(kh_msg->get('opening_model')), # 学習結果ファイルを選択してください
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 	
@@ -139,7 +139,7 @@ sub _calc{
 	unless (-e $self->gui_jg( $self->{entry}->get ) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => 'ファイルを正しく指定して下さい。',
+			msg    => kh_msg->get('er_no_such_file'), # ファイルを正しく指定して下さい。
 			window => \$self->{win_obj},
 		);
 		return 0;
@@ -148,7 +148,7 @@ sub _calc{
 	unless ( length( $self->gui_jg($self->{entry_ovn}->get) ) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => '変数名を指定して下さい。',
+			msg    => kh_msg->get('er_specify_name'), # 変数名を指定して下さい。
 			window => \$self->{win_obj},
 		);
 		return 0;
@@ -161,18 +161,14 @@ sub _calc{
 	if ( defined($chk->{id}) ){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => '指定された名前の変数がすでに存在します。',
+			msg    => kh_msg->get('er_exists'), # 指定された名前の変数がすでに存在します。
 			window => \$self->{win_obj},
 		);
 		return 0;
 	}
 
 	my $ans = $self->win_obj->messageBox(
-		-message => $self->gui_jchar
-			(
-			   "この処理には時間がかかることがあります。\n".
-			   "続行しますか？"
-			),
+		-message => kh_msg->gget('cont_big_pros'),
 		-icon    => 'question',
 		-type    => 'OKCancel',
 		-title   => 'KH Coder'
@@ -191,7 +187,7 @@ sub _calc{
 			-defaultextension => '.nbl',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt('分類ログをファイルに保存'),
+				$self->gui_jt(kh_msg->get('saving_log')), # 分類ログをファイルに保存
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 	}

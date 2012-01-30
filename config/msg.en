@@ -146,6 +146,7 @@ gui_window::main::inner:
     types:                    'Types (using):   '
     units:                    Units
 gui_window::main::menu:
+    open_nbl:                 'Select the classification log file to view'
     open_knb:                 'Select the model file to view'
     about:                    About
     bayes_classi:             Classify
@@ -282,7 +283,7 @@ gui_window::sysconfig:
     browse_mecab:             Please open MeCab.exe
     browse_stanford_jar:      Please open stanford-postagger.jar
     browse_stanford_tag:      Please open a model file
-    chasen:                   '"ChaSen" for Japanese data'
+    chasen:                   '"ChaSen" for Japanese text'
     config:                   config
     l_de:                     German *
     l_en:                     English
@@ -292,7 +293,7 @@ gui_window::sysconfig:
     l_nl:                     Dutch *
     l_pt:                     Portuguese *
     lang:                     '    Language:'
-    mecab:                    '"MeCab" for Japanese data'
+    mecab:                    '"MeCab" for Japanese text'
     need_inst:                '* you must install it by yourself'
     note_font:               "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
     note_s:                   '* %s will be replaced by filenames of URLs'
@@ -920,3 +921,28 @@ gui_window::bayes_view_knb:
     variance:                 Variance
 kh_nbayes::Util:
     prior:                    '[prior probability]'
+gui_window::bayes_predict:
+    win_title:                'Classify documents using a model file'
+    unit:                     'Classification unit:'
+    model_file:               'Model file:'
+    var_name:                 'Variable name:'
+    var_desc:                 '    * Classification result will be saved as a variable.'
+    save_log:                 'Save classification details to a log file'
+    opening_model:            'Opening a model file...'
+    er_no_such_file:          'Error: please specify a correct file name.'
+    er_specify_name:          'Error: please specify a varible name.'
+    er_exists:                'Error: the variable already exists.'
+    saving_log:               'Saving classification details as:'
+gui_window::bayes_view_log:
+    win_title:                'Classification details file:'
+    model_file:               'Model file:'
+    saved_var:                ' Saved variable:'
+    unit:                     ' Classification unit:'
+    doc_id:                   ' Doc No.'
+    search_words:             'Search words:'
+    class:                    'class:'
+    higher_left:              ' * Higher scores are placed towards the left.'
+    word:                     'words'
+    freq:                     'frequency'
+    variance:                 'variance'
+    run:                      'run'
