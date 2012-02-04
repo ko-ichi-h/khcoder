@@ -149,11 +149,11 @@ gui_window::main::menu:
     open_nbl:                 'Select the classification log file to view'
     open_knb:                 'Select the model file to view'
     about:                    About
-    bayes_classi:             Classify
-    bayes_learn:              Learn from Variables
+    bayes_classi:             Classify Documents using a Model
+    bayes_learn:              Built a Model from a Variable
     check:                    Check the Target File
-    check_classi:             View Classification Log
-    check_learning:           View Learning Result
+    check_classi:             View a Classification Log
+    check_learning:           View a Model File
     check_morpho:             Check the Result of Word Extraction
     close:                    Close
     cluster:                  Cluster Analysis
@@ -889,7 +889,7 @@ gui_window::use_te_g:
     h_hukugo:                 'cluster'
     h_score:                  'score'
 gui_window::bayes_learn:
-    win_title:                'Create classification model from variables'
+    win_title:                'Built a Model from a variable (use a variable as training data)'
     add2exists:               'Append current result to existing model file'
     cr_validate:              'Perform cross-validation'
     savelog:                  'Save classification log'
@@ -903,8 +903,8 @@ gui_window::bayes_learn:
     saving_new:               'Saving the model as'
     saving_log:               'Saving the classification log as'
     error_no_words:           'Error: No available words in current settings.'
-    done:                     'The model creation is complete.'
-    docs:                     'Number of documents documents:'
+    done:                     'The model build is complete.'
+    docs:                     'Number of documents used as training data:'
     docs_total:               'Total number of documents:'
     accuracy:                 'Accuracy:'
     verb4wid:                 ''
@@ -913,7 +913,7 @@ gui_widget::words_bayes:
     var:                      'Variable:'
     n_a:                      'not available'
 gui_window::bayes_view_knb:
-    win_title:                'View the Model File:'
+    win_title:                'View a Model File:'
     n_docs:                   'Processed documents:'
     n_types:                  ' Types of Words:'
     search:                   'Search'
@@ -946,3 +946,8 @@ gui_window::bayes_view_log:
     freq:                     'frequency'
     variance:                 'variance'
     run:                      'run'
+kh_nbayes:
+    classified_as:            'classified as'
+    classs:                   'class'
+    correct_insts:            'Correctly Classified Instances'
+    kappa:                    'Kappa statistic: '

@@ -180,8 +180,8 @@ sub calc{
 		}
 		
 		$varname2 = $varname1;
-		$varname1 .= '-Ê¬Îà';
-		$varname2 .= '-ÀµÈİ';
+		$varname1 .= '-class';
+		$varname2 .= '-is_correct';
 		foreach my $i ($varname1, $varname2){
 			my $chk = mysql_outvar::a_var->new($i);
 			if ( defined($chk->{id}) ){
