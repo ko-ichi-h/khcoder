@@ -948,3 +948,8 @@ gui_window::bayes_view_log:
     freq:                     '頻度'
     variance:                 '分散'
     run:                      '検索'
+kh_nbayes:
+    classified_as:            'ベイズ学習による分類'
+    classs:                   '正解'
+    correct_insts:            '正解を得た数'
+    kappa:                    'Kappa 統計量： '

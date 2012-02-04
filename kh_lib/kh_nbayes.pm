@@ -109,13 +109,13 @@ sub learn_from_ov{
 		# クロス集計
 		my $out; # Correct: $correct / $tested, kappa: $kappa\n
 		#$out .= "Confusion Matrix:\n";
-		$out .= ",,ベイズ学習による分類\n,,";
+		$out .= ",,".Encode::encode('euc-jp',kh_msg->get('classified_as'))."\n,,"; # .ベイズ学習による分類
 		foreach my $i ($self->{cls}->labels){
 			$out .= kh_csv->value_conv($i).',';
 		}
 		chop $out;
 		$out .= "\n";
-		$out .= "正解,";
+		$out .= Encode::encode('euc-jp',kh_msg->get('classs')).","; # 正解
 		
 		my $n = 0;
 		foreach my $i ($self->{cls}->labels){
@@ -134,9 +134,9 @@ sub learn_from_ov{
 		}
 		
 		# 出力
-		$out .= "\n\n正解を得た数： $correct / $tested (";
+		$out .= "\n\n".Encode::encode('euc-jp',kh_msg->get('correct_insts'))."： $correct / $tested ("; # 正解を得た数
 		$out .= sprintf("%.1f", $correct / $tested * 100)."%)\n";
-		$out .= "Kappa 統計量： ". sprintf("%.3f", $kappa);
+		$out .= Encode::encode('euc-jp',kh_msg->get('kappa')). sprintf("%.3f", $kappa); # Kappa 統計量： 
 		my $temp_file = $::project_obj->file_TempCSV;
 		open (TOUT,">$temp_file") or 
 			gui_errormsg->open(
@@ -242,11 +242,11 @@ sub cross_validate{
 				$v = '.';
 			}
 			elsif ($self->{test_result_raw}{$i} eq $self->{outvar_cnt}{$i}){
-				$s = '正';
+				$s = 'y';
 				$v = $self->{test_result_raw}{$i};
 			}
 			else {
-				$s = '否';
+				$s = 'n';
 				$v = $self->{test_result_raw}{$i};
 			}
 			push @data, [$v,$s];
