@@ -43,7 +43,7 @@ sub get{
 		$t = $msg_fb->{$caller}{$key};
 		print "kh_msg: fall back: $caller, $key\n";
 	} else {
-		$t = 'error: no msg!';
+		$t = 'error: '.$key;
 		print "kh_msg: no msg: $caller, $key\n";
 	}
 	
@@ -71,7 +71,7 @@ sub gget{
 		$t = $msg_fb->{$caller}{$key};
 		print "kh_msg: fall back: $caller, $key\n";
 	} else {
-		$t = 'error: no msg!';
+		$t = 'error: '.$key;
 		print "kh_msg: no msg: $caller, $key\n";
 	}
 	

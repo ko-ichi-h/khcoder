@@ -111,6 +111,7 @@ sub open{
 		# Windowオープン
 		if ($self->win_name eq 'main_window'){
 			$self->{win_obj} = MainWindow->new;
+			$self->position_icon(@_);
 		} else {
 			$self->{win_obj} = $::main_gui->mw->Toplevel();
 			$self->win_obj->focus;
@@ -144,6 +145,7 @@ sub open{
 
 		# 特殊処理に対応
 		$self->start;
+
 	}
 	return $self;
 }
