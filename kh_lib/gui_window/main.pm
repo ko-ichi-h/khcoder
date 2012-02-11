@@ -13,15 +13,17 @@ use Tk;
 
 sub _new{
 	my $self = shift;
-
-	$self->{mw} = $self->{win_obj};
 	$::main_gui = $self;
 
+	$self->{org_height} = $self->win_obj->height;
+
 	# Windowへの書き込み
-	$self->{mw}->title('KH Coder');                          # Windowタイトル
-	$self->make_font;                                        # フォント
-	$self->{menu}  = gui_window::main::menu->make(\$self);   # メニュー
-	$self->{inner} = gui_window::main::inner->make(\$self);  # Windowの中身
+	$self->make_font;                                        # フォント準備
+	$self->{win_obj}->title('KH Coder');                     # Windowタイトル
+	$self->{menu}  =
+		gui_window::main::menu->make(  $self->{win_obj} );   # メニュー
+	$self->{inner} = 
+		gui_window::main::inner->make( $self->{win_obj} );   # Windowの中身
 
 	#-----------------------#
 	#   KH Coder 開始処理   #
@@ -47,15 +49,18 @@ sub _new{
 }
 
 sub start{
-	# Windowsではここでiconをセットしないとフォーカスが来ない?!
-	my $self = shift;
-	$self->position_icon;
 	
+	my $self = shift;
+	
+	# Windowsではここでiconをセットしないとフォーカスが来なかった？
+	# $self->position_icon(no_geometry => 1);
+
 	# メイン画面だけはESCキーで閉じない
 	$self->win_obj->bind(
 		'<Key-Escape>',
 		sub{ return 1; }
 	);
+
 }
 
 
@@ -97,7 +102,7 @@ sub make_font{
 
 sub remove_font{
 	my $self = shift;
-	$self->{mw}->fontDelete('TKFN');
+	$self->{win_obj}->fontDelete('TKFN');
 }
 
 #--------------#
@@ -106,7 +111,7 @@ sub remove_font{
 
 sub mw{
 	my $self = shift;
-	return $self->{mw};
+	return $self->{win_obj};
 }
 sub inner{
 	my $self = shift;
@@ -158,7 +163,16 @@ sub opened{
 sub close{
 	my $self        = shift;
 	$self->close_all;
-	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
+	
+	# Main Windowの高さの値を修正する（+20px）
+	my $g = $self->win_obj->geometry;
+	print "height of mw: $self->{org_height}, ", $self->win_obj->height, "\n";
+	unless ($self->{org_height} == $self->win_obj->height){
+		my $h = $self->win_obj->height + 20;
+		$g =~ s/([0-9]+x)[0-9]+(\+[0-9]+\+[0-9]+)/$1$h$2/;
+	}
+	$::config_obj->win_gmtry($self->win_name,$g);
+
 	$::config_obj->save;
 	if ($::config_obj->all_in_one_pack){
 		kh_all_in_one->mysql_stop;

@@ -7,9 +7,8 @@ use strict;
 
 sub make{
 	my $class = shift;
-	my $gui   = shift;
+	my $mw   = shift;
 	my $self;
-	my $mw = ${$gui}->mw;
 
 	# プロジェクト情報
 	my $lab_fra1 = $mw->LabFrame(
@@ -17,14 +16,33 @@ sub make{
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(
-		-fill   => 'x',
 		-expand => 0,
-		-anchor => 'n',
+		-fill   => 'x',
 	);
 
-	my $fra1 = $lab_fra1->Frame()->pack(
-		-fill => 'both',
+	# データベース情報
+	my $lab_fra2 = $mw->LabFrame(
+		-label       => 'Database Stats',
+		-labelside   => 'acrosstop',
+		-borderwidth => '2'
+	)->pack(
 		-expand => 1,
+		-fill   => 'both',
+	);
+
+	# 言語の切り替え
+	my $fra3 = $mw->Frame()->pack(
+		-expand => 0,
+		-fill => 'x',
+		-padx => 2,
+		-pady => 2
+	);
+
+
+	# プロジェクト情報
+	my $fra1 = $lab_fra1->Frame()->pack(
+		-expand => 1,
+		-fill => 'both',
 	);
 	
 	$fra1->Label(
@@ -78,16 +96,6 @@ sub make{
 
 
 	# データベース情報
-	my $lab_fra2 = $mw->LabFrame(
-		-label       => 'Database Stats',
-		-labelside   => 'acrosstop',
-		-borderwidth => '2'
-	)->pack(
-		-fill   => 'both',
-		-expand => 1,
-		-anchor => 'n'
-	);
-
 	my $fra2 = $lab_fra2->Frame()->pack(
 		-fill => 'both',
 		-expand => 1,
@@ -154,7 +162,7 @@ sub make{
 		-highlightthickness => 0,
 		-columns            => 2,
 		-borderwidth        => 2,
-		-height             => 8,
+		-height             => 4,
 		-header             => 1,
 		-width      => $::config_obj->mw_entry_length - 2,
 	)->grid(
@@ -174,14 +182,27 @@ sub make{
 		1,
 		-text => kh_msg->get('cases'),#gui_window->gui_jchar('ケース数','euc')
 	);
+
 	$fra2->gridColumnconfigure(1, -weight => 1, -minsize => 30);
 	$fra2->gridRowconfigure(2, -weight => 1);
 
-	sub unselect{
-		my $self = shift;
-		$self->hlist->selectionClear();
-		#print "fuck\n";
-	}
+	# 言語の切り替え
+	$self->{optmenu_lg_v} = $::config_obj->msg_lang;
+	$self->{optmenu_lg} = gui_widget::optmenu->open(
+		parent  => $fra3,
+		pack    => {-side => 'right'},
+		options =>
+			[
+				[ 'English'  => 'en'],
+				[ 'Japanese' => 'jp'],
+			],
+		variable => \$self->{optmenu_lg_v},
+		command  => sub {$self->switch_lang;},
+	);
+
+	$fra3->Label(
+		-text => 'Interface Language: '
+	)->pack(-side => 'right');
 
 	$self->{e_curent_project} = $cupro;
 	$self->{e_project_memo}   = $cuprom;
@@ -191,6 +212,26 @@ sub make{
 #	$self->refresh;
 	
 	return $self;
+}
+
+sub switch_lang{
+	my $self = shift;
+	
+	my $v = gui_window->gui_jg( $self->{optmenu_lg_v} );
+	
+	unless ($::config_obj->msg_lang eq $v){
+		$::config_obj->msg_lang($v);
+		gui_errormsg->open(
+			type => 'msg',
+			icon => 'info',
+			msg  => "Language of user interface has been changed.\nPlease restart KH Coder for the change to take effect.",
+		);
+	}
+}
+
+sub unselect{
+	my $self = shift;
+	$self->hlist->selectionClear();
 }
 
 #--------------------#

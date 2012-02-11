@@ -65,10 +65,9 @@ my @menu1 = (
 
 sub make{
 	my $class = shift;
-	my $gui   = shift;
+	my $mw    = shift;
 	my $self;
 	
-	my $mw = ${$gui}->mw;
 	my $menubar = $mw->Menu(-type => 'menubar');
 	$mw->configure(-menu => $menubar);
 

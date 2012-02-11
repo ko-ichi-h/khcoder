@@ -494,6 +494,7 @@ sub ok{
 		$::config_obj->ClearGeometries;
 		gui_errormsg->open(
 			type => 'msg',
+			icon => 'info',
 			msg  => kh_msg->get('note_font'),
 		);
 		
