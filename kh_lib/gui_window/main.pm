@@ -15,7 +15,13 @@ sub _new{
 	my $self = shift;
 	$::main_gui = $self;
 
-	$self->{org_height} = $self->win_obj->height;
+	if ( $::config_obj->win_gmtry($self->win_name) ){
+		$self->{org_height} = $::config_obj->win_gmtry($self->win_name);
+		$self->{org_height} =~ s/[0-9]+x([0-9]+)\+[0-9]+\+[0-9]+/$1/;
+	} else {
+		$self->{org_height} = -1;
+	}
+
 
 	# Windowへの書き込み
 	$self->make_font;                                        # フォント準備
