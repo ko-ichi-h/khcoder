@@ -656,6 +656,7 @@ gui_widget::r_net:
     larger_c:                 'Larger nodes for higher frequency codes'
     larger_font:              'Variable font size *For printing with EMF/EPS/PDF'
     smaller:                  'Smaller Nodes'
+    min_sp_tree:              'Indicate minimum spanning tree'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
