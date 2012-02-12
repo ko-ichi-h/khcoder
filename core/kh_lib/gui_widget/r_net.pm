@@ -61,6 +61,11 @@ sub _new{
 		} else {
 			$self->{edge_type} = "words";
 		}
+		if ($self->{r_cmd} =~ /min_sp_tree <- ([01])\n/){
+			$self->{check_min_sp_tree} = $1;
+		} else {
+			die("cannot get configuration: min_sp_tree");
+		}
 
 		if ($edges == 0){
 			$self->{radio} = 'j';
@@ -191,6 +196,14 @@ sub _new{
 			},
 	)->pack(-anchor => 'w');
 
+	$self->{check_min_sp_tree} = 0 unless defined($self->{check_min_sp_tree});
+	$lf->Checkbutton(
+			-text     => kh_msg->get('min_sp_tree'),
+			-variable => \$self->{check_min_sp_tree},
+			-anchor => 'w',
+			#-state => 'disabled',
+	)->pack(-anchor => 'w');
+
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
 	return $self;
@@ -260,6 +273,11 @@ sub use_freq_as_size{
 sub use_freq_as_fsize{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_use_freq_as_fsize} );
+}
+
+sub min_sp_tree{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_min_sp_tree} );
 }
 
 sub smaller_nodes{

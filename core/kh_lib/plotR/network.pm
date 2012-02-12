@@ -55,6 +55,8 @@ sub new{
 	}
 	$r_command .= "text_font <- $args{font_bold}\n";
 
+	$r_command .= "min_sp_tree <- $args{min_sp_tree}\n";
+
 	#$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
@@ -346,6 +348,7 @@ n2  <- graph.edgelist(
 n2 <- set.edge.attribute(
 	n2, "weight", 0:(length(get.edgelist(n2)[,1])-1), el2[,3]
 )
+
 	';
 }
 
@@ -500,6 +503,60 @@ if (com_method == "twomode_g"){
 	edg_lty <- 3
 }
 
+# edge.widthを計算
+if ( use_weight_as_width == 1 ){
+	edg_width <- el2[,3]
+	edg_width <- edg_width / sd( edg_width )
+	edg_width <- edg_width - mean( edg_width )
+	edg_width <- edg_width * 0.6 + 2 # 分散 = 0.5, 平均 = 2
+	edg_width <- neg_to_zero(edg_width)
+} else {
+	edg_width <- 1
+}
+
+# Minimum Spanning Tree (2)
+if ( min_sp_tree == 1 ){
+	# MSTの検出
+	mst <- minimum.spanning.tree(
+		n2,
+		weights = 1 - get.edge.attribute(n2, "weight"),
+		algorithm="prim"
+	)
+
+	# MSTに合致するedgeを強調
+	if (length(edg_col) == 1){
+		edg_col <- rep(edg_col, length( get.edge.attribute(n2, "weight") ))
+	}
+	if (length(edg_width) == 1){
+	    edg_width <- rep(edg_width, ecount(n2) )
+	}
+
+	n2_edges  <- get.edgelist(n2,name=T);
+	mst_edges <- get.edgelist(mst,name=T);
+
+	for ( i in 1:ecount(n2) ){
+		name_n2 <- paste(
+			n2_edges[i,1],
+			n2_edges[i,2]
+		)
+		for ( j in 1:ecount(mst) ){
+			name_mst <- paste(
+				mst_edges[j,1],
+				mst_edges[j,2]
+			)
+			if ( name_n2 == name_mst ){
+				edg_col[i]   <- "gray30"                   # edgeの色
+				edg_width[i] <- 2                          # 太さ
+				if ( length(edg_lty) > 1 ){
+					edg_lty[i] <- 1                        # 線種
+				}
+				break
+			}
+		}
+	}
+}
+
+
 ';
 
 }
@@ -626,17 +683,6 @@ if (smaller_nodes ==1){
 	vertex_label_dist <- 0.75
 } else {
 	vertex_label_dist <- 0
-}
-
-# edge.widthを計算
-if ( use_weight_as_width == 1 ){
-	edg_width <- el2[,3]
-	edg_width <- edg_width / sd( edg_width )
-	edg_width <- edg_width - mean( edg_width )
-	edg_width <- edg_width * 0.6 + 2 # 分散 = 0.5, 平均 = 2
-	edg_width <- neg_to_zero(edg_width)
-} else {
-	edg_width <- 1
 }
 
 # 外部変数・見出しを使う場合の形状やサイズ

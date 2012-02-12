@@ -349,6 +349,7 @@ sub calc{
 		use_freq_as_fsize   => $self->{net_obj}->use_freq_as_fsize,
 		smaller_nodes       => $self->{net_obj}->smaller_nodes,
 		use_weight_as_width => $self->{net_obj}->use_weight_as_width,
+		min_sp_tree         => $self->{net_obj}->min_sp_tree,
 		r_command        => $r_command,
 		plotwin_name     => 'word_netgraph',
 	);
