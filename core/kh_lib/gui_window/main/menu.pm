@@ -771,7 +771,7 @@ sub make{
 	};
 
 	use File::Find;
-	find($read_each, $::config_obj->cwd.'/plugin');
+	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
 
 	$self->{t_sql_select} = $f->command(
 			-label => kh_msg->get('exec_sql'),#gui_window->gui_jchar('SQL文の実行'),
