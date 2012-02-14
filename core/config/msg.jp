@@ -658,7 +658,7 @@ gui_widget::r_net:
     larger_c:                 '出現数の多いコードほど大きい円で描画'
     larger_font:              'フォントも大きく ※EMFやEPSでの出力・印刷向け'
     smaller:                  'すべての語を小さめの円で描画'
-    min_sp_tree:              '最小スパニングツリーを表示'
+    min_sp_tree:              '最小スパニング・ツリーを表示'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'
