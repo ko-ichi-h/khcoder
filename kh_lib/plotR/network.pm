@@ -514,7 +514,7 @@ if ( use_weight_as_width == 1 ){
 	edg_width <- 1
 }
 
-# Minimum Spanning Tree (2)
+# Minimum Spanning Tree
 if ( min_sp_tree == 1 ){
 	# MST¤Î¸¡½Ð
 	mst <- minimum.spanning.tree(
