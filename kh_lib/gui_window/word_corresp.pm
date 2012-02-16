@@ -989,7 +989,10 @@ sub make_plot{
 
 sub r_command_aggr{
 	my $n_v = shift;
-	my $t = "name_nav <- '".kh_msg->get('nav')."'\n"; # ·çÂ»ÃÍ
+	my $t =
+		"name_nav <- '"
+		.Encode::encode('euc-jp', kh_msg->get('nav'))
+		."'\n"; # ·çÂ»ÃÍ
 	$t .= << 'END_OF_the_R_COMMAND';
 
 aggregate_with_var <- function(d, doc_length_mtr, v) {
