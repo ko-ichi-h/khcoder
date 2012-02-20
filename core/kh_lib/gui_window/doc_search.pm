@@ -20,22 +20,17 @@ sub _new{
 	$win->title($self->gui_jt(kh_msg->get('win_title'))); # Ê¸½ñ¸¡º÷
 	
 	my $lf = $win->Frame(
-		#-label => 'Search Entry',
-		#-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-side => 'top', -fill => 'x', -expand => 1);
+	);
 
 	my $adj = $win->Adjuster(
 		-widget => $lf,
 		-side   => 'top',
-		#-restore => 0,
-	)->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+	);
 
 	my $rf = $win->Frame(
-		#-label => 'Result',
-		#-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-side => 'top', -fill => 'both', -expand => 1);
+	);
 
 	$lf->Label(
 		-text => 'Search Entry:'
@@ -267,6 +262,11 @@ sub _new{
 		'<FocusIn>',
 		sub { $self->activate; }
 	);
+
+	$lf->pack(-side => 'top', -fill => 'x');
+	$adj->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+	$rf->pack(-side => 'top', -fill => 'both', -expand => 1);
+
 
 	return $self;
 }
