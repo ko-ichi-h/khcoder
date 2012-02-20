@@ -113,10 +113,9 @@ sub open{
 			$self->{win_obj} = MainWindow->new;
 		} else {
 			$self->{win_obj} = $::main_gui->mw->Toplevel();
+			$self->win_obj->focus;
+			$self->position_icon(@_);
 		}
-
-		$self->win_obj->focus;
-		$self->position_icon(@_);
 
 		# Windowの中身作成
 		$self = $self->_new(@_);

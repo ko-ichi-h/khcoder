@@ -31,19 +31,19 @@ sub _new{
 		#-labelside => 'acrosstop',
 		-borderwidth => 2,
 		-height      => 200,
-	)->pack(-side => 'top', -fill => 'x', -expand => 1);
+	);
 
 	my $adj = $win->Adjuster(
 		-widget => $lf,
 		-side   => 'top',
 		#-restore => 0,
-	)->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+	);
 
 	my $lf2 = $win->Frame(
 		#-label       => 'Result',
 		#-labelside   => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-side => 'top', -fill => 'both', -expand => 1);
+	);
 
 	$lf->Label(
 		-text => 'SQL Statement:'
@@ -152,6 +152,10 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	#$plane->make_control($frame);
+
+	$lf->pack(-side => 'top', -fill => 'x');
+	$adj->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
+	$lf2->pack(-side => 'top', -fill => 'both', -expand => 1);
 
 	$self->{entry} = $e;
 	$self->{text}  = $t;

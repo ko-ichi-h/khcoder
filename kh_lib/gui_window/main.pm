@@ -60,7 +60,8 @@ sub start{
 	
 	# Windowsではここでiconをセットしないとフォーカスが来なかった？
 	# $self->position_icon(no_geometry => 1);
-
+	$self->position_icon();
+	$self->inner->refresh;
 	# メイン画面だけはESCキーで閉じない
 	$self->win_obj->bind(
 		'<Key-Escape>',
@@ -170,14 +171,11 @@ sub close{
 	my $self        = shift;
 	$self->close_all;
 	
-	# Main Windowの高さの値を修正する（+20px）
-	my $g = $self->win_obj->geometry;
-	print "height of mw: $self->{org_height}, ", $self->win_obj->height, "\n";
-	unless ($self->{org_height} == $self->win_obj->height){
-		my $h = $self->win_obj->height + 20;
-		$g =~ s/([0-9]+x)[0-9]+(\+[0-9]+\+[0-9]+)/$1$h$2/;
-	}
-	$::config_obj->win_gmtry($self->win_name,$g);
+	# Main Windowの高さの値をチェック
+	#my $g = $self->win_obj->geometry;
+	#print "height of mw: $self->{org_height}, ", $self->win_obj->height, "\n";
+	
+	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 
 	$::config_obj->save;
 	if ($::config_obj->all_in_one_pack){

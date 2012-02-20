@@ -15,9 +15,6 @@ sub make{
 		-label       => 'Project',
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(
-		-expand => 0,
-		-fill   => 'x',
 	);
 
 	# データベース情報
@@ -25,18 +22,10 @@ sub make{
 		-label       => 'Database Stats',
 		-labelside   => 'acrosstop',
 		-borderwidth => '2'
-	)->pack(
-		-expand => 1,
-		-fill   => 'both',
 	);
 
-	# 言語の切り替え
-	my $fra3 = $mw->Frame()->pack(
-		-expand => 0,
-		-fill => 'x',
-		-padx => 2,
-		-pady => 2
-	);
+	# 言語の切り替え（これらのフレームは後でpack()する）
+	my $fra3 = $mw->Frame();
 
 
 	# プロジェクト情報
@@ -204,6 +193,17 @@ sub make{
 		-text => 'Interface Language: '
 	)->pack(-side => 'right');
 
+	$lab_fra1->pack(
+		-fill => 'x',
+	);
+	$lab_fra2->pack(
+		-fill => 'both',
+		-expand => 1,
+	);
+	$fra3->pack(
+		-fill => 'x',
+	);
+
 	$self->{e_curent_project} = $cupro;
 	$self->{e_project_memo}   = $cuprom;
 	$self->{hlist}            = $hlist;
@@ -269,8 +269,8 @@ sub refresh{
 			$self->entry('ent_num2', num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")") );
 			# 集計単位
 			my %name = (
-				"bun" => kh_msg->gget('sentence'),#"文",
-				"dan" => kh_msg->gget('paragraph'),#"段落",
+				"bun" => kh_msg->gget('sentence'),
+				"dan" => kh_msg->gget('paragraph'),
 				"h5"  => "H5",
 				"h4"  => "H4",
 				"h3"  => "H3",
