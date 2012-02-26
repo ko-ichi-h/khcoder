@@ -41,7 +41,7 @@ sub _new{
 		options =>
 			[
 				[kh_msg->get('f_p') , 0], # 度数とパーセント
-				[kh_msg->get('f')         , 1], # 度数のみ
+				[kh_msg->get('f')   , 1], # 度数のみ
 				[kh_msg->get('p')   , 2], # パーセントのみ
 			],
 		variable => \$self->{cell_opt},
@@ -200,6 +200,7 @@ sub _calc{
 		-highlightthickness => 0,
 	);
 	$self->{list2}->header('create',0,-text => ' ');
+	
 	$self->{list} = $self->{list_flame_inner}->HList(
 		-header             => 1,
 		-itemtype           => 'text',

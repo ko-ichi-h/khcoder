@@ -52,7 +52,19 @@ sub get{
 	shift @h;
 	pop   @h;
 	my $h;
+	
+	my $spacer = '';  # スペーサー設定
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	){
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+	
 	foreach my $i (@h){
+		$h .= $spacer if length($i);
 		$h .= $i->[0];
 	}
 	return Jcode->new($h)->sjis;
