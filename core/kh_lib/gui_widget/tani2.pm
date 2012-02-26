@@ -87,6 +87,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	@list2_1 = reverse @list2_1;
 	$self->{opt2} = $f1->Optionmenu(
 		-options=> \@list2_1,
 		-font => "TKFN",

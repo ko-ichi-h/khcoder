@@ -695,7 +695,12 @@ sub tab{
 		foreach my $h (@c){
 			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À
 				if (index($tani2,'h') == 0){
-					push @current, gui_window->gui_jchar(mysql_getheader->get($tani2, $h),'cp932'); # Decoding
+					push @current,
+						gui_window->gui_jchar( # Decoding
+							mysql_getheader->get($tani2, $h),
+							'cp932'
+						)
+					;
 				} else {
 					push @current, $h;
 				}

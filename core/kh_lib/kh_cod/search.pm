@@ -507,8 +507,19 @@ sub get_doc_head{
 	
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
+	my $spacer = '';  # スペーサー設定
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	){
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+	
 	my $r;
 	while (my $i = $sth->fetch){
+		$r .= $spacer if length($r);
 		$r .= $i->[0];
 		if (length($r) > $::config_obj->DocSrch_CutLength){
 			last;
