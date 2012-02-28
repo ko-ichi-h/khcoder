@@ -52,7 +52,6 @@ BEGIN {
 
 	# モジュールのパスを追加
 	push @INC, cwd.'/kh_lib';
-	push @INC, cwd.'/plugin';
 
 	# for Windows [2]
 	if ($^O eq 'MSWin32'){
