@@ -183,7 +183,7 @@ sub _new{
 	}
 
 	$fra_r->Label(
-		-text => $self->gui_jchar($copy_mark.'2001-2011'),
+		-text => $self->gui_jchar($copy_mark.'2001-2012'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 

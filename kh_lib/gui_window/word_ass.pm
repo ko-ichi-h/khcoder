@@ -665,6 +665,7 @@ sub net_calc{
 		use_freq_as_fsize   => 0,
 		smaller_nodes       => 0,
 		use_weight_as_width => 0,
+		min_sp_tree         => 0,
 		r_command           => $r_command,
 		plotwin_name        => 'selected_netgraph',
 	);

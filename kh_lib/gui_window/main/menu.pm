@@ -771,6 +771,7 @@ sub make{
 	};
 
 	use File::Find;
+	push @INC, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang;
 	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
 
 	$self->{t_sql_select} = $f->command(
