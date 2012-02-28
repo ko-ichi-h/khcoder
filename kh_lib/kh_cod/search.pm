@@ -67,9 +67,11 @@ sub add_direct{
 	my %args = @_;
 	my $debug = 0;
 	
+	my $direct = Encode::encode('euc-jp', kh_msg->get('direct') );
+	
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
-		if ($self->{codes}[0]->name eq '＃直接入力'){
+		if ($self->{codes}[0]->name eq $direct){
 			print "Deleting old \'direct\' code\n" if $debug;
 			shift @{$self->{codes}};
 		}
@@ -78,7 +80,7 @@ sub add_direct{
 	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'＃直接入力',
+			$direct,
 			Jcode->new($args{raw},'sjis')->euc
 		);
 	} else {                                      # 「AND」,「OR」の場合
@@ -98,7 +100,7 @@ sub add_direct{
 		print Jcode->new("direct-code: $t \n",'euc')->sjis if $debug;
 		
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'＃直接入力',
+			$direct,
 			$t
 		);
 	}

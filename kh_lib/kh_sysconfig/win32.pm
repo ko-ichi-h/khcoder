@@ -179,7 +179,14 @@ sub underline_conv{
 }
 
 sub mw_entry_length{
-	return 21;
+	require Win32;
+	
+	my $m = ( Win32::GetOSVersion() )[1];
+	if ($m >= 6 && $::config_obj->msg_lang eq 'jp'){
+		return 27;
+	} else {
+		return 22;
+	}
 }
 
 sub font_main{
