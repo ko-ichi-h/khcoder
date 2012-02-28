@@ -694,11 +694,11 @@ sub _fill{
 	# 外部変数
 	my $h = mysql_outvar->get_list;
 	foreach my $i (@{$h}){
-		if ($i->[0] eq 'dan'){$i->[0] = '段落';}
-		if ($i->[0] eq 'bun'){$i->[0] = '文';}
+		if ($i->[0] eq 'dan'){$i->[0] = kh_msg->gget('paragraph');}
+		if ($i->[0] eq 'bun'){$i->[0] = kh_msg->gget('sentence');}
 		$self->{list}->add($n,-at => "$n");
-		$self->{list}->itemCreate($n,0,-text => $self->gui_jchar($i->[0]),);
-		$self->{list}->itemCreate($n,1,-text => $self->gui_jchar($i->[1]),);
+		$self->{list}->itemCreate($n,0,-text => $i->[0],);
+		$self->{list}->itemCreate($n,1,-text => $i->[1],);
 		++$n;
 		# my $chk = Jcode->new($i->[1])->icode;
 		# print "$chk, $i->[1]\n";
