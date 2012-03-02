@@ -623,21 +623,22 @@ sub net_calc{
 	}
 
 	# 「文書 x 抽出語」データの取り出し
+	my $docs = $self->{code_obj}->fetch_Doc_IDs;
 	my $r_command = mysql_crossout::selected::r_com->new(
-		tani  => $self->{code_obj}->{tani},
-		words => \@words,
+		tani    => $self->{code_obj}->{tani},
+		words   => \@words,
+		doc_ids => $docs,
 	)->run;
 
 	# 該当する文書だけを選択
-	my $docs = $self->{code_obj}->fetch_Doc_IDs;
-	$r_command .= "target_docs <- c(";
-	foreach my $i (@{$docs}){
-		$r_command .= "$i,";
-	}
-	chop $r_command;
-	$r_command .= ")\n";
-
-	$r_command .= "d <- d[target_docs,]\n";
+	#my $docs = $self->{code_obj}->fetch_Doc_IDs;
+	#$r_command .= "target_docs <- c(";
+	#foreach my $i (@{$docs}){
+	#	$r_command .= "$i,";
+	#}
+	#chop $r_command;
+	#$r_command .= ")\n";
+	#$r_command .= "d <- d[target_docs,]\n";
 
 	$r_command .= "d <- t(d)\n";
 
@@ -652,7 +653,7 @@ sub net_calc{
 		$r_command .= ")\n";
 	}
 
-	# デフォルト値で描画
+	# デフォルト設定でネットワーク描画
 	$r_command .= "# END: DATA\n\n";
 	use plotR::network;
 	my $plotR = plotR::network->new(
