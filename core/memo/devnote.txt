@@ -109,13 +109,10 @@ Turkish*  			ok
 ・言語による処理切り替え部分には「# morpho_analyzer」というコメントでマーク
 ・Stanford POS Taggerはドイツ語のlemmaを出力してくれない（lemmatization対応は英語のみ？）
 
-[2.b.28のリリース時には]
-	・Rのライブラリ: Cairo
-	・msg.jp, msg.en
-	・kh_coder.exe
-	・KH Coderのプラグイン入れ替え
-	・マニュアル
-	・チュートリアルの整理
+
+[2.b.29]
+	・細部の調整
+		・Rを用いた多変量解析の実行速度をやや改善した。
 
 [2.b.28]
 	・プロット機能の拡充
