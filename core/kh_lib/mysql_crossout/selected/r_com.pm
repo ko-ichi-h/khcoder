@@ -44,6 +44,8 @@ sub out2{                               # length作製をする
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
+	my $nrow = 0;
+	$self->{r_command} .= "d <- matrix( c(";
 	while (1){
 		my $sth = mysql_exec->select(
 			$self->sql2($id, $id + 100),
@@ -69,10 +71,10 @@ sub out2{                               # length作製をする
 						$temp .= "0,";
 					}
 				}
-				chop $temp;
 				if ($doc_id{$last}){
-					$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+					$self->{r_command} .= "$temp\n";
 					$length .= "$current{length_c},$current{length_w},";
+					++$nrow;
 				}
 				# 初期化
 				%current = ();
@@ -114,11 +116,19 @@ sub out2{                               # length作製をする
 			$temp .= "0,";
 		}
 	}
-	chop $temp;
 	if ($doc_id{$last}){
-		$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+		$self->{r_command} .= "$temp\n";
 		$length .= "$current{length_c},$current{length_w},";
+		++$nrow;
 	}
+
+	my $ncol = @{$self->{wList}} + 1;
+
+	chop $self->{r_command};
+	chop $self->{r_command};
+	$self->{r_command} .= "), byrow=T,nrow=$nrow, ncol=$ncol)\n";
+
+
 	chop $row_names;
 	
 	if ($self->{rownames}){
@@ -128,6 +138,8 @@ sub out2{                               # length作製をする
 			$self->{r_command} .= "row.names(d) <- d[,1]\n";
 		}
 	}
+
+
 
 	$self->{r_command} .= "d <- d[,-1]\n";
 
