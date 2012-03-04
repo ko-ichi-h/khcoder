@@ -32,7 +32,9 @@ sub run{
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	$self->{r_command} = "d <- NULL\n";
+	$self->{r_command}  = "d <- NULL\n";
+	$self->{r_command} .= "d <- matrix( c(";
+	
 	my $row_names = '';
 	
 	my $length = 'doc_length_mtr <- matrix( c( ';
@@ -69,7 +71,7 @@ sub out2{                               # length作製をする
 					}
 				}
 				chop $temp;
-				$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+				$self->{r_command} .= "$temp,\n";
 				$current{length_c} = "0" unless length($current{length_c});
 				$current{length_w} = "0" unless length($current{length_w});
 				$length .= "$current{length_c},$current{length_w},";
@@ -114,11 +116,13 @@ sub out2{                               # length作製をする
 			$temp .= "0,";
 		}
 	}
+	++$num_r;
+	my $ncol = @{$self->{wList}} + 1;
 	chop $temp;
-	$self->{r_command} .= "d <- rbind(d, c($temp) )\n";
+	$self->{r_command} .= "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
 	$length .= "$current{length_c},$current{length_w},";
 	chop $row_names;
-	++$num_r;
+	
 	
 	# データ整形
 	if ($self->{rownames}){
