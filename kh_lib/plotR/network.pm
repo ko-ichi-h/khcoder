@@ -503,6 +503,19 @@ if (com_method == "twomode_g"){
 	edg_lty <- 3
 }
 
+# 負の値を0に変換する関数
+neg_to_zero <- function(nums){
+  temp <- NULL
+  for (i in 1:length(nums) ){
+    if (nums[i] < 0){
+      temp[i] <- 0
+    } else {
+      temp[i] <-  nums[i]
+    }
+  }
+  return(temp)
+}
+
 # edge.widthを計算
 if ( use_weight_as_width == 1 ){
 	edg_width <- el2[,3]
@@ -620,19 +633,6 @@ for (i in 1:2){
 	lay_f[,i] <- lay_f[,i] - min(lay_f[,i]); # 最小を0に
 	lay_f[,i] <- lay_f[,i] / max(lay_f[,i]); # 最大を1に
 	lay_f[,i] <- ( lay_f[,i] - 0.5 ) * 1.96;
-}
-
-# 負の値を0に変換する関数
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if (nums[i] < 0){
-      temp[i] <- 0
-    } else {
-      temp[i] <-  nums[i]
-    }
-  }
-  return(temp)
 }
 
 # vertex.sizeを計算
