@@ -78,13 +78,25 @@ sub add_direct{
 	}
 	print "direct-raw: $args{raw}\n" if $debug;
 	
+	$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
+	if ($args{raw} =~ /\r|\n/){
+		my $t = $args{raw};
+		$t =~ tr/\r\n/__/;
+		$args{raw} =~ s/\r|\n//g;
+		print
+			"illegal input! using ATOK? \"",
+			Jcode->new($t)->sjis,
+			"\"\n"
+		;
+	}
+	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			$direct,
-			Jcode->new($args{raw},'sjis')->euc
+			$args{raw},
 		);
 	} else {                                      # 「AND」,「OR」の場合
-		$args{raw} = Jcode->new($args{raw},'sjis')->tr('　',' ')->euc;
+		$args{raw} = Jcode->new($args{raw},'euc')->tr('　',' ');
 		$args{raw} =~ tr/\t\n/  /;
 		
 		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;

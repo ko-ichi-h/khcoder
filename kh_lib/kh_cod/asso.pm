@@ -64,19 +64,31 @@ sub add_direct{
 	
 	# 既に追加されていた場合はいったん削除
 	if ($self->{codes}){
-		if ($self->{codes}[0]->name eq '＃直接入力'){
+		if ($self->{codes}[0]->name eq '#direct'){
 			print "Deleting old \'direct\' code\n";
 			shift @{$self->{codes}};
 		}
 	}
 	
+	$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
+	if ($args{raw} =~ /\r|\n/){
+		my $t = $args{raw};
+		$t =~ tr/\r\n/__/;
+		$args{raw} =~ s/\r|\n//g;
+		print
+			"illegal input! using ATOK? \"",
+			Jcode->new($t)->sjis,
+			"\"\n"
+		;
+	}
+	
 	if ($args{mode} eq 'code'){                   #「code」の場合
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'＃直接入力',
-			Jcode->new($args{raw},'sjis')->euc
+			'#direct',
+			$args{raw}
 		);
 	} else {                                      # 「AND」,「OR」の場合
-		$args{raw} = Jcode->new($args{raw},'sjis')->tr('　',' ')->euc;
+		$args{raw} = Jcode->new($args{raw},'euc')->tr('　',' ');
 		$args{raw} =~ tr/\t\n/  /;
 		
 		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
@@ -90,7 +102,7 @@ sub add_direct{
 			++$n;
 		}
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
-			'＃直接入力',
+			'#direct',
 			$t
 		);
 	}
