@@ -580,35 +580,35 @@ if (n_cls > 1){
 		"y",
 		"text"
 	)
-	for ( i in 1:nrow( segment(ddata) ) ) {
+	for ( i in 1:nrow( ddata$segment ) ) {
 		if (
-			   segment(ddata)$y0[i] > cutpoint
-			|| segment(ddata)$y1[i] > cutpoint
+			   ddata$segment$y0[i] > cutpoint
+			|| ddata$segment$y1[i] > cutpoint
 			|| (
-				   segment(ddata)$y0[i] >= cutpoint
-				&& segment(ddata)$y1[i] >= cutpoint
+				   ddata$segment$y0[i] >= cutpoint
+				&& ddata$segment$y1[i] >= cutpoint
 			   )
 		) {
 			seg_bl <- c(
 				seg_bl,
-				segment(ddata)$x0[i],
-				segment(ddata)$y0[i],
-				segment(ddata)$x1[i],
-				segment(ddata)$y1[i]
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i]
 			)
 		} else {
 			seg_cl <- c(
 				seg_cl,
-				segment(ddata)$x0[i],
-				segment(ddata)$y0[i],
-				segment(ddata)$x1[i],
-				segment(ddata)$y1[i],
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i],
 				#col_vec[
 					memb[hcl$order][
 						floor(
 							mean(
-								segment(ddata)$x0[i],
-								segment(ddata)$x1[i]) 
+								ddata$segment$x0[i],
+								ddata$segment$x1[i]) 
 							)
 					]
 				#]
@@ -642,7 +642,7 @@ if (n_cls > 1){
 } else {
 	memb <- rep( c("a"), length(labels) )
 	p <- p + scale_colour_manual(values=c("black"))
-	seg_bl <- segment(ddata)
+	seg_bl <- ddata$segment
 	col_vec <- c("001")
 }
 
@@ -655,22 +655,12 @@ if (is.null(seg_bl) == F){
 	)
 }
 
-f_family = ""
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
-	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
-		f_family <- "HiraKaku"
-	} else {
-		f_family <- "Meiryo UI"
-	}
-}
-
 p <- p + geom_text(
 	data=data.frame(                    # ラベル変換
 		x=label(ddata)$x,
 		y=label(ddata)$y,
-		text=labels[ as.numeric( as.vector( label(ddata)$text ) ) ],
-		cols= col_vec[ memb[ as.numeric( as.vector( label(ddata)$text ) ) ] ]
+		text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
 	),
 	aes_string(
 		x="x",
@@ -680,9 +670,7 @@ p <- p + geom_text(
 	),
 	hjust=1,
 	angle =0,
-	size = 5 * 0.85 * font_size,
-	fontface ="bold",
-	fontfamily =f_family
+	size = 5 * 0.85 * font_size
 )
 
 p <- p + coord_flip()
@@ -711,14 +699,11 @@ if (n_cls <= 1){
 }
 
 ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
-print(ggplot2_version)
 ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
-print(ggplot2_version)
 ggplot2_version <- unlist(     ggplot2_version )
-print(ggplot2_version)
 ggplot2_version <- as.numeric( ggplot2_version )
-print(ggplot2_version)
 ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
+
 
 if (ggplot2_version <= 8){
 	# Save the original definition of guide_grid
@@ -743,19 +728,23 @@ if (ggplot2_version <= 8){
 
 	# Assign the function inside ggplot2
 	assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
+} else {
+	p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
 }
 
 print(p)
 
-if (ggplot2_version <= 8){
-	if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
-		if ( grepl("darwin", R.version$platform) ){
-			quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
-			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
-		} else {
-			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
-		}
+library(grid)
+if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
+	} else {
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
 	}
+}
+
+if (ggplot2_version <= 8){
 	assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
 }
 ';
