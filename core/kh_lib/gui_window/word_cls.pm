@@ -569,6 +569,17 @@ if (n_cls > 1){
 	# 線の色分け
 	seg_bl <- NULL
 	seg_cl <- NULL
+	colnames(ddata$segment) <- c(
+		"x0",
+		"y0",
+		"x1",
+		"y1"
+	)
+	colnames(ddata$labels) <- c(
+		"x",
+		"y",
+		"text"
+	)
 	for ( i in 1:nrow( segment(ddata) ) ) {
 		if (
 			   segment(ddata)$y0[i] > cutpoint
@@ -578,36 +589,35 @@ if (n_cls > 1){
 				&& segment(ddata)$y1[i] >= cutpoint
 			   )
 		) {
-			seg_bl <- rbind(
+			seg_bl <- c(
 				seg_bl,
-				c(
-					segment(ddata)$x0[i],
-					segment(ddata)$y0[i],
-					segment(ddata)$x1[i],
-					segment(ddata)$y1[i]
-				)
+				segment(ddata)$x0[i],
+				segment(ddata)$y0[i],
+				segment(ddata)$x1[i],
+				segment(ddata)$y1[i]
 			)
 		} else {
-			seg_cl <- rbind(
+			seg_cl <- c(
 				seg_cl,
-				c(
-					segment(ddata)$x0[i],
-					segment(ddata)$y0[i],
-					segment(ddata)$x1[i],
-					segment(ddata)$y1[i],
-					#col_vec[
-						memb[hcl$order][
-							floor(
-								mean(
-									segment(ddata)$x0[i],
-									segment(ddata)$x1[i]) 
-								)
-						]
-					#]
-				)
+				segment(ddata)$x0[i],
+				segment(ddata)$y0[i],
+				segment(ddata)$x1[i],
+				segment(ddata)$y1[i],
+				#col_vec[
+					memb[hcl$order][
+						floor(
+							mean(
+								segment(ddata)$x0[i],
+								segment(ddata)$x1[i]) 
+							)
+					]
+				#]
 			)
 		}
 	}
+	seg_bl = matrix(seg_bl, byrow=T, ncol=4 )
+	seg_cl = matrix(seg_cl, byrow=T, ncol=5 )
+	
 	if (is.null(seg_bl) == F){
 		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
 		seg_bl <- as.data.frame(seg_bl)
@@ -645,6 +655,16 @@ if (is.null(seg_bl) == F){
 	)
 }
 
+f_family = ""
+if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		f_family <- "HiraKaku"
+	} else {
+		f_family <- "Meiryo UI"
+	}
+}
+
 p <- p + geom_text(
 	data=data.frame(                    # ラベル変換
 		x=label(ddata)$x,
@@ -660,7 +680,9 @@ p <- p + geom_text(
 	),
 	hjust=1,
 	angle =0,
-	size = 5 * 0.85 * font_size
+	size = 5 * 0.85 * font_size,
+	fontface ="bold",
+	fontfamily =f_family
 )
 
 p <- p + coord_flip()
@@ -688,40 +710,54 @@ if (n_cls <= 1){
 	)
 }
 
-# Save the original definition of guide_grid
-guide_grid_orig <- guide_grid
+ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
+print(ggplot2_version)
+ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
+print(ggplot2_version)
+ggplot2_version <- unlist(     ggplot2_version )
+print(ggplot2_version)
+ggplot2_version <- as.numeric( ggplot2_version )
+print(ggplot2_version)
+ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
 
-# Create the replacement function
-guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
-  ggname("grill", grobTree(
-    theme_render(theme, "panel.background"),
-    theme_render(
-      theme, "panel.grid.minor", name = "x",
-      x = rep(x.minor, each=2), y = rep(0:1, length(x.minor)),
-      id.lengths = rep(2, length(x.minor))
-    ),
-    theme_render(
-      theme, "panel.grid.major", name = "x",
-      x = rep(x.major, each=2), y = rep(0:1, length(x.major)),
-      id.lengths = rep(2, length(x.major))
-    )
-  ))
+if (ggplot2_version <= 8){
+	# Save the original definition of guide_grid
+	guide_grid_orig <- guide_grid
+
+	# Create the replacement function
+	guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
+	  ggname("grill", grobTree(
+	    theme_render(theme, "panel.background"),
+	    theme_render(
+	      theme, "panel.grid.minor", name = "x",
+	      x = rep(x.minor, each=2), y = rep(0:1, length(x.minor)),
+	      id.lengths = rep(2, length(x.minor))
+	    ),
+	    theme_render(
+	      theme, "panel.grid.major", name = "x",
+	      x = rep(x.major, each=2), y = rep(0:1, length(x.major)),
+	      id.lengths = rep(2, length(x.major))
+	    )
+	  ))
+	}
+
+	# Assign the function inside ggplot2
+	assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
 }
-
-# Assign the function inside ggplot2
-assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
 
 print(p)
 
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
-	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
-	} else {
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
+if (ggplot2_version <= 8){
+	if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+		if ( grepl("darwin", R.version$platform) ){
+			quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
+		} else {
+			grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
+		}
 	}
+	assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
 }
-assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
 ';
 
 
