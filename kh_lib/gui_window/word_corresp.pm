@@ -704,7 +704,8 @@ sub make_plot{
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 
-	$r_command = Encode::decode('euc-jp', $r_command);
+	#$r_command = Encode::decode('euc-jp', $r_command);
+	$r_command = $r_command;
 
 	kh_r_plot->clear_env;
 
@@ -714,9 +715,9 @@ sub make_plot{
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
 
-	$r_command .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 成分
-	$r_command .= "name_eig <- '".kh_msg->get('eig')."'\n"; # 固有値
-	$r_command .= "name_exp <- '".kh_msg->get('exp')."'\n"; # 寄与率
+	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 成分
+	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # 固有値
+	$r_command .= "name_exp <- '".Encode::encode('euc-jp', kh_msg->get('exp'))."'\n"; # 寄与率
 
 	$r_command .= "library(MASS)\n";
 	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
@@ -1054,7 +1055,7 @@ END_OF_the_R_COMMAND2
 sub r_command_filter{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-# Filter words by chi-square value
+# Filter words by chi-square value ※日本語コメント
 if ( (flw > 0) && (flw < ncol(d)) ){
 	sort  <- NULL
 	for (i in 1:ncol(d) ){

@@ -301,7 +301,16 @@ sub calc_exec{
 		$merges_org->{_cluster_tmp_c}
 	);
 
-	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡す…
+	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡すが、
+	# ここではUTF8フラグ付きを渡している
+	#print
+	#	"is_utf8? ", 
+	#	utf8::is_utf8($r_command),
+	#	utf8::is_utf8($r_command_ward),
+	#	utf8::is_utf8($r_command_height),
+	#	"\n"
+	#;
+
 	kh_r_plot->clear_env;
 	my $plots;
 	
