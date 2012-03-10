@@ -198,9 +198,11 @@ sub calc{
 
 sub make_plot{
 	my %args = @_;
-	
+
 	my $fontsize = $args{font_size};
-	my $r_command = Encode::decode('euc-jp', $args{r_command});
+
+	#my $r_command = Encode::decode('euc-jp', $args{r_command});
+	my $r_command = $args{r_command};
 
 	kh_r_plot->clear_env;
 
@@ -268,7 +270,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_d .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 次元
+	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 次元
 	
 	$r_command_d .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_d .= "name_dim2 <- paste(name_dim,'2')\n";
@@ -279,7 +281,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # 次元
+	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 次元
 
 	$r_command_a .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_a .= "name_dim2 <- paste(name_dim,'2')\n";
