@@ -606,7 +606,6 @@ sub net_calc{
 		return undef;
 	}
 	
-	
 	my $wait_window = gui_wait->start;
 	
 	# ネットワーク描画に使用する語の基本形IDリスト
@@ -618,16 +617,29 @@ sub net_calc{
 		for_net => 1,
 	);
 
+	mysql_exec->drop_table("tmp_words_4net");
+	mysql_exec->do("
+		create temporary table tmp_words_4net (
+			genkei_id int primary key not null
+		) TYPE=HEAP
+	",1);
+
+	my $sql_w = "INSERT INTO tmp_words_4net (genkei_id) VALUES ";
 	foreach my $i (@{$r}){
-		push @words, $i->[0];
+		$sql_w .= "($i->[0]),";
 	}
+	foreach my $i (@{$self->{code_obj}{query_words}}){
+		$sql_w .= "($i),";
+	}
+	chop $sql_w;
+	mysql_exec->do($sql_w,1);
 
 	# 「文書 x 抽出語」データの取り出し
-	my $docs = $self->{code_obj}->fetch_Doc_IDs;
+	#my $docs = $self->{code_obj}->fetch_Doc_IDs;
 	my $r_command = mysql_crossout::selected::r_com->new(
-		tani    => $self->{code_obj}->{tani},
-		words   => \@words,
-		doc_ids => $docs,
+		tani           => $self->{code_obj}->{tani},
+		words          => "tmp_words_4net",
+		doc_list_table => "temp_word_ass",
 	)->run;
 
 	# 該当する文書だけを選択
@@ -640,7 +652,7 @@ sub net_calc{
 	#$r_command .= ")\n";
 	#$r_command .= "d <- d[target_docs,]\n";
 
-	$r_command .= "d <- t(d)\n";
+	#$r_command .= "d <- t(d)\n";
 
 	# 検索語のリスト（強調用）
 	my $qw_name = $self->{code_obj}->fetch_query_words_name;
