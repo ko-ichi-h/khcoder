@@ -278,10 +278,10 @@ sub asso{
 	print "2: conditional probability...\n";
 	
 	my $denom1 = mysql_exec->select("SELECT count(*) from $m_table",1)
-		->hundle->fetch->[0];                     # 条件付き確立の分母
+		->hundle->fetch->[0];                     # 条件付き確率の分母
 	unless ($denom1){return 0;}
 	$self->{doc_num} = $denom1;
-	mysql_exec->drop_table("ct_ass_p");           # 条件付き確立保存テーブル
+	mysql_exec->drop_table("ct_ass_p");           # 条件付き確率保存テーブル
 	mysql_exec->do("
 		CREATE TEMPORARY TABLE ct_ass_p(
 			genkei_id INT primary key,

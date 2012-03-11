@@ -57,7 +57,6 @@ sub new{
 
 	$r_command .= "min_sp_tree <- $args{min_sp_tree}\n";
 
-	#$r_command .= &r_plot_cmd_p1;
 
 	# プロット作成
 	
@@ -73,10 +72,10 @@ sub new{
 			command_f =>
 				 $r_command
 				."com_method <- \"twomode_c\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -86,14 +85,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."com_method <- \"twomode_g\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"twomode_g\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -102,11 +101,11 @@ sub new{
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
 				 $r_command
-				.&r_plot_cmd_p1
+				.$self->r_plot_cmd_p1
 				."\ncom_method <- \"cnt-b\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -116,14 +115,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"cnt-d\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"cnt-d\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -133,14 +132,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"cnt-e\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"cnt-e\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -150,14 +149,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"com-b\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"com-b\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -167,14 +166,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"com-g\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"com-g\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -184,14 +183,14 @@ sub new{
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"none\"\n"
-				.&r_plot_cmd_p1
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p3
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"none\"\n"
-				.&r_plot_cmd_p2
-				.&r_plot_cmd_p4,
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -280,9 +279,11 @@ sub r_plot_cmd_p1{
 	return '
 
 # 頻度計算
-freq <- NULL
-for (i in 1:length( rownames(d) )) {
-	freq[i] = sum( d[i,] )
+if (use_freq_as_size == 1){
+	freq <- NULL
+	for (i in 1:length( rownames(d) )) {
+		freq[i] = sum( d[i,] )
+	}
 }
 
 # 類似度計算 
