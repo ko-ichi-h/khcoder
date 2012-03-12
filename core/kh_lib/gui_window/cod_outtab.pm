@@ -355,7 +355,7 @@ sub copy{
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
-			$t .= $h;
+			$t .= $self->to_clip($h);
 			++$n;
 		}
 		$t .= "\n";

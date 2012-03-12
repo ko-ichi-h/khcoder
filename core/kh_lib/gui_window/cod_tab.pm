@@ -253,7 +253,7 @@ sub _calc{
 	foreach my $i (@{$result->[0]}){
 		if ($col){
 			my $w = $self->{list}->Label(
-				-text               => $self->gui_jchar($i),
+				-text               => $i,
 				-font               => "TKFN",
 				-foreground         => 'black',
 				#-background         => 'white',
@@ -323,7 +323,7 @@ sub copy{
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
-			$t .= $h;
+			$t .= $self->to_clip($h);
 			++$n;
 		}
 		$t .= "\n";
