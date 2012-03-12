@@ -28,7 +28,7 @@ sub exec{
 		SELECT dan_r.id
 		FROM dan_r
 		WHERE
-			txt like '%¾ðÊó%'
+			txt like '%²ÈÂ²%'
 	",1);
 	
 	my $n_hits = mysql_exec->select("select count(*) from tmp_dan_id",1)
