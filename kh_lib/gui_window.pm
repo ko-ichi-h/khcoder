@@ -332,7 +332,6 @@ sub gui_jg{ # 入力された文字列の変換
 				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
 				return Jcode->new($char,'utf8')->sjis;
 			}
-
 			return Encode::encode($char_code{sjis},$char);
 		} else {
 			#print "not utf8\n";
@@ -341,6 +340,23 @@ sub gui_jg{ # 入力された文字列の変換
 	} else {
 		return $char;
 	}
+}
+
+sub to_clip{ # クリップボードへコピーするための変換（現在はWindowsのみ対応）
+	my $char = $_[1];
+	
+	if ($] > 5.008 && utf8::is_utf8($char) ){
+		$char = Encode::encode($char_code{sjis},$char);
+	} else {
+		unless (
+			Jcode->new($char)->icode eq 'sjis'
+			|| Jcode->new($char)->icode or 'ascii'
+		) {
+			$char = Jcode->new($char)->sjis;
+		}
+	}
+	
+	return $char;
 }
 
 #----------------#
