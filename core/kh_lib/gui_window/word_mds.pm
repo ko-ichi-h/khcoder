@@ -414,7 +414,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	$plotwin->open(
 		plots       => [$plot1, $plot2],
 		msg         => $stress,
-		no_geometry => 1,
+		#no_geometry => 1,
 	);
 	
 	return 1;

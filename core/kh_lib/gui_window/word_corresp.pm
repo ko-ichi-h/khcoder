@@ -981,7 +981,7 @@ sub make_plot{
 	
 	$plotwin->open(
 		plots       => \@plots,
-		no_geometry => 1,
+		#no_geometry => 1,
 	);
 	
 	#(@plots,$plot2,$plotg,$plotv,$plot1) = undef;

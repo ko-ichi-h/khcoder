@@ -353,7 +353,7 @@ sub make_plot{
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
 		plots       => [$plot1,$plot2,$plot3],
-		no_geometry => 1,
+		#no_geometry => 1,
 		plot_size   => $args{plot_size},
 		merges      => $merges,
 	);
