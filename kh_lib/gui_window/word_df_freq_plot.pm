@@ -88,6 +88,7 @@ sub save{
 	my @types = (
 		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "PDF",[qw/.pdf/] ],
+		[ "SVG",[qw/.svg/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "R Source",[qw/.r/] ],
 	);
