@@ -314,9 +314,17 @@ sub save{
 	elsif ($path =~ /\.emf$/i){
 		$self->_save_emf($path);
 	}
+	elsif ($path =~ /\.svg$/i){
+		$self->_save_svg($path);
+	}
 	else {
 		warn "The file type is not supported yet:\n$path\n";
 	}
+
+	unless ( -e $path ){
+		warn "failed to save the plot: ".$::config_obj->R->read;
+	}
+
 }
 
 sub R_device{
@@ -461,6 +469,44 @@ sub _save_png{
 		}
 	");
 
+
+	$self->set_par;
+	$::config_obj->R->send($self->{command_f});
+	$::config_obj->R->send('dev.off()');
+	$::config_obj->R->unlock;
+	$::config_obj->R->output_chk(1);
+	
+	return 1;
+}
+
+sub _save_svg{
+	my $self = shift;
+	my $path = shift;
+	
+	$self->{width}  = 480 unless $self->{width};
+	$self->{height} = 480 unless $self->{height};
+	
+	# プロット作成
+	$::config_obj->R->output_chk(0);
+	$::config_obj->R->lock;
+
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(
+				width=$self->{width},
+				height=$self->{height},
+				file=\"$path\",
+				type=\"svg\",
+				onefile=TRUE,
+				bg=\"transparent\",
+				dpi=96,
+				units=\"px\",
+				pointsize=10
+			)
+		} else {
+			print(\"error: no Cairo!\")
+		}
+	");
 
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
