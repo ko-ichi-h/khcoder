@@ -675,7 +675,7 @@ p <- p + geom_text(
 
 p <- p + coord_flip()
 p <- p + scale_x_reverse( expand = c(0.01,0.01) )
-p <- p + scale_y_continuous(expand = c(0.2,0))
+p <- p + scale_y_continuous(expand = c(0.25,0))
 
 p <- p + ggplot2::opts(
 	axis.title.y = theme_blank(),
@@ -732,7 +732,70 @@ if (ggplot2_version <= 8){
 	p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
 }
 
-print(p)
+
+show_bar <- 1
+
+if (show_bar == 1){
+	p <- p + ggplot2::opts(
+		axis.ticks  = theme_blank(),
+		axis.text.y = theme_blank()
+	)
+	p <- p + opts(
+		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
+	)
+
+	print("ok")
+
+	freq <- NULL
+	for (i in 1:nrow(d)) {
+		freq[i] = sum( d[i,] )
+	}
+
+	bard <- data.frame(
+		nm <- labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		ht <- freq[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cl <- col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ],
+		od <- nrow(d):1
+	)
+
+	p2 <- NULL
+	p2 <- ggplot()
+	p2 <- p2 + geom_bar(
+		width=0.75,
+		data=bard,
+		aes(
+			x=reorder(nm,od),
+			y=ht,
+			fill=cl
+		)
+	)
+	p2 <- p2 + coord_flip()
+	p2 <- p2 + scale_y_reverse( expand = c(0,0))
+	p2 <- p2 + scale_x_discrete( expand = c(0.005,0.005) )
+	p2 <- p2 + ggplot2::opts(
+		axis.title.y     = theme_blank(),
+		axis.title.x     = theme_blank(),
+		axis.ticks       = theme_blank(),
+		axis.text.y      = theme_blank(),
+		axis.text.x      = theme_text(size=12,colour="white"),
+		legend.position  = "none",
+		panel.background = theme_rect(fill="white", colour="white"),
+		panel.grid.major = theme_blank(),
+		panel.grid.minor = theme_blank()
+	)
+	p2 <- p2 + opts(
+		plot.margin = unit(c(0.25,0,0.25,0), "lines")
+	)
+
+	grid.newpage()
+	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
+	print(p2, vp= viewport(layout.pos.row=1, layout.pos.col=1) )
+	print(p,  vp= viewport(layout.pos.row=1, layout.pos.col=2) )
+} else {
+	print(p)
+}
+
+
 
 library(grid)
 if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
