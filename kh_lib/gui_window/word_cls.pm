@@ -522,6 +522,7 @@ sub r_command_plot_ggplot2{
 
 #plot(hcl,ann=0,cex=1, hang=-1)
 
+library(grid)
 library(ggplot2)
 library(ggdendro)
 
@@ -744,8 +745,6 @@ if (show_bar == 1){
 		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
 	)
 
-	print("ok")
-
 	freq <- NULL
 	for (i in 1:nrow(d)) {
 		freq[i] = sum( d[i,] )
@@ -783,21 +782,23 @@ if (show_bar == 1){
 		panel.grid.major = theme_blank(),
 		panel.grid.minor = theme_blank()
 	)
+
+	mgs <- -0.25
+	if (ggplot2_version >= 9){
+		mgs <- mgs * 3
+	}
 	p2 <- p2 + opts(
-		plot.margin = unit(c(0.25,0,0.25,0), "lines")
+		plot.margin = unit(c(0.25,mgs,0.25,0), "lines")
 	)
 
 	grid.newpage()
 	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
-	print(p2, vp= viewport(layout.pos.row=1, layout.pos.col=1) )
 	print(p,  vp= viewport(layout.pos.row=1, layout.pos.col=2) )
+	print(p2, vp= viewport(layout.pos.row=1, layout.pos.col=1) )
 } else {
 	print(p)
 }
 
-
-
-library(grid)
 if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
