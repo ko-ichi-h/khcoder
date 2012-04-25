@@ -25,6 +25,16 @@ sub _new{
 			$self->{method_dist} = 'pearson';
 		}
 
+		if ( $self->{r_cmd} =~ /ward/ ){
+			$self->{method_mthd} = 'ward';
+		}
+		elsif  ( $self->{r_cmd} =~ /average/ ){
+			$self->{method_mthd} = 'average';
+		}
+		else {
+			$self->{method_mthd} = 'complete';
+		}
+
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){
 			$self->{cls_number} = $1;
 		} else {
@@ -40,6 +50,24 @@ sub _new{
 		$self->{r_cmd} = undef;
 	}
 
+	# 方法
+	$f4->Label(
+		-text => kh_msg->get('method'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{method_mthd} = "ward" unless $self->{method_mthd};
+	my $widget_method = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('ward'),    'ward'    ],
+				[kh_msg->get('average'), 'average' ],
+				[kh_msg->get('complete'),'complete'],
+			],
+		variable => \$self->{method_mthd},
+	);
 
 	# 距離
 	$f4->Label(
@@ -47,6 +75,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	$self->{method_dist} = 'binary' unless $self->{method_dist};
 	my $widget_dist = gui_widget::optmenu->open(
 		parent  => $f4,
 		pack    => {-side => 'left'},
@@ -58,7 +87,7 @@ sub _new{
 			],
 		variable => \$self->{method_dist},
 	);
-	$widget_dist->set_value('binary');
+	
 
 	# クラスター数
 	my $f5 = $win->Frame()->pack(
@@ -112,9 +141,24 @@ sub method_dist{
 	return gui_window->gui_jg( $self->{method_dist} );
 }
 
+sub method_mthd{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{method_mthd} );
+}
+
 sub cluster_number{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{entry_cluster_number}->get );
+}
+
+sub params{
+	my $self = shift;
+	return (
+		cluster_number => $self->cluster_number,
+		cluster_color  => $self->cluster_color,
+		method_dist    => $self->method_dist,
+		method_mthd    => $self->method_mthd,
+	);
 }
 
 1;

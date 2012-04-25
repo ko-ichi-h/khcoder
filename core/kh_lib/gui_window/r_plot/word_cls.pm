@@ -17,11 +17,7 @@ sub photo_pane_width{
 }
 
 sub option1_options{
-	return [
-		kh_msg->get('ward'), # WardË¡
-		kh_msg->get('ave'), # ·²Ê¿¶ÑË¡
-		kh_msg->get('clink'), # ºÇ±óÎÙË¡
-	];
+	return [ 'nothing' ];
 }
 
 sub option1_name{
@@ -42,7 +38,7 @@ sub start{
 			} else {
 				gui_window::cls_height::word->open(
 					plots => $self->{merges},
-					type  => $self->{ax},
+					type  => 0,
 				);
 			}
 		}

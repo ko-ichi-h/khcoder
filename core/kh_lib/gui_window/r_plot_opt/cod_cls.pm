@@ -50,9 +50,7 @@ sub calc{
 
 	my $wait_window = gui_wait->start;
 	&gui_window::word_cls::make_plot(
-		cluster_number => $self->{cls_obj}->cluster_number,
-		cluster_color  => $self->{cls_obj}->cluster_color,
-		method_dist    => $self->{cls_obj}->method_dist,
+		$self->{cls_obj}->params,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
