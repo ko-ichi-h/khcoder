@@ -120,9 +120,10 @@ sub out2{                               # length作製をする
 	my $ncol = @{$self->{wList}} + 1;
 	chop $temp;
 	$self->{r_command} .= "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+	$current{length_c} = "0" unless length($current{length_c});
+	$current{length_w} = "0" unless length($current{length_w});
 	$length .= "$current{length_c},$current{length_w},";
 	chop $row_names;
-	
 	
 	# データ整形
 	if ($self->{rownames}){

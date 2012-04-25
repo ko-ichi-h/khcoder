@@ -152,10 +152,11 @@ sub calc{
 	$r_command .= "# END: DATA\n";
 
 	&make_plot(
-		#base_win       => $self,
-		cluster_number => $self->{cls_obj}->cluster_number,
-		cluster_color  => $self->{cls_obj}->cluster_color,
-		method_dist    => $self->{cls_obj}->method_dist,
+		#cluster_number => $self->{cls_obj}->cluster_number,
+		#cluster_color  => $self->{cls_obj}->cluster_color,
+		#method_dist    => $self->{cls_obj}->method_dist,
+		#method_mthd    => $self->{cls_obj}->method_mthd,
+		$self->{cls_obj}->params,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
 		plot_size      => $self->{font_obj}->plot_size,
@@ -219,6 +220,11 @@ sub make_plot{
 	$r_command .= "labels <- rownames(d)\n";
 	$r_command .= "rownames(d) <- NULL\n";
 
+	$r_command .= "freq <- NULL\n";
+	$r_command .= "for (i in 1:nrow(d)) {\n";
+	$r_command .= "	freq[i] = sum( d[i,] )\n";
+	$r_command .= "}\n";
+
 	if ($args{method_dist} eq 'euclid'){
 		# 抽出語ごとに標準化
 			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
@@ -234,37 +240,11 @@ sub make_plot{
 	
 	$r_command .= "try( library(flashClust) )\n";
 
-	my $r_command_2a = 
-		"$par"
-		.'hcl <- hclust(dj, method="average")'."\n"
-		.&r_command_plot($old_simple_style)
-	;
-
-	#$r_command_2a .= 
-	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-	#	if $cluster_number > 1;
-	
-	my $r_command_2 = $r_command.$r_command_2a;
-
-	my $r_command_3a = 
-		"$par"
-		.'hcl <- hclust(dj, method="complete")'."\n"
-		.&r_command_plot($old_simple_style)
-	;
-	#$r_command_3a .= 
-	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-	#	if $cluster_number > 1;
-	my $r_command_3 = $r_command.$r_command_3a;
-
 	$r_command .=
 		"$par"
-		.'hcl <- hclust(dj, method="ward")'."\n"
+		.'hcl <- hclust(dj, method="'.$args{method_mthd}.'")'."\n"
 		.&r_command_plot($old_simple_style)
 	;
-	#$r_command .= 
-	#	"rect.hclust(hcl, k=$cluster_number, border=\"#FF8B00FF\")\n"
-	#	if $cluster_number > 1;
-
 
 	# プロット作成
 	my $flg_error = 0;
@@ -295,52 +275,6 @@ sub make_plot{
 		);
 	}
 
-	# 群平均法
-	my $plot2 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_2',
-		command_a => $r_command_2a,
-		command_f => $r_command_2,
-		width     => $w,
-		height    => $h,
-	) or $flg_error = 1;
-	$plot2->rotate_cls if $old_simple_style;
-
-	foreach my $i ('last','first','all'){
-		$merges->{1}{$i} = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_2_'.$i,
-			command_f =>  $r_command_2
-			             ."pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			command_a =>  "pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			width     => 640,
-			height    => 480,
-		);
-	}
-
-	# 最遠隣法
-	my $plot3 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_3',
-		command_a => $r_command_3,
-		command_f => $r_command_3,
-		width     => $w,
-		height    => $h,
-	) or $flg_error = 1;
-	$plot3->rotate_cls if $old_simple_style;
-
-	foreach my $i ('last','first','all'){
-		$merges->{2}{$i} = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_3_'.$i,
-			command_f =>  $r_command_3
-			             ."pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			command_a =>  "pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			width     => 640,
-			height    => 480,
-		);
-	}
-
 	# プロットWindowを開く
 	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
@@ -352,7 +286,7 @@ sub make_plot{
 	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
-		plots       => [$plot1,$plot2,$plot3],
+		plots       => [$plot1],
 		#no_geometry => 1,
 		plot_size   => $args{plot_size},
 		merges      => $merges,
@@ -635,6 +569,25 @@ if (n_cls > 1){
 	colnames(seg_cl) <- c("x0", "y0", "x1", "y1", "c")
 	seg_cl <- as.data.frame(seg_cl)
 	seg_cl$c <- col_vec[seg_cl$c]
+
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		size = 5 * 0.85 * font_size
+	)
+
 	p <- p + geom_segment(
 		data=seg_cl,
 		aes_string(x="x0", y="y0", xend="x1", yend="y1", colour="c"),
@@ -645,6 +598,23 @@ if (n_cls > 1){
 	p <- p + scale_colour_manual(values=c("black"))
 	seg_bl <- ddata$segment
 	col_vec <- c("001")
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		size = 5 * 0.85 * font_size
+	)
 }
 
 if (is.null(seg_bl) == F){
@@ -745,10 +715,10 @@ if (show_bar == 1){
 		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
 	)
 
-	freq <- NULL
-	for (i in 1:nrow(d)) {
-		freq[i] = sum( d[i,] )
-	}
+	#freq <- NULL
+	#for (i in 1:nrow(d)) {
+	#	freq[i] = sum( d[i,] )
+	#}
 
 	bard <- data.frame(
 		nm <- labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -756,6 +726,10 @@ if (show_bar == 1){
 		cl <- col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ],
 		od <- nrow(d):1
 	)
+
+	if (n_cls <= 1){
+		bard$cl <- "001"
+	}
 
 	p2 <- NULL
 	p2 <- ggplot()

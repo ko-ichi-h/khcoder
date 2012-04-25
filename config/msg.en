@@ -605,7 +605,11 @@ gui_window::r_plot::cod_mds:
 gui_window::r_plot_opt::cod_mds:
     win_title:                'Configure: Multi-Dimensional Scaling of Codes'
 gui_widget::r_cls:
-    dist:                     'Distance:'
+    method:                   'Method:'
+    ward:                     'Ward'
+    average:                  'Average'
+    complete:                 'Complete'
+    dist:                     '  Distance:'
     n_cls:                    'N of clusters:'
     color:                    'Different colors'
 gui_window::word_cls:

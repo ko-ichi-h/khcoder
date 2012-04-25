@@ -18,9 +18,7 @@ sub photo_pane_width{
 
 sub option1_options{
 	return [
-		kh_msg->get('gui_window::r_plot::word_cls->ward'), # WardË¡
-		kh_msg->get('gui_window::r_plot::word_cls->ave'), # ·²Ê¿¶ÑË¡
-		kh_msg->get('gui_window::r_plot::word_cls->clink'), # ºÇ±óÎÙË¡
+		'nothing'
 	];
 }
 
@@ -42,7 +40,7 @@ sub start{
 			} else {
 				gui_window::cls_height::cod->open(
 					plots => $self->{merges},
-					type  => $self->{ax},
+					type  => 0,
 				);
 			}
 		}

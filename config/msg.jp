@@ -607,7 +607,11 @@ gui_window::r_plot::cod_mds:
 gui_window::r_plot_opt::cod_mds:
     win_title:                'コーディング・多次元尺度法：調整'
 gui_widget::r_cls:
-    dist:                     '距離：'
+    method:                   '方法：'
+    ward:                     'Ward法'
+    average:                  '群平均法'
+    complete:                 '最遠隣法'
+    dist:                     '  距離：'
     n_cls:                    'クラスター数：'
     color:                    'クラスターの色分け'
 gui_window::word_cls:
