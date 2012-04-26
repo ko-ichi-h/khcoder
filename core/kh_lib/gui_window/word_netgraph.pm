@@ -328,7 +328,7 @@ sub calc{
 
 	# 外部変数・見出しデータの統合
 	if ($self->{radio_type} eq 'twomode'){
-		$r_command = Encode::decode('euc-jp',$r_command);
+		$r_command = $r_command;
 		$r_command .= &r_command_concat;
 	}
 
@@ -442,7 +442,7 @@ d <- cbind(d, v1)
 d <- subset(
 	d,
 	v0 != "'
-	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.Encode::encode('euc-jp', kh_msg->get('gui_window::word_corresp->nav') ) # 欠損値
 	.'" & v0 != "." & v0 != "missing"
 )
 v0 <- NULL
@@ -452,7 +452,7 @@ d <- t(d)
 d <- subset(
 	d,
 	rownames(d) != "<>'
-	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
+	.Encode::encode('euc-jp', kh_msg->get('gui_window::word_corresp->nav')) # 欠損値
 	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
 )
 d <- t(d)
