@@ -959,3 +959,9 @@ kh_nbayes:
     classs:                   '正解'
     correct_insts:            '正解を得た数'
     kappa:                    'Kappa 統計量： '
+kh_project:
+    no_target_file:           '分析対象ファイルが存在しません'
+gui_errormsg::file:
+    could_not_open_the_file:  "ファイルを開けませんでした。\nKH Coderを終了します。\n* "
+kh_cod:
+    not_coding_rules:         '選択されたファイルはコーディング・ルール・ファイルに見えません。'

@@ -13,7 +13,7 @@ sub new{
 	unless (-e $self->file_target){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => "分析対象ファイルが存在しません"
+			msg    => kh_msg->get('no_target_file'), # 分析対象ファイルが存在しません
 		);
 		return 0;
 	}
@@ -175,7 +175,7 @@ sub open{
 	unless (-e $self->file_target){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => "分析対象ファイルが存在しません"
+			msg    => kh_msg->get('no_target_file')
 		);
 		return 0;
 	}

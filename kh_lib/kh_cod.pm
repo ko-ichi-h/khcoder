@@ -98,8 +98,7 @@ sub read_file{
 	unless ($self){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  =>
-				"選択されたファイルはコーディング・ルール・ファイルに見えません。"
+			msg  => kh_msg->get('not_coding_rules') # "選択されたファイルはコーディング・ルール・ファイルに見えません。"
 		);
 		return 0;
 	}
