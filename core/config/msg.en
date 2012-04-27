@@ -23,7 +23,7 @@ global:
     r_net_msg_fail:           'Error: could not configure the options.'
     words:                    Words
 gui_errormsg::mysql:
-    fatal:                   "Failed to deal with MySQL database system.\nKH Coder will exit now."
+    fatal:                   "Failed in accessing MySQL database system.\nKH Coder will exit now."
 gui_wait:
     done:                    "The process is complete.\nElapsed time:"
 gui_widget::bubble:
@@ -957,3 +957,9 @@ kh_nbayes:
     classs:                   'class'
     correct_insts:            'Correctly Classified Instances'
     kappa:                    'Kappa statistic: '
+kh_project:
+    no_target_file:           'Cannot find the target file'
+gui_errormsg::file:
+    could_not_open_the_file:  "Could not open the file.\nKH Coder will exit now.\n* "
+kh_cod:
+    not_coding_rules:         'The selected file does not look like a coding rule file'
