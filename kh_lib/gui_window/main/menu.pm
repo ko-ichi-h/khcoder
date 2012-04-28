@@ -724,7 +724,7 @@ sub make{
 			my $err = $@;
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => "プラグイン「".$_.".pm」の読み込みを中止しました。\nエラー：\n$err"
+				msg  => "plugin error at ".$_.".pm\n\nerror: \n$err"
 			);
 			print "$err\n";
 			return 0;

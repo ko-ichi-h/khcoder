@@ -9,7 +9,7 @@ sub _copy{
 	my $win = $self->win_obj;
 
 	gui_errormsg->open(
-		msg => 'Linux上でのコピーは現在サポートしていません。',
+		msg => 'Sorry, currently cannot copy on Unix systems.',
 		type => 'msg',
 		window => \$win,
 	);

@@ -131,7 +131,7 @@ sub new{
 	){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'プロットサイズの指定が不正です。',
+			msg  => kh_msg->get('illegal_plot_size') # プロットサイズの指定が不正です
 		);
 		return 0;
 	}
@@ -169,7 +169,7 @@ sub new{
 			type   => 'msg',
 			window => \$::main_gui->mw,
 			msg    =>
-				"推定または描画に失敗しました\n\n"
+				kh_msg->get('faliled_in_plotting') # 推定または描画に失敗しました\n\n
 				.Jcode->new($self->{r_msg})->euc
 		);
 		return 0;

@@ -159,7 +159,7 @@ sub drop_db{
 	$dbh->func("dropdb", $drop,$host,$username,$password,'admin')
 		or gui_errormsg->open(
 			type => 'msg',
-			msg => 'データベース（MySQL）の削除に失敗しました。'
+			msg => 'Could not delete the database from MySQL'
 		);
 
 	$dbh->disconnect;

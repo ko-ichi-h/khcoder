@@ -103,8 +103,7 @@ sub when_read{
 	$self->{the_code} = $kh_cod::reading{$cod_name};
 
 	gui_errormsg->open(
-		msg  => "コーディングルールの記述に誤りがあります。\n".
-		        '「'.$cod_name.'」というコードは定義されていません。',
+		msg  => kh_msg->get('no_code_error').$cod_name,
 		type => 'msg'
 	) unless $self->{the_code};
 

@@ -551,6 +551,7 @@ kh_morpho::chasen:
 kh_morpho::mecab:
     error:                    'Fatal error: Could not execute MeCab.'
     error_config:             'Fatal error: Could not find MeCab.'
+    illegal_bra:              'Illegal marking with <>'
 kh_morpho::stanford:
     error:                    'Fatal error: Could not execute Stanford POS Tagger.'
     error_config:             'Fatal error: Could not find JStanford POS Tagger.'
@@ -573,6 +574,7 @@ mysql_words:
     tf:                       TF
     types:                    Types of Words (n)
     words:                    Words
+    excel_limit:              "Could not export all of the records due to the 65,536 records limit of Excel file.\nPlease select CSV to export all the data."
 gui_widget::cls4mds:
     cluster_color:            'Indicate clusters by different colors'
     cls_num:                  'Number of clusters:'
@@ -961,7 +963,25 @@ kh_nbayes:
     kappa:                    'Kappa statistic: '
 kh_project:
     no_target_file:           'Cannot find the target file'
+kh_projects:
+    already_registered:       'The file is already registered as a project'
 gui_errormsg::file:
     could_not_open_the_file:  "Could not open the file.\nKH Coder will exit now.\n* "
 kh_cod:
     not_coding_rules:         'The selected file does not look like a coding rule file'
+kh_r_plot:
+    illegal_plot_size:        'Illegal plot size'
+    faliled_in_plotting:      "Failed in plotting with R\n\n"
+mysql_ready:
+    error_in_mysql_bunr:      "Something wrong with the database: bun_r table\nKH Coder will exit now"
+    too_long_sentence:        "Error: there are too long sentences. ( > 65535 )\nKH Coder will exit now."
+kh_cod::a_code:
+    syntax_error:             "Syntax error in the coding rule:"
+kh_cod::a_code::atom::code:
+    no_code_error:            "Syntax error. Can not find the code: "
+mysql_outvar::read:
+    records_error:            "Number of records does not much.\nAborting the process."
+    midashi_error:            'Cannot use "headings 1" - "headings 5" as the name of the variable.'
+    overwrite_vars:           "The varible with the same name already exists.\nOver wright?\n\n"
+mysql_ready::dump:
+    too_long_word:            "There are too long words. ( > 255 )\nKH Coder will exit now.\n\nThe words are recorded in the following file: \n"

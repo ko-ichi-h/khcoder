@@ -456,7 +456,7 @@ sub search{
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => 'コードが選択されていません',
+			msg    => kh_msg->get('gui_window::doc_search->error_no_code'), # 'コードが選択されていません',
 			window => \$win,
 		);
 		return 0;

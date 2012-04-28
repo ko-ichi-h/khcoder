@@ -14,7 +14,7 @@ sub path_check{
 		gui_errormsg->open(
 			type   => 'msg',
 			window => \$gui_sysconfig::inis,
-			msg    => "MeCab.exeのパスが不正です"
+			msg    => "Cannot find MeCab.exe!"
 		);
 		return 0;
 	}

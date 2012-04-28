@@ -165,6 +165,13 @@ sub opened{
 	$self->{$window_name} = $window;
 	$::main_gui = $self;
 }
+sub closed{
+	my $self        = shift;
+	my $window_name = shift;
+	
+	undef $self->{$window_name};
+	$::main_gui = $self;
+}
 
 # プログラム全体の終了処理
 sub close{

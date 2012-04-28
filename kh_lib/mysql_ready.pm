@@ -1113,11 +1113,17 @@ sub rowtxt{
 			} else {
 				# エラー・チェック
 				if ( length($temp) > 65535 ){
-					gui_errormsg->open(type => 'msg',msg => "32,767文字を超える文がありました。\nKH Coderを終了します。");
+					gui_errormsg->open(
+						type => 'msg',
+						msg  => kh_msg->get('too_long_sentence') # "Error: there are too long sentences. ( > 65535 )\nKH Coder will exit now."
+					);
 					exit;
 				}
 				unless ($last + 1 == $i->[0]){
-					gui_errormsg->open(type => 'msg',msg => "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。");
+					gui_errormsg->open(
+						type => 'msg',
+						msg  => kh_msg->get('error_in_mysql_bunr') # "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"
+					);
 					exit;
 				}
 				# エスケープ

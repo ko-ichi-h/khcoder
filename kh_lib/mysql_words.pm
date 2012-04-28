@@ -288,7 +288,7 @@ sub _out_file_xls{
 	foreach my $i (@{$table_data}){
 		if ($row >= 65536 ){
 			gui_errormsg->open(
-				msg  => "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。",
+				msg  => kh_msg->get('excel_limit'), # "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。",
 				type => 'msg',
 			);
 			last;

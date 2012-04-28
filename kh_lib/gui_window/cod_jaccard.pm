@@ -119,7 +119,7 @@ sub _calc{
 	){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => "コーディングルール・ファイルを指定して下さい。",
+			msg => kh_msg->get('gui_window::cod_count->error_cod_f'), # "コーディングルール・ファイルを指定して下さい。",
 			window => \$win,
 			type => 'msg',
 		);
