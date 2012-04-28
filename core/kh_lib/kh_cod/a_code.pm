@@ -88,8 +88,8 @@ sub code{
 			gui_errormsg->open(
 				type => 'msg',
 				msg  =>
-					"コーディング・ルールの書式に誤りがありました。\n".
-					"誤りを含むコード： ".$self->name."\n".$check->err
+					kh_msg->get('syntax_error')#"コーディング・ルールの書式に誤りがありました。\n誤りを含むコード： "
+					.$self->name."\n".$check->err
 			);
 			$error_flag = 1;
 		}

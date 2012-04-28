@@ -281,7 +281,7 @@ sub os_path{
 			if ($i =~ /$character_undef/){
 				gui_errormsg->open(
 					type   => 'msg',
-					msg    => "未対応文字がファイル名またはフォルダ名に含まれています。\n現在のところ、EUCに変換できない文字には未対応です。"
+					msg    => "Illegal character(s) in the path!"
 				);
 				return undef;
 			}

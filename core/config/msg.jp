@@ -130,7 +130,7 @@ gui_window::force_color:
     add:                      追加
     delete:                   選択した言葉を削除
     desc:                     ■以下の言葉が常に強調されます。
-    exists:                   その言葉は既に登録されています。
+    exists:                   その言葉はすでに登録されています。
     highlight:                言葉：
     highlight_h:              　言葉　
     no_word:                  言葉が入力されていません。
@@ -553,6 +553,7 @@ kh_morpho::chasen:
 kh_morpho::mecab:
     error:                    MeCabの起動に失敗しました。
     error_config:             事前にKH Coderの設定（MeCab関連）を行ってください。
+    illegal_bra:              山カッコ（<>）による正しくないマーキングがありました。
 kh_morpho::stanford:
     error:                    Stanford POS Taggerの起動に失敗しました。
     error_config:             事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。
@@ -575,6 +576,7 @@ mysql_words:
     tf:                       出現回数
     types:                    異なり語数 (n)
     words:                    抽出語
+    excel_limit:              "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。"
 gui_widget::cls4mds:
     cluster_color:            'クラスター化と色分け'
     cls_num:                  'クラスター数：'
@@ -963,7 +965,25 @@ kh_nbayes:
     kappa:                    'Kappa 統計量： '
 kh_project:
     no_target_file:           '分析対象ファイルが存在しません'
+kh_projects:
+    already_registered:       'そのファイルは既にプロジェクトとして登録されています'
 gui_errormsg::file:
     could_not_open_the_file:  "ファイルを開けませんでした。\nKH Coderを終了します。\n* "
 kh_cod:
     not_coding_rules:         '選択されたファイルはコーディング・ルール・ファイルに見えません。'
+kh_r_plot:
+    illegal_plot_size:        'プロットサイズの指定が不正です'
+    faliled_in_plotting:      "Rを用いた推定または描画に失敗しました\n\n"
+mysql_ready:
+    error_in_mysql_bunr:      "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"
+    too_long_sentence:        "データ中に長すぎる文がありました。65535字（半角）を超えています。\nKH Coderを終了します。"
+kh_cod::a_code:
+    syntax_error:             "コーディング・ルールの書式に誤りがありました。\n誤りを含むコード： "
+kh_cod::a_code::atom::code:
+    no_code_error:            "コーディングルールの記述に誤りがあります。\n次のコードは定義されていません："
+mysql_outvar::read:
+    records_error:            "ケース数が一致しません。\n読み込み処理を中断します。"
+    midashi_error:            "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。"
+    overwrite_vars:           "同じ名前の変数がすでに読み込まれています。\n既存の変数を上書きしてよろしいですか？\n\n"
+mysql_ready::dump:
+    too_long_word:            "制限を超える長さの語（形態素）が茶筌によって抽出されました。\nKH Coderが扱えるの語の長さは全角127文字までです。\n前処理を中断してKH Coderを終了します。\n\n問題の語は以下のファイルに記録しました：\n"

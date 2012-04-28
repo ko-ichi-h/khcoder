@@ -265,8 +265,8 @@ sub new{
 	}
 
 	kh_r_plot->clear_env;
-	$self = undef;
-	%args = undef;
+	undef $self;
+	undef %args;
 	$self->{result_plots} = \@plots;
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;

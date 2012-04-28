@@ -103,9 +103,7 @@ sub add_new{
 		if ($i->file_target eq $new->file_target){
 			gui_errormsg->open(
 				type    => 'msg',
-				# window  => \$win,
-				msg     =>
-				"選択されたファイルは既にプロジェクトとして登録されています"
+				msg     => kh_msg->get('') # "選択されたファイルは既にプロジェクトとして登録されています"
 			);
 			return 0;
 		}

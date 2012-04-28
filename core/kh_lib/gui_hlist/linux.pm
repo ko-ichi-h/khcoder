@@ -4,15 +4,16 @@ use strict;
 
 sub _copy{
 	gui_errormsg->open(
-		msg => 'Linux上でのコピーは現在サポートしていません。',
+		msg => 'Sorry, currently cannot copy on Unix systems.',
 		type => 'msg',
 	);
 }
 
 sub _copy_all{
 	gui_errormsg->open(
-		msg => 'Linux上でのコピーは現在サポートしていません。',
+		msg => 'Sorry, currently cannot copy on Unix systems.',
 		type => 'msg',
 	);
 }
+
 1;

@@ -47,8 +47,8 @@ sub save{
 		->hundle->fetch->[0];
 	unless ($cases == $cases_in_file){
 		gui_errormsg->open(
-			type   => 'msg',
-			msg    => "ケース数が一致しません。\n読み込み処理を中断します。",
+			type => 'msg',
+			msg  => kh_msg->get('records_error'), # "ケース数が一致しません。\n読み込み処理を中断します。",
 		);
 		return 0;
 	}
@@ -78,7 +78,7 @@ sub save{
 		if ($i =~ /見出し[1-5]/){
 			gui_errormsg->open(
 				icon => 'info',
-				msg  => "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。",
+				msg  => kh_msg->get('midashi_error'), # "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。",
 				type => 'msg',
 			);
 			return 0;
@@ -93,9 +93,7 @@ sub save{
 			$msg .= ", " if length($msg);
 			$msg .= $i;
 		}
-		$msg  = "同じ名前の変数がすでに読み込まれています：\n\n$msg\n\n";
-		
-		$msg .= "すでに読み込まれている変数データを破棄し、\n指定したファイル内のデータで上書きしますか？";
+		$msg  = kh_msg->get('overwrite_vars').$msg;
 
 		my $ans = $::main_gui->mw->messageBox(
 			-message => gui_window->gui_jchar($msg),

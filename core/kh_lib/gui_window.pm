@@ -181,6 +181,7 @@ sub close{
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
 	$::config_obj->save_ini;
 	$self->win_obj->destroy;
+	$::main_gui->closed($self->win_name);
 	undef $self;
 }
 
