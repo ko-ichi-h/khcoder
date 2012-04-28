@@ -42,6 +42,12 @@ sub connect_db{
 	$t->execute;
 	my $r = $t->fetch;
 	$r = $r->[1] if $r;
+	if ($r =~ /^(.+)\-[a-z]+$/){
+		$r = $1;
+	}
+	if ($r =~ /^([0-9]+\.[0-9]+)\.[0-9]+/){
+		$r = $1;
+	}
 	$mysql_version = $r;
 	print "Connected to MySQL $r, $dbname.\n" unless $no_verbose;
 
