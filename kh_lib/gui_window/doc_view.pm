@@ -309,9 +309,11 @@ sub _view_doc{
 	$self->update_buttons;
 
 	# 他のWindowとの同期
-	my $win_o = $::main_gui->get('w_bayes_view_log');
-	if ( defined($win_o) ){
-		$win_o->from_doc_view($self->{tani},$self->{doc_id});
+	if ( $::main_gui->if_opened('w_bayes_view_log') ){
+		$::main_gui
+			->get('w_bayes_view_log')
+			->from_doc_view($self->{tani},$self->{doc_id})
+		;
 	}
 
 	# スクロールバーを表示するための挙動

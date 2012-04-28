@@ -927,6 +927,8 @@ gui_window::bayes_view_knb:
     search:                   '検索'
     whole:                    '全抽出語のリスト'
     variance:                 分散
+kh_nbayes::cv_predict:
+    cross_validation:         '（交差妥当化）'
 kh_nbayes::Util:
     prior:                    '[事前確率]'
 gui_window::bayes_predict:

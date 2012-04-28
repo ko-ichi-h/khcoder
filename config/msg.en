@@ -925,6 +925,8 @@ gui_window::bayes_view_knb:
     search:                   'Search'
     whole:                    'Whole list'
     variance:                 Variance
+kh_nbayes::cv_predict:
+    cross_validation:         '(cross validation)'
 kh_nbayes::Util:
     prior:                    '[prior probability]'
 gui_window::bayes_predict:

@@ -55,19 +55,21 @@ sub make_log_file{
 	foreach my $i (values %{$self->{result_log}}){  # $i = ログ
 		foreach my $h (values %{$i}){               # $h = 抽出語別
 			foreach my $j (keys %{$h->{l}}){        # $j = ラベル
-				$labels{$j} = 1 unless $labels{$j} = 1;
+				$labels{$j} = 1 unless $labels{$j} == 1;
 				$fixer = $h->{l}{$j} if $fixer > $h->{l}{$j};
 			}
 		}
 	}
 	my @labels = sort (keys %labels);
 
+	my $name = kh_msg->get('cross_validation'); # （交差妥当化）
+
 	my $obj;
 	$obj->{labels}     = \@labels;
 	$obj->{fixer}      = $fixer;
 	$obj->{tani}       = $self->{tani};
-	$obj->{file_model} = '（交差妥当化）';
-	$obj->{outvar}     = '（交差妥当化）';
+	$obj->{file_model} = $name;
+	$obj->{outvar}     = $name;
 	$obj->{log}        = $self->{result_log};
 	$obj->{prior_probs}= undef;
 
@@ -80,10 +82,12 @@ sub make_log_file{
 sub push_prior_probs{
 	my $self = shift;
 	
+	my $name = kh_msg->get('kh_nbayes::Util->prior');
+	
 	foreach my $i (keys %{$self->{result_log}}){
-		unless ( $self->{result_log}{$i}{'[事前確率]'}{v} ){
-			$self->{result_log}{$i}{'[事前確率]'}{v} = 1;
-			$self->{result_log}{$i}{'[事前確率]'}{l} = 
+		unless ( $self->{result_log}{$i}{$name}{v} ){
+			$self->{result_log}{$i}{$name}{v} = 1;
+			$self->{result_log}{$i}{$name}{l} = 
 				$self->{cls}{model}{prior_probs};
 		}
 	}

@@ -140,10 +140,12 @@ sub make_each_log_table{
 		return undef;
 	}
 	
-	unless ( $d->{'[事前確率]'}{v} ){
-		$d->{'[事前確率]'}{v} = 1;
+	my $name = kh_msg->get('kh_nbayes::Util->prior');
+	
+	unless ( $d->{$name}{v} ){
+		$d->{$name}{v} = 1;
 		foreach my $i (@{$labels}){
-			$d->{'[事前確率]'}{l}{$i} = $prior->{$i};
+			$d->{$name}{l}{$i} = $prior->{$i};
 		}
 	}
 	

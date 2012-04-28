@@ -190,9 +190,8 @@ sub start{
 	));
 
 	# 表示する文書の選択
-	my $w_doc_view = $::main_gui->get('w_doc_view');
-	if (defined($w_doc_view)){
-		$self->{current} = $w_doc_view->{doc_id};
+	if ( $::main_gui->if_opened('w_doc_view') ){
+		$self->{current} = $::main_gui->get('w_doc_view')->{doc_id};
 	} else {
 		$self->{current} = 1;
 	}
@@ -345,8 +344,6 @@ sub view{
 		-background         => 'white',
 		-selectforeground   => $::config_obj->color_ListHL_fore,
 		-selectbackground   => $::config_obj->color_ListHL_back,
-		-selectborderwidth  => 0,
-		-highlightthickness => 0,
 		-selectmode         => 'extended',
 		-height             => 10,
 		-width              => $width,
@@ -540,6 +537,8 @@ sub sort{
 	
 	$self->{list}->delete('all');
 	$self->{list2}->delete('all');
+	
+	return 0 unless $self->{result};
 	
 	# ソート
 	my @sort;
