@@ -138,7 +138,7 @@ sub config_morph{
 	close (GRAO);
 	
 	# もとファイルの待避
-	my $n = 0;
+	$n = 0;
 	while (-e $chasenrc.".$n.tmp"){
 		++$n;
 	}

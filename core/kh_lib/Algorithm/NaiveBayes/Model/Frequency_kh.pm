@@ -4,6 +4,8 @@ use strict;
 use Algorithm::NaiveBayes::Util qw(sum_hash add_hash max rescale);
 use base qw(Algorithm::NaiveBayes);
 
+no warnings 'redefine';
+
 sub new {
   my $self = shift()->SUPER::new(@_);
   $self->training_data->{attributes} = {};

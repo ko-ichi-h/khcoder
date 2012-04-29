@@ -282,7 +282,7 @@ sub print_out{
 		$icode = Jcode->new($t)->icode;
 		#print "$icode\n";
 	}
-	my $t = Jcode->new($t,$icode)->euc;
+	$t = Jcode->new($t,$icode)->euc;
 	if ($if_conv){
 		$t =~ s/</ /g;
 		$t =~ s/>/ /g;

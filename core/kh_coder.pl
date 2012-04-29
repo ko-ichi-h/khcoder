@@ -133,7 +133,10 @@ if (
 
 # Rの初期化
 use Statistics::R;
+
+no  warnings 'redefine';
 *Statistics::R::output_chk = sub {return 1};
+use warnings 'redefine';
 
 if (
 	   ( length($::config_obj->r_path) && -e $::config_obj->r_path )

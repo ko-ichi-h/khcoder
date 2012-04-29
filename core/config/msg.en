@@ -905,7 +905,6 @@ gui_window::bayes_learn:
     vname:                    'Variable:'
     error_f20:                'Error: please specify from 2 to 20 as the Fold number'
     error_var:                'Error: the selection of variable is illegal.'
-    error_var:                'Error: please specify the name of the variable'
     error_exists:             'Error: the variable already exists'
     select_exist:             'Select the model file to append'
     saving_new:               'Saving the model as'
@@ -981,7 +980,7 @@ kh_cod::a_code::atom::code:
     no_code_error:            "Syntax error. Can not find the code: "
 mysql_outvar::read:
     records_error:            "Number of records does not much.\nAborting the process."
-    midashi_error:            'Cannot use "headings 1" - "headings 5" as the name of the variable.'
+    midashi_error:            'Cannot use "Heading1" - "Headings5" as the name of the variable.'
     overwrite_vars:           "The varible with the same name already exists.\nOver wright?\n\n"
 mysql_ready::dump:
     too_long_word:            "There are too long words. ( > 255 )\nKH Coder will exit now.\n\nThe words are recorded in the following file: \n"

@@ -5,7 +5,7 @@ global:
     cancel:                   キャンセル
     clear:                    クリア
     close:                    閉じる
-    cont_big_pros:           "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
+    cont_big_pros:            "この処理には時間がかかる場合があります。\n続行してよろしいですか？"
     copy:                     コピー
     copy_all:                 コピー（表全体）
     csv_f:                    CSVファイル
@@ -907,7 +907,6 @@ gui_window::bayes_learn:
     vname:                    '変数名：'
     error_f20:                'Foldには2から20までの値を指定して下さい。'
     error_var:                '外部変数の設定が不正です。'
-    error_var:                '変数名を指定して下さい。'
     error_exists:             '指定された名前の変数がすでに存在します。'
     select_exist:             '今回の学習内容を追加するファイルを選択'
     saving_new:               '学習結果を新規ファイルに保存'
@@ -983,7 +982,7 @@ kh_cod::a_code::atom::code:
     no_code_error:            "コーディングルールの記述に誤りがあります。\n次のコードは定義されていません："
 mysql_outvar::read:
     records_error:            "ケース数が一致しません。\n読み込み処理を中断します。"
-    midashi_error:            "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。"
+    midashi_error:            "「見出し1」-「見出し5」と「Heading1」-「Heading5」は、変数名として利用できません。\n外部変数の読み込みを中断します。"
     overwrite_vars:           "同じ名前の変数がすでに読み込まれています。\n既存の変数を上書きしてよろしいですか？\n\n"
 mysql_ready::dump:
     too_long_word:            "制限を超える長さの語（形態素）が茶筌によって抽出されました。\nKH Coderが扱えるの語の長さは全角127文字までです。\n前処理を中断してKH Coderを終了します。\n\n問題の語は以下のファイルに記録しました：\n"

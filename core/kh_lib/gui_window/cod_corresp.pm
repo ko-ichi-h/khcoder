@@ -422,9 +422,6 @@ sub refresh{
 	#   外部変数選択Widget   #
 
 	unless ($self->{last_tani} eq $self->tani){
-
-		my @options = ();
-
 		if ($self->{opt_body_var}){
 			$self->{opt_body_var}->destroy;
 		}
@@ -866,7 +863,7 @@ sub _calc{
 				#}
 				
 				$sql .= "ORDER BY $tani.id";
-				print "$sql\n";
+				#print "$sql\n";
 			}
 		
 			$r_command .= "v$n_v <- c(";

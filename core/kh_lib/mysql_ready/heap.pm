@@ -9,8 +9,6 @@ sub rowdata{
 
 	my $sizeof_char = 4;
 	my $a_row = 0;
-	
-	my $a_row = 0;
 	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 °Ê¾å
 		# data
 		$a_row =
