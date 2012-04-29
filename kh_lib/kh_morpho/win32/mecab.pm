@@ -127,9 +127,9 @@ sub _mecab_run{
 		);
 	
 	my $last_line = '';
-	my $maru   = Jcode->new('。',euc)->sjis;
-	my $danpen = Jcode->new('記号-一般',euc)->sjis;
-	my $kuten  = Jcode->new('記号-句点',euc)->sjis;
+	my $maru   = Jcode->new('。','euc')->sjis;
+	my $danpen = Jcode->new('記号-一般','euc')->sjis;
+	my $kuten  = Jcode->new('記号-句点','euc')->sjis;
 	
 		# 句点「。」が必ず1語になるよう修正
 	while( <OTEMP> ){

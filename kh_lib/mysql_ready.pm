@@ -1014,7 +1014,7 @@ sub tag_fix{
 	}
 	
 	# 基本形テーブル(2)
-	my $k = mysql_exec->select("
+	$k = mysql_exec->select("
 		SELECT genkei_fin.id, genkei_fin.name
 		FROM genkei_fin, hselection
 		WHERE 

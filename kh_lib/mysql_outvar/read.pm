@@ -72,10 +72,11 @@ sub save{
 			push @exts, $i;
 		}
 	}
-	
+
 	# 不正な変数名が無いかチェック
+
 	foreach my $i (@{$data[0]}){
-		if ($i =~ /見出し[1-5]/){
+		if ($i =~ /^見出し[1-5]$|^Heading[1-5]$/){
 			gui_errormsg->open(
 				icon => 'info',
 				msg  => kh_msg->get('midashi_error'), # "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。",

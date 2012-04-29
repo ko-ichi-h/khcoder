@@ -91,7 +91,7 @@ sub _new{
 		-text => '  ',
 	)->pack(-side => 'left');
 
-	my $btn = $f1->Button(
+	$f1->Button(
 		-text => kh_msg->get('whole'), # 全抽出語のリスト
 		-command => sub { $self->list_all; }
 	)->pack(-side => 'left', -padx => 2);

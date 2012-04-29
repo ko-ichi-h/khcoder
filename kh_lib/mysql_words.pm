@@ -505,7 +505,7 @@ sub _make_wl_1c{
 		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
-	my @data = (
+	@data = (
 		[
 			kh_msg->get('words'),# √ÍΩ–∏Ï
 			kh_msg->get('pos'),#'… ªÏ',

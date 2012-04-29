@@ -662,7 +662,7 @@ sub file_TempCSV{
 	$f = $::config_obj->os_path($f);
 	
 	# 空ファイルを作成しておく
-	open (TOUT, ">$f");
+	CORE::open (TOUT, ">$f");
 	close (TOUT);
 	
 	return $f;

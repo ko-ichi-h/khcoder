@@ -4,8 +4,10 @@
 package Tk::Clipboard;
 use strict;
 
+no warnings 'redefine';
+
 use vars qw($VERSION);
-$VERSION = sprintf '4.%03d', q$Revision: 1.2 $ =~ /\D(\d+)\s*$/;
+$VERSION = sprintf '4.%03d', q$Revision: 1.3 $ =~ /\D(\d+)\s*$/;
 
 use AutoLoader qw(AUTOLOAD);
 use Tk qw(catch);
