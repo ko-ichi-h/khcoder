@@ -31,13 +31,14 @@ sub _new{
 		next if $key eq 'plot_size';
 		$self->{$key} = $args{$key};
 	}
-	%args = undef;
+	undef %args;
 
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
 	$win->title($self->gui_jt( $self->win_title ));
 
 	# 画像をロード
+	$self->{ax} = 0 unless defined( $self->{ax} );
 	if ( $imgs->{$self->win_name} ){
 		#print "img: read: ".$self->win_name."\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);

@@ -6,7 +6,8 @@ use Jcode;
 
 sub _new{
 	my $self = shift;
-	
+	$self->{type} = '' unless defined( $self->{type} );
+
 	my $lf = $self->parent->Frame();
 
 	$self->{radio}                     = 'n'
