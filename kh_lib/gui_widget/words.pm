@@ -6,6 +6,8 @@ use Tk;
 sub _new{
 	my $self = shift;
 
+	$self->{type} = '' unless defined( $self->{type} );
+
 	my $left = $self->parent->Frame()->pack(-fill => 'both', -expand => 1);
 
 	# 集計単位の選択

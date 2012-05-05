@@ -12,6 +12,7 @@ sub new{
 	my $self = \%args;
 	bless $self, $class;
 	
+	$self->{command_a} = '' unless defined( $self->{command_a} );
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
