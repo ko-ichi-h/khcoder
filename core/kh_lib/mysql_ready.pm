@@ -1120,6 +1120,7 @@ sub rowtxt{
 					exit;
 				}
 				unless ($last + 1 == $i->[0]){
+					print "counters: $last, $i->[0]\n";
 					gui_errormsg->open(
 						type => 'msg',
 						msg  => kh_msg->get('error_in_mysql_bunr') # "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"
