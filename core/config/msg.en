@@ -294,7 +294,7 @@ gui_window::sysconfig:
     l_pt:                     Portuguese *
     lang:                     '    Language:'
     mecab:                    '"MeCab" for Japanese text'
-    need_inst:                '* you must install it by yourself'
+    need_inst:                ' *need a separate installation'
     note_font:               "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
     note_s:                   '* %s will be replaced by filenames of URLs'
     p_chasen.exe:             '    path of "chasen.exe":'
