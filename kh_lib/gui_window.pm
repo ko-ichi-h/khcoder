@@ -142,6 +142,8 @@ sub open{
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 
+		$self->check_viewable;
+
 		# 特殊処理に対応
 		$self->start;
 
@@ -149,13 +151,65 @@ sub open{
 	return $self;
 }
 
+# Window位置のチェック（スクリーンをはみ出していないか）
+sub check_viewable{
+	my $self = shift;
+
+	my $g = $::config_obj->win_gmtry($self->win_name);
+	if ($g and not $self->{no_geometry}){     # 位置を読み込んでいて
+
+		if ($::config_obj->os eq 'win32'){    # なおかつWindowsの場合
+			require gui_checkgeo;
+			my $r = gui_checkgeo::check(
+				$self->win_obj->rootx,
+				$self->win_obj->rooty
+			);
+			unless ($r){
+				print "The window geometry is modified: $g, ";
+				$g =~ s/([0-9]+)x([0-9]+)\+.+/$1x$2+24+24/;
+				print "$g\n";
+				$self->win_obj->geometry($g);
+			}
+		}
+
+
+		#my $name   = $self->win_obj->screen;
+		#my $height = $self->win_obj->screenheight;
+		#my $width  = $self->win_obj->screenwidth;
+		#my $if     = $self->win_obj->viewable;
+		#my $h      = $self->win_obj->rooty;
+		#my $w      = $self->win_obj->rootx;
+
+		#require Win32::GUI;
+		#my $hoge = Win32::GUI::GetDesktopWindow();
+		#my $txt = Win32::GUI::GetClassName($hoge);
+		#my $w2 = Win32::GUI::Width($hoge);
+		#my $h2 = Win32::GUI::Height($hoge);
+		#my $if2 = Win32::GUI::IsVisible($hoge); 
+		
+		#print "screen: $name, $height, $width, $h, $w, $if, $if2, $txt, $h2, $w2\n";
+
+		#if (
+		#	   $self->win_obj->rootx > $self->win_obj->screenwidth
+		#	|| $self->win_obj->rooty > $self->win_obj->screenheight
+		#){
+		#	print "geometry modified: $g, ";
+		#	$g =~ s/([0-9]+)x([0-9]+)\+.+/$1x$2+24+24/;
+		#	print "$g\n";
+		#	$self->win_obj->geometry($g);
+		#}
+	}
+	return $self;
+}
+
 sub position_icon{
 	my $self = shift;
 	my %arg = @_;
+	$self->{no_geometry} = $arg{no_geometry};
 	
 	# Windowサイズと位置の指定
 	my $g = $::config_obj->win_gmtry($self->win_name);
-	if ($g and not $arg{no_geometry}){
+	if ($g and not $self->{no_geometry}){
 		$self->win_obj->geometry($g);
 	}
 
@@ -172,6 +226,8 @@ sub position_icon{
 	} else {
 		$self->win_obj->iconimage($icon);
 	}
+	
+	return $self;
 }
 
 
