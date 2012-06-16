@@ -41,7 +41,25 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => kh_msg->get('dist'), # 距離：
+		-text => kh_msg->get('gui_widget::r_cls->method'), # 方法：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_method = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('gui_widget::r_cls->ward'),     'ward'    ],
+				[kh_msg->get('gui_widget::r_cls->average'),  'average' ],
+				[kh_msg->get('gui_widget::r_cls->complete'), 'complete'],
+			],
+		variable => \$self->{method_method},
+	);
+	$widget_method->set_value('ward');
+
+	$f4->Label(
+		-text => kh_msg->get('gui_widget::r_cls->dist'), # 距離：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -58,13 +76,17 @@ sub _new{
 	);
 	$widget_dist->set_value('binary');
 
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
 
-	$f4->Label(
-		-text => kh_msg->get('n_cls'), #   クラスター数：
+	$f5->Label(
+		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   クラスター数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_cluster_number} = $f4->Entry(
+	$self->{entry_cluster_number} = $f5->Entry(
 		-font       => "TKFN",
 		-width      => 4,
 		-background => 'white',
@@ -210,6 +232,7 @@ sub calc{
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
+		method_method  => $self->gui_jg( $self->{method_method} ),
 		tani           => $self->tani,
 	);
 	
@@ -239,7 +262,7 @@ sub calc_exec{
 
 	# 類似度行列の作成（Rコマンド）
 	$r_command .= "library(amap)\n";
-	$r_command .= "try( library(flashClust) )\n";
+	#$r_command .= "try( library(flashClust) )\n";
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
@@ -252,53 +275,38 @@ sub calc_exec{
 			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
 			# の用をなさなくなる場合がまま見られる。
 		$r_command .= "d <- t( scale( t(d) ) )\n";
-		$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
+		#$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
 	} else {
-		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
+		#$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
 	
 	$r_command .= "d_names <- row.names(d)\n";
-	$r_command .= "d <- NULL\n";
+	#$r_command .= "d <- NULL\n";
 	
 	# 併合水準のプロット（Rコマンド）
 	my $r_command_height = &r_command_height;
 	
 	# クラスター化（Rコマンド）
 	my $r_command_ward;
-	$r_command_ward .= "dcls <- hclust(dj, method=\"ward\")\n";
+	$r_command_ward .=
+		"dcls <- hcluster(
+			d,
+			method=\"$args{method_dist}\",
+			link=\"$args{method_method}\"
+		)\n"
+	;
+
 	$r_command_ward .= "q <- cutree(dcls,k=$cluster_number)\n";
 	$r_command_ward .= "q <- check_cutree(q, n_org)\n";
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
 
-	my $r_command_ave;
-	$r_command_ave .= "dcls <- NULL\n";
-	$r_command_ave .= "dcls <- hclust(dj, method=\"average\")\n";
-	$r_command_ave .= "q <- cutree(dcls,k=$cluster_number)\n";
-	$r_command_ave .= "q <- check_cutree(q, n_org)\n";
-	$r_command_ave .= "r <- cbind(r, q)\n";
-
-	my $r_command_cmp;
-	$r_command_cmp .= "dcls <- NULL\n";
-	$r_command_cmp .= "dcls <- hclust(dj, method=\"complete\")\n";
-	$r_command_cmp .= "q <- cutree(dcls,k=$cluster_number)\n";
-	$r_command_cmp .= "q <- check_cutree(q, n_org)\n";
-	$r_command_cmp .= "r <- cbind(r, q)\n";
-
-	# 併合過程を保存するファイル群
+	# 併合過程を保存するファイル
 	my ($merges, $merges_org);
-	$merges_org->{_cluster_tmp_w} = $::project_obj->file_TempCSV();
-	$merges_org->{_cluster_tmp_a} = $::project_obj->file_TempCSV();
-	$merges_org->{_cluster_tmp_c} = $::project_obj->file_TempCSV();
+	$merges_org->{_cluster_tmp} = $::project_obj->file_TempCSV();
 
-	$merges->{_cluster_tmp_w} = gui_window->gui_jchar(
-		$merges_org->{_cluster_tmp_w}
-	);
-	$merges->{_cluster_tmp_a} = gui_window->gui_jchar(
-		$merges_org->{_cluster_tmp_a}
-	);
-	$merges->{_cluster_tmp_c} = gui_window->gui_jchar(
-		$merges_org->{_cluster_tmp_c}
+	$merges->{_cluster_tmp} = gui_window->gui_jchar(
+		$merges_org->{_cluster_tmp}
 	);
 
 	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡すが、
@@ -315,18 +323,18 @@ sub calc_exec{
 	my $plots;
 	
 	# ward
-	$plots->{_cluster_tmp_w}{last} = kh_r_plot->new(
+	$plots->{_cluster_tmp}{last} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
 		             .$r_command_ward
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height
-		             .&r_command_mout($merges->{_cluster_tmp_w}),
+		             .&r_command_mout($merges->{_cluster_tmp}),
 		width     => 640,
 		height    => 480,
 	) or return 0;
 
-	$plots->{_cluster_tmp_w}{first} = kh_r_plot->new(
+	$plots->{_cluster_tmp}{first} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_first',
 		command_f =>  $r_command
 		             .$r_command_ward
@@ -338,7 +346,7 @@ sub calc_exec{
 		height    => 480,
 	) or return 0;
 
-	$plots->{_cluster_tmp_w}{all} = kh_r_plot->new(
+	$plots->{_cluster_tmp}{all} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_all',
 		command_f =>  $r_command
 		             .$r_command_ward
@@ -350,89 +358,11 @@ sub calc_exec{
 		height    => 480,
 	) or return 0;
 
-	# average
-	$plots->{_cluster_tmp_a}{last} = kh_r_plot->new(
-		name      => 'doc_cls_height_ave_last',
-		command_f =>  $r_command
-		             .$r_command_ave
-		             ."pp_type <- \"last\"\n"
-		             .$r_command_height,
-		command_a =>  $r_command_ave
-		             ."pp_type <- \"last\"\n"
-		             .$r_command_height
-		             .&r_command_mout($merges->{_cluster_tmp_a}),
-		width     => 640,
-		height    => 480,
-	) or return 0;
-
-	$plots->{_cluster_tmp_a}{first} = kh_r_plot->new(
-		name      => 'doc_cls_height_ave_first',
-		command_f =>  $r_command
-		             .$r_command_ave
-		             ."pp_type <- \"first\"\n"
-		             .$r_command_height,
-		command_a =>  "pp_type <- \"first\"\n"
-		             .$r_command_height,
-		width     => 640,
-		height    => 480,
-	) or return 0;
-
-	$plots->{_cluster_tmp_a}{all} = kh_r_plot->new(
-		name      => 'doc_cls_height_ave_all',
-		command_f =>  $r_command
-		             .$r_command_ave
-		             ."pp_type <- \"first\"\n"
-		             .$r_command_height,
-		command_a =>  "pp_type <- \"all\"\n"
-		             .$r_command_height,
-		width     => 640,
-		height    => 480,
-	) or return 0;
-
-	# complete
-	$plots->{_cluster_tmp_c}{last} = kh_r_plot->new(
-		name      => 'doc_cls_height_cmp_last',
-		command_f =>  $r_command
-		             .$r_command_cmp
-		             ."pp_type <- \"last\"\n"
-		             .$r_command_height,
-		command_a =>  $r_command_cmp
-		             ."pp_type <- \"last\"\n"
-		             .$r_command_height
-		             .&r_command_mout($merges->{_cluster_tmp_c}),
-		width     => 640,
-		height    => 480,
-	) or return 0;
-
-	$plots->{_cluster_tmp_c}{first} = kh_r_plot->new(
-		name      => 'doc_cls_height_cmp_first',
-		command_f =>  $r_command
-		             .$r_command_cmp
-		             ."pp_type <- \"first\"\n"
-		             .$r_command_height,
-		command_a =>  "pp_type <- \"first\"\n"
-		             .$r_command_height,
-		width     => 640,
-		height    => 480,
-	) or return 0;
-
-	$plots->{_cluster_tmp_c}{all} = kh_r_plot->new(
-		name      => 'doc_cls_height_cmp_all',
-		command_f =>  $r_command
-		             .$r_command_cmp
-		             ."pp_type <- \"all\"\n"
-		             .$r_command_height,
-		command_a =>  "pp_type <- \"all\"\n"
-		             .$r_command_height,
-		width     => 640,
-		height    => 480,
-	) or return 0;
 
 	# クラスター番号の書き出し（Rコマンド）
 	#my $r_command_fin = &r_command_fix_r;
 	my $r_command_fin;
-	$r_command_fin .= "colnames(r) <- 
-		c(\"_cluster_tmp_w\",\"_cluster_tmp_a\",\"_cluster_tmp_c\")\n";
+	$r_command_fin .= "colnames(r) <- c(\"_cluster_tmp\")\n";
 	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
 	$r_command_fin .= "print(\"ok\")\n";
 
@@ -463,7 +393,7 @@ sub calc_exec{
 
 	# Rの計算結果を外部変数として読み込む
 	foreach my $i (@{mysql_outvar->get_list}){
-		if ($i->[1] =~ /^_cluster_tmp_[wac]$/){
+		if ($i->[1] eq "_cluster_tmp"){
 			mysql_outvar->delete(name => $i->[1]);
 		}
 	}
@@ -475,7 +405,7 @@ sub calc_exec{
 	)->read;
 
 	gui_window::doc_cls_res->open(
-		command_f   => $r_command,
+		command_f   => $r_command.$r_command_ward,
 		tani        => $args{tani},
 		plots       => $plots,
 		merge_files => $merges_org,

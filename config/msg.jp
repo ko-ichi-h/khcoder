@@ -758,8 +758,6 @@ gui_widget::select_a_var:
     na:                       '利用不可'
 gui_window::doc_cls:
     verb:                     '使用'
-    dist:                     '距離：'
-    n_cls:                    '  クラスター数：'
     select_3words:            '少なくとも3つ以上の抽出語を選択して下さい。'
     fail:                     '計算に失敗しました'
     win_title:                '文書のクラスター分析：オプション'
@@ -788,7 +786,6 @@ gui_window::doc_cls_res:
     save:                     '分類結果の保存'
     cluster:                  'クラスター'
     na:                       '分類不可'
-    method:                   '方法：'
 gui_window::doc_cls_res_sav:
     desc:                     '分類結果を外部変数として保存します。'
     name:                     '変数名：'

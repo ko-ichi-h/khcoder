@@ -19,14 +19,39 @@ sub _new{
 	$self->{labframe} = $lf;
 	#$self->innner;
 
-	# クラスター数
+	# クラスター分析のオプション
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f4->Label(
-		-text => kh_msg->get('gui_window::doc_cls->dist'), # 距離：
+		-text => kh_msg->get('gui_widget::r_cls->method'), # 方法：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	my $widget_method = gui_widget::optmenu->open(
+		parent  => $f4,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('gui_widget::r_cls->ward'),     'ward'    ],
+				[kh_msg->get('gui_widget::r_cls->average'),  'average' ],
+				[kh_msg->get('gui_widget::r_cls->complete'), 'complete'],
+			],
+		variable => \$self->{method_method},
+	);
+	if ( $self->{command_f} =~ /link=\"ward\"/ ){
+		$widget_method->set_value('ward');
+	}
+	elsif ($self->{command_f} =~ /link=\"average\"/){
+		$widget_method->set_value('average');
+	} else {
+		$widget_method->set_value('complete');
+	}
+
+	$f4->Label(
+		-text => kh_msg->get('gui_widget::r_cls->dist'), # 距離：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -41,6 +66,7 @@ sub _new{
 			],
 		variable => \$self->{method_dist},
 	);
+
 	if ( $self->{command_f} =~ /method=\"euclid\"/ ){
 		$widget_dist->set_value('euclid');
 	}
@@ -50,17 +76,22 @@ sub _new{
 		$widget_dist->set_value('pearson');
 	}
 
-	$f4->Label(
-		-text => kh_msg->get('gui_window::doc_cls->n_cls'), #   クラスター数：
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
+
+	$f5->Label(
+		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   クラスター数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	$self->{entry_cluster_number} = $f4->Entry(
+	$self->{entry_cluster_number} = $f5->Entry(
 		-font       => "TKFN",
 		-width      => 4,
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
-	if ( $self->{command_f} =~ /cutree\(dcls,k=([0-9]+)[\), ]/ ){
+	if ( $self->{command_f} =~ /cutree\(dcls,k=([0-9]+)\)/ ){
 		$self->{entry_cluster_number}->insert(0,$1);
 	} else {
 		$self->{entry_cluster_number}->insert(0,'10');
@@ -122,6 +153,7 @@ sub calc{
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
+		method_method  => $self->gui_jg( $self->{method_method} ),
 		tani           => $self->{tani},
 	);
 
