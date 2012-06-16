@@ -756,8 +756,6 @@ gui_widget::select_a_var:
     na:                       'n / a '
 gui_window::doc_cls:
     verb:                     ''
-    dist:                     'Distance:'
-    n_cls:                    '  N of clusters:'
     select_3words:            'Please select at least 3 words.'
     fail:                     'Failed to compute clusters.'
     win_title:                'Options: Cluster Analysis of Documents'
@@ -786,7 +784,6 @@ gui_window::doc_cls_res:
     save:                     'Save the result as a variable'
     cluster:                  'Cluster'
     na:                       'n/a'
-    method:                   'Method:'
 gui_window::doc_cls_res_sav:
     desc:                     'Saving cluster analysis result as a variable.'
     name:                     'Variable name:'

@@ -201,12 +201,12 @@ sub _new{
 		-command => sub {
 			if ($::main_gui->if_opened('w_doc_cls_height')){
 				$::main_gui->get('w_doc_cls_height')->renew(
-					$self->{tmp_out_var}
+					'_cluster_tmp'
 				);
 			} else {
 				gui_window::cls_height::doc->open(
 					plots => $self->{plots},
-					type  => $self->{tmp_out_var},
+					type  => '_cluster_tmp'
 				);
 			}
 		}
@@ -218,25 +218,20 @@ sub _new{
 	
 	my $fb = $wmw->Frame()->pack(-fill => 'x', -padx => 2, -pady => 2);
 	
-	$fb->Label(
-		-text => kh_msg->get('method'), # 方法：
-		-font => "TKFN",
-	)->pack(-side => 'left');
+	#my @opt = (
+	#	[kh_msg->get('m_wrd'),   '_cluster_tmp_w'], # Ward法','euc
+	#	[kh_msg->get('m_ave'), '_cluster_tmp_a'], # 群平均法','euc
+	#	[kh_msg->get('m_clk'), '_cluster_tmp_c'], # 最遠隣法','euc
+	#);
 	
-	my @opt = (
-		[kh_msg->get('m_wrd'),   '_cluster_tmp_w'], # Ward法','euc
-		[kh_msg->get('m_ave'), '_cluster_tmp_a'], # 群平均法','euc
-		[kh_msg->get('m_clk'), '_cluster_tmp_c'], # 最遠隣法','euc
-	);
-	
-	$self->{optmenu} = gui_widget::optmenu->open(
-		parent  => $fb,
-		pack    => {-side => 'left', -padx => 2},
-		options => \@opt,
-		variable => \$self->{tmp_out_var},
-		command  => sub {$self->renew;},
-	);
-	$self->{optmenu}->set_value('_cluster_tmp_w');
+	#$self->{optmenu} = gui_widget::optmenu->open(
+	#	parent  => $fb,
+	#	pack    => {-side => 'left', -padx => 2},
+	#	options => \@opt,
+	#	variable => \$self->{tmp_out_var},
+	#	command  => sub {$self->renew;},
+	#);
+	#$self->{optmenu}->set_value('_cluster_tmp_w');
 	
 	$fb->Button(
 		-text => kh_msg->get('config'), # 調整
@@ -256,7 +251,7 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub {
 			gui_window::doc_cls_res_sav->open(
-				var_from => $self->{tmp_out_var}
+				var_from => '_cluster_tmp'
 			);
 		}
 	)->pack(-side => 'right');
@@ -275,7 +270,7 @@ sub renew{
 	#   各クラスターに含まれる文書   #
 	
 	# 外部変数取りだし
-	my $var_obj = mysql_outvar::a_var->new($self->{tmp_out_var});
+	my $var_obj = mysql_outvar::a_var->new('_cluster_tmp');
 	
 	my $sql = '';
 	$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
@@ -317,10 +312,10 @@ sub renew{
 	#   クラスター併合の過程   #
 	
 	# データの読み込み
-	open (MERGE,$self->{merge_files}{$self->{tmp_out_var}}) or
+	open (MERGE,$self->{merge_files}{'_cluster_tmp'}) or
 		gui_errormsg->open(
 			type => 'file',
-			file => $self->{merge_files}{$self->{tmp_out_var}},
+			file => $self->{merge_files}{'_cluster_tmp'},
 		);
 	
 	my $merge;
@@ -338,7 +333,7 @@ sub renew{
 	# リモートウィンドウ
 	if ($::main_gui->if_opened('w_doc_cls_height')){
 		$::main_gui->get('w_doc_cls_height')->renew(
-			$self->{tmp_out_var}
+			'_cluster_tmp'
 		);
 	}
 	
@@ -582,9 +577,9 @@ sub cls_words{
 	
 	my $cls = kh_msg->get('cluster');
 	if ($query =~ /$cls([0-9]+)/){
-		$query = '<>'.$self->{tmp_out_var}.'-->'.$1;
+		$query = '<>'.'_cluster_tmp'.'-->'.$1;
 	} else {
-		$query = '<>'.$self->{tmp_out_var}.'-->.';
+		$query = '<>'.'_cluster_tmp'.'-->.';
 	}
 	
 	# リモートウィンドウの操作
@@ -619,9 +614,9 @@ sub cls_docs{
 	my $query = $self->list->itemCget($selected[0], 0, -text);
 	my $cls = kh_msg->get('cluster');
 	if ($query =~ /$cls([0-9]+)/){
-		$query = '<>'.$self->{tmp_out_var}.'-->'.$1;
+		$query = '<>'.'_cluster_tmp'.'-->'.$1;
 	} else {
-		$query = '<>'.$self->{tmp_out_var}.'-->.';
+		$query = '<>'.'_cluster_tmp'.'-->.';
 	}
 	
 	# リモートウィンドウの操作
@@ -647,7 +642,7 @@ sub cls_docs{
 
 sub end{
 	foreach my $i (@{mysql_outvar->get_list}){
-		if ($i->[1] =~ /^_cluster_tmp_[wac]$/){
+		if ($i->[1] eq "_cluster_tmp"){
 			mysql_outvar->delete(name => $i->[1]);
 		}
 		if ($i->[1] eq '_temp_for_search'){
