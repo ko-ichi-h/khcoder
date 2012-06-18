@@ -203,12 +203,14 @@ sub readin{
 		",1)->hundle;
 		my $r = $t->fetchrow_hashref;
 		$t->finish;
+		my $morpho_length_error_flag = 0;
 		foreach my $key (keys %{$r}){
-			mysql_ready::dump->word_length if $r->{$key} == 255;
+			$morpho_length_error_flag = 1 if $r->{$key} == 255;
 			my $len = $r->{$key} + 4;
 			$len = 255 if $len > 255;
 			$self->length($key,$len);
 		}
+		mysql_ready::dump->word_length if $morpho_length_error_flag;
 	}
 
 	mysql_ready::heap->rowdata($self);

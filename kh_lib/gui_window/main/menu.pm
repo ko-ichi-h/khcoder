@@ -991,6 +991,7 @@ sub mc_datacheck{
 }
 sub mc_morpho{
 	my $self = shift;
+	$::main_gui->close_all;
 	my $w = gui_wait->start;
 	$self->mc_morpho_exec;
 	$w->end;

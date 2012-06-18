@@ -24,18 +24,20 @@ sub word_length{
 	}
 
 	close (DMP);
-	
-	
+
 	my $msg = "制限を超える長さの語（形態素）が茶筌によって抽出されました。\n";
 	$msg .= "KH Coderが扱えるの語の長さは全角127文字までです。\n\n";
-	$msg .= "前処理を中断してKH Coderを終了します。\n\n";
-	$msg .= "問題の語は以下のファイルに記録しました：\n$file";
+	$msg .= "KH Coderは当該の語を短縮した状態で認識します。\n";
+	$msg .= "当該の語は以下のファイルに記録しました：\n$file\n\n";
+	$msg .= "OKをクリックすると処理を続行します。";
 	gui_errormsg->open(
 		msg  => "$msg",
 		type => 'msg',
 	);
 
-	exit;
+	#exit;
+
+	return 1;
 }
 
 1;
