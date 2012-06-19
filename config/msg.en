@@ -980,4 +980,5 @@ mysql_outvar::read:
     midashi_error:            'Cannot use "Heading1" - "Headings5" as the name of the variable.'
     overwrite_vars:           "The varible with the same name already exists.\nOver wright?\n\n"
 mysql_ready::dump:
-    too_long_word:            "There are too long words. ( > 255 )\nKH Coder will exit now.\n\nThe words are recorded in the following file: \n"
+    too_long_word1:            "There are too long words. ( > 255 )\n\nKH Coder recognize the first 255 characters only.\nThe words are recorded in the following file: \n"
+    too_long_word2:            "Click OK to continue the pre-processing."
