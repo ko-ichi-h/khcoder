@@ -4,6 +4,8 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
+use gui_window::doc_cls::clara;
+
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
@@ -53,6 +55,7 @@ sub _new{
 				[kh_msg->get('gui_widget::r_cls->ward'),     'ward'    ],
 				[kh_msg->get('gui_widget::r_cls->average'),  'average' ],
 				[kh_msg->get('gui_widget::r_cls->complete'), 'complete'],
+				[kh_msg->get('gui_widget::r_cls->clara'),    'clara'   ],
 			],
 		variable => \$self->{method_method},
 	);
@@ -156,7 +159,12 @@ sub check{
 
 sub calc{
 	my $self = shift;
-	
+
+	if ( $self->gui_jg( $self->{method_method} ) eq 'clara'){
+		bless $self, "gui_window::doc_cls::clara";
+	}
+
+
 	# 入力のチェック
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
@@ -227,7 +235,7 @@ sub calc{
 
 	$r_command .= "\n# END: DATA\n";
 
-	&calc_exec(
+	$self->calc_exec(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
@@ -240,6 +248,7 @@ sub calc{
 }
 
 sub calc_exec{
+	my $self = shift;
 	my %args = @_;
 
 	my $r_command = $args{r_command};
@@ -386,7 +395,6 @@ sub calc_exec{
 	}
 	kh_r_plot->clear_env;
 
-	$args{base_win}->close;
 	if ($::main_gui->if_opened('w_doc_cls_res')){
 		$::main_gui->get('w_doc_cls_res')->close;
 	}
@@ -411,6 +419,7 @@ sub calc_exec{
 		merge_files => $merges_org,
 	);
 
+	$self->close;
 	return 1;
 }
 
@@ -672,7 +681,7 @@ gw_idf <- function(m) {
 }
 
 d <- t(d)
-d <- subset(d, rowSums(d) > 0) # 出現数0の語をカット
+d <- subset(d, rowSums(d) > 0)
 d <- d * gw_idf(d)
 d <- t(d)
 

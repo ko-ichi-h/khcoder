@@ -312,29 +312,31 @@ sub renew{
 	#   クラスター併合の過程   #
 	
 	# データの読み込み
-	open (MERGE,$self->{merge_files}{'_cluster_tmp'}) or
-		gui_errormsg->open(
-			type => 'file',
-			file => $self->{merge_files}{'_cluster_tmp'},
-		);
-	
-	my $merge;
-	while (<MERGE>){
-		chomp;
-		push @{$merge}, [split /,/, $_ ];
-	}
-	close (MERGE);
-	$self->{merge} = $merge;
-	
-	# 表示
-	$self->{start} = 0;
-	$self->fill_list2;
-	
-	# リモートウィンドウ
-	if ($::main_gui->if_opened('w_doc_cls_height')){
-		$::main_gui->get('w_doc_cls_height')->renew(
-			'_cluster_tmp'
-		);
+	if ($self->{merge_files}){
+		open (MERGE,$self->{merge_files}{'_cluster_tmp'}) or
+			gui_errormsg->open(
+				type => 'file',
+				file => $self->{merge_files}{'_cluster_tmp'},
+			);
+		
+		my $merge;
+		while (<MERGE>){
+			chomp;
+			push @{$merge}, [split /,/, $_ ];
+		}
+		close (MERGE);
+		$self->{merge} = $merge;
+		
+		# 表示
+		$self->{start} = 0;
+		$self->fill_list2;
+		
+		# リモートウィンドウ
+		if ($::main_gui->if_opened('w_doc_cls_height')){
+			$::main_gui->get('w_doc_cls_height')->renew(
+				'_cluster_tmp'
+			);
+		}
 	}
 	
 	gui_hlist->update4scroll($self->list);

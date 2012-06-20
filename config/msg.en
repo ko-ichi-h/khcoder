@@ -611,6 +611,7 @@ gui_widget::r_cls:
     ward:                     'Ward'
     average:                  'Average'
     complete:                 'Complete'
+    clara:                    'large data (Clara)'
     dist:                     '  Distance:'
     n_cls:                    'N of clusters:'
     color:                    'Different colors'
