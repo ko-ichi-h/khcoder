@@ -235,6 +235,12 @@ sub calc{
 
 	$r_command .= "\n# END: DATA\n";
 
+	$::config_obj->R->send("print( sessionInfo()[2]\$platform )");
+	if ( $::config_obj->R->read =~ /32\-bit/ ){
+		$::config_obj->R->send("memory.limit(size=2047)");
+		print "Sent to R: memory.limit(size=2047)\n";
+	}
+
 	$self->calc_exec(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),

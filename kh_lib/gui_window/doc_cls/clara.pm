@@ -44,8 +44,8 @@ sub calc_exec{
 		"q <- clara(
 			d,
 			$cluster_number,
-			samples=100,
-			sampsize= min(nrow(d), 100 + 20 * $cluster_number),
+			samples=60,
+			sampsize= min(nrow(d), 60 + 20 * $cluster_number, 1000),
 			medoids.x=FALSE,
 			rngR=TRUE
 		)\$clustering\n"
