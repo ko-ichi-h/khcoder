@@ -1,12 +1,11 @@
 package gui_window::doc_cls::clara;
 use base qw(gui_window::doc_cls);
 
-sub calc_exec{
+sub _calc_exec{
 	my $self = shift;
-	my %args = @_;
 
-	my $r_command = $args{r_command};
-	my $cluster_number = $args{cluster_number};
+	my $r_command = $self->{r_command};
+	my $cluster_number = $self->{cluster_number};
 
 	# クラスター分析の結果を納めるファイル名
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
@@ -27,7 +26,7 @@ sub calc_exec{
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	
-	$r_command .= &gui_window::doc_cls::r_command_tfidf;
+	#$r_command .= &gui_window::doc_cls::r_command_tfidf;
 
 	# 文書ごとに標準化
 		# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
@@ -92,7 +91,7 @@ sub calc_exec{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$::main_gui->mw,
-			msg    => kh_msg->get('fail')."\n\n".$r # 計算に失敗しました
+			msg    => kh_msg->get('gui_window::doc_cls->fail')."\n\n".$r # 計算に失敗しました
 		);
 		return 0;
 	}
@@ -111,18 +110,24 @@ sub calc_exec{
 
 	mysql_outvar::read::tab->new(
 		file     => $file_org,
-		tani     => $args{tani},
+		tani     => $self->{tani},
 		#var_type => 'INT',
 	)->read;
 
-	gui_window::doc_cls_res->open(
-		command_f   => $r_command.$r_command_ward,
-		tani        => $args{tani},
-		plots       => $plots,
-		merge_files => '',
-	);
+	$self->{r_command} = $r_command.$r_command_ward;
+	return $self;
+}
 
-	$self->close;
+sub open_result_win{
+	my $self = shift;
+
+	gui_window::doc_cls_res::clara->open(
+		command_f   => $self->{r_command},
+		tani        => $self->{tani},
+		plots       => undef,
+		merge_files => undef,
+	);
+	$self = undef;
 	return 1;
 }
 

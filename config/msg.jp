@@ -613,7 +613,7 @@ gui_widget::r_cls:
     ward:                     'Ward法'
     average:                  '群平均法'
     complete:                 '最遠隣法'
-    clara:                    '大規模データ'
+    clara:                    'CLARA'
     dist:                     '  距離：'
     n_cls:                    'クラスター数：'
     color:                    'クラスターの色分け'

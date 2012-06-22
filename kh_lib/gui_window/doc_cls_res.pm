@@ -1,6 +1,8 @@
 package gui_window::doc_cls_res;
 use base qw(gui_window);
 
+use gui_window::doc_cls_res::clara;
+
 use strict;
 use gui_hlist;
 use mysql_words;
