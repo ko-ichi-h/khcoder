@@ -5,6 +5,9 @@ use strict;
 use Tk;
 
 use gui_window::doc_cls::clara;
+use gui_window::doc_cls::ward;
+use gui_window::doc_cls::complete;
+use gui_window::doc_cls::average;
 
 use gui_widget::tani;
 use gui_widget::hinshi;
@@ -58,6 +61,7 @@ sub _new{
 				[kh_msg->get('gui_widget::r_cls->clara'),    'clara'   ],
 			],
 		variable => \$self->{method_method},
+		command => sub {$self->config_dist;},
 	);
 	$widget_method->set_value('ward');
 
@@ -66,7 +70,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	my $widget_dist = gui_widget::optmenu->open(
+	$self->{widget_dist} = gui_widget::optmenu->open(
 		parent  => $f4,
 		pack    => {-side => 'left'},
 		options =>
@@ -77,7 +81,7 @@ sub _new{
 			],
 		variable => \$self->{method_dist},
 	);
-	$widget_dist->set_value('binary');
+	$self->{widget_dist}->set_value('binary');
 
 	my $f5 = $lf->Frame()->pack(
 		-fill => 'x',
@@ -115,8 +119,18 @@ sub _new{
 	return $self;
 }
 
+sub config_dist{
+	my $self = shift;
+	if ( $self->{method_method} eq 'clara' ){
+		$self->{widget_dist}->configure(-state => 'disable');
+	} else {
+		$self->{widget_dist}->configure(-state => 'normal');
+	}
+}
+
 #--------------#
 #   チェック   #
+
 sub check{
 	my $self = shift;
 	
@@ -159,11 +173,6 @@ sub check{
 
 sub calc{
 	my $self = shift;
-
-	if ( $self->gui_jg( $self->{method_method} ) eq 'clara'){
-		bless $self, "gui_window::doc_cls::clara";
-	}
-
 
 	# 入力のチェック
 	unless ( eval(@{$self->hinshi}) ){
@@ -241,7 +250,7 @@ sub calc{
 		print "Sent to R: memory.limit(size=2047)\n";
 	}
 
-	$self->calc_exec(
+	my $cluster = &calc_exec(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
@@ -251,14 +260,39 @@ sub calc{
 	);
 	
 	$wait_window->end(no_dialog => 1);
+	$self->close;
+
+	$cluster->open_result_win;
+
+	$self = undef;
+	return 1;
+}
+
+sub open_result_win{
+	my $self = shift;
+	gui_window::doc_cls_res->open(
+		command_f   => $self->{r_command},
+		tani        => $self->{tani},
+		plots       => $self->{plots},
+		merge_files => $self->{merges},
+	);
+	$self = undef;
+	return 1;
 }
 
 sub calc_exec{
-	my $self = shift;
-	my %args = @_;
+	my $self = {@_};
+	bless $self, "gui_window::doc_cls::".$self->{method_method};
+	return $self->_calc_exec;
+}
 
-	my $r_command = $args{r_command};
-	my $cluster_number = $args{cluster_number};
+
+
+sub _calc_exec{
+	my $self = shift;
+	
+	my $r_command = $self->{r_command};
+	my $cluster_number = $self->{cluster_number};
 
 	# クラスター分析の結果を納めるファイル名
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
@@ -284,7 +318,7 @@ sub calc_exec{
 	
 	$r_command .= &r_command_tfidf;
 	
-	if ($args{method_dist} eq 'euclid'){
+	if ($self->{method_dist} eq 'euclid'){
 		# 文書ごとに標準化
 			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
 			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
@@ -306,8 +340,8 @@ sub calc_exec{
 	$r_command_ward .=
 		"dcls <- hcluster(
 			d,
-			method=\"$args{method_dist}\",
-			link=\"$args{method_method}\"
+			method=\"$self->{method_dist}\",
+			link=\"$self->{method_method}\"
 		)\n"
 	;
 
@@ -414,19 +448,22 @@ sub calc_exec{
 
 	mysql_outvar::read::tab->new(
 		file     => $file_org,
-		tani     => $args{tani},
+		tani     => $self->{tani},
 		#var_type => 'INT',
 	)->read;
 
-	gui_window::doc_cls_res->open(
-		command_f   => $r_command.$r_command_ward,
-		tani        => $args{tani},
-		plots       => $plots,
-		merge_files => $merges_org,
-	);
+	#gui_window::doc_cls_res->open(
+	#	command_f   => $r_command.$r_command_ward,
+	#	tani        => $self->{tani},
+	#	plots       => $plots,
+	#	merge_files => $merges_org,
+	#);
 
-	$self->close;
-	return 1;
+	$self->{r_command} = $r_command.$r_command_ward;
+	$self->{plots} = $plots;
+	$self->{merges} = $merges_org;
+	
+	return $self;
 }
 
 #--------------#

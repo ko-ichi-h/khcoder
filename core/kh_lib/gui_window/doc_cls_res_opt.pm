@@ -38,16 +38,22 @@ sub _new{
 				[kh_msg->get('gui_widget::r_cls->ward'),     'ward'    ],
 				[kh_msg->get('gui_widget::r_cls->average'),  'average' ],
 				[kh_msg->get('gui_widget::r_cls->complete'), 'complete'],
+				[kh_msg->get('gui_widget::r_cls->clara'),    'clara'   ],
 			],
 		variable => \$self->{method_method},
+		command  => sub {$self->config_dist;},
 	);
 	if ( $self->{command_f} =~ /link=\"ward\"/ ){
 		$widget_method->set_value('ward');
 	}
 	elsif ($self->{command_f} =~ /link=\"average\"/){
 		$widget_method->set_value('average');
-	} else {
+	}
+	elsif ($self->{command_f} =~ /link=\"complete\"/){
 		$widget_method->set_value('complete');
+	}
+	else {
+		$widget_method->set_value('clara');
 	}
 
 	$f4->Label(
@@ -55,7 +61,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	my $widget_dist = gui_widget::optmenu->open(
+	$self->{widget_dist} = gui_widget::optmenu->open(
 		parent  => $f4,
 		pack    => {-side => 'left'},
 		options =>
@@ -68,13 +74,15 @@ sub _new{
 	);
 
 	if ( $self->{command_f} =~ /method=\"euclid\"/ ){
-		$widget_dist->set_value('euclid');
+		$self->{widget_dist}->set_value('euclid');
 	}
 	elsif ($self->{command_f} =~ /method=\"binary\"/){
-		$widget_dist->set_value('binary');
-	} else {
-		$widget_dist->set_value('pearson');
+		$self->{widget_dist}->set_value('binary');
 	}
+	else {
+		$self->{widget_dist}->set_value('pearson');
+	}
+	$self->config_dist;
 
 	my $f5 = $lf->Frame()->pack(
 		-fill => 'x',
@@ -117,6 +125,15 @@ sub _new{
 	return $self;
 }
 
+sub config_dist{
+	my $self = shift;
+	if ( $self->{method_method} eq 'clara' ){
+		$self->{widget_dist}->configure(-state => 'disable');
+	} else {
+		$self->{widget_dist}->configure(-state => 'normal');
+	}
+}
+
 sub calc{
 	my $self = shift;
 
@@ -148,7 +165,9 @@ sub calc{
 
 	$r_command .= "# END: DATA\n";
 
-	&gui_window::doc_cls::calc_exec(
+	my $wait_window = gui_wait->start;
+
+	my $cluster = &gui_window::doc_cls::calc_exec(
 		base_win       => $self,
 		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
@@ -157,6 +176,16 @@ sub calc{
 		tani           => $self->{tani},
 	);
 
+	$wait_window->end(no_dialog => 1);
+	$self->close;
+
+	if ($::main_gui->if_opened('w_doc_cls_res')){
+		$::main_gui->get('w_doc_cls_res')->close;
+	}
+
+	$cluster->open_result_win;
+
+	$self = undef;
 	return 1;
 }
 
