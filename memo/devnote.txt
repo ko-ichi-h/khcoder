@@ -75,6 +75,9 @@ order by genkei_t.id
 			→set.vertex.attribute、set.edge.attributeのIndex指定を1からに変更すればOKっぽい。
 		・コミュニティ検出関数の仕様も変更に
 			→（調査中）
+		・igraphのバージョンチェック
+			> library(igraph)
+			> sessionInfo()$otherPkgs$igraph$Version
 
 	・内部のUnicode化
 		・現状では必要に応じてDecode。
