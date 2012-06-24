@@ -26,9 +26,6 @@
 	・データが小さいときは「Strat1」に（相対的に）時間がかかる
 	・データサイズが大きくなるにつれて「Format」にかかる時間の割合が増えていく
 
-[英語UIについて]
-	・メニューのトップレベルの下線の場所の設定（kh_sysconfig::win32::underline_conv）は変更の要あり
-
 [「その他」に割り振られた品詞チェック]
 	SELECT hinshi.id, hinshi.name, COUNT(*), genkei.name
 	FROM genkei, hinshi
@@ -73,6 +70,12 @@ order by genkei_t.id
 		しかし、roundするにしても、従来とは異なる配置になるが…
 
 [TO DO]
+	・igraph 0.6からの変更
+		・頂点や辺のインデックス（添え字）が1から開始になった（従来は0から）
+			→set.vertex.attribute、set.edge.attributeのIndex指定を1からに変更すればOKっぽい。
+		・コミュニティ検出関数の仕様も変更に
+			→（調査中）
+
 	・内部のUnicode化
 		・現状では必要に応じてDecode。
 			・gui_window->gui_jcharをなるべく使う

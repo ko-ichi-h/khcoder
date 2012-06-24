@@ -166,18 +166,6 @@ sub mecab_path{
 #-------------#
 #   GUI´Ø·¸   #
 
-sub underline_conv{
-	my $self = shift;
-	my $n    = shift;
-	
-	require Win32;
-	
-	if ($Tk::VERSION >= 804.029 && Win32::IsWinNT() ){
-		$n = ( ($n - 1) / 2 ) + 1;
-	}
-	return $n;
-}
-
 sub mw_entry_length{
 	require Win32;
 	
