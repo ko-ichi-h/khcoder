@@ -72,7 +72,11 @@ order by genkei_t.id
 [TO DO]
 	・igraph 0.6からの変更
 		・頂点や辺のインデックス（添え字）が1から開始になった（従来は0から）
-			→set.vertex.attribute、set.edge.attributeのIndex指定を1からに変更すればOKっぽい。
+			→以下のIndex指定を1からに変更すればOKっぽい
+				set.vertex.attribute()
+				set.edge.attribute()
+				betweenness()
+				degree()
 		・コミュニティ検出関数の仕様も変更に
 			→（調査中）
 		・igraphのバージョンチェック
