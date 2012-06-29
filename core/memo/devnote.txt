@@ -77,8 +77,9 @@ order by genkei_t.id
 				set.edge.attribute()
 				betweenness()
 				degree()
-		・コミュニティ検出関数の仕様も変更に
-			→（調査中）
+		・コミュニティ検出関数にバグ？
+			→community.to.membership()関数で大きめのstepsを指定するとRが落ちる
+			　R 2.14.2, igraph 0.6-2で確認
 		・igraphのバージョンチェック
 			> library(igraph)
 			> sessionInfo()$otherPkgs$igraph$Version
