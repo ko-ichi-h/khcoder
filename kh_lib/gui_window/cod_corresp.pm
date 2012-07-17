@@ -823,9 +823,6 @@ sub _calc{
 		}
 	}
 
-
-
-
 	# 外部変数の付与
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
@@ -913,7 +910,7 @@ sub _calc{
 
 	my $biplot = 1;
 	if ($self->{radio} == 1){
-		$biplot = $self->{biplot};
+		$biplot = $self->gui_jg( $self->{biplot} );
 	}
 
 	&gui_window::word_corresp::make_plot(
