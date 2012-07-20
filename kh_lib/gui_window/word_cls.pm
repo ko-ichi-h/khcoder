@@ -239,6 +239,7 @@ sub make_plot{
 	}
 	
 	$r_command .= "try( library(flashClust) )\n";
+	#$r_command .= "try( library(fastcluster) )\n";
 
 	$r_command .=
 		"$par"
