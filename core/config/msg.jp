@@ -121,7 +121,7 @@ gui_window::doc_view:
     highlight:                強調
     in_the_file:              ファイル内：
     in_the_results:           '  検索結果：'
-    n1:                       '後 >>'
+    n1:                       '次 >>'
     n2:                       '次 >>'
     p1:                       << 前
     p2:                       << 前
