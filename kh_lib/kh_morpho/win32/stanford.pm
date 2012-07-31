@@ -160,9 +160,9 @@ sub _run_morpho{
 		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\n");
+			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\t\tTAG\n");
 			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out $output_code->encode("$3\t$3\t$3\tTAG\n");
+			print $fh_out $output_code->encode("$3\t$3\t$3\tTAG\t\tTAG\n");
 		} else {
 			while ( index($t,'<') > -1){
 				my $pre = substr($t,0,index($t,'<'));
@@ -207,7 +207,7 @@ sub _tag{
 	$t = Text::Unidecode::unidecode($t);
 	
 	print $fh $output_code->encode(
-			"$t\t$t\t$t\tTAG\n"
+			"$t\t$t\t$t\tTAG\t\tTAG\n"
 	);
 
 }

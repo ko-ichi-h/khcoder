@@ -178,7 +178,7 @@ sub _tag{
 	$t = Text::Unidecode::unidecode($t);
 	
 	print $fh $output_code->encode(
-		"$t\t$t\t$t\tTAG\n"
+		"$t\t$t\t$t\tTAG\t\tTAG\n"
 	);
 
 }

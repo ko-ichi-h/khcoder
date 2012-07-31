@@ -158,13 +158,13 @@ sub mark{
 			my %temp = (); my $f = 0;                      # 位置を取得
 			foreach my $i (@keywords){
 				# 当該の行内に文字列$iが存在すれば…
-				if (index($text,$i) > -1){
+				if (index(lc $text, lc $i) > -1){
 					my @pos = ();
 					my $pos = -1;
 					# $iのすべての開始位置を取得
-					while ( index($text, $i, $pos) > -1 ){
-						push @pos, index($text, $i, $pos);
-						$pos = index($text, $i, $pos) + 1;
+					while ( index(lc $text, lc $i, $pos) > -1 ){
+						push @pos, index(lc $text, lc $i, $pos);
+						$pos = index(lc $text, lc $i, $pos) + 1;
 					}
 					# 前から順にずれた場所でマッチしていないかチェック
 					foreach my $h (@pos){

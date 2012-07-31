@@ -207,7 +207,7 @@ gui_window::main::menu:
     word_freq:                Frequency List
     word_search:              Search Words
     words:                    Words
-    words_cluster:            Word Cluster
+    words_cluster:            Word Clusters
     words_selection:          Select Words to Analyze
 gui_window::morpho_check:
     details:                  Details
@@ -879,7 +879,7 @@ gui_window::outvar_list:
     error_hd2:                'Cannot export headings.\nPlease consider using "Extract Partial Text" command'
     saving:                   'Save variables as'
 gui_window::hukugo:
-    win_title:                'Word Cluster (ChaSen)'
+    win_title:                'Word Clusters: ChaSen'
     run:                      'Run'
     h_huku:                   'cluster'
     h_freq:                   'frequency'
@@ -890,7 +890,7 @@ gui_window::use_te:
     web:                      'Web page of TermExtract:'
     about:                    'About TermExtract:'
 gui_window::use_te_g:
-    win_title:                'Word Cluster (TermExtract)'
+    win_title:                'Word Clusters: TermExtract'
     run:                      'Run'
     h_hukugo:                 'cluster'
     h_score:                  'score'
