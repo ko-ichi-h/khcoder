@@ -50,12 +50,12 @@ sub first{
 		my $t1 = new Benchmark;
 		print "Read\t",timestr(timediff($t1,$t0)),"\n";
 	$self->reform;                 # hinshi, genkei, katuyo, hyoso, khhinshi
-	$self->tag_fix;                # hyoso, genkei
 		my $t15 = new Benchmark;
 		print "Format\t",timestr(timediff($t15,$t1)),"\n";
 	kh_dictio->readin->save;
 	$self->hyosobun;
 	kh_dictio->readin->save;
+	$self->tag_fix;                # hyoso, genkei
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	$self->tanis;
@@ -84,7 +84,27 @@ sub first{
 	
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+	
+	# 形態素解析器と言語の記録
 	$::project_obj->morpho_analyzer($::config_obj->c_or_j);
+
+	if (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	) {
+		$::project_obj->morpho_analyzer_lang('jp');
+	}
+	elsif ($::project_obj->morpho_analyzer eq 'stanford'){
+		$::project_obj->morpho_analyzer_lang(
+			$::config_obj->stanford_lang
+		);
+	}
+	elsif ($::project_obj->morpho_analyzer eq 'stemming'){
+		$::project_obj->morpho_analyzer_lang(
+			$::config_obj->stemming_lang
+		);
+	}
+
 }
 
 
@@ -985,6 +1005,7 @@ sub tag_fix{
 		chop $name; substr($name,0,1) = '';
 		my $length = length($name);
 		$name =~ s/'/\\'/go;
+		#print "$name, $length, $i->[0] : $i->[1]\n";
 		mysql_exec->do("
 			UPDATE hyoso
 			SET name = \'$name\', len = $length
@@ -1016,26 +1037,26 @@ sub tag_fix{
 	}
 	
 	# 基本形テーブル(2)
-	$k = mysql_exec->select("
-		SELECT genkei_fin.id, genkei_fin.name
-		FROM genkei_fin, hselection
-		WHERE 
-			    genkei_fin.khhinshi_id = hselection.khhinshi_id
-			AND (
-				   hselection.name = \'タグ\'
-				|| hselection.name = \'TAG\'
-			)
-	",1)->hundle;
-	while (my $i = $k->fetch){
-		my $name = $i->[1];
-		chop $name; substr($name,0,1) = '';
-		$name =~ s/'/\\'/go;
-		mysql_exec->do("
-			UPDATE genkei_fin
-			SET name = \'$name\'
-			WHERE id = $i->[0]
-		",1);
-	}
+	#$k = mysql_exec->select("
+	#	SELECT genkei_fin.id, genkei_fin.name
+	#	FROM genkei_fin, hselection
+	#	WHERE 
+	#		    genkei_fin.khhinshi_id = hselection.khhinshi_id
+	#		AND (
+	#			   hselection.name = \'タグ\'
+	#			|| hselection.name = \'TAG\'
+	#		)
+	#",1)->hundle;
+	#while (my $i = $k->fetch){
+	#	my $name = $i->[1];
+	#	chop $name; substr($name,0,1) = '';
+	#	$name =~ s/'/\\'/go;
+	#	mysql_exec->do("
+	#		UPDATE genkei_fin
+	#		SET name = \'$name\'
+	#		WHERE id = $i->[0]
+	#	",1);
+	#}
 	
 	
 	$k->finish;

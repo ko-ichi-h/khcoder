@@ -5,7 +5,6 @@ use base qw( kh_morpho::perl::stemming );
 sub init{
 	my $self = shift;
 	
-	require ptb_tokenizer_en;
 	
 	$self->{splitter} = Lingua::Sentence->new('en');
 	$self->{stemmer}  = Lingua::Stem::Snowball->new(
@@ -19,6 +18,8 @@ sub init{
 sub tokenize{
 	my $self = shift;
 	my $t    = shift;
+	
+	require ptb_tokenizer_en;
 	
 	my @words_hyoso = split / /, ptb_tokenizer_en::Run($t);
 	

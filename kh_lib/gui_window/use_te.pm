@@ -88,7 +88,7 @@ sub put_info{
 	
 	$self->{text}->insert('end',$self->gui_jchar("「TermExtract」は、東京大学情報基盤センター図書館電子化部門・中川研究室にて公開されています。詳細は以下の通りです。\n") );
 	
-	$self->{text}->insert('end',"TermExtract::Calc_Imp.pm:\n",'red');
+	$self->{text}->insert('end',"TermExtract::Calc_Imp.pm\n",'red');
 	my $Calc_Imp_cr = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のExtract.pmを参考に、中川教授の教示を受け、１からコーディングし直したものである。
 　この作業は、東京大学・前田朗(maeda@lib.u-tokyo.ac.jp)が行った。
 　その際のコンセプトは次のとおり。
@@ -112,7 +112,7 @@ Extract.pm の作者は次のとおり。
 なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
 	$self->{text}->insert('end',$self->gui_jchar($Calc_Imp_cr) );
 
-	$self->{text}->insert('end',"\n\nTermExtract::Chasen.pm:\n",'red');
+	$self->{text}->insert('end',"\n\nTermExtract::Chasen.pm\n",'red');
 	my $Chasen = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のtermex.pl を参考にコードを全面的に書き直したものである。
 　この作業は、東京大学・前田朗 (maeda@lib.u-tokyo.ac.jp)が行った。
 　相違点は次のとおり。
@@ -127,6 +127,12 @@ Extract.pm の作者は次のとおり。
 
 なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
 	$self->{text}->insert('end',$self->gui_jchar($Chasen) );
+
+	$self->{text}->insert('end',"\n\nTermExtract::BrillsTagger.pm\n",'red');
+	my $Brill = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のtermex_e.pl を元にモジュールTermExtract用に書き換えたものである。
+　この作業は、東京大学・前田朗 (maeda@lib.u-tokyo.ac.jp)が行った。
+　なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
+	$self->{text}->insert('end',$self->gui_jchar($Brill) );
 
 	return $self;
 }
@@ -148,18 +154,18 @@ sub _exec{
 	}
 	
 	if ($if_exec){
-		my $ans = $::main_gui->mw->messageBox(
-			-message => kh_msg->gget('cont_big_pros'),
-			-icon    => 'question',
-			-type    => 'OKCancel',
-			-title   => 'KH Coder'
-		);
-		unless ($ans =~ /ok/i){ return 0; }
+		#my $ans = $::main_gui->mw->messageBox(
+		#	-message => kh_msg->gget('cont_big_pros'),
+		#	-icon    => 'question',
+		#	-type    => 'OKCancel',
+		#	-title   => 'KH Coder'
+		#);
+		#unless ($ans =~ /ok/i){ return 0; }
 		
 		my $w = gui_wait->start;
 		use mysql_hukugo_te;
 		mysql_hukugo_te->run_from_morpho;
-		$w->end;
+		$w->end(no_dialog => 1);
 	}
 	$self->close;
 	gui_window::use_te_g->open;

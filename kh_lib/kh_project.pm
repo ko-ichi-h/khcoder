@@ -219,6 +219,34 @@ sub morpho_analyzer{
 	return $h->fetch->[0];
 }
 
+sub morpho_analyzer_lang{
+	my $self = shift;
+	my $v = shift;
+	
+	if (defined($v)){
+		mysql_exec->do("
+			DELETE
+			FROM   status_char
+			WHERE  name = \"morpho_analyzer_lang\"
+		",1);
+		mysql_exec->do("
+			INSERT INTO status_char (name, status)
+			VALUES (\"morpho_analyzer_lang\", \"$v\")
+		",1);
+		return $v;
+	}
+	
+	my $h = mysql_exec->select("
+		SELECT status FROM status_char WHERE name = \"morpho_analyzer_lang\"
+	",1)->hundle;
+	
+	unless ($h->rows){
+		return 'jp';
+	}
+	
+	return $h->fetch->[0];
+}
+
 sub check_up{
 	my $self = shift;
 	

@@ -8,7 +8,7 @@ $kh_version = "2.x Tester";
 
 BEGIN {
 	use Jcode;
-	require kh_lib::Jcode_kh if $] > 5.008;
+	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
 	# for Windows [1]
 	if ($^O eq 'MSWin32'){
@@ -144,7 +144,6 @@ $main_gui->win_obj->bind(
 	'<Control-Key-g>',
 	\&test
 );
-print "Hit Ctrl-G to start test procedures.\n";
 
 &test;
 

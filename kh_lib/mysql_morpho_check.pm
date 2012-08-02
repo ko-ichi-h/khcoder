@@ -9,11 +9,60 @@ sub search{
 	unless ( length($self->{query}) ){
 		return;
 	}
+	
+	my $q = $self->{query};
+	
+	# 日本語以外の場合はqueryをtokenizeする。
+	unless (
+		   $::project_obj->morpho_analyzer eq 'chasen'
+		|| $::project_obj->morpho_analyzer eq 'mecab'
+	){
+		# 強制抽出への対応
+		# (1)キーワード
+		#my @keywords = ();
+		#my $h = mysql_exec->select("
+		#	SELECT genkei.name
+		#	FROM   genkei, khhinshi
+		#	WHERE
+		#		genkei.khhinshi_id = khhinshi.id
+		#		AND (
+		#			   khhinshi.name = 'タグ'
+		#			OR khhinshi.name = 'TAG'
+		#		)
+		#",1)->hundle;
+		#while (my $i = $h->fetch){
+		#	if ($i->[0] =~ /_/){
+		#		$i->[0] =~ tr/_/ /;
+		#		push @keywords, $i->[0];
+		#	}
+		#}
+		# (2)マーク
+		# ちょっと中断して検討…
+
+		# tokenize
+		my $class =
+			 "kh_morpho::perl::stemming::"
+			.$::project_obj->morpho_analyzer_lang
+		;
+		my $self;
+		$self->{dummy} = 1;
+		bless $self, $class;
+		my ($w) = $self->tokenize($q);
+		$q = '';
+		foreach my $i (@{$w}){
+			$q .= ' ' if length($q);
+			$q .= $i;
+		}
+	}
+	
+	$q = mysql_exec->quote($q);
+	$q =~ s/'(.+)'/\1/;
+	
 	my $h = mysql_exec->select("
 		SELECT hyoso.name, hyosobun.bun_idt
 		FROM bun_r, hyosobun LEFT JOIN hyoso ON hyosobun.hyoso_id = hyoso.id
 		WHERE
-			bun_r.rowtxt LIKE \'%$self->{query}%\'
+			bun_r.rowtxt LIKE \'%$q%\'
 			AND hyosobun.bun_idt  = bun_r.id
 		ORDER BY hyosobun.id
 		LIMIT 1000

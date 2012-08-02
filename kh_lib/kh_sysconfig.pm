@@ -632,6 +632,17 @@ sub win_gmtry{
 	}
 }
 
+sub win32_monitor_chk{
+	my $self = shift;
+	my $new = shift;
+	
+	if ( defined($new) ){
+		$self->{win32_monitor_chk} = $new;
+	}
+	
+	return $self->{win32_monitor_chk};
+}
+
 #---------------#
 #   MySQL´ØÏ¢   #
 #---------------#

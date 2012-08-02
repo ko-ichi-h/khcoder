@@ -142,10 +142,10 @@ sub open{
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 
-		$self->check_viewable;
-
 		# 特殊処理に対応
 		$self->start;
+
+		$self->check_viewable;
 
 	}
 	return $self;
@@ -156,21 +156,31 @@ sub check_viewable{
 	my $self = shift;
 
 	my $g = $::config_obj->win_gmtry($self->win_name);
-	if ($g and not $self->{no_geometry}){     # 位置を読み込んでいて
+	if (
+		   $g
+		&& $self->{no_geometry} == 0        # 位置を読み込んでいて
+		&& $::config_obj->os eq 'win32'     # なおかつWindowsで
+		&& $::config_obj->win32_monitor_chk == 0
+	) {
+		$::config_obj->win32_monitor_chk(1);
+		$::config_obj->save;
 
-		if ($::config_obj->os eq 'win32'){    # なおかつWindowsの場合
-			require gui_checkgeo;
-			my $r = gui_checkgeo::check(
-				$self->win_obj->rootx,
-				$self->win_obj->rooty
-			);
-			unless ($r){
-				print "The window geometry is modified: $g, ";
-				$g =~ s/([0-9]+)x([0-9]+)\+.+/$1x$2+24+24/;
-				print "$g\n";
-				$self->win_obj->geometry($g);
-			}
+		require gui_checkgeo;
+		my $r = gui_checkgeo::check(
+			$self->win_obj->rootx,
+			$self->win_obj->rooty
+		);
+
+		print "new window: ", $self->win_obj->rootx, ", ",$self->win_obj->rooty, "\n";
+		unless ($r){
+			print "The window geometry is modified: $g, ";
+			$g =~ s/([0-9]+)x([0-9]+)\+.+/$1x$2+24+24/;
+			print "$g\n";
+			$self->win_obj->geometry($g);
 		}
+		
+		$::config_obj->win32_monitor_chk(0);
+	}
 
 
 		#my $name   = $self->win_obj->screen;
@@ -198,7 +208,7 @@ sub check_viewable{
 		#	print "$g\n";
 		#	$self->win_obj->geometry($g);
 		#}
-	}
+
 	return $self;
 }
 
