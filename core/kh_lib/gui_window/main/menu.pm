@@ -1062,7 +1062,15 @@ sub refresh{
 				'm_b2_datacheck',
 			]);
 		}
-		
+		elsif (
+			   $::config_obj->c_or_j        eq 'stanford'
+			&& $::config_obj->stanford_lang eq 'en'
+		){
+			$self->normalize([
+				'm_b1_hukugo_te',
+			]);
+		}
+
 		if ($::project_obj->status_morpho){
 			$self->normalize(\@menu1);
 		}

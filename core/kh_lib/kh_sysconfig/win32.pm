@@ -103,6 +103,7 @@ sub save_ini{
 		'all_in_one_pack',
 		'font_main',
 		'font_plot',
+		'win32_monitor_chk',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
