@@ -209,6 +209,7 @@ gui_window::main::menu:
     words:                    Words
     words_cluster:            Word Clusters
     words_selection:          Select Words to Analyze
+    som:                      Self-Organizing Map
 gui_window::morpho_check:
     details:                  Details
     note:                     Input a string or phrase to check.
@@ -616,6 +617,17 @@ gui_widget::r_cls:
     dist:                     '  Distance:'
     n_cls:                    'N of clusters:'
     color:                    'Different colors'
+gui_window::word_som:
+    win_title:                'Self-Organizing Map Options'
+    cluster:                  ' '
+    u_w:                      'Select the unit & words'
+    opt:                      'Self-Organizing Map Options'
+gui_widget::r_som:
+    n_nodes1:                 'Number of nodes:'
+    n_nodes2:                 '^2'
+    cluster_color:            'Clustering nodes'
+    cls_num:                  '  Number of clusters:'
+    2_12:                     '(from 2 to 12)'
 gui_window::word_cls:
     u_w:                      'Select the unit & words'
     opt:                      'Cluster Analysis Options'

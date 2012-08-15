@@ -363,6 +363,16 @@ sub make{
 			);
 		push @menu1, 't_word_netgraph' if $::config_obj->R;
 
+		$self->{t_word_som} = $f3->command(
+				-label => kh_msg->get('som'),#gui_window->gui_jchar('共起ネットワーク'),
+				-font => "TKFN",
+				-command => sub{
+					gui_window::word_som->open;
+				},
+				-state => 'disable'
+			);
+		push @menu1, 't_word_som' if $::config_obj->R;
+
 	my $f8 = $f->cascade(
 			-label => kh_msg->get('docs'),#gui_window->gui_jchar('文書'),
 			-font => "TKFN",

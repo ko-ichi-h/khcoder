@@ -211,6 +211,7 @@ gui_window::main::menu:
     words:                    抽出語
     words_cluster:            複合語の検出
     words_selection:          語の取捨選択
+    som:                      自己組織化マップ
 gui_window::morpho_check:
     details:                  詳細表示
     note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい
@@ -618,6 +619,17 @@ gui_widget::r_cls:
     dist:                     '  距離：'
     n_cls:                    'クラスター数：'
     color:                    'クラスターの色分け'
+gui_window::word_som:
+    win_title:                '抽出語・自己組織化マップ：オプション'
+    cluster:                  '布置'
+    u_w:                      '集計単位と抽出語の選択'
+    opt:                      '自己組織化マップのオプション'
+gui_widget::r_som:
+    n_nodes1:                 'ノード数：'
+    n_nodes2:                 '^2'
+    cluster_color:            'ノードのクラスター化'
+    cls_num:                  '  クラスター数：'
+    2_12:                     '（2から12まで）'
 gui_window::word_cls:
     u_w:                      '集計単位と抽出語の選択'
     opt:                      'クラスター分析のオプション'
