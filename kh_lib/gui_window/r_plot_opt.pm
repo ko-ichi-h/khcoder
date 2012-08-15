@@ -5,6 +5,7 @@ use gui_window::r_plot_opt::word_cls;
 use gui_window::r_plot_opt::word_corresp;
 use gui_window::r_plot_opt::word_mds;
 use gui_window::r_plot_opt::word_netgraph;
+use gui_window::r_plot_opt::word_som;
 use gui_window::r_plot_opt::cod_cls;
 use gui_window::r_plot_opt::cod_corresp;
 use gui_window::r_plot_opt::cod_mds;

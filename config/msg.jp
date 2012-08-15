@@ -630,6 +630,10 @@ gui_widget::r_som:
     cluster_color:            'ノードのクラスター化'
     cls_num:                  '  クラスター数：'
     2_12:                     '（2から12まで）'
+gui_window::r_plot::word_som:
+    win_title:                '抽出語・自己組織化マップ'
+gui_window::r_plot_opt::word_som:
+    win_title:                '抽出語・自己組織化マップ：調整'
 gui_window::word_cls:
     u_w:                      '集計単位と抽出語の選択'
     opt:                      'クラスター分析のオプション'

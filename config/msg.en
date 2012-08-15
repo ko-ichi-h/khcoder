@@ -628,6 +628,10 @@ gui_widget::r_som:
     cluster_color:            'Clustering nodes'
     cls_num:                  '  Number of clusters:'
     2_12:                     '(from 2 to 12)'
+gui_window::r_plot::word_som:
+    win_title:                'Self-Organizing Map of Words'
+gui_window::r_plot_opt::word_som:
+    win_title:                'Configure: Self-Organizing Map of Words'
 gui_window::word_cls:
     u_w:                      'Select the unit & words'
     opt:                      'Cluster Analysis Options'

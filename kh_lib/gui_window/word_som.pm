@@ -7,6 +7,7 @@ use Tk;
 use gui_widget::words;
 use mysql_crossout;
 use kh_r_plot;
+use plotR::som;
 
 #-------------#
 #   GUI作製   #
@@ -134,7 +135,7 @@ sub calc{
 
 	$self->{words_obj}->settings_save;
 
-	my $w = gui_wait->start;
+	my $wait_window = gui_wait->start;
 
 	# データの取り出し
 	my $r_command = mysql_crossout::r_com->new(
@@ -148,147 +149,44 @@ sub calc{
 		rownames => 0,
 	)->run;
 
-	# クラスター分析を実行するためのコマンド
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	&make_plot(
+	# SOMの実行
+	use plotR::som;
+	my $plotR = plotR::som->new(
 		$self->{som_obj}->params,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
 		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
-		plotwin_name   => 'word_cls',
+		plotwin_name   => 'word_som',
 		data_number    => $check_num,
 	);
 
-	$w->end(no_dialog => 1);
+	# プロットWindowを開く
+	$wait_window->end(no_dialog => 1);
+	$wait_window = undef;
+	
+	if ($::main_gui->if_opened('w_word_som_plot')){
+		$::main_gui->get('w_word_som_plot')->close;
+	}
+
+	return 0 unless $plotR;
+
+	gui_window::r_plot::word_som->open(
+		plots       => $plotR->{result_plots},
+		msg         => $plotR->{result_info},
+		msg_long    => $plotR->{result_info_long},
+		#no_geometry => 1,
+	);
+
+	$plotR = undef;
 
 	unless ( $self->{check_rm_open} ){
 		$self->close;
+		undef $self;
 	}
-
-}
-
-sub make_plot{
-	my %args = @_;
-
-	kh_r_plot->clear_env;
-
-	my $fontsize = $args{font_size};
-	my $r_command = $args{r_command};
-	my $cluster_number = $args{cluster_number};
-
-	my $old_simple_style = 0;
-	if ( $args{cluster_color} == 0 ){
-		$old_simple_style = 1;
-	}
-
-	my $bonus = 0;
-	$bonus = 8 if $old_simple_style;
-
-	if ($args{plot_size} =~ /auto/i){
-		$args{plot_size} =
-			int( ($args{data_number} * ( (20 + $bonus) * $fontsize) + 45) * 1 );
-		if ($args{plot_size} < 480){
-			$args{plot_size} = 480;
-		}
-		elsif ($args{plot_size} < 640){
-			$args{plot_size} = 640;
-		}
-	}
-
-	if ($cluster_number =~ /auto/i){
-		$cluster_number = int( sqrt( $args{data_number} ) + 0.5)
-	}
-
-	my $par = 
-		"par(
-			mai=c(0,0,0,0),
-			mar=c(1,2,1,0),
-			omi=c(0,0,0,0),
-			oma=c(0,0,0,0) 
-		)\n"
-	;
-
-	$r_command .= "n_cls <- $cluster_number\n";
-	$r_command .= "font_size <- $fontsize\n";
-	
-	$r_command .= "labels <- rownames(d)\n";
-	$r_command .= "rownames(d) <- NULL\n";
-
-	$r_command .= "freq <- NULL\n";
-	$r_command .= "for (i in 1:nrow(d)) {\n";
-	$r_command .= "	freq[i] = sum( d[i,] )\n";
-	$r_command .= "}\n";
-
-	if ($args{method_dist} eq 'euclid'){
-		# 抽出語ごとに標準化
-			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
-			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
-			# の用をなさなくなる場合がまま見られる。
-		$r_command .= "d <- t( scale( t(d) ) )\n";
-	}
-	$r_command .= "library(amap)\n";
-	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
-	if ($args{method_dist} eq 'euclid'){
-		$r_command .= "dj <- dj^2\n";
-	}
-	
-	$r_command .= "try( library(flashClust) )\n";
-	#$r_command .= "try( library(fastcluster) )\n";
-
-	$r_command .=
-		"$par"
-		.'hcl <- hclust(dj, method="'.$args{method_mthd}.'")'."\n"
-		.&r_command_plot($old_simple_style)
-	;
-
-	# プロット作成
-	my $flg_error = 0;
-	my $merges;
-	
-	my ($w,$h) = (480,$args{plot_size});
-	($w,$h) = ($h,$w) if $old_simple_style;
-	
-	# Ward法
-	my $plot1 = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_1',
-		command_f => $r_command,
-		width     => $w,
-		height    => $h,
-	) or $flg_error = 1;
-	$plot1->rotate_cls if $old_simple_style;
-
-	foreach my $i ('last','first','all'){
-		$merges->{0}{$i} = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_1_'.$i,
-			command_f =>  $r_command
-			             ."pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			command_a =>  "pp_type <- \"$i\"\n"
-			             .&r_command_height,
-			width     => 640,
-			height    => 480,
-		);
-	}
-
-	# プロットWindowを開く
-	kh_r_plot->clear_env;
-	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
-	if ($::main_gui->if_opened($plotwin_id)){
-		$::main_gui->get($plotwin_id)->close;
-	}
-	
-	return 0 if $flg_error;
-	
-	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
-	$plotwin->open(
-		plots       => [$plot1],
-		#no_geometry => 1,
-		plot_size   => $args{plot_size},
-		merges      => $merges,
-	);
 
 	return 1;
 }

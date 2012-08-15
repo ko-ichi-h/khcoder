@@ -55,7 +55,7 @@ sub Populate {
     ## Create the toplevel window
     $cw->withdraw;
     $cw->protocol('WM_DELETE_WINDOW' => sub {});
-    #$cw->transient($cw->toplevel);
+    #$cw->transient($::main_gui->mw);
 
     ### Set up the status
     $cw->{Shown} = 0;
@@ -69,7 +69,7 @@ sub Populate {
     $fm = $wdtop->Frame(-borderwidth => 2, -relief => 'raised')
 	    ->pack(@wd_packleft, -ipadx => 20, @wd_fullpack);
 
-    $bitmap = $fm->Label(Name => 'bitmap')
+    $cw->{bitmap} = $fm->Label(Name => 'bitmap')
 	    ->pack(@wd_packleft, -ipadx => 36, @wd_fullpack);
 
     ## Text Frame
@@ -95,7 +95,7 @@ sub Populate {
     ### We'll let the cancel frame and button wait until Show time
 
     ### Set up configuration
-    $cw->ConfigSpecs(-bitmap	=> [$bitmap, undef, undef, 'hourglass'],
+    $cw->ConfigSpecs(-bitmap	=> [$cw->{bitmap}, undef, undef, 'hourglass'],
 		     -foreground=> [[$txt1,$txt2], 'foreground','Foreground','black'],
 		     -background=> ['DESCENDANTS', 'background', 'Background',undef],
 		     -font	=> [$txt1,'font','Font','-Adobe-Helvetica-Bold-R-Normal--*-180-*'],
@@ -116,7 +116,7 @@ sub Show {
     ## Grab the input queue and focus
     #$wd->parent->configure(-cursor => 'watch') if $wd->{Configure}{-takefocus};
     #$wd->configure(-cursor => 'watch');
-    #$wd->update;
+    $wd->update;
 
     my($x) = int( ($wd->screenwidth
 		 - $wd->reqwidth)/2
@@ -132,8 +132,9 @@ sub Show {
     $wd->{Shown} = 1;
 
     $wd->deiconify;
-    $wd->tkwait('visibility', $wd);
+    #$wd->tkwait('visibility', $wd);
 
+    $wd->grab();
     $wd->focus();
     $wd->update;
 
@@ -144,12 +145,12 @@ sub Show {
 sub unShow {
     my($wd) = @_;
 
-	# print "shown: $wd->{Shown}\n";
+	print "shown: $wd->{Shown}\n";
 
     return unless $wd->{Shown};
     #$wd->parent->configure(-cursor => 'top_left_arrow');
 
-    #$wd->grab('release');
+    $wd->grab('release');
     $wd->withdraw;
     $wd->parent->update;
     $wd->{Shown} = 0;
