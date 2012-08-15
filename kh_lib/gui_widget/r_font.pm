@@ -95,6 +95,12 @@ sub _new{
 	return $self;
 }
 
+sub bold{
+	my $self = shift;
+	$self->{check_bold_text} = 1;
+	return 1;
+}
+
 #----------------------#
 #   設定へのアクセサ   #
 

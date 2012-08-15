@@ -19,6 +19,7 @@ use gui_widget::r_xy;
 use gui_widget::r_mds;
 use gui_widget::r_cls;
 use gui_widget::r_net;
+use gui_widget::r_som;
 
 sub open{
 	my $class = shift;
