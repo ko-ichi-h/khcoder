@@ -30,9 +30,9 @@ sub new{
 		name      => $args{plotwin_name}.'_1',
 		command_f =>
 			 $r_command
-			.$self->r_plot_cmd_p1
+			.$self->r_cmd_p1
 			."if_gray <- 0\n"
-			.$self->r_plot_cmd_p2,
+			.$self->r_cmd_p2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or $flg_error = 1;
@@ -42,12 +42,12 @@ sub new{
 			name      => $args{plotwin_name}.'_2',
 			command_f =>
 				 $r_command
-				.$self->r_plot_cmd_p1
+				.$self->r_cmd_p1
 				."if_gray <- 1\n"
-				.$self->r_plot_cmd_p2,
+				.$self->r_cmd_p2,
 			command_a =>
 				 "if_gray <- 1\n"
-				.$self->r_plot_cmd_p2,
+				.$self->r_cmd_p2,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
@@ -64,7 +64,7 @@ sub new{
 	return $self;
 }
 
-sub r_plot_cmd_p1{
+sub r_cmd_p1{
 	return '
 
 d <- t(d)
@@ -79,6 +79,7 @@ ti <- system.time(
 		d,
 		n_nodes,
 		n_nodes,
+		#topol="hexa",
 		rlen=c(414,2070)
 	)
 )
@@ -117,7 +118,7 @@ labcd <- NULL
 	';
 }
 
-sub r_plot_cmd_p2{
+sub r_cmd_p2{
 
 return 
 '
