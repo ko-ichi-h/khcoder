@@ -6,13 +6,15 @@ use Jcode;
 
 sub _new{
 	my $self = shift;
-	
+
 	my $win = $self->parent->Frame();
 	my $f4  = $win->Frame()->pack(-fill => 'x');
 
-	$self->{n_nodes} = 15 unless defined $self->{n_nodes};
-	$self->{if_cls}  =  1 unless defined $self->{if_cls};
-	$self->{n_cls}   =  8 unless defined $self->{n_cls};
+	$self->{n_nodes} = 15   unless defined $self->{n_nodes};
+	$self->{if_cls}  =  1   unless defined $self->{if_cls};
+	$self->{n_cls}   =  8   unless defined $self->{n_cls};
+	$self->{topo}    = 'hx' unless defined $self->{topo};
+	$self->{p_topo}  = 'hx' unless defined $self->{p_topo};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){
@@ -27,6 +29,20 @@ sub _new{
 
 		if ( $self->{r_cmd} =~ /n_nodes <- ([0-9]+)\n/ ){
 			$self->{n_nodes} = $1;
+		}
+
+		if ($self->{r_cmd} =~ /topol/ ){
+			$self->{topo} = 'hx';
+		} else {
+			$self->{topo} = 'sq';
+		}
+
+		if ( $self->{r_cmd} =~ /if_plothex <- ([01])\n/ ){
+			if ($1 == 1){
+				$self->{p_topo} = 'hx';
+			} else {
+				$self->{p_topo} = 'sq';
+			}
 		}
 
 		$self->{r_cmd} = undef;
@@ -58,6 +74,52 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	# ノード形状
+	my $f3 = $win->Frame()->pack(
+		-fill => 'x',
+		-pady => 0
+	);
+	$f3->Label(
+		-text => kh_msg->get('t_nodes'), # ノード形状：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$f3->Radiobutton(
+		-text             => kh_msg->get('hex'), # 6角形
+		-variable         => \$self->{topo},
+		-value            => 'hx',
+		-command          => sub{ $self->refresh_topo;},
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$f3->Radiobutton(
+		-text             => kh_msg->get('sq'), # 正方形
+		-variable         => \$self->{topo},
+		-value            => 'sq',
+		-command          => sub{ $self->refresh_topo;},
+	)->pack(-anchor => 'w', -side => 'left');
+
+	# 描画の形状
+	my $f2 = $win->Frame()->pack(
+		-fill => 'x',
+		-pady => 0
+	);
+	$f2->Label(
+		-text => kh_msg->get('p_nodes'), # 描画の形状：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	$self->{radio_hex} = $f2->Radiobutton(
+		-text             => kh_msg->get('hex'), # 6角形
+		-variable         => \$self->{p_topo},
+		-value            => 'hx',
+	)->pack(-anchor => 'w', -side => 'left');
+	$self->{radio_sq} = $f2->Radiobutton(
+		-text             => kh_msg->get('sq'), # 正方形
+		-variable         => \$self->{p_topo},
+		-value            => 'sq',
+	)->pack(-anchor => 'w', -side => 'left');
+
+
+	# クラスター化
 	$win->Checkbutton(
 			-text     => kh_msg->get('cluster_color'), # ノードのクラスター化
 			-variable => \$self->{if_cls},
@@ -71,7 +133,7 @@ sub _new{
 	);
 
 	$fcls1->Label(
-		-text => '  ',
+		-text => '    ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -96,9 +158,21 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->refresh_cls;
-
+	$self->refresh_topo;
 
 	$self->{win_obj} = $win;
+	return $self;
+}
+
+sub refresh_topo{
+	my $self = shift;
+	if ($self->{topo} eq 'hx'){
+		$self->{radio_hex}->configure(-state => 'normal');
+		$self->{radio_sq}->configure(-state => 'normal');
+	} else {
+		$self->{radio_hex}->configure(-state => 'disable');
+		$self->{radio_sq}->configure(-state => 'disable');
+	}
 	return $self;
 }
 
@@ -135,7 +209,9 @@ sub params{
 	my $self = shift;
 	return (
 		n_nodes => gui_window->gui_jg( $self->{entry_n_nodes}->get ),
-		n_cls   => $self->n,,
+		n_cls   => $self->n,
+		topo    => gui_window->gui_jg( $self->{topo} ),
+		p_topo  => gui_window->gui_jg( $self->{p_topo} ),
 	);
 }
 
