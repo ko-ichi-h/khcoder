@@ -626,8 +626,12 @@ gui_widget::r_som:
     n_nodes1:                 'Number of nodes:'
     n_nodes2:                 '^2'
     cluster_color:            'Clustering nodes'
-    cls_num:                  '  Number of clusters:'
+    cls_num:                  'Number of clusters:'
     2_12:                     '(from 2 to 12)'
+    t_nodes:                  'Topology: '
+    hex:                      'hexagon'
+    sq:                       'square'
+    p_nodes:                  'Plot: '
 gui_window::r_plot::word_som:
     win_title:                'Self-Organizing Map of Words'
 gui_window::r_plot_opt::word_som:

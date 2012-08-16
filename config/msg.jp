@@ -628,8 +628,12 @@ gui_widget::r_som:
     n_nodes1:                 'ノード数：'
     n_nodes2:                 '^2'
     cluster_color:            'ノードのクラスター化'
-    cls_num:                  '  クラスター数：'
+    cls_num:                  'クラスター数：'
     2_12:                     '（2から12まで）'
+    t_nodes:                  'ノード形状：'
+    hex:                      '6角形'
+    sq:                       '4角形'
+    p_nodes:                  '描画の形状：'
 gui_window::r_plot::word_som:
     win_title:                '抽出語・自己組織化マップ'
 gui_window::r_plot_opt::word_som:
