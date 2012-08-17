@@ -67,6 +67,13 @@ sub new{
 		) or $flg_error = 1;
 	}
 
+	$::config_obj->R->send("print( summary(somm) )");
+	my $t = $::config_obj->R->read;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	print "-------------------------[Begin]-------------------------[R]\n";
+	print "$t\n";
+	print "---------------------------------------------------------[R]\n";
+
 	kh_r_plot->clear_env;
 	undef $self;
 	undef %args;
