@@ -3,20 +3,24 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	my $self = shift;
-	if (@{$self->{plots}} == 2){
+	if (@{$self->{plots}} == 4){
 		return [
-			kh_msg->get('gui_window::r_plot::word_corresp->col'),  # カラー
-			kh_msg->get('gui_window::r_plot::word_corresp->gray'), # グレー
+			kh_msg->get('cls'),  # クラスター
+			kh_msg->get('gray'), # グレースケール
+			kh_msg->get('freq'), # 度数
+			kh_msg->get('umat'), # U行列
 		];
 	} else {
 		return [
-			kh_msg->get('gui_window::r_plot::word_corresp->gray'), # グレー
+			kh_msg->get('gray'), # グレースケール
+			kh_msg->get('freq'), # 度数
+			kh_msg->get('umat'), # U行列
 		];
 	}
 }
 
 sub option1_name{
-	return kh_msg->get('gui_window::r_plot::word_corresp->view'); # ' 表示：';
+	return kh_msg->get('views'); # ' カラー：';
 }
 
 sub win_title{

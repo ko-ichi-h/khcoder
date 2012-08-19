@@ -20,21 +20,19 @@ sub new{
 	$r_command .= "cex <- $args{font_size}\n";
 	$r_command .= "text_font <- $args{font_bold}\n";
 	$r_command .= "n_nodes <- $args{n_nodes}\n";
+	$r_command .= "if_cls <- $args{if_cls}\n";
 	$r_command .= "n_cls <- $args{n_cls}\n";
+	$r_command .= "rlen1 <- $args{rlen1}\n";
+	$r_command .= "rlen2 <- $args{rlen2}\n";
+	
 	if ($args{p_topo} eq 'hx'){
 		$r_command .= "if_plothex <- 1\n";
 	} else {
 		$r_command .= "if_plothex <- 0\n";
 	}
 
-	my ($p1, $p2);
-	if ($args{topo} eq 'hx'){
-		$p1 = $self->r_cmd_p1_hx;
-		$p2 = $self->r_cmd_p2_hx;
-	} else {
-		$p1 = $self->r_cmd_p1_sq;
-		$p2 = $self->r_cmd_p2_sq;
-	}
+	my $p1 = $self->r_cmd_p1_hx;
+	my $p2 = $self->r_cmd_p2_hx;
 
 	# プロット作成
 	my @plots = ();
@@ -45,27 +43,55 @@ sub new{
 		command_f =>
 			 $r_command
 			.$p1
-			."if_gray <- 0\n"
+			."plot_mode <- \"color\"\n"
 			.$p2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 	) or $flg_error = 1;
 
-	if ( $args{n_cls} > 0 ){
+	if ( $args{if_cls} == 1 ){
 		$plots[1] = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_2',
 			command_f =>
 				 $r_command
 				.$p1
-				."if_gray <- 1\n"
+				."plot_mode <- \"gray\"\n"
 				.$p2,
 			command_a =>
-				 "if_gray <- 1\n"
+				 "plot_mode <- \"gray\"\n"
 				.$p2,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
 	}
+
+	$plots[2] = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_3',
+		command_f =>
+			 $r_command
+			.$p1
+			."plot_mode <- \"freq\"\n"
+			.$p2,
+		command_a =>
+			 "plot_mode <- \"freq\"\n"
+			.$p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or $flg_error = 1;
+
+	$plots[3] = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_4',
+		command_f =>
+			 $r_command
+			.$p1
+			."plot_mode <- \"umat\"\n"
+			.$p2,
+		command_a =>
+			 "plot_mode <- \"umat\"\n"
+			.$p2,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or $flg_error = 1;
 
 	$::config_obj->R->send("print( summary(somm) )");
 	my $t = $::config_obj->R->read;
@@ -85,210 +111,29 @@ sub new{
 	return $self;
 }
 
-sub r_cmd_p1_sq{
-	return '
-
-d <- t(d)
-d <- subset(d, rowSums(d) > 0)
-d <- scale(d)
-d <- t(d)
-
-# SOMの実行
-library(som)
-ti <- system.time(
-	somm <- som(
-		d,
-		n_nodes,
-		n_nodes,
-		rlen=c(414,2070)
-	)
-)
-#print(ti)
-#print(somm$rlen)
-#print(somm$qerror)
-
-# 格子の座標を取得
-row2coods <- NULL
-for (i in 0:(n_nodes - 1)){
-	for (h in 0:(n_nodes - 1)){
-		row2coods <- c(row2coods, h, i)
-	}
-}
-row2coods <- matrix( row2coods, byrow=T, ncol=2  )
-
-# 格子のクラスター化（色分け）
-if ( n_cls > 0 ){
-	library(amap)
-	library( RColorBrewer )
-	hcl <- hcluster(somm$code, method="euclidean", link="ward")
-
-	colors <- NULL
-	if (n_cls <= 9){
-		pastel <- brewer.pal(9, "Pastel1")
-		pastel[6] = brewer.pal(9, "Pastel1")[9]
-		pastel[9] = brewer.pal(9, "Pastel1")[6]
-		colors <- pastel[cutree(hcl,k=n_cls)]
-	} else {
-		colors <- brewer.pal(12, "Set3")[cutree(hcl,k=n_cls)]
-	}
-} else {
-	colors <- rep("gray90", n_nodes^2)
-}
-
-library(maptools)                                 # 語のラベル
-labcd <- NULL
-
-	';
-}
-
-sub r_cmd_p2_sq{
-
-return 
-'
-
-# プロットの実行
-par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-
-plot(                                             # 初期化
-	somm$visual[,1:2],
-	type="p",
-	axes=F,
-	frame.plot=F
-)
-
-if (if_gray == 1){                                # 格子の色
-	symbols(
-		row2coods[,1],
-		row2coods[,2],
-		squares=rep(1,length(row2coods[,1])),
-		fg=NULL,
-		bg="gray90",
-		inches=F,
-		add=T,
-	)
-} else {
-	symbols(
-		row2coods[,1],
-		row2coods[,2],
-		squares=rep(1,length(row2coods[,1])),
-		fg=NULL,
-		bg=colors,
-		inches=F,
-		add=T,
-	)
-}
-
-for (i in 0:(n_nodes -1 )){                       # 縦線・白
-	for (h in 0:(n_nodes - 2)){
-		if ( colors[h + i * n_nodes + 1] == colors[h + i * n_nodes + 2] ){
-			segments(
-				h + 0.5, i + 0.5,
-				h + 0.5, i - 0.5,
-				col="white",
-				lwd=1,
-			)
-		}
-	}
-}
-
-for (i in 0:(n_nodes - 2)){                       # 横線・白
-	for (h in 0:(n_nodes - 1)){
-		if ( colors[h + i * n_nodes + 1] == colors[h + (i+1) * n_nodes + 1] ){
-			segments(
-				h - 0.5, i + 0.5,
-				h + 0.5, i + 0.5,
-				col="white",
-				lwd=1,
-			)
-		}
-	}
-}
-
-for (i in 0:(n_nodes - 1)){                       # 縦線・グレー
-	for (h in 0:(n_nodes - 2)){
-		if ( colors[h + i * n_nodes + 1] != colors[h + i * n_nodes + 2] ){
-			segments(
-				h + 0.5, i + 0.5,
-				h + 0.5, i - 0.5,
-				col="gray60",
-				lwd=3,
-			)
-		}
-	}
-}
-
-
-for (i in 0:(n_nodes - 2)){                       # 横線・グレー
-	for (h in 0:(n_nodes - 1)){
-		if ( colors[h + i * n_nodes + 1] != colors[h + (i+1) * n_nodes + 1] ){
-			segments(
-				h - 0.5, i + 0.5,
-				h + 0.5, i + 0.5,
-				col="gray60",
-				lwd=3,
-			)
-		}
-	}
-}
-
-symbols(                                          # 語のポイント
-	somm$visual[,1],
-	somm$visual[,2],
-	squares=rep(0.4,length(somm$visual[,1])),
-	fg="gray60",
-	bg="white",
-	inches=F,
-	add=T,
-)
-
-if (is.null(labcd) == 1){
-	labcd <- pointLabel(
-		x=somm$visual[,1],
-		y=somm$visual[,2],
-		labels=rownames(d),
-		doPlot=F,
-		cex=cex,
-		offset=0
-	)
-}
-
-text(
-	labcd$x,
-	labcd$y,
-	labels=rownames(d),
-	cex=cex,
-	offset=0,
-	font=text_font
-)
-
-
-';
-
-}
-
-
 sub r_cmd_p1_hx{
 	return '
 
 d <- t(d)
 d <- subset(d, rowSums(d) > 0)
-d <- scale(d)
+#d <- scale(d)
 d <- t(d)
 
 # SOMの実行
 library(som)
+d <- normalize(d)
 ti <- system.time(
 	somm <- som(
 		d,
 		n_nodes,
 		n_nodes,
 		topol="hexa",
-		rlen=c(414,2070)
+		rlen=c(rlen1,rlen2)
 	)
 )
 #print(ti)
 #print(somm$rlen)
-#print(somm$qerror)
+#print(summary(somm))
 
 # 格子の座標を取得
 row2coods <- NULL
@@ -305,8 +150,8 @@ for (i in 0:(n_nodes - 1)){
 }
 row2coods <- matrix( row2coods, byrow=T, ncol=2  )
 
-# 格子のクラスター化（色分け）
-if ( n_cls > 0 ){
+# 格子のクラスター化
+if ( if_cls == 1 ){
 	library(amap)
 	library( RColorBrewer )
 	hcl <- hcluster(somm$code, method="euclidean", link="ward")
@@ -324,6 +169,8 @@ if ( n_cls > 0 ){
 	colors <- rep("gray90", n_nodes^2)
 }
 labcd <- NULL
+
+
 
 
 ';
@@ -351,35 +198,180 @@ if (if_plothex == 1){                             # 格子の色
 }
 b <- 1-a
 
-if ( if_gray == 1){
-	for (i in 1:n_nodes^2){
-		x <- row2coods[i,1]
-		y <- row2coods[i,2]
-
-		polygon(
-			x=c( x + 0.5, x + 0.5, x,     x - 0.5, x - 0.5, x ),
-			y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
-			col="gray90",
-			border="white",
-			lty=0,
-		)
+if ( plot_mode == "gray"){                        # 各カラーモードへの対応
+	color_act  <- rep("gray90",n_nodes^2)
+	color_line <- "white"
+	if_points  <- 1
+}
+if ( plot_mode == "color" ) {
+	color_act <- colors
+	color_line <- "white"
+	if_points  <- 1
+}
+if ( plot_mode == "freq" ){
+	color_act <- somm$code.sum$nobs;
+	if (max(color_act) == 1){
+		color_act <- color_act * 3 + 1;
+	} else {
+		color_act <- color_act - min(color_act)
+		color_act <- round( color_act / max(color_act) * 6 ) + 1
+		#color_act[color_act==7] <- 6
 	}
-} else {
-	for (i in 1:n_nodes^2){
-		x <- row2coods[i,1]
-		y <- row2coods[i,2]
-
-		polygon(
-			x=c( x + 0.5, x + 0.5, x,     x - 0.5, x - 0.5, x ),
-			y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
-			col=colors[i],
-			border="white",
-			lty=0,
-		)
+	color_seed <- brewer.pal(6,"GnBu")
+	#color_seed <- brewer.pal(6,"YlOrRd")
+	color_seed <- c("white", color_seed)
+	color_act <- color_seed[color_act]
+	
+	color_line <- "gray80"
+	if_points  <- 0
+}
+if ( plot_mode == "umat" ){
+	
+	# 距離計算
+	dist_u <- NULL
+	
+	dist_m <- as.matrix( dist(somm$code, method="euclid") )
+	
+	for (i in 0:(n_nodes - 1)){
+		for (h in 0:(n_nodes - 1)){
+			cu <- NULL
+			n  <- 0
+			
+			if (h != n_nodes -1){       # 右
+				cu <- c(
+					cu, 
+					dist_m[
+						h     + i * n_nodes + 1,
+						h + 1 + i * n_nodes + 1
+					]
+				)
+			}
+			
+			if (h != 0){                # 左
+				cu <- c(
+					cu,
+					dist_m[
+						h     + i * n_nodes + 1,
+						h - 1 + i * n_nodes + 1
+					]
+				)
+			}
+			
+			if (i != n_nodes - 1){
+				if (h %% 2 == 0){       # 右上（偶数）
+					cu <- c(
+						cu,
+						dist_m[
+							h +   i       * n_nodes + 1,
+							h + ( i + 1 ) * n_nodes + 1
+						]
+					)
+				} else {                # 右上（奇数）
+					if (h != n_nodes -1){
+						cu <- c(
+							cu,
+							dist_m[
+								h     +   i       * n_nodes + 1,
+								h + 1 + ( i + 1 ) * n_nodes + 1
+							]
+						)
+					}
+				}
+			}
+			
+			if (i != 0){
+				if (h %% 2 == 0){       # 右下（偶数）
+					cu <- c(
+						cu,
+						dist_m[
+							h +   i       * n_nodes + 1,
+							h + ( i - 1 ) * n_nodes + 1
+						]
+					)
+				} else {                # 右下（奇数）
+					if (h != n_nodes -1){
+						cu <- c(
+							cu,
+							dist_m[
+								h     +   i       * n_nodes + 1,
+								h + 1 + ( i - 1 ) * n_nodes + 1
+							]
+						)
+					}
+				}
+			}
+			
+			if (i != n_nodes - 1){
+				if (h %% 2 == 0){       # 左上（偶数）
+					if (h != 0){
+						cu <- c(
+							cu,
+							dist_m[
+								h      +   i       * n_nodes + 1,
+								h - 1  + ( i + 1 ) * n_nodes + 1
+							]
+						)
+					}
+				} else {                # 左上（奇数）
+					cu <- c(
+						cu,
+						dist_m[
+							h +   i       * n_nodes + 1,
+							h + ( i + 1 ) * n_nodes + 1
+						]
+					)
+				}
+			}
+			
+			if (i != 0){
+				if (h %% 2 == 0){       # 左下（偶数）
+					if (h != 0){
+						cu <- c(
+							cu,
+							dist_m[
+								h      +   i       * n_nodes + 1,
+								h - 1  + ( i - 1 ) * n_nodes + 1
+							]
+						)
+					}
+				} else {                # 左下（奇数）
+					cu <- c(
+						cu,
+						dist_m[
+							h +   i       * n_nodes + 1,
+							h + ( i - 1 ) * n_nodes + 1
+						]
+					)
+				}
+			}
+			dist_u <- c(dist_u, median(cu) )
+		}
 	}
+	
+	print( summary(dist_u) )
+	
+	dist_u <- dist_u - min(dist_u)
+	dist_u <- round( dist_u / max(dist_u) * 100 ) + 1
+	color_act <- cm.colors(101)[dist_u]
+	
+	color_line <- "gray80"
+	if_points  <- 1
 }
 
-if (T){
+
+for (i in 1:n_nodes^2){                           # ノードの色
+	x <- row2coods[i,1]
+	y <- row2coods[i,2]
+
+	polygon(
+		x=c( x + 0.5, x + 0.5, x,     x - 0.5, x - 0.5, x ),
+		y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
+		col=color_act[i],
+		border="white",
+		lty=0,
+	)
+}
+
 
 for (i in 0:(n_nodes - 1)){                       # 白線・縦
 	for (h in 0:(n_nodes - 2)){
@@ -393,10 +385,57 @@ for (i in 0:(n_nodes - 1)){                       # 白線・縦
 			segments(
 				x + 0.5, y + a,
 				x + 0.5, y - a,
-				col="white",
+				col=color_line,
 				lwd=1,
 			)
 		}
+	}
+}
+
+for (i in 0:(n_nodes - 1)){                       # 白線・両端
+	for (h in c(-1, n_nodes-1) ){
+		x <- h
+		y <- i
+		if ( y %% 2 == 1 ){
+			x <- x + 0.5
+		}
+		segments(                       # 縦線
+			x + 0.5, y + a,
+			x + 0.5, y - a,
+			col=color_line,
+			lwd=1,
+		)
+	}
+	if ( y %% 2 == 0 ){
+		segments(                       # 左端1
+			-0.5, y + a,
+			0   , y + 1 - a,
+			col=color_line,
+			lwd=1,
+		)
+		if ( y != 0){
+			segments(                   # 左端2
+				-0.5, y - a,
+				 0  , y - 1 + a,
+				col=color_line,
+				lwd=1,
+			)
+		}
+	} else {
+		if ( y != n_nodes - 1){
+			segments(                   # 右端1
+				n_nodes - 0.5, y + 1 - a,
+				n_nodes      , y + a,
+				col=color_line,
+				lwd=1,
+			)
+		}
+		segments(                       # 右端2
+			n_nodes - 0.5, y - 1 + a,
+			n_nodes      , y - a,
+			col=color_line,
+			lwd=1,
+		)
 	}
 }
 
@@ -429,7 +468,7 @@ for (i in 0:(n_nodes - 2)){                       # 白線・右上
 			segments(
 				x,       y + b,
 				x + 0.5, y + a,
-				col="white",
+				col=color_line,
 				lwd=1,
 			)
 		}
@@ -443,7 +482,6 @@ for (i in 0:(n_nodes - 2)){                       # 白線・左上
 		} else {
 			chk <- 0
 		}
-	
 		if (
 			   is.na(colors[h +        i    * n_nodes + 1]) == 1
 			|| is.na(colors[h - chk + (i+1) * n_nodes + 1]) == 1
@@ -465,13 +503,13 @@ for (i in 0:(n_nodes - 2)){                       # 白線・左上
 			segments(
 				x,       y + b,
 				x - 0.5, y + a,
-				col="white",
+				col=color_line,
 				lwd=1,
 			)
 		}
 	}
 }
-}
+
 
 
 for (i in 0:(n_nodes - 1)){                       # グレー境界線・縦
@@ -580,29 +618,31 @@ for (i in 1:nrow(somm$visual)){
 }
 points <- matrix( points, byrow=T, ncol=2  )
 
-if (F){
-	for (i in 1:nrow(points)){
-		x <- points[i,1]
-		y <- points[i,2]
-	
-		polygon(
-			x=c( x + c, x + c, x,     x - c, x - c, x ),
-			y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
-			col="white",
-			border="gray70",
-			lty=1,
+if( if_points == 1 ){
+	if (F){
+		for (i in 1:nrow(points)){
+			x <- points[i,1]
+			y <- points[i,2]
+		
+			polygon(
+				x=c( x + c, x + c, x,     x - c, x - c, x ),
+				y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
+				col="white",
+				border="gray70",
+				lty=1,
+			)
+		}
+	} else {
+		symbols(
+			points[,1],
+			points[,2],
+			squares=rep(0.35,length(points[,1])),
+			fg="gray70",
+			bg="white",
+			inches=F,
+			add=T,
 		)
 	}
-} else {
-	symbols(
-		points[,1],
-		points[,2],
-		squares=rep(0.35,length(points[,1])),
-		fg="gray70",
-		bg="white",
-		inches=F,
-		add=T,
-	)
 }
 
 library(maptools)                                 # 語のラベル
@@ -625,6 +665,7 @@ text(
 	offset=0,
 	font=text_font
 )
+
 
 ';
 }

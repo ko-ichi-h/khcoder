@@ -623,16 +623,20 @@ gui_window::word_som:
     u_w:                      'Select the unit & words'
     opt:                      'Self-Organizing Map Options'
 gui_widget::r_som:
-    n_nodes1:                 'Number of nodes:'
-    n_nodes2:                 '^2'
+    n_nodes1:                 'Number of nodes (a side):'
     cluster_color:            'Clustering nodes'
     cls_num:                  'Number of clusters:'
     2_12:                     '(from 2 to 12)'
-    t_nodes:                  'Topology: '
     hex:                      'hexagon'
     sq:                       'square'
     p_nodes:                  'Plot: '
+    rlen:                     'Number of steps:'
 gui_window::r_plot::word_som:
+    cls:                      'Clusters'
+    gray:                     'Grayscale'
+    freq:                     'Frequency'
+    umat:                     'U-Matrix'
+    views:                    ' Color: '
     win_title:                'Self-Organizing Map of Words'
 gui_window::r_plot_opt::word_som:
     win_title:                'Configure: Self-Organizing Map of Words'
