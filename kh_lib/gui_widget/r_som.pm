@@ -8,33 +8,33 @@ sub _new{
 	my $self = shift;
 
 	my $win = $self->parent->Frame();
-	my $f4  = $win->Frame()->pack(-fill => 'x');
 
-	$self->{n_nodes} = 15   unless defined $self->{n_nodes};
+	$self->{n_nodes} = 20   unless defined $self->{n_nodes};
 	$self->{if_cls}  =  1   unless defined $self->{if_cls};
 	$self->{n_cls}   =  8   unless defined $self->{n_cls};
-	$self->{topo}    = 'hx' unless defined $self->{topo};
 	$self->{p_topo}  = 'hx' unless defined $self->{p_topo};
+	$self->{rlen1}   = 138  unless defined $self->{rlen1};
+	$self->{rlen2}   = 690  unless defined $self->{rlen2};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){
 			$self->{n_cls} = $1;
 		}
 
-		if ($self->{n_cls} > 0){
-			$self->{if_cls} = 1;
-		} else {
-			$self->{if_cls} = 0;
+		if ( $self->{r_cmd} =~ /if_cls <- ([0-9]+)\n/ ){
+			$self->{if_cls} = $1;
 		}
 
 		if ( $self->{r_cmd} =~ /n_nodes <- ([0-9]+)\n/ ){
 			$self->{n_nodes} = $1;
 		}
 
-		if ($self->{r_cmd} =~ /topol/ ){
-			$self->{topo} = 'hx';
-		} else {
-			$self->{topo} = 'sq';
+		if ( $self->{r_cmd} =~ /rlen1 <- ([0-9]+)\n/ ){
+			$self->{rlen1} = $1;
+		}
+
+		if ( $self->{r_cmd} =~ /rlen2 <- ([0-9]+)\n/ ){
+			$self->{rlen2} = $1;
 		}
 
 		if ( $self->{r_cmd} =~ /if_plothex <- ([01])\n/ ){
@@ -55,7 +55,7 @@ sub _new{
 	);
 
 	$f5->Label(
-		-text => kh_msg->get('n_nodes1'), # ノード数：
+		-text => kh_msg->get('n_nodes1'), # 1辺のノード数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -70,54 +70,26 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_n_nodes});
 
 	$f5->Label(
-		-text => kh_msg->get('n_nodes2'), # ^2
+		-text => ' ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
-
-	# ノード形状
-	my $f3 = $win->Frame()->pack(
-		-fill => 'x',
-		-pady => 0
-	);
-	$f3->Label(
-		-text => kh_msg->get('t_nodes'), # ノード形状：
-		-font => "TKFN",
-	)->pack(-side => 'left');
-
-	$f3->Radiobutton(
-		-text             => kh_msg->get('hex'), # 6角形
-		-variable         => \$self->{topo},
-		-value            => 'hx',
-		-command          => sub{ $self->refresh_topo;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$f3->Radiobutton(
-		-text             => kh_msg->get('sq'), # 正方形
-		-variable         => \$self->{topo},
-		-value            => 'sq',
-		-command          => sub{ $self->refresh_topo;},
-	)->pack(-anchor => 'w', -side => 'left');
 
 	# 描画の形状
-	my $f2 = $win->Frame()->pack(
-		-fill => 'x',
-		-pady => 0
-	);
-	$f2->Label(
+	$f5->Label(
 		-text => kh_msg->get('p_nodes'), # 描画の形状：
 		-font => "TKFN",
 	)->pack(-side => 'left');
-	$self->{radio_hex} = $f2->Radiobutton(
-		-text             => kh_msg->get('hex'), # 6角形
-		-variable         => \$self->{p_topo},
-		-value            => 'hx',
-	)->pack(-anchor => 'w', -side => 'left');
-	$self->{radio_sq} = $f2->Radiobutton(
-		-text             => kh_msg->get('sq'), # 正方形
-		-variable         => \$self->{p_topo},
-		-value            => 'sq',
-	)->pack(-anchor => 'w', -side => 'left');
 
+	my $widget = gui_widget::optmenu->open(
+		parent  => $f5,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('hex'),'hx'],
+				[kh_msg->get('sq'), 'sq'],
+			],
+		variable => \$self->{p_topo},
+	);
 
 	# クラスター化
 	$win->Checkbutton(
@@ -158,21 +130,41 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->refresh_cls;
-	$self->refresh_topo;
+
+	# 学習回数
+	my $f4 = $win->Frame()->pack( -fill => 'x', -pady => 2);
+	$f4->Label(
+		-text => kh_msg->get('rlen'), # 学習回数
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_rlen1} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 5,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_rlen1}->insert(0,$self->{rlen1});
+	$self->{entry_rlen1}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_rlen1});
+
+	$f4->Label(
+		-text => ', ',
+	)->pack(-side => 'left');
+
+	$self->{entry_rlen2} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 7,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	$self->{entry_rlen2}->insert(0,$self->{rlen2});
+	$self->{entry_rlen2}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_rlen2});
+
+
 
 	$self->{win_obj} = $win;
-	return $self;
-}
-
-sub refresh_topo{
-	my $self = shift;
-	if ($self->{topo} eq 'hx'){
-		$self->{radio_hex}->configure(-state => 'normal');
-		$self->{radio_sq}->configure(-state => 'normal');
-	} else {
-		$self->{radio_hex}->configure(-state => 'disable');
-		$self->{radio_sq}->configure(-state => 'disable');
-	}
 	return $self;
 }
 
@@ -209,9 +201,11 @@ sub params{
 	my $self = shift;
 	return (
 		n_nodes => gui_window->gui_jg( $self->{entry_n_nodes}->get ),
+		if_cls  => gui_window->gui_jg( $self->{if_cls} ),
 		n_cls   => $self->n,
-		topo    => gui_window->gui_jg( $self->{topo} ),
 		p_topo  => gui_window->gui_jg( $self->{p_topo} ),
+		rlen1   => gui_window->gui_jg( $self->{entry_rlen1}->get ),
+		rlen2   => gui_window->gui_jg( $self->{entry_rlen2}->get ),
 	);
 }
 
