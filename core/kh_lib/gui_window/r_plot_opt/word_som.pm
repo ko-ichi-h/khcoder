@@ -11,6 +11,7 @@ sub innner{
 		command => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
 		r_cmd   => $self->{command_f},
+		reuse  => 1,
 	);
 
 	return $self;
@@ -42,6 +43,7 @@ sub calc{
 	use plotR::som;
 	my $plotR = plotR::som->new(
 		$self->{som_obj}->params,
+		reuse             => 1,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,

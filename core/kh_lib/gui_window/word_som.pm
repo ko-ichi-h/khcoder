@@ -61,6 +61,11 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
+	$win->Label(
+		-text    => kh_msg->get('time_warn'),
+		-justify => 'left'
+	)->pack(-anchor => 'w');
+
 	$win->Button(
 		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
