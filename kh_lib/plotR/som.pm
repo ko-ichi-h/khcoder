@@ -266,7 +266,8 @@ if ( plot_mode == "gray"){                        # 各カラーモードへの対応
 	color_line <- "gray70"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray50"
+	color_cls  <- "gray45"
+	color_ptf  <- "gray90"
 }
 if ( plot_mode == "color" ) {
 	color_act <- colors
@@ -274,6 +275,7 @@ if ( plot_mode == "color" ) {
 	if_points  <- 1
 	w_lwd      <- 1
 	color_cls  <- "gray50"
+	color_ptf  <- "white"
 }
 if ( plot_mode == "freq" ){
 	color_act <- somm$code.sum$nobs;
@@ -293,6 +295,7 @@ if ( plot_mode == "freq" ){
 	if_points  <- 0
 	w_lwd      <- 1
 	color_cls  <- "gray50"
+	color_ptf  <- "white"
 }
 if ( plot_mode == "umat" ){
 	
@@ -427,6 +430,7 @@ if ( plot_mode == "umat" ){
 	if_points  <- 1
 	w_lwd      <- 1
 	color_cls  <- "gray50"
+	color_ptf  <- "white"
 }
 
 
@@ -698,7 +702,7 @@ if( if_points == 1 ){
 			polygon(
 				x=c( x + c, x + c, x,     x - c, x - c, x ),
 				y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
-				col="white",
+				col=color_ptf,
 				border="gray70",
 				lty=1,
 			)
@@ -709,7 +713,7 @@ if( if_points == 1 ){
 			points[,2],
 			squares=rep(0.35,length(points[,1])),
 			fg="gray70",
-			bg="white",
+			bg=color_ptf,
 			inches=F,
 			add=T,
 		)
