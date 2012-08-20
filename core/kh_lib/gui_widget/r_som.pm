@@ -194,21 +194,12 @@ sub refresh_cls{
 #----------------------#
 #   設定へのアクセサ   #
 
-sub n{
-	my $self = shift;
-	if ( $self->{if_cls} ) {
-		return gui_window->gui_jg( $self->{entry_cls_num}->get );
-	} else {
-		return 0;
-	}
-}
-
 sub params{
 	my $self = shift;
 	return (
 		n_nodes => gui_window->gui_jg( $self->{entry_n_nodes}->get ),
 		if_cls  => gui_window->gui_jg( $self->{if_cls} ),
-		n_cls   => $self->n,
+		n_cls   => gui_window->gui_jg( $self->{entry_cls_num}->get ),
 		p_topo  => gui_window->gui_jg( $self->{p_topo} ),
 		rlen1   => gui_window->gui_jg( $self->{entry_rlen1}->get ),
 		rlen2   => gui_window->gui_jg( $self->{entry_rlen2}->get ),

@@ -33,6 +33,10 @@ sub new{
 	} else {
 		$param1 .= "if_plothex <- 0\n";
 	}
+	$param1 .= "\n";
+	$param1 .= "# n_nodes <- $args{n_nodes}\n";
+	$param1 .= "# rlen1 <- $args{rlen1}\n";
+	$param1 .= "# rlen2 <- $args{rlen2}\n";
 
 	# 自己組織化マップを保存するファイル名
 	my $file_save = $::project_obj->file_datadir;
@@ -60,7 +64,7 @@ sub new{
 
 		# 自己組織化マップの保存
 		$::config_obj->R->send(
-			"save(d,somm, file=\"$file_save\" )\n"
+			"save(word_labs,n_nodes,somm, file=\"$file_save\" )\n"
 		);
 		print $::config_obj->R->read();
 		
@@ -83,7 +87,6 @@ sub new{
 	my $p0_a = "load(\"$file_save\")\n";
 	$p0_a   .= "# END: DATA\n";
 	$p0_a   .= "$param1\n\n";
-	$p0_a   .= "$param0\n\n";
 
 	my $p1 = $self->r_cmd_p1_hx;
 	my $p2 = $self->r_cmd_p2_hx;
@@ -92,34 +95,37 @@ sub new{
 	my @plots = ();
 	my $flg_error = 0;
 
-	$plots[0] = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_1',
-		command_f =>
-			 $p0_a
-			.$p1
-			."plot_mode <- \"color\"\n"
-			.$p2,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
-	) or $flg_error = 1;
+	my $com_a = '';
 
 	if ( $args{if_cls} == 1 ){
-		$plots[1] = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_2',
+		push @plots, kh_r_plot->new(
+			name      => $args{plotwin_name}.'_1',
 			command_f =>
 				 $p0_a
 				.$p1
-				."plot_mode <- \"gray\"\n"
-				.$p2,
-			command_a =>
-				 "plot_mode <- \"gray\"\n"
+				."plot_mode <- \"color\"\n"
 				.$p2,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 		) or $flg_error = 1;
+		$com_a = "plot_mode <- \"gray\"\n".$p2;
 	}
+	
+	push @plots, kh_r_plot->new(
+		name      => $args{plotwin_name}.'_2',
+		command_f =>
+			 $p0_a
+			.$p1
+			."plot_mode <- \"gray\"\n"
+			.$p2,
+		command_a =>
+			 $com_a,
+		width     => $args{plot_size},
+		height    => $args{plot_size},
+	) or $flg_error = 1;
 
-	$plots[2] = kh_r_plot->new(
+
+	push @plots, kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
 		command_f =>
 			 $p0_a
@@ -133,7 +139,7 @@ sub new{
 		height    => $args{plot_size},
 	) or $flg_error = 1;
 
-	$plots[3] = kh_r_plot->new(
+	push @plots, kh_r_plot->new(
 		name      => $args{plotwin_name}.'_4',
 		command_f =>
 			 $p0_a
@@ -182,6 +188,8 @@ somm <- som(
 	topol="hexa",
 	rlen=c(rlen1,rlen2)
 )
+
+word_labs <- rownames(d)
 
 
 ';
@@ -254,14 +262,18 @@ if (if_plothex == 1){                             # 格子の色
 b <- 1-a
 
 if ( plot_mode == "gray"){                        # 各カラーモードへの対応
-	color_act  <- rep("gray90",n_nodes^2)
-	color_line <- "white"
+	color_act  <- rep("white",n_nodes^2)
+	color_line <- "gray70"
 	if_points  <- 1
+	w_lwd      <- 1
+	color_cls  <- "gray50"
 }
 if ( plot_mode == "color" ) {
 	color_act <- colors
 	color_line <- "white"
 	if_points  <- 1
+	w_lwd      <- 1
+	color_cls  <- "gray50"
 }
 if ( plot_mode == "freq" ){
 	color_act <- somm$code.sum$nobs;
@@ -277,8 +289,10 @@ if ( plot_mode == "freq" ){
 	color_seed <- c("white", color_seed)
 	color_act <- color_seed[color_act]
 	
-	color_line <- "gray80"
+	color_line <- "gray70"
 	if_points  <- 0
+	w_lwd      <- 1
+	color_cls  <- "gray50"
 }
 if ( plot_mode == "umat" ){
 	
@@ -409,8 +423,10 @@ if ( plot_mode == "umat" ){
 	dist_u <- round( dist_u / max(dist_u) * 100 ) + 1
 	color_act <- cm.colors(101)[dist_u]
 	
-	color_line <- "gray80"
+	color_line <- "gray70"
 	if_points  <- 1
+	w_lwd      <- 1
+	color_cls  <- "gray50"
 }
 
 
@@ -441,7 +457,7 @@ for (i in 0:(n_nodes - 1)){                       # 白線・縦
 				x + 0.5, y + a,
 				x + 0.5, y - a,
 				col=color_line,
-				lwd=1,
+				lwd=w_lwd,
 			)
 		}
 	}
@@ -458,7 +474,7 @@ for (i in 0:(n_nodes - 1)){                       # 白線・両端
 			x + 0.5, y + a,
 			x + 0.5, y - a,
 			col=color_line,
-			lwd=1,
+			lwd=w_lwd,
 		)
 	}
 	if ( y %% 2 == 0 ){
@@ -466,14 +482,14 @@ for (i in 0:(n_nodes - 1)){                       # 白線・両端
 			-0.5, y + a,
 			0   , y + 1 - a,
 			col=color_line,
-			lwd=1,
+			lwd=w_lwd,
 		)
 		if ( y != 0){
 			segments(                   # 左端2
 				-0.5, y - a,
 				 0  , y - 1 + a,
 				col=color_line,
-				lwd=1,
+				lwd=w_lwd,
 			)
 		}
 	} else {
@@ -482,14 +498,14 @@ for (i in 0:(n_nodes - 1)){                       # 白線・両端
 				n_nodes - 0.5, y + 1 - a,
 				n_nodes      , y + a,
 				col=color_line,
-				lwd=1,
+				lwd=w_lwd,
 			)
 		}
 		segments(                       # 右端2
 			n_nodes - 0.5, y - 1 + a,
 			n_nodes      , y - a,
 			col=color_line,
-			lwd=1,
+			lwd=w_lwd,
 		)
 	}
 }
@@ -524,7 +540,7 @@ for (i in 0:(n_nodes - 2)){                       # 白線・右上
 				x,       y + b,
 				x + 0.5, y + a,
 				col=color_line,
-				lwd=1,
+				lwd=w_lwd,
 			)
 		}
 	}
@@ -559,7 +575,7 @@ for (i in 0:(n_nodes - 2)){                       # 白線・左上
 				x,       y + b,
 				x - 0.5, y + a,
 				col=color_line,
-				lwd=1,
+				lwd=w_lwd,
 			)
 		}
 	}
@@ -579,7 +595,7 @@ for (i in 0:(n_nodes - 1)){                       # グレー境界線・縦
 			segments(
 				x + 0.5, y + a,
 				x + 0.5, y - a,
-				col="gray60",
+				col=color_cls,
 				lwd=2,
 			)
 		}
@@ -615,7 +631,7 @@ for (i in 0:(n_nodes - 2)){                       # グレー境界線・右上
 			segments(
 				x,       y + b,
 				x + 0.5, y + a,
-				col="gray60",
+				col=color_cls,
 				lwd=2,
 			)
 		}
@@ -651,7 +667,7 @@ for (i in 0:(n_nodes - 2)){                       # グレー境界線・左上
 			segments(
 				x,       y + b,
 				x - 0.5, y + a,
-				col="gray60",
+				col=color_cls,
 				lwd=2,
 			)
 		}
@@ -705,7 +721,7 @@ if (is.null(labcd) == 1){
 	labcd <- pointLabel(
 		x=points[,1],
 		y=points[,2],
-		labels=rownames(d),
+		labels=word_labs,
 		doPlot=F,
 		cex=cex,
 		offset=0
@@ -715,7 +731,7 @@ if (is.null(labcd) == 1){
 text(
 	labcd$x,
 	labcd$y,
-	labels=rownames(d),
+	labels=word_labs,
 	cex=cex,
 	offset=0,
 	font=text_font
