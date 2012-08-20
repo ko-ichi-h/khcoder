@@ -522,12 +522,36 @@ sub _save_r{
 	my $self = shift;
 	my $path = shift;
 	
+	my $t = $self->{command_f};
+	
+	# SOMのための特殊処理
+	if ($t =~ /^load\(\"(.+)\"\)/){
+		my $file = $1;
+		$file .= '_s';
+		if ( -e $file ){
+			#print "file: $file\n";
+			open (my $fh, '<', $file)
+				or gui_errormsg->open(
+					type    => 'file',
+					thefile => $file,
+				)
+			;
+			my $t0 = '';
+			while (<$fh>){
+				$t0 .= $_;
+			}
+			close $fh;
+			$t =~ s/^load\(\"(.+)\"\)\n//;
+			$t = $t0."\n".$t;
+		}
+	}
+	
 	open (OUTF,">$path") or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $path,
 		);
-	print OUTF $self->{command_f},"\n";
+	print OUTF $t,"\n";
 	close (OUTF);
 	
 	return 1;

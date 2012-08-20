@@ -16,20 +16,73 @@ sub new{
 	my $r_command = $args{r_command};
 	$args{font_bold} += 1;
 
-	# パラメーター設定部分
-	$r_command .= "cex <- $args{font_size}\n";
-	$r_command .= "text_font <- $args{font_bold}\n";
-	$r_command .= "n_nodes <- $args{n_nodes}\n";
-	$r_command .= "if_cls <- $args{if_cls}\n";
-	$r_command .= "n_cls <- $args{n_cls}\n";
-	$r_command .= "rlen1 <- $args{rlen1}\n";
-	$r_command .= "rlen2 <- $args{rlen2}\n";
-	
+	# パラメーター設定（SOM）
+	my $param0 = "\n";
+	$param0 .= "n_nodes <- $args{n_nodes}\n";
+	$param0 .= "rlen1 <- $args{rlen1}\n";
+	$param0 .= "rlen2 <- $args{rlen2}\n";
+
+	# パラメーター設定（描画）
+	my $param1 = "\n";
+	$param1 .= "cex <- $args{font_size}\n";
+	$param1 .= "text_font <- $args{font_bold}\n";
+	$param1 .= "if_cls <- $args{if_cls}\n";
+	$param1 .= "n_cls <- $args{n_cls}\n";
 	if ($args{p_topo} eq 'hx'){
-		$r_command .= "if_plothex <- 1\n";
+		$param1 .= "if_plothex <- 1\n";
 	} else {
-		$r_command .= "if_plothex <- 0\n";
+		$param1 .= "if_plothex <- 0\n";
 	}
+
+	# 自己組織化マップを保存するファイル名
+	my $file_save = $::project_obj->file_datadir;
+	$file_save .= '_'.$args{plotwin_name};
+	my $icode = Jcode::getcode($file_save);
+	$file_save = Jcode->new($file_save, $icode)->euc;
+	$file_save =~ tr/\\/\//;
+	$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
+
+	# 自己組織化マップの実行
+	unless ($args{reuse}){
+		if ( -e $file_save ){
+			unlink $file_save;
+		}
+		my $r_data = $r_command;
+		$r_data = Jcode->new($r_data)->sjis if $::config_obj->os eq 'win32';
+		
+		my $p0_r = $self->r_cmd_p0_hx;
+		$::config_obj->R->send(
+			 $r_data
+			.$param0
+			.$p0_r
+		);
+		print $::config_obj->R->read();
+
+		# 自己組織化マップの保存
+		$::config_obj->R->send(
+			"save(d,somm,n_nodes, file=\"$file_save\" )\n"
+		);
+		print $::config_obj->R->read();
+		
+		my $file_save_s = $file_save.'_s';
+		open (my $fh, '>', $file_save_s)
+			or gui_errormsg->open(
+				type    => 'file',
+				thefile => $file_save_s,
+			)
+		;
+		print $fh 
+			 $r_data
+			.$param0
+			.$p0_r
+		;
+		close $fh;
+	}
+
+	# コマンドの準備
+	my $p0_a = "load(\"$file_save\")\n";
+	$p0_a   .= "# END: DATA\n";
+	$p0_a   .= "$param1\n\n";
 
 	my $p1 = $self->r_cmd_p1_hx;
 	my $p2 = $self->r_cmd_p2_hx;
@@ -41,7 +94,7 @@ sub new{
 	$plots[0] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f =>
-			 $r_command
+			 $p0_a
 			.$p1
 			."plot_mode <- \"color\"\n"
 			.$p2,
@@ -53,7 +106,7 @@ sub new{
 		$plots[1] = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_2',
 			command_f =>
-				 $r_command
+				 $p0_a
 				.$p1
 				."plot_mode <- \"gray\"\n"
 				.$p2,
@@ -68,7 +121,7 @@ sub new{
 	$plots[2] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
 		command_f =>
-			 $r_command
+			 $p0_a
 			.$p1
 			."plot_mode <- \"freq\"\n"
 			.$p2,
@@ -82,7 +135,7 @@ sub new{
 	$plots[3] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_4',
 		command_f =>
-			 $r_command
+			 $p0_a
 			.$p1
 			."plot_mode <- \"umat\"\n"
 			.$p2,
@@ -111,29 +164,30 @@ sub new{
 	return $self;
 }
 
-sub r_cmd_p1_hx{
+sub r_cmd_p0_hx{
 	return '
 
 d <- t(d)
 d <- subset(d, rowSums(d) > 0)
-#d <- scale(d)
+d <- scale(d)
 d <- t(d)
 
-# SOMの実行
+# SOM
 library(som)
-d <- normalize(d)
-ti <- system.time(
-	somm <- som(
-		d,
-		n_nodes,
-		n_nodes,
-		topol="hexa",
-		rlen=c(rlen1,rlen2)
-	)
+somm <- som(
+	d,
+	n_nodes,
+	n_nodes,
+	topol="hexa",
+	rlen=c(rlen1,rlen2)
 )
-#print(ti)
-#print(somm$rlen)
-#print(summary(somm))
+
+
+';
+}
+
+sub r_cmd_p1_hx{
+	return '
 
 # 格子の座標を取得
 row2coods <- NULL

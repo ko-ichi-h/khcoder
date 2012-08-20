@@ -622,6 +622,7 @@ gui_window::word_som:
     cluster:                  ' '
     u_w:                      'Select the unit & words'
     opt:                      'Self-Organizing Map Options'
+    time_warn:                "It may take several hours or days to make the\nself-organizing map!"
 gui_widget::r_som:
     n_nodes1:                 'Number of nodes (a side):'
     cluster_color:            'Clustering nodes'

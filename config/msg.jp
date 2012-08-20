@@ -624,6 +624,7 @@ gui_window::word_som:
     cluster:                  '布置'
     u_w:                      '集計単位と抽出語の選択'
     opt:                      '自己組織化マップのオプション'
+    time_warn:                "※自己組織化マップの作成には数時間ないし数日を\n要する場合があります。"
 gui_widget::r_som:
     n_nodes1:                 '1辺のノード数：'
     cluster_color:            'ノードのクラスター化'
@@ -631,7 +632,7 @@ gui_widget::r_som:
     2_12:                     '（2から12まで）'
     hex:                      '6角形'
     sq:                       '4角形'
-    p_nodes:                  '描画：'
+    p_nodes:                  '描画の形状：'
     rlen:                     '学習回数：'
 gui_window::r_plot::word_som:
     cls:                      'クラスター'

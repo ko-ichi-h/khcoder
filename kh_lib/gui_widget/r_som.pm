@@ -13,8 +13,8 @@ sub _new{
 	$self->{if_cls}  =  1   unless defined $self->{if_cls};
 	$self->{n_cls}   =  8   unless defined $self->{n_cls};
 	$self->{p_topo}  = 'hx' unless defined $self->{p_topo};
-	$self->{rlen1}   = 138  unless defined $self->{rlen1};
-	$self->{rlen2}   = 690  unless defined $self->{rlen2};
+	$self->{rlen1}   = 1000 unless defined $self->{rlen1};
+	$self->{rlen2}   = 200000  unless defined $self->{rlen2};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){
@@ -54,7 +54,7 @@ sub _new{
 		-pady => 2
 	);
 
-	$f5->Label(
+	$self->{cd_l1} = $f5->Label(
 		-text => kh_msg->get('n_nodes1'), # 1辺のノード数：
 		-font => "TKFN",
 	)->pack(-side => 'left');
@@ -133,7 +133,7 @@ sub _new{
 
 	# 学習回数
 	my $f4 = $win->Frame()->pack( -fill => 'x', -pady => 2);
-	$f4->Label(
+	$self->{cd_l2} = $f4->Label(
 		-text => kh_msg->get('rlen'), # 学習回数
 		-font => "TKFN",
 	)->pack(-side => 'left');
@@ -148,7 +148,7 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_rlen1});
 
-	$f4->Label(
+	$self->{cd_l3} = $f4->Label(
 		-text => ', ',
 	)->pack(-side => 'left');
 
@@ -162,7 +162,13 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_rlen2});
 
-
+	if ( $self->{reuse} ){
+		$self->{cd_l1}         ->configure(-state => 'disable');
+		$self->{entry_n_nodes} ->configure(-state => 'disable');
+		$self->{cd_l2}         ->configure(-state => 'disable');
+		$self->{entry_rlen1}   ->configure(-state => 'disable');
+		$self->{entry_rlen2}   ->configure(-state => 'disable');
+	}
 
 	$self->{win_obj} = $win;
 	return $self;

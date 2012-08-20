@@ -749,9 +749,7 @@ sub dir_CoderData{
 
 sub file_datadir{
 	my $self = shift;
-	
 
-	
 	my $temp = $self->file_short_name;
 	$temp = substr($temp,0,rindex($temp,'.'));
 
