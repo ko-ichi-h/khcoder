@@ -60,7 +60,7 @@ sub new{
 
 		# 自己組織化マップの保存
 		$::config_obj->R->send(
-			"save(d,somm,n_nodes, file=\"$file_save\" )\n"
+			"save(d,somm, file=\"$file_save\" )\n"
 		);
 		print $::config_obj->R->read();
 		
@@ -83,6 +83,7 @@ sub new{
 	my $p0_a = "load(\"$file_save\")\n";
 	$p0_a   .= "# END: DATA\n";
 	$p0_a   .= "$param1\n\n";
+	$p0_a   .= "$param0\n\n";
 
 	my $p1 = $self->r_cmd_p1_hx;
 	my $p2 = $self->r_cmd_p2_hx;
