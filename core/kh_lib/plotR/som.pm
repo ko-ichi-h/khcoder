@@ -274,7 +274,7 @@ if ( plot_mode == "color" ) {
 	color_line <- "white"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray50"
+	color_cls  <- "gray60"
 	color_ptf  <- "white"
 }
 if ( plot_mode == "freq" ){
@@ -294,7 +294,7 @@ if ( plot_mode == "freq" ){
 	color_line <- "gray70"
 	if_points  <- 0
 	w_lwd      <- 1
-	color_cls  <- "gray50"
+	color_cls  <- "gray45"
 	color_ptf  <- "white"
 }
 if ( plot_mode == "umat" ){
@@ -429,7 +429,7 @@ if ( plot_mode == "umat" ){
 	color_line <- "gray70"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray50"
+	color_cls  <- "gray45"
 	color_ptf  <- "white"
 }
 
