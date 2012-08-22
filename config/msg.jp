@@ -718,6 +718,12 @@ gui_window::cod_netg:
     win_title:                'コーディング・共起ネットワーク：オプション'
     c_c:                      '語 ― 語'
     c_v:                      '語 ― 外部変数・見出し'
+gui_window::cod_som:
+    win_title:                'コーディング・自己組織化マップ：オプション'
+gui_window::r_plot::cod_som:
+    win_title:                'コーディング・自己組織化マップ'
+gui_window::r_plot_opt::cod_som:
+    win_title:                'コーディング・自己組織化マップ：調整'
 gui_window::r_plot_opt::cod_netg:
     win_title:                'コーディング・共起ネットワーク：調整'
 gui_window::r_plot::cod_netg:

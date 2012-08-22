@@ -712,6 +712,7 @@ if( if_points == 1 ){
 			points[,1],
 			points[,2],
 			squares=rep(0.35,length(points[,1])),
+			#circles=rep(0.2,length(points[,1])),
 			fg="gray70",
 			bg=color_ptf,
 			inches=F,

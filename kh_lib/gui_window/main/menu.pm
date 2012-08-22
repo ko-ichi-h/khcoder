@@ -364,7 +364,7 @@ sub make{
 		push @menu1, 't_word_netgraph' if $::config_obj->R;
 
 		$self->{t_word_som} = $f3->command(
-				-label => kh_msg->get('som'),#gui_window->gui_jchar('共起ネットワーク'),
+				-label => kh_msg->get('som'), # 自己組織化マップ
 				-font => "TKFN",
 				-command => sub{
 					gui_window::word_som->open;
@@ -605,6 +605,16 @@ sub make{
 				-state => 'disable'
 			);
 		push @menu1, 't_cod_netg' if $::config_obj->R;
+
+		$self->{t_cod_som} = $f5->command(
+				-label => kh_msg->get('som'), # 自己組織化マップ
+				-font => "TKFN",
+				-command => sub{
+					gui_window::cod_som->open;
+				},
+				-state => 'disable'
+			);
+		push @menu1, 't_cod_som' if $::config_obj->R;
 
 		$f5->separator();
 

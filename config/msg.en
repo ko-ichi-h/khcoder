@@ -679,6 +679,12 @@ gui_window::r_plot::cod_cls:
     win_titile:               'Hierarchical Cluster Analysis of Codes'
 gui_window::cls_height::cod:
     win_title:                'Agglomeration: Hierarchical Cluster Analysis of Codes'
+gui_window::cod_som:
+    win_title:                'Options: Self-Organizing Map of Codes'
+gui_window::r_plot::cod_som:
+    win_title:                'Self-Organizing Map of Codes'
+gui_window::r_plot_opt::cod_som:
+    win_title:                'Configure: Self-Organizing Map of Codes'
 gui_widget::r_net:
     filter_edges:             'Filter edges:'
     e_top_n:                  'Top'
