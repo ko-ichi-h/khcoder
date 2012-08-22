@@ -84,6 +84,7 @@ use gui_window::bayes_view_log;
 use gui_window::bayes_view_knb;
 use gui_window::stop_words;
 use gui_window::word_som;
+use gui_window::cod_som;
 
 BEGIN{
 	if( $] > 5.008 ){
