@@ -14,7 +14,7 @@ sub _new{
 	$self->{n_cls}   =  8   unless defined $self->{n_cls};
 	$self->{p_topo}  = 'hx' unless defined $self->{p_topo};
 	$self->{rlen1}   = 1000 unless defined $self->{rlen1};
-	$self->{rlen2}   = 200000  unless defined $self->{rlen2};
+	$self->{rlen2}   = 'Auto' unless defined $self->{rlen2};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){
@@ -124,10 +124,10 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
-	$self->{label_cls2} = $fcls1->Label(
-		-text => kh_msg->get('2_12'), # （2から12まで）
-		-font => "TKFN",
-	)->pack(-side => 'left');
+	#$self->{label_cls2} = $fcls1->Label(
+	#	-text => kh_msg->get('2_12'), # （2から12まで）
+	#	-font => "TKFN",
+	#)->pack(-side => 'left');
 
 	$self->refresh_cls;
 
@@ -178,12 +178,12 @@ sub refresh_cls{
 	my $self = shift;
 	if ($self->{if_cls}){
 		$self->{label_cls1}     ->configure(-state => 'normal');
-		$self->{label_cls2}     ->configure(-state => 'normal');
+		#$self->{label_cls2}     ->configure(-state => 'normal');
 		$self->{entry_cls_num}  ->configure(-state => 'normal');
 		#$self->{check_cls_raw_w}->configure(-state => 'normal');
 	} else {
 		$self->{label_cls1}     ->configure(-state => 'disable');
-		$self->{label_cls2}     ->configure(-state => 'disable');
+		#$self->{label_cls2}     ->configure(-state => 'disable');
 		$self->{entry_cls_num}  ->configure(-state => 'disable');
 		#$self->{check_cls_raw_w}->configure(-state => 'disable');
 	}
@@ -194,6 +194,17 @@ sub refresh_cls{
 #----------------------#
 #   設定へのアクセサ   #
 
+sub rlen2{
+	my $self = shift;
+	my $r = gui_window->gui_jg( $self->{entry_rlen2}->get );
+	if ($r =~ /auto/i){
+		$r = gui_window->gui_jg( $self->{entry_n_nodes}->get );
+		$r = $r * $r * 500;
+	}
+	#print "rlen2: $r\n";
+	return $r;
+}
+
 sub params{
 	my $self = shift;
 	return (
@@ -202,7 +213,7 @@ sub params{
 		n_cls   => gui_window->gui_jg( $self->{entry_cls_num}->get ),
 		p_topo  => gui_window->gui_jg( $self->{p_topo} ),
 		rlen1   => gui_window->gui_jg( $self->{entry_rlen1}->get ),
-		rlen2   => gui_window->gui_jg( $self->{entry_rlen2}->get ),
+		rlen2   => $self->rlen2,
 	);
 }
 

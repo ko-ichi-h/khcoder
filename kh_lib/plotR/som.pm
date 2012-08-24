@@ -225,8 +225,14 @@ if ( if_cls == 1 ){
 		pastel[6] = brewer.pal(9, "Pastel1")[9]
 		pastel[9] = brewer.pal(9, "Pastel1")[6]
 		colors <- pastel[cutree(hcl,k=n_cls)]
-	} else {
+	}
+	if ( (n_cls > 9) && (n_cls <= 12) ) {
 		colors <- brewer.pal(12, "Set3")[cutree(hcl,k=n_cls)]
+	}
+	if (n_cls > 12) {
+		# 色の順番を決定
+		new_col <- order( runif(n_cls) )
+		colors <- terrain.colors(n_cls)[new_col[cutree(hcl,k=n_cls)]]
 	}
 } else {
 	colors <- rep("gray90", n_nodes^2)
@@ -274,7 +280,11 @@ if ( plot_mode == "color" ) {
 	color_line <- "white"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray60"
+	if (n_cls > 12) {
+		color_cls  <- "gray40"
+	} else {
+		color_cls  <- "gray60"
+	}
 	color_ptf  <- "white"
 }
 if ( plot_mode == "freq" ){
