@@ -638,7 +638,7 @@ gui_window::r_plot::word_som:
     cls:                      'クラスター'
     gray:                     'グレースケール'
     freq:                     '度数'
-    umat:                     'U行列'
+    umat:                     'U-Matrix'
     views:                    ' カラー：'
     win_title:                '抽出語・自己組織化マップ'
 gui_window::r_plot_opt::word_som:
