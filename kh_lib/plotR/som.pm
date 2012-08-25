@@ -155,6 +155,9 @@ sub new{
 
 	$::config_obj->R->send("print( summary(somm) )");
 	my $t = $::config_obj->R->read;
+	$t .= "\n";
+	$t .= "U-Matrix:\n";
+	$t .= $plots[$#plots]->r_msg;
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	print "-------------------------[Begin]-------------------------[R]\n";
 	print "$t\n";
