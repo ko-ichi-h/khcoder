@@ -531,6 +531,7 @@ sub search_byov{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end','<>_temp_for_search-->1');
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }
@@ -564,6 +565,7 @@ sub search_direct{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end',$q);
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }
@@ -603,6 +605,7 @@ sub cls_words{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }
@@ -640,6 +643,7 @@ sub cls_docs{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }

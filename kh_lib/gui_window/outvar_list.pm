@@ -304,6 +304,7 @@ sub v_docs{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }
@@ -345,6 +346,7 @@ sub v_words{
 	
 	$win->{direct_w_e}->delete(0,'end');
 	$win->{direct_w_e}->insert('end',$query);
+	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
 }
@@ -405,6 +407,7 @@ sub v_words_list{
 		
 		$win->{direct_w_e}->delete(0,'end');
 		$win->{direct_w_e}->insert('end',$query);
+		$win->win_obj->raise;
 		$win->win_obj->focus;
 		$win->search;
 		

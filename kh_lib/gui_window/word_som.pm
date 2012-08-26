@@ -70,7 +70,7 @@ sub _new{
 		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{$self->close;}
+		-command => sub{$self->withd;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
@@ -81,6 +81,21 @@ sub _new{
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	return $self;
+}
+
+sub start{
+	my $self = shift;
+
+	# Windowを閉じる際のバインド
+	$self->win_obj->bind(
+		'<Control-Key-q>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
 }
 
 #----------#
@@ -189,8 +204,7 @@ sub calc{
 	$plotR = undef;
 
 	unless ( $self->{check_rm_open} ){
-		$self->close;
-		undef $self;
+		$self->withd;
 	}
 
 	return 1;
