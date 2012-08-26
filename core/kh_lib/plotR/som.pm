@@ -229,13 +229,18 @@ if ( if_cls == 1 ){
 		pastel[9] = brewer.pal(9, "Pastel1")[6]
 		colors <- pastel[cutree(hcl,k=n_cls)]
 	}
-	if ( (n_cls > 9) && (n_cls <= 12) ) {
-		colors <- brewer.pal(12, "Set3")[cutree(hcl,k=n_cls)]
-	}
-	if (n_cls > 12) {
+	#if ( (n_cls > 9) && (n_cls <= 12) ) {
+	#	colors <- brewer.pal(12, "Set3")[cutree(hcl,k=n_cls)]
+	#}
+	if (n_cls > 9) {
 		# 色の順番を決定
+		library(colorspace)
 		new_col <- order( runif(n_cls) )
-		colors <- terrain.colors(n_cls)[new_col[cutree(hcl,k=n_cls)]]
+		colors <-
+			rainbow_hcl(n_cls, start = 30, end = 345, l=88, c=17.5)[
+			#terrain_hcl(n_cls, c = c(35, 5), l = c(85, 95), power = c(0.5,1))[
+				new_col[cutree(hcl,k=n_cls)]
+			]
 	}
 } else {
 	colors <- rep("gray90", n_nodes^2)
@@ -283,8 +288,8 @@ if ( plot_mode == "color" ) {
 	color_line <- "white"
 	if_points  <- 1
 	w_lwd      <- 1
-	if (n_cls > 12) {
-		color_cls  <- "gray40"
+	if (n_cls > 9) {
+		color_cls  <- "gray45"
 	} else {
 		color_cls  <- "gray60"
 	}
