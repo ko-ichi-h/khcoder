@@ -146,7 +146,7 @@ sub if_opened{
 	}
 	
 	if ( Exists($win) ){
-		focus $win;
+		#focus $win;
 		return 1;
 	} else {
 		return 0;

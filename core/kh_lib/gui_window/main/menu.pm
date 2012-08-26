@@ -75,28 +75,28 @@ sub make{
 	#   プロジェクト   #
 
 	my $msg = gui_window->gui_jm( kh_msg->get('project') );
-	my $f = $menubar->cascade(
+	my $f1 = $menubar->cascade(
 		-label => $msg,
 		-font => "TKFN",
 		-underline => index($msg, 'P'),
 		-tearoff=>'no'
 	);
 
-		$f->command(
+		my $m4a_project = $f1->command(
 			-label => kh_msg->get('new'),
 			-font => "TKFN",
 			-command =>
 				sub{gui_window::project_new->open;},
 			-accelerator => 'Ctrl+N'
 		);
-		$f->command(
+		$f1->command(
 			-label => kh_msg->get('open'),
 			-font => "TKFN",
 			-command =>
 				sub{gui_window::project_open->open;},
 			-accelerator => 'Ctrl+O'
 		);
-		$self->{m_b0_close} = $f->command(
+		$self->{m_b0_close} = $f1->command(
 			-label => kh_msg->get('close'),
 			-font => "TKFN",
 			-state => 'disable',
@@ -107,9 +107,9 @@ sub make{
 			-accelerator => 'Ctrl+W'
 		);
 		
-		$f->separator();
+		$f1->separator();
 
-		$f->command(
+		$f1->command(
 			-label => kh_msg->get('import'),
 			-font => "TKFN",
 			-command =>
@@ -118,7 +118,7 @@ sub make{
 					},
 		);
 
-		$self->{m_b0_export} = $f->command(
+		$self->{m_b0_export} = $f1->command(
 			-label => kh_msg->get('export'),
 			-font => "TKFN",
 			-state => 'disable',
@@ -128,9 +128,9 @@ sub make{
 					},
 		);
 
-		$f->separator();
+		$f1->separator();
 		
-		$f->command(
+		$f1->command(
 			-label => kh_msg->get('config'),
 			-font => "TKFN",
 			-command => 
@@ -138,7 +138,7 @@ sub make{
 		);
 		#$f->separator();
 		
-		$f->command(
+		$f1->command(
 			-label => kh_msg->get('exit'),
 			-font => "TKFN",
 			-command => sub{
@@ -150,7 +150,7 @@ sub make{
 	#------------#
 	#   前処理   #
 
-	$f = $menubar->cascade(
+	my $f = $menubar->cascade(
 		-label => gui_window->gui_jm( kh_msg->get('prep') ),
 		-font => "TKFN",
 		-underline => index(kh_msg->get('prep'), 'R'),
@@ -852,6 +852,17 @@ sub make{
 		'<Control-Key-w>',
 		sub{$self->mc_close_project;}
 	);
+
+	unless ($::config_obj->os eq 'win32'){
+		print "binding...\n";
+		$mw->bind(
+			'<Alt-Key-p>',
+			sub{
+				#$menubar->postcascade( kh_msg->get('project') );
+				#print "alt-p\n";
+			}
+		);
+	}
 
 	bless $self, $class;
 	return $self;

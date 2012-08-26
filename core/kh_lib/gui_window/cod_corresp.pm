@@ -358,7 +358,7 @@ sub _new{
 		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{$self->close;}
+		-command => sub{$self->withd;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$self->{ok_btn} = $f3->Button(
@@ -663,6 +663,21 @@ sub select_none{
 	return $self;
 }
 
+sub start{
+	my $self = shift;
+
+	# Windowを閉じる際のバインド
+	$self->win_obj->bind(
+		'<Control-Key-q>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
+}
+
 # プロット作成＆表示
 sub _calc{
 	my $self = shift;
@@ -938,7 +953,7 @@ sub _calc{
 	}
 	
 	unless ( $self->{check_rm_open} ){
-		$self->close;
+		$self->withd;
 	}
 
 }

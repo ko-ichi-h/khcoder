@@ -109,6 +109,9 @@ sub open{
 
 	if ( $check ){
 		$self = $::main_gui->get($self->win_name);
+		$self->{win_obj}->deiconify;
+		$self->{win_obj}->raise;
+		$self->{win_obj}->focus;
 	} else {
 		# Windowオープン
 		if ($self->win_name eq 'main_window'){
@@ -251,6 +254,13 @@ sub close{
 	$self->win_obj->destroy;
 	$::main_gui->closed($self->win_name);
 	undef $self;
+}
+
+sub withd{
+	my $self = shift;
+	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
+	$::config_obj->save_ini;
+	$self->{win_obj}->withdraw;
 }
 
 sub end{
