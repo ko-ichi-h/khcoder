@@ -39,6 +39,10 @@ sub new{
 			if $::config_obj->os eq 'win32' and length($self->{command_a});
 	}
 
+	# コマンドの改行コード
+	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+
 	my $command = '';
 	if (length($self->{command_a})){
 		$command = $self->{command_a};

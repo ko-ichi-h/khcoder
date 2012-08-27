@@ -209,7 +209,12 @@ sub save{
 
 	# 強制抽出
 	my @mark; my %check;
-	foreach my $i (split /\n/, Jcode->new($self->gui_jg($self->t1->get("1.0","end")), 'sjis')->euc){
+	my $t = Jcode->new(
+		$self->gui_jg($self->t1->get("1.0","end")),
+		'sjis'
+	)->euc;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	foreach my $i (split /\n/, $t){
 		if (length($i) and not $check{$i}) {
 			push @mark, $i;
 			$check{$i} = 1;
@@ -218,7 +223,13 @@ sub save{
 
 	# 使用しない語
 	my @stop; %check = ();
-	foreach my $i (split /\n/, Jcode->new($self->gui_jg($self->t2->get("1.0","end")), 'sjis')->euc){
+	$t = Jcode->new(
+		$self->gui_jg($self->t2->get("1.0","end")),
+		'sjis'
+	)->euc;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+
+	foreach my $i (split /\n/, $t){
 		if (length($i) and not $check{$i}) {
 			push @stop, $i;
 			$check{$i} = 1;

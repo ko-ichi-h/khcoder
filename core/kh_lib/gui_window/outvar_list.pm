@@ -767,6 +767,11 @@ sub _delete{
 			name => $self->{var_list}[$i][1],
 		);
 	}
+	
+	$::main_gui->close_all(
+		except => ['w_outvar_list']
+	);
+	
 	$self->_fill;
 	$self->_clear_values;
 }
