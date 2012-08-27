@@ -197,13 +197,18 @@ sub close{
 
 sub close_all{
 	my $self = shift;
+	my %args = @_;
 	foreach my $i (keys %{$self}){
 		if ( substr($i,0,2) eq 'w_'){
 			my $win;
 			if ($self->{$i}){
 				my $win = $self->{$i}->win_obj;
 				if (Exists($win)){
-					$self->{$i}->close;
+					my $skip = 0;
+					foreach my $h (@{$args{except}}){
+						$skip = 1 if $h eq $self->{$i}->win_name;
+					}
+					$self->{$i}->close unless $skip;
 				}
 			}
 		}

@@ -114,6 +114,8 @@ sub _read{
 	
 	# 変数リストWindowをオープン
 	$self->close;
+	$::main_gui->close_all;
+	
 	my $list = gui_window::outvar_list->open;
 	$list->_fill;
 	
