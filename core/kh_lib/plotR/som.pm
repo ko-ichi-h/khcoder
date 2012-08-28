@@ -46,6 +46,8 @@ sub new{
 	$file_save =~ tr/\\/\//;
 	$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
 
+	print "icode: $icode\nfile: $file_save\n";
+
 	# 自己組織化マップの実行
 	unless ($args{reuse}){
 		if ( -e $file_save ){
@@ -84,7 +86,7 @@ sub new{
 	}
 
 	# コマンドの準備
-	my $p0_a = "load(\"$file_save\")\n";
+	my $p0_a = Jcode->new( "load(\"$file_save\")\n" )->euc;
 	$p0_a   .= "# END: DATA\n";
 	$p0_a   .= "$param1\n\n";
 
