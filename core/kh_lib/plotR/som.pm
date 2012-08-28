@@ -45,8 +45,7 @@ sub new{
 	$file_save = Jcode->new($file_save, $icode)->euc;
 	$file_save =~ tr/\\/\//;
 	$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
-
-	print "icode: $icode\nfile: $file_save\n";
+	#print "icode: $icode\nfile: $file_save\n";
 
 	# 自己組織化マップの実行
 	unless ($args{reuse}){
@@ -227,19 +226,18 @@ if ( if_cls == 1 ){
 	colors <- NULL
 	if (n_cls <= 9){
 		pastel <- brewer.pal(9, "Pastel1")
-		pastel[6] = brewer.pal(9, "Pastel1")[9]
-		pastel[9] = brewer.pal(9, "Pastel1")[6]
+		# pastel[6] = brewer.pal(9, "Pastel1")[9]
+		# pastel[9] = brewer.pal(9, "Pastel1")[6]
+		pastel[6] = "gray91"
+		pastel[9] = "#F5F5DC" # FAF3C8 F7F1C6 EEE8AA F0E68C
 		colors <- pastel[cutree(hcl,k=n_cls)]
 	}
-	#if ( (n_cls > 9) && (n_cls <= 12) ) {
-	#	colors <- brewer.pal(12, "Set3")[cutree(hcl,k=n_cls)]
-	#}
 	if (n_cls > 9) {
 		# 色の順番を決定
 		library(colorspace)
 		new_col <- order( runif(n_cls) )
 		colors <-
-			rainbow_hcl(n_cls, start = 30, end = 345, l=88, c=17.5)[
+			rainbow_hcl(n_cls, start=20, end=340, l=92, c=20)[
 			#terrain_hcl(n_cls, c = c(35, 5), l = c(85, 95), power = c(0.5,1))[
 				new_col[cutree(hcl,k=n_cls)]
 			]
