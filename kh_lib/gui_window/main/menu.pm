@@ -854,27 +854,6 @@ sub make{
 		sub{$self->mc_close_project;}
 	);
 
-	unless ($::config_obj->os eq 'win32'){
-		print "binding...\n";
-		$mw->bind(
-			'<Alt-Key-p>',
-			sub{
-				#$menubar->postcascade( kh_msg->get('project') );
-				print
-					"alt-p ",
-					$menubar->type( kh_msg->get('project')  ),
-					"\n"
-				;
-				#$menubar->activate( kh_msg->get('project')  );
-				#$menubar->focus;
-				#$menubar->invoke( kh_msg->get('project')  );
-				#$menubar->postcascade( kh_msg->get('project') );
-
-				#$menubar->post(50,50);
-			}
-		);
-	}
-
 	bless $self, $class;
 	return $self;
 }
