@@ -68,7 +68,8 @@ sub make{
 	my $mw    = shift;
 	my $self;
 	
-	my $menubar = $mw->Menu(-type => 'menubar');
+	#my $menubar = $mw->Menu(-type => 'menubar');
+	my $menubar = $mw->Menu();
 	$mw->configure(-menu => $menubar);
 
 	#------------------#
@@ -859,7 +860,17 @@ sub make{
 			'<Alt-Key-p>',
 			sub{
 				#$menubar->postcascade( kh_msg->get('project') );
-				#print "alt-p\n";
+				print
+					"alt-p ",
+					$menubar->type( kh_msg->get('project')  ),
+					"\n"
+				;
+				#$menubar->activate( kh_msg->get('project')  );
+				#$menubar->focus;
+				#$menubar->invoke( kh_msg->get('project')  );
+				#$menubar->postcascade( kh_msg->get('project') );
+
+				#$menubar->post(50,50);
 			}
 		);
 	}
