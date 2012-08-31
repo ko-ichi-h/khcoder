@@ -73,7 +73,7 @@ sub _new{
 			if ($self->{r_cmd} =~ /# edges: ([0-9]+)\n/){
 				$edges = $1;
 			} else {
-				die("cannot get configuration: edges 2");
+				die("cannot get configuration: edges 2A");
 			}
 		} else {
 			$self->{radio} = 'n';
@@ -81,7 +81,7 @@ sub _new{
 			if ($self->{r_cmd} =~ /# min. jaccard: ([0-9\.]+)\n/){
 				$self->{edges_jac} = $1;
 			} else {
-				die("cannot get configuration: edges 2");
+				die("cannot get configuration: edges 2B");
 			}
 		}
 

@@ -664,6 +664,7 @@ sub net_calc{
 		chop $r_command;
 		$r_command .= ")\n";
 	}
+	#print "$r_command\n";
 
 	# デフォルト設定でネットワーク描画
 	$r_command .= "# END: DATA\n\n";
