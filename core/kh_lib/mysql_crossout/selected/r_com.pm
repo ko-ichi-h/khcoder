@@ -75,8 +75,8 @@ sub run{
 		$r_cmd .= "\"$i\",";
 	}
 	chop $r_cmd;
-	$r_cmd .= ")\n\n";
-	$r_cmd .= "# END: DATA\n\n";
+	$r_cmd .= ")\n";
+	#$r_cmd .= "# END: DATA\n\n";
 
 	return $r_cmd;
 }
