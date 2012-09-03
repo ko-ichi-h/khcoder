@@ -118,8 +118,13 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_edges_number}->insert(0,$self->{edges_number});
-	$self->{entry_edges_number}->bind("<Key-Return>",$self->{command})
-		if defined( $self->{command} );
+	$self->{entry_edges_number}->bind("<Return>",$self->{command})
+		if defined( $self->{command} )
+	;
+	$self->{entry_edges_number}->bind("<KP_Enter>",$self->{command})
+		if defined( $self->{command} )
+	;
+	
 	gui_window->config_entry_focusin($self->{entry_edges_number});
 
 	$f4->Radiobutton(
