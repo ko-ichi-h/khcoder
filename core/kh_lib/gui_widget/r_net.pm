@@ -118,10 +118,10 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_edges_number}->insert(0,$self->{edges_number});
-	$self->{entry_edges_number}->bind("<Return>",$self->{command})
+	$self->{entry_edges_number}->bind("<Return>",   $self->{command})
 		if defined( $self->{command} )
 	;
-	$self->{entry_edges_number}->bind("<KP_Enter>",$self->{command})
+	$self->{entry_edges_number}->bind("<KP_Enter>", $self->{command})
 		if defined( $self->{command} )
 	;
 	
