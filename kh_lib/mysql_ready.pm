@@ -54,8 +54,8 @@ sub first{
 		print "Format\t",timestr(timediff($t15,$t1)),"\n";
 	kh_dictio->readin->save;
 	$self->hyosobun;
-	kh_dictio->readin->save;
 	$self->tag_fix;                # hyoso, genkei
+	kh_dictio->readin->save;
 		my $t2 = new Benchmark;
 		print "Strat1\t",timestr(timediff($t2,$t15)),"\n";
 	$self->tanis;
