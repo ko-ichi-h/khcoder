@@ -214,12 +214,15 @@ sub save{
 		'sjis'
 	)->euc;
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	#print Jcode->new("$t\n")->sjis;
+
 	foreach my $i (split /\n/, $t){
 		if (length($i) and not $check{$i}) {
 			push @mark, $i;
 			$check{$i} = 1;
 		}
 	}
+
 
 	# 使用しない語
 	my @stop; %check = ();
@@ -228,6 +231,7 @@ sub save{
 		'sjis'
 	)->euc;
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	#print Jcode->new("$t\n")->sjis;
 
 	foreach my $i (split /\n/, $t){
 		if (length($i) and not $check{$i}) {
