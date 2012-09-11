@@ -73,12 +73,13 @@ sub read_file{
 		}
 		
 		$_ = Jcode->new("$_",$icode)->euc;
-		if ($_ =~ /^[¡ö|*]/o){
+		if ( $_ =~ /^¡ö.+/o || $_ =~ /^\*.+/o ){
 			$head = $_;
 			push @codes, $head;
-			#print Jcode->new("$head\n")->sjis;
+			print Jcode->new("head: $head\n")->sjis;
 		} else {
 			$codes{$head} .= "$_\n";
+			print Jcode->new("condition: $_\n")->sjis;
 		}
 	}
 	close (F);
