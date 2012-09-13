@@ -147,7 +147,11 @@ sub get_selected{
 	my $num1 = $chk->fetch->[0] or die("oops..");
 	my $num2 = @r;
 	unless ($num1 == $num2){
-		die("oops... $num1, $num2");
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->get('error'),
+		);
+		return 0;
 	}
 	
 	return \@r;

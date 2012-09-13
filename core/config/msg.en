@@ -1015,3 +1015,5 @@ mysql_outvar::read:
 mysql_ready::dump:
     too_long_word1:            "There are too long words. ( > 255 )\n\nKH Coder recognize the first 255 characters only.\nThe words are recorded in the following file: \n"
     too_long_word2:            "Click OK to continue the pre-processing."
+mysql_getheader:
+    error:                     "Failed to process documents.\n\nThere may be incorrect use of H1 - H5 tags in the target file.\nPlease try the \"Check the Target File\" command."
