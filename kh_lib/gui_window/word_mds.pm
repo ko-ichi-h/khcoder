@@ -589,10 +589,14 @@ for (i in rownames(cl)){
 b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 
 if (std_radius){ # 円の大小をデフォルメ
-	b_size <- b_size / sd(b_size)
-	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 5 * bubble_var / 100 + 10
-	b_size <- neg_to_zero(b_size)
+	if ( sd(b_size) == 0 ){
+		b_size <- rep(10, length(b_size))
+	} else {
+		b_size <- b_size / sd(b_size)
+		b_size <- b_size - mean(b_size)
+		b_size <- b_size * 5 * bubble_var / 100 + 10
+		b_size <- neg_to_zero(b_size)
+	}
 }
 
 # クラスター分析

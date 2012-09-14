@@ -1180,10 +1180,14 @@ for (i in rownames(c$cscore)){
 b_size <- sqrt( b_size / pi ) # adjust bubble size: frequency ratio = square measure ratio
 
 if (std_radius){ # standardize (enphasize) bubble size
-	b_size <- b_size / sd(b_size)
-	b_size <- b_size - mean(b_size)
-	b_size <- b_size * 5 * bubble_var / 100 + 10
-	b_size <- neg_to_zero(b_size)
+	if ( sd(b_size) == 0 ){
+		b_size <- rep(10, length(b_size))
+	} else {
+		b_size <- b_size / sd(b_size)
+		b_size <- b_size - mean(b_size)
+		b_size <- b_size * 5 * bubble_var / 100 + 10
+		b_size <- neg_to_zero(b_size)
+	}
 }
 
 # set plot area
@@ -1216,11 +1220,15 @@ if (biplot){
 		pch_cex <- sqrt(n_total);
 		pch_cex <- pch_cex * ( 10 / max(pch_cex) )
 		if (std_radius){ # standardize (enphasize) bubble size
-			pch_cex <- pch_cex / sd(pch_cex)
-			pch_cex <- pch_cex - mean(pch_cex)
-			pch_cex <- pch_cex * 5 + 10
-			pch_cex <- neg_to_zero(pch_cex)
-			pch_cex <- pch_cex * ( 10 / max(pch_cex) )
+			if ( sd(pch_cex) == 0 ){
+				pch_cex <- rep(10,length(pch_cex))
+			} else {
+				pch_cex <- pch_cex / sd(pch_cex)
+				pch_cex <- pch_cex - mean(pch_cex)
+				pch_cex <- pch_cex * 5 + 10
+				pch_cex <- neg_to_zero(pch_cex)
+				pch_cex <- pch_cex * ( 10 / max(pch_cex) )
+			}
 		}
 		pch_cex <- pch_cex * bubble_size / 100
 	}
