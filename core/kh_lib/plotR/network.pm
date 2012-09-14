@@ -520,10 +520,14 @@ neg_to_zero <- function(nums){
 # edge.width¤ò·×»»
 if ( use_weight_as_width == 1 ){
 	edg_width <- el2[,3]
-	edg_width <- edg_width / sd( edg_width )
-	edg_width <- edg_width - mean( edg_width )
-	edg_width <- edg_width * 0.6 + 2 # Ê¬»¶ = 0.5, Ê¿¶Ñ = 2
-	edg_width <- neg_to_zero(edg_width)
+	if ( sd( edg_width ) == 0 ){
+		edg_width <- 1
+	} else {
+		edg_width <- edg_width / sd( edg_width )
+		edg_width <- edg_width - mean( edg_width )
+		edg_width <- edg_width * 0.6 + 2 # Ê¬»¶ = 0.5, Ê¿¶Ñ = 2
+		edg_width <- neg_to_zero(edg_width)
+	}
 } else {
 	edg_width <- 1
 }
@@ -642,10 +646,14 @@ if ( use_freq_as_size == 1 ){
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		v_size <- v_size[var_select==FALSE]
 	}
-	v_size <- v_size / sd(v_size)
-	v_size <- v_size - mean(v_size)
-	v_size <- v_size * 3 + 12 # Ê¬»¶ = 3, Ê¿¶Ñ = 12
-	v_size <- neg_to_zero(v_size)
+	if ( sd(v_size) == 0 ){
+		v_size <- 15
+	} else {
+		v_size <- v_size / sd(v_size)
+		v_size <- v_size - mean(v_size)
+		v_size <- v_size * 3 + 12 # Ê¬»¶ = 3, Ê¿¶Ñ = 12
+		v_size <- neg_to_zero(v_size)
+	}
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		v_size[var_select==FALSE] <- v_size
 		v_size[var_select] <- 15
@@ -660,9 +668,13 @@ if ( use_freq_as_fontsize ==1 ){
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		f_size <- f_size[var_select==FALSE]
 	}
-	f_size <- f_size / sd(f_size)
-	f_size <- f_size - mean(f_size)
-	f_size <- f_size * 0.2 + cex
+	if ( sd(f_size) == 0 ){
+		f_size <- cex
+	} else {
+		f_size <- f_size / sd(f_size)
+		f_size <- f_size - mean(f_size)
+		f_size <- f_size * 0.2 + cex
+	}
 
 	for (i in 1:length(f_size) ){
 	  if (f_size[i] < 0.6 ){
