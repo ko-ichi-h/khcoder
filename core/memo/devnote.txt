@@ -70,6 +70,11 @@ order by genkei_t.id
 		しかし、roundするにしても、従来とは異なる配置になるが…
 
 [TO DO]
+	・プロットにおける語の重なりを抑制する（cor.rで実験中）
+		・対応分析
+		・MDS
+		・自己組織化マップ
+
 	・Linuxでも10キー上の「Enter」キーが効くようにする
 		・ReturnをバインドしているところにKP_Enterも追加
 		・gui_widget/r_net.pm l.124に例示
