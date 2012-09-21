@@ -143,6 +143,8 @@ sub _new{
 	$self->{entry_edges_jac}->insert(0,$self->{edges_jac});
 	$self->{entry_edges_jac}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_edges_jac}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_edges_jac});
 
 	$f4->Label(

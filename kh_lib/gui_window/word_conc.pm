@@ -43,6 +43,7 @@ sub _new{
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
+	$e1->bind("<KP_Enter>",sub{$self->search;});
 	$self->config_entry_focusin($e1);
 
 	$fra4e->Label(
@@ -57,6 +58,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$e4->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e4]);
 	$e4->bind("<Key-Return>",sub{$self->search;});
+	$e4->bind("<KP_Enter>",sub{$self->search;});
 	$self->config_entry_focusin($e4);
 
 	$fra4e->Label(
@@ -71,6 +73,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->search;});
+	$e2->bind("<KP_Enter>",sub{$self->search;});
 	$self->config_entry_focusin($e2);
 
 	$fra4e->Label(

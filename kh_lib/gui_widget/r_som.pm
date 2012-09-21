@@ -67,6 +67,8 @@ sub _new{
 	$self->{entry_n_nodes}->insert(0,$self->{n_nodes});
 	$self->{entry_n_nodes}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_n_nodes}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_n_nodes});
 
 	$f5->Label(
@@ -122,6 +124,8 @@ sub _new{
 	$self->{entry_cls_num}->insert(0,$self->{n_cls});
 	$self->{entry_cls_num}->bind("<Key-Return>", $self->{command})
 		if defined( $self->{command} );
+	$self->{entry_cls_num}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
 	#$self->{label_cls2} = $fcls1->Label(
@@ -145,6 +149,8 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_rlen1}->insert(0,$self->{rlen1});
 	$self->{entry_rlen1}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
+	$self->{entry_rlen1}->bind("<KP_Enter>", $self->{command})
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_rlen1});
 

@@ -96,6 +96,8 @@ sub _new{
 	$self->{entry_dim_number}->insert(0,$self->{dim_number});
 	$self->{entry_dim_number}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_dim_number}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_dim_number});
 
 	$fnd->Label(

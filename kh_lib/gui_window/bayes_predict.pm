@@ -75,6 +75,7 @@ sub _new{
 	)->pack(-padx => 2, -fill => 'x', -expand => 1);
 
 	$self->{entry_ovn}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->{entry_ovn}->bind("<KP_Enter>",sub{$self->_calc;});
 
 	$lf->Label(
 		-text => kh_msg->get('var_desc'), #     （分類の結果は外部変数として保存されます）

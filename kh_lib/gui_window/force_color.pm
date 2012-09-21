@@ -82,6 +82,7 @@ sub _new{
 		[\&gui_jchar::check_key_e,Ev('K'),\$self->{entry}]
 	);
 	$self->{entry}->bind("<Key-Return>",sub{$self->add;});
+	$self->{entry}->bind("<KP_Enter>",sub{$self->add;});
 
 	$lf2->Label(
 		-text => kh_msg->get('type'), # ¼ïÎà¡§

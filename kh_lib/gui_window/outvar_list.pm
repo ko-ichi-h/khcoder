@@ -135,6 +135,7 @@ sub _new{
 	$lis->bind("<Shift-Double-1>", sub{$self->v_words;});
 	$lis->bind("<Double-1>",       sub{$self->v_docs ;});
 	$lis->bind("<Key-Return>",     sub{$self->v_docs ;});
+	$lis->bind("<KP_Enter>",       sub{$self->v_docs ;});
 
 	$self->{list_val} = $lis;
 
@@ -988,7 +989,14 @@ sub _open_var{
 				#$self->{btn_save}->invoke;
 			}
 		);
-		
+		$c->bind(
+			"<KP_Enter>",
+			sub{
+				$self->{btn_save}->focus;
+				#$self->{btn_save}->invoke;
+			}
+		);
+
 		$self->{entry}{$i->[0]} = $c;
 		$self->{label}{$i->[0]} = $i->[1];
 		++$n;

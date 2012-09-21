@@ -276,6 +276,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 0);
 	$self->{entry_flw}->insert(0,'50');
 	$self->{entry_flw}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->{entry_flw}->bind("<KP_Enter>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->refresh_flw;
@@ -308,6 +309,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 0);
 	$self->{entry_flt}->insert(0,'50');
 	$self->{entry_flt}->bind("<Key-Return>",sub{$self->_calc;});
+	$self->{entry_flt}->bind("<KP_Enter>",sub{$self->_calc;});
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->refresh_flt;

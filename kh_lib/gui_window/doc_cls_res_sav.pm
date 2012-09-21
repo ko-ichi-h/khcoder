@@ -41,6 +41,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2, -fill => 'x', -expand => 1);
 
 	$self->{entry_name}->bind("<Key-Return>",sub{$self->save;});
+	$self->{entry_name}->bind("<KP_Enter>",sub{$self->save;});
 
 	$self->{win_obj}->Button(
 		-text => kh_msg->gget('cancel'), # キャンセル

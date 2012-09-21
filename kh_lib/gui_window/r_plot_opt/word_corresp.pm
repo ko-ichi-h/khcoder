@@ -32,6 +32,7 @@ sub innner{
 	)->pack(-side => 'left', -padx => 0);
 	#$self->{entry_flw}->insert(0,'50');
 	$self->{entry_flw}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_flw}->bind("<KP_Enter>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
@@ -68,6 +69,7 @@ sub innner{
 	)->pack(-side => 'left', -padx => 0);
 	#$self->{entry_flt}->insert(0,'50');
 	$self->{entry_flt}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_flt}->bind("<KP_Enter>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(

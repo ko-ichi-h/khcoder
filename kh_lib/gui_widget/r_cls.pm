@@ -108,6 +108,8 @@ sub _new{
 	$self->{entry_cluster_number}->insert(0,$self->{cls_number});
 	$self->{entry_cluster_number}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_cluster_number}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cluster_number});
 
 	$f5->Label(

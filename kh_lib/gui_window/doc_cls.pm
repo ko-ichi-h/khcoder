@@ -100,6 +100,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_cluster_number}->insert(0,'10');
 	$self->{entry_cluster_number}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_cluster_number}->bind("<KP_Enter>",sub{$self->calc;});
 	$self->config_entry_focusin($self->{entry_cluster_number});
 
 	$win->Button(
