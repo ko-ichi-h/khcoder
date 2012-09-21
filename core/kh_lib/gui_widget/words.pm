@@ -47,6 +47,8 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min}->insert(0,'1');
 	$self->{ent_min}->bind("<Key-Return>",sub{$self->check;});
+	$self->{ent_min}->bind("<KP_Enter>",sub{$self->check;});
+	
 	gui_window->config_entry_focusin($self->{ent_min});
 	
 	$l2->Label(
@@ -59,6 +61,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_max}->bind("<Key-Return>",sub{$self->check;});
+	$self->{ent_max}->bind("<KP_Enter>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max});
 
 	# 最小・最大文書数
@@ -79,6 +82,7 @@ sub _new{
 	)->pack(-side => 'left');
 	$self->{ent_min_df}->insert(0,'1');
 	$self->{ent_min_df}->bind("<Key-Return>",sub{$self->check;});
+	$self->{ent_min_df}->bind("<KP_Enter>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_min_df});
 
 	$l3->Label(
@@ -91,6 +95,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left');
 	$self->{ent_max_df}->bind("<Key-Return>",sub{$self->check;});
+	$self->{ent_max_df}->bind("<KP_Enter>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max_df});
 
 	# 集計単位の選択（対応分析用）

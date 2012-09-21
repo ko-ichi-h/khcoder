@@ -68,6 +68,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_dno}->bind("<Key-Return>",sub{$self->select_doc;});
+	$self->{entry_dno}->bind("<KP_Enter>",sub{$self->select_doc;});
 
 	gui_window->disabled_entry_configure( $self->{entry_file_model} );
 	gui_window->disabled_entry_configure( $self->{entry_outvar}     );

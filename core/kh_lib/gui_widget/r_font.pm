@@ -58,6 +58,8 @@ sub _new{
 
 	$self->{entry_font_size}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_font_size}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_font_size});
 
 	$ff->Label(

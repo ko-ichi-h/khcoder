@@ -83,6 +83,10 @@ sub _new{
 		'<Key-Return>',
 		sub {$self->_open}
 	);
+	$self->win_obj->bind(
+		'<KP_Enter>',
+		sub {$self->_open}
+	);
 
 	#$self->win_obj->bind(
 	#	'<Key-Down>',

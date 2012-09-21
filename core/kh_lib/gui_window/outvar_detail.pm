@@ -49,6 +49,7 @@ sub _new{
 	$lis->bind("<Shift-Double-1>", sub{$self->v_words;});
 	$lis->bind("<Double-1>",       sub{$self->v_docs ;});
 	$lis->bind("<Key-Return>",     sub{$self->v_docs ;});
+	$lis->bind("<KP_Enter>",       sub{$self->v_docs ;});
 
 	my $fhl = $fh->Frame->pack(-fill => 'x', -side => 'left');
 

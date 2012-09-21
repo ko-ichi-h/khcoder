@@ -249,6 +249,8 @@ sub start {
 			);
 		$self->{entry}{$i}
 			->bind("<Key-Return>",sub{$self->save;});
+		$self->{entry}{$i}
+			->bind("<KP_Enter>",sub{$self->save;});
 	}
 	
 	foreach my $n (1,2,3){

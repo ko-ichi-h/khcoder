@@ -77,6 +77,14 @@ sub _new{
 			$self->sort($key);
 		}
 	);
+	$self->{entry_wsearch}->bind(
+		"<KP_Enter>",
+		sub{
+			my $key = $self->{last_sort_key};
+			$self->{last_sort_key} = undef;
+			$self->sort($key);
+		}
+	);
 
 	$f1->Button(
 		-text => kh_msg->get('search'), # ¸¡º÷

@@ -40,7 +40,8 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_size});
 	$self->{ent_size}->bind("<Key-Return>", $self->{command})
 		if defined( $self->{command} );
-
+	$self->{ent_size}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 
 	$self->{lab_size2} = $f1->Label(
 		-text => '%',
@@ -96,6 +97,8 @@ sub _new{
 	$self->{ent_var}->insert(0,$self->{num_var});
 	gui_window->config_entry_focusin($self->{ent_var});
 	$self->{ent_var}->bind("<Key-Return>", $self->{command})
+		if defined( $self->{command} );
+	$self->{ent_var}->bind("<KP_Enter>", $self->{command})
 		if defined( $self->{command} );
 
 	$self->{lab_var2} = $f2->Label(

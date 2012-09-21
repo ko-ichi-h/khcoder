@@ -113,7 +113,8 @@ sub _new{
 		[\&gui_jchar::check_key_e,Ev('K'),\$self->{direct_w_e}]
 	);
 	$win->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
-	$self->{direct_w_e}->bind("<Key-Return>",sub{$self->search;});
+	$self->{direct_w_e}->bind("<Key-Return>", sub{$self->search;});
+	$self->{direct_w_e}->bind("<KP_Enter>",   sub{$self->search;});
 
 	# 各種オプション
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 2);

@@ -50,6 +50,7 @@ sub _new{
 	
 	$lis2->bind("<Double-1>",sub{$self->cls_docs;});
 	$lis2->bind("<Key-Return>",sub{$self->cls_docs;});
+	$lis2->bind("<KP_Enter>",sub{$self->cls_docs;});
 
 	my $fhl = $fr_dcs->Frame->pack(-fill => 'x');
 

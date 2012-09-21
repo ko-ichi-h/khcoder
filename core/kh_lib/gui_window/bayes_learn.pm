@@ -58,6 +58,7 @@ sub _new{
 	$self->{entry_fold}->insert(0,10);
 	$self->{entry_fold}->configure(-state => 'disable');
 	$self->{entry_fold}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_fold}->bind("<KP_Enter>",sub{$self->calc;});
 	gui_window->config_entry_focusin( $self->{entry_fold} );
 
 	$self->{chkw_savel} = $lf_x->Checkbutton(
@@ -85,6 +86,7 @@ sub _new{
 		-state      => 'normal',
 	)->pack(-anchor => 'w', -side => 'left', -fill => 'x', -expand => 1);
 	$self->{entry_vname}->bind("<Key-Return>",sub{$self->calc;});
+	$self->{entry_vname}->bind("<KP_Enter>",sub{$self->calc;});
 
 	$win->Button(
 		-text    => kh_msg->gget('cancel'), # キャンセル

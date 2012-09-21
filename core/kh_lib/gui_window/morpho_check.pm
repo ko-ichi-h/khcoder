@@ -36,6 +36,7 @@ sub _new{
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
 	$e1->bind("<Key-Return>",sub{$self->search;});
+	$e1->bind("<KP_Enter>",sub{$self->search;});
 
 	my $sbutton = $fra4e->Button(
 		-text => kh_msg->gget('search'),#$self->gui_jchar('¸¡º÷'),

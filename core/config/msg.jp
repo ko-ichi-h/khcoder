@@ -336,7 +336,7 @@ gui_window::word_ass:
     sort:                     ' ソート：'
     sort_h:                   ソート
     unit:                     集計単位：
-    win_title:                関連語探索
+    win_title:                関連語検索
     word_h:                   抽出語
 gui_window::word_ass_opt:
     by_df:                    ・全体での出現数による語の取捨選択
@@ -344,7 +344,7 @@ gui_window::word_ass_opt:
     min_df:                   　　　最低文書数：
     top:                      　　　上位：
     view:                     ・表示する語の数
-    win_title:                関連語探索・フィルタ設定
+    win_title:                関連語検索・フィルタ設定
 gui_window::word_conc:
     additional:               追加条件
     center:                   活用形

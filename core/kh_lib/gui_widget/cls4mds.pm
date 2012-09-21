@@ -43,6 +43,8 @@ sub _new{
 	$self->{entry_cls_num}->insert(0,$self->{cls_n});
 	$self->{entry_cls_num}->bind("<Key-Return>", $self->{command})
 		if defined( $self->{command} );
+	$self->{entry_cls_num}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
 	$self->{label_cls2} = $fcls1->Label(
