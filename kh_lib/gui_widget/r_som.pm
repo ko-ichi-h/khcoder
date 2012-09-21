@@ -166,6 +166,8 @@ sub _new{
 	$self->{entry_rlen2}->insert(0,$self->{rlen2});
 	$self->{entry_rlen2}->bind("<Key-Return>", $self->{command})
 		if defined( $self->{command} );
+	$self->{entry_rlen2}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_rlen2});
 
 	if ( $self->{reuse} ){
