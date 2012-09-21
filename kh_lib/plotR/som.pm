@@ -749,6 +749,49 @@ if (is.null(labcd) == 1){
 		cex=cex,
 		offset=0
 	)
+
+	# ラベル再調整
+	xorg <- points[,1]
+	yorg <- points[,2]
+	#cex  <- 1
+
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		word_labs,
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
+
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	for (i in 1:length(word_labs) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		d <- sqrt( x^2 + y^2 )
+		if ( d > 0.05 ){
+			# print( paste( rownames(cb)[i], d ) )
+			
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+
+
+
 }
 
 text(
