@@ -768,20 +768,19 @@ if (is.null(labcd) == 1){
 	xlen <- par("usr")[2] - par("usr")[1]
 	ylen <- par("usr")[4] - par("usr")[3]
 
+	segs <- NULL
 	for (i in 1:length(word_labs) ){
 		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
 		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
 		d <- sqrt( x^2 + y^2 )
 		if ( d > 0.05 ){
-			# print( paste( rownames(cb)[i], d ) )
-			
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
+			segs <- rbind(
+				segs,
+				c(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i]
+				) 
 			)
-			
 		}
 	}
 
@@ -792,6 +791,16 @@ if (is.null(labcd) == 1){
 
 
 
+}
+
+if ( is.null(segs) == F){
+	for (i in 1:nrow(segs) ){
+		segments(
+			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+			col="gray60",
+			lwd=1
+		)
+	}
 }
 
 text(

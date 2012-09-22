@@ -338,8 +338,58 @@ while ( is.na(check4mds(d)) == 0 ){
 				."mar=c(3,3,0,2), lty.hide=\"dashed\" )\n"
 			."cl2 <- s3d\$xyz.convert(cl)\n"
 			."library(maptools)\n"
-			."pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
-				."cex=$fontsize, offset=0, col=\"black\", font = text_font)\n"
+			."labcd <- pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
+				."cex=$fontsize, offset=0, col=\"black\", font = text_font, doPlot=F)\n"
+			.'
+	# ラベル再調整
+	xorg <- cl2$x
+	yorg <- cl2$y
+	cex  <- font_size
+
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
+
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	for (i in 1:length(rownames(cl)) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		d <- sqrt( x^2 + y^2 )
+		if ( d > 0.05 ){
+			# print( paste( rownames(cb)[i], d ) )
+			
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+
+	text(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=font_size,
+		offset=0,
+		font = text_font
+	)
+			'
 		;
 		$r_command_a .=
 			 "library(scatterplot3d)\n"
@@ -521,14 +571,65 @@ if (n_cls > 0){
 
 if ( plot_mode == "color" ){
 	library(maptools)
-	pointLabel(
+	labcd <- pointLabel(
 		x=cl[,1],
 		y=cl[,2],
 		labels=rownames(cl),
 		cex=font_size,
 		font = text_font,
+		doPlot = F,
 		offset=0
 	)
+
+	# ラベル再調整
+	xorg <- cl[,1]
+	yorg <- cl[,2]
+	cex  <- font_size
+
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
+
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	for (i in 1:length(rownames(cl)) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			# print( paste( rownames(cb)[i], d ) )
+			
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+
+	text(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=font_size,
+		offset=0,
+		font = text_font
+	)
+
 }
 
 ';
@@ -641,6 +742,48 @@ labcd <- pointLabel(
 	offset=0,
 	doPlot=F
 )
+
+# ラベル再調整
+xorg <- cl[,1]
+yorg <- cl[,2]
+cex  <- font_size
+
+library(wordcloud)
+nc <- wordlayout(
+	labcd$x,
+	labcd$y,
+	rownames(cl),
+	cex=cex * 1.25,
+	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+)
+
+xlen <- par("usr")[2] - par("usr")[1]
+ylen <- par("usr")[4] - par("usr")[3]
+
+for (i in 1:length(rownames(cl)) ){
+	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+	dst <- sqrt( x^2 + y^2 )
+	if ( dst > 0.05 ){
+		# print( paste( rownames(cb)[i], d ) )
+		
+		if (plot_mode == "color") {
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+		}
+	}
+}
+
+xorg <- labcd$x
+yorg <- labcd$y
+labcd$x <- nc[,1] + .5 * nc[,3]
+labcd$y <- nc[,2] + .5 * nc[,4]
+
 
 # ラベル描画
 if (plot_mode == "color") {

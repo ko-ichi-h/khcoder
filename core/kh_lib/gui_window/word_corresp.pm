@@ -731,6 +731,7 @@ sub make_plot{
 	$r_command .= "flt <- $args{flt}\n";
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
+	$r_command .= "cex=$fontsize\n";
 
 	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 成分
 	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # 固有値
@@ -767,8 +768,57 @@ sub make_plot{
 				#.'bty="l"'
 				.")\n"
 			."library(maptools)\n"
-			."pointLabel(x=c\$cscore[,d_x], y=c\$cscore[,d_y],"
-				."labels=rownames(c\$cscore), cex=$fontsize, offset=0)\n";
+			."labcd <- pointLabel(x=c\$cscore[,d_x], y=c\$cscore[,d_y],"
+				."labels=rownames(c\$cscore), cex=$fontsize, offset=0, doPlot=F)\n"
+			.'
+
+xorg <- c$cscore[,d_x]
+yorg <- c$cscore[,d_y]
+#cex  <- 1
+
+library(wordcloud)
+nc <- wordlayout(
+	labcd$x,
+	labcd$y,
+	rownames(c$cscore),
+	cex=cex * 1.25,
+	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+)
+
+xlen <- par("usr")[2] - par("usr")[1]
+ylen <- par("usr")[4] - par("usr")[3]
+
+for (i in 1:length( rownames(c$cscore) ) ){
+	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+	dst <- sqrt( x^2 + y^2 )
+	if ( dst > 0.05 ){
+		
+		segments(
+			nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+			xorg[i], yorg[i],
+			col="gray60",
+			lwd=1
+		)
+		
+	}
+}
+
+xorg <- labcd$x
+yorg <- labcd$y
+labcd$x <- nc[,1] + .5 * nc[,3]
+labcd$y <- nc[,2] + .5 * nc[,4]
+
+text(
+	labcd$x,
+	labcd$y,
+	rownames(c$cscore),
+	cex=cex,
+	offset=0
+)
+
+			'
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
@@ -801,6 +851,57 @@ sub make_plot{
 				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
 				."cex=$fontsize,offset=0,doPlot=F)\n"
+			.'
+
+xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
+yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
+#cex  <- 1
+
+library(wordcloud)
+nc <- wordlayout(
+	labcd$x,
+	labcd$y,
+	rownames(cb),
+	cex=cex * 1.25,
+	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+)
+
+xlen <- par("usr")[2] - par("usr")[1]
+ylen <- par("usr")[4] - par("usr")[3]
+
+segs <- NULL
+for (i in 1:length(rownames(cb)) ){
+	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+	dst <- sqrt( x^2 + y^2 )
+	if ( dst > 0.05 ){
+		segs <- rbind(
+			segs,
+			c(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i]
+			) 
+		)
+	}
+}
+
+xorg <- labcd$x
+yorg <- labcd$y
+labcd$x <- nc[,1] + .5 * nc[,3]
+labcd$y <- nc[,2] + .5 * nc[,4]
+
+if ( is.null(segs) == F){
+	for (i in 1:nrow(segs) ){
+		segments(
+			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+			col="gray60",
+			lwd=1
+		)
+	}
+}
+
+			'
 			.'text('
 				.'labcd$x, labcd$y, rownames(cb),'
 				."cex=$fontsize,"
@@ -829,6 +930,47 @@ sub make_plot{
 				."y=c\$rscore[,d_y],"
 				."labels=rownames(c\$rscore),"
 				."cex=$fontsize,offset=0,doPlot=F)\n"
+				.'
+
+xorg <- c$rscore[,d_x]
+yorg <- c$rscore[,d_y]
+#cex  <- 1
+
+library(wordcloud)
+nc <- wordlayout(
+	labcd$x,
+	labcd$y,
+	rownames(c$rscore),
+	cex=cex * 1.25,
+	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+)
+
+xlen <- par("usr")[2] - par("usr")[1]
+ylen <- par("usr")[4] - par("usr")[3]
+
+for (i in 1:length( rownames(c$rscore) ) ){
+	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+	dst <- sqrt( x^2 + y^2 )
+	if ( dst > 0.05 ){
+		
+		segments(
+			nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+			xorg[i], yorg[i],
+			col="gray60",
+			lwd=1
+		)
+		
+	}
+}
+
+xorg <- labcd$x
+yorg <- labcd$y
+labcd$x <- nc[,1] + .5 * nc[,3]
+labcd$y <- nc[,2] + .5 * nc[,4]
+
+				'
 			.'text('
 				.'labcd$x, labcd$y, rownames(c$rscore),'
 				."cex=$fontsize,"
@@ -861,6 +1003,48 @@ sub make_plot{
 				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
 				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
 				."cex=$fontsize,offset=0,doPlot=F)\n"
+			.'
+
+xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
+yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
+#cex  <- 1
+
+library(wordcloud)
+nc <- wordlayout(
+	labcd$x,
+	labcd$y,
+	c(rownames(c$cscore),rownames(c$rscore)),
+	cex=cex * 1.25,
+	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+)
+
+xlen <- par("usr")[2] - par("usr")[1]
+ylen <- par("usr")[4] - par("usr")[3]
+
+segs <- NULL
+for (i in 1:length( c(rownames(c$cscore),rownames(c$rscore)) ) ){
+	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+	dst <- sqrt( x^2 + y^2 )
+	if ( dst > 0.05 ){
+		segs <- rbind(
+			segs,
+			c(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i]
+			) 
+		)
+		
+	}
+}
+
+xorg <- labcd$x
+yorg <- labcd$y
+labcd$x <- nc[,1] + .5 * nc[,3]
+labcd$y <- nc[,2] + .5 * nc[,4]
+
+			'
 		;
 		my $temp_cmd =                            # _f・_aに共通
 			 "cb  <- cbind(cb, labcd\$x, labcd\$y)\n"
@@ -872,6 +1056,17 @@ sub make_plot{
 				.'offset=0,'
 				.'col="black",'
 				.')'."\n"
+			.'
+if ( is.null(segs) == F){
+	for (i in 1:nrow(segs) ){
+		segments(
+			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+			col="gray60",
+			lwd=1
+		)
+	}
+}
+			'
 			."library(ade4)\n"
 			.'s.label_my(cb2, xax=4, yax=5, label=rownames(cb2),'
 				.'boxes=T,'
@@ -1258,11 +1453,58 @@ if ( is.null(labcd) ){
 	labcd <- pointLabel(
 		x=cb[,1],
 		y=cb[,2],
-		labels=cb[,3],
+		labels=rownames(cb),
 		cex=font_size,
 		offset=0,
 		doPlot=F
 	)
+
+	xorg <- cb[,1]
+	yorg <- cb[,2]
+	#cex  <- 1
+
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(cb),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
+
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	segs <- NULL
+	for (i in 1:length( rownames(cb) ) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			segs <- rbind(
+				segs,
+				c(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i]
+				) 
+			)
+			#segments(
+			#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+			#	xorg[i], yorg[i],
+			#	col="gray60",
+			#	lwd=1
+			#)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+
+
 }
 
 # draw labels
@@ -1290,6 +1532,15 @@ if (plot_mode == "gray"){
 	if (resize_vars == 0){
 		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
 	}
+	if ( is.null(segs) == F){
+		for (i in 1:nrow(segs) ){
+			segments(
+				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+				col="gray60",
+				lwd=1
+			)
+		}
+	}
 } else if (plot_mode == "vars") {
 	cb  <- cbind(cb, labcd$x, labcd$y)
 	cb2 <-  subset(cb, cb[,3]>=3)
@@ -1310,6 +1561,15 @@ if (plot_mode == "gray"){
 		offset=0,
 		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
 	)
+	if ( is.null(segs) == F){
+		for (i in 1:nrow(segs) ){
+			segments(
+				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+				col="gray60",
+				lwd=1
+			)
+		}
+	}
 }
 
 
