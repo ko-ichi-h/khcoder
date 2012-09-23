@@ -710,6 +710,7 @@ gui_window::r_plot::word_netgraph:
     cnt_d:                    '中心性（次数）'
     cnt_v:                    '中心性（固有ベクトル）'
     com_b:                    'サブグラフ検出（媒介）'
+    com_r:                    'サブグラフ検出（random walks）'
     com_m:                    'サブグラフ検出（modularity）'
     none:                     'なし'
     color:                    ' カラー：'

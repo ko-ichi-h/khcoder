@@ -165,6 +165,23 @@ sub new{
 			name      => $args{plotwin_name}.'_5',
 			command_f =>
 				 $r_command
+				."\ncom_method <- \"com-r\"\n"
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"com-r\"\n"
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
+			width     => $args{plot_size},
+			height    => $args{plot_size},
+		) or $flg_error = 1;
+
+		$plots[5] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_6',
+			command_f =>
+				 $r_command
 				."\ncom_method <- \"com-g\"\n"
 				.$self->r_plot_cmd_p1
 				.$self->r_plot_cmd_p2
@@ -178,8 +195,8 @@ sub new{
 			height    => $args{plot_size},
 		) or $flg_error = 1;
 
-		$plots[5] = kh_r_plot->new(
-			name      => $args{plotwin_name}.'_6',
+		$plots[6] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_7',
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"none\"\n"
@@ -389,7 +406,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 }
 
 # クリーク検出
-if ( com_method == "com-b" || com_method == "com-g"){
+if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	merge_step <- function(n2, m){                # 共通利用の関数
 		for ( i in 1:( trunc( length( m ) / 2 ) ) ){
 			temp_csize <- community.to.membership(n2, m,i)$csize
@@ -427,6 +444,15 @@ if ( com_method == "com-b" || com_method == "com-g"){
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
 		)
+	}
+
+	if (com_method == "com-r"){                   # Random walks
+		com   <-  walktrap.community(
+			n2,
+			weights=get.edge.attribute(n2, "weight")
+		)
+		com_m$membership <- com$membership
+		com_m$csize      <- table(com$membership)
 	}
 
 	com_col <- NULL # vertex frame                # Vertexの色（12色まで）

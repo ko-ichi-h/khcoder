@@ -714,6 +714,7 @@ gui_window::r_plot::word_netgraph:
     cnt_d:                    'Centrality: degree'
     cnt_v:                    'Centrality: eigenvector'
     com_b:                    'Community: betweenness'
+    com_r:                    'Community: random walks'
     com_m:                    'Community: modularity'
     none:                     None
     color:                    ' color:'
