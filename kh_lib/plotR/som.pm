@@ -772,8 +772,8 @@ if (is.null(labcd) == 1){
 	for (i in 1:length(word_labs) ){
 		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
 		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		d <- sqrt( x^2 + y^2 )
-		if ( d > 0.05 ){
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
 			segs <- rbind(
 				segs,
 				c(
