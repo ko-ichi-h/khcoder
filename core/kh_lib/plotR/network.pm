@@ -496,11 +496,19 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 
 # 変数・見出しを利用する場合のカラー
 if (com_method == "twomode_c" || com_method == "twomode_g"){
+	if ( exists("var_select") ){
+		var_select_bak <- var_select
+	}
+	
 	var_select <- substring(
 		colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ],
 		1,
 		2
 	) == "<>"
+
+	if (length(var_select[var_select==TRUE]) == 0 && exists("var_select_bak")){
+		var_select <- var_select_bak;
+	}
 }
 
 if (com_method == "twomode_c"){
@@ -726,6 +734,7 @@ if (smaller_nodes ==1){
 }
 
 # 外部変数・見出しを使う場合の形状やサイズ
+v_shape <- "circle"
 if (com_method == "twomode_c" || com_method == "twomode_g"){
 	# ノードの形
 	v_shape <- rep("circle", length( get.vertex.attribute(n2,"name") ) )
@@ -872,6 +881,18 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 				col = "black"
 			)
 			labels[target_ids] <- ""
+		}
+
+		if ( exists("var_select") ){
+			text(
+				lay_f[var_select,1],
+				lay_f[var_select,2],
+				labels = labels[var_select],
+				font = text_font,
+				cex = f_size,
+				col = "black"
+			)
+			labels[var_select] <- ""
 		}
 
 		text(
