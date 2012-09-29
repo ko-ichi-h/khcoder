@@ -158,6 +158,7 @@ sub asso{
 		$self->code($self->{tani}) or return 0;
 		$self->cumulate('as') if @{$self->tables} > 30;
 	} else {                            # 選択されたコードのみ
+		$self->{valid_codes} = undef;
 		foreach my $i (@{$args{selected}}){
 			$self->{codes}[$i]->clear;
 			$self->{codes}[$i]->ready($args{tani});
