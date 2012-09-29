@@ -451,6 +451,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			n2,
 			weights=get.edge.attribute(n2, "weight")
 		)
+		com_m <- NULL
 		com_m$membership <- com$membership
 		com_m$csize      <- table(com$membership)
 	}
