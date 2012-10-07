@@ -161,6 +161,7 @@ if ($::config_obj->{R}){
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
 	} else {
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="ja_JP.EUC-JP")');
+		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="ja_JP.eucJP")');
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_MEASUREMENT",locale="C")');
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_MESSAGES",locale="C")');
 	}
