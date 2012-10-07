@@ -102,7 +102,12 @@ BEGIN {
 	} 
 	# for Linux & Others
 	else {
-		if ($] > 5.008){
+		use Tk;
+		my $version_tk = $Tk::VERSION;
+		if (length($version_tk) > 7){
+			$version_tk = substr($version_tk,0,7);
+		}
+		if ($] > 5.008 && $version_tk <= 804.029){
 			require Tk::FBox;
 			require Tk::FBox_kh;
 		}
