@@ -34,7 +34,7 @@ sub exec{
 		return 0;
 	}
 
-	# Rコマンドの実行
+	# Rコマンドの実行 1
 	$::config_obj->R->send('
 		print(
 			paste(
@@ -46,29 +46,22 @@ sub exec{
 		)
 	');
 	
-	# 実行結果の取得
+	# 実行結果の取得 1
 	my $t = $::config_obj->R->read();
 	
-	# 結果を少し整形
+	# 結果を少し整形 1
 	$t =~ s/.+"(.+)"/$1/;
 	$t =~ s/, / \t/g;
 	$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
 
-	# Rコマンドの実行
+	# Rコマンドの実行 2
 	$::config_obj->R->send('
-		print( Sys.getlocale() )
+		print( sessionInfo() )
 	');
 
-	# 実行結果の取得
-	my $t1 = $::config_obj->R->read();
-
-	# 結果を少し整形
-	$t1 =~ s/\[[0-9+]\]//;
-	$t1 =~ s/^\s//;
-	$t1 =~ s/;/\n/g;
-	$t1 =~ s/=/ =\t/g;
-	$t1 =~ s/"//g;
-	$t .= "\n\n$t1";
+	# 実行結果の取得 2
+	my $t2 = $::config_obj->R->read();
+	$t .= "\n\nsessionInfo():\n\n$t2";
 
 	# 画面表示
 	$mw->messageBox(
