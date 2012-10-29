@@ -119,7 +119,7 @@ sub add_new{
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
 	$sql .= "'".Jcode->new($new->file_target)->euc."',";
 	if ($new->comment){
-		$sql .= "'".Jcode->new($new->comment)->euc."',";
+		$sql .= $self->dbh->quote(Jcode->new($new->comment)->euc).",";
 	} else {
 		$sql .= "'no description',";
 		$new->comment('no description');
@@ -145,18 +145,19 @@ sub edit{
 	$edp->comment( Jcode->new($_[1])->euc );
 	$edp->assigned_icode($_[2]);
 
+	my $file    = Jcode->new($edp->file_target)->euc;
+	my $comment = Jcode->new($edp->comment    )->euc;
+
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){
-		$sql .= "'".$_[1]."'";
+		$sql .= $self->dbh->quote($comment);
 	} else {
 		$sql .= 'undef';
 	}
 	$sql .= " WHERE target = ";
-	$sql .= "'".$edp->file_target."'";
-	$sql = Jcode->new($sql)->euc;
+	$sql .= "'".$file."'";
 	$self->dbh->do($sql) or print $sql;
 }
-
 
 #----------#
 #   ºï½ü   #
