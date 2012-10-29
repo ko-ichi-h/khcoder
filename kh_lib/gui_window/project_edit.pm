@@ -92,6 +92,8 @@ sub _new{
 	# ENTRYのバインド
 	$npro->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
+	$e2->bind("<Key-Return>",sub{$self->_edit;});
+	$e2->bind("<KP_Enter>",sub{$self->_edit;});
 	
 	# ENTRYへの挿入
 	$e1->insert(0,$self->gui_jchar($self->project->file_target));
