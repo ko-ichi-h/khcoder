@@ -935,7 +935,7 @@ gui_window::bayes_learn:
     savecls:                  'Save classification result as a variable'
     vname:                    'Variable:'
     error_f20:                'Error: please specify from 2 to 20 as the Fold number'
-    error_var:                'Error: the selection of variable is illegal.'
+    error_var:                'Error: please select a variable.'
     error_exists:             'Error: the variable already exists'
     select_exist:             'Select the model file to append'
     saving_new:               'Saving the model as'

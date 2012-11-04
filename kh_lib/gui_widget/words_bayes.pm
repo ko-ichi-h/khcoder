@@ -266,6 +266,14 @@ sub check{
 		return 0;
 	}
 	
+	if ( $self->outvar == -1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->get('gui_window::bayes_learn->error_var'), # 外部変数の設定が不正です。
+		);
+		return 0;
+	}
+	
 	my $tani2 = '';
 	if ($self->{radio} == 0){
 		$tani2 = gui_window->gui_jg($self->{high});

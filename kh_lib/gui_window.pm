@@ -112,6 +112,7 @@ sub open{
 		$self->{win_obj}->deiconify;
 		$self->{win_obj}->raise;
 		$self->{win_obj}->focus;
+		$self->start_raise;
 	} else {
 		# Windowオープン
 		if ($self->win_name eq 'main_window'){
@@ -275,6 +276,11 @@ sub win_obj{
 sub start{
 	return 1;
 }
+
+sub start_raise{
+	return 1;
+}
+
 
 #--------------------------#
 #   日本語表示・入力関係   #
