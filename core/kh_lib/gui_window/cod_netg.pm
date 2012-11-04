@@ -268,6 +268,7 @@ sub read_cfile{
 	my $left = $self->{hlist}->ItemStyle('window',-anchor => 'w');
 
 	my $row = 0;
+	$self->{checks} = undef;
 	foreach my $i (@{$cod_obj->codes}){
 		
 		$self->{checks}[$row]{check} = 1;
@@ -296,6 +297,36 @@ sub read_cfile{
 	
 	return $self;
 }
+
+sub start_raise{
+	my $self = shift;
+	
+	# コード選択を読み取り
+	my %selection = ();
+	foreach my $i (@{$self->{checks}}){
+		if ($i->{check}){
+			$selection{$i->{name}} = 1;
+		} else {
+			$selection{$i->{name}} = -1;
+		}
+	}
+	
+	# ルールファイルを再読み込み
+	$self->read_cfile;
+	
+	# 選択を適用
+	foreach my $i (@{$self->{checks}}){
+		if ($selection{$i->{name}} == 1 || $selection{$i->{name}} == 0){
+			$i->{check} = 1;
+		} else {
+			$i->{check} = 0;
+		}
+	}
+	
+	$self->{hlist}->update;
+	return 1;
+}
+
 
 # コードが3つ以上選択されているかチェック
 sub check_selected_num{
