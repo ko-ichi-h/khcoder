@@ -116,6 +116,8 @@ gui_window::dictionary:
     one_line2:                （複数の場合は改行で区切る）
     pos:                      品詞による語の選択：
     win_title:                分析に使用する語の取捨選択
+    use_file:                 ファイルから読み込み
+    file_error:               指定されたファイルが存在しません：
 gui_window::doc_view:
     current_doc:              '・現在表示中の文書：  '
     highlight:                強調

@@ -13,6 +13,8 @@ sub readin{
 	my @hinshi;
 	my %selection;
 
+	my $self;
+
 	my $st = mysql_exec->select('SELECT name FROM dstop',1)->hundle;
 	while (my $i = $st->fetch){
 		push @stop, $i->[0];
@@ -27,7 +29,50 @@ sub readin{
 		$selection{$i->[0]} = $i->[1];
 	}
 	
-	my $self;
+	$st = mysql_exec->select('
+		SELECT status
+		FROM status
+		WHERE name="words_mk_file"
+	')->hundle;
+	if (my $chk = $st->fetch){
+		 $self->{words_mk_file_chk} = $chk->[0]
+	} else {
+		 $self->{words_mk_file_chk} = 0;
+	}
+
+	if ( $self->{words_mk_file_chk} ){
+		my $file = mysql_exec->select('
+			SELECT status
+			FROM status_char
+			WHERE name="words_mk_file"
+		')->hundle->fetch->[0];
+		$file = Jcode->new($file)->sjis if $::config_obj->os eq 'win32';
+		#print "read: $file\n";
+		$self->{words_mk_file} = $file;
+	}
+
+
+	$st = mysql_exec->select('
+		SELECT status
+		FROM status
+		WHERE name="words_st_file"
+	')->hundle;
+	if (my $chk = $st->fetch){
+		 $self->{words_st_file_chk} = $chk->[0]
+	} else {
+		 $self->{words_st_file_chk} = 0;
+	}
+
+	if ( $self->{words_st_file_chk} ){
+		my $file = mysql_exec->select('
+			SELECT status
+			FROM status_char
+			WHERE name="words_st_file"
+		')->hundle->fetch->[0];
+		$file = Jcode->new($file)->sjis if $::config_obj->os eq 'win32';
+		$self->{words_st_file} = $file;
+	}
+
 	$self->{stopwords}  = \@stop;
 	$self->{markwords}  = \@mark;
 	$self->{hinshilist} = \@hinshi;
@@ -55,6 +100,31 @@ sub save{
 		mysql_exec->do($sql1,1);
 	}
 	
+	# 強制抽出・ファイル
+	mysql_exec->do("
+		DELETE FROM status
+		WHERE name = \"words_mk_file\"
+	",1);
+	mysql_exec->do("
+		INSERT INTO status (name, status)
+		VALUES (\"words_mk_file\", $self->{words_mk_file_chk})
+	",1);
+	
+	if ( $self->{words_mk_file_chk} ){
+		my $file = $self->{words_mk_file};
+		$file = Jcode->new($file)->euc;
+		$file = mysql_exec->quote($file);
+
+		mysql_exec->do("
+			DELETE FROM status_char
+			WHERE name = \"words_mk_file\"
+		",1);
+		mysql_exec->do("
+			INSERT INTO status_char (name, status)
+			VALUES (\"words_mk_file\", $file)
+		",1);
+	}
+	
 	# 使用しない語
 	mysql_exec->do('DROP TABLE dstop',1);
 	mysql_exec->do('CREATE TABLE dstop(name varchar(255))',1);
@@ -77,7 +147,33 @@ sub save{
 			}
 		}
 	}
-	
+
+	# 使用しない語・ファイル
+	mysql_exec->do("
+		DELETE FROM status
+		WHERE name = \"words_st_file\"
+	",1);
+	mysql_exec->do("
+		INSERT INTO status (name, status)
+		VALUES (\"words_st_file\", $self->{words_st_file_chk})
+	",1);
+
+
+	if ( $self->{words_st_file_chk} ){
+		my $file = $self->{words_st_file};
+		$file = Jcode->new($file)->euc;
+		$file = mysql_exec->quote($file);
+
+		mysql_exec->do("
+			DELETE FROM status_char
+			WHERE name = \"words_st_file\"
+		",1);
+		mysql_exec->do("
+			INSERT INTO status_char (name, status)
+			VALUES (\"words_st_file\", $file)
+		",1);
+	}
+
 	# 品詞選択
 	if (eval (@{$self->hinshi_list})){
 		foreach my $i (@{$self->hinshi_list}){
@@ -230,6 +326,42 @@ sub words_mk{
 		$self->{markwords} = $val;
 	}
 	return $self->{markwords};
+}
+
+sub words_mk_file{
+	my $self = shift;
+	my $val  = shift;
+	if (defined($val)){
+		$self->{words_mk_file} = $val;
+	}
+	return $self->{words_mk_file};
+}
+
+sub words_mk_file_chk{
+	my $self = shift;
+	my $val  = shift;
+	if (defined($val)){
+		$self->{words_mk_file_chk} = $val;
+	}
+	return $self->{words_mk_file_chk};
+}
+
+sub words_st_file{
+	my $self = shift;
+	my $val  = shift;
+	if (defined($val)){
+		$self->{words_st_file} = $val;
+	}
+	return $self->{words_st_file};
+}
+
+sub words_st_file_chk{
+	my $self = shift;
+	my $val  = shift;
+	if (defined($val)){
+		$self->{words_st_file_chk} = $val;
+	}
+	return $self->{words_st_file_chk};
 }
 
 sub words_st{
