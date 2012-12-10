@@ -22,6 +22,7 @@ global:
     r_dont_close:             実行時にこの画面を閉じない
     r_net_msg_fail:           調整に失敗しましました。
     words:                    抽出語
+    select_a_file:            ファイルを選択して下さい
 gui_errormsg::mysql:
     fatal:                   "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
 gui_wait:
