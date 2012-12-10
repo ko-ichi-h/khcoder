@@ -22,6 +22,7 @@ global:
     r_dont_close:             Keep this window open
     r_net_msg_fail:           'Error: could not configure the options.'
     words:                    Words
+    select_a_file:            Please select a file
 gui_errormsg::mysql:
     fatal:                   "Failed in accessing MySQL database system.\nKH Coder will exit now."
 gui_wait:
@@ -114,6 +115,8 @@ gui_window::dictionary:
     one_line2:                (one word in each line)
     pos:                      'Select by Parts of Speech:'
     win_title:                Select Words to Analyze
+    use_file:                 Read from a file
+    file_error:               'The specified file does not exist:'
 gui_window::doc_view:
     current_doc:              '* Current Document: '
     highlight:                highlight

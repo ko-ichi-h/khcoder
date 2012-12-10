@@ -227,7 +227,7 @@ sub ff_mark_browse{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		#-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
+		-title      => kh_msg->gget('select_a_file'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 
@@ -274,7 +274,7 @@ sub ff_stop_browse{
 	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
-		#-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
+		-title      => kh_msg->gget('select_a_file'),
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
 
