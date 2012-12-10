@@ -73,6 +73,32 @@ sub _new{
 		-font       => "TKFN",
 	)->pack(-expand => 1, -fill => 'both');
 
+	# ファイルからの読み込み
+	$self->{ff_mark_check} = $f_mark->Checkbutton(
+			-text     => kh_msg->get('use_file'),
+			-variable => \$self->{ff_mark_check_v},
+			-anchor => 'w',
+			-command => sub{ $self->ff_mark_refresh; },
+	)->pack(-anchor => 'w');
+
+	my $ff_mark = $f_mark->Frame()->pack(-fill => 'x');
+
+	$self->{ff_mark_button} = $ff_mark->Button(
+		-text    => kh_msg->gget('browse'),
+		-command => sub{$self->ff_mark_browse;},
+	)->pack(
+		-side => 'left',
+		-padx => 1,
+	);
+
+	$self->{ff_mark_entry} = $ff_mark->Entry(
+		-font => "TKFN",
+	)->pack(
+		-expand => 1,
+		-fill   => 'x',
+		-padx   => 1,
+	);
+
 	$f_stop->Label(
 		-text => kh_msg->get('force_ignore'),#$self->gui_jchar('・使用しない語の指定'),
 		-font => "TKFN"
@@ -91,11 +117,39 @@ sub _new{
 		-background => 'white'
 	)->pack(-expand => 1, -fill => 'both');
 
+	# ファイルからの読み込み
+	$self->{ff_stop_check} = $f_stop->Checkbutton(
+			-text     => kh_msg->get('use_file'),
+			-variable => \$self->{ff_stop_check_v},
+			-anchor => 'w',
+			-command => sub{ $self->ff_stop_refresh; },
+	)->pack(-anchor => 'w');
+
+	my $ff_stop = $f_stop->Frame()->pack(-fill => 'x');
+
+	$self->{ff_stop_button} = $ff_stop->Button(
+		-text    => kh_msg->gget('browse'),
+		-command => sub{$self->ff_stop_browse;},
+	)->pack(
+		-side => 'left',
+		-padx => 1,
+	);
+
+	$self->{ff_stop_entry} = $ff_stop->Entry(
+		-font => "TKFN",
+	)->pack(
+		-expand => 1,
+		-fill   => 'x',
+		-padx   => 1,
+	);
+
+
+
 	# 文字化け回避バインド
-	$t1->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t1]);
-	$t1->bind("<Button-1>",[\&gui_jchar::check_mouse,\$t1]);
-	$t2->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t2]);
-	$t2->bind("<Button-1>",[\&gui_jchar::check_mouse,\$t2]);
+	#$t1->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t1]);
+	#$t1->bind("<Button-1>",[\&gui_jchar::check_mouse,\$t1]);
+	#$t2->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$t2]);
+	#$t2->bind("<Button-1>",[\&gui_jchar::check_mouse,\$t2]);
 
 	# ドラッグ＆ドロップ
 	$t1->DropSite(
@@ -133,8 +187,108 @@ sub _new{
 	
 	$self->_fill_in;
 
+
+	$self->ff_mark_refresh;
+	$self->ff_stop_refresh;
+
 	return $self;
 }
+
+sub ff_mark_refresh{
+	my $self = shift;
+	
+	return 0 unless $self->{ff_mark_button};
+	
+	if ( $self->{ff_mark_check_v} ){
+		$self->{ff_mark_button}->configure(-state => "normal");
+		$self->{ff_mark_entry} ->configure(-state => "normal");
+		$self->{t1}            ->configure(
+			-state      => "disable",
+			-background => $self->{ff_mark_entry}->cget(-disabledbackground),
+		);
+	} else {
+		$self->{ff_mark_button}->configure(-state => "disable");
+		$self->{ff_mark_entry} ->configure(-state => "disable");
+		$self->{t1}            ->configure(
+			-state      => "normal",
+			-background => "white",
+		);
+	}
+	return $self;
+}
+
+sub ff_mark_browse{
+	my $self = shift;
+
+	my @types = (
+		["Text Files", '.txt' ],
+		["All Files" , '*'    ]
+	);
+	
+	my $path = $self->win_obj->getOpenFile(
+		-filetypes  => \@types,
+		#-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
+	);
+
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+		$self->{ff_mark_entry}->delete('0','end');
+		$self->{ff_mark_entry}->insert(0,$self->gui_jchar($path));
+	}
+
+}
+
+sub ff_stop_refresh{
+	my $self = shift;
+	
+	return 0 unless $self->{ff_stop_button};
+	
+	if ( $self->{ff_stop_check_v} ){
+		$self->{ff_stop_button}->configure(-state => "normal");
+		$self->{ff_stop_entry} ->configure(-state => "normal");
+		$self->{t2}            ->configure(
+			-state      => "disable",
+			-background => $self->{ff_stop_entry}->cget(-disabledbackground),
+		);
+	} else {
+		$self->{ff_stop_button}->configure(-state => "disable");
+		$self->{ff_stop_entry} ->configure(-state => "disable");
+		$self->{t2}            ->configure(
+			-state      => "normal",
+			-background => "white",
+		);
+	}
+	return $self;
+}
+
+sub ff_stop_browse{
+	my $self = shift;
+
+	my @types = (
+		["Text Files", '.txt' ],
+		["All Files" , '*'    ]
+	);
+	
+	my $path = $self->win_obj->getOpenFile(
+		-filetypes  => \@types,
+		#-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
+		-initialdir => $self->gui_jchar($::config_obj->cwd),
+	);
+
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->os_path($path);
+		$self->{ff_stop_entry}->delete('0','end');
+		$self->{ff_stop_entry}->insert(0,$self->gui_jchar($path));
+	}
+
+}
+
+
 
 #---------------------------------------#
 #   現在の設定内容をWindownに書き込み   #
@@ -193,6 +347,22 @@ sub _fill_in{
 		}
 	}
 
+	# 強制抽出・ファイル
+	if ($self->config->words_mk_file_chk){
+		$self->{ff_mark_check_v} = 1;
+		$self->{ff_mark_entry}->insert(
+			0, $self->gui_jchar( $self->config->words_mk_file )
+		);
+	}
+
+	# 使用しない語・ファイル
+	if ($self->config->words_st_file_chk){
+		$self->{ff_stop_check_v} = 1;
+		$self->{ff_stop_entry}->insert(
+			0, $self->gui_jchar( $self->config->words_st_file )
+		);
+	}
+
 }
 
 sub unselect{
@@ -222,11 +392,32 @@ sub save{
 			$check{$i} = 1;
 		}
 	}
-
+	$self->config->words_mk(\@mark);
+	if ( $self->{ff_mark_check_v} == 0 ){
+		$self->config->words_mk_file_chk(0);
+	} else {
+		my $file = $::config_obj->os_path(
+			$self->gui_jg(
+				$self->{ff_mark_entry}->get
+			)
+		);
+		
+		unless (-e $file){
+			gui_errormsg->open(
+				msg    => kh_msg->get('file_error')."\n$file",
+				type   => 'msg',
+				#window => $self->win_obj,
+			);
+			return 0;
+		}
+		
+		$self->config->words_mk_file($file);
+		$self->config->words_mk_file_chk(1);
+	}
 
 	# 使用しない語
-	my @stop; %check = ();
-	$t = Jcode->new(
+	my @stop; my %check;
+	my $t = Jcode->new(
 		$self->gui_jg($self->t2->get("1.0","end")),
 		'sjis'
 	)->euc;
@@ -239,9 +430,28 @@ sub save{
 			$check{$i} = 1;
 		}
 	}
-
-	$self->config->words_mk(\@mark);
 	$self->config->words_st(\@stop);
+	if ( $self->{ff_stop_check_v} == 0 ){
+		$self->config->words_st_file_chk(0);
+	} else {
+		my $file = $::config_obj->os_path(
+			$self->gui_jg(
+				$self->{ff_stop_entry}->get
+			)
+		);
+		
+		unless (-e $file){
+			gui_errormsg->open(
+				msg    => kh_msg->get('file_error')."\n$file",
+				type   => 'msg',
+				#window => $self->win_obj,
+			);
+			return 0;
+		}
+		
+		$self->config->words_st_file($file);
+		$self->config->words_st_file_chk(1);
+	}
 
 	# 品詞選択
 	if ($self->config->hinshi_list){
