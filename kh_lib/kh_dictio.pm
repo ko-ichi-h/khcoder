@@ -81,15 +81,16 @@ sub readin{
 	$self->{hinshilist}    = \@hinshi;
 	$self->{usethis}       = \%selection;
 	bless $self, $class;
-	$self->read_file;
+	$self->read_file_mk;
+	$self->read_file_st;
 	return $self;
 }
 
-sub read_file{
+sub read_file_mk{
 	my $self = shift;
 
 	if ( $self->{words_mk_file_chk} ){
-		my $icode = kh_jchar->check_code( $self->{words_mk_file} );
+		my $icode = kh_jchar->check_code( $self->{words_mk_file}, 1 );
 		my @words;
 		open (SOURCE,'<',"$self->{words_mk_file}") or
 			gui_errormsg->open(
@@ -107,8 +108,14 @@ sub read_file{
 		$self->{markwords_act}  = \@words;
 	}
 
+	return $self;
+}
+
+sub read_file_st{
+	my $self = shift;
+
 	if ( $self->{words_st_file_chk} ){
-		my $icode = kh_jchar->check_code( $self->{words_st_file} );
+		my $icode = kh_jchar->check_code( $self->{words_st_file}, 1 );
 		my @words;
 		open (SOURCE,'<',"$self->{words_st_file}") or
 			gui_errormsg->open(
@@ -174,7 +181,6 @@ sub save{
 	}
 	
 	# 使用しない語
-	$self->read_file;
 	mysql_exec->do('DROP TABLE dstop',1);
 	mysql_exec->do('CREATE TABLE dstop(name varchar(255))',1);
 	if (eval (@{$self->words_st})){
@@ -383,6 +389,7 @@ sub words_mk_file{
 	my $val  = shift;
 	if (defined($val)){
 		$self->{words_mk_file} = $val;
+		$self->read_file_mk;
 	}
 	return $self->{words_mk_file};
 }
@@ -401,6 +408,7 @@ sub words_st_file{
 	my $val  = shift;
 	if (defined($val)){
 		$self->{words_st_file} = $val;
+		$self->read_file_st;
 	}
 	return $self->{words_st_file};
 }
