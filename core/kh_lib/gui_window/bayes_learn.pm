@@ -61,27 +61,32 @@ sub _new{
 	$self->{entry_fold}->bind("<KP_Enter>",sub{$self->calc;});
 	gui_window->config_entry_focusin( $self->{entry_fold} );
 
-	$self->{chkw_savel} = $lf_x->Checkbutton(
+	my $fcv1 = $lf_x->Frame()->pack(-fill => 'x');
+	$fcv1->Label(-text => '  ')->pack(-side => 'left');
+	$self->{chkw_savel} = $fcv1->Checkbutton(
 			-text     => kh_msg->get('savelog'), # 分類ログをファイルに保存','euc
 			-variable => \$self->{check_savel},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
-	)->pack(-anchor => 'w');
+	)->pack(-anchor => 'w',-side => 'left');
 
-	$self->{chkw_savev} = $lf_x->Checkbutton(
+	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x');
+	$fcv2->Label(-text => '  ')->pack(-side => 'left');
+	$self->{chkw_savev} = $fcv2->Checkbutton(
 			-text     => kh_msg->get('savecls'), # 分類結果を外部変数に保存','euc
 			-variable => \$self->{check_savev},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
 	)->pack(-anchor => 'w');
 
-	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
-	$self->{label_vname} = $fcv2->Label(
+	my $fcv3 = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
+	$fcv3->Label(-text => '  ')->pack(-side => 'left');
+	$self->{label_vname} = $fcv3->Label(
 		-text       => kh_msg->get('vname'), # 変数名：
 		#-foreground => 'gray',
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$self->{entry_vname} = $fcv2->Entry(
+	$self->{entry_vname} = $fcv3->Entry(
 		-width      => 10,
 		-state      => 'normal',
 	)->pack(-anchor => 'w', -side => 'left', -fill => 'x', -expand => 1);
@@ -92,7 +97,7 @@ sub _new{
 		-text    => kh_msg->gget('cancel'), # キャンセル
 		-font    => "TKFN",
 		-width   => 8,
-		-command => sub{$self->close;}
+		-command => sub{$self->withd;}
 	)->pack(-side => 'right',-padx => 2, -pady => 2, -anchor => 'se');
 
 	$win->Button(
@@ -106,32 +111,52 @@ sub _new{
 	return $self;
 }
 
-	sub w_status{
-		my $self = shift;
-		if ( $self->{check_cross} && $self->{check_savev} ){
-			$self->{entry_fold}->configure(-state => 'normal');
-			$self->{label_fold}->configure(-state => 'normal');
-			$self->{chkw_savel}->configure(-state => 'normal');
-			$self->{chkw_savev}->configure(-state => 'normal');
-			$self->{label_vname}->configure(-state => 'normal');
-			$self->{entry_vname}->configure(-state => 'normal');
-		}
-		elsif ( $self->{check_cross} ){
-			$self->{entry_fold}->configure(-state => 'normal');
-			$self->{label_fold}->configure(-state => 'normal');
-			$self->{chkw_savel}->configure(-state => 'normal');
-			$self->{chkw_savev}->configure(-state => 'normal');
-			$self->{label_vname}->configure(-state => 'disable');
-			$self->{entry_vname}->configure(-state => 'disable');
-		} else {
-			$self->{entry_fold}->configure(-state => 'disable');
-			$self->{label_fold}->configure(-state => 'disable');
-			$self->{chkw_savel}->configure(-state => 'disable');
-			$self->{chkw_savev}->configure(-state => 'disable');
-			$self->{label_vname}->configure(-state => 'disable');
-			$self->{entry_vname}->configure(-state => 'disable');
-		}
+sub start_raise{
+	my $self = shift;
+	$self->{words_obj}->settings_load;
+}
+
+sub start{
+	my $self = shift;
+
+	# Windowを閉じる際のバインド
+	$self->win_obj->bind(
+		'<Control-Key-q>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
+}
+
+sub w_status{
+	my $self = shift;
+	if ( $self->{check_cross} && $self->{check_savev} ){
+		$self->{entry_fold}->configure(-state => 'normal');
+		$self->{label_fold}->configure(-state => 'normal');
+		$self->{chkw_savel}->configure(-state => 'normal');
+		$self->{chkw_savev}->configure(-state => 'normal');
+		$self->{label_vname}->configure(-state => 'normal');
+		$self->{entry_vname}->configure(-state => 'normal');
 	}
+	elsif ( $self->{check_cross} ){
+		$self->{entry_fold}->configure(-state => 'normal');
+		$self->{label_fold}->configure(-state => 'normal');
+		$self->{chkw_savel}->configure(-state => 'normal');
+		$self->{chkw_savev}->configure(-state => 'normal');
+		$self->{label_vname}->configure(-state => 'disable');
+		$self->{entry_vname}->configure(-state => 'disable');
+	} else {
+		$self->{entry_fold}->configure(-state => 'disable');
+		$self->{label_fold}->configure(-state => 'disable');
+		$self->{chkw_savel}->configure(-state => 'disable');
+		$self->{chkw_savev}->configure(-state => 'disable');
+		$self->{label_vname}->configure(-state => 'disable');
+		$self->{entry_vname}->configure(-state => 'disable');
+	}
+}
 
 sub calc{
 	my $self = shift;
@@ -199,14 +224,6 @@ sub calc{
 
 	$self->{words_obj}->settings_save;
 
-	my $ans = $self->win_obj->messageBox(
-		-message => kh_msg->gget('cont_big_pros'),
-		-icon    => 'question',
-		-type    => 'OKCancel',
-		-title   => 'KH Coder'
-	);
-	unless ($ans =~ /ok/i){ return 0; }
-
 	# 保存先の参照
 	my @types = (
 		[ "KH Coder: Naive Bayes Models",[qw/.knb/] ],
@@ -271,6 +288,16 @@ sub calc{
 		return 0;
 	}
 
+	my $ans = $self->win_obj->messageBox(
+		-message => kh_msg->gget('cont_big_pros'),
+		-icon    => 'question',
+		-type    => 'OKCancel',
+		-title   => 'KH Coder'
+	);
+	unless ($ans =~ /ok/i){ return 0; }
+
+	my $wait_window = gui_wait->start;
+
 	use kh_nbayes;
 
 	my $r = kh_nbayes->learn_from_ov(
@@ -291,6 +318,8 @@ sub calc{
 		cross_vn2   => $varname2,
 		cross_path  => $cross_path,
 	);
+
+	$wait_window->end(no_dialog => 1);
 
 	# 「外部変数リスト」を開く
 	if ($self->{check_savev}){
@@ -322,7 +351,7 @@ sub calc{
 		icon => 'info',
 	);
 
-	$self->close;
+	$self->withd;
 	return 1;
 }
 

@@ -392,7 +392,7 @@ sub save{
 			$check{$i} = 1;
 		}
 	}
-	$self->config->words_mk(\@mark);
+
 	if ( $self->{ff_mark_check_v} == 0 ){
 		$self->config->words_mk_file_chk(0);
 	} else {
@@ -415,6 +415,8 @@ sub save{
 		$self->config->words_mk_file_chk(1);
 	}
 
+	$self->config->words_mk(\@mark); # ファイル利用のあとから設定
+
 	# 使用しない語
 	my @stop; my %check;
 	my $t = Jcode->new(
@@ -430,7 +432,7 @@ sub save{
 			$check{$i} = 1;
 		}
 	}
-	$self->config->words_st(\@stop);
+	
 	if ( $self->{ff_stop_check_v} == 0 ){
 		$self->config->words_st_file_chk(0);
 	} else {
@@ -452,6 +454,8 @@ sub save{
 		$self->config->words_st_file($file);
 		$self->config->words_st_file_chk(1);
 	}
+
+	$self->config->words_st(\@stop); # ファイル利用のあとから設定
 
 	# 品詞選択
 	if ($self->config->hinshi_list){
