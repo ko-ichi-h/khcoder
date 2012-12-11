@@ -76,6 +76,11 @@ sub _new{
 	return $self;
 }
 
+sub start_raise{
+	my $self = shift;
+	$self->{words_obj}->settings_load;
+}
+
 sub start{
 	my $self = shift;
 

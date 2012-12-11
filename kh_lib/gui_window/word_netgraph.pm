@@ -170,6 +170,11 @@ sub refresh{
 	#$nor[0]->focus unless $_[0] == 3;
 }
 
+sub start_raise{
+	my $self = shift;
+	$self->{words_obj}->settings_load;
+}
+
 sub start{
 	my $self = shift;
 

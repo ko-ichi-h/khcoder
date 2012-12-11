@@ -29,6 +29,7 @@ sub readin{
 		$selection{$i->[0]} = $i->[1];
 	}
 	
+	# 強制抽出・ファイル
 	$st = mysql_exec->select('
 		SELECT status
 		FROM status
@@ -51,7 +52,7 @@ sub readin{
 		$self->{words_mk_file} = $file;
 	}
 
-
+	# 使用しない語・ファイル
 	$st = mysql_exec->select('
 		SELECT status
 		FROM status
@@ -73,11 +74,58 @@ sub readin{
 		$self->{words_st_file} = $file;
 	}
 
-	$self->{stopwords}  = \@stop;
-	$self->{markwords}  = \@mark;
-	$self->{hinshilist} = \@hinshi;
-	$self->{usethis}    = \%selection;
+	$self->{stopwords}     = \@stop;
+	$self->{markwords}     = \@mark;
+	$self->{stopwords_act} = \@stop;
+	$self->{markwords_act} = \@mark;
+	$self->{hinshilist}    = \@hinshi;
+	$self->{usethis}       = \%selection;
 	bless $self, $class;
+	$self->read_file;
+	return $self;
+}
+
+sub read_file{
+	my $self = shift;
+
+	if ( $self->{words_mk_file_chk} ){
+		my $icode = kh_jchar->check_code( $self->{words_mk_file} );
+		my @words;
+		open (SOURCE,'<',"$self->{words_mk_file}") or
+			gui_errormsg->open(
+				type => 'file',
+				thefile => $self->{words_mk_file}
+			)
+		;
+		while (<SOURCE>){
+			s/\x0D\x0A|\x0D|\x0A/\n/g;
+			chomp;
+			next unless length($_);
+			my $t = Jcode->new($_,$icode)->euc;
+			push @words, $t;
+		}
+		$self->{markwords_act}  = \@words;
+	}
+
+	if ( $self->{words_st_file_chk} ){
+		my $icode = kh_jchar->check_code( $self->{words_st_file} );
+		my @words;
+		open (SOURCE,'<',"$self->{words_st_file}") or
+			gui_errormsg->open(
+				type => 'file',
+				thefile => $self->{words_st_file}
+			)
+		;
+		while (<SOURCE>){
+			s/\x0D\x0A|\x0D|\x0A/\n/g;
+			chomp;
+			next unless length($_);
+			my $t = Jcode->new($_,$icode)->euc;
+			push @words, $t;
+		}
+		$self->{stopwords_act}  = \@words;
+	}
+
 	return $self;
 }
 
@@ -126,6 +174,7 @@ sub save{
 	}
 	
 	# 使用しない語
+	$self->read_file;
 	mysql_exec->do('DROP TABLE dstop',1);
 	mysql_exec->do('CREATE TABLE dstop(name varchar(255))',1);
 	if (eval (@{$self->words_st})){
@@ -140,8 +189,8 @@ sub save{
 	
 	if ( mysql_exec->table_exists("genkei") ){
 		mysql_exec->do('UPDATE genkei SET nouse=0',1);
-		if (eval (@{$self->words_st})){
-			foreach my $i (@{$self->words_st}){
+		if (eval (@{$self->{stopwords_act}})){
+			foreach my $i (@{$self->{stopwords_act}}){
 				mysql_exec->
 					do("UPDATE genkei SET nouse=1 WHERE name=\'$i\'",1);
 			}
@@ -209,7 +258,7 @@ sub mark{
 #	}
 
 	my @keywords;
-	@keywords = @{$self->words_mk} if eval @{$self->words_mk};
+	@keywords = @{$self->{markwords_act}} if eval @{$self->{markwords_act}};
 
 	my %priority; my $n = 0;
 	foreach my $i (@keywords){
@@ -324,6 +373,7 @@ sub words_mk{
 	my $val  = shift;
 	if (defined($val)){
 		$self->{markwords} = $val;
+		$self->{markwords_act} = $val unless $self->{words_mk_file_chk};
 	}
 	return $self->{markwords};
 }
@@ -368,7 +418,8 @@ sub words_st{
 	my $self = shift;
 	my $val  = shift;
 	if (defined($val)){
-		$self->{stopwords} = $val;
+		$self->{stopwords}     = $val;
+		$self->{stopwords_act} = $val unless $self->{words_st_file_chk};
 	}
 	return $self->{stopwords};
 }

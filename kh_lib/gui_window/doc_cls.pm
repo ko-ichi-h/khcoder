@@ -169,6 +169,11 @@ sub check{
 	$self->{ent_check}->configure(-state => 'disable');
 }
 
+sub start_raise{
+	my $self = shift;
+	$self->{words_obj}->settings_load;
+}
+
 sub start{
 	my $self = shift;
 

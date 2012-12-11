@@ -93,7 +93,7 @@ sub _new{
 		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => "TKFN",
 		-width => 8,
-		-command => sub{$self->close;}
+		-command => sub{$self->withd;}
 	)->pack(-side => 'right',-padx => 2);
 
 	$win->Button(
@@ -119,15 +119,28 @@ sub file{
 		-title      => $self->gui_jt(kh_msg->get('opening_model')), # 学習結果ファイルを選択してください
 		-initialdir => $self->gui_jchar($::config_obj->cwd),
 	);
-	
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$self->{entry}->delete(0, 'end');
 		$self->{entry}->insert('0',$self->gui_jchar("$path"));
 	}
-	
 	return 1;
+}
+
+sub start{
+	my $self = shift;
+
+	# Windowを閉じる際のバインド
+	$self->win_obj->bind(
+		'<Control-Key-q>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ $self->withd; }
+	);
+	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
 }
 
 #----------------#
@@ -168,14 +181,6 @@ sub _calc{
 		return 0;
 	}
 
-	my $ans = $self->win_obj->messageBox(
-		-message => kh_msg->gget('cont_big_pros'),
-		-icon    => 'question',
-		-type    => 'OKCancel',
-		-title   => 'KH Coder'
-	);
-	unless ($ans =~ /ok/i){ return 0; }
-
 	# 保存先の参照
 	my $path;
 	if ($self->{check_savelog}) {
@@ -198,6 +203,16 @@ sub _calc{
 		$path = $::config_obj->os_path($path);
 	}
 
+	my $ans = $self->win_obj->messageBox(
+		-message => kh_msg->gget('cont_big_pros'),
+		-icon    => 'question',
+		-type    => 'OKCancel',
+		-title   => 'KH Coder'
+	);
+	unless ($ans =~ /ok/i){ return 0; }
+
+	my $wait_window = gui_wait->start;
+
 	use kh_nbayes;
 
 	kh_nbayes->predict(
@@ -208,11 +223,13 @@ sub _calc{
 		save_path => $path,
 	);
 
+	$wait_window->end(no_dialog => 1);
+
 	# 「外部変数リスト」を開く
 	my $win_list = gui_window::outvar_list->open;
 	$win_list->_fill;
 
-	$self->close;
+	$self->withd;
 }
 
 

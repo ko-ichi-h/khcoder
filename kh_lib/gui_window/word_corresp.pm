@@ -495,6 +495,11 @@ sub refresh{
 	return 1;
 }
 
+sub start_raise{
+	my $self = shift;
+	$self->{words_obj}->settings_load;
+}
+
 sub start{
 	my $self = shift;
 
