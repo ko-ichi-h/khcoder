@@ -411,8 +411,8 @@ sub save{
 			return 0;
 		}
 		
-		$self->config->words_mk_file($file);
 		$self->config->words_mk_file_chk(1);
+		$self->config->words_mk_file($file);
 	}
 
 	$self->config->words_mk(\@mark); # ファイル利用のあとから設定
@@ -451,8 +451,8 @@ sub save{
 			return 0;
 		}
 		
-		$self->config->words_st_file($file);
 		$self->config->words_st_file_chk(1);
+		$self->config->words_st_file($file);
 	}
 
 	$self->config->words_st(\@stop); # ファイル利用のあとから設定
