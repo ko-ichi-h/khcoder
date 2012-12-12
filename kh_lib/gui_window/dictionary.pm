@@ -93,11 +93,13 @@ sub _new{
 
 	$self->{ff_mark_entry} = $ff_mark->Entry(
 		-font => "TKFN",
+		-background => 'white',
 	)->pack(
 		-expand => 1,
 		-fill   => 'x',
 		-padx   => 1,
 	);
+	gui_window->disabled_entry_configure($self->{ff_mark_entry});
 
 	$f_stop->Label(
 		-text => kh_msg->get('force_ignore'),#$self->gui_jchar('・使用しない語の指定'),
@@ -137,12 +139,13 @@ sub _new{
 
 	$self->{ff_stop_entry} = $ff_stop->Entry(
 		-font => "TKFN",
+		-background => 'white',
 	)->pack(
 		-expand => 1,
 		-fill   => 'x',
 		-padx   => 1,
 	);
-
+	gui_window->disabled_entry_configure($self->{ff_stop_entry});
 
 
 	# 文字化け回避バインド
