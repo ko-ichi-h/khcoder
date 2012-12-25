@@ -1,6 +1,6 @@
-#!C:\Program Files\ActiveState Perl Dev Kit 8.1\bin\perlapp-gui.exe
+#!C:\Program Files\ActiveState Perl Dev Kit 9.1.1\bin\perlapp-gui.exe
 PAP-Version: 1.0
-Packer: C:\Program Files\ActiveState Perl Dev Kit 8.1\bin\perlapp.exe
+Packer: C:\Program Files\ActiveState Perl Dev Kit 9.1.1\bin\perlapp.exe
 Script: kh_coder.pl
 Cwd: F:\home\Koichi\Study\perl\core
 Add: Encode::Guess
@@ -11,6 +11,7 @@ Add: Encode::EUCJPMS
 Add: kh_project_io
 Add: YAML::Dumper
 Add: YAML::Loader
+Add: Clipboard::Win32::
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.ca,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.de,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.el[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.el,mode=666]
@@ -21,7 +22,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it[file=C:\apps\Perl\si
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.nl,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.pt,mode=666]
 Clean: 0
-Date: 2011-11-08 15:21:15
+Date: 2012-12-26 01:30:42
 Debug: 
 Dependent: 0
 Dyndll: 0
