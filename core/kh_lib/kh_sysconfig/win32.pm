@@ -235,6 +235,11 @@ sub os_cod_path{
 	return $c;
 }
 
+sub os_code{
+	return 'cp932';
+}
+
+
 1;
 
 __END__
