@@ -588,10 +588,13 @@ sub copy{
 		$clip .= "\n";
 	}
 	
-	$clip = gui_window->gui_jg($clip);
-	require Win32::Clipboard;
-	my $CLIP = Win32::Clipboard();
-	$CLIP->Set("$clip");
+	#$clip = gui_window->gui_jg($clip);
+	#require Win32::Clipboard;
+	#my $CLIP = Win32::Clipboard();
+	#$CLIP->Set("$clip");
+	
+	use Clipboard;
+	Clipboard->copy( Encode::encode($::config_obj->os_code,$clip) );
 }
 
 

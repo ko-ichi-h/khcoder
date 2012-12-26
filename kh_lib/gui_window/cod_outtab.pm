@@ -360,9 +360,11 @@ sub copy{
 		}
 		$t .= "\n";
 	}
-	require Win32::Clipboard;
-	my $CLIP = Win32::Clipboard();
-	$CLIP->Set("$t");
+	#require Win32::Clipboard;
+	#my $CLIP = Win32::Clipboard();
+	#$CLIP->Set("$t");
+	use Clipboard;
+	Clipboard->copy( Encode::encode($::config_obj->os_code,$t) );
 }
 
 sub multiscrolly{
