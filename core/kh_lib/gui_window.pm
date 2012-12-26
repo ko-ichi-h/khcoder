@@ -427,18 +427,12 @@ sub gui_jg{ # 入力された文字列の変換
 	}
 }
 
-sub to_clip{ # クリップボードへコピーするための変換（現在はWindowsのみ対応）
+sub to_clip{ # クリップボードへコピーするための変換
 	my $char = $_[1];
 	
-	if ($] > 5.008 && utf8::is_utf8($char) ){
-		$char = Encode::encode($char_code{sjis},$char);
-	} else {
-		unless (
-			Jcode->new($char)->icode eq 'sjis'
-			|| Jcode->new($char)->icode or 'ascii'
-		) {
-			$char = Jcode->new($char)->sjis;
-		}
+	unless ( utf8::is_utf8($char) ){
+		$char = Jcode->new($char)->utf8;
+		$char = Encode::decode('UTF8',$char);
 	}
 	
 	return $char;

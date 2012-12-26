@@ -4,10 +4,9 @@ use base qw(gui_window);
 use Tk;
 use strict;
 
-use gui_window::doc_search::linux;
-use gui_window::doc_search::win32;
 use gui_widget::optmenu;
 use kh_cod::search;
+use mysql_getdoc;
 
 #-------------#
 #   GUI作製   #
@@ -625,12 +624,33 @@ sub display{
 #------------------#
 #   文書のコピー   #
 #------------------#
+
 sub copy{
 	my $self = shift;
-	my $class = "gui_window::doc_search::".$::config_obj->os;
-	bless $self, $class;
+	my @selected = $self->{rlist}->infoSelection;
+	unless (@selected){
+		return;
+	}
 	
-	$self->_copy;
+	my $t;
+	foreach my $i (@selected){
+		
+		my $doc = mysql_getdoc->get(
+			doc_id => $self->{result}[$i][0],
+			tani   => $self->tani,
+		);
+		
+		$t .= $doc->header;
+		foreach my $i (@{$doc->body}){
+			$t .= $i->[0];
+		}
+		$t .= "\n";
+	}
+	
+	$t = $self->to_clip($t);
+	use Clipboard;
+	Clipboard->copy( Encode::encode($::config_obj->os_code,$t) );
+	return 1;
 }
 
 #--------------#
