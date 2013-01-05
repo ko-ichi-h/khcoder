@@ -622,6 +622,11 @@ gui_widget::r_cls:
     dist:                     '  距離：'
     n_cls:                    'クラスター数：'
     color:                    'クラスターの色分け'
+    stand:                    '標準化：'
+    none:                     'なし'
+    by_words:                 '抽出語ごと'
+    by_docs:                  '文書ごと'
+    tfidf:                    '  頻度：'
 gui_window::word_som:
     win_title:                '抽出語・自己組織化マップ：オプション'
     cluster:                  '布置'
