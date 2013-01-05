@@ -80,8 +80,57 @@ sub _new{
 				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
+		command => sub {$self->config_opts;},
 	);
 	$self->{widget_dist}->set_value('binary');
+
+
+
+	# 標準化とTF-IDF
+	my $f6 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
+
+	$f6->Label(
+		-text => kh_msg->get('gui_widget::r_cls->stand'), # 標準化：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{widget_stand} = gui_widget::optmenu->open(
+		parent  => $f6,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('gui_widget::r_cls->none'),     'none'     ],
+				[kh_msg->get('gui_widget::r_cls->by_words'), 'by_words' ],
+				[kh_msg->get('gui_widget::r_cls->by_docs'),  'by_docs'  ],
+			],
+		variable => \$self->{method_stand},
+		command => sub {$self->config_tfidf;},
+	);
+	$self->{widget_stand}->set_value('none');
+
+	$f6->Label(
+		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # 頻度：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{widget_tfidf} = gui_widget::optmenu->open(
+		parent  => $f6,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['TF',     'tf'     ],
+				['TF-IDF', 'tf-idf' ],
+			],
+		variable => \$self->{method_tfidf},
+	);
+	$self->{widget_tfidf}->set_value('tf-idf');
+	$self->config_opts();
+
+
+
 
 	my $f5 = $lf->Frame()->pack(
 		-fill => 'x',
@@ -120,12 +169,35 @@ sub _new{
 	return $self;
 }
 
+sub config_tfidf{
+	my $self = shift;
+	if ($self->{method_stand} eq 'by_words'){
+		$self->{widget_tfidf}->configure(-state => 'disabled');
+	} else {
+		$self->{widget_tfidf}->configure(-state => 'normal');
+	}
+}
+
+sub config_opts{
+	my $self = shift;
+	if ($self->{method_dist} eq 'binary'){
+		$self->{widget_tfidf}->configure(-state => 'disabled');
+		$self->{widget_stand}->configure(-state => 'disabled');
+	} else {
+		$self->{widget_tfidf}->configure(-state => 'normal');
+		$self->{widget_stand}->configure(-state => 'normal');
+	}
+}
+
 sub config_dist{
 	my $self = shift;
 	if ( $self->{method_method} eq 'clara' ){
 		$self->{widget_dist}->configure(-state => 'disable');
+		$self->{widget_tfidf}->configure(-state => 'normal');
+		$self->{widget_stand}->configure(-state => 'normal');
 	} else {
 		$self->{widget_dist}->configure(-state => 'normal');
+		$self->config_opts();
 	}
 }
 
@@ -277,6 +349,8 @@ sub calc{
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		method_method  => $self->gui_jg( $self->{method_method} ),
+		method_tfidf   => $self->gui_jg( $self->{method_tfidf} ),
+		method_stand   => $self->gui_jg( $self->{method_stand} ),
 		tani           => $self->tani,
 	);
 	
@@ -336,19 +410,19 @@ sub _calc_exec{
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	
-	$r_command .= &r_command_tfidf;
-	
-	if ($self->{method_dist} eq 'euclid'){
-		# 文書ごとに標準化
-			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
-			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
-			# の用をなさなくなる場合がまま見られる。
-		$r_command .= "d <- t( scale( t(d) ) )\n";
-		#$r_command .= "dj <- Dist(d,method=\"euclid\")^2\n";
-	} else {
-		#$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
+	if ( $self->{method_tfidf} eq 'tf-idf' ){
+		$r_command .= &r_command_tfidf;
 	}
 	
+	unless ( $self->{method_dist} eq 'binary' ){
+		if ($self->{method_stand} eq 'by_words'){
+			$r_command .= "d <- scale(d)\n";
+		}
+		elsif ($self->{method_stand} eq 'by_docs'){
+			$r_command .= "d <- t( scale( t(d) ) )\n";
+		}
+	}
+
 	$r_command .= "d_names <- row.names(d)\n";
 	#$r_command .= "d <- NULL\n";
 	
@@ -646,8 +720,18 @@ for (i in 1:12){
 		break
 	}
 }
+
+doc_length_mtr <- d[,(n_cut-1):n_cut]
+
 n_cut <- n_cut * -1
 d <- d[,-1:n_cut]
+
+for (i in 1:nrow(d)){
+	len <- as.numeric(doc_length_mtr[i,2])
+	if (len > 0){
+		d[i,] <- d[i,] / len * 1000
+	}
+}
 
 check_cutree <- function(r, n_org) {
 	q <- NULL

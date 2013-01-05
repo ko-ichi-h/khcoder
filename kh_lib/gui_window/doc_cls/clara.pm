@@ -28,11 +28,17 @@ sub _calc_exec{
 	
 	#$r_command .= &gui_window::doc_cls::r_command_tfidf;
 
-	# 文書ごとに標準化
-		# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
-		# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
-		# の用をなさなくなる場合がまま見られる。
-	$r_command .= "d <- t( scale( t(d) ) )\n";
+	if ( $self->{method_tfidf} eq 'tf-idf' ){
+		$r_command .= &r_command_tfidf;
+	}
+	
+
+	if ($self->{method_stand} eq 'by_words'){
+		$r_command .= "d <- scale(d)\n";
+	}
+	elsif ($self->{method_stand} eq 'by_docs'){
+		$r_command .= "d <- t( scale( t(d) ) )\n";
+	}
 
 	$r_command .= "d_names <- row.names(d)\n";
 	

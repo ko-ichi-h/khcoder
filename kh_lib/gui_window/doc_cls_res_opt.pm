@@ -71,6 +71,7 @@ sub _new{
 				['Cosine',  'pearson'],
 			],
 		variable => \$self->{method_dist},
+		command => sub {$self->config_opts;},
 	);
 
 	if ( $self->{command_f} =~ /method=\"euclid\"/ ){
@@ -82,6 +83,62 @@ sub _new{
 	else {
 		$self->{widget_dist}->set_value('pearson');
 	}
+
+	# 標準化とTF-IDF
+	my $f6 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
+
+	$f6->Label(
+		-text => kh_msg->get('gui_widget::r_cls->stand'), # 標準化：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{widget_stand} = gui_widget::optmenu->open(
+		parent  => $f6,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('gui_widget::r_cls->none'),     'none'     ],
+				[kh_msg->get('gui_widget::r_cls->by_words'), 'by_words' ],
+				[kh_msg->get('gui_widget::r_cls->by_docs'),  'by_docs'  ],
+			],
+		variable => \$self->{method_stand},
+		command => sub {$self->config_tfidf;},
+	);
+
+	if ( $self->{command_f} =~ /scale\( t\(d\) \)/ ){
+		$self->{widget_stand}->set_value('by_docs');
+	}
+	elsif ( $self->{command_f} =~ /scale\(d\)/ ){
+		$self->{widget_stand}->set_value('by_words');
+	}
+	else {
+		$self->{widget_stand}->set_value('none');
+	}
+
+	$f6->Label(
+		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # 頻度：
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{widget_tfidf} = gui_widget::optmenu->open(
+		parent  => $f6,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['TF',     'tf'     ],
+				['TF-IDF', 'tf-idf' ],
+			],
+		variable => \$self->{method_tfidf},
+	);
+	if ( $self->{command_f} =~ /gw_idf/ ){
+		$self->{widget_tfidf}->set_value('tf-idf');
+	} else {
+		$self->{widget_tfidf}->set_value('tf');
+	}
+
 	$self->config_dist;
 
 	my $f5 = $lf->Frame()->pack(
@@ -126,12 +183,35 @@ sub _new{
 	return $self;
 }
 
+sub config_tfidf{
+	my $self = shift;
+	if ($self->{method_stand} eq 'by_words'){
+		$self->{widget_tfidf}->configure(-state => 'disabled');
+	} else {
+		$self->{widget_tfidf}->configure(-state => 'normal');
+	}
+}
+
+sub config_opts{
+	my $self = shift;
+	if ($self->{method_dist} eq 'binary'){
+		$self->{widget_tfidf}->configure(-state => 'disabled');
+		$self->{widget_stand}->configure(-state => 'disabled');
+	} else {
+		$self->{widget_tfidf}->configure(-state => 'normal');
+		$self->{widget_stand}->configure(-state => 'normal');
+	}
+}
+
 sub config_dist{
 	my $self = shift;
 	if ( $self->{method_method} eq 'clara' ){
 		$self->{widget_dist}->configure(-state => 'disable');
+		$self->{widget_tfidf}->configure(-state => 'normal');
+		$self->{widget_stand}->configure(-state => 'normal');
 	} else {
 		$self->{widget_dist}->configure(-state => 'normal');
+		$self->config_opts();
 	}
 }
 
@@ -174,6 +254,8 @@ sub calc{
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		method_method  => $self->gui_jg( $self->{method_method} ),
+		method_tfidf   => $self->gui_jg( $self->{method_tfidf} ),
+		method_stand   => $self->gui_jg( $self->{method_stand} ),
 		tani           => $self->{tani},
 	);
 

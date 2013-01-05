@@ -620,6 +620,11 @@ gui_widget::r_cls:
     dist:                     '  Distance:'
     n_cls:                    'N of clusters:'
     color:                    'Different colors'
+    stand:                    'Standardize:'
+    none:                     'None'
+    by_words:                 'By Words'
+    by_docs:                  'By Document'
+    tfidf:                    '  TF-IDF:'
 gui_window::word_som:
     win_title:                'Self-Organizing Map Options'
     cluster:                  ' '
