@@ -465,7 +465,7 @@ sub _calc_exec{
 	kh_r_plot->clear_env;
 	my $plots;
 	
-	# ward
+	# 併合過程のファイル3種類
 	$plots->{_cluster_tmp}{last} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
@@ -500,6 +500,10 @@ sub _calc_exec{
 		width     => 640,
 		height    => 480,
 	) or return 0;
+
+	# デンドログラム
+
+
 
 
 	# クラスター番号の書き出し（Rコマンド）
@@ -595,6 +599,29 @@ sub tani{
 sub hinshi{
 	my $self = shift;
 	return $self->{words_obj}->hinshi;
+}
+
+sub r_command_dendro{
+
+
+# ラベルの取得
+
+# クラスター数の取得
+
+	my $t = '
+
+par(
+			mai=c(0,0,0,0),
+			mar=c(1,2,1,0),
+			omi=c(0,0,0,0),
+			oma=c(0,0,0,0) 
+		)
+
+plot(dcls,ann=0,cex=font_size, hang=-1)
+rect.hclust(dcls, k=n_cls, border="#FF8B00FF")
+
+';
+return $t;
 }
 
 sub r_command_height{
