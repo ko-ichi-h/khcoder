@@ -408,7 +408,9 @@ sub _calc_exec{
 	#$r_command .= "try( library(flashClust) )\n";
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
+	$r_command .= "d_labels <- d_labels[rowSums(d) > 0]\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
+	$r_command .= "n_cls <- $cluster_number\n";
 	
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
 		$r_command .= &r_command_tfidf;
@@ -502,9 +504,36 @@ sub _calc_exec{
 	) or return 0;
 
 	# デンドログラム
+	
+	$::config_obj->R->send("
+		print( paste( \"khc\",nrow(d),\"khc\", sep=\"\" ) )
+	");
+	my $ndocs = $::config_obj->R->read;
+	if ($ndocs =~ /"khc([0-9]+)khc"/){
+		$ndocs = $1;
+	} else {
+		warn "Could not get number of documents...\n";
+		return 0;
+	}
+	
+	my $size = int( ($ndocs * ( (20 + 5) * 1) + 45) * 1 );
+	if ($size < 480){
+		$size = 480;
+	}
+	elsif ($size < 640){
+		$size = 640;
+	}
 
-
-
+	$plots->{_dendro} = kh_r_plot->new(
+		name      => 'doc_cls_dendro',
+		command_f =>  $r_command
+		             .$r_command_ward
+		             .&r_command_dendro1(1),
+		command_a =>  &r_command_dendro1(1),
+		width     => $size,
+		height    => 480,
+	) or return 0;
+	$plots->{_dendro}->rotate_cls;
 
 	# クラスター番号の書き出し（Rコマンド）
 	#my $r_command_fin = &r_command_fix_r;
@@ -599,29 +628,6 @@ sub tani{
 sub hinshi{
 	my $self = shift;
 	return $self->{words_obj}->hinshi;
-}
-
-sub r_command_dendro{
-
-
-# ラベルの取得
-
-# クラスター数の取得
-
-	my $t = '
-
-par(
-			mai=c(0,0,0,0),
-			mar=c(1,2,1,0),
-			omi=c(0,0,0,0),
-			oma=c(0,0,0,0) 
-		)
-
-plot(dcls,ann=0,cex=font_size, hang=-1)
-rect.hclust(dcls, k=n_cls, border="#FF8B00FF")
-
-';
-return $t;
 }
 
 sub r_command_height{
@@ -748,6 +754,11 @@ for (i in 1:12){
 	}
 }
 
+d_labels <- as.character( d$name )
+if ( is.null(d$name) ){
+	d_labels <- as.character(1:nrow(d))
+}
+
 doc_length_mtr <- d[,(n_cut-1):n_cut]
 
 n_cut <- n_cut * -1
@@ -862,6 +873,377 @@ d <- t(d)
 END_OF_the_R_COMMAND
 return $t;
 }
+
+sub r_command_dendro1{
+	my $font_size = shift;
+
+	my $t = "# start dendro\n";
+
+	$t .= "font_size <- $font_size\n";
+
+	$t .= '
+
+par(
+			mai=c(0,0,0,0),
+			mar=c(1,2,1,0),
+			omi=c(0,0,0,0),
+			oma=c(0,0,0,0) 
+		)
+
+dcls$labels <- d_labels
+plot(dcls,ann=0,cex=font_size, hang=-1)
+
+rect.hclust(dcls, k=n_cls, border="#FF8B00FF")
+
+';
+return $t;
+}
+
+sub r_command_dendro2{
+	my $font_size = shift;
+
+	my $t = "# start dendro\n";
+
+	$t .= "font_size <- $font_size\n";
+
+	$t .= '
+
+freq <- as.vector( doc_length_mtr$length_w )
+
+library(grid)
+library(ggplot2)
+library(ggdendro)
+
+ddata <- dendro_data(as.dendrogram(dcls), type="rectangle")
+
+p <- NULL
+p <- ggplot()
+
+# クラスターごとのカラー設定
+
+if (n_cls > 1){
+	memb <- cutree(dcls,k=n_cls)
+	# 全体の色設定
+	p <- p + scale_colour_hue(l=40, c=100)
+	# 切り離し線(1)
+	cutpoint <- mean(
+		c(
+			rev(dcls$height)[n_cls-1],
+			rev(dcls$height)[n_cls]
+		)
+	)
+	# 色の順番を決定
+	n <- length( unique(memb[dcls$order]) )
+	new_col <- NULL
+	for (i in 1:ceiling(n / 2) ){
+		new_col <- c(new_col, i)
+		if (i + ceiling(n / 2) <= n){
+			new_col <- c(new_col, i + ceiling(n / 2))
+		}
+	}
+	# クラスター番号→色名の変換用ベクトル作成（col_vec）
+	col_tab <- cbind(
+		unique(memb[dcls$order]),
+		new_col
+	)
+	colnames(col_tab) <- c("org","new")
+	col_vec <- NULL
+	for (i in col_tab[order(col_tab[,1]),2]){
+		c <- as.character(i)
+		while (nchar(c) < 3){
+			c <- paste("0",c,sep="")
+		}
+		col_vec <- c(col_vec, c)
+	}
+	# 線の色分け
+	seg_bl <- NULL
+	seg_cl <- NULL
+	colnames(ddata$segment) <- c(
+		"x0",
+		"y0",
+		"x1",
+		"y1"
+	)
+	colnames(ddata$labels) <- c(
+		"x",
+		"y",
+		"text"
+	)
+	for ( i in 1:nrow( ddata$segment ) ) {
+		if (
+			   ddata$segment$y0[i] > cutpoint
+			|| ddata$segment$y1[i] > cutpoint
+			|| (
+				   ddata$segment$y0[i] >= cutpoint
+				&& ddata$segment$y1[i] >= cutpoint
+			   )
+		) {
+			seg_bl <- c(
+				seg_bl,
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i]
+			)
+		} else {
+			seg_cl <- c(
+				seg_cl,
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i],
+				#col_vec[
+					memb[dcls$order][
+						floor(
+							mean(
+								ddata$segment$x0[i],
+								ddata$segment$x1[i]) 
+							)
+					]
+				#]
+			)
+		}
+	}
+	seg_bl = matrix(seg_bl, byrow=T, ncol=4 )
+	seg_cl = matrix(seg_cl, byrow=T, ncol=5 )
+	
+	if (is.null(seg_bl) == F){
+		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
+		seg_bl <- as.data.frame(seg_bl)
+		# 切り離し線(2)
+		if ( max(seg_bl$y1) > cutpoint ){
+			p <- p + geom_hline(
+				yintercept = cutpoint,
+				colour="black",
+				linetype=5,
+				size=0.5
+			)
+		}
+	}
+	colnames(seg_cl) <- c("x0", "y0", "x1", "y1", "c")
+	seg_cl <- as.data.frame(seg_cl)
+	seg_cl$c <- col_vec[seg_cl$c]
+
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		size = 5 * 0.85 * font_size
+	)
+
+	p <- p + geom_segment(
+		data=seg_cl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1", colour="c"),
+		size=0.5
+	)
+} else {
+	memb <- rep( c("a"), length(d_labels) )
+	p <- p + scale_colour_manual(values=c("black"))
+	seg_bl <- ddata$segment
+	col_vec <- c("001")
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		size = 5 * 0.85 * font_size
+	)
+}
+
+if (is.null(seg_bl) == F){
+	p <- p + geom_segment(
+		data=seg_bl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1"),
+		color="gray50",
+		linetype=1,
+	)
+}
+
+p <- p + geom_text(
+	data=data.frame(                    # ラベル変換
+		x=label(ddata)$x,
+		y=label(ddata)$y,
+		text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+	),
+	aes_string(
+		x="x",
+		y="y",
+		label="text",
+		colour="cols"
+	),
+	hjust=1,
+	angle =0,
+	size = 5 * 0.85 * font_size
+)
+
+p <- p + coord_flip()
+p <- p + scale_x_reverse( expand = c(0.01,0.01) )
+p <- p + scale_y_continuous(expand = c(0.25,0))
+
+p <- p + ggplot2::opts(
+	axis.title.y = theme_blank(),
+	axis.title.x = theme_blank(),
+	axis.ticks   = theme_segment(colour="gray60"),
+	axis.text.y  = theme_text(size=12,colour="gray40"),
+	axis.text.x  = theme_text(size=12,colour="gray40"),
+	legend.position="none"
+)
+
+if (n_cls <= 1){
+	p <- p + ggplot2::opts(
+		axis.text.y  = theme_blank(),
+		axis.text.x  = theme_text(size=12,colour="black"),
+		axis.ticks = theme_segment(colour="black"),
+		#panel.grid.major = theme_blank(),
+		#panel.grid.minor = theme_blank(),
+		#panel.background = theme_blank(),
+		axis.line = theme_segment(colour = "black")
+	)
+}
+
+ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
+ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
+ggplot2_version <- unlist(     ggplot2_version )
+ggplot2_version <- as.numeric( ggplot2_version )
+ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
+
+
+if (ggplot2_version <= 8){
+	# Save the original definition of guide_grid
+	guide_grid_orig <- guide_grid
+
+	# Create the replacement function
+	guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
+	  ggname("grill", grobTree(
+	    theme_render(theme, "panel.background"),
+	    theme_render(
+	      theme, "panel.grid.minor", name = "x",
+	      x = rep(x.minor, each=2), y = rep(0:1, length(x.minor)),
+	      id.lengths = rep(2, length(x.minor))
+	    ),
+	    theme_render(
+	      theme, "panel.grid.major", name = "x",
+	      x = rep(x.major, each=2), y = rep(0:1, length(x.major)),
+	      id.lengths = rep(2, length(x.major))
+	    )
+	  ))
+	}
+
+	# Assign the function inside ggplot2
+	assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
+} else {
+	p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
+}
+
+
+show_bar <- 1
+
+if (show_bar == 1){
+	p <- p + ggplot2::opts(
+		axis.ticks  = theme_blank(),
+		axis.text.y = theme_blank()
+	)
+	p <- p + opts(
+		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
+	)
+
+	#freq <- NULL
+	#for (i in 1:nrow(d)) {
+	#	freq[i] = sum( d[i,] )
+	#}
+
+	bard <- data.frame(
+		nm <- d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		ht <- freq[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cl <- col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ],
+		od <- nrow(d):1
+	)
+
+	if (n_cls <= 1){
+		bard$cl <- "001"
+	}
+
+	p2 <- NULL
+	p2 <- ggplot()
+	p2 <- p2 + geom_bar(
+		width=0.75,
+		data=bard,
+		aes(
+			x=reorder(od,od),
+			y=ht,
+			fill=cl
+		)
+	)
+	p2 <- p2 + coord_flip()
+	p2 <- p2 + scale_y_reverse( expand = c(0,0))
+	p2 <- p2 + scale_x_discrete( expand = c(0.005,0.005) )
+	p2 <- p2 + ggplot2::opts(
+		axis.title.y     = theme_blank(),
+		axis.title.x     = theme_blank(),
+		axis.ticks       = theme_blank(),
+		axis.text.y      = theme_blank(),
+		axis.text.x      = theme_text(size=12,colour="white"),
+		legend.position  = "none",
+		panel.background = theme_rect(fill="white", colour="white"),
+		panel.grid.major = theme_blank(),
+		panel.grid.minor = theme_blank()
+	)
+
+	mgs <- -0.25
+	if (ggplot2_version >= 9){
+		mgs <- mgs * 3
+	}
+	p2 <- p2 + opts(
+		plot.margin = unit(c(0.25,mgs,0.25,0), "lines")
+	)
+
+	grid.newpage()
+	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
+	print(p,  vp= viewport(layout.pos.row=1, layout.pos.col=2) )
+	print(p2, vp= viewport(layout.pos.row=1, layout.pos.col=1) )
+} else {
+	print(p)
+}
+
+if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
+	} else {
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
+	}
+}
+
+if (ggplot2_version <= 8){
+	assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
+}
+
+';
+return $t;
+}
+
 
 
 1;

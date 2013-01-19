@@ -1026,3 +1026,7 @@ mysql_ready::dump:
     too_long_word2:            "Click OK to continue the pre-processing."
 mysql_getheader:
     error:                     "Failed to process documents.\n\nThere may be incorrect use of H1 - H5 tags in the target file.\nPlease try the \"Check the Target File\" command."
+gui_window::r_plot::doc_cls:
+    win_title:                 "Dendrogram of Documents"
+gui_window::r_plot_opt::doc_cls:
+    win_title:                 "Configure: Dendrogram of Documents"

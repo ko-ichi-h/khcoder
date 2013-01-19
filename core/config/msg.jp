@@ -626,7 +626,7 @@ gui_widget::r_cls:
     none:                     'なし'
     by_words:                 '抽出語ごと'
     by_docs:                  '文書ごと'
-    tfidf:                    '  頻度：'
+    tfidf:                    '  値：'
 gui_window::word_som:
     win_title:                '抽出語・自己組織化マップ：オプション'
     cluster:                  '布置'
@@ -1028,3 +1028,7 @@ mysql_ready::dump:
     too_long_word2:            "OKをクリックすると前処理を続行します。"
 mysql_getheader:
     error:                     "見出しの取り出しに失敗しました。\n\nH1～H5タグを使った見出し作成に失敗している可能性があります。\n分析対象ファイルのチェックを行ってみてください。"
+gui_window::r_plot::doc_cls:
+    win_title:                 "文書のデンドログラム"
+gui_window::r_plot_opt::doc_cls:
+    win_title:                 "文書のデンドログラム・調整"

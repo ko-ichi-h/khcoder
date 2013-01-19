@@ -29,7 +29,7 @@ sub _calc_exec{
 	#$r_command .= &gui_window::doc_cls::r_command_tfidf;
 
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
-		$r_command .= &r_command_tfidf;
+		$r_command .= &gui_window::doc_cls::r_command_tfidf;
 	}
 	
 
