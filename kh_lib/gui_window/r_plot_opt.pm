@@ -12,6 +12,7 @@ use gui_window::r_plot_opt::cod_mds;
 use gui_window::r_plot_opt::cod_netg;
 use gui_window::r_plot_opt::cod_som;
 use gui_window::r_plot_opt::selected_netgraph;
+use gui_window::r_plot_opt::doc_cls;
 
 sub _new{
 	my $self = shift;

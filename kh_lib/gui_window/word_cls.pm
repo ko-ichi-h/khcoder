@@ -758,7 +758,7 @@ if (show_bar == 1){
 		width=0.75,
 		data=bard,
 		aes(
-			x=reorder(nm,od),
+			x=reorder(od,od),
 			y=ht,
 			fill=cl
 		)

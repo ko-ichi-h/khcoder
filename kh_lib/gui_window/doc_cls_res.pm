@@ -92,6 +92,22 @@ sub _new{
 		-borderwidth => '1',
 		-command     => sub {gui_hlist->copy_all($self->list);}
 	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
+	
+	$fhl->Button(
+		-text        => kh_msg->gget('plot'), # プロット
+		-font        => "TKFN",
+		-borderwidth => '1',
+		-command     => sub {
+			if ($::main_gui->if_opened('w_doc_cls_plot')){
+				$::main_gui->get('w_doc_cls_plot')->close;
+			}
+		
+			gui_window::r_plot::doc_cls->open(
+				plots       => [$self->{plots}{_dendro}],
+				#plot_size   => 480,
+			);
+		}
+	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
 
 	#--------------------------#
 	#   クラスター併合の過程   #
@@ -338,12 +354,22 @@ sub renew{
 		$self->fill_list2;
 		
 		# リモートウィンドウ
-		if ($::main_gui->if_opened('w_doc_cls_height')){
-			$::main_gui->get('w_doc_cls_height')->renew(
-				'_cluster_tmp'
-			);
-		}
+		#if ($::main_gui->if_opened('w_doc_cls_height')){
+		#	$::main_gui->get('w_doc_cls_height')->renew(
+		#		'_cluster_tmp'
+		#	);
+		#}
 	}
+	
+	# デンドログラム・ウィンドウ
+	#if ($::main_gui->if_opened('w_doc_cls_plot')){
+	#	$::main_gui->get('w_doc_cls_plot')->close;
+	#	
+	#	gui_window::r_plot::doc_cls->open(
+	#		plots       => [$self->{plots}{_dendro}],
+	#		plot_size   => 480,
+	#	);
+	#}
 	
 	gui_hlist->update4scroll($self->list);
 	return 1;
@@ -670,6 +696,11 @@ sub end{
 	# 「併合水準」が開いている場合は閉じる
 	if ($::main_gui->if_opened('w_doc_cls_height')){
 		$::main_gui->get('w_doc_cls_height')->close;
+	}
+
+	# デンドログラムが開いている場合は閉じる
+	if ($::main_gui->if_opened('w_doc_cls_plot')){
+		$::main_gui->get('w_doc_cls_plot')->close;
 	}
 }
 

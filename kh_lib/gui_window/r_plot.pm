@@ -12,6 +12,7 @@ use gui_window::r_plot::cod_mds;
 use gui_window::r_plot::cod_netg;
 use gui_window::r_plot::cod_som;
 use gui_window::r_plot::selected_netgraph;
+use gui_window::r_plot::doc_cls;
 
 use strict;
 use gui_hlist;
