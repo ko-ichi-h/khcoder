@@ -764,12 +764,17 @@ doc_length_mtr <- d[,(n_cut-1):n_cut]
 n_cut <- n_cut * -1
 d <- d[,-1:n_cut]
 
-for (i in 1:nrow(d)){
-	len <- as.numeric(doc_length_mtr[i,2])
-	if (len > 0){
-		d[i,] <- d[i,] / len * 1000
-	}
-}
+#for (i in 1:nrow(d)){
+#	len <- as.numeric(doc_length_mtr[i,2])
+#	if (len > 0){
+#		d[i,] <- d[i,] / len * 1000
+#	}
+#}
+
+leng <- as.numeric(doc_length_mtr[,2])
+leng[leng ==0] <- 1
+d <- d / leng
+d <- d * 1000
 
 check_cutree <- function(r, n_org) {
 	q <- NULL
