@@ -245,6 +245,17 @@ sub make_plot{
 	$r_command .= "	freq[i] = sum( d[i,] )\n";
 	$r_command .= "}\n";
 
+	$r_command .= "
+
+leng <- as.numeric(doc_length_mtr[,2])
+leng[leng ==0] <- 1
+d <- t(d)
+d <- d / leng
+d <- d * 1000
+d <- t(d)
+
+" unless $args{method_dist} eq 'binary';
+
 	if ($args{method_dist} eq 'euclid'){
 		# 抽出語ごとに標準化
 			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
