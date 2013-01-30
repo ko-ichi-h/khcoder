@@ -179,6 +179,12 @@ sub r_cmd_p0_hx{
 	return '
 
 d <- t(d)
+
+leng <- as.numeric(doc_length_mtr[,2])
+leng[leng ==0] <- 1
+d <- d / leng
+d <- d * 1000
+
 d <- subset(d, rowSums(d) > 0)
 d <- scale(d)
 d <- t(d)
