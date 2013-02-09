@@ -1032,3 +1032,5 @@ gui_window::r_plot::doc_cls:
     win_title:                 "文書のデンドログラム"
 gui_window::r_plot_opt::doc_cls:
     win_title:                 "文書のデンドログラム・調整"
+mysql_ready::check:
+    error:                     "前処理データの整合性が失われました。"
