@@ -68,7 +68,7 @@ sub do{
 	
 	# 完了
 	if (@error){
-		my $msg = "前処理データの整合性が失われました。\n";
+		my $msg = kh_msg->get('error'); # 前処理データの整合性が失われました
 		my $n = 0;
 		foreach my $i (@error){
 			if ($n){$msg .= ', ';}

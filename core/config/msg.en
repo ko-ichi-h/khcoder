@@ -1030,3 +1030,5 @@ gui_window::r_plot::doc_cls:
     win_title:                 "Dendrogram of Documents"
 gui_window::r_plot_opt::doc_cls:
     win_title:                 "Configure: Dendrogram of Documents"
+mysql_ready::check:
+    error:                     "Something wrong with the database: "
