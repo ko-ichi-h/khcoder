@@ -73,6 +73,8 @@ order by genkei_t.id
 	・ヒートマップ
 		・白黒用にはバブルプロットを
 
+	・Stemming / Lemmatizationを行わないオプション
+
 	・掲示板で指摘のバグ
 		・コード選択関連
 		http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi?no=1173&mode=allread#1173
