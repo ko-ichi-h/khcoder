@@ -976,6 +976,7 @@ sub _calc{
 		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		use_alpha    => $self->{bubble_obj}->alpha,
 	);
 
 	$wait_window->end(no_dialog => 1);

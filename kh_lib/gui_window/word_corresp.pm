@@ -706,6 +706,7 @@ sub calc{
 		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		use_alpha    => $self->{bubble_obj}->alpha,
 		plotwin_name => 'word_corresp',
 	);
 
@@ -725,6 +726,7 @@ sub make_plot{
 
 	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
+	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
 	#$r_command = Encode::decode('euc-jp', $r_command);
 	$r_command = $r_command;
@@ -737,6 +739,8 @@ sub make_plot{
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
 	$r_command .= "cex=$fontsize\n";
+	$r_command .= "use_alpha <- $args{use_alpha}\n";
+	#$r_command .= "use_alpha <- 1\n";
 
 	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 成分
 	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # 固有値
@@ -1329,11 +1333,26 @@ return $t;
 sub r_command_bubble{
 	return '
 
+col_bg_words <- NA
+col_bg_vars  <- NA
+
 if (plot_mode == "color"){
 	col_txt_words <- "black"
 	col_txt_vars  <- "#DC143C"
 	col_dot_words <- "#00CED1"
 	col_dot_vars  <- "#FF6347"
+	if ( use_alpha == 1 ){
+		col_bg_words <- "#48D1CC"
+		col_bg_vars  <- "#FFA07A"
+		
+		rgb <- col2rgb(col_bg_words) / 255
+		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
+		rgb <- rgb * 0.75
+		col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.6 )
+		
+		rgb <- col2rgb(col_bg_vars) / 255
+		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
+	}
 }
 
 if (plot_mode == "gray"){
@@ -1412,6 +1431,7 @@ symbols(
 	circles=b_size,
 	inches=0.5 * bubble_size / 100,
 	fg=c(col_dot_words,"#ADD8E6")[ptype],
+	bg=c(col_bg_words,"#ADD8E6")[ptype],
 	add=T,
 )
 
@@ -1437,8 +1457,9 @@ if (biplot){
 	# plot points of variables
 	points(
 		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
-		pch=c(20,1,0,2,4:15)[cbb[,3]],
+		pch=c(20,1,22,23:25,21,4-14)[cbb[,3]],
 		col=c("#66CCCC","#ADD8E6",rep( col_dot_vars, v_count ))[cbb[,3]],
+		bg=col_bg_vars,
 		cex=pch_cex,
 	)
 }
