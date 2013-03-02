@@ -94,6 +94,11 @@ sub innner{
 		$num_var = $1;
 	}
 
+	$self->{use_alpha} = 1;
+	if ( $self->{command_f} =~ /use_alpha <\- ([0-9]+)\n/ ){
+		$use_alpha = $1;
+	}
+
 	# バブルプロット
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent          => $lf,
@@ -104,6 +109,7 @@ sub innner{
 		chk_std_radius  => $chk_std_radius,
 		num_size        => $num_size,
 		num_var         => $num_var,
+		use_alpha       => $use_alpha,
 		pack            => {
 			-anchor => 'w',
 		},
@@ -237,6 +243,7 @@ sub calc{
 		resize_vars  => $self->{bubble_obj}->chk_resize_vars,
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
+		use_alpha    => $self->{bubble_obj}->alpha,
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close

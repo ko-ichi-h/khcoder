@@ -16,6 +16,7 @@ sub _new{
 	$self->{chk_std_radius}  = 1   unless defined $self->{chk_std_radius};
 	$self->{num_size}        = 100 unless defined $self->{num_size};
 	$self->{num_var}         = 100 unless defined $self->{num_var};
+	$self->{use_alpha}       = 1   unless defined $self->{use_alpha};
 	
 	$f1->Checkbutton(
 		-text     => kh_msg->get('bubble'), # バブルプロット：
@@ -106,6 +107,22 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	if ($self->{type} eq 'corresp'){
+	
+		my $frm_alpha = $win->Frame()->pack(
+			-fill => 'x',
+		);
+
+		$frm_alpha->Label(
+			-text => '  ',
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left');
+
+		$self->{chkw_alpha} = $frm_alpha->Checkbutton(
+			-variable => \$self->{use_alpha},
+			-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+		)->pack(-anchor => 'w');
+	}
 
 	$self->refresh_std_radius;
 	$self->{win_obj} = $win;
@@ -124,6 +141,7 @@ sub refresh_std_radius{
 		$self->{lab_var1},
 		$self->{lab_var2},
 		$self->{ent_var},
+		$self->{chkw_alpha},
 	);
 	
 	my $state = 'disabled';
@@ -169,6 +187,10 @@ sub var{
 	return gui_window->gui_jg( $self->{ent_var}->get );
 }
 
+sub alpha{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{use_alpha} );
+}
 
 
 1;
