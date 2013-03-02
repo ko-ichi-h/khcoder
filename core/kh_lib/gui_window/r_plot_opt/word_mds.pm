@@ -82,6 +82,16 @@ sub innner{
 		check_nei    => $self->{cls_nei},
 	);
 
+	# È¾Æ©ÌÀ¤Î¿§
+	$self->{use_alpha} = 1;
+	if ( $self->{command_f} =~ /use_alpha <\- ([0-9]+)\n/ ){
+		$self->{use_alpha} = $1;
+	}
+	$lf->Checkbutton(
+		-variable => \$self->{use_alpha},
+		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+	)->pack(-anchor => 'w');
+
 	return $self;
 }
 
@@ -123,6 +133,7 @@ sub calc{
 		bubble_var   => $self->{bubble_obj}->var,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
+		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	$self->close;
