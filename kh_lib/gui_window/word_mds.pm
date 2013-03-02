@@ -62,6 +62,13 @@ sub _new{
 			-anchor   => 'w',
 		},
 	);
+	
+	# 半透明の色
+	$self->{use_alpha} = 1;
+	$lf->Checkbutton(
+		-variable => \$self->{use_alpha},
+		-text     => kh_msg->get('r_alpha'), 
+	)->pack(-anchor => 'w');
 
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
@@ -207,6 +214,7 @@ sub calc{
 		bubble_var     => $self->{bubble_obj}->var,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
+		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 	
 	$w->end(no_dialog => 1);
@@ -290,11 +298,13 @@ d <- t(d)
 	}
 
 	# プロット用のコマンド（次元別）
-	$args{n_cls} = 0 unless ( length($args{n_cls}) );
-	$args{cls_raw} = 0 unless ( length($args{cls_raw}) );
+	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
+	$args{cls_raw}   = 0 unless ( length($args{cls_raw}) );
+	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	
 	$r_command_d = $r_command;
 
+	$r_command_d .= "use_alpha <- $args{use_alpha}\n";
 	$r_command_d .= "plot_mode <- \"color\"\n";
 	$r_command_d .= "font_size <- $fontsize\n";
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
@@ -306,6 +316,7 @@ d <- t(d)
 	$r_command_d .= "name_dim2 <- paste(name_dim,'2')\n";
 	$r_command_d .= "name_dim3 <- paste(name_dim,'3')\n";
 	
+	$r_command_a .= "use_alpha <- $args{use_alpha}\n";
 	$r_command_a .= "plot_mode <- \"dots\"\n";
 	$r_command_a .= "font_size <- $fontsize\n";
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
@@ -560,7 +571,26 @@ if (n_cls > 0){
 		hcl <- hclust( dist(cl,method="euclid")^2, method="ward" )
 	}
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
+	col_dot_words <- "gray40"
 	col_base <- NA
+
+	if ( use_alpha == 1 ){
+		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
+		col_bg_words <- rgb(
+			red  =rgb[1,],
+			green=rgb[2,],
+			blue =rgb[3,],
+			alpha=0.5
+		)[cutree(hcl, k=n_cls)]
+		rgb <- rgb * 0.5
+		col_dot_words <- rgb(
+			red  =rgb[1,],
+			green=rgb[2,],
+			blue =rgb[3,],
+			alpha=0.92
+		)[cutree(hcl, k=n_cls)]
+	}
+
 }
 
 plot(
@@ -578,7 +608,7 @@ if (n_cls > 0){
 		cl[,2],
 		circles=rep(1,length(cl[,1])),
 		inches=0.1,
-		fg="gray40",
+		fg=col_dot_words,
 		bg=col_bg_words,
 		add=T,
 	)
@@ -666,14 +696,21 @@ if (plot_mode == "color"){
 	col_txt_words <- "black"
 	col_dot_words <- "#00CED1"
 	col_dot_vars  <- "#FF6347"
-	col_bg_words  <- "white"
+	col_bg_words  <- "NA"
 }
 
 if (plot_mode == "dots"){
 	col_txt_words <- NA
 	col_dot_words <- "black"
 	col_dot_vars  <- "black"
-	col_bg_words  <- "white"
+	col_bg_words  <- NA
+}
+
+if ( use_alpha == 1 ){
+	rgb <- c(179, 226, 205) / 255
+	col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
+	rgb <- rgb * 0.5
+	col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
 }
 
 # バブルのサイズを決定
@@ -725,6 +762,24 @@ if (n_cls > 0){
 	}
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
 	col_dot_words <- "gray40"
+
+	if ( use_alpha == 1 ){
+		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
+		col_bg_words <- rgb(
+			red  =rgb[1,],
+			green=rgb[2,],
+			blue =rgb[3,],
+			alpha=0.5
+		)[cutree(hcl, k=n_cls)]
+		rgb <- rgb * 0.5
+		col_dot_words <- rgb(
+			red  =rgb[1,],
+			green=rgb[2,],
+			blue =rgb[3,],
+			alpha=0.92
+		)[cutree(hcl, k=n_cls)]
+	}
+
 }
 
 # バブル描画

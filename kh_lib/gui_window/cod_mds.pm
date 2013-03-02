@@ -166,6 +166,13 @@ sub _new{
 		},
 	);
 
+	# 半透明の色
+	$self->{use_alpha} = 1;
+	$lf2->Checkbutton(
+		-variable => \$self->{use_alpha},
+		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
@@ -406,6 +413,7 @@ sub _calc{
 		bubble_var   => $self->{bubble_obj}->var,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
+		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 
 	$wait_window->end(no_dialog => 1);
