@@ -599,6 +599,7 @@ gui_window::word_mds:
     error_dim:                Error: Please specify from 1 to 3 as the number of dimensions
     dim:                      Dimension
     omit:                     "Following words/codes are omited from analysis:\n"
+    r_alpha:                  'Translucent Colors (not suitable for EMF/EPS)'
 gui_window::r_plot_opt::word_mds:
     win_title:                'Configure: Multi-Dimensional Scaling of Words'
 gui_window::r_plot::word_mds:
