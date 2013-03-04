@@ -147,7 +147,7 @@ gui_window::main::inner:
     docs:                     文書の単純集計：
     memo:                     説明（メモ）：
     target:                   現在のプロジェクト：
-    tokens:                   総抽出語数
+    tokens:                   総抽出語数（使用）：
     types:                    異なり語数（使用）：
     units:                    集計単位
 gui_window::main::menu:

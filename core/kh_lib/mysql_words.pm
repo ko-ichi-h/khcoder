@@ -887,6 +887,26 @@ sub num_kinds{
 	$sql .= " )";
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
+sub num{
+	my $hinshi = &_make_hinshi_list;
+	my $sql = '';
+	$sql .= 'SELECT sum(genkei.num) ';
+	$sql .= 'FROM genkei ';
+	$sql .= "WHERE genkei.nouse = 0 and (\n";
+	my $n = 0;
+	foreach my $i (@{$hinshi}){
+		if ($n){
+			$sql .= '    or ';
+		} else {
+			$sql .= '       ';
+		}
+		$sql .= "khhinshi_id=$i->[1]\n";
+		++$n;
+	}
+	$sql .= " 1 " unless $n;
+	$sql .= " )";
+	return mysql_exec->select($sql,1)->hundle->fetch->[0];
+}
 sub num_kinds_all{
 	return mysql_exec                   # HTMLおよび幽霊を除く単語種類数を返す
 		->select("

@@ -265,7 +265,7 @@ sub refresh{
 		
 		if ($::project_obj->status_morpho){       # 前処理が完了している場合
 			# 抽出語数
-			$self->entry('ent_num1', num_format(mysql_words->num_all));
+			$self->entry('ent_num1', num_format(mysql_words->num_all)." (".num_format(mysql_words->num).")");
 			$self->entry('ent_num2', num_format(mysql_words->num_kinds_all." (".mysql_words->num_kinds.")") );
 			# 集計単位
 			my %name = (

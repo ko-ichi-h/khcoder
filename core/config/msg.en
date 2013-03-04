@@ -145,8 +145,8 @@ gui_window::main::inner:
     docs:                     'Documents:'
     memo:                     'Memo:'
     target:                   'The Target File:'
-    tokens:                   'Tokens:'
-    types:                    'Types (using):   '
+    tokens:                   'Tokens (in use):'
+    types:                    'Types (in use):  '
     units:                    Units
 gui_window::main::menu:
     open_nbl:                 'Select the classification log file to view'
