@@ -305,6 +305,11 @@ d <- t(d)
 	$r_command_d = $r_command;
 
 	$r_command_d .= "use_alpha <- $args{use_alpha}\n";
+	$r_command_d .= "
+		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
+			use_alpha <- 0 
+		}
+	";
 	$r_command_d .= "plot_mode <- \"color\"\n";
 	$r_command_d .= "font_size <- $fontsize\n";
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
@@ -317,6 +322,11 @@ d <- t(d)
 	$r_command_d .= "name_dim3 <- paste(name_dim,'3')\n";
 	
 	$r_command_a .= "use_alpha <- $args{use_alpha}\n";
+	$r_command_a .= "
+		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
+			use_alpha <- 0 
+		}
+	";
 	$r_command_a .= "plot_mode <- \"dots\"\n";
 	$r_command_a .= "font_size <- $fontsize\n";
 	$r_command_a .= "n_cls <- $args{n_cls}\n";

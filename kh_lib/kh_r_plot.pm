@@ -304,6 +304,8 @@ sub save{
 	$path =~ tr/\\/\//;
 	$path = Jcode->new($path,'euc')->$icode unless $icode eq 'ascii';
 	
+	$self->clear_env;
+	
 	if ($path =~ /\.r$/i){
 		$self->_save_r($path);
 	}
@@ -373,6 +375,7 @@ sub _save_emf{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	$::config_obj->R->send( "saving_emf <- 1" );
 	$::config_obj->R->send(
 		 "win.metafile(filename=\"$path\", width = $w, height = $h )"
 	);
@@ -439,6 +442,7 @@ sub _save_eps{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	$::config_obj->R->send( "saving_eps <- 1" );
 	$::config_obj->R->send(
 		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
 		."paper = \"special\", height = $h, width = $w,"

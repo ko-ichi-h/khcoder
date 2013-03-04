@@ -740,7 +740,11 @@ sub make_plot{
 	$r_command .= "biplot <- $args{biplot}\n";
 	$r_command .= "cex=$fontsize\n";
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
-	#$r_command .= "use_alpha <- 1\n";
+	$r_command .= "
+		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
+			use_alpha <- 0 
+		}
+	";
 
 	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # 成分
 	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # 固有値
