@@ -89,7 +89,7 @@ sub _new{
 		#-selectforeground => 'black',
 		#-selectbackground => 'cyan',
 		-selectmode       => 'extended',
-		-height           => 20,
+		#-height           => 20,
 		#-command          => sub{$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
