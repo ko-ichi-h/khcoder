@@ -26,7 +26,7 @@ sub _new{
 		-selectborderwidth  => 0,
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
-		-height           => 20,
+		#-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 	
 	$self->{list}->header('create',0,-text => kh_msg->get('hyoso') ); # $self->gui_jchar('…Ω¡ÿ∏Ï')

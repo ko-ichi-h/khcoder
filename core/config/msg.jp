@@ -217,7 +217,7 @@ gui_window::main::menu:
     som:                      自己組織化マップ
 gui_window::morpho_check:
     details:                  詳細表示
-    note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力して下さい
+    note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力
     sentence:                 文（分割済み）
     win_title:                語の抽出結果
 gui_window::morpho_detail:

@@ -93,7 +93,7 @@ sub _new{
 		-selectborderwidth  => 0,
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
-		-height           => 20,
+		#-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => kh_msg->get('h_hukugo')); # Ê£¹ç¸ì
