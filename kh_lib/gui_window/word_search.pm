@@ -129,7 +129,7 @@ sub _new{
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
 		-command          => sub {$self->conc;},
-		-height           => 20,
+		#-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('√ÍΩ–∏Ï')

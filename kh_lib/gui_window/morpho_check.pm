@@ -68,7 +68,7 @@ sub _new{
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
 		-command          => sub{$self->detail;},
-		-height           => 20,
+		#-height           => 20,
 		-width            => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
