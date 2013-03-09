@@ -164,27 +164,27 @@ sub _run_morpho{
 			$self->_tokenize_stem($2, $fh_out);
 			print $fh_out $output_code->encode("$3\t$3\t$3\tTAG\t\tTAG\n");
 		} else {
-			while ( index($t,'<') > -1){
-				my $pre = substr($t,0,index($t,'<'));
-				my $cnt = substr(
-					$t,
-					index($t,'<'),
-					index($t,'>') - index($t,'<') + 1
-				);
-				unless ( index($t,'>') > -1 ){
-					gui_errormsg->open(
-						msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
-						type => 'msg'
-					);
-					exit;
-				}
-				substr($t,0,index($t,'>') + 1) = '';
-				
-				$self->_sentence($pre, $fh_out);
-				$self->_tag($cnt, $fh_out);
-				
-				#print "[[$pre << $cnt >> $t]]\n";
-			}
+			#while ( index($t,'<') > -1){
+			#	my $pre = substr($t,0,index($t,'<'));
+			#	my $cnt = substr(
+			#		$t,
+			#		index($t,'<'),
+			#		index($t,'>') - index($t,'<') + 1
+			#	);
+			#	unless ( index($t,'>') > -1 ){
+			#		gui_errormsg->open(
+			#			msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
+			#			type => 'msg'
+			#		);
+			#		exit;
+			#	}
+			#	substr($t,0,index($t,'>') + 1) = '';
+			#	
+			#	$self->_sentence($pre, $fh_out);
+			#	$self->_tag($cnt, $fh_out);
+			#	
+			#	#print "[[$pre << $cnt >> $t]]\n";
+			#}
 			$self->_sentence($t, $fh_out);
 		}
 		print $fh_out $output_code->encode("EOS\n");
@@ -238,6 +238,37 @@ sub _tokenize_stem{
 	my $t    = shift;
 	my $fh   = shift;
 	
+	while ( index($t,'<') > -1){
+		my $pre = substr($t,0,index($t,'<'));
+		my $cnt = substr(
+			$t,
+			index($t,'<'),
+			index($t,'>') - index($t,'<') + 1
+		);
+		unless ( index($t,'>') > -1 ){
+			gui_errormsg->open(
+				msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
+				type => 'msg'
+			);
+			exit;
+		}
+		substr($t,0,index($t,'>') + 1) = '';
+		
+		$self->_run_tagger($pre, $fh);
+		$self->_tag($cnt, $fh);
+		
+		#print "[[$pre << $cnt >> $t]]\n";
+	}
+	$self->_run_tagger($t, $fh);
+	
+	return 1;
+}
+
+sub _run_tagger{
+	my $self = shift;
+	my $t    = shift;
+	my $fh   = shift;
+
 	# POS Taggerへ
 	my $n = 0;
 	while ( not $self->{client}->open ){
