@@ -92,12 +92,15 @@ sub add_direct{
 		$args{raw} =~ tr/\t\n/  /;
 		
 		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
-		my @temp = ($args{raw} =~ /("(?:[^"]|"")*"|[^ ]*) /g);
+		my @temp = ($args{raw} =~ /('(?:[^']|'')*'|[^ ]*) /g);
 		
 		my ($n, $t) = (0,'');
 		foreach my $i (@temp){
 			unless ( length($i) ){next;}
 			if ($n){$t .= " $args{mode} ";}
+			if ( $i =~ /^(and|or|not)$/i ){
+				$i = "\"$i\"";
+			}
 			$t .= "$i";
 			++$n;
 		}
