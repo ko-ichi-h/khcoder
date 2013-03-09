@@ -166,6 +166,9 @@ sub ready{
 	my $tani = shift;
 	$self->{tani} = $tani;
 	
+	if ($self->raw =~ /^"(.+)"$/){
+		$self->{raw} = $1;
+	}
 	
 	my $list = mysql_a_word->new(
 		genkei => $self->raw
