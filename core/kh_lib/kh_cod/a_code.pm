@@ -358,9 +358,6 @@ CSV(Comma Separated Value)·Á¼°¤È¤¤¤¦¤Î¤Ï¡¤ ´°Á´¤Ë¥¢¥×¥ê¥±¡¼¥·¥ç¥ó¤Ë°ÍÂ¸¤·¤¿·Á¼°¤
 
 =cut
 
-	print "2: $condition\n";
-	#my @temp = split / /, $condition;
-	
 	my $n = 0;
 	foreach my $i (@temp){
 		next unless length($i);
