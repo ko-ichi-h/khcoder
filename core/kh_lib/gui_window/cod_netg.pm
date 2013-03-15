@@ -566,6 +566,7 @@ sub _calc{
 		smaller_nodes       => $self->{net_obj}->smaller_nodes,
 		use_weight_as_width => $self->{net_obj}->use_weight_as_width,
 		min_sp_tree         => $self->{net_obj}->min_sp_tree,
+		use_alpha           => $self->{net_obj}->use_alpha,
 		r_command        => $r_command,
 		plotwin_name     => 'cod_netg',
 	);
