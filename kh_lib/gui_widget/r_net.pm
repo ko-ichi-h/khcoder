@@ -64,8 +64,9 @@ sub _new{
 		}
 		if ($self->{r_cmd} =~ /min_sp_tree <- ([01])\n/){
 			$self->{check_min_sp_tree} = $1;
-		} else {
-			die("cannot get configuration: min_sp_tree");
+		}
+		if ($self->{r_cmd} =~ /use_alpha <- ([01])\n/){
+			$self->{check_use_alpha} = $1;
 		}
 
 		if ($edges == 0){
@@ -212,6 +213,13 @@ sub _new{
 			#-state => 'disabled',
 	)->pack(-anchor => 'w');
 
+	$self->{check_use_alpha} = 0 unless defined($self->{check_use_alpha});
+	$lf->Checkbutton(
+			-text     => kh_msg->get('gui_window::word_mds->r_alpha'),
+			-variable => \$self->{check_use_alpha},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
 	return $self;
@@ -271,6 +279,11 @@ sub edges_num{
 sub edges_jac{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{entry_edges_jac}->get );
+}
+
+sub use_alpha{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_use_alpha} );
 }
 
 sub use_freq_as_size{

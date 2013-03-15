@@ -57,6 +57,8 @@ sub new{
 
 	$r_command .= "min_sp_tree <- $args{min_sp_tree}\n";
 
+	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
+	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
 	# プロット作成
 	
@@ -476,19 +478,19 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	col_num <- 1
 	library( RColorBrewer )
 	for (i in com_m$csize ){
+		cu_col <- "white"
 		if ( i == 1){
-			ccol    <- c( ccol, "white" )
 			com_col <- c( com_col, "gray40" )
 		} else {
 			if (col_num <= 12){
-				ccol    <- c( ccol, brewer.pal(12, "Set3")[col_num] )
+				cu_col  <- brewer.pal(12, "Set3")[col_num]
 				com_col <- c( com_col, "gray40" )
 			} else {
-				ccol    <- c( ccol, "white" )
 				com_col <- c( com_col, "blue" )
 			}
 			col_num <- col_num + 1
 		}
+		ccol <- c( ccol, cu_col )
 	}
 	com_col_v <- com_col[com_m$membership + 1 - new_igraph]
 	ccol      <- ccol[com_m$membership + 1 - new_igraph]
@@ -527,7 +529,10 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 }
 
 if (com_method == "twomode_c"){
-	ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
+	ccol <-  degree(
+		n2,
+		v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
+	)
 	ccol[5 < ccol] <- 5
 	ccol <- ccol + 3
 	
@@ -540,6 +545,20 @@ if (com_method == "twomode_c"){
 	edg_col   <- "gray70"
 	edg_lty   <- 1
 
+}
+
+if ( exists("saving_emf") || exists("saving_eps") ){
+	use_alpha <- 0 
+}
+
+if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
+	rgb <- col2rgb(ccol) / 256
+	ccol <- rgb(
+		red  =rgb[1,],
+		green=rgb[2,],
+		blue =rgb[3,],
+		alpha=0.685
+	)
 }
 
 # カラーリング「なし」の場合の線の色（2010 12/4）
