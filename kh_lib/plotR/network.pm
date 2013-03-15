@@ -329,11 +329,16 @@ if ( exists("com_method") ){
 
 # グラフ作成 
 library(igraph)
+new_igraph <- 0
+if (as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) ) > 5){
+	new_igraph <- 1
+}
+
 n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
 n <- set.vertex.attribute(
 	n,
 	"name",
-	0:(length(d[1,])-1),
+	(0+new_igraph):(length(d[1,])-1+new_igraph),
 	as.character( 1:length(d[1,]) )
 )
 
@@ -364,7 +369,10 @@ n2  <- graph.edgelist(
 	directed	=F
 )
 n2 <- set.edge.attribute(
-	n2, "weight", 0:(length(get.edgelist(n2)[,1])-1), el2[,3]
+	n2,
+	"weight",
+	(0+new_igraph):(length(get.edgelist(n2)[,1])-1+new_igraph),
+	el2[,3]
 )
 
 	';
@@ -383,11 +391,16 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	ccol <- NULL
 	if (com_method == "cnt-b"){                   # 媒介
 		ccol <- betweenness(
-			n2, v=0:(length(get.vertex.attribute(n2,"name"))-1), directed=F
+			n2,
+			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+			directed=F
 		)
 	}
 	if (com_method == "cnt-d"){                   # 次数
-		ccol <-  degree(n2, v=0:(length(get.vertex.attribute(n2,"name"))-1) )
+		ccol <-  degree(
+			n2,
+			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
+		)
 	}
 	if (com_method == "cnt-e"){                   # 固有ベクトル
 		try(
@@ -437,6 +450,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
 		)
+		com_m$membership <- com_m$membership + new_igraph
 	}
 
 	if (com_method == "com-g"){                   # Modularity
@@ -444,6 +458,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
 		)
+		com_m$membership <- com_m$membership + new_igraph
 	}
 
 	if (com_method == "com-r"){                   # Random walks
@@ -475,15 +490,15 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			col_num <- col_num + 1
 		}
 	}
-	com_col_v <- com_col[com_m$membership + 1]
-	ccol      <- ccol[com_m$membership + 1]
+	com_col_v <- com_col[com_m$membership + 1 - new_igraph]
+	ccol      <- ccol[com_m$membership + 1 - new_igraph]
 
 	edg_lty <- NULL                               # edgeの色と形状
 	edg_col <- NULL
 	for (i in 1:length(el2$edge1)){
 		if (
-			   com_m$membership[ get.edgelist(n2,name=F)[i,1] + 1 ]
-			== com_m$membership[ get.edgelist(n2,name=F)[i,2] + 1 ]
+			   com_m$membership[ get.edgelist(n2,name=F)[i,1] + 1 - new_igraph]
+			== com_m$membership[ get.edgelist(n2,name=F)[i,2] + 1 - new_igraph]
 		){
 			edg_col <- c( edg_col, "gray55" )
 			edg_lty <- c( edg_lty, 1 )
