@@ -442,6 +442,10 @@ sub _calc_exec{
 	;
 
 	$r_command_ward .= "q <- cutree(dcls,k=$cluster_number)\n";
+	
+	$r_command_ward .= "ord <- order( unique( q[order.dendrogram( as.dendrogram(dcls) )] ) )\n";
+	$r_command_ward .= "q   <- ord[q]\n";
+	
 	$r_command_ward .= "q <- check_cutree(q, n_org)\n";
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
