@@ -74,10 +74,9 @@ sub out2{                               # length作製をする
 				# 書き出し
 				my $temp = "$last,";
 				if ($self->{midashi}){
-					$temp .= Jcode->new(
-						kh_csv->value_conv($self->{midashi}->[$last - 1]),
-						'euc'
-					)->sjis.',';
+					my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
+					$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+					$temp .= $jcode_tmp;
 				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 					if ($current{$h}){
@@ -118,10 +117,9 @@ sub out2{                               # length作製をする
 	# 最終行の出力
 	my $temp = "$last,";
 	if ($self->{midashi}){
-		$temp .= Jcode->new(
-			kh_csv->value_conv($self->{midashi}->[$last - 1]),
-			'euc'
-		)->sjis.',';
+		my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
+		$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+		$temp .= $jcode_tmp;
 	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 		if ($current{$h}){

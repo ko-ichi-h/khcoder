@@ -460,13 +460,15 @@ sub _calc_exec{
 
 	# kh_r_plotモジュールには基本的にEUCのRコマンドを渡すが、
 	# ここではUTF8フラグ付きを渡している
-	#print
-	#	"is_utf8? ", 
-	#	utf8::is_utf8($r_command),
-	#	utf8::is_utf8($r_command_ward),
-	#	utf8::is_utf8($r_command_height),
-	#	"\n"
-	#;
+	print
+		"is_utf8? ", 
+		utf8::is_utf8($r_command),
+		", ",
+		utf8::is_utf8($r_command_ward),
+		", ",
+		utf8::is_utf8($r_command_height),
+		"\n"
+	;
 
 	kh_r_plot->clear_env;
 	my $plots;
