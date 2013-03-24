@@ -24,16 +24,16 @@ sub read{
 	}
 
 	# 読み込み                                    # euc-->sjis変換？
-	my $st = $dbh->prepare("SELECT target,comment,dbname FROM projects")
+	my $st = $dbh->prepare("SELECT * FROM projects")
 		or die;
 	$st->execute or die;
 	my $n = 0;
-	while (my $r = $st->fetch){
+	while (my $r = $st->fetchrow_hashref){
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => $::config_obj->os_path($r->[0]),
-				comment => $r->[1],
-				dbname  => $r->[2]
+				target  => $::config_obj->os_path($r->{"target"}),
+				comment => $r->{"comment"},
+				dbname  => $r->{"dbname"}
 			);
 		++$n;
 	}
