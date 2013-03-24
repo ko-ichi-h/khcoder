@@ -37,7 +37,7 @@ sub _new{
 		-scrollbars=> 'ose',
 		-height => 20,
 		-width => 64,
-		-wrap => 'word',
+		-wrap => 'char',
 		-font => "TKFN",
 		-background => 'white',
 		-foreground => 'black',
