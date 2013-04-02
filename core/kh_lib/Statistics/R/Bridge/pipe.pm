@@ -442,32 +442,47 @@
     
     $this->chmod_all ;
         
-    my $cmd = "$this->{START_CMD} <start.r >output.log" ;
 
-    chdir("$this->{LOG_DIR}") ;
+	my $pid; # kh # WindowsではWin32::Processを使って起動
+	if ($::config_obj->os eq 'win32' && 1){
+		my $r_process;
+		require Win32::Process;
+		#print "starting R in $this->{LOG_DIR}, $this->{R_BIN}\n";
+		Win32::Process::Create(
+			$r_process,
+			$this->{R_BIN},
+			"rterm --slave --vanilla -f start.r",
+			0,
+			Win32::Process->NORMAL_PRIORITY_CLASS,
+			$this->{LOG_DIR},
+		) || die("Could not start R!");
+		$pid = $r_process->GetProcessID();
+		
+		$this->{PIPE} = "dummy" ;
+		
+		$this->{HOLD_PIPE_X} = ++$HOLD_PIPE_X ;
+		*{"HOLD_PIPE$HOLD_PIPE_X"} = "dummy" ;
 
-    #print "debug: $cmd\n";
+	} else {
+		chdir("$this->{LOG_DIR}") ;
+		my $cmd = "$this->{START_CMD} < start.r > output.log" ;
+		$pid = open(my $read , "| $cmd") ;
+		return if !$pid ;
 
-    my $pid = open(my $read , "| $cmd") ;
-    return if !$pid ;
+		$this->{PIPE} = $read ;
 
-    $this->{PIPE} = $read ;
-
-    $this->{HOLD_PIPE_X} = ++$HOLD_PIPE_X ;
-    *{"HOLD_PIPE$HOLD_PIPE_X"} = $read ;
+		$this->{HOLD_PIPE_X} = ++$HOLD_PIPE_X ;
+		*{"HOLD_PIPE$HOLD_PIPE_X"} = $read ;
+	}
 
     $this->{PID} = $pid ;
         
     $this->chmod_all ;
-
+	
     while( !-s $this->{PID_R} ) { select(undef,undef,undef,0.05) ;}
-
     $this->update_pid ;
-
     while( $this->read_processR() eq '' ) { select(undef,undef,undef,0.10) ;}
-
     $this->chmod_all ;
-
     return 1 ;
   }
   
@@ -614,8 +629,12 @@
     if ( $pid ) {
       for (1..3) { kill(9 , $pid) ;}
     }
-    
-    close( *{'HOLD_PIPE' . $this->{HOLD_PIPE_X} } ) ;
+
+	if ($::config_obj->os eq 'win32'){ # kh
+		
+	} else {
+		close( *{'HOLD_PIPE' . $this->{HOLD_PIPE_X} } ) ;
+	}
 
     delete $this->{PIPE} ;
     delete $this->{PID} ;
@@ -726,6 +745,10 @@
     $pid_r =~ s/\\/\\\\/g ;    
     $pid_r = Jcode->new($pid_r)->$icode
     	if ( length($icode) and ( $icode ne 'ascii' ) );
+    
+	if ($::config_obj->os eq 'win32'){ # kh
+		print $fh "sink(file=\"output.log\", append=TRUE )\n";
+	}
     
     print $fh qq`
       print("Statistics::R - Perl bridge started!") ;
