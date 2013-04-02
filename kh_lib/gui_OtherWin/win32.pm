@@ -13,8 +13,18 @@ sub _open{
 		} else {
 			$cmd = "start /MIN cmd.exe /c \"\"$t\"\"";
 		}
-		print "$cmd\n";
 		system $cmd;
+		
+		#use IPC::Run qw( start pump );
+		#my ($in, $out,$err);
+		#my $h = start ["cmd.exe"], \$in , \$out, \$err;
+		#if ($t =~ /^http/o){
+		#	$in = "start $t & exit\n";
+		#} else {
+		#	$in = "\"\"$t\"\" & exit\n";
+		#}
+		#pump $h while length $in;
+
 	} else {
 		system "start command.com /c start \"$t\"";
 	}
