@@ -444,7 +444,7 @@
         
 
 	my $pid; # kh # WindowsではWin32::Processを使って起動
-	if ($::config_obj->os eq 'win32' && 1){
+	if ($::config_obj->os eq 'win32'){
 		my $r_process;
 		require Win32::Process;
 		#print "starting R in $this->{LOG_DIR}, $this->{R_BIN}\n";

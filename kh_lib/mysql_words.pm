@@ -497,18 +497,18 @@ sub _make_wl_1c{
 
 	my $num_lab = '';
 	if ($self->{num} eq 'tf'){
-		$num_lab = kh_msg->get('tf'); #'出現回数'
+		$num_lab = Encode::encode('euc-jp',kh_msg->get('tf')); #'出現回数'
 	} else {
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = kh_msg->get('df').' ('.$tani.')';
+		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
 	}
 
 	@data = (
 		[
-			kh_msg->get('words'),# 抽出語
-			kh_msg->get('pos'),#'品詞',
+			Encode::encode('euc-jp',kh_msg->get('words')), # 抽出語
+			Encode::encode('euc-jp',kh_msg->get('pos')),   #'品詞',
 			$num_lab
 		],
 		@data
@@ -534,7 +534,7 @@ sub _make_wl_def{
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = kh_msg->get('df').' ('.$tani.')';
+		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
 	}
 
 	my @data;
@@ -601,14 +601,14 @@ sub _make_wl_150{
 			LIMIT 150
 		',1)->hundle;
 		$data[0] = [
-			kh_msg->get('words'),
-			kh_msg->get('tf'),
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('tf')),
 			'',
-			kh_msg->get('words'),
-			kh_msg->get('tf'),
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('tf')),
 			'',
-			kh_msg->get('words'),
-			kh_msg->get('tf')
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('tf'))
 		];
 	} else {
 		$t = mysql_exec->select('
@@ -642,14 +642,14 @@ sub _make_wl_150{
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
 		
 		$data[0] = [
-			kh_msg->get('words'),
-			kh_msg->get('df').' ('.$tani.')',
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
 			'',
-			kh_msg->get('words'),
-			kh_msg->get('df').' ('.$tani.')',
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
 			'',
-			kh_msg->get('words'),
-			kh_msg->get('df').' ('.$tani.')'
+			Encode::encode('euc-jp',kh_msg->get('words')),
+			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')')
 		];
 	}
 

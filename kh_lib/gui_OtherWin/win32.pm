@@ -2,16 +2,54 @@ package gui_OtherWin::win32;
 use base qw (gui_OtherWin);
 use strict;
 
+my $cmd_path = '';
+
 sub _open{
 	my $self = shift;
 	my $t = $self->target;
 	require Win32;
 	if ( Win32::IsWinNT() ){
-	
-		### system関数（シンプル）
-		system("start \"khcoder\" \"$t\"");
+		# Win32::Process
+		unless ($cmd_path){            # cmd.exeを探す
+			if (-e $ENV{'WINDIR'}.'\system32\cmd.exe'){
+				$cmd_path = $ENV{'WINDIR'}.'\system32\cmd.exe';
+				print "cmd.exe: $cmd_path\n";
+			} else {
+				foreach my $i (split /;/, $ENV{'PATH'}){
+					unless (
+						   substr($i,length($i) - 1, 1) eq '\\'
+						|| substr($i,length($i) - 1, 1) eq '/'
+					) {
+						$i .= '\\';
+					}
+					if (-e $i.'cmd.exe'){
+						$cmd_path = $i.'cmd.exe';
+						print "cmd.exe: found at $cmd_path\n";
+						last;
+					}
+				}
+			}
+		}
+		print "Opening $t\n";
+		if (-e $cmd_path){
+			require Win32::Process;
+			my $cmd_process;
+			Win32::Process::Create(
+				$cmd_process,
+				$cmd_path,
+				"cmd /C start \"khcoder\" \"$t\"",
+				0,
+				Win32::Process->NORMAL_PRIORITY_CLASS,
+				$ENV{'PWD'},
+			) || die("Could not start cmd.exe\n");
+		} else {
+			print "Could not find cmd.exe\n";
+		}
 
-		### system関数
+		### system関数（シンプル）
+		#system("start \"khcoder\" \"$t\"");
+
+		### system関数（古い）
 		#my $cmd;
 		#if ($t =~ /^http/o){
 		#	$cmd = "start /MIN cmd.exe /c start $t";
