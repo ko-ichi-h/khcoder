@@ -61,9 +61,9 @@ sub pick{
 			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){    # 見出し行
 				if ($last){
 					print F "\n";
-					$last = 0;
 				}
-				print F "$i->{rowtxt}\n";
+				print F "$i->{rowtxt}\n" if $args{pick_hi};
+				$last = 0;
 			} else {
 				if ($last == $i->{dan_id}){     # 同じ段落の続き
 					if (                  # 文単位の場合の特殊処理
@@ -77,12 +77,9 @@ sub pick{
 						print "-";
 					}
 				}
-				elsif ($i->{dan_id} == 1){      # 段落の変わり目（1つ目の段落）
+				else {      # 段落の変わり目
 					print F "\n" if $last;# 直前が見出しでなければ改行付加
 					print F "$i->{rowtxt}";
-					$last = 1;
-				} else {                        # 段落の変わり目（2つ目以降）
-					print F "\n$i->{rowtxt}";
 					$last = $i->{dan_id};
 				}
 			}
@@ -203,7 +200,7 @@ sub sql{
 	my %args = @_;
 	
 	my $sql;
-	if ($args{pick_hi}){
+	#if ($args{pick_hi}){
 		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
 		$sql .= "FROM bun_r, bun\n";
 		unless ($args{tani} eq 'bun'){
@@ -237,28 +234,28 @@ sub sql{
 				)
 			)
 		";
-	} else {
-		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
-		if ($args{tani} eq 'bun'){
-			$sql .= "FROM bun, bun_r, ct_pickup\n";
-		} else {
-			$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
-		}
-		$sql .= "WHERE\n";
-		$sql .= "	    bun.id = bun_r.id\n";
-		$sql .= "	AND bun.id >= $args{d1}\n";
-		$sql .= "	AND bun.id <  $args{d2}\n";
-		$sql .= "	AND ct_pickup.id = $args{tani}.id\n";
-		unless ($args{tani} eq 'bun'){
-			my $flag = 0;
-			foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
-				if ($i eq $args{tani}){$flag=1;}
-				if ($flag) {
-					$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
-				}
-			}
-		}
-	}
+	#} else {
+	#	$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
+	#	if ($args{tani} eq 'bun'){
+	#		$sql .= "FROM bun, bun_r, ct_pickup\n";
+	#	} else {
+	#		$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
+	#	}
+	#	$sql .= "WHERE\n";
+	#	$sql .= "	    bun.id = bun_r.id\n";
+	#	$sql .= "	AND bun.id >= $args{d1}\n";
+	#	$sql .= "	AND bun.id <  $args{d2}\n";
+	#	$sql .= "	AND ct_pickup.id = $args{tani}.id\n";
+	#	unless ($args{tani} eq 'bun'){
+	#		my $flag = 0;
+	#		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+	#			if ($i eq $args{tani}){$flag=1;}
+	#			if ($flag) {
+	#				$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
+	#			}
+	#		}
+	#	}
+	#}
 	
 	return $sql;
 }
