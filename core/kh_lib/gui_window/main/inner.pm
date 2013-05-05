@@ -190,7 +190,7 @@ sub make{
 	);
 
 	$fra3->Label(
-		-text => 'Interface Language: '
+		-text => 'The Interface Language: '
 	)->pack(-side => 'right');
 
 	$lab_fra1->pack(
@@ -224,7 +224,7 @@ sub switch_lang{
 		gui_errormsg->open(
 			type => 'msg',
 			icon => 'info',
-			msg  => "Language of user interface has been changed.\nPlease restart KH Coder for the change to take effect.",
+			msg  => "The user interface language has been changed.\nPlease restart KH Coder for the change to take effect.",
 		);
 	}
 }
