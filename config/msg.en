@@ -722,9 +722,9 @@ gui_window::r_plot::word_netgraph:
     cnt_b:                    'Centrality: betweenness'
     cnt_d:                    'Centrality: degree'
     cnt_v:                    'Centrality: eigenvector'
-    com_b:                    'Community: betweenness'
-    com_r:                    'Community: random walks'
-    com_m:                    'Community: modularity'
+    com_b:                    'Communities: betweenness'
+    com_r:                    'Communities: random walks'
+    com_m:                    'Communities: modularity'
     none:                     None
     color:                    ' color:'
     win_title:                'Co-Occurrence Network of Words'
