@@ -22,7 +22,11 @@ sub ready{
 	my $self = shift;
 	my $tani = shift;
 	$self->{tani} = $tani;
-	
+
+	if ($self->raw =~ /^"(.+)"$/){
+		$self->{raw} = $1;
+	}
+
 	# ルール指定の解釈
 	my ($var, $val);
 	if ($self->raw =~ /<>(.+)\-\->(.+)$/o){
@@ -145,7 +149,7 @@ sub parent_table{
 }
 
 sub pattern{
-	return '^<>.+\-\->.+';
+	return '^<>.+\-\->.+|^"<>.+\-\->.+"$';
 }
 sub name{
 	return 'outvar_o';

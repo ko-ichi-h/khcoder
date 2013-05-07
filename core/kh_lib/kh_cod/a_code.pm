@@ -322,7 +322,7 @@ sub new{
 
 	$condition =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
 	my @temp = map{/^'(.*)'$/ ? scalar(s/''/'/g, $_) : $_}
-		($condition =~ /('(?:[^']|'')*'|[^ ]*) /g);
+		($condition =~ /('(?:[^']|'')*'|"(?:[^"]|"")*"|[^ ]*) /g);
 
 =pod
 
@@ -362,14 +362,19 @@ CSV(Comma Separated Value)·Á¼°¤È¤¤¤¦¤Î¤Ï¡¤ ´°Á´¤Ë¥¢¥×¥ê¥±¡¼¥·¥ç¥ó¤Ë°ÍÂ¸¤·¤¿·Á¼°¤
 	foreach my $i (@temp){
 		next unless length($i);
 		next if ($i eq ' ');
-		#print "$i,";
+		#if ($i =~ /^"(.+)"$/){
+		#	$i = $1;
+		#	$i =~ s/""/"/g;
+		#}
+		
+		print "raw: $i,";
 		my $the_atom = kh_cod::a_code::atom->new($i);
 		push @{$self->{condition}}, $the_atom;
 		$self->{ed_condition} .= ' ' if $n;
 		$self->{ed_condition} .= $the_atom->raw_for_cache_chk;
 		++$n;
 	}
-	#print "\n";
+	print "\n";
 	
 	bless $self, $class;
 	return $self;

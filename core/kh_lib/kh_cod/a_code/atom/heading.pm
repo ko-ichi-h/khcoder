@@ -37,7 +37,11 @@ sub ready{
 	my $self = shift;
 	my $tani = shift;
 	$self->{tani} = $tani;
-	
+
+	if ($self->raw =~ /^"(.+)"$/){
+		$self->{raw} = $1;
+	}
+
 	# ルール指定の解釈
 	my ($var, $val);
 	if ($self->raw =~ /<>(見出し|heading)([1-5])\-\->(.+)$/io){
@@ -135,7 +139,7 @@ sub parent_table{
 
 
 sub pattern{
-	return '^<>見出し[1-5]\-\->.+|^<>heading[1-5]\-\->.+';
+	return '^<>見出し[1-5]\-\->.+|^"<>見出し[1-5]\-\->.+"$|^<>heading[1-5]\-\->.+|^"<>heading[1-5]\-\->.+"$';
 }
 sub name{
 	return 'heading';
