@@ -10,7 +10,7 @@
 
 ¢£project_name:	kokoro2_.txt
 ¢£project_comment:	º´∆∞•∆•π•»Õ—Project°Œ ‘°œ
-¢£words_all:	106,344
+¢£words_all:	106,344 (35,985)
 ¢£project_kinds:	6,098 (5,485)
 ¢£doc num:
  ∏	5,177
