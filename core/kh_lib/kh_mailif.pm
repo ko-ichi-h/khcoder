@@ -15,15 +15,22 @@ sub success{
 	my $host = $ENV{USERDOMAIN};
 	unless ($host){ $host = $ENV{HOSTNAME}; }
 	
-	
-	my $smtp = Net::SMTP->new($::config_obj->mail_smtp);
+	my $smtp = Net::SMTP->new(
+		$::config_obj->mail_smtp,
+		Port => 587,
+		Timeout => 30,
+	);
 	unless ($smtp){
-		print "*Could not send a notification e-mail...\n";
+		print "* Could not send a notification e-mail...\n";
 		return 0;
 	}
-	$smtp->mail($::config_obj->mail_from);
-	$smtp->to($::config_obj->mail_to);
-	$smtp->data();
+
+	# SMTPÇ§¾Ú
+	# $smtp->auth('id', 'pass');
+
+	$smtp->mail($::config_obj->mail_from) or return 0;
+	$smtp->to(  $::config_obj->mail_to  ) or return 0;
+	$smtp->data() or return 0;
 	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
 	$smtp->datasend("To:The User<".$::config_obj->mail_to.">\n");
 	$smtp->datasend("Subject:Pre-processing is successfully complete.\n");
@@ -39,6 +46,7 @@ sub success{
 	$smtp->datasend("\nBest regards.");
 	$smtp->dataend();
 	$smtp->quit;
+
 }
 
 sub failure{
@@ -52,10 +60,19 @@ sub failure{
 	my $host = $ENV{USERDOMAIN};
 	unless ($host){ $host = $ENV{HOSTNAME}; }
 
-	my $smtp = Net::SMTP->new($::config_obj->mail_smtp);
-	$smtp->mail($::config_obj->mail_from);
-	$smtp->to($::config_obj->mail_to);
-	$smtp->data();
+	my $smtp = Net::SMTP->new(
+		$::config_obj->mail_smtp,
+		Port => 587,
+		Timeout => 30,
+	);
+	unless ($smtp){
+		print "* Could not send a notification e-mail...\n";
+		return 0;
+	}
+
+	$smtp->mail( $::config_obj->mail_from ) or return 0;
+	$smtp->to(   $::config_obj->mail_to   ) or return 0;
+	$smtp->data() or return 0;
 	$smtp->datasend("From:KH Coder<".$::config_obj->mail_from.">\n");
 	$smtp->datasend("To:The User<".$::config_obj->mail_to.">\n");
 	$smtp->datasend("Subject:Failure in Pre-processing.\n");
