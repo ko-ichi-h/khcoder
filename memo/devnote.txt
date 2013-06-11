@@ -64,6 +64,9 @@ order by genkei_t.id
 	・Statistics::Rが大部更新されているので、ぼちぼち乗り換えるべき？　ただし結構大きなコード変更が必要そう。
 		→最近のStatistics::RはIPC::Runを使っていて、これがperlappと相性が悪いらしい。
 	・FreeLingが使えれば、（少なくとも）Italian (it), Portuguese (pt), Spanish (es)のTokenization機能を利用できそう。ただしWindows版PPMが見当たらない？
+	・Stanford POS Taggerについて
+		・「Even Mike seems to have wiser judgment than I.」みたいな文を入れると、最後の「I.」がこのまま1語になってしまう。バグなのか仕様なのかよく分からない。KH Coderに添付のv. 3.0.4 - 2011-09-14.と、現時点での最新版v3.1.5 - 2013-04-04でも確認。
+		・最近のバージョンではtagger modelファイルが肥大化している模様？
 	・同じ見出しがあった場合に、同じ値として扱うかどうか：　ex. 上の「一」と下の「一」を同一視するのかどうか
 		・同一視される箇所
 			共起ネットワークの「語‐外部変数・見出し」
@@ -75,6 +78,10 @@ order by genkei_t.id
 		これはcmdscaleが返す値が微妙に異なるため。
 		lay <- round(lay, digits=12)とすれば、12でも14でも同じ値になる。
 		しかし、roundするにしても、従来とは異なる配置になるが…
+
+	・Strawberry PerlのPortable版について
+		・コンパイルに失敗するモジュールはppm install hogeで入る
+		・起動用のバッチファイルを.exe化すると、一部の（最初の）エラーが表示されなくなる？
 
 [TO DO]
 	・ヒートマップ
