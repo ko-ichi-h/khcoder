@@ -32,6 +32,7 @@ sub __new{
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
+	# ChaSen
 	$lfra->Radiobutton(
 		-text     => kh_msg->get('chasen'),#$self->gui_jchar('茶筌（日本語）'),
 		-font     => 'TKFN',
@@ -61,6 +62,7 @@ sub __new{
 		-command => sub { $self->browse_chasen(); }
 	)->pack(-padx => '2',-side => 'right');
 
+	# MeCab
 	my $msg = kh_msg->get('mecab');#'MeCab（日本語）';
 	if ($::config_obj->all_in_one_pack){
 		$msg .= kh_msg->get('need_inst');#'※別途インストールが必要';
@@ -97,6 +99,23 @@ sub __new{
 	
 	$entry1->insert(0,$self->gui_jchar($::config_obj->chasen_path));
 	$entry2->insert(0,$self->gui_jchar($::config_obj->mecab_path));
+
+
+	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	
+	$fra3->Label(
+		-text => '   ',
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+	
+	$self->{check_mecab_unicode} = $::config_obj->mecab_unicode;
+	$self->{chkwd_mecab_unicode} = $fra3->Checkbutton(
+		-text     => kh_msg->get('mecab_unicode'),
+		-variable => \$self->{check_mecab_unicode},
+	)->pack(
+		-side   => 'left',
+	);
+
 
 	# POS Tagger
 
@@ -281,6 +300,8 @@ sub ok{
 	
 	$::config_obj->chasen_path(  $self->gui_jg( $self->entry1->get() ) );
 	$::config_obj->mecab_path(   $self->gui_jg( $self->entry2->get() ) );
+	$::config_obj->mecab_unicode($self->gui_jg( $self->{check_mecab_unicode}));
+	
 	$::config_obj->c_or_j(       $self->gui_jg( $self->{c_or_j}      ) );
 	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
 	$::config_obj->stanford_lang($self->gui_jg( $self->{opt_stan_val}) );
@@ -383,6 +404,7 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
 		
 		$self->{label_stem1}->configure(-state => 'disable');
 		$self->{label_stem2}->configure(-state => 'disable');
@@ -408,6 +430,7 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'normal');
 		$self->btn2->configure(-state => 'normal');
 		$self->lb2->configure(-state => 'normal');
+		$self->{chkwd_mecab_unicode}->configure(-state => 'normal');
 
 		$self->{label_stem1}->configure(-state => 'disable');
 		$self->{label_stem2}->configure(-state => 'disable');
@@ -434,6 +457,7 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
 
 		$self->{label_stem1}->configure(-state => 'normal');
 		$self->{label_stem2}->configure(-state => 'normal');
@@ -459,6 +483,7 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
 
 		$self->{label_stem1}->configure(-state => 'disable');
 		$self->{label_stem2}->configure(-state => 'disable');

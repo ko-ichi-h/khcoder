@@ -81,6 +81,7 @@ sub save_ini{
 	my @outlist = (
 		'chasen_path',
 		'mecab_path',
+		'mecab_unicode',
 		'stanf_jar_path',
 		'stanf_tagger_path',
 		'c_or_j',

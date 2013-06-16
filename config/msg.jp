@@ -307,6 +307,7 @@ gui_window::sysconfig:
     p_chasenrc:               '    "chasenrc"のパス：'
     p_grammer.cha:            '    "grammar.cha"のパス：'
     p_mecab.exe:              '    mecab.exeのパス：'
+    mecab_unicode:            'Unicode辞書'
     p_stanford_jar:           '    *.JAR file path:'
     p_stanford_tag:           '    *.TAGGER file path:'
     pdf:                      PDFビューア：
