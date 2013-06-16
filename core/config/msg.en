@@ -305,6 +305,7 @@ gui_window::sysconfig:
     p_chasenrc:               '    path of "chasenrc":'
     p_grammer.cha:            '    path of "grammar.cha":'
     p_mecab.exe:              '    path of "mecab.exe":'
+    mecab_unicode:            'Unicode Dictionary'
     p_stanford_jar:           '    path of *.JAR:'
     p_stanford_tag:           '    path of *.TAGGER:'
     pdf:                      'PDF Viewer:'

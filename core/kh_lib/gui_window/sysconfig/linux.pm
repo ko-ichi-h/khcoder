@@ -103,6 +103,21 @@ sub __new{
 		-command  => sub{ $self = $self->refine_cj; },
 	)->pack(-anchor => 'w');
 
+	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	
+	$fra3->Label(
+		-text => '   ',
+		-font => 'TKFN'
+	)->pack(-side => 'left');
+	
+	$self->{check_mecab_unicode} = $::config_obj->mecab_unicode;
+	$self->{chkwd_mecab_unicode} = $fra3->Checkbutton(
+		-text     => kh_msg->get('mecab_unicode'),
+		-variable => \$self->{check_mecab_unicode},
+	)->pack(
+		-side   => 'left',
+	);
+
 	# POS Tagger
 
 	$lfra->Radiobutton(

@@ -299,6 +299,15 @@ sub use_hukugo{
 	return $self->{use_hukugo};
 }
 
+sub mecab_unicode{
+	my $self = shift;
+	my $new = shift;
+	if (length($new) > 0){
+		$self->{mecab_unicode} = $new;
+	}
+	return $self->{mecab_unicode};
+}
+
 sub c_or_j{
 	my $self = shift;
 	my $new = shift;

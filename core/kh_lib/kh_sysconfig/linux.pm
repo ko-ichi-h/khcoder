@@ -81,6 +81,7 @@ sub save_ini{
 		'stanf_tagger_path',
 		#'juman_path',
 		'c_or_j',
+		'mecab_unicode',
 		'stemming_lang',
 		'stanford_lang',
 		'msg_lang',
