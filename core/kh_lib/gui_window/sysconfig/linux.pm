@@ -363,6 +363,8 @@ sub refine_cj{
 		$self->btn2->configure(-state => 'normal');
 		$self->lb2->configure(-state => 'normal');
 
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
+
 		$self->{label_stem1}->configure(-state => 'disable');
 		$self->{label_stem2}->configure(-state => 'disable');
 		$self->{opt_stem}->configure(-state => 'disable');
@@ -383,6 +385,8 @@ sub refine_cj{
 		$self->entry1->configure(-state => 'disable');
 		$self->btn1->configure(-state => 'disable');
 		$self->lb1->configure(-state => 'disable');
+
+		$self->{chkwd_mecab_unicode}->configure(-state => 'normal');
 
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
@@ -413,6 +417,8 @@ sub refine_cj{
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
 
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
+
 		$self->{label_stem1}->configure(-state => 'normal');
 		$self->{label_stem2}->configure(-state => 'normal');
 		$self->{opt_stem}->configure(-state => 'normal');
@@ -437,6 +443,8 @@ sub refine_cj{
 		$self->entry2->configure(-state => 'disable');
 		$self->btn2->configure(-state => 'disable');
 		$self->lb2->configure(-state => 'disable');
+
+		$self->{chkwd_mecab_unicode}->configure(-state => 'disable');
 
 		$self->{label_stem1}->configure(-state => 'disable');
 		$self->{label_stem2}->configure(-state => 'disable');
@@ -476,6 +484,8 @@ sub ok{
 	$::config_obj->app_html($self->e_html->get());
 	$::config_obj->app_pdf($self->e_pdf->get());
 	$::config_obj->app_csv($self->e_csv->get());
+
+	$::config_obj->mecab_unicode( $self->gui_jg( $self->{check_mecab_unicode} ) );
 
 	$::config_obj->c_or_j(    $self->gui_jg( $self->{c_or_j} ) );
 	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
