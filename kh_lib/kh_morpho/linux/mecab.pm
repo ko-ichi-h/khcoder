@@ -107,6 +107,10 @@ sub _mecab_run{
 	my $kuten  = 'µ≠πÊ-∂Á≈¿';
 
 	while( <OTEMP> ){
+		if ( $::config_obj->mecab_unicode ){
+			$_ = Jcode->new($_,'utf8')->euc;
+		}
+
 			if (
 				   index($last_line,$maru) > -1
 				&& length( (split /\t/, $last_line)[0] ) > 2
@@ -201,6 +205,11 @@ sub _mecab_store_out{
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
+
+	if ( $::config_obj->mecab_unicode ){
+		$self->{store} = Jcode->new($self->{store},'euc')->utf8;
+	}
+
 	print TMPO $self->{store};
 	close (TMPO);
 
