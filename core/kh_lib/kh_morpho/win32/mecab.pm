@@ -133,6 +133,10 @@ sub _mecab_run{
 	
 		# 句点「。」が必ず1語になるよう修正
 	while( <OTEMP> ){
+		if ( $::config_obj->mecab_unicode ){
+			$_ = Jcode->new($_,'utf8')->sjis;
+		}
+
 		if ( length($last_line) > 0 ){
 			if (
 				   index($last_line,$maru) > -1
@@ -229,6 +233,11 @@ sub _mecab_store_out{
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
+	
+	if ( $::config_obj->mecab_unicode ){
+		$self->{store} = Jcode->new($self->{store},'sjis')->utf8;
+	}
+	
 	print TMPO $self->{store};
 	close (TMPO);
 
