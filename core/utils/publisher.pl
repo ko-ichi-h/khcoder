@@ -7,8 +7,48 @@ $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 my $V = '2b30b';
 
-&source_tgz;
+#&source_tgz;
+&win_pkg;
 
+
+sub win_pkg{
+
+	# 「kh_coder.exe」を作成
+	chdir("..");
+	#system("cvs update");
+	unlink("kh_coder.exe");
+	system("make_exe.bat");
+	unless (-e "kh_coder.exe"){
+		die("Could not create \"kh_coder.exe\"\n");
+	}
+	
+	require Win32::API;
+	my $win = Win32::API->new(
+		'user32.dll',
+		'FindWindow',
+		'NP',
+		'N'
+	)->Call(
+		0,
+		"Console of KH Coder"
+	);
+	Win32::API->new(
+		'user32.dll',
+		'ShowWindow',
+		'NN',
+		'N'
+	)->Call(
+		$win,
+		9
+	);
+	
+	# 新しいファイルを「pub/base/win_pkg」へコピー
+	
+	
+	
+	chdir("utils");
+
+}
 
 sub source_tgz{
 	#---------------------------------#
