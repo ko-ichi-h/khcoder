@@ -7,4 +7,4 @@ move plugin_jp_bak plugin_jp
 move plugin_en_bak plugin_en
 move CVS_bak kh_lib\Tk\CVS
 attrib +h kh_lib\Tk\CVS
-pause
+REM pause
