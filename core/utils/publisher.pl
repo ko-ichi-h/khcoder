@@ -1,5 +1,6 @@
 use strict;
 use Archive::Tar;
+use File::Copy;
 use File::Find 'find';
 use File::Path 'rmtree';
 
@@ -7,15 +8,55 @@ $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 my $V = '2b30b';
 
-#&source_tgz;
+&source_tgz;
 &win_pkg;
+&win_upd;
+
+sub win_upd{
+	chdir("..");
+	
+	# 新しいファイルを「pub/base/win_upd」へコピー
+	my @cp_f = (
+		['kh_coder.exe' , 'kh_coder.exe'  ],
+		['config/msg.en', 'config/msg.en' ],
+		['config/msg.jp', 'config/msg.jp' ],
+	);
+	
+	find(
+		sub {
+			push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+			;
+		},
+		'utils/kh_coder/plugin_en'
+	);
+	
+	find(
+		sub {
+			push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
+			;
+		},
+		'utils/kh_coder/plugin_jp'
+	);
+	
+	foreach my $i (@cp_f){
+		copy($i->[0], 'pub/base/win_upd/'.$i->[1]) or die("Can not copy $i\n");
+		print "copy: $i->[1]\n";
+	}
+	
+	# Zipファイルを作成
+	system("wzzip -rp -ex utils\\khcoder-$V-s.zip pub\\base\\win_upd");
+	
+	chdir("utils");
+}
 
 
 sub win_pkg{
-
 	# 「kh_coder.exe」を作成
 	chdir("..");
-	#system("cvs update");
+
+	system("cvs update");
 	unlink("kh_coder.exe");
 	system("make_exe.bat");
 	unless (-e "kh_coder.exe"){
@@ -43,11 +84,42 @@ sub win_pkg{
 	);
 	
 	# 新しいファイルを「pub/base/win_pkg」へコピー
+	my @cp_f = (
+		['kh_coder.exe' , 'kh_coder.exe'  ],
+		['config/msg.en', 'config/msg.en' ],
+		['config/msg.jp', 'config/msg.jp' ],
+	);
 	
+	find(
+		sub {
+			push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+			;
+		},
+		'utils/kh_coder/plugin_en'
+	);
 	
+	find(
+		sub {
+			push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
+			;
+		},
+		'utils/kh_coder/plugin_jp'
+	);
 	
-	chdir("utils");
+	foreach my $i (@cp_f){
+		copy($i->[0], 'pub/base/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
+		print "copy: $i->[1]\n";
+	}
 
+	# Zip自己解凍ファイルを作成
+	unlink("utils\\khcoder-$V-f.zip");
+	unlink("utils\\khcoder-$V-f.exe");
+	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\base\\win_pkg");
+	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder -le -overwrite");unlink("utils\\khcoder-$V-f.zip");
+
+	chdir("utils");
 }
 
 sub source_tgz{
