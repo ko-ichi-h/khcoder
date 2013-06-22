@@ -1,6 +1,7 @@
 use strict;
 use Archive::Tar;
 use File::Copy;
+use Win32::Process;
 use File::Find 'find';
 use File::Path 'rmtree';
 
@@ -8,9 +9,91 @@ $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 my $V = '2b30b';
 
+&pdfs;
 &source_tgz;
 &win_pkg;
 &win_upd;
+
+sub pdfs{
+	# パスワード
+	open (my $fh, '<', 'pass.txt') or die;
+	my $pass = readline $fh;
+	close ($fh);
+	undef $fh;
+
+	# Distillerのパス
+	system('where acrodist.exe > temp.txt');
+	open (my $fh,'<',"temp.txt") or die;
+	my $acro_path = readline $fh;
+	close $fh;
+	unlink("temp.txt");
+	chomp $acro_path;
+	unless (-e $acro_path){
+		die("Could not find Distiller.");
+	}
+
+	# 移動
+	chdir('..');
+	chdir('..');
+	chdir('..');
+	chdir('doc');
+	chdir('tex__phd');
+	
+	# Distillerの起動
+	my $acro_proc;
+	Win32::Process::Create(
+		$acro_proc,
+		$acro_path,
+		"acrodist",
+		0,
+		NORMAL_PRIORITY_CLASS,
+		"."
+	) or die("Could not start Distiller");
+	
+	# LaTeX
+	system('platex  khcoder_manual_b5');
+	system('platex  khcoder_manual_b5');
+	system('jbibtex khcoder_manual_b5');
+	system('mendex -s dot.ist khcoder_manual_b5');
+	system('platex  khcoder_manual_b5');
+	system('platex  khcoder_manual_b5');
+	
+	system('platex  khcoder_tutorial');
+	system('platex  khcoder_tutorial');
+	system('jbibtex khcoder_tutorial');
+	system('platex  khcoder_tutorial');
+	system('platex  khcoder_tutorial');
+	
+	# pdf
+	system('dvipdfmx khcoder_manual_b5');
+	system('dvipdfmx khcoder_tutorial');
+
+	$acro_proc->Kill(1);
+	move('khcoder_manual_b5.pdf', 'khcoder_manual.pdf');
+
+	# security
+	system("pdftk khcoder_manual.pdf output out1.pdf owner_pw hoge allow printing screenreaders");
+	move('out1.pdf', 'khcoder_manual.pdf');
+	system("pdftk khcoder_tutorial.pdf output out2.pdf owner_pw $pass allow printing screenreaders");
+	move('out2.pdf', 'khcoder_tutorial.pdf');
+
+	copy ('khcoder_manual.pdf', '../../perl/core/pub/base/win_pkg/khcoder_manual.pdf') or die;
+	copy ('khcoder_manual.pdf', '../../perl/core/pub/base/win_upd/khcoder_manual.pdf') or die;
+	copy ('khcoder_manual.pdf', '../../perl/core/utils/khcoder_manual.pdf') or die;
+
+	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_pkg/khcoder_tutorial.pdf') or die;
+	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_upd/khcoder_tutorial.pdf') or die;
+	copy ('khcoder_tutorial.pdf', '../../perl/core/utils/khcoder_tutorial.pdf') or die;
+
+	# 移動
+	chdir('..');
+	chdir('..');
+	chdir('perl');
+	chdir('core');
+	chdir('utils');
+
+}
+
 
 sub win_upd{
 	chdir("..");
