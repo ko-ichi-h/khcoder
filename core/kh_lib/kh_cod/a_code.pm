@@ -367,14 +367,14 @@ CSV(Comma Separated Value)·Á¼°¤È¤¤¤¦¤Î¤Ï¡¤ ´°Á´¤Ë¥¢¥×¥ê¥±¡¼¥·¥ç¥ó¤Ë°ÍÂ¸¤·¤¿·Á¼°¤
 		#	$i =~ s/""/"/g;
 		#}
 		
-		print "raw: $i,";
+		#print "raw: $i,";
 		my $the_atom = kh_cod::a_code::atom->new($i);
 		push @{$self->{condition}}, $the_atom;
 		$self->{ed_condition} .= ' ' if $n;
 		$self->{ed_condition} .= $the_atom->raw_for_cache_chk;
 		++$n;
 	}
-	print "\n";
+	#print "\n";
 	
 	bless $self, $class;
 	return $self;
