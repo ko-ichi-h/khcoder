@@ -1,18 +1,179 @@
 use strict;
-use Archive::Tar;
-use File::Copy;
-use Win32::Process;
-use File::Find 'find';
-use File::Path 'rmtree';
+
+# core/pub/base 以下に：
+#	/web
+#	/win_pkg  →現行のWindows版パッケージを解凍しておく
+#	/win_upd  →現行のWindows版バイナリを解凍しておく
+#	/win_strb →現行のWindows・Strawberry版を解凍しておく
+
+# 配布パッケージに新しいファイルを加える場合は @cp_f を編集（後ろに追加）
+# 新たなPerlモジュールを使い始める場合にはStrawberry Perlの編集が必要
 
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
+# 初期設定
 my $V = '2b30b';
+my $V_main = "2.Beta.30";
+my $V_full = "2.Beta.30b";
 
-&pdfs;
-&source_tgz;
-&win_pkg;
-&win_upd;
+my $pdf = 1;
+
+# 環境設定
+my $home_dir = '';
+my $key_file = '';
+
+if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # 家PC
+	$key_file = 'f:/home/koichi/study/.ssh/id_dsa';
+	$home_dir = 'f:/home/koichi/study/';
+	system("set HOME=$home_dir");
+}
+
+# 更新するファイルの指定
+my @cp_f = (
+	['kh_coder.exe' , 'kh_coder.exe'  ],
+	['config/msg.en', 'config/msg.en' ],
+	['config/msg.jp', 'config/msg.jp' ],
+);
+
+use File::Find 'find';
+find(
+	sub {
+		push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
+			unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+		;
+	},
+	'utils/kh_coder/plugin_en'
+);
+
+find(
+	sub {
+		push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
+			unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
+		;
+	},
+	'utils/kh_coder/plugin_jp'
+);
+
+# 実行
+
+use Archive::Tar;
+use File::Copy;
+use File::Copy::Recursive 'dircopy';
+use Win32::Process;
+use Time::Piece;
+use Net::SFTP::Foreign;
+use LWP::UserAgent;
+use File::Path 'rmtree';
+
+#&web;
+#&pdfs if $pdf;
+#&source_tgz;
+#&win_pkg;
+#&win_upd;
+#&win_strb;
+&upload;
+
+sub upload{
+	print "Uploading...\n";
+
+	my $sftp = Net::SFTP::Foreign->new(
+		host => 'web.sourceforge.net',
+		user => 'ko-ichi,khc',
+		key_path => $key_file,
+	);
+	
+	# Files
+	if ($pdf){
+		$sftp->setcwd("/home/pfs/project/khc/Manual");
+		print "put: khcoder_manual.pdf\n";
+		$sftp->put ("khcoder_manual.pdf", "khcoder_manual.pdf") or die;
+		
+		$sftp->setcwd("/home/pfs/project/khc/Tutorial/for KH Coder 2.x");
+		print "put: khcoder_tutorial.pdf\n";
+		$sftp->put ("khcoder_tutorial.pdf", "khcoder_tutorial.pdf") or die;
+	}
+	
+	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
+	$sftp->mkdir($V_main);
+	$sftp->setcwd($V_main);
+	foreach my $i (
+		"khcoder-$V-strb.zip",
+		"khcoder-$V.tar.gz",
+		"khcoder-$V-s.zip",
+		"khcoder-$V-f.exe",
+	){
+		print "put: $i\n";
+		$sftp->put ($i, $i) or die;
+	}
+	
+	# Web pages
+	$sftp->setcwd("/home/project-web/khc/htdocs");
+	
+	foreach my $i (
+		"index.html",
+		"dl.html",
+	){
+		$sftp->put ("../pub/base/web/$i", $i) or die;
+	}
+	
+	$sftp->setcwd("en");
+	$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
+	
+	$sftp->disconnect;
+}
+
+
+sub web{
+	my $ua = LWP::UserAgent->new(
+		agent      => 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0',
+	);
+	
+	# 日付
+	my $time = localtime;
+	my $year = $time->year;
+	my $mon  = $time->mon;
+	my $day  = $time->mday;
+	$mon = '0'.$mon if $mon < 10;
+	$day = '0'.$day if $day < 10;
+	my $date = "$year $mon/$day";
+	
+	# index.html
+	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
+	my $t = '';
+	$t = $r0->content;
+	
+	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	
+	open(my $fh, '>', "../pub/base/web/index.html") or die;
+	print $fh $t;
+	close ($fh);
+	
+	# en/index.html
+	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
+	my $t = '';
+	$t = $r2->content;
+	
+	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	
+	open(my $fh, '>', "../pub/base/web/en_index.html") or die;
+	print $fh $t;
+	close ($fh);
+	
+	# dl.html
+	my $r1 = $ua->get('http://khc.sourceforge.net/dl.html') or die;
+	$t = '';
+	$t = $r1->content;
+
+	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                 # 日付
+	$t =~ s/khcoder\-2b[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
+	$t =~ s/KH%20Coder\/2\.Beta\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名
+
+	open(my $fh, '>', "../pub/base/web/dl.html") or die;
+	print $fh $t;
+	close ($fh);
+}
 
 sub pdfs{
 	# パスワード
@@ -79,10 +240,12 @@ sub pdfs{
 
 	copy ('khcoder_manual.pdf', '../../perl/core/pub/base/win_pkg/khcoder_manual.pdf') or die;
 	copy ('khcoder_manual.pdf', '../../perl/core/pub/base/win_upd/khcoder_manual.pdf') or die;
+	copy ('khcoder_manual.pdf', '../../perl/core/pub/base/win_strb/khcoder_manual.pdf') or die;
 	copy ('khcoder_manual.pdf', '../../perl/core/utils/khcoder_manual.pdf') or die;
 
 	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_pkg/khcoder_tutorial.pdf') or die;
 	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_upd/khcoder_tutorial.pdf') or die;
+	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_strb/khcoder_tutorial.pdf') or die;
 	copy ('khcoder_tutorial.pdf', '../../perl/core/utils/khcoder_tutorial.pdf') or die;
 
 	# 移動
@@ -99,37 +262,46 @@ sub win_upd{
 	chdir("..");
 	
 	# 新しいファイルを「pub/base/win_upd」へコピー
-	my @cp_f = (
-		['kh_coder.exe' , 'kh_coder.exe'  ],
-		['config/msg.en', 'config/msg.en' ],
-		['config/msg.jp', 'config/msg.jp' ],
-	);
-	
-	find(
-		sub {
-			push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
-			;
-		},
-		'utils/kh_coder/plugin_en'
-	);
-	
-	find(
-		sub {
-			push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
-			;
-		},
-		'utils/kh_coder/plugin_jp'
-	);
-	
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/base/win_upd/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
 	}
 	
 	# Zipファイルを作成
+	unlink("utils\\khcoder-$V-s.zip");
 	system("wzzip -rp -ex utils\\khcoder-$V-s.zip pub\\base\\win_upd");
+	
+	chdir("utils");
+}
+
+sub win_strb{
+	chdir("..");
+	
+	# khc.plを作成
+	open (my $fh, '<', 'utils/kh_coder/kh_coder.pl') or die;
+	my $t = do { local $/; <$fh> };
+	close $fh;
+	
+	$t =~ s/\t\tif.*?PerlApp.*?\n/\t\tif (1) {\n/;
+	
+	open (my $fh, '>', 'pub/base/win_strb/khc.pl') or die;
+	print $fh $t;
+	close $fh;
+	
+	# 新しいファイルを「pub/base/win_strb」へコピー（1）strb特有
+	rmtree('pub/base/win_strb/kh_lib');
+	dircopy('utils/kh_coder/kh_lib', 'pub/base/win_strb/kh_lib');
+	shift @cp_f;
+	
+	# 新しいファイルを「pub/base/win_strb」へコピー（2）共通
+	foreach my $i (@cp_f){
+		copy($i->[0], 'pub/base/win_strb/'.$i->[1]) or die("Can not copy $i\n");
+		print "copy: $i->[1]\n";
+	}
+	
+	# Zipファイルを作成
+	unlink("utils\\khcoder-$V-strb.zip");
+	system("wzzip -rp -ex utils\\khcoder-$V-strb.zip pub\\base\\win_strb");
 	
 	chdir("utils");
 }
@@ -167,30 +339,6 @@ sub win_pkg{
 	);
 	
 	# 新しいファイルを「pub/base/win_pkg」へコピー
-	my @cp_f = (
-		['kh_coder.exe' , 'kh_coder.exe'  ],
-		['config/msg.en', 'config/msg.en' ],
-		['config/msg.jp', 'config/msg.jp' ],
-	);
-	
-	find(
-		sub {
-			push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
-			;
-		},
-		'utils/kh_coder/plugin_en'
-	);
-	
-	find(
-		sub {
-			push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
-			;
-		},
-		'utils/kh_coder/plugin_jp'
-	);
-	
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/base/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
@@ -209,14 +357,6 @@ sub source_tgz{
 	#---------------------------------#
 	#   CVSから最新ソースを取り出し   #
 
-	my $home_dir = '';
-	my $key_file = '';
-
-	# 家PC
-	if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) {
-		$key_file = 'f:/home/koichi/study/.ssh/id_dsa';
-		$home_dir = 'f:/home/koichi';
-	}
 
 	my $cvs_cmd = 'cvs -d ":ext;command=\'';
 
@@ -265,7 +405,6 @@ sub source_tgz{
 		'core/make_exe.bat',
 	);
 
-	use File::Path 'rmtree';
 	foreach my $i (@rm_dir){
 		rmtree ($i) or warn("warn: could not delete: $i\n");
 	}
