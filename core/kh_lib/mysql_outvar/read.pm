@@ -92,7 +92,7 @@ sub save{
 		my $msg = '';
 		foreach my $i (@exts){
 			$msg .= ", " if length($msg);
-			$msg .= $i;
+			$msg .= gui_window->gui_jchar($i);
 		}
 		$msg  = kh_msg->get('overwrite_vars').$msg;
 
