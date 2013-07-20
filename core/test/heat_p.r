@@ -1,5 +1,4 @@
 dendro_c <- 1
-
 cellnote <- 0
 dendro_v <- 0
 
@@ -41,10 +40,10 @@ if ( length(col.labels) > 35 && (dendro_v == 0)){
 	rownames(d) <- col.labels
 }
 
-cexcol <- .9
+cexcol <- 9
 if ( length(col.labels) > 35 && (dendro_v == 1)){
 	#cexcol <- 0.2 + 1/log10( length(col.labels) * 5)
-	cexcol <- 0.2 + 0.8 * 30 / length(col.labels)
+	cexcol <- 2 + 8 * 30 / length(col.labels)
 }
 
 library(grid)
@@ -58,7 +57,7 @@ library(pheatmap)
 draw_matrix_my = function(
 	matrix,
 	border_color,
-	fmat=NA,                                      # デフォルト値としてNAを設定
+	fmat,
 	fontsize_number
 ){
 	n = nrow(matrix)
@@ -67,19 +66,18 @@ draw_matrix_my = function(
 	y = 1 - ((1:n)/n - 1/2/n)
 	for(i in 1:m){
 		grid.rect(
-			x = x[i],
-			y = y[1:n],
-			width = 1/m,
+			x      = x[i],
+			y      = y[1:n],
+			width  = 1/m,
 			height = 1/n,
-			gp = gpar(
-				fill = matrix[,i][n:1], # ←こうしないと逆順になるが、
-				col = NA                # 　理由がよくわからない...
+			gp     = gpar(
+				fill = matrix[,i],
+				col  = NA, #ifelse((attr(fmat, "draw")), NA, NA),
+				lwd=2
 			)
 		)
-		if (is.na(fmat) == FALSE){                # NAの時はパス
-			if(attr(fmat, "draw")){
-				grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "grey30", fontsize = fontsize_number))
-			}
+		if(attr(fmat, "draw")){
+			grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "black", fontsize = fontsize_number))
 		}
 	}
 	
@@ -106,11 +104,15 @@ pheatmap(
 	t(d),
 	color=colors,
 	drop_levels=T,
-	fontsize_col=9,
+	fontsize_col=cexcol,
 	border_color=NA,
-	cluster_cols=F,
+	cluster_cols=ifelse(dendro_v==1, T, F),
 	cluster_rows=ifelse(dendro_c==1, T, F),
+	display_numbers=ifelse(cellnote==1, T, F),
+	number_format = "%.1f",
+	legend=ifelse(cellnote==1, F, T),
+	fontsize_number=10,
 	clustering_distance_rows = "euclidean",
-	clustering_method = "ward",
+	clustering_method        = "ward",
 )
 
