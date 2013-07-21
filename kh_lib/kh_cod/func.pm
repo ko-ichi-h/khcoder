@@ -523,12 +523,14 @@ sub outtab{
 	# 結果出力の作製
 	my @result;
 	my @for_chisq;
+	my @for_plot;
 	
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name);
 	}
+	push @for_plot, \@head;
 	push @head, kh_msg->get('n_cases');
 	push @result, \@head;
 	# 中身
@@ -538,6 +540,7 @@ sub outtab{
 		my $n = 0;
 		my @current;
 		my @current_for_chisq;
+		my @current_for_plot;
 		my @c = @{$i};
 		my $nd = pop @c;
 		
@@ -560,13 +563,18 @@ sub outtab{
 					push @current, (
 						gui_window->gui_jchar($var_obj->{labels}{$h})
 					);
+					push @current_for_plot, (
+						gui_window->gui_jchar($var_obj->{labels}{$h})
+					);
 				} else {
 					push @current, gui_window->gui_jchar($h,'euc');
+					push @current_for_plot,  gui_window->gui_jchar($h,'euc');
 				}
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
+				push @current_for_plot, ($h / $nd) * 100;
 				if ($cell == 0){
 					my $pp = "($p"."%)";
 					$pp = '  '.$pp if length($pp) == 7;
@@ -584,6 +592,7 @@ sub outtab{
 		push @current, $nd;
 		push @result, \@current;
 		push @for_chisq, \@current_for_chisq if @current_for_chisq;
+		push @for_plot, \@current_for_plot;
 	}
 	# 合計行
 	my @c = @sum;
@@ -613,7 +622,11 @@ sub outtab{
 	my @chisq = &_chisq_test(\@current, \@for_chisq);
 	push @result, \@chisq if @chisq;
 	
-	return \@result;
+	my $ret;
+	$ret->{display} = \@result;
+	$ret->{plot}    = \@for_plot;
+
+	return $ret;
 }
 
 #----------------------------#
@@ -629,8 +642,6 @@ sub tab{
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
-	my $result;
-
 	# 集計用SQL文の作製
 	my $sql;
 	$sql .= "SELECT $tani2.id, ";
@@ -673,12 +684,14 @@ sub tab{
 	# 結果出力の作製
 	my @result;
 	my @for_chisq;
+	my @for_plot;
 
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name,'euc');
 	}
+	push @for_plot, \@head;
 	push @head, kh_msg->get('n_cases'); # ケース数
 	push @result, \@head;
 
@@ -689,25 +702,28 @@ sub tab{
 		my $n = 0;
 		my @current;
 		my @current_for_chisq;
+		my @current_for_plot;
 		my @c = @{$i};
 		my $nd = pop @c;
 		unless ( length($i->[0]) ){next;}
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ
 				if (index($tani2,'h') == 0){
-					push @current,
-						gui_window->gui_jchar( # Decoding
-							mysql_getheader->get($tani2, $h),
-							'cp932'
-						)
-					;
+					my $t_name = gui_window->gui_jchar( # Decoding
+						mysql_getheader->get($tani2, $h),
+						'cp932'
+					);
+					push @current, $t_name;
+					push @current_for_plot, $t_name;
 				} else {
 					push @current, $h;
+					push @current_for_plot, $h;
 				}
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
+				push @current_for_plot, ($h / $nd) * 100;
 				if ($cell == 0){
 					my $pp = "($p"."%)";
 					$pp = '  '.$pp if length($pp) == 7;
@@ -725,6 +741,7 @@ sub tab{
 		push @current, $nd;
 		push @result, \@current;
 		push @for_chisq, \@current_for_chisq if @current_for_chisq;
+		push @for_plot,  \@current_for_plot;
 	}
 	# 合計行
 	my @c = @sum;
@@ -755,7 +772,11 @@ sub tab{
 	my @chisq = &_chisq_test(\@current, \@for_chisq);
 	push @result, \@chisq if @chisq;
 
-	return \@result;
+	my $ret;
+	$ret->{display} = \@result;
+	$ret->{plot}    = \@for_plot;
+
+	return $ret;
 }
 
 

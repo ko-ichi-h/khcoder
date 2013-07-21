@@ -132,6 +132,18 @@ sub _new{
 		-font => "TKFN"
 	);
 
+	$rf->Label(
+		-text       => '  ',
+	)->pack(-side => 'right');
+
+	$rf->Button(
+		-text => kh_msg->gget('plot'), # プロット
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->copy; }
+	)->pack(-anchor => 'e', -pady => 1, -padx => 2, -side => 'right');
+
+
 	$self->fill;
 	return $self;
 }
@@ -184,7 +196,7 @@ sub _calc{
 		return 0;
 	}
 	
-	print "var_id: ".$self->var_id."\n";
+	#print "var_id: ".$self->var_id."\n";
 	
 	# 集計の実行
 	my $result;
@@ -218,9 +230,9 @@ sub _calc{
 	}
 
 	# 結果表示用のHList作成
-	my $cols = @{$result->[0]};
+	my $cols = @{$result->{display}[0]};
 	my $width = 0;
-	foreach my $i (@{$result}){
+	foreach my $i (@{$result->{display}}){
 		if ( length( Encode::encode('euc-jp',$i->[0]) ) > $width ){
 			$width = length( Encode::encode('euc-jp',$i->[0]) );
 		}
@@ -301,7 +313,7 @@ sub _calc{
 	
 	# 一行目（Header）
 	my $col = 0;
-	foreach my $i (@{$result->[0]}){
+	foreach my $i (@{$result->{display}[0]}){
 		if ($col){
 			my $w = $self->{list}->Label(
 				-text               => $self->gui_jchar($i),
@@ -323,7 +335,7 @@ sub _calc{
 		++$col;
 	}
 	$self->{result} = $result;
-	my @result_inside = @{$result};
+	my @result_inside = @{$result->{display}};
 	shift @result_inside;
 	
 	my $row = 0;
@@ -368,7 +380,7 @@ sub copy{
 	my $self = shift;
 	my $t = '';
 	
-	foreach my $i (@{$self->{result}}){
+	foreach my $i (@{$self->{result}{display}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
