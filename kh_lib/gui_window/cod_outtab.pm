@@ -32,7 +32,7 @@ sub _new{
 	);
 	# セル内容選択
 	$f0->Label(
-		-text => kh_msg->get('gui_window::cod_tab->cells'), # 　　セル内容：
+		-text => kh_msg->get('cells'), # 　　セル内容：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
@@ -41,9 +41,9 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[kh_msg->get('gui_window::cod_tab->f_p') , 0], # 度数とパーセント
-				[kh_msg->get('gui_window::cod_tab->f')         , 1], # 度数のみ
-				[kh_msg->get('gui_window::cod_tab->p')   , 2], # パーセントのみ
+				[kh_msg->get('f_p') , 0], # 度数とパーセント
+				[kh_msg->get('f')   , 1], # 度数のみ
+				[kh_msg->get('p')   , 2], # パーセントのみ
 			],
 		variable => \$self->{cell_opt},
 	);
@@ -74,7 +74,7 @@ sub _new{
 	$self->{opt_frame} = $f1;
 	
 	$f1->Button(
-		-text    => kh_msg->get('gui_window::cod_tab->run'), # 集計
+		-text    => kh_msg->get('run'), # 集計
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
@@ -146,8 +146,10 @@ sub fill{
 	
 	if ( ! $self->{var_obj} ){
 		$self->{var_obj} =  gui_widget::select_a_var->open(
-			parent        => $self->{opt_frame},
-			tani          => $self->tani,
+			parent          => $self->{opt_frame},
+			tani            => $self->tani,
+			show_headings   => 1,
+			higher_headings => 1,
 		);
 	} else {
 		$self->{var_obj}->new_tani( $self->tani );
@@ -174,7 +176,7 @@ sub _calc{
 	unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
-			msg => kh_msg->get('gui_window::cod_tab->er_ill'), # 指定された条件での集計は行えません。
+			msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
 			window => \$win,
 			type => 'msg',
 		);
@@ -182,22 +184,37 @@ sub _calc{
 		return 0;
 	}
 	
+	print "var_id: ".$self->var_id."\n";
+	
 	# 集計の実行
-
 	my $result;
 	unless ($result = kh_cod::func->read_file($self->cfile)){
 		$self->rtn;
 		return 0;
 	}
-	unless (
-		$result = $result->outtab(
-			$self->tani,
-			$self->var_id,
-			$self->{cell_opt}
-		)
-	){
-		$self->rtn;
-		return 0;
+
+	if ($self->{var_obj}->var_id =~ /h[1-5]/){    # 見出しの場合
+		unless (
+			$result = $result->tab(
+				$self->tani,
+				$self->var_id,
+				$self->{cell_opt}
+			)
+		){
+			$self->rtn;
+			return 0;
+		}
+	} else {                                      # 外部変数の場合
+		unless (
+			$result = $result->outtab(
+				$self->tani,
+				$self->var_id,
+				$self->{cell_opt}
+			)
+		){
+			$self->rtn;
+			return 0;
+		}
 	}
 
 	# 結果表示用のHList作成

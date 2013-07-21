@@ -22,6 +22,10 @@ sub fill{
 	# 見出し
 	if ($self->{show_headings}){
 		foreach my $i ("h1","h2","h3","h4","h5"){
+			if ( $self->{higher_headings} && $i eq $self->{tani} ){
+				last;
+			}
+			
 			if (
 				mysql_exec->select(
 					"select status from status where name = \'$i\'",1
@@ -59,6 +63,7 @@ sub fill{
 	}
 	
 	# Widgetの作成
+	$self->{var_id} = undef;
 	if (@options){
 		$self->{opt_body} = gui_widget::optmenu->open(
 			parent  => $self->{parent},

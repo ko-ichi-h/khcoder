@@ -163,8 +163,7 @@ gui_window::main::menu:
     coding:                   Coding
     config:                   Settings
     corresp:                  Correspondence Analysis
-    cross_st:                 Crosstab with Headings
-    cross_vr:                 Crosstab with Variables
+    cross_vr:                 Crosstab
     desc_stats:               Descriptive Stats
     doc_search:               Search Documents
     doc_term_mtrx:            Export Document-Word Matrix
@@ -750,21 +749,19 @@ kh_cod::func:
     n_cases:                  'N of Documents'
     total:                    'Total'
     chisq:                    'chi-square'
-gui_window::cod_tab:
-    win_title:                'Coding: Crosstab with Headings'
+gui_widget::tani2:
+    unit_c:                   'Coding Unit:'
+    unit_t:                   '    Tabulating Unit:'
+gui_window::cod_outtab:
+    win_title:                'Coding: Crosstab'
     cells:                    '    Cells:'
+    unit_cod:                 'Coding Unit:'
+    var:                      '   Crosstab:'
     f_p:                      'both'
     f:                        'frequency'
     p:                        'percent'
     run:                      'Run'
     er_ill:                   'Error: illegal parameters!'
-gui_widget::tani2:
-    unit_c:                   'Coding Unit:'
-    unit_t:                   '    Tabulating Unit:'
-gui_window::cod_outtab:
-    win_title:                'Coding: Crosstab with Variables'
-    unit_cod:                 'Coding Unit:'
-    var:                      '   Variable:'
 gui_window::cod_jaccard:
     win_title:                'Coding: Jaccard Coefficients'
     unit_cod:                 '  Coding Unit:'

@@ -25,7 +25,7 @@ my @menu1 = (
 	't_word_conc',
 	'm_b3_check',
 	't_cod_count',
-	't_cod_tab',
+	#'t_cod_tab',
 	't_cod_jaccard',
 	#'t_cod_multi',
 	't_cod_out',
@@ -532,14 +532,14 @@ sub make{
 			-state => 'disable'
 		);
 
-		$self->{t_cod_tab} = $f5->command(
-			-label => kh_msg->get('cross_st'),#gui_window->gui_jchar('章・節・段落ごとの集計'),
-			-font => "TKFN",
-			-command => sub{
-					gui_window::cod_tab->open;
-				},
-			-state => 'disable'
-		);
+		#$self->{t_cod_tab} = $f5->command(
+		#	-label => kh_msg->get('cross_st'),#gui_window->gui_jchar('章・節・段落ごとの集計'),
+		#	-font => "TKFN",
+		#	-command => sub{
+		#			gui_window::cod_tab->open;
+		#		},
+		#	-state => 'disable'
+		#);
 
 		$self->{t_cod_outtab} = $f5->command(
 			-label => kh_msg->get('cross_vr'),#gui_window->gui_jchar('外部変数とのクロス集計'),
