@@ -7,6 +7,8 @@ use strict;
 use mysql_getheader;
 use Jcode;
 
+use Clone qw(clone);
+
 #-----------------------------------------#
 #   コーディング結果の出力（不定長CSV）   #
 
@@ -530,7 +532,7 @@ sub outtab{
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name);
 	}
-	push @for_plot, \@head;
+	push @for_plot, clone(\@head);
 	push @head, kh_msg->get('n_cases');
 	push @result, \@head;
 	# 中身
@@ -691,7 +693,8 @@ sub tab{
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name,'euc');
 	}
-	push @for_plot, \@head;
+	
+	push @for_plot, clone(\@head);
 	push @head, kh_msg->get('n_cases'); # ケース数
 	push @result, \@head;
 
