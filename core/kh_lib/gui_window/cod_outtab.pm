@@ -140,7 +140,7 @@ sub _new{
 		-text => kh_msg->gget('plot'), # プロット
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $self->copy; }
+		-command => sub { $self->plot; }
 	)->pack(-anchor => 'e', -pady => 1, -padx => 2, -side => 'right');
 
 
@@ -402,6 +402,72 @@ sub multiscrolly{
 	foreach $w (@$wigs){
 		$w->yview(@args);
 	}
+}
+
+sub plot{
+	my $self = shift;
+	
+	unless ($self->{result}){
+		return 0;
+	}
+	
+	my $wait_window = gui_wait->start;
+	
+	my @matrix    = @{$self->{result}{plot}};
+	my @col_names = @{shift @matrix};
+	shift @col_names;
+	my $nrow = @matrix;
+	my $ncol = @col_names;
+
+	# データ行列
+	my $rcom = 'd <- matrix( c(';
+	my @row_names;
+	foreach my $row (@matrix){
+		my $n = 0;
+		foreach my $h (@{$row}){
+			if ($n == 0){
+				push @row_names, $h;
+			} else {
+				$rcom .= "$h,";
+			}
+			++$n;
+		}
+	}
+	chop $rcom;
+	$rcom .= "), byrow=T, nrow=$nrow, ncol=$ncol )\n";
+	
+	# 列名
+	foreach my $i (@col_names){ # 行頭の「＊」を削除（データはdecode済み）
+		substr($i,0,1) = '';
+	}
+	$rcom .= "colnames(d) <- c(";
+	foreach my $i (@col_names){
+		$rcom .= "\"$i\",";
+	}
+	chop $rcom;
+	$rcom .= ")\n";
+	
+	# 行名
+	$rcom .= "rownames(d) <- c(";
+	foreach my $i (@row_names){
+		$rcom .= "\"$i\",";
+	}
+	chop $rcom;
+	$rcom .= ")\n";
+	
+	$rcom .= "# END: DATA\n\n";
+	$rcom = Encode::encode('eucjp', $rcom);
+	
+	# プロット作成
+	use plotR::code_mat;
+	my $plot = plotR::code_mat->new(
+		font_size           => $::config_obj->r_default_font_size / 100,
+		r_command           => $rcom,
+		heat_dendro_c       => 1,
+		plotwin_name        => 'code_mat',
+	);	
+	
+	$wait_window->end(no_dialog => 1);
 }
 
 #--------------#
