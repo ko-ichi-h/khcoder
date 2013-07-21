@@ -1,6 +1,16 @@
+# R 2.15.2向けのpheatmap 0.7.4を使用
+
 dendro_c <- 1
 cellnote <- 0
 dendro_v <- 0
+
+font_fam <- "Meiryo UI" # ここはデバイスを開いていないとエラーに
+if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		font_fam <- "HiraKaku"
+	}
+}
 
 if (T) {
 	savefile <- NULL
@@ -100,19 +110,21 @@ assignInNamespace(
 	ns=asNamespace("pheatmap")
 )
 
+
 pheatmap(
 	t(d),
-	color=colors,
-	drop_levels=T,
-	fontsize_col=cexcol,
-	border_color=NA,
-	cluster_cols=ifelse(dendro_v==1, T, F),
-	cluster_rows=ifelse(dendro_c==1, T, F),
-	display_numbers=ifelse(cellnote==1, T, F),
-	number_format = "%.1f",
-	legend=ifelse(cellnote==1, F, T),
-	fontsize_number=10,
+	color                    = colors,
+	drop_levels              = T,
+	fontsize_col             = cexcol,
+	border_color             = NA,
+	cluster_cols             = ifelse(dendro_v==1, T, F),
+	cluster_rows             = ifelse(dendro_c==1, T, F),
+	display_numbers          = ifelse(cellnote==1, T, F),
+	number_format            = "%.1f",
+	legend                   = ifelse(cellnote==1, F, T),
+	fontsize_number          = 10,
 	clustering_distance_rows = "euclidean",
 	clustering_method        = "ward",
+	fontfamily               = font_fam,
 )
 

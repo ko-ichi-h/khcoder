@@ -165,8 +165,7 @@ gui_window::main::menu:
     coding:                   コーディング
     config:                   設定
     corresp:                  対応分析
-    cross_st:                 章・節・段落ごとの集計
-    cross_vr:                 外部変数とのクロス集計
+    cross_vr:                 クロス集計
     desc_stats:               記述統計
     doc_search:               文書検索
     doc_term_mtrx:            「文書ｘ抽出語」表の出力
@@ -752,21 +751,19 @@ kh_cod::func:
     n_cases:                  'ケース数'
     total:                    '合計'
     chisq:                    'カイ2乗値'
-gui_window::cod_tab:
-    win_title:                'コーディング・章 節 段落ごとの集計'
+gui_widget::tani2:
+    unit_c:                   'コーディング単位：'
+    unit_t:                   '    集計単位：'
+gui_window::cod_outtab:
+    win_title:                'コーディング・クロス集計'
     cells:                    '　　セル内容：'
+    unit_cod:                 'コーディング単位：'
+    var:                      ' 　クロス集計：'
     f_p:                      '度数とパーセント'
     f:                        '度数のみ'
     p:                        'パーセントのみ'
     run:                      '集計'
     er_ill:                   '指定された条件での集計は行えません。'
-gui_widget::tani2:
-    unit_c:                   'コーディング単位：'
-    unit_t:                   '    集計単位：'
-gui_window::cod_outtab:
-    win_title:                'コーディング・外部変数とのクロス集計'
-    unit_cod:                 'コーディング単位：'
-    var:                      ' 　クロスする変数：'
 gui_window::cod_jaccard:
     win_title:                'コーディング・類似度行列（Jaccard係数）'
     unit_cod:                 '　コーディング単位：'
