@@ -68,7 +68,12 @@ sub new{
 sub r_plot_cmd_heat{
 	return '
 
-font_fam <- "Meiryo UI" # ここはデバイスを開いていないとエラーに
+library(grid)
+library(pheatmap)
+library(RColorBrewer)
+
+font_fam <- "Meiryo UI"
+get.gpar()
 if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
@@ -89,7 +94,7 @@ if (F) {
 	d <- as.matrix(d)
 }
 
-library(RColorBrewer)
+
 if (cellnote == 1){
 	colors <- brewer.pal(9,"BuGn")[1:8]
 } else {
@@ -119,13 +124,6 @@ if ( length(col.labels) > 35 && (dendro_v == 1)){
 	#cexcol <- 0.2 + 1/log10( length(col.labels) * 5)
 	cexcol <- 2 + 8 * 30 / length(col.labels)
 }
-
-library(grid)
-library(pheatmap)
-
-# https://github.com/raivokolde/pheatmap/blob/master/R/pheatmap.r
-# http://stackoverflow.com/questions/15505607/diagonal-labels-orientation-on-x-axis-in-heatmaps
-# http://www.okada.jp.org/RWiki/?grid%20%A5%D1%A5%C3%A5%B1%A1%BC%A5%B8%BB%F6%BB%CF
 
 # pheatmapのカスタマイズ
 draw_matrix_my = function(
@@ -174,7 +172,6 @@ assignInNamespace(
 	ns=asNamespace("pheatmap")
 )
 
-
 pheatmap(
 	t(d),
 	color                    = colors,
@@ -192,8 +189,6 @@ pheatmap(
 	clustering_method        = "ward",
 	fontfamily               = font_fam,
 )
-
-
 
 	';
 }
