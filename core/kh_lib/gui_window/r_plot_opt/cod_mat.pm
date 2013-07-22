@@ -1,26 +1,41 @@
 package gui_window::r_plot_opt::cod_mat;
 use base qw(gui_window::r_plot_opt);
 
+use strict;
+
+# プロットサイズの変更が効いていない
+
 sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
 
-	#if ( $self->{command_f} =~ /std_radius <\- ([0-9]+)\n/ ){
-	#	$chk_std_radius = $1;
-	#}
+	if ( $self->{command_f} =~ /dendro_c <\- ([0-9]+)\n/ ){
+		$self->{heat_dendro_c} = $1;
+	}
 
+	if ( $self->{command_f} =~ /dendro_v <\- ([0-9]+)\n/ ){
+		$self->{heat_dendro_v} = $1;
+	}
 
+	if ( $self->{command_f} =~ /cellnote <\- ([0-9]+)\n/ ){
+		$self->{heat_cellnote} = $1;
+	}
 
-	# 半透明の色
-	#$self->{use_alpha} = 1;
-	#if ( $self->{command_f} =~ /use_alpha <\- ([0-9]+)\n/ ){
-	#	$self->{use_alpha} = $1;
-	#}
-	#$lf->Checkbutton(
-	#	-variable => \$self->{use_alpha},
-	#	-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
-	#)->pack(-anchor => 'w');
+	$lf->Checkbutton(
+		-variable => \$self->{heat_cellnote},
+		-text     => kh_msg->get('cellnote'), 
+	)->pack(-anchor => 'w');
+
+	$lf->Checkbutton(
+		-variable => \$self->{heat_dendro_c},
+		-text     => kh_msg->get('dendro_c'), 
+	)->pack(-anchor => 'w');
+
+	$lf->Checkbutton(
+		-variable => \$self->{heat_dendro_v},
+		-text     => kh_msg->get('dendro_v'), 
+	)->pack(-anchor => 'w');
 
 	return $self;
 }
@@ -47,27 +62,39 @@ sub calc{
 	$r_command .= "# END: DATA\n";
 
 	my $wait_window = gui_wait->start;
-	&gui_window::word_mds::make_plot(
-		font_size    => $self->{font_obj}->font_size,
-		font_bold    => $self->{font_obj}->check_bold_text,
-		plot_size    => $self->{font_obj}->plot_size,
-		method       => $self->{mds_obj}->method,
-		method_dist  => $self->{mds_obj}->method_dist,
-		dim_number   => $self->{mds_obj}->dim_number,
-		r_command    => $r_command,
-		plotwin_name => 'cod_mds',
-		bubble       => $self->{bubble_obj}->check_bubble,
-		std_radius   => $self->{bubble_obj}->chk_std_radius,
-		bubble_size  => $self->{bubble_obj}->size,
-		bubble_var   => $self->{bubble_obj}->var,
-		n_cls        => $self->{cls_obj}->n,
-		cls_raw      => $self->{cls_obj}->raw,
-		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
+	use plotR::code_mat;
+	my $plot = plotR::code_mat->new(
+		r_command     => $r_command,
+		font_size     => $self->{font_obj}->font_size,
+		font_bold     => $self->{font_obj}->check_bold_text,
+		plot_size     => $self->{font_obj}->plot_size,
+		heat_dendro_c => $self->gui_jg( $self->{heat_dendro_c} ),
+		heat_dendro_v => $self->gui_jg( $self->{heat_dendro_v} ),
+		heat_cellnote => $self->gui_jg( $self->{heat_cellnote} ),
+		plotwin_name  => 'code_mat',
 	);
 	$wait_window->end(no_dialog => 1);
+
+	if ($::main_gui->if_opened('w_cod_mat_plot')){
+		$::main_gui->get('w_cod_mat_plot')->close;
+	}
+
+	return 0 unless $plot;
+
+	use gui_window::r_plot::cod_mat;
+	gui_window::r_plot::cod_mat->open(
+		plots       => $plot->{result_plots},
+	);
+
+	$plot = undef;
+
 	$self->close;
 
+	return 1;
 }
+
+
+
 
 sub win_title{
 	return kh_msg->get('win_title'); # コーディング・多次元尺度法：調整

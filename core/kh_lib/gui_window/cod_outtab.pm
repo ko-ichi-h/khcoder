@@ -464,6 +464,7 @@ sub plot{
 		font_size           => $::config_obj->r_default_font_size / 100,
 		r_command           => $rcom,
 		heat_dendro_c       => 1,
+		heat_cellnote       => $nrow <= 12 ? 1 : 0,
 		plotwin_name        => 'code_mat',
 	);	
 	
