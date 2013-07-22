@@ -3,8 +3,6 @@ use base qw(gui_window::r_plot_opt);
 
 use strict;
 
-# プロットサイズの変更が効いていない
-
 sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
