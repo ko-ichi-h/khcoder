@@ -1037,3 +1037,6 @@ gui_window::r_plot::cod_mat:
     win_title:                 "クロス集計のプロット"
 gui_window::r_plot_opt::cod_mat:
     win_title:                 "クロス集計のプロット・調整"
+    cellnote:                  "各セルのパーセンテージを表示"
+    dendro_c:                  "コードのクラスター化と並べ替え"
+    dendro_v:                  "外部変数・見出しのクラスター化と並べ替え"
