@@ -1033,3 +1033,7 @@ gui_window::r_plot_opt::doc_cls:
     win_title:                 "文書のデンドログラム・調整"
 mysql_ready::check:
     error:                     "前処理データの整合性が失われました。"
+gui_window::r_plot::cod_mat:
+    win_title:                 "クロス集計のプロット"
+gui_window::r_plot_opt::cod_mat:
+    win_title:                 "クロス集計のプロット・調整"

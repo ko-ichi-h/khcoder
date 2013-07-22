@@ -1031,3 +1031,7 @@ gui_window::r_plot_opt::doc_cls:
     win_title:                 "Configure: Dendrogram of Documents"
 mysql_ready::check:
     error:                     "Something wrong with the database: "
+gui_window::r_plot::cod_mat:
+    win_title:                 "Crosstab Plots"
+gui_window::r_plot_opt::cod_mat:
+    win_title:                 "Configure: Crosstab Plots"
