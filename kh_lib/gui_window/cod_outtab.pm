@@ -458,14 +458,28 @@ sub plot{
 	$rcom .= "# END: DATA\n\n";
 	$rcom = Encode::encode('eucjp', $rcom);
 	
+	# ヒートマップの高さ
+	my $label_length = 0;
+	foreach my $i (@row_names){
+		my $t = Encode::encode('eucjp', $i);
+		if ( $label_length < length($t) ){
+			$label_length = length($t);
+		}
+	}
+	my $height = 30 * $ncol + $label_length * 14;
+	if ($height < 480){
+		$height = 480;
+	}
+	
 	# プロット作成
 	use plotR::code_mat;
 	my $plot = plotR::code_mat->new(
 		font_size           => $::config_obj->r_default_font_size / 100,
 		r_command           => $rcom,
 		heat_dendro_c       => 1,
-		heat_cellnote       => $nrow <= 12 ? 1 : 0,
+		heat_cellnote       => $nrow < 10 ? 1 : 0,
 		plotwin_name        => 'code_mat',
+		plot_size           => $height,
 	);	
 	
 	$wait_window->end(no_dialog => 1);
@@ -478,6 +492,7 @@ sub plot{
 	
 	gui_window::r_plot::cod_mat->open(
 		plots       => $plot->{result_plots},
+		no_geometry => 1,
 	);
 
 	$plot = undef;
