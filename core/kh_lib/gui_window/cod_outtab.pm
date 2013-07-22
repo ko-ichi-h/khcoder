@@ -468,6 +468,18 @@ sub plot{
 	);	
 	
 	$wait_window->end(no_dialog => 1);
+	
+	if ($::main_gui->if_opened('w_cod_mat_plot')){
+		$::main_gui->get('w_cod_mat_plot')->close;
+	}
+	
+	return 0 unless $plot;
+	
+	gui_window::r_plot::cod_mat->open(
+		plots       => $plot->{result_plots},
+	);
+
+	$plot = undef;
 }
 
 #--------------#
