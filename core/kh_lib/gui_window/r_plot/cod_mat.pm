@@ -10,6 +10,11 @@ sub option1_name{
 	return '';
 }
 
+sub photo_pane_width{
+	my $self = shift;
+	return 640;
+}
+
 sub win_title{
 	return kh_msg->get('win_title');
 }

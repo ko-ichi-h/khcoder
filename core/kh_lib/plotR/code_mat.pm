@@ -35,6 +35,10 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
+	unless ( $args{plot_size} ){
+		$args{plot_size} = 480;
+	}
+
 
 	# プロット作成
 	
@@ -50,7 +54,7 @@ sub new{
 			 $r_command
 			.$self->r_plot_cmd_heat,
 		width     => 640,
-		height    => 640,
+		height    => $args{plot_size},
 	) or $flg_error = 1;
 
 	#my $t1 = new Benchmark;
@@ -141,7 +145,7 @@ draw_matrix_my = function(
 			x      = x[i],
 			y      = y[1:n],
 			width  = 1/m,
-			height = 1/n,
+			height = 1/n - (1/n) * 0.2, # 行と行の間に隙間を作る
 			gp     = gpar(
 				fill = matrix[,i],
 				col  = NA, #ifelse((attr(fmat, "draw")), NA, NA),
@@ -152,18 +156,6 @@ draw_matrix_my = function(
 			grid.text(x = x[i], y = y[1:n], label = fmat[, i], gp = gpar(col = "black", fontsize = fontsize_number))
 		}
 	}
-	
-	# 行と行を白線で区切る
-	for (i in 1:(n-1)){
-		grid.segments(
-			x0=x[1] - 0.5/m,
-			y0=y[i] - 0.5/n,
-			x1=x[m] + 0.5/m,
-			y1=y[i] - 0.5/n,
-			gp = gpar(col="white",lwd=6),
-		)
-	}
-
 }
 
 assignInNamespace(
