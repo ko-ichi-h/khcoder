@@ -62,14 +62,14 @@ sub calc{
 	my $wait_window = gui_wait->start;
 	use plotR::code_mat;
 	my $plot = plotR::code_mat->new(
-		r_command     => $r_command,
-		font_size     => $self->{font_obj}->font_size,
-		font_bold     => $self->{font_obj}->check_bold_text,
-		plot_size     => $self->{font_obj}->plot_size,
-		heat_dendro_c => $self->gui_jg( $self->{heat_dendro_c} ),
-		heat_dendro_v => $self->gui_jg( $self->{heat_dendro_v} ),
-		heat_cellnote => $self->gui_jg( $self->{heat_cellnote} ),
-		plotwin_name  => 'code_mat',
+		r_command      => $r_command,
+		font_size      => $self->{font_obj}->font_size,
+		font_bold      => $self->{font_obj}->check_bold_text,
+		plot_size_heat => $self->{font_obj}->plot_size, # ÊÑ¹¹¡©
+		heat_dendro_c  => $self->gui_jg( $self->{heat_dendro_c} ),
+		heat_dendro_v  => $self->gui_jg( $self->{heat_dendro_v} ),
+		heat_cellnote  => $self->gui_jg( $self->{heat_cellnote} ),
+		plotwin_name   => 'code_mat',
 	);
 	$wait_window->end(no_dialog => 1);
 

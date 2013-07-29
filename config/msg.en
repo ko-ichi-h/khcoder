@@ -1033,6 +1033,8 @@ mysql_ready::check:
     error:                     "Something wrong with the database: "
 gui_window::r_plot::cod_mat:
     win_title:                 "Crosstab Plots"
+    heat:                      "heatmap"
+    fluc:                      "fluctuation"
 gui_window::r_plot_opt::cod_mat:
     win_title:                 "Configure: Crosstab Plots"
     cellnote:                  "Display percentages"

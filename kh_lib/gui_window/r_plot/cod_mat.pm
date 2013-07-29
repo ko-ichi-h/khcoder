@@ -3,11 +3,14 @@ use base qw(gui_window::r_plot);
 
 
 sub option1_options{
-	return [ 'nothing' ];
+	return [
+		kh_msg->get('heat'), # 'ヒートマップ',
+		kh_msg->get('fluc'), # 'バブルプロット',
+	];
 }
 
 sub option1_name{
-	return '';
+	return kh_msg->get('gui_window::r_plot::word_corresp->view'); # ' 表示：';
 }
 
 sub photo_pane_width{
