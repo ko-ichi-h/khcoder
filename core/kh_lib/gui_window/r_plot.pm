@@ -97,6 +97,7 @@ sub _new{
 	$self->{photo} = $self->{photo_pane}->Label(
 		-image       => $imgs->{$self->win_name},
 		-cursor      => $cursor,
+		-background  => "white",
 		-borderwidth => 0,
 	)->pack(
 		-expand => 1,
@@ -256,6 +257,7 @@ sub renew{
 	my $self = shift;
 	return 0 unless $self->{optmenu};
 
+	$imgs->{$self->win_name}->blank;
 	$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
 	$imgs->{$self->win_name}->update;
 	

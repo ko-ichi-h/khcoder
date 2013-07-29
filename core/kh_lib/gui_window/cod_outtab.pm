@@ -458,7 +458,7 @@ sub plot{
 	$rcom .= "# END: DATA\n\n";
 	$rcom = Encode::encode('eucjp', $rcom);
 	
-	# ヒートマップの高さ
+	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
 		my $t = Encode::encode('eucjp', $i);
@@ -470,6 +470,25 @@ sub plot{
 	if ($height < 480){
 		$height = 480;
 	}
+	my $height_f =  20 * $ncol + $label_length * 14;
+	if ($height_f < 480){
+		$height_f = 480;
+	}
+	
+	# マップの幅
+	$label_length = 0;
+	foreach my $i (@col_names){
+		my $t = Encode::encode('eucjp', $i);
+		if ( $label_length < length($t) ){
+			$label_length = length($t);
+		}
+	}
+	my $width_f = 20 * $nrow + $label_length * 14 + 25;
+	if ($width_f < 640){
+		$width_f = 640;
+	}
+	print "$ncol, $nrow\n";
+	
 	
 	# プロット作成
 	use plotR::code_mat;
@@ -479,8 +498,10 @@ sub plot{
 		heat_dendro_c       => 1,
 		heat_cellnote       => $nrow < 10 ? 1 : 0,
 		plotwin_name        => 'code_mat',
-		plot_size           => $height,
-	);	
+		plot_size_heat      => $height,
+		plot_size_maph      => $height_f,
+		plot_size_mapw      => $width_f,
+	);
 	
 	$wait_window->end(no_dialog => 1);
 	
