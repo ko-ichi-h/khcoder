@@ -48,7 +48,6 @@ ggfluctuation_my <- function (mat){
 			size = "result"
 		)
 	)
-	
 	rgb <- col2rgb( "black" ) / 255
 	col <- rgb(
 		red  =rgb[1,1],
