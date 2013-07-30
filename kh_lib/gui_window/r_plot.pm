@@ -23,7 +23,7 @@ use Tk;
 use Tk::Pane;
 use Tk::PNG;
 
-my $imgs;
+use vars qw($imgs);
 
 sub _new{
 
@@ -260,7 +260,7 @@ sub renew{
 	$imgs->{$self->win_name}->blank;
 	$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
 	$imgs->{$self->win_name}->update;
-	
+
 	$self->renew_command;
 }
 
