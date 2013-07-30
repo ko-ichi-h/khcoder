@@ -18,6 +18,7 @@ sub new{
 	my $r_command = $args{r_command};
 
 	# パラメーター設定（ヒートマップ）
+	$args{font_size} = 1 unless $args{font_size};
 	$r_command .= "cex <- $args{font_size}\n";
 	
 	unless ( $args{heat_dendro_c} ){
@@ -41,7 +42,11 @@ sub new{
 	$args{plot_size_maph} = 480 unless $args{plot_size_maph};
 	$args{plot_size_mapw} = 640 unless $args{plot_size_mapw};
 	
+	$args{bubble_shape} = 22 unless $args{bubble_shape};
+	$r_command .= "bubble_shape <- $args{bubble_shape}\n";
+	
 	$args{bubble_size} = 1 unless $args{bubble_size};
+	$args{bubble_size} = int( $args{bubble_size} * 100 + 0.5) / 100;
 	$r_command .= "bubble_size <- $args{bubble_size}\n";
 	
 
@@ -89,12 +94,20 @@ sub r_plot_cmd_fluc{
 
 library(ggplot2)
 
-font_fam <- "Meiryo UI"
-get.gpar()
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+font_fam <- NULL
+if ( is.null(dev.list()) ){
+	font_fam <- 1
+} else {
+	if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+		font_fam <- 1
+	}
+}
+if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 		font_fam <- "HiraKaku"
+	} else {
+		font_fam <- "'.$::config_obj->font_plot.'"
 	}
 }
 
@@ -129,10 +142,10 @@ ggfluctuation_my <- function (mat){
 		alpha=0.25
 	)
 	p <- p + geom_point(
-		shape=22,
+		shape=bubble_shape,
 		fill=col,
 		colour="black",
-		alpha=0.5
+		#alpha=0.5
 	)
 
 	# cofigure the regend
@@ -170,17 +183,32 @@ ggfluctuation_my <- function (mat){
 			size=12 * cex,
 			angle=90,
 			hjust=1,
-			family=font_fam
+			#family=font_fam
 		),
 		axis.text.y=theme_text(
 			size=12 * cex,
 			hjust=1,
-			family=font_fam
+			#family=font_fam
 		)
 	)
 
-	print(p)
+	if ( is.null(font_fam) == FALSE ){
+		p <- p + opts(
+			axis.text.x=theme_text(
+				size=12 * cex,
+				angle=90,
+				hjust=1,
+				family=font_fam
+			),
+			axis.text.y=theme_text(
+				size=12 * cex,
+				hjust=1,
+				family=font_fam
+			)
+		)
+	}
 
+	print(p)
 }
 
 
@@ -198,12 +226,20 @@ library(grid)
 library(pheatmap)
 library(RColorBrewer)
 
-font_fam <- "Meiryo UI"
-get.gpar()
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+font_fam <- NULL
+if ( is.null(dev.list()) ){
+	font_fam <- 1
+} else {
+	if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+		font_fam <- 1
+	}
+}
+if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 		font_fam <- "HiraKaku"
+	} else {
+		font_fam <- "'.$::config_obj->font_plot.'"
 	}
 }
 
@@ -286,23 +322,44 @@ assignInNamespace(
 	ns=asNamespace("pheatmap")
 )
 
-pheatmap(
-	t(d),
-	color                    = colors,
-	drop_levels              = T,
-	fontsize_col             = cexcol * cex,
-	fontsize_row             = 12 * cex,
-	border_color             = NA,
-	cluster_cols             = ifelse(dendro_v==1, T, F),
-	cluster_rows             = ifelse(dendro_c==1, T, F),
-	display_numbers          = ifelse(cellnote==1, T, F),
-	number_format            = "%.1f",
-	legend                   = ifelse(cellnote==1, F, T),
-	fontsize_number          = 10 * cex,
-	clustering_distance_rows = "euclidean",
-	clustering_method        = "ward",
-	fontfamily               = font_fam,
-)
+if ( is.null(font_fam) == FALSE ){
+	pheatmap(
+		t(d),
+		color                    = colors,
+		drop_levels              = T,
+		fontsize_col             = cexcol * cex,
+		fontsize_row             = 12 * cex,
+		border_color             = NA,
+		cluster_cols             = ifelse(dendro_v==1, T, F),
+		cluster_rows             = ifelse(dendro_c==1, T, F),
+		display_numbers          = ifelse(cellnote==1, T, F),
+		number_format            = "%.1f",
+		legend                   = ifelse(cellnote==1, F, T),
+		fontsize_number          = 10 * cex,
+		clustering_distance_rows = "euclidean",
+		clustering_method        = "ward",
+		fontfamily               = font_fam,
+	)
+} else {
+	pheatmap(
+		t(d),
+		color                    = colors,
+		drop_levels              = T,
+		fontsize_col             = cexcol * cex,
+		fontsize_row             = 12 * cex,
+		border_color             = NA,
+		cluster_cols             = ifelse(dendro_v==1, T, F),
+		cluster_rows             = ifelse(dendro_c==1, T, F),
+		display_numbers          = ifelse(cellnote==1, T, F),
+		number_format            = "%.1f",
+		legend                   = ifelse(cellnote==1, F, T),
+		fontsize_number          = 10 * cex,
+		clustering_distance_rows = "euclidean",
+		clustering_method        = "ward",
+		#fontfamily               = font_fam,
+	)
+}
+
 
 	';
 }

@@ -4,13 +4,13 @@ use base qw(gui_window::r_plot);
 
 sub option1_options{
 	return [
-		kh_msg->get('heat'), # 'ƒq[ƒgƒ}ƒbƒv',
-		kh_msg->get('fluc'), # 'ƒoƒuƒ‹ƒvƒƒbƒg',
+		kh_msg->get('heat'), # '¥Ò¡¼¥È¥Þ¥Ã¥×',
+		kh_msg->get('fluc'), # '¥Ð¥Ö¥ë¥×¥í¥Ã¥È',
 	];
 }
 
 sub option1_name{
-	return kh_msg->get('gui_window::r_plot::word_corresp->view'); # ' •\Ž¦F';
+	return kh_msg->get('gui_window::r_plot::word_corresp->view'); # ' É½¼¨¡§';
 }
 
 sub photo_pane_width{
@@ -18,10 +18,44 @@ sub photo_pane_width{
 	return 640;
 }
 
-# ‰æ‘œ•\Ž¦—pƒIƒuƒWƒFƒNƒg‚ðÄì¬iƒXƒNƒ[ƒ‹ƒo[‚ðƒŠƒZƒbƒg‚·‚é‚½‚ßj
+# Ä´À°ÍÑ¤ÎWindow¤ò³«¤¯
+sub open_config{
+	my $self = shift;
+	
+	# ²èÁü¥µ¥¤¥º¤Î¼èÆÀ
+	my $ax = $self->{ax};
+	$self->{ax} = 0;
+	$self->renew(1);
+	my $plot_size_heat = $self->{photo}->cget(-image)->height;
+	
+	$self->{ax} = 1;
+	$self->renew(1);
+	my $plot_size_maph = $self->{photo}->cget(-image)->height;
+	my $plot_size_mapw = $self->{photo}->cget(-image)->width;
+	
+	$self->{ax} = $ax;
+	$self->renew(1);
+	print "size: $plot_size_heat, $plot_size_maph, $plot_size_mapw\n";
+
+	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
+	$base_name->open(
+		command_f      => $self->{plots}[$self->{ax}]->command_f,
+		ax             => $self->{ax},
+		plot_size_heat => $plot_size_heat,
+		plot_size_maph => $plot_size_maph,
+		plot_size_mapw => $plot_size_mapw
+	);
+}
+
+# ²èÁüÉ½¼¨ÍÑ¥ª¥Ö¥¸¥§¥¯¥È¤òºÆºîÀ®¡Ê¥¹¥¯¥í¡¼¥ë¥Ð¡¼¤ò¥ê¥»¥Ã¥È¤¹¤ë¤¿¤á¡Ë
 sub renew{
 	my $self = shift;
+	my $opt  = shift;
+	
 	return 0 unless $self->{optmenu};
+
+	$self->{photo_pane}->xview(moveto => 0) unless $opt;
+	$self->{photo_pane}->yview(moveto => 0) unless $opt;
 
 	$gui_window::r_plot::imgs->{$self->win_name}->delete;
 	$gui_window::r_plot::imgs->{$self->win_name}->destroy;
@@ -35,6 +69,9 @@ sub renew{
 
 	$self->renew_command;
 }
+
+
+
 
 sub win_title{
 	return kh_msg->get('win_title');
