@@ -169,7 +169,7 @@ sub _new{
 			variable => \$self->{ax},
 			command  => sub {$self->renew;},
 		);
-		$self->{optmenu}->set_value(0);
+		$self->{optmenu}->set_value($self->{ax});
 	}
 
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
@@ -182,6 +182,7 @@ sub _new{
 			$base_name->open(
 				command_f => $self->{plots}[$self->{ax}]->command_f,
 				size      => $self->original_plot_size,
+				ax        => $self->{ax},
 			);
 		}
 	)->pack(-side => 'left', -padx => 2);

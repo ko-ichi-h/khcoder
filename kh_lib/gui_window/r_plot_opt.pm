@@ -19,6 +19,9 @@ sub _new{
 	my $self = shift;
 	my %args = @_;
 	
+	$self->{ax} = $args{ax};
+	$self->{ax} = 0 unless (length($self->{ax}));
+	
 	$self->{command_f} = $args{command_f};
 	
 	$self->{win_obj}->title($self->gui_jt( $self->win_title ));

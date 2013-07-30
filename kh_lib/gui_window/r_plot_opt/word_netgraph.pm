@@ -59,23 +59,23 @@ sub calc{
 		plotwin_name      => 'word_netgraph',
 	);
 
-	# プロットWindowを開く
 	$wait_window->end(no_dialog => 1);
 	
+	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_word_netgraph_plot')){
 		$::main_gui->get('w_word_netgraph_plot')->close;
 	}
-
 	return 0 unless $plotR;
 
 	gui_window::r_plot::word_netgraph->open(
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		ax          => $self->{ax},
 		#no_geometry => 1,
 	);
-
 	$plotR = undef;
+
 
 	$self->close;
 

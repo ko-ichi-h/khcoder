@@ -82,6 +82,7 @@ sub calc{
 	use gui_window::r_plot::cod_mat;
 	gui_window::r_plot::cod_mat->open(
 		plots       => $plot->{result_plots},
+		ax          => $self->{ax},
 	);
 
 	$plot = undef;

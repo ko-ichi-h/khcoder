@@ -69,6 +69,7 @@ sub calc{
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		ax          => $self->{ax},
 		#no_geometry => 1,
 	);
 
