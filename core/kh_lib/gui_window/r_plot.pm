@@ -172,19 +172,11 @@ sub _new{
 		$self->{optmenu}->set_value($self->{ax});
 	}
 
-	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
-
 	$self->{button_config} = $f1->Button(
 		-text => kh_msg->get('options'), # Ä´À°
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub {
-			$base_name->open(
-				command_f => $self->{plots}[$self->{ax}]->command_f,
-				size      => $self->original_plot_size,
-				ax        => $self->{ax},
-			);
-		}
+		-command => sub {$self->open_config;},
 	)->pack(-side => 'left', -padx => 2);
 
 	if (length($self->{msg})){
@@ -223,6 +215,16 @@ sub _new{
 
 	$self->{bottom_frame} = $f1;
 	return $self;
+}
+
+sub open_config{
+	my $self = shift;
+	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
+	$base_name->open(
+		command_f => $self->{plots}[$self->{ax}]->command_f,
+		size      => $self->original_plot_size,
+		ax        => $self->{ax},
+	);
 }
 
 sub drag {

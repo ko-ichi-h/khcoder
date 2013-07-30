@@ -16,14 +16,21 @@ rownames(d)[2] <- "ãEˆê";
 
 library(ggplot2)
 
-font_fam <- "Meiryo UI"
-get.gpar()
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+font_fam <- NULL
+if ( is.null(dev.list()) ){
+	font_fam <- 1
+} else {
+	font_fam <- 1
+}
+if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 		font_fam <- "HiraKaku"
+	} else {
+		font_fam <- "Meiryo UI"
 	}
 }
+
 
 ggfluctuation_my <- function (mat){
 	# preparing the data.frame
@@ -57,7 +64,7 @@ ggfluctuation_my <- function (mat){
 		alpha=0.25
 	)
 	p <- p + geom_point(
-		shape=22,
+		shape=21,
 		fill=col,
 		colour="black",
 		alpha=0.5
@@ -96,6 +103,13 @@ ggfluctuation_my <- function (mat){
 		axis.text.x=theme_text(angle=90, hjust=1),
 		axis.text.y=theme_text(hjust=1)
 	)
+
+	if ( is.null(font_fam) == FALSE ){
+		p <- p + opts(
+			axis.text.x=theme_text(angle=90, hjust=1,family=font_fam),
+			axis.text.y=theme_text(hjust=1,family=font_fam)
+		)
+	}
 
 	print(p)
 
