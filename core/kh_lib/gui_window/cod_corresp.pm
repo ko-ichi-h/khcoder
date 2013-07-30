@@ -960,7 +960,7 @@ sub _calc{
 		$biplot = $self->gui_jg( $self->{biplot} );
 	}
 
-	&gui_window::word_corresp::make_plot(
+	my $plot = &gui_window::word_corresp::make_plot(
 		d_x          => $self->{xy_obj}->x,
 		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
@@ -980,7 +980,18 @@ sub _calc{
 	);
 
 	$wait_window->end(no_dialog => 1);
+
+	# プロットWindowを開く
+	if ($::main_gui->if_opened('w_cod_corresp_plot')){
+		$::main_gui->get('w_cod_corresp_plot')->close;
+	}
 	
+	gui_window::r_plot::cod_corresp->open(
+		plots       => $plot,
+		#ax          => $self->{ax},
+	);
+
+	# 後処理
 	unless ( $self->{radio} ){
 		$self->{radio} = 1;
 	}

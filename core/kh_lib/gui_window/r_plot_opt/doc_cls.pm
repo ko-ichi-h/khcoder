@@ -69,7 +69,8 @@ sub calc{
 	}
 
 	gui_window::r_plot::doc_cls->open(
-		plots       => [$plot]
+		plots       => [$plot],
+		ax          => $self->{ax},
 	);
 
 	$plot = undef;

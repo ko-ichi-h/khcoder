@@ -690,7 +690,7 @@ sub calc{
 		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
 	}
 
-	&make_plot(
+	my $plot = &make_plot(
 		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
 		d_x          => $self->{xy_obj}->x,
 		d_y          => $self->{xy_obj}->y,
@@ -711,6 +711,17 @@ sub calc{
 	);
 
 	$w->end(no_dialog => 1);
+
+	# プロットWindowを開く
+	my $plotwin_id = 'w_word_corresp_plot';
+	if ($::main_gui->if_opened($plotwin_id)){
+		$::main_gui->get($plotwin_id)->close;
+	}
+	
+	gui_window::r_plot::word_corresp->open(
+		plots       => $plot,
+		#no_geometry => 1,
+	);
 
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
@@ -1194,23 +1205,11 @@ if ( is.null(segs) == F){
 		print "---------------------------------------------------------[R]\n";
 	}
 
-	# プロットWindowを開く
 	kh_r_plot->clear_env;
-	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
-	if ($::main_gui->if_opened($plotwin_id)){
-		$::main_gui->get($plotwin_id)->close;
-	}
-	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
-	
-	return 0 if $flg_error;
-	
-	$plotwin->open(
-		plots       => \@plots,
-		#no_geometry => 1,
-	);
-	
-	#(@plots,$plot2,$plotg,$plotv,$plot1) = undef;
-	return 1;
+
+	return undef if $flg_error;
+
+	return \@plots;
 }
 
 sub r_command_aggr{

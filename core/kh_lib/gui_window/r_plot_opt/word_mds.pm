@@ -118,7 +118,7 @@ sub calc{
 	$r_command .= "# END: DATA\n";
 
 	my $wait_window = gui_wait->start;
-	&gui_window::word_mds::make_plot(
+	my $plot = &gui_window::word_mds::make_plot(
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
@@ -136,6 +136,21 @@ sub calc{
 		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 	$wait_window->end(no_dialog => 1);
+	
+	# プロットWindowを開く
+	if ($::main_gui->if_opened('w_word_mds_plot')){
+		$::main_gui->get('w_word_mds_plot')->close;
+	}
+	return 0 unless $plot;
+
+	gui_window::r_plot::word_mds->open(
+		plots       => $plot->{result_plots},
+		msg         => $plot->{result_info},
+		ax          => $self->{ax},
+	);
+	$plot = undef;
+	
+	
 	$self->close;
 }
 

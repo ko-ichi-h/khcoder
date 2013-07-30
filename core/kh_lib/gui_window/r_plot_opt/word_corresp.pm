@@ -224,7 +224,7 @@ sub calc{
 
 	my $wait_window = gui_wait->start;
 
-	&gui_window::word_corresp::make_plot(
+	my $plot = &gui_window::word_corresp::make_plot(
 		d_x          => $self->{xy_obj}->x,
 		d_y          => $self->{xy_obj}->y,
 		flt          => $filter,
@@ -244,6 +244,17 @@ sub calc{
 	);
 	
 	$wait_window->end(no_dialog => 1);
+	
+	# プロットWindowを開く
+	if ($::main_gui->if_opened('w_word_corresp_plot')){
+		$::main_gui->get('w_word_corresp_plot')->close;
+	}
+	
+	gui_window::r_plot::word_corresp->open(
+		plots       => $plot,
+		ax          => $self->{ax},
+	);
+	
 	$self->close;
 }
 

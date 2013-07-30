@@ -198,7 +198,7 @@ sub calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	&make_plot(
+	my $plot = &make_plot(
 		#base_win       => $self,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
@@ -218,6 +218,19 @@ sub calc{
 	);
 	
 	$w->end(no_dialog => 1);
+	
+	# プロットWindowを開く
+	if ($::main_gui->if_opened('w_word_mds_plot')){
+		$::main_gui->get('w_word_mds_plot')->close;
+	}
+	return 0 unless $plot;
+
+	gui_window::r_plot::word_mds->open(
+		plots       => $plot->{result_plots},
+		msg         => $plot->{result_info},
+		#ax          => $self->{ax},
+	);
+	$plot = undef;
 	
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
@@ -502,23 +515,13 @@ d <- t(d)
 		}
 	}
 
-	# プロットWindowを開く
-	kh_r_plot->clear_env;
-	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
-	if ($::main_gui->if_opened($plotwin_id)){
-		$::main_gui->get($plotwin_id)->close;
-	}
-	
-	return 0 if $flg_error;
-	
-	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
-	$plotwin->open(
-		plots       => [$plot1, $plot2],
-		msg         => $stress,
-		#no_geometry => 1,
-	);
-	
-	return 1;
+	return undef if $flg_error;
+
+	my $plotR;
+	$plotR->{result_plots} = [$plot1, $plot2];
+	$plotR->{result_info} =  $stress;
+	return $plotR;
+
 }
 
 #--------------#
