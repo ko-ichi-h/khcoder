@@ -1,7 +1,7 @@
 savefile <- NULL
 require(tcltk)
 
-if (T){
+if (F){
 	csvfile <- tclvalue(
 		tkgetOpenFile(
 			filetypes = "{{CSV Files} {.csv}}",
@@ -38,6 +38,7 @@ ggfluctuation_my <- function (mat){
 		y	  = as.factor(table[,1]),
 		result = table[,3]
 	)
+	print(table)
 
 	# create the plot
 	p <- ggplot(
@@ -68,29 +69,32 @@ ggfluctuation_my <- function (mat){
 	p <- p + scale_area(
 		"Percent:",
 		limits = c(1, ceiling(max(table$result))),
-		to=c(0,50),
+		to=c(0,15),
 		breaks = breaks
 	)
 	
 	# labels of axis
 	p <- p + scale_x_discrete(
 		breaks = 1:ncol(mat),
-		labels = colnames(mat)
+		labels = colnames(mat),
+		expand = c(0.015, 0.5),
 	)
 	p <- p + scale_y_discrete(
 		breaks = 1:nrow(mat),
-		labels = rownames(mat)
+		labels = rownames(mat),
+		expand = c(0.015, 0.5)
 	)
-	p <- p + xlab("")
-	p <- p + ylab("")
 
 	# other cofigs of the plot
 	nx <- length(levels(table$x))
 	ny <- length(levels(table$y))
 	p <- p + opts(
-		aspect.ratio = ny/nx,
-		axis.text.x=theme_text(angle=90, hjust=1, family=font_fam),
-		axis.text.y=theme_text(hjust=1, family=font_fam)
+		#aspect.ratio = ny/nx,
+		axis.title.y     = theme_blank(),
+		axis.title.x     = theme_blank(),
+		legend.key=theme_rect(fill="gray96",colour = NA),
+		axis.text.x=theme_text(angle=90, hjust=1),
+		axis.text.y=theme_text(hjust=1)
 	)
 
 	print(p)
