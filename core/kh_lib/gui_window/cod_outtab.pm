@@ -470,9 +470,13 @@ sub plot{
 	if ($height < 480){
 		$height = 480;
 	}
+	
+	my $bs_h = 1;
+	my $bs_w = 1;
 	my $height_f =  20 * $ncol + $label_length * 14;
 	if ($height_f < 480){
 		$height_f = 480;
+		$bs_h = (480 - $label_length * 14) / $ncol / 20;
 	}
 	
 	# マップの幅
@@ -486,8 +490,11 @@ sub plot{
 	my $width_f = 20 * $nrow + $label_length * 14 + 25;
 	if ($width_f < 640){
 		$width_f = 640;
+		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 20;
 	}
-	print "$ncol, $nrow\n";
+	use List::Util 'min';
+	my $bubble_size = min($bs_h, $bs_w);
+	print "bubble_size: $bubble_size\n";
 	
 	
 	# プロット作成
@@ -501,6 +508,7 @@ sub plot{
 		plot_size_heat      => $height,
 		plot_size_maph      => $height_f,
 		plot_size_mapw      => $width_f,
+		bubble_size         => $bubble_size,
 	);
 	
 	$wait_window->end(no_dialog => 1);

@@ -35,14 +35,15 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
-	unless ( $args{plot_size_heat} ){
-		$args{plot_size_heat} = 480;
-	}
+	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
 	# パラメーター設定（バブルプロット）
 	$args{plot_size_maph} = 480 unless $args{plot_size_maph};
 	$args{plot_size_mapw} = 640 unless $args{plot_size_mapw};
-	print "$args{plot_size_heat}, $args{plot_size_maph}, $args{plot_size_mapw}\n";
+	
+	$args{bubble_size} = 1 unless $args{bubble_size};
+	$r_command .= "bubble_size <- $args{bubble_size}\n";
+	
 
 
 	# プロット作成
@@ -139,28 +140,32 @@ ggfluctuation_my <- function (mat){
 	breaks <- c(bt, 2 * bt, 3 * bt)
 	p <- p + scale_area(
 		"Percent:",
-		limits = c(1, ceiling(max(table$result))),
-		to=c(0,15),
+		limits = c(0.05, ceiling(max(table$result))),
+		to=c(0,15 * bubble_size),
 		breaks = breaks
 	)
 	
 	# labels of axis
 	p <- p + scale_x_discrete(
 		breaks = 1:ncol(mat),
-		labels = colnames(mat)
+		labels = colnames(mat),
+		expand = c(0.015, 0.5)
 	)
 	p <- p + scale_y_discrete(
 		breaks = 1:nrow(mat),
-		labels = rownames(mat)
+		labels = rownames(mat),
+		expand = c(0.015, 0.5)
 	)
-	p <- p + xlab("")
-	p <- p + ylab("")
 
 	# other cofigs of the plot
 	nx <- length(levels(table$x))
 	ny <- length(levels(table$y))
 	p <- p + opts(
 		#aspect.ratio = ny/nx,
+		legend.key=theme_rect(fill="gray96",colour = NA),
+		axis.title.y     = theme_blank(),
+		axis.title.x     = theme_blank(),
+		axis.ticks       = theme_blank(),
 		axis.text.x=theme_text(
 			size=12 * cex,
 			angle=90,
