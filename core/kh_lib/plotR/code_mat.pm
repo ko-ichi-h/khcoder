@@ -17,10 +17,25 @@ sub new{
 
 	my $r_command = $args{r_command};
 
-	# パラメーター設定（ヒートマップ）
-	$args{font_size} = 1 unless $args{font_size};
+	# パラメーター設定（共通）
+	$args{font_size} = 1 unless $args{font_size};      # フォントサイズ
 	$r_command .= "cex <- $args{font_size}\n";
-	
+
+	if ( defined($self->{selection}) ){                # コード選択
+		if ( $#{$self->{selection}} > -1 ){
+			$r_command .= "c_names <- colnames(d)\n";
+			
+			my $t = '';
+			foreach my $i (@{$self->{selection}}){
+					$t .= "$i,";
+			}
+			chop $t;
+			$r_command .= "d <- as.matrix(d[,c($t)])\n";
+			$r_command .= "colnames(d) <- c_names[c($t)]\n";
+		}
+	}
+
+	# パラメーター設定（ヒートマップ）
 	unless ( $args{heat_dendro_c} ){
 		$args{heat_dendro_c} = 0;
 	}
@@ -117,6 +132,10 @@ if ( is.null(font_fam) == FALSE ){
 }
 
 ggfluctuation_my <- function (mat){
+	if (nrow(mat) > 1){
+		mat <- mat[nrow(mat):1,]
+	}
+	
 	# preparing the data.frame
 	table <- NULL
 	for (r in 1:nrow(mat)){
@@ -244,6 +263,13 @@ ggfluctuation_my(  t( as.matrix(d) ) )
 
 sub r_plot_cmd_heat{
 	return '
+
+if (ncol(d) == 1){
+	dendro_c <- 0
+}
+if (nrow(d) == 1){
+	dendro_v <- 0
+}
 
 library(grid)
 library(pheatmap)
