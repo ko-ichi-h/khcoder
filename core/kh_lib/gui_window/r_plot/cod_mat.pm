@@ -6,6 +6,7 @@ sub option1_options{
 	return [
 		kh_msg->get('heat'), # 'ヒートマップ',
 		kh_msg->get('fluc'), # 'バブルプロット',
+		kh_msg->get('line'),
 	];
 }
 
