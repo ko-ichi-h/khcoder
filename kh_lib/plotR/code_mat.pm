@@ -195,7 +195,7 @@ p <- p + scale_x_discrete(
 p <- p + scale_colour_hue(
 	name = "",
 	breaks = 1:ncol(d),
-	labels = colnames(d),
+	labels = colnames(d)
 )
 
 p <- p + opts(
@@ -318,10 +318,7 @@ ggfluctuation_my <- function (mat){
 		#alpha=0.5
 	)
 
-	# cofigure the regend
-	bt <- floor( floor(max(table$result)) / 3 )
-	breaks <- c(bt, 2 * bt, 3 * bt)
-	# cofigure the regend
+	# cofigure the legend
 	bt <- floor( floor(max(table$result)) / 3 )
 	breaks <- c(bt, 2 * bt, 3 * bt)
 	if (ggplot2_version >= 9){
