@@ -92,6 +92,15 @@ sub new{
 		height    => $args{plot_size_maph},
 	) or $flg_error = 1;
 
+	$plots[2] = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_3',
+		command_f =>
+			 $r_command
+			.$self->r_plot_cmd_line,
+		width     => 640,
+		height    => 480,
+	) or $flg_error = 1;
+
 	#my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n" if $bench;
 
@@ -103,6 +112,143 @@ sub new{
 	return 0 if $flg_error;
 	return $self;
 }
+
+sub r_plot_cmd_line{
+	return '
+
+library(ggplot2)
+ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
+ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
+ggplot2_version <- unlist(     ggplot2_version )
+ggplot2_version <- as.numeric( ggplot2_version )
+ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
+
+font_fam <- NULL
+if ( is.null(dev.list()) ){
+	font_fam <- 1
+} else {
+	if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+		font_fam <- 1
+	}
+}
+if ( is.null(font_fam) == FALSE ){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		font_fam <- "HiraKaku"
+	} else {
+		font_fam <- "'.$::config_obj->font_plot.'"
+	}
+}
+
+if (ncol(d) > 9){
+	d <- d[,1:9]
+}
+
+# preparing the data.frame
+table <- NULL
+for (r in 1:nrow(d)){
+	for (l in 1:ncol(d)){
+		table <- rbind(table, c(r, l, d[r,l]))
+	}
+}
+table <- data.frame(
+	x	= as.factor(table[,1]),
+	y	= table[,3],
+	c	= as.factor(table[,2])
+)
+
+# preparing x-axis labels
+x.labels <- rownames(d)
+x.cuts   <- 1:nrow(d)
+if ( length(x.labels) > 21 ){
+	cutting <- length(x.labels) / 20
+	cutting <- ceiling(cutting)
+	x.labels <- NULL
+	x.cuts   <- NULL
+	
+	n <- 1
+	while ( n <= nrow(d) ){
+		x.cuts   <- c(x.cuts, n)
+		x.labels <- c(x.labels, rownames(d)[n])
+		n <- n + cutting
+	}
+}
+
+# creating the plot
+p <- ggplot(
+	table,
+	aes_string(
+		x = "x",
+		y = "y",
+		group="c",
+		colour="c"
+	)
+)
+
+p <- p + geom_line()
+
+p <- p + scale_x_discrete(
+	breaks = x.cuts,
+	labels = x.labels
+)
+
+p <- p + scale_colour_hue(
+	name = "",
+	breaks = 1:ncol(d),
+	labels = colnames(d),
+)
+
+p <- p + opts(
+	axis.title.x     = theme_blank(),
+	axis.title.y     = theme_blank(),
+	axis.ticks       = theme_blank(),
+	axis.text.x=theme_text(
+		size=11 * cex,
+		colour="black",
+		angle=90,
+		hjust=1
+		#family=font_fam
+	),
+	axis.text.y=theme_text(
+		size=11 * cex,
+		colour="black",
+		hjust=1
+		#family=font_fam
+	)
+)
+
+if ( is.null(font_fam) == FALSE ){
+	p <- p + opts(
+		axis.text.x=theme_text(
+			size=11 * cex,
+			colour="black",
+			angle=90,
+			hjust=1,
+			family=font_fam
+		),
+		axis.text.y=theme_text(
+			size=11 * cex,
+			colour="black",
+			hjust=1,
+			family=font_fam
+		),
+		legend.text=theme_text(
+			size=11 * cex,
+			colour="black",
+			family=font_fam
+		)
+	)
+}
+
+print(p)
+
+
+
+
+	';
+}
+
+
 
 sub r_plot_cmd_fluc{
 	return '

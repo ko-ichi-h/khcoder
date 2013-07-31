@@ -1037,6 +1037,7 @@ gui_window::r_plot::cod_mat:
     win_title:                 "クロス集計のプロット"
     heat:                      "ヒートマップ"
     fluc:                      "バブルプロット"
+    line:                      "折れ線"
 gui_window::r_plot_opt::cod_mat:
     win_title:                 "クロス集計のプロット・調整"
     cellnote:                  "各セルのパーセンテージを表示"
