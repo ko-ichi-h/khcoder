@@ -93,6 +93,11 @@ sub r_plot_cmd_fluc{
 	return '
 
 library(ggplot2)
+ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
+ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
+ggplot2_version <- unlist(     ggplot2_version )
+ggplot2_version <- as.numeric( ggplot2_version )
+ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
 
 font_fam <- NULL
 if ( is.null(dev.list()) ){
@@ -151,12 +156,26 @@ ggfluctuation_my <- function (mat){
 	# cofigure the regend
 	bt <- floor( floor(max(table$result)) / 3 )
 	breaks <- c(bt, 2 * bt, 3 * bt)
-	p <- p + scale_area(
-		"Percent:",
-		limits = c(0.05, ceiling(max(table$result))),
-		to=c(0,15 * bubble_size),
-		breaks = breaks
-	)
+	# cofigure the regend
+	bt <- floor( floor(max(table$result)) / 3 )
+	breaks <- c(bt, 2 * bt, 3 * bt)
+	if (ggplot2_version >= 9){
+		p <- p + scale_area(
+			"Percent:",
+			limits = c(0.05, ceiling(max(table$result))),
+			#to=c(0,15 * bubble_size),
+			range=c(0,15 * bubble_size),
+			breaks = breaks
+		)
+	} else {
+		p <- p + scale_area(
+			"Percent:",
+			limits = c(0.05, ceiling(max(table$result))),
+			to=c(0,15 * bubble_size),
+			#range=c(0,15 * bubble_size),
+			breaks = breaks
+		)
+	}
 	
 	# labels of axis
 	p <- p + scale_x_discrete(
@@ -181,13 +200,15 @@ ggfluctuation_my <- function (mat){
 		axis.ticks       = theme_blank(),
 		axis.text.x=theme_text(
 			size=12 * cex,
+			colour="black",
 			angle=90,
-			hjust=1,
+			hjust=1
 			#family=font_fam
 		),
 		axis.text.y=theme_text(
 			size=12 * cex,
-			hjust=1,
+			colour="black",
+			hjust=1
 			#family=font_fam
 		)
 	)
@@ -196,12 +217,14 @@ ggfluctuation_my <- function (mat){
 		p <- p + opts(
 			axis.text.x=theme_text(
 				size=12 * cex,
+				colour="black",
 				angle=90,
 				hjust=1,
 				family=font_fam
 			),
 			axis.text.y=theme_text(
 				size=12 * cex,
+				colour="black",
 				hjust=1,
 				family=font_fam
 			)
