@@ -1047,3 +1047,5 @@ gui_window::r_plot_opt::cod_mat:
     bubble_shape:              "Shape of bubbles: "
     square:                    "square"
     circle:                    "circle"
+    common:                    "common settings"
+    select_1:                  "Please select at least 1 code"

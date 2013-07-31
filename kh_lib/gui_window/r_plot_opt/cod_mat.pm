@@ -26,20 +26,9 @@ sub _new{
 	$self->{labframe} = $lf;
 	$self->innner;
 
-	# フォントサイズ
-	#$self->{font_obj} = gui_widget::r_font->open(
-	#	parent       => $lf,
-	#	command      => sub{ $self->calc; },
-	#	pack    => {
-	#		-anchor   => 'w',
-	#	},
-	#	r_com     => $args{command_f},
-	#	plot_size => $args{size},
-	#);
-
 	# OK, Cancel
 	$self->{win_obj}->Button(
-		-text => kh_msg->gget('cancel'), # キャンセル
+		-text => kh_msg->gget('cancel'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -60,12 +49,174 @@ sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
+	my $left  = $lf->Frame()->pack(-side => 'left', -fill => 'both', -expand => 1);
+	my $right = $lf->Frame()->pack(-side => 'right', -fill => 'both');
+
+	# 共通のパラメーター
+	my @code_names = ();
+	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
+		@code_names = eval( "($1)" );
+	}
+	if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
+		$self->{font_size} = $1;
+	}
+	
+	my %selected = ();
+	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
+		print "code selection: found!\n";
+		my @selecteda = eval( "($1)" );
+		foreach my $i (@selecteda){
+			$selected{$i - 1} = 1;
+		}
+	} else {
+		print "code selection: all\n";
+		my $n = 0;
+		foreach my $i (@code_names){
+			$selected{$n} = 1;
+			++$n;
+		}
+	}
+
+
+	# 共通のGUI
+	my $rf = $left->LabFrame(
+		-label => kh_msg->get('common'),
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+	)->pack(-fill => 'both', -expand => 1);
+
+	$rf->Label(
+		-text => kh_msg->get('gui_window::cod_corresp->select_codes'),
+	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
+
+	my $rf2 = $rf->Frame()->pack(
+		-fill   => 'both',
+		-expand => 1,
+		-padx   => 2,
+		-pady   => 2
+	);
+
+	$rf2->Label(
+		-text => '    ',
+		-font => "TKFN"
+	)->pack(
+		-anchor => 'w',
+		-side   => 'left',
+	);
+
+	my $rf2_1 = $rf2->Frame(
+		-borderwidth        => 2,
+		-relief             => 'sunken',
+	)->pack(
+			-anchor => 'w',
+			-side   => 'left',
+			-pady   => 2,
+			-padx   => 2,
+			-fill   => 'both',
+			-expand => 1
+	);
+
+	# コード選択用HList
+	$self->{hlist} = $rf2_1->Scrolled(
+		'HList',
+		-scrollbars         => 'osoe',
+		#-relief             => 'sunken',
+		-font               => 'TKFN',
+		-selectmode         => 'none',
+		-indicator => 0,
+		-highlightthickness => 0,
+		-columns            => 1,
+		-borderwidth        => 0,
+		-height             => 12,
+	)->pack(
+		-fill   => 'both',
+		-expand => 1
+	);
+
+	my $rf2_2 = $rf2->Frame()->pack(
+		-fill   => 'x',
+		-expand => 0,
+		-side   => 'left'
+	);
+	$rf2_2->Button(
+		-text => kh_msg->gget('all'), # すべて
+		-width => 8,
+		-font => "TKFN",
+		-borderwidth => 1,
+		-command => sub{$self->select_all;}
+	)->pack(-pady => 3);
+	$rf2_2->Button(
+		-text => kh_msg->gget('clear'), # クリア
+		-width => 8,
+		-font => "TKFN",
+		-borderwidth => 1,
+		-command => sub{$self->select_none;}
+	)->pack();
+
+	# コードのリストアップ
+	my $wleft = $self->{hlist}->ItemStyle('window',-anchor => 'w');
+
+	my $row = 0;
+	$self->{checks} = undef;
+	foreach my $i (@code_names){
+		if ($selected{$row}){
+			$self->{checks}[$row]{check} = 1;
+		} else {
+			$self->{checks}[$row]{check} = 0;
+		}
+		
+		$self->{checks}[$row]{name}  = $i;
+		
+		my $c = $self->{hlist}->Checkbutton(
+			-text     => gui_window->gui_jchar($i),
+			-variable => \$self->{checks}[$row]{check},
+			-anchor => 'w',
+		);
+		
+		$self->{checks}[$row]{widget} = $c;
+		
+		$self->{hlist}->add($row,-at => "$row");
+		$self->{hlist}->itemCreate(
+			$row,0,
+			-itemtype  => 'window',
+			-style     => $wleft,
+			-widget    => $c,
+		);
+		++$row;
+	}
+
+	# フォントサイズ
+	my $rf3 = $rf->Frame()->pack(
+		-fill   => 'x',
+		-expand => 0,
+		-padx   => 2,
+		-pady   => 2
+	);
+
+	$rf3->Label(
+		-text => kh_msg->get('gui_widget::r_font->font_size'),
+	)->pack(-side => 'left');
+
+	$self->{entry_font_size} = $rf3->Entry(
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left');
+	gui_window->config_entry_focusin($self->{entry_font_size});
+	$self->{entry_font_size}->bind("<Key-Return>", sub {$self->calc});
+	$self->{entry_font_size}->bind("<KP_Enter>", sub {$self->calc});
+	
+	$self->{entry_font_size}->insert(0,$self->{font_size} * 100);
+
+	$rf3->Label(
+		-text => '%',
+	)->pack(-side => 'left');
+
 	# ヒートマップのパラメーター
-	if ( $self->{command_f} =~ /dendro_c <\- ([0-9]+)\n/ ){
+	if ( $self->{command_f} =~ /\ndendro_c <\- ([0-9]+)\n/ ){
 		$self->{heat_dendro_c} = $1;
 	}
 
-	if ( $self->{command_f} =~ /dendro_v <\- ([0-9]+)\n/ ){
+	if ( $self->{command_f} =~ /\ndendro_v <\- ([0-9]+)\n/ ){
 		$self->{heat_dendro_v} = $1;
 	}
 
@@ -84,11 +235,11 @@ sub innner{
 	}
 
 	# ヒートマップのGUI
-	my $lf_h = $lf->LabFrame(
+	my $lf_h = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->heat'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'x', -expand => 0, -anchor => 'nw');
 
 	$lf_h->Checkbutton(
 		-variable => \$self->{heat_cellnote},
@@ -122,11 +273,11 @@ sub innner{
 
 
 	# バブルプロットのGUI
-	my $lf_f = $lf->LabFrame(
+	my $lf_f = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->fluc'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
-	)->pack(-fill => 'both', -expand => 1);
+	)->pack(-fill => 'x', -expand => 0, -anchor => 'nw');
 	
 	my $f_f1 = $lf_f->Frame()                               # バブルの大きさ
 		->pack(-fill=>'x',-expand=>0, -pady => 2);
@@ -221,6 +372,21 @@ sub calc{
 	}
 	$r_command .= "# END: DATA\n";
 
+	my @selection = ();
+	my $n = 1;
+	foreach my $i (@{$self->{checks}}){
+		push @selection, $n if $i->{check};
+		++$n;
+	}
+	unless ($#selection > -1){
+		gui_errormsg->open(
+			type   => 'msg',
+			window  => \$self->win_obj,
+			msg    => kh_msg->get('select_1'), # 'コードを1つ以上選択してください。'
+		);
+		return 0;
+	}
+
 	my $wait_window = gui_wait->start;
 	use plotR::code_mat;
 	my $plot = plotR::code_mat->new(
@@ -237,6 +403,8 @@ sub calc{
 		plot_size_mapw => $self->gui_jg( $self->{entry_plot_size_mapw}->get ),
 		plot_size_maph => $self->gui_jg( $self->{entry_plot_size_maph}->get ),
 		
+		selection      => \@selection,
+		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,
 		plotwin_name   => 'code_mat',
 	);
 	$wait_window->end(no_dialog => 1);
@@ -261,6 +429,23 @@ sub calc{
 }
 
 
+# すべて選択
+sub select_all{
+	my $self = shift;
+	foreach my $i (@{$self->{checks}}){
+		$i->{widget}->select;
+	}
+	return $self;
+}
+
+# クリア
+sub select_none{
+	my $self = shift;
+	foreach my $i (@{$self->{checks}}){
+		$i->{widget}->deselect;
+	}
+	return $self;
+}
 
 
 sub win_title{

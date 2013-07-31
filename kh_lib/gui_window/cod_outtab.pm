@@ -78,7 +78,7 @@ sub _new{
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
-	)->pack( -anchor => 'e', -side => 'right');
+	)->pack( -anchor => 'e', -side => 'right')->focus;
 	
 	#------------------#
 	#   結果表示部分   #
