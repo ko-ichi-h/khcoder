@@ -762,6 +762,9 @@ gui_window::cod_outtab:
     p:                        'percent'
     run:                      'Run'
     er_ill:                   'Error: illegal parameters!'
+    line_all:                 'all'
+    line_select:              'select'
+    line:                     'line:'
 gui_window::cod_jaccard:
     win_title:                'Coding: Jaccard Coefficients'
     unit_cod:                 '  Coding Unit:'

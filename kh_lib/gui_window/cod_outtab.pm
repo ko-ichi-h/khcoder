@@ -120,7 +120,7 @@ sub _new{
 		#-width => 8,
 		-borderwidth => '1',
 		-command => sub { $self->copy; }
-	)->pack(-anchor => 'e', -pady => 1, -side => 'right');
+	)->pack(-anchor => 'e', -pady => 2, -side => 'right');
 
 	$self->win_obj->bind(
 		'<Control-Key-c>',
@@ -136,13 +136,44 @@ sub _new{
 		-text       => '  ',
 	)->pack(-side => 'right');
 
+	$self->{line_mb} = $rf->Menubutton(
+		-text        => kh_msg->get('line_select'), # 選択
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-width       => $self->{width},
+		-borderwidth => 1,
+	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
+
 	$rf->Button(
-		-text => kh_msg->gget('plot'), # プロット
+		-text => kh_msg->get('line_all'), # すべて
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub { $self->plot; }
-	)->pack(-anchor => 'e', -pady => 1, -padx => 2, -side => 'right');
+		-command => sub { $self->plot(2); }
+	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
 
+	$rf->Label(
+		-text       => kh_msg->get('line'), # 折れ線
+	)->pack(-side => 'right');
+
+	$rf->Button(
+		-text => kh_msg->get('gui_window::r_plot::cod_mat->fluc'), # バブル
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->plot(1); }
+	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
+
+	$rf->Button(
+		-text => kh_msg->get('gui_window::r_plot::cod_mat->heat'), # ヒート
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->plot(0); }
+	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
+
+	#$rf->Label(
+	#	-text       => kh_msg->get('plot'),
+	#)->pack(-side => 'right');
 
 	$self->fill;
 	return $self;
@@ -313,6 +344,7 @@ sub _calc{
 	
 	# 一行目（Header）
 	my $col = 0;
+	my @code_names = ();
 	foreach my $i (@{$result->{display}[0]}){
 		if ($col){
 			my $w = $self->{list}->Label(
@@ -330,6 +362,11 @@ sub _calc{
 				$col - 1,
 				-itemtype  => 'window',
 				-widget    => $w,
+			);
+			push @code_names, substr(
+				$self->gui_jchar($i),
+				1,
+				length( $self->gui_jchar($i) )
 			);
 		}
 		++$col;
@@ -362,6 +399,19 @@ sub _calc{
 		}
 		++$row
 		;
+	}
+	
+	$self->{line_mb}->menu->delete(0,'end');
+	my $n = 1;
+	pop @code_names;
+	foreach my $i (@code_names){
+		$self->{code2number}{$i} = $n;
+		$self->{line_mb}->command(
+			-label => $i,
+			-command => sub { $self->plot(2,$self->{code2number}{$i}) },
+		
+		);
+		++$n;
 	}
 	
 	
@@ -405,11 +455,20 @@ sub multiscrolly{
 }
 
 sub plot{
-	my $self = shift;
+	my $self   = shift;
+	my $ax     = shift;
+	my $select = shift;
 	
 	unless ($self->{result}){
 		return 0;
 	}
+	
+	my @selection;
+	if ($select){
+		print "select: $select\n";
+		push @selection, $select;
+	}
+	
 	
 	my $wait_window = gui_wait->start;
 	
@@ -509,6 +568,7 @@ sub plot{
 		plot_size_maph      => $height_f,
 		plot_size_mapw      => $width_f,
 		bubble_size         => $bubble_size,
+		selection           => \@selection,
 	);
 	
 	$wait_window->end(no_dialog => 1);
@@ -521,6 +581,7 @@ sub plot{
 	
 	gui_window::r_plot::cod_mat->open(
 		plots       => $plot->{result_plots},
+		ax          => $ax,
 		no_geometry => 1,
 	);
 
