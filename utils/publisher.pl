@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # èâä˙ê›íË
-my $V = '2b30b';
+my $V = '2b30c';
 my $V_main = "2.Beta.30";
-my $V_full = "2.Beta.30b";
+my $V_full = "2.Beta.30c";
 
 my $pdf = 1;
 
@@ -65,13 +65,13 @@ use Net::SFTP::Foreign;
 use LWP::UserAgent;
 use File::Path 'rmtree';
 
-#&web;
-#&pdfs if $pdf;
-#&source_tgz;
-#&win_pkg;
-#&win_upd;
-#&win_strb;
-&upload;
+&web;
+&pdfs if $pdf;
+&source_tgz;
+&win_pkg;
+&win_upd;
+&win_strb;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";

@@ -31,6 +31,7 @@ sub new{
 			}
 			chop $t;
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
+			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 		}
 	}
@@ -57,14 +58,15 @@ sub new{
 	$args{plot_size_maph} = 480 unless $args{plot_size_maph};
 	$args{plot_size_mapw} = 640 unless $args{plot_size_mapw};
 	
-	$args{bubble_shape} = 22 unless $args{bubble_shape};
+	$args{bubble_shape} = 0 unless length($args{bubble_shape});
 	$r_command .= "bubble_shape <- $args{bubble_shape}\n";
 	
 	$args{bubble_size} = 1 unless $args{bubble_size};
 	$args{bubble_size} = int( $args{bubble_size} * 100 + 0.5) / 100;
 	$r_command .= "bubble_size <- $args{bubble_size}\n";
-	
 
+	$args{color_rsd} = 0 unless length($args{color_rsd});
+	$r_command .= "color_rsd <- $args{color_rsd}\n";
 
 	# プロット作成
 	
@@ -280,43 +282,67 @@ if ( is.null(font_fam) == FALSE ){
 ggfluctuation_my <- function (mat){
 	if (nrow(mat) > 1){
 		mat <- mat[nrow(mat):1,]
+		rsd <- rsd[nrow(rsd):1,]
 	}
 	
 	# preparing the data.frame
 	table <- NULL
 	for (r in 1:nrow(mat)){
 		for (l in 1:ncol(mat)){
-			table <- rbind(table, c(r, l, mat[r,l]))
+			table <- rbind(table, c(r, l, mat[r,l], rsd[r,l]))
 		}
 	}
 	table <- data.frame(
 		x	  = as.factor(table[,2]),
 		y	  = as.factor(table[,1]),
-		result = table[,3]
+		result = table[,3],
+		rsd    = table[,4]
 	)
 
-	# create the plot
+	# set up the plot
 	p <- ggplot(
 		table,
 		aes_string(
 			x = "x",
 			y = "y",
-			size = "result"
+			size = "result",
+			colour = "rsd"
 		)
 	)
-	rgb <- col2rgb( "black" ) / 255
-	col <- rgb(
-		red  =rgb[1,1],
-		green=rgb[2,1],
-		blue =rgb[3,1],
-		alpha=0.25
+
+	# fill color
+	if (color_rsd == 1){
+		p <- p + geom_point(
+			shape=ifelse(bubble_shape==0, 15, 16),
+			alpha=0.5,
+			legend = FALSE
+		)
+	} else {
+		p <- p + geom_point(
+			shape=ifelse(bubble_shape==0, 15, 16),
+			colour="gray30",
+			alpha=0.5,
+			legend = FALSE
+		)
+	}
+
+	# settings of fill color
+	library(RColorBrewer)
+	cols <- brewer.pal(9,"RdBu")
+	p <- p + scale_color_gradient2("Residual:",
+		high = "#FF69B4",            #   "#DE77AE",
+		low  = "#87CEFA",
+		#mid  = cols[5],
+		na.value = "gray30",
+		legend = FALSE
 	)
+
+	# outline
 	p <- p + geom_point(
 		shape=bubble_shape,
-		fill=col,
-		colour="black",
-		#alpha=0.5
+		colour="black"
 	)
+
 
 	# cofigure the legend
 	bt <- floor( floor(max(table$result)) / 3 )
