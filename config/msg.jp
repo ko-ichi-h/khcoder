@@ -1056,3 +1056,4 @@ gui_window::r_plot_opt::cod_mat:
     circle:                    "円"
     common:                    "共通の設定"
     select_1:                  "コードを少なくとも1つ選択して下さい"
+    color_rsd:                 "標準化残差による色分け"

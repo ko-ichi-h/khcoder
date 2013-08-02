@@ -234,6 +234,14 @@ sub innner{
 		$self->{bubble_shape} = $1;
 	}
 
+	if ( $self->{command_f} =~ /color_rsd <\- (.+)\n/ ){
+		$self->{color_rsd} = $1;
+	}
+
+	if ( $self->{command_f} =~ /color_gry <\- (.+)\n/ ){
+		$self->{color_gry} = $1;
+	}
+
 	# ヒートマップのGUI
 	my $lf_h = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->heat'),
@@ -309,14 +317,42 @@ sub innner{
 	$f_f3->Radiobutton(
 		-text     => kh_msg->get('square'),# 正方形
 		-variable => \$self->{bubble_shape},
-		-value    => 22,
+		-value    => 0,
 	)->pack(-side => 'left');
 
 	$f_f3->Radiobutton(
 		-text     => kh_msg->get('circle'),# 円
 		-variable => \$self->{bubble_shape},
-		-value    => 21,
+		-value    => 1,
 	)->pack(-side => 'left');
+
+	$lf_f->Checkbutton(                                     # 残差による色分け
+		-variable => \$self->{color_rsd},
+		-text     => kh_msg->get('color_rsd'),
+		-command  => sub {$self->color_widgets;}
+	)->pack(-anchor => 'w');
+
+	my $f_f4 = $lf_f->Frame()
+		->pack(-fill=>'x',-expand=>0, -pady => 2)
+	;
+
+	$f_f4->Label(
+		-text     => '  ',
+	)->pack(-side => 'left');
+
+	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー
+		-text     => kh_msg->get('gui_window::r_plot::word_corresp->col'),
+		-variable => \$self->{color_gry},
+		-value    => 0,
+	)->pack(-side => 'left');
+
+	$self->{widget_color_gry} = $f_f4->Radiobutton( # グレー
+		-text     => kh_msg->get('gui_window::r_plot::word_corresp->gray'),
+		-variable => \$self->{color_gry},
+		-value    => 1,
+	)->pack(-side => 'left');
+
+	$self->color_widgets;
 
 	my $f_f2 = $lf_f->Frame()                               # プロットの幅
 		->pack(-fill=>'x',-expand=>0, -pady => 2);
@@ -351,6 +387,19 @@ sub innner{
 	return $self;
 }
 
+sub color_widgets{
+	my $self = shift;
+	
+	if ($self->{color_rsd}){
+		$self->{widget_color_col}->configure(-state => 'normal');
+		$self->{widget_color_gry}->configure(-state => 'normal');
+	} else {
+		$self->{widget_color_col}->configure(-state => 'disabled');
+		$self->{widget_color_gry}->configure(-state => 'disabled');
+	}
+	
+	return 1;
+}
 
 sub calc{
 	my $self = shift;
@@ -400,6 +449,8 @@ sub calc{
 		
 		bubble_size    => $self->gui_jg( $self->{entry_bubble_size}->get) /100,
 		bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
+		color_rsd      => $self->gui_jg( $self->{color_rsd} ),
+		color_gry      => $self->gui_jg( $self->{color_gry} ),
 		plot_size_mapw => $self->gui_jg( $self->{entry_plot_size_mapw}->get ),
 		plot_size_maph => $self->gui_jg( $self->{entry_plot_size_maph}->get ),
 		

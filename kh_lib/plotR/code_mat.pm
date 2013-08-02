@@ -31,7 +31,8 @@ sub new{
 			}
 			chop $t;
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
-			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
+			# コミット忘れのための一時退避
+			#$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 		}
 	}
@@ -65,13 +66,13 @@ sub new{
 	$args{bubble_size} = int( $args{bubble_size} * 100 + 0.5) / 100;
 	$r_command .= "bubble_size <- $args{bubble_size}\n";
 
-	$args{color_rsd} = 0 unless length($args{color_rsd});
+	$args{color_rsd} = 1 unless length($args{color_rsd});
 	$r_command .= "color_rsd <- $args{color_rsd}\n";
 
+	$args{color_gry} = 0 unless length($args{color_gry});
+	$r_command .= "color_gry <- $args{color_gry}\n";
+
 	# プロット作成
-	
-	#use Benchmark;
-	#my $t0 = new Benchmark;
 	
 	my @plots = ();
 	my $flg_error = 0;
@@ -85,14 +86,16 @@ sub new{
 		height    => $args{plot_size_heat},
 	) or $flg_error = 1;
 
-	$plots[1] = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_2',
-		command_f =>
-			 $r_command
-			.$self->r_plot_cmd_fluc,
-		width     => $args{plot_size_mapw},
-		height    => $args{plot_size_maph},
-	) or $flg_error = 1;
+	# コミット忘れのための一時退避
+	#$plots[1] = kh_r_plot->new(
+	#	name      => $args{plotwin_name}.'_2',
+	#	command_f =>
+	#		 $r_command
+	#		.$self->r_plot_cmd_fluc,
+	#	width     => $args{plot_size_mapw},
+	#	height    => $args{plot_size_maph},
+	#) or $flg_error = 1;
+	$plots[1] = $plots[0];
 
 	$plots[2] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
@@ -103,8 +106,6 @@ sub new{
 		height    => 480,
 	) or $flg_error = 1;
 
-	#my $t1 = new Benchmark;
-	#print timestr(timediff($t1,$t0)),"\n" if $bench;
 
 	kh_r_plot->clear_env;
 	undef $self;
@@ -327,15 +328,21 @@ ggfluctuation_my <- function (mat){
 	}
 
 	# settings of fill color
-	library(RColorBrewer)
-	cols <- brewer.pal(9,"RdBu")
-	p <- p + scale_color_gradient2("Residual:",
-		high = "#FF69B4",            #   "#DE77AE",
-		low  = "#87CEFA",
-		#mid  = cols[5],
-		na.value = "gray30",
-		legend = FALSE
-	)
+	if (color_gry == 1){
+		p <- p + scale_color_continuous("Residual:",
+			high = "black",
+			low  = "gray95",
+			legend = FALSE
+		)
+	} else {
+		p <- p + scale_color_gradient2("Residual:",
+			high = "#FF69B4",
+			low  = "#87CEFA",
+			#mid  = cols[5],
+			na.value = "gray30",
+			legend = FALSE
+		)
+	}
 
 	# outline
 	p <- p + geom_point(
