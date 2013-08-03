@@ -33,7 +33,6 @@ sub new{
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
 			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
-			
 		}
 	}
 
@@ -176,27 +175,49 @@ if ( length(x.labels) > 21 ){
 }
 
 # creating the plot
-p <- ggplot(
-	table,
-	aes_string(
-		x = "x",
-		y = "y",
-		group="c",
-		colour="c"
+#if (ncol(d) > 1){
+	p <- ggplot(
+		table,
+		aes_string(
+			x = "x",
+			y = "y",
+			group="c",
+			colour="c",
+			shape="c"
+		)
 	)
-)
+#} else {
+#	p <- ggplot(
+#		table,
+#		aes_string(
+#			x = "x",
+#			y = "y",
+#			group="c"
+#			#colour="c",
+#			#shape="c"
+#		)
+#	)
+#}
 
 p <- p + geom_line()
 
-p <- p + scale_x_discrete(
-	breaks = x.cuts,
-	labels = x.labels
+p <- p + geom_point() 
+
+p <- p + scale_shape_discrete(
+	"",
+	breaks = 1:ncol(d),
+	labels = colnames(d)
 )
 
 p <- p + scale_colour_hue(
 	name = "",
 	breaks = 1:ncol(d),
 	labels = colnames(d)
+)
+
+p <- p + scale_x_discrete(
+	breaks = x.cuts,
+	labels = x.labels
 )
 
 p <- p + opts(
@@ -278,7 +299,7 @@ if ( is.null(font_fam) == FALSE ){
 	}
 }
 
-ggfluctuation_my <- function (mat,rsd){
+ggfluctuation_my <- function (mat, rsd){
 	if (nrow(mat) > 1){
 		mat <- mat[nrow(mat):1,]
 		rsd <- rsd[nrow(rsd):1,]
