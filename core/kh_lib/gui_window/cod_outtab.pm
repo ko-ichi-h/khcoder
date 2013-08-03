@@ -546,7 +546,7 @@ sub plot{
 	my $height_f =  20 * $ncol + $label_length * 14;
 	if ($height_f < 480){
 		$height_f = 480;
-		$bs_h = (480 - $label_length * 14) / $ncol / 20;
+		$bs_h = (480 - $label_length * 14) / $ncol / 25;
 	}
 	
 	# マップの幅
@@ -560,9 +560,10 @@ sub plot{
 	my $width_f = 20 * $nrow + $label_length * 14 + 25;
 	if ($width_f < 640){
 		$width_f = 640;
-		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 20;
+		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 25;
 	}
 	use List::Util 'min';
+	print "bubble_size: $bs_h, $bs_w\n";
 	my $bubble_size = min($bs_h, $bs_w);
 	print "bubble_size: $bubble_size\n";
 	
