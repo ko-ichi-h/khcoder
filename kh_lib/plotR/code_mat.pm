@@ -409,6 +409,7 @@ ggfluctuation_my <- function (mat, rsd){
 	p <- p + opts(
 		#aspect.ratio = ny/nx,
 		legend.key=theme_rect(fill="gray96",colour = NA),
+		plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
 		axis.title.y     = theme_blank(),
 		axis.title.x     = theme_blank(),
 		axis.ticks       = theme_blank(),
