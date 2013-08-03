@@ -767,7 +767,7 @@ gui_window::cod_outtab:
     plot:                     'プロット：'
     line_all:                 'すべて'
     line_select:              '選択'
-    line:                     '折れ線：'
+    line:                     ' 折れ線：'
 gui_window::cod_jaccard:
     win_title:                'コーディング・類似度行列（Jaccard係数）'
     unit_cod:                 '　コーディング単位：'

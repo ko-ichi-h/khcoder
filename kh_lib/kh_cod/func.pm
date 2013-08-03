@@ -826,7 +826,7 @@ sub _chisq_test{
 				print ( paste( "khc", c_rsd, "khcend", sep="=" ))
 			');
 			my $rtn = $::config_obj->R->read(3);
-			print "rtn: $rtn\n";
+			#print "rtn: $rtn\n";
 			if ($rtn =~ /khc=(.+)=khcend/){
 				$rtn = $1;
 				my @rtnarray = split /=/, $rtn;
