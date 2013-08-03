@@ -34,7 +34,6 @@ sub new{
 			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 			
-			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 		}
 	}
 
