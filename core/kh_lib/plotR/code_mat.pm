@@ -31,8 +31,7 @@ sub new{
 			}
 			chop $t;
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
-			# コミット忘れのための一時退避
-			#$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
+			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 			
 			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
@@ -88,16 +87,14 @@ sub new{
 		height    => $args{plot_size_heat},
 	) or $flg_error = 1;
 
-	# コミット忘れのための一時退避
-	#$plots[1] = kh_r_plot->new(
-	#	name      => $args{plotwin_name}.'_2',
-	#	command_f =>
-	#		 $r_command
-	#		.$self->r_plot_cmd_fluc,
-	#	width     => $args{plot_size_mapw},
-	#	height    => $args{plot_size_maph},
-	#) or $flg_error = 1;
-	$plots[1] = $plots[0];
+	$plots[1] = kh_r_plot->new(
+		name      => $args{plotwin_name}.'_2',
+		command_f =>
+			 $r_command
+			.$self->r_plot_cmd_fluc,
+		width     => $args{plot_size_mapw},
+		height    => $args{plot_size_maph},
+	) or $flg_error = 1;
 
 	$plots[2] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_3',
@@ -282,7 +279,7 @@ if ( is.null(font_fam) == FALSE ){
 	}
 }
 
-ggfluctuation_my <- function (mat){
+ggfluctuation_my <- function (mat,rsd){
 	if (nrow(mat) > 1){
 		mat <- mat[nrow(mat):1,]
 		rsd <- rsd[nrow(rsd):1,]
@@ -432,7 +429,7 @@ ggfluctuation_my <- function (mat){
 }
 
 
-ggfluctuation_my(  t( as.matrix(d) ) ) 
+ggfluctuation_my(  t( as.matrix(d) ),  t( as.matrix(rsd) ) ) 
 
 	';
 }
