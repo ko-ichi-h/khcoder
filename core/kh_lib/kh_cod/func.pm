@@ -621,12 +621,13 @@ sub outtab{
 	push @result, \@current;
 
 	# chi-square test
-	my @chisq = &_chisq_test(\@current, \@for_chisq);
-	push @result, \@chisq if @chisq;
+	my ($chisq, $rsd) = &_chisq_test(\@current, \@for_chisq);
+	push @result, $chisq if $chisq;
 	
 	my $ret;
-	$ret->{display} = \@result;
-	$ret->{plot}    = \@for_plot;
+	$ret->{display}  = \@result;
+	$ret->{plot}     = \@for_plot;
+	$ret->{t_rsd}    = $rsd;
 
 	return $ret;
 }
@@ -693,7 +694,7 @@ sub tab{
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name,'euc');
 	}
-	
+
 	push @for_plot, clone(\@head);
 	push @head, kh_msg->get('n_cases'); # ケース数
 	push @result, \@head;
@@ -772,12 +773,13 @@ sub tab{
 	push @result, \@current;
 
 	# chi-square test
-	my @chisq = &_chisq_test(\@current, \@for_chisq);
-	push @result, \@chisq if @chisq;
+	my ($chisq, $rsd) = &_chisq_test(\@current, \@for_chisq);
+	push @result, $chisq if $chisq;
 
 	my $ret;
 	$ret->{display} = \@result;
 	$ret->{plot}    = \@for_plot;
+	$ret->{t_rsd}   = $rsd;
 
 	return $ret;
 }
@@ -786,7 +788,9 @@ sub tab{
 sub _chisq_test{
 	my @current   = @{$_[0]};
 	my @for_chisq = @{$_[1]};
+	
 	my @chisq = ();
+	my @rsd   = ();
 	
 	my $R_debug = 0;
 	if ($::config_obj->R){
@@ -802,66 +806,64 @@ sub _chisq_test{
 				++$nrow;
 			}
 			chop $cmd; chop $cmd;
-			$cmd .= 
-				"), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n"
-				.'print ( paste( "khc:", chi$statistic, ":khcend", sep= "") )';
+			$cmd .=  "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n";
+			$cmd .= '
+				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
+				for (i in 1:nrow(chi$residuals)){
+					c_rsd <- paste(c_rsd, chi$residuals[i,1],sep="=")
+				}
+				print ( paste( "khc", c_rsd, "khcend", sep="=" ))
+			';
 			print "send: $cmd ..." if $R_debug;
 			$::config_obj->R->send($cmd);
-			print "ok\n" if $R_debug;
-			my $ret = $::config_obj->R->read(3);
-			print "read: $ret\n" if $R_debug;
-			if ( $ret =~ /khc:(.+):khcend/ ){
-				$ret = $1;
-			} else {
-				warn "Could not read the output of R.\n$ret\n";
-				push @chisq, '---';
-				next;
-			}
 
-			my $ret_mod = $ret;
-			$ret_mod =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
-			$ret_mod =~ s/ //g;
-			$ret_mod = sprintf("%.3f", $ret_mod);
-			if ( $ret =~ /na/i ){
-				push @chisq, $ret;
-				next;
-			}
-
-			if ($ret_mod > 0){
-				print 'send: print (chi$p.value) ...' if $R_debug;
-				$::config_obj->R->send(
-					'print ( paste( "khc:", chi$p.value, ":khcend", sep="" ))'
-				);
-				print "ok\n" if $R_debug;
-				my $p = $::config_obj->R->read(3);
-				print "read: $p\n" if $R_debug;
+			# 残差を取得
+			$::config_obj->R->send('
+				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
+				for (i in 1:nrow(chi$residuals)){
+					c_rsd <- paste(c_rsd, chi$residuals[i,1],sep="=")
+				}
+				print ( paste( "khc", c_rsd, "khcend", sep="=" ))
+			');
+			my $rtn = $::config_obj->R->read(3);
+			print "rtn: $rtn\n";
+			if ($rtn =~ /khc=(.+)=khcend/){
+				$rtn = $1;
+				my @rtnarray = split /=/, $rtn;
 				
-				if ($p =~ /khc:(.+):khcend/){
-					$p = $1;
+				# カイ二乗値
+				my $stat    = shift @rtnarray;
+				my $p_value = shift @rtnarray;
+				
+				if ( $stat =~ /na/i ){
+					push @chisq, 'na';
 				} else {
-					warn "Could not read the output of R.\n$p\n";
-					push @chisq, '---';
-					next;
+					$stat =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+					$stat =~ s/ //g;
+					$stat = sprintf("%.3f", $stat);
+					
+					if ($stat > 0){
+						if ($p_value < 0.01){
+							$stat .= '**';
+						}
+						elsif ($p_value < 0.05){
+							$stat .= '*';
+						}
+					}
+					push @chisq, $stat;
 				}
 				
-				#substr($p, 0, 4) = '';
-				#if ($p =~ /^(.+)\n\[[0-9]+\]/){
-				#	$p = $1;
-				#}
-				if ($p < 0.01){
-					$ret_mod .= '**';
-				}
-				elsif ($p < 0.05){
-					$ret_mod .= '*';
-				}
+				push @rsd, \@rtnarray;
+			} else {
+				warn "Could not read the output of R.\n$rtn\n";
+				push @chisq, '---';
 			}
-			push @chisq, $ret_mod;
 		}
 		$::config_obj->R->unlock;
 		push @chisq, ' ';
 	}
 
-	return @chisq;
+	return (\@chisq, \@rsd);
 }
 
 
