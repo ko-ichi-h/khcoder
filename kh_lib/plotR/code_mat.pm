@@ -228,6 +228,7 @@ p <- p + opts(
 	axis.title.x     = theme_blank(),
 	axis.title.y     = theme_blank(),
 	axis.ticks       = theme_blank(),
+	plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
 	axis.text.x=theme_text(
 		size=11 * cex,
 		colour="black",
