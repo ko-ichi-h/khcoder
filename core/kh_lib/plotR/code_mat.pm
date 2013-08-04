@@ -275,6 +275,11 @@ print(p)
 sub r_plot_cmd_fluc{
 	return '
 
+alpha_value = 0.5
+if ( exists("saving_emf") || exists("saving_eps") ){
+	alpha_value <- 1
+}
+
 library(ggplot2)
 ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
 ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
@@ -334,14 +339,14 @@ ggfluctuation_my <- function (mat, rsd){
 	if (color_rsd == 1){
 		p <- p + geom_point(
 			shape=ifelse(bubble_shape==0, 15, 16),
-			alpha=0.5,
+			alpha=alpha_value,
 			legend = FALSE
 		)
 	} else {
 		p <- p + geom_point(
 			shape=ifelse(bubble_shape==0, 15, 16),
 			colour="gray30",
-			alpha=0.5,
+			alpha=alpha_value,
 			legend = FALSE
 		)
 	}
