@@ -63,7 +63,7 @@ sub innner{
 	
 	my %selected = ();
 	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
-		print "code selection: found!\n";
+		#print "code selection: found!\n";
 		my @selecteda = eval( "($1)" );
 		foreach my $i (@selecteda){
 			$selected{$i - 1} = 1;

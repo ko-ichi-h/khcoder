@@ -563,9 +563,9 @@ sub plot{
 		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 25;
 	}
 	use List::Util 'min';
-	print "bubble_size: $bs_h, $bs_w\n";
+	#print "bubble_size: $bs_h, $bs_w\n";
 	my $bubble_size = min($bs_h, $bs_w);
-	print "bubble_size: $bubble_size\n";
+	#print "bubble_size: $bubble_size\n";
 	
 	
 	# プロット作成
