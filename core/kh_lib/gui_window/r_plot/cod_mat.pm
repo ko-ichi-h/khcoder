@@ -6,7 +6,7 @@ sub option1_options{
 	return [
 		kh_msg->get('heat'), # 'ヒートマップ',
 		kh_msg->get('fluc'), # 'バブルプロット',
-		kh_msg->get('line'),
+		#kh_msg->get('line'),
 	];
 }
 
@@ -39,13 +39,15 @@ sub open_config{
 	print "size: $plot_size_heat, $plot_size_maph, $plot_size_mapw\n";
 
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
-	$base_name->open(
+	$self->{child} = $base_name->open(
 		command_f      => $self->{plots}[$self->{ax}]->command_f,
 		ax             => $self->{ax},
 		plot_size_heat => $plot_size_heat,
 		plot_size_maph => $plot_size_maph,
 		plot_size_mapw => $plot_size_mapw
 	);
+	
+	return $self;
 }
 
 # 画像表示用オブジェクトを再作成（スクロールバーをリセットするため）
@@ -87,5 +89,8 @@ sub base_name{
 	return 'cod_mat';
 }
 
+sub child_windows{
+	return ('');
+}
 
 1;
