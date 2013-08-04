@@ -220,6 +220,10 @@ p <- p + scale_x_discrete(
 	labels = x.labels
 )
 
+p <- p + scale_y_continuous(
+	limits = c(0, ceiling( max(table$y) * 1.01 ))
+)
+
 p <- p + opts(
 	axis.title.x     = theme_blank(),
 	axis.title.y     = theme_blank(),
