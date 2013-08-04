@@ -242,20 +242,20 @@ p <- p + opts(
 if ( is.null(font_fam) == FALSE ){
 	p <- p + opts(
 		axis.text.x=theme_text(
-			size=11 * cex,
+			size=12 * cex,
 			colour="black",
 			angle=90,
 			hjust=1,
 			family=font_fam
 		),
 		axis.text.y=theme_text(
-			size=11 * cex,
+			size=12 * cex,
 			colour="black",
 			hjust=1,
 			family=font_fam
 		),
 		legend.text=theme_text(
-			size=11 * cex,
+			size=12 * cex,
 			colour="black",
 			family=font_fam
 		)
