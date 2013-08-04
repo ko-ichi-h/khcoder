@@ -768,6 +768,7 @@ gui_window::cod_outtab:
     line_all:                 'すべて'
     line_select:              '選択'
     line:                     ' 折れ線：'
+    map:                      'マップ：'
 gui_window::cod_jaccard:
     win_title:                'コーディング・類似度行列（Jaccard係数）'
     unit_cod:                 '　コーディング単位：'
@@ -1038,12 +1039,11 @@ gui_window::r_plot_opt::doc_cls:
 mysql_ready::check:
     error:                     "前処理データの整合性が失われました。"
 gui_window::r_plot::cod_mat:
-    win_title:                 "クロス集計のプロット"
-    heat:                      "ヒートマップ"
-    fluc:                      "バブルプロット"
-    line:                      "折れ線"
+    win_title:                 "クロス集計のマップ"
+    heat:                      "ヒート"
+    fluc:                      "バブル"
 gui_window::r_plot_opt::cod_mat:
-    win_title:                 "クロス集計のプロット・調整"
+    win_title:                 "クロス集計のマップ・調整"
     cellnote:                  "各セルのパーセンテージを表示"
     dendro_c:                  "コードのクラスター化と並べ替え"
     dendro_v:                  "外部変数・見出しのクラスター化と並べ替え"
@@ -1057,3 +1057,7 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "共通の設定"
     select_1:                  "コードを少なくとも1つ選択して下さい"
     color_rsd:                 "標準化残差による色分け"
+gui_window::r_plot::cod_mat_line:
+    win_title:                 "クロス集計の折れ線グラフ"
+gui_window::r_plot_opt::cod_mat_line:
+    win_title:                 "クロス集計の折れ線グラフ・調整"

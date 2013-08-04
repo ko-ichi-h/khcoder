@@ -19,6 +19,7 @@ sub innner{
 
 sub calc{
 	my $self = shift;
+	$self->_configure_mother;
 
 	my $r_command = '';
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){

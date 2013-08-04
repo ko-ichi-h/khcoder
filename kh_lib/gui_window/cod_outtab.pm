@@ -171,6 +171,10 @@ sub _new{
 		-command => sub { $self->plot(0); }
 	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
 
+	$rf->Label(
+		-text       => kh_msg->get('map'), # マップ
+	)->pack(-side => 'right');
+
 	#$rf->Label(
 	#	-text       => kh_msg->get('plot'),
 	#)->pack(-side => 'right');
@@ -569,33 +573,58 @@ sub plot{
 	
 	
 	# プロット作成
-	use plotR::code_mat;
-	my $plot = plotR::code_mat->new(
-		font_size           => $::config_obj->r_default_font_size / 100,
-		r_command           => $rcom,
-		heat_dendro_c       => 1,
-		heat_cellnote       => $nrow < 10 ? 1 : 0,
-		plotwin_name        => 'code_mat',
-		plot_size_heat      => $height,
-		plot_size_maph      => $height_f,
-		plot_size_mapw      => $width_f,
-		bubble_size         => $bubble_size,
-		selection           => \@selection,
-	);
-	
-	$wait_window->end(no_dialog => 1);
-	
-	if ($::main_gui->if_opened('w_cod_mat_plot')){
-		$::main_gui->get('w_cod_mat_plot')->close;
+	my $plot;
+	if ($ax <= 1){                      # ヒート・バブル
+		use plotR::code_mat;
+		$plot = plotR::code_mat->new(
+			font_size           => $::config_obj->r_default_font_size / 100,
+			r_command           => $rcom,
+			heat_dendro_c       => 1,
+			heat_cellnote       => $nrow < 10 ? 1 : 0,
+			plotwin_name        => 'code_mat',
+			plot_size_heat      => $height,
+			plot_size_maph      => $height_f,
+			plot_size_mapw      => $width_f,
+			bubble_size         => $bubble_size,
+			selection           => \@selection,
+		);
+		
+		$wait_window->end(no_dialog => 1);
+		
+		if ($::main_gui->if_opened('w_cod_mat_plot')){
+			$::main_gui->get('w_cod_mat_plot')->close;
+		}
+		
+		return 0 unless $plot;
+		
+		gui_window::r_plot::cod_mat->open(
+			plots       => $plot->{result_plots},
+			ax          => $ax,
+			no_geometry => 1,
+		);
+	} else {
+		use plotR::code_mat_line;
+		$plot = plotR::code_mat_line->new(
+			font_size           => $::config_obj->r_default_font_size / 100,
+			r_command           => $rcom,
+			plotwin_name        => 'code_mat_line',
+			selection           => \@selection,
+		);
+		
+		$wait_window->end(no_dialog => 1);
+		
+		if ($::main_gui->if_opened('w_cod_mat_line')){
+			$::main_gui->get('w_cod_mat_line')->close;
+		}
+		
+		return 0 unless $plot;
+		
+		gui_window::r_plot::cod_mat_line->open(
+			plots       => $plot->{result_plots},
+			#no_geometry => 1,
+		);
 	}
-	
-	return 0 unless $plot;
-	
-	gui_window::r_plot::cod_mat->open(
-		plots       => $plot->{result_plots},
-		ax          => $ax,
-		no_geometry => 1,
-	);
+
 
 	$plot = undef;
 }

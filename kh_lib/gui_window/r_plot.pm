@@ -12,6 +12,7 @@ use gui_window::r_plot::cod_mds;
 use gui_window::r_plot::cod_netg;
 use gui_window::r_plot::cod_som;
 use gui_window::r_plot::cod_mat;
+use gui_window::r_plot::cod_mat_line;
 use gui_window::r_plot::selected_netgraph;
 use gui_window::r_plot::doc_cls;
 
@@ -220,11 +221,12 @@ sub _new{
 sub open_config{
 	my $self = shift;
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
-	$base_name->open(
+	$self->{child} = $base_name->open(
 		command_f => $self->{plots}[$self->{ax}]->command_f,
 		size      => $self->original_plot_size,
 		ax        => $self->{ax},
 	);
+	return $self;
 }
 
 sub drag {
@@ -270,9 +272,26 @@ sub renew{
 
 sub renew_command{}
 
-# メモリ・リークの防止用
+sub dont_close_child{
+	my $self = shift;
+	my $new = shift;
+	if (defined($new)){
+		$self->{dont_close_child} = $new;
+	}
+	return $self->{dont_close_child};
+}
+
 sub end{
 	my $self = shift;
+
+	# 調整Windowを閉じる
+	if ( ($self->{child}) and not ($self->dont_close_child) ){
+		print "Closing child: ", ref $self->{child}, "\n";
+		$self->{child}->close;
+	}
+
+	#--------------------------------#
+	#   以下メモリ・リークの防止用   #
 
 	# バルーンヘルプ
 	if ( $self->{blhelp} ){
@@ -283,7 +302,6 @@ sub end{
 	$self->{plots} = undef;
 
 	# Imageオブジェクトのクリア
-	#print "clearing: ".$self->win_name."\n";
 	$imgs->{$self->win_name}->delete;
 	$imgs->{$self->win_name}->destroy;
 	$imgs->{$self->win_name} = undef;
