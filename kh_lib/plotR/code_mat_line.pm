@@ -63,6 +63,7 @@ sub new{
 sub r_plot_cmd_line{
 	return '
 
+library(grid)
 library(ggplot2)
 ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
 ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)

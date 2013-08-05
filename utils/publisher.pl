@@ -66,7 +66,7 @@ use LWP::UserAgent;
 use File::Path 'rmtree';
 
 &web;
-#&pdfs if $pdf;
+&pdfs if $pdf;
 &source_tgz;
 &win_pkg;
 &win_upd;
