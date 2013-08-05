@@ -121,6 +121,7 @@ if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
 }
 
+library(grid)
 library(ggplot2)
 ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
 ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
