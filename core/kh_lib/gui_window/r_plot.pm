@@ -287,7 +287,9 @@ sub end{
 	# Ä´À°Window¤òÊÄ¤¸¤ë
 	if ( ($self->{child}) and not ($self->dont_close_child) ){
 		print "Closing child: ", ref $self->{child}, "\n";
-		$self->{child}->close;
+		if ( Exists($self->{child}->{win_obj}) ){
+			$self->{child}->close;
+		}
 	}
 
 	#--------------------------------#
