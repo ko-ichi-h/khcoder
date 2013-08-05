@@ -88,7 +88,7 @@ if ( is.null(font_fam) == FALSE ){
 }
 
 if (ncol(d) > 9){
-	d <- d[,1:9]
+	d <- d[,1:6]
 }
 
 # preparing the data.frame

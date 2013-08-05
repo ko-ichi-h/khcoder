@@ -412,14 +412,36 @@ sub _calc{
 		$self->{code2number}{$i} = $n;
 		$self->{line_mb}->command(
 			-label => $i,
-			-command => sub { $self->plot(2,$self->{code2number}{$i}) },
+			-command => sub { $self->plot(2,[$self->{code2number}{$i}]) },
 		
 		);
 		++$n;
 	}
 	
-	
 	$self->rtn;
+	
+	# プロットWindowが開いている場合は内容を更新する
+	if ($::main_gui->if_opened('w_cod_mat_plot')){          # マップ
+		my @selected1 = ();
+		if (
+			$::main_gui->get('w_cod_mat_plot')->{plots}[0]->command_f
+			=~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ 
+		){
+			@selected1 = eval( "($1)" );
+		}
+		$self->plot($::main_gui->get('w_cod_mat_plot')->{ax}, \@selected1);
+	}
+	
+	if ($::main_gui->if_opened('w_cod_mat_line')){          # 折れ線
+		my @selected2 = ();
+		if (
+			$::main_gui->get('w_cod_mat_line')->{plots}[0]->command_f
+			=~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ 
+		){
+			@selected2 = eval( "($1)" );
+		}
+		$self->plot(2,\@selected2);
+	}
 }
 
 sub rtn{
@@ -461,16 +483,10 @@ sub multiscrolly{
 sub plot{
 	my $self   = shift;
 	my $ax     = shift;
-	my $select = shift;
+	my $selection = shift;
 	
 	unless ($self->{result}){
 		return 0;
-	}
-	
-	my @selection;
-	if ($select){
-		print "select: $select\n";
-		push @selection, $select;
 	}
 	
 	
@@ -586,7 +602,7 @@ sub plot{
 			plot_size_maph      => $height_f,
 			plot_size_mapw      => $width_f,
 			bubble_size         => $bubble_size,
-			selection           => \@selection,
+			selection           => $selection,
 		);
 		
 		$wait_window->end(no_dialog => 1);
@@ -608,7 +624,7 @@ sub plot{
 			font_size           => $::config_obj->r_default_font_size / 100,
 			r_command           => $rcom,
 			plotwin_name        => 'code_mat_line',
-			selection           => \@selection,
+			selection           => $selection,
 		);
 		
 		$wait_window->end(no_dialog => 1);

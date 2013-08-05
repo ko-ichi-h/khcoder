@@ -8,6 +8,11 @@ sub option1_options{
 	];
 }
 
+sub photo_pane_width{
+	my $self = shift;
+	return 640;
+}
+
 sub option1_name{
 	return '';
 }
