@@ -408,6 +408,7 @@ sub _calc{
 	$self->{line_mb}->menu->delete(0,'end');
 	my $n = 1;
 	pop @code_names;
+	$self->{code2number} = undef;
 	foreach my $i (@code_names){
 		$self->{code2number}{$i} = $n;
 		$self->{line_mb}->command(
@@ -422,25 +423,50 @@ sub _calc{
 	
 	# プロットWindowが開いている場合は内容を更新する
 	if ($::main_gui->if_opened('w_cod_mat_plot')){          # マップ
-		my @selected1 = ();
-		if (
-			$::main_gui->get('w_cod_mat_plot')->{plots}[0]->command_f
-			=~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ 
-		){
-			@selected1 = eval( "($1)" );
-		}
-		$self->plot($::main_gui->get('w_cod_mat_plot')->{ax}, \@selected1);
+		# オプション類はすべてリセット
+		$self->plot($::main_gui->get('w_cod_mat_plot')->{ax});
 	}
 	
 	if ($::main_gui->if_opened('w_cod_mat_line')){          # 折れ線
+		# オプション類はリセットするがコード選択だけは活かすように試みる
 		my @selected2 = ();
+		my @selected3 = ();
+		my @names = ();
+		my @selected_names = ();
 		if (
 			$::main_gui->get('w_cod_mat_line')->{plots}[0]->command_f
 			=~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ 
 		){
+			# 選択されたコードの番号
 			@selected2 = eval( "($1)" );
+			
+			# 選択されたコードの名前
+			if (
+				$::main_gui->get('w_cod_mat_line')->{plots}[0]->command_f
+				=~ /colnames\(d\) <\- c\((.+?)\)\n/ 
+			){
+				@names = eval( "($1)" );
+			}
+			foreach my $i (@selected2){
+				push @selected_names, $self->gui_jchar($names[$i-1]);
+			}
+			
+			# 選択されたコードの（新しい）番号
+			foreach my $i (@selected_names){
+				#print $self->gui_jg($i), ", ";
+				if ($self->{code2number}{$i}){
+					push @selected3, $self->{code2number}{$i};
+					#print $self->{code2number}{$i};
+				}
+				#print "\n";
+			}
+			my $n = @selected3;
+			if ($n == 0){
+				@selected3 = (1);
+			}
 		}
-		$self->plot(2,\@selected2);
+		
+		$self->plot(2,\@selected3);
 	}
 }
 
