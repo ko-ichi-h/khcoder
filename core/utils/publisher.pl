@@ -65,13 +65,13 @@ use Net::SFTP::Foreign;
 use LWP::UserAgent;
 use File::Path 'rmtree';
 
-&web;
-&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
-&win_upd;
-&win_strb;
-#&upload;
+#&web;
+#&pdfs if $pdf;
+#&source_tgz;
+#&win_pkg;
+#&win_upd;
+#&win_strb;
+&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -105,20 +105,20 @@ sub upload{
 		print "put: $i\n";
 		$sftp->put ($i, $i) or die;
 	}
-	
+
 	# Web pages
 	$sftp->setcwd("/home/project-web/khc/htdocs");
-	
+
 	foreach my $i (
 		"index.html",
 		"dl.html",
 	){
 		$sftp->put ("../pub/base/web/$i", $i) or die;
 	}
-	
+
 	$sftp->setcwd("en");
 	$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
-	
+
 	$sftp->disconnect;
 }
 
