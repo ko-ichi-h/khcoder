@@ -190,7 +190,7 @@ sub make{
 	);
 
 	$fra3->Label(
-		-text => 'The Interface Language: '
+		-text => 'Interface Language: '
 	)->pack(-side => 'right');
 
 	$lab_fra1->pack(
