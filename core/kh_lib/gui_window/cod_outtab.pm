@@ -136,7 +136,7 @@ sub _new{
 		-text       => '  ',
 	)->pack(-side => 'right');
 
-	$self->{line_mb} = $rf->Menubutton(
+	my $b1 = $self->{line_mb} = $rf->Menubutton(
 		-text        => kh_msg->get('line_select'), # 選択
 		-tearoff     => 'no',
 		-relief      => 'raised',
@@ -146,7 +146,7 @@ sub _new{
 		-borderwidth => 1,
 	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
 
-	$rf->Button(
+	my $b2 = $rf->Button(
 		-text => kh_msg->get('line_all'), # すべて
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -157,14 +157,14 @@ sub _new{
 		-text       => kh_msg->get('line'), # 折れ線
 	)->pack(-side => 'right');
 
-	$rf->Button(
+	my $b3 = $rf->Button(
 		-text => kh_msg->get('gui_window::r_plot::cod_mat->fluc'), # バブル
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $self->plot(1); }
 	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
 
-	$rf->Button(
+	my $b4 = $rf->Button(
 		-text => kh_msg->get('gui_window::r_plot::cod_mat->heat'), # ヒート
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -174,6 +174,14 @@ sub _new{
 	$rf->Label(
 		-text       => kh_msg->get('map'), # マップ
 	)->pack(-side => 'right');
+
+	# Rが使えない場合
+	unless ($::config_obj->R){
+		$b1->configure(-state => 'disable');
+		$b2->configure(-state => 'disable');
+		$b3->configure(-state => 'disable');
+		$b4->configure(-state => 'disable');
+	}
 
 	#$rf->Label(
 	#	-text       => kh_msg->get('plot'),

@@ -335,20 +335,6 @@ if ( is.null(font_fam) == FALSE ){
 	}
 }
 
-if (F) {
-	savefile <- NULL
-	require(tcltk)
-	csvfile <- tclvalue(
-	    tkgetOpenFile(
-	        filetypes = "{{CSV Files} {.csv}}",
-	        defaultextension=".csv"
-	    )
-	)
-	d <- read.csv(csvfile, header=T, sep = ",", row.names=1)
-	d <- as.matrix(d)
-}
-
-
 if (cellnote == 1){
 	colors <- brewer.pal(9,"BuGn")[1:8]
 } else {
@@ -411,6 +397,18 @@ draw_matrix_my = function(
 assignInNamespace(
 	x="draw_matrix",
 	value=draw_matrix_my,
+	ns=asNamespace("pheatmap")
+)
+
+draw_colnames_my = function(coln, ...){
+	m = length(coln)
+	x = (1:m)/m - 1/2/m
+	grid.text(coln, x = x, y = unit(0.96, "npc"), vjust = 0.5, hjust = 1, rot = 90, gp = gpar(...))
+}
+
+assignInNamespace(
+	x="draw_colnames",
+	value=draw_colnames_my,
 	ns=asNamespace("pheatmap")
 )
 
