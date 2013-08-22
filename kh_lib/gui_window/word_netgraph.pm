@@ -358,19 +358,11 @@ sub calc{
 
 	use plotR::network;
 	my $plotR = plotR::network->new(
+		$self->{net_obj}->params,
 		edge_type        => $self->gui_jg( $self->{radio_type} ),
 		font_size        => $self->{font_obj}->font_size,
 		font_bold        => $self->{font_obj}->check_bold_text,
 		plot_size        => $self->{font_obj}->plot_size,
-		n_or_j              => $self->{net_obj}->n_or_j,
-		edges_num           => $self->{net_obj}->edges_num,
-		edges_jac           => $self->{net_obj}->edges_jac,
-		use_freq_as_size    => $self->{net_obj}->use_freq_as_size,
-		use_freq_as_fsize   => $self->{net_obj}->use_freq_as_fsize,
-		smaller_nodes       => $self->{net_obj}->smaller_nodes,
-		use_weight_as_width => $self->{net_obj}->use_weight_as_width,
-		min_sp_tree         => $self->{net_obj}->min_sp_tree,
-		use_alpha           => $self->{net_obj}->use_alpha,
 		r_command        => $r_command,
 		plotwin_name     => 'word_netgraph',
 	);
