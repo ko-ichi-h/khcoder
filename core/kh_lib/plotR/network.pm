@@ -60,6 +60,10 @@ sub new{
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
+	$args{gray_scale} = 0 unless ( length($args{use_alpha}) );
+	$r_command .= "gray_scale <- $args{gray_scale}\n";
+
+
 	# プロット作成
 	
 	#use Benchmark;
@@ -410,10 +414,18 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 			silent = T
 		)
 	}
-	ccol <- ccol - min(ccol)                      # 色の設定
-	ccol <- ccol * 100 / max(ccol)
-	ccol <- trunc(ccol + 1)
-	ccol <- cm.colors(101)[ccol]
+	
+	# 色の設定
+	if ( gray_scale == 1 ) {
+		ccol <- ccol - min(ccol)
+		ccol <- 1 - ccol / max(ccol) / 2.5
+		ccol <- gray(ccol)
+	} else {
+		ccol <- ccol - min(ccol)
+		ccol <- ccol * 100 / max(ccol)
+		ccol <- trunc(ccol + 1)
+		ccol <- cm.colors(101)[ccol]
+	}
 
 	com_col_v <- "gray40"
 	edg_col   <- "gray65"

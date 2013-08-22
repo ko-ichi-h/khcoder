@@ -705,6 +705,7 @@ gui_widget::r_net:
     larger_font:              'Variable font size *For printing with EMF/EPS/PDF'
     smaller:                  'Smaller Nodes'
     min_sp_tree:              'Indicate minimum spanning tree'
+    gray_scale:               'Use grayscale to visualize centralities'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
@@ -1053,6 +1054,7 @@ gui_window::r_plot_opt::cod_mat:
     circle:                    "circle"
     common:                    "common settings"
     select_1:                  "Please select at least 1 code"
+    color_rsd:                 "Visualize standardized residuals by color"
 gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:

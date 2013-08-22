@@ -68,6 +68,9 @@ sub _new{
 		if ($self->{r_cmd} =~ /use_alpha <- ([01])\n/){
 			$self->{check_use_alpha} = $1;
 		}
+		if ($self->{r_cmd} =~ /gray_scale <- ([01])\n/){
+			$self->{check_gray_scale} = $1;
+		}
 
 		if ($edges == 0){
 			$self->{radio} = 'j';
@@ -220,6 +223,13 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
+	$self->{check_gray_scale} = 0 unless defined($self->{check_gray_scale});
+	$lf->Checkbutton(
+			-text     => kh_msg->get('gray_scale'),
+			-variable => \$self->{check_gray_scale},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
 	return $self;
@@ -266,6 +276,22 @@ sub refresh{
 #----------------------#
 #   設定へのアクセサ   #
 
+sub params{
+	my $self = shift;
+	return (
+		n_or_j              => $self->n_or_j,
+		edges_num           => $self->edges_num,
+		edges_jac           => $self->edges_jac,
+		use_freq_as_size    => $self->use_freq_as_size,
+		use_freq_as_fsize   => $self->use_freq_as_fsize,
+		smaller_nodes       => $self->smaller_nodes,
+		use_weight_as_width => $self->use_weight_as_width,
+		min_sp_tree         => $self->min_sp_tree,
+		use_alpha           => $self->use_alpha,
+		gray_scale          => $self->gray_scale,
+	);
+}
+
 sub n_or_j{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{radio} );
@@ -284,6 +310,11 @@ sub edges_jac{
 sub use_alpha{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_use_alpha} );
+}
+
+sub gray_scale{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_gray_scale} );
 }
 
 sub use_freq_as_size{
