@@ -487,15 +487,18 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 
 	com_col <- NULL # vertex frame                # Vertexの色（12色まで）
 	ccol    <- NULL # vertex
-	col_num <- 1
+
 	library( RColorBrewer )
+	colors_for_com <- brewer.pal(12, "Set3")
+
+	col_num <- 1
 	for (i in com_m$csize ){
 		cu_col <- "white"
 		if ( i == 1){
 			com_col <- c( com_col, "gray40" )
 		} else {
 			if (col_num <= 12){
-				cu_col  <- brewer.pal(12, "Set3")[col_num]
+				cu_col  <- colors_for_com[col_num]
 				com_col <- c( com_col, "gray40" )
 			} else {
 				com_col <- c( com_col, "blue" )
@@ -557,20 +560,6 @@ if (com_method == "twomode_c"){
 	edg_col   <- "gray70"
 	edg_lty   <- 1
 
-}
-
-if ( exists("saving_emf") || exists("saving_eps") ){
-	use_alpha <- 0 
-}
-
-if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
-	rgb <- col2rgb(ccol) / 256
-	ccol <- rgb(
-		red  =rgb[1,],
-		green=rgb[2,],
-		blue =rgb[3,],
-		alpha=0.685
-	)
 }
 
 # カラーリング「なし」の場合の線の色（2010 12/4）
@@ -824,6 +813,129 @@ sub r_plot_cmd_p4{
 
 return 
 '
+# レイアウトを考慮したグレーの配色
+if (
+	( gray_scale == 1 ) && (
+		   com_method == "com-b"
+		|| com_method == "com-g"
+		|| com_method == "com-r"
+	)
+){
+	com_col_v <- "gray40"
+	
+	grays <- NULL
+	n_coms <- length(com_m$csize[com_m$csize > 1]);
+	if (n_coms > 12){
+		n_coms <- 12
+	}
+	for (i in 1:n_coms){
+		#print(0.8 / (n_coms-1) * (i - 1) + 0.15)
+		grays <- c( grays, 0.8 / (n_coms-1) * (i - 1) + 0.15 )
+	}
+	grays <- gray(grays)
+	
+	n_order <- NULL
+	for (i in 1:n_coms){
+		if (i %% 2 == 0){
+			n_order <- c(n_order, ceiling(n_coms / 2) + i / 2 )
+		} else {
+			n_order <- c(n_order, ceiling(i/2) )
+		}
+	}
+	#print(n_order)
+	grays <- grays[n_order]
+
+	# グループのリスト（1はじまり）
+	groups <- NULL
+	groups <- as.matrix( table(com_m$membership + 1 - new_igraph) )
+	groups <- data.frame(
+		name = rownames(groups),
+		freq = groups[,1]
+	)
+	# groups$freq[groups$name==3]
+
+	# メンバーのリスト（1はじまり）
+	group_members <- data.frame(
+		vid = 1:length(com_m$membership),
+		gp  = com_m$membership + 1 - new_igraph,
+		x   = lay_f[,1],
+		y   = lay_f[,2]
+	)
+	
+	dist_single <- function(d, g1, g2){
+		sub <- subset(d,gp==g1|gp==g2)
+		sub <- sub[order(sub$gp),]
+		
+		if (g1 > g2){
+			tmp1 <- g1
+			tmp2 <- g2
+			g1 <- tmp2
+			g2 <- tmp1
+		}
+		
+		#print("-----------------------")
+		#print(g1)
+		#print(g2)
+		
+		dd <- sub[,3:4];
+		rownames(dd) <- paste(sub$gp, sub$vid, sep="-")
+		
+		#print(dd)
+		
+		dis <- as.matrix( dist(dd,method = "euclidean") )
+		
+		n_g1 <- length( sub$vid[sub$gp==g1] )
+		n_g2 <- length( sub$vid[sub$gp==g2] )
+		
+		#print(dis)
+		
+		dis <- dis[(n_g1+1):length(rownames(dis)), 1:n_g1]
+		
+		#print(dis)
+		#print(min(dis))
+		
+		return (min(dis))
+	}
+	
+	group_dist <- matrix(rep(NA, n_coms^2), ncol=n_coms, nrow=n_coms  )
+	for (i in groups$name[groups$freq>1]){
+		for (h in groups$name[groups$freq>1]){
+			i <- as.numeric(i)
+			h <- as.numeric(h)
+			if (i == h){
+				group_dist[i,h] <- 0
+			} else {
+				group_dist[i,h] <- dist_single(group_members, i, h)
+			}
+		}
+	}
+	group_dist <- as.dist(group_dist)
+	
+	#order <- isoMDS(group_dist, k=1)$points
+	order <- cmdscale(group_dist, k=1)
+	order <- order(order[,1])
+	
+	#print( order )
+
+	grays <- grays[order]
+
+	ccol <- grays[com_m$membership + 1 - new_igraph]
+}
+
+if ( exists("saving_emf") || exists("saving_eps") ){
+	use_alpha <- 0 
+}
+
+if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
+	rgb <- col2rgb(ccol) / 256
+	ccol <- rgb(
+		red  =rgb[1,],
+		green=rgb[2,],
+		blue =rgb[3,],
+		alpha=0.685
+	)
+}
+
 # 語の強調
 if ( exists("v_shape") == FALSE ){
 	v_shape    <- "circle"
@@ -951,16 +1063,37 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			col = "black"
 		)
 	} else {
-		text(
-			lay_f,
-			labels = colnames(d)
-			         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-			#pos = 4,
-			#offset = 1,
-			font = text_font,
-			cex = f_size,
-			col = "black"
-		)
+		if (
+			( gray_scale == 1 ) && (
+				   com_method == "com-b"
+				|| com_method == "com-g"
+				|| com_method == "com-r"
+			)
+		){
+			library(TeachingDemos)
+			shadowtext(
+				lay_f,
+				labels = colnames(d)
+				         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+				r = 0.2,
+				theta =  seq(0, 2 * pi, length.out = 32),
+				font = text_font,
+				cex = f_size,
+				col = "black",
+				bg="white"
+			)
+		} else {
+			text(
+				lay_f,
+				labels = colnames(d)
+				         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+				#pos = 4,
+				#offset = 1,
+				font = text_font,
+				cex = f_size,
+				col = "black"
+			)
+		}
 	}
 
 if ( exists("target_words") ){
