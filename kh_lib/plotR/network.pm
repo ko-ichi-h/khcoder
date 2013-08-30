@@ -831,17 +831,6 @@ if (
 		grays <- c( grays, 0.8 / (n_coms-1) * (i - 1) + 0.15 )
 	}
 	grays <- gray(grays)
-	
-	n_order <- NULL
-	for (i in 1:n_coms){
-		if (i %% 2 == 0){
-			n_order <- c(n_order, ceiling(n_coms / 2) + i / 2 )
-		} else {
-			n_order <- c(n_order, ceiling(i/2) )
-		}
-	}
-	#print(n_order)
-	grays <- grays[n_order]
 
 	# グループのリスト（1はじまり）
 	groups <- NULL
@@ -892,7 +881,7 @@ if (
 		#print(dis)
 		#print(min(dis))
 		
-		return (min(dis))
+		return (mean(dis))
 	}
 	
 	group_dist <- matrix(rep(NA, n_coms^2), ncol=n_coms, nrow=n_coms  )
@@ -909,9 +898,14 @@ if (
 	}
 	group_dist <- as.dist(group_dist)
 	
+	#library(MASS)
 	#order <- isoMDS(group_dist, k=1)$points
-	order <- cmdscale(group_dist, k=1)
-	order <- order(order[,1])
+	
+	#order <- cmdscale(group_dist, k=1)
+	#order <- order(order[,1])
+	
+	h <- hclust(group_dist, method="average")
+	order <- h$order
 	
 	n_order <- NULL
 	for (i in 1:n_coms){
@@ -928,6 +922,7 @@ if (
 	)
 	group_color <- group_color[order(group_color$gp),]
 	
+	#print(group_dist)
 	#print(order)
 	#print(n_order)
 	#print(group_color$col)
@@ -1088,6 +1083,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			library(TeachingDemos)
 			shadowtext(
 				lay_f,
+				#labels = group_members,
 				labels = colnames(d)
 				         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 				r = 0.2,
