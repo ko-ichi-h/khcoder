@@ -823,11 +823,9 @@ if (
 ){
 	com_col_v <- "gray40"
 	
+	# グレーを準備
 	grays <- NULL
 	n_coms <- length(com_m$csize[com_m$csize > 1]);
-	if (n_coms > 12){
-		n_coms <- 12
-	}
 	for (i in 1:n_coms){
 		#print(0.8 / (n_coms-1) * (i - 1) + 0.15)
 		grays <- c( grays, 0.8 / (n_coms-1) * (i - 1) + 0.15 )
@@ -915,9 +913,26 @@ if (
 	order <- cmdscale(group_dist, k=1)
 	order <- order(order[,1])
 	
-	#print( order )
+	n_order <- NULL
+	for (i in 1:n_coms){
+		if (i %% 2 == 0){
+			n_order <- c(n_order, ceiling(n_coms / 2) + i / 2 )
+		} else {
+			n_order <- c(n_order, ceiling(i/2) )
+		}
+	}
+	
+	group_color <- data.frame(
+		gp  = order,
+		col = n_order
+	)
+	group_color <- group_color[order(group_color$gp),]
+	
+	#print(order)
+	#print(n_order)
+	#print(group_color$col)
 
-	grays <- grays[order]
+	grays <- grays[group_color$col]
 
 	ccol <- grays[com_m$membership + 1 - new_igraph]
 }
