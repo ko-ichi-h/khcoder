@@ -2,7 +2,7 @@
 
 =head1 COPYRIGHT
 
-Copyright (C) 2001-2012 樋口耕一 <http://koichi.nihon.to/psnl>
+Copyright (C) 2001-2013 樋口耕一 <http://koichi.nihon.to/psnl>
 
 本プログラムはフリー・ソフトウェアです。
 
@@ -20,7 +20,7 @@ use strict;
 use Cwd;
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "2.beta.30c";
+$kh_version = "2.beta.30d";
 
 BEGIN {
 	# デバッグ用…
