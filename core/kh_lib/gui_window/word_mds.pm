@@ -396,41 +396,43 @@ if (exists(\"doc_length_mtr\")){
 	xorg <- cl2$x
 	yorg <- cl2$y
 	cex  <- font_size
+	
+	if ( length(xorg) < 300 ) {
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cl),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
 
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
 
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	for (i in 1:length(rownames(cl)) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		d <- sqrt( x^2 + y^2 )
-		if ( d > 0.05 ){
-			# print( paste( rownames(cb)[i], d ) )
-			
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
-			)
-			
+		for (i in 1:length(rownames(cl)) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			d <- sqrt( x^2 + y^2 )
+			if ( d > 0.05 ){
+				# print( paste( rownames(cb)[i], d ) )
+				
+				segments(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i],
+					col="gray60",
+					lwd=1
+				)
+				
+			}
 		}
-	}
 
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
 
 	text(
 		labcd$x,
@@ -646,40 +648,42 @@ if ( plot_mode == "color" ){
 	yorg <- cl[,2]
 	cex  <- font_size
 
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
+	if ( length(xorg) < 300 ) {
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cl),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
 
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
 
-	for (i in 1:length(rownames(cl)) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			# print( paste( rownames(cb)[i], d ) )
-			
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
-			)
-			
+		for (i in 1:length(rownames(cl)) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				# print( paste( rownames(cb)[i], d ) )
+				
+				segments(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i],
+					col="gray60",
+					lwd=1
+				)
+				
+			}
 		}
-	}
 
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
 
 	text(
 		labcd$x,
@@ -833,42 +837,43 @@ xorg <- cl[,1]
 yorg <- cl[,2]
 cex  <- font_size
 
-library(wordcloud)
-nc <- wordlayout(
-	labcd$x,
-	labcd$y,
-	rownames(cl),
-	cex=cex * 1.25,
-	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-)
+if ( length(xorg) < 300 ) {
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(cl),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
 
-xlen <- par("usr")[2] - par("usr")[1]
-ylen <- par("usr")[4] - par("usr")[3]
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
 
-for (i in 1:length(rownames(cl)) ){
-	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-	dst <- sqrt( x^2 + y^2 )
-	if ( dst > 0.05 ){
-		# print( paste( rownames(cb)[i], d ) )
-		
-		if (plot_mode == "color") {
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
-			)
+	for (i in 1:length(rownames(cl)) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			# print( paste( rownames(cb)[i], d ) )
+			
+			if (plot_mode == "color") {
+				segments(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i],
+					col="gray60",
+					lwd=1
+				)
+			}
 		}
 	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
 }
-
-xorg <- labcd$x
-yorg <- labcd$y
-labcd$x <- nc[,1] + .5 * nc[,3]
-labcd$y <- nc[,2] + .5 * nc[,4]
-
 
 # ラベル描画
 if (plot_mode == "color") {

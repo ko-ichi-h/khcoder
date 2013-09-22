@@ -800,39 +800,48 @@ xorg <- c$cscore[,d_x]
 yorg <- c$cscore[,d_y]
 #cex  <- 1
 
-library(wordcloud)
-nc <- wordlayout(
-	labcd$x,
-	labcd$y,
-	rownames(c$cscore),
-	cex=cex * 1.25,
-	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-)
-
-xlen <- par("usr")[2] - par("usr")[1]
-ylen <- par("usr")[4] - par("usr")[3]
-
-for (i in 1:length( rownames(c$cscore) ) ){
-	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-	dst <- sqrt( x^2 + y^2 )
-	if ( dst > 0.05 ){
-		
-		segments(
-			nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-			xorg[i], yorg[i],
-			col="gray60",
-			lwd=1
-		)
-		
-	}
+n_words_chk <- c( length(xorg) )
+if (flt > 0) {
+	n_words_chk <- c(n_words_chk, flt)
 }
+if (flw > 0) {
+	n_words_chk <- c(n_words_chk, flw)
+}
+if ( min(n_words_chk) < 300 ){
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(c$cscore),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
 
-xorg <- labcd$x
-yorg <- labcd$y
-labcd$x <- nc[,1] + .5 * nc[,3]
-labcd$y <- nc[,2] + .5 * nc[,4]
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	for (i in 1:length( rownames(c$cscore) ) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+}
 
 text(
 	labcd$x,
@@ -881,47 +890,58 @@ xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
 yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
 #cex  <- 1
 
-library(wordcloud)
-nc <- wordlayout(
-	labcd$x,
-	labcd$y,
-	rownames(cb),
-	cex=cex * 1.25,
-	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-)
-
-xlen <- par("usr")[2] - par("usr")[1]
-ylen <- par("usr")[4] - par("usr")[3]
-
-segs <- NULL
-for (i in 1:length(rownames(cb)) ){
-	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-	dst <- sqrt( x^2 + y^2 )
-	if ( dst > 0.05 ){
-		segs <- rbind(
-			segs,
-			c(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i]
-			) 
-		)
-	}
+n_words_chk <- c( length(xorg) )
+if (flt > 0) {
+	n_words_chk <- c(n_words_chk, flt)
 }
+if (flw > 0) {
+	n_words_chk <- c(n_words_chk, flw)
+}
+if ( min(n_words_chk) < 300 ){
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(cb),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
 
-xorg <- labcd$x
-yorg <- labcd$y
-labcd$x <- nc[,1] + .5 * nc[,3]
-labcd$y <- nc[,2] + .5 * nc[,4]
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
 
-if ( is.null(segs) == F){
-	for (i in 1:nrow(segs) ){
-		segments(
-			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-			col="gray60",
-			lwd=1
-		)
+	segs <- NULL
+	for (i in 1:length(rownames(cb)) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			segs <- rbind(
+				segs,
+				c(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i]
+				) 
+			)
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			for (i in 1:nrow(segs) ){
+				segments(
+					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+					col="gray60",
+					lwd=1
+				)
+			}
+		}
 	}
 }
 
@@ -960,39 +980,48 @@ xorg <- c$rscore[,d_x]
 yorg <- c$rscore[,d_y]
 #cex  <- 1
 
-library(wordcloud)
-nc <- wordlayout(
-	labcd$x,
-	labcd$y,
-	rownames(c$rscore),
-	cex=cex * 1.25,
-	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-)
-
-xlen <- par("usr")[2] - par("usr")[1]
-ylen <- par("usr")[4] - par("usr")[3]
-
-for (i in 1:length( rownames(c$rscore) ) ){
-	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-	dst <- sqrt( x^2 + y^2 )
-	if ( dst > 0.05 ){
-		
-		segments(
-			nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-			xorg[i], yorg[i],
-			col="gray60",
-			lwd=1
-		)
-		
-	}
+n_words_chk <- c( length(xorg) )
+if (flt > 0) {
+	n_words_chk <- c(n_words_chk, flt)
 }
+if (flw > 0) {
+	n_words_chk <- c(n_words_chk, flw)
+}
+if ( min(n_words_chk) < 300 ){
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		rownames(c$rscore),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
 
-xorg <- labcd$x
-yorg <- labcd$y
-labcd$x <- nc[,1] + .5 * nc[,3]
-labcd$y <- nc[,2] + .5 * nc[,4]
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	for (i in 1:length( rownames(c$rscore) ) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			
+			segments(
+				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				xorg[i], yorg[i],
+				col="gray60",
+				lwd=1
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+}
 
 				'
 			.'text('
@@ -1033,40 +1062,49 @@ xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
 yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
 #cex  <- 1
 
-library(wordcloud)
-nc <- wordlayout(
-	labcd$x,
-	labcd$y,
-	c(rownames(c$cscore),rownames(c$rscore)),
-	cex=cex * 1.25,
-	xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-	ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-)
-
-xlen <- par("usr")[2] - par("usr")[1]
-ylen <- par("usr")[4] - par("usr")[3]
-
-segs <- NULL
-for (i in 1:length( c(rownames(c$cscore),rownames(c$rscore)) ) ){
-	x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-	y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-	dst <- sqrt( x^2 + y^2 )
-	if ( dst > 0.05 ){
-		segs <- rbind(
-			segs,
-			c(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i]
-			) 
-		)
-		
-	}
+n_words_chk <- c( length(xorg) )
+if (flt > 0) {
+	n_words_chk <- c(n_words_chk, flt)
 }
+if (flw > 0) {
+	n_words_chk <- c(n_words_chk, flw)
+}
+if ( min(n_words_chk) < 300 ){
+	library(wordcloud)
+	nc <- wordlayout(
+		labcd$x,
+		labcd$y,
+		c(rownames(c$cscore),rownames(c$rscore)),
+		cex=cex * 1.25,
+		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	)
 
-xorg <- labcd$x
-yorg <- labcd$y
-labcd$x <- nc[,1] + .5 * nc[,3]
-labcd$y <- nc[,2] + .5 * nc[,4]
+	xlen <- par("usr")[2] - par("usr")[1]
+	ylen <- par("usr")[4] - par("usr")[3]
+
+	segs <- NULL
+	for (i in 1:length( c(rownames(c$cscore),rownames(c$rscore)) ) ){
+		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+		dst <- sqrt( x^2 + y^2 )
+		if ( dst > 0.05 ){
+			segs <- rbind(
+				segs,
+				c(
+					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+					xorg[i], yorg[i]
+				) 
+			)
+			
+		}
+	}
+
+	xorg <- labcd$x
+	yorg <- labcd$y
+	labcd$x <- nc[,1] + .5 * nc[,3]
+	labcd$y <- nc[,2] + .5 * nc[,4]
+}
 
 			'
 		;
@@ -1081,13 +1119,15 @@ labcd$y <- nc[,2] + .5 * nc[,4]
 				.'col="black",'
 				.')'."\n"
 			.'
-if ( is.null(segs) == F){
-	for (i in 1:nrow(segs) ){
-		segments(
-			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-			col="gray60",
-			lwd=1
-		)
+if ( exists("segs") ){
+	if ( is.null(segs) == F){
+		for (i in 1:nrow(segs) ){
+			segments(
+				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+				col="gray60",
+				lwd=1
+			)
+		}
 	}
 }
 			'
@@ -1492,47 +1532,55 @@ if ( is.null(labcd) ){
 	yorg <- cb[,2]
 	#cex  <- 1
 
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cb),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	segs <- NULL
-	for (i in 1:length( rownames(cb) ) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			segs <- rbind(
-				segs,
-				c(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i]
-				) 
-			)
-			#segments(
-			#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-			#	xorg[i], yorg[i],
-			#	col="gray60",
-			#	lwd=1
-			#)
-			
-		}
+	n_words_chk <- c( length(xorg) )
+	if (flt > 0) {
+		n_words_chk <- c(n_words_chk, flt)
 	}
+	if (flw > 0) {
+		n_words_chk <- c(n_words_chk, flw)
+	}
+	if ( min(n_words_chk) < 300 ){
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cb),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
 
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
 
+		segs <- NULL
+		for (i in 1:length( rownames(cb) ) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+						xorg[i], yorg[i]
+					) 
+				)
+				#segments(
+				#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				#	xorg[i], yorg[i],
+				#	col="gray60",
+				#	lwd=1
+				#)
+				
+			}
+		}
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
 
 }
 
@@ -1561,13 +1609,15 @@ if (plot_mode == "gray"){
 	if (resize_vars == 0){
 		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
 	}
-	if ( is.null(segs) == F){
-		for (i in 1:nrow(segs) ){
-			segments(
-				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-				col="gray60",
-				lwd=1
-			)
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			for (i in 1:nrow(segs) ){
+				segments(
+					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+					col="gray60",
+					lwd=1
+				)
+			}
 		}
 	}
 } else if (plot_mode == "vars") {
@@ -1590,13 +1640,15 @@ if (plot_mode == "gray"){
 		offset=0,
 		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
 	)
-	if ( is.null(segs) == F){
-		for (i in 1:nrow(segs) ){
-			segments(
-				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-				col="gray60",
-				lwd=1
-			)
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			for (i in 1:nrow(segs) ){
+				segments(
+					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+					col="gray60",
+					lwd=1
+				)
+			}
 		}
 	}
 }
@@ -1756,49 +1808,57 @@ if ( T ){
 	xorg <- c$rscore[,d_x]
 	yorg <- c$rscore[,d_y]
 	#cex  <- 1
-
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(c$rscore),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	segs <- NULL
-	for (i in 1:length( rownames(c$rscore) ) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		print(dst)
-		if ( dst > 0.05 ){
-			segs <- rbind(
-				segs,
-				c(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i]
-				) 
-			)
-			#segments(
-			#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-			#	xorg[i], yorg[i],
-			#	col="gray60",
-			#	lwd=1
-			#)
-			
-		}
+	
+	n_words_chk <- c( length(xorg) )
+	if (flt > 0) {
+		n_words_chk <- c(n_words_chk, flt)
 	}
+	if (flw > 0) {
+		n_words_chk <- c(n_words_chk, flw)
+	}
+	if ( min(n_words_chk) < 300 ){
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(c$rscore),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
 
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
 
+		segs <- NULL
+		for (i in 1:length( rownames(c$rscore) ) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			print(dst)
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+						xorg[i], yorg[i]
+					) 
+				)
+				#segments(
+				#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+				#	xorg[i], yorg[i],
+				#	col="gray60",
+				#	lwd=1
+				#)
+				
+			}
+		}
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
 
 }
 
@@ -1827,13 +1887,15 @@ if (plot_mode == "gray"){
 	if (resize_vars == 0){
 		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
 	}
-	if ( is.null(segs) == F){
-		for (i in 1:nrow(segs) ){
-			segments(
-				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-				col="gray60",
-				lwd=1
-			)
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			for (i in 1:nrow(segs) ){
+				segments(
+					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+					col="gray60",
+					lwd=1
+				)
+			}
 		}
 	}
 } else if (plot_mode == "vars") {
@@ -1856,13 +1918,15 @@ if (plot_mode == "gray"){
 		offset=0,
 		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
 	)
-	if ( is.null(segs) == F){
-		for (i in 1:nrow(segs) ){
-			segments(
-				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-				col="gray60",
-				lwd=1
-			)
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			for (i in 1:nrow(segs) ){
+				segments(
+					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+					col="gray60",
+					lwd=1
+				)
+			}
 		}
 	}
 }

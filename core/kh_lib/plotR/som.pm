@@ -202,7 +202,7 @@ somm <- som(
 )
 
 word_labs <- rownames(d)
-
+n_words <- length(word_labs)
 
 ';
 }
@@ -762,52 +762,55 @@ if (is.null(labcd) == 1){
 	xorg <- points[,1]
 	yorg <- points[,2]
 	#cex  <- 1
+	
+	if ( length(xorg) < 300 ) {
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			word_labs,
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
 
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		word_labs,
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
 
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	segs <- NULL
-	for (i in 1:length(word_labs) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			segs <- rbind(
-				segs,
-				c(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i]
-				) 
-			)
+		segs <- NULL
+		for (i in 1:length(word_labs) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+						xorg[i], yorg[i]
+					) 
+				)
+			}
 		}
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
-
 
 
 }
 
-if ( is.null(segs) == F){
-	for (i in 1:nrow(segs) ){
-		segments(
-			segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-			col="gray60",
-			lwd=1
-		)
+if ( exists("segs") ){
+	if ( is.null(segs) == F){
+		for (i in 1:nrow(segs) ){
+			segments(
+				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
+				col="gray60",
+				lwd=1
+			)
+		}
 	}
 }
 
