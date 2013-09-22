@@ -1027,7 +1027,7 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 			n_sele = '0' + n_sele;
 		}
 		
-		var n = "<span class=\"SMfnb\">件数： " + n_sele + " / " + n_total + "</span>";
+		var n = "<span class=\"SMfnb\">ヒット件数： " + n_sele + " / " + n_total + "</span>";
 		
 		document.getElementById('SearchresultN').innerHTML = n;
 		
@@ -1036,7 +1036,9 @@ var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=scree
 		// URL設定
 		var url = "bib.html?";
 		url = url + "year=" + encodeURIComponent(bib_year) + "&auth=" + encodeURIComponent(bib_auth) + "&key=" + encodeURIComponent(bib_key);
-		history.pushState("", "", url);
+		if ('pushState'in history){
+			history.pushState("", "", url);
+		}
 		
 		// 「クリア」リンク設定
 		if (bib_key){
