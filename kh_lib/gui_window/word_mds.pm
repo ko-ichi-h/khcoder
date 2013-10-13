@@ -806,7 +806,7 @@ plot(
 	cl,
 	pch=NA,
 	col="black",
-	xlab=name_dim2,
+	xlab=name_dim1,
 	ylab=ylab_text,
 	#bty="l"
 )
