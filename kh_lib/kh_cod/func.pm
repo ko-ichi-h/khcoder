@@ -807,6 +807,7 @@ sub _chisq_test{
 			}
 			chop $cmd; chop $cmd;
 			$cmd .=  "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n";
+			# 残差も取得
 			$cmd .= '
 				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
 				for (i in 1:nrow(chi$residuals)){
@@ -817,15 +818,7 @@ sub _chisq_test{
 			print "send: $cmd ..." if $R_debug;
 			$::config_obj->R->send($cmd);
 
-			# 残差を取得
-			$::config_obj->R->send('
-				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
-				for (i in 1:nrow(chi$residuals)){
-					c_rsd <- paste(c_rsd, chi$residuals[i,1],sep="=")
-				}
-				print ( paste( "khc", c_rsd, "khcend", sep="=" ))
-			');
-			my $rtn = $::config_obj->R->read(3);
+			my $rtn = $::config_obj->R->read();
 			#print "rtn: $rtn\n";
 			if ($rtn =~ /khc=(.+)=khcend/){
 				$rtn = $1;

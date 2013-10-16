@@ -20,6 +20,8 @@
 #############################################################################
 #qw(dump nice) ;
 
+my $DEBUG_TIMING = 0;
+
 { package Statistics::R::Bridge::pipe ;
 
   use strict qw(vars) ; no warnings ;
@@ -103,12 +105,10 @@
 
   sub send {
 	if ($::config_obj){                                   # kh
-		if ($::config_obj->os eq 'linux'){                # kh
-			require Time::HiRes;                              # kh
-			Time::HiRes::sleep(0.05);                         # kh
-			#print "waiting: sleep(0.05)\n";                  # kh
-		}                                                 # kh
-	}                                                     # kh
+		if ( ($::config_obj->os eq 'linux') || ($DEBUG_TIMING) ){
+			Time::HiRes::sleep(0.05);
+		}
+	}
 
     my $CLASS_HPLOO ;
     $CLASS_HPLOO = $this if defined $this ;
@@ -149,7 +149,10 @@
     $this->{OUTPUT_R_POS} = -s $this->{OUTPUT_R} ;
 
 	# Win9xではいったん他のファイルにコピーしないとサイズを読めない
-	if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+	if (
+		   ( $DEBUG_TIMING )
+		|| ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) )
+	){
 		unlink("$this->{LOG_DIR}/temp_out")
 			if -e "$this->{LOG_DIR}/temp_out";
 		if (-e $this->{OUTPUT_R}) {
@@ -164,6 +167,8 @@
     rename("$file._" , $file) ;
     
     my $has_quit = 1 if $cmd =~ /^\s*(?:q|quit)\s*\(.*?\)\s*$/s ;
+    
+    Time::HiRes::sleep(0.05) if $DEBUG_TIMING;
     
     ##print "CMD[$n]$has_quit>> $cmd\n" if $debug;
     
@@ -205,7 +210,10 @@
 				my $s = -s $this->{OUTPUT_R};
 				
 				# Win9xではいったん他のファイルにコピーしないとサイズを読めない
-				if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+				if (
+					   ( $DEBUG_TIMING )
+					|| ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) )
+				){
 					unlink("$this->{LOG_DIR}/temp_out")
 						if -e "$this->{LOG_DIR}/temp_out";
 					if (-e $this->{OUTPUT_R}) {
@@ -260,7 +268,10 @@
       my $s = -s $this->{OUTPUT_R} ;
 
 		# Win9xではいったん他のファイルにコピーしないとサイズを読めない
-		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
+		if (
+			   ( $DEBUG_TIMING )
+			|| ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) )
+		){
 			unlink("$this->{LOG_DIR}/temp_out")
 				if -e "$this->{LOG_DIR}/temp_out";
 			if (-e $this->{OUTPUT_R}) {
