@@ -454,8 +454,9 @@ my $DEBUG_TIMING = 0;
     $this->chmod_all ;
         
 
-	my $pid; # kh # WindowsではWin32::Processを使って起動
+	my $pid; # kh 
 	if ($::config_obj->os eq 'win32'){
+		# WindowsではWin32::Processを使って起動
 		my $r_process;
 		require Win32::Process;
 		#print "starting R in $this->{LOG_DIR}, $this->{R_BIN}\n";
@@ -473,6 +474,16 @@ my $DEBUG_TIMING = 0;
 		
 		$this->{HOLD_PIPE_X} = ++$HOLD_PIPE_X ;
 		*{"HOLD_PIPE$HOLD_PIPE_X"} = "dummy" ;
+
+		# Windowsの場合はドライブのファイルシステムをチェック
+		require Win32::DriveInfo;
+		my @drive_info = Win32::DriveInfo::VolumeInfo (
+			substr($::config_obj->cwd, 0, 1)
+		);
+		unless ($drive_info[3] eq 'NTFS'){
+			print "File system: $drive_info[3]\n";
+			$DEBUG_TIMING = 1;
+		}
 
 	} else {
 		chdir("$this->{LOG_DIR}") ;
