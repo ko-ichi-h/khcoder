@@ -29,6 +29,8 @@ sub each{
 		$self->{result_log}{$last} = $p;
 	}
 
+	#print "$max".'-'."$cnt\n";
+
 	#if (
 	#	   $cnt == 1
 	#	&& $max >= 0.8
