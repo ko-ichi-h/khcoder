@@ -65,13 +65,13 @@ use Net::SFTP::Foreign;
 use LWP::UserAgent;
 use File::Path 'rmtree';
 
-#&web;
+&web;
 #&pdfs if $pdf;
 #&source_tgz;
 #&win_pkg;
 #&win_upd;
 #&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
