@@ -93,21 +93,23 @@ sub _new{
 		-command     => sub {gui_hlist->copy_all($self->list);}
 	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
 	
-	$fhl->Button(
-		-text        => kh_msg->gget('plot'), # プロット
-		-font        => "TKFN",
-		-borderwidth => '1',
-		-command     => sub {
-			if ($::main_gui->if_opened('w_doc_cls_plot')){
-				$::main_gui->get('w_doc_cls_plot')->close;
+	if ( $self->{plots}{_dendro} ){
+		$fhl->Button(
+			-text        => kh_msg->gget('plot'), # プロット
+			-font        => "TKFN",
+			-borderwidth => '1',
+			-command     => sub {
+				if ($::main_gui->if_opened('w_doc_cls_plot')){
+					$::main_gui->get('w_doc_cls_plot')->close;
+				}
+			
+				gui_window::r_plot::doc_cls->open(
+					plots       => [$self->{plots}{_dendro}],
+					#plot_size   => 480,
+				);
 			}
-		
-			gui_window::r_plot::doc_cls->open(
-				plots       => [$self->{plots}{_dendro}],
-				#plot_size   => 480,
-			);
-		}
-	)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
+		)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
+	}
 
 	#--------------------------#
 	#   クラスター併合の過程   #

@@ -446,6 +446,9 @@ sub _calc_exec{
 	$r_command_ward .= "ord <- order( unique( q[order.dendrogram( as.dendrogram(dcls) )] ) )\n";
 	$r_command_ward .= "q   <- ord[q]\n";
 	
+	$r_command_ward .= "q <- cbind(q)\n";
+	$r_command_ward .= "row.names(q) <- row.names(d)\n";
+	
 	$r_command_ward .= "q <- check_cutree(q, n_org)\n";
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
@@ -530,16 +533,18 @@ sub _calc_exec{
 		$size = 640;
 	}
 
-	$plots->{_dendro} = kh_r_plot->new(
-		name      => 'doc_cls_dendro',
-		command_f =>  $r_command
-		             .$r_command_ward
-		             .&r_command_dendro1(1),
-		command_a =>  &r_command_dendro1(1),
-		width     => $size,
-		height    => 480,
-	) or return 0;
-	$plots->{_dendro}->rotate_cls;
+	if ($ndocs <= 300){
+		$plots->{_dendro} = kh_r_plot->new(
+			name      => 'doc_cls_dendro',
+			command_f =>  $r_command
+			             .$r_command_ward
+			             .&r_command_dendro1(1),
+			command_a =>  &r_command_dendro1(1),
+			width     => $size,
+			height    => 480,
+		) or return 0;
+		$plots->{_dendro}->rotate_cls;
+	}
 
 	# クラスター番号の書き出し（Rコマンド）
 	#my $r_command_fin = &r_command_fix_r;
@@ -783,18 +788,34 @@ d <- d / leng
 d <- d * 1000
 
 check_cutree <- function(r, n_org) {
-	q <- NULL
-	if ( length(r) < n_org ){
-		for (i in 1:n_org){
-			if ( is.na(r[as.character(i)]) ){
-				q <- c(q, ".")
-			} else {
-				q <- c(q, as.character( r[as.character(i)]) )
+	if ( nrow(r) < n_org ){
+		r_temp <- NULL
+		fixed  <- 0
+		for ( i in 1:nrow(r) ){
+			if (
+				   ( i         != as.numeric( row.names(r)[i] ) )
+				&& ( i + fixed != as.numeric( row.names(r)[i] ) )
+			){
+				gap <- as.numeric( row.names(r)[i] ) - i - fixed
+				print(paste("gap", gap, "fixed", fixed))
+				for (h in 1:gap){
+					r_temp <- rbind(r_temp, c("."))
+					fixed <- fixed + 1
+				}
+			}
+			#print (paste(i,row.names(r)[i]))
+			r_temp <- rbind(r_temp, r[i,])
+		}
+		
+		if ( nrow(r_temp) < n_org ){
+			for (i in 1:(n_org - nrow(r_temp))){
+				r_temp <- rbind(r_temp, c("."))
 			}
 		}
-		r <- q
+		print(paste( "n_org", n_org, "nrow", nrow(r_temp) ))
+		r <- r_temp
 	}
-	return (r)
+	return(r)
 }
 
 END_OF_the_R_COMMAND
