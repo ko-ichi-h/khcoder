@@ -55,7 +55,10 @@ sub _calc_exec{
 			rngR=TRUE
 		)\$clustering\n"
 	;
-
+	
+	$r_command_ward .= "q <- cbind(q)\n";
+	$r_command_ward .= "row.names(q) <- row.names(d)\n";
+	
 	$r_command_ward .= "q <- check_cutree(q, n_org)\n";
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
