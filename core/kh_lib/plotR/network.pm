@@ -60,7 +60,7 @@ sub new{
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
-	$args{gray_scale} = 0 unless ( length($args{use_alpha}) );
+	$args{gray_scale} = 0 unless ( length($args{gray_scale}) );
 	$r_command .= "gray_scale <- $args{gray_scale}\n";
 
 
@@ -1039,7 +1039,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 		}
 
 		labels <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-		if ( exists("target_words") ){
+		if ( (exists("target_words")) && (is.null(target_ids) == 0) ){
 			text(
 				lay_f[target_ids,1],
 				lay_f[target_ids,2],
