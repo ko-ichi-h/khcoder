@@ -283,13 +283,18 @@ if (if_plothex == 1){                             # 格子の色
 }
 b <- 1-a
 
+color_pte <- "gray70"
+cls_lwd   <- 2
+
 if ( plot_mode == "gray"){                        # 各カラーモードへの対応
 	color_act  <- rep("white",n_nodes^2)
-	color_line <- "gray70"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray45"
-	color_ptf  <- "gray90"
+	cls_lwd    <- 3
+	color_cls  <- "gray35"
+	color_line <- "gray50"
+	color_pte  <- "gray40"
+	color_ptf  <- "gray85"
 }
 if ( plot_mode == "color" ) {
 	color_act <- colors
@@ -626,7 +631,7 @@ for (i in 0:(n_nodes - 1)){                       # グレー境界線・縦
 				x + 0.5, y + a,
 				x + 0.5, y - a,
 				col=color_cls,
-				lwd=2,
+				lwd=cls_lwd,
 			)
 		}
 	}
@@ -662,7 +667,7 @@ for (i in 0:(n_nodes - 2)){                       # グレー境界線・右上
 				x,       y + b,
 				x + 0.5, y + a,
 				col=color_cls,
-				lwd=2,
+				lwd=cls_lwd,
 			)
 		}
 	}
@@ -698,7 +703,7 @@ for (i in 0:(n_nodes - 2)){                       # グレー境界線・左上
 				x,       y + b,
 				x - 0.5, y + a,
 				col=color_cls,
-				lwd=2,
+				lwd=cls_lwd,
 			)
 		}
 	}
@@ -729,7 +734,7 @@ if( if_points == 1 ){
 				x=c( x + c, x + c, x,     x - c, x - c, x ),
 				y=c( y + a,   y - a,   y - b, y - a,   y + a,   y + b ),
 				col=color_ptf,
-				border="gray70",
+				border=color_pte,
 				lty=1,
 			)
 		}
