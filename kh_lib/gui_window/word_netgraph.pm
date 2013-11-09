@@ -356,10 +356,11 @@ sub calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
+	$self->{net_obj}->{edge_type} = $self->gui_jg( $self->{radio_type} );
+
 	use plotR::network;
 	my $plotR = plotR::network->new(
 		$self->{net_obj}->params,
-		edge_type        => $self->gui_jg( $self->{radio_type} ),
 		font_size        => $self->{font_obj}->font_size,
 		font_bold        => $self->{font_obj}->check_bold_text,
 		plot_size        => $self->{font_obj}->plot_size,
