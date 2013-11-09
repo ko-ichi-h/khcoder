@@ -289,6 +289,7 @@ sub params{
 		min_sp_tree         => $self->min_sp_tree,
 		use_alpha           => $self->use_alpha,
 		gray_scale          => $self->gray_scale,
+		edge_type           => $self->{edge_type},
 	);
 }
 
