@@ -744,6 +744,7 @@ sub make_plot{
 
 	kh_r_plot->clear_env;
 
+	$r_command .= "r_max <- 100\n";
 	$r_command .= "d_x <- $args{d_x}\n";
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
@@ -890,14 +891,14 @@ xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
 yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
 #cex  <- 1
 
-n_words_chk <- c( length(xorg) )
+n_words_chk <- c( length(c$cscore[,d_x]) )
 if (flt > 0) {
 	n_words_chk <- c(n_words_chk, flt)
 }
 if (flw > 0) {
 	n_words_chk <- c(n_words_chk, flw)
 }
-if ( min(n_words_chk) < 300 ){
+if ( ( min(n_words_chk) < 300 ) && ( length(c$rscore[,d_x]) < r_max ) ){
 	library(wordcloud)
 	nc <- wordlayout(
 		labcd$x,
@@ -987,7 +988,7 @@ if (flt > 0) {
 if (flw > 0) {
 	n_words_chk <- c(n_words_chk, flw)
 }
-if ( min(n_words_chk) < 300 ){
+if ( min(n_words_chk) < r_max ){
 	library(wordcloud)
 	nc <- wordlayout(
 		labcd$x,
@@ -1062,14 +1063,14 @@ xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
 yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
 #cex  <- 1
 
-n_words_chk <- c( length(xorg) )
+n_words_chk <- c( length(c$cscore[,d_x]) )
 if (flt > 0) {
 	n_words_chk <- c(n_words_chk, flt)
 }
 if (flw > 0) {
 	n_words_chk <- c(n_words_chk, flw)
 }
-if ( min(n_words_chk) < 300 ){
+if ( ( min(n_words_chk) < 300 ) && ( length(c$rscore[,d_x]) < r_max ) ){
 	library(wordcloud)
 	nc <- wordlayout(
 		labcd$x,
@@ -1532,14 +1533,21 @@ if ( is.null(labcd) ){
 	yorg <- cb[,2]
 	#cex  <- 1
 
-	n_words_chk <- c( length(xorg) )
+	n_words_chk <- c( length(c$cscore[,d_x]) )
 	if (flt > 0) {
 		n_words_chk <- c(n_words_chk, flt)
 	}
 	if (flw > 0) {
 		n_words_chk <- c(n_words_chk, flw)
 	}
-	if ( min(n_words_chk) < 300 ){
+	if ( 
+		   ( (biplot == 0) && (min(n_words_chk) < 300) )
+		|| (
+			   (biplot == 1)
+			&& ( min(n_words_chk) < 300 )
+			&& ( length(c$rscore[,d_x]) < r_max )
+		)
+	){
 		library(wordcloud)
 		nc <- wordlayout(
 			labcd$x,
@@ -1816,7 +1824,7 @@ if ( T ){
 	if (flw > 0) {
 		n_words_chk <- c(n_words_chk, flw)
 	}
-	if ( min(n_words_chk) < 300 ){
+	if ( min(n_words_chk) < r_max ){
 		library(wordcloud)
 		nc <- wordlayout(
 			labcd$x,
