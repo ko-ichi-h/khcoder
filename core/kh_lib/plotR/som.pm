@@ -290,7 +290,7 @@ if ( plot_mode == "gray"){                        # 各カラーモードへの対応
 	color_act  <- rep("white",n_nodes^2)
 	if_points  <- 1
 	w_lwd      <- 1
-	cls_lwd    <- 3
+	cls_lwd    <- 2.25
 	color_cls  <- "gray35"
 	color_line <- "gray50"
 	color_pte  <- "gray40"
