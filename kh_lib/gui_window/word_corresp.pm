@@ -982,12 +982,12 @@ yorg <- c$rscore[,d_y]
 #cex  <- 1
 
 n_words_chk <- c( length(xorg) )
-if (flt > 0) {
-	n_words_chk <- c(n_words_chk, flt)
-}
-if (flw > 0) {
-	n_words_chk <- c(n_words_chk, flw)
-}
+#if (flt > 0) {
+#	n_words_chk <- c(n_words_chk, flt)
+#}
+#if (flw > 0) {
+#	n_words_chk <- c(n_words_chk, flw)
+#}
 if ( min(n_words_chk) < r_max ){
 	library(wordcloud)
 	nc <- wordlayout(
