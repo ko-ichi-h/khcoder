@@ -12,11 +12,11 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '2b30e';
+my $V = '2b30f';
 my $V_main = "2.Beta.30";
-my $V_full = "2.Beta.30e";
+my $V_full = "2.Beta.30f";
 
-my $pdf = 1; # 1になっているとPDFファイルもアップロードされる
+my $pdf = 0; # 1になっているとPDFファイルもアップロードされる
 
 # 環境設定
 my $home_dir = '';
@@ -67,12 +67,12 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-#&web;
-#&pdfs if $pdf;
-#&source_tgz;
-#&win_pkg;
-#&win_upd;
-#&win_strb;
+&web;
+&pdfs if $pdf;
+&source_tgz;
+&win_pkg;
+&win_upd;
+&win_strb;
 &upload;
 
 sub upload{
