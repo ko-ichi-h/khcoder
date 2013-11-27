@@ -744,7 +744,7 @@ sub make_plot{
 
 	kh_r_plot->clear_env;
 
-	$r_command .= "r_max <- 100\n";
+	$r_command .= "r_max <- 150\n";
 	$r_command .= "d_x <- $args{d_x}\n";
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
