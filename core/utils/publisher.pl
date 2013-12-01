@@ -16,7 +16,8 @@ my $V = '2b30f';
 my $V_main = "2.Beta.30";
 my $V_full = "2.Beta.30f";
 
-my $pdf = 0; # 1になっているとPDFファイルもアップロードされる
+# マニュアル・チュートリアルのPDFを再作成するか
+my $pdf = 0;
 
 # 環境設定
 my $home_dir = '';
@@ -85,15 +86,15 @@ sub upload{
 	);
 	
 	# Files
-	if ($pdf){
-		$sftp->setcwd("/home/pfs/project/khc/Manual");
-		print "put: khcoder_manual.pdf\n";
-		$sftp->put ("khcoder_manual.pdf", "khcoder_manual.pdf") or die;
-		
-		$sftp->setcwd("/home/pfs/project/khc/Tutorial/for KH Coder 2.x");
-		print "put: khcoder_tutorial.pdf\n";
-		$sftp->put ("khcoder_tutorial.pdf", "khcoder_tutorial.pdf") or die;
-	}
+	#if ($pdf){
+	#	$sftp->setcwd("/home/pfs/project/khc/Manual");
+	#	print "put: khcoder_manual.pdf\n";
+	#	$sftp->put ("khcoder_manual.pdf", "khcoder_manual.pdf") or die;
+	#	
+	#	$sftp->setcwd("/home/pfs/project/khc/Tutorial/for KH Coder 2.x");
+	#	print "put: khcoder_tutorial.pdf\n";
+	#	$sftp->put ("khcoder_tutorial.pdf", "khcoder_tutorial.pdf") or die;
+	#}
 	
 	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
 	$sftp->mkdir($V_main);
