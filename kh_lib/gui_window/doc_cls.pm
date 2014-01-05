@@ -533,7 +533,7 @@ sub _calc_exec{
 		$size = 640;
 	}
 
-	if ($ndocs <= 300){
+	if ($ndocs <= 500){
 		$plots->{_dendro} = kh_r_plot->new(
 			name      => 'doc_cls_dendro',
 			command_f =>  $r_command
