@@ -8,7 +8,7 @@ use strict;
 sub expr{
 	my $self = shift;
 		if ($self->raw eq 'lc'){
-			return "$self->{tani}_length.c";
+			return "( $self->{tani}_length.c / 2 )";
 		} else {
 			return "$self->{tani}_length.w";
 		}
