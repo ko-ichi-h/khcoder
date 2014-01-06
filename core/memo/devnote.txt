@@ -140,8 +140,8 @@ Turkish*  			ok
 
 [2.b.30g]
 	※リリース時には
-		・チュートリアルをスライド版に差替える
-		・Cairoを更新する( http://cran.r-project.org/bin/windows/contrib/2.15/Cairo_1.5-5.zip )
+		・チュートリアルをスライド版に差替える [ok]
+		・Cairoを更新する( http://cran.r-project.org/bin/windows/contrib/2.15/Cairo_1.5-5.zip ) [ok]
 
 	・細部の調整
 		・文書のクラスター分析を行う際、2.b.30e以降では、文書数が300を超える場合はデンドログラムを描画しないようにしていた。この制限の値を300から500に変更した。
