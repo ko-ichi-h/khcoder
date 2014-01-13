@@ -519,7 +519,7 @@ sub outtab{
 	$sql .= "LEFT JOIN outvar_lab ON ( outvar_lab.var_id = $var_id AND outvar_lab.val = $outvar_tbl.$outvar_clm )\n";
 	$sql .= "\nGROUP BY name";
 	$sql .= "\nORDER BY name";
-	print "$sql\n";
+	#print "$sql\n";
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 	
@@ -562,8 +562,8 @@ sub outtab{
 		
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ（1列目）
-				push @current, gui_window->gui_jchar($h,'euc');
-				push @current_for_plot,  gui_window->gui_jchar($h,'euc');
+				push @current,          gui_window->gui_jchar($h,'euc');
+				push @current_for_plot, gui_window->gui_jchar($h,'euc');
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
