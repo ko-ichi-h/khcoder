@@ -33,6 +33,7 @@ sub _exec_test{
 	)->euc;
 
 	# 章・節・段落ごとの集計
+	sub comment_out{
 	my $win1 = gui_window::cod_tab->open;
 	$win1->{tani_obj}->{raw_opt} = gui_window->gui_jchar('段落','euc');
 	$win1->{tani_obj}->check;
@@ -96,18 +97,19 @@ sub _exec_test{
 	}
 	$t = Jcode->new($t, 'sjis')->euc;
 	$self->{result} .= $t;
+	}
 	
-	# 外部変数とのクロス集計
+	# クロス集計
 	my $win2 = gui_window::cod_outtab->open;
-	
-	$self->{result} .= "■外部変数とのクロス集計：段落―「h1」\n";
+	my $t;
+	$self->{result} .= "■クロス集計：段落―「見出し1」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{var_obj}->{opt_body}->{selection} = 1;
+	$win2->{var_obj}->{opt_body}->{selection} = 'h1';
 	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
-	foreach my $i (@{$win2->{result}}){
+	foreach my $i (@{$win2->{result}->{display}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
@@ -119,14 +121,14 @@ sub _exec_test{
 	$t = Jcode->new( $t, 'sjis' )->euc;
 	$self->{result} .= $t;
 	
-	$self->{result} .= "■外部変数とのクロス集計：段落―「死ぬ」\n";
+	$self->{result} .= "■クロス集計：段落―「h1（dan）」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{var_obj}->{opt_body}->{selection} = 3;
+	$win2->{var_obj}->{opt_body}->{selection} = 1; # 変数のID
 	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
-	foreach my $i (@{$win2->{result}}){
+	foreach my $i (@{$win2->{result}->{display}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
@@ -138,14 +140,14 @@ sub _exec_test{
 	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
-	$self->{result} .= "■外部変数とのクロス集計：段落―「大見出し」\n";
+	$self->{result} .= "■クロス集計：段落―「大見出し（h1）」\n";
 	$win2->{tani_obj}->{raw_opt} = 'dan';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{var_obj}->{opt_body}->{selection} = 4;
+	$win2->{var_obj}->{opt_body}->{selection} = 4; # 変数のID
 	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
-	foreach my $i (@{$win2->{result}}){
+	foreach my $i (@{$win2->{result}->{display}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
@@ -157,14 +159,14 @@ sub _exec_test{
 	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
 	
-	$self->{result} .= "■外部変数とのクロス集計：h2―「大見出し」\n";
+	$self->{result} .= "■クロス集計：h2―「大見出し」\n";
 	$win2->{tani_obj}->{raw_opt} = 'h2';
 	$win2->{tani_obj}->mb_refresh;
-	$win2->{var_obj}->{opt_body}->{selection} = 4;
+	$win2->{var_obj}->{opt_body}->{selection} = 4; # 変数のID
 	$win2->{var_obj}->{opt_body}->mb_refresh;
 	$win2->_calc;
 	$t = '';
-	foreach my $i (@{$win2->{result}}){
+	foreach my $i (@{$win2->{result}->{display}}){
 		my $n = 0;
 		foreach my $h (@{$i}){
 			$t .= "\t" if $n;
@@ -175,6 +177,26 @@ sub _exec_test{
 	}
 	$t = Jcode->new($t,'sjis')->euc;
 	$self->{result} .= $t;
+
+	$self->{result} .= "■クロス集計：h2―「見出し1」\n";
+	$win2->{tani_obj}->{raw_opt} = 'h2';
+	$win2->{tani_obj}->mb_refresh;
+	$win2->{var_obj}->{opt_body}->{selection} = 'h1';
+	$win2->{var_obj}->{opt_body}->mb_refresh;
+	$win2->_calc;
+	$t = '';
+	foreach my $i (@{$win2->{result}->{display}}){
+		my $n = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $n;
+			$t .= $h;
+			++$n;
+		}
+		$t .= "\n";
+	}
+	$t = Jcode->new($t,'sjis')->euc;
+	$self->{result} .= $t;
+
 	
 	# コード間関連
 	my $win3 = gui_window::cod_jaccard->open;
