@@ -28,6 +28,11 @@ sub new{
 	}
 	$r_command .= "cex <- $args{font_size}\n";
 
+	unless ( $args{fix_lab} ){
+		$args{fix_lab} = 0;
+	}
+	$r_command .= "fix_lab <- $args{fix_lab}\n";
+
 	unless ( $args{use_freq_as_size} ){
 		$args{use_freq_as_size} = 0;
 	}
@@ -481,8 +486,19 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			weights=get.edge.attribute(n2, "weight")
 		)
 		com_m <- NULL
-		com_m$membership <- com$membership
-		com_m$csize      <- table(com$membership)
+		if ( max(com$membership) - new_igraph > 11 ){
+			for ( i in 1:( trunc( length( com$merges ) / 2 ) ) ){
+				temp_com <- community.to.membership(n2, com$merges, i)
+				if (length(temp_com$csize) <= 12){
+					com_m$membership <- temp_com$membership + new_igraph
+					com_m$csize      <- temp_com$csize
+					break
+				}
+			}
+		} else {
+			com_m$membership <- com$membership
+			com_m$csize      <- table(com$membership)
+		}
 	}
 
 	com_col <- NULL # vertex frame                # Vertexの色（12色まで）
@@ -1006,25 +1022,84 @@ if (smaller_nodes ==1){
 }
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 	# ネットワークを描画
-	plot.igraph(
-		n2,
-		vertex.label        = "",
-		#vertex.label       =colnames(d)
-		#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-		#vertex.label.cex   =f_size,
-		#vertex.label.color ="black",
-		#vertex.label.family= "", # Linux・Mac環境では必須
-		#vertex.label.dist  =vertex_label_dist,
-		vertex.color       =ccol,
-		vertex.frame.color =com_col_v,
-		vertex.size        =v_size,
-		vertex.shape       =v_shape,
-		edge.color         =edg_col,
-		edge.lty           =edg_lty,
-		edge.width         =edg_width,
-		layout             =lay_f,
-		rescale            =F
-	)
+	if (fix_lab == 0){
+		plot.igraph(
+			n2,
+			vertex.label        = "",
+			#vertex.label       =colnames(d)
+			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+			#vertex.label.cex   =f_size,
+			#vertex.label.color ="black",
+			#vertex.label.family= "", # Linux・Mac環境では必須
+			#vertex.label.dist  =vertex_label_dist,
+			vertex.color       =ccol,
+			vertex.frame.color =com_col_v,
+			vertex.size        =v_size,
+			vertex.shape       =v_shape,
+			edge.color         =edg_col,
+			edge.lty           =edg_lty,
+			edge.width         =edg_width,
+			layout             =lay_f,
+			rescale            =F
+		)
+	}
+
+# edit ------------------------------------------------------------
+	if (fix_lab == 1){
+		plot.new()
+		plot.window(xlim=c(-1, 1), ylim=c(-1, 1))
+		
+		labcd <- NULL
+		labcd$x <- lay_f[,1]
+		labcd$y <- lay_f[,2]
+		word_labs <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+
+		library(wordcloud)
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			word_labs,
+			cex=cex * 1.25,
+			xlim=c( -1, 1 ),
+			ylim=c( -1, 1 )
+		)
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+		lay_f <- cbind(labcd$x, labcd$y)
+
+		plot.igraph(
+			n2,
+			vertex.label        = "",
+			#vertex.label       =colnames(d)
+			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
+			#vertex.label.cex   =f_size,
+			#vertex.label.color ="black",
+			#vertex.label.family= "", # Linux・Mac環境では必須
+			#vertex.label.dist  =vertex_label_dist,
+			vertex.color       =ccol,
+			vertex.frame.color =com_col_v,
+			vertex.size        =v_size,
+			vertex.shape       =v_shape,
+			edge.color         =edg_col,
+			edge.lty           =edg_lty,
+			edge.width         =edg_width,
+			layout             =lay_f,
+			rescale            =F,
+			add = T
+		)
+		if_fixed <- 1
+	}
+# edit ------------------------------------------------------------
+
+
+
+
+
+
+
 
 	# 語のラベルを追加
 	lay_f_adj <- NULL

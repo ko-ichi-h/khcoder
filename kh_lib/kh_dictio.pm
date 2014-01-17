@@ -298,11 +298,14 @@ sub mark{
 		){
 			$text = Jcode->new($_,$icode)->h2z->euc;
 			$text =~ s/ /¡¡/go;
+			$text =~ s/\t/¡¡/go;
 			$text =~ s/\\/¡ï/go;
 			$text =~ s/'/¡Ç/go;
 			$text =~ s/"/¡É/go;
 		} else {
 			$text = $_;
+			$text =~ s/\t/ /go;
+			$text =~ s/\\/ /go;
 		}
 		
 		while (1){

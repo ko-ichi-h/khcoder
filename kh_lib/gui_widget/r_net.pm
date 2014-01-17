@@ -71,6 +71,9 @@ sub _new{
 		if ($self->{r_cmd} =~ /gray_scale <- ([01])\n/){
 			$self->{check_gray_scale} = $1;
 		}
+		if ($self->{r_cmd} =~ /fix_lab <- ([01])\n/){
+			$self->{check_fix_lab} = $1;
+		}
 
 		if ($edges == 0){
 			$self->{radio} = 'j';
@@ -216,6 +219,14 @@ sub _new{
 			#-state => 'disabled',
 	)->pack(-anchor => 'w');
 
+	$self->{check_fix_lab} = 0 unless defined($self->{check_fix_lab});
+	$lf->Checkbutton(
+			-text     => kh_msg->get('fix_lab'),
+			-variable => \$self->{check_fix_lab},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
+
 	$self->{check_use_alpha} = 0 unless defined($self->{check_use_alpha});
 	$lf->Checkbutton(
 			-text     => kh_msg->get('gui_window::word_mds->r_alpha'),
@@ -290,6 +301,7 @@ sub params{
 		use_alpha           => $self->use_alpha,
 		gray_scale          => $self->gray_scale,
 		edge_type           => $self->{edge_type},
+		fix_lab             => $self->fix_lab,
 	);
 }
 
@@ -316,6 +328,11 @@ sub use_alpha{
 sub gray_scale{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_gray_scale} );
+}
+
+sub fix_lab{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_fix_lab} );
 }
 
 sub use_freq_as_size{
