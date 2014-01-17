@@ -76,6 +76,8 @@ sub first{
 
 	$self->fix_katuyo;
 
+	$self->fix_michigo;
+
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
@@ -105,6 +107,48 @@ sub first{
 		);
 	}
 
+}
+
+sub fix_michigo{
+	my $self = shift;
+	
+	unless ( $::project_obj->morpho_analyzer eq 'chasen' ){
+		return 0;
+	}
+	
+	my $h = mysql_exec->select("
+		SELECT genkei.id, genkei.name
+		FROM   genkei, khhinshi
+		WHERE
+			    genkei.khhinshi_id = khhinshi.id
+			AND khhinshi.name = \"未知語\"
+	",1)->hundle;
+	
+	my @gomi = ();
+	
+	while (my $i = $h->fetch){
+		if ( $i->[1] =~ /a-z/io ){
+			next;
+		}
+		if ( $i->[1] =~ /[\xA1-\xFE][\xA1-\xFE]/o){
+			next;
+		}
+		push @gomi, $i->[0];
+	}
+	
+	my $sql = '';
+	$sql .= "UPDATE genkei SET khhinshi_id = 9999 WHERE\n";
+	
+	my $n = 0;
+	foreach my $i (@gomi){
+		$sql .= "OR " if $n;
+		$sql .= "( id = $i )\n";
+		++$n;
+	}
+	
+	#print "$sql\n\n";
+	
+	mysql_exec->do($sql, 1);
 }
 
 

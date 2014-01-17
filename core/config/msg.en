@@ -706,6 +706,7 @@ gui_widget::r_net:
     smaller:                  'Smaller Nodes'
     min_sp_tree:              'Indicate minimum spanning tree'
     gray_scale:               'Grayscale (centralities & communities)'
+    fix_lab:                  'Avoid overlapping of labels'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
