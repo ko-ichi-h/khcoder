@@ -148,7 +148,7 @@ sub fix_michigo{
 	
 	#print "$sql\n\n";
 	
-	mysql_exec->do($sql, 1);
+	mysql_exec->do($sql, 1) if $n;
 }
 
 
