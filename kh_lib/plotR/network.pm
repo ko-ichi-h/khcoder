@@ -486,14 +486,23 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			weights=get.edge.attribute(n2, "weight")
 		)
 		com_m <- NULL
-		if ( max(com$membership) - new_igraph > 11 ){
+
+		# コミュニティ数を12以下に
+		if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
+			best_step <- 0
 			for ( i in 1:( trunc( length( com$merges ) / 2 ) ) ){
 				temp_com <- community.to.membership(n2, com$merges, i)
-				if (length(temp_com$csize) <= 12){
-					com_m$membership <- temp_com$membership + new_igraph
-					com_m$csize      <- temp_com$csize
-					break
+				if ( length(temp_com$csize[temp_com$csize > 1]) == 12 ){
+					best_step <- i
 				}
+			}
+			if (best_step > 0){
+				temp_com <- community.to.membership(n2, com$merges, best_step)
+				com_m$membership <- temp_com$membership
+				com_m$csize      <- table(temp_com$membership)
+			} else {
+				com_m$membership <- com$membership
+				com_m$csize      <- table(com$membership)
 			}
 		} else {
 			com_m$membership <- com$membership
