@@ -1068,7 +1068,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			labcd$x,
 			labcd$y,
 			word_labs,
-			cex=cex * 1.25,
+			cex=cex * 1.28,
 			xlim=c( -1, 1 ),
 			ylim=c( -1, 1 )
 		)
