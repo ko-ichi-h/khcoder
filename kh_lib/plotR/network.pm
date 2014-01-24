@@ -490,7 +490,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		# コミュニティ数を12以下に
 		if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
 			best_step <- 0
-			for ( i in 1:( trunc( length( com$merges ) / 2 ) ) ){
+			for ( i in 1:( trunc( length( com$merges ) / 2 ) - 10 ) ){
 				temp_com <- community.to.membership(n2, com$merges, i)
 				if ( length(temp_com$csize[temp_com$csize > 1]) == 12 ){
 					best_step <- i
@@ -498,7 +498,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			}
 			if (best_step > 0){
 				temp_com <- community.to.membership(n2, com$merges, best_step)
-				com_m$membership <- temp_com$membership
+				com_m$membership <- temp_com$membership + new_igraph
 				com_m$csize      <- table(temp_com$membership)
 			} else {
 				com_m$membership <- com$membership
