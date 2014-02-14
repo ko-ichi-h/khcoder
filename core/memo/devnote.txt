@@ -86,6 +86,9 @@ order by genkei_t.id
 	・コーディングルールで文字数（lc）による指定を行う際、現状は「全角換算の文字数で指定」。よって全角1文字で「1」、半角1文字で「0.5」の扱い。しかし、将来的にはユニコード化の際に、全角でも半角でも1文字は「1」文字という扱いにすべき？　mysql_ready.pmのcreate table hyosoの後で、現状ではMySQLの「length」関数を使っているが、これを「char_length」関数に変更？
 
 [TO DO]
+	・ディスプレイスケーリングが100%よりも大きい場合に、Windowのアイコンが欠ける問題
+		・Win32::APIを使って、GetScaleFactorForDevice（Win 8.0以前） / GetScaleFactorForMonitor（Win 8.1以降）の値をとって、この値にあわせてアイコン画像を拡大すればOK？
+
 	・ドイツ語Tokenizationは英語と共通でいける？
 	・抽出語としての「lw」「lc」をコードで拾えるか？
 
@@ -105,8 +108,6 @@ order by genkei_t.id
 			・「# Decoding」というコメントをつけたりも
 
 	・Stanford NERを使って英語の連語取り出し
-
-	・日本語チュートリアル・スライド
 
 	・Rの解析コマンド作成部分を独立させる？（現状は共起ネットのみ独立）
 	・英語対応（ロジック／インターフェイス／チュートリアル／マニュアル）
