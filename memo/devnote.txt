@@ -88,6 +88,8 @@ order by genkei_t.id
 [TO DO]
 	・ディスプレイスケーリングが100%よりも大きい場合に、Windowのアイコンが欠ける問題
 		・Win32::APIを使って、GetScaleFactorForDevice（Win 8.0以前） / GetScaleFactorForMonitor（Win 8.1以降）の値をとって、この値にあわせてアイコン画像を拡大すればOK？
+		・gui_checkgeo.pmのコードが多少参考になる？
+		・しかしWin32::APIにある程度まともに取り組む必要がある？
 
 	・ドイツ語Tokenizationは英語と共通でいける？
 	・抽出語としての「lw」「lc」をコードで拾えるか？
