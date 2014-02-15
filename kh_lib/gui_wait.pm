@@ -15,19 +15,26 @@ sub start{
 	
 	if ($win){
 		$win->configure(-txt1 => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}));
-	#	# print "re-using...\n";
+		 print "gui_wait: re-using...\n";
 	} else {
+		print "gui_wait: making new...\n";
 		$win = $::main_gui->mw->WaitBox_kh(
 			-title      => 'KH Coder is processing data...',
 			-txt1       => "Start: ".strftime('%Y %m/%d %H:%M:%S',@{$d}),
 			-background => 'white',
 			-takefocus  => 0
 		);
+	}
+
+	$win->Show;
+
+	if ( $::config_obj->os eq 'win32' ) {
+		use Tk::Icon;
+		$win->setIcon(-file => Tk->findINC('1.ico') );
+	} else {
 		$win->Icon(-image => 'window_icon');
 	}
-	
-	$win->Show;
-	
+
 	$self->{started} = timelocal(@{$d});
 	bless $self, $class;
 	return $self;
