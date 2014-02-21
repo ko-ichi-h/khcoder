@@ -32,6 +32,7 @@ if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # 家PC
 # 更新するファイルの指定
 my @cp_f = (
 	['kh_coder.exe' , 'kh_coder.exe'  ],
+	['khc.xla'      , 'khc.xla'       ],
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
 );
