@@ -488,8 +488,9 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		com_m <- NULL
 
 		# コミュニティ数を12以下に
-		#if (F){
-		if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
+		# →この機能は現在停止中。R（igraph）のバージョンアップ時に復活？
+		if (F){
+		#if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
 			best_step <- 0
 			for ( i in 1:( trunc( length( com$merges ) / 2 ) - 10 ) ){
 				temp_com <- community.to.membership(n2, com$merges, i)
