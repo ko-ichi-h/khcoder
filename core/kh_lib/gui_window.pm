@@ -231,7 +231,7 @@ sub position_icon{
 	# Windowアイコンのセット
 	if ( $::config_obj->os eq 'win32' ) {
 		#$self->win_obj->Icon(-image => $icon);
-		use Tk::Icon;
+		require Tk::Icon;
 		$self->win_obj->setIcon(-file => Tk->findINC('1.ico'));
 	} else {
 		unless ($icon){
