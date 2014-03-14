@@ -40,6 +40,7 @@ sub ready{
 
 	if ($self->raw =~ /^"(.+)"$/){
 		$self->{raw} = $1;
+		$self->{raw} =~ s/""/"/g;
 	}
 
 	# ルール指定の解釈
@@ -47,7 +48,28 @@ sub ready{
 	if ($self->raw =~ /<>(見出し|heading)([1-5])\-\->(.+)$/io){
 		$var = $2;
 		$val = $3;
-		$val = '\'<h'."$var".'>'."$val".'</h'."$var".'>\'';
+		
+		# morpho_analyzer
+		if (
+			   $::project_obj->morpho_analyzer eq 'chasen'
+			|| $::project_obj->morpho_analyzer eq 'mecab'
+		){                                        # chasen・mecabを使用の場合
+			# スペースを全角に変換
+			$val =~ s/ /　/g;
+		} else {                                  # それ以外の場合
+			# PTB Tokenize
+			my $class =
+				 "kh_morpho::perl::stemming::"
+				.$::project_obj->morpho_analyzer_lang;
+			my ($tokens, $hoge) = $class->tokenize($val);
+			$val = join (' ', @{$tokens});
+		}
+		
+		print "kh_cod::a_code::atom::heading: ", Jcode->new($val,'euc')->sjis,"\n";
+		
+		$val = '<h'."$var".'>'."$val".'</h'."$var".'>';
+		$val = mysql_exec->quote($val);
+
 		$self->{heading_tani} = "h"."$var";
 	} else {
 		die("something wrong!");

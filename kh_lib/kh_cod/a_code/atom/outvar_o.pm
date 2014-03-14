@@ -25,6 +25,7 @@ sub ready{
 
 	if ($self->raw =~ /^"(.+)"$/){
 		$self->{raw} = $1;
+		$self->{raw} =~ s/""/"/g;
 	}
 
 	# ルール指定の解釈
@@ -86,6 +87,8 @@ sub ready{
 			num INT
 		)
 	",1);
+	
+	$val = mysql_exec->quote($val);
 	if ($var_obj->{tani} eq $tani){          # 集計単位が同じ場合
 		my $sql = "
 			INSERT
@@ -93,7 +96,7 @@ sub ready{
 			SELECT id, 1
 			FROM $var_obj->{table}
 			WHERE
-				$var_obj->{column} = \'$val\'
+				$var_obj->{column} = $val
 		";
 		mysql_exec->do("$sql",1);
 		print "$sql" if $debug;
@@ -107,7 +110,7 @@ sub ready{
 			$sql .= "and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
 			last if ($i eq $var_obj->{tani});
 		}
-		$sql .= "and $var_obj->{table}.$var_obj->{column} = \'$val\'";
+		$sql .= "and $var_obj->{table}.$var_obj->{column} = $val";
 		mysql_exec->do("$sql",1);
 	}
 }
