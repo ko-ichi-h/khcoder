@@ -286,8 +286,6 @@ sub v_docs{
 	my $query = $self->{list_val}->itemCget($selected[0], 0, -text);
 	$query = '<>'.$self->gui_jchar($self->{selected_var_obj}->{name}).'-->'.$query;
 
-	# UTF8フラグ付きの全角スペースでチェックを
-
 	$query =~ s/"/""/g;
 	$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
@@ -397,11 +395,11 @@ sub v_words_list{
 		# クエリー作成
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
 
+		$query = $self->gui_jchar($query,'euc');
+
 		$query =~ s/"/""/g;
 		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
-		$query = $self->gui_jchar($query,'euc');
-		
 		# リモートウィンドウの操作
 		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
 		$win->{tani_obj}->mb_refresh;
