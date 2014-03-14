@@ -9,6 +9,8 @@ use mysql_outvar;
 # ラベル・エントリーにバインドを設定
 # 「閉じる」を「読み込み」に
 
+my $z_space = Encode::decode('euc-jp', '　');
+
 my $headings = kh_msg->get('headings');
 
 #---------------------#
@@ -284,8 +286,10 @@ sub v_docs{
 	my $query = $self->{list_val}->itemCget($selected[0], 0, -text);
 	$query = '<>'.$self->gui_jchar($self->{selected_var_obj}->{name}).'-->'.$query;
 
+	# UTF8フラグ付きの全角スペースでチェックを
+
 	$query =~ s/"/""/g;
-	$query = '"'.$query.'"' if $query =~ / |"/;
+	$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
 	
 	# リモートウィンドウの操作
@@ -328,7 +332,7 @@ sub v_words{
 	$query = '<>'.$self->gui_jchar($self->{selected_var_obj}->{name}).'-->'.$query;
 	
 	$query =~ s/"/""/g;
-	$query = '"'.$query.'"' if $query =~ / |"/;
+	$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 	
 	# リモートウィンドウの操作
 	my $win;
@@ -394,7 +398,7 @@ sub v_words_list{
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
 
 		$query =~ s/"/""/g;
-		$query = '"'.$query.'"' if $query =~ / |"/;
+		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
 		$query = $self->gui_jchar($query,'euc');
 		

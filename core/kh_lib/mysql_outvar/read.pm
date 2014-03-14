@@ -25,7 +25,8 @@ sub read{
 		);
 	while (<CSVD>){
 		chomp;
-		my $line = $self->parse($_);
+		my $t = Jcode->new($_)->h2z->tr('¡¡',' ')->euc;
+		my $line = $self->parse($t);
 		push @data, $line;
 	}
 	close (CSVD);
