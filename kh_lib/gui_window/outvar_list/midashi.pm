@@ -2,6 +2,8 @@ package gui_window::outvar_list::midashi;
 use base qw(gui_window::outvar_list);
 use strict;
 
+my $z_space = Encode::decode('euc-jp', '¡¡');
+
 sub v_words_list{
 	my $self      = shift;
 	my $file_type = shift;
@@ -11,14 +13,14 @@ sub v_words_list{
 		return 0;
 	}
 	
-	# ƒ‰ƒxƒ‹‚Ì•ÏX“à—e‚ğ•Û‘¶‚µ‚ÄAŠO•”•Ï”ƒIƒuƒWƒFƒNƒg‚ğÄ¶¬
+	# ¥é¥Ù¥ë¤ÎÊÑ¹¹ÆâÍÆ¤òÊİÂ¸¤·¤Æ¡¢³°ÉôÊÑ¿ô¥ª¥Ö¥¸¥§¥¯¥È¤òºÆÀ¸À®
 	#$self->_save;
 	#$self->{selected_var_obj} = mysql_outvar::a_var->new(
 	#	$self->{selected_var_obj}->{name}
 	#);
 
-	# ’l‚ÌƒŠƒXƒg
-	my $values = mysql_getheader->get_selected(             # ’lƒŠƒXƒg‚Æ•p“x
+	# ÃÍ¤Î¥ê¥¹¥È
+	my $values = mysql_getheader->get_selected(             # ÃÍ¥ê¥¹¥È¤ÈÉÑÅÙ
 		tani => $self->{selected_var_obj}{tani}
 	);
 	my %freq = ();
@@ -29,7 +31,7 @@ sub v_words_list{
 	}
 	$values = \@values_org;
 
-	# ƒŠƒ‚[ƒgƒEƒBƒ“ƒhƒE‚Ì€”õ
+	# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤Î½àÈ÷
 	my $win;
 	if ($::main_gui->if_opened('w_doc_ass')){
 		$win = $::main_gui->get('w_doc_ass');
@@ -38,15 +40,15 @@ sub v_words_list{
 	}
 
 	my $d;
-	# ’l‚²‚Æ‚É“Á’¥“I‚ÈŒê‚ğæ“¾
+	# ÃÍ¤´¤È¤ËÆÃÄ§Åª¤Ê¸ì¤ò¼èÆÀ
 	foreach my $i (@{$values}){
-		# ƒNƒGƒŠ[ì¬
+		# ¥¯¥¨¥ê¡¼ºîÀ®
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'. $self->gui_jchar($i,'euc');
 
 		$query =~ s/"/""/g;
-		$query = '"'.$query.'"' if $query =~ / |"/;
+		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 		
-		# ƒŠƒ‚[ƒgƒEƒBƒ“ƒhƒE‚Ì‘€ì
+		# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤ÎÁàºî
 		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
 		$win->{tani_obj}->mb_refresh;
 		
@@ -59,7 +61,7 @@ sub v_words_list{
 		$win->win_obj->focus;
 		$win->search;
 		
-		# ’l‚Ìæ“¾
+		# ÃÍ¤Î¼èÆÀ
 		my $n = 0;
 		while ($win->{rlist}->info('exists', $n)){
 			if ( $win->{rlist}->itemExists($n, 1) ){
@@ -105,24 +107,24 @@ sub _open_var{
 
 	#print "go!\n";
 
-	# •Ï”–¼‚Ì•\¦
+	# ÊÑ¿ôÌ¾¤ÎÉ½¼¨
 	$self->{label_name}->configure(
 		-text => $self->gui_jchar(
 			$self->{var_list}[$selection[0]][1]
 		)
 	);
 
-	# ‚±‚±‚Í¡Œã—vŒŸ“¢H
+	# ¤³¤³¤Ïº£¸åÍ×¸¡Æ¤¡©
 	my $hoge;
 	$hoge->{name} = $self->{var_list}[$selection[0]][1];
 	$hoge->{tani} = $self->{var_list}[$selection[0]][0];
 	$self->{selected_var_obj} = $hoge;
 
-	# ’l‚Æƒ‰ƒxƒ‹‚Ì•\¦
+	# ÃÍ¤È¥é¥Ù¥ë¤ÎÉ½¼¨
 	$self->{label} = undef;
 	$self->{list_val}->delete('all');
 
-	my $values = mysql_getheader->get_selected(             # ’lƒŠƒXƒg‚Æ•p“x
+	my $values = mysql_getheader->get_selected(             # ÃÍ¥ê¥¹¥È¤ÈÉÑÅÙ
 		tani => $self->{var_list}[$selection[0]][0]
 	);
 	my %freq = ();
@@ -194,10 +196,10 @@ sub _open_var{
 	gui_hlist->update4scroll($self->{list_val});
 
 	#$self->{label_num}->configure(
-	#	-text => $self->gui_jchar("’l‚Ìí—ŞF $n")
+	#	-text => $self->gui_jchar("ÃÍ¤Î¼ïÎà¡§ $n")
 	#);
 
-	# WŒv’PˆÊ
+	# ½¸·×Ã±°Ì
 	my @tanis   = ();
 	if ($self->{opt_tani}){
 		$self->{opt_tani}->destroy;
@@ -205,8 +207,8 @@ sub _open_var{
 	}
 
 	my %tani_name = (
-		"bun" => kh_msg->gget('sentence'),  # "•¶",
-		"dan" => kh_msg->gget('paragraph'), # "’i—",
+		"bun" => kh_msg->gget('sentence'),  # "Ê¸",
+		"dan" => kh_msg->gget('paragraph'), # "ÃÊÍî",
 		"h5"  => "H5",
 		"h4"  => "H4",
 		"h3"  => "H3",
