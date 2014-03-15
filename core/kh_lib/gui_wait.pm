@@ -83,7 +83,7 @@ sub end{
 		);
 	}
 	
-	#$win->unShow;
+	$win->unShow unless $::config_obj->os eq 'win32';
 	$win->{bitmap}->destroy;
 	$win->destroy;
 	undef $win;
