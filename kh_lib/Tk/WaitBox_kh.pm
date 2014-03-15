@@ -53,12 +53,12 @@ sub Populate {
     $cw->SUPER::Populate(@_);
 
     ## Create the toplevel window
-    $cw->withdraw;
+    #$cw->withdraw;
     $cw->protocol('WM_DELETE_WINDOW' => sub {});
     #$cw->transient($::main_gui->mw);
 
     ### Set up the status
-    $cw->{Shown} = 0;
+    #$cw->{Shown} = 0;
 
 
     ### OK, create the dialog
