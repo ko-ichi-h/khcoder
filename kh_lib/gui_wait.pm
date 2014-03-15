@@ -26,8 +26,6 @@ sub start{
 		);
 	}
 
-	$win->Show;
-
 	if ( $::config_obj->os eq 'win32' ) {
 		require Tk::Icon;
 		$win->setIcon(-file => Tk->findINC('1.ico') );
@@ -35,10 +33,13 @@ sub start{
 		$win->Icon(-image => 'window_icon');
 	}
 
+	$win->Show;
+	#$win->update;
+	#$win->raise;
+
 	$self->{started} = timelocal(@{$d});
 	bless $self, $class;
-	
-	$win->update;
+
 	return $self;
 }
 
