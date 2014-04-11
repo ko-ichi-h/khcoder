@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '2b30k';
+my $V = '2b30l';
 my $V_main = "2.Beta.30";
-my $V_full = "2.Beta.30k";
+my $V_full = "2.Beta.30l";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -75,7 +75,7 @@ use File::Path 'rmtree';
 &win_pkg;
 &win_upd;
 &win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
