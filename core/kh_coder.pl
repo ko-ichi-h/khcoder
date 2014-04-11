@@ -127,6 +127,10 @@ use kh_projects;
 use kh_morpho;
 use gui_window;
 
+# Say hello
+print "This is KH Coder $kh_version on $^O.\n";
+print "CWD: ", $config_obj->cwd, "\n";
+
 # Windows版パッケージ用の初期化
 if (
 	   ($::config_obj->os eq 'win32')
