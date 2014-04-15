@@ -26,7 +26,10 @@ sub start{
 		);
 	}
 
-	if ( $::config_obj->os eq 'win32' ) {
+	if (
+		   ($::config_obj->os eq 'win32')
+		&& (eval 'require Tk::Icon' )
+	) {
 		$win->Show;
 		require Tk::Icon;
 		$win->setIcon(-file => Tk->findINC('1.ico') );
