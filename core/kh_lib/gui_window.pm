@@ -230,9 +230,17 @@ sub position_icon{
 
 	# Windowアイコンのセット
 	if ( $::config_obj->os eq 'win32' ) {
-		#$self->win_obj->Icon(-image => $icon);
-		require Tk::Icon;
-		$self->win_obj->setIcon(-file => Tk->findINC('1.ico'));
+		if ( eval 'require Tk::Icon' ){
+			require Tk::Icon;
+			$self->win_obj->setIcon(-file => Tk->findINC('1.ico'));
+		} else {
+			unless ($icon){
+				$icon = $self->win_obj->Photo('window_icon',
+					-file =>   Tk->findINC('acre.gif')
+				);
+			}
+			$self->win_obj->Icon(-image => $icon);
+		}
 	} else {
 		unless ($icon){
 			$icon = $self->win_obj->Photo('window_icon',
