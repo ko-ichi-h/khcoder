@@ -693,7 +693,8 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	if ( max(d4l) == Inf){
 		d4l[d4l == Inf] <- vcount(n2)
 	}
-	lay <-  cmdscale( d4l, k=2 )
+	lay <- cmdscale( d4l, k=2 )
+	lay <- round(lay, digits=5)
 	check4fr <- function(d){
 		chk <- 0
 		for (i in combn( length(d[,1]), 2, simplify=F ) ){
@@ -716,6 +717,7 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 }
 
 # «€√÷
+set.seed(100)
 if (
 	   (com_method == "twomode_c" || com_method == "twomode_g")
 	&& ( is.connected(n2) )
@@ -729,6 +731,7 @@ if (
 	lay_f <- layout.fruchterman.reingold(
 		n2,
 		start   = lay,
+		niter   = vcount(n2) * 512,
 		weights = get.edge.attribute(n2, "weight")
 	)
 }
