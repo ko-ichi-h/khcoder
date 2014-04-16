@@ -765,7 +765,17 @@ sub R_version{
 			}
 			
 			if ($v1 =~ /([0-9])([0-9]+)\./){
-				print "R Version: $1.$2\n";
+				print "R Version: $1.$2, ";
+				
+				$::config_obj->R->send(
+					'print( paste("khcoder",R.Version()$arch,sep="") )'
+				);
+				my $arch = $::config_obj->R->read;
+				if ($arch =~ /"khcoder(.+)"/){
+					$arch = $1
+				}
+				print "$arch\n";
+				
 				$self->{R_version} = $1 * 100 + $2;
 				return $self->{R_version};
 			} else {

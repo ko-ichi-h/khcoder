@@ -227,9 +227,16 @@ row2coods <- matrix( row2coods, byrow=T, ncol=2  )
 
 # 格子のクラスター化
 if ( if_cls == 1 ){
-	library(amap)
 	library( RColorBrewer )
-	hcl <- hcluster(somm$code, method="euclidean", link="ward")
+
+	if (
+		   ( as.numeric( R.Version()$major ) >= 3 )
+		&& ( as.numeric( R.Version()$minor ) >= 1.0)
+	){                                                      # >= R 3.1.0
+		hcl <- hclust( dist(somm$code,method="euclidean"),   method="ward.D2" )
+	} else {                                                # <= R 3.0
+		hcl <- hclust( dist(somm$code,method="euclidean")^2, method="ward" )
+	}
 
 	colors <- NULL
 	if (n_cls <= 9){

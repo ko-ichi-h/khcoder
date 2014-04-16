@@ -259,26 +259,41 @@ if (exists(\"doc_length_mtr\")){
 " unless $args{method_dist} eq 'binary';
 
 	if ($args{method_dist} eq 'euclid'){
-		# 抽出語ごとに標準化
-			# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
-			# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
-			# の用をなさなくなる場合がまま見られる。
 		$r_command .= "d <- t( scale( t(d) ) )\n";
 	}
-	$r_command .= "library(amap)\n";
-	$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
-	if ($args{method_dist} eq 'euclid'){
-		$r_command .= "dj <- dj^2\n";
-	}
-	
-	$r_command .= "try( library(flashClust) )\n";
-	#$r_command .= "try( library(fastcluster) )\n";
+	# euclidの場合は抽出語ごとに標準化
+		# euclid係数を使う主旨からすると、標準化は不要とも考えられるが、
+		# 標準化を行わないと連鎖の程度が激しくなり、クラスター分析として
+		# の用をなさなくなる場合がまま見られる。
 
-	$r_command .=
-		"$par"
-		.'hcl <- hclust(dj, method="'.$args{method_mthd}.'")'."\n"
-		.&r_command_plot($old_simple_style)
+	$r_command .= "method_dist <- \"$args{method_dist}\"\n";
+	$r_command .= "method_clst <- \"$args{method_mthd}\"\n";
+
+	$r_command .= '
+library(amap)
+dj <- Dist(d,method=method_dist)
+
+if (
+	   ( as.numeric( R.Version()$major ) >= 3 )
+	&& ( as.numeric( R.Version()$minor ) >= 1.0)
+){                                                      # >= R 3.1.0
+	if (method_clst == "ward"){
+		method_clst  <-  "ward.D2"
+	}
+	hcl <- hclust(dj,method=method_clst)
+} else {                                                # <= R 3.0
+	if (method_clst == "ward"){
+		dj <- dj^2
+		hcl <- hclust(dj,method=method_clst)
+		hcl$height <- sqrt( hcl$height )
+	} else {
+		hcl <- hclust(dj,method=method_clst)
+	}
+}'
 	;
+
+	$r_command .= "\n$par";
+	$r_command .= &r_command_plot($old_simple_style);
 
 	# プロット作成
 	my $flg_error = 0;

@@ -43,14 +43,8 @@ sub _new{
 		variable => \$self->{method_method},
 		command  => sub {$self->config_dist;},
 	);
-	if ( $self->{command_f} =~ /link=\"ward\"/ ){
-		$widget_method->set_value('ward');
-	}
-	elsif ($self->{command_f} =~ /link=\"average\"/){
-		$widget_method->set_value('average');
-	}
-	elsif ($self->{command_f} =~ /link=\"complete\"/){
-		$widget_method->set_value('complete');
+	if ( $self->{command_f} =~ /method_clst <\- \"(.+)\"/ ){
+		$widget_method->set_value($1);
 	}
 	else {
 		$widget_method->set_value('clara');
@@ -74,14 +68,11 @@ sub _new{
 		command => sub {$self->config_opts;},
 	);
 
-	if ( $self->{command_f} =~ /method=\"euclid\"/ ){
-		$self->{widget_dist}->set_value('euclid');
-	}
-	elsif ($self->{command_f} =~ /method=\"binary\"/){
-		$self->{widget_dist}->set_value('binary');
+	if ( $self->{command_f} =~ /method_dist <\- \"(.+)\"/ ){
+		$self->{widget_dist}->set_value($1);
 	}
 	else {
-		$self->{widget_dist}->set_value('pearson');
+		$self->{widget_dist}->set_value('binary');
 	}
 
 	# 標準化とTF-IDF
