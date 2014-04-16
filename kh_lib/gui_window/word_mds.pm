@@ -581,12 +581,25 @@ col_base <- "mediumaquamarine"
 
 # クラスター分析
 if (n_cls > 0){
-	library( RColorBrewer )
+
 	if (cls_raw == 1){
-		hcl <- hclust( dj, method="ward" )
+		djj <- dj
 	} else {
-		hcl <- hclust( dist(cl,method="euclid")^2, method="ward" )
+		djj <- dist(cl,method="euclid")
 	}
+	
+	if (
+		   ( as.numeric( R.Version()$major ) >= 3 )
+		&& ( as.numeric( R.Version()$minor ) >= 1.0)
+	){                                                      # >= R 3.1.0
+		hcl <- hclust(djj,method="ward.D2")
+	} else {                                                # <= R 3.0
+		djj <- djj^2
+		hcl <- hclust(dj,method="ward")
+		#hcl$height <- sqrt( hcl$height )
+	}
+
+	library( RColorBrewer )
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
 	col_dot_words <- "gray40"
 	col_base <- NA
@@ -774,11 +787,24 @@ if (std_radius){ # 円の大小をデフォルメ
 # クラスター分析
 if (n_cls > 0){
 	library( RColorBrewer )
+	
 	if (cls_raw == 1){
-		hcl <- hclust( dj, method="ward" )
+		djj <- dj
 	} else {
-		hcl <- hclust( dist(cl,method="euclid")^2, method="ward" )
+		djj <- dist(cl,method="euclid")
 	}
+	
+	if (
+		   ( as.numeric( R.Version()$major ) >= 3 )
+		&& ( as.numeric( R.Version()$minor ) >= 1.0)
+	){                                                      # >= R 3.1.0
+		hcl <- hclust(djj,method="ward.D2")
+	} else {                                                # <= R 3.0
+		djj <- djj^2
+		hcl <- hclust(djj,method="ward")
+		#hcl$height <- sqrt( hcl$height )
+	}
+
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
 	col_dot_words <- "gray40"
 

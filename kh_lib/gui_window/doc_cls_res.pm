@@ -242,21 +242,6 @@ sub _new{
 	
 	my $fb = $wmw->Frame()->pack(-fill => 'x', -padx => 2, -pady => 2);
 	
-	#my @opt = (
-	#	[kh_msg->get('m_wrd'),   '_cluster_tmp_w'], # WardË¡','euc
-	#	[kh_msg->get('m_ave'), '_cluster_tmp_a'], # ·²Ê¿¶ÑË¡','euc
-	#	[kh_msg->get('m_clk'), '_cluster_tmp_c'], # ºÇ±óÎÙË¡','euc
-	#);
-	
-	#$self->{optmenu} = gui_widget::optmenu->open(
-	#	parent  => $fb,
-	#	pack    => {-side => 'left', -padx => 2},
-	#	options => \@opt,
-	#	variable => \$self->{tmp_out_var},
-	#	command  => sub {$self->renew;},
-	#);
-	#$self->{optmenu}->set_value('_cluster_tmp_w');
-	
 	$fb->Button(
 		-text => kh_msg->get('config'), # Ä´À°
 		-font => "TKFN",

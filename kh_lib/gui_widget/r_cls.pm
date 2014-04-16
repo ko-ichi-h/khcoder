@@ -15,24 +15,18 @@ sub _new{
 	$self->{cls_number}     = 'Auto'   unless defined $self->{cls_number};
 
 	if ( length($self->{r_cmd}) ){
-		if ( $self->{r_cmd} =~ /euclid/ ){
-			$self->{method_dist} = 'euclid';
+		if ( $self->{r_cmd} =~ /method_dist <\- \"(.+)\"/ ){
+			$self->{method_dist} = $1;
 		}
-		elsif  ( $self->{r_cmd} =~ /binary/ ){
+		else {
 			$self->{method_dist} = 'binary';
 		}
-		else {
-			$self->{method_dist} = 'pearson';
-		}
 
-		if ( $self->{r_cmd} =~ /ward/ ){
-			$self->{method_mthd} = 'ward';
-		}
-		elsif  ( $self->{r_cmd} =~ /average/ ){
-			$self->{method_mthd} = 'average';
+		if ( $self->{r_cmd} =~ /method_clst <\- \"(.+)\"/ ){
+			$self->{method_mthd} = $1;
 		}
 		else {
-			$self->{method_mthd} = 'complete';
+			$self->{method_mthd} = 'ward';
 		}
 
 		if ( $self->{r_cmd} =~ /n_cls <- ([0-9]+)\n/ ){

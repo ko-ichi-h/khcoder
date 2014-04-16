@@ -55,6 +55,20 @@ sub init{
 	}
 
 	# Rのパス設定
+	if (not -e $::config_obj->r_path){
+		require Devel::Platform::Info::Win32;
+		my $os_info = Devel::Platform::Info::Win32->new->get_info();
+		my $candidate = '';
+		if ($os_info->{wow64} == 1){
+			$candidate = '\dep\R\bin\x64\Rterm.exe';
+		} else {
+			$candidate = '\dep\R\bin\i386\Rterm.exe';
+		}
+		if (-e config_obj->cwd.$candidate){
+			$::config_obj->r_path(-e config_obj->cwd.$candidate)
+		}
+	}
+
 	if (
 		not -e $::config_obj->r_path
 		and -e $::config_obj->cwd.'\dep\R\bin\Rterm.exe'

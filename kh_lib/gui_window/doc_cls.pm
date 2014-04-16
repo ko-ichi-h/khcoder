@@ -403,9 +403,7 @@ sub _calc_exec{
 		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
 	}
 
-	# 類似度行列の作成（Rコマンド）
-	$r_command .= "library(amap)\n";
-	#$r_command .= "try( library(flashClust) )\n";
+	# 各種準備（Rコマンド）
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d_labels <- d_labels[rowSums(d) > 0]\n";
@@ -426,20 +424,39 @@ sub _calc_exec{
 	}
 
 	$r_command .= "d_names <- row.names(d)\n";
-	#$r_command .= "d <- NULL\n";
 	
 	# 併合水準のプロット（Rコマンド）
 	my $r_command_height = &r_command_height;
 	
 	# クラスター化（Rコマンド）
 	my $r_command_ward;
-	$r_command_ward .=
-		"dcls <- hcluster(
-			d,
-			method=\"$self->{method_dist}\",
-			link=\"$self->{method_method}\"
-		)\n"
-	;
+	
+	$r_command_ward .= "method_dist <- \"$self->{method_dist}\"\n";
+	$r_command_ward .= "method_clst <- \"$self->{method_method}\"\n";
+	
+	$r_command_ward .= '
+library(amap)
+dj <- Dist(d,method=method_dist)
+
+if (
+	   ( as.numeric( R.Version()$major ) >= 3 )
+	&& ( as.numeric( R.Version()$minor ) >= 1.0)
+){                                                      # >= R 3.1.0
+	if (method_clst == "ward"){
+		method_clst  <-  "ward.D2"
+	}
+	dcls <- hclust(dj,method=method_clst)
+} else {                                                # <= R 3.0
+	if (method_clst == "ward"){
+		dj <- dj^2
+		dcls <- hclust(dj,method=method_clst)
+		dcls$height <- sqrt( dcls$height )
+	} else {
+		dcls <- hclust(dj,method=method_clst)
+	}
+}
+';
+
 
 	$r_command_ward .= "q <- cutree(dcls,k=$cluster_number)\n";
 	
