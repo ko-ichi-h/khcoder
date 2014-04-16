@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '2b30l';
-my $V_main = "2.Beta.30";
-my $V_full = "2.Beta.30l";
+my $V = '2b31';
+my $V_main = "2.Beta.31";
+my $V_full = "2.Beta.31";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -352,7 +352,10 @@ sub win_pkg{
 	unlink("utils\\khcoder-$V-f.zip");
 	unlink("utils\\khcoder-$V-f.exe");
 	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\base\\win_pkg");
-	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder -le -overwrite");unlink("utils\\khcoder-$V-f.zip");
+	sleep 1;
+	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder -le -overwrite");
+	# wzipse32 utils\khcoder-2b31-f.zip -y -d C:\khcoder -le -overwrite
+	# unlink("utils\\khcoder-$V-f.zip");
 
 	chdir("utils");
 }
