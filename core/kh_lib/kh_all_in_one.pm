@@ -64,8 +64,8 @@ sub init{
 		} else {
 			$candidate = '\dep\R\bin\i386\Rterm.exe';
 		}
-		if (-e config_obj->cwd.$candidate){
-			$::config_obj->r_path(-e config_obj->cwd.$candidate)
+		if (-e $::config_obj->cwd.$candidate){
+			$::config_obj->r_path( $::config_obj->cwd.$candidate)
 		}
 	}
 
