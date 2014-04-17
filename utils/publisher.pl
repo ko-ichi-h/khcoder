@@ -75,7 +75,7 @@ use File::Path 'rmtree';
 &win_pkg;
 &win_upd;
 &win_strb;
-#&upload;
+&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -160,6 +160,7 @@ sub web{
 	
 	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	$t =~ s/files\/KH%20Coder\/[0-9]\.[Bb]eta\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
 	
 	open(my $fh, '>', "../pub/base/web/en_index.html") or die;
 	print $fh $t;
