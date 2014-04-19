@@ -41,7 +41,7 @@ sub _new{
 	);
 
 	$lf->Button(
-		-text    => kh_msg->get('gui_window::cod_tab->run'), # 集計
+		-text    => kh_msg->get('gui_window::cod_outtab->run'), # 集計
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->_calc;}
