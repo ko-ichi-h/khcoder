@@ -209,7 +209,8 @@ sub _run_stemmer{
 	my @words_hyoso;
 	my @words_pos;
 	
-	my ($words_hyoso, $words_pos) = $self->tokenize($t);
+	# Encode the text to input it to Stemmer
+	my ($words_hyoso, $words_pos) = $self->tokenize( encode('utf8', $t) );
 	
 	# Stemming
 	my $words_stem = $self->stemming($words_hyoso);
@@ -236,7 +237,10 @@ sub _run_stemmer{
 		my $pos = '.';
 		$pos = $words_pos->[$n] if $words_pos;
 		
-		my $line = Text::Unidecode::unidecode("$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n");
+		my $line = "$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n";
+		# Decode the out put of Stemmer
+		$line = decode('utf8', $line);
+		$line = Text::Unidecode::unidecode($line);
 		
 		# Unidecodeによって空白になってしまった場合に対応
 		if ($line =~ /^\t/o){

@@ -85,7 +85,10 @@ sub _view{
 	foreach my $i (@{$r}){
 		$self->list->add($row,-at => "$row");
 		$self->list->itemCreate($row,0,-text  => $self->gui_jchar("$i->[0]",'euc'));
-		if (length($i->[4]) > 1){
+		if (
+			    ( length($i->[1]) > 0 )
+			&!  ( $i->[0] eq $i->[1]  )
+		){
 			$self->list->itemCreate($row,1,-text  => $self->gui_jchar("$i->[1]",'euc'));
 		}
 		$self->list->itemCreate($row,2,-text  => $self->gui_jchar("$i->[2]",'euc'));

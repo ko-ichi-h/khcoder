@@ -277,13 +277,14 @@ sub _run_tagger{
 		print " .";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
-	$self->{client}->print( $t );
+	$self->{client}->print( encode('utf8', $t) );
 	my @lines = $self->{client}->getlines;
 	$self->{client}->close;
 	
 	# 結果の書き出し
 	$n = 0;
 	foreach my $i (@lines){
+		$i = decode('utf8', $i);
 		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
 			my $base  = $2;
 			my $hyoso = $3;
