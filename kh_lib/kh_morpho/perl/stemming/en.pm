@@ -21,6 +21,8 @@ sub tokenize{
 	
 	require ptb_tokenizer_en;
 	
+	#print ptb_tokenizer_en::Run($t), "\n";
+	
 	my @words_hyoso = split / /, ptb_tokenizer_en::Run($t);
 	
 	return(\@words_hyoso, undef);
