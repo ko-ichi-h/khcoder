@@ -412,6 +412,29 @@ assignInNamespace(
 	ns=asNamespace("pheatmap")
 )
 
+cluster_mat_my = function(mat, distance, method){
+	d = dist(mat, method = "euclid")
+	
+	if (
+		   ( as.numeric( R.Version()$major ) >= 3 )
+		&& ( as.numeric( R.Version()$minor ) >= 1.0)
+	){                                                      # >= R 3.1.0
+		hcl <- hclust(d,method="ward.D2")
+	} else {                                                # <= R 3.0
+		hcl <- hclust(d^2,method="ward")
+		hcl$height <- sqrt( hcl$height )
+	}
+	
+	return(hcl)
+}
+
+assignInNamespace(
+	x="cluster_mat",
+	value=cluster_mat_my,
+	ns=asNamespace("pheatmap")
+)
+
+
 if ( is.null(font_fam) == FALSE ){
 	pheatmap(
 		t(d),
@@ -426,8 +449,6 @@ if ( is.null(font_fam) == FALSE ){
 		number_format            = "%.1f",
 		legend                   = ifelse(cellnote==1, F, T),
 		fontsize_number          = 10 * cex,
-		clustering_distance_rows = "euclidean",
-		clustering_method        = "ward",
 		fontfamily               = font_fam,
 	)
 } else {
@@ -444,8 +465,6 @@ if ( is.null(font_fam) == FALSE ){
 		number_format            = "%.1f",
 		legend                   = ifelse(cellnote==1, F, T),
 		fontsize_number          = 10 * cex,
-		clustering_distance_rows = "euclidean",
-		clustering_method        = "ward",
 		#fontfamily               = font_fam,
 	)
 }
