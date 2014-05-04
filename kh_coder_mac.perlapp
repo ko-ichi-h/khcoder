@@ -1,0 +1,61 @@
+#!/usr/local/PDK/bin/perlapp-gui
+PAP-Version: 1.0
+Packer: /usr/local/PDK/bin/perlapp
+Script: kh_coder.pl
+Cwd: /Users/K/perl/core
+Add: Encode::Guess
+Add: Encode::JP::H2Z
+Add: Encode::JP
+Add: Encode::EUCJPMS
+Add: feature
+Add: YAML::Dumper
+Add: YAML::Loader
+Add: arybase
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.el[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.el]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.en[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.en]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.es[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.es]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.fr[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.fr]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.hu[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.hu]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.is[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.is]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.lv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.lv]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pl[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pl]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ro[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ro]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sk[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sk]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
+Clean: 0
+Date: 2014-05-05 01:20:09
+Debug: 
+Dependent: 0
+Dyndll: 0
+Exe: mac64
+Force: 1
+Gui: 0
+Hostname: Ks-Mac.local
+Lib: lib:kh_lib
+Manifest: 
+No-Compress: 0
+No-Logo: 0
+Runlib: 
+Shared: none
+Tmpdir: 
+Verbose: 0
+Version-Comments: 
+Version-CompanyName: 
+Version-FileDescription: 
+Version-FileVersion: 
+Version-InternalName: 
+Version-LegalCopyright: 
+Version-LegalTrademarks: 
+Version-OriginalFilename: 
+Version-ProductName: 
+Version-ProductVersion: 
+Warnings: 1
+Xclude: 0
