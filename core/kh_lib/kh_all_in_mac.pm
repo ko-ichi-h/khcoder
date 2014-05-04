@@ -5,17 +5,6 @@ use strict;
 #   All In One 版の起動・終了   #
 #-------------------------------#
 
-# All In One版では、
-# (1)「config\coder.ini」に下記の設定を加える
-#	all_in_one_pack	1
-#	sql_username	root
-#	sql_password	khc
-#	sql_host	127.0.0.1
-#	sql_port	3308
-# (2) 同梱するMySQLの設定
-#	ユーザー設定: root / khc
-#	「khc.cnf」も添付する
-
 sub init{
 	print "Executing Mac OS X 64-bit Package\n";
 
