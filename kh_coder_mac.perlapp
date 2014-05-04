@@ -31,11 +31,11 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sk[file=/Users/K/Librar
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
 Clean: 0
-Date: 2014-05-05 01:20:09
+Date: 2014-05-05 03:45:17
 Debug: 
 Dependent: 0
 Dyndll: 0
-Exe: mac64
+Exe: .mac64
 Force: 1
 Gui: 0
 Hostname: Ks-Mac.local
