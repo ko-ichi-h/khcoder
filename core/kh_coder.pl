@@ -140,6 +140,15 @@ if (
 	kh_all_in_one->init;
 }
 
+# Mac OS X版パッケージ用の初期化
+if (
+	   ($^O eq 'darwin')
+	&& $::config_obj->all_in_one_pack
+){
+	use kh_all_in_mac;
+	kh_all_in_mac->init;
+}
+
 # Rの初期化
 use Statistics::R;
 
