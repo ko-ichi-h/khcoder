@@ -218,7 +218,7 @@ sub dbh{
 
 sub list{
 	my $self = shift;
-	if (defined(@{$self->{project}})){
+	if ( @{$self->{project}} ){
 		return \@{$self->{project}};
 	} else {
 		my @hoge;
