@@ -1,0 +1,33 @@
+#!/usr/local/PDK/bin/perlapp-gui
+PAP-Version: 1.0
+Packer: /usr/local/PDK/bin/perlapp
+Script: x_mac64setup.pl
+Cwd: /Users/K/perl/core
+Clean: 0
+Date: 2014-05-05 14:47:53
+Debug: 
+Dependent: 0
+Dyndll: 0
+Exe: x_mac64setup
+Force: 1
+Gui: 0
+Hostname: Ks-Mac.local
+Manifest: 
+No-Compress: 0
+No-Logo: 0
+Runlib: 
+Shared: none
+Tmpdir: 
+Verbose: 0
+Version-Comments: 
+Version-CompanyName: 
+Version-FileDescription: 
+Version-FileVersion: 
+Version-InternalName: 
+Version-LegalCopyright: 
+Version-LegalTrademarks: 
+Version-OriginalFilename: 
+Version-ProductName: 
+Version-ProductVersion: 
+Warnings: 1
+Xclude: 0
