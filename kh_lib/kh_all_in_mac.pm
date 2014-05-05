@@ -25,12 +25,22 @@ sub init{
 		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
 	}
 
+	# Start UIM
+	my $gr1 = `ps aux | grep uim-helper`;
+	unless ($gr1 =~ /uim\-helper\-server/){
+		system '/Library/Frameworks/UIM.framework/Versions/Current/bin/uim-xim --engine=anthy &';
+		system 'xterm -e echo ok';
+	}
+
+
 	return 1;
 }
 
 sub mysql_stop{
 	mysql_exec->shutdown_db_server;
-	#system 'c:\apps\mysql\bin\mysqladmin --port=3307 --user=root --password=khcallinone shutdown';
 }
 
 1;
+
+
+__END__

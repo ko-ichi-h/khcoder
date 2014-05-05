@@ -53,7 +53,6 @@ print $fh $r;
 close ($fh);
 
 # Edit configurations of MySQL
-
 my $file_mysql = cwd.'/deps/mysql-5.6.17/khc.cnf';
 my $mysal_b = cwd.'/deps/mysql-5.6.17';
 my $mysal_d = cwd.'/deps/mysql-5.6.17/data';
