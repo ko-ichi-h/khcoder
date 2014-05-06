@@ -25,9 +25,6 @@ sub init{
 
 	# Start MySQL
 	unless (-e '/tmp/mysql.sock.khc'){
-		system 'export DYLD_FALLBACK_LIBRARY_PATH='.$::config_obj->cwd.'/deps/mysql-5.6.17/lib:$DYLD_FALLBACK_LIBRARY_PATH';
-		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} = $::config_obj->cwd.'/deps/mysql-5.6.17/lib:'.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
-		
 		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
 	}
 
