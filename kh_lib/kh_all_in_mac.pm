@@ -11,7 +11,7 @@ sub init{
 	# Chasen's path
 	unless ($::ENV{PATH} =~ /deps\/chasen:/){
 		system "export PATH=".$::config_obj->cwd."/deps/chasen:\$PATH";
-		$::ENV{PATH} = $::config_obj->cwd."/deps/chasen:".$::ENV{PATH};
+		$::ENV{PATH} = $::config_obj->cwd."/deps/chasen/bin:".$::ENV{PATH};
 	}
 
 	# R's path
@@ -22,6 +22,7 @@ sub init{
 
 	# Start MySQL
 	unless (-e '/tmp/mysql.sock.khc'){
+		system 'export DYLD_FALLBACK_LIBRARY_PATH='.$::config_obj->cwd.'/deps/mysql-5.6.17/lib:$DYLD_FALLBACK_LIBRARY_PATH';
 		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
 	}
 
