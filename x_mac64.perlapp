@@ -11,6 +11,7 @@ Add: feature
 Add: YAML::Dumper
 Add: YAML::Loader
 Add: arybase
+Add: Clipboard::
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de]
@@ -32,7 +33,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Librar
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
 Bind: auto/DBD/mysql/mysql.bundle[file=/usr/local/ActivePerl-5.16/site/lib/auto/DBD/mysql/mysql.bundle,extract]
 Clean: 0
-Date: 2014-05-06 19:30:40
+Date: 2014-05-07 16:29:55
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -45,8 +46,8 @@ Manifest:
 No-Compress: 0
 No-Logo: 0
 Runlib: 
-Shared: none
-Tmpdir: 
+Shared: private
+Tmpdir: config
 Verbose: 0
 Version-Comments: 
 Version-CompanyName: 
