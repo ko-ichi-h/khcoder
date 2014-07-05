@@ -124,7 +124,12 @@
   sub cat_dir { 
     my $CLASS_HPLOO ;
     $CLASS_HPLOO = $this if defined $this ;
-    my $this = UNIVERSAL::isa($_[0],'UNIVERSAL') ? shift : $CLASS_HPLOO ;
+    
+    # Perl 5.18Ç≈ÇÕÇ»Ç∫Ç©UNIVERSAL::isa()Ç™1Çï‘Ç∑ÇΩÇﬂÇ…ÅAãììÆÇ™Ç®Ç©
+    # ÇµÇ≠Ç»Ç¡ÇƒÇ¢ÇΩÇÃÇ≈Åu&& ref($_[0])ÅvÇí«â¡
+    my $this = UNIVERSAL::isa($_[0],'UNIVERSAL') && ref($_[0]) # kh
+    	? shift : $CLASS_HPLOO ;                               # kh
+    
     my $class = ref($this) || __PACKAGE__ ;
     $CLASS_HPLOO = undef ;
     

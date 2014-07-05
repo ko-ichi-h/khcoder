@@ -183,6 +183,7 @@ if ($::config_obj->{R}){
 } else {
 	$::config_obj->{R} = 0;
 }
+
 chdir ($::config_obj->{cwd});
 $::config_obj->R_version;
 
