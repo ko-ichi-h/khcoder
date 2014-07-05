@@ -238,7 +238,7 @@ sub pdfs{
 	move('khcoder_manual_b5.pdf', 'khcoder_manual.pdf');
 
 	# security
-	system("pdftk khcoder_manual.pdf output out1.pdf owner_pw hoge allow printing screenreaders");
+	system("pdftk khcoder_manual.pdf output out1.pdf owner_pw $pass allow printing screenreaders");
 	move('out1.pdf', 'khcoder_manual.pdf');
 	system("pdftk khcoder_tutorial.pdf output out2.pdf owner_pw $pass allow printing screenreaders");
 	move('out2.pdf', 'khcoder_tutorial.pdf');
