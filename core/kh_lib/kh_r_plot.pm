@@ -175,7 +175,7 @@ sub new{
 			window => \$::main_gui->mw,
 			msg    =>
 				kh_msg->get('faliled_in_plotting') # 推定または描画に失敗しました\n\n
-				.Jcode->new($self->{r_msg})->euc
+				.gui_window->gui_jchar($self->{r_msg})
 		);
 		return 0;
 	}
