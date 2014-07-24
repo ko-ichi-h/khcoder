@@ -7,7 +7,7 @@ sub _open{
 	my $t = $self->target;
 
 	my $cmd;
-	if ($t =~ /^http/ or $t =~ /\.htm$/ or $t =~ /\.html$/ ){
+	if ($t =~ /^http/ or $t =~ /\.htm$/ or $t =~ /\.html$/ or $t =~ /\.png$/){
 		$cmd = $::config_obj->app_html;
 	}
 	elsif($t =~ /\.csv$/ || $t =~ /\.xls$/){
