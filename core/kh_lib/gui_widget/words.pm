@@ -347,5 +347,17 @@ sub hinshi{
 	my $self = shift;
 	return $self->{hinshi_obj}->selected;
 }
+sub params{
+	my $self = shift;
+	return (
+		tani2  => $self->tani,
+		max    => $self->max,
+		min    => $self->min,
+		max_df => $self->max_df,
+		min_df => $self->min_df,
+		hinshi => $self->hinshi,
+	);
+}
+
 
 1;

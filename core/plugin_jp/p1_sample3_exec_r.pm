@@ -63,6 +63,15 @@ sub exec{
 	my $t2 = $::config_obj->R->read();
 	$t .= "\n\nsessionInfo():\n\n$t2";
 
+	# Rコマンドの実行 3
+	$::config_obj->R->send('
+		print( getwd() )
+	');
+
+	# 実行結果の取得 3
+	my $t3 = $::config_obj->R->read();
+	$t .= "\n\ngetwd():\n\n$t3";
+
 	# 画面表示
 	$mw->messageBox(
 		-icon    => 'info',
