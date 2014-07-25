@@ -304,6 +304,11 @@ sub save{
 	$path =~ tr/\\/\//;
 	$path = Jcode->new($path,'euc')->$icode unless $icode eq 'ascii';
 	
+	use File::Spec;
+	unless ( File::Spec->file_name_is_absolute($path) ){
+		$path = File::Spec->rel2abs( $path );
+	} 
+	
 	$self->clear_env;
 	
 	if ($path =~ /\.r$/i){

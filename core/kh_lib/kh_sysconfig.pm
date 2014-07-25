@@ -924,6 +924,10 @@ sub cwd{
 	$c = $self->os_path($c);
 	return $c;
 }
+sub pwd{
+	my $self = shift;
+	return $self->{cwd};
+}
 
 
 sub icon_image_file{
