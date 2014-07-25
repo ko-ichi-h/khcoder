@@ -737,10 +737,18 @@ sub make{
 			-tearoff=>'no'
 		);
 
+	my @plugins;
 	my $read_each = sub {
 		return if(-d $File::Find::name);
 		return unless $_ =~ /.+\.pm/;
 		substr($_, length($_) - 3, length($_)) = '';
+		push @plugins, $_;
+	};
+	use File::Find;
+	push @INC, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang;
+	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
+
+	foreach (@plugins){
 		unless (eval "use $_; 1"){
 			my $err = $@;
 			gui_errormsg->open(
@@ -751,6 +759,10 @@ sub make{
 			return 0;
 		}
 		my $conf = $_->plugin_config;
+		unless ( defined($conf) ){
+			next;
+		}
+		
 		my $cu = $_;
 		my $mother = $f_p;
 		
@@ -789,11 +801,9 @@ sub make{
 			$self->{'t_plugin_'.$_} = $tmp_menu;
 			push @menu1, 't_plugin_'.$_;
 		}
-	};
+	}
 
-	use File::Find;
-	push @INC, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang;
-	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
+
 
 	$self->{t_sql_select} = $f->command(
 			-label => kh_msg->get('exec_sql'),#gui_window->gui_jchar('SQL文の実行'),

@@ -17,7 +17,7 @@ Copyright (C) 2001-2013 樋口耕一 <http://koichi.nihon.to/psnl>
 $| = 1;
 
 use strict;
-use Cwd;
+
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
 $kh_version = "2.beta.31b";
@@ -30,6 +30,7 @@ BEGIN {
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
 	# for Windows [1]
+	use Cwd;
 	if ($^O eq 'MSWin32'){
 		# Cwd.pmの上書き
 		no warnings 'redefine';
@@ -129,7 +130,7 @@ use gui_window;
 
 # Say hello
 print "This is KH Coder $kh_version on $^O.\n";
-print "CWD: ", $config_obj->cwd, "\n";
+print "CWD: ", $config_obj->pwd, "\n";
 
 # Windows版パッケージ用の初期化
 if (
