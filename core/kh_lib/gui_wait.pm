@@ -34,7 +34,7 @@ sub start{
 		require Tk::Icon;
 		$win->setIcon(-file => Tk->findINC('1.ico') );
 	} else {
-		$win->Icon(-image => 'window_icon');
+		eval'$win->Icon(-image => \'window_icon\')';
 		$win->Show;
 	}
 
