@@ -350,6 +350,7 @@ sub hinshi{
 sub params{
 	my $self = shift;
 	return (
+		tani   => $self->tani,
 		tani2  => $self->tani,
 		max    => $self->max,
 		min    => $self->min,
