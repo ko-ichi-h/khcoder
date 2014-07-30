@@ -74,7 +74,7 @@ use File::Path 'rmtree';
 &source_tgz;
 &win_pkg;
 &win_upd;
-&win_strb;
+#&win_strb;
 &upload;
 
 sub upload{
@@ -101,7 +101,7 @@ sub upload{
 	$sftp->mkdir($V_main);
 	$sftp->setcwd($V_main);
 	foreach my $i (
-		"khcoder-$V-strb.zip",
+		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
 		"khcoder-$V-s.zip",
 		"khcoder-$V-f.exe",
