@@ -52,7 +52,7 @@ BEGIN {
 	}
 
 	# モジュールのパスを追加
-	push @INC, cwd.'/kh_lib';
+	unshift @INC, cwd.'/kh_lib';
 
 	# for Windows [2]
 	if ($^O eq 'MSWin32'){
