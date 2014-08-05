@@ -58,8 +58,11 @@ sub init{
 	if (not -e $::config_obj->r_path){
 		require Devel::Platform::Info::Win32;
 		my $os_info = Devel::Platform::Info::Win32->new->get_info();
+		#use Data::Dumper;
+		#print Dumper $os_info;
+		
 		my $candidate = '';
-		if ($os_info->{wow64} == 1){
+		if ( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1)){
 			$candidate = '\dep\R\bin\x64\Rterm.exe';
 		} else {
 			$candidate = '\dep\R\bin\i386\Rterm.exe';
