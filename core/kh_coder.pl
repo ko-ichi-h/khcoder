@@ -44,7 +44,7 @@ BEGIN {
 			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
 			$ENV{'PWD'} =~ s:\\:/:g ;
 			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;
-			#print "hoge\n";
+			print "hoge\n";
 			return $ENV{'PWD'};
 		};
 		*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = *Cwd::_NT_cwd = \&Cwd::_win32_cwd;
