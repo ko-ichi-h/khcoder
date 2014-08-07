@@ -123,11 +123,6 @@ if ( exists("saving_emf") || exists("saving_eps") ){
 
 library(grid)
 library(ggplot2)
-ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
-ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
-ggplot2_version <- unlist(     ggplot2_version )
-ggplot2_version <- as.numeric( ggplot2_version )
-ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
 
 font_fam <- NULL
 if ( is.null(dev.list()) ){
@@ -142,7 +137,7 @@ if ( is.null(font_fam) == FALSE ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 		font_fam <- "HiraKaku"
 	} else {
-		font_fam <- "'.$::config_obj->font_plot.'"
+		font_fam <- "Meiryo UI"
 	}
 }
 
@@ -165,6 +160,7 @@ ggfluctuation_my <- function (mat, rsd){
 		result = table[,3],
 		rsd    = table[,4]
 	)
+	table <- subset(table, result > 0)
 
 	# set up the plot
 	p <- ggplot(
@@ -182,14 +178,14 @@ ggfluctuation_my <- function (mat, rsd){
 		p <- p + geom_point(
 			shape=ifelse(bubble_shape==0, 15, 16),
 			alpha=alpha_value,
-			legend = FALSE
+			show_guide = FALSE
 		)
 	} else {
 		p <- p + geom_point(
 			shape=ifelse(bubble_shape==0, 15, 16),
 			colour="gray30",
 			alpha=alpha_value,
-			legend = FALSE
+			show_guide = FALSE
 		)
 	}
 
@@ -198,7 +194,7 @@ ggfluctuation_my <- function (mat, rsd){
 		p <- p + scale_color_continuous("Residual:",
 			high = "black",
 			low  = "gray95",
-			legend = FALSE
+			guide="none"
 		)
 	} else {
 		p <- p + scale_color_gradient2("Residual:",
@@ -206,7 +202,7 @@ ggfluctuation_my <- function (mat, rsd){
 			low  = "#87CEFA",
 			#mid  = cols[5],
 			na.value = "gray30",
-			legend = FALSE
+			guide="none"
 		)
 	}
 
@@ -216,28 +212,19 @@ ggfluctuation_my <- function (mat, rsd){
 		colour="black"
 	)
 
-
 	# cofigure the legend
 	bt <- floor( floor(max(table$result)) / 3 )
 	breaks <- c(bt, 2 * bt, 3 * bt)
-	if (ggplot2_version >= 9){
-		p <- p + scale_area(
-			"Percent:",
-			limits = c(0.05, ceiling(max(table$result))),
-			#to=c(0,15 * bubble_size),
-			range=c(0,15 * bubble_size),
-			breaks = breaks
-		)
-	} else {
-		p <- p + scale_area(
-			"Percent:",
-			limits = c(0.05, ceiling(max(table$result))),
-			to=c(0,15 * bubble_size),
-			#range=c(0,15 * bubble_size),
-			breaks = breaks
-		)
-	}
-	
+
+	p <- p + scale_size_area(
+		"Percent:",
+		limits = c(0.05, ceiling(max(table$result))),
+		#to=c(0,15 * bubble_size),
+		#range=c(0,15 * bubble_size),
+		max_size = 15*bubble_size,
+		breaks = breaks
+	)
+
 	# labels of axis
 	p <- p + scale_x_discrete(
 		breaks = 1:ncol(mat),
@@ -253,21 +240,21 @@ ggfluctuation_my <- function (mat, rsd){
 	# other cofigs of the plot
 	nx <- length(levels(table$x))
 	ny <- length(levels(table$y))
-	p <- p + opts(
+	p <- p + theme(
 		#aspect.ratio = ny/nx,
-		legend.key=theme_rect(fill="gray96",colour = NA),
+		legend.key=element_rect(fill="gray96",colour = NA),
 		plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
-		axis.title.y     = theme_blank(),
-		axis.title.x     = theme_blank(),
-		axis.ticks       = theme_blank(),
-		axis.text.x=theme_text(
+		axis.title.y     = element_blank(),
+		axis.title.x     = element_blank(),
+		axis.ticks       = element_blank(),
+		axis.text.x=element_text(
 			size=12 * cex,
 			colour="black",
 			angle=90,
 			hjust=1
 			#family=font_fam
 		),
-		axis.text.y=theme_text(
+		axis.text.y=element_text(
 			size=12 * cex,
 			colour="black",
 			hjust=1
@@ -276,15 +263,15 @@ ggfluctuation_my <- function (mat, rsd){
 	)
 
 	if ( is.null(font_fam) == FALSE ){
-		p <- p + opts(
-			axis.text.x=theme_text(
+		p <- p + theme(
+			axis.text.x=element_text(
 				size=12 * cex,
 				colour="black",
 				angle=90,
 				hjust=1,
 				family=font_fam
 			),
-			axis.text.y=theme_text(
+			axis.text.y=element_text(
 				size=12 * cex,
 				colour="black",
 				hjust=1,

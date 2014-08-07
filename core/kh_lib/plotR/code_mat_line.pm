@@ -172,19 +172,19 @@ p <- p + scale_y_continuous(
 	limits = c(0, ceiling( max(table$y) * 1.01 ))
 )
 
-p <- p + opts(
-	axis.title.x     = theme_blank(),
-	axis.title.y     = theme_blank(),
-	axis.ticks       = theme_blank(),
+p <- p + theme(
+	axis.title.x     = element_blank(),
+	axis.title.y     = element_blank(),
+	axis.ticks       = element_blank(),
 	plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
-	axis.text.x=theme_text(
+	axis.text.x=element_text(
 		size=11 * cex,
 		colour="black",
 		angle=90,
 		hjust=1
 		#family=font_fam
 	),
-	axis.text.y=theme_text(
+	axis.text.y=element_text(
 		size=11 * cex,
 		colour="black",
 		hjust=1
@@ -193,21 +193,21 @@ p <- p + opts(
 )
 
 if ( is.null(font_fam) == FALSE ){
-	p <- p + opts(
-		axis.text.x=theme_text(
+	p <- p + theme(
+		axis.text.x=element_text(
 			size=12 * cex,
 			colour="black",
 			angle=90,
 			hjust=1,
 			family=font_fam
 		),
-		axis.text.y=theme_text(
+		axis.text.y=element_text(
 			size=12 * cex,
 			colour="black",
 			hjust=1,
 			family=font_fam
 		),
-		legend.text=theme_text(
+		legend.text=element_text(
 			size=12 * cex,
 			colour="black",
 			family=font_fam
