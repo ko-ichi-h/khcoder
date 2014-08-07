@@ -1180,8 +1180,9 @@ if (show_bar == 1){
 		axis.text.y = element_blank()
 	)
 	p <- p + theme(
-		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
+		plot.margin = unit(c(0,0,0,0), "lines")
 	)
+
 
 	#freq <- NULL
 	#for (i in 1:nrow(d)) {
@@ -1227,9 +1228,10 @@ if (show_bar == 1){
 		panel.grid.minor = element_blank()
 	)
 
-	mgs <- -0.25
-	mgs <- mgs * 3
-
+	margin <- 0.002 * nrow(d) + 0.00001 * nrow(d)^2 - 0.12
+	p2 <- p2 + theme(
+		plot.margin = unit(c(margin,-0.75,margin,0), "lines")
+	)
 
 	grid.newpage()
 	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
