@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '2b31';
+my $V = '2b31b';
 my $V_main = "2.Beta.31";
-my $V_full = "2.Beta.31";
+my $V_full = "2.Beta.31b";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -75,7 +75,7 @@ use File::Path 'rmtree';
 &win_pkg;
 &win_upd;
 #&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -144,6 +144,7 @@ sub web{
 	# index.html
 	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
 	my $t = '';
+	$r0->is_success or die;
 	$t = $r0->content;
 	
 	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
@@ -156,6 +157,7 @@ sub web{
 	# en/index.html
 	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
 	my $t = '';
+	$r2->is_success or die;
 	$t = $r2->content;
 	
 	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
@@ -169,6 +171,7 @@ sub web{
 	# dl.html
 	my $r1 = $ua->get('http://khc.sourceforge.net/dl.html') or die;
 	$t = '';
+	$r1->is_success or die;
 	$t = $r1->content;
 
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                 # 日付
@@ -411,6 +414,11 @@ sub source_tgz{
 		'core/auto_test.pl',
 		'core/kh_coder.perlapp',
 		'core/make_exe.bat',
+		'core/x_mac64.perlapp',
+		'core/x_mac64.scpt',
+		'core/x_mac64setup.perlapp',
+		'core/x_mac64setup.pl',
+		'core/x_mac64setup.scpt',
 	);
 
 	foreach my $i (@rm_dir){
