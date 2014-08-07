@@ -1151,70 +1151,35 @@ p <- p + coord_flip()
 p <- p + scale_x_reverse( expand = c(0.01,0.01) )
 p <- p + scale_y_continuous(expand = c(0.25,0))
 
-p <- p + ggplot2::opts(
-	axis.title.y = theme_blank(),
-	axis.title.x = theme_blank(),
-	axis.ticks   = theme_segment(colour="gray60"),
-	axis.text.y  = theme_text(size=12,colour="gray40"),
-	axis.text.x  = theme_text(size=12,colour="gray40"),
+p <- p + theme(
+	axis.title.y = element_blank(),
+	axis.title.x = element_blank(),
+	axis.ticks   = element_line(colour="gray60"),
+	axis.text.y  = element_text(size=12,colour="gray40"),
+	axis.text.x  = element_text(size=12,colour="gray40"),
 	legend.position="none"
 )
 
 if (n_cls <= 1){
-	p <- p + ggplot2::opts(
-		axis.text.y  = theme_blank(),
-		axis.text.x  = theme_text(size=12,colour="black"),
-		axis.ticks = theme_segment(colour="black"),
-		#panel.grid.major = theme_blank(),
-		#panel.grid.minor = theme_blank(),
-		#panel.background = theme_blank(),
-		axis.line = theme_segment(colour = "black")
+	p <- p + theme(
+		axis.text.y  = element_blank(),
+		axis.text.x  = element_text(size=12,colour="black"),
+		axis.ticks = element_line(colour="black"),
+		#panel.grid.major = element_blank(),
+		#panel.grid.minor = element_blank(),
+		#panel.background = element_blank(),
+		axis.line = element_line(colour = "black")
 	)
 }
-
-ggplot2_version <- sessionInfo()$otherPkgs$ggplot2$Version
-ggplot2_version <- strsplit(x=ggplot2_version, split=".", fixed=T)
-ggplot2_version <- unlist(     ggplot2_version )
-ggplot2_version <- as.numeric( ggplot2_version )
-ggplot2_version <- ggplot2_version[1] * 10 + ggplot2_version[2]
-
-
-if (ggplot2_version <= 8){
-	# Save the original definition of guide_grid
-	guide_grid_orig <- guide_grid
-
-	# Create the replacement function
-	guide_grid_no_hline <- function(theme, x.minor, x.major, y.minor, y.major) {
-	  ggname("grill", grobTree(
-	    theme_render(theme, "panel.background"),
-	    theme_render(
-	      theme, "panel.grid.minor", name = "x",
-	      x = rep(x.minor, each=2), y = rep(0:1, length(x.minor)),
-	      id.lengths = rep(2, length(x.minor))
-	    ),
-	    theme_render(
-	      theme, "panel.grid.major", name = "x",
-	      x = rep(x.major, each=2), y = rep(0:1, length(x.major)),
-	      id.lengths = rep(2, length(x.major))
-	    )
-	  ))
-	}
-
-	# Assign the function inside ggplot2
-	assignInNamespace("guide_grid", guide_grid_no_hline, pos="package:ggplot2")
-} else {
-	p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
-}
-
 
 show_bar <- 1
 
 if (show_bar == 1){
-	p <- p + ggplot2::opts(
-		axis.ticks  = theme_blank(),
-		axis.text.y = theme_blank()
+	p <- p + theme(
+		axis.ticks  = element_blank(),
+		axis.text.y = element_blank()
 	)
-	p <- p + opts(
+	p <- p + theme(
 		plot.margin = unit(c(0.25,0.25,0.25,0), "lines")
 	)
 
@@ -1237,6 +1202,8 @@ if (show_bar == 1){
 	p2 <- NULL
 	p2 <- ggplot()
 	p2 <- p2 + geom_bar(
+		stat="identity",
+		position = "identity",
 		width=0.75,
 		data=bard,
 		aes(
@@ -1248,25 +1215,21 @@ if (show_bar == 1){
 	p2 <- p2 + coord_flip()
 	p2 <- p2 + scale_y_reverse( expand = c(0,0))
 	p2 <- p2 + scale_x_discrete( expand = c(0.005,0.005) )
-	p2 <- p2 + ggplot2::opts(
-		axis.title.y     = theme_blank(),
-		axis.title.x     = theme_blank(),
-		axis.ticks       = theme_blank(),
-		axis.text.y      = theme_blank(),
-		axis.text.x      = theme_text(size=12,colour="white"),
+	p2 <- p2 + theme(
+		axis.title.y     = element_blank(),
+		axis.title.x     = element_blank(),
+		axis.ticks       = element_blank(),
+		axis.text.y      = element_blank(),
+		axis.text.x      = element_text(size=12,colour="white"),
 		legend.position  = "none",
-		panel.background = theme_rect(fill="white", colour="white"),
-		panel.grid.major = theme_blank(),
-		panel.grid.minor = theme_blank()
+		panel.background = element_rect(fill="white", colour="white"),
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank()
 	)
 
 	mgs <- -0.25
-	if (ggplot2_version >= 9){
-		mgs <- mgs * 3
-	}
-	p2 <- p2 + opts(
-		plot.margin = unit(c(0.25,mgs,0.25,0), "lines")
-	)
+	mgs <- mgs * 3
+
 
 	grid.newpage()
 	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
@@ -1285,9 +1248,6 @@ if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
 	}
 }
 
-if (ggplot2_version <= 8){
-	assignInNamespace("guide_grid", guide_grid_orig, pos="package:ggplot2")
-}
 
 ';
 return $t;
