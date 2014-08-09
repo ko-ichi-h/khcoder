@@ -687,6 +687,7 @@ sub r_plot_cmd_p3{
 return 
 '
 # 初期配置
+lay <- NULL
 if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	d4l <- as.dist( shortest.paths(n2) )
 	if ( min(d4l) < 1 ){
@@ -695,27 +696,27 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	if ( max(d4l) == Inf){
 		d4l[d4l == Inf] <- vcount(n2)
 	}
-	lay <- cmdscale( d4l, k=2 )
-	lay <- round(lay, digits=5)
-	check4fr <- function(d){
-		chk <- 0
-		for (i in combn( length(d[,1]), 2, simplify=F ) ){
-			if (
-				   d[i[1],1] == d[i[2],1]
-				&& d[i[1],2] == d[i[2],2]
-			){
-				return( i[1] )
+	try( lay <- cmdscale( d4l, k=2 ), silent=TRUE )
+	if ( is.null(lay) == F ){
+		lay <- round(lay, digits=5)
+		check4fr <- function(d){
+			chk <- 0
+			for (i in combn( length(d[,1]), 2, simplify=F ) ){
+				if (
+					   d[i[1],1] == d[i[2],1]
+					&& d[i[1],2] == d[i[2],2]
+				){
+					return( i[1] )
+				}
 			}
+			return( NA )
 		}
-		return( NA )
+		while ( is.na(check4fr(lay)) == 0 ){
+			mv <-  check4fr(lay)
+			lay[mv,1] <- lay[mv,1] + 0.001
+			#print( paste( "Moved:", mv ) )
+		}
 	}
-	while ( is.na(check4fr(lay)) == 0 ){
-		mv <-  check4fr(lay)
-		lay[mv,1] <- lay[mv,1] + 0.001
-		#print( paste( "Moved:", mv ) )
-	}
-} else {
-	lay <- NULL
 }
 
 # 配置
