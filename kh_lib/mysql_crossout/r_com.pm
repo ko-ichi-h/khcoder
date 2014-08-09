@@ -32,8 +32,16 @@ sub run{
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	$self->{r_command}  = "d <- NULL\n";
-	$self->{r_command} .= "d <- matrix( c(";
+	# データを保存するファイル名を決める
+	my $file = $::project_obj->file_TempR;
+	open my $fh, '>', $file or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $file,
+		);
+	
+	print $fh "d <- NULL\n";
+	print $fh "d <- matrix( c(";
 	
 	my $row_names = '';
 	
@@ -71,7 +79,7 @@ sub out2{                               # length作製をする
 					}
 				}
 				chop $temp;
-				$self->{r_command} .= "$temp,\n";
+				print $fh "$temp,\n";
 				$current{length_c} = "0" unless length($current{length_c});
 				$current{length_w} = "0" unless length($current{length_w});
 				$length .= "$current{length_c},$current{length_w},";
@@ -119,7 +127,7 @@ sub out2{                               # length作製をする
 	++$num_r;
 	my $ncol = @{$self->{wList}} + 1;
 	chop $temp;
-	$self->{r_command} .= "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+	print $fh "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
 	$current{length_c} = "0" unless length($current{length_c});
 	$current{length_w} = "0" unless length($current{length_w});
 	$length .= "$current{length_c},$current{length_w},";
@@ -128,30 +136,41 @@ sub out2{                               # length作製をする
 	# データ整形
 	if ($self->{rownames}){
 		if ($self->{midashi}){
-			$self->{r_command} .= "row.names(d) <- c($row_names)\n";
+			print $fh "row.names(d) <- c($row_names)\n";
 		} else {
-			$self->{r_command} .= "row.names(d) <- d[,1]\n";
+			print $fh "row.names(d) <- d[,1]\n";
 		}
 	}
 
-	$self->{r_command} .= "d <- d[,-1]\n";
+	print $fh "d <- d[,-1]\n";
 
-	$self->{r_command} .= "colnames(d) <- c(";
+	my $colnames = '';
+	$colnames .= "colnames(d) <- c(";
 	foreach my $i (@{$self->{wList}}){
 		my $t = $self->{wName}{$i};
 		$t =~ s/"/ /g;
-		$self->{r_command} .= "\"$t\",";
+		$colnames .= "\"$t\",";
 	}
-	chop $self->{r_command};
-	$self->{r_command} .= ")\n";
+	chop $colnames;
+	$colnames .= ")\n";
+	print $fh $colnames;
 
 	chop $length;
 	$length .= "), ncol=2, byrow=T)\n";
 	$length .= "colnames(doc_length_mtr) <- c(\"length_c\", \"length_w\")\n";
-	$self->{r_command} .= $length;
+	print $fh $length;
+	close($fh);
 
 	$self->{num_r} = $num_r;
-
+	
+	$self->{r_command} = "source(\"$file\")\n";
+	
+	if ($::config_obj->os eq 'win32'){
+		$self->{r_command} = Jcode->new($self->{r_command}, 'sjis')->euc;
+		$self->{r_command} =~ s/\\/\//g;
+		kh_jchar->to_sjis($file);
+	}
+	
 	return $self;
 }
 
