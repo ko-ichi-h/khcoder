@@ -7,6 +7,7 @@ use kh_r_plot;
 sub new{
 	my $class = shift;
 	my %args = @_;
+	@_ = ();
 
 	#print "$class\n";
 
@@ -16,6 +17,7 @@ sub new{
 	kh_r_plot->clear_env;
 
 	my $r_command = $args{r_command};
+	$args{r_command} = '';
 
 	# パラメーター設定部分
 	if ( $args{n_or_j} eq 'j'){

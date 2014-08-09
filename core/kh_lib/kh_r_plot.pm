@@ -554,11 +554,27 @@ sub _save_r{
 		}
 	}
 	
+	
 	open (OUTF,">$path") or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $path,
 		);
+	
+	# データをファイル内に記述
+	if ( $t =~ /source\(\"(.+)\"\)/ ){
+		my $file_data = $1;
+		open my $fhr, '<', $file_data or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $file_data,
+			);
+		while (<$fhr>){
+			print OUTF $_;
+		}
+		close $fhr;
+		$t =~ s/source\(\"(.+)\"\)//;
+	}
 	print OUTF $t,"\n";
 	close (OUTF);
 	
