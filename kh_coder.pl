@@ -178,6 +178,8 @@ if ($::config_obj->{R}){
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_MEASUREMENT",locale="C")');
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_MESSAGES",locale="C")');
 	}
+	$::config_obj->{R}->send('dummy_d <- matrix(1:9, nrow=3, ncol=3)');
+	$::config_obj->{R}->send('dummy_r <- cmdscale(dist(dummy_d), k=1)');
 	$::config_obj->{R}->read();
 	$::config_obj->{R}->output_chk(1);
 } else {
