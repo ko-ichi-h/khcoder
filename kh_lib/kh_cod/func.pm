@@ -232,23 +232,35 @@ sub out2r_selected{
 	$sql .= "ORDER BY ".$self->tani.".id";
 	#print "$sql\n";
 	
+	# データを保存するファイル
+	my $file = $::project_obj->file_TempR;
+	open my $fh, '>', $file or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $file,
+		);
+	
 	# データ取り出し
-	my $r_command = '';
+	print $fh "d <- matrix( c(";
 	my $nrow = 0;
 	my $h = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $h->fetch){
-		my $current;
-		foreach my $j (@{$i}){
-			$r_command .= "$j,";
-		}
+		print $fh "," if $nrow;
+		print $fh join(',', @{$i}), "\n";
 		++$nrow;
 	}
-	chop $r_command;
 	
 	my $ncol = @{$selected};
-	$r_command =
-		"d <- matrix( c($r_command), ncol=$ncol, nrow=$nrow, byrow=TRUE)";
-	#print "$r_command\n";
+	print $fh "), ncol=$ncol, nrow=$nrow, byrow=TRUE)\n";
+	close ($fh);
+
+	# Rコマンド
+	my $r_command = "source(\"$file\")\n";
+	if ($::config_obj->os eq 'win32'){
+		$r_command = Jcode->new($r_command, 'sjis')->euc;
+		$r_command =~ s/\\/\//g;
+		kh_jchar->to_sjis($file);
+	}
 	
 	return $r_command;
 }

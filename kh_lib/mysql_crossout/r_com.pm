@@ -32,7 +32,7 @@ sub run{
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	# データを保存するファイル名を決める
+	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
 	open my $fh, '>', $file or
 		gui_errormsg->open(
@@ -162,15 +162,16 @@ sub out2{                               # length作製をする
 	close($fh);
 
 	$self->{num_r} = $num_r;
-	
+
+	# Rコマンド
 	$self->{r_command} = "source(\"$file\")\n";
-	
+
 	if ($::config_obj->os eq 'win32'){
 		$self->{r_command} = Jcode->new($self->{r_command}, 'sjis')->euc;
 		$self->{r_command} =~ s/\\/\//g;
 		kh_jchar->to_sjis($file);
 	}
-	
+
 	return $self;
 }
 

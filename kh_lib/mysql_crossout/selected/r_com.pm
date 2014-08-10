@@ -51,32 +51,53 @@ sub run{
 		++$d->{$i->[0]}{$i->[1]};
 	}
 
+	# データを保存するファイル
+	my $file = $::project_obj->file_TempR;
+	open my $fh, '>', $file or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $file,
+		);
+
 	# R用のデータ作成
 	my $nrow = 0;
 	my $ncol = @word_ids;
-	my $r_cmd = "d <- matrix( c(";
+	print $fh "d <- matrix( c(\n";
 	foreach my $i ( sort { $a <=> $b } keys %{$d} ){
+		print $fh ',' if $nrow;
+		my $cu = '';
 		foreach my $h (@word_ids){
 			if ($d->{$i}{$h}){
-				$r_cmd .= "1,";
+				$cu .= "1,";
 			} else {
-				$r_cmd .= "0,";
+				$cu .= "0,";
 			}
 		}
-		$r_cmd .= "\n";
+		chop $cu;
+		print $fh $cu, "\n";
 		++$nrow;
 	}
-	chop $r_cmd;
-	chop $r_cmd;
-	$r_cmd .= "), ncol=$nrow, nrow=$ncol)\n";
+	print $fh "), ncol=$nrow, nrow=$ncol)\n";
 	
-	$r_cmd .= "rownames(d) = c(";
+	print $fh "rownames(d) = c(";
+	my $t;
 	foreach my $i (@word_nms){
-		$r_cmd .= "\"$i\",";
+		$t .= "\"$i\",";
 	}
-	chop $r_cmd;
-	$r_cmd .= ")\n";
+	chop $t;
+	$t .= ")\n";
+	print $fh $t;
+	close ($fh);
 	#$r_cmd .= "# END: DATA\n\n";
+
+	# Rコマンド
+	my $r_cmd = "source(\"$file\")\n";
+
+	if ($::config_obj->os eq 'win32'){
+		$r_cmd = Jcode->new($r_cmd, 'sjis')->euc;
+		$r_cmd =~ s/\\/\//g;
+		kh_jchar->to_sjis($file);
+	}
 
 	return $r_cmd;
 }
