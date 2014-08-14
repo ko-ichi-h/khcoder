@@ -38,13 +38,20 @@ sub _run_morpho{
 		exit;
 	}
 	
-	my $cmd_line  =
-		 'java  -mx300m  -cp "'
-		.$::config_obj->stanf_jar_path
-		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
-		.$::config_obj->stanf_tagger_path
-		.'"';
-	
+	my $cmd_line  = 'java -mx300m -cp ';
+	if ($::config_obj->stanf_jar_path =~ / /){
+		$cmd_line .= '"'.$::config_obj->stanf_jar_path.'"';
+	} else {
+		$cmd_line .= $::config_obj->stanf_jar_path;
+	}
+	$cmd_line .= ' edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model ';
+	if ($::config_obj->stanf_tagger_path =~ / /){
+		$cmd_line .= '"'.$::config_obj->stanf_tagger_path.'"';
+	} else {
+		$cmd_line .= $::config_obj->stanf_tagger_path;
+	}
+	#print "cmdline: $cmd_line\n";
+
 	require Proc::Background;
 	my $process = Proc::Background->new($cmd_line)
 		|| $self->Exec_Error("Wi32::Process can not start");
@@ -248,6 +255,7 @@ sub _run_tagger{
 		print " .";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
+	### $self->{client}->print(  $t ); # fixed at 2b31b
 	$self->{client}->print( encode('utf8', $t) );
 	my @lines = $self->{client}->getlines;
 	$self->{client}->close;
@@ -255,7 +263,7 @@ sub _run_tagger{
 	# 結果の書き出し
 	$n = 0;
 	foreach my $i (@lines){
-		$i = decode('utf8', $i);
+		$i = decode('utf8', $i); # fixed at 2b31b
 		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
 			my $base  = $2;
 			my $hyoso = $3;
