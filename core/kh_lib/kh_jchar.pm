@@ -156,8 +156,8 @@ sub check_code_en{
 	}
 	close (TEMP);
 
-	use Devel::Size qw(size total_size);
-	print size($t);
+	#use Devel::Size qw(size total_size);
+	#print size($t);
 
 	use Encode::Guess;
 	my $enc = guess_encoding($t, qw/latin1 cp1252/);
