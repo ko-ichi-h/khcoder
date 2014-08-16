@@ -109,7 +109,7 @@ sub check_code{
 			return $chk;
 		}
 	}
-	print "Checking icode... " unless $silent;
+	print "Checking icode (jp)... " unless $silent;
 	
 	open (TEMP,$the_file)
 		or gui_errormsg->open(type => 'file',thefile => $the_file);
@@ -135,6 +135,46 @@ sub check_code{
 
 	print "$icode\n" unless $silent;
 	return $icode;
+}
+
+# ファイルの文字コードを判別(英語)
+
+sub check_code_en{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	
+	print "Checking icode (en)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > 50000;
+	}
+	close (TEMP);
+
+	use Devel::Size qw(size total_size);
+	print size($t);
+
+	use Encode::Guess;
+	my $enc = guess_encoding($t, qw/latin1 cp1252/);
+	print ref $enc ? $enc->name : $enc unless $silent;
+	print "\n" unless $silent;
+	if (ref $enc){
+		$enc = $enc->name;
+	} elsif ($enc =~ /utf8/) {
+		$enc = 'utf8';
+	} elsif ($enc =~ /cp1252/){
+		$enc = 'cp1252';
+	}
+	else {
+		die("something wrong with icode!");
+	}
+
+	return $enc;
 }
 
 # 文字列変換
