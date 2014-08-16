@@ -41,6 +41,8 @@ sub run{
 			);
 	}
 
+	my $icode = kh_jchar->check_code_en($self->target,1);
+
 	open (TRGT,$self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
@@ -89,8 +91,8 @@ sub run{
 	# 処理開始
 	while ( <TRGT> ){
 		chomp;
-		my $t   = decode("latin1",$_);
-		
+		my $t = decode("$icode",$_);
+
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
 			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\n");
