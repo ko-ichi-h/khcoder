@@ -69,13 +69,13 @@ use File::Path 'rmtree';
 #                                     é¿çs
 #------------------------------------------------------------------------------
 
-&web;
-#&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
-&win_upd;
-#&win_strb;
-#&upload;
+#&web;
+	#&pdfs if $pdf;
+#&source_tgz;
+#&win_pkg;
+#&win_upd;
+	#&win_strb;
+&upload;
 
 sub upload{
 	print "Uploading...\n";
