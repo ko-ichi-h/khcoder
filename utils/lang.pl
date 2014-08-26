@@ -1,11 +1,7 @@
+# KH Coder‚Ì‰æ–Ê‚Ì“ú‰p‘ÎÆ•\ilang.txtj‚ğì‚é
+
 use strict;
 use YAML qw(LoadFile);
-
-use utf8;
-use Encode;
-
-my $utf8 = find_encoding('utf8');
-
 
 my $msg_jp = LoadFile('../config/msg.jp') or die;
 my $msg_en = LoadFile('../config/msg.en') or die;
