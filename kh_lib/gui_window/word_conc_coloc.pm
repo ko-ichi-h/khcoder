@@ -17,10 +17,10 @@ sub _new{
 	#$self->{win_obj} = $wmw;
 	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); #'コロケーション統計'
 	
-	# Nord Wordの情報表示部分
+	# Node Wordの情報表示部分
 	
 	my $fra4 = $wmw->LabFrame(
-		-label => 'Nord Word',
+		-label => 'Node Word',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
