@@ -435,7 +435,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	}
 
 	com_col_v <- "gray40"
-	edg_col   <- "gray65"
+	edg_col   <- "gray55"
 	edg_lty   <- 1
 }
 
@@ -544,7 +544,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 
 	edg_lty <- NULL                               # edgeの色と形状
 	edg_col <- NULL
-	for (i in 1:length(el2$edge1)){
+	for (i in 1:nrow(get.edgelist(n2,name=F))){
 		if (
 			   com_m$membership[ get.edgelist(n2,name=F)[i,1] + 1 - new_igraph]
 			== com_m$membership[ get.edgelist(n2,name=F)[i,2] + 1 - new_igraph]
