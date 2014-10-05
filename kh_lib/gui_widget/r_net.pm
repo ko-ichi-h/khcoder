@@ -65,6 +65,9 @@ sub _new{
 		if ($self->{r_cmd} =~ /min_sp_tree <- ([01])\n/){
 			$self->{check_min_sp_tree} = $1;
 		}
+		if ($self->{r_cmd} =~ /min_sp_tree_only <- ([01])\n/){
+			$self->{check_min_sp_tree_only} = $1;
+		}
 		if ($self->{r_cmd} =~ /use_alpha <- ([01])\n/){
 			$self->{check_use_alpha} = $1;
 		}
@@ -219,6 +222,16 @@ sub _new{
 			#-state => 'disabled',
 	)->pack(-anchor => 'w');
 
+	$self->{check_min_sp_tree_only} = 0
+		unless defined($self->{check_min_sp_tree_only})
+	;
+	$lf->Checkbutton(
+			-text     => kh_msg->get('min_sp_tree_only'),
+			-variable => \$self->{check_min_sp_tree_only},
+			-anchor => 'w',
+			#-state => 'disabled',
+	)->pack(-anchor => 'w');
+
 	$self->{check_fix_lab} = 0 unless defined($self->{check_fix_lab});
 	$lf->Checkbutton(
 			-text     => kh_msg->get('fix_lab'),
@@ -298,6 +311,7 @@ sub params{
 		smaller_nodes       => $self->smaller_nodes,
 		use_weight_as_width => $self->use_weight_as_width,
 		min_sp_tree         => $self->min_sp_tree,
+		min_sp_tree_only    => $self->min_sp_tree_only,
 		use_alpha           => $self->use_alpha,
 		gray_scale          => $self->gray_scale,
 		edge_type           => $self->{edge_type},
@@ -348,6 +362,11 @@ sub use_freq_as_fsize{
 sub min_sp_tree{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_min_sp_tree} );
+}
+
+sub min_sp_tree_only{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_min_sp_tree_only} );
 }
 
 sub smaller_nodes{
