@@ -64,6 +64,8 @@ sub new{
 
 	$r_command .= "min_sp_tree <- $args{min_sp_tree}\n";
 
+	$r_command .= "min_sp_tree_only <- $args{min_sp_tree_only}\n";
+
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
@@ -388,7 +390,15 @@ n2 <- set.edge.attribute(
 	el2[,3]
 )
 
-	';
+if ( min_sp_tree_only == 1 ){
+	n2 <- minimum.spanning.tree(
+		n2,
+		weights = 1 - get.edge.attribute(n2, "weight"),
+		algorithm="prim"
+	)
+}
+
+';
 }
 
 sub r_plot_cmd_p2{

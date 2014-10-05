@@ -92,6 +92,8 @@ order by genkei_t.id
 		・Unicode文字を削除するには1文字ずつunidecodeする。unidecodeで文字が消えた場合には、代わりにスペースを入れる処置が必要。Text::Unidecodeのドキュメントによれば「Some Unicode characters may transliterate to nothing (i.e., empty string).」
 		・入力はUTF-8とLatin1とを自動判定
 
+	・プロットサイズ・フォントサイズのデフォルト値を設定ファイルから読み込むようにする。4Kモニター、高解像度ディスプレイ対応。
+
 	・CSVおよびExcelの読み込み（対応カラム数？）
 
 	・外部変数にh1〜h5までの名前をつかってて大丈夫？
