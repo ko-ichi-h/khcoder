@@ -171,6 +171,9 @@ sub check_code_en{
 		$enc = 'cp1252';
 	} elsif ($enc =~ /latin1/){
 		$enc = 'latin1';
+	} elsif ($enc =~ /^No / ){
+		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		$enc = 'utf8';
 	} else {
 		die("something wrong with icode! $enc");
 	}
