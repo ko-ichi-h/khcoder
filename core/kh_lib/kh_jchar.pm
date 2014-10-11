@@ -169,9 +169,10 @@ sub check_code_en{
 		$enc = 'utf8';
 	} elsif ($enc =~ /cp1252/){
 		$enc = 'cp1252';
-	}
-	else {
-		die("something wrong with icode!");
+	} elsif ($enc =~ /latin1/){
+		$enc = 'latin1';
+	} else {
+		die("something wrong with icode! $enc");
 	}
 
 	return $enc;
