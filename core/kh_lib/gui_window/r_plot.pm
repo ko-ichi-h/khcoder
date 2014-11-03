@@ -328,7 +328,7 @@ sub save{
 		if $::config_obj->os eq 'win32';
 
 	my $path = $self->win_obj->getSaveFile(
-		-defaultextension => '.eps',
+		-defaultextension => '.pdf',
 		-filetypes        => \@types,
 		-title            =>
 			$self->gui_jt(kh_msg->get('saving')), # プロットを保存
