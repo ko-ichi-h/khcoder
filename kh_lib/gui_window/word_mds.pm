@@ -595,7 +595,7 @@ if (n_cls > 0){
 		hcl <- hclust(djj,method="ward.D2")
 	} else {                                                # <= R 3.0
 		djj <- djj^2
-		hcl <- hclust(dj,method="ward")
+		hcl <- hclust(djj,method="ward")
 		#hcl$height <- sqrt( hcl$height )
 	}
 
