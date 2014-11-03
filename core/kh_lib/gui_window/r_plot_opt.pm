@@ -74,12 +74,12 @@ sub _configure_mother{
 	$name = 'gui_window::r_plot::'.$name;
 	$name = $name->win_name;
 	
-	print "mother: $name";
+	#print "mother: $name";
 	if ($::main_gui->if_opened($name)){
 		$::main_gui->get($name)->dont_close_child(1);
-		print ", opened";
+		#print ", opened";
 	}
-	print "\n";
+	#print "\n";
 	
 	return 1;
 }

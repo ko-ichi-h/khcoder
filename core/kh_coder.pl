@@ -169,14 +169,14 @@ if (
 }
 
 if ($::config_obj->{R}){
+	$ENV{LANGUAGE} = 'EN';
 	$::config_obj->{R}->startR;
+	
 	if ($::config_obj->os eq 'win32'){
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
 	} else {
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="ja_JP.EUC-JP")');
 		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="ja_JP.eucJP")');
-		$::config_obj->{R}->send('Sys.setlocale(category="LC_MEASUREMENT",locale="C")');
-		$::config_obj->{R}->send('Sys.setlocale(category="LC_MESSAGES",locale="C")');
 	}
 	$::config_obj->{R}->send('dummy_d <- matrix(1:9, nrow=3, ncol=3)');
 	$::config_obj->{R}->send('dummy_r <- cmdscale(dist(dummy_d), k=1)');
