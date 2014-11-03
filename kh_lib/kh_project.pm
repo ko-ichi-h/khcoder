@@ -316,11 +316,11 @@ sub check_up{
 		unlink($self->file_datadir.'_temp'.$n.'.xls');
 		++$n;
 	}
-	$n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.r'){
-		unlink($self->file_datadir.'_temp'.$n.'.r');
-		++$n;
-	}
+	#$n = 0;
+	#while (-e $self->file_datadir.'_temp'.$n.'.r'){
+	#	unlink($self->file_datadir.'_temp'.$n.'.r');
+	#	++$n;
+	#}
 }
 
 
@@ -702,11 +702,14 @@ sub file_TempCSV{
 }
 sub file_TempR{
 	my $self = shift;
+	
+	
+	use Cwd;
 	my $n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.r'){
+	while (-e cwd.'/config/R-bridge/'.$::project_obj->dbname.'_temp'.$n.'.r'){
 		++$n;
 	}
-	my $f = $self->file_datadir.'_temp'.$n.'.r';
+	my $f = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_temp'.$n.'.r';
 	$f = $::config_obj->os_path($f);
 	
 	# 空ファイルを作成しておく

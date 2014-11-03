@@ -39,12 +39,15 @@ sub new{
 	$param1 .= "# rlen2 <- $args{rlen2}\n";
 
 	# 自己組織化マップを保存するファイル名
-	my $file_save = $::project_obj->file_datadir;
-	$file_save .= '_'.$args{plotwin_name};
-	my $icode = Jcode::getcode($file_save);
-	$file_save = Jcode->new($file_save, $icode)->euc;
-	$file_save =~ tr/\\/\//;
-	$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
+	use Cwd;
+	my $file_save = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
+	
+	#my $file_save = $::project_obj->file_datadir;
+	#$file_save .= '_'.$args{plotwin_name};
+	#my $icode = Jcode::getcode($file_save);
+	#$file_save = Jcode->new($file_save, $icode)->euc;
+	#$file_save =~ tr/\\/\//;
+	#$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
 	#print "icode: $icode\nfile: $file_save\n";
 
 	# 自己組織化マップの実行

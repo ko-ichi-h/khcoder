@@ -16,12 +16,15 @@ sub new{
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
-	my $icode = Jcode::getcode($::project_obj->file_datadir);
-	my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
-	$dir =~ tr/\\/\//;
-	$dir = Jcode->new($dir,'euc')->$icode
-		if ( length($icode) and ( $icode ne 'ascii' ) );
-	$self->{path} = $dir.'_'.$self->{name};
+	use Cwd;
+	$self->{path} = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
+	print "$self->{path}\n";
+	#my $icode = Jcode::getcode($::project_obj->file_datadir);
+	#my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
+	#$dir =~ tr/\\/\//;
+	#$dir = Jcode->new($dir,'euc')->$icode
+	#	if ( length($icode) and ( $icode ne 'ascii' ) );
+	#$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード
 	if ( utf8::is_utf8($self->{command_f}) ){
