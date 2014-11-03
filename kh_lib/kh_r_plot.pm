@@ -18,7 +18,7 @@ sub new{
 	# ファイル名
 	use Cwd;
 	$self->{path} = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
-	print "$self->{path}\n";
+	#print "$self->{path}\n";
 	#my $icode = Jcode::getcode($::project_obj->file_datadir);
 	#my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
 	#$dir =~ tr/\\/\//;
