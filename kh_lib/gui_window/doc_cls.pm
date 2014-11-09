@@ -1250,6 +1250,7 @@ if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
 	}
 }
 
+detach("package:ggdendro", unload=T)
 
 ';
 return $t;
