@@ -239,6 +239,7 @@ gui_window::project_new:
     browse_target:            Please select the target text File
     memo:                     'Memo:'
     target_char_code:         'Encoding of the target file:'
+    target_column:            'Target Column:'
     target_file:              'The Target File:'
     win_title:                New Project
 gui_window::project_open:

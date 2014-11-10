@@ -32,9 +32,10 @@ sub read{
 	close (CSVD);
 	
 	&save(
-		data     => \@data,
-		tani     => $self->{tani},
-		var_type => $self->{var_type},
+		data        => \@data,
+		tani        => $self->{tani},
+		var_type    => $self->{var_type},
+		skip_checks => $self->{skip_checks},
 	);
 }
 
@@ -42,40 +43,40 @@ sub save{
 	my %args = @_;
 	my @data = @{$args{data}};
 
-	# ケース数のチェック
-	my $cases_in_file = @data; --$cases_in_file;
-	my $cases = mysql_exec->select("SELECT COUNT(*) from $args{tani}",1)
-		->hundle->fetch->[0];
-	unless ($cases == $cases_in_file){
-		gui_errormsg->open(
-			type => 'msg',
-			msg  => kh_msg->get('records_error'), # "ケース数が一致しません。\n読み込み処理を中断します。",
-		);
-		return 0;
-	}
-
-
-
-
-	# 同じ変数名が無いかチェック（本当はこの部分はUI側へ回した方が良い…）
-	my %name_check;
-	my $h = mysql_exec->select("
-		SELECT name
-		FROM outvar
-		ORDER BY id
-	",1)->hundle;
-	while (my $i = $h->fetch){
-			$name_check{$i->[0]} = 1;
-	}
 	my @exts = ();
-	foreach my $i (@{$data[0]}){
-		if ($name_check{$i}){
-			push @exts, $i;
+	if ( $args{skip_checks} == 0 ){
+
+		# ケース数のチェック
+		my $cases_in_file = @data; --$cases_in_file;
+		my $cases = mysql_exec->select("SELECT COUNT(*) from $args{tani}",1)
+			->hundle->fetch->[0];
+		unless ($cases == $cases_in_file){
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => kh_msg->get('records_error'), # "ケース数が一致しません。\n読み込み処理を中断します。",
+			);
+			return 0;
+		}
+
+		# 同じ変数名が無いかチェック（本当はこの部分はUI側へ回した方が良い…）
+		my %name_check;
+		my $h = mysql_exec->select("
+			SELECT name
+			FROM outvar
+			ORDER BY id
+		",1)->hundle;
+		while (my $i = $h->fetch){
+				$name_check{$i->[0]} = 1;
+		}
+		
+		foreach my $i (@{$data[0]}){
+			if ($name_check{$i}){
+				push @exts, $i;
+			}
 		}
 	}
 
 	# 不正な変数名が無いかチェック
-
 	foreach my $i (@{$data[0]}){
 		if ($i =~ /^見出し[1-5]$|^Heading[1-5]$/){
 			gui_errormsg->open(

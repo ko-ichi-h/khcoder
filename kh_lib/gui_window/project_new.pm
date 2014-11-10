@@ -20,6 +20,7 @@ sub _new{
 		->pack(-expand=>'yes',-fill=>'both');
 	my $fra1 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra3 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	my $fra4 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes',-pady => 2);
 	my $fra2 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
 	$fra1->Label(
@@ -32,7 +33,7 @@ sub _new{
 		-background => 'white'
 	)->pack(-side => 'right');
 
-	$fra3->Label(
+	$self->{icode_label} = $fra3->Label(
 		-text => kh_msg->get('target_char_code'),#$self->gui_jchar('分析対象ファイルの文字コード：'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
@@ -49,6 +50,26 @@ sub _new{
 			],
 		variable => \$self->{icode},
 	);
+
+	$self->{column_label} = $fra4->Label(
+		-text => kh_msg->get('target_column'),
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	$self->{column_menu} = gui_widget::optmenu->open(
+		parent  => $fra4,
+		pack    => { -side => 'right', -padx => 2},
+		options =>
+			[
+				['N/A'  => 0],
+			],
+		variable => \$self->{column},
+	);
+	$self->{column_frame} = $fra4;
+
+	$self->{column_label}->configure( -state => 'disabled' );
+	$self->{column_menu}->configure( -state => 'disabled' );
+
 
 	$fra1->Button(
 		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
@@ -85,7 +106,7 @@ sub _new{
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
-	$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
+	#$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
 	$e2->bind("<Key-Return>",sub{$self->_make_new;});
 	$e2->bind("<KP_Enter>",sub{$self->_make_new;});
@@ -109,6 +130,34 @@ sub _make_new{
 		)
 	);
 
+	# Excel / CSV (1)
+	my $file_vars;
+	if ($t =~ /(.+)\.(xls|xlsx|csv)$/i){
+		# name of the new text file
+		my $n = 0;
+		while (-e $1."_txt$n.txt"){
+			++$n;
+		}
+		my $file_text = $1."_txt$n.txt";
+		
+		# name of the new variable file
+		$n = 0;
+		while (-e $1."_var$n.txt"){
+			++$n;
+		}
+		$file_vars = $1."_var$n.txt";
+
+		# make files
+		my $sheet_obj = kh_spreadsheet->new($t);
+		$sheet_obj->save_files(
+			filet    => $file_text,
+			filev    => $file_vars,
+			selected => $self->{column},
+		);
+
+		$t = $file_text;
+	}
+
 	my $new = kh_project->new(
 		target  => $t,
 		comment => $self->gui_jg($self->e2->get),
@@ -121,6 +170,29 @@ sub _make_new{
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
+	
+	# Excel / CSV (2)
+	if (-e $file_vars){
+		# read variables
+		mysql_outvar::read::tab->new(
+			file        => $file_vars,
+			tani        => 'h5',
+			skip_checks => 1,
+		)->read;
+
+		# ignoring the separator string
+		mysql_exec->do("
+			INSERT INTO dmark (name) VALUES ('--separator--')
+		",1);
+		mysql_exec->do("
+			INSERT INTO dstop (name) VALUES ('--separator--')
+		",1);
+		
+		# some configurations
+		$new->last_tani('h5');
+	}
+	
+	return 1;
 }
 
 sub _sansyo{
@@ -146,11 +218,61 @@ sub _sansyo{
 		$self->e1->insert(0,$self->gui_jchar($path));
 		
 		# Excel / CSV
-		if ($path =~ /\.(xls|xlsx|csv)$/){
+		if ($path =~ /\.(xls|xlsx|csv)$/i){
+			# column selection interface
 			use kh_spreadsheet;
-			my $table_obj = kh_spreadsheet->new($path);
-			my $columns = $table_obj->columns;
-			print Encode::encode('cp932',$columns->[1]), "\n";
+			my $columns = kh_spreadsheet->new($path)->columns;
+			
+			$self->{column_label}->configure( -state => 'normal' );
+			$self->{column_menu}->{win_obj}->destroy;
+			$self->{column_menu} = undef;
+			
+			my @options;
+			my $n = 0;
+			foreach my $i (@{$columns}){
+				my $label = $i;
+				if ( length($label > 16) ){
+					$label = substr($label, 0, 15).'...';
+				}
+				push @options, [$label, $n];
+				++$n;
+			}
+			$self->{column_menu} = gui_widget::optmenu->open(
+				parent   => $self->{column_frame},
+				pack     => { -side => 'right', -padx => 2},
+				options  => \@options,
+				variable => \$self->{column},
+			);
+			
+			# character code selection
+			if ($path =~ /\.(xls|xlsx)$/i){
+				$self->{icode_label}->configure( -state => 'disable' );
+				$self->{icode_menu} ->configure( -state => 'disable' );
+			} else {
+				$self->{icode_label}->configure( -state => 'normal' );
+				$self->{icode_menu} ->configure( -state => 'normal' );
+			}
+		}
+		# TXT / HTML
+		else {
+			# column selection interface
+			$self->{column_label}->configure( -state => 'disable' );
+			$self->{column_menu}->{win_obj}->destroy;
+			$self->{column_menu} = undef;
+			$self->{column_menu} = gui_widget::optmenu->open(
+				parent  => $self->{column_frame},
+				pack    => { -side => 'right', -padx => 2},
+				options =>
+					[
+						['N/A'  => 0],
+					],
+				variable => \$self->{column},
+			);
+			$self->{column_menu}->configure( -state => 'disable' );
+			
+			# character code selection
+			$self->{icode_label}->configure( -state => 'normal' );
+			$self->{icode_menu} ->configure( -state => 'normal' );
 		}
 	}
 }
