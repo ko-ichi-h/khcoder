@@ -239,6 +239,7 @@ gui_window::project_new:
     browse_target:            分析対象ファイルを選択してください
     memo:                     説明（メモ）：
     target_char_code:         分析対象ファイルの文字コード：
+    target_column:            分析対象とする列：
     target_file:              分析対象ファイル：
     win_title:                新規プロジェクト
 gui_window::project_open:
