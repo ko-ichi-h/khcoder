@@ -127,7 +127,7 @@ sub _sansyo{
 	my $self = shift;
 
 	my @types = (
-		[ "text/html files",[qw/.txt .htm .html/] ],
+		[ "data files",[qw/.txt .xls .xlsx .csv .htm .html/] ],
 		["All files",'*']
 	);
 
@@ -144,7 +144,14 @@ sub _sansyo{
 		$path = $::config_obj->os_path($path);
 		$self->e1->delete('0','end');
 		$self->e1->insert(0,$self->gui_jchar($path));
-		# print Jcode->new($path)->euc, "\n";
+		
+		# Excel / CSV
+		if ($path =~ /\.(xls|xlsx|csv)$/){
+			use kh_spreadsheet;
+			my $table_obj = kh_spreadsheet->new($path);
+			my $columns = $table_obj->columns;
+			print Encode::encode('cp932',$columns->[1]), "\n";
+		}
 	}
 }
 
