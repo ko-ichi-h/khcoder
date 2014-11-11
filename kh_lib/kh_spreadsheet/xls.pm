@@ -51,7 +51,7 @@ sub save_files{
 	}
 	close $fh;
 
-	# make a variable file
+	# make a variable file, < 127 char, <= 1000 columns
 	open my $fh, ">::encoding($icode)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
@@ -60,13 +60,21 @@ sub save_files{
 	;
 	for my $row ($row_min .. $row_max){
 		my $line = '';
+		my $ncol = 0;
 		for my $col ($col_min .. $col_max){
 			if ($col == $args{selected}){
 				next;
 			}
 			my $t = $sheet->get_cell( $row, $col )->value;
 			$t =~ s/[[:cntrl:]]//g;
+			if (length($t) > 127){
+				$t = substr($t, 0, 127);
+			}
 			$line .= "$t\t";
+			++$ncol;
+			if ($ncol == 1000){
+				last;
+			}
 		}
 		chop $line;
 		print $fh "$line\n";
