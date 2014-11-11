@@ -114,7 +114,7 @@ sub columns{
 	my $parser   = $self->parser;
 	my $workbook = $parser->parse($self->{file});
 	
-	die("failed to open *.xls file!\n") unless $workbook;
+	die("Failed to open the Excel file!\n") unless $workbook;
 	
 	my $sheet = $workbook->worksheet(0);
 	my ( $row_min, $row_max ) = $sheet->row_range();
@@ -122,7 +122,10 @@ sub columns{
 	
 	my @columns = ();
 	for my $col ( $col_min .. $col_max ) {
-		push @columns, $sheet->get_cell( $row_min, $col )->value;
+		my $t = '';
+		my $cell = $sheet->get_cell( $row_min, $col );
+		$t = $cell->value if $cell;
+		push @columns, $t;
 	}
 	
 	return \@columns;
