@@ -182,10 +182,10 @@ sub _make_new{
 
 		# ignoring the separator string
 		mysql_exec->do("
-			INSERT INTO dmark (name) VALUES ('--separator--')
+			INSERT INTO dmark (name) VALUES ('---cell---')
 		",1);
 		mysql_exec->do("
-			INSERT INTO dstop (name) VALUES ('--separator--')
+			INSERT INTO dstop (name) VALUES ('---cell---')
 		",1);
 		
 		# some configurations
@@ -231,8 +231,12 @@ sub _sansyo{
 			my $n = 0;
 			foreach my $i (@{$columns}){
 				my $label = $i;
-				if ( length($label > 16) ){
-					$label = substr($label, 0, 15).'...';
+				if ( length($label) > 40 ){
+					$label =
+						substr($label, 0, 31)
+						.'...'
+						.substr($label, length($label)-6, 6)
+					;
 				}
 				push @options, [$label, $n];
 				++$n;

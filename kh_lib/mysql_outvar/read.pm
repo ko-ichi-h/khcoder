@@ -77,15 +77,34 @@ sub save{
 	}
 
 	# 不正な変数名が無いかチェック
+	my %namechk = ();
 	foreach my $i (@{$data[0]}){
+		# 「見出し1」等
 		if ($i =~ /^見出し[1-5]$|^Heading[1-5]$/){
-			gui_errormsg->open(
-				icon => 'info',
-				msg  => kh_msg->get('midashi_error'), # "「見出し1」〜「見出し5」までは、変数名として利用できません。\n外部変数の読み込みを中断します。",
-				type => 'msg',
-			);
-			return 0;
+			$i .= '_m';
 		}
+		# 長すぎる場合
+		if (length($i) > 250){
+			$i = substr($i, 0, 250);
+			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
+				chop $i;
+			}
+			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
+				chop $i;
+			}
+			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
+				chop $i;
+			}
+		}
+		# 重複
+		if ($namechk{$i}){
+			my $n = 1;
+			while ( $namechk{$i.'_'.$n} ){
+				++$n;
+			}
+			$i = $i.'_'.$n;
+		}
+		$namechk{$i}++;
 	}
 	
 	# 同じ変数名があった場合

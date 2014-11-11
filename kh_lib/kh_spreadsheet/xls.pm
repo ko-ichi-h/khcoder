@@ -40,10 +40,12 @@ sub save_files{
 		)
 	;
 	for my $row ($row_min + 1 .. $row_max){
-		my $t = $sheet->get_cell( $row, $args{selected} )->value;
+		my $t = '';
+		my $cell = $sheet->get_cell( $row, $args{selected} );
+		$t = $cell->value if $cell;
 		$t =~ tr/<>/()/;
 		print $fh
-			'<h5>--separator--</h5>',
+			'<h5>---cell---</h5>',
 			"\n",
 			$t,
 			"\n",
@@ -52,7 +54,7 @@ sub save_files{
 	close $fh;
 
 	# make a variable file, < 127 char, <= 1000 columns
-	open my $fh, ">::encoding($icode)", $args{filev} or
+	open $fh, ">::encoding($icode)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
@@ -65,7 +67,10 @@ sub save_files{
 			if ($col == $args{selected}){
 				next;
 			}
-			my $t = $sheet->get_cell( $row, $col )->value;
+			my $t = '';
+			my $cell = $sheet->get_cell( $row, $col );
+			$t = $cell->value if $cell;
+			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
 			if (length($t) > 127){
 				$t = substr($t, 0, 127);
