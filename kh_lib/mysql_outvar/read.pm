@@ -96,6 +96,8 @@ sub save{
 				chop $i;
 			}
 		}
+		# スペース
+		$i =~ tr/ /_/;
 		# 重複
 		if ($namechk{$i}){
 			my $n = 1;

@@ -111,6 +111,9 @@ sub save_files{
 sub columns{
 	my $self = shift;
 	
+	use Benchmark;
+	my $t0 = new Benchmark;
+	
 	my $parser   = $self->parser;
 	my $workbook = $parser->parse($self->{file});
 	
@@ -127,6 +130,9 @@ sub columns{
 		$t = $cell->value if $cell;
 		push @columns, $t;
 	}
+	
+	my $t1 = new Benchmark;
+	print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
 	
 	return \@columns;
 }
