@@ -89,14 +89,13 @@ order by genkei_t.id
 	・マニュアルへの追記
 		・Excelファイル対応
 		・外部変数の欠損値の説明が落ちているところがちらほら？　抽出語の対応分析の説明の箇所など
+		・Mac版のFAQに、プロット保存形式の選択の話を
 
 	・英語データを扱うときにも「分析対象ファイルのチェック」を可能に
 		・Unicode文字を削除するには1文字ずつunidecodeする。unidecodeで文字が消えた場合には、代わりにスペースを入れる処置が必要。Text::Unidecodeのドキュメントによれば「Some Unicode characters may transliterate to nothing (i.e., empty string).」
 		・入力はUTF-8とLatin1とを自動判定
 
 	・プロットサイズ・フォントサイズのデフォルト値を設定ファイルから読み込むようにする。4Kモニター、高解像度ディスプレイ対応。
-
-	・[On the way!] CSVおよびExcelの読み込み
 
 	・外部変数にh1〜h5までの名前をつかってて大丈夫？
 
