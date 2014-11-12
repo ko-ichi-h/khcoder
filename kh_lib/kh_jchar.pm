@@ -99,6 +99,9 @@ sub to_sjis{
 sub check_code{
 	my $the_file = $_[1];
 	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 1000 unless $lines;
 	
 	if ( defined($::project_obj) ){
 		my $chk = $::project_obj->assigned_icode;
@@ -118,7 +121,7 @@ sub check_code{
 	while (<TEMP>){
 		$t .= $_;
 		++$n;
-		last if $n > 1000;
+		last if $n > $lines;
 	}
 	close (TEMP);
 
@@ -142,6 +145,9 @@ sub check_code{
 sub check_code_en{
 	my $the_file = $_[1];
 	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 50000 unless $lines;
 	
 	print "Checking icode (en)... " unless $silent;
 	
@@ -152,7 +158,7 @@ sub check_code_en{
 	while (<TEMP>){
 		$t .= $_;
 		++$n;
-		last if $n > 50000;
+		last if $n > $lines;
 	}
 	close (TEMP);
 
