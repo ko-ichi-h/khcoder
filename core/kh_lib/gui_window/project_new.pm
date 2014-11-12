@@ -45,10 +45,20 @@ sub _new{
 			[
 				[kh_msg->get('auto_detect')  => 0], #$self->gui_jchar('自動判別')
 				[$self->gui_jchar('EUC') => 'euc'],
-				[$self->gui_jchar('JIS') => 'jis'],
+				#[$self->gui_jchar('JIS') => 'jis'],
 				[$self->gui_jchar('Shift-JIS') => 'sjis']
 			],
 		variable => \$self->{icode},
+		command => sub {
+			my $t = $::config_obj->os_path(
+				$self->gui_jg(
+					$self->e1->get
+				)
+			);
+			if ($t =~ /\.csv$/i){
+				$self->_columns($t);
+			}
+		}
 	);
 
 	$self->{column_label} = $fra4->Label(
@@ -153,6 +163,7 @@ sub _make_new{
 			filet    => $file_text,
 			filev    => $file_vars,
 			selected => $self->{column},
+			icode    => $self->{icode},
 		);
 
 		$t = $file_text;
@@ -219,34 +230,7 @@ sub _sansyo{
 		
 		# Excel / CSV
 		if ($path =~ /\.(xls|xlsx|csv)$/i){
-			# column selection interface
-			use kh_spreadsheet;
-			my $columns = kh_spreadsheet->new($path)->columns;
-			
-			$self->{column_label}->configure( -state => 'normal' );
-			$self->{column_menu}->{win_obj}->destroy;
-			$self->{column_menu} = undef;
-			
-			my @options;
-			my $n = 0;
-			foreach my $i (@{$columns}){
-				my $label = $i;
-				if ( length($label) > 40 ){
-					$label =
-						substr($label, 0, 31)
-						.'...'
-						.substr($label, length($label)-6, 6)
-					;
-				}
-				push @options, [$label, $n];
-				++$n;
-			}
-			$self->{column_menu} = gui_widget::optmenu->open(
-				parent   => $self->{column_frame},
-				pack     => { -side => 'right', -padx => 2},
-				options  => \@options,
-				variable => \$self->{column},
-			);
+			$self->_columns($path);
 			
 			# character code selection
 			if ($path =~ /\.(xls|xlsx)$/i){
@@ -280,6 +264,43 @@ sub _sansyo{
 		}
 	}
 }
+
+sub _columns{
+	my $self = shift;
+	my $path = shift;
+	
+	# column selection interface
+	use kh_spreadsheet;
+	my $columns = kh_spreadsheet->new($path)->columns($self->{icode});
+	
+	$self->{column_label}->configure( -state => 'normal' );
+	$self->{column_menu}->{win_obj}->destroy;
+	$self->{column_menu} = undef;
+	
+	my @options;
+	my $n = 0;
+	foreach my $i (@{$columns}){
+		my $label = $i;
+		if ( length($label) > 40 ){
+			$label =
+				substr($label, 0, 31)
+				.'...'
+				.substr($label, length($label)-6, 6)
+			;
+		}
+		push @options, [$label, $n];
+		++$n;
+	}
+	$self->{column_menu} = gui_widget::optmenu->open(
+		parent   => $self->{column_frame},
+		pack     => { -side => 'right', -padx => 2},
+		options  => \@options,
+		variable => \$self->{column},
+	);
+	
+	return $self;
+}
+
 
 #--------------#
 #   アクセサ   #

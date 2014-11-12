@@ -34,6 +34,8 @@ sub ___new {
 	
 	my $self = {};
 	
+	use CGI;
+	
 	$self -> {zip} = Archive::Zip -> new ();
 
 	if (ref $filename) {
@@ -56,10 +58,11 @@ sub ___new {
 		my $mstr = $member_shared_strings->contents; 
 		$mstr =~ s/<t\/>/<t><\/t>/gsm;  # this handles an empty t tag in the xml <t/>
 		foreach my $si ($mstr =~ /<si.*?>(.*?)<\/si/gsm) {
-			$si =~ s!<rPh[^>]*>.*?</rPh>!!gsm; # modified
+			$si =~ s!<rPh[^>]*>.*?</rPh>!!gsm;              # modified
 			my $str;
 			foreach my $t ($si =~ /<t.*?>(.*?)<\/t/gsm) {
 				$t = $converter -> convert ($t) if $converter;
+				$t = CGI::unescapeHTML($t);                 # modified
 				$str .= $t;
 			}
 			push @shared_strings, $str;

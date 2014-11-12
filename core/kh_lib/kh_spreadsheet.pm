@@ -26,6 +26,7 @@ sub new{
 	return $self;
 }
 
+# for xls and xlsx
 sub save_files{
 	my $self = shift;
 	my %args = @_;
@@ -107,6 +108,7 @@ sub save_files{
 	return 1;
 }
 
+# for xls and xlsx
 sub columns{
 	my $self = shift;
 	
