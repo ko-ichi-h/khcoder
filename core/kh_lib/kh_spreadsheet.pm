@@ -42,8 +42,7 @@ sub save_files{
 	}
 	
 	# read excel
-	my $parser   = $self->parser;
-	my $workbook = $parser->parse($self->{file});
+	my $workbook = $self->parser;
 	
 	die("failed to open *.xls file!\n") unless $workbook;
 	
@@ -61,7 +60,7 @@ sub save_files{
 	for my $row ($row_min + 1 .. $row_max){
 		my $t = '';
 		my $cell = $sheet->get_cell( $row, $args{selected} );
-		$t = $cell->value if $cell;
+		$t = $self->get_value($cell) if $cell;
 		$t =~ tr/<>/()/;
 		print $fh
 			'<h5>---cell---</h5>',
@@ -88,7 +87,7 @@ sub save_files{
 			}
 			my $t = '';
 			my $cell = $sheet->get_cell( $row, $col );
-			$t = $cell->value if $cell;
+			$t = $self->get_value($cell) if $cell;
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
 			if (length($t) > 127){
@@ -114,8 +113,8 @@ sub columns{
 	use Benchmark;
 	my $t0 = new Benchmark;
 	
-	my $parser   = $self->parser;
-	my $workbook = $parser->parse($self->{file});
+	#my $parser   = $self->parser;
+	my $workbook = $self->parser; #$parser->parse($self->{file});
 	
 	die("Failed to open the Excel file!\n") unless $workbook;
 	
@@ -127,7 +126,7 @@ sub columns{
 	for my $col ( $col_min .. $col_max ) {
 		my $t = '';
 		my $cell = $sheet->get_cell( $row_min, $col );
-		$t = $cell->value if $cell;
+		$t = $self->get_value($cell) if $cell;
 		push @columns, $t;
 	}
 	
