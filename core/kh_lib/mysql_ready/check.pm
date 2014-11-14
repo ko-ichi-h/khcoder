@@ -7,7 +7,8 @@ sub do{
 	my $self = shift;
 	my @error;
 
-	# 各集計単位
+	# number of cases
+	my %cases = ();
 	foreach my $i ("h1","h2","h3","h4","h5"){
 		unless (
 			mysql_exec->select(
@@ -29,6 +30,17 @@ sub do{
 		
 		unless ($num1 == $num2){
 			push @error, $i;
+		}
+		$cases{$i} = $num1;
+	}
+
+	# variables
+	my $vars = mysql_outvar->get_list;
+	foreach my $i (@{$vars}){
+		my $var = mysql_outvar::a_var->new( undef, $i->[2] );
+		#print "$i->[2], ", $var->n, ", $cases{$var->tani}\n";
+		unless ( $cases{$var->tani} == $var->n ){
+			push @error, "variable $i->[2]";
 		}
 	}
 

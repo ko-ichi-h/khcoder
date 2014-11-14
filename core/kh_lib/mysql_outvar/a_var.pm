@@ -107,6 +107,20 @@ sub values{
 	return \@v;
 }
 
+sub n{
+	my $self = shift;
+
+	my $f = mysql_exec->select("
+		SELECT count(*)
+		FROM   $self->{table}
+	",1)->hundle;
+	
+	my $n = 0;
+	$n = $f->fetch->[0] if $f;
+	
+	return $n;
+}
+
 # 値のリストを返す（値ラベルがある場合はラベルを返す）
 sub print_values{
 	my $self = shift;
