@@ -516,7 +516,10 @@ sub _save_svg{
 				pointsize=10
 			)
 		} else {
-			print(\"error: no Cairo!\")
+			svg(
+				filename=\"$path\",
+				family=\"Japan1GothicBBB\"
+			)
 		}
 	");
 
