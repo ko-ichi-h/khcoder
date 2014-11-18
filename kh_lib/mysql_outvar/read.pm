@@ -161,7 +161,7 @@ sub save{
 		if ($args{var_type} eq 'INT') {
 			$cols .= "\t\t\t$col INT,\n";
 		} else {
-			$cols .= "\t\t\t$col varchar(255),\n";
+			$cols .= "\t\t\t$col BLOB,\n";
 		}
 		$cols2 .= "$col,";
 	}
