@@ -498,6 +498,16 @@ sub _save_svg{
 	$self->{width}  = 480 unless $self->{width};
 	$self->{height} = 480 unless $self->{height};
 	
+	# for darwin
+	my $w = 7;
+	if ($self->{width} > $self->{height}){
+		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
+	}
+	my $h = 7;
+	if ($self->{height} > $self->{width}){
+		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+	}
+	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -516,18 +526,44 @@ sub _save_svg{
 				pointsize=10
 			)
 		} else {
-			svg(
-				filename=\"$path\",
-				family=\"Japan1GothicBBB\"
+			# for darwin
+			library(RSVGTipsDevice)
+			devSVGTips(
+				\"$path\",
+				width=$w,
+				height=$h,
+				bg=\"white\",
+				fg=\"black\",
+				toolTipMode=0
 			)
 		}
 	");
 
 	$self->set_par;
+	
+	# for darwin
+	if ($^O =~ /darwin/i){
+		$::config_obj->R->send(
+			'par(mai=c(0,0,0,0), mar=c(5,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
+		);
+	}
+	
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
+	
+	# for darwin
+	my $file_temp = $::config_obj->file_temp;
+	open my $fhi, '<:encoding(eucJP-ms)', $path      or die("file: $path");
+	open my $fho, '>:encoding(utf8)',     $file_temp or die("file: $file_temp");
+	while (<$fhi>){
+		print $fho $_;
+	}
+	close $fhi;
+	close $fho;
+	unlink $path;
+	rename($file_temp, $path) or die("rename $file_temp, $path");
 	
 	return 1;
 }
