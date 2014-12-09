@@ -824,16 +824,75 @@ sub format_coloc{
 	my $self = shift;
 	my %args = @_;
 	
+	# 総語数
+	my $total = mysql_words->num_all;
+
+	# Node wordの出現数
+	my $w1_freq = $self->_count;
+	
+	
 	my $sql = '';
 	$sql .= "SELECT genkei.name, hselection.name,";
-	if ($args{sort} eq 'sum'){
-		$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
-	} else {
-		$sql .= "truncate( (l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 + .005, 2 ) as score,";
-	}
+	$sql .= "l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 as sum,";
+	#if ($args{sort} eq 'sum'){
+	#	
+	#} else {
+	#	$sql .= "truncate( (l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 + .005, 2 ) as score,";
+	#}
 	$sql .= "l5+l4+l3+l2+l1 as suml,";
 	$sql .= "r1+r2+r3+r4+r5 as sumr,";
-	$sql .= "l5,l4,l3,l2,l1,r1,r2,r3,r4,r5\n";
+	$sql .= "l5,l4,l3,l2,l1,r1,r2,r3,r4,r5,\n";
+	
+	if ( $args{sort} eq 'MI' ){
+		$sql .= "truncate( log( ((l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) / $total ) / ( ($w1_freq / $total) * (genkei.num / $total) ) ) / log(2) + .0005, 3) as MI\n";
+	}
+	elsif ( $args{sort} eq 'MI3' ){
+		$sql .= "truncate( log( power(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5,3) * (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - $w1_freq + $total - genkei.num + $total - $w1_freq - genkei.num) / ( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - $w1_freq) * l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - genkei.num ) ) / log(2) + .0005, 3) as MI3\n",
+	}
+	elsif ( $args{sort} eq 'T' ){
+		$sql .= "truncate( ( l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 - $w1_freq * genkei.num / $total ) / sqrt( l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 ) + .0005, 3 ) as T\n";
+	}
+	elsif ( $args{sort} eq 'Z' ){
+		$sql .= "truncate( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 - (genkei.num / ($total - $w1_freq) * $w1_freq * 10)) / sqrt( genkei.num / ($total - $w1_freq) * $w1_freq * 10 * (1-(genkei.num / ($total - $w1_freq))) ) + .0005, 3 ) as Z\n";
+	}
+	elsif ( $args{sort} eq 'Dice' ){
+		$sql .= "truncate( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * 2 / ($w1_freq + genkei.num) + .0005, 3 ) as Dice\n";
+	}
+	elsif ( $args{sort} eq 'Jaccard' ){
+		$sql .= "truncate( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) / ($w1_freq + genkei.num - (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) ) + .0005, 3 ) as Jaccard\n";
+	}
+	elsif ( $args{sort} eq 'LL' ){
+		$sql .= "truncate( 2 * (
+			  (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5)
+
+			+ $w1_freq                        * Log($w1_freq)
+
+			+ genkei.num                      * Log(genkei.num)
+
+			+ ($total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			                                  * Log($total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+
+			- (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+$w1_freq)
+			    * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+$w1_freq)
+
+			- (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+genkei.num)
+			    * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+genkei.num)
+
+			- ($w1_freq + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			    * Log($w1_freq + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+
+			- (genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			    * Log(genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+
+			+ ($w1_freq + genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * 2 )
+			    * Log($w1_freq + genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * 2 )
+		) + .0005, 3 ) as LL\n";
+	}
+	else {
+		$sql .= "truncate( (l5+r5) / 5 + (l4+r4) / 4 + (l3+r3) / 3 + (l2+r2) / 2 + l1 + r1 + .0005, 3 ) as score\n";
+	}
+	
+
 	$sql .= "FROM temp_conc_coloc,genkei,hselection\n";
 	$sql .= "WHERE\n";
 	$sql .= "\ttemp_conc_coloc.genkei_id = genkei.id\n";

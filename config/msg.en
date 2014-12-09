@@ -389,7 +389,7 @@ gui_window::word_conc_coloc:
     h_l_total:                LT
     h_pos:                    POS
     h_r_total:                RT
-    h_score:                  Score
+    h_score:                  The Score
     h_word:                   Word
     hits:                     '  Hits: '
     l1:                       L1

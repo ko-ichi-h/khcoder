@@ -83,7 +83,7 @@ sub _new{
 		-header           => 1,
 		-itemtype         => 'text',
 		-font             => 'TKFN',
-		-columns          => 16,
+		-columns          => 17,
 		-padx             => 2,
 		-background       => 'white',
 		#-selectforeground => 'black',
@@ -109,7 +109,7 @@ sub _new{
 	$lis->header('create',0,-text  => 'N');
 	$lis->header('create',1,-text  => kh_msg->get('h_word')); #$self->gui_jchar('抽出語')
 	$lis->header('create',2,-text  => kh_msg->get('h_pos')); #$self->gui_jchar('品詞')
-	$lis->header('create',3,-text  => kh_msg->get('h_score')); #$self->gui_jchar('スコア')
+	$lis->header('create',3,-text  => kh_msg->get('total')); #$self->gui_jchar('合計')
 	$lis->header('create',4,-text  => kh_msg->get('h_l_total')); #$self->gui_jchar('左合計')
 	$lis->header('create',5,-text  => kh_msg->get('h_r_total')); #$self->gui_jchar('右合計')
 	$lis->header(
@@ -163,6 +163,11 @@ sub _new{
 		-text => kh_msg->get('r5'),#$self->gui_jchar('右5'),
 		-style => $style_green
 	);
+	$lis->header(
+		'create',16,
+		-text  => kh_msg->get('h_score') #$self->gui_jchar('スコア')
+	);
+
 
 	# 結果操作用のボタン類
 
@@ -203,7 +208,14 @@ sub _new{
 		[ kh_msg->get('r2'),  'r2'],
 		[ kh_msg->get('r3'),  'r3'],
 		[ kh_msg->get('r4'),  'r4'],
-		[ kh_msg->get('r5'),  'r5']
+		[ kh_msg->get('r5'),  'r5'],
+		[ 'Mutual Information', 'MI'],
+		[ 'MI3', 'MI3'],
+		[ 'T Score', 'T'],
+		[ 'Z Score', 'Z'],
+		[ 'Dice', 'Dice'],
+		[ 'Jaccard', 'Jaccard'],
+		[ 'Log Likelihood', 'LL'],
 	);
 
 	$self->{menu1} = gui_widget::optmenu->open(
@@ -270,10 +282,29 @@ sub view{
 	my $self = shift;
 	$self->{result_obj} = shift if defined($_[0]);
 	
-	if ($self->{sort} eq 'sum'){
-		$self->list->header('create',3,-text  => kh_msg->get('total'));
-	} else {
-		$self->list->header('create',3,-text  => kh_msg->get('h_score'));
+	if ($self->{sort} eq 'MI'){
+		$self->list->header('create',16,-text  => 'Mutual Information');
+	}
+	elsif ($self->{sort} eq 'MI3'){
+		$self->list->header('create',16,-text  => 'MI3');
+	}
+	elsif ($self->{sort} eq 'T'){
+		$self->list->header('create',16,-text  => 'T Score');
+	}
+	elsif ($self->{sort} eq 'Z'){
+		$self->list->header('create',16,-text  => 'Z Score');
+	}
+	elsif ($self->{sort} eq 'Dice'){
+		$self->list->header('create',16,-text  => 'Dice');
+	}
+	elsif ($self->{sort} eq 'Jaccard'){
+		$self->list->header('create',16,-text  => 'Jaccard');
+	}
+	elsif ($self->{sort} eq 'LL'){
+		$self->list->header('create',16,-text  => 'Log Likelihood');
+	}
+	else {
+		$self->list->header('create',16,-text  => kh_msg->get('h_score'));
 	}
 	
 	# nord word 情報の表示
@@ -374,11 +405,10 @@ sub view{
 		foreach my $h (@{$i}){
 			if ($col > 2){              # 数字
 				my $style;
-				if ( ($col == 3) and not ($self->{sort} eq 'sum') ){
-					$style = $right_style;
-					$h = sprintf("%.2f",$h);
-				}
 				if ($col < 6){
+					$style = $right_style;
+				}
+				elsif ($col > 15){
 					$style = $right_style;
 				}
 				elsif ($h == $max) {
