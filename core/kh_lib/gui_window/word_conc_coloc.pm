@@ -243,6 +243,7 @@ sub _new{
 	
 	$filter = undef;
 	$filter->{limit}   = 200;                  # LIMIT数
+	$filter->{filter}  = 1;
 	my $h = mysql_exec->select("               # 品詞によるフィルタ
 		SELECT name, khhinshi_id
 		FROM   hselection

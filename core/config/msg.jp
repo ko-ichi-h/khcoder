@@ -343,10 +343,10 @@ gui_window::word_ass:
     win_title:                関連語検索
     word_h:                   抽出語
 gui_window::word_ass_opt:
-    by_df:                    ・全体での出現数による語の取捨選択
-    by_pos:                   ・品詞による語の取捨選択
-    min_df:                   　　　最低文書数：
-    top:                      　　　上位：
+    by_df:                    ・全体での出現数による語の選択
+    by_pos:                   ・品詞による語の選択
+    min_df:                   '　　最小文書数：'
+    top:                      '　　上位：'
     view:                     ・表示する語の数
     win_title:                関連語検索・フィルタ設定
 gui_window::word_conc:
@@ -410,9 +410,11 @@ gui_window::word_conc_coloc:
     win_title:                コロケーション統計
     word:                     抽出語：
 gui_window::word_conc_coloc_opt:
-    filter_by_pos:            品詞による語の取捨選択：
-    top:                      　　　上位
-    view:                     表示する語の数：
+    filter_by_pos:            ・品詞による語の選択：
+    top:                      '　　上位：'
+    view:                     ・表示する語の数
+    total_filt:               ・「合計」列による語の選択
+    no_less_than:             '　　最小：'
     win_title:                コロケーション統計・フィルタ設定
 gui_window::word_conc_opt:
     0:                        指定なし

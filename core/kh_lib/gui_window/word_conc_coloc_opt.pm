@@ -64,6 +64,24 @@ sub _new{
 		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack();
 
+	# 「合計」列によるフィルタリング
+	my $left4 = $win->Frame()->pack(-fill => 'x', -expand => 0);
+	$left4->Label(
+		-text => kh_msg->get('total_filt'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w',-pady => 2);
+	
+	$left4->Label(
+		-text => kh_msg->get('no_less_than'),
+		-font => "TKFN"
+	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
+	
+	$self->{ent_filter} = $left4->Entry(
+		-font  => "TKFN",
+		-width => 6,
+	)->pack(-anchor => 'w',-pady => 5);
+	$self->config_entry_focusin($self->{ent_filter});
+
 	# 表示数のLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
@@ -102,7 +120,10 @@ sub _new{
 		"end",
 		"$gui_window::word_conc_coloc::filter->{limit}"
 	);
-	
+	$self->{ent_filter}->insert(
+		"end",
+		"$gui_window::word_conc_coloc::filter->{filter}"
+	);
 	return $self;
 }
 
@@ -110,7 +131,11 @@ sub _new{
 sub save{
 	my $self = shift;
 	
-	$gui_window::word_conc_coloc::filter->{limit}   = $self->{ent_limit}->get;
+	$gui_window::word_conc_coloc::filter->{limit} =
+		$self->gui_jg( $self->{ent_limit}->get );
+	
+	$gui_window::word_conc_coloc::filter->{filter} =
+		$self->gui_jg( $self->{ent_filter}->get );
 	
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){

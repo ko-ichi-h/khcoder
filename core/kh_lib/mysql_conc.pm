@@ -844,10 +844,10 @@ sub format_coloc{
 	$sql .= "l5,l4,l3,l2,l1,r1,r2,r3,r4,r5,\n";
 	
 	if ( $args{sort} eq 'MI' ){
-		$sql .= "truncate( log( ((l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) / $total ) / ( ($w1_freq / $total) * (genkei.num / $total) ) ) / log(2) + .0005, 3) as MI\n";
+		$sql .= "truncate( log( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * $total / ($w1_freq * genkei.num) ) / log(2) + .0005, 3) as MI\n";
 	}
 	elsif ( $args{sort} eq 'MI3' ){
-		$sql .= "truncate( log( power(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5,3) * (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - $w1_freq + $total - genkei.num + $total - $w1_freq - genkei.num) / ( (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - $w1_freq) * l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 + $total - genkei.num ) ) / log(2) + .0005, 3) as MI3\n",
+		$sql .= "truncate( log( power(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5,3) * $total / ($w1_freq * genkei.num) ) / log(2) + .0005, 3) as MI3\n",
 	}
 	elsif ( $args{sort} eq 'T' ){
 		$sql .= "truncate( ( l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 - $w1_freq * genkei.num / $total ) / sqrt( l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 ) + .0005, 3 ) as T\n";
@@ -865,27 +865,27 @@ sub format_coloc{
 		$sql .= "truncate( 2 * (
 			  (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5)
 
-			+ $w1_freq                        * Log($w1_freq)
+			+ (genkei.num - (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5)) * Log(genkei.num - (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5))
 
-			+ genkei.num                      * Log(genkei.num)
+			+ ($w1_freq - (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) ) * Log($w1_freq - (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5))
 
-			+ ($total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
-			                                  * Log($total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			+ ($total - genkei.num - $w1_freq + l5+l4+l3+l2+l1+r1+r2+r3+r4+r5)
+			                                  * Log($total - genkei.num - $w1_freq + l5+l4+l3+l2+l1+r1+r2+r3+r4+r5)
 
-			- (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+$w1_freq)
-			    * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+$w1_freq)
+			- (genkei.num)
+			    * Log(genkei.num)
 
-			- (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+genkei.num)
-			    * Log(l5+l4+l3+l2+l1+r1+r2+r3+r4+r5+genkei.num)
+			- ($w1_freq)
+			    * Log($w1_freq)
 
-			- ($w1_freq + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
-			    * Log($w1_freq + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			- ($total - $w1_freq)
+			    * Log($total - $w1_freq)
 
-			- (genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
-			    * Log(genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) )
+			- ($total - genkei.num)
+			    * Log($total - genkei.num)
 
-			+ ($w1_freq + genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * 2 )
-			    * Log($w1_freq + genkei.num + $total -10 - $w1_freq - genkei.num + (l5+l4+l3+l2+l1+r1+r2+r3+r4+r5) * 2 )
+			+ ($total)
+			    * Log($total)
 		) + .0005, 3 ) as LL\n";
 	}
 	else {
@@ -897,6 +897,7 @@ sub format_coloc{
 	$sql .= "WHERE\n";
 	$sql .= "\ttemp_conc_coloc.genkei_id = genkei.id\n";
 	$sql .= "\tAND genkei.khhinshi_id = hselection.khhinshi_id\n";
+	$sql .= "\tAND l5+l4+l3+l2+l1+r1+r2+r3+r4+r5 >= $args{filter}->{filter}\n";
 	$sql .= "\tAND (\n";
 	my $n = 0;
 	foreach my $i (keys %{$args{filter}->{hinshi}}){
