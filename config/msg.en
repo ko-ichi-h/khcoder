@@ -411,8 +411,10 @@ gui_window::word_conc_coloc:
     word:                     'Word:'
 gui_window::word_conc_coloc_opt:
     filter_by_pos:            'Filter words by POS:'
-    top:                      '      Top '
+    total_filt:               'Filter words by "Total" column:'
+    no_less_than:             '      No less than '
     view:                     'View:'
+    top:                      '      Top '
     win_title:                'Filter: Collocation Stats'
 gui_window::word_conc_opt:
     0:                        None
