@@ -82,6 +82,9 @@ sub _new{
 	)->pack(-anchor => 'w',-pady => 5);
 	$self->config_entry_focusin($self->{ent_total});
 
+	$self->{ent_total}->bind("<Key-Return>",sub{$self->save});
+	$self->{ent_total}->bind("<KP_Enter>", sub{$self->save});
+
 	# 表示数のLIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
@@ -99,6 +102,9 @@ sub _new{
 		-width => 6,
 	)->pack(-anchor => 'w',-pady => 5);
 	$self->config_entry_focusin($self->{ent_limit});
+	
+	$self->{ent_limit}->bind("<Key-Return>",sub{$self->save});
+	$self->{ent_limit}->bind("<KP_Enter>", sub{$self->save});
 	
 	# OK & Cancel
 	$win->Button(

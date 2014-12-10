@@ -414,6 +414,24 @@ sub fetch_results{
 		'fr'  => "ct_ass_p.p",
 		'sa'  => "ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2",
 		'hi'  => "(ct_ass_p.p / $denom1) / (df_$self->{tani}.f / $denom2)",
+		'll' => "
+			2 * (
+				  ct_ass_p.p * log(ct_ass_p.p)
+				+ ( df_$self->{tani}.f - ct_ass_p.p )
+					* log(df_$self->{tani}.f - ct_ass_p.p)
+				+ ($denom1 - ct_ass_p.p)
+					* log($denom1 - ct_ass_p.p)
+				+ ($denom2 - df_$self->{tani}.f - $denom1 + ct_ass_p.p )
+					* log(($denom2 - df_$self->{tani}.f - $denom1 + ct_ass_p.p ))
+				- df_$self->{tani}.f * log(df_$self->{tani}.f)
+				- $denom1 * log($denom1)
+				- ($denom2 - df_$self->{tani}.f)
+					* log($denom2 - df_$self->{tani}.f)
+				- ($denom2 - $denom1)
+					* log($denom2 - $denom1)
+				+ $denom2 * log($denom2)
+			)
+			",
 		'jac' => "
 			ct_ass_p.p
 			/
@@ -465,6 +483,7 @@ sub fetch_results{
 				* ( $denom2 - $denom1 )
 			)
 			",
+
 	);
 
 	# 品詞フィルタ
