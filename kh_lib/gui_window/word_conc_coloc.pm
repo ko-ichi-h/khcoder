@@ -213,8 +213,8 @@ sub _new{
 		[ 'MI3', 'MI3'],
 		[ 'T Score', 'T'],
 		[ 'Z Score', 'Z'],
-		[ 'Dice', 'Dice'],
 		[ 'Jaccard', 'Jaccard'],
+		[ 'Dice', 'Dice'],
 		[ 'Log Likelihood', 'LL'],
 	);
 

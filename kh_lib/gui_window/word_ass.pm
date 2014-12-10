@@ -231,11 +231,12 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[kh_msg->get('fr') ,   'fr'  ], # ¶¦µ¯
-				[kh_msg->get('sa') , 'sa'  ], # ³ÎÎ¨º¹
-				[kh_msg->get('hi') , 'hi'  ], # ³ÎÎ¨Èæ
-				['Jaccard'                  , 'jac' ],
-				['Ochiai'                   , 'ochi'],
+				[kh_msg->get('fr') , 'fr'   ], # ¶¦µ¯
+				[kh_msg->get('sa') , 'sa'   ], # ³ÎÎ¨º¹
+				[kh_msg->get('hi') , 'hi'   ], # ³ÎÎ¨Èæ
+				['Jaccard'         , 'jac'  ],
+				['Dice'            , 'dice' ],
+				['Ochiai'          , 'ochi' ],
 				#[kh_msg->get('18') , 'chi'], # ¦Ö2¾è
 			],
 		variable => \$self->{opt_order},
@@ -248,6 +249,7 @@ sub _new{
 		'hi'  => kh_msg->get('hi'), # ³ÎÎ¨Èæ
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
+		'dice'=> 'Dice',
 	};
 
 	$f5->Label(
