@@ -237,6 +237,7 @@ sub _new{
 				['Jaccard'         , 'jac'  ],
 				['Dice'            , 'dice' ],
 				['Ochiai'          , 'ochi' ],
+				['Log Likelihood'  , 'll'   ],
 				#[kh_msg->get('18') , 'chi'], # ¦Ö2¾è
 			],
 		variable => \$self->{opt_order},
@@ -250,6 +251,7 @@ sub _new{
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
 		'dice'=> 'Dice',
+		'll'  => 'Log Likelihood',
 	};
 
 	$f5->Label(
