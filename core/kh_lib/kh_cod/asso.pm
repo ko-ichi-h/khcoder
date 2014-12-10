@@ -423,6 +423,15 @@ sub fetch_results{
 				+ $denom1 - ct_ass_p.p
 			)
 			",
+		'dice' => "
+			ct_ass_p.p * 2
+			/
+			(
+				ct_ass_p.p * 2
+				+ df_$self->{tani}.f - ct_ass_p.p
+				+ $denom1 - ct_ass_p.p
+			)
+			",
 		'ochi' => "
 			sqrt(
 				( ct_ass_p.p / $denom1 )
