@@ -127,12 +127,16 @@ sub fix_michigo{
 	my @gomi = ();
 	
 	while (my $i = $h->fetch){
-		if ( $i->[1] =~ /a-z/io ){
+		#print Jcode->new("$i->[1]: ")->sjis;
+		if ( $i->[1] =~ /[a-z]/io ){
+			#print "alpha\n";
 			next;
 		}
 		if ( $i->[1] =~ /[\xA1-\xFE][\xA1-\xFE]/o){
+			#print "zenkaku\n";
 			next;
 		}
+		#print "gomi\n";
 		push @gomi, $i->[0];
 	}
 	
