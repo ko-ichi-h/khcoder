@@ -174,7 +174,7 @@ sub _new{
 	$self->{copy_btn} = $fra5->Button(
 		-text => kh_msg->gget('copy'),#$self->gui_jchar('コピー'),
 		-font => "TKFN",
-		-width => 8,
+		#-width => 8,
 		-borderwidth => '1',
 		-command => sub {gui_hlist->copy($self->list);}
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
@@ -188,6 +188,42 @@ sub _new{
 		-balloonmsg => 'Ctrl + C',
 		-font => "TKFN"
 	);
+
+
+	$fra5->Label(
+		-text => '  ',
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	$fra5->Button(
+		-text => kh_msg->get('filter'),#self->gui_jchar('フィルタ設定'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub {gui_window::word_conc_coloc_opt->open;}
+	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
+
+	# フィルタ設定の初期化
+	
+	$filter = undef;
+	$filter->{limit}   = 200;                  # LIMIT数
+	$filter->{filter}  = 1;
+	my $h = mysql_exec->select("               # 品詞によるフィルタ
+		SELECT name, khhinshi_id
+		FROM   hselection
+		WHERE  ifuse = 1
+	",1)->hundle;
+	while (my $i = $h->fetch){
+		if (
+			   $i->[0] =~ /B$/
+			|| $i->[0] eq '否定助動詞'
+			|| $i->[0] eq '形容詞（非自立）'
+		){
+			$filter->{hinshi}{$i->[1]} = 0;
+		} else {
+			$filter->{hinshi}{$i->[1]} = 1;
+		}
+	}
+
 
 	$fra5->Label(
 		-text => kh_msg->get('sort'),#$self->gui_jchar('　ソート：'),
@@ -224,42 +260,68 @@ sub _new{
 		options  => \@options,
 		variable => \$self->{sort},
 		width    => 6,
-		command  => sub{$self->view;}
+		command  =>
+			sub{
+				$self->update_span;
+				$self->view;
+			}
 	);
 
-	$fra5->Label(
-		-text => $self->gui_jchar('　'),
+	# 集計範囲の設定
+	$self->{span1} = 'l5';
+	$self->{span2} = 'r5';
+	
+	$self->{span_lab1} = $fra5->Label(
+		-text => kh_msg->get('span'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
-	$fra5->Button(
-		-text => kh_msg->get('filter'),#self->gui_jchar('フィルタ設定'),
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub {gui_window::word_conc_coloc_opt->open;}
-	)->pack(-side => 'left',-anchor => 'w', -pady => 1, -padx => 2);
+	my @span_options = (
+		[ kh_msg->get('l5'),  'l5'],
+		[ kh_msg->get('l4'),  'l4'],
+		[ kh_msg->get('l3'),  'l3'],
+		[ kh_msg->get('l2'),  'l2'],
+		[ kh_msg->get('l1'),  'l1'],
+		[ kh_msg->get('r1'),  'r1'],
+		[ kh_msg->get('r2'),  'r2'],
+		[ kh_msg->get('r3'),  'r3'],
+		[ kh_msg->get('r4'),  'r4'],
+		[ kh_msg->get('r5'),  'r5'],
+	);
 
-	# フィルタ設定の初期化
-	
-	$filter = undef;
-	$filter->{limit}   = 200;                  # LIMIT数
-	$filter->{filter}  = 1;
-	my $h = mysql_exec->select("               # 品詞によるフィルタ
-		SELECT name, khhinshi_id
-		FROM   hselection
-		WHERE  ifuse = 1
-	",1)->hundle;
-	while (my $i = $h->fetch){
-		if (
-			   $i->[0] =~ /B$/
-			|| $i->[0] eq '否定助動詞'
-			|| $i->[0] eq '形容詞（非自立）'
-		){
-			$filter->{hinshi}{$i->[1]} = 0;
-		} else {
-			$filter->{hinshi}{$i->[1]} = 1;
-		}
-	}
+	$self->{span_menu1} = gui_widget::optmenu->open(
+		parent   => $fra5,
+		pack     => {-anchor=>'e', -side => 'left'},
+		options  => \@span_options,
+		variable => \$self->{span1},
+		width    => 6,
+		command  =>
+			sub{
+				$self->check_span1;
+				$self->view;
+			},
+	);
+
+	$self->{span_lab2} = $fra5->Label(
+		-text => '-',
+		-font => "TKFN"
+	)->pack(-side => 'left');
+
+	$self->{span_menu2} = gui_widget::optmenu->open(
+		parent   => $fra5,
+		pack     => {-anchor=>'e', -side => 'left'},
+		options  => \@span_options,
+		variable => \$self->{span2},
+		width    => 6,
+		command  =>
+			sub{
+				$self->check_span2;
+				$self->view;
+			},
+	);
+
+	$self->update_span;
+
 
 	# その他・最終処理
 	
@@ -274,6 +336,81 @@ sub _new{
 
 	return $self;
 }
+
+sub check_span1{
+	my $self = shift;
+	
+	my %pos = (
+		'l5' => 1,
+		'l4' => 2,
+		'l3' => 3,
+		'l2' => 4,
+		'l1' => 5,
+		'r1' => 6,
+		'r2' => 7,
+		'r3' => 8,
+		'r4' => 9,
+		'r5' => 10,
+	);
+	
+	if ( $pos{$self->{span1}} > $pos{$self->{span2}} ){
+		$self->{span_menu2}->set_value($self->{span1});
+		#print "fixed 1\n";
+	}
+	
+	return $self;
+}
+
+sub check_span2{
+	my $self = shift;
+	
+	my %pos = (
+		'l5' => 1,
+		'l4' => 2,
+		'l3' => 3,
+		'l2' => 4,
+		'l1' => 5,
+		'r1' => 6,
+		'r2' => 7,
+		'r3' => 8,
+		'r4' => 9,
+		'r5' => 10,
+	);
+	
+	if ( $pos{$self->{span1}} > $pos{$self->{span2}} ){
+		$self->{span_menu1}->set_value($self->{span2});
+		#print "fixed 2\n";
+	}
+	
+	return $self;
+}
+
+sub update_span{
+	my $self = shift;
+	
+	if (
+		   $self->{sort} eq 'MI'
+		|| $self->{sort} eq 'MI3'
+		|| $self->{sort} eq 'T'
+		|| $self->{sort} eq 'Z'
+		|| $self->{sort} eq 'Jaccard'
+		|| $self->{sort} eq 'Dice'
+		|| $self->{sort} eq 'LL'
+	) {
+		$self->{span_lab1}->configure(-state => 'normal');
+		$self->{span_lab2}->configure(-state => 'normal');
+		$self->{span_menu1}->configure(-state => 'normal');
+		$self->{span_menu2}->configure(-state => 'normal');
+	} else {
+		$self->{span_lab1}->configure(-state => 'disabled');
+		$self->{span_lab2}->configure(-state => 'disabled');
+		$self->{span_menu1}->configure(-state => 'disabled');
+		$self->{span_menu2}->configure(-state => 'disabled');
+	}
+	
+	return $self;
+}
+
 
 #--------------#
 #   結果表示   #
@@ -308,7 +445,7 @@ sub view{
 		$self->list->header('create',16,-text  => kh_msg->get('h_score'));
 	}
 	
-	# nord word 情報の表示
+	# node word 情報の表示
 	$self->{entry}{nw_w}->configure(-state => 'normal');
 	$self->{entry}{nw_h}->configure(-state => 'normal');
 	$self->{entry}{nw_k}->configure(-state => 'normal');
@@ -356,6 +493,8 @@ sub view{
 	my $res = $self->{result_obj}->format_coloc(
 		sort   => $self->{sort},
 		filter => $filter,
+		span1  => $self->{span1},
+		span2  => $self->{span2},
 	);
 	return unless $res;
 	

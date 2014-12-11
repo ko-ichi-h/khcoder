@@ -409,6 +409,7 @@ gui_window::word_conc_coloc:
     total:                    Total
     win_title:                Collocation Stats
     word:                     'Word:'
+    span:                     '  Window span:'
 gui_window::word_conc_coloc_opt:
     filter_by_pos:            'Filter words by POS:'
     total_filt:               'Filter words by "Total" column:'
