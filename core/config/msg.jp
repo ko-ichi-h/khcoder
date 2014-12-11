@@ -409,6 +409,7 @@ gui_window::word_conc_coloc:
     total:                    合計
     win_title:                コロケーション統計
     word:                     抽出語：
+    span:                     '  集計範囲：'
 gui_window::word_conc_coloc_opt:
     filter_by_pos:            ・品詞による語の選択：
     top:                      '　　上位：'
