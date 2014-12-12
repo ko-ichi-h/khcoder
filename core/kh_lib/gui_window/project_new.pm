@@ -113,7 +113,15 @@ sub _new{
 
 	# ENTRYのバインド
 	$e1->DropSite(
-		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
+		-dropcommand => 
+			[
+				sub {
+					&Gui_DragDrop::get_filename_droped;
+					my $path = $self->gui_jg( $self->{e1}->get );
+					$self->check_path($path);
+				},
+				$e1,
+			],
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 	#$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
@@ -228,41 +236,51 @@ sub _sansyo{
 		$self->e1->delete('0','end');
 		$self->e1->insert(0,$self->gui_jchar($path));
 		
-		# Excel / CSV
-		if ($path =~ /\.(xls|xlsx|csv)$/i){
-			$self->_columns($path);
-			
-			# character code selection
-			if ($path =~ /\.(xls|xlsx)$/i){
-				$self->{icode_label}->configure( -state => 'disable' );
-				$self->{icode_menu} ->configure( -state => 'disable' );
-			} else {
-				$self->{icode_label}->configure( -state => 'normal' );
-				$self->{icode_menu} ->configure( -state => 'normal' );
-			}
-		}
-		# TXT / HTML
-		else {
-			# column selection interface
-			$self->{column_label}->configure( -state => 'disable' );
-			$self->{column_menu}->{win_obj}->destroy;
-			$self->{column_menu} = undef;
-			$self->{column_menu} = gui_widget::optmenu->open(
-				parent  => $self->{column_frame},
-				pack    => { -side => 'right', -padx => 2},
-				options =>
-					[
-						['N/A'  => 0],
-					],
-				variable => \$self->{column},
-			);
-			$self->{column_menu}->configure( -state => 'disable' );
-			
-			# character code selection
+		$self->check_path($path);
+		
+	}
+}
+
+sub check_path{
+	my $self = shift;
+	my $path = shift;
+	
+	# Excel / CSV
+	if ($path =~ /\.(xls|xlsx|csv)$/i){
+		$self->_columns($path);
+		
+		# character code selection
+		if ($path =~ /\.(xls|xlsx)$/i){
+			$self->{icode_label}->configure( -state => 'disable' );
+			$self->{icode_menu} ->configure( -state => 'disable' );
+		} else {
 			$self->{icode_label}->configure( -state => 'normal' );
 			$self->{icode_menu} ->configure( -state => 'normal' );
 		}
 	}
+	# TXT / HTML
+	else {
+		# column selection interface
+		$self->{column_label}->configure( -state => 'disable' );
+		$self->{column_menu}->{win_obj}->destroy;
+		$self->{column_menu} = undef;
+		$self->{column_menu} = gui_widget::optmenu->open(
+			parent  => $self->{column_frame},
+			pack    => { -side => 'right', -padx => 2},
+			options =>
+				[
+					['N/A'  => 0],
+				],
+			variable => \$self->{column},
+		);
+		$self->{column_menu}->configure( -state => 'disable' );
+		
+		# character code selection
+		$self->{icode_label}->configure( -state => 'normal' );
+		$self->{icode_menu} ->configure( -state => 'normal' );
+	}
+	
+	return 1;
 }
 
 sub _columns{
