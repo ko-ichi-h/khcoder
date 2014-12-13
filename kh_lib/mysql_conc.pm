@@ -833,6 +833,7 @@ sub format_coloc{
 	# 共起数の表現
 	my $joint;
 	my $j_f;
+	my $span = 0;
 	foreach my $i ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5'){
 		if ($i eq $args{span1}){
 			$j_f = 1;
@@ -840,6 +841,7 @@ sub format_coloc{
 		if ($j_f){
 			$joint .= '+' if length($joint);
 			$joint .= "$i";
+			++$span;
 		}
 		if ($i eq $args{span2}){
 			last;
@@ -864,7 +866,7 @@ sub format_coloc{
 		$sql .= "truncate( ( $joint - $w1_freq * genkei.num / $total ) / sqrt( $joint ) + .0005, 3 ) as T\n";
 	}
 	elsif ( $args{sort} eq 'Z' ){
-		$sql .= "truncate( ($joint - (genkei.num / ($total - $w1_freq) * $w1_freq * 10)) / sqrt( genkei.num / ($total - $w1_freq) * $w1_freq * 10 * (1-(genkei.num / ($total - $w1_freq))) ) + .0005, 3 ) as Z\n";
+		$sql .= "truncate( ($joint - (genkei.num / ($total - $w1_freq) * $w1_freq * $span)) / sqrt( genkei.num / ($total - $w1_freq) * $w1_freq * $span * (1-(genkei.num / ($total - $w1_freq))) ) + .0005, 3 ) as Z\n";
 	}
 	elsif ( $args{sort} eq 'Dice' ){
 		$sql .= "truncate( ($joint) * 2 / ($w1_freq + genkei.num) + .0005, 3 ) as Dice\n";
@@ -876,12 +878,12 @@ sub format_coloc{
 		$sql .= "truncate( 2 * (
 			  ($joint) * Log($joint)
 
-			+ (genkei.num - ($joint)) * Log(genkei.num - ($joint))
+			+ (genkei.num - ($joint)) * IFNULL(Log(genkei.num - ($joint)), 0)
 
-			+ ($w1_freq - ($joint) )  * Log($w1_freq - ($joint))
+			+ ($w1_freq - ($joint) )  * IFNULL(Log($w1_freq - ($joint)), 0)
 
 			+ ($total - genkei.num - $w1_freq + $joint)
-			                          * Log($total - genkei.num - $w1_freq + $joint)
+			                          * IFNULL(Log($total - genkei.num - $w1_freq + $joint), 0)
 
 			- (genkei.num)
 			    * Log(genkei.num)
@@ -890,10 +892,10 @@ sub format_coloc{
 			    * Log($w1_freq)
 
 			- ($total - $w1_freq)
-			    * Log($total - $w1_freq)
+			    * IFNULL( Log($total - $w1_freq), 0 )
 
 			- ($total - genkei.num)
-			    * Log($total - genkei.num)
+			    * IFNULL( Log($total - genkei.num), 0 )
 
 			+ ($total)
 			    * Log($total)
