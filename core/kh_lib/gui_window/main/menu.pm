@@ -671,6 +671,15 @@ sub make{
 		 -tearoff=>'no'
 	);
 
+		$self->{t_out_list} = $f_out_var->command(
+			-label => kh_msg->get('var_list'),#gui_window->gui_jchar('リストの確認・管理'),
+			-font => "TKFN",
+			-command => sub{
+					gui_window::outvar_list->open;
+				},
+			-state => 'disable'
+		);
+
 		$self->{t_out_read} = $f_out_var->cascade(
 			-label => kh_msg->get('read'),#gui_window->gui_jchar('読み込み'),
 			 -font => "TKFN",
@@ -694,15 +703,6 @@ sub make{
 					},
 				-state => 'disable'
 			);
-
-		$self->{t_out_list} = $f_out_var->command(
-			-label => kh_msg->get('var_list'),#gui_window->gui_jchar('リストの確認・管理'),
-			-font => "TKFN",
-			-command => sub{
-					gui_window::outvar_list->open;
-				},
-			-state => 'disable'
-		);
 
 	my $f6 = $f->cascade(
 		-label => kh_msg->get('text_format'),#gui_window->gui_jchar('テキストファイルの変形'),
