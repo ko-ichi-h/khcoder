@@ -328,16 +328,19 @@ if ( exists("com_method") ){
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		d[1:n_words,] <- 0
 
-		std <- d[(n_words+1):nrow(d),1:n_words]
+		std  <- d[(n_words+1):nrow(d),1:n_words]
+		chkm <- std
+		
 		std <- t(std)
 		std <- scale(std, center=T, scale=F)
 		std <- t(std)
 
-		if ( min(std) < 0 ){
-			std <- std - min(std);
+		if ( min(std[!is.na(std)]) < 0.0005 ){
+			std <- std + ( 0.0005 - min(std[!is.na(std)]) );
 		}
-		std <- std / max(std)
+		std <- std / max(std[!is.na(std)])
 		
+		std[chkm == 0] <- 0
 		d[(n_words+1):nrow(d),1:n_words] <- std
 	}
 }
