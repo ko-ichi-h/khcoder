@@ -668,6 +668,8 @@ sub calc{
 
 	# 空の行・空の列を削除
 	$r_command .=
+		"if ( length(v_pch) > 1 ){ v_pch <- v_pch[rowSums(d) > 0] }\n";
+	$r_command .=
 		"doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)\n";
 	$r_command .=
 		"d              <- subset(d,              rowSums(d) > 0)\n";
