@@ -75,6 +75,40 @@ sub _mecab_run{
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
 
+	# MeCabにわたすファイル内容のチェック
+	open $fh_chk, '<', $self->{target_temp} or
+		gui_errormsg->open(
+			thefile => $self->{target_temp},
+			type => 'file'
+		)
+	;
+	#my $read_chk = '';
+	my $has_lf = 0;
+	while (<$fh_chk>){
+		#$read_chk .= $_;
+		if ($_ =~ /.*\n$/){
+			$has_lf = 1;
+		} else {
+			$has_lf = 0;
+		}
+	}
+	close $fh_chk;
+	
+	# 最後に改行文字をつけておく
+	if ( $has_lf == 0 ){
+		open $fh_add, '>>', $self->{target_temp} or
+			gui_errormsg->open(
+				thefile => $self->{target_temp},
+				type => 'file'
+			)
+		;
+		print $fh_add "\n";
+		close $fh_add;
+		
+		#$read_chk = Jcode->new($read_chk)->utf8;
+		#print "Added LF for MeCab: $read_chk\n";
+	}
+
 	# MeCabの実行
 	system "$self->{cmdline}";
 	
@@ -154,11 +188,21 @@ sub _mecab_run{
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	unlink $self->{target_temp} or 
-		gui_errormsg->open(
+
+	#unlink $self->{target_temp} or 
+	#	gui_errormsg->open(
+	#		thefile => $self->{target_temp},
+	#		type => 'file'
+	#	);
+
+	open my $fh_target, '>', $self->{target_temp}
+		or gui_errormsg->open(
 			thefile => $self->{target_temp},
-			type => 'file'
-		);
+			type    => 'file'
+		)
+	;
+	close ($fh_target);
+
 	$self->{store} = '';
 }
 
