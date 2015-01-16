@@ -515,12 +515,13 @@ igraph.Arrows_my <- function (x1, y1, x2, y2, code = 2, size = 1, width = 1.2/4/
     }
 }
 
-assignInNamespace(
-	x="igraph.Arrows",
-	value=igraph.Arrows_my,
-	ns=asNamespace("igraph")
-)
-
+if ( grepl( "mingw32", sessionInfo()$platform ) ) {
+	assignInNamespace(
+		x="igraph.Arrows",
+		value=igraph.Arrows_my,
+		ns=asNamespace("igraph")
+	)
+}
 
 ';
 }
