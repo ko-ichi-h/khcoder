@@ -407,7 +407,7 @@ sub _calc_exec{
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含ま
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ない文書を除外
 	$r_command .= "d_labels <- d_labels[rowSums(d) > 0]\n";
-	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
+	$r_command .= "d <- d[rowSums(d) > 0, ]\n";
 	$r_command .= "n_cls <- $cluster_number\n";
 	
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
@@ -915,7 +915,7 @@ gw_idf <- function(m) {
 }
 
 d <- t(d)
-d <- subset(d, rowSums(d) > 0)
+d <- d[rowSums(d) > 0, ]
 d <- d * gw_idf(d)
 d <- t(d)
 
