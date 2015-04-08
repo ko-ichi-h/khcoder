@@ -86,10 +86,29 @@ order by genkei_t.id
 	・コーディングルールで文字数（lc）による指定を行う際、現状は「全角換算の文字数で指定」。よって全角1文字で「1」、半角1文字で「0.5」の扱い。しかし、将来的にはユニコード化の際に、全角でも半角でも1文字は「1」文字という扱いにすべき？　mysql_ready.pmのcreate table hyosoの後で、現状ではMySQLの「length」関数を使っているが、これを「char_length」関数に変更？
 
 [TO DO]
+	・KH CoderのWeb
+		・FAQの自動実行の項目
+		・スライド類へのリンク
+
+	・バブルプロットのデフォルト設定変更
+	
+	・アスペクト比を1にするオプション
+		・対応分析
+		・MDS
+
+	・対応分析に参照線を入れるオプション
+
+
+	・Excelファイルの日付の扱いを修正
+	
+	・ドイツ語・フランス語あたりもlemmatization可能に？
+
+
+	・他のTaggerへの対応？
+
+
 	・マニュアルへの追記
-		・Excelファイル対応
 		・外部変数の欠損値の説明が落ちているところがちらほら？　抽出語の対応分析の説明の箇所など
-		・Mac版のFAQに、プロット保存形式の選択の話を
 
 	・英語データを扱うときにも「分析対象ファイルのチェック」を可能に
 		・Unicode文字を削除するには1文字ずつunidecodeする。unidecodeで文字が消えた場合には、代わりにスペースを入れる処置が必要。Text::Unidecodeのドキュメントによれば「Some Unicode characters may transliterate to nothing (i.e., empty string).」
