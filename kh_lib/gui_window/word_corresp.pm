@@ -751,6 +751,7 @@ sub make_plot{
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
 	$r_command .= "flw <- $args{flw}\n";
+	$r_command .= "bubble_plot <- $args{bubble}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
 	$r_command .= "cex=$fontsize\n";
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
@@ -783,8 +784,13 @@ sub make_plot{
 	my ($r_com_gray, $r_com_gray_a);
 	
 	if ( $args{bubble} == 0 ){
+		#$r_command .= &r_command_slab_my;
+		$r_command .= "font_size <- $fontsize\n";
+		$r_command .= "labcd <- NULL\n\n";
 	
 	if ($args{biplot} == 0){                      # 同時布置なし
+
+	
 		# ラベルとドットをプロット
 		$r_command_2a = 
 			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
@@ -794,67 +800,8 @@ sub make_plot{
 				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
 				#.'bty="l"'
 				.")\n"
-			."library(maptools)\n"
-			."labcd <- pointLabel(x=c\$cscore[,d_x], y=c\$cscore[,d_y],"
-				."labels=rownames(c\$cscore), cex=$fontsize, offset=0, doPlot=F)\n"
-			.'
-
-xorg <- c$cscore[,d_x]
-yorg <- c$cscore[,d_y]
-#cex  <- 1
-
-n_words_chk <- c( length(xorg) )
-if (flt > 0) {
-	n_words_chk <- c(n_words_chk, flt)
-}
-if (flw > 0) {
-	n_words_chk <- c(n_words_chk, flw)
-}
-if ( min(n_words_chk) < 300 ){
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(c$cscore),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	for (i in 1:length( rownames(c$cscore) ) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
-			)
-			
-		}
-	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
-}
-
-text(
-	labcd$x,
-	labcd$y,
-	rownames(c$cscore),
-	cex=cex,
-	offset=0
-)
-
-			'
+				
+				."plot_mode=\"color\"\n".&r_command_labels
 		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
@@ -881,81 +828,7 @@ text(
 				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
 				#.'bty="l"'
 				." )\n"
-			."library(maptools)\n"
-			."labcd <- pointLabel("
-				."x=c(c\$cscore[,d_x], c\$rscore[,d_x]),"
-				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
-				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize,offset=0,doPlot=F)\n"
-			.'
-
-xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
-yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
-#cex  <- 1
-
-n_words_chk <- c( length(c$cscore[,d_x]) )
-if (flt > 0) {
-	n_words_chk <- c(n_words_chk, flt)
-}
-if (flw > 0) {
-	n_words_chk <- c(n_words_chk, flw)
-}
-if ( ( min(n_words_chk) < 300 ) && ( length(c$rscore[,d_x]) < r_max ) ){
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cb),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	segs <- NULL
-	for (i in 1:length(rownames(cb)) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			segs <- rbind(
-				segs,
-				c(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i]
-				) 
-			)
-		}
-	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
-
-	if ( exists("segs") ){
-		if ( is.null(segs) == F){
-			for (i in 1:nrow(segs) ){
-				segments(
-					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-					col="gray60",
-					lwd=1
-				)
-			}
-		}
-	}
-}
-
-			'
-			.'text('
-				.'labcd$x, labcd$y, rownames(cb),'
-				."cex=$fontsize,"
-				.'offset=0,'
-				.'col=c("black",NA,rep("#FF6347",v_count) )[cb[,3]]' #336666（green） #FF6347（vermilion） #FF8B00FF（orange）
-				.')'."\n"
-		;
+			."plot_mode=\"color\"\n".&r_command_labels;
 		$r_command_2 = $r_command.$r_command_2a;
 		
 		# 変数のみのプロット
@@ -971,69 +844,7 @@ if ( ( min(n_words_chk) < 300 ) && ( length(c$rscore[,d_x]) < r_max ) ){
 				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
 				#.'bty="l"'
 				." )\n"
-			."library(maptools)\n"
-			."labcd <- pointLabel("
-				."x=c\$rscore[,d_x],"
-				."y=c\$rscore[,d_y],"
-				."labels=rownames(c\$rscore),"
-				."cex=$fontsize,offset=0,doPlot=F)\n"
-				.'
-
-xorg <- c$rscore[,d_x]
-yorg <- c$rscore[,d_y]
-#cex  <- 1
-
-n_words_chk <- c( length(xorg) )
-#if (flt > 0) {
-#	n_words_chk <- c(n_words_chk, flt)
-#}
-#if (flw > 0) {
-#	n_words_chk <- c(n_words_chk, flw)
-#}
-if ( min(n_words_chk) < r_max ){
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(c$rscore),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	for (i in 1:length( rownames(c$rscore) ) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			
-			segments(
-				nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				xorg[i], yorg[i],
-				col="gray60",
-				lwd=1
-			)
-			
-		}
-	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
-}
-
-				'
-			.'text('
-				.'labcd$x, labcd$y, rownames(c$rscore),'
-				."cex=$fontsize,"
-				.'offset=0,'
-				.'col="black"' # #336666
-				.')'."\n"
-		;
+				."plot_mode=\"vars\"\n".&r_command_labels;
 		$r_command_3 = $r_command.$r_command_3a;
 		
 		# グレースケールのプロット
@@ -1050,106 +861,8 @@ if ( min(n_words_chk) < r_max ){
 				#.'bty="l"'
 				.")\n"
 		;
-		$r_com_gray =                             # command_fにのみ追加
-			 $r_command
-			.$r_com_gray_a
-			."library(maptools)\n"
-			."labcd <- pointLabel("
-				."x=c(c\$cscore[,d_x], c\$rscore[,d_x]),"
-				."y=c(c\$cscore[,d_y], c\$rscore[,d_y]),"
-				."labels=c(rownames(c\$cscore),rownames(c\$rscore)),"
-				."cex=$fontsize,offset=0,doPlot=F)\n"
-			.'
-
-xorg <- c(c$cscore[,d_x], c$rscore[,d_x])
-yorg <- c(c$cscore[,d_y], c$rscore[,d_y])
-#cex  <- 1
-
-n_words_chk <- c( length(c$cscore[,d_x]) )
-if (flt > 0) {
-	n_words_chk <- c(n_words_chk, flt)
-}
-if (flw > 0) {
-	n_words_chk <- c(n_words_chk, flw)
-}
-if ( ( min(n_words_chk) < 300 ) && ( length(c$rscore[,d_x]) < r_max ) ){
-	library(wordcloud)
-	nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		c(rownames(c$cscore),rownames(c$rscore)),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-	)
-
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	segs <- NULL
-	for (i in 1:length( c(rownames(c$cscore),rownames(c$rscore)) ) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			segs <- rbind(
-				segs,
-				c(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i]
-				) 
-			)
-			
-		}
-	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
-}
-
-			'
-		;
-		my $temp_cmd =                            # _f・_aに共通
-			 "cb  <- cbind(cb, labcd\$x, labcd\$y)\n"
-			."cb1 <-  subset(cb, cb[,3]==1)\n"
-			."cb2 <-  subset(cb, cb[,3]>=3)\n"
-			.'text('
-				.'cb1[,4], cb1[,5], rownames(cb1),'
-				."cex=$fontsize,"
-				.'offset=0,'
-				.'col="black",'
-				.')'."\n"
-			.'
-if ( exists("segs") ){
-	if ( is.null(segs) == F){
-		for (i in 1:nrow(segs) ){
-			segments(
-				segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-				col="gray60",
-				lwd=1
-			)
-		}
-	}
-}
-			'
-			."library(ade4)\n"
-			.'s.label_my(cb2, xax=4, yax=5, label=rownames(cb2),'
-				.'boxes=T,'
-				."clabel=$fontsize,"
-				.'addaxes=F,'
-				.'include.origin=F,'
-				.'grid=F,'
-				.'cpoint=0,'
-				.'cneig=0,'
-				.'cgrid=0,'
-				.'add.plot=T,'
-				.')'."\n"
-			.'points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")'."\n"
-		;
-		$r_com_gray   .= $temp_cmd;
-		$r_com_gray_a .= $temp_cmd;
+		$r_com_gray_a .= "plot_mode=\"gray\"\n".&r_command_labels;
+		$r_com_gray = $r_command.$r_com_gray_a;
 
 		# ドットのみをプロット
 		$r_command_a .=
@@ -1387,8 +1100,6 @@ col_bg_words <- NA
 col_bg_vars  <- NA
 
 if (plot_mode == "color"){
-	col_txt_words <- "black"
-	col_txt_vars  <- "#DC143C"
 	col_dot_words <- "#00CED1"
 	col_dot_vars  <- "#FF6347"
 	if ( use_alpha == 1 ){
@@ -1406,22 +1117,16 @@ if (plot_mode == "color"){
 }
 
 if (plot_mode == "gray"){
-	col_txt_words <- "black"
-	col_txt_vars  <- "black"
 	col_dot_words <- "gray55"
 	col_dot_vars  <- "gray30"
 }
 
 if (plot_mode == "vars"){
-	col_txt_words <- NA
-	col_txt_vars  <- "black"
 	col_dot_words <- "#ADD8E6"
 	col_dot_vars  <- "red"
 }
 
 if (plot_mode == "dots"){
-	col_txt_words <- NA
-	col_txt_vars  <- NA
 	col_dot_words <- "black"
 	col_dot_vars  <- "black"
 }
@@ -1512,6 +1217,38 @@ if (biplot){
 		bg=col_bg_vars,
 		cex=pch_cex,
 	)
+}
+'
+.&r_command_labels;
+}
+
+
+sub r_command_labels{
+	return '
+
+if (plot_mode == "color"){
+	if (bubble_plot == 1){
+		col_txt_words <- "black"
+		col_txt_vars  <- "#DC143C"
+	} else {
+		col_txt_words <- "black"
+		col_txt_vars  <- "#FF6347"
+	}
+}
+
+if (plot_mode == "gray"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "vars"){
+	col_txt_words <- NA
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_txt_vars  <- NA
 }
 
 # compute label positions
@@ -1623,9 +1360,15 @@ if (plot_mode == "gray"){
 		cgrid=0,
 		add.plot=T,
 	)
-	if (resize_vars == 0){
+	
+	if (bubble_plot == 1){
+		if (resize_vars == 0){
+			points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
+		}
+	} else {
 		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
 	}
+	
 	if ( exists("segs") ){
 		if ( is.null(segs) == F){
 			for (i in 1:nrow(segs) ){
@@ -1662,11 +1405,8 @@ if (plot_mode == "gray"){
 if (plot_mode == "vars"){
 	labcd <- NULL
 }
-
-
 ';
 }
-
 
 sub r_command_slab_my{
 	return '
