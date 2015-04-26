@@ -940,7 +940,8 @@ plot(
 	col=plot_color[cb[,3]],
 	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
 	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
-	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]
+	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
+	bty = "l"
 )
 
 '.&r_command_labels;
@@ -1201,6 +1202,18 @@ if (biplot){
 sub r_command_labels{
 	return '
 
+# show the origin
+if (T){
+	line_color <- "gray30"
+	limits <- par("usr")
+	m_x <- (limits[2] - limits[1]) * 0.03
+	m_y <- (limits[4] - limits[3]) * 0.03
+	
+	segments( limits[1], 0, m_x, 0, col=line_color, lty=3, lwd=1)
+	segments( 0, limits[3], 0, m_y, col=line_color, lty=3, lwd=1)
+}
+
+# label colors
 if (plot_mode == "color"){
 	if (bubble_plot == 1){
 		col_txt_words <- "black"
