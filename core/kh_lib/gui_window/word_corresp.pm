@@ -817,34 +817,18 @@ sub make_plot{
 	} else {                                      # 同時布置あり
 		# ラベルとドットをプロット
 		$r_command_2a .= 
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
-				.'),'
-				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
-				.'col=c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
-				#.'bty="l"'
-				." )\n"
-			."plot_mode=\"color\"\n".&r_command_labels;
+			"plot_mode=\"color\"\n"
+			.&r_command_normal
+			.&r_command_labels
+		;
 		$r_command_2 = $r_command.$r_command_2a;
 		
 		# 変数のみのプロット
 		$r_command_3a .= 
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
-				.'),'
-				.'pch=c(1,1,0,2,4:15)[cb[,3]],'
-				.'col=c("#ADD8E6","#ADD8E6",rep( "red", v_count ))[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				.'cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],'
-				#.'bty="l"'
-				." )\n"
-				."plot_mode=\"vars\"\n".&r_command_labels;
+			"plot_mode=\"vars\"\n"
+			.&r_command_normal
+			.&r_command_labels
+		;
 		$r_command_3 = $r_command.$r_command_3a;
 		
 		# グレースケールのプロット
@@ -971,6 +955,35 @@ sub make_plot{
 
 	return \@plots;
 }
+
+sub r_command_normal{
+return '
+
+if (plot_mode == "color"){
+	plot_color <- c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))
+	plot_pch   <- c(20,1,0,2,4:15)
+} else if (plot_mode == "vars"){
+	plot_color <- c("#ADD8E6","#ADD8E6",rep( "red", v_count ))
+	plot_pch   <- c(1,1,0,2,4:15)
+}
+
+cb <- rbind(
+	cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+	cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+)
+
+plot(
+	cb,
+	pch=plot_pch[cb[,3]],
+	col=plot_color[cb[,3]],
+	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
+	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
+	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]
+)
+
+';
+}
+
 
 sub r_command_aggr{
 	my $n_v = shift;
