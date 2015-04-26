@@ -778,90 +778,41 @@ sub make_plot{
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
 	# プロットのためのRコマンド
-
 	my ($r_command_3a, $r_command_3);
-	my ($r_command_2a, $r_command_2, $r_command_a);
+	my ($r_command_2a, $r_command_2);
 	my ($r_com_gray, $r_com_gray_a);
 	
+	# バブル表現を行なわない場合
 	if ( $args{bubble} == 0 ){
-		#$r_command .= &r_command_slab_my;
 		$r_command .= "font_size <- $fontsize\n";
 		$r_command .= "labcd <- NULL\n\n";
-	
-	if ($args{biplot} == 0){                      # 同時布置なし
+		my $common = $r_command;
 
-	
 		# ラベルとドットをプロット
 		$r_command_2a = 
-			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				.'col=c("mediumaquamarine","mediumaquamarine","#ADD8E6")[cb[,3]],'
-				.'pch=c(20,1)[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				#.'bty="l"'
-				.")\n"
-				
-				."plot_mode=\"color\"\n".&r_command_labels
-		;
-		$r_command_2 = $r_command.$r_command_2a;
+			"plot_mode=\"color\"\n"
+			.&r_command_normal;
+		$r_command_2 = $common.$r_command_2a;
 		
 		# ドットのみプロット
-		$r_command_a .=
-			 "plot(cb <- cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				.'pch=c(1,3)[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				#.'bty="l"'
-				.")\n"
-		;
-	} else {                                      # 同時布置あり
-		# ラベルとドットをプロット
-		$r_command_2a .= 
-			"plot_mode=\"color\"\n"
-			.&r_command_normal
-			.&r_command_labels
-		;
-		$r_command_2 = $r_command.$r_command_2a;
-		
-		# 変数のみのプロット
-		$r_command_3a .= 
-			"plot_mode=\"vars\"\n"
-			.&r_command_normal
-			.&r_command_labels
-		;
-		$r_command_3 = $r_command.$r_command_3a;
-		
-		# グレースケールのプロット
-		$r_com_gray_a .= &r_command_slab_my;
-		$r_com_gray_a .= 
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
-				.'),'
-				.'pch=c(20,1,0,2,4:15)[cb[,3]],'
-				.'col=c("gray65","gray65",rep( "gray30", v_count))[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				#.'bty="l"'
-				.")\n"
-		;
-		$r_com_gray_a .= "plot_mode=\"gray\"\n".&r_command_labels;
-		$r_com_gray = $r_command.$r_com_gray_a;
+		$r_command .=
+			"plot_mode=\"dots\"\n"
+			.&r_command_normal;
 
-		# ドットのみをプロット
-		$r_command_a .=
-			 'plot(cb <- rbind('
-				."cbind(c\$cscore[,d_x], c\$cscore[,d_y], ptype),"
-				."cbind(c\$rscore[,d_x], c\$rscore[,d_y], v_pch)"
-				.'),'
-				.'pch=c(1,3,0,2,4:15)[cb[,3]],'
-				.'xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),'
-				.'ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),'
-				#.'bty="l"'
-				.")\n"
-		;
-	}
-	$r_command .= $r_command_a;
+		if ($args{biplot}){
+			# 変数のみのプロット
+			$r_command_3a .= 
+				"plot_mode=\"vars\"\n"
+				.&r_command_normal;
+			$r_command_3 = $common.$r_command_3a;
+			
+			# グレースケールのプロット
+			$r_com_gray_a .= &r_command_slab_my;
+			$r_com_gray_a .= 
+				"plot_mode=\"gray\"\n"
+				.&r_command_normal;
+			$r_com_gray = $common.$r_com_gray_a;
+		}
 
 	# バブル表現を行う場合
 	} else {
@@ -875,11 +826,11 @@ sub make_plot{
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 		
-		# カラー
+		# ドットのみ
 		$r_command .= "plot_mode <- \"dots\"\n";
 		$r_command .= &r_command_bubble;
 
-		# ドットのみ
+		# カラー
 		$r_command_2a .= "plot_mode <- \"color\"\n";
 		$r_command_2a .= &r_command_bubble;
 		$r_command_2  = $common.$r_command_2a;
@@ -965,12 +916,23 @@ if (plot_mode == "color"){
 } else if (plot_mode == "vars"){
 	plot_color <- c("#ADD8E6","#ADD8E6",rep( "red", v_count ))
 	plot_pch   <- c(1,1,0,2,4:15)
+} else if (plot_mode == "gray"){
+	plot_color <- c("gray65","gray65",rep( "gray30", v_count))
+	plot_pch   <- c(20,1,0,2,4:15)
+} else if (plot_mode == "dots"){
+	plot_color <- c("black","black",rep( "black", v_count))
+	plot_pch   <- c(1,3,0,2,4:15)
 }
 
-cb <- rbind(
-	cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-	cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-)
+
+if (biplot == 1){
+	cb <- rbind(
+		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+	)
+} else {
+	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
+}
 
 plot(
 	cb,
@@ -981,7 +943,7 @@ plot(
 	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]]
 )
 
-';
+'.&r_command_labels;
 }
 
 
