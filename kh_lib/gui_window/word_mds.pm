@@ -578,6 +578,7 @@ if ( dim_n == 1 ){
 }
 
 col_base <- "mediumaquamarine"
+bty      <- "l"
 
 # クラスター分析
 if (n_cls > 0){
@@ -603,6 +604,7 @@ if (n_cls > 0){
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
 	col_dot_words <- "gray40"
 	col_base <- NA
+	bty <- "o"
 
 	if ( use_alpha == 1 ){
 		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
@@ -629,7 +631,7 @@ plot(
 	col=col_base,
 	xlab=name_dim1,
 	ylab=ylab_text,
-	#bty="l",
+	bty=bty
 )
 
 if (n_cls > 0){
