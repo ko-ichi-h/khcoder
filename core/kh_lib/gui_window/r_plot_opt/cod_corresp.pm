@@ -229,8 +229,7 @@ sub calc{
 	my $wait_window = gui_wait->start;
 	my $plot = &gui_window::word_corresp::make_plot(
 		base_win     => $self,
-		d_x          => $self->{xy_obj}->x,
-		d_y          => $self->{xy_obj}->y,
+		$self->{xy_obj}->params,
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,

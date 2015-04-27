@@ -8,19 +8,30 @@ sub _new{
 	my $self = shift;
 	
 	my $win = $self->parent->Frame();
-	my $fd  = $win->Frame()->pack(-fill => 'x');
 	
 	$self->{x} = 1 unless defined $self->{x};
 	$self->{y} = 2 unless defined $self->{y};
+	$self->{check_origin} = 1 unless defined $self->{check_origin};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /\nd_x <\- ([0-9]+)\nd_y <\- ([0-9]+)\n/ ){
 			$self->{x} = $1;
 			$self->{y} = $2;
 		}
+		if ( $self->{r_cmd} =~ /\nshow_origin <\- ([0-9]+)\n/ ){
+			$self->{check_origin} = $1;
+		}
 		$self->{r_cmd} = undef;
 	}
 
+	$win->Checkbutton(
+		-text     => kh_msg->get('origin'),
+		-variable => \$self->{check_origin},
+	)->pack(
+		-anchor => 'w',
+	);
+
+	my $fd  = $win->Frame()->pack(-fill => 'x');
 	$fd->Label(
 		-text => kh_msg->get('cmp_plot'), # プロットする成分：
 		-font => "TKFN",
@@ -73,6 +84,15 @@ sub _new{
 #----------------------#
 #   設定へのアクセサ   #
 
+sub params{
+	my $self = shift;
+	return (
+		d_x         => $self->x,
+		d_y         => $self->y,
+		show_origin => $self->origin,
+	);
+}
+
 sub x{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{entry_d_x}->get );
@@ -81,6 +101,11 @@ sub x{
 sub y{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{entry_d_y}->get );
+}
+
+sub origin{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{check_origin} );
 }
 
 1;

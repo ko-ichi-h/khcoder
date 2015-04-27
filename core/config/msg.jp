@@ -60,6 +60,7 @@ gui_widget::r_xy:
     cmp_plot:                 プロットする成分：
     x:                        ' X軸'
     y:                        ' Y軸'
+    origin:                   原点を表示
 gui_widget::words:
     by_df:                    最小/最大 文書数による語の取捨選択
     by_pos:                   品詞による語の取捨選択
