@@ -70,7 +70,7 @@ sub innner{
 
 	# バブルプロット用のパラメーター
 	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var)
-		= (0,1,1,100,100);
+		= (0,1,0,100,100);
 
 	if ( $self->{command_f} =~ /symbols\(/ ){
 		$check_bubble = 1;
