@@ -13,7 +13,7 @@ sub _new{
 	
 	$self->{check_bubble}    = 0   unless defined $self->{check_bubble};
 	$self->{chk_resize_vars} = 1   unless defined $self->{chk_resize_vars};
-	$self->{chk_std_radius}  = 1   unless defined $self->{chk_std_radius};
+	$self->{chk_std_radius}  = 0   unless defined $self->{chk_std_radius};
 	$self->{num_size}        = 100 unless defined $self->{num_size};
 	$self->{num_var}         = 100 unless defined $self->{num_var};
 	$self->{use_alpha}       = 1   unless defined $self->{use_alpha};
