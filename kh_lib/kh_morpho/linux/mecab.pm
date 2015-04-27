@@ -45,7 +45,7 @@ sub _run_morpho{
 			);
 			unless ( index($t,'>') > -1 ){
 				gui_errormsg->open(
-					msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'), # '山カッコ（<>）による正しくないマーキングがありました。',
+					msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
 					type => 'msg'
 				);
 				exit;

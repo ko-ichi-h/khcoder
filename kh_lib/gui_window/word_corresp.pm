@@ -693,9 +693,7 @@ sub calc{
 	}
 
 	my $plot = &make_plot(
-		#d_n          => $self->gui_jg( $self->{entry_d_n}->get ),
-		d_x          => $self->{xy_obj}->x,
-		d_y          => $self->{xy_obj}->y,
+		$self->{xy_obj}->params,
 		flt          => $filter,
 		flw          => $filter_w,
 		biplot       => $biplot,
@@ -755,6 +753,7 @@ sub make_plot{
 	$r_command .= "biplot <- $args{biplot}\n";
 	$r_command .= "cex=$fontsize\n";
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
+	$r_command .= "show_origin <- $args{show_origin}\n";
 	$r_command .= "
 		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
 			use_alpha <- 0 
@@ -1203,7 +1202,7 @@ sub r_command_labels{
 	return '
 
 # show the origin
-if (T){
+if (show_origin == 1){
 	line_color <- "gray30"
 	limits <- par("usr")
 	m_x <- (limits[2] - limits[1]) * 0.03
