@@ -391,6 +391,7 @@ sub refresh{
 			parent  => $self->{opt_frame_var},
 			options => \@options,
 			default => 0,
+			height  => 3,
 			pack    => {
 				-side   => 'left',
 				-padx   => 2,
@@ -754,6 +755,7 @@ sub make_plot{
 	$r_command .= "cex=$fontsize\n";
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 	$r_command .= "show_origin <- $args{show_origin}\n";
+	$r_command .= "scaling <- \"$args{scaling}\"\n";
 	$r_command .= "
 		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
 			use_alpha <- 0 
@@ -765,7 +767,6 @@ sub make_plot{
 	$r_command .= "name_exp <- '".Encode::encode('euc-jp', kh_msg->get('exp'))."'\n"; # ´óÍ¿Î¨
 
 	$r_command .= "library(MASS)\n";
-	#$r_command .= "c <- corresp(d, nf=min( nrow(d), ncol(d) ) )\n";
 
 	$r_command .= &r_command_filter;
 
@@ -940,7 +941,8 @@ plot(
 	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
 	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
 	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
-	bty = "l"
+	bty = "l",
+	asp = asp
 )
 
 '.&r_command_labels;
@@ -1064,6 +1066,23 @@ if ( v_count > 1 ){
 	pch_cex <- 1.25
 }
 
+# Scaling
+asp <- 0
+if (scaling == "sym"){
+	c$cscore[,d_x] <- c$cscore[,d_x] * c$cor[d_x]
+	c$cscore[,d_y] <- c$cscore[,d_y] * c$cor[d_y]
+	c$rscore[,d_x] <- c$rscore[,d_x] * c$cor[d_x]
+	c$rscore[,d_y] <- c$rscore[,d_y] * c$cor[d_y]
+	asp <- 1
+} else if (scaling == "symbi"){
+	c$cscore[,d_x] <- c$cscore[,d_x] * sqrt( c$cor[d_x] )
+	c$cscore[,d_y] <- c$cscore[,d_y] * sqrt( c$cor[d_y] )
+	c$rscore[,d_x] <- c$rscore[,d_x] * sqrt( c$cor[d_x] )
+	c$rscore[,d_y] <- c$rscore[,d_y] * sqrt( c$cor[d_y] )
+	asp <- 1
+}
+
+
 END_OF_the_R_COMMAND
 return $t;
 }
@@ -1151,6 +1170,7 @@ plot(
 	col="black",
 	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
 	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
+	asp = asp,
 	#bty="l"
 )
 

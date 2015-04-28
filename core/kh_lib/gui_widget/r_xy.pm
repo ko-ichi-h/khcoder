@@ -12,6 +12,7 @@ sub _new{
 	$self->{x} = 1 unless defined $self->{x};
 	$self->{y} = 2 unless defined $self->{y};
 	$self->{check_origin} = 1 unless defined $self->{check_origin};
+	$self->{scale_opt} = "none" unless defined $self->{scale_opt};
 
 	if ( length($self->{r_cmd}) ){
 		if ( $self->{r_cmd} =~ /\nd_x <\- ([0-9]+)\nd_y <\- ([0-9]+)\n/ ){
@@ -21,17 +22,14 @@ sub _new{
 		if ( $self->{r_cmd} =~ /\nshow_origin <\- ([0-9]+)\n/ ){
 			$self->{check_origin} = $1;
 		}
+		if ( $self->{r_cmd} =~ /\nscaling <\- "([a-z]+)"\n/ ){
+			$self->{scale_opt} = $1;
+		}
+		
 		$self->{r_cmd} = undef;
 	}
 
-	$win->Checkbutton(
-		-text     => kh_msg->get('origin'),
-		-variable => \$self->{check_origin},
-	)->pack(
-		-anchor => 'w',
-	);
-
-	my $fd  = $win->Frame()->pack(-fill => 'x');
+	my $fd  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 	$fd->Label(
 		-text => kh_msg->get('cmp_plot'), # プロットする成分：
 		-font => "TKFN",
@@ -77,6 +75,36 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_d_y});
 
 
+	my $fs  = $win->Frame()->pack(-fill => 'x', -pady => 1);
+
+	$fs->Label(
+		-text => kh_msg->get('scaling'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	gui_widget::optmenu->open(
+		parent  => $fs,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				[kh_msg->get('none'),  'none' ],
+				[kh_msg->get('sym'),   'sym'  ],
+				[kh_msg->get('symbi'), 'symbi'],
+			],
+		variable => \$self->{scale_opt},
+	);
+
+	$fs->Label(
+		-text => '  ',
+	)->pack(-side => 'left');
+
+	$fs->Checkbutton(
+		-text     => kh_msg->get('origin'),
+		-variable => \$self->{check_origin},
+	)->pack(
+		-side => 'left'
+	);
+
 	$self->{win_obj} = $win;
 	return $self;
 }
@@ -90,6 +118,7 @@ sub params{
 		d_x         => $self->x,
 		d_y         => $self->y,
 		show_origin => $self->origin,
+		scaling     => $self->scale,
 	);
 }
 
@@ -106,6 +135,11 @@ sub y{
 sub origin{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_origin} );
+}
+
+sub scale{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{scale_opt} );
 }
 
 1;
