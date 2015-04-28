@@ -61,6 +61,10 @@ gui_widget::r_xy:
     x:                        ' X'
     y:                        ' Y'
     origin:                   Show the origin
+    scaling:                  Scaling:
+    none:                     none
+    sym:                      symmetric
+    symbi:                    symmetric biplot
 gui_widget::words:
     by_df:                    Filter words by Document Frequency
     by_pos:                   Filter words by POS
