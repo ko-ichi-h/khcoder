@@ -456,6 +456,7 @@ sub refresh{
 			parent  => $self->{opt_frame_var},
 			options => \@options,
 			default => 0,
+			height  => 3,
 			pack    => {
 				-side   => 'left',
 				-padx   => 2,

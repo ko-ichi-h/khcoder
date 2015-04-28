@@ -61,6 +61,10 @@ gui_widget::r_xy:
     x:                        ' X軸'
     y:                        ' Y軸'
     origin:                   原点を表示
+    scaling:                  'スコア：'
+    none:                     標準化
+    sym:                      対称
+    symbi:                    対称biplot
 gui_widget::words:
     by_df:                    最小/最大 文書数による語の取捨選択
     by_pos:                   品詞による語の取捨選択
