@@ -5,7 +5,6 @@ use warnings;
 use base 'kh_spreadsheet';
 
 use Spreadsheet::ParseXLSX;
-
 use Spreadsheet::ParseExcel::FmtJapan;
 
 no warnings 'redefine';
@@ -48,7 +47,7 @@ sub _parse_shared_strings {
     my $self = shift;
     my ($strings) = @_;
 
-	$strings =~ s!<rPh[^>]*>.*?</rPh>!!gsm; # kh coder
+	$strings =~ s!<rPh[^>]*>.*?</rPh>!!gsmo; # kh coder
 
     my $PkgStr = [];
 
