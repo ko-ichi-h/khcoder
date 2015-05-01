@@ -56,7 +56,7 @@ sub search{
 	}
 	
 	$q = mysql_exec->quote($q);
-	$q =~ s/'(.+)'/\1/;
+	$q =~ s/'(.+)'/$1/;
 	
 	my $h = mysql_exec->select("
 		SELECT hyoso.name, hyosobun.bun_idt
