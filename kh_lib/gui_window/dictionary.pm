@@ -421,8 +421,8 @@ sub save{
 	$self->config->words_mk(\@mark); # ファイル利用のあとから設定
 
 	# 使用しない語
-	my @stop; my %check;
-	my $t = Jcode->new(
+	my @stop; %check={};
+	$t = Jcode->new(
 		$self->gui_jg($self->t2->get("1.0","end")),
 		'sjis'
 	)->euc;
