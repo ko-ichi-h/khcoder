@@ -424,6 +424,10 @@ sub gui_jg{ # 入力された文字列の変換
 				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
 				return Jcode->new($char,'utf8')->sjis;
 			}
+			if ($^O eq 'MSWin32'){ # Win32, ATOK対策
+				$char =~ s/\r//g;
+				$char =~ s/\n//g;
+			}
 			return Encode::encode($char_code{sjis},$char);
 		} else {
 			#print "not utf8\n";
