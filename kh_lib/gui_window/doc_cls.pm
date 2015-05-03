@@ -501,8 +501,8 @@ if (
 		             ."pp_type <- \"last\"\n"
 		             .$r_command_height
 		             .&r_command_mout($merges->{_cluster_tmp}),
-		width     => 640,
-		height    => 480,
+		width     => $::config_obj->plot_size_words,
+		height    => $::config_obj->plot_size_codes,
 	) or return 0;
 
 	$plots->{_cluster_tmp}{first} = kh_r_plot->new(
@@ -513,8 +513,8 @@ if (
 		             .$r_command_height,
 		command_a =>  "pp_type <- \"first\"\n"
 		             .$r_command_height,
-		width     => 640,
-		height    => 480,
+		width     => $::config_obj->plot_size_words,
+		height    => $::config_obj->plot_size_codes,
 	) or return 0;
 
 	$plots->{_cluster_tmp}{all} = kh_r_plot->new(
@@ -525,8 +525,8 @@ if (
 		             .$r_command_height,
 		command_a =>  "pp_type <- \"all\"\n"
 		             .$r_command_height,
-		width     => 640,
-		height    => 480,
+		width     => $::config_obj->plot_size_words,
+		height    => $::config_obj->plot_size_codes,
 	) or return 0;
 
 	# デンドログラム
@@ -543,11 +543,12 @@ if (
 	}
 	
 	my $size = int( ($ndocs * ( (20 + 5) * 1) + 45) * 1 );
-	if ($size < 480){
-		$size = 480;
+	$size = int( $size * ( $::config_obj->plot_size_codes / 480 ) );
+	if ($size < $::config_obj->plot_size_codes){
+		$size = $::config_obj->plot_size_codes;
 	}
-	elsif ($size < 640){
-		$size = 640;
+	elsif ($size < $::config_obj->plot_size_words){
+		$size = $::config_obj->plot_size_words;
 	}
 
 	if ($ndocs <= 500){
@@ -558,7 +559,7 @@ if (
 			             .&r_command_dendro1(1),
 			command_a =>  &r_command_dendro1(1),
 			width     => $size,
-			height    => 480,
+			height    => $::config_obj->plot_size_codes,
 		) or return 0;
 		$plots->{_dendro}->rotate_cls;
 	}

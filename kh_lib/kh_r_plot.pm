@@ -133,6 +133,9 @@ sub new{
 	}
 
 	# width・heightのチェック
+	$self->{width}  = $::config_obj->plot_size_codes unless defined($self->{width});
+	$self->{height} = $::config_obj->plot_size_codes unless defined($self->{height});
+	
 	unless (
 		   (length($self->{width} ) == 0 || $self->{width}  =~ /^[0-9]+$/)
 		&& (length($self->{height}) == 0 || $self->{height} =~ /^[0-9]+$/)

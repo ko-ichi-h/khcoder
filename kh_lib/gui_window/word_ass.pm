@@ -675,8 +675,8 @@ sub net_calc{
 	$r_command .= "# END: DATA\n\n";
 	use plotR::network;
 	my $plotR = plotR::network->new(
-		font_size           => $::config_obj->r_default_font_size / 100,
-		plot_size           => 640,
+		font_size           => $::config_obj->plot_font_size / 100,
+		plot_size           => $::config_obj->plot_size_words,
 		n_or_j              => "n",
 		edges_num           => 60,
 		edges_jac           => 0,

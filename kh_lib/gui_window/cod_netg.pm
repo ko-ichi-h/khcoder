@@ -215,9 +215,8 @@ sub _new{
 		parent    => $lf2,
 		command   => sub{ $self->_calc; },
 		pack      => { -anchor   => 'w' },
-		font_size => $::config_obj->r_default_font_size,
 		show_bold => 1,
-		plot_size => 480,
+		plot_size => $::config_obj->plot_size_codes,
 	);
 
 	$win->Checkbutton(

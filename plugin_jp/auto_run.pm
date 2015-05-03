@@ -12,7 +12,7 @@ package auto_run;
 sub plugin_config{
 
 	# 自動処理を行うかどうか判断
-	if ( $ARGV[0] eq '-auto_run' && -e $ARGV[1] ){
+	if ( defined($ARGV[0]) && defined($ARGV[1]) && $ARGV[0] eq '-auto_run' && -e $ARGV[1] ){
 		
 		# ファイル名指定
 		my $file_target = $ARGV[1];

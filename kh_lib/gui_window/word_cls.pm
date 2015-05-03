@@ -48,7 +48,6 @@ sub _new{
 		parent    => $lf,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor   => 'w' },
-		font_size => $::config_obj->r_default_font_size,
 		show_bold => 0,
 		plot_size => 'Auto',
 	);
@@ -213,11 +212,13 @@ sub make_plot{
 	if ($args{plot_size} =~ /auto/i){
 		$args{plot_size} =
 			int( ($args{data_number} * ( (20 + $bonus) * $fontsize) + 45) * 1 );
-		if ($args{plot_size} < 480){
-			$args{plot_size} = 480;
+		$args{plot_size} = int( $args{plot_size} * ( $::config_obj->plot_size_codes / 480 ) );
+		
+		if ($args{plot_size} < $::config_obj->plot_size_codes){
+			$args{plot_size} = $::config_obj->plot_size_codes;
 		}
-		elsif ($args{plot_size} < 640){
-			$args{plot_size} = 640;
+		elsif ($args{plot_size} < $::config_obj->plot_size_words){
+			$args{plot_size} = $::config_obj->plot_size_words;
 		}
 	}
 
@@ -299,7 +300,7 @@ if (
 	my $flg_error = 0;
 	my $merges;
 	
-	my ($w,$h) = (480,$args{plot_size});
+	my ($w,$h) = ($::config_obj->plot_size_codes, $args{plot_size});
 	($w,$h) = ($h,$w) if $old_simple_style;
 	
 	# Wardˡ
@@ -319,8 +320,8 @@ if (
 			             .&r_command_height,
 			command_a =>  "pp_type <- \"$i\"\n"
 			             .&r_command_height,
-			width     => 640,
-			height    => 480,
+			width     => $::config_obj->plot_size_words,
+			height    => $::config_obj->plot_size_codes,
 		);
 	}
 
