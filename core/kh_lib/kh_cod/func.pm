@@ -261,7 +261,7 @@ sub out2r_selected{
 		$r_command =~ s/\\/\//g;
 		kh_jchar->to_sjis($file);
 	}
-	
+	$r_command .= "# dpi: short based\n";
 	return $r_command;
 }
 

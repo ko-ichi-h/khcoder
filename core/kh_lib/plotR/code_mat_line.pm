@@ -46,8 +46,8 @@ sub new{
 		command_f =>
 			 $r_command
 			.$self->r_plot_cmd_line,
-		width     => 640,
-		height    => 480,
+		width     => $::config_obj->plot_size_words,
+		height    => $::config_obj->plot_size_codes,
 	) or $flg_error = 1;
 
 

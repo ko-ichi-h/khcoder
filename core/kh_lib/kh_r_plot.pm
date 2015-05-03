@@ -349,14 +349,42 @@ sub R_device{
 	$path .= '.png';
 	unlink($path) if -e $path;
 	
-	$width  = 480 unless $width;
-	$height = 480 unless $height;
+	$width  = $::config_obj->plot_size_words unless $width;
+	$height = $::config_obj->plot_size_words unless $height;
+
+	# Setup the dpi value
+	my $dpi = 72;
+	use Statistics::Lite qw(min);
+	if (
+		(
+			   $self->{command_f} =~ /ggdendro/
+			|| $self->{command_f} =~ /rect\.hclust/
+		)
+		and not ( $self->{command_f} =~ /pp_type/ )
+	) {                         # dendrogram
+		$dpi = int( 72 * ($::config_obj->plot_size_codes / 480) );
+	}
+	elsif ($self->{command_f} =~ /# dpi: short based\n/){ # short based (codes, mainly)
+		$dpi = int( 72 * ( min($width,$height) / 480) );
+	}
+	elsif ($height == $width) { # square
+		$dpi = int( 72 * ($height / 640) ) if $height > 640;
+	}
+	elsif (
+		   $height == $::config_obj->plot_size_codes
+		&& $width  == $::config_obj->plot_size_words
+	){                          # default rectangle
+		$dpi = int( 72 * ($::config_obj->plot_size_words / 640) );
+	}
+	elsif ( min($width,$height) > 640 ) { # unknown
+		$dpi = int( 72 * ( min($width,$height) / 640 ) )
+	}
 
 	return 0 unless $::config_obj->R;
 	
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
-			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\")
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\", dpi=$dpi)
 		} else {
 			png(\"$path\", width=$width, height=$height, unit=\"px\" )
 		}
@@ -398,13 +426,13 @@ sub _save_pdf{
 	my $self = shift;
 	my $path = shift;
 
-	my $w = 7;
+	my $w = 8;
 	if ($self->{width} > $self->{height}){
-		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
+		$w = sprintf("%.5f", 8 * $self->{width} / $self->{height} );
 	}
-	my $h = 7;
+	my $h = 8;
 	if ($self->{height} > $self->{width}){
-		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
 	my $font = $::config_obj->font_plot;
@@ -433,13 +461,13 @@ sub _save_eps{
 	my $self = shift;
 	my $path = shift;
 
-	my $w = 7;
+	my $w = 8;
 	if ($self->{width} > $self->{height}){
-		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
+		$w = sprintf("%.5f", 8 * $self->{width} / $self->{height} );
 	}
-	my $h = 7;
+	my $h = 8;
 	if ($self->{height} > $self->{width}){
-		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
 	my $font = $::config_obj->font_plot;
@@ -469,16 +497,47 @@ sub _save_png{
 	my $self = shift;
 	my $path = shift;
 	
-	$self->{width}  = 480 unless $self->{width};
-	$self->{height} = 480 unless $self->{height};
-	
+	my $width = $self->{width};
+	my $height = $self->{height};
+
+	$width  = $::config_obj->plot_size_words unless $width;
+	$height = $::config_obj->plot_size_words unless $height;
+
+	# Setup the dpi value
+	my $dpi = 72;
+	use Statistics::Lite qw(min);
+	if (
+		(
+			   $self->{command_f} =~ /ggdendro/
+			|| $self->{command_f} =~ /rect\.hclust/
+		)
+		and not ( $self->{command_f} =~ /pp_type/ )
+	) {                         # dendrogram
+		$dpi = int( 72 * ($::config_obj->plot_size_codes / 480) );
+	}
+	elsif ($self->{command_f} =~ /# dpi: short based\n/){ # short based (codes, mainly)
+		$dpi = int( 72 * ( min($width,$height) / 480) );
+	}
+	elsif ($height == $width) { # square
+		$dpi = int( 72 * ($height / 640) ) if $height > 640;
+	}
+	elsif (
+		   $height == $::config_obj->plot_size_codes
+		&& $width  == $::config_obj->plot_size_words
+	){                          # default rectangle
+		$dpi = int( 72 * ($::config_obj->plot_size_words / 640) );
+	}
+	elsif ( min($width,$height) > 640 ) { # unknown
+		$dpi = int( 72 * ( min($width,$height) / 640 ) )
+	}
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
-			Cairo(width=$self->{width}, height=$self->{height}, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\")
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\", dpi=$dpi)
 		} else {
 			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\")
 		}
@@ -502,13 +561,13 @@ sub _save_svg{
 	$self->{height} = 480 unless $self->{height};
 	
 	# for darwin
-	my $w = 7;
+	my $w = 8;
 	if ($self->{width} > $self->{height}){
-		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
+		$w = sprintf("%.5f", 8 * $self->{width} / $self->{height} );
 	}
-	my $h = 7;
+	my $h = 8;
 	if ($self->{height} > $self->{width}){
-		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 	
 	# プロット作成
@@ -518,13 +577,13 @@ sub _save_svg{
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
 			Cairo(
-				width=$self->{width},
-				height=$self->{height},
+				width=$w * 80,
+				height=$h * 80,
 				file=\"$path\",
 				type=\"svg\",
 				onefile=TRUE,
 				bg=\"transparent\",
-				dpi=96,
+				dpi=72,
 				units=\"px\",
 				pointsize=10
 			)

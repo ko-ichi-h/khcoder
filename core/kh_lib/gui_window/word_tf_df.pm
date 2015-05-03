@@ -131,6 +131,8 @@ sub count{
 		$tani_name = $tani_name{$tani};
 	}
 
+	$rcmd .= "\n# dpi: short based\n";
+
 	use kh_r_plot;
 	kh_r_plot->clear_env;
 	my $flg_error = 0;
