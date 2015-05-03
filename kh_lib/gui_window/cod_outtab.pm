@@ -581,7 +581,9 @@ sub plot{
 	
 	$rcom .= "# END: DATA\n\n";
 	$rcom = Encode::encode('eucjp', $rcom);
-	
+
+	$rcom .= "# dpi: short based\n";
+
 	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
@@ -590,17 +592,17 @@ sub plot{
 			$label_length = length($t);
 		}
 	}
-	my $height = 30 * $ncol + $label_length * 14;
+	my $height = int( ( 30 * $ncol + $label_length * 14 ) * ($::config_obj->plot_size_codes / 480));
 	if ($height < $::config_obj->plot_size_codes){
 		$height = $::config_obj->plot_size_codes;
 	}
 	
 	my $bs_h = 1;
 	my $bs_w = 1;
-	my $height_f =  20 * $ncol + $label_length * 14;
+	my $height_f = int( ( 20 * $ncol + $label_length * 14 ) * ($::config_obj->plot_size_codes / 480));
 	if ($height_f < $::config_obj->plot_size_codes){
 		$height_f = $::config_obj->plot_size_codes;
-		$bs_h = ($::config_obj->plot_size_codes - $label_length * 14) / $ncol / 25;
+		$bs_h = (480 - $label_length * 14) / $ncol / 25;
 	}
 	
 	# マップの幅
@@ -611,10 +613,10 @@ sub plot{
 			$label_length = length($t);
 		}
 	}
-	my $width_f = 20 * $nrow + $label_length * 14 + 25;
+	my $width_f = int( (18 * $nrow + $label_length * 14 + 25) * ($::config_obj->plot_size_words / 640) );
 	if ($width_f < $::config_obj->plot_size_words){
 		$width_f = $::config_obj->plot_size_words;
-		$bs_w = ($::config_obj->plot_size_words - 10 - $label_length * 14) / ($nrow + 1) / 25;
+		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 25;
 	}
 	use List::Util 'min';
 	#print "bubble_size: $bs_h, $bs_w\n";

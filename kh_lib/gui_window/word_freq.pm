@@ -183,6 +183,8 @@ sub plot{
 	my $self = shift;
 	return 0 unless $::config_obj->R;
 	
+	$self->{rcmd} .= "\n# dpi: short based\n";
+	
 	use kh_r_plot;
 	kh_r_plot->clear_env;
 	my $flg_error = 0;

@@ -4,6 +4,8 @@ use strict;
 use Tk;
 use Jcode;
 
+use kh_msg;
+
 my %name = (
 	"bun" => kh_msg->gget('sentence'),
 	"dan" => kh_msg->gget('paragraph'),

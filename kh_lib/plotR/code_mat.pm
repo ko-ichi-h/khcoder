@@ -81,7 +81,7 @@ sub new{
 		command_f =>
 			 $r_command
 			.$self->r_plot_cmd_heat,
-		width     => 640,
+		width     => $::config_obj->plot_size_words,
 		height    => $args{plot_size_heat},
 	) or $flg_error = 1;
 
