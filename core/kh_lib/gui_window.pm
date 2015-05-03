@@ -163,7 +163,7 @@ sub check_viewable{
 	my $g = $::config_obj->win_gmtry($self->win_name);
 	if (
 		   $g
-		&& $self->{no_geometry} == 0        # 位置を読み込んでいて
+		&! $self->{no_geometry}        # 位置を読み込んでいて
 		&& $::config_obj->os eq 'win32'     # なおかつWindowsで
 		&& $::config_obj->win32_monitor_chk == 0
 	) {

@@ -10,11 +10,15 @@ sub _new{
 	my $win = $self->parent->Frame();
 	my $ff = $win->Frame()->pack(-fill => 'x');
 	
-	$self->{font_size}       = 100 unless defined $self->{font_percent};
+	# Default values
 	$self->{check_bold_text} = 0   unless defined $self->{check_bold_text};
 	$self->{show_bold}       = 0   unless defined $self->{show_bold};
-	$self->{plot_size}       = 640 unless defined $self->{plot_size};
-
+	$self->{plot_size}       = $::config_obj->plot_size_words
+		unless defined $self->{plot_size};
+	$self->{font_size}       = $::config_obj->plot_font_size
+		unless defined $self->{font_percent};
+	
+	# Get values from the R code
 	if ( length $self->{r_com} ){
 		if (
 			   $self->{r_com} =~ /cex=([0-9\.]+)[, \)]/

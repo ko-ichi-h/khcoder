@@ -75,9 +75,7 @@ sub _new{
 		parent    => $lf,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor   => 'w' },
-		font_size => $::config_obj->r_default_font_size,
 		show_bold => 1,
-		plot_size => 640,
 	);
 
 	$win->Checkbutton(

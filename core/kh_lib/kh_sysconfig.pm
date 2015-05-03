@@ -630,6 +630,57 @@ sub color_DocView_CodeW{
 	}
 }
 
+sub plot_size_words{
+	my $self = shift;
+	my $new  = shift;
+
+	# the default value
+	unless ( $self->{plot_size_words} ){
+		$self->{plot_size_words} = 800;
+	}
+	
+	# set a new value
+	if ( defined($new) ){
+		$self->{plot_size_words} = $new;
+	}
+	
+	return $self->{plot_size_words};
+}
+
+sub plot_size_codes{
+	my $self = shift;
+	my $new  = shift;
+
+	# the default value
+	unless ( $self->{plot_size_codes} ){
+		$self->{plot_size_codes} = 500;
+	}
+	
+	# set a new value
+	if ( defined($new) ){
+		$self->{plot_size_codes} = $new;
+	}
+	
+	return $self->{plot_size_codes};
+}
+
+sub plot_font_size{
+	my $self = shift;
+	my $new  = shift;
+
+	# the default value
+	unless ( $self->{plot_font_size} ){
+		$self->{plot_font_size} = 110;
+	}
+	
+	# set a new value
+	if ( defined($new) ){
+		$self->{plot_font_size} = $new;
+	}
+	
+	return $self->{plot_font_size};
+}
+
 sub win_gmtry{
 	my $self = shift;
 	my $win_name = shift;
@@ -842,6 +893,8 @@ sub r_dir{
 
 sub r_default_font_size{
 	my $self = shift;
+	
+	warn("'r_default_font_size' is deprecated. Please use 'plot_font_size' instead.\n");
 	
 	if ($self->R_version > 210){
 		return 100;
