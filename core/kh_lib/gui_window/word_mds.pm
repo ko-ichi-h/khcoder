@@ -238,7 +238,7 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
-	my $fontsize = $args{font_size};
+	my $fontsize = 1;
 
 	#my $r_command = Encode::decode('euc-jp', $args{r_command});
 	my $r_command = $args{r_command};
@@ -461,6 +461,7 @@ if (exists(\"doc_length_mtr\")){
 		command_f => $r_command_d,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 	my $plot2 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
@@ -468,6 +469,7 @@ if (exists(\"doc_length_mtr\")){
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	# 分析から省かれた語／コードをチェック
@@ -580,6 +582,10 @@ bty      <- "l"
 
 # クラスター分析
 if (n_cls > 0){
+
+	if (nrow(d) < n_cls){
+		n_cls <- nrow(d)
+	}
 
 	if (cls_raw == 1){
 		djj <- dj
@@ -787,6 +793,10 @@ if (std_radius){ # 円の大小をデフォルメ
 # クラスター分析
 if (n_cls > 0){
 	library( RColorBrewer )
+	
+	if (nrow(d) < n_cls){
+		n_cls <- nrow(d)
+	}
 	
 	if (cls_raw == 1){
 		djj <- dj

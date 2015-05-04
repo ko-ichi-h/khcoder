@@ -19,7 +19,8 @@ sub new{
 
 	# パラメーター設定（共通）
 	$args{font_size} = 1 unless $args{font_size};      # フォントサイズ
-	$r_command .= "cex <- $args{font_size}\n";
+	#$r_command .= "cex <- $args{font_size}\n";
+	$r_command .= "cex <- 1\n";
 
 	if ( defined($self->{selection}) ){                # コード選択
 		if ( $#{$self->{selection}} > -1 ){
@@ -48,6 +49,7 @@ sub new{
 			.$self->r_plot_cmd_line,
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 

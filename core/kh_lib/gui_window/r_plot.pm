@@ -223,6 +223,7 @@ sub open_config{
 	my $base_name = 'gui_window::r_plot_opt::'.$self->base_name;
 	$self->{child} = $base_name->open(
 		command_f => $self->{plots}[$self->{ax}]->command_f,
+		font_size => $self->{plots}[$self->{ax}]->{font_size} * 100,
 		size      => $self->original_plot_size,
 		ax        => $self->{ax},
 	);

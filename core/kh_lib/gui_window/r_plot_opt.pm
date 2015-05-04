@@ -45,6 +45,7 @@ sub _new{
 		},
 		r_com     => $args{command_f},
 		plot_size => $args{size},
+		font_size => $args{font_size}
 	);
 
 	# OK, Cancel

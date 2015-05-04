@@ -24,7 +24,8 @@ sub new{
 
 	# パラメーター設定（描画）
 	my $param1 = "\n";
-	$param1 .= "cex <- $args{font_size}\n";
+	#$param1 .= "cex <- $args{font_size}\n";
+	$param1 .= "cex <- 1\n";
 	$param1 .= "text_font <- $args{font_bold}\n";
 	$param1 .= "if_cls <- $args{if_cls}\n";
 	$param1 .= "n_cls <- $args{n_cls}\n";
@@ -89,6 +90,9 @@ sub new{
 
 	# コマンドの準備
 	my $p0_a = Jcode->new( "load(\"$file_save\")\n" )->euc;
+	if ($args{r_command} =~ /# dpi: short based\n/){
+		$p0_a .= "# dpi: short based\n";
+	}
 	$p0_a   .= "# END: DATA\n";
 	$p0_a   .= "$param1\n\n";
 
@@ -111,6 +115,7 @@ sub new{
 				.$p2,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 		$com_a = "plot_mode <- \"gray\"\n".$p2;
 	}
@@ -126,6 +131,7 @@ sub new{
 			 $com_a,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 
@@ -141,6 +147,7 @@ sub new{
 			.$p2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	push @plots, kh_r_plot->new(
@@ -155,6 +162,7 @@ sub new{
 			.$p2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	$::config_obj->R->send("print( summary(somm) )");

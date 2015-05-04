@@ -42,7 +42,7 @@ sub calc{
 		return 0;
 	}
 
-	my ($w, $h) = (480, $self->{font_obj}->plot_size);
+	my ($w, $h) = ($::config_obj->plot_size_codes, $self->{font_obj}->plot_size);
 
 	if ($self->{check_color_cls}){
 		$r_command .= &gui_window::doc_cls::r_command_dendro2(
@@ -62,6 +62,7 @@ sub calc{
 		command_f =>  $r_command,
 		width     => $w,
 		height    => $h,
+		font_size => $self->{font_obj}->font_size,
 	) or return 0;
 	$plot->rotate_cls unless $self->{check_color_cls};
 

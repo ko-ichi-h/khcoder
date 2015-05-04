@@ -18,8 +18,9 @@ sub new{
 	my $r_command = $args{r_command};
 
 	# パラメーター設定（共通）
-	$args{font_size} = 1 unless $args{font_size};      # フォントサイズ
-	$r_command .= "cex <- $args{font_size}\n";
+	$args{font_size} = $::config_obj->plot_font_size / 100 unless $args{font_size}; # フォントサイズ
+	#$r_command .= "cex <- $args{font_size}\n";
+	$r_command .= "cex <- 1\n";
 
 	if ( defined($self->{selection}) ){                # コード選択
 		if ( $#{$self->{selection}} > -1 ){
@@ -55,8 +56,8 @@ sub new{
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
 	# パラメーター設定（バブルプロット）
-	$args{plot_size_maph} = 480 unless $args{plot_size_maph};
-	$args{plot_size_mapw} = 640 unless $args{plot_size_mapw};
+	$args{plot_size_maph} = $::config_obj->plot_size_codes unless $args{plot_size_maph};
+	$args{plot_size_mapw} = $::config_obj->plot_size_words unless $args{plot_size_mapw};
 	
 	$args{bubble_shape} = 0 unless length($args{bubble_shape});
 	$r_command .= "bubble_shape <- $args{bubble_shape}\n";
@@ -83,6 +84,7 @@ sub new{
 			.$self->r_plot_cmd_heat,
 		width     => $::config_obj->plot_size_words,
 		height    => $args{plot_size_heat},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	$plots[1] = kh_r_plot->new(
@@ -92,6 +94,7 @@ sub new{
 			.$self->r_plot_cmd_fluc,
 		width     => $args{plot_size_mapw},
 		height    => $args{plot_size_maph},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	#$plots[2] = kh_r_plot->new(

@@ -16,23 +16,23 @@ sub _new{
 	$self->{plot_size}       = $::config_obj->plot_size_words
 		unless defined $self->{plot_size};
 	$self->{font_size}       = $::config_obj->plot_font_size
-		unless defined $self->{font_percent};
+		unless defined $self->{font_size};
 	
 	# Get values from the R code
 	if ( length $self->{r_com} ){
-		if (
-			   $self->{r_com} =~ /cex=([0-9\.]+)[, \)]/
-			|| $self->{r_com} =~ /cex <- ([0-9\.]+)\n/
-		){
-			$self->{font_size} = $1;
-			$self->{font_size} *= 100;
-			#print "font size: $self->{font_size}\n";
-		}
-		if ( $self->{r_com} =~ /font_size <- ([0-9\.]+)\n/ ){
-			$self->{font_size} = $1;
-			$self->{font_size} *= 100;
-			#print "font size: $self->{font_size}\n";
-		}
+		#if (
+		#	   $self->{r_com} =~ /cex=([0-9\.]+)[, \)]/
+		#	|| $self->{r_com} =~ /cex <- ([0-9\.]+)\n/
+		#){
+		#	$self->{font_size} = $1;
+		#	$self->{font_size} *= 100;
+		#	#print "font size: $self->{font_size}\n";
+		#}
+		#if ( $self->{r_com} =~ /font_size <- ([0-9\.]+)\n/ ){
+		#	$self->{font_size} = $1;
+		#	$self->{font_size} *= 100;
+		#	#print "font size: $self->{font_size}\n";
+		#}
 		if ( $self->{r_com} =~ /text_font <\- ([0-9]+)\n/ ){
 			if ($1 == 2 ){
 				$self->{check_bold_text} = 1;

@@ -28,7 +28,8 @@ sub new{
 		$r_command .= "edges <- $args{edges_num}\n";
 		$r_command .= "th <- 0\n";
 	}
-	$r_command .= "cex <- $args{font_size}\n";
+	#$r_command .= "cex <- $args{font_size}\n";
+	$r_command .= "cex <- 1\n";
 
 	unless ( $args{fix_lab} ){
 		$args{fix_lab} = 0;
@@ -93,6 +94,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[1] = kh_r_plot->new(
@@ -110,6 +112,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 	} else {
 		$plots[0] = kh_r_plot->new(
@@ -123,6 +126,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[1] = kh_r_plot->new(
@@ -140,6 +144,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[2] = kh_r_plot->new(
@@ -157,6 +162,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[3] = kh_r_plot->new(
@@ -174,6 +180,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[4] = kh_r_plot->new(
@@ -191,6 +198,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[5] = kh_r_plot->new(
@@ -208,6 +216,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 
 		$plots[6] = kh_r_plot->new(
@@ -225,6 +234,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 	}
 	
