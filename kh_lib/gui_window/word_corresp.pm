@@ -734,7 +734,8 @@ sub make_plot{
 	$args{flt} = 0 unless $args{flt};
 	$args{flw} = 0 unless $args{flw};
 
-	my $fontsize = $args{font_size};
+	#my $fontsize = $args{font_size};
+	my $fontsize = 1;
 	my $r_command = $args{r_command};
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
@@ -853,6 +854,7 @@ sub make_plot{
 		command_f => $r_command,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	my $plot2 = kh_r_plot->new(
@@ -861,6 +863,7 @@ sub make_plot{
 		command_f => $r_command_2,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 
 	my ($plotg, $plotv);
@@ -872,6 +875,7 @@ sub make_plot{
 			command_f => $r_com_gray,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 		
 		$plotv = kh_r_plot->new(
@@ -880,6 +884,7 @@ sub make_plot{
 			command_f => $r_command_3,
 			width     => $args{plot_size},
 			height    => $args{plot_size},
+			font_size => $args{font_size},
 		) or $flg_error = 1;
 		@plots = ($plot2,$plotg,$plotv,$plot1);
 	} else {

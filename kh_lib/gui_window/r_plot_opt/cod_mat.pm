@@ -57,9 +57,9 @@ sub innner{
 	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
 		@code_names = eval( "($1)" );
 	}
-	if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
-		$self->{font_size} = $1;
-	}
+	#if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
+	#	$self->{font_size} = $1;
+	#}
 	
 	my %selected = ();
 	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
@@ -205,7 +205,7 @@ sub innner{
 	$self->{entry_font_size}->bind("<Key-Return>", sub {$self->calc});
 	$self->{entry_font_size}->bind("<KP_Enter>", sub {$self->calc});
 	
-	$self->{entry_font_size}->insert(0,$self->{font_size} * 100);
+	$self->{entry_font_size}->insert(0,$self->{font_size});
 
 	$rf3->Label(
 		-text => '%',

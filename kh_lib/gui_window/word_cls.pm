@@ -197,7 +197,8 @@ sub make_plot{
 
 	kh_r_plot->clear_env;
 
-	my $fontsize = $args{font_size};
+	#my $fontsize = $args{font_size};
+	my $fontsize = 1;
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 
@@ -309,6 +310,7 @@ if (
 		command_f => $r_command,
 		width     => $w,
 		height    => $h,
+		font_size => $args{font_size},
 	) or $flg_error = 1;
 	$plot1->rotate_cls if $old_simple_style;
 
@@ -322,6 +324,7 @@ if (
 			             .&r_command_height,
 			width     => $::config_obj->plot_size_words,
 			height    => $::config_obj->plot_size_codes,
+			font_size => $args{font_size},
 		);
 	}
 

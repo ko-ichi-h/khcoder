@@ -503,6 +503,7 @@ if (
 		             .&r_command_mout($merges->{_cluster_tmp}),
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
+		font_size => $::config_obj->plot_font_size / 100,
 	) or return 0;
 
 	$plots->{_cluster_tmp}{first} = kh_r_plot->new(
@@ -515,6 +516,7 @@ if (
 		             .$r_command_height,
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
+		font_size => $::config_obj->plot_font_size / 100,
 	) or return 0;
 
 	$plots->{_cluster_tmp}{all} = kh_r_plot->new(
@@ -527,6 +529,7 @@ if (
 		             .$r_command_height,
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
+		font_size => $::config_obj->plot_font_size / 100,
 	) or return 0;
 
 	# デンドログラム
@@ -560,6 +563,7 @@ if (
 			command_a =>  &r_command_dendro1(1),
 			width     => $size,
 			height    => $::config_obj->plot_size_codes,
+			font_size => $::config_obj->plot_font_size / 100,
 		) or return 0;
 		$plots->{_dendro}->rotate_cls;
 	}
@@ -929,7 +933,8 @@ sub r_command_dendro1{
 
 	my $t = "# start dendro\n";
 
-	$t .= "font_size <- $font_size\n";
+	#$t .= "font_size <- $font_size\n";
+	$t .= "font_size <- 1\n";
 
 	$t .= '
 
@@ -954,7 +959,8 @@ sub r_command_dendro2{
 
 	my $t = "# start dendro\n";
 
-	$t .= "font_size <- $font_size\n";
+	#$t .= "font_size <- $font_size\n";
+	$t .= "font_size <- 1\n";
 
 	$t .= '
 

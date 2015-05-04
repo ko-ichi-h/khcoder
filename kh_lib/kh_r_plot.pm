@@ -147,6 +147,8 @@ sub new{
 		return 0;
 	}
 
+	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -278,7 +280,8 @@ sub rotate_cls{
 	
 	if ($self->{width} > 1000){
 		# スケール部分切り出し
-		$p->Crop(geometry=> "$self->{height}x41+0+0");
+		my $scale_height = int( 41 * $self->{dpi} / 72 );
+		$p->Crop(geometry=> "$self->{height}x$scale_height+0+0");
 		
 		# 本体切り出し
 		$p->Read($temp);
@@ -380,7 +383,10 @@ sub R_device{
 		$dpi = int( 72 * ( min($width,$height) / 640 ) )
 	}
 
+	$dpi = int( $dpi * $self->{font_size} );
+
 	return 0 unless $::config_obj->R;
+	$self->{dpi} = $dpi;
 	
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
@@ -392,18 +398,17 @@ sub R_device{
 	return $path;
 }
 
-
 sub _save_emf{
 	my $self = shift;
 	my $path = shift;
 	
-	my $w = 7;
+	my $w = 8;
 	if ($self->{width} > $self->{height}){
-		$w = sprintf("%.5f", 7 * $self->{width} / $self->{height} );
+		$w = sprintf("%.5f", 8 * $self->{width} / $self->{height} );
 	}
-	my $h = 7;
+	my $h = 8;
 	if ($self->{height} > $self->{width}){
-		$h = sprintf("%.5f", 7 * $self->{height} / $self->{width} );
+		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 	
 	# プロット作成
@@ -411,7 +416,7 @@ sub _save_emf{
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
 	$::config_obj->R->send(
-		 "win.metafile(filename=\"$path\", width = $w, height = $h )"
+		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=12)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -442,8 +447,8 @@ sub _save_pdf{
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
-		 "pdf(file=\"$path\", height = $h, width = $w,"
-		."family=\"Japan1GothicBBB\")"
+		 "pdf(file=\"$path\", height = $h, width = $w, "
+		."family=\"Japan1GothicBBB\", pointsize=12)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -480,7 +485,7 @@ sub _save_eps{
 	$::config_obj->R->send(
 		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
 		."paper = \"special\", height = $h, width = $w,"
-		."family=\"Japan1GothicBBB\" )"
+		."family=\"Japan1GothicBBB\", pointsize=12)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -530,6 +535,9 @@ sub _save_png{
 	elsif ( min($width,$height) > 640 ) { # unknown
 		$dpi = int( 72 * ( min($width,$height) / 640 ) )
 	}
+
+	$dpi = int( $dpi * $self->{font_size} );
+	$self->{dpi} = $dpi;
 
 	# プロット作成
 	$::config_obj->R->output_chk(0);

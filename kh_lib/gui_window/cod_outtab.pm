@@ -620,7 +620,7 @@ sub plot{
 	}
 	use List::Util 'min';
 	#print "bubble_size: $bs_h, $bs_w\n";
-	my $bubble_size = min($bs_h, $bs_w);
+	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) );
 	#print "bubble_size: $bubble_size\n";
 	
 	
@@ -657,7 +657,7 @@ sub plot{
 	} else {
 		use plotR::code_mat_line;
 		$plot = plotR::code_mat_line->new(
-			font_size           => $::config_obj->r_default_font_size / 100,
+			font_size           => $::config_obj->plot_font_size / 100,
 			r_command           => $rcom,
 			plotwin_name        => 'code_mat_line',
 			selection           => $selection,
