@@ -44,13 +44,17 @@ gui_widget::mail_config:
     font:                     フォント設定：
     from:                     '    From: '
     note_fs:                  KH Coderは計量テキスト分析を実践するためのツールです。
-    other:                    その他の設定
+    other:                    その他
     select_font:              フォント：
     sendmail:                 前処理の完了をメールで通知する
     size:                     サイズ：
     smtp:                     '    SMTP Server: '
     to:                       '    To: '
     use_heap:                 前処理効率化のためにデータをRAMに読み出す
+    display:                  画面表示
+    plot_size1:               'デフォルトのプロットサイズ：  長辺'
+    plot_size2:               '  短辺'
+    font_size:                'デフォルトのプロット内フォントサイズ：  '
 gui_widget::r_font:
     bold:                     太字
     font_size:                フォントサイズ：

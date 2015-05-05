@@ -26,8 +26,10 @@ sub __new{
 	my $lfra = $inis->LabFrame(
 		-label => kh_msg->get('words_ext'),#$self->gui_jchar('[語を抽出する方法]'),
 		-labelside => 'acrosstop',
-		-borderwidth => 2,)
-		->pack(-expand=>'yes',-fill=>'both');
+		-borderwidth => 2,
+		-foreground => 'blue',
+	)->pack(-fill=>'both', -expand => 1, -side => 'left');
+	
 	#my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
@@ -256,11 +258,16 @@ sub __new{
 		}
 	)->pack(-side => 'left');
 
-
 	$self = $self->refine_cj;
 
 	$self->{mail_obj} = gui_widget::mail_config->open(
 		parent => $inis,
+		pack   => {
+			-fill   => 'both',
+			-expand => 0,
+			#-side   => 'right',
+		},
+		command => sub{$self->ok;}
 	);
 
 	$inis->Button(
@@ -268,14 +275,14 @@ sub __new{
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
-	)->pack(-anchor=>'e',-side => 'right',-padx => 2, -pady => 2);
+	)->pack(-anchor=>'se',-side => 'right',-padx => 2, -pady => 2);
 
 	$inis->Button(
 		-text  => kh_msg->gget('ok'),
 		-font  => 'TKFN',
 		-width => 8,
 		-command => sub {$self->ok;}
-	)->pack(-anchor => 'e',-side => 'right',  -pady => 2);
+	)->pack(-anchor => 'se',-side => 'right',  -pady => 2);
 
 	# 文字化け回避用バインド
 	$inis->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
@@ -319,7 +326,11 @@ sub ok{
 	$::config_obj->mail_from(   $self->{mail_obj}->from    );
 	$::config_obj->mail_to(     $self->{mail_obj}->to      );
 	$::config_obj->font_main(   Jcode->new($self->{mail_obj}->font)->euc );
-	
+
+	$::config_obj->plot_size_words( $self->{mail_obj}->plot_size1 );
+	$::config_obj->plot_size_codes( $self->{mail_obj}->plot_size2 );
+	$::config_obj->plot_font_size(  $self->{mail_obj}->plot_font  );
+
 	if ($::config_obj->save){
 		$self->close;
 	}
