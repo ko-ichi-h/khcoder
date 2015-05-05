@@ -411,12 +411,19 @@ sub _save_emf{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 	
+	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
+	my $p = int(12 * $self->{font_size});
+	if ($p > 12) {
+		my $diff = $p - 12;
+		$p = 12 + int($diff * 0.5);
+	}
+	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
 	$::config_obj->R->send(
-		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=12)"
+		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=$p)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -440,6 +447,13 @@ sub _save_pdf{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
+	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
+	my $p = int(12 * $self->{font_size});
+	if ($p > 12) {
+		my $diff = $p - 12;
+		$p = 12 + int($diff * 0.5);
+	}
+
 	my $font = $::config_obj->font_plot;
 	$::config_obj->font_plot("Japan1GothicBBB");
 
@@ -448,7 +462,7 @@ sub _save_pdf{
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
 		 "pdf(file=\"$path\", height = $h, width = $w, "
-		."family=\"Japan1GothicBBB\", pointsize=12)"
+		."family=\"Japan1GothicBBB\", pointsize=$p)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -475,6 +489,13 @@ sub _save_eps{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
+	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
+	my $p = int(12 * $self->{font_size});
+	if ($p > 12) {
+		my $diff = $p - 12;
+		$p = 12 + int($diff * 0.5);
+	}
+
 	my $font = $::config_obj->font_plot;
 	$::config_obj->font_plot("Japan1GothicBBB");
 
@@ -485,7 +506,7 @@ sub _save_eps{
 	$::config_obj->R->send(
 		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
 		."paper = \"special\", height = $h, width = $w,"
-		."family=\"Japan1GothicBBB\", pointsize=12)"
+		."family=\"Japan1GothicBBB\", pointsize=$p)"
 	);
 	$self->set_par;
 	$::config_obj->R->send($self->{command_f});
@@ -577,7 +598,14 @@ sub _save_svg{
 	if ($self->{height} > $self->{width}){
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
-	
+
+	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
+	my $p = int(12 * $self->{font_size});
+	if ($p > 12) {
+		my $diff = $p - 12;
+		$p = 12 + int($diff * 0.5);
+	}
+
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -593,7 +621,7 @@ sub _save_svg{
 				bg=\"transparent\",
 				dpi=72,
 				units=\"px\",
-				pointsize=10
+				pointsize=$p
 			)
 		} else {
 			# for darwin
