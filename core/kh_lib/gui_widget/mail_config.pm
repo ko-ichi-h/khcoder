@@ -43,6 +43,7 @@ sub _new{
 	$self->{entry_plot_size1} = $fds->Entry(
 		-font       => "TKFN",
 		-width      => 5,
+		-background => 'white',
 	)->pack(-side => 'left');
 
 	$fds->Label(
@@ -53,6 +54,7 @@ sub _new{
 	$self->{entry_plot_size2} = $fds->Entry(
 		-font       => "TKFN",
 		-width      => 5,
+		-background => 'white',
 	)->pack(-side => 'left');
 
 
@@ -64,7 +66,8 @@ sub _new{
 
 	$self->{entry_plot_font} = $fdf->Entry(
 		-font       => "TKFN",
-		-width      => 5,
+		-width      => 3,
+		-background => 'white',
 	)->pack(-side => 'left');
 
 	$fdf->Label(

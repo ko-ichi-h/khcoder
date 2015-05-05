@@ -95,6 +95,8 @@ sub _new{
 
 	$self->{entry_plot_size}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_plot_size}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_plot_size});
 
 	$self->{win_obj} = $win;
