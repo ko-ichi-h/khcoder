@@ -6,12 +6,98 @@ use base qw(gui_widget);
 sub _new{
 	my $self = shift;
 
-	my $lf = $self->parent->LabFrame(
-		-label => kh_msg->get('other'),#$gui_window->gui_jchar('[その他の設定]'),
+	my $win = $self->parent->Frame();
+
+	my $lf2 = $win->LabFrame(
+		-label => kh_msg->get('display'),# 画面表示
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-fill => 'x');
-	$self->{win_obj} = $lf;
+
+	my $f4 = $lf2->Frame()->pack(-fill => 'x', -pady => 2);
+	$f4->Label(
+		-text => kh_msg->get('font'),#$gui_window->gui_jchar('フォント設定：','euc'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	$self->{e_font} = $f4->Entry(
+		-font       => "TKFN",
+		-width      => 25,
+		#-state      => 'disable',
+		-background => 'gray',
+		-foreground => 'black',
+	)->pack(-side => 'right');
+	$f4->Button(
+		-text  => kh_msg->get('config'),#$gui_window->gui_jchar('変更'),
+		-font  => "TKFN",
+		-command => sub { $self->font_change(); }
+	)->pack(-padx => '2',-side => 'right');
+
+
+	my $fds = $lf2->Frame()->pack(-fill => 'x', -pady => 2);
+	$fds->Label(
+		-text => kh_msg->get('plot_size1'),# plot size1
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_plot_size1} = $fds->Entry(
+		-font       => "TKFN",
+		-width      => 5,
+	)->pack(-side => 'left');
+
+	$fds->Label(
+		-text => kh_msg->get('plot_size2'),# plot size2
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_plot_size2} = $fds->Entry(
+		-font       => "TKFN",
+		-width      => 5,
+	)->pack(-side => 'left');
+
+
+	my $fdf = $lf2->Frame()->pack(-fill => 'x', -pady => 2);
+	$fdf->Label(
+		-text => kh_msg->get('font_size'),# plot font size
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_plot_font} = $fdf->Entry(
+		-font       => "TKFN",
+		-width      => 5,
+	)->pack(-side => 'left');
+
+	$fdf->Label(
+		-text => '%',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+
+	$self->{entry_plot_size1}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	$self->{entry_plot_size1}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_plot_size1});
+
+	$self->{entry_plot_size2}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	$self->{entry_plot_size2}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_plot_size2});
+
+	$self->{entry_plot_font}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	$self->{entry_plot_font}->bind("<KP_Enter>", $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_plot_font});
+
+
+	my $lf = $win->LabFrame(
+		-label => kh_msg->get('other'),# その他
+		-labelside => 'acrosstop',
+		-borderwidth => 2,
+		-foreground => 'blue',
+	)->pack(-fill => 'x');
 
 	$self->{check2} = $lf->Checkbutton(
 		-variable => \$self->{if_heap},
@@ -56,32 +142,19 @@ sub _new{
 		-font  => "TKFN",
 		-width => 25,
 	)->pack(-side => 'right');
-	
-	my $f4 = $lf->Frame()->pack(-fill => 'x', -pady => 2);
-	$f4->Label(
-		-text => kh_msg->get('font'),#$gui_window->gui_jchar('フォント設定：','euc'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-	$self->{e_font} = $f4->Entry(
-		-font       => "TKFN",
-		-width      => 25,
-		#-state      => 'disable',
-		-background => 'gray',
-		-foreground => 'black',
-	)->pack(-side => 'right');
-	$f4->Button(
-		-text  => kh_msg->get('config'),#$gui_window->gui_jchar('変更'),
-		-font  => "TKFN",
-		-command => sub { $self->font_change(); }
-	)->pack(-padx => '2',-side => 'right');
-	
+
 	$self->fill_in;
 	
+	$self->{win_obj} = $win;
 	return $self;
 }
 
 sub fill_in{
 	my $self = shift;
+
+	$self->{entry_plot_size1}->insert(0, $::config_obj->plot_size_words);
+	$self->{entry_plot_size2}->insert(0, $::config_obj->plot_size_codes);
+	$self->{entry_plot_font}->insert(0, $::config_obj->plot_font_size);
 	
 	$self->{e1}->insert(0,$::config_obj->mail_smtp() );
 	$self->{e2}->insert(0,$::config_obj->mail_from() );
@@ -173,6 +246,21 @@ sub font_change{
 
 #--------------------------#
 #   設定値を返すアクセサ   #
+
+sub plot_font{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{entry_plot_font}->get );
+}
+
+sub plot_size1{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{entry_plot_size1}->get );
+}
+
+sub plot_size2{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{entry_plot_size2}->get );
+}
 
 sub if_heap{
 	my $self = shift;
