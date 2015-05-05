@@ -636,7 +636,7 @@ sub plot_size_words{
 
 	# the default value
 	unless ( $self->{plot_size_words} ){
-		$self->{plot_size_words} = 800;
+		$self->{plot_size_words} = 640;
 	}
 	
 	# set a new value
@@ -653,7 +653,7 @@ sub plot_size_codes{
 
 	# the default value
 	unless ( $self->{plot_size_codes} ){
-		$self->{plot_size_codes} = 500;
+		$self->{plot_size_codes} = 480;
 	}
 	
 	# set a new value
@@ -670,7 +670,7 @@ sub plot_font_size{
 
 	# the default value
 	unless ( $self->{plot_font_size} ){
-		$self->{plot_font_size} = 110;
+		$self->{plot_font_size} = 100;
 	}
 	
 	# set a new value
