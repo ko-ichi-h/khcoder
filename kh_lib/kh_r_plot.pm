@@ -388,11 +388,13 @@ sub R_device{
 	return 0 unless $::config_obj->R;
 	$self->{dpi} = $dpi;
 	
+	my $p = 12 * $dpi / 72;
+	
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
 			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\", dpi=$dpi)
 		} else {
-			png(\"$path\", width=$width, height=$height, unit=\"px\" )
+			png(\"$path\", width=$width, height=$height, unit=\"px\", pointsize=$p )
 		}
 	");
 	return $path;
@@ -559,6 +561,8 @@ sub _save_png{
 
 	$dpi = int( $dpi * $self->{font_size} );
 	$self->{dpi} = $dpi;
+	
+	my $p = 12 * $dpi / 72;
 
 	# プロット作成
 	$::config_obj->R->output_chk(0);
@@ -568,7 +572,7 @@ sub _save_png{
 		if ( exists(\"Cairo\") ){
 			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\", dpi=$dpi)
 		} else {
-			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\")
+			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\", pointsize=$p)
 		}
 	");
 

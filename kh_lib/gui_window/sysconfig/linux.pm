@@ -30,10 +30,14 @@ sub __new{
 #	$inis->focus;
 #	$inis->grab;
 	$inis->title( $self->gui_jt( kh_msg->get('win_title') ) );#'KH Coderの設定','euc') );
-	my $lfra = $inis->LabFrame(
+	
+	my $left = $inis->Frame()->pack(-fill=>'both', -expand => 1, -side => 'left');
+	
+	my $lfra = $left->LabFrame(
 		-label => kh_msg->get('words_ext'),#$self->gui_jchar('[語を抽出する方法]'),
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
+		-foreground => 'blue',
 	)->pack(-expand=>'yes',-fill=>'both');
 	#my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
@@ -260,10 +264,11 @@ sub __new{
 #----------------------#
 #   外部アプリの設定   #
 
-	my $afra = $inis->LabFrame(
+	my $afra = $left->LabFrame(
 		-label       => kh_msg->get('apps'),#$self->gui_jchar('[外部アプリケーション]'),
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
+		-foreground  => 'blue',
 	)->pack(-expand=>'yes',-fill=>'both');
 
 	#$afra->Label(
@@ -314,6 +319,12 @@ sub __new{
 
 	$self->{mail_obj} = gui_widget::mail_config->open(
 		parent => $inis,
+		pack   => {
+			-fill   => 'both',
+			-expand => 0,
+			#-side   => 'right',
+		},
+		command => sub{$self->ok;}
 	);
 
 	$inis->Button(
@@ -321,14 +332,14 @@ sub __new{
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
-	)->pack(-anchor=>'e',-side => 'right',-padx => 2);
+	)->pack(-anchor => 'se', -side => 'right',-padx => 2);
 
 	$inis->Button(
 		-text => kh_msg->gget('ok'),#'OK',
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub {$self->ok }
-	)->pack(-side => 'right');
+	)->pack(-anchor => 'se', -side => 'right');
 
 	$entry1->insert(0,$::config_obj->chasenrc_path);
 	$entry2->insert(0,$::config_obj->grammarcha_path);
@@ -504,6 +515,10 @@ sub ok{
 	$::config_obj->mail_from( $self->{mail_obj}->from    );
 	$::config_obj->mail_to(   $self->{mail_obj}->to      );
 	$::config_obj->font_main( Jcode->new($self->{mail_obj}->font)->euc );
+
+	$::config_obj->plot_size_words( $self->{mail_obj}->plot_size1 );
+	$::config_obj->plot_size_codes( $self->{mail_obj}->plot_size2 );
+	$::config_obj->plot_font_size(  $self->{mail_obj}->plot_font  );
 
 	if ($::config_obj->save){
 		$self->close;
