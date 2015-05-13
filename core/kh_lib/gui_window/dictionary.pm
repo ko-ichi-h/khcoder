@@ -383,13 +383,14 @@ sub save{
 	# 強制抽出
 	my @mark; my %check;
 	my $t = Jcode->new(
-		$self->gui_jg($self->t1->get("1.0","end")),
+		$self->gui_jg($self->t1->get("1.0","end"),'reserve_rn'),
 		'sjis'
 	)->euc;
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	#print Jcode->new("$t\n")->sjis;
 
 	foreach my $i (split /\n/, $t){
+		$i =~ s/\x0D|\x0A//g;
 		if (length($i) and not $check{$i}) {
 			push @mark, $i;
 			$check{$i} = 1;
@@ -423,13 +424,14 @@ sub save{
 	# 使用しない語
 	my @stop; %check={};
 	$t = Jcode->new(
-		$self->gui_jg($self->t2->get("1.0","end")),
-		'sjis'
+		$self->gui_jg($self->t2->get("1.0","end"), 'reserve_rn'),
+		'sjis',
 	)->euc;
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	#print Jcode->new("$t\n")->sjis;
 
 	foreach my $i (split /\n/, $t){
+		$i =~ s/\x0D|\x0A//g;
 		if (length($i) and not $check{$i}) {
 			push @stop, $i;
 			$check{$i} = 1;

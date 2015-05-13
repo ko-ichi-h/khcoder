@@ -178,8 +178,8 @@ sub exec{
 	my $self = shift;
 	
 	my $all = Jcode->new(
-		$self->gui_jg( $self->text->get("1.0","end") ),
-		'sjis'
+		$self->gui_jg( $self->text->get("1.0","end"),'reserve_rn'),
+		'sjis',
 	)->euc;
 	$all =~ s/\r\n/\n/g;
 	my @temp = split /\;\n\n/, $all;

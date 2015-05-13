@@ -415,18 +415,18 @@ sub gui_jg_filename_win98{ # Á´³ÑÊ¸»ú¤ò´Þ¤à¥Ñ¥¹¤Î½èÍý ¡ÊWin9x & Perl/Tk 804ÍÑ¤ÎÆ
 }
 
 sub gui_jg{ # ÆþÎÏ¤µ¤ì¤¿Ê¸»úÎó¤ÎÊÑ´¹
-	my $char = $_[1];
+	my $char       = $_[1];
+	my $reserve_rn = $_[2];
 	
 	if ($] > 5.008){
 		if ( utf8::is_utf8($char) ){
 			#print "utf8\n";
-			if ($^O eq 'darwin'){ # Mac OS X
+			unless ( $reserve_rn ){ # ATOKÂÐºö
+				$char =~ s/\x0D|\x0A//g;
+			}
+			if ($^O eq 'darwin'){   # Mac OS X
 				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
 				return Jcode->new($char,'utf8')->sjis;
-			}
-			if ($^O eq 'MSWin32'){ # Win32, ATOKÂÐºö
-				$char =~ s/\r//g;
-				$char =~ s/\n//g;
 			}
 			return Encode::encode($char_code{sjis},$char);
 		} else {
