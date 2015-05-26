@@ -279,7 +279,11 @@ sub _run_tagger{
 		print " .";
 		die("Cannot connect to the Server!") if $n > 10;
 	}
-	$self->{client}->print( encode('utf8', $t) );
+	
+	my $send = encode('utf8', $t);
+	$send =~ s/[[:cntrl:]]//go;
+	$self->{client}->print( $send );
+
 	my @lines = $self->{client}->getlines;
 	$self->{client}->close;
 	
@@ -317,11 +321,29 @@ sub _run_tagger{
 	}
 	
 	if ($n == 0 && $t =~ /\S/o){
-		gui_errormsg->open(
-			msg => "t: $t\nFatal: Something wrong with the POS Tagger!\n",
-			type => 'msg'
-		);
-		exit;
+		my $file = $::project_obj->file_dropped;
+		
+		unless ($self->{unrecognized_char} ){
+			gui_errormsg->open(
+				msg =>
+					 "A sentence which includes unrecognized characters is dropped from the data.\n"
+					."Dropped sentences are recorded in the following file:\n$file",
+				type => 'msg'
+			);
+			$self->{unrecognized_char} = 1;
+			unlink $file if -e $file;
+		}
+		
+		warn("A sentence which includes unrecognized characters is dropped!\n");
+		
+		open(my $fh, '>>', $file)
+			or gui_errormsg->open(
+				thefile => $self->output,
+				type => 'file'
+			);
+		;
+		print $fh encode('utf8', $t)."\n";
+		close $fh;
 	}
 	
 	return 1;

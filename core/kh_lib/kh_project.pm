@@ -695,6 +695,14 @@ sub file_MorphoOut_o{
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
+
+sub file_dropped{
+	my $self = shift;
+	my $temp = $self->file_datadir.'_dp.txt';
+	$temp = $::config_obj->os_path($temp);
+	return $temp;
+}
+
 sub file_m_target{
 	my $self = shift;
 	my $temp = $self->file_datadir.'_mph.txt';
