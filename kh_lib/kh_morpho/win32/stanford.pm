@@ -161,8 +161,8 @@ sub _run_morpho{
 		my $t   = decode($icode,$_);
 		
 		# データのクリーニング
-		$t =~ s/\\//go;
-		$t =~ s/[[:cntrl:]]//go;
+		$t =~ s/\\/ /go;
+		$t =~ s/[[:cntrl:]]/ /go;
 		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
