@@ -15,21 +15,21 @@ sub _exec_test{
 	$win->_calc;
 	$self->{result} .= "■単純集計：文単位\n";
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn' )
 	)->euc;
 	$win->{tani_obj}->{raw_opt} = 'dan';
 	$win->{tani_obj}->mb_refresh;
 	$win->_calc;
 	$self->{result} .= "■単純集計：段落単位\n";
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn' )
 	)->euc;
 	$win->{tani_obj}->{raw_opt} = 'h2';
 	$win->{tani_obj}->mb_refresh;
 	$win->_calc;
 	$self->{result} .= "■単純集計：h2単位\n";
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn' )
 	)->euc;
 
 	# 章・節・段落ごとの集計

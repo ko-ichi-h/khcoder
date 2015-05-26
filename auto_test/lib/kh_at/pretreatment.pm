@@ -14,7 +14,7 @@ sub _exec_test{
 	$win_src->entry->insert(0,gui_window->gui_jchar('卒業証書'));
 	$win_src->search;
 	$t .= "■語の抽出結果を確認:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_src->list ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win_src->list ),'reserve_rn'  )
 	)->euc;
 	
 	# 「語の抽出結果を確認：詳細」
@@ -22,7 +22,7 @@ sub _exec_test{
 	$win_src->detail;
 	my $win_dtl = $::main_gui->get('w_morpho_detail');
 	$t .= "■語の抽出結果を確認（詳細）:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_dtl->list ) ),
+		gui_window->gui_jg( gui_hlist->get_all( $win_dtl->list ),'reserve_rn'  ),
 		'sjis'
 	)->euc;
 
@@ -35,10 +35,10 @@ sub _exec_test{
 	$win_dic1->save;
 	$t .= "■品詞選択（変更）:\n";
 	$t .= "words_all:\t".Jcode->new(
-		gui_window->gui_jg( $::main_gui->inner->{ent_num1}->get )
+		gui_window->gui_jg( $::main_gui->inner->{ent_num1}->get,'reserve_rn'  )
 	)->euc."\n";
 	$t .= "project_kinds:\t".Jcode->new(
-		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get )
+		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get,'reserve_rn'  )
 	)->euc."\n";
 
 	gui_window::dictionary->open;
@@ -49,10 +49,10 @@ sub _exec_test{
 	$win_dic2->save;
 	$t .= "■品詞選択（再変更）:\n";
 	$t .= "words_all:\t".Jcode->new(
-		gui_window->gui_jg( $::main_gui->inner->{ent_num1}->get )
+		gui_window->gui_jg( $::main_gui->inner->{ent_num1}->get,'reserve_rn'  )
 	)->euc."\n";
 	$t .= "project_kinds:\t".Jcode->new(
-		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get )
+		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get,'reserve_rn'  )
 	)->euc."\n";
 
 	# 「複合語の検出」→「TermExtract」
@@ -61,7 +61,7 @@ sub _exec_test{
 	my $win_hukugo_te = gui_window::use_te_g->open;
 	$t .= "■複合語の検出（TermExtract）\n";
 	$t .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_te->{list}) )
+		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_te->{list}),'reserve_rn','reserve_rn'   )
 	)->euc;
 	
 	# 「複合語の検出」→「茶筌」
@@ -70,7 +70,7 @@ sub _exec_test{
 	my $win_hukugo_ch = gui_window::hukugo->open;
 	$t .= "■複合語の検出（茶筌）\n";
 	$t .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_ch->{list}) )
+		gui_window->gui_jg( gui_hlist->get_all($win_hukugo_ch->{list}),'reserve_rn'  )
 	)->euc;
 	
 	$self->{result} = $t;

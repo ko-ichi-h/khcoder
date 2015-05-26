@@ -96,10 +96,10 @@ sub _exec_test{
 	my $win_freq = gui_window::word_freq->open;
 	$win_freq->count;
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list1} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list1} ),'reserve_rn' )
 	)->euc;
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list2} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win_freq->{list2} ),'reserve_rn'  )
 	)->euc;
 	
 	# 文書数 分布
@@ -108,10 +108,10 @@ sub _exec_test{
 	$win_df->{tani_obj}->{raw_opt} = 'h2';
 	$win_df->{tani_obj}->mb_refresh;
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list1} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list1} ),'reserve_rn'  )
 	)->euc;
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list2} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win_df->{list2} ),'reserve_rn'  )
 	)->euc;
 	
 	# 品詞別 出現数順 リスト
@@ -168,19 +168,19 @@ sub _wcl_sort{
 	my $t = '';
 	
 	$t .= "○ソート：スコア\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ),'reserve_rn'  )
 	)->euc;
 	
 	$win->{menu1}->set_value('r2');
 	$win->view;
 	$t .= "○ソート：右2\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ),'reserve_rn'  )
 	)->euc;
 	
 	$win->{menu1}->set_value('suml');
 	$win->view;
 	$t .= "○ソート：左合計\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{hlist} ),'reserve_rn'  )
 	)->euc;
 	
 	$win->{menu1}->set_value('score');
@@ -208,7 +208,7 @@ sub _wc_sort{
 	$win->_menu_check;
 	$win->search;
 	$t .= "○ソート：左\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	$win->{menu1}->set_value('r1');
@@ -219,7 +219,7 @@ sub _wc_sort{
 	$win->_menu_check;
 	$win->search;
 	$t .= "○ソート：右\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	$win->{menu1}->set_value('l2');
@@ -228,7 +228,7 @@ sub _wc_sort{
 	$win->_menu_check;
 	$win->search;
 	$t .= "○ソート：左2\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 
@@ -236,7 +236,7 @@ sub _wc_sort{
 	$win->_menu_check;
 	$win->search;
 	$t .= "○ソート：ID\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 	
 	$self->{result} .= $t;
@@ -280,14 +280,14 @@ sub _ws_AndOr{
 	$win->{entry}->insert( 0, gui_window->gui_jchar('者') );
 	$win->search;
 	$t .= "○OR-1:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	$win->{entry}->delete(0,'end');
 	$win->{entry}->insert( 0, gui_window->gui_jchar('死 殺　亡') );
 	$win->search;
 	$t .= "○OR-2:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	# AND検索
@@ -296,14 +296,14 @@ sub _ws_AndOr{
 	$win->{entry}->insert( 0, gui_window->gui_jchar('死') );
 	$win->search;
 	$t .= "○AND-1:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	$win->{entry}->delete(0,'end');
 	$win->{entry}->insert( 0, gui_window->gui_jchar('生　る') );
 	$win->search;
 	$t .= "○AND-2:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
 	)->euc;
 
 	$self->{result} .= $t;
