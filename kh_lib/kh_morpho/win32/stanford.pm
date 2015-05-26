@@ -160,6 +160,10 @@ sub _run_morpho{
 		chomp;
 		my $t   = decode($icode,$_);
 		
+		# データのクリーニング
+		$t =~ s/\\//go;
+		$t =~ s/[[:cntrl:]]//go;
+		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
 			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\t\tTAG\n");
@@ -280,10 +284,7 @@ sub _run_tagger{
 		die("Cannot connect to the Server!") if $n > 10;
 	}
 	
-	my $send = encode('utf8', $t);
-	$send =~ s/[[:cntrl:]]//go;
-	$self->{client}->print( $send );
-
+	$self->{client}->print( encode('utf8', $t) );
 	my @lines = $self->{client}->getlines;
 	$self->{client}->close;
 	
