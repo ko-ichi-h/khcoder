@@ -23,7 +23,7 @@ sub _run_morpho{
 	require Lingua::Sentence;
 	require Text::Unidecode;
 
-	my $self = shift;	
+	my $self = shift;
 	my $class = "kh_morpho::win32::stanford::".$::config_obj->stanford_lang;
 	bless $self, $class;
 
@@ -156,12 +156,13 @@ sub _run_morpho{
 	$self->init;
 
 	# 処理開始
+	$self->{unrecognized_char} = 0;
 	while ( <TRGT> ){
 		chomp;
 		my $t   = decode($icode,$_);
 		
 		# データのクリーニング
-		$t =~ s/\\/ /go;
+		$t =~ s/\\/\/_/go;
 		$t =~ s/[[:cntrl:]]/ /go;
 		
 		# 見出し行
@@ -310,6 +311,7 @@ sub _run_tagger{
 			my $line = Text::Unidecode::unidecode(
 				"$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n"
 			);
+			$line =~ s/\\/\/_/g;
 			
 			# Unidecodeによって空白になってしまった場合に対応
 			if ($line =~ /^\t/o){
@@ -325,7 +327,7 @@ sub _run_tagger{
 	if ($n == 0 && $t =~ /\S/o){
 		my $file = $::project_obj->file_dropped;
 		
-		unless ($self->{unrecognized_char} ){
+		unless ( $self->{unrecognized_char} ){
 			gui_errormsg->open(
 				msg =>
 					 "Warning: Sentences that include unrecognized characters are dropped from the processing.\n"

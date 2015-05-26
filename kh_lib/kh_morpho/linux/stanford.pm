@@ -134,12 +134,13 @@ sub _run_morpho{
 	$self->init;
 
 	# 処理開始
+	$self->{unrecognized_char} = 0;
 	while ( <TRGT> ){
 		chomp;
 		my $t   = decode($icode,$_);
 
 		# データのクリーニング
-		$t =~ s/\\/ /go;
+		$t =~ s/\\/\/_/go;
 		$t =~ s/[[:cntrl:]]/ /go;
 
 		# 見出し行
@@ -288,6 +289,7 @@ sub _run_tagger{
 			my $line = Text::Unidecode::unidecode(
 				"$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n"
 			);
+			$line =~ s/\\/\/_/go;
 			
 			# Unidecodeによって空白になってしまった場合に対応
 			if ($line =~ /^\t/o){
