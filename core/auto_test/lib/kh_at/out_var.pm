@@ -16,7 +16,7 @@ sub _exec_test{
 	$self->{result} .= "■読み込み結果\n";
 	$win = gui_window::outvar_list->open;
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn' )
 	)->euc;
 
 	# 外部変数を1つ削除
@@ -26,7 +26,7 @@ sub _exec_test{
 	);
 	$self->{result} .= "■変数削除の結果\n";
 	$self->{result} .= Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ) )
+		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn' )
 	)->euc;
 
 	# ラベル編集(1)

@@ -34,7 +34,8 @@ sub _exec_test{
 	
 	# 結果の取得
 	my $chk_result = gui_window->gui_jg(
-		$win_chk->{text_widget}->get('1.0','end')
+		$win_chk->{text_widget}->get('1.0','end'),
+		'reserve_rn'
 	);
 	$chk_result = Jcode->new($chk_result)->euc;
 	$t .= "■データチェックの結果\n";
@@ -86,7 +87,7 @@ sub _exec_test{
 		gui_window->gui_jg( $::main_gui->inner->{ent_num2}->get )
 	)->euc."\n";
 	$t .= "■doc num:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $::main_gui->inner->hlist ) )
+		gui_window->gui_jg( gui_hlist->get_all( $::main_gui->inner->hlist ),'reserve_rn' )
 	)->euc;
 
 	# 自動修正したファイルを元に戻しておく
