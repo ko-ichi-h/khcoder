@@ -327,7 +327,7 @@ sub _run_tagger{
 		unless ($self->{unrecognized_char} ){
 			gui_errormsg->open(
 				msg =>
-					 "A sentence which includes unrecognized characters is dropped from the data.\n"
+					 "Warning: Sentences that include unrecognized characters are dropped from the processing.\n"
 					."Dropped sentences are recorded in the following file:\n$file",
 				type => 'msg'
 			);
