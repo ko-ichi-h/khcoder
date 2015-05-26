@@ -231,8 +231,8 @@ sub _sentence{
 	my @sentences = $self->{splitter}->split_array($t);
 	
 	foreach my $i (@sentences) {
-		$self->_tokenize_stem($i, $fh);
-		print $fh $output_code->encode("。\t。\t。\tALL\tSP\n");
+		my $r = $self->_tokenize_stem($i, $fh);
+		print $fh $output_code->encode("。\t。\t。\tALL\tSP\n") if $r;
 	}
 
 	return 1;
@@ -244,6 +244,7 @@ sub _tokenize_stem{
 	my $t    = shift;
 	my $fh   = shift;
 	
+	my $r = 0;
 	while ( index($t,'<') > -1){
 		my $pre = substr($t,0,index($t,'<'));
 		my $cnt = substr(
@@ -260,14 +261,14 @@ sub _tokenize_stem{
 		}
 		substr($t,0,index($t,'>') + 1) = '';
 		
-		$self->_run_tagger($pre, $fh);
+		$r += $self->_run_tagger($pre, $fh);
 		$self->_tag($cnt, $fh);
 		
 		#print "[[$pre << $cnt >> $t]]\n";
 	}
-	$self->_run_tagger($t, $fh);
+	$r += $self->_run_tagger($t, $fh);
 	
-	return 1;
+	return $r;
 }
 
 sub _run_tagger{
@@ -328,7 +329,8 @@ sub _run_tagger{
 			gui_errormsg->open(
 				msg =>
 					 "Warning: Sentences that include unrecognized characters are dropped from the processing.\n"
-					."Dropped sentences are recorded in the following file:\n$file",
+					."Dropped sentences are recorded in this file:\n$file\n\n"
+					."Click OK to continue.",
 				type => 'msg'
 			);
 			$self->{unrecognized_char} = 1;
@@ -345,6 +347,10 @@ sub _run_tagger{
 		;
 		print $fh encode('utf8', $t)."\n";
 		close $fh;
+	}
+	
+	if ($n == 0) {
+		return 0;
 	}
 	
 	return 1;
