@@ -525,7 +525,10 @@ igraph.Arrows_my <- function (x1, y1, x2, y2, code = 2, size = 1, width = 1.2/4/
     }
 }
 
-if ( grepl( "mingw32", sessionInfo()$platform ) ) {
+if ( 
+	   ( grepl( "mingw32", sessionInfo()$platform                 ) )
+	&& ( grepl( "0.7.0",   sessionInfo()$otherPkgs$igraph$Version ) )
+) {
 	assignInNamespace(
 		x="igraph.Arrows",
 		value=igraph.Arrows_my,
