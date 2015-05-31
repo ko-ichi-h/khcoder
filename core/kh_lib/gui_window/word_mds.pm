@@ -8,6 +8,7 @@ use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
 use kh_r_plot;
+use plotR::network;
 
 #-------------#
 #   GUI∫Ó¿Ω   #
@@ -396,8 +397,9 @@ if (exists(\"doc_length_mtr\")){
 	cex  <- font_size
 	
 	if ( length(xorg) < 300 ) {
-		library(wordcloud)
-		nc <- wordlayout(
+		library(wordcloud)'
+		.&plotR::network::r_command_wordlayout
+		.'nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cl),
@@ -668,8 +670,9 @@ if ( plot_mode == "color" ){
 	cex  <- font_size
 
 	if ( length(xorg) < 300 ) {
-		library(wordcloud)
-		nc <- wordlayout(
+		library(wordcloud)'
+		.&plotR::network::r_command_wordlayout
+		.'nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cl),
@@ -874,8 +877,9 @@ yorg <- cl[,2]
 cex  <- font_size
 
 if ( length(xorg) < 300 ) {
-	library(wordcloud)
-	nc <- wordlayout(
+	library(wordcloud)'
+	.&plotR::network::r_command_wordlayout
+	.'nc <- wordlayout(
 		labcd$x,
 		labcd$y,
 		rownames(cl),

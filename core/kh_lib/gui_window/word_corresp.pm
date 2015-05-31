@@ -8,6 +8,7 @@ use kh_r_plot;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
+use plotR::network;
 
 #-------------#
 #   GUI∫Ó¿Ω   #
@@ -1304,8 +1305,9 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 			&& ( length(c$rscore[,d_x]) < r_max )
 		)
 	){
-		library(wordcloud)
-		nc <- wordlayout(
+		library(wordcloud)'
+		.&plotR::network::r_command_wordlayout
+		.'nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cb),
