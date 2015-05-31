@@ -1,8 +1,8 @@
 package plotR::som;
 
 use strict;
-
 use kh_r_plot;
+use plotR::network;
 
 sub new{
 	my $class = shift;
@@ -787,8 +787,9 @@ if (is.null(labcd) == 1){
 	#cex  <- 1
 	
 	if ( length(xorg) < 300 ) {
-		library(wordcloud)
-		nc <- wordlayout(
+		library(wordcloud)'
+		.&plotR::network::r_command_wordlayout
+		.'nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			word_labs,
