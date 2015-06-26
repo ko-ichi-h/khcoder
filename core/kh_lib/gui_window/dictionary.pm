@@ -310,7 +310,7 @@ sub _fill_in{
 			#print Jcode->new("$i\n",'euc')->sjis;
 			$selection[$row] = $self->config->ifuse_this($i);
 			my $c = $self->hlist->Checkbutton(
-				-text     => $self->gui_jchar($i,'euc'),
+				-text     => $self->gui_jchar($i),
 				-variable => \$selection[$row],
 				-anchor   => 'w',
 			);
@@ -382,10 +382,7 @@ sub save{
 
 	# 強制抽出
 	my @mark; my %check;
-	my $t = Jcode->new(
-		$self->gui_jg($self->t1->get("1.0","end"),'reserve_rn'),
-		'sjis'
-	)->euc;
+	my $t = $self->t1->get("1.0","end");
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	#print Jcode->new("$t\n")->sjis;
 
@@ -423,10 +420,7 @@ sub save{
 
 	# 使用しない語
 	my @stop; %check={};
-	$t = Jcode->new(
-		$self->gui_jg($self->t2->get("1.0","end"), 'reserve_rn'),
-		'sjis',
-	)->euc;
+	$t = $self->t2->get("1.0","end");
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	#print Jcode->new("$t\n")->sjis;
 
@@ -482,7 +476,6 @@ sub save{
 		$::main_gui->get('w_doc_ass')->close;
 	}
 }
-
 
 #--------------#
 #   アクセサ   #

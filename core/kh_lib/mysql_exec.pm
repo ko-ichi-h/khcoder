@@ -34,7 +34,7 @@ sub connect_db{
 	my $no_verbose = $_[2];
 	my $dsn = 
 		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
+	my $dbh = DBI->connect($dsn,$username,$password,{mysql_enable_utf8 => 1})
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
 	# MySQLのバージョンチェック
@@ -57,10 +57,11 @@ sub connect_db{
 	}
 
 	# 文字コードの設定
-	if ( substr($r,0,3) > 4 ){
-		$dbh->do("SET NAMES ujis");
-		print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
-	}
+	#if ( substr($r,0,3) > 4 ){
+	#	$dbh->do("SET NAMES ujis");
+	#	print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
+	#}
+	$dbh->do("SET NAMES utf8mb4");
 
 	return $dbh;
 }
@@ -136,7 +137,7 @@ sub create_new_db{
 
 	my $sql = '';
 	$sql .= "create database $new_db_name";
-	$sql .= " default character set ujis" if substr($r,0,3) >= 4.1;
+	$sql .= " default character set utf8mb4"; # if substr($r,0,3) >= 4.1;
 	$dbh->do($sql)
 		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
 

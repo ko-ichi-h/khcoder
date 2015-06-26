@@ -185,6 +185,8 @@ sub _make_new{
 	kh_projects->read->add_new($new) or return 0;
 	$self->close;
 
+	$new->{target} = $::config_obj->uni_path($t);
+
 	$new->open or die;
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;

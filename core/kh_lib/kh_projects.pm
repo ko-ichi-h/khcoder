@@ -23,7 +23,7 @@ sub read{
 		$self->create_project_list;
 	}
 
-	# 読み込み                                    # euc-->sjis変換？
+	# 読み込み
 	my $st = $dbh->prepare("SELECT * FROM projects")
 		or die;
 	$st->execute or die;
@@ -31,9 +31,9 @@ sub read{
 	while (my $r = $st->fetchrow_hashref){
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => $::config_obj->os_path($r->{"target"}),
+				target  => $r->{"target"},
 				comment => $r->{"comment"},
-				dbname  => $r->{"dbname"}
+				dbname  => $r->{"dbname"},
 			);
 		++$n;
 	}
@@ -100,7 +100,7 @@ sub add_new{
 
 	# 既にファイルが登録されていないかチェック
 	foreach my $i (@{$self->list}){
-		if ($i->file_target eq $new->file_target){
+		if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
 			gui_errormsg->open(
 				type    => 'msg',
 				msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
@@ -117,19 +117,17 @@ sub add_new{
 
 	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
-	$sql .= "'".Jcode->new($new->file_target)->euc."',";
+	$sql .= "'".$::config_obj->uni_path($new->file_target)."',";
 	if ($new->comment){
-		$sql .= $self->dbh->quote(Jcode->new($new->comment)->euc).",";
+		$sql .= $self->dbh->quote( $new->comment ).",";
 	} else {
 		$sql .= "'no description',";
 		$new->comment('no description');
 	}
 	$sql .= "'".$new->dbname."'";
 	$sql .= ')';
-	#$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
 
-	$new->{comment} = Jcode->new($new->comment)->euc;
+	$self->dbh->do($sql) or die;
 
 	return 1;
 }
@@ -142,11 +140,11 @@ sub edit{
 	my $self = shift;
 	my $edp = $self->a_project($_[0]);
 
-	$edp->comment( Jcode->new($_[1])->euc );
-	$edp->assigned_icode($_[2]);
+	$edp->comment( $_[1] );
+	$edp->assigned_icode( $_[2] );
 
-	my $file    = Jcode->new($edp->file_target)->euc;
-	my $comment = Jcode->new($edp->comment    )->euc;
+	my $file    = $edp->file_target;
+	my $comment = $edp->comment;
 
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){
@@ -169,7 +167,7 @@ sub delete{
 
 	my $sql = "DELETE FROM projects WHERE target = ";
 	$sql .= "'".$del->file_target."'";
-	$sql = Jcode->new($sql)->euc;
+	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 
 	# ゴミ箱テーブルが存在しない場合は作成 

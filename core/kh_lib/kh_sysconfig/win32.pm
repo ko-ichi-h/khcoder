@@ -225,7 +225,19 @@ sub os_path{
 	
 	$c =~ tr/\//\\/;
 	
-	return Encode::encode('cp932', $c);
+	return Encode::encode('cp932', $c); # this line should be changed! [unicode]
+}
+
+sub uni_path{
+	my $self  = shift;
+	my $c     = shift;
+	
+	unless ( utf8::is_utf8($c) ){
+		$c = Encode::decode('cp932', $c); # this line should be changed! [unicode]
+	}
+	$c =~ tr/\\/\//;
+	
+	return $c; 
 }
 
 sub os_cod_path{
