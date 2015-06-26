@@ -397,45 +397,29 @@ sub gui_jt{ # Windowタイトル部分の日本語 （Win9x & Perl/Tk 804用の特殊処理）
 	}
 }
 
-
-sub gui_jg_filename_win98{ # 全角文字を含むパスの処理 （Win9x & Perl/Tk 804用の特殊処理）
-	my $char = $_[1];
-	
-	if (
-		    ( $] > 5.008 )
-		and ( $^O eq 'MSWin32' )
-		and not ( Win32::IsWinNT() )
-	){
-		$char =~ s/\//\\/g;
-		$char = Encode::decode($char_code{sjis},$char);
-		$char = Encode::encode($char_code{sjis},$char);
-	}
-	
-	return $char;
+sub gui_jg_filename_win98{
+	return $_[1];
 }
 
 sub gui_jg{ # 入力された文字列の変換
 	my $char       = $_[1];
 	my $reserve_rn = $_[2];
-	
-	if ($] > 5.008){
-		if ( utf8::is_utf8($char) ){
-			#print "utf8\n";
-			unless ( $reserve_rn ){ # ATOK対策
-				$char =~ s/\x0D|\x0A//g;
-			}
-			if ($^O eq 'darwin'){   # Mac OS X
-				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
-				return Jcode->new($char,'utf8')->sjis;
-			}
-			return Encode::encode($char_code{sjis},$char);
-		} else {
-			#print "not utf8\n";
+
+	if ( utf8::is_utf8($char) ){
+		#print "utf8\n";
+		unless ( $reserve_rn ){ # ATOK対策
+			$char =~ s/\x0D|\x0A//g;
+		}
+		if ($^O eq 'darwin'){   # Mac OS X
+			$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
 			return $char;
 		}
+		return $char;
 	} else {
+		#print "not utf8\n";
 		return $char;
 	}
+
 }
 
 sub to_clip{ # クリップボードへコピーするための変換

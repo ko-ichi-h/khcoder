@@ -1,9 +1,12 @@
+use utf8;
+use Encode qw/encode decode/;
+
 package kh_sysconfig::win32;
 use base qw(kh_sysconfig);
 use strict;
 
 #----------------------------#
-#   ÀßÄê¤ÎÆÉ¤ß¹þ¤ß¥ë¡¼¥Á¥ó   #
+#   è¨­å®šã®èª­ã¿è¾¼ã¿ãƒ«ãƒ¼ãƒãƒ³   #
 #----------------------------#
 
 sub _readin{
@@ -15,17 +18,17 @@ sub _readin{
 
 	my $self = shift;
 
-	# Chasen¤ÎÀßÄê
+	# Chasenã®è¨­å®š
 	if (-e $self->{chasen_path}){
 		my $pos = rindex($self->{chasen_path},'\\');
 		$self->{grammercha} = substr($self->{chasen_path},0,$pos);
 		$self->{chasenrc} = "$self->{grammercha}".'\\dic\chasenrc';
 		$self->{grammercha} .= '\dic\grammar.cha';
 		
-		my $flag = 0; my $msg = '(Ï¢·ëÉÊ»ì';
-		Jcode::convert(\$msg,'sjis','euc');
+		my $flag = 0;
+		my $msg = '(é€£çµå“è©ž';
 		if (-e $self->{chasenrc}){
-			open (CRC,"$self->{chasenrc}") or
+			open (CRC, '<:encoding(cp932)', $self->{chasenrc}) or
 				gui_errormsg->open(
 					type    => 'file',
 					thefile => "$self->{chasenrc}"
@@ -59,7 +62,7 @@ sub _readin{
 }
 
 #------------------#
-#   ÀßÄêÃÍ¤ÎÊÝÂ¸   #
+#   è¨­å®šå€¤ã®ä¿å­˜   #
 #------------------#
 
 sub save{
@@ -121,16 +124,24 @@ sub save_ini{
 	);
 	
 	my $f = $self->{ini_file};
-	open (INI,">$f") or
+	open (INI,'>:encoding(utf8)', "$f") or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => ">$f"
+			thefile => "$f"
 		);
+
 	foreach my $i (@outlist){
 		my $value = $self->$i( undef,'1');
 		$value = '' unless defined($value);
+		
+		unless ( utf8::is_utf8($value) ){
+			$value = Encode::decode('utf8', Jcode->new($value)->utf8);
+			# åŸºæœ¬çš„ã«ã™ã¹ã¦decodeã•ã‚Œã¦ã„ã‚‹å‰æ
+			# æ—¥æœ¬èªžãƒ»ASCIIä»¥å¤–ãŒdecodeã•ã‚Œã¦ã„ãªã‘ã‚Œã°æ–‡å­—åŒ–ã‘ï¼
+		}
 		print INI "$i\t".$value."\n";
 	}
+
 	foreach my $i (keys %{$self}){
 		if ( index($i,'w_') == 0 ){
 			my $value = $self->win_gmtry($i);
@@ -147,7 +158,7 @@ sub save_ini{
 }
 
 #--------------------#
-#   ·ÁÂÖÁÇ²òÀÏ´Ø·¸   #
+#   å½¢æ…‹ç´ è§£æžé–¢ä¿‚   #
 
 
 sub chasen_path{
@@ -169,7 +180,7 @@ sub mecab_path{
 }
 
 #-------------#
-#   GUI´Ø·¸   #
+#   GUIé–¢ä¿‚   #
 
 sub mw_entry_length{
 	require Win32;
@@ -200,23 +211,21 @@ sub font_plot{
 
 
 #------------#
-#   ¤½¤ÎÂ¾   #
+#   ãã®ä»–   #
 
 
 sub os_path{
 	my $self  = shift;
 	my $c     = shift;
 	my $icode = shift;
-
-	#print "kh_sysconfig::win32::os_path[1]:  $c\n";
-
-	$c = Jcode->new("$c",$icode)->euc;
+	
+	unless ( utf8::is_utf8($c) ){
+		$c = Encode::decode('utf8', Jcode->new($c,$icode)->utf8);
+	}
+	
 	$c =~ tr/\//\\/;
-	$c = Jcode->new("$c",'euc')->sjis;
 	
-	#print "kh_sysconfig::win32::os_path[2]:  $c\n";
-	
-	return $c;
+	return Encode::encode('cp932', $c);
 }
 
 sub os_cod_path{
@@ -230,9 +239,6 @@ sub os_cod_path{
 	$c =~ tr/\//\\/;
 	$c = Jcode->new("$c",'euc')->sjis;
 	
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\\/\//;
-	$c = Jcode->new("$c",'euc')->sjis;
 	
 	#print "kh_sysconfig::win32::os_path[2]:  $c\n";
 	

@@ -1,3 +1,5 @@
+use utf8;
+
 package kh_sysconfig;
 use strict;
 
@@ -12,7 +14,7 @@ sub readin{
 	$self->{cwd} = shift;
 	bless $self, $class;
 
-	# cwd¤Î¥Á¥§¥Ã¥¯
+	# cwdã®ãƒã‚§ãƒƒã‚¯
 	if ( $] > 5.008 ) {
 		if ( utf8::is_utf8($self->{cwd}) ){
 			warn "Error: Unexpected UTF8 Flag!";
@@ -20,7 +22,7 @@ sub readin{
 	}
 	#print "kh_sysconfig: $self->{cwd}\n";
 
-	# ÀßÄê¥Õ¥¡¥¤¥ë¤¬Â·¤Ã¤Æ¤¤¤ë¤«³ÎÇ§
+	# è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒæƒã£ã¦ã„ã‚‹ã‹ç¢ºèª
 	if (
 		   ! -e "$self->{ini_file}"
 		|| ! -e "./config/hinshi_chasen"
@@ -29,13 +31,13 @@ sub readin{
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
 	){
-		# Â·¤Ã¤Æ¤¤¤Ê¤¤¾ì¹ç¤ÏÀßÄê¤ò½é´ü²½
+		# æƒã£ã¦ã„ãªã„å ´åˆã¯è¨­å®šã‚’åˆæœŸåŒ–
 		$self->reset_parm;
 	}
 
-	# ini¥Õ¥¡¥¤¥ë
+	# iniãƒ•ã‚¡ã‚¤ãƒ«
 	#print "kh_sysconfig: $self->{ini_file}\n";
-	open (CINI,"$self->{ini_file}") or
+	open (CINI, '<:encoding(utf8)', "$self->{ini_file}") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$self->{ini_file}"
@@ -47,7 +49,7 @@ sub readin{
 	}
 	close (CINI);
 
-	# ¤½¤ÎÂ¾
+	# ãã®ä»–
 	$self->{history_file} = $self->{cwd}.'/config/projects';
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
 
@@ -57,14 +59,14 @@ sub readin{
 }
 
 #------------------#
-#   ÀßÄê¤Î½é´ü²½   #
+#   è¨­å®šã®åˆæœŸåŒ–   #
 
 sub reset_parm{
 		my $self = shift;
 		print "Resetting parameters...\n";
 		mkdir 'config' unless -d 'config';
 		
-		# ÀßÄê¥Õ¥¡¥¤¥ë¤Î½àÈ÷
+		# è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®æº–å‚™
 		unless (-e $self->{ini_file}){
 			open (CON,">$self->{ini_file}") or 
 				gui_errormsg->open(
@@ -74,40 +76,40 @@ sub reset_parm{
 			close (CON);
 		}
 		
-		# ÉÊ»ìÄêµÁ¥Õ¥¡¥¤¥ë¤ÎºîÀ®½àÈ÷
+		# å“è©žå®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆæº–å‚™
 		use DBI;
 		use DBD::CSV;
 		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
 		my @table = (
-				"'7', 'ÃÏÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-ÃÏ°è', ''",
-				"'6', '¿ÍÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-¿ÍÌ¾', ''",
-				"'5','ÁÈ¿¥Ì¾','Ì¾»ì-¸ÇÍ­Ì¾»ì-ÁÈ¿¥', ''",
-				"'4','¸ÇÍ­Ì¾»ì','Ì¾»ì-¸ÇÍ­Ì¾»ì', ''",
-				"'2','¥µÊÑÌ¾»ì','Ì¾»ì-¥µÊÑÀÜÂ³', ''",
-				"'3','·ÁÍÆÆ°»ì','Ì¾»ì-·ÁÍÆÆ°»ì¸ì´´', ''",
-				"'8','¥Ê¥¤·ÁÍÆ','Ì¾»ì-¥Ê¥¤·ÁÍÆ»ì¸ì´´', ''",
-				"'16','Ì¾»ìB','Ì¾»ì-°ìÈÌ','¤Ò¤é¤¬¤Ê'",
-				#"'16','Ì¾»ìB','Ì¾»ì-Éû»ì²ÄÇ½','¤Ò¤é¤¬¤Ê'",
-				"'20','Ì¾»ìC','Ì¾»ì-°ìÈÌ','°ìÊ¸»ú'",
-				#"'20','Ì¾»ìC','Ì¾»ì-Éû»ì²ÄÇ½','°ìÊ¸»ú'",
-				"'21','ÈÝÄê½õÆ°»ì','½õÆ°»ì','ÈÝÄê'",
-				"'1','Ì¾»ì','Ì¾»ì-°ìÈÌ', ''",
-				"'9','Éû»ì²ÄÇ½','Ì¾»ì-Éû»ì²ÄÇ½', ''",
-				"'10','Ì¤ÃÎ¸ì','Ì¤ÃÎ¸ì', ''",
-				"'12','´¶Æ°»ì','´¶Æ°»ì', ''",
-				"'12','´¶Æ°»ì','¥Õ¥£¥é¡¼', ''",
-				"'99999','HTML¥¿¥°','¥¿¥°', 'HTML'",
-				"'11','¥¿¥°','¥¿¥°', ''",
-				"'17','Æ°»ìB','Æ°»ì-¼«Î©','¤Ò¤é¤¬¤Ê'",
-				"'13','Æ°»ì','Æ°»ì-¼«Î©', ''",
-				"'22','·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë','·ÁÍÆ»ì-Èó¼«Î©', ''",
-				"'18','·ÁÍÆ»ìB','·ÁÍÆ»ì','¤Ò¤é¤¬¤Ê'",
-				"'14','·ÁÍÆ»ì','·ÁÍÆ»ì', ''",
-				"'19','Éû»ìB','Éû»ì','¤Ò¤é¤¬¤Ê'",
-				"'15','Éû»ì','Éû»ì', ''"
+				"'7', 'åœ°å', 'åè©ž-å›ºæœ‰åè©ž-åœ°åŸŸ', ''",
+				"'6', 'äººå', 'åè©ž-å›ºæœ‰åè©ž-äººå', ''",
+				"'5','çµ„ç¹”å','åè©ž-å›ºæœ‰åè©ž-çµ„ç¹”', ''",
+				"'4','å›ºæœ‰åè©ž','åè©ž-å›ºæœ‰åè©ž', ''",
+				"'2','ã‚µå¤‰åè©ž','åè©ž-ã‚µå¤‰æŽ¥ç¶š', ''",
+				"'3','å½¢å®¹å‹•è©ž','åè©ž-å½¢å®¹å‹•è©žèªžå¹¹', ''",
+				"'8','ãƒŠã‚¤å½¢å®¹','åè©ž-ãƒŠã‚¤å½¢å®¹è©žèªžå¹¹', ''",
+				"'16','åè©žB','åè©ž-ä¸€èˆ¬','ã²ã‚‰ãŒãª'",
+				#"'16','åè©žB','åè©ž-å‰¯è©žå¯èƒ½','ã²ã‚‰ãŒãª'",
+				"'20','åè©žC','åè©ž-ä¸€èˆ¬','ä¸€æ–‡å­—'",
+				#"'20','åè©žC','åè©ž-å‰¯è©žå¯èƒ½','ä¸€æ–‡å­—'",
+				"'21','å¦å®šåŠ©å‹•è©ž','åŠ©å‹•è©ž','å¦å®š'",
+				"'1','åè©ž','åè©ž-ä¸€èˆ¬', ''",
+				"'9','å‰¯è©žå¯èƒ½','åè©ž-å‰¯è©žå¯èƒ½', ''",
+				"'10','æœªçŸ¥èªž','æœªçŸ¥èªž', ''",
+				"'12','æ„Ÿå‹•è©ž','æ„Ÿå‹•è©ž', ''",
+				"'12','æ„Ÿå‹•è©ž','ãƒ•ã‚£ãƒ©ãƒ¼', ''",
+				"'99999','HTMLã‚¿ã‚°','ã‚¿ã‚°', 'HTML'",
+				"'11','ã‚¿ã‚°','ã‚¿ã‚°', ''",
+				"'17','å‹•è©žB','å‹•è©ž-è‡ªç«‹','ã²ã‚‰ãŒãª'",
+				"'13','å‹•è©ž','å‹•è©ž-è‡ªç«‹', ''",
+				"'22','å½¢å®¹è©žï¼ˆéžè‡ªç«‹ï¼‰','å½¢å®¹è©ž-éžè‡ªç«‹', ''",
+				"'18','å½¢å®¹è©žB','å½¢å®¹è©ž','ã²ã‚‰ãŒãª'",
+				"'14','å½¢å®¹è©ž','å½¢å®¹è©ž', ''",
+				"'19','å‰¯è©žB','å‰¯è©ž','ã²ã‚‰ãŒãª'",
+				"'15','å‰¯è©ž','å‰¯è©ž', ''"
 		);
 		
-		# Ããä¥ÍÑ
+		# èŒ¶ç­Œç”¨
 		unless (-e "./config/hinshi_chasen"){
 			$dbh->do(
 				"CREATE TABLE hinshi_chasen (
@@ -127,7 +129,7 @@ sub reset_parm{
 			}
 		}
 
-		# MeCabÍÑ
+		# MeCabç”¨
 		unless (-e "./config/hinshi_mecab"){
 			$dbh->do(
 				"CREATE TABLE hinshi_mecab (
@@ -147,7 +149,7 @@ sub reset_parm{
 			}
 		}
 
-		# StemmingÍÑ
+		# Stemmingç”¨
 		unless (-e "./config/hinshi_stemming"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stemming (
@@ -169,10 +171,10 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
-		# Stanford POS TaggerÍÑ¡Ê±Ñ¸ì¡Ë
+		# Stanford POS Taggerç”¨ï¼ˆè‹±èªžï¼‰
 		unless (-e "./config/hinshi_stanford_en"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stanford_en (
@@ -201,10 +203,10 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
-		# Stanford POS TaggerÍÑ¡Ê¥É¥¤¥Ä¸ì¡Ë
+		# Stanford POS Taggerç”¨ï¼ˆãƒ‰ã‚¤ãƒ„èªžï¼‰
 		unless (-e "./config/hinshi_stanford_de"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stanford_de (
@@ -274,7 +276,7 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
 
@@ -282,7 +284,7 @@ sub reset_parm{
 }
 
 #--------------------#
-#   ·ÁÂÖÁÇ²òÀÏ´Ø·¸   #
+#   å½¢æ…‹ç´ è§£æžé–¢ä¿‚   #
 
 sub refine_cj{
 	my $self = shift;
@@ -393,7 +395,7 @@ sub stopwords{
 	my $type = $args{method}.'_'.$args{locale};
 
 	if ( defined( $args{stopwords} ) ){
-		# ¥Ç¡¼¥¿ÊÝÂ¸
+		# ãƒ‡ãƒ¼ã‚¿ä¿å­˜
 		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
 		if (-e "./config/stopwords_$type"){
 			$dbh->do("
@@ -416,7 +418,7 @@ sub stopwords{
 		$dbh->disconnect;
 		return $args{stopwords};
 	} else {
-		# ¥Ç¡¼¥¿ÆÉ¤ß½Ð¤·
+		# ãƒ‡ãƒ¼ã‚¿èª­ã¿å‡ºã—
 		my @words = ();
 		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
 		if (-e "./config/stopwords_$type"){
@@ -489,12 +491,12 @@ sub hukugo_chasenrc{
 		return $self->{hukugo_chasenrc};
 	} else {
 		my $t = '';
-		$t .= '(Ï¢·ëÉÊ»ì'."\n";
-		$t .= "\t".'((Ê£¹çÌ¾»ì)'."\n";
-		$t .= "\t\t".'(Ì¾»ì)'."\n";
-		$t .= "\t\t".'(ÀÜÆ¬»ì Ì¾»ìÀÜÂ³)'."\n";
-		$t .= "\t\t".'(ÀÜÆ¬»ì ¿ôÀÜÂ³)'."\n";
-		$t .= "\t\t".'(µ­¹æ °ìÈÌ)'."\n";
+		$t .= '(é€£çµå“è©ž'."\n";
+		$t .= "\t".'((è¤‡åˆåè©ž)'."\n";
+		$t .= "\t\t".'(åè©ž)'."\n";
+		$t .= "\t\t".'(æŽ¥é ­è©ž åè©žæŽ¥ç¶š)'."\n";
+		$t .= "\t\t".'(æŽ¥é ­è©ž æ•°æŽ¥ç¶š)'."\n";
+		$t .= "\t\t".'(è¨˜å· ä¸€èˆ¬)'."\n";
 		$t .= "\t".')'."\n";
 		$t .= ')'."\n";
 		return $t;
@@ -503,9 +505,9 @@ sub hukugo_chasenrc{
 
 
 #-------------#
-#   GUI´Ø·¸   #
+#   GUIé–¢ä¿‚   #
 
-# Window°ÌÃÖ¤È¥µ¥¤¥º¤Î¥ê¥»¥Ã¥È
+# Windowä½ç½®ã¨ã‚µã‚¤ã‚ºã®ãƒªã‚»ãƒƒãƒˆ
 sub ClearGeometries{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
@@ -704,7 +706,7 @@ sub win32_monitor_chk{
 }
 
 #---------------#
-#   MySQL´ØÏ¢   #
+#   MySQLé–¢é€£   #
 #---------------#
 
 sub sql_username{
@@ -768,7 +770,7 @@ sub sqllog_file{
 }
 
 #------------#
-#   ¤½¤ÎÂ¾   #
+#   ãã®ä»–   #
 
 sub all_in_one_pack{
 	my $self = shift;
@@ -779,14 +781,14 @@ sub kaigyo_kigou{
 	my $self = shift;
 	my $new  = shift;
 	
-	# ¿·¤·¤¤ÃÍ¤ò»ØÄê¤µ¤ì¤¿¾ì¹ç
+	# æ–°ã—ã„å€¤ã‚’æŒ‡å®šã•ã‚ŒãŸå ´åˆ
 	if (defined($new)){
 		$self->{kaigyo_kigou} = $new;
 	}
 	
-	# ¥Ç¥Õ¥©¥ë¥ÈÃÍ
+	# ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 	unless ($self->{kaigyo_kigou}){
-		return '¡Ê¢­¡Ë';
+		return 'ï¼ˆâ†“ï¼‰';
 	}
 	
 	return $self->{kaigyo_kigou};
@@ -876,21 +878,6 @@ sub r_path{
 	return $self->{r_path};
 }
 
-sub r_dir{
-	my $self = shift;
-	if ( -e $self->{r_path} ) {
-		if ( $self->{r_path} =~ /\A(.+)Rterm\.exe/i){
-			my $v = $1;
-			chop $v;
-			chop $v;
-			chop $v;
-			chop $v;
-			chop $v;
-			return $v;
-		}
-	}
-}
-
 sub r_default_font_size{
 	my $self = shift;
 	
@@ -916,10 +903,10 @@ sub use_heap {
 	my $self = shift;
 	my $new = shift;
 	
-	if ( defined($new) && length($new) ){                     # ¿·¤·¤¤ÃÍ¤Î»ØÄê
+	if ( defined($new) && length($new) ){                     # æ–°ã—ã„å€¤ã®æŒ‡å®š
 		$self->{use_heap} = $new;
 	}
-	unless (defined($self->{use_heap})){     # ¥Ç¥Õ¥©¥ë¥ÈÃÍ
+	unless (defined($self->{use_heap})){     # ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 		$self->{use_heap} = 1;
 	}
 	return $self->{use_heap};

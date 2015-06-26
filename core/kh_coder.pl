@@ -157,12 +157,15 @@ no  warnings 'redefine';
 use warnings 'redefine';
 
 if (
-	   ( length($::config_obj->r_path) && -e $::config_obj->r_path )
+	   (
+			   length($::config_obj->r_path)
+			&& -e $::config_obj->os_path( $::config_obj->r_path )
+		)
 	|| ( length($::config_obj->r_path) == 0 )
 ){
 	$::config_obj->{R} = Statistics::R->new(
-		r_bin   => $::config_obj->r_path,
-		r_dir   => $::config_obj->r_dir,
+		r_bin   => $::config_obj->os_path( $::config_obj->r_path ),
+		#r_dir   => $::config_obj->os_path( $::config_obj->r_dir  ),
 		log_dir => $::config_obj->{cwd}.'/config/R-bridge',
 		tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
 	);

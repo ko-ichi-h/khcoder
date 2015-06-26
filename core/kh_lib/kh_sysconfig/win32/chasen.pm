@@ -5,8 +5,11 @@ use gui_errormsg;
 
 sub config_morph{
 	my $self = shift;
-	my $pos = rindex($self->{chasen_path},'\\');
-	$self->{grammercha} = substr($self->{chasen_path},0,$pos);
+	
+	my $chasen_path = $::config_obj->os_path( $self->{chasen_path} );
+	
+	my $pos = rindex($chasen_path,'\\');
+	$self->{grammercha} = substr($chasen_path,0,$pos);
 	$self->{chasenrc} = "$self->{grammercha}".'\\dic\chasenrc';
 	$self->{dic_dir} =  "$self->{grammercha}".'\\dic';
 	$self->{grammercha} .= '\dic\grammar.cha';
@@ -164,22 +167,24 @@ sub config_morph{
 }
 
 sub path_check{
-	if ($::config_obj->os ne 'win32'){
-		return 1;
-	}
-
-	my $self = shift;
-	my $path = $self->chasen_path;
-
-	if (not (-e $path) or not ($path =~ /chasen\.exe\Z/i) ){
-		gui_errormsg->open(
-			type   => 'msg',
-			window => \$gui_sysconfig::inis,
-			msg    => kh_msg->get('path_error'),
-		);
-		return 0;
-	}
 	return 1;
+	
+	#if ($::config_obj->os ne 'win32'){
+	#	return 1;
+	#}
+
+	#my $self = shift;
+	#my $path = $self->chasen_path;
+
+	#if (not (-e $path) or not ($path =~ /chasen\.exe\Z/i) ){
+	#	gui_errormsg->open(
+	#		type   => 'msg',
+	#		window => \$gui_sysconfig::inis,
+	#		msg    => kh_msg->get('path_error'),
+	#	);
+	#	return 0;
+	#}
+	#return 1;
 }
 
 
