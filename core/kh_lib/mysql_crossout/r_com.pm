@@ -34,7 +34,7 @@ sub out2{                               # length作製をする
 	
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
-	open my $fh, '>', $file or
+	open my $fh, '>:encoding(utf8)', $file or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
@@ -164,13 +164,7 @@ sub out2{                               # length作製をする
 	$self->{num_r} = $num_r;
 
 	# Rコマンド
-	$self->{r_command} = "source(\"$file\")\n";
-
-	if ($::config_obj->os eq 'win32'){
-		$self->{r_command} = Jcode->new($self->{r_command}, 'sjis')->euc;
-		$self->{r_command} =~ s/\\/\//g;
-		kh_jchar->to_sjis($file);
-	}
+	$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
 
 	return $self;
 }

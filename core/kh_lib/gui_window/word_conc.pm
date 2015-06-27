@@ -523,15 +523,15 @@ sub search{
 	my $self = shift;
 
 	# 変数取得
-	my $query = Jcode->new($self->gui_jg($self->entry->get),'sjis')->euc;
+	my $query = $self->entry->get;
 	#unless ($query){
 	#	return;
 	#}
-	my $katuyo = Jcode->new($self->gui_jg($self->entry2->get),'sjis')->euc;
-	my $hinshi = Jcode->new($self->gui_jg($self->entry4->get),'sjis')->euc;
+	my $katuyo = $self->entry2->get;
+	my $hinshi = $self->entry4->get;
 	my $length = $self->entry3->get;
 
-	$query  = $self->check_entry_input($query);
+	$query  = $self->check_entry_input($query );
 	$katuyo = $self->check_entry_input($katuyo);
 	$hinshi = $self->check_entry_input($hinshi);
 

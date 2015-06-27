@@ -273,7 +273,7 @@ sub calc{
 			->hundle->fetch->[0];
 		my %heads = ();
 		for (my $n = 1; $n <= $max; ++$n){
-			$heads{$n} = Jcode->new(mysql_getheader->get($tani2, $n),'sjis')->euc;
+			$heads{$n} = mysql_getheader->get($tani2, $n);
 		}
 
 		my $sql = '';
@@ -453,7 +453,7 @@ d <- cbind(d, v1)
 d <- subset(
 	d,
 	v0 != "'
-	.Encode::encode('euc-jp', kh_msg->get('gui_window::word_corresp->nav') ) # ·çÂ»ÃÍ
+	.kh_msg->get('gui_window::word_corresp->nav') # ·çÂ»ÃÍ
 	.'" & v0 != "." & v0 != "missing"
 )
 v0 <- NULL
@@ -463,7 +463,7 @@ d <- t(d)
 d <- subset(
 	d,
 	rownames(d) != "<>'
-	.Encode::encode('euc-jp', kh_msg->get('gui_window::word_corresp->nav')) # ·çÂ»ÃÍ
+	.kh_msg->get('gui_window::word_corresp->nav') # ·çÂ»ÃÍ
 	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
 )
 d <- t(d)

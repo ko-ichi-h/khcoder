@@ -857,7 +857,7 @@ my $DEBUG_TIMING = 0;
         try( rm(test_open), silent=T  );
         options(warn=0);
         
-        tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;
+        tryCatch( source(PERLINPUTFILE, encoding="UTF-8") , error = function(e) { print(e) } ) ;
         
         ## Ensure that device is off after execute the input file.
         # tryCatch( dev.off() , error = function(e) {} ) ;

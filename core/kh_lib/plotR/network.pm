@@ -1,7 +1,8 @@
 package plotR::network;
 
-use strict;
+use utf8;
 
+use strict;
 use kh_r_plot;
 
 sub new{
@@ -19,7 +20,7 @@ sub new{
 	my $r_command = $args{r_command};
 	$args{r_command} = '';
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄêÉôÊ¬
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šéƒ¨åˆ†
 	if ( $args{n_or_j} eq 'j'){
 		$r_command .= "edges <- 0\n";
 		$r_command .= "th <- $args{edges_jac}\n";
@@ -74,7 +75,7 @@ sub new{
 	$r_command .= "gray_scale <- $args{gray_scale}\n";
 
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	
 	#use Benchmark;
 	#my $t0 = new Benchmark;
@@ -241,7 +242,7 @@ sub new{
 	#my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n" if $bench;
 
-	# ¾ğÊó¤Î¼èÆÀ¡ÊÃ»¤¤¥Ğ¡¼¥¸¥ç¥ó¡Ë
+	# æƒ…å ±ã®å–å¾—ï¼ˆçŸ­ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼‰
 	my $info;
 	$::config_obj->R->send('
 		print(
@@ -263,7 +264,7 @@ sub new{
 		$info = undef;
 	}
 
-	# ¾ğÊó¤Î¼èÆÀ¡ÊÄ¹¤¤¥Ğ¡¼¥¸¥ç¥ó¡Ë
+	# æƒ…å ±ã®å–å¾—ï¼ˆé•·ã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ï¼‰
 	my $info_long;
 	$::config_obj->R->send('
 		print(
@@ -291,7 +292,7 @@ sub new{
 		$info_long = undef;
 	}
 
-	# edge¤Î¿ô¡¦ºÇ¾®¤Îjaccard·¸¿ô¤Ê¤É¤Î¾ğÊó¤òcommand_f¤ËÉÕ²Ã
+	# edgeã®æ•°ãƒ»æœ€å°ã®jaccardä¿‚æ•°ãªã©ã®æƒ…å ±ã‚’command_fã«ä»˜åŠ 
 	my ($info_edges, $info_jac);
 	if ($info =~ /E ([0-9]+), D/){
 		$info_edges = $1;
@@ -320,7 +321,7 @@ sub new{
 sub r_plot_cmd_p1{
 	return '
 
-# ÉÑÅÙ·×»»
+# é »åº¦è¨ˆç®—
 if (use_freq_as_size == 1){
 	freq <- NULL
 	for (i in 1:length( rownames(d) )) {
@@ -328,12 +329,12 @@ if (use_freq_as_size == 1){
 	}
 }
 
-# Îà»÷ÅÙ·×»» 
+# é¡ä¼¼åº¦è¨ˆç®— 
 d <- dist(d,method="binary")
 d <- as.matrix(d)
 d <- 1 - d;
 
-# ÉÔÍ×¤Êedge¤òºï½ü¤·¤ÆÉ¸½à²½
+# ä¸è¦ãªedgeã‚’å‰Šé™¤ã—ã¦æ¨™æº–åŒ–
 if ( exists("com_method") ){
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		d[1:n_words,] <- 0
@@ -355,7 +356,7 @@ if ( exists("com_method") ){
 	}
 }
 
-# ¥°¥é¥ÕºîÀ® 
+# ã‚°ãƒ©ãƒ•ä½œæˆ 
 library(igraph)
 new_igraph <- 0
 if (as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) ) > 5){
@@ -370,7 +371,7 @@ n <- set.vertex.attribute(
 	as.character( 1:length(d[1,]) )
 )
 
-# edge¤ò´Ö°ú¤¯½àÈ÷ 
+# edgeã‚’é–“å¼•ãæº–å‚™ 
 el <- data.frame(
 	edge1            = get.edgelist(n,name=T)[,1],
 	edge2            = get.edgelist(n,name=T)[,2],
@@ -378,7 +379,7 @@ el <- data.frame(
 	stringsAsFactors = FALSE
 )
 
-# ïçÃÍ¤ò·×»» 
+# é–¾å€¤ã‚’è¨ˆç®— 
 if (th == 0){
 	if(edges > length(el[,1])){
 		edges <- length(el[,1])
@@ -390,7 +391,7 @@ if (th == 0){
 	)
 }
 
-# edge¤ò´Ö°ú¤¤¤Æ¥°¥é¥Õ¤òºÆºîÀ® 
+# edgeã‚’é–“å¼•ã„ã¦ã‚°ãƒ©ãƒ•ã‚’å†ä½œæˆ 
 el2 <- subset(el, el[,3] >= th)
 n2  <- graph.edgelist(
 	matrix( as.matrix(el2)[,1:2], ncol=2 ),
@@ -675,30 +676,30 @@ if (length(get.vertex.attribute(n2,"name")) < 2){
 	com_method <- "none"
 }
 
-# Ãæ¿´À­
+# ä¸­å¿ƒæ€§
 if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	ccol <- NULL
-	if (com_method == "cnt-b"){                   # ÇŞ²ğ
+	if (com_method == "cnt-b"){                   # åª’ä»‹
 		ccol <- betweenness(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
 			directed=F
 		)
 	}
-	if (com_method == "cnt-d"){                   # ¼¡¿ô
+	if (com_method == "cnt-d"){                   # æ¬¡æ•°
 		ccol <-  degree(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
 		)
 	}
-	if (com_method == "cnt-e"){                   # ¸ÇÍ­¥Ù¥¯¥È¥ë
+	if (com_method == "cnt-e"){                   # å›ºæœ‰ãƒ™ã‚¯ãƒˆãƒ«
 		try(
 			ccol <- evcent(n2)$vector,
 			silent = T
 		)
 	}
 	
-	# ¿§¤ÎÀßÄê
+	# è‰²ã®è¨­å®š
 	if ( gray_scale == 1 ) {
 		ccol <- ccol - min(ccol)
 		ccol <- 1 - ccol / max(ccol) / 2.5
@@ -715,9 +716,9 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	edg_lty   <- 1
 }
 
-# ¥¯¥ê¡¼¥¯¸¡½Ğ
+# ã‚¯ãƒªãƒ¼ã‚¯æ¤œå‡º
 if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
-	merge_step <- function(n2, m){                # ¶¦ÄÌÍøÍÑ¤Î´Ø¿ô
+	merge_step <- function(n2, m){                # å…±é€šåˆ©ç”¨ã®é–¢æ•°
 		for ( i in 1:( trunc( length( m ) / 2 ) ) ){
 			temp_csize <- community.to.membership(n2, m,i)$csize
 			num_max   <- max( temp_csize )
@@ -725,16 +726,16 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			num_cls   <- length( temp_csize[temp_csize > 1] )
 			#print( paste(i, "a", num_alone, "max", num_max, "cls", num_cls) )
 			if (
-				# ºÇÂç¥³¥ß¥å¥Ë¥Æ¥£¥µ¥¤¥º¤¬Á´¥Î¡¼¥É¿ô¤Î22.5%°Ê¾å
+				# æœ€å¤§ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚µã‚¤ã‚ºãŒå…¨ãƒãƒ¼ãƒ‰æ•°ã®22.5%ä»¥ä¸Š
 				   num_max / length(get.vertex.attribute(n2,"name")) >= 0.225
-				# ¤«¤Ä¡¢ºÇÂç¥³¥ß¥å¥Ë¥Æ¥£¥µ¥¤¥º¤¬Ã±ÆÈ¥Î¡¼¥É¿ô¤è¤ê¤âÂç¤­¤¤
+				# ã‹ã¤ã€æœ€å¤§ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚µã‚¤ã‚ºãŒå˜ç‹¬ãƒãƒ¼ãƒ‰æ•°ã‚ˆã‚Šã‚‚å¤§ãã„
 				&& num_max > num_alone
-				# ¤«¤Ä¡¢¥µ¥¤¥º¤¬2°Ê¾å¤Î¥³¥ß¥å¥Ë¥Æ¥£¿ô¤¬12Ì¤Ëş
+				# ã‹ã¤ã€ã‚µã‚¤ã‚ºãŒ2ä»¥ä¸Šã®ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£æ•°ãŒ12æœªæº€
 				&& num_cls < 12
 			){
 				return(i)
 			}
-			# ºÇÂç¥³¥ß¥å¥Ë¥Æ¥£¥µ¥¤¥º¤¬¥Î¡¼¥É¿ô¤Î40%¤ò±Û¤¨¤ëÄ¾Á°¤ÇÂÇ¤ÁÀÚ¤ê
+			# æœ€å¤§ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£ã‚µã‚¤ã‚ºãŒãƒãƒ¼ãƒ‰æ•°ã®40%ã‚’è¶Šãˆã‚‹ç›´å‰ã§æ‰“ã¡åˆ‡ã‚Š
 			if (num_max / length(get.vertex.attribute(n2,"name")) >= 0.4 ){
 				return(i-1)
 			}
@@ -742,7 +743,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		return( trunc(length( m ) / 2) )
 	}
 
-	if (com_method == "com-b"){                   # ÇŞ²ğÀ­¡Êbetweenness¡Ë
+	if (com_method == "com-b"){                   # åª’ä»‹æ€§ï¼ˆbetweennessï¼‰
 		com   <- edge.betweenness.community(n2, directed=F)    
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
@@ -765,8 +766,8 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		)
 		com_m <- NULL
 
-		# ¥³¥ß¥å¥Ë¥Æ¥£¿ô¤ò12°Ê²¼¤Ë
-		# ¢ª¤³¤Îµ¡Ç½¤Ï¸½ºßÄä»ßÃæ¡£R¡Êigraph¡Ë¤Î¥Ğ¡¼¥¸¥ç¥ó¥¢¥Ã¥×»ş¤ËÉü³è¡©
+		# ã‚³ãƒŸãƒ¥ãƒ‹ãƒ†ã‚£æ•°ã‚’12ä»¥ä¸‹ã«
+		# â†’ã“ã®æ©Ÿèƒ½ã¯ç¾åœ¨åœæ­¢ä¸­ã€‚Rï¼ˆigraphï¼‰ã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚¢ãƒƒãƒ—æ™‚ã«å¾©æ´»ï¼Ÿ
 		if (F){
 		#if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
 			best_step <- 0
@@ -793,7 +794,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		}
 	}
 
-	com_col <- NULL # vertex frame                # Vertex¤Î¿§¡Ê12¿§¤Ş¤Ç¡Ë
+	com_col <- NULL # vertex frame                # Vertexã®è‰²ï¼ˆ12è‰²ã¾ã§ï¼‰
 	ccol    <- NULL # vertex
 
 	library( RColorBrewer )
@@ -818,7 +819,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	com_col_v <- com_col[com_m$membership + 1 - new_igraph]
 	ccol      <- ccol[com_m$membership + 1 - new_igraph]
 
-	edg_lty <- NULL                               # edge¤Î¿§¤È·Á¾õ
+	edg_lty <- NULL                               # edgeã®è‰²ã¨å½¢çŠ¶
 	edg_col <- NULL
 	for (i in 1:nrow(get.edgelist(n2,name=F))){
 		if (
@@ -834,7 +835,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	}
 }
 
-# ÊÑ¿ô¡¦¸«½Ğ¤·¤òÍøÍÑ¤¹¤ë¾ì¹ç¤Î¥«¥é¡¼
+# å¤‰æ•°ãƒ»è¦‹å‡ºã—ã‚’åˆ©ç”¨ã™ã‚‹å ´åˆã®ã‚«ãƒ©ãƒ¼
 if (com_method == "twomode_c" || com_method == "twomode_g"){
 	if ( exists("var_select") ){
 		var_select_bak <- var_select
@@ -870,7 +871,7 @@ if (com_method == "twomode_c"){
 
 }
 
-# ¥«¥é¡¼¥ê¥ó¥°¡Ö¤Ê¤·¡×¤Î¾ì¹ç¤ÎÀş¤Î¿§¡Ê2010 12/4¡Ë
+# ã‚«ãƒ©ãƒ¼ãƒªãƒ³ã‚°ã€Œãªã—ã€ã®å ´åˆã®ç·šã®è‰²ï¼ˆ2010 12/4ï¼‰
 if (com_method == "none" || com_method == "twomode_g"){
 	ccol <- "white"
 	com_col_v <- "black"
@@ -882,7 +883,7 @@ if (com_method == "twomode_g"){
 	edg_lty <- 3
 }
 
-# Éé¤ÎÃÍ¤ò0¤ËÊÑ´¹¤¹¤ë´Ø¿ô
+# è² ã®å€¤ã‚’0ã«å¤‰æ›ã™ã‚‹é–¢æ•°
 neg_to_zero <- function(nums){
   temp <- NULL
   for (i in 1:length(nums) ){
@@ -895,7 +896,7 @@ neg_to_zero <- function(nums){
   return(temp)
 }
 
-# edge.width¤ò·×»»
+# edge.widthã‚’è¨ˆç®—
 if ( use_weight_as_width == 1 ){
 	edg_width <- el2[,3]
 	if ( sd( edg_width ) == 0 ){
@@ -903,7 +904,7 @@ if ( use_weight_as_width == 1 ){
 	} else {
 		edg_width <- edg_width / sd( edg_width )
 		edg_width <- edg_width - mean( edg_width )
-		edg_width <- edg_width * 0.6 + 2 # Ê¬»¶ = 0.5, Ê¿¶Ñ = 2
+		edg_width <- edg_width * 0.6 + 2 # åˆ†æ•£ = 0.5, å¹³å‡ = 2
 		edg_width <- neg_to_zero(edg_width)
 	}
 } else {
@@ -912,14 +913,14 @@ if ( use_weight_as_width == 1 ){
 
 # Minimum Spanning Tree
 if ( min_sp_tree == 1 ){
-	# MST¤Î¸¡½Ğ
+	# MSTã®æ¤œå‡º
 	mst <- minimum.spanning.tree(
 		n2,
 		weights = 1 - get.edge.attribute(n2, "weight"),
 		algorithm="prim"
 	)
 
-	# MST¤Ë¹çÃ×¤¹¤ëedge¤ò¶¯Ä´
+	# MSTã«åˆè‡´ã™ã‚‹edgeã‚’å¼·èª¿
 	if (length(edg_col) == 1){
 		edg_col <- rep(edg_col, length( get.edge.attribute(n2, "weight") ))
 	}
@@ -941,10 +942,10 @@ if ( min_sp_tree == 1 ){
 				mst_edges[j,2]
 			)
 			if ( name_n2 == name_mst ){
-				edg_col[i]   <- "gray30"                   # edge¤Î¿§
-				edg_width[i] <- 2                          # ÂÀ¤µ
+				edg_col[i]   <- "gray30"                   # edgeã®è‰²
+				edg_width[i] <- 2                          # å¤ªã•
 				if ( length(edg_lty) > 1 ){
-					edg_lty[i] <- 1                        # Àş¼ï
+					edg_lty[i] <- 1                        # ç·šç¨®
 				}
 				break
 			}
@@ -962,7 +963,7 @@ sub r_plot_cmd_p3{
 
 return 
 '
-# ½é´üÇÛÃÖ
+# åˆæœŸé…ç½®
 lay <- NULL
 if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	d4l <- as.dist( shortest.paths(n2) )
@@ -995,7 +996,7 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 	}
 }
 
-# ÇÛÃÖ
+# é…ç½®
 set.seed(100)
 if (
 	   (com_method == "twomode_c" || com_method == "twomode_g")
@@ -1017,12 +1018,12 @@ if (
 
 lay_f <- scale(lay_f,center=T, scale=F)
 for (i in 1:2){
-	lay_f[,i] <- lay_f[,i] - min(lay_f[,i]); # ºÇ¾®¤ò0¤Ë
-	lay_f[,i] <- lay_f[,i] / max(lay_f[,i]); # ºÇÂç¤ò1¤Ë
+	lay_f[,i] <- lay_f[,i] - min(lay_f[,i]); # æœ€å°ã‚’0ã«
+	lay_f[,i] <- lay_f[,i] / max(lay_f[,i]); # æœ€å¤§ã‚’1ã«
 	lay_f[,i] <- ( lay_f[,i] - 0.5 ) * 1.96;
 }
 
-# vertex.size¤ò·×»»
+# vertex.sizeã‚’è¨ˆç®—
 if ( use_freq_as_size == 1 ){
 	v_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
@@ -1033,7 +1034,7 @@ if ( use_freq_as_size == 1 ){
 	} else {
 		v_size <- v_size / sd(v_size)
 		v_size <- v_size - mean(v_size)
-		v_size <- v_size * 3 + 12 # Ê¬»¶ = 3, Ê¿¶Ñ = 12
+		v_size <- v_size * 3 + 12 # åˆ†æ•£ = 3, å¹³å‡ = 12
 		v_size <- neg_to_zero(v_size)
 	}
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
@@ -1044,7 +1045,7 @@ if ( use_freq_as_size == 1 ){
 	v_size <- 15
 }
 
-# vertex.label.cex¤ò·×»»
+# vertex.label.cexã‚’è¨ˆç®—
 if ( use_freq_as_fontsize ==1 ){
 	f_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
@@ -1071,7 +1072,7 @@ if ( use_freq_as_fontsize ==1 ){
 	f_size <- cex
 }
 
-# ¾®¤µ¤á¤Î±ß¤ÇÉÁ²è
+# å°ã•ã‚ã®å††ã§æç”»
 if (smaller_nodes ==1){
 	f_size <- cex
 	v_size <- 5
@@ -1080,16 +1081,16 @@ if (smaller_nodes ==1){
 	vertex_label_dist <- 0
 }
 
-# ³°ÉôÊÑ¿ô¡¦¸«½Ğ¤·¤ò»È¤¦¾ì¹ç¤Î·Á¾õ¤ä¥µ¥¤¥º
+# å¤–éƒ¨å¤‰æ•°ãƒ»è¦‹å‡ºã—ã‚’ä½¿ã†å ´åˆã®å½¢çŠ¶ã‚„ã‚µã‚¤ã‚º
 v_shape <- "circle"
 if (com_method == "twomode_c" || com_method == "twomode_g"){
-	# ¥Î¡¼¥É¤Î·Á
+	# ãƒãƒ¼ãƒ‰ã®å½¢
 	v_shape <- rep("circle", length( get.vertex.attribute(n2,"name") ) )
 	v_shape[var_select] <- "square"
 
-	# ¾®¤µ¤Ê±ß¤ÇÉÁ²è¤·¤Æ¤¤¤ë¾ì¹ç¤Î¥Î¡¼¥É¥µ¥¤¥º
+	# å°ã•ãªå††ã§æç”»ã—ã¦ã„ã‚‹å ´åˆã®ãƒãƒ¼ãƒ‰ã‚µã‚¤ã‚º
 	if (smaller_nodes == 1){
-		# ¥é¥Ù¥ë¤Îµ÷Î¥
+		# ãƒ©ãƒ™ãƒ«ã®è·é›¢
 		if (length( vertex_label_dist ) == 1){
 			vertex_label_dist <- rep(
 				vertex_label_dist,
@@ -1097,14 +1098,14 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 			)
 		}
 		vertex_label_dist[var_select] <- 0
-		# ¥µ¥¤¥º
+		# ã‚µã‚¤ã‚º
 		if (length( v_size ) == 1){
 			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
 		}
 		v_size[var_select] <- 10
 	}
 
-	# ¼±ÊÌÍÑ¤Î¡Ö<>¡×¤ò³°¤¹
+	# è­˜åˆ¥ç”¨ã®ã€Œ<>ã€ã‚’å¤–ã™
 	colnames(d)[
 		substring(colnames(d), 1, 2) == "<>"
 	] <- substring(
@@ -1125,7 +1126,7 @@ sub r_plot_cmd_p4{
 
 return 
 '
-# ¥ì¥¤¥¢¥¦¥È¤ò¹ÍÎ¸¤·¤¿¥°¥ì¡¼¤ÎÇÛ¿§
+# ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’è€ƒæ…®ã—ãŸã‚°ãƒ¬ãƒ¼ã®é…è‰²
 if (
 	( gray_scale == 1 ) && (
 		   com_method == "com-b"
@@ -1135,7 +1136,7 @@ if (
 ){
 	com_col_v <- "gray40"
 	
-	# ¥°¥ì¡¼¤ò½àÈ÷
+	# ã‚°ãƒ¬ãƒ¼ã‚’æº–å‚™
 	grays <- NULL
 	n_coms <- length(com_m$csize[com_m$csize > 1]);
 	for (i in 1:n_coms){
@@ -1144,7 +1145,7 @@ if (
 	}
 	grays <- gray(grays)
 
-	# ¥°¥ë¡¼¥×¤Î¥ê¥¹¥È¡Ê1¤Ï¤¸¤Ş¤ê¡Ë
+	# ã‚°ãƒ«ãƒ¼ãƒ—ã®ãƒªã‚¹ãƒˆï¼ˆ1ã¯ã˜ã¾ã‚Šï¼‰
 	groups <- NULL
 	groups <- as.matrix( table(com_m$membership + 1 - new_igraph) )
 	groups <- data.frame(
@@ -1153,7 +1154,7 @@ if (
 	)
 	# groups$freq[groups$name==3]
 
-	# ¥á¥ó¥Ğ¡¼¤Î¥ê¥¹¥È¡Ê1¤Ï¤¸¤Ş¤ê¡Ë
+	# ãƒ¡ãƒ³ãƒãƒ¼ã®ãƒªã‚¹ãƒˆï¼ˆ1ã¯ã˜ã¾ã‚Šï¼‰
 	group_members <- data.frame(
 		vid = 1:length(com_m$membership),
 		gp  = com_m$membership + 1 - new_igraph,
@@ -1258,13 +1259,13 @@ if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
 	)
 }
 
-# ¸ì¤Î¶¯Ä´
+# èªã®å¼·èª¿
 if ( exists("v_shape") == FALSE ){
 	v_shape    <- "circle"
 }
 target_ids <-  NULL
 if ( exists("target_words") ){
-	# ID¤Î¼èÆÀ
+	# IDã®å–å¾—
 	for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
 		for (w in target_words){
 			if (
@@ -1275,25 +1276,25 @@ if ( exists("target_words") ){
 			}
 		}
 	}
-	# ·Á¾õ
+	# å½¢çŠ¶
 	if (length(v_shape) == 1){
 		v_shape <- rep(v_shape, length( get.vertex.attribute(n2,"name") ) )
 	}
 	v_shape[target_ids] <- "square"
-	# ÏÈÀş¤Î¿§
+	# æ ç·šã®è‰²
 	if (length(com_col_v) == 1){
 		com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
 	}
 	com_col_v[target_ids] <- "black"
-	# ¥µ¥¤¥º
+	# ã‚µã‚¤ã‚º
 	if (length( v_size ) == 1){
 		v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
 	}
 	v_size[target_ids] <- 15
-	# ¾®¤µ¤Ê±ß¤ÇÉÁ²è¤·¤Æ¤¤¤ë¾ì¹ç
+	# å°ã•ãªå††ã§æç”»ã—ã¦ã„ã‚‹å ´åˆ
 	rect_size <- 0.095
 	if (smaller_nodes == 1){
-		# ¥é¥Ù¥ë¤Îµ÷Î¥
+		# ãƒ©ãƒ™ãƒ«ã®è·é›¢
 		if (length( vertex_label_dist ) == 1){
 			vertex_label_dist <- rep(
 				vertex_label_dist,
@@ -1301,7 +1302,7 @@ if ( exists("target_words") ){
 			)
 		}
 		vertex_label_dist[target_ids] <- 0
-		# ¥µ¥¤¥º
+		# ã‚µã‚¤ã‚º
 		if (length( v_size ) == 1){
 			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
 		}
@@ -1310,14 +1311,14 @@ if ( exists("target_words") ){
 	}
 }
 
-# ¥×¥í¥Ã¥È
+# ãƒ—ãƒ­ãƒƒãƒˆ
 if (smaller_nodes ==1){
 	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 } else {
 	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 }
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
-	# ¥Í¥Ã¥È¥ï¡¼¥¯¤òÉÁ²è
+	# ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚’æç”»
 	if (fix_lab == 0){
 		plot.igraph(
 			n2,
@@ -1326,7 +1327,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 			#vertex.label.cex   =f_size,
 			#vertex.label.color ="black",
-			#vertex.label.family= "", # Linux¡¦Mac´Ä¶­¤Ç¤ÏÉ¬¿Ü
+			#vertex.label.family= "", # Linuxãƒ»Macç’°å¢ƒã§ã¯å¿…é ˆ
 			#vertex.label.dist  =vertex_label_dist,
 			vertex.color       =ccol,
 			vertex.frame.color =com_col_v,
@@ -1374,7 +1375,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
 			#vertex.label.cex   =f_size,
 			#vertex.label.color ="black",
-			#vertex.label.family= "", # Linux¡¦Mac´Ä¶­¤Ç¤ÏÉ¬¿Ü
+			#vertex.label.family= "", # Linuxãƒ»Macç’°å¢ƒã§ã¯å¿…é ˆ
 			#vertex.label.dist  =vertex_label_dist,
 			vertex.color       =ccol,
 			vertex.frame.color =com_col_v,
@@ -1398,13 +1399,13 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 
 
 
-	# ¸ì¤Î¥é¥Ù¥ë¤òÄÉ²Ã
+	# èªã®ãƒ©ãƒ™ãƒ«ã‚’è¿½åŠ 
 	lay_f_adj <- NULL
 	if (smaller_nodes ==1){
 		# [2011 10/19]
-		# ¾®¤µ¤¤¥Î¡¼¥É¤ÇÉ½¼¨¤¹¤ëºİ¤Ëplot.igraph´Ø¿ô¤Îvertex.label.dist¤ò»ØÄê
-		# ¤¹¤ë¤È¡¢Ä¹¤¤¡ÊÊ¸»ú¿ô¤¬Â¿¤¤¡Ë¸ì¤¬Î¥¤ì¤¹¤®¤ÆåºÎï¤Ç¤Ê¤«¤Ã¤¿¤Î¤Ç¡¢¼êÆ°
-		# ¤Ç¥é¥Ù¥ë¤òÄÉ²Ã. R 2.12.2 / igraph 0.5.5-2 
+		# å°ã•ã„ãƒãƒ¼ãƒ‰ã§è¡¨ç¤ºã™ã‚‹éš›ã«plot.igraphé–¢æ•°ã®vertex.label.distã‚’æŒ‡å®š
+		# ã™ã‚‹ã¨ã€é•·ã„ï¼ˆæ–‡å­—æ•°ãŒå¤šã„ï¼‰èªãŒé›¢ã‚Œã™ãã¦ç¶ºéº—ã§ãªã‹ã£ãŸã®ã§ã€æ‰‹å‹•
+		# ã§ãƒ©ãƒ™ãƒ«ã‚’è¿½åŠ . R 2.12.2 / igraph 0.5.5-2 
 		if ( is.null(lay_f_adj) == 1){
 			lay_f_adj <- cbind(lay_f_adj, lay_f[,1])
 			lay_f_adj <- cbind(lay_f_adj, lay_f[,2] + ( max(lay_f[,2]) - min(lay_f[,2]) ) / 38 )
@@ -1491,7 +1492,7 @@ if ( exists("target_words") ){
 
 if(0){
 if (com_method == "twomode_g"){
-# ÏÈÉÕ¤­¥×¥í¥Ã¥È´Ø¿ô¤ÎÀßÄê
+# æ ä»˜ããƒ—ãƒ­ãƒƒãƒˆé–¢æ•°ã®è¨­å®š
 s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
     clabel = 1, 
     pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 

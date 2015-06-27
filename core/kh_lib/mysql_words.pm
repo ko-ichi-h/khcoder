@@ -362,7 +362,7 @@ sub _out_file_xls_150{
 
 	my $font = '';
 	if ($] > 5.008){
-		$font = gui_window->gui_jchar('ＭＳ Ｐゴシック', 'euc');
+		$font = 'ＭＳ Ｐゴシック'; # これは不味い？
 	} else {
 		$font = 'MS PGothic';
 	}
@@ -447,7 +447,8 @@ sub _out_file_csv{
 	# リスト構造をテキストに出力
 	my $target = $::project_obj->file_TempCSV;
 
-	open (LIST,">$target") or
+	use File::BOM;
+	open (LIST, '>:encoding(utf8):via(File::BOM)', "$target") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
@@ -464,9 +465,9 @@ sub _out_file_csv{
 	}
 
 	close (LIST);
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($target);
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($target);
+	#}
 	
 	return $target;
 }
@@ -498,18 +499,18 @@ sub _make_wl_1c{
 
 	my $num_lab = '';
 	if ($self->{num} eq 'tf'){
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('tf')); #'出現回数'
+		$num_lab = kh_msg->get('tf'); #'出現回数'
 	} else {
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
 	@data = (
 		[
-			Encode::encode('euc-jp',kh_msg->get('words')), # 抽出語
-			Encode::encode('euc-jp',kh_msg->get('pos')),   #'品詞',
+			kh_msg->get('words'), # 抽出語
+			kh_msg->get('pos'),   #'品詞',
 			$num_lab
 		],
 		@data

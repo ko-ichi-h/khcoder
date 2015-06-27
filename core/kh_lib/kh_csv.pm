@@ -1,7 +1,7 @@
 package kh_csv;
 use strict;
 
-# CSVƒtƒ@ƒCƒ‹ì»‚Ì‚½‚ß‚ÉAu,"v‚Æ‰üs‚ðƒGƒXƒP[ƒv
+# CSVãƒ•ã‚¡ã‚¤ãƒ«ä½œè£½ã®ãŸã‚ã«ã€ã€Œ,"ã€ã¨æ”¹è¡Œã‚’ã‚¨ã‚¹ã‚±ãƒ¼ãƒ—
 # usage: kh_csv->value_conv("value");
 sub value_conv{
 	my $v = $_[1];

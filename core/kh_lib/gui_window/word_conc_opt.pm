@@ -325,14 +325,14 @@ sub save{
 	my $ad;
 	foreach my $n (1,2,3){
 		if ($self->{"pos$n"}) {
-			$ad->{$n}{query}  = $self->check_entry_input( Jcode->new($self->gui_jg( $self->{entry}{"$n"."a"}->get ),'sjis')->euc );
+			$ad->{$n}{query}  = $self->check_entry_input( $self->{entry}{"$n"."a"}->get );
 			#unless (length($ad->{$n}{query})){
 			#	$ad->{$n} = undef;
 			#	next;
 			#}
 			$ad->{$n}{pos} = $self->{"pos$n"};
-			$ad->{$n}{hinshi} = $self->check_entry_input( Jcode->new($self->gui_jg( $self->{entry}{"$n"."b"}->get ),'sjis')->euc );
-			$ad->{$n}{katuyo} = $self->check_entry_input( Jcode->new($self->gui_jg( $self->{entry}{"$n"."c"}->get ),'sjis')->euc );
+			$ad->{$n}{hinshi} = $self->check_entry_input( $self->{entry}{"$n"."b"}->get );
+			$ad->{$n}{katuyo} = $self->check_entry_input( $self->{entry}{"$n"."c"}->get );
 		} else {
 			$ad->{$n} = undef;
 		}

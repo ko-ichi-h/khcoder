@@ -441,13 +441,13 @@ sub reform{
 				$i->[2] = '' unless defined($i->[2]);
 				if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
 					if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
-						if ($d->[0] =~ /^(\xA4[\xA1-\xF3])+$/o){
+						if ($d->[0] =~ /^\p{Hiragana}+$/o){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
 					elsif ($i->[2] eq '一文字'){           # 条件2:ひらがな
-						if (length($d->[0]) == 2){
+						if (length($d->[0]) == 1){
 							$kh_hinshi = $i->[3];
 							last;
 						}

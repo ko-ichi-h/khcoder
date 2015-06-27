@@ -720,11 +720,13 @@ sub file_MorphoIn{ # file_m_targetと同じ
 sub file_TempCSV{
 	my $self = shift;
 	my $n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.csv'){
 		++$n;
 	}
-	my $f = $self->file_datadir.'_temp'.$n.'.csv';
-	$f = $::config_obj->os_path($f);
+	my $f = $dir.'_temp'.$n.'.csv';
 	
 	# 空ファイルを作成しておく
 	CORE::open (TOUT, ">$f");

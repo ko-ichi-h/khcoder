@@ -762,9 +762,9 @@ sub make_plot{
 		}
 	";
 
-	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # À®Ê¬
-	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # ¸ÇÍ­ÃÍ
-	$r_command .= "name_exp <- '".Encode::encode('euc-jp', kh_msg->get('exp'))."'\n"; # ´óÍ¿Î¨
+	$r_command .= "name_dim <- '".kh_msg->get('dim')."'\n"; # À®Ê¬
+	$r_command .= "name_eig <- '".kh_msg->get('eig')."'\n"; # ¸ÇÍ­ÃÍ
+	$r_command .= "name_exp <- '".kh_msg->get('exp')."'\n"; # ´óÍ¿Î¨
 
 	$r_command .= "library(MASS)\n";
 
@@ -957,7 +957,7 @@ sub r_command_aggr{
 	my $n_v = shift;
 	my $t =
 		"name_nav <- '"
-		.Encode::encode('euc-jp', kh_msg->get('nav'))
+		.kh_msg->get('nav')
 		."'\n"; # ·çÂ»ÃÍ
 	$t .= << 'END_OF_the_R_COMMAND';
 

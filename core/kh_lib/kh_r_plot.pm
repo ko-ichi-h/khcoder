@@ -28,18 +28,11 @@ sub new{
 	
 	# コマンドの文字コード
 	if ( utf8::is_utf8($self->{command_f}) ){
-		if ( $::config_obj->os eq 'win32' ){
-			$self->{command_f}  = Encode::encode('cp932',$self->{command_f});
-			$self->{command_a}  = Encode::encode('cp932',$self->{command_a});
-		} else {
-			$self->{command_f}  = Encode::encode('euc-jp',$self->{command_f});
-			$self->{command_a}  = Encode::encode('euc-jp',$self->{command_a});
-		}
+		# It's OK!
 	} else {
-		$self->{command_f} = Jcode->new($self->{command_f},'euc')->sjis
-			if $::config_obj->os eq 'win32';
-		$self->{command_a} = Jcode->new($self->{command_a},'euc')->sjis
-			if $::config_obj->os eq 'win32' and length($self->{command_a});
+		$self->{command_f} = Encode::decode('utf8', Jcode->new($self->{command_f})->utf8);
+		$self->{command_a} = Encode::decode('utf8', Jcode->new($self->{command_a})->utf8);
+		Warn( "Warn: R commands are not decoded!\n" );
 	}
 
 	# コマンドの改行コード
@@ -56,7 +49,7 @@ sub new{
 	# Debug用出力
 	if ($::config_obj->r_plot_debug){
 		my $file_debug = $self->{path}.'.r';
-		open (RDEBUG, ">$file_debug") or 
+		open (RDEBUG, '>encoding(utf8)', $file_debug) or 
 			gui_errormsg->open(
 				type    => 'file',
 				thefile => $file_debug,
@@ -698,8 +691,7 @@ sub _save_r{
 		}
 	}
 	
-	
-	open (OUTF,">$path") or 
+	open (OUTF, '>:encoding(utf8)', $path) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $path,

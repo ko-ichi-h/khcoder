@@ -357,10 +357,9 @@ sub to_clip{ # クリップボードへコピーするための変換
 
 sub check_entry_input{
 	my $char = $_[1];
-	# 末尾に改行文字が入っていれば削除（主にExcelからのコピペ対策）
-	if ($char =~ /^([^\n]+)\n\Z/){
-		$char = $1;
-	}
+	# 改行文字が入っていれば削除（ExcelからのコピペやAtokに対応）
+	$char =~ s/\x0D|\x0A//g;
+	
 	return $char;
 }
 
