@@ -1,10 +1,13 @@
 [[メモ]]
 
 [Unicode化]
+・「unicode」というブランチを作成して作業開始
 ・設定画面
 	・MeCabのパスに日本語を含んで大丈夫かどうかチェック
 	・Stanford POS Taggerのパスに日本語を含んで大丈夫かどうかチェック
-	・kh_sysconfig::win32のos_path・uni_pathはシステムロケールに合わせて文字コードを変えるべき
+・kh_sysconfig::win32のos_path・uni_pathはシステムロケールに合わせて文字コードを変えるべき
+・前処理
+	・255文字を超える長さの語対策（エラー表示）が、新しいMySQLではスキップされている？
 
 
 [KH Coderに起因する制限]
