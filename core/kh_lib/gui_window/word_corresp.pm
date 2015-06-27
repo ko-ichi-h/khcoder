@@ -1020,7 +1020,7 @@ END_OF_the_R_COMMAND2
 sub r_command_filter{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-# Filter words by chi-square value ※日本語コメント
+# Filter words by chi-square value
 if ( (flw > 0) && (flw < ncol(d)) ){
 	sort  <- NULL
 	for (i in 1:ncol(d) ){

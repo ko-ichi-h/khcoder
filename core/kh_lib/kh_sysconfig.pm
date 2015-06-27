@@ -28,6 +28,7 @@ sub readin{
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
 		|| ! -e "./config/hinshi_stemming"
+		|| ! -e "./config/hinshi_stanford_cn"
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
 	){
@@ -279,6 +280,37 @@ sub reset_parm{
 			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
 
+		# Stanford POS Tagger用（中国語）
+		unless (-e "./config/hinshi_stanford_cn"){
+			$dbh->do(
+				"CREATE TABLE hinshi_stanford_cn (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'NR', ''",
+				"1, 'Noun',  'NN', ''",#
+				"3, 'Foreign',  'FW', ''",
+				"25, 'Adj',  'VA', ''",
+				"26, 'JJ',  'JJ', ''",
+				"30, 'Adv',  'AD', ''",
+				"35, 'Verb',  'VV', ''",
+				"40, 'W',  'W', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_stanford_cn
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
 
 		$dbh->disconnect;
 }
@@ -354,6 +386,15 @@ sub stanf_jar_path{
 		$self->{stanf_jar_path} = $new;
 	}
 	return $self->{stanf_jar_path};
+}
+
+sub stanf_seg_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_seg_path} = $new;
+	}
+	return $self->{stanf_seg_path};
 }
 
 sub stanford_lang{

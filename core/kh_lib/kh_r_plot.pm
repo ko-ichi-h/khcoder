@@ -18,13 +18,6 @@ sub new{
 	# ファイル名
 	use Cwd;
 	$self->{path} = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
-	#print "$self->{path}\n";
-	#my $icode = Jcode::getcode($::project_obj->file_datadir);
-	#my $dir   = Jcode->new($::project_obj->file_datadir, $icode)->euc;
-	#$dir =~ tr/\\/\//;
-	#$dir = Jcode->new($dir,'euc')->$icode
-	#	if ( length($icode) and ( $icode ne 'ascii' ) );
-	#$self->{path} = $dir.'_'.$self->{name};
 	
 	# コマンドの文字コード
 	if ( utf8::is_utf8($self->{command_f}) ){
@@ -34,6 +27,12 @@ sub new{
 		$self->{command_a} = Encode::decode('utf8', Jcode->new($self->{command_a})->utf8);
 		Warn( "Warn: R commands are not decoded!\n" );
 	}
+
+	# コマンドから日本語コメントを削除
+	$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/g;
+	$self->{command_f} =~ s/#.*?\p{Katakana}.*?\n/\n/g;
+	$self->{command_a} =~ s/#.*?\p{Hiragana}.*?\n/\n/g;
+	$self->{command_a} =~ s/#.*?\p{Katakana}.*?\n/\n/g;
 
 	# コマンドの改行コード
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
@@ -232,7 +231,7 @@ sub set_par{
 
 	$::config_obj->R->send(
 		 'par(family="'
-		.$::config_obj->font_plot
+		.$::config_obj->font_plot_current
 		.'")'
 	);
 
@@ -698,9 +697,9 @@ sub _save_r{
 		);
 	
 	# データをファイル内に記述
-	if ( $t =~ /source\(\"(.+)\"\)/ ){
+	if ( $t =~ /source\(\"(.+)\", encoding=\"UTF-8\"\)/ ){
 		my $file_data = $1;
-		open my $fhr, '<', $file_data or 
+		open my $fhr, '<:encoding(utf8)', $file_data or 
 			gui_errormsg->open(
 				type    => 'file',
 				thefile => $file_data,
@@ -709,7 +708,7 @@ sub _save_r{
 			print OUTF $_;
 		}
 		close $fhr;
-		$t =~ s/source\(\"(.+)\"\)//;
+		$t =~ s/source\(\"(.+)\", encoding=\"UTF-8\"\)//;
 	}
 	print OUTF $t,"\n";
 	close (OUTF);

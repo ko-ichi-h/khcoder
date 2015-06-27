@@ -300,6 +300,7 @@ gui_window::sysconfig:
     browse_stanford_tag:      モデルファイルを開いてください。
     chasen:                   茶筌（日本語）
     config:                   config
+    l_cn:                     Chinese
     l_de:                     German *
     l_en:                     English
     l_es:                     Spanish *

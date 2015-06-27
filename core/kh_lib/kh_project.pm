@@ -189,8 +189,26 @@ sub open{
 	my_threads->open_project;
 	
 	$self->check_up;
+	$self->set_r_locale;
 	
 	return $self;
+}
+
+sub set_r_locale{
+	my $self = shift;
+	my $lang = $::project_obj->morpho_analyzer_lang;
+	
+	return 0 unless $::config_obj->os eq 'win32';
+	return 0 unless $::config_obj->{R};
+	
+	if ($lang eq 'cn'){
+		print "Set R locale: CN\n";
+		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Chinese")');
+	} else {
+		print "Set R locale: JP\n";
+		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
+	}
+	
 }
 
 sub morpho_analyzer{
@@ -727,6 +745,23 @@ sub file_TempCSV{
 		++$n;
 	}
 	my $f = $dir.'_temp'.$n.'.csv';
+	
+	# 空ファイルを作成しておく
+	CORE::open (TOUT, ">$f");
+	close (TOUT);
+	
+	return $f;
+}
+sub file_TempTXT{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.txt'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.txt';
 	
 	# 空ファイルを作成しておく
 	CORE::open (TOUT, ">$f");

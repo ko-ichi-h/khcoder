@@ -300,6 +300,7 @@ gui_window::sysconfig:
     browse_stanford_tag:      Please open a model file
     chasen:                   '"ChaSen" for Japanese text'
     config:                   config
+    l_cn:                     Chinese
     l_de:                     German *
     l_en:                     English
     l_es:                     Spanish *

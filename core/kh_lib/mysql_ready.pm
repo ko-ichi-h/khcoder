@@ -101,6 +101,8 @@ sub first{
 			$::config_obj->stemming_lang
 		);
 	}
+	$::project_obj->set_r_locale;
+	
 }
 
 sub fix_michigo{
@@ -906,6 +908,7 @@ sub hyosobun{
 	unless (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
+		|| ( $::config_obj->c_or_j eq 'stanford' && $::config_obj->stanford_lang eq 'cn')
 	){
 		mysql_exec->do("
 			DELETE FROM hyosobun
@@ -1139,6 +1142,7 @@ sub rowtxt{
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
+		|| ( $::config_obj->c_or_j eq 'stanford' && $::config_obj->stanford_lang eq 'cn')
 	) {
 		$spacer = '';
 	} else {
