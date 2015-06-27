@@ -1,5 +1,5 @@
 package kh_morpho::win32::chasen;
-# use strict;
+use strict;
 use base qw( kh_morpho::win32 );
 
 #--------------------#
@@ -7,12 +7,12 @@ use base qw( kh_morpho::win32 );
 #--------------------#
 
 sub _run_morpho{
-	my $self = shift;	
-	my $path = $self->config->chasen_path;
+	my $self = shift;
+	my $path = $::config_obj->os_path( $self->config->chasen_path );
 	
 	unless (-e $path){
 		gui_errormsg->open(
-			msg => kh_msg->get('error_confg'),
+			msg => kh_msg->get('error_config'),
 			type => 'msg'
 		);
 		exit;
@@ -37,7 +37,7 @@ sub _run_morpho{
 	) || $self->Exec_Error("Wi32::Process can not start");
 	$ChasenObj->Wait( Win32::Process->INFINITE )
 		|| $self->Exec_Error("Wi32::Process can not wait");
-	
+
 	return(1);
 }
 

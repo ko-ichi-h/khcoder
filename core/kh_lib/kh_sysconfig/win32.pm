@@ -223,7 +223,7 @@ sub os_path{
 		$c = Encode::decode('utf8', Jcode->new($c,$icode)->utf8);
 	}
 	
-	$c =~ tr/\//\\/;
+	#$c =~ tr/\//\\/;
 	
 	return Encode::encode('cp932', $c); # this line should be changed! [unicode]
 }

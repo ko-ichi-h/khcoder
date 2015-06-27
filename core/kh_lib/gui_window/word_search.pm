@@ -246,7 +246,7 @@ sub search{
 	my $self = shift;
 	
 	# 変数取得
-	my $query = Jcode->new($self->gui_jg($self->entry->get),'sjis')->euc;
+	my $query = $self->entry->get;
 
 	unless ($query){
 		return;

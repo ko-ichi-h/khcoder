@@ -1,9 +1,11 @@
+use utf8;
+
 package kh_dictio;
 use strict;
 use mysql_exec;
 
 #--------------------#
-#   ¿ﬂƒÍ§Œ∆…§ﬂπ˛§ﬂ   #
+#   Ë®≠ÂÆö„ÅÆË™≠„ÅøËæº„Åø   #
 #--------------------#
 
 sub readin{
@@ -29,7 +31,7 @@ sub readin{
 		$selection{$i->[0]} = $i->[1];
 	}
 	
-	# ∂Ø¿©√ÍΩ–°¶•’•°•§•Î
+	# Âº∑Âà∂ÊäΩÂá∫„Éª„Éï„Ç°„Ç§„É´
 	$st = mysql_exec->select('
 		SELECT status
 		FROM status
@@ -52,7 +54,7 @@ sub readin{
 		$self->{words_mk_file} = $file;
 	}
 
-	# ª»Õ—§∑§ §§∏Ï°¶•’•°•§•Î
+	# ‰ΩøÁî®„Åó„Å™„ÅÑË™û„Éª„Éï„Ç°„Ç§„É´
 	$st = mysql_exec->select('
 		SELECT status
 		FROM status
@@ -137,12 +139,12 @@ sub read_file_st{
 }
 
 #----------------#
-#   ¿ﬂƒÍ§Ú ›¬∏   #
+#   Ë®≠ÂÆö„Çí‰øùÂ≠ò   #
 #----------------#
 sub save{
 	my $self = shift;
 	
-	# ∂Ø¿©√ÍΩ–
+	# Âº∑Âà∂ÊäΩÂá∫
 	mysql_exec->do('DROP TABLE dmark',1);
 	mysql_exec->do('CREATE TABLE dmark(name varchar(255))',1);
 	if (eval (@{$self->words_mk})){
@@ -155,7 +157,7 @@ sub save{
 		mysql_exec->do($sql1,1);
 	}
 	
-	# ∂Ø¿©√ÍΩ–°¶•’•°•§•Î
+	# Âº∑Âà∂ÊäΩÂá∫„Éª„Éï„Ç°„Ç§„É´
 	mysql_exec->do("
 		DELETE FROM status
 		WHERE name = \"words_mk_file\"
@@ -180,7 +182,7 @@ sub save{
 		",1);
 	}
 	
-	# ª»Õ—§∑§ §§∏Ï
+	# ‰ΩøÁî®„Åó„Å™„ÅÑË™û
 	mysql_exec->do('DROP TABLE dstop',1);
 	mysql_exec->do('CREATE TABLE dstop(name varchar(255))',1);
 	if (eval (@{$self->words_st})){
@@ -203,7 +205,7 @@ sub save{
 		}
 	}
 
-	# ª»Õ—§∑§ §§∏Ï°¶•’•°•§•Î
+	# ‰ΩøÁî®„Åó„Å™„ÅÑË™û„Éª„Éï„Ç°„Ç§„É´
 	mysql_exec->do("
 		DELETE FROM status
 		WHERE name = \"words_st_file\"
@@ -229,7 +231,7 @@ sub save{
 		",1);
 	}
 
-	# … ªÏ¡™¬Ú
+	# ÂìÅË©ûÈÅ∏Êäû
 	if (eval (@{$self->hinshi_list})){
 		foreach my $i (@{$self->hinshi_list}){
 			my $sql = 
@@ -240,21 +242,21 @@ sub save{
 		}
 	}
 
-	#  £πÁÃæªÏ
-	# print "hukugo: ".$self->ifuse_this(' £πÁÃæªÏ')."\n";
-	# $::config_obj->use_hukugo($self->ifuse_this(' £πÁÃæªÏ'));
+	# Ë§áÂêàÂêçË©û
+	# print "hukugo: ".$self->ifuse_this('Ë§áÂêàÂêçË©û')."\n";
+	# $::config_obj->use_hukugo($self->ifuse_this('Ë§áÂêàÂêçË©û'));
 	# $::config_obj->save;
 
 }
 
 #------------------------#
-#   •«°º•ø§Œ•ﬁ°º•≠•Û•∞   #
+#   „Éá„Éº„Çø„ÅÆ„Éû„Éº„Ç≠„É≥„Ç∞   #
 #------------------------#
 
 sub mark{
 	my $self = shift;
-	my $source = $::project_obj->file_target;
-	my $dist   = $::project_obj->file_m_target;
+	my $source = $::config_obj->os_path( $::project_obj->file_target   );
+	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target );
 
 #	unless (eval (@{$self->words_mk})){
 #		unlink($dist) or die if -e $dist;
@@ -272,36 +274,64 @@ sub mark{
 		++$n;
 	}
 
-	my $icode = kh_jchar->check_code($source);
+	# ÊñáÂ≠ó„Ç≥„Éº„Éâ„ÅÆ„ÉÅ„Çß„ÉÉ„ÇØ
+	my $icode;
+	my $ocode;
 
-	open (MARKED,">$dist") or 
+	my %char_code = ();
+	if (eval 'require Encode::EUCJPMS'){
+		$char_code{euc}  = 'eucJP-ms';
+		$char_code{sjis} = 'cp932';
+	} else {
+		$char_code{euc}  = 'euc-jp';
+		$char_code{sjis} = 'cp932';
+	}
+
+	if (
+		   $::config_obj->c_or_j eq 'chasen'
+		|| $::config_obj->c_or_j eq 'mecab'
+	){
+		$icode = kh_jchar->check_code($source);
+		$icode = 'sjis' if $icode eq 'shiftjis';
+		$icode = $char_code{$icode} if $char_code{$icode};
+		if ($::config_obj->os eq 'win32'){
+			$ocode = 'cp932';
+		} else {
+			$ocode = $char_code{euc};
+		}
+	} else {
+		$icode = kh_jchar->check_code_en($source);
+		$ocode = 'utf8';
+	}
+
+	open (MARKED,">:encoding($ocode)", $dist) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $dist
 		);
-	open (SOURCE,"$source") or
+	open (SOURCE, "<:encoding($icode)", $source) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $source
 		);
 
 	while (<SOURCE>){
-		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ≤˛π‘•≥°º•…≈˝∞Ï
+		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ÊîπË°å„Ç≥„Éº„ÉâÁµ±‰∏Ä
 		chomp;
 
-		my $text;
+		my $text = $_;
 
 		# morpho_analyzer
 		if (
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		){
-			$text = Jcode->new($_,$icode)->h2z->euc;
-			$text =~ s/ /°°/go;
-			$text =~ s/\t/°°/go;
-			$text =~ s/\\/°Ô/go;
-			$text =~ s/'/°«/go;
-			$text =~ s/"/°…/go;
+			#$text = Jcode->new($_,'utf8')->h2z;
+			$text =~ s/ /„ÄÄ/go;
+			$text =~ s/\t/„ÄÄ/go;
+			$text =~ s/\\/Ôø•/go;
+			$text =~ s/'/‚Äô/go;
+			$text =~ s/"/‚Äù/go;
 		} else {
 			$text = $_;
 			$text =~ s/\t/ /go;
@@ -309,36 +339,19 @@ sub mark{
 		}
 		
 		while (1){
-			my %temp = (); my $f = 0;                      # ∞Ã√÷§ÚºË∆¿
+			my %temp = (); my $f = 0;                      # ‰ΩçÁΩÆ„ÇíÂèñÂæó
 			foreach my $i (@keywords){
-				# ≈ˆ≥∫§Œπ‘∆‚§À ∏ª˙ŒÛ$i§¨¬∏∫ﬂ§π§Ï§–°ƒ
+				# ÂΩìË©≤„ÅÆË°åÂÜÖ„Å´ÊñáÂ≠óÂàó$i„ÅåÂ≠òÂú®„Åô„Çå„Å∞‰ΩçÁΩÆ„Çí„ÉÅ„Çß„ÉÉ„ÇØ
 				if (index(lc $text, lc $i) > -1){
-					my @pos = ();
-					my $pos = -1;
-					# $i§Œ§π§Ÿ§∆§Œ≥´ªœ∞Ã√÷§ÚºË∆¿
-					while ( index(lc $text, lc $i, $pos) > -1 ){
-						push @pos, index(lc $text, lc $i, $pos);
-						$pos = index(lc $text, lc $i, $pos) + 1;
-					}
-					# ¡∞§´§ÈΩÁ§À§∫§Ï§øæÏΩÍ§«•ﬁ•√•¡§∑§∆§§§ §§§´•¡•ß•√•Ø
-					foreach my $h (@pos){
-						my $str = substr($text,0,$h);
-						if ($str =~ /\x8F$/ or $str =~ tr/\x8E\xA1-\xFE// % 2){
-							#print Jcode->new("str: $str\n", 'euc')->sjis;
-						} else {
-							# §∫§Ï§∆§§§ §±§Ï§–•ﬁ°º•≠•Û•∞∏ı ‰§»§∑§∆≈–œø§∑§∆Ω™Œª
-							$temp{$i} = $h;
-							++$f;
-							last;
-						}
-					}
+					$temp{$i} = index(lc $text, lc $i, -1);
+					++$f;
 				}
 			}
-			unless ($f){                                   # ¬∏∫ﬂ§∑§ §±§Ï§–√Êªﬂ
+			unless ($f){                                   # Â≠òÂú®„Åó„Å™„Åë„Çå„Å∞‰∏≠Ê≠¢
 				last;
 			}
 			
-			my %firstplaces = (); my $n = -1;              # ¿Ë∆¨•¡•ß•√•Ø
+			my %firstplaces = (); my $n = -1;              # ÂÖàÈ†≠„ÉÅ„Çß„ÉÉ„ÇØ
 			for my $i (sort {$temp{$a} <=> $temp{$b}} keys %temp){
 				if ($n < 0){
 					$n = $temp{$i};
@@ -348,11 +361,11 @@ sub mark{
 				}
 				$firstplaces{$i} = $priority{$i};
 			}
-			for my $i (                                    # Õ•¿Ë≈Ÿ•¡•ß•√•Ø
+			for my $i (                                    # ÂÑ™ÂÖàÂ∫¶„ÉÅ„Çß„ÉÉ„ÇØ
 				sort { $firstplaces{$a} <=> $firstplaces{$b} }
 				keys %firstplaces
 			){
-				my $len = length ($i);                     # •ﬁ°º•≠•Û•∞
+				my $len = length ($i);                     # „Éû„Éº„Ç≠„É≥„Ç∞
 				$len += $n;
 				my $t = substr($text,0,$n);
 				substr($text,0,$len) = '';
@@ -364,18 +377,12 @@ sub mark{
 	}
 	close (SOURCE);
 	close (MARKED);
-	if ($::config_obj->os eq 'win32'){
-		if ( # morpho_analyzer
-			   $::config_obj->c_or_j eq 'chasen'
-			|| $::config_obj->c_or_j eq 'mecab'
-		){
-			kh_jchar->to_sjis($dist);
-		}
-	}
+	
+	return 1;
 }
 
 #--------------#
-#   •¢•Ø•ª•µ   #
+#   „Ç¢„ÇØ„Çª„Çµ   #
 #--------------#
 sub words_mk{
 	my $self = shift;

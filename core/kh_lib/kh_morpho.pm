@@ -16,8 +16,8 @@ sub run{
 	my %args = @_;
 	my $self = {
 		t_obj  => $::project_obj,
-		target => $::project_obj->file_MorphoIn,
-		output => $::project_obj->file_MorphoOut,
+		target => $::config_obj->os_path( $::project_obj->file_MorphoIn ),
+		output => $::config_obj->os_path( $::project_obj->file_MorphoOut ),
 		config => $::config_obj,
 	};
 	bless $self, $class;

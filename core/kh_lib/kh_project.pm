@@ -753,11 +753,13 @@ sub file_TempR{
 sub file_TempExcel{
 	my $self = shift;
 	my $n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.xls'){
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+	
+	while (-e $dir.'_temp'.$n.'.xls'){
 		++$n;
 	}
-	my $f = $self->file_datadir.'_temp'.$n.'.xls';
-	$f = $::config_obj->os_path($f);
+	my $f = $dir.'_temp'.$n.'.xls';
 	return $f;
 }
 sub file_HukugoList{
