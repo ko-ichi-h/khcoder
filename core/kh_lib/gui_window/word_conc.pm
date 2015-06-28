@@ -367,7 +367,6 @@ sub view_doc{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  "; #"・現在表示中の検索結果： 
-	$foot = Jcode->new($foot)->sjis;
 
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
@@ -403,7 +402,6 @@ sub next{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  ";
-	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
 }
@@ -431,7 +429,6 @@ sub prev{
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
 	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  ";
-	$foot = Jcode->new($foot)->sjis;
 
 	return ($hyosobun_id,undef,$foot);
 }

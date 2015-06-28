@@ -246,7 +246,7 @@ sub search{
 	my $self = shift;
 	
 	# 変数取得
-	my $query = $self->entry->get;
+	my $query = $self->gui_jg( $self->entry->get );
 
 	unless ($query){
 		return;

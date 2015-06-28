@@ -489,7 +489,7 @@ sub check_a_doc{
 		$text .= kh_msg->get('gui_window::doc_view->current_doc'); # ・現在表示中の文書：  
 	}
 	
-	$text = Encode::encode('cp932', $text);
+	#$text = Encode::encode('cp932', $text);
 	return ($text,\@words);
 }
 

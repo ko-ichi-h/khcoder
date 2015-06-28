@@ -87,7 +87,6 @@ sub get_header{
 			}
 			$sql   .= "LIMIT 1";
 			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			$h = Jcode->new($h)->sjis;
 			$headers .= "$h\n";
 		}
 	}

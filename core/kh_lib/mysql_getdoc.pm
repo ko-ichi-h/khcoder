@@ -67,7 +67,7 @@ sub get{
 		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/o){ push @body, ["\n",'']; }
 		
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
-		push @body, [Jcode->new("$i->[0]",'euc')->sjis, $k];
+		push @body, [ $i->[0], $k ];
 		$lastw = $i->[0];
 		
 	}
@@ -192,7 +192,7 @@ sub get_header{
 			}
 			$sql   .= "LIMIT 1";
 			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			$h = Jcode->new($h,'euc')->sjis;
+			#$h = Jcode->new($h,'euc')->sjis;
 			$headers .= "$h\n";
 		}
 	}
@@ -278,8 +278,8 @@ sub id_for_print{
 			tani   => $self->{tani}
 		);
 		$val = $i->print_val($val);
-		$r .= Jcode->new($i->{name},'euc')->sjis;
-		$r .= " = ".Jcode->new($val,'euc')->sjis.",  ";
+		$r .= $i->{name}; #Jcode->new($i->{name},'euc')->sjis;
+		$r .= " = $val,  ";
 	}
 	chop $r;
 	chop $r;
