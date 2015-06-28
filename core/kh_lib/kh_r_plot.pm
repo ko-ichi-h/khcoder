@@ -29,10 +29,12 @@ sub new{
 	}
 
 	# コマンドから日本語コメントを削除
-	$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/g;
-	$self->{command_f} =~ s/#.*?\p{Katakana}.*?\n/\n/g;
-	$self->{command_a} =~ s/#.*?\p{Hiragana}.*?\n/\n/g;
-	$self->{command_a} =~ s/#.*?\p{Katakana}.*?\n/\n/g;
+	$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
+	$self->{command_f} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
+	$self->{command_f} =~ s/#.*?\p{Han}.*?\n/\n/go;
+	$self->{command_a} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
+	$self->{command_a} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
+	$self->{command_a} =~ s/#.*?\p{Han}.*?\n/\n/go;
 
 	# コマンドの改行コード
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;

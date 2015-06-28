@@ -1,5 +1,6 @@
 package gui_window::word_mds;
 use base qw(gui_window);
+use utf8;
 
 use strict;
 use Tk;
@@ -11,7 +12,7 @@ use kh_r_plot;
 use plotR::network;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -28,7 +29,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('plot'), # ÉÛÃÖ
+		verb   => kh_msg->get('plot'), # å¸ƒç½®
 	);
 
 	my $lf = $win->LabFrame(
@@ -38,14 +39,14 @@ sub _new{
 		-foreground => 'blue',
 	)->pack(-fill => 'x', -expand => 0);
 
-	# ¥¢¥ë¥´¥ê¥º¥àÁªÂò
+	# ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ é¸æŠ
 	$self->{mds_obj} = gui_widget::r_mds->open(
 		parent       => $lf,
 		command      => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
 	);
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf,
 		type         => 'mds',
@@ -55,7 +56,7 @@ sub _new{
 		},
 	);
 
-	# ¥¯¥é¥¹¥¿¡¼²½
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–
 	$self->{cls_obj} = gui_widget::cls4mds->open(
 		parent       => $lf,
 		command      => sub{ $self->calc; },
@@ -64,14 +65,14 @@ sub _new{
 		},
 	);
 	
-	# È¾Æ©ÌÀ¤Î¿§
+	# åŠé€æ˜ã®è‰²
 	$self->{use_alpha} = 1;
 	$lf->Checkbutton(
 		-variable => \$self->{use_alpha},
 		-text     => kh_msg->get('r_alpha'), 
 	)->pack(-anchor => 'w');
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
 		command   => sub{ $self->calc; },
@@ -80,13 +81,13 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤','euc
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -111,7 +112,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -124,12 +125,12 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
@@ -181,7 +182,7 @@ sub calc{
 
 	my $w = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $self->tani,
@@ -193,7 +194,7 @@ sub calc{
 		rownames => 0,
 	)->run;
 
-	# ¥Ç¡¼¥¿À°Íı
+	# ãƒ‡ãƒ¼ã‚¿æ•´ç†
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
@@ -218,7 +219,7 @@ sub calc{
 	
 	$w->end(no_dialog => 1);
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_word_mds_plot')){
 		$::main_gui->get('w_word_mds_plot')->close;
 	}
@@ -241,7 +242,6 @@ sub make_plot{
 
 	my $fontsize = 1;
 
-	#my $r_command = Encode::decode('euc-jp', $args{r_command});
 	my $r_command = $args{r_command};
 
 	kh_r_plot->clear_env;
@@ -249,12 +249,10 @@ sub make_plot{
 	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error_dim'), # ¼¡¸µ¤Î»ØÄê¤¬ÉÔÀµ¤Ç¤¹¡£1¤«¤é3¤Ş¤Ç¤Î¿ôÃÍ¤ò»ØÄê¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('error_dim'), # æ¬¡å…ƒã®æŒ‡å®šãŒä¸æ­£ã§ã™ã€‚1ã‹ã‚‰3ã¾ã§ã®æ•°å€¤ã‚’æŒ‡å®šã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
-
-	#$args{method_dist} = 'binary' unless $args{method_dist} eq 'euclid';
 
 	$r_command .= "
 library(amap)
@@ -287,13 +285,13 @@ if (exists(\"doc_length_mtr\")){
 " unless $args{method_dist} eq 'binary';
 
 	if ($args{method_dist} eq 'euclid'){
-		# Ãê½Ğ¸ì¤´¤È¤ËÉ¸½à²½
+		# æŠ½å‡ºèªã”ã¨ã«æ¨™æº–åŒ–
 		$r_command .= "dj <- Dist(t( scale( t(d) ) ),method=\"$args{method_dist}\")\n";
 	} else {
 		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
 	}
 
-	# ¥¢¥ë¥´¥ê¥º¥àÊÌ¤Î¥³¥Ş¥ó¥É
+	# ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ åˆ¥ã®ã‚³ãƒãƒ³ãƒ‰
 	my $r_command_d = '';
 	my $r_command_a = '';
 	if ($args{method} eq 'K'){
@@ -311,7 +309,7 @@ if (exists(\"doc_length_mtr\")){
 		$r_command .= "cl <- c\n";
 	}
 
-	# ¥×¥í¥Ã¥ÈÍÑ¤Î¥³¥Ş¥ó¥É¡Ê¼¡¸µÊÌ¡Ë
+	# ãƒ—ãƒ­ãƒƒãƒˆç”¨ã®ã‚³ãƒãƒ³ãƒ‰ï¼ˆæ¬¡å…ƒåˆ¥ï¼‰
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
 	$args{cls_raw}   = 0 unless ( length($args{cls_raw}) );
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
@@ -329,7 +327,7 @@ if (exists(\"doc_length_mtr\")){
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_d .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # ¼¡¸µ
+	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # æ¬¡å…ƒ
 	
 	$r_command_d .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_d .= "name_dim2 <- paste(name_dim,'2')\n";
@@ -346,7 +344,7 @@ if (exists(\"doc_length_mtr\")){
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # ¼¡¸µ
+	$r_command_d .= "name_dim <- '".kh_msg->get('dim')."'\n"; # æ¬¡å…ƒ
 
 	$r_command_a .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_a .= "name_dim2 <- paste(name_dim,'2')\n";
@@ -366,7 +364,7 @@ if (exists(\"doc_length_mtr\")){
 			$r_command_a .= &r_command_plot;
 
 		} else {
-			# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤¦¾ì¹ç
+			# ãƒãƒ–ãƒ«è¡¨ç¾ã‚’è¡Œã†å ´åˆ
 			$r_command_d .= "std_radius <- $args{std_radius}\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
 			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
@@ -391,7 +389,7 @@ if (exists(\"doc_length_mtr\")){
 			."labcd <- pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
 				."cex=$fontsize, offset=0, col=\"black\", font = text_font, doPlot=F)\n"
 			.'
-	# ¥é¥Ù¥ëºÆÄ´À°
+	# ãƒ©ãƒ™ãƒ«å†èª¿æ•´
 	xorg <- cl2$x
 	yorg <- cl2$y
 	cex  <- font_size
@@ -456,7 +454,7 @@ if (exists(\"doc_length_mtr\")){
 
 	$r_command .= $r_command_a;
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
@@ -474,7 +472,7 @@ if (exists(\"doc_length_mtr\")){
 		font_size => $args{font_size},
 	) or $flg_error = 1;
 
-	# Ê¬ÀÏ¤«¤é¾Ê¤«¤ì¤¿¸ì¡¿¥³¡¼¥É¤ò¥Á¥§¥Ã¥¯
+	# åˆ†æã‹ã‚‰çœã‹ã‚ŒãŸèªï¼ã‚³ãƒ¼ãƒ‰ã‚’ãƒã‚§ãƒƒã‚¯
 	my $dropped = '';
 	foreach my $i (split /\n/, $plot1->r_msg){
 		if ($i =~ /"Dropped object: (.+)"/){
@@ -484,12 +482,12 @@ if (exists(\"doc_length_mtr\")){
 	if ( length($dropped) ){
 		chop $dropped;
 		chop $dropped;
-		$dropped = Jcode->new($dropped,'sjis')->euc
-			if $::config_obj->os eq 'win32';
+		#$dropped = Jcode->new($dropped,'sjis')->euc
+		#	if $::config_obj->os eq 'win32';
 		gui_errormsg->open(
 			type => 'msg',
 			msg  =>
-				kh_msg->get('omit') # °Ê²¼¤ÎÃê½Ğ¸ì¡¿¥³¡¼¥É¤ÏÊ¬ÀÏ¤«¤é¾Ê¤«¤ì¤Ş¤·¤¿¡§\n
+				kh_msg->get('omit') # ä»¥ä¸‹ã®æŠ½å‡ºèªï¼ã‚³ãƒ¼ãƒ‰ã¯åˆ†æã‹ã‚‰çœã‹ã‚Œã¾ã—ãŸï¼š\n
 				.$dropped
 		);
 	}
@@ -502,7 +500,7 @@ if (exists(\"doc_length_mtr\")){
 		print "---------------------------------------------------------[R]\n";
 	}
 
-	# ¥¹¥È¥ì¥¹ÃÍ¤Î¼èÆÀ
+	# ã‚¹ãƒˆãƒ¬ã‚¹å€¤ã®å–å¾—
 	my $stress;
 	if ($args{method} eq 'K' or $args{method} eq 'S'){
 		$::config_obj->R->send(
@@ -531,11 +529,11 @@ if (exists(\"doc_length_mtr\")){
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦Â¿¼¡¸µ¼ÜÅÙË¡¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å¤šæ¬¡å…ƒå°ºåº¦æ³•ï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{
@@ -582,7 +580,7 @@ if ( dim_n == 1 ){
 col_base <- "mediumaquamarine"
 bty      <- "l"
 
-# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æ
 if (n_cls > 0){
 
 	if (nrow(d) < n_cls){
@@ -664,7 +662,7 @@ if ( plot_mode == "color" ){
 		offset=0
 	)
 
-	# ¥é¥Ù¥ëºÆÄ´À°
+	# ãƒ©ãƒ™ãƒ«å†èª¿æ•´
 	xorg <- cl[,1]
 	yorg <- cl[,2]
 	cex  <- font_size
@@ -754,7 +752,7 @@ if ( use_alpha == 1 ){
 	col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
 }
 
-# ¥Ğ¥Ö¥ë¤Î¥µ¥¤¥º¤ò·èÄê
+# ãƒãƒ–ãƒ«ã®ã‚µã‚¤ã‚ºã‚’æ±ºå®š
 neg_to_zero <- function(nums){
   temp <- NULL
   for (i in 1:length(nums) ){
@@ -780,9 +778,9 @@ for (i in rownames(cl)){
 	}
 }
 
-b_size <- sqrt( b_size / pi ) # ½Ğ¸½¿ôÈæ¡áÌÌÀÑÈæ¤Ë¤Ê¤ë¤è¤¦¤ËÈ¾·Â¤òÄ´À°
+b_size <- sqrt( b_size / pi ) # å‡ºç¾æ•°æ¯”ï¼é¢ç©æ¯”ã«ãªã‚‹ã‚ˆã†ã«åŠå¾„ã‚’èª¿æ•´
 
-if (std_radius){ # ±ß¤ÎÂç¾®¤ò¥Ç¥Õ¥©¥ë¥á
+if (std_radius){ # å††ã®å¤§å°ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒ¡
 	if ( sd(b_size) == 0 ){
 		b_size <- rep(10, length(b_size))
 	} else {
@@ -793,7 +791,7 @@ if (std_radius){ # ±ß¤ÎÂç¾®¤ò¥Ç¥Õ¥©¥ë¥á
 	}
 }
 
-# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æ
 if (n_cls > 0){
 	library( RColorBrewer )
 	
@@ -840,7 +838,7 @@ if (n_cls > 0){
 
 }
 
-# ¥Ğ¥Ö¥ëÉÁ²è
+# ãƒãƒ–ãƒ«æç”»
 plot(
 	cl,
 	pch=NA,
@@ -860,7 +858,7 @@ symbols(
 	add=T,
 )
 
-# ¥é¥Ù¥ë°ÌÃÖ¤ò·èÄê
+# ãƒ©ãƒ™ãƒ«ä½ç½®ã‚’æ±ºå®š
 library(maptools)
 labcd <- pointLabel(
 	x=cl[,1],
@@ -871,7 +869,7 @@ labcd <- pointLabel(
 	doPlot=F
 )
 
-# ¥é¥Ù¥ëºÆÄ´À°
+# ãƒ©ãƒ™ãƒ«å†èª¿æ•´
 xorg <- cl[,1]
 yorg <- cl[,2]
 cex  <- font_size
@@ -915,7 +913,7 @@ if ( length(xorg) < 300 ) {
 	labcd$y <- nc[,2] + .5 * nc[,4]
 }
 
-# ¥é¥Ù¥ëÉÁ²è
+# ãƒ©ãƒ™ãƒ«æç”»
 if (plot_mode == "color") {
 	text(
 		labcd$x,

@@ -2,6 +2,7 @@ package gui_window::word_netgraph;
 use base qw(gui_window);
 
 use strict;
+use utf8;
 use Tk;
 
 use gui_widget::tani;
@@ -12,7 +13,7 @@ use kh_r_plot;
 my $bench = 0;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -21,7 +22,7 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf_w = $win->LabFrame(
-		-label => kh_msg->get('u_w'), # ½¸·×Ã±°Ì¤ÈÃê½Ğ¸ì¤ÎÁªÂò
+		-label => kh_msg->get('u_w'), # é›†è¨ˆå˜ä½ã¨æŠ½å‡ºèªã®é¸æŠ
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 		-foreground => 'blue'
@@ -34,19 +35,19 @@ sub _new{
 				$self->{var_obj}->new_tani($self->tani);
 			}
 		},
-		verb   => kh_msg->get('use'), # ÍøÍÑ
+		verb   => kh_msg->get('use'), # åˆ©ç”¨
 	);
 
 	my $lf = $win->LabFrame(
-		-label => kh_msg->get('net_opt'), # ¢£¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¤ÎÀßÄê
+		-label => kh_msg->get('net_opt'), # â– å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®è¨­å®š
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 		-foreground => 'blue'
 	)->pack(-fill => 'x', -expand => 0);
 
-	# ¶¦µ¯´Ø·¸¤Î¼ïÎà
+	# å…±èµ·é–¢ä¿‚ã®ç¨®é¡
 	$lf->Label(
-		-text => kh_msg->get('e_type'), # ¶¦µ¯´Ø·¸¡Êedge¡Ë¤Î¼ïÎà
+		-text => kh_msg->get('e_type'), # å…±èµ·é–¢ä¿‚ï¼ˆedgeï¼‰ã®ç¨®é¡
 		-font => "TKFN",
 	)->pack(-anchor => 'w');
 
@@ -65,7 +66,7 @@ sub _new{
 	}
 
 	$f5->Radiobutton(
-		-text             => kh_msg->get('w_w'), # ¸ì ¡½ ¸ì
+		-text             => kh_msg->get('w_w'), # èª â€• èª
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'words',
@@ -78,7 +79,7 @@ sub _new{
 	)->pack(-anchor => 'nw', -side => 'left');
 
 	$f5->Radiobutton(
-		-text             => kh_msg->get('w_v'), # ¸ì ¡½ ³°ÉôÊÑ¿ô¡¦¸«½Ğ¤·
+		-text             => kh_msg->get('w_v'), # èª â€• å¤–éƒ¨å¤‰æ•°ãƒ»è¦‹å‡ºã—
 		-font             => "TKFN",
 		-variable         => \$self->{radio_type},
 		-value            => 'twomode',
@@ -96,7 +97,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{var_lab} = $f6->Label(
-		-text => kh_msg->get('var'), # ³°ÉôÊÑ¿ô¡¦¸«½Ğ¤·¡§
+		-text => kh_msg->get('var'), # å¤–éƒ¨å¤‰æ•°ãƒ»è¦‹å‡ºã—ï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -106,14 +107,14 @@ sub _new{
 		show_headings => 1,
 	);
 
-	# ¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¤Î¥ª¥×¥·¥ç¥ó
+	# å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf,
 		command => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
 		command   => sub{ $self->calc; },
@@ -122,13 +123,13 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤','euc
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„','euc
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -176,7 +177,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -189,16 +190,16 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # 'ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£',
+			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # 'å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚',
 		);
 		return 0;
 	}
@@ -219,7 +220,7 @@ sub calc{
 	if ($check_num < 5){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::word_mds->select_3words'), # '¾¯¤Ê¤¯¤È¤â5¤Ä°Ê¾å¤ÎÃê½Ğ¸ì¤òÁªÂò¤·¤Æ²¼¤µ¤¤¡£',
+			msg  => kh_msg->get('gui_window::word_mds->select_3words'), # 'å°‘ãªãã¨ã‚‚5ã¤ä»¥ä¸Šã®æŠ½å‡ºèªã‚’é¸æŠã—ã¦ä¸‹ã•ã„ã€‚',
 		);
 		return 0;
 	}
@@ -228,13 +229,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					kh_msg->get('gui_window::word_corresp->too_many1') # ¸½ºß¤ÎÀßÄê¤Ç¤Ï
+					kh_msg->get('gui_window::word_corresp->too_many1') # ç¾åœ¨ã®è¨­å®šã§ã¯
 					.$check_num
-					.kh_msg->get('gui_window::word_corresp->too_many2') # ¸ì¤¬ÉÛÃÖ¤µ¤ì¤Ş¤¹¡£
+					.kh_msg->get('gui_window::word_corresp->too_many2') # èªãŒå¸ƒç½®ã•ã‚Œã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('gui_window::word_corresp->too_many3') # ÉÛÃÖ¤¹¤ë¸ì¤Î¿ô¤Ï100¡Á150ÄøÅÙ¤Ë¤ª¤µ¤¨¤ë¤³¤È¤ò¿ä¾©¤·¤Ş¤¹¡£
+					.kh_msg->get('gui_window::word_corresp->too_many3') # å¸ƒç½®ã™ã‚‹èªã®æ•°ã¯100ã€œ150ç¨‹åº¦ã«ãŠã•ãˆã‚‹ã“ã¨ã‚’æ¨å¥¨ã—ã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('gui_window::word_corresp->too_many4') # Â³¹Ô¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡©
+					.kh_msg->get('gui_window::word_corresp->too_many4') # ç¶šè¡Œã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -247,7 +248,7 @@ sub calc{
 
 	my $wait_window = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $self->tani,
@@ -260,7 +261,7 @@ sub calc{
 	)->run;
 
 
-	# ¸«½Ğ¤·¤Î¼è¤ê½Ğ¤·
+	# è¦‹å‡ºã—ã®å–ã‚Šå‡ºã—
 	if (
 		   $self->{radio_type} eq 'twomode'
 		&& $self->{var_obj}->var_id =~ /h[1-5]/
@@ -268,7 +269,7 @@ sub calc{
 		my $tani1 = $self->tani;
 		my $tani2 = $self->{var_obj}->var_id;
 		
-		# ¸«½Ğ¤·¥ê¥¹¥ÈºîÀ®
+		# è¦‹å‡ºã—ãƒªã‚¹ãƒˆä½œæˆ
 		my $max = mysql_exec->select("SELECT max(id) FROM $tani2")
 			->hundle->fetch->[0];
 		my %heads = ();
@@ -298,7 +299,7 @@ sub calc{
 		$r_command .= ")\n";
 	}
 
-	# ³°ÉôÊÑ¿ô¤Î¼è¤ê½Ğ¤·
+	# å¤–éƒ¨å¤‰æ•°ã®å–ã‚Šå‡ºã—
 	if (
 		   $self->{radio_type} eq 'twomode'
 		&& $self->{var_obj}->var_id =~ /^[0-9]+$/
@@ -344,13 +345,13 @@ sub calc{
 		$r_command .= ")\n";
 	}
 
-	# ³°ÉôÊÑ¿ô¡¦¸«½Ğ¤·¥Ç¡¼¥¿¤ÎÅı¹ç
+	# å¤–éƒ¨å¤‰æ•°ãƒ»è¦‹å‡ºã—ãƒ‡ãƒ¼ã‚¿ã®çµ±åˆ
 	if ($self->{radio_type} eq 'twomode'){
 		$r_command = $r_command;
 		$r_command .= &r_command_concat;
 	}
 
-	# ¥Ç¡¼¥¿À°Íı
+	# ãƒ‡ãƒ¼ã‚¿æ•´ç†
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
@@ -366,7 +367,7 @@ sub calc{
 		plotwin_name     => 'word_netgraph',
 	);
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	$wait_window->end(no_dialog => 1);
 	
 	if ($::main_gui->if_opened('w_word_netgraph_plot')){
@@ -393,10 +394,10 @@ sub calc{
 
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{
@@ -430,7 +431,7 @@ sub hinshi{
 
 sub r_command_concat{
 	return '
-# 1¤Ä¤Î³°ÉôÊÑ¿ô¤¬Æş¤Ã¤¿¥Ù¥¯¥È¥ë¤ò0-1¥Ş¥È¥ê¥¯¥¹¤ËÊÑ´¹
+# 1ã¤ã®å¤–éƒ¨å¤‰æ•°ãŒå…¥ã£ãŸãƒ™ã‚¯ãƒˆãƒ«ã‚’0-1ãƒãƒˆãƒªã‚¯ã‚¹ã«å¤‰æ›
 mk.dummy <- function(dat){
 	dat  <- factor(dat)
 	cols <- length(levels(dat))
@@ -446,14 +447,14 @@ mk.dummy <- function(dat){
 }
 v1 <- mk.dummy(v0)
 
-# Ãê½Ğ¸ì¤È³°ÉôÊÑ¿ô¤òÀÜ¹ç
+# æŠ½å‡ºèªã¨å¤–éƒ¨å¤‰æ•°ã‚’æ¥åˆ
 n_words <- ncol(d)
 d <- cbind(d, v1)
 
 d <- subset(
 	d,
 	v0 != "'
-	.kh_msg->get('gui_window::word_corresp->nav') # ·çÂ»ÃÍ
+	.kh_msg->get('gui_window::word_corresp->nav') # æ¬ æå€¤
 	.'" & v0 != "." & v0 != "missing"
 )
 v0 <- NULL
@@ -463,7 +464,7 @@ d <- t(d)
 d <- subset(
 	d,
 	rownames(d) != "<>'
-	.kh_msg->get('gui_window::word_corresp->nav') # ·çÂ»ÃÍ
+	.kh_msg->get('gui_window::word_corresp->nav') # æ¬ æå€¤
 	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
 )
 d <- t(d)

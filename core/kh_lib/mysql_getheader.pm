@@ -1,8 +1,9 @@
 package mysql_getheader;
 use strict;
+use utf8;
 use mysql_exec;
 
-# uÍEßE’i—‚²‚Æ‚ÌWŒvvƒRƒ}ƒ“ƒh‚Å—˜—p
+# ã€Œç« ãƒ»ç¯€ãƒ»æ®µè½ã”ã¨ã®é›†è¨ˆã€ã‚³ãƒãƒ³ãƒ‰ã§åˆ©ç”¨
 sub get{
 	my $class = shift;
 	my $tani  = shift;
@@ -53,10 +54,11 @@ sub get{
 	pop   @h;
 	my $h;
 	
-	my $spacer = '';  # ƒXƒy[ƒT[İ’è
+	my $morpho = $::project_obj->morpho_analyzer_lang; # ã‚¹ãƒšãƒ¼ã‚µãƒ¼è¨­å®š
+	my $spacer = '';
 	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
+		   $morpho eq 'jp'
+		|| $morpho eq 'cn'
 	){
 		$spacer = '';
 	} else {
@@ -67,10 +69,10 @@ sub get{
 		$h .= $spacer if length($i);
 		$h .= $i->[0];
 	}
-	return Jcode->new($h)->sjis;
+	return $h;
 }
 
-# u•”•ªƒeƒLƒXƒg‚Ìæ‚èo‚µv->uŒ©o‚µ•¶‚¾‚¯‚ğæ‚èo‚·v‚©‚ç—˜—p
+# ã€Œéƒ¨åˆ†ãƒ†ã‚­ã‚¹ãƒˆã®å–ã‚Šå‡ºã—ã€->ã€Œè¦‹å‡ºã—æ–‡ã ã‘ã‚’å–ã‚Šå‡ºã™ã€ã‹ã‚‰åˆ©ç”¨
 sub get_all{
 	my $class = shift;
 	my %args  = @_;
@@ -139,7 +141,7 @@ sub get_selected{
 		push @r, $i->[0];
 	}
 	
-	# ƒf[ƒ^ƒ`ƒFƒbƒN
+	# ãƒ‡ãƒ¼ã‚¿ãƒã‚§ãƒƒã‚¯
 	my $chk = mysql_exec->select(
 		"select max(id) from $self->{tani}",
 		1
