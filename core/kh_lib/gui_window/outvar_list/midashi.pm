@@ -1,8 +1,9 @@
 package gui_window::outvar_list::midashi;
 use base qw(gui_window::outvar_list);
 use strict;
+use utf8;
 
-my $z_space = Encode::decode('euc-jp', '¡¡');
+my $z_space = 'ã€€';
 
 sub v_words_list{
 	my $self      = shift;
@@ -13,14 +14,14 @@ sub v_words_list{
 		return 0;
 	}
 	
-	# ¥é¥Ù¥ë¤ÎÊÑ¹¹ÆâÍÆ¤òÊİÂ¸¤·¤Æ¡¢³°ÉôÊÑ¿ô¥ª¥Ö¥¸¥§¥¯¥È¤òºÆÀ¸À®
+	# ãƒ©ãƒ™ãƒ«ã®å¤‰æ›´å†…å®¹ã‚’ä¿å­˜ã—ã¦ã€å¤–éƒ¨å¤‰æ•°ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿæˆ
 	#$self->_save;
 	#$self->{selected_var_obj} = mysql_outvar::a_var->new(
 	#	$self->{selected_var_obj}->{name}
 	#);
 
-	# ÃÍ¤Î¥ê¥¹¥È
-	my $values = mysql_getheader->get_selected(             # ÃÍ¥ê¥¹¥È¤ÈÉÑÅÙ
+	# å€¤ã®ãƒªã‚¹ãƒˆ
+	my $values = mysql_getheader->get_selected(             # å€¤ãƒªã‚¹ãƒˆã¨é »åº¦
 		tani => $self->{selected_var_obj}{tani}
 	);
 	my %freq = ();
@@ -31,7 +32,7 @@ sub v_words_list{
 	}
 	$values = \@values_org;
 
-	# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤Î½àÈ÷
+	# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æº–å‚™
 	my $win;
 	if ($::main_gui->if_opened('w_doc_ass')){
 		$win = $::main_gui->get('w_doc_ass');
@@ -40,15 +41,15 @@ sub v_words_list{
 	}
 
 	my $d;
-	# ÃÍ¤´¤È¤ËÆÃÄ§Åª¤Ê¸ì¤ò¼èÆÀ
+	# å€¤ã”ã¨ã«ç‰¹å¾´çš„ãªèªã‚’å–å¾—
 	foreach my $i (@{$values}){
-		# ¥¯¥¨¥ê¡¼ºîÀ®
+		# ã‚¯ã‚¨ãƒªãƒ¼ä½œæˆ
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'. $self->gui_jchar($i,'euc');
 
 		$query =~ s/"/""/g;
 		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 		
-		# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤ÎÁàºî
+		# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ“ä½œ
 		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
 		$win->{tani_obj}->mb_refresh;
 		
@@ -61,28 +62,14 @@ sub v_words_list{
 		$win->win_obj->focus;
 		$win->search;
 		
-		# ÃÍ¤Î¼èÆÀ
+		# å€¤ã®å–å¾—
 		my $n = 0;
 		while ($win->{rlist}->info('exists', $n)){
 			if ( $win->{rlist}->itemExists($n, 1) ){
-				$d->{$i}[$n][0] = 
-					Jcode->new(
-						$self->gui_jg(
-								$win->{rlist}->itemCget($n, 1, -text)
-						),
-						'sjis'
-					)->euc
-				;
+				$d->{$i}[$n][0] = $self->gui_jg( $win->{rlist}->itemCget($n, 1, -text) );
 			}
 			if ( $win->{rlist}->itemExists($n, 5) ){
-				$d->{$i}[$n][1] = 
-					Jcode->new(
-						$self->gui_jg(
-							$win->{rlist}->itemCget($n, 5, -text)
-						),
-						'sjis'
-					)->euc
-				;
+				$d->{$i}[$n][1] = $self->gui_jg( $win->{rlist}->itemCget($n, 5, -text) );
 			}
 			++$n;
 			last if $n >= 10;
@@ -107,24 +94,24 @@ sub _open_var{
 
 	#print "go!\n";
 
-	# ÊÑ¿ôÌ¾¤ÎÉ½¼¨
+	# å¤‰æ•°åã®è¡¨ç¤º
 	$self->{label_name}->configure(
 		-text => $self->gui_jchar(
 			$self->{var_list}[$selection[0]][1]
 		)
 	);
 
-	# ¤³¤³¤Ïº£¸åÍ×¸¡Æ¤¡©
+	# ã“ã“ã¯ä»Šå¾Œè¦æ¤œè¨ï¼Ÿ
 	my $hoge;
 	$hoge->{name} = $self->{var_list}[$selection[0]][1];
 	$hoge->{tani} = $self->{var_list}[$selection[0]][0];
 	$self->{selected_var_obj} = $hoge;
 
-	# ÃÍ¤È¥é¥Ù¥ë¤ÎÉ½¼¨
+	# å€¤ã¨ãƒ©ãƒ™ãƒ«ã®è¡¨ç¤º
 	$self->{label} = undef;
 	$self->{list_val}->delete('all');
 
-	my $values = mysql_getheader->get_selected(             # ÃÍ¥ê¥¹¥È¤ÈÉÑÅÙ
+	my $values = mysql_getheader->get_selected(             # å€¤ãƒªã‚¹ãƒˆã¨é »åº¦
 		tani => $self->{var_list}[$selection[0]][0]
 	);
 	my %freq = ();
@@ -196,10 +183,10 @@ sub _open_var{
 	gui_hlist->update4scroll($self->{list_val});
 
 	#$self->{label_num}->configure(
-	#	-text => $self->gui_jchar("ÃÍ¤Î¼ïÎà¡§ $n")
+	#	-text => $self->gui_jchar("å€¤ã®ç¨®é¡ï¼š $n")
 	#);
 
-	# ½¸·×Ã±°Ì
+	# é›†è¨ˆå˜ä½
 	my @tanis   = ();
 	if ($self->{opt_tani}){
 		$self->{opt_tani}->destroy;
@@ -207,8 +194,8 @@ sub _open_var{
 	}
 
 	my %tani_name = (
-		"bun" => kh_msg->gget('sentence'),  # "Ê¸",
-		"dan" => kh_msg->gget('paragraph'), # "ÃÊÍî",
+		"bun" => kh_msg->gget('sentence'),  # "æ–‡",
+		"dan" => kh_msg->gget('paragraph'), # "æ®µè½",
 		"h5"  => "H5",
 		"h4"  => "H4",
 		"h3"  => "H3",

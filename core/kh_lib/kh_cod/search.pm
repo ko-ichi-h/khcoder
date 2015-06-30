@@ -1,6 +1,7 @@
 package kh_cod::search;
 use base qw(kh_cod);
 use strict;
+use utf8;
 use mysql_exec;
 
 my $last_tani;
@@ -60,16 +61,16 @@ sub new{
 }
 
 #------------------------------#
-#   Ä¾ÀÜÆþÎÏ¥³¡¼¥É¤ÎÆÉ¤ß¹þ¤ß   #
+#   ç›´æŽ¥å…¥åŠ›ã‚³ãƒ¼ãƒ‰ã®èª­ã¿è¾¼ã¿   #
 
 sub add_direct{
 	my $self = shift;
 	my %args = @_;
 	my $debug = 0;
 	
-	my $direct = Encode::encode('euc-jp', kh_msg->get('direct') );
+	my $direct = kh_msg->get('direct');
 	
-	# ´û¤ËÄÉ²Ã¤µ¤ì¤Æ¤¤¤¿¾ì¹ç¤Ï¤¤¤Ã¤¿¤óºï½ü
+	# æ—¢ã«è¿½åŠ ã•ã‚Œã¦ã„ãŸå ´åˆã¯ã„ã£ãŸã‚“å‰Šé™¤
 	if ($self->{codes}){
 		if ($self->{codes}[0]->name eq $direct){
 			print "Deleting old \'direct\' code\n" if $debug;
@@ -78,7 +79,7 @@ sub add_direct{
 	}
 	print "direct-raw: $args{raw}\n" if $debug;
 	
-	$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
+	#$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
 	if ($args{raw} =~ /\r|\n/){
 		my $t = $args{raw};
 		$t =~ tr/\r\n/__/;
@@ -90,13 +91,14 @@ sub add_direct{
 		;
 	}
 	
-	if ($args{mode} eq 'code'){                   #¡Öcode¡×¤Î¾ì¹ç
+	if ($args{mode} eq 'code'){                   #ã€Œcodeã€ã®å ´åˆ
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			$direct,
 			$args{raw},
 		);
-	} else {                                      # ¡ÖAND¡×,¡ÖOR¡×¤Î¾ì¹ç
-		$args{raw} = Jcode->new($args{raw},'euc')->tr('¡¡',' ');
+	} else {                                      # ã€ŒANDã€,ã€ŒORã€ã®å ´åˆ
+		#$args{raw} = Jcode->new($args{raw},'euc')->tr('ã€€',' ');
+		$args{raw} =~ tr/ã€€/ /;
 		$args{raw} =~ tr/\t\n/  /;
 		
 		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
@@ -122,7 +124,7 @@ sub add_direct{
 }
 
 #----------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°¼Â¹Ô   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å®Ÿè¡Œ   #
 
 sub code{
 	my $self = shift;
@@ -147,7 +149,7 @@ sub code{
 
 
 #----------------#
-#   ¸¡º÷¤Î¼Â¹Ô   #
+#   æ¤œç´¢ã®å®Ÿè¡Œ   #
 
 sub search{
 	my $self = shift;
@@ -157,13 +159,13 @@ sub search{
 	$self->{order} = $args{order};
 	$self->{last_search_words} = undef;
 
-	# ¥Ç¥Ð¥Ã¥°¥³¡¼¥É
+	# ãƒ‡ãƒãƒƒã‚°ã‚³ãƒ¼ãƒ‰
 	#foreach my $i (@{$self->{codes}}){
 	#	print Jcode->new($i->name)->sjis."\n".Jcode->new($i->row_condition)->sjis."\n";
 	#}
 	#print "\n";
 
-	# ¥³¡¼¥Ç¥£¥ó¥°
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
 	print "kh_cod::search -> coding...\n";
 	
 	if (
@@ -173,12 +175,12 @@ sub search{
 			   ( $last_order eq $self->{order} )
 			|| ( $self->{order} eq 'by' )
 		)
-	){                                                  # ¥³¡¼¥Ç¥£¥ó¥°ºÑ¤ß
+	){                                                  # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°æ¸ˆã¿
 		#print "\t[re-use]\n";
 		$self->{codes}[0]->clear;
 		$self->{codes}[0]->ready($args{tani});
 		$self->{codes}[0]->code("ct_$args{tani}_dscode_0",$self->{order});
-	} else {                                            # Á´¤Æ¥³¡¼¥Ç¥£¥ó¥°
+	} else {                                            # å…¨ã¦ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
 		unless ($last_tani eq $self->{tani}){
 			$self->{valid_codes} = undef;
 		}
@@ -190,7 +192,7 @@ sub search{
 		$self->code($self->{tani}) or return 0;
 	}
 
-	# AND¾ò·ï¤Î»þ¤Ë¡¢0¥³¡¼¥É¤¬Â¸ºß¤·¤¿¾ì¹ç¤Ïreturn
+	# ANDæ¡ä»¶ã®æ™‚ã«ã€0ã‚³ãƒ¼ãƒ‰ãŒå­˜åœ¨ã—ãŸå ´åˆã¯return
 	unless ($self->valid_codes){ return undef; }
 	unless ($self->{valid_codes}){
 		return undef;
@@ -202,7 +204,7 @@ sub search{
 		return undef;
 	}
 	
-	# ¡Ö¡ô¥³¡¼¥ÉÌµ¤·¡×¤Î»È¤ï¤ìÊý¤ò¥Á¥§¥Ã¥¯
+	# ã€Œï¼ƒã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã®ä½¿ã‚ã‚Œæ–¹ã‚’ãƒã‚§ãƒƒã‚¯
 	my $code_num_check = @{$self->{codes}};
 	my $no_code_flag = 0;
 	foreach my $i (@{$args{selected}}){
@@ -226,9 +228,9 @@ sub search{
 		$self->cumulate('ds') if @{$self->tables} > 30;
 	}
 	
-	# ¹çÃ×¤¹¤ëÊ¸½ñ¤Î¥ê¥¹¥È¤òºîÀ®
+	# åˆè‡´ã™ã‚‹æ–‡æ›¸ã®ãƒªã‚¹ãƒˆã‚’ä½œæˆ
 	print "kh_cod::search -> searching...\n";
-		# ¥Æ¡¼¥Ö¥ë¤Î½àÈ÷
+		# ãƒ†ãƒ¼ãƒ–ãƒ«ã®æº–å‚™
 	mysql_exec->drop_table("temp_doc_search");
 	mysql_exec->do("
 		create temporary table temp_doc_search(
@@ -238,10 +240,10 @@ sub search{
 		)
 	",1);
 	
-	# ¥ê¥¹¥È¤ò¥Æ¡¼¥Ö¥ë¤ËÅêÆþ
+	# ãƒªã‚¹ãƒˆã‚’ãƒ†ãƒ¼ãƒ–ãƒ«ã«æŠ•å…¥
 	my $sql;
 	$sql .= "INSERT INTO temp_doc_search (id, num)\n";
-			# ¡Ö¥³¡¼¥ÉÌµ¤·¡×¤ò»ÈÍÑ¤·¤Æ¤¤¤ë¾ì¹ç
+			# ã€Œã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹å ´åˆ
 	if ($no_code_flag){
 		$sql .= "SELECT $args{tani}.id,1\nFROM $args{tani}\n";
 		my $n = 0;
@@ -286,7 +288,7 @@ sub search{
 		$sql .= ")";
 	}
 	
-			# ¡Ö¥³¡¼¥ÉÌµ¤·¡×¤ò»ÈÍÑ¤·¤Ê¤¤¾ì¹ç
+			# ã€Œã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã‚’ä½¿ç”¨ã—ãªã„å ´åˆ
 	else {
 		$sql .= "SELECT $args{tani}.id, ";
 		if ($args{order} =~ /^tf/o){
@@ -358,7 +360,7 @@ sub search{
 	#print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
-	# ¸¡º÷¤ËÍøÍÑ¤·¤¿¸ì¡ÊÉ½ÁØ¡Ë¤Î¥ê¥¹¥È
+	# æ¤œç´¢ã«åˆ©ç”¨ã—ãŸèªžï¼ˆè¡¨å±¤ï¼‰ã®ãƒªã‚¹ãƒˆ
 	print "kh_cod::search -> getting word list...\n";
 	my (@words, %words);
 	foreach my $i (@{$args{selected}}){
@@ -372,7 +374,7 @@ sub search{
 	}
 	@words = (keys %words);
 	$self->{last_search_words} = \@words;
-	# ¸¡º÷¤ËÍøÍÑ¤·¤¿Ê¸»úÎó¤Î¥ê¥¹¥È
+	# æ¤œç´¢ã«åˆ©ç”¨ã—ãŸæ–‡å­—åˆ—ã®ãƒªã‚¹ãƒˆ
 	my (@strs, %strs);
 	foreach my $i (@{$args{selected}}){
 		next unless $self->{codes}[$i];
@@ -394,7 +396,7 @@ sub search{
 }
 
 #--------------------#
-#   ·ë²Ì¤Î¼è¤ê½Ð¤·   #
+#   çµæžœã®å–ã‚Šå‡ºã—   #
 
 sub last_search_words{
 	my $self = shift;
@@ -444,14 +446,14 @@ sub fetch_results{
 }
 
 #-----------------------------------------#
-#   1¤Ä¤ÎÊ¸½ñ¤ËÍ¿¤¨¤é¤ì¤¿¥³¡¼¥É¤Î¥ê¥¹¥È   #
+#   1ã¤ã®æ–‡æ›¸ã«ä¸Žãˆã‚‰ã‚ŒãŸã‚³ãƒ¼ãƒ‰ã®ãƒªã‚¹ãƒˆ   #
 
 sub check_a_doc{
 	my $self   = shift;
 	my $doc_id = shift;
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤ÎÆÉ¤ß½Ð¤·
-	my $text = kh_msg->get('codes')."\n"; # ¡¦¤³¤ÎÊ¸½ñ¤Ë¥Ò¥Ã¥È¤·¤¿¥³¡¼¥É ¡Ê¸½ºß³«¤¤¤Æ¤¤¤ë¥³¡¼¥Ç¥£¥ó¥°¡¦¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤ÎÃæ¤Ç¡Ë
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæžœã®èª­ã¿å‡ºã—
+	my $text = kh_msg->get('codes')."\n"; # ãƒ»ã“ã®æ–‡æ›¸ã«ãƒ’ãƒƒãƒˆã—ãŸã‚³ãƒ¼ãƒ‰ ï¼ˆç¾åœ¨é–‹ã„ã¦ã„ã‚‹ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ»ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¸­ã§ï¼‰
 	my (@words, %words, $n);
 	foreach my $i (@{$self->{codes}}){
 		unless ($i->res_table){next;}
@@ -469,11 +471,11 @@ sub check_a_doc{
 	}
 	@words = (keys %words);
 	unless ($n){
-		$text .= "    ".kh_msg->get('no_codes')."\n"; # ¡ô¥³¡¼¥ÉÌµ¤·
+		$text .= "    ".kh_msg->get('no_codes')."\n"; # ï¼ƒã‚³ãƒ¼ãƒ‰ç„¡ã—
 	}
 	$text .= "\n";
 	
-	# ¤¤¤¯¤ÄÌÜ¤Î¸¡º÷·ë²Ì¤«¤ò¥Á¥§¥Ã¥¯
+	# ã„ãã¤ç›®ã®æ¤œç´¢çµæžœã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	my ($rnum_all, $rnum);
 	if (
 		$rnum = mysql_exec->select("
@@ -486,7 +488,7 @@ sub check_a_doc{
 		$rnum_all = $self->total_hits;
 		$text .= kh_msg->get('gui_window::word_conc->currentDoc')."$rnum / $rnum_all,  ";
 	} else {
-		$text .= kh_msg->get('gui_window::doc_view->current_doc'); # ¡¦¸½ºßÉ½¼¨Ãæ¤ÎÊ¸½ñ¡§  
+		$text .= kh_msg->get('gui_window::doc_view->current_doc'); # ãƒ»ç¾åœ¨è¡¨ç¤ºä¸­ã®æ–‡æ›¸ï¼š  
 	}
 	
 	#$text = Encode::encode('cp932', $text);
@@ -495,7 +497,7 @@ sub check_a_doc{
 
 
 #--------------------------#
-#   Ê¸½ñ¤ÎÀèÆ¬ÉôÊ¬¤ò¼èÆÀ   #
+#   æ–‡æ›¸ã®å…ˆé ­éƒ¨åˆ†ã‚’å–å¾—   #
 
 sub get_doc_head{
 	my $self = shift;
@@ -524,7 +526,7 @@ sub get_doc_head{
 	
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	my $spacer = '';  # ¥¹¥Ú¡¼¥µ¡¼ÀßÄê
+	my $spacer = '';  # ã‚¹ãƒšãƒ¼ã‚µãƒ¼è¨­å®š
 	if (
 		   $::project_obj->morpho_analyzer eq 'chasen'
 		|| $::project_obj->morpho_analyzer eq 'mecab'
@@ -543,7 +545,7 @@ sub get_doc_head{
 		}
 	}
 	
-	# ÀÚ¤êÍî¤È¤·
+	# åˆ‡ã‚Šè½ã¨ã—
 	if (length($r) > $::config_obj->DocSrch_CutLength){
 		my $len = $::config_obj->DocSrch_CutLength;
 		if (
@@ -559,7 +561,7 @@ sub get_doc_head{
 			}
 		}
 		$r = substr($r,0,$len);
-		$r .= '¡Ä';
+		$r .= 'â€¦';
 	}
 	
 	return $r;

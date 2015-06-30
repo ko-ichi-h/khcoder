@@ -1,8 +1,9 @@
-# ¾å°Ì¸«½Ğ¤·¤Ë¤è¤ë»ØÄê
+# ä¸Šä½è¦‹å‡ºã—ã«ã‚ˆã‚‹æŒ‡å®š
 
 package kh_cod::a_code::atom::heading;
 use base qw(kh_cod::a_code::atom);
 use strict;
+use utf8;
 
 my $num = 0;
 sub reset{
@@ -43,9 +44,9 @@ sub ready{
 		$self->{raw} =~ s/""/"/g;
 	}
 
-	# ¥ë¡¼¥ë»ØÄê¤Î²ò¼á
+	# ãƒ«ãƒ¼ãƒ«æŒ‡å®šã®è§£é‡ˆ
 	my ($var, $val);
-	if ($self->raw =~ /<>(¸«½Ğ¤·|heading)([1-5])\-\->(.+)$/io){
+	if ($self->raw =~ /<>(è¦‹å‡ºã—|heading)([1-5])\-\->(.+)$/io){
 		$var = $2;
 		$val = $3;
 		
@@ -53,10 +54,14 @@ sub ready{
 		if (
 			   $::project_obj->morpho_analyzer eq 'chasen'
 			|| $::project_obj->morpho_analyzer eq 'mecab'
-		){                                        # chasen¡¦mecab¤ò»ÈÍÑ¤Î¾ì¹ç
-			# ¥¹¥Ú¡¼¥¹¤òÁ´³Ñ¤ËÊÑ´¹
-			$val =~ s/ /¡¡/g;
-		} else {                                  # ¤½¤ì°Ê³°¤Î¾ì¹ç
+		){                                        # chasenãƒ»mecabã‚’ä½¿ç”¨ã®å ´åˆ
+			# ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¨è§’ã«å¤‰æ›
+			$val =~ s/ /ã€€/g;
+		}
+		elsif ($::project_obj->morpho_analyzer_lang eq "cn" ){ # ä¸­å›½èªã®å ´åˆ
+			# ä½•ã‚‚ã—ãªã„
+		}
+		else {                                    # ãã‚Œä»¥å¤–ï¼ˆæ¬§ç±³èªï¼‰ã®å ´åˆ
 			# PTB Tokenize
 			my $class =
 				 "kh_morpho::perl::stemming::"
@@ -76,7 +81,7 @@ sub ready{
 	}
 	
 	
-	# ½¸·×Ã±°Ì¤¬Ì·½â¤·¤Ê¤¤¤«¤É¤¦¤«³ÎÇ§
+	# é›†è¨ˆå˜ä½ãŒçŸ›ç›¾ã—ãªã„ã‹ã©ã†ã‹ç¢ºèª
 	$self->{valid} = 1;
 	if ($tani =~ /h([1-5])/i){
 		if ($1 < $var){
@@ -85,7 +90,7 @@ sub ready{
 		}
 	}
 	
-	# ¾ò·ï¤Ë¹çÃ×¤¹¤ë¸«½Ğ¤·Ê¸¤Î¥ê¥¹¥È¤òºîÀ½
+	# æ¡ä»¶ã«åˆè‡´ã™ã‚‹è¦‹å‡ºã—æ–‡ã®ãƒªã‚¹ãƒˆã‚’ä½œè£½
 	my ($temp_s, $temp_c);
 	foreach my $i (1,2,3,4,5){
 		$temp_s .= "h"."$i"."_id,";
@@ -110,7 +115,7 @@ sub ready{
 			AND rowtxt = $val
 	",1);
 	
-	# Åö³º¤Î¸«½Ğ¤·Ê¸¤ò»ı¤Ä¥±¡¼¥¹¤ò¥ê¥¹¥È¥¢¥Ã¥×
+	# å½“è©²ã®è¦‹å‡ºã—æ–‡ã‚’æŒã¤ã‚±ãƒ¼ã‚¹ã‚’ãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—
 
 	my $table = "ct_$tani"."_heading_$num";
 	$self->{tables} = ["$table"];
@@ -140,7 +145,7 @@ sub ready{
 }
 
 #-------------------------------#
-#   ÍøÍÑ¤¹¤ëtmp table¤Î¥ê¥¹¥È   #
+#   åˆ©ç”¨ã™ã‚‹tmp tableã®ãƒªã‚¹ãƒˆ   #
 
 sub tables{
 	my $self = shift;
@@ -148,7 +153,7 @@ sub tables{
 }
 
 #----------------#
-#   ¿Æ¥Æ¡¼¥Ö¥ë   #
+#   è¦ªãƒ†ãƒ¼ãƒ–ãƒ«   #
 sub parent_table{
 	my $self = shift;
 	my $new  = shift;
@@ -161,7 +166,7 @@ sub parent_table{
 
 
 sub pattern{
-	return '^<>¸«½Ğ¤·[1-5]\-\->.+|^"<>¸«½Ğ¤·[1-5]\-\->.+"$|^<>heading[1-5]\-\->.+|^"<>heading[1-5]\-\->.+"$';
+	return '^<>è¦‹å‡ºã—[1-5]\-\->.+|^"<>è¦‹å‡ºã—[1-5]\-\->.+"$|^<>heading[1-5]\-\->.+|^"<>heading[1-5]\-\->.+"$';
 }
 sub name{
 	return 'heading';

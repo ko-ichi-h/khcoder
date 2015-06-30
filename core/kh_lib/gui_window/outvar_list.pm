@@ -1,20 +1,21 @@
 package gui_window::outvar_list;
 use base qw(gui_window);
 use strict;
+use utf8;
 use Tk;
 
 use gui_window::outvar_list::midashi;
 use mysql_outvar;
 
-# ¥é¥Ù¥ë¡¦¥¨¥ó¥È¥ê¡¼¤Ë¥Ğ¥¤¥ó¥É¤òÀßÄê
-# ¡ÖÊÄ¤¸¤ë¡×¤ò¡ÖÆÉ¤ß¹ş¤ß¡×¤Ë
+# ãƒ©ãƒ™ãƒ«ãƒ»ã‚¨ãƒ³ãƒˆãƒªãƒ¼ã«ãƒã‚¤ãƒ³ãƒ‰ã‚’è¨­å®š
+# ã€Œé–‰ã˜ã‚‹ã€ã‚’ã€Œèª­ã¿è¾¼ã¿ã€ã«
 
-my $z_space = Encode::decode('euc-jp', '¡¡');
+my $z_space = 'ã€€';
 
 my $headings = kh_msg->get('headings');
 
 #---------------------#
-#   Window ¥ª¡¼¥×¥ó   #
+#   Window ã‚ªãƒ¼ãƒ—ãƒ³   #
 #---------------------#
 
 sub _new{
@@ -22,7 +23,7 @@ sub _new{
 	
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
-	$wmw->title($self->gui_jt(kh_msg->get('win_title'))); # ³°ÉôÊÑ¿ô¤È¸«½Ğ¤·
+	$wmw->title($self->gui_jt(kh_msg->get('win_title'))); # å¤–éƒ¨å¤‰æ•°ã¨è¦‹å‡ºã—
 
 	my $fra4 = $wmw->Frame();
 	my $adj  = $wmw->Adjuster(-widget => $fra4, -side => 'left');
@@ -33,10 +34,10 @@ sub _new{
 	$fra5->pack(-side => 'left', -fill => 'both', -expand => 1, -padx => 2);
 
 	#----------------#
-	#   ÊÑ¿ô¥ê¥¹¥È   #
+	#   å¤‰æ•°ãƒªã‚¹ãƒˆ   #
 
 	$fra4->Label(
-		-text => kh_msg->get('vars'), # ¢£ÊÑ¿ô¥ê¥¹¥È
+		-text => kh_msg->get('vars'), # â– å¤‰æ•°ãƒªã‚¹ãƒˆ
 	)->pack(-anchor => 'nw');
 
 	my $lis_vr = $fra4->Scrolled(
@@ -59,13 +60,13 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 1);
 
-	$lis_vr->header('create',0,-text => kh_msg->get('h_unit')); # Ê¸½ñÃ±°Ì
-	$lis_vr->header('create',1,-text => kh_msg->get('h_name')); # ÊÑ¿ôÌ¾
+	$lis_vr->header('create',0,-text => kh_msg->get('h_unit')); # æ–‡æ›¸å˜ä½
+	$lis_vr->header('create',1,-text => kh_msg->get('h_name')); # å¤‰æ•°å
 
 	my $fra4_bts = $fra4->Frame()->pack(-fill => 'x', -expand => 0);
 
 	$fra4_bts->Button(
-		-text => kh_msg->get('del'), # ºï½ü
+		-text => kh_msg->get('del'), # å‰Šé™¤
 		-font => "TKFN",
 #		-width => 8,
 		-borderwidth => '1',
@@ -73,7 +74,7 @@ sub _new{
 	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	$fra4_bts->Button(
-		-text => kh_msg->get('export'), # ½ĞÎÏ
+		-text => kh_msg->get('export'), # å‡ºåŠ›
 		-font => "TKFN",
 #		-width => 8,
 		-borderwidth => '1',
@@ -81,7 +82,7 @@ sub _new{
 	)->pack(-padx => 2, -pady => 2, -anchor => 'nw', -side => 'left', -fill => 'y');
 
 	my $mb1 = $fra4_bts->Menubutton(
-		-text        => kh_msg->get('read'), # ¢¦ÆÉ¤ß¹ş¤ß
+		-text        => kh_msg->get('read'), # â–½èª­ã¿è¾¼ã¿
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -92,21 +93,21 @@ sub _new{
 
 	$mb1->command(
 		-command => sub {gui_window::outvar_read::csv->open;},
-		-label   => kh_msg->get('csv'), # CSV¥Õ¥¡¥¤¥ë
+		-label   => kh_msg->get('csv'), # CSVãƒ•ã‚¡ã‚¤ãƒ«
 	);
 
 	$mb1->command(
 		-command => sub {gui_window::outvar_read::tab->open;},
-		-label   => kh_msg->get('tabdel'), # ¥¿¥Ö¶èÀÚ¤ê¥Õ¥¡¥¤¥ë
+		-label   => kh_msg->get('tabdel'), # ã‚¿ãƒ–åŒºåˆ‡ã‚Šãƒ•ã‚¡ã‚¤ãƒ«
 	);
 
 	#----------------#
-	#   ÊÑ¿ô¤Î¾ÜºÙ   #
+	#   å¤‰æ•°ã®è©³ç´°   #
 
 	my $fra5lab = $fra5->Frame()->pack(-anchor => 'w');
 
 	$fra5lab->Label(
-		-text => kh_msg->get('values'), # ¢£ÃÍ¤È¥é¥Ù¥ë¡§
+		-text => kh_msg->get('values'), # â– å€¤ã¨ãƒ©ãƒ™ãƒ«ï¼š
 	)->pack(-side => 'left');
 
 	$self->{label_name} = $fra5lab->Label(
@@ -130,9 +131,9 @@ sub _new{
 		-height           => 10,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => kh_msg->get('h_value')); # ÃÍ
-	$lis->header('create',1,-text => kh_msg->get('h_label')); # ¥é¥Ù¥ë
-	$lis->header('create',2,-text => kh_msg->get('h_freq')); # ÅÙ¿ô
+	$lis->header('create',0,-text => kh_msg->get('h_value')); # å€¤
+	$lis->header('create',1,-text => kh_msg->get('h_label')); # ãƒ©ãƒ™ãƒ«
+	$lis->header('create',2,-text => kh_msg->get('h_freq')); # åº¦æ•°
 
 	$lis->bind("<Shift-Double-1>", sub{$self->v_words;});
 	$lis->bind("<Double-1>",       sub{$self->v_docs ;});
@@ -146,7 +147,7 @@ sub _new{
 	#my $fra5_btm = $fra5->Frame()->pack(-fill => 'x');
 
 	$self->{btn_save} = $fra5_ets->Button(
-		-text        => kh_msg->get('save'), # ¥é¥Ù¥ë¤òÊİÂ¸
+		-text        => kh_msg->get('save'), # ãƒ©ãƒ™ãƒ«ã‚’ä¿å­˜
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->_save;}
@@ -159,14 +160,14 @@ sub _new{
 	);
 
 	my $btn_doc = $fra5_bts->Button(
-		-text        => kh_msg->get('docs'), # Ê¸½ñ¸¡º÷
+		-text        => kh_msg->get('docs'), # æ–‡æ›¸æ¤œç´¢
 		-font        => "TKFN",
 		-borderwidth => '1',
 		-command     => sub {$self->v_docs;}
 	)->pack(-padx => 2, -pady => 2, -side => 'left', -fill => 'y');
 
 	my $mb = $fra5_bts->Menubutton(
-		-text        => kh_msg->get('words'), # ¢¦ÆÃÄ§¸ì
+		-text        => kh_msg->get('words'), # â–½ç‰¹å¾´èª
 		-tearoff     => 'no',
 		-relief      => 'raised',
 		-indicator   => 'no',
@@ -178,37 +179,37 @@ sub _new{
 
 	$mb->command(
 		-command => sub {$self->v_words;},
-		-label   => kh_msg->get('selected'), # ÁªÂò¤·¤¿ÃÍ
+		-label   => kh_msg->get('selected'), # é¸æŠã—ãŸå€¤
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('xls')},
-		-label   => kh_msg->get('catalogue_xls'), # °ìÍ÷¡ÊExcel·Á¼°¡Ë
+		-label   => kh_msg->get('catalogue_xls'), # ä¸€è¦§ï¼ˆExcelå½¢å¼ï¼‰
 	);
 
 	$mb->command(
 		-command => sub {$self->v_words_list('csv')},
-		-label   => kh_msg->get('catalogue_csv'), # °ìÍ÷¡ÊCSV·Á¼°¡Ë
+		-label   => kh_msg->get('catalogue_csv'), # ä¸€è¦§ï¼ˆCSVå½¢å¼ï¼‰
 	);
 
 	$wmw->Balloon()->attach(
 		$mb,
-		-balloonmsg => kh_msg->get('help_words'), # ÁªÂò¤·¤¿ÃÍ¤ò»ı¤ÄÊ¸½ñ¤ËÆÃÄ§Åª¤Ê¸ì¤òÃµº÷¤·¤Ş¤¹\n[Shift + ÃÍ¤ò¥À¥Ö¥ë¥¯¥ê¥Ã¥¯]
+		-balloonmsg => kh_msg->get('help_words'), # é¸æŠã—ãŸå€¤ã‚’æŒã¤æ–‡æ›¸ã«ç‰¹å¾´çš„ãªèªã‚’æ¢ç´¢ã—ã¾ã™\n[Shift + å€¤ã‚’ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯]
 		-font       => "TKFN"
 	);
 
 
 	$fra5_bts->Label(
-		-text => kh_msg->get('unit') # Ã±°Ì¡§
+		-text => kh_msg->get('unit') # å˜ä½ï¼š
 	)->pack(-side => 'left');
 
-	# ¥À¥ß¡¼¤òºî¤Ã¤Æ¤ª¤¯...
+	# ãƒ€ãƒŸãƒ¼ã‚’ä½œã£ã¦ãŠã...
 	$self->{opt_tani_fra} = $fra5_bts; #->Frame()->pack(-side => 'left');
 	$self->{opt_tani} = gui_widget::optmenu->open(
 		parent  => $fra5_bts,
 		pack    => {-side => 'left', -padx => 2, -pady => 2},
 		options => [
-			[kh_msg->gget('paragraph'), 'dan'], # ÃÊÍî
+			[kh_msg->gget('paragraph'), 'dan'], # æ®µè½
 			[kh_msg->gget('sentence'),  'bun']
 		],
 		variable => \$self->{calc_tani},
@@ -217,7 +218,7 @@ sub _new{
 
 	$wmw->Balloon()->attach(
 		$btn_doc,
-		-balloonmsg => kh_msg->get('help_docs'), # ÁªÂò¤·¤¿ÃÍ¤ò»ı¤ÄÊ¸½ñ¤ò¸¡º÷¤·¤Ş¤¹\n[ÃÍ¤ò¥À¥Ö¥ë¥¯¥ê¥Ã¥¯]
+		-balloonmsg => kh_msg->get('help_docs'), # é¸æŠã—ãŸå€¤ã‚’æŒã¤æ–‡æ›¸ã‚’æ¤œç´¢ã—ã¾ã™\n[å€¤ã‚’ãƒ€ãƒ–ãƒ«ã‚¯ãƒªãƒƒã‚¯]
 		-font       => "TKFN"
 	);
 
@@ -230,7 +231,7 @@ sub _new{
 }
 
 #----------------------------#
-#   ÃÍ´Ø·Ï¤Î¥Õ¥¡¥ó¥¯¥·¥ç¥ó   #
+#   å€¤é–¢ä¿‚ã®ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³   #
 #----------------------------#
 
 sub _save{
@@ -238,7 +239,7 @@ sub _save{
 
 	unless ($self->{selected_var_obj}){
 		$self->win_obj->messageBox(
-			-message => kh_msg->get('error_sel_a_var'), # ÊÑ¿ô¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó
+			-message => kh_msg->get('error_sel_a_var'), # å¤‰æ•°ãŒé¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“
 			-icon    => 'info',
 			-type    => 'Ok',
 			-title   => 'KH Coder'
@@ -246,23 +247,21 @@ sub _save{
 		return 0;
 	}
 
-	# ÊÑ¹¹¤µ¤ì¤¿¥é¥Ù¥ë¤òÊİÂ¸
+	# å¤‰æ›´ã•ã‚ŒãŸãƒ©ãƒ™ãƒ«ã‚’ä¿å­˜
 	foreach my $i (keys %{$self->{label}}){
 		if (
 			$self->{label}{$i}
 			eq
-			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc
+			$self->gui_jg($self->{entry}{$i}->get)
 		){
 			#print "skip: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
 			next;
 		}
 		$self->{selected_var_obj}->label_save(
 			$i,
-			Jcode->new( $self->gui_jg($self->{entry}{$i}->get), 'sjis' )->euc,
+			$self->gui_jg($self->{entry}{$i}->get),
 		);
-		$self->{label}{$i} = Jcode->new(
-			$self->gui_jg($self->{entry}{$i}->get), 'sjis'
-		)->euc;
+		$self->{label}{$i} = $self->gui_jg($self->{entry}{$i}->get);
 		#print "saved: ", $self->gui_jg($self->{entry}{$i}->get), "\n";
 	}
 	return $self;
@@ -277,7 +276,7 @@ sub v_docs{
 		return 0;
 	}
 	
-	# ¥¯¥¨¥ê¡¼ºîÀ®
+	# ã‚¯ã‚¨ãƒªãƒ¼ä½œæˆ
 	my @selected = $self->{list_val}->infoSelection;
 	unless(@selected){
 		$self->{list_val}->selectionSet(0);
@@ -290,7 +289,7 @@ sub v_docs{
 	$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
 	
-	# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤ÎÁàºî
+	# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ“ä½œ
 	my $win;
 	if ($::main_gui->if_opened('w_doc_search')){
 		$win = $::main_gui->get('w_doc_search');
@@ -320,7 +319,7 @@ sub v_words{
 		return 0;
 	}
 	
-	# ¥¯¥¨¥ê¡¼ºîÀ®
+	# ã‚¯ã‚¨ãƒªãƒ¼ä½œæˆ
 	my @selected = $self->{list_val}->infoSelection;
 	unless(@selected){
 		$self->{list_val}->selectionSet(0);
@@ -332,7 +331,7 @@ sub v_words{
 	$query =~ s/"/""/g;
 	$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 	
-	# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤ÎÁàºî
+	# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ“ä½œ
 	my $win;
 	if ($::main_gui->if_opened('w_doc_ass')){
 		$win = $::main_gui->get('w_doc_ass');
@@ -364,24 +363,24 @@ sub v_words_list{
 		return 0;
 	}
 	
-	#print "ok! 0\n";
+	print "ok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 	
-	# ¥é¥Ù¥ë¤ÎÊÑ¹¹ÆâÍÆ¤òÊİÂ¸¤·¤Æ¡¢³°ÉôÊÑ¿ô¥ª¥Ö¥¸¥§¥¯¥È¤òºÆÀ¸À®
+	# ãƒ©ãƒ™ãƒ«ã®å¤‰æ›´å†…å®¹ã‚’ä¿å­˜ã—ã¦ã€å¤–éƒ¨å¤‰æ•°ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿæˆ
 	$self->_save;
 	$self->{selected_var_obj} = mysql_outvar::a_var->new(
 		$self->{selected_var_obj}->{name}
 	);
 
-	# ÃÍ¤Î¥ê¥¹¥È
+	# å€¤ã®ãƒªã‚¹ãƒˆ
 	my $values;
 	foreach my $i (@{$self->{selected_var_obj}->print_values}){
-		if ( $i eq '.' || $i =~ /missing/i || $i eq '·çÂ»ÃÍ' ){
+		if ( $i eq '.' || $i =~ /missing/i || $i eq 'æ¬ æå€¤' ){
 			next;
 		}
 		push @{$values}, $i;
 	}
 
-	# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤Î½àÈ÷
+	# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æº–å‚™
 	my $win;
 	if ($::main_gui->if_opened('w_doc_ass')){
 		$win = $::main_gui->get('w_doc_ass');
@@ -390,17 +389,17 @@ sub v_words_list{
 	}
 
 	my $d;
-	# ÃÍ¤´¤È¤ËÆÃÄ§Åª¤Ê¸ì¤ò¼èÆÀ
+	# å€¤ã”ã¨ã«ç‰¹å¾´çš„ãªèªã‚’å–å¾—
 	foreach my $i (@{$values}){
-		# ¥¯¥¨¥ê¡¼ºîÀ®
+		# ã‚¯ã‚¨ãƒªãƒ¼ä½œæˆ
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
 
-		$query = $self->gui_jchar($query,'euc');
+		$query = $self->gui_jchar($query);
 
 		$query =~ s/"/""/g;
 		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;
 
-		# ¥ê¥â¡¼¥È¥¦¥£¥ó¥É¥¦¤ÎÁàºî
+		# ãƒªãƒ¢ãƒ¼ãƒˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®æ“ä½œ
 		$win->{tani_obj}->{raw_opt} = $self->gui_jg( $self->{calc_tani} );
 		$win->{tani_obj}->mb_refresh;
 		
@@ -414,28 +413,16 @@ sub v_words_list{
 		$win->win_obj->focus;
 		$win->search;
 		
-		# ÃÍ¤Î¼èÆÀ
+		# å€¤ã®å–å¾—
 		my $n = 0;
 		while ($win->{rlist}->info('exists', $n)){
 			if ( $win->{rlist}->itemExists($n, 1) ){
 				$d->{$i}[$n][0] = 
-					Jcode->new(
-						$self->gui_jg(
-								$win->{rlist}->itemCget($n, 1, -text)
-						),
-						'sjis'
-					)->euc
-				;
+					$self->gui_jg($win->{rlist}->itemCget($n, 1, -text));
 			}
 			if ( $win->{rlist}->itemExists($n, 5) ){
 				$d->{$i}[$n][1] = 
-					Jcode->new(
-						$self->gui_jg(
-							$win->{rlist}->itemCget($n, 5, -text)
-						),
-						'sjis'
-					)->euc
-				;
+					$self->gui_jg($win->{rlist}->itemCget($n, 5, -text));
 			}
 			++$n;
 			last if $n >= 10;
@@ -451,7 +438,7 @@ sub _write_csv{
 	my $values = shift;
 	my $d      = shift;
 
-	# ½ĞÎÏÍÑ¤ÎÀ°Íı
+	# å‡ºåŠ›ç”¨ã®æ•´ç†
 	my $b_row_max = @{$values};
 	$b_row_max /= 4;
 	$b_row_max = int($b_row_max) + 1 if $b_row_max > int($b_row_max);
@@ -459,12 +446,12 @@ sub _write_csv{
 	my $t = '';
 	for (my $b_row = 0; $b_row < $b_row_max; ++$b_row){
 		my @c = ($b_row * 4, $b_row * 4 + 1, $b_row * 4 + 2, $b_row * 4 + 3);
-		foreach my $i (@c){                                 # ¥Ø¥Ã¥À
+		foreach my $i (@c){                                 # ãƒ˜ãƒƒãƒ€
 			$t .= kh_csv->value_conv($values->[$i]).",,";
 		}
 		chop $t;
 		$t .= "\n";
-		for (my $n = 0; $n <= 10; ++$n){                    # Ãæ¿È
+		for (my $n = 0; $n <= 10; ++$n){                    # ä¸­èº«
 			foreach my $i (@c){
 				$t .= kh_csv->value_conv($d->{$values->[$i]}[$n][0]).",";
 				$t .= "$d->{$values->[$i]}[$n][1],";
@@ -474,11 +461,12 @@ sub _write_csv{
 		}
 	}
 	
-	$t = Jcode->new($t,'euc')->sjis if $::config_obj->os eq 'win32';
+	#$t = Jcode->new($t,'euc')->sjis if $::config_obj->os eq 'win32';
 	
-	# ¥Õ¥¡¥¤¥ë¤Ø½ĞÎÏ
+	# ãƒ•ã‚¡ã‚¤ãƒ«ã¸å‡ºåŠ›
+	use File::BOM;
 	my $f = $::project_obj->file_TempCSV;
-	open (TEMPCSV,">$f") or
+	open (TEMPCSV, '>:encoding(utf8):via(File::BOM)', $f) or
 		gui_errormsg->open(
 			type => 'file',
 			file => $f
@@ -499,15 +487,12 @@ sub _write_xls{
 
 	my $f    = $::project_obj->file_TempExcel;
 	my $workbook  = Spreadsheet::WriteExcel->new($f);
-	my $worksheet = $workbook->add_worksheet(
-		utf8( Jcode->new('¥·¡¼¥È1')->utf8 )->utf16,
-		1
-	);
+	my $worksheet = $workbook->add_worksheet('ã‚·ãƒ¼ãƒˆ1',1);
 	$worksheet->hide_gridlines(1);
 
 	my $font = '';
 	if ($] > 5.008){
-		$font = kh_msg->get('mspgoth'); # £Í£Ó £Ğ¥´¥·¥Ã¥¯
+		$font = kh_msg->get('mspgoth'); # ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯
 	} else {
 		$font = 'MS PGothic';
 	}
@@ -517,33 +502,33 @@ sub _write_xls{
 		valign     => 'vcenter',
 		align      => 'center',
 	);
-	my $format_n = $workbook->add_format(         # ¿ôÃÍ
+	my $format_n = $workbook->add_format(         # æ•°å€¤
 		num_format => '.000',
 		size       => 9,
 		font       => $font,
 		align      => 'right',
 	);
-	my $format_nl = $workbook->add_format(        # ¿ôÃÍ¡¦²¼¤Ë·ÓÀş
+	my $format_nl = $workbook->add_format(        # æ•°å€¤ãƒ»ä¸‹ã«ç½«ç·š
 		num_format => '.000',
 		size       => 9,
 		font       => $font,
 		align      => 'right',
 		bottom     => 1,
 	);
-	my $format_c = $workbook->add_format(         # Ê¸»úÎó
+	my $format_c = $workbook->add_format(         # æ–‡å­—åˆ—
 		font       => $font,
 		size       => 9,
 		align      => 'left',
 		num_format => '@'
 	);
-	my $format_cl = $workbook->add_format(        # Ê¸»úÎó¡¦²¼¤Ë·ÓÀş
+	my $format_cl = $workbook->add_format(        # æ–‡å­—åˆ—ãƒ»ä¸‹ã«ç½«ç·š
 		font       => $font,
 		size       => 9,
 		align      => 'left',
 		bottom     => 1,
 		num_format => '@'
 	);
-	my $format_l = $workbook->add_format(         # ¾å¤Ë·ÓÀş
+	my $format_l = $workbook->add_format(         # ä¸Šã«ç½«ç·š
 		font       => $font,
 		size       => 9,
 		top        => 1,
@@ -556,7 +541,7 @@ sub _write_xls{
 	foreach my $i (@{$values}){
 		my $row = $big_row * 11 + 1;
 		
-		# ¥Ø¥Ã¥À
+		# ãƒ˜ãƒƒãƒ€
 		my $format_m = $workbook->add_format(
 			font          => $font,
 			size          => 9,
@@ -569,7 +554,7 @@ sub _write_xls{
 		$worksheet->write_unicode(
 			$row,
 			$col,
-			utf8( Jcode->new($i,'euc')->utf8 )->utf16,
+			utf8( $i )->utf16,
 			$format_m
 		);
 		$worksheet->write_blank(
@@ -585,14 +570,14 @@ sub _write_xls{
 		
 		++$row;
 		
-		# ¥Ç¡¼¥¿
+		# ãƒ‡ãƒ¼ã‚¿
 		my $row_cu = 0;
 		foreach my $h (@{$d->{$i}}){
-			if ($row_cu == 9 && $n + 5 > @{$values}){       # ²¼¤Ë·ÓÀş¤¢¤ê
+			if ($row_cu == 9 && $n + 5 > @{$values}){       # ä¸‹ã«ç½«ç·šã‚ã‚Š
 				$worksheet->write_unicode(
 					$row,
 					$col,
-					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					utf8( $h->[0] )->utf16,
 					$format_cl
 				);
 				$worksheet->write_number(
@@ -601,11 +586,11 @@ sub _write_xls{
 					$h->[1],
 					$format_nl
 				);
-			} else {                                        # ·ÓÀşÌµ¤·
+			} else {                                        # ç½«ç·šç„¡ã—
 				$worksheet->write_unicode(
 					$row,
 					$col,
-					utf8( Jcode->new($h->[0],'euc')->utf8 )->utf16,
+					utf8( $h->[0] )->utf16,
 					$format_c
 				);
 				$worksheet->write_number(
@@ -619,7 +604,7 @@ sub _write_xls{
 			++$row_cu;
 		}
 		
-		# ²¼Àş(1)
+		# ä¸‹ç·š(1)
 		if ( $col - 1 > 0 && $n + 5 > @{$values} ){
 			$worksheet->write_blank(
 				$row - 1,
@@ -628,7 +613,7 @@ sub _write_xls{
 			);
 		}
 		
-		# °ÌÃÖÄ´À°
+		# ä½ç½®èª¿æ•´
 		$col += 3;
 		if ($col > 10){
 			$col = 0;
@@ -637,7 +622,7 @@ sub _write_xls{
 		++$n;
 	}
 
-	# ²¼Àş(2)
+	# ä¸‹ç·š(2)
 	if ($col > 0 && $col - 1 < 9 && $big_row > 0){
 		$col -= 1;
 		while ($col <= 10){
@@ -659,7 +644,7 @@ sub _error_no_var{
 	my $self = shift;
 
 	$self->win_obj->messageBox(
-		-message => kh_msg->get('error_sel_a_vv'), # ÊÑ¿ô¤Ş¤¿¤Ï¸«½Ğ¤·¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+		-message => kh_msg->get('error_sel_a_vv'), # å¤‰æ•°ã¾ãŸã¯è¦‹å‡ºã—ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚
 		-icon    => 'info',
 		-type    => 'Ok',
 		-title   => 'KH Coder'
@@ -668,7 +653,7 @@ sub _error_no_var{
 }
 
 #----------------------------#
-#   ÊÑ¿ô·Ï¤Î¥Õ¥¡¥ó¥¯¥·¥ç¥ó   #
+#   å¤‰æ•°ç³»ã®ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³   #
 #----------------------------#
 
 sub _fill{
@@ -678,7 +663,7 @@ sub _fill{
 	$self->{list}->delete('all');
 	$self->{var_list} = undef;
 
-	# ¸«½Ğ¤·
+	# è¦‹å‡ºã—
 	foreach my $i ('h1','h2','h3','h4','h5'){
 		if (
 			mysql_exec->select(
@@ -690,14 +675,14 @@ sub _fill{
 			$self->{list}->itemCreate(
 				$n,
 				1,
-				-text => $headings.substr($i,1,1), # ¸«½Ğ¤·
+				-text => $headings.substr($i,1,1), # è¦‹å‡ºã—
 			);
 			push @{$self->{var_list}}, [$i, $headings.substr($i,1,1)];
 			++$n;
 		}
 	}
 	
-	# ³°ÉôÊÑ¿ô
+	# å¤–éƒ¨å¤‰æ•°
 	my $h = mysql_outvar->get_list;
 	foreach my $i (@{$h}){
 		if ($i->[0] eq 'dan'){$i->[0] = kh_msg->gget('paragraph');}
@@ -722,7 +707,7 @@ sub _delete{
 	my $self = shift;
 	my %args = @_;
 	
-	# ÁªÂò³ÎÇ§
+	# é¸æŠç¢ºèª
 	my @selection = $self->{list}->info('selection');
 	unless (@selection){
 		gui_errormsg->open(
@@ -732,11 +717,11 @@ sub _delete{
 		return 0;
 	}
 	
-	# ¸«½Ğ¤·¤¬º®¤¶¤Ã¤Æ¤¤¤Ê¤¤¤«¥Á¥§¥Ã¥¯¡£
+	# è¦‹å‡ºã—ãŒæ··ã–ã£ã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯ã€‚
 	foreach my $i (@selection){
 		if ($self->{var_list}[$i][1] =~ /^$headings[1-5]$/){
 			$self->win_obj->messageBox(
-				-message => kh_msg->get('error_hd1'), # ¸½ºß¤Î¤È¤³¤í¡¢¤³¤Î¥³¥Ş¥ó¥É¤Ç¸«½Ğ¤·¤òºï½ü¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£\nÊ¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¤òÄ¾ÀÜ½¤Àµ¤·¤Æ¤¯¤À¤µ¤¤¡£
+				-message => kh_msg->get('error_hd1'), # ç¾åœ¨ã®ã¨ã“ã‚ã€ã“ã®ã‚³ãƒãƒ³ãƒ‰ã§è¦‹å‡ºã—ã‚’å‰Šé™¤ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚\nåˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç›´æ¥ä¿®æ­£ã—ã¦ãã ã•ã„ã€‚
 				-icon    => 'info',
 				-type    => 'Ok',
 				-title   => 'KH Coder'
@@ -745,25 +730,25 @@ sub _delete{
 		}
 	}
 	
-	# ËÜÅö¤Ëºï½ü¤¹¤ë¤Î¤«³ÎÇ§
+	# æœ¬å½“ã«å‰Šé™¤ã™ã‚‹ã®ã‹ç¢ºèª
 	unless ( $args{no_conf} ){
 		my $confirm = $self->{win_obj}->messageBox(
 			-title   => 'KH Coder',
 			-type    => 'OKCancel',
 			#-default => 'OK',
 			-icon    => 'question',
-			-message => kh_msg->get('del_ok'), # ÁªÂò¤µ¤ì¤Æ¤¤¤ëÊÑ¿ô¤òºï½ü¤·¤Ş¤¹¤«¡©
+			-message => kh_msg->get('del_ok'), # é¸æŠã•ã‚Œã¦ã„ã‚‹å¤‰æ•°ã‚’å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ
 		);
 		unless ($confirm =~ /^OK$/i){
 			return 0;
 		}
 	}
 	
-	# ´û¤Ë¾ÜºÙWindow¤¬³«¤¤¤Æ¤¤¤ë¾ì¹ç¤Ï¤¤¤Ã¤¿¤óÊÄ¤¸¤ë
+	# æ—¢ã«è©³ç´°WindowãŒé–‹ã„ã¦ã„ã‚‹å ´åˆã¯ã„ã£ãŸã‚“é–‰ã˜ã‚‹
 	#$::main_gui->get('w_outvar_detail')->close
 	#	if $::main_gui->if_opened('w_outvar_detail');
 	
-	# ºï½ü¼Â¹Ô
+	# å‰Šé™¤å®Ÿè¡Œ
 	foreach my $i (@selection){
 		mysql_outvar->delete(
 			tani => $self->{var_list}[$i][0],
@@ -782,7 +767,7 @@ sub _delete{
 sub _export{
 	my $self = shift;
 	
-	# ÁªÂò³ÎÇ§
+	# é¸æŠç¢ºèª
 	my @selection = $self->{list}->info('selection');
 	unless (@selection){
 		gui_errormsg->open(
@@ -800,13 +785,13 @@ sub _export{
 		unless ($last eq $self->{var_list}[$i][0]){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('error_units'), # ½¸·×Ã±°Ì¤Î°Û¤Ê¤ëÊÑ¿ô·²¤ò°ìÅÙ¤ËÊİÂ¸¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£
+				msg  => kh_msg->get('error_units'), # é›†è¨ˆå˜ä½ã®ç•°ãªã‚‹å¤‰æ•°ç¾¤ã‚’ä¸€åº¦ã«ä¿å­˜ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚
 			);
 			return 0;
 		}
 		if ($self->{var_list}[$i][1] =~ /^$headings[1-5]$/){
 			$self->win_obj->messageBox(
-				-message => kh_msg->get('error_hd2'), # ¸½ºß¤Î¤È¤³¤í¡¢¤³¤Î¥³¥Ş¥ó¥É¤Ç¸«½Ğ¤·¤ò½ĞÎÏ¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£\n¡Ö¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë¤ÎÊÑ·Á¡×¥á¥Ë¥å¡¼¤ò¤´ÍøÍÑ¤¯¤À¤µ¤¤¡£
+				-message => kh_msg->get('error_hd2'), # ç¾åœ¨ã®ã¨ã“ã‚ã€ã“ã®ã‚³ãƒãƒ³ãƒ‰ã§è¦‹å‡ºã—ã‚’å‡ºåŠ›ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚\nã€Œãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®å¤‰å½¢ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ã”åˆ©ç”¨ãã ã•ã„ã€‚
 				-icon    => 'info',
 				-type    => 'Ok',
 				-title   => 'KH Coder'
@@ -815,7 +800,7 @@ sub _export{
 		}
 	}
 
-	# ÊİÂ¸Àè¥Õ¥¡¥¤¥ëÌ¾
+	# ä¿å­˜å…ˆãƒ•ã‚¡ã‚¤ãƒ«å
 	my @types = (
 		['CSV Files',[qw/.csv/] ],
 		["All files",'*']
@@ -824,7 +809,7 @@ sub _export{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt(kh_msg->get('saving')), # ³°ÉôÊÑ¿ô¡§Ì¾Á°¤òÉÕ¤±¤ÆÊİÂ¸
+			$self->gui_jt(kh_msg->get('saving')), # å¤–éƒ¨å¤‰æ•°ï¼šåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	unless ($path){
@@ -842,8 +827,8 @@ sub _export{
 	return 1;
 }
 
-# ¤¢¤Ş¤êÂ®¤¤¥Ú¡¼¥¹¤Çgui_widget::optmenu¤Îdestroy¤ò¹Ô¤¦¤È¥¨¥é¡¼¤Ë¤Ê¤ë¡©¤Î¤Ç¡¢
-# ¾¯¤·ÂÔ¤Ã¤Æ¤ß¤Æ¡¢ÁªÂò¤¬ÊÑ¤ï¤Ã¤Æ¤¤¤Ê¤«¤Ã¤¿¾ì¹ç¤Î¤ß¼Â¹Ô¤¹¤ë¡Êx 3¡Ë
+# ã‚ã¾ã‚Šé€Ÿã„ãƒšãƒ¼ã‚¹ã§gui_widget::optmenuã®destroyã‚’è¡Œã†ã¨ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹ï¼Ÿã®ã§ã€
+# å°‘ã—å¾…ã£ã¦ã¿ã¦ã€é¸æŠãŒå¤‰ã‚ã£ã¦ã„ãªã‹ã£ãŸå ´åˆã®ã¿å®Ÿè¡Œã™ã‚‹ï¼ˆx 3ï¼‰
 
 sub _delayed_open_var{
 	my $self = shift;
@@ -933,14 +918,14 @@ sub _open_var{
 
 	#print "go!\n";
 
-	# ÊÑ¿ôÌ¾¤ÎÉ½¼¨
+	# å¤‰æ•°åã®è¡¨ç¤º
 	$self->{label_name}->configure(
 		-text => $self->gui_jchar(
 			$self->{var_list}[$selection[0]][1]
 		)
 	);
 
-	# ÃÍ¤È¥é¥Ù¥ë¤ÎÉ½¼¨
+	# å€¤ã¨ãƒ©ãƒ™ãƒ«ã®è¡¨ç¤º
 	$self->{label} = undef;
 	$self->{list_val}->delete('all');
 	$self->{selected_var_obj} = mysql_outvar::a_var->new($self->{var_list}[$selection[0]][1]);
@@ -1006,10 +991,10 @@ sub _open_var{
 	gui_hlist->update4scroll($self->{list_val});
 
 	#$self->{label_num}->configure(
-	#	-text => $self->gui_jchar("ÃÍ¤Î¼ïÎà¡§ $n")
+	#	-text => $self->gui_jchar("å€¤ã®ç¨®é¡ï¼š $n")
 	#);
 
-	# ½¸·×Ã±°Ì
+	# é›†è¨ˆå˜ä½
 	my @tanis   = ();
 	if ($self->{opt_tani}){
 		$self->{opt_tani}->destroy;
@@ -1017,8 +1002,8 @@ sub _open_var{
 	}
 
 	my %tani_name = (
-		"bun" => kh_msg->gget('sentence'),# "Ê¸",
-		"dan" => kh_msg->gget('paragraph'),# "ÃÊÍî",
+		"bun" => kh_msg->gget('sentence'),# "æ–‡",
+		"dan" => kh_msg->gget('paragraph'),# "æ®µè½",
 		"h5"  => "H5",
 		"h4"  => "H4",
 		"h3"  => "H3",
@@ -1076,7 +1061,7 @@ sub _clear_values{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 

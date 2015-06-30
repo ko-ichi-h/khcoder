@@ -176,6 +176,7 @@ sub _run_morpho{
 			print $fh_out "$1\t$1\t$1\tTAG\t\tTAG\n";
 			$self->_tokenize_stem($2, $fh_out);
 			print $fh_out "$3\t$3\t$3\tTAG\t\tTAG\n";
+			print $fh_out "EOS\n";
 		} else {
 			$self->_sentence($t, $fh_out);
 		}
@@ -197,7 +198,7 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
-	$t = Text::Unidecode::unidecode($t);
+	#$t = Text::Unidecode::unidecode($t);
 	
 	print $fh "$t\t$t\t$t\tTAG\t\tTAG\n";
 
