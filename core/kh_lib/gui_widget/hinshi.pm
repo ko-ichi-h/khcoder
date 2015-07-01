@@ -1,9 +1,8 @@
 package gui_widget::hinshi;
 use base qw(gui_widget);
 use strict;
+use utf8;
 use Tk;
-use Jcode;
-
 
 sub _new{
 	my $self = shift;
@@ -52,8 +51,8 @@ sub _new{
 	while (my $i = $sth->fetch){
 		if (
 			   $i->[0] =~ /B$/
-			|| $i->[0] eq 'ÈÝÄê½õÆ°»ì'
-			|| $i->[0] eq '·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë'
+			|| $i->[0] eq 'å¦å®šåŠ©å‹•è©ž'
+			|| $i->[0] eq 'å½¢å®¹è©žï¼ˆéžè‡ªç«‹ï¼‰'
 		){
 			$default{$i->[1]} = 0;
 		} else {
@@ -155,7 +154,7 @@ sub selection_set{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub hlist{
 	my $self = shift;

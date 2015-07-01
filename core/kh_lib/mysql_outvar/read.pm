@@ -33,17 +33,14 @@ sub read{
 		$icode = 'sjis' if $icode eq 'shiftjis';
 		$icode = $char_code{$icode} if $char_code{$icode};
 	} else {
-		$icode = kh_jchar->check_code_en($self->{file},1);
+		$icode = kh_jchar->check_code_en($self->{file});
 	}
 	
 	# ファイルをメモリ上に読み込み
 	my @data;
 	use File::BOM;
-	File::BOM::open_bom ('CSVD',$self->{file},":encoding($icode)") or 
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => $self->{file},
-		);
+	File::BOM::open_bom ('CSVD',$self->{file},":encoding($icode)");
+
 	while (<CSVD>){
 		chomp;
 		$_ =~ tr/　/ /;
@@ -51,7 +48,12 @@ sub read{
 		push @data, $line;
 	}
 	close (CSVD);
-	
+
+	gui_errormsg->open(
+		type    => 'file',
+		thefile => $self->{file},
+	) unless @data;
+
 	&save(
 		data        => \@data,
 		tani        => $self->{tani},
