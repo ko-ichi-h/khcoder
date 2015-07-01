@@ -34,6 +34,15 @@ sub do{
 		$cases{$i} = $num1;
 	}
 
+	$cases{bun} = mysql_exec->select(
+		"select count(*) from bun",
+		1
+	)->hundle->fetch->[0];
+	$cases{dan} = mysql_exec->select(
+		"select count(*) from dan",
+		1
+	)->hundle->fetch->[0];
+
 	# variables
 	my $vars = mysql_outvar->get_list;
 	foreach my $i (@{$vars}){
