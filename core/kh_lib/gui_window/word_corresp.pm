@@ -640,6 +640,7 @@ sub calc{
 			my $h = mysql_exec->select($sql,1)->hundle;
 			my $n = 0;
 			while (my $i = $h->fetch){
+				$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
 				if ( length( $var_obj->{labels}{$i->[0]} ) ){
 					my $t = $var_obj->{labels}{$i->[0]};
 					$t =~ s/"/ /g;

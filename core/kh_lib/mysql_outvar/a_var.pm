@@ -1,5 +1,6 @@
 package mysql_outvar::a_var;
 use strict;
+use utf8;
 use mysql_exec;
 
 sub new{
@@ -9,7 +10,7 @@ sub new{
 	$self->{id}   = shift;
 	bless $self, $class;
 	
-	if (defined($self->{name}) && length($self->{name}) ){# ÊÑ¿ôÌ¾¤«¤éÂ¾¤Î¾ğÊó¤ò¼èÆÀ
+	if (defined($self->{name}) && length($self->{name}) ){# å¤‰æ•°åã‹ã‚‰ä»–ã®æƒ…å ±ã‚’å–å¾—
 		my $i = mysql_exec->select("
 			SELECT tab, col, tani, id
 			FROM outvar
@@ -22,7 +23,7 @@ sub new{
 			$self->{tani}   = $i->[2];
 			$self->{id}     = $i->[3];
 		}
-	} else {                                      # ÊÑ¿ôID¤«¤éÂ¾¤Î¾ğÊó¤ò¼èÆÀ
+	} else {                                      # å¤‰æ•°IDã‹ã‚‰ä»–ã®æƒ…å ±ã‚’å–å¾—
 		my $i = mysql_exec->select("
 			SELECT tab, col, tani, name
 			FROM outvar
@@ -79,30 +80,34 @@ sub copy {
 	return 1;
 }
 
-# ÃÍ¤Î¥ê¥¹¥È¤òÊÖ¤¹¡ÊÀ¸¤ÎÃÍ¤òÊÖ¤¹¡Ë
+# å€¤ã®ãƒªã‚¹ãƒˆã‚’è¿”ã™ï¼ˆç”Ÿã®å€¤ã‚’è¿”ã™ï¼‰
 sub values{
 	my $self = shift;
 
 	my @v = ();
 	my $names = '';
 
-	# ÃÍ¥ê¥¹¥È¤Î¼èÆÀ
+	# å€¤ãƒªã‚¹ãƒˆã®å–å¾—
 	my $f = mysql_exec->select("
 		SELECT $self->{column}
 		FROM   $self->{table}
 		GROUP BY $self->{column}
 	",1)->hundle;
 	while (my $i = $f->fetch){
+		my $chk0 = utf8::is_utf8($i->[0]);
+		$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
 		push @v, $i->[0];
 		$names .= $i->[0];
 	}
 
-	# ¥½¡¼¥È
+	# ã‚½ãƒ¼ãƒˆ
+	my $chk1 = utf8::is_utf8($v[1]);
 	if ($names =~ /\A[0-9]+\Z/){
 		@v = sort {$a <=> $b} @v;
 	} else {
 		@v = sort @v;
 	}
+	my $chk2 = utf8::is_utf8($v[1]);
 
 	return \@v;
 }
@@ -121,11 +126,11 @@ sub n{
 	return $n;
 }
 
-# ÃÍ¤Î¥ê¥¹¥È¤òÊÖ¤¹¡ÊÃÍ¥é¥Ù¥ë¤¬¤¢¤ë¾ì¹ç¤Ï¥é¥Ù¥ë¤òÊÖ¤¹¡Ë
+# å€¤ã®ãƒªã‚¹ãƒˆã‚’è¿”ã™ï¼ˆå€¤ãƒ©ãƒ™ãƒ«ãŒã‚ã‚‹å ´åˆã¯ãƒ©ãƒ™ãƒ«ã‚’è¿”ã™ï¼‰
 sub print_values{
 	my $self = shift;
 	
-	# ¥ê¥¹¥È¤Î¼èÆÀ
+	# ãƒªã‚¹ãƒˆã®å–å¾—
 	my $raw_values = $self->values;
 	my @v = ();
 	my $names = '';
@@ -136,8 +141,8 @@ sub print_values{
 		$names_v .= $i;
 	}
 	
-	# ¥½¡¼¥È
-	unless ( $names_v =~ /\A[0-9]*\.*[0-9]*\Z/ ) {# ÃÍ¤¬¿ôÃÍ¤Î¤ß¤Ê¤éÃÍ¤Ç¥½¡¼¥È
+	# ã‚½ãƒ¼ãƒˆ
+	unless ( $names_v =~ /\A[0-9]*\.*[0-9]*\Z/ ) {# å€¤ãŒæ•°å€¤ã®ã¿ãªã‚‰å€¤ã§ã‚½ãƒ¼ãƒˆ
 		if ($names =~ /\A[0-9]+\Z/){
 			@v = sort {$a <=> $b} @v;
 		} else {
@@ -150,7 +155,7 @@ sub print_values{
 
 
 
-# ÃÍ¥é¥Ù¥ë¤â¤·¤¯¤ÏÃÍ¤òÍ¿¤¨¤é¤ì¤¿»ş¤Ë¡¢ÃÍ¤òÊÖ¤¹
+# å€¤ãƒ©ãƒ™ãƒ«ã‚‚ã—ãã¯å€¤ã‚’ä¸ãˆã‚‰ã‚ŒãŸæ™‚ã«ã€å€¤ã‚’è¿”ã™
 sub real_val{
 	my $self = shift;
 	my $val  = shift;
@@ -167,7 +172,7 @@ sub real_val{
 	return $val;
 }
 
-# ÃÍ¥é¥Ù¥ë¤â¤·¤¯¤ÏÃÍ¤òÍ¿¤¨¤é¤ì¤¿»ş¤Ë¡¢ÃÍID¡Ê²¿ÈÖÌÜ¤ÎÃÍ¤«¤ò¼¨¤¹ÈÖ¹æ¡Ë¤òÊÖ¤¹
+# å€¤ãƒ©ãƒ™ãƒ«ã‚‚ã—ãã¯å€¤ã‚’ä¸ãˆã‚‰ã‚ŒãŸæ™‚ã«ã€å€¤IDï¼ˆä½•ç•ªç›®ã®å€¤ã‹ã‚’ç¤ºã™ç•ªå·ï¼‰ã‚’è¿”ã™
 sub real_val_id{
 	my $self = shift;
 	my $val  = shift;
@@ -194,7 +199,7 @@ sub real_val_id{
 	return $n;
 }
 
-# ÆÃÄê¤ÎÊ¸½ñ¤ËÍ¿¤¨¤é¤ì¤¿ÃÍ¤òÊÖ¤¹
+# ç‰¹å®šã®æ–‡æ›¸ã«ä¸ãˆã‚‰ã‚ŒãŸå€¤ã‚’è¿”ã™
 sub doc_val{
 	my $self = shift;
 	my %args = @_;
@@ -217,8 +222,8 @@ sub doc_val{
 		if ($doc_id->selected_rows){
 			$doc_id = $doc_id->hundle->fetch->[0];
 		} else {
-			# ÃÊÍîÃ±°Ì¤ÎÊÑ¿ô¤ÎÃÍ¤ò¡¢Ê¸Ã±°Ì¤Ç¸«¤è¤¦¤È¤¹¤ë¾ì¹ç¡¢
-			# ¸«½Ğ¤·Ê¸¤Ç¤Ï¡Ö³ºÅö¤Ê¤·¡Êundef¡Ë¡×¤Ë
+			# æ®µè½å˜ä½ã®å¤‰æ•°ã®å€¤ã‚’ã€æ–‡å˜ä½ã§è¦‹ã‚ˆã†ã¨ã™ã‚‹å ´åˆã€
+			# è¦‹å‡ºã—æ–‡ã§ã¯ã€Œè©²å½“ãªã—ï¼ˆundefï¼‰ã€ã«
 			return undef;
 		}
 		
@@ -233,7 +238,7 @@ sub doc_val{
 	",1)->hundle->fetch->[0];
 }
 
-# ÃÍ¤òÍ¿¤¨¤é¤ì¤¿»ş¤Ë¡¢ÃÍ¥é¥Ù¥ë¤«ÃÍ¤òÊÖ¤¹
+# å€¤ã‚’ä¸ãˆã‚‰ã‚ŒãŸæ™‚ã«ã€å€¤ãƒ©ãƒ™ãƒ«ã‹å€¤ã‚’è¿”ã™
 sub print_val{
 	my $self = shift;
 	if ($self->{labels}{$_[0]}){
@@ -243,13 +248,13 @@ sub print_val{
 	}
 }
 
-# ÃÍ¥é¥Ù¥ë¡ÜÃ±½¸¤ÎÉ½¤òÊÖ¤¹
+# å€¤ãƒ©ãƒ™ãƒ«ï¼‹å˜é›†ã®è¡¨ã‚’è¿”ã™
 sub detail_tab{
 	my $self = shift;
 	
 	my $names = '';
 	
-	# ÅÙ¿ô¡ÊÃ±½ã½¸·×¡Ë¼èÆÀ
+	# åº¦æ•°ï¼ˆå˜ç´”é›†è¨ˆï¼‰å–å¾—
 	my $f = mysql_exec->select("
 		SELECT $self->{column}, COUNT(*)
 		FROM   $self->{table}
@@ -260,7 +265,7 @@ sub detail_tab{
 		$names .= $i->[0];
 	}
 	
-	# ¥ê¥¿¡¼¥ó¤¹¤ëÉ½¤òºîÀ®
+	# ãƒªã‚¿ãƒ¼ãƒ³ã™ã‚‹è¡¨ã‚’ä½œæˆ
 	my @data;
 	
 	if ($names =~ /\A[0-9]+\Z/){
@@ -278,13 +283,13 @@ sub detail_tab{
 	return \@data;
 }
 
-# ÃÍ¥é¥Ù¥ë¤òÊİÂ¸
+# å€¤ãƒ©ãƒ™ãƒ«ã‚’ä¿å­˜
 sub label_save{
 	my $self = shift;
 	my $val  = shift;
 	my $lab  = shift;
 	
-	if ($lab eq ''){                          # ¥é¥Ù¥ë¤¬¶õ¤Î¾ì¹ç¤Ï¥ì¥³¡¼¥Éºï½ü
+	if ($lab eq ''){                          # ãƒ©ãƒ™ãƒ«ãŒç©ºã®å ´åˆã¯ãƒ¬ã‚³ãƒ¼ãƒ‰å‰Šé™¤
 		mysql_exec->do("
 			DELETE FROM outvar_lab
 			WHERE
@@ -292,7 +297,7 @@ sub label_save{
 				AND val = \'$val\'
 		",1);
 	} else {
-		my $exists = mysql_exec->select(     # ¥ì¥³¡¼¥É¤ÎÍ­Ìµ¤ò³ÎÇ§
+		my $exists = mysql_exec->select(     # ãƒ¬ã‚³ãƒ¼ãƒ‰ã®æœ‰ç„¡ã‚’ç¢ºèª
 			"SELECT *
 			FROM outvar_lab
 			WHERE 

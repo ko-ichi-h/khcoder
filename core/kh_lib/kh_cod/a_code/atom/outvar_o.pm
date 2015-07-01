@@ -1,8 +1,9 @@
-# ³°ÉôÊÑ¿ô¤Ë¤è¤ë»ØÄê¡ÊKH Coder¥Ğ¡¼¥¸¥ç¥ó1x ¸ß´¹¡Ë
+# å¤–éƒ¨å¤‰æ•°ã«ã‚ˆã‚‹æŒ‡å®šï¼ˆKH Coderãƒãƒ¼ã‚¸ãƒ§ãƒ³1x äº’æ›ï¼‰
 
 package kh_cod::a_code::atom::outvar_o;
 use base qw(kh_cod::a_code::atom);
 use strict;
+use utf8;
 my $debug = 0;
 
 sub expr{
@@ -28,7 +29,7 @@ sub ready{
 		$self->{raw} =~ s/""/"/g;
 	}
 
-	# ¥ë¡¼¥ë»ØÄê¤Î²ò¼á
+	# ãƒ«ãƒ¼ãƒ«æŒ‡å®šã®è§£é‡ˆ
 	my ($var, $val);
 	if ($self->raw =~ /<>(.+)\-\->(.+)$/o){
 		$var = $1;
@@ -38,7 +39,7 @@ sub ready{
 		die("something wrong!");
 	}
 	
-	# ÊÑ¿ô¤ÎÂ¸ºß¤ò³ÎÇ§
+	# å¤‰æ•°ã®å­˜åœ¨ã‚’ç¢ºèª
 	my $var_obj = mysql_outvar::a_var->new($var);
 	unless ($var_obj->{tani}){
 		$self->{valid} = 0;
@@ -46,15 +47,15 @@ sub ready{
 	}
 	print "atom-outvar_o: the variable found\n" if $debug;
 	
-	# ½¸·×Ã±°Ì¤¬Ì·½â¤·¤Ê¤¤¤«¤É¤¦¤«³ÎÇ§
+	# é›†è¨ˆå˜ä½ãŒçŸ›ç›¾ã—ãªã„ã‹ã©ã†ã‹ç¢ºèª
 	$self->{valid} = 1;
-	if ($tani eq 'dan'){                # ÃÊÍîÃ±°Ì¤Î¾ì¹ç
+	if ($tani eq 'dan'){                # æ®µè½å˜ä½ã®å ´åˆ
 		if ($var_obj->{tani} eq 'bun'){
 			$self->{valid} = 0;
 			return 1;
 		}
 	}
-	elsif ($tani =~ /h([1-5])/i) {      # H1-H5Ã±°Ì¤Î¾ì¹ç
+	elsif ($tani =~ /h([1-5])/i) {      # H1-H5å˜ä½ã®å ´åˆ
 		if ($var_obj->{tani} eq 'bun' || $var_obj->{tani} eq 'dan'){
 			$self->{valid} = 0;
 			return 1;
@@ -69,14 +70,14 @@ sub ready{
 	}
 	print "atom-outvar_o: tani looks ok\n" if $debug;
 
-	# ¥Æ¡¼¥Ö¥ëÌ¾·èÄê
+	# ãƒ†ãƒ¼ãƒ–ãƒ«åæ±ºå®š
 	$val = $var_obj->real_val($val);
 	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"
 		.$var_obj->real_val_id($val);
 	print Jcode->new("atom-outvar_o: table: $val: $table\n")->sjis if $debug;
 	$self->{tables} = ["$table"];
 
-	# ¥Æ¡¼¥Ö¥ëºîÀ®
+	# ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 	if ( mysql_exec->table_exists($table) ){
 		print "atom-outvar_o: the table already exists\n" if $debug;
 		return 1;
@@ -89,7 +90,9 @@ sub ready{
 	",1);
 	
 	$val = mysql_exec->quote($val);
-	if ($var_obj->{tani} eq $tani){          # ½¸·×Ã±°Ì¤¬Æ±¤¸¾ì¹ç
+	#$val = Encode::encode('utf8', $val) if utf8::is_utf8($val);
+	
+	if ($var_obj->{tani} eq $tani){          # é›†è¨ˆå˜ä½ãŒåŒã˜å ´åˆ
 		my $sql = "
 			INSERT
 			INTO $table (id, num)
@@ -99,8 +102,9 @@ sub ready{
 				$var_obj->{column} = $val
 		";
 		mysql_exec->do("$sql",1);
+		$sql = Encode::encode('utf8', $sql) if utf8::is_utf8($sql);
 		print "$sql" if $debug;
-	} else {                                 # ½¸·×Ã±°Ì¤¬°Û¤Ê¤ë¾ì¹ç
+	} else {                                 # é›†è¨ˆå˜ä½ãŒç•°ãªã‚‹å ´åˆ
 		my $sql;
 		$sql .= "INSERT INTO $table (id, num) SELECT $tani.id, 1 FROM\n";
 		$sql .= "$var_obj->{table}, $var_obj->{tani}, $tani\n";
@@ -111,17 +115,18 @@ sub ready{
 			last if ($i eq $var_obj->{tani});
 		}
 		$sql .= "and $var_obj->{table}.$var_obj->{column} = $val";
+		$sql = Encode::encode('utf8', $sql) if utf8::is_utf8($sql);
 		mysql_exec->do("$sql",1);
 	}
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub raw_for_cache_chk{
 	my $self = shift;
 	
-	# ²ò¼á
+	# è§£é‡ˆ
 	my ($var, $val);
 	if ($self->raw =~ /<>(.+)\-\->(.+)$/o){
 		$var = $1;

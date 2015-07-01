@@ -29,7 +29,8 @@ sub exec{
 	}
 
 	# 書き出し用ファイルをオープン
-	open (CSVO,">$args{file}") or 
+	use File::BOM;
+	open (CSVO,'>:encoding(utf8):via(File::BOM)', $args{file}) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $args{file}
@@ -109,10 +110,6 @@ sub exec{
 	}
 	print CSVO "$current\n";
 	close (CSVO);
-	
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($args{file});
-	}
 }
 
 1;

@@ -363,7 +363,7 @@ sub v_words_list{
 		return 0;
 	}
 	
-	print "ok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+	#print "ok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
 	
 	# ラベルの変更内容を保存して、外部変数オブジェクトを再生成
 	$self->_save;
@@ -392,9 +392,12 @@ sub v_words_list{
 	# 値ごとに特徴的な語を取得
 	foreach my $i (@{$values}){
 		# クエリー作成
+		my $chk1 = utf8::is_utf8( $self->{selected_var_obj}->{name} );
+		my $chk2 = utf8::is_utf8( $i );
+		
 		my $query = '<>'.$self->{selected_var_obj}->{name}.'-->'.$i;
 
-		$query = $self->gui_jchar($query);
+		#$query = $self->gui_jchar($query);
 
 		$query =~ s/"/""/g;
 		$query = '"'.$query.'"' if $query =~ / |"|$z_space/;

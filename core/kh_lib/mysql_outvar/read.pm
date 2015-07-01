@@ -1,5 +1,6 @@
 package mysql_outvar::read;
 use strict;
+use utf8;
 
 use mysql_outvar::read::csv;
 use mysql_outvar::read::tab;
@@ -16,17 +17,37 @@ sub new{
 sub read{
 	my $self = shift;
 	
-	# ¥Õ¥¡¥¤¥ë¤ò¥á¥â¥ê¾å¤ËÆÉ¤ß¹þ¤ß
+	# æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’ãƒã‚§ãƒƒã‚¯
+	my $icode;
+	if ( $::project_obj->morpho_analyzer_lang eq 'jp') {
+		my %char_code = ();
+		if (eval 'require Encode::EUCJPMS'){
+			$char_code{euc}  = 'eucJP-ms';
+			$char_code{sjis} = 'cp932';
+		} else {
+			$char_code{euc}  = 'euc-jp';
+			$char_code{sjis} = 'cp932';
+		}
+
+		$icode = kh_jchar->check_code($self->{file});
+		$icode = 'sjis' if $icode eq 'shiftjis';
+		$icode = $char_code{$icode} if $char_code{$icode};
+	} else {
+		$icode = kh_jchar->check_code_en($self->{file},1);
+	}
+	
+	# ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ¡ãƒ¢ãƒªä¸Šã«èª­ã¿è¾¼ã¿
 	my @data;
-	open (CSVD,$self->{file}) or 
+	use File::BOM;
+	File::BOM::open_bom ('CSVD',$self->{file},":encoding($icode)") or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file},
 		);
 	while (<CSVD>){
 		chomp;
-		my $t = Jcode->new($_)->h2z->tr('¡¡',' ')->euc;
-		my $line = $self->parse($t);
+		$_ =~ tr/ã€€/ /;
+		my $line = $self->parse($_);
 		push @data, $line;
 	}
 	close (CSVD);
@@ -46,19 +67,19 @@ sub save{
 	my @exts = ();
 	if ( $args{skip_checks} == 0 ){
 
-		# ¥±¡¼¥¹¿ô¤Î¥Á¥§¥Ã¥¯
+		# ã‚±ãƒ¼ã‚¹æ•°ã®ãƒã‚§ãƒƒã‚¯
 		my $cases_in_file = @data; --$cases_in_file;
 		my $cases = mysql_exec->select("SELECT COUNT(*) from $args{tani}",1)
 			->hundle->fetch->[0];
 		unless ($cases == $cases_in_file){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('records_error'), # "¥±¡¼¥¹¿ô¤¬°ìÃ×¤·¤Þ¤»¤ó¡£\nÆÉ¤ß¹þ¤ß½èÍý¤òÃæÃÇ¤·¤Þ¤¹¡£",
+				msg  => kh_msg->get('records_error'), # "ã‚±ãƒ¼ã‚¹æ•°ãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚\nèª­ã¿è¾¼ã¿å‡¦ç†ã‚’ä¸­æ–­ã—ã¾ã™ã€‚",
 			);
 			return 0;
 		}
 
-		# Æ±¤¸ÊÑ¿ôÌ¾¤¬Ìµ¤¤¤«¥Á¥§¥Ã¥¯¡ÊËÜÅö¤Ï¤³¤ÎÉôÊ¬¤ÏUIÂ¦¤Ø²ó¤·¤¿Êý¤¬ÎÉ¤¤¡Ä¡Ë
+		# åŒã˜å¤‰æ•°åãŒç„¡ã„ã‹ãƒã‚§ãƒƒã‚¯ï¼ˆæœ¬å½“ã¯ã“ã®éƒ¨åˆ†ã¯UIå´ã¸å›žã—ãŸæ–¹ãŒè‰¯ã„â€¦ï¼‰
 		my %name_check;
 		my $h = mysql_exec->select("
 			SELECT name
@@ -76,14 +97,14 @@ sub save{
 		}
 	}
 
-	# ÉÔÀµ¤ÊÊÑ¿ôÌ¾¤¬Ìµ¤¤¤«¥Á¥§¥Ã¥¯
+	# ä¸æ­£ãªå¤‰æ•°åãŒç„¡ã„ã‹ãƒã‚§ãƒƒã‚¯
 	my %namechk = ();
 	foreach my $i (@{$data[0]}){
-		# ¡Ö¸«½Ð¤·1¡×Åù
-		if ($i =~ /^¸«½Ð¤·[1-5]$|^Heading[1-5]$/){
+		# ã€Œè¦‹å‡ºã—1ã€ç­‰
+		if ($i =~ /^è¦‹å‡ºã—[1-5]$|^Heading[1-5]$/){
 			$i .= '_m';
 		}
-		# Ä¹¤¹¤®¤ë¾ì¹ç
+		# é•·ã™ãŽã‚‹å ´åˆ
 		if (length($i) > 250){
 			$i = substr($i, 0, 250);
 			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
@@ -96,9 +117,9 @@ sub save{
 				chop $i;
 			}
 		}
-		# ¥¹¥Ú¡¼¥¹
+		# ã‚¹ãƒšãƒ¼ã‚¹
 		$i =~ tr/ /_/;
-		# ½ÅÊ£
+		# é‡è¤‡
 		if ($namechk{$i}){
 			my $n = 1;
 			while ( $namechk{$i.'_'.$n} ){
@@ -109,9 +130,9 @@ sub save{
 		$namechk{$i}++;
 	}
 	
-	# Æ±¤¸ÊÑ¿ôÌ¾¤¬¤¢¤Ã¤¿¾ì¹ç
+	# åŒã˜å¤‰æ•°åãŒã‚ã£ãŸå ´åˆ
 	if (@exts){
-		# ´ûÂ¸¤ÎÊÑ¿ô¤ò¾å½ñ¤­¤·¤ÆÎÉ¤¤¤«¤É¤¦¤«Ìä¤¤¹ç¤ï¤»
+		# æ—¢å­˜ã®å¤‰æ•°ã‚’ä¸Šæ›¸ãã—ã¦è‰¯ã„ã‹ã©ã†ã‹å•ã„åˆã‚ã›
 		my $msg = '';
 		foreach my $i (@exts){
 			$msg .= ", " if length($msg);
@@ -127,7 +148,7 @@ sub save{
 		);
 		unless ($ans =~ /ok/i){ return 0; }
 
-		# ¾å½ñ¤­¤¹¤ë¾ì¹ç¤Ï´ûÂ¸¤ÎÊÑ¿ô¤òºï½ü
+		# ä¸Šæ›¸ãã™ã‚‹å ´åˆã¯æ—¢å­˜ã®å¤‰æ•°ã‚’å‰Šé™¤
 		foreach my $i (@exts){
 			mysql_outvar->delete(
 				name => $i,
@@ -135,7 +156,7 @@ sub save{
 		}
 	}
 
-	# ÊÝÂ¸ÍÑ¥Æ¡¼¥Ö¥ëÌ¾¤Î·èÄê
+	# ä¿å­˜ç”¨ãƒ†ãƒ¼ãƒ–ãƒ«åã®æ±ºå®š
 	my $n = 0;
 	while (1){
 		my $table = 'outvar'."$n";
@@ -147,7 +168,7 @@ sub save{
 	}
 	my $table = 'outvar'."$n";
 	
-	# DB¤Ë¥Ø¥Ã¥À¤ò³ÊÇ¼
+	# DBã«ãƒ˜ãƒƒãƒ€ã‚’æ ¼ç´
 	my $cn = 0;
 	my $cols = '';
 	my $cols2 = '';
@@ -161,13 +182,13 @@ sub save{
 		if ($args{var_type} eq 'INT') {
 			$cols .= "\t\t\t$col INT,\n";
 		} else {
-			$cols .= "\t\t\t$col BLOB,\n";
+			$cols .= "\t\t\t$col TEXT,\n";
 		}
 		$cols2 .= "$col,";
 	}
 	chop $cols2;
 	
-	# DB¤Ë¥Ç¡¼¥¿¤ò³ÊÇ¼
+	# DBã«ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´
 	mysql_exec->do("create table $table
 		(
 			$cols
