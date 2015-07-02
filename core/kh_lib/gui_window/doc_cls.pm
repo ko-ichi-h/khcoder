@@ -3,6 +3,7 @@ use base qw(gui_window);
 
 use strict;
 use Tk;
+use utf8;
 
 use gui_window::doc_cls::clara;
 use gui_window::doc_cls::ward;
@@ -14,7 +15,7 @@ use gui_widget::hinshi;
 use mysql_crossout;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -30,7 +31,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('verb'), # »ÈÍÑ
+		verb   => kh_msg->get('verb'), # ä½¿ç”¨
 	);
 
 	my $lf = $win->LabFrame(
@@ -39,14 +40,14 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'x', -expand => 0);
 
-	# ¥¯¥é¥¹¥¿¡¼¿ô
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f4->Label(
-		-text => kh_msg->get('gui_widget::r_cls->method'), # ÊıË¡¡§
+		-text => kh_msg->get('gui_widget::r_cls->method'), # æ–¹æ³•ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -66,7 +67,7 @@ sub _new{
 	$widget_method->set_value('ward');
 
 	$f4->Label(
-		-text => kh_msg->get('gui_widget::r_cls->dist'), # µ÷Î¥¡§
+		-text => kh_msg->get('gui_widget::r_cls->dist'), # è·é›¢ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -86,14 +87,14 @@ sub _new{
 
 
 
-	# É¸½à²½¤ÈTF-IDF
+	# æ¨™æº–åŒ–ã¨TF-IDF
 	my $f6 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f6->Label(
-		-text => kh_msg->get('gui_widget::r_cls->stand'), # É¸½à²½¡§
+		-text => kh_msg->get('gui_widget::r_cls->stand'), # æ¨™æº–åŒ–ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -112,7 +113,7 @@ sub _new{
 	$self->{widget_stand}->set_value('none');
 
 	$f6->Label(
-		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # ÉÑÅÙ¡§
+		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # é »åº¦ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -138,7 +139,7 @@ sub _new{
 	);
 
 	$f5->Label(
-		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   ¥¯¥é¥¹¥¿¡¼¿ô¡§
+		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -153,7 +154,7 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_cluster_number});
 
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -202,7 +203,7 @@ sub config_dist{
 }
 
 #--------------#
-#   ¥Á¥§¥Ã¥¯   #
+#   ãƒã‚§ãƒƒã‚¯   #
 
 sub check{
 	my $self = shift;
@@ -210,7 +211,7 @@ sub check{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚
 		);
 		return 0;
 	}
@@ -249,7 +250,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -262,16 +263,16 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),# 'ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£',
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'),# 'å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚',
 		);
 		return 0;
 	}
@@ -292,7 +293,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('select_3words'), # ¾¯¤Ê¤¯¤È¤â3¤Ä°Ê¾å¤ÎÃê½Ğ¸ì¤òÁªÂò¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('select_3words'), # å°‘ãªãã¨ã‚‚3ã¤ä»¥ä¸Šã®æŠ½å‡ºèªã‚’é¸æŠã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
@@ -301,11 +302,11 @@ sub calc{
 	#	my $ans = $self->win_obj->messageBox(
 	#		-message => $self->gui_jchar
 	#			(
-	#				 '¸½ºß¤ÎÀßÄê¤Ç¤Ï'.$check_num.'¸ì¤¬»ÈÍÑ¤µ¤ì¤Ş¤¹¡£'
+	#				 'ç¾åœ¨ã®è¨­å®šã§ã¯'.$check_num.'èªãŒä½¿ç”¨ã•ã‚Œã¾ã™ã€‚'
 	#				."\n"
-	#				.'»ÈÍÑ¤¹¤ë¸ì¤Î¿ô¤Ï200¡Á300ÄøÅÙ¤Ë¤ª¤µ¤¨¤ë¤³¤È¤ò¿ä¾©¤·¤Ş¤¹¡£'
+	#				.'ä½¿ç”¨ã™ã‚‹èªã®æ•°ã¯200ã€œ300ç¨‹åº¦ã«ãŠã•ãˆã‚‹ã“ã¨ã‚’æ¨å¥¨ã—ã¾ã™ã€‚'
 	#				."\n"
-	#				.'Â³¹Ô¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡©'
+	#				.'ç¶šè¡Œã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ'
 	#			),
 	#		-icon    => 'question',
 	#		-type    => 'OKCancel',
@@ -316,7 +317,7 @@ sub calc{
 
 	my $wait_window = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $file_csv = $::project_obj->file_TempCSV;
 	mysql_crossout::csv->new(
 		file   => $file_csv,
@@ -329,7 +330,7 @@ sub calc{
 		min_df => $self->min_df,
 	)->run;
 
-	$file_csv = gui_window->gui_jchar($file_csv);
+	$file_csv = $::config_obj->uni_path($file_csv);
 	$file_csv =~ s/\\/\\\\/g;
 
 	my $r_command = "d <- read.csv(\"$file_csv\")\n";
@@ -388,24 +389,15 @@ sub _calc_exec{
 	my $r_command = $self->{r_command};
 	my $cluster_number = $self->{cluster_number};
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î·ë²Ì¤òÇ¼¤á¤ë¥Õ¥¡¥¤¥ëÌ¾
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®çµæœã‚’ç´ã‚ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
-	my $file_org = $file;
-	my $icode;
-	if ($::config_obj->os eq 'win32'){
-		$file = Jcode->new($file,'sjis')->euc;
-		$file =~ s/\\/\\\\/g;
-	} else {
-		# ¤¿¤Ö¤óÊÑ´¹¤ÏÉÔÍ×
-		#$icode = Jcode::getcode($file);
-		#$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
-		#$file =~ s/\\/\\\\/g;
-		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
-	}
+	my $file_org = $::config_obj->os_path($file);
+	$file = $::config_obj->uni_path($file);
+	$file =~ s/\\/\\\\/g;
 
-	# ³Æ¼ï½àÈ÷¡ÊR¥³¥Ş¥ó¥É¡Ë
-	$r_command .= "n_org <- nrow(d)\n";                     # Ê¬ÀÏÂĞ¾İ¸ì¤ò´Ş¤Ş
-	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ¤Ê¤¤Ê¸½ñ¤ò½ü³°
+	# å„ç¨®æº–å‚™ï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
+	$r_command .= "n_org <- nrow(d)\n";                     # åˆ†æå¯¾è±¡èªã‚’å«ã¾
+	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ãªã„æ–‡æ›¸ã‚’é™¤å¤–
 	$r_command .= "d_labels <- d_labels[rowSums(d) > 0]\n";
 	$r_command .= "d <- d[rowSums(d) > 0, ]\n";
 	$r_command .= "n_cls <- $cluster_number\n";
@@ -425,10 +417,10 @@ sub _calc_exec{
 
 	$r_command .= "d_names <- row.names(d)\n";
 	
-	# Ê»¹ç¿å½à¤Î¥×¥í¥Ã¥È¡ÊR¥³¥Ş¥ó¥É¡Ë
+	# ä½µåˆæ°´æº–ã®ãƒ—ãƒ­ãƒƒãƒˆï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
 	my $r_command_height = &r_command_height;
 	
-	# ¥¯¥é¥¹¥¿¡¼²½¡ÊR¥³¥Ş¥ó¥É¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–ï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
 	my $r_command_ward;
 	
 	$r_command_ward .= "method_dist <- \"$self->{method_dist}\"\n";
@@ -470,16 +462,16 @@ if (
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
 
-	# Ê»¹ç²áÄø¤òÊİÂ¸¤¹¤ë¥Õ¥¡¥¤¥ë
+	# ä½µåˆéç¨‹ã‚’ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«
 	my ($merges, $merges_org);
 	$merges_org->{_cluster_tmp} = $::project_obj->file_TempCSV();
 
-	$merges->{_cluster_tmp} = gui_window->gui_jchar(
+	$merges->{_cluster_tmp} = $::config_obj->uni_path(
 		$merges_org->{_cluster_tmp}
 	);
 
-	# kh_r_plot¥â¥¸¥å¡¼¥ë¤Ë¤Ï´ğËÜÅª¤ËEUC¤ÎR¥³¥Ş¥ó¥É¤òÅÏ¤¹¤¬¡¢
-	# ¤³¤³¤Ç¤ÏUTF8¥Õ¥é¥°ÉÕ¤­¤òÅÏ¤·¤Æ¤¤¤ë
+	# kh_r_plotãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«ã¯åŸºæœ¬çš„ã«EUCã®Rã‚³ãƒãƒ³ãƒ‰ã‚’æ¸¡ã™ãŒã€
+	# ã“ã“ã§ã¯UTF8ãƒ•ãƒ©ã‚°ä»˜ãã‚’æ¸¡ã—ã¦ã„ã‚‹
 	#print
 	#	"is_utf8? ", 
 	#	utf8::is_utf8($r_command),
@@ -493,7 +485,7 @@ if (
 	kh_r_plot->clear_env;
 	my $plots;
 	
-	# Ê»¹ç²áÄø¤Î¥Õ¥¡¥¤¥ë3¼ïÎà
+	# ä½µåˆéç¨‹ã®ãƒ•ã‚¡ã‚¤ãƒ«3ç¨®é¡
 	$plots->{_cluster_tmp}{last} = kh_r_plot->new(
 		name      => 'doc_cls_height_ward_last',
 		command_f =>  $r_command
@@ -532,7 +524,7 @@ if (
 		font_size => $::config_obj->plot_font_size / 100,
 	) or return 0;
 
-	# ¥Ç¥ó¥É¥í¥°¥é¥à
+	# ãƒ‡ãƒ³ãƒ‰ãƒ­ã‚°ãƒ©ãƒ 
 	
 	$::config_obj->R->send("
 		print( paste( \"khc\",nrow(d),\"khc\", sep=\"\" ) )
@@ -568,28 +560,28 @@ if (
 		$plots->{_dendro}->rotate_cls;
 	}
 
-	# ¥¯¥é¥¹¥¿¡¼ÈÖ¹æ¤Î½ñ¤­½Ğ¤·¡ÊR¥³¥Ş¥ó¥É¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç•ªå·ã®æ›¸ãå‡ºã—ï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
 	#my $r_command_fin = &r_command_fix_r;
 	my $r_command_fin;
 	$r_command_fin .= "colnames(r) <- c(\"_cluster_tmp\")\n";
 	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
 	$r_command_fin .= "print(\"ok\")\n";
 
-	$r_command_fin = Jcode->new($r_command_fin,'euc')->sjis
-		if $::config_obj->os eq 'win32';
+	#$r_command_fin = Jcode->new($r_command_fin,'euc')->sjis
+	#	if $::config_obj->os eq 'win32';
 
 	$::config_obj->R->send($r_command_fin);
 	my $r = $::config_obj->R->read;
 
 	if (
 		   ( $r =~ /error/i )
-		or ( index($r, '¥¨¥é¡¼') > -1 )
-		or ( index($r, Jcode->new('¥¨¥é¡¼','euc')->sjis) > -1 )
+		or ( index($r, 'ã‚¨ãƒ©ãƒ¼') > -1 )
+		or ( index($r, Jcode->new('ã‚¨ãƒ©ãƒ¼','euc')->sjis) > -1 )
 	) {
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$::main_gui->mw,
-			msg    => kh_msg->get('fail')."\n\n".$r # ·×»»¤Ë¼ºÇÔ¤·¤Ş¤·¤¿
+			msg    => kh_msg->get('fail')."\n\n".$r # è¨ˆç®—ã«å¤±æ•—ã—ã¾ã—ãŸ
 		);
 		return 0;
 	}
@@ -599,7 +591,7 @@ if (
 		$::main_gui->get('w_doc_cls_res')->close;
 	}
 
-	# R¤Î·×»»·ë²Ì¤ò³°ÉôÊÑ¿ô¤È¤·¤ÆÆÉ¤ß¹ş¤à
+	# Rã®è¨ˆç®—çµæœã‚’å¤–éƒ¨å¤‰æ•°ã¨ã—ã¦èª­ã¿è¾¼ã‚€
 	foreach my $i (@{mysql_outvar->get_list}){
 		if ($i->[1] eq "_cluster_tmp"){
 			mysql_outvar->delete(name => $i->[1]);
@@ -627,11 +619,11 @@ if (
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'), # Ê¸½ñ¤Î¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'), # æ–‡æ›¸ã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{
@@ -700,9 +692,9 @@ if (pp_type == "last"){
 	det <- det[nrow(det):n_start,]
 	
 	str_xlab <- paste(" ('
-	.kh_msg->get('gui_window::word_cls->last1') # ºÇ¸å¤Î
+	.kh_msg->get('gui_window::word_cls->last1') # æœ€å¾Œã®
 	.'",pp_focus,"'
-	.kh_msg->get('gui_window::word_cls->last2') # ²ó
+	.kh_msg->get('gui_window::word_cls->last2') # å›
 	.') ",sep="")
 } else if (pp_type == "first") {
 	if ( pp_focus > nrow(det) ){
@@ -711,9 +703,9 @@ if (pp_type == "last"){
 	det <- det[pp_focus:1,]
 	
 	str_xlab <- paste(" ('
-	.kh_msg->get('gui_window::word_cls->first1') # ºÇ½é¤Î
+	.kh_msg->get('gui_window::word_cls->first1') # æœ€åˆã®
 	.'",pp_focus,"'
-	.kh_msg->get('gui_window::word_cls->first2') # ²ó
+	.kh_msg->get('gui_window::word_cls->first2') # å›
 	.') ",sep="")
 } else if (pp_type == "all") {
 	det <- det[nrow(det):1,]
@@ -744,10 +736,10 @@ plot(
 	type = "b",
 	pch  = p_type,
 	xlab = paste("'
-	.kh_msg->get('gui_window::word_cls->agglomer') # ¥¯¥é¥¹¥¿¡¼Ê»¹ç¤ÎÃÊ³¬
+	.kh_msg->get('gui_window::word_cls->agglomer') # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ä½µåˆã®æ®µéš
 	.'",str_xlab,sep = ""),
 	ylab = "'
-	.kh_msg->get('gui_window::word_cls->hight') # Ê»¹ç¿å½à¡ÊÈóÎà»÷ÅÙ¡Ë
+	.kh_msg->get('gui_window::word_cls->hight') # ä½µåˆæ°´æº–ï¼ˆéé¡ä¼¼åº¦ï¼‰
 	.'"
 )
 
@@ -765,7 +757,7 @@ legend(
 	min(det[,"u_n"]),
 	max(det[,"height"]),
 	legend = c("'
-	.kh_msg->get('gui_window::word_cls->note1') # ¢¨¥×¥í¥Ã¥ÈÆâ¤Î¿ôÃÍ¥é¥Ù¥ë¤Ï\n¡¡Ê»¹ç¸å¤Î¥¯¥é¥¹¥¿¡¼Áí¿ô
+	.kh_msg->get('gui_window::word_cls->note1') # â€»ãƒ—ãƒ­ãƒƒãƒˆå†…ã®æ•°å€¤ãƒ©ãƒ™ãƒ«ã¯\nã€€ä½µåˆå¾Œã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç·æ•°
 	.'"),
 	#pch = c(16),
 	cex = .8,
@@ -975,20 +967,20 @@ ddata <- dendro_data(as.dendrogram(dcls), type="rectangle")
 p <- NULL
 p <- ggplot()
 
-# ¥¯¥é¥¹¥¿¡¼¤´¤È¤Î¥«¥é¡¼ÀßÄê
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ã”ã¨ã®ã‚«ãƒ©ãƒ¼è¨­å®š
 
 if (n_cls > 1){
 	memb <- cutree(dcls,k=n_cls)
-	# Á´ÂÎ¤Î¿§ÀßÄê
+	# å…¨ä½“ã®è‰²è¨­å®š
 	p <- p + scale_colour_hue(l=40, c=100)
-	# ÀÚ¤êÎ¥¤·Àş(1)
+	# åˆ‡ã‚Šé›¢ã—ç·š(1)
 	cutpoint <- mean(
 		c(
 			rev(dcls$height)[n_cls-1],
 			rev(dcls$height)[n_cls]
 		)
 	)
-	# ¿§¤Î½çÈÖ¤ò·èÄê
+	# è‰²ã®é †ç•ªã‚’æ±ºå®š
 	n <- length( unique(memb[dcls$order]) )
 	new_col <- NULL
 	for (i in 1:ceiling(n / 2) ){
@@ -997,7 +989,7 @@ if (n_cls > 1){
 			new_col <- c(new_col, i + ceiling(n / 2))
 		}
 	}
-	# ¥¯¥é¥¹¥¿¡¼ÈÖ¹æ¢ª¿§Ì¾¤ÎÊÑ´¹ÍÑ¥Ù¥¯¥È¥ëºîÀ®¡Êcol_vec¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç•ªå·â†’è‰²åã®å¤‰æ›ç”¨ãƒ™ã‚¯ãƒˆãƒ«ä½œæˆï¼ˆcol_vecï¼‰
 	col_tab <- cbind(
 		unique(memb[dcls$order]),
 		new_col
@@ -1011,7 +1003,7 @@ if (n_cls > 1){
 		}
 		col_vec <- c(col_vec, c)
 	}
-	# Àş¤Î¿§Ê¬¤±
+	# ç·šã®è‰²åˆ†ã‘
 	seg_bl <- NULL
 	seg_cl <- NULL
 	colnames(ddata$segment) <- c(
@@ -1066,7 +1058,7 @@ if (n_cls > 1){
 	if (is.null(seg_bl) == F){
 		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
 		seg_bl <- as.data.frame(seg_bl)
-		# ÀÚ¤êÎ¥¤·Àş(2)
+		# åˆ‡ã‚Šé›¢ã—ç·š(2)
 		if ( max(seg_bl$y1) > cutpoint ){
 			p <- p + geom_hline(
 				yintercept = cutpoint,
@@ -1081,7 +1073,7 @@ if (n_cls > 1){
 	seg_cl$c <- col_vec[seg_cl$c]
 
 	p <- p + geom_text(
-		data=data.frame(                    # ¥é¥Ù¥ë
+		data=data.frame(                    # ãƒ©ãƒ™ãƒ«
 			x=label(ddata)$x,
 			y=label(ddata)$y,
 			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -1109,7 +1101,7 @@ if (n_cls > 1){
 	seg_bl <- ddata$segment
 	col_vec <- c("001")
 	p <- p + geom_text(
-		data=data.frame(                    # ¥é¥Ù¥ë
+		data=data.frame(                    # ãƒ©ãƒ™ãƒ«
 			x=label(ddata)$x,
 			y=label(ddata)$y,
 			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -1137,7 +1129,7 @@ if (is.null(seg_bl) == F){
 }
 
 p <- p + geom_text(
-	data=data.frame(                    # ¥é¥Ù¥ëÊÑ´¹
+	data=data.frame(                    # ãƒ©ãƒ™ãƒ«å¤‰æ›
 		x=label(ddata)$x,
 		y=label(ddata)$y,
 		text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],

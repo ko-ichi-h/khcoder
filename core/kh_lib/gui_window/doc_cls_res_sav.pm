@@ -63,8 +63,7 @@ sub _new{
 sub save{
 	my $self = shift;
 
-	my $name =
-		Jcode->new( $self->gui_jg( $self->{entry_name}->get ), 'sjis')->euc;
+	my $name = $self->gui_jg( $self->{entry_name}->get );
 	
 	unless ( length($name) ){
 		gui_errormsg->open(
