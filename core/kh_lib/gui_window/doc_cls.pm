@@ -333,7 +333,7 @@ sub calc{
 	$file_csv = $::config_obj->uni_path($file_csv);
 	$file_csv =~ s/\\/\\\\/g;
 
-	my $r_command = "d <- read.csv(\"$file_csv\")\n";
+	my $r_command = "d <- read.csv(\"$file_csv\", fileEncoding=\"UTF-8-BOM\")\n";
 	$r_command .= &r_command_fix_d;
 
 	$r_command .= "\n# END: DATA\n";
