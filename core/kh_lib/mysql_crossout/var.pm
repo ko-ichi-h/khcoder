@@ -1,6 +1,7 @@
 package mysql_crossout::var;
 use base qw(mysql_crossout);
 use strict;
+use utf8;
 
 sub sql3{
 	my $self = shift;
@@ -79,7 +80,7 @@ sub sql4{
 sub out2{
 	my $self = shift;
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½1: ¥Ç¡¼¥¿ÆâÍÆ
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½1: ãƒ‡ãƒ¼ã‚¿å†…å®¹
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -95,7 +96,7 @@ sub out2{
 		}
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
-				# ½ñ¤­½Ð¤·
+				# æ›¸ãå‡ºã—
 				my $temp;
 				foreach my $h ( @{$self->{hinshi}} ){
 					if ($current{$h}){
@@ -107,16 +108,16 @@ sub out2{
 				}
 				chop $temp;
 				$data{$last} = $temp;
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 			}
-			# ½¸·×
+			# é›†è¨ˆ
 			$current{$i->[2]} .= "$i->[1] ";
 		}
 		$sth->finish;
 	}
-	# ºÇ½ª¹Ô¤Î½ÐÎÏ
+	# æœ€çµ‚è¡Œã®å‡ºåŠ›
 	my $temp;
 	foreach my $h ( @{$self->{hinshi}} ){
 		if ($current{$h}){
@@ -129,14 +130,14 @@ sub out2{
 	chop $temp;
 	$data{$last} = $temp;
 	$self->{data} = \%data;
-	# ·çÂ»¥±¡¼¥¹ÍÑ
+	# æ¬ æã‚±ãƒ¼ã‚¹ç”¨
 	foreach my $h ( @{$self->{hinshi}} ){
 		$self->{data}{kesson} .= ',';
 	}
 	chop $self->{data}{kesson};
 	
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½2: Ããä¥¤Ë¤è¤ëÊ¬¤«¤Á½ñ¤­·ë²Ì
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½2: èŒ¶ç­Œã«ã‚ˆã‚‹åˆ†ã‹ã¡æ›¸ãçµæžœ
 	$id = 1;
 	$last = 1;
 	my $current;
@@ -152,20 +153,20 @@ sub out2{
 		}
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
-				# ½ñ¤­½Ð¤·
+				# æ›¸ãå‡ºã—
 				chop $current;
 				$data2{$last} = kh_csv->value_conv($current);
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				$current = '';
 				$last = $i->[0];
 			}
-			# ½¸·×
+			# é›†è¨ˆ
 			$current .= "$i->[1] "
 				unless ($i->[1] eq '---MISSING---' and $i->[2]);
 		}
 		$sth->finish;
 	}
-	# ºÇ½ª¹Ô¤Î½ÐÎÏ
+	# æœ€çµ‚è¡Œã®å‡ºåŠ›
 	if ( length($current) ){
 		chop $current;
 		$data2{$last} = kh_csv->value_conv($current);
@@ -178,13 +179,13 @@ sub out2{
 sub finish{
 	my $self = shift;
 	
-	open (OUTF,">$self->{file}") or 
+	open (OUTF, '>:encoding(cp932)', $self->{file}) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file},
 		);
 	
-	# ¥Ø¥Ã¥À¹Ô¤ÎºîÀ½
+	# ãƒ˜ãƒƒãƒ€è¡Œã®ä½œè£½
 	my $head = ''; my @head;
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 		$head .= "$i,";
@@ -197,7 +198,7 @@ sub finish{
 	if ($self->{midashi}){
 		$head .= "name,";
 	}
-	$head .= "length_c,length_w,Ããä¥½ÐÎÏ¡Ê´ðËÜ·Á¡Ë,";
+	$head .= "length_c,length_w,èŒ¶ç­Œå‡ºåŠ›ï¼ˆåŸºæœ¬å½¢ï¼‰,";
 	foreach my $i (@{$self->{hinshi}}){
 		$head .= kh_csv->value_conv($self->{hName}{$i}).',';
 	}
@@ -205,7 +206,7 @@ sub finish{
 
 	print OUTF "$head\n";
 	
-	# °ÌÃÖ¾ðÊó¤È¤Î¥Þ¡¼¥¸
+	# ä½ç½®æƒ…å ±ã¨ã®ãƒžãƒ¼ã‚¸
 	
 	my $sql;
 	$sql .= "SELECT ";
@@ -241,9 +242,9 @@ sub finish{
 	close (OUTF);
 	$self->{data} = '';
 	
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($self->{file});
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($self->{file});
+	#}
 }
 
 
