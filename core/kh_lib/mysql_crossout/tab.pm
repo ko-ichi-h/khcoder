@@ -5,7 +5,7 @@ use strict;
 sub out2{                               # length作製をする
 	my $self = shift;
 	
-	open (F,">$self->{file_temp}") or die("could not open $self->{file_temp}");
+	open (F,'>:encoding(utf8)', $self->{file_temp}) or die("could not open $self->{file_temp}");
 	
 	# セル内容の作製
 	my $id = 1;
@@ -26,10 +26,7 @@ sub out2{                               # length作製をする
 				# 書き出し
 				my $temp = "$last\t";
 				if ($self->{midashi}){
-					$temp .= Jcode->new(
-						kh_csv->value_conv_t($self->{midashi}->[$last - 1]),
-						'euc'
-					)->sjis."\t";
+					$temp .= kh_csv->value_conv_t($self->{midashi}->[$last - 1])."\t";
 				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 					if ($current{$h}){
@@ -55,7 +52,7 @@ sub out2{                               # length作製をする
 			
 			# 集計
 			++$current{'length_w'};
-			$current{'length_c'} += (length($i->[2]) / 2);
+			$current{'length_c'} += length($i->[2]);
 			if ($self->{wName}{$i->[1]}){
 				++$current{$i->[1]};
 			}
@@ -66,10 +63,7 @@ sub out2{                               # length作製をする
 	# 最終行の出力
 	my $temp = "$last\t";
 	if ($self->{midashi}){
-		$temp .= Jcode->new(
-			kh_csv->value_conv_t($self->{midashi}->[$last - 1]),
-			'euc'
-		)->sjis."\t";
+		$temp .= kh_csv->value_conv_t($self->{midashi}->[$last - 1])."\t";
 	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
 		if ($current{$h}){
@@ -86,7 +80,7 @@ sub out2{                               # length作製をする
 sub finish{
 	my $self = shift;
 	
-	open (OUTF,">$self->{file}") or 
+	open (OUTF,'>:encoding(utf8)', $self->{file}) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file},
@@ -111,9 +105,9 @@ sub finish{
 		$head .= kh_csv->value_conv_t($self->{wName}{$i})."\t";
 	}
 	chop $head;
-	if ($::config_obj->os eq 'win32'){
-		$head = Jcode->new($head)->sjis;
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	$head = Jcode->new($head)->sjis;
+	#}
 	print OUTF "$head\n";
 	
 	# 位置情報とのマージ
@@ -128,7 +122,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"$self->{file_temp}") or die;
+	open (F, '<:encoding(utf8)', $self->{file_temp}) or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;

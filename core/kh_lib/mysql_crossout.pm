@@ -1,5 +1,6 @@
 package mysql_crossout;
 use strict;
+use utf8;
 
 use mysql_exec;
 use mysql_crossout::csv;
@@ -28,10 +29,10 @@ sub run{
 	
 	use Benchmark;
 	
-	# ¸«½Ð¤·¤Î¼èÆÀ
+	# è¦‹å‡ºã—ã®å–å¾—
 	$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani});
 
-	# °ì»þ¥Õ¥¡¥¤¥ë¤ÎÌ¿Ì¾
+	# ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã®å‘½å
 	$self->{file_temp} = "temp.dat";
 	while (-e $self->{file_temp}){
 		$self->{file_temp} .= ".tmp";
@@ -48,14 +49,14 @@ sub run{
 }
 
 #----------------#
-#   ¥Ç¡¼¥¿ºîÀ½   #
+#   ãƒ‡ãƒ¼ã‚¿ä½œè£½   #
 
-sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
+sub out2{                               # lengthä½œè£½ã‚’ã™ã‚‹
 	my $self = shift;
 	
-	open (F,">$self->{file_temp}") or die;
+	open (F,'>:encoding(utf8)', $self->{file_temp}) or die;
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -71,11 +72,14 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 		
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0]){
-				# ½ñ¤­½Ð¤·
+				# æ›¸ãå‡ºã—
 				my $temp = "$last,";
 				if ($self->{midashi}){
 					my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
-					$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+					#my $chk0 = utf8::is_utf8( $self->{midashi}->[$last - 1] );
+					#my $chk1 = utf8::is_utf8( $jcode_tmp );
+					
+					#$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
 					$temp .= $jcode_tmp;
 				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
@@ -87,24 +91,24 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 				}
 				chop $temp;
 				print F "$temp\n";
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 			}
 			
-			# HTML¥¿¥°¤òÌµ»ë
+			# HTMLã‚¿ã‚°ã‚’ç„¡è¦–
 			if (
 				!  ( $self->{use_html} )
 				&& ( $i->[2] =~ /<[h|H][1-5]>|<\/[h|H][1-5]>/o )
 			){
 				next;
 			}
-			# Ì¤»ÈÍÑ¸ì¤òÌµ»ë
+			# æœªä½¿ç”¨èªžã‚’ç„¡è¦–
 			if ($i->[3]){
 				next;
 			}
 			
-			# ½¸·×
+			# é›†è¨ˆ
 			++$current{'length_w'};
 			$current{'length_c'} += (length($i->[2]) / 2);
 			if ($self->{wName}{$i->[1]}){
@@ -114,11 +118,11 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 		$sth->finish;
 	}
 	
-	# ºÇ½ª¹Ô¤Î½ÐÎÏ
+	# æœ€çµ‚è¡Œã®å‡ºåŠ›
 	my $temp = "$last,";
 	if ($self->{midashi}){
 		my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
-		$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+		#$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
 		$temp .= $jcode_tmp;
 	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
@@ -162,12 +166,12 @@ sub sql2{
 
 
 #------------------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¡¦ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžãƒ»å“è©žãƒªã‚¹ãƒˆã®ä½œè£½   #
 
 sub make_list{
 	my $self = shift;
 	
-	# Ã±¸ì¥ê¥¹¥È¤ÎºîÀ½
+	# å˜èªžãƒªã‚¹ãƒˆã®ä½œè£½
 	my $sql = "
 		SELECT genkei.id, genkei.name, hselection.khhinshi_id
 		FROM   genkei, hselection, df_$self->{tani}
@@ -207,7 +211,7 @@ sub make_list{
 	$self->{wName}   = \%name;
 	$self->{wHinshi} = \%hinshi;
 	
-	# ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½
+	# å“è©žãƒªã‚¹ãƒˆã®ä½œè£½
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
 	$sql .= "FROM   hselection\n";
@@ -221,7 +225,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTML¥¿¥°' || $i->[1] eq 'HTML_TAG'){
+		if ($i->[1] eq 'HTMLã‚¿ã‚°' || $i->[1] eq 'HTML_TAG'){
 			$self->{use_html} = 1;
 		}
 	}
@@ -230,7 +234,7 @@ sub make_list{
 }
 
 #--------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¿ô¤òÊÖ¤¹   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžæ•°ã‚’è¿”ã™   #
 
 sub wnum{
 	my $self = shift;
@@ -265,7 +269,7 @@ sub wnum{
 	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/; # °Ì¼è¤êÍÑ¤Î¥³¥ó¥Þ¤òÁÞÆþ
+	1 while s/(.*\d)(\d\d\d)/$1,$2/; # ä½å–ã‚Šç”¨ã®ã‚³ãƒ³ãƒžã‚’æŒ¿å…¥
 	return $_;
 }
 
@@ -320,9 +324,9 @@ sub get_default_freq{
 				}
 				last;
 			}
-			$lf  =  [$i->[0], $cum + $i->[1]]; # 1¤ÄÁ°¤Î¤òÊÝÂ¸
+			$lf  =  [$i->[0], $cum + $i->[1]]; # 1ã¤å‰ã®ã‚’ä¿å­˜
 		}
-		$cum += $i->[1]; # ÎßÀÑ
+		$cum += $i->[1]; # ç´¯ç©
 	}
 
 	return $r;
@@ -333,7 +337,7 @@ sub get_default_freq{
 
 __END__
 
-sub out1{                               # lengthºîÀ½¤ò¤·¤Ê¤¤(150ÉÃ) + 26ÉÃ?
+sub out1{                               # lengthä½œè£½ã‚’ã—ãªã„(150ç§’) + 26ç§’?
 	my $self = shift;
 	
 	open (F,">test.csv") or die;
@@ -362,7 +366,7 @@ sub out1{                               # lengthºîÀ½¤ò¤·¤Ê¤¤(150ÉÃ) + 26ÉÃ?
 			if ($last == $i->[0]){
 				++$current{$i->[1]};
 			} else {
-				# ½ñ¤­½Ð¤·
+				# æ›¸ãå‡ºã—
 				my $temp;
 				foreach my $i (@{$self->{wList}}){
 					if ($current{$i}){
@@ -373,7 +377,7 @@ sub out1{                               # lengthºîÀ½¤ò¤·¤Ê¤¤(150ÉÃ) + 26ÉÃ?
 				}
 				chop $temp;
 				print F "$temp\n";
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 			}

@@ -1,23 +1,21 @@
 package mysql_crossout::spss;
 use base qw(mysql_crossout);
 use strict;
+use utf8;
 
 sub finish{
 	my $self = shift;
 	
-	# ¥Õ¥¡¥¤¥ëÌ¾¤Î·èÄê
+	# ãƒ•ã‚¡ã‚¤ãƒ«åã®æ±ºå®š
 	my $file_data = substr($self->{file},0,length($self->{file})-4).".dat";
 	my $file_la =substr($self->{file},0,length($self->{file})-4)."_Conv.sps";
 
-	# ¥Ç¡¼¥¿ÆÉ¤ß¹þ¤ßÍÑ¥·¥ó¥¿¥Ã¥¯¥¹
+	# ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿ç”¨ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹
 
 	my $spss;
 	$spss .= "file handle trgt1 /name=\'";
-	if ($::config_obj->os eq 'win32'){
-		$spss .= Jcode->new($file_data,'sjis')->euc;
-	} else {
-		$spss .= $file_data;
-	}
+	$spss .= $::config_obj->uni_path( $file_data );
+
 	$spss .= "\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
@@ -51,18 +49,18 @@ sub finish{
 	$spss .= ".\n";
 	$spss .= "Execute.\n";
 
-	open (SOUT,">$self->{file}") or 
+	open (SOUT,'>:encoding(utf8)', $self->{file}) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$self->{file}",
 		);
 	print SOUT $spss;
 	close (SOUT);
-	kh_jchar->to_sjis($self->{file});
+	#kh_jchar->to_sjis($self->{file});
 
-	# ¥Ç¡¼¥¿¥Õ¥¡¥¤¥ëºîÀ½¡Ê°ÌÃÖ¾ðÊó¤È¤Î¥Þ¡¼¥¸¡Ë
+	# ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ä½œè£½ï¼ˆä½ç½®æƒ…å ±ã¨ã®ãƒžãƒ¼ã‚¸ï¼‰
 
-	open (OUTF,">$file_data") or 
+	open (OUTF,'>:encoding(utf8)', $file_data) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file},
@@ -94,7 +92,7 @@ sub finish{
 	close (OUTF);
 	unlink("$self->{file_temp}");
 
-	# ¥Ç¡¼¥¿ÊÑ·ÁÍÑ¥·¥ó¥¿¥Ã¥¯¥¹
+	# ãƒ‡ãƒ¼ã‚¿å¤‰å½¢ç”¨ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹
 	$spss = '';
 	
 	$spss .= "MATCH FILES FILE=* /DROP id length_w length_c";
@@ -108,18 +106,18 @@ sub finish{
 	$spss .= ".\n";
 	
 	$spss .= "FLIP.\n";
-	$spss .= "STRING Ã±¸ì (A255) .\n";
+	$spss .= "STRING å˜èªž (A255) .\n";
 	$wn = 0;
 	foreach my $i (@{$self->{wList}}){
-		$spss .= "if case_lbl = 'W$wn' Ã±¸ì = '$self->{wName}{$i}'.\n";
-		$spss .= "if case_lbl = 'w$wn' Ã±¸ì = '$self->{wName}{$i}'.\n";
+		$spss .= "if case_lbl = 'W$wn' å˜èªž = '$self->{wName}{$i}'.\n";
+		$spss .= "if case_lbl = 'w$wn' å˜èªž = '$self->{wName}{$i}'.\n";
 		++$wn;
 	}
-	$spss .= "STRING ÉÊ»ì (A10) .\n";
+	$spss .= "STRING å“è©ž (A10) .\n";
 	$wn = 0;
 	foreach my $i (@{$self->{wList}}){
-		$spss .= "if case_lbl = 'W$wn' ÉÊ»ì = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
-		$spss .= "if case_lbl = 'w$wn' ÉÊ»ì = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
+		$spss .= "if case_lbl = 'W$wn' å“è©ž = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
+		$spss .= "if case_lbl = 'w$wn' å“è©ž = '$self->{hName}{$self->{wHinshi}{$i}}'.\n";
 		++$wn;
 	}
 
@@ -129,17 +127,17 @@ sub finish{
 	elsif ($nc < 100){
 		$nc = '0'.$nc;
 	}
-	$spss .= "MATCH FILES FILE=* /KEEP case_lbl Ã±¸ì ÉÊ»ì var001 to var$nc.\n";
+	$spss .= "MATCH FILES FILE=* /KEEP case_lbl å˜èªž å“è©ž var001 to var$nc.\n";
 	$spss .= "FORMATS var001 to var$nc (f8.0).\n";
 	$spss .= "EXECUTE.\n";
-	open (SOUT,">$file_la") or 
+	open (SOUT,'>:encoding(utf8)', $file_la) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_la",
 		);
 	print SOUT $spss;
 	close (SOUT);
-	kh_jchar->to_sjis($file_la);
+	#kh_jchar->to_sjis($file_la);
 
 
 }
