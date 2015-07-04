@@ -20,18 +20,7 @@ sub read{
 	# 文字コードをチェック
 	my $icode;
 	if ( $::project_obj->morpho_analyzer_lang eq 'jp') {
-		my %char_code = ();
-		if (eval 'require Encode::EUCJPMS'){
-			$char_code{euc}  = 'eucJP-ms';
-			$char_code{sjis} = 'cp932';
-		} else {
-			$char_code{euc}  = 'euc-jp';
-			$char_code{sjis} = 'cp932';
-		}
-
-		$icode = kh_jchar->check_code($self->{file});
-		$icode = 'sjis' if $icode eq 'shiftjis';
-		$icode = $char_code{$icode} if $char_code{$icode};
+		$icode = kh_jchar->check_code2($self->{file});
 	} else {
 		$icode = kh_jchar->check_code_en($self->{file});
 	}

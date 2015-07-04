@@ -139,14 +139,18 @@ Extract.pm の作者は次のとおり。
 
 sub _exec{
 	my $self = shift;
+	
+	my $file_target = $::config_obj->os_path($::project_obj->file_target);
+	my $file_hukugo = $::config_obj->os_path($::project_obj->file_HukugoListTE);
+	
 	# 処理実行
 	my $if_exec = 1;
 	if (
-		   ( -e $::project_obj->file_HukugoListTE)
+		   ( -e $file_hukugo)
 		&& ( mysql_exec->table_exists('hukugo_te') )
 	){
-		my $t0 = (stat $::project_obj->file_target)[9];
-		my $t1 = (stat $::project_obj->file_HukugoListTE)[9];
+		my $t0 = (stat $file_target)[9];
+		my $t1 = (stat $file_hukugo)[9];
 		#print "$t0\n$t1\n";
 		if ($t0 < $t1){
 			$if_exec = 0; # この場合だけ解析しない

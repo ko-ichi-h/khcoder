@@ -278,26 +278,20 @@ sub mark{
 	my $icode;
 	my $ocode;
 
-	my %char_code = ();
-	if (eval 'require Encode::EUCJPMS'){
-		$char_code{euc}  = 'eucJP-ms';
-		$char_code{sjis} = 'cp932';
-	} else {
-		$char_code{euc}  = 'euc-jp';
-		$char_code{sjis} = 'cp932';
-	}
 
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
 	){
-		$icode = kh_jchar->check_code($source);
-		$icode = 'sjis' if $icode eq 'shiftjis';
-		$icode = $char_code{$icode} if $char_code{$icode};
+		$icode = kh_jchar->check_code2($source);
 		if ($::config_obj->os eq 'win32'){
 			$ocode = 'cp932';
 		} else {
-			$ocode = $char_code{euc};
+			if (eval 'require Encode::EUCJPMS') {
+				$ocode = 'eucJP-ms';
+			} else {
+				$ocode = 'euc-jp';
+			}
 		}
 	} else {
 		$icode = kh_jchar->check_code_en($source);
@@ -327,6 +321,7 @@ sub mark{
 			|| $::config_obj->c_or_j eq 'mecab'
 		){
 			#$text = Jcode->new($_,'utf8')->h2z;
+			Encode::JP::H2Z::h2z(\$text);
 			$text =~ s/ /　/go;
 			$text =~ s/\t/　/go;
 			$text =~ s/\\/￥/go;

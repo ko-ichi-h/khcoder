@@ -336,9 +336,7 @@ sub ok{
 		$self->close;
 	}
 	
-	unless ($old_c_or_j eq $::config_obj->c_or_j) {
-		$::main_gui->menu->refresh;
-	}
+	$::main_gui->menu->refresh;
 	
 	unless ($oldfont eq $::config_obj->font_main){
 		$::main_gui->close_all;

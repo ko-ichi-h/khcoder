@@ -1,8 +1,9 @@
-# Ê£¹ç¸ì¤ò¸¡½Ð¡¦¸¡º÷¤¹¤ë¤¿¤á¤Î¥í¥¸¥Ã¥¯
+# è¤‡åˆèªžã‚’æ¤œå‡ºãƒ»æ¤œç´¢ã™ã‚‹ãŸã‚ã®ãƒ­ã‚¸ãƒƒã‚¯
 
 package mysql_hukugo_te;
 
 use strict;
+use utf8;
 use Benchmark;
 
 use kh_jchar;
@@ -24,8 +25,8 @@ sub search{
 		return \@r;
 	}
 	
-	$args{query} = Jcode->new($args{query},'sjis')->euc;
-	$args{query} =~ s/¡¡/ /g;
+	#$args{query} = Jcode->new($args{query},'sjis')->euc;
+	$args{query} =~ s/ã€€/ /g;
 	my @query = split(/ /, $args{query});
 	
 	
@@ -72,7 +73,7 @@ sub search{
 	return \@r;
 }
 
-# ¸¡º÷Ê¸»úÎó¤¬»ØÄê¤µ¤ì¤Ê¤«¤Ã¤¿¾ì¹ç
+# æ¤œç´¢æ–‡å­—åˆ—ãŒæŒ‡å®šã•ã‚Œãªã‹ã£ãŸå ´åˆ
 sub get_majority{
 	my $h = mysql_exec->select("
 		SELECT name, num

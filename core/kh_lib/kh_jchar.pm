@@ -140,6 +140,55 @@ sub check_code{
 	return $icode;
 }
 
+sub check_code2{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 1000 unless $lines;
+	
+	if ( defined($::project_obj) ){
+		my $chk = $::project_obj->assigned_icode;
+		if (
+			   ( $::project_obj->file_target eq $the_file )
+			&& ( $chk )
+		) {
+			return $chk;
+		}
+	}
+	print "Checking icode (jp)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	#print "checking icode...(icode)\n";
+
+	use Jcode;
+	my $icode = Jcode->new($t)->icode;
+
+	my %char_code = ();
+	$char_code{shiftjis} = 'cp932';
+	$char_code{sjis} = 'cp932';
+	if (eval 'require Encode::EUCJPMS'){
+		$char_code{euc}  = 'eucJP-ms';
+	} else {
+		$char_code{euc}  = 'euc-jp';
+	}
+
+	$icode = $char_code{$icode} if $char_code{$icode};
+
+	print "$icode\n" unless $silent;
+	return $icode;
+}
+
 # ファイルの文字コードを判別(英語)
 
 sub check_code_en{
