@@ -272,7 +272,13 @@ sub mark{
 		++$n;
 	}
 
-	my $icode = kh_jchar->check_code($source);
+	my $icode;
+	if (
+		   $::config_obj->c_or_j eq 'chasen'
+		|| $::config_obj->c_or_j eq 'mecab'
+	){
+		$icode = kh_jchar->check_code($source);
+	}
 
 	open (MARKED,">$dist") or 
 		gui_errormsg->open(
