@@ -39,7 +39,7 @@ sub save_files{
 	){
 		$icode = 'cp932';
 	} else {
-		$icode = 'latin1';
+		$icode = 'utf8';
 	}
 	
 	# read excel
