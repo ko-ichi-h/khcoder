@@ -39,7 +39,7 @@ sub save_files{
 	){
 		$icode = 'cp932';
 	} else {
-		$icode = 'latin1';
+		$icode = 'utf8';
 	}
 	
 	# read excel
@@ -73,7 +73,7 @@ sub save_files{
 	close $fh;
 
 	# make a variable file, < 127 char, <= 1000 columns
-	open $fh, ">::encoding($icode)", $args{filev} or
+	open $fh, ">::encoding(cp932)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
