@@ -27,6 +27,8 @@ sub _run_morpho{
 	my $class = "kh_morpho::win32::stanford::".$::config_obj->stanford_lang;
 	bless $self, $class;
 
+	my $icode = kh_jchar->check_code_en($self->target);
+
 	# Stanford POS Taggerのサーバーを起動
 	require Win32::SearchPath;
 	my $java_path = Win32::SearchPath::SearchPath('java');
@@ -107,8 +109,6 @@ sub _run_morpho{
 				type => 'file'
 			);
 	}
-
-	my $icode = kh_jchar->check_code_en($self->target,1);
 
 	open (TRGT,$self->target) or 
 		gui_errormsg->open(
