@@ -1,8 +1,9 @@
-# Ê£¹çÌ¾»ì¤Î¥ê¥¹¥È¤òºîÀ½¤¹¤ë¤¿¤á¤Î¥í¥¸¥Ã¥¯
+# è¤‡åˆåè©žã®ãƒªã‚¹ãƒˆã‚’ä½œè£½ã™ã‚‹ãŸã‚ã®ãƒ­ã‚¸ãƒƒã‚¯
 
 package mysql_hukugo;
 
 use strict;
+use utf8;
 use Benchmark;
 
 use kh_jchar;
@@ -19,7 +20,7 @@ sub search{
 	}
 	
 	$args{query} = Jcode->new($args{query},'sjis')->euc;
-	$args{query} =~ s/¡¡/ /g;
+	$args{query} =~ s/ã€€/ /g;
 	my @query = split(/ /, $args{query});
 	
 	
@@ -66,7 +67,7 @@ sub search{
 	return \@r;
 }
 
-# ¸¡º÷Ê¸»úÎó¤¬»ØÄê¤µ¤ì¤Ê¤«¤Ã¤¿¾ì¹ç
+# æ¤œç´¢æ–‡å­—åˆ—ãŒæŒ‡å®šã•ã‚Œãªã‹ã£ãŸå ´åˆ
 sub get_majority{
 	my $h = mysql_exec->select("
 		SELECT name, num
@@ -88,48 +89,63 @@ sub run_from_morpho{
 
 	my $t0 = new Benchmark;
 
-	# ·ÁÂÖÁÇ²òÀÏ
+	# å½¢æ…‹ç´ è§£æž
 	#print "1. morpho\n";
 	
-	my $source = $::project_obj->file_target;
-	my $dist   = $::project_obj->file_m_target;
+	my $source = $::config_obj->os_path( $::project_obj->file_target);
+	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target);
 	unlink($dist);
-	my $icode = kh_jchar->check_code($source);
-	open (MARKED,">$dist") or 
+
+	my $icode = kh_jchar->check_code2($source);
+	my $ocode;
+	if ($::config_obj->os eq 'win32'){
+		$ocode = 'cp932';
+	} else {
+		if (eval 'require Encode::EUCJPMS') {
+			$ocode = 'eucJP-ms';
+		} else {
+			$ocode = 'euc-jp';
+		}
+	}
+
+	open (MARKED,">:encoding($ocode)", $dist) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $dist
 		);
-	open (SOURCE,"$source") or
+	open (SOURCE,"<:encoding($icode)", $source) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $source
 		);
 	while (<SOURCE>){
 		chomp;
-		my $text = Jcode->new($_,$icode)->h2z->euc;
-		$text =~ s/ /¡¡/go;
-		$text =~ s/\\/¡ï/go;
-		$text =~ s/'/¡Ç/go;
-		$text =~ s/"/¡É/go;
+		my $text = $_;
+		Encode::JP::H2Z::h2z(\$text);
+		$text =~ s/ /ã€€/go;
+		$text =~ s/\\/ï¿¥/go;
+		$text =~ s/'/â€™/go;
+		$text =~ s/"/â€/go;
 		print MARKED "$text\n";
 	}
 	close (SOURCE);
 	close (MARKED);
-	kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
+	#kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
 	
 	$::config_obj->use_hukugo(1);
 	$::config_obj->save;
 	kh_morpho->run;
 	$::config_obj->use_hukugo(0);
 	$::config_obj->save;
-	
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($::project_obj->file_MorphoOut);
-			my $ta2 = new Benchmark;
+
+	my $mcode = '';
+	if ($::config_obj->os eq 'win32') {
+		$mcode = 'sjis';
+	} else {
+		$mcode = 'ujis'
 	}
 	
-	# ÆÉ¤ß¹þ¤ß
+	# èª­ã¿è¾¼ã¿
 	#print "2. read\n";
 	mysql_exec->drop_table("rowdata_h");
 	mysql_exec->do("create table rowdata_h
@@ -145,9 +161,9 @@ sub run_from_morpho{
 	",1);
 	my $thefile = "'".$::project_obj->file_MorphoOut."'";
 	$thefile =~ tr/\\/\//;
-	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata_h",1);
+	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata_h CHARACTER SET $mcode",1);
 	
-	# Ãæ´Ö¥Æ¡¼¥Ö¥ëºîÀ½
+	# ä¸­é–“ãƒ†ãƒ¼ãƒ–ãƒ«ä½œè£½
 	mysql_exec->drop_table("rowdata_h2");
 	mysql_exec->do("
 		create table rowdata_h2 (
@@ -159,10 +175,10 @@ sub run_from_morpho{
 		select genkei
 		from rowdata_h
 		where
-			    hinshi = \'Ê£¹çÌ¾»ì\'
+			    hinshi = \'è¤‡åˆåè©ž\'
 	",1);
 	
-	# ½ñ¤­½Ð¤·
+	# æ›¸ãå‡ºã—
 	#print "4. print out\n";
 	mysql_exec->drop_table("hukugo");
 	mysql_exec->do("
@@ -171,12 +187,13 @@ sub run_from_morpho{
 			num int
 		)
 	",1);
-	open (F,">$target") or
+	use File::BOM;
+	open (F,'>:encoding(utf8):via(File::BOM)', $target) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $target
 		);
-	print F "Ê£¹ç¸ì,½Ð¸½¿ô\n";
+	print F "è¤‡åˆèªž,å‡ºç¾æ•°\n";
 	
 	my $oh = mysql_exec->select("
 		SELECT genkei, count(*) as hoge
@@ -188,9 +205,9 @@ sub run_from_morpho{
 	use kh_csv;
 	while (my $i = $oh->fetch){
 		#print ".";
-		my $tmp = Jcode->new($i->[0], 'euc')->tr('£°-£¹','0-9'); 
-		next if $tmp =~ /^(¾¼ÏÂ)*(Ê¿À®)*(\d+Ç¯)*(\d+·î)*(\d+Æü)*(¸áÁ°)*(¸á¸å)*(\d+»þ)*(\d+Ê¬)*(\d+ÉÃ)*$/o;   # ÆüÉÕ¡¦»þ¹ï
-		next if $tmp =~ /^\d+$/o;    # ¿ôÃÍ¤Î¤ß
+		my $tmp = Jcode->new($i->[0], 'euc')->tr('ï¼-ï¼™','0-9'); 
+		next if $tmp =~ /^(æ˜­å’Œ)*(å¹³æˆ)*(\d+å¹´)*(\d+æœˆ)*(\d+æ—¥)*(åˆå‰)*(åˆå¾Œ)*(\d+æ™‚)*(\d+åˆ†)*(\d+ç§’)*$/o;   # æ—¥ä»˜ãƒ»æ™‚åˆ»
+		next if $tmp =~ /^\d+$/o;    # æ•°å€¤ã®ã¿
 		#print ",";
 		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
 		mysql_exec->do("
@@ -200,7 +217,7 @@ sub run_from_morpho{
 	}
 	close (F);
 	
-	kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
+	#kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
 	
 	my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n";

@@ -12,7 +12,6 @@ use Encode;
 use utf8;
 
 my $output_code = find_encoding('utf8');
-my $sjis = find_encoding('cp932');
 
 #my $fh_db;
 

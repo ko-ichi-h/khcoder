@@ -1,6 +1,8 @@
 package kh_sysconfig::win32::chasen;
-use strict;
 use base qw(kh_sysconfig::win32);
+
+use strict;
+use utf8;
 use gui_errormsg;
 
 sub config_morph{
@@ -9,21 +11,29 @@ sub config_morph{
 	my $chasen_path = $::config_obj->os_path( $self->{chasen_path} );
 	
 	my $pos = rindex($chasen_path,'\\');
+	my $char;
+	if ($pos > -1) {
+		$char = '\\';
+	} else {
+		$char = '/';
+	}
+	
+	$pos = rindex($chasen_path,$char);
 	$self->{grammercha} = substr($chasen_path,0,$pos);
-	$self->{chasenrc} = "$self->{grammercha}".'\\dic\chasenrc';
-	$self->{dic_dir} =  "$self->{grammercha}".'\\dic';
-	$self->{grammercha} .= '\dic\grammar.cha';
-	
-	$self->{dic_dir} = Jcode->new($self->{dic_dir},'sjis')->euc;
+	$self->{chasenrc} = "$self->{grammercha}".$char.'dic'.$char.'chasenrc';
+	$self->{dic_dir} =  "$self->{grammercha}".$char.'dic';
+	$self->{grammercha} .= $char.'dic'.$char.'grammar.cha';
+
+	$self->{dic_dir} = $::config_obj->uni_path($self->{dic_dir});
 	$self->{dic_dir} =~ s/\\/\//g;
-	
+
 	#-------------------------------#
-	#   Grammer.cha¥Õ¥¡¥¤¥ë¤ÎÊÑ¹¹   #
+	#   Grammer.chaãƒ•ã‚¡ã‚¤ãƒ«ã®å¤‰æ›´   #
 	
-	# ÆÉ¤ß¹ş¤ß
+	# èª­ã¿è¾¼ã¿
 	my $grammercha = $self->{grammercha};
 	my $temp = ''; my $khflg = 0;
-	open (GRA,"$grammercha") or 
+	open (GRA, '<:encoding(cp932)', $grammercha) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $grammercha
@@ -46,17 +56,16 @@ sub config_morph{
 	}
 	close (GRA);
 	
-	# ÊÔ½¸
-	my $temp2 = '(Ê£¹çÌ¾»ì)'."\n".'(¥¿¥°)'."\n";
-	Jcode::convert(\$temp2,'sjis','euc');
+	# ç·¨é›†
+	my $temp2 = '(è¤‡åˆåè©)'."\n".'(ã‚¿ã‚°)'."\n";
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 	
-	# ½ñ¤­½Ğ¤·
+	# æ›¸ãå‡ºã—
 	my $temp_file = 'grammercha.tmp';
 	while (-e $temp_file){
 		$temp_file .= '.tmp';
 	}
-	open (GRAO,">$temp_file") or
+	open (GRAO,'>:encoding(cp932)', $temp_file) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $temp_file
@@ -64,7 +73,7 @@ sub config_morph{
 	print GRAO "$temp";
 	close (GRAO);
 	
-	# ¤â¤È¥Õ¥¡¥¤¥ë¤ÎÂÔÈò
+	# ã‚‚ã¨ãƒ•ã‚¡ã‚¤ãƒ«ã®å¾…é¿
 	my $n = 0;
 	while (-e $grammercha.".$n.tmp"){
 		++$n;
@@ -76,7 +85,7 @@ sub config_morph{
 		)
 	;
 	
-	# ¿·¥Õ¥¡¥¤¥ë¤Î¥³¥Ô¡¼
+	# æ–°ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚³ãƒ”ãƒ¼
 	rename ("$temp_file","$grammercha") or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -84,17 +93,17 @@ sub config_morph{
 		)
 	;
 
-	# ÂÔÈò¥Õ¥¡¥¤¥ë¤òºï½ü
+	# å¾…é¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤
 	unlink($grammercha.".$n.tmp");
 
 	#-----------------------------#
-	#   chasen.rc¥Õ¥¡¥¤¥ë¤ÎÊÑ¹¹   #
+	#   chasen.rcãƒ•ã‚¡ã‚¤ãƒ«ã®å¤‰æ›´   #
 
 	my $chasenrc = $self->{chasenrc};
 
-	# ÆÉ¤ß¹ş¤ß
+	# èª­ã¿è¾¼ã¿
 	$temp = ''; $khflg = 0;
-	open (GRA,"$chasenrc") or
+	open (GRA, '<:encoding(cp932)', $chasenrc) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$chasenrc"
@@ -117,22 +126,20 @@ sub config_morph{
 	}
 	close (GRA);
 	
-	# ÊÔ½¸
-	$temp2  = "(Ê¸Ë¡¥Õ¥¡¥¤¥ë  \"$self->{dic_dir}\")\n";
-	$temp2 .= '(Ãí¼á (("<" ">") (¥¿¥°)) )'."\n";
+	# ç·¨é›†
+	$temp2  = "(æ–‡æ³•ãƒ•ã‚¡ã‚¤ãƒ«  \"$self->{dic_dir}\")\n";
+	$temp2 .= '(æ³¨é‡ˆ (("<" ">") (ã‚¿ã‚°)) )'."\n";
 	if ($self->{use_hukugo}){
 		$temp2 .= $self->hukugo_chasenrc;
-		#print Jcode->new($self->hukugo_chasenrc)->sjis;
 	}
-	Jcode::convert(\$temp2,'sjis','euc');
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
-	# ½ñ¤­½Ğ¤·
+	# æ›¸ãå‡ºã—
 	$temp_file = 'chasenrc.tmp';
 	while (-e $temp_file){
 		$temp_file .= '.tmp';
 	}
-	open (GRAO,">$temp_file") or
+	open (GRAO,'>:encoding(cp932)', $temp_file) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $temp_file
@@ -140,7 +147,7 @@ sub config_morph{
 	print GRAO "$temp";
 	close (GRAO);
 	
-	# ¤â¤È¥Õ¥¡¥¤¥ë¤ÎÂÔÈò
+	# ã‚‚ã¨ãƒ•ã‚¡ã‚¤ãƒ«ã®å¾…é¿
 	$n = 0;
 	while (-e $chasenrc.".$n.tmp"){
 		++$n;
@@ -152,7 +159,7 @@ sub config_morph{
 		)
 	;
 	
-	# ¿·¥Õ¥¡¥¤¥ë¤Î¥³¥Ô¡¼
+	# æ–°ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚³ãƒ”ãƒ¼
 	rename ("$temp_file","$chasenrc") or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -160,7 +167,7 @@ sub config_morph{
 		)
 	;
 
-	# ÂÔÈòÀè¥Õ¥¡¥¤¥ë¤Îºï½ü
+	# å¾…é¿å…ˆãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤
 	unlink($chasenrc.".$n.tmp");
 
 	return 1;

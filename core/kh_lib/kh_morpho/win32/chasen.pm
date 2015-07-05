@@ -19,8 +19,16 @@ sub _run_morpho{
 	}
 	
 	my $pos = rindex($path,"\\");
+	my $char;
+	if ($pos > -1) {
+		$char = '\\';
+	} else {
+		$char = '/';
+	}
+	
+	$pos = rindex($path,$char);
 	$self->{dir} = substr($path,0,$pos);
-	my $chasenrc = $self->{dir}."\\dic\\chasenrc";
+	my $chasenrc = $self->{dir}.$char."dic".$char."chasenrc";
 	$self->{cmdline} = "chasen -r \"$chasenrc\" -o \"".$self->output."\" \"".$self->target."\"";
 
 	require Win32::Process;

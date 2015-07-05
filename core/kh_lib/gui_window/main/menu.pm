@@ -1037,13 +1037,16 @@ sub mc_hukugo{
 	my $self = shift;
 	my $mw = $::main_gui->{win_obj};
 
+	my $file_hukugo = $::config_obj->os_path( $::project_obj->file_HukugoList );
+	my $file_target = $::config_obj->os_path( $::project_obj->file_target );
+	
 	my $if_exec = 1;
 	if (
-		   ( -e $::project_obj->file_HukugoList )
+		   ( -e $file_hukugo )
 		&& ( mysql_exec->table_exists('hukugo') )
 	){
-		my $t0 = (stat $::project_obj->file_target)[9];
-		my $t1 = (stat $::project_obj->file_HukugoList)[9];
+		my $t0 = (stat $file_target)[9];
+		my $t1 = (stat $file_hukugo)[9];
 		if ($t0 < $t1){
 			$if_exec = 0; # この場合だけ解析しない
 		}
