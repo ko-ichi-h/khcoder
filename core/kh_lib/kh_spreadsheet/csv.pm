@@ -40,7 +40,7 @@ sub save_files{
 	){
 		$icode_o = 'cp932';
 	} else {
-		$icode_o = 'latin1';
+		$icode_o = 'utf8';
 	}
 	open my $fht, ">::encoding($icode_o)", $args{filet} or
 		gui_errormsg->open(
@@ -48,7 +48,7 @@ sub save_files{
 			file => $args{filet}
 		)
 	;
-	open my $fhv, ">::encoding($icode_o)", $args{filev} or
+	open my $fhv, ">::encoding(cp932)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
