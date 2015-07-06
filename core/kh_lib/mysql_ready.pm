@@ -390,7 +390,7 @@ sub reform{
 			1
 		)->hundle->fetchall_arrayref;
 	} else {
-		my $dbhh = DBI->connect("DBI:CSV:f_dir=./config");      
+		my $dbhh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8");      
 		my $th = $dbhh->prepare("
 			SELECT kh_hinshi,condition1,condition2,hinshi_id
 			FROM hinshi_chasen

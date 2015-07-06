@@ -80,7 +80,7 @@ sub reset_parm{
 		# 品詞定義ファイルの作成準備
 		use DBI;
 		use DBD::CSV;
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
 		my @table = (
 				"'7', '地名', '名詞-固有名詞-地域', ''",
 				"'6', '人名', '名詞-固有名詞-人名', ''",
@@ -437,7 +437,7 @@ sub stopwords{
 
 	if ( defined( $args{stopwords} ) ){
 		# データ保存
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
 		if (-e "./config/stopwords_$type"){
 			$dbh->do("
 				DROP TABLE stopwords_$type
@@ -461,7 +461,7 @@ sub stopwords{
 	} else {
 		# データ読み出し
 		my @words = ();
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
 		if (-e "./config/stopwords_$type"){
 			my $sth = $dbh->prepare("
 				SELECT name FROM stopwords_$type
@@ -492,7 +492,7 @@ sub stopwords_current{
 	#print "type: $type\n";
 	
 	my @words = ();
-	my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+	my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
 	if (-e "./config/stopwords_$type"){
 		my $sth = $dbh->prepare("
 			SELECT name FROM stopwords_$type

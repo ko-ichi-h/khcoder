@@ -33,6 +33,7 @@ sub config_morph{
 	# 読み込み
 	my $grammercha = $self->{grammercha};
 	my $temp = ''; my $khflg = 0;
+	return 0 unless -e $grammercha;
 	open (GRA, '<:encoding(cp932)', $grammercha) or 
 		gui_errormsg->open(
 			type    => 'file',
