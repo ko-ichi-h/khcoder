@@ -149,7 +149,7 @@ sub save{
 	$self->{dacheck_obj}->save($path);
 
 	# 結果表示
-	$path = Jcode->new($path)->euc;
+	$path = $::config_obj->uni_path($path);
 	$self->{text_widget}->insert(
 		'end',
 		kh_msg->get('saved')#"●見つかった問題点の詳細を次のファイルに保存しました："

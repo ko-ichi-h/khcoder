@@ -189,26 +189,8 @@ sub open{
 	my_threads->open_project;
 	
 	$self->check_up;
-	$self->set_r_locale;
 	
 	return $self;
-}
-
-sub set_r_locale{
-	my $self = shift;
-	my $lang = $::project_obj->morpho_analyzer_lang;
-	
-	return 0 unless $::config_obj->os eq 'win32';
-	return 0 unless $::config_obj->{R};
-	
-	if ($lang eq 'cn'){
-		print "Set R locale: CN\n";
-		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Chinese")');
-	} else {
-		print "Set R locale: JP\n";
-		$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
-	}
-	
 }
 
 sub morpho_analyzer{

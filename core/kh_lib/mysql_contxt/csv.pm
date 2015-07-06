@@ -1,30 +1,32 @@
 package mysql_contxt::csv;
 use base qw(mysql_contxt);
 use strict;
+use utf8;
 
 #---------------------#
-#   1¹ÔÌÜ¤òÉÕ¤±Â­¤¹   #
+#   1è¡Œç›®ã‚’ä»˜ã‘è¶³ã™   #
 
 sub _save_finish{
 	my $self = shift;
 	
 	use kh_csv;
-	my $first_line = 'Ãê½Ð¸ì,';
+	my $first_line = kh_msg->gget('words').',';
 	foreach my $w2 (@{$self->{wList2}}){
 		$first_line .= 'cw: '.kh_csv->value_conv($self->{wName2}{$w2}).',';
 	}
 	chop $first_line;
-	$first_line = Jcode->new($first_line)->sjis;
+	#$first_line = Jcode->new($first_line)->sjis;
 	
 	my $file = $self->data_file;
 	my $file_tmp = "$file".".bak";
 	
-	open (OLD,"$file") or 
+	open (OLD,'<:encoding(utf8)', $file) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file",
 		);
-	open (NEW,">$file_tmp") or
+	use File::BOM;
+	open (NEW,'>:encoding(utf8):via(File::BOM)', $file_tmp) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_tmp",
@@ -38,13 +40,10 @@ sub _save_finish{
 	unlink($file);
 	rename($file_tmp,$file);
 
-	unless ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($file);
-	}
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 sub data_file{

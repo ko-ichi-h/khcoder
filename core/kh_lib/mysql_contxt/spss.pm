@@ -1,23 +1,20 @@
 package mysql_contxt::spss;
 use base qw(mysql_contxt);
 use strict;
+use utf8;
 
 #--------------------------------#
-#   ¥·¥ó¥¿¥Ã¥¯¥¹¥Õ¥¡¥¤¥ë¤Î½ÐÎÏ   #
+#   ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«ã®å‡ºåŠ›   #
 
 sub _save_finish{
 	my $self = shift;
 	my $file_data   = $self->data_file;
 	my $file_syntax = $self->synt_file;
 	
-	# ÊÑ¿ôÄêµÁ
+	# å¤‰æ•°å®šç¾©
 	my $spss;
 	$spss .= "file handle trgt1 /name=\'";
-	if ($::config_obj->os eq 'win32'){
-		$spss .= Jcode->new($file_data,'sjis')->euc;
-	} else {
-		$spss .= $file_data;
-	}
+	$spss .= $::config_obj->uni_path($file_data);
 	$spss .= "\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
@@ -29,29 +26,28 @@ sub _save_finish{
 	}
 	$spss .= ".\nexecute.\n";
 
-	# ÊÑ¿ô¥é¥Ù¥ë
+	# å¤‰æ•°ãƒ©ãƒ™ãƒ«
 	$n = 0;
 	$spss .= "variable labels\n";
-	$spss .= "  word \'Ãê½Ð¸ì\'\n";
+	$spss .= "  word '".kh_msg->gget('words')."'\n";
 	foreach my $w2 (@{$self->{wList2}}){
 		$spss .= "  cw$n \'cw: $self->{wName2}{$w2}\'\n";
 		++$n;
 	}
 	$spss .= ".\nexecute.";
 
-	open (SOUT,">$file_syntax") or 
+	open (SOUT,'>:encoding(utf8)', $file_syntax) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_syntax",
 		);
 	print SOUT $spss;
 	close (SOUT);
-	kh_jchar->to_sjis($file_syntax);
 }
 
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 sub data_file{

@@ -337,7 +337,6 @@ sub gui_jg{ # 入力された文字列の変換
 		#print "not utf8\n";
 		return $char;
 	}
-
 }
 
 sub to_clip{ # クリップボードへコピーするための変換

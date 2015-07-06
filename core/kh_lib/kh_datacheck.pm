@@ -14,7 +14,7 @@ my %errors = (
 sub run{
 	my $class = shift;
 	my $self;
-	$self->{file_source} = $::project_obj->file_target;
+	$self->{file_source} = $::config_obj->os_path( $::project_obj->file_target );
 	$self->{file_temp}   = 'temp.txt';
 	while (-e $self->{file_temp}){
 		$self->{file_temp} .= '.tmp';
@@ -192,25 +192,26 @@ sub edit{
 	my $self = shift;
 
 	# バックアップ作成
+	my $file_target = $::config_obj->os_path( $::project_obj->file_target );
 	$self->{file_backup} = $::project_obj->file_backup;
-	rename($::project_obj->file_target,$self->{file_backup}) or
+	rename($file_target, $self->{file_backup}) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $self->{file_backup}
 		);
 
 	# 修正（置換）
-	rename($self->{file_temp}, $::project_obj->file_target) or
+	rename($self->{file_temp}, $file_target) or
 		gui_errormsg->open(
 			type => 'file',
-			thefile => $::project_obj->file_target
+			thefile => $file_target
 		);
 
 	# Diff作成
 	use Text::Diff;
 	my $diff = diff(
 		$self->{file_backup},
-		$::project_obj->file_target,
+		$file_target,
 		{STYLE => "OldStyle"}
 	);
 	$self->{file_diff} = $::project_obj->file_diff;

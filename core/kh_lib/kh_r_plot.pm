@@ -237,6 +237,18 @@ sub set_par{
 		.'")'
 	);
 
+	# Windowsではロケールを設定する
+	if ($::config_obj->os eq 'win32') {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'cn'){
+			#print "Set R locale: CN\n";
+			$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Chinese")');
+		} else {
+			#print "Set R locale: JP\n";
+			$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
+		}
+	}
+	
 	$::config_obj->R->output_chk(1);
 
 	return $self;
