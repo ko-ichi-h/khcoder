@@ -7,6 +7,8 @@ use gui_errormsg::file;
 use gui_errormsg::mysql;
 use gui_errormsg::print;
 
+my $exiting = 0;
+
 # usege: gui_errormsg->open
 # options: 
 #	msg
@@ -29,6 +31,8 @@ sub open{
 	unless ($self->{type} eq 'msg'){
 		if ($::main_gui){
 			print "Exit (gui_errormsg.pm)\n";
+			exit if $exiting;
+			$exiting = 1;
 			$::main_gui->close;
 		} else {
 			exit;
