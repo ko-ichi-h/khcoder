@@ -47,7 +47,7 @@ sub do{
 	my $vars = mysql_outvar->get_list;
 	foreach my $i (@{$vars}){
 		my $var = mysql_outvar::a_var->new( undef, $i->[2] );
-		print "$i->[2], ", $var->n, ", $cases{$var->tani}\n";
+		#print "$i->[2], ", $var->n, ", $cases{$var->tani}\n";
 		unless ( $cases{$var->tani} == $var->n ){
 			push @error, "variable $i->[2]";
 		}

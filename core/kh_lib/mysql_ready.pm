@@ -101,8 +101,6 @@ sub first{
 			$::config_obj->stemming_lang
 		);
 	}
-	$::project_obj->set_r_locale;
-	
 }
 
 sub fix_michigo{
