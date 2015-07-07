@@ -13,7 +13,7 @@ sub export{
 
 	# MySQLのデータを格納
 	my $file_temp_mysql = $::config_obj->file_temp;
-	open (MYSQLO,">$file_temp_mysql") or
+	open (MYSQLO,'>:encoding(utf8)', $file_temp_mysql) or
 		gui_errormsg->open(
 			type => 'file',
 			file => $file_temp_mysql
@@ -33,8 +33,14 @@ sub export{
 	# 情報ファイルを作成
 	my $file_temp_info = $::config_obj->file_temp;
 	my %info;
-	$info{'file_name'} = encode_base64($::project_obj->file_short_name,'');
-	$info{'comment'}   = encode_base64($::project_obj->comment,'');
+	$info{'file_name'} = encode_base64(
+		Encode::encode('utf8', $::project_obj->file_short_name),
+		''
+	);
+	$info{'comment'}   = encode_base64(
+		Encode::encode('utf8', $::project_obj->comment),
+		''
+	);
 	DumpFile($file_temp_info, %info) or
 		gui_errormsg->open(
 			type => 'file',
@@ -47,7 +53,10 @@ sub export{
 	
 	$zip->addFile( $file_temp_mysql, 'mysql' );
 	$zip->addFile( $file_temp_info,  'info' );
-	$zip->addFile( $::project_obj->file_target, 'target');
+	$zip->addFile(
+		$::config_obj->os_path($::project_obj->file_target),
+		'target'
+	);
 	
 	unless ( $zip->writeToFileNamed($savefile) == "AZ_OK" ) {
 		gui_errormsg->open(
@@ -97,7 +106,7 @@ sub import{
 	
 	my $new = kh_project->new(
 		target  => $file_target,
-		comment => Jcode->new($info->{comment})->sjis,
+		comment => $info->{comment},
 		icode   => 0,
 	) or return 0;
 	kh_projects->read->add_new($new) or return 0; # このプロジェクトが開かれる
@@ -137,7 +146,7 @@ sub get_info{
 	# 解釈
 	my %info = LoadFile($file_temp_info) or return undef;
 	foreach my $i (keys %info){
-		$info{$i} = decode_base64($info{$i})
+		$info{$i} = Encode::decode('utf8', decode_base64($info{$i}) )
 	}
 	unlink($file_temp_info);
 
