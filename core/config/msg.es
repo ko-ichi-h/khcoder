@@ -542,7 +542,7 @@ gui_window::word_search:
     search:                   Buscar
     view_conj:                Ver Conj.
     win_title:                Buscar Palabras
-    df:                       Palabra
+    word:                     Palabra
 gui_window::word_tf_df:
     df:                       Document Frecuencia
     log:                      '  Ejes logarítmicos:'
