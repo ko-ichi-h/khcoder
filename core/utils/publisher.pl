@@ -35,6 +35,7 @@ my @cp_f = (
 	['khc.xla'      , 'khc.xla'       ],
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
+	['config/msg.es', 'config/msg.es' ],
 );
 
 use File::Find 'find';
