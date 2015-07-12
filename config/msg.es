@@ -202,7 +202,7 @@ gui_window::main::menu:
     output_cod:               Exportar Matriz Documento-Código
     partial:                  Extracción parcial de texto
     plugin:                   Plugin
-    prep:                     Preprocesamiento
+    prep:                     PReprocesamiento
     project:                  Proyecto
     read:                     Importar Variables
     run_prep:                 Ejecutar Preprocesamiento
