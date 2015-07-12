@@ -76,10 +76,13 @@ sub make{
 	#   プロジェクト   #
 
 	my $msg = gui_window->gui_jm( kh_msg->get('project') );
+	my $underline_pos = -1;
+	$underline_pos = index($msg, 'P');
+	$underline_pos = 0 if $underline_pos == -1;
 	my $f1 = $menubar->cascade(
 		-label => $msg,
 		-font => "TKFN",
-		-underline => index($msg, 'P'),
+		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
 
@@ -151,10 +154,12 @@ sub make{
 	#------------#
 	#   前処理   #
 
+	$underline_pos = index(kh_msg->get('prep'), 'R');
+	$underline_pos = 0 if $underline_pos == -1;
 	my $f = $menubar->cascade(
 		-label => gui_window->gui_jm( kh_msg->get('prep') ),
 		-font => "TKFN",
-		-underline => index(kh_msg->get('prep'), 'R'),
+		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
 
@@ -237,10 +242,12 @@ sub make{
 	#------------#
 	#   ツール   #
 
+	$underline_pos = index(kh_msg->get('tools'), 'T');
+	$underline_pos = 0 if $underline_pos == -1;
 	$f = $menubar->cascade(
 		-label => gui_window->gui_jm( kh_msg->get('tools') ),
 		-font => "TKFN",
-		-underline => index(kh_msg->get('tools'),'T'),
+		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
 
@@ -816,11 +823,13 @@ sub make{
 
 	#------------#
 	#   ヘルプ   #
-	
+
+	$underline_pos = index(kh_msg->get('help'), 'H');
+	$underline_pos = 0 if $underline_pos == -1;
 	$f = $menubar->cascade(
 		-label => gui_window->gui_jm( kh_msg->get('help') ),#"$msg",
 		-font => "TKFN",
-		-underline => index(kh_msg->get('help'),'H'),
+		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
 	
