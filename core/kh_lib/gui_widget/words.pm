@@ -292,6 +292,7 @@ sub settings_load{
 			max_df => $self->max_df,
 			min_df => $self->min_df,
 		)->get_default_freq(75);
+		$freq = 2 if $freq == 1;
 		
 		$self->min( $freq );
 		
