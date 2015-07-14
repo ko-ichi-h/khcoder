@@ -142,7 +142,7 @@ my $DEBUG_TIMING = 0;
       $file = "$this->{LOG_DIR}/input.$n.r" ;
     }
 
-    open (my $fh,">$file._") ;
+    open (my $fh, '>:encoding(utf8)' ,"$file._") ;
     print $fh "$cmd\n" ;
     close ($fh) ;
     chmod(0777 , "$file._") ;
@@ -857,6 +857,7 @@ my $DEBUG_TIMING = 0;
         try( rm(test_open), silent=T  );
         options(warn=0);
         
+        #tryCatch( eval(parse(PERLINPUTFILE, encoding="UTF-8")) , error = function(e) { print(e) } ) ;
         tryCatch( source(PERLINPUTFILE, encoding="UTF-8") , error = function(e) { print(e) } ) ;
         
         ## Ensure that device is off after execute the input file.

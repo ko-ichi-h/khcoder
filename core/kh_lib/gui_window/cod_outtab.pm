@@ -580,7 +580,7 @@ sub plot{
 	$rcom .= ")\n";
 	
 	$rcom .= "# END: DATA\n\n";
-	$rcom = Encode::encode('eucjp', $rcom);
+	#$rcom = Encode::encode('eucjp', $rcom);
 
 	$rcom .= "# dpi: short based\n";
 

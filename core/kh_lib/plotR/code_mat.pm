@@ -1,6 +1,7 @@
 package plotR::code_mat;
 
 use strict;
+use utf8;
 
 use kh_r_plot;
 
@@ -17,12 +18,12 @@ sub new{
 
 	my $r_command = $args{r_command};
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡Ê¶¦ÄÌ¡Ë
-	$args{font_size} = $::config_obj->plot_font_size / 100 unless $args{font_size}; # ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆå…±é€šï¼‰
+	$args{font_size} = $::config_obj->plot_font_size / 100 unless $args{font_size}; # ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	#$r_command .= "cex <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
 
-	if ( defined($self->{selection}) ){                # ¥³¡¼¥ÉÁªÂò
+	if ( defined($self->{selection}) ){                # ã‚³ãƒ¼ãƒ‰é¸æŠž
 		if ( $#{$self->{selection}} > -1 ){
 			$r_command .= "c_names <- colnames(d)\n";
 			
@@ -37,7 +38,7 @@ sub new{
 		}
 	}
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡Ê¥Ò¡¼¥È¥Þ¥Ã¥×¡Ë
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆãƒ’ãƒ¼ãƒˆãƒžãƒƒãƒ—ï¼‰
 	unless ( $args{heat_dendro_c} ){
 		$args{heat_dendro_c} = 0;
 	}
@@ -55,7 +56,7 @@ sub new{
 
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡Ê¥Ð¥Ö¥ë¥×¥í¥Ã¥È¡Ë
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆï¼‰
 	$args{plot_size_maph} = $::config_obj->plot_size_codes unless $args{plot_size_maph};
 	$args{plot_size_mapw} = $::config_obj->plot_size_words unless $args{plot_size_mapw};
 	
@@ -72,7 +73,7 @@ sub new{
 	$args{color_gry} = 0 unless length($args{color_gry});
 	$r_command .= "color_gry <- $args{color_gry}\n";
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	
 	my @plots = ();
 	my $flg_error = 0;
@@ -355,7 +356,7 @@ if ( length(col.labels) > 35 && (dendro_v == 1)){
 	cexcol <- 2 + 8 * 30 / length(col.labels)
 }
 
-# pheatmap¤Î¥«¥¹¥¿¥Þ¥¤¥º
+# pheatmapã®ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚º
 draw_matrix_my = function(
 	matrix,
 	border_color,
@@ -371,7 +372,7 @@ draw_matrix_my = function(
 			x      = x[i],
 			y      = y[1:n],
 			width  = 1/m,
-			height = 1/n - (1/n) * 0.2, # ¹Ô¤È¹Ô¤Î´Ö¤Ë·ä´Ö¤òºî¤ë
+			height = 1/n - (1/n) * 0.2, # è¡Œã¨è¡Œã®é–“ã«éš™é–“ã‚’ä½œã‚‹
 			gp     = gpar(
 				fill = matrix[,i],
 				col  = NA, #ifelse((attr(fmat, "draw")), NA, NA),
