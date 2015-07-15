@@ -76,7 +76,8 @@ sub save{
 
 	my $sth = mysql_exec->select($sql, 1)->hundle;
 
-	open (VOUT,">$args{path}") or 
+	use File::BOM;
+	open (VOUT, '>:encoding(utf8):via(File::BOM)', $args{path}) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $args{path},
@@ -94,7 +95,7 @@ sub save{
 	}
 	close(VOUT);
 
-	kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
+	#kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
 
 
 }

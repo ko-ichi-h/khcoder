@@ -30,7 +30,7 @@ sub pick{
 	}
 
 	# 書き出し（テキスト）
-	open (F,">$args{file}") or 
+	open (F, '>:encoding(utf8)', $args{file}) or
 		gui_errormsg->open(
 			thefile => $args{file},
 			type    => 'file'
@@ -91,9 +91,6 @@ sub pick{
 	my $t1 = new Benchmark;                           # 時間計測用
 	print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($args{file});
-	}
 
 	# 書き出し（外部変数）
 	my $var_file = $args{file};                   # 出力ファイル名
@@ -164,7 +161,8 @@ sub pick{
 			}
 		}
 		
-		open my $fh, '>' ,$var_file or                # ファイルへ書き出し
+		use File::BOM;
+		open my $fh, '>:encoding(utf8):via(File::BOM)' ,$var_file or # ファイルへ書き出し
 			gui_errormsg->open(
 				thefile => $var_file,
 				type    => 'file'
@@ -187,9 +185,6 @@ sub pick{
 			print $fh "$t\n";
 		}
 		close($fh);
-		if ($::config_obj->os eq 'win32'){
-			kh_jchar->to_sjis($var_file);
-		}
 	}
 	
 	return 1;

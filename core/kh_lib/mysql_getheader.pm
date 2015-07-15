@@ -78,7 +78,7 @@ sub get_all{
 	my %args  = @_;
 	my $self = \%args;
 	
-	open (F,">$self->{file}")
+	open (F,'>:encoding(utf8)',$self->{file})
 		or gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file}
@@ -106,9 +106,9 @@ sub get_all{
 	}
 	close (F);
 
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($self->{file});
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($self->{file});
+	#}
 }
 
 sub get_selected{
