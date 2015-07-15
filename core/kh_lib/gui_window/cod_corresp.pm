@@ -838,10 +838,7 @@ sub _calc{
 		my $n = 1;
 		my $headings = "hn <- c(";
 		while ($n <= $max){
-			$names{$n} = Jcode->new(
-				mysql_getheader->get($tani_high, $n),
-				'sjis'
-			)->euc;
+			$names{$n} = mysql_getheader->get($tani_high, $n);
 
 			if (length($names{$n})){
 				$names{$n} =~ s/"/ /g;

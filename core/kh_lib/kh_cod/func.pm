@@ -234,7 +234,7 @@ sub out2r_selected{
 	
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
-	open my $fh, '>', $file or
+	open my $fh, '>:encoding(utf8)', $file or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
@@ -257,9 +257,9 @@ sub out2r_selected{
 	# Rコマンド
 	my $r_command = "source(\"$file\")\n";
 	if ($::config_obj->os eq 'win32'){
-		$r_command = Jcode->new($r_command, 'sjis')->euc;
+		#$r_command = Jcode->new($r_command, 'sjis')->euc;
 		$r_command =~ s/\\/\//g;
-		kh_jchar->to_sjis($file);
+		#kh_jchar->to_sjis($file);
 	}
 	$r_command .= "# dpi: short based\n";
 	return $r_command;
