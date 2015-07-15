@@ -53,7 +53,7 @@ sub run{
 
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
-	open my $fh, '>', $file or
+	open my $fh, '>:encoding(utf8)', $file or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
@@ -91,12 +91,12 @@ sub run{
 	#$r_cmd .= "# END: DATA\n\n";
 
 	# Rコマンド
-	my $r_cmd = "source(\"$file\")\n";
+	my $r_cmd = "source(\"$file\", encoding=\"UTF-8\")\n";
 
 	if ($::config_obj->os eq 'win32'){
-		$r_cmd = Jcode->new($r_cmd, 'sjis')->euc;
-		$r_cmd =~ s/\\/\//g;
-		kh_jchar->to_sjis($file);
+		#$r_cmd = Jcode->new($r_cmd, 'sjis')->euc;
+		#$r_cmd =~ s/\\/\//g;
+		#kh_jchar->to_sjis($file);
 	}
 
 	return $r_cmd;
