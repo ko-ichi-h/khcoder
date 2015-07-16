@@ -496,9 +496,9 @@ sub last_codf{
 	my $new  = shift;
 	
 	if ($new){
-		$new = Jcode->new($new,'sjis')->euc if $::config_obj->os eq 'win32';
-		$new = Jcode->new($new,'utf8')->euc if $^O eq 'darwin';
-		print "new: $new\n", Jcode->new($new)->icode, "\n";
+		#$new = Jcode->new($new,'sjis')->euc if $::config_obj->os eq 'win32';
+		#$new = Jcode->new($new,'utf8')->euc if $^O eq 'darwin';
+		#print "new: $new\n", Jcode->new($new)->icode, "\n";
 		mysql_exec->do(
 			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_codf\'"
 		,1);

@@ -150,7 +150,9 @@ sub _calc{
 	my $self = shift;
 
 	# 入力チェック
-	unless (-e $self->gui_jg( $self->{entry}->get ) ){
+	my $path_i = $self->gui_jg( $self->{entry}->get );
+	my $path_i= $::config_obj->os_path($path_i);
+	unless (-e $path_i ){
 		gui_errormsg->open(
 			type   => 'msg',
 			msg    => kh_msg->get('er_no_such_file'), # ファイルを正しく指定して下さい。
@@ -169,7 +171,7 @@ sub _calc{
 	}
 	
 	my $var_new = $self->gui_jg($self->{entry_ovn}->get);
-	$var_new = Jcode->new($var_new, 'sjis')->euc;
+	#$var_new = Jcode->new($var_new, 'sjis')->euc;
 	
 	my $chk = mysql_outvar::a_var->new($var_new);
 	if ( defined($chk->{id}) ){
@@ -216,7 +218,7 @@ sub _calc{
 	use kh_nbayes;
 
 	kh_nbayes->predict(
-		path      => $self->gui_jg( $self->{entry}->get ),
+		path      => $path_i,
 		tani      => $self->tani,
 		outvar    => $var_new,
 		save_log  => $self->{check_savelog},

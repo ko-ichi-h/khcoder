@@ -2,28 +2,25 @@ package gui_window::bayes_view_knb;
 use base qw(gui_window);
 
 use strict;
+use utf8;
 use Jcode;
 use List::Util qw(max sum);
-
-my $ascii = '[\x00-\x7F]';
-my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
-my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 
 my $debug_ms = 0;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ³Ø½¬·ë²Ì¥Õ¥¡¥¤¥ë¡§
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # å­¦ç¿’çµæœãƒ•ã‚¡ã‚¤ãƒ«ï¼š
 
 	$self->{path} = shift;
 
 	#------------------#
-	#   Á´ÂÎÅª¤Ê¾ğÊó   #
+	#   å…¨ä½“çš„ãªæƒ…å ±   #
 
 	my $lf = $win->LabFrame(
 		-label => 'Info',
@@ -33,7 +30,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => kh_msg->get('n_docs'), # ³Ø½¬¤·¤¿Ê¸½ñ¡§
+		-text => kh_msg->get('n_docs'), # å­¦ç¿’ã—ãŸæ–‡æ›¸ï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_instances} = $lf->Entry(
@@ -42,7 +39,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => kh_msg->get('n_types'), #  °Û¤Ê¤ê¸ì¿ô¡§
+		-text => kh_msg->get('n_types'), #  ç•°ãªã‚Šèªæ•°ï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_words} = $lf->Entry(
@@ -61,7 +58,7 @@ sub _new{
 	$self->{list_flame} = $lf1->Frame()->pack(-fill => 'both', -expand => 1);
 
 	#------------------#
-	#   Áàºî¥Ü¥¿¥óÎà   #
+	#   æ“ä½œãƒœã‚¿ãƒ³é¡   #
 
 	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 
@@ -87,7 +84,7 @@ sub _new{
 	);
 
 	$f1->Button(
-		-text => kh_msg->get('search'), # ¸¡º÷
+		-text => kh_msg->get('search'), # æ¤œç´¢
 		-command => sub{
 			my $key = $self->{last_sort_key};
 			$self->{last_sort_key} = undef;
@@ -100,12 +97,12 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$f1->Button(
-		-text => kh_msg->get('whole'), # Á´Ãê½Ğ¸ì¤Î¥ê¥¹¥È
+		-text => kh_msg->get('whole'), # å…¨æŠ½å‡ºèªã®ãƒªã‚¹ãƒˆ
 		-command => sub { $self->list_all; }
 	)->pack(-side => 'left', -padx => 2);
 
 	my $btn = $f1->Button(
-		-text => kh_msg->gget('copy_all'), # ¥³¥Ô¡¼¡ÊÉ½Á´ÂÎ¡Ë
+		-text => kh_msg->gget('copy_all'), # ã‚³ãƒ”ãƒ¼ï¼ˆè¡¨å…¨ä½“ï¼‰
 		-command => sub { $self->copy; }
 	)->pack(-side => 'left', -padx => 2);
 	
@@ -123,29 +120,29 @@ sub _new{
 }
 
 #------------#
-#   ½é´ü²½   #
+#   åˆæœŸåŒ–   #
 
 sub start{
 	my $self = shift;
 	$self->{knb_obj} = kh_nbayes::Util->knb2lst( path => $self->{path} );
 
-	# ¥Õ¥¡¥¤¥ëÌ¾
+	# ãƒ•ã‚¡ã‚¤ãƒ«å
 	my $fl = gui_window->gui_jchar($self->{path});
 	$fl = File::Basename::basename($fl);
-	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
+	$fl = $::config_obj->uni_path($fl);
 	$self->{win_obj}->title(
 		$self->gui_jt(
 			kh_msg->get('win_title')." $fl"
 		));
 
 
-	# Ê¸½ñ¿ô
+	# æ–‡æ›¸æ•°
 	$self->{entry_instances}->configure(-state => 'normal');
 	$self->{entry_instances}->delete(0,'end');
 	$self->{entry_instances}->insert(0,$self->{knb_obj}->instances);
 	$self->{entry_instances}->configure(-state => 'disable');
 
-	# Ãê½Ğ¸ì¿ô
+	# æŠ½å‡ºèªæ•°
 	$self->{entry_words}->configure(-state => 'normal');
 	$self->{entry_words}->delete(0,'end');
 	$self->{entry_words}->insert(0,$self->{knb_obj}->words);
@@ -170,9 +167,9 @@ sub view{
 	my $self = shift;
 
 	#--------------------#
-	#   Ãê½Ğ¸ì¤Î¥ê¥¹¥È   #
+	#   æŠ½å‡ºèªã®ãƒªã‚¹ãƒˆ   #
 
-	# 1ÎóÌÜ¤ÎÄ¹¤µ
+	# 1åˆ—ç›®ã®é•·ã•
 	my $width = 0;
 	foreach my $i ( @{$self->{knb_obj}->rows} ){
 		if ( length($i->[0]) > $width ){
@@ -181,14 +178,14 @@ sub view{
 	}
 	my $cols = 2 + ($self->{knb_obj}->labels) * 2;
 
-	# ¥ê¥¹¥ÈWidget
-	$self->{list}->destroy if $self->{list};                # ¸Å¤¤¤â¤Î¤òÇÑ´ş
+	# ãƒªã‚¹ãƒˆWidget
+	$self->{list}->destroy if $self->{list};                # å¤ã„ã‚‚ã®ã‚’å»ƒæ£„
 	$self->{list2}->destroy if $self->{list2};
 	$self->{sb1}->destroy if $self->{sb1};
 	$self->{sb2}->destroy if $self->{sb2};
 	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
 
-	$self->{list_flame_inner} = $self->{list_flame}->Frame( # ¿·¤¿¤Ê¥ê¥¹¥ÈºîÀ®
+	$self->{list_flame_inner} = $self->{list_flame}->Frame( # æ–°ãŸãªãƒªã‚¹ãƒˆä½œæˆ
 		-relief      => 'sunken',
 		-borderwidth => 2
 	);
@@ -222,13 +219,13 @@ sub view{
 		-highlightthickness => 0,
 	);
 
-	my $col = 0;                                            # HeaderºîÀ®
+	my $col = 0;                                            # Headerä½œæˆ
 	my @temp = ();
 	foreach my $i ( $self->{knb_obj}->labels ){
 		push @temp, $i.' (%)';
 	}
 	foreach my $i (
-		kh_msg->gget('words'), $self->{knb_obj}->labels, kh_msg->get('variance'), @temp # Ê¬»¶
+		kh_msg->gget('words'), $self->{knb_obj}->labels, kh_msg->get('variance'), @temp # åˆ†æ•£
 	){
 		unless ($col){
 			++$col;
@@ -268,7 +265,7 @@ sub view{
 		++$col;
 	}
 
-	my $sb1 = $self->{list_flame}->Scrollbar(               # ¥¹¥¯¥í¡¼¥ëÀßÄê
+	my $sb1 = $self->{list_flame}->Scrollbar(               # ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¨­å®š
 		-orient  => 'v',
 		-command => sub {
 			$self->multiscrolly(@_);
@@ -283,7 +280,7 @@ sub view{
 	$self->{list}->configure(
 		-yscrollcommand => sub{
 			$sb1->set(@_);
-			# ¤â¤¦°ìÊı¤Î¥ê¥¹¥È¤¬ÄÉ¿ï¤·¤Æ¤¤¤Ê¤±¤ì¤ĞÆ±´ü¤µ¤»¤ë
+			# ã‚‚ã†ä¸€æ–¹ã®ãƒªã‚¹ãƒˆãŒè¿½éšã—ã¦ã„ãªã‘ã‚Œã°åŒæœŸã•ã›ã‚‹
 			my $p1 = $_[0];
 			my @t = $self->{list2}->yview;
 			my $p2 = $t[0];
@@ -315,7 +312,7 @@ sub view{
 	$self->{list2}->configure(
 		-yscrollcommand => sub{
 			$sb1->set(@_);
-			# ¤â¤¦°ìÊı¤Î¥ê¥¹¥È¤¬ÄÉ¿ï¤·¤Æ¤¤¤Ê¤±¤ì¤ĞÆ±´ü¤µ¤»¤ë
+			# ã‚‚ã†ä¸€æ–¹ã®ãƒªã‚¹ãƒˆãŒè¿½éšã—ã¦ã„ãªã‘ã‚Œã°åŒæœŸã•ã›ã‚‹
 			my $p1 = $_[0];
 			my @t = $self->{list}->yview;
 			my $p2 = $t[0];
@@ -355,7 +352,7 @@ sub view{
 	$sb2->pack(-fill => 'x');
 
 	#--------------------#
-	#   Ãê½Ğ¸ì¤Î¥ê¥¹¥È   #
+	#   æŠ½å‡ºèªã®ãƒªã‚¹ãƒˆ   #
 
 	$self->sort;
 	return $self;
@@ -375,7 +372,7 @@ sub multiscrolly{
 }
 
 #--------------------------#
-#   Ãê½Ğ¸ì¤Î¥½¡¼¥È¡ÜÉ½¼¨   #
+#   æŠ½å‡ºèªã®ã‚½ãƒ¼ãƒˆï¼‹è¡¨ç¤º   #
 
 sub sort{
 	my $self = shift;
@@ -385,7 +382,7 @@ sub sort{
 	$self->{list}->delete('all');
 	$self->{list2}->delete('all');
 	
-	# ¥½¡¼¥È
+	# ã‚½ãƒ¼ãƒˆ
 	my @sort;
 	if ($key){
 		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{knb_obj}->rows};
@@ -393,11 +390,11 @@ sub sort{
 		@sort = @{$self->{knb_obj}->rows};
 	}
 
-	# ¸¡º÷¥ë¡¼¥Á¥ó
+	# æ¤œç´¢ãƒ«ãƒ¼ãƒãƒ³
 	my $s_method = 'AND';
 	my $search = $self->gui_jg( $self->{entry_wsearch}->get );
-	$search = Jcode->new($search, 'sjis')->euc;
-	$search =~ s/¡¡/ /go;
+	#$search = Jcode->new($search, 'sjis')->euc;
+	$search =~ s/ã€€/ /go;
 	$search = [ split / /, $search ]; # /
 
 	my @temp = ();
@@ -405,7 +402,7 @@ sub sort{
 		foreach my $i (@sort){
 			my $cnt = 0;
 			foreach my $j (@{$search}){
-				if ($i->[0] =~ /^(?:$ascii|$twoBytes|$threeBytes)*?(?:$j)/) {
+				if ($i->[0] =~ /$j/) {
 					if ($s_method eq 'OR'){
 						push @temp, $i;
 						last;
@@ -426,7 +423,7 @@ sub sort{
 		@temp = @sort;
 	}
 
-	# ½ĞÎÏ
+	# å‡ºåŠ›
 	my $right_style = $self->{list}->ItemStyle(
 		'text',
 		-font => "TKFN",
@@ -491,7 +488,7 @@ sub sort{
 	$self->{list}->yview(0);
 	$self->{list2}->yview(0);
 	
-	# ¥é¥Ù¥ë¤Î¿§¤òÊÑ¹¹
+	# ãƒ©ãƒ™ãƒ«ã®è‰²ã‚’å¤‰æ›´
 	if ($key){
 		my $w = $self->{list}->header(
 			'cget',
@@ -508,7 +505,7 @@ sub sort{
 		);
 	}
 	
-	# Á°²óÊÑ¹¹¤·¤¿¥é¥Ù¥ë¤Î¿§¤ò¸µ¤ËÌá¤¹
+	# å‰å›å¤‰æ›´ã—ãŸãƒ©ãƒ™ãƒ«ã®è‰²ã‚’å…ƒã«æˆ»ã™
 	if ($self->{last_sort_key}){
 		my $lw = $self->{list}->header(
 			'cget',
@@ -534,7 +531,7 @@ sub copy{
 	
 	return 0 unless $self->{knb_obj}->rows;
 	
-	# 1¹ÔÌÜ
+	# 1è¡Œç›®
 	my $clip = "\t";
 	
 	my $cols = @{$self->{knb_obj}->rows->[0]} - 2;
@@ -555,12 +552,12 @@ sub copy{
 	chop $clip;
 	$clip .= "\n";
 
-	# Ãæ¿È
+	# ä¸­èº«
 	my $rows = @{$self->{knb_obj}->rows} - 2;
 	for (my $r = 0; $r <= $rows; ++$r){
 		last unless $self->{list2}->info('exists', $r);
 		
-		# 1ÎóÌÜ
+		# 1åˆ—ç›®
 		if ($self->{list2}->itemExists($r, 0)){
 			my $cell = $self->{list2}->itemCget($r, 0, -text);
 			chop $cell if $cell =~ /\r$/o;
@@ -568,7 +565,7 @@ sub copy{
 		} else {
 			$clip .= "\t";
 		}
-		# 2ÎóÌÜ°Ê¹ß
+		# 2åˆ—ç›®ä»¥é™
 		for (my $c = 0; $c <= $cols; ++$c){
 			#if ($self->{last_sort_key}){
 			#	unless ($c + 1 == $self->{last_sort_key}){

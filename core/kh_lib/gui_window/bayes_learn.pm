@@ -196,7 +196,7 @@ sub calc{
 	my ($varname1, $varname2);
 	if ($self->{check_savev}){
 		$varname1 = $self->gui_jg( $self->{entry_vname}->get );
-		$varname1 = Jcode->new($varname1,'sjis')->euc;
+		#$varname1 = Jcode->new($varname1,'sjis')->euc;
 		unless (length($varname1)){
 			gui_errormsg->open(
 				type   => 'msg',
