@@ -897,6 +897,7 @@ sub hyosobun{
 	unless (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
+		|| (! $IDsR->{'¡£'} )
 	){
 		mysql_exec->do("
 			DELETE FROM hyosobun

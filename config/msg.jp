@@ -300,6 +300,7 @@ gui_window::sysconfig:
     browse_stanford_tag:      モデルファイルを開いてください。
     chasen:                   茶筌（日本語）
     config:                   config
+    l_cn:                     Chinese
     l_de:                     German *
     l_en:                     English
     l_es:                     Spanish *
@@ -327,6 +328,11 @@ gui_window::sysconfig:
     web_browser:              Webブラウザ：
     win_title:                KH Coderの設定
     words_ext:                語を抽出する方法
+gui_window::stop_words:
+    change_will:              "※前処理を（再度）実行するまで\n変更は反映されません。"
+    for_this_method:          Stop wordを以下の抽出方法と言語むけに設定： 
+    select_all:               すべて選択
+    lang:                     言語：
 gui_window::word_ass:
     18:                       χ2乗
     and:                      AND検索

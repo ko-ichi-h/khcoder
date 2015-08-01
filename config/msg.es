@@ -1,3 +1,5 @@
+# This file contains Spanish UI texts.
+# Spanish translation was kindly provided by Mr. Francisco Carmona with the CC-BY license.
 ---
 global:
     all:                      Todo
@@ -328,6 +330,11 @@ gui_window::sysconfig:
     web_browser:              'Navegador:'
     win_title:                Configuración General
     words_ext:                Extracción de Palabras
+gui_window::stop_words:
+    change_will:              "Los cambios tendrán efecto cuando haga\nclick nuevamente en \"Ejecutar Preprocesamiento\"."
+    for_this_method:          Palabras vacías para el siguiente método:
+    select_all:               Seleccionar TODO
+    lang:                     Idioma:
 gui_window::word_ass:
     18:                       chi cuadrado
     and:                      Y
@@ -911,7 +918,8 @@ gui_window::outvar_read::tab:
     win_title:                'Leer variables desde el archivo delimitado por tabulación'
 gui_window::outvar_list:
     win_title:                'Lista de Variables & Encabezados'
-    headings:                 'Encabezados'
+#    headings:                 'Encabezados'
+    headings:                 'Heading'
     vars:                     'Variables'
     h_unit:                   'unidades'
     h_name:                   'variables'
