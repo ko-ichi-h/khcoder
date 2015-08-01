@@ -343,8 +343,9 @@ sub to_clip{ # クリップボードへコピーするための変換
 	my $char = $_[1];
 	
 	unless ( utf8::is_utf8($char) ){
+		warn("To clipboard: non decoded string found.");
 		$char = Jcode->new($char)->utf8;
-		$char = Encode::decode('UTF8',$char);
+		$char = Encode::decode('UTF-8',$char);
 	}
 	
 	return $char;

@@ -16,16 +16,15 @@ sub new{
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
-	use Cwd;
-	$self->{path} = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
-	
+	$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
+
 	# コマンドの文字コード
 	if ( utf8::is_utf8($self->{command_f}) ){
 		# It's OK!
 	} else {
 		$self->{command_f} = Encode::decode('utf8', Jcode->new($self->{command_f})->utf8);
 		$self->{command_a} = Encode::decode('utf8', Jcode->new($self->{command_a})->utf8);
-		Warn( "Warn: R commands are not decoded!\n" );
+		warn( "Warn: R commands are not decoded!\n" );
 	}
 
 	# コマンドから日本語コメントを削除
@@ -47,7 +46,7 @@ sub new{
 		$command = $self->{command_f};
 	}
 	
-	# Debug用出力
+	# Debug用出力 1
 	if ($::config_obj->r_plot_debug){
 		my $file_debug = $self->{path}.'.r';
 		open (RDEBUG, '>encoding(utf8)', $file_debug) or 
@@ -146,6 +145,7 @@ sub new{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
+	$::config_obj->R->send("the_warning <<- \"\"\n");
 	print "kh_r_plot::new lock ok.\n" if $debug;
 	$self->{path} = $self->R_device(
 		$self->{path},
@@ -159,25 +159,37 @@ sub new{
 	print "kh_r_plot::new send ok.\n" if $debug;
 	$self->{r_msg} = $::config_obj->R->read;
 	print "kh_r_plot::new read ok.\n" if $debug;
+	$::config_obj->R->send("print( the_warning )\n");
+	$self->{r_warning} = $::config_obj->R->read;
 	$::config_obj->R->send('dev.off()');
 	print "kh_r_plot::new dev.off ok.\n" if $debug;
 	$::config_obj->R->unlock;
 	print "kh_r_plot::new unlock ok.\n" if $debug;
 	$::config_obj->R->output_chk(1);
 	
+	# print warnings from R to the console
+	if ($self->{r_warning} =~ /\[1\] "(.+)"/ ) {
+		print "WARNING from R: $1\n";
+	}
+
 	# 結果のチェック
 	if (
 		not (-e $self->{path})
 		or ( $self->{r_msg} =~ /error/i )
 		or ( index($self->{r_msg},'エラー') > -1 )
-		or ( index($self->{r_msg},Jcode->new('エラー','euc')->sjis) > -1 )
+		or ( index($self->{r_msg},Jcode->new('エラー','euc')->utf8) > -1 )
 	) {
+		my $msg = kh_msg->get('faliled_in_plotting');
+		$msg .= $self->{r_msg}."\n\n";
+		
+		$msg .= "No output file." if not -e $self->{path};
+		
+		print "output file: $self->{path}\n";
+		
 		gui_errormsg->open(
 			type   => 'msg',
 			window => \$::main_gui->mw,
-			msg    =>
-				kh_msg->get('faliled_in_plotting') # 推定または描画に失敗しました\n\n
-				.gui_window->gui_jchar($self->{r_msg})
+			msg    => $msg,
 		);
 		return 0;
 	}
@@ -222,8 +234,8 @@ sub clear_env{
 }
 
 sub set_par{
-	my $self    = shift;
-	my $no_font = shift;
+	my $self = shift;
+	my $opt  = shift;
 
 	$::config_obj->R->output_chk(0);
 
@@ -231,21 +243,35 @@ sub set_par{
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
 
-	$::config_obj->R->send(
-		 'par(family="'
-		.$::config_obj->font_plot_current
-		.'")'
-	);
+	my $font;
+	if ($opt eq 'ps_font') {
+		$font = $::config_obj->font_pdf_current;
+	} else {
+		$font = $::config_obj->font_plot_current;
+	}
+	$::config_obj->R->send( "par(family=\"$font\")" );
 
 	# Windowsではロケールを設定する
 	if ($::config_obj->os eq 'win32') {
+		my %loc = (
+			'jp' => 'Japanese',
+			'en' => 'English',
+			'cn' => 'Chinese',
+			'de' => 'German',
+			'es' => 'Spanish',
+			'fr' => 'French',
+			'it' => 'Italian',
+			'nl' => 'Dutch',
+			'pt' => 'Portuguese',
+		);
+		
 		my $lang = $::project_obj->morpho_analyzer_lang;
-		if ($lang eq 'cn'){
-			#print "Set R locale: CN\n";
-			$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Chinese")');
-		} else {
-			#print "Set R locale: JP\n";
-			$::config_obj->{R}->send('Sys.setlocale(category="LC_ALL",locale="Japanese_Japan.932")');
+		if ($lang eq 'en') {
+			$lang = $::config_obj->msg_lang;
+		}
+		$lang = $loc{$lang};
+		if ($lang) {
+			$::config_obj->{R}->send("Sys.setlocale(category=\"LC_ALL\",locale=\"$lang\")");
 		}
 	}
 	
@@ -312,12 +338,10 @@ sub rotate_cls{
 
 sub save{
 	my $self = shift;
-	my $path = shift;
+	my $os_path = shift;
 	
-	my $icode = Jcode::getcode($path);
-	$path = Jcode->new($path, $icode)->euc;
+	my $path = $::config_obj->uni_path($os_path);
 	$path =~ tr/\\/\//;
-	$path = Jcode->new($path,'euc')->$icode unless $icode eq 'ascii';
 	
 	$self->clear_env;
 	
@@ -343,7 +367,7 @@ sub save{
 		warn "The file type is not supported yet:\n$path\n";
 	}
 
-	unless ( -e $path ){
+	unless ( -e $os_path ){
 		warn "failed to save the plot: ".$::config_obj->R->read;
 	}
 
@@ -396,11 +420,12 @@ sub R_device{
 	
 	my $p = 12 * $dpi / 72;
 	
+	my $uni_path = $::config_obj->uni_path($path);
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
-			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", bg = \"white\", type=\"png\", dpi=$dpi)
+			Cairo(width=$width, height=$height, unit=\"px\", file=\"$uni_path\", bg = \"white\", type=\"png\", dpi=$dpi)
 		} else {
-			png(\"$path\", width=$width, height=$height, unit=\"px\", pointsize=$p )
+			png(\"$uni_path\", width=$width, height=$height, unit=\"px\", pointsize=$p )
 		}
 	");
 	return $path;
@@ -462,23 +487,18 @@ sub _save_pdf{
 		$p = 12 + int($diff * 0.5);
 	}
 
-	my $font = $::config_obj->font_plot;
-	$::config_obj->font_plot("Japan1GothicBBB");
-
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send(
 		 "pdf(file=\"$path\", height = $h, width = $w, "
-		."family=\"Japan1GothicBBB\", pointsize=$p)"
+		."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
 	);
-	$self->set_par;
+	$self->set_par('ps_font');
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
-	
-	$::config_obj->font_plot($font);
 	
 	return 1;
 }
@@ -504,25 +524,25 @@ sub _save_eps{
 		$p = 12 + int($diff * 0.5);
 	}
 
-	my $font = $::config_obj->font_plot;
-	$::config_obj->font_plot("Japan1GothicBBB");
-
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_eps <- 1" );
+	#$::config_obj->R->send(
+	#	 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
+	#	."paper = \"special\", height = $h, width = $w,"
+	#	."family=\"$font\",pointsize=$p)"
+	#);
+	
 	$::config_obj->R->send(
-		 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
-		."paper = \"special\", height = $h, width = $w,"
-		."family=\"Japan1GothicBBB\", pointsize=$p)"
+		"cairo_ps(\"$path\", height = $h, width = $w, pointsize=$p)"
 	);
-	$self->set_par;
+	
+	$self->set_par();
 	$::config_obj->R->send($self->{command_f});
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
-
-	$::config_obj->font_plot($font);
 	
 	return 1;
 }
@@ -688,7 +708,7 @@ sub _save_r{
 		$file .= '_s';
 		if ( -e $file ){
 			#print "file: $file\n";
-			open (my $fh, '<', $file)
+			open (my $fh, '<:encoding(utf8)', $file)
 				or gui_errormsg->open(
 					type    => 'file',
 					thefile => $file,

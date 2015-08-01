@@ -23,7 +23,7 @@ sub _run_morpho{
 	require Text::Unidecode;
 
 	my $self = shift;	
-	my $class = "kh_morpho::linux::stanford::".$::config_obj->stanford_lang;
+	my $class = "kh_morpho::linux::stanford::".$::project_obj->morpho_analyzer_lang;
 	bless $self, $class;
 
 	# Stanford POS Taggerのサーバーを起動

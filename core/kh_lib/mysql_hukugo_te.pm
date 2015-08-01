@@ -65,7 +65,7 @@ sub search{
 	$sql .= "LIMIT 500\n";
 	#print Jcode->new($sql)->sjis, "\n";
 	
-	my $h = mysql_exec->select($sql,1)->hundle;
+	my $h = mysql_exec->select($sql)->hundle;
 	my @r = ();
 	while (my $i = $h->fetch){
 		push @r, [$i->[0], $i->[1]];
@@ -80,7 +80,7 @@ sub get_majority{
 		FROM hukugo_te
 		ORDER BY num DESC, name
 		LIMIT 500
-	",1)->hundle;
+	")->hundle;
 	
 	my @r = ();
 	while (my $i = $h->fetch){
@@ -102,10 +102,13 @@ sub run_from_morpho{
 		$class .= '::ipadic';
 	}
 	elsif (
-		   $::config_obj->c_or_j        eq 'stanford'
-		&& $::config_obj->stanford_lang eq 'en'
+		   $::config_obj->c_or_j                eq 'stanford'
+		&& $::project_obj->morpho_analyzer_lang eq 'en'
 	) {
 		$class .= '::ptb';
+	}
+	else{
+		return 0;
 	}
 	
 	my $self->{dummy} = 1;

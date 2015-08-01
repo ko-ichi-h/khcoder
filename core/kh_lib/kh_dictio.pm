@@ -215,7 +215,6 @@ sub save{
 		VALUES (\"words_st_file\", $self->{words_st_file_chk})
 	",1);
 
-
 	if ( $self->{words_st_file_chk} ){
 		my $file = $self->{words_st_file};
 		$file = Jcode->new($file)->euc;
@@ -256,7 +255,7 @@ sub save{
 sub mark{
 	my $self = shift;
 	my $source = $::config_obj->os_path( $::project_obj->file_target   );
-	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target );
+	my $dist   = $::project_obj->file_m_target;
 
 #	unless (eval (@{$self->words_mk})){
 #		unlink($dist) or die if -e $dist;

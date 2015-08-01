@@ -20,7 +20,7 @@ sub _run_morpho{
 	#require Text::Unidecode;
 
 	my $self = shift;
-	my $class = "kh_morpho::win32::stanford::".$::config_obj->stanford_lang;
+	my $class = "kh_morpho::win32::stanford::".$::project_obj->morpho_analyzer_lang;
 	bless $self, $class;
 
 	my $icode = kh_jchar->check_code_en($self->target,1);

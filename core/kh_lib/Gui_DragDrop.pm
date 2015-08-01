@@ -67,6 +67,7 @@ sub get_filename_droped{
 	
 	if ($] > 5.008){
 		utf8::decode($filename);
+		$filename =~ s/\\/\//g;
 	}
 	
 	if (-e $filename) {

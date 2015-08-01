@@ -83,24 +83,24 @@ sub first{
 	$::config_obj->in_preprocessing(0);
 	
 	# 形態素解析器と言語の記録
-	$::project_obj->morpho_analyzer($::config_obj->c_or_j);
+	#$::project_obj->morpho_analyzer($::config_obj->c_or_j);
 
-	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	) {
-		$::project_obj->morpho_analyzer_lang('jp');
-	}
-	elsif ($::project_obj->morpho_analyzer eq 'stanford'){
-		$::project_obj->morpho_analyzer_lang(
-			$::config_obj->stanford_lang
-		);
-	}
-	elsif ($::project_obj->morpho_analyzer eq 'stemming'){
-		$::project_obj->morpho_analyzer_lang(
-			$::config_obj->stemming_lang
-		);
-	}
+	#if (
+	#	   $::project_obj->morpho_analyzer eq 'chasen'
+	#	|| $::project_obj->morpho_analyzer eq 'mecab'
+	#) {
+	#	$::project_obj->morpho_analyzer_lang('jp');
+	#}
+	#elsif ($::project_obj->morpho_analyzer eq 'stanford'){
+	#	$::project_obj->morpho_analyzer_lang(
+	#		$::config_obj->stanford_lang
+	#	);
+	#}
+	#elsif ($::project_obj->morpho_analyzer eq 'stemming'){
+	#	$::project_obj->morpho_analyzer_lang(
+	#		$::config_obj->stemming_lang
+	#	);
+	#}
 }
 
 sub fix_michigo{
@@ -186,7 +186,7 @@ sub readin{
 	# 入力データの文字コード
 	if (
 		   ( $::config_obj->c_or_j eq 'chasen' )
-		|| ( $::config_obj->c_or_j eq 'mecab' &! $::config_obj->mecab_unicode )
+		|| ( $::config_obj->c_or_j eq 'mecab'  )
 	){
 		if ($::config_obj->os eq 'win32') {
 			$icode = 'sjis';
@@ -399,6 +399,7 @@ sub reform{
 
 	my %stopwords = ();
 	foreach my $i (@{$::config_obj->stopwords_current}){
+		$i =~ tr/A-Z/a-z/;
 		$stopwords{$i} = 1;
 		#print "$i, ";
 	}
@@ -479,7 +480,9 @@ sub reform{
 				}
 			}
 			
-			if ($stopwords{$d->[0]}){
+			my $chk = $d->[0];
+			$chk =~ tr/A-Z/a-z/;
+			if ($stopwords{$chk}){
 				$kh_hinshi = '9999';
 			}
 			
@@ -906,7 +909,8 @@ sub hyosobun{
 	unless (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
-		|| ( $::config_obj->c_or_j eq 'stanford' && $::config_obj->stanford_lang eq 'cn')
+		|| ( $::config_obj->c_or_j eq 'stanford' && $::project_obj->morpho_analyzer_lang eq 'cn')
+		|| (! $IDsR->{'。'} )
 	){
 		mysql_exec->do("
 			DELETE FROM hyosobun
@@ -1140,7 +1144,7 @@ sub rowtxt{
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
-		|| ( $::config_obj->c_or_j eq 'stanford' && $::config_obj->stanford_lang eq 'cn')
+		|| ( $::config_obj->c_or_j eq 'stanford' && $::project_obj->morpho_analyzer_lang eq 'cn')
 	) {
 		$spacer = '';
 	} else {

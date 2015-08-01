@@ -42,9 +42,6 @@ my @menu1 = (
 	'm_b3_crossout_var',
 	't_txt_pickup',
 	't_doc_search',
-	't_out_read',
-	't_out_read_csv',
-	't_out_read_tab',
 	't_out_list',
 	'm_b3_contxtout',
 	'm_b3_contxtout_spss',
@@ -671,45 +668,15 @@ sub make{
 			);
 
 	$f->separator();
-	
-	my $f_out_var = $f->cascade(
-		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('外部変数と見出し'),
-		 -font => "TKFN",
-		 -tearoff=>'no'
+
+	$self->{t_out_list} = $f->command(
+		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('リストの確認・管理'),
+		-font => "TKFN",
+		-command => sub{
+				gui_window::outvar_list->open;
+			},
+		-state => 'disable'
 	);
-
-		$self->{t_out_list} = $f_out_var->command(
-			-label => kh_msg->get('var_list'),#gui_window->gui_jchar('リストの確認・管理'),
-			-font => "TKFN",
-			-command => sub{
-					gui_window::outvar_list->open;
-				},
-			-state => 'disable'
-		);
-
-		$self->{t_out_read} = $f_out_var->cascade(
-			-label => kh_msg->get('read'),#gui_window->gui_jchar('読み込み'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
-
-			$self->{t_out_read_csv} = $self->{t_out_read}->command(
-				-label => kh_msg->gget('csv_f'),#gui_window->gui_jchar('CSVファイル'),
-				-font => "TKFN",
-				-command => sub{
-						gui_window::outvar_read::csv->open;
-					},
-				-state => 'disable'
-			);
-
-			$self->{t_out_read_tab} = $self->{t_out_read}->command(
-				-label => kh_msg->gget('tab_f'),#gui_window->gui_jchar('タブ区切り'),
-				-font => "TKFN",
-				-command => sub{
-						gui_window::outvar_read::tab->open;
-					},
-				-state => 'disable'
-			);
 
 	my $f6 = $f->cascade(
 		-label => kh_msg->get('text_format'),#gui_window->gui_jchar('テキストファイルの変形'),
@@ -751,9 +718,15 @@ sub make{
 		substr($_, length($_) - 3, length($_)) = '';
 		push @plugins, $_;
 	};
+
 	use File::Find;
-	push @INC, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang;
-	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
+	my $plugin_lang = Encode::encode( 'utf8', $::config_obj->msg_lang );
+	unless (-d $::config_obj->cwd.'/plugin_'.$plugin_lang){
+		$plugin_lang = 'en';
+	}
+	use File::Find;
+	push @INC, $::config_obj->cwd.'/plugin_'.$plugin_lang;
+	find($read_each, $::config_obj->cwd.'/plugin_'.$plugin_lang);
 
 	foreach (@plugins){
 		unless (eval "use $_; 1"){
@@ -1107,7 +1080,7 @@ sub refresh{
 		}
 		elsif (
 			   $::config_obj->c_or_j        eq 'stanford'
-			&& $::config_obj->stanford_lang eq 'en'
+			&& $::project_obj->morpho_analyzer_lang eq 'en'
 		){
 			$self->normalize([
 				'm_b1_hukugo_te',

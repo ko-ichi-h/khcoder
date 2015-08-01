@@ -1,9 +1,7 @@
 package gui_hlist;
 use Tk;
 use Tk::HList;
-use Clipboard;
-#use gui_hlist::win32;
-#use gui_hlist::linux;
+use utf8;
 
 # Usage:
 # 	gui_hlist->copy(     $hlist_obj );
@@ -18,7 +16,7 @@ sub copy{
 	bless $self, $class;
 
 	my @selected = $self->list->infoSelection;
-	my $cols = pop @{$self->list->configure(-columns)}; --$cols;      # —ñ”’²‚×
+	my $cols = pop @{$self->list->configure(-columns)}; --$cols;      # åˆ—æ•°èª¿ã¹
 	my $clip;
 
 	foreach my $i (@selected){
@@ -40,7 +38,8 @@ sub copy{
 	}
 
 	if (defined($clip) && length($clip)){
-		Clipboard->copy( Encode::encode($::config_obj->os_code,$clip) );
+		use kh_clipboard;
+		kh_clipboard->string($clip);
 	}
 }
 
@@ -53,7 +52,8 @@ sub copy_all{
 	my $clip = gui_hlist->get_all($self->list);
 
 	if (defined($clip) && length($clip)){
-		Clipboard->copy( Encode::encode($::config_obj->os_code,$clip) );
+		use kh_clipboard;
+		kh_clipboard->string($clip);
 	}
 }
 
@@ -75,14 +75,14 @@ sub get_all{
 	$self->{list} = shift;
 	bless $self, $class;
 	
-	# —ñ”
+	# åˆ—æ•°
 	my $cols = pop @{$self->list->configure(-columns)}; --$cols;
 	print "gui_hlist / cols: $cols\n" if $debug;
 	
 	my $t = '';
 	my $n = 0;
 	while ($self->list->info('exists', $n)){
-		# ’Êí‚Ìs
+		# é€šå¸¸ã®è¡Œ
 		print "n$n, " if $debug;
 		for (my $c = 0; $c <= $cols; ++$c){
 			if ( $self->list->itemExists($n, $c) ){
@@ -95,7 +95,7 @@ sub get_all{
 		print "line-end\n" if $debug;
 		chop $t; $t .= "\n";
 		
-		# q‹Ÿ‚Ìs
+		# å­ä¾›ã®è¡Œ
 		my @children = $self->list->info('children', $n);
 		foreach my $i (@children){
 			print "n$i, " if $debug;

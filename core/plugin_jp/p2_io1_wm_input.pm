@@ -1,240 +1,160 @@
 package p2_io1_wm_input;
 use strict;
+use utf8;
 
 #----------------------#
-#   ¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
-		name     => '¿·µ¬¥×¥í¥¸¥§¥¯¥È - Ìµµ­Æþ¡¦¶õÇò¤Î¹Ô¤ËÂÐ±þ',
+		name     => 'æ–°è¦ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆ - ç„¡è¨˜å…¥ãƒ»ç©ºç™½ã®è¡Œã«å¯¾å¿œ',
 		menu_cnf => 0,
-		menu_grp => 'Æþ½ÐÎÏ',
+		menu_grp => 'å…¥å‡ºåŠ›',
 	};
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»þ¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠžæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
-	gui_window::wm_input->open; # GUI¤òµ¯Æ°
+	gui_window::wm_input->open; # GUIã‚’èµ·å‹•
 }
 
 #-------------------------------#
-#   GUIÁàºî¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó·²   #
+#   GUIæ“ä½œã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³ç¾¤   #
 
 package gui_window::wm_input;
-use base qw(gui_window);
+use base qw(gui_window::project_new); # gui_window::project_newã‚’ã‚«ã‚¹ã‚¿ãƒžã‚¤ã‚º
 use strict;
 use Tk;
 
-# Window¤ÎºîÀ®
-sub _new{
-	my $self = shift;
-	my $mw = $self->{win_obj};
-
-	$mw->title(
-		$self->gui_jchar('¿·µ¬¥×¥í¥¸¥§¥¯¥È¡ÊÌµµ­Æþ¡¦¶õÇò¤Î¹Ô¤ËÂÐ±þ¡Ë','euc')
-	);
-
-	# ¥Õ¥ì¡¼¥à¤Î½àÈ÷
-	my $lfra = $mw->LabFrame(
-		-label       => 'Entry',
-		-labelside   => 'acrosstop',
-		-borderwidth => 2
-	)->pack(
-		-expand => 'yes',
-		-fill   => 'both'
-	);
-	my $fra1 = $lfra->Frame()->pack(
-		-anchor => 'c',
-		-fill   => 'x',
-		-expand => 'yes'
-	);
-	my $fra3 = $lfra->Frame()->pack(
-		-anchor => 'c',
-		-fill   => 'x',
-		-expand => 'yes'
-	);
-	my $fra2 = $lfra->Frame()->pack(
-		-anchor => 'c',
-		-fill   => 'x',
-		-expand => 'yes'
-	);
-
-	# ÀßÄê¹àÌÜ¤ÎÇÛÃÖ
-	$fra1->Label(
-		-text => $self->gui_jchar('Ê¬ÀÏÂÐ¾Ý¥Õ¥¡¥¤¥ë¡§'),
-		-font => "TKFN"
-	)->pack(
-		-side => 'left'
-	);
-	my $e1 = $fra1->Entry(
-		-font => "TKFN",
-		-background => 'white'
-	)->pack(
-		-side => 'right'
-	);
-	$fra1->Button(
-		-text => $self->gui_jchar('»²¾È'),
-		-font => "TKFN",
-		-borderwidth => 1,
-		-command => sub{ $mw->after(10,sub{$self->_sansyo;});}
-	)->pack(
-		-side => 'right',
-		-padx => 2
-	);
-
-	$fra3->Label(
-		-text => $self->gui_jchar('Ê¬ÀÏÂÐ¾Ý¥Õ¥¡¥¤¥ë¤ÎÊ¸»ú¥³¡¼¥É¡§'),
-		-font => "TKFN"
-	)->pack(
-		-side => 'left'
-	);
-	$self->{icode_menu} = gui_widget::optmenu->open(
-		parent  => $fra3,
-		pack    =>
-			{
-				-side => 'right',
-				-padx => 2
-			},
-		options => 
-			[
-				[$self->gui_jchar('¼«Æ°È½ÊÌ')  => 0     ],
-				[$self->gui_jchar('EUC')       => 'euc' ],
-				[$self->gui_jchar('JIS')       => 'jis' ],
-				[$self->gui_jchar('Shift-JIS') => 'sjis']
-			],
-		variable => \$self->{icode},
-	);
-
-	$fra2->Label(
-		-text => $self->gui_jchar('ÀâÌÀ¡Ê¥á¥â¡Ë¡§'),
-		-font => "TKFN"
-	)->pack(
-		-side => 'left'
-	);
-	my $e2 = $fra2->Entry(
-		-font => "TKFN",
-		-background => 'white'
-	)->pack(
-		-side => 'right',
-		-pady => 2
-	);
-
-	# ¥Ü¥¿¥óÎà¤ÎÇÛÃÖ
-	$mw->Button(
-		-text    => $self->gui_jchar('¥­¥ã¥ó¥»¥ë'),
-		-font    => "TKFN",
-		-width   => 8,
-		-command => sub{ $mw->after(10,sub{$self->close;});}
-	)->pack(
-		-side => 'right',
-		-padx => 2
-	);
-	$mw->Button(
-		-text    => 'OK',
-		-width   => 8,
-		-font    => "TKFN",
-		-command => sub{ $mw->after(10,sub{$self->_make_new;});}
-	)->pack(
-		-side => 'right'
-	);
-
-	# ÆþÎÏÍó¡ÊEntry¡Ë¤ÎÀßÄê
-	$e1->DropSite(
-		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $e1,],
-		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
-	);
-	$mw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
-	$e2->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e2]);
-	$e2->bind("<Key-Return>",sub{$self->_make_new;});
-
-	$self->{e1}  = $e1;
-	$self->{e2}  = $e2;
-
-	return $self;
-}
-
-# ¥Õ¥¡¥¤¥ë»²¾È¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó
-sub _sansyo{
-	my $self = shift;
-	my @types = (
-		[ "text/html files",[qw/.txt .htm .html/] ],
-		["All files",'*']
-	);
-	my $path = $self->win_obj->getOpenFile(
-		-filetypes  => \@types,
-		-title      => $self->gui_jchar('Ê¬ÀÏÂÐ¾Ý¥Õ¥¡¥¤¥ë¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤'),
-		-initialdir => $self->gui_jchar($::config_obj->cwd),
-	);
-	if ($path){
-		$path = gui_window->gui_jg_filename_win98($path);
-		$path = gui_window->gui_jg($path);
-		$::config_obj->os_path($path);
-		$self->{e1}->delete('0','end');
-		$self->{e1}->insert(0,gui_window->gui_jchar($path));
-	}
-}
-
-# ¿·µ¬¥×¥í¥¸¥§¥¯¥ÈºîÀ®¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó
+# æ–°è¦ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆä½œæˆã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³
 sub _make_new{
 	my $self = shift;
-	
-	# ¶õ¹Ô¤Ë¡Ö---Ìµµ­Æþ¡¦¶õÇò---¡×¤òÁÞÆþ¤·¤¿Ê¬ÀÏÍÑ¥Õ¥¡¥¤¥ë¤òºîÀ®
-	use File::Basename;                                     # ¥Õ¥¡¥¤¥ëÌ¾¤ò·èÄê
-	my $new_file      = $self->gui_jg($self->{e1}->get);
-	my $new_file_dir  = dirname($new_file);
-	my $new_file_base = basename($new_file, qw/.txt .htm .html/);
-	my $n = 0;
-	while (-e $new_file){
-		$new_file =
-			$new_file_dir
-			.'/'
-			.$new_file_base
-			."_ed$n.txt"
-		;
-		++$n;
-	}
-	open (ORGF,$self->gui_jg($self->{e1}->get)) or          # ¥Õ¥¡¥¤¥ëºîÀ®
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => $self->gui_jg($self->{e1}->get)
-		);
-	open (NEWF,">$new_file") or 
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => $new_file
-		);
-	while (<ORGF>){
-		chomp;
-		if ( length($_) ){
-			print NEWF "$_\n";
-		} else {
-			print NEWF "---MISSING---\n";
+
+	$::config_obj->last_method( $self->{method} );
+	$::config_obj->last_lang(   $self->{lang}   );
+
+	my $t = $::config_obj->os_path(
+		$self->gui_jg(
+			$self->e1->get
+		)
+	);
+
+	# Excel / CSV (1)
+	my $file_vars;
+	if ($t =~ /(.+)\.(xls|xlsx|csv)$/i){
+		# name of the new text file
+		my $n = 0;
+		while (-e $1."_txt$n.txt"){
+			++$n;
 		}
-	}
-	close (ORGF);
-	close (NEWF);
+		my $file_text = $1."_txt$n.txt";
+		
+		# name of the new variable file
+		$n = 0;
+		while (-e $1."_var$n.txt"){
+			++$n;
+		}
+		$file_vars = $1."_var$n.txt";
+
+		# make files
+		my $sheet_obj = kh_spreadsheet->new($t);
+		$sheet_obj->save_files(
+			filet    => $file_text,
+			filev    => $file_vars,
+			selected => $self->{column},
+			#icode    => $self->{icode},
+		);
+
+		$t = $file_text;
 	
-	# ºîÀ®¤·¤¿Ê¬ÀÏÍÑ¥Õ¥¡¥¤¥ë¤òKH Coder¤ËÅÐÏ¿
+	# ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®å ´åˆ
+	} else {
+		# ç©ºè¡Œã«ã€Œ---ç„¡è¨˜å…¥ãƒ»ç©ºç™½---ã€ã‚’æŒ¿å…¥ã—ãŸåˆ†æžç”¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆ
+		use File::Basename;                                     # ãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ±ºå®š
+		my $new_file      = $t;
+		my $new_file_dir  = dirname($new_file);
+		my $new_file_base = basename($new_file, qw/.txt .htm .html/);
+		my $n = 0;
+		while (-e $new_file){
+			$new_file =
+				$new_file_dir
+				.'/'
+				.$new_file_base
+				."_ed$n.txt"
+			;
+			++$n;
+		}
+		open (ORGF,$t) or          # ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $t
+			);
+		open (NEWF,">$new_file") or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $new_file
+			);
+		while (<ORGF>){
+			chomp;
+			if ( length($_) ){
+				print NEWF "$_\n";
+			} else {
+				print NEWF "---MISSING---\n";
+			}
+		}
+		close (ORGF);
+		close (NEWF);
+		$t = $new_file;
+	}
+	
+	# ä½œæˆã—ãŸåˆ†æžç”¨ãƒ•ã‚¡ã‚¤ãƒ«ã‚’KH Coderã«ç™»éŒ²
 	my $new = kh_project->new(
-		target  => $self->gui_jg($new_file),
-		comment => $self->gui_jg($self->{e2}->get),
-		icode   => $self->gui_jg($self->{icode}),
+		target  => $t,
+		comment => $self->gui_jg($self->e2->get),
+		#icode   => $self->gui_jg($self->{icode}),
 	) or return 0;
 	kh_projects->read->add_new($new) or return 0;
 	$self->close;
+
+	$new->{target} = $::config_obj->uni_path($t);
+
 	$new->open or die;
+	$::project_obj->morpho_analyzer( $self->{method} );
+	$::project_obj->morpho_analyzer_lang( $self->{lang} );
+	$::project_obj->read_hinshi_setting;
+
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 	
-	# ¡Ö---Ìµµ­Æþ¡¦¶õÇò---¡×¤È¤¤¤¦¸ì¤òÌµ»ë¤¹¤ë¤è¤¦¤ËÀßÄê
+	# ã€Œ---ç„¡è¨˜å…¥ãƒ»ç©ºç™½---ã€ã¨ã„ã†èªžã‚’ç„¡è¦–ã™ã‚‹ã‚ˆã†ã«è¨­å®š
 	my $conf = kh_dictio->readin;
 	$conf->words_mk( ['---MISSING---'] );
 	$conf->words_st( ['---MISSING---'] );
 	$conf->save;
-	
+
+	# Excel / CSV (2)
+	if (-e $file_vars){
+		# read variables
+		mysql_outvar::read::tab->new(
+			file        => $file_vars,
+			tani        => 'h5',
+			skip_checks => 1,
+		)->read;
+
+		# ignoring the separator string
+		mysql_exec->do("
+			INSERT INTO dmark (name) VALUES ('---cell---')
+		",1);
+		mysql_exec->do("
+			INSERT INTO dstop (name) VALUES ('---cell---')
+		",1);
+		
+		# some configurations
+		$new->last_tani('h5');
+	}
 	return 1;
 }
 

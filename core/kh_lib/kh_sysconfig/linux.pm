@@ -84,6 +84,8 @@ sub save_ini{
 		'mecab_unicode',
 		'stemming_lang',
 		'stanford_lang',
+		'last_lang',
+		'last_method',
 		'msg_lang',
 		'r_path',
 		'r_plot_debug',
@@ -101,6 +103,9 @@ sub save_ini{
 		'all_in_one_pack',
 		'font_main',
 		'font_plot',
+		'font_plot_cn',
+		'font_pdf',
+		'font_pdf_cn',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
@@ -247,62 +252,13 @@ sub font_plot{
 	return $self->{font_plot};
 }
 
-#------------#
-#   ¤½¤ÎÂ¾   #
-
-sub os_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-
-	#if ($^O eq 'darwin'){ # Mac OS X
-		
-		$c = Jcode->new("$c",$icode)->euc;
-		my $ascii = '[\x00-\x7F]';
-		my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
-		my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
-		my $character_undef =
-			'(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|' # 9-15,85-94¶è
-			  . '\x8E[\xE0-\xFE]|' # È¾³Ñ¥«¥¿¥«¥Ê
-			  . '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2¶è
-			  . '\xA3[\XA1-\xAF\xBA-\xC0\xDB-\xE0\xFB-\xFE]|' # 3¶è
-			  . '\xA4[\xF4-\xFE]|' # 4¶è
-			  . '\xA5[\xF7-\xFE]|' # 5¶è
-			  . '\xA6[\xB9-\xC0\xD9-\xFE]|' # 6¶è
-			 . '\xA7[\xC2-\xD0\xF2-\xFE]|' # 7¶è
-			  . '\xA8[\xC1-\xFE]|' # 8¶è
-			  . '\xCF[\xD4-\xFE]|' # 47¶è
-			  . '\xF4[\xA7-\xFE]|' # 84¶è
-			  . '\x8F[\xA1-\xFE][\xA1-\xFE])'; # 3¥Ð¥¤¥ÈÊ¸»ú
-
-		foreach my $i ($c =~ /$ascii|$twoBytes|$threeBytes/og){
-			if ($i =~ /$character_undef/){
-				gui_errormsg->open(
-					type   => 'msg',
-					msg    => "Illegal character(s) in the path!"
-				);
-				return undef;
-			}
-		}
-
-		$c = Jcode->new("$c",'euc')->utf8;
-	#} else {
-	#	$c = Jcode->new("$c",$icode)->euc;
-	#	$c =~ tr/\\/\//;
-	#}
-
-	return $c;
-}
-
-*os_cod_path = \&os_path;
-
-sub os_code{
-	if ($^O eq 'darwin'){
-		return 'MacJapanese';
-	} else {
-		return 'UTF8';
-	}
-}
+#sub os_code{
+#	if ($^O eq 'darwin'){
+#		return 'MacJapanese';
+#	} else {
+#		return 'UTF-8';
+#	}
+#}
 
 1;
 

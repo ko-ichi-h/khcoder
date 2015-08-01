@@ -11,7 +11,7 @@ use kh_morpho::perl::stemming;
 sub _run_morpho{
 	my $self = shift;	
 
-	my $class = "kh_morpho::perl::stemming::".$::config_obj->stemming_lang;
+	my $class = "kh_morpho::perl::stemming::".$::project_obj->morpho_analyzer_lang;
 
 	$class->run(
 		'output' => $self->output,

@@ -16,17 +16,27 @@ my $password = $::config_obj->sql_password;
 my $host     = $::config_obj->sql_host;
 my $port     = $::config_obj->sql_port;
 
-my $mysql_version;
-my $win_9x = 0;
-
 $username = '' unless defined ($username);
 $password = '' unless defined ($password);
 $host     = '' unless defined ($host);
 $port     = '' unless defined ($port);
 
+my $mysql_version;
+my $win_9x = 0;
+
+my $dbh_common;
+
 #------------#
 #   DB操作   #
 #------------#
+
+sub connect_common{
+	my $dsn = 
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+	$dbh_common = DBI->connect($dsn,$username,$password)
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	#print "Created a shared connection to MySQL.\n";
+}
 
 # 既存DBにConnect
 sub connect_db{
@@ -133,7 +143,7 @@ sub create_new_db{
 	my $r = $t->fetch;
 	$t->finish;
 	$r = $r->[1] if $r;
-	print "Connected to MySQL $r. Creating new DB...\n";
+	#print "Connected to MySQL $r. Creating new DB...\n";
 
 	my $sql = '';
 	$sql .= "create database $new_db_name";
@@ -169,10 +179,14 @@ sub drop_db{
 # DB Serverのシャットダウン
 
 sub shutdown_db_server{
-	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password);
-		#or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	my $dbh;
+	if ($dbh_common) {
+		$dbh = $dbh_common;
+	} else {
+		my $dsn = 
+			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		$dbh = DBI->connect($dsn,$username,$password);
+	}
 
 	$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
 		#or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
@@ -254,7 +268,15 @@ sub do{
 	
 	$self->log;
 
-	$::project_obj->dbh->do($self->sql)
+	my $dbh;
+	if ($::project_obj) {
+		$dbh = $::project_obj->dbh;
+	} else {
+		&connect_common unless $dbh_common;
+		$dbh = $dbh_common;
+	}
+
+	$dbh->do($self->sql)
 		or $self->print_error;
 	return $self;
 }
@@ -266,14 +288,24 @@ sub select{
 	$self->{critical} = shift;
 	bless $self, $class;
 	
+	($self->{caller_pac}, $self->{caller_file}, $self->{caller_line}) = caller;
+	
 	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
 		if $mysql_version >= 5.5;
 	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
 		if $win_9x; # for Win9x
 
 	$self->log;
-	
-	my $t = $::project_obj->dbh->prepare($self->sql) or $self->print_error;
+
+	my $dbh;
+	if ($::project_obj) {
+		$dbh = $::project_obj->dbh;
+	} else {
+		&connect_common unless $dbh_common;
+		$dbh = $dbh_common;
+	}
+
+	my $t = $dbh->prepare($self->sql) or $self->print_error;
 	$t->execute or $self->print_error;
 	$self->{hundle} = $t;
 	return $self;
@@ -287,9 +319,13 @@ sub selected_rows{
 sub print_error{
 	my $self = shift;
 	$self->{err} =
-		"SQL Input:\n".$self->sql."\nError:\n".
-		$::project_obj->dbh->{'mysql_error'};
+		"SQL Input:\n".$self->sql."\nError:\n"
+		.$::project_obj->dbh->{'mysql_error'}."\n\n"
+		."SQL Caller: $self->{caller_file} line $self->{caller_line}"
+	;
+	
 	unless ($self->critical){
+		warn($self->{err});
 		return 0;
 	}
 	gui_errormsg->open(type => 'mysql',sql => $self->err);

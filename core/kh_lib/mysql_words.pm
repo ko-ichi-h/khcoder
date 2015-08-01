@@ -355,7 +355,7 @@ sub _out_file_xls_150{
 	my $f    = $::project_obj->file_TempExcel;
 	my $workbook  = Spreadsheet::WriteExcel->new($f);
 	my $worksheet = $workbook->add_worksheet(
-		utf8( Jcode->new('シート1')->utf8 )->utf16,
+		utf8( 'sheet 1' )->utf16,
 		1
 	);
 	$worksheet->hide_gridlines(1);
@@ -402,7 +402,7 @@ sub _out_file_xls_150{
 	foreach my $i (@{$table_data}){
 		my $col = 0;
 		foreach my $h (@{$i}){
-			$h = gui_window->gui_jchar($h, 'euc') unless $h =~ /^[0-9]+$/o;
+			#$h = gui_window->gui_jchar($h, 'euc') unless $h =~ /^[0-9]+$/o;
 
 			my $f;
 			if ($row == 0){
@@ -448,7 +448,7 @@ sub _out_file_csv{
 	my $target = $::project_obj->file_TempCSV;
 
 	use File::BOM;
-	open (LIST, '>:encoding(utf8):via(File::BOM)', "$target") or
+	open (LIST, '>:encoding(utf8):via(File::BOM)', $target) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
@@ -536,7 +536,7 @@ sub _make_wl_def{
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
 	my @data;
@@ -603,14 +603,14 @@ sub _make_wl_150{
 			LIMIT 150
 		',1)->hundle;
 		$data[0] = [
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf')),
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf')),
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf'))
+			kh_msg->get('words'),
+			kh_msg->get('tf')
 		];
 	} else {
 		$t = mysql_exec->select('
@@ -644,14 +644,14 @@ sub _make_wl_150{
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
 		
 		$data[0] = [
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')')
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')'
 		];
 	}
 

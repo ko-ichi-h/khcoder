@@ -400,9 +400,9 @@ if (pp_type == "last"){
 	det <- det[nrow(det):n_start,]
 	
 	str_xlab <- paste(" ('
-	.kh_msg->get('last1') # 最後の
+	.kh_msg->pget('last1') # 最後の
 	.'",pp_focus,"'
-	.kh_msg->get('last2') # 回
+	.kh_msg->pget('last2') # 回
 	.')",sep="")
 } else if (pp_type == "first") {
 	if ( pp_focus > nrow(det) ){
@@ -411,9 +411,9 @@ if (pp_type == "last"){
 	det <- det[pp_focus:1,]
 	
 	str_xlab <- paste(" ('
-	.kh_msg->get('first1') # 最初の
+	.kh_msg->pget('first1') # 最初の
 	.'",pp_focus,"'
-	.kh_msg->get('first2') # 回
+	.kh_msg->pget('first2') # 回
 	.')",sep="")
 } else if (pp_type == "all") {
 	det <- det[nrow(det):1,]
@@ -444,10 +444,10 @@ plot(
 	type = "b",
 	pch  = p_type,
 	xlab = paste("'
-	.kh_msg->get('agglomer') # クラスター併合の段階
+	.kh_msg->pget('agglomer') # クラスター併合の段階
 	.'",str_xlab,sep = ""),
 	ylab = "'
-	.kh_msg->get('hight') # 併合水準（非類似度）
+	.kh_msg->pget('hight') # 併合水準（非類似度）
 	.'"
 )
 
@@ -465,7 +465,7 @@ legend(
 	min(det[,"u_n"]),
 	max(det[,"height"]),
 	legend = c("'
-	.kh_msg->get('note1') # ※プロット内の数値ラベルは\n　併合後のクラスター総数
+	.kh_msg->pget('note1') # ※プロット内の数値ラベルは\n　併合後のクラスター総数
 	.'"),
 	#pch = c(16),
 	cex = .9,

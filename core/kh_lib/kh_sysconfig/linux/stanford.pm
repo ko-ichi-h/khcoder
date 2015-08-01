@@ -7,6 +7,7 @@ sub config_morph{
 
 sub path_check{
 	my $self = shift;
+	return 1;
 
 	if ( ! (-e $self->stanf_tagger_path && -e $self->stanf_jar_path)){
 		gui_errormsg->open(

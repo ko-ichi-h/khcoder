@@ -12,13 +12,6 @@ use kh_morpho::perl::stemming::pt;
 use utf8;
 use Encode;
 
-my $output_code;
-if ($::config_obj->os eq 'win32'){
-	$output_code = find_encoding('cp932');
-} else {
-	$output_code = find_encoding('euc-jp');
-}
-
 #-----------------------#
 #   Stemmerの実行関係   #
 #-----------------------#
@@ -43,13 +36,13 @@ sub run{
 
 	my $icode = kh_jchar->check_code_en($self->target,1);
 
-	open (TRGT,$self->target) or 
+	open (TRGT, "<:encoding($icode)", $self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
 			type => 'file'
 		);
 	
-	open (my $fh_out,'>',$self->output) or 
+	open (my $fh_out,'>:encoding(utf8)',$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
@@ -91,13 +84,13 @@ sub run{
 	# 処理開始
 	while ( <TRGT> ){
 		chomp;
-		my $t = decode("$icode",$_);
+		my $t = $_;
 
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\n");
+			print $fh_out "$1\t$1\t$1\tTAG\n";
 			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out $output_code->encode("$3\t$3\t$3\tTAG\n");
+			print $fh_out "$3\t$3\t$3\tTAG\n";
 		} else {
 			#while ( index($t,'<') > -1){
 			#	my $pre = substr($t,0,index($t,'<'));
@@ -122,7 +115,7 @@ sub run{
 			#}
 			$self->_sentence($t, $fh_out);
 		}
-		print $fh_out $output_code->encode("EOS\n");
+		print $fh_out "EOS\n";
 	}
 	close (TRGT);
 	close ($fh_out);
@@ -142,11 +135,9 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
-	$t = Text::Unidecode::unidecode($t);
+	#$t = Text::Unidecode::unidecode($t);
 	
-	print $fh $output_code->encode(
-			"$t\t$t\t$t\tTAG\n"
-	);
+	print $fh "$t\t$t\t$t\tTAG\n";
 
 }
 
@@ -164,7 +155,7 @@ sub _sentence{
 	
 	foreach my $i (@sentences) {
 		$self->_tokenize_stem($i, $fh);
-		print $fh $output_code->encode("。\t。\t。\tALL\tSP\n");
+		print $fh "。\t。\t。\tALL\tSP\n";
 	}
 
 	return 1;
@@ -212,7 +203,8 @@ sub _run_stemmer{
 	my @words_pos;
 	
 	# Encode the text to input it to Stemmer
-	my ($words_hyoso, $words_pos) = $self->tokenize( encode('utf8', $t) );
+	#my ($words_hyoso, $words_pos) = $self->tokenize( encode('utf8', $t) );
+	my ($words_hyoso, $words_pos) = $self->tokenize( $t );
 	
 	# Stemming
 	my $words_stem = $self->stemming($words_hyoso);
@@ -241,16 +233,16 @@ sub _run_stemmer{
 		
 		my $line = "$i\t$i\t$words_stem->[$n]\tALL\t\t$pos\n";
 		# Decode the out put of Stemmer
-		$line = decode('utf8', $line);
-		$line = Text::Unidecode::unidecode($line);
+		#$line = decode('utf8', $line);
+		#$line = Text::Unidecode::unidecode($line);
 		
 		# Unidecodeによって空白になってしまった場合に対応
-		if ($line =~ /^\t/o){
-			$line = '???'.$line;
-		}
+		#if ($line =~ /^\t/o){
+		#	$line = '???'.$line;
+		#}
 		$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
 		
-		print $fh $output_code->encode($line);
+		print $fh $line;
 		++$n;
 	}
 	

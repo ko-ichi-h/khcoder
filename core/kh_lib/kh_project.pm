@@ -64,16 +64,16 @@ sub read_hinshi_setting{
 	my $self = shift;
 	
 	my $dbh_csv = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8");
-	
+
 	# 品詞設定の読み込み
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
-	$sql .= $::config_obj->c_or_j;
-	
+	$sql .= Encode::encode( 'ascii', $::config_obj->c_or_j );
+
 	# Stanford POS Taggerの場合は言語ごとに異なる品詞設定ファイルを読む
 	if ($::config_obj->c_or_j eq 'stanford'){
-		$sql .= '_'.$::config_obj->stanford_lang;
+		$sql .= Encode::encode( 'ascii', '_'.$::project_obj->morpho_analyzer_lang);
 	}
-	
+
 	my $h = $dbh_csv->prepare($sql) or
 		gui_errormsg->open(
 			type => 'file',
@@ -190,6 +190,8 @@ sub open{
 	
 	$self->check_up;
 	
+	$::config_obj->c_or_j( $self->morpho_analyzer );
+	
 	return $self;
 }
 
@@ -197,21 +199,24 @@ sub morpho_analyzer{
 	my $self = shift;
 	my $v = shift;
 	
+	my $name = $self->dbname.'.';
+	
 	if (defined($v)){
 		mysql_exec->do("
 			DELETE
-			FROM   status_char
+			FROM   $name"."status_char
 			WHERE  name = \"morpho_analyzer\"
 		",1);
 		mysql_exec->do("
-			INSERT INTO status_char (name, status)
+			INSERT INTO $name"."status_char (name, status)
 			VALUES (\"morpho_analyzer\", \"$v\")
 		",1);
+		$::config_obj->c_or_j($v);
 		return $v;
 	}
 	
 	my $h = mysql_exec->select("
-		SELECT status FROM status_char WHERE name = \"morpho_analyzer\"
+		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer\"
 	",1)->hundle;
 	
 	unless ($h->rows){
@@ -225,21 +230,23 @@ sub morpho_analyzer_lang{
 	my $self = shift;
 	my $v = shift;
 	
+	my $name = $self->dbname.'.';
+	
 	if (defined($v)){
 		mysql_exec->do("
 			DELETE
-			FROM   status_char
+			FROM   $name"."status_char
 			WHERE  name = \"morpho_analyzer_lang\"
 		",1);
 		mysql_exec->do("
-			INSERT INTO status_char (name, status)
+			INSERT INTO $name"."status_char (name, status)
 			VALUES (\"morpho_analyzer_lang\", \"$v\")
 		",1);
 		return $v;
 	}
 	
 	my $h = mysql_exec->select("
-		SELECT status FROM status_char WHERE name = \"morpho_analyzer_lang\"
+		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer_lang\"
 	",1)->hundle;
 	
 	unless ($h->rows){
@@ -351,6 +358,19 @@ sub check_up{
 #--------------#
 #   アクセサ   #
 #--------------#
+
+# 開いていない（かもしれない）プロジェクトの言語・抽出方法を設定
+sub lang_method{
+	my $self       = shift;
+	my $new_lang   = shift;
+	my $new_method = shift;
+
+	my $method = $self->morpho_analyzer($new_method);
+	my $lang   = $self->morpho_analyzer_lang($new_lang);
+
+	return [$lang, $method];
+}
+
 
 sub assigned_icode{
 	my $self = shift;
@@ -711,6 +731,7 @@ sub file_m_target{
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
+
 sub file_MorphoIn{ # file_m_targetと同じ
 	my $self = shift;
 	my $temp = $self->file_m_target;
@@ -829,7 +850,7 @@ sub file_datadir{
 	my $temp = $self->file_short_name;
 	$temp = substr($temp,0,rindex($temp,'.'));
 
-	return $self->dir_CoderData.$temp;
+	return $self->dir_CoderData.$::config_obj->os_path($temp);
 }
 
 sub file_target{

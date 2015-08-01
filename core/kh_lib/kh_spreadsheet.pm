@@ -32,15 +32,15 @@ sub save_files{
 	my %args = @_;
 	
 	# morpho_analyzer
-	my $icode;
-	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-	){
-		$icode = 'cp932';
-	} else {
-		$icode = 'utf8';
-	}
+	my $icode = 'utf8';
+	#if (
+	#	   $::config_obj->c_or_j eq 'chasen'
+	#	|| $::config_obj->c_or_j eq 'mecab'
+	#){
+	#	$icode = 'cp932';
+	#} else {
+	#	$icode = 'utf8';
+	#}
 	
 	# read excel
 	my $workbook = $self->parser;

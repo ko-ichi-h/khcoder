@@ -315,6 +315,41 @@ sub reset_parm{
 		$dbh->disconnect;
 }
 
+#----------------------#
+#   パスの文字コード   #
+
+use Encode;
+use Encode::Locale;
+
+sub os_path{
+	my $self  = shift;
+	my $c     = shift;
+	my $icode = shift;
+	
+	unless ( utf8::is_utf8($c) ){
+		$c = Encode::decode('utf8', Jcode->new($c,$icode)->utf8);
+	}
+	
+	return Encode::encode("locale_fs", $c);
+}
+
+sub uni_path{
+	my $self  = shift;
+	my $c     = shift;
+	
+	unless ( utf8::is_utf8($c) ){
+		$c = Encode::decode("locale_fs", $c);
+	}
+	$c =~ tr/\\/\//;
+	
+	return $c; 
+}
+
+sub os_code{
+	print "kh_sysconfig::os_code: $Encode::Locale::ENCODING_LOCALE\n";
+	return $Encode::Locale::ENCODING_LOCALE;
+}
+
 #--------------------#
 #   形態素解析関係   #
 
@@ -356,6 +391,34 @@ sub c_or_j{
 	}
 }
 
+sub last_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{last_lang} = $new;
+	}
+
+	if (length($self->{last_lang}) > 0) {
+		return $self->{last_lang};
+	} else {
+		return 'jp';
+	}
+}
+
+sub last_method{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{last_method} = $new;
+	}
+
+	if (length($self->{last_method}) > 0) {
+		return $self->{last_method};
+	} else {
+		return 'chasen';
+	}
+}
+
 sub stemming_lang{
 	my $self = shift;
 	my $new = shift;
@@ -370,13 +433,43 @@ sub stemming_lang{
 	}
 }
 
-sub stanf_tagger_path{
+sub stanford_lang{
 	my $self = shift;
 	my $new = shift;
 	if ($new){
-		$self->{stanf_tagger_path} = $new;
+		$self->{stanford_lang} = $new;
 	}
-	return $self->{stanf_tagger_path};
+
+	if (length($self->{stanford_lang}) > 0) {
+		return $self->{stanford_lang};
+	} else {
+		return 'en';
+	}
+}
+
+sub stanf_tagger_path{
+	my $self = shift;
+	
+	my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
+	return $self->$call;
+}
+
+sub stanf_tagger_path_en{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_tagger_path_en} = $new;
+	}
+	return $self->{stanf_tagger_path_en};
+}
+
+sub stanf_tagger_path_cn{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_tagger_path_cn} = $new;
+	}
+	return $self->{stanf_tagger_path_cn};
 }
 
 sub stanf_jar_path{
@@ -395,20 +488,6 @@ sub stanf_seg_path{
 		$self->{stanf_seg_path} = $new;
 	}
 	return $self->{stanf_seg_path};
-}
-
-sub stanford_lang{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{stanford_lang} = $new;
-	}
-
-	if (length($self->{stanford_lang}) > 0) {
-		return $self->{stanford_lang};
-	} else {
-		return 'en';
-	}
 }
 
 sub msg_lang{
@@ -482,18 +561,19 @@ sub stopwords_current{
 	my $type = $self->c_or_j;
 	
 	if ($self->c_or_j eq 'stemming'){
-		$type .= '_'.$self->stemming_lang;
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
 	}
 	elsif ($self->c_or_j eq 'stanford'){
-		$type .= '_'.$self->stanford_lang;
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
 	} else {
 		$type .= '_d';
 	}
 	#print "type: $type\n";
 	
 	my @words = ();
-	my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
-	if (-e "./config/stopwords_$type"){
+	my $cwd = $self->cwd;
+	my $dbh = DBI->connect("DBI:CSV:f_dir=$cwd/config;f_encoding=utf8") or die;
+	if (-e "$cwd/config/stopwords_$type"){
 		my $sth = $dbh->prepare("
 			SELECT name FROM stopwords_$type
 		") or die;
@@ -894,6 +974,48 @@ sub multi_threads{
 	} else {
 		return 0;
 	}
+}
+
+sub font_pdf{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf} = $new if defined($new) && length($new);
+	$self->{font_pdf} = 'Japan1GothicBBB' unless length($self->{font_pdf});
+	return $self->{font_pdf};
+}
+
+sub font_pdf_cn{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf_cn} = $new if defined($new) && length($new);
+	$self->{font_pdf_cn} = 'GB1' unless length($self->{font_pdf_cn});
+	return $self->{font_pdf_cn};
+}
+
+sub font_pdf_current{
+	my $self = shift;
+
+	# プロジェクトの言語にあわせてフォントを返す
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'cn') {                         # Chinese
+			return $self->font_pdf_cn;
+		}
+		elsif ($lang eq 'jp'){                       # Japanese
+			return $self->font_pdf;
+		}
+		elsif (
+				   ($lang eq 'en')
+				&& ($self->msg_lang ne 'jp')
+		){
+			return $self->font_pdf;
+		}
+		else{                                        # Euro
+			return 'serif';
+		}
+	}
+
+	return $self->font_pdf;
 }
 
 sub r_plot_debug{

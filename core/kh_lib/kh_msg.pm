@@ -10,6 +10,7 @@ my $utf8 = find_encoding('utf8');
 
 my $msg;
 my $msg_fb;
+
 my $debug = 1;
 
 sub get{
@@ -53,6 +54,55 @@ sub get{
 	return $t;
 }
 
+sub pget{
+	# キー作成
+	          shift;
+	my $key = shift;
+	my $caller = shift;
+	
+	$caller = (caller)[0]    unless length($caller);
+	
+	if ($key =~ /^(.+)\->(.+)$/){
+		$key    = $2;
+		$caller = $1;
+		#print "kh_msg: caller is specified: $caller, $key\n" if $debug;
+	}
+		
+	$caller =~ s/::(linux|win32)//go;
+
+	# メッセージをロード
+	&load unless $msg;
+
+	# メッセージを返す
+	my $the_msg;
+	if (
+		   ( $::project_obj->morpho_analyzer_lang eq $::config_obj->msg_lang )
+		|| ( $::project_obj->morpho_analyzer_lang eq 'en' )
+		|| ( $::config_obj->msg_lang eq 'en' )
+		|| (
+				   ( $::project_obj->morpho_analyzer_lang eq 'cn' )
+				&& ( $::config_obj->msg_lang eq 'jp' )
+		)
+	){
+		$the_msg = $msg;
+	} else {
+		$the_msg = $msg_fb;
+	}
+	
+	my $t = '';
+	if ( defined( $the_msg->{$caller}{$key} ) ){
+		$t = $the_msg->{$caller}{$key};
+	} else {
+		$t = 'error: '.$key;
+		print "kh_msg::pget: no msg: $caller, $key\n";
+	}
+	
+	unless ( utf8::is_utf8($t) ){
+		$t = $utf8->decode($t);
+	}
+	return $t;
+}
+
 sub gget{
 	# キー作成
 	          shift;
@@ -83,21 +133,21 @@ sub gget{
 
 sub load{
 	my $file =
-		Cwd::cwd
-		.'/config/'
-		.'msg.'
-		.$::config_obj->msg_lang
+		$::config_obj->cwd
+		.$utf8->encode( '/config/' )
+		.$utf8->encode( 'msg.' )
+		.$utf8->encode( $::config_obj->msg_lang )
 	;
 	if (-e $file){
 		$msg = LoadFile($file) or die;
 	}
 	
-	unless ($::config_obj->msg_lang eq 'jp'){
+	unless ($::config_obj->msg_lang eq 'en'){
 		my $file_fb =
-			Cwd::cwd
-			.'/config/'
-			.'msg.'
-			.'jp'
+			$::config_obj->cwd
+			.$utf8->encode('/config/')
+			.$utf8->encode('msg.')
+			.$utf8->encode('en')
 		;
 		$msg_fb = LoadFile($file_fb) or die;
 		

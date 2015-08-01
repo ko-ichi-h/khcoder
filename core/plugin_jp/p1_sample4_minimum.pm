@@ -1,16 +1,19 @@
-# �Ǿ��¡ʤ˶ᤤ�˥ץ饰������
+# 最小限（に近い）プラグイン構成
 
 package p1_sample4_minimum;
 
+use strict;
+use utf8;
+
 sub plugin_config{
 	return {
-		name     => '�Ǿ��¤ι���',
-		menu_grp => '����ץ�',         # ���ιԤϡ�����ϡ˾�ά��
+		name     => '最小限の構成',
+		menu_grp => 'サンプル',         # この行は（本来は）省略可
 	};
 }
 
 sub exec{
-	print "short sample\n";             # ������ɬ�פʽ������Ƥ򵭽�
+	print "short sample\n";             # ここに必要な処理内容を記述
 }
 
-1;                                      # �����˺�줺�ˡġ�
+1;                                      # これも忘れずに…。

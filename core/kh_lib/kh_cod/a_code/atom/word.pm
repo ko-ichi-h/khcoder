@@ -122,11 +122,14 @@ sub idf{
 	my $df = 0;
 	# 1種類の場合
 	if (@{$t} == 1){
+		return 0 unless $self->{list};
 		$df = mysql_exec->select("
 			SELECT f
 			FROM   df_$self->{tani}
 			WHERE  genkei_id = $self->{list}->[0]
-		",1)->hundle->fetch->[0];
+		",1)->hundle;
+		$df = $df->fetch or return 0;
+		$df = $df->[0];
 	}
 	# 2種類以上の場合
 	elsif (@{$t} > 1){
@@ -144,7 +147,9 @@ sub idf{
 			$n = 1;
 		}
 		#print "$sql\n";
-		$df = mysql_exec->select($sql,1)->hundle->fetch->[0];
+		$df = mysql_exec->select($sql,1)->hundle;
+		$df = $df->fetch or return 0;
+		$df = $df->[0];
 	}
 	
 	return 0 unless $df;

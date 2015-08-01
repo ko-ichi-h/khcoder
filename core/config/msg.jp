@@ -252,6 +252,7 @@ gui_window::project_new:
     target_file:              分析対象ファイル：
     win_title:                新規プロジェクト
 gui_window::project_open:
+    lang:                     言語
     del:                      削除
     dir:                      ディレクトリ
     edit:                     編集
@@ -299,16 +300,17 @@ gui_window::sysconfig:
     browse_stanford_jar:      stanford-postagger.jarを開いてください。
     browse_stanford_tag:      モデルファイルを開いてください。
     chasen:                   茶筌（日本語）
-    config:                   config
-    l_cn:                     Chinese
-    l_de:                     German *
-    l_en:                     English
-    l_es:                     Spanish *
-    l_fr:                     French *
-    l_it:                     Italian *
-    l_nl:                     Dutch *
-    l_pt:                     Portuguese *
-    lang:                     '    Language:'
+    config:                   設定
+    l_jp:                     日本語
+    l_cn:                     中国語
+    l_de:                     ドイツ語
+    l_en:                     英語
+    l_es:                     スペイン語
+    l_fr:                     フランス語
+    l_it:                     イタリア語
+    l_nl:                     オランダ語
+    l_pt:                     ポルトガル語
+    lang:                     '    言語：'
     mecab:                    MeCab（日本語）
     need_inst:                （要・別途インストール）
     note_font:               "フォントが変更されました。変更を有効にするために、KH Coderを再起動してください。"
@@ -328,6 +330,11 @@ gui_window::sysconfig:
     web_browser:              Webブラウザ：
     win_title:                KH Coderの設定
     words_ext:                語を抽出する方法
+gui_window::stop_words:
+    change_will:              "※前処理を（再度）実行するまで\n変更は反映されません。"
+    for_this_method:          Stop wordを以下の抽出方法と言語むけに設定： 
+    select_all:               すべて選択
+    lang:                     言語：
 gui_window::word_ass:
     18:                       χ2乗
     and:                      AND検索

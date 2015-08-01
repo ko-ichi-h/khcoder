@@ -32,7 +32,7 @@ sub exec{
 		return 0;
 	}
 
-	# execute R command
+	# execute R command 1
 	$::config_obj->R->send('
 		print(
 			paste(
@@ -44,13 +44,31 @@ sub exec{
 		)
 	');
 	
-	# read output of R
+	# read output of R 1
 	my $t = $::config_obj->R->read();
 	
 	# modify the output string for print
 	$t =~ s/.+"(.+)"/$1/;
 	$t =~ s/, / \t/g;
 	$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
+
+	# execute R command 2
+	$::config_obj->R->send('
+		print( sessionInfo() )
+	');
+
+	# read output of R 2
+	my $t2 = $::config_obj->R->read();
+	$t .= "\n\nsessionInfo():\n\n$t2";
+
+	# execute R command 3
+	$::config_obj->R->send('
+		print( getwd() )
+	');
+
+	#  read output of R 3
+	my $t3 = $::config_obj->R->read();
+	$t .= "\n\ngetwd():\n\n$t3";
 	
 	# print
 	$mw->messageBox(

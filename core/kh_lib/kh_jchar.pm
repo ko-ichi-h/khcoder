@@ -236,6 +236,57 @@ sub check_code_en{
 	return $enc;
 }
 
+# ファイルの文字コードを判別(対応コードすべて)
+
+sub check_code_all{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 50000 unless $lines;
+	
+	print "Checking icode (en)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	#use Devel::Size qw(size total_size);
+	#print size($t);
+
+	use Encode::Guess;
+	my $enc = guess_encoding($t, qw/cp932 euc-jp ISO-2022-JP latin1 cp1252/);
+	print ref $enc ? $enc->name : $enc unless $silent;
+	print "\n" unless $silent;
+	if (ref $enc){
+		$enc = $enc->name;
+	} elsif ($enc =~ /utf8/) {
+		$enc = 'utf8';
+	} elsif ($enc =~ /euc-jp/) {
+		$enc = 'euc-jp';
+	} elsif ($enc =~ /cp932/) {
+		$enc = 'cp932';
+	} elsif ($enc =~ /ISO-2022-JP/){
+		$enc = 'ISO-2022-JP';
+	} elsif ($enc =~ /latin1/){
+		$enc = 'latin1';
+	} elsif ($enc =~ /^No / ){
+		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		$enc = 'utf8';
+	} else {
+		die("something wrong with icode! $enc");
+	}
+
+	return $enc;
+}
+
 # 文字列変換
 
 sub s2e{

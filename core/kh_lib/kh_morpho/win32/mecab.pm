@@ -1,19 +1,23 @@
 package kh_morpho::win32::mecab;
-# use strict;
 use base qw( kh_morpho::win32 );
 
+use strict;
+use utf8;
+
 #---------------------#
-#   MeCab¤Î¼Â¹Ô´Ø·¸   #
+#   MeCabã®å®Ÿè¡Œé–¢ä¿‚   #
 #---------------------#
 
 sub _run_morpho{
 	my $self = shift;	
 	my $path = $self->config->mecab_path;
+	$path =~ s/\\/\//g;
+	$path = $::config_obj->os_path($path);
 	
-	# ½é´ü²½
+	# åˆæœŸåŒ–
 	unless (-e $path){
 		gui_errormsg->open(
-			msg => kh_msg->get('error_confg'),
+			msg => kh_msg->get('error_config'),
 			type => 'msg'
 		);
 		exit;
@@ -34,14 +38,15 @@ sub _run_morpho{
 			);
 	}
 	
-	my $pos = rindex($path,"\\bin\\");
+	my $pos = rindex($path,"/bin/");
 	$self->{dir} = substr($path,0,$pos);
-	my $chasenrc = $self->{dir}."\\etc\\mecabrc";
+	my $chasenrc = $self->{dir}."/etc/mecabrc";
 	$self->{cmdline} = "mecab -Ochasen -r \"$chasenrc\" -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
 	#print "morpho: $self->{cmdline}\n";
 	
-	# ½èÍı³«»Ï
-	open (TRGT,$self->target) or 
+	# å‡¦ç†é–‹å§‹
+	my $icode = kh_jchar->check_code2($self->target);
+	open (TRGT, "<:encoding($icode)", $self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
 			type => 'file'
@@ -81,23 +86,27 @@ sub _mecab_run{
 	my $self = shift;
 	my $t    = shift;
 
-	# ¤³¤³¤Ş¤Ç¤Î½èÍıÁ°¥Ç¡¼¥¿¤ò¥Õ¥¡¥¤¥ë¤Ø½ñ¤­½Ğ¤· out: $self->{target_temp}
+	# ã“ã“ã¾ã§ã®å‡¦ç†å‰ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã¸æ›¸ãå‡ºã— out: $self->{target_temp}
 	$self->_mecab_store($t) if length($t);
 	$self->_mecab_store_out;
 
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
-
-	# MeCab¤Ë¤è¤ë½èÍı in: $self->{target_temp}, out: $self->{output_temp}
+	
+	#print "path: ".$::config_obj->os_path( $self->config->mecab_path )."\n";
+	#print "cmd: $self->{cmdline}\n";
+	#print "dir: $self->{dir}\n";
+	
+	# MeCabã«ã‚ˆã‚‹å‡¦ç† in: $self->{target_temp}, out: $self->{output_temp}
 	require Win32::Process;
 	my $ChasenObj;
 	Win32::Process::Create(
 		$ChasenObj,
-		$self->config->mecab_path,
+		$::config_obj->os_path( $self->config->mecab_path ),
 		$self->{cmdline},
 		0,
 		Win32::Process->CREATE_NO_WINDOW,
-		$self->{dir},
+		$self->{dir}.'/bin',
 	) || $self->Exec_Error("Wi32::Process can not start");
 	$ChasenObj->Wait( Win32::Process->INFINITE )
 		|| $self->Exec_Error("Wi32::Process can not wait");
@@ -113,60 +122,62 @@ sub _mecab_run{
 		$cut_eos = 1;
 	}
 	
-	# MeCab¤Î½èÍı·ë²Ì¤ò¼ı½¸ in: $self->{output_temp} out: $self->output
-	# ¢­¤³¤³¤ÇMecab¤Î½ĞÎÏ¤ò½¤Àµ¢­
-	open (OTEMP,"$self->{output_temp}") or
+	# MeCabã®å‡¦ç†çµæœã‚’åé›† in: $self->{output_temp} out: $self->output
+	# â†“ã“ã“ã§Mecabã®å‡ºåŠ›ã‚’ä¿®æ­£â†“
+	my $icode = 'cp932';
+	$icode = $icode = 'utf8' if $::config_obj->mecab_unicode;
+	open (OTEMP, "<:encoding($icode)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	open (OTPT,">>",$self->output) or 
+	open (OTPT,">>:encoding(cp932)",$self->output) or
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
 		);
 	
 	my $last_line = '';
-	my $maru   = Jcode->new('¡£','euc')->sjis;
-	my $danpen = Jcode->new('µ­¹æ-°ìÈÌ','euc')->sjis;
-	my $kuten  = Jcode->new('µ­¹æ-¶çÅÀ','euc')->sjis;
+	#my $maru   = Jcode->new('ã€‚','euc')->sjis;
+	#my $danpen = Jcode->new('è¨˜å·-ä¸€èˆ¬','euc')->sjis;
+	#my $kuten  = Jcode->new('è¨˜å·-å¥ç‚¹','euc')->sjis;
 	
-		# ¶çÅÀ¡Ö¡£¡×¤¬É¬¤º1¸ì¤Ë¤Ê¤ë¤è¤¦½¤Àµ
+		# å¥ç‚¹ã€Œã€‚ã€ãŒå¿…ãš1èªã«ãªã‚‹ã‚ˆã†ä¿®æ­£
 	while( <OTEMP> ){
-		if ( $::config_obj->mecab_unicode ){
-			$_ = Jcode->new($_,'utf8')->sjis;
-		}
+		#if ( $::config_obj->mecab_unicode ){
+		#	$_ = Jcode->new($_,'utf8')->sjis;
+		#}
 
 		if ( length($last_line) > 0 ){
 			if (
-				   index($last_line,$maru) > -1
+				   index($last_line,'ã€‚') > -1
 				&& length( (split /\t/, $last_line)[0] ) > 2
 			){
 				my $w = (split /\t/, $last_line)[0];
 				# print "w: $w, ";
-				$w = Jcode->new($w,'sjis')->euc;
+				#$w = Jcode->new($w,'sjis')->euc;
 				
-				while ( index($w,'¡£') > -1 ){
-					if ( index($w,'¡£') > 0 ){
-						my $pre = substr($w, 0, index($w,'¡£'));
-						$pre = Jcode->new($pre,'euc')->sjis;
+				while ( index($w,'ã€‚') > -1 ){
+					if ( index($w,'ã€‚') > 0 ){
+						my $pre = substr($w, 0, index($w,'ã€‚'));
+						#$pre = Jcode->new($pre,'euc')->sjis;
 						# print "pre: $pre, ";
-						print OTPT "$pre\t$pre\t$pre\t$danpen\t\t\n";
+						print OTPT "$pre\t$pre\t$pre\tè¨˜å·-ä¸€èˆ¬\t\t\n";
 					}
 					# print "$maru, ";
-					print OTPT "$maru\t$maru\t$maru\t$kuten\t\t\n";
-					substr($w, 0, index($w,'¡£') + 2) = '';
+					print OTPT "ã€‚\tã€‚\tã€‚\tè¨˜å·-å¥ç‚¹\t\t\n";
+					substr($w, 0, index($w,'ã€‚') + 1) = '';
 				}
-				$w = Jcode->new($w,'euc')->sjis;
+				#$w = Jcode->new($w,'euc')->sjis;
 				print "l: $w\n";
-				print OTPT "$w\t$w\t$w\t$danpen\t\t\n";
+				print OTPT "$w\t$w\t$w\tè¨˜å·-ä¸€èˆ¬\t\t\n";
 			} else {
 				print OTPT $last_line;
 			}
 		}
 		$last_line = $_;
 	}
-		# ºÇ¸å¤ËÍ¾Ê¬¤Ê¡ÖEOS¡×¤¬ÉÕ¤¯¤Î¤òºï½ü
+		# æœ€å¾Œã«ä½™åˆ†ãªã€ŒEOSã€ãŒä»˜ãã®ã‚’å‰Šé™¤
 	if ($last_line =~ /^EOS\n/o && $cut_eos){
 	
 	} else {
@@ -181,31 +192,49 @@ sub _mecab_run{
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	unlink $self->{target_temp} or 
+	unlink $self->{target_temp} or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
+	
+	# unlink ç¢ºèª
+	use Time::HiRes;
+	for ( my $n = 0; $n < 20; ++$n ){
+		if ( not ( -e $self->{output_temp} ) and not ( -e $self->{target_temp} ) ){
+			if ($n > 0) {
+				print "unlink: it was necessary to wait $n loop(s)\n";
+			}
+			last;
+		}
+		if ($n == 19) {
+			gui_errormsg->open(
+				thefile => $self->{target_temp},
+				type => 'file'
+			);
+		}
+		Time::HiRes::sleep (0.5);
+	}
+	
 	$self->{store} = '';
 }
 
 sub _mecab_outer{
 	my $self = shift;
 	my $t    = shift;
-	my $name = Jcode->new('¥¿¥°','euc')->sjis;
 
-	open (OTPT,">>",$self->output) or 
+	open (OTPT,">>:encoding(cp932)",$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
 		);
 
-	print OTPT "$t\t$t\t$t\t$name\t\t\n";
+	print OTPT "$t\t$t\t$t\tã‚¿ã‚°\t\t\n";
 
 	close (OTPT);
 }
 
-# MeCab¤Ç½èÍı¤¹¤ëÁ°¤Î¥Ç¡¼¥¿¤òÃßÀÑ
+# MeCabã§å‡¦ç†ã™ã‚‹å‰ã®ãƒ‡ãƒ¼ã‚¿ã‚’è“„ç©
 sub _mecab_store{
 	my $self = shift;
 	my $t    = shift;
@@ -222,30 +251,34 @@ sub _mecab_store{
 	return $self;
 }
 
-# MeCab¤Ç½èÍı¤¹¤ëÁ°¤Î¥Ç¡¼¥¿¤ò¥Õ¥¡¥¤¥ë¤Ë½ñ¤­½Ğ¤·
+# MeCabã§å‡¦ç†ã™ã‚‹å‰ã®ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ãå‡ºã—
 sub _mecab_store_out{
 	my $self = shift;
 
 	return 1 unless length($self->{store}) > 0;
 
-	open (TMPO,">>", $self->{target_temp}) or 
+	my $icode = 'cp932';
+	$icode = 'utf8' if $::config_obj->mecab_unicode;
+	
+	my $arg;
+	if (-e $self->{target_temp}) {
+		$arg = ">>:encoding($icode)";
+	} else {
+		$arg = ">:encoding($icode)";
+	}
+	
+	open (TMPO, $arg, $self->{target_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
-	
-	if ( $::config_obj->mecab_unicode ){
-		$self->{store} = Jcode->new($self->{store},'sjis')->utf8;
-	}
-	
+
 	print TMPO $self->{store};
 	close (TMPO);
 
 	$self->{store} = '';
 	return $self;
 }
-
-
 
 sub exec_error_mes{
 	return kh_msg->get('error');

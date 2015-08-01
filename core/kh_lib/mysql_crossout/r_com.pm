@@ -164,6 +164,7 @@ sub out2{                               # length作製をする
 	$self->{num_r} = $num_r;
 
 	# Rコマンド
+	$file = $::config_obj->uni_path($file);
 	$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
 
 	return $self;

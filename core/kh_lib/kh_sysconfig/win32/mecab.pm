@@ -7,7 +7,7 @@ sub config_morph{
 
 sub path_check{
 	my $self = shift;
-	my $path = $self->mecab_path;
+	my $path = $::config_obj->os_path( $self->mecab_path );
 	
 	if (not (-e $path) or not ($path =~ /mecab\.exe\Z/i) ){
 		use gui_errormsg;

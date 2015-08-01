@@ -37,7 +37,7 @@ sub browse_stanford_jar{
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
-		$path = $::config_obj->os_path($path);
+		#$path = $::config_obj->os_path($path);
 		$self->{entry_stan1}->delete('0','end');
 		$self->{entry_stan1}->insert(0,$self->gui_jchar($path));
 	}
@@ -61,7 +61,7 @@ sub browse_stanford_tag{
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
-		$path = $::config_obj->os_path($path);
+		#$path = $::config_obj->os_path($path);
 		$self->{entry_stan2}->delete('0','end');
 		$self->{entry_stan2}->insert(0,$self->gui_jchar($path));
 	}

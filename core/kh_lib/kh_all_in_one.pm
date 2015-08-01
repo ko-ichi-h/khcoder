@@ -23,34 +23,56 @@ sub init{
 	Win32::SystemInfo::MemoryStatus(\%mHash,'MB');
 	$mHash{AvailPhys} = 32 if $mHash{AvailPhys} < 32;
 	$mHash{AvailPhys} = int($mHash{AvailPhys});
-	$mHash{AvailPhys} = 2046 if $mHash{AvailPhys} > 2046;
+	$mHash{AvailPhys} = 2048 if $mHash{AvailPhys} > 2048;
 	print "Available Physical Memory: $mHash{AvailPhys}MB\n";
+	$mHash{AvailPhys} = $mHash{AvailPhys} - 500;
+	$mHash{AvailPhys} = 16 if $mHash{AvailPhys} < 16;
 
 	# 茶筌のパス設定
 	if (
 		not -e $::config_obj->chasen_path
-		and -e $::config_obj->cwd.'\dep\chasen\chasen.exe'
+		and -e $::config_obj->cwd.'/dep/chasen/chasen.exe'
 	) { 
 		$::config_obj->chasen_path(
-			$::config_obj->cwd.'\dep\chasen\chasen.exe'
+			$::config_obj->cwd.'/dep/chasen/chasen.exe'
+		);
+	}
+
+	# Stanford segmenterのパス設定
+	if (
+		not -d $::config_obj->stanf_seg_path
+		and -d $::config_obj->cwd.'/dep/stanford-segmenter'
+	) { 
+		$::config_obj->stanf_seg_path(
+			$::config_obj->cwd.'/dep/stanford-segmenter'
 		);
 	}
 
 	# Stanford POS Taggerのパス設定
 	if (
-		not -e $::config_obj->stanf_tagger_path
-		and -e $::config_obj->cwd.'\dep\stanford-postagger\models\left3words-wsj-0-18.tagger'
+		not -e $::config_obj->stanf_tagger_path_en
+		and -e $::config_obj->cwd.'/dep/stanford-postagger/models/wsj-0-18-left3words-distsim.tagger'
 	) {
-		$::config_obj->stanf_tagger_path(
-			$::config_obj->cwd.'\dep\stanford-postagger\models\left3words-wsj-0-18.tagger'
+		$::config_obj->stanf_tagger_path_en(
+			$::config_obj->cwd.'/dep/stanford-postagger/models/wsj-0-18-left3words-distsim.tagger'
 		);
 	}
+
+	if (
+		not -e $::config_obj->stanf_tagger_path_cn
+		and -e $::config_obj->cwd.'/dep/stanford-postagger/models/chinese-distsim.tagger'
+	) {
+		$::config_obj->stanf_tagger_path_cn(
+			$::config_obj->cwd.'/dep/stanford-postagger/models/chinese-distsim.tagger'
+		);
+	}
+
 	if (
 		not -e $::config_obj->stanf_jar_path
-		and -e $::config_obj->cwd.'\dep\stanford-postagger\stanford-postagger.jar'
+		and -e $::config_obj->cwd.'/dep/stanford-postagger/stanford-postagger.jar'
 	) {
 		$::config_obj->stanf_jar_path(
-			$::config_obj->cwd.'\dep\stanford-postagger\stanford-postagger.jar'
+			$::config_obj->cwd.'/dep/stanford-postagger/stanford-postagger.jar'
 		);
 	}
 
@@ -63,9 +85,9 @@ sub init{
 		
 		my $candidate = '';
 		if ( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1)){
-			$candidate = '\dep\R\bin\x64\Rterm.exe';
+			$candidate = '/dep/R/bin/x64/Rterm.exe';
 		} else {
-			$candidate = '\dep\R\bin\i386\Rterm.exe';
+			$candidate = '/dep/R/bin/i386/Rterm.exe';
 		}
 		if (-e $::config_obj->cwd.$candidate){
 			$::config_obj->r_path( $::config_obj->cwd.$candidate)
@@ -74,27 +96,21 @@ sub init{
 
 	if (
 		not -e $::config_obj->r_path
-		and -e $::config_obj->cwd.'\dep\R\bin\Rterm.exe'
+		and -e $::config_obj->cwd.'/dep/R/bin/Rterm.exe'
 	){
-		$::config_obj->r_path($::config_obj->cwd.'\dep\R\bin\Rterm.exe');
+		$::config_obj->r_path($::config_obj->cwd.'/dep/R/bin/Rterm.exe');
 	}
 	if (
 		not -e $::config_obj->r_path
-		and -e $::config_obj->cwd.'\dep\R\bin\i386\Rterm.exe'
+		and -e $::config_obj->cwd.'/dep/R/bin/i386/Rterm.exe'
 	){
-		$::config_obj->r_path($::config_obj->cwd.'\dep\R\bin\i386\Rterm.exe');
+		$::config_obj->r_path($::config_obj->cwd.'/dep/R/bin/i386/Rterm.exe');
 	}
 	
 	# MySQL設定ファイル修正（khc.ini）
-	my $p1 = $::config_obj->cwd.'\dep\mysql\\';
-	my $p2 = $::config_obj->cwd.'\dep\mysql\data\\';
+	my $p1 = $::config_obj->cwd.'/dep/mysql/';
+	my $p2 = $::config_obj->cwd.'/dep/mysql/data/';
 	my $p3 = $p1; chop $p3;
-	$p1 = Jcode->new($p1,'sjis')->euc;
-	$p2 = Jcode->new($p2,'sjis')->euc;
-	$p1 =~ s/\\/\//g;
-	$p2 =~ s/\\/\//g;
-	$p1 = Jcode->new($p1,'euc')->sjis;
-	$p2 = Jcode->new($p2,'euc')->sjis;
 
 	my $p4 = $p1.'tmp/';
 	unless (-e $p4){
@@ -106,12 +122,12 @@ sub init{
 		;
 	}
 
-	open (MYINI,$::config_obj->cwd.'\dep\mysql\khc.ini') or 
+	open (MYINI,$::config_obj->cwd.'/dep/mysql/khc.ini') or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => ">khc.ini"
 		);
-	open (MYININ,'>'.$::config_obj->cwd.'\dep\mysql\khc.ini.new') or 
+	open (MYININ,'>'.$::config_obj->cwd.'/dep/mysql/khc.ini.new') or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => ">khc.ini.new"
@@ -127,9 +143,9 @@ sub init{
 		elsif ($_ =~ /^tmpdir = (.+)$/){
 			print MYININ "tmpdir = $p4\n";
 		}
-		elsif ($_ =~ /set\-variable(\s*)=(\s*)max_heap_table_size/i){
+		elsif ($_ =~ /max_heap_table_size/i){
 			print MYININ
-				"set-variable	= max_heap_table_size="
+				"max_heap_table_size = "
 				.$mHash{AvailPhys}
 				."M\n"
 			;
@@ -160,13 +176,9 @@ sub init{
 	my $obj;
 	my ($mysql_pass, $cmd_line);
 	
-	if ( Win32::IsWinNT() ){
-		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld-nt.exe';
-		$cmd_line = 'bin\mysqld-nt --defaults-file=khc.ini';
-	} else {
-		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld-opt.exe';
-		$cmd_line = 'bin\mysqld-opt --defaults-file=khc.ini';
-	}
+	$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld.exe';
+	$cmd_line = 'bin\mysqld --defaults-file=khc.ini';
+
 	Win32::Process::Create(
 		$obj,
 		$mysql_pass,

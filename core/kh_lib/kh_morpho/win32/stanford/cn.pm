@@ -97,6 +97,8 @@ sub segment{
 	$seg_dir .= '/' unless $seg_dir =~ /\/$/;
 	$seg_dir = $::config_obj->os_path( $seg_dir );
 	
+	die( "Could not execute Stanford Segmenter!\n" ) unless -d $seg_dir;
+	
 	my $cmd_line  =
 		 'cmd /c java -mx1024m -cp "'
 		.$seg_dir

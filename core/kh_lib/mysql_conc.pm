@@ -722,7 +722,8 @@ sub save_all{
 	my $id = $st1->fetchall_arrayref;
 	
 	# ╫пно
-	open(KWICO,">$args{path}") or
+	use File::BOM;
+	open (KWICO, '>:encoding(utf8):via(File::BOM)', $args{path}) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $args{path}
@@ -737,7 +738,7 @@ sub save_all{
 		print KWICO $line;
 	}
 	close (KWICO);
-	kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
+	#kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
 	
 	return 1;
 }

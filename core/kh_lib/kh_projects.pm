@@ -111,7 +111,7 @@ sub add_new{
 
 	# MySQL DB¤ÎÀ°È÷
 	$new->prepare_db;
-	$new->read_hinshi_setting;
+	#$new->read_hinshi_setting;
 
 	# print "1: ", $new->file_target, "\n";
 
@@ -140,8 +140,10 @@ sub edit{
 	my $self = shift;
 	my $edp = $self->a_project($_[0]);
 
+	$edp->lang_method($_[2], $_[3]);
+
 	$edp->comment( $_[1] );
-	$edp->assigned_icode( $_[2] );
+
 
 	my $file    = $edp->file_target;
 	my $comment = $edp->comment;

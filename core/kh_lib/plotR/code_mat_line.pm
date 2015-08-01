@@ -87,7 +87,7 @@ if ( is.null(font_fam) == FALSE ){
 		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
 		font_fam <- "HiraKaku"
 	} else {
-		font_fam <- "'.$::config_obj->font_plot.'"
+		font_fam <- "'.$::config_obj->font_plot_current.'"
 	}
 }
 

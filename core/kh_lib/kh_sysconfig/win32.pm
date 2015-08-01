@@ -86,11 +86,14 @@ sub save_ini{
 		'mecab_path',
 		'mecab_unicode',
 		'stanf_jar_path',
-		'stanf_tagger_path',
+		'stanf_tagger_path_en',
+		'stanf_tagger_path_cn',
 		'stanf_seg_path',
-		'c_or_j',
-		'stemming_lang',
 		'stanford_lang',
+		'stemming_lang',
+		'last_lang',
+		'last_method',
+		'c_or_j',
 		'msg_lang',
 		'r_path',
 		'r_plot_debug',
@@ -109,6 +112,8 @@ sub save_ini{
 		'font_main',
 		'font_plot',
 		'font_plot_cn',
+		'font_pdf',
+		'font_pdf_cn',
 		'win32_monitor_chk',
 		'kaigyo_kigou',
 		'color_DocView_info',
@@ -232,53 +237,6 @@ sub font_plot_current{
 
 	return $self->font_plot;
 }
-
-#------------#
-#   その他   #
-
-
-sub os_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-	
-	unless ( utf8::is_utf8($c) ){
-		$c = Encode::decode('utf8', Jcode->new($c,$icode)->utf8);
-	}
-	
-	#$c =~ tr/\//\\/;
-	
-	return Encode::encode('cp932', $c); # this line should be changed! [unicode]
-}
-
-sub uni_path{
-	my $self  = shift;
-	my $c     = shift;
-	
-	unless ( utf8::is_utf8($c) ){
-		$c = Encode::decode('cp932', $c); # this line should be changed! [unicode]
-	}
-	$c =~ tr/\\/\//;
-	
-	return $c; 
-}
-
-sub os_cod_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\//\\/;
-	$c = Jcode->new("$c",'euc')->sjis;
-	
-	return $c;
-}
-
-sub os_code{
-	return 'cp932';  # this line should be changed! [unicode]
-}
-
 
 1;
 

@@ -1,3 +1,5 @@
+# This file contains Spanish UI texts.
+# Spanish translation was kindly provided by Mr. Francisco Carmona with the CC-BY license.
 ---
 global:
     all:                      Todo
@@ -252,6 +254,7 @@ gui_window::project_new:
     target_file:              'Archivo de destino:'
     win_title:                Nuevo Proyecto
 gui_window::project_open:
+    lang:                     Idioma
     del:                      Eliminar
     dir:                      Ruta
     edit:                     Editar
@@ -300,14 +303,15 @@ gui_window::sysconfig:
     browse_stanford_tag:      Abrir modelo de archivo
     chasen:                   '"ChaSen" para textos en Japanés'
     config:                   Ingresar
+    l_jp:                     Japanés
     l_cn:                     Chino
-    l_de:                     Alemán*
+    l_de:                     Alemán
     l_en:                     Inglés
-    l_es:                     Español *
-    l_fr:                     Francés *
-    l_it:                     Italiano *
-    l_nl:                     Holandés*
-    l_pt:                     Portugués *
+    l_es:                     Español
+    l_fr:                     Francés
+    l_it:                     Italiano
+    l_nl:                     Holandés
+    l_pt:                     Portugués
     lang:                     '    Idioma:'
     mecab:                    '"MeCab" para textos en Japanés'
     need_inst:                ' *instalación separada'
@@ -323,11 +327,16 @@ gui_window::sysconfig:
     pdf:                      'Visor de PDF:'
     s_sheet:                  'Hoja de Cálculo (CSV/Excel):'
     stanford:                 Lematización con "Stanford POS Tagger"
-    stemming:                 Stemming con "Bola de Nieve"
+    stemming:                 Stemming con "Snowball"
     stopwords:                '  Palabras vacías:'
     web_browser:              'Navegador:'
     win_title:                Configuración General
     words_ext:                Extracción de Palabras
+gui_window::stop_words:
+    change_will:              "Los cambios tendrán efecto cuando haga\nclick nuevamente en \"Ejecutar Preprocesamiento\"."
+    for_this_method:          Palabras vacías para el siguiente método:
+    select_all:               Seleccionar TODO
+    lang:                     Idioma:
 gui_window::word_ass:
     18:                       chi cuadrado
     and:                      Y
@@ -911,7 +920,8 @@ gui_window::outvar_read::tab:
     win_title:                'Leer variables desde el archivo delimitado por tabulación'
 gui_window::outvar_list:
     win_title:                'Lista de Variables & Encabezados'
-    headings:                 'Encabezados'
+#    headings:                 'Encabezados'
+    headings:                 'Heading'
     vars:                     'Variables'
     h_unit:                   'unidades'
     h_name:                   'variables'

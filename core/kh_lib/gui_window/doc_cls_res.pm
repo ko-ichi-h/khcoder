@@ -208,13 +208,8 @@ sub _new{
 			foreach my $i (@{$self->{merge}}){
 				$t .= "$i->[0]\t$i->[1]\t$i->[2]\t$i->[3]\n";
 			}
-			#require Win32::Clipboard;
-			#my $CLIP = Win32::Clipboard();
-			#$CLIP->Empty();
-			#$CLIP->Set("$t");
-			$t = $self->to_clip($t);
-			use Clipboard;
-			Clipboard->copy( Encode::encode($::config_obj->os_code,$t) );
+			use kh_clipboard;
+			kh_clipboard->string($t);
 		}
 	)->pack(-side => 'right', -padx => 2, -pady => 2);
 	

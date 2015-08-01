@@ -42,8 +42,7 @@ sub new{
 	$param1 .= "# rlen2 <- $args{rlen2}\n";
 
 	# 自己組織化マップを保存するファイル名
-	use Cwd;
-	my $file_save = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
 	
 	#my $file_save = $::project_obj->file_datadir;
 	#$file_save .= '_'.$args{plotwin_name};
@@ -76,7 +75,7 @@ sub new{
 		print $::config_obj->R->read();
 		
 		my $file_save_s = $file_save.'_s';
-		open (my $fh, '>', $file_save_s)
+		open (my $fh, '>:encoding(utf8)', $file_save_s)
 			or gui_errormsg->open(
 				type    => 'file',
 				thefile => $file_save_s,

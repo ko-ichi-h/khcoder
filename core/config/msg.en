@@ -258,6 +258,7 @@ gui_window::project_open:
     memo:                     memo
     new:                      new
     open:                     Open
+    lang:                     language
     opened:                   "The project is currently opened.\nCannot perform the specified action."
     select_one:               Please select a project.
     target_file:              target file
@@ -300,14 +301,15 @@ gui_window::sysconfig:
     browse_stanford_tag:      Please open a model file
     chasen:                   '"ChaSen" for Japanese text'
     config:                   config
+    l_jp:                     Japanese
     l_cn:                     Chinese
-    l_de:                     German *
+    l_de:                     German
     l_en:                     English
-    l_es:                     Spanish *
-    l_fr:                     French *
-    l_it:                     Italian *
-    l_nl:                     Dutch *
-    l_pt:                     Portuguese *
+    l_es:                     Spanish
+    l_fr:                     French
+    l_it:                     Italian
+    l_nl:                     Dutch
+    l_pt:                     Portuguese
     lang:                     '    Language:'
     mecab:                    '"MeCab" for Japanese text'
     need_inst:                ' *need a separate installation'
@@ -328,6 +330,11 @@ gui_window::sysconfig:
     web_browser:              'Web Browser:'
     win_title:                Global Settings
     words_ext:                Word Extraction
+gui_window::stop_words:
+    change_will:              "* Changes will take effect when you invoke\nthe \"Run Preprocessing\" command (again)."
+    for_this_method:          Stop words for the following method:
+    select_all:               Select ALL
+    lang:                     Language:
 gui_window::word_ass:
     18:                       chi square
     and:                      AND
