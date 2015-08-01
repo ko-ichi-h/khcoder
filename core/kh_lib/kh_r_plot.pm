@@ -1,9 +1,10 @@
 package kh_r_plot;
 use strict;
 
-my $if_font = 0;
-my $if_lt25 = 0;
+use vars qw($if_font);
+$kh_r_plot::if_font = 0;
 
+my $if_lt25 = 0;
 my $debug = 0;
 
 sub new{
@@ -65,7 +66,7 @@ sub new{
 	}
 	
 	# Linux用フォント設定
-	if ( ($::config_obj->os ne 'win32') and ($if_font == 0) ){
+	if ( ($::config_obj->os ne 'win32') and ($kh_r_plot::if_font == 0) ){
 		system('xset fp rehash');
 		$::config_obj->R->output_chk(0);
 		if ( $::config_obj->R_version < 207 ){
@@ -98,16 +99,16 @@ sub new{
 			);
 		}
 		$::config_obj->R->output_chk(1);
-		$if_font = 1;
+		$kh_r_plot::if_font = 1;
 	}
 
 	# Windows用の設定
-	if ( ($::config_obj->os eq 'win32') and ($if_font == 0) ){
+	if ( ($::config_obj->os eq 'win32') and ($kh_r_plot::if_font == 0) ){
 		print "loading Cairo...\n";
 		$::config_obj->R->output_chk(0);
 		$::config_obj->R->send( "try( library(Cairo) )" );
 		$::config_obj->R->output_chk(1);
-		$if_font = 1;
+		$kh_r_plot::if_font = 1;
 	}
 
 	# Rのバージョンが2.5.0より小さい場合の対処

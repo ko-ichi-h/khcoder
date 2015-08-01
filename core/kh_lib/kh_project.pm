@@ -173,7 +173,7 @@ sub temp{
 sub open{
 	my $self = shift;
 	
-	# 対象ファイルの存在を確認
+	# check the target file
 	unless (-e $::config_obj->os_path( $self->file_target ) ){
 		gui_errormsg->open(
 			type   => 'msg',
@@ -182,7 +182,10 @@ sub open{
 		return 0;
 	}
 	
-	# データベースを開く
+	# reset font settings of R
+	$kh_r_plot::if_font = 0;
+	
+	# open DB
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
 	$::project_obj = $self;
 	
