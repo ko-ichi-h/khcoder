@@ -751,9 +751,14 @@ sub make{
 		substr($_, length($_) - 3, length($_)) = '';
 		push @plugins, $_;
 	};
+
+	my $plugin_lang = $::config_obj->msg_lang;
+	unless (-d $::config_obj->cwd.'/plugin_'.$plugin_lang){
+		$plugin_lang = 'en';
+	}
 	use File::Find;
-	push @INC, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang;
-	find($read_each, $::config_obj->cwd.'/plugin_'.$::config_obj->msg_lang);
+	push @INC, $::config_obj->cwd.'/plugin_'.$plugin_lang;
+	find($read_each, $::config_obj->cwd.'/plugin_'.$plugin_lang);
 
 	foreach (@plugins){
 		unless (eval "use $_; 1"){
