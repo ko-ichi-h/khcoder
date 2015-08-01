@@ -77,15 +77,16 @@ sub save_ini{
 	my @outlist = (
 		'chasenrc_path',
 		'grammarcha_path',
-		'stanf_jar_path',
-		'stanf_tagger_path',
-		#'juman_path',
-		'c_or_j',
 		'mecab_unicode',
-		'stemming_lang',
+		'stanf_jar_path',
+		'stanf_tagger_path_en',
+		'stanf_tagger_path_cn',
+		'stanf_seg_path',
 		'stanford_lang',
+		'stemming_lang',
 		'last_lang',
 		'last_method',
+		'c_or_j',
 		'msg_lang',
 		'r_path',
 		'r_plot_debug',
@@ -125,7 +126,7 @@ sub save_ini{
 	);
 
 	my $f = $self->{ini_file};
-	open (INI,">$f") or
+	open (INI, '>encoding(utf8)', $f) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => ">$f"
@@ -252,13 +253,28 @@ sub font_plot{
 	return $self->{font_plot};
 }
 
-#sub os_code{
-#	if ($^O eq 'darwin'){
-#		return 'MacJapanese';
-#	} else {
-#		return 'UTF-8';
-#	}
-#}
+sub font_plot_cn{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_cn} = $new         if defined($new) && length($new);
+	$self->{font_plot_cn} = 'SimHei'  unless length($self->{font_plot_cn});
+	return $self->{font_plot_cn};
+}
+
+sub font_plot_current{
+	my $self = shift;
+
+	# 中国語プロジェクトを開いている時だけ中国語フォントを返す
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'cn') {
+			return $self->font_plot_cn
+		}
+	}
+
+	return $self->font_plot;
+}
+
 
 1;
 
