@@ -404,7 +404,7 @@ sub ok{
 	$::config_obj->mail_smtp( $self->{mail_obj}->smtp    );
 	$::config_obj->mail_from( $self->{mail_obj}->from    );
 	$::config_obj->mail_to(   $self->{mail_obj}->to      );
-	$::config_obj->font_main( Jcode->new($self->{mail_obj}->font)->euc );
+	$::config_obj->font_main( $self->{mail_obj}->font    );
 
 	$::config_obj->plot_size_words( $self->{mail_obj}->plot_size1 );
 	$::config_obj->plot_size_codes( $self->{mail_obj}->plot_size2 );
