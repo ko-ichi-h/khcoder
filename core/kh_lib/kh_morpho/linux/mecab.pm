@@ -1,15 +1,16 @@
 package kh_morpho::linux::mecab;
-# use strict;
+use strict;
+use utf8;
 use base qw( kh_morpho::linux );
 
 #---------------------#
-#   MeCab¤Î¼Â¹Ô´Ø·¸   #
+#   MeCabã®å®Ÿè¡Œé–¢ä¿‚   #
 #---------------------#
 
 sub _run_morpho{
 	my $self = shift;	
 	
-	# ½é´ü²½
+	# åˆæœŸåŒ–
 	$self->{store} = '';
 	
 	$self->{target_temp} = $self->target.'.tmp';
@@ -28,8 +29,9 @@ sub _run_morpho{
 	$self->{cmdline} = "mecab -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
 	#print "morpho: $self->{cmdline}\n";
 	
-	# ½èÍı³«»Ï
-	open (TRGT,$self->target) or 
+	# å‡¦ç†é–‹å§‹
+	my $icode = kh_jchar->check_code2($self->target);
+	open (TRGT, "<:encoding($icode)", $self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
 			type => 'file'
@@ -64,7 +66,6 @@ sub _run_morpho{
 	return(1);
 }
 
-
 sub _mecab_run{
 	my $self = shift;
 	my $t    = shift;
@@ -75,8 +76,8 @@ sub _mecab_run{
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
 
-	# MeCab¤Ë¤ï¤¿¤¹¥Õ¥¡¥¤¥ëÆâÍÆ¤Î¥Á¥§¥Ã¥¯
-	open $fh_chk, '<', $self->{target_temp} or
+	# MeCabã«ã‚ãŸã™ãƒ•ã‚¡ã‚¤ãƒ«å†…å®¹ã®ãƒã‚§ãƒƒã‚¯
+	open my $fh_chk, '<', $self->{target_temp} or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
@@ -94,9 +95,9 @@ sub _mecab_run{
 	}
 	close $fh_chk;
 	
-	# ºÇ¸å¤Ë²ş¹ÔÊ¸»ú¤ò¤Ä¤±¤Æ¤ª¤¯
+	# æœ€å¾Œã«æ”¹è¡Œæ–‡å­—ã‚’ã¤ã‘ã¦ãŠã
 	if ( $has_lf == 0 ){
-		open $fh_add, '>>', $self->{target_temp} or
+		open my $fh_add, '>>', $self->{target_temp} or
 			gui_errormsg->open(
 				thefile => $self->{target_temp},
 				type => 'file'
@@ -109,14 +110,14 @@ sub _mecab_run{
 		#print "Added LF for MeCab: $read_chk\n";
 	}
 
-	# MeCab¤Î¼Â¹Ô
+	# MeCabã®å®Ÿè¡Œ
 	system "$self->{cmdline}";
 	
 	unless (-e $self->{output_temp}){
 		$self->Exec_Error("No output file");
 	}
 
-	# ·ë²Ì¤Î¼è¤ê½Ğ¤·
+	# çµæœã®å–ã‚Šå‡ºã—
 	my $cut_eos;
 	if ( $self->{stlast} =~ /\n\Z/o){
 		$cut_eos = 0;
@@ -124,27 +125,25 @@ sub _mecab_run{
 		$cut_eos = 1;
 	}
 	
-	open (OTEMP,"$self->{output_temp}") or
+	my $icode = 'euc-jp';
+	$icode = 'utf8' if $::config_obj->mecab_unicode;
+	open (OTEMP, "<:encoding($icode)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	open (OTPT,">>",$self->output) or 
+	open (OTPT,">>:encoding(euc-jp)",$self->output) or
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
 		);
 	
 	my $last_line = '';
-	my $maru   = '¡£';
-	my $danpen = 'µ­¹æ-°ìÈÌ';
-	my $kuten  = 'µ­¹æ-¶çÅÀ';
+	my $maru   = 'ã€‚';
+	my $danpen = 'è¨˜å·-ä¸€èˆ¬';
+	my $kuten  = 'è¨˜å·-å¥ç‚¹';
 
 	while( <OTEMP> ){
-		if ( $::config_obj->mecab_unicode ){
-			$_ = Jcode->new($_,'utf8')->euc;
-		}
-
 			if (
 				   index($last_line,$maru) > -1
 				&& length( (split /\t/, $last_line)[0] ) > 2
@@ -153,16 +152,16 @@ sub _mecab_run{
 				# print "w: $w, ";
 				#$w = Jcode->new($w,'sjis')->euc;
 				
-				while ( index($w,'¡£') > -1 ){
-					if ( index($w,'¡£') > 0 ){
-						my $pre = substr($w, 0, index($w,'¡£'));
+				while ( index($w,'ã€‚') > -1 ){
+					if ( index($w,'ã€‚') > 0 ){
+						my $pre = substr($w, 0, index($w,'ã€‚'));
 						#$pre = Jcode->new($pre,'euc')->sjis;
 						# print "pre: $pre, ";
 						print OTPT "$pre\t$pre\t$pre\t$danpen\t\t\n";
 					}
 					# print "$maru, ";
 					print OTPT "$maru\t$maru\t$maru\t$kuten\t\t\n";
-					substr($w, 0, index($w,'¡£') + 2) = '';
+					substr($w, 0, index($w,'ã€‚') + 2) = '';
 				}
 				#$w = Jcode->new($w,'sjis')->euc;
 				# print "l: $w\n";
@@ -189,19 +188,29 @@ sub _mecab_run{
 			type => 'file'
 		);
 
-	#unlink $self->{target_temp} or 
-	#	gui_errormsg->open(
-	#		thefile => $self->{target_temp},
-	#		type => 'file'
-	#	);
-
-	open my $fh_target, '>', $self->{target_temp}
-		or gui_errormsg->open(
+	unlink $self->{target_temp} or 
+		gui_errormsg->open(
 			thefile => $self->{target_temp},
-			type    => 'file'
-		)
-	;
-	close ($fh_target);
+			type => 'file'
+		);
+
+	# unlink ç¢ºèª
+	use Time::HiRes;
+	for ( my $n = 0; $n < 20; ++$n ){
+		if ( not ( -e $self->{output_temp} ) and not ( -e $self->{target_temp} ) ){
+			if ($n > 0) {
+				print "unlink: it was necessary to wait $n loop(s)\n";
+			}
+			last;
+		}
+		if ($n == 19) {
+			gui_errormsg->open(
+				thefile => $self->{target_temp},
+				type => 'file'
+			);
+		}
+		Time::HiRes::sleep (0.5);
+	}
 
 	$self->{store} = '';
 }
@@ -209,9 +218,9 @@ sub _mecab_run{
 sub _mecab_outer{
 	my $self = shift;
 	my $t    = shift;
-	my $name = '¥¿¥°';
+	my $name = 'ã‚¿ã‚°';
 
-	open (OTPT,">>",$self->output) or 
+	open (OTPT,">>:encoding(euc-jp)",$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
@@ -244,15 +253,22 @@ sub _mecab_store_out{
 
 	return 1 unless length($self->{store}) > 0;
 
-	open (TMPO,">>", $self->{target_temp}) or 
+	my $icode = 'euc-jp';
+	$icode = 'utf8' if $::config_obj->mecab_unicode;
+	
+	my $arg;
+	if (-e $self->{target_temp}) {
+		$arg = ">>:encoding($icode)";
+	} else {
+		$arg = ">:encoding($icode)";
+	}
+
+	open (TMPO, $arg, $self->{target_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
-		);
-
-	if ( $::config_obj->mecab_unicode ){
-		$self->{store} = Jcode->new($self->{store},'euc')->utf8;
-	}
+		)
+	;
 
 	print TMPO $self->{store};
 	close (TMPO);
