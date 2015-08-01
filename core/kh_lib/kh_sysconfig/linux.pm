@@ -256,8 +256,8 @@ sub font_plot{
 sub font_plot_cn{
 	my $self = shift;
 	my $new  = shift;
-	$self->{font_plot_cn} = $new         if defined($new) && length($new);
-	$self->{font_plot_cn} = 'SimHei'  unless length($self->{font_plot_cn});
+	$self->{font_plot_cn} = $new if defined($new) && length($new);
+	$self->{font_plot_cn} = 'Droid Sans Fallback' unless length($self->{font_plot_cn});
 	return $self->{font_plot_cn};
 }
 

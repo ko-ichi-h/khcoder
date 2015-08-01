@@ -86,7 +86,7 @@ sub new{
 
 		# Cairo
 		unless ($^O =~ /darwin/i ){
-			my $f = $::config_obj->font_plot;
+			my $f = $::config_obj->font_plot_current;
 			$::config_obj->R->send(
 				 "try( library(Cairo) )\n"
 				."try( CairoFonts(\n"

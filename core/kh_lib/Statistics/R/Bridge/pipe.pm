@@ -855,10 +855,9 @@ my $DEBUG_TIMING = 0;
         }
         try( close(test_open), silent=T );
         try( rm(test_open), silent=T  );
-        options(warn=0);
+        options(warn=1);
         
-        #tryCatch( eval(parse(PERLINPUTFILE, encoding="UTF-8")) , error = function(e) { print(e) } ) ;
-        tryCatch( source(PERLINPUTFILE, encoding="UTF-8") , error = function(e) { print(e) },  warning=function(w){ the_warning <<- as.character(w); } ) ;
+        tryCatch( eval(parse(PERLINPUTFILE, encoding="UTF-8")) , error = function(e) { print(e) } ) ;
         
         ## Ensure that device is off after execute the input file.
         # tryCatch( dev.off() , error = function(e) {} ) ;
