@@ -77,7 +77,7 @@ sub finish{
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
 	my $nc = 0;
-	open (F,"$self->{file_temp}") or die;
+	open (F, '<:encoding(utf8)', $self->{file_temp}) or die;
 	while (<F>){
 		my $srow = $sth->fetchrow_hashref;
 		my $head;
