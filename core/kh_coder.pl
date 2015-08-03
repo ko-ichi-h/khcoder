@@ -130,9 +130,6 @@ use kh_morpho;
 use gui_window;
 
 # Say hello
-use Encode;
-use Encode::Locale;
-use open OUT => qw/:encoding(console_out) :std/;
 print "This is KH Coder $kh_version on $^O.\n";
 print "CWD: ", $config_obj->cwd, "\n";
 

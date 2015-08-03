@@ -326,11 +326,12 @@ sub os_path{
 	my $c     = shift;
 	my $icode = shift;
 	
-	unless ( utf8::is_utf8($c) ){
-		$c = Encode::decode('utf8', Jcode->new($c,$icode)->utf8);
+	if ( utf8::is_utf8($c) ){
+		return Encode::encode("locale_fs", $c);
+	} else {
+		print "kh_sysconfig::os_path: returning $c\n";
+		return $c;
 	}
-	
-	return Encode::encode("locale_fs", $c);
 }
 
 sub uni_path{

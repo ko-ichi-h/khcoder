@@ -494,6 +494,9 @@ if (exists(\"doc_length_mtr\")){
 
 	my $txt = $plot1->r_msg;
 	if ( length($txt) ){
+		use Encode;
+		use Encode::Locale;
+		$txt = Encode::encode('console_out', $txt);
 		print "-------------------------[Begin]-------------------------[R]\n";
 		print "$txt\n";
 		print "---------------------------------------------------------[R]\n";
