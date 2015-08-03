@@ -70,7 +70,7 @@ sub new{
 
 		# 自己組織化マップの保存
 		$::config_obj->R->send(
-			"save(word_labs,n_nodes,somm, file=\"$file_save\" )\n"
+			"save(word_labs,n_nodes,somm, file=\"".$::config_obj->uni_path($file_save)."\" )\n"
 		);
 		print $::config_obj->R->read();
 		
@@ -90,7 +90,7 @@ sub new{
 	}
 
 	# コマンドの準備
-	my $p0_a = "load(\"$file_save\")\n";
+	my $p0_a = "load(\"".$::config_obj->uni_path($file_save)."\")\n";
 	if ($args{r_command} =~ /# dpi: short based\n/){
 		$p0_a .= "# dpi: short based\n";
 	}

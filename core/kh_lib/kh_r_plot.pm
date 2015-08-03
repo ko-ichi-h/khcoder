@@ -300,13 +300,20 @@ sub rotate_cls{
 	while (-e "$temp$n.$type"){
 		++$n;
 	}
-	$temp = "$temp$n.$type";
-	rename($self->{path}, $temp);
-	
+	$temp = $::config_obj->cwd.'/'."$temp$n.$type";
+	use File::Copy;
+	copy($self->{path}, $temp);
+	#print "$temp, $self->{path}\n";
+
 	# 画像操作
 	my $p = Image::Magick->new;
-	$p->Read($temp);
-	$p->Rotate(degrees=>90);
+	$p->Read( $::config_obj->uni_path( $temp ) );
+	unless ($p->[0]){
+		warn("Could not rotate the dendrogram: $!");
+		unlink($temp);
+		return $self;
+	}
+	$p->Rotate( degrees=>90 );
 	
 	if ($self->{width} > 1000){
 		# スケール部分切り出し
@@ -314,7 +321,13 @@ sub rotate_cls{
 		$p->Crop(geometry=> "$self->{height}x$scale_height+0+0");
 		
 		# 本体切り出し
-		$p->Read($temp);
+		print "$temp\n";
+		$p->Read( $::config_obj->uni_path( $temp ) );
+		unless ($p->[1]){
+			warn("Could not rotate the dendrogram: $!");
+			unlink($temp);
+			return $self;
+		}
 		$p->[1]->Rotate(degrees=>90);
 		my $start = int( $self->{width} * 0.033 + 33 - 10 );
 		my $height = int( $self->{width} - $self->{width} * 0.033 +10)-$start;
@@ -329,6 +342,8 @@ sub rotate_cls{
 	} else {
 		$p->Write($temp);
 	}
+	
+	unlink($self->{path});
 	rename($temp, $self->{path});
 
 	return $self;
@@ -697,12 +712,14 @@ sub _save_svg{
 sub _save_r{
 	my $self = shift;
 	my $path = shift;
+	$path = $::config_obj->os_path($path);
 	
 	my $t = $self->{command_f};
 	
 	# SOMのための特殊処理
 	if ($t =~ /^load\(\"(.+)\"\)/){
 		my $file = $1;
+		$file = $::config_obj->os_path($file);
 		$file .= '_s';
 		if ( -e $file ){
 			#print "file: $file\n";
@@ -731,6 +748,7 @@ sub _save_r{
 	# データをファイル内に記述
 	if ( $t =~ /source\(\"(.+)\", encoding=\"UTF-8\"\)/ ){
 		my $file_data = $1;
+		$file_data = $::config_obj->os_path($file_data);
 		open my $fhr, '<:encoding(utf8)', $file_data or 
 			gui_errormsg->open(
 				type    => 'file',
