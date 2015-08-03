@@ -160,18 +160,15 @@ sub new{
 	print "kh_r_plot::new send ok.\n" if $debug;
 	$self->{r_msg} = $::config_obj->R->read;
 	print "kh_r_plot::new read ok.\n" if $debug;
-	$::config_obj->R->send("print( the_warning )\n");
-	$self->{r_warning} = $::config_obj->R->read;
 	$::config_obj->R->send('dev.off()');
 	print "kh_r_plot::new dev.off ok.\n" if $debug;
 	$::config_obj->R->unlock;
 	print "kh_r_plot::new unlock ok.\n" if $debug;
 	$::config_obj->R->output_chk(1);
-	
-	# print warnings from R to the console
-	if ($self->{r_warning} =~ /\[1\] "(.+)"/ ) {
-		print "WARNING from R: $1\n";
-	}
+
+	use Encode;
+	use Encode::Locale;
+	$self->{r_msg} = Encode::decode('console_out', $self->{r_msg});
 
 	# 結果のチェック
 	if (

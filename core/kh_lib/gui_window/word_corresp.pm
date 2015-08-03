@@ -895,11 +895,6 @@ sub make_plot{
 
 	my $txt = $plot1->r_msg;
 	if ( length($txt) ){
-		if ($::config_obj->os eq 'win32'){
-			$txt = Jcode->new($txt)->sjis;
-		} else {
-			$txt = Jcode->new($txt)->utf8;
-		}
 		print "-------------------------[Begin]-------------------------[R]\n";
 		print "$txt\n";
 		print "---------------------------------------------------------[R]\n";

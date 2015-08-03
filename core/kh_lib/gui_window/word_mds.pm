@@ -494,7 +494,6 @@ if (exists(\"doc_length_mtr\")){
 
 	my $txt = $plot1->r_msg;
 	if ( length($txt) ){
-		$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
 		print "-------------------------[Begin]-------------------------[R]\n";
 		print "$txt\n";
 		print "---------------------------------------------------------[R]\n";
