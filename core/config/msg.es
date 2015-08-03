@@ -332,19 +332,11 @@ gui_window::sysconfig:
     web_browser:              'Navegador:'
     win_title:                Configuración General
     words_ext:                Extracción de Palabras
-<<<<<<< msg.es
-gui_window::stop_words:
-    change_will:              "* Changes will take effect when you invoke\nthe \"Run Preprocessing\" command (again)."
-    for_this_method:          Stopwords for the following method:
-    select_all:               Select ALL
-    lang:                     Idioma:
-=======
 gui_window::stop_words:
     change_will:              "Los cambios tendrán efecto cuando haga\nclick nuevamente en \"Ejecutar Preprocesamiento\"."
     for_this_method:          Palabras vacías para el siguiente método:
     select_all:               Seleccionar TODO
     lang:                     Idioma:
->>>>>>> 1.2.2.3
 gui_window::word_ass:
     18:                       chi cuadrado
     and:                      Y
