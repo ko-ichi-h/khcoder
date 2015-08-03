@@ -41,9 +41,11 @@ BEGIN {
 			else { # miniperl
 				chomp($ENV{'PWD'} = `cd`);
 			}
-			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'sjis')->euc;
+			use Encode;
+			use Encode::Locale;
+			$ENV{'PWD'} = Encode::decode('locale_fs', $ENV{'PWD'});
 			$ENV{'PWD'} =~ s:\\:/:g ;
-			$ENV{'PWD'} = Jcode->new($ENV{'PWD'},'euc')->sjis;
+			$ENV{'PWD'} = Encode::encode('locale_fs', $ENV{'PWD'});
 			return $ENV{'PWD'};
 		};
 		*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = *Cwd::_NT_cwd = \&Cwd::_win32_cwd;
@@ -128,6 +130,9 @@ use kh_morpho;
 use gui_window;
 
 # Say hello
+use Encode;
+use Encode::Locale;
+use open OUT => qw/:encoding(console_out) :std/;
 print "This is KH Coder $kh_version on $^O.\n";
 print "CWD: ", $config_obj->cwd, "\n";
 
