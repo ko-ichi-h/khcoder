@@ -67,7 +67,10 @@ sub exec{
 	');
 
 	#  read output of R 3
+	use Encode;
+	use Encode::Locale;
 	my $t3 = $::config_obj->R->read();
+	$t3 = Encode::decode('console_out', $t3);
 	$t .= "\n\ngetwd():\n\n$t3";
 	
 	# print

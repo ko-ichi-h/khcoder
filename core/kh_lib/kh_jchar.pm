@@ -275,6 +275,8 @@ sub check_code_all{
 		$enc = 'cp932';
 	} elsif ($enc =~ /ISO-2022-JP/){
 		$enc = 'ISO-2022-JP';
+	} elsif ($enc =~ /cp1252/){
+		$enc = 'cp1252';
 	} elsif ($enc =~ /latin1/){
 		$enc = 'latin1';
 	} elsif ($enc =~ /^No / ){

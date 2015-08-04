@@ -329,7 +329,7 @@ sub os_path{
 	if ( utf8::is_utf8($c) ){
 		return Encode::encode("locale_fs", $c);
 	} else {
-		print "kh_sysconfig::os_path: returning $c\n";
+		#print "kh_sysconfig::os_path: returning $c\n";
 		return $c;
 	}
 }

@@ -252,11 +252,10 @@ sub out2r_selected{
 	close ($fh);
 
 	# Rコマンド
+	$file = $::config_obj->uni_path($file);
 	my $r_command = "source(\"$file\")\n";
 	if ($::config_obj->os eq 'win32'){
-		#$r_command = Jcode->new($r_command, 'sjis')->euc;
 		$r_command =~ s/\\/\//g;
-		#kh_jchar->to_sjis($file);
 	}
 	$r_command .= "# dpi: short based\n";
 	return $r_command;

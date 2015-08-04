@@ -64,6 +64,7 @@ sub make_mds{
 	)->run;
 
 	$r_command .= "\n";                           # Rコマンドの準備
+	$file_r = $::config_obj->uni_path( $file_r );
 	$r_command .= "source(\"$file_r\")";
 
 	my $plot = kh_r_plot->new(                    # 分析の実行
