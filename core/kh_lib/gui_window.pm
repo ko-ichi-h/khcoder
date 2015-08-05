@@ -328,13 +328,13 @@ sub gui_jg{ # 入力された文字列の変換
 		unless ( $reserve_rn ){ # ATOK対策
 			$char =~ s/\x0D|\x0A//g;
 		}
-		if ($^O eq 'darwin'){   # Mac OS X
-			$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
-			return $char;
-		}
+		#if ($^O eq 'darwin'){   # Mac OS X
+		#	$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
+		#	return $char;
+		#}
 		return $char;
 	} else {
-		#print "not utf8\n";
+		#warn "No utf8 flag: $char\n";
 		return $char;
 	}
 }

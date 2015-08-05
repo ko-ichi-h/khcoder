@@ -257,7 +257,13 @@ sub font_plot_cn{
 	my $self = shift;
 	my $new  = shift;
 	$self->{font_plot_cn} = $new if defined($new) && length($new);
-	$self->{font_plot_cn} = 'Droid Sans Fallback' unless length($self->{font_plot_cn});
+	unless ( length($self->{font_plot_cn}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_cn} = 'STHeiti';
+		} else {
+			$self->{font_plot_cn} = 'Droid Sans Fallback';
+		}
+	}
 	return $self->{font_plot_cn};
 }
 

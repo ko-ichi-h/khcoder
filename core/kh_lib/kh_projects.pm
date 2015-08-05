@@ -7,7 +7,7 @@ use DBD::mysql;
 use Jcode;
 
 #--------------------------------------#
-#   �ꥹ���ɤ߹��ߡʥ��󥹥ȥ饯����   #
+#   リスト読み込み（コンストラクタ）   #
 #--------------------------------------#
 
 sub read{
@@ -17,13 +17,13 @@ sub read{
 	$self->{dbh} = $dbh;
 	bless $self, $class;
 
-	# �ơ��֥뤬¸�ߤ��ʤ����Ϻ���
+	# テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
 	unless (-e $save_file){
 		$self->create_project_list;
 	}
 
-	# �ɤ߹���
+	# 読み込み
 	my $st = $dbh->prepare("SELECT * FROM projects")
 		or die;
 	$st->execute or die;
@@ -43,7 +43,7 @@ sub read{
 sub create_project_list{
 	my $self = shift;
 	
-	# �ե����뤬¸�ߤ���������
+	# ファイルが存在する場合は中止
 	if (-e $::config_obj->history_file){
 		print
 			"kh_projects::create_project_list: Aborted!\n",
@@ -51,8 +51,8 @@ sub create_project_list{
 		return 0;
 	}
 	
-	# SQL��SELECT�ǥǡ��������äƤ���������
-	my $file_temp = $::config_obj->file_temp;     # ���顼��������
+	# SQLのSELECTでデータが帰ってくる場合も中止
+	my $file_temp = $::config_obj->file_temp;     # エラー出力抑制
 	open (STDERR,">$file_temp");
 	
 	my $st = $self->{dbh}->prepare(
@@ -68,13 +68,13 @@ sub create_project_list{
 		}
 	}
 	
-	close (STDERR);                               # ���顼��������
+	close (STDERR);                               # エラー出力復帰
 	open(STDERR,'>&STDOUT') or die;
 	unlink($file_temp);
 	
-	# �ơ��֥����
+	# テーブル作成
 	print "creating project list... ";
-	$self->dbh->do(                                 # �롼���󲽡�
+	$self->dbh->do(                                 # ルーチン化？
 		"CREATE TABLE projects (
 			target CHAR(225),
 			comment CHAR(225),
@@ -85,37 +85,37 @@ sub create_project_list{
 }
 
 #--------------------#
-#   ������Ͽ����¸   #
+#   新規登録＆保存   #
 #--------------------#
 
 sub add_new{
 	my $self = shift;
 	my $new  = shift;
 
-	# �ץ��������ȡ��ơ��֥뤬¸�ߤ��ʤ����Ϻ���
+	# プロジェクト・テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
 	unless (-e $save_file){
 		$self->create_project_list;
 	}
 
-	# ���˥ե����뤬��Ͽ����Ƥ��ʤ��������å�
+	# 既にファイルが登録されていないかチェック
 	foreach my $i (@{$self->list}){
 		if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
 			gui_errormsg->open(
 				type    => 'msg',
-				msg     => kh_msg->get('already_registered') # "�����Υե�����ϴ��˥ץ��������ȤȤ�����Ͽ����Ƥ��ޤ�"
+				msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
 			);
 			return 0;
 		}
 	}
 
-	# MySQL DB������
+	# MySQL DBの整備
 	$new->prepare_db;
 	#$new->read_hinshi_setting;
 
 	# print "1: ", $new->file_target, "\n";
 
-	# �ץ��������Ȥ���Ͽ
+	# プロジェクトを登録
 	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
 	$sql .= "'".$::config_obj->uni_path($new->file_target)."',";
 	if ($new->comment){
@@ -133,7 +133,7 @@ sub add_new{
 }
 
 #------------------#
-#   �������Խ�   #
+#   コメント編集   #
 #------------------#
 
 sub edit{
@@ -160,7 +160,7 @@ sub edit{
 }
 
 #----------#
-#   ���   #
+#   削除   #
 #----------#
 
 sub delete{
@@ -172,10 +172,10 @@ sub delete{
 	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 
-	# ����Ȣ�ơ��֥뤬¸�ߤ��ʤ����Ϻ��� 
+	# ゴミ箱テーブルが存在しない場合は作成 
 	my $save_file = $::config_obj->history_trush_file;
 	unless (-e $save_file){
-		$self->dbh->do(                                 # �롼���󲽡�
+		$self->dbh->do(                                 # ルーチン化？
 			"CREATE TABLE projects_trush (
 				target CHAR(225),
 				comment CHAR(225),
@@ -184,7 +184,7 @@ sub delete{
 		) or die;
 	}
 
-	# ����Ȣ�ơ��֥���ɲ�
+	# ゴミ箱テーブルに追加
 	$sql = 'INSERT INTO projects_trush (target, comment, dbname) VALUES (';
 	$sql .= "'".$del->file_target."',";
 	if ($del->comment){
@@ -197,14 +197,14 @@ sub delete{
 	$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 	
-	# MySQL DB����
+	# MySQL DBを削除
 	mysql_exec->drop_db($del->dbname);
 }
 
 
 
 #--------------#
-#   ��������   #
+#   アクセサ   #
 #--------------#
 sub a_project{
 	my $self = shift;
@@ -229,7 +229,7 @@ sub list{
 
 1;
 __END__
-�ץ��������ȥꥹ�Ȥ�
-	���ɤ߹��� �ʤ��٤�kh_project->temp��
-	���Խ�
-	����¸
+プロジェクトリストの
+	・読み込み （すべてkh_project->temp）
+	・編集
+	・保存
