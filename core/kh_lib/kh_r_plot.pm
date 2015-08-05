@@ -714,6 +714,15 @@ sub _save_r{
 	my $path = shift;
 	$path = $::config_obj->os_path($path);
 	
+	# 日本語データでOSの文字コードがcp932の場合のみcp932で出力
+	my $out_code = 'utf8';
+	if (
+		   ( $::config_obj->os_code eq 'cp932' )
+		&& ( $::project_obj->morpho_analyzer_lang eq 'jp' )
+	) {
+		$out_code = 'cp932';
+	}
+	
 	my $t = $self->{command_f};
 	
 	# SOMのための特殊処理
@@ -739,7 +748,7 @@ sub _save_r{
 		}
 	}
 	
-	open (OUTF, '>:encoding(utf8)', $path) or 
+	open (OUTF, ">:encoding($out_code)", $path) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $path,
