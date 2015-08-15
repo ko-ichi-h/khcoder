@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '2b32f';
-my $V_main = "2.Beta.32";
-my $V_full = "2.Beta.32f";
+my $V = '3a01';
+my $V_main = "3.Alpha.01";
+my $V_full = "3.Alpha.01";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -35,25 +35,30 @@ my @cp_f = (
 	['khc.xla'      , 'khc.xla'       ],
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
+	['config/msg.es', 'config/msg.es' ],
 );
 
 use File::Find 'find';
 find(
 	sub {
-		push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
-			unless $File::Find::name eq 'utils/kh_coder/plugin_en'
-		;
+		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
+			push @cp_f, ['plugin_en/'.$_, 'plugin_en/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+			;
+		}
 	},
-	'utils/kh_coder/plugin_en'
+	'../plugin_en'
 );
 
 find(
 	sub {
-		push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
-			unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
-		;
+		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
+			push @cp_f, ['plugin_jp/'.$_, 'plugin_jp/'.$_]
+				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+			;
+		}
 	},
-	'utils/kh_coder/plugin_jp'
+	'../plugin_jp'
 );
 
 use Archive::Tar;
@@ -69,13 +74,13 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
-&win_upd;
+#&source_tgz; # OK
+#&win_pkg;
+	#&win_upd;
 	#&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -348,7 +353,7 @@ sub win_pkg{
 	
 	# 新しいファイルを「pub/base/win_pkg」へコピー
 	foreach my $i (@cp_f){
-		copy($i->[0], 'pub/base/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
+		copy($i->[0], 'pub/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
 	}
 
@@ -382,7 +387,7 @@ sub source_tgz{
 	}
 
 	$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
-	$cvs_cmd .= "export -r HEAD -- core";
+	$cvs_cmd .= "export -r unicode -- core";
 
 	print "cmd: $cvs_cmd\n";
 
@@ -394,7 +399,6 @@ sub source_tgz{
 	#   不要なファイルを削除   #
 
 	my @rm_dir = (
-		'core/.settings',
 		'core/auto_test',
 		'core/test',
 		'core/utils',
@@ -407,10 +411,8 @@ sub source_tgz{
 		'core/memo/bib_t2h.bat',
 		'core/memo/db_memo.csv',
 		'core/memo/devnote.txt',
+		'core/memo/1.icns',
 		'core/memo/performance.csv',
-		'core/plugin_jp/jssdb_bench1.pm',
-		'core/plugin_jp/jssdb_prepare.pm',
-		'core/plugin_jp/jssdb_search.pm',
 		'core/auto_test.pl',
 		'core/kh_coder.perlapp',
 		'core/make_exe.bat',
