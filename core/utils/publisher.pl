@@ -61,6 +61,21 @@ find(
 	'../plugin_jp'
 );
 
+# 古いプラグインはすべて削除
+find(
+	sub {
+		unlink $_ or die($File::Find::name) unless -d $_;
+	},
+	'../pub/win_pkg/plugin_en'
+);
+
+find(
+	sub {
+		unlink $_ or die unless -d $_;
+	},
+	'../pub/win_pkg/plugin_jp'
+);
+
 use Archive::Tar;
 use File::Copy;
 use File::Copy::Recursive 'dircopy';
@@ -74,13 +89,13 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-#&web;
+&web;
 	#&pdfs if $pdf;
-#&source_tgz; # OK
-#&win_pkg;
+&source_tgz;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
-#&upload;
+&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -108,7 +123,7 @@ sub upload{
 	foreach my $i (
 		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
-		"khcoder-$V-s.zip",
+		#"khcoder-$V-s.zip",
 		"khcoder-$V-f.exe",
 	){
 		print "put: $i\n";
@@ -119,14 +134,14 @@ sub upload{
 	$sftp->setcwd("/home/project-web/khc/htdocs");
 
 	foreach my $i (
-		"index.html",
-		"dl.html",
+		#"index.html",
+		"dl3.html",
 	){
-		$sftp->put ("../pub/base/web/$i", $i) or die;
+		$sftp->put ("../pub/web/$i", $i) or die;
 	}
 
-	$sftp->setcwd("en");
-	$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
+	#$sftp->setcwd("en");
+	#$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
 
 	$sftp->disconnect;
 }
@@ -146,44 +161,48 @@ sub web{
 	$day = '0'.$day if $day < 10;
 	my $date = "$year $mon/$day";
 	
-	# index.html
-	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
 	my $t = '';
-	$r0->is_success or die;
-	$t = $r0->content;
 	
-	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	
-	open(my $fh, '>', "../pub/base/web/index.html") or die;
-	print $fh $t;
-	close ($fh);
+	# index.html
+	#my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
+	#$t = '';
+	#$r0->is_success or die;
+	#$t = $r0->content;
+	#
+	#$t =~ s/Ver\. [0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	#
+	#open(my $fh, '>', "../pub/base/web/index.html") or die;
+	#print $fh $t;
+	#close ($fh);
 	
 	# en/index.html
-	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
-	my $t = '';
-	$r2->is_success or die;
-	$t = $r2->content;
+	#my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
+	#my $t = '';
+	#$r2->is_success or die;
+	#$t = $r2->content;
+	#
+	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	#$t =~ s/files\/KH%20Coder\/[0-9]\.[Bb]eta\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
+	#
+	#open(my $fh, '>', "../pub/base/web/en_index.html") or die;
+	#print $fh $t;
+	#close ($fh);
 	
-	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	$t =~ s/files\/KH%20Coder\/[0-9]\.[Bb]eta\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
-	
-	open(my $fh, '>', "../pub/base/web/en_index.html") or die;
-	print $fh $t;
-	close ($fh);
-	
-	# dl.html
-	my $r1 = $ua->get('http://khc.sourceforge.net/dl.html') or die;
+	# dl3.html
+	my $r1 = $ua->get('http://khc.sourceforge.net/dl3.html') or die;
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
 
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                 # 日付
-	$t =~ s/khcoder\-2b[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
-	$t =~ s/KH%20Coder\/2\.Beta\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名
+	$t =~ s/khcoder\-3a[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
+	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名1
+	$t =~ s/KH Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名2
 
-	open(my $fh, '>', "../pub/base/web/dl.html") or die;
+
+	open(my $fh, '>', "../pub/web/dl3.html") or die;
 	print $fh $t;
 	close ($fh);
 }
@@ -351,7 +370,7 @@ sub win_pkg{
 		9
 	);
 	
-	# 新しいファイルを「pub/base/win_pkg」へコピー
+	# 新しいファイルを「pub/win_pkg」へコピー
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
@@ -360,9 +379,9 @@ sub win_pkg{
 	# Zip自己解凍ファイルを作成
 	unlink("utils\\khcoder-$V-f.zip");
 	unlink("utils\\khcoder-$V-f.exe");
-	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\base\\win_pkg");
+	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\win_pkg");
 	sleep 5;
-	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder -le -overwrite");
+	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite");
 	# wzipse32 utils\khcoder-2b31-f.zip -y -d C:\khcoder -le -overwrite
 	# unlink("utils\\khcoder-$V-f.zip");
 

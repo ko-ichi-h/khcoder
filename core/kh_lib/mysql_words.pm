@@ -490,12 +490,21 @@ sub _make_wl_1c{
 			push @data, [ $h->[0], $i->[0] ,$h->[1]  ];
 		}
 	}
-
-	@data = sort { 
-		   $b->[2] <=> $a->[2]
-		or $a->[0] cmp $b->[0]
-		or $a->[1] cmp $b->[1]
-	} @data;
+	
+	# 日本語の抽出語の表示順を過去のバージョン（2.x）にあわせるための分岐
+	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+		@data = sort { 
+			   $b->[2] <=> $a->[2]
+			or Encode::encode('euc-jp', $a->[0]) cmp Encode::encode('euc-jp', $b->[0] )
+			or Encode::encode('euc-jp', $a->[1]) cmp Encode::encode('euc-jp', $b->[1] )
+		} @data;
+	} else {
+		@data = sort { 
+			   $b->[2] <=> $a->[2]
+			or $a->[0] cmp $b->[0]
+			or $a->[1] cmp $b->[1]
+		} @data;
+	}
 
 	my $num_lab = '';
 	if ($self->{num} eq 'tf'){
@@ -599,7 +608,7 @@ sub _make_wl_150{
 			  and hselection.name != "形容詞（非自立）"
 			  and hselection.ifuse = 1
 			  and genkei.nouse = 0
-			ORDER BY TF DESC, W
+			ORDER BY TF DESC, '.$::project_obj->mysql_sort('W').'
 			LIMIT 150
 		',1)->hundle;
 		$data[0] = [
@@ -635,7 +644,7 @@ sub _make_wl_150{
 			  and hselection.name != "HTML_TAG"
 			  and hselection.ifuse = 1
 			  and genkei.nouse = 0
-			ORDER BY DF DESC, W
+			ORDER BY DF DESC, '.$::project_obj->mysql_sort('W').'
 			LIMIT 150
 		',1)->hundle;
 		
@@ -815,7 +824,7 @@ sub _make_list{
 				WHERE
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY num DESC, name
+				ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."
 			";
 		#}
 		my $t = mysql_exec->select($sql,1);
@@ -856,7 +865,7 @@ sub _make_list_df{
 				WHERE
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY f DESC, name
+				ORDER BY f DESC, ".$::project_obj->mysql_sort('name')."
 			";
 		#}
 		my $t = mysql_exec->select($sql,1);

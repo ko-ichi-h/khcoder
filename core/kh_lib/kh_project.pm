@@ -259,6 +259,18 @@ sub morpho_analyzer_lang{
 	return $h->fetch->[0];
 }
 
+# 日本語の抽出語の表示順を過去のバージョン（2.x）にあわせるための分岐
+sub mysql_sort{
+	my $self = shift;
+	my $t = shift;
+	
+	if ( $self->morpho_analyzer_lang eq 'jp' ) {
+		return "CONVERT($t USING ujis)";
+	} else {
+		return $t;
+	}
+}
+
 sub check_up{
 	my $self = shift;
 	
