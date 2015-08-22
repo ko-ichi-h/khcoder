@@ -119,7 +119,7 @@ if (
 ){
 	$::config_obj->{R} = Statistics::R->new(
 		r_bin   => $::config_obj->r_path,
-		r_dir   => $::config_obj->r_dir,
+		#r_dir   => $::config_obj->r_dir,
 		log_dir => $::config_obj->{cwd}.'/config/R-bridge',
 		tmp_dir => $::config_obj->{cwd}.'/config/R-bridge',
 	);
@@ -168,9 +168,9 @@ kh_at::project_new->exec_test('project_new');      # テストファイル登録&前処理
 
 kh_at::pretreatment->exec_test('pretreatment');    # 前処理メニュー
 kh_at::words->exec_test('words');                  # 抽出語メニュー
-kh_at::out_var->exec_test('out_var');              # 外部変数メニュー
-kh_at::cod->exec_test('cod');                      # コーディング
-kh_at::transf->exec_test('transf');                # テキストファイル
+#kh_at::out_var->exec_test('out_var');              # 外部変数メニュー
+#kh_at::cod->exec_test('cod');                      # コーディング
+#kh_at::transf->exec_test('transf');                # テキストファイル
 
 kh_at->close_test_project;                         # プロジェクトを閉じる
 kh_at->delete_test_project;                        # プロジェクトを削除

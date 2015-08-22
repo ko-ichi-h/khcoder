@@ -259,7 +259,7 @@ sub morpho_analyzer_lang{
 	return $h->fetch->[0];
 }
 
-# 日本語の抽出語の表示順を過去のバージョン（2.x）にあわせるための分岐
+# To sort Japanese words in the same order as prvious version (2.x)
 sub mysql_sort{
 	my $self = shift;
 	my $t = shift;

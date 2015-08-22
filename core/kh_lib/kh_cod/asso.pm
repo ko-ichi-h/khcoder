@@ -521,7 +521,7 @@ sub fetch_results{
 				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
 				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 				$hselection
-			ORDER BY lift DESC, ct_ass_p.p DESC
+			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
 			LIMIT $args{filter}->{limit}
 		";
 	} else {
@@ -542,7 +542,7 @@ sub fetch_results{
 				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
 				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 				$hselection
-			ORDER BY lift DESC, ct_ass_p.p DESC
+			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
 			LIMIT $args{filter}->{limit}
 		";
 	}

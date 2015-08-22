@@ -18,6 +18,8 @@ sub _exec_test{
 	my $win_np = $::main_gui->get('w_new_pro');
 	$win_np->{e1}->insert(0,gui_window->gui_jchar($self->file_testdata));
 	$win_np->{e2}->insert(0,gui_window->gui_jchar('自動テスト用Project'));
+	$win_np->{lang_menu}->set_value( 'jp' );
+	$win_np->refresh_method;
 	$win_np->_make_new;
 	
 	# 語の取捨選択

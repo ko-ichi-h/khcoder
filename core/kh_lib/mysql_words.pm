@@ -53,7 +53,8 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, genkei.name";
+		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
+		$sql .= $::project_obj->mysql_sort('genkei.name');
 		my $t = mysql_exec->select($sql,1);
 		$result = $t->hundle->fetchall_arrayref;
 		
@@ -82,18 +83,14 @@ sub search{
 				my $id = pop @{$i};
 				push @{$result2}, $i;
 				
-				#if ( index("$hinshi",'名詞-') == 0 ){
-				#	next;
-				#}
-				
 				my $r = mysql_exec->select("      # 活用語を探す
 					SELECT hyoso.name, katuyo.name, hyoso.num
 					FROM hyoso, katuyo
 					WHERE
 						    hyoso.katuyo_id = katuyo.id
 						AND hyoso.genkei_id = $id
-					ORDER BY hyoso.num DESC, katuyo.name
-				",1)->hundle->fetchall_arrayref;
+					ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('katuyo.name')
+				,1)->hundle->fetchall_arrayref;
 				
 				my @katuyo = ();
 				my $n = 0;
@@ -116,9 +113,9 @@ sub search{
 					   $n > 0
 					&& (
 						   $n > 1                     # 活用形が複数ある
-						|| $katuyo[0]->[2] ne '   .'  # 活用名が「.」でない
 						|| $katuyo[0]->[1] ne $i->[0] # 活用形が基本形と異なる
 					)
+					#&& $katuyo[0]->[2] ne '   .'     # 活用名が「.」でない
 				){
 					@{$result2} = (@{$result2},@katuyo);
 				}
@@ -146,7 +143,7 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= ") \n ORDER BY hyoso.num DESC, hyoso.name";
+		$sql .= ") \n ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
@@ -175,6 +172,7 @@ sub conv_query{
 #-------------------------#
 #   CSV形式リストの出力   #
 
+# Currently, this function is only for an automatic test.
 sub csv_list{
 	use kh_csv;
 	my $class = shift;
@@ -182,7 +180,7 @@ sub csv_list{
 	
 	my $list = &_make_list;
 	
-	open (LIST,">$target") or
+	open (LIST, '>:encoding(euc-jp)', $target) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
@@ -491,7 +489,7 @@ sub _make_wl_1c{
 		}
 	}
 	
-	# 日本語の抽出語の表示順を過去のバージョン（2.x）にあわせるための分岐
+	# Sort Japanese words in the same order as prvious version (2.x)
 	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
 		@data = sort { 
 			   $b->[2] <=> $a->[2]

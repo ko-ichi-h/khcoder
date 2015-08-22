@@ -927,7 +927,7 @@ sub format_coloc{
 	
 	
 	$sql .= "\t)\n";
-	$sql .= "ORDER BY $args{sort} DESC, genkei.name\n";
+	$sql .= "ORDER BY $args{sort} DESC, ".$::project_obj->mysql_sort('genkei.name')."\n";
 	$sql .= "LIMIT $args{filter}->{limit}";
 	
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
