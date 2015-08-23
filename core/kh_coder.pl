@@ -20,7 +20,7 @@ use strict;
 
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "3.Alpha.01";
+$kh_version = "3.Alpha.01a";
 
 BEGIN {
 	# デバッグ用…

@@ -211,12 +211,12 @@ sub readin{
 	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("create table rowdata
 		(
-			hyoso varchar(255) binary not null,
-			yomi varchar(255) not null,
-			genkei varchar(255) not null,
-			hinshi varchar(255) not null,
-			katuyogata varchar(255) not null,
-			katuyo varchar(255) not null,
+			hyoso varchar(128) binary not null,
+			yomi varchar(128) not null,
+			genkei varchar(128) not null,
+			hinshi varchar(128) not null,
+			katuyogata varchar(128) not null,
+			katuyo varchar(128) not null,
 			id int auto_increment primary key not null
 		) $self->{max_rows}
 	",1);
@@ -236,12 +236,12 @@ sub readin{
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_org",1);
 	mysql_exec->do("create table rowdata
 		(
-			hyoso varchar(255) binary not null,
-			yomi varchar(255) not null,
-			genkei varchar(255) not null,
-			hinshi varchar(255) not null,
-			katuyogata varchar(255) not null,
-			katuyo varchar(255) not null,
+			hyoso varchar(128) binary not null,
+			yomi varchar(128) not null,
+			genkei varchar(128) not null,
+			hinshi varchar(128) not null,
+			katuyogata varchar(128) not null,
+			katuyo varchar(128) not null,
 			id int primary key not null
 		) $self->{max_rows}
 	",1);
@@ -254,40 +254,23 @@ sub readin{
 	mysql_exec->drop_table("rowdata_org");
 
 	# フィールド長の取得
-	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 以上
-		my $t = mysql_exec->select("
-			SELECT
-				MAX( CHAR_LENGTH(hyoso) )  AS hyoso,
-				MAX( CHAR_LENGTH(genkei) ) AS genkei,
-				MAX( CHAR_LENGTH(hinshi) ) AS hinshi,
-				MAX( CHAR_LENGTH(katuyo) ) AS katuyo
-			FROM rowdata
-		",1)->hundle;
-		my $r = $t->fetchrow_hashref;
-		$t->finish;
-		foreach my $key (keys %{$r}){
-			$self->length($key,$r->{$key});
-		}
-	} else {                                 # MySQL 3.x 以下
-		my $t = mysql_exec->select("
-			SELECT
-				MAX( LENGTH(hyoso) ) AS hyoso,
-				MAX( LENGTH(genkei) ) AS genkei,
-				MAX( LENGTH(hinshi) ) AS hinshi,
-				MAX( LENGTH(katuyo) ) AS katuyo
-			FROM rowdata
-		",1)->hundle;
-		my $r = $t->fetchrow_hashref;
-		$t->finish;
-		my $morpho_length_error_flag = 0;
-		foreach my $key (keys %{$r}){
-			$morpho_length_error_flag = 1 if $r->{$key} == 255;
-			my $len = $r->{$key} + 4;
-			$len = 255 if $len > 255;
-			$self->length($key,$len);
-		}
-		mysql_ready::dump->word_length if $morpho_length_error_flag;
+	my $morpho_length_error_flag = 0;
+
+	my $t = mysql_exec->select("
+		SELECT
+			MAX( CHAR_LENGTH(hyoso) )  AS hyoso,
+			MAX( CHAR_LENGTH(genkei) ) AS genkei,
+			MAX( CHAR_LENGTH(hinshi) ) AS hinshi,
+			MAX( CHAR_LENGTH(katuyo) ) AS katuyo
+		FROM rowdata
+	",1)->hundle;
+	my $r = $t->fetchrow_hashref;
+	$t->finish;
+	foreach my $key (keys %{$r}){
+		$self->length($key,$r->{$key});
+		$morpho_length_error_flag = 1 if $r->{$key} >= 128;
 	}
+	mysql_ready::dump->word_length if $morpho_length_error_flag;
 
 	mysql_ready::heap->rowdata($self);
 	
@@ -296,7 +279,7 @@ sub readin{
 		mysql_exec->do("create table d_force
 			(
 				id int auto_increment primary key not null,
-				name varchar(255) not null,
+				name varchar(128) not null,
 				type int not null
 			)
 		",1);
@@ -1543,7 +1526,7 @@ sub length{
 		if ($self->{length}{$name}){
 			return $self->{length}{$name};
 		} else {
-			return 255;
+			return 128;
 		}
 	}
 }

@@ -1054,7 +1054,7 @@ mysql_outvar::read:
     midashi_error:            'No se puede utilizar "Encabezado1" - "Encabezado5" como el nomber de la variable.'
     overwrite_vars:           "Existe una variable con el mismo nombre.\n¿Sobreescribir?\n\n"
 mysql_ready::dump:
-    too_long_word1:            "Hay palabras muy largas. ( > 255 )\n\nKH Coder reconoce solo los primeros 255 caracteres.\nLas alabras se registraron en el siguiente archivo: \n"
+    too_long_word1:            "Hay palabras muy largas. ( > 128 )\n\nKH Coder reconoce solo los primeros 128 caracteres.\nLas alabras se registraron en el siguiente archivo: \n"
     too_long_word2:            "Click en OK para continuar el preprocesamiento."
 mysql_getheader:
     error:                     "Error al procesar los documentos.\n\nVerifique el uso de las etiquetas H1 - H5 en el archivo de destino.\nUtilice el comando \"Verificar el archivo de destino\"."
