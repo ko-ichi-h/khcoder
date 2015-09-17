@@ -164,7 +164,7 @@ gui_window::main::menu:
     open_knb:                 'Select the model file to view'
     about:                    About
     bayes_classi:             Classify Documents using a Model
-    bayes_learn:              Built a Model from a Variable
+    bayes_learn:              Build a Model from a Variable
     check:                    Check the Target File
     check_classi:             View a Classification Log
     check_learning:           View a Model File
@@ -965,7 +965,7 @@ gui_window::use_te_g:
     h_hukugo:                 'cluster'
     h_score:                  'score'
 gui_window::bayes_learn:
-    win_title:                'Built a Model from a variable (use a variable as training data)'
+    win_title:                'Build a Model from a variable (use a variable as training data)'
     add2exists:               'Append current result to existing model file'
     cr_validate:              'Perform cross-validation'
     savelog:                  'Save classification log'
