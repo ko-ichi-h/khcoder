@@ -61,7 +61,7 @@ sub search{
 		$sql .= "\n";
 		++$num;
 	}
-	$sql .= "ORDER BY num DESC, name\n";
+	$sql .= "ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."\n";
 	$sql .= "LIMIT 500\n";
 	#print Jcode->new($sql)->sjis, "\n";
 	
@@ -78,7 +78,7 @@ sub get_majority{
 	my $h = mysql_exec->select("
 		SELECT name, num
 		FROM hukugo_te
-		ORDER BY num DESC, name
+		ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."
 		LIMIT 500
 	")->hundle;
 	

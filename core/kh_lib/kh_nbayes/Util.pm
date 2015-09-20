@@ -110,7 +110,8 @@ sub make_csv{
 	print "$csv\n";
 	
 	# 書き出し
-	open (COUT,">$csv") or 
+	use File::BOM;
+	open (COUT, '>:encoding(utf8):via(File::BOM)', $csv) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$csv",
@@ -119,17 +120,17 @@ sub make_csv{
 	my @labels = $self->labels;
 
 	my $header = '';
-	$header .= ',スコア,';
+	$header .= ','.kh_msg->get('h_score','gui_window::use_te_g').',';  #',スコア,';
 	for (my $n = 1; $n <= $#labels; ++$n){
 		$header .= ',';
 	}
-	$header .= ",行の%\n";
+	$header .= ','.kh_msg->get('pcnt','gui_window::word_freq')."\n";#",行の%\n";
 
-	$header .= "抽出語,";
+	$header .= kh_msg->gget('words').','; #"抽出語,";
 	foreach my $i (@labels){
 		$header .= kh_csv->value_conv($i).',';
 	}
-	$header .= '分散,';
+	$header .= kh_msg->get('variance','gui_window::bayes_view_knb').','; #'分散,';
 	foreach my $i (@labels){
 		$header .= kh_csv->value_conv($i).',';
 	}
@@ -151,7 +152,6 @@ sub make_csv{
 		print COUT "$t\n";
 	}
 	close (COUT);
-	kh_jchar->to_sjis($csv) if $::config_obj->os eq 'win32';
 	
 	return 1;
 }

@@ -519,7 +519,7 @@ sub outtab{
 	}
 	$sql .= "LEFT JOIN outvar_lab ON ( outvar_lab.var_id = $var_id AND outvar_lab.val = $outvar_tbl.$outvar_clm )\n";
 	$sql .= "\nGROUP BY name";
-	$sql .= "\nORDER BY name";
+	$sql .= "\nORDER BY ".$::project_obj->mysql_sort('name');
 	#print "$sql\n";
 	
 	my $h = mysql_exec->select($sql,1)->hundle;

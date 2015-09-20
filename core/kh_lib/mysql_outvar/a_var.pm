@@ -105,7 +105,11 @@ sub values{
 	if ($names =~ /\A[0-9]+\Z/){
 		@v = sort {$a <=> $b} @v;
 	} else {
-		@v = sort @v;
+		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+			@v = sort {Encode::encode('eucjp', $a) cmp Encode::encode('eucjp', $b)} @v;
+		} else {
+			@v = sort @v;
+		}
 	}
 	my $chk2 = utf8::is_utf8($v[1]);
 
@@ -273,8 +277,18 @@ sub detail_tab{
 			push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
 		}
 	} else {
-		foreach my $i (sort keys %{$self->{freqs}}){
-			push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+			foreach my $i (
+				sort
+				{Encode::encode('eucjp', $a) cmp Encode::encode('eucjp', $b)}
+				keys %{$self->{freqs}}
+			){
+				push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+			}
+		} else {
+			foreach my $i (sort keys %{$self->{freqs}}){
+				push @data, [$i, $self->{labels}{$i}, $self->{freqs}{$i} ];
+			}
 		}
 	}
 	
