@@ -254,22 +254,22 @@ sub make_plot{
 		return 0;
 	}
 
+	my $source_matrix = 'd';
+	if ($args{method_dist} eq 'euclid'){
+		# 抽出語ごとに標準化
+		$source_matrix = 't( scale( t(d) ) )';
+	}
+
 	$r_command .= "
 library(amap)
 check4mds <- function(d){
-	jm <- as.matrix(Dist(d, method=\"$args{method_dist}\"))
+	jm <- as.matrix(Dist($source_matrix, method=\"$args{method_dist}\"))
 	jm[upper.tri(jm,diag=TRUE)] <- NA
 	if ( length( which(jm==0, arr.ind=TRUE) ) ){
 		return( which(jm==0, arr.ind=TRUE)[,1][1] )
 	} else {
 		return( NA )
 	}
-}
-
-while ( is.na(check4mds(d)) == 0 ){
-	n <-  check4mds(d)
-	print( paste( \"Dropped object:\", row.names(d)[n]) )
-	d <- d[-n,]
 }
 ";
 
@@ -284,12 +284,15 @@ if (exists(\"doc_length_mtr\")){
 }
 " unless $args{method_dist} eq 'binary';
 
-	if ($args{method_dist} eq 'euclid'){
-		# 抽出語ごとに標準化
-		$r_command .= "dj <- Dist(t( scale( t(d) ) ),method=\"$args{method_dist}\")\n";
-	} else {
-		$r_command .= "dj <- Dist(d,method=\"$args{method_dist}\")\n";
-	}
+	$r_command .= "
+while ( is.na(check4mds(d)) == 0 ){
+	n <-  check4mds(d)
+	print( paste( \"Dropped object:\", row.names(d)[n]) )
+	d <- d[-n,]
+}
+";
+
+	$r_command .= "dj <- Dist($source_matrix,method=\"$args{method_dist}\")\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';

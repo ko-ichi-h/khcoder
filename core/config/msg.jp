@@ -621,7 +621,7 @@ gui_window::word_mds:
     select_5words:            少なくとも5つ以上の抽出語を布置して下さい。
     error_dim:                '次元の指定が不正です。1から3までの数値を指定して下さい。'
     dim:                      '次元'
-    omit:                     '以下の抽出語／コードは分析から省かれました：\n'
+    omit:                     "以下の抽出語／コードは分析から省かれました：\n"
     r_alpha:                  '半透明の色（EMF・EPS形式では保存不可）'
 gui_window::r_plot_opt::word_mds:
     win_title:                '抽出語・多次元尺度法：調整'
