@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '200';
+my $V = '200a';
 my $V_main = "2.00";
-my $V_full = "2.00";
+my $V_full = "2.00a";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -148,7 +148,7 @@ sub web{
 	$r0->is_success or die;
 	$t = $r0->content;
 	
-	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	$t =~ s/Ver\. 2\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
 	
 	open(my $fh, '>', "../pub/base/web/index.html") or die;
@@ -161,9 +161,9 @@ sub web{
 	$r2->is_success or die;
 	$t = $r2->content;
 	
-	$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	$t =~ s/Ver\. 2\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	$t =~ s/files\/KH%20Coder\/[0-9]\.[Bb]eta\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
+	$t =~ s/files\/KH%20Coder\/2.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
 	
 	open(my $fh, '>', "../pub/base/web/en_index.html") or die;
 	print $fh $t;
@@ -175,9 +175,9 @@ sub web{
 	$r1->is_success or die;
 	$t = $r1->content;
 
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                 # 日付
-	$t =~ s/khcoder\-2b[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
-	$t =~ s/KH%20Coder\/2\.Beta\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名
+	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                # 日付
+	$t =~ s/khcoder\-2[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
+	$t =~ s/KH%20Coder\/2\.[0-9]+\//KH%20Coder\/$V_main\//g;      # フォルダ名
 
 	open(my $fh, '>', "../pub/base/web/dl.html") or die;
 	print $fh $t;
