@@ -207,20 +207,27 @@ sub edit{
 		);
 
 	# Diff作成
-	use Text::Diff;
-	my $diff = diff(
-		$self->{file_backup},
-		$::project_obj->file_target,
-		{STYLE => "OldStyle"}
-	);
-	$self->{file_diff} = $::project_obj->file_diff;
-	open (DIFFO, ">$self->{file_diff}") or 
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $self->{file_diff}
+	if (-s $self->{file_backup} < 50*1024*1024 ) {
+		$self->{diff} = 1;
+		use Text::Diff;
+		my $diff = diff(
+			$self->{file_backup},
+			$::project_obj->file_target,
+			{STYLE => "OldStyle"}
 		);
-	print DIFFO $diff;
-	close (DIFFO);
+		$self->{file_diff} = $::project_obj->file_diff;
+		open (DIFFO, ">$self->{file_diff}") or 
+			gui_errormsg->open(
+				type => 'file',
+				thefile => $self->{file_diff}
+			);
+		print DIFFO $diff;
+		close (DIFFO);
+	} else {
+		$self->{diff} = 0;
+	}
+	
+
 
 	# レポート（詳細）の再作成
 	if ($self->{auto_ng}){

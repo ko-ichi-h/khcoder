@@ -178,10 +178,12 @@ sub edit{
 	#$msg .= "○修正前の分析対象ファイルを次の場所にバックアップしました：\n";
 	$msg .= "　$path\n\n";
 	
-	$msg .= kh_msg->get('file_diff');
-	$msg .= "\n";
-	#$msg .= "○修正箇所のリスト（diff）を次のファイルに保存しました：\n";
-	$msg .= "　$path2\n\n";
+	if ($self->{dacheck_obj}->{diff}){
+		$msg .= kh_msg->get('file_diff');
+		$msg .= "\n";
+		#$msg .= "○修正箇所のリスト（diff）を次のファイルに保存しました：\n";
+		$msg .= "　$path2\n\n";
+	}
 	
 	if ($self->{dacheck_obj}->{auto_ng}){
 		$msg .= kh_msg->get('not_complete');
