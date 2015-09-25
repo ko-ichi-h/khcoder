@@ -79,7 +79,7 @@ use File::Path 'rmtree';
 &upload;
 
 sub upload{
-	print "Uploading...\n";
+	print "Connecting...\n";
 
 	my $sftp = Net::SFTP::Foreign->new(
 		host => 'web.sourceforge.net',
@@ -101,6 +101,8 @@ sub upload{
 	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
 	$sftp->mkdir($V_main);
 	$sftp->setcwd($V_main);
+	
+	print "Uploading...\n";
 	foreach my $i (
 		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
