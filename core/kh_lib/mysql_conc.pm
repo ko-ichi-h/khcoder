@@ -596,11 +596,11 @@ sub _format{                                      # 結果の出力
 	my $start = shift;
 	
 	# print "3: Formating...\n";
-	my $morpho = $::project_obj->morpho_analyzer;
+	my $lang = $::project_obj->morpho_analyzer_lang;
 	my $spacer = '';
 	if (
-		   $morpho eq 'chasen'
-		|| $morpho eq 'mecab'
+		   $lang eq 'jp'
+		|| $lang eq 'cn'
 	){
 		$spacer = '';
 	} else {
