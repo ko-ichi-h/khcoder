@@ -24,7 +24,7 @@ sub init{
 	}
 
 	# Start MySQL
-	unless (-e '/tmp/mysql.sock.khc'){
+	unless (-e '/tmp/mysql.sock.khc3'){
 		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
 	}
 
