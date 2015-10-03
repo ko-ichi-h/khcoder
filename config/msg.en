@@ -194,7 +194,7 @@ gui_window::main::menu:
     import_win_title:         Import a project from a *.khc file.
     jac_mtrx:                 Similarity Matrix
     kwic:                     KWIC Concordance
-    man:                      Manual (PDF, in Japanese)
+    man:                      Manual (PDF)
     mds:                      Multi-Dimensional Scaling
     netg:                     Co-Occurrence Network
     new:                      New
