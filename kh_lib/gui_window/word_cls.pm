@@ -705,6 +705,7 @@ y_min <- max(
 	)
 )
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
+y_min <- y_min * 1.1
 if (y_min > y_max * 2){
 	y_min <- y_max * 2
 }
