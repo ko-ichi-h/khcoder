@@ -695,9 +695,24 @@ p <- p + geom_text(
 	size = 5 * 0.85 * font_size
 )
 
+# 語やコードの長さにあわせて余白の大きさを設定
+y_max <- max( ddata$segment$y1 )
+y_min <- max(
+	strwidth(
+		labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		units = "figure",
+		font = 2
+	)
+)
+y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
+if (y_min > y_max * 2){
+	y_min <- y_max * 2
+}
+y_min <- y_min * -1
+
 p <- p + coord_flip()
 p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
-p <- p + scale_y_continuous(expand = c(0.25,0))
+p <- p + ylim(y_min,y_max)
 
 p <- p + theme(
 	axis.title.y = element_blank(),

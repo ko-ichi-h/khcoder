@@ -842,7 +842,15 @@ sub make{
 		$f->command(
 			-label => kh_msg->get('man'),
 			-font => "TKFN",
-			-command => sub { gui_OtherWin->open('khcoder_manual.pdf'); },
+			-command => sub {
+				my $file;
+				if ($::config_obj->msg_lang eq 'jp') {
+					$file = 'khcoder_manual.pdf';
+				} else {
+					$file = 'khcoder_manual_en.pdf';
+				}
+				gui_OtherWin->open($file);
+			},
 		);
 		
 		$f->command(
