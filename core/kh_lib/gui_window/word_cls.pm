@@ -702,14 +702,24 @@ y_min <- max(
 	)
 )
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
+y_min <- y_min * 1.1
 if (y_min > y_max * 2){
 	y_min <- y_max * 2
 }
 y_min <- y_min * -1
 
+# 目盛の位置を設定
+b1 <- 0
+for (i in 1:1000){
+	b1 <- signif(y_max * 0.875, i)
+	if (b1 < y_max){
+		break
+	}
+}
+
 p <- p + coord_flip()
 p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
-p <- p + ylim(y_min,y_max)
+p <- p + scale_y_continuous( limits=c(y_min,y_max), breaks=c(0,b1/2,b1) )
 
 p <- p + theme(
 	axis.title.y = element_blank(),
