@@ -196,7 +196,7 @@ gui_window::main::menu:
     import_win_title:         Importar proyecto desde archivo *.khc.
     jac_mtrx:                 Matriz de similitud
     kwic:                     Concordancia KWIC
-    man:                      Manual (PDF, en Japonés)
+    man:                      Manual (PDF)
     mds:                      Escalamiento multidimensional
     netg:                     Red de coocurrencias
     new:                      Nuevo
