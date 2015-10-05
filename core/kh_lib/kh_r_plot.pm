@@ -166,9 +166,17 @@ sub new{
 	print "kh_r_plot::new unlock ok.\n" if $debug;
 	$::config_obj->R->output_chk(1);
 
+	# Reading text output from R
 	use Encode;
 	use Encode::Locale;
-	$self->{r_msg} = Encode::decode('console_out', $self->{r_msg});
+	my $loc = 'console_out';
+	if (
+		   ( $::config_obj->os eq 'win32' )
+		&& $::project_obj->morpho_analyzer_lang eq 'cn')
+	{
+		$loc = 'cp936'
+	}
+	$self->{r_msg} = Encode::decode($loc, $self->{r_msg});
 
 	# 結果のチェック
 	if (

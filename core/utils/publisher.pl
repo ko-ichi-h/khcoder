@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a01a';
-my $V_main = "3.Alpha.01";
-my $V_full = "3.Alpha.01a";
+my $V = '3a02';
+my $V_main = "3.Alpha.02";
+my $V_full = "3.Alpha.02";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -140,8 +140,8 @@ sub upload{
 		$sftp->put ("../pub/web/$i", $i) or die;
 	}
 
-	#$sftp->setcwd("en");
-	#$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
+	$sftp->setcwd("en");
+	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
 
 	$sftp->disconnect;
 }
@@ -177,18 +177,18 @@ sub web{
 	#close ($fh);
 	
 	# en/index.html
-	#my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
-	#my $t = '';
-	#$r2->is_success or die;
-	#$t = $r2->content;
-	#
+	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
+	my $t = '';
+	$r2->is_success or die;
+	$t = $r2->content;
+	
 	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	#$t =~ s/files\/KH%20Coder\/[0-9]\.[Bb]eta\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
+	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
 	#
-	#open(my $fh, '>', "../pub/base/web/en_index.html") or die;
-	#print $fh $t;
-	#close ($fh);
+	open(my $fh, '>', "../pub/web/en_index.html") or die;
+	print $fh $t;
+	close ($fh);
 	
 	# dl3.html
 	my $r1 = $ua->get('http://khc.sourceforge.net/dl3.html') or die;
