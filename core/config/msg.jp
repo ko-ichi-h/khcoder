@@ -310,6 +310,7 @@ gui_window::sysconfig:
     l_it:                     イタリア語
     l_nl:                     オランダ語
     l_pt:                     ポルトガル語
+    l_kr:                     朝鮮語
     lang:                     '    言語：'
     mecab:                    MeCab（日本語）
     need_inst:                （要・別途インストール）

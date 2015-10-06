@@ -312,6 +312,7 @@ gui_window::sysconfig:
     l_it:                     Italiano
     l_nl:                     Holandés
     l_pt:                     Portugués
+    L_kr:                     Coreano
     lang:                     '    Idioma:'
     mecab:                    '"MeCab" para textos en Japanés'
     need_inst:                ' *instalación separada'

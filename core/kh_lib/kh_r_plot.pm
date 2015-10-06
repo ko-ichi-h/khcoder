@@ -269,6 +269,7 @@ sub set_par{
 			'it' => 'Italian',
 			'nl' => 'Dutch',
 			'pt' => 'Portuguese',
+			'kr' => 'Korean',
 		);
 		
 		my $lang = $::project_obj->morpho_analyzer_lang;

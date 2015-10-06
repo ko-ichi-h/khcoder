@@ -10,6 +10,7 @@ sub _readin{
 	use Jcode;
 	use kh_sysconfig::linux::chasen;
 	use kh_sysconfig::linux::mecab;
+	use kh_sysconfig::linux::mecab_k;
 	use kh_sysconfig::linux::stemming;
 	use kh_sysconfig::linux::stanford;
 
@@ -82,6 +83,7 @@ sub save_ini{
 		'stanf_tagger_path_en',
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
+		'han_dic_path',
 		'stanford_lang',
 		'stemming_lang',
 		'last_lang',
@@ -105,6 +107,7 @@ sub save_ini{
 		'font_main',
 		'font_plot',
 		'font_plot_cn',
+		'font_plot_kr',
 		'font_pdf',
 		'font_pdf_cn',
 		'kaigyo_kigou',
@@ -267,19 +270,15 @@ sub font_plot_cn{
 	return $self->{font_plot_cn};
 }
 
-sub font_plot_current{
+sub font_plot_kr{
 	my $self = shift;
-
-	# 中国語プロジェクトを開いている時だけ中国語フォントを返す
-	if ($::project_obj) {
-		my $lang = $::project_obj->morpho_analyzer_lang;
-		if ($lang eq 'cn') {
-			return $self->font_plot_cn
-		}
-	}
-
-	return $self->font_plot;
+	my $new  = shift;
+	$self->{font_plot_kr} = $new         if defined($new) && length($new);
+	$self->{font_plot_kr} = 'Malgun Gothic' unless length($self->{font_plot_kr});
+	return $self->{font_plot_kr};
 }
+
+
 
 
 1;

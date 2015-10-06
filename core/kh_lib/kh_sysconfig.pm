@@ -27,6 +27,7 @@ sub readin{
 		   ! -e "$self->{ini_file}"
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
+		|| ! -e "./config/hinshi_mecab_k"
 		|| ! -e "./config/hinshi_stemming"
 		|| ! -e "./config/hinshi_stanford_cn"
 		|| ! -e "./config/hinshi_stanford_en"
@@ -312,6 +313,35 @@ sub reset_parm{
 			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
 
+		# MeCab & Handic用（朝鮮語）
+		unless (-e "./config/hinshi_mecab_k"){
+			$dbh->do(
+				"CREATE TABLE hinshi_mecab_k (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'Noun-固有名詞', ''",
+				"1, 'Noun',  'Noun-普通', ''",#
+				"25, 'Adj',  'Adjective-自立', ''",
+				"30, 'Adv',  'Adverb-一般', ''",
+				"35, 'Verb',  'Verb-自立', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_mecab_k
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
 		$dbh->disconnect;
 }
 
@@ -489,6 +519,15 @@ sub stanf_seg_path{
 		$self->{stanf_seg_path} = $new;
 	}
 	return $self->{stanf_seg_path};
+}
+
+sub han_dic_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{han_dic_path} = $new;
+	}
+	return $self->{han_dic_path};
 }
 
 sub msg_lang{
@@ -1017,6 +1056,22 @@ sub font_pdf_current{
 	}
 
 	return $self->font_pdf;
+}
+
+sub font_plot_current{
+	my $self = shift;
+
+	# 中国語 / 韓国語プロジェクトを開いている時だけ中 / 韓フォントを返す
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'cn') {
+			return $self->font_plot_cn;
+		}
+		elsif ($lang eq 'kr'){
+			return $self->font_plot_kr;
+		}
+	}
+	return $self->font_plot;
 }
 
 sub r_plot_debug{
