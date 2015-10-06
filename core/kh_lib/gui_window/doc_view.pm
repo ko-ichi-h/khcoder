@@ -275,6 +275,7 @@ sub _view_doc{
 	if (
 		   $morpho eq 'jp'
 		|| $morpho eq 'cn'
+		|| $morpho eq 'kr'
 	){
 		$spacer = '';
 	} else {

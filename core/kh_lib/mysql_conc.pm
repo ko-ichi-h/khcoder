@@ -601,6 +601,7 @@ sub _format{                                      # 結果の出力
 	if (
 		   $lang eq 'jp'
 		|| $lang eq 'cn'
+		|| $lang eq 'kr'
 	){
 		$spacer = '';
 	} else {

@@ -117,6 +117,7 @@ sub save_ini{
 		'font_plot_kr',
 		'font_pdf',
 		'font_pdf_cn',
+		'font_pdf_kr',
 		'win32_monitor_chk',
 		'kaigyo_kigou',
 		'color_DocView_info',

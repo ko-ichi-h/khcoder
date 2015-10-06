@@ -1032,6 +1032,14 @@ sub font_pdf_cn{
 	return $self->{font_pdf_cn};
 }
 
+sub font_pdf_kr{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf_kr} = $new if defined($new) && length($new);
+	$self->{font_pdf_kr} = 'Korea1deb' unless length($self->{font_pdf_kr});
+	return $self->{font_pdf_kr};
+}
+
 sub font_pdf_current{
 	my $self = shift;
 
@@ -1040,6 +1048,9 @@ sub font_pdf_current{
 		my $lang = $::project_obj->morpho_analyzer_lang;
 		if ($lang eq 'cn') {                         # Chinese
 			return $self->font_pdf_cn;
+		}
+		elsif ($lang eq 'kr'){                       # Korean
+			return $self->font_pdf_kr;
 		}
 		elsif ($lang eq 'jp'){                       # Japanese
 			return $self->font_pdf;

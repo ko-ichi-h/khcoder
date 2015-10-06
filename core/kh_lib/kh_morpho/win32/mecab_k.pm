@@ -165,35 +165,15 @@ sub _mecab_run{
 	
 	my $last_line = '';
 
-	# 句点「。」が必ず1語になるよう修正
+	# 文区切りの「。」を挿入
 	while( <OTEMP> ){
-		#if ( $::config_obj->mecab_unicode ){
-		#	$_ = Jcode->new($_,'utf8')->sjis;
-		#}
-
+		if ($last_line =~ /^\t(\S+)\t\t(.+)/ ) {
+			$last_line = "$1\t$1\t$1\t$2";
+		}
 		if ( length($last_line) > 0 ){
-			if (
-				   index($last_line,'。') > -1
-				&& length( (split /\t/, $last_line)[0] ) > 2
-			){
-				my $w = (split /\t/, $last_line)[0];
-				# print "w: $w, ";
-				#$w = Jcode->new($w,'sjis')->euc;
-				
-				while ( index($w,'。') > -1 ){
-					if ( index($w,'。') > 0 ){
-						my $pre = substr($w, 0, index($w,'。'));
-						#$pre = Jcode->new($pre,'euc')->sjis;
-						# print "pre: $pre, ";
-						print OTPT "$pre\t$pre\t$pre\t記号-一般\t\t\n";
-					}
-					# print "$maru, ";
-					print OTPT "。\t。\t。\t記号-句点\t\t\n";
-					substr($w, 0, index($w,'。') + 1) = '';
-				}
-				#$w = Jcode->new($w,'euc')->sjis;
-				print "l: $w\n";
-				print OTPT "$w\t$w\t$w\t記号-一般\t\t\n";
+			if ( index($last_line,'Symbol-ピリオド') > -1){
+				print OTPT $last_line;
+				print OTPT "。\t。\t。\t文区切り\t\t\n";
 			} else {
 				print OTPT $last_line;
 			}

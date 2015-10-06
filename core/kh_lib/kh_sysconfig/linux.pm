@@ -110,6 +110,7 @@ sub save_ini{
 		'font_plot_kr',
 		'font_pdf',
 		'font_pdf_cn',
+		'font_pdf_kr',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
@@ -274,7 +275,13 @@ sub font_plot_kr{
 	my $self = shift;
 	my $new  = shift;
 	$self->{font_plot_kr} = $new         if defined($new) && length($new);
-	$self->{font_plot_kr} = 'Malgun Gothic' unless length($self->{font_plot_kr});
+	unless ( length($self->{font_plot_kr}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_kr} = 'STHeiti';
+		} else {
+			$self->{font_plot_kr} = 'Droid Sans Fallback';
+		}
+	}
 	return $self->{font_plot_kr};
 }
 
