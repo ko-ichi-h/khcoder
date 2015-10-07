@@ -279,7 +279,7 @@ sub font_plot_kr{
 		if ( $^O =~ /darwin/){
 			$self->{font_plot_kr} = 'STHeiti';
 		} else {
-			$self->{font_plot_kr} = 'Droid Sans Fallback';
+			$self->{font_plot_kr} = 'UnDotum';
 		}
 	}
 	return $self->{font_plot_kr};

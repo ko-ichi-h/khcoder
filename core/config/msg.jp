@@ -581,6 +581,8 @@ kh_morpho::mecab:
     error:                    MeCabの起動に失敗しました。
     error_config:             事前にKH Coderの設定（MeCab関連）を行ってください。
     illegal_bra:              山カッコ（<>）による正しくないマーキングがありました。
+kh_morpho::mecab_k:
+    error:                    MeCabの起動に失敗しました。
 kh_morpho::stanford:
     error:                    Stanford POS Taggerの起動に失敗しました。
     error_config:             事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。

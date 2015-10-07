@@ -583,6 +583,8 @@ kh_morpho::mecab:
     error:                    'Error fatal: no se puede ejecutar MeCab.'
     error_config:             'Error fatal: no se encuentra MeCab.'
     illegal_bra:              'marcado incorrecto con <>'
+kh_morpho::mecab_k:
+    error:                    'Error fatal: no se puede ejecutar MeCab.'
 kh_morpho::stanford:
     error:                    'Error fatal: no se puede ejecutar Stanford POS Tagger.'
     error_config:             'Error fatal: no se encuentra JStanford POS Tagger.'

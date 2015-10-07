@@ -581,6 +581,8 @@ kh_morpho::mecab:
     error:                    'Fatal error: Could not execute MeCab.'
     error_config:             'Fatal error: Could not find MeCab.'
     illegal_bra:              'Illegal marking with <>'
+kh_morpho::mecab_k:
+    error:                    'Fatal error: Could not execute MeCab.'
 kh_morpho::stanford:
     error:                    'Fatal error: Could not execute Stanford POS Tagger.'
     error_config:             'Fatal error: Could not find JStanford POS Tagger.'
