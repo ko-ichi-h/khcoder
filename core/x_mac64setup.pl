@@ -19,6 +19,7 @@ $config{stanf_jar_path}       = cwd.'/deps/stanford-postagger/stanford-postagger
 $config{stanf_tagger_path_en} = cwd.'/deps/stanford-postagger/models/wsj-0-18-left3words-distsim.tagger';
 $config{stanf_tagger_path_cn} = cwd.'/deps/stanford-postagger/models/chinese-distsim.tagger';
 $config{stanf_seg_path}       = cwd.'/deps/stanford-segmenter';
+$config{han_dic_path}       = cwd.'/deps/handic';
 $config{sql_username}         = 'root';
 $config{sql_password}         = 'khc';
 $config{sql_host}             = '127.0.0.1';
