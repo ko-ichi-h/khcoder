@@ -277,7 +277,7 @@ sub font_plot_kr{
 	$self->{font_plot_kr} = $new         if defined($new) && length($new);
 	unless ( length($self->{font_plot_kr}) ){
 		if ( $^O =~ /darwin/){
-			$self->{font_plot_kr} = 'STHeiti';
+			$self->{font_plot_kr} = 'AppleGothic';
 		} else {
 			$self->{font_plot_kr} = 'UnDotum';
 		}

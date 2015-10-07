@@ -807,7 +807,7 @@ if (show_bar == 1){
 
 if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
 	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
 	} else {
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot_current.'", fontface="bold"))

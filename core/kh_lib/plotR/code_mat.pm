@@ -138,7 +138,7 @@ if ( is.null(dev.list()) ){
 }
 if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		font_fam <- "HiraKaku"
 	} else {
 		font_fam <- "'.$::config_obj->font_plot_current.'"
@@ -319,7 +319,7 @@ if ( is.null(dev.list()) ){
 }
 if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		font_fam <- "HiraKaku"
 	} else {
 		font_fam <- "'.$::config_obj->font_plot_current.'"
