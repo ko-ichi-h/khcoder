@@ -596,17 +596,7 @@ sub _format{                                      # 結果の出力
 	my $start = shift;
 	
 	# print "3: Formating...\n";
-	my $lang = $::project_obj->morpho_analyzer_lang;
-	my $spacer = '';
-	if (
-		   $lang eq 'jp'
-		|| $lang eq 'cn'
-		|| $lang eq 'kr'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 	
 	# 出力リスト作成（中央のID）;
 	my $st1 = mysql_exec->select("

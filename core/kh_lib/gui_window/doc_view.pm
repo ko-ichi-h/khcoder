@@ -270,18 +270,8 @@ sub _view_doc{
 		);
 	}
 	
-	my $morpho = $::project_obj->morpho_analyzer_lang; # スペーサー設定
-	my $spacer = '';
-	if (
-		   $morpho eq 'jp'
-		|| $morpho eq 'cn'
-		|| $morpho eq 'kr'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
-	
+	my $spacer = $::project_obj->spacer; # スペーサー設定
+
 	$self->text->delete('0.0','end');             # 見出し書き出し
 	$self->text->insert('end', $doc->header, 'info');
 	

@@ -62,7 +62,7 @@ sub _run_morpho{
 		);
 	while ( <TRGT> ){
 		my $t   = $_;
-		$t =~ s/ /　/g; # kr
+		#$t =~ s/ /　/g; # kr
 		$t =~ s/[\x{AC00}-\x{D7A3}]/convert_main($&)/ge; # kr
 		
 		while ( index($t,'<') > -1){
@@ -167,8 +167,11 @@ sub _mecab_run{
 
 	# 文区切りの「。」を挿入 # kr
 	while( <OTEMP> ){
-		if ($last_line =~ /^\t(\S+)\t\t(.+)/ ) {
+		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
+		if ($last_line =~ /^\t([^\t]+)\t\t(.+)/ ) {
 			$last_line = "$1\t$1\t$1\t$2";
+			chomp $last_line;
+			$last_line .= "\n";
 		}
 		if ( length($last_line) > 0 ){
 			if ( index($last_line,'Symbol-ピリオド') > -1){

@@ -1123,15 +1123,11 @@ sub rowtxt{
 	$::project_obj->status_bun(1);
 
 	# morpho_analyzer
-	my $spacer;
-	if (
-		   $::project_obj->morpho_analyzer_lang eq 'jp'
-		|| $::project_obj->morpho_analyzer_lang eq 'cn'
-		|| $::project_obj->morpho_analyzer_lang eq 'kr'
-	) {
+	my $spacer = $::project_obj->spacer;
+	
+	# 韓国語の場合だけ詰める
+	if ( $::project_obj->morpho_analyzer_lang eq 'kr' ) {
 		$spacer = '';
-	} else {
-		$spacer = ' ';
 	}
 
 	mysql_exec->drop_table("bun_r");

@@ -259,6 +259,20 @@ sub morpho_analyzer_lang{
 	return $h->fetch->[0];
 }
 
+sub spacer{
+	my $self = shift;
+	my $spacer = '';
+	if (
+		   $self->morpho_analyzer_lang eq 'jp'
+		|| $self->morpho_analyzer_lang eq 'cn'
+	) {
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+	return $spacer;
+}
+
 # To sort Japanese words in the same order as prvious version (2.x)
 sub mysql_sort{
 	my $self = shift;

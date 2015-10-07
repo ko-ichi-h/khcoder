@@ -45,15 +45,7 @@ sub exec{
 	",1)->hundle;
 
 	# morpho_analyzer
-	my $spacer;
-	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 
 	my $current; my %h;
 	my $last = 0;

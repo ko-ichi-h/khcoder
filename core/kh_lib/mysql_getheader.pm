@@ -54,16 +54,7 @@ sub get{
 	pop   @h;
 	my $h;
 	
-	my $morpho = $::project_obj->morpho_analyzer_lang; # スペーサー設定
-	my $spacer = '';
-	if (
-		   $morpho eq 'jp'
-		|| $morpho eq 'cn'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 	
 	foreach my $i (@h){
 		$h .= $spacer if length($i);
