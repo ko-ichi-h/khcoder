@@ -16,6 +16,7 @@ sub search{
 	unless (
 		   $::project_obj->morpho_analyzer_lang eq 'jp'
 		|| $::project_obj->morpho_analyzer_lang eq 'cn'
+		|| $::project_obj->morpho_analyzer_lang eq 'kr'
 	){
 		# 強制抽出への対応
 		# (1)キーワード

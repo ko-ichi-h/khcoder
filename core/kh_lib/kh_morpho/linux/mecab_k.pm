@@ -1,8 +1,7 @@
-package kh_morpho::win32::mecab_k;
-use base qw( kh_morpho::win32 );
-
+package kh_morpho::linux::mecab_k;
 use strict;
 use utf8;
+use base qw( kh_morpho::linux );
 
 # kr
 my @initial = ("ᄀ", "ᄁ", "ᄂ", "ᄃ", "ᄄ", "ᄅ", "ᄆ", "ᄇ", "ᄈ", "ᄉ", "ᄊ", "ᄋ",
@@ -28,28 +27,15 @@ sub convert_main {
 #   MeCabの実行関係   #
 #---------------------#
 
-# encoding はすべてUTF-8に！ # kr
-
 sub _run_morpho{
 	my $self = shift;	
-	my $path = $self->config->mecab_path;
-	$path =~ s/\\/\//g;
-	$path = $::config_obj->os_path($path);
 
 	# kr
 	my $dic_path = $self->config->han_dic_path;
 	$dic_path =~ s/\\/\//g;
 	$dic_path = $::config_obj->os_path($dic_path);
-	
+
 	# 初期化
-	unless (-e $path){
-		gui_errormsg->open(
-			msg => kh_msg->get('error_config'),
-			type => 'msg'
-		);
-		exit;
-	}
-	
 	$self->{store} = '';
 	
 	$self->{target_temp} = $self->target.'.tmp';
@@ -65,21 +51,18 @@ sub _run_morpho{
 			);
 	}
 	
-	my $pos = rindex($path,"/bin/");
-	$self->{dir} = substr($path,0,$pos);
-	my $chasenrc = $self->{dir}."/etc/mecabrc";
-	$self->{cmdline} = "mecab -Ochasen -r \"$chasenrc\" -d \"$dic_path\" -o \"$self->{output_temp}\" \"$self->{target_temp}\""; # kr
+	$self->{cmdline} = "mecab -Ochasen -d \"$dic_path\" -o \"$self->{output_temp}\" \"$self->{target_temp}\""; # kr
 	#print "morpho: $self->{cmdline}\n";
 	
 	# 処理開始
-	open (TRGT, "<:encoding(UTF-8)", $self->target) or
+	open (TRGT, "<:encoding(UTF-8)", $self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
 			type => 'file'
 		);
 	while ( <TRGT> ){
 		my $t   = $_;
-		#$t =~ s/ /　/g; # kr
+		$t =~ s/ /　/g; # kr
 		$t =~ s/[\x{AC00}-\x{D7A3}]/convert_main($&)/ge; # kr
 		
 		while ( index($t,'<') > -1){
@@ -110,40 +93,58 @@ sub _run_morpho{
 	return(1);
 }
 
-
 sub _mecab_run{
 	my $self = shift;
 	my $t    = shift;
 
-	# ここまでの処理前データをファイルへ書き出し out: $self->{target_temp}
 	$self->_mecab_store($t) if length($t);
 	$self->_mecab_store_out;
 
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
+
+	# MeCabにわたすファイル内容のチェック
+	open my $fh_chk, '<', $self->{target_temp} or
+		gui_errormsg->open(
+			thefile => $self->{target_temp},
+			type => 'file'
+		)
+	;
+	#my $read_chk = '';
+	my $has_lf = 0;
+	while (<$fh_chk>){
+		#$read_chk .= $_;
+		if ($_ =~ /.*\n$/){
+			$has_lf = 1;
+		} else {
+			$has_lf = 0;
+		}
+	}
+	close $fh_chk;
 	
-	#print "path: ".$::config_obj->os_path( $self->config->mecab_path )."\n";
-	#print "cmd: $self->{cmdline}\n";
-	#print "dir: $self->{dir}\n";
-	
-	# MeCabによる処理 in: $self->{target_temp}, out: $self->{output_temp}
-	require Win32::Process;
-	my $ChasenObj;
-	Win32::Process::Create(
-		$ChasenObj,
-		$::config_obj->os_path( $self->config->mecab_path ),
-		$self->{cmdline},
-		0,
-		Win32::Process->CREATE_NO_WINDOW,
-		$self->{dir}.'/bin',
-	) || $self->Exec_Error("Wi32::Process can not start");
-	$ChasenObj->Wait( Win32::Process->INFINITE )
-		|| $self->Exec_Error("Wi32::Process can not wait");
+	# 最後に改行文字をつけておく
+	if ( $has_lf == 0 ){
+		open my $fh_add, '>>', $self->{target_temp} or
+			gui_errormsg->open(
+				thefile => $self->{target_temp},
+				type => 'file'
+			)
+		;
+		print $fh_add "\n";
+		close $fh_add;
+		
+		#$read_chk = Jcode->new($read_chk)->utf8;
+		#print "Added LF for MeCab: $read_chk\n";
+	}
+
+	# MeCabの実行
+	system "$self->{cmdline}";
 	
 	unless (-e $self->{output_temp}){
 		$self->Exec_Error("No output file");
 	}
-	
+
+	# 結果の取り出し
 	my $cut_eos;
 	if ( $self->{stlast} =~ /\n\Z/o){
 		$cut_eos = 0;
@@ -151,8 +152,6 @@ sub _mecab_run{
 		$cut_eos = 1;
 	}
 	
-	# MeCabの処理結果を収集 in: $self->{output_temp} out: $self->output
-	# ↓ここでMecabの出力を修正↓
 	open (OTEMP, "<:encoding(UTF-8)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
@@ -168,11 +167,8 @@ sub _mecab_run{
 
 	# 文区切りの「。」を挿入 # kr
 	while( <OTEMP> ){
-		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
-		if ($last_line =~ /^\t([^\t]+)\t\t(.+)/ ) {
+		if ($last_line =~ /^\t(\S+)\t\t(.+)/ ) {
 			$last_line = "$1\t$1\t$1\t$2";
-			chomp $last_line;
-			$last_line .= "\n";
 		}
 		if ( length($last_line) > 0 ){
 			if ( index($last_line,'Symbol-ピリオド') > -1){
@@ -199,12 +195,13 @@ sub _mecab_run{
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	unlink $self->{target_temp} or
+
+	unlink $self->{target_temp} or 
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
-	
+
 	# unlink 確認
 	use Time::HiRes;
 	for ( my $n = 0; $n < 20; ++$n ){
@@ -222,13 +219,14 @@ sub _mecab_run{
 		}
 		Time::HiRes::sleep (0.5);
 	}
-	
+
 	$self->{store} = '';
 }
 
 sub _mecab_outer{
 	my $self = shift;
 	my $t    = shift;
+	my $name = 'TAG';
 
 	open (OTPT,">>:encoding(UTF-8)",$self->output) or 
 		gui_errormsg->open(
@@ -236,12 +234,11 @@ sub _mecab_outer{
 			type => 'file'
 		);
 
-	print OTPT "$t\t$t\t$t\tTAG\t\t\n";
+	print OTPT "$t\t$t\t$t\t$name\t\t\n";
 
 	close (OTPT);
 }
 
-# MeCabで処理する前のデータを蓄積
 sub _mecab_store{
 	my $self = shift;
 	my $t    = shift;
@@ -258,25 +255,25 @@ sub _mecab_store{
 	return $self;
 }
 
-# MeCabで処理する前のデータをファイルに書き出し
+
 sub _mecab_store_out{
 	my $self = shift;
 
 	return 1 unless length($self->{store}) > 0;
 
-	
 	my $arg;
 	if (-e $self->{target_temp}) {
 		$arg = ">>:encoding(UTF-8)";
 	} else {
 		$arg = ">:encoding(UTF-8)";
 	}
-	
+
 	open (TMPO, $arg, $self->{target_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
-		);
+		)
+	;
 
 	print TMPO $self->{store};
 	close (TMPO);

@@ -1125,9 +1125,9 @@ sub rowtxt{
 	# morpho_analyzer
 	my $spacer;
 	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-		|| ( $::config_obj->c_or_j eq 'stanford' && $::project_obj->morpho_analyzer_lang eq 'cn')
+		   $::project_obj->morpho_analyzer_lang eq 'jp'
+		|| $::project_obj->morpho_analyzer_lang eq 'cn'
+		|| $::project_obj->morpho_analyzer_lang eq 'kr'
 	) {
 		$spacer = '';
 	} else {
