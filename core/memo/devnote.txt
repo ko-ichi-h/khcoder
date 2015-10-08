@@ -25,7 +25,14 @@
 
 
 [3.Alpha.03]
+韓国語の分析に対応した。
+	・MeCab向けの韓国語辞書「HanDic」を利用（Windows版パッケージには同梱）。「HanDic」に付属のdicrcファイルに次の記述を追加している。
+	; ChaSen
+	node-format-chasen = %f[6]\t%M\t%f[5]\t%F-[0,1,2]\t%f[3]\t%f[4]\n
+	unk-format-chasen  = %f[6]\t%M\t%f[6]\t%F-[0,1,2]\t\t\n
+	eos-format-chasen  = EOS\n
 バグの修正
+	・「語の取捨選択」画面の「ファイルから読み込み」機能が正常に機能しない場合がある問題を修正した。
 	・コンソール出力が一部文字化けしていた問題を修正した。
 
 [3.Alpha.02]

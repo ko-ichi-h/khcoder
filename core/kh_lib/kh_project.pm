@@ -265,6 +265,7 @@ sub spacer{
 	if (
 		   $self->morpho_analyzer_lang eq 'jp'
 		|| $self->morpho_analyzer_lang eq 'cn'
+		|| $self->morpho_analyzer_lang eq 'kr'
 	) {
 		$spacer = '';
 	} else {

@@ -48,8 +48,10 @@ sub readin{
 			SELECT status
 			FROM status_char
 			WHERE name="words_mk_file"
-		')->hundle->fetch->[0];
-		$file = Jcode->new($file)->sjis if $::config_obj->os eq 'win32';
+		')->hundle->fetch;
+		$file = $file->[0] if $file;
+		
+		$file = $::config_obj->os_path($file);
 		#print "read: $file\n";
 		$self->{words_mk_file} = $file;
 	}
@@ -71,8 +73,9 @@ sub readin{
 			SELECT status
 			FROM status_char
 			WHERE name="words_st_file"
-		')->hundle->fetch->[0];
-		$file = Jcode->new($file)->sjis if $::config_obj->os eq 'win32';
+		')->hundle->fetch;
+		$file = $file->[0] if $file;
+		$file = $::config_obj->os_path($file);
 		$self->{words_st_file} = $file;
 	}
 
@@ -92,9 +95,17 @@ sub read_file_mk{
 	my $self = shift;
 
 	if ( $self->{words_mk_file_chk} ){
-		my $icode = kh_jchar->check_code( $self->{words_mk_file}, 1 );
+		return 0 unless -e $self->{words_mk_file};
+		
+		my $icode;
+		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+			$icode = kh_jchar->check_code2($self->{words_mk_file});
+		} else {
+			$icode = kh_jchar->check_code_en($self->{words_mk_file});
+		}
+		
 		my @words;
-		open (SOURCE,'<',"$self->{words_mk_file}") or
+		open (SOURCE, "<:encoding($icode)", $self->{words_mk_file}) or
 			gui_errormsg->open(
 				type => 'file',
 				thefile => $self->{words_mk_file}
@@ -104,8 +115,7 @@ sub read_file_mk{
 			s/\x0D\x0A|\x0D|\x0A/\n/g;
 			chomp;
 			next unless length($_);
-			my $t = Jcode->new($_,$icode)->euc;
-			push @words, $t;
+			push @words, $_;
 		}
 		$self->{markwords_act}  = \@words;
 	}
@@ -117,9 +127,17 @@ sub read_file_st{
 	my $self = shift;
 
 	if ( $self->{words_st_file_chk} ){
-		my $icode = kh_jchar->check_code( $self->{words_st_file}, 1 );
+		return 0 unless -e $self->{words_st_file};
+		
+		my $icode;
+		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+			$icode = kh_jchar->check_code2($self->{words_st_file});
+		} else {
+			$icode = kh_jchar->check_code_en($self->{words_st_file});
+		}
+
 		my @words;
-		open (SOURCE,'<',"$self->{words_st_file}") or
+		open (SOURCE, "<:encoding($icode)", $self->{words_st_file}) or
 			gui_errormsg->open(
 				type => 'file',
 				thefile => $self->{words_st_file}
@@ -129,8 +147,7 @@ sub read_file_st{
 			s/\x0D\x0A|\x0D|\x0A/\n/g;
 			chomp;
 			next unless length($_);
-			my $t = Jcode->new($_,$icode)->euc;
-			push @words, $t;
+			push @words, $_;
 		}
 		$self->{stopwords_act}  = \@words;
 	}
@@ -169,7 +186,7 @@ sub save{
 	
 	if ( $self->{words_mk_file_chk} ){
 		my $file = $self->{words_mk_file};
-		$file = Jcode->new($file)->euc;
+		$file = $::config_obj->uni_path($file);
 		$file = mysql_exec->quote($file);
 
 		mysql_exec->do("
@@ -203,6 +220,13 @@ sub save{
 					do("UPDATE genkei SET nouse=1 WHERE name=\'$i\'",1);
 			}
 		}
+		# 韓国語データの場合は半角スペースを無視する設定に
+		if ($::project_obj->morpho_analyzer_lang eq 'kr') {
+			mysql_exec->do(
+				"update genkei set nouse = 1 where name = ' '",
+				1
+			);
+		}
 	}
 
 	# 使用しない語・ファイル
@@ -217,7 +241,7 @@ sub save{
 
 	if ( $self->{words_st_file_chk} ){
 		my $file = $self->{words_st_file};
-		$file = Jcode->new($file)->euc;
+		$file = $::config_obj->uni_path($file);
 		$file = mysql_exec->quote($file);
 
 		mysql_exec->do("

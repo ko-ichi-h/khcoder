@@ -82,25 +82,6 @@ sub first{
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 	
-	# 形態素解析器と言語の記録
-	#$::project_obj->morpho_analyzer($::config_obj->c_or_j);
-
-	#if (
-	#	   $::project_obj->morpho_analyzer eq 'chasen'
-	#	|| $::project_obj->morpho_analyzer eq 'mecab'
-	#) {
-	#	$::project_obj->morpho_analyzer_lang('jp');
-	#}
-	#elsif ($::project_obj->morpho_analyzer eq 'stanford'){
-	#	$::project_obj->morpho_analyzer_lang(
-	#		$::config_obj->stanford_lang
-	#	);
-	#}
-	#elsif ($::project_obj->morpho_analyzer eq 'stemming'){
-	#	$::project_obj->morpho_analyzer_lang(
-	#		$::config_obj->stemming_lang
-	#	);
-	#}
 }
 
 sub fix_michigo{
@@ -521,7 +502,6 @@ sub reform{
 	mysql_exec->do('alter table genkei_fin add index index1(name,khhinshi_id)',1);
 	mysql_exec->do('alter table genkei_fin add index index2(khhinshi_id)',1);
 
-
 	my $pt4 = new Benchmark;
 	print "\tgenkei\t\t",timestr(timediff($pt4,$pt3)),"\n" if $report_time;
 
@@ -890,9 +870,8 @@ sub hyosobun{
 
 	# 不要な場合は「。」を削除 # morpho_analyzer
 	unless (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-		|| ( $::config_obj->c_or_j eq 'stanford' && $::project_obj->morpho_analyzer_lang eq 'cn')
+		   $::project_obj->morpho_analyzer_lang eq 'jp'
+		|| $::project_obj->morpho_analyzer_lang eq 'cn'
 		|| (! $IDsR->{'。'} )
 	){
 		mysql_exec->do("
@@ -1124,11 +1103,6 @@ sub rowtxt{
 
 	# morpho_analyzer
 	my $spacer = $::project_obj->spacer;
-	
-	# 韓国語の場合だけ詰める
-	if ( $::project_obj->morpho_analyzer_lang eq 'kr' ) {
-		$spacer = '';
-	}
 
 	mysql_exec->drop_table("bun_r");
 	mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);

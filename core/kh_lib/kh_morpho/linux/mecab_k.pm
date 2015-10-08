@@ -168,11 +168,27 @@ sub _mecab_run{
 	# 文区切りの「。」を挿入 # kr
 	while( <OTEMP> ){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
+		# 表層や基本形が出力されていない場合への対応
 		if ($last_line =~ /^\t([^\t]+)\t\t(.+)/ ) {
 			$last_line = "$1\t$1\t$1\t$2";
 			chomp $last_line;
 			$last_line .= "\n";
 		}
+		# 半角スペースへの対応
+		if ($last_line =~ /([^\t]+)\t ([^\t]+)\t([^\t]+)\t(.+)/ ) {
+			my ($t1, $t2, $t3, $t4) = ($1, $2, $3, $4);
+			if ($t1 =~ /^ (.+)$/) {
+			  $t1 = $1;
+			}
+			if ($t3 =~ /^ (.+)$/) {
+			  $t3 = $1;
+			}
+			$last_line = "$t1\t$t2\t$t3\t$t4";
+			chomp $last_line;
+			$last_line .= "\n";
+			print OTPT " \t \t \t半角スペース\t\t\n";
+		}
+		
 		if ( length($last_line) > 0 ){
 			if ( index($last_line,'Symbol-ピリオド') > -1){
 				print OTPT $last_line;

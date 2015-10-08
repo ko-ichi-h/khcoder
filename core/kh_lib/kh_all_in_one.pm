@@ -38,6 +38,26 @@ sub init{
 		);
 	}
 
+	# Mecabのパス設定
+	if (
+		not -e $::config_obj->mecab_path
+		and -e $::config_obj->cwd.'/dep/mecab/bin/mecab.exe'
+	) { 
+		$::config_obj->mecab_path(
+			$::config_obj->cwd.'/dep/mecab/bin/mecab.exe'
+		);
+	}
+	
+	# HanDicのパス設定
+	if (
+		not -d $::config_obj->han_dic_path
+		and -d $::config_obj->cwd.'/dep/handic'
+	) { 
+		$::config_obj->han_dic_path(
+			$::config_obj->cwd.'/dep/handic'
+		);
+	}
+	
 	# Stanford segmenterのパス設定
 	if (
 		not -d $::config_obj->stanf_seg_path
