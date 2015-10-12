@@ -22,6 +22,7 @@ sub init{
 		system "export PATH=".$::config_obj->cwd."/deps/R-3.1.0/Resources/bin:\$PATH";
 		$::ENV{PATH} = $::config_obj->cwd."/deps/R-3.1.0/Resources/bin:".$::ENV{PATH};
 	}
+	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 
 	# Start MySQL
 	unless (-e '/tmp/mysql.sock.khc3'){

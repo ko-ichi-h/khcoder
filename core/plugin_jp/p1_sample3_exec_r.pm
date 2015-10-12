@@ -76,6 +76,16 @@ sub exec{
 	$t3 = Encode::decode('console_out', $t3);
 	$t .= "\n\ngetwd():\n\n$t3";
 
+	# Rコマンドの実行 4
+	$::config_obj->R->send('
+		print( .libPaths() )
+	');
+
+	# 実行結果の取得 4
+	my $t4 = $::config_obj->R->read();
+	$t4 = Encode::decode('console_out', $t4);
+	$t .= "\n\n.libPaths():\n\n$t4";
+	
 	# 画面表示
 	$mw->messageBox(
 		-icon    => 'info',

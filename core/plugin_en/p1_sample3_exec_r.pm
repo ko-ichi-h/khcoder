@@ -72,7 +72,17 @@ sub exec{
 	my $t3 = $::config_obj->R->read();
 	$t3 = Encode::decode('console_out', $t3);
 	$t .= "\n\ngetwd():\n\n$t3";
-	
+
+	# execute R command 4
+	$::config_obj->R->send('
+		print( .libPaths() )
+	');
+
+	# read output of R 4
+	my $t4 = $::config_obj->R->read();
+	$t4 = Encode::decode('console_out', $t4);
+	$t .= "\n\n.libPaths():\n\n$t4";
+
 	# print
 	$mw->messageBox(
 		-icon    => 'info',
