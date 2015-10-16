@@ -54,6 +54,7 @@ sub ready{
 		if (
 			   $::project_obj->morpho_analyzer eq 'chasen'
 			|| $::project_obj->morpho_analyzer eq 'mecab'
+			|| $::project_obj->morpho_analyzer eq 'mecab_k'
 		){                                        # chasen・mecabを使用の場合
 			# スペースを全角に変換
 			$val =~ s/ /　/g;
