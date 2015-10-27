@@ -206,8 +206,10 @@ sub edit{
 			thefile => $::project_obj->file_target
 		);
 
-	# Diff作成
-	if (-s $self->{file_backup} < 50*1024*1024 ) {
+	# Diff作成 →異様に時間がかかる場合があるのでスキップ
+	#if (-s $self->{file_backup} < 50*1024*1024 ) {
+	if (0) {
+		print "Making diff...\n";
 		$self->{diff} = 1;
 		use Text::Diff;
 		my $diff = diff(
