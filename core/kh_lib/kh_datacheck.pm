@@ -208,7 +208,8 @@ sub edit{
 		);
 
 	# DiffºîÀ®
-	if (-s $self->{file_backup} < 50*1024*1024 ) {
+	if ( 0 ) {
+	#if (-s $self->{file_backup} < 50*1024*1024 ) {
 		$self->{diff} = 1;
 		use Text::Diff;
 		my $diff = diff(

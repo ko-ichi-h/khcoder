@@ -241,6 +241,7 @@ sub _make_new{
 			filet    => $file_text,
 			filev    => $file_vars,
 			selected => $self->{column},
+			lang     => $self->{lang},
 			#icode    => $self->{icode},
 		);
 

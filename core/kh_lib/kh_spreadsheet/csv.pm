@@ -25,10 +25,7 @@ sub save_files{
 
 	# morpho_analyzer (output)
 	my $icode_o;
-	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-	){
+	if ($args{lang} eq 'jp') {
 		$icode_o = 'cp932';
 	} else {
 		$icode_o = 'utf8';
@@ -39,7 +36,7 @@ sub save_files{
 			file => $args{filet}
 		)
 	;
-	open my $fhv, ">::encoding($icode_o)", $args{filev} or
+	open my $fhv, ">::encoding(utf8)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}

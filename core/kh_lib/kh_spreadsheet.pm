@@ -33,14 +33,9 @@ sub save_files{
 	
 	# morpho_analyzer
 	my $icode = 'utf8';
-	#if (
-	#	   $::config_obj->c_or_j eq 'chasen'
-	#	|| $::config_obj->c_or_j eq 'mecab'
-	#){
-	#	$icode = 'cp932';
-	#} else {
-	#	$icode = 'utf8';
-	#}
+	if ($args{lang} eq 'jp') {
+		$icode = 'cp932';
+	}
 	
 	# read excel
 	my $workbook = $self->parser;
@@ -73,7 +68,7 @@ sub save_files{
 	close $fh;
 
 	# make a variable file, < 127 char, <= 1000 columns
-	open $fh, ">::encoding($icode)", $args{filev} or
+	open $fh, ">::encoding(utf8)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
