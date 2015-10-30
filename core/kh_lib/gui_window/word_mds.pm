@@ -311,7 +311,12 @@ while ( is.na(check4mds(d)) == 0 ){
 		$r_command .= "c <- cmdscale(dj, k=$args{dim_number})\n";
 		$r_command .= "cl <- c\n";
 	}
-
+	elsif ($args{method} eq 'SM'){
+		$r_command .= "library(smacof)\n";
+		$r_command .= "c <- mds(dj, type=\"ordinal\", ndim=$args{dim_number})\n";
+		$r_command .= "cl <- c\$conf\n";
+	}
+	
 	# プロット用のコマンド（次元別）
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
 	$args{cls_raw}   = 0 unless ( length($args{cls_raw}) );
@@ -507,7 +512,7 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	# ストレス値の取得
 	my $stress;
-	if ($args{method} eq 'K' or $args{method} eq 'S'){
+	if ($args{method} eq 'K' or $args{method} eq 'S' or $args{method} eq 'SM' ){
 		$::config_obj->R->send(
 			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
 			.'print(str)'

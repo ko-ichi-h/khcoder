@@ -20,7 +20,11 @@ sub _new{
 		}
 		elsif ($self->{r_cmd} =~ /sammon/){
 			$self->{method_opt} = 'S';
-		} else {
+		}
+		elsif ($self->{r_cmd} =~ /smacof/){
+			$self->{method_opt} = 'SM';
+		}
+		else {
 			$self->{method_opt} = 'C';
 		}
 
@@ -53,9 +57,10 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				['Classical', 'C'],
-				['Kruskal',   'K'],
-				['Sammon',    'S'],
+				['Classical', 'C' ],
+				['Kruskal',   'K' ],
+				['Sammon',    'S' ],
+				['SMACOF',    'SM'],
 			],
 		variable => \$self->{method_opt},
 	);
