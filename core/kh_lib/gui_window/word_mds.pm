@@ -203,9 +203,10 @@ sub calc{
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
-		method         => $self->{mds_obj}->method,
-		method_dist    => $self->{mds_obj}->method_dist,
-		dim_number     => $self->{mds_obj}->dim_number,
+		$self->{mds_obj}->params,
+		#method         => $self->{mds_obj}->method,
+		#method_dist    => $self->{mds_obj}->method_dist,
+		#dim_number     => $self->{mds_obj}->dim_number,
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 		bubble         => $self->{bubble_obj}->check_bubble,
@@ -294,12 +295,32 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	$r_command .= "dj <- Dist($source_matrix,method=\"$args{method_dist}\")\n";
 
+	if ($args{random_starts} == 1){
+		$r_command .= "random_starts <- 1\n";
+	} else {
+		$r_command .= "random_starts <- 0\n";
+	}
+
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
 	if ($args{method} eq 'K'){
 		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- isoMDS(dj, k=$args{dim_number})\n";
+		$r_command .= "c <- isoMDS(dj, k=$args{dim_number}, maxit=3000, tol=0.000001)\n";
+		$r_command .= '
+			if (random_starts == 1){
+					print("Running random starts...")
+					set.seed(123)
+					for (i in 1:1000){ # 200sec
+						init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+						ct <- isoMDS(dj, y=init, k=2, maxit=3000, tol=0.000001, trace=F)
+						if (ct$stress < c$stress){
+							c <- ct
+							print( paste("random start #", i, ": ",  c$stress, sep=""))
+						}
+					}
+			}
+		';
 		$r_command .= "cl <- c\$points\n";
 	}
 	elsif ($args{method} eq 'S'){
@@ -313,7 +334,20 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 	elsif ($args{method} eq 'SM'){
 		$r_command .= "library(smacof)\n";
-		$r_command .= "c <- mds(dj, type=\"ordinal\", ndim=$args{dim_number})\n";
+		$r_command .= "c <- mds(dj, ndim=$args{dim_number}, type=\"ordinal\", itmax=3000)\n";
+		$r_command .= '
+			if (random_starts == 1){
+				print("Running random starts...")
+				set.seed(123)
+				for (i in 1:200){ # 200 -> 246sec
+					run <- mds(dj, type="ordinal", init = "random", itmax=3000)
+					if (run$stress < c$stress){
+						c <- run
+						print( paste("random start #", i, ": ",  c$stress, sep=""))
+					}
+				}
+			}
+		';
 		$r_command .= "cl <- c\$conf\n";
 	}
 	
@@ -641,6 +675,7 @@ if (n_cls > 0){
 
 plot(
 	cl,
+	asp=1,
 	pch=20,
 	col=col_base,
 	xlab=name_dim1,
@@ -851,6 +886,7 @@ if (n_cls > 0){
 # バブル描画
 plot(
 	cl,
+	asp=1,
 	pch=NA,
 	col="black",
 	xlab=name_dim1,

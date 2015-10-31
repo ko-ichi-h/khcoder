@@ -616,6 +616,7 @@ gui_widget::r_mds:
     dist:                     '  距離：'
     dim:                      '次元：'
     1_3:                      '（1から3までの範囲で指定）'
+    random_start:             ランダムスタートを繰り返してより良い解を探す
 gui_window::word_mds:
     units_words:              '集計単位と抽出語の選択'
     mds_opt:                  '多次元尺度法のオプション'

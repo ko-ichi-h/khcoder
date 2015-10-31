@@ -10,9 +10,10 @@ sub _new{
 	my $win = $self->parent->Frame();
 	my $f4  = $win->Frame()->pack(-fill => 'x');
 
-	$self->{method_opt}  = 'K'      unless defined $self->{method_opt};
-	$self->{method_dist} = 'binary' unless defined $self->{method_dist};
-	$self->{dim_number}  = 2        unless defined $self->{dim_number};
+	$self->{method_opt}         = 'K'      unless defined $self->{method_opt};
+	$self->{method_dist}        = 'binary' unless defined $self->{method_dist};
+	$self->{dim_number}         = 2        unless defined $self->{dim_number};
+	$self->{check_random_start} = 0        unless defined $self->{check_random_start};
 
 	if ( length($self->{r_cmd}) ){
 		if ($self->{r_cmd} =~ /isoMDS/){
@@ -44,6 +45,10 @@ sub _new{
 			$self->{dim_number} = 2;
 		}
 
+		if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
+			$self->{check_random_start} = 1;
+		}
+
 		$self->{r_cmd} = undef;
 	}
 
@@ -63,6 +68,7 @@ sub _new{
 				['SMACOF',    'SM'],
 			],
 		variable => \$self->{method_opt},
+		command => sub{$self->check_rs_widget;},
 	);
 
 	$f4->Label(
@@ -110,12 +116,41 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	# random start
+	$self->{check_rs} = $win->Checkbutton(
+		-text => kh_msg->get('random_start'), # 乱数による探索
+		-variable => \$self->{check_random_start},
+		-font => "TKFN",
+		-anchor => 'w',
+	)->pack(-anchor => 'w');
+	
 	$self->{win_obj} = $win;
 	return $self;
 }
 
+sub check_rs_widget{
+	my $self = shift;
+	if ( $self->{check_rs} ){
+		if ( $self->{method_opt} eq 'K' or $self->{method_opt} eq 'SM' ){
+			$self->{check_rs}->configure(-state => 'normal');
+		 } else {
+			$self->{check_rs}->configure(-state => 'disable');
+		 }
+	}
+}
+
 #----------------------#
 #   設定へのアクセサ   #
+
+sub params{
+	my $self = shift;
+	return (
+		method        => $self->method,
+		method_dist   => $self->method_dist,
+		dim_number    => $self->dim_number,
+		random_starts => gui_window->gui_jg( $self->{check_random_start} ),
+	);
+}
 
 sub dim_number{
 	my $self = shift;
