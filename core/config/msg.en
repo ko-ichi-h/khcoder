@@ -616,7 +616,7 @@ gui_widget::r_mds:
     dist:                     '  Distance:'
     dim:                      'Dimensions:'
     1_3:                      '(from 1 to 3)'
-    random_start:             Run with random starts to find a better solution
+    random_start:             Use random starts to find a better solution (takes time)
 gui_window::word_mds:
     units_words:              'Select the unit & words'
     mds_opt:                  'Multi-Dimensional Scaling Options'

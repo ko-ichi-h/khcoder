@@ -199,14 +199,10 @@ sub calc{
 	$r_command .= "# END: DATA\n";
 
 	my $plot = &make_plot(
-		#base_win       => $self,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
 		$self->{mds_obj}->params,
-		#method         => $self->{mds_obj}->method,
-		#method_dist    => $self->{mds_obj}->method_dist,
-		#dim_number     => $self->{mds_obj}->dim_number,
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
 		bubble         => $self->{bubble_obj}->check_bubble,
@@ -307,25 +303,39 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ($args{method} eq 'K'){
 		$r_command .= "library(MASS)\n";
 		$r_command .= "c <- isoMDS(dj, k=$args{dim_number}, maxit=3000, tol=0.000001)\n";
-		$r_command .= '
+		$r_command .= "
 			if (random_starts == 1){
-					print("Running random starts...")
+					print(\"Running random starts...\")
 					set.seed(123)
 					for (i in 1:1000){ # 200sec
 						init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
-						ct <- isoMDS(dj, y=init, k=2, maxit=3000, tol=0.000001, trace=F)
-						if (ct$stress < c$stress){
+						ct <- isoMDS(dj, y=init, k=$args{dim_number}, maxit=3000, tol=0.000001, trace=F)
+						if (ct\$stress < c\$stress){
 							c <- ct
-							print( paste("random start #", i, ": ",  c$stress, sep=""))
+							print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
 						}
 					}
 			}
-		';
+		";
 		$r_command .= "cl <- c\$points\n";
 	}
 	elsif ($args{method} eq 'S'){
 		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- sammon(dj, k=$args{dim_number})\n";
+		$r_command .= "c <- sammon(dj, k=$args{dim_number}, niter=3000, tol=0.000001)\n";
+		$r_command .= "
+			if (random_starts == 1){
+					print(\"Running random starts...\")
+					set.seed(123)
+					for (i in 1:1000){ # 200sec
+						init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+						ct <- sammon(dj, y=init, k=$args{dim_number}, niter=3000, tol=0.000001, trace=F)
+						if (ct\$stress < c\$stress){
+							c <- ct
+							print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
+						}
+					}
+			}
+		";
 		$r_command .= "cl <- c\$points\n";
 	}
 	elsif ($args{method} eq 'C'){
@@ -335,19 +345,19 @@ while ( is.na(check4mds(d)) == 0 ){
 	elsif ($args{method} eq 'SM'){
 		$r_command .= "library(smacof)\n";
 		$r_command .= "c <- mds(dj, ndim=$args{dim_number}, type=\"ordinal\", itmax=3000)\n";
-		$r_command .= '
+		$r_command .= "
 			if (random_starts == 1){
-				print("Running random starts...")
+				print(\"Running random starts...\")
 				set.seed(123)
 				for (i in 1:200){ # 200 -> 246sec
-					run <- mds(dj, type="ordinal", init = "random", itmax=3000)
-					if (run$stress < c$stress){
+					run <- mds(dj, ndim=$args{dim_number}, type=\"ordinal\", init = \"random\", itmax=3000)
+					if (run\$stress < c\$stress){
 						c <- run
-						print( paste("random start #", i, ": ",  c$stress, sep=""))
+						print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
 					}
 				}
 			}
-		';
+		";
 		$r_command .= "cl <- c\$conf\n";
 	}
 	
@@ -774,7 +784,6 @@ if ( dim_n == 2 ){
 if ( dim_n == 1 ){
 	cl <- cbind(cl[,1],cl[,1])
 }
-
 
 if (plot_mode == "color"){
 	col_txt_words <- "black"

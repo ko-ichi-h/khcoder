@@ -131,7 +131,11 @@ sub _new{
 sub check_rs_widget{
 	my $self = shift;
 	if ( $self->{check_rs} ){
-		if ( $self->{method_opt} eq 'K' or $self->{method_opt} eq 'SM' ){
+		if (
+			   $self->{method_opt} eq 'K'
+			or $self->{method_opt} eq 'S'
+			or $self->{method_opt} eq 'SM'
+		){
 			$self->{check_rs}->configure(-state => 'normal');
 		 } else {
 			$self->{check_rs}->configure(-state => 'disable');
