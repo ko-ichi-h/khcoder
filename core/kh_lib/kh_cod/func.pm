@@ -253,7 +253,7 @@ sub out2r_selected{
 
 	# Rコマンド
 	$file = $::config_obj->uni_path($file);
-	my $r_command = "source(\"$file\")\n";
+	my $r_command = "source(\"$file\", encoding=\"UTF-8\"\)\n";
 	if ($::config_obj->os eq 'win32'){
 		$r_command =~ s/\\/\//g;
 	}
