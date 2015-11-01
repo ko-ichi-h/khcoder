@@ -16,17 +16,10 @@ sub _new{
 	$self->{check_random_start} = 0        unless defined $self->{check_random_start};
 
 	if ( length($self->{r_cmd}) ){
-		if ($self->{r_cmd} =~ /isoMDS/){
+		if ($self->{r_cmd} =~ /method_mds <\- "(.+)"\n/){
+			$self->{method_opt} = $1;
+		} else {
 			$self->{method_opt} = 'K';
-		}
-		elsif ($self->{r_cmd} =~ /sammon/){
-			$self->{method_opt} = 'S';
-		}
-		elsif ($self->{r_cmd} =~ /smacof/){
-			$self->{method_opt} = 'SM';
-		}
-		else {
-			$self->{method_opt} = 'C';
 		}
 
 		if ( $self->{r_cmd} =~ /dj .+euclid/ ){
@@ -39,15 +32,15 @@ sub _new{
 			$self->{method_dist} = 'pearson';
 		}
 
-		if ( $self->{r_cmd} =~ /k=([123])[\), ]/ ){
+		if ( $self->{r_cmd} =~ /dim_n <\- ([123])\n/ ){
 			$self->{dim_number} = $1;
 		} else {
 			$self->{dim_number} = 2;
 		}
 
-		if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
-			$self->{check_random_start} = 1;
-		}
+		#if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
+		#	$self->{check_random_start} = 1;
+		#}
 
 		$self->{r_cmd} = undef;
 	}
@@ -68,7 +61,7 @@ sub _new{
 				['SMACOF',    'SM'],
 			],
 		variable => \$self->{method_opt},
-		command => sub{$self->check_rs_widget;},
+		#command => sub{$self->check_rs_widget;},
 	);
 
 	$f4->Label(
@@ -116,32 +109,24 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	# random start
-	$self->{check_rs} = $win->Checkbutton(
-		-text => kh_msg->get('random_start'), # 乱数による探索
-		-variable => \$self->{check_random_start},
-		-font => "TKFN",
-		-anchor => 'w',
-	)->pack(-anchor => 'w');
-	
 	$self->{win_obj} = $win;
 	return $self;
 }
 
-sub check_rs_widget{
-	my $self = shift;
-	if ( $self->{check_rs} ){
-		if (
-			   $self->{method_opt} eq 'K'
-			or $self->{method_opt} eq 'S'
-			or $self->{method_opt} eq 'SM'
-		){
-			$self->{check_rs}->configure(-state => 'normal');
-		 } else {
-			$self->{check_rs}->configure(-state => 'disable');
-		 }
-	}
-}
+#sub check_rs_widget{
+#	my $self = shift;
+#	if ( $self->{check_rs} ){
+#		if (
+#			   $self->{method_opt} eq 'K'
+#			or $self->{method_opt} eq 'S'
+#			or $self->{method_opt} eq 'SM'
+#		){
+#			$self->{check_rs}->configure(-state => 'normal');
+#		 } else {
+#			$self->{check_rs}->configure(-state => 'disable');
+#		 }
+#	}
+#}
 
 #----------------------#
 #   設定へのアクセサ   #
@@ -152,7 +137,7 @@ sub params{
 		method        => $self->method,
 		method_dist   => $self->method_dist,
 		dim_number    => $self->dim_number,
-		random_starts => gui_window->gui_jg( $self->{check_random_start} ),
+		#random_starts => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 }
 

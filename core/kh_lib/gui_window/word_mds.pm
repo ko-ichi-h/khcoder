@@ -72,6 +72,15 @@ sub _new{
 		-text     => kh_msg->get('r_alpha'), 
 	)->pack(-anchor => 'w');
 
+	# random start
+	$self->{check_rs} = $lf->Checkbutton(
+		-text => kh_msg->get('gui_widget::r_mds->random_start'), # 乱数による探索
+		-variable => \$self->{check_random_start},
+		-font => "TKFN",
+		-justify => 'left',
+		-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
@@ -212,6 +221,7 @@ sub calc{
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
 		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
+		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 	
 	$w->end(no_dialog => 1);
@@ -296,70 +306,13 @@ while ( is.na(check4mds(d)) == 0 ){
 	} else {
 		$r_command .= "random_starts <- 0\n";
 	}
+	$r_command .= "dim_n <- $args{dim_number}\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
-	if ($args{method} eq 'K'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- isoMDS(dj, k=$args{dim_number}, maxit=3000, tol=0.000001)\n";
-		$r_command .= "
-			if (random_starts == 1){
-					print(\"Running random starts...\")
-					set.seed(123)
-					for (i in 1:1000){ # 200sec
-						init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
-						ct <- isoMDS(dj, y=init, k=$args{dim_number}, maxit=3000, tol=0.000001, trace=F)
-						if (ct\$stress < c\$stress){
-							c <- ct
-							print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
-						}
-					}
-			}
-		";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'S'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- sammon(dj, k=$args{dim_number}, niter=3000, tol=0.000001)\n";
-		$r_command .= "
-			if (random_starts == 1){
-					print(\"Running random starts...\")
-					set.seed(123)
-					for (i in 1:1000){ # 200sec
-						init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
-						ct <- sammon(dj, y=init, k=$args{dim_number}, niter=3000, tol=0.000001, trace=F)
-						if (ct\$stress < c\$stress){
-							c <- ct
-							print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
-						}
-					}
-			}
-		";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'C'){
-		$r_command .= "c <- cmdscale(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\n";
-	}
-	elsif ($args{method} eq 'SM'){
-		$r_command .= "library(smacof)\n";
-		$r_command .= "c <- mds(dj, ndim=$args{dim_number}, type=\"ordinal\", itmax=3000)\n";
-		$r_command .= "
-			if (random_starts == 1){
-				print(\"Running random starts...\")
-				set.seed(123)
-				for (i in 1:200){ # 200 -> 246sec
-					run <- mds(dj, ndim=$args{dim_number}, type=\"ordinal\", init = \"random\", itmax=3000)
-					if (run\$stress < c\$stress){
-						c <- run
-						print( paste(\"random start #\", i, \": \",  c\$stress, sep=\"\"))
-					}
-				}
-			}
-		";
-		$r_command .= "cl <- c\$conf\n";
-	}
+	$r_command .= "method_mds <- \"$args{method}\"\n";
+	$r_command .= &r_command_mds();
 	
 	# プロット用のコマンド（次元別）
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
@@ -378,7 +331,6 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_d .= "font_size <- $fontsize\n";
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
-	$r_command_d .= "dim_n <- $args{dim_number}\n";
 	$r_command_d .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # 次元
 	
 	$r_command_d .= "name_dim1 <- paste(name_dim,'1')\n";
@@ -985,5 +937,80 @@ if (plot_mode == "color") {
 ';
 }
 
+sub r_command_mds{
+	return '
+if (method_mds == "K"){
+	# Kruskal
+	library(MASS)
+	c <- isoMDS(dj, k=dim_n, maxit=3000, tol=0.000001)
+	if (random_starts == 1){
+			print("Running random starts...")
+			set.seed(123)
+			for (i in 1:1000){ # 200sec
+				if (dim_n == 1){
+					init <- cbind( rnorm(nrow(d)) )
+				} else if (dim_n == 2){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else if (dim_n == 3){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else {
+					warn("Error: invalid dimesion number!")
+				}
+				ct <- isoMDS(dj, y=init, k=dim_n, maxit=3000, tol=0.000001, trace=F)
+				if (ct$stress < c$stress){
+					c <- ct
+					print( paste("random start #", i, ": ",  c$stress, sep=""))
+				}
+			}
+	}
+	cl <- c$points
+} else if (method_mds == "S"){
+	#Sammon
+	library(MASS)
+	c <- sammon(dj, k=dim_n, niter=3000, tol=0.000001)
+	if (random_starts == 1){
+			print("Running random starts...")
+			set.seed(123)
+			for (i in 1:1000){ # 200sec
+				if (dim_n == 1){
+					init <- cbind( rnorm(nrow(d)) )
+				} else if (dim_n == 2){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else if (dim_n == 3){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else {
+					warn("Error: invalid dimesion number!")
+				}
+				ct <- sammon(dj, y=init, k=dim_n, niter=3000, tol=0.000001, trace=F)
+				if (ct$stress < c$stress){
+					c <- ct
+					print( paste("random start #", i, ": ",  c$stress, sep=""))
+				}
+			}
+	}
+	cl <- c$points
+} else if (method_mds == "C"){
+	# Classical
+	c <- cmdscale(dj, k=dim_n)
+	cl <- c
+} else if (method_mds == "SM"){
+	# SMACOF
+	library(smacof)
+	c <- mds(dj, ndim=dim_n, type="ordinal", itmax=3000)
+	if (random_starts == 1){
+		print("Running random starts...")
+		set.seed(123)
+		for (i in 1:200){ # 200 -> 246sec
+			run <- mds(dj, ndim=dim_n, type="ordinal", init = "random", itmax=3000)
+			if (run$stress < c$stress){
+				c <- run
+				print( paste("random start #", i, ": ",  c$stress, sep=""))
+			}
+		}
+	}
+	cl <- c$conf
+}
+	';
+}
 
 1;

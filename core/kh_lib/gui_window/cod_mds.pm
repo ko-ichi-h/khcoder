@@ -173,6 +173,15 @@ sub _new{
 		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
 	)->pack(-anchor => 'w');
 
+	# random start widget
+	$self->{check_rs} = $lf2->Checkbutton(
+		-text => kh_msg->get('gui_widget::r_mds->random_start'), # 乱数による探索
+		-variable => \$self->{check_random_start},
+		-font => "TKFN",
+		-justify => 'left',
+		-anchor => 'w',
+	)->pack(-anchor => 'w');
+
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
@@ -411,6 +420,7 @@ sub _calc{
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
 		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
+		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 
 	$wait_window->end(no_dialog => 1);

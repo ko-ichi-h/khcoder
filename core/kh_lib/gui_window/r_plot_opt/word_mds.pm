@@ -69,7 +69,7 @@ sub innner{
 		} else {
 			$self->{cls_nei} = 1;
 		}
-		print "cls_nei: $self->{cls_nei}, v: $v,\n";
+		#print "cls_nei: $self->{cls_nei}, v: $v,\n";
 	}
 	$self->{cls_obj} = gui_widget::cls4mds->open(
 		parent       => $lf,
@@ -90,6 +90,22 @@ sub innner{
 	$lf->Checkbutton(
 		-variable => \$self->{use_alpha},
 		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+	)->pack(-anchor => 'w');
+
+	# random start parameter
+	if ( $self->{command_f} =~ /random_starts <\- 1/ ){
+		$self->{check_random_start} = 1;
+	} else {
+		$self->{check_random_start} = 0;
+	}
+
+	# random start widget
+	$self->{check_rs} = $lf->Checkbutton(
+		-text => kh_msg->get('gui_widget::r_mds->random_start'), # Íğ¿ô¤Ë¤è¤ëÃµº÷
+		-variable => \$self->{check_random_start},
+		-font => "TKFN",
+		-justify => 'left',
+		-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	return $self;
@@ -130,6 +146,7 @@ sub calc{
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
 		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
+		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 	$wait_window->end(no_dialog => 1);
 	
