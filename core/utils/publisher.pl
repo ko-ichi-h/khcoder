@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a03d';
+my $V = '3a03e';
 my $V_main = "3.Alpha.03";
-my $V_full = "3.Alpha.03d";
+my $V_full = "3.Alpha.03e";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -36,6 +36,7 @@ my @cp_f = (
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
 	['config/msg.es', 'config/msg.es' ],
+	['config/msg.es', 'config/msg.cn' ],
 );
 
 use File::Find 'find';
@@ -89,13 +90,13 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
+#&source_tgz;
+#&win_pkg;
 	#&win_upd;
 	#&win_strb;
-#&upload;
+&upload;
 
 sub upload{
 	print "Uploading...\n";

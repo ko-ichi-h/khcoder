@@ -185,6 +185,7 @@ sub make{
 				[ 'English'  => 'en'],
 				[ 'Japanese' => 'jp'],
 				[ 'Spanish'  => 'es'],
+				[ 'Chinese'  => 'cn'],
 			],
 		variable => \$self->{optmenu_lg_v},
 		command  => sub {$self->switch_lang;},
