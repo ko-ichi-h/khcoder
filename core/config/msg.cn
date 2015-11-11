@@ -428,7 +428,7 @@ gui_window::main::menu:
   import_save_path: 请指定分析对象文件的保存地址（在同一地方会建立一个coder_data文件夹）
   import_win_title: 从KHC格式的文件导入项目。
   jac_mtrx: 相似性行列
-  kwic: KWIC一致
+  kwic: KWIC Concordance
   man: 使用手册(PDF)
   mds: 多维尺度构成法
   netg: 同现网络
@@ -799,7 +799,7 @@ gui_window::word_conc:
   r5: 右5
   retrieveNum1: （显示前后
   retrieveNum2: 个词）
-  saving: 保存KWIC一致的结果
+  saving: 保存KWIC Concordance的结果
   search: 搜索
   sort1: 排序1：
   sort2: 排序2：
@@ -808,7 +808,7 @@ gui_window::word_conc:
   viewDoc: 显示文档
   viewing: ，显示：
   viewingUnit: 显示单元：
-  win_title: KWIC一致
+  win_title: KWIC Concordance
   word: 提取词汇
 gui_window::word_conc_coloc:
   additional: ' +追加条件'
@@ -868,7 +868,7 @@ gui_window::word_conc_opt:
   r4: 右4
   r5: 右5
   rl: 左右1-5
-  win_title: 追加条件（KWIC一致）
+  win_title: 追加条件（KWIC Concordance）
   word: 提取词汇：
 gui_window::word_corresp:
   biplot: 同时配置标题或者文档编号
@@ -970,7 +970,7 @@ gui_window::word_search:
   conj: 活用
   forw: 前方一致
   freq: 频率
-  kwic: KWIC一致
+  kwic: KWIC Concordance
   morph: 词素
   or: 搜索OR
   part: 部分一致

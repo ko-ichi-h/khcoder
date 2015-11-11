@@ -36,7 +36,7 @@ my @cp_f = (
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
 	['config/msg.es', 'config/msg.es' ],
-	['config/msg.es', 'config/msg.cn' ],
+	['config/msg.cn', 'config/msg.cn' ],
 );
 
 use File::Find 'find';
@@ -90,10 +90,10 @@ use File::Path 'rmtree';
 #                                     é¿çs
 #------------------------------------------------------------------------------
 
-#&web;
+&web;
 	#&pdfs if $pdf;
-#&source_tgz;
-#&win_pkg;
+&source_tgz;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;
