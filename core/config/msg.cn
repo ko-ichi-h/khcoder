@@ -22,7 +22,7 @@ global:
   spss_f: SPSS文件
   tab_f: 栏标定界
   wm_f: 不定长CSV（WordMiner）
-  words: 提取词汇
+  words: 词汇
 gui_errormsg::file:
   could_not_open_the_file: 文件无法打开。结束KH Coder。*
 gui_errormsg::mysql:
@@ -65,7 +65,7 @@ gui_widget::mail_config:
 gui_widget::r_cls:
   average: 群平均法
   by_docs: 每个文档
-  by_words: 每个提取词汇
+  by_words: 每个词汇
   clara: CLARA
   color: 集群的颜色区分
   complete: 最远邻法
@@ -183,7 +183,7 @@ gui_window::bayes_view_knb:
   n_types: 不同的词汇数：
   search: 搜索
   variance: 分散
-  whole: 所有提取词汇的明细表
+  whole: 所有词汇的明细表
   win_title: 学习结果文件：
 gui_window::bayes_view_log:
   class: 分类：
@@ -193,11 +193,11 @@ gui_window::bayes_view_log:
   model_file: 学习结果：
   run: 搜索
   saved_var: 保存先变量：
-  search_words: 提取词汇的搜索：
+  search_words: 词汇的搜索：
   unit: 分类单元：
   variance: 分散
   win_title: 分类日志文件：
-  word: 提取词汇
+  word: 词汇
 gui_window::cls_height:
   all: 全体
   f50: << 最初的50
@@ -210,7 +210,7 @@ gui_window::cls_height::doc:
   overwr: 覆盖这个文件可以吗：
   win_title: 文档的的集群分析：合并水平
 gui_window::cls_height::word:
-  win_title: 提取词汇的集群分析：合并水平
+  win_title: 词汇的集群分析：合并水平
 gui_window::cod_cls:
   win_titile: 编码集群分析：选项
 gui_window::cod_corresp:
@@ -245,7 +245,7 @@ gui_window::cod_mds:
 gui_window::cod_netg:
   c_c: 词汇-词汇
   c_v: 词汇-外部变量和标题
-  win_title: 编码同现网络：选项
+  win_title: 编码网络：选项
 gui_window::cod_out::csv:
   save_as: 编码结果（CSV）：附上名字然后保存
   win_title: 输出编码结果：CSV文件
@@ -278,15 +278,15 @@ gui_window::cod_som:
 gui_window::contxt_out:
   options: 汇总单元和加权
   use: 使用
-  words: 提取词汇
-  words4cntxt: 用于上下文矢量计算的提取词汇
+  words: 词汇
+  words4cntxt: 用于上下文矢量计算的词汇
 gui_window::contxt_out::csv:
-  saving: “提取词汇ｘ上下文矢量”表：附上名字然后保存
-  win_title: “提取词汇ｘ上下文矢量”表的输出：CSV
+  saving: “词汇ｘ上下文矢量”表：附上名字然后保存
+  win_title: “词汇ｘ上下文矢量”表的输出：CSV
 gui_window::contxt_out::spss:
-  win_title: “提取词汇ｘ上下文矢量”表的输出：SPSS
+  win_title: “词汇ｘ上下文矢量”表的输出：SPSS
 gui_window::contxt_out::tab:
-  win_title: “提取词汇ｘ上下文矢量”表的输出：栏标定界
+  win_title: “词汇ｘ上下文矢量”表的输出：栏标定界
 gui_window::datacheck:
   auto_correct: 分析对象文件的自动修正：
   close: 关闭
@@ -315,7 +315,7 @@ gui_window::dictionary:
   win_title: 选择在分析中使用词汇的取舍
 gui_window::doc_cls:
   fail: 计算失败
-  select_3words: 请选择至少3个的提取词汇。
+  select_3words: 请选择至少3个的词汇。
   verb: 使用
   win_title: 文档的集群分析：选项
 gui_window::doc_cls_res:
@@ -381,7 +381,7 @@ gui_window::force_color:
   type: 种类：
   type_h: 种类
   win_title: 强调的单词
-  word: 提取词汇
+  word: 词汇
 gui_window::hukugo:
   h_freq: 出现数
   h_huku: 复合词
@@ -393,7 +393,7 @@ gui_window::main::inner:
   docs: 文档的简单汇总
   memo: 说明（备忘录）：
   target: 现在的项目：
-  tokens: 总提取词汇数（使用）：
+  tokens: 词汇数（使用）：
   types: 不同的词汇数（使用）：
   units: 汇总单元
 gui_window::main::menu:
@@ -412,7 +412,7 @@ gui_window::main::menu:
   cross_vr: 交叉汇总
   desc_stats: 描述性统计
   doc_search: 搜索文档
-  doc_term_mtrx: “文档ｘ提取词汇”表的输出
+  doc_term_mtrx: “文档ｘ词汇”表的输出
   docs: 文档
   docs_bayes: 根据贝叶斯学习的分类
   exec_sql: SQL语句的执行
@@ -431,7 +431,7 @@ gui_window::main::menu:
   kwic: KWIC Concordance
   man: 使用手册(PDF)
   mds: 多维尺度构成法
-  netg: 同现网络
+  netg: 网络
   new: 新建
   open: 打开
   open_knb: 选择阅览的学习结果文件
@@ -444,7 +444,7 @@ gui_window::main::menu:
   read: 读取
   run_prep: 执行预处理
   som: 自组织映射
-  term_vec_mtrx: “提取词汇ｘ上下文矢量”表的输出
+  term_vec_mtrx: “词汇ｘ上下文矢量”表的输出
   text_format: 文本文件的变形
   tf_df: 出现次数×文档数的图表
   to_csv: 从HTML变换为CSV
@@ -455,9 +455,9 @@ gui_window::main::menu:
   vars_heads: 外部变量和标题
   web: 最新信息（Web）
   word_ass: 搜索相关词汇
-  word_freq: 提取词汇明细
-  word_search: 搜索提取词汇
-  words: 提取词汇
+  word_freq: 词频表
+  word_search: 搜索词汇
+  words: 词汇
   words_cluster: 检测复合词
   words_selection: 选择词汇的取舍
 gui_window::morpho_check:
@@ -469,15 +469,15 @@ gui_window::morpho_crossout:
   output: 输出
 gui_window::morpho_crossout::csv:
   er_no_pos: 一个词类也没有被选择。
-  saving: “文档ｘ提取词汇”表：附上名字然后保存
-  win_title: “文档ｘ提取词汇”表的输出：CSV
+  saving: “文档ｘ词汇”表：附上名字然后保存
+  win_title: “文档ｘ词汇”表的输出：CSV
 gui_window::morpho_crossout::spss:
-  win_title: “文档ｘ提取词汇”表的输出：SPSS
+  win_title: “文档ｘ词汇”表的输出：SPSS
 gui_window::morpho_crossout::tab:
   tabdel: 栏标定界
-  win_title: “文档ｘ提取词汇”表的输出：栏标定界
+  win_title: “文档ｘ词汇”表的输出：栏标定界
 gui_window::morpho_crossout::var:
-  win_title: “文档ｘ提取词汇”表的输出：不定长CSV
+  win_title: “文档ｘ词汇”表的输出：不定长CSV
 gui_window::morpho_detail:
   base: 基本形
   hyoso: 表层词汇
@@ -573,21 +573,21 @@ gui_window::r_plot::cod_mat_line:
 gui_window::r_plot::cod_mds:
   win_title: 编码多维尺度法
 gui_window::r_plot::cod_netg:
-  win_title: 编码同现网络
+  win_title: 编码网络
 gui_window::r_plot::cod_som:
   win_title: 编码自组织映射
 gui_window::r_plot::doc_cls:
   win_title: 文档的树状图
 gui_window::r_plot::selected_netgraph:
   color: 彩色：
-  win_title: 相关词汇同现网络
+  win_title: 相关词汇网络
 gui_window::r_plot::word_cls:
   agglomer: 合并水平
   ave: 群平均法
   clink: 最远邻法
   method: 方法：
   ward: Ward法
-  win_title: 提取词汇集群分析
+  win_title: 词汇集群分析
 gui_window::r_plot::word_corresp:
   col: 彩色
   d: 只有点
@@ -595,9 +595,9 @@ gui_window::r_plot::word_corresp:
   gray: 灰度等级
   var: 只有变量
   view: 显示：
-  win_title: 提取词汇和对应分析
+  win_title: 词汇和对应分析
 gui_window::r_plot::word_mds:
-  win_title: 提取词汇多维尺度法
+  win_title: 词汇多维尺度法
 gui_window::r_plot::word_netgraph:
   cnt_b: 中心性（中介）
   cnt_d: 中心性(度)
@@ -609,14 +609,14 @@ gui_window::r_plot::word_netgraph:
   com_r: 检测副图表（random walks）
   gray: 灰度等级
   none: 没有
-  win_title: 提取词汇同现网络
+  win_title: 词汇网络
 gui_window::r_plot::word_som:
   cls: 集群
   freq: 频率
   gray: 灰度等级
   umat: U-Matrix
   views: 彩色：
-  win_title: 提取词汇自组织映射
+  win_title: 词汇自组织映射
 gui_window::r_plot_opt::cod_cls:
   win_title: 编码集群分析：调整
 gui_window::r_plot_opt::cod_corresp:
@@ -641,24 +641,24 @@ gui_window::r_plot_opt::cod_mat_line:
 gui_window::r_plot_opt::cod_mds:
   win_title: 编码多维尺度法：调整
 gui_window::r_plot_opt::cod_netg:
-  win_title: 编码同现网络：调整
+  win_title: 编码网络：调整
 gui_window::r_plot_opt::cod_som:
   win_title: 编码自组织映射：调整
 gui_window::r_plot_opt::doc_cls:
   win_title: 文档的树状图调整
 gui_window::r_plot_opt::selected_netgraph:
-  win_title: 相关词汇同现网络：调整
+  win_title: 相关词汇网络：调整
 gui_window::r_plot_opt::word_cls:
   err_no_auto: 该Window中不能指定“Auto”。请输入数值。
-  win_title: 提取词汇集群分析：调整
+  win_title: 词汇集群分析：调整
 gui_window::r_plot_opt::word_corresp:
-  win_title: 提取词汇对应分析：调整
+  win_title: 词汇对应分析：调整
 gui_window::r_plot_opt::word_mds:
-  win_title: 提取词汇多维尺度法：调整
+  win_title: 词汇多维尺度法：调整
 gui_window::r_plot_opt::word_netgraph:
-  win_title: 提取词汇同现网络：调整
+  win_title: 词汇网络：调整
 gui_window::r_plot_opt::word_som:
-  win_title: 提取词汇自组织映射：调整
+  win_title: 词汇自组织映射：调整
 gui_window::sql_select:
   Server: 服务器：
   exec: 执行
@@ -747,7 +747,7 @@ gui_window::word_ass:
   hits: 文档数：
   hits0: 文档数：0
   msg_l5: 由于被列出来词汇的数量为不足5，处理中止。
-  net: 同现网络
+  net: 网络
   no_code: '#没有代码'
   or: 搜索OR
   pos_h: 词类
@@ -757,7 +757,7 @@ gui_window::word_ass:
   sort_h: 排序
   unit: 汇总单元：
   win_title: 搜索相关词汇
-  word_h: 提取词汇
+  word_h: 词汇
 gui_window::word_ass_opt:
   by_df: 根据在全体里的出现数来选择词汇
   by_pos: 根据词类选择词汇
@@ -775,8 +775,8 @@ gui_window::word_cls:
   last2: 次
   note1: ※图表里的数值标签为合并后的集群总数
   opt: 集群分析的选项
-  u_w: 汇总单元和提取词汇的选择
-  win_title: 提取词汇集群分析：选项
+  u_w: 汇总单元和词汇的选择
+  win_title: 词汇集群分析：选项
 gui_window::word_conc:
   additional: 追加条件
   center: 活用形
@@ -809,7 +809,7 @@ gui_window::word_conc:
   viewing: ，显示：
   viewingUnit: 显示单元：
   win_title: KWIC Concordance
-  word: 提取词汇
+  word: 词汇
 gui_window::word_conc_coloc:
   additional: ' +追加条件'
   conj: 活用形：
@@ -818,7 +818,7 @@ gui_window::word_conc_coloc:
   h_pos: 词类
   h_r_total: 右边合计
   h_score: 分数
-  h_word: 提取词汇：
+  h_word: 词汇：
   hits: 叫用次数：
   l1: 左1
   l2: 左2
@@ -837,7 +837,7 @@ gui_window::word_conc_coloc:
   span: 汇总范围：
   total: 合计
   win_title: 配置统计
-  word: 提取词汇：
+  word: 词汇：
 gui_window::word_conc_coloc_opt:
   filter_by_pos: ・根据词类选择词汇：
   no_less_than: 最小：
@@ -869,7 +869,7 @@ gui_window::word_conc_opt:
   r5: 右5
   rl: 左右1-5
   win_title: 追加条件（KWIC Concordance）
-  word: 提取词汇：
+  word: 词汇：
 gui_window::word_corresp:
   biplot: 同时配置标题或者文档编号
   check_var_unit: 现在，不能同时使用汇总单元不同的外部变量。
@@ -882,9 +882,9 @@ gui_window::word_corresp:
   na: 不能使用
   nav: 缺值
   option_ca: 对应分析的选项
-  option_words: 选择提取词汇
+  option_words: 选择词汇
   plot: 配置
-  select_3words: 请至少配置3个提取词汇。
+  select_3words: 请至少配置3个词汇。
   select_pos: 一个词类也没有被选择。
   select_var: 请至少选择1个外部变量。
   too_many1: 现在的设定中
@@ -893,9 +893,9 @@ gui_window::word_corresp:
   too_many4: 可以继续吗？
   top: 上位
   unit: 汇总单元：
-  w_d: 提取词汇×文档
-  w_v: 提取词汇×外部变量
-  win_title: 提取词汇对应分析：选项
+  w_d: 词汇×文档
+  w_v: 词汇×外部变量
+  win_title: 词汇对应分析：选项
   words: 词汇
 gui_window::word_df_freq:
   c_freq: 累积频率
@@ -940,32 +940,32 @@ gui_window::word_list:
   single: 1列
   tf: 出现次数（TF）
   top150: 频繁出现的150个词汇
-  type: 提取词汇明细的格式：
-  win_title: 提取词汇明细-选项
+  type: 词频表的格式：
+  win_title: 词频表-选项
   xls: Excel (*.xls)
 gui_window::word_mds:
   dim: 次元
   error_dim: 次元的指定不正确。请指定从1到3的数值。
   mds_opt: 多维尺度法的选项
-  omit: 以下的提取词汇/代码已经从分析中省略了：
+  omit: 以下的词汇/代码已经从分析中省略了：
   plot: 配置
   r_alpha: 半透明的颜色（不能用EMF和EPS格式保存）
-  select_5words: 请至少配置5个提取词汇。
-  units_words: 汇总单元和提取词汇的选择
-  win_title: 提取词汇多维尺度法：选项
+  select_5words: 请至少配置5个词汇。
+  units_words: 汇总单元和词汇的选择
+  win_title: 词汇多维尺度法：选项
 gui_window::word_netgraph:
   e_type: 共现关系（edge）的种类
-  net_opt: 同现网络的设定
-  u_w: 汇总单元和提取词汇的选择
+  net_opt: 网络的设定
+  u_w: 汇总单元和词汇的选择
   use: 使用
   var: 外部变量和标题：
   w_v: 词汇-外部变量和标题
   w_w: 词汇-词汇
-  win_title: 提取词汇同现网络：选项
+  win_title: 词汇网络：选项
 gui_window::word_search:
   and: 搜索AND
   back: 后方一致
-  baseform: 搜索提取词汇
+  baseform: 搜索词汇
   comp: 完全一致
   conj: 活用
   forw: 前方一致
@@ -978,14 +978,14 @@ gui_window::word_search:
   pos_conj: 词类/活用
   search: 搜索
   view_conj: 显示活用形
-  win_title: 搜索提取词汇
-  word: 提取词汇
+  win_title: 搜索词汇
+  word: 词汇
 gui_window::word_som:
   cluster: 配置
   opt: 自组织映射的选项
   time_warn: ※自组织映射的制作有时需要数小时乃至几天。
-  u_w: 汇总单元和提取词汇的选择
-  win_title: 提取词汇自组织映射：选项
+  u_w: 汇总单元和词汇的选择
+  win_title: 词汇自组织映射：选项
 gui_window::word_tf_df:
   df: 文档数
   log: 使用对数轴：
@@ -1086,4 +1086,4 @@ mysql_words:
   std_dev_tf: 出现次数的标准偏差
   tf: 出现次数
   types: 不同的词数（n）
-  words: 提取词汇
+  words: 词汇
