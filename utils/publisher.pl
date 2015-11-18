@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '200b';
+my $V = '200c';
 my $V_main = "2.00";
-my $V_full = "2.00b";
+my $V_full = "2.00c";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -150,7 +150,7 @@ sub web{
 	$r0->is_success or die;
 	$t = $r0->content;
 	
-	$t =~ s/Ver\. 2\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	$t =~ s/Ver\. 2\.[0-9]+[a-z]*,/Ver\. $V_full,/;  # バージョン番号
 	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
 	
 	open(my $fh, '>', "../pub/base/web/index.html") or die;
