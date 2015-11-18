@@ -472,7 +472,7 @@ sub outtab{
 	# コーディングの実行
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
-	$self->cumulate if @{$self->{valid_codes}} > 30;
+	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
 	# 外部変数のチェック
 	my ($outvar_tbl,$outvar_clm);
