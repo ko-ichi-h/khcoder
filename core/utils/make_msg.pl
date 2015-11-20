@@ -2,8 +2,8 @@ use strict;
 use Encode;
 use utf8;
 
-my $file_in = "lang2.txt";
-my $file_out = "msg.cn";
+my $file_in = "lang3.txt";
+my $file_out = "msg.kr";
 
 my $t;
 
