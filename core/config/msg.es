@@ -296,7 +296,7 @@ gui_window::sql_select:
     win_title:                Ejecutar Sentencias SQL
 gui_window::sysconfig:
     apps:                     Aplicaciones
-    browse_:                  ' '
+    browse_:                  Abrir ____
     browse_chasen:            Abrir ChaSen.exe
     browse_mecab:             Abrir MeCab.exe
     browse_stanford_jar:      Abrir stanford-postagger.jar

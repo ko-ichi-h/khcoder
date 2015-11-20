@@ -673,7 +673,7 @@ gui_window::stop_words:
   select_all: 全部选择
 gui_window::sysconfig:
   apps: 外部应用
-  browse_: 请打开
+  browse_: 请打开____
   browse_chasen: 请打开ChaSen.exe
   browse_mecab: 请打开MeCab.exe
   browse_stanford_jar: 请打开stanford-postagger.jar。

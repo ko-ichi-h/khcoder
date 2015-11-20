@@ -294,7 +294,7 @@ gui_window::sql_select:
     win_title:                SQL文の実行
 gui_window::sysconfig:
     apps:                     外部アプリケーション
-    browse_:                  を開いてください。
+    browse_:                  ____を開いてください。
     browse_chasen:            ChaSen.exeを開いてください
     browse_mecab:             MeCab.exeを開いてください
     browse_stanford_jar:      stanford-postagger.jarを開いてください。

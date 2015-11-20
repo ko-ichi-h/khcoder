@@ -438,9 +438,12 @@ sub gui_get_exe{
 		["All files", '*']
 	);
 
+	my $msg = kh_msg->get('browse_');
+	$msg =~ s/____/$file/;
+	
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes => \@types,
-		-title => $file.kh_msg->get('browse_'),
+		-title => $msg,
 		-initialdir => $self->gui_jchar($::config_obj->cwd)
 	);
 

@@ -182,11 +182,11 @@ sub make{
 		pack    => {-side => 'right'},
 		options =>
 			[
+				[ 'Chinese'  => 'cn'],
 				[ 'English'  => 'en'],
 				[ 'Japanese' => 'jp'],
+				[ 'Korean'   => 'kr'],
 				[ 'Spanish'  => 'es'],
-				[ 'Chinese (preliminary)'  => 'cn'],
-				[ 'Korean (preliminary)'  => 'kr'],
 			],
 		variable => \$self->{optmenu_lg_v},
 		command  => sub {$self->switch_lang;},

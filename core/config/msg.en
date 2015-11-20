@@ -294,7 +294,7 @@ gui_window::sql_select:
     win_title:                Execute SQL Statements
 gui_window::sysconfig:
     apps:                     Applications
-    browse_:                  ' '
+    browse_:                  Please open ____
     browse_chasen:            Please open ChaSen.exe
     browse_mecab:             Please open MeCab.exe
     browse_stanford_jar:      Please open stanford-postagger.jar

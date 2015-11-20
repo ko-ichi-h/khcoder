@@ -673,7 +673,7 @@ gui_window::stop_words:
   select_all: 모두 선택
 gui_window::sysconfig:
   apps: 외부 어플리케이션
-  browse_: '을/를 열어 주십시오. '
+  browse_: ____를 열어 주십시오
   browse_chasen: ChaSen.exe를 열어 주십시오
   browse_mecab: MeCab.exe를 열어 주십시오
   browse_stanford_jar: stanford-postagger.jar를 열어 주십시오.
