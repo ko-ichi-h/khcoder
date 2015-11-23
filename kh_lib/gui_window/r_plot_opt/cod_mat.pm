@@ -54,7 +54,8 @@ sub innner{
 
 	# 共通のパラメーター
 	my @code_names = ();
-	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
+	my $euc_command = Jcode->new($self->{command_f})->euc;
+	if ( $euc_command =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
 		@code_names = eval( "($1)" );
 	}
 	#if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
@@ -62,7 +63,7 @@ sub innner{
 	#}
 	
 	my %selected = ();
-	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
+	if ( $euc_command =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
 		#print "code selection: found!\n";
 		my @selecteda = eval( "($1)" );
 		foreach my $i (@selecteda){
