@@ -87,7 +87,7 @@ sub _run_from_morpho{
 	;
 	$data_out = Encode::encode('shift-jis',$data_out);
 	
-	"複合語,スコア\n";
+	#"複合語,スコア\n";
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("

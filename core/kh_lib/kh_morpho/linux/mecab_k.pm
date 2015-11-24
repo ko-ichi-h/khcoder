@@ -19,8 +19,8 @@ sub convert_main {
   my $init_ind = int($int/588);
   my $final_ind = $int % 28;
   my $med_ind = int(($int - ($init_ind * 588) - $final_ind) / 28);
-  my $char = $initial[$init_ind] . $medial[$med_ind] . $final[$final_ind];
-  return $char;
+  my $r = $initial[$init_ind] . $medial[$med_ind] . $final[$final_ind];
+  return $r;
 }
 
 #---------------------#

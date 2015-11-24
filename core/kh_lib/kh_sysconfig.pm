@@ -402,7 +402,7 @@ sub use_hukugo{
 sub mecab_unicode{
 	my $self = shift;
 	my $new = shift;
-	if (length($new) > 0){
+	if ( defined($new) ){
 		$self->{mecab_unicode} = $new;
 	}
 	return $self->{mecab_unicode};

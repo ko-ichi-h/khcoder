@@ -21,7 +21,7 @@ $password = '' unless defined ($password);
 $host     = '' unless defined ($host);
 $port     = '' unless defined ($port);
 
-my $mysql_version;
+my $mysql_version = -1;
 my $win_9x = 0;
 
 my $dbh_common;

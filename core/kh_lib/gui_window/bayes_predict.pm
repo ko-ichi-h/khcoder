@@ -151,7 +151,7 @@ sub _calc{
 
 	# 入力チェック
 	my $path_i = $self->gui_jg( $self->{entry}->get );
-	my $path_i= $::config_obj->os_path($path_i);
+	$path_i= $::config_obj->os_path($path_i);
 	unless (-e $path_i ){
 		gui_errormsg->open(
 			type   => 'msg',
