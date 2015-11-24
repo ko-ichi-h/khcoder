@@ -256,6 +256,7 @@ sub set_par{
 		$font = $::config_obj->font_plot_current;
 	}
 	$::config_obj->R->send( "par(family=\"$font\")" );
+	$::config_obj->R->send( "PERL_font_family <- \"$font\"" );
 
 	# Windowsではロケールを設定する
 	if ($::config_obj->os eq 'win32') {

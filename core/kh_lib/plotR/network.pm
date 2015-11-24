@@ -32,6 +32,11 @@ sub new{
 	#$r_command .= "cex <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
 
+	unless ( $args{view_coef} ){
+		$args{view_coef} = 0;
+	}
+	$r_command .= "view_coef <- $args{view_coef}\n";
+	
 	unless ( $args{fix_lab} ){
 		$args{fix_lab} = 0;
 	}
@@ -1311,6 +1316,23 @@ if ( exists("target_words") ){
 	}
 }
 
+edge_label <- NULL
+if (view_coef == 1){
+	edge_label <- substring(
+		round(
+			get.edge.attribute(n2,"weight"),
+			digits=2
+		),
+		2,
+		4
+	)
+}
+
+font_fam <- NULL
+if ( exists("PERL_font_family") ){
+	font_fam <- PERL_font_family
+}
+
 # プロット
 if (smaller_nodes ==1){
 	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
@@ -1336,6 +1358,9 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			edge.color         =edg_col,
 			edge.lty           =edg_lty,
 			edge.width         =edg_width,
+			edge.label         =edge_label,
+			edge.label.cex     =0.9,
+			edge.label.family  =font_fam,
 			layout             =lay_f,
 			rescale            =F
 		)
@@ -1384,6 +1409,8 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			edge.color         =edg_col,
 			edge.lty           =edg_lty,
 			edge.width         =edg_width,
+			edge.label         =edge_label,
+			edge.label.family  =font_fam,
 			layout             =lay_f,
 			rescale            =F,
 			add = T

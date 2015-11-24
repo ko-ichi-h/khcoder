@@ -77,7 +77,10 @@ sub _new{
 		if ($self->{r_cmd} =~ /fix_lab <- ([01])\n/){
 			$self->{check_fix_lab} = $1;
 		}
-
+		if ($self->{r_cmd} =~ /view_coef <- ([01])\n/){
+			$self->{view_coef} = $1;
+		}
+	
 		if ($edges == 0){
 			$self->{radio} = 'j';
 			if ($self->{r_cmd} =~ /# edges: ([0-9]+)\n/){
@@ -162,7 +165,21 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
-	# Edgeの太さ・Nodeの大きさ
+	# Edgeの太さ
+	my $edge_frame = $lf->Frame()->pack(-anchor => 'w');
+	$edge_frame->Checkbutton(
+			-text     => kh_msg->get('thicker'),
+			-variable => \$self->{check_use_weight_as_width},
+			-anchor => 'w',
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$edge_frame->Checkbutton(
+			-text     => kh_msg->get('view_coef'),
+			-variable => \$self->{view_coef},
+			-anchor => 'w',
+	)->pack(-anchor => 'w');
+
+	# Nodeの大きさ
 	my $msg;
 	if ($self->{type} eq 'codes'){
 		$msg = kh_msg->get('larger_c');
@@ -170,12 +187,6 @@ sub _new{
 		$msg = kh_msg->get('larger');
 	}
 	
-	$lf->Checkbutton(
-			-text     => kh_msg->get('thicker'),
-			-variable => \$self->{check_use_weight_as_width},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
-
 	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
 			-text     => $msg, # 出現数の多い語ほど大きい円で描画','euc
 			-variable => \$self->{check_use_freq_as_size},
@@ -198,7 +209,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
-			-text     => kh_msg->get('larger_font'), # フォントも大きく ※EMFやEPSでの出力・印刷向け','euc
+			-text     => kh_msg->get('larger_font'), # フォントも大きく
 			-variable => \$self->{check_use_freq_as_fsize},
 			-anchor => 'w',
 			-state => 'disabled',
@@ -213,6 +224,8 @@ sub _new{
 				$self->refresh(3);
 			},
 	)->pack(-anchor => 'w');
+
+
 
 	$self->{check_min_sp_tree} = 0 unless defined($self->{check_min_sp_tree});
 	$lf->Checkbutton(
@@ -316,6 +329,7 @@ sub params{
 		gray_scale          => $self->gray_scale,
 		edge_type           => $self->{edge_type},
 		fix_lab             => $self->fix_lab,
+		view_coef           => gui_window->gui_jg( $self->{view_coef} ),
 	);
 }
 

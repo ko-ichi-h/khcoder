@@ -735,6 +735,7 @@ gui_widget::r_net:
     min_sp_tree_only:         'Draw the minimum spanning only'
     gray_scale:               'Grayscale (centralities & communities)'
     fix_lab:                  'Avoid overlapping of labels'
+    view_coef:                Show coef.
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''

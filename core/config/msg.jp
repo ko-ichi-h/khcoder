@@ -720,7 +720,7 @@ gui_widget::r_net:
     e_top_n:                  '描画数：'
     e_jac:                    'Jaccard係数：'
     or_more:                  '以上'
-    thicker:                  '強い共起関係ほど太い線で描画'
+    thicker:                  '強い共起関係ほど太い線に'
     larger:                   '出現数の多い語ほど大きい円で描画'
     larger_c:                 '出現数の多いコードほど大きい円で描画'
     larger_font:              'フォントも大きく ※EMFやEPSでの出力・印刷向け'
@@ -729,6 +729,7 @@ gui_widget::r_net:
     min_sp_tree_only:         '最小スパニング・ツリーだけを描画'
     gray_scale:               'グレースケールで表現（中心性・サブグラフ）'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
+    view_coef:                係数を表示
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'
