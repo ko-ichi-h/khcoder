@@ -897,7 +897,7 @@ neg_to_zero <- function(nums){
 
 # edge.width¤ò·×»»
 if ( use_weight_as_width == 1 ){
-	edg_width <- el2[,3]
+	edg_width <- get.edge.attribute(n2, "weight")
 	if ( sd( edg_width ) == 0 ){
 		edg_width <- 1
 	} else {
