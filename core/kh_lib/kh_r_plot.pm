@@ -1,6 +1,9 @@
 package kh_r_plot;
 use strict;
 
+use kh_r_plot::network;
+use kh_r_plot::corresp;
+
 use vars qw($if_font);
 $kh_r_plot::if_font = 0;
 
@@ -385,6 +388,12 @@ sub save{
 	}
 	elsif ($path =~ /\.svg$/i){
 		$self->_save_svg($path);
+	}
+	elsif ($path =~ /\.graphml$/i){
+		$self->_save_graphml($path);
+	}
+	elsif ($path =~ /\.csv$/i){
+		$self->_save_csv($path);
 	}
 	else {
 		warn "The file type is not supported yet:\n$path\n";

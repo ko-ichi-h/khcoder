@@ -4,7 +4,7 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
-use kh_r_plot;
+use kh_r_plot::corresp;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
@@ -744,7 +744,7 @@ sub make_plot{
 	#$r_command = Encode::decode('euc-jp', $r_command);
 	$r_command = $r_command;
 
-	kh_r_plot->clear_env;
+	kh_r_plot::corresp->clear_env;
 
 	$r_command .= "r_max <- 150\n";
 	$r_command .= "d_x <- $args{d_x}\n";
@@ -851,7 +851,7 @@ sub make_plot{
 
 	# プロット作成
 	my $flg_error = 0;
-	my $plot1 = kh_r_plot->new(
+	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $args{plot_size},
@@ -859,7 +859,7 @@ sub make_plot{
 		font_size => $args{font_size},
 	) or $flg_error = 1;
 
-	my $plot2 = kh_r_plot->new(
+	my $plot2 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
@@ -871,7 +871,7 @@ sub make_plot{
 	my ($plotg, $plotv);
 	my @plots = ();
 	if ($r_com_gray_a){
-		$plotg = kh_r_plot->new(
+		$plotg = kh_r_plot::corresp->new(
 			name      => $args{plotwin_name}.'_g',
 			command_a => $r_com_gray_a,
 			command_f => $r_com_gray,
@@ -880,7 +880,7 @@ sub make_plot{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 		
-		$plotv = kh_r_plot->new(
+		$plotv = kh_r_plot::corresp->new(
 			name      => $args{plotwin_name}.'_v',
 			command_a => $r_command_3a,
 			command_f => $r_command_3,
@@ -903,7 +903,7 @@ sub make_plot{
 		print "---------------------------------------------------------[R]\n";
 	}
 
-	kh_r_plot->clear_env;
+	kh_r_plot::corresp->clear_env;
 
 	return undef if $flg_error;
 
@@ -1031,7 +1031,10 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	}
 	d <- d[,order(sort,decreasing=T)]
 	d <- d[,1:flw]
-	d <- subset(d, rowSums(d) > 0)
+	
+	doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+	d              <- subset(d,              rowSums(d) > 0)
+	n_total <- doc_length_mtr[,2]
 }
 
 c <- corresp(d, nf=min( nrow(d), ncol(d) ) )

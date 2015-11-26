@@ -3,7 +3,7 @@ package plotR::network;
 use utf8;
 
 use strict;
-use kh_r_plot;
+use kh_r_plot::network;
 
 sub new{
 	my $class = shift;
@@ -15,7 +15,7 @@ sub new{
 	my $self = \%args;
 	bless $self, $class;
 
-	kh_r_plot->clear_env;
+	kh_r_plot::network->clear_env;
 
 	my $r_command = $args{r_command};
 	$args{r_command} = '';
@@ -89,7 +89,7 @@ sub new{
 	my $flg_error = 0;
 	
 	if ($self->{edge_type} eq 'twomode'){
-		$plots[0] = kh_r_plot->new(
+		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
 				 $r_command
@@ -103,7 +103,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[1] = kh_r_plot->new(
+		$plots[1] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_2',
 			command_f =>
 				 $r_command
@@ -121,7 +121,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 	} else {
-		$plots[0] = kh_r_plot->new(
+		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
 				 $r_command
@@ -135,7 +135,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[1] = kh_r_plot->new(
+		$plots[1] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_2',
 			command_f =>
 				 $r_command
@@ -153,7 +153,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[2] = kh_r_plot->new(
+		$plots[2] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_3',
 			command_f =>
 				 $r_command
@@ -171,7 +171,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[3] = kh_r_plot->new(
+		$plots[3] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_4',
 			command_f =>
 				 $r_command
@@ -189,7 +189,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[4] = kh_r_plot->new(
+		$plots[4] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_5',
 			command_f =>
 				 $r_command
@@ -207,7 +207,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[5] = kh_r_plot->new(
+		$plots[5] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_6',
 			command_f =>
 				 $r_command
@@ -225,7 +225,7 @@ sub new{
 			font_size => $args{font_size},
 		) or $flg_error = 1;
 
-		$plots[6] = kh_r_plot->new(
+		$plots[6] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_7',
 			command_f =>
 				 $r_command
@@ -312,7 +312,7 @@ sub new{
 		$i->{command_f} .= "\n# min. jaccard: $info_jac\n";
 	}
 
-	kh_r_plot->clear_env;
+	kh_r_plot::network->clear_env;
 	undef $self;
 	undef %args;
 	$self->{result_plots} = \@plots;
@@ -327,12 +327,12 @@ sub r_plot_cmd_p1{
 	return '
 
 # 頻度計算
-if (use_freq_as_size == 1){
+#if (use_freq_as_size == 1){
 	freq <- NULL
 	for (i in 1:length( rownames(d) )) {
 		freq[i] = sum( d[i,] )
 	}
-}
+#}
 
 # 類似度計算 
 d <- dist(d,method="binary")
