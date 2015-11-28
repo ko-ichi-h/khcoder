@@ -101,13 +101,15 @@ out <- rbind(
 		type = "col",
 		frequency = colSums(d),
 		size = c_size,
-		c$cscore
+		c$cscore,
+		row.names = rownames(c$cscore)
 	),
 	data.frame(
 		type = "row",
 		frequency = n_total,
 		size = r_size,
-		c$rscore
+		c$rscore,
+		row.names = rownames(c$rscore)
 	)
 )
 
