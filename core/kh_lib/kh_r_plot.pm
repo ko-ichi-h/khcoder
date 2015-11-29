@@ -392,6 +392,9 @@ sub save{
 	elsif ($path =~ /\.graphml$/i){
 		$self->_save_graphml($path);
 	}
+	elsif ($path =~ /\.net$/i){
+		$self->_save_net($path);
+	}
 	elsif ($path =~ /\.csv$/i){
 		$self->_save_csv($path);
 	}

@@ -4,6 +4,32 @@ use base qw(kh_r_plot);
 
 use strict;
 
+sub _save_net{
+	my $self = shift;
+	my $path = shift;
+
+	my $temp_img = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name}.'.tmp';
+
+	# open dvice
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=640, height=640, unit=\"px\", file=\"$temp_img\", type=\"png\", bg=\"white\")
+		} else {
+			png(\"$temp_img\", width=640, height=480, unit=\"px\")
+		}
+	");
+	$self->set_par;
+	$::config_obj->R->send($self->{command_f});
+	$::config_obj->R->send('dev.off()');
+	
+	# run save command
+	my $r_command = &r_command_n3;
+	$r_command .= "write.graph(n3, \"$path\", format=\"pajek\")";
+	$::config_obj->R->send($r_command);
+	
+	return 1;
+}
+
 sub _save_graphml{
 	my $self = shift;
 	my $path = shift;
@@ -88,6 +114,36 @@ sub _save_graphml{
 	return 1;
 }
 
+# for Pajeck
+sub r_command_n3{
+	return '
+
+n3 <- set.vertex.attribute(
+    n2,
+    "id",
+    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+    colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+)
+
+n3 <- set.vertex.attribute(
+    n3,
+    "xfact",
+    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+    sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
+)
+
+n3 <- set.vertex.attribute(
+    n3,
+    "yfact",
+    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+    sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
+)
+
+
+	';
+}
+
+# for GraphML
 sub r_command_n4{
 	return '
 n4 <- set.vertex.attribute(

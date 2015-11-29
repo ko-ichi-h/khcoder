@@ -32,6 +32,7 @@ sub save{
 		[ "SVG",[qw/.svg/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "GraphML",[qw/.graphml/] ],
+		[ "Pajek",[qw/.net/] ],
 		[ "R Source",[qw/.r/] ],
 	);
 	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
