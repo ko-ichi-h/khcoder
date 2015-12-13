@@ -146,6 +146,15 @@ n3 <- set.vertex.attribute(
 # for GraphML
 sub r_command_n4{
 	return '
+
+print(paste("use_alpha", use_alpha))
+
+if ( exists("use_alpha") ){
+	if (use_alpha == 1){
+		ccol <- ccol_notrans
+	}
+}
+
 n4 <- set.vertex.attribute(
     n2,
     "label",

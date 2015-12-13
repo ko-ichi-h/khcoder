@@ -1255,6 +1255,7 @@ if ( exists("saving_emf") || exists("saving_eps") ){
 }
 
 if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
+	ccol_notrans <- ccol
 	rgb <- col2rgb(ccol) / 256
 	ccol <- rgb(
 		red  =rgb[1,],
