@@ -3,6 +3,7 @@ use strict;
 
 use kh_r_plot::network;
 use kh_r_plot::corresp;
+use kh_r_plot::mds;
 
 use vars qw($if_font);
 $kh_r_plot::if_font = 0;

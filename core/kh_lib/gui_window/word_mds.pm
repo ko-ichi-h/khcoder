@@ -8,7 +8,7 @@ use Tk;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
-use kh_r_plot;
+use kh_r_plot::mds;
 use plotR::network;
 
 #-------------#
@@ -251,7 +251,7 @@ sub make_plot{
 
 	my $r_command = $args{r_command};
 
-	kh_r_plot->clear_env;
+	kh_r_plot::mds->clear_env;
 
 	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
 		gui_errormsg->open(
@@ -460,14 +460,14 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	# プロット作成
 	my $flg_error = 0;
-	my $plot1 = kh_r_plot->new(
+	my $plot1 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command_d,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
-	my $plot2 = kh_r_plot->new(
+	my $plot2 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_a,
 		command_f => $r_command,
@@ -612,6 +612,7 @@ if (n_cls > 0){
 
 	library( RColorBrewer )
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
+	col_bg_words_notrans <- col_bg_words
 	col_dot_words <- "gray40"
 	col_base <- NA
 	bty <- "o"
@@ -776,6 +777,7 @@ neg_to_zero <- function(nums){
 }
 
 b_size <- NULL
+
 for (i in rownames(cl)){
 	if ( is.na(i) || is.null(i) || is.nan(i) ){
 		b_size <- c( b_size, 1 )
@@ -784,6 +786,7 @@ for (i in rownames(cl)){
 	}
 }
 
+b_size_raw <- b_size
 b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
 
 if (std_radius){ # 円の大小をデフォルメ
@@ -823,6 +826,7 @@ if (n_cls > 0){
 	}
 
 	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
+	col_bg_words_notrans <- col_bg_words
 	col_dot_words <- "gray40"
 
 	if ( use_alpha == 1 ){
