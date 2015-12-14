@@ -246,9 +246,9 @@ sub clear_env{
 sub set_par{
 	my $self = shift;
 	my $opt  = shift;
+	$opt = '' unless defined($opt);
 
 	$::config_obj->R->output_chk(0);
-
 	$::config_obj->R->send(
 		'par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )'
 	);
