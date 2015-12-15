@@ -314,12 +314,19 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command .= "method_mds <- \"$args{method}\"\n";
 	$r_command .= &r_command_mds();
 	
+	# MDSの保存
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
+	unlink $file_save if -e $file_save;
+	$file_save = $::config_obj->uni_path($file_save);
+	$r_command .= "save(d,cl,dim_n, file=\"$file_save\" )\n";
+	
 	# プロット用のコマンド（次元別）
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
 	$args{cls_raw}   = 0 unless ( length($args{cls_raw}) );
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	
-	$r_command_d = $r_command;
+	#$r_command_d = $r_command;
+	$r_command_d = "\n#--------------------------------------------------------#\n";
 
 	$r_command_d .= "use_alpha <- $args{use_alpha}\n";
 	$r_command_d .= "
@@ -456,21 +463,24 @@ while ( is.na(check4mds(d)) == 0 ){
 		;
 	}
 
-	$r_command .= $r_command_a;
+	#$r_command .= $r_command_a;
+	my $r_command_l = "load(\"$file_save\")\n";
 
 	# プロット作成
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_1',
-		command_f => $r_command_d,
+		command_f => $r_command.$r_command_d,
+		command_s => $r_command_l.$r_command_d,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
 	my $plot2 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_2',
+		command_s => $r_command_l.$r_command_a,
 		command_a => $r_command_a,
-		command_f => $r_command,
+		command_f => $r_command.$r_command_a,
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},

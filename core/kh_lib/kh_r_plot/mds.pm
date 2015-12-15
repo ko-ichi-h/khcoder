@@ -25,7 +25,11 @@ sub _save_csv{
 		}
 	");
 	$self->set_par;
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	
 	# run save command

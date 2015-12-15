@@ -18,6 +18,7 @@ sub new{
 	bless $self, $class;
 	
 	$self->{command_a} = '' unless defined( $self->{command_a} );
+	$self->{command_s} = '' unless defined( $self->{command_s} );
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
@@ -29,6 +30,7 @@ sub new{
 	} else {
 		$self->{command_f} = Encode::decode('utf8', Jcode->new($self->{command_f})->utf8);
 		$self->{command_a} = Encode::decode('utf8', Jcode->new($self->{command_a})->utf8);
+		$self->{command_s} = Encode::decode('utf8', Jcode->new($self->{command_s})->utf8);
 		warn( "Warn: R commands are not decoded!\n" );
 	}
 
@@ -39,10 +41,17 @@ sub new{
 	$self->{command_a} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
 	$self->{command_a} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
 	$self->{command_a} =~ s/#.*?\p{Han}.*?\n/\n/go;
+	$self->{command_s} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
+	$self->{command_s} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
+	$self->{command_s} =~ s/#.*?\p{Han}.*?\n/\n/go;
 
 	# コマンドの改行コード
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	$self->{command_s} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+
+		# command_sはプロットの保存専用コード。
+		# 現在はMDSでのみ使用。
 
 	my $command = '';
 	if (length($self->{command_a})){
@@ -495,7 +504,11 @@ sub _save_emf{
 		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=$p)"
 	);
 	$self->set_par;
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
@@ -531,7 +544,11 @@ sub _save_pdf{
 		."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
 	);
 	$self->set_par('ps_font');
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
@@ -575,7 +592,11 @@ sub _save_eps{
 	);
 	
 	$self->set_par();
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
@@ -640,7 +661,11 @@ sub _save_png{
 
 
 	$self->set_par;
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
@@ -712,7 +737,11 @@ sub _save_svg{
 		);
 	}
 	
-	$::config_obj->R->send($self->{command_f});
+	if ( length($self->{command_s}) ) {
+		$::config_obj->R->send($self->{command_s});
+	} else {
+		$::config_obj->R->send($self->{command_f});
+	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
