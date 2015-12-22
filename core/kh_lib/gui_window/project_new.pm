@@ -125,6 +125,7 @@ sub _new{
 				sub {
 					&Gui_DragDrop::get_filename_droped;
 					my $path = $self->gui_jg( $self->{e1}->get );
+					$path = $::config_obj->os_path($path);
 					$self->check_path($path);
 				},
 				$e1,
