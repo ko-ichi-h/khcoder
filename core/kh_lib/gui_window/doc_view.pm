@@ -30,6 +30,16 @@ sub _new{
 	my $bunhyojiwin = $self->{win_obj};
 	$bunhyojiwin->title($self->gui_jt( kh_msg->get('win_title') )); # '文書表示'
 
+	my $lang = $::project_obj->morpho_analyzer_lang;
+	my $wrap = 'char';
+	unless (
+		   $lang eq 'jp'
+		|| $lang eq 'cn'
+		|| $lang eq 'kr'
+	) {
+		$wrap = 'word';
+	}
+
 	my $srtxt = $bunhyojiwin->Scrolled(
 		"ROText",
 		-spacing1 => 4,
@@ -38,7 +48,7 @@ sub _new{
 		-scrollbars=> 'ose',
 		-height => 20,
 		-width => 64,
-		-wrap => 'char',
+		-wrap => $wrap,
 		-font => "TKFN",
 		-background => 'white',
 		-foreground => 'black',
