@@ -38,13 +38,6 @@ sub _new{
 	$self->menu->refresh;
 	$self->inner->refresh;
 
-	# GUI未作成のコマンド
-	#use kh_hinshi;
-	#$self->win_obj->bind(
-	#	'<Control-Key-h>',
-	#	sub { kh_hinshi->output; }
-	#);
-	
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){
 		$::splash->Destroy if $::splash;

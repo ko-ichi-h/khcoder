@@ -153,6 +153,7 @@ sub _calc{
 			$width = length($i->[0]);
 		}
 	}
+	$width = $width * 2;
 
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
 	$self->{list2}->destroy if $self->{list2};
@@ -201,7 +202,7 @@ sub _calc{
 			next;
 		}
 		my $w = $self->{list}->Label(
-			-text               => $self->gui_jchar($i),
+			-text               => $i,
 			-font               => "TKFN",
 			-foreground         => 'blue',
 			-cursor             => 'hand2',
@@ -342,14 +343,14 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col - 1,
-					-text  => $self->gui_jchar($h,'sjis'),
+					-text  => $h,#$self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
 			} else {
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'sjis')
+					-text  => $h,#$self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;
@@ -422,7 +423,7 @@ sub sort{
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'sjis')
+					-text  => $h,#$self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;

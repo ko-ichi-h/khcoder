@@ -19,7 +19,7 @@ sub search{
 		return \@r;
 	}
 	
-	$args{query} = Jcode->new($args{query},'sjis')->euc;
+	#$args{query} = Jcode->new($args{query},'sjis')->euc;
 	$args{query} =~ s/　/ /g;
 	my @query = split(/ /, $args{query});
 	

@@ -865,7 +865,7 @@ sub jaccard{
 	
 	my ($n, @head) = (0, (''));
 	foreach my $i (@{$self->valid_codes}){
-		push @head, Jcode->new($i->name)->sjis;        # 出力結果・ヘッダ行
+		push @head, $i->name;        # 出力結果・ヘッダ行
 		++$n;
 	}
 	unless ($n > 1){return 0;}
@@ -875,7 +875,7 @@ sub jaccard{
 	push @result, \@head;
 	
 	foreach my $i (@{$self->valid_codes}){           # 出力結果・相関行列
-		my @current = (Jcode->new($i->name)->sjis);
+		my @current = ($i->name);
 		foreach my $h (@{$self->valid_codes}){
 			if ($i->name eq $h->name){
 				push @current,"1.000";

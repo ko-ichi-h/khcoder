@@ -223,26 +223,13 @@ sub font_change{
 	#print "1: ", $font->configure(-family), "\n";
 
 	my $font_conf = $font->configure(-family);
-	
-	# Win9x & Perl/Tk 804用の特殊処理
-	if (
-		        ( $] > 5.008 )
-		and     ( $^O eq 'MSWin32' )
-		and not ( Win32::IsWinNT() )
-	){
-		# 変換なし
-	} else {
-		$font_conf = gui_window->gui_jg($font_conf);
-	}
-
-	#print "2: $font_conf\n";
 
 	$font_conf .= ",";
 	$font_conf .= $font->configure(-size);
 	
 	$self->{e_font}->configure(-state => 'normal');
 	$self->{e_font}->delete('0','end');
-	$self->{e_font}->insert(0,gui_window->gui_jchar($font_conf,'sjis'));
+	$self->{e_font}->insert(0, $font_conf);
 	$self->{e_font}->configure(-state => 'disable');
 }
 
