@@ -17,7 +17,7 @@
 
 	■TO DO
 	・「sjis」「euc」を検索して怪しいのを修正
-		・「sjis」の「cod_jaccard」まではOK
+		・「sjis」の「cod_jaccard」まではOK: ちらほら文字化け等のバグを発見＆修正
 		・「sjis」の「cod_outtab」から続ける
 	・WordMiner用のファイルは文字コードをcp932としているが、utf8のCSVを読み込めるようなら、utf8にする？ （文書×抽出語 ＆ 文書×コード）→だめぽ？
 	・Excelファイル作成時に「ＭＳ Ｐゴシック」を指定するのは不味そう？（mysql_words.pm）
