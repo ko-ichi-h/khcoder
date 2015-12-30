@@ -576,7 +576,7 @@ if (
 	if (
 		   ( $r =~ /error/i )
 		or ( index($r, 'エラー') > -1 )
-		or ( index($r, Jcode->new('エラー','euc')->sjis) > -1 )
+		or ( index($r, Jcode->new('エラー')->sjis) > -1 )
 	) {
 		gui_errormsg->open(
 			type   => 'msg',

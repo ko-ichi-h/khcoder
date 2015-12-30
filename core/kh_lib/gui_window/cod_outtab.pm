@@ -397,14 +397,14 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col -1,
-					-text  => $self->gui_jchar($h,'sjis'),
+					-text  => $h,#$self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
 			} else {
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'sjis')
+					-text  => $h,#$self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;

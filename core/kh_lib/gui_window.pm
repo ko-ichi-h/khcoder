@@ -303,6 +303,11 @@ sub gui_jchar{ # GUI表示用の日本語
 		return $char;
 	}
 	
+	if ( $char =~ /[[:^ascii:]]/ ){
+		my ($package, $filename, $line) = caller;
+		warn( "Warning: Non-decoded string: $char,\n\t$package, $line\n" );
+	}
+
 	$code = Jcode->new($char)->icode unless $code;
 	# print "$char : $code\n";
 	$code = $char_code{euc}  if $code eq 'euc';
