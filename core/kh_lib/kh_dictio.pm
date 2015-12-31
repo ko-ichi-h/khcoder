@@ -332,7 +332,7 @@ sub mark{
 			thefile => $source
 		);
 
-	use Lingua::JA::Regular::Unicode (katakana_h2z);
+	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
 	while (<SOURCE>){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
 		chomp;

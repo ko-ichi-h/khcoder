@@ -160,7 +160,10 @@ use kh_at;
 use Benchmark;
 
 print "Starting test procedures...\n";
-open (STDOUT,">stdout.txt") or die;
+
+open (STDOUT,">:encoding(UTF-8)", "stdout.txt") or die;
+binmode STDOUT, ":encoding(UTF-8)";
+
 my $t0 = new Benchmark;
 
 kh_at::project_new->exec_test('project_new');      # テストファイル登録&前処理

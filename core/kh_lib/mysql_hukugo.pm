@@ -118,7 +118,7 @@ sub run_from_morpho{
 			type => 'file',
 			thefile => $source
 		);
-	use Lingua::JA::Regular::Unicode (katakana_h2z);
+	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
 	while (<SOURCE>){
 		chomp;
 		my $text = katakana_h2z($_);
