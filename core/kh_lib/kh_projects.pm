@@ -194,7 +194,7 @@ sub delete{
 	}
 	$sql .= "'".$del->dbname."'";
 	$sql .= ')';
-	$sql = Jcode->new($sql)->euc;
+	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 	
 	# MySQL DBを削除

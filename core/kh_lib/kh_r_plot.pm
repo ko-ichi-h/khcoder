@@ -746,7 +746,7 @@ sub _save_svg{
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
 	
-	# for darwin
+	# for darwin (No harm in Windows. But what's this?)
 	my $file_temp = $::config_obj->file_temp;
 	open my $fhi, '<:encoding(eucJP-ms)', $path      or die("file: $path");
 	open my $fho, '>:encoding(utf8)',     $file_temp or die("file: $file_temp");

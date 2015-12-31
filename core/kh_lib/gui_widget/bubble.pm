@@ -61,7 +61,7 @@ sub _new{
 		)->pack(-anchor => 'w', -side => 'left');
 
 		$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-				-text     => kh_msg->get('variable'), # 変数の値 / 見出しの大きさも可変に','euc
+				-text     => kh_msg->get('variable'), # 変数の値 / 見出しの大きさも可変に
 				-variable => \$self->{chk_resize_vars},
 				-anchor => 'w',
 				-state => 'disabled',
@@ -78,7 +78,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->{chkw_std_radius} = $f2->Checkbutton(
-		-text     => kh_msg->get('standardize'), # バブルの大きさを標準化：','euc
+		-text     => kh_msg->get('standardize'), # バブルの大きさを標準化：
 		-variable => \$self->{chk_std_radius},
 		-anchor => 'w',
 		-state => 'disabled',

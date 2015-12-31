@@ -606,7 +606,7 @@ sub read_cfile{
 		$self->{checks}[$row]{name}  = $i->name; # ½¤Àµ¡ª 2010 12/24
 		
 		my $c = $self->{hlist}->Checkbutton(
-			-text     => gui_window->gui_jchar($i->name,'euc'),
+			-text     => $i->name,
 			-variable => \$self->{checks}[$row]{check},
 			-command  => sub{ $self->check_selected_num; },
 			-anchor => 'w',

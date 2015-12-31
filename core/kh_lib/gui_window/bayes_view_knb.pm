@@ -393,7 +393,6 @@ sub sort{
 	# 検索ルーチン
 	my $s_method = 'AND';
 	my $search = $self->gui_jg( $self->{entry_wsearch}->get );
-	#$search = Jcode->new($search, 'sjis')->euc;
 	$search =~ s/　/ /go;
 	$search = [ split / /, $search ]; # /
 
@@ -477,7 +476,7 @@ sub sort{
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'euc')
+					-text => $h
 				);
 			}
 			++$col;

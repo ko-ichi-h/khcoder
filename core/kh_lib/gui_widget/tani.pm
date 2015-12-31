@@ -40,11 +40,18 @@ sub _new{
 			)->hundle->fetch->[0]
 		){
 			push @list1, $i;
-			$len = length( Encode::encode('cp932',$name{$i}) )
-				if $len < length( Encode::encode('cp932',$name{$i}) );
+			$len = length( $name{$i} )
+				if $len < length( $name{$i} );
 		}
 	}
-	#print "len: $len\n";
+	
+	if (
+		   $::config_obj->msg_lang eq 'jp'
+		|| $::config_obj->msg_lang eq 'kr'
+		|| $::config_obj->msg_lang eq 'cn'
+	) {
+		$len = 4;
+	}
 
 	$self->{win_obj} = $self->parent->Menubutton(
 		-text        => '',
@@ -57,7 +64,7 @@ sub _new{
 	)->pack();
 	foreach my $i (@list1){
 		$self->{win_obj}->radiobutton(
-			-label    => gui_window->gui_jchar(" $name{$i}",'euc'),
+			-label    => gui_window->gui_jchar(" $name{$i}"),
 			-variable => \$self->{raw_opt},
 			-value    => "$i",
 			-font     => "TKFN",
@@ -80,7 +87,10 @@ sub start{
 }
 sub mb_refresh{
 	my $self = shift;
-	$self->{win_obj}->configure(-text,gui_window->gui_jchar($name{$self->{raw_opt}},'euc'));
+	$self->{win_obj}->configure(
+		-text,
+		gui_window->gui_jchar( $name{$self->{raw_opt}} )
+	);
 	$self->{win_obj}->update;
 	$::project_obj->last_tani($self->{raw_opt})
 		unless $self->{dont_remember};

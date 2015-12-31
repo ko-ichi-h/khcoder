@@ -127,7 +127,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # 　　※コードを3つ以上選択して下さい。','euc
+		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # 　　※コードを3つ以上選択して下さい。
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -152,7 +152,7 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
+			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
@@ -211,7 +211,7 @@ sub read_cfile{
 		$self->{checks}[$row]{name}  = $i->name;
 		
 		my $c = $self->{hlist}->Checkbutton(
-			-text     => gui_window->gui_jchar($i->name,'euc'),
+			-text     => $i->name,
 			-variable => \$self->{checks}[$row]{check},
 			-command  => sub{ $self->check_selected_num;},
 			-anchor => 'w',

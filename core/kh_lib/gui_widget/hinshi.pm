@@ -67,7 +67,7 @@ sub _new{
 		}
 		$self->{name}{$row} = $i->[1];
 		my $c = $self->hlist->Checkbutton(
-			-text     => gui_window->gui_jchar($i->[0],'euc'),
+			-text     => gui_window->gui_jchar($i->[0]),
 			-variable => \$selection[$row],
 			-anchor => 'w',
 		);
@@ -79,11 +79,7 @@ sub _new{
 			-style => $right,
 			-widget    => $c,
 		);
-		#$self->hlist->itemCreate(
-		#	$row,1,
-		#	-itemtype => 'text',
-		#	-text     => gui_window->gui_jchar($i->[0],'euc')
-		#);
+
 		++$row;
 	}
 	$self->{checks} = \@selection;

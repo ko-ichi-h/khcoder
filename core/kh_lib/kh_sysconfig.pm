@@ -354,7 +354,6 @@ use Encode::Locale;
 sub os_path{
 	my $self  = shift;
 	my $c     = shift;
-	my $icode = shift;
 	
 	if ( utf8::is_utf8($c) ){
 		return Encode::encode("locale_fs", $c);

@@ -560,7 +560,7 @@ sub last_codf{
 			)->hundle->fetch->[0];
 		#$lst = Jcode->new($lst,'euc')->sjis if $::config_obj->os eq 'win32';
 		#print "lst: $lst\n";
-                $lst = $::config_obj->os_path($lst,'euc');
+		$lst = $::config_obj->os_path($lst);
 		return $lst;
 	}
 }

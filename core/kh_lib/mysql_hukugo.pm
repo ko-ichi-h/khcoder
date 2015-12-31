@@ -203,9 +203,11 @@ sub run_from_morpho{
 	",1)->hundle;
 	
 	use kh_csv;
+	use Lingua::JA::Regular::Unicode qw(alnum_z2h);
 	while (my $i = $oh->fetch){
 		#print ".";
-		my $tmp = Jcode->new($i->[0], 'euc')->tr('０-９','0-9'); 
+		#my $tmp = Jcode->new($i->[0], 'euc')->tr('０-９','0-9');
+		my $tmp = alnum_z2h($i->[0]);
 		next if $tmp =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/o;   # 日付・時刻
 		next if $tmp =~ /^\d+$/o;    # 数値のみ
 		#print ",";

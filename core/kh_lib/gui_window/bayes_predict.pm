@@ -171,7 +171,6 @@ sub _calc{
 	}
 	
 	my $var_new = $self->gui_jg($self->{entry_ovn}->get);
-	#$var_new = Jcode->new($var_new, 'sjis')->euc;
 	
 	my $chk = mysql_outvar::a_var->new($var_new);
 	if ( defined($chk->{id}) ){

@@ -163,7 +163,7 @@ sub start{
 	$self->{entry_outvar}->configure(-state => 'normal');
 	$self->{entry_outvar}->delete(0,'end');
 	$self->{entry_outvar}->insert(0,
-		gui_window->gui_jchar($self->{log_obj}{outvar},'euc')
+		$self->{log_obj}{outvar}
 	);
 	$self->{entry_outvar}->configure(-state => 'disable');
 
@@ -175,17 +175,16 @@ sub start{
 	$self->{entry_tani}->configure(-state => 'normal');
 	$self->{entry_tani}->delete(0,'end');
 	$self->{entry_tani}->insert(0,
-		gui_window->gui_jchar($tani,'euc')
+		$tani
 	);
 	$self->{entry_tani}->configure(-state => 'disable');
 
 	# ログファイル名
-	my $fl = gui_window->gui_jchar($self->{path});
+	my $fl = $::config_obj->uni_path($self->{path});
 	$fl = File::Basename::basename($fl);
-	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
-	$self->{win_obj}->title($self->gui_jt(
-		kh_msg->get('win_title').$self->gui_jchar(" $fl")
-	));
+	$self->{win_obj}->title(
+		kh_msg->get('win_title')." $fl"
+	);
 
 	# 表示する文書の選択
 	if ( $::main_gui->if_opened('w_doc_view') ){
@@ -634,7 +633,7 @@ sub sort{
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'euc')
+					-text  => $h
 				);
 			}
 			++$col;

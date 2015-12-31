@@ -183,7 +183,7 @@ sub _calc{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => $self->gui_jchar($i->[0],'euc'),
+			-text  => $i->[0],
 		);
 		$self->list->itemCreate(
 			$row,

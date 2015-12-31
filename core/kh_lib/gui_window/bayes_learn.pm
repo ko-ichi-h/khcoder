@@ -30,7 +30,7 @@ sub _new{
 	);
 
 	$self->{chkw_over} = $lf_x->Checkbutton(
-			-text     => kh_msg->get('add2exists'), # 既存の学習結果ファイルに今回の内容を追加する','euc
+			-text     => kh_msg->get('add2exists'), # 既存の学習結果ファイルに今回の内容を追加する
 			-variable => \$self->{check_overwrite},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -39,7 +39,7 @@ sub _new{
 	my $fcv = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
 
 	$self->{chkw_cross} = $fcv->Checkbutton(
-			-text     => kh_msg->get('cr_validate'), # 交差妥当化を行う','euc
+			-text     => kh_msg->get('cr_validate'), # 交差妥当化を行う
 			-variable => \$self->{check_cross},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -64,7 +64,7 @@ sub _new{
 	my $fcv1 = $lf_x->Frame()->pack(-fill => 'x');
 	$fcv1->Label(-text => '  ')->pack(-side => 'left');
 	$self->{chkw_savel} = $fcv1->Checkbutton(
-			-text     => kh_msg->get('savelog'), # 分類ログをファイルに保存','euc
+			-text     => kh_msg->get('savelog'), # 分類ログをファイルに保存
 			-variable => \$self->{check_savel},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -73,7 +73,7 @@ sub _new{
 	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x');
 	$fcv2->Label(-text => '  ')->pack(-side => 'left');
 	$self->{chkw_savev} = $fcv2->Checkbutton(
-			-text     => kh_msg->get('savecls'), # 分類結果を外部変数に保存','euc
+			-text     => kh_msg->get('savecls'), # 分類結果を外部変数に保存
 			-variable => \$self->{check_savev},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -196,7 +196,6 @@ sub calc{
 	my ($varname1, $varname2);
 	if ($self->{check_savev}){
 		$varname1 = $self->gui_jg( $self->{entry_vname}->get );
-		#$varname1 = Jcode->new($varname1,'sjis')->euc;
 		unless (length($varname1)){
 			gui_errormsg->open(
 				type   => 'msg',

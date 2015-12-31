@@ -17,7 +17,7 @@ sub _new{
 
 	my $f4 = $lf2->Frame()->pack(-fill => 'x', -pady => 2);
 	$f4->Label(
-		-text => kh_msg->get('font'),#$gui_window->gui_jchar('フォント設定：','euc'),
+		-text => kh_msg->get('font'),# フォント設定：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e_font} = $f4->Entry(
@@ -28,7 +28,7 @@ sub _new{
 		-foreground => 'black',
 	)->pack(-side => 'right');
 	$f4->Button(
-		-text  => kh_msg->get('config'),#$gui_window->gui_jchar('変更'),
+		-text  => kh_msg->get('config'), # 変更
 		-font  => "TKFN",
 		-command => sub { $self->font_change(); }
 	)->pack(-padx => '2',-side => 'right');
@@ -165,7 +165,7 @@ sub fill_in{
 	
 	$self->{e_font}->insert(
 		0,
-		gui_window->gui_jchar($::config_obj->font_main,'euc')
+		gui_window->gui_jchar($::config_obj->font_main)
 	);
 	$self->{e_font}->configure(-state => 'disable');
 	

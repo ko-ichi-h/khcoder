@@ -188,7 +188,7 @@ sub _new{
 	}
 	
 	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
-			-text     => $msg, # 出現数の多い語ほど大きい円で描画','euc
+			-text     => $msg, # 出現数の多い語ほど大きい円で描画
 			-variable => \$self->{check_use_freq_as_size},
 			-anchor   => 'w',
 			-command  => sub{
@@ -216,7 +216,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	$self->{wc_smaller_nodes} = $lf->Checkbutton(
-			-text     => kh_msg->get('smaller'), # すべての語を小さめの円で描画','euc
+			-text     => kh_msg->get('smaller'), # すべての語を小さめの円で描画
 			-variable => \$self->{check_smaller_nodes},
 			-anchor   => 'w',
 			-command  => sub{
