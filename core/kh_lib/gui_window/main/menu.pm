@@ -536,15 +536,6 @@ sub make{
 			-state => 'disable'
 		);
 
-		#$self->{t_cod_tab} = $f5->command(
-		#	-label => kh_msg->get('cross_st'),#gui_window->gui_jchar('章・節・段落ごとの集計'),
-		#	-font => "TKFN",
-		#	-command => sub{
-		#			gui_window::cod_tab->open;
-		#		},
-		#	-state => 'disable'
-		#);
-
 		$self->{t_cod_outtab} = $f5->command(
 			-label => kh_msg->get('cross_vr'),#gui_window->gui_jchar('外部変数とのクロス集計'),
 			-font => "TKFN",

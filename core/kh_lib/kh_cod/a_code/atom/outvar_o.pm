@@ -74,7 +74,7 @@ sub ready{
 	$val = $var_obj->real_val($val);
 	my $table = "ct_$tani"."_ovo"."$var_obj->{id}"."_"
 		.$var_obj->real_val_id($val);
-	print Jcode->new("atom-outvar_o: table: $val: $table\n")->sjis if $debug;
+	print "atom-outvar_o: table: $val: $table\n" if $debug;
 	$self->{tables} = ["$table"];
 
 	# テーブル作成

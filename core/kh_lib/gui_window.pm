@@ -298,14 +298,9 @@ sub gui_jchar{ # GUI表示用の日本語
 	my $code = $_[2];
 
 	if ( utf8::is_utf8($char) ){
-		print "already decoded: ", Encode::encode($char_code{sjis},$char), "\n"
+		print "already decoded: $char\n"
 			if $debug;
 		return $char;
-	}
-	
-	if ( $char =~ /[[:^ascii:]]/ ){
-		my ($package, $filename, $line) = caller;
-		warn( "Warning: Non-decoded string: $char,\n\t$package, $line\n" );
 	}
 
 	$code = Jcode->new($char)->icode unless $code;
@@ -314,7 +309,14 @@ sub gui_jchar{ # GUI表示用の日本語
 	$code = $char_code{sjis} if $code eq 'sjis';
 	$code = $char_code{sjis} if $code eq 'shiftjis';
 	$code = $char_code{euc}  unless length($code);
-	return Encode::decode($code,$char);
+	$char = Encode::decode($code,$char);
+
+	if ( $char =~ /[[:^ascii:]]/ ){
+		my ($package, $filename, $line) = caller;
+		print "Warn: Non-decoded string: $char,\n\t$code,\n\t$package, $line\n";
+	}
+
+	return $char;
 
 }
 

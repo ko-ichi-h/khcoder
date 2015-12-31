@@ -9,8 +9,6 @@ use Tk::ROText;
 use gui_jchar;
 use mysql_getdoc;
 use gui_window::word_conc;
-use gui_window::doc_view::win32;
-use gui_window::doc_view::linux;
 
 my $ascii = '[\x00-\x7F]';
 my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
@@ -22,8 +20,7 @@ my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 
 sub _new{
 	my $self = shift;
-	my $class = 'gui_window::doc_view::'.$::config_obj->os;
-	bless $self, $class;
+	bless $self, 'gui_window::doc_view';
 	$self->_init;
 	
 	my $mw = $::main_gui->mw;

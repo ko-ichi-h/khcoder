@@ -167,9 +167,8 @@ sub ready{
 	$self->{hyosos} = $list;
 	
 	unless ( $list ){
-		print Jcode->new(
-			"atom::hinshi, could not find : \"".$self->raw."\"\n"
-		)->sjis;
+		print 
+			"atom::hinshi, could not find : \"".$self->raw."\"\n";
 		return '';
 	}
 	

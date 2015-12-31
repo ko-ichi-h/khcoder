@@ -71,7 +71,7 @@ sub ready{
 			$val = join (' ', @{$tokens});
 		}
 		
-		print "kh_cod::a_code::atom::heading: ", Jcode->new($val,'euc')->sjis,"\n";
+		print "kh_cod::a_code::atom::heading: $val\n";
 		
 		$val = '<h'."$var".'>'."$val".'</h'."$var".'>';
 		$val = mysql_exec->quote($val);

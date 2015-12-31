@@ -71,14 +71,13 @@ sub add_direct{
 		}
 	}
 	
-	#$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
 	if ($args{raw} =~ /\r|\n/){
 		my $t = $args{raw};
 		$t =~ tr/\r\n/__/;
 		$args{raw} =~ s/\r|\n//g;
 		print
 			"illegal input! using ATOK? \"",
-			Jcode->new($t)->sjis,
+			$t,
 			"\"\n"
 		;
 	}

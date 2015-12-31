@@ -1,22 +1,23 @@
 package gui_window::use_te;
 use base qw(gui_window);
 use strict;
+use utf8;
 use Tk;
 use gui_jchar;
 
-# Window�򳫤�
+# Windowを開く
 sub _new{
 	my $self = shift;
-	$self->{win_obj}->title($self->gui_jt(kh_msg->get('win_title')));; # TermExtract������ˤĤ���
+	$self->{win_obj}->title($self->gui_jt(kh_msg->get('win_title')));; # TermExtractの著作権について
 
 	$self->{win_obj}->Label(
-		-text => kh_msg->get('desc'), # �����Ѹ�ʥ�����ɡ˼�ư�����Perl�⥸�塼���TermExtract�פ����Ѥ��ޤ���','euc
+		-text => kh_msg->get('desc'), # 専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	my $f1 = $self->{win_obj}->Frame()->pack(-anchor => 'w');
 	$f1->Label(
-		-text => kh_msg->get('web'), # TermExtract��Web�ڡ�����
+		-text => kh_msg->get('web'), # TermExtractのWebページ：
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2', -side => 'left');
 
@@ -34,7 +35,7 @@ sub _new{
 	)->pack(-side => 'left', -anchor => 'w');
 
 	$self->{win_obj}->Label(
-		-text => kh_msg->get('about'), # TermExtract�ˤĤ��ơ�
+		-text => kh_msg->get('about'), # TermExtractについて：
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
@@ -57,7 +58,7 @@ sub _new{
 
 	
 	$self->{win_obj}->Button(
-		-text => kh_msg->gget('cancel'), # ����󥻥�
+		-text => kh_msg->gget('cancel'), # キャンセル
 		-font => 'TKFN',
 		-width => 8,
 		-command => sub{$self->close;}
@@ -77,7 +78,7 @@ sub _new{
 	return $self;
 }
 
-# ��������ή������
+# 著作権情報を流し込む
 sub put_info{
 	my $self = shift;
 	$self->{text}->tagConfigure('red',
@@ -86,53 +87,53 @@ sub put_info{
 		-underline  => 0
 	);
 	
-	$self->{text}->insert('end',$self->gui_jchar("��TermExtract�פϡ������ؾ�����ץ��󥿡��޽���ŻҲ����硦����漼�ˤƸ�������Ƥ��ޤ����ܺ٤ϰʲ����̤�Ǥ���\n") );
+	$self->{text}->insert('end',"「TermExtract」は、東京大学情報基盤センター図書館電子化部門・中川研究室にて公開されています。詳細は以下の通りです。\n");
 	
 	$self->{text}->insert('end',"TermExtract::Calc_Imp.pm\n",'red');
-	my $Calc_Imp_cr = '�����Υץ������ϡ������ء�����͵�ֶ��������͹�Ω��ء���ä§�����������������������Ѹ켫ư��Х����ƥ�פ�Extract.pm�򻲹ͤˡ�������ζ���������������饳���ǥ��󥰤�ľ������ΤǤ��롣
-�����κ�Ȥϡ������ء�����ϯ(maeda@lib.u-tokyo.ac.jp)���Ԥä���
-�����κݤΥ��󥻥ץȤϼ��ΤȤ��ꡣ
-���������ǲ��ϥǡ����μ����ߤ�ޤ�ƥ⥸�塼�벽����¾�Υץ������ؤ��Ȥ߹��ߤ��Ǥ��뤳��
-�����ؽ���ǽ��Ϣ�ܸ����׾����DB�ؤ����ѤȤ��γ��ѡˤ���Ĥ���
-���������ٷ׻���ˡ���ڤ��ؤ����Ǥ��뤳��
-�������ܸ�ѥå������Ƥ�Perl (Jperl) �����ǤϤʤ������ꥸ�ʥ��Perl��ư��뤳��
-�����������γ��ݤΤ���Perl��strict�⥸�塼��ڤ�perl��-w���ץ������б����뤳��
-��������ؿ��פˤ�롢���׸�κ���롼�����Ȥ�Ϥ�������
-����ñ̾���Ϣ�ܲ�������ʿ�Ѥ��������Ȥ뤳�ȡ�Extract.pm��Ϣ�ܲ���Σ��������٤Ȥ��Ƥ������ʤ�����������ϥѥ��᡼���ˤ��Ĵ���Ǥ��롣Extract.pm��Ʊ���ˤ���ˤϡ�$obj->average_rate(0.5) �Ȥ���
-�������ͤ�Ǥ�դθ������ٷ׻����оݤ���Ϥ�����褦�ˤ��뤳��
-����¿������б����뤿�ᡢUnicode(UTF-8)��ư��뤳��
-�������ѡ��ץ쥭���ƥ��򸵤˽����ٷ׻���Ԥ���褦�ˤ��뤳�ȡ�
-������Frequency, TF, TF*IDF�ʤɤν����ٷ׻���ǽ����Ĥ���
+	my $Calc_Imp_cr = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のExtract.pmを参考に、中川教授の教示を受け、１からコーディングし直したものである。
+　この作業は、東京大学・前田朗(maeda@lib.u-tokyo.ac.jp)が行った。
+　その際のコンセプトは次のとおり。
+１．形態素解析データの取り込みも含めてモジュール化し、他のプログラムへの組み込みができること
+２．学習機能（連接語統計情報のDBへの蓄積とその活用）を持つこと
+３．重要度計算方法の切り替えができること
+４．日本語パッチを当てたPerl (Jperl) だけではなく、オリジナルのPerlで動作すること
+５．信頼性の確保のためPerlのstrictモジュール及びperlの-wオプションに対応すること
+６．「窓関数」による、不要語の削除ルーチンをとりはずすこと
+７．単名詞の連接回数の相乗平均を正しくとること。Extract.pmは連接回数の２乗を重要度としていた。なお、この設定はパタメータにより調整できる。Extract.pmと同じにするには、$obj->average_rate(0.5) とする
+８．数値と任意の語を重要度計算の対象からはずせるようにすること
+９．多言語に対応するため、Unicode(UTF-8)で動作すること
+１０．パープレキシティを元に重要度計算を行えるようにすること。
+１１．Frequency, TF, TF*IDFなどの重要度計算機能を持つこと
 
-Extract.pm �κ�Ԥϼ��ΤȤ��ꡣ
-��Keisuke Uchima 
-��Hirokazu Ohata
-��Hiroaki  Yumoto (Email:hir@forest.dnj.ynu.ac.jp)
+Extract.pm の作者は次のとおり。
+　Keisuke Uchima 
+　Hirokazu Ohata
+　Hiroaki  Yumoto (Email:hir@forest.dnj.ynu.ac.jp)
 
-�ʤ����ܥץ������λ��Ѥˤ����������������ʤ��̤˴ؤ��Ƥ������Ǥϰ�����Ǥ�����ʤ���';
-	$self->{text}->insert('end',$self->gui_jchar($Calc_Imp_cr) );
+なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
+	$self->{text}->insert('end', $Calc_Imp_cr );
 
 	$self->{text}->insert('end',"\n\nTermExtract::Chasen.pm\n",'red');
-	my $Chasen = '�����Υץ������ϡ������ء�����͵�ֶ��������͹�Ω��ء���ä§�����������������������Ѹ켫ư��Х����ƥ�פ�termex.pl �򻲹ͤ˥����ɤ�����Ū�˽�ľ������ΤǤ��롣
-�����κ�Ȥϡ������ء�����ϯ (maeda@lib.u-tokyo.ac.jp)���Ԥä���
-��������ϼ��ΤȤ��ꡣ
-������Ω����������ץȤ���⥸�塼��ؽ񤭴�����¾�Υץ�����फ����Ȥ߹��ߤ��ǽ�Ȥ�����
-���������ǲ��ϺѤߤΥƥ����ȥե���������ǤϤʤ����ѿ���������ϲ�ǽ�ˤ���������ˤ��UNIX�Ķ��Ǥ� Text::Chasen �⥸�塼�����ˤ��б�����ǽ�ˤʤä���
-�������ꥸ�ʥ�Perl�б��ˤ�����Shift-JIS��EUC�ˤ�����ܸ����Ϥ����ܸ��б��ѥå������Ƥ�Perl(Jperl)��Ȥ鷺�Ȥ������ǽ�ˤʤä���
-������˸�ͭ̾�������Ȥ�����ʸ���������Ȥ���褦�ѥ�᡼������ꤷ��
-�������Σ�ʸ���Ρ�̤�θ�פϸ�ζ��ڤ�Ȥ���ǧ������褦�ˤ������ޤ�����̤�θ�פ� , �ǽ����Ȥ��ˤ��ζ��ڤ�Ȥ�����!"#$%&\'()*+,-./{|}:;<>[]
-����ʣ���Ρ�̤�θ�פ���ñ̾���������������å����Ȥ߹�������ʡ���䦡�ver 2.3.3���ο������С������ؤ��б���
-����ʣ���Ρֵ���-����ե��٥åȡפ����ñ���������������å����Ȥ߹�������ʡ���䦡�ver 2.3.3���ο������С������ؤ��б���
-�����������γ��ݤΤ��ᡢPerl��"strict"�⥸�塼��ڤ�perl��-w���ץ����ؤ��б���Ԥä���
+	my $Chasen = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のtermex.pl を参考にコードを全面的に書き直したものである。
+　この作業は、東京大学・前田朗 (maeda@lib.u-tokyo.ac.jp)が行った。
+　相違点は次のとおり。
+１．独立したスクリプトからモジュールへ書き換え、他のプログラムからの組み込みを可能とした。
+２．形態素解析済みのテキストファイルだけではなく、変数からも入力可能にした。これによりUNIX環境での Text::Chasen モジュール等にも対応が可能になった。
+３．オリジナルPerl対応にした。Shift-JISとEUCによる日本語入力を日本語対応パッチを当てたPerl(Jperl)を使わずとも処理可能になった。
+４．常に固有名詞を候補語とし、１文字語も候補語とするようパラメータを固定した
+５．次の１文字の「未知語」は語の区切りとして認識するようにした。また、「未知語」が , で終わるときにも語の区切りとした。!"#$%&\'()*+,-./{|}:;<>[]
+６．複数の「未知語」から単名詞を生成するロジックを組み込んだ。（「茶筅」ver 2.3.3等の新しいバージョンへの対応）
+７．複数の「記号-アルファベット」から英単語を生成するロジックを組み込んだ。（「茶筅」ver 2.3.3等の新しいバージョンへの対応）
+８．信頼性の確保のため、Perlの"strict"モジュール及びperlの-wオプションへの対応を行った。
 
-�ʤ����ܥץ������λ��Ѥˤ����������������ʤ��̤˴ؤ��Ƥ������Ǥϰ�����Ǥ�����ʤ���';
-	$self->{text}->insert('end',$self->gui_jchar($Chasen) );
+なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
+	$self->{text}->insert('end', $Chasen);
 
 	$self->{text}->insert('end',"\n\nTermExtract::BrillsTagger.pm\n",'red');
-	my $Brill = '�����Υץ������ϡ������ء�����͵�ֶ��������͹�Ω��ء���ä§�����������������������Ѹ켫ư��Х����ƥ�פ�termex_e.pl �򸵤˥⥸�塼��TermExtract�Ѥ˽񤭴�������ΤǤ��롣
-�����κ�Ȥϡ������ء�����ϯ (maeda@lib.u-tokyo.ac.jp)���Ԥä���
-���ʤ����ܥץ������λ��Ѥˤ����������������ʤ��̤˴ؤ��Ƥ������Ǥϰ�����Ǥ�����ʤ���';
-	$self->{text}->insert('end',$self->gui_jchar($Brill) );
+	my $Brill = '　このプログラムは、東京大学・中川裕志教授、横浜国立大学・森辰則助教授が作成した「専門用語自動抽出システム」のtermex_e.pl を元にモジュールTermExtract用に書き換えたものである。
+　この作業は、東京大学・前田朗 (maeda@lib.u-tokyo.ac.jp)が行った。
+　なお、本プログラムの使用において生じたいかなる結果に関しても当方では一切責任を負わない。';
+	$self->{text}->insert('end', $Brill );
 
 	return $self;
 }
@@ -143,7 +144,7 @@ sub _exec{
 	my $file_target = $::config_obj->os_path($::project_obj->file_target);
 	my $file_hukugo = $::config_obj->os_path($::project_obj->file_HukugoListTE);
 	
-	# �����¹�
+	# 処理実行
 	my $if_exec = 1;
 	if (
 		   ( -e $file_hukugo)
@@ -153,7 +154,7 @@ sub _exec{
 		my $t1 = (stat $file_hukugo)[9];
 		#print "$t0\n$t1\n";
 		if ($t0 < $t1){
-			$if_exec = 0; # ���ξ��������Ϥ��ʤ�
+			$if_exec = 0; # この場合だけ解析しない
 		}
 	}
 	

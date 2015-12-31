@@ -332,6 +332,7 @@ sub mark{
 			thefile => $source
 		);
 
+	use Lingua::JA::Regular::Unicode (katakana_h2z);
 	while (<SOURCE>){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
 		chomp;
@@ -343,8 +344,7 @@ sub mark{
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		){
-			#$text = Jcode->new($_,'utf8')->h2z;
-			Encode::JP::H2Z::h2z(\$text);
+			$text = katakana_h2z($text);
 			$text =~ s/ /　/go;
 			$text =~ s/\t/　/go;
 			$text =~ s/\\/￥/go;

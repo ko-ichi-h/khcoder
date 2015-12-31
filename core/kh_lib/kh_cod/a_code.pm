@@ -186,7 +186,7 @@ sub ready{
 	# キャッシュのチェック
 	my $raw = $self->{ed_condition};
 	$raw =~ s/'/\\'/g;
-	print Jcode->new("raw: $raw\n",'euc')->sjis if $debug;
+	print "raw: $raw\n" if $debug;
 	my $kind = 'code';
 	if (defined($sort) && $sort eq 'tf*idf'){
 		$kind .= '_idf_m';

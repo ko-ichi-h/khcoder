@@ -29,6 +29,9 @@ BEGIN {
 	use Jcode;
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
+	use Encode::Locale;
+	binmode STDOUT, ":encoding(console_out)";
+
 	# for Windows [1]
 	use Cwd;
 	if ($^O eq 'MSWin32'){
@@ -41,8 +44,6 @@ BEGIN {
 			else { # miniperl
 				chomp($ENV{'PWD'} = `cd`);
 			}
-			use Encode;
-			use Encode::Locale;
 			$ENV{'PWD'} = Encode::decode('locale_fs', $ENV{'PWD'});
 			$ENV{'PWD'} =~ s:\\:/:g ;
 			$ENV{'PWD'} = Encode::encode('locale_fs', $ENV{'PWD'});

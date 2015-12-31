@@ -110,19 +110,10 @@ sub columns{
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		) {
-			$icode = kh_jchar->check_code( $self->{file}, 0, 200 );
+			$icode = kh_jchar->check_code2( $self->{file}, 0, 200 );
 		} else {
 			$icode = kh_jchar->check_code_en( $self->{file}, 0, 200 );
 		}
-	}
-	if ( $icode eq 'sjis' ){
-		$icode = 'shiftjis';
-	}
-	elsif ( $icode eq 'euc' ){
-		$icode = 'eucJP-ms';
-	}
-	elsif ( $icode eq 'jis' ){
-		$icode = '7bit-jis';
 	}
 
 	# open csv file

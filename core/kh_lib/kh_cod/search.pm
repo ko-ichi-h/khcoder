@@ -86,7 +86,7 @@ sub add_direct{
 		$args{raw} =~ s/\r|\n//g;
 		print
 			"illegal input! using ATOK? \"",
-			Jcode->new($t)->sjis,
+			$t,
 			"\"\n"
 		;
 	}
@@ -114,7 +114,7 @@ sub add_direct{
 			$t .= "$i";
 			++$n;
 		}
-		print Jcode->new("direct-code: $t \n",'euc')->sjis if $debug;
+		print "direct-code: $t \n" if $debug;
 		
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			$direct,

@@ -118,10 +118,10 @@ sub run_from_morpho{
 			type => 'file',
 			thefile => $source
 		);
+	use Lingua::JA::Regular::Unicode (katakana_h2z);
 	while (<SOURCE>){
 		chomp;
-		my $text = $_;
-		Encode::JP::H2Z::h2z(\$text);
+		my $text = katakana_h2z($_);
 		$text =~ s/ /　/go;
 		$text =~ s/\\/￥/go;
 		$text =~ s/'/’/go;

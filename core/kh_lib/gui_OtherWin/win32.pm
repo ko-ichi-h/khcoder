@@ -30,7 +30,10 @@ sub _open{
 				}
 			}
 		}
-		print "Opening $t\n";
+		
+		my $msg = $::config_obj->uni_path($t);
+		print "Opening $msg\n";
+		
 		if (-e $cmd_path){
 			require Win32::Process;
 			my $cmd_process;

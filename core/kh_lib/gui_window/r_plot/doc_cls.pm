@@ -45,23 +45,21 @@ sub save_r{
 	my $file_tmp = '';
 	if (
 		$self->{plots}[0]->{command_f}
-		=~ /read.csv\("(.+?)"\)\n/
+		=~ /read.csv\("(.+?)"/
 	) {
 		$file_tmp = $1;
 		$file_tmp =~ s/\\\\/\\/g;
+		$file_tmp = $::config_obj->os_path($file_tmp);
 	}
 
 	# tmpファイルを保存用にコピー
 	my $file_csv = $path.'.csv';
 	if (-e $file_csv){
-		my $msg = Jcode->new($file_csv)->euc;
 		my $ans = $self->win_obj->messageBox(
-			-message => $self->gui_jchar
-				(
+			-message => 
 				   kh_msg->get('gui_window::cls_height::doc->overwr') # このファイルを上書きしてよろしいですか：
 				   ."\n"
-				   ."$file_csv"
-				),
+				   .$::config_obj->uni_path($file_csv)
 			-icon    => 'question',
 			-type    => 'OKCancel',
 			-title   => 'KH Coder'
@@ -77,15 +75,13 @@ sub save_r{
 	);
 
 	# rコマンドの変更
-	if ($::config_obj->os eq 'win32'){
-		$file_csv = Jcode->new($file_csv)->euc;
-		$file_csv =~ s/\\/\\\\/g;
-		$file_csv = Jcode->new($file_csv,'euc')->sjis;
-	}
+	$file_csv = $::config_obj->uni_path($file_csv);
+	$file_csv =~ s/\\/\\\\/g;
+
 	$self->{plots}[0]->{command_f}
-		=~ s/^.+read.csv\(".+?"\)\n/\n/;
+		=~ s/^.+read.csv\(".+?\n/\n/;
 	$self->{plots}[0]->{command_f} =
-		'd <- read.csv("'.$file_csv.'")'."\n"
+		'd <- read.csv("'.$file_csv.'", fileEncoding="UTF-8-BOM")'."\n"
 		.$self->{plots}[0]->{command_f};
 
 	$self->{plots}[0]->save($path) if $path;

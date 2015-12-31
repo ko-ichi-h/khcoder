@@ -39,10 +39,10 @@ sub _run_from_morpho{
 			type => 'file',
 			thefile => $source
 		);
+	use Lingua::JA::Regular::Unicode (katakana_h2z);
 	while (<SOURCE>){
 		chomp;
-		my $text = $_;
-		Encode::JP::H2Z::h2z(\$text);
+		my $text = katakana_h2z($_);
 		$text =~ s/ /　/go;
 		$text =~ s/\\/￥/go;
 		$text =~ s/'/’/go;
@@ -52,15 +52,9 @@ sub _run_from_morpho{
 	close (SOURCE);
 	close (MARKED);
 	
-	#print "02. Converting Codes...\n" if $debug;
-	#kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
-	
 	print "03. Chasen...\n" if $debug;
 	kh_morpho->run;
 
-	#if ($::config_obj->os eq 'win32'){
-	#	kh_jchar->to_euc($::project_obj->file_MorphoOut);
-	#}
 	my $file_MorphoOut = $::config_obj->os_path($::project_obj->file_MorphoOut);
 
 	# フィルタリング用に単名詞のリストを作成
@@ -89,8 +83,6 @@ sub _run_from_morpho{
 		.kh_msg->get('gui_window::use_te_g->h_score')
 		."\n"
 	;
-	$data_out = Encode::encode('euc-jp',$data_out);
-
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("
@@ -100,31 +92,29 @@ sub _run_from_morpho{
 		)
 	",1);
 
+	use Lingua::JA::Regular::Unicode qw(alnum_z2h);
 	foreach (@noun_list) {
-		# 単名詞のスコアをprintしてチェック…
-		#if ($is_alone{$_->[0]}){
-		#	print Jcode->new("$_->[0], $_->[1]\n")->sjis
-		#		if $_->[1] > 1;
-		#}
-
 		next if $is_alone{$_->[0]};  # 単名詞
 		
-		my $tmp = Jcode->new($_->[0], 'euc')->tr('０-９','0-9'); 
+		my $tmp = alnum_z2h($_->[0]);
 		next if $tmp =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/o;   # 日付・時刻
 		next if $tmp =~ /^\d+$/o;    # 数値のみ
 
 		$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
+		my $quoted = mysql_exec->quote($_->[0]);
 		mysql_exec->do("
 			INSERT INTO hukugo_te (name, num)
-			VALUES (\"$_->[0]\", $_->[1])
+			VALUES ($quoted, $_->[1])
 		");
 	}
 
-	$data_out = Jcode->new($data_out, 'euc')->sjis
-		if $::config_obj->os eq 'win32';
+	#$data_out = Jcode->new($data_out, 'euc')->sjis
+	#	if $::config_obj->os eq 'win32';
 
 	my $target_csv = $::project_obj->file_HukugoListTE;
-	open (OUT,">$target_csv") or
+
+	use File::BOM;
+	open (OUT, '>:encoding(utf8):via(File::BOM)', $target_csv) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $target_csv
