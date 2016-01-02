@@ -570,7 +570,7 @@ sub view{
 				$self->list->itemCreate(
 					$row,
 					$col,
-					-text  => $self->gui_jchar($h,'euc')
+					-text  => $self->gui_jchar($h)
 				);
 			}
 			++$col;

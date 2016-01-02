@@ -93,7 +93,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high} = $fi_2->Label(
-		-text => kh_msg->get('unit'), # 集計単位：','euc
+		-text => kh_msg->get('unit'), # 集計単位：
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',

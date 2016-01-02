@@ -61,7 +61,7 @@ sub _save{
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt(kh_msg->get('win_title')); # 文書のクラスター分析：併合水準','euc
+	return $self->gui_jt(kh_msg->get('win_title')); # 文書のクラスター分析：併合水準
 }
 
 sub win_name{

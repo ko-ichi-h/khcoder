@@ -159,7 +159,7 @@ sub _new{
 		my @opt = ();
 		my $n = 0;
 		foreach my $i (@{$self->option1_options}){
-			push @opt, [$self->gui_jchar($i,'euc'),$n];
+			push @opt, [$self->gui_jchar($i),$n];
 			++$n;
 		}
 
@@ -182,13 +182,13 @@ sub _new{
 
 	if (length($self->{msg})){
 		my $info_label = $f1->Label(
-			-text => $self->gui_jchar($self->{msg},'euc')
+			-text => $self->gui_jchar($self->{msg})
 		)->pack(-side => 'left');
 
 		if ( length($self->{msg_long}) ){
 			$self->{blhelp} = $mw->Balloon();
 			$self->{blhelp}->attach( $info_label,
-				-balloonmsg => $self->gui_jchar($self->{msg_long},'euc'),
+				-balloonmsg => $self->gui_jchar($self->{msg_long}),
 				-font       => "TKFN"
 			);
 		}

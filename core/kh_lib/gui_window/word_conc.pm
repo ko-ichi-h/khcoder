@@ -260,7 +260,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $fra5->Button(
-		-text        => kh_msg->get('prev').mysql_conc->docs_per_once,#$self->gui_jchar('前'.mysql_conc->docs_per_once,'euc'),
+		-text        => kh_msg->get('prev').mysql_conc->docs_per_once,#$self->gui_jchar('前'.mysql_conc->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -273,7 +273,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $fra5->Button(
-		-text        => kh_msg->get('next').mysql_conc->docs_per_once,#$self->gui_jchar('次'.mysql_conc->docs_per_once,'euc'),
+		-text        => kh_msg->get('next').mysql_conc->docs_per_once,#$self->gui_jchar('次'.mysql_conc->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -291,7 +291,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_coloc} = $fra5->Button(
-		-text        => kh_msg->get('stats'),#$self->gui_jchar('集計','euc'),
+		-text        => kh_msg->get('stats'),#$self->gui_jchar('集計'),
 		-font        => "TKFN",
 		-command     => sub{$self->coloc;},
 		-borderwidth => 1,
@@ -299,7 +299,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$self->{btn_save} = $fra5->Button(
-		-text        => kh_msg->gget('save'),#$self->gui_jchar('保存','euc'),
+		-text        => kh_msg->gget('save'),#$self->gui_jchar('保存'),
 		-font        => "TKFN",
 		-command     => sub{$self->save;},
 		-borderwidth => 1,
@@ -630,19 +630,19 @@ sub display{
 		$self->list->itemCreate(
 			$row,
 			0,
-			-text  => $self->gui_jchar($i->[0],'euc'),
+			-text  => $self->gui_jchar($i->[0]),
 			-style => $right_style
 		);
 		my $center = $self->list->itemCreate(
 			$row,
 			1,
-			-text  => $self->gui_jchar($i->[1],'euc'),
+			-text  => $self->gui_jchar($i->[1]),
 			-style => $center_style
 		);
 		$self->list->itemCreate(
 			$row,
 			2,
-			-text  => $self->gui_jchar($i->[2],'euc'),
+			-text  => $self->gui_jchar($i->[2]),
 		);
 		++$row;
 	}

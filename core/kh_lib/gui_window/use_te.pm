@@ -11,7 +11,7 @@ sub _new{
 	$self->{win_obj}->title($self->gui_jt(kh_msg->get('win_title')));; # TermExtractの著作権について
 
 	$self->{win_obj}->Label(
-		-text => kh_msg->get('desc'), # 専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。','euc
+		-text => kh_msg->get('desc'), # 専門用語（キーワード）自動抽出用Perlモジュール「TermExtract」を利用します。
 		-font => "TKFN",
 	)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 

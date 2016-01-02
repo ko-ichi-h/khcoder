@@ -290,7 +290,7 @@ sub refresh{
 					my $num = mysql_exec->select(
 						"SELECT count(*) FROM $i"
 					)->hundle->fetch->[0];
-					push @list, [gui_window->gui_jchar($name{$i},'euc'), num_format($num)];
+					push @list, [gui_window->gui_jchar($name{$i}), num_format($num)];
 				}
 			}
 		}

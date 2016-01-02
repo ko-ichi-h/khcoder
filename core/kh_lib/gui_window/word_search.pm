@@ -292,7 +292,7 @@ sub search{
 					-style => $numb_style
 				);
 			} else {
-				$self->list->itemCreate($cu,$col,-text => $self->gui_jchar($h,'euc')); # nkf('-s -E',$h)
+				$self->list->itemCreate($cu,$col,-text => $self->gui_jchar($h));
 			}
 			++$col;
 		}
@@ -323,13 +323,13 @@ sub conc{
 	my ($query, $hinshi, $katuyo);
 	if (index($selected,'.') > 0){
 		my ($parent, $child) = split /\./, $selected;
-		$query = $self->gui_jchar($result->[$parent][0],'euc');
-		$hinshi = $self->gui_jchar($result->[$parent][1],'euc');
-		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][1],'euc');
+		$query = $self->gui_jchar($result->[$parent][0]);
+		$hinshi = $self->gui_jchar($result->[$parent][1]);
+		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][1]);
 		substr($katuyo,0,3) = ''
 	} else {
-		$query = $self->gui_jchar($result->[$selected][0],'euc');
-		$hinshi = $self->gui_jchar($result->[$selected][1],'euc');
+		$query = $self->gui_jchar($result->[$selected][0]);
+		$hinshi = $self->gui_jchar($result->[$selected][1]);
 	}
 
 	# コンコーダンスの呼び出し

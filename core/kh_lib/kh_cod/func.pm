@@ -563,8 +563,8 @@ sub outtab{
 		
 		foreach my $h (@c){
 			if ($n == 0){                         # 行ヘッダ（1列目）
-				push @current,          gui_window->gui_jchar($h,'euc');
-				push @current_for_plot, gui_window->gui_jchar($h,'euc');
+				push @current,          gui_window->gui_jchar($h);
+				push @current_for_plot, gui_window->gui_jchar($h);
 			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
@@ -685,7 +685,7 @@ sub tab{
 	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
-		push @head, gui_window->gui_jchar($i->name,'euc');
+		push @head, gui_window->gui_jchar($i->name);
 	}
 
 	push @for_plot, clone(\@head);

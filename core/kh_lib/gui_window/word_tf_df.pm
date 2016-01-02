@@ -114,9 +114,6 @@ sub count{
 	chop $rcmd;
 	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
-	# Decoding input from MySQL
-	#$rcmd = Encode::decode("eucjp", $rcmd);
-
 	my %tani_name = (
 		'bun' => kh_msg->pget('sentence','global'),
 		'dan' => kh_msg->pget('paragraph','global'),
