@@ -19,6 +19,11 @@ sub _run_morpho{
 		exit;
 	}
 
+
+	print "ENV: $::ENV{DYLD_FALLBACK_LIBRARY_PATH}\n\n";
+	system "printenv";
+	print "\n\n";
+
 	my $cmdline = "chasen -r ".$::config_obj->chasenrc_path." -o ".$self->output." ".$self->target;
 	#print "$cmdline\n";
 	system "$cmdline";

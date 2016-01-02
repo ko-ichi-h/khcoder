@@ -55,6 +55,11 @@ sub _run_morpho{
 	$rcpath = ' -r '.$::config_obj->mecabrc_path if length($::config_obj->mecabrc_path);
 	
 	$self->{cmdline} = "mecab $rcpath -Ochasen -d \"$dic_path\" -o \"$self->{output_temp}\" \"$self->{target_temp}\""; # kr
+	
+	if ($::config_obj->all_in_one_pack){
+		$self->{cmdline} = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $self->{cmdline}";
+	}
+	
 	#print "morpho: $self->{cmdline}\n";
 	
 	# 処理開始
