@@ -756,17 +756,14 @@ my $DEBUG_TIMING = 0;
     open (my $fh,">$this->{START_R}") ;
     
     my $process_r = $this->{PROCESS_R} ;
-    my $icode = Jcode::getcode($process_r);
-    $process_r = Jcode->new($process_r)->euc;
-    $process_r =~ s/\\/\\\\/g ;
-    $process_r = Jcode->new($process_r)->$icode
-    	if ( length($icode) and ( $icode ne 'ascii' ) );
+    $::config_obj->uni_path($process_r);
+	$process_r =~ s/\\/\\\\/g ;
+	$::config_obj->os_path($process_r);
     
     my $pid_r = $this->{PID_R} ;
-    $pid_r = Jcode->new($pid_r)->euc;
+    $::config_obj->uni_path($pid_r);
     $pid_r =~ s/\\/\\\\/g ;    
-    $pid_r = Jcode->new($pid_r)->$icode
-    	if ( length($icode) and ( $icode ne 'ascii' ) );
+    $::config_obj->os_path($pid_r);
     
 	if ($::config_obj->os eq 'win32'){ # kh
 		print $fh "sink(file=\"output.log\", append=TRUE )\n";
