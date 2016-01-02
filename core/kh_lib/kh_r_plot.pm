@@ -747,16 +747,16 @@ sub _save_svg{
 	$::config_obj->R->output_chk(1);
 	
 	# for darwin (No harm in Windows. But what's this?)
-	my $file_temp = $::config_obj->file_temp;
-	open my $fhi, '<:encoding(eucJP-ms)', $path      or die("file: $path");
-	open my $fho, '>:encoding(utf8)',     $file_temp or die("file: $file_temp");
-	while (<$fhi>){
-		print $fho $_;
-	}
-	close $fhi;
-	close $fho;
-	unlink $path;
-	rename($file_temp, $path) or die("rename $file_temp, $path");
+	#my $file_temp = $::config_obj->file_temp;
+	#open my $fhi, '<:encoding(eucJP-ms)', $path      or die("file: $path");
+	#open my $fho, '>:encoding(utf8)',     $file_temp or die("file: $file_temp");
+	#while (<$fhi>){
+	#	print $fho $_;
+	#}
+	#close $fhi;
+	#close $fho;
+	#unlink $path;
+	#rename($file_temp, $path) or die("rename $file_temp, $path");
 	
 	return 1;
 }
