@@ -64,6 +64,7 @@ sub _new{
 				[ kh_msg->get('l_jp', 'gui_window::sysconfig') => 'jp'],# Japanese
 				[ kh_msg->get('l_en', 'gui_window::sysconfig') => 'en'],# English
 				[ kh_msg->get('l_cn', 'gui_window::sysconfig') => 'cn'],# Chinese
+				[ kh_msg->get('l_kr', 'gui_window::sysconfig') => 'kr'],# Korean
 				[ kh_msg->get('l_nl', 'gui_window::sysconfig') => 'nl'],# Dutch
 				[ kh_msg->get('l_fr', 'gui_window::sysconfig') => 'fr'],# French
 				[ kh_msg->get('l_de', 'gui_window::sysconfig') => 'de'],# German
@@ -172,6 +173,11 @@ sub refresh_method{
 	elsif ($self->{lang} eq 'cn') {
 		push @options, ['Stanford POS Tagger', 'stanford'];
 		$possbile{stanford} = 1;
+	}
+	# Korean
+	elsif ($self->{lang} eq 'kr') {
+		push @options, ['MeCab & HanDic', 'mecab_k'];
+		$possbile{mecab} = 1;
 	}
 	# English
 	elsif ($self->{lang} eq 'en') {

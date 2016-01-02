@@ -407,6 +407,13 @@ sub mecab_unicode{
 	return $self->{mecab_unicode};
 }
 
+sub mecabrc_path{
+	my $self = shift;
+	my $new  = shift;
+	$self->{mecabrc_path} = $new if defined($new);
+	return $self->{mecabrc_path};
+}
+
 sub c_or_j{
 	my $self = shift;
 	my $new = shift;

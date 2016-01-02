@@ -26,7 +26,10 @@ sub _run_morpho{
 			);
 	}
 	
-	$self->{cmdline} = "mecab -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
+	my $rcpath = '';
+	$rcpath = ' -r '.$::config_obj->mecabrc_path if length($::config_obj->mecabrc_path);
+	
+	$self->{cmdline} = "mecab $rcpath -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
 	#print "morpho: $self->{cmdline}\n";
 	
 	# 処理開始

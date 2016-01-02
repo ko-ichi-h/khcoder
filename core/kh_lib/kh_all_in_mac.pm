@@ -10,11 +10,20 @@ sub init{
 
 	# Chasen's path
 	unless ($::ENV{PATH} =~ /deps\/chasen:/){
-		system "export PATH=".$::config_obj->cwd."/deps/chasen:\$PATH";
+		system "export PATH=".$::config_obj->cwd."/deps/chasen/bin:\$PATH";
 		$::ENV{PATH} = $::config_obj->cwd."/deps/chasen/bin:".$::ENV{PATH};
 		
 		system 'export DYLD_FALLBACK_LIBRARY_PATH='.$::config_obj->cwd.'/deps/chasen/lib:$DYLD_FALLBACK_LIBRARY_PATH';
 		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} = $::config_obj->cwd.'/deps/chasen/lib:'.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
+	}
+
+	# MeCab's path
+	unless ($::ENV{PATH} =~ /deps\/chasen:/){
+		system "export PATH=".$::config_obj->cwd."/deps/mecab/bin:\$PATH";
+		$::ENV{PATH} = $::config_obj->cwd."/deps/mecab/bin:".$::ENV{PATH};
+		
+		system 'export DYLD_FALLBACK_LIBRARY_PATH='.$::config_obj->cwd.'/deps/mecab/lib:$DYLD_FALLBACK_LIBRARY_PATH';
+		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} = $::config_obj->cwd.'/deps/mecab/lib:'.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
 	}
 
 	# R's path

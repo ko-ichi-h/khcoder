@@ -79,6 +79,7 @@ sub save_ini{
 		'chasenrc_path',
 		'grammarcha_path',
 		'mecab_unicode',
+		'mecabrc_path',
 		'stanf_jar_path',
 		'stanf_tagger_path_en',
 		'stanf_tagger_path_cn',

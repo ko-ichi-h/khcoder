@@ -19,7 +19,8 @@ $config{stanf_jar_path}       = cwd.'/deps/stanford-postagger/stanford-postagger
 $config{stanf_tagger_path_en} = cwd.'/deps/stanford-postagger/models/wsj-0-18-left3words-distsim.tagger';
 $config{stanf_tagger_path_cn} = cwd.'/deps/stanford-postagger/models/chinese-distsim.tagger';
 $config{stanf_seg_path}       = cwd.'/deps/stanford-segmenter';
-$config{han_dic_path}       = cwd.'/deps/handic';
+$config{han_dic_path}         = cwd.'/deps/handic';
+$config{mecabrc_path}         = cwd.'/deps/mecab/etc/mecabrc';
 $config{sql_username}         = 'root';
 $config{sql_password}         = 'khc';
 $config{sql_host}             = '127.0.0.1';
@@ -36,6 +37,22 @@ foreach my $i (keys %config){
 	print $fh "$i\t$config{$i}\n";
 }
 close ($fh);
+
+# Edit configurations of MeCab
+my $dic_dir = cwd.'/deps/mecab/lib/mecab/dic/ipadic';
+my $mecabrc;
+open (my $fh, '<', cwd.'/deps/mecab/etc/mecabrc') or die("could not read file: mecabrc\n");
+{
+	local $/ = undef;
+	$mecabrc = <$fh>;
+}
+close ($fh);
+
+$mecabrc =~ s/\ndicdir = .+?\n/\ndicdir = $dic_dir\n/;
+
+open (my $fh, '>', cwd.'/deps/mecab/etc/mecabrc') or die("could not write file: mecabrc\n");
+print $fh $mecabrc;
+close($fh);
 
 # Edit configurations of R
 my $file_r = cwd.'/deps/R-3.1.0/Versions/3.1/Resources/bin/R';
