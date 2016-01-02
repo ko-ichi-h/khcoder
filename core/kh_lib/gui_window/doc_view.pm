@@ -329,7 +329,6 @@ sub _str_color{
 	my $self = shift;
 	my $str  = shift;
 	
-	#$str = Jcode->new($str)->euc;
 	foreach my $i (@{$self->{s_search}}, @{$self->{str_force}}){
 		my $pat = $i;
 		my $rep = "	start$i	end";
@@ -348,7 +347,7 @@ sub _str_color{
 			last if $start > $pos;
 			$self->text->insert(
 				'end',
-				$self->gui_jchar(substr($str,$pref,$start - $pref),'euc'),
+				$self->gui_jchar(substr($str,$pref,$start - $pref) ),
 				$color
 			);
 			# print Jcode->new(substr($str,$pref,$start - $pref))->sjis.", $color, ,$pref, $start\n";
@@ -362,7 +361,7 @@ sub _str_color{
 		}
 		$self->text->insert(
 			'end',
-			$self->gui_jchar(substr($str, $pref, $pos - $pref),'euc'),
+			$self->gui_jchar(substr($str, $pref, $pos - $pref) ),
 			$color2
 		);
 		# print Jcode->new( substr($str, $pref, $pos - $pref) )->sjis.", nakami\n";
@@ -372,7 +371,7 @@ sub _str_color{
 	
 	$self->text->insert(                # end以降
 		'end',
-		$self->gui_jchar( substr($str, $pref, length($str) - $pref), 'euc')
+		$self->gui_jchar( substr($str, $pref, length($str) - $pref) )
 	);
 	# print Jcode->new( substr($str, $pref, length($str) - $pref) )->sjis.", nokori\n";
 }

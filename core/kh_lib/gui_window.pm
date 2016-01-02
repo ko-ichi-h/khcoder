@@ -313,7 +313,7 @@ sub gui_jchar{ # GUI表示用の日本語
 
 	if ( $char =~ /[[:^ascii:]]/ ){
 		my ($package, $filename, $line) = caller;
-		print "Warn: Non-decoded string: $char,\n\t$code,\n\t$package, $line\n";
+		print "Warn: Non-decoded string: $char,\n\t$code,\n\t$package, $filename, $line\n";
 	}
 
 	return $char;

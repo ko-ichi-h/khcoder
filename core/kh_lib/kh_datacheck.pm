@@ -153,7 +153,7 @@ sub run{
 				} else {
 					$line .= "$h->[1]\n";
 				}
-				$line = gui_window->gui_jchar($line,'euc');
+				$line = Encode::decode('euc-jp', $line);#gui_window->gui_jchar($line,'euc');
 				$msg .= $line;
 			}
 		}

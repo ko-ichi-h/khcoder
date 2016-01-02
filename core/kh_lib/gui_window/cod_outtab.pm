@@ -276,9 +276,11 @@ sub _calc{
 	my $cols = @{$result->{display}[0]};
 	my $width = 0;
 	foreach my $i (@{$result->{display}}){
-		if ( length( Encode::encode('euc-jp',$i->[0]) ) > $width ){
-			$width = length( Encode::encode('euc-jp',$i->[0]) );
+		if ( length( Encode::encode('cp932',$i->[0]) ) > $width ){
+			$width = length( Encode::encode('cp932',$i->[0]) );
 		}
+		# Chinese characters will be transformed to "??".
+		# So it's OK to get length.
 	}
 	
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
@@ -577,14 +579,13 @@ sub plot{
 	$rcom .= ")\n";
 	
 	$rcom .= "# END: DATA\n\n";
-	#$rcom = Encode::encode('eucjp', $rcom);
 
 	$rcom .= "# dpi: short based\n";
 
 	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
-		my $t = Encode::encode('eucjp', $i);
+		my $t = Encode::encode('cp932', $i);
 		if ( $label_length < length($t) ){
 			$label_length = length($t);
 		}
@@ -605,7 +606,7 @@ sub plot{
 	# マップの幅
 	$label_length = 0;
 	foreach my $i (@col_names){
-		my $t = Encode::encode('eucjp', $i);
+		my $t = Encode::encode('cp932', $i);
 		if ( $label_length < length($t) ){
 			$label_length = length($t);
 		}
