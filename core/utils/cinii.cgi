@@ -1,17 +1,20 @@
 #!/usr/local/bin/perl
 
 use CGI;
-use Jcode;
 use strict;
+use utf8;
+use Encode;
+
+binmode STDOUT, ":utf8";
 
 my $q = new CGI; 
 
 print
-	$q->header(-charset => 'euc-jp'),
+	$q->header(-charset => 'UTF-8'),
 	$q->start_html('CiNii / Jstage Formatter'),
 	$q->h1('CiNii / Jstage Formatter'),
 	$q->h2('Description:'),
-	$q->p('CiNii§ﬁ§ø§œJstage§Œœ¿ ∏URL§Ú∆˛Œœ§∑§∆º¬π‘§π§Î§»°¢ ∏∏••Í•π•»∑«∫‹Õ—§Œ•’•©°º•ﬁ•√•»§À —¥π§∑§ﬁ§π°£'),
+	$q->p('CiNii„Åæ„Åü„ÅØJstage„ÅÆË´ñÊñáURL„ÇíÂÖ•Âäõ„Åó„Å¶ÂÆüË°å„Åô„Çã„Å®„ÄÅÊñáÁåÆ„É™„Çπ„ÉàÊé≤ËºâÁî®„ÅÆ„Éï„Ç©„Éº„Éû„ÉÉ„Éà„Å´Â§âÊèõ„Åó„Åæ„Åô„ÄÇ'),
 
 	$q->h2('Input:'),
 	$q->start_form(),
@@ -24,11 +27,11 @@ print
 	'<br>',
 
 	$q->submit(
-		-name=>'º¬π‘°™',
-		-value=>'º¬π‘°™'
+		-name=>'ÂÆüË°åÔºÅ',
+		-value=>'ÂÆüË°åÔºÅ'
 	),
 	$q->end_form,
-	'<div align="right"><a href="./">Ã·§Î</a></div>',
+	'<div align="right"><a href="./">Êàª„Çã</a></div>',
 	<p>,
 	$q->hr,
 ;
@@ -47,17 +50,21 @@ if ($q->param){
 	);
 	
 	foreach my $i (split /\n/, $q->param('input')){
-		# CiNii§ŒæÏπÁ
-		if ( $i =~ /naid\/(\d+)$/ ) {
+		chomp $i;
+		#$output .= "\nurl: $i\n";
+
+		# CiNii„ÅÆÂ†¥Âêà
+		if ( $i =~ /naid\/(\d+)/ ) {
+			#$output .= "cinii\n";
 			my $r = $ua->get("http://ci.nii.ac.jp/naid/$1.bib");
-			my $t = Jcode->new($r->content, 'utf8')->euc;
-			$output .= &format($t);
+			$output .= &format( Encode::decode('UTF-8', $r->content) );
 		}
 		
-		# JSTAGE§ŒæÏπÁ
+		# JSTAGE„ÅÆÂ†¥Âêà
 		if ($i =~ /jstage/ ) {
+			#$output .= "jstage\n";
 			my $r = $ua->get($i);
-			my $t = Jcode->new($r->content, 'utf8')->euc;
+			my $t = Encode::decode('UTF-8', $r->content);
 			
 			my $url = '';
 			if ( $t =~ /<a href="(.+?)">BibTeX<\/a>/ ){
@@ -71,12 +78,11 @@ if ($q->param){
 			$url = 'http://www.jstage.jst.go.jp'.$url;
 			
 			my $r1 = $ua->get($url);
-			my $t1 = Jcode->new($r1->content, 'utf8')->euc;
-			$output .= &format($t1);
+			$output .= &format( Encode::decode('UTF-8', $r1->content) );
 		}
 	}
 
-	# Ω–Œœ
+	# Âá∫Âäõ
 	print $q->textarea(
 		-name    =>'output',
 		-default =>$output,
@@ -87,7 +93,7 @@ if ($q->param){
 
 sub format{
 	my $t = shift;
-	my $output = '';
+	my $out = '';
 
 	my $year   ;
 	my $author ;
@@ -103,21 +109,38 @@ sub format{
 	}
 	if ($t =~ /author="(.+?)",/ || $t =~ /author=\{(.+?)\},/) {
 		$author = $1;
-		$author =~ s/ and /°¶/g;
+		$author =~ s/ and /„Éª/g;
 		$author =~ s/, //g;
 		$author =~ s/ //g;
 	}
 	if ($t =~ /title="(.+?)",/ || $t =~ /title=\{(.+?)\},/) {
 		$title = $1;
+		if ($title =~ /(.+) : (.+)/) {
+			$title = $1.' ‚Äï'.$2.'‚Äï';
+		}
+		if ($title =~ /<b>(.+)<\/b>$/) {
+			$title = $1;
+		}
+		if ($title =~ /(.+)\s$/) {
+			$title = $1;
+		}
 	}
 	if ($t =~ /journal="(.+?)",/ || $t =~ /journal=\{(.+?)\},/) {
 		$journal = $1;
+		if ($journal =~ /(.+) = [a-zA-Z ]+/) {
+			$journal = $1;
+		}
+		
 	}
 	if ($t =~ /volume="(.+?)",/ || $t =~ /volume=\{(.+?)\},/) {
 		$vol = $1;
 	}
 	if ($t =~ /number="(.+?)",/ || $t =~ /number=\{(.+?)\},/) {
 		$num = $1;
+		if ($num eq ' ') {
+			$num = '';
+		}
+		
 	}
 	if ($t =~ /pages="(.+?)",/ || $t =~ /pages=\{(.+?)\},/) {
 		$pages = $1;
@@ -126,30 +149,30 @@ sub format{
 		$doi = $1;
 	}
 	
-	$output .=
-		"$author $year °÷$title"
-		."°◊ °ÿ$journal"
-		."°Ÿ "
+	$out .=
+		"$author $year „Äå$title"
+		."„Äç „Äé$journal"
+		."„Äè "
 	;
 	
 	if ( $num and not $vol ) {
 		$vol = $num;
-		$num = "undef";
+		$num = '';
 	}
 	
 	if ($vol) {
-		$output .= $vol;
+		$out .= $vol;
 	}
 	if ($num ) {
-		$output .= "($num)";
+		$out .= "($num)";
 	}
 	if ($pages) {
-		$output .= ": $pages";
+		$out .= ": $pages";
 	}
 	if ($doi) {
-		$output .= ", doi: $doi";
+		$out .= ", doi: $doi";
 	}
 
-	$output .= "\n";
-	return $output;
+	$out .= "\n";
+	return $out;
 }
