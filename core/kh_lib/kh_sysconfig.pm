@@ -32,6 +32,7 @@ sub readin{
 		|| ! -e "./config/hinshi_stanford_cn"
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
+		|| ! -e "./config/hinshi_freeling_en"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -341,6 +342,38 @@ sub reset_parm{
 				") or die($i);
 			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
 		}
+
+		# for FreeLing (English)
+		unless (-e "./config/hinshi_freeling_en"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_en (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'NNP', ''",
+				"1, 'Noun',  'NN', ''",
+				"3, 'Foreign',  'FW', ''",
+				"20, 'PRP',  'PRP', ''",
+				"25, 'Adj',  'JJ', ''",
+				"30, 'Adv',  'RB', ''",
+				"35, 'Verb',  'VB', ''",
+				"40, 'W',  'W', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_en
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
 		
 		$dbh->disconnect;
 }
@@ -482,6 +515,18 @@ sub stanford_lang{
 	} else {
 		return 'en';
 	}
+}
+
+sub freeling_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{freeling_lang} = $new;
+	}
+	unless (defined($self->{freeling_lang})){
+		$self->{freeling_lang} = 'en';
+	}
+	return $self->{freeling_lang};
 }
 
 sub stanf_tagger_path{

@@ -91,6 +91,8 @@ sub save_ini{
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
 		'han_dic_path',
+		'freeling_dir',
+		'freeling_lang',
 		'stanford_lang',
 		'stemming_lang',
 		'last_lang',
@@ -171,6 +173,14 @@ sub save_ini{
 #--------------------#
 #   形態素解析関係   #
 
+sub freeling_dir{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{freeling_dir} = $new;
+	}
+	return $self->{freeling_dir};
+}
 
 sub chasen_path{
 	my $self = shift;

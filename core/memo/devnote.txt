@@ -16,6 +16,10 @@
 	・Performance Schemaも配布版ではOFFにする
 
 	■TO DO
+	・HanDicのパスを指定するためのGUI
+	・Freeling用のStopwordsを指定するためのGUI
+	・Freelingの各言語用のデフォルト品詞設定の準備
+	
 	・WordMiner用のファイルは文字コードをcp932としているが、utf8のCSVを読み込めるようなら、utf8にする？ （文書×抽出語 ＆ 文書×コード）→だめぽ？
 	・Excelファイル作成時に「ＭＳ Ｐゴシック」を指定するのは不味そう？（mysql_words.pm）
 

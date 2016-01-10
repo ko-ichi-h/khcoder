@@ -7,6 +7,7 @@ use kh_morpho::win32::chasen;
 use kh_morpho::win32::stemming;
 use kh_morpho::win32::stanford;
 use kh_morpho::win32::mecab_k;
+use kh_morpho::win32::freeling;
 
 sub _run{
 	my $self = shift;

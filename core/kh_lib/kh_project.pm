@@ -69,8 +69,11 @@ sub read_hinshi_setting{
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
 	$sql .= Encode::encode( 'ascii', $::config_obj->c_or_j );
 
-	# Stanford POS Taggerの場合は言語ごとに異なる品詞設定ファイルを読む
-	if ($::config_obj->c_or_j eq 'stanford'){
+	# Stanford POS TaggerとFreeLingの場合は言語ごとに異なる品詞設定ファイルを読む
+	if (
+		   $::config_obj->c_or_j eq 'stanford'
+		|| $::config_obj->c_or_j eq 'freeling'
+	){
 		$sql .= Encode::encode( 'ascii', '_'.$::project_obj->morpho_analyzer_lang);
 	}
 
