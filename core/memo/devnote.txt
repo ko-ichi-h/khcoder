@@ -15,6 +15,16 @@
 	・MySQL 5.6では「innodb_flush_log_at_trx_commit = 0」としないと一部の処理（プロジェクトのインポート）がとてつもなく遅くなる
 	・Performance Schemaも配布版ではOFFにする
 
+	・FreeLingの対応言語
+		Catalan		ct	new!
+		English		en
+		French		fr
+		Italian		it
+		Portuguese	pt
+		Russian		ru	new!
+		Slovenian	sl	new!
+		Spanish		es
+
 	■TO DO
 	・HanDicのパスを指定するためのGUI
 	・Freeling用のStopwordsを指定するためのGUI
