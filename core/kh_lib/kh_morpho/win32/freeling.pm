@@ -15,56 +15,60 @@ sub _run_morpho{
 	$self->{icode} = $icode;
 
 	
-	# Start FreeLing Server
-	my $freeling_dir = $::config_obj->freeling_dir;          # set env variable
+	# Set ENV variable
+	my $freeling_dir = $::config_obj->freeling_dir;          
 	$freeling_dir .= '\data';
 	$freeling_dir =~ s/\//\\/g;
 	$freeling_dir = $::config_obj->os_path($freeling_dir);
 	$::ENV{FREELINGSHARE} = $freeling_dir;
 	
+	# get ready to run FreeLing
+	$self->{target_temp} = $self->target.'.tmp';
+	$self->{output_temp} = $self->output.'.tmp';
+	unlink $self->{target_temp} if -e $self->{target_temp};
+	unlink $self->{output_temp} if -e $self->{output_temp};
+	
 	my $freeling_path = $::config_obj->freeling_dir;         # path of *.exe
 	$freeling_path .= '\bin\analyzer.exe';
 	$freeling_path =~ s/\//\\/g;
 	$freeling_path = $::config_obj->os_path($freeling_path);
+
+	my $cmd_path;
+	if (-e $ENV{'WINDIR'}.'\system32\cmd.exe'){
+		$cmd_path = $ENV{'WINDIR'}.'\system32\cmd.exe';
+		#print "cmd.exe: $cmd_path\n";
+	} else {
+		foreach my $i (split /;/, $ENV{'PATH'}){
+			unless (
+				   substr($i,length($i) - 1, 1) eq '\\'
+				|| substr($i,length($i) - 1, 1) eq '/'
+			) {
+				$i .= '\\';
+			}
+			if (-e $i.'cmd.exe'){
+				$cmd_path = $i.'cmd.exe';
+				#print "cmd.exe: found at $cmd_path\n";
+				last;
+			}
+		}
+	}
+	die("Error: could not find cmd.exe") unless -e $cmd_path;
 	
 	my $cmd_line =                                           # command line
-		 ' -f %FREELINGSHARE%\config\\'
+		$cmd_path 
+		#." /C set FREELINGSHARE=\"$freeling_dir\" & $freeling_path"
+		." /C $freeling_path"
+		." -f %FREELINGSHARE%\\config\\"
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg --server --port 8182'
+		.'.cfg '
+		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
-	$cmd_line = $::config_obj->os_path($cmd_line);
-	$cmd_line = $freeling_path.$cmd_line;
-
-	require Win32::Process;                                  # start the server process
-	my $process;
-	Win32::Process::Create(
-		$process,
-		$freeling_path,
-		$cmd_line,
-		0,
-		Win32::Process->CREATE_NO_WINDOW,
-		$::config_obj->cwd,
-	) || $self->Exec_Error("Wi32::Process can not start");
 	
-	print "Starting server, pid: ", $process->GetProcessID(), ", Connecting.";
+	$self->{cmd_path}      = $cmd_path;
+	$self->{cmd_line}      = $cmd_line;
+	$self->{freeling_path} = $freeling_path;
+	$self->{dir}           = $freeling_dir;
 
-	use Net::Telnet;                                         # check the server status
-	$self->{client} = undef;
-	while (not $self->{client}){
-		$self->{client} = new Net::Telnet(
-			Host => '127.0.0.1',
-			Port => 8182,
-			Errmode => 'return',
-		);
-		sleep 1;
-		print ".";
-	}
-	while ( not $self->{client}->open ){
-		sleep 1;
-		print ".";
-	}
-	print " ok. Tagging...";
-	$self->{client}->close;
 
 	# ファイルオープン
 	if (-e $self->output){
@@ -149,10 +153,6 @@ sub _run_morpho{
 	close (TRGT);
 	close ($fh_out);
 
-	#close ($fh_db);
-
-	print " ok.\n";
-	$process->Kill(1);
 
 	return 1;
 }
@@ -229,60 +229,53 @@ sub _run_tagger{
 	my $fh   = shift;
 
 	return 0 unless length($t);
-	#print $fh_db "$t\n";
 
-	# POS Taggerへ
+	# write data to temp file
+	open(my $tmpo, '>:encoding(utf8)', $self->{target_temp}) or
+		gui_errormsg->open(
+			thefile => $self->{target_temp},
+			type => 'file'
+		);
+	print $tmpo $t;
+	close $tmpo;
+		
+	# run freeling
+	require Win32::Process;
+	my $process;
+	Win32::Process::Create(
+		$process,
+		$self->{cmd_path},
+		$self->{cmd_line},
+		0,
+		#Win32::Process->CREATE_NO_WINDOW,
+		Win32::Process->NORMAL_PRIORITY_CLASS,
+		$self->{dir},
+	) or $self->Exec_Error("Wi32::Process can not start");
+	$process->Wait( Win32::Process->INFINITE )
+		|| $self->Exec_Error("Wi32::Process can not wait");
+	
+	unless (-e $self->{output_temp}){
+		$self->Exec_Error("No output file");
+	}
+	
+	# read and format the output of freeling
+	my $out = '';
 	my $n = 0;
-	while ( not $self->{client}->open ){
+	open (OTEMP, "<:encoding(utf8)", $self->{output_temp}) or
+		gui_errormsg->open(
+			thefile => $self->{output_temp},
+			type => 'file'
+		);
+	while( <OTEMP> ){
+		chomp;
+		next unless length($_);
+		my @line = split / /, $_;
+		$out .= "$line[0]\t$line[0]\t$line[1]\t$line[2]\t\t$line[2]\n";
 		++$n;
-		sleep 1;
-		print " .";
-		die("Cannot connect to the Server!") if $n > 10;
 	}
 	
-	$self->{client}->print( encode('utf8', $t) );
-	my @lines = $self->{client}->getlines;
-	$self->{client}->close;
-	
-	# 結果の書き出し
-	$n = 0;
-	foreach my $i (@lines){
-		$i = decode('utf8', $i);
-		
-		#print $fh_db "$i\n";
-		
-		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
-			my $base  = $2;
-			my $hyoso = $3;
-			my $pos   = $1;
-
-			# 基本形の前後に記号がついている場合は落とす
-			if ($base =~ /^(\w+)\W+$/o){
-				$base = $1;
-			}
-			elsif ($base =~ /^\W+(\w+)$/o){
-				$base = $1;
-			}
-			
-			# 出力する行を作成
-			my $line = "$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n";
-			$line =~ s/\\/\/_/g;
-			
-			# 語が空白の場合はスキップ
-			if ($line =~ /^\t/o){
-				warn("dropped: $i\n");
-				next;
-			}
-			$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
-			
-			print $fh $line;
-			++$n;
-		}
-		#else {
-		#	warn("unexpected otput from Stanford-POS-Tagger!\n$i");
-		#}
-	}
-	
+	# write the output to result file
+	print $fh $out;
 	if ($n == 0 && $t =~ /\S/o){
 		my $file = $::project_obj->file_dropped;
 		
@@ -300,7 +293,7 @@ sub _run_tagger{
 		
 		warn("A sentence which includes unrecognized characters is dropped!\n");
 		
-		open(my $fh, '>>', $file)
+		open(my $fh, '>>:encoding(utf8)', $file)
 			or gui_errormsg->open(
 				thefile => $self->output,
 				type => 'file'

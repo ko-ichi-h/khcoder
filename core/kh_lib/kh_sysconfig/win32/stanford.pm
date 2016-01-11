@@ -7,7 +7,7 @@ sub config_morph{
 
 sub path_check{
 	my $self = shift;
-	return 1;
+	#return 1;
 
 	if ( ! (
 			   -e $::config_obj->os_path( $self->stanf_tagger_path )

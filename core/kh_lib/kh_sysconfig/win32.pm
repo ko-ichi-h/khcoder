@@ -16,6 +16,7 @@ sub _readin{
 	use kh_sysconfig::win32::mecab_k;
 	use kh_sysconfig::win32::stemming;
 	use kh_sysconfig::win32::stanford;
+	use kh_sysconfig::win32::freeling;
 
 	my $self = shift;
 
