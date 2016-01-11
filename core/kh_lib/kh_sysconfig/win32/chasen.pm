@@ -175,24 +175,20 @@ sub config_morph{
 }
 
 sub path_check{
-	return 1;
+	#return 1;
 	
 	#if ($::config_obj->os ne 'win32'){
 	#	return 1;
 	#}
 
-	#my $self = shift;
-	#my $path = $self->chasen_path;
+	my $self = shift;
+	my $path = $self->chasen_path;
 
-	#if (not (-e $path) or not ($path =~ /chasen\.exe\Z/i) ){
-	#	gui_errormsg->open(
-	#		type   => 'msg',
-	#		window => \$gui_sysconfig::inis,
-	#		msg    => kh_msg->get('path_error'),
-	#	);
-	#	return 0;
-	#}
-	#return 1;
+	if (not (-e $path) or not ($path =~ /chasen\.exe\Z/i) ){
+		print "path error: Chasen\n";
+		return 0;
+	}
+	return 1;
 }
 
 

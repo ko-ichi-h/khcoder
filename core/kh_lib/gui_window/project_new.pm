@@ -78,14 +78,14 @@ sub _new{
 				[ kh_msg->get('l_en', 'gui_window::sysconfig') => 'en'],#'English'
 				[ kh_msg->get('l_cn', 'gui_window::sysconfig') => 'cn'],#'Chinese'
 				[ kh_msg->get('l_kr', 'gui_window::sysconfig') => 'kr'],#'Korean *'
-				[ kh_msg->get('l_ct', 'gui_window::sysconfig') => 'ct'],#'Catalan *'
+				#[ kh_msg->get('l_ct', 'gui_window::sysconfig') => 'ct'],#'Catalan *'
 				[ kh_msg->get('l_nl', 'gui_window::sysconfig') => 'nl'],#'Dutch *'
 				[ kh_msg->get('l_fr', 'gui_window::sysconfig') => 'fr'],#'French *'
 				[ kh_msg->get('l_de', 'gui_window::sysconfig') => 'de'],#'German *'
 				[ kh_msg->get('l_it', 'gui_window::sysconfig') => 'it'],#'Italian *'
 				[ kh_msg->get('l_pt', 'gui_window::sysconfig') => 'pt'],#'Portuguese *'
-				[ kh_msg->get('l_ru', 'gui_window::sysconfig') => 'ru'],#'Russian *'
-				[ kh_msg->get('l_sl', 'gui_window::sysconfig') => 'sl'],#'Slovenian *'
+				#[ kh_msg->get('l_ru', 'gui_window::sysconfig') => 'ru'],#'Russian *'
+				#[ kh_msg->get('l_sl', 'gui_window::sysconfig') => 'sl'],#'Slovenian *'
 				[ kh_msg->get('l_es', 'gui_window::sysconfig') => 'es'],#'Spanish *'
 			],
 		variable => \$self->{lang},
@@ -179,10 +179,10 @@ sub refresh_method{
 	elsif ($self->{lang} eq 'en') {
 		push @options, ['Stanford POS Tagger', 'stanford'];
 		push @options, ['Snowball stemmer',    'stemming'];
-		push @options, ['FreeLing',            'freeling'];
+		#push @options, ['FreeLing',            'freeling'];
 		$possbile{stanford} = 1;
 		$possbile{stemming} = 1;
-		$possbile{freeling} = 1;
+		#$possbile{freeling} = 1;
 	}
 	
 	else {
@@ -197,8 +197,8 @@ sub refresh_method{
 			|| $self->{lang} eq 'sl'
 			|| $self->{lang} eq 'es'
 		) {
-			push @options, ['FreeLing', 'freeling'];
-			$possbile{freeling} = 1;
+			#push @options, ['FreeLing', 'freeling'];
+			#$possbile{freeling} = 1;
 		}
 		
 		# add Snowball stemmer
