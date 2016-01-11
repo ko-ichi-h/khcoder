@@ -58,7 +58,7 @@ sub _run_morpho{
 		$cmd_path 
 		#." /C set FREELINGSHARE=\"$freeling_dir\" & $freeling_path"
 		." /C $freeling_path"
-		." -f %FREELINGSHARE%\\config\\"
+		." --nonumb --nodate --noquant -f %FREELINGSHARE%\\config\\"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg '
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
