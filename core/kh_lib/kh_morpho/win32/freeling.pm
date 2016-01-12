@@ -14,7 +14,6 @@ sub _run_morpho{
 	my $icode = kh_jchar->check_code_en($self->target,1);
 	$self->{icode} = $icode;
 
-	
 	# Set ENV variable
 	my $freeling_dir = $::config_obj->freeling_dir;          
 	$freeling_dir .= '\data';
@@ -84,12 +83,6 @@ sub _run_morpho{
 			thefile => $self->target,
 			type => 'file'
 		);
-	
-	open (my $fh_out,'>:encoding(utf8)',$self->output) or 
-		gui_errormsg->open(
-			thefile => $self->output,
-			type => 'file'
-		);
 
 	# Perlapp用にLingua::Sentenceのデータを解凍
 	if(defined(&PerlApp::extract_bound_file)){
@@ -130,115 +123,109 @@ sub _run_morpho{
 	# 処理開始
 	$self->{unrecognized_char} = 0;
 	while ( <TRGT> ){
-		chomp;
-		my $t = $_;
-
-		# データのクリーニング
-		unless (length($t)){
-			next;
+		my $t   = $_;
+		while ( index($t,'<') > -1){
+			my $pre = substr($t,0,index($t,'<'));
+			my $cnt = substr(
+				$t,
+				index($t,'<'),
+				index($t,'>') - index($t,'<') + 1
+			);
+			unless ( index($t,'>') > -1 ){
+				gui_errormsg->open(
+					msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
+					type => 'msg'
+				);
+				exit;
+			}
+			substr($t,0,index($t,'>') + 1) = '';
+			
+			$self->_fl_run($pre);
+			$self->_fl_outer($cnt);
+			
+			#print "[[$pre << $cnt >> $t]]\n";
 		}
-		$t =~ s/\\/\/_/go;
-		$t =~ s/[[:cntrl:]]/ /go;
-		
-		# 見出し行
-		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out "$1\t$1\t$1\tTAG\t\tTAG\n";
-			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out "$3\t$3\t$3\tTAG\t\tTAG\n";
-			print $fh_out "EOS\n";
-		} else {
-			$self->_sentence($t, $fh_out);
-		}
+		$self->_fl_store($t);
 	}
 	close (TRGT);
-	close ($fh_out);
-
+	$self->_fl_run();
 
 	return 1;
 }
 
-sub _tag{
+sub _fl_outer{
 	my $self = shift;
 	my $t    = shift;
-	my $fh   = shift;
 
-	$t =~ tr/ /_/;
-	#$t = Text::Unidecode::unidecode($t);
-	
-	print $fh "$t\t$t\t$t\tTAG\t\tTAG\n";
-
-}
-
-sub _sentence{
-	my $self = shift;
-	my $t    = shift;
-	my $fh   = shift;
-	
-	unless (length($t)){
-		#print "Empty!\n";
-		return 1;
-	}
-	
-	my @sentences = $self->{splitter}->split_array($t);
-	
-	foreach my $i (@sentences) {
-		my $r = $self->_tokenize_stem($i, $fh);
-		print $fh "。\t。\t。\tALL\tSP\n" if $r;
-	}
-
-	print $fh "EOS\n";
-	return 1;
-}
-
-
-sub _tokenize_stem{
-	my $self = shift;
-	my $t    = shift;
-	my $fh   = shift;
-	
-	my $r = 0;
-	while ( index($t,'<') > -1){
-		my $pre = substr($t,0,index($t,'<'));
-		my $cnt = substr(
-			$t,
-			index($t,'<'),
-			index($t,'>') - index($t,'<') + 1
+	open (OTPT,">>:encoding(utf8)",$self->output) or 
+		gui_errormsg->open(
+			thefile => $self->output,
+			type => 'file'
 		);
-		unless ( index($t,'>') > -1 ){
-			gui_errormsg->open(
-				msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
-				type => 'msg'
-			);
-			exit;
-		}
-		substr($t,0,index($t,'>') + 1) = '';
-		
-		$r += $self->_run_tagger($pre, $fh);
-		$self->_tag($cnt, $fh);
-		
-		#print "[[$pre]] [[$cnt]] [[$t]]\n";
-	}
-	$r += $self->_run_tagger($t, $fh);
-	
-	return $r;
+
+	print OTPT "$t\t$t\t$t\tTAG\t\t\n";
+
+	close (OTPT);
 }
 
-sub _run_tagger{
+# Store the data for FreeLing
+sub _fl_store{
 	my $self = shift;
 	my $t    = shift;
-	my $fh   = shift;
+	
+	return 1 unless length($t) > 0;
+	
+	$self->{store} .= $t;
+	$self->{stlast} = $t;
+	
+	if ( length($self->{store}) > 1048576 ){
+		$self->_fl_store_out;
+	}
 
-	return 0 unless length($t);
+	return $self;
+}
 
-	# write data to temp file
-	open(my $tmpo, '>:encoding(utf8)', $self->{target_temp}) or
+# Write data for FreeLing to a file
+sub _fl_store_out{
+	my $self = shift;
+
+	return 1 unless defined($self->{store});
+	return 1 unless length($self->{store}) > 0;
+
+	my $icode = 'utf8';
+	
+	my $arg;
+	if (-e $self->{target_temp}) {
+		$arg = ">>:encoding($icode)";
+	} else {
+		$arg = ">:encoding($icode)";
+	}
+	
+	open (TMPO, $arg, $self->{target_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{target_temp},
 			type => 'file'
 		);
-	print $tmpo $t;
-	close $tmpo;
-		
+
+	$self->{store} =~ s/\n/\n>\n/g; # add paragraph delimiter
+
+	print TMPO $self->{store};
+	close (TMPO);
+
+	$self->{store} = '';
+	return $self;
+}
+
+
+sub _fl_run{
+	my $self = shift;
+	my $t    = shift;
+
+	$self->_fl_store($t) if length($t);
+	$self->_fl_store_out;
+
+	return 0 unless -e $self->{target_temp};
+
 	# run freeling
 	require Win32::Process;
 	my $process;
@@ -260,7 +247,8 @@ sub _run_tagger{
 	
 	# read and format the output of freeling
 	my $out = '';
-	my $n = 0;
+	my $lines = 0;
+	my $this_line = '';
 	open (OTEMP, "<:encoding(utf8)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
@@ -268,15 +256,37 @@ sub _run_tagger{
 		);
 	while( <OTEMP> ){
 		chomp;
-		next unless length($_);
+		if ( length($_) == 0 ){
+			if ( length($this_line) > 0  ){ # insert sentence delimiter
+				$out .= "。\t。\t。\tALL\tSP\n";
+			}
+			next;
+		}
 		my @line = split / /, $_;
+		
+		if ($line[0] eq '>') {              # paragraph delimiter
+			$out .= "EOS\n";
+			$this_line = '';
+			next;
+		}
+		
 		$out .= "$line[0]\t$line[0]\t$line[1]\t$line[2]\t\t$line[2]\n";
-		++$n;
+		$this_line .= " $line[0]";
+		++$lines;
 	}
+	close (OTEMP);
 	
 	# write the output to result file
+	open (my $fh,'>>:encoding(utf8)',$self->output) or 
+		gui_errormsg->open(
+			thefile => $self->output,
+			type => 'file'
+		);
 	print $fh $out;
-	if ($n == 0 && $t =~ /\S/o){
+	close ($fh);
+	
+	# error check
+	if ($lines == 0 && $t =~ /\S/o){
 		my $file = $::project_obj->file_dropped;
 		
 		unless ( $self->{unrecognized_char} ){
@@ -303,20 +313,47 @@ sub _run_tagger{
 		close $fh;
 	}
 	
-	if ($n == 0) {
+	# unlink files
+	$process->Kill(1);
+	unlink $self->{output_temp} or
+		gui_errormsg->open(
+			thefile => $self->{output_temp}."\n$!",
+			type => 'file'
+		);
+	unlink $self->{target_temp} or
+		gui_errormsg->open(
+			thefile => $self->{target_temp},
+			type => 'file'
+		);
+		
+	# check file status
+	use Time::HiRes;
+	for ( my $n = 0; $n < 20; ++$n ){
+		if ( not ( -e $self->{output_temp} ) and not ( -e $self->{target_temp} ) ){
+			if ($n > 0) {
+				print "unlink: it was necessary to wait $n loop(s)\n";
+			}
+			last;
+		}
+		if ($n == 19) {
+			gui_errormsg->open(
+				thefile => $self->{target_temp},
+				type => 'file'
+			);
+		}
+		Time::HiRes::sleep (0.5);
+	}
+	
+	
+	if ($lines == 0) {
 		return 0;
 	}
 	
 	return 1;
 }
 
-sub segment{
-	my $self = shift;
-	return $self;
-}
-
 sub exec_error_mes{
-	return kh_msg->get('error');
+	return 'Could not run FreeLing!';
 }
 
 
