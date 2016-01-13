@@ -165,23 +165,23 @@ sub refresh_method{
 			$possbile{mecab} = 1;
 		}
 	}
-	# Chinese
-	elsif ($self->{lang} eq 'cn') {
-		push @options, ['Stanford POS Tagger', 'stanford'];
-		$possbile{stanford} = 1;
-	}
 	# Korean
 	elsif ($self->{lang} eq 'kr') {
 		push @options, ['MeCab & HanDic', 'mecab_k'];
 		$possbile{mecab} = 1;
 	}
-	# English
-	elsif ($self->{lang} eq 'en') {
-		push @options, ['Stanford POS Tagger', 'stanford'];
-		$possbile{stanford} = 1;
-	}
 	
 	else {
+		
+		# add stanford pos tagger
+		if (
+				$self->{lang} eq 'cn'
+			 || $self->{lang} eq 'en'
+		) {
+			push @options, ['Stanford POS Tagger', 'stanford'];
+			$possbile{stanford} = 1;
+		}
+
 		# add FreeLing
 		if (
 			(

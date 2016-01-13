@@ -533,13 +533,13 @@ sub stanf_tagger_path{
 	my $self = shift;
 	
 	if ($::project_obj) {
-		my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
-		return $self->$call;
-	} else {
-		return undef;
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'en' || $lang eq 'cn') {
+			my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
+			return $self->$call;
+		}
 	}
-	
-
+	return undef;
 }
 
 sub stanf_tagger_path_en{

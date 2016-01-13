@@ -2,7 +2,7 @@ package kh_sysconfig::linux::mecab_k;
 use base qw(kh_sysconfig::linux);
 
 sub config_morph{
-	# 設定事項無し
+	return 1;
 }
 
 sub path_check{

@@ -175,12 +175,6 @@ sub config_morph{
 }
 
 sub path_check{
-	#return 1;
-	
-	#if ($::config_obj->os ne 'win32'){
-	#	return 1;
-	#}
-
 	my $self = shift;
 	my $path = $self->chasen_path;
 
