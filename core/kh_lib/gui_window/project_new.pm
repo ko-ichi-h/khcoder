@@ -184,17 +184,21 @@ sub refresh_method{
 	else {
 		# add FreeLing
 		if (
-			   $self->{lang} eq 'ct'
-			|| $self->{lang} eq 'en'
-			|| $self->{lang} eq 'fr'
-			|| $self->{lang} eq 'it'
-			|| $self->{lang} eq 'pt'
-			|| $self->{lang} eq 'ru'
-			|| $self->{lang} eq 'sl'
-			|| $self->{lang} eq 'es'
+			(
+				$self->{lang} eq 'ct'
+			 || $self->{lang} eq 'en'
+			 || $self->{lang} eq 'fr'
+			 || $self->{lang} eq 'it'
+			 || $self->{lang} eq 'pt'
+			 || $self->{lang} eq 'ru'
+			 || $self->{lang} eq 'sl'
+			 || $self->{lang} eq 'es'
+			) && (
+				-d $::config_obj->freeling_dir
+			)
 		) {
-			# push @options, ['FreeLing', 'freeling'];
-			# $possbile{freeling} = 1;
+			push @options, ['FreeLing', 'freeling'];
+			$possbile{freeling} = 1;
 		}
 		
 		# add Snowball stemmer
