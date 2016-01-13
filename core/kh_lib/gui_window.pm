@@ -349,12 +349,15 @@ sub gui_jg{ # 入力された文字列の変換
 sub to_clip{ # クリップボードへコピーするための変換
 	my $char = $_[1];
 	
-	unless ( utf8::is_utf8($char) ){
-		warn("To clipboard: non decoded string found.");
+	if ( $char =~ /[[:^ascii:]]/ and not utf8::is_utf8($char) ){
+
+		my ($package, $filename, $line) = caller;
+		print "to_clip Warn: Non-decoded string: $char,\n\t$package, $filename, $line\n";
+
 		$char = Jcode->new($char)->utf8;
 		$char = Encode::decode('UTF-8',$char);
 	}
-	
+
 	return $char;
 }
 
