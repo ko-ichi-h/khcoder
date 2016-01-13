@@ -532,8 +532,14 @@ sub freeling_lang{
 sub stanf_tagger_path{
 	my $self = shift;
 	
-	my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
-	return $self->$call;
+	if ($::project_obj) {
+		my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
+		return $self->$call;
+	} else {
+		return undef;
+	}
+	
+
 }
 
 sub stanf_tagger_path_en{

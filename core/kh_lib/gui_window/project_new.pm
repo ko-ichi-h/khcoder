@@ -178,11 +178,7 @@ sub refresh_method{
 	# English
 	elsif ($self->{lang} eq 'en') {
 		push @options, ['Stanford POS Tagger', 'stanford'];
-		push @options, ['Snowball stemmer',    'stemming'];
-		push @options, ['FreeLing',            'freeling'];
 		$possbile{stanford} = 1;
-		$possbile{stemming} = 1;
-		$possbile{freeling} = 1;
 	}
 	
 	else {
@@ -197,8 +193,8 @@ sub refresh_method{
 			|| $self->{lang} eq 'sl'
 			|| $self->{lang} eq 'es'
 		) {
-			#push @options, ['FreeLing', 'freeling'];
-			#$possbile{freeling} = 1;
+			# push @options, ['FreeLing', 'freeling'];
+			# $possbile{freeling} = 1;
 		}
 		
 		# add Snowball stemmer

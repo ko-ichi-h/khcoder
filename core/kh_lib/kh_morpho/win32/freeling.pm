@@ -55,9 +55,8 @@ sub _run_morpho{
 	
 	my $cmd_line =                                           # command line
 		$cmd_path 
-		#." /C set FREELINGSHARE=\"$freeling_dir\" & $freeling_path"
 		." /C $freeling_path"
-		." --nonumb --nodate --noquant -f %FREELINGSHARE%\\config\\"
+		." --nonumb --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg '
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
@@ -67,7 +66,6 @@ sub _run_morpho{
 	$self->{cmd_line}      = $cmd_line;
 	$self->{freeling_path} = $freeling_path;
 	$self->{dir}           = $freeling_dir;
-
 
 	# ファイルオープン
 	if (-e $self->output){
@@ -207,9 +205,22 @@ sub _fl_store_out{
 			type => 'file'
 		);
 
-	$self->{store} =~ s/\n/\n>\n/g; # add paragraph delimiter
+	$self->{store} =~ s/\n/\n>\n/g;    # add paragraph delimiter
 
-	print TMPO $self->{store};
+	my $t = '';                        # add sentence delimiter
+	foreach my $i (split /\n/, $self->{store}){
+		if ($i eq '>') {
+			$t .= ">\n";
+		} else {
+			my @sentences = $self->{splitter}->split_array($i);
+			foreach my $h (@sentences){
+				next unless length($h);
+				$t .= "$h\n<\n";
+			}
+		}
+	}
+	
+	print TMPO $t;
 	close (TMPO);
 
 	$self->{store} = '';
@@ -248,7 +259,6 @@ sub _fl_run{
 	# read and format the output of freeling
 	my $out = '';
 	my $lines = 0;
-	my $this_line = '';
 	open (OTEMP, "<:encoding(utf8)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
@@ -256,22 +266,21 @@ sub _fl_run{
 		);
 	while( <OTEMP> ){
 		chomp;
-		if ( length($_) == 0 ){
-			if ( length($this_line) > 0  ){ # insert sentence delimiter
-				$out .= "。\t。\t。\tALL\tSP\n";
-			}
-			next;
-		}
+
+		next unless length($_);
 		my @line = split / /, $_;
 		
 		if ($line[0] eq '>') {              # paragraph delimiter
 			$out .= "EOS\n";
-			$this_line = '';
+			next;
+		}
+		
+		if ($line[0] eq '<') {              # sentence delimiter
+			$out .= "。\t。\t。\tALL\tSP\n";
 			next;
 		}
 		
 		$out .= "$line[0]\t$line[0]\t$line[1]\t$line[2]\t\t$line[2]\n";
-		$this_line .= " $line[0]";
 		++$lines;
 	}
 	close (OTEMP);
