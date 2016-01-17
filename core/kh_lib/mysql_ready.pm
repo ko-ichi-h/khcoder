@@ -442,6 +442,10 @@ sub reform{
 						last;
 					}
 				}
+				elsif ( $i->[1] eq '*' ) {
+					$kh_hinshi = $i->[3];
+					last;
+				}
 			}
 			
 			my $chk = $d->[0];

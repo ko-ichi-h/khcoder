@@ -39,10 +39,13 @@ sub _new{
 	my %default;
 	
 	my $sth = mysql_exec->select("
-		SELECT  name,khhinshi_id
-		FROM    hselection
-		WHERE   ifuse = 1
-		ORDER BY khhinshi_id
+		SELECT hselection.name, hselection.khhinshi_id
+		FROM genkei, hselection
+		WHERE
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.ifuse = 1
+		GROUP BY hselection.khhinshi_id
+		ORDER BY hselection.khhinshi_id
 	",1)->hundle;
 	
 	#use Data::Dumper;

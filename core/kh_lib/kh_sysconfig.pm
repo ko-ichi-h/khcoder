@@ -33,6 +33,7 @@ sub readin{
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
 		|| ! -e "./config/hinshi_freeling_en"
+		|| ! -e "./config/hinshi_freeling_fr"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -368,6 +369,207 @@ sub reset_parm{
 			foreach my $i (@table){
 				$dbh->do("
 					INSERT INTO hinshi_freeling_en
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (French)
+		unless (-e "./config/hinshi_freeling_fr"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_fr (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_fr
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (Spanish)
+		unless (-e "./config/hinshi_freeling_es"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_es (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_es
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (Catalan)
+		unless (-e "./config/hinshi_freeling_ct"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_ct (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_ct
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (Italian)
+		unless (-e "./config/hinshi_freeling_it"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_it (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_it
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (Portuguese)
+		unless (-e "./config/hinshi_freeling_pt"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_pt (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_pt
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+		
+		# for FreeLing (Russian)
+		unless (-e "./config/hinshi_freeling_pt"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_pt (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"2, 'D', 'D', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'J', 'J', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_pt
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )
