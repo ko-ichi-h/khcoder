@@ -32,8 +32,13 @@ sub readin{
 		|| ! -e "./config/hinshi_stanford_cn"
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
+		|| ! -e "./config/hinshi_freeling_ca"
 		|| ! -e "./config/hinshi_freeling_en"
 		|| ! -e "./config/hinshi_freeling_fr"
+		|| ! -e "./config/hinshi_freeling_it"
+		|| ! -e "./config/hinshi_freeling_pt"
+		|| ! -e "./config/hinshi_freeling_ru"
+		|| ! -e "./config/hinshi_freeling_es"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -445,9 +450,9 @@ sub reset_parm{
 		}
 		
 		# for FreeLing (Catalan)
-		unless (-e "./config/hinshi_freeling_ct"){
+		unless (-e "./config/hinshi_freeling_ca"){
 			$dbh->do(
-				"CREATE TABLE hinshi_freeling_ct (
+				"CREATE TABLE hinshi_freeling_ca (
 					hinshi_id INTEGER,
 					kh_hinshi CHAR(225),
 					condition1 CHAR(225),
@@ -470,7 +475,7 @@ sub reset_parm{
 			);
 			foreach my $i (@table){
 				$dbh->do("
-					INSERT INTO hinshi_freeling_ct
+					INSERT INTO hinshi_freeling_ca
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )
@@ -547,9 +552,9 @@ sub reset_parm{
 		}
 		
 		# for FreeLing (Russian)
-		unless (-e "./config/hinshi_freeling_pt"){
+		unless (-e "./config/hinshi_freeling_ru"){
 			$dbh->do(
-				"CREATE TABLE hinshi_freeling_pt (
+				"CREATE TABLE hinshi_freeling_ru (
 					hinshi_id INTEGER,
 					kh_hinshi CHAR(225),
 					condition1 CHAR(225),
@@ -569,7 +574,7 @@ sub reset_parm{
 			);
 			foreach my $i (@table){
 				$dbh->do("
-					INSERT INTO hinshi_freeling_pt
+					INSERT INTO hinshi_freeling_ru
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )

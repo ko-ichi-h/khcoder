@@ -311,7 +311,7 @@ gui_window::sysconfig:
     l_nl:                     オランダ語
     l_pt:                     ポルトガル語
     l_kr:                     韓国語
-    l_ct:                     カタロニア語
+    l_ca:                     カタロニア語
     l_ru:                     ロシア語
     l_sl:                     スロベニア語
     lang:                     '    言語：'

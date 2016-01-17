@@ -2,7 +2,7 @@
 PAP-Version: 1.0
 Packer: C:\Program Files (x86)\ActiveState Perl Dev Kit 9.2.1\bin\perlapp.exe
 Script: kh_coder.pl
-Cwd: F:\home\Koichi\Study\perl\core
+Cwd: F:\home\Koichi\Study\perl\core_uni
 Add: Encode::Guess
 Add: feature
 Add: Encode::EUCJPMS
@@ -24,8 +24,9 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.fr[file=C:\apps\Perl\si
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.it,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.nl,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.pt,mode=666]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.ru,mode=666]
 Clean: 0
-Date: 2015-10-12 18:48:13
+Date: 2016-01-18 01:01:27
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -33,7 +34,7 @@ Exe: kh_coder.exe
 Force: 1
 Gui: 0
 Hostname: FORTUNA
-Icon: memo\1.ico
+Icon: ..\core\memo\1.ico
 Lib: lib:.\kh_lib
 Manifest: 
 No-Compress: 0
@@ -45,12 +46,12 @@ Verbose: 1
 Version-Comments: 
 Version-CompanyName: Ritsumeikan Univ.
 Version-FileDescription: KH Coder
-Version-FileVersion: 2
+Version-FileVersion: 3
 Version-InternalName: kh_coder.exe
 Version-LegalCopyright: Higuchi Koichi
 Version-LegalTrademarks: 
 Version-OriginalFilename: kh_coder.exe
 Version-ProductName: KH Coder
-Version-ProductVersion: 2
+Version-ProductVersion: 3
 Warnings: 0
 Xclude: 0

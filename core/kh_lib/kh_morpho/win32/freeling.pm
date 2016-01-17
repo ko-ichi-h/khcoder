@@ -111,9 +111,17 @@ sub _run_morpho{
 		PerlApp::extract_bound_file(
 			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt',
 		);
+		PerlApp::extract_bound_file(
+			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru',
+		);
 	}
 
 	require Lingua::Sentence;
+	my $lang = $::project_obj->morpho_analyzer_lang;
+	if ($lang eq 'ru') {
+		$lang = 'Russian';
+	}
+	
 	$self->{splitter} = Lingua::Sentence->new(
 		$::project_obj->morpho_analyzer_lang
 	);
