@@ -823,6 +823,20 @@ sub _save_r{
 		close $fhr;
 		$t =~ s/source\(\"(.+)\", encoding=\"UTF-8\"\)//;
 	}
+	if ( $t =~ /source\(\"(.+)\"\)/ ){
+		my $file_data = $1;
+		$file_data = $::config_obj->os_path($file_data);
+		open my $fhr, '<:encoding(cp1251)', $file_data or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $file_data,
+			);
+		while (<$fhr>){
+			print OUTF $_;
+		}
+		close $fhr;
+		$t =~ s/source\(\"(.+)\"\)//;
+	}
 	print OUTF $t,"\n";
 	close (OUTF);
 	

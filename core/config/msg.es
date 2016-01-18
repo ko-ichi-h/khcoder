@@ -327,8 +327,8 @@ gui_window::sysconfig:
     p_stanford_tag:           '    Ruta de *.TAGGER:'
     pdf:                      'Visor de PDF:'
     s_sheet:                  'Hoja de Cálculo (CSV/Excel):'
-    stanford:                 Lematización con "Stanford POS Tagger"
-    stemming:                 Stemming con "Snowball"
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
     stopwords:                '  Palabras vacías:'
     web_browser:              'Navegador:'
     win_title:                Configuración General

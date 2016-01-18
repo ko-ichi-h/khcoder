@@ -34,7 +34,16 @@ sub out2{                               # length作製をする
 	
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
-	open my $fh, '>:encoding(utf8)', $file or
+	my $icode = 'UTF-8';
+	
+	if (
+		$::project_obj->morpho_analyzer_lang eq 'ru'
+		&& $::config_obj->os eq 'win32'
+	) {
+		$icode = 'cp1251';
+	}
+	
+	open my $fh, ">:encoding($icode)", $file or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
@@ -165,7 +174,11 @@ sub out2{                               # length作製をする
 
 	# Rコマンド
 	$file = $::config_obj->uni_path($file);
-	$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
+	if ($icode eq 'UTF-8') {
+		$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
+	} else {
+		$self->{r_command} = "source(\"$file\")\n";
+	}
 
 	return $self;
 }

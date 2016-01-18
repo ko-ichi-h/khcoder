@@ -869,6 +869,9 @@ sub stopwords_current{
 	}
 	elsif ($self->c_or_j eq 'stanford'){
 		$type .= '_'.$::project_obj->morpho_analyzer_lang;
+	}
+	elsif ($self->c_or_j eq 'freeling'){
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
 	} else {
 		$type .= '_d';
 	}

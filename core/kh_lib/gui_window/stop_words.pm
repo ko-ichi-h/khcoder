@@ -13,6 +13,14 @@ use gui_window::stop_words::stemming_pt;
 use gui_window::stop_words::stanford_en;
 use gui_window::stop_words::stanford_cn;
 
+use gui_window::stop_words::freeling_ca;
+use gui_window::stop_words::freeling_en;
+use gui_window::stop_words::freeling_fr;
+use gui_window::stop_words::freeling_it;
+use gui_window::stop_words::freeling_pt;
+use gui_window::stop_words::freeling_ru;
+use gui_window::stop_words::freeling_es;
+
 use kh_msg;
 
 #------------------#

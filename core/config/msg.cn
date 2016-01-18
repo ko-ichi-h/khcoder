@@ -704,8 +704,8 @@ gui_window::sysconfig:
   p_stanford_tag: ' *.TAGGER文件路径:'
   pdf: PDF阅读器：
   s_sheet: 表格程序(CSV/Excel)：
-  stanford: Lemmatization with "Stanford POS Tagger"
-  stemming: Stemming with "Snowball"
+  stanford: Stanford POS Tagger
+  stemming: Snowball Stemmer
   stopwords: ' Stop words:'
   web_browser: Web浏览器：
   win_title: KH Coder的设定

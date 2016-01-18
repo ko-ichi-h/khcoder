@@ -328,8 +328,8 @@ gui_window::sysconfig:
     p_stanford_tag:           '    *.TAGGER file path:'
     pdf:                      PDFビューア：
     s_sheet:                  表計算（CSV/Excel）：
-    stanford:                 Lemmatization with "Stanford POS Tagger"
-    stemming:                 Stemming with "Snowball"
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
     stopwords:                '  Stop words:'
     web_browser:              Webブラウザ：
     win_title:                KH Coderの設定
