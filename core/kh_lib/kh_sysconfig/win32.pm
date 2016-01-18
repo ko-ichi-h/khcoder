@@ -247,6 +247,13 @@ sub font_plot_kr{
 	return $self->{font_plot_kr};
 }
 
+sub font_plot_ru{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_ru} = $new         if defined($new) && length($new);
+	$self->{font_plot_ru} = 'Meiryo UI' unless length($self->{font_plot_ru});
+	return $self->{font_plot_ru};
+}
 
 1;
 

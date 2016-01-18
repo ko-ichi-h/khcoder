@@ -1345,6 +1345,9 @@ sub font_plot_current{
 		elsif ($lang eq 'kr'){
 			return $self->font_plot_kr;
 		}
+		elsif ($lang eq 'ru'){
+			return $self->font_plot_ru;
+		}
 	}
 	return $self->font_plot;
 }
