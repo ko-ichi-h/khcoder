@@ -193,8 +193,13 @@ sub refresh_method{
 			 || $self->{lang} eq 'ru' ##
 			 || $self->{lang} eq 'sl' ####
 			 || $self->{lang} eq 'es' 
-			) && (
-				-d $::config_obj->freeling_dir
+			)
+			&& (
+				   ($::config_obj->os ne 'win32')
+				|| (
+					$::config_obj->os eq 'win32'
+					&& -d $::config_obj->freeling_dir
+				)
 			)
 		) {
 			push @options, ['FreeLing', 'freeling'];

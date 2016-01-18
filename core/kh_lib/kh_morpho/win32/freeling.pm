@@ -56,7 +56,7 @@ sub _run_morpho{
 	my $cmd_line =                                           # command line
 		$cmd_path 
 		." /C $freeling_path"
-		." --nonumb --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
+		." --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg '
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";

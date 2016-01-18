@@ -360,7 +360,7 @@ sub reset_parm{
 				)"
 			) or die;
 			my @table = (
-				"2, 'ProperNoun', 'NNP', ''",
+				"2, 'ProperNoun', 'NP', ''",
 				"1, 'Noun',  'NN', ''",
 				"3, 'Foreign',  'FW', ''",
 				"20, 'PRP',  'PRP', ''",

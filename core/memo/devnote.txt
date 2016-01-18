@@ -27,8 +27,6 @@
 	■TO DO
 	・HanDicのパスを指定するためのGUI
 	・FreeLingが日本語名の分析対象ファイルで動くかどうかチェック
-	・プロジェクト編集画面にfreelingを追加
-	・FreeLingのNumber Detectionを試す
 	・FreeLingに強制抽出系の機能がないか調べる
 
 	・WordMiner用のファイルは文字コードをcp932としているが、utf8のCSVを読み込めるようなら、utf8にする？ （文書×抽出語 ＆ 文書×コード）→だめぽ？

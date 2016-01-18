@@ -65,11 +65,13 @@ sub _new{
 				[ kh_msg->get('l_en', 'gui_window::sysconfig') => 'en'],# English
 				[ kh_msg->get('l_cn', 'gui_window::sysconfig') => 'cn'],# Chinese
 				[ kh_msg->get('l_kr', 'gui_window::sysconfig') => 'kr'],# Korean
+				[ kh_msg->get('l_ca', 'gui_window::sysconfig') => 'ca'],#'Catalan *'
 				[ kh_msg->get('l_nl', 'gui_window::sysconfig') => 'nl'],# Dutch
 				[ kh_msg->get('l_fr', 'gui_window::sysconfig') => 'fr'],# French
 				[ kh_msg->get('l_de', 'gui_window::sysconfig') => 'de'],# German
 				[ kh_msg->get('l_it', 'gui_window::sysconfig') => 'it'],# Italian
 				[ kh_msg->get('l_pt', 'gui_window::sysconfig') => 'pt'],# Portuguese
+				[ kh_msg->get('l_ru', 'gui_window::sysconfig') => 'ru'],#'Russian *'
 				[ kh_msg->get('l_es', 'gui_window::sysconfig') => 'es'],# Spanish
 			],
 		variable => \$self->{lang},
@@ -169,27 +171,59 @@ sub refresh_method{
 			$possbile{mecab} = 1;
 		}
 	}
-	# Chinese
-	elsif ($self->{lang} eq 'cn') {
-		push @options, ['Stanford POS Tagger', 'stanford'];
-		$possbile{stanford} = 1;
-	}
 	# Korean
 	elsif ($self->{lang} eq 'kr') {
 		push @options, ['MeCab & HanDic', 'mecab_k'];
 		$possbile{mecab} = 1;
 	}
-	# English
-	elsif ($self->{lang} eq 'en') {
-		push @options, ['Stanford POS Tagger', 'stanford'];
-		push @options, ['Snowball stemmer',    'stemming'];
-		$possbile{stanford} = 1;
-		$possbile{stemming} = 1;
-	}
-	# Other
 	else {
-		push @options, ['Snowball stemmer',    'stemming'];
-		$possbile{stemming} = 1;
+		
+		# add stanford pos tagger
+		if (
+				$self->{lang} eq 'cn'
+			 || $self->{lang} eq 'en'
+		) {
+			push @options, ['Stanford POS Tagger', 'stanford'];
+			$possbile{stanford} = 1;
+		}
+
+		# add FreeLing
+		if (
+			(
+				$self->{lang} eq 'ca' ##
+			 || $self->{lang} eq 'en'
+			 || $self->{lang} eq 'fr'
+			 || $self->{lang} eq 'it'
+			 || $self->{lang} eq 'pt'
+			 || $self->{lang} eq 'ru' ##
+			 || $self->{lang} eq 'sl' ####
+			 || $self->{lang} eq 'es' 
+			)
+			&& (
+				   ($::config_obj->os ne 'win32')
+				|| (
+					$::config_obj->os eq 'win32'
+					&& -d $::config_obj->freeling_dir
+				)
+			)
+		) {
+			push @options, ['FreeLing', 'freeling'];
+			$possbile{freeling} = 1;
+		}
+		
+		# add Snowball stemmer
+		if (
+			   $self->{lang} eq 'en'
+			|| $self->{lang} eq 'nl'
+			|| $self->{lang} eq 'fr'
+			|| $self->{lang} eq 'de'
+			|| $self->{lang} eq 'it'
+			|| $self->{lang} eq 'pt'
+			|| $self->{lang} eq 'es'
+		) {
+			push @options, ['Snowball stemmer', 'stemming'];
+			$possbile{stemming} = 1;
+		}
 	}
 
 	my $last = $::config_obj->last_method;
