@@ -9,15 +9,13 @@ my $output_code = find_encoding('utf8');
 
 sub _run_morpho{
 	my $self = shift;
-	bless $self, 'kh_morpho::win32::freeling';
+	bless $self, 'kh_morpho::linux::freeling';
 
 	my $icode = kh_jchar->check_code_en($self->target,1);
 	$self->{icode} = $icode;
 
 	# Set ENV variable
 	my $freeling_dir = $::config_obj->freeling_dir;          
-	$freeling_dir .= '\data';
-	$freeling_dir =~ s/\//\\/g;
 	$freeling_dir = $::config_obj->os_path($freeling_dir);
 	$::ENV{FREELINGSHARE} = $freeling_dir;
 	
@@ -27,45 +25,14 @@ sub _run_morpho{
 	unlink $self->{target_temp} if -e $self->{target_temp};
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
-	my $freeling_path = $::config_obj->freeling_dir;         # path of *.exe
-	$freeling_path .= '\bin\analyzer.exe';
-	$freeling_path =~ s/\//\\/g;
-	$freeling_path = $::config_obj->os_path($freeling_path);
-
-	my $cmd_path;
-	if (-e $ENV{'WINDIR'}.'\system32\cmd.exe'){
-		$cmd_path = $ENV{'WINDIR'}.'\system32\cmd.exe';
-		#print "cmd.exe: $cmd_path\n";
-	} else {
-		foreach my $i (split /;/, $ENV{'PATH'}){
-			unless (
-				   substr($i,length($i) - 1, 1) eq '\\'
-				|| substr($i,length($i) - 1, 1) eq '/'
-			) {
-				$i .= '\\';
-			}
-			if (-e $i.'cmd.exe'){
-				$cmd_path = $i.'cmd.exe';
-				#print "cmd.exe: found at $cmd_path\n";
-				last;
-			}
-		}
-	}
-	die("Error: could not find cmd.exe") unless -e $cmd_path;
-	
 	my $cmd_line =                                           # command line
-		$cmd_path 
-		." /C $freeling_path"
-		." --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
+		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg '
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	
-	$self->{cmd_path}      = $cmd_path;
 	$self->{cmd_line}      = $cmd_line;
-	$self->{freeling_path} = $freeling_path;
-	$self->{dir}           = $freeling_dir;
 
 	# ファイルオープン
 	if (-e $self->output){
@@ -246,19 +213,7 @@ sub _fl_run{
 	return 0 unless -e $self->{target_temp};
 
 	# run freeling
-	require Win32::Process;
-	my $process;
-	Win32::Process::Create(
-		$process,
-		$self->{cmd_path},
-		$self->{cmd_line},
-		0,
-		#Win32::Process->CREATE_NO_WINDOW,
-		Win32::Process->NORMAL_PRIORITY_CLASS,
-		$self->{dir},
-	) or $self->Exec_Error("Wi32::Process can not start");
-	$process->Wait( Win32::Process->INFINITE )
-		|| $self->Exec_Error("Wi32::Process can not wait");
+	system( $self->{cmd_line} );
 	
 	unless (-e $self->{output_temp}){
 		$self->Exec_Error("No output file");
@@ -331,7 +286,6 @@ sub _fl_run{
 	}
 	
 	# unlink files
-	$process->Kill(1);
 	unlink $self->{output_temp} or
 		gui_errormsg->open(
 			thefile => $self->{output_temp}."\n$!",
