@@ -5,6 +5,8 @@ use strict;
 use Encode;
 use utf8;
 
+use Time::HiRes;
+
 my $output_code = find_encoding('utf8');
 
 sub _run_morpho{
@@ -28,13 +30,44 @@ sub _run_morpho{
 	my $cmd_line =                                           # command line
 		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg '
-		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
+		.'.cfg --server --port 50005'
+		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	
+	require Proc::Background;
+	my $process = Proc::Background->new($cmd_line)
+		|| $self->Exec_Error("Process could not start");
+	
+	$cmd_line =                                           # command line
+		"analyzer_client 50005 "
+		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
+	;
 	$self->{cmd_line}      = $cmd_line;
 
-	# ファイルオープン
+	# Wait for the server to starts
+	my $file_temp = $::config_obj->file_temp;
+	open(my $fh_tmp, '>', $file_temp) or
+		gui_errormsg->open(
+			thefile => $self->target,
+			type => 'file'
+		)
+	;
+	print $fh_tmp 'test';
+	close $fh_tmp;
+	
+	for (my $n = 0; $n <= 30; ++$n){
+		my $return = `analyzer_client 50005 < $file_temp`;
+		if (length($return) > 5) {
+			last;
+		}
+		Time::HiRes::sleep (0.5);
+		if ($n == 60) {
+			die("Could not start FreeLing server process!\n");
+		}
+	}
+	unlink($file_temp);
+
+	# Open files
 	if (-e $self->output){
 		unlink $self->output or 
 			gui_errormsg->open(
@@ -49,7 +82,7 @@ sub _run_morpho{
 			type => 'file'
 		);
 
-	# Perlapp用にLingua::Sentenceのデータを解凍
+	# When run with Perlapp, extract Lingua::Sentence files
 	if(defined(&PerlApp::extract_bound_file)){
 		PerlApp::extract_bound_file(
 			'auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca',
@@ -122,6 +155,7 @@ sub _run_morpho{
 	}
 	close (TRGT);
 	$self->_fl_run();
+	$process->die;
 
 	return 1;
 }
@@ -298,7 +332,6 @@ sub _fl_run{
 		);
 		
 	# check file status
-	use Time::HiRes;
 	for ( my $n = 0; $n < 20; ++$n ){
 		if ( not ( -e $self->{output_temp} ) and not ( -e $self->{target_temp} ) ){
 			if ($n > 0) {

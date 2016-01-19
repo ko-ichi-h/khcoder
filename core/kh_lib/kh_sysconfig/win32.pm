@@ -118,6 +118,7 @@ sub save_ini{
 		'font_plot',
 		'font_plot_cn',
 		'font_plot_kr',
+		'font_plot_ru',
 		'font_pdf',
 		'font_pdf_cn',
 		'font_pdf_kr',

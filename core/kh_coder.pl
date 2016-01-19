@@ -164,7 +164,7 @@ if (
 			   length($::config_obj->r_path)
 			&& -e $::config_obj->os_path( $::config_obj->r_path )
 		)
-	|| ( length($::config_obj->r_path) == 0 )
+	|| ( not length($::config_obj->r_path) )
 ){
 	$::config_obj->{R} = Statistics::R->new(
 		r_bin   => $::config_obj->os_path( $::config_obj->r_path ),

@@ -58,7 +58,7 @@ sub _run_morpho{
 
 	require Proc::Background;
 	my $process = Proc::Background->new($cmd_line)
-		|| $self->Exec_Error("Wi32::Process can not start");
+		|| $self->Exec_Error("Process can not start");
 	
 	print "Starting server, pid: ", $process->pid(), ", Connecting.";	
 

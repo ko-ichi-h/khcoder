@@ -112,6 +112,7 @@ sub save_ini{
 		'font_plot',
 		'font_plot_cn',
 		'font_plot_kr',
+		'font_plot_ru',
 		'font_pdf',
 		'font_pdf_cn',
 		'font_pdf_kr',
@@ -140,11 +141,15 @@ sub save_ini{
 			thefile => ">$f"
 		);
 	foreach my $i (@outlist){
-		print INI "$i\t".$self->$i(undef,'1')."\n";
+		my $value = $self->$i(undef,'1');
+		$value = '' unless defined $value;
+		print INI "$i\t$value\n";
 	}
 	foreach my $i (keys %{$self}){
 		if ( index($i,'w_') == 0 ){
-			print INI "$i\t".$self->win_gmtry($i)."\n";
+			my $value = $self->win_gmtry($i);
+			$value = '' unless defined $value;
+			print INI "$i\t$value\n";
 		}
 	}
 	if ($self->{main_window}){
@@ -289,7 +294,19 @@ sub font_plot_kr{
 	return $self->{font_plot_kr};
 }
 
-
+sub font_plot_ru{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_ru} = $new         if defined($new) && length($new);
+	unless ( length($self->{font_plot_ru}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_ru} = 'AppleGothic';
+		} else {
+			$self->{font_plot_ru} = 'Droid Sans';
+		}
+	}
+	return $self->{font_plot_ru};
+}
 
 
 1;
