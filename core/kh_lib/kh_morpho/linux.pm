@@ -7,6 +7,7 @@ use kh_morpho::linux::chasen;
 use kh_morpho::linux::mecab_k;
 use kh_morpho::linux::stemming;
 use kh_morpho::linux::stanford;
+use kh_morpho::linux::freeling;
 
 sub _run{
 	my $self = shift;

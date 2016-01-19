@@ -13,6 +13,7 @@ sub _readin{
 	use kh_sysconfig::linux::mecab_k;
 	use kh_sysconfig::linux::stemming;
 	use kh_sysconfig::linux::stanford;
+	use kh_sysconfig::linux::freeling;
 
 	my $self = shift;
 
@@ -85,6 +86,7 @@ sub save_ini{
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
 		'han_dic_path',
+		'freeling_lang',
 		'stanford_lang',
 		'stemming_lang',
 		'last_lang',
