@@ -300,7 +300,7 @@ sub font_plot_ru{
 	$self->{font_plot_ru} = $new         if defined($new) && length($new);
 	unless ( length($self->{font_plot_ru}) ){
 		if ( $^O =~ /darwin/){
-			$self->{font_plot_ru} = 'AppleGothic';
+			$self->{font_plot_ru} = 'Helvetica';
 		} else {
 			$self->{font_plot_ru} = 'Droid Sans';
 		}

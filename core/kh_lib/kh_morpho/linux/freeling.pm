@@ -28,7 +28,7 @@ sub _run_morpho{
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
 	my $cmd_line =                                           # command line
-		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
+		"analyze --nodate --noquant --flush -f $freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg --server --port 50005'
 		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
@@ -55,13 +55,14 @@ sub _run_morpho{
 	print $fh_tmp 'test';
 	close $fh_tmp;
 	
-	for (my $n = 0; $n <= 30; ++$n){
+	for (my $n = 0; $n <= 120; ++$n){
+		print "Testing: ";
 		my $return = `analyzer_client 50005 < $file_temp`;
 		if (length($return) > 5) {
 			last;
 		}
 		Time::HiRes::sleep (0.5);
-		if ($n == 60) {
+		if ($n == 120) {
 			die("Could not start FreeLing server process!\n");
 		}
 	}
