@@ -33,8 +33,7 @@ sub __new{
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 		-foreground => 'blue',
-	)->pack(-expand=>'yes',-fill=>'both');
-	#my $fra0 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
+	)->pack(-expand=>'yes',-fill=>'x',-anchor=>'nw');
 	my $fra0_5 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 	my $fra0_7 = $lfra->Frame() ->pack(-anchor=>'c',-fill=>'x',-expand=>'yes');
 
@@ -209,6 +208,58 @@ sub __new{
 		0, $self->gui_jchar($::config_obj->$call)
 	);
 
+	# FreeLing
+	$lfra->Label( -text => "FreeLing" )->pack(-anchor => 'w');
+	
+	my $fra_flp = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes');
+	$fra_flp->Label(-text => '    Installation dir: ')->pack(-side => 'left');
+	$self->{entry_freeling} = $fra_flp->Entry(
+		-background => 'white'
+	)->pack(-side => 'right');
+	$fra_flp->Button(
+		-text => kh_msg->gget('browse'),#$self->gui_jchar('参照'),
+		-command => sub { $self->browse_freeling(); }
+	)->pack(-padx => '2',-side => 'right');
+	$self->{entry_freeling}->insert(
+		0, $::config_obj->uni_path($::config_obj->freeling_dir)
+	);
+	
+	my $fra_fls = $lfra->Frame()->pack(-anchor => 'w',-pady => 1);
+	
+	$fra_fls->Label(
+		-text => kh_msg->get('lang'),#'Language:'
+	)->pack(-side => 'left',-anchor => 'w');
+	$self->{opt_fls} = gui_widget::optmenu->open(
+		parent  => $fra_fls,
+		pack    => {-anchor=>'w', -side => 'left'},
+		options =>
+			[
+				[ kh_msg->get('l_ca') => 'ca'],
+				[ kh_msg->get('l_en') => 'en'],
+				[ kh_msg->get('l_fr') => 'fr'],
+				[ kh_msg->get('l_it') => 'it'],
+				[ kh_msg->get('l_pt') => 'pt'],
+				[ kh_msg->get('l_ru') => 'ru'],
+				[ kh_msg->get('l_es') => 'es'],
+			],
+		variable => \$self->{opt_fls_val},
+	);
+	$self->{opt_fls}->set_value( $::config_obj->freeling_lang );
+
+	$fra_fls->Label(
+		-text => kh_msg->get('stopwords'),#'  Stop words:'
+	)->pack(-side => 'left',-anchor => 'w');
+
+	$fra_fls->Button(
+		-text => kh_msg->get('config'),#'config',
+		-borderwidth => 1,
+		-command => sub {
+			my $class = "gui_window::stop_words::freeling_";
+			$class   .= "$self->{opt_fls_val}";
+			$class->open();
+		}
+	)->pack(-side => 'left');
+
 	# Stemming
 	
 	$lfra->Label(
@@ -253,10 +304,21 @@ sub __new{
 	)->pack(-side => 'left');
 
 
+	$self->{mail_obj} = gui_widget::mail_config->open(
+		parent => $inis,
+		pack   => {
+			-fill   => 'both',
+			-expand => 0,
+			#-side   => 'right',
+		},
+		command => sub{$self->ok;}
+	);
+
+
 #----------------------#
 #   外部アプリの設定   #
 
-	my $afra = $left->LabFrame(
+	my $afra = $inis->LabFrame(
 		-label       => kh_msg->get('apps'),#$self->gui_jchar('[外部アプリケーション]'),
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
@@ -309,15 +371,7 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-anchor => 'w');
 
-	$self->{mail_obj} = gui_widget::mail_config->open(
-		parent => $inis,
-		pack   => {
-			-fill   => 'both',
-			-expand => 0,
-			#-side   => 'right',
-		},
-		command => sub{$self->ok;}
-	);
+
 
 	$inis->Button(
 		-text => kh_msg->gget('cancel'),#$self->gui_jchar('キャンセル'),
@@ -391,6 +445,7 @@ sub ok{
 
 	$::config_obj->stemming_lang($self->gui_jg( $self->{opt_stem_val}) );
 	$::config_obj->stanford_lang($self->gui_jg( $self->{opt_stan_val}) );
+	$::config_obj->freeling_lang($self->gui_jg( $self->{opt_fls_val}) );
 
 	$::config_obj->stanf_jar_path(
 		$self->gui_jg( $self->{entry_stan1}->get() )
@@ -398,6 +453,10 @@ sub ok{
 
 	my $call = "stanf_tagger_path_".$self->{opt_stan_val};
 	$::config_obj->$call( $self->gui_jg( $self->{entry_stan2}->get ) );
+
+	$::config_obj->freeling_dir(
+		$self->gui_jg( $self->{entry_freeling}->get() )
+	);
 
 	$::config_obj->use_heap(  $self->{mail_obj}->if_heap );
 	$::config_obj->mail_if(   $self->{mail_obj}->if      );

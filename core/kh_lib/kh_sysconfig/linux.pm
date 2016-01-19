@@ -86,6 +86,7 @@ sub save_ini{
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
 		'han_dic_path',
+		'freeling_dir',
 		'freeling_lang',
 		'stanford_lang',
 		'stemming_lang',

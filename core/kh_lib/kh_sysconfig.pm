@@ -654,6 +654,15 @@ sub mecabrc_path{
 	return $self->{mecabrc_path};
 }
 
+sub freeling_dir{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{freeling_dir} = $new;
+	}
+	return $self->{freeling_dir};
+}
+
 sub c_or_j{
 	my $self = shift;
 	my $new = shift;

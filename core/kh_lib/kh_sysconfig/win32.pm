@@ -174,15 +174,6 @@ sub save_ini{
 #--------------------#
 #   形態素解析関係   #
 
-sub freeling_dir{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{freeling_dir} = $new;
-	}
-	return $self->{freeling_dir};
-}
-
 sub chasen_path{
 	my $self = shift;
 	my $new = shift;

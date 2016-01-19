@@ -19,6 +19,26 @@ sub _new{
 	return $self;
 }
 
+sub browse_freeling{
+	my $self = shift;
+	
+	my $path = $self->{win_obj}->chooseDirectory;
+
+	use Encode;
+	$path = Encode::decode($::config_obj->os_code, "$path");
+	$path = Encode::encode($::config_obj->os_code, $path);
+
+	if ($path){
+		$path = $self->gui_jg_filename_win98($path);
+		$path = $self->gui_jg($path);
+		$path = $::config_obj->uni_path($path);
+		$self->{entry_freeling}->delete('0','end');
+		$self->{entry_freeling}->insert(0,$path);
+	}
+	
+	return $self;
+}
+
 # .jar¤Î»²¾È
 sub browse_stanford_jar{
 	my $self  = shift;
