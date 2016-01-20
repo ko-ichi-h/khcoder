@@ -48,6 +48,16 @@ sub init{
 		);
 	}
 	
+	# FreeLIngのパス設定
+	if (
+		not -d $::config_obj->freeling_dir
+		and -d $::config_obj->cwd.'/dep/freeling'
+	) { 
+		$::config_obj->freeling_dir(
+			$::config_obj->cwd.'/dep/freeling'
+		);
+	}
+	
 	# HanDicのパス設定
 	if (
 		not -d $::config_obj->han_dic_path

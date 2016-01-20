@@ -284,7 +284,7 @@ sub search{
 		}
 		my $col = 0;
 		foreach my $h (@{$i}){
-			if ($h =~ /[0-9]+/o){
+			if ($h =~ /^[0-9]+$/o){
 				$self->list->itemCreate(
 					$cu,
 					$col,

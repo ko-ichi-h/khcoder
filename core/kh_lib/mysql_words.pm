@@ -96,8 +96,8 @@ sub search{
 				my $n = 0;
 				foreach my $h (@{$r}){            # 活用語の追加
 					if (
-						   length($h->[1]) > 0
-						&& length($h->[0]) > 0
+						#   length($h->[1]) > 0
+						length($h->[0]) > 0
 						&& $h->[2] =~ /[0-9]+/
 						&& $h->[2] > 0
 					){
