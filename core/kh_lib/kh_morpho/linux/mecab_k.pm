@@ -60,7 +60,7 @@ sub _run_morpho{
 		$self->{cmdline} = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $self->{cmdline}";
 	}
 	
-	#print "morpho: $self->{cmdline}\n";
+	print "morpho: $self->{cmdline}\n";
 	
 	# 処理開始
 	open (TRGT, "<:encoding(UTF-8)", $self->target) or 

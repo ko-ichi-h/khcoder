@@ -28,11 +28,19 @@ sub _run_morpho{
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
 	my $cmd_line =                                           # command line
-		"analyze --nodate --noquant --flush -f $freeling_dir/config/"
+		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg --server --port 50005'
 		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
+	
+	if ($::config_obj->all_in_one_pack){
+		$cmd_line = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $cmd_line";
+	}
+	print "cmd-line: $cmd_line\n";
+	
+	require Proc::Killall;
+	Proc::Killall::killall('KILL', 'freeling');
 	
 	require Proc::Background;
 	my $process = Proc::Background->new($cmd_line)
@@ -56,9 +64,13 @@ sub _run_morpho{
 	close $fh_tmp;
 	
 	for (my $n = 0; $n <= 120; ++$n){
-		print "Testing: ";
+		print "Trying ($n/120): ";
 		my $return = `analyzer_client 50005 < $file_temp`;
-		if (length($return) > 5) {
+		#print "Return: \"$return\"";
+		if (
+			length($return) > 5
+			#and not $return =~ /Library not loaded/
+		) {
 			last;
 		}
 		Time::HiRes::sleep (0.5);
@@ -156,7 +168,9 @@ sub _run_morpho{
 	}
 	close (TRGT);
 	$self->_fl_run();
+
 	$process->die;
+	Proc::Killall::killall('TERM', 'freeling');
 
 	return 1;
 }

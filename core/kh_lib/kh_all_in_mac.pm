@@ -27,13 +27,22 @@ sub init{
 		system 'xterm -e echo ok';
 	}
 
-	# Chasen & MeCab's path
+	# Chasen, MeCab, FreeLing
 	unless ($::ENV{PATH} =~ /deps\/chasen:/){
 		#system "export PATH=".$::config_obj->cwd."/deps/chasen/bin:".$::config_obj->cwd."/deps/mecab/bin:\$PATH";
-		$::ENV{PATH} = $::config_obj->cwd."/deps/chasen/bin:".$::config_obj->cwd."/deps/mecab/bin:".$::ENV{PATH};
+		$::ENV{PATH} =
+			 $::config_obj->cwd."/deps/chasen/bin:"
+			.$::config_obj->cwd."/deps/mecab/bin:"
+			.$::config_obj->cwd."/deps/freeling31/bin:"
+			.$::ENV{PATH}
+		;
 		
 		#system 'export DYLD_FALLBACK_LIBRARY_PATH='.$::config_obj->cwd.'/deps/chasen/lib:'.$::config_obj->cwd."/deps/mecab/lib:\$DYLD_FALLBACK_LIBRARY_PATH";
-		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} = $::config_obj->cwd.'/deps/chasen/lib:'.$::config_obj->cwd.'/deps/mecab/lib:'.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
+		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} =
+			 $::config_obj->cwd.'/deps/chasen/lib:'
+			.$::config_obj->cwd.'/deps/mecab/lib:'
+			.$::config_obj->cwd.'/deps/freeling31/lib:'
+			.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
 	}
 
 	return 1;
