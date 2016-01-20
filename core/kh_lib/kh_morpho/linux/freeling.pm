@@ -64,7 +64,7 @@ sub _run_morpho{
 	close $fh_tmp;
 	
 	for (my $n = 0; $n <= 120; ++$n){
-		print "Trying ($n/120): ";
+		print "Waiting ($n/120): ";
 		my $return = `analyzer_client 50005 < $file_temp`;
 		#print "Return: \"$return\"";
 		if (

@@ -58,14 +58,74 @@ sub _run_morpho{
 		." /C $freeling_path"
 		." --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg '
-		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
+		.'.cfg --server --port 50005'
+		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	
 	$self->{cmd_path}      = $cmd_path;
 	$self->{cmd_line}      = $cmd_line;
 	$self->{freeling_path} = $freeling_path;
 	$self->{dir}           = $freeling_dir;
+
+	require Win32::Process::Info;
+	Win32::Process::Info->import;
+	my $pi = Win32::Process::Info->new ();
+	my @info = grep {
+		defined $_->{Name} &&
+		$_->{Name} =~ m/analyzer\.exe/
+	} $pi->GetProcInfo ();
+	foreach my $i (@info){
+		Win32::Process::KillProcess($i->{ProcessId}, 1);
+	}
+	
+	# run the server
+	require Win32::Process;
+	my $process;
+	Win32::Process::Create(
+		$process,
+		$self->{cmd_path},
+		$self->{cmd_line},
+		0,
+		#Win32::Process->CREATE_NO_WINDOW,
+		Win32::Process->NORMAL_PRIORITY_CLASS,
+		$self->{dir},
+	) or $self->Exec_Error("Wi32::Process can not start");
+	
+	# Wait for the server to starts
+	my $file_temp = $::config_obj->file_temp;
+	open(my $fh_tmp, '>', $file_temp) or
+		gui_errormsg->open(
+			thefile => $self->target,
+			type => 'file'
+		)
+	;
+	print $fh_tmp 'test';
+	close $fh_tmp;
+	
+	$freeling_path = $::config_obj->freeling_dir;         # path of *.exe
+	$freeling_path .= '\bin\analyzer_client.exe';
+	$freeling_path =~ s/\//\\/g;
+	$freeling_path = $::config_obj->os_path($freeling_path);
+	
+	for (my $n = 0; $n <= 120; ++$n){
+		print "Waiting ($n/120): ";
+		my $return = `$freeling_path 50005 < $file_temp`;
+		#print "Return: \"$return\"\n";
+		if ( length($return) > 5 ) {
+			last;
+		}
+		Time::HiRes::sleep (0.5);
+		if ($n == 120) {
+			die("Could not start FreeLing server process!\n");
+		}
+	}
+	unlink($file_temp);
+
+	$self->{cmd_line} =                                # command line
+		$cmd_path 
+		." /C $freeling_path 50005 "
+		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
+	;
 
 	# ファイルオープン
 	if (-e $self->output){
@@ -117,11 +177,6 @@ sub _run_morpho{
 	}
 
 	require Lingua::Sentence;
-	my $lang = $::project_obj->morpho_analyzer_lang;
-	if ($lang eq 'ru') {
-		$lang = 'Russian';
-	}
-	
 	$self->{splitter} = Lingua::Sentence->new(
 		$::project_obj->morpho_analyzer_lang
 	);
@@ -156,6 +211,18 @@ sub _run_morpho{
 	close (TRGT);
 	$self->_fl_run();
 
+	# Stop the Server
+	$process->Kill(1);
+	
+	@info = ();
+	@info = grep {
+		defined $_->{Name} &&
+		$_->{Name} =~ m/analyzer\.exe/
+	} $pi->GetProcInfo ();
+	foreach my $i (@info){
+		Win32::Process::KillProcess($i->{ProcessId}, 1);
+	}
+	
 	return 1;
 }
 
