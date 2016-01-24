@@ -694,13 +694,20 @@ p <- p + geom_text(
 
 # 語やコードの長さにあわせて余白の大きさを設定
 y_max <- max( ddata$segment$y1 )
-y_min <- max(
-	strwidth(
-		labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
-		units = "figure",
-		font = 2
+y_min <- 0.2
+# "strwidth" crashes if the device is cairo_pdf or cairo_ps 
+if (
+	is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
+	y_min <- max(
+		strwidth(
+			labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			units = "figure",
+			font = 2
+		)
 	)
-)
+}
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
 y_min <- y_min * 1.1
 if (y_min > y_max * 2){
@@ -805,7 +812,12 @@ if (show_bar == 1){
 	print(p)
 }
 
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+if (
+	is.na(dev.list()["pdf"])
+	&& is.na(dev.list()["postscript"])
+	&& is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
