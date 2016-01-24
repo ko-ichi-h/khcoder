@@ -24,8 +24,8 @@ sub save{
 
 	# 保存先の参照
 	my @types = (
-		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "PDF",[qw/.pdf/] ],
+		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "SVG",[qw/.svg/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "CSV",[qw/.csv/] ],

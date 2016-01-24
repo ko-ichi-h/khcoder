@@ -541,10 +541,26 @@ sub _save_pdf{
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
-	$::config_obj->R->send(
-		 "pdf(file=\"$path\", height = $h, width = $w, "
-		."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
-	);
+	
+	# Use "cairo_pdf" when the prject language is Russian
+	#   cairo_pdf can render Cyrillic characters
+	#   but can NOT save dendrogram
+	my $lang = '';
+	if ( $::project_obj ) {
+		$lang = $::project_obj->morpho_analyzer_lang;
+	}
+	if ($lang eq 'ru') {
+		$::config_obj->R->send(
+			 "cairo_pdf(file=\"$path\", height = $h, width = $w, "
+			."pointsize=$p)"
+		);
+	} else {
+		$::config_obj->R->send(
+			 "pdf(file=\"$path\", height = $h, width = $w, "
+			."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
+		);
+	}
+
 	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
 		$::config_obj->R->send($self->{command_s});
@@ -583,17 +599,27 @@ sub _save_eps{
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_eps <- 1" );
-	#$::config_obj->R->send(
-	#	 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
-	#	."paper = \"special\", height = $h, width = $w,"
-	#	."family=\"$font\",pointsize=$p)"
-	#);
 	
-	$::config_obj->R->send(
-		"cairo_ps(\"$path\", height = $h, width = $w, pointsize=$p)"
-	);
-	
-	$self->set_par();
+	# Use "cairo_ps" when the prject language is Russian or Korean
+	#   cairo_ps can render Cyrillic characters
+	#   but can NOT save dendrogram
+	my $lang = '';
+	if ( $::project_obj ) {
+		$lang = $::project_obj->morpho_analyzer_lang;
+	}
+	if ($lang eq 'ru' || $lang eq 'kr') {
+		$::config_obj->R->send(
+			"cairo_ps(\"$path\", height = $h, width = $w, pointsize=$p)"
+		);
+	} else {
+		$::config_obj->R->send(
+			 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
+			."paper = \"special\", height = $h, width = $w,"
+			."family=\"".$::config_obj->font_pdf_current."\",pointsize=$p)"
+		);
+	}
+
+	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
 		$::config_obj->R->send($self->{command_s});
 	} else {
