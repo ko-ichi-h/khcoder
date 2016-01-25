@@ -543,8 +543,6 @@ sub _save_pdf{
 	$::config_obj->R->lock;
 	
 	# Use "cairo_pdf" when the prject language is Russian
-	#   cairo_pdf can render Cyrillic characters
-	#   but can NOT save dendrogram
 	my $lang = '';
 	if ( $::project_obj ) {
 		$lang = $::project_obj->morpho_analyzer_lang;
@@ -568,6 +566,19 @@ sub _save_pdf{
 		$::config_obj->R->send($self->{command_f});
 	}
 	$::config_obj->R->send('dev.off()');
+
+	if (
+		$lang eq 'ru'
+		&& $^O =~ /darwin/
+		&& $::config_obj->all_in_one_pack
+		&& 0
+	) {
+		#$::config_obj->R->send(
+		#	"embedFonts(\"$path\", fontpaths=\"".$::config_obj->cwd."/deps/fonts\")"
+		#);
+		$::config_obj->R->send("Sys.setlocale(category=\"LC_ALL\",locale=\"ja_JP.UTF-8\")");
+	}
+	
 	$::config_obj->R->unlock;
 	$::config_obj->R->output_chk(1);
 	
@@ -601,13 +612,11 @@ sub _save_eps{
 	$::config_obj->R->send( "saving_eps <- 1" );
 	
 	# Use "cairo_ps" when the prject language is Russian or Korean
-	#   cairo_ps can render Cyrillic characters
-	#   but can NOT save dendrogram
 	my $lang = '';
 	if ( $::project_obj ) {
 		$lang = $::project_obj->morpho_analyzer_lang;
 	}
-	if ($lang eq 'ru' || $lang eq 'kr') {
+	if ($lang eq 'ru' || $lang eq 'kr' || $^O =~ /darwin/i ) {
 		$::config_obj->R->send(
 			"cairo_ps(\"$path\", height = $h, width = $w, pointsize=$p)"
 		);
