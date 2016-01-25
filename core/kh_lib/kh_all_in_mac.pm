@@ -9,9 +9,9 @@ sub init{
 	print "Executing Mac OS X 64-bit Package\n";
 
 	# R's path
-	unless ($::ENV{PATH} =~ /deps\/R\-3\.2\.1\/Resources\/bin:/){
-		system "export PATH=".$::config_obj->cwd."/deps/R-3.2.1/Resources/bin:\$PATH";
-		$::ENV{PATH} = $::config_obj->cwd."/deps/R-3.2.1/Resources/bin:".$::ENV{PATH};
+	unless ($::ENV{PATH} =~ /deps\/R\-3\.1\.0\/Resources\/bin:/){
+		system "export PATH=".$::config_obj->cwd."/deps/R-3.1.0/Resources/bin:\$PATH";
+		$::ENV{PATH} = $::config_obj->cwd."/deps/R-3.1.0/Resources/bin:".$::ENV{PATH};
 	}
 	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 

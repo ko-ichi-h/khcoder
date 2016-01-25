@@ -56,8 +56,8 @@ print $fh $mecabrc;
 close($fh);
 
 # Edit configurations of R
-my $file_r = cwd.'/deps/R-3.2.1/Versions/3.2/Resources/bin/R';
-my $r_home = cwd.'/deps/R-3.2.1/Resources';
+my $file_r = cwd.'/deps/R-3.1.0/Versions/3.1/Resources/bin/R';
+my $r_home = cwd.'/deps/R-3.1.0/Resources';
 
 my $r;
 open (my $fh, '<', $file_r) or die("could not read file: $file_r\n");
