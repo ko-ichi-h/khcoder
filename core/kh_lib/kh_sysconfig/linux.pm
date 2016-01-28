@@ -297,11 +297,7 @@ sub os_path{
 *os_cod_path = \&os_path;
 
 sub os_code{
-	if ($^O eq 'darwin'){
-		return 'MacJapanese';
-	} else {
-		return 'UTF8';
-	}
+	return 'UTF-8';
 }
 
 1;
