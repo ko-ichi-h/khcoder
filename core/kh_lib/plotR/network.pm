@@ -27,7 +27,7 @@ sub new{
 	}
 	elsif ( $args{n_or_j} eq 'n'){
 		$r_command .= "edges <- $args{edges_num}\n";
-		$r_command .= "th <- 0\n";
+		$r_command .= "th <- -1\n";
 	}
 	#$r_command .= "cex <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
@@ -385,7 +385,7 @@ el <- data.frame(
 )
 
 # 閾値を計算 
-if (th == 0){
+if (th < 0){
 	if(edges > length(el[,1])){
 		edges <- length(el[,1])
 	}

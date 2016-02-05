@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a06a';
+my $V = '3a06b';
 my $V_main = "3.Alpha.06";
-my $V_full = "3.Alpha.06a";
+my $V_full = "3.Alpha.06b";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;

@@ -79,8 +79,6 @@ sub _run_morpho{
 		);
 	while ( <TRGT> ){
 		my $t   = $_;
-		#$t =~ s/ /　/g; # kr
-		$t =~ s/[\x{AC00}-\x{D7A3}]/convert_main($&)/ge; # kr
 		
 		while ( index($t,'<') > -1){
 			my $pre = substr($t,0,index($t,'<'));
@@ -280,7 +278,8 @@ sub _mecab_store_out{
 
 	return 1 unless length($self->{store}) > 0;
 
-	
+	$self->{store} =~ s/[\x{AC00}-\x{D7A3}]/convert_main($&)/ge; # kr
+
 	my $arg;
 	if (-e $self->{target_temp}) {
 		$arg = ">>:encoding(UTF-8)";
