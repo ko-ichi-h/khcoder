@@ -776,6 +776,7 @@ sub make_plot{
 		"txt <- cbind( 1:length(k), round(k,4), round(100*k / sum(k),2) )\n";
 	$r_command .= "colnames(txt) <- c(name_dim,name_eig,name_exp)\n";
 	$r_command .= "print( txt )\n";
+	$r_command .= "inertias <- round(k,4)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
 	# プロットのためのRコマンド
@@ -938,8 +939,8 @@ plot(
 	cb,
 	pch=plot_pch[cb[,3]],
 	col=plot_color[cb[,3]],
-	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
+	xlab=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
+	ylab=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep=""),
 	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
 	bty = "l",
 	asp = asp
@@ -1171,8 +1172,8 @@ plot(
 	),
 	pch=NA,
 	col="black",
-	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
+	xlab=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
+	ylab=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep=""),
 	asp = asp,
 	#bty="l"
 )

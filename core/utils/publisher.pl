@@ -384,6 +384,16 @@ sub win_pkg{
 	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\win_pkg");
 	sleep 5;
 	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite");
+	
+	for (my $n = 0; $n < 5; ++$n){
+		if (-e "utils\\khcoder-$V-f.exe" && -e "utils\\khcoder-$V-f.zip") {
+			last;
+		}
+		sleep 5;
+		system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite");
+	}
+	
+	
 	# wzipse32 utils\khcoder-2b31-f.zip -y -d C:\khcoder -le -overwrite
 	# unlink("utils\\khcoder-$V-f.zip");
 
