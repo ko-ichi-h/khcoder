@@ -70,8 +70,9 @@ sub first{
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
 	$self->fix_katuyo;
-
 	$self->fix_michigo;
+	
+	&zero_length_headings;
 
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
@@ -82,6 +83,41 @@ sub first{
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 	
+}
+
+# We will NOT count zero length headings as sentences
+sub zero_length_headings{
+	
+	mysql_exec->do("drop table if exists bun_bak",1);
+	mysql_exec->do("CREATE TABLE bun_bak LIKE bun",1);
+	mysql_exec->do("INSERT INTO bun_bak SELECT * FROM bun",1);
+	
+	mysql_exec->do("drop table if exists bun_length_nouse;",1);
+	mysql_exec->do("
+		CREATE TABLE bun_length_nouse(
+		  id int primary key not null,
+		  len int
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO bun_length_nouse (id, len)
+		SELECT
+			hyosobun.bun_idt,
+			SUM( IF(nouse=0 and not khhinshi_id=99999, 1, 0) ) as len
+		FROM hyosobun, hyoso, genkei
+		WHERE   hyosobun.hyoso_id = hyoso.id
+			AND hyoso.genkei_id = genkei.id
+		GROUP BY hyosobun.bun_idt
+		ORDER BY hyosobun.bun_idt
+	",1);
+	mysql_exec->do("
+		DELETE
+		FROM bun
+		USING bun, bun_length_nouse
+		WHERE bun.id = bun_length_nouse.id
+			AND bun_length_nouse.len = 0;
+	",1);
+
 }
 
 sub fix_michigo{

@@ -58,6 +58,39 @@ sub prepare_db{
 		INSERT INTO status_char (name, status)
 		VALUES ('last_tani',''),('last_codf',''),('icode','$self->{icode}')
 	",1);
+
+	# 外部変数用のテーブルを準備
+	mysql_exec->do("create table outvar
+		(
+			name varchar(255) not null,
+			tab varchar(255) not null,
+			col varchar(255) not null,
+			tani varchar(10) not null,
+			id int auto_increment primary key not null
+		)
+	",1);
+
+	mysql_exec->do("create table outvar_lab
+		(
+			var_id int not null,
+			val varchar(255) not null,
+			lab varchar(255) not null,
+			id int auto_increment primary key not null
+		)
+	",1);
+
+	# 情報入力
+	my $target = $::config_obj->uni_path( $self->file_target );
+	mysql_exec->do("
+		INSERT INTO status_char (name,status)
+		VALUES (\"target\", \"$target\")
+	",1);
+
+	mysql_exec->do("
+		INSERT INTO status_char (name,status)
+		VALUES (\"comment\", \"".$self->comment."\")
+	",1);
+
 }
 
 sub read_hinshi_setting{
@@ -292,83 +325,12 @@ sub mysql_sort{
 sub check_up{
 	my $self = shift;
 	
-	# status_char.statusをvarcharからtextへ
-	my $chk = mysql_exec->select(
-		'show columns from status_char like \'status\'',
-		1
-	)->hundle->fetch->[1];
-	if ($chk =~ /varchar/){
-		mysql_exec->do(
-			'ALTER TABLE status_char MODIFY status TEXT'
-			,1
-		);
-		# print "Converted \"status_char.status\" to TEXT\n";
+	# For projects created by 3.alpha.06b or prior
+	unless ( mysql_exec->table_exists('bun_length_nouse') ){
+		&mysql_ready::zero_length_headings;
 	}
 
-	# プロジェクト情報をMySQL内にも保存
-	my $chk_t = 0;
-	my $st = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = \"target\""
-	)->hundle;
-	if (my $i = $st->fetch){
-		if ( length( $i->[0] ) ){
-			$chk_t = 1;
-		}
-	}
-	unless ($chk_t){
-		my $target = $self->file_target;
-		mysql_exec->do("
-			INSERT INTO status_char (name,status)
-			VALUES (\"target\", \"$target\")
-		",1);
-		# print "target: ", Jcode->new($target)->sjis, "\n";
-	}
-
-	my $chk_c = 0;
-	my $st0 = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = \"comment\""
-	)->hundle;
-	if (my $i = $st0->fetch){
-		if ( $i->[0] eq $self->comment ){
-			$chk_c = 1;
-		}
-	}
-	unless ($chk_c){
-		mysql_exec->do("
-			DELETE FROM status_char
-			WHERE name = \"comment\"
-		",1);
-		mysql_exec->do("
-			INSERT INTO status_char (name,status)
-			VALUES (\"comment\", \"".$self->comment."\")
-		",1);
-		# print "comment: ", Jcode->new($self->comment)->sjis, "\n";
-	}
-
-	# 外部変数用のテーブルを準備
-	unless ( mysql_exec->table_exists('outvar') ){
-		mysql_exec->do("create table outvar
-			(
-				name varchar(255) not null,
-				tab varchar(255) not null,
-				col varchar(255) not null,
-				tani varchar(10) not null,
-				id int auto_increment primary key not null
-			)
-		",1);
-	}
-	unless ( mysql_exec->table_exists('outvar_lab') ){
-		mysql_exec->do("create table outvar_lab
-			(
-				var_id int not null,
-				val varchar(255) not null,
-				lab varchar(255) not null,
-				id int auto_increment primary key not null
-			)
-		",1);
-	}
-
-	# 一時ファイル群を削除
+	# Delete temporarily files
 	my $n;
 	$n = 0;
 	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
@@ -380,11 +342,7 @@ sub check_up{
 		unlink($self->file_datadir.'_temp'.$n.'.xls');
 		++$n;
 	}
-	#$n = 0;
-	#while (-e $self->file_datadir.'_temp'.$n.'.r'){
-	#	unlink($self->file_datadir.'_temp'.$n.'.r');
-	#	++$n;
-	#}
+
 }
 
 
