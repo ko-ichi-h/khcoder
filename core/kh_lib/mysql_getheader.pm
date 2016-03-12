@@ -77,12 +77,12 @@ sub get_all{
 	
 	my $sth = mysql_exec->select ("
 		select *
-		from bun_r, bun
+		from bun_r, bun_bak
 		where
-			bun_r.id = bun.id
-			and bun.bun_id = 0
-			and bun.dan_id = 0
-		order by bun.id
+			bun_r.id = bun_bak.id
+			and bun_id = 0
+			and dan_id = 0
+		order by bun_bak.id
 	",1)->hundle;
 	
 	while (my $i = $sth->fetchrow_hashref){
@@ -113,17 +113,17 @@ sub get_selected{
 	
 	my $sql = '';
 	$sql .= "select rowtxt\n";
-	$sql .= "from bun_r, bun\n";
+	$sql .= "from bun_r, bun_bak\n";
 	$sql .= "where\n";
-	$sql .= "\tbun_r.id = bun.id\n";
-	$sql .= "\tand bun.bun_id = 0\n";
-	$sql .= "\tand bun.dan_id = 0\n";
+	$sql .= "\tbun_r.id = bun_bak.id\n";
+	$sql .= "\tand bun_bak.bun_id = 0\n";
+	$sql .= "\tand bun_bak.dan_id = 0\n";
 	foreach my $i ("h5", "h4", "h3", "h2", "h1"){
 		last if $self->{tani} eq $i;
-		$sql .= "\tand bun.$i"."_id = 0\n";
+		$sql .= "\tand bun_bak.$i"."_id = 0\n";
 	}
-	$sql .= "\tand bun.$self->{tani}"."_id >= 1\n";
-	$sql .= "order by bun.id";
+	$sql .= "\tand bun_bak.$self->{tani}"."_id >= 1\n";
+	$sql .= "order by bun_bak.id";
 
 	my $sth = mysql_exec->select ("$sql",1)->hundle;
 	my @r = ();

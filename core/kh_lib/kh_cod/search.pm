@@ -285,7 +285,8 @@ sub search{
 				.",0)\n";
 			++$n;
 		}
-		$sql .= ")";
+		$sql .= ")\n";
+		$sql .= "ORDER BY $args{tani}.id";
 	}
 	
 			# 「コード無し」を使用しない場合
@@ -355,6 +356,8 @@ sub search{
 		$sql .= ")\n";
 		if ($args{order} =~ /^tf/o){
 			$sql .= "ORDER BY tf,$args{tani}.id";
+		} else {
+			$sql .= "ORDER BY $args{tani}.id";
 		}
 	}
 	#print "\n$sql\n";
@@ -431,6 +434,7 @@ sub fetch_results{
 		WHERE
 			    rnum >= $start
 			AND rnum <  $start + $docs_per_once
+		ORDER BY rnum
 	",1)->hundle;
 
 	my @result;

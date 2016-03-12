@@ -175,9 +175,9 @@ sub get_header{
 		){
 			#print "getting $i header...\n";
 			my $sql = "SELECT rowtxt\n";
-			$sql   .= "FROM bun_r, bun\n";
+			$sql   .= "FROM bun_r, bun_bak\n";
 			$sql   .= "WHERE\n";
-			$sql   .= "    bun_r.id = bun.id\n";
+			$sql   .= "    bun_r.id = bun_bak.id\n";
 			$sql   .= "    AND bun_id = 0\n";
 			$sql   .= "    AND dan_id = 0\n";
 			my $frag = 0; my $n = 5;
@@ -191,9 +191,11 @@ sub get_header{
 				--$n;
 			}
 			$sql   .= "LIMIT 1";
-			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			#$h = Jcode->new($h,'euc')->sjis;
-			$headers .= "$h\n";
+			my $h = mysql_exec->select("$sql",1)->hundle->fetch;
+			if ($h) {
+				$h = $h->[0];
+				$headers .= "$h\n";
+			}
 		}
 	}
 	return $headers;

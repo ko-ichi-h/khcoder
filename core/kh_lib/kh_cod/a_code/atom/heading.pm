@@ -59,7 +59,12 @@ sub ready{
 			# スペースを全角に変換
 			$val =~ s/ /　/g;
 		}
-		elsif ($::project_obj->morpho_analyzer_lang eq "cn" ){ # 中国語の場合
+		elsif (                                   # 中・韓・露の場合
+			   $::project_obj->morpho_analyzer_lang eq "cn"
+			|| $::project_obj->morpho_analyzer_lang eq "kr"
+			|| $::project_obj->morpho_analyzer_lang eq "ru"
+			|| $::project_obj->morpho_analyzer_lang eq "ca"
+		){ 
 			# 何もしない
 		}
 		else {                                    # それ以外（欧米語）の場合
@@ -108,14 +113,14 @@ sub ready{
 	mysql_exec->do("
 		INSERT INTO ct_tmp_midashi ($temp_s)
 		SELECT $temp_s
-		FROM   bun, bun_r
+		FROM   bun_bak, bun_r
 		WHERE
-			    bun.id = bun_r.id
+			    bun_bak.id = bun_r.id
 			AND bun_id = 0
 			AND dan_id = 0
 			AND rowtxt = $val
 	",1);
-	
+
 	# 当該の見出し文を持つケースをリストアップ
 
 	my $table = "ct_$tani"."_heading_$num";

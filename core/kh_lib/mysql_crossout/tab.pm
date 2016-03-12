@@ -10,6 +10,7 @@ sub out2{                               # length作製をする
 	# セル内容の作製
 	my $id = 1;
 	my $last = 1;
+	my $started = 0;
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
@@ -22,7 +23,7 @@ sub out2{                               # length作製をする
 		}
 		
 		while (my $i = $sth->fetch){
-			if ($last != $i->[0]){
+			if ($last != $i->[0] && $started == 1){
 				# 書き出し
 				my $temp = "$last\t";
 				if ($self->{midashi}){
@@ -41,6 +42,9 @@ sub out2{                               # length作製をする
 				%current = ();
 				$last = $i->[0];
 			}
+			
+			$last = $i->[0] unless $started;
+			$started = 1;
 			
 			# HTMLタグを無視
 			if (

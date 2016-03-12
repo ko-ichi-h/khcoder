@@ -36,19 +36,22 @@ sub exec{
 			thefile => $args{file}
 		);
 
-	my $h = mysql_exec->select ("
+	my $hundle = mysql_exec->select ("
 		select *
-		from bun_r, bun
+		from bun_r, bun_bak, bun_length_nouse
 		where
-			bun_r.id = bun.id
-		order by bun.id
+			bun_r.id = bun_bak.id
+			AND bun_length_nouse.id = bun_bak.id
+		order by bun_bak.id
 	",1)->hundle;
 
 	# morpho_analyzer
 	my $spacer = $::project_obj->spacer;
 
-	my $current; my %h;
+	my $current;
+	my %head;
 	my $last = 0;
+	my $last_bunidt;
 	my $the_tani;
 	if ($args{tani} eq 'bun'){
 		$the_tani = 'id';
@@ -56,7 +59,7 @@ sub exec{
 		$the_tani = "$args{tani}"."_id";
 	}
 	use kh_csv;
-	while (my $i = $h->fetchrow_hashref){
+	while (my $i = $hundle->fetchrow_hashref){
 		if ($i->{"$args{tani}"."_id"}){           # 本文の場合
 			# print "$i->{$the_tani},";
 			if ($i->{$the_tani} == $last){             # 継ぎ足し
@@ -70,7 +73,11 @@ sub exec{
 				}
 				
 				foreach my $g (@h){
-					print CSVO kh_csv->value_conv($h{$g}).',';
+					print CSVO kh_csv->value_conv($head{$g}).',';
+				}
+				if ($current =~ /<h[1-5]>(.+?)<\/h[1-5]>(.+)/i) {
+					print CSVO kh_csv->value_conv($1).',';
+					$current = $2;
 				}
 				print CSVO kh_csv->value_conv($current)."\n";
 				
@@ -80,27 +87,61 @@ sub exec{
 		} else {                                  # 上位見出しの場合
 			if ( length($current) ){                   # 書き出し（見出し変化）
 				foreach my $g (@h){
-					print CSVO kh_csv->value_conv($h{$g}).',';
+					print CSVO kh_csv->value_conv($head{$g}).',';
+				}
+				if ($current =~ /<h[1-5]>(.+?)<\/h[1-5]>(.+)/i) {
+					print CSVO kh_csv->value_conv($1).',';
+					$current = $2;
 				}
 				print CSVO kh_csv->value_conv($current)."\n";
 				$current = '';
 			}
+			
 			$last = 0;
+			
+			my $midashi_tani = '';
 			foreach my $g (reverse @h){                # 見出しの変更
 				if ( $i->{"$g"."_id"} ){
-					$h{$g} = $i->{rowtxt};
-					$h{$g} =~ s#<h[1-5]>(.*)</h[1-5]>#$1#i;
+					$head{$g} = $i->{rowtxt};
+					$head{$g} =~ s#<h[1-5]>(.*)</h[1-5]>#$1#i;
+					$midashi_tani = $g;
 					last;
 				}
+			}
+			my $flag = 0;
+			foreach my $g (@h){
+				if ($g eq $midashi_tani) {
+					$flag = 1;
+					next;
+				}
+				if ($flag) {
+					$head{$g} = '';
+				}
+			}
+			
+			if ($args{tani} eq 'bun' && $i->{len} > 0) { # 文単位の場合だけ書き出し
+				foreach my $g (@h){
+					print CSVO kh_csv->value_conv($head{$g}).',';
+				}
+				my $t = $i->{rowtxt};
+				$t =~ s#<h[1-5]>(.*)</h[1-5]>#$1#i;
+				print CSVO kh_csv->value_conv($t)."\n";
 			}
 		}
 	}
 	
 	# 最後のデータを書き出し
-	foreach my $g (@h){
-		print CSVO "$h{$g},";
+	if (length($current)) {
+		foreach my $g (@h){
+			print CSVO "$head{$g},";
+		}
+		if ($current =~ /<h[1-5]>(.+?)<\/h[1-5]>(.+)/i) {
+			print CSVO kh_csv->value_conv($1).',';
+			$current = $2;
+		}
+		print CSVO "$current\n";
 	}
-	print CSVO "$current\n";
+
 	close (CSVO);
 }
 

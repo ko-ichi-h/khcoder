@@ -80,7 +80,7 @@ sub sql4{
 sub out2{
 	my $self = shift;
 	
-	# セル内容の作製1: データ内容
+	# セル内容の作製1: データ内容（品詞別）
 	my $id = 1;
 	my $last = 1;
 	my %current = ();
@@ -112,6 +112,7 @@ sub out2{
 				%current = ();
 				$last = $i->[0];
 			}
+			
 			# 集計
 			$current{$i->[2]} .= "$i->[1] ";
 		}
@@ -219,25 +220,29 @@ sub finish{
 	$sql .= "ORDER BY $self->{tani}.id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	my $n = 1;
+	#my $n = 1;
 	while (my $srow = $sth->fetch){
 		my @tmp = @{$srow};
-		my $head = shift @tmp;
-		my $midashi_id = shift @tmp;
-		$head .= ",$midashi_id,";
-		if ($self->{midashi}){
-			$head .= kh_csv->value_conv($self->{midashi}->[$midashi_id - 1]).",";
-		}
+		my $lw = pop @tmp;
+		my $lc = pop @tmp;
+		my $n  = $tmp[-1];
+		
+		my $head;
 		foreach my $i (@tmp){
 			$head .= "$i,"
 		}
+		
+		if ($self->{midashi}){
+			$head .= kh_csv->value_conv($self->{midashi}->[$n - 1]).",";
+		}
+		$head .= "$lc,$lw,";
 		
 		if ($self->{data}{$n}){
 			print OUTF "$head"."$self->{data2}{$n},$self->{data}{$n}\n";
 		} else {
 			print OUTF "$head"."$self->{data2}{$n},$self->{data}{kesson}\n";
 		}
-		++$n;
+		#++$n;
 	}
 	close (OUTF);
 	$self->{data} = '';
