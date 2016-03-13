@@ -680,6 +680,24 @@ if ( length(d_names) < n_org ){
 	}
 	mergep <- merge_tmp
 }
+
+# fix document ids: mainly for sentence ids
+merge_tmp <- NULL
+for (i in 1:nrow(mergep)){
+	if ( mergep[i,1] < 0 ){
+		c1 <- as.numeric( d_ids[mergep[i,1] * -1] ) * -1
+	} else {
+		c1 <- mergep[i,1]
+	}
+	if ( mergep[i,2] < 0 ){
+		c2 <- as.numeric( d_ids[mergep[i,2] * -1] ) * -1
+	} else {
+		c2 <- mergep[i,2]
+	}
+	merge_tmp <- rbind( merge_tmp, c(c1, c2) )
+}
+mergep <- merge_tmp
+
 det <- mergep
 det <- cbind(1:nrow(det), nrow(det):1, det, dcls$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
