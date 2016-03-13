@@ -179,11 +179,20 @@ sub save{
 	}
 	chop $cols2;
 	
+	# ID番号の取得
+	my @ids;
+	my $h_id = mysql_exec->select("
+		select id from $args{tani} order by id
+	",1)->hundle;
+	while (my $i = $h_id->fetch) {
+		push @ids, $i->[0];
+	}
+	
 	# DBにデータを格納
 	mysql_exec->do("create table $table
 		(
 			$cols
-			id int auto_increment primary key not null
+			id int primary key not null
 		)
 	",1);
 	shift @data;
@@ -199,11 +208,12 @@ sub save{
 				$v .= "\'$h\',";
 			}
 		}
-		chop $v;
+		$v .= "$ids[$n]";
 		mysql_exec->do("
-			INSERT INTO $table ($cols2)
+			INSERT INTO $table ($cols2, id)
 			VALUES ($v)
 		",1);
+		++$n;
 	}
 	
 	return 1;

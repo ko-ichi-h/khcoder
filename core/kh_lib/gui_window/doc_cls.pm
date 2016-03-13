@@ -778,6 +778,8 @@ for (i in 1:12){
 	}
 }
 
+d_ids <- d$id
+
 d_labels <- as.character( d$name )
 if ( is.null(d$name) ){
 	d_labels <- as.character(1:nrow(d))
