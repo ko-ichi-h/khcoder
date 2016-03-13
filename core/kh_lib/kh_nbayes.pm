@@ -366,6 +366,7 @@ sub scan_each{
 	# セル内容の作製
 	my $id = 1;
 	my $last = 1;
+	my $started = 0;
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
@@ -378,7 +379,7 @@ sub scan_each{
 		}
 		
 		while (my $i = $sth->fetch){
-			if ($last != $i->[0]){
+			if ($last != $i->[0] && $started){
 				# 書き出し
 				$self->each(\%current, $last);
 				
@@ -386,6 +387,9 @@ sub scan_each{
 				%current = ();
 				$last = $i->[0];
 			}
+
+			$last = $i->[0] unless $started;
+			$started = 1;
 
 			# 学習に使う抽出語を選択する場合
 			if (

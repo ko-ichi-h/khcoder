@@ -65,7 +65,7 @@ sub save{
 		unless ($cases == $cases_in_file){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('records_error'), # "ケース数が一致しません。\n読み込み処理を中断します。",
+				msg  => kh_msg->get('records_error')."\n$cases, $cases_in_file", # "ケース数が一致しません。\n読み込み処理を中断します。",
 			);
 			return 0;
 		}
