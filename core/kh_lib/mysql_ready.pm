@@ -657,7 +657,7 @@ sub reform{
 	mysql_exec->do("
 		INSERT
 		INTO hyoso (id, name, len, genkei_id, num, katuyo_id, hinshi_id)
-		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_fin.id, hghi.num, katuyo.id, genkei.hinshi_id
+		SELECT hyoso_id, hyoso, CHAR_LENGTH(hyoso), genkei_fin.id, hghi.num, katuyo.id, genkei.hinshi_id
 			FROM hghi, katuyo, genkei, genkei_fin
 			WHERE
 				    hghi.katuyo = katuyo.name

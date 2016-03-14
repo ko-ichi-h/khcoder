@@ -218,6 +218,9 @@ sub save{
 			foreach my $i (@{$self->{stopwords_act}}){
 				mysql_exec->
 					do("UPDATE genkei SET nouse=1 WHERE name=\'$i\'",1);
+				mysql_exec->
+					do("UPDATE genkei SET nouse=1 WHERE name=\'<$i>\'",1);
+				#print "no use: $i\n";
 			}
 		}
 		# 韓国語データの場合は半角スペースを無視する設定に
