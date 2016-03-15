@@ -326,7 +326,10 @@ sub check_up{
 	my $self = shift;
 	
 	# For projects created by 3.alpha.06b or prior
-	unless ( mysql_exec->table_exists('bun_length_nouse') ){
+	if (
+		   mysql_exec->table_exists('bun')
+		&! mysql_exec->table_exists('bun_length_nouse')
+	){
 		&mysql_ready::zero_length_headings;
 	}
 
