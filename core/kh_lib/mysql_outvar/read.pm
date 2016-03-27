@@ -181,11 +181,13 @@ sub save{
 	
 	# ID番号の取得
 	my @ids;
-	my $h_id = mysql_exec->select("
-		select id from $args{tani} order by id
-	",1)->hundle;
-	while (my $i = $h_id->fetch) {
-		push @ids, $i->[0];
+	if ( mysql_exec->table_exists($args{tani}) ){
+		my $h_id = mysql_exec->select("
+			select id from $args{tani} order by id
+		",1)->hundle;
+		while (my $i = $h_id->fetch) {
+			push @ids, $i->[0];
+		}
 	}
 	
 	# DBにデータを格納
@@ -208,7 +210,11 @@ sub save{
 				$v .= "\'$h\',";
 			}
 		}
-		$v .= "$ids[$n]";
+		if (@ids) {
+			$v .= "$ids[$n]";
+		} else {
+			$v .= "$n";
+		}
 		mysql_exec->do("
 			INSERT INTO $table ($cols2, id)
 			VALUES ($v)
