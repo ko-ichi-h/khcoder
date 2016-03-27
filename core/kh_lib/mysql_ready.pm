@@ -88,10 +88,12 @@ sub first{
 # We will NOT count zero length headings as sentences
 sub zero_length_headings{
 	
+	# make a backup
 	mysql_exec->do("drop table if exists bun_bak",1);
 	mysql_exec->do("CREATE TABLE bun_bak LIKE bun",1);
 	mysql_exec->do("INSERT INTO bun_bak SELECT * FROM bun",1);
 	
+	# check length (is it necessary?)
 	mysql_exec->do("drop table if exists bun_length_nouse;",1);
 	mysql_exec->do("
 		CREATE TABLE bun_length_nouse(
@@ -110,6 +112,8 @@ sub zero_length_headings{
 		GROUP BY hyosobun.bun_idt
 		ORDER BY hyosobun.bun_idt
 	",1);
+	
+	# delete from "bun" table
 	mysql_exec->do("
 		DELETE
 		FROM bun
@@ -117,7 +121,52 @@ sub zero_length_headings{
 		WHERE bun.id = bun_length_nouse.id
 			AND bun_length_nouse.len = 0;
 	",1);
+	if ($::project_obj->status_hb) {
+		mysql_exec->do("
+			DELETE
+			FROM bun
+			WHERE bun_id = 0 AND dan_id = 0
+		",1);
+	}
+	
+	# add sequential number
+	mysql_exec->do("drop table if exists bun_tmp;",1);
+	mysql_exec->do("
+		CREATE TABLE bun_tmp(
+		  id int primary key not null,
+		  bun_id int not null,
+		  dan_id int not null,
+		  h5_id  int not null,
+		  h4_id  int not null,
+		  h3_id  int not null,
+		  h2_id  int not null,
+		  h1_id  int not null,
+		  seq int auto_increment not null UNIQUE
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO bun_tmp (id, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
+		SELECT id, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+		FROM bun
+		ORDER BY id
+	",1);
+	mysql_exec->do("drop table if exists bun",1);
+	mysql_exec->do("RENAME TABLE bun_tmp TO bun",1);
 
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index1 (bun_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index2 (dan_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index3 (h5_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index4 (h4_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index5 (h3_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index6 (h2_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index7 (h1_id)",1);
+	mysql_exec->do("
+		ALTER TABLE bun ADD INDEX index8 (
+			bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+		)
+	",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index9 (id,seq)",1);
+	
 }
 
 sub fix_michigo{
