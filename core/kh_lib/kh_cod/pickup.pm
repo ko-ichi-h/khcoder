@@ -41,6 +41,7 @@ sub pick{
 	my $id = 1;
 	my $bun_num = mysql_exec->select("SELECT MAX(id) FROM bun")
 		->hundle->fetch->[0]; # データに含まれる文の数
+	my $spacer = $::project_obj->spacer;
 
 	while ($id <= $bun_num){
 		my $sth = mysql_exec->select(
@@ -58,6 +59,10 @@ sub pick{
 		$id += $records_per_once;
 
 		while (my $i = $sth->fetchrow_hashref){
+			if ( $spacer eq ' ') {
+				$i->{rowtxt} =~ s/ \.$/\./;
+			}
+			
 			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){    # 見出し行
 				if ($last){
 					print F "\n";
@@ -69,7 +74,8 @@ sub pick{
 					   ($last == $i->{dan_id})
 					&& ($last_seq + 1 == $i->{seq})
 				){                  # 同じ段落の続き
-					print F "$i->{rowtxt}";
+					print F "\n" if $args{tani} eq 'bun'; # 文単位の場合は文と文とを改行で区切る
+					print F $spacer, $i->{rowtxt};
 					print "-";
 				}
 				else {              # 段落の変わり目
