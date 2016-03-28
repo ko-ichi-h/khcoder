@@ -313,7 +313,7 @@ sub _make_new{
 			file        => $file_vars,
 			tani        => 'h5',
 			skip_checks => 1,
-		)->read;
+		)->read if -e $file_vars;
 
 		# ignoring the separator string
 		mysql_exec->do("

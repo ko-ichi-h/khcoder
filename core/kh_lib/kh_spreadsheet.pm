@@ -68,6 +68,8 @@ sub save_files{
 	close $fh;
 
 	# make a variable file, < 127 char, <= 1000 columns
+	return 1 if $col_min == $col_max;
+	
 	open $fh, ">::encoding(utf8)", $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
