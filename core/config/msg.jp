@@ -1040,7 +1040,7 @@ kh_nbayes:
 kh_project:
     no_target_file:           '分析対象ファイルが存在しません'
 kh_projects:
-    already_registered:       '当該のファイルは既にプロジェクトとして登録されています'
+    already_registered:       "そのファイルはすでにプロジェクトとして登録されています。\n\nメニューから「プロジェクト」「開く」と進み、\nそのファイルを選択して「開く」ボタンをクリックしてください。"
 gui_errormsg::file:
     could_not_open_the_file:  "ファイルを開けませんでした。\nKH Coderを終了します。\n* "
 kh_cod:
