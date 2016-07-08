@@ -33,6 +33,7 @@ sub readin{
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
 		|| ! -e "./config/hinshi_freeling_ca"
+		|| ! -e "./config/hinshi_freeling_de"
 		|| ! -e "./config/hinshi_freeling_en"
 		|| ! -e "./config/hinshi_freeling_fr"
 		|| ! -e "./config/hinshi_freeling_it"
@@ -88,7 +89,11 @@ sub reset_parm{
 		# 品詞定義ファイルの作成準備
 		use DBI;
 		use DBD::CSV;
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
 		my @table = (
 				"'7', '地名', '名詞-固有名詞-地域', ''",
 				"'6', '人名', '名詞-固有名詞-人名', ''",
@@ -360,8 +365,9 @@ sub reset_parm{
 				)"
 			) or die;
 			my @table = (
-				"2, 'ProperNoun', 'NP', ''",
-				"1, 'Noun',  'NN', ''",
+				#"2, 'ProperNoun', 'NP', ''",
+				#"2, 'ProperNoun', 'NNP', ''",
+				"1, 'Noun',  'N', ''",
 				"3, 'Foreign',  'FW', ''",
 				"20, 'PRP',  'PRP', ''",
 				"25, 'Adj',  'JJ', ''",
@@ -394,9 +400,10 @@ sub reset_parm{
 			my @table = (
 				"1, 'AQ', 'AQ', ''",
 				"2, 'AO', 'AO', ''",
-				"3, 'R', 'R', ''",
-				"4, 'N', 'N', ''",
-				"5, 'V', 'V', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
 				"6, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
@@ -428,10 +435,11 @@ sub reset_parm{
 			my @table = (
 				"1, 'AQ', 'AQ', ''",
 				"2, 'AO', 'AO', ''",
-				"3, 'R', 'R', ''",
-				"4, 'N', 'N', ''",
-				"5, 'V', 'V', ''",
-				"6, 'I', 'I', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
 				"83, 'U', 'U', ''",
@@ -462,10 +470,11 @@ sub reset_parm{
 			my @table = (
 				"1, 'AQ', 'AQ', ''",
 				"2, 'AO', 'AO', ''",
-				"3, 'R', 'R', ''",
-				"4, 'N', 'N', ''",
-				"5, 'V', 'V', ''",
-				"6, 'I', 'I', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
 				"83, 'U', 'U', ''",
@@ -496,10 +505,11 @@ sub reset_parm{
 			my @table = (
 				"1, 'AQ', 'AQ', ''",
 				"2, 'AO', 'AO', ''",
-				"3, 'R', 'R', ''",
-				"4, 'N', 'N', ''",
-				"5, 'V', 'V', ''",
-				"6, 'I', 'I', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
 				"83, 'U', 'U', ''",
@@ -530,10 +540,11 @@ sub reset_parm{
 			my @table = (
 				"1, 'AQ', 'AQ', ''",
 				"2, 'AO', 'AO', ''",
-				"3, 'R', 'R', ''",
-				"4, 'N', 'N', ''",
-				"5, 'V', 'V', ''",
-				"6, 'I', 'I', ''",
+				"2, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
 				"83, 'U', 'U', ''",
@@ -566,7 +577,7 @@ sub reset_parm{
 				"2, 'D', 'D', ''",
 				"4, 'N', 'N', ''",
 				"5, 'V', 'V', ''",
-				"6, 'J', 'J', ''",
+				"6, 'I', 'I', ''",
 				"83, 'U', 'U', ''",
 				"99999,'HTML_TAG','TAG','HTML'",
 				"11,'TAG','TAG',''",
@@ -575,6 +586,36 @@ sub reset_parm{
 			foreach my $i (@table){
 				$dbh->do("
 					INSERT INTO hinshi_freeling_ru
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+
+		# for FreeLing (German)
+		unless (-e "./config/hinshi_freeling_de"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_de (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_de
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )
@@ -829,7 +870,12 @@ sub stopwords{
 
 	if ( defined( $args{stopwords} ) ){
 		# データ保存
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
+		
 		if (-e "./config/stopwords_$type"){
 			$dbh->do("
 				DROP TABLE stopwords_$type
@@ -853,7 +899,11 @@ sub stopwords{
 	} else {
 		# データ読み出し
 		my @words = ();
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8") or die;
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
 		if (-e "./config/stopwords_$type"){
 			my $sth = $dbh->prepare("
 				SELECT name FROM stopwords_$type
@@ -888,7 +938,11 @@ sub stopwords_current{
 	
 	my @words = ();
 	my $cwd = $self->cwd;
-	my $dbh = DBI->connect("DBI:CSV:f_dir=$cwd/config;f_encoding=utf8") or die;
+	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "$cwd/config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;
 	if (-e "$cwd/config/stopwords_$type"){
 		my $sth = $dbh->prepare("
 			SELECT name FROM stopwords_$type

@@ -228,6 +228,7 @@ sub __new{
 		options =>
 			[
 				[ kh_msg->get('l_ca') => 'ca'],
+				[ kh_msg->get('l_de') => 'de'],
 				[ kh_msg->get('l_en') => 'en'],
 				[ kh_msg->get('l_fr') => 'fr'],
 				[ kh_msg->get('l_it') => 'it'],

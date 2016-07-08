@@ -142,7 +142,7 @@ sub get_selected{
 	unless ($num1 == $num2){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error'),
+			msg  => kh_msg->get('error')."\n$num1, $num2",
 		);
 		return 0;
 	}

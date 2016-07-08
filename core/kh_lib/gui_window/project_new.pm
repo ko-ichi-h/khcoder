@@ -192,7 +192,8 @@ sub refresh_method{
 			 || $self->{lang} eq 'pt'
 			 || $self->{lang} eq 'ru' ##
 			 || $self->{lang} eq 'sl' ####
-			 || $self->{lang} eq 'es' 
+			 || $self->{lang} eq 'es'
+			 || $self->{lang} eq 'de'
 			)
 			&& (
 				   ($::config_obj->os ne 'win32')

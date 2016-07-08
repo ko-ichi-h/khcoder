@@ -14,21 +14,18 @@ sub _run_morpho{
 	my $icode = kh_jchar->check_code_en($self->target,1);
 	$self->{icode} = $icode;
 
-	# Set ENV variable
+	# get ready to run FreeLing
 	my $freeling_dir = $::config_obj->freeling_dir;          
-	$freeling_dir .= '\data';
 	$freeling_dir =~ s/\//\\/g;
 	$freeling_dir = $::config_obj->os_path($freeling_dir);
-	$::ENV{FREELINGSHARE} = $freeling_dir;
-	
-	# get ready to run FreeLing
+
 	$self->{target_temp} = $self->target.'.tmp';
 	$self->{output_temp} = $self->output.'.tmp';
 	unlink $self->{target_temp} if -e $self->{target_temp};
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
 	my $freeling_path = $::config_obj->freeling_dir;         # path of *.exe
-	$freeling_path .= '\bin\analyzer.exe';
+	$freeling_path .= '\bin\analyzer.bat';
 	$freeling_path =~ s/\//\\/g;
 	$freeling_path = $::config_obj->os_path($freeling_path);
 
@@ -56,16 +53,15 @@ sub _run_morpho{
 	my $cmd_line =                                           # command line
 		$cmd_path 
 		." /C $freeling_path"
-		." --nodate --noquant --flush -f %FREELINGSHARE%\\config\\"
+		." --nodate --noquant --flush -f "
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg --server --port 50005'
-		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	
 	$self->{cmd_path}      = $cmd_path;
 	$self->{cmd_line}      = $cmd_line;
 	$self->{freeling_path} = $freeling_path;
-	$self->{dir}           = $freeling_dir;
+	$self->{dir}           = $freeling_dir.'\bin';
 
 	require Win32::Process::Info;
 	Win32::Process::Info->import;
@@ -89,7 +85,7 @@ sub _run_morpho{
 		#Win32::Process->CREATE_NO_WINDOW,
 		Win32::Process->NORMAL_PRIORITY_CLASS,
 		$self->{dir},
-	) or $self->Exec_Error("Wi32::Process can not start");
+	) or $self->Exec_Error("Wim32::Process can not start");
 	
 	# Wait for the server to starts
 	my $file_temp = $::config_obj->file_temp;

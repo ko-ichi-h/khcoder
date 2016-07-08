@@ -96,7 +96,11 @@ sub prepare_db{
 sub read_hinshi_setting{
 	my $self = shift;
 	
-	my $dbh_csv = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8");
+	my $dbh_csv = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "./config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;;
 
 	# 品詞設定の読み込み
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";

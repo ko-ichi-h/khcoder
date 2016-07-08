@@ -13,7 +13,11 @@ use Jcode;
 sub read{
 	my $class = shift;
 	my $self;
-	my $dbh = DBI->connect("DBI:CSV:f_dir=./config;f_encoding=utf8");
+	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "./config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;
 	$self->{dbh} = $dbh;
 	bless $self, $class;
 

@@ -14,6 +14,7 @@ use gui_window::stop_words::stanford_en;
 use gui_window::stop_words::stanford_cn;
 
 use gui_window::stop_words::freeling_ca;
+use gui_window::stop_words::freeling_de;
 use gui_window::stop_words::freeling_en;
 use gui_window::stop_words::freeling_fr;
 use gui_window::stop_words::freeling_it;
