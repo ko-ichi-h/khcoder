@@ -21,6 +21,7 @@ use gui_window::stop_words::freeling_it;
 use gui_window::stop_words::freeling_pt;
 use gui_window::stop_words::freeling_ru;
 use gui_window::stop_words::freeling_es;
+use gui_window::stop_words::freeling_sl;
 
 use kh_msg;
 

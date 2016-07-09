@@ -51,10 +51,10 @@ sub init{
 	# FreeLIngのパス設定
 	if (
 		not -d $::config_obj->freeling_dir
-		and -d $::config_obj->cwd.'/dep/freeling31'
+		and -d $::config_obj->cwd.'/dep/freeling40'
 	) { 
 		$::config_obj->freeling_dir(
-			$::config_obj->cwd.'/dep/freeling31'
+			$::config_obj->cwd.'/dep/freeling40'
 		);
 	}
 	

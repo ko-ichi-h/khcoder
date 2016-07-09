@@ -40,6 +40,7 @@ sub readin{
 		|| ! -e "./config/hinshi_freeling_pt"
 		|| ! -e "./config/hinshi_freeling_ru"
 		|| ! -e "./config/hinshi_freeling_es"
+		|| ! -e "./config/hinshi_freeling_sl"
 	){
 		# 揃っていない場合は設定を初期化
 		$self->reset_parm;
@@ -404,7 +405,7 @@ sub reset_parm{
 				"4, 'R', 'R', ''",
 				"5, 'N', 'N', ''",
 				"6, 'V', 'V', ''",
-				"6, 'I', 'I', ''",
+				"7, 'I', 'I', ''",
 				"81, 'AJ', 'AJ', ''",
 				"82, 'AV', 'AV', ''",
 				"83, 'U', 'U', ''",
@@ -616,6 +617,36 @@ sub reset_parm{
 			foreach my $i (@table){
 				$dbh->do("
 					INSERT INTO hinshi_freeling_de
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSV関連が古いと、1文で複数行INSERTすることができない...
+		}
+
+		# for FreeLing (Slovene)
+		unless (-e "./config/hinshi_freeling_sl"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_sl (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_sl
 						(hinshi_id, kh_hinshi, condition1, condition2 )
 					VALUES
 						( $i )

@@ -27,6 +27,7 @@
 
 	■TO DO
 	・FreeLing 4対応（Winパッケージ、Linux、Mac）
+	・韓国語辞書HanDicの更新
 	
 	・HanDicのパスを指定するためのGUI
 	・FreeLingが日本語名の分析対象ファイルで動くかどうかチェック
@@ -51,7 +52,8 @@ where hyoso.katuyo_id = katuyo.id
 
 
 [3.Alpha.08]
-	・FreeLing 4.0に対応し、ドイツ語についても基本形を正確に取り出せるようになった。
+	・スロベニア語の分析に新たに対応した。
+	・ドイツ語の基本形をより正確に取り出せるようになった。従来は単純に語の最後の方を切り落とす処理（stemming）しかできなかった。
 
 [3.Alpha.07]
 

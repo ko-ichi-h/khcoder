@@ -85,7 +85,7 @@ sub _new{
 				[ kh_msg->get('l_it', 'gui_window::sysconfig') => 'it'],#'Italian *'
 				[ kh_msg->get('l_pt', 'gui_window::sysconfig') => 'pt'],#'Portuguese *'
 				[ kh_msg->get('l_ru', 'gui_window::sysconfig') => 'ru'],#'Russian *'
-				#[ kh_msg->get('l_sl', 'gui_window::sysconfig') => 'sl'],#'Slovenian *'
+				[ kh_msg->get('l_sl', 'gui_window::sysconfig') => 'sl'],#'Slovenian *'
 				[ kh_msg->get('l_es', 'gui_window::sysconfig') => 'es'],#'Spanish *'
 			],
 		variable => \$self->{lang},

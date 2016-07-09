@@ -228,12 +228,13 @@ sub __new{
 		options =>
 			[
 				[ kh_msg->get('l_ca') => 'ca'],
-				[ kh_msg->get('l_de') => 'de'],
 				[ kh_msg->get('l_en') => 'en'],
 				[ kh_msg->get('l_fr') => 'fr'],
+				[ kh_msg->get('l_de') => 'de'],
 				[ kh_msg->get('l_it') => 'it'],
 				[ kh_msg->get('l_pt') => 'pt'],
 				[ kh_msg->get('l_ru') => 'ru'],
+				[ kh_msg->get('l_sl') => 'sl'],
 				[ kh_msg->get('l_es') => 'es'],
 			],
 		variable => \$self->{opt_fls_val},
