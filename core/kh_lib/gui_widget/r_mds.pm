@@ -14,6 +14,9 @@ sub _new{
 	$self->{method_dist}        = 'binary' unless defined $self->{method_dist};
 	$self->{dim_number}         = 2        unless defined $self->{dim_number};
 	$self->{check_random_start} = 0        unless defined $self->{check_random_start};
+	$self->{use_alpha}          = 1        unless defined $self->{use_alpha};
+
+	my ($check_bubble, $num_size) = (0,100);
 
 	if ( length($self->{r_cmd}) ){
 		if ($self->{r_cmd} =~ /method_mds <\- "(.+)"\n/){
@@ -38,9 +41,45 @@ sub _new{
 			$self->{dim_number} = 2;
 		}
 
-		#if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
-		#	$self->{check_random_start} = 1;
-		#}
+		if ( $self->{r_cmd} =~ /use_alpha <\- ([0-9]+)\n/ ){
+			$self->{use_alpha} = $1;
+		}
+		
+		if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
+			$self->{check_random_start} = 1;
+		}
+
+		# クラスター化のパラメーター
+		if ( $self->{r_cmd} =~ /n_cls <\- ([0-9]+)\n/ ){
+			$self->{cls_if} = $1;
+			if ( $self->{cls_if} ){
+				$self->{cls_n} = $self->{cls_if};
+				$self->{cls_if} = 1;
+			} else {
+				$self->{cls_n} = 7;
+			}
+		} else {
+			$self->{cls_if} = 0;
+			$self->{cls_n}  = 7;
+		}
+		if ( $self->{r_cmd} =~ /cls_raw <\- ([0-9]+)\n/ ){
+			my $v = $1;
+			if ($v == 1){
+				$self->{cls_nei} = 0;
+			} else {
+				$self->{cls_nei} = 1;
+			}
+		}
+
+		# バブルプロット用のパラメーター
+		if ( $self->{r_cmd} =~ /bubble <\- 1\n/ ){
+			$check_bubble = 1;
+		} else {
+			$check_bubble = 0;
+		}
+		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
+			$num_size = $1;
+		}
 
 		$self->{r_cmd} = undef;
 	}
@@ -109,6 +148,51 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
+	# バブルプロット
+	my $lf = $win->Frame()->pack(
+		-fill => 'x',
+		#-pady => 4,
+	);
+	
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent       => $lf,
+		type         => 'mds',
+		command      => $self->{command},
+		pack    => {
+			-anchor   => 'w',
+		},
+		check_bubble    => $check_bubble,
+		num_size        => $num_size,
+	);
+
+	# クラスター化
+	$self->{cls_obj} = gui_widget::cls4mds->open(
+		parent       => $lf,
+		command      => $self->{command},,
+		pack    => {
+			-anchor   => 'w',
+		},
+		check_cls    => $self->{cls_if},
+		cls_n        => $self->{cls_n},
+		check_nei    => $self->{cls_nei},
+	);
+
+	# 半透明の色
+	
+	$lf->Checkbutton(
+		-variable => \$self->{use_alpha},
+		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+	)->pack(-anchor => 'w');
+
+	# random start
+	$self->{check_rs} = $lf->Checkbutton(
+		-text => kh_msg->get('random_start'), # 乱数による探索
+		-variable => \$self->{check_random_start},
+		-font => "TKFN",
+		-justify => 'left',
+		-anchor => 'w',
+	)->pack(-anchor => 'w');
+	
 	$self->{win_obj} = $win;
 	return $self;
 }
@@ -134,10 +218,15 @@ sub _new{
 sub params{
 	my $self = shift;
 	return (
-		method        => $self->method,
-		method_dist   => $self->method_dist,
-		dim_number    => $self->dim_number,
-		#random_starts => gui_window->gui_jg( $self->{check_random_start} ),
+		method         => $self->method,
+		method_dist    => $self->method_dist,
+		dim_number     => $self->dim_number,
+		bubble         => $self->{bubble_obj}->check_bubble,
+		bubble_size    => $self->{bubble_obj}->size,
+		n_cls          => $self->{cls_obj}->n,
+		cls_raw        => $self->{cls_obj}->raw,
+		use_alpha      => gui_window->gui_jg( $self->{use_alpha} ),
+		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 }
 

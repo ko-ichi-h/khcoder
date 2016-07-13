@@ -46,41 +46,6 @@ sub _new{
 		pack    => { -anchor   => 'w'},
 	);
 
-	# バブルプロット
-	$self->{bubble_obj} = gui_widget::bubble->open(
-		parent       => $lf,
-		type         => 'mds',
-		command      => sub{ $self->calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-
-	# クラスター化
-	$self->{cls_obj} = gui_widget::cls4mds->open(
-		parent       => $lf,
-		command      => sub{ $self->calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-	
-	# 半透明の色
-	$self->{use_alpha} = 1;
-	$lf->Checkbutton(
-		-variable => \$self->{use_alpha},
-		-text     => kh_msg->get('r_alpha'), 
-	)->pack(-anchor => 'w');
-
-	# random start
-	$self->{check_rs} = $lf->Checkbutton(
-		-text => kh_msg->get('gui_widget::r_mds->random_start'), # 乱数による探索
-		-variable => \$self->{check_random_start},
-		-font => "TKFN",
-		-justify => 'left',
-		-anchor => 'w',
-	)->pack(-anchor => 'w');
-
 	# フォントサイズ
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
@@ -214,14 +179,6 @@ sub calc{
 		$self->{mds_obj}->params,
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
-		bubble         => $self->{bubble_obj}->check_bubble,
-		std_radius     => $self->{bubble_obj}->chk_std_radius,
-		bubble_size    => $self->{bubble_obj}->size,
-		bubble_var     => $self->{bubble_obj}->var,
-		n_cls          => $self->{cls_obj}->n,
-		cls_raw        => $self->{cls_obj}->raw,
-		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
-		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);
 	
 	$w->end(no_dialog => 1);
@@ -371,20 +328,22 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
+			$r_command_d .= "bubble <- 0\n";
 			$r_command_d .= &r_command_plot;
+			$r_command_a .= "bubble <- 0\n";
 			$r_command_a .= &r_command_plot;
 
 		} else {
 			# バブル表現を行う場合
-			$r_command_d .= "std_radius <- $args{std_radius}\n";
+			#$r_command_d .= "std_radius <- $args{std_radius}\n";
+			#$r_command_d .= "bubble_var <- $args{bubble_var}\n";
+			$r_command_d .= "bubble <- 1\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_d .= &r_command_bubble;
+			$r_command_d .= &r_command_plot;
 
-			$r_command_a .= "std_radius <- $args{std_radius}\n";
+			$r_command_a .= "bubble <- 1\n";
 			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_a .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_a .= &r_command_bubble;
+			$r_command_a .= &r_command_plot;
 		}
 	}
 	elsif ($args{dim_number} == 3){
@@ -466,13 +425,24 @@ while ( is.na(check4mds(d)) == 0 ){
 	#$r_command .= $r_command_a;
 	my $r_command_l = "load(\"$file_save\")\n";
 
+	my $x_factor = 1;
+	if (
+		$args{dim_number} <= 2
+		&& (
+			   $args{bubble}
+			|| $args{n_cls}
+		)
+	){
+		$x_factor = 4/3;
+	}
+
 	# プロット作成
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command.$r_command_d,
 		command_s => $r_command_l.$r_command_d,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
@@ -481,7 +451,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		command_s => $r_command_l.$r_command_a,
 		command_a => $r_command_a,
 		command_f => $r_command.$r_command_a,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
@@ -595,7 +565,6 @@ bty      <- "l"
 
 # クラスター分析
 if (n_cls > 0){
-
 	if (nrow(d) < n_cls){
 		n_cls <- nrow(d)
 	}
@@ -616,171 +585,6 @@ if (n_cls > 0){
 		hcl <- hclust(djj,method="ward")
 		#hcl$height <- sqrt( hcl$height )
 	}
-
-	library( RColorBrewer )
-	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
-	col_bg_words_notrans <- col_bg_words
-	col_dot_words <- "gray40"
-	col_base <- NA
-	bty <- "o"
-
-	if ( use_alpha == 1 ){
-		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
-		col_bg_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.5
-		)[cutree(hcl, k=n_cls)]
-		rgb <- rgb * 0.5
-		col_dot_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.92
-		)[cutree(hcl, k=n_cls)]
-	}
-
-}
-
-plot(
-	cl,
-	asp=1,
-	pch=20,
-	col=col_base,
-	xlab=name_dim1,
-	ylab=ylab_text,
-	bty=bty
-)
-
-if (n_cls > 0){
-	symbols(
-		cl[,1],
-		cl[,2],
-		circles=rep(1,length(cl[,1])),
-		inches=0.1,
-		fg=col_dot_words,
-		bg=col_bg_words,
-		add=T,
-	)
-}
-
-if ( plot_mode == "color" ){
-	library(maptools)
-	labcd <- pointLabel(
-		x=cl[,1],
-		y=cl[,2],
-		labels=rownames(cl),
-		cex=font_size,
-		font = text_font,
-		doPlot = F,
-		offset=0
-	)
-
-	# ラベル再調整
-	xorg <- cl[,1]
-	yorg <- cl[,2]
-	cex  <- font_size
-
-	if ( length(xorg) < 300 ) {
-		library(wordcloud)'
-		.&plotR::network::r_command_wordlayout
-		.'nc <- wordlayout(
-			labcd$x,
-			labcd$y,
-			rownames(cl),
-			cex=cex * 1.25,
-			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-		)
-
-		xlen <- par("usr")[2] - par("usr")[1]
-		ylen <- par("usr")[4] - par("usr")[3]
-
-		for (i in 1:length(rownames(cl)) ){
-			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-			dst <- sqrt( x^2 + y^2 )
-			if ( dst > 0.05 ){
-				# print( paste( rownames(cb)[i], d ) )
-				
-				segments(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i],
-					col="gray60",
-					lwd=1
-				)
-				
-			}
-		}
-
-		xorg <- labcd$x
-		yorg <- labcd$y
-		labcd$x <- nc[,1] + .5 * nc[,3]
-		labcd$y <- nc[,2] + .5 * nc[,4]
-	}
-
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=font_size,
-		offset=0,
-		font = text_font
-	)
-
-}
-
-';
-}
-
-sub r_command_bubble{
-	return '
-
-ylab_text <- ""
-if ( dim_n == 2 ){
-	ylab_text <- name_dim2
-}
-if ( dim_n == 1 ){
-	cl <- cbind(cl[,1],cl[,1])
-}
-
-if (plot_mode == "color"){
-	col_txt_words <- "black"
-	col_dot_words <- "#00CED1"
-	col_dot_vars  <- "#FF6347"
-	col_bg_words  <- "NA"
-}
-
-if (plot_mode == "dots"){
-	col_txt_words <- NA
-	col_dot_words <- "black"
-	col_dot_vars  <- "black"
-	col_bg_words  <- NA
-}
-
-if ( use_alpha == 1 ){
-	rgb <- c(179, 226, 205) / 255
-	col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
-	rgb <- rgb * 0.5
-	col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
-}
-
-# バブルのサイズを決定
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if ( is.na( nums[i] ) ){
-      temp[i] <- 1
-    } else {
-	    if (nums[i] < 1){
-	      temp[i] <- 1
-	    } else {
-	      temp[i] <-  nums[i]
-	    }
-	}
-  }
-  return(temp)
 }
 
 b_size <- NULL
@@ -793,157 +597,204 @@ for (i in rownames(cl)){
 	}
 }
 
-b_size_raw <- b_size
-b_size <- sqrt( b_size / pi ) # 出現数比＝面積比になるように半径を調整
+#-----------------------------------------------------------------------------#
+#                           prepare label positions
+#-----------------------------------------------------------------------------#
 
-if (std_radius){ # 円の大小をデフォルメ
-	if ( sd(b_size) == 0 ){
-		b_size <- rep(10, length(b_size))
-	} else {
-		b_size <- b_size / sd(b_size)
-		b_size <- b_size - mean(b_size)
-		b_size <- b_size * 5 * bubble_var / 100 + 10
-		b_size <- neg_to_zero(b_size)
-	}
-}
-
-# クラスター分析
-if (n_cls > 0){
-	library( RColorBrewer )
-	
-	if (nrow(d) < n_cls){
-		n_cls <- nrow(d)
-	}
-	
-	if (cls_raw == 1){
-		djj <- dj
-	} else {
-		djj <- dist(cl,method="euclid")
-	}
-	
-	if (
-		   ( as.numeric( R.Version()$major ) >= 3 )
-		&& ( as.numeric( R.Version()$minor ) >= 1.0)
-	){                                                      # >= R 3.1.0
-		hcl <- hclust(djj,method="ward.D2")
-	} else {                                                # <= R 3.0
-		djj <- djj^2
-		hcl <- hclust(djj,method="ward")
-		#hcl$height <- sqrt( hcl$height )
-	}
-
-	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
-	col_bg_words_notrans <- col_bg_words
-	col_dot_words <- "gray40"
-
-	if ( use_alpha == 1 ){
-		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
-		col_bg_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.5
-		)[cutree(hcl, k=n_cls)]
-		rgb <- rgb * 0.5
-		col_dot_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.92
-		)[cutree(hcl, k=n_cls)]
-	}
-
-}
-
-# バブル描画
-plot(
-	cl,
-	asp=1,
-	pch=NA,
-	col="black",
-	xlab=name_dim1,
-	ylab=ylab_text,
-	#bty="l"
-)
-
-symbols(
-	cl[,1],
-	cl[,2],
-	circles=b_size,
-	inches=0.5 * bubble_size / 100,
-	fg=col_dot_words,
-	bg=col_bg_words,
-	add=T,
-)
-
-# ラベル位置を決定
-library(maptools)
-labcd <- pointLabel(
-	x=cl[,1],
-	y=cl[,2],
-	labels=rownames(cl),
-	cex=font_size,
-	offset=0,
-	doPlot=F
-)
-
-# ラベル再調整
-xorg <- cl[,1]
-yorg <- cl[,2]
-cex  <- font_size
-
-if ( length(xorg) < 300 ) {
-	library(wordcloud)'
-	.&plotR::network::r_command_wordlayout
-	.'nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+if (plot_mode == "color") {
+	plot(cl)
+	library(maptools)
+	labcd <- pointLabel(
+		x=cl[,1],
+		y=cl[,2],
+		labels=rownames(cl),
+		cex=font_size,
+		offset=0,
+		doPlot=F
 	)
+	
+	xorg <- cl[,1]
+	yorg <- cl[,2]
+	cex  <- font_size
+	segs <- NULL
+	
+	if ( length(xorg) < 300 ) {
+		library(wordcloud)
+		'.&plotR::network::r_command_wordlayout.'
 
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	for (i in 1:length(rownames(cl)) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			# print( paste( rownames(cb)[i], d ) )
-			
-			if (plot_mode == "color") {
-				segments(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i],
-					col="gray60",
-					lwd=1
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cl),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
+	
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
+	
+		for (i in 1:length(rownames(cl)) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3],
+						nc[i,2] + .5 * nc[i,4],
+						xorg[i],
+						yorg[i]
+					)
 				)
 			}
 		}
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
 }
 
-# ラベル描画
-if (plot_mode == "color") {
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=font_size,
-		offset=0,
-		font = text_font,
-		col=col_txt_words,
+#-----------------------------------------------------------------------------#
+#                              start plotting
+#-----------------------------------------------------------------------------#
+
+library(grid)
+library(ggplot2)
+
+font_family <- "'.$::config_obj->font_plot_current.'"
+
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+if (use_alpha == 1){
+	alpha_value = 0.6
+} else {
+	alpha_value = 1
+}
+
+if ( n_cls > 0 ){
+	cls_labels <- cutree(hcl, k=n_cls)
+	if (n_cls >= 10){
+		cls_labels <- formatC(cls_labels,width=2,flag="0")
+	}
+	cls_labels <- paste("cluster", cls_labels)
+} else {
+	cls_labels <- "cluster 1"
+}
+
+cl2 <- data.frame(
+	d1 = cl[,1],
+	d2 = cl[,2],
+	s = b_size,
+	col_f = cls_labels,
+	lx = labcd$x,
+	ly = labcd$y,
+	labels = rownames(cl),
+	stringsAsFactors = F
+)
+
+g <- ggplot()
+
+# Plot
+if ( bubble == 1 ){
+	g <- g + geom_point(
+		data=cl2,
+		aes(x=d1, y=d2, size=s, colour=col_f, fill=col_f),
+		shape=21,
+		colour="gray40",
+		alpha=alpha_value
+	)
+	g <- g + scale_size_area(
+		max_size= 30 * bubble_size / 100,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", alpha=1),
+			order = 2
+		)
+	)
+} else {
+	if ( n_cls > 0 ){
+		g <- g + geom_point(
+			data=cl2,
+			aes(x=d1, y=d2, colour=col_f, fill=col_f),
+			size=5.5,
+			shape=21,
+			colour="gray40",
+			alpha=alpha_value
+		)
+	} else {
+		g <- g + geom_point(
+			data=cl2,
+			aes(x=d1, y=d2),
+			size=2,
+			shape=16,
+			colour="mediumaquamarine"
+		)
+	}
+}
+
+if ( n_cls > 0 ){
+	g <- g + scale_fill_brewer(
+		palette = "Set3",
+		guide = guide_legend(
+			title = "Clusters:",
+			override.aes = list(size=5.5, alpha=1, shape=22),
+			keyheight = unit(1.5,"line"),
+			order = 1
+		)
+	)
+} else {
+	g <- g + scale_fill_brewer(
+		palette = "Set3",
+		guide = "none"
 	)
 }
 
+# Text
+if (plot_mode == "color") {
+	if (text_font == 1){
+		face <- "plain"
+	} else {
+		face <- "bold"
+	}
+	g <- g + geom_text(
+		data=cl2,
+		aes(x=lx,y=ly,label=labels),
+		size=4,
+		colour="black",
+		family=font_family,
+		fontface=face
+	)
+	if (length(segs) > 0){
+		colnames(segs) <- c("x1", "y1", "x2", "y2")
+		segs <- as.data.frame(segs)
+		g <- g + geom_segment(
+			aes(x=x1, y=y1, xend=x2, yend=y2),
+			data=segs,
+			colour="gray60"
+		)
+
+	}
+}
+
+# Appearance / Theme
+g <- g + labs(x=name_dim1, y=name_dim2)
+g <- g + theme_classic(base_family=font_family)
+g <- g + theme(
+	legend.key   = element_rect(colour = "transparent"),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0)
+)
+
+print(g)
 
 ';
 }
