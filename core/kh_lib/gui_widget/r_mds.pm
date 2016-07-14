@@ -15,7 +15,8 @@ sub _new{
 	$self->{dim_number}         = 2        unless defined $self->{dim_number};
 	$self->{check_random_start} = 0        unless defined $self->{check_random_start};
 	$self->{use_alpha}          = 1        unless defined $self->{use_alpha};
-
+	$self->{fix_asp}            = 0        unless defined $self->{fix_asp};
+	
 	my ($check_bubble, $num_size) = (0,100);
 
 	if ( length($self->{r_cmd}) ){
@@ -44,7 +45,11 @@ sub _new{
 		if ( $self->{r_cmd} =~ /use_alpha <\- ([0-9]+)\n/ ){
 			$self->{use_alpha} = $1;
 		}
-		
+
+		if ( $self->{r_cmd} =~ /fix_asp <\- ([0-9]+)\n/ ){
+			$self->{fix_asp} = $1;
+		}
+
 		if ( $self->{r_cmd} =~ /random_starts <\- 1/ ){
 			$self->{check_random_start} = 1;
 		}
@@ -178,10 +183,15 @@ sub _new{
 	);
 
 	# È¾Æ©ÌÀ¤Î¿§
-	
 	$lf->Checkbutton(
 		-variable => \$self->{use_alpha},
 		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
+	)->pack(-anchor => 'w');
+
+	# aspect ratio
+	$lf->Checkbutton(
+		-variable => \$self->{fix_asp},
+		-text     => kh_msg->get('fix_asp'), 
 	)->pack(-anchor => 'w');
 
 	# random start
@@ -225,6 +235,7 @@ sub params{
 		bubble_size    => $self->{bubble_obj}->size,
 		n_cls          => $self->{cls_obj}->n,
 		cls_raw        => $self->{cls_obj}->raw,
+		fix_asp        => gui_window->gui_jg( $self->{fix_asp} ),
 		use_alpha      => gui_window->gui_jg( $self->{use_alpha} ),
 		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 	);

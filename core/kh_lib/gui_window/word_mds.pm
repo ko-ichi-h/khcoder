@@ -302,6 +302,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_d .= "name_dim3 <- paste(name_dim,'3')\n";
 	
 	$r_command_a .= "use_alpha <- $args{use_alpha}\n";
+	$r_command_d .= "fix_asp <- $args{fix_asp}\n";
 	$r_command_a .= "
 		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
 			use_alpha <- 0 
@@ -426,15 +427,16 @@ while ( is.na(check4mds(d)) == 0 ){
 	my $r_command_l = "load(\"$file_save\")\n";
 
 	my $x_factor = 1;
-	if (
-		$args{dim_number} <= 2
-		&& (
-			   $args{bubble}
-			|| $args{n_cls}
-		)
-	){
-		$x_factor = 4/3;
-	}
+	#if (
+	#	$args{dim_number} <= 2
+	#	&& (
+	#		   $args{bubble}
+	#		|| $args{n_cls}
+	#	)
+	#){
+	#	$x_factor = 4/3;
+	#}
+	$x_factor = 4/3;
 
 	# プロット作成
 	my $flg_error = 0;
@@ -752,6 +754,11 @@ if ( n_cls > 0 ){
 		palette = "Set3",
 		guide = "none"
 	)
+}
+
+# aspect ratio
+if (fix_asp == 1){
+	g <- g + coord_fixed()
 }
 
 # Text

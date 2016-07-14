@@ -619,6 +619,7 @@ gui_widget::r_mds:
     dist:                     '  Distance:'
     dim:                      'Dimensions:'
     1_3:                      '(from 1 to 3)'
+    fix_asp:                  'Fix aspect ratio'
     random_start:             "Use random starts to find better solutions\n*It may take 10 minutes or more."
 gui_window::word_mds:
     units_words:              'Select the unit & words'

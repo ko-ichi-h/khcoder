@@ -100,8 +100,8 @@ if ( dim_n >= 3 ){
 }
 
 # frequency
-if ( exists("b_size_raw") ){
-	out <- cbind( out, b_size_raw )
+if ( exists("b_size") ){
+	out <- cbind( out, b_size )
 	colnames(out)[ length(colnames(out)) ] <- "frequency"
 }
 
@@ -110,8 +110,6 @@ if (n_cls > 0){
 	out <- cbind( out, cutree(hcl, k=n_cls) )
 	colnames(out)[ length(colnames(out)) ] <- "cluster"
 
-	out <- cbind( out, col_bg_words_notrans)
-	colnames(out)[ length(colnames(out)) ] <- "color"
 }
 
 ';
