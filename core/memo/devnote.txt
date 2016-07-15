@@ -26,7 +26,6 @@
 		Spanish		es
 
 	■TO DO
-	・MDSの保存： EMF & PDF
 	・FreeLing 4対応（Linux、Mac）
 	
 	・HanDicのパスを指定するためのGUI

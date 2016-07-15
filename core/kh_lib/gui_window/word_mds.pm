@@ -604,6 +604,11 @@ for (i in rownames(cl)){
 #-----------------------------------------------------------------------------#
 
 if (plot_mode == "color") {
+	png("temp.png", width=800, height=640, unit="px")
+	if ( exists("PERL_font_family") ){
+		par(family=PERL_font_family) 
+	}
+	
 	plot(cl)
 	library(maptools)
 	labcd <- pointLabel(
@@ -657,6 +662,7 @@ if (plot_mode == "color") {
 		labcd$x <- nc[,1] + .5 * nc[,3]
 		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
+	dev.off()
 }
 
 #-----------------------------------------------------------------------------#
