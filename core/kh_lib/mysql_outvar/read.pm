@@ -98,15 +98,6 @@ sub save{
 		# 長すぎる場合
 		if (length($i) > 250){
 			$i = substr($i, 0, 250);
-			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
-				chop $i;
-			}
-			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
-				chop $i;
-			}
-			if ($i =~ /\x8F$/ or $i =~ tr/\x8E\xA1-\xFE// % 2) {
-				chop $i;
-			}
 		}
 		# スペース
 		$i =~ tr/ /_/;
@@ -205,6 +196,9 @@ sub save{
 			if ($v =~ /^[0-9]+$/o){
 				$v .= "$h,";
 			} else {
+				if (length($h) > 20000 ) {
+					$h = substr($h, 0, 20000)
+				}
 				$h =~ s/\\/\\\\/g;
 				$h =~ s/'/\\'/g;
 				$v .= "\'$h\',";

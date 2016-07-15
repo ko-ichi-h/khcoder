@@ -75,9 +75,9 @@ sub save_files{
 			my $t = $col;
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
-			if (length($t) > 127){
-				$t = substr($t, 0, 127);
-			}
+			#if (length($t) > 127){
+			#	$t = substr($t, 0, 127);
+			#}
 			$line .= "$t\t";
 			++$col_n;
 			if ($col_n == 1001){

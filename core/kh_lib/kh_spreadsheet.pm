@@ -67,7 +67,7 @@ sub save_files{
 	}
 	close $fh;
 
-	# make a variable file, < 127 char, <= 1000 columns
+	# make a variable file, <= 1000 columns
 	return 1 if $col_min == $col_max;
 	
 	open $fh, ">::encoding(utf8)", $args{filev} or
@@ -88,9 +88,9 @@ sub save_files{
 			$t = $self->get_value($cell) if $cell;
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
-			if (length($t) > 127){
-				$t = substr($t, 0, 127);
-			}
+			#if (length($t) > 127){
+			#	$t = substr($t, 0, 127);
+			#}
 			$line .= "$t\t";
 			++$ncol;
 			if ($ncol == 1000){
