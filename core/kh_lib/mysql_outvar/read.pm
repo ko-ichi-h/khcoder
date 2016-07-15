@@ -213,7 +213,8 @@ sub save{
 		if (@ids) {
 			$v .= "$ids[$n]";
 		} else {
-			$v .= "$n";
+			my $idc = $n + 1;
+			$v .= "$idc";
 		}
 		mysql_exec->do("
 			INSERT INTO $table ($cols2, id)
