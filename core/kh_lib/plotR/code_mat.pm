@@ -120,6 +120,8 @@ sub new{
 sub r_plot_cmd_fluc{
 	return '
 
+maxv <- 0
+
 alpha_value = 0.5
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
@@ -145,7 +147,7 @@ if ( is.null(font_fam) == FALSE ){
 	}
 }
 
-ggfluctuation_my <- function (mat, rsd){
+ggfluctuation_my <- function (mat, rsd, maxv){
 	if (nrow(mat) > 1){
 		mat <- mat[nrow(mat):1,]
 		rsd <- rsd[nrow(rsd):1,]
@@ -166,67 +168,107 @@ ggfluctuation_my <- function (mat, rsd){
 	)
 	table <- subset(table, result > 0)
 
-	# set up the plot
+	if (maxv > 0){
+		table$rsd[table$rsd >  maxv     ] <- maxv
+		table$rsd[table$rsd <  maxv * -1] <- maxv * -1
+	}
+
+	# Set up the plot
 	p <- ggplot(
 		table,
 		aes_string(
 			x = "x",
 			y = "y",
 			size = "result",
-			colour = "rsd"
+			fill = "rsd"
 		)
 	)
 
-	# fill color
+	# Basic points
 	if (color_rsd == 1){
 		p <- p + geom_point(
-			shape=ifelse(bubble_shape==0, 15, 16),
-			alpha=alpha_value,
-			show_guide = FALSE
+			shape=ifelse(bubble_shape==0, 22, 21),
+			colour = "black",
+			alpha=alpha_value
 		)
 	} else {
 		p <- p + geom_point(
-			shape=ifelse(bubble_shape==0, 15, 16),
-			colour="gray30",
-			alpha=alpha_value,
-			show_guide = FALSE
+			shape=ifelse(bubble_shape==0, 22, 21),
+			colour="black",
+			fill="gray30",
+			alpha=alpha_value
 		)
 	}
 
-	# settings of fill color
-	if (color_gry == 1){
-		p <- p + scale_color_continuous("Residual:",
-			high = "black",
-			low  = "gray95",
-			guide="none"
-		)
-	} else {
-		p <- p + scale_color_gradient2("Residual:",
-			high = "#FF69B4",
-			low  = "#87CEFA",
-			#mid  = cols[5],
-			na.value = "gray30",
-			guide="none"
-		)
+	# Fill color
+	if (color_rsd == 1){
+		limv = max( abs( table$rsd ) )
+		if ( maxv > 0 ){
+			limv <- maxv
+		}
+		if (color_gry == 1){
+			p <- p + scale_fill_gradientn(
+				colours = paste("gray",95:1, sep=""),
+				limits = c( limv * -1, limv ),
+				guide = guide_legend(
+					title = "Pearson rsd.",
+					order = 1,
+					override.aes = list(size=6)
+				)
+				#guide = guide_colourbar(
+				#	title = "Pearson rsd.",
+				#	order = 1
+				#)
+			)
+			
+			p <- p + theme_classic()
+			p <- p + theme(
+				panel.grid.major = element_line(
+					#colour = "gray25",
+					#linetype="dotted"
+					colour = "gray60",
+					size=0.25
+				)
+			)
+		} else {
+			library(RColorBrewer)
+			myPalette <- colorRampPalette(rev(brewer.pal(5, "Spectral")))
+			
+			p <- p + scale_fill_gradientn(
+				colours = myPalette(100),
+				limits = c( limv * -1, limv ),
+				na.value = "black",
+				#guide = guide_legend(
+				#	title = "Pearson rsd.",
+				#	order = 1,
+				#	override.aes = list(size=6, alpha = 1)
+				#)
+				guide = guide_colourbar(
+					title = "Pearson rsd.",
+					order = 1
+				)
+			)
+		}
 	}
 
-	# outline
-	p <- p + geom_point(
-		shape=bubble_shape,
-		colour="black"
-	)
+	# outline ### commented out
+	#p <- p + geom_point(
+	#	shape=bubble_shape,
+	#	colour="black"
+	#)
 
 	# cofigure the legend
-	bt <- floor( floor(max(table$result)) / 3 )
-	breaks <- c(bt, 2 * bt, 3 * bt)
+	#bt <- floor( floor(max(table$result)) / 3 )
+	#breaks <- c(bt, 2 * bt, 3 * bt)
 
 	p <- p + scale_size_area(
-		"Percent:",
 		limits = c(0.05, ceiling(max(table$result))),
-		#to=c(0,15 * bubble_size),
-		#range=c(0,15 * bubble_size),
 		max_size = 15*bubble_size,
-		breaks = breaks
+		guide = guide_legend(
+			title = "Percent",
+			override.aes = list(alpha = 1, fill=NA),
+			order = 2
+		)
 	)
 
 	# labels of axis
@@ -246,7 +288,10 @@ ggfluctuation_my <- function (mat, rsd){
 	ny <- length(levels(table$y))
 	p <- p + theme(
 		#aspect.ratio = ny/nx,
-		legend.key=element_rect(fill="gray96",colour = NA),
+		#legend.background=element_rect(fill="gray96",colour = NA),
+		legend.key=element_rect(fill=NA,colour = NA),
+		legend.title = element_text(face="bold",  size=11, angle=0),
+		legend.text  = element_text(face="plain", size=11, angle=0),
 		plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
 		axis.title.y     = element_blank(),
 		axis.title.x     = element_blank(),
@@ -283,12 +328,11 @@ ggfluctuation_my <- function (mat, rsd){
 			)
 		)
 	}
-
 	print(p)
 }
 
 
-ggfluctuation_my(  t( as.matrix(d) ),  t( as.matrix(rsd) ) ) 
+ggfluctuation_my(  t( as.matrix(d) ),  t( as.matrix(rsd) ), maxv ) 
 
 	';
 }
