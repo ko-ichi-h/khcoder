@@ -242,8 +242,14 @@ sub innner{
 		$self->{color_gry} = $1;
 	}
 
-	if ( $self->{command_f} =~ /maxv <\- (.+)\n/ ){
-		$self->{bubble_maxv} = $1;
+	$self->{color_maxv} = 10;
+	if ( $self->{command_f} =~ /\nmaxv <\- (.+)\n/ ){
+		$self->{color_maxv} = $1;
+	}
+
+	$self->{color_fix} = 0;
+	if ( $self->{command_f} =~ /\ncolor_fix <\- (.+)\n/ ){
+		$self->{color_fix} = $1;
 	}
 
 	# ヒートマップのGUI
@@ -282,7 +288,6 @@ sub innner{
 	$self->{entry_plot_size_heat}->bind("<KP_Enter>", sub {$self->calc});
 	
 	$self->{entry_plot_size_heat}->insert(0,$self->{plot_size_heat});
-
 
 	# バブルプロットのGUI
 	my $lf_f = $right->LabFrame(
@@ -344,13 +349,13 @@ sub innner{
 		-text     => '  ',
 	)->pack(-side => 'left');
 
-	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー1
+	$self->{widget_color_col1} = $f_f4->Radiobutton( # カラー1
 		-text     => kh_msg->get('col1'),
 		-variable => \$self->{color_gry},
 		-value    => 0,
 	)->pack(-side => 'left');
 
-	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー2
+	$self->{widget_color_col2} = $f_f4->Radiobutton( # カラー2
 		-text     => kh_msg->get('col2'),
 		-variable => \$self->{color_gry},
 		-value    => -1,
@@ -364,6 +369,30 @@ sub innner{
 
 	$self->color_widgets;
 
+	my $f_f5 = $lf_f->Frame()
+		->pack(-fill=>'x',-expand=>0, -pady => 2)
+	;
+
+	$f_f5->Label(
+		-text     => '  ',
+	)->pack(-side => 'left');
+
+	$f_f5->Checkbutton(                                     # カラースケール固定
+		-variable => \$self->{color_fix},
+		-text     => kh_msg->get('color_fix'),
+		-command  => sub {$self->color_fix;}
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{entry_color_fix} = $f_f5->Entry(
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left');
+	gui_window->config_entry_focusin($self->{entry_color_fix});
+	$self->{entry_color_fix}->bind("<Key-Return>", sub {$self->calc});
+	$self->{entry_color_fix}->bind("<KP_Enter>", sub {$self->calc});
+	$self->{entry_color_fix}->insert(0,$self->{color_maxv});
+	$self->color_fix;
+
 	my $f_f2 = $lf_f->Frame()                               # プロットの幅
 		->pack(-fill=>'x',-expand=>0, -pady => 2);
 	$f_f2->Label(
@@ -376,7 +405,7 @@ sub innner{
 	)->pack(-side => 'left');
 	gui_window->config_entry_focusin($self->{entry_plot_size_mapw});
 	$self->{entry_plot_size_mapw}->bind("<Key-Return>", sub {$self->calc});
-	$self->{entry_plot_size_mapw}->bind("<KP_Enter>", sub {$self->calc});
+	$self->{entry_plot_size_mapw}->bind("<KP_Enter>",   sub {$self->calc});
 	
 	$self->{entry_plot_size_mapw}->insert(0,$self->{plot_size_mapw});
 
@@ -397,14 +426,28 @@ sub innner{
 	return $self;
 }
 
+sub color_fix{
+	my $self = shift;
+	
+	if ($self->{color_fix}){
+		$self->{entry_color_fix}->configure(-state => 'normal');
+	} else {
+		$self->{entry_color_fix}->configure(-state => 'disabled');
+	}
+	
+	return 1;
+}
+
 sub color_widgets{
 	my $self = shift;
 	
 	if ($self->{color_rsd}){
-		$self->{widget_color_col}->configure(-state => 'normal');
+		$self->{widget_color_col1}->configure(-state => 'normal');
+		$self->{widget_color_col2}->configure(-state => 'normal');
 		$self->{widget_color_gry}->configure(-state => 'normal');
 	} else {
-		$self->{widget_color_col}->configure(-state => 'disabled');
+		$self->{widget_color_col1}->configure(-state => 'disabled');
+		$self->{widget_color_col2}->configure(-state => 'disabled');
 		$self->{widget_color_gry}->configure(-state => 'disabled');
 	}
 	
@@ -464,6 +507,9 @@ sub calc{
 		color_gry      => $self->gui_jg( $self->{color_gry} ),
 		plot_size_mapw => $self->gui_jg( $self->{entry_plot_size_mapw}->get ),
 		plot_size_maph => $self->gui_jg( $self->{entry_plot_size_maph}->get ),
+		
+		color_fix      => $self->gui_jg( $self->{color_fix} ),
+		color_maxv     => $self->gui_jg( $self->{entry_color_fix}->get ),
 		
 		selection      => \@selection,
 		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,

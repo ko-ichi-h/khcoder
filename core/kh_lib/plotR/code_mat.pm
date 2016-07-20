@@ -54,10 +54,6 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
-	unless ( $args{bubble_maxv} ){
-		$args{bubble_maxv} = 0;
-	}
-	$r_command .= "maxv <- $args{bubble_maxv}\n";
 	
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
@@ -78,6 +74,12 @@ sub new{
 	$args{color_gry} = 0 unless length($args{color_gry});
 	$r_command .= "color_gry <- $args{color_gry}\n";
 
+	$args{color_maxv} = 10 unless length( $args{color_maxv} );
+	$r_command .= "maxv <- $args{color_maxv}\n";
+	
+	$args{color_fix} = 0 unless length( $args{color_fix} );
+	$r_command .= "color_fix <- $args{color_fix}\n";
+	
 	# プロット作成
 	
 	my @plots = ();
@@ -125,8 +127,6 @@ sub new{
 sub r_plot_cmd_fluc{
 	return '
 
-maxv <- 0
-
 alpha_value = 0.5
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
@@ -173,7 +173,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 	)
 	table <- subset(table, result > 0)
 
-	if (maxv > 0){
+	if (color_fix == 1){
 		table$rsd[table$rsd >  maxv     ] <- maxv
 		table$rsd[table$rsd <  maxv * -1] <- maxv * -1
 	}
@@ -208,7 +208,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 	# Fill color
 	if (color_rsd == 1){
 		limv = max( abs( table$rsd ) )
-		if ( maxv > 0 ){
+		if ( color_fix == 1 ){
 			limv <- maxv
 		}
 		if (color_gry == 1){
@@ -259,7 +259,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 			)
 		} else {
 			library(RColorBrewer)
-			myPalette <- colorRampPalette(rev(brewer.pal(5, "Spectral")))
+			myPalette <- colorRampPalette(rev(brewer.pal(5, "RdYlBu"))) #Spectral
 			
 			p <- p + scale_fill_gradientn(
 				colours = myPalette(100),
@@ -271,7 +271,13 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				#	override.aes = list(size=6, alpha = 1)
 				#)
 				guide = guide_colourbar(
-					title = "Pearson rsd.",
+					title = "Pearson rsd.\n",
+					title.theme = element_text(
+						face="bold",
+						size=11,
+						lineheight=0.4,
+						angle=0
+					),
 					label.hjust = 1,
 					order = 1
 				)

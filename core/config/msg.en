@@ -1092,6 +1092,7 @@ gui_window::r_plot_opt::cod_mat:
     col1:                      "Color (Spc)"
     col2:                      "Color (CM)"
     gray:                      "Gray"
+    color_fix:                 "Fixed color scale: "
 gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:

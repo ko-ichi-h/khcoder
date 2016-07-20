@@ -1093,6 +1093,7 @@ gui_window::r_plot_opt::cod_mat:
     col1:                      "カラー（Spc）"
     col2:                      "カラー（CM）"
     gray:                      "グレー"
+    color_fix:                 "カラースケールを固定： "
 gui_window::r_plot::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ"
 gui_window::r_plot_opt::cod_mat_line:
