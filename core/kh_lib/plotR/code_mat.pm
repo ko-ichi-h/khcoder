@@ -54,6 +54,11 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
+	unless ( $args{bubble_maxv} ){
+		$args{bubble_maxv} = 0;
+	}
+	$r_command .= "maxv <- $args{bubble_maxv}\n";
+	
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
 	# パラメーター設定（バブルプロット）
@@ -213,14 +218,36 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				guide = guide_legend(
 					title = "Pearson rsd.",
 					order = 1,
-					override.aes = list(size=6)
+					override.aes = list(size=6, shape=22),
+					label.hjust = 1,
+					reverse = TRUE,
+					keyheight = unit(1.5,"line")
 				)
-				#guide = guide_colourbar(
-				#	title = "Pearson rsd.",
-				#	order = 1
-				#)
 			)
 			
+			p <- p + theme_classic()
+			p <- p + theme(
+				panel.grid.major = element_line(
+					#colour = "gray25",
+					#linetype="dotted"
+					colour = "gray60",
+					size=0.25
+				)
+			)
+		}
+		else if (color_gry == -1){
+			p <- p + scale_fill_gradientn(
+				colours = cm.colors(99),
+				limits = c( limv * -1, limv ),
+				guide = guide_legend(
+					title = "Pearson rsd.",
+					order = 1,
+					override.aes = list(size=6, shape=22),
+					label.hjust = 1,
+					reverse = TRUE,
+					keyheight = unit(1.5,"line")
+				)
+			)
 			p <- p + theme_classic()
 			p <- p + theme(
 				panel.grid.major = element_line(
@@ -245,21 +272,12 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				#)
 				guide = guide_colourbar(
 					title = "Pearson rsd.",
+					label.hjust = 1,
 					order = 1
 				)
 			)
 		}
 	}
-
-	# outline ### commented out
-	#p <- p + geom_point(
-	#	shape=bubble_shape,
-	#	colour="black"
-	#)
-
-	# cofigure the legend
-	#bt <- floor( floor(max(table$result)) / 3 )
-	#breaks <- c(bt, 2 * bt, 3 * bt)
 
 	p <- p + scale_size_area(
 		limits = c(0.05, ceiling(max(table$result))),
@@ -267,6 +285,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 		guide = guide_legend(
 			title = "Percent",
 			override.aes = list(alpha = 1, fill=NA),
+			label.hjust = 1,
 			order = 2
 		)
 	)

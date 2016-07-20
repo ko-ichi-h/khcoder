@@ -721,6 +721,7 @@ if ( bubble == 1 ){
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", alpha=1),
+			label.hjust = 1,
 			order = 2
 		)
 	)

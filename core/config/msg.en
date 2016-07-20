@@ -1089,6 +1089,9 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "common settings"
     select_1:                  "Please select at least 1 code"
     color_rsd:                 "Visualize standardized residuals by color"
+    col1:                      "Color (Spc)"
+    col2:                      "Color (CM)"
+    gray:                      "Gray"
 gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:

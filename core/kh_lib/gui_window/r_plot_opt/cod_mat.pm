@@ -242,6 +242,10 @@ sub innner{
 		$self->{color_gry} = $1;
 	}
 
+	if ( $self->{command_f} =~ /maxv <\- (.+)\n/ ){
+		$self->{bubble_maxv} = $1;
+	}
+
 	# ヒートマップのGUI
 	my $lf_h = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->heat'),
@@ -340,14 +344,20 @@ sub innner{
 		-text     => '  ',
 	)->pack(-side => 'left');
 
-	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー
-		-text     => kh_msg->get('gui_window::r_plot::word_corresp->col'),
+	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー1
+		-text     => kh_msg->get('col1'),
 		-variable => \$self->{color_gry},
 		-value    => 0,
 	)->pack(-side => 'left');
 
+	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー2
+		-text     => kh_msg->get('col2'),
+		-variable => \$self->{color_gry},
+		-value    => -1,
+	)->pack(-side => 'left');
+
 	$self->{widget_color_gry} = $f_f4->Radiobutton( # グレー
-		-text     => kh_msg->get('gui_window::r_plot::word_corresp->gray'),
+		-text     => kh_msg->get('gray'),
 		-variable => \$self->{color_gry},
 		-value    => 1,
 	)->pack(-side => 'left');
