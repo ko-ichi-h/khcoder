@@ -14,6 +14,13 @@ my $z_space = '　';
 
 my $headings = kh_msg->get('headings');
 
+unless (
+	   $::config_obj->msg_lang eq 'en'
+	|| $::config_obj->msg_lang eq 'jp'
+){
+	$headings = 'Heading';
+}
+
 #---------------------#
 #   Window オープン   #
 #---------------------#
