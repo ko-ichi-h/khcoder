@@ -127,7 +127,8 @@ sub new{
 sub r_plot_cmd_fluc{
 	return '
 
-alpha_value = 0.5
+alpha_value <- 0.5
+
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
 }
@@ -230,7 +231,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				panel.grid.major = element_line(
 					#colour = "gray25",
 					#linetype="dotted"
-					colour = "gray60",
+					colour = "gray50",
 					size=0.25
 				)
 			)
@@ -253,7 +254,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				panel.grid.major = element_line(
 					#colour = "gray25",
 					#linetype="dotted"
-					colour = "gray60",
+					colour = "gray50",
 					size=0.25
 				)
 			)
@@ -265,11 +266,6 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				colours = myPalette(100),
 				limits = c( limv * -1, limv ),
 				na.value = "black",
-				#guide = guide_legend(
-				#	title = "Pearson rsd.",
-				#	order = 1,
-				#	override.aes = list(size=6, alpha = 1)
-				#)
 				guide = guide_colourbar(
 					title = "Pearson rsd.\n",
 					title.theme = element_text(
@@ -280,6 +276,16 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 					),
 					label.hjust = 1,
 					order = 1
+				)
+			)
+
+			p <- p + theme_classic()
+			p <- p + theme(
+				panel.grid.major = element_line(
+					#colour = "gray25",
+					#linetype="dotted"
+					colour = "gray50",
+					size=0.25
 				)
 			)
 		}

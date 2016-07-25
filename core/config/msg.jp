@@ -1090,8 +1090,8 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "共通の設定"
     select_1:                  "コードを少なくとも1つ選択して下さい"
     color_rsd:                 "標準化残差による色分け"
-    col1:                      "カラー（Spc）"
-    col2:                      "カラー（CM）"
+    col1:                      "カラー(Spc)"
+    col2:                      "カラー(CM)"
     gray:                      "グレー"
     color_fix:                 "カラースケールを固定： "
 gui_window::r_plot::cod_mat_line:

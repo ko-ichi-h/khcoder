@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a08';
+my $V = '3a08a';
 my $V_main = "3.Alpha.08"; # フォルダ名
-my $V_full = "3.Alpha.08";
+my $V_full = "3.Alpha.08a";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -197,7 +197,9 @@ sub web{
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
-
+	
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
+	
 	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付
 	$t =~ s/khcoder\-3a[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
 	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名1
