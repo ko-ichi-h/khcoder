@@ -16,8 +16,9 @@ sub _new{
 	$self->{check_random_start} = 0        unless defined $self->{check_random_start};
 	$self->{use_alpha}          = 1        unless defined $self->{use_alpha};
 	$self->{fix_asp}            = 0        unless defined $self->{fix_asp};
+	$self->{cls_if}             = 1        unless defined $self->{cls_if};
 	
-	my ($check_bubble, $num_size) = (0,100);
+	my ($check_bubble, $num_size) = (1,100);
 
 	if ( length($self->{r_cmd}) ){
 		if ($self->{r_cmd} =~ /method_mds <\- "(.+)"\n/){
@@ -64,7 +65,7 @@ sub _new{
 				$self->{cls_n} = 7;
 			}
 		} else {
-			$self->{cls_if} = 0;
+			$self->{cls_if} = 1;
 			$self->{cls_n}  = 7;
 		}
 		if ( $self->{r_cmd} =~ /cls_raw <\- ([0-9]+)\n/ ){
