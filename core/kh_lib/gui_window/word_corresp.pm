@@ -1399,9 +1399,12 @@ if (plot_mode != "dots") {
 		cols = cb[,3]
 	)
 	
+	font_face <- "plain"
+	
 	if ( plot_mode == "gray" ){
 		df.labels.var <- subset(df.labels, cols == 3)
 		df.labels     <- subset(df.labels, cols != 3)
+		font_face <- "bold"
 		g <- g + geom_label(
 			data=df.labels.var,
 			family=font_family,
@@ -1410,6 +1413,7 @@ if (plot_mode != "dots") {
 			label.padding=unit(1.8, "mm"),
 			colour="white",
 			fill="gray50",
+			#alpha=0.7,
 			aes(x=x, y=y,label=labs)
 		)
 	}
@@ -1418,7 +1422,8 @@ if (plot_mode != "dots") {
 		data=df.labels,
 		aes(x=x, y=y,label=labs,colour=factor(cols)),
 		size=4,
-		family=font_family
+		family=font_family,
+		fontface=font_face
 		#colour="black"
 	)
 	
