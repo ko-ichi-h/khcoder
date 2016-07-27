@@ -225,16 +225,6 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 					keyheight = unit(1.5,"line")
 				)
 			)
-			
-			p <- p + theme_classic()
-			p <- p + theme(
-				panel.grid.major = element_line(
-					#colour = "gray25",
-					#linetype="dotted"
-					colour = "gray50",
-					size=0.25
-				)
-			)
 		}
 		else if (color_gry == -1){
 			p <- p + scale_fill_gradientn(
@@ -247,15 +237,6 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 					label.hjust = 1,
 					reverse = TRUE,
 					keyheight = unit(1.5,"line")
-				)
-			)
-			p <- p + theme_classic()
-			p <- p + theme(
-				panel.grid.major = element_line(
-					#colour = "gray25",
-					#linetype="dotted"
-					colour = "gray50",
-					size=0.25
 				)
 			)
 		} else {
@@ -276,16 +257,6 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 					),
 					label.hjust = 1,
 					order = 1
-				)
-			)
-
-			p <- p + theme_classic()
-			p <- p + theme(
-				panel.grid.major = element_line(
-					#colour = "gray25",
-					#linetype="dotted"
-					colour = "gray50",
-					size=0.25
 				)
 			)
 		}
@@ -317,6 +288,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 	# other cofigs of the plot
 	nx <- length(levels(table$x))
 	ny <- length(levels(table$y))
+	p <- p + theme_classic()
 	p <- p + theme(
 		#aspect.ratio = ny/nx,
 		#legend.background=element_rect(fill="gray96",colour = NA),
@@ -324,6 +296,20 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 		legend.title = element_text(face="bold",  size=11, angle=0),
 		legend.text  = element_text(face="plain", size=11, angle=0),
 		plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
+		axis.line.x    = element_line(colour = "black", size=0.5),
+		axis.line.y    = element_line(colour = "black", size=0.5),
+		panel.grid.major.x = element_line(
+			#colour = "gray25",
+			#linetype="dotted"
+			colour = "gray50",
+			size=0.25
+		),
+		panel.grid.major.y = element_line(
+			#colour = "gray25",
+			#linetype="dotted"
+			colour = "gray50",
+			size=0.25
+		),
 		axis.title.y     = element_blank(),
 		axis.title.x     = element_blank(),
 		axis.ticks       = element_blank(),

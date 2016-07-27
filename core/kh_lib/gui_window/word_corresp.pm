@@ -819,12 +819,10 @@ sub make_plot{
 	# バブル表現を行う場合
 	} else {
 		# 初期化
-		$r_command .= &r_command_slab_my;
+		#$r_command .= &r_command_slab_my;
 		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "std_radius <- $args{std_radius}\n";
 		$r_command .= "resize_vars <- $args{resize_vars}\n";
 		$r_command .= "bubble_size <- $args{bubble_size}\n";
-		$r_command .= "bubble_var <- $args{bubble_var}\n";
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 		
@@ -851,11 +849,16 @@ sub make_plot{
 	}
 
 	# プロット作成
+	my $x_factor = 1;
+	if ( $args{bubble} == 1 ){
+		$x_factor = 4/3;
+	}
+	
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
@@ -864,7 +867,7 @@ sub make_plot{
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or $flg_error = 1;
@@ -876,7 +879,7 @@ sub make_plot{
 			name      => $args{plotwin_name}.'_g',
 			command_a => $r_com_gray_a,
 			command_f => $r_com_gray,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or $flg_error = 1;
@@ -885,7 +888,7 @@ sub make_plot{
 			name      => $args{plotwin_name}.'_v',
 			command_a => $r_command_3a,
 			command_f => $r_command_3,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or $flg_error = 1;
@@ -1094,6 +1097,126 @@ return $t;
 sub r_command_bubble{
 	return '
 
+library(ggplot2)
+
+font_family <- "'.$::config_obj->font_plot_current.'"
+
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+
+#-----------------------------------------------------------------------------#
+#                           prepare label positions
+#-----------------------------------------------------------------------------#
+
+# compute label positions
+if (biplot == 1 && plot_mode != "vars"){
+	cb <- rbind(
+		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+	)
+} else if (plot_mode == "vars") {
+	cb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+} else {
+	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
+}
+
+if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
+	png("temp.png", width=640, height=640, unit="px")
+	if ( exists("PERL_font_family") ){
+		par(family=PERL_font_family) 
+	}
+
+	plot( cb )
+	
+	library(maptools)
+	labcd <- pointLabel(
+		x=cb[,1],
+		y=cb[,2],
+		labels=rownames(cb),
+		cex=font_size,
+		offset=0,
+		doPlot=F
+	)
+
+	xorg <- cb[,1]
+	yorg <- cb[,2]
+	#cex  <- 1
+
+	n_words_chk <- c( length(c$cscore[,d_x]) )
+	if (flt > 0) {
+		n_words_chk <- c(n_words_chk, flt)
+	}
+	if (flw > 0) {
+		n_words_chk <- c(n_words_chk, flw)
+	}
+	if ( 
+		   ( (biplot == 0) && (min(n_words_chk) < 300) )
+		|| (
+			   (biplot == 1)
+			&& ( min(n_words_chk) < 300 )
+			&& ( length(c$rscore[,d_x]) < r_max )
+		)
+	){
+
+		library(wordcloud)
+		'.&plotR::network::r_command_wordlayout.'
+
+
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cb),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
+
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
+
+		segs <- NULL
+		for (i in 1:length( rownames(cb) ) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+						xorg[i], yorg[i]
+					) 
+				)
+			}
+		}
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
+	dev.off()
+}
+
+
+#-----------------------------------------------------------------------------#
+#                              start plotting
+#-----------------------------------------------------------------------------#
+
+#-----------#
+#   Words   #
+
+b_size <- NULL
+for (i in rownames(c$cscore)){
+	if ( is.na(i) || is.null(i) || is.nan(i) ){
+		b_size <- c( b_size, 1 )
+	} else {
+		b_size <- c( b_size, sum( d[,i] ) )
+	}
+}
+
 col_bg_words <- NA
 col_bg_vars  <- NA
 
@@ -1105,12 +1228,13 @@ if (plot_mode == "color"){
 		col_bg_vars  <- "#FFA07A"
 		
 		rgb <- col2rgb(col_bg_words) / 255
-		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
-		rgb <- rgb * 0.75
-		col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.6 )
+		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3])
+		
+		rgb <- rgb * 0.5
+		col_dot_words <- "#87CAC6" #  <- rgb( rgb[1], rgb[2], rgb[3])
 		
 		rgb <- col2rgb(col_bg_vars) / 255
-		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
+		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3])
 	}
 }
 
@@ -1129,96 +1253,272 @@ if (plot_mode == "dots"){
 	col_dot_vars  <- "black"
 }
 
-# Bubble size
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if (nums[i] < 1){
-      temp[i] <- 1
-    } else {
-      temp[i] <-  nums[i]
-    }
-  }
-  return(temp)
-}
+g <- ggplot()
 
-b_size <- NULL
-for (i in rownames(c$cscore)){
-	if ( is.na(i) || is.null(i) || is.nan(i) ){
-		b_size <- c( b_size, 1 )
-	} else {
-		b_size <- c( b_size, sum( d[,i] ) )
-	}
-}
-
-b_size <- sqrt( b_size / pi ) # adjust bubble size: frequency ratio = square measure ratio
-
-if (std_radius){ # standardize (enphasize) bubble size
-	if ( sd(b_size) == 0 ){
-		b_size <- rep(10, length(b_size))
-	} else {
-		b_size <- b_size / sd(b_size)
-		b_size <- b_size - mean(b_size)
-		b_size <- b_size * 5 * bubble_var / 100 + 10
-		b_size <- neg_to_zero(b_size)
-	}
-}
-
-# set plot area
-plot(
-	rbind(
-		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-	),
-	pch=NA,
-	col="black",
-	xlab=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep=""),
-	asp = asp,
-	#bty="l"
+df.words <- data.frame(
+	x    = c$cscore[,d_x],
+	y    = c$cscore[,d_y],
+	size = b_size,
+	type = ptype
 )
 
-# draw bubbles of words
-symbols(
-	c$cscore[,d_x],
-	c$cscore[,d_y],
-	circles=b_size,
-	inches=0.5 * bubble_size / 100,
-	fg=c(col_dot_words,"#ADD8E6")[ptype],
-	bg=c(col_bg_words,"#ADD8E6")[ptype],
-	add=T,
+df.words.sub <- subset(df.words, type==2)
+df.words     <- subset(df.words, type==1)
+
+g <- g + geom_point(
+	data=df.words,
+	aes(x=x, y=y, size=size),
+	shape=21,
+	colour = NA,
+	fill = col_bg_words,
+	alpha=0.15
 )
 
-# draw bubbles of variables
-if (biplot){
-	# bubble size
-	if (resize_vars){
-		pch_cex <- sqrt(n_total);
-		pch_cex <- pch_cex * ( 10 / max(pch_cex) )
-		if (std_radius){ # standardize (enphasize) bubble size
-			if ( sd(pch_cex) == 0 ){
-				pch_cex <- rep(10,length(pch_cex))
-			} else {
-				pch_cex <- pch_cex / sd(pch_cex)
-				pch_cex <- pch_cex - mean(pch_cex)
-				pch_cex <- pch_cex * 5 + 10
-				pch_cex <- neg_to_zero(pch_cex)
-				pch_cex <- pch_cex * ( 10 / max(pch_cex) )
-			}
-		}
-		pch_cex <- pch_cex * bubble_size / 100
-	}
-	# plot points of variables
-	points(
-		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
-		pch=c(20,1,22,23:25,21,4-14)[cbb[,3]],
-		col=c("#66CCCC","#ADD8E6",rep( col_dot_vars, v_count ))[cbb[,3]],
-		bg=col_bg_vars,
-		cex=pch_cex,
+g <- g + geom_point(
+	data=df.words,
+	aes(x=x, y=y, size=size),
+	shape=21,
+	colour = col_dot_words,
+	fill = NA,
+	alpha=1,
+	show_guide = F
+)
+
+g <- g + scale_size_area(
+	max_size= 30 * bubble_size / 100,
+	guide = guide_legend(
+		title = "Frequency:",
+		override.aes = list(colour="black", fill=NA, alpha=1),
+		label.hjust = 1,
+		order = 2
+	)
+)
+
+if ( nrow(df.words.sub) > 0 ){
+	g <- g + geom_point(
+		data=df.words.sub,
+		aes(x=x, y=y),
+		shape=19,
+		size=2,
+		colour = "#ADD8E6",
+		alpha=1,
+		show_guide = F
 	)
 }
-'
-.&r_command_labels;
+
+#---------------#
+#   Variables   #
+
+if ( biplot == 1 ){
+	df.vars <- data.frame(
+		x    = c$rscore[,d_x],
+		y    = c$rscore[,d_y],
+		size = n_total * max(b_size) / max(n_total) * 0.6,
+		type = v_pch
+	)
+
+	if ( resize_vars == 1 ) {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			show_guide = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			show_guide = F
+		)
+	} else {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			size=3.5,
+			show_guide = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			size=3.5,
+			show_guide = F
+		)
+	}
+
+	g <- g + scale_shape_manual(
+		values = c(22:25,0-6)
+	)
+}
+
+#------------#
+#   Labels   #
+
+# label colors
+if (plot_mode == "color"){
+	if (bubble_plot == 1){
+		col_txt_words <- "black"
+		col_txt_vars  <- "#DC143C"
+	} else {
+		col_txt_words <- "black"
+		col_txt_vars  <- "#FF6347"
+	}
+}
+
+if (plot_mode == "gray"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "vars"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_txt_vars  <- NA
+}
+
+if (plot_mode != "dots") {
+	df.labels <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+	
+	if ( plot_mode == "gray" ){
+		df.labels.var <- subset(df.labels, cols == 3)
+		df.labels     <- subset(df.labels, cols != 3)
+		g <- g + geom_label(
+			data=df.labels.var,
+			family=font_family,
+			fontface="bold",
+			#label.size=0.25,
+			label.padding=unit(1.8, "mm"),
+			colour="white",
+			fill="gray50",
+			aes(x=x, y=y,label=labs)
+		)
+	}
+	
+	g <- g + geom_text(
+		data=df.labels,
+		aes(x=x, y=y,label=labs,colour=factor(cols)),
+		size=4,
+		family=font_family
+		#colour="black"
+	)
+	
+	#label_legend <- guide_legend(
+	#	title = "Labels:",
+	#	key.theme   = element_rect(colour = "gray30"),
+	#	override.aes = list(size=5),
+	#	order = 1
+	#)
+	label_legend <- "none"
+	
+	g <- g + scale_color_manual(
+		values = c(col_txt_words, col_txt_vars, col_txt_vars),
+		breaks = c(1,3),
+		labels = c("Words / Codes", "Variables"),
+		guide = label_legend
+	)
+
+	
+	
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			colnames(segs) <- c("x1", "y1", "x2", "y2")
+			segs <- as.data.frame(segs)
+			g <- g + geom_segment(
+				aes(x=x1, y=y1, xend=x2, yend=y2),
+				data=segs,
+				colour="gray60"
+			)
+		}
+	}
+}
+
+if (plot_mode == "vars"){
+	labcd <- NULL
+}
+
+#--------------------#
+#   Configurations   #
+
+if ( asp == 1 ){
+	g <- g + coord_fixed()
+}
+
+g <- g + labs(
+	x=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
+	y=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep="")
+)
+g <- g + theme_classic(base_family=font_family)
+g <- g + theme(
+	legend.key   = element_rect(colour = NA, fill= NA),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0)
+)
+
+#---------------------#
+#   show the origin   #
+
+if (show_origin == 1){
+	line_color <- "gray30"
+	ylims <- ggplot_build(g)$panel$ranges[[1]]$y.range 
+	xlims <- ggplot_build(g)$panel$ranges[[1]]$x.range
+	
+	#g <- g + coord_cartesian(xlim = xlims, ylim = ylims, expand=F)
+	g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
+	g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
+	
+	m_x <- (xlims[2] - xlims[1]) * 0.03
+	m_y <- (ylims[2] - ylims[1]) * 0.03
+	
+	g <- g + geom_segment(
+		aes(x = xlims[1], y = 0, xend = m_x, yend = 0),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+	g <- g + geom_segment(
+		aes(x = 0, y = ylims[1], xend = 0, yend = m_y),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+}
+
+#-----------#
+#   Print   #
+
+print(g)
+
+library(grid)
+text_font <- 1
+
+
+';
 }
 
 

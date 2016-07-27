@@ -800,6 +800,8 @@ g <- g + labs(x=name_dim1, y=name_dim2)
 g <- g + theme_classic(base_family=font_family)
 g <- g + theme(
 	legend.key   = element_rect(colour = "transparent"),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
 	axis.title.x = element_text(face="plain", size=11, angle=0),
 	axis.title.y = element_text(face="plain", size=11, angle=90),
 	axis.text.x  = element_text(face="plain", size=11, angle=0),
