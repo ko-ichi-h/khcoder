@@ -1038,7 +1038,22 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	n_total <- doc_length_mtr[,2]
 }
 
-c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
+d_max <- min( nrow(d), ncol(d) ) - 1
+if (d_x > d_max){
+	d_x <- d_max
+}
+if (d_y > d_max){
+	d_y <- d_max
+}
+
+c <- corresp(d, nf=d_max )
+
+if (d_max == 1){
+	c$cscore <- as.matrix( c$cscore )
+	c$rscore <- as.matrix( c$rscore )
+	colnames(c$cscore) <- c("X1")
+	colnames(c$rscore) <- c("X1")
+}
 
 # Dilplay Labels only for distinctive words
 if ( (flt > 0) && (flt < nrow(c$cscore)) ){
@@ -1076,16 +1091,16 @@ if ( v_count > 1 ){
 # Scaling
 asp <- 0
 if (scaling == "sym"){
-	c$cscore[,d_x] <- c$cscore[,d_x] * c$cor[d_x]
-	c$cscore[,d_y] <- c$cscore[,d_y] * c$cor[d_y]
-	c$rscore[,d_x] <- c$rscore[,d_x] * c$cor[d_x]
-	c$rscore[,d_y] <- c$rscore[,d_y] * c$cor[d_y]
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * c$cor[i]
+		c$rscore[,i] <- c$rscore[,i] * c$cor[i]
+	}
 	asp <- 1
 } else if (scaling == "symbi"){
-	c$cscore[,d_x] <- c$cscore[,d_x] * sqrt( c$cor[d_x] )
-	c$cscore[,d_y] <- c$cscore[,d_y] * sqrt( c$cor[d_y] )
-	c$rscore[,d_x] <- c$rscore[,d_x] * sqrt( c$cor[d_x] )
-	c$rscore[,d_y] <- c$rscore[,d_y] * sqrt( c$cor[d_y] )
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * sqrt( c$cor[i] )
+		c$rscore[,i] <- c$rscore[,i] * sqrt( c$cor[i] )
+	}
 	asp <- 1
 }
 
