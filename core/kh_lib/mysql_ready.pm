@@ -150,6 +150,7 @@ sub zero_length_headings{
 		FROM bun
 		ORDER BY id
 	",1);
+	mysql_exec->do("alter table bun_tmp CHANGE COLUMN seq seq int not null",1);
 	mysql_exec->do("drop table if exists bun",1);
 	mysql_exec->do("RENAME TABLE bun_tmp TO bun",1);
 
