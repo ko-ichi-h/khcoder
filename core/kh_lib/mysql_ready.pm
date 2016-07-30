@@ -121,14 +121,17 @@ sub zero_length_headings{
 		WHERE bun.id = bun_length_nouse.id
 			AND bun_length_nouse.len = 0;
 	",1);
-	if ($::project_obj->status_hb) {
-		mysql_exec->do("
-			DELETE
-			FROM bun
-			WHERE bun_id = 0 AND dan_id = 0
-		",1);
-	}
-	
+
+	# Counts of document length will be broken here and there,
+	# so I disabled this feature (count all heading sentences as 0)
+	#if ($::project_obj->status_hb) {
+	#	mysql_exec->do("
+	#		DELETE
+	#		FROM bun
+	#		WHERE bun_id = 0 AND dan_id = 0
+	#	",1);
+	#}
+
 	# add sequential number
 	mysql_exec->do("drop table if exists bun_tmp;",1);
 	mysql_exec->do("
