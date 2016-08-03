@@ -259,7 +259,7 @@ sub readin{
 		|| ( $::config_obj->c_or_j eq 'mecab'  )
 	){
 		if ($::config_obj->os eq 'win32') {
-			$icode = 'sjis';
+			$icode = 'cp932';
 		} else {
 			$icode = 'ujis'
 		}
