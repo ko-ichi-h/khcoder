@@ -28,6 +28,8 @@
 	■TO DO
 	・FreeLing 4対応（Linux、Mac）
 	
+	・MySQLカラムの容量計算をやり直し →「Table rowdata full」エラー回避を
+	
 	・HanDicのパスを指定するためのGUI
 	・FreeLingが日本語名の分析対象ファイルで動くかどうかチェック
 	・FreeLingに強制抽出系の機能がないか調べる
