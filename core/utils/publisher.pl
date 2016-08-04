@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a08a';
+my $V = '3a08b';
 my $V_main = "3.Alpha.08"; # フォルダ名
-my $V_full = "3.Alpha.08a";
+my $V_full = "3.Alpha.08b";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -45,7 +45,7 @@ find(
 	sub {
 		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
 			push @cp_f, ['plugin_en/'.$_, 'plugin_en/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+				unless -d $File::Find::name
 			;
 		}
 	},
@@ -56,7 +56,7 @@ find(
 	sub {
 		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
 			push @cp_f, ['plugin_jp/'.$_, 'plugin_jp/'.$_]
-				unless $File::Find::name eq 'utils/kh_coder/plugin_en'
+				unless -d $File::Find::name
 			;
 		}
 	},
@@ -77,6 +77,9 @@ find(
 	},
 	'../pub/win_pkg/plugin_jp'
 );
+
+#use Data::Dumper;
+#print Dumper(@cp_f);
 
 use Archive::Tar;
 use File::Copy;
