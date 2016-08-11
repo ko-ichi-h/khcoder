@@ -176,7 +176,7 @@ sub config_morph{
 
 sub path_check{
 	my $self = shift;
-	my $path = $self->chasen_path;
+	my $path = $self->os_path( $self->chasen_path );
 
 	if (not (-e $path) or not ($path =~ /chasen\.exe\Z/i) ){
 		print "path error: Chasen\n";
