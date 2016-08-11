@@ -1308,19 +1308,19 @@ g <- g + geom_point(
 	data=df.words,
 	aes(x=x, y=y, size=size),
 	shape=21,
-	colour = NA,
-	fill = col_bg_words,
-	alpha=0.15
+	colour = col_dot_words,
+	fill = NA,
+	alpha=1,
+	show.legend = F
 )
 
 g <- g + geom_point(
 	data=df.words,
 	aes(x=x, y=y, size=size),
 	shape=21,
-	colour = col_dot_words,
-	fill = NA,
-	alpha=1,
-	show.legend = F
+	colour = NA,
+	fill = col_bg_words,
+	alpha=0.15
 )
 
 g <- g + scale_size_area(
@@ -1341,7 +1341,7 @@ if ( nrow(df.words.sub) > 0 ){
 		size=2,
 		colour = "#ADD8E6",
 		alpha=1,
-		show_guide = F
+		show.legend = F
 	)
 }
 
@@ -1363,7 +1363,7 @@ if ( biplot == 1 ){
 			colour = NA,
 			fill = col_bg_vars,
 			alpha=0.2,
-			show_guide = F
+			show.legend = F
 		)
 
 		g <- g + geom_point(
@@ -1372,7 +1372,7 @@ if ( biplot == 1 ){
 			colour = col_dot_vars,
 			fill = NA,
 			alpha=1,
-			show_guide = F
+			show.legend = F
 		)
 	} else {
 		g <- g + geom_point(
@@ -1382,7 +1382,7 @@ if ( biplot == 1 ){
 			fill = col_bg_vars,
 			alpha=0.2,
 			size=3.5,
-			show_guide = F
+			show.legend = F
 		)
 
 		g <- g + geom_point(
@@ -1392,7 +1392,7 @@ if ( biplot == 1 ){
 			fill = NA,
 			alpha=1,
 			size=3.5,
-			show_guide = F
+			show.legend = F
 		)
 	}
 
