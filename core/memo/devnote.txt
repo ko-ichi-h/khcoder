@@ -26,6 +26,8 @@
 		Spanish		es
 
 	■TO DO
+	・フォントサイズを大きくするとラベルが重なる：対応分析・MDS
+	
 	・FreeLing 4対応（Linux、Mac）
 	
 	・HanDicのパスを指定するためのGUI

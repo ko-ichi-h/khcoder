@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a08b';
+my $V = '3a08c';
 my $V_main = "3.Alpha.08"; # フォルダ名
-my $V_full = "3.Alpha.08b";
+my $V_full = "3.Alpha.08c";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -186,7 +186,8 @@ sub web{
 	my $t = '';
 	$r2->is_success or die;
 	$t = $r2->content;
-	
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
+
 	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
 	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
@@ -200,7 +201,6 @@ sub web{
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
-	
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
 	
 	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付

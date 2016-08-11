@@ -238,7 +238,7 @@ sub _new{
 		parent    => $lf2,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor   => 'w' },
-		show_bold => 0,
+		show_bold => 1,
 	);
 
 	$rf->Checkbutton(
@@ -745,6 +745,13 @@ sub make_plot{
 	$r_command = $r_command;
 
 	kh_r_plot::corresp->clear_env;
+
+	if ($args{font_bold} == 1){
+		$args{font_bold} = 2;
+	} else {
+		$args{font_bold} = 1;
+	}
+	$r_command .= "text_font <- $args{font_bold}\n";
 
 	$r_command .= "r_max <- 150\n";
 	$r_command .= "d_x <- $args{d_x}\n";
@@ -1406,6 +1413,12 @@ if (plot_mode == "dots"){
 	col_txt_vars  <- NA
 }
 
+if ( text_font == 1 ){
+	font_face <- "plain"
+} else {
+	font_face <- "bold"
+}
+
 if (plot_mode != "dots") {
 	df.labels <- data.frame(
 		x    = labcd$x,
@@ -1414,12 +1427,9 @@ if (plot_mode != "dots") {
 		cols = cb[,3]
 	)
 	
-	font_face <- "plain"
-	
 	if ( plot_mode == "gray" ){
 		df.labels.var <- subset(df.labels, cols == 3)
 		df.labels     <- subset(df.labels, cols != 3)
-		font_face <- "bold"
 		g <- g + geom_label(
 			data=df.labels.var,
 			family=font_family,
@@ -1529,14 +1539,7 @@ if (show_origin == 1){
 	)
 }
 
-#-----------#
-#   Print   #
-
 print(g)
-
-library(grid)
-text_font <- 1
-
 
 ';
 }
@@ -1675,7 +1678,7 @@ if (plot_mode == "gray"){
 	cb  <- cbind(cb, labcd$x, labcd$y)
 	cb1 <-  subset(cb, cb[,3]==1)
 	cb2 <-  subset(cb, cb[,3]>=3)
-	text(cb1[,4], cb1[,5], rownames(cb1),cex=font_size,offset=0,col="black",)
+	text(cb1[,4], cb1[,5], rownames(cb1),cex=font_size,offset=0,col="black",font=text_font)
 	library(ade4)
 	s.label_my(
 		cb2,
@@ -1691,15 +1694,10 @@ if (plot_mode == "gray"){
 		cneig=0,
 		cgrid=0,
 		add.plot=T,
+		font=text_font
 	)
 	
-	if (bubble_plot == 1){
-		if (resize_vars == 0){
-			points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
-		}
-	} else {
-		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
-	}
+	points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
 	
 	if ( exists("segs") ){
 		if ( is.null(segs) == F){
@@ -1719,6 +1717,7 @@ if (plot_mode == "gray"){
 		rownames(cb),
 		cex=font_size,
 		offset=0,
+		font=text_font,
 		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
 	)
 	if ( exists("segs") ){
@@ -1749,7 +1748,7 @@ s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
     neig = NULL, cneig = 2, xlim = NULL, ylim = NULL, grid = TRUE, 
     addaxes = TRUE, cgrid = 1, include.origin = TRUE, origin = c(0, 
         0), sub = "", csub = 1.25, possub = "bottomleft", pixmap = NULL, 
-    contour = NULL, area = NULL, add.plot = FALSE) 
+    contour = NULL, area = NULL, add.plot = FALSE, font = 1)
 {
     dfxy <- data.frame(dfxy)
     opar <- par(mar = par("mar"))
@@ -1777,14 +1776,14 @@ s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
         apply(unclass(neig), 1, fun, coo = coo)
     }
     if (clabel > 0) 
-        scatterutil.eti_my(coo$x, coo$y, label, clabel, boxes)
+        scatterutil.eti_my(coo$x, coo$y, label, clabel, boxes, font=font)
     if (cpoint > 0 & clabel < 1e-06) 
         points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
     #box()
     invisible(match.call())
 }
 scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1, length(x)), 
-    horizontal = TRUE) 
+    horizontal = TRUE, font = 1) 
 {
     if (length(label) == 0) 
         return(invisible())
@@ -1810,11 +1809,11 @@ scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1,
                 col = "white", border = coul[i])
         }
         if (horizontal) {
-            text(x1, y1, cha, cex = cex0, col = coul[i])
+            text(x1, y1, cha, cex = cex0, col = coul[i], font=font)
             print("looks ok...")
         }
         else {
-            text(x1, y1, cha, cex = cex0, col = coul[i], srt = 90)
+            text(x1, y1, cha, cex = cex0, col = coul[i], srt = 90, font=font)
         }
     }
 }
