@@ -205,6 +205,18 @@ sub make_plot{
 	my %args = @_;
 
 	my $fontsize = 1;
+	my $x_factor = 1;
+	if (
+		$args{dim_number} <= 2
+		&& (
+			   $args{bubble}
+			|| $args{n_cls}
+		)
+	){
+		$x_factor = 4/3;
+	}
+	$args{height} = $args{plot_size};
+	$args{width}  = int( $args{plot_size} * $x_factor );
 
 	my $r_command = $args{r_command};
 
@@ -330,9 +342,9 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
 			$r_command_d .= "bubble <- 0\n";
-			$r_command_d .= &r_command_plot;
+			$r_command_d .= &r_command_plot(%args);
 			$r_command_a .= "bubble <- 0\n";
-			$r_command_a .= &r_command_plot;
+			$r_command_a .= &r_command_plot(%args);
 
 		} else {
 			# バブル表現を行う場合
@@ -340,11 +352,11 @@ while ( is.na(check4mds(d)) == 0 ){
 			#$r_command_d .= "bubble_var <- $args{bubble_var}\n";
 			$r_command_d .= "bubble <- 1\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_d .= &r_command_plot;
+			$r_command_d .= &r_command_plot(%args);
 
 			$r_command_a .= "bubble <- 1\n";
 			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_a .= &r_command_plot;
+			$r_command_a .= &r_command_plot(%args);
 		}
 	}
 	elsif ($args{dim_number} == 3){
@@ -425,18 +437,6 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	#$r_command .= $r_command_a;
 	my $r_command_l = "load(\"$file_save\")\n";
-
-	my $x_factor = 1;
-	#if (
-	#	$args{dim_number} <= 2
-	#	&& (
-	#		   $args{bubble}
-	#		|| $args{n_cls}
-	#	)
-	#){
-	#	$x_factor = 4/3;
-	#}
-	$x_factor = 4/3;
 
 	# プロット作成
 	my $flg_error = 0;
@@ -552,6 +552,7 @@ sub hinshi{
 }
 
 sub r_command_plot{
+	my %args = @_;
 	return '
 
 ylab_text <- ""
@@ -564,6 +565,11 @@ if ( dim_n == 1 ){
 
 col_base <- "mediumaquamarine"
 bty      <- "l"
+
+if ( exists("bs_fixed") == F ) {
+	bubble_size <- bubble_size / '.$args{font_size}.'
+	bs_fixed <- 1
+}
 
 # クラスター分析
 if (n_cls > 0){
@@ -604,7 +610,16 @@ for (i in rownames(cl)){
 #-----------------------------------------------------------------------------#
 
 if (plot_mode == "color") {
-	png("temp.png", width=800, height=640, unit="px")
+
+	png_width  <- '.$args{width}.'
+	png_height <- '.$args{height}.'
+	if ( png_width > png_height ){
+		png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
+	}
+	dpi <- 72 * min(png_width, png_width) / 640 * '.$args{font_size}.'
+	p_size <- 12 * dpi / 72;
+	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
+
 	if ( exists("PERL_font_family") ){
 		par(family=PERL_font_family) 
 	}

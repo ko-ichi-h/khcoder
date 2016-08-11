@@ -736,12 +736,17 @@ sub make_plot{
 	$args{flt} = 0 unless $args{flt};
 	$args{flw} = 0 unless $args{flw};
 
-	#my $fontsize = $args{font_size};
+	my $x_factor = 1;
+	if ( $args{bubble} == 1 ){
+		$x_factor = 4/3;
+	}
+	$args{height} = $args{plot_size};
+	$args{width}  = int( $args{plot_size} * $x_factor );
+
 	my $fontsize = 1;
 	my $r_command = $args{r_command};
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
-	#$r_command = Encode::decode('euc-jp', $r_command);
 	$r_command = $r_command;
 
 	kh_r_plot::corresp->clear_env;
@@ -839,28 +844,23 @@ sub make_plot{
 
 		# カラー
 		$r_command_2a .= "plot_mode <- \"color\"\n";
-		$r_command_2a .= &r_command_bubble;
+		$r_command_2a .= &r_command_bubble(%args);
 		$r_command_2  = $common.$r_command_2a;
 
 		if ($args{biplot}){
 			# 変数のみ
 			$r_command_3a .= "plot_mode <- \"vars\"\n";
-			$r_command_3a .= &r_command_bubble;
+			$r_command_3a .= &r_command_bubble(%args);
 			$r_command_3  = $common.$r_command_3a;
 			
 			# グレースケール
 			$r_com_gray_a .= "plot_mode <- \"gray\"\n";
-			$r_com_gray_a .= &r_command_bubble;
+			$r_com_gray_a .= &r_command_bubble(%args);
 			$r_com_gray = $common.$r_com_gray_a;
 		}
 	}
 
 	# プロット作成
-	my $x_factor = 1;
-	if ( $args{bubble} == 1 ){
-		$x_factor = 4/3;
-	}
-	
 	my $flg_error = 0;
 	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
@@ -1117,6 +1117,7 @@ return $t;
 }
 
 sub r_command_bubble{
+	my %args = @_;
 	return '
 
 library(ggplot2)
@@ -1127,6 +1128,10 @@ if ( exists("PERL_font_family") ){
 	font_family <- PERL_font_family
 }
 
+if ( exists("bs_fixed") == F ) {
+	bubble_size <- bubble_size / '.$args{font_size}.'
+	bs_fixed <- 1
+}
 
 #-----------------------------------------------------------------------------#
 #                           prepare label positions
@@ -1145,13 +1150,24 @@ if (biplot == 1 && plot_mode != "vars"){
 }
 
 if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
-	png("temp.png", width=640, height=640, unit="px")
+
+	png_width  <- '.$args{width}.'
+	png_height <- '.$args{height}.' 
+	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
+	dpi <- 72 * min(png_width, png_width) / 640 * '.$args{font_size}.'
+	p_size <- 12 * dpi / 72;
+	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
+
 	if ( exists("PERL_font_family") ){
 		par(family=PERL_font_family) 
 	}
 
-	plot( cb )
-	
+	plot(
+		x=c(c$cscore[,d_x],c$rscore[,d_x]),
+		y=c(c$cscore[,d_y],c$rscore[,d_y]),
+		asp=asp
+	)
+
 	library(maptools)
 	labcd <- pointLabel(
 		x=cb[,1],
@@ -1185,12 +1201,11 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 		library(wordcloud)
 		'.&plotR::network::r_command_wordlayout.'
 
-
 		nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cb),
-			cex=cex * 1.25,
+			cex=cex * 1.05,
 			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
 			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
 		)
@@ -1219,6 +1234,8 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 		labcd$x <- nc[,1] + .5 * nc[,3]
 		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
+	
+	text(labcd$x, labcd$y, rownames(cb))
 	dev.off()
 }
 
@@ -1303,7 +1320,7 @@ g <- g + geom_point(
 	colour = col_dot_words,
 	fill = NA,
 	alpha=1,
-	show_guide = F
+	show.legend = F
 )
 
 g <- g + scale_size_area(

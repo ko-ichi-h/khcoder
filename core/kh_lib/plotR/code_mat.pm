@@ -125,9 +125,12 @@ sub new{
 }
 
 sub r_plot_cmd_fluc{
+	my $self = shift;
 	return '
 
 alpha_value <- 0.5
+
+bubble_size <- bubble_size / '.$self->{font_size}.'
 
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
