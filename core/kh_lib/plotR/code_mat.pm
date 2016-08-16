@@ -251,7 +251,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				limits = c( limv * -1, limv ),
 				na.value = "black",
 				guide = guide_colourbar(
-					title = "Pearson rsd.\n",
+					title = "Pearson rsd.:\n",
 					title.theme = element_text(
 						face="bold",
 						size=11,
@@ -269,7 +269,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 		limits = c(0.05, ceiling(max(table$result))),
 		max_size = 15*bubble_size,
 		guide = guide_legend(
-			title = "Percent",
+			title = "\nPercent:",
 			override.aes = list(alpha = 1, fill=NA),
 			label.hjust = 1,
 			order = 2
