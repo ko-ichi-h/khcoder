@@ -34,6 +34,11 @@ sub finish{
 	#if ($::config_obj->os eq 'win32'){
 	#	$head = Jcode->new($head)->sjis;
 	#}
+	
+	if ($self->{for_R}) {
+		$head = mysql_crossout::r_com->clean_up($head);
+	}
+	
 	print OUTF "$head\n";
 	
 	# 位置情報とのマージ

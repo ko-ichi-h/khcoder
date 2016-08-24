@@ -149,6 +149,7 @@ sub out2{                               # length作製をする
 	# データ整形
 	if ($self->{rownames}){
 		if ($self->{midashi}){
+			$row_names = $self->clean_up($row_names);
 			print $fh "row.names(d) <- c($row_names)\n";
 		} else {
 			print $fh "row.names(d) <- d[,1]\n";
@@ -166,6 +167,7 @@ sub out2{                               # length作製をする
 	}
 	chop $colnames;
 	$colnames .= ")\n";
+	$colnames = $self->clean_up($colnames);
 	print $fh $colnames;
 
 	chop $length;
@@ -315,5 +317,38 @@ sub make_list{
 	
 	return $self;
 }
+
+sub clean_up{
+	my $self = shift;
+	my $input= shift;
+	
+	unless ($::config_obj->os eq 'win32') {
+		return $input;
+	}
+	
+	my %loc = (
+		'jp' => 'cp932',
+		'en' => 'cp1252',
+		'cn' => 'cp936',
+		'de' => 'cp1252',
+		'es' => 'cp1252',
+		'fr' => 'cp1252',
+		'it' => 'cp1252',
+		'nl' => 'cp1252',
+		'pt' => 'cp1252',
+		'kr' => 'cp949',
+		'ca' => 'cp1252',
+		'ru' => 'cp1251',
+		'sl' => 'cp1251',
+	);
+	
+	my $lang = $::project_obj->morpho_analyzer_lang;
+	$lang = $loc{$lang};
+	
+	my $encoded = Encode::encode($lang, $input, Encode::FB_HTMLCREF );
+	
+	return Encode::decode($lang, $encoded);
+}
+
 
 1;

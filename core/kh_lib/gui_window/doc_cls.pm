@@ -328,6 +328,7 @@ sub calc{
 		min    => $self->min,
 		max_df => $self->max_df,
 		min_df => $self->min_df,
+		for_R  => 1,
 	)->run;
 
 	$file_csv = $::config_obj->uni_path($file_csv);

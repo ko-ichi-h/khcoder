@@ -86,6 +86,9 @@ sub run{
 	}
 	chop $t;
 	$t .= ")\n";
+	
+	$t = mysql_crossout::r_com->clean_up($t);
+	
 	print $fh $t;
 	close ($fh);
 	#$r_cmd .= "# END: DATA\n\n";
