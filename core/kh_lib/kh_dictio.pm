@@ -342,6 +342,25 @@ sub mark{
 
 		my $text = $_;
 
+	my %loc = (
+		'jp' => 'cp932',
+		'en' => 'cp1252',
+		'cn' => 'cp936',
+		'de' => 'cp1252',
+		'es' => 'cp1252',
+		'fr' => 'cp1252',
+		'it' => 'cp1252',
+		'nl' => 'cp1252',
+		'pt' => 'cp1252',
+		'kr' => 'cp949',
+		'ca' => 'cp1252',
+		'ru' => 'cp1251',
+		'sl' => 'cp1251',
+	);
+	my $cn = 0;
+	my $lang = $::project_obj->morpho_analyzer_lang;
+	$lang = $loc{$lang};
+	
 		# morpho_analyzer
 		if (
 			   $::config_obj->c_or_j eq 'chasen'
@@ -357,6 +376,12 @@ sub mark{
 			$text = $_;
 			$text =~ s/\t/ /go;
 			$text =~ s/\\/ /go;
+		}
+		
+		if ($::config_obj->os eq 'win32') {
+			# 当該言語の文字コードに入っていない文字は「?」に変換
+			$text = Encode::encode($lang, $text, sub{++$cn;'?';} );
+			$text = Encode::decode($lang, $text);
 		}
 		
 		while (1){
@@ -398,6 +423,8 @@ sub mark{
 	}
 	close (SOURCE);
 	close (MARKED);
+	
+	#print " ( $cn characters are converted to '?' ) " if $cn;
 	
 	return 1;
 }

@@ -322,6 +322,15 @@ sub clean_up{
 	my $self = shift;
 	my $input= shift;
 	
+	return $input;
+	
+	# データ読み込み時に変換してしまうことにしたので以下の処理は不要
+	
+	# Windows版のRに送る前に変な絵文字等をHTML文字参照に変換しようかと思ったが、
+	# RだけでなくPerl/Tkでも表示できない（エラーが発生する）ことが分かったので、
+	# 入力時にまとめて置換することにした。ActivePerl 5.22, Perl/Tk 804.033でも
+	# 「code point too high」エラーに。
+	
 	unless ($::config_obj->os eq 'win32') {
 		return $input;
 	}
