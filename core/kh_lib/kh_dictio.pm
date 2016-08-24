@@ -357,7 +357,7 @@ sub mark{
 		'ru' => 'cp1251',
 		'sl' => 'cp1251',
 	);
-	my $cn = 0;
+
 	my $lang = $::project_obj->morpho_analyzer_lang;
 	$lang = $loc{$lang};
 	
@@ -380,7 +380,7 @@ sub mark{
 		
 		if ($::config_obj->os eq 'win32') {
 			# 当該言語の文字コードに入っていない文字は「?」に変換
-			$text = Encode::encode($lang, $text, sub{++$cn;'?';} );
+			$text = Encode::encode($lang, $text, sub{'?'} );
 			$text = Encode::decode($lang, $text);
 		}
 		
