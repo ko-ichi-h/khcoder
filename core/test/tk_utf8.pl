@@ -4,9 +4,18 @@
 use strict;
 use warnings;
 use Tk;
+use utf8;
 
 my $mw = MainWindow->new;
-my $text = "\x{1F642}";
+
+$mw->fontCreate('TKFN',
+	-family => 'Unifont',
+	-size   => 50,
+);
+$mw->optionAdd('*font','TKFN');
+
+
+my $text = '😂';
 
 $mw->Label(-text => $text)->pack;
 
