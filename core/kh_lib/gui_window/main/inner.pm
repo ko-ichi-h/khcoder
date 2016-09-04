@@ -224,6 +224,7 @@ sub switch_lang{
 	
 	unless ($::config_obj->msg_lang eq $v){
 		$::config_obj->msg_lang($v);
+		$::config_obj->msg_lang_set($v);
 		gui_errormsg->open(
 			type => 'msg',
 			icon => 'info',

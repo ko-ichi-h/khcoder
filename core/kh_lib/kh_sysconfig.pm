@@ -889,6 +889,20 @@ sub msg_lang{
 	}
 }
 
+sub msg_lang_set{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{msg_lang_set} = $new;
+	}
+
+	if (length($self->{msg_lang_set}) > 0) {
+		return $self->{msg_lang_set};
+	} else {
+		return 0;
+	}
+}
+
 sub stopwords{
 	my $self = shift;
 	my %args = @_;

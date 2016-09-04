@@ -100,6 +100,7 @@ sub save_ini{
 		'last_method',
 		'c_or_j',
 		'msg_lang',
+		'msg_lang_set',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',

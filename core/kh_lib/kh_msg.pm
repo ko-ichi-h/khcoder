@@ -132,6 +132,27 @@ sub gget{
 }
 
 sub load{
+	my $lang = 'en';
+	my $locale = '';
+	if ( $::config_obj->msg_lang_set ){
+		$lang = $::config_obj->msg_lang;
+	} else {
+		if ($::config_obj->os eq 'win32'){
+			use Encode::Locale;
+			$locale = $Encode::Locale::ENCODING_LOCALE;
+			$lang = 'jp' if $locale eq 'cp932';
+		} else {
+			$locale = $ENV{LANG};
+			$locale = $ENV{LANG_BAK}
+				if $^O eq 'darwin'
+				&& $::config_obj->all_in_one_pack
+			;
+			$lang = 'jp' if $locale =~ /ja_JP\./;
+		}
+		$::config_obj->msg_lang($lang);
+		print "Locale: $locale\n";
+	}
+
 	my $file =
 		$::config_obj->cwd
 		.$utf8->encode( '/config/' )
@@ -141,7 +162,7 @@ sub load{
 	if (-e $file){
 		$msg = LoadFile($file) or die;
 	}
-	
+
 	unless ($::config_obj->msg_lang eq 'en'){
 		my $file_fb =
 			$::config_obj->cwd
