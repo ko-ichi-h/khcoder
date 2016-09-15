@@ -316,7 +316,6 @@ gui_window::sysconfig:
     l_sl:                     スロベニア語
     lang:                     '    言語：'
     mecab:                    MeCab（日本語）
-    need_inst:                （要・別途インストール）
     note_font:               "フォントが変更されました。変更を有効にするために、KH Coderを再起動してください。"
     note_s:                   ※ %sはファイル名やURLで置き換えられます
     p_chasen.exe:             '    chasen.exeのパス：'

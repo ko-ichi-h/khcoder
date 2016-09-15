@@ -61,10 +61,7 @@ sub __new{
 	)->pack(-padx => '2',-side => 'right');
 
 	# MeCab
-	my $msg = kh_msg->get('mecab');#'MeCab（日本語）';
-	if ($::config_obj->all_in_one_pack){
-		$msg .= kh_msg->get('need_inst');#'※別途インストールが必要';
-	}
+	my $msg = kh_msg->get('mecab'); #'MeCab（日本語）';
 
 	$lfra->Label(
 		-text     => $msg,

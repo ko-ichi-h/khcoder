@@ -759,7 +759,7 @@ sub last_lang{
 	if (length($self->{last_lang}) > 0) {
 		return $self->{last_lang};
 	} else {
-		return 'jp';
+		return $self->msg_lang;
 	}
 }
 

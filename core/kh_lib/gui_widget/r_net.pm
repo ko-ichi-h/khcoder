@@ -245,7 +245,7 @@ sub _new{
 			#-state => 'disabled',
 	)->pack(-anchor => 'w');
 
-	$self->{check_fix_lab} = 0 unless defined($self->{check_fix_lab});
+	$self->{check_fix_lab} = 1 unless defined($self->{check_fix_lab});
 	$lf->Checkbutton(
 			-text     => kh_msg->get('fix_lab'),
 			-variable => \$self->{check_fix_lab},

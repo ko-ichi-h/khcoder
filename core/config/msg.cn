@@ -693,7 +693,6 @@ gui_window::sysconfig:
   lang: 词汇：
   mecab: MeCab（日语）
   mecab_unicode: Unicode词典
-  need_inst: （需要另行安装）
   note_font: 字体被变更了。为了使变更有效，请重新启动KH Coder。
   note_s: ※ %s被用文件名和ＵＲＬ替换了
   p_chasen.exe: chasen.exe的路径：

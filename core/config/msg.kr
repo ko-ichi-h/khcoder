@@ -693,7 +693,6 @@ gui_window::sysconfig:
   lang: '    언어: '
   mecab: MeCab(일본어)
   mecab_unicode: Unicode 사전
-  need_inst: (별도로 설치해야 합니다)
   note_font: 폰트가 변경되었습니다. 변경을 유효하게 하려면 KH Coder를 다시 기동해 주십시오.
   note_s: ※%s는 파일명과 URL로 바뀝니다
   p_chasen.exe: '   chasen.exe의 패스: '

@@ -315,7 +315,6 @@ gui_window::sysconfig:
     L_kr:                     Coreano
     lang:                     '    Idioma:'
     mecab:                    '"MeCab" para textos en Japanés'
-    need_inst:                ' *instalación separada'
     note_font:               "Ajuste de Fuente realizado.\nReiniciar KH Coder para aplicar los cambios."
     note_s:                   '* %s se reemplazará por los nombres de archivo de las URL'
     p_chasen.exe:             '    Ruta de "chasen.exe":'
