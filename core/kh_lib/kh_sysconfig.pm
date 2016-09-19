@@ -1430,12 +1430,6 @@ sub font_pdf_current{
 		elsif ($lang eq 'jp'){                       # Japanese
 			return $self->font_pdf;
 		}
-		elsif (                                      # English
-				   ($lang eq 'en')
-				&& ($self->msg_lang ne 'jp')
-		){
-			return $self->font_pdf;
-		}
 		#elsif (                                      # Russian
 		#	$lang eq 'ru'
 		#	&& $^O =~ /darwin/
@@ -1444,8 +1438,12 @@ sub font_pdf_current{
 		#	#return 'RU';
 		#	return 'ArialMT';
 		#}
-		else{                                        # Euro
-			return 'serif';
+		else{                                        # English & Euro
+			if ($self->msg_lang eq 'jp') {
+				return $self->font_pdf;
+			} else {
+				return 'sans';
+			}
 		}
 	}
 
