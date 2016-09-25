@@ -377,48 +377,76 @@ sub rotate_cls{
 
 sub save{
 	my $self = shift;
-	my $os_path = shift;
+	my $target_os_path = shift;
 	
-	my $path = $::config_obj->uni_path($os_path);
+	my $path;
+	$path =
+		$::config_obj->cwd
+		.'/config/R-bridge/'
+		.$::project_obj->dbname
+		.'_'
+		.$self->{name}
+		.'_save'
+	;
+	
+	if (-e $path){
+		unlink $path or die("could not delete file: $path");
+	}
+	#my $temp_os_path = $path;
+	
+	$path = $::config_obj->uni_path($path);
 	$path =~ tr/\\/\//;
 	
 	$self->clear_env;
 	
-	if ($path =~ /\.r$/i){
+	if ($target_os_path =~ /\.r$/i){
+		$path .= ".r";
 		$self->_save_r($path);
 	}
-	elsif ($path =~ /\.png$/i){
+	elsif ($target_os_path =~ /\.png$/i){
+		$path .= ".png";
 		$self->_save_png($path);
 	}
-	elsif ($path =~ /\.eps$/i){
+	elsif ($target_os_path =~ /\.eps$/i){
+		$path .= ".eps";
 		$self->_save_eps($path);
 	}
-	elsif ($path =~ /\.pdf$/i){
+	elsif ($target_os_path =~ /\.pdf$/i){
+		$path .= ".pdf";
 		$self->_save_pdf($path);
 	}
-	elsif ($path =~ /\.emf$/i){
+	elsif ($target_os_path =~ /\.emf$/i){
+		$path .= ".emf";
 		$self->_save_emf($path);
 	}
-	elsif ($path =~ /\.svg$/i){
+	elsif ($target_os_path =~ /\.svg$/i){
+		$path .= ".svg";
 		$self->_save_svg($path);
 	}
-	elsif ($path =~ /\.graphml$/i){
+	elsif ($target_os_path =~ /\.graphml$/i){
+		$path .= ".graphml";
 		$self->_save_graphml($path);
 	}
-	elsif ($path =~ /\.net$/i){
+	elsif ($target_os_path =~ /\.net$/i){
+		$path .= ".net";
 		$self->_save_net($path);
 	}
-	elsif ($path =~ /\.csv$/i){
+	elsif ($target_os_path =~ /\.csv$/i){
+		$path .= ".csv";
 		$self->_save_csv($path);
 	}
 	else {
-		warn "The file type is not supported yet:\n$path\n";
+		warn "The file type is not supported yet:\n$target_os_path\n";
 	}
 
-	unless ( -e $os_path ){
+	my $temp_os_path = $::config_obj->os_path($path);
+	unless ( -e $temp_os_path ){
 		warn "failed to save the plot: ".$::config_obj->R->read;
+		return 0;
 	}
-
+	
+	use File::Copy;
+	copy($temp_os_path, $target_os_path) or die("failed to copy the file: $temp_os_path, $target_os_path");
 }
 
 sub R_device{
