@@ -315,26 +315,33 @@ sub get_default_freq{
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 
-	my $lf  = 0;
 	my $cum = 0;
-	my $r   = 1;
 	while (my $i = $h->fetch){
-		if ($i->[0] % 5 ==0){
-			if ($cum + $i->[1] >= $target){
-				# print "$lf->[1]: ", $target - $lf->[1], ", ", $cum + $i->[1], ": ", $cum + $i->[1] - $target, "\n";
-				if ( ( $target - $lf->[1] ) >= ( $cum + $i->[1] - $target ) ){
-					$r = $i->[0];
-				} else {
-					$r = $lf->[0];
-				}
-				last;
-			}
-			$lf  =  [$i->[0], $cum + $i->[1]]; # 1つ前のを保存
-		}
 		$cum += $i->[1]; # 累積
+		if ($cum >= $target) {
+			my $rem = $i->[0] % 5;
+			my $can_0 = $i->[0] - $rem;
+			my $can_1 = $can_0 + 5;
+			
+			$self->{min} = $can_0;
+			my $dif_0 = $self->wnum() - $target;
+			
+			$self->{min} = $can_1;
+			my $dif_1 = $target - $self->wnum();
+			
+			print "$can_0, $dif_0 ; $can_1, $dif_1\n";
+			
+			if ($dif_0 < $dif_1) {
+				return $can_0;
+			} else {
+				return $can_1
+			}
+			
+		}
+		
 	}
 
-	return $r;
+	return 2;
 }
 
 1;

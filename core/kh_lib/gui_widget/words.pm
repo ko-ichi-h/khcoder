@@ -284,6 +284,11 @@ sub settings_load{
 	} else {
 		# print "Getting the default min-freq value...\n";
 		my $target = 75;
+		
+		if ( $::project_obj->morpho_analyzer_lang ne 'jp' ){
+			$target = 120;
+		}
+		
 		my $freq = mysql_crossout::r_com->new(
 			tani   => $self->tani,
 			hinshi => $self->hinshi,
@@ -291,7 +296,7 @@ sub settings_load{
 			min    => $self->min,
 			max_df => $self->max_df,
 			min_df => $self->min_df,
-		)->get_default_freq(75);
+		)->get_default_freq($target);
 		$freq = 2 if $freq == 1;
 		
 		$self->min( $freq );

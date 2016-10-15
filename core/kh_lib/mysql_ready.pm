@@ -574,7 +574,6 @@ sub reform{
 	}
 	mysql_exec->do('alter table genkei add index index1(name,khhinshi_id,hinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
-	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 
 
 	# 原形テーブルの仕上げ(1)
@@ -598,6 +597,7 @@ sub reform{
 
 	mysql_exec->do('alter table genkei_fin add index index1(name,khhinshi_id)',1);
 	mysql_exec->do('alter table genkei_fin add index index2(khhinshi_id)',1);
+	mysql_exec->do('alter table genkei_fin add unique index index3(khhinshi_id, nouse, num, id)',1);
 
 	my $pt4 = new Benchmark;
 	print "\tgenkei\t\t",timestr(timediff($pt4,$pt3)),"\n" if $report_time;
