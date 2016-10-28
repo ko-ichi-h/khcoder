@@ -15,7 +15,7 @@ sub plugin_config{
 		
 		# specify file names
 		my $file_target = $ARGV[1];
-		my $file_save   = 'C:\khcoder\net.png';
+		my $file_save   = 'C:\khcoder3\net.png';
 
 		# create a new project
 		my $new = kh_project->new(
