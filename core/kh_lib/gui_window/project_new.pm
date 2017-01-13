@@ -248,6 +248,7 @@ sub refresh_method{
 
 sub _make_new{
 	my $self = shift;
+	my $from_table = 0;
 
 	$::config_obj->last_method( $self->{method} );
 	$::config_obj->last_lang(   $self->{lang}   );
@@ -261,6 +262,8 @@ sub _make_new{
 	# Excel / CSV (1)
 	my $file_vars;
 	if ($t =~ /(.+)\.(xls|xlsx|csv)$/i){
+		$from_table = 1;
+		
 		# name of the new text file
 		my $n = 0;
 		while (-e $1."_txt$n.txt"){
@@ -308,7 +311,7 @@ sub _make_new{
 	$::main_gui->inner->refresh;
 
 	# Excel / CSV (2)
-	if (-e $file_vars){
+	if ( $from_table ){
 		# read variables
 		mysql_outvar::read::tab->new(
 			file        => $file_vars,
@@ -325,7 +328,10 @@ sub _make_new{
 		",1);
 		
 		# some configurations
-		$new->last_tani('h5');
+		$::project_obj->last_tani('h5');
+		$::project_obj->status_from_table(1);
+	} else {
+		$::project_obj->status_from_table(0);
 	}
 	
 	return 1;

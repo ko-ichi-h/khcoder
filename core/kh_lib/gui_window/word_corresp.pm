@@ -125,6 +125,12 @@ sub _new{
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
 
+	my $vars = mysql_outvar->get_list;
+	$vars = @{$vars};
+	if ( $::project_obj->status_from_table == 1 && $vars ){
+		$self->{radio} = 1;
+	}
+
 	my $fi_3 = $fi_1->Frame()->pack(
 		-anchor => 'w',
 		-fill   => 'both',

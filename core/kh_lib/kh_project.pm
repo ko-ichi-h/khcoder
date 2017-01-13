@@ -589,6 +589,33 @@ sub load_dmp{
 	}
 }
 
+sub status_from_table{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status WHERE name = 'from_table'",1
+	)->hundle;
+	my $current = 0;
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status (name, status) VALUES ('from_table', $current)"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status SET status = $new WHERE name = 'from_table'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
+}
+
 sub status_hb{
 	my $self = shift;
 	my $new  = shift;
