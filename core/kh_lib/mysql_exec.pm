@@ -11,15 +11,13 @@ use kh_project;
 # 		sql: SQLʸ
 #		[1/0]: Critical(1) or not(0)
 
-my $username = $::config_obj->sql_username;
-my $password = $::config_obj->sql_password;
-my $host     = $::config_obj->sql_host;
-my $port     = $::config_obj->sql_port;
-
-$username = '' unless defined ($username);
-$password = '' unless defined ($password);
-$host     = '' unless defined ($host);
-$port     = '' unless defined ($port);
+my ($username, $password, $host, $port);
+if ($::config_obj){
+	$username = $::config_obj->sql_username;
+	$password = $::config_obj->sql_password;
+	$host     = $::config_obj->sql_host;
+	$port     = $::config_obj->sql_port;
+}
 
 my $mysql_version = -1;
 my $win_9x = 0;
