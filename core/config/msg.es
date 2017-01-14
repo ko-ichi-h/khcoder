@@ -724,7 +724,7 @@ gui_window::r_plot_opt::cod_som:
 gui_widget::r_net:
     filter_edges:             'Filtrar bordes:'
     e_top_n:                  'Top'
-    e_jac:                    'coeficiente Jaccard >= '
+    e_jac:                    'coeficiente >= '
     or_more:                  ''
     thicker:                  'Líneas más gruesas para bordes más fuertes'
     larger:                   'Nodos más grandes para Palabras más Frecuentes'

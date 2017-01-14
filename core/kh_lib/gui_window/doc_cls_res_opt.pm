@@ -61,8 +61,8 @@ sub _new{
 		options =>
 			[
 				['Jaccard', 'binary'],
-				['Euclid',  'euclid'],
 				['Cosine',  'pearson'],
+				['Euclid',  'euclid'],
 			],
 		variable => \$self->{method_dist},
 		command => sub {$self->config_opts;},

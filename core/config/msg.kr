@@ -87,8 +87,8 @@ gui_widget::r_mds:
   dist: ' 거리:'
   method: '방법:'
 gui_widget::r_net:
-  e_jac: 'Jaccard 계수:'
-  e_top_n: '묘화수:'
+  e_jac: '계수'
+  e_top_n: '묘화수'
   filter_edges: 묘화하는 공기 관계(edge) 한정
   fix_lab: 라벨이 겹치지 않도록 위치 조정
   gray_scale: 그레이 스케일로 표현(중심성/서브그래프)

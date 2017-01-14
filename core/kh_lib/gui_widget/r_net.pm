@@ -80,6 +80,9 @@ sub _new{
 		if ($self->{r_cmd} =~ /view_coef <- ([01])\n/){
 			$self->{view_coef} = $1;
 		}
+		if ($self->{r_cmd} =~ /method_coef <- "(.+)"\n/){
+			$self->{method_coef} = $1;
+		}
 	
 		if ($edges == 0){
 			$self->{radio} = 'j';
@@ -102,14 +105,32 @@ sub _new{
 	}
 
 	# Edge選択
-	$lf->Label(
+	my $f5 = $lf->Frame()->pack(
+		-fill => 'x',
+		-pady => 2
+	);
+	
+	$f5->Label(
 		-text => kh_msg->get('filter_edges'), # 描画する共起関係（edge）の絞り込み
 		-font => "TKFN",
-	)->pack(-anchor => 'w');
+	)->pack(-anchor => 'w', -side => 'left',);
+	
+	$self->{method_coef} = 'binary' unless $self->{method_coef};
+	gui_widget::optmenu->open(
+		parent  => $f5,
+		pack    => {-anchor => 'w', -side => 'left'},
+		options =>
+			[
+				['Jaccard', 'binary'],
+				['Cosine',  'pearson'],
+				['Euclid',  'euclid'],
+			],
+		variable => \$self->{method_coef},
+	);
 
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
-		-pady => 2
+		-pady => 2,
 	);
 
 	$f4->Label(
@@ -139,6 +160,11 @@ sub _new{
 	;
 	
 	gui_window->config_entry_focusin($self->{entry_edges_number});
+
+	$f4->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
 
 	$f4->Radiobutton(
 		-text             => kh_msg->get('e_jac'), # Jaccard係数：
@@ -330,6 +356,7 @@ sub params{
 		edge_type           => $self->{edge_type},
 		fix_lab             => $self->fix_lab,
 		view_coef           => gui_window->gui_jg( $self->{view_coef} ),
+		method_coef         => gui_window->gui_jg( $self->{method_coef} ),
 	);
 }
 

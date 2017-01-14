@@ -725,9 +725,9 @@ gui_window::r_plot::cod_som:
 gui_window::r_plot_opt::cod_som:
     win_title:                'Configure: Self-Organizing Map of Codes'
 gui_widget::r_net:
-    filter_edges:             'Filter edges:'
+    filter_edges:             'Filter edges: '
     e_top_n:                  'Top'
-    e_jac:                    'Jaccard coef. >= '
+    e_jac:                    'Coef. >= '
     or_more:                  ''
     thicker:                  'Thicker lines for stronger edges'
     larger:                   'Larger nodes for higher frequency words'

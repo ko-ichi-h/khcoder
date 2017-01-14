@@ -87,8 +87,8 @@ gui_widget::r_mds:
   dist: 距离：
   method: 方法：
 gui_widget::r_net:
-  e_jac: Jaccard系数：
-  e_top_n: 绘图数：
+  e_jac: 系数
+  e_top_n: 绘图数
   filter_edges: 帅选绘图的共现关系（edge）
   fix_lab: 为了标签不重叠对位置进行调整
   gray_scale: 用灰度等级来表示(中心性和副图表)

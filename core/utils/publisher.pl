@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a08i';
+my $V = '3a08j';
 my $V_main = "3.Alpha.08"; # フォルダ名
-my $V_full = "3.Alpha.08i";
+my $V_full = "3.Alpha.08j";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -94,10 +94,10 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
 &source_tgz;
-#&win_pkg;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
 #&upload;

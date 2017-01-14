@@ -79,6 +79,7 @@ sub new{
 	$args{gray_scale} = 0 unless ( length($args{gray_scale}) );
 	$r_command .= "gray_scale <- $args{gray_scale}\n";
 
+	$r_command .= "method_coef <- \"$args{method_coef}\"\n\n";
 
 	# プロット作成
 	
@@ -284,7 +285,7 @@ sub new{
 				length(get.edgelist(n,name=T)[,1]),
 				"), Density ",
 				substr(paste( round( graph.density(n2), 3 ) ), 2, 5 ),
-				", Min. Jaccard ",
+				", Min. Coef. ",
 				substr( paste( round( th, 3 ) ), 2, 5),
 				sep=""
 			)
@@ -334,10 +335,29 @@ sub r_plot_cmd_p1{
 	}
 #}
 
-# 類似度計算 
-d <- dist(d,method="binary")
+# 類似度計算
+if ( (exists("doc_length_mtr")) &! (method_coef == "binary")){
+	leng <- as.numeric(doc_length_mtr[,2])
+	leng[leng ==0] <- 1
+	d <- t(d)
+	d <- d / leng
+	d <- d * 1000
+	d <- t(d)
+}
+if (method_coef == "euclid"){ # 抽出語ごとに標準化
+	d <- t( scale( t(d) ) )
+}
+
+library(amap)
+d <- Dist(d,method=method_coef)
+
 d <- as.matrix(d)
-d <- 1 - d;
+if ( method_coef == "euclid" ){
+	d <- max(d) - d
+	d <- d / max(d)
+} else {
+	d <- 1 - d
+}
 
 # 不要なedgeを削除して標準化
 if ( exists("com_method") ){
