@@ -248,6 +248,12 @@ sub _new{
 	);
 	$self->{opt_frame_var} = $fi_3;
 
+	my $vars = mysql_outvar->get_list;
+	$vars = @{$vars};
+	if ( $::project_obj->status_from_table == 1 && $vars ){
+		$self->{radio} = 2;
+	}
+
 	# 差異の顕著な語のみ分析
 	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
@@ -451,19 +457,42 @@ sub refresh{
 		}
 
 		# リスト表示
-		$self->{opt_body_var} = gui_widget::chklist->open(
-			parent  => $self->{opt_frame_var},
-			options => \@options,
-			default => 0,
-			height  => 3,
-			pack    => {
-				-side   => 'left',
-				-padx   => 2,
-				-fill   => 'both',
-				-expand => 1
-			},
+		$self->{vars} = \@options;
+		$self->{opt_body_var} = $self->{opt_frame_var}->Scrolled(
+			'HList',
+			-scrollbars         => 'osoe',
+			-header             => '0',
+			-itemtype           => 'text',
+			-font               => 'TKFN',
+			-columns            => '1',
+			-height             => '4',
+			-background         => 'white',
+			-selectforeground   => $::config_obj->color_ListHL_fore,
+			-selectbackground   => $::config_obj->color_ListHL_back,
+			-selectborderwidth  => 0,
+			-highlightthickness => 0,
+			-selectmode         => 'extended',
+		)->pack(
+			-anchor => 'w',
+			-padx   => '2',
+			-pady   => '2',
+			-fill   => 'both',
+			-expand => 1
 		);
-		$self->{opt_body_var_ok} = 1;
+		
+		my $row = 0;
+		foreach my $i (@options){
+			$self->{opt_body_var}->add($row, -at => "$row");
+			$self->{opt_body_var}->itemCreate(
+				$row,
+				0,
+				-text => $i->[0],
+			);
+			++$row;
+		}
+		
+		$self->{opt_body_var}->selectionSet(0)
+				if $self->{opt_body_var}->info('exists', 0);
 
 	#------------------------------#
 	#   上位の文書単位選択Widget   #
@@ -537,7 +566,8 @@ sub refresh{
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 		
-		$self->{opt_body_var}->disable;
+		$self->{opt_body_var}->configure(-selectbackground => 'gray');
+		$self->{opt_body_var}->configure(-background => 'gray');
 		
 		$self->{check_filter_w_widget}->configure(-state => 'disabled');
 		$self->{entry_flw}   ->configure(-state => 'disabled');
@@ -551,7 +581,8 @@ sub refresh{
 		}
 		$self->{label_high}->configure(-foreground => 'black');
 		
-		$self->{opt_body_var}->disable;
+		$self->{opt_body_var}->configure(-selectbackground => 'gray');
+		$self->{opt_body_var}->configure(-background => 'gray');
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
 		$self->{label_high2}->configure(-state => 'normal');
@@ -567,8 +598,9 @@ sub refresh{
 		$self->{label_high2}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 
-		$self->{opt_body_var}->enable;
-		gui_hlist->update4scroll( $self->{opt_body_var}{hlist} );
+		$self->{opt_body_var}->configure(-selectbackground => $::config_obj->color_ListHL_back);
+		$self->{opt_body_var}->configure(-background => 'white');
+		gui_hlist->update4scroll( $self->{opt_body_var} );
 
 		$self->{check_filter_w_widget}->configure(-state => 'normal');
 		$self->refresh_flw;
@@ -728,7 +760,10 @@ sub _calc{
 
 	my $vars;
 	if ($self->{radio} == 2){
-		$vars = $self->{opt_body_var}->selected;
+		foreach my $i ( $self->{opt_body_var}->selectionGet ){
+			push @{$vars}, $self->{vars}[$i][1];
+		}
+		
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',

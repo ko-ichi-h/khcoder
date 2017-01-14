@@ -392,19 +392,56 @@ sub refresh{
 		}
 		
 		# リスト表示
-		$self->{opt_body_var} = gui_widget::chklist->open(
-			parent  => $self->{opt_frame_var},
-			options => \@options,
-			default => 0,
-			height  => 3,
-			pack    => {
-				-side   => 'left',
-				-padx   => 2,
-				-fill   => 'both',
-				-expand => 1
-			},
+		$self->{vars} = \@options;
+		$self->{opt_body_var} = $self->{opt_frame_var}->Scrolled(
+			'HList',
+			-scrollbars         => 'osoe',
+			-header             => '0',
+			-itemtype           => 'text',
+			-font               => 'TKFN',
+			-columns            => '1',
+			-height             => '4',
+			-background         => 'white',
+			-selectforeground   => $::config_obj->color_ListHL_fore,
+			-selectbackground   => $::config_obj->color_ListHL_back,
+			-selectborderwidth  => 0,
+			-highlightthickness => 0,
+			-selectmode         => 'extended',
+		)->pack(
+			-anchor => 'w',
+			-padx   => '2',
+			-pady   => '2',
+			-fill   => 'both',
+			-expand => 1
 		);
-		$self->{opt_body_var_ok} = 1;
+		
+		my $row = 0;
+		foreach my $i (@options){
+			$self->{opt_body_var}->add($row, -at => "$row");
+			$self->{opt_body_var}->itemCreate(
+				$row,
+				0,
+				-text => $i->[0],
+			);
+			++$row;
+		}
+		
+		$self->{opt_body_var}->selectionSet(0)
+				if $self->{opt_body_var}->info('exists', 0);
+		
+		#$self->{opt_body_var} = gui_widget::chklist->open(
+		#	parent  => $self->{opt_frame_var},
+		#	options => \@options,
+		#	default => 0,
+		#	height  => 3,
+		#	pack    => {
+		#		-side   => 'left',
+		#		-padx   => 2,
+		#		-fill   => 'both',
+		#		-expand => 1
+		#	},
+		#);
+		#$self->{opt_body_var_ok} = 1;
 	}
 
 	#------------------------------#
@@ -480,22 +517,17 @@ sub refresh{
 		$self->{label_high}->configure(-foreground => 'black');
 		$self->{label_high2}->configure(-state => 'normal');
 		
-		$self->{opt_body_var}->disable;
-		#$self->{label_var}->configure(-foreground => 'gray');
+		$self->{opt_body_var}->configure(-selectbackground => 'gray');
+		$self->{opt_body_var}->configure(-background => 'gray');
 	}
 	elsif ($self->{radio} == 1){
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 		$self->{label_high2}->configure(-state => 'disable');
 
-		$self->{opt_body_var}->enable;
+		$self->{opt_body_var}->configure(-selectbackground => $::config_obj->color_ListHL_back);
+		$self->{opt_body_var}->configure(-background => 'white');
 
-		#if ($self->{opt_body_var_ok}){
-		#	#$self->{opt_body_var}->configure(-state => 'normal');
-		#} else {
-		#	#$self->{opt_body_var}->configure(-state => 'disable');
-		#}
-		#$self->{label_var}->configure(-foreground => 'black');
 	}
 	
 	return 1;
@@ -542,7 +574,10 @@ sub calc{
 		$tani2 = $self->gui_jg($self->{high});
 	}
 	elsif ($self->{radio} == 1){
-		$vars = $self->{opt_body_var}->selected;
+		foreach my $i ( $self->{opt_body_var}->selectionGet ){
+			push @{$vars}, $self->{vars}[$i][1];
+		}
+		
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
