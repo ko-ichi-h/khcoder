@@ -102,7 +102,6 @@ sub new{
 
 	# プロット作成
 	my @plots = ();
-	my $flg_error = 0;
 
 	my $com_a = '';
 
@@ -117,7 +116,8 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		);
+		return 0 unless $plots[$#plots];
 		$com_a = "plot_mode <- \"gray\"\n".$p2;
 	}
 	
@@ -133,7 +133,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 
 	push @plots, kh_r_plot->new(
@@ -149,7 +150,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 	push @plots, kh_r_plot->new(
 		name      => $args{plotwin_name}.'_4',
@@ -164,7 +166,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 	$::config_obj->R->send("print( summary(somm) )");
 	my $t = $::config_obj->R->read;
@@ -183,7 +186,6 @@ sub new{
 	#$self->{result_info} = $info;
 	#$self->{result_info_long} = $info_long;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 

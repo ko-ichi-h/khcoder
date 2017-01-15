@@ -175,8 +175,7 @@ sub ready{
 	my $tani = shift;
 	my $sort = shift;
 	
-	print "***\n" if $debug;
-	print "* Coding: making tables for atoms...\n" if $debug;
+	print "*** *** *** *** *** ***\n" if $debug;
 
 	$self->{tani} = $tani;
 	unless ($self->{condition}){
@@ -213,6 +212,7 @@ sub ready{
 	}
 	
 	# ATOMごとのテーブルを作製
+	print "* Coding: making tables for atoms...\n" if $debug;
 	my %words;
 	my ($length_frag,$n,$n0, $n1,$unique_check,@tmp_tab) = (0,0,0,0,undef,undef);
 	my @t = ();

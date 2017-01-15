@@ -83,7 +83,6 @@ sub new{
 	# プロット作成
 	
 	my @plots = ();
-	my $flg_error = 0;
 
 	$plots[0] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
@@ -93,7 +92,7 @@ sub new{
 		width     => $::config_obj->plot_size_words,
 		height    => $args{plot_size_heat},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	$plots[1] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_2',
@@ -103,7 +102,7 @@ sub new{
 		width     => $args{plot_size_mapw},
 		height    => $args{plot_size_maph},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	#$plots[2] = kh_r_plot->new(
 	#	name      => $args{plotwin_name}.'_3',
@@ -120,7 +119,6 @@ sub new{
 	undef %args;
 	$self->{result_plots} = \@plots;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 

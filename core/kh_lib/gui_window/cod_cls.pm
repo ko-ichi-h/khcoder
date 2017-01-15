@@ -354,7 +354,7 @@ sub _calc{
 	$r_command .= ")\n";
 	$r_command .= "# END: DATA\n";
 
-	&gui_window::word_cls::make_plot(
+	my $plot = &gui_window::word_cls::make_plot(
 		$self->{cls_obj}->params,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
@@ -365,6 +365,8 @@ sub _calc{
 	);
 
 	$wait_window->end(no_dialog => 1);
+	return 0 unless $plot;
+	
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
 	}

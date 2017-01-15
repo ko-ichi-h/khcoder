@@ -41,7 +41,6 @@ sub new{
 	# プロット作成
 	
 	my @plots = ();
-	my $flg_error = 0;
 
 	$plots[0] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
@@ -51,7 +50,7 @@ sub new{
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 
 	kh_r_plot->clear_env;
@@ -59,7 +58,6 @@ sub new{
 	undef %args;
 	$self->{result_plots} = \@plots;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 

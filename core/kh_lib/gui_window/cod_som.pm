@@ -389,12 +389,11 @@ sub _calc{
 
 	# プロットWindowを開く
 	$wait_window->end(no_dialog => 1);
+	return 0 unless $plotR;
 	
 	if ($::main_gui->if_opened('w_cod_som_plot')){
 		$::main_gui->get('w_cod_som_plot')->close;
 	}
-
-	return 0 unless $plotR;
 
 	gui_window::r_plot::cod_som->open(
 		plots       => $plotR->{result_plots},

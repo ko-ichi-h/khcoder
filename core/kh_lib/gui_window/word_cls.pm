@@ -171,7 +171,7 @@ sub calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	&make_plot(
+	my $plot = &make_plot(
 		$self->{cls_obj}->params,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
@@ -182,6 +182,7 @@ sub calc{
 	);
 
 	$w->end(no_dialog => 1);
+	return 0 unless $plot;
 
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
@@ -294,23 +295,23 @@ if (
 	$r_command .= "\n$par";
 	$r_command .= &r_command_plot($old_simple_style);
 
-	# プロット作成
-	my $flg_error = 0;
+	# make plots
 	my $merges;
 	
 	my ($w,$h) = ($::config_obj->plot_size_codes, $args{plot_size});
 	($w,$h) = ($h,$w) if $old_simple_style;
 	
-	# Ward法
+	# dendrogram
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $w,
 		height    => $h,
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 	$plot1->rotate_cls if $old_simple_style;
 
+	# heights
 	foreach my $i ('last','first','all'){
 		$merges->{0}{$i} = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_1_'.$i,
@@ -322,7 +323,7 @@ if (
 			width     => $::config_obj->plot_size_words,
 			height    => $::config_obj->plot_size_codes,
 			font_size => $args{font_size},
-		);
+		) or return 0;
 	}
 
 	# プロットWindowを開く
@@ -331,8 +332,6 @@ if (
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
-	
-	return 0 if $flg_error;
 	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(

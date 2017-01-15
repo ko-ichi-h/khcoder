@@ -357,6 +357,8 @@ sub calc{
 	);
 	
 	$wait_window->end(no_dialog => 1);
+	return 0 unless $cluster;
+	
 	$self->withd;
 
 	$cluster->open_result_win;
@@ -428,6 +430,7 @@ sub _calc_exec{
 	$r_command_ward .= "method_clst <- \"$self->{method_method}\"\n";
 	
 	$r_command_ward .= '
+
 library(amap)
 dj <- Dist(d,method=method_dist)
 

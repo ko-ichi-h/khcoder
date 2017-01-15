@@ -87,7 +87,6 @@ sub new{
 	#my $t0 = new Benchmark;
 	
 	my @plots = ();
-	my $flg_error = 0;
 	
 	if ($self->{edge_type} eq 'twomode'){
 		$plots[0] = kh_r_plot::network->new(
@@ -102,7 +101,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[1] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_2',
@@ -120,7 +119,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 	} else {
 		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
@@ -134,7 +133,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[1] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_2',
@@ -152,7 +151,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[2] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_3',
@@ -170,7 +169,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[3] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_4',
@@ -188,7 +187,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[4] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_5',
@@ -206,7 +205,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[5] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_6',
@@ -224,7 +223,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 
 		$plots[6] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_7',
@@ -242,7 +241,7 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 	}
 	
 	#my $t1 = new Benchmark;
@@ -320,7 +319,6 @@ sub new{
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 
@@ -418,6 +416,9 @@ if (th < 0){
 
 # edgeを間引いてグラフを再作成 
 el2 <- subset(el, el[,3] >= th)
+if ( nrow(el2) == 0 ){
+	stop(message = "No edges to draw!", call. = F)
+}
 n2  <- graph.edgelist(
 	matrix( as.matrix(el2)[,1:2], ncol=2 ),
 	directed	=F

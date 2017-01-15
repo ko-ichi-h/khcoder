@@ -1022,6 +1022,8 @@ sub _open_var{
 	);
 
 	@tanis = ();
+	my $last_tani = $::project_obj->last_tani;
+	my $last_tani_ok = 0;
 	my $flag_t = 0;
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 		$flag_t = 1 if ($self->{selected_var_obj}->tani eq $i);
@@ -1032,6 +1034,7 @@ sub _open_var{
 			   )->hundle->fetch->[0]
 		){
 			push @tanis, [$self->gui_jchar($tani_name{$i}),$i];
+			$last_tani_ok = 1 if $i eq $last_tani;
 		}
 	}
 
@@ -1042,9 +1045,14 @@ sub _open_var{
 			options => \@tanis,
 			variable => \$self->{calc_tani},
 		);
+		if ($last_tani_ok) {
+			$self->{opt_tani}->set_value($last_tani);
+		}
 	}
 
 	$self->{btn_save}->configure(-state => 'normal');
+	
+	$self->{opt_tani}
 
 	#gui_window::outvar_detail->open(
 	#	tani => $self->{var_list}[$selection[0]][0],

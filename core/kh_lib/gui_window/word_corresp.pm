@@ -753,7 +753,8 @@ sub calc{
 	);
 
 	$w->end(no_dialog => 1);
-
+	return 0 unless $plot;
+	
 	# プロットWindowを開く
 	my $plotwin_id = 'w_word_corresp_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
@@ -902,14 +903,13 @@ sub make_plot{
 	}
 
 	# プロット作成
-	my $flg_error = 0;
 	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	my $plot2 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_2',
@@ -918,7 +918,7 @@ sub make_plot{
 		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	my ($plotg, $plotv);
 	my @plots = ();
@@ -930,7 +930,7 @@ sub make_plot{
 			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 		
 		$plotv = kh_r_plot::corresp->new(
 			name      => $args{plotwin_name}.'_v',
@@ -939,7 +939,7 @@ sub make_plot{
 			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 		@plots = ($plot2,$plotg,$plotv,$plot1);
 	} else {
 		@plots = ($plot2,$plot1);
@@ -953,8 +953,6 @@ sub make_plot{
 	}
 
 	kh_r_plot::corresp->clear_env;
-
-	return undef if $flg_error;
 
 	return \@plots;
 }
@@ -975,7 +973,6 @@ if (plot_mode == "color"){
 	plot_color <- c("black","black",rep( "black", v_count))
 	plot_pch   <- c(1,3,0,2,4:15)
 }
-
 
 if (biplot == 1){
 	cb <- rbind(

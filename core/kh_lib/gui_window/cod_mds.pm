@@ -381,6 +381,7 @@ sub _calc{
 	);
 
 	$wait_window->end(no_dialog => 1);
+	return 0 unless $plot;
 	
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_cod_mds_plot')){

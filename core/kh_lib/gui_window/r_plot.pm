@@ -37,6 +37,7 @@ sub _new{
 		$self->{$key} = $args{$key};
 	}
 	undef %args;
+	return 0 unless $self->{plots};
 
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};

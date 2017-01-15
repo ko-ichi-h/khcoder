@@ -182,6 +182,7 @@ sub calc{
 	);
 	
 	$w->end(no_dialog => 1);
+	return 0 unless $plot;
 	
 	# プロットWindowを開く
 	if ($::main_gui->if_opened('w_word_mds_plot')){
@@ -439,7 +440,6 @@ while ( is.na(check4mds(d)) == 0 ){
 	my $r_command_l = "load(\"$file_save\")\n";
 
 	# プロット作成
-	my $flg_error = 0;
 	my $plot1 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command.$r_command_d,
@@ -447,7 +447,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 	my $plot2 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_2',
 		command_s => $r_command_l.$r_command_a,
@@ -456,7 +456,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	# 分析から省かれた語／コードをチェック
 	my $dropped = '';
@@ -503,8 +503,6 @@ while ( is.na(check4mds(d)) == 0 ){
 			$stress = undef;
 		}
 	}
-
-	return undef if $flg_error;
 
 	my $plotR;
 	$plotR->{result_plots} = [$plot1, $plot2];
@@ -832,6 +830,7 @@ print(g)
 
 sub r_command_mds{
 	return '
+
 if (method_mds == "K"){
 	# Kruskal
 	library(MASS)

@@ -228,15 +228,28 @@ sub _calc{
 	$self->win_obj->update;
 	
 	# 入力内容チェック
-	unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
-		my $win = $self->win_obj;
-		gui_errormsg->open(
-			msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
-			window => \$win,
-			type => 'msg',
-		);
-		$self->rtn;
-		return 0;
+	if ($self->var_id =~ /h[1-5]/i ) {
+		unless ( $self->tani && -e $self->cfile ){
+			my $win = $self->win_obj;
+			gui_errormsg->open(
+				msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
+				window => \$win,
+				type => 'msg',
+			);
+			$self->rtn;
+			return 0;
+		}
+	} else {
+		unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
+			my $win = $self->win_obj;
+			gui_errormsg->open(
+				msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
+				window => \$win,
+				type => 'msg',
+			);
+			$self->rtn;
+			return 0;
+		}
 	}
 	
 	#print "var_id: ".$self->var_id."\n";
