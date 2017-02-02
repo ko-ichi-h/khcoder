@@ -116,7 +116,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left',);
 	
 	$self->{method_coef} = 'binary' unless $self->{method_coef};
-	gui_widget::optmenu->open(
+	my $method_coef_wd = gui_widget::optmenu->open(
 		parent  => $f5,
 		pack    => {-anchor => 'w', -side => 'left'},
 		options =>
@@ -127,7 +127,13 @@ sub _new{
 			],
 		variable => \$self->{method_coef},
 	);
-
+	
+	if ($self->{from} eq 'selected_netgraph') {
+		$method_coef_wd->configure(-state => 'disabled');
+	}
+	
+	
+	
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,

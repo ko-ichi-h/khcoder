@@ -9,6 +9,7 @@ sub innner{
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf,
 		command => sub{ $self->calc; },
+		from    => 'selected_netgraph',
 		pack    => { -anchor   => 'w'},
 		r_cmd   => $self->{command_f},
 	);
