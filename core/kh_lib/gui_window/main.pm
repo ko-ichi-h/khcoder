@@ -60,9 +60,7 @@ sub start{
 		'<Key-Escape>',
 		sub{ return 1; }
 	);
-
 }
-
 
 #------------------#
 #   フォント設定   #
@@ -158,14 +156,11 @@ sub closed{
 sub close{
 	my $self        = shift;
 	$self->close_all;
-	
-	# Main Windowの高さの値をチェック
-	#my $g = $self->win_obj->geometry;
-	#print "height of mw: $self->{org_height}, ", $self->win_obj->height, "\n";
-	
-	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 
+	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 	$::config_obj->save;
+
+	# End sub-process
 	if ($::config_obj->all_in_one_pack){
 		kh_all_in_one->mysql_stop;
 	}

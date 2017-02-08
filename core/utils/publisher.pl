@@ -96,8 +96,8 @@ use File::Path 'rmtree';
 
 &web;
 	#&pdfs if $pdf;
-#&source_tgz;
-#&win_pkg;
+&source_tgz;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;

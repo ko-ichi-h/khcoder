@@ -258,7 +258,7 @@ sub close{
 	my $self = shift;
 	$self->end; # 特殊処理に対応
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
-	$::config_obj->save_ini;
+	#$::config_obj->save_ini;
 	$self->win_obj->destroy;
 	$::main_gui->closed($self->win_name);
 	undef $self;
@@ -267,7 +267,7 @@ sub close{
 sub withd{
 	my $self = shift;
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
-	$::config_obj->save_ini;
+	#$::config_obj->save_ini;
 	$self->{win_obj}->withdraw;
 }
 
