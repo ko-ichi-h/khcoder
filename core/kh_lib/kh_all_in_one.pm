@@ -114,7 +114,10 @@ sub init{
 		#print Dumper $os_info;
 		
 		my $candidate = '';
-		if ( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1)){
+		if (
+			( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1) )
+			&& -e $::config_obj->cwd.'/dep/R/bin/x64/Rterm.exe'
+		){
 			$candidate = '/dep/R/bin/x64/Rterm.exe';
 		} else {
 			$candidate = '/dep/R/bin/i386/Rterm.exe';

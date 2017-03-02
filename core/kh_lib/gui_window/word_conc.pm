@@ -210,7 +210,7 @@ sub _new{
 		-selectborderwidth  => 0,
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
-		-height           => 20,
+		-height           => 10,
 		-command          => sub{$self->view_doc;}
 	)->pack(-fill =>'both',-expand => 'yes');
 
