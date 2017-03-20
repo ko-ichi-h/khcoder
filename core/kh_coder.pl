@@ -30,7 +30,10 @@ BEGIN {
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
 	use Encode::Locale;
-	binmode STDOUT, ":encoding(console_out)";
+	eval {
+		binmode STDOUT, ":encoding(console_out)";
+	};
+	warn $@ if $@;
 
 	# for Windows [1]
 	use Cwd;
