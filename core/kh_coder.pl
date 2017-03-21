@@ -35,6 +35,15 @@ BEGIN {
 	};
 	warn $@ if $@;
 
+	my $locale_fs = 1;
+	eval {
+		Encode::decode('locale_fs', $ENV{'PWD'});
+	};
+	if ( $@ ){
+		warn $@;
+		$locale_fs = 0;
+	}
+
 	# for Windows [1]
 	use Cwd;
 	if ($^O eq 'MSWin32'){
@@ -47,9 +56,9 @@ BEGIN {
 			else { # miniperl
 				chomp($ENV{'PWD'} = `cd`);
 			}
-			$ENV{'PWD'} = Encode::decode('locale_fs', $ENV{'PWD'});
+			$ENV{'PWD'} = Encode::decode('locale_fs', $ENV{'PWD'}) if $locale_fs;
 			$ENV{'PWD'} =~ s:\\:/:g ;
-			$ENV{'PWD'} = Encode::encode('locale_fs', $ENV{'PWD'});
+			$ENV{'PWD'} = Encode::encode('locale_fs', $ENV{'PWD'}) if $locale_fs;
 			return $ENV{'PWD'};
 		};
 		*cwd = *Cwd::cwd = *Cwd::getcwd = *Cwd::fastcwd = *Cwd::fastgetcwd = *Cwd::_NT_cwd = \&Cwd::_win32_cwd;

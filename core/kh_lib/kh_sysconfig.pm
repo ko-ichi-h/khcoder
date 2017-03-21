@@ -6,6 +6,17 @@ use strict;
 use kh_sysconfig::win32;
 use kh_sysconfig::linux;
 
+use Encode;
+use Encode::Locale;
+my $locale_fs = 1;
+eval {
+	Encode::encode('locale_fs', 'test');
+};
+if ( $@ ){
+	warn $@;
+	$locale_fs = 0;
+}
+
 sub readin{
 	my $class = shift;
 	$class .= '::'.&os;
@@ -660,15 +671,13 @@ sub reset_parm{
 #----------------------#
 #   パスの文字コード   #
 
-use Encode;
-use Encode::Locale;
-
 sub os_path{
 	my $self  = shift;
 	my $c     = shift;
 	
 	if ( utf8::is_utf8($c) ){
-		return Encode::encode("locale_fs", $c);
+		$c = Encode::encode("locale_fs", $c) if $locale_fs;
+		return $c;
 	} else {
 		#print "kh_sysconfig::os_path: returning $c\n";
 		return $c;
@@ -680,7 +689,7 @@ sub uni_path{
 	my $c     = shift;
 	
 	unless ( utf8::is_utf8($c) ){
-		$c = Encode::decode("locale_fs", $c);
+		$c = Encode::decode("locale_fs", $c) if $locale_fs;
 	}
 	$c =~ tr/\\/\//;
 	
