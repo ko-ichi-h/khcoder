@@ -971,6 +971,8 @@ sub _calc{
 	';
 
 	# 対応分析実行のためのRコマンド
+	$r_command .=
+		"if ( length(v_pch) > 1 ){ v_pch <- v_pch[rowSums(d) > 0] }\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
