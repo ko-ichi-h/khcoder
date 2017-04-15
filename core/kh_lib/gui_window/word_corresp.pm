@@ -1,5 +1,6 @@
 package gui_window::word_corresp;
 use base qw(gui_window);
+use utf8;
 
 use strict;
 use Tk;
@@ -11,7 +12,7 @@ use mysql_crossout;
 use plotR::network;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -38,13 +39,13 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent       => $lf,
-		verb         => kh_msg->get('plot'), # ÉÛÃÖ
+		verb         => kh_msg->get('plot'), # å¸ƒç½®
 		type         => 'corresp',
 	);
 
-	# ÆşÎÏ¥Ç¡¼¥¿¤ÎÀßÄê
+	# å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	$lf2->Label(
-		-text => kh_msg->get('matrix'), # Ê¬ÀÏ¤Ë»ÈÍÑ¤¹¤ë¥Ç¡¼¥¿É½¤Î¼ïÎà¡§
+		-text => kh_msg->get('matrix'), # åˆ†æã«ä½¿ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿è¡¨ã®ç¨®é¡ï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
@@ -77,7 +78,7 @@ sub _new{
 
 	$self->{radio} = 0;
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('w_d'), # Ãê½Ğ¸ì £ø Ê¸½ñ
+		-text             => kh_msg->get('w_d'), # æŠ½å‡ºèª ï½˜ æ–‡æ›¸
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
@@ -93,7 +94,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high} = $fi_2->Label(
-		-text => kh_msg->get('unit'), # ½¸·×Ã±°Ì¡§
+		-text => kh_msg->get('unit'), # é›†è¨ˆå˜ä½ï¼š
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -110,7 +111,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high2} = $fi_4->Checkbutton(
-		-text     => kh_msg->get('biplot'), # ¸«½Ğ¤·¤Ş¤¿¤ÏÊ¸½ñÈÖ¹æ¤òÆ±»şÉÛÃÖ
+		-text     => kh_msg->get('biplot'), # è¦‹å‡ºã—ã¾ãŸã¯æ–‡æ›¸ç•ªå·ã‚’åŒæ™‚å¸ƒç½®
 		-variable => \$self->{biplot},
 	)->pack(
 		-anchor => 'w',
@@ -118,7 +119,7 @@ sub _new{
 	);
 
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('w_v'), # Ãê½Ğ¸ì £ø ³°ÉôÊÑ¿ô
+		-text             => kh_msg->get('w_v'), # æŠ½å‡ºèª ï½˜ å¤–éƒ¨å¤‰æ•°
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
@@ -148,15 +149,15 @@ sub _new{
 	
 	$self->refresh;
 
-	# º¹°Û¤Î¸²Ãø¤Ê¸ì¤Î¤ßÊ¬ÀÏ
-	$self->{check_filter_w} = 1;                  # ¥Ç¥Õ¥©¥ë¥È¤ÇON
+	# å·®ç•°ã®é¡•è‘—ãªèªã®ã¿åˆ†æ
+	$self->{check_filter_w} = 1;                  # ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ON
 	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
 	);
 
 	$fsw->Checkbutton(
-		-text     => kh_msg->get('flw'), # º¹°Û¤¬¸²Ãø¤Ê¸ì¤òÊ¬ÀÏ¤Ë»ÈÍÑ¡§
+		-text     => kh_msg->get('flw'), # å·®ç•°ãŒé¡•è‘—ãªèªã‚’åˆ†æã«ä½¿ç”¨ï¼š
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -165,7 +166,7 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -180,12 +181,12 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => kh_msg->get('words'), # ¸ì
+		-text => kh_msg->get('words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	$self->refresh_flw;
 
-	# ÆÃÄ§Åª¤Ê¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨
+	# ç‰¹å¾´çš„ãªèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤º
 	my $fs = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -193,7 +194,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => kh_msg->get('flt'), # ¸¶ÅÀ¤«¤éÎ¥¤ì¤¿¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨¡§
+		-text     => kh_msg->get('flt'), # åŸç‚¹ã‹ã‚‰é›¢ã‚ŒãŸèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤ºï¼š
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -202,7 +203,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -217,12 +218,12 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => kh_msg->get('words'), # ¸ì
+		-text => kh_msg->get('words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->refresh_flt;
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf2,
 		type         => 'corresp',
@@ -232,14 +233,14 @@ sub _new{
 		},
 	);
 
-	# À®Ê¬
+	# æˆåˆ†
 	$self->{xy_obj} = gui_widget::r_xy->open(
 		parent    => $lf2,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor => 'w', -pady => 2 },
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
 		command   => sub{ $self->calc; },
@@ -248,13 +249,13 @@ sub _new{
 	);
 
 	$rf->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$rf->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -272,7 +273,7 @@ sub _new{
 	return $self;
 }
 
-# ÀßÄê¤ÎÊİÂ¸¡Ê¡ÖOK¡×¤ò¥¯¥ê¥Ã¥¯¤·¤Æ¼Â¹Ô¤¹¤ë»ş¤Ë¡Ë
+# è¨­å®šã®ä¿å­˜ï¼ˆã€ŒOKã€ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ã¦å®Ÿè¡Œã™ã‚‹æ™‚ã«ï¼‰
 sub _settings_save{
 	my $self = shift;
 	my $settings;
@@ -293,26 +294,26 @@ sub _settings_save{
 		var  => $settings,
 	);
 
-	# Ãê½Ğ¸ìÁªÂò¤ÎÀßÄê¤âÊİÂ¸¤·¤Æ¤ª¤¯
-	# ¡ÊÆÉ¤ß¹ş¤ß¤Ï¼«Æ°¤À¤¬¡¢ÊİÂ¸¤Ï¼êÆ°¡Ä¡Ë
+	# æŠ½å‡ºèªé¸æŠã®è¨­å®šã‚‚ä¿å­˜ã—ã¦ãŠã
+	# ï¼ˆèª­ã¿è¾¼ã¿ã¯è‡ªå‹•ã ãŒã€ä¿å­˜ã¯æ‰‹å‹•â€¦ï¼‰
 	$self->{words_obj}->settings_save;
 
 	return $self;
 }
 
-# ÀßÄê¤ÎÆÉ¤ß¹ş¤ß¡Ê²èÌÌ¤ò³«¤¯»ş¤Ë¡Ë
+# è¨­å®šã®èª­ã¿è¾¼ã¿ï¼ˆç”»é¢ã‚’é–‹ãæ™‚ã«ï¼‰
 sub _settings_load{
 	my $self = shift;
 
-	return 1; # ¤³¤Îµ¡Ç½¤Ç¤Î¤ßÀßÄê¤¬¤¹¤Ù¤ÆÊİÂ¸¤µ¤ì¤ë¤è¤¦¤Ë¤¹¤ë¤È¡¢
-	          # Â¾¤Îµ¡Ç½¤È¤Î¥Ğ¥é¥ó¥¹¤¬°­¤½¤¦¤Ê¤Î¤Ç¡¢ÊİÂ¸¤·¤Æ¤¢¤ë
-	          # ÀßÄê¤ò¡Êº£¤Î½ê¡Ë´º¤¨¤ÆÆÉ¤ß¹ş¤Ş¤Ê¤¤¤³¤È¤Ë¡Ä¡£
+	return 1; # ã“ã®æ©Ÿèƒ½ã§ã®ã¿è¨­å®šãŒã™ã¹ã¦ä¿å­˜ã•ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹ã¨ã€
+	          # ä»–ã®æ©Ÿèƒ½ã¨ã®ãƒãƒ©ãƒ³ã‚¹ãŒæ‚ªãã†ãªã®ã§ã€ä¿å­˜ã—ã¦ã‚ã‚‹
+	          # è¨­å®šã‚’ï¼ˆä»Šã®æ‰€ï¼‰æ•¢ãˆã¦èª­ã¿è¾¼ã¾ãªã„ã“ã¨ã«â€¦ã€‚
 
 	my $settings = $::project_obj->load_dmp(
 		name => $self->win_name,
 	) or return 0;
 
-	# ¥¨¥ó¥È¥ê¡¼
+	# ã‚¨ãƒ³ãƒˆãƒªãƒ¼
 	foreach my $i ('d_n', 'd_x', 'd_y', 'plot_size', 'font_size'){
 		if ( length($settings->{$i}) ){
 			$self->{'entry_'.$i}->delete(0,'end');
@@ -320,11 +321,11 @@ sub _settings_load{
 		}
 	}
 
-	# ¡ÖÃê½Ğ¸ì£øÊ¸½ñ¡× or ¡ÖÃê½Ğ¸ì£ø³°ÉôÊÑ¿ô¡×
+	# ã€ŒæŠ½å‡ºèªï½˜æ–‡æ›¸ã€ or ã€ŒæŠ½å‡ºèªï½˜å¤–éƒ¨å¤‰æ•°ã€
 	$self->{radio} = $settings->{radio};
 	$self->refresh;
 
-	# ¡ÖÃê½Ğ¸ì£øÊ¸½ñ¡×¤Î¾ì¹ç
+	# ã€ŒæŠ½å‡ºèªï½˜æ–‡æ›¸ã€ã®å ´åˆ
 	if ( $self->{radio} == 0 ){
 		$self->{opt_body_high}->set_value( $settings->{tani2} );
 		if ($settings->{biplot}){
@@ -334,13 +335,13 @@ sub _settings_load{
 		}
 	}
 
-	# ¡ÖÃê½Ğ¸ì£ø³°ÉôÊÑ¿ô¡×¤Î¾ì¹ç
+	# ã€ŒæŠ½å‡ºèªï½˜å¤–éƒ¨å¤‰æ•°ã€ã®å ´åˆ
 	elsif ( $self->{radio} == 1 ) {
 		#$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
 }
 
-# ¡ÖÆÃÄ§¸ì¤ËÃíÌÜ¡×¤Î¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹
+# ã€Œç‰¹å¾´èªã«æ³¨ç›®ã€ã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 sub refresh_flt{
 	my $self = shift;
 	if ( $self->{check_filter} ){
@@ -372,26 +373,26 @@ sub refresh_flw{
 
 
 
-# ¥é¥¸¥ª¥Ü¥¿¥ó´ØÏ¢
+# ãƒ©ã‚¸ã‚ªãƒœã‚¿ãƒ³é–¢é€£
 sub refresh{
 	my $self = shift;
 	unless ($self->tani){return 0;}
 
 	#------------------------#
-	#   ³°ÉôÊÑ¿ôÁªÂòWidget   #
+	#   å¤–éƒ¨å¤‰æ•°é¸æŠWidget   #
 
 	my @options = ();
 	my @tanis   = ();
 
 	unless ($self->{opt_body_var}){
-		# ÍøÍÑ¤Ç¤­¤ëÊÑ¿ô¤ò¥Á¥§¥Ã¥¯
+		# åˆ©ç”¨ã§ãã‚‹å¤‰æ•°ã‚’ãƒã‚§ãƒƒã‚¯
 		my $h = mysql_outvar->get_list;
 		my @options = ();
 		foreach my $i (@{$h}){
 			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
 		}
 		
-		# ¥ê¥¹¥ÈÉ½¼¨
+		# ãƒªã‚¹ãƒˆè¡¨ç¤º
 		$self->{vars} = \@options;
 		$self->{opt_body_var} = $self->{opt_frame_var}->Scrolled(
 			'HList',
@@ -445,7 +446,7 @@ sub refresh{
 	}
 
 	#------------------------------#
-	#   ¾å°Ì¤ÎÊ¸½ñÃ±°ÌÁªÂòWidget   #
+	#   ä¸Šä½ã®æ–‡æ›¸å˜ä½é¸æŠWidget   #
 
 	unless ($self->{opt_body_high}){
 
@@ -484,7 +485,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => 
 					[
-						[kh_msg->get('na'), undef], # ÍøÍÑÉÔ²Ä
+						[kh_msg->get('na'), undef], # åˆ©ç”¨ä¸å¯
 					],
 				variable => \$self->{high},
 			);
@@ -506,7 +507,7 @@ sub refresh{
 	}
 
 	#----------------------------------#
-	#   Widget¤ÎÍ­¸ú¡¦Ìµ¸ú¤òÀÚ¤êÂØ¤¨   #
+	#   Widgetã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã‚’åˆ‡ã‚Šæ›¿ãˆ   #
 
 	if ($self->{radio} == 0){
 		if ($self->{opt_body_high_ok}){
@@ -541,7 +542,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -554,16 +555,16 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('select_pos'), # ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£
+			msg  => kh_msg->get('select_pos'), # å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚
 		);
 		return 0;
 	}
@@ -581,7 +582,7 @@ sub calc{
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('select_var'), # ³°ÉôÊÑ¿ô¤ò1¤Ä°Ê¾åÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+				msg  => kh_msg->get('select_var'), # å¤–éƒ¨å¤‰æ•°ã‚’1ã¤ä»¥ä¸Šé¸æŠã—ã¦ãã ã•ã„ã€‚
 			);
 			return 0;
 		}
@@ -594,7 +595,7 @@ sub calc{
 				){
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => kh_msg->get('check_var_unit'), # ¸½ºß¤Î½ê¡¢½¸·×Ã±°Ì¤¬°Û¤Ê¤ë³°ÉôÊÑ¿ô¤òÆ±»ş¤Ë»ÈÍÑ¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£
+						msg  => kh_msg->get('check_var_unit'), # ç¾åœ¨ã®æ‰€ã€é›†è¨ˆå˜ä½ãŒç•°ãªã‚‹å¤–éƒ¨å¤‰æ•°ã‚’åŒæ™‚ã«ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚
 					);
 					return 0;
 				}
@@ -624,7 +625,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('select_3words'), # ¾¯¤Ê¤¯¤È¤â3¤Ä°Ê¾å¤ÎÃê½Ğ¸ì¤òÉÛÃÖ¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('select_3words'), # å°‘ãªãã¨ã‚‚3ã¤ä»¥ä¸Šã®æŠ½å‡ºèªã‚’å¸ƒç½®ã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
@@ -633,13 +634,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					kh_msg->get('too_many1') # ¸½ºß¤ÎÀßÄê¤Ç¤Ï
+					kh_msg->get('too_many1') # ç¾åœ¨ã®è¨­å®šã§ã¯
 					.$check_num
-					.kh_msg->get('too_many2') # ¸ì¤¬ÉÛÃÖ¤µ¤ì¤Ş¤¹¡£
+					.kh_msg->get('too_many2') # èªãŒå¸ƒç½®ã•ã‚Œã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('too_many3') # ÉÛÃÖ¤¹¤ë¸ì¤Î¿ô¤Ï100¡Á150ÄøÅÙ¤Ë¤ª¤µ¤¨¤ë¤³¤È¤ò¿ä¾©¤·¤Ş¤¹¡£
+					.kh_msg->get('too_many3') # å¸ƒç½®ã™ã‚‹èªã®æ•°ã¯100ã€œ150ç¨‹åº¦ã«ãŠã•ãˆã‚‹ã“ã¨ã‚’æ¨å¥¨ã—ã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('too_many4') # Â³¹Ô¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡©
+					.kh_msg->get('too_many4') # ç¶šè¡Œã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -652,7 +653,7 @@ sub calc{
 
 	my $w = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $tani2,
@@ -666,7 +667,7 @@ sub calc{
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 
-	# ³°ÉôÊÑ¿ô¤ÎÉÕÍ¿
+	# å¤–éƒ¨å¤‰æ•°ã®ä»˜ä¸
 	if ($self->{radio} == 1){
 		
 		my $n_v = 0;
@@ -700,7 +701,7 @@ sub calc{
 		$r_command .= &r_command_aggr($n_v);
 	}
 
-	# ³°ÉôÊÑ¿ô¤¬Ìµ¤«¤Ã¤¿¾ì¹ç
+	# å¤–éƒ¨å¤‰æ•°ãŒç„¡ã‹ã£ãŸå ´åˆ
 	$r_command .= '
 		if ( length(v_pch) == 0 ) {
 			v_pch   <- 3
@@ -708,7 +709,7 @@ sub calc{
 		}
 	';
 
-	# ¶õ¤Î¹Ô¡¦¶õ¤ÎÎó¤òºï½ü
+	# ç©ºã®è¡Œãƒ»ç©ºã®åˆ—ã‚’å‰Šé™¤
 	$r_command .=
 		"if ( length(v_pch) > 1 ){ v_pch <- v_pch[rowSums(d) > 0] }\n";
 	$r_command .=
@@ -755,7 +756,7 @@ sub calc{
 	$w->end(no_dialog => 1);
 	return 0 unless $plot;
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	my $plotwin_id = 'w_word_corresp_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
@@ -817,9 +818,9 @@ sub make_plot{
 		}
 	";
 
-	$r_command .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # À®Ê¬
-	$r_command .= "name_eig <- '".kh_msg->pget('eig')."'\n"; # ¸ÇÍ­ÃÍ
-	$r_command .= "name_exp <- '".kh_msg->pget('exp')."'\n"; # ´óÍ¿Î¨
+	$r_command .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # æˆåˆ†
+	$r_command .= "name_eig <- '".kh_msg->pget('eig')."'\n"; # å›ºæœ‰å€¤
+	$r_command .= "name_exp <- '".kh_msg->pget('exp')."'\n"; # å¯„ä¸ç‡
 
 	$r_command .= "library(MASS)\n";
 
@@ -833,36 +834,36 @@ sub make_plot{
 	$r_command .= "inertias <- round(k,4)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
-	# ¥×¥í¥Ã¥È¤Î¤¿¤á¤ÎR¥³¥Ş¥ó¥É
+	# ãƒ—ãƒ­ãƒƒãƒˆã®ãŸã‚ã®Rã‚³ãƒãƒ³ãƒ‰
 	my ($r_command_3a, $r_command_3);
 	my ($r_command_2a, $r_command_2);
 	my ($r_com_gray, $r_com_gray_a);
 	
-	# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤Ê¤ï¤Ê¤¤¾ì¹ç
+	# ãƒãƒ–ãƒ«è¡¨ç¾ã‚’è¡Œãªã‚ãªã„å ´åˆ
 	if ( $args{bubble} == 0 ){
 		$r_command .= "font_size <- $fontsize\n";
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 
-		# ¥é¥Ù¥ë¤È¥É¥Ã¥È¤ò¥×¥í¥Ã¥È
+		# ãƒ©ãƒ™ãƒ«ã¨ãƒ‰ãƒƒãƒˆã‚’ãƒ—ãƒ­ãƒƒãƒˆ
 		$r_command_2a = 
 			"plot_mode=\"color\"\n"
 			.&r_command_normal;
 		$r_command_2 = $common.$r_command_2a;
 		
-		# ¥É¥Ã¥È¤Î¤ß¥×¥í¥Ã¥È
+		# ãƒ‰ãƒƒãƒˆã®ã¿ãƒ—ãƒ­ãƒƒãƒˆ
 		$r_command .=
 			"plot_mode=\"dots\"\n"
 			.&r_command_normal;
 
 		if ($args{biplot}){
-			# ÊÑ¿ô¤Î¤ß¤Î¥×¥í¥Ã¥È
+			# å¤‰æ•°ã®ã¿ã®ãƒ—ãƒ­ãƒƒãƒˆ
 			$r_command_3a .= 
 				"plot_mode=\"vars\"\n"
 				.&r_command_normal;
 			$r_command_3 = $common.$r_command_3a;
 			
-			# ¥°¥ì¡¼¥¹¥±¡¼¥ë¤Î¥×¥í¥Ã¥È
+			# ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«ã®ãƒ—ãƒ­ãƒƒãƒˆ
 			$r_com_gray_a .= &r_command_slab_my;
 			$r_com_gray_a .= 
 				"plot_mode=\"gray\"\n"
@@ -870,9 +871,9 @@ sub make_plot{
 			$r_com_gray = $common.$r_com_gray_a;
 		}
 
-	# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤¦¾ì¹ç
+	# ãƒãƒ–ãƒ«è¡¨ç¾ã‚’è¡Œã†å ´åˆ
 	} else {
-		# ½é´ü²½
+		# åˆæœŸåŒ–
 		#$r_command .= &r_command_slab_my;
 		$r_command .= "font_size <- $fontsize\n";
 		$r_command .= "resize_vars <- $args{resize_vars}\n";
@@ -880,29 +881,29 @@ sub make_plot{
 		$r_command .= "labcd <- NULL\n\n";
 		my $common = $r_command;
 		
-		# ¥É¥Ã¥È¤Î¤ß
+		# ãƒ‰ãƒƒãƒˆã®ã¿
 		$r_command .= "plot_mode <- \"dots\"\n";
 		$r_command .= &r_command_bubble;
 
-		# ¥«¥é¡¼
+		# ã‚«ãƒ©ãƒ¼
 		$r_command_2a .= "plot_mode <- \"color\"\n";
 		$r_command_2a .= &r_command_bubble(%args);
 		$r_command_2  = $common.$r_command_2a;
 
 		if ($args{biplot}){
-			# ÊÑ¿ô¤Î¤ß
+			# å¤‰æ•°ã®ã¿
 			$r_command_3a .= "plot_mode <- \"vars\"\n";
 			$r_command_3a .= &r_command_bubble(%args);
 			$r_command_3  = $common.$r_command_3a;
 			
-			# ¥°¥ì¡¼¥¹¥±¡¼¥ë
+			# ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«
 			$r_com_gray_a .= "plot_mode <- \"gray\"\n";
 			$r_com_gray_a .= &r_command_bubble(%args);
 			$r_com_gray = $common.$r_com_gray_a;
 		}
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
@@ -1003,7 +1004,7 @@ sub r_command_aggr{
 	my $t =
 		"name_nav <- '"
 		.kh_msg->pget('nav')
-		."'\n"; # ·çÂ»ÃÍ
+		."'\n"; # æ¬ æå€¤
 	$t .= << 'END_OF_the_R_COMMAND';
 
 aggregate_with_var <- function(d, doc_length_mtr, v) {
@@ -1876,11 +1877,11 @@ scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1,
 
 }
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦ÂĞ±şÊ¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å¯¾å¿œåˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{

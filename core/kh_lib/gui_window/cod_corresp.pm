@@ -1,16 +1,16 @@
 package gui_window::cod_corresp;
 use base qw(gui_window);
-
+use utf8;
 use strict;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ¥³¡¼¥Ç¥£¥ó¥°¡¦ÂĞ±şÊ¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ»å¯¾å¿œåˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 
 	my $lf = $win->LabFrame(
 		-label => 'Codes',
@@ -28,7 +28,7 @@ sub _new{
 	)->pack(-fill => 'both', -expand => 1);
 
 
-	# ¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë
+	# ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«
 	my %pack0 = (
 		-anchor => 'w',
 		#-padx => 2,
@@ -42,14 +42,14 @@ sub _new{
 		command => sub{$self->read_cfile;},
 	);
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½
 	my $f1 = $lf->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4
 	);
 	$f1->Label(
-		-text => kh_msg->get('coding_unit'), # ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì¡§
+		-text => kh_msg->get('coding_unit'), # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -63,9 +63,9 @@ sub _new{
 		pack   => \%pack1,
 	);
 
-	# ¥³¡¼¥ÉÁªÂò
+	# ã‚³ãƒ¼ãƒ‰é¸æŠ
 	$lf->Label(
-		-text => kh_msg->get('select_codes'), # ¥³¡¼¥ÉÁªÂò¡§
+		-text => kh_msg->get('select_codes'), # ã‚³ãƒ¼ãƒ‰é¸æŠï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -96,7 +96,7 @@ sub _new{
 			-expand => 1
 	);
 
-	# ¥³¡¼¥ÉÁªÂòÍÑHList
+	# ã‚³ãƒ¼ãƒ‰é¸æŠç”¨HList
 	$self->{hlist} = $f2_1->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
@@ -134,7 +134,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => kh_msg->get('sel3'), # ¡¡¡¡¢¨¥³¡¼¥É¤ò3¤Ä°Ê¾åÁªÂò¤·¤Æ²¼¤µ¤¤¡£
+		-text => kh_msg->get('sel3'), # ã€€ã€€â€»ã‚³ãƒ¼ãƒ‰ã‚’3ã¤ä»¥ä¸Šé¸æŠã—ã¦ä¸‹ã•ã„ã€‚
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -142,9 +142,9 @@ sub _new{
 		-pady   => 2,
 	);
 
-	# ÆşÎÏ¥Ç¡¼¥¿¤ÎÀßÄê
+	# å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	$lf2->Label(
-		-text => kh_msg->get('matrix_type'), # Ê¬ÀÏ¤Ë»ÈÍÑ¤¹¤ë¥Ç¡¼¥¿É½¤Î¼ïÎà¡§
+		-text => kh_msg->get('matrix_type'), # åˆ†æã«ä½¿ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿è¡¨ã®ç¨®é¡ï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -177,7 +177,7 @@ sub _new{
 
 	$self->{radio} = 1;
 	#$fi_1->Radiobutton(
-	#	-text             => kh_msg->get('c_d'), # ¥³¡¼¥É £ø Ê¸½ñ¡ÊÆ±»şÉÛÃÖ¤Ê¤·¡Ë
+	#	-text             => kh_msg->get('c_d'), # ã‚³ãƒ¼ãƒ‰ ï½˜ æ–‡æ›¸ï¼ˆåŒæ™‚å¸ƒç½®ãªã—ï¼‰
 	#	-font             => "TKFN",
 	#	-variable         => \$self->{radio},
 	#	-value            => 0,
@@ -185,7 +185,7 @@ sub _new{
 	#)->pack(-anchor => 'w');
 
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('c_dd'), # ¥³¡¼¥É £ø ¾å°Ì¤Î¾Ï¡¦Àá¡¦ÃÊÍî
+		-text             => kh_msg->get('c_dd'), # ã‚³ãƒ¼ãƒ‰ ï½˜ ä¸Šä½ã®ç« ãƒ»ç¯€ãƒ»æ®µè½
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
@@ -201,7 +201,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high} = $fi_2->Label(
-		-text => kh_msg->get('gui_window::word_corresp->unit'), # ½¸·×Ã±°Ì¡§
+		-text => kh_msg->get('gui_window::word_corresp->unit'), # é›†è¨ˆå˜ä½ï¼š
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -219,7 +219,7 @@ sub _new{
 	);
 	$self->{biplot} = 1;
 	$self->{label_high2} = $fi_4->Checkbutton(
-		-text     => kh_msg->get('gui_window::word_corresp->biplot'), # ¸«½Ğ¤·¤Ş¤¿¤ÏÊ¸½ñÈÖ¹æ¤òÆ±»şÉÛÃÖ
+		-text     => kh_msg->get('gui_window::word_corresp->biplot'), # è¦‹å‡ºã—ã¾ãŸã¯æ–‡æ›¸ç•ªå·ã‚’åŒæ™‚å¸ƒç½®
 		-variable => \$self->{biplot},
 	)->pack(
 		-anchor => 'w',
@@ -227,7 +227,7 @@ sub _new{
 	);
 
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('c_v'), # ¥³¡¼¥É £ø ³°ÉôÊÑ¿ô
+		-text             => kh_msg->get('c_v'), # ã‚³ãƒ¼ãƒ‰ ï½˜ å¤–éƒ¨å¤‰æ•°
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 2,
@@ -254,7 +254,7 @@ sub _new{
 		$self->{radio} = 2;
 	}
 
-	# º¹°Û¤Î¸²Ãø¤Ê¸ì¤Î¤ßÊ¬ÀÏ
+	# å·®ç•°ã®é¡•è‘—ãªèªã®ã¿åˆ†æ
 	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
@@ -262,7 +262,7 @@ sub _new{
 
 	$self->{check_filter_w} = 1;
 	$self->{check_filter_w_widget} = $fsw->Checkbutton(
-		-text     => kh_msg->get('flw'), # º¹°Û¤¬¸²Ãø¤Ê¥³¡¼¥É¤òÊ¬ÀÏ¤Ë»ÈÍÑ¡§
+		-text     => kh_msg->get('flw'), # å·®ç•°ãŒé¡•è‘—ãªã‚³ãƒ¼ãƒ‰ã‚’åˆ†æã«ä½¿ç”¨ï¼š
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -271,7 +271,7 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -287,7 +287,7 @@ sub _new{
 
 	$self->refresh_flw;
 
-	# ÆÃÄ§Åª¤Ê¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨
+	# ç‰¹å¾´çš„ãªèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤º
 	my $fs = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -295,7 +295,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => kh_msg->get('flt'), # ¸¶ÅÀ¤«¤éÎ¥¤ì¤¿¥³¡¼¥É¤Î¤ß¥é¥Ù¥ëÉ½¼¨¡§
+		-text     => kh_msg->get('flt'), # åŸç‚¹ã‹ã‚‰é›¢ã‚ŒãŸã‚³ãƒ¼ãƒ‰ã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤ºï¼š
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -304,7 +304,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -322,7 +322,7 @@ sub _new{
 
 	$self->refresh;
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf2,
 		type         => 'corresp',
@@ -332,14 +332,14 @@ sub _new{
 		},
 	);
 
-	# À®Ê¬
+	# æˆåˆ†
 	$self->{xy_obj} = gui_widget::r_xy->open(
 		parent    => $lf2,
 		command   => sub{ $self->_calc; },
 		pack      => { -anchor => 'w', -pady => 2 },
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
 		command   => sub{ $self->_calc; },
@@ -354,7 +354,7 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	# OK¡¦¥­¥ã¥ó¥»¥ë
+	# OKãƒ»ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 	my $f3 = $rf->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
@@ -382,7 +382,7 @@ sub _new{
 	return $self;
 }
 
-# ¡ÖÆÃÄ§¸ì¤ËÃíÌÜ¡×¤Î¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹
+# ã€Œç‰¹å¾´èªã«æ³¨ç›®ã€ã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 sub refresh_flt{
 	my $self = shift;
 	if ( $self->{check_filter} ){
@@ -420,26 +420,26 @@ sub refresh_same_doc_unit{
 }
 
 
-# ¥é¥¸¥ª¥Ü¥¿¥ó´ØÏ¢
+# ãƒ©ã‚¸ã‚ªãƒœã‚¿ãƒ³é–¢é€£
 sub refresh{
 	my $self = shift;
 	unless ($self->{tani_obj}){return 0;}
 
 	#------------------------#
-	#   ³°ÉôÊÑ¿ôÁªÂòWidget   #
+	#   å¤–éƒ¨å¤‰æ•°é¸æŠWidget   #
 
 	unless ($self->{last_tani} eq $self->tani){
 		if ($self->{opt_body_var}){
 			$self->{opt_body_var}->destroy;
 		}
 
-		# ÍøÍÑ¤Ç¤­¤ëÊÑ¿ô¤ò¥Á¥§¥Ã¥¯
+		# åˆ©ç”¨ã§ãã‚‹å¤‰æ•°ã‚’ãƒã‚§ãƒƒã‚¯
 		my %tani_check = ();
 		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 			$tani_check{$i} = 1;
 			last if ($self->tani eq $i);
 		}
-		# ¤³¤ì²¿¤À¤í¤¦¡© 2011 06/16
+		# ã“ã‚Œä½•ã ã‚ã†ï¼Ÿ 2011 06/16
 		#if ($self->tani eq 'bun'){
 		#	%tani_check = ();
 		#	$tani_check{'bun'} = 1;
@@ -456,7 +456,7 @@ sub refresh{
 			}
 		}
 
-		# ¥ê¥¹¥ÈÉ½¼¨
+		# ãƒªã‚¹ãƒˆè¡¨ç¤º
 		$self->{vars} = \@options;
 		$self->{opt_body_var} = $self->{opt_frame_var}->Scrolled(
 			'HList',
@@ -495,7 +495,7 @@ sub refresh{
 				if $self->{opt_body_var}->info('exists', 0);
 
 	#------------------------------#
-	#   ¾å°Ì¤ÎÊ¸½ñÃ±°ÌÁªÂòWidget   #
+	#   ä¸Šä½ã®æ–‡æ›¸å˜ä½é¸æŠWidget   #
 
 		my @tanis   = ();
 		if ($self->{opt_body_high}){
@@ -503,8 +503,8 @@ sub refresh{
 		}
 
 		my %tani_name = (
-			"bun" => kh_msg->gget('sentence'), # Ê¸
-			"dan" => kh_msg->gget('paragraph'), # ÃÊÍî
+			"bun" => kh_msg->gget('sentence'), # æ–‡
+			"dan" => kh_msg->gget('paragraph'), # æ®µè½
 			"h5"  => "H5",
 			"h4"  => "H4",
 			"h3"  => "H3",
@@ -520,7 +520,7 @@ sub refresh{
 					"select status from status where name = \'$i\'",1
 				)->hundle->fetch->[0]
 			){
-				# ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì¤¬¡ÖÊ¸¡×¤Î¾ì¹ç¡¢¡ÖÃÊÍî¡×Ã±°Ì¤Ç¤Î½¸·×¤ÏÉÔ²Ä
+				# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½ãŒã€Œæ–‡ã€ã®å ´åˆã€ã€Œæ®µè½ã€å˜ä½ã§ã®é›†è¨ˆã¯ä¸å¯
 				if (
 					   $i eq 'dan'
 					&& $self->tani eq 'bun'
@@ -551,7 +551,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => 
 					[
-						[kh_msg->get('na'), undef], # ÍøÍÑÉÔ²Ä
+						[kh_msg->get('na'), undef], # åˆ©ç”¨ä¸å¯
 					],
 				variable => \$self->{high},
 			);
@@ -560,7 +560,7 @@ sub refresh{
 	}
 
 	#----------------------------------#
-	#   Widget¤ÎÍ­¸ú¡¦Ìµ¸ú¤òÀÚ¤êÂØ¤¨   #
+	#   Widgetã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã‚’åˆ‡ã‚Šæ›¿ãˆ   #
 
 	if ($self->{radio} == 0){
 		$self->{opt_body_high}->configure(-state => 'disable');
@@ -611,7 +611,7 @@ sub refresh{
 	return 1;
 }
 
-# ¥³¡¼¥Ç¥£¥ó¥°¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë¤ÎÆÉ¤ß¹ş¤ß
+# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿
 sub read_cfile{
 	my $self = shift;
 	
@@ -634,7 +634,7 @@ sub read_cfile{
 	foreach my $i (@{$cod_obj->codes}){
 		
 		$self->{checks}[$row]{check} = 1;
-		$self->{checks}[$row]{name}  = $i->name; # ½¤Àµ¡ª 2010 12/24
+		$self->{checks}[$row]{name}  = $i->name; # ä¿®æ­£ï¼ 2010 12/24
 		
 		my $c = $self->{hlist}->Checkbutton(
 			-text     => $i->name,
@@ -663,7 +663,7 @@ sub read_cfile{
 sub start_raise{
 	my $self = shift;
 	
-	# ¥³¡¼¥ÉÁªÂò¤òÆÉ¤ß¼è¤ê
+	# ã‚³ãƒ¼ãƒ‰é¸æŠã‚’èª­ã¿å–ã‚Š
 	my %selection = ();
 	foreach my $i (@{$self->{checks}}){
 		if ($i->{check}){
@@ -673,10 +673,10 @@ sub start_raise{
 		}
 	}
 	
-	# ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤òºÆÆÉ¤ß¹ş¤ß
+	# ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å†èª­ã¿è¾¼ã¿
 	$self->read_cfile;
 	
-	# ÁªÂò¤òÅ¬ÍÑ
+	# é¸æŠã‚’é©ç”¨
 	foreach my $i (@{$self->{checks}}){
 		if ($selection{$i->{name}} == 1 || $selection{$i->{name}} == 0){
 			$i->{check} = 1;
@@ -690,7 +690,7 @@ sub start_raise{
 }
 
 
-# ¥³¡¼¥É¤¬3¤Ä°Ê¾åÁªÂò¤µ¤ì¤Æ¤¤¤ë¤«¥Á¥§¥Ã¥¯
+# ã‚³ãƒ¼ãƒ‰ãŒ3ã¤ä»¥ä¸Šé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 sub check_selected_num{
 	my $self = shift;
 	
@@ -707,7 +707,7 @@ sub check_selected_num{
 	return $self;
 }
 
-# ¤¹¤Ù¤ÆÁªÂò
+# ã™ã¹ã¦é¸æŠ
 sub select_all{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -717,7 +717,7 @@ sub select_all{
 	return $self;
 }
 
-# ¥¯¥ê¥¢
+# ã‚¯ãƒªã‚¢
 sub select_none{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -730,7 +730,7 @@ sub select_none{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -742,13 +742,13 @@ sub start{
 	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
 }
 
-# ¥×¥í¥Ã¥ÈºîÀ®¡õÉ½¼¨
+# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆï¼†è¡¨ç¤º
 sub _calc{
 	my $self = shift;
 
 	#if ( $self->{radio} == 1 ){
 	#	if ( $self->tani eq $self->{high} ){
-	#		# ¤³¤Î¾ì¹ç¤Ï¾å°Ì¸«½Ğ¤·¤ò¼èÆÀ¤·¤Ê¤¤
+	#		# ã“ã®å ´åˆã¯ä¸Šä½è¦‹å‡ºã—ã‚’å–å¾—ã—ãªã„
 	#		$self->{radio} = 0;
 	#	}
 	#}
@@ -767,7 +767,7 @@ sub _calc{
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('gui_window::word_corresp->select_var'), # ³°ÉôÊÑ¿ô¤ò1¤Ä°Ê¾åÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+				msg  => kh_msg->get('gui_window::word_corresp->select_var'), # å¤–éƒ¨å¤‰æ•°ã‚’1ã¤ä»¥ä¸Šé¸æŠã—ã¦ãã ã•ã„ã€‚
 			);
 			return 0;
 		}
@@ -781,7 +781,7 @@ sub _calc{
 				){
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => kh_msg->get('gui_window::word_corresp->check_var_unit'), # '¸½ºß¤Î½ê¡¢½¸·×Ã±°Ì¤¬°Û¤Ê¤ë³°ÉôÊÑ¿ô¤òÆ±»ş¤Ë»ÈÍÑ¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£',
+						msg  => kh_msg->get('gui_window::word_corresp->check_var_unit'), # 'ç¾åœ¨ã®æ‰€ã€é›†è¨ˆå˜ä½ãŒç•°ãªã‚‹å¤–éƒ¨å¤‰æ•°ã‚’åŒæ™‚ã«ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚',
 					);
 					return 0;
 				}
@@ -797,31 +797,26 @@ sub _calc{
 
 	my $wait_window = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¼èÆÀ
+	# ãƒ‡ãƒ¼ã‚¿å–å¾—
 	my $r_command = '';
-	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){ # ½¤Àµ¡ª 2010 12/24
+	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){ # ä¿®æ­£ï¼ 2010 12/24
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => kh_msg->get('er_zero'), # ½Ğ¸½¿ô¤¬0¤Î¥³¡¼¥É¤ÏÍøÍÑ¤Ç¤­¤Ş¤»¤ó¡£
+			msg    => kh_msg->get('er_zero'), # å‡ºç¾æ•°ãŒ0ã®ã‚³ãƒ¼ãƒ‰ã¯åˆ©ç”¨ã§ãã¾ã›ã‚“ã€‚
 		);
 		#$self->close();
 		$wait_window->end(no_dialog => 1);
 		return 0;
 	}
 
-	# ¥Ç¡¼¥¿À°·Á
+	# ãƒ‡ãƒ¼ã‚¿æ•´å½¢
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
 		my $name = $i->{name};
-		if (index($name,'¡ö') == 0){
-			substr($name, 0, 2) = '';
-		}
-		elsif (index($name,'*') == 0){
-			substr($name, 0, 1) = ''
-		}
+		substr($name, 0, 1) = '';
 		$r_command .= '"'.$name.'",'
 			if $i->{check}
 		;
@@ -830,7 +825,7 @@ sub _calc{
 	$r_command .= ")\n";
 	$r_command .= "d <- t(d)\n";
 	
-	# ¾å°Ì¸«½Ğ¤·¤ÎÉÕÍ¿
+	# ä¸Šä½è¦‹å‡ºã—ã®ä»˜ä¸
 	if ($self->{radio} == 1){
 		my $tani_low  = $self->tani;
 		my $tani_high = $self->{high};
@@ -839,7 +834,7 @@ sub _calc{
 			gui_errormsg->open(
 				type   => 'msg',
 				window  => \$self->win_obj,
-				msg    => kh_msg->get('er_unit'), # ½¸·×Ã±°Ì¤ÎÁªÂò¤¬ÉÔÀµ¤Ç¤¹¡£
+				msg    => kh_msg->get('er_unit'), # é›†è¨ˆå˜ä½ã®é¸æŠãŒä¸æ­£ã§ã™ã€‚
 			);
 			return 0;
 		}
@@ -902,7 +897,7 @@ sub _calc{
 		}
 	}
 
-	# ³°ÉôÊÑ¿ô¤ÎÉÕÍ¿
+	# å¤–éƒ¨å¤‰æ•°ã®ä»˜ä¸
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 	if ($self->{radio} == 2){
@@ -962,7 +957,7 @@ sub _calc{
 		}
 		$r_command .= &r_command_aggr_var($n_v);
 	}
-	# ³°ÉôÊÑ¿ô¤¬Ìµ¤«¤Ã¤¿¾ì¹ç
+	# å¤–éƒ¨å¤‰æ•°ãŒç„¡ã‹ã£ãŸå ´åˆ
 	$r_command .= '
 		if ( length(v_pch) == 0 ) {
 			v_pch   <- 3
@@ -970,7 +965,7 @@ sub _calc{
 		}
 	';
 
-	# ÂĞ±şÊ¬ÀÏ¼Â¹Ô¤Î¤¿¤á¤ÎR¥³¥Ş¥ó¥É
+	# å¯¾å¿œåˆ†æå®Ÿè¡Œã®ãŸã‚ã®Rã‚³ãƒãƒ³ãƒ‰
 	$r_command .=
 		"if ( length(v_pch) > 1 ){ v_pch <- v_pch[rowSums(d) > 0] }\n";
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
@@ -1015,7 +1010,7 @@ sub _calc{
 	$wait_window->end(no_dialog => 1);
 	return 0 unless $plot;
 
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_cod_corresp_plot')){
 		$::main_gui->get('w_cod_corresp_plot')->close;
 	}
@@ -1025,7 +1020,7 @@ sub _calc{
 		#ax          => $self->{ax},
 	);
 
-	# ¸å½èÍı
+	# å¾Œå‡¦ç†
 	unless ( $self->{radio} ){
 		$self->{radio} = 1;
 	}
@@ -1049,11 +1044,11 @@ n_total <- n_total[ order(rownames(n_total))  ]
 #------------------------------------------------------------------------------
 n_total <- subset(
 	n_total,
-	row.names(d) != "·çÂ»ÃÍ" & row.names(d) != "." & row.names(d) != "missing"
+	row.names(d) != "æ¬ æå€¤" & row.names(d) != "." & row.names(d) != "missing"
 )
 d <- subset(
 	d,
-	row.names(d) != "·çÂ»ÃÍ" & row.names(d) != "." & row.names(d) != "missing"
+	row.names(d) != "æ¬ æå€¤" & row.names(d) != "." & row.names(d) != "missing"
 )
 #------------------------------------------------------------------------------
 n_total <- subset(n_total,rowSums(d) > 0)
@@ -1079,11 +1074,11 @@ aggregate_with_var <- function(d, doc_length_mtr, v) {
 
 	n_total <- subset(
 		n_total,
-		row.names(d) != "·çÂ»ÃÍ" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
+		row.names(d) != "æ¬ æå€¤" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
 	)
 	d <- subset(
 		d,
-		row.names(d) != "·çÂ»ÃÍ" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
+		row.names(d) != "æ¬ æå€¤" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
 	)
 	n_total <- as.matrix(n_total)
 	return( list(d, n_total) )
@@ -1139,7 +1134,7 @@ return $t;
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub cfile{
 	my $self = shift;
