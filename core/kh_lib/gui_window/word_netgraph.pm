@@ -277,6 +277,15 @@ sub calc{
 			$heads{$n} = mysql_getheader->get($tani2, $n);
 		}
 
+		if ($tani1 eq $tani2) {
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => 'Unexpected selection of computing units!',
+			);
+			$wait_window->end(no_dialog => 1);
+			return 0;
+		}
+
 		my $sql = '';
 		$sql .= "SELECT $tani2.id\n";
 		$sql .= "FROM   $tani1, $tani2\n";

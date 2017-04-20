@@ -125,8 +125,8 @@ sub add_new{
 	if ($new->comment){
 		$sql .= $self->dbh->quote( $new->comment ).",";
 	} else {
-		$sql .= "'no description',";
-		$new->comment('no description');
+		$sql .= "'',";
+		$new->comment('');
 	}
 	$sql .= "'".$new->dbname."'";
 	$sql .= ')';

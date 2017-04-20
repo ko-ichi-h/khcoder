@@ -355,7 +355,7 @@ sub log{
 	use POSIX 'strftime';
 	my $self = shift;
 	my $logfile = $::config_obj->sqllog_file;
-	open (LOG,">>$logfile") or 
+	open (LOG,">>:utf8", $logfile) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$logfile"

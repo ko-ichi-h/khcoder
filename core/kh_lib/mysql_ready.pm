@@ -80,6 +80,7 @@ sub first{
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
 	
+	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 	
@@ -291,14 +292,14 @@ sub readin{
 		) $self->{max_rows}
 	",1);
 
-	my $thefile = "'$file'";
-	
+	#my $thefile = $::config_obj->uni_path($file);
 	#my $icode = Jcode->new($thefile)->icode;
 	#$thefile = Jcode->new($thefile,$icode)->euc;
 	#$thefile =~ tr/\\/\//;
 	#$thefile = Jcode->new($thefile,'euc')->$icode;
 	#print "$thefile\n";
 	
+	my $thefile = "'$file'";
 	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata CHARACTER SET $icode",1);
 
 	# 新しいバージョンの茶筌に対応するためのFix

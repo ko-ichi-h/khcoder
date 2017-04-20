@@ -329,6 +329,9 @@ sub mysql_sort{
 sub check_up{
 	my $self = shift;
 	
+	# Create temp dir
+	mkdir($self->dir_CoderData) unless -d $self->dir_CoderData;
+	
 	# For projects created by 3.alpha.06b or prior
 	if (
 		   mysql_exec->table_exists('bun')
@@ -889,20 +892,21 @@ sub file_ColorSave{
 
 sub dir_CoderData{
 	my $self = shift;
-	my $pos = rindex($self->file_target,'/'); ++$pos;
-	my $datadir = substr($self->file_target,0,"$pos");
-	$datadir .= 'coder_data/';
-	$datadir = $::config_obj->os_path($datadir);
-	return $datadir;
+	#my $pos = rindex($self->file_target,'/'); ++$pos;
+	#my $datadir = substr($self->file_target,0,"$pos");
+	#$datadir .= 'coder_data/';
+	#$datadir = $::config_obj->os_path($datadir);
+	#return $datadir;
+	
+	my $dir = cwd;
+	$dir .= '/config/'.$self->dbname.'/';
+	$dir = $::config_obj->os_path($dir);
+	return $dir;
 }
 
 sub file_datadir{
 	my $self = shift;
-
-	my $temp = $self->file_short_name;
-	$temp = substr($temp,0,rindex($temp,'.'));
-
-	return $self->dir_CoderData.$::config_obj->os_path($temp);
+	return $self->dir_CoderData.$self->dbname;
 }
 
 sub file_target{
