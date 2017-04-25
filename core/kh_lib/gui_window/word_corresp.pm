@@ -1571,10 +1571,15 @@ g <- g + theme(
 
 if (show_origin == 1){
 	line_color <- "gray30"
-	ylims <- ggplot_build(g)$panel$ranges[[1]]$y.range 
-	xlims <- ggplot_build(g)$panel$ranges[[1]]$x.range
 	
-	#g <- g + coord_cartesian(xlim = xlims, ylim = ylims, expand=F)
+	lim_chk <-ggplot_build(g)
+	xlims <- lim_chk$panel$ranges[[1]]$x.range
+	ylims <- lim_chk$panel$ranges[[1]]$y.range
+	if ( is.null(xlims) ){
+		xlims <- lim_chk$layout$panel_ranges[[1]]$x.range
+		ylims <- lim_chk$layout$panel_ranges[[1]]$x.range
+	}
+	
 	g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
 	g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
 	

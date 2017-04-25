@@ -512,6 +512,11 @@ ddata <- dendro_data(as.dendrogram(hcl), type="rectangle")
 p <- NULL
 p <- ggplot()
 
+font_family <- "'.$::config_obj->font_plot_current.'"
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
 # クラスターごとのカラー設定
 
 if (n_cls > 1){
@@ -632,6 +637,8 @@ if (n_cls > 1){
 		),
 		hjust=1,
 		angle =0,
+		family = font_family,
+		fontface = "bold",
 		size = 5 * 0.85 * font_size
 	)
 
@@ -660,6 +667,8 @@ if (n_cls > 1){
 		),
 		hjust=1,
 		angle =0,
+		family = font_family,
+		fontface = "bold",
 		size = 5 * 0.85 * font_size
 	)
 }
@@ -688,6 +697,8 @@ p <- p + geom_text(
 	),
 	hjust=1,
 	angle =0,
+	family = font_family,
+	fontface = "bold",
 	size = 5 * 0.85 * font_size
 )
 
@@ -820,8 +831,6 @@ if (
 	if ( grepl("darwin", R.version$platform) ){
 		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
-	} else {
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot_current.'", fontface="bold"))
 	}
 }
 

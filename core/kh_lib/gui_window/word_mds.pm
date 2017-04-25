@@ -564,6 +564,9 @@ if ( dim_n == 1 ){
 col_base <- "mediumaquamarine"
 bty      <- "l"
 
+if ( exists("bubble_size") == F ) {
+	bubble_size <- 100
+}
 if ( exists("bs_fixed") == F ) {
 	bubble_size <- bubble_size / '.$args{font_size}.'
 	bs_fixed <- 1
@@ -618,9 +621,9 @@ if (plot_mode == "color") {
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
-	if ( exists("PERL_font_family") ){
-		par(family=PERL_font_family) 
-	}
+	#if ( exists("PERL_font_family") ){
+	#	par(family=PERL_font_family) 
+	#}
 	
 	plot(cl)
 	library(maptools)
