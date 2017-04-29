@@ -137,6 +137,9 @@ if ($q->param){
 
 sub format_dspace{
 	my $t = shift;
+	$t =~ tr/()/（）/;
+	$t =~ s/&#x20;/ /g;
+	$t =~ s/&amp;/&/g;
 
 	my $year     ;
 	my $author   ;
@@ -171,6 +174,10 @@ sub format_dspace{
 			$author .= '・' if length($author);
 			$author .= $1;
 		}
+		elsif ( $i =~ />contributor.author<.+?Value">(.+?)<\/td/ ){
+			$author .= '・' if length($author);
+			$author .= $1;
+		}
 		elsif ( $i =~ /date.issued<.+?Value">(.+?)<\/td/ ){           # date
 			$year = $1;
 		}
@@ -192,9 +199,13 @@ sub format_dspace{
 	}
 	
 	# format
+	$author =~ s/<.+?>//g;
 	$author =~ s/,//g;
 	$author =~ s/ //g;
 	if ($title =~ /(.+) : (.+)/) {
+		$title = $1.' ―'.$2.'―';
+	}
+	if ($title =~ /(.+)、(.+)/) {
 		$title = $1.' ―'.$2.'―';
 	}
 	if ($title =~ /<b>(.+)<\/b>$/) {
@@ -204,6 +215,9 @@ sub format_dspace{
 		$title = $1;
 	}
 	
+	if ( $title =~ /(.+)\－(.+)\－$/ ){
+		$title = $1.'―'.$2.'―';
+	}
 	if ( $title =~ /(.+)\-(.+)\-$/ ){
 		$title = $1.'―'.$2.'―';
 	}
@@ -234,12 +248,17 @@ sub format_dspace{
 		$out .= ": $pages";
 	}
 	$out .= "\n";
+	$out .= "\n\n\n$t" if $debug;
 	return $out;
 }
 
 
 sub format{
 	my $t = shift;
+	$t =~ tr/()/（）/;
+	$t =~ s/&#x20;/ /g;
+	$t =~ s/&amp;/&/g;
+	
 
 	my $year     ;
 	my $author   ;
@@ -253,18 +272,22 @@ sub format{
 	my $series   ;
 	
 	
-	if ($t =~ /year\s*=\s*"(\d+)",/ || $t =~ /year=\{(\d+)\},/) {
+	if ($t =~ /year\s*=\s*"(\d+)"[,\n]/ || $t =~ /year=\{(\d+)\},/) {
 		$year = $1;
 	}
-	if ($t =~ /author\s*=\s*"(.+?)",/ || $t =~ /author=\{(.+?)\},/) {
+	if ($t =~ /author\s*=\s*"(.+?)"[,\n]/ || $t =~ /author=\{(.+?)\},/) {
 		$author = $1;
+		$author =~ s/<.+?>//g;
 		$author =~ s/ and /・/g;
 		$author =~ s/,//g;
 		$author =~ s/ //g;
 	}
-	if ($t =~ /title\s*=\s*"(.+?)",/ || $t =~ /title=\{(.+?)\},/) {
+	if ($t =~ /title\s*=\s*"(.+?)"[,\n]/ || $t =~ /title=\{(.+?)\},/) {
 		$title = $1;
 		if ($title =~ /(.+) : (.+)/) {
+			$title = $1.' ―'.$2.'―';
+		}
+		if ($title =~ /(.+)、(.+)/) {
 			$title = $1.' ―'.$2.'―';
 		}
 		if ($title =~ /<b>(.+)<\/b>$/) {
@@ -274,29 +297,32 @@ sub format{
 			$title = $1;
 		}
 		
+		if ( $title =~ /(.+)\－(.+)\－$/ ){
+			$title = $1.'―'.$2.'―';
+		}
 		if ( $title =~ /(.+)\-(.+)\-$/ ){
 			$title = $1.'―'.$2.'―';
 		}
 		$title =~ s/(\S)―(.+)/$1 ―$2/;
 	}
-	if ($t =~ /journal\s*=\s*"(.+?)",/ || $t =~ /journal=\{(.+?)\},/) {
+	if ($t =~ /journal\s*=\s*"(.+?)"[,\n]/ || $t =~ /journal=\{(.+?)\},/) {
 		$journal = $1;
 		if ($journal =~ /(.+) = [a-zA-Z ]+/) {
 			$journal = $1;
 		}
 		
 	}
-	if ($t =~ /volume\s*=\s*"(.+?)",/ || $t =~ /volume=\{(.+?)\},/) {
+	if ($t =~ /volume\s*=\s*"(.+?)"[,\n]/ || $t =~ /volume=\{(.+?)\},/) {
 		$vol = $1;
 	}
-	if ($t =~ /number\s*=\s*"(.+?)",/ || $t =~ /number=\{(.+?)\},/) {
+	if ($t =~ /number\s*=\s*"(.+?)"[,\n]/ || $t =~ /number=\{(.+?)\},/) {
 		$num = $1;
 		if ($num eq ' ') {
 			$num = '';
 		}
 		
 	}
-	if ($t =~ /pages\s*=\s*"(.+?)",/ || $t =~ /pages=\{(.+?)\},/) {
+	if ($t =~ /pages\s*=\s*"(.+?)"[,\n]/ || $t =~ /pages=\{(.+?)\},/) {
 		$pages = $1;
 		$pages =~ s/\-\-/-/;
 	}
