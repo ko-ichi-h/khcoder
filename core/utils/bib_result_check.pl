@@ -1,19 +1,32 @@
+# 「cinii_result.txt」に保存された文献について、既にリストに存在するかどうか
+# をチェックするための補助スクリプト。結果を「cinii_result2.txt」に保存
+
 use strict;
 
 use utf8;
 use Encode::Locale;
 eval { binmode STDOUT, ":encoding(console_out)"; }; warn $@ if $@;
 
-my $current_file = 'F:\home\Koichi\stock\socroot\khc\bib.tsv';
+my $current_file1 = 'F:\home\Koichi\stock\socroot\khc\bib.tsv';
+my $current_file2 = 'F:\home\Koichi\Study\perl\core_uni\memo\bib_ng.txt';
+
 my $new_file = 'cinii_result.txt';
 
 # 現在のリストを読み込み
 my @current;
-open my $fh, '<:utf8', $current_file or die;
+open my $fh, '<:utf8', $current_file1 or die;
 while (<$fh>){
 	chomp;
 	my @line = split /\t/, $_;
 	push @current, [ $line[2], $line[4] ];
+}
+close $fh;
+
+open my $fh, '<:utf8', $current_file2 or die;
+while (<$fh>){
+	chomp;
+	my @line = split /\t/, $_;
+	push @current, [ $line[0], $line[1] ];
 }
 close $fh;
 
@@ -29,9 +42,13 @@ while (<$fh>){
 my @results;
 
 # 新しいアイテムのチェック
+my $nskip;
 foreach my $i (@new){
 	# CiNiiのURLが一致したらパス
-	next if &check_url($i->[1]);
+	if ( &check_url($i->[1]) ){
+		++$nskip;
+		next;
+	}
 	
 	# 既存のもので似ているものを探す
 	my $m = &count_matches($i->[0]);
@@ -44,6 +61,8 @@ open my $fh, '>:utf8', 'cinii_result2.txt' or die;
 foreach my $i (@results){
 	print $fh "$i->[0]\t$i->[1]\t$i->[2]\t$i->[3]\t$i->[4]\n";
 }
+
+print "skiped: $nskip";
 
 
 sub count_matches{
@@ -75,10 +94,9 @@ sub count_matches{
 	
 	my $p = int( $r[0]->[1] / $total * 100 + 0.5 );
 	
-	unless ( substr($query, 0, 3) eq substr($r[0]->[0], 0, 3) ){
-		$r[0]->[0] = 'deleted';
-		
-	}
+	#unless ( substr($query, 0, 3) eq substr($r[0]->[0], 0, 3) ){
+	#	$r[0]->[0] = 'deleted';
+	#}
 	
 	return [$r[0]->[0], $p, $r[0]->[2]];
 }

@@ -1,3 +1,5 @@
+# CiNii全文検索を行って、結果を「cinii_result.txt」に保存する
+
 use strict;
 
 use utf8;
