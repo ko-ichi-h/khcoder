@@ -61,7 +61,8 @@ if ($q->param){
 		chomp $i;
 		$output .= "\nurl: $i\n" if $debug;;
 
-		
+		next unless $i =~ /^http/;
+
 		if ( $i =~ /naid\/(\d+)/ ) {                        # CiNiiの場合
 			#$output .= "cinii\n";
 			my $r = $ua->get("http://ci.nii.ac.jp/naid/$1.bib");
