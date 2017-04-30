@@ -11,10 +11,20 @@ my $debug = 0;
 
 my $q = new CGI; 
 
+# 入力欄の文字化け対策
+if ($q->param){
+	my $qq = Encode::decode('utf8', $q->param('input') );
+	$q->param('input', $qq);
+}
+
 print
 	$q->header(-charset => 'UTF-8'),
-	$q->start_html('CiNii / Jstage Formatter'),
-	$q->h1('CiNii / Jstage Formatter'),
+	$q->start_html(
+		-title=> 'Bib Formatter',
+		-lang => 'ja',
+		-encoding => 'UTF-8',
+	),
+	$q->h1('Bib Formatter'),
 	$q->h2('Description:'),
 	$q->p(
 		'CiNii・Jstage・機関リポジトリの論文URLを入力して実行すると、文献リスト掲載用のフォーマットに変換します。'
@@ -40,6 +50,7 @@ print
 	<p>,
 	$q->hr,
 ;
+
 
 if ($q->param){
 	print
