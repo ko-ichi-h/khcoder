@@ -47,6 +47,48 @@ Generative Transfer Learning between Recurrent Neural Networks	https://arxiv.org
 テキストマイニングで行うアンケート分析	https://www.jstage.jst.go.jp/article/jscstaikai/30/0/30_45/_article/-char/ja/
 Factors for Developing a Software Industry	http://dl.acm.org/citation.cfm?id=2987507
 
+奥津拡・遠田敦・菊池弘祐・渡辺仁史 2010 「ソーシャルメディアを介した行動モニタリングに関する研究2 ―マイクロブログの投稿位置における行為の集積からみたホットスポット群の抽出―」 『日本建築学会研究報告』 : 269-272	http://ci.nii.ac.jp/naid/110008730422
+小池太輔・渡辺仁史 2012 「ソーシャルメディアのテキスト情報に現れる都市イメージの抽出」 『研究報告』 82(2): 457-460	http://ci.nii.ac.jp/naid/110009571734
+
+
+#-------------------#
+#   確定 2017 5/9   #
+
+코퍼스의 일본어 교수· 학습 자원화를 위한 제언	http://www.dbpia.co.kr/Journal/ArticleDetail/NODE02355834
+個人用コーパスの作成とアノテーションを支援する環境の実現	http://www.ninjal.ac.jp/event/specialists/project-meeting/files/JCLWorkshop_no3_papers/JCLWorkshop_No3_46.pdf
+福島原発事故をめぐるメディア言説の変容: 毎日新聞社説 (2011-2013 年) を対象として	http://koara.lib.keio.ac.jp/xoonips/modules/xoonips/download.php/AA1121824X-20170300-0119.pdf?file_id=123491
+数理的研究 (&lt; 特集&gt; 2010 年・2011 年における日本語学界の展望)	http://ci.nii.ac.jp/lognavi?name=nels&lang=en&type=pdf&id=ART0010030608
+リーダーの危機認識の変遷と経営行動に関するテキスト分析	http://ci.nii.ac.jp/lognavi?name=nels&lang=en&type=pdf&id=ART0009714858
+日本人就学前幼児の教室と家庭における英語学習に関する事例研究	http://www.arcle.jp/research/books/data/html/data/pdf/vol8_4-0.pdf
+合奏指導における比喩表現の役割	http://www.jaist.ac.jp/ks/skl/papers/sig-skl-20140314.pdf
+身体知の観点から聴き手ー話し手の関係を捉える ーオーラル・ヒストリーメソッドの再検討―	http://www.jaist.ac.jp/ks/skl/papers/sig-skl-20140314.pdf
+社会科学におけるテキスト型 BIG DATA の可能性	https://www.jstage.jst.go.jp/article/ssi/3/3/3_135/_article/-char/ja/
+資料集 1980 年代から 2010 年までの 「ジェンダー」: 日本の定期刊行物における	https://tokyo-metro-u.repo.nii.ac.jp/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=126&item_no=1&page_id=30&block_id=69
+Co-Supervisor	http://fab.utm.my/ismail/files/2016/12/Middle-Childhood-Children-Outdoor-Learning-through-Farming-Activities-in-Rural.pdf
+
+近代日本の生活環境と 「香り文化」 アロマテラピー受容の背景―第 2 報 メディアの言語表現の視点からみるアロマテラピー受容の背景―	https://www.jstage.jst.go.jp/article/aeaj/17/1/17_170102/_article/-char/ja/
+教員との関わりが就職決定に与える影響: 難関校と非難関校の比較	http://eprints.lib.hokudai.ac.jp/dspace/handle/2115/65030
+議論の指導を通じた知識構築思考コンピテンシーの学習支援手法の開発	https://dspace.jaist.ac.jp/dspace/handle/10119/13670
+エコロジカル・タイム・ロス指標の開発と ESD での活用	http://ir.lib.fukushima-u.ac.jp/dspace/handle/10270/4461
+11 教− 24− 口− 09 身体表現プロジェクトの自己組織化を検討する	https://www.jstage.jst.go.jp/article/jspehss/67/0/67_294_3/_article/-char/ja/
+歴史研究とデジタル・ヒューマニティーズの相関	http://repository.dl.itc.u-tokyo.ac.jp/dspace/handle/2261/60849
+11 教− 24− 口− 07 学習評価における動画情報活用に関する検討	https://www.jstage.jst.go.jp/article/jspehss/67/0/67_294_1/_article/-char/ja/
+『理論と方法』 におけるテーマの 30 年, 方法の 30 年	https://www.jstage.jst.go.jp/article/ojjams/31/1/31_99/_article/-char/ja/
+「北條五代記」 における人物・地名関連分析	https://tama.repo.nii.ac.jp/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=293&item_no=1&page_id=13&block_id=52
+座談会 「第 3 期研究を終えて」	https://www.jstage.jst.go.jp/article/jkg/67/3/67_135/_article/-char/ja/
+ウェブ型テキストマイニングツール iTM の開発	https://www.jstage.jst.go.jp/article/jass/32/1/32_25/_article/-char/ja/
+資料 『理論と方法』 1-30 巻記事リスト	http://jlc.jst.go.jp/DN/JLC/20023506730?from=Google
+El financiamiento filantrópico a la investigación como mecanismo estructurante del conocimiento sobre las enfermedades desatendidas y su efecto en el  …	https://www.researchgate.net/profile/David_Fajardo_Ortiz/publication/310831717_El_financiamiento_filantropico_a_la_investigacion_como_mecanismo_estructurante_del_conocimiento_sobre_las_enfermedades_desatendidas_y_su_efecto_en_el_diseno_e_institucion_de_politicas_publicas_de_salu/links/58392a9f08aef00f3bfa3ebb.pdf
+Text Mining utilizando o Software R: um estudo de caso de uma biblioteca americana	https://www.lume.ufrgs.br/handle/10183/149102
+An empirical verification of a-priori learning models on mailing archives in the context of online learning activities of participants in free\libre open source software ( …	http://link.springer.com/article/10.1007/s10639-017-9573-6
+15 Exploring the values of rural communities through placebased education in Niigata prefecture	https://books.google.co.jp/books?hl=ja&lr=&id=USAxDQAAQBAJ&oi=fnd&pg=PT326&dq=%22KH+Coder%22+%7C+%22KHCODER%22+%7C+%22KH%E3%82%B3%E3%83%BC%E3%83%80%E3%83%BC%22+%7C+%22%E6%A8%8B%E5%8F%A3%E8%80%95%E4%B8%80%22&ots=F66xFzR1w2&sig=iiBV0enEoowMyqP1ICOxgsWTl5U
+Using Peer Assessment Data to Help Improve Teaching and Learning Outcomes	https://cs.anu.edu.au/courses/csprojects/16S2/Reports/Zi_Jin_Report.pdf
+Percepción social de la imagen pública del fisioterapista ecuatoriano en una muestra de prensa escrita periodo 2010-2015	http://repositorio.puce.edu.ec/handle/22000/10949
+Role Conceptions and Role Consequences in the Case of Head Start Paraeducators: An Exploratory Q Study of Role Concept, Ambiguity, and Conflict	http://search.proquest.com/openview/31317d6b0714ac7a14c97e749548bed7/1?pq-origsite=gscholar&cbl=18750&diss=y
+Generative Transfer Learning between Recurrent Neural Networks	https://arxiv.org/abs/1608.04077
+テキストマイニングで行うアンケート分析	https://www.jstage.jst.go.jp/article/jscstaikai/30/0/30_45/_article/-char/ja/
+Factors for Developing a Software Industry	http://dl.acm.org/citation.cfm?id=2987507
+
 阪口祐介 2016 「原発への態度と世代・ジェンダー・社会階層-価値媒介メカニズムの検証-（鈴木富久教授退任記念号）」 『桃山学院大学社会学論集』 49(2): 47-68	http://ci.nii.ac.jp/naid/110010008383
 斉藤洋介・海老原修 2015 「02社-25-口-11 生涯スポーツへ誘う学校教育の取り組み ―SSF笹川スポーツ財団スポーツライフ・データの2次分析を基に（02 体育社会学,一般研究発表,2020東京オリンピック・パラリンピックと体育・スポーツ科学研究）―」 『日本体育学会大会予稿集』 66: 109	http://ci.nii.ac.jp/naid/110010019642
 谷本奈穂 2016 「『『ポピュラー・カルチャーと戦争』の70年』シンポジウムによせて ―内容分析の可能性（<特集>『ポピュラー・カルチャーと戦争』の70年）―」 『マス・コミュニケーション研究』 88: 3-15	http://ci.nii.ac.jp/naid/110010041602
