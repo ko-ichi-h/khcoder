@@ -702,10 +702,9 @@ if (use_alpha == 1){
 
 if ( n_cls > 0 ){
 	cls_labels <- cutree(hcl, k=n_cls)
-	if (n_cls >= 10){
-		cls_labels <- formatC(cls_labels,width=2,flag="0")
-	}
-	cls_labels <- paste("cluster", cls_labels)
+	cls_labels <- formatC(cls_labels,width=2,flag="0")
+
+	cls_labels <- paste(cls_labels, "  ")
 } else {
 	cls_labels <- "cluster 1"
 }
@@ -766,9 +765,10 @@ if ( n_cls > 0 ){
 	g <- g + scale_fill_brewer(
 		palette = "Set3",
 		guide = guide_legend(
-			title = "Clusters:",
+			title = "Cluster:",
 			override.aes = list(size=5.5, alpha=1, shape=22),
 			keyheight = unit(1.5,"line"),
+			ncol=2,
 			order = 1
 		)
 	)
