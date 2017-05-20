@@ -603,9 +603,6 @@ if ( min_sp_tree == 1 ){
 	#if (length(edg_col) == 1){
 		edg_col <- rep("gray55", length( get.edge.attribute(n2, "weight") )) 
 	#}
-	if (length(edg_width) == 1){
-	    edg_width <- rep(edg_width, ecount(n2) )
-	}
 
 	n2_edges  <- get.edgelist(n2,name=T);
 	mst_edges <- get.edgelist(mst,name=T);
@@ -621,10 +618,9 @@ if ( min_sp_tree == 1 ){
 				mst_edges[j,2]
 			)
 			if ( name_n2 == name_mst ){
-				edg_col[i]   <- "gray30"                   # edgeの色
-				edg_width[i] <- 2                          # 太さ
+				edg_col[i]   <- "gray30"                   # edge color
 				if ( length(edg_lty) > 1 ){
-					edg_lty[i] <- 1                        # 線種
+					edg_lty[i] <- 1                        # edge linetype
 				}
 				break
 			}
@@ -901,7 +897,7 @@ p <- ggplot(
 )
 
 if (use_alpha == 1){
-	alpha_value = 0.7
+	alpha_value = 0.58
 	gray_color_n <- "gray20"
 } else {
 	alpha_value = 1
@@ -1006,10 +1002,10 @@ p <- p + scale_linetype_identity()
 
 p <- p + geom_nodes(
 	aes(
-		size = size * 0.333,
+		size = size * 0.41,
 		fill = com
 	),
-	alpha = 0.8,
+	alpha = 0.85,
 	colour = NA,
 	show.legend = F,
 	shape = 21
