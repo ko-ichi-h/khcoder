@@ -767,7 +767,7 @@ if ( n_cls > 0 ){
 		guide = guide_legend(
 			title = "Cluster:",
 			override.aes = list(size=5.5, alpha=1, shape=22),
-			keyheight = unit(1.5,"line"),
+			keyheight = unit(1.25,"line"),
 			ncol=2,
 			order = 1
 		)

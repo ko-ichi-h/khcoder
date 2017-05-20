@@ -87,6 +87,7 @@ sub new{
 	#my $t0 = new Benchmark;
 	
 	my @plots = ();
+	my $x_factor = 4/3;
 	
 	if ($self->{edge_type} eq 'twomode'){
 		$plots[0] = kh_r_plot::network->new(
@@ -98,7 +99,7 @@ sub new{
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p3
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -116,7 +117,7 @@ sub new{
 				 "com_method <- \"twomode_g\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -130,7 +131,7 @@ sub new{
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p3
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -148,7 +149,7 @@ sub new{
 				 "com_method <- \"cnt-d\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -166,7 +167,7 @@ sub new{
 				 "com_method <- \"cnt-e\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -184,7 +185,7 @@ sub new{
 				 "com_method <- \"com-b\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -202,7 +203,7 @@ sub new{
 				 "com_method <- \"com-r\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -220,7 +221,7 @@ sub new{
 				 "com_method <- \"com-g\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -238,7 +239,7 @@ sub new{
 				 "com_method <- \"none\"\n"
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
@@ -706,36 +707,37 @@ if (length(get.vertex.attribute(n2,"name")) < 2){
 if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	ccol <- NULL
 	if (com_method == "cnt-b"){                   # 媒介
-		ccol <- betweenness(
+		ccol <- igraph::betweenness(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
 			directed=F
 		)
 	}
 	if (com_method == "cnt-d"){                   # 次数
-		ccol <-  degree(
+		ccol <-  igraph::degree(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
 		)
 	}
 	if (com_method == "cnt-e"){                   # 固有ベクトル
 		try(
-			ccol <- evcent(n2)$vector,
+			ccol <- igraph::evcent(n2)$vector,
 			silent = T
 		)
 	}
+	ccol_raw <- ccol # ggplot2
 	
 	# 色の設定
-	if ( gray_scale == 1 ) {
-		ccol <- ccol - min(ccol)
-		ccol <- 1 - ccol / max(ccol) / 2.5
-		ccol <- gray(ccol)
-	} else {
-		ccol <- ccol - min(ccol)
-		ccol <- ccol * 100 / max(ccol)
-		ccol <- trunc(ccol + 1)
-		ccol <- cm.colors(101)[ccol]
-	}
+	#if ( gray_scale == 1 ) {
+	#	ccol <- ccol - min(ccol)
+	#	ccol <- 1 - ccol / max(ccol) / 2.5
+	#	ccol <- gray(ccol)
+	#} else {
+	#	ccol <- ccol - min(ccol)
+	#	ccol <- ccol * 100 / max(ccol)
+	#	ccol <- trunc(ccol + 1)
+	#	ccol <- cm.colors(101)[ccol]
+	#}
 
 	com_col_v <- "gray40"
 	edg_col   <- "gray55"
@@ -879,17 +881,23 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 }
 
 if (com_method == "twomode_c"){
-	ccol <-  degree(
+	ccol <-  igraph::degree(
 		n2,
 		v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
 	)
-	ccol[5 < ccol] <- 5
-	ccol <- ccol + 3
+	# ggplot2
+	ccol_raw <- ccol
+	ccol_raw[var_select] <- NA
+	ccol_raw <- as.character(ccol_raw)
+	ccol_raw[ccol_raw=="5"] <- ">= 5"
 	
-	library( RColorBrewer )
-	ccol <- brewer.pal(8, "Spectral")[ccol]
+	#ccol[5 < ccol] <- 5
+	#ccol <- ccol + 3
+	
+	#library( RColorBrewer )
+	#ccol <- brewer.pal(8, "Spectral")[ccol]
 
-	ccol[var_select] <- "#FB8072" # #FB8072 #DEEBF7 #FF9966 #FFDAB9 "#F46D43"
+	#ccol[var_select] <- "#FB8072" # #FB8072 #DEEBF7 #FF9966 #FFDAB9 "#F46D43"
 
 	com_col_v <- "gray65"
 	edg_col   <- "gray70"
@@ -947,9 +955,9 @@ if ( min_sp_tree == 1 ){
 	)
 
 	# MSTに合致するedgeを強調
-	if (length(edg_col) == 1){
-		edg_col <- rep(edg_col, length( get.edge.attribute(n2, "weight") ))
-	}
+	#if (length(edg_col) == 1){
+		edg_col <- rep("gray55", length( get.edge.attribute(n2, "weight") )) 
+	#}
 	if (length(edg_width) == 1){
 	    edg_width <- rep(edg_width, ecount(n2) )
 	}
@@ -977,6 +985,7 @@ if ( min_sp_tree == 1 ){
 			}
 		}
 	}
+	edg_mst <- edg_col
 }
 
 
@@ -1026,7 +1035,7 @@ if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
 set.seed(100)
 if (
 	   (com_method == "twomode_c" || com_method == "twomode_g")
-	&& ( is.connected(n2) )
+	&& ( igraph::is.connected(n2) )
 ){
 	lay_f <- layout.kamada.kawai(
 		n2,
@@ -1152,138 +1161,8 @@ sub r_plot_cmd_p4{
 
 return 
 '
-# レイアウトを考慮したグレーの配色
-if (
-	( gray_scale == 1 ) && (
-		   com_method == "com-b"
-		|| com_method == "com-g"
-		|| com_method == "com-r"
-	)
-){
-	com_col_v <- "gray40"
-	
-	# グレーを準備
-	grays <- NULL
-	n_coms <- length(com_m$csize[com_m$csize > 1]);
-	for (i in 1:n_coms){
-		#print(0.8 / (n_coms-1) * (i - 1) + 0.15)
-		grays <- c( grays, 0.8 / (n_coms-1) * (i - 1) + 0.15 )
-	}
-	grays <- gray(grays)
-
-	# グループのリスト（1はじまり）
-	groups <- NULL
-	groups <- as.matrix( table(com_m$membership + 1 - new_igraph) )
-	groups <- data.frame(
-		name = rownames(groups),
-		freq = groups[,1]
-	)
-	# groups$freq[groups$name==3]
-
-	# メンバーのリスト（1はじまり）
-	group_members <- data.frame(
-		vid = 1:length(com_m$membership),
-		gp  = com_m$membership + 1 - new_igraph,
-		x   = lay_f[,1],
-		y   = lay_f[,2]
-	)
-	
-	dist_single <- function(d, g1, g2){
-		sub <- subset(d,gp==g1|gp==g2)
-		sub <- sub[order(sub$gp),]
-		
-		if (g1 > g2){
-			tmp1 <- g1
-			tmp2 <- g2
-			g1 <- tmp2
-			g2 <- tmp1
-		}
-		
-		#print("-----------------------")
-		#print(g1)
-		#print(g2)
-		
-		dd <- sub[,3:4];
-		rownames(dd) <- paste(sub$gp, sub$vid, sep="-")
-		
-		#print(dd)
-		
-		dis <- as.matrix( dist(dd,method = "euclidean") )
-		
-		n_g1 <- length( sub$vid[sub$gp==g1] )
-		n_g2 <- length( sub$vid[sub$gp==g2] )
-		
-		#print(dis)
-		
-		dis <- dis[(n_g1+1):length(rownames(dis)), 1:n_g1]
-		
-		#print(dis)
-		#print(min(dis))
-		
-		return (mean(dis))
-	}
-	
-	group_dist <- matrix(rep(NA, n_coms^2), ncol=n_coms, nrow=n_coms  )
-	for (i in groups$name[groups$freq>1]){
-		for (h in groups$name[groups$freq>1]){
-			i <- as.numeric(i)
-			h <- as.numeric(h)
-			if (i == h){
-				group_dist[i,h] <- 0
-			} else {
-				group_dist[i,h] <- dist_single(group_members, i, h)
-			}
-		}
-	}
-	group_dist <- as.dist(group_dist)
-	
-	#library(MASS)
-	#order <- isoMDS(group_dist, k=1)$points
-	
-	#order <- cmdscale(group_dist, k=1)
-	#order <- order(order[,1])
-	
-	h <- hclust(group_dist, method="average")
-	order <- h$order
-	
-	n_order <- NULL
-	for (i in 1:n_coms){
-		if (i %% 2 == 0){
-			n_order <- c(n_order, ceiling(n_coms / 2) + i / 2 )
-		} else {
-			n_order <- c(n_order, ceiling(i/2) )
-		}
-	}
-	
-	group_color <- data.frame(
-		gp  = order,
-		col = n_order
-	)
-	group_color <- group_color[order(group_color$gp),]
-	
-	#print(group_dist)
-	#print(order)
-	#print(n_order)
-	#print(group_color$col)
-
-	grays <- grays[group_color$col]
-
-	ccol <- grays[com_m$membership + 1 - new_igraph]
-}
-
 if ( exists("saving_emf") || exists("saving_eps") ){
 	use_alpha <- 0 
-}
-
-if (use_alpha == 1 && com_method != "none" && com_method != "twomode_g"){
-	ccol_notrans <- ccol
-	rgb <- col2rgb(ccol) / 256
-	ccol <- rgb(
-		red  =rgb[1,],
-		green=rgb[2,],
-		blue =rgb[3,],
-		alpha=0.685
-	)
 }
 
 # 語の強調
@@ -1339,105 +1218,62 @@ if ( exists("target_words") ){
 }
 
 edge_label <- NULL
-if (view_coef == 1){
-	edge_label <- substring(
-		round(
-			get.edge.attribute(n2,"weight"),
-			digits=2
-		),
-		2,
-		4
-	)
-}
+#if (view_coef == 1){
+#	edge_label <- substring(
+#		round(
+#			get.edge.attribute(n2,"weight"),
+#			digits=2
+#		),
+#		2,
+#		4
+#	)
+#}
 
-font_fam <- NULL
+font_family <- "'.$::config_obj->font_plot_current.'"
 if ( exists("PERL_font_family") ){
 	font_fam <- PERL_font_family
 }
 
 # プロット
-if (smaller_nodes ==1){
-	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-} else {
-	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-}
+#if (smaller_nodes ==1){
+#	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+#} else {
+#	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+#}
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 	# ネットワークを描画
-	if (fix_lab == 0){
-		plot.igraph(
-			n2,
-			vertex.label        = "",
-			#vertex.label       =colnames(d)
-			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-			#vertex.label.cex   =f_size,
-			#vertex.label.color ="black",
-			#vertex.label.family= "", # Linux・Mac環境では必須
-			#vertex.label.dist  =vertex_label_dist,
-			vertex.color       =ccol,
-			vertex.frame.color =com_col_v,
-			vertex.size        =v_size,
-			vertex.shape       =v_shape,
-			edge.color         =edg_col,
-			edge.lty           =edg_lty,
-			edge.width         =edg_width,
-			edge.label         =edge_label,
-			edge.label.cex     =0.9,
-			edge.label.family  =font_fam,
-			layout             =lay_f,
-			rescale            =F
-		)
-	}
+
 
 # edit ------------------------------------------------------------
 	if (fix_lab == 1){
-		plot.new()
-		plot.window(xlim=c(-1, 1), ylim=c(-1, 1))
-		
-		labcd <- NULL
-		labcd$x <- lay_f[,1]
-		labcd$y <- lay_f[,2]
-		word_labs <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-
-		library(wordcloud)'
-		.&r_command_wordlayout
-		.'nc <- wordlayout(
-			labcd$x,
-			labcd$y,
-			word_labs,
-			cex=cex * 1.28,
-			xlim=c( -1, 1 ),
-			ylim=c( -1, 1 )
-		)
-
-		xorg <- labcd$x
-		yorg <- labcd$y
-		labcd$x <- nc[,1] + .5 * nc[,3]
-		labcd$y <- nc[,2] + .5 * nc[,4]
-		lay_f <- cbind(labcd$x, labcd$y)
-
-		plot.igraph(
-			n2,
-			vertex.label        = "",
-			#vertex.label       =colnames(d)
-			#                    [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-			#vertex.label.cex   =f_size,
-			#vertex.label.color ="black",
-			#vertex.label.family= "", # Linux・Mac環境では必須
-			#vertex.label.dist  =vertex_label_dist,
-			vertex.color       =ccol,
-			vertex.frame.color =com_col_v,
-			vertex.size        =v_size,
-			vertex.shape       =v_shape,
-			edge.color         =edg_col,
-			edge.lty           =edg_lty,
-			edge.width         =edg_width,
-			edge.label         =edge_label,
-			edge.label.family  =font_fam,
-			layout             =lay_f,
-			rescale            =F,
-			add = T
-		)
-		if_fixed <- 1
+		if (exists("if_fixed") == 0){
+			plot.new()
+			plot.window(xlim=c(-1, 1), ylim=c(-1, 1))
+			
+			labcd <- NULL
+			labcd$x <- lay_f[,1]
+			labcd$y <- lay_f[,2]
+			word_labs <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	
+			library(wordcloud)'
+			.&r_command_wordlayout
+			.'nc <- wordlayout(
+				labcd$x,
+				labcd$y,
+				word_labs,
+				cex=cex * 1.28,
+				xlim=c( -1, 1 ),
+				ylim=c( -1, 1 )
+			)
+	
+			xorg <- labcd$x
+			yorg <- labcd$y
+			labcd$x <- nc[,1] + .5 * nc[,3]
+			labcd$y <- nc[,2] + .5 * nc[,4]
+			lay_f <- cbind(labcd$x, labcd$y)
+	
+			if_fixed <- 1
+		}
 	}
 # edit ------------------------------------------------------------
 
@@ -1445,162 +1281,641 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 
 
 
+#-----------------------------------------------------------------------------#
+#                       Prepare for Plotting with ggplot2                     #
+
+#-----------------------------------------------#
+#  get ready for ggplot2 graph drawing (1): n2  #
+
+n2 <- set.vertex.attribute(
+	n2,
+	"lab",
+	1:length(get.vertex.attribute(n2,"name")),
+	colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+)
+
+ver_freq <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+
+if (com_method == "twomode_c" || com_method == "twomode_g"){
+	ver_freq[var_select] <- NA
+}
+
+if ( is.null(target_ids) == FALSE ){
+	ver_freq[target_ids] <- NA
+}
+
+if (use_freq_as_size == 0){
+	ver_freq[ver_freq > 0] <- 1
+}
 
 
+n2 <- set.vertex.attribute(
+	n2,
+	"size",
+	1:length(get.vertex.attribute(n2,"name")),
+	ver_freq
+)
 
-	# 語のラベルを追加
-	lay_f_adj <- NULL
-	if (smaller_nodes ==1){
-		# [2011 10/19]
-		# 小さいノードで表示する際にplot.igraph関数のvertex.label.distを指定
-		# すると、長い（文字数が多い）語が離れすぎて綺麗でなかったので、手動
-		# でラベルを追加. R 2.12.2 / igraph 0.5.5-2 
-		if ( is.null(lay_f_adj) == 1){
-			lay_f_adj <- cbind(lay_f_adj, lay_f[,1])
-			lay_f_adj <- cbind(lay_f_adj, lay_f[,2] + ( max(lay_f[,2]) - min(lay_f[,2]) ) / 38 )
+# For community detection
+
+if ( exists("com_m") ){
+	com_label <- NULL
+
+	for (h in 1:length(com_m$membership)){
+		i <- com_m$membership[h]
+		if ( com_m$csize[i] > 1 ) {
+			if (i < 10){
+				com_label <- c(
+					com_label,
+					paste("0", as.character(i), " ", sep="")
+				)
+			} else {
+				com_label <- c(com_label, as.character(i))
+			}
+		} else {
+			com_label <- c(com_label, NA)
 		}
+	}
 
-		labels <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-		if ( (exists("target_words")) && (is.null(target_ids) == 0) ){
-			text(
-				lay_f[target_ids,1],
-				lay_f[target_ids,2],
-				labels = labels[target_ids],
-				font = text_font,
-				cex = f_size,
-				col = "black"
+	n2 <- set.vertex.attribute(
+		n2,
+		"com",
+		1:length(get.vertex.attribute(n2,"name")),
+		com_label
+	)
+}
+
+if ( exists("ccol_raw") ){
+	n2 <- set.vertex.attribute(
+		n2,
+		"com",
+		1:length(get.vertex.attribute(n2,"name")),
+		ccol_raw
+	)
+	com_label <- ccol_raw
+}
+
+if ( com_method == "none" || com_method == "twomode_g"){
+	n2 <- set.vertex.attribute(
+		n2,
+		"com",
+		1:length(get.vertex.attribute(n2,"name")),
+		rep( "na", length(get.vertex.attribute(n2,"name")) )
+	)
+	com_label <- NA
+}
+
+if ( exists("edg_mst") ){
+	n2 <- set.edge.attribute(
+		n2,
+		"edg_col",
+		1:length(get.edge.attribute(n2,"weight")),
+		edg_mst
+	)
+	#print(edg_mst)
+}
+
+n2 <- set.vertex.attribute(
+	n2,
+	"shape",
+	1:length(get.vertex.attribute(n2,"name")),
+	v_shape
+)
+
+edg_lty[edg_lty==1] <- "solid"
+edg_lty[edg_lty==3] <- "dotted"
+
+n2 <- set.edge.attribute(
+	n2,
+	"line",
+	1:length(get.edge.attribute(n2,"weight")),
+	edg_lty
+)
+
+#-------------------------------------------------------#
+#  get ready for ggplot2 graph drawing (2): parameters  #
+
+library(ggplot2)
+library(ggnetwork)
+
+p <- ggplot(
+	ggnetwork(n2, layout=lay_f),
+	aes(x = x, y = y, xend = xend, yend = yend),
+)
+
+if (use_alpha == 1){
+	alpha_value = 0.7
+	gray_color_n <- "gray20"
+} else {
+	alpha_value = 1
+	gray_color_n <- "gray40"
+
+}
+
+if (text_font == 2){
+	face <- "bold"
+} else {
+	face <- "plain"
+}
+if (smaller_nodes == 1 ){
+	edge_colour <- "gray68"
+	nudge <- 0.015
+	hjust <- "left"
+} else {
+	edge_colour <- "gray55"
+	nudge <- 0
+	hjust <- "center"
+}
+
+if (com_method == "twomode_c"){
+	edge_colour <- "gray70"
+}
+
+if (com_method == "none" || com_method == "twomode_g"){
+	edge_colour <- "gray40"
+	gray_color_n <- "black"
+}
+
+rownames(lay_f) <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+lay_f[,1] <- lay_f[,1] - min(lay_f[,1])
+lay_f[,1] <- lay_f[,1] / max(lay_f[,1])
+lay_f[,2] <- lay_f[,2] - min(lay_f[,2])
+lay_f[,2] <- lay_f[,2] / max(lay_f[,2])
+lay_f_df <- data.frame(
+	x = lay_f[,1],
+	y = lay_f[,2],
+	lab = rownames(lay_f)
+)
+
+if ( smaller_nodes == 1 ){
+	vv <- 6.2
+} else {
+	vv <- 20
+}
+
+#-----------------------------------------------------------------------------#
+#                           Start Plotting with ggplot2                       #
+
+#---------#
+#  Edges  #
+
+if (min_sp_tree == 1){
+	edg_col2 <- p$data$edg_col
+	edg_col2[edg_col2=="gray30"] <- "MST"
+	edg_col2[edg_col2=="gray55"] <- "non-MST"
+	edg_col2[edg_col2=="gray70"] <- "non-MST"
+	p <- p + geom_edges(
+		aes(linetype = as.character(line), alpha=edg_col2),
+		#size = 0.8,
+		color = "grey10"
+	)
+	p <- p + scale_alpha_discrete(
+		range = c(1, 0.3),
+		guide = guide_legend(
+			title = "Edge:",
+			keyheight = unit(1.2,"line"),
+			order = 2
+		)
+	)
+} else if ( use_weight_as_width == 1 ){
+	p <- p + geom_edges(
+		aes(linetype = as.character(line), alpha=weight),
+		#size = 0.8,
+		color = "grey10"
+	)
+	p <- p + scale_alpha(
+		range = c(0.2, 1),
+		guide = guide_legend(
+			title = "Coefficient:",
+			label.hjust = 1,
+			keyheight = unit(1.2,"line"),
+			order = 2
+		)
+	)
+} else {
+	p <- p + geom_edges(
+		aes(linetype = as.character(line)),
+		size = 0.4,
+		color = edge_colour
+	)
+}
+
+p <- p + scale_linetype_identity()
+
+#---------#
+#  Nodes  #
+
+# words
+
+p <- p + geom_nodes(
+	aes(
+		size = size * 0.333,
+		fill = com,
+		shape = shape
+	),
+	alpha = 0.8,
+	colour = NA,
+	show.legend = F,
+	shape = 21
+)
+p <- p + geom_nodes(
+	aes(
+		size = size,
+		fill = com,
+		shape = shape
+	),
+	colour = gray_color_n,
+	alpha = alpha_value,
+	shape = 21
+)
+
+if ( use_freq_as_size == 1 ){
+	p <- p + scale_size_area(
+		"Frequency",
+		max_size = 30,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", alpha=1),
+			label.hjust = 1,
+			order = 3
+		)
+	)
+} else {
+	p <- p + scale_size_area(
+		max_size = vv,
+		guide = F
+	)
+}
+
+# variables
+
+if ( (com_method == "twomode_c" || com_method == "twomode_g") ) {
+	# (is.null(target_ids) == FALSE)
+
+	if ( com_method == "twomode_c" ){
+		var_outline_c <- "gray50"
+		var_fill_c <- "#FB8072"
+	}
+	if ( com_method == "twomode_g" ){
+		var_outline_c <- "black"
+		var_fill_c <- "white"
+	}
+	
+	p <- p + geom_point(
+		data = data.frame(
+			x = lay_f[var_select,1],
+			y = lay_f[var_select,2]
+		),
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y
+		),
+		fill = var_fill_c,
+		show.legend = F,
+		colour = NA,
+		alpha = 0.8,
+		size = vv * 2 / 3,
+		shape = 22
+	)
+	
+	p <- p + geom_point(
+		data = data.frame(
+			x = lay_f[var_select,1],
+			y = lay_f[var_select,2]
+		),
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y
+		),
+		fill = var_fill_c,
+		show.legend = F,
+		colour = var_outline_c,
+		alpha = alpha_value,
+		size = vv,
+		shape = 22
+	)
+}
+
+# selected words
+
+if ( (is.null(target_ids) == FALSE) ) {
+	var_select <- target_ids
+
+	p <- p + geom_point(
+		data = data.frame(
+			x = lay_f[var_select,1],
+			y = lay_f[var_select,2]
+		),
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y,
+			fill = com_label[var_select]
+		),
+		show.legend = F,
+		colour = NA,
+		alpha = 0.8,
+		size = vv * 2 / 3,
+		shape = 22
+	)
+	
+	p <- p + geom_point(
+		data = data.frame(
+			x = lay_f[var_select,1],
+			y = lay_f[var_select,2]
+		),
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y,
+			fill = com_label[var_select]
+		),
+		show.legend = F,
+		colour = gray_color_n,
+		alpha = alpha_value,
+		size = vv,
+		shape = 22
+	)
+	
+	p <- p + geom_point(
+		data = data.frame(
+			x = lay_f[var_select,1],
+			y = lay_f[var_select,2]
+		),
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y
+		),
+		fill = NA,
+		show.legend = F,
+		colour = gray_color_n,
+		alpha = alpha_value,
+		size = vv * 1.4,
+		shape = 22
+	)
+}
+
+#---------------#
+#  Node labels  #
+
+#if ( (use_freq_as_fontsize == 1) && (use_freq_as_size == 1) ) {
+#	p <- p + geom_nodetext(
+#		aes(label = lab, size=size * 0.1),
+#		show.legend = F,
+#		family="Meiryo UI",
+#		fontface=face
+#	)
+#}
+
+if (
+	( com_method == "com-b" || com_method == "com-g" || com_method == "com-r")
+	&& gray_scale == 1
+	&& smaller_nodes == 0
+){
+	theta <- seq(0, 2*pi, length.out=32)
+	xo <- 0.8 / 200
+	yo <- 0.8 / 200
+	for(i in theta) {
+		df <- data.frame(
+			x = lay_f_df$x + cos(i)*xo,
+			y = lay_f_df$y + sin(i)*yo,
+			lab = lay_f_df$lab
+		)
+		p <- p + geom_text( 
+			data = df,
+			aes(
+				x     = x,
+				y     = y,
+				xend  = x,
+				yend  = y,
+				label =lab
+			),
+			colour="white",
+			size=4,
+			hjust = hjust,
+			nudge_x = nudge,
+			nudge_y = nudge,
+			family=font_fam,
+			na.rm = T,
+			#alpha = 0.8,
+			fontface=face
+		)
+	}
+}
+
+if (
+	   (com_method == "twomode_c" || com_method == "twomode_g")
+	&& (smaller_nodes == 1)
+){
+	lay_f_df_bak <- lay_f_df[var_select,]
+	lay_f_df$lab[var_select] <- NA
+	p <- p + geom_text(
+		data = lay_f_df_bak,
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y,
+			label = lab
+		),
+		size=4,
+		#hjust = hjust,
+		#nudge_x = nudge,
+		nudge_y = nudge * 1.65,
+		family=font_fam,
+		na.rm = T,
+		fontface=face
+	)
+}
+
+p <- p + geom_text(
+	data = lay_f_df,
+	aes(
+		x = x,
+		y = y,
+		xend = x,
+		yend = y,
+		label = lab
+	),
+	size=4,
+	hjust = hjust,
+	nudge_x = nudge,
+	nudge_y = nudge * 1.25,
+	family=font_fam,
+	na.rm = T,
+	fontface=face
+)
+
+#---------------#
+#  Edge labels  #
+
+if (view_coef == 1){
+	p <- p + geom_edgetext(
+		aes(label = substring( round(weight, digits = 2), 2, 4) ),
+		color = "#000080",
+		fill = NA,
+		size=3.5,
+	)
+}
+
+#-------------------#
+#  Community color  #
+
+if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
+	if ( gray_scale == 1) {
+		p <- p + scale_fill_grey(
+			na.value = "white",
+			guide = guide_legend(
+				title = "Community:",
+				override.aes = list(size=5.5, alpha=1, shape=22),
+				keyheight = unit(1,"line"),
+				ncol=2,
+				order = 1
 			)
-			labels[target_ids] <- ""
-		}
-
-		if ( exists("var_select") ){
-			text(
-				lay_f[var_select,1],
-				lay_f[var_select,2],
-				labels = labels[var_select],
-				font = text_font,
-				cex = f_size,
-				col = "black"
-			)
-			labels[var_select] <- ""
-		}
-
-		text(
-			lay_f_adj,
-			labels = labels,
-			pos = 4,
-			offset = 0.25,
-			font = text_font,
-			cex = f_size,
-			col = "black"
 		)
 	} else {
-		if (
-			( gray_scale == 1 ) && (
-				   com_method == "com-b"
-				|| com_method == "com-g"
-				|| com_method == "com-r"
-			)
-		){
-			library(TeachingDemos)
-			shadowtext(
-				lay_f,
-				#labels = group_members,
-				labels = colnames(d)
-				         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-				r = 0.2,
-				theta =  seq(0, 2 * pi, length.out = 32),
-				font = text_font,
-				cex = f_size,
-				col = "black",
-				bg="white"
+		if ( length(com_m$csize[com_m$csize > 1]) <= 12 ){
+			p <- p + scale_fill_brewer(
+				palette = "Set3",
+				na.value = "white",
+				guide = guide_legend(
+					title = "Community:",
+					override.aes = list(size=5.5, alpha=1, shape=22),
+					keyheight = unit(1,"line"),
+					ncol=2,
+					order = 1
+				)
 			)
 		} else {
-			text(
-				lay_f,
-				labels = colnames(d)
-				         [ as.numeric( get.vertex.attribute(n2,"name") ) ],
-				#pos = 4,
-				#offset = 1,
-				font = text_font,
-				cex = f_size,
-				col = "black"
+			p <- p + scale_fill_hue(
+				c = 50,
+				l = 85,
+				na.value = "white",
+				guide = guide_legend(
+					title = "Community:",
+					override.aes = list(size=5.5, alpha=1, shape=22),
+					keyheight = unit(1,"line"),
+					ncol=2,
+					order = 1
+				)
 			)
 		}
 	}
+}
 
-if ( exists("target_words") ){
-	if ( is.null(target_ids) == FALSE){
-		rect(
-			lay_f[target_ids,1] - rect_size, lay_f[target_ids,2] - rect_size,
-			lay_f[target_ids,1] + rect_size, lay_f[target_ids,2] + rect_size,
-		)
+#--------------------#
+#  Centrality color  #
+
+if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
+	
+	if (gray_scale == 1){
+		myPalette <- gray( seq(1, 0.4, length.out=100) )
+	} else {
+		#library(RColorBrewer)
+		#myPalette <- colorRampPalette(rev(brewer.pal(5, "RdYlBu")))(100) #Spectral
+		myPalette <- cm.colors(99)
 	}
+
+	p <- p + scale_fill_gradientn(
+		colours = myPalette,
+		#limits = c( limv * -1, limv ),
+		guide = guide_colourbar(
+			title = "Centrality:\n",
+			title.theme = element_text(
+				face="bold",
+				size=11,
+				lineheight=0.4,
+				angle=0
+			),
+			order = 1,
+			#override.aes = list(size=6, shape=22),
+			label.hjust = 1,
+			#reverse = TRUE,
+			#ncol=2,
+			#keyheight = unit(1.5,"line")
+		)
+	)
 }
 
+#----------------#
+#  2 Mode color  #
 
-if(0){
-if (com_method == "twomode_g"){
-# 枠付きプロット関数の設定
-s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
-    clabel = 1, 
-    pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 
-    neig = NULL, cneig = 2, xlim = NULL, ylim = NULL, grid = TRUE, 
-    addaxes = TRUE, cgrid = 1, include.origin = TRUE, origin = c(0, 
-        0), sub = "", csub = 1.25, possub = "bottomleft", pixmap = NULL, 
-    contour = NULL, area = NULL, add.plot = FALSE) 
-{
-    dfxy <- data.frame(dfxy)
-    opar <- par(mar = par("mar"))
-    on.exit(par(opar))
-    par(mar = c(0.1, 0.1, 0.1, 0.1))
-    coo <- scatterutil.base(dfxy = dfxy, xax = xax, yax = yax, 
-        xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, 
-        cgrid = cgrid, include.origin = include.origin, origin = origin, 
-        sub = sub, csub = csub, possub = possub, pixmap = pixmap, 
-        contour = contour, area = area, add.plot = add.plot)
-    if (!is.null(neig)) {
-        if (is.null(class(neig))) 
-            neig <- NULL
-        if (class(neig) != "neig") 
-            neig <- NULL
-        deg <- attr(neig, "degrees")
-        if ((length(deg)) != (length(coo$x))) 
-            neig <- NULL
-    }
-    if (!is.null(neig)) {
-        fun <- function(x, coo) {
-            segments(coo$x[x[1]], coo$y[x[1]], coo$x[x[2]], coo$y[x[2]], 
-                lwd = par("lwd") * cneig)
-        }
-        apply(unclass(neig), 1, fun, coo = coo)
-    }
-    if (clabel > 0) 
-        scatterutil.eti(coo$x, coo$y, label, clabel, boxes)
-    if (cpoint > 0 & clabel < 1e-06) 
-        points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
-    #box()
-    invisible(match.call())
+if (com_method == "twomode_c"){
+	p <- p + scale_fill_manual(
+		values = brewer.pal(8, "Spectral")[4:8],
+		guide = guide_legend(
+			title = "Degree:",
+			order = 1,
+			override.aes = list(size=6, shape=22),
+			label.hjust = 1,
+			#reverse = TRUE,
+			#ncol=2,
+			keyheight = unit(1.2,"line")
+		)
+	)
 }
-library(ade4)
 
-s.label_my(
-	lay_f[var_select,],
-	xax=1,
-	yax=2,
-	label=colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ][var_select],
-	boxes=T,
-	clabel=0.8,
-	addaxes=F,
-	include.origin=F,
-	grid=F,
-	cpoint=0,
-	cneig=0,
-	cgrid=0,
-	add.plot=T,
+if ( com_method == "none" || com_method == "twomode_g"){
+	p <- p + scale_fill_manual(
+		values = c("white"),
+		na.value = "white",
+		guide = F
+	)
+}
+
+#---------------------#
+#  Final adjustments  #
+
+p <- p + theme_blank()
+
+p <- p + theme(
+	legend.title    = element_text(face="bold",  size=11, angle=0),
+	legend.text     = element_text(face="plain", size=11, angle=0)
 )
+
+p <- p + coord_fixed()
+
+g <- ggplotGrob(p)
+
+if ( 
+	(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
+	&& ( gray_scale == 0 )
+){
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray45"
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
 }
+if ( 
+	(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
+	&& ( gray_scale == 1 )
+){
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray30"
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
 }
+
+library(grid)
+grid.draw(g)
+
+if (exists("com_m")){
+	rm("com_m")
+}
+if (exists("ccol_raw")){
+	rm("ccol_raw")
+}
+if (exists("edg_mst")){
+	rm("edg_mst")
+}
+
+
+
+
 
 
 
