@@ -326,15 +326,13 @@ sub new{
 sub r_plot_cmd_p1{
 	return '
 
-# 頻度計算
-#if (use_freq_as_size == 1){
-	freq <- NULL
-	for (i in 1:length( rownames(d) )) {
-		freq[i] = sum( d[i,] )
-	}
-#}
+# Count frequency of each word
+freq <- NULL
+for (i in 1:length( rownames(d) )) {
+	freq[i] = sum( d[i,] )
+}
 
-# 類似度計算
+# Compute co-occurrence coefficient
 if ( (exists("doc_length_mtr")) &! (method_coef == "binary")){
 	leng <- as.numeric(doc_length_mtr[,2])
 	leng[leng ==0] <- 1
@@ -343,7 +341,7 @@ if ( (exists("doc_length_mtr")) &! (method_coef == "binary")){
 	d <- d * 1000
 	d <- t(d)
 }
-if (method_coef == "euclid"){ # 抽出語ごとに標準化
+if (method_coef == "euclid"){ # standardize for each word
 	d <- t( scale( t(d) ) )
 }
 
@@ -358,7 +356,7 @@ if ( method_coef == "euclid" ){
 	d <- 1 - d
 }
 
-# 不要なedgeを削除して標準化
+# Delete unnecessary edges and standardize
 if ( exists("com_method") ){
 	if (com_method == "twomode_c" || com_method == "twomode_g"){
 		d[1:n_words,] <- 0
@@ -380,7 +378,7 @@ if ( exists("com_method") ){
 	}
 }
 
-# グラフ作成 
+# Make a graph
 library(igraph)
 new_igraph <- 0
 if (as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) ) > 5){
@@ -395,7 +393,7 @@ n <- set.vertex.attribute(
 	as.character( 1:length(d[1,]) )
 )
 
-# edgeを間引く準備 
+# Prepare for deleting weak edges
 el <- data.frame(
 	edge1            = get.edgelist(n,name=T)[,1],
 	edge2            = get.edgelist(n,name=T)[,2],
@@ -403,7 +401,7 @@ el <- data.frame(
 	stringsAsFactors = FALSE
 )
 
-# 閾値を計算 
+# Find a threshold value
 if (th < 0){
 	if(edges > length(el[,1])){
 		edges <- length(el[,1])
@@ -415,7 +413,7 @@ if (th < 0){
 	)
 }
 
-# edgeを間引いてグラフを再作成 
+# Delete weak edges and make a graph again
 el2 <- subset(el, el[,3] >= th)
 if ( nrow(el2) == 0 ){
 	stop(message = "No edges to draw!", call. = F)
@@ -439,259 +437,6 @@ if ( min_sp_tree_only == 1 ){
 	)
 }
 
-# Fix for igraph.Arrows
-igraph.Arrows_my0 <- function (x1, y1, x2, y2, code = 2, size = 1, width = 1.2/4/cin, 
-    open = TRUE, sh.adj = 0.1, sh.lwd = 1, sh.col = if (is.R()) par("fg") else 1, 
-    sh.lty = 1, h.col = sh.col, h.col.bo = sh.col, h.lwd = sh.lwd, 
-    h.lty = sh.lty, curved = FALSE) 
-{
-    cin <- size * par("cin")[2]
-    width <- width * (1.2/4/cin)
-    uin <- if (is.R()) 
-        1/xyinch()
-    else par("uin")
-    x <- sqrt(seq(0, cin^2, length = floor(35 * cin) + 2))
-    delta <- sqrt(h.lwd) * par("cin")[2] * 0.005
-    x.arr <- c(-rev(x), -x)
-    wx2 <- width * x^2
-    y.arr <- c(-rev(wx2 + delta), wx2 + delta)
-    deg.arr <- c(atan2(y.arr, x.arr), NA)
-    r.arr <- c(sqrt(x.arr^2 + y.arr^2), NA)
-    bx1 <- x1
-    bx2 <- x2
-    by1 <- y1
-    by2 <- y2
-    lx <- length(x1)
-    r.seg <- rep(cin * sh.adj, lx)
-    theta1 <- atan2((y1 - y2) * uin[2], (x1 - x2) * uin[1])
-    th.seg1 <- theta1 + rep(atan2(0, -cin), lx)
-    theta2 <- atan2((y2 - y1) * uin[2], (x2 - x1) * uin[1])
-    th.seg2 <- theta2 + rep(atan2(0, -cin), lx)
-    x1d <- y1d <- x2d <- y2d <- 0
-    if (code %in% c(1, 3)) {
-        x2d <- r.seg * cos(th.seg2)/uin[1]
-        y2d <- r.seg * sin(th.seg2)/uin[2]
-    }
-    if (code %in% c(2, 3)) {
-        x1d <- r.seg * cos(th.seg1)/uin[1]
-        y1d <- r.seg * sin(th.seg1)/uin[2]
-    }
-    if ( (is.logical(curved) && all(!curved)) || all(!curved) ) { # KH Coder
-        segments(x1 + x1d, y1 + y1d, x2 + x2d, y2 + y2d, lwd = sh.lwd, 
-            col = sh.col, lty = sh.lty)
-    }
-    else {
-        if (is.numeric(curved)) {
-            lambda <- curved
-        }
-        else {
-            lambda <- as.logical(curved) * 0.5
-        }
-        c.x1 <- x1 + x1d
-        c.y1 <- y1 + y1d
-        c.x2 <- x2 + x2d
-        c.y2 <- y2 + y2d
-        midx <- (x1 + x2)/2
-        midy <- (y1 + y2)/2
-        spx <- midx - lambda * 1/2 * (c.y2 - c.y1)
-        spy <- midy + lambda * 1/2 * (c.x2 - c.x1)
-        sh.col <- rep(sh.col, length = length(c.x1))
-        sh.lty <- rep(sh.lty, length = length(c.x1))
-        sh.lwd <- rep(sh.lwd, length = length(c.x1))
-        for (i in seq_len(length(c.x1))) {
-            spl <- xspline(x = c(c.x1[i], spx[i], c.x2[i]), y = c(c.y1[i], 
-                spy[i], c.y2[i]), shape = 1, draw = FALSE)
-            lines(spl, lwd = sh.lwd[i], col = sh.col[i], lty = sh.lty[i])
-            if (code %in% c(2, 3)) {
-                x1[i] <- spl$x[3 * length(spl$x)/4]
-                y1[i] <- spl$y[3 * length(spl$y)/4]
-            }
-            if (code %in% c(1, 3)) {
-                x2[i] <- spl$x[length(spl$x)/4]
-                y2[i] <- spl$y[length(spl$y)/4]
-            }
-        }
-    }
-    if (code %in% c(2, 3)) {
-        theta <- atan2((by2 - y1) * uin[2], (bx2 - x1) * uin[1])
-        Rep <- rep(length(deg.arr), lx)
-        p.x2 <- rep(bx2, Rep)
-        p.y2 <- rep(by2, Rep)
-        ttheta <- rep(theta, Rep) + rep(deg.arr, lx)
-        r.arr <- rep(r.arr, lx)
-        if (open) 
-            lines((p.x2 + r.arr * cos(ttheta)/uin[1]), (p.y2 + 
-                r.arr * sin(ttheta)/uin[2]), lwd = h.lwd, col = h.col.bo, 
-                lty = h.lty)
-        else polygon(p.x2 + r.arr * cos(ttheta)/uin[1], p.y2 + 
-            r.arr * sin(ttheta)/uin[2], col = h.col, lwd = h.lwd, 
-            border = h.col.bo, lty = h.lty)
-    }
-    if (code %in% c(1, 3)) {
-        x1 <- bx1
-        y1 <- by1
-        tmp <- x1
-        x1 <- x2
-        x2 <- tmp
-        tmp <- y1
-        y1 <- y2
-        y2 <- tmp
-        theta <- atan2((y2 - y1) * uin[2], (x2 - x1) * uin[1])
-        lx <- length(x1)
-        Rep <- rep(length(deg.arr), lx)
-        p.x2 <- rep(x2, Rep)
-        p.y2 <- rep(y2, Rep)
-        ttheta <- rep(theta, Rep) + rep(deg.arr, lx)
-        r.arr <- rep(r.arr, lx)
-        if (open) 
-            lines((p.x2 + r.arr * cos(ttheta)/uin[1]), (p.y2 + 
-                r.arr * sin(ttheta)/uin[2]), lwd = h.lwd, col = h.col.bo, 
-                lty = h.lty)
-        else polygon(p.x2 + r.arr * cos(ttheta)/uin[1], p.y2 + 
-            r.arr * sin(ttheta)/uin[2], col = h.col, lwd = h.lwd, 
-            border = h.col.bo, lty = h.lty)
-    }
-}
-
-igraph.Arrows_my1 <- function (x1, y1, x2, y2, code = 2, size = 1, width = 1.2/4/cin, 
-    open = TRUE, sh.adj = 0.1, sh.lwd = 1, sh.col = if (is.R()) par("fg") else 1, 
-    sh.lty = 1, h.col = sh.col, h.col.bo = sh.col, h.lwd = sh.lwd, 
-    h.lty = sh.lty, curved = FALSE) 
-{
-    cin <- size * par("cin")[2]
-    width <- width * (1.2/4/cin)
-    uin <- if (is.R()) 
-        1/xyinch()
-    else par("uin")
-    x <- sqrt(seq(0, cin^2, length = floor(35 * cin) + 2))
-    delta <- sqrt(h.lwd) * par("cin")[2] * 0.005
-    x.arr <- c(-rev(x), -x)
-    wx2 <- width * x^2
-    y.arr <- c(-rev(wx2 + delta), wx2 + delta)
-    deg.arr <- c(atan2(y.arr, x.arr), NA)
-    r.arr <- c(sqrt(x.arr^2 + y.arr^2), NA)
-    bx1 <- x1
-    bx2 <- x2
-    by1 <- y1
-    by2 <- y2
-    lx <- length(x1)
-    r.seg <- rep(cin * sh.adj, lx)
-    theta1 <- atan2((y1 - y2) * uin[2], (x1 - x2) * uin[1])
-    th.seg1 <- theta1 + rep(atan2(0, -cin), lx)
-    theta2 <- atan2((y2 - y1) * uin[2], (x2 - x1) * uin[1])
-    th.seg2 <- theta2 + rep(atan2(0, -cin), lx)
-    x1d <- y1d <- x2d <- y2d <- 0
-    if (code %in% c(1, 3)) {
-        x2d <- r.seg * cos(th.seg2)/uin[1]
-        y2d <- r.seg * sin(th.seg2)/uin[2]
-    }
-    if (code %in% c(2, 3)) {
-        x1d <- r.seg * cos(th.seg1)/uin[1]
-        y1d <- r.seg * sin(th.seg1)/uin[2]
-    }
-    if ( (is.logical(curved) && all(!curved)) || all(!curved) ) { # KH Coder
-        segments(x1 + x1d, y1 + y1d, x2 + x2d, y2 + y2d, lwd = sh.lwd, 
-            col = sh.col, lty = sh.lty)
-        phi <- atan2(y1 - y2, x1 - x2)
-        r <- sqrt((x1 - x2)^2 + (y1 - y2)^2)
-        lc.x <- x2 + 2/3 * r * cos(phi)
-        lc.y <- y2 + 2/3 * r * sin(phi)
-    }
-    else {
-        if (is.numeric(curved)) {
-            lambda <- curved
-        }
-        else {
-            lambda <- as.logical(curved) * 0.5
-        }
-        c.x1 <- x1 + x1d
-        c.y1 <- y1 + y1d
-        c.x2 <- x2 + x2d
-        c.y2 <- y2 + y2d
-        midx <- (x1 + x2)/2
-        midy <- (y1 + y2)/2
-        spx <- midx - lambda * 1/2 * (c.y2 - c.y1)
-        spy <- midy + lambda * 1/2 * (c.x2 - c.x1)
-        sh.col <- rep(sh.col, length = length(c.x1))
-        sh.lty <- rep(sh.lty, length = length(c.x1))
-        sh.lwd <- rep(sh.lwd, length = length(c.x1))
-        lc.x <- lc.y <- numeric(length(c.x1))
-        for (i in seq_len(length(c.x1))) {
-            spl <- xspline(x = c(c.x1[i], spx[i], c.x2[i]), y = c(c.y1[i], 
-                spy[i], c.y2[i]), shape = 1, draw = FALSE)
-            lines(spl, lwd = sh.lwd[i], col = sh.col[i], lty = sh.lty[i])
-            if (code %in% c(2, 3)) {
-                x1[i] <- spl$x[3 * length(spl$x)/4]
-                y1[i] <- spl$y[3 * length(spl$y)/4]
-            }
-            if (code %in% c(1, 3)) {
-                x2[i] <- spl$x[length(spl$x)/4]
-                y2[i] <- spl$y[length(spl$y)/4]
-            }
-            lc.x[i] <- spl$x[2/3 * length(spl$x)]
-            lc.y[i] <- spl$y[2/3 * length(spl$y)]
-        }
-    }
-    if (code %in% c(2, 3)) {
-        theta <- atan2((by2 - y1) * uin[2], (bx2 - x1) * uin[1])
-        Rep <- rep(length(deg.arr), lx)
-        p.x2 <- rep(bx2, Rep)
-        p.y2 <- rep(by2, Rep)
-        ttheta <- rep(theta, Rep) + rep(deg.arr, lx)
-        r.arr <- rep(r.arr, lx)
-        if (open) 
-            lines((p.x2 + r.arr * cos(ttheta)/uin[1]), (p.y2 + 
-                r.arr * sin(ttheta)/uin[2]), lwd = h.lwd, col = h.col.bo, 
-                lty = h.lty)
-        else polygon(p.x2 + r.arr * cos(ttheta)/uin[1], p.y2 + 
-            r.arr * sin(ttheta)/uin[2], col = h.col, lwd = h.lwd, 
-            border = h.col.bo, lty = h.lty)
-    }
-    if (code %in% c(1, 3)) {
-        x1 <- bx1
-        y1 <- by1
-        tmp <- x1
-        x1 <- x2
-        x2 <- tmp
-        tmp <- y1
-        y1 <- y2
-        y2 <- tmp
-        theta <- atan2((y2 - y1) * uin[2], (x2 - x1) * uin[1])
-        lx <- length(x1)
-        Rep <- rep(length(deg.arr), lx)
-        p.x2 <- rep(x2, Rep)
-        p.y2 <- rep(y2, Rep)
-        ttheta <- rep(theta, Rep) + rep(deg.arr, lx)
-        r.arr <- rep(r.arr, lx)
-        if (open) 
-            lines((p.x2 + r.arr * cos(ttheta)/uin[1]), (p.y2 + 
-                r.arr * sin(ttheta)/uin[2]), lwd = h.lwd, col = h.col.bo, 
-                lty = h.lty)
-        else polygon(p.x2 + r.arr * cos(ttheta)/uin[1], p.y2 + 
-            r.arr * sin(ttheta)/uin[2], col = h.col, lwd = h.lwd, 
-            border = h.col.bo, lty = h.lty)
-    }
-    list(lab.x = lc.x, lab.y = lc.y)
-}
-
-if ( grepl( "mingw32", sessionInfo()$platform ) ) {
-	if ( grepl( "0.7.0",   sessionInfo()$otherPkgs$igraph$Version ) ){
-		assignInNamespace(
-			x="igraph.Arrows",
-			value=igraph.Arrows_my0,
-			ns=asNamespace("igraph")
-		)
-	}
-	if ( grepl( "0.7.1",   sessionInfo()$otherPkgs$igraph$Version ) ){
-		assignInNamespace(
-			x="igraph.Arrows",
-			value=igraph.Arrows_my1,
-			ns=asNamespace("igraph")
-		)
-	}
-}
-
-
 ';
 }
 
@@ -703,48 +448,35 @@ if (length(get.vertex.attribute(n2,"name")) < 2){
 	com_method <- "none"
 }
 
-# 中心性
+# Centrality
 if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	ccol <- NULL
-	if (com_method == "cnt-b"){                   # 媒介
+	if (com_method == "cnt-b"){                   # betweenness
 		ccol <- igraph::betweenness(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
 			directed=F
 		)
 	}
-	if (com_method == "cnt-d"){                   # 次数
+	if (com_method == "cnt-d"){                   # degree
 		ccol <-  igraph::degree(
 			n2,
 			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
 		)
 	}
-	if (com_method == "cnt-e"){                   # 固有ベクトル
+	if (com_method == "cnt-e"){                   # evcent
 		try(
 			ccol <- igraph::evcent(n2)$vector,
 			silent = T
 		)
 	}
-	ccol_raw <- ccol # ggplot2
-	
-	# 色の設定
-	#if ( gray_scale == 1 ) {
-	#	ccol <- ccol - min(ccol)
-	#	ccol <- 1 - ccol / max(ccol) / 2.5
-	#	ccol <- gray(ccol)
-	#} else {
-	#	ccol <- ccol - min(ccol)
-	#	ccol <- ccol * 100 / max(ccol)
-	#	ccol <- trunc(ccol + 1)
-	#	ccol <- cm.colors(101)[ccol]
-	#}
+	ccol_raw <- ccol
 
-	com_col_v <- "gray40"
 	edg_col   <- "gray55"
 	edg_lty   <- 1
 }
 
-# クリーク検出
+# Community detection
 if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	merge_step <- function(n2, m){                # 共通利用の関数
 		for ( i in 1:( trunc( length( m ) / 2 ) ) ){
@@ -771,7 +503,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		return( trunc(length( m ) / 2) )
 	}
 
-	if (com_method == "com-b"){                   # 媒介性（betweenness）
+	if (com_method == "com-b"){                   # Betweenness
 		com   <- edge.betweenness.community(n2, directed=F)    
 		com_m <- community.to.membership(
 			n2, com$merges, merge_step(n2,com$merges)
@@ -793,61 +525,12 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			weights=get.edge.attribute(n2, "weight")
 		)
 		com_m <- NULL
-
-		# コミュニティ数を12以下に
-		# →この機能は現在停止中。R（igraph）のバージョンアップ時に復活？
-		if (F){
-		#if (length( table(com$membership)[table(com$membership) > 1] ) > 12 ){
-			best_step <- 0
-			for ( i in 1:( trunc( length( com$merges ) / 2 ) - 10 ) ){
-				temp_com <- community.to.membership(n2, com$merges, i)
-				if (
-					   (length(temp_com$csize[temp_com$csize > 1]) == 12)
-					&& (i > 12)
-				){
-					best_step <- i
-				}
-			}
-			if (best_step > 0){
-				temp_com <- community.to.membership(n2, com$merges, best_step)
-				com_m$membership <- temp_com$membership + new_igraph
-				com_m$csize      <- table(temp_com$membership)
-			} else {
-				com_m$membership <- com$membership
-				com_m$csize      <- table(com$membership)
-			}
-		} else {
-			com_m$membership <- com$membership
-			com_m$csize      <- table(com$membership)
-		}
+		com_m$membership <- com$membership
+		com_m$csize      <- table(com$membership)
 	}
 
-	com_col <- NULL # vertex frame                # Vertexの色（12色まで）
-	ccol    <- NULL # vertex
-
-	library( RColorBrewer )
-	colors_for_com <- brewer.pal(12, "Set3")
-
-	col_num <- 1
-	for (i in com_m$csize ){
-		cu_col <- "white"
-		if ( i == 1){
-			com_col <- c( com_col, "gray40" )
-		} else {
-			if (col_num <= 12){
-				cu_col  <- colors_for_com[col_num]
-				com_col <- c( com_col, "gray40" )
-			} else {
-				com_col <- c( com_col, "blue" )
-			}
-			col_num <- col_num + 1
-		}
-		ccol <- c( ccol, cu_col )
-	}
-	com_col_v <- com_col[com_m$membership + 1 - new_igraph]
-	ccol      <- ccol[com_m$membership + 1 - new_igraph]
-
-	edg_lty <- NULL                               # edgeの色と形状
+	# Configure Edges
+	edg_lty <- NULL
 	edg_col <- NULL
 	for (i in 1:nrow(get.edgelist(n2,name=F))){
 		if (
@@ -888,18 +571,10 @@ if (com_method == "twomode_c"){
 	# ggplot2
 	ccol_raw <- ccol
 	ccol_raw[var_select] <- NA
+	ccol_raw[ccol_raw >= 5] <- 5
 	ccol_raw <- as.character(ccol_raw)
-	ccol_raw[ccol_raw=="5"] <- ">= 5"
-	
-	#ccol[5 < ccol] <- 5
-	#ccol <- ccol + 3
-	
-	#library( RColorBrewer )
-	#ccol <- brewer.pal(8, "Spectral")[ccol]
+	ccol_raw[ccol_raw=="5"] <- "5+"
 
-	#ccol[var_select] <- "#FB8072" # #FB8072 #DEEBF7 #FF9966 #FFDAB9 "#F46D43"
-
-	com_col_v <- "gray65"
 	edg_col   <- "gray70"
 	edg_lty   <- 1
 
@@ -907,42 +582,12 @@ if (com_method == "twomode_c"){
 
 # カラーリング「なし」の場合の線の色（2010 12/4）
 if (com_method == "none" || com_method == "twomode_g"){
-	ccol <- "white"
-	com_col_v <- "black"
 	edg_lty <- 1
 	edg_col   <- "gray40"
 }
 
 if (com_method == "twomode_g"){
 	edg_lty <- 3
-}
-
-# 負の値を0に変換する関数
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if (nums[i] < 0){
-      temp[i] <- 0
-    } else {
-      temp[i] <-  nums[i]
-    }
-  }
-  return(temp)
-}
-
-# edge.widthを計算
-if ( use_weight_as_width == 1 ){
-	edg_width <- edg_width <- get.edge.attribute(n2, "weight")
-	if ( sd( edg_width ) == 0 ){
-		edg_width <- 1
-	} else {
-		edg_width <- edg_width / sd( edg_width )
-		edg_width <- edg_width - mean( edg_width )
-		edg_width <- edg_width * 0.6 + 2 # 分散 = 0.5, 平均 = 2
-		edg_width <- neg_to_zero(edg_width)
-	}
-} else {
-	edg_width <- 1
 }
 
 # Minimum Spanning Tree
@@ -1058,88 +703,9 @@ for (i in 1:2){
 	lay_f[,i] <- ( lay_f[,i] - 0.5 ) * 1.96;
 }
 
-# vertex.sizeを計算
-if ( use_freq_as_size == 1 ){
-	v_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
-		v_size <- v_size[var_select==FALSE]
-	}
-	if ( sd(v_size) == 0 ){
-		v_size <- 15
-	} else {
-		v_size <- v_size / sd(v_size)
-		v_size <- v_size - mean(v_size)
-		v_size <- v_size * 3 + 12 # 分散 = 3, 平均 = 12
-		v_size <- neg_to_zero(v_size)
-	}
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
-		v_size[var_select==FALSE] <- v_size
-		v_size[var_select] <- 15
-	}
-} else {
-	v_size <- 15
-}
-
-# vertex.label.cexを計算
-if ( use_freq_as_fontsize ==1 ){
-	f_size <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
-		f_size <- f_size[var_select==FALSE]
-	}
-	if ( sd(f_size) == 0 ){
-		f_size <- cex
-	} else {
-		f_size <- f_size / sd(f_size)
-		f_size <- f_size - mean(f_size)
-		f_size <- f_size * 0.2 + cex
-	}
-
-	for (i in 1:length(f_size) ){
-	  if (f_size[i] < 0.6 ){
-	    f_size[i] <- 0.6
-	  }
-	}
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
-		f_size[var_select==FALSE] <- f_size
-		f_size[var_select] <- cex
-	}
-} else {
-	f_size <- cex
-}
-
-# 小さめの円で描画
-if (smaller_nodes ==1){
-	f_size <- cex
-	v_size <- 5
-	vertex_label_dist <- 0.75
-} else {
-	vertex_label_dist <- 0
-}
 
 # 外部変数・見出しを使う場合の形状やサイズ
-v_shape <- "circle"
 if (com_method == "twomode_c" || com_method == "twomode_g"){
-	# ノードの形
-	v_shape <- rep("circle", length( get.vertex.attribute(n2,"name") ) )
-	v_shape[var_select] <- "square"
-
-	# 小さな円で描画している場合のノードサイズ
-	if (smaller_nodes == 1){
-		# ラベルの距離
-		if (length( vertex_label_dist ) == 1){
-			vertex_label_dist <- rep(
-				vertex_label_dist,
-				length( get.vertex.attribute(n2,"name") )
-			)
-		}
-		vertex_label_dist[var_select] <- 0
-		# サイズ
-		if (length( v_size ) == 1){
-			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
-		}
-		v_size[var_select] <- 10
-	}
-
 	# 識別用の「<>」を外す
 	colnames(d)[
 		substring(colnames(d), 1, 2) == "<>"
@@ -1165,13 +731,9 @@ if ( exists("saving_emf") || exists("saving_eps") ){
 	use_alpha <- 0 
 }
 
-# 語の強調
-if ( exists("v_shape") == FALSE ){
-	v_shape    <- "circle"
-}
 target_ids <-  NULL
 if ( exists("target_words") ){
-	# IDの取得
+	# get word IDs
 	for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
 		for (w in target_words){
 			if (
@@ -1182,69 +744,16 @@ if ( exists("target_words") ){
 			}
 		}
 	}
-	# 形状
-	if (length(v_shape) == 1){
-		v_shape <- rep(v_shape, length( get.vertex.attribute(n2,"name") ) )
-	}
-	v_shape[target_ids] <- "square"
-	# 枠線の色
-	if (length(com_col_v) == 1){
-		com_col_v <- rep(com_col_v, length( get.vertex.attribute(n2,"name") ) )
-	}
-	com_col_v[target_ids] <- "black"
-	# サイズ
-	if (length( v_size ) == 1){
-		v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
-	}
-	v_size[target_ids] <- 15
-	# 小さな円で描画している場合
-	rect_size <- 0.095
-	if (smaller_nodes == 1){
-		# ラベルの距離
-		if (length( vertex_label_dist ) == 1){
-			vertex_label_dist <- rep(
-				vertex_label_dist,
-				length( get.vertex.attribute(n2,"name") )
-			)
-		}
-		vertex_label_dist[target_ids] <- 0
-		# サイズ
-		if (length( v_size ) == 1){
-			v_size <- rep(v_size, length( get.vertex.attribute(n2,"name") ) )
-		}
-		v_size[target_ids] <- 10
-		rect_size <- 0.07
-	}
 }
 
 edge_label <- NULL
-#if (view_coef == 1){
-#	edge_label <- substring(
-#		round(
-#			get.edge.attribute(n2,"weight"),
-#			digits=2
-#		),
-#		2,
-#		4
-#	)
-#}
 
-font_family <- "'.$::config_obj->font_plot_current.'"
+font_fam <- "'.$::config_obj->font_plot_current.'"
 if ( exists("PERL_font_family") ){
 	font_fam <- PERL_font_family
 }
 
-# プロット
-#if (smaller_nodes ==1){
-#	par(mai=c(0,0,0,0), mar=c(0,0,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-#} else {
-#	par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
-#}
 if ( length(get.vertex.attribute(n2,"name")) > 1 ){
-	# ネットワークを描画
-
-
-# edit ------------------------------------------------------------
 	if (fix_lab == 1){
 		if (exists("if_fixed") == 0){
 			plot.new()
@@ -1275,11 +784,6 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			if_fixed <- 1
 		}
 	}
-# edit ------------------------------------------------------------
-
-
-
-
 
 #-----------------------------------------------------------------------------#
 #                       Prepare for Plotting with ggplot2                     #
@@ -1327,7 +831,7 @@ if ( exists("com_m") ){
 			if (i < 10){
 				com_label <- c(
 					com_label,
-					paste("0", as.character(i), " ", sep="")
+					paste("0", as.character(i), "   ", sep="")
 				)
 			} else {
 				com_label <- c(com_label, as.character(i))
@@ -1374,13 +878,6 @@ if ( exists("edg_mst") ){
 	)
 	#print(edg_mst)
 }
-
-n2 <- set.vertex.attribute(
-	n2,
-	"shape",
-	1:length(get.vertex.attribute(n2,"name")),
-	v_shape
-)
 
 edg_lty[edg_lty==1] <- "solid"
 edg_lty[edg_lty==3] <- "dotted"
@@ -1510,8 +1007,7 @@ p <- p + scale_linetype_identity()
 p <- p + geom_nodes(
 	aes(
 		size = size * 0.333,
-		fill = com,
-		shape = shape
+		fill = com
 	),
 	alpha = 0.8,
 	colour = NA,
@@ -1788,8 +1284,8 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				na.value = "white",
 				guide = guide_legend(
 					title = "Community:",
-					override.aes = list(size=5.5, alpha=1, shape=22),
-					keyheight = unit(1,"line"),
+					override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
+					keyheight = unit(1.25,"line"),
 					ncol=2,
 					order = 1
 				)
@@ -1801,8 +1297,8 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				na.value = "white",
 				guide = guide_legend(
 					title = "Community:",
-					override.aes = list(size=5.5, alpha=1, shape=22),
-					keyheight = unit(1,"line"),
+					override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
+					keyheight = unit(1.25,"line"),
 					ncol=2,
 					order = 1
 				)
@@ -1854,8 +1350,8 @@ if (com_method == "twomode_c"){
 		guide = guide_legend(
 			title = "Degree:",
 			order = 1,
-			override.aes = list(size=6, shape=22),
-			label.hjust = 1,
+			override.aes = list(size=5.5, shape=22),
+			#label.hjust = "left",
 			#reverse = TRUE,
 			#ncol=2,
 			keyheight = unit(1.2,"line")
@@ -1874,14 +1370,14 @@ if ( com_method == "none" || com_method == "twomode_g"){
 #---------------------#
 #  Final adjustments  #
 
-p <- p + theme_blank()
+p <- p + theme_blank(base_family=font_fam)
 
 p <- p + theme(
 	legend.title    = element_text(face="bold",  size=11, angle=0),
 	legend.text     = element_text(face="plain", size=11, angle=0)
 )
 
-p <- p + coord_fixed()
+p <- p + coord_fixed( xlim=c(0,1.025) )
 
 g <- ggplotGrob(p)
 
