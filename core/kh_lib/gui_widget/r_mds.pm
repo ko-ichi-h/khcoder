@@ -77,16 +77,6 @@ sub _new{
 			}
 		}
 
-		# バブルプロット用のパラメーター
-		if ( $self->{r_cmd} =~ /bubble <\- 1\n/ ){
-			$check_bubble = 1;
-		} else {
-			$check_bubble = 0;
-		}
-		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
-			$num_size = $1;
-		}
-
 		$self->{r_cmd} = undef;
 	}
 

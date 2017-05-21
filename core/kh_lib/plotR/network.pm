@@ -47,10 +47,10 @@ sub new{
 	}
 	$r_command .= "use_freq_as_size <- $args{use_freq_as_size}\n";
 
-	unless ( $args{use_freq_as_fsize} && $args{use_freq_as_size}){
-		$args{use_freq_as_fsize} = 0;
+	unless ( $args{bubble_size} ){
+		$args{bubble_size} = 100;
 	}
-	$r_command .= "use_freq_as_fontsize <- $args{use_freq_as_fsize}\n";
+	$r_command .= "bubble_size <- $args{bubble_size}\n";
 
 	unless ( $args{use_weight_as_width} ){
 		$args{use_weight_as_width} = 0;
@@ -1024,7 +1024,7 @@ p <- p + geom_nodes(
 if ( use_freq_as_size == 1 ){
 	p <- p + scale_size_area(
 		"Frequency",
-		max_size = 30,
+		max_size = 30 * bubble_size / 100,
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", alpha=1),

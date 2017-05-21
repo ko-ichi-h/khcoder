@@ -18,12 +18,12 @@ sub _new{
 		unless defined $self->{edges_jac};
 	$self->{check_use_weight_as_width} = 0
 		unless $self->{check_use_weight_as_width};
-	$self->{check_use_freq_as_size}    = 0
+	$self->{check_use_freq_as_size}    = 1
 		unless defined $self->{check_use_freq_as_size};
-	$self->{check_use_freq_as_fsize}   = 0
-		unless defined $self->{check_use_freq_as_fsize};
 	$self->{check_smaller_nodes}       = 0
 		unless defined $self->{check_smaller_nodes};
+
+	my $num_size = 100;
 
 	if ( length($self->{r_cmd}) ){
 		my ($edges);
@@ -41,11 +41,6 @@ sub _new{
 			$self->{check_use_freq_as_size} = $1;
 		} else {
 			die("cannot get configuration: use_freq_as_size");
-		}
-		if ($self->{r_cmd} =~ /use_freq_as_fontsize <- ([01])\n/){
-			$self->{check_use_freq_as_fsize} = $1;
-		} else {
-			die("cannot get configuration: use_freq_as_fsize");
 		}
 		if ($self->{r_cmd} =~ /use_weight_as_width <- ([01])\n/){
 			$self->{check_use_weight_as_width} = $1;
@@ -101,6 +96,10 @@ sub _new{
 			}
 		}
 
+		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
+			$num_size = $1;
+		}
+
 		$self->{r_cmd} = undef;
 	}
 
@@ -131,8 +130,6 @@ sub _new{
 	if ($self->{from} eq 'selected_netgraph') {
 		$method_coef_wd->configure(-state => 'disabled');
 	}
-	
-	
 	
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
@@ -212,40 +209,17 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	# Nodeの大きさ
-	my $msg;
-	if ($self->{type} eq 'codes'){
-		$msg = kh_msg->get('larger_c');
-	} else {
-		$msg = kh_msg->get('larger');
-	}
-	
-	$self->{wc_use_freq_as_size} = $lf->Checkbutton(
-			-text     => $msg, # 出現数の多い語ほど大きい円で描画
-			-variable => \$self->{check_use_freq_as_size},
+	$self->{bubble_obj} = gui_widget::bubble->open(
+		parent       => $lf,
+		type         => 'mds',
+		command2      => sub {$self->refresh(3);},
+		command      => $self->{command},
+		pack    => {
 			-anchor   => 'w',
-			-command  => sub{
-				$self->{check_smaller_nodes} = 0;
-				$self->refresh(3);
-			},
-	)->pack(-anchor => 'w');
-
-	my $fontsize_frame = $lf->Frame()->pack(
-		-fill => 'x',
-		-pady => 0,
-		-padx => 0,
+		},
+		check_bubble    => $self->{check_use_freq_as_size},
+		num_size        => $num_size,
 	);
-
-	$fontsize_frame->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-	
-	$self->{wc_use_freq_as_fsize} = $fontsize_frame->Checkbutton(
-			-text     => kh_msg->get('larger_font'), # フォントも大きく
-			-variable => \$self->{check_use_freq_as_fsize},
-			-anchor => 'w',
-			-state => 'disabled',
-	)->pack(-anchor => 'w');
 
 	$self->{wc_smaller_nodes} = $lf->Checkbutton(
 			-text     => kh_msg->get('smaller'), # すべての語を小さめの円で描画
@@ -256,8 +230,6 @@ sub _new{
 				$self->refresh(3);
 			},
 	)->pack(-anchor => 'w');
-
-
 
 	$self->{check_min_sp_tree} = 0 unless defined($self->{check_min_sp_tree});
 	$lf->Checkbutton(
@@ -285,7 +257,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 
-	$self->{check_use_alpha} = 0 unless defined($self->{check_use_alpha});
+	$self->{check_use_alpha} = 1 unless defined($self->{check_use_alpha});
 	$lf->Checkbutton(
 			-text     => kh_msg->get('gui_window::word_mds->r_alpha'),
 			-variable => \$self->{check_use_alpha},
@@ -306,7 +278,8 @@ sub _new{
 
 sub refresh{
 	my $self = shift;
-
+	return unless $self->{wc_smaller_nodes};
+	
 	my (@dis, @nor);
 	if ($self->{radio} eq 'n'){
 		push @nor, $self->{entry_edges_number};
@@ -316,19 +289,18 @@ sub refresh{
 		push @dis, $self->{entry_edges_number};
 	}
 
-	if ($self->{check_use_freq_as_size}){
-		push @nor, $self->{wc_use_freq_as_fsize};
+	if ($self->{bubble_obj}->check_bubble){
+		push @nor, $self->{bubble_obj}{chkw_main};
 		push @dis, $self->{wc_smaller_nodes};
 	} else {
-		push @dis, $self->{wc_use_freq_as_fsize};
+		#push @dis, $self->{bubble_obj}{chkw_main};;
 		push @nor, $self->{wc_smaller_nodes};
 	}
 
 	if ($self->{check_smaller_nodes}){
-		push @dis, $self->{wc_use_freq_as_size};
-		push @dis, $self->{wc_use_freq_as_fsize};
+		push @dis,  $self->{bubble_obj}{chkw_main};
 	} else {
-		push @nor, $self->{wc_use_freq_as_size};
+		push @nor,  $self->{bubble_obj}{chkw_main};
 	}
 
 	foreach my $i (@nor){
@@ -351,8 +323,9 @@ sub params{
 		n_or_j              => $self->n_or_j,
 		edges_num           => $self->edges_num,
 		edges_jac           => $self->edges_jac,
-		use_freq_as_size    => $self->use_freq_as_size,
-		use_freq_as_fsize   => $self->use_freq_as_fsize,
+		use_freq_as_size    => $self->{bubble_obj}->check_bubble,
+		bubble_size         => $self->{bubble_obj}->size,
+		#use_freq_as_fsize   => $self->use_freq_as_fsize,
 		smaller_nodes       => $self->smaller_nodes,
 		use_weight_as_width => $self->use_weight_as_width,
 		min_sp_tree         => $self->min_sp_tree,
@@ -399,11 +372,6 @@ sub fix_lab{
 sub use_freq_as_size{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{check_use_freq_as_size} );
-}
-
-sub use_freq_as_fsize{
-	my $self = shift;
-	return gui_window->gui_jg( $self->{check_use_freq_as_fsize} );
 }
 
 sub min_sp_tree{

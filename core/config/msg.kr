@@ -92,14 +92,11 @@ gui_widget::r_net:
   filter_edges: 묘화하는 공기 관계(edge) 한정
   fix_lab: 라벨이 겹치지 않도록 위치 조정
   gray_scale: 그레이 스케일로 표현(중심성/서브그래프)
-  larger: 출현수가 많은 어휘일수록 더 큰 원으로 묘화
-  larger_c: 출현수가 많은 코드일수록 더 큰 원으로 묘화
-  larger_font: 폰트도 크게 ※EMF와 EPS로 출력/인쇄용
   min_sp_tree: 최소 스패닝 트리를 강조 표시
   min_sp_tree_only: 최소 스패닝 트리만 묘화
   or_more: 이상
   smaller: 모든 어휘를 작은 원으로 묘화
-  thicker: 강한 공기 관계일수록 굵은 선으로 묘화
+  thicker: 강한 관계를 위해 어두운 선으로 그립니다
 gui_widget::r_som:
   2_12: (2에서 12까지)
   cls_num: '클러스터 수:'

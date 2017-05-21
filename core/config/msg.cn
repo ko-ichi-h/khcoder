@@ -92,14 +92,11 @@ gui_widget::r_net:
   filter_edges: 帅选绘图的共现关系（edge）
   fix_lab: 为了标签不重叠对位置进行调整
   gray_scale: 用灰度等级来表示(中心性和副图表)
-  larger: 出现数较多的词汇用较大的圆来绘制
-  larger_c: 出现数较多的代码用较大的圆来绘制
-  larger_font: 字体也大※面向使用EMF和EPS的输出和印刷
   min_sp_tree: 强调表示最小生成树
   min_sp_tree_only: 只绘制最小生成树
   or_more: 以上
   smaller: 所有的词汇用小圆来绘制
-  thicker: 坚定的共现关系用较粗的线绘制
+  thicker: 坚定的共现关系用暗线绘制
 gui_widget::r_som:
   2_12: （从2到12为止）
   cls_num: 集群数：

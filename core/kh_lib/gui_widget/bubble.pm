@@ -18,7 +18,7 @@ sub _new{
 	$self->{num_var}         = 100 unless defined $self->{num_var};
 	$self->{use_alpha}       = 1   unless defined $self->{use_alpha};
 	
-	$f1->Checkbutton(
+	$self->{chkw_main} = $f1->Checkbutton(
 		-text     => kh_msg->get('bubble'), # バブルプロット：
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
@@ -111,6 +111,11 @@ sub refresh_std_radius{
 	foreach my $i (@temp){
 		$i->configure(-state => $state) if $i;
 	}
+
+	if ($self->{command2}) {
+		&{$self->{command2}};
+	}
+
 
 	#if ( $self->{check_bubble} == 1 && $self->{chk_std_radius} == 0 ){
 	#	foreach my $i ($self->{lab_var1},$self->{lab_var2},$self->{ent_var}){
