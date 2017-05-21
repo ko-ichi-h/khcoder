@@ -1373,7 +1373,12 @@ p <- p + theme(
 	legend.text     = element_text(face="plain", size=11, angle=0)
 )
 
-p <- p + coord_fixed( xlim=c(0,1.025) )
+# make a small space between the graph and the legend
+if (smaller_nodes == 1){
+	p <- p + coord_fixed( xlim=c(0,1.05) )
+} else {
+	p <- p + coord_fixed( xlim=c(0,1.025) )
+}
 
 g <- ggplotGrob(p)
 
