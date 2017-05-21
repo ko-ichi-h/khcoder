@@ -897,7 +897,7 @@ p <- ggplot(
 )
 
 if (use_alpha == 1){
-	alpha_value = 0.58
+	alpha_value = 0.62
 	gray_color_n <- "gray20"
 } else {
 	alpha_value = 1
@@ -1404,7 +1404,7 @@ if (exists("ccol_raw")){
 if (exists("edg_mst")){
 	rm("edg_mst")
 }
-
+ccol <- get.vertex.attribute(n2,"com")
 
 
 
