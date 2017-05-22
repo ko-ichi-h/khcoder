@@ -1,9 +1,9 @@
 中学校・高等学校における情報教育の体系化に向けた教科書分析: 情報モラル教育に着目して (情報教育, 研究発表 I)	http://ci.nii.ac.jp/naid/110009930331/
 第 36 回研究大会ワークショップ まちづくりの話し合い学―言語学・社会学からのアプローチ―	https://www.jstage.jst.go.jp/article/jajls/18/2/18_94/_article/-char/ja/
+学習指導法・評価	http://ci.nii.ac.jp/naid/110009930815
 
 火山災害に対してレジリエントな地域社会づくりに向けた課題	https://www.jstage.jst.go.jp/article/jscejsp/72/2/72_I_85/_article/-char/ja/
 開発・参加型GIS教育における性格別による学習上のつまずきの特徴の解明	https://www.jstage.jst.go.jp/article/jscejeep/73/1/73_12/_article/-char/ja/
-大学生におけるソーシャルネットワーキングサービスの利用行動と共感性の関連	http://search.ieice.org/bin/summary.php?id=j99-d_12_1154
 地域包括ケア研究の動向と今後の課題	http://ci.nii.ac.jp/naid/40021097823
 寒冷地における厳冬期被災時の住宅と避難所の温熱環境	https://www.jstage.jst.go.jp/article/aijt/22/52/22_1021/_article/-char/ja/
 Web情報に関連するストレスエビデンス論文の視覚的提示方法の有効性	https://www.jstage.jst.go.jp/article/ieejeiss/137/2/137_310/_article/-char/ja/
@@ -14,7 +14,6 @@ A Study on the Advent of New Radicalism in the Middle East after the Arab Sprin	
 継続したPBLテュートリアル教育による効果の検討 : 学生アンケートの計量テキスト分析	http://ci.nii.ac.jp/naid/40021043753
 薬物依存回復施設ダルクにおける家族支援 : フォーカス・グループインタビューをもとに	http://ci.nii.ac.jp/naid/40020993547
 大森ふるさとの浜辺整備事業に見る海洋環境修復事業に伴う持続的合意形成の形	https://www.jstage.jst.go.jp/article/jscejoe/72/2/72_I_838/_article/-char/ja/
-Twitterにおける日本人に言及する日本語ツイートの計量的分析	http://ci.nii.ac.jp/naid/40020859258
 異文化コミュニケーション授業をアクティブな学びの場にする試み	http://ci.nii.ac.jp/naid/40020816081
 認知症高齢者ケアにおける生活の安定への変容過程に関わるなじみの検討	https://jcsw.repo.nii.ac.jp/?action=pages_view_main&active_action=repository_view_main_item_detail&item_id=374&item_no=1&page_id=13&block_id=32
 ※博論・本文はネット非公開
@@ -47,8 +46,7 @@ Generative Transfer Learning between Recurrent Neural Networks	https://arxiv.org
 テキストマイニングで行うアンケート分析	https://www.jstage.jst.go.jp/article/jscstaikai/30/0/30_45/_article/-char/ja/
 Factors for Developing a Software Industry	http://dl.acm.org/citation.cfm?id=2987507
 
-奥津拡・遠田敦・菊池弘祐・渡辺仁史 2010 「ソーシャルメディアを介した行動モニタリングに関する研究2 ―マイクロブログの投稿位置における行為の集積からみたホットスポット群の抽出―」 『日本建築学会研究報告』 : 269-272	http://ci.nii.ac.jp/naid/110008730422
-小池太輔・渡辺仁史 2012 「ソーシャルメディアのテキスト情報に現れる都市イメージの抽出」 『研究報告』 82(2): 457-460	http://ci.nii.ac.jp/naid/110009571734
+
 
 
 #-------------------#
