@@ -1286,6 +1286,19 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 					order = 1
 				)
 			)
+		#} else if ( length(com_m$csize[com_m$csize > 1]) <= 20) {
+		#	library(ggsci)
+		#	p <- p + scale_fill_d3(
+		#		palette = "category20",
+		#		na.value = "white",
+		#		guide = guide_legend(
+		#			title = "Community:",
+		#			override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
+		#			keyheight = unit(1.25,"line"),
+		#			ncol=2,
+		#			order = 1
+		#		)
+		#	)
 		} else {
 			p <- p + scale_fill_hue(
 				c = 50,
