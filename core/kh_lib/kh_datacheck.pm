@@ -2,6 +2,13 @@ package kh_datacheck;
 use strict;
 use kh_msg;
 
+my $euc_code = '';
+if (eval 'require Encode::EUCJPMS'){
+	$euc_code = 'eucJP-ms';
+} else {
+	$euc_code = 'euc-jp';
+}
+
 my %errors = (
 	'error_m1'  => kh_msg->get('error_m1'),#'長すぎる見出し行があります（自動修正不可）',
 	'error_c1'  => kh_msg->get('error_c1'),#'文字化けを含む行があります',
@@ -153,13 +160,16 @@ sub run{
 				} else {
 					$line .= "$h->[1]\n";
 				}
-				$line = Encode::decode('euc-jp', $line);#gui_window->gui_jchar($line,'euc');
+				$line = Encode::decode($euc_code, $line);
 				$msg .= $line;
 			}
 		}
 	}
+	$msg = Encode::encode('cp932', $msg, sub{'?'});
+	$msg = Encode::decode('cp932', $msg);
+
 	$self->{repo_full} = $msg;
-	
+
 	gui_window::datacheck->open($self);
 }
 
@@ -266,11 +276,13 @@ sub edit{
 					} else {
 						$line = "$h->[1]\n";
 					}
-					$line = gui_window->gui_jchar($line,'euc');
+					$line = Encode::decode($euc_code, $line);
 					$msg .= $line;
 				}
 			}
 		}
+		$msg = Encode::encode('cp932', $msg, sub{'?'});
+		$msg = Encode::decode('cp932', $msg);
 		$self->{repo_full} = $msg;
 	} else {
 		$self->{repo_full} = kh_msg->get('corrected')."\n"; #"既知の問題点はすべて修正されています。\n";
