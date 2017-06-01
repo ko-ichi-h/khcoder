@@ -156,7 +156,7 @@ sub edit{
 	if (length($edp->comment)){
 		$sql .= $self->dbh->quote($comment);
 	} else {
-		$sql .= 'undef';
+		$sql .= '\'\'';
 	}
 	$sql .= " WHERE target = ";
 	$sql .= "'".$file."'";
@@ -194,7 +194,7 @@ sub delete{
 	if ($del->comment){
 		$sql .= "'".$del->comment."',";
 	} else {
-		$sql .= "undef,";
+		$sql .= "'',";
 	}
 	$sql .= "'".$del->dbname."'";
 	$sql .= ')';
