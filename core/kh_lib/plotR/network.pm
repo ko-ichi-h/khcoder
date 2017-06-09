@@ -230,6 +230,24 @@ sub new{
 			name      => $args{plotwin_name}.'_7',
 			command_f =>
 				 $r_command
+				."\ncom_method <- \"cor\"\n"
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
+			command_a =>
+				 "com_method <- \"cor\"\n"
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p4,
+			width     => int( $args{plot_size} * $x_factor ),
+			height    => $args{plot_size},
+			font_size => $args{font_size},
+		) or return 0;
+
+		$plots[7] = kh_r_plot::network->new(
+			name      => $args{plotwin_name}.'_8',
+			command_f =>
+				 $r_command
 				."\ncom_method <- \"none\"\n"
 				.$self->r_plot_cmd_p1
 				.$self->r_plot_cmd_p2
@@ -237,7 +255,7 @@ sub new{
 				.$self->r_plot_cmd_p4,
 			command_a =>
 				 "com_method <- \"none\"\n"
-				.$self->r_plot_cmd_p2
+				#.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p4,
 			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
@@ -345,6 +363,7 @@ if (method_coef == "euclid"){ # standardize for each word
 	d <- t( scale( t(d) ) )
 }
 
+dr <- d
 library(amap)
 d <- Dist(d,method=method_coef)
 
@@ -784,6 +803,88 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 #-----------------------------------------------------------------------------#
 #                       Prepare for Plotting with ggplot2                     #
 
+#------------------------------------------------#
+#  get ready for ggplot2 graph drawing (0): cor  #
+
+if ( com_method == "cor" ){  # cor
+	dr <- as.data.frame( t(dr) )
+	dv <- data.frame(
+	  khvar_ = 1:nrow(dr)
+	)
+	dr <- cbind(dr,dv)
+
+	edge_pos <- NULL
+	edges <- get.edgelist(n2, names=TRUE)
+	for (i in 1:nrow(edges)){
+		i1 <- as.numeric( edges[i,1] )
+		i2 <- as.numeric( edges[i,2] )
+		
+		edge_pos <- c(
+			edge_pos,
+			cor(
+				as.numeric( dr[,i1] > 0 & dr[,i2] >0 ),
+				dr$khvar_,
+				method="pearson"
+			)
+			#mean( dr[dr[,i1] > 0 & dr[,i2] >0,]$khvar_ )
+		)
+	}
+
+	n2 <- set.edge.attribute(
+		n2,
+		"edge_pos_o",
+		1:length(get.edge.attribute(n2,"weight")),
+		edge_pos
+	)
+
+	#edge_pos <- edge_pos - mean(edge_pos)
+	#edge_pos <- edge_pos / sd(edge_pos)
+	##edge_pos <- edge_pos * 10 + 50
+
+	#limv <- 0.15
+	#maxv <- max( abs( edge_pos ) )
+	
+	#if ( limv < maxv ){
+	#	edge_pos[edge_pos > limv]  <- limv
+	#	edge_pos[edge_pos < -limv] <- -limv
+	#}
+
+	n2 <- set.edge.attribute(
+		n2,
+		"edge_pos",
+		1:length(get.edge.attribute(n2,"weight")),
+		edge_pos
+	)
+
+	ver_pos <- NULL
+	vertices <- as.numeric( get.vertex.attribute(n2,"name") )
+	for (i in 1:length(vertices) ){
+		ver_pos <- c(
+			ver_pos,
+			cor(
+				as.numeric( dr[,vertices[i]] > 0 ),
+				dr$khvar_,
+				method="pearson"
+			)
+		)
+	}
+
+	ver_pos[ver_pos > max(edge_pos)] <- max(edge_pos)
+	ver_pos[ver_pos < min(edge_pos)] <- min(edge_pos)
+
+	n2 <- set.vertex.attribute(
+		n2,
+		"ver_pos",
+		1:length(get.vertex.attribute(n2,"name")),
+		ver_pos
+	)
+	ccol_raw <- ver_pos
+	if ( is.null( get.vertex.attribute(n2,"com") ) == FALSE ){
+		n2 <- remove.vertex.attribute(n2, "com")
+		edg_lty <- 1
+	}
+}
+
 #-----------------------------------------------#
 #  get ready for ggplot2 graph drawing (1): n2  #
 
@@ -952,7 +1053,42 @@ if ( smaller_nodes == 1 ){
 #---------#
 #  Edges  #
 
-if (min_sp_tree == 1){
+if (com_method == "cor"){ # cor
+	p <- p + geom_edges(
+		aes(
+			linetype = as.character(line),
+			color = edge_pos
+		),
+		size = 0.6,
+	)
+	myPalette <- colorRampPalette(
+		rev( brewer.pal(9, "RdYlBu") )
+	)(100) #Spectral
+	p <- p + scale_color_gradientn(
+		colours = myPalette,
+		#limits = c( min(edge_pos), limv ),
+		#limits = c( 0 - limv, 0 + limv ),
+		guide = guide_colourbar(
+			title = "Correlation:\n",
+			title.theme = element_text(
+				face="bold",
+				size=11,
+				lineheight=0.4,
+				angle=0
+			),
+			order = 1,
+			#override.aes = list(size=6, shape=22),
+			label.hjust = 1,
+			#reverse = TRUE,
+			#ncol=2,
+			#keyheight = unit(1.5,"line")
+		)
+	)
+	p <- p + scale_fill_gradientn(
+		colours = myPalette,
+		guide = FALSE
+	)
+} else if (min_sp_tree == 1){
 	edg_col2 <- p$data$edg_col
 	edg_col2[edg_col2=="gray30"] <- "MST"
 	edg_col2[edg_col2=="gray55"] <- "non-MST"
@@ -1003,21 +1139,36 @@ p <- p + scale_linetype_identity()
 p <- p + geom_nodes(
 	aes(
 		size = size * 0.41,
-		fill = com
+		color = com
 	),
 	alpha = 0.85,
-	colour = NA,
 	show.legend = F,
-	shape = 21
+	shape = 16
 )
 p <- p + geom_nodes(
 	aes(
 		size = size,
-		fill = com,
+		color = com,
+		shape = shape
+	),
+	alpha = alpha_value,
+	shape = 16
+)
+p <- p + geom_nodes(
+	aes(
+		size = size,
 		shape = shape
 	),
 	colour = gray_color_n,
+	show.legend = F,
 	alpha = alpha_value,
+	shape = 1
+)
+p <- p + geom_nodes( # dummy for the legend
+	aes( fill = com ),
+	size=0,
+	colour = gray_color_n,
+	alpha = 0,
 	shape = 21
 )
 
@@ -1027,7 +1178,7 @@ if ( use_freq_as_size == 1 ){
 		max_size = 30 * bubble_size / 100,
 		guide = guide_legend(
 			title = "Frequency:",
-			override.aes = list(colour="black", alpha=1),
+			override.aes = list(colour="black", alpha=1, shape=1),
 			label.hjust = 1,
 			order = 3
 		)
@@ -1263,6 +1414,10 @@ if (view_coef == 1){
 
 if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	if ( gray_scale == 1) {
+		p <- p + scale_color_grey(
+			na.value = "white",
+			guide = FALSE
+		)
 		p <- p + scale_fill_grey(
 			na.value = "white",
 			guide = guide_legend(
@@ -1275,31 +1430,29 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		)
 	} else {
 		if ( length(com_m$csize[com_m$csize > 1]) <= 12 ){
+			p <- p + scale_color_brewer(
+				palette = "Set3",
+				na.value = "white",
+				guide = FALSE
+			)
 			p <- p + scale_fill_brewer(
 				palette = "Set3",
 				na.value = "white",
 				guide = guide_legend(
 					title = "Community:",
-					override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
+					override.aes = list(size=5.5, alpha=1, shape=22),
 					keyheight = unit(1.25,"line"),
 					ncol=2,
 					order = 1
 				)
 			)
-		#} else if ( length(com_m$csize[com_m$csize > 1]) <= 20) {
-		#	library(ggsci)
-		#	p <- p + scale_fill_d3(
-		#		palette = "category20",
-		#		na.value = "white",
-		#		guide = guide_legend(
-		#			title = "Community:",
-		#			override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
-		#			keyheight = unit(1.25,"line"),
-		#			ncol=2,
-		#			order = 1
-		#		)
-		#	)
 		} else {
+			p <- p + scale_color_hue(
+				c = 50,
+				l = 85,
+				na.value = "white",
+				guide = FALSE
+			)
 			p <- p + scale_fill_hue(
 				c = 50,
 				l = 85,
@@ -1329,9 +1482,12 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 		myPalette <- cm.colors(99)
 	}
 
+	p <- p + scale_color_gradientn(
+		colours = myPalette,
+		guide = FALSE
+	)
 	p <- p + scale_fill_gradientn(
 		colours = myPalette,
-		#limits = c( limv * -1, limv ),
 		guide = guide_colourbar(
 			title = "Centrality:\n",
 			title.theme = element_text(
@@ -1354,12 +1510,16 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 #  2 Mode color  #
 
 if (com_method == "twomode_c"){
+	p <- p + scale_color_manual(
+		values = brewer.pal(8, "Spectral")[4:8],
+		guide = FALSE
+	)
 	p <- p + scale_fill_manual(
 		values = brewer.pal(8, "Spectral")[4:8],
 		guide = guide_legend(
 			title = "Degree:",
 			order = 1,
-			override.aes = list(size=5.5, shape=22),
+			override.aes = list(size=5.5, shape=22, alpha=1),
 			#label.hjust = "left",
 			#reverse = TRUE,
 			#ncol=2,
@@ -1369,6 +1529,11 @@ if (com_method == "twomode_c"){
 }
 
 if ( com_method == "none" || com_method == "twomode_g"){
+	p <- p + scale_color_manual(
+		values = c("white"),
+		na.value = "white",
+		guide = F
+	)
 	p <- p + scale_fill_manual(
 		values = c("white"),
 		na.value = "white",
@@ -1380,6 +1545,12 @@ if ( com_method == "none" || com_method == "twomode_g"){
 #  Final adjustments  #
 
 p <- p + theme_blank(base_family=font_fam)
+
+if (com_method == "cor"){ # cor
+	p <- p + theme(
+		panel.background = element_rect(fill = "grey50", colour = NA)
+	)
+}
 
 p <- p + theme(
 	legend.title    = element_text(face="bold",  size=11, angle=0),
