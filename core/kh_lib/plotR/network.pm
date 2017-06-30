@@ -976,6 +976,9 @@ if ( exists("edg_mst") ){
 	#print(edg_mst)
 }
 
+if ( exists("edg_lty") == F ){
+	edg_lty <- 1
+}
 edg_lty[edg_lty==1] <- "solid"
 edg_lty[edg_lty==3] <- "dotted"
 
@@ -1579,6 +1582,10 @@ if (
 ){
 	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray30"
 	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
+}
+if ( com_method == "cor" ){
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray40"
+	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.1
 }
 
 library(grid)
