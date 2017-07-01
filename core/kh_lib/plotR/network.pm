@@ -226,26 +226,26 @@ sub new{
 			font_size => $args{font_size},
 		) or return 0;
 
+		#$plots[6] = kh_r_plot::network->new(
+		#	name      => $args{plotwin_name}.'_7',
+		#	command_f =>
+		#		 $r_command
+		#		."\ncom_method <- \"cor\"\n"
+		#		.$self->r_plot_cmd_p1
+		#		.$self->r_plot_cmd_p2
+		#		.$self->r_plot_cmd_p3
+		#		.$self->r_plot_cmd_p4,
+		#	command_a =>
+		#		 "com_method <- \"cor\"\n"
+		#		.$self->r_plot_cmd_p2
+		#		.$self->r_plot_cmd_p4,
+		#	width     => int( $args{plot_size} * $x_factor ),
+		#	height    => $args{plot_size},
+		#	font_size => $args{font_size},
+		#) or return 0;
+
 		$plots[6] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_7',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"cor\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"cor\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
-		) or return 0;
-
-		$plots[7] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_8',
 			command_f =>
 				 $r_command
 				."\ncom_method <- \"none\"\n"
@@ -909,7 +909,6 @@ if (use_freq_as_size == 0){
 	ver_freq[ver_freq > 0] <- 1
 }
 
-
 n2 <- set.vertex.attribute(
 	n2,
 	"size",
@@ -918,6 +917,10 @@ n2 <- set.vertex.attribute(
 )
 
 # For community detection
+
+if ( exists("ccol") ){ # clean up previous data
+	try( n2 <- remove.vertex.attribute(n2, "com"), silent=T )
+}
 
 if ( exists("com_m") ){
 	com_label <- NULL
