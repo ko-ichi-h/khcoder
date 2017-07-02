@@ -73,27 +73,13 @@ BEGIN {
 		# コンソールを最小化
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
-		Win32::Sleep(40);
+		Win32::Sleep(50);
 		if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
 			require Win32::API;
-			my $win = Win32::API->new(
-				'user32.dll',
-				'FindWindow',
-				'NP',
-				'N'
-			)->Call(
-				0,
-				"Console of KH Coder"
-			);
-			Win32::API->new(
-				'user32.dll',
-				'ShowWindow',
-				'NN',
-				'N'
-			)->Call(
-				$win,
-				2
-			);
+			my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
+			my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
+			my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
+			$ShowWindow->Call( $hw, 7 );
 		}
 		$SIG{TERM} = $SIG{QUIT} = sub{ exit; };
 		# スプラッシュ

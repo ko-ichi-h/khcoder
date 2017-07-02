@@ -13,6 +13,16 @@ use gui_jchar;
 
 sub _new{
 	my $self = shift;
+
+	# Minimize Console
+	if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
+		require Win32::API;
+		my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
+		my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
+		my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
+		$ShowWindow->Call( $hw, 7 );
+	}
+
 	my $mw = $::main_gui->mw;
 	# WindowºîÀ®
 	my $few = $self->{win_obj};
@@ -137,6 +147,7 @@ sub _open{
 	$self->if_selected or return 0;
 	my $project = $self->projects->a_project($self->selected);
 	$project->open or return 0;
+
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
