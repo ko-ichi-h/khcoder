@@ -73,6 +73,7 @@ BEGIN {
 		# コンソールを最小化
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
+		Win32::Sleep(40);
 		if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
 			require Win32::API;
 			my $win = Win32::API->new(
