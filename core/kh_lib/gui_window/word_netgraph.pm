@@ -279,7 +279,6 @@ sub calc{
 	) {
 		my $tani1 = $self->tani;
 		my $tani2;
-		
 		if ($self->{radio_type} eq 'twomode'){
 			$tani2 = $self->{var_obj}->var_id;
 		} else {

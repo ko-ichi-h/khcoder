@@ -59,6 +59,14 @@ sub _new{
 	);
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $f1,
+		command => sub {
+			if ($self->{var_obj}){
+				$self->{var_obj}->new_tani($self->tani);
+			}
+			if ( $self->{net_obj}{var_obj2} ){
+				$self->{net_obj}{var_obj2}->new_tani($self->tani);
+			}
+		},
 		pack   => \%pack1,
 	);
 
@@ -205,6 +213,7 @@ sub _new{
 	# 共起ネットワークのオプション
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf2,
+		from    => $self,
 		command => sub{ $self->_calc; },
 		pack    => { -anchor   => 'w'},
 		type    => 'codes',
@@ -455,11 +464,23 @@ sub _calc{
 
 	# 見出しの取り出し
 	if (
-		   $self->{radio_type} eq 'twomode'
-		&& $self->{var_obj}->var_id =~ /h[1-5]/
+		(
+			   $self->{radio_type} eq 'twomode'
+			&& $self->{var_obj}->var_id =~ /h[1-5]/
+		)
+		or (
+			   $self->{radio_type} eq 'words'
+			&& $self->{net_obj}{check_cor_var} == 1
+			&& $self->{net_obj}{var_obj2}->var_id =~ /h[1-5]/
+		)
 	) {
 		my $tani1 = $self->tani;
-		my $tani2 = $self->{var_obj}->var_id;
+		my $tani2;
+		if ($self->{radio_type} eq 'twomode'){
+			$tani2 = $self->{var_obj}->var_id;
+		} else {
+			$tani2 = $self->{net_obj}{var_obj2}->var_id;
+		}
 		
 		# 見出しリスト作成
 		my $max = mysql_exec->select("SELECT max(id) FROM $tani2")
@@ -495,10 +516,23 @@ sub _calc{
 
 	# 外部変数の取り出し
 	if (
-		   $self->{radio_type} eq 'twomode'
-		&& $self->{var_obj}->var_id =~ /^[0-9]+$/
+		(
+			   $self->{radio_type} eq 'twomode'
+			&& $self->{var_obj}->var_id =~ /^[0-9]+$/
+		)
+		or (
+			   $self->{radio_type} eq 'words'
+			&& $self->{net_obj}{check_cor_var} == 1
+			&& $self->{net_obj}{var_obj2}->var_id =~ /^[0-9]+$/
+		)
 	) {
-		my $var_obj = mysql_outvar::a_var->new(undef,$self->{var_obj}->var_id);
+		
+		my $var_obj;
+		if ($self->{radio_type} eq 'twomode') {
+			$var_obj = mysql_outvar::a_var->new(undef,$self->{var_obj}->var_id);
+		} else {
+			$var_obj = mysql_outvar::a_var->new(undef,$self->{net_obj}{var_obj2}->var_id);
+		}
 		
 		my $sql = '';
 		if ($var_obj->{tani} eq $self->tani){
@@ -539,6 +573,13 @@ sub _calc{
 		$r_command .= ")\n";
 	}
 
+	if (
+		   $self->{net_obj}{check_cor_var} == 1
+		&& $self->{net_obj}{var_obj2}->var_id eq 'pos'
+	) {
+		$r_command .= "v0 <- 1:nrow(d)\n";
+	}
+
 	# 外部変数・見出しデータの統合
 	if ($self->{radio_type} eq 'twomode'){
 		#$r_command = Encode::decode('euc-jp',$r_command);
@@ -570,10 +611,16 @@ sub _calc{
 
 	return 0 unless $plotR;
 
+	my $ax = 0;
+	if ($self->{net_obj}{check_cor_var} == 1){
+		$ax = 6;
+	}
+
 	gui_window::r_plot::cod_netg->open(
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		ax          => $ax,
 		#no_geometry => 1,
 	);
 

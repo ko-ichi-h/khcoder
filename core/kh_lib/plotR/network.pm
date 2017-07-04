@@ -234,7 +234,10 @@ sub new{
 		) or return 0;
 
 		if (
-			   $args{plotwin_name} eq 'word_netgraph'
+			(
+				   $args{plotwin_name} eq 'word_netgraph'
+				|| $args{plotwin_name} eq 'cod_netg'
+			)
 			&& $args{cor_var} == 1
 		) {
 			push (
