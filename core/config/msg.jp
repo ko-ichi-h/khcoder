@@ -730,7 +730,9 @@ gui_widget::r_net:
     min_sp_tree_only:         '最小スパニング・ツリーだけを描画'
     gray_scale:               'グレースケールで表現（中心性・サブグラフ）'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
-    view_coef:                係数を表示
+    view_coef:                '係数を表示'
+    cor_var:                  '相関にもとづくカラーリング'
+    cor_var_darker:           '背景色を暗めにする'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'
@@ -751,6 +753,7 @@ gui_window::r_plot::word_netgraph:
     com_b:                    'サブグラフ検出（媒介）'
     com_r:                    'サブグラフ検出（random walks）'
     com_m:                    'サブグラフ検出（modularity）'
+    cor:                      '相関'
     none:                     'なし'
     color:                    ' カラー：'
     win_title:                '抽出語・共起ネットワーク'
@@ -832,6 +835,7 @@ kh_cod::search:
 gui_widget::select_a_var:
     heading:                  '見出し'
     na:                       '利用不可'
+    pos:                      '出現位置'
 gui_window::doc_cls:
     verb:                     '使用'
     select_3words:            '少なくとも3つ以上の抽出語を選択して下さい。'

@@ -19,6 +19,13 @@ sub fill{
 	my @options;
 	my %vars = ();
 	
+	if ( $self->{add_position} ){
+		push @options, [
+			kh_msg->get('pos'),
+			'pos'
+		];
+	}
+	
 	# ¸«½Ð¤·
 	if ($self->{show_headings}){
 		foreach my $i ("h1","h2","h3","h4","h5"){

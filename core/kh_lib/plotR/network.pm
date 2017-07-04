@@ -73,6 +73,12 @@ sub new{
 
 	$r_command .= "min_sp_tree_only <- $args{min_sp_tree_only}\n";
 
+	$args{cor_var} = 0 unless length($args{cor_var} );
+	$r_command .= "cor_var <- $args{cor_var}\n";
+
+	$args{cor_var_darker} = 0 unless length($args{cor_var_darker} );
+	$r_command .= "cor_var_darker <- $args{cor_var_darker}\n";
+
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
@@ -80,6 +86,7 @@ sub new{
 	$r_command .= "gray_scale <- $args{gray_scale}\n";
 
 	$r_command .= "method_coef <- \"$args{method_coef}\"\n\n";
+
 
 	# プロット作成
 	
@@ -226,41 +233,54 @@ sub new{
 			font_size => $args{font_size},
 		) or return 0;
 
-		#$plots[6] = kh_r_plot::network->new(
-		#	name      => $args{plotwin_name}.'_7',
-		#	command_f =>
-		#		 $r_command
-		#		."\ncom_method <- \"cor\"\n"
-		#		.$self->r_plot_cmd_p1
-		#		.$self->r_plot_cmd_p2
-		#		.$self->r_plot_cmd_p3
-		#		.$self->r_plot_cmd_p4,
-		#	command_a =>
-		#		 "com_method <- \"cor\"\n"
-		#		.$self->r_plot_cmd_p2
-		#		.$self->r_plot_cmd_p4,
-		#	width     => int( $args{plot_size} * $x_factor ),
-		#	height    => $args{plot_size},
-		#	font_size => $args{font_size},
-		#) or return 0;
+		if (
+			   $args{plotwin_name} eq 'word_netgraph'
+			&& $args{cor_var} == 1
+		) {
+			push (
+				@plots,
+				kh_r_plot::network->new(
+					name      => $args{plotwin_name}.'_7',
+					command_f =>
+						 $r_command
+						."\ncom_method <- \"cor\"\n"
+						.$self->r_plot_cmd_p1
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p3
+						.$self->r_plot_cmd_p4,
+					command_a =>
+						 "com_method <- \"cor\"\n"
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p4,
+					width     => int( $args{plot_size} * $x_factor ),
+					height    => $args{plot_size},
+					font_size => $args{font_size},
+				)
+			);
+			return 0 unless $plots[$#plots];
+		}
 
-		$plots[6] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_7',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"none\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"none\"\n"
-				#.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
-		) or return 0;
+		push (
+			@plots,
+			kh_r_plot::network->new(
+				name      => $args{plotwin_name}.'_8',
+				command_f =>
+					 $r_command
+					."\ncom_method <- \"none\"\n"
+					.$self->r_plot_cmd_p1
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p3
+					.$self->r_plot_cmd_p4,
+				command_a =>
+					 "com_method <- \"none\"\n"
+					#.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p4,
+				width     => int( $args{plot_size} * $x_factor ),
+				height    => $args{plot_size},
+				font_size => $args{font_size},
+			)
+		);
+		return 0 unless $plots[$#plots];
 	}
 	
 	#my $t1 = new Benchmark;
@@ -626,6 +646,9 @@ if ( min_sp_tree == 1 ){
 	n2_edges  <- get.edgelist(n2,name=T);
 	mst_edges <- get.edgelist(mst,name=T);
 
+	if (exists("edg_lty") == F){
+		edg_lty <- 1
+	}
 	for ( i in 1:ecount(n2) ){
 		name_n2 <- paste(
 			n2_edges[i,1],
@@ -809,7 +832,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 if ( com_method == "cor" ){  # cor
 	dr <- as.data.frame( t(dr) )
 	dv <- data.frame(
-	  khvar_ = 1:nrow(dr)
+	  khvar_ = as.numeric(v0)
 	)
 	dr <- cbind(dr,dv)
 
@@ -1062,7 +1085,6 @@ if ( smaller_nodes == 1 ){
 if (com_method == "cor"){ # cor
 	p <- p + geom_edges(
 		aes(
-			linetype = as.character(line),
 			color = edge_pos
 		),
 		size = 0.6,
@@ -1553,8 +1575,13 @@ if ( com_method == "none" || com_method == "twomode_g"){
 p <- p + theme_blank(base_family=font_fam)
 
 if (com_method == "cor"){ # cor
+	if ( cor_var_darker == 1 ){
+		col_backg <- "gray50"
+	} else {
+		col_backg <- "gray60"
+	}
 	p <- p + theme(
-		panel.background = element_rect(fill = "grey50", colour = NA)
+		panel.background = element_rect(fill = col_backg, colour = NA)
 	)
 }
 
@@ -1602,6 +1629,9 @@ if (exists("ccol_raw")){
 }
 if (exists("edg_mst")){
 	rm("edg_mst")
+}
+if (exists("edg_lty")){
+  rm("edg_lty")
 }
 ccol <- get.vertex.attribute(n2,"com")
 

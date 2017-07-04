@@ -736,6 +736,8 @@ gui_widget::r_net:
     gray_scale:               'Grayscale (centralities & communities)'
     fix_lab:                  'Avoid overlapping of labels'
     view_coef:                Show coef.
+    cor_var:                  'Correlation based coloring'
+    cor_var_darker:           'Darker background color'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
@@ -756,6 +758,7 @@ gui_window::r_plot::word_netgraph:
     com_b:                    'Communities: betweenness'
     com_r:                    'Communities: random walks'
     com_m:                    'Communities: modularity'
+    cor:                      'Correlation'
     none:                     None
     color:                    ' color:'
     win_title:                'Co-Occurrence Network of Words'
@@ -828,6 +831,7 @@ kh_cod::search:
     no_codes:                 '#none'
     direct:                   '#direct'
 gui_widget::select_a_var:
+    pos:                      'Position'
     heading:                  'Heading '
     na:                       'n / a '
 gui_window::doc_cls:

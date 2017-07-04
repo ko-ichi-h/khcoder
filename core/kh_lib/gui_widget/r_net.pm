@@ -75,6 +75,12 @@ sub _new{
 		if ($self->{r_cmd} =~ /view_coef <- ([01])\n/){
 			$self->{view_coef} = $1;
 		}
+		if ($self->{r_cmd} =~ /cor_var <- ([01])\n/){
+			$self->{check_cor_var} = $1;
+		}
+		if ($self->{r_cmd} =~ /cor_var_darker <- ([01])\n/){
+			$self->{check_cor_var_darker} = $1;
+		}
 		if ($self->{r_cmd} =~ /method_coef <- "(.+)"\n/){
 			$self->{method_coef} = $1;
 		}
@@ -100,7 +106,7 @@ sub _new{
 			$num_size = $1;
 		}
 
-		$self->{r_cmd} = undef;
+		$self->{r_cmd} = 1;
 	}
 
 	# EdgeÁªÂò
@@ -232,12 +238,14 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	$self->{check_min_sp_tree} = 0 unless defined($self->{check_min_sp_tree});
-	$lf->Checkbutton(
-			-text     => kh_msg->get('min_sp_tree'),
-			-variable => \$self->{check_min_sp_tree},
-			-anchor => 'w',
-			#-state => 'disabled',
-	)->pack(-anchor => 'w');
+	if ($self->{r_cmd}){
+		$lf->Checkbutton(
+				-text     => kh_msg->get('min_sp_tree'),
+				-variable => \$self->{check_min_sp_tree},
+				-anchor => 'w',
+				#-state => 'disabled',
+		)->pack(-anchor => 'w');
+	}
 
 	$self->{check_min_sp_tree_only} = 0
 		unless defined($self->{check_min_sp_tree_only})
@@ -249,13 +257,47 @@ sub _new{
 			#-state => 'disabled',
 	)->pack(-anchor => 'w');
 
-	$self->{check_fix_lab} = 1 unless defined($self->{check_fix_lab});
-	$lf->Checkbutton(
-			-text     => kh_msg->get('fix_lab'),
-			-variable => \$self->{check_fix_lab},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
+	# Coloring by Correlation
+	if ($self->{r_cmd}) {
+		if ( $self->{check_cor_var} ){
+			$lf->Checkbutton(
+					-text     => kh_msg->get('cor_var_darker'),
+					-variable => \$self->{check_cor_var_darker},
+					-anchor => 'w',
+			)->pack(-anchor => 'w');
+		}
+	} else {
+		my $f7 = $lf->Frame()->pack(
+			-fill => 'x',
+			-pady => 1
+		);
 
+		$self->{check_cor_var} = 0
+			unless defined($self->{check_cor_var})
+		;
+		$f7->Checkbutton(
+				-text     => kh_msg->get('cor_var'),
+				-variable => \$self->{check_cor_var},
+				-command  => sub{ $self->refresh;},
+				-anchor => 'w',
+		)->pack(-anchor => 'w', -side => 'left');
+
+		$self->{var_obj2} = gui_widget::select_a_var->open(
+			parent        => $f7,
+			tani          => $self->{from}->tani,
+			show_headings => 1,
+			add_position  => 1,
+		);
+	}
+
+	$self->{check_fix_lab} = 1 unless defined($self->{check_fix_lab});
+	if ($self->{r_cmd}) {
+		$lf->Checkbutton(
+				-text     => kh_msg->get('fix_lab'),
+				-variable => \$self->{check_fix_lab},
+				-anchor => 'w',
+		)->pack(-anchor => 'w');
+	}
 
 	$self->{check_use_alpha} = 1 unless defined($self->{check_use_alpha});
 	$lf->Checkbutton(
@@ -303,15 +345,23 @@ sub refresh{
 		push @nor,  $self->{bubble_obj}{chkw_main};
 	}
 
+	unless ($self->{r_cmd}) {
+		if ($self->{check_cor_var}){
+			$self->{var_obj2}->enable;
+		} else {
+			$self->{var_obj2}->disable;
+		}
+	}
+	
 	foreach my $i (@nor){
-		$i->configure(-state => 'normal');
+		$i->configure(-state => 'normal') if $i;
 	}
 
 	foreach my $i (@dis){
-		$i->configure(-state => 'disabled');
+		$i->configure(-state => 'disabled') if $i;
 	}
 	
-	$nor[0]->focus unless $_[0] == 3;
+	#$nor[0]->focus unless $_[0] == 3;
 }
 
 #----------------------#
@@ -336,6 +386,8 @@ sub params{
 		fix_lab             => $self->fix_lab,
 		view_coef           => gui_window->gui_jg( $self->{view_coef} ),
 		method_coef         => gui_window->gui_jg( $self->{method_coef} ),
+		cor_var             => gui_window->gui_jg( $self->{check_cor_var} ),
+		cor_var_darker      => gui_window->gui_jg( $self->{check_cor_var_darker} ),
 	);
 }
 
