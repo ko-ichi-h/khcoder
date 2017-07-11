@@ -170,6 +170,8 @@ sub refresh{
 		$i->configure(-state => 'disabled');
 	}
 	
+	$self->{net_obj}->refresh;
+	
 	#$nor[0]->focus unless $_[0] == 3;
 }
 
@@ -273,7 +275,7 @@ sub calc{
 		)
 		or (
 			   $self->{radio_type} eq 'words'
-			&& $self->{net_obj}{check_cor_var} == 1
+			&& $self->{net_obj}->cor_var == 1
 			&& $self->{net_obj}{var_obj2}->var_id =~ /h[1-5]/
 		)
 	) {
@@ -332,7 +334,7 @@ sub calc{
 		)
 		or (
 			   $self->{radio_type} eq 'words'
-			&& $self->{net_obj}{check_cor_var} == 1
+			&& $self->{net_obj}->cor_var == 1
 			&& $self->{net_obj}{var_obj2}->var_id =~ /^[0-9]+$/
 		)
 	) {
@@ -384,7 +386,7 @@ sub calc{
 	}
 
 	if (
-		   $self->{net_obj}{check_cor_var} == 1
+		   $self->{net_obj}->cor_var == 1
 		&& $self->{net_obj}{var_obj2}->var_id eq 'pos'
 	) {
 		$r_command .= "v0 <- 1:nrow(d)\n";
@@ -422,7 +424,10 @@ sub calc{
 	return 0 unless $plotR;
 	
 	my $ax = 0;
-	if ($self->{net_obj}{check_cor_var} == 1){
+	if (
+		   $self->{net_obj}{check_cor_var} == 1
+		&& $self->{radio_type} ne "twomode"
+	){
 		$ax = 6;
 	}
 	

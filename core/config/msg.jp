@@ -731,7 +731,7 @@ gui_widget::r_net:
     gray_scale:               'グレースケールで表現（中心性・サブグラフ）'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
     view_coef:                '係数を表示'
-    cor_var:                  '相関にもとづくカラーリング'
+    cor_var:                  '位置・外部変数・見出しとの相関をカラーで表現：'
     cor_var_darker:           '背景色を暗めにする'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'

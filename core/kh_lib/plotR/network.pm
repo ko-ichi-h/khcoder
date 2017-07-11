@@ -856,12 +856,16 @@ if ( com_method == "cor" ){  # cor
 		)
 	}
 
-	n2 <- set.edge.attribute(
-		n2,
-		"edge_pos_o",
-		1:length(get.edge.attribute(n2,"weight")),
-		edge_pos
-	)
+	if ( length( edge_pos[is.na(edge_pos) == F] ) == 0 ){
+		edge_pos <- 0
+	}
+
+	#n2 <- set.edge.attribute(
+	#	n2,
+	#	"edge_pos_o",
+	#	1:length(get.edge.attribute(n2,"weight")),
+	#	edge_pos
+	#)
 
 	#edge_pos <- edge_pos - mean(edge_pos)
 	#edge_pos <- edge_pos / sd(edge_pos)
@@ -893,6 +897,10 @@ if ( com_method == "cor" ){  # cor
 				method="pearson"
 			)
 		)
+	}
+
+	if ( length( ver_pos[is.na(ver_pos) == F] ) == 0 ){
+	  ver_pos <- 0
 	}
 
 	ver_pos[ver_pos > max(edge_pos)] <- max(edge_pos)

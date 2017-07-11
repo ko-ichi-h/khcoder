@@ -267,19 +267,24 @@ sub _new{
 			)->pack(-anchor => 'w');
 		}
 	} else {
-		my $f7 = $lf->Frame()->pack(
-			-fill => 'x',
-			-pady => 1
-		);
-
 		$self->{check_cor_var} = 0
 			unless defined($self->{check_cor_var})
 		;
-		$f7->Checkbutton(
+		$self->{wd_check_cor_var} = $lf->Checkbutton(
 				-text     => kh_msg->get('cor_var'),
 				-variable => \$self->{check_cor_var},
 				-command  => sub{ $self->refresh;},
 				-anchor => 'w',
+		)->pack(-anchor => 'w');
+
+		my $f7 = $lf->Frame()->pack(
+			-fill => 'x',
+			-pady => 1
+		);
+		
+		$f7->Label(
+			-text => '  ',
+			-font => "TKFN",
 		)->pack(-anchor => 'w', -side => 'left');
 
 		$self->{var_obj2} = gui_widget::select_a_var->open(
@@ -287,6 +292,7 @@ sub _new{
 			tani          => $self->{from}->tani,
 			show_headings => 1,
 			add_position  => 1,
+			#pack          => {-anchor => 'center'},
 		);
 	}
 
@@ -307,11 +313,13 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	$self->{check_gray_scale} = 0 unless defined($self->{check_gray_scale});
-	$lf->Checkbutton(
-			-text     => kh_msg->get('gray_scale'),
-			-variable => \$self->{check_gray_scale},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
+	#if ($self->{r_cmd}){
+		$lf->Checkbutton(
+				-text     => kh_msg->get('gray_scale'),
+				-variable => \$self->{check_gray_scale},
+				-anchor => 'w',
+		)->pack(-anchor => 'w');
+	#}
 
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
@@ -346,13 +354,19 @@ sub refresh{
 	}
 
 	unless ($self->{r_cmd}) {
-		if ($self->{check_cor_var}){
-			$self->{var_obj2}->enable;
-		} else {
+		if ( $self->{from}{radio_type} eq "twomode" ){
+			push @dis, $self->{wd_check_cor_var};
 			$self->{var_obj2}->disable;
+		} else {
+			push @nor, $self->{wd_check_cor_var};
+			if ($self->{check_cor_var}){
+				$self->{var_obj2}->enable;
+			} else {
+				$self->{var_obj2}->disable;
+			}
 		}
 	}
-	
+
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal') if $i;
 	}
@@ -386,9 +400,21 @@ sub params{
 		fix_lab             => $self->fix_lab,
 		view_coef           => gui_window->gui_jg( $self->{view_coef} ),
 		method_coef         => gui_window->gui_jg( $self->{method_coef} ),
-		cor_var             => gui_window->gui_jg( $self->{check_cor_var} ),
+		cor_var             => $self->cor_var,
 		cor_var_darker      => gui_window->gui_jg( $self->{check_cor_var_darker} ),
 	);
+}
+
+sub cor_var{
+	my $self = shift;
+	
+	return 0 unless defined ( $self->{from}{radio_type} );
+	
+	if ($self->{from}{radio_type} eq "twomode"){
+		return 0;
+	} else {
+		return gui_window->gui_jg( $self->{check_cor_var} );
+	}
 }
 
 sub n_or_j{

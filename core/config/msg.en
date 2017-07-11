@@ -736,7 +736,7 @@ gui_widget::r_net:
     gray_scale:               'Grayscale (centralities & communities)'
     fix_lab:                  'Avoid overlapping of labels'
     view_coef:                Show coef.
-    cor_var:                  'Correlation based coloring'
+    cor_var:                  'Color: correlation with position / variables'
     cor_var_darker:           'Darker background color'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'

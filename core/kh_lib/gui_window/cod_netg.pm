@@ -612,7 +612,10 @@ sub _calc{
 	return 0 unless $plotR;
 
 	my $ax = 0;
-	if ($self->{net_obj}{check_cor_var} == 1){
+	if (
+			$self->{net_obj}{check_cor_var} == 1
+			&& $self->{radio_type} ne "twomode"
+		){
 		$ax = 6;
 	}
 
