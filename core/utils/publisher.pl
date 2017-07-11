@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a09c';
+my $V = '3a09d';
 my $V_main = "3.Alpha.09"; # フォルダ名
-my $V_full = "3.Alpha.09c";
+my $V_full = "3.Alpha.09d";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -100,7 +100,7 @@ use File::Path 'rmtree';
 &win_pkg;
 	#&win_upd;
 	#&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -388,14 +388,14 @@ sub win_pkg{
 	unlink("utils\\khcoder-$V-f.exe");
 	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\win_pkg");
 	sleep 5;
-	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite");
+	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
 	
 	for (my $n = 0; $n < 5; ++$n){
 		if (-e "utils\\khcoder-$V-f.exe" && -e "utils\\khcoder-$V-f.zip") {
 			last;
 		}
 		sleep 5;
-		system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite");
+		system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
 	}
 	
 	

@@ -304,7 +304,6 @@ sub mark{
 	my $icode;
 	my $ocode;
 
-
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
@@ -329,11 +328,9 @@ sub mark{
 			type => 'file',
 			thefile => $dist
 		);
-	open (SOURCE, "<:encoding($icode)", $source) or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $source
-		);
+
+	use File::BOM;
+	File::BOM::open_bom (SOURCE, $source, ":encoding($icode)" );
 
 	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
 	while (<SOURCE>){
