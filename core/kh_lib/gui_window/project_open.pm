@@ -152,6 +152,9 @@ sub _open{
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 
+	$::config_obj->ini_backup;
+
+	return 1;
 }
 
 #--------------#

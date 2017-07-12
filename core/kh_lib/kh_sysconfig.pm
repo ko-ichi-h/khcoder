@@ -701,6 +701,20 @@ sub os_code{
 	return $Encode::Locale::ENCODING_LOCALE;
 }
 
+sub ini_backup{
+	my $self = shift;
+	
+	my $file_ini = $self->cwd.'/config/coder.ini';
+	my $file_bak = $file_ini.'.bak';
+	
+	unlink($file_bak) if -e $file_bak;
+	
+	use File::Copy;
+	copy($file_ini, $file_bak);
+	
+	return $self;
+}
+
 #--------------------#
 #   形態素解析関係   #
 

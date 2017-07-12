@@ -408,7 +408,9 @@ sub params{
 sub cor_var{
 	my $self = shift;
 	
-	return 0 unless defined ( $self->{from}{radio_type} );
+	unless ( defined ( $self->{from}{radio_type} ) ){
+		return gui_window->gui_jg( $self->{check_cor_var} );
+	}
 	
 	if ($self->{from}{radio_type} eq "twomode"){
 		return 0;
