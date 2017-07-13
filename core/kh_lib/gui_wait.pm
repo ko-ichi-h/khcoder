@@ -80,9 +80,10 @@ sub end{
 		print "done:  $h:$m:$s\n";
 	} else {
 		gui_errormsg->open(
-			msg  => kh_msg->get('done')." $h:$m:$s",#"処理が完了しました。\n経過時間： 
-			type => 'msg',
-			icon => 'info'
+			msg    => kh_msg->get('done')." $h:$m:$s",#"処理が完了しました。\n経過時間： 
+			type   => 'msg',
+			icon   => 'info',
+			window => \$win,
 		);
 	}
 	
