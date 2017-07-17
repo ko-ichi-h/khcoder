@@ -14,10 +14,10 @@ sub out2{                               # length作製をする
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
-			$self->sql2($id, $id + 100),
+			$self->sql2($id, $id + 30000),
 			1
 		)->hundle;
-		$id += 100;
+		$id += 30000;
 		unless ($sth->rows > 0){
 			last;
 		}

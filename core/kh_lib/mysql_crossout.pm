@@ -63,10 +63,10 @@ sub out2{                               # length作製をする
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
-			$self->sql2($id, $id + 100),
+			$self->sql2($id, $id + 30000),
 			1
 		)->hundle;
-		$id += 100;
+		$id += 30000;
 		unless ($sth->rows > 0){
 			last;
 		}
@@ -149,7 +149,7 @@ sub sql2{
 
 	my $sql;
 	$sql .= "SELECT $self->{tani}.id, genkei.id, hyoso.name, genkei.nouse\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
+	$sql .= "FROM   hyosobun USE INDEX (PRIMARY), hyoso, genkei, $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
@@ -162,8 +162,8 @@ sub sql2{
 		}
 	}
 	#$sql .= "	AND genkei.nouse = 0\n";
-	$sql .= "	AND $self->{tani}.id >= $d1\n";
-	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "	AND hyosobun.id >= $d1\n";
+	$sql .= "	AND hyosobun.id <  $d2\n";
 	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }

@@ -61,14 +61,15 @@ sub out2{                               # length作製をする
 	# セル内容の作製
 	my $id = 1;
 	my $last = 1;
+	my $increment = 30000;
 	my $started = 0;
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
-			$self->sql2($id, $id + 100),
+			$self->sql2($id, $id + $increment),
 			1
 		)->hundle;
-		$id += 100;
+		$id += $increment;
 		unless ($sth->rows > 0){
 			last;
 		}

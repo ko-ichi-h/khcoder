@@ -45,8 +45,8 @@ sub sql3{
 		++$n;
 	}
 	$sql .= "	)\n";
-	$sql .= "	AND $self->{tani}.id >= $d1\n";
-	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "	AND hyosobun.id >= $d1\n";
+	$sql .= "	AND hyosobun.id <  $d2\n";
 	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }
@@ -70,8 +70,8 @@ sub sql4{
 			$sql .= "	AND hyosobun.$i"."_id = $self->{tani}.$i"."_id\n";
 		}
 	}
-	$sql .= "	AND $self->{tani}.id >= $d1\n";
-	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "	AND hyosobun.id >= $d1\n";
+	$sql .= "	AND hyosobun.id <  $d2\n";
 	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }
@@ -87,10 +87,10 @@ sub out2{
 	my %data;
 	while (1){
 		my $sth = mysql_exec->select(
-			$self->sql3($id, $id + 100),
+			$self->sql3($id, $id + 30000),
 			1
 		)->hundle;
-		$id += 100;
+		$id += 30000;
 		unless ($sth->rows > 0){
 			last;
 		}
