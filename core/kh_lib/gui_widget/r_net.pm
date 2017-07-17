@@ -12,8 +12,14 @@ sub _new{
 
 	$self->{radio}                     = 'n'
 		unless defined $self->{radio};
-	$self->{edges_number}              = 60
-		unless defined $self->{edges_number};
+	unless ( defined $self->{edges_number} ){
+		$self->{edges_number} = 60;
+		if ($self->{from} && $self->{from} ne 'selected_netgraph'){
+			if ( $self->{from}->win_name eq 'w_cod_netg'){
+				$self->{edges_number} = 10;
+			}
+		}
+	}
 	$self->{edges_jac}                 = 0.2
 		unless defined $self->{edges_jac};
 	$self->{check_use_weight_as_width} = 0
@@ -259,6 +265,7 @@ sub _new{
 
 	# Coloring by Correlation
 	if ($self->{r_cmd}) {
+		# "configure" button screen
 		if ( $self->{check_cor_var} ){
 			$lf->Checkbutton(
 					-text     => kh_msg->get('cor_var_darker'),
@@ -267,6 +274,7 @@ sub _new{
 			)->pack(-anchor => 'w');
 		}
 	} else {
+		# initial option screen
 		$self->{check_cor_var} = 0
 			unless defined($self->{check_cor_var})
 		;
