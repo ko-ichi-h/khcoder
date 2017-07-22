@@ -124,6 +124,7 @@ sub open{
 
 		# Windowの中身作成
 		$self = $self->_new(@_);
+		return 0 unless $self;
 		$::main_gui->opened($self->win_name,$self);
 
 		# Windowを閉じる際のバインド

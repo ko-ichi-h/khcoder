@@ -2,6 +2,7 @@ package gui_widget::bubble;
 use base qw(gui_widget);
 use strict;
 use Tk;
+use utf8;
 use Jcode;
 
 sub _new{
@@ -19,7 +20,7 @@ sub _new{
 	$self->{use_alpha}       = 1   unless defined $self->{use_alpha};
 	
 	$self->{chkw_main} = $f1->Checkbutton(
-		-text     => kh_msg->get('bubble'), # ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È¡§
+		-text     => kh_msg->get('bubble'), # ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆï¼š
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -28,7 +29,7 @@ sub _new{
 	);
 
 	$self->{lab_size1} = $f1->Label(
-		-text => kh_msg->get('size'), # ¥Ğ¥Ö¥ë¤ÎÂç¤­¤µ
+		-text => kh_msg->get('size'), # ãƒãƒ–ãƒ«ã®å¤§ãã•
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -61,7 +62,7 @@ sub _new{
 		)->pack(-anchor => 'w', -side => 'left');
 
 		$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-				-text     => kh_msg->get('variable'), # ÊÑ¿ô¤ÎÃÍ / ¸«½Ğ¤·¤ÎÂç¤­¤µ¤â²ÄÊÑ¤Ë
+				-text     => kh_msg->get('variable'), # å¤‰æ•°ã®å€¤ / è¦‹å‡ºã—ã®å¤§ãã•ã‚‚å¯å¤‰ã«
 				-variable => \$self->{chk_resize_vars},
 				-anchor => 'w',
 				-state => 'disabled',
@@ -126,7 +127,7 @@ sub refresh_std_radius{
 
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub check_bubble{
 	my $self = shift;
@@ -145,7 +146,9 @@ sub chk_std_radius{
 
 sub size{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{ent_size}->get );
+	my $n = $self->{ent_size}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return gui_window->gui_jg( $n );
 }
 
 sub var{

@@ -1,18 +1,19 @@
 package gui_window::r_plot_opt::word_corresp;
 use base qw(gui_window::r_plot_opt);
+use utf8;
 
 sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
-	# º¹°Û¤Î¸²Ãø¤Ê¸ì¤Î¤ßÊ¬ÀÏ
+	# å·®ç•°ã®é¡•è‘—ãªèªã®ã¿åˆ†æ
 	my $fsw = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
 	);
 
 	$fsw->Checkbutton(
-		-text     => kh_msg->get('gui_window::word_corresp->flw'), # º¹°Û¤¬¸²Ãø¤Ê¸ì¤òÊ¬ÀÏ¤Ë»ÈÍÑ¡§
+		-text     => kh_msg->get('gui_window::word_corresp->flw'), # å·®ç•°ãŒé¡•è‘—ãªèªã‚’åˆ†æã«ä½¿ç”¨ï¼š
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -21,7 +22,7 @@ sub innner{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => kh_msg->get('gui_window::word_corresp->top'), # ¾å°Ì
+		-text => kh_msg->get('gui_window::word_corresp->top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -36,12 +37,12 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => kh_msg->get('gui_window::word_corresp->words'), # ¸ì
+		-text => kh_msg->get('gui_window::word_corresp->words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	#$self->refresh_flw;
 
-	# ÆÃÄ§Åª¤Ê¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨
+	# ç‰¹å¾´çš„ãªèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤º
 	my $fs = $lf->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -49,7 +50,7 @@ sub innner{
 	);
 
 	$fs->Checkbutton(
-		-text     => kh_msg->get('gui_window::word_corresp->flt'), # ¸¶ÅÀ¤«¤éÎ¥¤ì¤¿¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨¡§
+		-text     => kh_msg->get('gui_window::word_corresp->flt'), # åŸç‚¹ã‹ã‚‰é›¢ã‚ŒãŸèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤ºï¼š
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -58,7 +59,7 @@ sub innner{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => kh_msg->get('gui_window::word_corresp->top'), # ¾å°Ì
+		-text => kh_msg->get('gui_window::word_corresp->top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -73,12 +74,12 @@ sub innner{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => kh_msg->get('gui_window::word_corresp->words'), # ¸ì
+		-text => kh_msg->get('gui_window::word_corresp->words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	#$self->refresh_flt;
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥ÈÍÑ¤Î¥Ñ¥é¥á¡¼¥¿¡¼
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆç”¨ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var)
 		= (0,1,0,100,100);
 
@@ -109,7 +110,7 @@ sub innner{
 		$use_alpha = $1;
 	}
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent          => $lf,
 		type            => 'corresp',
@@ -125,7 +126,7 @@ sub innner{
 		},
 	);
 
-	# À®Ê¬
+	# æˆåˆ†
 	$self->{xy_obj} = gui_widget::r_xy->open(
 		parent    => $lf,
 		command   => sub{ $self->calc; },
@@ -158,7 +159,7 @@ sub innner{
 	return $self;
 }
 
-# ¡ÖÆÃÄ§¸ì¤ËÃíÌÜ¡×¤Î¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹
+# ã€Œç‰¹å¾´èªã«æ³¨ç›®ã€ã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 sub refresh_flt{
 	my $self = shift;
 	if ( $self->{check_filter} ){
@@ -197,7 +198,7 @@ sub calc{
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->gget('r_net_msg_fail'), # Ä´À°¤Ë¼ºÇÔ¤·¤Ş¤·¤Ş¤·¤¿¡£
+			msg  => kh_msg->gget('r_net_msg_fail'), # èª¿æ•´ã«å¤±æ•—ã—ã¾ã—ã¾ã—ãŸã€‚
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -212,12 +213,16 @@ sub calc{
 
 	my $filter = 0;
 	if ( $self->{check_filter} ){
-		$filter = $self->gui_jg( $self->{entry_flt}->get );
+		$filter = $self->{entry_flt}->get;
+		$filter =~ tr/ï¼-ï¼™/0-9/;
+		$filter = $self->gui_jg( $filter );
 	}
 
 	my $filter_w = 0;
 	if ( $self->{check_filter_w} ){
-		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+		$filter_w = $self->{entry_flw}->get;
+		$filter_w =~ tr/ï¼-ï¼™/0-9/;
+		$filter_w = $self->gui_jg( $filter_w );
 	}
 
 	my $wait_window = gui_wait->start;
@@ -242,7 +247,7 @@ sub calc{
 	
 	$wait_window->end(no_dialog => 1);
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_word_corresp_plot')){
 		$::main_gui->get('w_word_corresp_plot')->close;
 	}
@@ -256,7 +261,7 @@ sub calc{
 }
 
 sub win_title{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦ÂĞ±şÊ¬ÀÏ¡§Ä´À°
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å¯¾å¿œåˆ†æï¼šèª¿æ•´
 }
 
 sub win_name{

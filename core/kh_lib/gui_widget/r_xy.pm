@@ -2,6 +2,7 @@ package gui_widget::r_xy;
 use base qw(gui_widget);
 use strict;
 use Tk;
+use utf8;
 use Jcode;
 
 sub _new{
@@ -31,7 +32,7 @@ sub _new{
 
 	my $fd  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 	$fd->Label(
-		-text => kh_msg->get('cmp_plot'), # ¥×¥í¥Ã¥È¤¹¤ëÀ®Ê¬¡§
+		-text => kh_msg->get('cmp_plot'), # ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹æˆåˆ†ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -45,7 +46,7 @@ sub _new{
 	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => kh_msg->get('x'), #  X¼´
+		-text => kh_msg->get('x'), #  Xè»¸
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -60,7 +61,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => kh_msg->get('y'), #  Y¼´
+		-text => kh_msg->get('y'), #  Yè»¸
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -110,7 +111,7 @@ sub _new{
 }
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub params{
 	my $self = shift;
@@ -124,12 +125,16 @@ sub params{
 
 sub x{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_d_x}->get );
+	my $n = $self->{entry_d_x}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return gui_window->gui_jg( $n );
 }
 
 sub y{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_d_y}->get );
+	my $n = $self->{entry_d_y}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return gui_window->gui_jg( $n );
 }
 
 sub origin{

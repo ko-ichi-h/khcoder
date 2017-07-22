@@ -727,12 +727,16 @@ sub calc{
 
 	my $filter = 0;
 	if ( $self->{check_filter} ){
-		$filter = $self->gui_jg( $self->{entry_flt}->get );
+		$filter = $self->{entry_flt}->get;
+		$filter =~ tr/０-９/0-9/;
+		$filter = $self->gui_jg( $filter );
 	}
 
 	my $filter_w = 0;
 	if ( $self->{check_filter_w} ){
-		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+		$filter_w = $self->{entry_flw}->get;
+		$filter_w =~ tr/０-９/0-9/;
+		$filter_w = $self->gui_jg( $filter_w );
 	}
 
 	my $plot = &make_plot(
@@ -1079,9 +1083,11 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	d <- d[,order(sort,decreasing=T)]
 	d <- d[,1:flw]
 	
-	doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
-	d              <- subset(d,              rowSums(d) > 0)
-	n_total <- doc_length_mtr[,2]
+	d <- subset(d, rowSums(d) > 0)
+	if (exists("doc_length_mtr")){
+		doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+		n_total <- doc_length_mtr[,2]
+	}
 }
 
 d_max <- min( nrow(d), ncol(d) ) - 1
