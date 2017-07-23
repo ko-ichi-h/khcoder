@@ -2,6 +2,7 @@ package gui_widget::r_mds;
 use base qw(gui_widget);
 use strict;
 use Tk;
+use utf8;
 use Jcode;
 
 sub _new{
@@ -55,7 +56,11 @@ sub _new{
 			$self->{check_random_start} = 1;
 		}
 
-		# ¥¯¥é¥¹¥¿¡¼²½¤Î¥Ñ¥é¥á¡¼¥¿¡¼
+		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
+			$num_size = $1;
+		}
+
+		# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼
 		if ( $self->{r_cmd} =~ /n_cls <\- ([0-9]+)\n/ ){
 			$self->{cls_if} = $1;
 			if ( $self->{cls_if} ){
@@ -81,7 +86,7 @@ sub _new{
 	}
 
 	$f4->Label(
-		-text => kh_msg->get('method'), # ÊýË¡¡§
+		-text => kh_msg->get('method'), # æ–¹æ³•ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -100,7 +105,7 @@ sub _new{
 	);
 
 	$f4->Label(
-		-text => kh_msg->get('dist'), #   µ÷Î¥¡§
+		-text => kh_msg->get('dist'), #   è·é›¢ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -116,14 +121,14 @@ sub _new{
 		variable => \$self->{method_dist},
 	);
 
-	# ¼¡¸µ¤Î¿ô
+	# æ¬¡å…ƒã®æ•°
 	my $fnd = $win->Frame()->pack(
 		-fill => 'x',
 		-pady => 4,
 	);
 
 	$fnd->Label(
-		-text => kh_msg->get('dim'), # ¼¡¸µ¡§
+		-text => kh_msg->get('dim'), # æ¬¡å…ƒï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -140,11 +145,11 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_dim_number});
 
 	$fnd->Label(
-		-text => kh_msg->get('1_3'), # ¡Ê1¤«¤é3¤Þ¤Ç¤ÎÈÏ°Ï¤Ç»ØÄê¡Ë
+		-text => kh_msg->get('1_3'), # ï¼ˆ1ã‹ã‚‰3ã¾ã§ã®ç¯„å›²ã§æŒ‡å®šï¼‰
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	# ¥Ð¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	my $lf = $win->Frame()->pack(
 		-fill => 'x',
 		#-pady => 4,
@@ -161,7 +166,7 @@ sub _new{
 		num_size        => $num_size,
 	);
 
-	# ¥¯¥é¥¹¥¿¡¼²½
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–
 	$self->{cls_obj} = gui_widget::cls4mds->open(
 		parent       => $lf,
 		command      => $self->{command},,
@@ -173,7 +178,7 @@ sub _new{
 		check_nei    => $self->{cls_nei},
 	);
 
-	# È¾Æ©ÌÀ¤Î¿§
+	# åŠé€æ˜Žã®è‰²
 	$lf->Checkbutton(
 		-variable => \$self->{use_alpha},
 		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
@@ -187,7 +192,7 @@ sub _new{
 
 	# random start
 	$self->{check_rs} = $lf->Checkbutton(
-		-text => kh_msg->get('random_start'), # Íð¿ô¤Ë¤è¤ëÃµº÷
+		-text => kh_msg->get('random_start'), # ä¹±æ•°ã«ã‚ˆã‚‹æŽ¢ç´¢
 		-variable => \$self->{check_random_start},
 		-font => "TKFN",
 		-justify => 'left',
@@ -214,7 +219,7 @@ sub _new{
 #}
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub params{
 	my $self = shift;
@@ -234,7 +239,13 @@ sub params{
 
 sub dim_number{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_dim_number}->get );
+	my $n = $self->{entry_dim_number}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	$n =~ s/\x0D|\x0A//g;
+	unless ($n =~ /\A[123]\Z/) {
+		$n = 2
+	}
+	return gui_window->gui_jg( $n );
 }
 
 sub method{
