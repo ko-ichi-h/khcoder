@@ -2,7 +2,7 @@ package gui_widget::r_som;
 use base qw(gui_widget);
 use strict;
 use Tk;
-use Jcode;
+use utf8;
 
 sub _new{
 	my $self = shift;
@@ -48,14 +48,14 @@ sub _new{
 		$self->{r_cmd} = undef;
 	}
 
-	# ¥Î¡¼¥É¿ô
+	# ãƒŽãƒ¼ãƒ‰æ•°
 	my $f5 = $win->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$self->{cd_l1} = $f5->Label(
-		-text => kh_msg->get('n_nodes1'), # 1ÊÕ¤Î¥Î¡¼¥É¿ô¡§
+		-text => kh_msg->get('n_nodes1'), # 1è¾ºã®ãƒŽãƒ¼ãƒ‰æ•°ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -76,9 +76,9 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	# ÉÁ²è¤Î·Á¾õ
+	# æç”»ã®å½¢çŠ¶
 	$f5->Label(
-		-text => kh_msg->get('p_nodes'), # ÉÁ²è¤Î·Á¾õ¡§
+		-text => kh_msg->get('p_nodes'), # æç”»ã®å½¢çŠ¶ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -93,9 +93,9 @@ sub _new{
 		variable => \$self->{p_topo},
 	);
 
-	# ¥¯¥é¥¹¥¿¡¼²½
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–
 	$win->Checkbutton(
-			-text     => kh_msg->get('cluster_color'), # ¥Î¡¼¥É¤Î¥¯¥é¥¹¥¿¡¼²½
+			-text     => kh_msg->get('cluster_color'), # ãƒŽãƒ¼ãƒ‰ã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–
 			-variable => \$self->{if_cls},
 			-command  => sub{$self->refresh_cls},
 			-anchor => 'w',
@@ -112,7 +112,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{label_cls1} = $fcls1->Label(
-		-text => kh_msg->get('cls_num'), # ¥¯¥é¥¹¥¿¡¼¿ô¡§
+		-text => kh_msg->get('cls_num'), # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -129,16 +129,16 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
 	#$self->{label_cls2} = $fcls1->Label(
-	#	-text => kh_msg->get('2_12'), # ¡Ê2¤«¤é12¤Þ¤Ç¡Ë
+	#	-text => kh_msg->get('2_12'), # ï¼ˆ2ã‹ã‚‰12ã¾ã§ï¼‰
 	#	-font => "TKFN",
 	#)->pack(-side => 'left');
 
 	$self->refresh_cls;
 
-	# ³Ø½¬²ó¿ô
+	# å­¦ç¿’å›žæ•°
 	my $f4 = $win->Frame()->pack( -fill => 'x', -pady => 2);
 	$self->{cd_l2} = $f4->Label(
-		-text => kh_msg->get('rlen'), # ³Ø½¬²ó¿ô
+		-text => kh_msg->get('rlen'), # å­¦ç¿’å›žæ•°
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -200,13 +200,36 @@ sub refresh_cls{
 }
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
+
+sub n_nodes{
+	my $self = shift;
+	my $n = $self->{entry_n_nodes}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return  gui_window->gui_jg( $n );
+}
+
+sub rlen1{
+	my $self = shift;
+	my $n = $self->{entry_rlen1}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return  gui_window->gui_jg( $n );
+}
+
+sub n_cls{
+	my $self = shift;
+	my $n = $self->{entry_cls_num}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return  gui_window->gui_jg( $n );
+}
 
 sub rlen2{
 	my $self = shift;
-	my $r = gui_window->gui_jg( $self->{entry_rlen2}->get );
+	my $r = $self->{entry_rlen2}->get;
+	$r =~ tr/ï¼-ï¼™/0-9/;
+	$r = gui_window->gui_jg( $r );
 	if ($r =~ /auto/i){
-		$r = gui_window->gui_jg( $self->{entry_n_nodes}->get );
+		$r = $self->n_nodes;
 		$r = $r * $r * 500;
 	}
 	#print "rlen2: $r\n";
@@ -216,11 +239,11 @@ sub rlen2{
 sub params{
 	my $self = shift;
 	return (
-		n_nodes => gui_window->gui_jg( $self->{entry_n_nodes}->get ),
+		n_nodes => $self->n_nodes,
 		if_cls  => gui_window->gui_jg( $self->{if_cls} ),
-		n_cls   => gui_window->gui_jg( $self->{entry_cls_num}->get ),
+		n_cls   => $self->n_cls,
 		p_topo  => gui_window->gui_jg( $self->{p_topo} ),
-		rlen1   => gui_window->gui_jg( $self->{entry_rlen1}->get ),
+		rlen1   => $self->rlen1,
 		rlen2   => $self->rlen2,
 	);
 }

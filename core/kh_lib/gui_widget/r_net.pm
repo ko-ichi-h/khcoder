@@ -2,7 +2,7 @@ package gui_widget::r_net;
 use base qw(gui_widget);
 use strict;
 use Tk;
-use Jcode;
+use utf8;
 
 sub _new{
 	my $self = shift;
@@ -115,14 +115,14 @@ sub _new{
 		$self->{r_cmd} = 1;
 	}
 
-	# EdgeÁªÂò
+	# Edgeé¸æŠž
 	my $f5 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 	
 	$f5->Label(
-		-text => kh_msg->get('filter_edges'), # ÉÁ²è¤¹¤ë¶¦µ¯´Ø·¸¡Êedge¡Ë¤Î¹Ê¤ê¹þ¤ß
+		-text => kh_msg->get('filter_edges'), # æç”»ã™ã‚‹å…±èµ·é–¢ä¿‚ï¼ˆedgeï¼‰ã®çµžã‚Šè¾¼ã¿
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left',);
 	
@@ -154,7 +154,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$f4->Radiobutton(
-		-text             => kh_msg->get('e_top_n'), # ÉÁ²è¿ô¡§
+		-text             => kh_msg->get('e_top_n'), # æç”»æ•°ï¼š
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 'n',
@@ -182,7 +182,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$f4->Radiobutton(
-		-text             => kh_msg->get('e_jac'), # Jaccard·¸¿ô¡§
+		-text             => kh_msg->get('e_jac'), # Jaccardä¿‚æ•°ï¼š
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 'j',
@@ -202,11 +202,11 @@ sub _new{
 	gui_window->config_entry_focusin($self->{entry_edges_jac});
 
 	$f4->Label(
-		-text => kh_msg->get('or_more'), # °Ê¾å
+		-text => kh_msg->get('or_more'), # ä»¥ä¸Š
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
-	# Edge¤ÎÂÀ¤µ
+	# Edgeã®å¤ªã•
 	my $edge_frame = $lf->Frame()->pack(-anchor => 'w');
 	$edge_frame->Checkbutton(
 			-text     => kh_msg->get('thicker'),
@@ -220,7 +220,7 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	# Node¤ÎÂç¤­¤µ
+	# Nodeã®å¤§ãã•
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf,
 		type         => 'mds',
@@ -234,7 +234,7 @@ sub _new{
 	);
 
 	$self->{wc_smaller_nodes} = $lf->Checkbutton(
-			-text     => kh_msg->get('smaller'), # ¤¹¤Ù¤Æ¤Î¸ì¤ò¾®¤µ¤á¤Î±ß¤ÇÉÁ²è
+			-text     => kh_msg->get('smaller'), # ã™ã¹ã¦ã®èªžã‚’å°ã•ã‚ã®å††ã§æç”»
 			-variable => \$self->{check_smaller_nodes},
 			-anchor   => 'w',
 			-command  => sub{
@@ -387,7 +387,7 @@ sub refresh{
 }
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub params{
 	my $self = shift;
@@ -434,12 +434,16 @@ sub n_or_j{
 
 sub edges_num{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_edges_number}->get );
+	my $n = $self->{entry_edges_number}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	return gui_window->gui_jg( $n );
 }
 
 sub edges_jac{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_edges_jac}->get );
+	my $n = $self->{entry_edges_jac}->get;
+	$n =~ tr/ã€‚ï¼Žã€ï¼Œ,ï¼-ï¼™/.....0-9/;
+	return gui_window->gui_jg( $n );
 }
 
 sub use_alpha{
