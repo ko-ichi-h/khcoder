@@ -1,10 +1,10 @@
 package gui_window::word_ass_opt;
 use base qw(gui_window);
-
+use utf8;
 use Tk;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 #-------------#
 
 sub _new{
@@ -14,19 +14,19 @@ sub _new{
 	my $win = $self->{win_obj};
 	#$win->focus;
 	#$win->grab;
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ´ØÏ¢¸ìÃµº÷¡¦¥Õ¥£¥ë¥¿ÀßÄê
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # é–¢é€£èªæ¢ç´¢ãƒ»ãƒ•ã‚£ãƒ«ã‚¿è¨­å®š
 	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 
-	# ÉÊ»ì¤Ë¤è¤ëÃ±¸ì¤Î¼è¼ÎÁªÂò
+	# å“è©ã«ã‚ˆã‚‹å˜èªã®å–æ¨é¸æŠ
 	$left->Label(
-		-text => kh_msg->get('by_pos'), # ¡¦ÉÊ»ì¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò
+		-text => kh_msg->get('by_pos'), # ãƒ»å“è©ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
 	$l3->Label(
-		-text => '    ', # ¡¡¡¡
+		-text => '    ', # ã€€ã€€
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left',-fill => 'y',-expand => 1);
 	%pack = (
@@ -43,36 +43,36 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => kh_msg->gget('all'), # ¤¹¤Ù¤Æ
+		-text => kh_msg->gget('all'), # ã™ã¹ã¦
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{ $self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->gget('default'), # ´ûÄêÃÍ
+		-text => kh_msg->gget('default'), # æ—¢å®šå€¤
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->gget('clear'), # ¥¯¥ê¥¢
+		-text => kh_msg->gget('clear'), # ã‚¯ãƒªã‚¢
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack(-pady => 2);
 
-	# Á´ÂÎ¤Ç¤Î½Ğ¸½¿ô
+	# å…¨ä½“ã§ã®å‡ºç¾æ•°
 	my $left2 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left2->Label(
-		-text => kh_msg->get('by_df'), # ¡¦Á´ÂÎ¤Ç¤Î½Ğ¸½¿ô¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò
+		-text => kh_msg->get('by_df'), # ãƒ»å…¨ä½“ã§ã®å‡ºç¾æ•°ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left2->Label(
-		-text => kh_msg->get('min_df'), # ¡¡¡¡¡¡ºÇÄãÊ¸½ñ¿ô¡§
+		-text => kh_msg->get('min_df'), # ã€€ã€€ã€€æœ€ä½æ–‡æ›¸æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -85,15 +85,15 @@ sub _new{
 	$self->{ent_total}->bind("<Key-Return>",sub{$self->save});
 	$self->{ent_total}->bind("<KP_Enter>", sub{$self->save});
 
-	# É½¼¨¿ô¤ÎLIMIT
+	# è¡¨ç¤ºæ•°ã®LIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
-		-text => kh_msg->get('view'), # ¡¦É½¼¨¤¹¤ë¸ì¤Î¿ô
+		-text => kh_msg->get('view'), # ãƒ»è¡¨ç¤ºã™ã‚‹èªã®æ•°
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left3->Label(
-		-text => kh_msg->get('top'), # ¡¡¡¡¡¡¾å°Ì¡§
+		-text => kh_msg->get('top'), # ã€€ã€€ã€€ä¸Šä½ï¼š
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -108,7 +108,7 @@ sub _new{
 	
 	# OK & Cancel
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -121,7 +121,7 @@ sub _new{
 		-command => sub{$self->save;}
 	)->pack(-side => 'right');
 	
-	# ÃÍ¤ÎÆşÎÏ
+	# å€¤ã®å…¥åŠ›
 	$self->{ent_total}->insert(
 		"end",
 		"$gui_window::word_ass::filter->{min_doc}"
@@ -138,8 +138,15 @@ sub _new{
 sub save{
 	my $self = shift;
 	
-	$gui_window::word_ass::filter->{min_doc} = $self->{ent_total}->get;
-	$gui_window::word_ass::filter->{limit}   = $self->{ent_limit}->get;
+	my $n = 1;
+	$n = $self->{ent_total}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	$gui_window::word_ass::filter->{min_doc} = $self->gui_jg( $n );
+	
+	$n = 200;
+	$n = $self->{ent_limit}->get;
+	$n =~ tr/ï¼-ï¼™/0-9/;
+	$gui_window::word_ass::filter->{limit}   = $self->gui_jg( $n );
 	
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){
