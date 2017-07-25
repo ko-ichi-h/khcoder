@@ -5,12 +5,12 @@ use strict;
 use Tk;
 use Tk::HList;
 use mysql_conc;
-use Jcode;
+use utf8;
 use gui_widget::tani;
 use gui_widget::optmenu;
 
 #---------------------#
-#   Window ¥ª¡¼¥×¥ó   #
+#   Window ã‚ªãƒ¼ãƒ—ãƒ³   #
 #---------------------#
 
 sub _new{
@@ -19,7 +19,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'KWIC¥³¥ó¥³¡¼¥À¥ó¥¹'
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'KWICã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹'
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -27,11 +27,11 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
-	# ¥¨¥ó¥È¥ê¤È¸¡º÷¥Ü¥¿¥ó¤Î¥Õ¥ì¡¼¥à
+	# ã‚¨ãƒ³ãƒˆãƒªã¨æ¤œç´¢ãƒœã‚¿ãƒ³ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	$fra4e->Label(
-		-text => kh_msg->get('word'), #$self->gui_jchar('Ãê½Ğ¸ì¡§'),
+		-text => kh_msg->get('word'), #$self->gui_jchar('æŠ½å‡ºèªï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -47,7 +47,7 @@ sub _new{
 	$self->config_entry_focusin($e1);
 
 	$fra4e->Label(
-		-text => kh_msg->get('pos'), #self->gui_jchar('¡¡ÉÊ»ì¡§'),
+		-text => kh_msg->get('pos'), #self->gui_jchar('ã€€å“è©ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -62,7 +62,7 @@ sub _new{
 	$self->config_entry_focusin($e4);
 
 	$fra4e->Label(
-		-text => kh_msg->get('conj'),#$self->gui_jchar('¡¡³èÍÑ·Á¡§'),
+		-text => kh_msg->get('conj'),#$self->gui_jchar('ã€€æ´»ç”¨å½¢ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -82,14 +82,14 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_tuika} = $fra4e->Button(
-		-text => kh_msg->get('additional'), #$self->gui_jchar('ÄÉ²Ã¾ò·ï'),
+		-text => kh_msg->get('additional'), #$self->gui_jchar('è¿½åŠ æ¡ä»¶'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub{ gui_window::word_conc_opt->open;}
 	)->pack(-side => 'left');
 
 	my $sbutton = $fra4e->Button(
-		-text => kh_msg->get('search'), #$self->gui_jchar('¸¡º÷'),
+		-text => kh_msg->get('search'), #$self->gui_jchar('æ¤œç´¢'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->search;}
@@ -102,26 +102,26 @@ sub _new{
 		-font => "TKFN"
 	);
 
-	# ¥½¡¼¥È¡¦¥ª¥×¥·¥ç¥ó¤Î¥Õ¥ì¡¼¥à
+	# ã‚½ãƒ¼ãƒˆãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -pady => 2);
 
 	my @options = (
-		[ kh_msg->get('ns'), 'id'], # $self->gui_jchar('½Ğ¸½½ç')
-		[ kh_msg->get('l5'),  'l5'], # $self->gui_jchar('º¸¡¦5')
-		[ kh_msg->get('l4'),  'l4'], # $self->gui_jchar('º¸¡¦4')
-		[ kh_msg->get('l3'),  'l3'], # $self->gui_jchar('º¸¡¦3')
-		[ kh_msg->get('l2'),  'l2'], # $self->gui_jchar('º¸¡¦2')
-		[ kh_msg->get('l1'),  'l1'], # $self->gui_jchar('º¸¡¦1')
-		[ kh_msg->get('center'), 'center'], # $self->gui_jchar('³èÍÑ·Á')
-		[ kh_msg->get('r1'),  'r1'], # $self->gui_jchar('±¦¡¦1')
-		[ kh_msg->get('r2'),  'r2'], # $self->gui_jchar('±¦¡¦2')
-		[ kh_msg->get('r3'),  'r3'], # $self->gui_jchar('±¦¡¦3')
-		[ kh_msg->get('r4'),  'r4'], # $self->gui_jchar('±¦¡¦4')
-		[ kh_msg->get('r5'),  'r5'] # $self->gui_jchar('±¦¡¦5')
+		[ kh_msg->get('ns'), 'id'], # $self->gui_jchar('å‡ºç¾é †')
+		[ kh_msg->get('l5'),  'l5'], # $self->gui_jchar('å·¦ãƒ»5')
+		[ kh_msg->get('l4'),  'l4'], # $self->gui_jchar('å·¦ãƒ»4')
+		[ kh_msg->get('l3'),  'l3'], # $self->gui_jchar('å·¦ãƒ»3')
+		[ kh_msg->get('l2'),  'l2'], # $self->gui_jchar('å·¦ãƒ»2')
+		[ kh_msg->get('l1'),  'l1'], # $self->gui_jchar('å·¦ãƒ»1')
+		[ kh_msg->get('center'), 'center'], # $self->gui_jchar('æ´»ç”¨å½¢')
+		[ kh_msg->get('r1'),  'r1'], # $self->gui_jchar('å³ãƒ»1')
+		[ kh_msg->get('r2'),  'r2'], # $self->gui_jchar('å³ãƒ»2')
+		[ kh_msg->get('r3'),  'r3'], # $self->gui_jchar('å³ãƒ»3')
+		[ kh_msg->get('r4'),  'r4'], # $self->gui_jchar('å³ãƒ»4')
+		[ kh_msg->get('r5'),  'r5'] # $self->gui_jchar('å³ãƒ»5')
 	);
 
 	$fra4h->Label(
-		-text => kh_msg->get('sort1'), #$self->gui_jchar('¥½¡¼¥È1¡§'),
+		-text => kh_msg->get('sort1'), #$self->gui_jchar('ã‚½ãƒ¼ãƒˆ1ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -135,7 +135,7 @@ sub _new{
 	);
 
 	$fra4h->Label(
-		-text => kh_msg->get('sort2'),#$self->gui_jchar('¡¡¥½¡¼¥È2¡§'),
+		-text => kh_msg->get('sort2'),#$self->gui_jchar('ã€€ã‚½ãƒ¼ãƒˆ2ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -149,7 +149,7 @@ sub _new{
 	);
 
 	$fra4h->Label(
-		-text => kh_msg->get('sort3'),#$self->gui_jchar('¡¡¥½¡¼¥È3¡§'),
+		-text => kh_msg->get('sort3'),#$self->gui_jchar('ã€€ã‚½ãƒ¼ãƒˆ3ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -165,7 +165,7 @@ sub _new{
 
 
 	$fra4h->Label(
-		-text => kh_msg->get('retrieveNum1'),#$self->gui_jchar('¡¡¡ÊÁ°¸å'),
+		-text => kh_msg->get('retrieveNum1'),#$self->gui_jchar('ã€€ï¼ˆå‰å¾Œ'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -177,7 +177,7 @@ sub _new{
 	$self->config_entry_focusin($e3);
 
 	$fra4h->Label(
-		-text => kh_msg->get('retrieveNum2'),#$self->gui_jchar('¸ì¤òÉ½¼¨¡Ë'),
+		-text => kh_msg->get('retrieveNum2'),#$self->gui_jchar('èªã‚’è¡¨ç¤ºï¼‰'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -187,7 +187,7 @@ sub _new{
 		-foreground => 'blue'
 	)->pack(-side => 'right');
 
-	# ·ë²ÌÉ½¼¨ÉôÊ¬
+	# çµæœè¡¨ç¤ºéƒ¨åˆ†
 	my $fra5 = $wmw->LabFrame(
 		-label => 'Result',
 		-labelside => 'acrosstop',
@@ -215,7 +215,7 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$self->{copy_btn} = $fra5->Button(
-		-text => kh_msg->gget('copy'),#$self->gui_jchar('¥³¥Ô¡¼'),
+		-text => kh_msg->gget('copy'),#$self->gui_jchar('ã‚³ãƒ”ãƒ¼'),
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -233,7 +233,7 @@ sub _new{
 	);
 
 	$fra5->Button(
-		-text => kh_msg->get('viewDoc'),#$self->gui_jchar('Ê¸½ñÉ½¼¨'),
+		-text => kh_msg->get('viewDoc'),#$self->gui_jchar('æ–‡æ›¸è¡¨ç¤º'),
 		-font => "TKFN",
 		#-width => 8,
 		-borderwidth => '1',
@@ -241,7 +241,7 @@ sub _new{
 	)->pack(-side => 'left',-anchor => 'w', -pady => 1);
 
 	$fra5->Label(
-		-text => kh_msg->get('viewingUnit'),#$self->gui_jchar(' É½¼¨Ã±°Ì¡§'),
+		-text => kh_msg->get('viewingUnit'),#$self->gui_jchar(' è¡¨ç¤ºå˜ä½ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
@@ -260,7 +260,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $fra5->Button(
-		-text        => kh_msg->get('prev').mysql_conc->docs_per_once,#$self->gui_jchar('Á°'.mysql_conc->docs_per_once),
+		-text        => kh_msg->get('prev').mysql_conc->docs_per_once,#$self->gui_jchar('å‰'.mysql_conc->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -273,7 +273,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_next} = $fra5->Button(
-		-text        => kh_msg->get('next').mysql_conc->docs_per_once,#$self->gui_jchar('¼¡'.mysql_conc->docs_per_once),
+		-text        => kh_msg->get('next').mysql_conc->docs_per_once,#$self->gui_jchar('æ¬¡'.mysql_conc->docs_per_once),
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -286,12 +286,12 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $hits = $fra5->Label(
-		-text => kh_msg->get('hits'),#$self->gui_jchar('  ¥Ò¥Ã¥È¿ô¡§'),
+		-text => kh_msg->get('hits'),#$self->gui_jchar('  ãƒ’ãƒƒãƒˆæ•°ï¼š'),
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
 	$self->{btn_coloc} = $fra5->Button(
-		-text        => kh_msg->get('stats'),#$self->gui_jchar('½¸·×'),
+		-text        => kh_msg->get('stats'),#$self->gui_jchar('é›†è¨ˆ'),
 		-font        => "TKFN",
 		-command     => sub{$self->coloc;},
 		-borderwidth => 1,
@@ -299,7 +299,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$self->{btn_save} = $fra5->Button(
-		-text        => kh_msg->gget('save'),#$self->gui_jchar('ÊİÂ¸'),
+		-text        => kh_msg->gget('save'),#$self->gui_jchar('ä¿å­˜'),
 		-font        => "TKFN",
 		-command     => sub{$self->save;},
 		-borderwidth => 1,
@@ -319,7 +319,7 @@ sub _new{
 }
 
 #------------------------#
-#   ¥á¥Ë¥å¡¼¤Î¾õÂÖÊÑ¹¹   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®çŠ¶æ…‹å¤‰æ›´   #
 #------------------------#
 sub _menu_check{
 	my $self = shift;
@@ -344,14 +344,14 @@ sub btn_check{
 		   $gui_window::word_conc::additional->{1}{pos}
 		#&& length($gui_window::word_conc::additional->{1}{query})
 	){
-		$self->{btn_tuika}->configure(-text => kh_msg->get('additional').'*'); # $self->gui_jchar('ÄÉ²Ã¾ò·ï¡ö')
+		$self->{btn_tuika}->configure(-text => kh_msg->get('additional').'*'); # $self->gui_jchar('è¿½åŠ æ¡ä»¶ï¼Š')
 	} else {
 		$self->{btn_tuika}->configure(-text => kh_msg->get('additional') );
 	}
 }
 
 #--------------#
-#   Ê¸½ñÉ½¼¨   #
+#   æ–‡æ›¸è¡¨ç¤º   #
 #--------------#
 sub view_doc{
 	my $self = shift;
@@ -366,7 +366,7 @@ sub view_doc{
 
 	$selected = $self->{current_start} + $selected;
 	my $foot = $self->{result_obj}->_count;
-	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  "; #"¡¦¸½ºßÉ½¼¨Ãæ¤Î¸¡º÷·ë²Ì¡§ 
+	$foot = kh_msg->get('currentDoc')."$selected / "."$foot,  "; #"ãƒ»ç¾åœ¨è¡¨ç¤ºä¸­ã®æ¤œç´¢çµæœï¼š 
 
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
@@ -470,13 +470,13 @@ sub end{
 }
 
 #----------#
-#   ÊİÂ¸   #
+#   ä¿å­˜   #
 #----------#
 
 sub save{
 	my $self = shift;
 	
-	# ÊİÂ¸Àè¤Î»²¾È
+	# ä¿å­˜å…ˆã®å‚ç…§
 	my @types = (
 		[ "csv file",[qw/.csv/] ],
 		["All files",'*']
@@ -485,7 +485,7 @@ sub save{
 		-defaultextension => '.csv',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt( kh_msg->get('saving')), # '¥³¥ó¥³¡¼¥À¥ó¥¹¡ÊKWIC¡Ë¸¡º÷¤Î·ë²Ì¤òÊİÂ¸'
+			$self->gui_jt( kh_msg->get('saving')), # 'ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹ï¼ˆKWICï¼‰æ¤œç´¢ã®çµæœã‚’ä¿å­˜'
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 	
@@ -501,7 +501,7 @@ sub save{
 }
 
 #----------#
-#   ½¸·×   #
+#   é›†è¨ˆ   #
 #----------#
 
 sub coloc{
@@ -513,13 +513,13 @@ sub coloc{
 }
 
 #----------#
-#   ¸¡º÷   #
+#   æ¤œç´¢   #
 #----------#
 
 sub search{
 	my $self = shift;
 
-	# ÊÑ¿ô¼èÆÀ
+	# å¤‰æ•°å–å¾—
 	my $query = $self->entry->get;
 	#unless ($query){
 	#	return;
@@ -528,13 +528,15 @@ sub search{
 	my $hinshi = $self->entry4->get;
 	my $length = $self->entry3->get;
 
+	$length =~ tr/ï¼-ï¼™/0-9/;
+
 	$query  = $self->check_entry_input($query );
 	$katuyo = $self->check_entry_input($katuyo);
 	$hinshi = $self->check_entry_input($hinshi);
 
-	# É½¼¨¤Î½é´ü²½
+	# è¡¨ç¤ºã®åˆæœŸåŒ–
 	$self->hit_label->configure(
-		-text => kh_msg->get('hits'),#$self->gui_jchar("  ¥Ò¥Ã¥È¿ô¡§")
+		-text => kh_msg->get('hits'),#$self->gui_jchar("  ãƒ’ãƒƒãƒˆæ•°ï¼š")
 	);
 	$self->list->delete('all');
 	$self->{btn_prev}->configure(-state => 'disable');
@@ -547,7 +549,7 @@ sub search{
 	);
 	$self->win_obj->update;
 
-	# ¸¡º÷¼Â¹Ô
+	# æ¤œç´¢å®Ÿè¡Œ
 	use Benchmark;
 	my $t0 = new Benchmark;
 
@@ -586,7 +588,7 @@ sub search{
 }
 
 #--------------#
-#   ·ë²ÌÉ½¼¨   #
+#   çµæœè¡¨ç¤º   #
 #--------------#
 
 sub display{
@@ -595,7 +597,7 @@ sub display{
 	
 	$self->{current_start} = $start;
 	
-	# HList¤Î¹¹¿·
+	# HListã®æ›´æ–°
 	unless ($self->{result_obj}){
 		return undef;
 	}
@@ -647,7 +649,7 @@ sub display{
 		++$row;
 	}
 
-	# ¥é¥Ù¥ë¤Î¹¹¿·
+	# ãƒ©ãƒ™ãƒ«ã®æ›´æ–°
 	my $num_total = $self->{result_obj}->_count;
 	my $num_disp  = $start + mysql_conc->docs_per_once - 1;
 	my $num_disp2;
@@ -666,7 +668,7 @@ sub display{
 			"-$num_disp2"
 		);
 	
-	# ¥Ü¥¿¥ó¤Î¹¹¿·
+	# ãƒœã‚¿ãƒ³ã®æ›´æ–°
 	if ($start > 1){
 		$self->{btn_prev}->configure(-state => 'normal');
 	} else {
@@ -681,7 +683,7 @@ sub display{
 	$self->{btn_save}->configure(-state => 'normal');
 	$self->win_obj->update;
 
-	# É½¼¨¤Î¥»¥ó¥¿¥ê¥ó¥°
+	# è¡¨ç¤ºã®ã‚»ãƒ³ã‚¿ãƒªãƒ³ã‚°
 	$self->list->xview(moveto => 1);
 	$self->list->yview(0);
 	$self->win_obj->update;
@@ -717,7 +719,7 @@ sub display{
 }
 
 #------------#
-#   ½é´ü²½   #
+#   åˆæœŸåŒ–   #
 #------------#
 
 sub start{
@@ -729,7 +731,7 @@ sub start{
 
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 sub result{
