@@ -906,12 +906,12 @@ if ( com_method == "cor" ){  # cor
 	ver_pos[ver_pos > max(edge_pos)] <- max(edge_pos)
 	ver_pos[ver_pos < min(edge_pos)] <- min(edge_pos)
 
-	n2 <- set.vertex.attribute(
-		n2,
-		"ver_pos",
-		1:length(get.vertex.attribute(n2,"name")),
-		ver_pos
-	)
+	#n2 <- set.vertex.attribute(
+	#	n2,
+	#	"ver_pos",
+	#	1:length(get.vertex.attribute(n2,"name")),
+	#	ver_pos
+	#)
 	ccol_raw <- ver_pos
 	if ( is.null( get.vertex.attribute(n2,"com") ) == FALSE ){
 		n2 <- remove.vertex.attribute(n2, "com")

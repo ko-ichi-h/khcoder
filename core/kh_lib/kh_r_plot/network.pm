@@ -149,19 +149,6 @@ sub r_command_n4{
 
 print(paste("use_alpha", use_alpha))
 
-#if ( exists("use_alpha") ){
-#	if (use_alpha == 1){
-#		ccol <- ccol_notrans
-#	}
-#}
-
-#n4 <- set.vertex.attribute(
-#    n2,
-#    "label",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
-#)
-
 n4 <- set.vertex.attribute(
     n2,
     "frequency",
@@ -176,41 +163,6 @@ n4 <- set.vertex.attribute(
     sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
 )
 
-#n4 <- set.vertex.attribute(
-#    n4,
-#    "fill",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    ccol
-#)
-
-#n4 <- set.vertex.attribute(
-#    n4,
-#    "r",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    col2rgb(ccol)[1,]
-#)
-
-#n4 <- set.vertex.attribute(
-#    n4,
-#    "g",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    col2rgb(ccol)[2,]
-#)
-
-#n4 <- set.vertex.attribute(
-#    n4,
-#    "b",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    col2rgb(ccol)[3,]
-#)
-
-#n4 <- set.vertex.attribute(
-#    n4,
-#    "shape",
-#    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-#    v_shape
-#)
-
 n4 <- set.vertex.attribute(
     n4,
     "x",
@@ -223,13 +175,6 @@ n4 <- set.vertex.attribute(
     "y",
     (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
     lay_f[,2] * 100
-)
-
-n4 <- set.edge.attribute(
-    n4,
-    "line_type",
-    (0+new_igraph):(length(get.edge.attribute(n2,"weight"))-1+new_igraph),
-    edg_lty
 )
 
 	';
