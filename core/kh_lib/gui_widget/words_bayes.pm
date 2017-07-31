@@ -8,11 +8,11 @@ sub _new{
 
 	my $left = $self->parent->Frame()->pack(-fill => 'both', -expand => 1);
 
-	# ½¸·×Ã±°Ì¤ÎÁªÂò
+	# é›†è¨ˆå˜ä½ã®é¸æŠ
 	unless ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => kh_msg->get('unit'), # ¡¦Ê¬Îà¤ÎÃ±°Ì¡§
+			-text => kh_msg->get('unit'), # ãƒ»åˆ†é¡ã®å˜ä½ï¼š
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		my %pack = (
@@ -28,21 +28,21 @@ sub _new{
 		);
 	}
 
-	# ³°ÉôÊÑ¿ô¤ÎÁªÂò
+	# å¤–éƒ¨å¤‰æ•°ã®é¸æŠ
 	$self->{opt_frame} = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$self->{opt_frame}->Label(
-		-text => kh_msg->get('var'), # ¡¦³Ø½¬¤¹¤ë³°ÉôÊÑ¿ô¡§
+		-text => kh_msg->get('var'), # ãƒ»å­¦ç¿’ã™ã‚‹å¤–éƒ¨å¤‰æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
-	# ºÇ¾®¡¦ºÇÂç½Ğ¸½¿ô
+	# æœ€å°ãƒ»æœ€å¤§å‡ºç¾æ•°
 	$left->Label(
-		-text => kh_msg->get('gui_widget::words->by_tf'), # ¡¦ºÇ¾®/ºÇÂç ½Ğ¸½¿ô¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò
+		-text => kh_msg->get('gui_widget::words->by_tf'), # ãƒ»æœ€å°/æœ€å¤§ å‡ºç¾æ•°ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l2 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l2->Label(
-		-text => kh_msg->get('gui_widget::words->min_tf'), # ¡¡ ¡¡ºÇ¾®½Ğ¸½¿ô¡§
+		-text => kh_msg->get('gui_widget::words->min_tf'), # ã€€ ã€€æœ€å°å‡ºç¾æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min} = $l2->Entry(
@@ -56,7 +56,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min});
 	
 	$l2->Label(
-		-text => kh_msg->get('gui_widget::words->max_tf'), # ¡¡ ºÇÂç½Ğ¸½¿ô¡§
+		-text => kh_msg->get('gui_widget::words->max_tf'), # ã€€ æœ€å¤§å‡ºç¾æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max} = $l2->Entry(
@@ -68,15 +68,15 @@ sub _new{
 	$self->{ent_max}->bind("<KP_Enter>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max});
 
-	# ºÇ¾®¡¦ºÇÂçÊ¸½ñ¿ô
+	# æœ€å°ãƒ»æœ€å¤§æ–‡æ›¸æ•°
 	$left->Label(
-		-text => kh_msg->get('gui_widget::words->by_df'), # ¡¦ºÇ¾®/ºÇÂç Ê¸½ñ¿ô¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò
+		-text => kh_msg->get('gui_widget::words->by_df'), # ãƒ»æœ€å°/æœ€å¤§ æ–‡æ›¸æ•°ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 
 	my $l3 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 	$l3->Label(
-		-text => kh_msg->get('gui_widget::words->min_df'), # ¡¡ ¡¡ºÇ¾®Ê¸½ñ¿ô¡§
+		-text => kh_msg->get('gui_widget::words->min_df'), # ã€€ ã€€æœ€å°æ–‡æ›¸æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_min_df} = $l3->Entry(
@@ -90,7 +90,7 @@ sub _new{
 	gui_window->config_entry_focusin($self->{ent_min_df});
 
 	$l3->Label(
-		-text => kh_msg->get('gui_widget::words->max_df'), # ¡¡ ºÇÂçÊ¸½ñ¿ô¡§
+		-text => kh_msg->get('gui_widget::words->max_df'), # ã€€ æœ€å¤§æ–‡æ›¸æ•°ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	$self->{ent_max_df} = $l3->Entry(
@@ -102,7 +102,7 @@ sub _new{
 	$self->{ent_max_df}->bind("<KP_Enter>",sub{$self->check;});
 	gui_window->config_entry_focusin($self->{ent_max_df});
 
-	# ½¸·×Ã±°Ì¤ÎÁªÂò¡ÊÂĞ±şÊ¬ÀÏÍÑ¡Ë
+	# é›†è¨ˆå˜ä½ã®é¸æŠï¼ˆå¯¾å¿œåˆ†æç”¨ï¼‰
 	my %pack = (
 		-anchor => 'e',
 		-pady   => 0,
@@ -111,7 +111,7 @@ sub _new{
 	if ($self->{type} eq 'corresp'){
 		my $l1 = $left->Frame()->pack(-fill => 'x', -pady => 2);
 		$l1->Label(
-			-text => kh_msg->get('gui_widget::words->df_unit'), # ¡¡ ¡¡Ê¸½ñ¤È¸«¤Ê¤¹Ã±°Ì¡§
+			-text => kh_msg->get('gui_widget::words->df_unit'), # ã€€ ã€€æ–‡æ›¸ã¨è¦‹ãªã™å˜ä½ï¼š
 			-font => "TKFN"
 		)->pack(-side => 'left');
 		$self->{tani_obj} = gui_widget::tani->open(
@@ -121,9 +121,9 @@ sub _new{
 		);
 	}
 
-	# ÉÊ»ì¤Ë¤è¤ëÃ±¸ì¤Î¼è¼ÎÁªÂò
+	# å“è©ã«ã‚ˆã‚‹å˜èªã®å–æ¨é¸æŠ
 	$left->Label(
-		-text => kh_msg->get('gui_widget::words->by_pos'), # ¡¦ÉÊ»ì¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò
+		-text => kh_msg->get('gui_widget::words->by_pos'), # ãƒ»å“è©ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -pady => 2);
 	my $l5 = $left->Frame()->pack(-fill => 'both',-expand => 1, -pady => 2);
@@ -145,21 +145,21 @@ sub _new{
 	$self->{hinshi_obj}->select_all;
 	my $l4 = $l5->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => kh_msg->gget('all'), # ¤¹¤Ù¤Æ
+		-text => kh_msg->gget('all'), # ã™ã¹ã¦
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 3);
 	$l4->Button(
-		-text => kh_msg->gget('clear'), # ¥¯¥ê¥¢
+		-text => kh_msg->gget('clear'), # ã‚¯ãƒªã‚¢
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack();
 
-	# ¥Á¥§¥Ã¥¯ÉôÊ¬
+	# ãƒã‚§ãƒƒã‚¯éƒ¨åˆ†
 	$self->parent->Label(
 		-text => kh_msg->get('gui_widget::words->check_desc1')
 			.$self->{verb}
@@ -175,7 +175,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$cf->Button(
-		-text => kh_msg->get('gui_widget::words->check'), # ¥Á¥§¥Ã¥¯
+		-text => kh_msg->get('gui_widget::words->check'), # ãƒã‚§ãƒƒã‚¯
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->check;}
@@ -196,7 +196,7 @@ sub _new{
 }
 
 #--------------------#
-#   ³°ÉôÊÑ¿ô¤ÎÉ½¼¨   #
+#   å¤–éƒ¨å¤‰æ•°ã®è¡¨ç¤º   #
 sub load_ov{
 	my $self = shift;
 	unless ($self->{tani_obj}){return 0;}
@@ -205,7 +205,7 @@ sub load_ov{
 		$self->{opt_body}->destroy;
 	}
 	
-	# ÍøÍÑ¤Ç¤­¤ëÊÑ¿ô¤¬¤¢¤ë¤«¤É¤¦¤«¥Á¥§¥Ã¥¯
+	# åˆ©ç”¨ã§ãã‚‹å¤‰æ•°ãŒã‚ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	my %tani_check = ();
 	foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
 		$tani_check{$i} = 1;
@@ -237,7 +237,7 @@ sub load_ov{
 			pack    => {-side => 'left', -padx => 2},
 			options => 
 				[
-					[kh_msg->get('n_a'), -1], # ÍøÍÑÉÔ²Ä
+					[kh_msg->get('n_a'), -1], # åˆ©ç”¨ä¸å¯
 				],
 			variable => \$self->{var_id},
 		);
@@ -253,7 +253,7 @@ sub rem_ov{
 
 
 #--------------#
-#   ¥Á¥§¥Ã¥¯   #
+#   ãƒã‚§ãƒƒã‚¯   #
 
 sub check{
 	my $self = shift;
@@ -269,7 +269,7 @@ sub check{
 	if ( $self->outvar == -1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::bayes_learn->error_var'), # ³°ÉôÊÑ¿ô¤ÎÀßÄê¤¬ÉÔÀµ¤Ç¤¹¡£
+			msg  => kh_msg->get('gui_window::bayes_learn->error_var'), # å¤–éƒ¨å¤‰æ•°ã®è¨­å®šãŒä¸æ­£ã§ã™ã€‚
 		);
 		return 0;
 	}
@@ -309,7 +309,7 @@ sub check{
 }
 
 #--------------------------#
-#   ÀßÄê¤ÎÆÉ¤ß¹ş¤ß¡¦ÊİÂ¸   #
+#   è¨­å®šã®èª­ã¿è¾¼ã¿ãƒ»ä¿å­˜   #
 
 sub settings_save{
 	my $self = shift;
@@ -340,9 +340,9 @@ sub settings_load{
 	$self->min( $settings->{min} );
 	$self->max( $settings->{max} );
 	
-	# Ã±°Ì¤ÎÀßÄê¤ÏÆÉ¤ß¹ş¤Ş¤Ê¤¤
-	# ¡ÊÍ¾½ê¤Ç°ã¤¦ÃÍ¤ËÀßÄê¤µ¤ì¤¿¤é¡¢¤½¤ì¤Ë¤¢¤ï¤»¤ë¡£
-	# ¡¡¤Ş¤¿¤½¤Î¾ì¹ç¤Ï¡ÖÊ¸½ñ¿ô¡×¤ÎÀßÄê¤âÆÉ¤ß¹ş¤Ş¤Ê¤¤¡Ë
+	# å˜ä½ã®è¨­å®šã¯èª­ã¿è¾¼ã¾ãªã„
+	# ï¼ˆä½™æ‰€ã§é•ã†å€¤ã«è¨­å®šã•ã‚ŒãŸã‚‰ã€ãã‚Œã«ã‚ã‚ã›ã‚‹ã€‚
+	# ã€€ã¾ãŸãã®å ´åˆã¯ã€Œæ–‡æ›¸æ•°ã€ã®è¨­å®šã‚‚èª­ã¿è¾¼ã¾ãªã„ï¼‰
 	if ( $self->tani eq $settings->{tani} ){
 		$self->min_df( $settings->{min_df} );
 		$self->max_df( $settings->{max_df} );
@@ -352,7 +352,7 @@ sub settings_load{
 
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub outvar{
 	my $self = shift;
@@ -366,7 +366,7 @@ sub min{
 		$self->{ent_min}->delete(0,'end');
 		$self->{ent_min}->insert(0,$new);
 	}
-	return gui_window->gui_jg( $self->{ent_min}->get );
+	return gui_window->gui_jgn( $self->{ent_min}->get );
 }
 sub max{
 	my $self = shift;
@@ -375,7 +375,7 @@ sub max{
 		$self->{ent_max}->delete(0,'end');
 		$self->{ent_max}->insert(0,$new);
 	}
-	return gui_window->gui_jg( $self->{ent_max}->get );
+	return gui_window->gui_jgn( $self->{ent_max}->get );
 }
 sub min_df{
 	my $self = shift;
@@ -384,7 +384,7 @@ sub min_df{
 		$self->{ent_min_df}->delete(0,'end');
 		$self->{ent_min_df}->insert(0,$new);
 	}
-	return gui_window->gui_jg( $self->{ent_min_df}->get );
+	return gui_window->gui_jgn( $self->{ent_min_df}->get );
 }
 sub max_df{
 	my $self = shift;
@@ -393,7 +393,7 @@ sub max_df{
 		$self->{ent_max_df}->delete(0,'end');
 		$self->{ent_max_df}->insert(0,$new);
 	}
-	return gui_window->gui_jg( $self->{ent_max_df}->get );
+	return gui_window->gui_jgn( $self->{ent_max_df}->get );
 }
 sub tani{
 	my $self = shift;

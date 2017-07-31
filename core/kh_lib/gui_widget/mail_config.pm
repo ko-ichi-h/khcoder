@@ -239,17 +239,17 @@ sub font_change{
 
 sub plot_font{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_font}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_font}->get );
 }
 
 sub plot_size1{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_size1}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_size1}->get );
 }
 
 sub plot_size2{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_size2}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_size2}->get );
 }
 
 sub if_heap{

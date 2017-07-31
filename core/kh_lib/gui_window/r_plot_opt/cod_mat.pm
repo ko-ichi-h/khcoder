@@ -494,25 +494,24 @@ sub calc{
 	use plotR::code_mat;
 	my $plot = plotR::code_mat->new(
 		r_command      => $r_command,
-		#font_size      => $self->{font_obj}->font_size,
 
 		heat_dendro_c  => $self->gui_jg( $self->{heat_dendro_c} ),
 		heat_dendro_v  => $self->gui_jg( $self->{heat_dendro_v} ),
 		heat_cellnote  => $self->gui_jg( $self->{heat_cellnote} ),
-		plot_size_heat => $self->gui_jg( $self->{entry_plot_size_heat}->get ),
+		plot_size_heat => $self->gui_jgn( $self->{entry_plot_size_heat}->get ),
 		
-		bubble_size    => $self->gui_jg( $self->{entry_bubble_size}->get) /100,
+		bubble_size    => $self->gui_jgn( $self->{entry_bubble_size}->get) /100,
 		bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
 		color_rsd      => $self->gui_jg( $self->{color_rsd} ),
 		color_gry      => $self->gui_jg( $self->{color_gry} ),
-		plot_size_mapw => $self->gui_jg( $self->{entry_plot_size_mapw}->get ),
-		plot_size_maph => $self->gui_jg( $self->{entry_plot_size_maph}->get ),
+		plot_size_mapw => $self->gui_jgn( $self->{entry_plot_size_mapw}->get ),
+		plot_size_maph => $self->gui_jgn( $self->{entry_plot_size_maph}->get ),
 		
 		color_fix      => $self->gui_jg( $self->{color_fix} ),
-		color_maxv     => $self->gui_jg( $self->{entry_color_fix}->get ),
+		color_maxv     => $self->gui_jgn( $self->{entry_color_fix}->get ),
 		
 		selection      => \@selection,
-		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,
+		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		plotwin_name   => 'code_mat',
 	);
 	$wait_window->end(no_dialog => 1);

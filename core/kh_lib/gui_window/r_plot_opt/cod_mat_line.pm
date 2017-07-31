@@ -248,7 +248,7 @@ sub calc{
 	my $plot = plotR::code_mat_line->new(
 		r_command      => $r_command,
 		#font_size      => $self->{font_obj}->font_size,
-		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,
+		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		selection      => \@selection,
 		plotwin_name   => 'code_mat_line',
 	);

@@ -13,6 +13,8 @@ if (eval 'require Encode::EUCJPMS'){
 }
 
 use strict;
+use utf8;
+
 use Tk;
 use Tk::ErrorDialog;
 use Tk::LabFrame;
@@ -113,7 +115,7 @@ sub open{
 		$self->{win_obj}->focus;
 		$self->start_raise;
 	} else {
-		# Window¥ª¡¼¥×¥ó
+		# Windowã‚ªãƒ¼ãƒ—ãƒ³
 		if ($self->win_name eq 'main_window'){
 			$self->{win_obj} = MainWindow->new;
 		} else {
@@ -122,12 +124,12 @@ sub open{
 			$self->position_icon(@_);
 		}
 
-		# Window¤ÎÃæ¿ÈºîÀ®
+		# Windowã®ä¸­èº«ä½œæˆ
 		$self = $self->_new(@_);
 		return 0 unless $self;
 		$::main_gui->opened($self->win_name,$self);
 
-		# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+		# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 		$self->win_obj->bind(
 			'<Control-Key-q>',
 			sub{ $self->close; }
@@ -138,7 +140,7 @@ sub open{
 		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
-		# ¥á¥¤¥óWindows¤ØÌá¤ë¤¿¤á¤Î¥­¡¼¡¦¥Ğ¥¤¥ó¥É
+		# ãƒ¡ã‚¤ãƒ³Windowsã¸æˆ»ã‚‹ãŸã‚ã®ã‚­ãƒ¼ãƒ»ãƒã‚¤ãƒ³ãƒ‰
 		$self->win_obj->bind(
 			'<Alt-Key-m>',
 			sub { $::main_gui->{main_window}->win_obj->focus; }
@@ -148,7 +150,7 @@ sub open{
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 
-		# ÆÃ¼ì½èÍı¤ËÂĞ±ş
+		# ç‰¹æ®Šå‡¦ç†ã«å¯¾å¿œ
 		$self->start;
 
 		$self->check_viewable;
@@ -157,15 +159,15 @@ sub open{
 	return $self;
 }
 
-# Window°ÌÃÖ¤Î¥Á¥§¥Ã¥¯¡Ê¥¹¥¯¥ê¡¼¥ó¤ò¤Ï¤ß½Ğ¤·¤Æ¤¤¤Ê¤¤¤«¡Ë
+# Windowä½ç½®ã®ãƒã‚§ãƒƒã‚¯ï¼ˆã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚’ã¯ã¿å‡ºã—ã¦ã„ãªã„ã‹ï¼‰
 sub check_viewable{
 	my $self = shift;
 
 	my $g = $::config_obj->win_gmtry($self->win_name);
 	if (
-		   defined($g) && length($g)        # °ÌÃÖ¤òÆÉ¤ß¹ş¤ó¤Ç¤¤¤Æ
+		   defined($g) && length($g)        # ä½ç½®ã‚’èª­ã¿è¾¼ã‚“ã§ã„ã¦
 		&! $self->{no_geometry}
-		&& $::config_obj->os eq 'win32'     # ¤Ê¤ª¤«¤ÄWindows¤Ç
+		&& $::config_obj->os eq 'win32'     # ãªãŠã‹ã¤Windowsã§
 		&& $::config_obj->win32_monitor_chk == 0
 	) {
 		$::config_obj->win32_monitor_chk(1);
@@ -223,13 +225,13 @@ sub position_icon{
 	my %arg = @_;
 	$self->{no_geometry} = $arg{no_geometry};
 	
-	# Window¥µ¥¤¥º¤È°ÌÃÖ¤Î»ØÄê
+	# Windowã‚µã‚¤ã‚ºã¨ä½ç½®ã®æŒ‡å®š
 	my $g = $::config_obj->win_gmtry($self->win_name);
 	if ($g and not $self->{no_geometry}){
 		$self->win_obj->geometry($g);
 	}
 
-	# Window¥¢¥¤¥³¥ó¤Î¥»¥Ã¥È
+	# Windowã‚¢ã‚¤ã‚³ãƒ³ã®ã‚»ãƒƒãƒˆ
 	if ( $::config_obj->os eq 'win32' ) {
 		if ( eval 'require Tk::Icon' ){
 			require Tk::Icon;
@@ -257,7 +259,7 @@ sub position_icon{
 
 sub close{
 	my $self = shift;
-	$self->end; # ÆÃ¼ì½èÍı¤ËÂĞ±ş
+	$self->end; # ç‰¹æ®Šå‡¦ç†ã«å¯¾å¿œ
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
 	#$::config_obj->save_ini;
 	$self->win_obj->destroy;
@@ -291,10 +293,10 @@ sub start_raise{
 
 
 #--------------------------#
-#   ÆüËÜ¸ìÉ½¼¨¡¦ÆşÎÏ´Ø·¸   #
+#   æ—¥æœ¬èªè¡¨ç¤ºãƒ»å…¥åŠ›é–¢ä¿‚   #
 #--------------------------#
 
-sub gui_jchar{ # GUIÉ½¼¨ÍÑ¤ÎÆüËÜ¸ì
+sub gui_jchar{ # GUIè¡¨ç¤ºç”¨ã®æ—¥æœ¬èª
 	my $char = $_[1];
 	my $code = $_[2];
 
@@ -327,13 +329,13 @@ sub gui_jg_filename_win98{
 	return $_[1];
 }
 
-sub gui_jg{ # ÆşÎÏ¤µ¤ì¤¿Ê¸»úÎó¤ÎÊÑ´¹
+sub gui_jg{ # å…¥åŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã®å¤‰æ›
 	my $char       = $_[1];
 	my $reserve_rn = $_[2];
 
 	if ( utf8::is_utf8($char) ){
 		#print "utf8\n";
-		unless ( $reserve_rn ){ # ATOKÂĞºö
+		unless ( $reserve_rn ){ # ATOKå¯¾ç­–
 			$char =~ s/\x0D|\x0A//g;
 		}
 		#if ($^O eq 'darwin'){   # Mac OS X
@@ -347,7 +349,25 @@ sub gui_jg{ # ÆşÎÏ¤µ¤ì¤¿Ê¸»úÎó¤ÎÊÑ´¹
 	}
 }
 
-sub to_clip{ # ¥¯¥ê¥Ã¥×¥Ü¡¼¥É¤Ø¥³¥Ô¡¼¤¹¤ë¤¿¤á¤ÎÊÑ´¹
+sub gui_jgn{ # å…¥åŠ›ã•ã‚ŒãŸæ•°å€¤ã®å¤‰æ›
+	my $char       = $_[1];
+	my $reserve_rn = $_[2];
+
+	if ( utf8::is_utf8($char) ){
+		#print "utf8\n";
+		unless ( $reserve_rn ){ # ATOKå¯¾ç­–
+			$char =~ s/\x0D|\x0A//g;
+		}
+		$char =~ tr/ï¼-ï¼™/0-9/;
+		$char =~ s/[[:cntrl:]]|\s//g;
+		return $char;
+	} else {
+		#warn "No utf8 flag: $char\n";
+		return $char;
+	}
+}
+
+sub to_clip{ # ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã¸ã‚³ãƒ”ãƒ¼ã™ã‚‹ãŸã‚ã®å¤‰æ›
 	my $char = $_[1];
 	
 	if ( $char =~ /[[:^ascii:]]/ and not utf8::is_utf8($char) ){
@@ -363,12 +383,12 @@ sub to_clip{ # ¥¯¥ê¥Ã¥×¥Ü¡¼¥É¤Ø¥³¥Ô¡¼¤¹¤ë¤¿¤á¤ÎÊÑ´¹
 }
 
 #----------------#
-#   ¶¦ÄÌ¤Î½èÍı   #
+#   å…±é€šã®å‡¦ç†   #
 #----------------#
 
 sub check_entry_input{
 	my $char = $_[1];
-	# ²ş¹ÔÊ¸»ú¤¬Æş¤Ã¤Æ¤¤¤ì¤Ğºï½ü¡ÊExcel¤«¤é¤Î¥³¥Ô¥Ú¤äAtok¤ËÂĞ±ş¡Ë
+	# æ”¹è¡Œæ–‡å­—ãŒå…¥ã£ã¦ã„ã‚Œã°å‰Šé™¤ï¼ˆExcelã‹ã‚‰ã®ã‚³ãƒ”ãƒšã‚„Atokã«å¯¾å¿œï¼‰
 	$char =~ s/\x0D|\x0A//g;
 	
 	return $char;
