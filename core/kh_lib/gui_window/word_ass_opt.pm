@@ -137,17 +137,10 @@ sub _new{
 
 sub save{
 	my $self = shift;
-	
-	my $n = 1;
-	$n = $self->{ent_total}->get;
-	$n =~ tr/０-９/0-9/;
-	$gui_window::word_ass::filter->{min_doc} = $self->gui_jg( $n );
-	
-	$n = 200;
-	$n = $self->{ent_limit}->get;
-	$n =~ tr/０-９/0-9/;
-	$gui_window::word_ass::filter->{limit}   = $self->gui_jg( $n );
-	
+
+	$gui_window::word_ass::filter->{min_doc} = $self->gui_jgn( $self->{ent_total}->get );
+	$gui_window::word_ass::filter->{limit}   = $self->gui_jgn( $self->{ent_limit}->get );
+
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){
 		$selected{$i} = 1;

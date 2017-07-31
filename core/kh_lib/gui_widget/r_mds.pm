@@ -239,13 +239,11 @@ sub params{
 
 sub dim_number{
 	my $self = shift;
-	my $n = $self->{entry_dim_number}->get;
-	$n =~ tr/０-９/0-9/;
-	$n =~ s/\x0D|\x0A//g;
+	my $n = gui_window->gui_jgn( $self->{entry_dim_number}->get );
 	unless ($n =~ /\A[123]\Z/) {
 		$n = 2
 	}
-	return gui_window->gui_jg( $n );
+	return $n;
 }
 
 sub method{

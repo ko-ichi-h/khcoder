@@ -727,16 +727,12 @@ sub calc{
 
 	my $filter = 0;
 	if ( $self->{check_filter} ){
-		$filter = $self->{entry_flt}->get;
-		$filter =~ tr/０-９/0-9/;
-		$filter = $self->gui_jg( $filter );
+		$filter = $self->gui_jgn( $self->{entry_flt}->get );
 	}
 
 	my $filter_w = 0;
 	if ( $self->{check_filter_w} ){
-		$filter_w = $self->{entry_flw}->get;
-		$filter_w =~ tr/０-９/0-9/;
-		$filter_w = $self->gui_jg( $filter_w );
+		$filter_w = $self->gui_jgn( $self->{entry_flw}->get );
 	}
 
 	my $plot = &make_plot(

@@ -102,13 +102,11 @@ sub refresh_cls{
 sub n{
 	my $self = shift;
 	if ( $self->{check_cls} ) {
-		my $n = $self->{entry_cls_num}->get;
-		$n =~ tr/０-９/0-9/;
-		$n =~ s/\x0D|\x0A//g;
+		my $n = gui_window->gui_jgn( $self->{entry_cls_num}->get );
 		unless ($n =~ /\A[0-9]+\Z/ && $n >= 2 && $n <= 12) {
 			$n = 7;
 		}
-		return gui_window->gui_jg($n);
+		return ($n);
 	} else {
 		return 0;
 	}

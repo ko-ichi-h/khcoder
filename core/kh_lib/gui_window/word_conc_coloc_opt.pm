@@ -137,15 +137,8 @@ sub _new{
 sub save{
 	my $self = shift;
 	
-	my $n = 200;
-	$n = $self->{ent_limit}->get;
-	$n =~ tr/０-９/0-9/;
-	$gui_window::word_conc_coloc::filter->{limit} = $self->gui_jg( $n );
-	
-	$n = 1;
-	$n = $self->{ent_filter}->get;
-	$n =~ tr/０-９/0-9/;
-	$gui_window::word_conc_coloc::filter->{filter} = $self->gui_jg( $n );
+	$gui_window::word_conc_coloc::filter->{limit} = $self->gui_jgn( $self->{ent_limit}->get );
+	$gui_window::word_conc_coloc::filter->{filter} = $self->gui_jgn( $self->{ent_filter}->get );
 	
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){

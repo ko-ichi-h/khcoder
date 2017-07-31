@@ -317,9 +317,7 @@ sub min{
 		$self->{ent_min}->delete(0,'end');
 		$self->{ent_min}->insert(0,$new);
 	}
-	my $t = $self->{ent_min}->get;
-	$t =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $t );
+	return gui_window->gui_jgn( $self->{ent_min}->get );
 }
 sub max{
 	my $self = shift;
@@ -328,9 +326,7 @@ sub max{
 		$self->{ent_max}->delete(0,'end');
 		$self->{ent_max}->insert(0,$new);
 	}
-	my $t = $self->{ent_max}->get;
-	$t =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $t );
+	return gui_window->gui_jgn( $self->{ent_max}->get );
 }
 sub min_df{
 	my $self = shift;
@@ -339,9 +335,7 @@ sub min_df{
 		$self->{ent_min_df}->delete(0,'end');
 		$self->{ent_min_df}->insert(0,$new);
 	}
-	my $t = $self->{ent_min_df}->get;
-	$t =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $t );
+	return gui_window->gui_jgn( $self->{ent_min_df}->get );
 }
 sub max_df{
 	my $self = shift;
@@ -350,9 +344,7 @@ sub max_df{
 		$self->{ent_max_df}->delete(0,'end');
 		$self->{ent_max_df}->insert(0,$new);
 	}
-	my $t = $self->{ent_max_df}->get;
-	$t =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $t );
+	return gui_window->gui_jgn( $self->{ent_max_df}->get );
 }
 sub tani{
 	my $self = shift;

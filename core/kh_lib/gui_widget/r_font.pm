@@ -115,9 +115,7 @@ sub bold{
 
 sub font_size{
 	my $self = shift;
-	my $n = $self->{entry_font_size}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n ) / 100;
+	return gui_window->gui_jgn( $self->{entry_font_size}->get ) / 100;
 }
 
 
@@ -128,9 +126,7 @@ sub check_bold_text{
 
 sub plot_size{
 	my $self = shift;
-	my $n = $self->{entry_plot_size}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $self->{entry_plot_size}->get );
 }
 
 1;

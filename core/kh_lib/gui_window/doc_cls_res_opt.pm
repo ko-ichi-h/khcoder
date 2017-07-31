@@ -241,12 +241,9 @@ sub calc{
 
 	my $wait_window = gui_wait->start;
 
-	my $n = $self->{entry_cluster_number}->get;
-	$n =~ tr/０-９/0-9/;
-
 	my $cluster = &gui_window::doc_cls::calc_exec(
 		base_win       => $self,
-		cluster_number => $self->gui_jg( $n ),
+		cluster_number => $self->gui_jgn( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		method_method  => $self->gui_jg( $self->{method_method} ),

@@ -146,9 +146,7 @@ sub chk_std_radius{
 
 sub size{
 	my $self = shift;
-	my $n = $self->{ent_size}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $self->{ent_size}->get );
 }
 
 sub var{

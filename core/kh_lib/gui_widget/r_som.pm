@@ -204,30 +204,22 @@ sub refresh_cls{
 
 sub n_nodes{
 	my $self = shift;
-	my $n = $self->{entry_n_nodes}->get;
-	$n =~ tr/０-９/0-9/;
-	return  gui_window->gui_jg( $n );
+	return  gui_window->gui_jgn( $self->{entry_n_nodes}->get );
 }
 
 sub rlen1{
 	my $self = shift;
-	my $n = $self->{entry_rlen1}->get;
-	$n =~ tr/０-９/0-9/;
-	return  gui_window->gui_jg( $n );
+	return  gui_window->gui_jgn( $self->{entry_rlen1}->get );
 }
 
 sub n_cls{
 	my $self = shift;
-	my $n = $self->{entry_cls_num}->get;
-	$n =~ tr/０-９/0-9/;
-	return  gui_window->gui_jg( $n );
+	return  gui_window->gui_jgn( $self->{entry_cls_num}->get );
 }
 
 sub rlen2{
 	my $self = shift;
-	my $r = $self->{entry_rlen2}->get;
-	$r =~ tr/０-９/0-9/;
-	$r = gui_window->gui_jg( $r );
+	my $r = gui_window->gui_jgn( $self->{entry_rlen2}->get );
 	if ($r =~ /auto/i){
 		$r = $self->n_nodes;
 		$r = $r * $r * 500;

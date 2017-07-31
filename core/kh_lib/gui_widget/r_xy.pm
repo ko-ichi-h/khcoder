@@ -125,16 +125,12 @@ sub params{
 
 sub x{
 	my $self = shift;
-	my $n = $self->{entry_d_x}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $self->{entry_d_x}->get );
 }
 
 sub y{
 	my $self = shift;
-	my $n = $self->{entry_d_y}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $self->{entry_d_y}->get );
 }
 
 sub origin{

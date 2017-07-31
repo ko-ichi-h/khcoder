@@ -142,9 +142,7 @@ sub method_mthd{
 
 sub cluster_number{
 	my $self = shift;
-	my $n = $self->{entry_cluster_number}->get;
-	$n =~ tr/０-９/0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $self->{entry_cluster_number}->get );
 }
 
 sub params{
