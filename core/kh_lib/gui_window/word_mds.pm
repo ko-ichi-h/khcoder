@@ -41,9 +41,10 @@ sub _new{
 
 	# アルゴリズム選択
 	$self->{mds_obj} = gui_widget::r_mds->open(
-		parent       => $lf,
-		command      => sub{ $self->calc; },
+		parent  => $lf,
+		command => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
+		from    => $self->win_name,
 	);
 
 	# フォントサイズ
@@ -554,10 +555,8 @@ sub r_command_plot{
 	return '
 
 ylab_text <- ""
-if ( dim_n == 2 ){
-	ylab_text <- name_dim2
-}
 if ( dim_n == 1 ){
+	name_dim2 <- name_dim1
 	cl <- cbind(cl[,1],cl[,1])
 }
 

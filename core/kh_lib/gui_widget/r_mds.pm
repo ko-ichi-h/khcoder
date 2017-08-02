@@ -21,6 +21,12 @@ sub _new{
 	
 	my ($check_bubble, $num_size) = (1,100);
 
+	my $cls_n_d = 3;
+	if (defined $self->{from} && $self->{from} eq 'w_word_mds') {
+		$cls_n_d = 8;
+	}
+	$self->{cls_n} = $cls_n_d unless defined $self->{cls_n};
+	
 	if ( length($self->{r_cmd}) ){
 		if ($self->{r_cmd} =~ /method_mds <\- "(.+)"\n/){
 			$self->{method_opt} = $1;
@@ -67,11 +73,11 @@ sub _new{
 				$self->{cls_n} = $self->{cls_if};
 				$self->{cls_if} = 1;
 			} else {
-				$self->{cls_n} = 7;
+				$self->{cls_n} = $cls_n_d;
 			}
 		} else {
 			$self->{cls_if} = 1;
-			$self->{cls_n}  = 7;
+			$self->{cls_n}  = $cls_n_d;
 		}
 		if ( $self->{r_cmd} =~ /cls_raw <\- ([0-9]+)\n/ ){
 			my $v = $1;

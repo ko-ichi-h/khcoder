@@ -100,7 +100,7 @@ use File::Path 'rmtree';
 &win_pkg;
 	#&win_upd;
 	#&win_strb;
-#&upload;
+&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -129,7 +129,7 @@ sub upload{
 		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
 		#"khcoder-$V-s.zip",
-		"khcoder-$V-f.exe",
+		"khcoder-$V.exe",
 	){
 		print "put: $i\n";
 		$sftp->put ($i, $i) or die;
