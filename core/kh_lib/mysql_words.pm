@@ -592,13 +592,13 @@ sub _make_wl_150{
 			WHERE
 			      genkei.khhinshi_id = hselection.khhinshi_id
 			  and hselection.name != "否定助動詞"
-			  and hselection.name != "未知語"
+			#  and hselection.name != "未知語"
 			  and hselection.name != "否定"
 			  and hselection.name != "名詞B"
 			  and hselection.name != "形容詞B"
 			  and hselection.name != "動詞B"
 			  and hselection.name != "副詞B"
-			  and hselection.name != "感動詞"
+			#  and hselection.name != "感動詞"
 			  and hselection.name != "その他"
 			  and hselection.name != "OTHER"
 			  and hselection.name != "HTMLタグ"
