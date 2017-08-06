@@ -125,13 +125,13 @@ sub _mecab_run{
 	# MeCabの処理結果を収集 in: $self->{output_temp} out: $self->output
 	# ↓ここでMecabの出力を修正↓
 	my $icode = 'cp932';
-	$icode = $icode = 'utf8' if $::config_obj->mecab_unicode;
+	$icode = 'utf8' if $::config_obj->mecab_unicode;
 	open (OTEMP, "<:encoding($icode)", $self->{output_temp}) or
 		gui_errormsg->open(
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	open (OTPT,">>:encoding(cp932)",$self->output) or
+	open (OTPT,">>:encoding(utf8)",$self->output) or
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
@@ -220,7 +220,7 @@ sub _mecab_outer{
 	my $self = shift;
 	my $t    = shift;
 
-	open (OTPT,">>:encoding(cp932)",$self->output) or 
+	open (OTPT,">>:encoding(utf8)",$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'

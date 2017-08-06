@@ -140,7 +140,7 @@ sub _mecab_run{
 			thefile => $self->{output_temp},
 			type => 'file'
 		);
-	open (OTPT,">>:encoding(euc-jp)",$self->output) or
+	open (OTPT,">>:encoding(utf8)",$self->output) or
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
@@ -231,7 +231,7 @@ sub _mecab_outer{
 	my $t    = shift;
 	my $name = 'タグ';
 
-	open (OTPT,">>:encoding(euc-jp)",$self->output) or 
+	open (OTPT,">>:encoding(utf8)",$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'

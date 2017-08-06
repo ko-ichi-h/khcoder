@@ -257,7 +257,7 @@ sub readin{
 	# 入力データの文字コード
 	if (
 		   ( $::config_obj->c_or_j eq 'chasen' )
-		|| ( $::config_obj->c_or_j eq 'mecab'  )
+		#|| ( $::config_obj->c_or_j eq 'mecab'  )
 	){
 		if ($::config_obj->os eq 'win32') {
 			$icode = 'cp932';

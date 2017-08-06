@@ -281,7 +281,7 @@ sub save{
 
 sub mark{
 	my $self = shift;
-	my $source = $::config_obj->os_path( $::project_obj->file_target   );
+	my $source = $::config_obj->os_path( $::project_obj->file_target );
 	my $dist   = $::project_obj->file_m_target;
 
 #	unless (eval (@{$self->words_mk})){
@@ -304,9 +304,10 @@ sub mark{
 	my $icode;
 	my $ocode;
 
+	# Japanese: chasen or mecab with non-unicode dic
 	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
+		     $::config_obj->c_or_j eq 'chasen'
+		|| ( $::config_obj->c_or_j eq 'mecab' &! $::config_obj->mecab_unicode )
 	){
 		$icode = kh_jchar->check_code2($source);
 		if ($::config_obj->os eq 'win32'){
@@ -318,7 +319,14 @@ sub mark{
 				$ocode = 'euc-jp';
 			}
 		}
-	} else {
+	}
+	# Japanese: mecab with unicode dic
+	elsif ( $::config_obj->c_or_j eq 'mecab' && $::config_obj->mecab_unicode ) {
+		$icode = kh_jchar->check_code2($source);
+		$ocode = 'utf8';
+	}
+	# non-Japanese
+	else {
 		$icode = kh_jchar->check_code_en($source);
 		$ocode = 'utf8';
 	}
