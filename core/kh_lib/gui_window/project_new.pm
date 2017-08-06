@@ -426,6 +426,11 @@ sub _columns{
 				.substr($label, length($label)-6, 6)
 			;
 		}
+		
+		$label = Encode::encode('UCS-2LE', $label, Encode::FB_DEFAULT);
+		$label = Encode::decode('UCS-2LE', $label);
+		$label =~ s/\x{fffd}/?/g;
+		
 		push @options, [$label, $n];
 		++$n;
 	}

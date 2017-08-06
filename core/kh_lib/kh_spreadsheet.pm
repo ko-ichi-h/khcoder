@@ -119,16 +119,25 @@ sub columns{
 	die("Failed to open the Excel file!\n") unless $workbook;
 	
 	my $sheet = $workbook->worksheet(0);
-	my ( $row_min, $row_max ) = $sheet->row_range();
-	my ( $col_min, $col_max ) = $sheet->col_range();
+	#my ( $row_min, $row_max ) = $sheet->row_range();
+	#my ( $col_min, $col_max ) = $sheet->col_range();
 	
 	my @columns = ();
-	for my $col ( $col_min .. $col_max ) {
-		my $t = '';
-		my $cell = $sheet->get_cell( $row_min, $col );
-		$t = $self->get_value($cell) if $cell;
+	
+	my $c = 0;
+	while ( my $cell = $sheet->get_cell( 0, $c ) ) {
+		last unless $cell;
+		my $t = $self->get_value($cell);
 		push @columns, $t;
+		++$c;
 	}
+	
+	#for my $col ( $col_min .. $col_max ) {
+	#	my $t = '';
+	#	my $cell = $sheet->get_cell( 0, $col );
+	#	$t = $self->get_value($cell) if $cell;
+	#	push @columns, $t;
+	#}
 	
 	my $t1 = new Benchmark;
 	print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
