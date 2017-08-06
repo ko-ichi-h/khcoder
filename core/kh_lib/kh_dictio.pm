@@ -341,12 +341,6 @@ sub mark{
 	File::BOM::open_bom (SOURCE, $source, ":encoding($icode)" );
 
 	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
-	while (<SOURCE>){
-		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
-		chomp;
-
-		my $text = $_;
-
 	my %loc = (
 		'jp' => 'cp932',
 		'en' => 'cp1252',
@@ -362,9 +356,14 @@ sub mark{
 		'ru' => 'cp1251',
 		'sl' => 'cp1251',
 	);
-
 	my $lang = $::project_obj->morpho_analyzer_lang;
 	$lang = $loc{$lang};
+
+	while (<SOURCE>){
+		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
+		chomp;
+
+		my $text = $_;
 	
 		# morpho_analyzer
 		if (
@@ -383,11 +382,10 @@ sub mark{
 			$text =~ s/\\/ /go;
 		}
 		
-		if ($::config_obj->os eq 'win32') {
-			# 当該言語の文字コードに入っていない文字は「?」に変換
-			$text = Encode::encode($lang, $text, sub{'?'} );
-			$text = Encode::decode($lang, $text);
-		}
+		# Delete characters outside of BMP (Basic Multilingual Plane)
+		$text = Encode::encode('UCS-2LE', $text, Encode::FB_DEFAULT);
+		$text = Encode::decode('UCS-2LE', $text);
+		$text =~ s/\x{fffd}/?/g;
 		
 		while (1){
 			my %temp = (); my $f = 0;                      # 位置を取得

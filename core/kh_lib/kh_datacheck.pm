@@ -34,6 +34,7 @@ sub run{
 		   $icode eq 'sjis'
 		|| $icode eq 'euc'
 		|| $icode eq 'jis'
+		|| $icode eq 'utf8'
 	) {
 		gui_errormsg->open(
 			type => 'msg',

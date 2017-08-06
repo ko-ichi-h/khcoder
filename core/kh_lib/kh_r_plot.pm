@@ -60,6 +60,29 @@ sub new{
 		$command = $self->{command_f};
 	}
 	
+	# Delete characters outside of the current locale (Win32)
+	if ($::config_obj->os eq 'win32') {
+		my %locwin = (
+			'jp' => 'cp932',
+			'en' => 'cp1252',
+			'cn' => 'cp936',
+			'de' => 'cp1252',
+			'es' => 'cp1252',
+			'fr' => 'cp1252',
+			'it' => 'cp1252',
+			'nl' => 'cp1252',
+			'pt' => 'cp1252',
+			'kr' => 'cp949',
+			'ca' => 'cp1252',
+			'ru' => 'cp1251',
+			'sl' => 'cp1251',
+		);
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		$lang = $locwin{$lang};
+		$command = Encode::encode($lang, $command, sub{'?'} );
+		$command = Encode::decode($lang, $command);
+	}
+	
 	# DebugÍÑ½ĞÎÏ 1
 	if ($::config_obj->r_plot_debug){
 		my $file_debug = $self->{path}.'.r';

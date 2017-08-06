@@ -33,9 +33,9 @@ sub save_files{
 	
 	# morpho_analyzer
 	my $icode = 'utf8';
-	if ($args{lang} eq 'jp') {
-		$icode = 'cp932';
-	}
+	#if ($args{lang} eq 'jp') {
+	#	$icode = 'cp932';
+	#}
 	
 	# read excel
 	my $workbook = $self->parser;

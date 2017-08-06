@@ -90,6 +90,7 @@ sub _mecab_run{
 	$self->_mecab_store($t) if length($t);
 	$self->_mecab_store_out;
 
+	return 1 unless -e $self->{target_temp};
 	return 1 unless -s $self->{target_temp} > 0;
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
