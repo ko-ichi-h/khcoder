@@ -32,7 +32,7 @@ sub save_files{
 	my %args = @_;
 	
 	# morpho_analyzer
-	my $icode = 'utf8';
+	#my $icode = 'utf8';
 	#if ($args{lang} eq 'jp') {
 	#	$icode = 'cp932';
 	#}
@@ -47,7 +47,7 @@ sub save_files{
 	my ( $col_min, $col_max ) = $sheet->col_range();
 	
 	# make a text file
-	open my $fh, '>', $args{filet} or
+	open my $fh, '>:encoding(utf8)', $args{filet} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{file}
@@ -58,7 +58,7 @@ sub save_files{
 		my $cell = $sheet->get_cell( $row, $args{selected} );
 		$t = $self->get_value($cell) if $cell;
 		$t =~ tr/<>/()/;
-		$t = Encode::encode($icode, $t, sub{'?'} );
+		#$t = Encode::encode($icode, $t, sub{'?'} );
 		print $fh
 			'<h5>---cell---</h5>',
 			"\n",

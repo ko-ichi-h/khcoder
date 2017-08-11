@@ -54,8 +54,37 @@ sub read{
 sub save{
 	my %args = @_;
 	my @data = @{$args{data}};
-
 	my @exts = ();
+
+	# 不正な変数名が無いかチェック
+	my %namechk = ();
+	foreach my $i (@{$data[0]}){
+		# 「見出し1」等
+		if ($i =~ /^見出し[1-5]$|^Heading[1-5]$/){
+			$i .= '_m';
+		}
+		# 長すぎる場合
+		if (length($i) > 250){
+			$i = substr($i, 0, 250);
+		}
+		# スペース
+		$i =~ tr/ /_/;
+		# 重複
+		if ($namechk{$i}){
+			my $n = 1;
+			while ( $namechk{$i.'_'.$n} ){
+				++$n;
+			}
+			$i = $i.'_'.$n;
+		}
+		# BMP
+		$i = Encode::encode('UCS-2LE', $i, Encode::FB_DEFAULT);
+		$i = Encode::decode('UCS-2LE', $i);
+		$i =~ s/\x{fffd}/_/g;
+		
+		$namechk{$i}++;
+	}
+
 	if ( $args{skip_checks} == 0 ){
 
 		# ケース数のチェック
@@ -88,30 +117,6 @@ sub save{
 		}
 	}
 
-	# 不正な変数名が無いかチェック
-	my %namechk = ();
-	foreach my $i (@{$data[0]}){
-		# 「見出し1」等
-		if ($i =~ /^見出し[1-5]$|^Heading[1-5]$/){
-			$i .= '_m';
-		}
-		# 長すぎる場合
-		if (length($i) > 250){
-			$i = substr($i, 0, 250);
-		}
-		# スペース
-		$i =~ tr/ /_/;
-		# 重複
-		if ($namechk{$i}){
-			my $n = 1;
-			while ( $namechk{$i.'_'.$n} ){
-				++$n;
-			}
-			$i = $i.'_'.$n;
-		}
-		$namechk{$i}++;
-	}
-	
 	# 同じ変数名があった場合
 	if (@exts){
 		# 既存の変数を上書きして良いかどうか問い合わせ
@@ -199,9 +204,10 @@ sub save{
 				if (length($h) > 20000 ) {
 					$h = substr($h, 0, 20000)
 				}
-				$h =~ s/\\/\\\\/g;
-				$h =~ s/'/\\'/g;
-				$v .= "\'$h\',";
+				#$h =~ s/\\/\\\\/g;
+				#$h =~ s/'/\\'/g;
+				#$v .= "\'$h\',";
+				$v .= mysql_exec->quote($h).',';
 			}
 		}
 		if (@ids) {
@@ -210,6 +216,9 @@ sub save{
 			my $idc = $n + 1;
 			$v .= "$idc";
 		}
+		$v = Encode::encode('UCS-2LE', $v, Encode::FB_DEFAULT);
+		$v = Encode::decode('UCS-2LE', $v);
+		$v =~ s/\x{fffd}/_/g;
 		mysql_exec->do("
 			INSERT INTO $table ($cols2, id)
 			VALUES ($v)

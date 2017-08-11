@@ -24,13 +24,13 @@ sub save_files{
 	}
 
 	# morpho_analyzer (output)
-	my $icode_o;
+	#my $icode_o;
 	#if ($args{lang} eq 'jp') {
 	#	$icode_o = 'cp932';
 	#} else {
-		$icode_o = 'utf8';
+	#	$icode_o = 'utf8';
 	#}
-	open my $fht, ">::encoding($icode_o)", $args{filet} or
+	open my $fht, ">::encoding(utf8)", $args{filet} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filet}
