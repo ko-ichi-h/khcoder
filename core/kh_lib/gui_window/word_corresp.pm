@@ -1349,19 +1349,19 @@ g <- g + geom_point(
 	data=df.words,
 	aes(x=x, y=y, size=size),
 	shape=21,
-	colour = col_dot_words,
-	fill = NA,
-	alpha=1,
-	show.legend = F
+	#colour = NA,
+	fill = col_bg_words,
+	alpha=0.15
 )
 
 g <- g + geom_point(
 	data=df.words,
 	aes(x=x, y=y, size=size),
 	shape=21,
-	colour = NA,
-	fill = col_bg_words,
-	alpha=0.15
+	colour = col_dot_words,
+	fill = NA,
+	alpha=1,
+	show.legend = F
 )
 
 g <- g + scale_size_area(
@@ -1401,7 +1401,7 @@ if ( biplot == 1 ){
 		g <- g + geom_point(
 			data=df.vars,
 			aes(x=x, y=y, size=size, shape=factor(type) ),
-			colour = NA,
+			#colour = NA,
 			fill = col_bg_vars,
 			alpha=0.2,
 			show.legend = F
