@@ -295,7 +295,7 @@ sub new{
 		print(
 			paste(
 				"khcoderN ",
-				length(get.vertex.attribute(n2,"name")),
+				length(igraph::get.vertex.attribute(n2,"name")),
 				", E ",
 				length(get.edgelist(n2,name=T)[,1]),
 				", D ",
@@ -317,9 +317,9 @@ sub new{
 		print(
 			paste(
 				"khcoderNodes ",
-				length(get.vertex.attribute(n2,"name")),
+				length(igraph::get.vertex.attribute(n2,"name")),
 				" (",
-				length(get.vertex.attribute(n,"name")),
+				length(igraph::get.vertex.attribute(n,"name")),
 				"), Edges ",
 				length(get.edgelist(n2,name=T)[,1]),
 				" (",
@@ -428,7 +428,7 @@ if (as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) ) > 5){
 }
 
 n <- graph.adjacency(d, mode="lower", weighted=T, diag=F)
-n <- set.vertex.attribute(
+n <- igraph::set.vertex.attribute(
 	n,
 	"name",
 	(0+new_igraph):(length(d[1,])-1+new_igraph),
@@ -439,7 +439,7 @@ n <- set.vertex.attribute(
 el <- data.frame(
 	edge1            = get.edgelist(n,name=T)[,1],
 	edge2            = get.edgelist(n,name=T)[,2],
-	weight           = get.edge.attribute(n, "weight"),
+	weight           = igraph::get.edge.attribute(n, "weight"),
 	stringsAsFactors = FALSE
 )
 
@@ -464,7 +464,7 @@ n2  <- graph.edgelist(
 	matrix( as.matrix(el2)[,1:2], ncol=2 ),
 	directed	=F
 )
-n2 <- set.edge.attribute(
+n2 <- igraph::set.edge.attribute(
 	n2,
 	"weight",
 	(0+new_igraph):(length(get.edgelist(n2)[,1])-1+new_igraph),
@@ -474,7 +474,7 @@ n2 <- set.edge.attribute(
 if ( min_sp_tree_only == 1 ){
 	n2 <- minimum.spanning.tree(
 		n2,
-		weights = 1 - get.edge.attribute(n2, "weight"),
+		weights = 1 - igraph::get.edge.attribute(n2, "weight"),
 		algorithm="prim"
 	)
 }
@@ -486,7 +486,7 @@ sub r_plot_cmd_p2{
 
 return 
 '
-if (length(get.vertex.attribute(n2,"name")) < 2){
+if (length(igraph::get.vertex.attribute(n2,"name")) < 2){
 	com_method <- "none"
 }
 
@@ -496,14 +496,14 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	if (com_method == "cnt-b"){                   # betweenness
 		ccol <- igraph::betweenness(
 			n2,
-			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+			v=(0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
 			directed=F
 		)
 	}
 	if (com_method == "cnt-d"){                   # degree
 		ccol <-  igraph::degree(
 			n2,
-			v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
+			v=(0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph)
 		)
 	}
 	if (com_method == "cnt-e"){                   # evcent
@@ -529,7 +529,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			#print( paste(i, "a", num_alone, "max", num_max, "cls", num_cls) )
 			if (
 				# 最大コミュニティサイズが全ノード数の22.5%以上
-				   num_max / length(get.vertex.attribute(n2,"name")) >= 0.225
+				   num_max / length(igraph::get.vertex.attribute(n2,"name")) >= 0.225
 				# かつ、最大コミュニティサイズが単独ノード数よりも大きい
 				&& num_max > num_alone
 				# かつ、サイズが2以上のコミュニティ数が12未満
@@ -538,7 +538,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				return(i)
 			}
 			# 最大コミュニティサイズがノード数の40%を越える直前で打ち切り
-			if (num_max / length(get.vertex.attribute(n2,"name")) >= 0.4 ){
+			if (num_max / length(igraph::get.vertex.attribute(n2,"name")) >= 0.4 ){
 				return(i-1)
 			}
 		}
@@ -564,7 +564,7 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 	if (com_method == "com-r"){                   # Random walks
 		com   <-  walktrap.community(
 			n2,
-			weights=get.edge.attribute(n2, "weight")
+			weights=igraph::get.edge.attribute(n2, "weight")
 		)
 		com_m <- NULL
 		com_m$membership <- com$membership
@@ -595,7 +595,7 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 	}
 	
 	var_select <- substring(
-		colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ],
+		colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ],
 		1,
 		2
 	) == "<>"
@@ -608,7 +608,7 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 if (com_method == "twomode_c"){
 	ccol <-  igraph::degree(
 		n2,
-		v=(0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph)
+		v=(0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph)
 	)
 	# ggplot2
 	ccol_raw <- ccol
@@ -637,13 +637,13 @@ if ( min_sp_tree == 1 ){
 	# MSTの検出
 	mst <- minimum.spanning.tree(
 		n2,
-		weights = 1 - get.edge.attribute(n2, "weight"),
+		weights = 1 - igraph::get.edge.attribute(n2, "weight"),
 		algorithm="prim"
 	)
 
 	# MSTに合致するedgeを強調
 	#if (length(edg_col) == 1){
-		edg_col <- rep("gray55", length( get.edge.attribute(n2, "weight") )) 
+		edg_col <- rep("gray55", length( igraph::get.edge.attribute(n2, "weight") )) 
 	#}
 
 	n2_edges  <- get.edgelist(n2,name=T);
@@ -686,7 +686,7 @@ return
 '
 # 初期配置
 lay <- NULL
-if ( length(get.vertex.attribute(n2,"name")) >= 3 ){
+if ( length(igraph::get.vertex.attribute(n2,"name")) >= 3 ){
 	d4l <- as.dist( shortest.paths(n2) )
 	if ( min(d4l) < 1 ){
 		d4l <- as.dist( shortest.paths(n2, weights=NA ) )
@@ -726,14 +726,14 @@ if (
 	lay_f <- layout.kamada.kawai(
 		n2,
 		start   = lay,
-		weights = get.edge.attribute(n2, "weight")
+		weights = igraph::get.edge.attribute(n2, "weight")
 	)
 } else {
 	lay_f <- layout.fruchterman.reingold(
 		n2,
 		start   = lay,
 		niter   = vcount(n2) * 512,
-		weights = get.edge.attribute(n2, "weight")
+		weights = igraph::get.edge.attribute(n2, "weight")
 	)
 }
 
@@ -775,10 +775,10 @@ if ( exists("saving_emf") || exists("saving_eps") ){
 target_ids <-  NULL
 if ( exists("target_words") ){
 	# get word IDs
-	for (i in 1:length( get.vertex.attribute(n2,"name") ) ){
+	for (i in 1:length( igraph::get.vertex.attribute(n2,"name") ) ){
 		for (w in target_words){
 			if (
-				colnames(d)[ as.numeric(get.vertex.attribute(n2,"name")[i]) ]
+				colnames(d)[ as.numeric(igraph::get.vertex.attribute(n2,"name")[i]) ]
 				== w
 			){
 				target_ids <- c(target_ids, i)
@@ -794,7 +794,7 @@ if ( exists("PERL_font_family") ){
 	font_fam <- PERL_font_family
 }
 
-if ( length(get.vertex.attribute(n2,"name")) > 1 ){
+if ( length(igraph::get.vertex.attribute(n2,"name")) > 1 ){
 	if (fix_lab == 1){
 		if (exists("if_fixed") == 0){
 			plot.new()
@@ -803,7 +803,7 @@ if ( length(get.vertex.attribute(n2,"name")) > 1 ){
 			labcd <- NULL
 			labcd$x <- lay_f[,1]
 			labcd$y <- lay_f[,2]
-			word_labs <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+			word_labs <- colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 	
 			library(wordcloud)'
 			.&r_command_wordlayout
@@ -860,10 +860,10 @@ if ( com_method == "cor" ){  # cor
 		edge_pos <- 0
 	}
 
-	#n2 <- set.edge.attribute(
+	#n2 <- igraph::set.edge.attribute(
 	#	n2,
 	#	"edge_pos_o",
-	#	1:length(get.edge.attribute(n2,"weight")),
+	#	1:length(igraph::get.edge.attribute(n2,"weight")),
 	#	edge_pos
 	#)
 
@@ -879,15 +879,15 @@ if ( com_method == "cor" ){  # cor
 	#	edge_pos[edge_pos < -limv] <- -limv
 	#}
 
-	n2 <- set.edge.attribute(
+	n2 <- igraph::set.edge.attribute(
 		n2,
 		"edge_pos",
-		1:length(get.edge.attribute(n2,"weight")),
+		1:length(igraph::get.edge.attribute(n2,"weight")),
 		edge_pos
 	)
 
 	ver_pos <- NULL
-	vertices <- as.numeric( get.vertex.attribute(n2,"name") )
+	vertices <- as.numeric( igraph::get.vertex.attribute(n2,"name") )
 	for (i in 1:length(vertices) ){
 		ver_pos <- c(
 			ver_pos,
@@ -906,14 +906,14 @@ if ( com_method == "cor" ){  # cor
 	ver_pos[ver_pos > max(edge_pos)] <- max(edge_pos)
 	ver_pos[ver_pos < min(edge_pos)] <- min(edge_pos)
 
-	#n2 <- set.vertex.attribute(
+	#n2 <- igraph::set.vertex.attribute(
 	#	n2,
 	#	"ver_pos",
-	#	1:length(get.vertex.attribute(n2,"name")),
+	#	1:length(igraph::get.vertex.attribute(n2,"name")),
 	#	ver_pos
 	#)
 	ccol_raw <- ver_pos
-	if ( is.null( get.vertex.attribute(n2,"com") ) == FALSE ){
+	if ( is.null( igraph::get.vertex.attribute(n2,"com") ) == FALSE ){
 		n2 <- remove.vertex.attribute(n2, "com")
 		edg_lty <- 1
 	}
@@ -922,14 +922,14 @@ if ( com_method == "cor" ){  # cor
 #-----------------------------------------------#
 #  get ready for ggplot2 graph drawing (1): n2  #
 
-n2 <- set.vertex.attribute(
+n2 <- igraph::set.vertex.attribute(
 	n2,
 	"lab",
-	1:length(get.vertex.attribute(n2,"name")),
-	colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+	1:length(igraph::get.vertex.attribute(n2,"name")),
+	colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 )
 
-ver_freq <- freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+ver_freq <- freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 
 if (com_method == "twomode_c" || com_method == "twomode_g"){
 	ver_freq[var_select] <- NA
@@ -943,10 +943,10 @@ if (use_freq_as_size == 0){
 	ver_freq[ver_freq > 0] <- 1
 }
 
-n2 <- set.vertex.attribute(
+n2 <- igraph::set.vertex.attribute(
 	n2,
 	"size",
-	1:length(get.vertex.attribute(n2,"name")),
+	1:length(igraph::get.vertex.attribute(n2,"name")),
 	ver_freq
 )
 
@@ -975,39 +975,39 @@ if ( exists("com_m") ){
 		}
 	}
 
-	n2 <- set.vertex.attribute(
+	n2 <- igraph::set.vertex.attribute(
 		n2,
 		"com",
-		1:length(get.vertex.attribute(n2,"name")),
+		1:length(igraph::get.vertex.attribute(n2,"name")),
 		com_label
 	)
 }
 
 if ( exists("ccol_raw") ){
-	n2 <- set.vertex.attribute(
+	n2 <- igraph::set.vertex.attribute(
 		n2,
 		"com",
-		1:length(get.vertex.attribute(n2,"name")),
+		1:length(igraph::get.vertex.attribute(n2,"name")),
 		ccol_raw
 	)
 	com_label <- ccol_raw
 }
 
 if ( com_method == "none" || com_method == "twomode_g"){
-	n2 <- set.vertex.attribute(
+	n2 <- igraph::set.vertex.attribute(
 		n2,
 		"com",
-		1:length(get.vertex.attribute(n2,"name")),
-		rep( "na", length(get.vertex.attribute(n2,"name")) )
+		1:length(igraph::get.vertex.attribute(n2,"name")),
+		rep( "na", length(igraph::get.vertex.attribute(n2,"name")) )
 	)
 	com_label <- NA
 }
 
 if ( exists("edg_mst") ){
-	n2 <- set.edge.attribute(
+	n2 <- igraph::set.edge.attribute(
 		n2,
 		"edg_col",
-		1:length(get.edge.attribute(n2,"weight")),
+		1:length(igraph::get.edge.attribute(n2,"weight")),
 		edg_mst
 	)
 	#print(edg_mst)
@@ -1019,10 +1019,10 @@ if ( exists("edg_lty") == F ){
 edg_lty[edg_lty==1] <- "solid"
 edg_lty[edg_lty==3] <- "dotted"
 
-n2 <- set.edge.attribute(
+n2 <- igraph::set.edge.attribute(
 	n2,
 	"line",
-	1:length(get.edge.attribute(n2,"weight")),
+	1:length(igraph::get.edge.attribute(n2,"weight")),
 	edg_lty
 )
 
@@ -1070,7 +1070,7 @@ if (com_method == "none" || com_method == "twomode_g"){
 	gray_color_n <- "black"
 }
 
-rownames(lay_f) <- colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+rownames(lay_f) <- colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 lay_f[,1] <- lay_f[,1] - min(lay_f[,1])
 lay_f[,1] <- lay_f[,1] / max(lay_f[,1])
 lay_f[,2] <- lay_f[,2] - min(lay_f[,2])
@@ -1610,23 +1610,25 @@ if (smaller_nodes == 1){
 
 g <- ggplotGrob(p)
 
-if ( 
-	(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
-	&& ( gray_scale == 0 )
-){
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray45"
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
-}
-if ( 
-	(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
-	&& ( gray_scale == 1 )
-){
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray30"
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
-}
-if ( com_method == "cor" ){
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray40"
-	g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.1
+if (g$grobs[[8]][[1]][[1]] != "NULL"){
+	if ( 
+		(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
+		&& ( gray_scale == 0 )
+	){
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray45"
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
+	}
+	if ( 
+		(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
+		&& ( gray_scale == 1 )
+	){
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray30"
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
+	}
+	if ( com_method == "cor" ){
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray40"
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.1
+	}
 }
 
 library(grid)
@@ -1644,7 +1646,7 @@ if (exists("edg_mst")){
 if (exists("edg_lty")){
   rm("edg_lty")
 }
-ccol <- get.vertex.attribute(n2,"com")
+ccol <- igraph::get.vertex.attribute(n2,"com")
 
 
 
