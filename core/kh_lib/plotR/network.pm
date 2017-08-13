@@ -1610,7 +1610,7 @@ if (smaller_nodes == 1){
 
 g <- ggplotGrob(p)
 
-if (g$grobs[[8]][[1]][[1]] != "NULL"){
+if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 	if ( 
 		(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
 		&& ( gray_scale == 0 )
