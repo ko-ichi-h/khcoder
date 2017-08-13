@@ -518,13 +518,14 @@ sub R_device{
 	$self->{dpi} = $dpi;
 	
 	my $p = 12 * $dpi / 72;
+	print "point size: $p\n";
 	
 	my $uni_path = $::config_obj->uni_path($path);
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
 			Cairo(width=$width, height=$height, unit=\"px\", file=\"$uni_path\", bg = \"white\", type=\"png\", dpi=$dpi)
 		} else {
-			png(\"$uni_path\", width=$width, height=$height, unit=\"px\", pointsize=$p )
+			png(\"$uni_path\", width=$width, height=$height, unit=\"px\", res=$dpi ) # pointsize=$p
 		}
 	");
 	return $path;
@@ -744,7 +745,7 @@ sub _save_png{
 		if ( exists(\"Cairo\") ){
 			Cairo(width=$width, height=$height, unit=\"px\", file=\"$path\", type=\"png\", bg=\"white\", dpi=$dpi)
 		} else {
-			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\", pointsize=$p)
+			png(\"$path\", width=$self->{width}, height=$self->{height}, unit=\"px\", res=$dpi)
 		}
 	");
 
