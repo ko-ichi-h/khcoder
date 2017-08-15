@@ -33,7 +33,7 @@ sub init{
 		$::ENV{PATH} =
 			 $::config_obj->cwd."/deps/chasen/bin:"
 			.$::config_obj->cwd."/deps/mecab/bin:"
-			.$::config_obj->cwd."/deps/freeling31/bin:"
+			.$::config_obj->cwd."/deps/freeling40/bin:"
 			.$::ENV{PATH}
 		;
 		
@@ -41,7 +41,7 @@ sub init{
 		$::ENV{DYLD_FALLBACK_LIBRARY_PATH} =
 			 $::config_obj->cwd.'/deps/chasen/lib:'
 			.$::config_obj->cwd.'/deps/mecab/lib:'
-			.$::config_obj->cwd.'/deps/freeling31/lib:'
+			.$::config_obj->cwd.'/deps/freeling40/lib:'
 			.$::ENV{DYLD_FALLBACK_LIBRARY_PATH};
 	}
 

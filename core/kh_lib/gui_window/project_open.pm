@@ -15,7 +15,11 @@ sub _new{
 	my $self = shift;
 
 	# Minimize Console
-	if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
+	if (
+		   $::config_obj->os eq 'win32'
+		&& defined($PerlApp::VERSION)
+		&& substr($PerlApp::VERSION,0,1) >= 7
+	){
 		require Win32::API;
 		my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
 		my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');

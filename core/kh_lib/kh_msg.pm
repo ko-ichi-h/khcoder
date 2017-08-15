@@ -143,10 +143,10 @@ sub load{
 			$lang = 'jp' if $locale eq 'cp932';
 		} else {
 			$locale = $ENV{LANG};
-			$locale = $ENV{LANG_BAK}
-				if $^O eq 'darwin'
-				&& $::config_obj->all_in_one_pack
-			;
+			#$locale = $ENV{LANG_BAK}
+			#	if $^O eq 'darwin'
+			#	&& $::config_obj->all_in_one_pack
+			#;
 			$lang = 'jp' if $locale =~ /ja_JP\./;
 		}
 		$::config_obj->msg_lang($lang);

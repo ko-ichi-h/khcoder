@@ -1,13 +1,14 @@
 package mysql_crossout::r_com;
 use base qw(mysql_crossout);
 use strict;
+use utf8;
 
 sub run{
 	my $self = shift;
 	
 	use Benchmark;
 	
-	# ¸«½Ð¤·¤Î¼èÆÀ
+	# è¦‹å‡ºã—ã®å–å¾—
 	$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani2});
 
 	$self->make_list;
@@ -27,12 +28,12 @@ sub run{
 }
 
 #----------------#
-#   ¥Ç¡¼¥¿ºîÀ½   #
+#   ãƒ‡ãƒ¼ã‚¿ä½œè£½   #
 
-sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
+sub out2{                               # lengthä½œè£½ã‚’ã™ã‚‹
 	my $self = shift;
 	
-	# ¥Ç¡¼¥¿¤òÊÝÂ¸¤¹¤ë¥Õ¥¡¥¤¥ë
+	# ãƒ‡ãƒ¼ã‚¿ã‚’ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«
 	my $file = $::project_obj->file_TempR;
 	my $icode = 'UTF-8';
 	
@@ -58,7 +59,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 	
 	my $num_r = 0;
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½
 	my $id = 1;
 	my $last = 1;
 	my $increment = 30000;
@@ -76,7 +77,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 		
 		while (my $i = $sth->fetch){
 			if ($last != $i->[0] && $started == 1){
-				# ½ñ¤­½Ð¤·
+				# æ›¸ãå‡ºã—
 				my $temp = "$last,";
 				if ($self->{midashi}){
 					$self->{midashi}->[$last - 1] =~ s/"/ /g;
@@ -94,7 +95,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 				$current{length_c} = "0" unless length($current{length_c});
 				$current{length_w} = "0" unless length($current{length_w});
 				$length .= "$current{length_c},$current{length_w},";
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 				++$num_r;
@@ -103,19 +104,19 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 			$last = $i->[0] unless $started;
 			$started = 1;
 			
-			# HTML¥¿¥°¤òÌµ»ë
+			# HTMLã‚¿ã‚°ã‚’ç„¡è¦–
 			if (
 				!  ( $self->{use_html} )
 				&& ( $i->[2] =~ /<[h|H][1-5]>|<\/[h|H][1-5]>/o )
 			){
 				next;
 			}
-			# Ì¤»ÈÍÑ¸ì¤òÌµ»ë
+			# æœªä½¿ç”¨èªžã‚’ç„¡è¦–
 			if ($i->[3]){
 				next;
 			}
 			
-			# ½¸·×
+			# é›†è¨ˆ
 			++$current{'length_w'};
 			$current{'length_c'} += length($i->[2]);
 			if ($self->{wName}{$i->[1]}){
@@ -125,7 +126,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 		$sth->finish;
 	}
 	
-	# ºÇ½ª¹Ô¤Î½ÐÎÏ
+	# æœ€çµ‚è¡Œã®å‡ºåŠ›
 	my $temp = "$last,";
 	if ($self->{midashi}){
 		$self->{midashi}->[$last - 1] =~ s/"/ /g;
@@ -147,7 +148,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 	$length .= "$current{length_c},$current{length_w},";
 	chop $row_names;
 	
-	# ¥Ç¡¼¥¿À°·Á
+	# ãƒ‡ãƒ¼ã‚¿æ•´å½¢
 	if ($self->{rownames}){
 		if ($self->{midashi}){
 			$row_names = $self->clean_up($row_names);
@@ -179,7 +180,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 
 	$self->{num_r} = $num_r;
 
-	# R¥³¥Þ¥ó¥É
+	# Rã‚³ãƒžãƒ³ãƒ‰
 	$file = $::config_obj->uni_path($file);
 	if ($icode eq 'UTF-8') {
 		$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
@@ -192,7 +193,7 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 
 
 #--------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¿ô¤òÊÖ¤¹   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžæ•°ã‚’è¿”ã™   #
 
 sub wnum{
 	my $self = shift;
@@ -235,19 +236,19 @@ sub wnum{
 	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/; # °Ì¼è¤êÍÑ¤Î¥³¥ó¥Þ¤òÁÞÆþ
+	1 while s/(.*\d)(\d\d\d)/$1,$2/; # ä½å–ã‚Šç”¨ã®ã‚³ãƒ³ãƒžã‚’æŒ¿å…¥
 	return $_;
 }
 
 #--------------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¤ò¥ê¥¹¥È¥¢¥Ã¥×   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžã‚’ãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—   #
 
-# tani2¤Ë¤è¤ëÊ¸½ñ¿ôÀßÄê¤¬²ÄÇ½¤Ê½¤ÀµÈÇ
+# tani2ã«ã‚ˆã‚‹æ–‡æ›¸æ•°è¨­å®šãŒå¯èƒ½ãªä¿®æ­£ç‰ˆ
 
 sub make_list{
 	my $self = shift;
 	
-	# Ã±¸ì¥ê¥¹¥È¤ÎºîÀ½
+	# å˜èªžãƒªã‚¹ãƒˆã®ä½œè£½
 	my $sql = '';
 	$sql .= "SELECT genkei.id, genkei.name, hselection.khhinshi_id\n";
 	$sql .= "FROM   genkei, hselection, df_$self->{tani}";
@@ -297,7 +298,7 @@ sub make_list{
 	$self->{wHinshi} = \%hinshi;
 	$self->{num_w} = @list;
 	
-	# ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½
+	# å“è©žãƒªã‚¹ãƒˆã®ä½œè£½
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
 	$sql .= "FROM   hselection\n";
@@ -311,7 +312,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTML¥¿¥°' || $i->[1] eq 'HTML_TAG'){
+		if ($i->[1] eq 'HTMLã‚¿ã‚°' || $i->[1] eq 'HTML_TAG'){
 			$self->{use_html} = 1;
 		}
 	}
