@@ -35,7 +35,10 @@ sub new{
 	}
 
 	# コマンドから日本語コメントを削除
-	if ($::config_obj->os eq 'win32' &! $::project_obj->morpho_analyzer_lang eq 'jp' ){
+	if (
+		   ($::config_obj->os eq 'win32')
+		&! ($::project_obj->morpho_analyzer_lang eq 'jp')
+	){
 		$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
 		$self->{command_f} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
 		$self->{command_f} =~ s/#.*?\p{Han}.*?\n/\n/go;
