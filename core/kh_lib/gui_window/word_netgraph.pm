@@ -11,6 +11,7 @@ use mysql_crossout;
 use kh_r_plot;
 
 my $bench = 0;
+my $debug = 0;
 
 #-------------#
 #   GUI作製   #
@@ -266,6 +267,7 @@ sub calc{
 		rownames => 0,
 	)->run;
 
+	print '$r_command is_utf8 (1): ', utf8::is_utf8($r_command), "\n" if $debug;
 
 	# 見出しの取り出し
 	if (

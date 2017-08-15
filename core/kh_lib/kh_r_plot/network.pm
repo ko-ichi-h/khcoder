@@ -3,6 +3,7 @@ package kh_r_plot::network;
 use base qw(kh_r_plot);
 
 use strict;
+use utf8;
 
 sub _save_net{
 	my $self = shift;

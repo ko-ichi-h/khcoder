@@ -1,5 +1,6 @@
 package kh_r_plot;
 use strict;
+use utf8;
 
 use kh_r_plot::network;
 use kh_r_plot::corresp;
@@ -17,14 +18,33 @@ sub new{
 	my $self = \%args;
 	bless $self, $class;
 	
+	# Debugç”¨å‡ºåŠ› 0
+	if ($::config_obj->r_plot_debug){
+		$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
+		my $file_debug = $self->{path}.'_0.r';
+		open (RDEBUG, '>encoding(utf8)', $file_debug) or 
+			gui_errormsg->open(
+				type    => 'file',
+				thefile => $file_debug,
+			)
+		;
+		print RDEBUG
+			"# command_f\n",
+			$self->{command_f},
+			"\n\n# command_a\n",
+			$self->{command_a}
+		;
+		close (RDEBUG)
+	}
+	
 	$self->{command_a} = '' unless defined( $self->{command_a} );
 	$self->{command_s} = '' unless defined( $self->{command_s} );
 	return undef unless $::config_obj->R;
 	
-	# ¥Õ¥¡¥¤¥ëÌ¾
+	# ãƒ•ã‚¡ã‚¤ãƒ«å
 	$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
 
-	# ¥³¥Þ¥ó¥É¤ÎÊ¸»ú¥³¡¼¥É
+	# ã‚³ãƒžãƒ³ãƒ‰ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰
 	if ( utf8::is_utf8($self->{command_f}) ){
 		# It's OK!
 	} else {
@@ -34,7 +54,7 @@ sub new{
 		warn( "Warn: R commands are not decoded!\n" );
 	}
 
-	# ¥³¥Þ¥ó¥É¤«¤éÆüËÜ¸ì¥³¥á¥ó¥È¤òºï½ü
+	# ã‚³ãƒžãƒ³ãƒ‰ã‹ã‚‰æ—¥æœ¬èªžã‚³ãƒ¡ãƒ³ãƒˆã‚’å‰Šé™¤
 	if (
 		   ($::config_obj->os eq 'win32')
 		&! ($::project_obj->morpho_analyzer_lang eq 'jp')
@@ -50,13 +70,13 @@ sub new{
 		$self->{command_s} =~ s/#.*?\p{Han}.*?\n/\n/go;
 	}
 
-	# ¥³¥Þ¥ó¥É¤Î²þ¹Ô¥³¡¼¥É
+	# ã‚³ãƒžãƒ³ãƒ‰ã®æ”¹è¡Œã‚³ãƒ¼ãƒ‰
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_s} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 
-		# command_s¤Ï¥×¥í¥Ã¥È¤ÎÊÝÂ¸ÀìÍÑ¥³¡¼¥É¡£
-		# ¸½ºß¤ÏMDS¤Ç¤Î¤ß»ÈÍÑ¡£
+		# command_sã¯ãƒ—ãƒ­ãƒƒãƒˆã®ä¿å­˜å°‚ç”¨ã‚³ãƒ¼ãƒ‰ã€‚
+		# ç¾åœ¨ã¯MDSã§ã®ã¿ä½¿ç”¨ã€‚
 
 	my $command = '';
 	if (length($self->{command_a})){
@@ -88,7 +108,7 @@ sub new{
 		$command = Encode::decode($lang, $command);
 	}
 	
-	# DebugÍÑ½ÐÎÏ 1
+	# Debugç”¨å‡ºåŠ› 1
 	if ($::config_obj->r_plot_debug){
 		my $file_debug = $self->{path}.'.r';
 		open (RDEBUG, '>encoding(utf8)', $file_debug) or 
@@ -106,19 +126,19 @@ sub new{
 		close (RDEBUG)
 	}
 	
-	# LinuxÍÑ¥Õ¥©¥ó¥ÈÀßÄê
+	# Linuxç”¨ãƒ•ã‚©ãƒ³ãƒˆè¨­å®š
 	if ( ($::config_obj->os ne 'win32') and ($kh_r_plot::if_font == 0) ){
 		system('xset fp rehash');
 		$::config_obj->R->output_chk(0);
 		if ( $::config_obj->R_version < 207 ){
-			# 2.7°ÊÁ°
+			# 2.7ä»¥å‰
 			$::config_obj->R->send(
 				 'options(X11fonts = c('
 				.'"-*-gothic-%s-%s-normal--%d-*-*-*-*-*-*-*",'
 				.'"-adobe-symbol-*-*-*-*-%d-*-*-*-*-*-*-*"))'
 			);
 		} else {
-			# 2.7°Ê¹ß
+			# 2.7ä»¥é™
 			$::config_obj->R->send(
 				 'X11.options(fonts = c('
 				.'"-*-gothic-%s-%s-normal--%d-*-*-*-*-*-*-*",'
@@ -143,7 +163,7 @@ sub new{
 		$kh_r_plot::if_font = 1;
 	}
 
-	# WindowsÍÑ¤ÎÀßÄê
+	# Windowsç”¨ã®è¨­å®š
 	if ( ($::config_obj->os eq 'win32') and ($kh_r_plot::if_font == 0) ){
 		print "loading Cairo...\n";
 		$::config_obj->R->output_chk(0);
@@ -152,7 +172,7 @@ sub new{
 		$kh_r_plot::if_font = 1;
 	}
 
-	# R¤Î¥Ð¡¼¥¸¥ç¥ó¤¬2.5.0¤è¤ê¾®¤µ¤¤¾ì¹ç¤ÎÂÐ½è
+	# Rã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³ãŒ2.5.0ã‚ˆã‚Šå°ã•ã„å ´åˆã®å¯¾å‡¦
 	unless ($if_lt25){
 		if ($::config_obj->R_version > 205){
 			$if_lt25 = 1;
@@ -167,7 +187,7 @@ sub new{
 		}
 	}
 
-	# width¡¦height¤Î¥Á¥§¥Ã¥¯
+	# widthãƒ»heightã®ãƒã‚§ãƒƒã‚¯
 	$self->{width}  = $::config_obj->plot_size_codes unless defined($self->{width});
 	$self->{height} = $::config_obj->plot_size_codes unless defined($self->{height});
 	
@@ -177,14 +197,14 @@ sub new{
 	){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('illegal_plot_size') # ¥×¥í¥Ã¥È¥µ¥¤¥º¤Î»ØÄê¤¬ÉÔÀµ¤Ç¤¹
+			msg  => kh_msg->get('illegal_plot_size') # ãƒ—ãƒ­ãƒƒãƒˆã‚µã‚¤ã‚ºã®æŒ‡å®šãŒä¸æ­£ã§ã™
 		);
 		return 0;
 	}
 
 	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send("the_warning <<- \"\"\n");
@@ -219,12 +239,12 @@ sub new{
 	}
 	$self->{r_msg} = Encode::decode($loc, $self->{r_msg});
 
-	# ·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# çµæžœã®ãƒã‚§ãƒƒã‚¯
 	if (
 		not (-e $self->{path})
 		or ( $self->{r_msg} =~ /error/i )
-		or ( index($self->{r_msg},'¥¨¥é¡¼') > -1 )
-		or ( index($self->{r_msg},Jcode->new('¥¨¥é¡¼','euc')->utf8) > -1 )
+		or ( index($self->{r_msg},'ã‚¨ãƒ©ãƒ¼') > -1 )
+		or ( index($self->{r_msg},Jcode->new('ã‚¨ãƒ©ãƒ¼','euc')->utf8) > -1 )
 	) {
 		my $msg = kh_msg->get('faliled_in_plotting');
 		$msg .= $self->{r_msg}."\n\n";
@@ -241,7 +261,7 @@ sub new{
 		return 0;
 	}
 	
-	# ¥Æ¥­¥¹¥È½ÐÎÏ
+	# ãƒ†ã‚­ã‚¹ãƒˆå‡ºåŠ›
 	#my $txt = $self->{r_msg};
 	#if ( length($txt) ){
 	#	$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
@@ -299,7 +319,7 @@ sub set_par{
 	$::config_obj->R->send( "par(family=\"$font\")" );
 	$::config_obj->R->send( "PERL_font_family <- \"$font\"" );
 
-	# Windows¤Ç¤Ï¥í¥±¡¼¥ë¤òÀßÄê¤¹¤ë
+	# Windowsã§ã¯ãƒ­ã‚±ãƒ¼ãƒ«ã‚’è¨­å®šã™ã‚‹
 	if ($::config_obj->os eq 'win32') {
 		my %loc = (
 			'jp' => 'Japanese',
@@ -340,7 +360,7 @@ sub rotate_cls{
 		return $self;
 	}
 	
-	# temp¥Õ¥¡¥¤¥ë¤ÎÌ¾Á°
+	# tempãƒ•ã‚¡ã‚¤ãƒ«ã®åå‰
 	my $type = '';
 	if ($self->{path} =~ /\.bmp$/){
 		$type = 'bmp';
@@ -348,7 +368,7 @@ sub rotate_cls{
 		$type = 'png';
 	}
 	
-	# temp¥Õ¥¡¥¤¥ë¤Ë¥ê¥Í¡¼¥à
+	# tempãƒ•ã‚¡ã‚¤ãƒ«ã«ãƒªãƒãƒ¼ãƒ 
 	my $temp = "hoge";
 	my $n = 0;
 	while (-e "$temp$n.$type"){
@@ -359,7 +379,7 @@ sub rotate_cls{
 	copy($self->{path}, $temp);
 	#print "$temp, $self->{path}\n";
 
-	# ²èÁüÁàºî
+	# ç”»åƒæ“ä½œ
 	my $p = Image::Magick->new;
 	$p->Read( $::config_obj->uni_path( $temp ) );
 	unless ($p->[0]){
@@ -370,11 +390,11 @@ sub rotate_cls{
 	$p->Rotate( degrees=>90 );
 	
 	if ($self->{width} > 1000){
-		# ¥¹¥±¡¼¥ëÉôÊ¬ÀÚ¤ê½Ð¤·
+		# ã‚¹ã‚±ãƒ¼ãƒ«éƒ¨åˆ†åˆ‡ã‚Šå‡ºã—
 		my $scale_height = int( 41 * $self->{dpi} / 72 );
 		$p->Crop(geometry=> "$self->{height}x$scale_height+0+0");
 		
-		# ËÜÂÎÀÚ¤ê½Ð¤·
+		# æœ¬ä½“åˆ‡ã‚Šå‡ºã—
 		print "$temp\n";
 		$p->Read( $::config_obj->uni_path( $temp ) );
 		unless ($p->[1]){
@@ -387,7 +407,7 @@ sub rotate_cls{
 		my $height = int( $self->{width} - $self->{width} * 0.033 +10)-$start;
 		$p->[1]->Crop(geometry=> "$self->{height}x$height+0+$start");
 		
-		# Å½¤ê¹ç¤ï¤»
+		# è²¼ã‚Šåˆã‚ã›
 		$p = $p->append(stack => "true");
 	}
 	
@@ -556,7 +576,7 @@ sub _save_emf{
 		$p = 12 + int($diff * 0.5);
 	}
 	
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
@@ -596,7 +616,7 @@ sub _save_pdf{
 		$p = 12 + int($diff * 0.5);
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	
@@ -664,7 +684,7 @@ sub _save_eps{
 		$p = 12 + int($diff * 0.5);
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_eps <- 1" );
@@ -742,7 +762,7 @@ sub _save_png{
 	
 	my $p = 12 * $dpi / 72;
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 
@@ -792,7 +812,7 @@ sub _save_svg{
 		$p = 12 + int($diff * 0.5);
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 
@@ -861,7 +881,7 @@ sub _save_r{
 	my $path = shift;
 	$path = $::config_obj->os_path($path);
 	
-	# ÆüËÜ¸ì¥Ç¡¼¥¿¤ÇOS¤ÎÊ¸»ú¥³¡¼¥É¤¬cp932¤Î¾ì¹ç¤Î¤ßcp932¤Ç½ÐÎÏ
+	# æ—¥æœ¬èªžãƒ‡ãƒ¼ã‚¿ã§OSã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒcp932ã®å ´åˆã®ã¿cp932ã§å‡ºåŠ›
 	my $out_code = 'utf8';
 	if (
 		   ( $::config_obj->os_code eq 'cp932' )
@@ -872,7 +892,7 @@ sub _save_r{
 	
 	my $t = $self->{command_f};
 	
-	# SOM¤Î¤¿¤á¤ÎÆÃ¼ì½èÍý
+	# SOMã®ãŸã‚ã®ç‰¹æ®Šå‡¦ç†
 	if ($t =~ /^load\(\"(.+)\"\)/){
 		my $file = $1;
 		$file = $::config_obj->os_path($file);
@@ -901,7 +921,7 @@ sub _save_r{
 			thefile => $path,
 		);
 	
-	# ¥Ç¡¼¥¿¤ò¥Õ¥¡¥¤¥ëÆâ¤Ëµ­½Ò
+	# ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ•ã‚¡ã‚¤ãƒ«å†…ã«è¨˜è¿°
 	if ( $t =~ /source\(\"(.+)\", encoding=\"UTF-8\"\)/ ){
 		my $file_data = $1;
 		$file_data = $::config_obj->os_path($file_data);

@@ -1,8 +1,8 @@
 package plotR::network;
 
+use strict;
 use utf8;
 
-use strict;
 use kh_r_plot::network;
 
 sub new{
@@ -19,6 +19,7 @@ sub new{
 
 	my $r_command = $args{r_command};
 	$args{r_command} = '';
+	#print '$r_command is_utf8 (2): ', utf8::is_utf8($r_command), "\n";
 
 	# パラメーター設定部分
 	if ( $args{n_or_j} eq 'j'){
@@ -129,6 +130,31 @@ sub new{
 			font_size => $args{font_size},
 		) or return 0;
 	} else {
+
+		# Mac版のPerlAppで作製したバイナリでのみ、保存した「R Source」ファイル中の日本語
+		# コメントが文字化けする問題がある。この問題を追求しようとしたが、よくわからない。
+		if (0) {
+			
+			# これが既に文字化けしていて、打つ手を思いつかない
+			open(my $cfh, '>:encoding(utf8)', "r_check2.txt") or die;
+			print $cfh $self->r_plot_cmd_p2;
+			close ($cfh);
+			
+			my $tf =
+				 $r_command
+				.$self->r_plot_cmd_p1
+				."\ncom_method <- \"cnt-b\"\n"
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4
+			;
+			
+			# これも文字化け
+			open(my $cfh, '>:encoding(utf8)', "r_check1.txt") or die;
+			print $cfh $tf;
+			close ($cfh);
+		}
+		
 		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
@@ -761,7 +787,7 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 	)
 }
 
-'
+';
 }
 
 sub r_plot_cmd_p4{
@@ -1654,7 +1680,7 @@ ccol <- igraph::get.vertex.attribute(n2,"com")
 
 
 }
-'
+';
 }
 
 sub r_command_wordlayout{
