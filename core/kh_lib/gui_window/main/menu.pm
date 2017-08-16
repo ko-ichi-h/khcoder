@@ -845,35 +845,37 @@ sub make{
 		sub{$self->mc_close_project;}
 	);
 
-	# For Mac OS X, mainly
-	$mw->bind(
-		'<Control-Key-p>',
-		sub{
-			$menubar->Post(10, 10, 1);
-			$menubar->NextMenu('right');
-		}
-	);
-	$mw->bind(
-		'<Control-Key-r>',
-		sub{
-			$menubar->Post(10, 10, 2);
-			$menubar->NextMenu('right');
-		}
-	);
-	$mw->bind(
-		'<Control-Key-t>',
-		sub{
-			$menubar->Post(10, 10, 3);
-			$menubar->NextMenu('right');
-		}
-	);
-	$mw->bind(
-		'<Control-Key-h>',
-		sub{
-			$menubar->Post(10, 10, 4);
-			$menubar->NextMenu('right');
-		}
-	);
+	# For Mac OS X
+	if ($^O =~ /darwin/i ){
+		$mw->bind(
+			'<p>',
+			sub{
+				$menubar->Post(10, 10, 1);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<r>',
+			sub{
+				$menubar->Post(10, 10, 2);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<t>',
+			sub{
+				$menubar->Post(10, 10, 3);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<h>',
+			sub{
+				$menubar->Post(10, 10, 4);
+				$menubar->NextMenu('right');
+			}
+		);
+	}
 	
 	bless $self, $class;
 	return $self;
