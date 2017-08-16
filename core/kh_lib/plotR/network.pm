@@ -1,7 +1,7 @@
 package plotR::network;
 
 use strict;
-use utf8;
+#use utf8;
 
 use kh_r_plot::network;
 
@@ -130,31 +130,6 @@ sub new{
 			font_size => $args{font_size},
 		) or return 0;
 	} else {
-
-		# Mac版のPerlAppで作製したバイナリでのみ、保存した「R Source」ファイル中の日本語
-		# コメントが文字化けする問題がある。この問題を追求しようとしたが、よくわからない。
-		if (0) {
-			
-			# これが既に文字化けしていて、打つ手を思いつかない
-			open(my $cfh, '>:encoding(utf8)', "r_check2.txt") or die;
-			print $cfh $self->r_plot_cmd_p2;
-			close ($cfh);
-			
-			my $tf =
-				 $r_command
-				.$self->r_plot_cmd_p1
-				."\ncom_method <- \"cnt-b\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4
-			;
-			
-			# これも文字化け
-			open(my $cfh, '>:encoding(utf8)', "r_check1.txt") or die;
-			print $cfh $tf;
-			close ($cfh);
-		}
-		
 		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
@@ -391,7 +366,7 @@ sub new{
 }
 
 sub r_plot_cmd_p1{
-	return '
+	my $t = '
 
 # Count frequency of each word
 freq <- NULL
@@ -506,11 +481,14 @@ if ( min_sp_tree_only == 1 ){
 }
 
 ';
+	# こんなことをせずに「use utf8;」と書きたいが、そうするとなぜかMac版のPerlAppで作ったバイナリで文字化け
+	$t = Encode::decode('UTF-8', $t);
+	return $t;
 }
 
 sub r_plot_cmd_p2{
 
-return 
+	my $t = 
 '
 if (length(igraph::get.vertex.attribute(n2,"name")) < 2){
 	com_method <- "none"
@@ -699,16 +677,15 @@ if ( min_sp_tree == 1 ){
 	}
 	edg_mst <- edg_col
 }
-
-
 ';
-
+	$t = Encode::decode('UTF-8', $t);
+	return $t;
 }
 
 
 sub r_plot_cmd_p3{
 
-return 
+	my $t =
 '
 # 初期配置
 lay <- NULL
@@ -788,11 +765,13 @@ if (com_method == "twomode_c" || com_method == "twomode_g"){
 }
 
 ';
+	$t = Encode::decode('UTF-8', $t);
+	return $t;
 }
 
 sub r_plot_cmd_p4{
 
-return 
+	my $t = 
 '
 if ( exists("saving_emf") || exists("saving_eps") ){
 	use_alpha <- 0 
@@ -1673,18 +1652,14 @@ if (exists("edg_lty")){
   rm("edg_lty")
 }
 ccol <- igraph::get.vertex.attribute(n2,"com")
-
-
-
-
-
-
 }
 ';
+	$t = Encode::decode('UTF-8', $t);
+	return $t;
 }
 
 sub r_command_wordlayout{
-	return '
+	my $t = '
 
 # fix for "wordlayout" function
 filename <- tempfile()
@@ -1752,8 +1727,9 @@ writeLines("wordlayout <- function (x, y, words, cex = 1, rotate90 = FALSE, xlim
 }
 ", filename)
 insertSource(filename, package="wordcloud", force=FALSE)
-
 ';
+	$t = Encode::decode('UTF-8', $t);
+	return $t;
 }
 
 1;
