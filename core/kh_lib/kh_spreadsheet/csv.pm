@@ -101,8 +101,8 @@ sub columns{
 	my $self = shift;
 	my $icode = shift;
 	
-	use Benchmark;
-	my $t0 = new Benchmark;
+	#use Benchmark;
+	#my $t0 = new Benchmark;
 	
 	# check character code
 	unless ($icode) {
@@ -127,8 +127,8 @@ sub columns{
 	my $row = $csv->getline($fh);
 	close($fh);
 
-	my $t1 = new Benchmark;
-	print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
+	#my $t1 = new Benchmark;
+	#print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
 
 	return $row;
 }

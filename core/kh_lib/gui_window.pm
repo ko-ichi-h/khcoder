@@ -336,7 +336,7 @@ sub gui_jg{ # 入力された文字列の変換
 	if ( utf8::is_utf8($char) ){
 		#print "utf8\n";
 		unless ( $reserve_rn ){ # ATOK対策
-			$char =~ s/\x0D|\x0A//g;
+			$char =~ s/\x0D|\x0A//go;
 		}
 		#if ($^O eq 'darwin'){   # Mac OS X
 		#	$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);

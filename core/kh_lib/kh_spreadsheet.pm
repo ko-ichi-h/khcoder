@@ -111,7 +111,7 @@ sub columns{
 	my $self = shift;
 	
 	use Benchmark;
-	my $t0 = new Benchmark;
+	#my $t0 = new Benchmark;
 	
 	#my $parser   = $self->parser;
 	my $workbook = $self->parser(columns => 1); #$parser->parse($self->{file});
@@ -139,8 +139,8 @@ sub columns{
 	#	push @columns, $t;
 	#}
 	
-	my $t1 = new Benchmark;
-	print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
+	#my $t1 = new Benchmark;
+	#print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
 	
 	return \@columns;
 }

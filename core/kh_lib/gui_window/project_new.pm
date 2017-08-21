@@ -354,25 +354,36 @@ sub _sansyo{
 	my $self = shift;
 
 	my @types = (
-		[ "data files",[qw/.txt .xls .xlsx .csv .htm .html/] ],
-		["All files",'*']
+		[ "Data files",[qw/.txt .csv .xls .xlsx/] ],
+		[ "All files",'*' ]
 	);
 
 	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
 		-filetypes  => \@types,
 		-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
-		-initialdir => $self->gui_jchar($::config_obj->cwd),
+		-initialdir => $::config_obj->uni_path( $::config_obj->cwd ),
 	);
-
+	my $time = 0;
+	print utf8::is_utf8($path), " $path\n" if $time;
+	
+	use Benchmark;
+	my $t0 = new Benchmark;
+	
 	if ($path){
-		$path = $self->gui_jg_filename_win98($path);
-		$path = $self->gui_jg($path);
 		$self->e1->delete('0','end');
+		my $t2 = new Benchmark;
+		print "del:\t",timestr(timediff($t2,$t0)),"\n" if $time;
 		$self->e1->insert(0,$self->gui_jchar($path));
+		my $t3 = new Benchmark;
+		print "ins:\t",timestr(timediff($t3,$t2)),"\n" if $time;
 		
 		$path = $::config_obj->os_path($path);
+		my $t4 = new Benchmark;
+		print "char:\t",timestr(timediff($t4,$t3)),"\n" if $time;
 		$self->check_path($path);
+		my $t5 = new Benchmark;
+		print "cols:\t",timestr(timediff($t5,$t4)),"\n" if $time;
 		
 	}
 }
@@ -412,8 +423,10 @@ sub _columns{
 	my $path = shift;
 	
 	# column selection interface
+
 	use kh_spreadsheet;
 	my $columns = kh_spreadsheet->new($path)->columns();
+
 	
 	$self->{column_label}->configure( -state => 'normal' );
 	$self->{column_menu}->{win_obj}->destroy;
