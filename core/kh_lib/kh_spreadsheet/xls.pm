@@ -6,6 +6,27 @@ use base 'kh_spreadsheet';
 
 sub parser{
 	my $self = shift;
+	my %args = @_;
+	
+	# For column name only
+	if ( defined($args{columns}) && $args{columns} == 1) {
+		use Spreadsheet::ParseExcel;
+		my $parser = Spreadsheet::ParseExcel->new(
+			CellHandler => \&cell_handler_c,
+			#NotSetCell  => 1
+		);
+		sub cell_handler_c {
+			my $workbook    = $_[0];
+			#my $sheet_index = $_[1];
+			my $row         = $_[2];
+			#my $col         = $_[3];
+			#my $cell        = $_[4];
+			$workbook->ParseAbort(1) if $row > 0;
+		}
+		return $parser->parse($self->{file});
+	}
+	
+	# Full file
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'

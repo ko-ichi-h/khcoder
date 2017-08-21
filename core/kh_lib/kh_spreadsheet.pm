@@ -114,7 +114,7 @@ sub columns{
 	my $t0 = new Benchmark;
 	
 	#my $parser   = $self->parser;
-	my $workbook = $self->parser; #$parser->parse($self->{file});
+	my $workbook = $self->parser(columns => 1); #$parser->parse($self->{file});
 	
 	die("Failed to open the Excel file!\n") unless $workbook;
 	
