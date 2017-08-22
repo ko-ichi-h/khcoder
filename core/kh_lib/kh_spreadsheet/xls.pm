@@ -32,7 +32,7 @@ sub columns{
 		$workbook->ParseAbort(1) if $row > 0;
 		$workbook->ParseAbort(1) if $sheet_index > 0;
 		
-		if ($row == 0){
+		if ($row == 0 && $sheet_index == 0){
 			my $t = $cell->value;
 			$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
 			push @kh_spreadsheet::xls::cell, $t;

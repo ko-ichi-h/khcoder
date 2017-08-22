@@ -159,6 +159,7 @@ sub save{
 	my $cn = 0;
 	my $cols = '';
 	my $cols2 = '';
+	$args{var_type} = '' unless defined( $args{var_type} );
 	foreach my $i (@{$data[0]}){
 		my $col = 'col'."$cn"; ++$cn;
 		mysql_exec->do("

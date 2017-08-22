@@ -49,9 +49,11 @@ sub prepare_db{
 			status text
 		)
 	',1);
+	my $icode = '';
+	$icode = $self->{icode} if defined($self->{icode});
 	mysql_exec->do("
 		INSERT INTO status_char (name, status)
-		VALUES ('last_tani',''),('last_codf',''),('icode','$self->{icode}')
+		VALUES ('last_tani',''),('last_codf',''),('icode','$icode')
 	",1);
 
 	# 外部変数用のテーブルを準備

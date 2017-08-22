@@ -364,7 +364,7 @@ sub _sansyo{
 		-title      => $self->gui_jt( kh_msg->get('browse_target')),#'分析対象ファイルを選択してください'
 		-initialdir => $::config_obj->uni_path( $::config_obj->cwd ),
 	);
-	my $time = 1;
+	my $time = 0;
 	print utf8::is_utf8($path), " $path\n" if $time;
 	
 	use Benchmark;

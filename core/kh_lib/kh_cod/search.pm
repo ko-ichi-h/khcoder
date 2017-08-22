@@ -4,8 +4,8 @@ use strict;
 use utf8;
 use mysql_exec;
 
-my $last_tani;
-my $last_order;
+my $last_tani = '';
+my $last_order = '';
 my $docs_per_once = 200;
 
 my %sql_join = (

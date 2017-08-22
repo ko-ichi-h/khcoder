@@ -285,6 +285,7 @@ sub start{
 sub activate{
 	my $self = shift;
 	return 1 unless $self->{codf_obj};
+	return 1 unless $self->cfile;
 	return 1 unless -e $self->cfile;
 	return 1 unless $self->{timestamp};
 	
