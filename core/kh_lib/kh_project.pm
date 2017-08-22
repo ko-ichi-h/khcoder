@@ -20,11 +20,6 @@ sub new{
 		return 0;
 	}
 	
-	# データディレクトリが無かった場合は作成
-	print $self->dir_CoderData."\n";
-	unless (-d $self->dir_CoderData){
-		mkdir $self->dir_CoderData or die;
-	}
 	return $self;
 }
 
@@ -91,6 +86,11 @@ sub prepare_db{
 		VALUES (\"comment\", \"".$self->comment."\")
 	",1);
 
+	# データディレクトリが無かった場合は作成
+	print "Data dir: ".$self->dir_CoderData."\n";
+	unless (-d $self->dir_CoderData){
+		mkdir $self->dir_CoderData or die;
+	}
 }
 
 sub read_hinshi_setting{
