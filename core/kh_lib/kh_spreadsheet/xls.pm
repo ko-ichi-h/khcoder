@@ -34,7 +34,7 @@ sub columns{
 		
 		if ($row == 0 && $sheet_index == 0){
 			my $t = $cell->value;
-			$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
+			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
 			push @kh_spreadsheet::xls::cell, $t;
 		}
 	}
@@ -45,6 +45,9 @@ sub columns{
 sub save_files{
 	my $self = shift;
 	my %args = @_;
+
+	use Benchmark;
+	my $t0 = new Benchmark;
 
 	# text file
 	$kh_spreadsheet::xls::fht = undef;
@@ -75,7 +78,7 @@ sub save_files{
 		NotSetCell  => 1
 	)->parse(
 		$self->{file},
-		Spreadsheet::ParseExcel::FmtJapan->new(Code => 'utf8')
+		Spreadsheet::ParseExcel::FmtJapan->new
 	);
 	die("failed to open *.xls file!\n") unless $p;
 
@@ -103,7 +106,7 @@ sub save_files{
 		if ($col == $kh_spreadsheet::xls::selected){
 			return 1 if $row == 0;
 			my $t = $cell->value;
-			$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
+			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
 			$t =~ tr/<>/()/;
 			print $kh_spreadsheet::xls::fht
 				'<h5>---cell---</h5>',
@@ -114,7 +117,7 @@ sub save_files{
 		} else {
 			return 1 if $kh_spreadsheet::xls::ncol >= 1000;
 			my $t = $cell->value;
-			$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
+			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
 			$kh_spreadsheet::xls::line .= "$t\t";
@@ -129,6 +132,9 @@ sub save_files{
 
 	close $kh_spreadsheet::xls::fht;
 	close $kh_spreadsheet::xls::fhv;
+
+	my $t1 = new Benchmark;
+	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
 }
 
 1;
