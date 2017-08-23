@@ -10,6 +10,9 @@ sub save_files{
 	my $self = shift;
 	my %args = @_;
 
+	use Benchmark;
+	my $t0 = new Benchmark;
+
 	# check character code
 	my $icode = $args{icode};
 	unless ($icode) {
@@ -93,6 +96,9 @@ sub save_files{
 	close ($fh);
 	close ($fht);
 	close ($fhv);
+
+	my $t1 = new Benchmark;
+	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
 
 	return 1;
 }
