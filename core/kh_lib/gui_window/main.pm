@@ -15,21 +15,11 @@ sub _new{
 	my $self = shift;
 	$::main_gui = $self;
 
-	if ( $::config_obj->win_gmtry($self->win_name) ){
-		$self->{org_height} = $::config_obj->win_gmtry($self->win_name);
-		$self->{org_height} =~ s/[0-9]+x([0-9]+)\+[0-9]+\+[0-9]+/$1/;
-	} else {
-		$self->{org_height} = -1;
-	}
-
-
 	# Windowへの書き込み
 	$self->make_font;                                        # フォント準備
 	$self->{win_obj}->title('KH Coder');                     # Windowタイトル
 	$self->{menu}  =
-		gui_window::main::menu->make(  $self->{win_obj} );   # メニュー
-	$self->{inner} = 
-		gui_window::main::inner->make( $self->{win_obj} );   # Windowの中身
+		gui_window::main::menu->make(  $self->{win_obj} );   # メニュー＆内容
 
 	#-----------------------#
 	#   KH Coder 開始処理   #

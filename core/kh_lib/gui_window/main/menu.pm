@@ -83,6 +83,10 @@ sub make{
 		-tearoff=>'no'
 	);
 
+	# ここでMain Windowの中身を作成しておく
+	# http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi?no=2699&mode=allread#3107
+	$::main_gui->{inner} = 'gui_window::main::inner'->make($::main_gui->{win_obj});
+
 		my $m4a_project = $f1->command(
 			-label => kh_msg->get('new'),
 			-font => "TKFN",
