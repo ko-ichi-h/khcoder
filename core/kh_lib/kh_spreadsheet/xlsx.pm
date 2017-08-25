@@ -16,7 +16,7 @@ no warnings 'redefine';
 *Spreadsheet::ParseXLSX::_extract_files        = \&_extract_files;
 use warnings 'redefine';
 
-use vars qw(@col $fht $fhv $line $selected $row $ncol);
+use vars qw(@col);
 
 sub columns{
 	my $self = shift;
@@ -56,16 +56,16 @@ sub save_files{
 	my $t0 = new Benchmark;
 
 	# text file
-	$kh_spreadsheet::xlsx::fht = undef;
-	open $kh_spreadsheet::xlsx::fht, '>:encoding(utf8)', $args{filet} or
+	$kh_spreadsheet::fht = undef;
+	open $kh_spreadsheet::fht, '>:encoding(utf8)', $args{filet} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{file}
 		)
 	;
 	# variable file
-	$kh_spreadsheet::xlsx::fhv = undef;
-	open $kh_spreadsheet::xlsx::fhv, '>::encoding(utf8)', $args{filev} or
+	$kh_spreadsheet::fhv = undef;
+	open $kh_spreadsheet::fhv, '>::encoding(utf8)', $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
@@ -73,10 +73,10 @@ sub save_files{
 	;
 
 	# init
-	$kh_spreadsheet::xlsx::line = '';
-	$kh_spreadsheet::xlsx::row = 0;
-	$kh_spreadsheet::xlsx::ncol = 0;
-	$kh_spreadsheet::xlsx::selected = $args{selected};
+	$kh_spreadsheet::line = undef;
+	$kh_spreadsheet::row = 0;
+	$kh_spreadsheet::ncol = 0;
+	$kh_spreadsheet::selected = $args{selected};
 
 	my $p = Spreadsheet::ParseXLSX->new;
 	$p->{NotSetCell} = 1;
@@ -93,45 +93,25 @@ sub save_files{
 		my $col  = $_[2];
 		my $cell = $_[3];
 		
-		unless ($row == $kh_spreadsheet::xlsx::row){
-			chop $kh_spreadsheet::xlsx::line;
-			print $kh_spreadsheet::xlsx::fhv $kh_spreadsheet::xlsx::line, "\n";
+		unless ($row == $kh_spreadsheet::row){
+			&kh_spreadsheet::print_line;
 			
-			$kh_spreadsheet::xlsx::line = '';
-			$kh_spreadsheet::xlsx::ncol = 0;
-			$kh_spreadsheet::xlsx::row = $row;
+			$kh_spreadsheet::line = undef;
+			$kh_spreadsheet::row = $row;
 		}
 		
-		if ($col == $kh_spreadsheet::xlsx::selected){
-			return $self if $row == 0;
-			my $t = $cell->value;
-			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			$t =~ tr/<>/()/;
-			print $kh_spreadsheet::xlsx::fht
-				'<h5>---cell---</h5>',
-				"\n",
-				$t,
-				"\n",
-			;
-		} else {
-			return $self if $kh_spreadsheet::xlsx::ncol >= 1000;
-			my $t = $cell->value;
-			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			$t = '.' if length($t) == 0;
-			$t =~ s/[[:cntrl:]]//g;
-			$kh_spreadsheet::xlsx::line .= "$t\t";
-			++$kh_spreadsheet::xlsx::ncol;
-		}
+		++$kh_spreadsheet::ncol if $row == 0;
+		$kh_spreadsheet::line->[$col] = $cell->value;
+		
 		return $self;
 	}
-
-	if ( length( $kh_spreadsheet::xlsx::line ) ){
-		chop $kh_spreadsheet::xlsx::line;
-		print $kh_spreadsheet::xlsx::fhv $kh_spreadsheet::xlsx::line;
+	
+	if ( $kh_spreadsheet::line ){
+		&kh_spreadsheet::print_line;
 	}
 
-	close $kh_spreadsheet::xlsx::fht;
-	close $kh_spreadsheet::xlsx::fhv;
+	close $kh_spreadsheet::fht;
+	close $kh_spreadsheet::fhv;
 	
 	my $t1 = new Benchmark;
 	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";

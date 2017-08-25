@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 
-use vars qw(@cell $fht $fhv $line $selected $row $ncol);
+use vars qw(@cell);
 
 sub columns{
 	my $self = shift;
@@ -50,16 +50,16 @@ sub save_files{
 	my $t0 = new Benchmark;
 
 	# text file
-	$kh_spreadsheet::xls::fht = undef;
-	open $kh_spreadsheet::xls::fht, '>:encoding(utf8)', $args{filet} or
+	$kh_spreadsheet::fht = undef;
+	open $kh_spreadsheet::fht, '>:encoding(utf8)', $args{filet} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{file}
 		)
 	;
 	# variable file
-	$kh_spreadsheet::xls::fhv = undef;
-	open $kh_spreadsheet::xls::fhv, '>::encoding(utf8)', $args{filev} or
+	$kh_spreadsheet::fhv = undef;
+	open $kh_spreadsheet::fhv, '>::encoding(utf8)', $args{filev} or
 		gui_errormsg->open(
 			type => 'file',
 			file => $args{filev}
@@ -67,10 +67,10 @@ sub save_files{
 	;
 
 	# init
-	$kh_spreadsheet::xls::line = '';
-	$kh_spreadsheet::xls::row = 0;
-	$kh_spreadsheet::xls::ncol = 0;
-	$kh_spreadsheet::xls::selected = $args{selected};
+	$kh_spreadsheet::line = undef;
+	$kh_spreadsheet::row = 0;
+	$kh_spreadsheet::ncol = 0;
+	$kh_spreadsheet::selected = $args{selected};
 
 	use Spreadsheet::ParseExcel::FmtJapan;
 	my $p = Spreadsheet::ParseExcel->new(
@@ -94,44 +94,23 @@ sub save_files{
 			return 1;
 		}
 		
-		unless ($row == $kh_spreadsheet::xls::row){
-			chop $kh_spreadsheet::xls::line;
-			print $kh_spreadsheet::xls::fhv $kh_spreadsheet::xls::line, "\n";
+		unless ($row == $kh_spreadsheet::row){
+			&kh_spreadsheet::print_line;
 			
-			$kh_spreadsheet::xls::line = '';
-			$kh_spreadsheet::xls::ncol = 0;
-			$kh_spreadsheet::xls::row = $row;
+			$kh_spreadsheet::line = undef;
+			$kh_spreadsheet::row = $row;
 		}
 		
-		if ($col == $kh_spreadsheet::xls::selected){
-			return 1 if $row == 0;
-			my $t = $cell->value;
-			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			$t =~ tr/<>/()/;
-			print $kh_spreadsheet::xls::fht
-				'<h5>---cell---</h5>',
-				"\n",
-				$t,
-				"\n",
-			;
-		} else {
-			return 1 if $kh_spreadsheet::xls::ncol >= 1000;
-			my $t = $cell->value;
-			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			$t = '.' if length($t) == 0;
-			$t =~ s/[[:cntrl:]]//g;
-			$kh_spreadsheet::xls::line .= "$t\t";
-			++$kh_spreadsheet::xls::ncol;
-		}
+		++$kh_spreadsheet::ncol if $row == 0;
+		$kh_spreadsheet::line->[$col] = $cell->value;
 	}
 
-	if ( length( $kh_spreadsheet::xls::line ) ){
-		chop $kh_spreadsheet::xls::line;
-		print $kh_spreadsheet::xls::fhv $kh_spreadsheet::xls::line;
+	if ( $kh_spreadsheet::line ){
+		&kh_spreadsheet::print_line;
 	}
 
-	close $kh_spreadsheet::xls::fht;
-	close $kh_spreadsheet::xls::fhv;
+	close $kh_spreadsheet::fht;
+	close $kh_spreadsheet::fhv;
 
 	my $t1 = new Benchmark;
 	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
