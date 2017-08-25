@@ -416,14 +416,17 @@ sub params{
 sub cor_var{
 	my $self = shift;
 	
-	unless ( defined ( $self->{from}{radio_type} ) ){
-		return gui_window->gui_jg( $self->{check_cor_var} );
+	# return 0 if "twomode" is selected
+	if ( ref ( $self->{from} ) ){
+		if ($self->{from}{radio_type} eq "twomode"){
+			return 0;
+		}
 	}
 	
-	if ($self->{from}{radio_type} eq "twomode"){
-		return 0;
+	if ( defined( $self->{check_cor_var} ) ) {
+		return $self->{check_cor_var};
 	} else {
-		return gui_window->gui_jg( $self->{check_cor_var} );
+		return 0;
 	}
 }
 

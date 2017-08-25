@@ -13,7 +13,7 @@ use Tk;
 
 sub _new{
 	my $self = shift;
-	$::main_gui = $self;
+	$::main_gui = $self; # リファレンスなので、以降はどちらを書き換えても、両方書き換わる
 
 	# Windowへの書き込み
 	$self->make_font;                                        # フォント準備
@@ -132,14 +132,14 @@ sub opened{
 	my $window      = shift;
 	
 	$self->{$window_name} = $window;
-	$::main_gui = $self;
+	#$::main_gui = $self; # リファレンスなので自動的に更新される
 }
 sub closed{
 	my $self        = shift;
 	my $window_name = shift;
 	
 	undef $self->{$window_name};
-	$::main_gui = $self;
+	#$::main_gui = $self; # リファレンスなので自動的に更新される
 }
 
 # プログラム全体の終了処理
