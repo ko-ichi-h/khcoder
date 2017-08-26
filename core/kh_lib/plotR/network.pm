@@ -794,7 +794,7 @@ if ( exists("target_words") ){
 
 edge_label <- NULL
 
-font_fam <- "'.$::config_obj->font_plot_current.'"
+font_fam <- "'.Encode::encode('UTF-8',$::config_obj->font_plot_current).'"
 if ( exists("PERL_font_family") ){
 	font_fam <- PERL_font_family
 }
