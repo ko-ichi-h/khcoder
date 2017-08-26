@@ -109,11 +109,13 @@ sub save_files{
 		&kh_spreadsheet::print_line;
 	}
 
-	close $kh_spreadsheet::fht;
 	close $kh_spreadsheet::fhv;
+	close $kh_spreadsheet::fht;
 
 	my $t1 = new Benchmark;
 	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
+	
+	unlink $args{filev} if $kh_spreadsheet::ncol == 1;
 }
 
 1;
