@@ -8,7 +8,7 @@ use kh_spreadsheet::csv;
 
 use Encode;
 
-use vars qw($fht $fhv $line $row $ncol $selected);
+use vars qw($fht $fhv $line $row $ncol $selected $tsv);
 
 sub new{
 	my $self;
@@ -29,7 +29,7 @@ sub new{
 }
 
 sub print_line{
-	my $v = '';
+	my $v;
 	for (my $i = 0; $i < $kh_spreadsheet::ncol;  ++$i){
 		if ($i == $kh_spreadsheet::selected){
 			next if $kh_spreadsheet::row == 0;
@@ -44,13 +44,13 @@ sub print_line{
 		} else {
 			next if $i > 1000;
 			my $t = $kh_spreadsheet::line->[$i];
+			$t = '.' unless defined($t);
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
-			$v .= "$t\t";
+			push @{$v}, $t;
 		}
 	}
-	chop $v;
-	print $kh_spreadsheet::fhv "$v\n";
+	$kh_spreadsheet::tsv->print($kh_spreadsheet::fhv, $v);
 }
 
 1;

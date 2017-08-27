@@ -78,6 +78,15 @@ sub save_files{
 	$kh_spreadsheet::ncol = 0;
 	$kh_spreadsheet::selected = $args{selected};
 
+	use Text::CSV_XS;
+	$kh_spreadsheet::tsv = Text::CSV_XS->new({
+		binary    => 1,
+		auto_diag => 2,
+		sep_char  => "\t",
+		eol       => $/
+		#quote_char => undef
+	});
+
 	my $p = Spreadsheet::ParseXLSX->new;
 	$p->{NotSetCell} = 1;
 	$p->{CellHandler} = \&cell_handler_s;

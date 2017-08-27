@@ -2,15 +2,10 @@ package mysql_outvar::read::csv;
 use base qw(mysql_outvar::read);
 use strict;
 
-sub parse{
+sub parser{
 	my $self = shift;
-	my $line = shift;
-
-	my $tmp = $line;
-	$tmp =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/,/;
-	my @line = map {/^"(.*)"$/ ? scalar($_ = $1, s/""/"/g, $_) : $_}
-	                ($tmp =~ /("[^"]*(?:""[^"]*)*"|[^,]*),/g);
-	return \@line;
+	use Text::CSV_XS;
+	return Text::CSV_XS->new( { binary => 1, auto_diag => 2 } );
 }
 
 1;

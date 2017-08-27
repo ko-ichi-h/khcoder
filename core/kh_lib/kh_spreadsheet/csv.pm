@@ -47,7 +47,7 @@ sub save_files{
 	;
 
 	# open csv file
-	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 1 } );
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
 	open my $fh, "<:encoding($icode)", $self->{file}
 		or gui_errormsg->open(
 			type => 'file',
