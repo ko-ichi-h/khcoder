@@ -95,7 +95,13 @@ sub read_file_mk{
 	my $self = shift;
 
 	if ( $self->{words_mk_file_chk} ){
-		return 0 unless -e $self->{words_mk_file};
+		unless (-e $self->{words_mk_file} ){
+			gui_errormsg->open(
+				type => 'msg',
+				msg => 'cannot open file: '.$self->{words_mk_file}
+			);
+			return 0 ;
+		}
 		
 		my $icode;
 		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
@@ -126,7 +132,13 @@ sub read_file_st{
 	my $self = shift;
 
 	if ( $self->{words_st_file_chk} ){
-		return 0 unless -e $self->{words_st_file};
+		unless (-e $self->{words_st_file_chk} ){
+			gui_errormsg->open(
+				type => 'msg',
+				msg => 'cannot open file: '.$self->{words_st_file_chk}
+			);
+			return 0 ;
+		}
 		
 		my $icode;
 		if ($::project_obj->morpho_analyzer_lang eq 'jp') {
