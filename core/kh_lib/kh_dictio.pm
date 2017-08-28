@@ -112,8 +112,7 @@ sub read_file_mk{
 			)
 		;
 		while (<SOURCE>){
-			s/\x0D\x0A|\x0D|\x0A/\n/g;
-			chomp;
+			s/\x0D|\x0A//g;
 			next unless length($_);
 			push @words, $_;
 		}
@@ -144,8 +143,7 @@ sub read_file_st{
 			)
 		;
 		while (<SOURCE>){
-			s/\x0D\x0A|\x0D|\x0A/\n/g;
-			chomp;
+			s/\x0D|\x0A//g;
 			next unless length($_);
 			push @words, $_;
 		}

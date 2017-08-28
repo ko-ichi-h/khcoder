@@ -144,7 +144,12 @@ sub save{
 	
 	my @mark = ();
 	my %check = ();
-	foreach my $i (split /\n/, $self->{text}->get("1.0","end")){
+	
+	my $t = $self->{text}->get("1.0","end");
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	
+	foreach my $i (split /\n/, $t){
+		$i =~ s/\x0D|\x0A//g;
 		if (length($i) and not $check{$i}) {
 			push @mark, $i;
 			$check{$i} = 1;
