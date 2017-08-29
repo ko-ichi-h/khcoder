@@ -8,7 +8,8 @@ sub parser{
 	return Text::CSV_XS->new({
 		binary     => 1,
 		auto_diag  => 2,
-		sep_char   => "\t"
+		sep_char   => "\t",
+		allow_loose_quotes => 1
 	});
 }
 
