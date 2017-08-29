@@ -46,8 +46,16 @@ sub save_files{
 		)
 	;
 
+	# for writing variable file
+	my $tsv = Text::CSV_XS->new({
+		binary    => 1,
+		auto_diag => 2,
+		sep_char  => "\t",
+		eol       => $/
+	});
+
 	# open csv file
-	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, allow_loose_quotes => 1 } );
 	open my $fh, "<:encoding($icode)", $self->{file}
 		or gui_errormsg->open(
 			type => 'file',
@@ -69,7 +77,7 @@ sub save_files{
 		}
 		# variables
 		my $col_n = 0;
-		my $line = '';
+		my $line = undef;
 		foreach my $col (@{$row}){
 			if ($col_n == $args{selected}){
 				++$col_n;
@@ -81,14 +89,13 @@ sub save_files{
 			#if (length($t) > 127){
 			#	$t = substr($t, 0, 127);
 			#}
-			$line .= "$t\t";
+			push @{$line}, $t;
 			++$col_n;
 			if ($col_n == 1001){
 				last;
 			}
 		}
-		chop $line;
-		print $fhv "$line\n";
+		$tsv->print($fhv, $line);
 		
 		++$row_n;
 	}
