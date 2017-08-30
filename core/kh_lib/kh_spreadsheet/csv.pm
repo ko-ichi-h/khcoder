@@ -95,7 +95,7 @@ sub save_files{
 				last;
 			}
 		}
-		$tsv->print($fhv, $line);
+		$tsv->print($fhv, $line) if $line;
 		
 		++$row_n;
 	}
@@ -104,6 +104,8 @@ sub save_files{
 	close ($fht);
 	close ($fhv);
 
+	unlink($args{filev}) if -s $args{filev} == 0;
+	
 	my $t1 = new Benchmark;
 	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
 

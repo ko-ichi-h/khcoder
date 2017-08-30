@@ -34,7 +34,8 @@ sub print_line{
 		if ($i == $kh_spreadsheet::selected){
 			next if $kh_spreadsheet::row == 0;
 			my $t = $kh_spreadsheet::line->[$i];
-			$t =~ tr/<>/()/;
+			$t =~ s/\x0D\x0A|\x0D|\x0A/\n/go;
+			$t =~ s/_x000D_\n/\n/go if (caller)[0] eq 'kh_spreadsheet::xlsx';
 			print $kh_spreadsheet::fht
 				'<h5>---cell---</h5>',
 				"\n",
@@ -50,7 +51,7 @@ sub print_line{
 			push @{$v}, $t;
 		}
 	}
-	$kh_spreadsheet::tsv->print($kh_spreadsheet::fhv, $v);
+	$kh_spreadsheet::tsv->print($kh_spreadsheet::fhv, $v) if $v;
 }
 
 1;
