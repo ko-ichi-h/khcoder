@@ -221,6 +221,7 @@ sub check_code3{
 	use Encode::Guess;
 	my $enc = guess_encoding($t, @candi);
 	print ref $enc ? $enc->name : $enc unless $silent;
+	print "\n" unless $silent;
 
 	if (ref $enc){
 		$enc = $enc->name;
