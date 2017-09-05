@@ -3,6 +3,8 @@ use base qw(gui_window);
 use strict;
 use Tk;
 
+use vars qw/$lang/;
+
 use gui_jchar;
 
 #----------------------------#
@@ -252,8 +254,13 @@ sub refresh_method{
 		variable => \$self->{method},
 		command => sub {}
 	);
-
+	
+	$lang = $self->{lang};
 	return $self;
+}
+
+sub end{
+	$lang = undef;
 }
 
 #--------------------#

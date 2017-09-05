@@ -134,7 +134,7 @@ sub check_code{
 	$icode = 'euc' if $icode eq 'eucJP-ms';
 	$icode = 'sjis' if $icode eq 'shiftjis';
 	$icode = 'sjis' if $icode eq 'cp932';
-	$icode = 'jis' if  $icode eq '7bit-jis';	
+	$icode = 'jis' if  $icode eq '7bit-jis';
 
 	print "$icode\n" unless $silent;
 	return $icode;
@@ -189,6 +189,59 @@ sub check_code2{
 	return $icode;
 }
 
+sub check_code3{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 1000 unless $lines;
+	
+	print "Checking icode (jp)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	my @candi = (
+		$char_code{euc},
+		'cp932',
+		'7bit-jis'
+	);
+	if ($^O eq 'darwin'){
+		push @candi, 'MacJapanese';
+	}
+
+	use Encode::Guess;
+	my $enc = guess_encoding($t, @candi);
+	print ref $enc ? $enc->name : $enc unless $silent;
+
+	if (ref $enc){
+		$enc = $enc->name;
+	} elsif ($enc =~ /MacJapanese/ && $^O eq 'darwin') {
+		$enc = 'MacJapanese';
+	} elsif ($enc =~ /utf8/i){
+		$enc = 'utf8';
+	} elsif ($enc =~ /cp932/){
+		$enc = 'cp932';
+	} elsif ($enc =~ /euc/){
+		$enc = $char_code{euc};
+	} elsif ($enc =~ /^No / ){
+		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		$enc = 'utf8';
+	} else {
+		die("something wrong with icode! $enc");
+	}
+
+	return $enc;
+}
+
 # ファイルの文字コードを判別(英語)
 
 sub check_code_en{
@@ -220,7 +273,7 @@ sub check_code_en{
 	print "\n" unless $silent;
 	if (ref $enc){
 		$enc = $enc->name;
-	} elsif ($enc =~ /utf8/) {
+	} elsif ($enc =~ /utf8/i) {
 		$enc = 'utf8';
 	} elsif ($enc =~ /cp1252/){
 		$enc = 'cp1252';

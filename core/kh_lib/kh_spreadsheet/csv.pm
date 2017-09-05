@@ -9,18 +9,28 @@ use Text::CSV_XS;
 sub save_files{
 	my $self = shift;
 	my %args = @_;
+	my $icode = $args{icode};
 
 	use Benchmark;
 	my $t0 = new Benchmark;
 
 	# check character code
-	my $icode = $args{icode};
-	unless ($icode) {
-		if (
+	my $jp = 1;
+	if (defined $gui_window::project_new::lang){
+		unless ($gui_window::project_new::lang eq 'jp'){
+			$jp = 0;
+		}
+	} else {
+		unless (
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		) {
-			$icode = kh_jchar->check_code2( $self->{file}, 0, 200 );
+			$jp = 0;
+		}
+	}
+	unless ($icode) {
+		if ($jp) {
+			$icode = kh_jchar->check_code3( $self->{file}, 0, 200 );
 		} else {
 			$icode = kh_jchar->check_code_en( $self->{file}, 0, 200 );
 		}
@@ -120,12 +130,22 @@ sub columns{
 	#my $t0 = new Benchmark;
 	
 	# check character code
-	unless ($icode) {
-		if (
+	my $jp = 1;
+	if (defined $gui_window::project_new::lang){
+		unless ($gui_window::project_new::lang eq 'jp'){
+			$jp = 0;
+		}
+	} else {
+		unless (
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
 		) {
-			$icode = kh_jchar->check_code2( $self->{file}, 0, 200 );
+			$jp = 0;
+		}
+	}
+	unless ($icode) {
+		if ($jp) {
+			$icode = kh_jchar->check_code3( $self->{file}, 0, 200 );
 		} else {
 			$icode = kh_jchar->check_code_en( $self->{file}, 0, 200 );
 		}

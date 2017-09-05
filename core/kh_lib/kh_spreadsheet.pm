@@ -34,6 +34,7 @@ sub print_line{
 		if ($i == $kh_spreadsheet::selected){
 			next if $kh_spreadsheet::row == 0;
 			my $t = $kh_spreadsheet::line->[$i];
+			$t =~ tr/<>/()/;
 			$t =~ s/\x0D\x0A|\x0D|\x0A/\n/go;
 			$t =~ s/_x000D_\n/\n/go if (caller)[0] eq 'kh_spreadsheet::xlsx';
 			print $kh_spreadsheet::fht
