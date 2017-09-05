@@ -262,13 +262,16 @@ sub morpho_analyzer{
 	
 	my $h = mysql_exec->select("
 		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer\"
-	",1)->hundle;
+	",0)->hundle;
 	
 	unless ($h->rows){
-		return 'chasen';
+		return ' MySQL Error';
 	}
-	
-	return $h->fetch->[0];
+	my $r;
+	unless ($r = $h->fetch){
+		return ' MySQL Error';
+	}
+	return $r->[0];
 }
 
 sub morpho_analyzer_lang{
@@ -292,13 +295,17 @@ sub morpho_analyzer_lang{
 	
 	my $h = mysql_exec->select("
 		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer_lang\"
-	",1)->hundle;
+	",0)->hundle;
+	
 	
 	unless ($h->rows){
-		return 'jp';
+		return ' MySQL Error';
 	}
-	
-	return $h->fetch->[0];
+	my $r;
+	unless ($r = $h->fetch){
+		return ' MySQL Error';
+	}
+	return $r->[0];
 }
 
 sub spacer{

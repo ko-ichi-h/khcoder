@@ -316,11 +316,21 @@ sub selected_rows{
 
 sub print_error{
 	my $self = shift;
-	$self->{err} =
-		"SQL Input:\n".$self->sql."\nError:\n"
-		.$::project_obj->dbh->{'mysql_error'}."\n\n"
-		."SQL Caller: $self->{caller_file} line $self->{caller_line}"
-	;
+	
+	if ($::project_obj) {
+		$self->{err} =
+			"SQL Input:\n".$self->sql."\nError:\n"
+			.$::project_obj->dbh->{'mysql_error'}."\n\n"
+			."SQL Caller: $self->{caller_file} line $self->{caller_line}"
+		;
+	}
+	elsif ( $dbh_common ){
+		$self->{err} =
+			"SQL Input:\n".$self->sql."\nError:\n"
+			.$dbh_common->{'mysql_error'}."\n\n"
+			."SQL Caller: $self->{caller_file} line $self->{caller_line}"
+		;
+	}
 	
 	unless ($self->critical){
 		warn($self->{err});
