@@ -16,7 +16,9 @@ sub init{
 	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 
 	# Start MySQL
-	unless (-e '/tmp/mysql.sock.khc3'){
+	#unless (-e '/tmp/mysql.sock.khc3'){
+	unless (mysql_exec->connection_test){
+		print "Starting MySQL...\n";
 		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
 	}
 
