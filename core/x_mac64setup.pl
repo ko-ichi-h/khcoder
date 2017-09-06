@@ -49,10 +49,28 @@ open (my $fh, '<', cwd.'/deps/mecab/etc/mecabrc') or die("could not read file: m
 }
 close ($fh);
 
+$mecabrc =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 $mecabrc =~ s/\ndicdir = .+?\n/\ndicdir = $dic_dir\n/;
 
 open (my $fh, '>', cwd.'/deps/mecab/etc/mecabrc') or die("could not write file: mecabrc\n");
 print $fh $mecabrc;
+close($fh);
+
+# Edit configurations of Chasen
+my $dici_dir = cwd.'/deps/ipadic-2.7.0';
+my $chasenrc;
+open (my $fh, '<', cwd.'/deps/ipadic-2.7.0/chasenrc') or die("could not read file: chasenrc\n");
+{
+	local $/ = undef;
+	$chasenrc = <$fh>;
+}
+close ($fh);
+
+$chasenrc =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+$chasenrc =~ s/\n\(GRAMMAR .+?\n/\n\(GRAMMAR $dici_dir\)\n/;
+
+open (my $fh, '>', cwd.'/deps/ipadic-2.7.0/chasenrc') or die("could not write file: chasenrc\n");
+print $fh $chasenrc;
 close($fh);
 
 # Edit configurations of R

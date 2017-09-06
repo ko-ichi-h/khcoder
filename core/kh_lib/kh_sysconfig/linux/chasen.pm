@@ -95,7 +95,7 @@ sub config_morph{
 		$temp2 .= $self->hukugo_chasenrc;
 	}
 #	Jcode::convert(\$temp2,'sjis','euc');
-	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
+	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
 	$temp_file = 'temp.txt';
