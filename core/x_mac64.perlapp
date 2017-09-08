@@ -14,6 +14,8 @@ Add: Encode::JP::
 Add: Encode::CN::
 Add: Encode::KR::
 Add: Encode::TW::
+Add: File::BOM::
+Add: PerlIO::via::
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.cs]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de]
@@ -35,7 +37,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Librar
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
 Bind: auto/DBD/mysql/mysql.bundle[file=/usr/local/ActivePerl-5.16/site/lib/auto/DBD/mysql/mysql.bundle,extract]
 Clean: 0
-Date: 2017-08-16 03:26:53
+Date: 2017-09-07 16:05:06
 Debug: 
 Dependent: 0
 Dyndll: 0

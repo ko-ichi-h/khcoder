@@ -27,15 +27,20 @@ sub _run_morpho{
 	}
 	
 	my $rcpath = '';
-	$rcpath = ' -r '.$::config_obj->mecabrc_path if length($::config_obj->mecabrc_path);
+	$rcpath = ' -r "'.$::config_obj->mecabrc_path.'"' if length($::config_obj->mecabrc_path);
 	
-	$self->{cmdline} = "mecab $rcpath -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
+	my $mecab_exe = 'mecab';
+	if ($::config_obj->all_in_one_pack) {
+		$mecab_exe = './deps/mecab/bin/mecab';
+	}
+	
+	$self->{cmdline} = "$mecab_exe $rcpath -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
 	
 	if ($::config_obj->all_in_one_pack){
 		$self->{cmdline} = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $self->{cmdline}";
 	}
 	
-	#print "morpho: $self->{cmdline}\n";
+	print "command line: $self->{cmdline}\n";
 	
 	# 処理開始
 	my $icode = kh_jchar->check_code2($self->target);

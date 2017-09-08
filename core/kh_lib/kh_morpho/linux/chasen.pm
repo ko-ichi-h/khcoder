@@ -20,9 +20,19 @@ sub _run_morpho{
 	#print "ENV: $::ENV{DYLD_FALLBACK_LIBRARY_PATH}\n\n";
 	#system "printenv";
 	#print "\n\n";
+	
+	my $chasen_exe = 'chasen';
+	if ($::config_obj->all_in_one_pack) {
+		$chasen_exe = './deps/chasen/bin/chasen';
+	}
 
-	my $cmdline = "chasen -r ".$::config_obj->chasenrc_path." -o ".$self->output." ".$self->target;
-	#print "$cmdline\n";
+	my $cmdline = "$chasen_exe -r \"".$::config_obj->chasenrc_path.'" -o "'.$self->output.'" "'.$self->target.'"';
+	
+	if ($::config_obj->all_in_one_pack){
+		$cmdline = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $cmdline";
+	}
+	
+	print "command line: $cmdline\n";
 
 	system "$cmdline";
 

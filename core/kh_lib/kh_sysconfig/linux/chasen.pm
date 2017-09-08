@@ -92,7 +92,9 @@ sub config_morph{
 	#  ‘Ω∏
 	$temp2 = '(√Ìº· (("<" ">") (•ø•∞)) )'."\n";
 	if ($self->{use_hukugo}){
-		$temp2 .= $self->hukugo_chasenrc;
+		my $hc = $self->hukugo_chasenrc;
+		$hc = Encode::encode('euc-jp', $hc) if utf8::is_utf8($hc);
+		$temp2 .= $hc;
 	}
 #	Jcode::convert(\$temp2,'sjis','euc');
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
