@@ -79,15 +79,51 @@ sub _run_from_morpho{
 
 	# 出力
 	print "06. Output...\n" if $debug;
-	my $data_out = 
-		 kh_msg->get('gui_window::use_te_g->h_hukugo')
-		.','
-		.kh_msg->get('gui_window::use_te_g->h_score')
-		."\n"
-	;
-	$data_out = Encode::encode('shift-jis',$data_out);
-	
-	#"複合語,スコア\n";
+
+	my $target = $::project_obj->file_HukugoListTE;
+	use Excel::Writer::XLSX;
+	my $workbook  = Excel::Writer::XLSX->new($target);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
+	$worksheet->hide_gridlines(1);
+
+		my $font = '';
+	if ($] > 5.008){
+		$font = 'ＭＳ Ｐゴシック';
+	} else {
+		$font = 'MS PGothic';
+	}
+	#$workbook->{_formats}->[15]->set_properties( # cannot do this with Excel::Writer::XLSX
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
+	my $format_n = $workbook->add_format(         # 数値
+		num_format => '0',
+		size       => 11,
+		font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(         # 文字列
+		font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@'
+	);
+
+	# the first line
+	$worksheet->write_string(
+		0,
+		0,
+		kh_msg->get('gui_window::use_te_g->h_hukugo'),
+		$format_c
+	);
+	$worksheet->write_string(
+		0,
+		1,
+		kh_msg->get('gui_window::use_te_g->h_score'),
+		$format_c
+	);
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("
@@ -97,13 +133,26 @@ sub _run_from_morpho{
 		)
 	",1);
 
+	my $row = 1;
 	foreach (@noun_list) {
 		next unless $_->[0] =~ / /; # 単名詞はパス
 
+		#$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
+		$worksheet->write_string(
+			$row,
+			0,
+			$_->[0],
+			$format_c
+		);
+		$worksheet->write_number(
+			$row,
+			1,
+			$_->[1],
+			$format_n
+		);
+		++$row;
+		
 		my $q = mysql_exec->quote($_->[0]);
-		#print "$q ";
-
-		$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
 		mysql_exec->do("
 			INSERT INTO hukugo_te (name, num)
 			VALUES ($q, $_->[1])
@@ -111,16 +160,9 @@ sub _run_from_morpho{
 	}
 	print "\n";
 
+	$worksheet->freeze_panes(1, 0);
+	$workbook->close;
 
-	my $target_csv = $::project_obj->file_HukugoListTE;
-	open (OUT,">$target_csv") or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $target_csv
-		);
-	print OUT $data_out;
-	close (OUT);
-	
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n" if $debug;
 

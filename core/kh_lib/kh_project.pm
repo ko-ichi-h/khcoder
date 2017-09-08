@@ -868,14 +868,14 @@ sub file_TempExcel{
 }
 sub file_HukugoList{
 	my $self = shift;
-	my $list = $self->file_datadir.'_hl.csv';
+	my $list = $self->file_datadir.'_hl.xlsx';
 	$list = $::config_obj->os_path($list);
 	return $list;
 }
 
 sub file_HukugoListTE{
 	my $self = shift;
-	my $list = $self->file_datadir.'_hlte.csv';
+	my $list = $self->file_datadir.'_hlte.xlsx';
 	$list = $::config_obj->os_path($list);
 	return $list;
 }

@@ -187,14 +187,52 @@ sub run_from_morpho{
 			num int
 		)
 	",1);
-	use File::BOM;
-	open (F,'>:encoding(utf8):via(File::BOM)', $target) or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $target
-		);
-	print F "複合語,出現数\n";
+
+	use Excel::Writer::XLSX;
+	my $workbook  = Excel::Writer::XLSX->new($target);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
+	$worksheet->hide_gridlines(1);
 	
+	my $font = '';
+	if ($] > 5.008){
+		$font = 'ＭＳ Ｐゴシック';
+	} else {
+		$font = 'MS PGothic';
+	}
+	#$workbook->{_formats}->[15]->set_properties( # cannot do this with Excel::Writer::XLSX
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
+	my $format_n = $workbook->add_format(         # 数値
+		num_format => '0',
+		size       => 11,
+		font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(         # 文字列
+		font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@'
+	);
+
+	# the first line
+	$worksheet->write_string(
+		0,
+		0,
+		'複合語',
+		$format_c
+	);
+	$worksheet->write_string(
+		0,
+		1,
+		'出現数',
+		$format_c
+	);
+	
+	# body
 	my $oh = mysql_exec->select("
 		SELECT genkei, count(*) as hoge
 		FROM rowdata_h2
@@ -202,8 +240,8 @@ sub run_from_morpho{
 		ORDER BY hoge DESC
 	",1)->hundle;
 	
-	use kh_csv;
 	use Lingua::JA::Regular::Unicode qw(alnum_z2h);
+	my $row = 1;
 	while (my $i = $oh->fetch){
 		#print ".";
 		#my $tmp = Jcode->new($i->[0], 'euc')->tr('０-９','0-9');
@@ -211,15 +249,29 @@ sub run_from_morpho{
 		next if $tmp =~ /^(昭和)*(平成)*(\d+年)*(\d+月)*(\d+日)*(午前)*(午後)*(\d+時)*(\d+分)*(\d+秒)*$/o;   # 日付・時刻
 		next if $tmp =~ /^\d+$/o;    # 数値のみ
 		#print ",";
-		print F kh_csv->value_conv($i->[0]).",$i->[1]\n";
+		
+		$worksheet->write_string(
+			$row,
+			0,
+			$i->[0],
+			$format_c
+		);
+		$worksheet->write_number(
+			$row,
+			1,
+			$i->[1],
+			$format_n
+		);
+		
 		mysql_exec->do("
 			INSERT INTO hukugo (name, num) VALUES (\"$i->[0]\", $i->[1])
 		",1);
 		#print "!";
+		++$row;
 	}
-	close (F);
 	
-	#kh_jchar->to_sjis($target) if $::config_obj->os eq 'win32';
+	$worksheet->freeze_panes(1, 0);
+	$workbook->close;
 	
 	my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n";
