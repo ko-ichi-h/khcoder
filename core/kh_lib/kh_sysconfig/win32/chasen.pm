@@ -131,9 +131,7 @@ sub config_morph{
 	$temp2  = "(文法ファイル  \"$self->{dic_dir}\")\n";
 	$temp2 .= '(注釈 (("<" ">") (タグ)) )'."\n";
 	if ($self->{use_hukugo}){
-		my $hc = $self->hukugo_chasenrc;
-		$hc = Encode::encode('cp932', $hc) if utf8::is_utf8($hc);
-		$temp2 .= $hc;
+		$temp2 .= $self->hukugo_chasenrc;
 	}
 	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
