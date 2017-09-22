@@ -1331,6 +1331,27 @@ sub sqllog_file{
 #------------#
 #   その他   #
 
+sub color_universal_design{
+	my $self = shift;
+	my $new = shift;
+	
+	if (defined($new)) {
+		$self->{color_universal_design} = $new;
+	}
+	
+	unless ( defined($self->{color_universal_design}) ){
+		$self->{color_universal_design} = 1;
+	}
+	
+	return $self->{color_universal_design};
+}
+
+sub color_palette{
+	my $self = shift;
+	$self->{color_palette} = 'YlGnBu' unless defined($self->{color_palette});
+	return $self->{color_palette};
+}
+
 sub all_in_one_pack{
 	my $self = shift;
 	return $self->{all_in_one_pack};

@@ -55,6 +55,7 @@ gui_widget::mail_config:
     plot_size1:               'Default plot size:  long side'
     plot_size2:               '  short side'
     font_size:                'Dfault font size in plots: '
+    if_cud:                   'Color universal design'
 gui_widget::r_font:
     bold:                     Bold
     font_size:                'Font size:'
@@ -1089,7 +1090,7 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "common settings"
     select_1:                  "Please select at least 1 code"
     color_rsd:                 "Visualize standardized residuals by color"
-    col1:                      "Color (Spc)"
+    col1:                      "Color"
     col2:                      "Color (CM)"
     gray:                      "Gray"
     color_fix:                 "Fixed color scale: "

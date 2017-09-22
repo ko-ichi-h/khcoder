@@ -75,6 +75,24 @@ sub new{
 	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_s} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 
+	if ( length($self->{command_f}) ) {
+		$self->{command_f} =
+			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
+			.$self->{command_f}
+		;
+	}
+	if ( length($self->{command_a}) ) {
+		$self->{command_a} =
+			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
+			.$self->{command_a}
+		;
+	}
+	if ( length($self->{command_s}) ) {
+		$self->{command_s} =
+			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
+			.$self->{command_s}
+		;
+	}
 		# command_sはプロットの保存専用コード。
 		# 現在はMDSでのみ使用。
 

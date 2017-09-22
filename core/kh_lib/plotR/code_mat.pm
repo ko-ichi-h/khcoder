@@ -227,7 +227,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				)
 			)
 		}
-		else if (color_gry == -1){
+		else if (color_universal_design == 0){
 			p <- p + scale_fill_gradientn(
 				colours = cm.colors(99),
 				limits = c( limv * -1, limv ),

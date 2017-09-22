@@ -378,13 +378,14 @@ sub ok{
 		$self->gui_jg( $self->{entry_freeling}->get() )
 	);
 	
-	$::config_obj->use_heap(    $self->{mail_obj}->if_heap );
-	$::config_obj->mail_if(     $self->{mail_obj}->if      );
-	$::config_obj->mail_smtp(   $self->{mail_obj}->smtp    );
-	$::config_obj->mail_from(   $self->{mail_obj}->from    );
-	$::config_obj->mail_to(     $self->{mail_obj}->to      );
-	$::config_obj->font_main(   $self->{mail_obj}->font    );
-
+	$::config_obj->use_heap(               $self->{mail_obj}->if_heap );
+	$::config_obj->mail_if(                $self->{mail_obj}->if      );
+	$::config_obj->mail_smtp(              $self->{mail_obj}->smtp    );
+	$::config_obj->mail_from(              $self->{mail_obj}->from    );
+	$::config_obj->mail_to(                $self->{mail_obj}->to      );
+	$::config_obj->font_main(              $self->{mail_obj}->font    );
+	$::config_obj->color_universal_design( $self->{mail_obj}->cud     );
+	
 	$::config_obj->plot_size_words( $self->{mail_obj}->plot_size1 );
 	$::config_obj->plot_size_codes( $self->{mail_obj}->plot_size2 );
 	$::config_obj->plot_font_size(  $self->{mail_obj}->plot_font  );

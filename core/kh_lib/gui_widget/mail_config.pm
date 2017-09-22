@@ -109,6 +109,12 @@ sub _new{
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 
+	$self->{check_cud} = $lf->Checkbutton(
+		-variable => \$self->{if_cud},
+		-text     => kh_msg->get('if_cud'), # color universal design
+		-font     => "TKFN",
+	)->pack(-anchor => 'w');
+	
 	$self->{check} = $lf->Checkbutton(
 		-variable => \$self->{if_mail},
 		-text     => kh_msg->get('sendmail'),#$gui_window->gui_jchar('前処理の完了をメールで通知する'),
@@ -171,6 +177,10 @@ sub fill_in{
 	
 	if ($::config_obj->use_heap){
 		$self->{check2}->select;
+	}
+	
+	if ($::config_obj->color_universal_design){
+		$self->{check_cud}->select;
 	}
 	
 	if ($::config_obj->mail_if){
@@ -277,5 +287,10 @@ sub font{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{e_font}->get );
 }
+sub cud{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{if_cud} );
+}
+
 
 1;

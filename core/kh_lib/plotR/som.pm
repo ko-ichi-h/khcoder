@@ -476,7 +476,15 @@ if ( plot_mode == "umat" ){
 	
 	dist_u <- dist_u - min(dist_u)
 	dist_u <- round( dist_u / max(dist_u) * 100 ) + 1
-	color_act <- cm.colors(101)[dist_u]
+	
+	if (color_universal_design == 0){
+		color_act <- cm.colors(101)[dist_u]
+	} else {
+		library(RColorBrewer)
+		col_seed <- rev(brewer.pal(9, "RdYlBu"))
+		myPalette <- colorRampPalette( col_seed )
+		color_act <- myPalette(101)[dist_u]
+	}
 	
 	color_line <- "gray70"
 	if_points  <- 1

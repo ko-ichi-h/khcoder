@@ -355,11 +355,11 @@ sub innner{
 		-value    => 0,
 	)->pack(-side => 'left');
 
-	$self->{widget_color_col2} = $f_f4->Radiobutton( # カラー2
-		-text     => kh_msg->get('col2'),
-		-variable => \$self->{color_gry},
-		-value    => -1,
-	)->pack(-side => 'left');
+	#$self->{widget_color_col2} = $f_f4->Radiobutton( # カラー2
+	#	-text     => kh_msg->get('col2'),
+	#	-variable => \$self->{color_gry},
+	#	-value    => -1,
+	#)->pack(-side => 'left');
 
 	$self->{widget_color_gry} = $f_f4->Radiobutton( # グレー
 		-text     => kh_msg->get('gray'),
@@ -443,11 +443,11 @@ sub color_widgets{
 	
 	if ($self->{color_rsd}){
 		$self->{widget_color_col1}->configure(-state => 'normal');
-		$self->{widget_color_col2}->configure(-state => 'normal');
+		#$self->{widget_color_col2}->configure(-state => 'normal');
 		$self->{widget_color_gry}->configure(-state => 'normal');
 	} else {
 		$self->{widget_color_col1}->configure(-state => 'disabled');
-		$self->{widget_color_col2}->configure(-state => 'disabled');
+		#$self->{widget_color_col2}->configure(-state => 'disabled');
 		$self->{widget_color_gry}->configure(-state => 'disabled');
 	}
 	

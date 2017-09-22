@@ -1521,9 +1521,17 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	if (gray_scale == 1){
 		myPalette <- gray( seq(1, 0.4, length.out=100) )
 	} else {
-		#library(RColorBrewer)
-		#myPalette <- colorRampPalette(rev(brewer.pal(5, "RdYlBu")))(100) #Spectral
-		myPalette <- cm.colors(99)
+		if (color_universal_design == 0){
+			myPalette <- cm.colors(99)
+		} else {
+			library(RColorBrewer)
+
+			col_seed <- brewer.pal(8, "'.$::config_obj->color_palette.'")
+			col_seed <- col_seed[1:6]
+			
+			myPalette <- colorRampPalette( col_seed )
+			myPalette <- myPalette(99)
+		}
 	}
 
 	p <- p + scale_color_gradientn(
