@@ -1525,10 +1525,8 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 			myPalette <- cm.colors(99)
 		} else {
 			library(RColorBrewer)
+			col_seed <- '.$::config_obj->color_palette.'
 
-			col_seed <- brewer.pal(8, "'.$::config_obj->color_palette.'")
-			col_seed <- col_seed[1:6]
-			
 			myPalette <- colorRampPalette( col_seed )
 			myPalette <- myPalette(99)
 		}

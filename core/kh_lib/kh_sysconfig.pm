@@ -1348,7 +1348,26 @@ sub color_universal_design{
 
 sub color_palette{
 	my $self = shift;
-	$self->{color_palette} = 'YlGnBu' unless defined($self->{color_palette});
+	
+	if ($self->{color_palette}) {
+		# Check if we can execute the string as R command
+		if (
+			$self->{color_palette} =~
+			/(rev\(|)brewer.pal\(([0-9]+),"([a-zA-Z]+)"\)\[([0-9]+):([0-9]+)\](\)|)/
+		){
+			# OK
+			#print "color: $2, $3, $4, $5\n";
+		} else {
+			# NG
+			print "color palette: undef";
+			$self->{color_palette} = undef;
+		}
+	}
+	
+	$self->{color_palette} = 'brewer.pal(8,"YlGnBu")[1:6]'
+		unless defined($self->{color_palette})
+	;
+	
 	return $self->{color_palette};
 }
 
