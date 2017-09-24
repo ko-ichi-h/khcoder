@@ -26,9 +26,44 @@ sub _new{
 		if ( $self->{r_cmd} =~ /\nscaling <\- "([a-z]+)"\n/ ){
 			$self->{scale_opt} = $1;
 		}
+		if ( $self->{r_cmd} =~ /\nzoom_factor <\- ([0-9\.]+)\n/ ){
+			$self->{check_zoom} = $1;
+		}
 		
 		$self->{r_cmd} = undef;
 	}
+
+	my $fz  = $win->Frame()->pack(-fill => 'x', -pady => 1);
+
+	$fz->Checkbutton(
+		-text     => kh_msg->get('zoom'),
+		-variable => \$self->{check_zoom},
+		-command  => sub{$self->refresh_zoom;}
+	)->pack(
+		-side => 'left'
+	);
+
+	$self->{label_zoom} = $fz->Label(
+		-text => kh_msg->get('zoom_factor'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	
+	$self->{entry_zoom} = $fz->Entry(
+		-font       => "TKFN",
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	
+	if ($self->{check_zoom}){
+		$self->{entry_zoom}->insert(0,$self->{check_zoom});
+		$self->{check_zoom} = 1;
+	} else {
+		$self->{entry_zoom}->insert(0,3);
+	}
+	$self->{entry_zoom}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_zoom});
+	gui_window->disabled_entry_configure($self->{entry_zoom});
 
 	my $fd  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 	$fd->Label(
@@ -75,7 +110,6 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_d_y});
 
-
 	my $fs  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 
 	$fs->Label(
@@ -83,7 +117,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	gui_widget::optmenu->open(
+	$self->{sc_obj} = gui_widget::optmenu->open(
 		parent  => $fs,
 		pack    => {-side => 'left'},
 		options =>
@@ -105,9 +139,23 @@ sub _new{
 	)->pack(
 		-side => 'left'
 	);
-
+	
+	$self->refresh_zoom;
 	$self->{win_obj} = $win;
 	return $self;
+}
+
+sub refresh_zoom{
+	my $self = shift;
+	if ($self->{check_zoom}) {
+		$self->{label_zoom}->configure(-state, 'normal');
+		$self->{entry_zoom}->configure(-state, 'normal');
+		$self->{sc_obj}->{win_obj}->configure(-state, 'disable');
+	} else {
+		$self->{label_zoom}->configure(-state, 'disable');
+		$self->{entry_zoom}->configure(-state, 'disable');
+		$self->{sc_obj}->{win_obj}->configure(-state, 'normal');
+	}
 }
 
 #----------------------#
@@ -120,7 +168,17 @@ sub params{
 		d_y         => $self->y,
 		show_origin => $self->origin,
 		scaling     => $self->scale,
+		zoom        => $self->zoom,
 	);
+}
+
+sub zoom{
+	my $self = shift;
+	if ( $self->{check_zoom} ){
+		return gui_window->gui_jgn( $self->{entry_zoom}->get );
+	} else {
+		return 0;
+	}
 }
 
 sub x{

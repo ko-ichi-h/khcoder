@@ -802,6 +802,7 @@ sub make_plot{
 	$r_command .= "text_font <- $args{font_bold}\n";
 
 	$r_command .= "r_max <- 150\n";
+	$r_command .= "zoom_factor <- $args{zoom}\n";
 	$r_command .= "d_x <- $args{d_x}\n";
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
@@ -992,6 +993,8 @@ plot(
 	ylab=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep=""),
 	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
 	bty = "l",
+	xaxp=axp,
+	yaxp=axp,
 	asp = asp
 )
 
@@ -1134,6 +1137,47 @@ if ( (flt > 0) && (flt < nrow(c$cscore)) ){
 pch_cex <- 1
 if ( v_count > 1 ){
 	pch_cex <- 1.25
+}
+
+# Zooming area near the origin
+
+log_conv <- function(x, y, a){
+	log_base <- 10
+	
+	# Find Cosine theta
+	OA  <- sqrt( x^2 + y^2 )
+	OA[OA == 0] <- 0.00000000000000000001 * max(OA)
+	Cos <- x / OA
+	
+	# Convert OA
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+
+	# Find OB
+	OB <- Cos * OA
+	
+	# Find AB
+	AB = sqrt( OA^2 - OB^2 )
+	AB[y < 0] <- AB[y < 0] * -1
+	
+	cbind(OB, AB)
+}
+
+axp <- NULL
+if (zoom_factor >= 1 ){
+	scaling <- "none"
+	axp <- c(0,0,1)
+
+	r <- log_conv( c$cscore[,d_x], c$cscore[,d_y], zoom_factor )
+	c$cscore[,d_x] <- r[,1]
+	c$cscore[,d_y] <- r[,2]
+
+	r <- log_conv( c$rscore[,d_x], c$rscore[,d_y], zoom_factor )
+	c$rscore[,d_x] <- r[,1]
+	c$rscore[,d_y] <- r[,2]
 }
 
 # Scaling
@@ -1582,8 +1626,13 @@ if (show_origin == 1){
 		ylims <- lim_chk$layout$panel_ranges[[1]]$x.range
 	}
 	
-	g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
-	g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0), breaks=c(0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0), breaks=c(0) )
+	} else {
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
+	}
 	
 	m_x <- (xlims[2] - xlims[1]) * 0.03
 	m_y <- (ylims[2] - ylims[1]) * 0.03
@@ -1600,6 +1649,11 @@ if (show_origin == 1){
 		linetype="dashed",
 		colour=line_color
 	)
+} else {
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( breaks=c(0) )
+		g <- g + scale_y_continuous( breaks=c(0) )
+	} 
 }
 
 print(g)
