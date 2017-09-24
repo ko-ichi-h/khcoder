@@ -70,7 +70,8 @@ gui_widget::r_xy:
     none:                     none
     sym:                      symmetric
     symbi:                    symmetric biplot
-    zoom:                     Enlarge area near the origin: Factor
+    zoom:                     Enlarge area near the origin:
+    zoom_factor:              Factor
 gui_widget::words:
     by_df:                    Filter words by Document Frequency
     by_pos:                   Filter words by POS
