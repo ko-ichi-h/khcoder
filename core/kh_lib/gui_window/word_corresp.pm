@@ -1146,7 +1146,7 @@ log_conv <- function(x, y, a){
 	
 	# Find Cosine theta
 	OA  <- sqrt( x^2 + y^2 )
-	OA[OA == 0] <- 0.00000000000000000001 * max(OA)
+	OA[OA == 0] <- 0.00000000000000000001
 	Cos <- x / OA
 	
 	# Convert OA
