@@ -363,6 +363,9 @@ sub gui_jgn{ # 入力された数値の変換
 		return $char;
 	} else {
 		#warn "No utf8 flag: $char\n";
+		unless ( $reserve_rn ){ # ATOK対策
+			$char =~ s/\x0D|\x0A//g;
+		}
 		return $char;
 	}
 }

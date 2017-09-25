@@ -479,17 +479,31 @@ if ( plot_mode == "umat" ){
 	
 	if (color_universal_design == 0){
 		color_act <- cm.colors(101)[dist_u]
+		color_line <- "gray70"
+		color_cls  <- "gray45"
 	} else {
 		library(RColorBrewer)
-		col_seed <- rev(brewer.pal(9, "RdYlBu"))
-		myPalette <- colorRampPalette( col_seed )
-		color_act <- myPalette(101)[dist_u]
+		if (T){
+			col_seed <- brewer.pal(9, "GnBu")
+			myPalette <- colorRampPalette( col_seed )
+			color_act <- myPalette(101)[dist_u]
+			color_act <- adjustcolor(color_act, alpha=0.8)
+			color_line <- "white"
+			color_cls  <- "gray30"
+		} else {
+			col_seed <- rev(brewer.pal(9, "RdYlBu"))
+			myPalette <- colorRampPalette( col_seed )
+			color_act <- myPalette(101)[dist_u]
+			color_act <- adjustcolor(color_act, alpha=0.8)
+			color_line <- "gray50"
+			color_cls  <- "gray25"
+		}
 	}
 	
-	color_line <- "gray70"
+	#color_line <- "gray70"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray45"
+	#color_cls  <- "gray45"
 	color_ptf  <- "white"
 }
 
