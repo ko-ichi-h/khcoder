@@ -62,6 +62,8 @@ sub _new{
 	}
 	$self->{entry_zoom}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_zoom}->bind("<KP_Enter>",  $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_zoom});
 	gui_window->disabled_entry_configure($self->{entry_zoom});
 
@@ -93,6 +95,8 @@ sub _new{
 	$self->{entry_d_x}->insert(0,$self->{x});
 	$self->{entry_d_x}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_d_x}->bind("<KP_Enter>",  $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
@@ -107,6 +111,8 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 	$self->{entry_d_y}->insert(0,$self->{y});
 	$self->{entry_d_y}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	$self->{entry_d_y}->bind("<KP_Enter>",  $self->{command})
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_d_y});
 
