@@ -1613,7 +1613,7 @@ if (com_method == "cor"){ # cor
 
 p <- p + theme(
 	legend.title    = element_text(family="sans", face="bold",  size=11, angle=0),
-	legend.text     = element_text(family="sans", face="plain", size=11, angle=0)
+	legend.text     = element_text(face="plain", size=11, angle=0)
 )
 
 
