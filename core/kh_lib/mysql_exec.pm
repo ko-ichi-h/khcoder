@@ -77,9 +77,11 @@ sub connect_db{
 # DBへの接続テスト
 sub connection_test{
 	# コンソールへのエラー出力抑制
-	my $temp_file = 'temp.txt';
+	my $temp_file = 'config/temp.txt';
+	my $n = 0;
 	while (-e $temp_file){
-		$temp_file .= '.tmp';
+		$temp_file .= "config/temp$n.txt";
+		++$n;
 	}
 	open (STDERR,">$temp_file");
 	
