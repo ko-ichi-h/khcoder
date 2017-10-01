@@ -1115,7 +1115,8 @@ if (com_method == "cor"){ # cor
 		guide = guide_colourbar(
 			title = "Correlation:\n",
 			title.theme = element_text(
-				#face="bold",
+				family="sans",
+				face="bold",
 				size=11,
 				lineheight=0.4,
 				angle=0
@@ -1541,7 +1542,8 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 		guide = guide_colourbar(
 			title = "Centrality:\n",
 			title.theme = element_text(
-				#face="bold",
+				family="sans",
+				face="bold",
 				size=11,
 				lineheight=0.4,
 				angle=0
@@ -1594,7 +1596,9 @@ if ( com_method == "none" || com_method == "twomode_g"){
 #---------------------#
 #  Final adjustments  #
 
-p <- p + theme_blank(base_family=font_fam)
+p <- p + theme_blank(
+	base_family  = font_fam
+)
 
 if (com_method == "cor"){ # cor
 	if ( cor_var_darker == 1 ){
@@ -1608,9 +1612,10 @@ if (com_method == "cor"){ # cor
 }
 
 p <- p + theme(
-	legend.title    = element_text(face="bold",  size=11, angle=0),
-	legend.text     = element_text(face="plain", size=11, angle=0)
+	legend.title    = element_text(family="sans", face="bold",  size=11, angle=0),
+	legend.text     = element_text(family="sans", face="plain", size=11, angle=0)
 )
+
 
 # make a small space between the graph and the legend
 if (smaller_nodes == 1){
