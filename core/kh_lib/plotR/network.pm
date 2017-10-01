@@ -1115,7 +1115,7 @@ if (com_method == "cor"){ # cor
 		guide = guide_colourbar(
 			title = "Correlation:\n",
 			title.theme = element_text(
-				face="bold",
+				#face="bold",
 				size=11,
 				lineheight=0.4,
 				angle=0
@@ -1541,7 +1541,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 		guide = guide_colourbar(
 			title = "Centrality:\n",
 			title.theme = element_text(
-				face="bold",
+				#face="bold",
 				size=11,
 				lineheight=0.4,
 				angle=0
