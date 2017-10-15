@@ -538,6 +538,7 @@ gui_window::word_list:
     type:                     'Type of the list:'
     win_title:                'Options: Frequency List'
     xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
     and:                      AND
     back:                     Backward Match

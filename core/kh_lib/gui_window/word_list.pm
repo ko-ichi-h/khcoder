@@ -128,7 +128,7 @@ sub _new{
 	)->pack(-side => 'left', -padx => 4);
 
 	$f3->Radiobutton(
-		-text             => kh_msg->get('xls'),#$self->gui_jchar('Excel (*.xls)'),
+		-text             => kh_msg->get('xlsx'),#$self->gui_jchar('Excel (*.xls)'),
 		-font             => "TKFN",
 		-variable         => \$radio_ftype,
 		-value            => 'xls',

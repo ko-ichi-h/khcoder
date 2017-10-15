@@ -538,6 +538,7 @@ gui_window::word_list:
     type:                     抽出語リストの形式：
     win_title:                '抽出語リスト - オプション'
     xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
     and:                      AND検索
     back:                     後方一致

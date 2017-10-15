@@ -244,37 +244,32 @@ sub _out_file_xls{
 	#----------------#
 	#   出力の準備   #
 
-	use Spreadsheet::WriteExcel;
-	use Unicode::String qw(utf8 utf16);
-
-	my $f    = $::project_obj->file_TempExcel;
-	my $workbook  = Spreadsheet::WriteExcel->new($f);
-	my $worksheet = $workbook->add_worksheet(
-		utf8( 'シート1' )->utf16,
-		1
-	);
+	use Excel::Writer::XLSX;
+	my $f = $::project_obj->file_TempExcelX;
+	my $workbook  = Excel::Writer::XLSX->new($f);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
 	$worksheet->hide_gridlines(1);
 
-	my $font = '';
-	if ($] > 5.008){
-		$font = 'ＭＳ Ｐゴシック';
-	} else {
-		$font = 'MS PGothic';
-	}
-	$workbook->{_formats}->[15]->set_properties(
-		font       => $font,
-		size       => 11,
-		valign     => 'vcenter',
-		align      => 'center',
-	);
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ＭＳ Ｐゴシック';
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties(
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
 	my $format_n = $workbook->add_format(         # 数値
 		num_format => '0',
 		size       => 11,
-		font       => $font,
+		#font       => $font,
 		align      => 'right',
 	);
 	my $format_c = $workbook->add_format(         # 文字列
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		align      => 'left',
 		num_format => '@'
@@ -285,13 +280,13 @@ sub _out_file_xls{
 
 	my $row = 0;
 	foreach my $i (@{$table_data}){
-		if ($row >= 65536 ){
-			gui_errormsg->open(
-				msg  => kh_msg->get('excel_limit'), # "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。",
-				type => 'msg',
-			);
-			last;
-		}
+		#if ($row >= 65536 ){
+		#	gui_errormsg->open(
+		#		msg  => kh_msg->get('excel_limit'), # "Excel形式ファイルの制限のため、65,536行を越える部分のデータは出力しませんでした。\nこの部分のデータを出力するには、CSV形式を選択してください。",
+		#		type => 'msg',
+		#	);
+		#	last;
+		#}
 		
 		my $col = 0;
 		foreach my $h (@{$i}){
@@ -347,47 +342,42 @@ sub _out_file_xls_150{
 	#----------------#
 	#   出力の準備   #
 
-	use Spreadsheet::WriteExcel;
-	use Unicode::String qw(utf8 utf16);
-
-	my $f    = $::project_obj->file_TempExcel;
-	my $workbook  = Spreadsheet::WriteExcel->new($f);
-	my $worksheet = $workbook->add_worksheet(
-		utf8( 'sheet 1' )->utf16,
-		1
-	);
+	use Excel::Writer::XLSX;
+	my $f = $::project_obj->file_TempExcelX;
+	my $workbook  = Excel::Writer::XLSX->new($f);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
 	$worksheet->hide_gridlines(1);
 
-	my $font = '';
-	if ($] > 5.008){
-		$font = 'ＭＳ Ｐゴシック'; # これは不味い？
-	} else {
-		$font = 'MS PGothic';
-	}
-	$workbook->{_formats}->[15]->set_properties(
-		font       => $font,
-		size       => 11,
-		valign     => 'vcenter',
-		align      => 'center',
-	);
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ＭＳ Ｐゴシック'; # これは不味い？
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties(
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
 
 	my $format_n = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 	);
 	my $format_t = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		top        => 1,
 	);
 	my $format_tb = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		top        => 1,
 		bottom     => 1,
 	);
 	my $format_b = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		bottom     => 1,
 	);
@@ -489,7 +479,7 @@ sub _make_wl_1c{
 		}
 	}
 	
-	# Sort Japanese words in the same order as prvious version (2.x)
+	# Sort Japanese words in the same order as previous version (2.x)
 	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
 		@data = sort { 
 			   $b->[2] <=> $a->[2]

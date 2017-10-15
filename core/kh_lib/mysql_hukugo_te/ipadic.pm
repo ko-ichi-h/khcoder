@@ -98,12 +98,12 @@ sub _run_from_morpho{
 	my $worksheet = $workbook->add_worksheet('Sheet1',1);
 	$worksheet->hide_gridlines(1);
 	
-	my $font = '';
-	if ($] > 5.008){
-		$font = 'ＭＳ Ｐゴシック';
-	} else {
-		$font = 'MS PGothic';
-	}
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ＭＳ Ｐゴシック';
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
 	#$workbook->{_formats}->[15]->set_properties( # cannot do this with Excel::Writer::XLSX
 	#	font       => $font,
 	#	size       => 11,
@@ -113,11 +113,11 @@ sub _run_from_morpho{
 	my $format_n = $workbook->add_format(         # 数値
 		num_format => '0',
 		size       => 11,
-		font       => $font,
+		#font       => $font,
 		align      => 'right',
 	);
 	my $format_c = $workbook->add_format(         # 文字列
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		align      => 'left',
 		num_format => '@'

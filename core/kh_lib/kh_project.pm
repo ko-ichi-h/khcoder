@@ -866,6 +866,18 @@ sub file_TempExcel{
 	my $f = $dir.'_temp'.$n.'.xls';
 	return $f;
 }
+sub file_TempExcelX{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+	
+	while (-e $dir.'_temp'.$n.'.xlsx'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.xlsx';
+	return $f;
+}
 sub file_HukugoList{
 	my $self = shift;
 	my $list = $self->file_datadir.'_hl.xlsx';
