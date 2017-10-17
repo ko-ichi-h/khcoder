@@ -1263,8 +1263,8 @@ sub rowtxt{
 		$h->finish;
 	}
 	
-	if ($values or $temp){
-		if ($temp){
+	if (length($values) or length($temp)){
+		if (length($temp)){
 			$temp =~ s/'/\\'/go;
 			$values .= "(\'$temp\'),";
 		}
