@@ -54,7 +54,7 @@ gui_widget::mail_config:
     display:                  Display
     plot_size1:               'Default plot size:  long side'
     plot_size2:               '  short side'
-    font_size:                'Dfault font size in plots: '
+    font_size:                'Default font size in plots: '
     if_cud:                   'Color universal design'
 gui_widget::r_font:
     bold:                     Bold
