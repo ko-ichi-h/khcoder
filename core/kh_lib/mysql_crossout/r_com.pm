@@ -35,16 +35,15 @@ sub out2{                               # length作製をする
 	
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
-	my $icode = 'UTF-8';
+	#my $icode = 'UTF-8';
+	#if (
+	#	$::project_obj->morpho_analyzer_lang eq 'ru'
+	#	&& $::config_obj->os eq 'win32'
+	#) {
+	#	$icode = 'cp1251';
+	#}
 	
-	if (
-		$::project_obj->morpho_analyzer_lang eq 'ru'
-		&& $::config_obj->os eq 'win32'
-	) {
-		$icode = 'cp1251';
-	}
-	
-	open my $fh, ">:encoding($icode)", $file or
+	open my $fh, ">:encoding(UTF-8)", $file or # $icode
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
@@ -151,7 +150,7 @@ sub out2{                               # length作製をする
 	# データ整形
 	if ($self->{rownames}){
 		if ($self->{midashi}){
-			$row_names = $self->clean_up($row_names);
+			$row_names = kh_r_plot->escape_unicode($row_names);
 			print $fh "row.names(d) <- c($row_names)\n";
 		} else {
 			print $fh "row.names(d) <- d[,1]\n";
@@ -169,7 +168,7 @@ sub out2{                               # length作製をする
 	}
 	chop $colnames;
 	$colnames .= ")\n";
-	$colnames = $self->clean_up($colnames);
+	$colnames = kh_r_plot->escape_unicode($colnames);
 	print $fh $colnames;
 
 	chop $length;
@@ -182,11 +181,14 @@ sub out2{                               # length作製をする
 
 	# Rコマンド
 	$file = $::config_obj->uni_path($file);
-	if ($icode eq 'UTF-8') {
-		$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
-	} else {
-		$self->{r_command} = "source(\"$file\")\n";
-	}
+	$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
+	
+	#if ($icode eq 'UTF-8') {
+	#	$self->{r_command} = "source(\"$file\", encoding=\"UTF-8\")\n";
+	#}
+	#else { # for Russian on Win32
+	#	$self->{r_command} = "source(\"$file\")\n";
+	#}
 
 	return $self;
 }
@@ -318,39 +320,6 @@ sub make_list{
 	}
 	
 	return $self;
-}
-
-sub clean_up{
-	my $self = shift;
-	my $input= shift;
-	
-	
-	unless ($::config_obj->os eq 'win32') {
-		return $input;
-	}
-	
-	my %loc = (
-		'jp' => 'cp932',
-		'en' => 'cp1252',
-		'cn' => 'cp936',
-		'de' => 'cp1252',
-		'es' => 'cp1252',
-		'fr' => 'cp1252',
-		'it' => 'cp1252',
-		'nl' => 'cp1252',
-		'pt' => 'cp1252',
-		'kr' => 'cp949',
-		'ca' => 'cp1252',
-		'ru' => 'cp1251',
-		'sl' => 'cp1251',
-	);
-	
-	my $lang = $::project_obj->morpho_analyzer_lang;
-	$lang = $loc{$lang};
-	
-	my $encoded = Encode::encode($lang, $input, Encode::FB_HTMLCREF );
-	
-	return Encode::decode($lang, $encoded);
 }
 
 

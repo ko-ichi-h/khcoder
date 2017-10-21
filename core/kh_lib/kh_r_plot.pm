@@ -18,25 +18,6 @@ sub new{
 	my $self = \%args;
 	bless $self, $class;
 	
-	# Debug用出力 0
-	if ($::config_obj->r_plot_debug){
-		$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
-		my $file_debug = $self->{path}.'_0.r';
-		open (RDEBUG, '>encoding(utf8)', $file_debug) or 
-			gui_errormsg->open(
-				type    => 'file',
-				thefile => $file_debug,
-			)
-		;
-		print RDEBUG
-			"# command_f\n",
-			$self->{command_f},
-			"\n\n# command_a\n",
-			$self->{command_a}
-		;
-		close (RDEBUG)
-	}
-	
 	$self->{command_a} = '' unless defined( $self->{command_a} );
 	$self->{command_s} = '' unless defined( $self->{command_s} );
 	return undef unless $::config_obj->R;
@@ -57,7 +38,7 @@ sub new{
 	# コマンドから日本語コメントを削除
 	if (
 		   ($::config_obj->os eq 'win32')
-		&! ($::project_obj->morpho_analyzer_lang eq 'jp')
+		#&! ($::project_obj->morpho_analyzer_lang eq 'jp')
 	){
 		$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
 		$self->{command_f} =~ s/#.*?\p{Katakana}.*?\n/\n/go;
@@ -103,28 +84,7 @@ sub new{
 		$command = $self->{command_f};
 	}
 	
-	# Delete characters outside of the current locale (Win32)
-	if ($::config_obj->os eq 'win32') {
-		my %locwin = (
-			'jp' => 'cp932',
-			'en' => 'cp1252',
-			'cn' => 'cp936',
-			'de' => 'cp1252',
-			'es' => 'cp1252',
-			'fr' => 'cp1252',
-			'it' => 'cp1252',
-			'nl' => 'cp1252',
-			'pt' => 'cp1252',
-			'kr' => 'cp949',
-			'ca' => 'cp1252',
-			'ru' => 'cp1251',
-			'sl' => 'cp1251',
-		);
-		my $lang = $::project_obj->morpho_analyzer_lang;
-		$lang = $locwin{$lang};
-		$command = Encode::encode($lang, $command, sub{'?'} );
-		$command = Encode::decode($lang, $command);
-	}
+	$command = $self->escape_unicode($command);
 	
 	# Debug用出力 1
 	if ($::config_obj->r_plot_debug){
@@ -289,6 +249,43 @@ sub new{
 	#}
 	
 	return $self;
+}
+
+sub escape_unicode{
+	my $self = shift;
+	my $input = shift;
+	
+	if ($::config_obj->os eq 'win32') {
+		# Delete characters outside of the current locale (Win32)
+		if ($::project_obj) {
+			my %loc = (
+				'jp' => 'cp932',
+				'en' => 'cp1252',
+				'cn' => 'cp936',
+				'de' => 'cp1252',
+				'es' => 'cp1252',
+				'fr' => 'cp1252',
+				'it' => 'cp1252',
+				'nl' => 'cp1252',
+				'pt' => 'cp1252',
+				'kr' => 'cp949',
+				'ca' => 'cp1252',
+				'ru' => 'cp1251',
+				'sl' => 'cp1251',
+			);
+			my $lang = $::project_obj->morpho_analyzer_lang;
+			$lang = $loc{$lang};
+			my $encoded = Encode::encode($lang, $input, Encode::FB_HTMLCREF );
+			$input = Encode::decode($lang, $encoded);
+		}
+		
+		# Escape Unicode characaters
+		my $utf8 = Encode::encode('UTF-8', $input);
+		use Unicode::Escape;
+		return Unicode::Escape::escape($utf8);
+	} else {
+		return $input;
+	}
 }
 
 sub clear_env{
@@ -603,9 +600,9 @@ sub _save_emf{
 	);
 	$self->set_par;
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send($self->{command_s});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
 	} else {
-		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -657,9 +654,9 @@ sub _save_pdf{
 
 	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send($self->{command_s});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
 	} else {
-		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
 	}
 	$::config_obj->R->send('dev.off()');
 
@@ -726,9 +723,9 @@ sub _save_eps{
 
 	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send($self->{command_s});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
 	} else {
-		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -795,9 +792,9 @@ sub _save_png{
 
 	$self->set_par;
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send($self->{command_s});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
 	} else {
-		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -871,9 +868,9 @@ sub _save_svg{
 	}
 	
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send($self->{command_s});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
 	} else {
-		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -911,7 +908,7 @@ sub _save_r{
 	my $t = $self->{command_f};
 	
 	# SOMのための特殊処理
-	if ($t =~ /^load\(\"(.+)\"\)/){
+	if ($t =~ /\nload\(\"(.+)\"\)/){
 		my $file = $1;
 		$file = $::config_obj->os_path($file);
 		$file .= '_s';
@@ -928,7 +925,7 @@ sub _save_r{
 				$t0 .= $_;
 			}
 			close $fh;
-			$t =~ s/^load\(\"(.+)\"\)\n//;
+			$t =~ s/\nload\(\"(.+)\"\)\n/\n/;
 			$t = $t0."\n".$t;
 		}
 	}
@@ -968,6 +965,8 @@ sub _save_r{
 		close $fhr;
 		$t =~ s/source\(\"(.+)\"\)//;
 	}
+	
+	$t = $self->escape_unicode($t);
 	print OUTF $t,"\n";
 	close (OUTF);
 	
