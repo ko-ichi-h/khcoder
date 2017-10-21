@@ -87,7 +87,7 @@ sub run{
 	chop $t;
 	$t .= ")\n";
 	
-	$t = mysql_crossout::r_com->clean_up($t);
+	$t = kh_r_plot->escape_unicode($t);
 	
 	print $fh $t;
 	close ($fh);

@@ -28,7 +28,7 @@ sub finish{
 	}
 	
 	foreach my $i (@{$self->{wList}}){
-		$head .= kh_csv->value_conv($self->{wName}{$i}).',';
+		$head .= '"'.kh_csv->value_conv($self->{wName}{$i}).'",';
 	}
 	chop $head;
 	#if ($::config_obj->os eq 'win32'){
@@ -36,7 +36,7 @@ sub finish{
 	#}
 	
 	if ($self->{for_R}) {
-		$head = mysql_crossout::r_com->clean_up($head);
+		$head = kh_r_plot->escape_unicode($head);
 	}
 	
 	print OUTF "$head\n";
