@@ -1516,9 +1516,13 @@ sub font_pdf_current{
 sub font_plot_current{
 	my $self = shift;
 
-	# 中国語 / 韓国語プロジェクトを開いている時だけ中 / 韓フォントを返す
+	# 中・韓・露プロジェクトを開いている時だけ専用フォントを返す
 	if ($::project_obj) {
 		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'en') {
+			$lang = $::config_obj->msg_lang;
+		}
+		
 		if ($lang eq 'cn') {
 			return $self->font_plot_cn;
 		}

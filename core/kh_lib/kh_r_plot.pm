@@ -258,6 +258,7 @@ sub escape_unicode{
 	if ($::config_obj->os eq 'win32') {
 		# Delete characters outside of the current locale (Win32)
 		if ($::project_obj) {
+		#if (0) {
 			my %loc = (
 				'jp' => 'cp932',
 				'en' => 'cp1252',
@@ -274,6 +275,10 @@ sub escape_unicode{
 				'sl' => 'cp1251',
 			);
 			my $lang = $::project_obj->morpho_analyzer_lang;
+			if ($lang eq 'en') {
+				$lang = $::config_obj->msg_lang;
+			}
+			
 			$lang = $loc{$lang};
 			my $encoded = Encode::encode($lang, $input, Encode::FB_HTMLCREF );
 			$input = Encode::decode($lang, $encoded);
