@@ -245,7 +245,7 @@ gui_window::project_edit:
     memo:                     説明（メモ）：
     target_char_code:         分析対象ファイルの文字コード：
     target_file:              分析対象ファイル：
-    win_title:                説明（メモ）の編集
+    win_title:                プロジェクトの編集
 gui_window::project_new:
     auto_detect:              自動判別
     browse_target:            分析対象ファイルを選択してください

@@ -65,30 +65,47 @@ sub _new{
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->delete;}
-	)->pack(-side => 'left',-padx => 2,-pady => 1);
+	)->pack(-side => 'left',-padx => 2,-pady => 2);
+
+	$few->Button(
+		-text => kh_msg->gget('cancel'),
+		#-padx => 3,
+		-font => "TKFN",
+		-width => 8,
+		-command => sub{$self->close;}
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
+	
+	my $b3 = $few->Button(
+		-text => kh_msg->get('open'),#$self->gui_jchar('開く'),
+		#-padx => 3,
+		-font => "TKFN",
+		-width => 8,
+		-command => sub{$self->_open;}
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
+
+	$few->Label(
+		-text => '    '
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
+
 	my $b2 = $few->Button(
 		-text => kh_msg->get('edit'),#$self->gui_jchar('編集'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->edit;}
-	)->pack(-side => 'left',-pady => 1);
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
+	
 	$few->Button(
 		-text => kh_msg->get('new'),#$self->gui_jchar('新規'),
-		-padx => 2,
+		#-padx => 2,
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{
 			$self->close;
 			gui_window::project_new->open;
 		}
-	)->pack(-side => 'left',-padx => 3,,-pady => 1);
-	my $b3 = $few->Button(
-		-text => kh_msg->get('open'),#$self->gui_jchar('開く'),
-		-padx => 3,
-		-font => "TKFN",
-		-width => 8,
-		-command => sub{$self->_open;}
-	)->pack(-anchor => 'w',-side => 'right',-padx => 2,,-pady => 1);
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
+	
+	
 	$self->{g_buttons} = [$b1,$b2,$b3];
 	
 	$self->refresh;

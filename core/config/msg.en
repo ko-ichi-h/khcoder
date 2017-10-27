@@ -245,7 +245,7 @@ gui_window::project_edit:
     memo:                     'Memo:'
     target_char_code:         'Encoding of the target file:'
     target_file:              'The Target File:'
-    win_title:                New Project
+    win_title:                Edit Project
 gui_window::project_new:
     auto_detect:              Auto detect
     browse_target:            Please select the target text File
