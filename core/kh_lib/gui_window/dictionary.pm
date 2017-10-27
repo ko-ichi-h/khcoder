@@ -440,7 +440,7 @@ sub save{
 				$self->{ff_stop_entry}->get
 			)
 		);
-		
+
 		unless (-e $file){
 			gui_errormsg->open(
 				msg    => kh_msg->get('file_error')."\n$file",

@@ -132,7 +132,7 @@ sub read_file_st{
 	my $self = shift;
 
 	if ( $self->{words_st_file_chk} ){
-		unless (-e $self->{words_st_file_chk} ){
+		unless (-e $self->{words_st_file} ){
 			gui_errormsg->open(
 				type => 'msg',
 				msg => 'cannot open file: '.$self->{words_st_file_chk}
