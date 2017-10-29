@@ -503,6 +503,10 @@ sub save{
 		$path .= ".csv";
 		$self->_save_csv($path);
 	}
+	elsif ($target_os_path =~ /\.html$/i){
+		$path .= ".html";
+		$self->_save_html($path);
+	}
 	else {
 		warn "The file type is not supported yet:\n$target_os_path\n";
 	}

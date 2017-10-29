@@ -5,6 +5,33 @@ use base qw(kh_r_plot);
 use strict;
 use utf8;
 
+# Experimental!
+sub _save_html{
+	my $self = shift;
+	my $path = shift;
+
+	my $temp_img = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name}.'.tmp';
+
+	# open dvice
+	$::config_obj->R->send("
+		if ( exists(\"Cairo\") ){
+			Cairo(width=640, height=640, unit=\"px\", file=\"$temp_img\", type=\"png\", bg=\"white\")
+		} else {
+			png(\"$temp_img\", width=640, height=480, unit=\"px\")
+		}
+	");
+	$self->set_par;
+	$::config_obj->R->send($self->{command_f});
+	$::config_obj->R->send('dev.off()');
+	
+	# run save command
+	my $r_command = &r_command_html;
+	$r_command .= "saveNetwork(d3net, \"$path\", selfcontained = T)";
+	$::config_obj->R->send($r_command);
+	
+	return 1;
+}
+
 sub _save_net{
 	my $self = shift;
 	my $path = shift;
@@ -113,6 +140,41 @@ sub _save_graphml{
 	}
 
 	return 1;
+}
+
+# for HTML
+sub r_command_html{
+	return '
+
+library(networkD3)
+
+com <- fastgreedy.community(n2, merges=TRUE, modularity=TRUE)
+d3 <- igraph_to_networkD3(n2, as.vector( membership(com) ))
+
+d3$nodes$name <- colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
+d3$nodes$size <- freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
+
+d3net <- forceNetwork(
+	Links=d3$links,
+	Nodes=d3$nodes,
+	Source="source",
+	Target="target",
+	NodeID="name",
+	Group="group",
+	#Nodesize="size",
+	zoom=T,
+	opacityNoHover=10,
+	opacity = 10,
+	legend=F,
+	fontSize=12,
+	linkDistance = 40,
+	charge = -20,
+	#height=640,
+	#width=640
+	colourScale = JS("d3.scaleOrdinal(d3.schemeCategory10);")
+)
+
+';
 }
 
 # for Pajeck

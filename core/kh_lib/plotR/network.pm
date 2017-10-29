@@ -422,9 +422,14 @@ if ( exists("com_method") ){
 }
 
 # Make a graph
+# For igraph > 1.0.0
 library(igraph)
 new_igraph <- 0
-if (as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) ) > 5){
+igraph_ver <- (
+	  as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 1,1) ) * 10
+	+ as.numeric( substr(sessionInfo()$otherPkgs$igraph$Version, 3,3) )
+)
+if ( igraph_ver > 5){
 	new_igraph <- 1
 }
 
@@ -548,31 +553,40 @@ if (com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		}
 		return( trunc(length( m ) / 2) )
 	}
-
+	# For igraph > 1.0.0
 	if (com_method == "com-b"){                   # Betweenness
 		com   <- edge.betweenness.community(n2, directed=F)    
-		com_m <- community.to.membership(
-			n2, com$merges, merge_step(n2,com$merges)
-		)
-		com_m$membership <- com_m$membership + new_igraph
+		if (igraph_ver < 10){
+			com_m <- community.to.membership(
+				n2, com$merges, merge_step(n2,com$merges)
+			)
+			com_m$membership <- com_m$membership + new_igraph
+		}
 	}
-
 	if (com_method == "com-g"){                   # Modularity
 		com   <- fastgreedy.community   (n2, merges=TRUE, modularity=TRUE)
-		com_m <- community.to.membership(
-			n2, com$merges, merge_step(n2,com$merges)
-		)
-		com_m$membership <- com_m$membership + new_igraph
+		if (igraph_ver < 10){
+			com_m <- community.to.membership(
+				n2, com$merges, merge_step(n2,com$merges)
+			)
+			com_m$membership <- com_m$membership + new_igraph
+		}
 	}
-
 	if (com_method == "com-r"){                   # Random walks
 		com   <-  walktrap.community(
 			n2,
 			weights=igraph::get.edge.attribute(n2, "weight")
 		)
+		if (igraph_ver < 10){
+			com_m <- NULL
+			com_m$membership <- com$membership
+			com_m$csize      <- table(com$membership)
+		}
+	}
+	if (igraph_ver >= 10){
 		com_m <- NULL
-		com_m$membership <- com$membership
-		com_m$csize      <- table(com$membership)
+		com_m$membership <- as.vector( membership(com) )
+		com_m$csize      <- table(com_m$membership)
 	}
 
 	# Configure Edges
@@ -726,18 +740,37 @@ if (
 	   (com_method == "twomode_c" || com_method == "twomode_g")
 	&& ( igraph::is.connected(n2) )
 ){
-	lay_f <- layout.kamada.kawai(
-		n2,
-		start   = lay,
-		weights = igraph::get.edge.attribute(n2, "weight")
-	)
+	# For igraph > 1.0.0
+	if (igraph_ver >= 10){
+		lay_f <- layout.kamada.kawai(
+			n2,
+			#coords   = lay,
+			weights = igraph::get.edge.attribute(n2, "weight")
+		)
+	} else {
+		lay_f <- layout.kamada.kawai(
+			n2,
+			start   = lay,
+			weights = igraph::get.edge.attribute(n2, "weight")
+		)
+	}
 } else {
-	lay_f <- layout.fruchterman.reingold(
-		n2,
-		start   = lay,
-		niter   = vcount(n2) * 512,
-		weights = igraph::get.edge.attribute(n2, "weight")
-	)
+	# For igraph > 1.0.0
+	if (igraph_ver >= 10){
+		lay_f <- layout.fruchterman.reingold(
+			n2,
+			#coords   = lay,
+			niter   = vcount(n2) * 512,
+			weights = igraph::get.edge.attribute(n2, "weight")
+		)
+	} else {
+		lay_f <- layout.fruchterman.reingold(
+			n2,
+			start   = lay,
+			niter   = vcount(n2) * 512,
+			weights = igraph::get.edge.attribute(n2, "weight")
+		)
+	}
 }
 
 lay_f <- scale(lay_f,center=T, scale=F)
