@@ -297,6 +297,8 @@ sub clear_env{
 	#$::config_obj->R->send('print( ls() )');
 	#print "before: ", $::config_obj->R->read, "\n";
 
+	return 1 if $::config_obj->web_if;
+	
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->send("
 		the_list <- ls()

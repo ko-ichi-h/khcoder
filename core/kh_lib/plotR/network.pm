@@ -129,7 +129,8 @@ sub new{
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
-	} else {
+	}
+	elsif ($::config_obj->web_if == 0) {
 		$plots[0] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_1',
 			command_f =>
@@ -285,6 +286,20 @@ sub new{
 			)
 		);
 		return 0 unless $plots[$#plots];
+	} else { # For web if
+		$plots[5] = kh_r_plot::network->new(
+			name      => $args{plotwin_name}.'_6',
+			command_f =>
+				 $r_command
+				."\ncom_method <- \"com-g\"\n"
+				.$self->r_plot_cmd_p1
+				.$self->r_plot_cmd_p2
+				.$self->r_plot_cmd_p3
+				.$self->r_plot_cmd_p4,
+			width     => int( $args{plot_size} * $x_factor ),
+			height    => $args{plot_size},
+			font_size => $args{font_size},
+		) or return 0;
 	}
 	
 	#my $t1 = new Benchmark;

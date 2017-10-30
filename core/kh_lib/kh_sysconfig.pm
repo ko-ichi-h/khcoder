@@ -772,6 +772,19 @@ sub c_or_j{
 	}
 }
 
+sub web_if{
+	my $self = shift;
+	my $new = shift;
+	if (defined($new)){
+		$self->{web_if} = $new;
+	}
+
+	if (length($self->{web_if}) == 0) {
+		$self->{web_if} = 0;
+	}
+	return $self->{web_if};
+}
+
 sub last_lang{
 	my $self = shift;
 	my $new = shift;

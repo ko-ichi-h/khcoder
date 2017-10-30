@@ -10,19 +10,20 @@ sub _save_html{
 	my $self = shift;
 	my $path = shift;
 
-	my $temp_img = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name}.'.tmp';
-
 	# open dvice
-	$::config_obj->R->send("
-		if ( exists(\"Cairo\") ){
-			Cairo(width=640, height=640, unit=\"px\", file=\"$temp_img\", type=\"png\", bg=\"white\")
-		} else {
-			png(\"$temp_img\", width=640, height=480, unit=\"px\")
-		}
-	");
-	$self->set_par;
-	$::config_obj->R->send($self->{command_f});
-	$::config_obj->R->send('dev.off()');
+	unless ( $::config_obj->web_if ){
+		my $temp_img = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name}.'.tmp';
+		$::config_obj->R->send("
+			if ( exists(\"Cairo\") ){
+				Cairo(width=640, height=640, unit=\"px\", file=\"$temp_img\", type=\"png\", bg=\"white\")
+			} else {
+				png(\"$temp_img\", width=640, height=480, unit=\"px\")
+			}
+		");
+		$self->set_par;
+		$::config_obj->R->send($self->{command_f});
+		$::config_obj->R->send('dev.off()');
+	}
 	
 	# run save command
 	my $r_command = &r_command_html;
@@ -167,8 +168,9 @@ d3net <- forceNetwork(
 	opacity = 10,
 	legend=F,
 	fontSize=12,
-	linkDistance = 40,
-	charge = -20,
+	bounded=T,
+	linkDistance = 50,
+	charge = -130,
 	#height=640,
 	#width=640
 	colourScale = JS("d3.scaleOrdinal(d3.schemeCategory10);")
