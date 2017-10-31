@@ -115,7 +115,10 @@ sub connection_test{
 
 # 新規DBの作成
 sub create_new_db{
-	# DB名決定
+	my $class = shift;
+	my $file = shift;
+	
+	# Get DB List
 	my $drh = DBI->install_driver("mysql") or
 		gui_errormsg->open(type => 'mysql',sql=>'install_driver');
 	my @dbs = $drh->func($host,$port,$username,$password,'_ListDBs') or 
@@ -123,38 +126,71 @@ sub create_new_db{
 	my %dbs;
 	foreach my $i (@dbs){
 		$dbs{$i} = 1;
-		# print "$i\n";
 	}
-	my $n = 0;
-	while ( $dbs{"khc$n"} ){
-		++$n;
+	
+	# Prepare master DB (this happens only once)
+	unless ($dbs{khc_master}){
+		# create DB
+		my $dsn = 
+			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		my $dbh = DBI->connect($dsn,$username,$password)
+			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+		$dbh->do("
+			create database khc_master default character set utf8mb4
+		");
+		$dbh->disconnect;
+		
+		# create table
+		$dsn = 
+			"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
+		$dbh = DBI->connect($dsn,$username,$password)
+			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+		$dbh->do("
+			create table db_name(
+				id     int auto_increment primary key not null,
+				target varchar(10000)
+			)
+		");
+		
+		# insert dummy data
+		my $max = 0;
+		foreach my $i (@dbs){
+			if ( $i =~ /khc([0-9]+)/ ) {
+				if ($1 > $max) {
+					$max = $1;
+				}
+			}
+		}
+		for (my $i = 0; $i <= $max; ++$i){
+			$dbh->do("
+				insert into db_name (target) VALUES (\"dummy$i\")
+			");
+		}
+		$dbh->disconnect;
 	}
-	my $new_db_name = "khc$n";
-
-	# DB作成
+	
+	# Get new DB number
 	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	$file = $dbh->quote($file);
+	$dbh->do("
+		insert into db_name (target) VALUES ($file)
+	");
+	my $h = $dbh->prepare("select LAST_INSERT_ID()");
+	$h->execute;
+	my $n = $h->fetch or die("Failed to obtain new DB name!");
+	$h->finish;
+	$n = $n->[0];
 
-	# Check MySQL Ver.
-	my $t = $dbh->prepare("show variables like \"version\"");
-	$t->execute;
-	my $r = $t->fetch;
-	$t->finish;
-	$r = $r->[1] if $r;
-	#print "Connected to MySQL $r. Creating new DB...\n";
+	# Create new DB
+	my $new_db_name = "khc$n";
+	$dbh->do("
+		create database $new_db_name default character set utf8mb4
+	") or die("Failed to create new DB!");
 
-	my $sql = '';
-	$sql .= "create database $new_db_name";
-	$sql .= " default character set utf8mb4"; # if substr($r,0,3) >= 4.1;
-	$dbh->do($sql)
-		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
-
-#	$dbh->func("createdb", $new_db_name,$host,$username,$password,'admin')
-#		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
 	$dbh->disconnect;
-	
 	return $new_db_name;
 }
 

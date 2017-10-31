@@ -281,6 +281,7 @@ sub wnum{
 
 sub get_default_freq{
 	my $self = shift;
+	
 	my $target = shift;
 	
 	$self->{min_df} = 0 unless length($self->{min_df});
@@ -315,7 +316,9 @@ sub get_default_freq{
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 
+	# stage 1
 	my $cum = 0;
+	my ($words, $cut);
 	while (my $i = $h->fetch){
 		$cum += $i->[1]; # 累積
 		if ($cum >= $target) {
@@ -324,24 +327,40 @@ sub get_default_freq{
 			my $can_1 = $can_0 + 5;
 			
 			$self->{min} = $can_0;
-			my $dif_0 = $self->wnum() - $target;
+			my $words_0 = $self->wnum();
+			my $dif_0 = $words_0 - $target;
 			
 			$self->{min} = $can_1;
-			my $dif_1 = $target - $self->wnum();
+			my $words_1 = $self->wnum();
+			my $dif_1 = $target - $words_1;
 			
-			print "$can_0, $dif_0 ; $can_1, $dif_1\n";
+			print "stage 1: $can_0, $words_0 ; $can_1, $words_1\n";
 			
 			if ($dif_0 < $dif_1) {
-				return $can_0;
+				$cut = $can_0;
+				$words = $words_0;
+				last;
 			} else {
-				return $can_1
+				$cut = $can_1;
+				$words = $words_1;
+				last;
 			}
-			
 		}
-		
 	}
-
-	return 2;
+	
+	# stage 2
+	while ($words < $target / 3 * 2) {
+		--$cut;
+		$self->{min} = $cut;
+		$words = $self->wnum();
+		print "stage 2: $cut, $words\n";
+		if ($cut == 2) {
+			last;
+		}
+	}
+	
+	$cut = 2 if $cut < 2;
+	return $cut;
 }
 
 1;

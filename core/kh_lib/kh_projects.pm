@@ -201,8 +201,13 @@ sub delete{
 	#$sql = Jcode->new($sql)->euc;
 	$self->dbh->do($sql) or die;
 	
-	# MySQL DBを削除
+	# Delete MySQL DB
 	mysql_exec->drop_db($del->dbname);
+	
+	# Delete Working folder
+	use File::Path qw(remove_tree);
+	remove_tree( $del->dir_CoderData );
+	#print "removed: ".$del->dir_CoderData."\n";
 }
 
 

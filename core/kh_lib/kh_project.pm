@@ -25,7 +25,7 @@ sub new{
 
 sub prepare_db{
 	my $self   = shift;
-	$self->{dbname} = mysql_exec->create_new_db;
+	$self->{dbname} = mysql_exec->create_new_db($self->file_target);
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
 	$::project_obj = $self;
 	
