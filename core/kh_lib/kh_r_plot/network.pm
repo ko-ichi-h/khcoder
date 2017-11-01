@@ -5,7 +5,7 @@ use base qw(kh_r_plot);
 use strict;
 use utf8;
 
-# Experimental!
+# Experimental! Only for Web
 sub _save_html{
 	my $self = shift;
 	my $path = shift;
@@ -26,8 +26,12 @@ sub _save_html{
 	}
 	
 	# run save command
-	my $r_command = &r_command_html;
-	$r_command .= "saveNetwork(d3net, \"$path\", selfcontained = T)";
+	my $r_command = &r_command_html2;
+	$r_command .= "
+		zz <- file(\"$path\", \"w\", encoding=\"UTF-8\")
+		cat(net, file=zz)
+		close(zz)
+	";
 	$::config_obj->R->send($r_command);
 	
 	return 1;
@@ -143,7 +147,96 @@ sub _save_graphml{
 	return 1;
 }
 
-# for HTML
+
+sub r_command_html2{
+	my $t = <<'EOS';
+
+edges <- get.edgelist(n2,names=F)
+names <- colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
+group <- as.numeric( igraph::get.vertex.attribute(n2,"com") )
+col   <- 10
+
+group[is.na(group)] <- -1
+maxg <- max(group) + 1
+group[group==-1] <- maxg
+if (max(group) > 10){
+  col <- 20
+}
+
+net <- '<!DOCTYPE html>
+  <html>
+  <head>
+  <meta charset="utf-8"/>
+    <script src="/lib/htmlwidgets-0.9/htmlwidgets.js"></script>
+    <script src="/lib/d3-4.5.0/d3.min.js"></script>
+    <script src="/lib/forceNetwork-binding-0.4/forceNetwork.js"></script>
+
+          </head>
+  <body style="background-color:white;">
+    <div id="htmlwidget_container">
+    <div id="htmlwidget-net" style="width:960px;height:500px;" class="forceNetwork html-widget"></div>
+    </div>
+<script type="application/json" data-for="htmlwidget-net">{"x":{"links":{"source":['
+
+
+
+for (i in 1:length(edges[,1])){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, edges[i,1] - 1)
+}
+
+net <- paste0(net, '],"target":[')
+
+for (i in 1:length(edges[,2])){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, edges[i,2] - 1)
+}
+
+net <- paste0(net, '],"colour":[')
+
+for (i in 1:length(edges[,1])){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, '"#a9a9a9"')
+}
+
+net <- paste0(net, ']},"nodes":{"name":[')
+
+for (i in 1:length(names)){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, '"', names[i], '"')
+}
+
+net <- paste0(net, '],"group":[')
+
+for (i in 1:length(group)){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, group[i])
+}
+
+net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"d3.scaleOrdinal(d3.schemeCategory'
+
+net3 <- ');","fontSize":12,"fontFamily":"serif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":10,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
+<script type="application/htmlwidget-sizing" data-for="htmlwidget-net">{"viewer":{"width":450,"height":350,"padding":10,"fill":true},"browser":{"width":960,"height":500,"padding":10,"fill":true}}</script>
+</body>
+</html>'
+
+net <- paste0(net, net2, col, net3)
+
+EOS
+	return $t;
+}
+
+# for HTML / only for web
 sub r_command_html{
 	return '
 
@@ -178,6 +271,7 @@ d3net <- forceNetwork(
 
 ';
 }
+
 
 # for Pajeck
 sub r_command_n3{
