@@ -475,6 +475,8 @@ sub outtab{
 	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
 	# 外部変数のチェック
+	my $heap = 'TYPE=HEAP';
+	$heap = '' unless $::config_obj->use_heap;
 	my ($outvar_tbl,$outvar_clm);
 	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
 	if ( $var_obj->{tani} eq $tani){
@@ -488,7 +490,7 @@ sub outtab{
 			CREATE TABLE ct_outvar_cross (
 				id int primary key not null,
 				value varchar(255)
-			) TYPE=HEAP
+			) $heap
 		",1);
 		my $sql;
 		$sql .= "INSERT INTO ct_outvar_cross\n";

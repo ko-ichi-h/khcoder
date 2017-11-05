@@ -46,6 +46,7 @@ sub save{
 		[ "PNG",[qw/.png/] ],
 		[ "GraphML",[qw/.graphml/] ],
 		[ "Pajek",[qw/.net/] ],
+		[ "Interactive HTML",[qw/.html/] ],
 		[ "R Source",[qw/.r/] ],
 	);
 	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)

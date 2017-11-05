@@ -5,7 +5,7 @@ use base qw(kh_r_plot);
 use strict;
 use utf8;
 
-# Experimental! Only for Web
+# Basically for Web
 sub _save_html{
 	my $self = shift;
 	my $path = shift;
@@ -32,6 +32,12 @@ sub _save_html{
 		cat(net, file=zz)
 		close(zz)
 	";
+	
+	unless ($::config_obj->web_if){
+		my $cwd = $::config_obj->cwd;
+		$r_command =~ s/src="\/lib/src="$cwd\/config\/lib/g;
+	}
+	
 	$::config_obj->R->send($r_command);
 	
 	return 1;
@@ -148,19 +154,35 @@ sub _save_graphml{
 }
 
 
+# for HTML (customized)
 sub r_command_html2{
 	my $t = <<'EOS';
 
 edges <- get.edgelist(n2,names=F)
 names <- colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
-group <- as.numeric( igraph::get.vertex.attribute(n2,"com") )
-col   <- 10
+ccol <- as.numeric(ccol)
 
-group[is.na(group)] <- -1
-maxg <- max(group) + 1
-group[group==-1] <- maxg
-if (max(group) > 10){
-  col <- 20
+if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
+	ccol <- ccol / max(ccol)
+	ccol <- (1 - ccol) * 0.7 + 0.25
+	col <- "d3.scaleSequential(d3.interpolateMagma)"
+} else if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
+	ccol[is.na(ccol)] <- -1
+	#maxg <- max(ccol) + 1
+	#ccol[ccol==-1] <- maxg
+	if (max(ccol) > 10){
+		col <- "d3.scaleOrdinal().domain([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]).range(d3.schemeCategory20).unknown('white')"
+	} else {
+		col <- "d3.scaleOrdinal().domain([1,2,3,4,5,6,7,8,9,10]).range(d3.schemeCategory10).unknown('white')"
+	}
+} else if ( com_method == "twomode_c" ){
+	ccol[is.na(ccol)] <- -1
+	ccol <- ccol / max(ccol)
+	ccol <- (1 - ccol) * 0.7 + 0.2
+	col <- "d3.scaleSequential(d3.interpolateMagma)"
+} else {
+	col <- "d3.scaleOrdinal().domain([1,2,3,4,5,6,7,8,9,10]).range(d3.schemeCategory10).unknown('white')"
+	ccol <- rep(-1, length(names) )
 }
 
 net <- '<!DOCTYPE html>
@@ -169,7 +191,7 @@ net <- '<!DOCTYPE html>
   <meta charset="utf-8"/>
     <script src="/lib/htmlwidgets-0.9/htmlwidgets.js"></script>
     <script src="/lib/d3-4.5.0/d3.min.js"></script>
-    <script src="/lib/forceNetwork-binding-0.4/forceNetwork.js"></script>
+    <script src="/lib/forceNetwork-binding-0.4kh/forceNetwork.js"></script>
 
           </head>
   <body style="background-color:white;">
@@ -196,14 +218,13 @@ for (i in 1:length(edges[,2])){
   net <- paste0(net, edges[i,2] - 1)
 }
 
-net <- paste0(net, '],"colour":[')
-
-for (i in 1:length(edges[,1])){
-  if (i > 1){
-    net <- paste0(net, ",")
-  }
-  net <- paste0(net, '"#a9a9a9"')
-}
+#net <- paste0(net, '],"colour":[')
+#for (i in 1:length(edges[,1])){
+#  if (i > 1){
+#    net <- paste0(net, ",")
+#  }
+#  net <- paste0(net, '"#a9a9a9"')
+#}
 
 net <- paste0(net, ']},"nodes":{"name":[')
 
@@ -216,16 +237,16 @@ for (i in 1:length(names)){
 
 net <- paste0(net, '],"group":[')
 
-for (i in 1:length(group)){
+for (i in 1:length(ccol)){
   if (i > 1){
     net <- paste0(net, ",")
   }
-  net <- paste0(net, group[i])
+  net <- paste0(net, ccol[i])
 }
 
-net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"d3.scaleOrdinal(d3.schemeCategory'
+net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"'
 
-net3 <- ');","fontSize":12,"fontFamily":"serif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":10,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
+net3 <- '","fontSize":12,"fontFamily":"sansserif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":10,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
 <script type="application/htmlwidget-sizing" data-for="htmlwidget-net">{"viewer":{"width":450,"height":350,"padding":10,"fill":true},"browser":{"width":960,"height":500,"padding":10,"fill":true}}</script>
 </body>
 </html>'
@@ -236,7 +257,7 @@ EOS
 	return $t;
 }
 
-# for HTML / only for web
+# for HTML
 sub r_command_html{
 	return '
 

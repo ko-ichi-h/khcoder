@@ -215,6 +215,11 @@ sub _new{
 		}
 	)->pack(-side => 'right',-padx => 4);
 
+	$self->win_obj->bind(
+		'<Control-Key-s>',
+		sub{ $self->save; }
+	);
+	
 	$self->{bottom_frame} = $f1;
 	return $self;
 }
