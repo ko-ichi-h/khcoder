@@ -354,7 +354,7 @@ sub get_default_freq{
 		$self->{min} = $cut;
 		$words = $self->wnum();
 		print "stage 2: $cut, $words\n";
-		if ($cut == 2) {
+		if ($cut <= 2) {
 			last;
 		}
 	}
