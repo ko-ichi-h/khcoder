@@ -35,7 +35,7 @@ sub _save_html{
 	
 	unless ($::config_obj->web_if){
 		my $cwd = $::config_obj->cwd;
-		$r_command =~ s/src="\/lib/src="$cwd\/config\/lib/g;
+		$r_command =~ s/src="\/lib/src="$cwd\/kh_lib\/web_lib/g;
 	}
 	
 	$::config_obj->R->send($r_command);

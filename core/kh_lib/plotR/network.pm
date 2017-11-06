@@ -1229,12 +1229,39 @@ p <- p + scale_linetype_identity()
 
 # words
 
+alpha_config <- 0
+if (
+	   ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r" )
+	&& ( length(com_m$csize[com_m$csize >= 2]) >= 13 )
+	&& ( length(com_m$csize[com_m$csize >= 2]) <= 20 )
+){
+	alpha_config <- -0.5
+	p <- p + geom_nodes(
+		aes(
+			size = size * 0.41
+		),
+		alpha = 0.3, # 0.65
+		color = "white",
+		show.legend = F,
+		shape = 16
+	)
+	p <- p + geom_nodes(
+		aes(
+			size = size
+		),
+		alpha = 0.65,
+		color = "white",
+		show.legend = F,
+		shape = 16
+	)
+}
+
 p <- p + geom_nodes(
 	aes(
 		size = size * 0.41,
 		color = com
 	),
-	alpha = 0.85,
+	alpha = 0.85 + alpha_config,
 	show.legend = F,
 	shape = 16
 )
@@ -1244,7 +1271,7 @@ p <- p + geom_nodes(
 		color = com,
 		shape = shape
 	),
-	alpha = alpha_value,
+	alpha = alpha_value + alpha_config / 3,
 	shape = 16
 )
 p <- p + geom_nodes(
@@ -1530,6 +1557,24 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			)
 			p <- p + scale_fill_brewer(
 				palette = "Set3",
+				na.value = "white",
+				guide = guide_legend(
+					title = "Community:",
+					override.aes = list(size=5.5, alpha=1, shape=22),
+					keyheight = unit(1.25,"line"),
+					ncol=2,
+					order = 1
+				)
+			)
+		} else if (length(com_m$csize[com_m$csize > 1]) <= 20)  {
+			library(ggsci)
+			p <- p + scale_color_d3(
+				palette = "category20",
+				na.value = "white",
+				guide = FALSE
+			)
+			p <- p + scale_fill_d3(
+				palette = "category20",
 				na.value = "white",
 				guide = guide_legend(
 					title = "Community:",
