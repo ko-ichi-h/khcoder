@@ -100,7 +100,7 @@ use File::Path 'rmtree';
 &win_pkg;
 	#&win_upd;
 	#&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
