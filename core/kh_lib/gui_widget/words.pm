@@ -285,9 +285,15 @@ sub settings_load{
 	} else {
 		# print "Getting the default min-freq value...\n";
 		my $target = 75;
-		
 		if ( $::project_obj->morpho_analyzer_lang ne 'jp' ){
 			$target = 120;
+		}
+		
+		if ($::config_obj->web_if) {
+			$target = 60;
+			if ( $::project_obj->morpho_analyzer_lang ne 'jp' ){
+				$target = 85;
+			}
 		}
 		
 		my $freq = mysql_crossout::r_com->new(

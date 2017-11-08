@@ -199,6 +199,7 @@ sub out2{                               # length作製をする
 
 sub wnum{
 	my $self = shift;
+	my $nc   = shift;
 	
 	$self->{min_df} = 0 unless length($self->{min_df});
 	
@@ -238,7 +239,9 @@ sub wnum{
 	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
+	unless ($nc){
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
+	}
 	return $_;
 }
 

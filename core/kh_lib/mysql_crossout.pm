@@ -243,6 +243,7 @@ sub make_list{
 
 sub wnum{
 	my $self = shift;
+	my $nc   = shift;
 	
 	$self->{min_df} = 0 unless length($self->{min_df});
 	
@@ -274,7 +275,9 @@ sub wnum{
 	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
+	unless ($nc){
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # 位取り用のコンマを挿入
+	}
 	return $_;
 }
 
@@ -327,14 +330,14 @@ sub get_default_freq{
 			my $can_1 = $can_0 + 5;
 			
 			$self->{min} = $can_0;
-			my $words_0 = $self->wnum();
+			my $words_0 = $self->wnum(1);
 			my $dif_0 = $words_0 - $target;
 			
 			$self->{min} = $can_1;
-			my $words_1 = $self->wnum();
+			my $words_1 = $self->wnum(1);
 			my $dif_1 = $target - $words_1;
 			
-			print "stage 1: $can_0, $words_0 ; $can_1, $words_1\n";
+			print "stage 1: $can_0, $words_0, $dif_0 ; $can_1, $words_1, $dif_1 ; $target\n";
 			
 			if ($dif_0 < $dif_1) {
 				$cut = $can_0;
@@ -352,7 +355,7 @@ sub get_default_freq{
 	while ($words < $target / 3 * 2) {
 		--$cut;
 		$self->{min} = $cut;
-		$words = $self->wnum();
+		$words = $self->wnum(1);
 		print "stage 2: $cut, $words\n";
 		if ($cut <= 2) {
 			last;
