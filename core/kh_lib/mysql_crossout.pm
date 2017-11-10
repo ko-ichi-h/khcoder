@@ -352,7 +352,7 @@ sub get_default_freq{
 	}
 	
 	# stage 2
-	while ($words < $target / 3 * 2) {
+	while ($words < $target * 0.55) {
 		--$cut;
 		$self->{min} = $cut;
 		$words = $self->wnum(1);

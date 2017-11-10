@@ -224,7 +224,7 @@ sub calc{
 	$check_num =~ s/,//g;
 	#print "$check_num\n";
 
-	if ($check_num < 5){
+	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
 			msg  => kh_msg->get('gui_window::word_mds->select_3words'), # '少なくとも5つ以上の抽出語を選択して下さい。',
