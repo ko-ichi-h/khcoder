@@ -291,7 +291,7 @@ sub new{
 			name      => $args{plotwin_name}.'_6',
 			command_f =>
 				 $r_command
-				."\ncom_method <- \"com-g\"\n"
+				."\ncom_method <- \"com-r\"\n"
 				.$self->r_plot_cmd_p1
 				.$self->r_plot_cmd_p2
 				.$self->r_plot_cmd_p3

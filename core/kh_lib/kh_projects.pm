@@ -115,23 +115,16 @@ sub add_new{
 
 	# MySQL DBの整備
 	$new->prepare_db;
-	#$new->read_hinshi_setting;
-
-	# print "1: ", $new->file_target, "\n";
 
 	# プロジェクトを登録
-	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
-	$sql .= "'".$::config_obj->uni_path($new->file_target)."',";
-	if ($new->comment){
-		$sql .= $self->dbh->quote( $new->comment ).",";
-	} else {
-		$sql .= "'',";
-		$new->comment('');
-	}
-	$sql .= "'".$new->dbname."'";
-	$sql .= ')';
-
-	$self->dbh->do($sql) or die;
+	my $sth = $self->dbh->prepare(
+		"INSERT INTO projects (target, comment, dbname) VALUES (?,?,?)"
+	);
+	$sth->execute(
+		$::config_obj->uni_path($new->file_target),
+		$new->comment,
+		$new->dbname
+	) or die;
 
 	return 1;
 }
@@ -171,11 +164,14 @@ sub delete{
 	my $self = shift;
 	my $del = $self->a_project($_[0]);
 
-	my $sql = "DELETE FROM projects WHERE target = ";
-	$sql .= "'".$del->file_target."'";
-	#$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
-
+	my $sth = $self->dbh->prepare(
+		"DELETE FROM projects WHERE target = ?"
+	);
+	$sth->execute(
+		$del->file_target
+	) or die;
+	
+	
 	# ゴミ箱テーブルが存在しない場合は作成 
 	my $save_file = $::config_obj->history_trush_file;
 	unless (-e $save_file){
@@ -189,17 +185,14 @@ sub delete{
 	}
 
 	# ゴミ箱テーブルに追加
-	$sql = 'INSERT INTO projects_trush (target, comment, dbname) VALUES (';
-	$sql .= "'".$del->file_target."',";
-	if ($del->comment){
-		$sql .= "'".$del->comment."',";
-	} else {
-		$sql .= "'',";
-	}
-	$sql .= "'".$del->dbname."'";
-	$sql .= ')';
-	#$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
+	my $sth = $self->dbh->prepare(
+		"INSERT INTO projects_trush (target, comment, dbname) VALUES (?,?,?)"
+	);
+	$sth->execute(
+		$del->file_target,
+		$del->comment,
+		$del->dbname
+	) or die;
 	
 	# Delete MySQL DB
 	mysql_exec->drop_db($del->dbname);
