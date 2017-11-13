@@ -7,6 +7,11 @@ my ( $l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika);
 my $docs_per_once = 200;
 my $temporary = '';
 
+if ($::config_obj->web_if){
+	$docs_per_once = 50;
+	$temporary = 'temporary';
+}
+
 #----------------------------#
 #   初期化・コンストラクト   #
 #----------------------------#
@@ -61,6 +66,7 @@ sub a_word{
 		&& ( $l_katuyo eq $args{katuyo} )
 		&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
 		&& ( $l_tuika eq $tuika_chk )
+		&& ( $::config_obj->web_if == 0 )
 	){
 		if (
 			not (
@@ -68,6 +74,7 @@ sub a_word{
 				&& ( $l_hinshi eq $args{hinshi} )
 				&& ( $l_katuyo eq $args{katuyo} )
 				&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
+				&& ( $::config_obj->web_if == 0 )
 			)
 			or (length($l_tuika) > 11)
 		){

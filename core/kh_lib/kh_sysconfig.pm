@@ -779,7 +779,7 @@ sub web_if{
 		$self->{web_if} = $new;
 	}
 
-	if (length($self->{web_if}) == 0) {
+	unless ( defined( $self->{web_if} ) ) {
 		$self->{web_if} = 0;
 	}
 	return $self->{web_if};
@@ -1399,7 +1399,7 @@ sub kaigyo_kigou{
 	}
 	
 	# デフォルト値
-	unless ($self->{kaigyo_kigou}){
+	unless ( defined($self->{kaigyo_kigou}) ){
 		return '（↓）';
 	}
 	

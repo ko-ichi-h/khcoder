@@ -170,6 +170,7 @@ sub delete{
 	$sth->execute(
 		$del->file_target
 	) or die;
+	undef $sth;
 	
 	
 	# ゴミ箱テーブルが存在しない場合は作成 
@@ -185,7 +186,7 @@ sub delete{
 	}
 
 	# ゴミ箱テーブルに追加
-	my $sth = $self->dbh->prepare(
+	$sth = $self->dbh->prepare(
 		"INSERT INTO projects_trush (target, comment, dbname) VALUES (?,?,?)"
 	);
 	$sth->execute(

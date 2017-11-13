@@ -228,7 +228,7 @@ sub open{
 	$kh_r_plot::if_font = 0;
 	
 	# open DB
-	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
+	$self->{dbh} = mysql_exec->connect_db($self->{dbname}, $::config_obj->web_if);
 	$::project_obj = $self;
 	
 	my_threads->open_project;
