@@ -1711,11 +1711,16 @@ p <- p + theme(
 
 
 # make a small space between the graph and the legend
+margin <- 0.04
 if (smaller_nodes == 1){
-	p <- p + coord_fixed( xlim=c(0,1.05) )
+	extra <- 0.05
+	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
 } else {
-	p <- p + coord_fixed( xlim=c(0,1.025) )
+	extra <- 0.025
+	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
 }
+
+#p <- p + theme(plot.margin= unit(c(5, 0, 5, 0), "pt"))
 
 g <- ggplotGrob(p)
 

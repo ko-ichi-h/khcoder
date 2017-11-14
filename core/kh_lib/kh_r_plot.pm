@@ -448,6 +448,7 @@ sub rotate_cls{
 sub save{
 	my $self = shift;
 	my $target_os_path = shift;
+	$self->{target_os_path} = $target_os_path;
 	
 	my $path;
 	$path =

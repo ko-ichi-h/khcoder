@@ -33,7 +33,11 @@ sub _save_html{
 		close(zz)
 	";
 	
-	unless ($::config_obj->web_if){
+	if ($::config_obj->web_if) {
+		my $csv = $::config_obj->uni_path( $self->{target_os_path} );
+		$csv = substr($csv, 0, length($csv) - 4).'csv';
+		$r_command .= "write.table(lay_f, file=\"$csv\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F)\n";
+	} else {
 		my $cwd = $::config_obj->cwd;
 		$r_command =~ s/src="\/lib/src="$cwd\/kh_lib\/web_lib/g;
 	}
