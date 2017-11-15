@@ -74,7 +74,16 @@ sub _new{
 	$self->{photo_pane_height} = $size;
 
 	# 画像表示用ペイン
-	$self->{photo_pane} = $win->Scrolled(
+	my $fp = $win->Frame(
+		-borderwidth => 2,
+		-relief      => 'sunken',
+	)->pack(
+		-anchor => 'c',
+		-fill   => 'both',
+		-expand => 1,
+	);
+
+	$self->{photo_pane} = $fp->Scrolled(
 		'Pane',
 		-scrollbars  => 'osoe',
 		-width       => $self->photo_pane_width,
@@ -93,7 +102,7 @@ sub _new{
 		-background  => 'white',
 		-borderwidth => 0,
 		-highlightthickness => 0,
-		-cursor      => $cursor,
+		#-cursor      => $cursor,
 	)->pack(
 		-anchor => 'c',
 		-fill   => 'both',
