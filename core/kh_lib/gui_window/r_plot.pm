@@ -172,14 +172,14 @@ sub _new{
 			command  => sub {$self->renew;},
 		);
 		$self->{optmenu}->set_value($self->{ax});
-		$self->{optmenu}->{win_obj}->focus;
-		
+
 		$self->win_obj->bind(
 			'<Key-l>',
 			sub{
-				$self->{optmenu}->{win_obj}->menu->post(
+				$self->{optmenu}->{win_obj}->menu->Post(
 					$self->{optmenu}->{win_obj}->rootx,
 					$self->{optmenu}->{win_obj}->rooty,
+					#$self->{ax}
 				);
 			}
 		);
