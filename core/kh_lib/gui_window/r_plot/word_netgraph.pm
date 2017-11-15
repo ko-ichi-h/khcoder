@@ -94,7 +94,7 @@ sub show_kwic{
 	$conc->entry->insert('end', $self->{coordin}{$id}{name});
 	$conc->search;
 	
-	$self->{canvas}->focus;
+	$self->{win_obj}->focus;
 }
 
 sub decorate{
