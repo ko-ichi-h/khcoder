@@ -35,6 +35,29 @@ sub option1_options{
 
 }
 
+sub start{
+	my $self = shift;
+	
+	$self->{button_interactive} = $self->{bottom_frame}->Button(
+		-text => kh_msg->get('interactive'), # インタラクティブ
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub {
+			my $html = $::project_obj->file_TempHTML;
+			$self->{plots}[$self->{ax}]->save($html);
+			gui_OtherWin->open($html);
+		}
+	)->pack(-side => 'right');
+	
+	$self->win_obj->bind(
+		'<Control-Key-i>',
+		sub{
+			$self->{button_interactive}->flash;
+			$self->{button_interactive}->invoke;
+		}
+	);
+}
+
 sub save{
 	my $self = shift;
 

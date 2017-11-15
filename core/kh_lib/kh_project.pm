@@ -819,6 +819,23 @@ sub file_TempCSV{
 	
 	return $f;
 }
+sub file_TempHTML{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.html'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.html';
+	
+	# 空ファイルを作成しておく
+	CORE::open (TOUT, ">$f");
+	close (TOUT);
+	
+	return $f;
+}
 sub file_TempTXT{
 	my $self = shift;
 	my $n = 0;
