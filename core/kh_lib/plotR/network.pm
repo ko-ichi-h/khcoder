@@ -305,6 +305,12 @@ sub new{
 	#my $t1 = new Benchmark;
 	#print timestr(timediff($t1,$t0)),"\n" if $bench;
 
+	# 座標の取得
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(lay_f, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+
 	# 情報の取得（短いバージョン）
 	my $info;
 	$::config_obj->R->send('
@@ -376,6 +382,7 @@ sub new{
 	$self->{result_plots} = \@plots;
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;
+	$self->{coord} = $csv;
 	
 	return $self;
 }

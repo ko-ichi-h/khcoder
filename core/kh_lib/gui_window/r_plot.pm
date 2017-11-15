@@ -74,16 +74,7 @@ sub _new{
 	$self->{photo_pane_height} = $size;
 
 	# 画像表示用ペイン
-	my $fp = $win->Frame(
-		-borderwidth => 2,
-		-relief      => 'sunken',
-	)->pack(
-		-anchor => 'c',
-		-fill   => 'both',
-		-expand => 1,
-	);
-	
-	$self->{photo_pane} = $fp->Scrolled(
+	$self->{photo_pane} = $win->Scrolled(
 		'Pane',
 		-scrollbars  => 'osoe',
 		-width       => $self->photo_pane_width,
@@ -96,25 +87,35 @@ sub _new{
 		-expand => 1,
 	);
 	
-	$self->{photo} = $self->{photo_pane}->Label(
-		-image       => $imgs->{$self->win_name},
-		-cursor      => $cursor,
-		-background  => "white",
+	$self->{canvas} = $self->{photo_pane}->Canvas(
+		-width  => $self->{img_width},
+		-height => $self->{img_height},
+		-background  => 'white',
 		-borderwidth => 0,
+		-highlightthickness => 0,
+		-cursor      => $cursor,
 	)->pack(
-		-expand => 1,
+		-anchor => 'c',
 		-fill   => 'both',
+		-expand => 1,
 	);
+	
+	my $image_id = $self->{canvas}->createImage(
+		int( $self->{img_width} / 2 ),
+		int( $self->{img_height} / 2 ),
+		-image => $gui_window::r_plot::imgs->{$self->win_name},
+	);
+	print "image_id: $image_id\n";
 
 	# 画像のドラッグ
 	( $self->{xscroll}, $self->{yscroll} ) =
 		$self->{photo_pane}->Subwidget( 'xscrollbar', 'yscrollbar' );
-	$self->{photo}->bind(
+	$self->{canvas}->CanvasBind(
 		'<Button1-ButtonRelease>' => sub {
 			undef $self->{last_x};
 		}
 	);
-	$self->{photo}->bind(
+	$self->{canvas}->CanvasBind(
 		'<Button1-Motion>' => [
 			\&drag, $self, Ev('X'), Ev('Y')
 		]
@@ -385,7 +386,8 @@ sub original_plot_size{
 	if ($self->{original_plot_size}){
 		return $self->{original_plot_size};
 	} else {
-		return $self->{photo}->cget(-image)->height;
+		#return $self->{photo}->cget(-image)->height;
+		return $self->{img_height};
 	}
 }
 
