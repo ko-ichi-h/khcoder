@@ -24,6 +24,7 @@ sub start{
 		}
 	);
 	
+	return 0 unless -e $self->{coord};
 	@{$self->{coordi}} = ();
 	open(my $fh, '<:encoding(utf8)', $self->{coord}) or die("file: $self->{coord}");
 	while (<$fh>) {
@@ -93,6 +94,7 @@ sub show_kwic{
 	$conc->entry->insert('end', $self->{coordin}{$id}{name});
 	$conc->search;
 	
+	$self->{canvas}->focus;
 }
 
 sub decorate{
