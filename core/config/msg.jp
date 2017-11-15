@@ -760,7 +760,7 @@ gui_window::r_plot::word_netgraph:
     cor:                      '相関'
     none:                     'なし'
     color:                    ' カラー：'
-    interactive:              'HTML版'
+    interactive:              'HTML表示'
     win_title:                '抽出語・共起ネットワーク'
 gui_window::cod_netg:
     win_title:                'コーディング・共起ネットワーク：オプション'

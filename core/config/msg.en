@@ -765,7 +765,7 @@ gui_window::r_plot::word_netgraph:
     cor:                      'Correlation'
     none:                     None
     color:                    ' color:'
-    interactive:              'interactive'
+    interactive:              'HTML'
     win_title:                'Co-Occurrence Network of Words'
 gui_window::cod_netg:
     win_title:                'Options: Co-Occurrence Network of Codes'

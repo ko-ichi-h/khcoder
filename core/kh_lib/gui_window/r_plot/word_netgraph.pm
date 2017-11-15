@@ -6,7 +6,7 @@ sub start{
 	my $self = shift;
 	
 	$self->{button_interactive} = $self->{bottom_frame}->Button(
-		-text => kh_msg->get('interactive'), # インタラクティブ
+		-text => kh_msg->get('interactive'), # interactive html
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -17,7 +17,7 @@ sub start{
 	)->pack(-side => 'right');
 	
 	$self->win_obj->bind(
-		'<Key-i>',
+		'<Key-h>',
 		sub{
 			$self->{button_interactive}->flash;
 			$self->{button_interactive}->invoke;
