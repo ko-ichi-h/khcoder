@@ -94,14 +94,14 @@ sub show_kwic{
 	$conc->entry->insert('end', $self->{coordin}{$id}{name});
 	$conc->search;
 	
-	$self->{win_obj}->focus;
+	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
 }
 
 sub decorate{
 	my $self = shift;
 	my $id = shift;
 	
-	print "decorate: $id, $self->{coordin}{$id}{x1}\n";
+	#print "decorate: $id, $self->{coordin}{$id}{x1}\n";
 	
 	return 1 if $self->{coordin}{$id}{did};
 	
@@ -133,7 +133,7 @@ sub decorate{
 sub undecorate{
 	my $self = shift;
 	
-	print "undecorate\n";
+	#print "undecorate\n";
 	
 	foreach my $i (@{$self->{coordin}{decorated}}){
 		if ( $self->{coordin}{$i}{did} ){
@@ -144,8 +144,6 @@ sub undecorate{
 	@{$self->{coordin}{decorated}} = ();
 
 }
-
-
 
 sub option1_options{
 	my $self = shift;
