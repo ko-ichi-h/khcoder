@@ -172,6 +172,17 @@ sub _new{
 			command  => sub {$self->renew;},
 		);
 		$self->{optmenu}->set_value($self->{ax});
+		$self->{optmenu}->{win_obj}->focus;
+		
+		$self->win_obj->bind(
+			'<Key-l>',
+			sub{
+				$self->{optmenu}->{win_obj}->menu->post(
+					$self->{optmenu}->{win_obj}->rootx,
+					$self->{optmenu}->{win_obj}->rooty,
+				);
+			}
+		);
 	}
 
 	$self->{button_config} = $f1->Button(
@@ -180,6 +191,13 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub {$self->open_config;},
 	)->pack(-side => 'left', -padx => 2);
+
+	$self->win_obj->bind(
+		'<Key-c>',
+		sub{
+			$self->{button_config}->invoke;
+		}
+	);
 
 	if (length($self->{msg})){
 		my $info_label = $f1->Label(
@@ -216,7 +234,7 @@ sub _new{
 	)->pack(-side => 'right',-padx => 4);
 
 	$self->win_obj->bind(
-		'<Control-Key-s>',
+		'<Key-s>',
 		sub{ $self->save; }
 	);
 	

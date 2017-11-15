@@ -50,7 +50,7 @@ sub start{
 	)->pack(-side => 'right');
 	
 	$self->win_obj->bind(
-		'<Control-Key-i>',
+		'<Key-i>',
 		sub{
 			$self->{button_interactive}->flash;
 			$self->{button_interactive}->invoke;
