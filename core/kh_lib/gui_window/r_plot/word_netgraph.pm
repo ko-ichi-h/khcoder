@@ -5,6 +5,9 @@ use base qw(gui_window::r_plot);
 sub start{
 	my $self = shift;
 	
+	return 1 if $::config_obj->web_if;
+	
+	# make a button for interactive html
 	$self->{button_interactive} = $self->{bottom_frame}->Button(
 		-text => kh_msg->get('interactive'), # interactive html
 		-font => "TKFN",
@@ -24,6 +27,7 @@ sub start{
 		}
 	);
 	
+	# read coordinates
 	return 0 unless -e $self->{coord};
 	@{$self->{coordi}} = ();
 	open(my $fh, '<:encoding(utf8)', $self->{coord}) or die("file: $self->{coord}");
@@ -33,6 +37,7 @@ sub start{
 	}
 	close $fh;
 
+	# make clickable image map
 	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.1, 1.11, 47, 30, 30, 11);
 	$xo = $xo * $self->{img_height} / 640;
 	$yo = $yo * $self->{img_height} / 640;
@@ -81,6 +86,48 @@ sub start{
 		};
 	}
 }
+
+sub illuminate{
+	my $self = shift;
+	
+	return 0 unless ( defined($self->{coordin}) );
+	
+	$self->{win_obj}->update;
+	
+	use Time::HiRes 'sleep';
+	my @ills = ();
+	my $n = 1;
+	foreach my $i (
+		sort {
+			$self->{coordin}{$a}{y1} 
+			<=>
+			$self->{coordin}{$b}{y1} 
+		}
+		keys %{$self->{coordin}}
+	){
+		push @ills, $self->{canvas}->createRectangle(
+			$self->{coordin}{$i}{x1} -1,
+			$self->{coordin}{$i}{y1} +1,
+			$self->{coordin}{$i}{x2} +1,
+			$self->{coordin}{$i}{y2} -1,
+			-outline => '#778899',
+			-width   => 1,
+		);
+		$self->{canvas}->update;
+		
+		sleep 1 / (  $n * $n + 30 );
+		++$n;
+	}
+	
+	sleep 0.5;
+	
+	my $n = 1;
+	foreach my $i (reverse @ills){
+		$self->{canvas}->delete( $i );
+	}
+	$self->{canvas}->update;
+}
+
 
 sub show_kwic{
 	my $self = shift;

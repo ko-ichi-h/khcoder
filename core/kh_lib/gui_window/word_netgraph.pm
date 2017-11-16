@@ -434,7 +434,7 @@ sub calc{
 		}
 	}
 
-	gui_window::r_plot::word_netgraph->open(
+	my $win = gui_window::r_plot::word_netgraph->open(
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
@@ -448,6 +448,8 @@ sub calc{
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
 	}
+	
+	#$win->illuminate;
 	return 1;
 }
 

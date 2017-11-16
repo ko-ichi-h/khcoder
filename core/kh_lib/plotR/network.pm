@@ -1147,6 +1147,11 @@ if ( smaller_nodes == 1 ){
 	vv <- 20
 }
 
+sans <- "sans"
+if ( exists("saving_eps") ){
+	sans <- NULL
+}
+
 #-----------------------------------------------------------------------------#
 #                           Start Plotting with ggplot2                       #
 
@@ -1170,7 +1175,7 @@ if (com_method == "cor"){ # cor
 		guide = guide_colourbar(
 			title = "Correlation:\n",
 			title.theme = element_text(
-				family="sans",
+				family=sans,
 				face="bold",
 				size=11,
 				lineheight=0.4,
@@ -1642,7 +1647,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 		guide = guide_colourbar(
 			title = "Centrality:\n",
 			title.theme = element_text(
-				family="sans",
+				family=sans,
 				face="bold",
 				size=11,
 				lineheight=0.4,
@@ -1712,7 +1717,7 @@ if (com_method == "cor"){ # cor
 }
 
 p <- p + theme(
-	legend.title    = element_text(family="sans", face="bold",  size=11, angle=0),
+	legend.title    = element_text(family=sans, face="bold",  size=11, angle=0),
 	legend.text     = element_text(face="plain", size=11, angle=0)
 )
 

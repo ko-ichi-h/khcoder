@@ -33,11 +33,7 @@ sub _save_html{
 		close(zz)
 	";
 	
-	if ($::config_obj->web_if) {
-		my $csv = $::config_obj->uni_path( $self->{target_os_path} );
-		$csv = substr($csv, 0, length($csv) - 4).'csv';
-		$r_command .= "write.table(lay_f, file=\"$csv\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F)\n";
-	} else {
+	unless ( $::config_obj->web_if ){
 		my $cwd = $::config_obj->cwd;
 		$r_command =~ s/src="\/lib/src="$cwd\/kh_lib\/web_lib/g;
 	}
@@ -97,7 +93,7 @@ sub _save_graphml{
 	$::config_obj->R->send($r_command);
 
 	# convert character coding to UTF-8
-	if ($::config_obj->os eq 'win32') {
+	if ($::config_obj->os eq 'win32' && 0) {
 		# input code
 		my %codes = (
 			'jp' => 'cp932',

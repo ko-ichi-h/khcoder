@@ -1,6 +1,29 @@
 package gui_window::r_plot::cod_netg;
 use base qw(gui_window::r_plot);
 
+sub start{
+	my $self = shift;
+	
+	$self->{button_interactive} = $self->{bottom_frame}->Button(
+		-text => kh_msg->get('gui_window::r_plot::word_netgraph->interactive'), # interactive html
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub {
+			my $html = $::project_obj->file_TempHTML;
+			$self->{plots}[$self->{ax}]->save($html);
+			gui_OtherWin->open($html);
+		}
+	)->pack(-side => 'right');
+	
+	$self->win_obj->bind(
+		'<Key-h>',
+		sub{
+			$self->{button_interactive}->flash;
+			$self->{button_interactive}->invoke;
+		}
+	);
+}
+
 sub option1_options{
 	my $self = shift;
 
