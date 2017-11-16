@@ -1719,13 +1719,13 @@ p <- p + theme(
 
 # make a small space between the graph and the legend
 margin <- 0.04
-if (smaller_nodes == 1){
-	extra <- 0.05
-	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
-} else {
+#if (smaller_nodes == 1){
+#	extra <- 0.05
+#	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
+#} else {
 	extra <- 0.025
 	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
-}
+#}
 
 #p <- p + theme(plot.margin= unit(c(5, 0, 5, 0), "pt"))
 
@@ -1753,6 +1753,27 @@ if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 }
 
 library(grid)
+library(gtable)
+
+# fixing width of legends to 22%
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		diff_mm <- diff( c(
+			convertX( g$widths[5], "mm" ),
+			target_legend_width )
+		)
+		print(target_legend_width)
+		if ( diff_mm > 0 ){
+			print(diff_mm)
+			g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+		}
+	}
+}
+
 grid.draw(g)
 
 if (exists("com_m")){

@@ -195,6 +195,8 @@ sub new{
 	print "kh_r_plot::new R.device ok.\n" if $debug;
 	$self->set_par;
 	print "kh_r_plot::new set_par ok.\n" if $debug;
+	$::config_obj->R->send("saving_file <- 0\n");
+	$::config_obj->R->send("image_width <- $self->{width} / $self->{dpi}\n");
 	$::config_obj->R->send($command);
 	print "kh_r_plot::new send ok.\n" if $debug;
 	$self->{r_msg} = $::config_obj->R->read;
@@ -470,6 +472,7 @@ sub save{
 	
 	$self->clear_env;
 	
+	$::config_obj->R->send("saving_file <- 1\n");
 	if ($target_os_path =~ /\.r$/i){
 		$path .= ".r";
 		$self->_save_r($path);

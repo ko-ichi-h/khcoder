@@ -33,7 +33,7 @@ sub start{
 	}
 	close $fh;
 
-	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.1, 1.105, 77, 30, 30, 11);
+	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.1, 1.11, 47, 30, 30, 11);
 	$xo = $xo * $self->{img_height} / 640;
 	$yo = $yo * $self->{img_height} / 640;
 	$tw = $tw * $self->{img_height} / 640;
