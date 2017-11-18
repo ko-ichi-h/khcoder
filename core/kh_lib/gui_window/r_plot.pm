@@ -114,7 +114,7 @@ sub _new{
 		int( $self->{img_height} / 2 ),
 		-image => $gui_window::r_plot::imgs->{$self->win_name},
 	);
-	print "image_id: $image_id\n";
+	#print "image_id: $image_id\n";
 
 	# 画像のドラッグ
 	( $self->{xscroll}, $self->{yscroll} ) =
@@ -399,5 +399,70 @@ sub original_plot_size{
 		return $self->{img_height};
 	}
 }
+
+
+sub show_kwic{
+	my $self = shift;
+	my $id = shift;
+
+	# コンコーダンスの呼び出し
+	my $conc = gui_window::word_conc->open;
+	$conc->entry->delete(0,'end');
+	$conc->entry4->delete(0,'end');
+	$conc->entry2->delete(0,'end');
+	$conc->entry->insert('end', $self->{coordin}{$id}{name});
+	$conc->search;
+	
+	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
+}
+
+sub decorate{
+	my $self = shift;
+	my $id = shift;
+	
+	#print "decorate: $id, $self->{coordin}{$id}{x1}\n";
+	
+	return 1 if $self->{coordin}{$id}{did};
+	
+	# show
+	$self->{coordin}{$id}{did} = $self->{canvas}->createRectangle(
+		$self->{coordin}{$id}{x1} -1,
+		$self->{coordin}{$id}{y1} +1,
+		$self->{coordin}{$id}{x2} +1,
+		$self->{coordin}{$id}{y2} -1,
+		-outline => '#778899',
+		-width   => 1,
+	);
+	
+	# unshow others
+	foreach my $i (@{$self->{coordin}{decorated}}){
+		if ($i == $id) {
+			next;
+		}
+		if ( $self->{coordin}{$i}{did} ){
+			$self->{canvas}->delete( $self->{coordin}{$i}{did} );
+			$self->{coordin}{$i}{did} = undef;
+		}
+	}
+	@{$self->{coordin}{decorated}} = ();
+	
+	push @{$self->{coordin}{decorated}}, $id;
+}
+
+sub undecorate{
+	my $self = shift;
+	
+	#print "undecorate\n";
+	
+	foreach my $i (@{$self->{coordin}{decorated}}){
+		if ( $self->{coordin}{$i}{did} ){
+			$self->{canvas}->delete( $self->{coordin}{$i}{did} );
+			$self->{coordin}{$i}{did} = undef;
+		}
+	}
+	@{$self->{coordin}{decorated}} = ();
+
+}
+
 
 1;

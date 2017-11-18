@@ -65,6 +65,7 @@ sub calc{
 		msg_long    => $plotR->{result_info_long},
 		ax          => $self->{ax},
 		#no_geometry => 1,
+		coord       => $plotR->{coord},
 	);
 
 	$plotR = undef;

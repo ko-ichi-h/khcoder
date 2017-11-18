@@ -308,7 +308,13 @@ sub new{
 	# 座標の取得
 	my $csv = $::project_obj->file_TempCSV;
 	$::config_obj->R->send("
-		write.table(lay_f, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+		if (com_method == 'twomode_c' || com_method == 'twomode_g') {
+			coord <- lay_f[var_select==F,]
+		} else {
+			coord <- lay_f
+		}
+		
+		write.table(coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
 	");
 
 	# 情報の取得（短いバージョン）

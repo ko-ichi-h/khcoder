@@ -244,6 +244,52 @@ for (i in 1:length(ccol)){
   net <- paste0(net, ccol[i])
 }
 
+
+if ( exists("var_select") ){
+	if (
+		   ( com_method == "twomode_c" || com_method == "twomode_g" )
+	) {
+		# for twomode
+		net <- paste0(net, '],"shape":[')
+		for (i in 1:length(var_select)){
+			if (i > 1){
+				net <- paste0(net, ",")
+			}
+			if (var_select[i]){
+				net <- paste0(net, 3)
+			} else {
+				net <- paste0(net, 0)
+			}
+		}
+	} else {
+		# for selected words
+		checker <- NULL
+		checker[var_select] <- 1
+		
+		net <- paste0(net, '],"shape":[')
+		for (i in 1:length(names)){
+			if (i > 1){
+				net <- paste0(net, ",")
+			}
+			if ( is.na( checker[i] ) ){
+				net <- paste0(net, 0)
+			} else {
+				net <- paste0(net, 4)
+			}
+		}
+	}
+} else {
+	# for normal
+	net <- paste0(net, '],"shape":[')
+	for (i in 1:length(names)){
+		if (i > 1){
+			net <- paste0(net, ",")
+		}
+		net <- paste0(net, 0)
+	}
+}
+
+
 net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"'
 
 net3 <- '","fontSize":12,"fontFamily":"sansserif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":10,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>

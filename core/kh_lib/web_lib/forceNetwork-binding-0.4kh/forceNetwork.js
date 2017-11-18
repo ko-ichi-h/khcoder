@@ -124,8 +124,8 @@ HTMLWidgets.widget({
       .data(links)
       .enter().append("line")
       .attr("class", "link")
-      .style("stroke", "#a9a9a9")
       //.style("stroke", function(d) { return d.colour ; })
+      .style("stroke", "#a9a9a9")
       .style("opacity", options.opacity)
       .style("stroke-width", eval("(" + options.linkWidth + ")"))
       .on("mouseover", function(d) {
@@ -170,11 +170,17 @@ HTMLWidgets.widget({
       .on("click", click)
       .call(drag);
 
-    node.append("circle")
-      .attr("r", function(d){return nodeSize(d);})
+    node.append("path")
+      .attr("d", d3.symbol().type( function(d) { return d3.symbols[d.shape];} ).size(100) )
       .style("stroke", "#c0c0c0")
       .style("opacity", 1)
       .style("stroke-width", "1px");
+
+//    node.append("circle")
+//      .attr("r", function(d){return nodeSize(d);})
+//      .style("stroke", "#c0c0c0")
+//      .style("opacity", 1)
+//      .style("stroke-width", "1px");
 
     node.append("svg:text")
       .attr("class", "nodetext")
@@ -231,9 +237,12 @@ HTMLWidgets.widget({
         //  .style("opacity", function(o) { return d.index == o.index || neighboring(d, o) ? +options.opacity : +options.opacity / unfocusDivisor; });
       //}
 
-      d3.select(this).select("circle").transition()
+
+
+      d3.select(this).select("path").transition()
         .duration(750)
-        .attr("r", function(d){return nodeSize(d)+10;});
+        .attr("d", d3.symbol().type( function(d) { return d3.symbols[d.shape];} ).size(600) )
+        //.attr("size", function(d){return nodeSize(d)+10;});
       d3.select(this).select("text").transition()
         .duration(750)
         .attr("x", 15);
@@ -247,9 +256,9 @@ HTMLWidgets.widget({
       //node.style("opacity", +options.opacity);
       //link.style("opacity", +options.opacity);
 
-      d3.select(this).select("circle").transition()
+      d3.select(this).select("path").transition()
         .duration(750)
-        .attr("r", function(d){return nodeSize(d);});
+        .attr("d", d3.symbol().type( function(d) { return d3.symbols[d.shape];} ).size(100) )
       d3.select(this).select("text").transition()
         .duration(750)
         .attr("x", 0);

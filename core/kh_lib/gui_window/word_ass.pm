@@ -709,6 +709,7 @@ sub net_calc{
 		msg_long    => $plotR->{result_info_long},
 		ax          => 5,
 		#no_geometry => 1,
+		coord       => $plotR->{coord},
 	);
 
 	$plotR = undef;
