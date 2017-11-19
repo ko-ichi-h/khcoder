@@ -1243,9 +1243,9 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
-	if ( exists("PERL_font_family") ){
-		par(family=PERL_font_family) 
-	}
+	#if ( exists("PERL_font_family") ){
+	#	par(family=PERL_font_family) 
+	#}
 
 	plot(
 		x=c(c$cscore[,d_x],c$rscore[,d_x]),

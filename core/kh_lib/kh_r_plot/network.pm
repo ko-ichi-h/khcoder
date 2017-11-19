@@ -192,8 +192,7 @@ net <- '<!DOCTYPE html>
     <script src="/lib/htmlwidgets-0.9/htmlwidgets.js"></script>
     <script src="/lib/d3-4.5.0/d3.min.js"></script>
     <script src="/lib/forceNetwork-binding-0.4kh/forceNetwork.js"></script>
-
-          </head>
+  </head>
   <body style="background-color:white;">
     <div id="htmlwidget_container">
     <div id="htmlwidget-net" style="width:960px;height:500px;" class="forceNetwork html-widget"></div>
@@ -218,13 +217,38 @@ for (i in 1:length(edges[,2])){
   net <- paste0(net, edges[i,2] - 1)
 }
 
-#net <- paste0(net, '],"colour":[')
-#for (i in 1:length(edges[,1])){
-#  if (i > 1){
-#    net <- paste0(net, ",")
-#  }
-#  net <- paste0(net, '"#a9a9a9"')
-#}
+lines <- igraph::get.edge.attribute(n2, "line")
+net <- paste0(net, '],"linetype":[')
+for (i in 1:length(edges[,1])){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  if (lines[i] == "solid"){
+    type <- "1,0"
+  } else {
+    type <- "1,3"
+  }
+  net <- paste0(net, '"', type, '"')
+}
+
+if (
+    com_method == "com-b"
+	|| com_method == "com-g"
+	|| com_method == "com-r"
+	|| com_method == "twomode_g"
+){
+	colh <- "#a9a9a9"
+} else {
+	colh <- "#c0c0c0"
+}
+
+net <- paste0(net, '],"colour":[')
+for (i in 1:length(edges[,1])){
+  if (i > 1){
+    net <- paste0(net, ",")
+  }
+  net <- paste0(net, '"', colh, '"')
+}
 
 net <- paste0(net, ']},"nodes":{"name":[')
 
@@ -292,7 +316,7 @@ if ( exists("var_select") ){
 
 net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"'
 
-net3 <- '","fontSize":12,"fontFamily":"sansserif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":10,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
+net3 <- '","fontSize":12,"fontFamily":"sansserif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":1,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
 <script type="application/htmlwidget-sizing" data-for="htmlwidget-net">{"viewer":{"width":450,"height":350,"padding":10,"fill":true},"browser":{"width":960,"height":500,"padding":10,"fill":true}}</script>
 </body>
 </html>'

@@ -124,10 +124,10 @@ HTMLWidgets.widget({
       .data(links)
       .enter().append("line")
       .attr("class", "link")
-      //.style("stroke", function(d) { return d.colour ; })
-      .style("stroke", "#a9a9a9")
+      .style("stroke", function(d) { return d.colour ; })
       .style("opacity", options.opacity)
       .style("stroke-width", eval("(" + options.linkWidth + ")"))
+      .style("stroke-dasharray",function(d) { return d.linetype })
       .on("mouseover", function(d) {
           d3.select(this)
             .style("opacity", 1);
