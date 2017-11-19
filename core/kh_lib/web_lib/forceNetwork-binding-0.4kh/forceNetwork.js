@@ -124,10 +124,14 @@ HTMLWidgets.widget({
       .data(links)
       .enter().append("line")
       .attr("class", "link")
-      .style("stroke", function(d) { return d.colour ; })
+      .style("stroke", function(d) {
+          return ( d.colour == null ) ? "#a9a9a9" : d.colour ;
+      })
       .style("opacity", options.opacity)
       .style("stroke-width", eval("(" + options.linkWidth + ")"))
-      .style("stroke-dasharray",function(d) { return d.linetype })
+      .style("stroke-dasharray",function(d) {
+           return ( d.linetype == null ) ? "1,0" : d.linetype ;
+      })
       .on("mouseover", function(d) {
           d3.select(this)
             .style("opacity", 1);
@@ -171,7 +175,9 @@ HTMLWidgets.widget({
       .call(drag);
 
     node.append("path")
-      .attr("d", d3.symbol().type( function(d) { return d3.symbols[d.shape];} ).size(100) )
+      .attr("d", d3.symbol().type( function(d) {
+           return ( d.shape == null ) ? d3.symbols[0] : d3.symbols[d.shape];
+       } ).size(100))
       .style("stroke", "#c0c0c0")
       .style("opacity", 1)
       .style("stroke-width", "1px");
