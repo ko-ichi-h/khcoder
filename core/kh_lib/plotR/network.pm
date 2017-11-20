@@ -1773,14 +1773,25 @@ if ( exists("saving_file") ){
 			unit( image_width * 0.22, "in" ),
 			"mm"
 		)
-		diff_mm <- diff( c(
-			convertX( g$widths[5], "mm" ),
-			target_legend_width )
-		)
-		print(target_legend_width)
-		if ( diff_mm > 0 ){
-			print(diff_mm)
-			g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
 		}
 	}
 }
