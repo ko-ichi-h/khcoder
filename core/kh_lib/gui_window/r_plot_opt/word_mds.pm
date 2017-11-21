@@ -56,6 +56,7 @@ sub calc{
 	gui_window::r_plot::word_mds->open(
 		plots       => $plot->{result_plots},
 		msg         => $plot->{result_info},
+		coord       => $plot->{coord},
 		ax          => $self->{ax},
 	);
 	$plot = undef;

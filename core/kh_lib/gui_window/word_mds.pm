@@ -194,6 +194,7 @@ sub calc{
 	gui_window::r_plot::word_mds->open(
 		plots       => $plot->{result_plots},
 		msg         => $plot->{result_info},
+		coord       => $plot->{coord},
 		#ax          => $self->{ax},
 	);
 	$plot = undef;
@@ -505,9 +506,16 @@ while ( is.na(check4mds(d)) == 0 ){
 		}
 	}
 
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+	
 	my $plotR;
 	$plotR->{result_plots} = [$plot1, $plot2];
 	$plotR->{result_info} =  $stress;
+	$plotR->{coord} = $csv;
 	return $plotR;
 
 }
@@ -778,11 +786,6 @@ if ( n_cls > 0 ){
 	)
 }
 
-# aspect ratio
-if (fix_asp == 1){
-	g <- g + coord_fixed()
-}
-
 # Text
 if (plot_mode == "color") {
 	if (text_font == 1){
@@ -825,7 +828,75 @@ g <- g + theme(
 	legend.text  = element_text(face="plain", size=11, angle=0)
 )
 
-print(g)
+# fix range
+out_coord <- cbind( cl2$lx, cl2$ly )
+rownames(out_coord) <- cl2$labels
+xlimv <- c(
+	min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
+	max( out_coord[,1] ) + 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) )
+)
+ylimv <- c(
+	min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
+	max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
+)
+
+# aspect ratio
+if (fix_asp == 1){
+	g <- g + coord_fixed(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+} else {
+	g <- g + coord_cartesian(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+}
+
+# coordinates for saving
+add <- -1 * xlimv[1]
+div <- add + xlimv[2]
+out_coord[,1] <- ( out_coord[,1] + add ) / div
+
+add <- -1 *  ylimv[1]
+div <- add + ylimv[2]
+out_coord[,2] <- ( out_coord[,2] + add ) / div
+
+# fixing width of legends to 22%
+library(grid)
+library(gtable)
+g <- ggplotGrob(g)
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		}
+	}
+}
+
+grid.draw(g)
 
 ';
 }
