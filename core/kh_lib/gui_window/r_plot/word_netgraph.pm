@@ -120,7 +120,6 @@ sub illuminate{
 	
 	sleep 0.5;
 	
-	my $n = 1;
 	foreach my $i (reverse @ills){
 		$self->{canvas}->delete( $i );
 	}

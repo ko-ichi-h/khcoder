@@ -5,7 +5,6 @@ use base qw(kh_r_plot);
 use strict;
 use utf8;
 
-# Basically for Web
 sub _save_html{
 	my $self = shift;
 	my $path = shift;
@@ -32,13 +31,46 @@ sub _save_html{
 		cat(net, file=zz)
 		close(zz)
 	";
+	$::config_obj->R->send($r_command);
+	
+	#use Time::HiRes qw(gettimeofday tv_interval);
+	#my $t0 = gettimeofday;
 	
 	unless ( $::config_obj->web_if ){
+		use MIME::Base64;
 		my $cwd = $::config_obj->cwd;
-		$r_command =~ s/src="\/lib/src="$cwd\/kh_lib\/web_lib/g;
+		my $head = "<meta charset=\"utf-8\"/>\n";
+		foreach my $i (
+			"$cwd\/kh_lib\/web_lib/".'d3-4.5.0/d3.min.js',
+			"$cwd\/kh_lib\/web_lib/".'htmlwidgets-0.9/htmlwidgets.js',
+			"$cwd\/kh_lib\/web_lib/".'forceNetwork-binding-0.4kh/forceNetwork.js'
+		){
+			$head .= '<script src="data:application/x-javascript;base64,';
+			local $/ = undef;
+			open(my $fh, '<', $i) or die($i);
+			my $cu = <$fh>;
+			close $fh;
+			$cu = encode_base64($cu);
+			#$cu =~ s/\n//g;
+			$head .= "$cu\"></script>\n";
+		}
+		
+		$path  = $::config_obj->os_path($path);
+		local $/ = undef;
+		open(my $fh, '<:encoding(utf8)', $path) or die($path);
+		my $t = <$fh>;
+		close ($fh);
+		
+		$t =~ s/<head>.+<\/head>/<head>\n$head<\/head>/s;
+		
+		$fh = undef;
+		open($fh, '>:encoding(utf8)', $path) or die($path);
+		print $fh $t;
+		close ($fh);
 	}
-	
-	$::config_obj->R->send($r_command);
+
+	#my $t1 = gettimeofday;
+	#print "elapsed: ", $t1 - $t0, "\n";
 	
 	return 1;
 }
