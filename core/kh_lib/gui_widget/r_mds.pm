@@ -66,6 +66,10 @@ sub _new{
 			$num_size = $1;
 		}
 
+		if ( $self->{r_cmd} =~ /bubble <\- ([0-9]+)\n/ ){
+			$check_bubble = $1;
+		}
+
 		# クラスター化のパラメーター
 		if ( $self->{r_cmd} =~ /n_cls <\- ([0-9]+)\n/ ){
 			$self->{cls_if} = $1;

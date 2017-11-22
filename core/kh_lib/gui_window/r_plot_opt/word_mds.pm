@@ -57,6 +57,7 @@ sub calc{
 		plots       => $plot->{result_plots},
 		msg         => $plot->{result_info},
 		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		ax          => $self->{ax},
 	);
 	$plot = undef;

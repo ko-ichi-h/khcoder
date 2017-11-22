@@ -195,6 +195,7 @@ sub calc{
 		plots       => $plot->{result_plots},
 		msg         => $plot->{result_info},
 		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		#ax          => $self->{ax},
 	);
 	$plot = undef;
@@ -512,12 +513,27 @@ while ( is.na(check4mds(d)) == 0 ){
 		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
 	");
 	
+	# get XY ratio
+	$::config_obj->R->send("
+		if (fix_asp == 1){
+			ratio = ( xlimv[2] - xlimv[1] ) / ( ylimv[2] - ylimv[1] )
+		} else {
+			ratio = 0
+		}
+		print( paste0('<ratio>', ratio ,'</ratio>') )
+	");
+	my $ratio = $::config_obj->R->read;
+	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
+		$ratio = $1;
+	}
+	
 	my $plotR;
 	$plotR->{result_plots} = [$plot1, $plot2];
 	$plotR->{result_info} =  $stress;
 	$plotR->{coord} = $csv;
+	$plotR->{ratio} = $ratio;
+	
 	return $plotR;
-
 }
 
 #--------------#
@@ -868,6 +884,11 @@ out_coord[,2] <- ( out_coord[,2] + add ) / div
 library(grid)
 library(gtable)
 g <- ggplotGrob(g)
+
+if ( ( n_cls == 0 ) && ( bubble == 0 ) ){
+	saving_file <- 1
+}
+
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
 		target_legend_width <- convertX(

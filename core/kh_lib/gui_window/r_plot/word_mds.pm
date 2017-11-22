@@ -1,6 +1,8 @@
 package gui_window::r_plot::word_mds;
 use base qw(gui_window::r_plot);
 
+use strict;
+
 sub option1_options{
 	return [
 		kh_msg->get('gui_window::r_plot::word_corresp->d_l'), # 'ドットとラベル',
@@ -29,6 +31,54 @@ sub start{
 	$yo = $yo * $self->{img_height} / 640;
 	$tw = $tw * $self->{img_height} / 640;
 	$th = $th * $self->{img_height} / 640;
+
+	# adjustments for no legend figs
+	my ($bubble, $cls) = (1,1);
+	if ( $self->{plots}[$self->{ax}]->command_f =~ /bubble <\- ([0-9]+)\n/ ){
+		$bubble = $1;
+	}
+	if ( $self->{plots}[$self->{ax}]->command_f =~ /n_cls <\- ([0-9]+)\n/ ){
+		$cls = $1;
+	}
+	if ($bubble == 0 && $cls == 0) {
+		$xmag = $xmag * 1.05;
+		$xo   = $xo   * 1.1;
+	}
+	#print "$cls, $bubble, $xmag\n";
+	
+	
+	# adjustments for font size (dpi value)
+	my $nxo = $xo * 0.00 + $xo * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
+	my $nyo = $yo * 0.10 + $yo * 0.90 * $self->{plots}[$self->{ax}]->{font_size};
+	$xmag = $xmag / (( $self->{img_height} - ($nxo) ) / ( $self->{img_height} - ($xo) ));
+	$mag = $mag / (( $self->{img_height} - ($nyo) ) / ( $self->{img_height} - ($yo) ));
+	#print "$xmag, $mag\n";
+	$xo = $nxo;
+	$yo = $nyo;
+	
+	# adjustments for X-Y ratio
+	if ($self->{ratio}) {
+		#print "ratio: $self->{ratio}\n";
+		if ($self->{ratio} * 0.99 > 1) {
+			$self->{ratio} = $self->{ratio} * 0.99; # um
+			if ($self->{ratio} < 1) {
+				$self->{ratio} = 1;
+			}
+			$yo = $yo +
+				( ( $self->{img_height} - $yo ) / $mag ) * ( 1 -  1 / $self->{ratio} ) / 2;
+			$mag = $mag * $self->{ratio};
+			$mag = $mag * 0.99 if $self->{ratio} > 1; # umm
+		}
+		elsif ($self->{ratio} < 1){
+			$xo = $xo +
+				( ( $self->{img_height} - $xo ) / $mag ) * ( 1 - $self->{ratio} ) / 2;
+			$xmag = $xmag / $self->{ratio};
+			$xo = $xo * 1.1; # umm
+			$xmag = $xmag / 0.975 if $self->{ratio} < 1; # umm
+		}
+		#print "$xo, $yo, $mag, $xmag\n";
+	}
+	
 	
 	$self->{coordin} = {};
 	foreach my $i (@{$self->{coordi}}){
