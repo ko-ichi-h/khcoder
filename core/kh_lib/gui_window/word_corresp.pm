@@ -844,31 +844,35 @@ sub make_plot{
 	if ( $args{bubble} == 0 ){
 		$r_command .= "font_size <- $fontsize\n";
 		$r_command .= "labcd <- NULL\n\n";
+		$r_command .= "resize_vars <- $args{resize_vars}\n";
+		$r_command .= "bubble_size <- $args{bubble_size}\n";
+
 		my $common = $r_command;
 
 		# ラベルとドットをプロット
 		$r_command_2a = 
 			"plot_mode=\"color\"\n"
-			.&r_command_normal;
+			.&r_command_bubble(%args);
+			#.&r_command_normal;
 		$r_command_2 = $common.$r_command_2a;
 		
 		# ドットのみプロット
 		$r_command .=
 			"plot_mode=\"dots\"\n"
-			.&r_command_normal;
+			.&r_command_bubble(%args);
 
 		if ($args{biplot}){
 			# 変数のみのプロット
 			$r_command_3a .= 
 				"plot_mode=\"vars\"\n"
-				.&r_command_normal;
+				.&r_command_bubble(%args);
 			$r_command_3 = $common.$r_command_3a;
 			
 			# グレースケールのプロット
-			$r_com_gray_a .= &r_command_slab_my;
+			#$r_com_gray_a .= &r_command_slab_my;
 			$r_com_gray_a .= 
 				"plot_mode=\"gray\"\n"
-				.&r_command_normal;
+				.&r_command_bubble(%args);
 			$r_com_gray = $common.$r_com_gray_a;
 		}
 
@@ -957,48 +961,6 @@ sub make_plot{
 	kh_r_plot::corresp->clear_env;
 
 	return \@plots;
-}
-
-sub r_command_normal{
-return '
-
-if (plot_mode == "color"){
-	plot_color <- c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))
-	plot_pch   <- c(20,1,0,2,4:15)
-} else if (plot_mode == "vars"){
-	plot_color <- c("#ADD8E6","#ADD8E6",rep( "red", v_count ))
-	plot_pch   <- c(1,1,0,2,4:15)
-} else if (plot_mode == "gray"){
-	plot_color <- c("gray65","gray65",rep( "gray30", v_count))
-	plot_pch   <- c(20,1,0,2,4:15)
-} else if (plot_mode == "dots"){
-	plot_color <- c("black","black",rep( "black", v_count))
-	plot_pch   <- c(1,3,0,2,4:15)
-}
-
-if (biplot == 1){
-	cb <- rbind(
-		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-	)
-} else {
-	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
-}
-
-plot(
-	cb,
-	pch=plot_pch[cb[,3]],
-	col=plot_color[cb[,3]],
-	xlab=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep=""),
-	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
-	bty = "l",
-	xaxp=axp,
-	yaxp=axp,
-	asp = asp
-)
-
-'.&r_command_labels;
 }
 
 
@@ -1239,7 +1201,7 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 	png_width  <- '.$args{width}.'
 	png_height <- '.$args{height}.' 
 	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
-	dpi <- 72 * min(png_width, png_width) / 640 * '.$args{font_size}.'
+	dpi <- 72 * min(png_width, png_height) / 640 * '.$args{font_size}.'
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
@@ -1389,34 +1351,46 @@ df.words <- data.frame(
 df.words.sub <- subset(df.words, type==2)
 df.words     <- subset(df.words, type==1)
 
-g <- g + geom_point(
-	data=df.words,
-	aes(x=x, y=y, size=size),
-	shape=21,
-	#colour = NA,
-	fill = col_bg_words,
-	alpha=0.15
-)
-
-g <- g + geom_point(
-	data=df.words,
-	aes(x=x, y=y, size=size),
-	shape=21,
-	colour = col_dot_words,
-	fill = NA,
-	alpha=1,
-	show.legend = F
-)
-
-g <- g + scale_size_area(
-	max_size= 30 * bubble_size / 100,
-	guide = guide_legend(
-		title = "Frequency:",
-		override.aes = list(colour="black", fill=NA, alpha=1),
-		label.hjust = 1,
-		order = 2
+if (bubble_plot == 1){
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		#colour = NA,
+		fill = col_bg_words,
+		alpha=0.15
 	)
-)
+	
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		colour = col_dot_words,
+		fill = NA,
+		alpha=1,
+		show.legend = F
+	)
+	
+	g <- g + scale_size_area(
+		max_size= 30 * bubble_size / 100,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", fill=NA, alpha=1),
+			label.hjust = 1,
+			order = 2
+		)
+	)
+} else {
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y),
+		size = 2,
+		shape=16,
+		colour = col_dot_words,
+		alpha=1,
+		show.legend = F
+	)
+}
 
 if ( nrow(df.words.sub) > 0 ){
 	g <- g + geom_point(
@@ -1441,7 +1415,7 @@ if ( biplot == 1 ){
 		type = v_pch
 	)
 
-	if ( resize_vars == 1 ) {
+	if ( (resize_vars == 1) && (bubble_plot == 1) ) {
 		g <- g + geom_point(
 			data=df.vars,
 			aes(x=x, y=y, size=size, shape=factor(type) ),
@@ -1491,13 +1465,13 @@ if ( biplot == 1 ){
 
 # label colors
 if (plot_mode == "color"){
-	if (bubble_plot == 1){
+	#if (bubble_plot == 1){
 		col_txt_words <- "black"
 		col_txt_vars  <- "#DC143C"
-	} else {
-		col_txt_words <- "black"
-		col_txt_vars  <- "#FF6347"
-	}
+	#} else {
+	#	col_txt_words <- "black"
+	#	col_txt_vars  <- "#FF6347"
+	#}
 }
 
 if (plot_mode == "gray"){
@@ -1543,6 +1517,17 @@ if (plot_mode != "dots") {
 			#alpha=0.7,
 			aes(x=x, y=y,label=labs)
 		)
+		if ( (resize_vars == 0) || (bubble_plot == 0) ) {
+			g <- g + geom_point(
+				data=df.vars,
+				aes(x=x, y=y, shape=factor(type) ),
+				colour = col_dot_vars,
+				fill = NA,
+				alpha=1,
+				size=3.5,
+				show.legend = F
+			)
+		}
 	}
 	
 	g <- g + geom_text(
@@ -1662,281 +1647,6 @@ print(g)
 }
 
 
-sub r_command_labels{
-	return '
-
-# show the origin
-if (show_origin == 1){
-	line_color <- "gray30"
-	limits <- par("usr")
-	m_x <- (limits[2] - limits[1]) * 0.03
-	m_y <- (limits[4] - limits[3]) * 0.03
-	
-	segments( limits[1], 0, m_x, 0, col=line_color, lty=3, lwd=1)
-	segments( 0, limits[3], 0, m_y, col=line_color, lty=3, lwd=1)
-}
-
-# label colors
-if (plot_mode == "color"){
-	if (bubble_plot == 1){
-		col_txt_words <- "black"
-		col_txt_vars  <- "#DC143C"
-	} else {
-		col_txt_words <- "black"
-		col_txt_vars  <- "#FF6347"
-	}
-}
-
-if (plot_mode == "gray"){
-	col_txt_words <- "black"
-	col_txt_vars  <- "black"
-}
-
-if (plot_mode == "vars"){
-	col_txt_words <- NA
-	col_txt_vars  <- "black"
-}
-
-if (plot_mode == "dots"){
-	col_txt_words <- NA
-	col_txt_vars  <- NA
-}
-
-# compute label positions
-if (biplot == 1 && plot_mode != "vars"){
-	cb <- rbind(
-		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-	)
-} else if (plot_mode == "vars") {
-	cb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-} else {
-	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
-}
-
-if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
-	print("computing label positions...")
-	library(maptools)
-	labcd <- pointLabel(
-		x=cb[,1],
-		y=cb[,2],
-		labels=rownames(cb),
-		cex=font_size,
-		offset=0,
-		doPlot=F
-	)
-
-	xorg <- cb[,1]
-	yorg <- cb[,2]
-	#cex  <- 1
-
-	n_words_chk <- c( length(c$cscore[,d_x]) )
-	if (flt > 0) {
-		n_words_chk <- c(n_words_chk, flt)
-	}
-	if (flw > 0) {
-		n_words_chk <- c(n_words_chk, flw)
-	}
-	if ( 
-		   ( (biplot == 0) && (min(n_words_chk) < 300) )
-		|| (
-			   (biplot == 1)
-			&& ( min(n_words_chk) < 300 )
-			&& ( length(c$rscore[,d_x]) < r_max )
-		)
-	){
-		library(wordcloud)'
-		.&plotR::network::r_command_wordlayout
-		.'nc <- wordlayout(
-			labcd$x,
-			labcd$y,
-			rownames(cb),
-			cex=cex * 1.25,
-			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-		)
-
-		xlen <- par("usr")[2] - par("usr")[1]
-		ylen <- par("usr")[4] - par("usr")[3]
-
-		segs <- NULL
-		for (i in 1:length( rownames(cb) ) ){
-			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-			dst <- sqrt( x^2 + y^2 )
-			if ( dst > 0.05 ){
-				segs <- rbind(
-					segs,
-					c(
-						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-						xorg[i], yorg[i]
-					) 
-				)
-				#segments(
-				#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				#	xorg[i], yorg[i],
-				#	col="gray60",
-				#	lwd=1
-				#)
-				
-			}
-		}
-
-		xorg <- labcd$x
-		yorg <- labcd$y
-		labcd$x <- nc[,1] + .5 * nc[,3]
-		labcd$y <- nc[,2] + .5 * nc[,4]
-	}
-
-}
-
-# draw labels
-if (plot_mode == "gray"){
-	cb  <- cbind(cb, labcd$x, labcd$y)
-	cb1 <-  subset(cb, cb[,3]==1)
-	cb2 <-  subset(cb, cb[,3]>=3)
-	text(cb1[,4], cb1[,5], rownames(cb1),cex=font_size,offset=0,col="black",font=text_font)
-	library(ade4)
-	s.label_my(
-		cb2,
-		xax=4,
-		yax=5,
-		label=rownames(cb2),
-		boxes=T,
-		clabel=font_size,
-		addaxes=F,
-		include.origin=F,
-		grid=F,
-		cpoint=0,
-		cneig=0,
-		cgrid=0,
-		add.plot=T,
-		font=text_font
-	)
-	
-	points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
-	
-	if ( exists("segs") ){
-		if ( is.null(segs) == F){
-			for (i in 1:nrow(segs) ){
-				segments(
-					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-					col="gray60",
-					lwd=1
-				)
-			}
-		}
-	}
-} else if (plot_mode == "color" || plot_mode == "vars") {
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cb),
-		cex=font_size,
-		offset=0,
-		font=text_font,
-		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
-	)
-	if ( exists("segs") ){
-		if ( is.null(segs) == F){
-			for (i in 1:nrow(segs) ){
-				segments(
-					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-					col="gray60",
-					lwd=1
-				)
-			}
-		}
-	}
-}
-
-if (plot_mode == "vars"){
-	labcd <- NULL
-}
-';
-}
-
-sub r_command_slab_my{
-	return '
-# configure the slab function
-s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
-    clabel = 1, 
-    pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 
-    neig = NULL, cneig = 2, xlim = NULL, ylim = NULL, grid = TRUE, 
-    addaxes = TRUE, cgrid = 1, include.origin = TRUE, origin = c(0, 
-        0), sub = "", csub = 1.25, possub = "bottomleft", pixmap = NULL, 
-    contour = NULL, area = NULL, add.plot = FALSE, font = 1)
-{
-    dfxy <- data.frame(dfxy)
-    opar <- par(mar = par("mar"))
-    on.exit(par(opar))
-    par(mar = c(0.1, 0.1, 0.1, 0.1))
-    coo <- scatterutil.base(dfxy = dfxy, xax = xax, yax = yax, 
-        xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, 
-        cgrid = cgrid, include.origin = include.origin, origin = origin, 
-        sub = sub, csub = csub, possub = possub, pixmap = pixmap, 
-        contour = contour, area = area, add.plot = add.plot)
-    if (!is.null(neig)) {
-        if (is.null(class(neig))) 
-            neig <- NULL
-        if (class(neig) != "neig") 
-            neig <- NULL
-        deg <- attr(neig, "degrees")
-        if ((length(deg)) != (length(coo$x))) 
-            neig <- NULL
-    }
-    if (!is.null(neig)) {
-        fun <- function(x, coo) {
-            segments(coo$x[x[1]], coo$y[x[1]], coo$x[x[2]], coo$y[x[2]], 
-                lwd = par("lwd") * cneig)
-        }
-        apply(unclass(neig), 1, fun, coo = coo)
-    }
-    if (clabel > 0) 
-        scatterutil.eti_my(coo$x, coo$y, label, clabel, boxes, font=font)
-    if (cpoint > 0 & clabel < 1e-06) 
-        points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
-    #box()
-    invisible(match.call())
-}
-scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1, length(x)), 
-    horizontal = TRUE, font = 1) 
-{
-    if (length(label) == 0) 
-        return(invisible())
-    if (is.null(label)) 
-        return(invisible())
-    if (any(label == "")) 
-        return(invisible())
-    cex0 <- par("cex") * clabel
-    for (i in 1:(length(x))) {
-        cha <- as.character(label[i])
-        cha2 <- paste( " ", cha, " ", sep = "")
-        x1 <- x[i]
-        y1 <- y[i]
-        xh <- strwidth(cha2, cex = cex0)
-        yh <- strheight(cha, cex = cex0) * 5/3
-        if (!horizontal) {
-            tmp <- scatterutil.convrot90(xh, yh)
-            xh <- tmp[1]
-            yh <- tmp[2]
-        }
-        if (boxes) {
-            rect(x1 - xh/2, y1 - yh/2, x1 + xh/2, y1 + yh/2, 
-                col = "white", border = coul[i])
-        }
-        if (horizontal) {
-            text(x1, y1, cha, cex = cex0, col = coul[i], font=font)
-            print("looks ok...")
-        }
-        else {
-            text(x1, y1, cha, cex = cex0, col = coul[i], srt = 90, font=font)
-        }
-    }
-}
-';
-
-}
 #--------------#
 #   アクセサ   #
 

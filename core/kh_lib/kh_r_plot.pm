@@ -574,6 +574,7 @@ sub R_device{
 	
 	my $p = 12 * $dpi / 72;
 	#print "point size: $p\n";
+	print "dpi: $dpi\n";
 	
 	my $uni_path = $::config_obj->uni_path($path);
 	$::config_obj->R->send("

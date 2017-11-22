@@ -83,10 +83,8 @@ sub innner{
 	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var)
 		= (0,1,0,100,100);
 
-	if ( $self->{command_f} =~ /bubble_size/ ){
-		$check_bubble = 1;
-	} else {
-		$check_bubble = 0;
+	if ( $self->{command_f} =~ /bubble_plot <- ([0-9]+)\n/ ){
+		$check_bubble = $1;
 	}
 
 	if ( $self->{command_f} =~ /std_radius <\- ([0-9]+)\n/ ){
