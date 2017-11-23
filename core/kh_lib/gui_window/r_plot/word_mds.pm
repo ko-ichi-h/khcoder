@@ -26,27 +26,12 @@ sub start{
 	close $fh;
 
 	# make clickable image map
-	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.07, 1.04, 46, 36, 30, 11);
+	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.07, 1.09, 50, 36, 30, 11);
 	$xo = $xo * $self->{img_height} / 640;
 	$yo = $yo * $self->{img_height} / 640;
 	$tw = $tw * $self->{img_height} / 640;
 	$th = $th * $self->{img_height} / 640;
 
-	# adjustments for no legend figs
-	my ($bubble, $cls) = (1,1);
-	if ( $self->{plots}[$self->{ax}]->command_f =~ /bubble <\- ([0-9]+)\n/ ){
-		$bubble = $1;
-	}
-	if ( $self->{plots}[$self->{ax}]->command_f =~ /n_cls <\- ([0-9]+)\n/ ){
-		$cls = $1;
-	}
-	if ($bubble == 0 && $cls == 0) {
-		$xmag = $xmag * 1.05;
-		$xo   = $xo   * 1.1;
-	}
-	#print "$cls, $bubble, $xmag\n";
-	
-	
 	# adjustments for font size (dpi value)
 	my $nxo = $xo * 0.00 + $xo * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
 	my $nyo = $yo * 0.10 + $yo * 0.90 * $self->{plots}[$self->{ax}]->{font_size};
@@ -58,23 +43,23 @@ sub start{
 	
 	# adjustments for X-Y ratio
 	if ($self->{ratio}) {
-		#print "ratio: $self->{ratio}\n";
-		if ($self->{ratio} * 0.99 > 1) {
-			$self->{ratio} = $self->{ratio} * 0.99; # um
+		print "ratio: $self->{ratio}\n";
+		if ($self->{ratio} > 1.01) {
 			if ($self->{ratio} < 1) {
 				$self->{ratio} = 1;
 			}
 			$yo = $yo +
 				( ( $self->{img_height} - $yo ) / $mag ) * ( 1 -  1 / $self->{ratio} ) / 2;
 			$mag = $mag * $self->{ratio};
-			$mag = $mag * 0.99 if $self->{ratio} > 1; # umm
+			$yo = $yo * 1.06; # umm...
+			$mag = $mag * 1.02 if $self->{ratio} > 1; # umm...
 		}
-		elsif ($self->{ratio} < 1){
+		elsif ($self->{ratio} < 0.99){
 			$xo = $xo +
 				( ( $self->{img_height} - $xo ) / $mag ) * ( 1 - $self->{ratio} ) / 2;
 			$xmag = $xmag / $self->{ratio};
-			$xo = $xo * 1.1; # umm
-			$xmag = $xmag / 0.975 if $self->{ratio} < 1; # umm
+			#$xo = $xo * 1.00; # umm...
+			$xmag = $xmag * 0.98; # umm...
 		}
 		#print "$xo, $yo, $mag, $xmag\n";
 	}

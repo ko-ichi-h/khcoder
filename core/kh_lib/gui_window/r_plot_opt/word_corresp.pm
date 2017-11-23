@@ -245,12 +245,14 @@ sub calc{
 	if ($::main_gui->if_opened('w_word_corresp_plot')){
 		$::main_gui->get('w_word_corresp_plot')->close;
 	}
-	
+
 	gui_window::r_plot::word_corresp->open(
-		plots       => $plot,
+		plots       => $plot->{result_plots},
+		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		ax          => $self->{ax},
 	);
-	
+
 	$self->close;
 }
 

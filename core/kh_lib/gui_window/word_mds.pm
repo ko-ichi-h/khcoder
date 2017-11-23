@@ -217,7 +217,7 @@ sub make_plot{
 			|| $args{n_cls}
 		)
 	){
-		$x_factor = 4/3;
+		$x_factor = 1.285;
 	}
 	$args{height} = $args{plot_size};
 	$args{width}  = int( $args{plot_size} * $x_factor );
@@ -841,7 +841,8 @@ g <- g + theme(
 	axis.text.x  = element_text(face="plain", size=11, angle=0),
 	axis.text.y  = element_text(face="plain", size=11, angle=0),
 	legend.title = element_text(face="bold",  size=11, angle=0),
-	legend.text  = element_text(face="plain", size=11, angle=0)
+	legend.text  = element_text(face="plain", size=11, angle=0),
+	plot.margin  = margin(6, 6, 6, 0, "pt")
 )
 
 # fix range
@@ -914,6 +915,17 @@ if ( exists("saving_file") ){
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
 		}
+	}
+}
+
+# fixing width of left spaces to 4.25 char
+if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+	diff_char <- diff( c(
+		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+		unit(4.25, "char")
+	))
+	if ( diff_char > 0 ){
+		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
 	}
 }
 

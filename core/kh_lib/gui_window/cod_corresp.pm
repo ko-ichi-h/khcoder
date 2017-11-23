@@ -1016,7 +1016,7 @@ sub _calc{
 	}
 	
 	gui_window::r_plot::cod_corresp->open(
-		plots       => $plot,
+		plots       => $plot->{result_plots},
 		#ax          => $self->{ax},
 	);
 

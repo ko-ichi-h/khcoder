@@ -763,7 +763,9 @@ sub calc{
 	}
 	
 	gui_window::r_plot::word_corresp->open(
-		plots       => $plot,
+		plots       => $plot->{result_plots},
+		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		#no_geometry => 1,
 	);
 
@@ -781,7 +783,7 @@ sub make_plot{
 
 	my $x_factor = 1;
 	if ( $args{bubble} == 1 ){
-		$x_factor = 4/3;
+		$x_factor = 1.285;
 	}
 	$args{height} = $args{plot_size};
 	$args{width}  = int( $args{plot_size} * $x_factor );
@@ -839,74 +841,35 @@ sub make_plot{
 	my ($r_command_3a, $r_command_3);
 	my ($r_command_2a, $r_command_2);
 	my ($r_com_gray, $r_com_gray_a);
+
+	# 初期化
+	$r_command .= "font_size <- $fontsize\n";
+	$r_command .= "resize_vars <- $args{resize_vars}\n";
+	$r_command .= "bubble_size <- $args{bubble_size}\n";
+	$r_command .= "labcd <- NULL\n\n";
+	my $common = $r_command;
 	
-	# バブル表現を行なわない場合
-	if ( $args{bubble} == 0 ){
-		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "labcd <- NULL\n\n";
-		$r_command .= "resize_vars <- $args{resize_vars}\n";
-		$r_command .= "bubble_size <- $args{bubble_size}\n";
+	# ドットのみ
+	$r_command .= "plot_mode <- \"color\"\n";
+	$r_command .= &r_command_bubble(%args);
 
-		my $common = $r_command;
+	# カラー
+	$r_command_2a .= "plot_mode <- \"dots\"\n";
+	$r_command_2a .= &r_command_bubble(%args);
+	$r_command_2  = $common.$r_command_2a;
 
-		# ラベルとドットをプロット
-		$r_command_2a = 
-			"plot_mode=\"color\"\n"
-			.&r_command_bubble(%args);
-			#.&r_command_normal;
-		$r_command_2 = $common.$r_command_2a;
+	if ($args{biplot}){
+		# 変数のみ
+		$r_command_3a .= "plot_mode <- \"vars\"\n";
+		$r_command_3a .= &r_command_bubble(%args);
+		$r_command_3  = $common.$r_command_3a;
 		
-		# ドットのみプロット
-		$r_command .=
-			"plot_mode=\"dots\"\n"
-			.&r_command_bubble(%args);
-
-		if ($args{biplot}){
-			# 変数のみのプロット
-			$r_command_3a .= 
-				"plot_mode=\"vars\"\n"
-				.&r_command_bubble(%args);
-			$r_command_3 = $common.$r_command_3a;
-			
-			# グレースケールのプロット
-			#$r_com_gray_a .= &r_command_slab_my;
-			$r_com_gray_a .= 
-				"plot_mode=\"gray\"\n"
-				.&r_command_bubble(%args);
-			$r_com_gray = $common.$r_com_gray_a;
-		}
-
-	# バブル表現を行う場合
-	} else {
-		# 初期化
-		#$r_command .= &r_command_slab_my;
-		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "resize_vars <- $args{resize_vars}\n";
-		$r_command .= "bubble_size <- $args{bubble_size}\n";
-		$r_command .= "labcd <- NULL\n\n";
-		my $common = $r_command;
-		
-		# ドットのみ
-		$r_command .= "plot_mode <- \"dots\"\n";
-		$r_command .= &r_command_bubble;
-
-		# カラー
-		$r_command_2a .= "plot_mode <- \"color\"\n";
-		$r_command_2a .= &r_command_bubble(%args);
-		$r_command_2  = $common.$r_command_2a;
-
-		if ($args{biplot}){
-			# 変数のみ
-			$r_command_3a .= "plot_mode <- \"vars\"\n";
-			$r_command_3a .= &r_command_bubble(%args);
-			$r_command_3  = $common.$r_command_3a;
-			
-			# グレースケール
-			$r_com_gray_a .= "plot_mode <- \"gray\"\n";
-			$r_com_gray_a .= &r_command_bubble(%args);
-			$r_com_gray = $common.$r_com_gray_a;
-		}
+		# グレースケール
+		$r_com_gray_a .= "plot_mode <- \"gray\"\n";
+		$r_com_gray_a .= &r_command_bubble(%args);
+		$r_com_gray = $common.$r_com_gray_a;
 	}
+
 
 	# プロット作成
 	my $plot1 = kh_r_plot::corresp->new(
@@ -946,9 +909,9 @@ sub make_plot{
 			height    => $args{plot_size},
 			font_size => $args{font_size},
 		) or return 0;
-		@plots = ($plot2,$plotg,$plotv,$plot1);
+		@plots = ($plot1,$plotg,$plotv,$plot2);
 	} else {
-		@plots = ($plot2,$plot1);
+		@plots = ($plot1,$plot2);
 	}
 
 	my $txt = $plot1->r_msg;
@@ -958,9 +921,34 @@ sub make_plot{
 		print "---------------------------------------------------------[R]\n";
 	}
 
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+
+	# get XY ratio
+	$::config_obj->R->send("
+		if (asp == 1){
+			ratio = ( xlimv[2] - xlimv[1] ) / ( ylimv[2] - ylimv[1] )
+		} else {
+			ratio = 0
+		}
+		print( paste0('<ratio>', ratio ,'</ratio>') )
+	");
+	my $ratio = $::config_obj->R->read;
+	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
+		$ratio = $1;
+	}
+
 	kh_r_plot::corresp->clear_env;
 
-	return \@plots;
+	my $plotR;
+	$plotR->{result_plots} = \@plots,
+	$plotR->{coord} = $csv;
+	$plotR->{ratio} = $ratio;
+	
+	return $plotR;
 }
 
 
@@ -1495,6 +1483,15 @@ if ( text_font == 1 ){
 	font_face <- "bold"
 }
 
+if ( plot_mode == "color" ){
+	df.labels.save <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+}
+
 if (plot_mode != "dots") {
 	df.labels <- data.frame(
 		x    = labcd$x,
@@ -1502,10 +1499,9 @@ if (plot_mode != "dots") {
 		labs = rownames(cb),
 		cols = cb[,3]
 	)
-	
 	if ( plot_mode == "gray" ){
-		df.labels.var <- subset(df.labels, cols == 3)
-		df.labels     <- subset(df.labels, cols != 3)
+		df.labels.var  <- subset(df.labels, cols == 3)
+		df.labels <- subset(df.labels, cols != 3)
 		g <- g + geom_label(
 			data=df.labels.var,
 			family=font_family,
@@ -1576,9 +1572,9 @@ if (plot_mode == "vars"){
 #--------------------#
 #   Configurations   #
 
-if ( asp == 1 ){
-	g <- g + coord_fixed()
-}
+#if ( asp == 1 ){
+#	g <- g + coord_fixed()
+#}
 
 g <- g + labs(
 	x=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
@@ -1641,8 +1637,109 @@ if (show_origin == 1){
 	} 
 }
 
-print(g)
+#-----------------------------#
+#   for clickable image map   #
 
+# fix range
+if (plot_mode == "color"){
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+	
+	xlimv <- c(
+		min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
+		max( out_coord[,1] ) + 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) )
+	)
+	ylimv <- c(
+		min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
+		max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
+	)
+}
+
+# aspect ratio
+if (asp == 1){
+	g <- g + coord_fixed(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+} else {
+	g <- g + coord_cartesian(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+}
+
+# coordinates for saving
+if (plot_mode == "color"){
+	df.labels.save <- subset(df.labels.save, cols != 3)
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+	
+	add <- -1 * xlimv[1]
+	div <- add + xlimv[2]
+	out_coord[,1] <- ( out_coord[,1] + add ) / div
+	
+	add <- -1 *  ylimv[1]
+	div <- add + ylimv[2]
+	out_coord[,2] <- ( out_coord[,2] + add ) / div
+}
+
+# fixing width of legends to 22%
+library(grid)
+library(gtable)
+g <- ggplotGrob(g)
+
+if ( bubble_plot == 0 ){
+	saving_file <- 1
+}
+
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		}
+	}
+}
+
+# fixing width of left spaces to 4.25 char
+if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+	diff_char <- diff( c(
+		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+		unit(4.25, "char")
+	))
+	if ( diff_char > 0 ){
+		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
+	}
+}
+
+grid.draw(g)
 ';
 }
 
