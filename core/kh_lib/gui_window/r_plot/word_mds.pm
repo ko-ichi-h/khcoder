@@ -15,6 +15,15 @@ sub start{
 	
 	return 1 if $::config_obj->web_if;
 	
+	$self->renew_command;
+}
+
+sub renew_command{
+	my $self = shift;
+	$self->clear_clickablemap;
+	
+	return 0 if $self->{ax} == 1;
+	
 	# read coordinates
 	return 0 unless -e $self->{coord};
 	@{$self->{coordi}} = ();
@@ -65,7 +74,7 @@ sub start{
 	}
 	
 	
-	$self->{coordin} = {};
+	$self->{coordin} = ();
 	foreach my $i (@{$self->{coordi}}){
 		my $x1 = $i->[1] * $self->{img_height} / $xmag + $xo - $tw;
 		my $y1 = $self->{img_height} - ($i->[2] * $self->{img_height} / $mag  + $yo + $th);

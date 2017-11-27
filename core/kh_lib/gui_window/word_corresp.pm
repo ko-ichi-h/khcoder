@@ -1642,11 +1642,11 @@ if (show_origin == 1){
 
 # fix range
 if (plot_mode == "color"){
+	# for setting xlim & ylim
 	out_coord <- cbind(
-		df.labels.save$x,
-		df.labels.save$y
+		c( df.labels.save$x, df.words$x),
+		c( df.labels.save$y, df.words$y)
 	)
-	rownames(out_coord) <- df.labels.save$labs
 	
 	xlimv <- c(
 		min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
@@ -1656,6 +1656,13 @@ if (plot_mode == "color"){
 		min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
 		max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
 	)
+	
+	# for saving
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
 }
 
 # aspect ratio

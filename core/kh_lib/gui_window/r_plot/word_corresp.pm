@@ -24,6 +24,22 @@ sub start{
 	
 	return 1 if $::config_obj->web_if;
 	
+	$self->renew_command;
+}
+
+sub renew_command{
+	my $self = shift;
+	$self->clear_clickablemap;
+	
+	
+	my $n = @{$self->{plots}};
+	#print "ax: $self->{ax}\n";
+	#print "n: $n\n";
+	return 0 unless $self->{ax} == 0 || $self->{ax} == 1;
+	return 0 if $n == 2 && $self->{ax} == 1;
+	
+	
+	
 	# read coordinates
 	return 0 unless -e $self->{coord};
 	@{$self->{coordi}} = ();

@@ -379,6 +379,15 @@ sub save{
 	return 1;
 }
 
+sub img_height{
+	my $self = shift;
+	return $self->{img_height};
+}
+sub img_width{
+	my $self = shift;
+	return $self->{img_width};
+}
+
 sub photo_pane_height{
 	my $self = shift;
 	return $self->{photo_pane_height};
@@ -414,6 +423,23 @@ sub show_kwic{
 	$conc->search;
 	
 	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
+}
+
+sub clear_clickablemap{
+	my $self = shift;
+	
+	return 0 unless defined( $self->{coordin} );
+	return 0 unless $self->{coordin};
+	return 0 unless $self->{canvas};
+	
+	$self->undecorate;
+	
+	foreach my $i (keys %{$self->{coordin}}) {
+		$self->{canvas}->delete( $i );
+	}
+	
+	$self->{coordin} = ();
+	return 1;
 }
 
 sub decorate{

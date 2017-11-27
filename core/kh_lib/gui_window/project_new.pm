@@ -421,6 +421,11 @@ sub check_path{
 		$self->{column_menu}->configure( -state => 'disable' );
 		
 	}
+	#SCREEN Plugin
+	if (exists($self->{plugin_btn})){
+		$self->{plugin_btn}->configure( -state => 'normal' );
+	}
+	#SCREEN Plugin
 	
 	return 1;
 }

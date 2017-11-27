@@ -348,7 +348,7 @@ if ( exists("var_select") ){
 
 net2 <- ']},"options":{"NodeID":"name","Group":"group","colourScale":"'
 
-net3 <- '","fontSize":12,"fontFamily":"sansserif","clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":1,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
+net3 <- '","fontSize":12,"clickTextSize":30,"linkDistance":50,"linkWidth":"function(d) { return Math.sqrt(d.value); }","charge":-200,"opacity":1,"zoom":true,"legend":false,"arrows":false,"nodesize":false,"radiusCalculation":" Math.sqrt(d.nodesize)+6","bounded":true,"opacityNoHover":10,"clickAction":null}},"evals":[],"jsHooks":[]}</script>
 <script type="application/htmlwidget-sizing" data-for="htmlwidget-net">{"viewer":{"width":450,"height":350,"padding":10,"fill":true},"browser":{"width":960,"height":500,"padding":10,"fill":true}}</script>
 </body>
 </html>'

@@ -1102,3 +1102,10 @@ gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "Configure: Line Chart"
+screen_code::rde_menu:
+    plugin_raw_data_editor:    "Edit Data"
+    err_not_exist:             "Projectdata don't exist."
+    err_output_from_db:        "Projectdata cannot output from database."
+    err_edit:                  "Projectdata cannot edit."
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:    "Edit File"
