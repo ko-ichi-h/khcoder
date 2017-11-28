@@ -179,10 +179,17 @@ sub new{
 	print "$t\n";
 	print "---------------------------------------------------------[R]\n";
 
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+
 	kh_r_plot->clear_env;
 	undef $self;
 	undef %args;
 	$self->{result_plots} = \@plots;
+	$self->{coord} = $csv;
 	#$self->{result_info} = $info;
 	#$self->{result_info_long} = $info_long;
 	
@@ -872,6 +879,12 @@ text(
 	font=text_font
 )
 
+if ( exists("out_coord") == F ) {
+	out_coord <- cbind(
+		labcd$x / (n_nodes-0.5),
+		labcd$y / (n_nodes-1)
+	)
+}
 
 ';
 }
