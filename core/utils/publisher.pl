@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a10m';
+my $V = '3a10n';
 my $V_main = "3.Alpha.10"; # フォルダ名
-my $V_full = "3.Alpha.10m";
+my $V_full = "3.Alpha.10n";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -406,20 +406,18 @@ sub source_tgz{
 	#   CVSから最新ソースを取り出し   #
 
 
-	my $cvs_cmd = 'cvs -d ":ext;command=\'';
+	#my $cvs_cmd = 'cvs -d ":ext;command=\'';
+	#if (-d $home_dir){
+	#	$cvs_cmd .= "set HOME=f:/home/koichi& ";
+	#}
+	#$cvs_cmd .= "ssh -l ko-ichi ";
+	#if (-d $home_dir){
+	#	$cvs_cmd .= "-i $key_file ";
+	#}
+	#$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
+	#$cvs_cmd .= "export -r unicode -- core";
 
-	if (-d $home_dir){
-		$cvs_cmd .= "set HOME=f:/home/koichi& ";
-	}
-
-	$cvs_cmd .= "ssh -l ko-ichi ";
-
-	if (-d $home_dir){
-		$cvs_cmd .= "-i $key_file ";
-	}
-
-	$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
-	$cvs_cmd .= "export -r unicode -- core";
+	my $cvs_cmd = "svn export --username=ko-ichi https://svn.code.sf.net/p/khc/svn/branches/unicode/core core";
 
 	print "cmd: $cvs_cmd\n";
 
