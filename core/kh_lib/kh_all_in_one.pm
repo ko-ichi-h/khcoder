@@ -48,7 +48,7 @@ sub init{
 		);
 	}
 	
-	# FreeLIngのパス設定
+	# FreeLingのパス設定
 	if (
 		not -d $::config_obj->freeling_dir
 		and -d $::config_obj->cwd.'/dep/freeling40'
@@ -126,6 +126,11 @@ sub init{
 			$::config_obj->r_path( $::config_obj->cwd.$candidate)
 		}
 	}
+	my $dir = $::config_obj->cwd."/config/Rtmp";
+	$dir =~ s/\//\\/g;
+	$dir = $::config_obj->os_path($dir);
+	mkdir($dir) unless -d $dir;
+	$ENV{TMPDIR} = $dir;
 
 	if (
 		not -e $::config_obj->r_path
