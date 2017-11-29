@@ -3,6 +3,7 @@
 [Unicode化]
 	■メモ
 	・「unicode」というブランチを作成して作業開始。
+	svn checkout --username=ko-ichi https://svn.code.sf.net/p/khc/svn/branches/unicode/core core_uni
 
 	■メモ（3.xでの制限事項 ← なんとかならないの？）
 	・Rのパス問題[1]：KH Coderのインストールパスに非アスキー文字（日本語）が含まれると駄目 → Bridgeフォルダを「c:\khcoder\Bridge」とかに決め打ち？
