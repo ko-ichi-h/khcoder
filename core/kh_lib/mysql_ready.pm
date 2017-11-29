@@ -201,6 +201,10 @@ sub fix_michigo{
 			#print "zenkaku\n";
 			next;
 		}
+		if ( $i->[1] =~ /[ａ-ｚ|Ａ-Ｚ]/o){
+			#print "zenkaku-alpha\n";
+			next;
+		}
 		#print "gomi\n";
 		push @gomi, $i->[0];
 	}
