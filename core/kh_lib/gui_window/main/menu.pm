@@ -708,7 +708,8 @@ sub make{
 
 	my @plugins;
 	my $read_each = sub {
-		return if(-d $File::Find::name);
+		return if (-d $File::Find::name);
+		return if ($File::Find::name =~ /\/\.svn/);
 		return unless $_ =~ /.+\.pm/;
 		substr($_, length($_) - 3, length($_)) = '';
 		push @plugins, $_;
