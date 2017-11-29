@@ -32,25 +32,29 @@ sub exec{
 		return 0;
 	}
 
-	# execute R command 1
-	$::config_obj->R->send('
-		print(
-			paste(
-				memory.size(),
-				memory.size(max=T),
-				memory.limit(),
-				sep=", "
-			) 
-		)
-	');
+	my $t = '';
 	
-	# read output of R 1
-	my $t = $::config_obj->R->read();
-	
-	# modify the output string for print
-	$t =~ s/.+"(.+)"/$1/;
-	$t =~ s/, / \t/g;
-	$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
+	if ($::config_obj->os eq 'win32') {
+		# execute R command 1
+		$::config_obj->R->send('
+			print(
+				paste(
+					memory.size(),
+					memory.size(max=T),
+					memory.limit(),
+					sep=", "
+				) 
+			)
+		');
+		
+		# read output of R 1
+		my $t = $::config_obj->R->read();
+		
+		# modify the output string for print
+		$t =~ s/.+"(.+)"/$1/;
+		$t =~ s/, / \t/g;
+		$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
+	}
 
 	# execute R command 2
 	$::config_obj->R->send('
@@ -82,6 +86,16 @@ sub exec{
 	my $t4 = $::config_obj->R->read();
 	$t4 = Encode::decode('console_out', $t4);
 	$t .= "\n\n.libPaths():\n\n$t4";
+
+	# execute R command 5
+	$::config_obj->R->send('
+		print( tempdir() )
+	');
+
+	# read output of R 5
+	my $t5 = $::config_obj->R->read();
+	$t5 = Encode::decode('console_out', $t5);
+	$t .= "\n\ntempdir():\n\n$t5";
 
 	# print
 	$mw->messageBox(

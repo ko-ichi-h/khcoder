@@ -35,25 +35,29 @@ sub exec{
 		return 0;
 	}
 
-	# Rコマンドの実行 1
-	$::config_obj->R->send('
-		print(
-			paste(
-				memory.size(),
-				memory.size(max=T),
-				memory.limit(),
-				sep=", "
-			) 
-		)
-	');
+	my $t = '';
 	
-	# 実行結果の取得 1
-	my $t = $::config_obj->R->read();
-	
-	# 結果を少し整形 1
-	$t =~ s/.+"(.+)"/$1/;
-	$t =~ s/, / \t/g;
-	$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
+	if ($::config_obj->os eq 'win32') {
+		# Rコマンドの実行 1
+		$::config_obj->R->send('
+			print(
+				paste(
+					memory.size(),
+					memory.size(max=T),
+					memory.limit(),
+					sep=", "
+				) 
+			)
+		');
+		
+		# 実行結果の取得 1
+		$t = $::config_obj->R->read();
+		
+		# 結果を少し整形 1
+		$t =~ s/.+"(.+)"/$1/;
+		$t =~ s/, / \t/g;
+		$t = "Memory consumption of R (MB):\n\ncurrent	max	limit\n".$t;
+	}
 
 	# Rコマンドの実行 2
 	$::config_obj->R->send('
@@ -85,7 +89,17 @@ sub exec{
 	my $t4 = $::config_obj->R->read();
 	$t4 = Encode::decode('console_out', $t4);
 	$t .= "\n\n.libPaths():\n\n$t4";
-	
+
+	# Rコマンドの実行 5
+	$::config_obj->R->send('
+		print( tempdir() )
+	');
+
+	# 実行結果の取得 5
+	my $t5 = $::config_obj->R->read();
+	$t5 = Encode::decode('console_out', $t5);
+	$t .= "\n\ntempdir():\n\n$t5";
+
 	# 画面表示
 	$mw->messageBox(
 		-icon    => 'info',
