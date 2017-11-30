@@ -1483,7 +1483,7 @@ if ( text_font == 1 ){
 	font_face <- "bold"
 }
 
-if ( plot_mode == "color" ){
+if ( exists("df.labels.save ") == F ){
 	df.labels.save <- data.frame(
 		x    = labcd$x,
 		y    = labcd$y,
@@ -1641,7 +1641,7 @@ if (show_origin == 1){
 #   for clickable image map   #
 
 # fix range
-if (plot_mode == "color"){
+if ( exists("xlimv") == F ){
 	# for setting xlim & ylim
 	out_coord <- cbind(
 		c( df.labels.save$x, df.words$x),
