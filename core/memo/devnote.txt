@@ -2,8 +2,11 @@
 
 [Unicode化]
 	■メモ
-	・「unicode」というブランチを作成して作業開始。
+	・「unicode」というブランチを作成して作業開始。現在はトランクに格上げ。
 	svn checkout --username=ko-ichi https://svn.code.sf.net/p/khc/svn/trunk/core core_uni
+
+	svn copy https://svn.code.sf.net/p/khc/svn/trunk/core https://svn.code.sf.net/p/khc/svn/branches/v3screen/core
+	svn switch https://svn.code.sf.net/p/khc/svn/branches/v3screen/core
 	svn switch https://svn.code.sf.net/p/khc/svn/trunk/core
 
 	■メモ（3.xでの制限事項 ← なんとかならないの？）

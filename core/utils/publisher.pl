@@ -350,7 +350,7 @@ sub win_pkg{
 	# Åukh_coder.exeÅvÇçÏê¨
 	chdir("..");
 
-	system("cvs update");
+	system("svn update");
 	unlink("kh_coder.exe");
 	system("make_exe.bat");
 	unless (-e "kh_coder.exe"){
@@ -417,7 +417,7 @@ sub source_tgz{
 	#$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
 	#$cvs_cmd .= "export -r unicode -- core";
 
-	my $cvs_cmd = "svn export --username=ko-ichi https://svn.code.sf.net/p/khc/svn/branches/unicode/core core";
+	my $cvs_cmd = "svn export --username=ko-ichi https://svn.code.sf.net/p/khc/svn/trunk/core core";
 
 	print "cmd: $cvs_cmd\n";
 
