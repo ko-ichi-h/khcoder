@@ -1,31 +1,36 @@
+use utf8;
+use Encode qw/encode decode/;
+
 package kh_sysconfig::win32;
 use base qw(kh_sysconfig);
 use strict;
 
 #----------------------------#
-#   ÀßÄê¤ÎÆÉ¤ß¹þ¤ß¥ë¡¼¥Á¥ó   #
+#   è¨­å®šã®èª­ã¿è¾¼ã¿ãƒ«ãƒ¼ãƒãƒ³   #
 #----------------------------#
 
 sub _readin{
 	use Jcode;
 	use kh_sysconfig::win32::chasen;
 	use kh_sysconfig::win32::mecab;
+	use kh_sysconfig::win32::mecab_k;
 	use kh_sysconfig::win32::stemming;
 	use kh_sysconfig::win32::stanford;
+	use kh_sysconfig::win32::freeling;
 
 	my $self = shift;
 
-	# Chasen¤ÎÀßÄê
+	# Chasenã®è¨­å®š
 	if (-e $self->{chasen_path}){
 		my $pos = rindex($self->{chasen_path},'\\');
 		$self->{grammercha} = substr($self->{chasen_path},0,$pos);
 		$self->{chasenrc} = "$self->{grammercha}".'\\dic\chasenrc';
 		$self->{grammercha} .= '\dic\grammar.cha';
 		
-		my $flag = 0; my $msg = '(Ï¢·ëÉÊ»ì';
-		Jcode::convert(\$msg,'sjis','euc');
+		my $flag = 0;
+		my $msg = '(é€£çµå“è©ž';
 		if (-e $self->{chasenrc}){
-			open (CRC,"$self->{chasenrc}") or
+			open (CRC, '<:encoding(cp932)', $self->{chasenrc}) or
 				gui_errormsg->open(
 					type    => 'file',
 					thefile => "$self->{chasenrc}"
@@ -59,7 +64,7 @@ sub _readin{
 }
 
 #------------------#
-#   ÀßÄêÃÍ¤ÎÊÝÂ¸   #
+#   è¨­å®šå€¤ã®ä¿å­˜   #
 #------------------#
 
 sub save{
@@ -83,11 +88,19 @@ sub save_ini{
 		'mecab_path',
 		'mecab_unicode',
 		'stanf_jar_path',
-		'stanf_tagger_path',
-		'c_or_j',
-		'stemming_lang',
+		'stanf_tagger_path_en',
+		'stanf_tagger_path_cn',
+		'stanf_seg_path',
+		'han_dic_path',
+		'freeling_dir',
+		'freeling_lang',
 		'stanford_lang',
+		'stemming_lang',
+		'last_lang',
+		'last_method',
+		'c_or_j',
 		'msg_lang',
+		'msg_lang_set',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',
@@ -96,6 +109,7 @@ sub save_ini{
 		'sql_host',
 		'sql_port',
 		'multi_threads',
+		'color_universal_design',
 		'mail_if',
 		'mail_smtp',
 		'mail_from',
@@ -104,6 +118,12 @@ sub save_ini{
 		'all_in_one_pack',
 		'font_main',
 		'font_plot',
+		'font_plot_cn',
+		'font_plot_kr',
+		'font_plot_ru',
+		'font_pdf',
+		'font_pdf_cn',
+		'font_pdf_kr',
 		'win32_monitor_chk',
 		'kaigyo_kigou',
 		'color_DocView_info',
@@ -113,6 +133,7 @@ sub save_ini{
 		'color_DocView_CodeW',
 		'color_ListHL_fore',
 		'color_ListHL_back',
+		'color_palette',
 		'plot_size_words',
 		'plot_size_codes',
 		'plot_font_size',
@@ -121,16 +142,24 @@ sub save_ini{
 	);
 	
 	my $f = $self->{ini_file};
-	open (INI,">$f") or
+	open (INI,'>:encoding(utf8)', "$f") or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => ">$f"
+			thefile => "$f"
 		);
+
 	foreach my $i (@outlist){
 		my $value = $self->$i( undef,'1');
 		$value = '' unless defined($value);
+		
+		unless ( utf8::is_utf8($value) ){
+			$value = Encode::decode('utf8', Jcode->new($value)->utf8);
+			# åŸºæœ¬çš„ã«ã™ã¹ã¦decodeã•ã‚Œã¦ã„ã‚‹å‰æ
+			# æ—¥æœ¬èªžãƒ»ASCIIä»¥å¤–ãŒdecodeã•ã‚Œã¦ã„ãªã‘ã‚Œã°æ–‡å­—åŒ–ã‘ï¼
+		}
 		print INI "$i\t".$value."\n";
 	}
+
 	foreach my $i (keys %{$self}){
 		if ( index($i,'w_') == 0 ){
 			my $value = $self->win_gmtry($i);
@@ -147,8 +176,7 @@ sub save_ini{
 }
 
 #--------------------#
-#   ·ÁÂÖÁÇ²òÀÏ´Ø·¸   #
-
+#   å½¢æ…‹ç´ è§£æžé–¢ä¿‚   #
 
 sub chasen_path{
 	my $self = shift;
@@ -169,7 +197,7 @@ sub mecab_path{
 }
 
 #-------------#
-#   GUI´Ø·¸   #
+#   GUIé–¢ä¿‚   #
 
 sub mw_entry_length{
 	require Win32;
@@ -198,51 +226,29 @@ sub font_plot{
 	return $self->{font_plot};
 }
 
-
-#------------#
-#   ¤½¤ÎÂ¾   #
-
-
-sub os_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-
-	#print "kh_sysconfig::win32::os_path[1]:  $c\n";
-
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\//\\/;
-	$c = Jcode->new("$c",'euc')->sjis;
-	
-	#print "kh_sysconfig::win32::os_path[2]:  $c\n";
-	
-	return $c;
+sub font_plot_cn{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_cn} = $new         if defined($new) && length($new);
+	$self->{font_plot_cn} = 'SimHei'  unless length($self->{font_plot_cn});
+	return $self->{font_plot_cn};
 }
 
-sub os_cod_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-
-	#print "kh_sysconfig::win32::os_path[1]:  $c\n";
-
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\//\\/;
-	$c = Jcode->new("$c",'euc')->sjis;
-	
-	$c = Jcode->new("$c",$icode)->euc;
-	$c =~ tr/\\/\//;
-	$c = Jcode->new("$c",'euc')->sjis;
-	
-	#print "kh_sysconfig::win32::os_path[2]:  $c\n";
-	
-	return $c;
+sub font_plot_kr{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_kr} = $new         if defined($new) && length($new);
+	$self->{font_plot_kr} = 'Malgun Gothic' unless length($self->{font_plot_kr});
+	return $self->{font_plot_kr};
 }
 
-sub os_code{
-	return 'cp932';
+sub font_plot_ru{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_ru} = $new         if defined($new) && length($new);
+	$self->{font_plot_ru} = 'Meiryo UI' unless length($self->{font_plot_ru});
+	return $self->{font_plot_ru};
 }
-
 
 1;
 

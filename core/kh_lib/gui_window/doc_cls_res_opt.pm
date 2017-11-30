@@ -1,5 +1,7 @@
 package gui_window::doc_cls_res_opt;
 use base qw(gui_window);
+use utf8;
+
 
 sub _new{
 	my $self = shift;
@@ -19,14 +21,14 @@ sub _new{
 	$self->{labframe} = $lf;
 	#$self->innner;
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î¥ª¥×¥·¥ç¥ó
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	my $f4 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f4->Label(
-		-text => kh_msg->get('gui_widget::r_cls->method'), # ÊıË¡¡§
+		-text => kh_msg->get('gui_widget::r_cls->method'), # æ–¹æ³•ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -51,7 +53,7 @@ sub _new{
 	}
 
 	$f4->Label(
-		-text => kh_msg->get('gui_widget::r_cls->dist'), # µ÷Î¥¡§
+		-text => kh_msg->get('gui_widget::r_cls->dist'), # è·é›¢ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -61,8 +63,8 @@ sub _new{
 		options =>
 			[
 				['Jaccard', 'binary'],
-				['Euclid',  'euclid'],
 				['Cosine',  'pearson'],
+				['Euclid',  'euclid'],
 			],
 		variable => \$self->{method_dist},
 		command => sub {$self->config_opts;},
@@ -75,14 +77,14 @@ sub _new{
 		$self->{widget_dist}->set_value('binary');
 	}
 
-	# É¸½à²½¤ÈTF-IDF
+	# æ¨™æº–åŒ–ã¨TF-IDF
 	my $f6 = $lf->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f6->Label(
-		-text => kh_msg->get('gui_widget::r_cls->stand'), # É¸½à²½¡§
+		-text => kh_msg->get('gui_widget::r_cls->stand'), # æ¨™æº–åŒ–ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -110,7 +112,7 @@ sub _new{
 	}
 
 	$f6->Label(
-		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # ÉÑÅÙ¡§
+		-text => kh_msg->get('gui_widget::r_cls->tfidf'), # é »åº¦ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -138,7 +140,7 @@ sub _new{
 	);
 
 	$f5->Label(
-		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   ¥¯¥é¥¹¥¿¡¼¿ô¡§
+		-text => kh_msg->get('gui_widget::r_cls->n_cls'), #   ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -158,7 +160,7 @@ sub _new{
 
 
 	$self->{win_obj}->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -213,12 +215,12 @@ sub calc{
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
 		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
+		#$r_command = Jcode->new($r_command)->euc
+		#	if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->gget('r_net_msg_fail') # Ä´À°¤Ë¼ºÇÔ¤·¤Ş¤·¤Ş¤·¤¿¡£
+			msg  => kh_msg->gget('r_net_msg_fail') # èª¿æ•´ã«å¤±æ•—ã—ã¾ã—ã¾ã—ãŸã€‚
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -230,7 +232,7 @@ sub calc{
 	#) {
 	#	gui_errormsg->open(
 	#		type => 'msg',
-	#		msg  => "¤³¤ÎWindow¤Ç¤Ï¡ÖAuto¡×»ØÄê¤Ï¤Ç¤­¤Ş¤»¤ó¡£¿ôÃÍ¤òÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤",
+	#		msg  => "ã“ã®Windowã§ã¯ã€ŒAutoã€æŒ‡å®šã¯ã§ãã¾ã›ã‚“ã€‚æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„",
 	#	);
 	#	return 0;
 	#}
@@ -241,7 +243,7 @@ sub calc{
 
 	my $cluster = &gui_window::doc_cls::calc_exec(
 		base_win       => $self,
-		cluster_number => $self->gui_jg( $self->{entry_cluster_number}->get ),
+		cluster_number => $self->gui_jgn( $self->{entry_cluster_number}->get ),
 		r_command      => $r_command,
 		method_dist    => $self->gui_jg( $self->{method_dist} ),
 		method_method  => $self->gui_jg( $self->{method_method} ),
@@ -264,7 +266,7 @@ sub calc{
 }
 
 sub win_title{
-	return kh_msg->get('win_title'); # Ê¸½ñ¡¦¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¡§Ä´À°
+	return kh_msg->get('win_title'); # æ–‡æ›¸ãƒ»ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æï¼šèª¿æ•´
 }
 
 sub win_name{

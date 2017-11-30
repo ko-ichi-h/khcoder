@@ -1,19 +1,20 @@
 #------------------------------#
-#   Ã±¸ì´Ø·¸¤Î¥µ¥Ö¥ë¡¼¥Á¥ó·²   #
+#   å˜èªé–¢ä¿‚ã®ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³ç¾¤   #
 #------------------------------#
 
 package mysql_words;
 use strict;
+use utf8;
 use mysql_exec;
 
 #--------------#
-#   Ã±¸ì¸¡º÷   #
+#   å˜èªæ¤œç´¢   #
 
 # Usage: mysql_word->search(
-# 	query  => 'EUC¸¡º÷Ê¸',
+# 	query  => 'EUCæ¤œç´¢æ–‡',
 # 	method => 'AND/OR',
-# 	kihone => 1/0             # ´ğËÜ·Á¤Ç¸¡º÷¤¹¤ë¤«¤É¤¦¤«
-# 	katuyo => 1/0             # ³èÍÑ·Á¤òÉ½¼¨¤¹¤ë¤«¤É¤¦¤«
+# 	kihone => 1/0             # åŸºæœ¬å½¢ã§æ¤œç´¢ã™ã‚‹ã‹ã©ã†ã‹
+# 	katuyo => 1/0             # æ´»ç”¨å½¢ã‚’è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹
 # );
 
 sub search{
@@ -23,12 +24,12 @@ sub search{
 	bless $self, $class;
 	
 	my $query = $args{query};
-	$query =~ s/¡¡/ /g;
+	$query =~ s/ã€€/ /g;
 	my @query = split / /, $query;
 	
 	my $result;
 	
-	if ($args{kihon}){        # KHC¤ÎÃê½Ğ¸ì(´ğËÜ·Á)¤ò¸¡º÷
+	if ($args{kihon}){        # KHCã®æŠ½å‡ºèª(åŸºæœ¬å½¢)ã‚’æ¤œç´¢
 		my $sql;
 		$sql = '
 			SELECT
@@ -52,54 +53,51 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, genkei.name";
+		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
+		$sql .= $::project_obj->mysql_sort('genkei.name');
 		my $t = mysql_exec->select($sql,1);
 		$result = $t->hundle->fetchall_arrayref;
 		
-		# ¡Ö¤½¤ÎÂ¾¡×ÂĞºö
+		# ã€Œãã®ä»–ã€å¯¾ç­–
 		#if (
 		#	mysql_exec->select("
-		#		SELECT ifuse FROM hselection WHERE name = \'¤½¤ÎÂ¾\'
+		#		SELECT ifuse FROM hselection WHERE name = \'ãã®ä»–\'
 		#	",1)->hundle->fetch->[0]
 		#){
 		#	foreach my $i (@{$result}){
-		#		if ($i->[1] eq '¤½¤ÎÂ¾'){
+		#		if ($i->[1] eq 'ãã®ä»–'){
 		#			$i->[0] = "$i->[0]($i->[4])";
 		#		}
 		#	}
 		#}
 		
-		if ( ! $args{katuyo} ){         # ³èÍÑ¸ì¤Ê¤·¤Î¾ì¹ç
+		if ( ! $args{katuyo} ){         # æ´»ç”¨èªãªã—ã®å ´åˆ
 			foreach my $i (@{$result}){
 				pop @{$i};
 				#pop @{$i};
 			}
-		} else {                        # ³èÍÑ¸ì¤¢¤ê¤Î¾ì¹ç
+		} else {                        # æ´»ç”¨èªã‚ã‚Šã®å ´åˆ
 			my $result2;
 			foreach my $i (@{$result}){
 				#my $hinshi = pop @{$i};
 				my $id = pop @{$i};
 				push @{$result2}, $i;
 				
-				#if ( index("$hinshi",'Ì¾»ì-') == 0 ){
-				#	next;
-				#}
-				
-				my $r = mysql_exec->select("      # ³èÍÑ¸ì¤òÃµ¤¹
+				my $r = mysql_exec->select("      # æ´»ç”¨èªã‚’æ¢ã™
 					SELECT hyoso.name, katuyo.name, hyoso.num
 					FROM hyoso, katuyo
 					WHERE
 						    hyoso.katuyo_id = katuyo.id
 						AND hyoso.genkei_id = $id
-					ORDER BY hyoso.num DESC, katuyo.name
-				",1)->hundle->fetchall_arrayref;
+					ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('katuyo.name')
+				,1)->hundle->fetchall_arrayref;
 				
 				my @katuyo = ();
 				my $n = 0;
-				foreach my $h (@{$r}){            # ³èÍÑ¸ì¤ÎÄÉ²Ã
+				foreach my $h (@{$r}){            # æ´»ç”¨èªã®è¿½åŠ 
 					if (
-						   length($h->[1]) > 0
-						&& length($h->[0]) > 0
+						#   length($h->[1]) > 0
+						length($h->[0]) > 0
 						&& $h->[2] =~ /[0-9]+/
 						&& $h->[2] > 0
 					){
@@ -111,13 +109,13 @@ sub search{
 					}
 				}
 
-				if (                              # °Ê²¼¤Î¾ò·ï¤òËş¤¿¤»¤ĞÄÉ²Ã
+				if (                              # ä»¥ä¸‹ã®æ¡ä»¶ã‚’æº€ãŸã›ã°è¿½åŠ 
 					   $n > 0
 					&& (
-						   $n > 1                     # ³èÍÑ·Á¤¬Ê£¿ô¤¢¤ë
-						|| $katuyo[0]->[2] ne '   .'  # ³èÍÑÌ¾¤¬¡Ö.¡×¤Ç¤Ê¤¤
-						|| $katuyo[0]->[1] ne $i->[0] # ³èÍÑ·Á¤¬´ğËÜ·Á¤È°Û¤Ê¤ë
+						   $n > 1                     # æ´»ç”¨å½¢ãŒè¤‡æ•°ã‚ã‚‹
+						|| $katuyo[0]->[1] ne $i->[0] # æ´»ç”¨å½¢ãŒåŸºæœ¬å½¢ã¨ç•°ãªã‚‹
 					)
+					#&& $katuyo[0]->[2] ne '   .'     # æ´»ç”¨åãŒã€Œ.ã€ã§ãªã„
 				){
 					@{$result2} = (@{$result2},@katuyo);
 				}
@@ -125,7 +123,7 @@ sub search{
 			$result = $result2
 		}
 
-	} else {                  # Èó-Ãê½Ğ¸ì ¸¡º÷
+	} else {                  # é-æŠ½å‡ºèª æ¤œç´¢
 		my $sql;
 		$sql = '
 			SELECT hyoso.name, hinshi.name, katuyo.name, hyoso.num
@@ -145,7 +143,7 @@ sub search{
 			}
 		}
 		substr($sql,-4,3) = '';
-		$sql .= ") \n ORDER BY hyoso.num DESC, hyoso.name";
+		$sql .= ") \n ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 
@@ -172,8 +170,9 @@ sub conv_query{
 }
 
 #-------------------------#
-#   CSV·Á¼°¥ê¥¹¥È¤Î½ĞÎÏ   #
+#   CSVå½¢å¼ãƒªã‚¹ãƒˆã®å‡ºåŠ›   #
 
+# Currently, this function is only for an automatic test.
 sub csv_list{
 	use kh_csv;
 	my $class = shift;
@@ -181,20 +180,20 @@ sub csv_list{
 	
 	my $list = &_make_list;
 	
-	open (LIST,">$target") or
+	open (LIST, '>:encoding(euc-jp)', $target) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
 		);
 	
-	# 1¹ÔÌÜ
+	# 1è¡Œç›®
 	my $line = '';
 	foreach my $i (@{$list}){
 		$line .= kh_csv->value_conv($i->[0]).',,';
 	}
 	chop $line;
 	print LIST "$line\n";
-	# 2¹ÔÌÜ°Ê¹ß
+	# 2è¡Œç›®ä»¥é™
 	my $row = 0;
 	while (1){
 		my $line = '';
@@ -221,7 +220,7 @@ sub csv_list{
 
 
 #----------------------#
-#   ³Æ¼ïÃê½Ğ¸ì¥ê¥¹¥È   #
+#   å„ç¨®æŠ½å‡ºèªãƒªã‚¹ãƒˆ   #
 
 sub word_list_custom{
 	use kh_csv;
@@ -243,56 +242,51 @@ sub _out_file_xls{
 	my $table_data = shift;
 
 	#----------------#
-	#   ½ĞÎÏ¤Î½àÈ÷   #
+	#   å‡ºåŠ›ã®æº–å‚™   #
 
-	use Spreadsheet::WriteExcel;
-	use Unicode::String qw(utf8 utf16);
-
-	my $f    = $::project_obj->file_TempExcel;
-	my $workbook  = Spreadsheet::WriteExcel->new($f);
-	my $worksheet = $workbook->add_worksheet(
-		utf8( Jcode->new('¥·¡¼¥È1')->utf8 )->utf16,
-		1
-	);
+	use Excel::Writer::XLSX;
+	my $f = $::project_obj->file_TempExcelX;
+	my $workbook  = Excel::Writer::XLSX->new($f);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
 	$worksheet->hide_gridlines(1);
 
-	my $font = '';
-	if ($] > 5.008){
-		$font = gui_window->gui_jchar('£Í£Ó £Ğ¥´¥·¥Ã¥¯', 'euc');
-	} else {
-		$font = 'MS PGothic';
-	}
-	$workbook->{_formats}->[15]->set_properties(
-		font       => $font,
-		size       => 11,
-		valign     => 'vcenter',
-		align      => 'center',
-	);
-	my $format_n = $workbook->add_format(         # ¿ôÃÍ
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯';
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties(
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
+	my $format_n = $workbook->add_format(         # æ•°å€¤
 		num_format => '0',
 		size       => 11,
-		font       => $font,
+		#font       => $font,
 		align      => 'right',
 	);
-	my $format_c = $workbook->add_format(         # Ê¸»úÎó
-		font       => $font,
+	my $format_c = $workbook->add_format(         # æ–‡å­—åˆ—
+		#font       => $font,
 		size       => 11,
 		align      => 'left',
 		num_format => '@'
 	);
 
 	#----------#
-	#   ½ĞÎÏ   #
+	#   å‡ºåŠ›   #
 
 	my $row = 0;
 	foreach my $i (@{$table_data}){
-		if ($row >= 65536 ){
-			gui_errormsg->open(
-				msg  => kh_msg->get('excel_limit'), # "Excel·Á¼°¥Õ¥¡¥¤¥ë¤ÎÀ©¸Â¤Î¤¿¤á¡¢65,536¹Ô¤ò±Û¤¨¤ëÉôÊ¬¤Î¥Ç¡¼¥¿¤Ï½ĞÎÏ¤·¤Ş¤»¤ó¤Ç¤·¤¿¡£\n¤³¤ÎÉôÊ¬¤Î¥Ç¡¼¥¿¤ò½ĞÎÏ¤¹¤ë¤Ë¤Ï¡¢CSV·Á¼°¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£",
-				type => 'msg',
-			);
-			last;
-		}
+		#if ($row >= 65536 ){
+		#	gui_errormsg->open(
+		#		msg  => kh_msg->get('excel_limit'), # "Excelå½¢å¼ãƒ•ã‚¡ã‚¤ãƒ«ã®åˆ¶é™ã®ãŸã‚ã€65,536è¡Œã‚’è¶Šãˆã‚‹éƒ¨åˆ†ã®ãƒ‡ãƒ¼ã‚¿ã¯å‡ºåŠ›ã—ã¾ã›ã‚“ã§ã—ãŸã€‚\nã“ã®éƒ¨åˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’å‡ºåŠ›ã™ã‚‹ã«ã¯ã€CSVå½¢å¼ã‚’é¸æŠã—ã¦ãã ã•ã„ã€‚",
+		#		type => 'msg',
+		#	);
+		#	last;
+		#}
 		
 		my $col = 0;
 		foreach my $h (@{$i}){
@@ -316,8 +310,8 @@ sub _out_file_xls{
 				$worksheet->write_string(
 					$row,
 					$col,
-					gui_window->gui_jchar($h, 'euc'), # Perl 5.8°Ê¹ß¤¬É¬¿Ü
-					# Perl 5.6¤Î¾ì¹ç¡§
+					$h, # Perl 5.8ä»¥é™ãŒå¿…é ˆ
+					# Perl 5.6ã®å ´åˆï¼š
 					# utf8( Jcode->new($h,'euc')->utf8 )->utf16,
 					$format_c
 				);
@@ -328,10 +322,10 @@ sub _out_file_xls{
 	}
 
 	#------------#
-	#   Áõ¾şÅù   #
-	$worksheet->freeze_panes(1, 0);     # ¡ÖWindowÏÈ¤Î¸ÇÄê¡×
+	#   è£…é£¾ç­‰   #
+	$worksheet->freeze_panes(1, 0);     # ã€ŒWindowæ ã®å›ºå®šã€
 
-	if ( $self->{type} eq '1c' ){       # ¡Ö1Îó¡×¤Î¥ê¥¹¥È¤Ë¤Ï¥ª¡¼¥È¥Õ¥£¥ë¥¿¤ò
+	if ( $self->{type} eq '1c' ){       # ã€Œ1åˆ—ã€ã®ãƒªã‚¹ãƒˆã«ã¯ã‚ªãƒ¼ãƒˆãƒ•ã‚£ãƒ«ã‚¿ã‚’
 		$worksheet->autofilter(0, 1, $row - 1, 1);
 	}
 
@@ -346,62 +340,57 @@ sub _out_file_xls_150{
 	my $table_data = shift;
 
 	#----------------#
-	#   ½ĞÎÏ¤Î½àÈ÷   #
+	#   å‡ºåŠ›ã®æº–å‚™   #
 
-	use Spreadsheet::WriteExcel;
-	use Unicode::String qw(utf8 utf16);
-
-	my $f    = $::project_obj->file_TempExcel;
-	my $workbook  = Spreadsheet::WriteExcel->new($f);
-	my $worksheet = $workbook->add_worksheet(
-		utf8( Jcode->new('¥·¡¼¥È1')->utf8 )->utf16,
-		1
-	);
+	use Excel::Writer::XLSX;
+	my $f = $::project_obj->file_TempExcelX;
+	my $workbook  = Excel::Writer::XLSX->new($f);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
 	$worksheet->hide_gridlines(1);
 
-	my $font = '';
-	if ($] > 5.008){
-		$font = gui_window->gui_jchar('£Í£Ó £Ğ¥´¥·¥Ã¥¯', 'euc');
-	} else {
-		$font = 'MS PGothic';
-	}
-	$workbook->{_formats}->[15]->set_properties(
-		font       => $font,
-		size       => 11,
-		valign     => 'vcenter',
-		align      => 'center',
-	);
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯'; # ã“ã‚Œã¯ä¸å‘³ã„ï¼Ÿ
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties(
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
 
 	my $format_n = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 	);
 	my $format_t = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		top        => 1,
 	);
 	my $format_tb = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		top        => 1,
 		bottom     => 1,
 	);
 	my $format_b = $workbook->add_format(
-		font       => $font,
+		#font       => $font,
 		size       => 11,
 		bottom     => 1,
 	);
 
 
 	#----------#
-	#   ½ĞÎÏ   #
+	#   å‡ºåŠ›   #
 
 	my $row = 0;
 	foreach my $i (@{$table_data}){
 		my $col = 0;
 		foreach my $h (@{$i}){
-			$h = gui_window->gui_jchar($h, 'euc') unless $h =~ /^[0-9]+$/o;
+			#$h = gui_window->gui_jchar($h, 'euc') unless $h =~ /^[0-9]+$/o;
 
 			my $f;
 			if ($row == 0){
@@ -430,7 +419,7 @@ sub _out_file_xls_150{
 	}
 
 	#------------#
-	#   Áõ¾şÅù   #
+	#   è£…é£¾ç­‰   #
 	#$worksheet->freeze_panes(1, 0);
 	$worksheet->set_column(2, 2, 2);
 	$worksheet->set_column(5, 5, 2);
@@ -443,10 +432,11 @@ sub _out_file_csv{
 	my $self       = shift;
 	my $table_data = shift;
 
-	# ¥ê¥¹¥È¹½Â¤¤ò¥Æ¥­¥¹¥È¤Ë½ĞÎÏ
+	# ãƒªã‚¹ãƒˆæ§‹é€ ã‚’ãƒ†ã‚­ã‚¹ãƒˆã«å‡ºåŠ›
 	my $target = $::project_obj->file_TempCSV;
 
-	open (LIST,">$target") or
+	use File::BOM;
+	open (LIST, '>:encoding(utf8):via(File::BOM)', $target) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$target"
@@ -463,9 +453,9 @@ sub _out_file_csv{
 	}
 
 	close (LIST);
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($target);
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($target);
+	#}
 	
 	return $target;
 }
@@ -488,27 +478,36 @@ sub _make_wl_1c{
 			push @data, [ $h->[0], $i->[0] ,$h->[1]  ];
 		}
 	}
-
-	@data = sort { 
-		   $b->[2] <=> $a->[2]
-		or $a->[0] cmp $b->[0]
-		or $a->[1] cmp $b->[1]
-	} @data;
+	
+	# Sort Japanese words in the same order as previous version (2.x)
+	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+		@data = sort { 
+			   $b->[2] <=> $a->[2]
+			or Encode::encode('euc-jp', $a->[0]) cmp Encode::encode('euc-jp', $b->[0] )
+			or Encode::encode('euc-jp', $a->[1]) cmp Encode::encode('euc-jp', $b->[1] )
+		} @data;
+	} else {
+		@data = sort { 
+			   $b->[2] <=> $a->[2]
+			or $a->[0] cmp $b->[0]
+			or $a->[1] cmp $b->[1]
+		} @data;
+	}
 
 	my $num_lab = '';
 	if ($self->{num} eq 'tf'){
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('tf')); #'½Ğ¸½²ó¿ô'
+		$num_lab = kh_msg->get('tf'); #'å‡ºç¾å›æ•°'
 	} else {
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
 	@data = (
 		[
-			Encode::encode('euc-jp',kh_msg->get('words')), # Ãê½Ğ¸ì
-			Encode::encode('euc-jp',kh_msg->get('pos')),   #'ÉÊ»ì',
+			kh_msg->get('words'), # æŠ½å‡ºèª
+			kh_msg->get('pos'),   #'å“è©',
 			$num_lab
 		],
 		@data
@@ -534,12 +533,12 @@ sub _make_wl_def{
 		my $tani = $self->{tani};
 		$tani = kh_msg->gget('sentence')  if $self->{tani} eq 'bun';
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
-		$num_lab = Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')');
+		$num_lab = kh_msg->get('df').' ('.$tani.')';
 	}
 
 	my @data;
 
-	# 1¹ÔÌÜ
+	# 1è¡Œç›®
 	my @line = ();
 	foreach my $i (@{$list}){
 		push @line, $i->[0];
@@ -547,7 +546,7 @@ sub _make_wl_def{
 	}
 	push @data, \@line;
 
-	# 2¹ÔÌÜ°Ê¹ß
+	# 2è¡Œç›®ä»¥é™
 	my $row = 0;
 	while (1){
 		my @line = ();
@@ -582,33 +581,33 @@ sub _make_wl_150{
 			FROM genkei, hselection
 			WHERE
 			      genkei.khhinshi_id = hselection.khhinshi_id
-			  and hselection.name != "ÈİÄê½õÆ°»ì"
-			  and hselection.name != "Ì¤ÃÎ¸ì"
-			  and hselection.name != "ÈİÄê"
-			  and hselection.name != "Ì¾»ìB"
-			  and hselection.name != "·ÁÍÆ»ìB"
-			  and hselection.name != "Æ°»ìB"
-			  and hselection.name != "Éû»ìB"
-			  and hselection.name != "´¶Æ°»ì"
-			  and hselection.name != "¤½¤ÎÂ¾"
+			  and hselection.name != "å¦å®šåŠ©å‹•è©"
+			#  and hselection.name != "æœªçŸ¥èª"
+			  and hselection.name != "å¦å®š"
+			  and hselection.name != "åè©B"
+			  and hselection.name != "å½¢å®¹è©B"
+			  and hselection.name != "å‹•è©B"
+			  and hselection.name != "å‰¯è©B"
+			#  and hselection.name != "æ„Ÿå‹•è©"
+			  and hselection.name != "ãã®ä»–"
 			  and hselection.name != "OTHER"
-			  and hselection.name != "HTML¥¿¥°"
+			  and hselection.name != "HTMLã‚¿ã‚°"
 			  and hselection.name != "HTML_TAG"
-			  and hselection.name != "·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë"
+			  and hselection.name != "å½¢å®¹è©ï¼ˆéè‡ªç«‹ï¼‰"
 			  and hselection.ifuse = 1
 			  and genkei.nouse = 0
-			ORDER BY TF DESC, W
+			ORDER BY TF DESC, '.$::project_obj->mysql_sort('W').'
 			LIMIT 150
 		',1)->hundle;
 		$data[0] = [
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf')),
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf')),
+			kh_msg->get('words'),
+			kh_msg->get('tf'),
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('tf'))
+			kh_msg->get('words'),
+			kh_msg->get('tf')
 		];
 	} else {
 		$t = mysql_exec->select('
@@ -619,21 +618,21 @@ sub _make_wl_150{
 			  LEFT JOIN df_'.$self->{tani}.' ON genkei_id = genkei.id
 			WHERE
 			      genkei.khhinshi_id = hselection.khhinshi_id
-			  and hselection.name != "ÈİÄê½õÆ°»ì"
-			  and hselection.name != "Ì¤ÃÎ¸ì"
-			  and hselection.name != "ÈİÄê"
-			  and hselection.name != "Ì¾»ìB"
-			  and hselection.name != "·ÁÍÆ»ìB"
-			  and hselection.name != "Æ°»ìB"
-			  and hselection.name != "Éû»ìB"
-			  and hselection.name != "´¶Æ°»ì"
-			  and hselection.name != "¤½¤ÎÂ¾"
+			  and hselection.name != "å¦å®šåŠ©å‹•è©"
+			  and hselection.name != "æœªçŸ¥èª"
+			  and hselection.name != "å¦å®š"
+			  and hselection.name != "åè©B"
+			  and hselection.name != "å½¢å®¹è©B"
+			  and hselection.name != "å‹•è©B"
+			  and hselection.name != "å‰¯è©B"
+			  and hselection.name != "æ„Ÿå‹•è©"
+			  and hselection.name != "ãã®ä»–"
 			  and hselection.name != "OTHER"
-			  and hselection.name != "HTML¥¿¥°"
+			  and hselection.name != "HTMLã‚¿ã‚°"
 			  and hselection.name != "HTML_TAG"
 			  and hselection.ifuse = 1
 			  and genkei.nouse = 0
-			ORDER BY DF DESC, W
+			ORDER BY DF DESC, '.$::project_obj->mysql_sort('W').'
 			LIMIT 150
 		',1)->hundle;
 		
@@ -642,18 +641,18 @@ sub _make_wl_150{
 		$tani = kh_msg->gget('paragraph') if $self->{tani} eq 'dan';
 		
 		$data[0] = [
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')'),
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')',
 			'',
-			Encode::encode('euc-jp',kh_msg->get('words')),
-			Encode::encode('euc-jp',kh_msg->get('df').' ('.$tani.')')
+			kh_msg->get('words'),
+			kh_msg->get('df').' ('.$tani.')'
 		];
 	}
 
-	# ¥ê¥¹¥È¹½Â¤ºîÀ®
+	# ãƒªã‚¹ãƒˆæ§‹é€ ä½œæˆ
 	my $row = 1;
 	my $col = 1;
 	while (my $i = $t->fetch){
@@ -672,7 +671,7 @@ sub _make_wl_150{
 
 
 #-----------------------#
-#   ½Ğ¸½²ó¿ô ÅÙ¿ôÊ¬ÉÛ   #
+#   å‡ºç¾å›æ•° åº¦æ•°åˆ†å¸ƒ   #
 
 sub freq_of_f{
 	my $class = shift;
@@ -698,9 +697,9 @@ sub freq_of_f{
 	my $sd = sprintf("%.2f", sqrt( ($sum_sq - $sum ** 2 / $n) / ($n - 1)) );
 
 	my @r1;
-	push @r1, [kh_msg->get('types'), $n]; # '°Û¤Ê¤ê¸ì¿ô (n)  '
-	push @r1, [kh_msg->get('mean_tf'), $mean]; # 'Ê¿¶Ñ ½Ğ¸½²ó¿ô'
-	push @r1, [kh_msg->get('std_dev_tf'), $sd]; # 'É¸½àÊĞº¹'
+	push @r1, [kh_msg->get('types'), $n]; # 'ç•°ãªã‚Šèªæ•° (n)  '
+	push @r1, [kh_msg->get('mean_tf'), $mean]; # 'å¹³å‡ å‡ºç¾å›æ•°'
+	push @r1, [kh_msg->get('std_dev_tf'), $sd]; # 'æ¨™æº–åå·®'
 	
 	my (@r2, $cum); 
 	foreach my $i (sort {$a <=> $b} keys %freq){
@@ -717,7 +716,7 @@ sub freq_of_f{
 }
 
 #-------------------------#
-#   ½Ğ¸½Ê¸½ñ¿ô ÅÙ¿ôÊ¬ÉÛ   #
+#   å‡ºç¾æ–‡æ›¸æ•° åº¦æ•°åˆ†å¸ƒ   #
 
 sub freq_of_df{
 	my $class = shift;
@@ -745,8 +744,8 @@ sub freq_of_df{
 
 	my @r1;
 	push @r1, [kh_msg->get('types'), $n];
-	push @r1, [kh_msg->get('mean_df'), $mean]; # 'Ê¿¶Ñ Ê¸½ñ¿ô'
-	push @r1, [kh_msg->get('std_dev_df'), $sd];   # 'É¸½àÊĞº¹'
+	push @r1, [kh_msg->get('mean_df'), $mean]; # 'å¹³å‡ æ–‡æ›¸æ•°'
+	push @r1, [kh_msg->get('std_dev_df'), $sd];   # 'æ¨™æº–åå·®'
 	
 	my (@r2, $cum); 
 	foreach my $i (sort {$a <=> $b} keys %freq){
@@ -763,9 +762,9 @@ sub freq_of_df{
 }
 
 #----------------------#
-#   Ã±¸ì¥ê¥¹¥È¤ÎºîÀ®   #
+#   å˜èªãƒªã‚¹ãƒˆã®ä½œæˆ   #
 
-# ÉÊ»ì¥ê¥¹¥È¥¢¥Ã¥×
+# å“è©ãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—
 sub _make_hinshi_list{
 	my @hinshi = ();
 	my $sql = '
@@ -793,11 +792,11 @@ sub _make_list{
 	}
 
 	my @hinshi = @{$temp};
-	# Ã±¸ì¥ê¥¹¥È¥¢¥Ã¥×
+	# å˜èªãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—
 	my @result = ();
 	foreach my $i (@hinshi){
 		my $sql;
-		#if ($i->[0] eq '¤½¤ÎÂ¾'){
+		#if ($i->[0] eq 'ãã®ä»–'){
 		#	$sql  = "
 		#		SELECT concat(genkei.name,'(',hinshi.name,')'), genkei.num
 		#		FROM genkei, hinshi
@@ -813,7 +812,7 @@ sub _make_list{
 				WHERE
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY num DESC, name
+				ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."
 			";
 		#}
 		my $t = mysql_exec->select($sql,1);
@@ -832,11 +831,11 @@ sub _make_list_df{
 	}
 
 	my @hinshi = @{$temp};
-	# Ã±¸ì¥ê¥¹¥È¥¢¥Ã¥×
+	# å˜èªãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—
 	my @result = ();
 	foreach my $i (@hinshi){
 		my $sql;
-		#if ($i->[0] eq '¤½¤ÎÂ¾'){
+		#if ($i->[0] eq 'ãã®ä»–'){
 		#	$sql  = "
 		#		SELECT concat(genkei.name,'(',hinshi.name,')'), f
 		#		FROM hinshi, genkei
@@ -854,7 +853,7 @@ sub _make_list_df{
 				WHERE
 					khhinshi_id = $i->[1]
 					and genkei.nouse = 0
-				ORDER BY f DESC, name
+				ORDER BY f DESC, ".$::project_obj->mysql_sort('name')."
 			";
 		#}
 		my $t = mysql_exec->select($sql,1);
@@ -864,7 +863,7 @@ sub _make_list_df{
 }
 
 #--------------------------#
-#   Ã±¸ì¿ô¤òÊÖ¤¹¥ë¡¼¥Á¥ó   #
+#   å˜èªæ•°ã‚’è¿”ã™ãƒ«ãƒ¼ãƒãƒ³   #
 #--------------------------#
 
 sub num_kinds{
@@ -908,7 +907,7 @@ sub num{
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
 sub num_kinds_all{
-	return mysql_exec                   # HTML¤ª¤è¤ÓÍ©Îî¤ò½ü¤¯Ã±¸ì¼ïÎà¿ô¤òÊÖ¤¹
+	return mysql_exec                   # HTMLãŠã‚ˆã³å¹½éœŠã‚’é™¤ãå˜èªç¨®é¡æ•°ã‚’è¿”ã™
 		->select("
 			select count(*)
 			from genkei
@@ -917,7 +916,7 @@ sub num_kinds_all{
 		",1)->hundle->fetch->[0];
 }
 sub num_all{
-	return mysql_exec                   # HTML¤ª¤è¤ÓÍ©Îî¤ò½ü¤¯Ã±¸ì¿ô¤òÊÖ¤¹
+	return mysql_exec                   # HTMLãŠã‚ˆã³å¹½éœŠã‚’é™¤ãå˜èªæ•°ã‚’è¿”ã™
 		->select("
 			select sum(num)
 			from genkei

@@ -193,10 +193,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'")',
 	) or $flg_error = 1;
 	
@@ -205,10 +205,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,log="x",ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'")',
 	) or $flg_error = 1;
 	
@@ -217,10 +217,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,log="xy",ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'")',
 	) or $flg_error = 1;
 	

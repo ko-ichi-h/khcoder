@@ -10,8 +10,10 @@ sub _readin{
 	use Jcode;
 	use kh_sysconfig::linux::chasen;
 	use kh_sysconfig::linux::mecab;
+	use kh_sysconfig::linux::mecab_k;
 	use kh_sysconfig::linux::stemming;
 	use kh_sysconfig::linux::stanford;
+	use kh_sysconfig::linux::freeling;
 
 	my $self = shift;
 
@@ -77,14 +79,22 @@ sub save_ini{
 	my @outlist = (
 		'chasenrc_path',
 		'grammarcha_path',
-		'stanf_jar_path',
-		'stanf_tagger_path',
-		#'juman_path',
-		'c_or_j',
 		'mecab_unicode',
-		'stemming_lang',
+		'mecabrc_path',
+		'stanf_jar_path',
+		'stanf_tagger_path_en',
+		'stanf_tagger_path_cn',
+		'stanf_seg_path',
+		'han_dic_path',
+		'freeling_dir',
+		'freeling_lang',
 		'stanford_lang',
+		'stemming_lang',
+		'last_lang',
+		'last_method',
+		'c_or_j',
 		'msg_lang',
+		'msg_lang_set',
 		'r_path',
 		'r_plot_debug',
 		'sqllog',
@@ -93,6 +103,7 @@ sub save_ini{
 		'sql_host',
 		'sql_port',
 		'multi_threads',
+		'color_universal_design',
 		'mail_if',
 		'mail_smtp',
 		'mail_from',
@@ -101,6 +112,12 @@ sub save_ini{
 		'all_in_one_pack',
 		'font_main',
 		'font_plot',
+		'font_plot_cn',
+		'font_plot_kr',
+		'font_plot_ru',
+		'font_pdf',
+		'font_pdf_cn',
+		'font_pdf_kr',
 		'kaigyo_kigou',
 		'color_DocView_info',
 		'color_DocView_search',
@@ -109,6 +126,7 @@ sub save_ini{
 		'color_DocView_CodeW',
 		'color_ListHL_fore',
 		'color_ListHL_back',
+		'color_palette',
 		'plot_size_words',
 		'plot_size_codes',
 		'plot_font_size',
@@ -120,17 +138,21 @@ sub save_ini{
 	);
 
 	my $f = $self->{ini_file};
-	open (INI,">$f") or
+	open (INI, '>encoding(utf8)', $f) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => ">$f"
 		);
 	foreach my $i (@outlist){
-		print INI "$i\t".$self->$i(undef,'1')."\n";
+		my $value = $self->$i(undef,'1');
+		$value = '' unless defined $value;
+		print INI "$i\t$value\n";
 	}
 	foreach my $i (keys %{$self}){
 		if ( index($i,'w_') == 0 ){
-			print INI "$i\t".$self->win_gmtry($i)."\n";
+			my $value = $self->win_gmtry($i);
+			$value = '' unless defined $value;
+			print INI "$i\t$value\n";
 		}
 	}
 	if ($self->{main_window}){
@@ -247,58 +269,48 @@ sub font_plot{
 	return $self->{font_plot};
 }
 
-#------------#
-#   ¤½¤ÎÂ¾   #
-
-sub os_path{
-	my $self  = shift;
-	my $c     = shift;
-	my $icode = shift;
-
-	#if ($^O eq 'darwin'){ # Mac OS X
-		
-		$c = Jcode->new("$c",$icode)->euc;
-		my $ascii = '[\x00-\x7F]';
-		my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
-		my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
-		my $character_undef =
-			'(?:[\xA9-\xAF\xF5-\xFE][\xA1-\xFE]|' # 9-15,85-94¶è
-			  . '\x8E[\xE0-\xFE]|' # È¾³Ñ¥«¥¿¥«¥Ê
-			  . '\xA2[\xAF-\xB9\xC2-\xC9\xD1-\xDB\xEB-\xF1\xFA-\xFD]|' # 2¶è
-			  . '\xA3[\XA1-\xAF\xBA-\xC0\xDB-\xE0\xFB-\xFE]|' # 3¶è
-			  . '\xA4[\xF4-\xFE]|' # 4¶è
-			  . '\xA5[\xF7-\xFE]|' # 5¶è
-			  . '\xA6[\xB9-\xC0\xD9-\xFE]|' # 6¶è
-			 . '\xA7[\xC2-\xD0\xF2-\xFE]|' # 7¶è
-			  . '\xA8[\xC1-\xFE]|' # 8¶è
-			  . '\xCF[\xD4-\xFE]|' # 47¶è
-			  . '\xF4[\xA7-\xFE]|' # 84¶è
-			  . '\x8F[\xA1-\xFE][\xA1-\xFE])'; # 3¥Ð¥¤¥ÈÊ¸»ú
-
-		foreach my $i ($c =~ /$ascii|$twoBytes|$threeBytes/og){
-			if ($i =~ /$character_undef/){
-				gui_errormsg->open(
-					type   => 'msg',
-					msg    => "Illegal character(s) in the path!"
-				);
-				return undef;
-			}
+sub font_plot_cn{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_cn} = $new if defined($new) && length($new);
+	unless ( length($self->{font_plot_cn}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_cn} = 'STHeiti';
+		} else {
+			$self->{font_plot_cn} = 'Droid Sans Fallback';
 		}
-
-		$c = Jcode->new("$c",'euc')->utf8;
-	#} else {
-	#	$c = Jcode->new("$c",$icode)->euc;
-	#	$c =~ tr/\\/\//;
-	#}
-
-	return $c;
+	}
+	return $self->{font_plot_cn};
 }
 
-*os_cod_path = \&os_path;
-
-sub os_code{
-	return 'UTF-8';
+sub font_plot_kr{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_kr} = $new         if defined($new) && length($new);
+	unless ( length($self->{font_plot_kr}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_kr} = 'AppleGothic';
+		} else {
+			$self->{font_plot_kr} = 'UnDotum';
+		}
+	}
+	return $self->{font_plot_kr};
 }
+
+sub font_plot_ru{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_plot_ru} = $new         if defined($new) && length($new);
+	unless ( length($self->{font_plot_ru}) ){
+		if ( $^O =~ /darwin/){
+			$self->{font_plot_ru} = 'Helvetica';
+		} else {
+			$self->{font_plot_ru} = 'Droid Sans';
+		}
+	}
+	return $self->{font_plot_ru};
+}
+
 
 1;
 

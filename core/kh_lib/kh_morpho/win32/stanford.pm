@@ -3,6 +3,7 @@ package kh_morpho::win32::stanford;
 use base qw(kh_morpho::win32);
 use kh_morpho::win32::stanford::en;
 use kh_morpho::win32::stanford::de;
+use kh_morpho::win32::stanford::cn;
 
 use strict;
 use Net::Telnet ();
@@ -10,30 +11,27 @@ use Net::Telnet ();
 use Encode;
 use utf8;
 
-my $output_code;
-if ($::config_obj->os eq 'win32'){
-	$output_code = find_encoding('cp932');
-} else {
-	$output_code = find_encoding('euc-jp');
-}
-my $sjis = find_encoding('cp932');
+my $output_code = find_encoding('utf8');
 
+#my $fh_db;
 
 sub _run_morpho{
 	require Lingua::Sentence;
-	require Text::Unidecode;
+	#require Text::Unidecode;
 
 	my $self = shift;
-	my $class = "kh_morpho::win32::stanford::".$::config_obj->stanford_lang;
+	my $class = "kh_morpho::win32::stanford::".$::project_obj->morpho_analyzer_lang;
 	bless $self, $class;
 
-	my $icode = kh_jchar->check_code_en($self->target);
+	my $icode = kh_jchar->check_code_en($self->target,1);
+	$self->{icode} = $icode;
+
+	# 中国語の場合には文・単語のセグメンテーションを事前に行なう
+	$self->segment($icode);
 
 	# Stanford POS Taggerのサーバーを起動
 	require Win32::SearchPath;
 	my $java_path = Win32::SearchPath::SearchPath('java');
-	$java_path = $sjis->decode($java_path)
-		unless utf8::is_utf8( $java_path );
 
 	unless (-e $java_path && length($java_path)){
 		gui_errormsg->open(
@@ -43,14 +41,12 @@ sub _run_morpho{
 		exit;
 	}
 
-	my $p1 = $sjis->decode($::config_obj->stanf_jar_path)
-		unless utf8::is_utf8( $::config_obj->stanf_jar_path );
-	my $p2 = $sjis->decode($::config_obj->stanf_tagger_path)
-		unless utf8::is_utf8( $::config_obj->stanf_tagger_path );
+	my $p1 = $::config_obj->os_path( $::config_obj->stanf_jar_path );
+	my $p2 = $::config_obj->os_path( $::config_obj->stanf_tagger_path );
 	
 	unless (
-		    -e $::config_obj->stanf_jar_path
-		&& -e $::config_obj->stanf_tagger_path
+		   -e $p1
+		&& -e $p2
 	){
 		gui_errormsg->open(
 			msg => kh_msg->get('error_confg'),
@@ -60,21 +56,21 @@ sub _run_morpho{
 	}
 	
 	my $cmd_line  =
-		 'java  -mx300m  -cp "'
+		 'java -mx300m  -cp "'
 		.$p1
 		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
 		.$p2
 		.'"'
 	;
 	
-	#print "cmd: $cmd_line\n";
+	#print "\ncmd: $cmd_line\n";
 	
 	require Win32::Process;
 	my $process;
 	Win32::Process::Create(
 		$process,
-		$sjis->encode($java_path),
-		$sjis->encode($cmd_line),
+		$java_path,
+		$cmd_line,
 		0,
 		Win32::Process->CREATE_NO_WINDOW,
 		$::config_obj->cwd,
@@ -110,17 +106,23 @@ sub _run_morpho{
 			);
 	}
 
-	open (TRGT,$self->target) or 
+	open (TRGT, "<:encoding($icode)", $self->target) or 
 		gui_errormsg->open(
 			thefile => $self->target,
 			type => 'file'
 		);
 	
-	open (my $fh_out,'>',$self->output) or 
+	open (my $fh_out,'>:encoding(utf8)',$self->output) or 
 		gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
 		);
+
+	#open ($fh_db,'>:encoding(utf8)',$::project_obj->file_TempTXT) or 
+	#	gui_errormsg->open(
+	#		thefile => $self->output,
+	#		type => 'file'
+	#	);
 
 	# Perlapp用にLingua::Sentenceのデータを解凍
 	if(defined(&PerlApp::extract_bound_file)){
@@ -159,45 +161,29 @@ sub _run_morpho{
 	$self->{unrecognized_char} = 0;
 	while ( <TRGT> ){
 		chomp;
-		my $t   = decode($icode,$_);
-		
+		my $t = $_;
+
 		# データのクリーニング
+		unless (length($t)){
+			next;
+		}
 		$t =~ s/\\/\/_/go;
 		$t =~ s/[[:cntrl:]]/ /go;
 		
 		# 見出し行
 		if ($t =~ /^(<h[1-5]>)(.+)(<\/h[1-5]>)$/io){
-			print $fh_out $output_code->encode("$1\t$1\t$1\tTAG\t\tTAG\n");
+			print $fh_out "$1\t$1\t$1\tTAG\t\tTAG\n";
 			$self->_tokenize_stem($2, $fh_out);
-			print $fh_out $output_code->encode("$3\t$3\t$3\tTAG\t\tTAG\n");
+			print $fh_out "$3\t$3\t$3\tTAG\t\tTAG\n";
+			print $fh_out "EOS\n";
 		} else {
-			#while ( index($t,'<') > -1){
-			#	my $pre = substr($t,0,index($t,'<'));
-			#	my $cnt = substr(
-			#		$t,
-			#		index($t,'<'),
-			#		index($t,'>') - index($t,'<') + 1
-			#	);
-			#	unless ( index($t,'>') > -1 ){
-			#		gui_errormsg->open(
-			#			msg  => kh_msg->get('kh_morpho::mecab->illegal_bra'),
-			#			type => 'msg'
-			#		);
-			#		exit;
-			#	}
-			#	substr($t,0,index($t,'>') + 1) = '';
-			#	
-			#	$self->_sentence($pre, $fh_out);
-			#	$self->_tag($cnt, $fh_out);
-			#	
-			#	#print "[[$pre << $cnt >> $t]]\n";
-			#}
 			$self->_sentence($t, $fh_out);
 		}
-		print $fh_out $output_code->encode("EOS\n");
 	}
 	close (TRGT);
 	close ($fh_out);
+
+	#close ($fh_db);
 
 	print " ok.\n";
 	$process->Kill(1);
@@ -211,11 +197,9 @@ sub _tag{
 	my $fh   = shift;
 
 	$t =~ tr/ /_/;
-	$t = Text::Unidecode::unidecode($t);
+	#$t = Text::Unidecode::unidecode($t);
 	
-	print $fh $output_code->encode(
-			"$t\t$t\t$t\tTAG\t\tTAG\n"
-	);
+	print $fh "$t\t$t\t$t\tTAG\t\tTAG\n";
 
 }
 
@@ -233,9 +217,10 @@ sub _sentence{
 	
 	foreach my $i (@sentences) {
 		my $r = $self->_tokenize_stem($i, $fh);
-		print $fh $output_code->encode("。\t。\t。\tALL\tSP\n") if $r;
+		print $fh "。\t。\t。\tALL\tSP\n" if $r;
 	}
 
+	print $fh "EOS\n";
 	return 1;
 }
 
@@ -265,7 +250,7 @@ sub _tokenize_stem{
 		$r += $self->_run_tagger($pre, $fh);
 		$self->_tag($cnt, $fh);
 		
-		#print "[[$pre << $cnt >> $t]]\n";
+		#print "[[$pre]] [[$cnt]] [[$t]]\n";
 	}
 	$r += $self->_run_tagger($t, $fh);
 	
@@ -276,6 +261,9 @@ sub _run_tagger{
 	my $self = shift;
 	my $t    = shift;
 	my $fh   = shift;
+
+	return 0 unless length($t);
+	#print $fh_db "$t\n";
 
 	# POS Taggerへ
 	my $n = 0;
@@ -294,6 +282,9 @@ sub _run_tagger{
 	$n = 0;
 	foreach my $i (@lines){
 		$i = decode('utf8', $i);
+		
+		#print $fh_db "$i\n";
+		
 		if ($i =~ /<word wid="[0-9]+" pos="(.*)" lemma="(.*)">(.*)<\/word>/){
 			my $base  = $2;
 			my $hyoso = $3;
@@ -308,20 +299,22 @@ sub _run_tagger{
 			}
 			
 			# 出力する行を作成
-			my $line = Text::Unidecode::unidecode(
-				"$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n"
-			);
+			my $line = "$hyoso\t$hyoso\t$base\t$pos\t\t$pos\n";
 			$line =~ s/\\/\/_/g;
 			
-			# Unidecodeによって空白になってしまった場合に対応
+			# 語が空白の場合はスキップ
 			if ($line =~ /^\t/o){
-				$line = '???'.$line;
+				warn("dropped: $i\n");
+				next;
 			}
 			$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
 			
-			print $fh $output_code->encode($line);
+			print $fh $line;
 			++$n;
 		}
+		#else {
+		#	warn("unexpected otput from Stanford-POS-Tagger!\n$i");
+		#}
 	}
 	
 	if ($n == 0 && $t =~ /\S/o){
@@ -358,6 +351,10 @@ sub _run_tagger{
 	return 1;
 }
 
+sub segment{
+	my $self = shift;
+	return $self;
+}
 
 sub exec_error_mes{
 	return kh_msg->get('error');

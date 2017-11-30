@@ -1,8 +1,9 @@
-# Ê£¹ç¸ì¤ò¸¡½Ğ¡¦¸¡º÷¤¹¤ë¤¿¤á¤Î¥í¥¸¥Ã¥¯
+# è¤‡åˆèªã‚’æ¤œå‡ºãƒ»æ¤œç´¢ã™ã‚‹ãŸã‚ã®ãƒ­ã‚¸ãƒƒã‚¯
 
 package mysql_hukugo_te;
 
 use strict;
+use utf8;
 use Benchmark;
 
 use kh_jchar;
@@ -24,8 +25,8 @@ sub search{
 		return \@r;
 	}
 	
-	$args{query} = Jcode->new($args{query},'sjis')->euc;
-	$args{query} =~ s/¡¡/ /g;
+	#$args{query} = Jcode->new($args{query},'sjis')->euc;
+	$args{query} =~ s/ã€€/ /g;
 	my @query = split(/ /, $args{query});
 	
 	
@@ -60,11 +61,11 @@ sub search{
 		$sql .= "\n";
 		++$num;
 	}
-	$sql .= "ORDER BY num DESC, name\n";
+	$sql .= "ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."\n";
 	$sql .= "LIMIT 500\n";
 	#print Jcode->new($sql)->sjis, "\n";
 	
-	my $h = mysql_exec->select($sql,1)->hundle;
+	my $h = mysql_exec->select($sql)->hundle;
 	my @r = ();
 	while (my $i = $h->fetch){
 		push @r, [$i->[0], $i->[1]];
@@ -72,14 +73,14 @@ sub search{
 	return \@r;
 }
 
-# ¸¡º÷Ê¸»úÎó¤¬»ØÄê¤µ¤ì¤Ê¤«¤Ã¤¿¾ì¹ç
+# æ¤œç´¢æ–‡å­—åˆ—ãŒæŒ‡å®šã•ã‚Œãªã‹ã£ãŸå ´åˆ
 sub get_majority{
 	my $h = mysql_exec->select("
 		SELECT name, num
 		FROM hukugo_te
-		ORDER BY num DESC, name
+		ORDER BY num DESC, ".$::project_obj->mysql_sort('name')."
 		LIMIT 500
-	",1)->hundle;
+	")->hundle;
 	
 	my @r = ();
 	while (my $i = $h->fetch){
@@ -101,10 +102,13 @@ sub run_from_morpho{
 		$class .= '::ipadic';
 	}
 	elsif (
-		   $::config_obj->c_or_j        eq 'stanford'
-		&& $::config_obj->stanford_lang eq 'en'
+		   $::config_obj->c_or_j                eq 'stanford'
+		&& $::project_obj->morpho_analyzer_lang eq 'en'
 	) {
 		$class .= '::ptb';
+	}
+	else{
+		return 0;
 	}
 	
 	my $self->{dummy} = 1;

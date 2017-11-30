@@ -1,10 +1,10 @@
 package gui_window::word_conc_coloc_opt;
 use base qw(gui_window);
-
+use utf8;
 use Tk;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 #-------------#
 
 sub _new{
@@ -14,14 +14,14 @@ sub _new{
 	my $win = $self->{win_obj};
 	#$win->focus;
 	#$win->grab;
-	$win->title($self->gui_jt( kh_msg->get('win_title') ));# '¥³¥í¥±¡¼¥·¥ç¥óÅı·× ¥Õ¥£¥ë¥¿ÀßÄê'
+	$win->title($self->gui_jt( kh_msg->get('win_title') ));# 'ã‚³ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³çµ±è¨ˆ ãƒ•ã‚£ãƒ«ã‚¿è¨­å®š'
 	#$self->{win_obj} = $win;
 	
 	my $left = $win->Frame()->pack(-fill => 'both', -expand => 1);
 
-	# ÉÊ»ì¤Ë¤è¤ëÃ±¸ì¤Î¼è¼ÎÁªÂò
+	# å“è©ã«ã‚ˆã‚‹å˜èªã®å–æ¨é¸æŠ
 	$left->Label(
-		-text => kh_msg->get('filter_by_pos'),#$self->gui_jchar('¡¦ÉÊ»ì¤Ë¤è¤ë¸ì¤Î¼è¼ÎÁªÂò'),
+		-text => kh_msg->get('filter_by_pos'),#$self->gui_jchar('ãƒ»å“è©ã«ã‚ˆã‚‹èªã®å–æ¨é¸æŠ'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w');
 	my $l3 = $left->Frame()->pack(-fill => 'both',-expand => 1);
@@ -43,28 +43,28 @@ sub _new{
 	);
 	my $l4 = $l3->Frame()->pack(-fill => 'x', -expand => 'y',-side => 'left');
 	$l4->Button(
-		-text => kh_msg->gget('all'),#$self->gui_jchar('¤¹¤Ù¤Æ'),
+		-text => kh_msg->gget('all'),#$self->gui_jchar('ã™ã¹ã¦'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_all;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->gget('default'),#$self->gui_jchar('´ûÄêÃÍ'),
+		-text => kh_msg->gget('default'),#$self->gui_jchar('æ—¢å®šå€¤'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_default;}
 	)->pack(-pady => 2);
 	$l4->Button(
-		-text => kh_msg->gget('clear'),#$self->gui_jchar('¥¯¥ê¥¢'),
+		-text => kh_msg->gget('clear'),#$self->gui_jchar('ã‚¯ãƒªã‚¢'),
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->{hinshi_obj}->select_none;}
 	)->pack();
 
-	# ¡Ö¹ç·×¡×Îó¤Ë¤è¤ë¥Õ¥£¥ë¥¿¥ê¥ó¥°
+	# ã€Œåˆè¨ˆã€åˆ—ã«ã‚ˆã‚‹ãƒ•ã‚£ãƒ«ã‚¿ãƒªãƒ³ã‚°
 	my $left4 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left4->Label(
 		-text => kh_msg->get('total_filt'),
@@ -85,15 +85,15 @@ sub _new{
 	$self->{ent_filter}->bind("<Key-Return>",sub{$self->save});
 	$self->{ent_filter}->bind("<KP_Enter>", sub{$self->save});
 
-	# É½¼¨¿ô¤ÎLIMIT
+	# è¡¨ç¤ºæ•°ã®LIMIT
 	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
 	$left3->Label(
-		-text => kh_msg->get('view'),#$self->gui_jchar('¡¦É½¼¨¤¹¤ë¸ì¤Î¿ô'),
+		-text => kh_msg->get('view'),#$self->gui_jchar('ãƒ»è¡¨ç¤ºã™ã‚‹èªã®æ•°'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w',-pady => 2);
 	
 	$left3->Label(
-		-text => kh_msg->get('top'),#$self->gui_jchar('¡¡¡¡¡¡¾å°Ì¡§'),
+		-text => kh_msg->get('top'),#$self->gui_jchar('ã€€ã€€ã€€ä¸Šä½ï¼š'),
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
@@ -108,7 +108,7 @@ sub _new{
 
 	# OK & Cancel
 	$win->Button(
-		-text => kh_msg->gget('cancel'),#$self->gui_jchar('¥­¥ã¥ó¥»¥ë'),
+		-text => kh_msg->gget('cancel'),#$self->gui_jchar('ã‚­ãƒ£ãƒ³ã‚»ãƒ«'),
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->close;}
@@ -121,7 +121,7 @@ sub _new{
 		-command => sub{$self->save;}
 	)->pack(-side => 'right');
 	
-	# ÃÍ¤ÎÆşÎÏ
+	# å€¤ã®å…¥åŠ›
 	$self->{ent_limit}->insert(
 		"end",
 		"$gui_window::word_conc_coloc::filter->{limit}"
@@ -137,11 +137,8 @@ sub _new{
 sub save{
 	my $self = shift;
 	
-	$gui_window::word_conc_coloc::filter->{limit} =
-		$self->gui_jg( $self->{ent_limit}->get );
-	
-	$gui_window::word_conc_coloc::filter->{filter} =
-		$self->gui_jg( $self->{ent_filter}->get );
+	$gui_window::word_conc_coloc::filter->{limit} = $self->gui_jgn( $self->{ent_limit}->get );
+	$gui_window::word_conc_coloc::filter->{filter} = $self->gui_jgn( $self->{ent_filter}->get );
 	
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){

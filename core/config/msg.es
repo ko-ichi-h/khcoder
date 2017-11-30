@@ -1,4 +1,4 @@
-# This file contains Spanish UI texts.
+# This file contains Spanish UI text.
 # Spanish translation was kindly provided by Mr. Francisco Carmona with the CC-BY license.
 ---
 global:
@@ -254,6 +254,7 @@ gui_window::project_new:
     target_file:              'Archivo de destino:'
     win_title:                Nuevo Proyecto
 gui_window::project_open:
+    lang:                     Idioma
     del:                      Eliminar
     dir:                      Ruta
     edit:                     Editar
@@ -295,24 +296,25 @@ gui_window::sql_select:
     win_title:                Ejecutar Sentencias SQL
 gui_window::sysconfig:
     apps:                     Aplicaciones
-    browse_:                  ' '
+    browse_:                  Abrir ____
     browse_chasen:            Abrir ChaSen.exe
     browse_mecab:             Abrir MeCab.exe
     browse_stanford_jar:      Abrir stanford-postagger.jar
     browse_stanford_tag:      Abrir modelo de archivo
     chasen:                   '"ChaSen" para textos en Japanés'
     config:                   Ingresar
+    l_jp:                     Japanés
     l_cn:                     Chino
-    l_de:                     Alemán*
+    l_de:                     Alemán
     l_en:                     Inglés
-    l_es:                     Español *
-    l_fr:                     Francés *
-    l_it:                     Italiano *
-    l_nl:                     Holandés*
-    l_pt:                     Portugués *
+    l_es:                     Español
+    l_fr:                     Francés
+    l_it:                     Italiano
+    l_nl:                     Holandés
+    l_pt:                     Portugués
+    L_kr:                     Coreano
     lang:                     '    Idioma:'
     mecab:                    '"MeCab" para textos en Japanés'
-    need_inst:                ' *instalación separada'
     note_font:               "Ajuste de Fuente realizado.\nReiniciar KH Coder para aplicar los cambios."
     note_s:                   '* %s se reemplazará por los nombres de archivo de las URL'
     p_chasen.exe:             '    Ruta de "chasen.exe":'
@@ -324,8 +326,8 @@ gui_window::sysconfig:
     p_stanford_tag:           '    Ruta de *.TAGGER:'
     pdf:                      'Visor de PDF:'
     s_sheet:                  'Hoja de Cálculo (CSV/Excel):'
-    stanford:                 Lematización con "Stanford POS Tagger"
-    stemming:                 Stemming con "Bola de Nieve"
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
     stopwords:                '  Palabras vacías:'
     web_browser:              'Navegador:'
     win_title:                Configuración General
@@ -580,6 +582,8 @@ kh_morpho::mecab:
     error:                    'Error fatal: no se puede ejecutar MeCab.'
     error_config:             'Error fatal: no se encuentra MeCab.'
     illegal_bra:              'marcado incorrecto con <>'
+kh_morpho::mecab_k:
+    error:                    'Error fatal: no se puede ejecutar MeCab.'
 kh_morpho::stanford:
     error:                    'Error fatal: no se puede ejecutar Stanford POS Tagger.'
     error_config:             'Error fatal: no se encuentra JStanford POS Tagger.'
@@ -720,12 +724,9 @@ gui_window::r_plot_opt::cod_som:
 gui_widget::r_net:
     filter_edges:             'Filtrar bordes:'
     e_top_n:                  'Top'
-    e_jac:                    'coeficiente Jaccard >= '
+    e_jac:                    'coeficiente >= '
     or_more:                  ''
-    thicker:                  'Líneas más gruesas para bordes más fuertes'
-    larger:                   'Nodos más grandes para Palabras más Frecuentes'
-    larger_c:                 'Nodos más grandes para Códigos más Frecuentes'
-    larger_font:              'Tamaño de fuente variable *Para imprimir en EMF/EPS/PDF'
+    thicker:                  'Líneas más oscuras para bordes más fuertes'
     smaller:                  'Nodos más pequeños'
     min_sp_tree:              'Destacar el árbol recubridor mínimo'
     min_sp_tree_only:         'Dibujar solo el árbol recubridor mínimo'
@@ -1052,7 +1053,7 @@ mysql_outvar::read:
     midashi_error:            'No se puede utilizar "Encabezado1" - "Encabezado5" como el nomber de la variable.'
     overwrite_vars:           "Existe una variable con el mismo nombre.\n¿Sobreescribir?\n\n"
 mysql_ready::dump:
-    too_long_word1:            "Hay palabras muy largas. ( > 255 )\n\nKH Coder reconoce solo los primeros 255 caracteres.\nLas alabras se registraron en el siguiente archivo: \n"
+    too_long_word1:            "Hay palabras muy largas. ( > 128 )\n\nKH Coder reconoce solo los primeros 128 caracteres.\nLas alabras se registraron en el siguiente archivo: \n"
     too_long_word2:            "Click en OK para continuar el preprocesamiento."
 mysql_getheader:
     error:                     "Error al procesar los documentos.\n\nVerifique el uso de las etiquetas H1 - H5 en el archivo de destino.\nUtilice el comando \"Verificar el archivo de destino\"."

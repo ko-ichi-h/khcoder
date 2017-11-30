@@ -1,8 +1,21 @@
+use utf8;
+
 package kh_sysconfig;
 use strict;
 
 use kh_sysconfig::win32;
 use kh_sysconfig::linux;
+
+use Encode;
+use Encode::Locale;
+my $locale_fs = 1;
+eval {
+	Encode::encode('locale_fs', 'test');
+};
+if ( $@ ){
+	warn $@;
+	$locale_fs = 0;
+}
 
 sub readin{
 	my $class = shift;
@@ -12,7 +25,7 @@ sub readin{
 	$self->{cwd} = shift;
 	bless $self, $class;
 
-	# cwd¤Î¥Á¥§¥Ã¥¯
+	# cwdã®ãƒã‚§ãƒƒã‚¯
 	if ( $] > 5.008 ) {
 		if ( utf8::is_utf8($self->{cwd}) ){
 			warn "Error: Unexpected UTF8 Flag!";
@@ -20,22 +33,33 @@ sub readin{
 	}
 	#print "kh_sysconfig: $self->{cwd}\n";
 
-	# ÀßÄê¥Õ¥¡¥¤¥ë¤¬Â·¤Ã¤Æ¤¤¤ë¤«³ÎÇ§
+	# è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒæƒã£ã¦ã„ã‚‹ã‹ç¢ºèª
 	if (
 		   ! -e "$self->{ini_file}"
 		|| ! -e "./config/hinshi_chasen"
 		|| ! -e "./config/hinshi_mecab"
+		|| ! -e "./config/hinshi_mecab_k"
 		|| ! -e "./config/hinshi_stemming"
+		|| ! -e "./config/hinshi_stanford_cn"
 		|| ! -e "./config/hinshi_stanford_en"
 		|| ! -e "./config/hinshi_stanford_de"
+		|| ! -e "./config/hinshi_freeling_ca"
+		|| ! -e "./config/hinshi_freeling_de"
+		|| ! -e "./config/hinshi_freeling_en"
+		|| ! -e "./config/hinshi_freeling_fr"
+		|| ! -e "./config/hinshi_freeling_it"
+		|| ! -e "./config/hinshi_freeling_pt"
+		|| ! -e "./config/hinshi_freeling_ru"
+		|| ! -e "./config/hinshi_freeling_es"
+		|| ! -e "./config/hinshi_freeling_sl"
 	){
-		# Â·¤Ã¤Æ¤¤¤Ê¤¤¾ì¹ç¤ÏÀßÄê¤ò½é´ü²½
+		# æƒã£ã¦ã„ãªã„å ´åˆã¯è¨­å®šã‚’åˆæœŸåŒ–
 		$self->reset_parm;
 	}
 
-	# ini¥Õ¥¡¥¤¥ë
+	# iniãƒ•ã‚¡ã‚¤ãƒ«
 	#print "kh_sysconfig: $self->{ini_file}\n";
-	open (CINI,"$self->{ini_file}") or
+	open (CINI, '<:encoding(utf8)', "$self->{ini_file}") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$self->{ini_file}"
@@ -47,7 +71,7 @@ sub readin{
 	}
 	close (CINI);
 
-	# ¤½¤ÎÂ¾
+	# ãã®ä»–
 	$self->{history_file} = $self->{cwd}.'/config/projects';
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
 
@@ -57,14 +81,14 @@ sub readin{
 }
 
 #------------------#
-#   ÀßÄê¤Î½é´ü²½   #
+#   è¨­å®šã®åˆæœŸåŒ–   #
 
 sub reset_parm{
 		my $self = shift;
 		print "Resetting parameters...\n";
 		mkdir 'config' unless -d 'config';
 		
-		# ÀßÄê¥Õ¥¡¥¤¥ë¤Î½àÈ÷
+		# è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã®æº–å‚™
 		unless (-e $self->{ini_file}){
 			open (CON,">$self->{ini_file}") or 
 				gui_errormsg->open(
@@ -74,40 +98,44 @@ sub reset_parm{
 			close (CON);
 		}
 		
-		# ÉÊ»ìÄêµÁ¥Õ¥¡¥¤¥ë¤ÎºîÀ®½àÈ÷
+		# å“è©žå®šç¾©ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆæº–å‚™
 		use DBI;
 		use DBD::CSV;
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
 		my @table = (
-				"'7', 'ÃÏÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-ÃÏ°è', ''",
-				"'6', '¿ÍÌ¾', 'Ì¾»ì-¸ÇÍ­Ì¾»ì-¿ÍÌ¾', ''",
-				"'5','ÁÈ¿¥Ì¾','Ì¾»ì-¸ÇÍ­Ì¾»ì-ÁÈ¿¥', ''",
-				"'4','¸ÇÍ­Ì¾»ì','Ì¾»ì-¸ÇÍ­Ì¾»ì', ''",
-				"'2','¥µÊÑÌ¾»ì','Ì¾»ì-¥µÊÑÀÜÂ³', ''",
-				"'3','·ÁÍÆÆ°»ì','Ì¾»ì-·ÁÍÆÆ°»ì¸ì´´', ''",
-				"'8','¥Ê¥¤·ÁÍÆ','Ì¾»ì-¥Ê¥¤·ÁÍÆ»ì¸ì´´', ''",
-				"'16','Ì¾»ìB','Ì¾»ì-°ìÈÌ','¤Ò¤é¤¬¤Ê'",
-				#"'16','Ì¾»ìB','Ì¾»ì-Éû»ì²ÄÇ½','¤Ò¤é¤¬¤Ê'",
-				"'20','Ì¾»ìC','Ì¾»ì-°ìÈÌ','°ìÊ¸»ú'",
-				#"'20','Ì¾»ìC','Ì¾»ì-Éû»ì²ÄÇ½','°ìÊ¸»ú'",
-				"'21','ÈÝÄê½õÆ°»ì','½õÆ°»ì','ÈÝÄê'",
-				"'1','Ì¾»ì','Ì¾»ì-°ìÈÌ', ''",
-				"'9','Éû»ì²ÄÇ½','Ì¾»ì-Éû»ì²ÄÇ½', ''",
-				"'10','Ì¤ÃÎ¸ì','Ì¤ÃÎ¸ì', ''",
-				"'12','´¶Æ°»ì','´¶Æ°»ì', ''",
-				"'12','´¶Æ°»ì','¥Õ¥£¥é¡¼', ''",
-				"'99999','HTML¥¿¥°','¥¿¥°', 'HTML'",
-				"'11','¥¿¥°','¥¿¥°', ''",
-				"'17','Æ°»ìB','Æ°»ì-¼«Î©','¤Ò¤é¤¬¤Ê'",
-				"'13','Æ°»ì','Æ°»ì-¼«Î©', ''",
-				"'22','·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë','·ÁÍÆ»ì-Èó¼«Î©', ''",
-				"'18','·ÁÍÆ»ìB','·ÁÍÆ»ì','¤Ò¤é¤¬¤Ê'",
-				"'14','·ÁÍÆ»ì','·ÁÍÆ»ì', ''",
-				"'19','Éû»ìB','Éû»ì','¤Ò¤é¤¬¤Ê'",
-				"'15','Éû»ì','Éû»ì', ''"
+				"'7', 'åœ°å', 'åè©ž-å›ºæœ‰åè©ž-åœ°åŸŸ', ''",
+				"'6', 'äººå', 'åè©ž-å›ºæœ‰åè©ž-äººå', ''",
+				"'5','çµ„ç¹”å','åè©ž-å›ºæœ‰åè©ž-çµ„ç¹”', ''",
+				"'4','å›ºæœ‰åè©ž','åè©ž-å›ºæœ‰åè©ž', ''",
+				"'2','ã‚µå¤‰åè©ž','åè©ž-ã‚µå¤‰æŽ¥ç¶š', ''",
+				"'3','å½¢å®¹å‹•è©ž','åè©ž-å½¢å®¹å‹•è©žèªžå¹¹', ''",
+				"'8','ãƒŠã‚¤å½¢å®¹','åè©ž-ãƒŠã‚¤å½¢å®¹è©žèªžå¹¹', ''",
+				"'16','åè©žB','åè©ž-ä¸€èˆ¬','ã²ã‚‰ãŒãª'",
+				#"'16','åè©žB','åè©ž-å‰¯è©žå¯èƒ½','ã²ã‚‰ãŒãª'",
+				"'20','åè©žC','åè©ž-ä¸€èˆ¬','ä¸€æ–‡å­—'",
+				#"'20','åè©žC','åè©ž-å‰¯è©žå¯èƒ½','ä¸€æ–‡å­—'",
+				"'21','å¦å®šåŠ©å‹•è©ž','åŠ©å‹•è©ž','å¦å®š'",
+				"'1','åè©ž','åè©ž-ä¸€èˆ¬', ''",
+				"'9','å‰¯è©žå¯èƒ½','åè©ž-å‰¯è©žå¯èƒ½', ''",
+				"'10','æœªçŸ¥èªž','æœªçŸ¥èªž', ''",
+				"'12','æ„Ÿå‹•è©ž','æ„Ÿå‹•è©ž', ''",
+				"'12','æ„Ÿå‹•è©ž','ãƒ•ã‚£ãƒ©ãƒ¼', ''",
+				"'99999','HTMLã‚¿ã‚°','ã‚¿ã‚°', 'HTML'",
+				"'11','ã‚¿ã‚°','ã‚¿ã‚°', ''",
+				"'17','å‹•è©žB','å‹•è©ž-è‡ªç«‹','ã²ã‚‰ãŒãª'",
+				"'13','å‹•è©ž','å‹•è©ž-è‡ªç«‹', ''",
+				"'22','å½¢å®¹è©žï¼ˆéžè‡ªç«‹ï¼‰','å½¢å®¹è©ž-éžè‡ªç«‹', ''",
+				"'18','å½¢å®¹è©žB','å½¢å®¹è©ž','ã²ã‚‰ãŒãª'",
+				"'14','å½¢å®¹è©ž','å½¢å®¹è©ž', ''",
+				"'19','å‰¯è©žB','å‰¯è©ž','ã²ã‚‰ãŒãª'",
+				"'15','å‰¯è©ž','å‰¯è©ž', ''"
 		);
 		
-		# Ããä¥ÍÑ
+		# èŒ¶ç­Œç”¨
 		unless (-e "./config/hinshi_chasen"){
 			$dbh->do(
 				"CREATE TABLE hinshi_chasen (
@@ -127,7 +155,7 @@ sub reset_parm{
 			}
 		}
 
-		# MeCabÍÑ
+		# MeCabç”¨
 		unless (-e "./config/hinshi_mecab"){
 			$dbh->do(
 				"CREATE TABLE hinshi_mecab (
@@ -147,7 +175,7 @@ sub reset_parm{
 			}
 		}
 
-		# StemmingÍÑ
+		# Stemmingç”¨
 		unless (-e "./config/hinshi_stemming"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stemming (
@@ -169,10 +197,10 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
-		# Stanford POS TaggerÍÑ¡Ê±Ñ¸ì¡Ë
+		# Stanford POS Taggerç”¨ï¼ˆè‹±èªžï¼‰
 		unless (-e "./config/hinshi_stanford_en"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stanford_en (
@@ -201,10 +229,10 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
-		# Stanford POS TaggerÍÑ¡Ê¥É¥¤¥Ä¸ì¡Ë
+		# Stanford POS Taggerç”¨ï¼ˆãƒ‰ã‚¤ãƒ„èªžï¼‰
 		unless (-e "./config/hinshi_stanford_de"){
 			$dbh->do(
 				"CREATE TABLE hinshi_stanford_de (
@@ -274,15 +302,421 @@ sub reset_parm{
 					VALUES
 						( $i )
 				") or die($i);
-			} # DBD::CSV´ØÏ¢¤¬¸Å¤¤¤È¡¢1Ê¸¤ÇÊ£¿ô¹ÔINSERT¤¹¤ë¤³¤È¤¬¤Ç¤­¤Ê¤¤...
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
 		}
 
+		# Stanford POS Taggerç”¨ï¼ˆä¸­å›½èªžï¼‰
+		unless (-e "./config/hinshi_stanford_cn"){
+			$dbh->do(
+				"CREATE TABLE hinshi_stanford_cn (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'NR', ''",
+				"1, 'Noun',  'NN', ''",#
+				"3, 'Foreign',  'FW', ''",
+				"25, 'Adj',  'VA', ''",
+				"26, 'JJ',  'JJ', ''",
+				"30, 'Adv',  'AD', ''",
+				"35, 'Verb',  'VV', ''",
+				"40, 'W',  'W', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_stanford_cn
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
 
+		# MeCab & Handicç”¨ï¼ˆæœé®®èªžï¼‰
+		unless (-e "./config/hinshi_mecab_k"){
+			$dbh->do(
+				"CREATE TABLE hinshi_mecab_k (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"2, 'ProperNoun', 'Noun-å›ºæœ‰åè©ž', ''",
+				"1, 'Noun',  'Noun-æ™®é€š', ''",#
+				"25, 'Adj',  'Adjective-è‡ªç«‹', ''",
+				"30, 'Adv',  'Adverb-ä¸€èˆ¬', ''",
+				"35, 'Verb',  'Verb-è‡ªç«‹', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_mecab_k
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+
+		# for FreeLing (English)
+		unless (-e "./config/hinshi_freeling_en"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_en (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				#"2, 'ProperNoun', 'NP', ''",
+				#"2, 'ProperNoun', 'NNP', ''",
+				"1, 'Noun',  'N', ''",
+				"3, 'Foreign',  'FW', ''",
+				"20, 'PRP',  'PRP', ''",
+				"25, 'Adj',  'JJ', ''",
+				"30, 'Adv',  'RB', ''",
+				"35, 'Verb',  'VB', ''",
+				"40, 'W',  'W', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_en
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (French)
+		unless (-e "./config/hinshi_freeling_fr"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_fr (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_fr
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (Spanish)
+		unless (-e "./config/hinshi_freeling_es"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_es (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_es
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (Catalan)
+		unless (-e "./config/hinshi_freeling_ca"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_ca (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_ca
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (Italian)
+		unless (-e "./config/hinshi_freeling_it"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_it (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_it
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (Portuguese)
+		unless (-e "./config/hinshi_freeling_pt"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_pt (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'AQ', 'AQ', ''",
+				"2, 'AO', 'AO', ''",
+				"3, 'AP', 'AP', ''",
+				"4, 'R', 'R', ''",
+				"5, 'N', 'N', ''",
+				"6, 'V', 'V', ''",
+				"7, 'I', 'I', ''",
+				"81, 'AJ', 'AJ', ''",
+				"82, 'AV', 'AV', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_pt
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
+		# for FreeLing (Russian)
+		unless (-e "./config/hinshi_freeling_ru"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_ru (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"2, 'D', 'D', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"83, 'U', 'U', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_ru
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+
+		# for FreeLing (German)
+		unless (-e "./config/hinshi_freeling_de"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_de (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_de
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+
+		# for FreeLing (Slovene)
+		unless (-e "./config/hinshi_freeling_sl"){
+			$dbh->do(
+				"CREATE TABLE hinshi_freeling_sl (
+					hinshi_id INTEGER,
+					kh_hinshi CHAR(225),
+					condition1 CHAR(225),
+					condition2 CHAR(225)
+				)"
+			) or die;
+			my @table = (
+				"1, 'A', 'A', ''",
+				"3, 'R', 'R', ''",
+				"4, 'N', 'N', ''",
+				"5, 'V', 'V', ''",
+				"6, 'I', 'I', ''",
+				"99999,'HTML_TAG','TAG','HTML'",
+				"11,'TAG','TAG',''",
+				#"1, 'ALL', '*', ''",
+			);
+			foreach my $i (@table){
+				$dbh->do("
+					INSERT INTO hinshi_freeling_sl
+						(hinshi_id, kh_hinshi, condition1, condition2 )
+					VALUES
+						( $i )
+				") or die($i);
+			} # DBD::CSVé–¢é€£ãŒå¤ã„ã¨ã€1æ–‡ã§è¤‡æ•°è¡ŒINSERTã™ã‚‹ã“ã¨ãŒã§ããªã„...
+		}
+		
 		$dbh->disconnect;
 }
 
+#----------------------#
+#   ãƒ‘ã‚¹ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰   #
+
+sub os_path{
+	my $self  = shift;
+	my $c     = shift;
+	
+	if ( utf8::is_utf8($c) ){
+		$c = Encode::encode("locale_fs", $c) if $locale_fs;
+		return $c;
+	} else {
+		#print "kh_sysconfig::os_path: returning $c\n";
+		return $c;
+	}
+}
+
+sub uni_path{
+	my $self  = shift;
+	my $c     = shift;
+	
+	unless ( utf8::is_utf8($c) ){
+		$c = Encode::decode("locale_fs", $c) if $locale_fs;
+	}
+	$c =~ tr/\\/\//;
+	
+	return $c; 
+}
+
+sub os_code{
+	print "kh_sysconfig::os_code: $Encode::Locale::ENCODING_LOCALE\n";
+	return $Encode::Locale::ENCODING_LOCALE;
+}
+
+sub ini_backup{
+	my $self = shift;
+	
+	my $file_ini = $self->cwd.'/config/coder.ini';
+	my $file_bak = $file_ini.'.bak';
+	
+	unlink($file_bak) if -e $file_bak;
+	
+	use File::Copy;
+	copy($file_ini, $file_bak);
+	
+	return $self;
+}
+
 #--------------------#
-#   ·ÁÂÖÁÇ²òÀÏ´Ø·¸   #
+#   å½¢æ…‹ç´ è§£æžé–¢ä¿‚   #
 
 sub refine_cj{
 	my $self = shift;
@@ -302,10 +736,26 @@ sub use_hukugo{
 sub mecab_unicode{
 	my $self = shift;
 	my $new = shift;
-	if (length($new) > 0){
+	if ( defined($new) ){
 		$self->{mecab_unicode} = $new;
 	}
 	return $self->{mecab_unicode};
+}
+
+sub mecabrc_path{
+	my $self = shift;
+	my $new  = shift;
+	$self->{mecabrc_path} = $new if defined($new);
+	return $self->{mecabrc_path};
+}
+
+sub freeling_dir{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{freeling_dir} = $new;
+	}
+	return $self->{freeling_dir};
 }
 
 sub c_or_j{
@@ -317,6 +767,47 @@ sub c_or_j{
 
 	if (length($self->{c_or_j}) > 0) {
 		return $self->{c_or_j};
+	} else {
+		return 'chasen';
+	}
+}
+
+sub web_if{
+	my $self = shift;
+	my $new = shift;
+	if (defined($new)){
+		$self->{web_if} = $new;
+	}
+
+	unless ( defined( $self->{web_if} ) ) {
+		$self->{web_if} = 0;
+	}
+	return $self->{web_if};
+}
+
+sub last_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{last_lang} = $new;
+	}
+
+	if (length($self->{last_lang}) > 0) {
+		return $self->{last_lang};
+	} else {
+		return $self->msg_lang;
+	}
+}
+
+sub last_method{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{last_method} = $new;
+	}
+
+	if (length($self->{last_method}) > 0) {
+		return $self->{last_method};
 	} else {
 		return 'chasen';
 	}
@@ -336,24 +827,6 @@ sub stemming_lang{
 	}
 }
 
-sub stanf_tagger_path{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{stanf_tagger_path} = $new;
-	}
-	return $self->{stanf_tagger_path};
-}
-
-sub stanf_jar_path{
-	my $self = shift;
-	my $new = shift;
-	if ($new){
-		$self->{stanf_jar_path} = $new;
-	}
-	return $self->{stanf_jar_path};
-}
-
 sub stanford_lang{
 	my $self = shift;
 	my $new = shift;
@@ -366,6 +839,76 @@ sub stanford_lang{
 	} else {
 		return 'en';
 	}
+}
+
+sub freeling_lang{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{freeling_lang} = $new;
+	}
+	unless (defined($self->{freeling_lang})){
+		$self->{freeling_lang} = 'en';
+	}
+	return $self->{freeling_lang};
+}
+
+sub stanf_tagger_path{
+	my $self = shift;
+	
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'en' || $lang eq 'cn') {
+			my $call = 'stanf_tagger_path_'.$::project_obj->morpho_analyzer_lang;
+			return $self->$call;
+		}
+	}
+	return undef;
+}
+
+sub stanf_tagger_path_en{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_tagger_path_en} = $new;
+	}
+	return $self->{stanf_tagger_path_en};
+}
+
+sub stanf_tagger_path_cn{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_tagger_path_cn} = $new;
+	}
+	return $self->{stanf_tagger_path_cn};
+}
+
+sub stanf_jar_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_jar_path} = $new;
+	}
+	return $self->{stanf_jar_path};
+}
+
+sub stanf_seg_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{stanf_seg_path} = $new;
+	}
+	return $self->{stanf_seg_path};
+}
+
+sub han_dic_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{han_dic_path} = $new;
+	}
+	return $self->{han_dic_path};
 }
 
 sub msg_lang{
@@ -382,6 +925,20 @@ sub msg_lang{
 	}
 }
 
+sub msg_lang_set{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{msg_lang_set} = $new;
+	}
+
+	if (length($self->{msg_lang_set}) > 0) {
+		return $self->{msg_lang_set};
+	} else {
+		return 0;
+	}
+}
+
 sub stopwords{
 	my $self = shift;
 	my %args = @_;
@@ -393,8 +950,13 @@ sub stopwords{
 	my $type = $args{method}.'_'.$args{locale};
 
 	if ( defined( $args{stopwords} ) ){
-		# ¥Ç¡¼¥¿ÊÝÂ¸
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		# ãƒ‡ãƒ¼ã‚¿ä¿å­˜
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
+		
 		if (-e "./config/stopwords_$type"){
 			$dbh->do("
 				DROP TABLE stopwords_$type
@@ -416,9 +978,13 @@ sub stopwords{
 		$dbh->disconnect;
 		return $args{stopwords};
 	} else {
-		# ¥Ç¡¼¥¿ÆÉ¤ß½Ð¤·
+		# ãƒ‡ãƒ¼ã‚¿èª­ã¿å‡ºã—
 		my @words = ();
-		my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
+		my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die;
 		if (-e "./config/stopwords_$type"){
 			my $sth = $dbh->prepare("
 				SELECT name FROM stopwords_$type
@@ -439,18 +1005,26 @@ sub stopwords_current{
 	my $type = $self->c_or_j;
 	
 	if ($self->c_or_j eq 'stemming'){
-		$type .= '_'.$self->stemming_lang;
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
 	}
 	elsif ($self->c_or_j eq 'stanford'){
-		$type .= '_'.$self->stanford_lang;
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
+	}
+	elsif ($self->c_or_j eq 'freeling'){
+		$type .= '_'.$::project_obj->morpho_analyzer_lang;
 	} else {
 		$type .= '_d';
 	}
 	#print "type: $type\n";
 	
 	my @words = ();
-	my $dbh = DBI->connect("DBI:CSV:f_dir=./config") or die;
-	if (-e "./config/stopwords_$type"){
+	my $cwd = $self->cwd;
+	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "$cwd/config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;
+	if (-e "$cwd/config/stopwords_$type"){
 		my $sth = $dbh->prepare("
 			SELECT name FROM stopwords_$type
 		") or die;
@@ -489,12 +1063,12 @@ sub hukugo_chasenrc{
 		return $self->{hukugo_chasenrc};
 	} else {
 		my $t = '';
-		$t .= '(Ï¢·ëÉÊ»ì'."\n";
-		$t .= "\t".'((Ê£¹çÌ¾»ì)'."\n";
-		$t .= "\t\t".'(Ì¾»ì)'."\n";
-		$t .= "\t\t".'(ÀÜÆ¬»ì Ì¾»ìÀÜÂ³)'."\n";
-		$t .= "\t\t".'(ÀÜÆ¬»ì ¿ôÀÜÂ³)'."\n";
-		$t .= "\t\t".'(µ­¹æ °ìÈÌ)'."\n";
+		$t .= '(é€£çµå“è©ž'."\n";
+		$t .= "\t".'((è¤‡åˆåè©ž)'."\n";
+		$t .= "\t\t".'(åè©ž)'."\n";
+		$t .= "\t\t".'(æŽ¥é ­è©ž åè©žæŽ¥ç¶š)'."\n";
+		$t .= "\t\t".'(æŽ¥é ­è©ž æ•°æŽ¥ç¶š)'."\n";
+		$t .= "\t\t".'(è¨˜å· ä¸€èˆ¬)'."\n";
 		$t .= "\t".')'."\n";
 		$t .= ')'."\n";
 		return $t;
@@ -503,9 +1077,9 @@ sub hukugo_chasenrc{
 
 
 #-------------#
-#   GUI´Ø·¸   #
+#   GUIé–¢ä¿‚   #
 
-# Window°ÌÃÖ¤È¥µ¥¤¥º¤Î¥ê¥»¥Ã¥È
+# Windowä½ç½®ã¨ã‚µã‚¤ã‚ºã®ãƒªã‚»ãƒƒãƒˆ
 sub ClearGeometries{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
@@ -704,7 +1278,7 @@ sub win32_monitor_chk{
 }
 
 #---------------#
-#   MySQL´ØÏ¢   #
+#   MySQLé–¢é€£   #
 #---------------#
 
 sub sql_username{
@@ -768,7 +1342,47 @@ sub sqllog_file{
 }
 
 #------------#
-#   ¤½¤ÎÂ¾   #
+#   ãã®ä»–   #
+
+sub color_universal_design{
+	my $self = shift;
+	my $new = shift;
+	
+	if (defined($new)) {
+		$self->{color_universal_design} = $new;
+	}
+	
+	unless ( defined($self->{color_universal_design}) ){
+		$self->{color_universal_design} = 1;
+	}
+	
+	return $self->{color_universal_design};
+}
+
+sub color_palette{
+	my $self = shift;
+	
+	if ($self->{color_palette}) {
+		# Check if we can execute the string as R command
+		if (
+			$self->{color_palette} =~
+			/(rev\(|)brewer.pal\(([0-9]+),"([a-zA-Z]+)"\)\[([0-9]+):([0-9]+)\](\)|)/
+		){
+			# OK
+			#print "color: $2, $3, $4, $5\n";
+		} else {
+			# NG
+			print "color palette: undef";
+			$self->{color_palette} = undef;
+		}
+	}
+	
+	$self->{color_palette} = 'brewer.pal(8,"YlGnBu")[1:6]'
+		unless defined($self->{color_palette})
+	;
+	
+	return $self->{color_palette};
+}
 
 sub all_in_one_pack{
 	my $self = shift;
@@ -779,14 +1393,14 @@ sub kaigyo_kigou{
 	my $self = shift;
 	my $new  = shift;
 	
-	# ¿·¤·¤¤ÃÍ¤ò»ØÄê¤µ¤ì¤¿¾ì¹ç
+	# æ–°ã—ã„å€¤ã‚’æŒ‡å®šã•ã‚ŒãŸå ´åˆ
 	if (defined($new)){
 		$self->{kaigyo_kigou} = $new;
 	}
 	
-	# ¥Ç¥Õ¥©¥ë¥ÈÃÍ
-	unless ($self->{kaigyo_kigou}){
-		return '¡Ê¢­¡Ë';
+	# ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
+	unless ( defined($self->{kaigyo_kigou}) ){
+		return 'ï¼ˆâ†“ï¼‰';
 	}
 	
 	return $self->{kaigyo_kigou};
@@ -853,6 +1467,88 @@ sub multi_threads{
 	}
 }
 
+sub font_pdf{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf} = $new if defined($new) && length($new);
+	$self->{font_pdf} = 'Japan1GothicBBB' unless length($self->{font_pdf});
+	return $self->{font_pdf};
+}
+
+sub font_pdf_cn{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf_cn} = $new if defined($new) && length($new);
+	$self->{font_pdf_cn} = 'GB1' unless length($self->{font_pdf_cn});
+	return $self->{font_pdf_cn};
+}
+
+sub font_pdf_kr{
+	my $self = shift;
+	my $new  = shift;
+	$self->{font_pdf_kr} = $new if defined($new) && length($new);
+	$self->{font_pdf_kr} = 'Korea1deb' unless length($self->{font_pdf_kr});
+	return $self->{font_pdf_kr};
+}
+
+sub font_pdf_current{
+	my $self = shift;
+
+	# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã®è¨€èªžã«ã‚ã‚ã›ã¦ãƒ•ã‚©ãƒ³ãƒˆã‚’è¿”ã™
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'cn') {                         # Chinese
+			return $self->font_pdf_cn;
+		}
+		elsif ($lang eq 'kr'){                       # Korean
+			return $self->font_pdf_kr;
+		}
+		elsif ($lang eq 'jp'){                       # Japanese
+			return $self->font_pdf;
+		}
+		#elsif (                                      # Russian
+		#	$lang eq 'ru'
+		#	&& $^O =~ /darwin/
+		#	&& $::config_obj->all_in_one_pack
+		#){
+		#	#return 'RU';
+		#	return 'ArialMT';
+		#}
+		else{                                        # English & Euro
+			if ($self->msg_lang eq 'jp') {
+				return $self->font_pdf;
+			} else {
+				return 'sans';
+			}
+		}
+	}
+
+	return $self->font_pdf;
+}
+
+sub font_plot_current{
+	my $self = shift;
+
+	# ä¸­ãƒ»éŸ“ãƒ»éœ²ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’é–‹ã„ã¦ã„ã‚‹æ™‚ã ã‘å°‚ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’è¿”ã™
+	if ($::project_obj) {
+		my $lang = $::project_obj->morpho_analyzer_lang;
+		if ($lang eq 'en') {
+			$lang = $::config_obj->msg_lang;
+		}
+		
+		if ($lang eq 'cn') {
+			return $self->font_plot_cn;
+		}
+		elsif ($lang eq 'kr'){
+			return $self->font_plot_kr;
+		}
+		elsif ($lang eq 'ru'){
+			return $self->font_plot_ru;
+		}
+	}
+	return $self->font_plot;
+}
+
 sub r_plot_debug{
 	my $self = shift;
 	my $new = shift;
@@ -874,21 +1570,6 @@ sub r_path{
 		$self->{r_path} = $new;
 	}
 	return $self->{r_path};
-}
-
-sub r_dir{
-	my $self = shift;
-	if ( -e $self->{r_path} ) {
-		if ( $self->{r_path} =~ /\A(.+)Rterm\.exe/i){
-			my $v = $1;
-			chop $v;
-			chop $v;
-			chop $v;
-			chop $v;
-			chop $v;
-			return $v;
-		}
-	}
 }
 
 sub r_default_font_size{
@@ -916,10 +1597,10 @@ sub use_heap {
 	my $self = shift;
 	my $new = shift;
 	
-	if ( defined($new) && length($new) ){                     # ¿·¤·¤¤ÃÍ¤Î»ØÄê
+	if ( defined($new) && length($new) ){                     # æ–°ã—ã„å€¤ã®æŒ‡å®š
 		$self->{use_heap} = $new;
 	}
-	unless (defined($self->{use_heap})){     # ¥Ç¥Õ¥©¥ë¥ÈÃÍ
+	unless (defined($self->{use_heap})){     # ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 		$self->{use_heap} = 1;
 	}
 	return $self->{use_heap};

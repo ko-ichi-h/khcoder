@@ -1,14 +1,15 @@
 package gui_window::force_color;
 use base qw(gui_window);
 use strict;
+use utf8;
 use Tk;
 
 #----------------------#
-#   ¥¤¥ó¥¿¡¼¥Õ¥§¥¤¥¹   #
+#   ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹   #
 #----------------------#
 
 #------------------#
-#   Window¤ÎºîÀ®   #
+#   Windowã®ä½œæˆ   #
 
 sub _new{
 	my $self = shift;
@@ -16,9 +17,9 @@ sub _new{
 	$self->{parent} = $args{parent};
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ¶¯Ä´¤¹¤ë¸ÀÍÕ
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # å¼·èª¿ã™ã‚‹è¨€è‘‰
 
-	# ¥ê¥¹¥ÈÍÑ¥Õ¥ì¡¼¥à
+	# ãƒªã‚¹ãƒˆç”¨ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $lf = $win->LabFrame(
 		-label => 'List',
 		-labelside => 'acrosstop',
@@ -26,7 +27,7 @@ sub _new{
 	)->pack(-fill => 'both',-expand => 'y');
 
 	$lf->Label(
-		-text => kh_msg->get('desc'), # ¢£°Ê²¼¤Î¸ÀÍÕ¤¬¾ï¤Ë¶¯Ä´¤µ¤ì¤Þ¤¹¡£
+		-text => kh_msg->get('desc'), # â– ä»¥ä¸‹ã®è¨€è‘‰ãŒå¸¸ã«å¼·èª¿ã•ã‚Œã¾ã™ã€‚
 		-font => "TKFN",
 	)->pack(
 		-anchor =>'w',
@@ -49,16 +50,16 @@ sub _new{
 		-highlightthickness => 0,
 		-selectmode => 'extended',
 	)->pack(-fill=>'both',-expand => 'yes',-pady => 2);
-	$plis->header('create',0,-text => kh_msg->get('highlight_h')); # ¡¡¸ÀÍÕ¡¡
-	$plis->header('create',1,-text => kh_msg->get('type_h')); # ¡¡¼ïÎà¡¡
+	$plis->header('create',0,-text => kh_msg->get('highlight_h')); # ã€€è¨€è‘‰ã€€
+	$plis->header('create',1,-text => kh_msg->get('type_h')); # ã€€ç¨®é¡žã€€
 
 	$lf->Button(
-		-text => kh_msg->get('delete'), # ÁªÂò¤·¤¿¸ÀÍÕ¤òºï½ü
+		-text => kh_msg->get('delete'), # é¸æŠžã—ãŸè¨€è‘‰ã‚’å‰Šé™¤
 		-font => "TKFN",
 		-command => sub{$self->delete;}
 	)->pack(-anchor => 'e');
 
-	# ÄÉ²ÃÍÑ¥Õ¥ì¡¼¥à
+	# è¿½åŠ ç”¨ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $lf2 = $win->LabFrame(
 		-label => 'Add',
 		-labelside => 'acrosstop',
@@ -67,7 +68,7 @@ sub _new{
 	my $lf2a = $lf2->Frame()->pack(-fill => 'x',-expand => 'y');
 
 	$lf2a->Label(
-		-text => kh_msg->get('highlight'), # ¸ÀÍÕ¡§
+		-text => kh_msg->get('highlight'), # è¨€è‘‰ï¼š
 		-font => "TKFN",
 	)->pack(
 		-side => 'left',
@@ -85,7 +86,7 @@ sub _new{
 	$self->{entry}->bind("<KP_Enter>",sub{$self->add;});
 
 	$lf2->Label(
-		-text => kh_msg->get('type'), # ¼ïÎà¡§
+		-text => kh_msg->get('type'), # ç¨®é¡žï¼š
 		-font => "TKFN",
 	)->pack(
 		-side => 'left'
@@ -95,19 +96,19 @@ sub _new{
 		width   => 6,
 		pack    => {-side => 'left'},
 		options => [
-			[kh_msg->get('word'), '1'], # Ãê½Ð¸ì
-			[kh_msg->get('string'), '0'], # Ê¸»úÎó
+			[kh_msg->get('word'), '1'], # æŠ½å‡ºèªž
+			[kh_msg->get('string'), '0'], # æ–‡å­—åˆ—
 		],
 		variable => \$self->{type},
 	);
 	$lf2->Button(
-		-text => kh_msg->get('add'), # ÄÉ²Ã
+		-text => kh_msg->get('add'), # è¿½åŠ 
 		-font => "TKFN",
 		-command => sub{$self->add;}
 	)->pack(-anchor => 'e');
 
 	$win->Button(
-		-text => kh_msg->gget('close'), # ÊÄ¤¸¤ë
+		-text => kh_msg->gget('close'), # é–‰ã˜ã‚‹
 		#-width => 8,
 		-font => "TKFN",
 		-command => sub{$self->close;}
@@ -121,7 +122,7 @@ sub _new{
 }
 
 #----------------------#
-#   ¶¯Ä´¥ê¥¹¥È¤Î¹¹¿·   #
+#   å¼·èª¿ãƒªã‚¹ãƒˆã®æ›´æ–°   #
 
 sub refresh{
 	my $self = shift;
@@ -140,13 +141,13 @@ sub refresh{
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => kh_msg->get('word') # Ãê½Ð¸ì
+				-text => kh_msg->get('word') # æŠ½å‡ºèªž
 			);
 		} else {
 			$self->list->itemCreate(
 				$row,
 				1,
-				-text => kh_msg->get('string') # Ê¸»úÎó
+				-text => kh_msg->get('string') # æ–‡å­—åˆ—
 			);
 		}
 		++$row;
@@ -154,52 +155,52 @@ sub refresh{
 }
 
 #--------------#
-#   ¥í¥¸¥Ã¥¯   #
+#   ãƒ­ã‚¸ãƒƒã‚¯   #
 #--------------#
 
 #----------#
-#   ÄÉ²Ã   #
+#   è¿½åŠ    #
 
 sub add{
 	my $self = shift;
 	
 	my ($word, $type) = (
-		Jcode->new($self->gui_jg($self->{entry}->get),'sjis')->euc,
+		$self->gui_jg($self->{entry}->get),
 		$self->gui_jg($self->{type})
 	);
 
-	# ÆþÎÏ¤¬¤¢¤ë¤«¤É¤¦¤«¤ò¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ãŒã‚ã‚‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
 	unless (length($word)){
 		gui_errormsg->open(
-			msg    => kh_msg->get('no_word'),# ¸ÀÍÕ¤¬ÆþÎÏ¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£
+			msg    => kh_msg->get('no_word'),# è¨€è‘‰ãŒå…¥åŠ›ã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚
 			type   => 'msg',
 			window => \$self->{win_obj},
 		);
 		return 0;
 	}
 	
-	# Æ±¤¸¤â¤Î¤¬´û¤ËÌµ¤¤¤«¤É¤¦¤«¥Á¥§¥Ã¥¯
+	# åŒã˜ã‚‚ã®ãŒæ—¢ã«ç„¡ã„ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	my $chk = mysql_exec->select("
 		SELECT id FROM d_force WHERE name = \'$word\' AND type= $type
 	",1)->hundle->rows;
 	if ($chk){
 		gui_errormsg->open(
-			msg    => kh_msg->get('exists'),# ¤½¤Î¸ÀÍÕ¤Ï´û¤ËÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤¹¡£
+			msg    => kh_msg->get('exists'),# ãã®è¨€è‘‰ã¯æ—¢ã«ç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™ã€‚
 			type   => 'msg',
 			window => \$self->{win_obj},
 		);
 		return 0;
 	}
 	
-	# ÄÉ²Ã
+	# è¿½åŠ 
 	mysql_exec->do("
 		INSERT INTO d_force (name, type) VALUES (\'$word\', $type)
 	",1);
 	
-	# ¥¨¥ó¥È¥ê¤Î¥¯¥ê¥¢
+	# ã‚¨ãƒ³ãƒˆãƒªã®ã‚¯ãƒªã‚¢
 	$self->{entry}->delete(0,'end');
 
-	# ¥ê¥¹¥È¹¹¿·
+	# ãƒªã‚¹ãƒˆæ›´æ–°
 	$self->refresh;
 	$self->{edited} = 1;
 	
@@ -208,20 +209,16 @@ sub add{
 }
 
 #----------#
-#   ºï½ü   #
+#   å‰Šé™¤   #
 sub delete{
 	my $self = shift;
 	
-	# ºï½ü
+	# å‰Šé™¤
 	my @selected = $self->{list}->infoSelection;
 	foreach my $i (@selected){
-		my $word = Jcode->new(
-			$self->gui_jg($self->list->itemCget($i,0,-text))
-		)->euc;
-		my $type = Jcode->new(
-			$self->gui_jg($self->list->itemCget($i,1,-text))
-		)->euc;
-		if ($type eq 'Ãê½Ð¸ì' || $type eq 'word'){
+		my $word = $self->gui_jg( $self->list->itemCget($i,0,-text) );
+		my $type = $self->gui_jg($self->list->itemCget($i,1,-text));
+		if ($type eq 'æŠ½å‡ºèªž' || $type eq 'word'){
 			$type = 1;
 		} else {
 			$type = 0;
@@ -235,7 +232,7 @@ sub delete{
 		
 	}
 	
-	# ¥ê¥¹¥È¹¹¿·
+	# ãƒªã‚¹ãƒˆæ›´æ–°
 	$self->refresh;
 	$self->{edited} = 1;
 	
@@ -244,7 +241,7 @@ sub delete{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 sub list{

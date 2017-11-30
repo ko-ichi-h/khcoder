@@ -1,5 +1,6 @@
 package gui_window::word_mds;
 use base qw(gui_window);
+use utf8;
 
 use strict;
 use Tk;
@@ -7,11 +8,11 @@ use Tk;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
-use kh_r_plot;
+use kh_r_plot::mds;
 use plotR::network;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -28,7 +29,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('plot'), # ÉÛÃÖ
+		verb   => kh_msg->get('plot'), # å¸ƒç½®
 	);
 
 	my $lf = $win->LabFrame(
@@ -38,40 +39,15 @@ sub _new{
 		-foreground => 'blue',
 	)->pack(-fill => 'x', -expand => 0);
 
-	# ¥¢¥ë¥´¥ê¥º¥àÁªÂò
+	# ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ é¸æŠ
 	$self->{mds_obj} = gui_widget::r_mds->open(
-		parent       => $lf,
-		command      => sub{ $self->calc; },
+		parent  => $lf,
+		command => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
+		from    => $self->win_name,
 	);
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
-	$self->{bubble_obj} = gui_widget::bubble->open(
-		parent       => $lf,
-		type         => 'mds',
-		command      => sub{ $self->calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-
-	# ¥¯¥é¥¹¥¿¡¼²½
-	$self->{cls_obj} = gui_widget::cls4mds->open(
-		parent       => $lf,
-		command      => sub{ $self->calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-	
-	# È¾Æ©ÌÀ¤Î¿§
-	$self->{use_alpha} = 1;
-	$lf->Checkbutton(
-		-variable => \$self->{use_alpha},
-		-text     => kh_msg->get('r_alpha'), 
-	)->pack(-anchor => 'w');
-
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
 		command   => sub{ $self->calc; },
@@ -80,13 +56,13 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤','euc
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -111,7 +87,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -124,12 +100,12 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
@@ -181,7 +157,7 @@ sub calc{
 
 	my $w = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $self->tani,
@@ -193,32 +169,23 @@ sub calc{
 		rownames => 0,
 	)->run;
 
-	# ¥Ç¡¼¥¿À°Íı
+	# ãƒ‡ãƒ¼ã‚¿æ•´ç†
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
 	my $plot = &make_plot(
-		#base_win       => $self,
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
-		method         => $self->{mds_obj}->method,
-		method_dist    => $self->{mds_obj}->method_dist,
-		dim_number     => $self->{mds_obj}->dim_number,
+		$self->{mds_obj}->params,
 		r_command      => $r_command,
 		plotwin_name   => 'word_mds',
-		bubble         => $self->{bubble_obj}->check_bubble,
-		std_radius     => $self->{bubble_obj}->chk_std_radius,
-		bubble_size    => $self->{bubble_obj}->size,
-		bubble_var     => $self->{bubble_obj}->var,
-		n_cls          => $self->{cls_obj}->n,
-		cls_raw        => $self->{cls_obj}->raw,
-		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 	
 	$w->end(no_dialog => 1);
+	return 0 unless $plot;
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_word_mds_plot')){
 		$::main_gui->get('w_word_mds_plot')->close;
 	}
@@ -227,6 +194,8 @@ sub calc{
 	gui_window::r_plot::word_mds->open(
 		plots       => $plot->{result_plots},
 		msg         => $plot->{result_info},
+		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		#ax          => $self->{ax},
 	);
 	$plot = undef;
@@ -240,23 +209,34 @@ sub make_plot{
 	my %args = @_;
 
 	my $fontsize = 1;
+	my $x_factor = 1;
+	if (
+		$args{dim_number} <= 2
+		&& (
+			   $args{bubble}
+			|| $args{n_cls}
+		)
+	){
+		$x_factor = 1.285;
+	}
+	$args{height} = $args{plot_size};
+	$args{width}  = int( $args{plot_size} * $x_factor );
 
-	#my $r_command = Encode::decode('euc-jp', $args{r_command});
 	my $r_command = $args{r_command};
 
-	kh_r_plot->clear_env;
+	kh_r_plot::mds->clear_env;
 
 	unless ($args{dim_number} <= 3 && $args{dim_number} >= 1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error_dim'), # ¼¡¸µ¤Î»ØÄê¤¬ÉÔÀµ¤Ç¤¹¡£1¤«¤é3¤Ş¤Ç¤Î¿ôÃÍ¤ò»ØÄê¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('error_dim'), # æ¬¡å…ƒã®æŒ‡å®šãŒä¸æ­£ã§ã™ã€‚1ã‹ã‚‰3ã¾ã§ã®æ•°å€¤ã‚’æŒ‡å®šã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
 
 	my $source_matrix = 'd';
 	if ($args{method_dist} eq 'euclid'){
-		# Ãê½Ğ¸ì¤´¤È¤ËÉ¸½à²½
+		# æŠ½å‡ºèªã”ã¨ã«æ¨™æº–åŒ–
 		$source_matrix = 't( scale( t(d) ) )';
 	}
 
@@ -294,30 +274,32 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	$r_command .= "dj <- Dist($source_matrix,method=\"$args{method_dist}\")\n";
 
-	# ¥¢¥ë¥´¥ê¥º¥àÊÌ¤Î¥³¥Ş¥ó¥É
+	if ($args{random_starts} == 1){
+		$r_command .= "random_starts <- 1\n";
+	} else {
+		$r_command .= "random_starts <- 0\n";
+	}
+	$r_command .= "dim_n <- $args{dim_number}\n";
+
+	# ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ åˆ¥ã®ã‚³ãƒãƒ³ãƒ‰
 	my $r_command_d = '';
 	my $r_command_a = '';
-	if ($args{method} eq 'K'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- isoMDS(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'S'){
-		$r_command .= "library(MASS)\n";
-		$r_command .= "c <- sammon(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\$points\n";
-	}
-	elsif ($args{method} eq 'C'){
-		$r_command .= "c <- cmdscale(dj, k=$args{dim_number})\n";
-		$r_command .= "cl <- c\n";
-	}
-
-	# ¥×¥í¥Ã¥ÈÍÑ¤Î¥³¥Ş¥ó¥É¡Ê¼¡¸µÊÌ¡Ë
+	$r_command .= "method_mds <- \"$args{method}\"\n";
+	$r_command .= &r_command_mds();
+	
+	# MDSã®ä¿å­˜
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
+	unlink $file_save if -e $file_save;
+	$file_save = $::config_obj->uni_path($file_save);
+	$r_command .= "save(d,cl,dim_n, file=\"$file_save\" )\n";
+	
+	# ãƒ—ãƒ­ãƒƒãƒˆç”¨ã®ã‚³ãƒãƒ³ãƒ‰ï¼ˆæ¬¡å…ƒåˆ¥ï¼‰
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
 	$args{cls_raw}   = 0 unless ( length($args{cls_raw}) );
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	
-	$r_command_d = $r_command;
+	#$r_command_d = $r_command;
+	$r_command_d = "\n#--------------------------------------------------------#\n";
 
 	$r_command_d .= "use_alpha <- $args{use_alpha}\n";
 	$r_command_d .= "
@@ -329,14 +311,14 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_d .= "font_size <- $fontsize\n";
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
-	$r_command_d .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # ¼¡¸µ
+	$r_command_d .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # æ¬¡å…ƒ
 	
 	$r_command_d .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_d .= "name_dim2 <- paste(name_dim,'2')\n";
 	$r_command_d .= "name_dim3 <- paste(name_dim,'3')\n";
 	
 	$r_command_a .= "use_alpha <- $args{use_alpha}\n";
+	$r_command_d .= "fix_asp <- $args{fix_asp}\n";
 	$r_command_a .= "
 		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
 			use_alpha <- 0 
@@ -347,7 +329,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
-	$r_command_d .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # ¼¡¸µ
+	$r_command_d .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # æ¬¡å…ƒ
 
 	$r_command_a .= "name_dim1 <- paste(name_dim,'1')\n";
 	$r_command_a .= "name_dim2 <- paste(name_dim,'2')\n";
@@ -363,20 +345,22 @@ while ( is.na(check4mds(d)) == 0 ){
 
 	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
-			$r_command_d .= &r_command_plot;
-			$r_command_a .= &r_command_plot;
+			$r_command_d .= "bubble <- 0\n";
+			$r_command_d .= &r_command_plot(%args);
+			$r_command_a .= "bubble <- 0\n";
+			$r_command_a .= &r_command_plot(%args);
 
 		} else {
-			# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤¦¾ì¹ç
-			$r_command_d .= "std_radius <- $args{std_radius}\n";
+			# ãƒãƒ–ãƒ«è¡¨ç¾ã‚’è¡Œã†å ´åˆ
+			#$r_command_d .= "std_radius <- $args{std_radius}\n";
+			#$r_command_d .= "bubble_var <- $args{bubble_var}\n";
+			$r_command_d .= "bubble <- 1\n";
 			$r_command_d .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_d .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_d .= &r_command_bubble;
+			$r_command_d .= &r_command_plot(%args);
 
-			$r_command_a .= "std_radius <- $args{std_radius}\n";
+			$r_command_a .= "bubble <- 1\n";
 			$r_command_a .= "bubble_size <- $args{bubble_size}\n";
-			$r_command_a .= "bubble_var <- $args{bubble_var}\n";
-			$r_command_a .= &r_command_bubble;
+			$r_command_a .= &r_command_plot(%args);
 		}
 	}
 	elsif ($args{dim_number} == 3){
@@ -392,7 +376,7 @@ while ( is.na(check4mds(d)) == 0 ){
 			."labcd <- pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
 				."cex=$fontsize, offset=0, col=\"black\", font = text_font, doPlot=F)\n"
 			.'
-	# ¥é¥Ù¥ëºÆÄ´À°
+	# ãƒ©ãƒ™ãƒ«å†èª¿æ•´
 	xorg <- cl2$x
 	yorg <- cl2$y
 	cex  <- font_size
@@ -455,27 +439,29 @@ while ( is.na(check4mds(d)) == 0 ){
 		;
 	}
 
-	$r_command .= $r_command_a;
+	#$r_command .= $r_command_a;
+	my $r_command_l = "load(\"$file_save\")\n";
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
-	my $flg_error = 0;
-	my $plot1 = kh_r_plot->new(
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
+	my $plot1 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_1',
-		command_f => $r_command_d,
-		width     => $args{plot_size},
+		command_f => $r_command.$r_command_d,
+		command_s => $r_command_l.$r_command_d,
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
-	my $plot2 = kh_r_plot->new(
+	) or return 0;
+	my $plot2 = kh_r_plot::mds->new(
 		name      => $args{plotwin_name}.'_2',
+		command_s => $r_command_l.$r_command_a,
 		command_a => $r_command_a,
-		command_f => $r_command,
-		width     => $args{plot_size},
+		command_f => $r_command.$r_command_a,
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
-	# Ê¬ÀÏ¤«¤é¾Ê¤«¤ì¤¿¸ì¡¿¥³¡¼¥É¤ò¥Á¥§¥Ã¥¯
+	# åˆ†æã‹ã‚‰çœã‹ã‚ŒãŸèªï¼ã‚³ãƒ¼ãƒ‰ã‚’ãƒã‚§ãƒƒã‚¯
 	my $dropped = '';
 	foreach my $i (split /\n/, $plot1->r_msg){
 		if ($i =~ /"Dropped object: (.+)"/){
@@ -485,27 +471,26 @@ while ( is.na(check4mds(d)) == 0 ){
 	if ( length($dropped) ){
 		chop $dropped;
 		chop $dropped;
-		$dropped = Jcode->new($dropped,'sjis')->euc
-			if $::config_obj->os eq 'win32';
+		#$dropped = Jcode->new($dropped,'sjis')->euc
+		#	if $::config_obj->os eq 'win32';
 		gui_errormsg->open(
 			type => 'msg',
 			msg  =>
-				kh_msg->get('omit') # °Ê²¼¤ÎÃê½Ğ¸ì¡¿¥³¡¼¥É¤ÏÊ¬ÀÏ¤«¤é¾Ê¤«¤ì¤Ş¤·¤¿¡§\n
+				kh_msg->get('omit') # ä»¥ä¸‹ã®æŠ½å‡ºèªï¼ã‚³ãƒ¼ãƒ‰ã¯åˆ†æã‹ã‚‰çœã‹ã‚Œã¾ã—ãŸï¼š\n
 				.$dropped
 		);
 	}
 
 	my $txt = $plot1->r_msg;
 	if ( length($txt) ){
-		$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
 		print "-------------------------[Begin]-------------------------[R]\n";
 		print "$txt\n";
 		print "---------------------------------------------------------[R]\n";
 	}
 
-	# ¥¹¥È¥ì¥¹ÃÍ¤Î¼èÆÀ
+	# ã‚¹ãƒˆãƒ¬ã‚¹å€¤ã®å–å¾—
 	my $stress;
-	if ($args{method} eq 'K' or $args{method} eq 'S'){
+	if ($args{method} eq 'K' or $args{method} eq 'S' or $args{method} eq 'SM' ){
 		$::config_obj->R->send(
 			 'str <- paste("khcoder",c$stress, sep = "")'."\n"
 			.'print(str)'
@@ -522,21 +507,41 @@ while ( is.na(check4mds(d)) == 0 ){
 		}
 	}
 
-	return undef if $flg_error;
-
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+	
+	# get XY ratio
+	$::config_obj->R->send("
+		if (fix_asp == 1){
+			ratio = ( xlimv[2] - xlimv[1] ) / ( ylimv[2] - ylimv[1] )
+		} else {
+			ratio = 0
+		}
+		print( paste0('<ratio>', ratio ,'</ratio>') )
+	");
+	my $ratio = $::config_obj->R->read;
+	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
+		$ratio = $1;
+	}
+	
 	my $plotR;
 	$plotR->{result_plots} = [$plot1, $plot2];
 	$plotR->{result_info} =  $stress;
+	$plotR->{coord} = $csv;
+	$plotR->{ratio} = $ratio;
+	
 	return $plotR;
-
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦Â¿¼¡¸µ¼ÜÅÙË¡¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å¤šæ¬¡å…ƒå°ºåº¦æ³•ï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{
@@ -570,22 +575,28 @@ sub hinshi{
 }
 
 sub r_command_plot{
+	my %args = @_;
 	return '
 
 ylab_text <- ""
-if ( dim_n == 2 ){
-	ylab_text <- name_dim2
-}
 if ( dim_n == 1 ){
+	name_dim2 <- name_dim1
 	cl <- cbind(cl[,1],cl[,1])
 }
 
 col_base <- "mediumaquamarine"
 bty      <- "l"
 
-# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ
-if (n_cls > 0){
+if ( exists("bubble_size") == F ) {
+	bubble_size <- 100
+}
+if ( exists("bs_fixed") == F ) {
+	bubble_size <- bubble_size / '.$args{font_size}.'
+	bs_fixed <- 1
+}
 
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æ
+if (n_cls > 0){
 	if (nrow(d) < n_cls){
 		n_cls <- nrow(d)
 	}
@@ -606,173 +617,10 @@ if (n_cls > 0){
 		hcl <- hclust(djj,method="ward")
 		#hcl$height <- sqrt( hcl$height )
 	}
-
-	library( RColorBrewer )
-	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
-	col_dot_words <- "gray40"
-	col_base <- NA
-	bty <- "o"
-
-	if ( use_alpha == 1 ){
-		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
-		col_bg_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.5
-		)[cutree(hcl, k=n_cls)]
-		rgb <- rgb * 0.5
-		col_dot_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.92
-		)[cutree(hcl, k=n_cls)]
-	}
-
-}
-
-plot(
-	cl,
-	pch=20,
-	col=col_base,
-	xlab=name_dim1,
-	ylab=ylab_text,
-	bty=bty
-)
-
-if (n_cls > 0){
-	symbols(
-		cl[,1],
-		cl[,2],
-		circles=rep(1,length(cl[,1])),
-		inches=0.1,
-		fg=col_dot_words,
-		bg=col_bg_words,
-		add=T,
-	)
-}
-
-if ( plot_mode == "color" ){
-	library(maptools)
-	labcd <- pointLabel(
-		x=cl[,1],
-		y=cl[,2],
-		labels=rownames(cl),
-		cex=font_size,
-		font = text_font,
-		doPlot = F,
-		offset=0
-	)
-
-	# ¥é¥Ù¥ëºÆÄ´À°
-	xorg <- cl[,1]
-	yorg <- cl[,2]
-	cex  <- font_size
-
-	if ( length(xorg) < 300 ) {
-		library(wordcloud)'
-		.&plotR::network::r_command_wordlayout
-		.'nc <- wordlayout(
-			labcd$x,
-			labcd$y,
-			rownames(cl),
-			cex=cex * 1.25,
-			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
-		)
-
-		xlen <- par("usr")[2] - par("usr")[1]
-		ylen <- par("usr")[4] - par("usr")[3]
-
-		for (i in 1:length(rownames(cl)) ){
-			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-			dst <- sqrt( x^2 + y^2 )
-			if ( dst > 0.05 ){
-				# print( paste( rownames(cb)[i], d ) )
-				
-				segments(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i],
-					col="gray60",
-					lwd=1
-				)
-				
-			}
-		}
-
-		xorg <- labcd$x
-		yorg <- labcd$y
-		labcd$x <- nc[,1] + .5 * nc[,3]
-		labcd$y <- nc[,2] + .5 * nc[,4]
-	}
-
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=font_size,
-		offset=0,
-		font = text_font
-	)
-
-}
-
-';
-}
-
-sub r_command_bubble{
-	return '
-
-ylab_text <- ""
-if ( dim_n == 2 ){
-	ylab_text <- name_dim2
-}
-if ( dim_n == 1 ){
-	cl <- cbind(cl[,1],cl[,1])
-}
-
-
-if (plot_mode == "color"){
-	col_txt_words <- "black"
-	col_dot_words <- "#00CED1"
-	col_dot_vars  <- "#FF6347"
-	col_bg_words  <- "NA"
-}
-
-if (plot_mode == "dots"){
-	col_txt_words <- NA
-	col_dot_words <- "black"
-	col_dot_vars  <- "black"
-	col_bg_words  <- NA
-}
-
-if ( use_alpha == 1 ){
-	rgb <- c(179, 226, 205) / 255
-	col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
-	rgb <- rgb * 0.5
-	col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.5 )
-}
-
-# ¥Ğ¥Ö¥ë¤Î¥µ¥¤¥º¤ò·èÄê
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if ( is.na( nums[i] ) ){
-      temp[i] <- 1
-    } else {
-	    if (nums[i] < 1){
-	      temp[i] <- 1
-	    } else {
-	      temp[i] <-  nums[i]
-	    }
-	}
-  }
-  return(temp)
 }
 
 b_size <- NULL
+
 for (i in rownames(cl)){
 	if ( is.na(i) || is.null(i) || is.nan(i) ){
 		b_size <- c( b_size, 1 )
@@ -781,157 +629,386 @@ for (i in rownames(cl)){
 	}
 }
 
-b_size <- sqrt( b_size / pi ) # ½Ğ¸½¿ôÈæ¡áÌÌÀÑÈæ¤Ë¤Ê¤ë¤è¤¦¤ËÈ¾·Â¤òÄ´À°
+#-----------------------------------------------------------------------------#
+#                           prepare label positions
+#-----------------------------------------------------------------------------#
 
-if (std_radius){ # ±ß¤ÎÂç¾®¤ò¥Ç¥Õ¥©¥ë¥á
-	if ( sd(b_size) == 0 ){
-		b_size <- rep(10, length(b_size))
-	} else {
-		b_size <- b_size / sd(b_size)
-		b_size <- b_size - mean(b_size)
-		b_size <- b_size * 5 * bubble_var / 100 + 10
-		b_size <- neg_to_zero(b_size)
+if (plot_mode == "color") {
+
+	png_width  <- '.$args{width}.'
+	png_height <- '.$args{height}.'
+	if ( png_width > png_height ){
+		png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
 	}
-}
+	dpi <- 72 * min(png_width, png_width) / 640 * '.$args{font_size}.'
+	p_size <- 12 * dpi / 72;
+	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
-# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ
-if (n_cls > 0){
-	library( RColorBrewer )
+	#if ( exists("PERL_font_family") ){
+	#	par(family=PERL_font_family) 
+	#}
 	
-	if (nrow(d) < n_cls){
-		n_cls <- nrow(d)
-	}
-	
-	if (cls_raw == 1){
-		djj <- dj
-	} else {
-		djj <- dist(cl,method="euclid")
-	}
-	
-	if (
-		   ( as.numeric( R.Version()$major ) >= 3 )
-		&& ( as.numeric( R.Version()$minor ) >= 1.0)
-	){                                                      # >= R 3.1.0
-		hcl <- hclust(djj,method="ward.D2")
-	} else {                                                # <= R 3.0
-		djj <- djj^2
-		hcl <- hclust(djj,method="ward")
-		#hcl$height <- sqrt( hcl$height )
-	}
-
-	col_bg_words <- brewer.pal(12, "Set3")[cutree(hcl, k=n_cls)]
-	col_dot_words <- "gray40"
-
-	if ( use_alpha == 1 ){
-		rgb <- col2rgb( brewer.pal(12, "Set3") ) / 255
-		col_bg_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.5
-		)[cutree(hcl, k=n_cls)]
-		rgb <- rgb * 0.5
-		col_dot_words <- rgb(
-			red  =rgb[1,],
-			green=rgb[2,],
-			blue =rgb[3,],
-			alpha=0.92
-		)[cutree(hcl, k=n_cls)]
-	}
-
-}
-
-# ¥Ğ¥Ö¥ëÉÁ²è
-plot(
-	cl,
-	pch=NA,
-	col="black",
-	xlab=name_dim1,
-	ylab=ylab_text,
-	#bty="l"
-)
-
-symbols(
-	cl[,1],
-	cl[,2],
-	circles=b_size,
-	inches=0.5 * bubble_size / 100,
-	fg=col_dot_words,
-	bg=col_bg_words,
-	add=T,
-)
-
-# ¥é¥Ù¥ë°ÌÃÖ¤ò·èÄê
-library(maptools)
-labcd <- pointLabel(
-	x=cl[,1],
-	y=cl[,2],
-	labels=rownames(cl),
-	cex=font_size,
-	offset=0,
-	doPlot=F
-)
-
-# ¥é¥Ù¥ëºÆÄ´À°
-xorg <- cl[,1]
-yorg <- cl[,2]
-cex  <- font_size
-
-if ( length(xorg) < 300 ) {
-	library(wordcloud)'
-	.&plotR::network::r_command_wordlayout
-	.'nc <- wordlayout(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=cex * 1.25,
-		xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
-		ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+	plot(cl)
+	library(maptools)
+	labcd <- pointLabel(
+		x=cl[,1],
+		y=cl[,2],
+		labels=rownames(cl),
+		cex=font_size,
+		offset=0,
+		doPlot=F
 	)
+	
+	xorg <- cl[,1]
+	yorg <- cl[,2]
+	cex  <- font_size
+	segs <- NULL
+	
+	if ( length(xorg) < 300 ) {
+		library(wordcloud)
+		'.&plotR::network::r_command_wordlayout.'
 
-	xlen <- par("usr")[2] - par("usr")[1]
-	ylen <- par("usr")[4] - par("usr")[3]
-
-	for (i in 1:length(rownames(cl)) ){
-		x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
-		y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
-		dst <- sqrt( x^2 + y^2 )
-		if ( dst > 0.05 ){
-			# print( paste( rownames(cb)[i], d ) )
-			
-			if (plot_mode == "color") {
-				segments(
-					nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-					xorg[i], yorg[i],
-					col="gray60",
-					lwd=1
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cl),
+			cex=cex * 1.25,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
+	
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
+	
+		for (i in 1:length(rownames(cl)) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3],
+						nc[i,2] + .5 * nc[i,4],
+						xorg[i],
+						yorg[i]
+					)
 				)
 			}
 		}
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
-
-	xorg <- labcd$x
-	yorg <- labcd$y
-	labcd$x <- nc[,1] + .5 * nc[,3]
-	labcd$y <- nc[,2] + .5 * nc[,4]
+	dev.off()
 }
 
-# ¥é¥Ù¥ëÉÁ²è
-if (plot_mode == "color") {
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cl),
-		cex=font_size,
-		offset=0,
-		font = text_font,
-		col=col_txt_words,
+#-----------------------------------------------------------------------------#
+#                              start plotting
+#-----------------------------------------------------------------------------#
+
+library(grid)
+library(ggplot2)
+
+font_family <- "'.$::config_obj->font_plot_current.'"
+
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+if (use_alpha == 1){
+	alpha_value = 0.6
+} else {
+	alpha_value = 1
+}
+
+if ( n_cls > 0 ){
+	cls_labels <- cutree(hcl, k=n_cls)
+	cls_labels <- formatC(cls_labels,width=2,flag="0")
+
+	cls_labels <- paste(cls_labels, "  ")
+} else {
+	cls_labels <- "cluster 1"
+}
+
+cl2 <- data.frame(
+	d1 = cl[,1],
+	d2 = cl[,2],
+	s = b_size,
+	col_f = cls_labels,
+	lx = labcd$x,
+	ly = labcd$y,
+	labels = rownames(cl),
+	stringsAsFactors = F
+)
+
+g <- ggplot()
+
+# Plot
+if ( bubble == 1 ){
+	g <- g + geom_point(
+		data=cl2,
+		aes(x=d1, y=d2, size=s, colour=col_f, fill=col_f),
+		shape=21,
+		colour="gray40",
+		alpha=alpha_value
+	)
+	g <- g + scale_size_area(
+		max_size= 30 * bubble_size / 100,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", alpha=1),
+			label.hjust = 1,
+			order = 2
+		)
+	)
+} else {
+	if ( n_cls > 0 ){
+		g <- g + geom_point(
+			data=cl2,
+			aes(x=d1, y=d2, colour=col_f, fill=col_f),
+			size=5.5,
+			shape=21,
+			colour="gray40",
+			alpha=alpha_value
+		)
+	} else {
+		g <- g + geom_point(
+			data=cl2,
+			aes(x=d1, y=d2),
+			size=2,
+			shape=16,
+			colour="mediumaquamarine"
+		)
+	}
+}
+
+if ( n_cls > 0 ){
+	g <- g + scale_fill_brewer(
+		palette = "Set3",
+		guide = guide_legend(
+			title = "Cluster:",
+			override.aes = list(size=5.5, alpha=1, shape=22),
+			keyheight = unit(1.25,"line"),
+			ncol=2,
+			order = 1
+		)
+	)
+} else {
+	g <- g + scale_fill_brewer(
+		palette = "Set3",
+		guide = "none"
 	)
 }
 
+# Text
+if (plot_mode == "color") {
+	if (text_font == 1){
+		face <- "plain"
+	} else {
+		face <- "bold"
+	}
+	g <- g + geom_text(
+		data=cl2,
+		aes(x=lx,y=ly,label=labels),
+		size=4,
+		colour="black",
+		family=font_family,
+		fontface=face
+	)
+	if (length(segs) > 0){
+		colnames(segs) <- c("x1", "y1", "x2", "y2")
+		segs <- as.data.frame(segs)
+		g <- g + geom_segment(
+			aes(x=x1, y=y1, xend=x2, yend=y2),
+			data=segs,
+			colour="gray60"
+		)
+
+	}
+}
+
+# Appearance / Theme
+g <- g + labs(x=name_dim1, y=name_dim2)
+g <- g + theme_classic(base_family=font_family)
+g <- g + theme(
+	legend.key   = element_rect(colour = "transparent"),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0),
+	plot.margin  = margin(6, 6, 6, 0, "pt")
+)
+
+# fix range
+out_coord <- cbind( cl2$lx, cl2$ly )
+rownames(out_coord) <- cl2$labels
+xlimv <- c(
+	min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
+	max( out_coord[,1] ) + 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) )
+)
+ylimv <- c(
+	min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
+	max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
+)
+
+# aspect ratio
+if (fix_asp == 1){
+	g <- g + coord_fixed(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+} else {
+	g <- g + coord_cartesian(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+}
+
+# coordinates for saving
+add <- -1 * xlimv[1]
+div <- add + xlimv[2]
+out_coord[,1] <- ( out_coord[,1] + add ) / div
+
+add <- -1 *  ylimv[1]
+div <- add + ylimv[2]
+out_coord[,2] <- ( out_coord[,2] + add ) / div
+
+# fixing width of legends to 22%
+library(grid)
+library(gtable)
+g <- ggplotGrob(g)
+
+if ( ( n_cls == 0 ) && ( bubble == 0 ) ){
+	saving_file <- 1
+}
+
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		}
+	}
+}
+
+# fixing width of left spaces to 4.25 char
+if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+	diff_char <- diff( c(
+		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+		unit(4.25, "char")
+	))
+	if ( diff_char > 0 ){
+		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
+	}
+}
+
+grid.draw(g)
 
 ';
 }
 
+sub r_command_mds{
+	return '
+
+if (method_mds == "K"){
+	# Kruskal
+	library(MASS)
+	c <- isoMDS(dj, k=dim_n, maxit=3000, tol=0.000001)
+	if (random_starts == 1){
+			print("Running random starts...")
+			set.seed(123)
+			for (i in 1:1000){ # 200sec
+				if (dim_n == 1){
+					init <- cbind( rnorm(nrow(d)) )
+				} else if (dim_n == 2){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else if (dim_n == 3){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else {
+					warn("Error: invalid dimesion number!")
+				}
+				ct <- isoMDS(dj, y=init, k=dim_n, maxit=3000, tol=0.000001, trace=F)
+				if (ct$stress < c$stress){
+					c <- ct
+					print( paste("random start #", i, ": ",  c$stress, sep=""))
+				}
+			}
+	}
+	cl <- c$points
+} else if (method_mds == "S"){
+	#Sammon
+	library(MASS)
+	c <- sammon(dj, k=dim_n, niter=3000, tol=0.000001)
+	if (random_starts == 1){
+			print("Running random starts...")
+			set.seed(123)
+			for (i in 1:1000){ # 200sec
+				if (dim_n == 1){
+					init <- cbind( rnorm(nrow(d)) )
+				} else if (dim_n == 2){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else if (dim_n == 3){
+					init <- cbind( rnorm(nrow(d)), rnorm(nrow(d)), rnorm(nrow(d)) )
+				} else {
+					warn("Error: invalid dimesion number!")
+				}
+				ct <- sammon(dj, y=init, k=dim_n, niter=3000, tol=0.000001, trace=F)
+				if (ct$stress < c$stress){
+					c <- ct
+					print( paste("random start #", i, ": ",  c$stress, sep=""))
+				}
+			}
+	}
+	cl <- c$points
+} else if (method_mds == "C"){
+	# Classical
+	c <- cmdscale(dj, k=dim_n)
+	cl <- c
+} else if (method_mds == "SM"){
+	# SMACOF
+	library(smacof)
+	c <- mds(dj, ndim=dim_n, type="ordinal", itmax=3000)
+	if (random_starts == 1){
+		print("Running random starts...")
+		set.seed(123)
+		for (i in 1:200){ # 200 -> 246sec
+			run <- mds(dj, ndim=dim_n, type="ordinal", init = "random", itmax=3000)
+			if (run$stress < c$stress){
+				c <- run
+				print( paste("random start #", i, ": ",  c$stress, sep=""))
+			}
+		}
+	}
+	cl <- c$conf
+}
+	';
+}
 
 1;

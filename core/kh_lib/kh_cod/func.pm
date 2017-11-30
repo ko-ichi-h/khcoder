@@ -1,8 +1,9 @@
-# ¡Ö¥Ä¡¼¥ë¡× -> ¡Ö¥³¡¼¥Ç¥£¥ó¥°¡×¥á¥Ë¥å¡¼°Ê²¼¤Î¥³¥Ş¥ó¥É¤Î¤¿¤á¤Î¥í¥¸¥Ã¥¯·²
+# ã€Œãƒ„ãƒ¼ãƒ«ã€ -> ã€Œã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ä»¥ä¸‹ã®ã‚³ãƒãƒ³ãƒ‰ã®ãŸã‚ã®ãƒ­ã‚¸ãƒƒã‚¯ç¾¤
 
 package kh_cod::func;
 use base qw(kh_cod);
 use strict;
+use utf8;
 
 use mysql_getheader;
 use Jcode;
@@ -10,19 +11,19 @@ use Jcode;
 use Clone qw(clone);
 
 #-----------------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î½ĞÎÏ¡ÊÉÔÄêÄ¹CSV¡Ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®å‡ºåŠ›ï¼ˆä¸å®šé•·CSVï¼‰   #
 
 sub cod_out_var{
 	my $self    = shift;
 	my $tani    = shift;
 	my $outfile = shift;
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
 	
-	# ½ĞÎÏÍÑSQL¡¦°ì¹ÔÌÜ¤ÎºîÀ®
+	# å‡ºåŠ›ç”¨SQLãƒ»ä¸€è¡Œç›®ã®ä½œæˆ
 	my ($sql,$head);
 	my $flag = 0;
 	my $hnum = 0;
@@ -36,16 +37,16 @@ sub cod_out_var{
 			++$hnum;
 		}
 	}
-	$head .= '¥³¡¼¥É';
+	$head .= 'ã‚³ãƒ¼ãƒ‰';
 	$sql = "SELECT "."$sql";
 	
-	my @codename;                                 # ¤³¤³¤Ç¥³¡¼¥ÉÌ¾¤â¥Á¥§¥Ã¥¯
+	my @codename;                                 # ã“ã“ã§ã‚³ãƒ¼ãƒ‰åã‚‚ãƒã‚§ãƒƒã‚¯
 	my $n = 0;
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		use kh_csv;
 		$codename[$n] = $i->name;
-		substr($codename[$n],0,2) = '';
+		substr($codename[$n],0,1) = '';
 		++$n;
 	}
 	chop $sql;
@@ -55,8 +56,8 @@ sub cod_out_var{
 	}
 	$sql .= "ORDER BY ".$self->tani.".id";
 	
-	# ½ĞÎÏ³«»Ï
-	open(CODO,">$outfile") or
+	# å‡ºåŠ›é–‹å§‹
+	open(CODO,'>:encoding(cp932)', $outfile) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile
@@ -69,9 +70,9 @@ sub cod_out_var{
 		my $current_code;
 		my $n = 0;
 		foreach my $j (@{$i}){
-			if ($n < $hnum){                     # °ÌÃÖ¾ğÊó
+			if ($n < $hnum){                     # ä½ç½®æƒ…å ±
 				$current .= "$j,";
-			} else {                              # ¥³¡¼¥É
+			} else {                              # ã‚³ãƒ¼ãƒ‰
 				if ($j){
 					my $cnum = $n - $hnum;
 					$current_code .= "$codename[$cnum] ";
@@ -86,14 +87,10 @@ sub cod_out_var{
 		print CODO "$current$current_code\n";
 	}
 	close (CODO);
-	
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($outfile);
-	}
 }
 
 #------------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î½ĞÎÏ¡ÊSPSS¡Ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®å‡ºåŠ›ï¼ˆSPSSï¼‰   #
 
 sub cod_out_spss{
 	my $self     = shift;
@@ -101,7 +98,7 @@ sub cod_out_spss{
 	my $outfile  = shift;
 	my $outfile2 = substr($outfile,0,length($outfile)-4).".dat";
 
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
@@ -123,7 +120,7 @@ sub cod_out_spss{
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		push @head, "code$cn";
-		$codes{"code$cn"} = Jcode->new($i->name)->sjis;
+		$codes{"code$cn"} = $i->name;
 		++$cn;
 	}
 	chop $sql;
@@ -134,8 +131,8 @@ sub cod_out_spss{
 	}
 	$sql .= "ORDER BY ".$self->tani.".id";
 	
-	# ¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë
-	open(CODO,">$outfile2") or
+	# ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	open(CODO, '>:encoding(utf8)', $outfile2) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile2
@@ -152,7 +149,7 @@ sub cod_out_spss{
 	}
 	close (CODO);
 	
-	# ¥·¥ó¥¿¥Ã¥¯¥¹¥Õ¥¡¥¤¥ë
+	# ã‚·ãƒ³ã‚¿ãƒƒã‚¯ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«
 	my $spss;
 	$spss .= "file handle trgt1 /name=\'";
 	#if ($::config_obj->os eq 'win32'){
@@ -160,7 +157,7 @@ sub cod_out_spss{
 	#} else {
 	#	$spss .= $outfile2;
 	#}
-	$spss .= $outfile2;
+	$spss .= $::config_obj->uni_path( $outfile2 );
 	$spss .= "\'\n";
 	$spss .= "                 /lrecl=32767 .\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
@@ -175,7 +172,7 @@ sub cod_out_spss{
 	$spss .= ".\n";
 	$spss .= "execute.\n";
 	
-	open(CODO,">$outfile") or
+	open(CODO,'>:encoding(utf8)', $outfile) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile
@@ -189,7 +186,7 @@ sub out2r_selected{
 	my $tani     = shift;
 	my $selected = shift;
 
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	unless ($self->code($tani)){
 		print "could not perform coding\n";
 		return 0;
@@ -200,7 +197,7 @@ sub out2r_selected{
 	}
 	$self->cumulate if @{$self->{valid_codes}} > 30;
 
-	# ÁªÂò¤µ¤ì¤¿¥³¡¼¥É¤ò¥ê¥¹¥È¥¢¥Ã¥×
+	# é¸æŠã•ã‚ŒãŸã‚³ãƒ¼ãƒ‰ã‚’ãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—
 	my %if_selected = ();
 	foreach my $i (@{$selected}){
 		$if_selected{$i} = 1;
@@ -211,7 +208,7 @@ sub out2r_selected{
 	}
 	$selected = \@codes;
 
-	# SQLÊ¸
+	# SQLæ–‡
 	my %tables = ();
 	foreach my $i (@{$selected}){
 		unless ($i->res_table){
@@ -232,15 +229,15 @@ sub out2r_selected{
 	$sql .= "ORDER BY ".$self->tani.".id";
 	#print "$sql\n";
 	
-	# ¥Ç¡¼¥¿¤òÊİÂ¸¤¹¤ë¥Õ¥¡¥¤¥ë
+	# ãƒ‡ãƒ¼ã‚¿ã‚’ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«
 	my $file = $::project_obj->file_TempR;
-	open my $fh, '>', $file or
+	open my $fh, '>:encoding(utf8)', $file or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $file,
 		);
 	
-	# ¥Ç¡¼¥¿¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿å–ã‚Šå‡ºã—
 	print $fh "d <- matrix( c(";
 	my $nrow = 0;
 	my $h = mysql_exec->select($sql,1)->hundle;
@@ -254,26 +251,25 @@ sub out2r_selected{
 	print $fh "), ncol=$ncol, nrow=$nrow, byrow=TRUE)\n";
 	close ($fh);
 
-	# R¥³¥Ş¥ó¥É
-	my $r_command = "source(\"$file\")\n";
+	# Rã‚³ãƒãƒ³ãƒ‰
+	$file = $::config_obj->uni_path($file);
+	my $r_command = "source(\"$file\", encoding=\"UTF-8\"\)\n";
 	if ($::config_obj->os eq 'win32'){
-		$r_command = Jcode->new($r_command, 'sjis')->euc;
 		$r_command =~ s/\\/\//g;
-		kh_jchar->to_sjis($file);
 	}
 	$r_command .= "# dpi: short based\n";
 	return $r_command;
 }
 
 #-----------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î½ĞÎÏ¡ÊCSV¡Ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®å‡ºåŠ›ï¼ˆCSVï¼‰   #
 
 sub cod_out_csv{
 	my $self    = shift;
 	my $tani    = shift;
 	my $outfile = shift;
 
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
@@ -293,11 +289,7 @@ sub cod_out_csv{
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		use kh_csv;
-		if ($::config_obj->os eq 'win32'){
-			$head .= kh_csv->value_conv(Jcode->new($i->name)->sjis).",";
-		} else {
-			$head .= kh_csv->value_conv($i->name).",";
-		}
+		$head .= kh_csv->value_conv($i->name).",";
 	}
 	chop $sql;
 	chop $head;
@@ -307,7 +299,8 @@ sub cod_out_csv{
 	}
 	$sql .= "ORDER BY ".$self->tani.".id";
 	
-	open(CODO,">$outfile") or
+	use File::BOM;
+	open(CODO, '>:encoding(utf8):via(File::BOM)', $outfile) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile
@@ -328,7 +321,7 @@ sub cod_out_csv{
 }
 
 #------------------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î½ĞÎÏ¡Ê¥¿¥Ö¶èÀÚ¤ê¡Ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®å‡ºåŠ›ï¼ˆã‚¿ãƒ–åŒºåˆ‡ã‚Šï¼‰   #
 
 sub cod_out_tab{
 	my $self    = shift;
@@ -338,7 +331,7 @@ sub cod_out_tab{
 	my $debug = 0;
 	print "1.\n" if $debug;
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 30;
@@ -359,11 +352,7 @@ sub cod_out_tab{
 	foreach my $i (@{$self->valid_codes}){
 		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
 		use kh_csv;
-		if ($::config_obj->os eq 'win32'){
-			$head .= kh_csv->value_conv_t(Jcode->new($i->name)->sjis)."\t";
-		} else {
-			$head .= kh_csv->value_conv_t($i->name)."\t";
-		}
+		$head .= kh_csv->value_conv_t($i->name)."\t";
 	}
 	chop $sql;
 	chop $head;
@@ -374,7 +363,7 @@ sub cod_out_tab{
 	$sql .= "ORDER BY ".$self->tani.".id";
 	print "3. $outfile\n" if $debug;
 	
-	open(CODO,">$outfile") or
+	open(CODO, '>:encoding(utf8)', $outfile) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile
@@ -396,7 +385,7 @@ sub cod_out_tab{
 }
 
 #--------------#
-#   Ã±½ã½¸·×   #
+#   å˜ç´”é›†è¨ˆ   #
 
 sub count{
 	my $self = shift;
@@ -408,15 +397,15 @@ sub count{
 	$self->code($tani) or return 0;
 	unless ($self->codes){ return 0; }
 	
-	# Áí¿ô¤ò¼èÆÀ
+	# ç·æ•°ã‚’å–å¾—
 	my $total = mysql_exec->select("select count(*) from $tani",1)
 		->hundle->fetch->[0];
 	
-	# ³Æ¥³¡¼¥É¤Î½Ğ¸½¿ô¤ò¼èÆÀ
+	# å„ã‚³ãƒ¼ãƒ‰ã®å‡ºç¾æ•°ã‚’å–å¾—
 	my $result;
 	foreach my $i (@{$self->codes}){
 		my $rows = 0;
-		if ($i->res_table){                  # ½Ğ¸½¿ô0¤ËÂĞ½è
+		if ($i->res_table){                  # å‡ºç¾æ•°0ã«å¯¾å‡¦
 			$rows = mysql_exec->select(
 				"SELECT sum(IF(".$i->res_col.",1,0)) FROM ".$i->res_table
 			)->hundle;
@@ -434,7 +423,7 @@ sub count{
 		];
 	}
 	
-	# 1¤Ä¤Ç¤â¥³¡¼¥É¤¬Í¿¤¨¤é¤ì¤¿Ê¸½ñ¤Î¿ô¤ò¼èÆÀ
+	# 1ã¤ã§ã‚‚ã‚³ãƒ¼ãƒ‰ãŒä¸ãˆã‚‰ã‚ŒãŸæ–‡æ›¸ã®æ•°ã‚’å–å¾—
 	
 	my $least1 = 0;
 	if ($self->valid_codes){
@@ -455,12 +444,12 @@ sub count{
 	}
 	
 	push @{$result}, [
-		kh_msg->get('no_codes'), # ¡ô¥³¡¼¥ÉÌµ¤·
+		kh_msg->get('no_codes'), # ï¼ƒã‚³ãƒ¼ãƒ‰ç„¡ã—
 		$total - $least1,
 		sprintf("%.2f",( ($total - $least1) / $total ) * 100)."%"
 	];
 	push @{$result}, [
-		kh_msg->get('n_docs'), # ¡ÊÊ¸½ñ¿ô¡Ë
+		kh_msg->get('n_docs'), # ï¼ˆæ–‡æ›¸æ•°ï¼‰
 		$total,
 		''
 	];
@@ -472,7 +461,7 @@ sub count{
 }
 
 #----------------------------#
-#   ³°ÉôÊÑ¿ô¤È¤Î¥¯¥í¥¹½¸·×   #
+#   å¤–éƒ¨å¤‰æ•°ã¨ã®ã‚¯ãƒ­ã‚¹é›†è¨ˆ   #
 
 sub outtab{
 	my $self  = shift;
@@ -480,12 +469,14 @@ sub outtab{
 	my $var_id = shift;
 	my $cell  = shift;
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°¤Î¼Â¹Ô
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã®å®Ÿè¡Œ
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
-	# ³°ÉôÊÑ¿ô¤Î¥Á¥§¥Ã¥¯
+	# å¤–éƒ¨å¤‰æ•°ã®ãƒã‚§ãƒƒã‚¯
+	my $heap = 'TYPE=HEAP';
+	$heap = '' unless $::config_obj->use_heap;
 	my ($outvar_tbl,$outvar_clm);
 	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
 	if ( $var_obj->{tani} eq $tani){
@@ -499,7 +490,7 @@ sub outtab{
 			CREATE TABLE ct_outvar_cross (
 				id int primary key not null,
 				value varchar(255)
-			) TYPE=HEAP
+			) $heap
 		",1);
 		my $sql;
 		$sql .= "INSERT INTO ct_outvar_cross\n";
@@ -517,7 +508,7 @@ sub outtab{
 	}
 	
 	
-	# ½¸·×ÍÑSQLÊ¸¤ÎºîÀ½
+	# é›†è¨ˆç”¨SQLæ–‡ã®ä½œè£½
 	my $sql;
 	$sql .= "SELECT if ( outvar_lab.lab is NULL, $outvar_tbl.$outvar_clm, outvar_lab.lab) as name,";
 	foreach my $i (@{$self->{valid_codes}}){
@@ -530,17 +521,17 @@ sub outtab{
 	}
 	$sql .= "LEFT JOIN outvar_lab ON ( outvar_lab.var_id = $var_id AND outvar_lab.val = $outvar_tbl.$outvar_clm )\n";
 	$sql .= "\nGROUP BY name";
-	$sql .= "\nORDER BY name";
+	$sql .= "\nORDER BY ".$::project_obj->mysql_sort('name');
 	#print "$sql\n";
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 	
-	# ·ë²Ì½ĞÎÏ¤ÎºîÀ½
+	# çµæœå‡ºåŠ›ã®ä½œè£½
 	my @result;
 	my @for_chisq;
 	my @for_plot;
 	
-	# °ì¹ÔÌÜ
+	# ä¸€è¡Œç›®
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name);
@@ -548,7 +539,7 @@ sub outtab{
 	push @for_plot, clone(\@head);
 	push @head, kh_msg->get('n_cases');
 	push @result, \@head;
-	# Ãæ¿È
+	# ä¸­èº«
 	my @sum = ( kh_msg->get('total') );
 	my $total;
 	while (my $i = $h->fetch){
@@ -565,18 +556,18 @@ sub outtab{
 		next if
 			   length($i->[0]) == 0
 			or $c[0] eq '.'
-			or $c[0] eq '·çÂ»ÃÍ'
+			or $c[0] eq 'æ¬ æå€¤'
 			or $c[0] =~  /^missing$/i
 			or $var_obj->{labels}{$c[0]} eq '.'
-			or $var_obj->{labels}{$c[0]} eq '·çÂ»ÃÍ'
+			or $var_obj->{labels}{$c[0]} eq 'æ¬ æå€¤'
 			or $var_obj->{labels}{$c[0]} =~ /^missing$/i
 		;
 		
 		foreach my $h (@c){
-			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À¡Ê1ÎóÌÜ¡Ë
-				push @current,          gui_window->gui_jchar($h,'euc');
-				push @current_for_plot, gui_window->gui_jchar($h,'euc');
-			} else {                              # Ãæ¿È
+			if ($n == 0){                         # è¡Œãƒ˜ãƒƒãƒ€ï¼ˆ1åˆ—ç›®ï¼‰
+				push @current,          gui_window->gui_jchar($h);
+				push @current_for_plot, gui_window->gui_jchar($h);
+			} else {                              # ä¸­èº«
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
@@ -600,7 +591,7 @@ sub outtab{
 		push @for_chisq, \@current_for_chisq if @current_for_chisq;
 		push @for_plot, \@current_for_plot;
 	}
-	# ¹ç·×¹Ô
+	# åˆè¨ˆè¡Œ
 	my @c = @sum;
 	my @current; my $n = 0;
 	foreach my $i (@sum){
@@ -637,7 +628,7 @@ sub outtab{
 }
 
 #----------------------------#
-#   ¾Ï¡¦Àá¡¦ÃÊÍî¤´¤È¤Î½¸·×   #
+#   ç« ãƒ»ç¯€ãƒ»æ®µè½ã”ã¨ã®é›†è¨ˆ   #
 
 sub tab{
 	my $self  = shift;
@@ -649,7 +640,7 @@ sub tab{
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
-	# ½¸·×ÍÑSQLÊ¸¤ÎºîÀ½
+	# é›†è¨ˆç”¨SQLæ–‡ã®ä½œè£½
 	my $sql;
 	$sql .= "SELECT $tani2.id, ";
 	foreach my $i (@{$self->{valid_codes}}){
@@ -688,23 +679,23 @@ sub tab{
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 	
-	# ·ë²Ì½ĞÎÏ¤ÎºîÀ½
+	# çµæœå‡ºåŠ›ã®ä½œè£½
 	my @result;
 	my @for_chisq;
 	my @for_plot;
 
-	# °ì¹ÔÌÜ
+	# ä¸€è¡Œç›®
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
-		push @head, gui_window->gui_jchar($i->name,'euc');
+		push @head, gui_window->gui_jchar($i->name);
 	}
 
 	push @for_plot, clone(\@head);
-	push @head, kh_msg->get('n_cases'); # ¥±¡¼¥¹¿ô
+	push @head, kh_msg->get('n_cases'); # ã‚±ãƒ¼ã‚¹æ•°
 	push @result, \@head;
 
-	# Ãæ¿È
-	my @sum = (kh_msg->get('total')); # ¹ç·×
+	# ä¸­èº«
+	my @sum = (kh_msg->get('total')); # åˆè¨ˆ
 	my $total;
 	while (my $i = $h->fetch){
 		my $n = 0;
@@ -715,7 +706,7 @@ sub tab{
 		my $nd = pop @c;
 		unless ( length($i->[0]) ){next;}
 		foreach my $h (@c){
-			if ($n == 0){                         # ¹Ô¥Ø¥Ã¥À
+			if ($n == 0){                         # è¡Œãƒ˜ãƒƒãƒ€
 				if (index($tani2,'h') == 0){
 					my $t_name = gui_window->gui_jchar( # Decoding
 						mysql_getheader->get($tani2, $h),
@@ -727,7 +718,7 @@ sub tab{
 					push @current, $h;
 					push @current_for_plot, $h;
 				}
-			} else {                              # Ãæ¿È
+			} else {                              # ä¸­èº«
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
@@ -751,7 +742,7 @@ sub tab{
 		push @for_chisq, \@current_for_chisq if @current_for_chisq;
 		push @for_plot,  \@current_for_plot;
 	}
-	# ¹ç·×¹Ô
+	# åˆè¨ˆè¡Œ
 	my @c = @sum;
 	my @current;
 	$n = 0;
@@ -798,7 +789,7 @@ sub _chisq_test{
 	
 	my $R_debug = 0;
 	if ($::config_obj->R){
-		@chisq = ( kh_msg->get('chisq') ); # ¥«¥¤2¾èÃÍ
+		@chisq = ( kh_msg->get('chisq') ); # ã‚«ã‚¤2ä¹—å€¤
 		my $n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
@@ -811,7 +802,7 @@ sub _chisq_test{
 			}
 			chop $cmd; chop $cmd;
 			$cmd .=  "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n";
-			# »Äº¹¤â¼èÆÀ
+			# æ®‹å·®ã‚‚å–å¾—
 			$cmd .= '
 				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
 				for (i in 1:nrow(chi$residuals)){
@@ -828,7 +819,7 @@ sub _chisq_test{
 				$rtn = $1;
 				my @rtnarray = split /=/, $rtn;
 				
-				# ¥«¥¤Æó¾èÃÍ
+				# ã‚«ã‚¤äºŒä¹—å€¤
 				my $stat    = shift @rtnarray;
 				my $p_value = shift @rtnarray;
 				
@@ -865,28 +856,28 @@ sub _chisq_test{
 
 
 #------------------------------#
-#   ¥¸¥ã¥Ã¥«¡¼¥É¤ÎÎà»÷À­Â¬ÅÙ   #
+#   ã‚¸ãƒ£ãƒƒã‚«ãƒ¼ãƒ‰ã®é¡ä¼¼æ€§æ¸¬åº¦   #
 sub jaccard{
 	my $self = shift;
 	my $tani = shift;
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°¤È¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤Î¥Á¥§¥Ã¥¯
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ã¨ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã®ãƒã‚§ãƒƒã‚¯
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	
 	my ($n, @head) = (0, (''));
 	foreach my $i (@{$self->valid_codes}){
-		push @head, Jcode->new($i->name)->sjis;        # ½ĞÎÏ·ë²Ì¡¦¥Ø¥Ã¥À¹Ô
+		push @head, $i->name;        # å‡ºåŠ›çµæœãƒ»ãƒ˜ãƒƒãƒ€è¡Œ
 		++$n;
 	}
 	unless ($n > 1){return 0;}
 	
-	# ·ë²Ì½ĞÎÏ¤ÎºîÀ½
+	# çµæœå‡ºåŠ›ã®ä½œè£½
 	my @result;
 	push @result, \@head;
 	
-	foreach my $i (@{$self->valid_codes}){           # ½ĞÎÏ·ë²Ì¡¦Áê´Ø¹ÔÎó
-		my @current = (Jcode->new($i->name)->sjis);
+	foreach my $i (@{$self->valid_codes}){           # å‡ºåŠ›çµæœãƒ»ç›¸é–¢è¡Œåˆ—
+		my @current = ($i->name);
 		foreach my $h (@{$self->valid_codes}){
 			if ($i->name eq $h->name){
 				push @current,"1.000";
@@ -911,7 +902,7 @@ sub _jaccard{
 		push @tables, $c2->res_table;
 	}
 
-	# Î¾Êı½Ğ¸½¤·¤Æ¤¤¤ë¥±¡¼¥¹
+	# ä¸¡æ–¹å‡ºç¾ã—ã¦ã„ã‚‹ã‚±ãƒ¼ã‚¹
 	my $sql1 = "SELECT * FROM ".$c1->tani."\n";
 	foreach my $i (@tables){
 		$sql1 .= "LEFT JOIN $i ON ".$c1->tani.".id = $i.id\n";
@@ -921,7 +912,7 @@ sub _jaccard{
 	
 	my $both =  mysql_exec->select($sql1,1)->hundle->rows;
 
-	# ¤É¤Á¤é¤«¤¬½Ğ¸½¤·¤Æ¤¤¤ë¥±¡¼¥¹
+	# ã©ã¡ã‚‰ã‹ãŒå‡ºç¾ã—ã¦ã„ã‚‹ã‚±ãƒ¼ã‚¹
 	my $sql2 = "SELECT * FROM ".$c1->tani."\n";
 	foreach my $i (@tables){
 		$sql2 .= "LEFT JOIN $i ON ".$c1->tani.".id = $i.id\n";

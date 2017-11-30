@@ -49,8 +49,8 @@ sub _new{
 	
 	if ($::project_obj->last_codf){
 		my $path = $::project_obj->last_codf;
-		#print "$path\n";
-		$self->{cfile} = $path;
+		$self->{cfile} = $::config_obj->os_path($path);
+		
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
 		$e1->configure(-state,'normal');
 		$e1->insert('0',gui_window->gui_jchar($path));
@@ -84,23 +84,23 @@ sub _drop{
 		}
 	};
 
-	if ($] > 5.008){
-		utf8::decode($path);
-	}
-	# else {
-	# 	$path = gui_window->gui_jg($path);
-	# }
+	#my $chk0 = utf8::is_utf8($path);
+	$path = Encode::decode('cp932', $path);;
+	$path =~ s/\\/\//g;
+	$::project_obj->last_codf($path);
 
-	$path = $::config_obj->os_cod_path($path);
+	if ($path){
+		$path = gui_window->gui_jg_filename_win98($path);
+		$path = gui_window->gui_jg($path);
+		
+		$self->{cfile} = $::config_obj->os_path($path);
 
-	if (-e $path) {
-		$::project_obj->last_codf($path);
-		$self->{cfile} = $path;
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
 		$self->entry->configure(-state,'normal');
 		$self->entry->delete(0, 'end');
-		$self->entry->insert('0',gui_window->gui_jchar("$path"));
+		$self->entry->insert('0',$::config_obj->uni_path("$path"));
 		$self->entry->configure(-state,'disable');
+
 		if (defined($self->{command})){
 			&{$self->{command}};
 		}
@@ -126,15 +126,15 @@ sub _sansyo{
 	if ($path){
 		$path = gui_window->gui_jg_filename_win98($path);
 		$path = gui_window->gui_jg($path);
-		$path = $::config_obj->os_cod_path($path);
-
 		$::project_obj->last_codf($path);
-		$self->{cfile} = $path;
+		$self->{cfile} = $::config_obj->os_path($path);
+
 		substr($path, 0, rindex($path, '/') + 1 ) = '';
 		$self->entry->configure(-state,'normal');
 		$self->entry->delete(0, 'end');
 		$self->entry->insert('0',gui_window->gui_jchar("$path"));
 		$self->entry->configure(-state,'disable');
+
 		if (defined($self->{command})){
 			&{$self->{command}};
 		}

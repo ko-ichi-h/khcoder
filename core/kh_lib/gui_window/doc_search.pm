@@ -285,6 +285,7 @@ sub start{
 sub activate{
 	my $self = shift;
 	return 1 unless $self->{codf_obj};
+	return 1 unless $self->cfile;
 	return 1 unless -e $self->cfile;
 	return 1 unless $self->{timestamp};
 	
@@ -648,8 +649,8 @@ sub copy{
 	}
 	
 	$t = $self->to_clip($t);
-	use Clipboard;
-	Clipboard->copy( Encode::encode($::config_obj->os_code,$t) );
+	use kh_clipboard;
+	kh_clipboard->string($t);
 	return 1;
 }
 

@@ -2,13 +2,16 @@ package mysql_outvar::read::tab;
 use base qw(mysql_outvar::read);
 use strict;
 
-sub parse{
+sub parser{
 	my $self = shift;
-	my $line = shift;
-	
-	my @line = split /\t/, $line;
-	
-	return \@line;
+	use Text::CSV_XS;
+	return Text::CSV_XS->new({
+		binary     => 1,
+		auto_diag  => 2,
+		sep_char   => "\t",
+		allow_loose_quotes => 1
+	});
 }
+
 
 1;

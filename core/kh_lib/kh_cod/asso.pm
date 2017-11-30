@@ -1,6 +1,7 @@
 package kh_cod::asso;
 use base qw(kh_cod);
 use strict;
+use utf8;
 
 my %sql_join = (
 	'bun' =>
@@ -55,14 +56,14 @@ sub new{
 }
 
 #------------------------------#
-#   Ä¾ÀÜÆşÎÏ¥³¡¼¥É¤ÎÆÉ¤ß¹ş¤ß   #
+#   ç›´æ¥å…¥åŠ›ã‚³ãƒ¼ãƒ‰ã®èª­ã¿è¾¼ã¿   #
 #------------------------------#
 
 sub add_direct{
 	my $self = shift;
 	my %args = @_;
 	
-	# ´û¤ËÄÉ²Ã¤µ¤ì¤Æ¤¤¤¿¾ì¹ç¤Ï¤¤¤Ã¤¿¤óºï½ü
+	# æ—¢ã«è¿½åŠ ã•ã‚Œã¦ã„ãŸå ´åˆã¯ã„ã£ãŸã‚“å‰Šé™¤
 	if ($self->{codes}){
 		if ($self->{codes}[0]->name eq '#direct'){
 			print "Deleting old \'direct\' code\n";
@@ -70,25 +71,25 @@ sub add_direct{
 		}
 	}
 	
-	$args{raw} = Jcode->new($args{raw}, 'sjis')->euc;
 	if ($args{raw} =~ /\r|\n/){
 		my $t = $args{raw};
 		$t =~ tr/\r\n/__/;
 		$args{raw} =~ s/\r|\n//g;
 		print
 			"illegal input! using ATOK? \"",
-			Jcode->new($t)->sjis,
+			$t,
 			"\"\n"
 		;
 	}
 	
-	if ($args{mode} eq 'code'){                   #¡Öcode¡×¤Î¾ì¹ç
+	if ($args{mode} eq 'code'){                   #ã€Œcodeã€ã®å ´åˆ
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			'#direct',
 			$args{raw}
 		);
-	} else {                                      # ¡ÖAND¡×,¡ÖOR¡×¤Î¾ì¹ç
-		$args{raw} = Jcode->new($args{raw},'euc')->tr('¡¡',' ');
+	} else {                                      # ã€ŒANDã€,ã€ŒORã€ã®å ´åˆ
+		#$args{raw} = Jcode->new($args{raw},'euc')->tr('ã€€',' ');
+		$args{raw} =~ tr/ã€€/ /;
 		$args{raw} =~ tr/\t\n/  /;
 		
 		$args{raw} =~ s/(?:\x0D\x0A|[\x0D\x0A])?$/ /;
@@ -112,7 +113,7 @@ sub add_direct{
 }
 
 #----------------#
-#   ·×»»¤Î¼Â¹Ô   #
+#   è¨ˆç®—ã®å®Ÿè¡Œ   #
 #----------------#
 
 sub asso{
@@ -123,11 +124,11 @@ sub asso{
 	$self->{last_search_words} = undef;
 
 	#--------------------#
-	#   Ê¸½ñ¸¡º÷¤Î¼Â¹Ô   #
+	#   æ–‡æ›¸æ¤œç´¢ã®å®Ÿè¡Œ   #
 
 	print "1: coding...\n";
 
-	# ¡Ö¡ô¥³¡¼¥ÉÌµ¤·¡×¤Î»È¤ï¤ìÊı¤ò¥Á¥§¥Ã¥¯
+	# ã€Œï¼ƒã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã®ä½¿ã‚ã‚Œæ–¹ã‚’ãƒã‚§ãƒƒã‚¯
 	my $code_num_check = @{$self->{codes}};
 	my $no_code_flag = 0;
 	foreach my $i (@{$args{selected}}){
@@ -150,8 +151,8 @@ sub asso{
 		};
 	}
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°
-	if ($no_code_flag){                 # Á´¤Æ¤Î¥³¡¼¥É
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°
+	if ($no_code_flag){                 # å…¨ã¦ã®ã‚³ãƒ¼ãƒ‰
 		if ($self->{codes}){
 			foreach my $i (@{$self->{codes}}){
 				$i->clear;
@@ -160,7 +161,7 @@ sub asso{
 		$self->{valid_codes} = undef;
 		$self->code($self->{tani}) or return 0;
 		$self->cumulate('as') if @{$self->tables} > 30;
-	} else {                            # ÁªÂò¤µ¤ì¤¿¥³¡¼¥É¤Î¤ß
+	} else {                            # é¸æŠã•ã‚ŒãŸã‚³ãƒ¼ãƒ‰ã®ã¿
 		$self->{valid_codes} = undef;
 		foreach my $i (@{$args{selected}}){
 			$self->{codes}[$i]->clear;
@@ -172,7 +173,7 @@ sub asso{
 		}
 	}
 
-	# AND¾ò·ï¤Î»ş¤Ë¡¢0¥³¡¼¥É¤¬Â¸ºß¤·¤¿¾ì¹ç¤Ïreturn
+	# ANDæ¡ä»¶ã®æ™‚ã«ã€0ã‚³ãƒ¼ãƒ‰ãŒå­˜åœ¨ã—ãŸå ´åˆã¯return
 	unless ($self->{valid_codes}){
 		return undef;
 	}
@@ -183,17 +184,17 @@ sub asso{
 		return undef;
 	}
 
-	# ¹çÃ×¤¹¤ëÊ¸½ñ¤Î¥ê¥¹¥È¤òºîÀ®
-	mysql_exec->drop_table("temp_word_ass");    # ¥Æ¡¼¥Ö¥ë¤Î½àÈ÷
+	# åˆè‡´ã™ã‚‹æ–‡æ›¸ã®ãƒªã‚¹ãƒˆã‚’ä½œæˆ
+	mysql_exec->drop_table("temp_word_ass");    # ãƒ†ãƒ¼ãƒ–ãƒ«ã®æº–å‚™
 	mysql_exec->do("
 		create temporary table temp_word_ass(
 			id int not null primary key
 		) TYPE=HEAP
 	",1);
 
-	my $sql;                                    # ¥ê¥¹¥È¤ò¥Æ¡¼¥Ö¥ë¤ËÅêÆş
+	my $sql;                                    # ãƒªã‚¹ãƒˆã‚’ãƒ†ãƒ¼ãƒ–ãƒ«ã«æŠ•å…¥
 	$sql .= "INSERT INTO temp_word_ass (id)\n";
-			# ¡Ö¥³¡¼¥ÉÌµ¤·¡×¤ò»ÈÍÑ¤·¤Æ¤¤¤ë¾ì¹ç
+			# ã€Œã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹å ´åˆ
 	if ($no_code_flag){
 		$sql .= "SELECT $args{tani}.id\nFROM $args{tani}\n";
 		my $n = 0;
@@ -238,7 +239,7 @@ sub asso{
 		$sql .= ")";
 	}
 	
-			# ¡Ö¥³¡¼¥ÉÌµ¤·¡×¤ò»ÈÍÑ¤·¤Ê¤¤¾ì¹ç
+			# ã€Œã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã‚’ä½¿ç”¨ã—ãªã„å ´åˆ
 	else {
 		$sql .= "SELECT $args{tani}.id\n";
 		$sql .= "FROM $args{tani}\n";
@@ -274,7 +275,7 @@ sub asso{
 	mysql_exec->do($sql,1);
 
 	#------------------------#
-	#   ¾ò·ïÉÕ¤­³ÎÎ©¤Î·×»»   #
+	#   æ¡ä»¶ä»˜ãç¢ºç«‹ã®è¨ˆç®—   #
 
 	my $m_table = 'temp_word_ass';
 	my $tani    = $args{tani};
@@ -282,10 +283,10 @@ sub asso{
 	print "2: conditional probability...\n";
 	
 	my $denom1 = mysql_exec->select("SELECT count(*) from $m_table",1)
-		->hundle->fetch->[0];                     # ¾ò·ïÉÕ¤­³ÎÎ¨¤ÎÊ¬Êì
+		->hundle->fetch->[0];                     # æ¡ä»¶ä»˜ãç¢ºç‡ã®åˆ†æ¯
 	unless ($denom1){return 0;}
 	$self->{doc_num} = $denom1;
-	mysql_exec->drop_table("ct_ass_p");           # ¾ò·ïÉÕ¤­³ÎÎ¨ÊİÂ¸¥Æ¡¼¥Ö¥ë
+	mysql_exec->drop_table("ct_ass_p");           # æ¡ä»¶ä»˜ãç¢ºç‡ä¿å­˜ãƒ†ãƒ¼ãƒ–ãƒ«
 	mysql_exec->do("
 		CREATE TEMPORARY TABLE ct_ass_p(
 			genkei_id INT primary key,
@@ -306,7 +307,7 @@ sub asso{
 	mysql_exec->do($sql,1);
 
 	print "3: delete unnecessary words...\n";
-	my %words;                                    # É½ÁØ¥ê¥¹¥È¤ò¼èÆÀ
+	my %words;                                    # è¡¨å±¤ãƒªã‚¹ãƒˆã‚’å–å¾—
 	foreach my $i (@{$args{selected}}){
 		next unless $self->{codes}[$i];
 		next unless $self->{codes}[$i]->res_table;
@@ -316,8 +317,8 @@ sub asso{
 			}
 		}
 	}
-	my @words = (keys %words);                    # É½ÁØ¥ê¥¹¥È¤ò´ğËÜ·Á¥ê¥¹¥È¤Ë
-	$sql =  "SELECT genkei.id\n";                 #                       ÊÑ´¹
+	my @words = (keys %words);                    # è¡¨å±¤ãƒªã‚¹ãƒˆã‚’åŸºæœ¬å½¢ãƒªã‚¹ãƒˆã«
+	$sql =  "SELECT genkei.id\n";                 #                       å¤‰æ›
 	$sql .= "FROM genkei, hyoso\n";
 	$sql .= "WHERE\n";
 	$sql .= "\tgenkei.id = hyoso.genkei_id\n";
@@ -355,7 +356,7 @@ sub asso{
 }
 
 #--------------------#
-#   ·ë²Ì¤Î¼è¤ê½Ğ¤·   #
+#   çµæœã®å–ã‚Šå‡ºã—   #
 #--------------------#
 
 sub fetch_query_words_name{
@@ -405,11 +406,11 @@ sub fetch_results{
 	# print "\n";
 
 	my $denom1 = mysql_exec->select("SELECT count(*) from temp_word_ass",1)
-		->hundle->fetch->[0];                     # ¾ò·ïÉÕ¤­³ÎÎ©¤ÎÊ¬Êì
+		->hundle->fetch->[0];                     # æ¡ä»¶ä»˜ãç¢ºç«‹ã®åˆ†æ¯
 	my $denom2 = mysql_exec->select("SELECT count(*) from $self->{tani}",1)
-		->hundle->fetch->[0];                     # Á´ÂÎ³ÎÎ©¤ÎÊ¬Êì
+		->hundle->fetch->[0];                     # å…¨ä½“ç¢ºç«‹ã®åˆ†æ¯
 
-	# ¥½¡¼¥ÈÃÍ
+	# ã‚½ãƒ¼ãƒˆå€¤
 	my %lift = (
 		'fr'  => "ct_ass_p.p",
 		'sa'  => "ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2",
@@ -486,7 +487,7 @@ sub fetch_results{
 
 	);
 
-	# ÉÊ»ì¥Õ¥£¥ë¥¿
+	# å“è©ãƒ•ã‚£ãƒ«ã‚¿
 	my $hselection = "AND (\n";
 	my $n = 0;
 	foreach my $i (keys %{$args{filter}->{hinshi}}){
@@ -504,7 +505,7 @@ sub fetch_results{
 	if ( $args{for_net} ){
 		$sql = "
 			SELECT
-				genkei.id, # ¤³¤³¤À¤±ÊÑ¹¹
+				genkei.id, # ã“ã“ã ã‘å¤‰æ›´
 				khhinshi.name,
 				df_$self->{tani}.f,
 				ROUND(df_$self->{tani}.f / $denom2, 3),
@@ -519,7 +520,7 @@ sub fetch_results{
 				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
 				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 				$hselection
-			ORDER BY lift DESC, ct_ass_p.p DESC
+			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
 			LIMIT $args{filter}->{limit}
 		";
 	} else {
@@ -540,7 +541,7 @@ sub fetch_results{
 				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
 				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 				$hselection
-			ORDER BY lift DESC, ct_ass_p.p DESC
+			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
 			LIMIT $args{filter}->{limit}
 		";
 	}

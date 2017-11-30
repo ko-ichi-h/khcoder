@@ -298,7 +298,7 @@ sub run_restore_script{
       $dbh->do("DROP TABLE IF EXISTS `$temp`");
     }
 
-	open(FILE, $file) or die("cannot open file: $file\n");
+	open(FILE, '<:encoding(utf8)', $file) or die("cannot open file: $file\n");
 
 	while (<FILE>){
 		s/\x0D\x0A/\n/g;

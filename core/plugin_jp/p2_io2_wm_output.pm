@@ -1,28 +1,29 @@
 package p2_io2_wm_output;
 use strict;
+use utf8;
 
 #----------------------#
-#   ¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
-		name => '¡ÖÊ¸½ñ£øÃê½Ğ¸ì¡ÊÉ½ÁØ¸ì¡Ë¡×É½¤Î½ĞÎÏ - ÉÔÄêÄ¹CSV¡ÊWordMiner¡Ë',
+		name => 'ã€Œæ–‡æ›¸ï½˜æŠ½å‡ºèªï¼ˆè¡¨å±¤èªï¼‰ã€è¡¨ã®å‡ºåŠ› - ä¸å®šé•·CSVï¼ˆWordMinerï¼‰',
 		menu_cnf => 2,
-		menu_grp => 'Æş½ĞÎÏ',
+		menu_grp => 'å…¥å‡ºåŠ›',
 	};
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»ş¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
-	gui_window::morpho_crossout::wm_output->open; # GUI¤òµ¯Æ°
+	gui_window::morpho_crossout::wm_output->open; # GUIã‚’èµ·å‹•
 }
 
 #-----------------------------------#
-#   GUIÁàºî¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó¡Ê·²¡Ë   #
+#   GUIæ“ä½œã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³ï¼ˆç¾¤ï¼‰   #
 
-# KH Coder¤Ë´û¤Ë´Ş¤Ş¤ì¤Æ¤¤¤ë¥â¥¸¥å¡¼¥ë¡Ögui_window::morpho_crossout¡×¤òÍøÍÑ
+# KH Coderã«æ—¢ã«å«ã¾ã‚Œã¦ã„ã‚‹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã€Œgui_window::morpho_crossoutã€ã‚’åˆ©ç”¨
 
 package gui_window::morpho_crossout::wm_output;
 use base qw(gui_window::morpho_crossout);
@@ -31,16 +32,16 @@ use strict;
 sub save{
 	my $self = shift;
 
-	# ÉÊ»ìÁªÂò¤Î¥Á¥§¥Ã¥¯
+	# å“è©é¸æŠã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => 'ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£',
+			msg  => 'å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚',
 		);
 		return 0;
 	}
 
-	# ÊİÂ¸Àè¤Î»²¾È
+	# ä¿å­˜å…ˆã®å‚ç…§
 	my @types = (
 		['CSV Files',[qw/.csv/] ],
 		["All files",'*']
@@ -48,8 +49,7 @@ sub save{
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.txt',
 		-initialdir       => $self->gui_jchar($::config_obj->cwd),
-		-title            =>
-			$self->gui_jchar('¡ÖÊ¸½ñ£øÃê½Ğ¸ì¡×É½¡ÊÉ½ÁØ¸ì¡Ë¡§Ì¾Á°¤òÉÕ¤±¤ÆÊİÂ¸'),
+		-title            => 'ã€Œæ–‡æ›¸ï½˜æŠ½å‡ºèªã€è¡¨ï¼ˆè¡¨å±¤èªï¼‰ï¼šåå‰ã‚’ä»˜ã‘ã¦ä¿å­˜',
 		-filetypes        =>
 			[
 				['CSV Files', [qw/.csv/] ],
@@ -61,12 +61,12 @@ sub save{
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 
-	# ¼Â¹Ô³ÎÇ§
+	# å®Ÿè¡Œç¢ºèª
 	my $ans = $self->win_obj->messageBox(
 		-message => $self->gui_jchar
 			(
-			   "¤³¤Î½èÍı¤Ë¤Ï»ş´Ö¤¬¤«¤«¤ë¤³¤È¤¬¤¢¤ê¤Ş¤¹¡£\n".
-			   "Â³¹Ô¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡©"
+			   "ã“ã®å‡¦ç†ã«ã¯æ™‚é–“ãŒã‹ã‹ã‚‹ã“ã¨ãŒã‚ã‚Šã¾ã™ã€‚\n".
+			   "ç¶šè¡Œã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ"
 			),
 		-icon    => 'question',
 		-type    => 'OKCancel',
@@ -74,7 +74,7 @@ sub save{
 	);
 	return 0 unless $ans =~ /ok/i;
 
-	# ¼Â¹Ô
+	# å®Ÿè¡Œ
 	my $w = gui_wait->start;
 	mysql_crossout::var::hyoso->new(
 		tani   => $self->tani,
@@ -91,22 +91,22 @@ sub save{
 }
 
 sub label{
-	return '¡ÖÊ¸½ñ£øÃê½Ğ¸ì¡×É½¤Î½ĞÎÏ¡ÊÉ½ÁØ¸ì¡Ë¡§ ÉÔÄêÄ¹CSV';
+	return 'ã€Œæ–‡æ›¸ï½˜æŠ½å‡ºèªã€è¡¨ã®å‡ºåŠ›ï¼ˆè¡¨å±¤èªï¼‰ï¼š ä¸å®šé•·CSV';
 }
 sub win_name{
 	return 'w_morpho_crossout_wm_output';
 }
 
 #------------------------------#
-#   ½ĞÎÏ½èÍı¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó   #
+#   å‡ºåŠ›å‡¦ç†ã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³   #
 
-# KH Coder¤Ë´û¤Ë´Ş¤Ş¤ì¤Æ¤¤¤ë¥â¥¸¥å¡¼¥ë¡Ömysql_crossout::var¡×¤òÍøÍÑ
+# KH Coderã«æ—¢ã«å«ã¾ã‚Œã¦ã„ã‚‹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã€Œmysql_crossout::varã€ã‚’åˆ©ç”¨
 
 package mysql_crossout::var::hyoso;
 use base qw(mysql_crossout::var);
 use strict;
 
-# SQLÊ¸¤Î½àÈ÷(1)
+# SQLæ–‡ã®æº–å‚™(1)
 sub sql3{
 	my $self = shift;
 	my $d1   = shift;
@@ -117,7 +117,7 @@ sub sql3{
 	$sql .= "FROM   hyosobun, hyoso, genkei, df_$self->{tani}, khhinshi, $self->{tani}\n";
 	$sql .= "WHERE\n";
 
-	# ¥Æ¡¼¥Ö¥ë¤Î·ë¹ç
+	# ãƒ†ãƒ¼ãƒ–ãƒ«ã®çµåˆ
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
 	$sql .= "	AND genkei.id = df_$self->{tani}.genkei_id\n";
@@ -130,7 +130,7 @@ sub sql3{
 		}
 	}
 
-	# ºÇ¾®¡¦ºÇÂç¡¦¡Ö»ÈÍÑ¤·¤Ê¤¤¸ì¡×¤Î¥Á¥§¥Ã¥¯
+	# æœ€å°ãƒ»æœ€å¤§ãƒ»ã€Œä½¿ç”¨ã—ãªã„èªã€ã®ãƒã‚§ãƒƒã‚¯
 	$sql .= "	AND genkei.nouse = 0\n";
 	$sql .= "	AND genkei.num >= $self->{min}\n";
 	$sql .= "	AND df_$self->{tani}.f >= $self->{min_df}\n";
@@ -141,7 +141,7 @@ sub sql3{
 		$sql .= "	AND df_$self->{tani}.f <= $self->{max_df}\n";
 	}
 
-	# ÉÊ»ì¤Ë¤è¤ëÁªÂò
+	# å“è©ã«ã‚ˆã‚‹é¸æŠ
 	$sql .= "	AND (\n";
 	my $n = 0;
 	foreach my $i ( @{$self->{hinshi}} ){
@@ -155,17 +155,17 @@ sub sql3{
 	}
 	$sql .= "	)\n";
 
-	# ½ĞÎÏÈÏ°Ï
+	# å‡ºåŠ›ç¯„å›²
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id <  $d2\n";
 
-	# ½ĞÎÏ½ç
+	# å‡ºåŠ›é †
 	$sql .= "ORDER BY hyosobun.id";
 
 	return $sql;
 }
 
-# SQLÊ¸¤Î½àÈ÷(2)
+# SQLæ–‡ã®æº–å‚™(2)
 sub sql4{
 	my $self = shift;
 	my $d1   = shift;
@@ -176,7 +176,7 @@ sub sql4{
 	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
 	$sql .= "WHERE\n";
 
-	# ¥Æ¡¼¥Ö¥ë¤Î·ë¹ç
+	# ãƒ†ãƒ¼ãƒ–ãƒ«ã®çµåˆ
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
 	my $flag = 0;
@@ -187,11 +187,11 @@ sub sql4{
 		}
 	}
 
-	# ½ĞÎÏÈÏ°Ï
+	# å‡ºåŠ›ç¯„å›²
 	$sql .= "	AND $self->{tani}.id >= $d1\n";
 	$sql .= "	AND $self->{tani}.id <  $d2\n";
 
-	# ½ĞÎÏ½ç
+	# å‡ºåŠ›é †
 	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }

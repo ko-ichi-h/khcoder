@@ -2,12 +2,12 @@ package mysql_ready::dump;
 use strict;
 
 #----------------------------------------#
-#   Ä¹¤¹¤®¤ë¸ì¤¬¤¢¤Ã¤¿¾ì¹ç¤Î¥À¥ó¥×½ÐÎÏ   #
+#   é•·ã™ãŽã‚‹èªžãŒã‚ã£ãŸå ´åˆã®ãƒ€ãƒ³ãƒ—å‡ºåŠ›   #
 #----------------------------------------#
 
 sub word_length{
 	my $file = $::project_obj->file_datadir.'_dmp.txt';
-	open (DMP,">$file") or
+	open (DMP, '>encoding(utf8)', $file) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $file
@@ -17,7 +17,7 @@ sub word_length{
 		SELECT genkei
 		FROM   rowdata
 		WHERE  
-			( length(hyoso) = 255 ) or ( length(genkei) = 255 )
+			( char_length(hyoso) = 128 ) or ( char_length(genkei) = 128 )
 	",1)->hundle;
 	while (my $i = $t->fetch){
 		print DMP "$i->[0]\n";
@@ -27,7 +27,7 @@ sub word_length{
 
 	my $msg =
 		 kh_msg->get('too_long_word1')
-		.$file
+		.$::config_obj->uni_path($file)
 		."\n\n"
 		.kh_msg->get('too_long_word2')
 	;

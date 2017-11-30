@@ -42,9 +42,6 @@ my @menu1 = (
 	'm_b3_crossout_var',
 	't_txt_pickup',
 	't_doc_search',
-	't_out_read',
-	't_out_read_csv',
-	't_out_read_tab',
 	't_out_list',
 	'm_b3_contxtout',
 	'm_b3_contxtout_spss',
@@ -85,6 +82,10 @@ sub make{
 		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
+
+	# ここでMain Windowの中身を作成しておく
+	# http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi?no=2699&mode=allread#3107
+	$::main_gui->{inner} = 'gui_window::main::inner'->make($::main_gui->{win_obj});
 
 		my $m4a_project = $f1->command(
 			-label => kh_msg->get('new'),
@@ -539,15 +540,6 @@ sub make{
 			-state => 'disable'
 		);
 
-		#$self->{t_cod_tab} = $f5->command(
-		#	-label => kh_msg->get('cross_st'),#gui_window->gui_jchar('章・節・段落ごとの集計'),
-		#	-font => "TKFN",
-		#	-command => sub{
-		#			gui_window::cod_tab->open;
-		#		},
-		#	-state => 'disable'
-		#);
-
 		$self->{t_cod_outtab} = $f5->command(
 			-label => kh_msg->get('cross_vr'),#gui_window->gui_jchar('外部変数とのクロス集計'),
 			-font => "TKFN",
@@ -671,45 +663,15 @@ sub make{
 			);
 
 	$f->separator();
-	
-	my $f_out_var = $f->cascade(
-		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('外部変数と見出し'),
-		 -font => "TKFN",
-		 -tearoff=>'no'
+
+	$self->{t_out_list} = $f->command(
+		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('リストの確認・管理'),
+		-font => "TKFN",
+		-command => sub{
+				gui_window::outvar_list->open;
+			},
+		-state => 'disable'
 	);
-
-		$self->{t_out_list} = $f_out_var->command(
-			-label => kh_msg->get('var_list'),#gui_window->gui_jchar('リストの確認・管理'),
-			-font => "TKFN",
-			-command => sub{
-					gui_window::outvar_list->open;
-				},
-			-state => 'disable'
-		);
-
-		$self->{t_out_read} = $f_out_var->cascade(
-			-label => kh_msg->get('read'),#gui_window->gui_jchar('読み込み'),
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
-
-			$self->{t_out_read_csv} = $self->{t_out_read}->command(
-				-label => kh_msg->gget('csv_f'),#gui_window->gui_jchar('CSVファイル'),
-				-font => "TKFN",
-				-command => sub{
-						gui_window::outvar_read::csv->open;
-					},
-				-state => 'disable'
-			);
-
-			$self->{t_out_read_tab} = $self->{t_out_read}->command(
-				-label => kh_msg->gget('tab_f'),#gui_window->gui_jchar('タブ区切り'),
-				-font => "TKFN",
-				-command => sub{
-						gui_window::outvar_read::tab->open;
-					},
-				-state => 'disable'
-			);
 
 	my $f6 = $f->cascade(
 		-label => kh_msg->get('text_format'),#gui_window->gui_jchar('テキストファイルの変形'),
@@ -746,13 +708,15 @@ sub make{
 
 	my @plugins;
 	my $read_each = sub {
-		return if(-d $File::Find::name);
+		return if (-d $File::Find::name);
+		return if ($File::Find::name =~ /\/\.svn/);
 		return unless $_ =~ /.+\.pm/;
 		substr($_, length($_) - 3, length($_)) = '';
 		push @plugins, $_;
 	};
 
-	my $plugin_lang = $::config_obj->msg_lang;
+	use File::Find;
+	my $plugin_lang = Encode::encode( 'utf8', $::config_obj->msg_lang );
 	unless (-d $::config_obj->cwd.'/plugin_'.$plugin_lang){
 		$plugin_lang = 'en';
 	}
@@ -831,7 +795,6 @@ sub make{
 
 	$underline_pos = index(kh_msg->get('help'), 'H');
 	$underline_pos = 0 if $underline_pos == -1;
-
 	$f = $menubar->cascade(
 		-label => gui_window->gui_jm( kh_msg->get('help') ),#"$msg",
 		-font => "TKFN",
@@ -887,6 +850,38 @@ sub make{
 		sub{$self->mc_close_project;}
 	);
 
+	# For Mac OS X
+	if ($^O =~ /darwin/i ){
+		$mw->bind(
+			'<p>',
+			sub{
+				$menubar->Post(10, 10, 1);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<r>',
+			sub{
+				$menubar->Post(10, 10, 2);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<t>',
+			sub{
+				$menubar->Post(10, 10, 3);
+				$menubar->NextMenu('right');
+			}
+		);
+		$mw->bind(
+			'<h>',
+			sub{
+				$menubar->Post(10, 10, 4);
+				$menubar->NextMenu('right');
+			}
+		);
+	}
+	
 	bless $self, $class;
 	return $self;
 }
@@ -1060,13 +1055,16 @@ sub mc_hukugo{
 	my $self = shift;
 	my $mw = $::main_gui->{win_obj};
 
+	my $file_hukugo = $::config_obj->os_path( $::project_obj->file_HukugoList );
+	my $file_target = $::config_obj->os_path( $::project_obj->file_target );
+	
 	my $if_exec = 1;
 	if (
-		   ( -e $::project_obj->file_HukugoList )
+		   ( -e $file_hukugo )
 		&& ( mysql_exec->table_exists('hukugo') )
 	){
-		my $t0 = (stat $::project_obj->file_target)[9];
-		my $t1 = (stat $::project_obj->file_HukugoList)[9];
+		my $t0 = (stat $file_target)[9];
+		my $t1 = (stat $file_hukugo)[9];
 		if ($t0 < $t1){
 			$if_exec = 0; # この場合だけ解析しない
 		}
@@ -1118,7 +1116,7 @@ sub refresh{
 		}
 		elsif (
 			   $::config_obj->c_or_j        eq 'stanford'
-			&& $::config_obj->stanford_lang eq 'en'
+			&& $::project_obj->morpho_analyzer_lang eq 'en'
 		){
 			$self->normalize([
 				'm_b1_hukugo_te',

@@ -40,9 +40,17 @@ sub _new{
 			unless ($i eq 'bun'){
 				push @list2_1, $name{$i};
 			}
-			$width = length( Encode::encode('euc-jp',$name{$i}) )
-				if $width < length( Encode::encode('euc-jp',$name{$i}) );
+			$width = length( $name{$i} )
+				if $width < length( $name{$i} );
 		}
+	}
+
+	if (
+		   $::config_obj->msg_lang eq 'jp'
+		|| $::config_obj->msg_lang eq 'kr'
+		|| $::config_obj->msg_lang eq 'cn'
+	) {
+		$width = 4;
 	}
 	
 	my $f1 = $self->parent->Frame()->pack(-expand => 'y', -fill => 'x');
@@ -80,7 +88,7 @@ sub _new{
 			-command  => sub{$self->check;},
 		);
 	}
-	$self->{raw_opt} = gui_window->gui_jchar($name{$::project_obj->last_tani},'euc');
+	$self->{raw_opt} = gui_window->gui_jchar($name{$::project_obj->last_tani});
 
 	$f1->Label(
 		-text => kh_msg->get('unit_t'), #     集計単位：

@@ -1,3 +1,5 @@
+use utf8;
+
 package kh_project;
 use strict;
 use File::Basename;
@@ -13,29 +15,24 @@ sub new{
 	unless (-e $self->file_target){
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => kh_msg->get('no_target_file'), # Ê¬ÀÏÂÐ¾Ý¥Õ¥¡¥¤¥ë¤¬Â¸ºß¤·¤Þ¤»¤ó
+			msg    => kh_msg->get('no_target_file'), # åˆ†æžå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã—ã¾ã›ã‚“
 		);
 		return 0;
 	}
 	
-	# ¥Ç¡¼¥¿¥Ç¥£¥ì¥¯¥È¥ê¤¬Ìµ¤«¤Ã¤¿¾ì¹ç¤ÏºîÀ®
-	print $self->dir_CoderData."\n";
-	unless (-d $self->dir_CoderData){
-		mkdir $self->dir_CoderData or die;
-	}
 	return $self;
 }
 
 sub prepare_db{
 	my $self   = shift;
-	$self->{dbname} = mysql_exec->create_new_db;
+	$self->{dbname} = mysql_exec->create_new_db($self->file_target);
 	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
 	$::project_obj = $self;
 	
-	# ¼­½ñ¥Æ¡¼¥Ö¥ë
+	# è¾žæ›¸ãƒ†ãƒ¼ãƒ–ãƒ«
 	mysql_exec->do('create table dmark ( name varchar(200) not null )',1);
 	mysql_exec->do('create table dstop ( name varchar(200) not null )',1);
-	# ¾õÂÖ¥Æ¡¼¥Ö¥ë¤ÎºîÀ®
+	# çŠ¶æ…‹ãƒ†ãƒ¼ãƒ–ãƒ«ã®ä½œæˆ
 	mysql_exec->do('
 		create table status (
 			name   varchar(200) not null,
@@ -52,26 +49,73 @@ sub prepare_db{
 			status text
 		)
 	',1);
+	my $icode = '';
+	$icode = $self->{icode} if defined($self->{icode});
 	mysql_exec->do("
 		INSERT INTO status_char (name, status)
-		VALUES ('last_tani',''),('last_codf',''),('icode','$self->{icode}')
+		VALUES ('last_tani',''),('last_codf',''),('icode','$icode')
 	",1);
+
+	# å¤–éƒ¨å¤‰æ•°ç”¨ã®ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’æº–å‚™
+	mysql_exec->do("create table outvar
+		(
+			name varchar(255) not null,
+			tab varchar(255) not null,
+			col varchar(255) not null,
+			tani varchar(10) not null,
+			id int auto_increment primary key not null
+		)
+	",1);
+
+	mysql_exec->do("create table outvar_lab
+		(
+			var_id int not null,
+			val varchar(255) not null,
+			lab varchar(255) not null,
+			id int auto_increment primary key not null
+		)
+	",1);
+
+	# æƒ…å ±å…¥åŠ›
+	my $target = $::config_obj->uni_path( $self->file_target );
+	mysql_exec->do("
+		INSERT INTO status_char (name,status)
+		VALUES (\"target\", \"$target\")
+	",1);
+
+	mysql_exec->do("
+		INSERT INTO status_char (name,status)
+		VALUES (\"comment\", \"".$self->comment."\")
+	",1);
+
+	# ãƒ‡ãƒ¼ã‚¿ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªãŒç„¡ã‹ã£ãŸå ´åˆã¯ä½œæˆ
+	print "Data dir: ".$self->dir_CoderData."\n";
+	unless (-d $self->dir_CoderData){
+		mkdir $self->dir_CoderData or die;
+	}
 }
 
 sub read_hinshi_setting{
 	my $self = shift;
 	
-	my $dbh_csv = DBI->connect("DBI:CSV:f_dir=./config");
-	
-	# ÉÊ»ìÀßÄê¤ÎÆÉ¤ß¹þ¤ß
+	my $dbh_csv = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "./config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;;
+
+	# å“è©žè¨­å®šã®èª­ã¿è¾¼ã¿
 	my $sql = "SELECT hinshi_id,kh_hinshi,condition1,condition2 FROM hinshi_";
-	$sql .= $::config_obj->c_or_j;
-	
-	# Stanford POS Tagger¤Î¾ì¹ç¤Ï¸À¸ì¤´¤È¤Ë°Û¤Ê¤ëÉÊ»ìÀßÄê¥Õ¥¡¥¤¥ë¤òÆÉ¤à
-	if ($::config_obj->c_or_j eq 'stanford'){
-		$sql .= '_'.$::config_obj->stanford_lang;
+	$sql .= Encode::encode( 'ascii', $::config_obj->c_or_j );
+
+	# Stanford POS Taggerã¨FreeLingã®å ´åˆã¯è¨€èªžã”ã¨ã«ç•°ãªã‚‹å“è©žè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã‚€
+	if (
+		   $::config_obj->c_or_j eq 'stanford'
+		|| $::config_obj->c_or_j eq 'freeling'
+	){
+		$sql .= Encode::encode( 'ascii', '_'.$::project_obj->morpho_analyzer_lang);
 	}
-	
+
 	my $h = $dbh_csv->prepare($sql) or
 		gui_errormsg->open(
 			type => 'file',
@@ -88,7 +132,7 @@ sub read_hinshi_setting{
 			thefile => $sql,
 		);
 
-	# ¥×¥í¥¸¥§¥¯¥ÈÆâ¤Î´ûÂ¸¤ÎÉÊ»ìÁªÂò¤ò¼èÆÀ
+	# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå†…ã®æ—¢å­˜ã®å“è©žé¸æŠžã‚’å–å¾—
 	my %current = ();
 	if ( mysql_exec->table_exists('hselection') ){
 		my $h =
@@ -98,7 +142,7 @@ sub read_hinshi_setting{
 		}
 	}
 
-	# ¥×¥í¥¸¥§¥¯¥ÈÆâ¤Ø¥³¥Ô¡¼(1)
+	# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå†…ã¸ã‚³ãƒ”ãƒ¼(1)
 	mysql_exec->drop_table('hselection');
 	mysql_exec->do('
 		create table hselection(
@@ -116,30 +160,30 @@ sub read_hinshi_setting{
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
 	){
-		$other_hinshi = '¤½¤ÎÂ¾';
+		$other_hinshi = 'ãã®ä»–';
 	}
 	
 	foreach my $i (@{$hinshi}, [9999,$other_hinshi]){
-		# 2½Å¤ËInsert¤·¤Ê¤¤¤è¤¦¤Ë¥Á¥§¥Ã¥¯
+		# 2é‡ã«Insertã—ãªã„ã‚ˆã†ã«ãƒã‚§ãƒƒã‚¯
 		if ($temp_h{$i->[0]}){
 			next;
 		} else {
 			$temp_h{$i->[0]} = 1;
 		}
-		# »È¤¦ÀßÄê¤Ë¤¹¤ë¤«¤É¤¦¤«
+		# ä½¿ã†è¨­å®šã«ã™ã‚‹ã‹ã©ã†ã‹
 		my $val = 1;
 		if ( defined($current{$i->[1]}) ){
 			$val = $current{$i->[1]};
 		} else {
-			$val = 0 if $i->[1] eq "HTML¥¿¥°" || $i->[1] eq "HTML_TAG";
-			$val = 0 if $i->[1] eq "¤½¤ÎÂ¾"   || $i->[1] eq "OTHER";
+			$val = 0 if $i->[1] eq "HTMLã‚¿ã‚°" || $i->[1] eq "HTML_TAG";
+			$val = 0 if $i->[1] eq "ãã®ä»–"   || $i->[1] eq "OTHER";
 		}
 		$sql .= "($i->[0],$val,'$i->[1]'),";
 	}
 	chop $sql;
 	mysql_exec->do($sql,1);
 
-	# ¥×¥í¥¸¥§¥¯¥ÈÆâ¤Ø¥³¥Ô¡¼(2)
+	# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆå†…ã¸ã‚³ãƒ”ãƒ¼(2)
 	mysql_exec->drop_table('hinshi_setting');
 	mysql_exec->do('
 		create table hinshi_setting(
@@ -171,8 +215,8 @@ sub temp{
 sub open{
 	my $self = shift;
 	
-	# ÂÐ¾Ý¥Õ¥¡¥¤¥ë¤ÎÂ¸ºß¤ò³ÎÇ§
-	unless (-e $self->file_target){
+	# check the target file
+	unless (-e $::config_obj->os_path( $self->file_target ) ){
 		gui_errormsg->open(
 			type   => 'msg',
 			msg    => kh_msg->get('no_target_file')
@@ -180,13 +224,18 @@ sub open{
 		return 0;
 	}
 	
-	# ¥Ç¡¼¥¿¥Ù¡¼¥¹¤ò³«¤¯
-	$self->{dbh} = mysql_exec->connect_db($self->{dbname});
+	# reset font settings of R
+	$kh_r_plot::if_font = 0;
+	
+	# open DB
+	$self->{dbh} = mysql_exec->connect_db($self->{dbname}, $::config_obj->web_if);
 	$::project_obj = $self;
 	
 	my_threads->open_project;
 	
 	$self->check_up;
+	
+	$::config_obj->c_or_j( $self->morpho_analyzer );
 	
 	return $self;
 }
@@ -195,138 +244,112 @@ sub morpho_analyzer{
 	my $self = shift;
 	my $v = shift;
 	
+	my $name = $self->dbname.'.';
+	
 	if (defined($v)){
 		mysql_exec->do("
 			DELETE
-			FROM   status_char
+			FROM   $name"."status_char
 			WHERE  name = \"morpho_analyzer\"
 		",1);
 		mysql_exec->do("
-			INSERT INTO status_char (name, status)
+			INSERT INTO $name"."status_char (name, status)
 			VALUES (\"morpho_analyzer\", \"$v\")
 		",1);
+		$::config_obj->c_or_j($v);
 		return $v;
 	}
 	
 	my $h = mysql_exec->select("
-		SELECT status FROM status_char WHERE name = \"morpho_analyzer\"
-	",1)->hundle;
+		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer\"
+	",0)->hundle;
 	
 	unless ($h->rows){
-		return 'chasen';
+		return ' MySQL Error';
 	}
-	
-	return $h->fetch->[0];
+	my $r;
+	unless ($r = $h->fetch){
+		return ' MySQL Error';
+	}
+	return $r->[0];
 }
 
 sub morpho_analyzer_lang{
 	my $self = shift;
 	my $v = shift;
 	
+	my $name = $self->dbname.'.';
+	
 	if (defined($v)){
 		mysql_exec->do("
 			DELETE
-			FROM   status_char
+			FROM   $name"."status_char
 			WHERE  name = \"morpho_analyzer_lang\"
 		",1);
 		mysql_exec->do("
-			INSERT INTO status_char (name, status)
+			INSERT INTO $name"."status_char (name, status)
 			VALUES (\"morpho_analyzer_lang\", \"$v\")
 		",1);
 		return $v;
 	}
 	
 	my $h = mysql_exec->select("
-		SELECT status FROM status_char WHERE name = \"morpho_analyzer_lang\"
-	",1)->hundle;
+		SELECT status FROM $name"."status_char WHERE name = \"morpho_analyzer_lang\"
+	",0)->hundle;
+	
 	
 	unless ($h->rows){
-		return 'jp';
+		return ' MySQL Error';
 	}
+	my $r;
+	unless ($r = $h->fetch){
+		return ' MySQL Error';
+	}
+	return $r->[0];
+}
+
+sub spacer{
+	my $self = shift;
+	my $spacer = '';
+	if (
+		   $self->morpho_analyzer_lang eq 'jp'
+		|| $self->morpho_analyzer_lang eq 'cn'
+		|| $self->morpho_analyzer_lang eq 'kr'
+	) {
+		$spacer = '';
+	} else {
+		$spacer = ' ';
+	}
+	return $spacer;
+}
+
+# To sort Japanese words in the same order as prvious version (2.x)
+sub mysql_sort{
+	my $self = shift;
+	my $t = shift;
 	
-	return $h->fetch->[0];
+	if ( $self->morpho_analyzer_lang eq 'jp' ) {
+		return "CONVERT($t USING ujis)";
+	} else {
+		return $t;
+	}
 }
 
 sub check_up{
 	my $self = shift;
 	
-	# status_char.status¤òvarchar¤«¤étext¤Ø
-	my $chk = mysql_exec->select(
-		'show columns from status_char like \'status\'',
-		1
-	)->hundle->fetch->[1];
-	if ($chk =~ /varchar/){
-		mysql_exec->do(
-			'ALTER TABLE status_char MODIFY status TEXT'
-			,1
-		);
-		# print "Converted \"status_char.status\" to TEXT\n";
+	# Create temp dir
+	mkdir($self->dir_CoderData) unless -d $self->dir_CoderData;
+	
+	# For projects created by 3.alpha.06b or prior
+	if (
+		   mysql_exec->table_exists('bun')
+		&! mysql_exec->table_exists('bun_length_nouse')
+	){
+		&mysql_ready::zero_length_headings;
 	}
 
-	# ¥×¥í¥¸¥§¥¯¥È¾ðÊó¤òMySQLÆâ¤Ë¤âÊÝÂ¸
-	my $chk_t = 0;
-	my $st = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = \"target\""
-	)->hundle;
-	if (my $i = $st->fetch){
-		if ( length( $i->[0] ) ){
-			$chk_t = 1;
-		}
-	}
-	unless ($chk_t){
-		my $target = Jcode->new($self->file_target)->euc;
-		mysql_exec->do("
-			INSERT INTO status_char (name,status)
-			VALUES (\"target\", \"$target\")
-		",1);
-		# print "target: ", Jcode->new($target)->sjis, "\n";
-	}
-
-	my $chk_c = 0;
-	my $st0 = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = \"comment\""
-	)->hundle;
-	if (my $i = $st0->fetch){
-		if ( $i->[0] eq $self->comment ){
-			$chk_c = 1;
-		}
-	}
-	unless ($chk_c){
-		mysql_exec->do("
-			DELETE FROM status_char
-			WHERE name = \"comment\"
-		",1);
-		mysql_exec->do("
-			INSERT INTO status_char (name,status)
-			VALUES (\"comment\", \"".$self->comment."\")
-		",1);
-		# print "comment: ", Jcode->new($self->comment)->sjis, "\n";
-	}
-
-	# ³°ÉôÊÑ¿ôÍÑ¤Î¥Æ¡¼¥Ö¥ë¤ò½àÈ÷
-	unless ( mysql_exec->table_exists('outvar') ){
-		mysql_exec->do("create table outvar
-			(
-				name varchar(255) not null,
-				tab varchar(255) not null,
-				col varchar(255) not null,
-				tani varchar(10) not null,
-				id int auto_increment primary key not null
-			)
-		",1);
-	}
-	unless ( mysql_exec->table_exists('outvar_lab') ){
-		mysql_exec->do("create table outvar_lab
-			(
-				var_id int not null,
-				val varchar(255) not null,
-				lab varchar(255) not null,
-				id int auto_increment primary key not null
-			)
-		",1);
-	}
-
-	# °ì»þ¥Õ¥¡¥¤¥ë·²¤òºï½ü
+	# Delete temporarily files
 	my $n;
 	$n = 0;
 	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
@@ -338,30 +361,39 @@ sub check_up{
 		unlink($self->file_datadir.'_temp'.$n.'.xls');
 		++$n;
 	}
-	#$n = 0;
-	#while (-e $self->file_datadir.'_temp'.$n.'.r'){
-	#	unlink($self->file_datadir.'_temp'.$n.'.r');
-	#	++$n;
-	#}
+
 }
 
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
+
+# é–‹ã„ã¦ã„ãªã„ï¼ˆã‹ã‚‚ã—ã‚Œãªã„ï¼‰ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã®è¨€èªžãƒ»æŠ½å‡ºæ–¹æ³•ã‚’è¨­å®š
+sub lang_method{
+	my $self       = shift;
+	my $new_lang   = shift;
+	my $new_method = shift;
+
+	my $method = $self->morpho_analyzer($new_method);
+	my $lang   = $self->morpho_analyzer_lang($new_lang);
+
+	return [$lang, $method];
+}
+
 
 sub assigned_icode{
 	my $self = shift;
 	my $new = shift;
 	my $r = 0;
 	
-	# ¥×¥í¥¸¥§¥¯¥È¤ò°ì»þÅª¤Ë³«¤¯
+	# ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¸€æ™‚çš„ã«é–‹ã
 	my $tmp_open;
 	my $cu_project;
 	if ($::project_obj){
 		unless ($::project_obj->dbname eq $self->dbname){
-			# ¸½ºß³«¤¤¤Æ¤¤¤ë¥×¥í¥¸¥§¥¯¥È¤ò°ì»þÅª¤ËÊÄ¤¸¤Æ¡¢Â¾¤Î¥×¥í¥¸¥§¥¯¥È¤ò
-			# °ì»þÅª¤Ë³«¤¯
+			# ç¾åœ¨é–‹ã„ã¦ã„ã‚‹ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¸€æ™‚çš„ã«é–‰ã˜ã¦ã€ä»–ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’
+			# ä¸€æ™‚çš„ã«é–‹ã
 			$cu_project = $::project_obj;
 			undef $::project_obj;
 			$self->open or die;
@@ -369,13 +401,13 @@ sub assigned_icode{
 		}
 	}
 	else {
-		# ²¿¤â¥×¥í¥¸¥§¥¯¥È¤ò³«¤¤¤Æ¤¤¤Ê¤«¤Ã¤¿¾õÂÖ¤«¤é¡¢Â¾¤Î¥×¥í¥¸¥§¥¯¥È¤ò°ì»þ
-		# Åª¤Ë³«¤¯
+		# ä½•ã‚‚ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’é–‹ã„ã¦ã„ãªã‹ã£ãŸçŠ¶æ…‹ã‹ã‚‰ã€ä»–ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¸€æ™‚
+		# çš„ã«é–‹ã
 		$self->open or die;
 		$tmp_open = 1;
 	}
 	
-	if ( defined($new) ){                         # ¿·¤·¤¤ÃÍ¤òÀßÄê
+	if ( defined($new) ){                         # æ–°ã—ã„å€¤ã‚’è¨­å®š
 		my $h = mysql_exec->select("
 			SELECT status
 			FROM   status_char
@@ -392,7 +424,7 @@ sub assigned_icode{
 			",1);
 		}
 		$r = $new;
-	} else {                                      # ¸½ºß¤ÎÃÍ¤ò»²¾È
+	} else {                                      # ç¾åœ¨ã®å€¤ã‚’å‚ç…§
 		my $h = mysql_exec->select("
 			SELECT status
 			FROM   status_char
@@ -403,7 +435,7 @@ sub assigned_icode{
 		}
 	}
 	
-	# °ì»þÅª¤Ë³«¤¤¤¿¥×¥í¥¸¥§¥¯¥È¤òÊÄ¤¸¤ë
+	# ä¸€æ™‚çš„ã«é–‹ã„ãŸãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’é–‰ã˜ã‚‹
 	if ($tmp_open){
 		undef $::project_obj;
 	}
@@ -433,7 +465,7 @@ sub status_morpho{
 
 sub use_hukugo{
 	#return mysql_exec
-	#	->select("SELECT ifuse FROM hselection where name = 'Ê£¹çÌ¾»ì'",1)
+	#	->select("SELECT ifuse FROM hselection where name = 'è¤‡åˆåè©ž'",1)
 	#		->hundle
 	#			->fetch
 	#				->[0]
@@ -443,7 +475,7 @@ sub use_hukugo{
 
 #sub use_sonota{
 #	return mysql_exec
-#		->select("SELECT ifuse FROM hselection where name = '¤½¤ÎÂ¾'",1)
+#		->select("SELECT ifuse FROM hselection where name = 'ãã®ä»–'",1)
 #			->hundle
 #				->fetch
 #					->[0]
@@ -494,9 +526,9 @@ sub last_codf{
 	my $new  = shift;
 	
 	if ($new){
-		$new = Jcode->new($new,'sjis')->euc if $::config_obj->os eq 'win32';
-		$new = Jcode->new($new,'utf8')->euc if $^O eq 'darwin';
-		print "new: $new\n", Jcode->new($new)->icode, "\n";
+		#$new = Jcode->new($new,'sjis')->euc if $::config_obj->os eq 'win32';
+		#$new = Jcode->new($new,'utf8')->euc if $^O eq 'darwin';
+		#print "new: $new\n", Jcode->new($new)->icode, "\n";
 		mysql_exec->do(
 			"UPDATE status_char SET status=\'$new\' WHERE name=\'last_codf\'"
 		,1);
@@ -508,7 +540,7 @@ sub last_codf{
 			)->hundle->fetch->[0];
 		#$lst = Jcode->new($lst,'euc')->sjis if $::config_obj->os eq 'win32';
 		#print "lst: $lst\n";
-                $lst = $::config_obj->os_path($lst,'euc');
+		$lst = $::config_obj->os_path($lst);
 		return $lst;
 	}
 }
@@ -531,13 +563,13 @@ sub save_dmp{
 			"SELECT * FROM status_char WHERE name = $args{name}",
 			1
 		)->hundle->rows > 0
-	) {                                 # ´û¤Ë¥¨¥ó¥È¥ê¡Ê¹Ô¡Ë¤¬¤¢¤ë¾ì¹ç
+	) {                                 # æ—¢ã«ã‚¨ãƒ³ãƒˆãƒªï¼ˆè¡Œï¼‰ãŒã‚ã‚‹å ´åˆ
 		mysql_exec->do(
 			"UPDATE status_char SET status=$args{var} WHERE name=$args{name}",
 			1
 		);
 		# print "update: $args{var}\n";
-	} else {                            # ¥¨¥ó¥È¥ê¡Ê¹Ô¡Ë¤ò¿·¤¿¤ËºîÀ®
+	} else {                            # ã‚¨ãƒ³ãƒˆãƒªï¼ˆè¡Œï¼‰ã‚’æ–°ãŸã«ä½œæˆ
 		mysql_exec->do(
 			"INSERT INTO status_char (name, status)
 			VALUES ($args{name}, $args{var})",
@@ -567,6 +599,60 @@ sub load_dmp{
 	} else {
 		return undef;
 	}
+}
+
+sub status_from_table{
+	my $self = shift;
+	my $new  = shift;
+	
+	# è¡ŒãŒã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
+	my $h = mysql_exec->select(
+		"SELECT status FROM status WHERE name = 'from_table'",1
+	)->hundle;
+	my $current = 0;
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status (name, status) VALUES ('from_table', $current)"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status SET status = $new WHERE name = 'from_table'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
+}
+
+sub status_hb{
+	my $self = shift;
+	my $new  = shift;
+	
+	# è¡ŒãŒã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
+	my $h = mysql_exec->select(
+		"SELECT status FROM status WHERE name = 'hb'",1
+	)->hundle;
+	my $current = 0;
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status (name, status) VALUES ('hb', $current)"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status SET status = $new WHERE name = 'hb'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
 }
 
 sub status_h5{
@@ -647,7 +733,7 @@ sub status_dan{
 	}
 }
 #--------------------------#
-#   ¥Õ¥¡¥¤¥ëÌ¾¡¦¥Ñ¥¹´ØÏ¢   #
+#   ãƒ•ã‚¡ã‚¤ãƒ«åãƒ»ãƒ‘ã‚¹é–¢é€£   #
 
 
 sub file_backup{
@@ -709,7 +795,8 @@ sub file_m_target{
 	$temp = $::config_obj->os_path($temp);
 	return $temp;
 }
-sub file_MorphoIn{ # file_m_target¤ÈÆ±¤¸
+
+sub file_MorphoIn{ # file_m_targetã¨åŒã˜
 	my $self = shift;
 	my $temp = $self->file_m_target;
 	$temp = $::config_obj->os_path($temp);
@@ -718,13 +805,49 @@ sub file_MorphoIn{ # file_m_target¤ÈÆ±¤¸
 sub file_TempCSV{
 	my $self = shift;
 	my $n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.csv'){
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.csv'){
 		++$n;
 	}
-	my $f = $self->file_datadir.'_temp'.$n.'.csv';
-	$f = $::config_obj->os_path($f);
+	my $f = $dir.'_temp'.$n.'.csv';
 	
-	# ¶õ¥Õ¥¡¥¤¥ë¤òºîÀ®¤·¤Æ¤ª¤¯
+	# ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã—ã¦ãŠã
+	CORE::open (TOUT, ">$f");
+	close (TOUT);
+	
+	return $f;
+}
+sub file_TempHTML{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.html'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.html';
+	
+	# ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã—ã¦ãŠã
+	CORE::open (TOUT, ">$f");
+	close (TOUT);
+	
+	return $f;
+}
+sub file_TempTXT{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+
+	while (-e $dir.'_temp'.$n.'.txt'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.txt';
+	
+	# ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã—ã¦ãŠã
 	CORE::open (TOUT, ">$f");
 	close (TOUT);
 	
@@ -742,7 +865,7 @@ sub file_TempR{
 	my $f = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_temp'.$n.'.r';
 	$f = $::config_obj->os_path($f);
 	
-	# ¶õ¥Õ¥¡¥¤¥ë¤òºîÀ®¤·¤Æ¤ª¤¯
+	# ç©ºãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆã—ã¦ãŠã
 	CORE::open (TOUT, ">$f");
 	close (TOUT);
 	
@@ -751,23 +874,37 @@ sub file_TempR{
 sub file_TempExcel{
 	my $self = shift;
 	my $n = 0;
-	while (-e $self->file_datadir.'_temp'.$n.'.xls'){
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+	
+	while (-e $dir.'_temp'.$n.'.xls'){
 		++$n;
 	}
-	my $f = $self->file_datadir.'_temp'.$n.'.xls';
-	$f = $::config_obj->os_path($f);
+	my $f = $dir.'_temp'.$n.'.xls';
+	return $f;
+}
+sub file_TempExcelX{
+	my $self = shift;
+	my $n = 0;
+	
+	my $dir = $::config_obj->os_path( $self->file_datadir );
+	
+	while (-e $dir.'_temp'.$n.'.xlsx'){
+		++$n;
+	}
+	my $f = $dir.'_temp'.$n.'.xlsx';
 	return $f;
 }
 sub file_HukugoList{
 	my $self = shift;
-	my $list = $self->file_datadir.'_hl.csv';
+	my $list = $self->file_datadir.'_hl.xlsx';
 	$list = $::config_obj->os_path($list);
 	return $list;
 }
 
 sub file_HukugoListTE{
 	my $self = shift;
-	my $list = $self->file_datadir.'_hlte.csv';
+	my $list = $self->file_datadir.'_hlte.xlsx';
 	$list = $::config_obj->os_path($list);
 	return $list;
 }
@@ -793,31 +930,33 @@ sub file_ColorSave{
 
 sub dir_CoderData{
 	my $self = shift;
-	my $pos = rindex($self->file_target,'/'); ++$pos;
-	my $datadir = substr($self->file_target,0,"$pos");
-	$datadir .= 'coder_data/';
-	$datadir = $::config_obj->os_path($datadir);
-	return $datadir;
+	#my $pos = rindex($self->file_target,'/'); ++$pos;
+	#my $datadir = substr($self->file_target,0,"$pos");
+	#$datadir .= 'coder_data/';
+	#$datadir = $::config_obj->os_path($datadir);
+	#return $datadir;
+	
+	my $dir = cwd;
+	$dir .= '/config/'.$self->dbname.'/';
+	$dir = $::config_obj->os_path($dir);
+	return $dir;
 }
 
 sub file_datadir{
 	my $self = shift;
-
-	my $temp = $self->file_short_name;
-	$temp = substr($temp,0,rindex($temp,'.'));
-
-	return $self->dir_CoderData.$temp;
+	return $self->dir_CoderData.$self->dbname;
 }
 
 sub file_target{
 	my $self = shift;
-	my $t = $self->{target};
-	my $icode = Jcode::getcode($t);
-	$t = Jcode->new($t)->euc;
-	$t =~ tr/\\/\//;
-	$t = Jcode->new($t)->$icode
-		if ( length($icode) and ( $icode ne 'ascii' ) );
-	return($t);
+	return $self->{target};
+	#my $t = $self->{target};
+	#my $icode = Jcode::getcode($t);
+	#$t = Jcode->new($t)->euc;
+	#$t =~ tr/\\/\//;
+	#$t = Jcode->new($t)->$icode
+	#	if ( length($icode) and ( $icode ne 'ascii' ) );
+	#return($t);
 }
 
 sub file_base{

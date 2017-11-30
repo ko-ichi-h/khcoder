@@ -1,6 +1,6 @@
 package mysql_ready;
 use strict;
-
+use utf8;
 use Jcode;
 use Benchmark;
 
@@ -16,8 +16,8 @@ use mysql_ready::df;
 use mysql_ready::dump;
 use mysql_ready::fc;
 
-my $rows_per_once = 30000;    # MySQL����Perl�˰��٤��ɤ߹���Կ�
-my $data_per_1ins = 200;      # ���٤�INSERT�����ͤο�
+my $rows_per_once = 30000;    # MySQLからPerlに一度に読み込む行数
+my $data_per_1ins = 200;      # 一度にINSERTする値の数
 
 sub first{
 	my $class = shift;
@@ -29,7 +29,7 @@ sub first{
 
 	if ($::config_obj->use_heap) {
 		# $self->{type_heap} = ' TYPE=HEAP ';
-		$self->{type_heap} = '';        # ������� / heap�ǤϤʤ�myisam��
+		$self->{type_heap} = '';        # 安全第一 / heapではなくmyisamで
 	} else {
 		$self->{type_heap} = '';
 	}
@@ -40,11 +40,6 @@ sub first{
 	kh_morpho->run;
 		my $ta1 = new Benchmark;
 		print "Morpho1\t",timestr(timediff($ta1,$ta0)),"\n";
-	if ($::config_obj->os eq 'win32'){
-			kh_jchar->to_euc($::project_obj->file_MorphoOut);
-			my $ta2 = new Benchmark;
-			print "Morpho2\t",timestr(timediff($ta2,$ta1)),"\n";
-	}
 		my $t0 = new Benchmark;
 	$self->readin;                 # rowdata
 		my $t1 = new Benchmark;
@@ -75,38 +70,108 @@ sub first{
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
 	$self->fix_katuyo;
-
 	$self->fix_michigo;
+	
+	&zero_length_headings;
 
-	# �ǡ����١�����ΰ���ơ��֥�򥯥ꥢ
+	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
 	
+	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 	
-	# �����ǲ��ϴ�ȸ���ε�Ͽ
-	$::project_obj->morpho_analyzer($::config_obj->c_or_j);
+}
 
-	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	) {
-		$::project_obj->morpho_analyzer_lang('jp');
-	}
-	elsif ($::project_obj->morpho_analyzer eq 'stanford'){
-		$::project_obj->morpho_analyzer_lang(
-			$::config_obj->stanford_lang
-		);
-	}
-	elsif ($::project_obj->morpho_analyzer eq 'stemming'){
-		$::project_obj->morpho_analyzer_lang(
-			$::config_obj->stemming_lang
-		);
-	}
+# We will NOT count zero length headings as sentences
+sub zero_length_headings{
+	
+	# make a backup
+	mysql_exec->do("drop table if exists bun_bak",1);
+	mysql_exec->do("CREATE TABLE bun_bak LIKE bun",1);
+	mysql_exec->do("INSERT INTO bun_bak SELECT * FROM bun",1);
+	
+	# check length (is it necessary?)
+	mysql_exec->do("drop table if exists bun_length_nouse;",1);
+	mysql_exec->do("
+		CREATE TABLE bun_length_nouse(
+		  id int primary key not null,
+		  len int
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO bun_length_nouse (id, len)
+		SELECT
+			hyosobun.bun_idt,
+			SUM( IF(nouse=0 and not khhinshi_id=99999, 1, 0) ) as len
+		FROM hyosobun, hyoso, genkei
+		WHERE   hyosobun.hyoso_id = hyoso.id
+			AND hyoso.genkei_id = genkei.id
+		GROUP BY hyosobun.bun_idt
+		ORDER BY hyosobun.bun_idt
+	",1);
+	
+	# delete from "bun" table
+	mysql_exec->do("
+		DELETE
+		FROM bun
+		USING bun, bun_length_nouse
+		WHERE bun.id = bun_length_nouse.id
+			AND bun_length_nouse.len = 0;
+	",1);
 
+	# Counts of document length will be broken here and there,
+	# so I disabled this feature (count all heading sentences as 0)
+	#if ($::project_obj->status_hb) {
+	#	mysql_exec->do("
+	#		DELETE
+	#		FROM bun
+	#		WHERE bun_id = 0 AND dan_id = 0
+	#	",1);
+	#}
+
+	# add sequential number
+	mysql_exec->do("drop table if exists bun_tmp;",1);
+	mysql_exec->do("
+		CREATE TABLE bun_tmp(
+		  id int primary key not null,
+		  bun_id int not null,
+		  dan_id int not null,
+		  h5_id  int not null,
+		  h4_id  int not null,
+		  h3_id  int not null,
+		  h2_id  int not null,
+		  h1_id  int not null,
+		  seq int auto_increment not null UNIQUE
+		)
+	",1);
+	mysql_exec->do("
+		INSERT INTO bun_tmp (id, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id)
+		SELECT id, bun_id, dan_id, h5_id, h4_id, h3_id, h2_id, h1_id
+		FROM bun
+		ORDER BY id
+	",1);
+	mysql_exec->do("alter table bun_tmp CHANGE COLUMN seq seq int not null",1);
+	mysql_exec->do("drop table if exists bun",1);
+	mysql_exec->do("RENAME TABLE bun_tmp TO bun",1);
+
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index1 (bun_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index2 (dan_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index3 (h5_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index4 (h4_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index5 (h3_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index6 (h2_id)",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index7 (h1_id)",1);
+	mysql_exec->do("
+		ALTER TABLE bun ADD INDEX index8 (
+			bun_id,dan_id,h5_id,h4_id,h3_id,h2_id,h1_id
+		)
+	",1);
+	mysql_exec->do("ALTER TABLE bun ADD INDEX index9 (id,seq)",1);
+	
 }
 
 sub fix_michigo{
@@ -121,7 +186,7 @@ sub fix_michigo{
 		FROM   genkei, khhinshi
 		WHERE
 			    genkei.khhinshi_id = khhinshi.id
-			AND khhinshi.name = \"̤�θ�\"
+			AND khhinshi.name = \"未知語\"
 	",1)->hundle;
 	
 	my @gomi = ();
@@ -132,8 +197,12 @@ sub fix_michigo{
 			#print "alpha\n";
 			next;
 		}
-		if ( $i->[1] =~ /[\xA1-\xFE][\xA1-\xFE]/o){
+		if ( $i->[1] =~ /\p{Han}|\p{Hiragana}|\p{Katakana}/o){
 			#print "zenkaku\n";
+			next;
+		}
+		if ( $i->[1] =~ /[ａ-ｚ|Ａ-Ｚ]/o){
+			#print "zenkaku-alpha\n";
 			next;
 		}
 		#print "gomi\n";
@@ -182,58 +251,72 @@ sub fix_katuyo{
 }
 
 #----------------------#
-#   �ǡ������ɤ߹���   #
+#   データの読み込み   #
 
 sub readin{
 	my $self = shift;
+	my $file = $::config_obj->os_path( $::project_obj->file_MorphoOut );
+	my $icode = 'utf8mb4';
 
-	# �ǡ����ե�����Υ��������ǧ
-	open (RCNT,$::project_obj->file_MorphoOut) or
+	# 入力データの文字コード
+	if (
+		   ( $::config_obj->c_or_j eq 'chasen' )
+		#|| ( $::config_obj->c_or_j eq 'mecab'  )
+	){
+		if ($::config_obj->os eq 'win32') {
+			$icode = 'cp932';
+		} else {
+			$icode = 'ujis'
+		}
+	}
+
+	# データファイルのサイズを確認
+	open (RCNT,$file) or
 		gui_errormsg->open(
 			type => 'file',
-			file => $::project_obj->file_MorphoOut
+			file => $file
 		);
 	my $max_rows = 0;
-	$max_rows += tr/\n/\n/ while read(RCNT, $_, 2 ** 16); # �Կ��������
+	$max_rows += tr/\n/\n/ while read(RCNT, $_, 2 ** 16); # 行数カウント
 	close (RCNT);
 	$max_rows += 100;
 	$self->{max_rows} = "MAX_ROWS = $max_rows";
 
-	# �����ǡ������ɤ߹���
+	# ローデータの読み込み
 	mysql_exec->drop_table("rowdata");
 	mysql_exec->do("create table rowdata
 		(
-			hyoso varchar(255) binary not null,
-			yomi varchar(255) not null,
-			genkei varchar(255) not null,
-			hinshi varchar(255) not null,
-			katuyogata varchar(255) not null,
-			katuyo varchar(255) not null,
+			hyoso varchar(128) binary not null,
+			yomi varchar(128) not null,
+			genkei varchar(128) not null,
+			hinshi varchar(128) not null,
+			katuyogata varchar(128) not null,
+			katuyo varchar(128) not null,
 			id int auto_increment primary key not null
 		) $self->{max_rows}
 	",1);
 
-	my $thefile = "'".$::project_obj->file_MorphoOut."'";
-	
+	#my $thefile = $::config_obj->uni_path($file);
 	#my $icode = Jcode->new($thefile)->icode;
 	#$thefile = Jcode->new($thefile,$icode)->euc;
-	$thefile =~ tr/\\/\//;
+	#$thefile =~ tr/\\/\//;
 	#$thefile = Jcode->new($thefile,'euc')->$icode;
 	#print "$thefile\n";
 	
-	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata",1);
+	my $thefile = "'$file'";
+	mysql_exec->do("LOAD DATA LOCAL INFILE $thefile INTO TABLE rowdata CHARACTER SET $icode",1);
 
-	# �������С���������䥤��б����뤿���Fix
+	# 新しいバージョンの茶筌に対応するためのFix
 	mysql_exec->drop_table("rowdata_org");
 	mysql_exec->do("ALTER TABLE rowdata RENAME rowdata_org",1);
 	mysql_exec->do("create table rowdata
 		(
-			hyoso varchar(255) binary not null,
-			yomi varchar(255) not null,
-			genkei varchar(255) not null,
-			hinshi varchar(255) not null,
-			katuyogata varchar(255) not null,
-			katuyo varchar(255) not null,
+			hyoso varchar(128) binary not null,
+			yomi varchar(128) not null,
+			genkei varchar(128) not null,
+			hinshi varchar(128) not null,
+			katuyogata varchar(128) not null,
+			katuyo varchar(128) not null,
 			id int primary key not null
 		) $self->{max_rows}
 	",1);
@@ -245,58 +328,42 @@ sub readin{
 	",1);
 	mysql_exec->drop_table("rowdata_org");
 
-	# �ե������Ĺ�μ���
-	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 �ʾ�
-		my $t = mysql_exec->select("
-			SELECT
-				MAX( CHAR_LENGTH(hyoso) )  AS hyoso,
-				MAX( CHAR_LENGTH(genkei) ) AS genkei,
-				MAX( CHAR_LENGTH(hinshi) ) AS hinshi,
-				MAX( CHAR_LENGTH(katuyo) ) AS katuyo
-			FROM rowdata
-		",1)->hundle;
-		my $r = $t->fetchrow_hashref;
-		$t->finish;
-		foreach my $key (keys %{$r}){
-			$self->length($key,$r->{$key});
-		}
-	} else {                                 # MySQL 3.x �ʲ�
-		my $t = mysql_exec->select("
-			SELECT
-				MAX( LENGTH(hyoso) ) AS hyoso,
-				MAX( LENGTH(genkei) ) AS genkei,
-				MAX( LENGTH(hinshi) ) AS hinshi,
-				MAX( LENGTH(katuyo) ) AS katuyo
-			FROM rowdata
-		",1)->hundle;
-		my $r = $t->fetchrow_hashref;
-		$t->finish;
-		my $morpho_length_error_flag = 0;
-		foreach my $key (keys %{$r}){
-			$morpho_length_error_flag = 1 if $r->{$key} == 255;
-			my $len = $r->{$key} + 4;
-			$len = 255 if $len > 255;
-			$self->length($key,$len);
-		}
-		mysql_ready::dump->word_length if $morpho_length_error_flag;
+	# フィールド長の取得
+	my $morpho_length_error_flag = 0;
+
+	my $t = mysql_exec->select("
+		SELECT
+			MAX( CHAR_LENGTH(hyoso) )  AS hyoso,
+			MAX( CHAR_LENGTH(genkei) ) AS genkei,
+			MAX( CHAR_LENGTH(hinshi) ) AS hinshi,
+			MAX( CHAR_LENGTH(katuyo) ) AS katuyo
+		FROM rowdata
+	",1)->hundle;
+	my $r = $t->fetchrow_hashref;
+	$t->finish;
+	foreach my $key (keys %{$r}){
+		$self->length($key,$r->{$key});
+		$morpho_length_error_flag = 1 if $r->{$key} >= 128;
 	}
+	mysql_ready::dump->word_length if $morpho_length_error_flag;
 
 	mysql_ready::heap->rowdata($self);
 	
-	# ��Ĵʸ������¸�ѤΥơ��֥�����
+	# 強調文字列保存用のテーブルを準備
 	unless ( mysql_exec->table_exists('d_force') ){
 		mysql_exec->do("create table d_force
 			(
 				id int auto_increment primary key not null,
-				name varchar(255) not null,
+				name varchar(128) not null,
 				type int not null
 			)
 		",1);
 	}
+
 }
 
 #----------------#
-#   �ǡ�������   #
+#   データ整形   #
 
 sub reform{
 	my $self = shift;
@@ -304,7 +371,7 @@ sub reform{
 	my $report_time = 0;
 	my $pt1 = new Benchmark;
 
-	# ����å��塦�ơ��֥����
+	# キャッシュ・テーブル作成
 	mysql_exec->drop_table("hgh");
 	my @len = (
 		$self->length('hyoso'),
@@ -334,7 +401,7 @@ sub reform{
 	my $pt2 = new Benchmark;
 	print "\tcache(hgh)\t",timestr(timediff($pt2,$pt1)),"\n" if $report_time;
 
-	# �ʻ�ơ��֥����
+	# 品詞テーブル作成
 	my $len = $self->length('hinshi');
 	mysql_exec->drop_table("hinshi");
 	mysql_exec->do("
@@ -357,8 +424,8 @@ sub reform{
 	my $pt3 = new Benchmark;
 	print "\thinshi\t\t",timestr(timediff($pt3,$pt2)),"\n" if $report_time;
 
-	# �����ơ��֥����
-	$len = $self->length('genkei');                         # �ơ��֥����
+	# 原形テーブル作成
+	$len = $self->length('genkei');                         # テーブル準備
 	mysql_exec->drop_table("genkei");
 	mysql_exec->do("
 		create table genkei (
@@ -371,7 +438,7 @@ sub reform{
 		)
 	",1);
 
-	my $rule;                                               # ʬ�൬§����
+	my $rule;                                               # 分類規則準備
 	if (mysql_exec->table_exists('hinshi_setting')){
 		$rule = mysql_exec->select(
 			 "SELECT khhinshi,condition1,condition2,khhinshi_id "
@@ -379,7 +446,11 @@ sub reform{
 			1
 		)->hundle->fetchall_arrayref;
 	} else {
-		my $dbhh = DBI->connect("DBI:CSV:f_dir=./config");      
+		my $dbhh = DBI->connect("dbi:CSV:", undef, undef, {
+			f_dir      => "./config",
+			f_encoding => "UTF8",
+			csv_eol    => "\n",
+		}) or die; 
 		my $th = $dbhh->prepare("
 			SELECT kh_hinshi,condition1,condition2,hinshi_id
 			FROM hinshi_chasen
@@ -390,12 +461,13 @@ sub reform{
 
 	my %stopwords = ();
 	foreach my $i (@{$::config_obj->stopwords_current}){
+		$i =~ tr/A-Z/a-z/;
 		$stopwords{$i} = 1;
 		#print "$i, ";
 	}
 	#print "\n";
 
-                                                            # �ǡ�������
+                                                            # データ準備
 	mysql_exec->drop_table("hgh2");
 	mysql_exec->do("
 		create table hgh2 (
@@ -426,24 +498,24 @@ sub reform{
 		}
 		$id += $rows_per_once;
 		
-		while (my $d = $td->fetch){                             # ����ʬ��
+		while (my $d = $td->fetch){                             # 振り分け
 			my $kh_hinshi = '9999';
 			foreach my $i (@{$rule}){
 				$i->[2] = '' unless defined($i->[2]);
-				if ( index("$d->[3]","$i->[1]") == 0 ){        # ���1
-					if ($i->[2] eq '�Ҥ餬��'){            # ���2:�Ҥ餬��
-						if ($d->[0] =~ /^(\xA4[\xA1-\xF3])+$/o){
+				if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
+					if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
+						if ($d->[0] =~ /^\p{Hiragana}+$/o){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
-					elsif ($i->[2] eq '��ʸ��'){           # ���2:�Ҥ餬��
-						if (length($d->[0]) == 2){
+					elsif ($i->[2] eq '一文字'){           # 条件2:ひらがな
+						if (length($d->[0]) == 1){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
-					elsif ($i->[2] eq 'HTML'){             # ���2:HTML
+					elsif ($i->[2] eq 'HTML'){             # 条件2:HTML
 						if ( 
 							   ($d->[0] =~ /<h[1-5]>/io)
 							|| ($d->[0] =~ /<\/h[1-5]>/io) 
@@ -452,32 +524,38 @@ sub reform{
 							last;
 						}
 					}
-					elsif($i->[2] eq '����'){             # ���2:����
+					elsif($i->[2] eq '否定'){             # 条件2:否定
 						if (
-							   ($d->[0] eq '�ʤ�')
-							|| ($d->[0] eq '�ޤ�')
-							|| ($d->[0] eq '��')
-							|| ($d->[0] eq '��')
+							   ($d->[0] eq 'ない')
+							|| ($d->[0] eq 'まい')
+							|| ($d->[0] eq 'ぬ')
+							|| ($d->[0] eq 'ん')
 						){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
-					else {                                 # ���2̵���ξ��
+					else {                                 # 条件2無しの場合
 						$kh_hinshi = $i->[3];
 						last;
 					}
 				}
+				elsif ( $i->[1] eq '*' ) {
+					$kh_hinshi = $i->[3];
+					last;
+				}
 			}
 			
-			if ($stopwords{$d->[0]}){
+			my $chk = $d->[0];
+			$chk =~ tr/A-Z/a-z/;
+			if ($stopwords{$chk}){
 				$kh_hinshi = '9999';
 			}
 			
 			$d->[0] =~ s/'/\\'/go;
 			$con .= "('$d->[0]',$d->[1],$d->[2],$kh_hinshi),";
 			++$num;
-			if ($num == $data_per_1ins){               # DB������
+			if ($num == $data_per_1ins){               # DBに投入
 				chop $con;
 				mysql_exec->do("
 					INSERT
@@ -491,7 +569,7 @@ sub reform{
 		$td->finish;
 	}
 	
-	if ($con){                                         # �Ĥ��DB������
+	if ($con){                                         # 残りをDBに投入
 		chop $con;
 		mysql_exec->do("
 			INSERT
@@ -501,10 +579,9 @@ sub reform{
 	}
 	mysql_exec->do('alter table genkei add index index1(name,khhinshi_id,hinshi_id)',1);
 	mysql_exec->do('alter table genkei add index index2(khhinshi_id)',1);
-	mysql_exec->do('alter table genkei add index index3(hinshi_id)',1);
 
 
-	# �����ơ��֥�λž夲(1)
+	# 原形テーブルの仕上げ(1)
 	mysql_exec->drop_table("genkei_fin");
 	mysql_exec->do("
 		create table genkei_fin (
@@ -525,12 +602,12 @@ sub reform{
 
 	mysql_exec->do('alter table genkei_fin add index index1(name,khhinshi_id)',1);
 	mysql_exec->do('alter table genkei_fin add index index2(khhinshi_id)',1);
-
+	mysql_exec->do('alter table genkei_fin add unique index index3(khhinshi_id, nouse, num, id)',1);
 
 	my $pt4 = new Benchmark;
 	print "\tgenkei\t\t",timestr(timediff($pt4,$pt3)),"\n" if $report_time;
 
-	# KH_�ʻ�ơ��֥�κ���
+	# KH_品詞テーブルの作成
 	mysql_exec->drop_table("khhinshi");
 	mysql_exec->do("
 		create table khhinshi (
@@ -553,7 +630,7 @@ sub reform{
 		   $::config_obj->c_or_j eq 'chasen'
 		|| $::config_obj->c_or_j eq 'mecab'
 	){
-		$other_hinshi = '����¾';
+		$other_hinshi = 'その他';
 	}
 	
 	$con .= "(9999,'$other_hinshi')";
@@ -568,7 +645,7 @@ sub reform{
 	my $pt5 = new Benchmark;
 	print "\tkh-hinshi\t",timestr(timediff($pt5,$pt4)),"\n" if $report_time;
 
-	# ����å���ơ��֥�(2)����
+	# キャッシュテーブル(2)作成
 	mysql_exec->drop_table("hghi");
 	mysql_exec->do("
 		create table hghi (
@@ -608,7 +685,7 @@ sub reform{
 	my $pt6 = new Benchmark;
 	print "\tcache(hghi)\t",timestr(timediff($pt6,$pt5)),"\n" if $report_time;
 
-	# ���ѥơ��֥����
+	# 活用テーブル作成
 	mysql_exec->drop_table("katuyo");
 	mysql_exec->do ("
 		create table katuyo (
@@ -626,7 +703,7 @@ sub reform{
 	my $pt7 = new Benchmark;
 	print "\tkatuyo\t\t",timestr(timediff($pt7,$pt6)),"\n" if $report_time;
 
-	# ɽ�إơ��֥����
+	# 表層テーブル作成
 	mysql_exec->drop_table("hyoso");
 	mysql_exec->do("
 		create table hyoso (
@@ -642,7 +719,7 @@ sub reform{
 	mysql_exec->do("
 		INSERT
 		INTO hyoso (id, name, len, genkei_id, num, katuyo_id, hinshi_id)
-		SELECT hyoso_id, hyoso, LENGTH(hyoso), genkei_fin.id, hghi.num, katuyo.id, genkei.hinshi_id
+		SELECT hyoso_id, hyoso, CHAR_LENGTH(hyoso), genkei_fin.id, hghi.num, katuyo.id, genkei.hinshi_id
 			FROM hghi, katuyo, genkei, genkei_fin
 			WHERE
 				    hghi.katuyo = katuyo.name
@@ -676,19 +753,19 @@ sub genkei_sql{
 
 
 #-------------------------#
-#   ɽ��-ʸ�ơ��֥����   #
+#   表層-文テーブル作成   #
 
 sub hyosobun{
 	my $self = shift;
 	
-	# �Ƽ����
-	my $t = mysql_exec->select("        # HTML�����ȶ�������hyoso.id�����
+	# 各種準備
+	my $t = mysql_exec->select("        # HTMLタグと句読点のhyoso.idを取得
 		SELECT hyoso.name, hyoso.id
 		FROM hyoso
 		WHERE
 			   (( name RLIKE '<[Hh][1-5]\>' ) AND ( len = 4 ))
 			OR (( name RLIKE '</[Hh][1-5]>' ) AND ( len = 5 ))
-			OR ( name = '��' )
+			OR ( name = '。' )
 	",1)->hundle;
 	my ($IDs, $IDsR);
 	while (my $d = $t->fetch){
@@ -697,7 +774,7 @@ sub hyosobun{
 	}
 	$t->finish;
 
-	mysql_exec->drop_table("hyosobun");   # �ơ��֥����
+	mysql_exec->drop_table("hyosobun");   # テーブル作成
 	mysql_exec->do("
 		create table hyosobun (
 			id int auto_increment primary key not null,
@@ -712,7 +789,7 @@ sub hyosobun{
 			bun_idt INT not null
 		) $self->{max_rows}
 	",1);
-	mysql_exec->drop_table("hyosobun_t");# ñ���ѥ���å��塦�ơ��֥����
+	mysql_exec->drop_table("hyosobun_t");# 単位用キャッシュ・テーブル作成
 	mysql_exec->do("
 		create table hyosobun_t (
 			h1_id INT not null,
@@ -728,13 +805,13 @@ sub hyosobun{
 		) $self->{type_heap}
 	",1);
 
-	# �����
+	# 初期化
 	my ($bun, $dan, $h5, $h4, $h3, $h2, $h1, $lastrow, $midashi, $bun2) = 
 		(1,1,0,0,0,0,0,0,0,1);
 	my ($temp, $c, $maru);
 	my ($temp_tani, $last_tani, $c_t, $lw, $lc, $lt);
 	my $id = 1;
-	# �¹�
+	# 実行
 	while (1){
 		my $t = mysql_exec->select(
 			$self->hyosobun_sql($id, $id + $rows_per_once),
@@ -746,7 +823,7 @@ sub hyosobun{
 		$id += $rows_per_once;
 
 		while (my $d = $t->fetch){
-			if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# ���ԤΥ����å�
+			if ( ($d->[0] - $lastrow > 1) &! ($lastrow == 0) ){# 改行のチェック
 				++$dan;
 				$bun = 1;
 				unless ($maru){
@@ -754,7 +831,7 @@ sub hyosobun{
 				}
 			}
 			$lastrow = $d->[0];
-			if ( defined($IDs->{$d->[1]}) ){           # HTML���ϥ����Υ����å�
+			if ( defined($IDs->{$d->[1]}) ){           # HTML開始タグのチェック
 				if (
 					   $IDs->{$d->[1]} eq '<h1>' 
 					|| $IDs->{$d->[1]} eq '<H1>'
@@ -797,7 +874,7 @@ sub hyosobun{
 				$IDs->{$d->[1]} = '';
 			}
 
-			                                          # DB�˽񤭹���
+			                                          # DBに書き込み
 			$temp .= "($bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1,$d->[1]),";
 			unless (defined($last_tani) && $last_tani eq "$bun2,$bun,$dan,$h5,$h4,$h3,$h2,$h1"){
 				if (defined($last_tani) && length($last_tani)){
@@ -850,21 +927,21 @@ sub hyosobun{
 			}
 			++$lt;
 
-			if ($IDs->{$d->[1]} eq '��'){              # �������Υ����å�
+			if ($IDs->{$d->[1]} eq '。'){              # 句読点のチェック
 				unless ($midashi){
 					++$bun; ++$bun2; $maru = 1;
 				}
 			} else {
 				$maru = 0;
 			}
-			if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML��λ�����Υ����å�
+			if ($IDs->{$d->[1]} =~ /<\/[Hh][1-5]>/o){  # HTML終了タグのチェック
 					$midashi = 0;
 			}
 		}
 	$t->finish;
 	}
 
-	# �Ĥ��DB������
+	# 残りをDBに投入
 	if ($temp){
 		chop $temp;
 		my_threads->exec("
@@ -893,27 +970,27 @@ sub hyosobun{
 
 	my_threads->wait;
 
-	# ���פʾ��ϡ֡��פ��� # morpho_analyzer
+	# 不要な場合は「。」を削除 # morpho_analyzer
 	unless (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-		|| (! $IDsR->{'��'} )
+		   $::project_obj->morpho_analyzer_lang eq 'jp'
+		|| $::project_obj->morpho_analyzer_lang eq 'cn'
+		|| (! $IDsR->{'。'} )
 	){
 		mysql_exec->do("
 			DELETE FROM hyosobun
-			WHERE hyoso_id = $IDsR->{'��'}
+			WHERE hyoso_id = $IDsR->{'。'}
 		",1);
 		mysql_exec->do("
 			DELETE FROM genkei
-			WHERE name = '��'
+			WHERE name = '。'
 		",1);
 		mysql_exec->do("
 			DELETE FROM genkei_fin
-			WHERE name = '��'
+			WHERE name = '。'
 		",1);
 		mysql_exec->do("
 			DELETE FROM hyoso
-			WHERE name = '��'
+			WHERE name = '。'
 		",1);
 		
 		mysql_exec->drop_table("hyosobun_n");
@@ -946,7 +1023,7 @@ sub hyosobun{
 		",1);
 	}
 
-	# ����ǥå�����Ž��
+	# インデックスを貼る
 	mysql_exec->do("
 		alter table hyosobun
 			add index index1 (h1_id, h2_id, h3_id, h4_id, h5_id, dan_id),
@@ -966,7 +1043,7 @@ sub hyosobun{
 			add index index4 (bun_idt)
 	",1);
 
-	# �����ơ��֥�λž夲(2)
+	# 原形テーブルの仕上げ(2)
 	mysql_exec->drop_table("genkei");
 	mysql_exec->do(" RENAME TABLE genkei_fin TO genkei",1);
 
@@ -1009,12 +1086,12 @@ sub hyosobun_sql{
 }
 
 #--------------------------------------#
-#   �����ʻ����и줫��<>�������   #
+#   タグ品詞の抽出語から<>を取り除く   #
 
 sub tag_fix{
 	my $self = shift;
 	
-	# ɽ�ظ�ơ��֥�
+	# 表層語テーブル
 	my $h = mysql_exec->select("
 		SELECT hyoso.id, hyoso.name
 		FROM hyoso, genkei, hselection
@@ -1022,7 +1099,7 @@ sub tag_fix{
 			    hyoso.genkei_id = genkei.id
 			AND genkei.khhinshi_id = hselection.khhinshi_id
 			AND (
-				   hselection.name = \'����\'
+				   hselection.name = \'タグ\'
 				|| hselection.name = \'TAG\'
 			)
 	",1)->hundle;
@@ -1040,14 +1117,14 @@ sub tag_fix{
 	}
 	$h->finish;
 	
-	# ���ܷ��ơ��֥�(1)
+	# 基本形テーブル(1)
 	my $k = mysql_exec->select("
 		SELECT genkei.id, genkei.name
 		FROM genkei, hselection
 		WHERE 
 			    genkei.khhinshi_id = hselection.khhinshi_id
 			AND (
-				   hselection.name = \'����\'
+				   hselection.name = \'タグ\'
 				|| hselection.name = \'TAG\'
 			)
 	",1)->hundle;
@@ -1062,14 +1139,14 @@ sub tag_fix{
 		",1);
 	}
 	
-	# ���ܷ��ơ��֥�(2)
+	# 基本形テーブル(2)
 	#$k = mysql_exec->select("
 	#	SELECT genkei_fin.id, genkei_fin.name
 	#	FROM genkei_fin, hselection
 	#	WHERE 
 	#		    genkei_fin.khhinshi_id = hselection.khhinshi_id
 	#		AND (
-	#			   hselection.name = \'����\'
+	#			   hselection.name = \'タグ\'
 	#			|| hselection.name = \'TAG\'
 	#		)
 	#",1)->hundle;
@@ -1087,7 +1164,7 @@ sub tag_fix{
 	
 	$k->finish;
 	
-	# HTML������ʸ�������줹��
+	# HTMLタグを小文字に統一する
 	#
 	#foreach my $i ("h1","h2","h3","h4","h5"){
 	#	my $uc = uc $i;
@@ -1116,7 +1193,7 @@ sub tag_fix{
 }
 
 #----------------------------#
-#   ʿʸ��Ǽ�ơ��֥�����   #
+#   平文格納テーブルを作製   #
 
 sub rowtxt{
 	my $self = shift;
@@ -1127,15 +1204,7 @@ sub rowtxt{
 	$::project_obj->status_bun(1);
 
 	# morpho_analyzer
-	my $spacer;
-	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-	) {
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 
 	mysql_exec->drop_table("bun_r");
 	mysql_exec->do("create table bun_r(id int auto_increment primary key not null, rowtxt TEXT )",1);
@@ -1160,7 +1229,7 @@ sub rowtxt{
 				$temp .= $spacer if length($temp);
 				$temp .= $i->[1];
 			} else {
-				# ���顼�������å�
+				# エラー・チェック
 				if ( length($temp) > 65535 ){
 					gui_errormsg->open(
 						type => 'msg',
@@ -1172,11 +1241,11 @@ sub rowtxt{
 					print "counters: $last, $i->[0]\n";
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => kh_msg->get('error_in_mysql_bunr') # "��bun_r�ץơ��֥������˥ǡ������������������ޤ�����\nKH Coder��λ���ޤ���"
+						msg  => kh_msg->get('error_in_mysql_bunr') # "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"
 					);
 					exit;
 				}
-				# ����������
+				# エスケープ
 				$temp =~ s/'/\\'/go;
 				if ($spacer eq ' '){
 					$temp =~ s/^(<h[1-5]>) /$1/i;
@@ -1198,8 +1267,8 @@ sub rowtxt{
 		$h->finish;
 	}
 	
-	if ($values or $temp){
-		if ($temp){
+	if (length($values) or length($temp)){
+		if (length($temp)){
 			$temp =~ s/'/\\'/go;
 			$values .= "(\'$temp\'),";
 		}
@@ -1241,12 +1310,12 @@ sub rowtxt_sql{
 }
 
 #--------------------------------------------------#
-#    �ƽ���ñ�̡�H1, H2, H3,,,�ˤΥơ��֥�����   #
+#    各集計単位（H1, H2, H3,,,）のテーブルを作製   #
 
 
 sub tanis{
 	if (mysql_exec->select("select max(bun_idt) from hyosobun",1)->hundle->fetch->[0]){
-		# ʸñ��2
+		# 文単位2
 		mysql_exec->drop_table("bun");
 		mysql_exec->do("
 			create table bun(
@@ -1288,7 +1357,7 @@ sub tanis{
 	}
 	
 	
-	# ����ñ��
+	# 段落単位
 	if(mysql_exec->select("select max(dan_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_dan(1);
 		mysql_exec->drop_table("dan");
@@ -1331,7 +1400,7 @@ sub tanis{
 	} else {
 		$::project_obj->status_dan(0);
 	}
-	# h5ñ��
+	# h5単位
 	if(mysql_exec->select("select max(h5_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h5(1);
 		mysql_exec->drop_table("h5");
@@ -1372,7 +1441,7 @@ sub tanis{
 	} else {
 		$::project_obj->status_h5(0);
 	}
-	# h4ñ��
+	# h4単位
 	if(mysql_exec->select("select max(h4_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h4(1);
 		mysql_exec->drop_table("h4");
@@ -1411,7 +1480,7 @@ sub tanis{
 	} else {
 		$::project_obj->status_h4(0);
 	}
-	# h3ñ��
+	# h3単位
 	if(mysql_exec->select("select max(h3_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h3(1);
 		mysql_exec->drop_table("h3");
@@ -1448,7 +1517,7 @@ sub tanis{
 	} else {
 		$::project_obj->status_h3(0);
 	}
-	# h2ñ��
+	# h2単位
 	if(mysql_exec->select("select max(h2_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h2(1);
 		mysql_exec->drop_table("h2");
@@ -1483,7 +1552,7 @@ sub tanis{
 	} else {
 		$::project_obj->status_h2(0);
 	}
-	# h1ñ��
+	# h1単位
 	if(mysql_exec->select("select max(h1_id) from hyosobun",1)->hundle->fetch->[0]){
 		$::project_obj->status_h1(1);
 		mysql_exec->drop_table("h1");
@@ -1514,7 +1583,7 @@ sub tanis{
 }
 
 #--------------#
-#   ��������   #
+#   アクセサ   #
 #--------------#
 
 sub length{
@@ -1529,7 +1598,7 @@ sub length{
 		if ($self->{length}{$name}){
 			return $self->{length}{$name};
 		} else {
-			return 255;
+			return 128;
 		}
 	}
 }
@@ -1539,8 +1608,8 @@ sub length{
 
 __END__
 
-#if ($::config_obj->sqllog){                    # coder_data/*_fm.csv����
-#	my $f = $::project_obj->file_FormedText;    # �ǥХå��⡼�ɻ��Τ�
+#if ($::config_obj->sqllog){                    # coder_data/*_fm.csv出力
+#	my $f = $::project_obj->file_FormedText;    # デバッグモード時のみ
 #	my $d = '';
 #	my $h = mysql_exec->select("select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt, hyoso.name from hyosobun, hyoso where hyosobun.hyoso_id = hyoso.id",1)->hundle;
 #	my $last = -1;

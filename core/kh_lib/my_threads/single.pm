@@ -7,7 +7,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = qw(&init &open_project &exec1 &exec2 &wait1 &wait2);
 
 sub init{
-	print "Using un-threaded functions...\n";
+	print "Using un-threaded functions...\n" unless $::config_obj->web_if;
 	return 1;
 }
 

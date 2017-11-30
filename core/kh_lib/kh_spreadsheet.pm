@@ -8,6 +8,8 @@ use kh_spreadsheet::csv;
 
 use Encode;
 
+use vars qw($fht $fhv $line $row $ncol $selected $tsv);
+
 sub new{
 	my $self;
 	$self->{file} = $_[1];
@@ -26,116 +28,31 @@ sub new{
 	return $self;
 }
 
-# for xls and xlsx
-sub save_files{
-	my $self = shift;
-	my %args = @_;
-	
-	# morpho_analyzer
-	my $icode;
-	if (
-		   $::config_obj->c_or_j eq 'chasen'
-		|| $::config_obj->c_or_j eq 'mecab'
-	){
-		$icode = 'cp932';
-	} else {
-		$icode = 'utf8';
-	}
-	
-	# read excel
-	my $workbook = $self->parser;
-	
-	die("failed to open *.xls file!\n") unless $workbook;
-	
-	my $sheet = $workbook->worksheet(0);
-	my ( $row_min, $row_max ) = $sheet->row_range();
-	my ( $col_min, $col_max ) = $sheet->col_range();
-	
-	# make a text file
-	open my $fh, ">::encoding($icode)", $args{filet} or
-		gui_errormsg->open(
-			type => 'file',
-			file => $args{file}
-		)
-	;
-	for my $row ($row_min + 1 .. $row_max){
-		my $t = '';
-		my $cell = $sheet->get_cell( $row, $args{selected} );
-		$t = $self->get_value($cell) if $cell;
-		$t =~ tr/<>/()/;
-		print $fh
-			'<h5>---cell---</h5>',
-			"\n",
-			$t,
-			"\n",
-		;
-	}
-	close $fh;
-
-	# make a variable file, < 127 char, <= 1000 columns
-	open $fh, ">::encoding(cp932)", $args{filev} or
-		gui_errormsg->open(
-			type => 'file',
-			file => $args{filev}
-		)
-	;
-	for my $row ($row_min .. $row_max){
-		my $line = '';
-		my $ncol = 0;
-		for my $col ($col_min .. $col_max){
-			if ($col == $args{selected}){
-				next;
-			}
-			my $t = '';
-			my $cell = $sheet->get_cell( $row, $col );
-			$t = $self->get_value($cell) if $cell;
+sub print_line{
+	my $v;
+	for (my $i = 0; $i < $kh_spreadsheet::ncol;  ++$i){
+		if ($i == $kh_spreadsheet::selected){
+			next if $kh_spreadsheet::row == 0;
+			my $t = $kh_spreadsheet::line->[$i];
+			$t =~ tr/<>/()/;
+			$t =~ s/\x0D\x0A|\x0D|\x0A/\n/go;
+			$t =~ s/_x000D_\n/\n/go if (caller)[0] eq 'kh_spreadsheet::xlsx';
+			print $kh_spreadsheet::fht
+				'<h5>---cell---</h5>',
+				"\n",
+				$t,
+				"\n",
+			;
+		} else {
+			next if $i > 1000;
+			my $t = $kh_spreadsheet::line->[$i];
+			$t = '.' unless defined($t);
 			$t = '.' if length($t) == 0;
 			$t =~ s/[[:cntrl:]]//g;
-			if (length($t) > 127){
-				$t = substr($t, 0, 127);
-			}
-			$line .= "$t\t";
-			++$ncol;
-			if ($ncol == 1000){
-				last;
-			}
+			push @{$v}, $t;
 		}
-		chop $line;
-		print $fh "$line\n";
 	}
-	close $fh;
-
-	return 1;
-}
-
-# for xls and xlsx
-sub columns{
-	my $self = shift;
-	
-	use Benchmark;
-	my $t0 = new Benchmark;
-	
-	#my $parser   = $self->parser;
-	my $workbook = $self->parser; #$parser->parse($self->{file});
-	
-	die("Failed to open the Excel file!\n") unless $workbook;
-	
-	my $sheet = $workbook->worksheet(0);
-	my ( $row_min, $row_max ) = $sheet->row_range();
-	my ( $col_min, $col_max ) = $sheet->col_range();
-	
-	my @columns = ();
-	for my $col ( $col_min .. $col_max ) {
-		my $t = '';
-		my $cell = $sheet->get_cell( $row_min, $col );
-		$t = $self->get_value($cell) if $cell;
-		push @columns, $t;
-	}
-	
-	my $t1 = new Benchmark;
-	print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
-	
-	return \@columns;
+	$kh_spreadsheet::tsv->print($kh_spreadsheet::fhv, $v) if $v;
 }
 
 1;

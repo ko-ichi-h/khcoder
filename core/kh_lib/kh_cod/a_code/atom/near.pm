@@ -171,9 +171,8 @@ sub ready{
 		);
 		$w2hyoso{$i} = $list->hyoso_id_s;
 		unless ( $w2hyoso{$i} ){
-			print Jcode->new(
-				"warn: no such word in the text: \"".$self->raw."\"\n"
-			)->sjis;
+			print
+				"warn: no such word in the text: \"".$self->raw."\"\n";
 			return '';
 		}
 		$list = $list->genkei_ids;
@@ -319,7 +318,7 @@ sub ready{
 	my %result = ();
 	my $chk_data_rows = @chk_data - @wlist;
 	for (my $n = 0; $n <= $chk_data_rows; ++$n){
-		print Jcode->new("$n,$chk_data[$n]->[0],$chk_data[$n]->[1],$chk_data[$n]->[2]\n")->sjis if $debug;
+		print "$n,$chk_data[$n]->[0],$chk_data[$n]->[1],$chk_data[$n]->[2]\n" if $debug;
 		
 		# 直後が同じ語の場合はチェックをスキップ
 		if ($chk_data[$n]->[2] eq $chk_data[$n+1]->[2]){
@@ -335,7 +334,7 @@ sub ready{
 		my $pos_opt     = $chk_data[$n]->[3];
 		while ($chk_data[$sn]->[0] == $chk_data[$n]->[0]){
 			# 同じ文書内の後続をチェックしていく
-			print Jcode->new("\t$sn,$chk_data[$sn]->[0],$chk_data[$sn]->[1],$chk_data[$sn]->[2],$chk_data[$sn]->[3]\n")->sjis if $debug;
+			print "\t$sn,$chk_data[$sn]->[0],$chk_data[$sn]->[1],$chk_data[$sn]->[2],$chk_data[$sn]->[3]\n" if $debug;
 			
 			# 後続が離れすぎていれば中断
 			if (                                                 # 語数

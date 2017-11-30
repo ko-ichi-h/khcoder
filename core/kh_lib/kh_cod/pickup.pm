@@ -30,7 +30,7 @@ sub pick{
 	}
 
 	# 書き出し（テキスト）
-	open (F,">$args{file}") or 
+	open (F, '>:encoding(utf8)', $args{file}) or
 		gui_errormsg->open(
 			thefile => $args{file},
 			type    => 'file'
@@ -41,6 +41,7 @@ sub pick{
 	my $id = 1;
 	my $bun_num = mysql_exec->select("SELECT MAX(id) FROM bun")
 		->hundle->fetch->[0]; # データに含まれる文の数
+	my $spacer = $::project_obj->spacer;
 
 	while ($id <= $bun_num){
 		my $sth = mysql_exec->select(
@@ -58,27 +59,27 @@ sub pick{
 		$id += $records_per_once;
 
 		while (my $i = $sth->fetchrow_hashref){
+			if ( $spacer eq ' ') {
+				$i->{rowtxt} =~ s/ \.$/\./;
+			}
+			
 			if ($i->{bun_id} == 0 && $i->{dan_id} == 0){    # 見出し行
 				if ($last){
 					print F "\n";
 				}
-				print F "$i->{rowtxt}\n" if $args{pick_hi};
+				print F "$i->{rowtxt}\n";
 				$last = 0;
 			} else {
-				if ($last == $i->{dan_id}){     # 同じ段落の続き
-					if (                  # 文単位の場合の特殊処理
-						   ($args{tani} eq 'bun')
-						&! ($last_seq + 1 == $i->{seq})
-					){
-						print F "\n$i->{rowtxt}";
-						print ".";
-					} else {
-						print F "$i->{rowtxt}";
-						print "-";
-					}
+				if (
+					   ($last == $i->{dan_id})
+					&& ($last_seq + 1 == $i->{seq})
+				){                  # 同じ段落の続き
+					print F "\n" if $args{tani} eq 'bun'; # 文単位の場合は文と文とを改行で区切る
+					print F $spacer, $i->{rowtxt};
+					print "-";
 				}
-				else {      # 段落の変わり目
-					print F "\n" if $last;# 直前が見出しでなければ改行付加
+				else {              # 段落の変わり目
+					print F "\n" if $last; # 直前が見出しでなければ改行付加
 					print F "$i->{rowtxt}";
 					$last = $i->{dan_id};
 				}
@@ -91,9 +92,6 @@ sub pick{
 	my $t1 = new Benchmark;                           # 時間計測用
 	print timestr(timediff($t1,$t0)),"\n";            # 時間計測用
 
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($args{file});
-	}
 
 	# 書き出し（外部変数）
 	my $var_file = $args{file};                   # 出力ファイル名
@@ -164,7 +162,8 @@ sub pick{
 			}
 		}
 		
-		open my $fh, '>' ,$var_file or                # ファイルへ書き出し
+		use File::BOM;
+		open my $fh, '>:encoding(utf8):via(File::BOM)' ,$var_file or # ファイルへ書き出し
 			gui_errormsg->open(
 				thefile => $var_file,
 				type    => 'file'
@@ -187,9 +186,6 @@ sub pick{
 			print $fh "$t\n";
 		}
 		close($fh);
-		if ($::config_obj->os eq 'win32'){
-			kh_jchar->to_sjis($var_file);
-		}
 	}
 	
 	return 1;
@@ -200,63 +196,49 @@ sub sql{
 	my %args = @_;
 	
 	my $sql;
-	#if ($args{pick_hi}){
-		$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
-		$sql .= "FROM bun_r, bun\n";
-		unless ($args{tani} eq 'bun'){
-			$sql .= "	LEFT JOIN $args{tani} ON\n";
-			my $flag = 0;
-			foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
-				if ($i eq $args{tani}){ ++$flag;}
-				if ($flag) {
-					if ($flag > 1){
-						$sql .="\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
-					} else {
-						$sql .="\t\t    bun.$i"."_id = $args{tani}.$i"."_id\n";
-					}
-					++$flag;
+	$sql .= "SELECT bun_bak.bun_id, bun_bak.dan_id, rowtxt, bun_bak.id as seq\n";
+	$sql .= "FROM bun_r, bun_bak\n";
+	unless ($args{tani} eq 'bun'){
+		$sql .= "	LEFT JOIN $args{tani} ON\n";
+		my $flag = 0;
+		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
+			if ($i eq $args{tani}){ ++$flag;}
+			if ($flag) {
+				if ($flag > 1){
+					$sql .="\t\tAND bun_bak.$i"."_id = $args{tani}.$i"."_id\n";
+				} else {
+					$sql .="\t\t    bun_bak.$i"."_id = $args{tani}.$i"."_id\n";
 				}
+				++$flag;
 			}
 		}
-		$sql .= "\tLEFT JOIN ct_pickup ON ct_pickup.id = $args{tani}.id\n";
-		$sql .= "WHERE\n";
+	}
+	my $tani_tmp = $args{tani};
+	$tani_tmp .= '_bak' if $tani_tmp eq 'bun';
+	$sql .= "\tLEFT JOIN ct_pickup ON ct_pickup.id = $tani_tmp.id\n";
+	$sql .= "WHERE\n";
+	$sql .= "
+		    bun_bak.id = bun_r.id
+		AND bun_bak.id >= $args{d1}
+		AND bun_bak.id <  $args{d2}
+		";
+
+	if ($args{pick_hi}){
 		$sql .= "
-			    bun.id = bun_r.id
-			AND bun.id >= $args{d1}
-			AND bun.id <  $args{d2}
 			AND (
 				IFNULL(ct_pickup.num,0)
 				OR
 				(
-					    bun.bun_id = 0
-					AND bun.dan_id = 0
-					AND bun.$args{tani}"."_id  = 0
+						bun_bak.bun_id = 0
+					AND bun_bak.dan_id = 0
+					AND bun_bak.$args{tani}"."_id  = 0
 				)
 			)
 		";
-	#} else {
-	#	$sql .= "SELECT bun.bun_id, bun.dan_id, bun_r.rowtxt, bun.id as seq\n";
-	#	if ($args{tani} eq 'bun'){
-	#		$sql .= "FROM bun, bun_r, ct_pickup\n";
-	#	} else {
-	#		$sql .= "FROM bun, bun_r, $args{tani}, ct_pickup\n";
-	#	}
-	#	$sql .= "WHERE\n";
-	#	$sql .= "	    bun.id = bun_r.id\n";
-	#	$sql .= "	AND bun.id >= $args{d1}\n";
-	#	$sql .= "	AND bun.id <  $args{d2}\n";
-	#	$sql .= "	AND ct_pickup.id = $args{tani}.id\n";
-	#	unless ($args{tani} eq 'bun'){
-	#		my $flag = 0;
-	#		foreach my $i ('bun','dan','h5','h4','h3','h2','h1'){
-	#			if ($i eq $args{tani}){$flag=1;}
-	#			if ($flag) {
-	#				$sql .= "\t\tAND bun.$i"."_id = $args{tani}.$i"."_id\n";
-	#			}
-	#		}
-	#	}
-	#}
-	
+	} else {
+		$sql .= "AND IFNULL(ct_pickup.num,0)";
+	}
+
 	return $sql;
 }
 

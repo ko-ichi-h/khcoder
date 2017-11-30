@@ -70,9 +70,9 @@ sub get_header{
 			)->hundle->fetch->[0]
 		){
 			my $sql = "SELECT rowtxt\n";
-			$sql   .= "FROM bun_r, bun\n";
+			$sql   .= "FROM bun_r, bun_bak\n";
 			$sql   .= "WHERE\n";
-			$sql   .= "    bun.id = bun_r.id\n";
+			$sql   .= "    bun_bak.id = bun_r.id\n";
 			$sql   .= "    AND bun_id = 0\n";
 			$sql   .= "    AND dan_id = 0\n";
 			my $frag = 0; my $n = 5;
@@ -86,9 +86,11 @@ sub get_header{
 				--$n;
 			}
 			$sql   .= "LIMIT 1";
-			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			$h = Jcode->new($h)->sjis;
-			$headers .= "$h\n";
+			my $h = mysql_exec->select("$sql",1)->hundle->fetch;
+			if ($h){
+				$h = $h->[0];
+				$headers .= "$h\n";
+			}
 		}
 	}
 	

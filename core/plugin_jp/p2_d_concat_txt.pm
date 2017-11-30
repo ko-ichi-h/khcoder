@@ -1,44 +1,44 @@
 package p2_d_concat_txt;
 use strict;
+use utf8;
 
 #--------------------------#
-#   ¤³¤Î¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
-		name     => '¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë¤Î·ë¹ç',
+		name     => 'ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®çµåˆ',
 		menu_cnf => 0,
-		menu_grp => '¥Ç¡¼¥¿½àÈ÷',
+		menu_grp => 'ãƒ‡ãƒ¼ã‚¿æº–å‚™',
 	};
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»ş¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
-	gui_window::concat_txt->open; # GUI¤òµ¯Æ°
+	gui_window::concat_txt->open; # GUIã‚’èµ·å‹•
 }
 
-
 #-------------------------------#
-#   GUIÁàºî¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó·²   #
+#   GUIæ“ä½œã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³ç¾¤   #
 
 package gui_window::concat_txt;
 use base qw(gui_window);
 use strict;
 use Tk;
 
-# Window¤ÎºîÀ®
+# Windowã®ä½œæˆ
 sub _new{
 	my $self = shift;
 	my $mw = $self->{win_obj};
 
 	$mw->title(
-		$self->gui_jchar('¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë¤Î·ë¹ç','euc')
+		'ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã®çµåˆ'
 	);
 
 	$mw->Label(
-		-text => $self->gui_jchar('»ØÄê¤µ¤ì¤¿¥Õ¥©¥ë¥ÀÆâ¤Î¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë¡Ê*.txt¡Ë¤ò¤¹¤Ù¤Æ·ë¹ç¤·¤Ş¤¹'),
+		-text => 'æŒ‡å®šã•ã‚ŒãŸãƒ•ã‚©ãƒ«ãƒ€å†…ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆ*.txtï¼‰ã‚’ã™ã¹ã¦çµåˆã—ã¾ã™',
 	)->pack(-anchor => 'w');
 
 	my $fra_lab = $mw->LabFrame(
@@ -50,7 +50,7 @@ sub _new{
 		-fill   => 'both'
 	);
 
-	# ¥Õ¥©¥ë¥ÀÍÑ¥Õ¥ì¡¼¥à
+	# ãƒ•ã‚©ãƒ«ãƒ€ç”¨ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra1 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -58,13 +58,13 @@ sub _new{
 	);
 
 	$fra1->Label(
-		-text => $self->gui_jchar('¥Õ¥©¥ë¥À¡§'),
+		-text => 'ãƒ•ã‚©ãƒ«ãƒ€ï¼š',
 	)->pack(
 		-side => 'left',
 	);
 
 	$self->{btn1} = $fra1->Button(
-		-text => $self->gui_jchar('»²¾È'),
+		-text => 'å‚ç…§',
 		-font => 'TKFN',
 		-borderwidth => 1,
 		-command => sub{ $mw->after
@@ -85,7 +85,7 @@ sub _new{
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-	# ¸«½Ğ¤·¥ì¥Ù¥ëÁªÂòÍÑ¥Õ¥ì¡¼¥à
+	# è¦‹å‡ºã—ãƒ¬ãƒ™ãƒ«é¸æŠç”¨ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra2 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -93,7 +93,7 @@ sub _new{
 	);
 
 	$fra2->Label(
-		-text => $self->gui_jchar('¥Õ¥¡¥¤¥ëÌ¾¤Î¸«½Ğ¤·¥ì¥Ù¥ë¡§'),
+		-text => 'ãƒ•ã‚¡ã‚¤ãƒ«åã®è¦‹å‡ºã—ãƒ¬ãƒ™ãƒ«ï¼š',
 	)->pack(
 		-side => 'left',
 	);
@@ -113,17 +113,47 @@ sub _new{
 	);
 	$self->{tani_obj}->set_value('h2');
 
-	# ¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹
+	# æ–‡å­—ã‚³ãƒ¼ãƒ‰é¸æŠç”¨ãƒ•ãƒ¬ãƒ¼ãƒ 
+	my $fra3 = $fra_lab->Frame()->pack(
+		-anchor => 'c',
+		-fill   => 'x',
+		-expand => 'x',
+	);
+
+	$fra3->Label(
+		-text => 'æ–‡å­—ã‚³ãƒ¼ãƒ‰ï¼š',
+	)->pack(
+		-side => 'left',
+	);
+	
+	$self->{icode_obj} = gui_widget::optmenu->open(
+		parent  => $fra3,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['æ—¥æœ¬èªï¼ˆè‡ªå‹•ï¼‰',      'jp_auto' ],
+				['æ—¥æœ¬èªï¼ˆEUCï¼‰',       'eucjp'   ],
+				['æ—¥æœ¬èªï¼ˆShift JISï¼‰', 'cp932'   ],
+				['Unicodeï¼ˆUTF-8ï¼‰',    'utf8'    ],
+				['Latin1',              'latin1'  ],
+				['è‡ªå‹•',                'auto'    ]
+			],
+		variable => \$self->{icode},
+	);
+	$self->{icode_obj}->set_value('jp_auto');
+	
+	
+	# ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 	$self->{if_conv} = 1;
 	$self->{check2} = $fra_lab->Checkbutton(
 		-variable => \$self->{if_conv},
-		-text     => gui_window->gui_jchar('¥Ç¡¼¥¿Æâ¤ÎÈ¾³Ñ»³¥«¥Ã¥³¡Ö<>¡×¤òÁ´³Ñ¤ËÊÑ´¹¤¹¤ë'),
+		-text     => 'ãƒ‡ãƒ¼ã‚¿å†…ã®åŠè§’å±±ã‚«ãƒƒã‚³ã€Œ<>ã€ã‚’ã‚¹ãƒšãƒ¼ã‚¹ã«å¤‰æ›ã™ã‚‹',
 		-font     => "TKFN",
 	)->pack(-anchor => 'w');
 
-	# ¥Ü¥¿¥óÎà¤ÎÇÛÃÖ
+	# ãƒœã‚¿ãƒ³é¡ã®é…ç½®
 	$mw->Button(
-		-text    => $self->gui_jchar('¥­¥ã¥ó¥»¥ë'),
+		-text    => 'ã‚­ãƒ£ãƒ³ã‚»ãƒ«',
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{ $mw->after(10,sub{$self->close;});}
@@ -146,12 +176,12 @@ sub _new{
 sub _get_folder{
 	my $self = shift;
 
-	# UTF8¥Õ¥é¥°¤Ï¤Ä¤¤¤Æ¤¤¤ë¤±¤É¡¢Ãæ¿È¤ÏCP932¤È¤¤¤¦¥Ø¥ó¤Ê¤â¤Î¤¬µ¢¤Ã¤Æ¤¯¤ë¤Î¤Ç¡¢
-	# ½¤Àµ¤·¤Æ¤ª¤¯¡ÊUTF8¥Õ¥é¥°¤òÍî¤È¤·¤Æ¤ª¤¯¡Ë
+	# UTF8ãƒ•ãƒ©ã‚°ã¯ã¤ã„ã¦ã„ã‚‹ã‘ã©ã€ä¸­èº«ã¯CP932ã¨ã„ã†ãƒ˜ãƒ³ãªã‚‚ã®ãŒå¸°ã£ã¦ãã‚‹ã®ã§ã€
+	# ä¿®æ­£ã—ã¦ãŠãï¼ˆUTF8ãƒ•ãƒ©ã‚°ã‚’è½ã¨ã—ã¦ãŠãï¼‰
 	my $path = $self->{win_obj}->chooseDirectory;
-	require Encode;
-	$path = Encode::decode('cp932', "$path");
-	$path = Encode::encode('cp932', $path);
+	use Encode;
+	$path = Encode::decode($::config_obj->os_code, "$path");
+	$path = Encode::encode($::config_obj->os_code, $path);
 	
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
@@ -167,19 +197,19 @@ sub _get_folder{
 sub _exec{
 	my $self = shift;
 	
-	# ¥Õ¥©¥ë¥À¤Î¥Á¥§¥Ã¥¯
+	# ãƒ•ã‚©ãƒ«ãƒ€ã®ãƒã‚§ãƒƒã‚¯
 	my $path = $self->gui_jg_filename_win98( $self->{entry_folder}->get() );
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	unless (-d $path){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => '¥Õ¥©¥ë¥À»ØÄê¤¬ÉÔÀµ¤Ç¤¹',
+			msg  => 'ãƒ•ã‚©ãƒ«ãƒ€æŒ‡å®šãŒä¸æ­£ã§ã™',
 		);
 		return 0;
 	}
 
-	# ÊİÂ¸Àè¤Î»²¾È
+	# ä¿å­˜å…ˆã®å‚ç…§
 	my @types = (
 		[ "text file",[qw/.txt/] ],
 		["All files",'*']
@@ -188,7 +218,7 @@ sub _exec{
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt('Ì¾Á°¤òÉÕ¤±¤Æ·ë¹ç¥Õ¥¡¥¤¥ë¤òÊİÂ¸')
+			$self->gui_jt('åå‰ã‚’ä»˜ã‘ã¦çµåˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜')
 	);
 	unless ($save){
 		return 0;
@@ -198,16 +228,16 @@ sub _exec{
 	$save = $::config_obj->os_path($save);
 
 
-	# ½èÍı¤Î¼Â¹Ô
+	# å‡¦ç†ã®å®Ÿè¡Œ
 	my @files = ();
-	open my $fh, '>', $save or
+	open my $fh, '>:encoding(utf8)', $save or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $save,
 		);
 
 	my $read_each = sub {
-		# ¥Õ¥¡¥¤¥ëÌ¾´Ø·¸
+		# ãƒ•ã‚¡ã‚¤ãƒ«åé–¢ä¿‚
 		return if(-d $File::Find::name);
 		return unless $_ =~ /.+\.txt$/;
 		
@@ -215,49 +245,49 @@ sub _exec{
 		#print "$f, ";
 
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
-		$f_o = Jcode->new($f_o)->euc;
+		$f_o = $::config_obj->uni_path( $f_o );
 		$f_o =~ s/\\/\//g;
 
 		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
 		push @files, "file:$f_o";
 
-		# ÆÉ¤ß¹ş¤ß
-		open (TEMP, $f) or
+		# æ–‡å­—ã‚³ãƒ¼ãƒ‰
+		my $icode = $self->{icode};
+		if ($icode eq 'jp_auto') {
+			$icode = kh_jchar->check_code2($f);
+		}
+		elsif ($icode eq 'auto'){
+			$icode = kh_jchar->check_code_all($f);
+		}
+		
+		# èª­ã¿è¾¼ã¿
+		open (TEMP, "<:encoding($icode)", $f) or
 			gui_errormsg->open(
 				type    => 'file',
 				thefile => $f,
 			);
-		my $t     = '';
-		my $n     = 0;
-		my $icode = '';
 		while ( <TEMP> ){
-			$t .= $_;
-			++$n;
-			if ($n == 1000){
-				$icode = &print_out($t, $icode, $fh, $self->{if_conv});
-				$n = 0;
-				$t = '';
+			if ($self->{if_conv}){
+				$_ =~ tr/<>/  /;
 			}
+			print $fh $_;
 		}
-		&print_out($t,$icode, $fh, $self->{if_conv});
 		close (TEMP);
 		print $fh "\n";
 	};
-
-
 
 	use File::Find;
 	find($read_each, $path);
 	close($fh);
 	$fh = undef;
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($save);
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($save);
+	#}
 
-	# ¥Õ¥¡¥¤¥ëÌ¾¤Î³ÊÇ¼
+	# ãƒ•ã‚¡ã‚¤ãƒ«åã®æ ¼ç´
 	my $names = substr( $save,0, rindex($save,'.txt') );
 	$names .= '_names.txt';
-	open my $fhn, '>', $names or
+	open my $fhn, '>:encoding(utf8)', $names or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $names,
@@ -268,30 +298,6 @@ sub _exec{
 	close ($fhn);
 
 	$self->close;
-}
-
-# ½ñ¤­½Ğ¤·
-sub print_out{
-	my $t       = shift;
-	my $icode   = shift;
-	my $fh      = shift;
-	my $if_conv = shift;
-
-	unless ( length($t) ){
-		print "empty!? ";
-		return 1;
-	}
-	unless ($icode){
-		$icode = Jcode->new($t)->icode;
-		#print "$icode\n";
-	}
-	$t = Jcode->new($t,$icode)->euc;
-	if ($if_conv){
-		$t =~ s/</¡ã/g;
-		$t =~ s/>/¡ä/g;
-	}
-	print $fh $t;
-	return $icode;
 }
 
 sub win_name{

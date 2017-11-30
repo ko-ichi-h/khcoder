@@ -1,29 +1,22 @@
 package gui_window::doc_cls::clara;
 use base qw(gui_window::doc_cls);
 
+use utf8;
+
 sub _calc_exec{
 	my $self = shift;
 
 	my $r_command = $self->{r_command};
 	my $cluster_number = $self->{cluster_number};
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î·ë²Ì¤òÇ¼¤á¤ë¥Õ¥¡¥¤¥ëÌ¾
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®çµæœã‚’ç´ã‚ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
 	my $file_org = $file;
-	my $icode;
-	if ($::config_obj->os eq 'win32'){
-		$file = Jcode->new($file,'sjis')->euc;
-		$file =~ s/\\/\\\\/g;
-	} else {
-		# ¤¿¤Ö¤óÊÑ´¹¤ÏÉÔÍ×
-		#$icode = Jcode::getcode($file);
-		#$file = Jcode->new($file, $icode)->euc unless $icode eq 'euc';
-		#$file =~ s/\\/\\\\/g;
-		#$file = Jcode->new($file,'euc')->$icode unless $icode eq 'ascii';
-	}
+	$file = $::config_obj->uni_path($file);
+	$file =~ s/\\/\\\\/g;
 
-	$r_command .= "n_org <- nrow(d)\n";                     # Ê¬ÀÏÂĞ¾İ¸ì¤ò´Ş¤Ş
-	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ¤Ê¤¤Ê¸½ñ¤ò½ü³°
+	$r_command .= "n_org <- nrow(d)\n";                     # åˆ†æå¯¾è±¡èªã‚’å«ã¾
+	$r_command .= "row.names(d) <- 1:nrow(d)\n";            # ãªã„æ–‡æ›¸ã‚’é™¤å¤–
 	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	
 	#$r_command .= &gui_window::doc_cls::r_command_tfidf;
@@ -31,7 +24,6 @@ sub _calc_exec{
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
 		$r_command .= &gui_window::doc_cls::r_command_tfidf;
 	}
-	
 
 	if ($self->{method_stand} eq 'by_words'){
 		$r_command .= "d <- scale(d)\n";
@@ -42,7 +34,7 @@ sub _calc_exec{
 
 	$r_command .= "d_names <- row.names(d)\n";
 	
-	# ¥¯¥é¥¹¥¿¡¼²½¡ÊR¥³¥Ş¥ó¥É¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–ï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
 	my $r_command_ward;
 	$r_command_ward .= "library(cluster)\n";
 	$r_command_ward .=
@@ -63,27 +55,27 @@ sub _calc_exec{
 	$r_command_ward .= "r <- NULL\n";
 	$r_command_ward .= "r <- cbind(r, q)\n";
 
-	# kh_r_plot¥â¥¸¥å¡¼¥ë¤Ë¤Ï´ğËÜÅª¤ËEUC¤ÎR¥³¥Ş¥ó¥É¤òÅÏ¤¹¤¬¡¢
-	# ¤³¤³¤Ç¤ÏUTF8¥Õ¥é¥°ÉÕ¤­¤òÅÏ¤·¤Æ¤¤¤ë
-	#print
-	#	"is_utf8? ", 
-	#	utf8::is_utf8($r_command),
-	#	utf8::is_utf8($r_command_ward),
-	#	utf8::is_utf8($r_command_height),
-	#	"\n"
-	#;
+	# kh_r_plotãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã«ã¯åŸºæœ¬çš„ã«EUCã®Rã‚³ãƒãƒ³ãƒ‰ã‚’æ¸¡ã™ãŒã€
+	# ã“ã“ã§ã¯UTF8ãƒ•ãƒ©ã‚°ä»˜ãã‚’æ¸¡ã—ã¦ã„ã‚‹
+	print
+		"is_utf8? ", 
+		utf8::is_utf8($r_command),
+		utf8::is_utf8($r_command_ward),
+		utf8::is_utf8($r_command_height),
+		"\n"
+	;
 
 	kh_r_plot->clear_env;
 
-	# ¥¯¥é¥¹¥¿¡¼ÈÖ¹æ¤Î½ñ¤­½Ğ¤·¡ÊR¥³¥Ş¥ó¥É¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç•ªå·ã®æ›¸ãå‡ºã—ï¼ˆRã‚³ãƒãƒ³ãƒ‰ï¼‰
 	#my $r_command_fin = &r_command_fix_r;
 	my $r_command_fin;
 	$r_command_fin .= "colnames(r) <- c(\"_cluster_tmp\")\n";
 	$r_command_fin .= "write.table(r, file=\"$file\", row.names=F, append=F, sep=\"\\t\", quote=F)\n";
 	$r_command_fin .= "print(\"ok\")\n";
 
-	$r_command_fin = Jcode->new($r_command_fin,'euc')->sjis
-		if $::config_obj->os eq 'win32';
+	#$r_command_fin = Jcode->new($r_command_fin,'euc')->sjis
+	#	if $::config_obj->os eq 'win32';
 
 	$::config_obj->R->send(
 		 $r_command
@@ -94,13 +86,12 @@ sub _calc_exec{
 
 	if (
 		   ( $r =~ /error/i )
-		or ( index($r, '¥¨¥é¡¼') > -1 )
-		or ( index($r, Jcode->new('¥¨¥é¡¼','euc')->sjis) > -1 )
+		or ( index($r, 'ã‚¨ãƒ©ãƒ¼') > -1 )
 	) {
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$::main_gui->mw,
-			msg    => kh_msg->get('gui_window::doc_cls->fail')."\n\n".$r # ·×»»¤Ë¼ºÇÔ¤·¤Ş¤·¤¿
+			msg    => kh_msg->get('gui_window::doc_cls->fail')."\n\n".$r # è¨ˆç®—ã«å¤±æ•—ã—ã¾ã—ãŸ
 		);
 		return 0;
 	}
@@ -110,7 +101,7 @@ sub _calc_exec{
 		$::main_gui->get('w_doc_cls_res')->close;
 	}
 
-	# R¤Î·×»»·ë²Ì¤ò³°ÉôÊÑ¿ô¤È¤·¤ÆÆÉ¤ß¹ş¤à
+	# Rã®è¨ˆç®—çµæœã‚’å¤–éƒ¨å¤‰æ•°ã¨ã—ã¦èª­ã¿è¾¼ã‚€
 	foreach my $i (@{mysql_outvar->get_list}){
 		if ($i->[1] eq "_cluster_tmp"){
 			mysql_outvar->delete(name => $i->[1]);

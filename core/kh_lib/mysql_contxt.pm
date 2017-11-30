@@ -67,7 +67,7 @@ sub save{
 	#   データファイルの出力   #
 	
 	my $file_data = $self->data_file;
-	open (DOUT,">$file_data") or 
+	open (DOUT,'>:encoding(utf8)', $file_data) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_data",
@@ -104,7 +104,7 @@ sub save{
 		}
 		# 書き出し
 		my $line =
-			Jcode->new($self->{wName}{$i})->sjis
+			$self->{wName}{$i}
 			.'('
 			."$self->{wNum}{$i}"
 			.'),'

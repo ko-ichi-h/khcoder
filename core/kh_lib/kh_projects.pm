@@ -7,23 +7,27 @@ use DBD::mysql;
 use Jcode;
 
 #--------------------------------------#
-#   �ꥹ���ɤ߹��ߡʥ��󥹥ȥ饯����   #
+#   リスト読み込み（コンストラクタ）   #
 #--------------------------------------#
 
 sub read{
 	my $class = shift;
 	my $self;
-	my $dbh = DBI->connect("DBI:CSV:f_dir=./config");
+	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
+		f_dir      => "./config",
+		f_encoding => "UTF8",
+		csv_eol    => "\n",
+	}) or die;
 	$self->{dbh} = $dbh;
 	bless $self, $class;
 
-	# �ơ��֥뤬¸�ߤ��ʤ����Ϻ���
+	# テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
 	unless (-e $save_file){
 		$self->create_project_list;
 	}
 
-	# �ɤ߹���                                    # euc-->sjis�Ѵ���
+	# 読み込み
 	my $st = $dbh->prepare("SELECT * FROM projects")
 		or die;
 	$st->execute or die;
@@ -31,9 +35,9 @@ sub read{
 	while (my $r = $st->fetchrow_hashref){
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => $::config_obj->os_path($r->{"target"}),
+				target  => $r->{"target"},
 				comment => $r->{"comment"},
-				dbname  => $r->{"dbname"}
+				dbname  => $r->{"dbname"},
 			);
 		++$n;
 	}
@@ -43,7 +47,7 @@ sub read{
 sub create_project_list{
 	my $self = shift;
 	
-	# �ե����뤬¸�ߤ���������
+	# ファイルが存在する場合は中止
 	if (-e $::config_obj->history_file){
 		print
 			"kh_projects::create_project_list: Aborted!\n",
@@ -51,8 +55,8 @@ sub create_project_list{
 		return 0;
 	}
 	
-	# SQL��SELECT�ǥǡ��������äƤ���������
-	my $file_temp = $::config_obj->file_temp;     # ���顼��������
+	# SQLのSELECTでデータが帰ってくる場合も中止
+	my $file_temp = $::config_obj->file_temp;     # エラー出力抑制
 	open (STDERR,">$file_temp");
 	
 	my $st = $self->{dbh}->prepare(
@@ -68,13 +72,13 @@ sub create_project_list{
 		}
 	}
 	
-	close (STDERR);                               # ���顼��������
+	close (STDERR);                               # エラー出力復帰
 	open(STDERR,'>&STDOUT') or die;
 	unlink($file_temp);
 	
-	# �ơ��֥����
+	# テーブル作成
 	print "creating project list... ";
-	$self->dbh->do(                                 # �롼���󲽡�
+	$self->dbh->do(                                 # ルーチン化？
 		"CREATE TABLE projects (
 			target CHAR(225),
 			comment CHAR(225),
@@ -85,74 +89,67 @@ sub create_project_list{
 }
 
 #--------------------#
-#   ������Ͽ����¸   #
+#   新規登録＆保存   #
 #--------------------#
 
 sub add_new{
 	my $self = shift;
 	my $new  = shift;
 
-	# �ץ��������ȡ��ơ��֥뤬¸�ߤ��ʤ����Ϻ���
+	# プロジェクト・テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
 	unless (-e $save_file){
 		$self->create_project_list;
 	}
 
-	# ���˥ե����뤬��Ͽ����Ƥ��ʤ��������å�
+	# 既にファイルが登録されていないかチェック
 	foreach my $i (@{$self->list}){
-		if ($i->file_target eq $new->file_target){
+		if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
 			gui_errormsg->open(
 				type    => 'msg',
-				msg     => kh_msg->get('already_registered') # "�����Υե�����ϴ��˥ץ��������ȤȤ�����Ͽ����Ƥ��ޤ�"
+				msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
 			);
 			return 0;
 		}
 	}
 
-	# MySQL DB������
+	# MySQL DBの整備
 	$new->prepare_db;
-	$new->read_hinshi_setting;
 
-	# print "1: ", $new->file_target, "\n";
-
-	# �ץ��������Ȥ���Ͽ
-	my $sql = 'INSERT INTO projects (target, comment, dbname) VALUES (';
-	$sql .= "'".Jcode->new($new->file_target)->euc."',";
-	if ($new->comment){
-		$sql .= $self->dbh->quote(Jcode->new($new->comment)->euc).",";
-	} else {
-		$sql .= "'no description',";
-		$new->comment('no description');
-	}
-	$sql .= "'".$new->dbname."'";
-	$sql .= ')';
-	#$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
-
-	$new->{comment} = Jcode->new($new->comment)->euc;
+	# プロジェクトを登録
+	my $sth = $self->dbh->prepare(
+		"INSERT INTO projects (target, comment, dbname) VALUES (?,?,?)"
+	);
+	$sth->execute(
+		$::config_obj->uni_path($new->file_target),
+		$new->comment,
+		$new->dbname
+	) or die;
 
 	return 1;
 }
 
 #------------------#
-#   �������Խ�   #
+#   コメント編集   #
 #------------------#
 
 sub edit{
 	my $self = shift;
 	my $edp = $self->a_project($_[0]);
 
-	$edp->comment( Jcode->new($_[1])->euc );
-	$edp->assigned_icode($_[2]);
+	$edp->lang_method($_[2], $_[3]);
 
-	my $file    = Jcode->new($edp->file_target)->euc;
-	my $comment = Jcode->new($edp->comment    )->euc;
+	$edp->comment( $_[1] );
+
+
+	my $file    = $edp->file_target;
+	my $comment = $edp->comment;
 
 	my $sql = "UPDATE projects SET comment=";
 	if (length($edp->comment)){
 		$sql .= $self->dbh->quote($comment);
 	} else {
-		$sql .= 'undef';
+		$sql .= '\'\'';
 	}
 	$sql .= " WHERE target = ";
 	$sql .= "'".$file."'";
@@ -160,22 +157,26 @@ sub edit{
 }
 
 #----------#
-#   ���   #
+#   削除   #
 #----------#
 
 sub delete{
 	my $self = shift;
 	my $del = $self->a_project($_[0]);
 
-	my $sql = "DELETE FROM projects WHERE target = ";
-	$sql .= "'".$del->file_target."'";
-	$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
-
-	# ����Ȣ�ơ��֥뤬¸�ߤ��ʤ����Ϻ��� 
+	my $sth = $self->dbh->prepare(
+		"DELETE FROM projects WHERE target = ?"
+	);
+	$sth->execute(
+		$del->file_target
+	) or die;
+	undef $sth;
+	
+	
+	# ゴミ箱テーブルが存在しない場合は作成 
 	my $save_file = $::config_obj->history_trush_file;
 	unless (-e $save_file){
-		$self->dbh->do(                                 # �롼���󲽡�
+		$self->dbh->do(                                 # ルーチン化？
 			"CREATE TABLE projects_trush (
 				target CHAR(225),
 				comment CHAR(225),
@@ -184,27 +185,29 @@ sub delete{
 		) or die;
 	}
 
-	# ����Ȣ�ơ��֥���ɲ�
-	$sql = 'INSERT INTO projects_trush (target, comment, dbname) VALUES (';
-	$sql .= "'".$del->file_target."',";
-	if ($del->comment){
-		$sql .= "'".$del->comment."',";
-	} else {
-		$sql .= "undef,";
-	}
-	$sql .= "'".$del->dbname."'";
-	$sql .= ')';
-	$sql = Jcode->new($sql)->euc;
-	$self->dbh->do($sql) or die;
+	# ゴミ箱テーブルに追加
+	$sth = $self->dbh->prepare(
+		"INSERT INTO projects_trush (target, comment, dbname) VALUES (?,?,?)"
+	);
+	$sth->execute(
+		$del->file_target,
+		$del->comment,
+		$del->dbname
+	) or die;
 	
-	# MySQL DB����
+	# Delete MySQL DB
 	mysql_exec->drop_db($del->dbname);
+	
+	# Delete Working folder
+	use File::Path qw(remove_tree);
+	remove_tree( $del->dir_CoderData );
+	#print "removed: ".$del->dir_CoderData."\n";
 }
 
 
 
 #--------------#
-#   ��������   #
+#   アクセサ   #
 #--------------#
 sub a_project{
 	my $self = shift;
@@ -229,7 +232,7 @@ sub list{
 
 1;
 __END__
-�ץ��������ȥꥹ�Ȥ�
-	���ɤ߹��� �ʤ��٤�kh_project->temp��
-	���Խ�
-	����¸
+プロジェクトリストの
+	・読み込み （すべてkh_project->temp）
+	・編集
+	・保存

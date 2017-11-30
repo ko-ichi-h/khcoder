@@ -1,5 +1,6 @@
 package gui_window::cls_height::doc;
 use strict;
+use utf8;
 use base qw(gui_window::cls_height);
 
 use File::Copy;
@@ -9,26 +10,26 @@ sub _save{
 	my $path = shift;
 	
 	if ($path =~ /\.r$/){
-		# tmp¥Õ¥¡¥¤¥ëÌ¾¼èÆÀ
+		# tmpãƒ•ã‚¡ã‚¤ãƒ«åå–å¾—
 		my $file_tmp = '';
 		if (
 			$self->{plots}{$self->{type}}{$self->{range}}->{command_f}
-			=~ /read.csv\("(.+?)"\)\n/
+			=~ /read.csv\("(.+?)"/
 		) {
 			$file_tmp = $1;
 			$file_tmp =~ s/\\\\/\\/g;
+			$file_tmp = $::config_obj->os_path($file_tmp);
 		}
 
-		# tmp¥Õ¥¡¥¤¥ë¤òÊİÂ¸ÍÑ¤Ë¥³¥Ô¡¼
+		# tmpãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ç”¨ã«ã‚³ãƒ”ãƒ¼
 		my $file_csv = $path.'.csv';
 		if (-e $file_csv){
-			my $msg = Jcode->new($file_csv)->euc;
 			my $ans = $self->win_obj->messageBox(
 				-message => $self->gui_jchar
 					(
-					   kh_msg->get('overwr') # ¤³¤Î¥Õ¥¡¥¤¥ë¤ò¾å½ñ¤­¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡§
+					   kh_msg->get('overwr') # ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¸Šæ›¸ãã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼š
 					   ."\n"
-					   ."$file_csv"
+					   .$::config_obj->uni_path($file_csv)
 					),
 				-icon    => 'question',
 				-type    => 'OKCancel',
@@ -43,16 +44,15 @@ sub _save{
 				file => $file_csv,
 			);
 
-		# r¥³¥Ş¥ó¥É¤ÎÊÑ¹¹
+		# rã‚³ãƒãƒ³ãƒ‰ã®å¤‰æ›´
+		$file_csv = $::config_obj->uni_path($file_csv);
 		if ($::config_obj->os eq 'win32'){
-			$file_csv = Jcode->new($file_csv)->euc;
 			$file_csv =~ s/\\/\\\\/g;
-			$file_csv = Jcode->new($file_csv,'euc')->sjis;
 		}
 		$self->{plots}{$self->{type}}{$self->{range}}->{command_f}
-			=~ s/^.+read.csv\(".+?"\)\n/\n/;
+			=~ s/^.+read.csv\(.+?\)\n/\n/;
 		$self->{plots}{$self->{type}}{$self->{range}}->{command_f} =
-			'd <- read.csv("'.$file_csv.'")'."\n"
+			'd <- read.csv("'.$file_csv.'",fileEncoding="UTF-8-BOM")'."\n"
 			.$self->{plots}{$self->{type}}{$self->{range}}->{command_f};
 	}
 	
@@ -61,7 +61,7 @@ sub _save{
 
 sub win_title{
 	my $self = shift;
-	return $self->gui_jt(kh_msg->get('win_title')); # Ê¸½ñ¤Î¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¡§Ê»¹ç¿å½à','euc
+	return $self->gui_jt(kh_msg->get('win_title')); # æ–‡æ›¸ã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æï¼šä½µåˆæ°´æº–
 }
 
 sub win_name{

@@ -13,6 +13,8 @@ if (eval 'require Encode::EUCJPMS'){
 }
 
 use strict;
+use utf8;
+
 use Tk;
 use Tk::ErrorDialog;
 use Tk::LabFrame;
@@ -113,7 +115,7 @@ sub open{
 		$self->{win_obj}->focus;
 		$self->start_raise;
 	} else {
-		# Window¥ª¡¼¥×¥ó
+		# Windowã‚ªãƒ¼ãƒ—ãƒ³
 		if ($self->win_name eq 'main_window'){
 			$self->{win_obj} = MainWindow->new;
 		} else {
@@ -122,11 +124,12 @@ sub open{
 			$self->position_icon(@_);
 		}
 
-		# Window¤ÎÃæ¿ÈºîÀ®
+		# Windowã®ä¸­èº«ä½œæˆ
 		$self = $self->_new(@_);
+		return 0 unless $self;
 		$::main_gui->opened($self->win_name,$self);
 
-		# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+		# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 		$self->win_obj->bind(
 			'<Control-Key-q>',
 			sub{ $self->close; }
@@ -137,7 +140,7 @@ sub open{
 		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
-		# ¥á¥¤¥óWindows¤ØÌá¤ë¤¿¤á¤Î¥­¡¼¡¦¥Ğ¥¤¥ó¥É
+		# ãƒ¡ã‚¤ãƒ³Windowsã¸æˆ»ã‚‹ãŸã‚ã®ã‚­ãƒ¼ãƒ»ãƒã‚¤ãƒ³ãƒ‰
 		$self->win_obj->bind(
 			'<Alt-Key-m>',
 			sub { $::main_gui->{main_window}->win_obj->focus; }
@@ -147,7 +150,7 @@ sub open{
 			sub { $::main_gui->{main_window}->win_obj->focus; }
 		);
 
-		# ÆÃ¼ì½èÍı¤ËÂĞ±ş
+		# ç‰¹æ®Šå‡¦ç†ã«å¯¾å¿œ
 		$self->start;
 
 		$self->check_viewable;
@@ -156,15 +159,15 @@ sub open{
 	return $self;
 }
 
-# Window°ÌÃÖ¤Î¥Á¥§¥Ã¥¯¡Ê¥¹¥¯¥ê¡¼¥ó¤ò¤Ï¤ß½Ğ¤·¤Æ¤¤¤Ê¤¤¤«¡Ë
+# Windowä½ç½®ã®ãƒã‚§ãƒƒã‚¯ï¼ˆã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚’ã¯ã¿å‡ºã—ã¦ã„ãªã„ã‹ï¼‰
 sub check_viewable{
 	my $self = shift;
 
 	my $g = $::config_obj->win_gmtry($self->win_name);
 	if (
-		   $g
-		&! $self->{no_geometry}        # °ÌÃÖ¤òÆÉ¤ß¹ş¤ó¤Ç¤¤¤Æ
-		&& $::config_obj->os eq 'win32'     # ¤Ê¤ª¤«¤ÄWindows¤Ç
+		   defined($g) && length($g)        # ä½ç½®ã‚’èª­ã¿è¾¼ã‚“ã§ã„ã¦
+		&! $self->{no_geometry}
+		&& $::config_obj->os eq 'win32'     # ãªãŠã‹ã¤Windowsã§
 		&& $::config_obj->win32_monitor_chk == 0
 	) {
 		$::config_obj->win32_monitor_chk(1);
@@ -222,13 +225,13 @@ sub position_icon{
 	my %arg = @_;
 	$self->{no_geometry} = $arg{no_geometry};
 	
-	# Window¥µ¥¤¥º¤È°ÌÃÖ¤Î»ØÄê
+	# Windowã‚µã‚¤ã‚ºã¨ä½ç½®ã®æŒ‡å®š
 	my $g = $::config_obj->win_gmtry($self->win_name);
 	if ($g and not $self->{no_geometry}){
 		$self->win_obj->geometry($g);
 	}
 
-	# Window¥¢¥¤¥³¥ó¤Î¥»¥Ã¥È
+	# Windowã‚¢ã‚¤ã‚³ãƒ³ã®ã‚»ãƒƒãƒˆ
 	if ( $::config_obj->os eq 'win32' ) {
 		if ( eval 'require Tk::Icon' ){
 			require Tk::Icon;
@@ -256,9 +259,9 @@ sub position_icon{
 
 sub close{
 	my $self = shift;
-	$self->end; # ÆÃ¼ì½èÍı¤ËÂĞ±ş
+	$self->end; # ç‰¹æ®Šå‡¦ç†ã«å¯¾å¿œ
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
-	$::config_obj->save_ini;
+	#$::config_obj->save_ini;
 	$self->win_obj->destroy;
 	$::main_gui->closed($self->win_name);
 	undef $self;
@@ -267,7 +270,7 @@ sub close{
 sub withd{
 	my $self = shift;
 	$::config_obj->win_gmtry($self->win_name,$self->win_obj->geometry);
-	$::config_obj->save_ini;
+	#$::config_obj->save_ini;
 	$self->{win_obj}->withdraw;
 }
 
@@ -290,175 +293,107 @@ sub start_raise{
 
 
 #--------------------------#
-#   ÆüËÜ¸ìÉ½¼¨¡¦ÆşÎÏ´Ø·¸   #
+#   æ—¥æœ¬èªè¡¨ç¤ºãƒ»å…¥åŠ›é–¢ä¿‚   #
 #--------------------------#
 
-sub gui_jchar{ # GUIÉ½¼¨ÍÑ¤ÎÆüËÜ¸ì
+sub gui_jchar{ # GUIè¡¨ç¤ºç”¨ã®æ—¥æœ¬èª
 	my $char = $_[1];
 	my $code = $_[2];
-	
-	if ( $] > 5.008 ) {
-		if ( utf8::is_utf8($char) ){
-			print "already decoded: ", Encode::encode($char_code{sjis},$char), "\n"
-				if $debug;
-			return $char;
-		}
-		
-		$code = Jcode->new($char)->icode unless $code;
-		# print "$char : $code\n";
-		$code = $char_code{euc}  if $code eq 'euc';
-		$code = $char_code{sjis} if $code eq 'sjis';
-		$code = $char_code{sjis} if $code eq 'shiftjis';
-		$code = $char_code{euc}  unless length($code);
-		return Encode::decode($code,$char);
-	} else {
-		if (defined($code) && $code eq 'sjis'){
-			return $char;
-		} else {
-			# UTF-8¥Õ¥é¥°¤òÍî¤È¤µ¤Ê¤¤¤ÈÊ¸»ú²½¤±¡©
-			if (Jcode->new($char)->icode eq 'utf8'){
-				use Unicode::String qw(utf8);
-				$char = utf8($char)->as_string;
-			}
 
-			return Jcode->new($char,$code)->sjis;
-		}
+	if ( utf8::is_utf8($char) ){
+		print "already decoded: $char\n"
+			if $debug;
+		return $char;
 	}
-}
 
-sub gui_jm{ # ¥á¥Ë¥å¡¼¤Î¥È¥Ã¥×ÉôÊ¬ÍÑÆüËÜ¸ì
-	my $char = $_[1];
-	my $code = $_[2];
-	
-	if (
-		$] > 5.008
-		&& (
-			$::config_obj->os eq 'linux'
-			|| ( $Tk::VERSION >= 804.029 && Win32::IsWinNT() )
-		)
-	) {
-		if (utf8::is_utf8($char)){
-			return $char;
-		} else {
-			$code = Jcode->new($char)->icode unless $code;
-			$code = $char_code{euc}  if $code eq 'euc';
-			$code = $char_code{sjis} if $code eq 'sjis';
-			return Encode::decode($code,$char);
-		}
+	$code = Jcode->new($char)->icode unless $code;
+	# print "$char : $code\n";
+	$code = $char_code{euc}  if $code eq 'euc';
+	$code = $char_code{sjis} if $code eq 'sjis';
+	$code = $char_code{sjis} if $code eq 'shiftjis';
+	$code = $char_code{euc}  unless length($code);
+	$char = Encode::decode($code,$char);
+
+	if ( $char =~ /[[:^ascii:]]/ ){
+		my ($package, $filename, $line) = caller;
+		print "Warn: Non-decoded string: $char,\n\t$code,\n\t$package, $filename, $line\n";
 	}
-	elsif ($] > 5.008){
-		return Jcode->new($char,$code)->sjis;
-	} else {
-		if (defined($code) && $code eq 'sjis'){
-			return $char;
-		} else {
-			return Jcode->new($char,$code)->sjis;
-		}
-	}
-}
 
-sub gui_jt{ # Window¥¿¥¤¥È¥ëÉôÊ¬¤ÎÆüËÜ¸ì ¡ÊWin9x & Perl/Tk 804ÍÑ¤ÎÆÃ¼ì½èÍı¡Ë
-	my $char = $_[1];
-	my $code = $_[2];
-	$code = '' unless defined($code);
-	
-	if ( $] > 5.008 ) {
-		$code = Jcode->new($char)->icode unless $code;
-		# print "$char : $code\n";
-		$code = $char_code{euc}  if $code eq 'euc';
-		$code = $char_code{sjis} if $code eq 'sjis';
-		$code = $char_code{sjis} if $code eq 'shiftjis';
-		$code = $char_code{euc}  unless length($code);
-		if ( ( $^O eq 'MSWin32' ) and not ( Win32::IsWinNT() ) ){
-			if ($code eq 'sjis'){
-				return $char;
-			} else {
-				return Jcode->new($char,$code)->sjis;
-			}
-		} else {
-			if (utf8::is_utf8($char)){
-				return $char;
-			} else {
-				return Encode::decode($code,$char);
-			}
-		}
-	} else {
-		if ($code eq 'sjis'){
-			return $char;
-		} else {
-			# UTF-8¥Õ¥é¥°¤òÍî¤È¤µ¤Ê¤¤¤ÈÊ¸»ú²½¤±¡©
-			if (Jcode->new($char)->icode eq 'utf8'){
-				use Unicode::String qw(utf8);
-				$char = utf8($char)->as_string;
-			}
-
-			return Jcode->new($char,$code)->sjis;
-		}
-	}
-}
-
-
-sub gui_jg_filename_win98{ # Á´³ÑÊ¸»ú¤ò´Ş¤à¥Ñ¥¹¤Î½èÍı ¡ÊWin9x & Perl/Tk 804ÍÑ¤ÎÆÃ¼ì½èÍı¡Ë
-	my $char = $_[1];
-	
-	if (
-		    ( $] > 5.008 )
-		and ( $^O eq 'MSWin32' )
-		and not ( Win32::IsWinNT() )
-	){
-		$char =~ s/\//\\/g;
-		$char = Encode::decode($char_code{sjis},$char);
-		$char = Encode::encode($char_code{sjis},$char);
-	}
-	
 	return $char;
+
 }
 
-sub gui_jg{ # ÆşÎÏ¤µ¤ì¤¿Ê¸»úÎó¤ÎÊÑ´¹
+*gui_window::gui_jm = *gui_window::gui_jt = \&gui_window::gui_jchar;
+
+sub gui_jg_filename_win98{
+	return $_[1];
+}
+
+sub gui_jg{ # å…¥åŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã®å¤‰æ›
 	my $char       = $_[1];
 	my $reserve_rn = $_[2];
-	
-	if ($] > 5.008){
-		if ( utf8::is_utf8($char) ){
-			#print "utf8\n";
-			unless ( $reserve_rn ){ # ATOKÂĞºö
-				$char =~ s/\x0D|\x0A//g;
-			}
-			if ($^O eq 'darwin'){   # Mac OS X
-				$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
-				return Jcode->new($char,'utf8')->sjis;
-			}
-			return Encode::encode($char_code{sjis},$char);
-		} else {
-			#print "not utf8\n";
-			return $char;
+
+	if ( utf8::is_utf8($char) ){
+		#print "utf8\n";
+		unless ( $reserve_rn ){ # ATOKå¯¾ç­–
+			$char =~ s/\x0D|\x0A//go;
 		}
+		#if ($^O eq 'darwin'){   # Mac OS X
+		#	$char = Text::Iconv->new('UTF-8-MAC','UTF-8')->convert($char);
+		#	return $char;
+		#}
+		return $char;
 	} else {
+		#warn "No utf8 flag: $char\n";
 		return $char;
 	}
 }
 
-sub to_clip{ # ¥¯¥ê¥Ã¥×¥Ü¡¼¥É¤Ø¥³¥Ô¡¼¤¹¤ë¤¿¤á¤ÎÊÑ´¹
+sub gui_jgn{ # å…¥åŠ›ã•ã‚ŒãŸæ•°å€¤ã®å¤‰æ›
+	my $char       = $_[1];
+	my $reserve_rn = $_[2];
+
+	if ( utf8::is_utf8($char) ){
+		#print "utf8\n";
+		unless ( $reserve_rn ){ # ATOKå¯¾ç­–
+			$char =~ s/\x0D|\x0A//g;
+		}
+		$char =~ tr/ï¼-ï¼™/0-9/;
+		$char =~ s/[[:cntrl:]]|\s//g;
+		return $char;
+	} else {
+		#warn "No utf8 flag: $char\n";
+		unless ( $reserve_rn ){ # ATOKå¯¾ç­–
+			$char =~ s/\x0D|\x0A//g;
+		}
+		return $char;
+	}
+}
+
+sub to_clip{ # ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ã¸ã‚³ãƒ”ãƒ¼ã™ã‚‹ãŸã‚ã®å¤‰æ›
 	my $char = $_[1];
 	
-	unless ( utf8::is_utf8($char) ){
+	if ( $char =~ /[[:^ascii:]]/ and not utf8::is_utf8($char) ){
+
+		my ($package, $filename, $line) = caller;
+		print "to_clip Warn: Non-decoded string: $char,\n\t$package, $filename, $line\n";
+
 		$char = Jcode->new($char)->utf8;
-		$char = Encode::decode('UTF8',$char);
+		$char = Encode::decode('UTF-8',$char);
 	}
-	
+
 	return $char;
 }
 
 #----------------#
-#   ¶¦ÄÌ¤Î½èÍı   #
+#   å…±é€šã®å‡¦ç†   #
 #----------------#
 
 sub check_entry_input{
 	my $char = $_[1];
-	# ËöÈø¤Ë²ş¹ÔÊ¸»ú¤¬Æş¤Ã¤Æ¤¤¤ì¤Ğºï½ü¡Ê¼ç¤ËExcel¤«¤é¤Î¥³¥Ô¥ÚÂĞºö¡Ë
-	if ($char =~ /^([^\n]+)\n\Z/){
-		$char = $1;
-	}
+	# æ”¹è¡Œæ–‡å­—ãŒå…¥ã£ã¦ã„ã‚Œã°å‰Šé™¤ï¼ˆExcelã‹ã‚‰ã®ã‚³ãƒ”ãƒšã‚„Atokã«å¯¾å¿œï¼‰
+	$char =~ s/\x0D|\x0A//g;
+	
 	return $char;
 }
 

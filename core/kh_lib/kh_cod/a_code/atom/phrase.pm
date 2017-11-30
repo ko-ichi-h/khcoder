@@ -176,9 +176,8 @@ sub ready{
 		$w2hyoso{$i} = $list->hyoso_id_s;
 		$list = $list->genkei_ids;
 		unless ( $w2hyoso{$i} ){
-			print Jcode->new(
-				"no such word in the text: \"".$self->raw."\"\n"
-			)->sjis;
+			print 
+				"no such word in the text: \"".$self->raw."\"\n";
 			return '';
 		}
 		@hyosos = (@hyosos ,@{$w2hyoso{$i}});

@@ -1,6 +1,8 @@
 package plotR::som;
 
 use strict;
+use utf8;
+
 use kh_r_plot;
 use plotR::network;
 
@@ -16,13 +18,13 @@ sub new{
 	my $r_command = $args{r_command};
 	$args{font_bold} += 1;
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡ÊSOM¡Ë
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆSOMï¼‰
 	my $param0 = "\n";
 	$param0 .= "n_nodes <- $args{n_nodes}\n";
 	$param0 .= "rlen1 <- $args{rlen1}\n";
 	$param0 .= "rlen2 <- $args{rlen2}\n";
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡ÊÉÁ²è¡Ë
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆæç”»ï¼‰
 	my $param1 = "\n";
 	#$param1 .= "cex <- $args{font_size}\n";
 	$param1 .= "cex <- 1\n";
@@ -39,9 +41,8 @@ sub new{
 	$param1 .= "# rlen1 <- $args{rlen1}\n";
 	$param1 .= "# rlen2 <- $args{rlen2}\n";
 
-	# ¼«¸ÊÁÈ¿¥²½¥Ş¥Ã¥×¤òÊİÂ¸¤¹¤ë¥Õ¥¡¥¤¥ëÌ¾
-	use Cwd;
-	my $file_save = cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
+	# è‡ªå·±çµ„ç¹”åŒ–ãƒãƒƒãƒ—ã‚’ä¿å­˜ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«å
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
 	
 	#my $file_save = $::project_obj->file_datadir;
 	#$file_save .= '_'.$args{plotwin_name};
@@ -51,13 +52,13 @@ sub new{
 	#$file_save = Jcode->new($file_save,'euc')->$icode unless $icode eq 'ascii';
 	#print "icode: $icode\nfile: $file_save\n";
 
-	# ¼«¸ÊÁÈ¿¥²½¥Ş¥Ã¥×¤Î¼Â¹Ô
+	# è‡ªå·±çµ„ç¹”åŒ–ãƒãƒƒãƒ—ã®å®Ÿè¡Œ
 	unless ($args{reuse}){
 		if ( -e $file_save ){
 			unlink $file_save;
 		}
 		my $r_data = $r_command;
-		$r_data = Jcode->new($r_data)->sjis if $::config_obj->os eq 'win32';
+		#$r_data = Jcode->new($r_data)->sjis if $::config_obj->os eq 'win32';
 		
 		my $p0_r = $self->r_cmd_p0_hx;
 		$::config_obj->R->send(
@@ -67,14 +68,14 @@ sub new{
 		);
 		print $::config_obj->R->read();
 
-		# ¼«¸ÊÁÈ¿¥²½¥Ş¥Ã¥×¤ÎÊİÂ¸
+		# è‡ªå·±çµ„ç¹”åŒ–ãƒãƒƒãƒ—ã®ä¿å­˜
 		$::config_obj->R->send(
-			"save(word_labs,n_nodes,somm, file=\"$file_save\" )\n"
+			"save(word_labs,n_nodes,somm, file=\"".$::config_obj->uni_path($file_save)."\" )\n"
 		);
 		print $::config_obj->R->read();
 		
 		my $file_save_s = $file_save.'_s';
-		open (my $fh, '>', $file_save_s)
+		open (my $fh, '>:encoding(utf8)', $file_save_s)
 			or gui_errormsg->open(
 				type    => 'file',
 				thefile => $file_save_s,
@@ -88,8 +89,8 @@ sub new{
 		close $fh;
 	}
 
-	# ¥³¥Ş¥ó¥É¤Î½àÈ÷
-	my $p0_a = Jcode->new( "load(\"$file_save\")\n" )->euc;
+	# ã‚³ãƒãƒ³ãƒ‰ã®æº–å‚™
+	my $p0_a = "load(\"".$::config_obj->uni_path($file_save)."\")\n";
 	if ($args{r_command} =~ /# dpi: short based\n/){
 		$p0_a .= "# dpi: short based\n";
 	}
@@ -99,9 +100,8 @@ sub new{
 	my $p1 = $self->r_cmd_p1_hx;
 	my $p2 = $self->r_cmd_p2_hx;
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	my @plots = ();
-	my $flg_error = 0;
 
 	my $com_a = '';
 
@@ -116,7 +116,8 @@ sub new{
 			width     => $args{plot_size},
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		);
+		return 0 unless $plots[$#plots];
 		$com_a = "plot_mode <- \"gray\"\n".$p2;
 	}
 	
@@ -132,7 +133,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 
 	push @plots, kh_r_plot->new(
@@ -148,7 +150,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 	push @plots, kh_r_plot->new(
 		name      => $args{plotwin_name}.'_4',
@@ -163,7 +166,8 @@ sub new{
 		width     => $args{plot_size},
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	);
+	return 0 unless $plots[$#plots];
 
 	$::config_obj->R->send("print( summary(somm) )");
 	my $t = $::config_obj->R->read;
@@ -175,14 +179,20 @@ sub new{
 	print "$t\n";
 	print "---------------------------------------------------------[R]\n";
 
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
+
 	kh_r_plot->clear_env;
 	undef $self;
 	undef %args;
 	$self->{result_plots} = \@plots;
+	$self->{coord} = $csv;
 	#$self->{result_info} = $info;
 	#$self->{result_info_long} = $info_long;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 
@@ -221,7 +231,7 @@ n_words <- length(word_labs)
 sub r_cmd_p1_hx{
 	return '
 
-# ³Ê»Ò¤ÎºÂÉ¸¤ò¼èÆÀ
+# æ ¼å­ã®åº§æ¨™ã‚’å–å¾—
 row2coods <- NULL
 eve <- 0
 for (i in 0:(n_nodes - 1)){
@@ -236,7 +246,7 @@ for (i in 0:(n_nodes - 1)){
 }
 row2coods <- matrix( row2coods, byrow=T, ncol=2  )
 
-# ³Ê»Ò¤Î¥¯¥é¥¹¥¿¡¼²½
+# æ ¼å­ã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åŒ–
 if ( if_cls == 1 ){
 	library( RColorBrewer )
 
@@ -259,7 +269,7 @@ if ( if_cls == 1 ){
 		colors <- pastel[cutree(hcl,k=n_cls)]
 	}
 	if (n_cls > 9) {
-		# ¿§¤Î½çÈÖ¤ò·èÄê
+		# è‰²ã®é †ç•ªã‚’æ±ºå®š
 		library(colorspace)
 		new_col <- order( runif(n_cls) )
 		colors <-
@@ -283,10 +293,10 @@ sub r_cmd_p2_hx{
 
 return 
 '
-# ¥×¥í¥Ã¥È¤Î¼Â¹Ô
+# ãƒ—ãƒ­ãƒƒãƒˆã®å®Ÿè¡Œ
 par(mai=c(0,0,0,0), mar=c(0,0,0,0), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 
-plot(                                             # ½é´ü²½
+plot(                                             # åˆæœŸåŒ–
 	NULL,NULL,
 	xlim=c(0,n_nodes-0.5),
 	ylim=c(0,n_nodes-1),
@@ -294,7 +304,7 @@ plot(                                             # ½é´ü²½
 	frame.plot=F
 )
 
-if (if_plothex == 1){                             # ³Ê»Ò¤Î¿§
+if (if_plothex == 1){                             # æ ¼å­ã®è‰²
 	a <- 0.333333333333
 } else {
 	a <- 0.5
@@ -304,7 +314,7 @@ b <- 1-a
 color_pte <- "gray70"
 cls_lwd   <- 2
 
-if ( plot_mode == "gray"){                        # ³Æ¥«¥é¡¼¥â¡¼¥É¤Ø¤ÎÂĞ±ş
+if ( plot_mode == "gray"){                        # å„ã‚«ãƒ©ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¸ã®å¯¾å¿œ
 	color_act  <- rep("white",n_nodes^2)
 	if_points  <- 1
 	w_lwd      <- 1
@@ -348,7 +358,7 @@ if ( plot_mode == "freq" ){
 }
 if ( plot_mode == "umat" ){
 	
-	# µ÷Î¥·×»»
+	# è·é›¢è¨ˆç®—
 	dist_u <- NULL
 	
 	dist_m <- as.matrix( dist(somm$code, method="euclid") )
@@ -358,7 +368,7 @@ if ( plot_mode == "umat" ){
 			cu <- NULL
 			n  <- 0
 			
-			if (h != n_nodes -1){       # ±¦
+			if (h != n_nodes -1){       # å³
 				cu <- c(
 					cu, 
 					dist_m[
@@ -368,7 +378,7 @@ if ( plot_mode == "umat" ){
 				)
 			}
 			
-			if (h != 0){                # º¸
+			if (h != 0){                # å·¦
 				cu <- c(
 					cu,
 					dist_m[
@@ -379,7 +389,7 @@ if ( plot_mode == "umat" ){
 			}
 			
 			if (i != n_nodes - 1){
-				if (h %% 2 == 0){       # ±¦¾å¡Ê¶ö¿ô¡Ë
+				if (h %% 2 == 0){       # å³ä¸Šï¼ˆå¶æ•°ï¼‰
 					cu <- c(
 						cu,
 						dist_m[
@@ -387,7 +397,7 @@ if ( plot_mode == "umat" ){
 							h + ( i + 1 ) * n_nodes + 1
 						]
 					)
-				} else {                # ±¦¾å¡Ê´ñ¿ô¡Ë
+				} else {                # å³ä¸Šï¼ˆå¥‡æ•°ï¼‰
 					if (h != n_nodes -1){
 						cu <- c(
 							cu,
@@ -401,7 +411,7 @@ if ( plot_mode == "umat" ){
 			}
 			
 			if (i != 0){
-				if (h %% 2 == 0){       # ±¦²¼¡Ê¶ö¿ô¡Ë
+				if (h %% 2 == 0){       # å³ä¸‹ï¼ˆå¶æ•°ï¼‰
 					cu <- c(
 						cu,
 						dist_m[
@@ -409,7 +419,7 @@ if ( plot_mode == "umat" ){
 							h + ( i - 1 ) * n_nodes + 1
 						]
 					)
-				} else {                # ±¦²¼¡Ê´ñ¿ô¡Ë
+				} else {                # å³ä¸‹ï¼ˆå¥‡æ•°ï¼‰
 					if (h != n_nodes -1){
 						cu <- c(
 							cu,
@@ -423,7 +433,7 @@ if ( plot_mode == "umat" ){
 			}
 			
 			if (i != n_nodes - 1){
-				if (h %% 2 == 0){       # º¸¾å¡Ê¶ö¿ô¡Ë
+				if (h %% 2 == 0){       # å·¦ä¸Šï¼ˆå¶æ•°ï¼‰
 					if (h != 0){
 						cu <- c(
 							cu,
@@ -433,7 +443,7 @@ if ( plot_mode == "umat" ){
 							]
 						)
 					}
-				} else {                # º¸¾å¡Ê´ñ¿ô¡Ë
+				} else {                # å·¦ä¸Šï¼ˆå¥‡æ•°ï¼‰
 					cu <- c(
 						cu,
 						dist_m[
@@ -445,7 +455,7 @@ if ( plot_mode == "umat" ){
 			}
 			
 			if (i != 0){
-				if (h %% 2 == 0){       # º¸²¼¡Ê¶ö¿ô¡Ë
+				if (h %% 2 == 0){       # å·¦ä¸‹ï¼ˆå¶æ•°ï¼‰
 					if (h != 0){
 						cu <- c(
 							cu,
@@ -455,7 +465,7 @@ if ( plot_mode == "umat" ){
 							]
 						)
 					}
-				} else {                # º¸²¼¡Ê´ñ¿ô¡Ë
+				} else {                # å·¦ä¸‹ï¼ˆå¥‡æ•°ï¼‰
 					cu <- c(
 						cu,
 						dist_m[
@@ -473,17 +483,39 @@ if ( plot_mode == "umat" ){
 	
 	dist_u <- dist_u - min(dist_u)
 	dist_u <- round( dist_u / max(dist_u) * 100 ) + 1
-	color_act <- cm.colors(101)[dist_u]
 	
-	color_line <- "gray70"
+	if (color_universal_design == 0){
+		color_act <- cm.colors(101)[dist_u]
+		color_line <- "gray70"
+		color_cls  <- "gray45"
+	} else {
+		library(RColorBrewer)
+		if (T){
+			col_seed <- brewer.pal(9, "GnBu")
+			myPalette <- colorRampPalette( col_seed )
+			color_act <- myPalette(101)[dist_u]
+			color_act <- adjustcolor(color_act, alpha=0.8)
+			color_line <- "white"
+			color_cls  <- "gray30"
+		} else {
+			col_seed <- rev(brewer.pal(9, "RdYlBu"))
+			myPalette <- colorRampPalette( col_seed )
+			color_act <- myPalette(101)[dist_u]
+			color_act <- adjustcolor(color_act, alpha=0.8)
+			color_line <- "gray50"
+			color_cls  <- "gray25"
+		}
+	}
+	
+	#color_line <- "gray70"
 	if_points  <- 1
 	w_lwd      <- 1
-	color_cls  <- "gray45"
+	#color_cls  <- "gray45"
 	color_ptf  <- "white"
 }
 
 
-for (i in 1:n_nodes^2){                           # ¥Î¡¼¥É¤Î¿§
+for (i in 1:n_nodes^2){                           # ãƒãƒ¼ãƒ‰ã®è‰²
 	x <- row2coods[i,1]
 	y <- row2coods[i,2]
 
@@ -497,7 +529,7 @@ for (i in 1:n_nodes^2){                           # ¥Î¡¼¥É¤Î¿§
 }
 
 
-for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦½Ä
+for (i in 0:(n_nodes - 1)){                       # ç™½ç·šãƒ»ç¸¦
 	for (h in 0:(n_nodes - 2)){
 		if ( colors[h + i * n_nodes + 1] == colors[h + i * n_nodes + 2] ){
 			x <- h
@@ -516,14 +548,14 @@ for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦½Ä
 	}
 }
 
-for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦Î¾Ã¼
+for (i in 0:(n_nodes - 1)){                       # ç™½ç·šãƒ»ä¸¡ç«¯
 	for (h in c(-1, n_nodes-1) ){
 		x <- h
 		y <- i
 		if ( y %% 2 == 1 ){
 			x <- x + 0.5
 		}
-		segments(                       # ½ÄÀş
+		segments(                       # ç¸¦ç·š
 			x + 0.5, y + a,
 			x + 0.5, y - a,
 			col=color_line,
@@ -531,14 +563,14 @@ for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦Î¾Ã¼
 		)
 	}
 	if ( y %% 2 == 0 ){
-		segments(                       # º¸Ã¼1
+		segments(                       # å·¦ç«¯1
 			-0.5, y + a,
 			0   , y + 1 - a,
 			col=color_line,
 			lwd=w_lwd,
 		)
 		if ( y != 0){
-			segments(                   # º¸Ã¼2
+			segments(                   # å·¦ç«¯2
 				-0.5, y - a,
 				 0  , y - 1 + a,
 				col=color_line,
@@ -547,14 +579,14 @@ for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦Î¾Ã¼
 		}
 	} else {
 		if ( y != n_nodes - 1){
-			segments(                   # ±¦Ã¼1
+			segments(                   # å³ç«¯1
 				n_nodes - 0.5, y + 1 - a,
 				n_nodes      , y + a,
 				col=color_line,
 				lwd=w_lwd,
 			)
 		}
-		segments(                       # ±¦Ã¼2
+		segments(                       # å³ç«¯2
 			n_nodes - 0.5, y - 1 + a,
 			n_nodes      , y - a,
 			col=color_line,
@@ -563,7 +595,7 @@ for (i in 0:(n_nodes - 1)){                       # ÇòÀş¡¦Î¾Ã¼
 	}
 }
 
-for (i in 0:(n_nodes - 2)){                       # ÇòÀş¡¦±¦¾å
+for (i in 0:(n_nodes - 2)){                       # ç™½ç·šãƒ»å³ä¸Š
 	for (h in 0:(n_nodes - 1)){
 		if (i %% 2 == 1){
 			chk <- 1
@@ -599,7 +631,7 @@ for (i in 0:(n_nodes - 2)){                       # ÇòÀş¡¦±¦¾å
 	}
 }
 
-for (i in 0:(n_nodes - 2)){                       # ÇòÀş¡¦º¸¾å
+for (i in 0:(n_nodes - 2)){                       # ç™½ç·šãƒ»å·¦ä¸Š
 	for (h in 0:(n_nodes - 1)){
 		if (i %% 2 == 0){
 			chk <- 1
@@ -636,7 +668,7 @@ for (i in 0:(n_nodes - 2)){                       # ÇòÀş¡¦º¸¾å
 
 
 
-for (i in 0:(n_nodes - 1)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦½Ä
+for (i in 0:(n_nodes - 1)){                       # ã‚°ãƒ¬ãƒ¼å¢ƒç•Œç·šãƒ»ç¸¦
 	for (h in 0:(n_nodes - 2)){
 		if ( colors[h + i * n_nodes + 1] != colors[h + i * n_nodes + 2] ){
 			x <- h
@@ -655,7 +687,7 @@ for (i in 0:(n_nodes - 1)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦½Ä
 	}
 }
 
-for (i in 0:(n_nodes - 2)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦±¦¾å
+for (i in 0:(n_nodes - 2)){                       # ã‚°ãƒ¬ãƒ¼å¢ƒç•Œç·šãƒ»å³ä¸Š
 	for (h in 0:(n_nodes - 1)){
 		if (i %% 2 == 1){
 			chk <- 1
@@ -691,7 +723,7 @@ for (i in 0:(n_nodes - 2)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦±¦¾å
 	}
 }
 
-for (i in 0:(n_nodes - 2)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦º¸¾å
+for (i in 0:(n_nodes - 2)){                       # ã‚°ãƒ¬ãƒ¼å¢ƒç•Œç·šãƒ»å·¦ä¸Š
 	for (h in 0:(n_nodes - 1)){
 		if (i %% 2 == 0){
 			chk <- 1
@@ -727,7 +759,7 @@ for (i in 0:(n_nodes - 2)){                       # ¥°¥ì¡¼¶­³¦Àş¡¦º¸¾å
 	}
 }
 
-points <- NULL                                    # ¸ì¤Î¥İ¥¤¥ó¥È
+points <- NULL                                    # èªã®ãƒã‚¤ãƒ³ãƒˆ
 sf <- 0.35
 a  <- a   * sf;
 b  <- b   * sf;
@@ -770,7 +802,7 @@ if( if_points == 1 ){
 	}
 }
 
-library(maptools)                                 # ¸ì¤Î¥é¥Ù¥ë
+library(maptools)                                 # èªã®ãƒ©ãƒ™ãƒ«
 if (is.null(labcd) == 1){
 	labcd <- pointLabel(
 		x=points[,1],
@@ -781,7 +813,7 @@ if (is.null(labcd) == 1){
 		offset=0
 	)
 
-	# ¥é¥Ù¥ëºÆÄ´À°
+	# ãƒ©ãƒ™ãƒ«å†èª¿æ•´
 	xorg <- points[,1]
 	yorg <- points[,2]
 	#cex  <- 1
@@ -847,6 +879,12 @@ text(
 	font=text_font
 )
 
+if ( exists("out_coord") == F ) {
+	out_coord <- cbind(
+		labcd$x / (n_nodes-0.5),
+		labcd$y / (n_nodes-1)
+	)
+}
 
 ';
 }

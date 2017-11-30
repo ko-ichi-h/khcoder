@@ -55,6 +55,7 @@ gui_widget::mail_config:
     plot_size1:               'デフォルトのプロットサイズ：  長辺'
     plot_size2:               '  短辺'
     font_size:                'デフォルトのプロット内フォントサイズ：  '
+    if_cud:                   'カラーユニバーサルデザインを考慮'
 gui_widget::r_font:
     bold:                     太字
     font_size:                フォントサイズ：
@@ -69,6 +70,8 @@ gui_widget::r_xy:
     none:                     標準化
     sym:                      対称
     symbi:                    対称biplot
+    zoom:                     原点付近を拡大：
+    zoom_factor:              係数
 gui_widget::words:
     by_df:                    最小/最大 文書数による語の取捨選択
     by_pos:                   品詞による語の取捨選択
@@ -242,7 +245,7 @@ gui_window::project_edit:
     memo:                     説明（メモ）：
     target_char_code:         分析対象ファイルの文字コード：
     target_file:              分析対象ファイル：
-    win_title:                説明（メモ）の編集
+    win_title:                プロジェクトの編集
 gui_window::project_new:
     auto_detect:              自動判別
     browse_target:            分析対象ファイルを選択してください
@@ -252,6 +255,7 @@ gui_window::project_new:
     target_file:              分析対象ファイル：
     win_title:                新規プロジェクト
 gui_window::project_open:
+    lang:                     言語
     del:                      削除
     dir:                      ディレクトリ
     edit:                     編集
@@ -293,24 +297,28 @@ gui_window::sql_select:
     win_title:                SQL文の実行
 gui_window::sysconfig:
     apps:                     外部アプリケーション
-    browse_:                  を開いてください。
+    browse_:                  ____を開いてください。
     browse_chasen:            ChaSen.exeを開いてください
     browse_mecab:             MeCab.exeを開いてください
     browse_stanford_jar:      stanford-postagger.jarを開いてください。
     browse_stanford_tag:      モデルファイルを開いてください。
     chasen:                   茶筌（日本語）
-    config:                   config
-    l_cn:                     Chinese
-    l_de:                     German *
-    l_en:                     English
-    l_es:                     Spanish *
-    l_fr:                     French *
-    l_it:                     Italian *
-    l_nl:                     Dutch *
-    l_pt:                     Portuguese *
-    lang:                     '    Language:'
+    config:                   設定
+    l_jp:                     日本語
+    l_cn:                     中国語
+    l_de:                     ドイツ語
+    l_en:                     英語
+    l_es:                     スペイン語
+    l_fr:                     フランス語
+    l_it:                     イタリア語
+    l_nl:                     オランダ語
+    l_pt:                     ポルトガル語
+    l_kr:                     韓国語
+    l_ca:                     カタロニア語
+    l_ru:                     ロシア語
+    l_sl:                     スロベニア語
+    lang:                     '    言語：'
     mecab:                    MeCab（日本語）
-    need_inst:                （要・別途インストール）
     note_font:               "フォントが変更されました。変更を有効にするために、KH Coderを再起動してください。"
     note_s:                   ※ %sはファイル名やURLで置き換えられます
     p_chasen.exe:             '    chasen.exeのパス：'
@@ -322,8 +330,8 @@ gui_window::sysconfig:
     p_stanford_tag:           '    *.TAGGER file path:'
     pdf:                      PDFビューア：
     s_sheet:                  表計算（CSV/Excel）：
-    stanford:                 Lemmatization with "Stanford POS Tagger"
-    stemming:                 Stemming with "Snowball"
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
     stopwords:                '  Stop words:'
     web_browser:              Webブラウザ：
     win_title:                KH Coderの設定
@@ -530,6 +538,7 @@ gui_window::word_list:
     type:                     抽出語リストの形式：
     win_title:                '抽出語リスト - オプション'
     xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
     and:                      AND検索
     back:                     後方一致
@@ -578,6 +587,8 @@ kh_morpho::mecab:
     error:                    MeCabの起動に失敗しました。
     error_config:             事前にKH Coderの設定（MeCab関連）を行ってください。
     illegal_bra:              山カッコ（<>）による正しくないマーキングがありました。
+kh_morpho::mecab_k:
+    error:                    MeCabの起動に失敗しました。
 kh_morpho::stanford:
     error:                    Stanford POS Taggerの起動に失敗しました。
     error_config:             事前にKH Coderの設定（Stanford POS Tagger関連）を行ってください。
@@ -611,6 +622,8 @@ gui_widget::r_mds:
     dist:                     '  距離：'
     dim:                      '次元：'
     1_3:                      '（1から3までの範囲で指定）'
+    fix_asp:                  '縦横比を固定する'
+    random_start:             "ランダムスタートを繰り返してより良い解を探す\n※10分またはそれ以上の時間がかかる場合があります"
 gui_window::word_mds:
     units_words:              '集計単位と抽出語の選択'
     mds_opt:                  '多次元尺度法のオプション'
@@ -710,19 +723,20 @@ gui_window::r_plot::cod_cls:
 gui_window::cls_height::cod:
     win_title:                'コードのクラスター分析：併合水準'
 gui_widget::r_net:
-    filter_edges:             '描画する共起関係（edge）の絞り込み'
-    e_top_n:                  '描画数：'
-    e_jac:                    'Jaccard係数：'
+    filter_edges:             '描画する共起関係（edge）の選択： '
+    e_top_n:                  '上位'
+    e_jac:                    '係数'
     or_more:                  '以上'
-    thicker:                  '強い共起関係ほど太い線で描画'
-    larger:                   '出現数の多い語ほど大きい円で描画'
-    larger_c:                 '出現数の多いコードほど大きい円で描画'
+    thicker:                  '強い共起関係ほど濃い線に'
     larger_font:              'フォントも大きく ※EMFやEPSでの出力・印刷向け'
-    smaller:                  'すべての語を小さめの円で描画'
+    smaller:                  '小さめの円ですべての語を描画'
     min_sp_tree:              '最小スパニング・ツリーを強調表示'
     min_sp_tree_only:         '最小スパニング・ツリーだけを描画'
     gray_scale:               'グレースケールで表現（中心性・サブグラフ）'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
+    view_coef:                '係数を表示'
+    cor_var:                  '外部変数・見出し・位置との相関をカラー表示：'
+    cor_var_darker:           '背景色を暗めにする（相関）'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'
@@ -743,8 +757,10 @@ gui_window::r_plot::word_netgraph:
     com_b:                    'サブグラフ検出（媒介）'
     com_r:                    'サブグラフ検出（random walks）'
     com_m:                    'サブグラフ検出（modularity）'
+    cor:                      '相関'
     none:                     'なし'
     color:                    ' カラー：'
+    interactive:              'HTML表示'
     win_title:                '抽出語・共起ネットワーク'
 gui_window::cod_netg:
     win_title:                'コーディング・共起ネットワーク：オプション'
@@ -824,6 +840,7 @@ kh_cod::search:
 gui_widget::select_a_var:
     heading:                  '見出し'
     na:                       '利用不可'
+    pos:                      '出現位置'
 gui_window::doc_cls:
     verb:                     '使用'
     select_3words:            '少なくとも3つ以上の抽出語を選択して下さい。'
@@ -1030,7 +1047,7 @@ kh_nbayes:
 kh_project:
     no_target_file:           '分析対象ファイルが存在しません'
 kh_projects:
-    already_registered:       '当該のファイルは既にプロジェクトとして登録されています'
+    already_registered:       "そのファイルはすでにプロジェクトとして登録されています。\n\nメニューから「プロジェクト」「開く」と進み、\nそのファイルを選択して「開く」ボタンをクリックしてください。"
 gui_errormsg::file:
     could_not_open_the_file:  "ファイルを開けませんでした。\nKH Coderを終了します。\n* "
 kh_cod:
@@ -1050,7 +1067,7 @@ mysql_outvar::read:
     midashi_error:            "「見出し1」-「見出し5」と「Heading1」-「Heading5」は、変数名として利用できません。\n外部変数の読み込みを中断します。"
     overwrite_vars:           "同じ名前の変数がすでに読み込まれています。\n既存の変数を上書きしてよろしいですか？\n\n"
 mysql_ready::dump:
-    too_long_word1:            "制限を超える長さの語（形態素）が抽出されました。\nKH Coderが扱えるの語の長さは全角127文字までです。\n\nKH Coderは当該の語を短縮した状態で認識します。\n当該の語は以下のファイルに記録しました：\n"
+    too_long_word1:            "制限を超える長さの語（形態素）が抽出されました。\nKH Coderが扱えるの語の長さは128文字までです。\n\nKH Coderは当該の語を短縮した状態で認識します。\n当該の語は以下のファイルに記録しました：\n"
     too_long_word2:            "OKをクリックすると前処理を続行します。"
 mysql_getheader:
     error:                     "見出しの取り出しに失敗しました。\n\nH1～H5タグを使った見出し作成に失敗している可能性があります。\n分析対象ファイルのチェックを行ってみてください。"
@@ -1079,7 +1096,18 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "共通の設定"
     select_1:                  "コードを少なくとも1つ選択して下さい"
     color_rsd:                 "標準化残差による色分け"
+    col1:                      "カラー"
+    col2:                      "カラー(CM)"
+    gray:                      "グレー"
+    color_fix:                 "カラースケールを固定： "
 gui_window::r_plot::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ・調整"
+screen_code::rde_menu:
+    plugin_raw_data_editor:    "｢文錦｣ 分析対象データの編集"
+    err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"
+    err_output_from_db:        "データベースからの外部変数出力に失敗しました。"
+    err_edit:                  "プロジェクトデータの編集処理に失敗しました。\n再試行するか、サポートまでお問い合わせください。"
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:    "｢文錦｣ 分析対象ファイルの編集"

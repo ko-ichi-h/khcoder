@@ -24,9 +24,6 @@ sub calc{
 	my $r_command = '';
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
-		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
@@ -63,6 +60,7 @@ sub calc{
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		coord       => $plotR->{coord},
 		ax          => $self->{ax},
 		#no_geometry => 1,
 	);

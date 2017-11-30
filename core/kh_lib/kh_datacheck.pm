@@ -2,6 +2,13 @@ package kh_datacheck;
 use strict;
 use kh_msg;
 
+my $euc_code = '';
+if (eval 'require Encode::EUCJPMS'){
+	$euc_code = 'eucJP-ms';
+} else {
+	$euc_code = 'euc-jp';
+}
+
 my %errors = (
 	'error_m1'  => kh_msg->get('error_m1'),#'長すぎる見出し行があります（自動修正不可）',
 	'error_c1'  => kh_msg->get('error_c1'),#'文字化けを含む行があります',
@@ -14,7 +21,7 @@ my %errors = (
 sub run{
 	my $class = shift;
 	my $self;
-	$self->{file_source} = $::project_obj->file_target;
+	$self->{file_source} = $::config_obj->os_path( $::project_obj->file_target );
 	$self->{file_temp}   = 'temp.txt';
 	while (-e $self->{file_temp}){
 		$self->{file_temp} .= '.tmp';
@@ -27,6 +34,7 @@ sub run{
 		   $icode eq 'sjis'
 		|| $icode eq 'euc'
 		|| $icode eq 'jis'
+		|| $icode eq 'utf8'
 	) {
 		gui_errormsg->open(
 			type => 'msg',
@@ -153,13 +161,16 @@ sub run{
 				} else {
 					$line .= "$h->[1]\n";
 				}
-				$line = gui_window->gui_jchar($line,'euc');
+				$line = Encode::decode($euc_code, $line);
 				$msg .= $line;
 			}
 		}
 	}
+	$msg = Encode::encode('cp932', $msg, sub{'?'});
+	$msg = Encode::decode('cp932', $msg);
+
 	$self->{repo_full} = $msg;
-	
+
 	gui_window::datacheck->open($self);
 }
 
@@ -192,24 +203,24 @@ sub edit{
 	my $self = shift;
 
 	# バックアップ作成
+	my $file_target = $::config_obj->os_path( $::project_obj->file_target );
 	$self->{file_backup} = $::project_obj->file_backup;
-	rename($::project_obj->file_target,$self->{file_backup}) or
+	rename($file_target, $self->{file_backup}) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $self->{file_backup}
 		);
 
 	# 修正（置換）
-	rename($self->{file_temp}, $::project_obj->file_target) or
+	rename($self->{file_temp}, $file_target) or
 		gui_errormsg->open(
 			type => 'file',
-			thefile => $::project_obj->file_target
+			thefile => $file_target
 		);
 
-	# Diff作成 →異様に時間がかかる場合があるのでスキップ
+	# Diff作成
+	if ( 0 ) {
 	#if (-s $self->{file_backup} < 50*1024*1024 ) {
-	if (0) {
-		print "Making diff...\n";
 		$self->{diff} = 1;
 		use Text::Diff;
 		my $diff = diff(
@@ -228,8 +239,6 @@ sub edit{
 	} else {
 		$self->{diff} = 0;
 	}
-	
-
 
 	# レポート（詳細）の再作成
 	if ($self->{auto_ng}){
@@ -268,11 +277,13 @@ sub edit{
 					} else {
 						$line = "$h->[1]\n";
 					}
-					$line = gui_window->gui_jchar($line,'euc');
+					$line = Encode::decode($euc_code, $line);
 					$msg .= $line;
 				}
 			}
 		}
+		$msg = Encode::encode('cp932', $msg, sub{'?'});
+		$msg = Encode::decode('cp932', $msg);
 		$self->{repo_full} = $msg;
 	} else {
 		$self->{repo_full} = kh_msg->get('corrected')."\n"; #"既知の問題点はすべて修正されています。\n";

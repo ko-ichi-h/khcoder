@@ -1,0 +1,13 @@
+Contingency(
+	Y( :name ),
+	X( :Label ),
+	Freq( :Data ),
+	Contingency Table,
+	Correspondence Analysis( 1 ),
+	SendToReport(
+		Dispatch( {}, "Mosaic Plot", OutlineBox, {Close( 1 )} ),
+		Dispatch( {}, "Contingency Table", OutlineBox, {Close( 1 )} ),
+		Dispatch( {}, "Tests", OutlineBox, {Close( 1 )} ),
+		Dispatch( {"Correspondence Analysis"}, "Details", OutlineBox, {Close( 0 )} )
+	)
+)

@@ -193,8 +193,8 @@ sub plot{
 
 	my $tani = $self->{tani_obj}->tani;
 	my %tani_name = (
-		'bun' => kh_msg->gget('sentence'),
-		'dan' => kh_msg->gget('paragraph'),
+		'bun' => kh_msg->pget('sentence', 'global'),
+		'dan' => kh_msg->pget('paragraph', 'global'),
 		'h1'  => 'H1',
 		'h2'  => 'H2',
 		'h3'  => 'H3',
@@ -216,10 +216,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.')")',
 	) or $flg_error = 1;
 
@@ -228,10 +228,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.')", log="x")',
 	) or $flg_error = 1;
 	
@@ -240,10 +240,10 @@ sub plot{
 		command_f => 
 			"$self->{rcmd}\n"
 			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,ylab="'
-			.kh_msg->get('freq')
+			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.')", log="xy")',
 	) or $flg_error = 1;
 	

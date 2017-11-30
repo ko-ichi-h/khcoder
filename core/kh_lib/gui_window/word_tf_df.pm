@@ -114,12 +114,9 @@ sub count{
 	chop $rcmd;
 	$rcmd .= "), nrow=$n, ncol=3, byrow=TRUE)";
 
-	# Decoding input from MySQL
-	$rcmd = Encode::decode("eucjp", $rcmd);
-
 	my %tani_name = (
-		'bun' => kh_msg->gget('sentence'),
-		'dan' => kh_msg->gget('paragraph'),
+		'bun' => kh_msg->pget('sentence','global'),
+		'dan' => kh_msg->pget('paragraph','global'),
 		'h1'  => 'H1',
 		'h2'  => 'H2',
 		'h3'  => 'H3',
@@ -141,9 +138,9 @@ sub count{
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.') ", xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'")',
 	) or $flg_error = 1;
 
@@ -152,9 +149,9 @@ sub count{
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.')",xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'",log="x")',
 	) or $flg_error = 1;
 
@@ -163,9 +160,9 @@ sub count{
 		command_f => 
 			"$rcmd\n"
 			.'plot(hoge[,1],hoge[,2],ylab="'
-			.kh_msg->get('df')
+			.kh_msg->pget('df')
 			.' ('.$tani_name.')",xlab="'
-			.kh_msg->get('tf')
+			.kh_msg->pget('tf')
 			.'",log="xy")',
 	) or $flg_error = 0;
 

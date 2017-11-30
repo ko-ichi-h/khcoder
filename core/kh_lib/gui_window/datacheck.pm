@@ -16,7 +16,7 @@ sub _new{
 
 	my $mw = $self->win_obj;
 
-	$mw->title( $self->gui_jt( kh_msg->get('win_title') ) ); # '分析対象ファイルのチェックと修正','euc'
+	$mw->title( $self->gui_jt( kh_msg->get('win_title') ) ); # '分析対象ファイルのチェックと修正'
 
 	my $fr_res = $mw->LabFrame(
 		-label       => 'Results & Messages',
@@ -72,8 +72,7 @@ sub _new{
 				'end',
 				kh_msg->get('headmark')
 				.gui_window->gui_jchar(
-					$self->{dacheck_obj}->{repo_full}."\n",
-					'euc'
+					$self->{dacheck_obj}->{repo_full}."\n"
 				)
 			);
 			$text_widget->yview(moveto => 1);
@@ -149,7 +148,7 @@ sub save{
 	$self->{dacheck_obj}->save($path);
 
 	# 結果表示
-	$path = Jcode->new($path)->euc;
+	$path = $::config_obj->uni_path($path);
 	$self->{text_widget}->insert(
 		'end',
 		kh_msg->get('saved')#"●見つかった問題点の詳細を次のファイルに保存しました："
@@ -168,8 +167,8 @@ sub edit{
 	
 	# 結果表示
 	my $msg = '';
-	my $path  = gui_window->gui_jchar( $self->{dacheck_obj}->{file_backup} );
-	my $path2 = gui_window->gui_jchar( $self->{dacheck_obj}->{file_diff} );
+	my $path  = $::config_obj->uni_path( $self->{dacheck_obj}->{file_backup} );
+	my $path2 = $::config_obj->uni_path( $self->{dacheck_obj}->{file_diff} );
 	#$msg .= kh_msg->get('headmark');#"●自動修正を行いました。\n\n";
 	$msg .= kh_msg->get('correction_done');
 	$msg .= "\n\n";

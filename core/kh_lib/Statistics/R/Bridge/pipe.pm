@@ -142,7 +142,7 @@ my $DEBUG_TIMING = 0;
       $file = "$this->{LOG_DIR}/input.$n.r" ;
     }
 
-    open (my $fh,">$file._") ;
+    open (my $fh, '>:encoding(utf8)' ,"$file._") ;
     print $fh "$cmd\n" ;
     close ($fh) ;
     chmod(0777 , "$file._") ;
@@ -756,17 +756,14 @@ my $DEBUG_TIMING = 0;
     open (my $fh,">$this->{START_R}") ;
     
     my $process_r = $this->{PROCESS_R} ;
-    my $icode = Jcode::getcode($process_r);
-    $process_r = Jcode->new($process_r)->euc;
-    $process_r =~ s/\\/\\\\/g ;
-    $process_r = Jcode->new($process_r)->$icode
-    	if ( length($icode) and ( $icode ne 'ascii' ) );
+    $::config_obj->uni_path($process_r);
+	$process_r =~ s/\\/\\\\/g ;
+	$::config_obj->os_path($process_r);
     
     my $pid_r = $this->{PID_R} ;
-    $pid_r = Jcode->new($pid_r)->euc;
+    $::config_obj->uni_path($pid_r);
     $pid_r =~ s/\\/\\\\/g ;    
-    $pid_r = Jcode->new($pid_r)->$icode
-    	if ( length($icode) and ( $icode ne 'ascii' ) );
+    $::config_obj->os_path($pid_r);
     
 	if ($::config_obj->os eq 'win32'){ # kh
 		print $fh "sink(file=\"output.log\", append=TRUE )\n";
@@ -855,9 +852,9 @@ my $DEBUG_TIMING = 0;
         }
         try( close(test_open), silent=T );
         try( rm(test_open), silent=T  );
-        options(warn=0);
+        options(warn=1);
         
-        tryCatch( source(PERLINPUTFILE) , error = function(e) { print(e) } ) ;
+        tryCatch( source(PERLINPUTFILE, encoding="UTF-8") , error = function(e) { print(e) } ) ;
         
         ## Ensure that device is off after execute the input file.
         # tryCatch( dev.off() , error = function(e) {} ) ;

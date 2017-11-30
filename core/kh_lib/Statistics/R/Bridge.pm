@@ -135,11 +135,9 @@
     
     my ( $dir , $cut , $r , $f ) = @_ ;
     
-    my $icode = Jcode::getcode($dir);
-    $dir = Jcode->new($dir)->euc;
+	$dir = $::config_obj->uni_path($dir);
     $dir =~ s/\\/\//g ;
-    $dir = Jcode->new($dir)->$icode
-    	if ( length($icode) and ( $icode ne 'ascii' ) );
+    $dir = $::config_obj->os_path($dir);
     
     my @files ;
     

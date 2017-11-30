@@ -7,6 +7,11 @@ my ( $l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika);
 my $docs_per_once = 200;
 my $temporary = '';
 
+if ($::config_obj->web_if){
+	$docs_per_once = 50;
+	$temporary = 'temporary';
+}
+
 #----------------------------#
 #   初期化・コンストラクト   #
 #----------------------------#
@@ -61,6 +66,7 @@ sub a_word{
 		&& ( $l_katuyo eq $args{katuyo} )
 		&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
 		&& ( $l_tuika eq $tuika_chk )
+		&& ( $::config_obj->web_if == 0 )
 	){
 		if (
 			not (
@@ -68,6 +74,7 @@ sub a_word{
 				&& ( $l_hinshi eq $args{hinshi} )
 				&& ( $l_katuyo eq $args{katuyo} )
 				&& ( length($args{query}.$args{hinshi}.$args{katuyo}) )
+				&& ( $::config_obj->web_if == 0 )
 			)
 			or (length($l_tuika) > 11)
 		){
@@ -596,16 +603,7 @@ sub _format{                                      # 結果の出力
 	my $start = shift;
 	
 	# print "3: Formating...\n";
-	my $morpho = $::project_obj->morpho_analyzer;
-	my $spacer = '';
-	if (
-		   $morpho eq 'chasen'
-		|| $morpho eq 'mecab'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 	
 	# 出力リスト作成（中央のID）;
 	my $st1 = mysql_exec->select("
@@ -722,7 +720,8 @@ sub save_all{
 	my $id = $st1->fetchall_arrayref;
 	
 	# 出力
-	open(KWICO,">$args{path}") or
+	use File::BOM;
+	open (KWICO, '>:encoding(utf8):via(File::BOM)', $args{path}) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $args{path}
@@ -737,7 +736,7 @@ sub save_all{
 		print KWICO $line;
 	}
 	close (KWICO);
-	kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
+	#kh_jchar->to_sjis($args{path}) if $::config_obj->os eq 'win32';
 	
 	return 1;
 }
@@ -926,7 +925,7 @@ sub format_coloc{
 	
 	
 	$sql .= "\t)\n";
-	$sql .= "ORDER BY $args{sort} DESC, genkei.name\n";
+	$sql .= "ORDER BY $args{sort} DESC, ".$::project_obj->mysql_sort('genkei.name')."\n";
 	$sql .= "LIMIT $args{filter}->{limit}";
 	
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;

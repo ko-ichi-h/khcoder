@@ -39,7 +39,7 @@ sub __read{
 	my $self = shift;
 
 	return mysql_outvar::read::tab->new(
-		file => $self->gui_jg( $self->{entry}->get ),
+		file => $::config_obj->os_path( $self->gui_jg( $self->{entry}->get ) ),
 		tani => $self->{tani_obj}->tani,
 	)->read;
 }

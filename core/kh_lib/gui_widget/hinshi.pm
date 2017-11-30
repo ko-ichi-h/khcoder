@@ -1,9 +1,8 @@
 package gui_widget::hinshi;
 use base qw(gui_widget);
 use strict;
+use utf8;
 use Tk;
-use Jcode;
-
 
 sub _new{
 	my $self = shift;
@@ -40,10 +39,13 @@ sub _new{
 	my %default;
 	
 	my $sth = mysql_exec->select("
-		SELECT  name,khhinshi_id
-		FROM    hselection
-		WHERE   ifuse = 1
-		ORDER BY khhinshi_id
+		SELECT hselection.name, hselection.khhinshi_id
+		FROM genkei, hselection
+		WHERE
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			AND hselection.ifuse = 1
+		GROUP BY hselection.khhinshi_id
+		ORDER BY hselection.khhinshi_id
 	",1)->hundle;
 	
 	#use Data::Dumper;
@@ -52,8 +54,8 @@ sub _new{
 	while (my $i = $sth->fetch){
 		if (
 			   $i->[0] =~ /B$/
-			|| $i->[0] eq 'ÈÝÄê½õÆ°»ì'
-			|| $i->[0] eq '·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë'
+			|| $i->[0] eq 'å¦å®šåŠ©å‹•è©ž'
+			|| $i->[0] eq 'å½¢å®¹è©žï¼ˆéžè‡ªç«‹ï¼‰'
 		){
 			$default{$i->[1]} = 0;
 		} else {
@@ -68,7 +70,7 @@ sub _new{
 		}
 		$self->{name}{$row} = $i->[1];
 		my $c = $self->hlist->Checkbutton(
-			-text     => gui_window->gui_jchar($i->[0],'euc'),
+			-text     => gui_window->gui_jchar($i->[0]),
 			-variable => \$selection[$row],
 			-anchor => 'w',
 		);
@@ -80,11 +82,7 @@ sub _new{
 			-style => $right,
 			-widget    => $c,
 		);
-		#$self->hlist->itemCreate(
-		#	$row,1,
-		#	-itemtype => 'text',
-		#	-text     => gui_window->gui_jchar($i->[0],'euc')
-		#);
+
 		++$row;
 	}
 	$self->{checks} = \@selection;
@@ -155,7 +153,7 @@ sub selection_set{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub hlist{
 	my $self = shift;

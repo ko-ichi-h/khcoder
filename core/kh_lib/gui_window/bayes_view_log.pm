@@ -2,28 +2,25 @@ package gui_window::bayes_view_log;
 use base qw(gui_window);
 
 use strict;
+use utf8;
 use Jcode;
 use List::Util qw(max sum);
-
-my $ascii = '[\x00-\x7F]';
-my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
-my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 
 my $debug_ms = 0;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # Ê¬Îà¥í¥°¥Õ¥¡¥¤¥ë¡§
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # åˆ†é¡ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ï¼š
 
 	$self->{path} = shift;
 
 	#------------------#
-	#   Á´ÂÎÅª¤Ê¾ğÊó   #
+	#   å…¨ä½“çš„ãªæƒ…å ±   #
 
 	my $lf = $win->LabFrame(
 		-label => 'Info',
@@ -33,7 +30,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => kh_msg->get('model_file'), # ³Ø½¬·ë²Ì¡§
+		-text => kh_msg->get('model_file'), # å­¦ç¿’çµæœï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_file_model} = $lf->Entry(
@@ -42,7 +39,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => kh_msg->get('saved_var'), #  ÊİÂ¸ÀèÊÑ¿ô¡§
+		-text => kh_msg->get('saved_var'), #  ä¿å­˜å…ˆå¤‰æ•°ï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_outvar} = $lf->Entry(
@@ -51,7 +48,7 @@ sub _new{
 
 
 	$lf->Label(
-		-text => kh_msg->get('unit'), #  Ê¬ÎàÃ±°Ì¡§
+		-text => kh_msg->get('unit'), #  åˆ†é¡å˜ä½ï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_tani} = $lf->Entry(
@@ -59,7 +56,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$lf->Label(
-		-text => kh_msg->get('doc_id'), #  Ê¸½ñNo.
+		-text => kh_msg->get('doc_id'), #  æ–‡æ›¸No.
 	)->pack(-side => 'left');
 
 	$self->{entry_dno} = $lf->Entry(
@@ -75,7 +72,7 @@ sub _new{
 	gui_window->disabled_entry_configure( $self->{entry_tani}       );
 
 	#--------------------#
-	#   Åö³ºÊ¸½ñ¤Î¾ğÊó   #
+	#   å½“è©²æ–‡æ›¸ã®æƒ…å ±   #
 
 	$self->{frame_scores} = $win->LabFrame(
 		-label => 'Scores',
@@ -93,12 +90,12 @@ sub _new{
 	$self->{list_flame} = $lf1->Frame()->pack(-fill => 'both', -expand => 1);
 
 	#------------------#
-	#   Áàºî¥Ü¥¿¥óÎà   #
+	#   æ“ä½œãƒœã‚¿ãƒ³é¡   #
 
 	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 
 	$f1->Label(
-		-text => kh_msg->get('search_words'), # Ãê½Ğ¸ì¤Î¸¡º÷¡§
+		-text => kh_msg->get('search_words'), # æŠ½å‡ºèªã®æ¤œç´¢ï¼š
 	)->pack(-side => 'left');
 
 	$self->{entry_wsearch} = $f1->Entry(
@@ -115,7 +112,7 @@ sub _new{
 	);
 
 	$f1->Button(
-		-text => kh_msg->get('run'), # ¸¡º÷
+		-text => kh_msg->get('run'), # æ¤œç´¢
 		-command => sub{
 			my $key = $self->{last_sort_key};
 			$self->{last_sort_key} = undef;
@@ -128,7 +125,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	my $btn = $f1->Button(
-		-text => kh_msg->gget('copy_all'), # ¥³¥Ô¡¼¡ÊÉ½Á´ÂÎ¡Ë
+		-text => kh_msg->gget('copy_all'), # ã‚³ãƒ”ãƒ¼ï¼ˆè¡¨å…¨ä½“ï¼‰
 		-command => sub { $self->copy; }
 	)->pack(-side => 'left', -padx => 2);
 	
@@ -146,13 +143,13 @@ sub _new{
 }
 
 #------------#
-#   ½é´ü²½   #
+#   åˆæœŸåŒ–   #
 
 sub start{
 	my $self = shift;
 	$self->{log_obj} = Storable::retrieve($self->{path});
 	
-	# ¥â¥Ç¥ë¥Õ¥¡¥¤¥ëÌ¾
+	# ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å
 	use File::Basename;
 	my $fm = gui_window->gui_jchar($self->{log_obj}{file_model});
 	$fm = File::Basename::basename($fm);
@@ -162,15 +159,15 @@ sub start{
 	$self->{entry_file_model}->insert(0,$fm);
 	$self->{entry_file_model}->configure(-state => 'disable');
 
-	# ÊÑ¿ôÌ¾
+	# å¤‰æ•°å
 	$self->{entry_outvar}->configure(-state => 'normal');
 	$self->{entry_outvar}->delete(0,'end');
 	$self->{entry_outvar}->insert(0,
-		gui_window->gui_jchar($self->{log_obj}{outvar},'euc')
+		$self->{log_obj}{outvar}
 	);
 	$self->{entry_outvar}->configure(-state => 'disable');
 
-	# Ã±°Ì
+	# å˜ä½
 	my $tani = $self->{log_obj}{tani};
 	$tani = kh_msg->gget('sentence') if $tani eq 'bun';
 	$tani = kh_msg->gget('paragraph') if $tani eq 'dan';
@@ -178,19 +175,18 @@ sub start{
 	$self->{entry_tani}->configure(-state => 'normal');
 	$self->{entry_tani}->delete(0,'end');
 	$self->{entry_tani}->insert(0,
-		gui_window->gui_jchar($tani,'euc')
+		$tani
 	);
 	$self->{entry_tani}->configure(-state => 'disable');
 
-	# ¥í¥°¥Õ¥¡¥¤¥ëÌ¾
-	my $fl = gui_window->gui_jchar($self->{path});
+	# ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«å
+	my $fl = $::config_obj->uni_path($self->{path});
 	$fl = File::Basename::basename($fl);
-	$fl = Jcode->new( gui_window->gui_jg($fl) )->euc;
-	$self->{win_obj}->title($self->gui_jt(
-		kh_msg->get('win_title').$self->gui_jchar(" $fl")
-	));
+	$self->{win_obj}->title(
+		kh_msg->get('win_title')." $fl"
+	);
 
-	# É½¼¨¤¹¤ëÊ¸½ñ¤ÎÁªÂò
+	# è¡¨ç¤ºã™ã‚‹æ–‡æ›¸ã®é¸æŠ
 	if ( $::main_gui->if_opened('w_doc_view') ){
 		$self->{current} = $::main_gui->get('w_doc_view')->{doc_id};
 	} else {
@@ -203,7 +199,7 @@ sub start{
 }
 
 #----------------------#
-#   Ê¸½ñ¤Î¾ğÊó¤òÉ½¼¨   #
+#   æ–‡æ›¸ã®æƒ…å ±ã‚’è¡¨ç¤º   #
 
 sub from_doc_view{
 	my $self = shift;
@@ -233,11 +229,11 @@ sub view{
 	my $self = shift;
 
 	#------------------------------#
-	#   É½¼¨¤¹¤ëÊ¸½ñ¤¬ÊÑ¤ï¤ë¾ì¹ç   #
+	#   è¡¨ç¤ºã™ã‚‹æ–‡æ›¸ãŒå¤‰ã‚ã‚‹å ´åˆ   #
 
 	my $selected_by_bayes;
 	unless ( $self->{current} == $self->{ready} ){
-		# ¥Æ¡¼¥Ö¥ë¤Î½àÈ÷
+		# ãƒ†ãƒ¼ãƒ–ãƒ«ã®æº–å‚™
 		my $scores;
 		($self->{result}, $scores) =
 			&kh_nbayes::predict::make_each_log_table(
@@ -248,11 +244,11 @@ sub view{
 			)
 		;
 		
-		# Ê¸½ñÈÖ¹æ¤ÎÉ½¼¨
+		# æ–‡æ›¸ç•ªå·ã®è¡¨ç¤º
 		$self->{entry_dno}->delete(0,'end');
 		$self->{entry_dno}->insert(0, $self->{current});
 		
-		# ¥¹¥³¥¢¤ÎÉ½¼¨
+		# ã‚¹ã‚³ã‚¢ã®è¡¨ç¤º
 		$self->{frame_scores_a}->destroy if $self->{frame_scores_a};
 		$self->{frame_scores_a} = $self->{frame_scores}->Frame()->pack(
 			-fill => 'x'
@@ -265,7 +261,7 @@ sub view{
 			
 			unless ($n + 1){
 				$self->{frame_scores_a}->Label(
-					-text => kh_msg->get('class'), # Ê¬Îà¡§
+					-text => kh_msg->get('class'), # åˆ†é¡ï¼š
 				)->pack(-side => 'left');
 				
 				my @len;
@@ -289,7 +285,7 @@ sub view{
 			)->pack(-side => 'left') if $n;
 
 			$self->{frame_scores_a}->Label(
-				-text => $self->gui_jchar($i.'¡§'),
+				-text => $self->gui_jchar($i.'ï¼š'),
 			)->pack(-side => 'left');
 			
 			my $ent = $self->{frame_scores_a}->Entry(
@@ -308,7 +304,7 @@ sub view{
 			#last if $n >= 5;
 		}
 		$self->{frame_scores_a}->Label(
-			-text => kh_msg->get('higher_left'), #  ¢¨º¸¤«¤é¥¹¥³¥¢¤Î¹â¤¤½ç¤ËÉ½¼¨
+			-text => kh_msg->get('higher_left'), #  â€»å·¦ã‹ã‚‰ã‚¹ã‚³ã‚¢ã®é«˜ã„é †ã«è¡¨ç¤º
 		)->pack(-side => 'left');
 		
 		$self->{last_sort_key} = undef;
@@ -316,7 +312,7 @@ sub view{
 	}
 
 	#--------------------#
-	#   Ãê½Ğ¸ì¤Î¥ê¥¹¥È   #
+	#   æŠ½å‡ºèªã®ãƒªã‚¹ãƒˆ   #
 
 	my $width = 0;
 	foreach my $i (keys %{$self->{log_obj}{log}{$self->{current}}} ){
@@ -326,13 +322,13 @@ sub view{
 	}
 	my $cols = 2 + 1 + @{$self->{log_obj}{labels}} * 2;
 
-	$self->{list}->destroy if $self->{list};                # ¸Å¤¤¤â¤Î¤òÇÑ´ş
+	$self->{list}->destroy if $self->{list};                # å¤ã„ã‚‚ã®ã‚’å»ƒæ£„
 	$self->{list2}->destroy if $self->{list2};
 	$self->{sb1}->destroy if $self->{sb1};
 	$self->{sb2}->destroy if $self->{sb2};
 	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
 
-	$self->{list_flame_inner} = $self->{list_flame}->Frame( # ¿·¤¿¤Ê¥ê¥¹¥ÈºîÀ®
+	$self->{list_flame_inner} = $self->{list_flame}->Frame( # æ–°ãŸãªãƒªã‚¹ãƒˆä½œæˆ
 		-relief      => 'sunken',
 		-borderwidth => 2
 	);
@@ -366,16 +362,16 @@ sub view{
 		-highlightthickness => 0,
 	);
 
-	my $col = 0;                                            # HeaderºîÀ®
+	my $col = 0;                                            # Headerä½œæˆ
 	my @temp = ();
 	foreach my $i ( @{$self->{log_obj}{labels}} ){
 		push @temp, $i.' (%)';
 	}
 	foreach my $i (
-		kh_msg->get('word'), # Ãê½Ğ¸ì
-		kh_msg->get('freq'), # ÉÑÅÙ
+		kh_msg->get('word'), # æŠ½å‡ºèª
+		kh_msg->get('freq'), # é »åº¦
 		@{$self->{log_obj}{labels}},
-		kh_msg->get('variance'), # Ê¬»¶
+		kh_msg->get('variance'), # åˆ†æ•£
 		@temp
 	){
 		unless ($col){
@@ -416,7 +412,7 @@ sub view{
 		++$col;
 	}
 
-	my $sb1 = $self->{list_flame}->Scrollbar(               # ¥¹¥¯¥í¡¼¥ëÀßÄê
+	my $sb1 = $self->{list_flame}->Scrollbar(               # ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«è¨­å®š
 		-orient  => 'v',
 		-command => sub {
 			$self->multiscrolly(@_);
@@ -431,7 +427,7 @@ sub view{
 	$self->{list}->configure(
 		-yscrollcommand => sub{
 			$sb1->set(@_);
-			# ¤â¤¦°ìÊı¤Î¥ê¥¹¥È¤¬ÄÉ¿ï¤·¤Æ¤¤¤Ê¤±¤ì¤ĞÆ±´ü¤µ¤»¤ë
+			# ã‚‚ã†ä¸€æ–¹ã®ãƒªã‚¹ãƒˆãŒè¿½éšã—ã¦ã„ãªã‘ã‚Œã°åŒæœŸã•ã›ã‚‹
 			my $p1 = $_[0];
 			my @t = $self->{list2}->yview;
 			my $p2 = $t[0];
@@ -463,7 +459,7 @@ sub view{
 	$self->{list2}->configure(
 		-yscrollcommand => sub{
 			$sb1->set(@_);
-			# ¤â¤¦°ìÊı¤Î¥ê¥¹¥È¤¬ÄÉ¿ï¤·¤Æ¤¤¤Ê¤±¤ì¤ĞÆ±´ü¤µ¤»¤ë
+			# ã‚‚ã†ä¸€æ–¹ã®ãƒªã‚¹ãƒˆãŒè¿½éšã—ã¦ã„ãªã‘ã‚Œã°åŒæœŸã•ã›ã‚‹
 			my $p1 = $_[0];
 			my @t = $self->{list}->yview;
 			my $p2 = $t[0];
@@ -503,7 +499,7 @@ sub view{
 	$sb2->pack(-fill => 'x');
 
 	#--------------------#
-	#   Ãê½Ğ¸ì¤Î¥ê¥¹¥È   #
+	#   æŠ½å‡ºèªã®ãƒªã‚¹ãƒˆ   #
 	
 	my $n = 2;
 	my $key;
@@ -529,7 +525,7 @@ sub multiscrolly{
 }
 
 #--------------------------#
-#   Ãê½Ğ¸ì¤Î¥½¡¼¥È¡ÜÉ½¼¨   #
+#   æŠ½å‡ºèªã®ã‚½ãƒ¼ãƒˆï¼‹è¡¨ç¤º   #
 
 sub sort{
 	my $self = shift;
@@ -541,7 +537,7 @@ sub sort{
 	
 	return 0 unless $self->{result};
 	
-	# ¥½¡¼¥È
+	# ã‚½ãƒ¼ãƒˆ
 	my @sort;
 	if ($key){
 		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{result}};
@@ -549,11 +545,11 @@ sub sort{
 		@sort = @{$self->{result}};
 	}
 
-	# ¸¡º÷¥ë¡¼¥Á¥ó
+	# æ¤œç´¢ãƒ«ãƒ¼ãƒãƒ³
 	my $s_method = 'AND';
 	my $search = $self->gui_jg( $self->{entry_wsearch}->get );
-	$search = Jcode->new($search, 'sjis')->euc;
-	$search =~ s/¡¡/ /go;
+	#$search = Jcode->new($search, 'sjis')->euc;
+	$search =~ s/ã€€/ /go;
 	$search = [ split / /, $search ]; # /
 
 	my @temp = ();
@@ -561,7 +557,7 @@ sub sort{
 		foreach my $i (@sort){
 			my $cnt = 0;
 			foreach my $j (@{$search}){
-				if ($i->[0] =~ /^(?:$ascii|$twoBytes|$threeBytes)*?(?:$j)/) {
+				if ($i->[0] =~ /$j/) {
 					if ($s_method eq 'OR'){
 						push @temp, $i;
 						last;
@@ -582,7 +578,7 @@ sub sort{
 		@temp = @sort;
 	}
 
-	# ½ĞÎÏ
+	# å‡ºåŠ›
 	my $right_style = $self->{list}->ItemStyle(
 		'text',
 		-font => "TKFN",
@@ -637,7 +633,7 @@ sub sort{
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'euc')
+					-text  => $h
 				);
 			}
 			++$col;
@@ -647,7 +643,7 @@ sub sort{
 	$self->{list}->yview(0);
 	$self->{list2}->yview(0);
 	
-	# ¥é¥Ù¥ë¤Î¿§¤òÊÑ¹¹
+	# ãƒ©ãƒ™ãƒ«ã®è‰²ã‚’å¤‰æ›´
 	if ($key){
 		my $w = $self->{list}->header(
 			'cget',
@@ -664,7 +660,7 @@ sub sort{
 		);
 	}
 	
-	# Á°²óÊÑ¹¹¤·¤¿¥é¥Ù¥ë¤Î¿§¤ò¸µ¤ËÌá¤¹
+	# å‰å›å¤‰æ›´ã—ãŸãƒ©ãƒ™ãƒ«ã®è‰²ã‚’å…ƒã«æˆ»ã™
 	if ($self->{last_sort_key}){
 		my $lw = $self->{list}->header(
 			'cget',
@@ -690,7 +686,7 @@ sub copy{
 	
 	return 0 unless $self->{result};
 	
-	# 1¹ÔÌÜ
+	# 1è¡Œç›®
 	my $clip = "\t";
 	
 	my $cols = @{$self->{result}->[0]} - 2;
@@ -711,10 +707,10 @@ sub copy{
 	chop $clip;
 	$clip .= "\n";
 	
-	# Ãæ¿È
+	# ä¸­èº«
 	my $rows = @{$self->{result}} - 2;
 	for (my $r = 0; $r <= $rows; ++$r){
-		# 1ÎóÌÜ
+		# 1åˆ—ç›®
 		if ($self->{list2}->itemExists($r, 0)){
 			my $cell = $self->{list2}->itemCget($r, 0, -text);
 			chop $cell if $cell =~ /\r$/o;
@@ -722,7 +718,7 @@ sub copy{
 		} else {
 			$clip .= "\t";
 		}
-		# 2ÎóÌÜ°Ê¹ß
+		# 2åˆ—ç›®ä»¥é™
 		for (my $c = 0; $c <= $cols; ++$c){
 			#if ($self->{last_sort_key}){
 			#	unless ($c + 1 == $self->{last_sort_key}){
@@ -742,13 +738,8 @@ sub copy{
 		$clip .= "\n";
 	}
 	
-	#$clip = gui_window->gui_jg($clip);
-	#require Win32::Clipboard;
-	#my $CLIP = Win32::Clipboard();
-	#$CLIP->Set("$clip");
-	
-	use Clipboard;
-	Clipboard->copy( Encode::encode($::config_obj->os_code,$clip) );
+	use kh_clipboard;
+	kh_clipboard->string($clip);
 }
 
 

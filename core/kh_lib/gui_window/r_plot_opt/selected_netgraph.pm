@@ -9,6 +9,7 @@ sub innner{
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf,
 		command => sub{ $self->calc; },
+		from    => 'selected_netgraph',
 		pack    => { -anchor   => 'w'},
 		r_cmd   => $self->{command_f},
 	);
@@ -25,8 +26,8 @@ sub calc{
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
 		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
+		#$r_command = Jcode->new($r_command)->euc
+		#	if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
@@ -64,6 +65,7 @@ sub calc{
 		msg_long    => $plotR->{result_info_long},
 		ax          => $self->{ax},
 		#no_geometry => 1,
+		coord       => $plotR->{coord},
 	);
 
 	$plotR = undef;

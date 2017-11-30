@@ -1,17 +1,18 @@
 package gui_window::word_corresp;
 use base qw(gui_window);
+use utf8;
 
 use strict;
 use Tk;
 
-use kh_r_plot;
+use kh_r_plot::corresp;
 use gui_widget::tani;
 use gui_widget::hinshi;
 use mysql_crossout;
 use plotR::network;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -38,13 +39,13 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent       => $lf,
-		verb         => kh_msg->get('plot'), # ÉÛÃÖ
+		verb         => kh_msg->get('plot'), # å¸ƒç½®
 		type         => 'corresp',
 	);
 
-	# ÆşÎÏ¥Ç¡¼¥¿¤ÎÀßÄê
+	# å…¥åŠ›ãƒ‡ãƒ¼ã‚¿ã®è¨­å®š
 	$lf2->Label(
-		-text => kh_msg->get('matrix'), # Ê¬ÀÏ¤Ë»ÈÍÑ¤¹¤ë¥Ç¡¼¥¿É½¤Î¼ïÎà¡§
+		-text => kh_msg->get('matrix'), # åˆ†æã«ä½¿ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿è¡¨ã®ç¨®é¡ï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
 
@@ -77,7 +78,7 @@ sub _new{
 
 	$self->{radio} = 0;
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('w_d'), # Ãê½Ğ¸ì £ø Ê¸½ñ
+		-text             => kh_msg->get('w_d'), # æŠ½å‡ºèª ï½˜ æ–‡æ›¸
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
@@ -93,7 +94,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high} = $fi_2->Label(
-		-text => kh_msg->get('unit'), # ½¸·×Ã±°Ì¡§','euc
+		-text => kh_msg->get('unit'), # é›†è¨ˆå˜ä½ï¼š
 		-font => "TKFN"
 	)->pack(
 		-anchor => 'w',
@@ -110,7 +111,7 @@ sub _new{
 		-side   => 'left',
 	);
 	$self->{label_high2} = $fi_4->Checkbutton(
-		-text     => kh_msg->get('biplot'), # ¸«½Ğ¤·¤Ş¤¿¤ÏÊ¸½ñÈÖ¹æ¤òÆ±»şÉÛÃÖ
+		-text     => kh_msg->get('biplot'), # è¦‹å‡ºã—ã¾ãŸã¯æ–‡æ›¸ç•ªå·ã‚’åŒæ™‚å¸ƒç½®
 		-variable => \$self->{biplot},
 	)->pack(
 		-anchor => 'w',
@@ -118,12 +119,18 @@ sub _new{
 	);
 
 	$fi_1->Radiobutton(
-		-text             => kh_msg->get('w_v'), # Ãê½Ğ¸ì £ø ³°ÉôÊÑ¿ô
+		-text             => kh_msg->get('w_v'), # æŠ½å‡ºèª ï½˜ å¤–éƒ¨å¤‰æ•°
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
 		-command          => sub{ $self->refresh;},
 	)->pack(-anchor => 'w');
+
+	my $vars = mysql_outvar->get_list;
+	$vars = @{$vars};
+	if ( $::project_obj->status_from_table == 1 && $vars ){
+		$self->{radio} = 1;
+	}
 
 	my $fi_3 = $fi_1->Frame()->pack(
 		-anchor => 'w',
@@ -142,15 +149,15 @@ sub _new{
 	
 	$self->refresh;
 
-	# º¹°Û¤Î¸²Ãø¤Ê¸ì¤Î¤ßÊ¬ÀÏ
-	$self->{check_filter_w} = 1;                  # ¥Ç¥Õ¥©¥ë¥È¤ÇON
+	# å·®ç•°ã®é¡•è‘—ãªèªã®ã¿åˆ†æ
+	$self->{check_filter_w} = 1;                  # ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ON
 	my $fsw = $lf2->Frame()->pack(
 		-fill => 'x',
 		-pady => 2,
 	);
 
 	$fsw->Checkbutton(
-		-text     => kh_msg->get('flw'), # º¹°Û¤¬¸²Ãø¤Ê¸ì¤òÊ¬ÀÏ¤Ë»ÈÍÑ¡§
+		-text     => kh_msg->get('flw'), # å·®ç•°ãŒé¡•è‘—ãªèªã‚’åˆ†æã«ä½¿ç”¨ï¼š
 		-variable => \$self->{check_filter_w},
 		-command  => sub{ $self->refresh_flw;},
 	)->pack(
@@ -159,7 +166,7 @@ sub _new{
 	);
 
 	$self->{entry_flw_l1} = $fsw->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 
@@ -174,12 +181,12 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flw});
 
 	$self->{entry_flw_l2} = $fsw->Label(
-		-text => kh_msg->get('words'), # ¸ì
+		-text => kh_msg->get('words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left', -padx => 0);
 	$self->refresh_flw;
 
-	# ÆÃÄ§Åª¤Ê¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨
+	# ç‰¹å¾´çš„ãªèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤º
 	my $fs = $lf2->Frame()->pack(
 		-fill => 'x',
 		#-padx => 2,
@@ -187,7 +194,7 @@ sub _new{
 	);
 
 	$fs->Checkbutton(
-		-text     => kh_msg->get('flt'), # ¸¶ÅÀ¤«¤éÎ¥¤ì¤¿¸ì¤Î¤ß¥é¥Ù¥ëÉ½¼¨¡§
+		-text     => kh_msg->get('flt'), # åŸç‚¹ã‹ã‚‰é›¢ã‚ŒãŸèªã®ã¿ãƒ©ãƒ™ãƒ«è¡¨ç¤ºï¼š
 		-variable => \$self->{check_filter},
 		-command  => sub{ $self->refresh_flt;},
 	)->pack(
@@ -196,7 +203,7 @@ sub _new{
 	);
 
 	$self->{entry_flt_l1} = $fs->Label(
-		-text => kh_msg->get('top'), # ¾å°Ì
+		-text => kh_msg->get('top'), # ä¸Šä½
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -211,12 +218,12 @@ sub _new{
 	$self->config_entry_focusin($self->{entry_flt});
 
 	$self->{entry_flt_l2} = $fs->Label(
-		-text => kh_msg->get('words'), # ¸ì
+		-text => kh_msg->get('words'), # èª
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->refresh_flt;
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
+	# ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆ
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf2,
 		type         => 'corresp',
@@ -226,29 +233,29 @@ sub _new{
 		},
 	);
 
-	# À®Ê¬
+	# æˆåˆ†
 	$self->{xy_obj} = gui_widget::r_xy->open(
 		parent    => $lf2,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor => 'w', -pady => 2 },
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor   => 'w' },
-		show_bold => 0,
+		show_bold => 1,
 	);
 
 	$rf->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
 	$rf->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -266,7 +273,7 @@ sub _new{
 	return $self;
 }
 
-# ÀßÄê¤ÎÊİÂ¸¡Ê¡ÖOK¡×¤ò¥¯¥ê¥Ã¥¯¤·¤Æ¼Â¹Ô¤¹¤ë»ş¤Ë¡Ë
+# è¨­å®šã®ä¿å­˜ï¼ˆã€ŒOKã€ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ã¦å®Ÿè¡Œã™ã‚‹æ™‚ã«ï¼‰
 sub _settings_save{
 	my $self = shift;
 	my $settings;
@@ -287,26 +294,26 @@ sub _settings_save{
 		var  => $settings,
 	);
 
-	# Ãê½Ğ¸ìÁªÂò¤ÎÀßÄê¤âÊİÂ¸¤·¤Æ¤ª¤¯
-	# ¡ÊÆÉ¤ß¹ş¤ß¤Ï¼«Æ°¤À¤¬¡¢ÊİÂ¸¤Ï¼êÆ°¡Ä¡Ë
+	# æŠ½å‡ºèªé¸æŠã®è¨­å®šã‚‚ä¿å­˜ã—ã¦ãŠã
+	# ï¼ˆèª­ã¿è¾¼ã¿ã¯è‡ªå‹•ã ãŒã€ä¿å­˜ã¯æ‰‹å‹•â€¦ï¼‰
 	$self->{words_obj}->settings_save;
 
 	return $self;
 }
 
-# ÀßÄê¤ÎÆÉ¤ß¹ş¤ß¡Ê²èÌÌ¤ò³«¤¯»ş¤Ë¡Ë
+# è¨­å®šã®èª­ã¿è¾¼ã¿ï¼ˆç”»é¢ã‚’é–‹ãæ™‚ã«ï¼‰
 sub _settings_load{
 	my $self = shift;
 
-	return 1; # ¤³¤Îµ¡Ç½¤Ç¤Î¤ßÀßÄê¤¬¤¹¤Ù¤ÆÊİÂ¸¤µ¤ì¤ë¤è¤¦¤Ë¤¹¤ë¤È¡¢
-	          # Â¾¤Îµ¡Ç½¤È¤Î¥Ğ¥é¥ó¥¹¤¬°­¤½¤¦¤Ê¤Î¤Ç¡¢ÊİÂ¸¤·¤Æ¤¢¤ë
-	          # ÀßÄê¤ò¡Êº£¤Î½ê¡Ë´º¤¨¤ÆÆÉ¤ß¹ş¤Ş¤Ê¤¤¤³¤È¤Ë¡Ä¡£
+	return 1; # ã“ã®æ©Ÿèƒ½ã§ã®ã¿è¨­å®šãŒã™ã¹ã¦ä¿å­˜ã•ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹ã¨ã€
+	          # ä»–ã®æ©Ÿèƒ½ã¨ã®ãƒãƒ©ãƒ³ã‚¹ãŒæ‚ªãã†ãªã®ã§ã€ä¿å­˜ã—ã¦ã‚ã‚‹
+	          # è¨­å®šã‚’ï¼ˆä»Šã®æ‰€ï¼‰æ•¢ãˆã¦èª­ã¿è¾¼ã¾ãªã„ã“ã¨ã«â€¦ã€‚
 
 	my $settings = $::project_obj->load_dmp(
 		name => $self->win_name,
 	) or return 0;
 
-	# ¥¨¥ó¥È¥ê¡¼
+	# ã‚¨ãƒ³ãƒˆãƒªãƒ¼
 	foreach my $i ('d_n', 'd_x', 'd_y', 'plot_size', 'font_size'){
 		if ( length($settings->{$i}) ){
 			$self->{'entry_'.$i}->delete(0,'end');
@@ -314,11 +321,11 @@ sub _settings_load{
 		}
 	}
 
-	# ¡ÖÃê½Ğ¸ì£øÊ¸½ñ¡× or ¡ÖÃê½Ğ¸ì£ø³°ÉôÊÑ¿ô¡×
+	# ã€ŒæŠ½å‡ºèªï½˜æ–‡æ›¸ã€ or ã€ŒæŠ½å‡ºèªï½˜å¤–éƒ¨å¤‰æ•°ã€
 	$self->{radio} = $settings->{radio};
 	$self->refresh;
 
-	# ¡ÖÃê½Ğ¸ì£øÊ¸½ñ¡×¤Î¾ì¹ç
+	# ã€ŒæŠ½å‡ºèªï½˜æ–‡æ›¸ã€ã®å ´åˆ
 	if ( $self->{radio} == 0 ){
 		$self->{opt_body_high}->set_value( $settings->{tani2} );
 		if ($settings->{biplot}){
@@ -328,13 +335,13 @@ sub _settings_load{
 		}
 	}
 
-	# ¡ÖÃê½Ğ¸ì£ø³°ÉôÊÑ¿ô¡×¤Î¾ì¹ç
+	# ã€ŒæŠ½å‡ºèªï½˜å¤–éƒ¨å¤‰æ•°ã€ã®å ´åˆ
 	elsif ( $self->{radio} == 1 ) {
 		#$self->{opt_body_var}->set_value( $settings->{var_id} );
 	}
 }
 
-# ¡ÖÆÃÄ§¸ì¤ËÃíÌÜ¡×¤Î¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹
+# ã€Œç‰¹å¾´èªã«æ³¨ç›®ã€ã®ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹
 sub refresh_flt{
 	my $self = shift;
 	if ( $self->{check_filter} ){
@@ -366,43 +373,80 @@ sub refresh_flw{
 
 
 
-# ¥é¥¸¥ª¥Ü¥¿¥ó´ØÏ¢
+# ãƒ©ã‚¸ã‚ªãƒœã‚¿ãƒ³é–¢é€£
 sub refresh{
 	my $self = shift;
 	unless ($self->tani){return 0;}
 
 	#------------------------#
-	#   ³°ÉôÊÑ¿ôÁªÂòWidget   #
+	#   å¤–éƒ¨å¤‰æ•°é¸æŠWidget   #
 
 	my @options = ();
 	my @tanis   = ();
 
 	unless ($self->{opt_body_var}){
-		# ÍøÍÑ¤Ç¤­¤ëÊÑ¿ô¤ò¥Á¥§¥Ã¥¯
+		# åˆ©ç”¨ã§ãã‚‹å¤‰æ•°ã‚’ãƒã‚§ãƒƒã‚¯
 		my $h = mysql_outvar->get_list;
 		my @options = ();
 		foreach my $i (@{$h}){
 			push @options, [$self->gui_jchar($i->[1]), $i->[2]];
 		}
 		
-		# ¥ê¥¹¥ÈÉ½¼¨
-		$self->{opt_body_var} = gui_widget::chklist->open(
-			parent  => $self->{opt_frame_var},
-			options => \@options,
-			default => 0,
-			height  => 3,
-			pack    => {
-				-side   => 'left',
-				-padx   => 2,
-				-fill   => 'both',
-				-expand => 1
-			},
+		# ãƒªã‚¹ãƒˆè¡¨ç¤º
+		$self->{vars} = \@options;
+		$self->{opt_body_var} = $self->{opt_frame_var}->Scrolled(
+			'HList',
+			-scrollbars         => 'osoe',
+			-header             => '0',
+			-itemtype           => 'text',
+			-font               => 'TKFN',
+			-columns            => '1',
+			-height             => '4',
+			-background         => 'white',
+			-selectforeground   => $::config_obj->color_ListHL_fore,
+			-selectbackground   => $::config_obj->color_ListHL_back,
+			-selectborderwidth  => 0,
+			-highlightthickness => 0,
+			-selectmode         => 'extended',
+		)->pack(
+			-anchor => 'w',
+			-padx   => '2',
+			-pady   => '2',
+			-fill   => 'both',
+			-expand => 1
 		);
-		$self->{opt_body_var_ok} = 1;
+		
+		my $row = 0;
+		foreach my $i (@options){
+			$self->{opt_body_var}->add($row, -at => "$row");
+			$self->{opt_body_var}->itemCreate(
+				$row,
+				0,
+				-text => $i->[0],
+			);
+			++$row;
+		}
+		
+		$self->{opt_body_var}->selectionSet(0)
+				if $self->{opt_body_var}->info('exists', 0);
+		
+		#$self->{opt_body_var} = gui_widget::chklist->open(
+		#	parent  => $self->{opt_frame_var},
+		#	options => \@options,
+		#	default => 0,
+		#	height  => 3,
+		#	pack    => {
+		#		-side   => 'left',
+		#		-padx   => 2,
+		#		-fill   => 'both',
+		#		-expand => 1
+		#	},
+		#);
+		#$self->{opt_body_var_ok} = 1;
 	}
 
 	#------------------------------#
-	#   ¾å°Ì¤ÎÊ¸½ñÃ±°ÌÁªÂòWidget   #
+	#   ä¸Šä½ã®æ–‡æ›¸å˜ä½é¸æŠWidget   #
 
 	unless ($self->{opt_body_high}){
 
@@ -441,7 +485,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => 
 					[
-						[kh_msg->get('na'), undef], # ÍøÍÑÉÔ²Ä
+						[kh_msg->get('na'), undef], # åˆ©ç”¨ä¸å¯
 					],
 				variable => \$self->{high},
 			);
@@ -463,7 +507,7 @@ sub refresh{
 	}
 
 	#----------------------------------#
-	#   Widget¤ÎÍ­¸ú¡¦Ìµ¸ú¤òÀÚ¤êÂØ¤¨   #
+	#   Widgetã®æœ‰åŠ¹ãƒ»ç„¡åŠ¹ã‚’åˆ‡ã‚Šæ›¿ãˆ   #
 
 	if ($self->{radio} == 0){
 		if ($self->{opt_body_high_ok}){
@@ -474,22 +518,17 @@ sub refresh{
 		$self->{label_high}->configure(-foreground => 'black');
 		$self->{label_high2}->configure(-state => 'normal');
 		
-		$self->{opt_body_var}->disable;
-		#$self->{label_var}->configure(-foreground => 'gray');
+		$self->{opt_body_var}->configure(-selectbackground => 'gray');
+		$self->{opt_body_var}->configure(-background => 'gray');
 	}
 	elsif ($self->{radio} == 1){
 		$self->{opt_body_high}->configure(-state => 'disable');
 		$self->{label_high}->configure(-foreground => 'gray');
 		$self->{label_high2}->configure(-state => 'disable');
 
-		$self->{opt_body_var}->enable;
+		$self->{opt_body_var}->configure(-selectbackground => $::config_obj->color_ListHL_back);
+		$self->{opt_body_var}->configure(-background => 'white');
 
-		#if ($self->{opt_body_var_ok}){
-		#	#$self->{opt_body_var}->configure(-state => 'normal');
-		#} else {
-		#	#$self->{opt_body_var}->configure(-state => 'disable');
-		#}
-		#$self->{label_var}->configure(-foreground => 'black');
 	}
 	
 	return 1;
@@ -503,7 +542,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -516,16 +555,16 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('select_pos'), # ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£
+			msg  => kh_msg->get('select_pos'), # å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚
 		);
 		return 0;
 	}
@@ -536,11 +575,14 @@ sub calc{
 		$tani2 = $self->gui_jg($self->{high});
 	}
 	elsif ($self->{radio} == 1){
-		$vars = $self->{opt_body_var}->selected;
+		foreach my $i ( $self->{opt_body_var}->selectionGet ){
+			push @{$vars}, $self->{vars}[$i][1];
+		}
+		
 		unless ( @{$vars} ){
 			gui_errormsg->open(
 				type => 'msg',
-				msg  => kh_msg->get('select_var'), # ³°ÉôÊÑ¿ô¤ò1¤Ä°Ê¾åÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+				msg  => kh_msg->get('select_var'), # å¤–éƒ¨å¤‰æ•°ã‚’1ã¤ä»¥ä¸Šé¸æŠã—ã¦ãã ã•ã„ã€‚
 			);
 			return 0;
 		}
@@ -553,7 +595,7 @@ sub calc{
 				){
 					gui_errormsg->open(
 						type => 'msg',
-						msg  => kh_msg->get('check_var_unit'), # ¸½ºß¤Î½ê¡¢½¸·×Ã±°Ì¤¬°Û¤Ê¤ë³°ÉôÊÑ¿ô¤òÆ±»ş¤Ë»ÈÍÑ¤¹¤ë¤³¤È¤Ï¤Ç¤­¤Ş¤»¤ó¡£
+						msg  => kh_msg->get('check_var_unit'), # ç¾åœ¨ã®æ‰€ã€é›†è¨ˆå˜ä½ãŒç•°ãªã‚‹å¤–éƒ¨å¤‰æ•°ã‚’åŒæ™‚ã«ä½¿ç”¨ã™ã‚‹ã“ã¨ã¯ã§ãã¾ã›ã‚“ã€‚
 					);
 					return 0;
 				}
@@ -583,7 +625,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('select_3words'), # ¾¯¤Ê¤¯¤È¤â3¤Ä°Ê¾å¤ÎÃê½Ğ¸ì¤òÉÛÃÖ¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('select_3words'), # å°‘ãªãã¨ã‚‚3ã¤ä»¥ä¸Šã®æŠ½å‡ºèªã‚’å¸ƒç½®ã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
@@ -592,13 +634,13 @@ sub calc{
 		my $ans = $self->win_obj->messageBox(
 			-message => $self->gui_jchar
 				(
-					kh_msg->get('too_many1') # ¸½ºß¤ÎÀßÄê¤Ç¤Ï
+					kh_msg->get('too_many1') # ç¾åœ¨ã®è¨­å®šã§ã¯
 					.$check_num
-					.kh_msg->get('too_many2') # ¸ì¤¬ÉÛÃÖ¤µ¤ì¤Ş¤¹¡£
+					.kh_msg->get('too_many2') # èªãŒå¸ƒç½®ã•ã‚Œã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('too_many3') # ÉÛÃÖ¤¹¤ë¸ì¤Î¿ô¤Ï100¡Á150ÄøÅÙ¤Ë¤ª¤µ¤¨¤ë¤³¤È¤ò¿ä¾©¤·¤Ş¤¹¡£
+					.kh_msg->get('too_many3') # å¸ƒç½®ã™ã‚‹èªã®æ•°ã¯100ã€œ150ç¨‹åº¦ã«ãŠã•ãˆã‚‹ã“ã¨ã‚’æ¨å¥¨ã—ã¾ã™ã€‚
 					."\n"
-					.kh_msg->get('too_many4') # Â³¹Ô¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡©
+					.kh_msg->get('too_many4') # ç¶šè¡Œã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
 				),
 			-icon    => 'question',
 			-type    => 'OKCancel',
@@ -611,7 +653,7 @@ sub calc{
 
 	my $w = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $tani2,
@@ -625,7 +667,7 @@ sub calc{
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 
-	# ³°ÉôÊÑ¿ô¤ÎÉÕÍ¿
+	# å¤–éƒ¨å¤‰æ•°ã®ä»˜ä¸
 	if ($self->{radio} == 1){
 		
 		my $n_v = 0;
@@ -640,6 +682,7 @@ sub calc{
 			my $h = mysql_exec->select($sql,1)->hundle;
 			my $n = 0;
 			while (my $i = $h->fetch){
+				$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
 				if ( length( $var_obj->{labels}{$i->[0]} ) ){
 					my $t = $var_obj->{labels}{$i->[0]};
 					$t =~ s/"/ /g;
@@ -658,7 +701,7 @@ sub calc{
 		$r_command .= &r_command_aggr($n_v);
 	}
 
-	# ³°ÉôÊÑ¿ô¤¬Ìµ¤«¤Ã¤¿¾ì¹ç
+	# å¤–éƒ¨å¤‰æ•°ãŒç„¡ã‹ã£ãŸå ´åˆ
 	$r_command .= '
 		if ( length(v_pch) == 0 ) {
 			v_pch   <- 3
@@ -666,7 +709,7 @@ sub calc{
 		}
 	';
 
-	# ¶õ¤Î¹Ô¡¦¶õ¤ÎÎó¤òºï½ü
+	# ç©ºã®è¡Œãƒ»ç©ºã®åˆ—ã‚’å‰Šé™¤
 	$r_command .=
 		"if ( length(v_pch) > 1 ){ v_pch <- v_pch[rowSums(d) > 0] }\n";
 	$r_command .=
@@ -684,12 +727,12 @@ sub calc{
 
 	my $filter = 0;
 	if ( $self->{check_filter} ){
-		$filter = $self->gui_jg( $self->{entry_flt}->get );
+		$filter = $self->gui_jgn( $self->{entry_flt}->get );
 	}
 
 	my $filter_w = 0;
 	if ( $self->{check_filter_w} ){
-		$filter_w = $self->gui_jg( $self->{entry_flw}->get );
+		$filter_w = $self->gui_jgn( $self->{entry_flw}->get );
 	}
 
 	my $plot = &make_plot(
@@ -711,15 +754,18 @@ sub calc{
 	);
 
 	$w->end(no_dialog => 1);
-
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	return 0 unless $plot;
+	
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	my $plotwin_id = 'w_word_corresp_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
 	
 	gui_window::r_plot::word_corresp->open(
-		plots       => $plot,
+		plots       => $plot->{result_plots},
+		coord       => $plot->{coord},
+		ratio       => $plot->{ratio},
 		#no_geometry => 1,
 	);
 
@@ -735,17 +781,30 @@ sub make_plot{
 	$args{flt} = 0 unless $args{flt};
 	$args{flw} = 0 unless $args{flw};
 
-	#my $fontsize = $args{font_size};
+	my $x_factor = 1;
+	if ( $args{bubble} == 1 ){
+		$x_factor = 1.285;
+	}
+	$args{height} = $args{plot_size};
+	$args{width}  = int( $args{plot_size} * $x_factor );
+
 	my $fontsize = 1;
 	my $r_command = $args{r_command};
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
-	#$r_command = Encode::decode('euc-jp', $r_command);
 	$r_command = $r_command;
 
-	kh_r_plot->clear_env;
+	kh_r_plot::corresp->clear_env;
+
+	if ($args{font_bold} == 1){
+		$args{font_bold} = 2;
+	} else {
+		$args{font_bold} = 1;
+	}
+	$r_command .= "text_font <- $args{font_bold}\n";
 
 	$r_command .= "r_max <- 150\n";
+	$r_command .= "zoom_factor <- $args{zoom}\n";
 	$r_command .= "d_x <- $args{d_x}\n";
 	$r_command .= "d_y <- $args{d_y}\n";
 	$r_command .= "flt <- $args{flt}\n";
@@ -762,9 +821,9 @@ sub make_plot{
 		}
 	";
 
-	$r_command .= "name_dim <- '".Encode::encode('euc-jp', kh_msg->get('dim'))."'\n"; # À®Ê¬
-	$r_command .= "name_eig <- '".Encode::encode('euc-jp', kh_msg->get('eig'))."'\n"; # ¸ÇÍ­ÃÍ
-	$r_command .= "name_exp <- '".Encode::encode('euc-jp', kh_msg->get('exp'))."'\n"; # ´óÍ¿Î¨
+	$r_command .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # æˆåˆ†
+	$r_command .= "name_eig <- '".kh_msg->pget('eig')."'\n"; # å›ºæœ‰å€¤
+	$r_command .= "name_exp <- '".kh_msg->pget('exp')."'\n"; # å¯„ä¸ç‡
 
 	$r_command .= "library(MASS)\n";
 
@@ -775,181 +834,121 @@ sub make_plot{
 		"txt <- cbind( 1:length(k), round(k,4), round(100*k / sum(k),2) )\n";
 	$r_command .= "colnames(txt) <- c(name_dim,name_eig,name_exp)\n";
 	$r_command .= "print( txt )\n";
+	$r_command .= "inertias <- round(k,4)\n";
 	$r_command .= "k <- round(100*k / sum(k),2)\n";
 
-	# ¥×¥í¥Ã¥È¤Î¤¿¤á¤ÎR¥³¥Ş¥ó¥É
+	# ãƒ—ãƒ­ãƒƒãƒˆã®ãŸã‚ã®Rã‚³ãƒãƒ³ãƒ‰
 	my ($r_command_3a, $r_command_3);
 	my ($r_command_2a, $r_command_2);
 	my ($r_com_gray, $r_com_gray_a);
+
+	# åˆæœŸåŒ–
+	$r_command .= "font_size <- $fontsize\n";
+	$r_command .= "resize_vars <- $args{resize_vars}\n";
+	$r_command .= "bubble_size <- $args{bubble_size}\n";
+	$r_command .= "labcd <- NULL\n\n";
+	my $common = $r_command;
 	
-	# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤Ê¤ï¤Ê¤¤¾ì¹ç
-	if ( $args{bubble} == 0 ){
-		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "labcd <- NULL\n\n";
-		my $common = $r_command;
+	# ãƒ‰ãƒƒãƒˆã®ã¿
+	$r_command .= "plot_mode <- \"color\"\n";
+	$r_command .= &r_command_bubble(%args);
 
-		# ¥é¥Ù¥ë¤È¥É¥Ã¥È¤ò¥×¥í¥Ã¥È
-		$r_command_2a = 
-			"plot_mode=\"color\"\n"
-			.&r_command_normal;
-		$r_command_2 = $common.$r_command_2a;
+	# ã‚«ãƒ©ãƒ¼
+	$r_command_2a .= "plot_mode <- \"dots\"\n";
+	$r_command_2a .= &r_command_bubble(%args);
+	$r_command_2  = $common.$r_command_2a;
+
+	if ($args{biplot}){
+		# å¤‰æ•°ã®ã¿
+		$r_command_3a .= "plot_mode <- \"vars\"\n";
+		$r_command_3a .= &r_command_bubble(%args);
+		$r_command_3  = $common.$r_command_3a;
 		
-		# ¥É¥Ã¥È¤Î¤ß¥×¥í¥Ã¥È
-		$r_command .=
-			"plot_mode=\"dots\"\n"
-			.&r_command_normal;
-
-		if ($args{biplot}){
-			# ÊÑ¿ô¤Î¤ß¤Î¥×¥í¥Ã¥È
-			$r_command_3a .= 
-				"plot_mode=\"vars\"\n"
-				.&r_command_normal;
-			$r_command_3 = $common.$r_command_3a;
-			
-			# ¥°¥ì¡¼¥¹¥±¡¼¥ë¤Î¥×¥í¥Ã¥È
-			$r_com_gray_a .= &r_command_slab_my;
-			$r_com_gray_a .= 
-				"plot_mode=\"gray\"\n"
-				.&r_command_normal;
-			$r_com_gray = $common.$r_com_gray_a;
-		}
-
-	# ¥Ğ¥Ö¥ëÉ½¸½¤ò¹Ô¤¦¾ì¹ç
-	} else {
-		# ½é´ü²½
-		$r_command .= &r_command_slab_my;
-		$r_command .= "font_size <- $fontsize\n";
-		$r_command .= "std_radius <- $args{std_radius}\n";
-		$r_command .= "resize_vars <- $args{resize_vars}\n";
-		$r_command .= "bubble_size <- $args{bubble_size}\n";
-		$r_command .= "bubble_var <- $args{bubble_var}\n";
-		$r_command .= "labcd <- NULL\n\n";
-		my $common = $r_command;
-		
-		# ¥É¥Ã¥È¤Î¤ß
-		$r_command .= "plot_mode <- \"dots\"\n";
-		$r_command .= &r_command_bubble;
-
-		# ¥«¥é¡¼
-		$r_command_2a .= "plot_mode <- \"color\"\n";
-		$r_command_2a .= &r_command_bubble;
-		$r_command_2  = $common.$r_command_2a;
-
-		if ($args{biplot}){
-			# ÊÑ¿ô¤Î¤ß
-			$r_command_3a .= "plot_mode <- \"vars\"\n";
-			$r_command_3a .= &r_command_bubble;
-			$r_command_3  = $common.$r_command_3a;
-			
-			# ¥°¥ì¡¼¥¹¥±¡¼¥ë
-			$r_com_gray_a .= "plot_mode <- \"gray\"\n";
-			$r_com_gray_a .= &r_command_bubble;
-			$r_com_gray = $common.$r_com_gray_a;
-		}
+		# ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«
+		$r_com_gray_a .= "plot_mode <- \"gray\"\n";
+		$r_com_gray_a .= &r_command_bubble(%args);
+		$r_com_gray = $common.$r_com_gray_a;
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
-	my $flg_error = 0;
-	my $plot1 = kh_r_plot->new(
+
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
+	my $plot1 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
-	my $plot2 = kh_r_plot->new(
+	my $plot2 = kh_r_plot::corresp->new(
 		name      => $args{plotwin_name}.'_2',
 		command_a => $r_command_2a,
 		command_f => $r_command_2,
-		width     => $args{plot_size},
+		width     => int( $args{plot_size} * $x_factor ),
 		height    => $args{plot_size},
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 	my ($plotg, $plotv);
 	my @plots = ();
 	if ($r_com_gray_a){
-		$plotg = kh_r_plot->new(
+		$plotg = kh_r_plot::corresp->new(
 			name      => $args{plotwin_name}.'_g',
 			command_a => $r_com_gray_a,
 			command_f => $r_com_gray,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
+		) or return 0;
 		
-		$plotv = kh_r_plot->new(
+		$plotv = kh_r_plot::corresp->new(
 			name      => $args{plotwin_name}.'_v',
 			command_a => $r_command_3a,
 			command_f => $r_command_3,
-			width     => $args{plot_size},
+			width     => int( $args{plot_size} * $x_factor ),
 			height    => $args{plot_size},
 			font_size => $args{font_size},
-		) or $flg_error = 1;
-		@plots = ($plot2,$plotg,$plotv,$plot1);
+		) or return 0;
+		@plots = ($plot1,$plotg,$plotv,$plot2);
 	} else {
-		@plots = ($plot2,$plot1);
+		@plots = ($plot1,$plot2);
 	}
 
 	my $txt = $plot1->r_msg;
 	if ( length($txt) ){
-		if ($::config_obj->os eq 'win32'){
-			$txt = Jcode->new($txt)->sjis;
-		} else {
-			$txt = Jcode->new($txt)->utf8;
-		}
 		print "-------------------------[Begin]-------------------------[R]\n";
 		print "$txt\n";
 		print "---------------------------------------------------------[R]\n";
 	}
 
-	kh_r_plot->clear_env;
+	# write coordinates to a file
+	my $csv = $::project_obj->file_TempCSV;
+	$::config_obj->R->send("
+		write.table(out_coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+	");
 
-	return undef if $flg_error;
+	# get XY ratio
+	$::config_obj->R->send("
+		if (asp == 1){
+			ratio = ( xlimv[2] - xlimv[1] ) / ( ylimv[2] - ylimv[1] )
+		} else {
+			ratio = 0
+		}
+		print( paste0('<ratio>', ratio ,'</ratio>') )
+	");
+	my $ratio = $::config_obj->R->read;
+	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
+		$ratio = $1;
+	}
 
-	return \@plots;
-}
+	kh_r_plot::corresp->clear_env;
 
-sub r_command_normal{
-return '
-
-if (plot_mode == "color"){
-	plot_color <- c("#66CCCC","#ADD8E6",rep( "#DC143C", v_count ))
-	plot_pch   <- c(20,1,0,2,4:15)
-} else if (plot_mode == "vars"){
-	plot_color <- c("#ADD8E6","#ADD8E6",rep( "red", v_count ))
-	plot_pch   <- c(1,1,0,2,4:15)
-} else if (plot_mode == "gray"){
-	plot_color <- c("gray65","gray65",rep( "gray30", v_count))
-	plot_pch   <- c(20,1,0,2,4:15)
-} else if (plot_mode == "dots"){
-	plot_color <- c("black","black",rep( "black", v_count))
-	plot_pch   <- c(1,3,0,2,4:15)
-}
-
-
-if (biplot == 1){
-	cb <- rbind(
-		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-	)
-} else {
-	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
-}
-
-plot(
-	cb,
-	pch=plot_pch[cb[,3]],
-	col=plot_color[cb[,3]],
-	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
-	cex=c(1,1,rep( pch_cex, v_count ))[cb[,3]],
-	bty = "l",
-	asp = asp
-)
-
-'.&r_command_labels;
+	my $plotR;
+	$plotR->{result_plots} = \@plots,
+	$plotR->{coord} = $csv;
+	$plotR->{ratio} = $ratio;
+	
+	return $plotR;
 }
 
 
@@ -957,8 +956,8 @@ sub r_command_aggr{
 	my $n_v = shift;
 	my $t =
 		"name_nav <- '"
-		.Encode::encode('euc-jp', kh_msg->get('nav'))
-		."'\n"; # ·çÂ»ÃÍ
+		.kh_msg->pget('nav')
+		."'\n"; # æ¬ æå€¤
 	$t .= << 'END_OF_the_R_COMMAND';
 
 aggregate_with_var <- function(d, doc_length_mtr, v) {
@@ -1020,7 +1019,7 @@ END_OF_the_R_COMMAND2
 sub r_command_filter{
 	my $t = << 'END_OF_the_R_COMMAND';
 
-# Filter words by chi-square value ¢¨ÆüËÜ¸ì¥³¥á¥ó¥È
+# Filter words by chi-square value
 if ( (flw > 0) && (flw < ncol(d)) ){
 	sort  <- NULL
 	for (i in 1:ncol(d) ){
@@ -1032,10 +1031,30 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	}
 	d <- d[,order(sort,decreasing=T)]
 	d <- d[,1:flw]
+	
 	d <- subset(d, rowSums(d) > 0)
+	if (exists("doc_length_mtr")){
+		doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+		n_total <- doc_length_mtr[,2]
+	}
 }
 
-c <- corresp(d, nf=min( nrow(d), ncol(d) ) )
+d_max <- min( nrow(d), ncol(d) ) - 1
+if (d_x > d_max){
+	d_x <- d_max
+}
+if (d_y > d_max){
+	d_y <- d_max
+}
+
+c <- corresp(d, nf=d_max )
+
+if (d_max == 1){
+	c$cscore <- as.matrix( c$cscore )
+	c$rscore <- as.matrix( c$rscore )
+	colnames(c$cscore) <- c("X1")
+	colnames(c$rscore) <- c("X1")
+}
 
 # Dilplay Labels only for distinctive words
 if ( (flt > 0) && (flt < nrow(c$cscore)) ){
@@ -1070,19 +1089,60 @@ if ( v_count > 1 ){
 	pch_cex <- 1.25
 }
 
+# Zooming area near the origin
+
+log_conv <- function(x, y, a){
+	log_base <- 10
+	
+	# Find Cosine theta
+	OA  <- sqrt( x^2 + y^2 )
+	OA[OA == 0] <- 0.00000000000000000001
+	Cos <- x / OA
+	
+	# Convert OA
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+
+	# Find OB
+	OB <- Cos * OA
+	
+	# Find AB
+	AB = sqrt( OA^2 - OB^2 )
+	AB[y < 0] <- AB[y < 0] * -1
+	
+	cbind(OB, AB)
+}
+
+axp <- NULL
+if (zoom_factor >= 1 ){
+	scaling <- "none"
+	axp <- c(0,0,1)
+
+	r <- log_conv( c$cscore[,d_x], c$cscore[,d_y], zoom_factor )
+	c$cscore[,d_x] <- r[,1]
+	c$cscore[,d_y] <- r[,2]
+
+	r <- log_conv( c$rscore[,d_x], c$rscore[,d_y], zoom_factor )
+	c$rscore[,d_x] <- r[,1]
+	c$rscore[,d_y] <- r[,2]
+}
+
 # Scaling
 asp <- 0
 if (scaling == "sym"){
-	c$cscore[,d_x] <- c$cscore[,d_x] * c$cor[d_x]
-	c$cscore[,d_y] <- c$cscore[,d_y] * c$cor[d_y]
-	c$rscore[,d_x] <- c$rscore[,d_x] * c$cor[d_x]
-	c$rscore[,d_y] <- c$rscore[,d_y] * c$cor[d_y]
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * c$cor[i]
+		c$rscore[,i] <- c$rscore[,i] * c$cor[i]
+	}
 	asp <- 1
 } else if (scaling == "symbi"){
-	c$cscore[,d_x] <- c$cscore[,d_x] * sqrt( c$cor[d_x] )
-	c$cscore[,d_y] <- c$cscore[,d_y] * sqrt( c$cor[d_y] )
-	c$rscore[,d_x] <- c$rscore[,d_x] * sqrt( c$cor[d_x] )
-	c$rscore[,d_y] <- c$rscore[,d_y] * sqrt( c$cor[d_y] )
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * sqrt( c$cor[i] )
+		c$rscore[,i] <- c$rscore[,i] * sqrt( c$cor[i] )
+	}
 	asp <- 1
 }
 
@@ -1092,175 +1152,25 @@ return $t;
 }
 
 sub r_command_bubble{
+	my %args = @_;
 	return '
 
-col_bg_words <- NA
-col_bg_vars  <- NA
+library(ggplot2)
 
-if (plot_mode == "color"){
-	col_dot_words <- "#00CED1"
-	col_dot_vars  <- "#FF6347"
-	if ( use_alpha == 1 ){
-		col_bg_words <- "#48D1CC"
-		col_bg_vars  <- "#FFA07A"
-		
-		rgb <- col2rgb(col_bg_words) / 255
-		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
-		rgb <- rgb * 0.75
-		col_dot_words  <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.6 )
-		
-		rgb <- col2rgb(col_bg_vars) / 255
-		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3], alpha=0.15 )
-	}
+font_family <- "'.$::config_obj->font_plot_current.'"
+
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
 }
 
-if (plot_mode == "gray"){
-	col_dot_words <- "gray55"
-	col_dot_vars  <- "gray30"
+if ( exists("bs_fixed") == F ) {
+	bubble_size <- bubble_size / '.$args{font_size}.'
+	bs_fixed <- 1
 }
 
-if (plot_mode == "vars"){
-	col_dot_words <- "#ADD8E6"
-	col_dot_vars  <- "red"
-}
-
-if (plot_mode == "dots"){
-	col_dot_words <- "black"
-	col_dot_vars  <- "black"
-}
-
-# Bubble size
-neg_to_zero <- function(nums){
-  temp <- NULL
-  for (i in 1:length(nums) ){
-    if (nums[i] < 1){
-      temp[i] <- 1
-    } else {
-      temp[i] <-  nums[i]
-    }
-  }
-  return(temp)
-}
-
-b_size <- NULL
-for (i in rownames(c$cscore)){
-	if ( is.na(i) || is.null(i) || is.nan(i) ){
-		b_size <- c( b_size, 1 )
-	} else {
-		b_size <- c( b_size, sum( d[,i] ) )
-	}
-}
-
-b_size <- sqrt( b_size / pi ) # adjust bubble size: frequency ratio = square measure ratio
-
-if (std_radius){ # standardize (enphasize) bubble size
-	if ( sd(b_size) == 0 ){
-		b_size <- rep(10, length(b_size))
-	} else {
-		b_size <- b_size / sd(b_size)
-		b_size <- b_size - mean(b_size)
-		b_size <- b_size * 5 * bubble_var / 100 + 10
-		b_size <- neg_to_zero(b_size)
-	}
-}
-
-# set plot area
-plot(
-	rbind(
-		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
-		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
-	),
-	pch=NA,
-	col="black",
-	xlab=paste(name_dim,d_x," (",k[d_x],"%)",sep=""),
-	ylab=paste(name_dim,d_y," (",k[d_y],"%)",sep=""),
-	asp = asp,
-	#bty="l"
-)
-
-# draw bubbles of words
-symbols(
-	c$cscore[,d_x],
-	c$cscore[,d_y],
-	circles=b_size,
-	inches=0.5 * bubble_size / 100,
-	fg=c(col_dot_words,"#ADD8E6")[ptype],
-	bg=c(col_bg_words,"#ADD8E6")[ptype],
-	add=T,
-)
-
-# draw bubbles of variables
-if (biplot){
-	# bubble size
-	if (resize_vars){
-		pch_cex <- sqrt(n_total);
-		pch_cex <- pch_cex * ( 10 / max(pch_cex) )
-		if (std_radius){ # standardize (enphasize) bubble size
-			if ( sd(pch_cex) == 0 ){
-				pch_cex <- rep(10,length(pch_cex))
-			} else {
-				pch_cex <- pch_cex / sd(pch_cex)
-				pch_cex <- pch_cex - mean(pch_cex)
-				pch_cex <- pch_cex * 5 + 10
-				pch_cex <- neg_to_zero(pch_cex)
-				pch_cex <- pch_cex * ( 10 / max(pch_cex) )
-			}
-		}
-		pch_cex <- pch_cex * bubble_size / 100
-	}
-	# plot points of variables
-	points(
-		cbb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch),
-		pch=c(20,1,22,23:25,21,4-14)[cbb[,3]],
-		col=c("#66CCCC","#ADD8E6",rep( col_dot_vars, v_count ))[cbb[,3]],
-		bg=col_bg_vars,
-		cex=pch_cex,
-	)
-}
-'
-.&r_command_labels;
-}
-
-
-sub r_command_labels{
-	return '
-
-# show the origin
-if (show_origin == 1){
-	line_color <- "gray30"
-	limits <- par("usr")
-	m_x <- (limits[2] - limits[1]) * 0.03
-	m_y <- (limits[4] - limits[3]) * 0.03
-	
-	segments( limits[1], 0, m_x, 0, col=line_color, lty=3, lwd=1)
-	segments( 0, limits[3], 0, m_y, col=line_color, lty=3, lwd=1)
-}
-
-# label colors
-if (plot_mode == "color"){
-	if (bubble_plot == 1){
-		col_txt_words <- "black"
-		col_txt_vars  <- "#DC143C"
-	} else {
-		col_txt_words <- "black"
-		col_txt_vars  <- "#FF6347"
-	}
-}
-
-if (plot_mode == "gray"){
-	col_txt_words <- "black"
-	col_txt_vars  <- "black"
-}
-
-if (plot_mode == "vars"){
-	col_txt_words <- NA
-	col_txt_vars  <- "black"
-}
-
-if (plot_mode == "dots"){
-	col_txt_words <- NA
-	col_txt_vars  <- NA
-}
+#-----------------------------------------------------------------------------#
+#                           prepare label positions
+#-----------------------------------------------------------------------------#
 
 # compute label positions
 if (biplot == 1 && plot_mode != "vars"){
@@ -1275,7 +1185,24 @@ if (biplot == 1 && plot_mode != "vars"){
 }
 
 if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
-	print("computing label positions...")
+
+	png_width  <- '.$args{width}.'
+	png_height <- '.$args{height}.' 
+	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
+	dpi <- 72 * min(png_width, png_height) / 640 * '.$args{font_size}.'
+	p_size <- 12 * dpi / 72;
+	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
+
+	#if ( exists("PERL_font_family") ){
+	#	par(family=PERL_font_family) 
+	#}
+
+	plot(
+		x=c(c$cscore[,d_x],c$rscore[,d_x]),
+		y=c(c$cscore[,d_y],c$rscore[,d_y]),
+		asp=asp
+	)
+
 	library(maptools)
 	labcd <- pointLabel(
 		x=cb[,1],
@@ -1305,13 +1232,15 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 			&& ( length(c$rscore[,d_x]) < r_max )
 		)
 	){
-		library(wordcloud)'
-		.&plotR::network::r_command_wordlayout
-		.'nc <- wordlayout(
+
+		library(wordcloud)
+		'.&plotR::network::r_command_wordlayout.'
+
+		nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cb),
-			cex=cex * 1.25,
+			cex=cex * 1.05,
 			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
 			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
 		)
@@ -1332,13 +1261,6 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 						xorg[i], yorg[i]
 					) 
 				)
-				#segments(
-				#	nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
-				#	xorg[i], yorg[i],
-				#	col="gray60",
-				#	lwd=1
-				#)
-				
 			}
 		}
 
@@ -1347,69 +1269,298 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 		labcd$x <- nc[,1] + .5 * nc[,3]
 		labcd$y <- nc[,2] + .5 * nc[,4]
 	}
-
+	
+	text(labcd$x, labcd$y, rownames(cb))
+	dev.off()
 }
 
-# draw labels
-if (plot_mode == "gray"){
-	cb  <- cbind(cb, labcd$x, labcd$y)
-	cb1 <-  subset(cb, cb[,3]==1)
-	cb2 <-  subset(cb, cb[,3]>=3)
-	text(cb1[,4], cb1[,5], rownames(cb1),cex=font_size,offset=0,col="black",)
-	library(ade4)
-	s.label_my(
-		cb2,
-		xax=4,
-		yax=5,
-		label=rownames(cb2),
-		boxes=T,
-		clabel=font_size,
-		addaxes=F,
-		include.origin=F,
-		grid=F,
-		cpoint=0,
-		cneig=0,
-		cgrid=0,
-		add.plot=T,
-	)
-	
-	if (bubble_plot == 1){
-		if (resize_vars == 0){
-			points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
-		}
+
+#-----------------------------------------------------------------------------#
+#                              start plotting
+#-----------------------------------------------------------------------------#
+
+#-----------#
+#   Words   #
+
+b_size <- NULL
+for (i in rownames(c$cscore)){
+	if ( is.na(i) || is.null(i) || is.nan(i) ){
+		b_size <- c( b_size, 1 )
 	} else {
-		points(cb2[,1], cb2[,2], pch=c(20,1,0,2,4:15)[cb2[,3]], col="gray30")
+		b_size <- c( b_size, sum( d[,i] ) )
 	}
+}
+
+col_bg_words <- NA
+col_bg_vars  <- NA
+
+if (plot_mode == "color"){
+	col_dot_words <- "#00CED1"
+	col_dot_vars  <- "#FF6347"
+	if ( use_alpha == 1 ){
+		col_bg_words <- "#48D1CC"
+		col_bg_vars  <- "#FFA07A"
+		
+		rgb <- col2rgb(col_bg_words) / 255
+		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3])
+		
+		rgb <- rgb * 0.5
+		col_dot_words <- "#87CAC6" #  <- rgb( rgb[1], rgb[2], rgb[3])
+		
+		rgb <- col2rgb(col_bg_vars) / 255
+		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3])
+	}
+}
+
+if (plot_mode == "gray"){
+	col_dot_words <- "gray55"
+	col_dot_vars  <- "gray30"
+}
+
+if (plot_mode == "vars"){
+	col_dot_words <- "#ADD8E6"
+	col_dot_vars  <- "red"
+}
+
+if (plot_mode == "dots"){
+	col_dot_words <- "black"
+	col_dot_vars  <- "black"
+}
+
+g <- ggplot()
+
+df.words <- data.frame(
+	x    = c$cscore[,d_x],
+	y    = c$cscore[,d_y],
+	size = b_size,
+	type = ptype
+)
+
+df.words.sub <- subset(df.words, type==2)
+df.words     <- subset(df.words, type==1)
+
+if (bubble_plot == 1){
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		#colour = NA,
+		fill = col_bg_words,
+		alpha=0.15
+	)
+	
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		colour = col_dot_words,
+		fill = NA,
+		alpha=1,
+		show.legend = F
+	)
+	
+	g <- g + scale_size_area(
+		max_size= 30 * bubble_size / 100,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", fill=NA, alpha=1),
+			label.hjust = 1,
+			order = 2
+		)
+	)
+} else {
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y),
+		size = 2,
+		shape=16,
+		colour = col_dot_words,
+		alpha=1,
+		show.legend = F
+	)
+}
+
+if ( nrow(df.words.sub) > 0 ){
+	g <- g + geom_point(
+		data=df.words.sub,
+		aes(x=x, y=y),
+		shape=19,
+		size=2,
+		colour = "#ADD8E6",
+		alpha=1,
+		show.legend = F
+	)
+}
+
+#---------------#
+#   Variables   #
+
+if ( biplot == 1 ){
+	df.vars <- data.frame(
+		x    = c$rscore[,d_x],
+		y    = c$rscore[,d_y],
+		size = n_total * max(b_size) / max(n_total) * 0.6,
+		type = v_pch
+	)
+
+	if ( (resize_vars == 1) && (bubble_plot == 1) ) {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			#colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			show.legend = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			show.legend = F
+		)
+	} else {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			size=3.5,
+			show.legend = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			size=3.5,
+			show.legend = F
+		)
+	}
+
+	g <- g + scale_shape_manual(
+		values = c(22:25,0-6)
+	)
+}
+
+#------------#
+#   Labels   #
+
+# label colors
+if (plot_mode == "color"){
+	#if (bubble_plot == 1){
+		col_txt_words <- "black"
+		col_txt_vars  <- "#DC143C"
+	#} else {
+	#	col_txt_words <- "black"
+	#	col_txt_vars  <- "#FF6347"
+	#}
+}
+
+if (plot_mode == "gray"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "vars"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_txt_vars  <- NA
+}
+
+if ( text_font == 1 ){
+	font_face <- "plain"
+} else {
+	font_face <- "bold"
+}
+
+if ( plot_mode == "color" ){
+	df.labels.save <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+}
+
+if (plot_mode != "dots") {
+	df.labels <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+	if ( plot_mode == "gray" ){
+		df.labels.var  <- subset(df.labels, cols == 3)
+		df.labels <- subset(df.labels, cols != 3)
+		g <- g + geom_label(
+			data=df.labels.var,
+			family=font_family,
+			fontface="bold",
+			#label.size=0.25,
+			label.padding=unit(1.8, "mm"),
+			colour="white",
+			fill="gray50",
+			#alpha=0.7,
+			aes(x=x, y=y,label=labs)
+		)
+		if ( (resize_vars == 0) || (bubble_plot == 0) ) {
+			g <- g + geom_point(
+				data=df.vars,
+				aes(x=x, y=y, shape=factor(type) ),
+				colour = col_dot_vars,
+				fill = NA,
+				alpha=1,
+				size=3.5,
+				show.legend = F
+			)
+		}
+	}
+	
+	g <- g + geom_text(
+		data=df.labels,
+		aes(x=x, y=y,label=labs,colour=factor(cols)),
+		size=4,
+		family=font_family,
+		fontface=font_face
+		#colour="black"
+	)
+	
+	#label_legend <- guide_legend(
+	#	title = "Labels:",
+	#	key.theme   = element_rect(colour = "gray30"),
+	#	override.aes = list(size=5),
+	#	order = 1
+	#)
+	label_legend <- "none"
+	
+	g <- g + scale_color_manual(
+		values = c(col_txt_words, col_txt_vars, col_txt_vars),
+		breaks = c(1,3),
+		labels = c("Words / Codes", "Variables"),
+		guide = label_legend
+	)
+
+	
 	
 	if ( exists("segs") ){
 		if ( is.null(segs) == F){
-			for (i in 1:nrow(segs) ){
-				segments(
-					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-					col="gray60",
-					lwd=1
-				)
-			}
-		}
-	}
-} else if (plot_mode == "color" || plot_mode == "vars") {
-	text(
-		labcd$x,
-		labcd$y,
-		rownames(cb),
-		cex=font_size,
-		offset=0,
-		col=c(col_txt_words,NA,rep(col_txt_vars,v_count) )[cb[,3]]
-	)
-	if ( exists("segs") ){
-		if ( is.null(segs) == F){
-			for (i in 1:nrow(segs) ){
-				segments(
-					segs[i,1],segs[i,2],segs[i,3],segs[i,4],
-					col="gray60",
-					lwd=1
-				)
-			}
+			colnames(segs) <- c("x1", "y1", "x2", "y2")
+			segs <- as.data.frame(segs)
+			g <- g + geom_segment(
+				aes(x=x1, y=y1, xend=x2, yend=y2),
+				data=segs,
+				colour="gray60"
+			)
 		}
 	}
 }
@@ -1417,96 +1568,195 @@ if (plot_mode == "gray"){
 if (plot_mode == "vars"){
 	labcd <- NULL
 }
+
+#--------------------#
+#   Configurations   #
+
+#if ( asp == 1 ){
+#	g <- g + coord_fixed()
+#}
+
+g <- g + labs(
+	x=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
+	y=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep="")
+)
+g <- g + theme_classic(base_family=font_family)
+g <- g + theme(
+	legend.key   = element_rect(colour = NA, fill= NA),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0)
+)
+
+#---------------------#
+#   show the origin   #
+
+if (show_origin == 1){
+	line_color <- "gray30"
+	
+	lim_chk <-ggplot_build(g)
+	xlims <- lim_chk$panel$ranges[[1]]$x.range
+	ylims <- lim_chk$panel$ranges[[1]]$y.range
+	if ( is.null(xlims) ){
+		xlims <- lim_chk$layout$panel_ranges[[1]]$x.range
+		ylims <- lim_chk$layout$panel_ranges[[1]]$x.range
+	}
+	
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0), breaks=c(0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0), breaks=c(0) )
+	} else {
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
+	}
+	
+	m_x <- (xlims[2] - xlims[1]) * 0.03
+	m_y <- (ylims[2] - ylims[1]) * 0.03
+	
+	g <- g + geom_segment(
+		aes(x = xlims[1], y = 0, xend = m_x, yend = 0),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+	g <- g + geom_segment(
+		aes(x = 0, y = ylims[1], xend = 0, yend = m_y),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+} else {
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( breaks=c(0) )
+		g <- g + scale_y_continuous( breaks=c(0) )
+	} 
+}
+
+#-----------------------------#
+#   for clickable image map   #
+
+# fix range
+if (plot_mode == "color"){
+	# for setting xlim & ylim
+	out_coord <- cbind(
+		c( df.labels.save$x, df.words$x),
+		c( df.labels.save$y, df.words$y)
+	)
+	
+	xlimv <- c(
+		min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
+		max( out_coord[,1] ) + 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) )
+	)
+	ylimv <- c(
+		min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
+		max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
+	)
+	
+	# for saving
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+}
+
+# aspect ratio
+if (asp == 1){
+	g <- g + coord_fixed(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+} else {
+	g <- g + coord_cartesian(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+}
+
+# coordinates for saving
+if (plot_mode == "color"){
+	df.labels.save <- subset(df.labels.save, cols != 3)
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+	
+	add <- -1 * xlimv[1]
+	div <- add + xlimv[2]
+	out_coord[,1] <- ( out_coord[,1] + add ) / div
+	
+	add <- -1 *  ylimv[1]
+	div <- add + ylimv[2]
+	out_coord[,2] <- ( out_coord[,2] + add ) / div
+}
+
+# fixing width of legends to 22%
+library(grid)
+library(gtable)
+g <- ggplotGrob(g)
+
+if ( bubble_plot == 0 ){
+	saving_file <- 1
+}
+
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		}
+	}
+}
+
+# fixing width of left spaces to 4.25 char
+if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+	diff_char <- diff( c(
+		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+		unit(4.25, "char")
+	))
+	if ( diff_char > 0 ){
+		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
+	}
+}
+
+grid.draw(g)
 ';
 }
 
-sub r_command_slab_my{
-	return '
-# configure the slab function
-s.label_my <- function (dfxy, xax = 1, yax = 2, label = row.names(dfxy),
-    clabel = 1, 
-    pch = 20, cpoint = if (clabel == 0) 1 else 0, boxes = TRUE, 
-    neig = NULL, cneig = 2, xlim = NULL, ylim = NULL, grid = TRUE, 
-    addaxes = TRUE, cgrid = 1, include.origin = TRUE, origin = c(0, 
-        0), sub = "", csub = 1.25, possub = "bottomleft", pixmap = NULL, 
-    contour = NULL, area = NULL, add.plot = FALSE) 
-{
-    dfxy <- data.frame(dfxy)
-    opar <- par(mar = par("mar"))
-    on.exit(par(opar))
-    par(mar = c(0.1, 0.1, 0.1, 0.1))
-    coo <- scatterutil.base(dfxy = dfxy, xax = xax, yax = yax, 
-        xlim = xlim, ylim = ylim, grid = grid, addaxes = addaxes, 
-        cgrid = cgrid, include.origin = include.origin, origin = origin, 
-        sub = sub, csub = csub, possub = possub, pixmap = pixmap, 
-        contour = contour, area = area, add.plot = add.plot)
-    if (!is.null(neig)) {
-        if (is.null(class(neig))) 
-            neig <- NULL
-        if (class(neig) != "neig") 
-            neig <- NULL
-        deg <- attr(neig, "degrees")
-        if ((length(deg)) != (length(coo$x))) 
-            neig <- NULL
-    }
-    if (!is.null(neig)) {
-        fun <- function(x, coo) {
-            segments(coo$x[x[1]], coo$y[x[1]], coo$x[x[2]], coo$y[x[2]], 
-                lwd = par("lwd") * cneig)
-        }
-        apply(unclass(neig), 1, fun, coo = coo)
-    }
-    if (clabel > 0) 
-        scatterutil.eti_my(coo$x, coo$y, label, clabel, boxes)
-    if (cpoint > 0 & clabel < 1e-06) 
-        points(coo$x, coo$y, pch = pch, cex = par("cex") * cpoint)
-    #box()
-    invisible(match.call())
-}
-scatterutil.eti_my <- function (x, y, label, clabel, boxes = TRUE, coul = rep(1, length(x)), 
-    horizontal = TRUE) 
-{
-    if (length(label) == 0) 
-        return(invisible())
-    if (is.null(label)) 
-        return(invisible())
-    if (any(label == "")) 
-        return(invisible())
-    cex0 <- par("cex") * clabel
-    for (i in 1:(length(x))) {
-        cha <- as.character(label[i])
-        cha2 <- paste( " ", cha, " ", sep = "")
-        x1 <- x[i]
-        y1 <- y[i]
-        xh <- strwidth(cha2, cex = cex0)
-        yh <- strheight(cha, cex = cex0) * 5/3
-        if (!horizontal) {
-            tmp <- scatterutil.convrot90(xh, yh)
-            xh <- tmp[1]
-            yh <- tmp[2]
-        }
-        if (boxes) {
-            rect(x1 - xh/2, y1 - yh/2, x1 + xh/2, y1 + yh/2, 
-                col = "white", border = coul[i])
-        }
-        if (horizontal) {
-            text(x1, y1, cha, cex = cex0, col = coul[i])
-            print("looks ok...")
-        }
-        else {
-            text(x1, y1, cha, cex = cex0, col = coul[i], srt = 90)
-        }
-    }
-}
-';
 
-}
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦ÂĞ±şÊ¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å¯¾å¿œåˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{

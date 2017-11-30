@@ -7,40 +7,23 @@ sub rowdata{
 	my $class = shift;
 	my $self = shift;
 
-	my $sizeof_char = 4;
+	my $sizeof_char = 8; # It should be "4" on 32bit systems
 	my $a_row = 0;
-	if (mysql_exec->version_number > 4 ){    # MySQL 4.1 以上
-		# data
-		$a_row =
-			  $self->length('hyoso')  * 3
-			+ $self->length('genkei') * 3
-			+ $self->length('hinshi') * 3
-			+ $self->length('katuyo') * 3
-			+ 4 + 1;
-		if ($a_row % $sizeof_char) {
-			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
-		}
-		# index
-		$a_row += $sizeof_char * 2;
-		# margin
-		$a_row += 3;
-		print "a_row: $a_row\n";
-	} else {                                 # MySQL 3.x 以下
-		# data
-		$a_row =
-			  $self->length('hyoso')
-			+ $self->length('genkei')
-			+ $self->length('hinshi')
-			+ $self->length('katuyo')
-			+ 4 + 1;
-		if ($a_row % $sizeof_char) {
-			$a_row += $sizeof_char - ( $a_row % $sizeof_char );
-		}
-		# index
-		$a_row += 4 + $sizeof_char * 2;
-		# margin
-		$a_row += 3;
+
+	# data
+	$a_row =
+		  $self->length('hyoso')  * 4 + 2
+		+ $self->length('genkei') * 4 + 2
+		+ $self->length('hinshi') * 4 + 2
+		+ $self->length('katuyo') * 4 + 2
+		+ 1;
+	if ($a_row % $sizeof_char) {
+		$a_row += $sizeof_char - ( $a_row % $sizeof_char );
 	}
+	# index
+	$a_row += 4 + $sizeof_char * 4;
+
+	print "\tSingle row: $a_row bytes\n";
 
 	my $rows = mysql_exec->select("
 		select count(*) from rowdata

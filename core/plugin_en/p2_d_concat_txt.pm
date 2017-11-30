@@ -1,8 +1,9 @@
-package p2_d_concat_txt; # same as the file name
+package p2_d_concat_txt;
 use strict;
+use utf8;
 
-#---------------------------#
-#   Setting of this plugin  #
+#--------------------------#
+#   このプラグインの設定   #
 
 sub plugin_config{
 	return {
@@ -12,23 +13,22 @@ sub plugin_config{
 	};
 }
 
-#-------------#
-#   command   #
+#----------------------------------------#
+#   メニュー選択時に実行されるルーチン   #
 
 sub exec{
-	gui_window::concat_txt->open; # Open the Window
+	gui_window::concat_txt->open; # GUIを起動
 }
 
-
-#------------------------------#
-#   routine to open a window   #
+#-------------------------------#
+#   GUI操作のためのルーチン群   #
 
 package gui_window::concat_txt;
 use base qw(gui_window);
 use strict;
 use Tk;
 
-# creating a window
+# Windowの作成
 sub _new{
 	my $self = shift;
 	my $mw = $self->{win_obj};
@@ -50,7 +50,7 @@ sub _new{
 		-fill   => 'both'
 	);
 
-	# Frame for folder specification
+	# フォルダ用フレーム
 	my $fra1 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -85,7 +85,7 @@ sub _new{
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-	# Frame for headings specification
+	# 見出しレベル選択用フレーム
 	my $fra2 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -113,7 +113,36 @@ sub _new{
 	);
 	$self->{tani_obj}->set_value('h2');
 
-	# Checkbutton
+	# 文字コード選択用フレーム
+	my $fra3 = $fra_lab->Frame()->pack(
+		-anchor => 'c',
+		-fill   => 'x',
+		-expand => 'x',
+	);
+
+	$fra3->Label(
+		-text => 'Encoding of files: ',
+	)->pack(
+		-side => 'left',
+	);
+	
+	$self->{icode_obj} = gui_widget::optmenu->open(
+		parent  => $fra3,
+		pack    => {-side => 'left'},
+		options =>
+			[
+				['Unicode（UTF-8）',     'utf8'    ],
+				['Latin1',               'latin1'  ],
+				['Auto Detect',          'auto'    ],
+				['Japanese (Auto)',      'jp_auto' ],
+				['Japanese (EUC)',       'eucjp'   ],
+				['Japanese (Shift JIS)', 'cp932'   ],
+			],
+		variable => \$self->{icode},
+	);
+	$self->{icode_obj}->set_value('utf8');
+
+	# チェックボックス
 	$self->{if_conv} = 1;
 	$self->{check2} = $fra_lab->Checkbutton(
 		-variable => \$self->{if_conv},
@@ -121,7 +150,7 @@ sub _new{
 		-font     => "TKFN",
 	)->pack(-anchor => 'w');
 
-	# Buttons
+	# ボタン類の配置
 	$mw->Button(
 		-text    => 'Cancel',
 		-font    => "TKFN",
@@ -146,12 +175,12 @@ sub _new{
 sub _get_folder{
 	my $self = shift;
 
-	# We get a string with UTF8-Flag, but the string is actually CP932...
-	# So we drop the UTF8-Flag.
+	# UTF8フラグはついているけど、中身はCP932というヘンなものが帰ってくるので、
+	# 修正しておく（UTF8フラグを落としておく）
 	my $path = $self->{win_obj}->chooseDirectory;
-	require Encode;
-	$path = Encode::decode('cp932', "$path");
-	$path = Encode::encode('cp932', $path);
+	use Encode;
+	$path = Encode::decode($::config_obj->os_code, "$path");
+	$path = Encode::encode($::config_obj->os_code, $path);
 	
 	if ($path){
 		$path = $self->gui_jg_filename_win98($path);
@@ -167,7 +196,7 @@ sub _get_folder{
 sub _exec{
 	my $self = shift;
 	
-	# Check the folder
+	# フォルダのチェック
 	my $path = $self->gui_jg_filename_win98( $self->{entry_folder}->get() );
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
@@ -179,7 +208,7 @@ sub _exec{
 		return 0;
 	}
 
-	# file name
+	# 保存先の参照
 	my @types = (
 		[ "text file",[qw/.txt/] ],
 		["All files",'*']
@@ -187,7 +216,8 @@ sub _exec{
 	my $save = $self->win_obj->getSaveFile(
 		-defaultextension => '.txt',
 		-filetypes        => \@types,
-		-title            => 'Save the unified file as:'
+		-title            =>
+			$self->gui_jt('Save the unified file as:')
 	);
 	unless ($save){
 		return 0;
@@ -197,16 +227,16 @@ sub _exec{
 	$save = $::config_obj->os_path($save);
 
 
-	# execute
+	# 処理の実行
 	my @files = ();
-	open my $fh, '>', $save or
+	open my $fh, '>:encoding(utf8)', $save or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $save,
 		);
 
 	my $read_each = sub {
-		# file name
+		# ファイル名関係
 		return if(-d $File::Find::name);
 		return unless $_ =~ /.+\.txt$/;
 		
@@ -214,31 +244,33 @@ sub _exec{
 		#print "$f, ";
 
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
-		$f_o = Jcode->new($f_o)->euc;
+		$f_o = $::config_obj->uni_path( $f_o );
 		$f_o =~ s/\\/\//g;
 
 		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
 		push @files, "file:$f_o";
 
-		# start reading
-		open (TEMP, $f) or
+		# 文字コード
+		my $icode = $self->{icode};
+		if ($icode eq 'jp_auto') {
+			$icode = kh_jchar->check_code2($f);
+		}
+		elsif ($icode eq 'auto'){
+			$icode = kh_jchar->check_code_all($f);
+		}
+		
+		# 読み込み
+		open (TEMP, "<:encoding($icode)", $f) or
 			gui_errormsg->open(
 				type    => 'file',
 				thefile => $f,
 			);
-		my $t     = '';
-		my $n     = 0;
-		my $icode = '';
 		while ( <TEMP> ){
-			$t .= $_;
-			++$n;
-			if ($n == 1000){
-				$icode = &print_out($t, $icode, $fh, $self->{if_conv});
-				$n = 0;
-				$t = '';
+			if ($self->{if_conv}){
+				$_ =~ tr/<>/  /;
 			}
+			print $fh $_;
 		}
-		&print_out($t,$icode, $fh, $self->{if_conv});
 		close (TEMP);
 		print $fh "\n";
 	};
@@ -247,14 +279,14 @@ sub _exec{
 	find($read_each, $path);
 	close($fh);
 	$fh = undef;
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($save);
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($save);
+	#}
 
-	# save filenames
+	# ファイル名の格納
 	my $names = substr( $save,0, rindex($save,'.txt') );
 	$names .= '_names.txt';
-	open my $fhn, '>', $names or
+	open my $fhn, '>:encoding(utf8)', $names or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $names,
@@ -265,30 +297,6 @@ sub _exec{
 	close ($fhn);
 
 	$self->close;
-}
-
-# �񤭽Ф�
-sub print_out{
-	my $t       = shift;
-	my $icode   = shift;
-	my $fh      = shift;
-	my $if_conv = shift;
-
-	unless ( length($t) ){
-		print "empty!? ";
-		return 1;
-	}
-	unless ($icode){
-		$icode = Jcode->new($t)->icode;
-		#print "$icode\n";
-	}
-	$t = Jcode->new($t,$icode)->euc;
-	if ($if_conv){
-		$t =~ s/</ /g;
-		$t =~ s/>/ /g;
-	}
-	print $fh $t;
-	return $icode;
 }
 
 sub win_name{

@@ -228,15 +228,28 @@ sub _calc{
 	$self->win_obj->update;
 	
 	# 入力内容チェック
-	unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
-		my $win = $self->win_obj;
-		gui_errormsg->open(
-			msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
-			window => \$win,
-			type => 'msg',
-		);
-		$self->rtn;
-		return 0;
+	if ($self->var_id =~ /h[1-5]/i ) {
+		unless ( $self->tani && -e $self->cfile ){
+			my $win = $self->win_obj;
+			gui_errormsg->open(
+				msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
+				window => \$win,
+				type => 'msg',
+			);
+			$self->rtn;
+			return 0;
+		}
+	} else {
+		unless ( $self->tani && -e $self->cfile && $self->var_id > -1){
+			my $win = $self->win_obj;
+			gui_errormsg->open(
+				msg => kh_msg->get('er_ill'), # 指定された条件での集計は行えません。
+				window => \$win,
+				type => 'msg',
+			);
+			$self->rtn;
+			return 0;
+		}
 	}
 	
 	#print "var_id: ".$self->var_id."\n";
@@ -276,9 +289,11 @@ sub _calc{
 	my $cols = @{$result->{display}[0]};
 	my $width = 0;
 	foreach my $i (@{$result->{display}}){
-		if ( length( Encode::encode('euc-jp',$i->[0]) ) > $width ){
-			$width = length( Encode::encode('euc-jp',$i->[0]) );
+		if ( length( Encode::encode('cp932',$i->[0]) ) > $width ){
+			$width = length( Encode::encode('cp932',$i->[0]) );
 		}
+		# Chinese characters will be transformed to "??".
+		# So it's OK to get length.
 	}
 	
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
@@ -397,14 +412,14 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col -1,
-					-text  => $self->gui_jchar($h,'sjis'),
+					-text  => $h,#$self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
 			} else {
 				$self->{list2}->itemCreate(
 					$row,
 					0,
-					-text  => $self->gui_jchar($h,'sjis')
+					-text  => $h,#$self->gui_jchar($h,'sjis')
 				);
 			}
 			++$col;
@@ -499,11 +514,8 @@ sub copy{
 		}
 		$t .= "\n";
 	}
-	#require Win32::Clipboard;
-	#my $CLIP = Win32::Clipboard();
-	#$CLIP->Set("$t");
-	use Clipboard;
-	Clipboard->copy( Encode::encode($::config_obj->os_code,$t) );
+	use kh_clipboard;
+	kh_clipboard->string($t);
 }
 
 sub multiscrolly{
@@ -580,14 +592,13 @@ sub plot{
 	$rcom .= ")\n";
 	
 	$rcom .= "# END: DATA\n\n";
-	$rcom = Encode::encode('eucjp', $rcom);
 
 	$rcom .= "# dpi: short based\n";
 
 	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
-		my $t = Encode::encode('eucjp', $i);
+		my $t = Encode::encode('cp932', $i);
 		if ( $label_length < length($t) ){
 			$label_length = length($t);
 		}
@@ -608,7 +619,7 @@ sub plot{
 	# マップの幅
 	$label_length = 0;
 	foreach my $i (@col_names){
-		my $t = Encode::encode('eucjp', $i);
+		my $t = Encode::encode('cp932', $i);
 		if ( $label_length < length($t) ){
 			$label_length = length($t);
 		}

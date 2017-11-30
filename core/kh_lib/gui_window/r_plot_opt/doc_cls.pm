@@ -30,8 +30,8 @@ sub calc{
 	my $r_command = '';
 	if ($self->{command_f} =~ /\A(.+)# start dendro.+/s){
 		$r_command = $1;
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
+		#$r_command = Jcode->new($r_command)->euc
+		#	if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',

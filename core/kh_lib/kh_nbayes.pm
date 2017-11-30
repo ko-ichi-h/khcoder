@@ -1,9 +1,11 @@
 package kh_nbayes;
 
-# ¸òº¹ÂÅÅö²½¤Î·ë²Ì¤ò¤â¤¦¾¯¤·¾Ü¤·¤¯¼¨¤¹¡©
-# ¸òº¹ÂÅÅö²½¤Ë¤Ï¤¤¤¯¤Ö¤ó¸úÎ¨²½¤ÎÍ¾ÃÏ¤¢¤ê
+# äº¤å·®å¦¥å½“åŒ–ã®çµæœã‚’ã‚‚ã†å°‘ã—è©³ã—ãç¤ºã™ï¼Ÿ
+# äº¤å·®å¦¥å½“åŒ–ã«ã¯ã„ãã¶ã‚“åŠ¹ç‡åŒ–ã®ä½™åœ°ã‚ã‚Š
 
 use strict;
+use utf8;
+
 use List::Util qw(max sum);
 use Algorithm::NaiveBayes;
 require Algorithm::NaiveBayes::Model::Frequency;
@@ -17,7 +19,7 @@ use kh_nbayes::wnum;
 use kh_nbayes::Util;
 
 #----------#
-#   ³Ø½¬   #
+#   å­¦ç¿’   #
 
 sub learn_from_ov{
 	my $class = shift;
@@ -29,7 +31,7 @@ sub learn_from_ov{
 		$self->{max} = 0;
 	}
 
-	# ´ûÂ¸¤Î¥Õ¥¡¥¤¥ë¤ËÄÉ²Ã¤¹¤ë¤«¤É¤¦¤«
+	# æ—¢å­˜ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½åŠ ã™ã‚‹ã‹ã©ã†ã‹
 	if ($self->{add_data}){
 		$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 		rename($self->{path}, $self->{path}.'.tmp');
@@ -37,14 +39,14 @@ sub learn_from_ov{
 		$self->{cls} = Algorithm::NaiveBayes->new(purge => 0);
 	}
 
-	# ³Ø½¬¥â¡¼¥É¤Ë¥»¥Ã¥È
+	# å­¦ç¿’ãƒ¢ãƒ¼ãƒ‰ã«ã‚»ãƒƒãƒˆ
 	$self->{mode} = 't';
 
-	# ½àÈ÷
+	# æº–å‚™
 	$self->make_list;
 	$self->get_ov;
 
-	# ¼Â¹Ô
+	# å®Ÿè¡Œ
 	print "Start training... ";
 	$self->{train_cnt} = 0;
 	$self->scan_each;
@@ -61,7 +63,7 @@ sub learn_from_ov{
 	my $n   = $self->{cls}->instances;
 	my $n_c = $self->{train_cnt};
 
-	# ¸òº¹ÂÅÅö²½
+	# äº¤å·®å¦¥å½“åŒ–
 	my ($tested, $correct, $kappa);
 	if ( $self->{cross_vl} ){
 		my @labels = $self->{cls}->labels;
@@ -75,13 +77,13 @@ sub learn_from_ov{
 			++$correct if $i;
 		}
 		
-		# kappa¤Î·×»»
+		# kappaã®è¨ˆç®—
 		my (%outvar, $outvar_n);
 		foreach my $h (values %{$self->{outvar_cnt}}){
 			unless (
 				   length($h) == 0
 				|| $h eq '.'
-				|| $h eq '·çÂ»ÃÍ'
+				|| $h eq 'æ¬ æå€¤'
 				|| $h =~ /missing/io
 			){
 				++$outvar{$h};
@@ -106,16 +108,16 @@ sub learn_from_ov{
 		
 		print "Tested: $correct / $tested, kappa: $kappa\n\n";
 		
-		# ¥¯¥í¥¹½¸·×
+		# ã‚¯ãƒ­ã‚¹é›†è¨ˆ
 		my $out; # Correct: $correct / $tested, kappa: $kappa\n
 		#$out .= "Confusion Matrix:\n";
-		$out .= ",,".Encode::encode('euc-jp',kh_msg->get('classified_as'))."\n,,"; # .¥Ù¥¤¥º³Ø½¬¤Ë¤è¤ëÊ¬Îà
+		$out .= ",,".kh_msg->get('classified_as')."\n,,"; # .ãƒ™ã‚¤ã‚ºå­¦ç¿’ã«ã‚ˆã‚‹åˆ†é¡
 		foreach my $i ($self->{cls}->labels){
 			$out .= kh_csv->value_conv($i).',';
 		}
 		chop $out;
 		$out .= "\n";
-		$out .= Encode::encode('euc-jp',kh_msg->get('classs')).","; # Àµ²ò
+		$out .= kh_msg->get('classs').","; # æ­£è§£
 		
 		my $n = 0;
 		foreach my $i ($self->{cls}->labels){
@@ -133,19 +135,21 @@ sub learn_from_ov{
 			++$n;
 		}
 		
-		# ½ĞÎÏ
-		$out .= "\n\n".Encode::encode('euc-jp',kh_msg->get('correct_insts'))."¡§ $correct / $tested ("; # Àµ²ò¤òÆÀ¤¿¿ô
+		# å‡ºåŠ›
+		$out .= "\n\n".kh_msg->get('correct_insts')."ï¼š $correct / $tested ("; # æ­£è§£ã‚’å¾—ãŸæ•°
 		$out .= sprintf("%.1f", $correct / $tested * 100)."%)\n";
-		$out .= Encode::encode('euc-jp',kh_msg->get('kappa')). sprintf("%.3f", $kappa); # Kappa Åı·×ÎÌ¡§ 
+		$out .= kh_msg->get('kappa'). sprintf("%.3f", $kappa); # Kappa çµ±è¨ˆé‡ï¼š 
 		my $temp_file = $::project_obj->file_TempCSV;
-		open (TOUT,">$temp_file") or 
+		
+		use File::BOM;
+		open (TOUT, '>:encoding(utf8):via(File::BOM)', $temp_file) or 
 			gui_errormsg->open(
 				type    => 'file',
 				thefile => "$temp_file",
 			);
 		print TOUT $out;
 		close (TOUT);
-		kh_jchar->to_sjis($temp_file) if $::config_obj->os eq 'win32';
+		#kh_jchar->to_sjis($temp_file) if $::config_obj->os eq 'win32';
 		gui_OtherWin->open($temp_file);
 		
 	}
@@ -162,20 +166,20 @@ sub learn_from_ov{
 
 
 #----------------#
-#   ¸òº¹ÂÅÅö²½   #
+#   äº¤å·®å¦¥å½“åŒ–   #
 
 sub cross_validate{
 	my $self = shift;
 	
-	# ¥°¥ë¡¼¥×Ê¬¤±
-	my $groups = $self->{cross_fl}; # ¤¤¤¯¤Ä¤Î¥°¥ë¡¼¥×¤ËÊ¬¤±¤ë¤«
+	# ã‚°ãƒ«ãƒ¼ãƒ—åˆ†ã‘
+	my $groups = $self->{cross_fl}; # ã„ãã¤ã®ã‚°ãƒ«ãƒ¼ãƒ—ã«åˆ†ã‘ã‚‹ã‹
 	
 	my $member_order;
 	foreach my $i (keys %{$self->{outvar_cnt}}){
 		unless (
 			   length($self->{outvar_cnt}{$i}) == 0
 			|| $self->{outvar_cnt}{$i} eq '.'
-			|| $self->{outvar_cnt}{$i} eq '·çÂ»ÃÍ'
+			|| $self->{outvar_cnt}{$i} eq 'æ¬ æå€¤'
 			|| $self->{outvar_cnt}{$i} =~ /missing/io
 		){
 			$member_order->{$i} = rand();
@@ -197,7 +201,7 @@ sub cross_validate{
 		$self->{result_log} = undef;
 	}
 	
-	# ¸òº¹¥ë¡¼¥×
+	# äº¤å·®ãƒ«ãƒ¼ãƒ—
 	$self->{test_result} = undef;
 	$self->{test_result_raw} = undef;
 	for (my $c = 1; $c <= $groups; ++$c){
@@ -205,7 +209,7 @@ sub cross_validate{
 		$self->{cls} = Algorithm::NaiveBayes->new;
 		print "  fold $c: ";
 		
-		# ³Ø½¬¥Õ¥§¡¼¥º
+		# å­¦ç¿’ãƒ•ã‚§ãƒ¼ã‚º
 		$self->{mode} = 't';
 		bless $self, 'kh_nbayes::cv_train';
 		$self->scan_each;
@@ -215,7 +219,7 @@ sub cross_validate{
 		}
 		print "training ", $self->{cls}->instances, ",\t";
 
-		# ¥Æ¥¹¥È¥Õ¥§¡¼¥º
+		# ãƒ†ã‚¹ãƒˆãƒ•ã‚§ãƒ¼ã‚º
 		$self->{test_count} = 0;
 		$self->{test_count_hit} = 0;
 		$self->{mode} = 'p';
@@ -224,14 +228,14 @@ sub cross_validate{
 		print "test $self->{test_count_hit} / $self->{test_count}";
 		print "\n";
 		if ($self->{cross_savel}){
-			$self->push_prior_probs; # ¥Æ¥¹¥ÈÊÌ¤Ë»öÁ°³ÎÎ¨¤òÊİÂ¸
+			$self->push_prior_probs; # ãƒ†ã‚¹ãƒˆåˆ¥ã«äº‹å‰ç¢ºç‡ã‚’ä¿å­˜
 		}
 	}
 	
-	# ¥í¥°¤Î½ñ¤­½Ğ¤·
+	# ãƒ­ã‚°ã®æ›¸ãå‡ºã—
 	$self->make_log_file if $self->{cross_savel};
 	
-	# ÊÑ¿ôÊİÂ¸
+	# å¤‰æ•°ä¿å­˜
 	if ($self->{cross_savev}){
 		my @data = ( [$self->{cross_vn1}, $self->{cross_vn2}] );
 		
@@ -263,20 +267,20 @@ sub cross_validate{
 }
 
 #----------#
-#   Ê¬Îà   #
+#   åˆ†é¡   #
 
 sub predict{
 	my $class = shift;
 	my $self = {@_};
 	bless $self, $class."::predict";
 	
-	# ³Ø½¬·ë²Ì¤ÎÆÉ¤ß¹ş¤ß
+	# å­¦ç¿’çµæœã®èª­ã¿è¾¼ã¿
 	$self->{cls} = Algorithm::NaiveBayes->restore_state($self->{path});
 	
-	# Ê¬Îà¥â¡¼¥É¤Ë¥»¥Ã¥È
+	# åˆ†é¡ãƒ¢ãƒ¼ãƒ‰ã«ã‚»ãƒƒãƒˆ
 	$self->{mode} = 'p';
 	
-	# ½àÈ÷
+	# æº–å‚™
 	$self->make_hinshi_list;
 	$self->{result} = undef;
 	push @{$self->{result}}, [$self->{outvar}];
@@ -285,10 +289,10 @@ sub predict{
 		$self->{result_log} = undef;
 	}
 
-	# ¼Â¹Ô
+	# å®Ÿè¡Œ
 	$self->scan_each;
 	
-	# ÊİÂ¸
+	# ä¿å­˜
 	my $type = 'INT';
 	foreach my $i ($self->{cls}->labels){
 		# print "labels: $i\n";
@@ -303,16 +307,16 @@ sub predict{
 		var_type => $type,
 	) or return 0;
 
-	# ¥í¥°¤Î½ñ¤­½Ğ¤·
+	# ãƒ­ã‚°ã®æ›¸ãå‡ºã—
 	$self->make_log_file if $self->{save_log};
 
 	return 1;
 }
 
 #--------------------------#
-#   ³Ø½¬¤Ë»ÈÍÑ¤¹¤ë¸ì¤Î¿ô   #
+#   å­¦ç¿’ã«ä½¿ç”¨ã™ã‚‹èªã®æ•°   #
 
-# ¸úÎ¨²½¤ÎÍ¾ÃÏ¤¬¤À¤¤¤Ö¤¢¤ë¤«¤â¡Ä
+# åŠ¹ç‡åŒ–ã®ä½™åœ°ãŒã ã„ã¶ã‚ã‚‹ã‹ã‚‚â€¦
 
 sub wnum{
 	my $class = shift;
@@ -328,7 +332,7 @@ sub wnum{
 		if (
 			   length($i) == 0
 			|| $i eq '.'
-			|| $i eq '·çÂ»ÃÍ'
+			|| $i eq 'æ¬ æå€¤'
 			|| $i =~ /missing/io
 		){
 			$missing = 1;
@@ -336,7 +340,7 @@ sub wnum{
 		}
 	}
 	
-	if ( $missing == 0 ){     # ³°ÉôÊÑ¿ô¤Ë·çÂ»ÃÍ¤¬¤Ê¤¤¾ì¹ç
+	if ( $missing == 0 ){     # å¤–éƒ¨å¤‰æ•°ã«æ¬ æå€¤ãŒãªã„å ´åˆ
 		my $check = mysql_crossout::r_com->new(
 			tani   => $self->{tani},
 			hinshi => $self->{hinshi},
@@ -346,22 +350,23 @@ sub wnum{
 			min_df => $self->{min_df},
 		)->wnum;
 		return $check;
-	} else {                  # ³°ÉôÊÑ¿ô¤Ë·çÂ»ÃÍ¤¬¤¢¤ë¾ì¹ç
+	} else {                  # å¤–éƒ¨å¤‰æ•°ã«æ¬ æå€¤ãŒã‚ã‚‹å ´åˆ
 		$_ = $self->_get_wnum;
-		1 while s/(.*\d)(\d\d\d)/$1,$2/; # °Ì¼è¤êÍÑ¤Î¥³¥ó¥Ş¤òÁŞÆş
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # ä½å–ã‚Šç”¨ã®ã‚³ãƒ³ãƒã‚’æŒ¿å…¥
 		return $_;
 	}
 }
 
 #----------------#
-#   ¥Ç¡¼¥¿Áöºº   #
+#   ãƒ‡ãƒ¼ã‚¿èµ°æŸ»   #
 
 sub scan_each{
 	my $self = shift;
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½
 	my $id = 1;
 	my $last = 1;
+	my $started = 0;
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
@@ -374,16 +379,19 @@ sub scan_each{
 		}
 		
 		while (my $i = $sth->fetch){
-			if ($last != $i->[0]){
-				# ½ñ¤­½Ğ¤·
+			if ($last != $i->[0] && $started){
+				# æ›¸ãå‡ºã—
 				$self->each(\%current, $last);
 				
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 			}
 
-			# ³Ø½¬¤Ë»È¤¦Ãê½Ğ¸ì¤òÁªÂò¤¹¤ë¾ì¹ç
+			$last = $i->[0] unless $started;
+			$started = 1;
+
+			# å­¦ç¿’ã«ä½¿ã†æŠ½å‡ºèªã‚’é¸æŠã™ã‚‹å ´åˆ
 			if (
 				   ( $self->{mode} eq 't' && $self->{wName}{$i->[1]} )
 				|| ( $self->{mode} eq 'p' && $self->{hName}{$i->[3]} )
@@ -405,7 +413,7 @@ sub scan_each{
 		$sth->finish;
 	}
 	
-	# ºÇ½ª¹Ô¤Î½ñ¤­½Ğ¤·
+	# æœ€çµ‚è¡Œã®æ›¸ãå‡ºã—
 	$self->each(\%current, $last);
 
 	return $self;
@@ -418,7 +426,7 @@ sub each{
 	unless (
 		   length($self->{outvar_cnt}{$last}) == 0
 		|| $self->{outvar_cnt}{$last} eq '.'
-		|| $self->{outvar_cnt}{$last} eq '·çÂ»ÃÍ'
+		|| $self->{outvar_cnt}{$last} eq 'æ¬ æå€¤'
 		|| $self->{outvar_cnt}{$last} =~ /missing/io
 	){
 		$self->{cls}->add_instance(
@@ -427,7 +435,7 @@ sub each{
 		);
 		++$self->{train_cnt};
 		
-		# ¥Æ¥¹¥È¥×¥ê¥ó¥È
+		# ãƒ†ã‚¹ãƒˆãƒ—ãƒªãƒ³ãƒˆ
 		# print "out: $last\n";
 		# print Jcode->new("label: $self->{outvar_cnt}{$last}\n", 'euc')->sjis;
 		# foreach my $h (keys %{$current}){
@@ -465,7 +473,7 @@ sub sql2{
 }
 
 #------------------------#
-#   ³°ÉôÊÑ¿ô¤ÎÃÍ¤ò¼èÆÀ   #
+#   å¤–éƒ¨å¤‰æ•°ã®å€¤ã‚’å–å¾—   #
 
 sub get_ov{
 	my $self = shift;
@@ -508,12 +516,12 @@ sub get_ov{
 
 
 #------------------------------------#
-#   ½ĞÎÏ¤¹¤ëÃ±¸ì¡¦ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªãƒ»å“è©ãƒªã‚¹ãƒˆã®ä½œè£½   #
 
 sub make_list{
 	my $self = shift;
 	
-	# Ã±¸ì¥ê¥¹¥È¤ÎºîÀ½
+	# å˜èªãƒªã‚¹ãƒˆã®ä½œè£½
 	my $sql = "
 		SELECT genkei.id, genkei.name, hselection.khhinshi_id
 		FROM   genkei, hselection, df_$self->{tani}
@@ -553,7 +561,7 @@ sub make_list{
 	$self->{wName}   = \%name;
 	$self->{wHinshi} = \%hinshi;
 	
-	# ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½
+	# å“è©ãƒªã‚¹ãƒˆã®ä½œè£½
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
 	$sql .= "FROM   hselection\n";
@@ -567,7 +575,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTML¥¿¥°' || $i->[1] eq 'HTML_TAG'){
+		if ($i->[1] eq 'HTMLã‚¿ã‚°' || $i->[1] eq 'HTML_TAG'){
 			$self->{use_html} = 1;
 		}
 	}

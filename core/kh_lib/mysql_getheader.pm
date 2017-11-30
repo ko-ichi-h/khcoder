@@ -1,8 +1,9 @@
 package mysql_getheader;
 use strict;
+use utf8;
 use mysql_exec;
 
-# uÍEßE’i—Ž‚²‚Æ‚ÌWŒvvƒRƒ}ƒ“ƒh‚Å—˜—p
+# ã€Œç« ãƒ»ç¯€ãƒ»æ®µè½ã”ã¨ã®é›†è¨ˆã€ã‚³ãƒžãƒ³ãƒ‰ã§åˆ©ç”¨
 sub get{
 	my $class = shift;
 	my $tani  = shift;
@@ -53,30 +54,22 @@ sub get{
 	pop   @h;
 	my $h;
 	
-	my $spacer = '';  # ƒXƒy[ƒT[Ý’è
-	if (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
+	my $spacer = $::project_obj->spacer;
 	
 	foreach my $i (@h){
 		$h .= $spacer if length($i);
 		$h .= $i->[0];
 	}
-	return Jcode->new($h)->sjis;
+	return $h;
 }
 
-# u•”•ªƒeƒLƒXƒg‚ÌŽæ‚èo‚µv->uŒ©o‚µ•¶‚¾‚¯‚ðŽæ‚èo‚·v‚©‚ç—˜—p
+# ã€Œéƒ¨åˆ†ãƒ†ã‚­ã‚¹ãƒˆã®å–ã‚Šå‡ºã—ã€->ã€Œè¦‹å‡ºã—æ–‡ã ã‘ã‚’å–ã‚Šå‡ºã™ã€ã‹ã‚‰åˆ©ç”¨
 sub get_all{
 	my $class = shift;
 	my %args  = @_;
 	my $self = \%args;
 	
-	open (F,">$self->{file}")
+	open (F,'>:encoding(utf8)',$self->{file})
 		or gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file}
@@ -84,12 +77,12 @@ sub get_all{
 	
 	my $sth = mysql_exec->select ("
 		select *
-		from bun_r, bun
+		from bun_r, bun_bak
 		where
-			bun_r.id = bun.id
-			and bun.bun_id = 0
-			and bun.dan_id = 0
-		order by bun.id
+			bun_r.id = bun_bak.id
+			and bun_id = 0
+			and dan_id = 0
+		order by bun_bak.id
 	",1)->hundle;
 	
 	while (my $i = $sth->fetchrow_hashref){
@@ -104,9 +97,9 @@ sub get_all{
 	}
 	close (F);
 
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_sjis($self->{file});
-	}
+	#if ($::config_obj->os eq 'win32'){
+	#	kh_jchar->to_sjis($self->{file});
+	#}
 }
 
 sub get_selected{
@@ -120,17 +113,17 @@ sub get_selected{
 	
 	my $sql = '';
 	$sql .= "select rowtxt\n";
-	$sql .= "from bun_r, bun\n";
+	$sql .= "from bun_r, bun_bak\n";
 	$sql .= "where\n";
-	$sql .= "\tbun_r.id = bun.id\n";
-	$sql .= "\tand bun.bun_id = 0\n";
-	$sql .= "\tand bun.dan_id = 0\n";
+	$sql .= "\tbun_r.id = bun_bak.id\n";
+	$sql .= "\tand bun_bak.bun_id = 0\n";
+	$sql .= "\tand bun_bak.dan_id = 0\n";
 	foreach my $i ("h5", "h4", "h3", "h2", "h1"){
 		last if $self->{tani} eq $i;
-		$sql .= "\tand bun.$i"."_id = 0\n";
+		$sql .= "\tand bun_bak.$i"."_id = 0\n";
 	}
-	$sql .= "\tand bun.$self->{tani}"."_id >= 1\n";
-	$sql .= "order by bun.id";
+	$sql .= "\tand bun_bak.$self->{tani}"."_id >= 1\n";
+	$sql .= "order by bun_bak.id";
 
 	my $sth = mysql_exec->select ("$sql",1)->hundle;
 	my @r = ();
@@ -139,7 +132,7 @@ sub get_selected{
 		push @r, $i->[0];
 	}
 	
-	# ƒf[ƒ^ƒ`ƒFƒbƒN
+	# ãƒ‡ãƒ¼ã‚¿ãƒã‚§ãƒƒã‚¯
 	my $chk = mysql_exec->select(
 		"select max(id) from $self->{tani}",
 		1
@@ -149,7 +142,7 @@ sub get_selected{
 	unless ($num1 == $num2){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error'),
+			msg  => kh_msg->get('error')."\n$num1, $num2",
 		);
 		return 0;
 	}

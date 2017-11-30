@@ -134,10 +134,113 @@ sub check_code{
 	$icode = 'euc' if $icode eq 'eucJP-ms';
 	$icode = 'sjis' if $icode eq 'shiftjis';
 	$icode = 'sjis' if $icode eq 'cp932';
-	$icode = 'jis' if  $icode eq '7bit-jis';	
+	$icode = 'jis' if  $icode eq '7bit-jis';
 
 	print "$icode\n" unless $silent;
 	return $icode;
+}
+
+sub check_code2{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 1000 unless $lines;
+	
+	if ( defined($::project_obj) ){
+		my $chk = $::project_obj->assigned_icode;
+		if (
+			   ( $::project_obj->file_target eq $the_file )
+			&& ( $chk )
+		) {
+			return $chk;
+		}
+	}
+	print "Checking icode (jp)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	#print "checking icode...(icode)\n";
+
+	use Jcode;
+	my $icode = Jcode->new($t)->icode;
+
+	my %char_code = ();
+	$char_code{shiftjis} = 'cp932';
+	$char_code{sjis} = 'cp932';
+	if (eval 'require Encode::EUCJPMS'){
+		$char_code{euc}  = 'eucJP-ms';
+	} else {
+		$char_code{euc}  = 'euc-jp';
+	}
+
+	$icode = $char_code{$icode} if $char_code{$icode};
+
+	print "$icode\n" unless $silent;
+	return $icode;
+}
+
+sub check_code3{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 1000 unless $lines;
+	
+	print "Checking icode (jp)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	my @candi = (
+		$char_code{euc},
+		'cp932',
+		'7bit-jis'
+	);
+	if ($^O eq 'darwin'){
+		push @candi, 'MacJapanese';
+	}
+
+	use Encode::Guess;
+	my $enc = guess_encoding($t, @candi);
+	print ref $enc ? $enc->name : $enc unless $silent;
+	print "\n" unless $silent;
+
+	if (ref $enc){
+		$enc = $enc->name;
+	} elsif ($enc =~ /MacJapanese/ && $^O eq 'darwin') {
+		$enc = 'MacJapanese';
+	} elsif ($enc =~ /utf8/i){
+		$enc = 'utf8';
+	} elsif ($enc =~ /cp932/){
+		$enc = 'cp932';
+	} elsif ($enc =~ /euc/){
+		$enc = $char_code{euc};
+	} elsif ($enc =~ /^No / ){
+		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		$enc = 'utf8';
+	} else {
+		die("something wrong with icode! $enc");
+	}
+
+	return $enc;
 }
 
 # ファイルの文字コードを判別(英語)
@@ -171,8 +274,61 @@ sub check_code_en{
 	print "\n" unless $silent;
 	if (ref $enc){
 		$enc = $enc->name;
+	} elsif ($enc =~ /utf8/i) {
+		$enc = 'utf8';
+	} elsif ($enc =~ /cp1252/){
+		$enc = 'cp1252';
+	} elsif ($enc =~ /latin1/){
+		$enc = 'latin1';
+	} elsif ($enc =~ /^No / ){
+		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		$enc = 'utf8';
+	} else {
+		die("something wrong with icode! $enc");
+	}
+
+	return $enc;
+}
+
+# ファイルの文字コードを判別(対応コードすべて)
+
+sub check_code_all{
+	my $the_file = $_[1];
+	my $silent   = $_[2];
+	my $lines    = $_[3];
+	
+	$lines = 50000 unless $lines;
+	
+	print "Checking icode (en)... " unless $silent;
+	
+	open (TEMP,$the_file)
+		or gui_errormsg->open(type => 'file',thefile => $the_file);
+	my $n = 0;
+	my $t;
+	while (<TEMP>){
+		$t .= $_;
+		++$n;
+		last if $n > $lines;
+	}
+	close (TEMP);
+
+	#use Devel::Size qw(size total_size);
+	#print size($t);
+
+	use Encode::Guess;
+	my $enc = guess_encoding($t, qw/cp932 euc-jp ISO-2022-JP latin1 cp1252/);
+	print ref $enc ? $enc->name : $enc unless $silent;
+	print "\n" unless $silent;
+	if (ref $enc){
+		$enc = $enc->name;
 	} elsif ($enc =~ /utf8/) {
 		$enc = 'utf8';
+	} elsif ($enc =~ /euc-jp/) {
+		$enc = 'euc-jp';
+	} elsif ($enc =~ /cp932/) {
+		$enc = 'cp932';
+	} elsif ($enc =~ /ISO-2022-JP/){
+		$enc = 'ISO-2022-JP';
 	} elsif ($enc =~ /cp1252/){
 		$enc = 'cp1252';
 	} elsif ($enc =~ /latin1/){

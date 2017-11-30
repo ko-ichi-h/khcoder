@@ -2,6 +2,7 @@ package mysql_hukugo_te::ipadic;
 use base qw(mysql_hukugo_te);
 
 use strict;
+use utf8;
 
 my $debug = 0;
 
@@ -9,64 +10,72 @@ sub _run_from_morpho{
 	#my $class = shift;
 	#my $target = shift;
 
-	# ·ÁÂÖÁÇ²òÀÏ
+	# å½¢æ…‹ç´ è§£æž
 	my $t0 = new Benchmark;
 	print "01. Marking...\n" if $debug;
-	my $source = $::project_obj->file_target;
-	my $dist   = $::project_obj->file_m_target;
+	my $source = $::config_obj->os_path( $::project_obj->file_target);
+	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target);
 	unlink($dist);
-	my $icode = kh_jchar->check_code($source);
-	open (MARKED,">$dist") or 
+
+	my $icode = kh_jchar->check_code2($source);
+	my $ocode;
+	if ($::config_obj->os eq 'win32'){
+		$ocode = 'cp932';
+	} else {
+		if (eval 'require Encode::EUCJPMS') {
+			$ocode = 'eucJP-ms';
+		} else {
+			$ocode = 'euc-jp';
+		}
+	}
+
+	open (MARKED,">:encoding($ocode)", $dist) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $dist
 		);
-	open (SOURCE,"$source") or
+	open (SOURCE,"<:encoding($icode)", $source) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $source
 		);
+	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
 	while (<SOURCE>){
 		chomp;
-		my $text = Jcode->new($_,$icode)->h2z->euc;
-		$text =~ s/ /¡¡/go;
-		$text =~ s/\\/¡ï/go;
-		$text =~ s/'/¡Ç/go;
-		$text =~ s/"/¡É/go;
+		my $text = katakana_h2z($_);
+		$text =~ s/ /ã€€/go;
+		$text =~ s/\\/ï¿¥/go;
+		$text =~ s/'/â€™/go;
+		$text =~ s/"/â€/go;
 		print MARKED "$text\n";
 	}
 	close (SOURCE);
 	close (MARKED);
 	
-	print "02. Converting Codes...\n" if $debug;
-	kh_jchar->to_sjis($dist) if $::config_obj->os eq 'win32';
-	
 	print "03. Chasen...\n" if $debug;
 	kh_morpho->run;
 
-	if ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($::project_obj->file_MorphoOut);
-	}
+	my $file_MorphoOut = $::config_obj->os_path($::project_obj->file_MorphoOut);
 
-	# ¥Õ¥£¥ë¥¿¥ê¥ó¥°ÍÑ¤ËÃ±Ì¾»ì¤Î¥ê¥¹¥È¤òºîÀ®
+	# ãƒ•ã‚£ãƒ«ã‚¿ãƒªãƒ³ã‚°ç”¨ã«å˜åè©žã®ãƒªã‚¹ãƒˆã‚’ä½œæˆ
 	print "04. Making the Filter...\n" if $debug;
 	my %is_alone = ();
-	open (CHASEN,$::project_obj->file_MorphoOut) or 
+	open (CHASEN, "<:encoding($ocode)", $file_MorphoOut) or 
 			gui_errormsg->open(
 				type    => 'file',
-				thefile => $::project_obj->file_MorphoOut
+				thefile => $file_MorphoOut
 			);
 	while (<CHASEN>){
 		$is_alone{(split /\t/, $_)[0]} = 1;
 	}
 	close (CHASEN);
 
-	# TermExtract¤Î¼Â¹Ô
+	# TermExtractã®å®Ÿè¡Œ
 	print "05. TermExtract...\n" if $debug;
 	my $te_obj = new TermExtract::Chasen;
-	my @noun_list = $te_obj->get_imp_word($::project_obj->file_MorphoOut);
+	my @noun_list = $te_obj->get_imp_word($file_MorphoOut);
 
-	# ½ÐÎÏ
+	# å‡ºåŠ›
 	print "06. Output...\n" if $debug;
 	my $data_out = 
 		 kh_msg->get('gui_window::use_te_g->h_hukugo')
@@ -74,8 +83,6 @@ sub _run_from_morpho{
 		.kh_msg->get('gui_window::use_te_g->h_score')
 		."\n"
 	;
-	$data_out = Encode::encode('euc-jp',$data_out);
-
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("
@@ -85,38 +92,84 @@ sub _run_from_morpho{
 		)
 	",1);
 
+	my $target = $::project_obj->file_HukugoListTE;
+	use Excel::Writer::XLSX;
+	my $workbook  = Excel::Writer::XLSX->new($target);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
+	$worksheet->hide_gridlines(1);
+	
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯';
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties( # cannot do this with Excel::Writer::XLSX
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
+	my $format_n = $workbook->add_format(         # æ•°å€¤
+		num_format => '0',
+		size       => 11,
+		#font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(         # æ–‡å­—åˆ—
+		#font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@'
+	);
+
+	# the first line
+	$worksheet->write_string(
+		0,
+		0,
+		'è¤‡åˆèªž',
+		$format_c
+	);
+	$worksheet->write_string(
+		0,
+		1,
+		'ã‚¹ã‚³ã‚¢',
+		$format_c
+	);
+
+	use Lingua::JA::Regular::Unicode qw(alnum_z2h);
+	my $row = 1;
 	foreach (@noun_list) {
-		# Ã±Ì¾»ì¤Î¥¹¥³¥¢¤òprint¤·¤Æ¥Á¥§¥Ã¥¯¡Ä
-		#if ($is_alone{$_->[0]}){
-		#	print Jcode->new("$_->[0], $_->[1]\n")->sjis
-		#		if $_->[1] > 1;
-		#}
-
-		next if $is_alone{$_->[0]};  # Ã±Ì¾»ì
+		next if $is_alone{$_->[0]};  # å˜åè©ž
 		
-		my $tmp = Jcode->new($_->[0], 'euc')->tr('£°-£¹','0-9'); 
-		next if $tmp =~ /^(¾¼ÏÂ)*(Ê¿À®)*(\d+Ç¯)*(\d+·î)*(\d+Æü)*(¸áÁ°)*(¸á¸å)*(\d+»þ)*(\d+Ê¬)*(\d+ÉÃ)*$/o;   # ÆüÉÕ¡¦»þ¹ï
-		next if $tmp =~ /^\d+$/o;    # ¿ôÃÍ¤Î¤ß
+		my $tmp = alnum_z2h($_->[0]);
+		next if $tmp =~ /^(æ˜­å’Œ)*(å¹³æˆ)*(\d+å¹´)*(\d+æœˆ)*(\d+æ—¥)*(åˆå‰)*(åˆå¾Œ)*(\d+æ™‚)*(\d+åˆ†)*(\d+ç§’)*$/o;   # æ—¥ä»˜ãƒ»æ™‚åˆ»
+		next if $tmp =~ /^\d+$/o;    # æ•°å€¤ã®ã¿
 
-		$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
+		$worksheet->write_string(
+			$row,
+			0,
+			$_->[0],
+			$format_c
+		);
+		$worksheet->write_number(
+			$row,
+			1,
+			$_->[1],
+			$format_n
+		);
+		++$row;
+		
+		my $quoted = mysql_exec->quote($_->[0]);
 		mysql_exec->do("
 			INSERT INTO hukugo_te (name, num)
-			VALUES (\"$_->[0]\", $_->[1])
+			VALUES ($quoted, $_->[1])
 		");
 	}
 
-	$data_out = Jcode->new($data_out, 'euc')->sjis
-		if $::config_obj->os eq 'win32';
+	$worksheet->freeze_panes(1, 0);
+	$workbook->close;
 
-	my $target_csv = $::project_obj->file_HukugoListTE;
-	open (OUT,">$target_csv") or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $target_csv
-		);
-	print OUT $data_out;
-	close (OUT);
-	
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n" if $debug;
 

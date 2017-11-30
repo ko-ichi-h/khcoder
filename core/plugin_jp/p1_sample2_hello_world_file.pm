@@ -1,43 +1,44 @@
-package p1_sample2_hello_world_file;  # ¢«¤³¤Î¹Ô¤Ï¥Õ¥¡¥¤¥ëÌ¾¤Ë¤¢¤ï¤»¤ÆÊÑ¹¹
-use strict;                           # ¢¨¥Õ¥¡¥¤¥ë¤ÎÊ¸»ú¥³¡¼¥É¤ÏEUC¤ò¿ä¾©
+package p1_sample2_hello_world_file;  # â†ã“ã®è¡Œã¯ãƒ•ã‚¡ã‚¤ãƒ«åã«ã‚ã‚ã›ã¦å¤‰æ›´
+use strict;
+use utf8;
 
 #--------------------------#
-#   ¤³¤Î¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
-		name     => 'Hello World - ¥Õ¥¡¥¤¥ë',        # ¥á¥Ë¥å¡¼¤ËÉ½¼¨¤µ¤ì¤ëÌ¾Á°
-		menu_cnf => 1,                               # ¥á¥Ë¥å¡¼¤ÎÀßÄê(1)
-			# 0: ¤¤¤Ä¤Ç¤â¼Â¹Ô²ÄÇ½
-			# 1: ¥×¥í¥¸¥§¥¯¥È¤¬³«¤«¤ì¤Æ¤µ¤¨¤¤¤ì¤Ğ¼Â¹Ô²ÄÇ½
-			# 2: ¥×¥í¥¸¥§¥¯¥È¤ÎÁ°½èÍı¤¬½ª¤ï¤Ã¤Æ¤¤¤ì¤Ğ¼Â¹Ô²ÄÇ½
-		menu_grp => '¥µ¥ó¥×¥ë',                      # ¥á¥Ë¥å¡¼¤ÎÀßÄê(2)
-			# ¥á¥Ë¥å¡¼¤ò¥°¥ë¡¼¥×²½¤·¤¿¤¤¾ì¹ç¤Ë¤³¤ÎÀßÄê¤ò¹Ô¤¦¡£
-			# É¬Í×¤Ê¤¤¾ì¹ç¤Ï¡Ö'',¡×¤Ş¤¿¤Ï¡Öundef,¡×¤È¤·¤Æ¤ª¤±¤ĞÎÉ¤¤¡£
+		name     => 'Hello World - ãƒ•ã‚¡ã‚¤ãƒ«',        # ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã«è¡¨ç¤ºã•ã‚Œã‚‹åå‰
+		menu_cnf => 1,                               # ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¨­å®š(1)
+			# 0: ã„ã¤ã§ã‚‚å®Ÿè¡Œå¯èƒ½
+			# 1: ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆãŒé–‹ã‹ã‚Œã¦ã•ãˆã„ã‚Œã°å®Ÿè¡Œå¯èƒ½
+			# 2: ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã®å‰å‡¦ç†ãŒçµ‚ã‚ã£ã¦ã„ã‚Œã°å®Ÿè¡Œå¯èƒ½
+		menu_grp => 'ã‚µãƒ³ãƒ—ãƒ«',                      # ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®è¨­å®š(2)
+			# ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ã‚°ãƒ«ãƒ¼ãƒ—åŒ–ã—ãŸã„å ´åˆã«ã“ã®è¨­å®šã‚’è¡Œã†ã€‚
+			# å¿…è¦ãªã„å ´åˆã¯ã€Œ'',ã€ã¾ãŸã¯ã€Œundef,ã€ã¨ã—ã¦ãŠã‘ã°è‰¯ã„ã€‚
 	};
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»ş¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
 
 	#-----------------------------------#
-	#   GUI¤Ç½ĞÎÏÀè¤Î¥Õ¥¡¥¤¥ëÌ¾¤ò¼èÆÀ   #
+	#   GUIã§å‡ºåŠ›å…ˆã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—   #
 
-	my $mw = $::main_gui->mw;           # KH Coder¤Î¥á¥¤¥ó¡¦¥¦¥£¥ó¥É¥¦¤ò¼èÆÀ
+	my $mw = $::main_gui->mw;           # KH Coderã®ãƒ¡ã‚¤ãƒ³ãƒ»ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å–å¾—
 
-	my $path = $mw->getSaveFile(        # Tk¤Î¥Õ¥¡¥¤¥ëÁªÂò¥À¥¤¥¢¥í¥°
-		-title            => gui_window->gui_jchar('¥á¥Ã¥»¡¼¥¸¤ÎÊİÂ¸'),
+	my $path = $mw->getSaveFile(        # Tkã®ãƒ•ã‚¡ã‚¤ãƒ«é¸æŠãƒ€ã‚¤ã‚¢ãƒ­ã‚°
+		-title            => gui_window->gui_jchar('ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ä¿å­˜'),
 		-initialdir       => gui_window->gui_jchar($::config_obj->cwd),
 		-defaultextension => '.txt',
 		-filetypes        => [
-			[ gui_window->gui_jchar("¥Æ¥­¥¹¥È¥Õ¥¡¥¤¥ë"),'.txt' ],
+			[ gui_window->gui_jchar("ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«"),'.txt' ],
 			["All files",                               '*'    ]
 		]
 	);
-		# gui_window->gui_jchar('Ê¸»úÎó')¤Ç¡¢Ê¸»ú¥³¡¼¥É¤òGUIÍÑ¤ËÊÑ´¹
-		# $::config_obj->cwd¤Ç¡¢KH Coder¤¬Â¸ºß¤¹¤ë¥Ç¥£¥ì¥¯¥È¥ê¤òÁªÂò
+		# gui_window->gui_jchar('æ–‡å­—åˆ—')ã§ã€æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’GUIç”¨ã«å¤‰æ›
+		# $::config_obj->cwdã§ã€KH CoderãŒå­˜åœ¨ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’é¸æŠ
 
 	return 0 unless length($path);
 
@@ -46,41 +47,41 @@ sub exec{
 	$path = $::config_obj->os_path($path);
 
 	#------------------------------#
-	#   ½ĞÎÏ¤¹¤ë¥á¥Ã¥»¡¼¥¸¤òºîÀ®   #
+	#   å‡ºåŠ›ã™ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ä½œæˆ   #
 
 	my $msg = '';
-	$msg .= 'Ê¬ÀÏÂĞ¾İ¥Õ¥¡¥¤¥ë¡§ ';
-	$msg .= Jcode->new($::project_obj->file_target)->euc;
+	$msg .= 'åˆ†æå¯¾è±¡ãƒ•ã‚¡ã‚¤ãƒ«ï¼š ';
+	$msg .= $::project_obj->file_target;
 	$msg .= "\n";
-	$msg .= '¥á¥â¡§ ';
-	$msg .= Jcode->new($::project_obj->comment)->euc;
+	$msg .= 'ãƒ¡ãƒ¢ï¼š ';
+	$msg .= $::project_obj->comment;
 	$msg .= "\n";
-	$msg .= 'Á°½èÍı¡§ ';
+	$msg .= 'å‰å‡¦ç†ï¼š ';
 
 	if ( $::project_obj->status_morpho ){
-		$msg .= '¼Â¹ÔºÑ¤ß'
+		$msg .= 'å®Ÿè¡Œæ¸ˆã¿'
 	} else {
-		$msg .= 'Ì¤¼Â¹Ô'
+		$msg .= 'æœªå®Ÿè¡Œ'
 	}
 
 	$msg .= "\n\n";
-	$msg .= '¢¨KH Coder¤Î¥µ¥ó¥×¥ë¡¦¥×¥é¥°¥¤¥ó¤Ë¤è¤ë¥Æ¥¹¥È½ĞÎÏ';
+	$msg .= 'â€»KH Coderã®ã‚µãƒ³ãƒ—ãƒ«ãƒ»ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã«ã‚ˆã‚‹ãƒ†ã‚¹ãƒˆå‡ºåŠ›';
 
 	#----------------------#
-	#   ¥Õ¥¡¥¤¥ë¤Ø¤Î½ĞÎÏ   #
+	#   ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å‡ºåŠ›   #
 
-	open (SMPLOUT,">$path") or          # ¥Õ¥¡¥¤¥ë¤ò¥ª¡¼¥×¥ó
-		gui_errormsg->open(             # ¥ª¡¼¥×¥ó¼ºÇÔ»ş¤Î¥¨¥é¡¼É½¼¨
+	open (SMPLOUT, '>:encoding(utf8)', $path) or # ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚ªãƒ¼ãƒ—ãƒ³
+		gui_errormsg->open(                      # ã‚ªãƒ¼ãƒ—ãƒ³å¤±æ•—æ™‚ã®ã‚¨ãƒ©ãƒ¼è¡¨ç¤º
 			type => 'file',
 			thefile => $path
 		);
 
-	print SMPLOUT $msg;                 # ¥Õ¥¡¥¤¥ë¤Ø½ñ¤­½Ğ¤·
+	print SMPLOUT $msg;                 # ãƒ•ã‚¡ã‚¤ãƒ«ã¸æ›¸ãå‡ºã—
 
-	close (SMPLOUT);                    # ¥Õ¥¡¥¤¥ë¤Î¥¯¥í¡¼¥º
+	close (SMPLOUT);                    # ãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¯ãƒ­ãƒ¼ã‚º
 
 	#--------------------#
-	#   ³ÎÇ§²èÌÌ¤ÎÉ½¼¨   #
+	#   ç¢ºèªç”»é¢ã®è¡¨ç¤º   #
 	
 	gui_window::sample_hello_world2_file->open(
 		msg  => $msg,
@@ -91,46 +92,46 @@ sub exec{
 }
 
 #------------------------------#
-#   ³ÎÇ§²èÌÌÉ½¼¨ÍÑ¤Î¥ë¡¼¥Á¥ó   #
+#   ç¢ºèªç”»é¢è¡¨ç¤ºç”¨ã®ãƒ«ãƒ¼ãƒãƒ³   #
 
-package gui_window::sample_hello_world2_file; # ¢«¤³¤Î¹Ô¤Ï¡Ögui_window::¡×¤Ç»Ï
-use base qw(gui_window);                      #           ¤Ş¤ëÅ¬Åö¤ÊÌ¾¾Î¤ËÊÑ¹¹
+package gui_window::sample_hello_world2_file; # â†ã“ã®è¡Œã¯ã€Œgui_window::ã€ã§å§‹
+use base qw(gui_window);                      #           ã¾ã‚‹é©å½“ãªåç§°ã«å¤‰æ›´
 use strict;
 use Tk;
 
-## Window¤ÎºîÀ®
+## Windowã®ä½œæˆ
 sub _new{
-	# ÊÑ¿ô¤Î¼èÆÀ
+	# å¤‰æ•°ã®å–å¾—
 	my $self = shift;
 	my %args = @_;
-	my $mw = $self->win_obj; # Window¡ÊTk¥ª¥Ö¥¸¥§¥¯¥È¡Ë¤ò¼èÆÀ¤·¤Æ$mw¤Ë³ÊÇ¼
+	my $mw = $self->win_obj; # Windowï¼ˆTkã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼‰ã‚’å–å¾—ã—ã¦$mwã«æ ¼ç´
 
-	# Window¤Î¥¿¥¤¥È¥ë¤òÀßÄê
-	$mw->title( gui_window->gui_jchar('¥µ¥ó¥×¥ë¡§Hello World¡Ê¥Õ¥¡¥¤¥ë¡Ë') );
+	# Windowã®ã‚¿ã‚¤ãƒˆãƒ«ã‚’è¨­å®š
+	$mw->title( gui_window->gui_jchar('ã‚µãƒ³ãƒ—ãƒ«ï¼šHello Worldï¼ˆãƒ•ã‚¡ã‚¤ãƒ«ï¼‰') );
 
-	# ¥é¥Ù¥ë¤ÎÉ½¼¨(0)
+	# ãƒ©ãƒ™ãƒ«ã®è¡¨ç¤º(0)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' ¢¨¥Õ¥¡¥¤¥ë¤Ø¤Î½ĞÎÏ¤¬´°Î»¤·¤Ş¤·¤¿'),
+		-text => gui_window->gui_jchar(' â€»ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®å‡ºåŠ›ãŒå®Œäº†ã—ã¾ã—ãŸ'),
 	)->pack(
 		-anchor => 'w',
 		-pady => 5
 	);
 
-	# ¥é¥Ù¥ë¤ÎÉ½¼¨(1)
+	# ãƒ©ãƒ™ãƒ«ã®è¡¨ç¤º(1)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' ½ĞÎÏ¥Õ¥¡¥¤¥ë¡§ '.Jcode->new($args{path})->euc),
+		-text => gui_window->gui_jchar(' å‡ºåŠ›ãƒ•ã‚¡ã‚¤ãƒ«ï¼š '.$::config_obj->uni_path( $args{path} ) ),
 	)->pack(
 		-anchor => 'w'
 	);
 
-	# ¥é¥Ù¥ë¤ÎÉ½¼¨(2)
+	# ãƒ©ãƒ™ãƒ«ã®è¡¨ç¤º(2)
 	$mw->Label(
-		-text => gui_window->gui_jchar(' ½ĞÎÏÆâÍÆ¡§'),
+		-text => gui_window->gui_jchar(' å‡ºåŠ›å†…å®¹ï¼š'),
 	)->pack(
 		-anchor => 'w'
 	);
 
-	# ¥Æ¥­¥¹¥È¥Õ¥£¡¼¥ë¥É¡ÊRead Only¡Ë¤ÎÉ½¼¨
+	# ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ï¼ˆRead Onlyï¼‰ã®è¡¨ç¤º
 	my $text_widget = $mw->Scrolled(
 		"ROText",
 		-scrollbars => 'osoe',
@@ -143,15 +144,15 @@ sub _new{
 	);
 	$text_widget->bind("<Key>",[\&gui_jchar::check_key,Ev('K'),\$text_widget]);
 
-	# ¥Æ¥­¥¹¥È¥Õ¥£¡¼¥ë¥É¤Ë¥á¥Ã¥»¡¼¥¸¤òÁŞÆş
+	# ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æŒ¿å…¥
 	$text_widget->insert(
 		'end',
 		gui_window->gui_jchar( $args{msg} )
 	);
 
-	# ¡ÖÊÄ¤¸¤ë¡×¥Ü¥¿¥ó¤ÎÉ½¼¨
+	# ã€Œé–‰ã˜ã‚‹ã€ãƒœã‚¿ãƒ³ã®è¡¨ç¤º
 	$mw->Button(
-		-text    => gui_window->gui_jchar('ÊÄ¤¸¤ë'),
+		-text    => gui_window->gui_jchar('é–‰ã˜ã‚‹'),
 		-command => sub{ $self->close; }
 	)->pack(
 		-pady => 2
@@ -160,9 +161,9 @@ sub _new{
 	return $self;
 }
 
-## Window¤ÎÌ¾¾Î¤òÀßÄê
+## Windowã®åç§°ã‚’è¨­å®š
 sub win_name{                 
-	return 'w_sample_hello_world2_file'; # ¢«¤³¤Î¹Ô¤Ï¡Öw_¡×¤Ç»Ï¤Ş¤ëÅ¬Åö¤ÊÌ¾¾Î
-}	                                     #                             ¤ËÊÑ¹¹
+	return 'w_sample_hello_world2_file'; # â†ã“ã®è¡Œã¯ã€Œw_ã€ã§å§‹ã¾ã‚‹é©å½“ãªåç§°
+}	                                     #                             ã«å¤‰æ›´
 
 1;

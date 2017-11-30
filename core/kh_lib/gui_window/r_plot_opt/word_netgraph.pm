@@ -1,11 +1,12 @@
 package gui_window::r_plot_opt::word_netgraph;
 use base qw(gui_window::r_plot_opt);
+use utf8;
 
 sub innner{
 	my $self = shift;
 	my $lf = $self->{labframe};
 
-	# ¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¤Î¥ª¥×¥·¥ç¥ó
+	# å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf,
 		command => sub{ $self->calc; },
@@ -24,13 +25,10 @@ sub calc{
 	my $r_command = '';
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
-		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->gget('r_net_msg_fail'), # Ä´À°¤Ë¼ºÇÔ¤·¤Ş¤·¤Ş¤·¤¿¡£
+			msg  => kh_msg->gget('r_net_msg_fail'), # èª¿æ•´ã«å¤±æ•—ã—ã¾ã—ã¾ã—ãŸã€‚
 		);
 		print "$self->{command_f}\n";
 		$self->close;
@@ -52,17 +50,18 @@ sub calc{
 
 	$wait_window->end(no_dialog => 1);
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_word_netgraph_plot')){
 		$::main_gui->get('w_word_netgraph_plot')->close;
 	}
 	return 0 unless $plotR;
 
-	gui_window::r_plot::word_netgraph->open(
+	my $win = gui_window::r_plot::word_netgraph->open(
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
 		ax          => $self->{ax},
+		coord       => $plotR->{coord},
 		#no_geometry => 1,
 	);
 	$plotR = undef;
@@ -70,11 +69,12 @@ sub calc{
 
 	$self->close;
 
+	#$win->illuminate;
 	return 1;
 }
 
 sub win_title{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¡§Ä´À°
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ï¼šèª¿æ•´
 }
 
 sub win_name{

@@ -1,5 +1,6 @@
 package kh_cod;
 use strict;
+use utf8;
 use Jcode;
 
 use gui_errormsg;
@@ -10,7 +11,7 @@ use kh_cod::func;
 use vars(%kh_cod::reading);
 
 #----------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°¼Â¹Ô   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å®Ÿè¡Œ   #
 
 sub code{
 	my $self = shift;
@@ -35,35 +36,28 @@ sub code{
 }
 
 #----------------------------#
-#   ¥ë¡¼¥ë¥Õ¥¡¥¤¥ëÆÉ¤ß¹ş¤ß   #
+#   ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿   #
 
 sub read_file{
 	my $self;
 	my $class = shift;
 	my $file = shift;
 
-	# Ê¸»ú¥³¡¼¥ÉÈ½ÊÌ
-	open (FC,"$file") or 
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $file
-		);
-	my $check = '';
-	while (<FC>){
-		$check .= $_;
+	# æ–‡å­—ã‚³ãƒ¼ãƒ‰åˆ¤åˆ¥
+	my $icode;
+	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+		$icode = kh_jchar->check_code2($file);
+	} else {
+		$icode = kh_jchar->check_code_en($file);
 	}
-	close (FC);
-	my $icode = Jcode->new($check)->icode;
-	$check = '';
-	#print "$icode\n";
-	
-	open (F,"$file") or 
+
+	open (F, "<:encoding($icode)", $file) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $file
 		);
 	
-	# ÆÉ¤ß¤È¤ê
+	# èª­ã¿ã¨ã‚Š
 	my (@codes, %codes, $head);
 	while (<F>){
 		$_ =~ s/\r\n\z/\n/o;
@@ -72,8 +66,8 @@ sub read_file{
 			next;
 		}
 		
-		$_ = Jcode->new("$_",$icode)->euc;
-		if ( $_ =~ /^¡ö.+/o || $_ =~ /^\*.+/o ){
+		#$_ = Jcode->new("$_",$icode)->euc;
+		if ( $_ =~ /^ï¼Š.+/o || $_ =~ /^\*.+/o ){
 			$head = $_;
 			push @codes, $head;
 			#print Jcode->new("head: $head\n")->sjis;
@@ -84,14 +78,14 @@ sub read_file{
 	}
 	close (F);
 	
-	# ²ò¼á
+	# è§£é‡ˆ
 	foreach my $i (@codes){
 		# print Jcode->new("code: $i\n")->sjis;
 		my $c = kh_cod::a_code->new($i,$codes{$i});
 		push @{$self->{codes}}, $c;
 		$kh_cod::reading{$i} =  $c;
 	}
-	# ¥ê¥»¥Ã¥È
+	# ãƒªã‚»ãƒƒãƒˆ
 	%kh_cod::reading = ();
 	kh_cod::a_code::atom::code->reset;
 	kh_cod::a_code::atom::string->reset;
@@ -99,7 +93,7 @@ sub read_file{
 	unless ($self){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('not_coding_rules') # "ÁªÂò¤µ¤ì¤¿¥Õ¥¡¥¤¥ë¤Ï¥³¡¼¥Ç¥£¥ó¥°¡¦¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë¤Ë¸«¤¨¤Ş¤»¤ó¡£"
+			msg  => kh_msg->get('not_coding_rules') # "é¸æŠã•ã‚ŒãŸãƒ•ã‚¡ã‚¤ãƒ«ã¯ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ»ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«ã«è¦‹ãˆã¾ã›ã‚“ã€‚"
 		);
 		return 0;
 	}
@@ -109,7 +103,7 @@ sub read_file{
 }
 
 #--------------------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì³ÊÇ¼¥Æ¡¼¥Ö¥ë¤ò¤Ş¤È¤á¤ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœæ ¼ç´ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ã¾ã¨ã‚ã‚‹   #
 #--------------------------------------------#
 sub cumulate{
 	my $self = shift;
@@ -146,7 +140,7 @@ sub _cumulate{
 	my $table = "ct_$self->{tani}_$salt"."code_cum_$n";
 	#print "$table\n";
 	
-	# ¥Æ¡¼¥Ö¥ëºîÀ®
+	# ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 	mysql_exec->drop_table($table);
 	my $sql = "CREATE TABLE $table (\n";
 	$sql .= "	id int not null primary key,\n";
@@ -184,7 +178,7 @@ sub _cumulate{
 	}
 	mysql_exec->do("$sql",1);
 	
-	# ¿·¤·¤¤¥Æ¡¼¥Ö¥ë¡¦¥«¥é¥àÌ¾¤ò¥»¥Ã¥È
+	# æ–°ã—ã„ãƒ†ãƒ¼ãƒ–ãƒ«ãƒ»ã‚«ãƒ©ãƒ åã‚’ã‚»ãƒƒãƒˆ
 	$n = 0;
 	foreach my $i (@{$codes}){
 		$i->res_table($table);
@@ -194,9 +188,9 @@ sub _cumulate{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
-sub tables{                         # ¥³¡¼¥Ç¥£¥ó¥°·ë²Ì¤òÇ¼¤á¤¿¥Æ¡¼¥Ö¥ë¤Î¥ê¥¹¥È
+sub tables{                         # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°çµæœã‚’ç´ã‚ãŸãƒ†ãƒ¼ãƒ–ãƒ«ã®ãƒªã‚¹ãƒˆ
 	my $self = shift;
 	my @r;
 	

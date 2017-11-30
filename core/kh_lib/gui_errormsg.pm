@@ -27,6 +27,13 @@ sub open{
 	kh_mailif->failure;
 	
 	$self->{msg} = $self->get_msg;
+	unless ($self->{type} eq 'msg') {
+		#print "hoge!!!!\n";
+		($self->{caller_pac}, $self->{caller_file}, $self->{caller_line}) = caller;
+		$self->{msg} .= "\n\n";
+		$self->{msg} .= "$self->{caller_file} line $self->{caller_line}";
+	}
+	
 	$self->print;
 	unless ($self->{type} eq 'msg'){
 		if ($::main_gui){

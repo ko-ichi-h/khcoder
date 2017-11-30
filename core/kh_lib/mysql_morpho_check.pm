@@ -12,10 +12,11 @@ sub search{
 	
 	my $q = $self->{query};
 	
-	# 日本語以外の場合はqueryをtokenizeする。
+	# 日本語・中国語・韓国語以外の場合はqueryをtokenizeする。
 	unless (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
+		   $::project_obj->morpho_analyzer_lang eq 'jp'
+		|| $::project_obj->morpho_analyzer_lang eq 'cn'
+		|| $::project_obj->morpho_analyzer_lang eq 'kr'
 	){
 		# 強制抽出への対応
 		# (1)キーワード

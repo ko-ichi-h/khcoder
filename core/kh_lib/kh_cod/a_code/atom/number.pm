@@ -4,10 +4,14 @@ package kh_cod::a_code::atom::number;
 use base qw(kh_cod::a_code::atom);
 use strict;
 
-
 sub expr{
 	my $self = shift;
-	return "$self->{tani}.id";
+	
+	if ($self->{tani} eq 'bun'){
+		return "bun.seq";
+	} else {
+		return "$self->{tani}.id";
+	}
 }
 sub num_expr{
 	my $self = shift;

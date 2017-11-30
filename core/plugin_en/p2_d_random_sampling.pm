@@ -3,7 +3,7 @@ use strict;
 use utf8;
 
 #--------------------------#
-#   ¤³¤Î¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ã“ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
@@ -14,22 +14,22 @@ sub plugin_config{
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»ş¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
-	gui_window::random_sampling->open; # GUI¤òµ¯Æ°
+	gui_window::random_sampling->open; # GUIã‚’èµ·å‹•
 }
 
 
 #-------------------------------#
-#   GUIÁàºî¤Î¤¿¤á¤Î¥ë¡¼¥Á¥ó·²   #
+#   GUIæ“ä½œã®ãŸã‚ã®ãƒ«ãƒ¼ãƒãƒ³ç¾¤   #
 
 package gui_window::random_sampling;
 use base qw(gui_window);
 use strict;
 use Tk;
 
-# Window¤ÎºîÀ®
+# Windowã®ä½œæˆ
 sub _new{
 	my $self = shift;
 	my $mw = $self->{win_obj};
@@ -49,7 +49,7 @@ sub _new{
 		-fill   => 'both'
 	);
 
-	# ÆşÎÏ
+	# å…¥åŠ›
 	my $fra1 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -80,7 +80,7 @@ sub _new{
 		-expand => 'x',
 	);
 
-	# ½ĞÎÏ
+	# å‡ºåŠ›
 	my $fra3 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -120,7 +120,7 @@ sub _new{
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
-	# ¥Ñ¡¼¥»¥ó¥È
+	# ãƒ‘ãƒ¼ã‚»ãƒ³ãƒˆ
 	my $fra4 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
@@ -148,7 +148,7 @@ sub _new{
 	);
 	$self->{entry_per}->insert(0,'10');
 
-	# ¥Ü¥¿¥óÎà¤ÎÇÛÃÖ
+	# ãƒœã‚¿ãƒ³é¡ã®é…ç½®
 	$mw->Button(
 		-text    => 'Cancel',
 		-font    => "TKFN",
@@ -222,7 +222,7 @@ sub _get_out{
 sub _exec{
 	my $self = shift;
 	
-	# ¥Õ¥¡¥¤¥ë¤Î¥Á¥§¥Ã¥¯
+	# ãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒã‚§ãƒƒã‚¯
 	my $file_in = $self->gui_jg_filename_win98( $self->{entry_in}->get() );
 	$file_in = $self->gui_jg($file_in);
 	$file_in = $::config_obj->os_path($file_in);
@@ -251,7 +251,7 @@ sub _exec{
 	my $th = $self->gui_jg( $self->{entry_per}->get );
 	$th = $th / 100;
 
-	# ½èÍı»ş¤Î¼Â¹Ô
+	# å‡¦ç†æ™‚ã®å®Ÿè¡Œ
 	my $w = gui_wait->start;
 	open(my $fh_in, '<', $file_in) or
 		gui_errormsg->open(

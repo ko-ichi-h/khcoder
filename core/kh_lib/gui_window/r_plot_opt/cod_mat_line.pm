@@ -51,8 +51,7 @@ sub innner{
 
 	# 共通のパラメーター
 	my @code_names = ();
-	my $euc_command = Jcode->new($self->{command_f})->euc;
-	if ( $euc_command =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
+	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
 		@code_names = eval( "($1)" );
 	}
 	#if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
@@ -60,7 +59,7 @@ sub innner{
 	#}
 	
 	my %selected = ();
-	if ( $euc_command =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
+	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
 		#print "code selection: found!\n";
 		my @selecteda = eval( "($1)" );
 		foreach my $i (@selecteda){
@@ -216,8 +215,8 @@ sub calc{
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
 		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
+		#$r_command = Jcode->new($r_command)->euc
+		#	if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
@@ -249,7 +248,7 @@ sub calc{
 	my $plot = plotR::code_mat_line->new(
 		r_command      => $r_command,
 		#font_size      => $self->{font_obj}->font_size,
-		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,
+		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		selection      => \@selection,
 		plotwin_name   => 'code_mat_line',
 	);

@@ -54,7 +54,8 @@ gui_widget::mail_config:
     display:                  Display
     plot_size1:               'Default plot size:  long side'
     plot_size2:               '  short side'
-    font_size:                'Dfault font size in plots: '
+    font_size:                'Default font size in plots: '
+    if_cud:                   'Color universal design'
 gui_widget::r_font:
     bold:                     Bold
     font_size:                'Font size:'
@@ -69,6 +70,8 @@ gui_widget::r_xy:
     none:                     none
     sym:                      symmetric
     symbi:                    symmetric biplot
+    zoom:                     Enlarge area near the origin:
+    zoom_factor:              Factor
 gui_widget::words:
     by_df:                    Filter words by Document Frequency
     by_pos:                   Filter words by POS
@@ -242,7 +245,7 @@ gui_window::project_edit:
     memo:                     'Memo:'
     target_char_code:         'Encoding of the target file:'
     target_file:              'The Target File:'
-    win_title:                New Project
+    win_title:                Edit Project
 gui_window::project_new:
     auto_detect:              Auto detect
     browse_target:            Please select the target text File
@@ -258,6 +261,7 @@ gui_window::project_open:
     memo:                     memo
     new:                      new
     open:                     Open
+    lang:                     language
     opened:                   "The project is currently opened.\nCannot perform the specified action."
     select_one:               Please select a project.
     target_file:              target file
@@ -293,24 +297,28 @@ gui_window::sql_select:
     win_title:                Execute SQL Statements
 gui_window::sysconfig:
     apps:                     Applications
-    browse_:                  ' '
+    browse_:                  Please open ____
     browse_chasen:            Please open ChaSen.exe
     browse_mecab:             Please open MeCab.exe
     browse_stanford_jar:      Please open stanford-postagger.jar
     browse_stanford_tag:      Please open a model file
     chasen:                   '"ChaSen" for Japanese text'
     config:                   config
+    l_jp:                     Japanese
     l_cn:                     Chinese
-    l_de:                     German *
+    l_de:                     German
     l_en:                     English
-    l_es:                     Spanish *
-    l_fr:                     French *
-    l_it:                     Italian *
-    l_nl:                     Dutch *
-    l_pt:                     Portuguese *
+    l_es:                     Spanish
+    l_fr:                     French
+    l_it:                     Italian
+    l_nl:                     Dutch
+    l_pt:                     Portuguese
+    l_kr:                     Korean
+    l_ca:                     Catalan
+    l_ru:                     Russian
+    l_sl:                     Slovenian
     lang:                     '    Language:'
     mecab:                    '"MeCab" for Japanese text'
-    need_inst:                ' *need a separate installation'
     note_font:               "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
     note_s:                   '* %s will be replaced by filenames of URLs'
     p_chasen.exe:             '    path of "chasen.exe":'
@@ -322,8 +330,8 @@ gui_window::sysconfig:
     p_stanford_tag:           '    path of *.TAGGER:'
     pdf:                      'PDF Viewer:'
     s_sheet:                  'Spreadsheets (CSV/Excel):'
-    stanford:                 Lemmatization with "Stanford POS Tagger"
-    stemming:                 Stemming with "Snowball"
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball
     stopwords:                '  Stop words:'
     web_browser:              'Web Browser:'
     win_title:                Global Settings
@@ -530,6 +538,7 @@ gui_window::word_list:
     type:                     'Type of the list:'
     win_title:                'Options: Frequency List'
     xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
     and:                      AND
     back:                     Backward Match
@@ -578,6 +587,8 @@ kh_morpho::mecab:
     error:                    'Fatal error: Could not execute MeCab.'
     error_config:             'Fatal error: Could not find MeCab.'
     illegal_bra:              'Illegal marking with <>'
+kh_morpho::mecab_k:
+    error:                    'Fatal error: Could not execute MeCab.'
 kh_morpho::stanford:
     error:                    'Fatal error: Could not execute Stanford POS Tagger.'
     error_config:             'Fatal error: Could not find JStanford POS Tagger.'
@@ -611,6 +622,8 @@ gui_widget::r_mds:
     dist:                     '  Distance:'
     dim:                      'Dimensions:'
     1_3:                      '(from 1 to 3)'
+    fix_asp:                  'Fix aspect ratio'
+    random_start:             "Use random starts to find better solutions\n*It may take 10 minutes or more."
 gui_window::word_mds:
     units_words:              'Select the unit & words'
     mds_opt:                  'Multi-Dimensional Scaling Options'
@@ -716,19 +729,19 @@ gui_window::r_plot::cod_som:
 gui_window::r_plot_opt::cod_som:
     win_title:                'Configure: Self-Organizing Map of Codes'
 gui_widget::r_net:
-    filter_edges:             'Filter edges:'
+    filter_edges:             'Filter edges: '
     e_top_n:                  'Top'
-    e_jac:                    'Jaccard coef. >= '
+    e_jac:                    'Coef. >= '
     or_more:                  ''
-    thicker:                  'Thicker lines for stronger edges'
-    larger:                   'Larger nodes for higher frequency words'
-    larger_c:                 'Larger nodes for higher frequency codes'
-    larger_font:              'Variable font size *For printing with EMF/EPS/PDF'
+    thicker:                  'Darker lines for stronger edges'
     smaller:                  'Smaller Nodes'
     min_sp_tree:              'Highlight the minimum spanning tree'
-    min_sp_tree_only:         'Draw the minimum spanning only'
+    min_sp_tree_only:         'Draw the minimum spanning tree only'
     gray_scale:               'Grayscale (centralities & communities)'
     fix_lab:                  'Avoid overlapping of labels'
+    view_coef:                Show coef.
+    cor_var:                  'Color: correlation with variables / position'
+    cor_var_darker:           'Darker background color (correlation)'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
@@ -749,8 +762,10 @@ gui_window::r_plot::word_netgraph:
     com_b:                    'Communities: betweenness'
     com_r:                    'Communities: random walks'
     com_m:                    'Communities: modularity'
+    cor:                      'Correlation'
     none:                     None
     color:                    ' color:'
+    interactive:              'HTML'
     win_title:                'Co-Occurrence Network of Words'
 gui_window::cod_netg:
     win_title:                'Options: Co-Occurrence Network of Codes'
@@ -821,6 +836,7 @@ kh_cod::search:
     no_codes:                 '#none'
     direct:                   '#direct'
 gui_widget::select_a_var:
+    pos:                      'Position'
     heading:                  'Heading '
     na:                       'n / a '
 gui_window::doc_cls:
@@ -1049,7 +1065,7 @@ mysql_outvar::read:
     midashi_error:            'Cannot use "Heading1" - "Headings5" as the name of the variable.'
     overwrite_vars:           "The varible with the same name already exists.\nOver wright?\n\n"
 mysql_ready::dump:
-    too_long_word1:            "There are too long words. ( > 255 )\n\nKH Coder recognize the first 255 characters only.\nThe words are recorded in the following file: \n"
+    too_long_word1:            "There are too long words. ( > 128 )\n\nKH Coder recognize the first 128 characters only.\nThe words are recorded in the following file: \n"
     too_long_word2:            "Click OK to continue the pre-processing."
 mysql_getheader:
     error:                     "Failed to process documents.\n\nThere may be incorrect use of H1 - H5 tags in the target file.\nPlease try the \"Check the Target File\" command."
@@ -1078,7 +1094,18 @@ gui_window::r_plot_opt::cod_mat:
     common:                    "common settings"
     select_1:                  "Please select at least 1 code"
     color_rsd:                 "Visualize standardized residuals by color"
+    col1:                      "Color"
+    col2:                      "Color (CM)"
+    gray:                      "Gray"
+    color_fix:                 "Fixed color scale: "
 gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "Configure: Line Chart"
+screen_code::rde_menu:
+    plugin_raw_data_editor:    "Edit Data"
+    err_not_exist:             "Projectdata don't exist."
+    err_output_from_db:        "Projectdata cannot output from database."
+    err_edit:                  "Projectdata cannot edit."
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:    "Edit File"

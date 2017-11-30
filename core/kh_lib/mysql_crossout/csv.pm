@@ -5,7 +5,8 @@ use strict;
 sub finish{
 	my $self = shift;
 	
-	open (OUTF,">$self->{file}") or 
+	use File::BOM;
+	open (OUTF, '>:encoding(utf8):via(File::BOM)', $self->{file}) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => $self->{file},
@@ -27,12 +28,17 @@ sub finish{
 	}
 	
 	foreach my $i (@{$self->{wList}}){
-		$head .= kh_csv->value_conv($self->{wName}{$i}).',';
+		$head .= '"'.kh_csv->value_conv($self->{wName}{$i}).'",';
 	}
 	chop $head;
-	if ($::config_obj->os eq 'win32'){
-		$head = Jcode->new($head)->sjis;
+	#if ($::config_obj->os eq 'win32'){
+	#	$head = Jcode->new($head)->sjis;
+	#}
+	
+	if ($self->{for_R}) {
+		$head = kh_r_plot->escape_unicode($head);
 	}
+	
 	print OUTF "$head\n";
 	
 	# 位置情報とのマージ
@@ -47,7 +53,7 @@ sub finish{
 	$sql .= "ORDER BY id";
 	my $sth = mysql_exec->select($sql,1)->hundle;
 	
-	open (F,"$self->{file_temp}") or
+	open (F, '<:encoding(utf8)', "$self->{file_temp}") or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$self->{file_temp}",

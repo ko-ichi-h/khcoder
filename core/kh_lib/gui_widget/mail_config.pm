@@ -17,7 +17,7 @@ sub _new{
 
 	my $f4 = $lf2->Frame()->pack(-fill => 'x', -pady => 2);
 	$f4->Label(
-		-text => kh_msg->get('font'),#$gui_window->gui_jchar('フォント設定：','euc'),
+		-text => kh_msg->get('font'),# フォント設定：
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	$self->{e_font} = $f4->Entry(
@@ -28,7 +28,7 @@ sub _new{
 		-foreground => 'black',
 	)->pack(-side => 'right');
 	$f4->Button(
-		-text  => kh_msg->get('config'),#$gui_window->gui_jchar('変更'),
+		-text  => kh_msg->get('config'), # 変更
 		-font  => "TKFN",
 		-command => sub { $self->font_change(); }
 	)->pack(-padx => '2',-side => 'right');
@@ -109,6 +109,12 @@ sub _new{
 		-command  => sub{$self->update;}
 	)->pack(-anchor => 'w');
 
+	$self->{check_cud} = $lf->Checkbutton(
+		-variable => \$self->{if_cud},
+		-text     => kh_msg->get('if_cud'), # color universal design
+		-font     => "TKFN",
+	)->pack(-anchor => 'w');
+	
 	$self->{check} = $lf->Checkbutton(
 		-variable => \$self->{if_mail},
 		-text     => kh_msg->get('sendmail'),#$gui_window->gui_jchar('前処理の完了をメールで通知する'),
@@ -165,12 +171,16 @@ sub fill_in{
 	
 	$self->{e_font}->insert(
 		0,
-		gui_window->gui_jchar($::config_obj->font_main,'euc')
+		gui_window->gui_jchar($::config_obj->font_main)
 	);
 	$self->{e_font}->configure(-state => 'disable');
 	
 	if ($::config_obj->use_heap){
 		$self->{check2}->select;
+	}
+	
+	if ($::config_obj->color_universal_design){
+		$self->{check_cud}->select;
 	}
 	
 	if ($::config_obj->mail_if){
@@ -223,26 +233,13 @@ sub font_change{
 	#print "1: ", $font->configure(-family), "\n";
 
 	my $font_conf = $font->configure(-family);
-	
-	# Win9x & Perl/Tk 804用の特殊処理
-	if (
-		        ( $] > 5.008 )
-		and     ( $^O eq 'MSWin32' )
-		and not ( Win32::IsWinNT() )
-	){
-		# 変換なし
-	} else {
-		$font_conf = gui_window->gui_jg($font_conf);
-	}
-
-	#print "2: $font_conf\n";
 
 	$font_conf .= ",";
 	$font_conf .= $font->configure(-size);
 	
 	$self->{e_font}->configure(-state => 'normal');
 	$self->{e_font}->delete('0','end');
-	$self->{e_font}->insert(0,gui_window->gui_jchar($font_conf,'sjis'));
+	$self->{e_font}->insert(0, $font_conf);
 	$self->{e_font}->configure(-state => 'disable');
 }
 
@@ -252,17 +249,17 @@ sub font_change{
 
 sub plot_font{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_font}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_font}->get );
 }
 
 sub plot_size1{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_size1}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_size1}->get );
 }
 
 sub plot_size2{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_plot_size2}->get );
+	return gui_window->gui_jgn( $self->{entry_plot_size2}->get );
 }
 
 sub if_heap{
@@ -290,5 +287,10 @@ sub font{
 	my $self = shift;
 	return gui_window->gui_jg( $self->{e_font}->get );
 }
+sub cud{
+	my $self = shift;
+	return gui_window->gui_jg( $self->{if_cud} );
+}
+
 
 1;

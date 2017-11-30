@@ -10,7 +10,7 @@ sub save{
 	#   データファイルの出力   #
 	
 	my $file_data = $self->data_file;
-	open (DOUT,">$file_data") or 
+	open (DOUT,'>encoding(utf8)', $file_data) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_data",
@@ -47,7 +47,7 @@ sub save{
 		}
 		# 書き出し
 		my $line =
-			Jcode->new($self->{wName}{$i})->sjis
+			$self->{wName}{$i}
 			.'('
 			."$self->{wNum}{$i}"
 			.')'
@@ -79,22 +79,21 @@ sub _save_finish{
 	my $self = shift;
 	
 	use kh_csv;
-	my $first_line = "抽出語\t";
+	my $first_line = kh_msg->gget('words')."\t";
 	foreach my $w2 (@{$self->{wList2}}){
 		$first_line .= 'cw: '.kh_csv->value_conv_t($self->{wName2}{$w2})."\t";
 	}
 	chop $first_line;
-	$first_line = Jcode->new($first_line)->sjis;
 	
 	my $file = $self->data_file;
 	my $file_tmp = "$file".".bak";
 	
-	open (OLD,"$file") or 
+	open (OLD,'<:encoding(utf8)', $file) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file",
 		);
-	open (NEW,">$file_tmp") or
+	open (NEW,'>:encoding(utf8)', $file_tmp) or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_tmp",
@@ -108,9 +107,6 @@ sub _save_finish{
 	unlink($file);
 	rename($file_tmp,$file);
 
-	unless ($::config_obj->os eq 'win32'){
-		kh_jchar->to_euc($file);
-	}
 }
 
 #--------------#

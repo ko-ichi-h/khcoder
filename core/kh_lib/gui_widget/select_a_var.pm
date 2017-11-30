@@ -19,6 +19,13 @@ sub fill{
 	my @options;
 	my %vars = ();
 	
+	if ( $self->{add_position} ){
+		push @options, [
+			kh_msg->get('pos'),
+			'pos'
+		];
+	}
+	
 	# 見出し
 	if ($self->{show_headings}){
 		foreach my $i ("h1","h2","h3","h4","h5"){
@@ -64,10 +71,13 @@ sub fill{
 	
 	# Widgetの作成
 	$self->{var_id} = undef;
+	unless ($self->{pack}){
+		$self->{pack} = {-anchor => 'w', -padx => 2};
+	}
 	if (@options){
 		$self->{opt_body} = gui_widget::optmenu->open(
 			parent  => $self->{parent},
-			pack    => {-side => 'left', -padx => 2},
+			pack    => $self->{pack},
 			options => \@options,
 			variable => \$self->{var_id},
 			command  => sub{$self->rem_ov;},
@@ -82,7 +92,7 @@ sub fill{
 	} else {
 		$self->{opt_body} = gui_widget::optmenu->open(
 			parent  => $self->{parent},
-			pack    => {-side => 'left', -padx => 2},
+			pack    => $self->{pack},
 			options => 
 				[
 					[ kh_msg->get('na') , -1], # 利用不可

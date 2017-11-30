@@ -1,6 +1,7 @@
 package plotR::code_mat_line;
 
 use strict;
+use utf8;
 
 use kh_r_plot;
 
@@ -17,12 +18,12 @@ sub new{
 
 	my $r_command = $args{r_command};
 
-	# ¥Ñ¥é¥á¡¼¥¿¡¼ÀßÄê¡Ê¶¦ÄÌ¡Ë
-	$args{font_size} = 1 unless $args{font_size};      # ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼è¨­å®šï¼ˆå…±é€šï¼‰
+	$args{font_size} = 1 unless $args{font_size};      # ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	#$r_command .= "cex <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
 
-	if ( defined($self->{selection}) ){                # ¥³¡¼¥ÉÁªÂò
+	if ( defined($self->{selection}) ){                # ã‚³ãƒ¼ãƒ‰é¸æŠž
 		if ( $#{$self->{selection}} > -1 ){
 			$r_command .= "c_names <- colnames(d)\n";
 			
@@ -37,10 +38,9 @@ sub new{
 		}
 	}
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
+	# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆ
 	
 	my @plots = ();
-	my $flg_error = 0;
 
 	$plots[0] = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
@@ -50,7 +50,7 @@ sub new{
 		width     => $::config_obj->plot_size_words,
 		height    => $::config_obj->plot_size_codes,
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 
 
 	kh_r_plot->clear_env;
@@ -58,7 +58,6 @@ sub new{
 	undef %args;
 	$self->{result_plots} = \@plots;
 	
-	return 0 if $flg_error;
 	return $self;
 }
 
@@ -83,10 +82,10 @@ if ( is.null(dev.list()) ){
 }
 if ( is.null(font_fam) == FALSE ){
 	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		font_fam <- "HiraKaku"
 	} else {
-		font_fam <- "'.$::config_obj->font_plot.'"
+		font_fam <- "'.$::config_obj->font_plot_current.'"
 	}
 }
 

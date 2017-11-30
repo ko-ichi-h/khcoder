@@ -1,13 +1,14 @@
 package gui_window::bayes_learn;
 use base qw(gui_window);
 use strict;
+use utf8;
 use Tk;
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ³°ÉôÊÑ¿ô¤«¤é³Ø½¬
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # å¤–éƒ¨å¤‰æ•°ã‹ã‚‰å­¦ç¿’
 
 	my $lf_w = $win->LabFrame(
 		-label       => 'Basic Settings',
@@ -26,11 +27,11 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words_bayes->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('verb4wid'), # ³Ø½¬¤Ë»ÈÍÑ
+		verb   => kh_msg->get('verb4wid'), # å­¦ç¿’ã«ä½¿ç”¨
 	);
 
 	$self->{chkw_over} = $lf_x->Checkbutton(
-			-text     => kh_msg->get('add2exists'), # ´ûÂ¸¤Î³Ø½¬·ë²Ì¥Õ¥¡¥¤¥ë¤Ëº£²ó¤ÎÆâÍÆ¤òÄÉ²Ã¤¹¤ë','euc
+			-text     => kh_msg->get('add2exists'), # æ—¢å­˜ã®å­¦ç¿’çµæžœãƒ•ã‚¡ã‚¤ãƒ«ã«ä»Šå›žã®å†…å®¹ã‚’è¿½åŠ ã™ã‚‹
 			-variable => \$self->{check_overwrite},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -39,7 +40,7 @@ sub _new{
 	my $fcv = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
 
 	$self->{chkw_cross} = $fcv->Checkbutton(
-			-text     => kh_msg->get('cr_validate'), # ¸òº¹ÂÅÅö²½¤ò¹Ô¤¦','euc
+			-text     => kh_msg->get('cr_validate'), # äº¤å·®å¦¥å½“åŒ–ã‚’è¡Œã†
 			-variable => \$self->{check_cross},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -64,7 +65,7 @@ sub _new{
 	my $fcv1 = $lf_x->Frame()->pack(-fill => 'x');
 	$fcv1->Label(-text => '  ')->pack(-side => 'left');
 	$self->{chkw_savel} = $fcv1->Checkbutton(
-			-text     => kh_msg->get('savelog'), # Ê¬Îà¥í¥°¤ò¥Õ¥¡¥¤¥ë¤ËÊÝÂ¸','euc
+			-text     => kh_msg->get('savelog'), # åˆ†é¡žãƒ­ã‚°ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
 			-variable => \$self->{check_savel},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -73,7 +74,7 @@ sub _new{
 	my $fcv2 = $lf_x->Frame()->pack(-fill => 'x');
 	$fcv2->Label(-text => '  ')->pack(-side => 'left');
 	$self->{chkw_savev} = $fcv2->Checkbutton(
-			-text     => kh_msg->get('savecls'), # Ê¬Îà·ë²Ì¤ò³°ÉôÊÑ¿ô¤ËÊÝÂ¸','euc
+			-text     => kh_msg->get('savecls'), # åˆ†é¡žçµæžœã‚’å¤–éƒ¨å¤‰æ•°ã«ä¿å­˜
 			-variable => \$self->{check_savev},
 			-anchor => 'w',
 			-command => sub {$self->w_status;},
@@ -82,7 +83,7 @@ sub _new{
 	my $fcv3 = $lf_x->Frame()->pack(-fill => 'x', -expand => 0);
 	$fcv3->Label(-text => '  ')->pack(-side => 'left');
 	$self->{label_vname} = $fcv3->Label(
-		-text       => kh_msg->get('vname'), # ÊÑ¿ôÌ¾¡§
+		-text       => kh_msg->get('vname'), # å¤‰æ•°åï¼š
 		#-foreground => 'gray',
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -94,7 +95,7 @@ sub _new{
 	$self->{entry_vname}->bind("<KP_Enter>",sub{$self->calc;});
 
 	$win->Button(
-		-text    => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text    => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font    => "TKFN",
 		-width   => 8,
 		-command => sub{$self->withd;}
@@ -119,7 +120,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºÝ¤Î¥Ð¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -162,9 +163,9 @@ sub calc{
 	my $self = shift;
 	
 	#------------------#
-	#   ÆþÎÏ¥Á¥§¥Ã¥¯   #
+	#   å…¥åŠ›ãƒã‚§ãƒƒã‚¯   #
 
-	my $fold = $self->gui_jg( $self->{entry_fold}->get );
+	my $fold = $self->gui_jgn( $self->{entry_fold}->get );
 	if (
 		   $fold =~ /[^0-9]/o
 		|| $fold < 2
@@ -172,7 +173,7 @@ sub calc{
 	){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error_f20'), # Fold¤Ë¤Ï2¤«¤é20¤Þ¤Ç¤ÎÃÍ¤ò»ØÄê¤·¤Æ²¼¤µ¤¤¡£
+			msg  => kh_msg->get('error_f20'), # Foldã«ã¯2ã‹ã‚‰20ã¾ã§ã®å€¤ã‚’æŒ‡å®šã—ã¦ä¸‹ã•ã„ã€‚
 		);
 		return 0;
 	}
@@ -180,7 +181,7 @@ sub calc{
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£
+			msg  => kh_msg->get('gui_widget::words->no_pos_selected'), # å“è©žãŒ1ã¤ã‚‚é¸æŠžã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚
 		);
 		return 0;
 	}
@@ -188,7 +189,7 @@ sub calc{
 	if ( $self->outvar == -1 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error_var'), # ³°ÉôÊÑ¿ô¤ÎÀßÄê¤¬ÉÔÀµ¤Ç¤¹¡£
+			msg  => kh_msg->get('error_var'), # å¤–éƒ¨å¤‰æ•°ã®è¨­å®šãŒä¸æ­£ã§ã™ã€‚
 		);
 		return 0;
 	}
@@ -196,11 +197,10 @@ sub calc{
 	my ($varname1, $varname2);
 	if ($self->{check_savev}){
 		$varname1 = $self->gui_jg( $self->{entry_vname}->get );
-		$varname1 = Jcode->new($varname1,'sjis')->euc;
 		unless (length($varname1)){
 			gui_errormsg->open(
 				type   => 'msg',
-				msg    => kh_msg->get('error_var'), # ÊÑ¿ôÌ¾¤ò»ØÄê¤·¤Æ²¼¤µ¤¤¡£
+				msg    => kh_msg->get('error_var'), # å¤‰æ•°åã‚’æŒ‡å®šã—ã¦ä¸‹ã•ã„ã€‚
 				window => \$self->{win_obj},
 			);
 			return 0;
@@ -214,7 +214,7 @@ sub calc{
 			if ( defined($chk->{id}) ){
 				gui_errormsg->open(
 					type   => 'msg',
-					msg    => kh_msg->get('error_exists'), # »ØÄê¤µ¤ì¤¿Ì¾Á°¤ÎÊÑ¿ô¤¬¤¹¤Ç¤ËÂ¸ºß¤·¤Þ¤¹¡£
+					msg    => kh_msg->get('error_exists'), # æŒ‡å®šã•ã‚ŒãŸåå‰ã®å¤‰æ•°ãŒã™ã§ã«å­˜åœ¨ã—ã¾ã™ã€‚
 					window => \$self->{win_obj},
 				);
 				return 0;
@@ -224,7 +224,7 @@ sub calc{
 
 	$self->{words_obj}->settings_save;
 
-	# ÊÝÂ¸Àè¤Î»²¾È
+	# ä¿å­˜å…ˆã®å‚ç…§
 	my @types = (
 		[ "KH Coder: Naive Bayes Models",[qw/.knb/] ],
 		["All files",'*']
@@ -236,7 +236,7 @@ sub calc{
 			-defaultextension => '.knb',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt(kh_msg->get('select_exist')), # º£²ó¤Î³Ø½¬ÆâÍÆ¤òÄÉ²Ã¤¹¤ë¥Õ¥¡¥¤¥ë¤òÁªÂò
+				$self->gui_jt(kh_msg->get('select_exist')), # ä»Šå›žã®å­¦ç¿’å†…å®¹ã‚’è¿½åŠ ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é¸æŠž
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 	} else {
@@ -244,7 +244,7 @@ sub calc{
 			-defaultextension => '.knb',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt(kh_msg->get('saving_new')), # ³Ø½¬·ë²Ì¤ò¿·µ¬¥Õ¥¡¥¤¥ë¤ËÊÝÂ¸
+				$self->gui_jt(kh_msg->get('saving_new')), # å­¦ç¿’çµæžœã‚’æ–°è¦ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 	}
@@ -266,7 +266,7 @@ sub calc{
 			-defaultextension => '.nbl',
 			-filetypes        => \@types,
 			-title            =>
-				$self->gui_jt(kh_msg->get('saving_log')), # Ê¬Îà¥í¥°¤ò¥Õ¥¡¥¤¥ë¤ËÊÝÂ¸
+				$self->gui_jt(kh_msg->get('saving_log')), # åˆ†é¡žãƒ­ã‚°ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¿å­˜
 			-initialdir       => $self->gui_jchar($::config_obj->cwd),
 		);
 		unless ($cross_path){
@@ -278,12 +278,12 @@ sub calc{
 	}
 
 	#----------#
-	#   ¼Â¹Ô   #
+	#   å®Ÿè¡Œ   #
 
 	unless ( $self->{words_obj}->check > 0 ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('error_no_words'), # ¸½ºß¤ÎÀßÄêÆâÍÆ¤Ç¤Ï¡¢»ÈÍÑ¤Ç¤­¤ë¸ì¤¬¤¢¤ê¤Þ¤»¤ó¡£
+			msg  => kh_msg->get('error_no_words'), # ç¾åœ¨ã®è¨­å®šå†…å®¹ã§ã¯ã€ä½¿ç”¨ã§ãã‚‹èªžãŒã‚ã‚Šã¾ã›ã‚“ã€‚
 		);
 		return 0;
 	}
@@ -321,22 +321,22 @@ sub calc{
 
 	$wait_window->end(no_dialog => 1);
 
-	# ¡Ö³°ÉôÊÑ¿ô¥ê¥¹¥È¡×¤ò³«¤¯
+	# ã€Œå¤–éƒ¨å¤‰æ•°ãƒªã‚¹ãƒˆã€ã‚’é–‹ã
 	if ($self->{check_savev}){
 		my $win_list = gui_window::outvar_list->open;
 		$win_list->_fill;
 	}
 
 	my $msg = '';
-	$msg .= kh_msg->get('done')."\n\n"; # ¥Ê¥¤¡¼¥Ö¥Ù¥¤¥º¥â¥Ç¥ë¤Î³Ø½¬¤¬´°Î»¤·¤Þ¤·¤¿¡£
-	$msg .= kh_msg->get('docs')." $r->{instances}"; # º£²ó³Ø½¬¤·¤¿Ê¸½ñ¡§
+	$msg .= kh_msg->get('done')."\n\n"; # ãƒŠã‚¤ãƒ¼ãƒ–ãƒ™ã‚¤ã‚ºãƒ¢ãƒ‡ãƒ«ã®å­¦ç¿’ãŒå®Œäº†ã—ã¾ã—ãŸã€‚
+	$msg .= kh_msg->get('docs')." $r->{instances}"; # ä»Šå›žå­¦ç¿’ã—ãŸæ–‡æ›¸ï¼š
 	if ($self->{check_overwrite}){
-		$msg .= ", ".kh_msg->get('docs_total')." $r->{instances_all}\n"; # Ê¸½ñ¤ÎÁí¿ô¡§
+		$msg .= ", ".kh_msg->get('docs_total')." $r->{instances_all}\n"; # æ–‡æ›¸ã®ç·æ•°ï¼š
 	} else {
 		$msg .= "\n";
 	}
 	if ($self->{check_cross}){
-		$msg .= kh_msg->get('accuracy'); # Ê¬Îà¤ÎÀµ³Î¤µ¡§
+		$msg .= kh_msg->get('accuracy'); # åˆ†é¡žã®æ­£ç¢ºã•ï¼š
 		$msg .= " $r->{cross_vl_ok} / $r->{cross_vl_tested} (";
 		$msg .= sprintf("%.1f",$r->{cross_vl_ok}/$r->{cross_vl_tested}*100);
 		$msg .= "%),  ";
@@ -356,7 +356,7 @@ sub calc{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub min{
 	my $self = shift;

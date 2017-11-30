@@ -13,23 +13,13 @@ use Tk;
 
 sub _new{
 	my $self = shift;
-	$::main_gui = $self;
-
-	if ( $::config_obj->win_gmtry($self->win_name) ){
-		$self->{org_height} = $::config_obj->win_gmtry($self->win_name);
-		$self->{org_height} =~ s/[0-9]+x([0-9]+)\+[0-9]+\+[0-9]+/$1/;
-	} else {
-		$self->{org_height} = -1;
-	}
-
+	$::main_gui = $self; # リファレンスなので、以降はどちらを書き換えても、両方書き換わる
 
 	# Windowへの書き込み
 	$self->make_font;                                        # フォント準備
 	$self->{win_obj}->title('KH Coder');                     # Windowタイトル
 	$self->{menu}  =
-		gui_window::main::menu->make(  $self->{win_obj} );   # メニュー
-	$self->{inner} = 
-		gui_window::main::inner->make( $self->{win_obj} );   # Windowの中身
+		gui_window::main::menu->make(  $self->{win_obj} );   # メニュー＆内容
 
 	#-----------------------#
 	#   KH Coder 開始処理   #
@@ -38,13 +28,6 @@ sub _new{
 	$self->menu->refresh;
 	$self->inner->refresh;
 
-	# GUI未作成のコマンド
-	#use kh_hinshi;
-	#$self->win_obj->bind(
-	#	'<Control-Key-h>',
-	#	sub { kh_hinshi->output; }
-	#);
-	
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){
 		$::splash->Destroy if $::splash;
@@ -67,9 +50,7 @@ sub start{
 		'<Key-Escape>',
 		sub{ return 1; }
 	);
-
 }
-
 
 #------------------#
 #   フォント設定   #
@@ -78,16 +59,6 @@ sub start{
 sub make_font{
 	my $self = shift;
 	my @font = split /,/, $::config_obj->font_main;
-
-	# Win9x & Perl/Tk 804用の特殊処理
-	my $flg = 0;
-	if (
-		        ( $] > 5.008 )
-		and     ( $^O eq 'MSWin32' )
-		and not ( Win32::IsWinNT() )
-	){
-		$flg = 1;
-	}
 
 	if ($Tk::VERSION < 804 && $::config_obj->os eq 'linux'){
 		$self->mw->fontCreate('TKFN',
@@ -98,9 +69,7 @@ sub make_font{
 		);
 	} else {
 		$self->mw->fontCreate('TKFN',
-			-family => (
-				$flg ? Jcode->new($font[0])->sjis : $self->gui_jchar($font[0])
-			),
+			-family => $font[0],
 			-size   => $font[1],
 		);
 	}
@@ -163,28 +132,25 @@ sub opened{
 	my $window      = shift;
 	
 	$self->{$window_name} = $window;
-	$::main_gui = $self;
+	#$::main_gui = $self; # リファレンスなので自動的に更新される
 }
 sub closed{
 	my $self        = shift;
 	my $window_name = shift;
 	
 	undef $self->{$window_name};
-	$::main_gui = $self;
+	#$::main_gui = $self; # リファレンスなので自動的に更新される
 }
 
 # プログラム全体の終了処理
 sub close{
 	my $self        = shift;
 	$self->close_all;
-	
-	# Main Windowの高さの値をチェック
-	#my $g = $self->win_obj->geometry;
-	#print "height of mw: $self->{org_height}, ", $self->win_obj->height, "\n";
-	
-	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 
+	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 	$::config_obj->save;
+
+	# End sub-process
 	if ($::config_obj->all_in_one_pack){
 		kh_all_in_one->mysql_stop;
 	}

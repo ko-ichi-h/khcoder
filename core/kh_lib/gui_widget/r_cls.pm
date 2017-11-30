@@ -2,7 +2,7 @@ package gui_widget::r_cls;
 use base qw(gui_widget);
 use strict;
 use Tk;
-use Jcode;
+use utf8;
 
 sub _new{
 	my $self = shift;
@@ -44,7 +44,7 @@ sub _new{
 		$self->{r_cmd} = undef;
 	}
 
-	# ÊıË¡
+	# æ–¹æ³•
 	$f4->Label(
 		-text => kh_msg->get('method'),
 		-font => "TKFN",
@@ -63,9 +63,9 @@ sub _new{
 		variable => \$self->{method_mthd},
 	);
 
-	# µ÷Î¥
+	# è·é›¢
 	$f4->Label(
-		-text => kh_msg->get('dist'), # µ÷Î¥¡§
+		-text => kh_msg->get('dist'), # è·é›¢ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -76,21 +76,21 @@ sub _new{
 		options =>
 			[
 				['Jaccard', 'binary' ],
-				['Euclid',  'euclid' ],
 				['Cosine',  'pearson'],
+				['Euclid',  'euclid' ],
 			],
 		variable => \$self->{method_dist},
 	);
 	
 
-	# ¥¯¥é¥¹¥¿¡¼¿ô
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°
 	my $f5 = $win->Frame()->pack(
 		-fill => 'x',
 		-pady => 2
 	);
 
 	$f5->Label(
-		-text => kh_msg->get('n_cls'), # ¥¯¥é¥¹¥¿¡¼¿ô¡§
+		-text => kh_msg->get('n_cls'), # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -111,9 +111,9 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	# ¿§Ê¬¤±
+	# è‰²åˆ†ã‘
 	$f5->Checkbutton(
-			-text     => kh_msg->get('color'), # ¥¯¥é¥¹¥¿¡¼¤Î¿§Ê¬¤±
+			-text     => kh_msg->get('color'), # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ã®è‰²åˆ†ã‘
 			-variable => \$self->{check_color_cls},
 			-anchor => 'w',
 	)->pack(-anchor => 'w', -side => 'left');
@@ -123,9 +123,7 @@ sub _new{
 }
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
-
-
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub cluster_color{
 	my $self = shift;
@@ -144,7 +142,7 @@ sub method_mthd{
 
 sub cluster_number{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_cluster_number}->get );
+	return gui_window->gui_jgn( $self->{entry_cluster_number}->get );
 }
 
 sub params{

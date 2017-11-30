@@ -190,6 +190,7 @@ sub calc{
 	# プロットWindowを開く
 	$wait_window->end(no_dialog => 1);
 	$wait_window = undef;
+	return 0 unless $plotR;
 	
 	if ($::main_gui->if_opened('w_word_som_plot')){
 		$::main_gui->get('w_word_som_plot')->close;
@@ -201,6 +202,7 @@ sub calc{
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		coord       => $plotR->{coord},
 		#no_geometry => 1,
 	);
 

@@ -84,21 +84,21 @@ sub _view{
 	my $row = 0;
 	foreach my $i (@{$r}){
 		$self->list->add($row,-at => "$row");
-		$self->list->itemCreate($row,0,-text  => $self->gui_jchar("$i->[0]",'euc'));
+		$self->list->itemCreate($row,0,-text  => $self->gui_jchar($i->[0]));
 		if (
 			    ( length($i->[1]) > 0 )
 			&!  ( $i->[0] eq $i->[1]  )
 		){
-			$self->list->itemCreate($row,1,-text  => $self->gui_jchar("$i->[1]",'euc'));
+			$self->list->itemCreate($row,1,-text  => $self->gui_jchar($i->[1]));
 		}
-		$self->list->itemCreate($row,2,-text  => $self->gui_jchar("$i->[2]",'euc'));
-		$self->list->itemCreate($row,4,-text  => $self->gui_jchar("$i->[3]",'euc'));
+		$self->list->itemCreate($row,2,-text  => $self->gui_jchar($i->[2]));
+		$self->list->itemCreate($row,4,-text  => $self->gui_jchar($i->[3]));
 		
 		if ($i->[4] eq $i->[3]){
 			$i->[4] = '';
 		}
 		
-		$self->list->itemCreate($row,5,-text  => $self->gui_jchar("$i->[4]",'euc'));
+		$self->list->itemCreate($row,5,-text  => $self->gui_jchar($i->[4]));
 		++$row;
 	}
 	gui_hlist->update4scroll($self->list);

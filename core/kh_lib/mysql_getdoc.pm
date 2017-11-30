@@ -67,7 +67,7 @@ sub get{
 		if ($c =~ /^<\/[Hh][1-5]><[Hh][1-5]>$/o){ push @body, ["\n",'']; }
 		
 		my $k = ''; if ($for_color{$i->[1]}){$k = $for_color{$i->[1]};}
-		push @body, [Jcode->new("$i->[0]",'euc')->sjis, $k];
+		push @body, [ $i->[0], $k ];
 		$lastw = $i->[0];
 		
 	}
@@ -175,9 +175,9 @@ sub get_header{
 		){
 			#print "getting $i header...\n";
 			my $sql = "SELECT rowtxt\n";
-			$sql   .= "FROM bun_r, bun\n";
+			$sql   .= "FROM bun_r, bun_bak\n";
 			$sql   .= "WHERE\n";
-			$sql   .= "    bun_r.id = bun.id\n";
+			$sql   .= "    bun_r.id = bun_bak.id\n";
 			$sql   .= "    AND bun_id = 0\n";
 			$sql   .= "    AND dan_id = 0\n";
 			my $frag = 0; my $n = 5;
@@ -191,9 +191,11 @@ sub get_header{
 				--$n;
 			}
 			$sql   .= "LIMIT 1";
-			my $h = mysql_exec->select("$sql",1)->hundle->fetch->[0];
-			$h = Jcode->new($h,'euc')->sjis;
-			$headers .= "$h\n";
+			my $h = mysql_exec->select("$sql",1)->hundle->fetch;
+			if ($h) {
+				$h = $h->[0];
+				$headers .= "$h\n";
+			}
 		}
 	}
 	return $headers;
@@ -278,8 +280,8 @@ sub id_for_print{
 			tani   => $self->{tani}
 		);
 		$val = $i->print_val($val);
-		$r .= Jcode->new($i->{name},'euc')->sjis;
-		$r .= " = ".Jcode->new($val,'euc')->sjis.",  ";
+		$r .= $i->{name}; #Jcode->new($i->{name},'euc')->sjis;
+		$r .= " = $val,  ";
 	}
 	chop $r;
 	chop $r;

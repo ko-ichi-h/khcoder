@@ -2,6 +2,7 @@ package gui_widget::bubble;
 use base qw(gui_widget);
 use strict;
 use Tk;
+use utf8;
 use Jcode;
 
 sub _new{
@@ -18,8 +19,8 @@ sub _new{
 	$self->{num_var}         = 100 unless defined $self->{num_var};
 	$self->{use_alpha}       = 1   unless defined $self->{use_alpha};
 	
-	$f1->Checkbutton(
-		-text     => kh_msg->get('bubble'), # ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È¡§
+	$self->{chkw_main} = $f1->Checkbutton(
+		-text     => kh_msg->get('bubble'), # ãƒãƒ–ãƒ«ãƒ—ãƒ­ãƒƒãƒˆï¼š
 		-variable => \$self->{check_bubble},
 		-command  => sub{ $self->refresh_std_radius;},
 	)->pack(
@@ -28,7 +29,7 @@ sub _new{
 	);
 
 	$self->{lab_size1} = $f1->Label(
-		-text => kh_msg->get('size'), # ¥Ğ¥Ö¥ë¤ÎÂç¤­¤µ
+		-text => kh_msg->get('size'), # ãƒãƒ–ãƒ«ã®å¤§ãã•
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
@@ -61,51 +62,12 @@ sub _new{
 		)->pack(-anchor => 'w', -side => 'left');
 
 		$self->{chkw_resize_vars} = $frm_std_radius->Checkbutton(
-				-text     => kh_msg->get('variable'), # ÊÑ¿ô¤ÎÃÍ / ¸«½Ğ¤·¤ÎÂç¤­¤µ¤â²ÄÊÑ¤Ë','euc
+				-text     => kh_msg->get('variable'), # å¤‰æ•°ã®å€¤ / è¦‹å‡ºã—ã®å¤§ãã•ã‚‚å¯å¤‰ã«
 				-variable => \$self->{chk_resize_vars},
 				-anchor => 'w',
 				-state => 'disabled',
 		)->pack(-anchor => 'w');
 	}
-
-	my $f2 = $win->Frame()->pack(
-		-fill => 'x',
-	);
-
-	$f2->Label(
-		-text => '  ',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{chkw_std_radius} = $f2->Checkbutton(
-		-text     => kh_msg->get('standardize'), # ¥Ğ¥Ö¥ë¤ÎÂç¤­¤µ¤òÉ¸½à²½¡§','euc
-		-variable => \$self->{chk_std_radius},
-		-anchor => 'w',
-		-state => 'disabled',
-		-command  => sub{ $self->refresh_std_radius;},
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{lab_var1} = $f2->Label(
-		-text => kh_msg->get('variance'), # Ê¬»¶
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
-
-	$self->{ent_var} = $f2->Entry(
-		-font       => "TKFN",
-		-width      => 3,
-		-background => 'white',
-	)->pack(-side => 'left');
-	$self->{ent_var}->insert(0,$self->{num_var});
-	gui_window->config_entry_focusin($self->{ent_var});
-	$self->{ent_var}->bind("<Key-Return>", $self->{command})
-		if defined( $self->{command} );
-	$self->{ent_var}->bind("<KP_Enter>", $self->{command})
-		if defined( $self->{command} );
-
-	$self->{lab_var2} = $f2->Label(
-		-text => '%',
-		-font => "TKFN",
-	)->pack(-anchor => 'w', -side => 'left');
 
 	if ($self->{type} eq 'corresp'){
 	
@@ -133,14 +95,14 @@ sub refresh_std_radius{
 	my $self = shift;
 	
 	my @temp = (
-		$self->{chkw_std_radius},
+		#$self->{chkw_std_radius},
 		$self->{chkw_resize_vars},
 		$self->{lab_size1},
 		$self->{lab_size2},
 		$self->{ent_size},
-		$self->{lab_var1},
-		$self->{lab_var2},
-		$self->{ent_var},
+		#$self->{lab_var1},
+		#$self->{lab_var2},
+		#$self->{ent_var},
 		$self->{chkw_alpha},
 	);
 	
@@ -151,16 +113,21 @@ sub refresh_std_radius{
 		$i->configure(-state => $state) if $i;
 	}
 
-	if ( $self->{check_bubble} == 1 && $self->{chk_std_radius} == 0 ){
-		foreach my $i ($self->{lab_var1},$self->{lab_var2},$self->{ent_var}){
-			$i->configure(-state => 'disable') if $i;
-		}
+	if ($self->{command2}) {
+		&{$self->{command2}};
 	}
+
+
+	#if ( $self->{check_bubble} == 1 && $self->{chk_std_radius} == 0 ){
+	#	foreach my $i ($self->{lab_var1},$self->{lab_var2},$self->{ent_var}){
+	#		$i->configure(-state => 'disable') if $i;
+	#	}
+	#}
 }
 
 
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub check_bubble{
 	my $self = shift;
@@ -174,17 +141,17 @@ sub chk_resize_vars{
 
 sub chk_std_radius{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{chk_std_radius} );
+	return 0;
 }
 
 sub size{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{ent_size}->get );
+	return gui_window->gui_jgn( $self->{ent_size}->get );
 }
 
 sub var{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{ent_var}->get );
+	return 100;
 }
 
 sub alpha{

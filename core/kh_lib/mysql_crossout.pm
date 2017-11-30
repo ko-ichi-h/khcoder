@@ -1,5 +1,6 @@
 package mysql_crossout;
 use strict;
+use utf8;
 
 use mysql_exec;
 use mysql_crossout::csv;
@@ -28,10 +29,10 @@ sub run{
 	
 	use Benchmark;
 	
-	# ¸«½Ð¤·¤Î¼èÆÀ
+	# è¦‹å‡ºã—ã®å–å¾—
 	$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani});
 
-	# °ì»þ¥Õ¥¡¥¤¥ë¤ÎÌ¿Ì¾
+	# ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã®å‘½å
 	$self->{file_temp} = "temp.dat";
 	while (-e $self->{file_temp}){
 		$self->{file_temp} .= ".tmp";
@@ -48,34 +49,38 @@ sub run{
 }
 
 #----------------#
-#   ¥Ç¡¼¥¿ºîÀ½   #
+#   ãƒ‡ãƒ¼ã‚¿ä½œè£½   #
 
-sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
+sub out2{                               # lengthä½œè£½ã‚’ã™ã‚‹
 	my $self = shift;
 	
-	open (F,">$self->{file_temp}") or die;
+	open (F,'>:encoding(utf8)', $self->{file_temp}) or die;
 	
-	# ¥»¥ëÆâÍÆ¤ÎºîÀ½
+	# ã‚»ãƒ«å†…å®¹ã®ä½œè£½
 	my $id = 1;
 	my $last = 1;
+	my $started = 0;
 	my %current = ();
 	while (1){
 		my $sth = mysql_exec->select(
-			$self->sql2($id, $id + 100),
+			$self->sql2($id, $id + 30000),
 			1
 		)->hundle;
-		$id += 100;
+		$id += 30000;
 		unless ($sth->rows > 0){
 			last;
 		}
 		
 		while (my $i = $sth->fetch){
-			if ($last != $i->[0]){
-				# ½ñ¤­½Ð¤·
+			if ($last != $i->[0] && $started == 1){
+				# æ›¸ãå‡ºã—
 				my $temp = "$last,";
 				if ($self->{midashi}){
 					my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
-					$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+					#my $chk0 = utf8::is_utf8( $self->{midashi}->[$last - 1] );
+					#my $chk1 = utf8::is_utf8( $jcode_tmp );
+					
+					#$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
 					$temp .= $jcode_tmp;
 				}
 				foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
@@ -87,26 +92,29 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 				}
 				chop $temp;
 				print F "$temp\n";
-				# ½é´ü²½
+				# åˆæœŸåŒ–
 				%current = ();
 				$last = $i->[0];
 			}
 			
-			# HTML¥¿¥°¤òÌµ»ë
+			$last = $i->[0] unless $started;
+			$started = 1;
+			
+			# HTMLã‚¿ã‚°ã‚’ç„¡è¦–
 			if (
 				!  ( $self->{use_html} )
 				&& ( $i->[2] =~ /<[h|H][1-5]>|<\/[h|H][1-5]>/o )
 			){
 				next;
 			}
-			# Ì¤»ÈÍÑ¸ì¤òÌµ»ë
+			# æœªä½¿ç”¨èªžã‚’ç„¡è¦–
 			if ($i->[3]){
 				next;
 			}
 			
-			# ½¸·×
+			# é›†è¨ˆ
 			++$current{'length_w'};
-			$current{'length_c'} += (length($i->[2]) / 2);
+			$current{'length_c'} += length($i->[2]);
 			if ($self->{wName}{$i->[1]}){
 				++$current{$i->[1]};
 			}
@@ -114,11 +122,11 @@ sub out2{                               # lengthºîÀ½¤ò¤¹¤ë
 		$sth->finish;
 	}
 	
-	# ºÇ½ª¹Ô¤Î½ÐÎÏ
+	# æœ€çµ‚è¡Œã®å‡ºåŠ›
 	my $temp = "$last,";
 	if ($self->{midashi}){
 		my $jcode_tmp = kh_csv->value_conv($self->{midashi}->[$last - 1]).',';
-		$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
+		#$jcode_tmp = Jcode->new($jcode_tmp,'euc')->sjis if $::config_obj->os eq 'win32';
 		$temp .= $jcode_tmp;
 	}
 	foreach my $h ( 'length_c','length_w',@{$self->{wList}} ){
@@ -141,7 +149,7 @@ sub sql2{
 
 	my $sql;
 	$sql .= "SELECT $self->{tani}.id, genkei.id, hyoso.name, genkei.nouse\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n";
+	$sql .= "FROM   hyosobun USE INDEX (PRIMARY), hyoso, genkei, $self->{tani}\n";
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
@@ -154,20 +162,20 @@ sub sql2{
 		}
 	}
 	#$sql .= "	AND genkei.nouse = 0\n";
-	$sql .= "	AND $self->{tani}.id >= $d1\n";
-	$sql .= "	AND $self->{tani}.id <  $d2\n";
+	$sql .= "	AND hyosobun.id >= $d1\n";
+	$sql .= "	AND hyosobun.id <  $d2\n";
 	$sql .= "ORDER BY hyosobun.id";
 	return $sql;
 }
 
 
 #------------------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¡¦ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžãƒ»å“è©žãƒªã‚¹ãƒˆã®ä½œè£½   #
 
 sub make_list{
 	my $self = shift;
 	
-	# Ã±¸ì¥ê¥¹¥È¤ÎºîÀ½
+	# å˜èªžãƒªã‚¹ãƒˆã®ä½œè£½
 	my $sql = "
 		SELECT genkei.id, genkei.name, hselection.khhinshi_id
 		FROM   genkei, hselection, df_$self->{tani}
@@ -193,7 +201,8 @@ sub make_list{
 	if ($self->{max_df}){
 		$sql .= "AND df_$self->{tani}.f <= $self->{max_df}\n";
 	}
-	$sql .= "ORDER BY khhinshi_id, genkei.num DESC, genkei.name\n";
+	$sql .= "ORDER BY khhinshi_id, genkei.num DESC, ";
+	$sql .= $::project_obj->mysql_sort('genkei.name');
 	
 	my $sth = mysql_exec->select($sql, 1)->hundle;
 	my (@list, %name, %hinshi);
@@ -207,7 +216,7 @@ sub make_list{
 	$self->{wName}   = \%name;
 	$self->{wHinshi} = \%hinshi;
 	
-	# ÉÊ»ì¥ê¥¹¥È¤ÎºîÀ½
+	# å“è©žãƒªã‚¹ãƒˆã®ä½œè£½
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
 	$sql .= "FROM   hselection\n";
@@ -221,7 +230,7 @@ sub make_list{
 	$sth = mysql_exec->select($sql, 1)->hundle;
 	while (my $i = $sth->fetch) {
 		$self->{hName}{$i->[0]} = $i->[1];
-		if ($i->[1] eq 'HTML¥¿¥°' || $i->[1] eq 'HTML_TAG'){
+		if ($i->[1] eq 'HTMLã‚¿ã‚°' || $i->[1] eq 'HTML_TAG'){
 			$self->{use_html} = 1;
 		}
 	}
@@ -230,10 +239,11 @@ sub make_list{
 }
 
 #--------------------------#
-#   ½ÐÎÏ¤¹¤ëÃ±¸ì¿ô¤òÊÖ¤¹   #
+#   å‡ºåŠ›ã™ã‚‹å˜èªžæ•°ã‚’è¿”ã™   #
 
 sub wnum{
 	my $self = shift;
+	my $nc   = shift;
 	
 	$self->{min_df} = 0 unless length($self->{min_df});
 	
@@ -265,13 +275,16 @@ sub wnum{
 	#print "$sql\n";
 	
 	$_ = mysql_exec->select($sql,1)->hundle->fetch->[0];
-	1 while s/(.*\d)(\d\d\d)/$1,$2/; # °Ì¼è¤êÍÑ¤Î¥³¥ó¥Þ¤òÁÞÆþ
+	unless ($nc){
+		1 while s/(.*\d)(\d\d\d)/$1,$2/; # ä½å–ã‚Šç”¨ã®ã‚³ãƒ³ãƒžã‚’æŒ¿å…¥
+	}
 	return $_;
 }
 
 
 sub get_default_freq{
 	my $self = shift;
+	
 	my $target = shift;
 	
 	$self->{min_df} = 0 unless length($self->{min_df});
@@ -306,118 +319,51 @@ sub get_default_freq{
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 
-	my $lf  = 0;
+	# stage 1
 	my $cum = 0;
-	my $r   = 1;
+	my ($words, $cut);
 	while (my $i = $h->fetch){
-		if ($i->[0] % 5 ==0){
-			if ($cum + $i->[1] >= $target){
-				# print "$lf->[1]: ", $target - $lf->[1], ", ", $cum + $i->[1], ": ", $cum + $i->[1] - $target, "\n";
-				if ( ( $target - $lf->[1] ) >= ( $cum + $i->[1] - $target ) ){
-					$r = $i->[0];
-				} else {
-					$r = $lf->[0];
-				}
+		$cum += $i->[1]; # ç´¯ç©
+		if ($cum >= $target) {
+			my $rem = $i->[0] % 5;
+			my $can_0 = $i->[0] - $rem;
+			my $can_1 = $can_0 + 5;
+			
+			$self->{min} = $can_0;
+			my $words_0 = $self->wnum(1);
+			my $dif_0 = $words_0 - $target;
+			
+			$self->{min} = $can_1;
+			my $words_1 = $self->wnum(1);
+			my $dif_1 = $target - $words_1;
+			
+			print "stage 1: $can_0, $words_0, $dif_0 ; $can_1, $words_1, $dif_1 ; $target\n";
+			
+			if ($dif_0 < $dif_1) {
+				$cut = $can_0;
+				$words = $words_0;
+				last;
+			} else {
+				$cut = $can_1;
+				$words = $words_1;
 				last;
 			}
-			$lf  =  [$i->[0], $cum + $i->[1]]; # 1¤ÄÁ°¤Î¤òÊÝÂ¸
 		}
-		$cum += $i->[1]; # ÎßÀÑ
 	}
-
-	return $r;
+	
+	# stage 2
+	while ($words < $target * 0.55) {
+		--$cut;
+		$self->{min} = $cut;
+		$words = $self->wnum(1);
+		print "stage 2: $cut, $words\n";
+		if ($cut <= 2) {
+			last;
+		}
+	}
+	
+	$cut = 2 if $cut < 2;
+	return $cut;
 }
 
 1;
-
-
-__END__
-
-sub out1{                               # lengthºîÀ½¤ò¤·¤Ê¤¤(150ÉÃ) + 26ÉÃ?
-	my $self = shift;
-	
-	open (F,">test.csv") or die;
-	my $t;
-	foreach my $i (@{$self->{wList}}){
-		$t .= "$self->{wName}{$i},";
-	}
-	chop $t;
-	print F Jcode->new($t)->sjis,"\n";
-	
-	
-	my $id = 1;
-	my $last = 1;
-	my %current = ();
-	while (1){
-		my $sth = mysql_exec->select(
-			$self->sql1($id, $id + 30000),
-			1
-		)->hundle;
-		$id += 30000;
-		unless ($sth->rows > 0){
-			last;
-		}
-		
-		while (my $i = $sth->fetch){
-			if ($last == $i->[0]){
-				++$current{$i->[1]};
-			} else {
-				# ½ñ¤­½Ð¤·
-				my $temp;
-				foreach my $i (@{$self->{wList}}){
-					if ($current{$i}){
-						$temp .= "$current{$i},";
-					} else {
-						$temp .= "0,";
-					}
-				}
-				chop $temp;
-				print F "$temp\n";
-				# ½é´ü²½
-				%current = ();
-				$last = $i->[0];
-			}
-		}
-		$sth->finish;
-		print "$id,";
-	}
-
-}
-
-sub sql1{
-	my $self = shift;
-	my $d1   = shift;
-	my $d2   = shift;
-
-
-	my $sql;
-	$sql .= "SELECT $self->{tani}.id, genkei.id\n";
-	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}, hselection\n";
-	$sql .= "WHERE\n";
-	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
-	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
-	$sql .= "	AND genkei.khhinshi_id = hselection.khhinshi_id\n";
-	
-	my $flag = 0;
-	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
-		if ($i eq $self->{tani}){ $flag = 1; }
-		if ($flag){
-			$sql .= "	AND hyosobun.$i"."_id = $self->{tani}.$i"."_id\n";
-		}
-	}
-	$sql .= "	AND hyosobun.id >= $d1\n";
-	$sql .= "	AND hyosobun.id <  $d2\n";
-	$sql .= "	AND genkei.num >= $self->{min}\n";
-	if ($self->{max}){
-		$sql .= "AND genkei.num <= $self->{max}\n";
-	}
-	$sql .= "AND (\n";
-	my $n = 0;
-	foreach my $i ( @{$self->{hinshi}} ){
-		if ($n){ $sql .= ' OR '; }
-		$sql .= "hselection.khhinshi_id = $i\n";
-		++$n;
-	}
-	$sql .= ")\n";
-	return $sql;
-}

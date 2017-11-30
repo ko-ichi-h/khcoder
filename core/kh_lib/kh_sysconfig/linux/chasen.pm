@@ -92,10 +92,12 @@ sub config_morph{
 	# 編集
 	$temp2 = '(注釈 (("<" ">") (タグ)) )'."\n";
 	if ($self->{use_hukugo}){
-		$temp2 .= $self->hukugo_chasenrc;
+		my $hc = $self->hukugo_chasenrc;
+		$hc = Encode::encode('euc-jp', $hc) if utf8::is_utf8($hc);
+		$temp2 .= $hc;
 	}
 #	Jcode::convert(\$temp2,'sjis','euc');
-	$temp .= "\n".'; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
+	$temp .= '; by KH Coder, start.'."\n"."$temp2".'; by KH Coder, end.';
 
 	# 書き出し
 	$temp_file = 'temp.txt';

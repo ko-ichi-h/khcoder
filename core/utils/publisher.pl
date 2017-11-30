@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '200f';
-my $V_main = "2.00";
-my $V_full = "2.00f";
+my $V = '3a10n';
+my $V_main = "3.Alpha.10"; # フォルダ名
+my $V_full = "3.Alpha.10n";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -36,26 +36,50 @@ my @cp_f = (
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
 	['config/msg.es', 'config/msg.es' ],
+	['config/msg.cn', 'config/msg.cn' ],
+	['config/msg.kr', 'config/msg.kr' ],
 );
 
 use File::Find 'find';
 find(
 	sub {
-		push @cp_f, [$File::Find::name, 'plugin_en/'.$_]
-			unless $File::Find::name eq 'utils/kh_coder/plugin_en'
-		;
+		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
+			push @cp_f, ['plugin_en/'.$_, 'plugin_en/'.$_]
+				unless -d $File::Find::name
+			;
+		}
 	},
-	'utils/kh_coder/plugin_en'
+	'../plugin_en'
 );
 
 find(
 	sub {
-		push @cp_f, [$File::Find::name, 'plugin_jp/'.$_]
-			unless $File::Find::name eq 'utils/kh_coder/plugin_jp'
-		;
+		if ($_ =~ /\.pm$/ || $_ =~ /\.r$/){
+			push @cp_f, ['plugin_jp/'.$_, 'plugin_jp/'.$_]
+				unless -d $File::Find::name
+			;
+		}
 	},
-	'utils/kh_coder/plugin_jp'
+	'../plugin_jp'
 );
+
+# 古いプラグインはすべて削除
+find(
+	sub {
+		unlink $_ or die($File::Find::name) unless -d $_;
+	},
+	'../pub/win_pkg/plugin_en'
+);
+
+find(
+	sub {
+		unlink $_ or die unless -d $_;
+	},
+	'../pub/win_pkg/plugin_jp'
+);
+
+#use Data::Dumper;
+#print Dumper(@cp_f);
 
 use Archive::Tar;
 use File::Copy;
@@ -74,12 +98,12 @@ use File::Path 'rmtree';
 	#&pdfs if $pdf;
 &source_tgz;
 &win_pkg;
-&win_upd;
+	#&win_upd;
 	#&win_strb;
 &upload;
 
 sub upload{
-	print "Connecting...\n";
+	print "Uploading...\n";
 
 	my $sftp = Net::SFTP::Foreign->new(
 		host => 'web.sourceforge.net',
@@ -101,13 +125,11 @@ sub upload{
 	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
 	$sftp->mkdir($V_main);
 	$sftp->setcwd($V_main);
-	
-	print "Uploading...\n";
 	foreach my $i (
 		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
-		"khcoder-$V-s.zip",
-		"khcoder-$V-f.exe",
+		#"khcoder-$V-s.zip",
+		"khcoder-$V.exe",
 	){
 		print "put: $i\n";
 		$sftp->put ($i, $i) or die;
@@ -117,14 +139,14 @@ sub upload{
 	$sftp->setcwd("/home/project-web/khc/htdocs");
 
 	foreach my $i (
-		"index.html",
-		"dl.html",
+		#"index.html",
+		"dl3.html",
 	){
-		$sftp->put ("../pub/base/web/$i", $i) or die;
+		$sftp->put ("../pub/web/$i", $i) or die;
 	}
 
 	$sftp->setcwd("en");
-	$sftp->put ("../pub/base/web/en_index.html", "index.html") or die;
+	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
 
 	$sftp->disconnect;
 }
@@ -144,44 +166,50 @@ sub web{
 	$day = '0'.$day if $day < 10;
 	my $date = "$year $mon/$day";
 	
-	# index.html
-	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
 	my $t = '';
-	$r0->is_success or die;
-	$t = $r0->content;
 	
-	$t =~ s/Ver\. 2\.[0-9]+[a-z]*,/Ver\. $V_full,/;  # バージョン番号
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	
-	open(my $fh, '>', "../pub/base/web/index.html") or die;
-	print $fh $t;
-	close ($fh);
+	# index.html
+	#my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
+	#$t = '';
+	#$r0->is_success or die;
+	#$t = $r0->content;
+	#
+	#$t =~ s/Ver\. [0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	#
+	#open(my $fh, '>', "../pub/base/web/index.html") or die;
+	#print $fh $t;
+	#close ($fh);
 	
 	# en/index.html
 	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
 	my $t = '';
 	$r2->is_success or die;
 	$t = $r2->content;
-	
-	$t =~ s/Ver\. 2\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	$t =~ s/files\/KH%20Coder\/2.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
-	
-	open(my $fh, '>', "../pub/base/web/en_index.html") or die;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
+
+	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
+	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
+	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
+	#
+	open(my $fh, '>', "../pub/web/en_index.html") or die;
 	print $fh $t;
 	close ($fh);
 	
-	# dl.html
-	my $r1 = $ua->get('http://khc.sourceforge.net/dl.html') or die;
+	# dl3.html
+	my $r1 = $ua->get('http://khc.sourceforge.net/dl3.html') or die;
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
+	
+	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付
+	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
+	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名1
+	$t =~ s/KH Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名2
 
-	$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/g;                # 日付
-	$t =~ s/khcoder\-2[0-9]+[a-z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
-	$t =~ s/KH%20Coder\/2\.[0-9]+\//KH%20Coder\/$V_main\//g;      # フォルダ名
 
-	open(my $fh, '>', "../pub/base/web/dl.html") or die;
+	open(my $fh, '>', "../pub/web/dl3.html") or die;
 	print $fh $t;
 	close ($fh);
 }
@@ -349,20 +377,26 @@ sub win_pkg{
 		9
 	);
 	
-	# 新しいファイルを「pub/base/win_pkg」へコピー
+	# 新しいファイルを「pub/win_pkg」へコピー
 	foreach my $i (@cp_f){
-		copy($i->[0], 'pub/base/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
+		copy($i->[0], 'pub/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
 	}
 
 	# Zip自己解凍ファイルを作成
-	unlink("utils\\khcoder-$V-f.zip");
-	unlink("utils\\khcoder-$V-f.exe");
-	system("wzzip -rp -ex utils\\khcoder-$V-f.zip pub\\base\\win_pkg");
+	unlink("utils\\khcoder-$V.zip");
+	unlink("utils\\khcoder-$V.exe");
+	system("wzzip -rp -ex utils\\khcoder-$V.zip pub\\win_pkg");
 	sleep 5;
-	system("wzipse32 utils\\khcoder-$V-f.zip -y -d C:\\khcoder -le -overwrite");
-	# wzipse32 utils\khcoder-2b31-f.zip -y -d C:\khcoder -le -overwrite
-	# unlink("utils\\khcoder-$V-f.zip");
+	system("wzipse32 utils\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
+	
+	for (my $n = 0; $n < 5; ++$n){
+		if (-e "utils\\khcoder-$V.exe" && -e "utils\\khcoder-$V.zip") {
+			last;
+		}
+		sleep 5;
+		system("wzipse32 utils\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
+	}
 
 	chdir("utils");
 }
@@ -372,20 +406,18 @@ sub source_tgz{
 	#   CVSから最新ソースを取り出し   #
 
 
-	my $cvs_cmd = 'cvs -d ":ext;command=\'';
+	#my $cvs_cmd = 'cvs -d ":ext;command=\'';
+	#if (-d $home_dir){
+	#	$cvs_cmd .= "set HOME=f:/home/koichi& ";
+	#}
+	#$cvs_cmd .= "ssh -l ko-ichi ";
+	#if (-d $home_dir){
+	#	$cvs_cmd .= "-i $key_file ";
+	#}
+	#$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
+	#$cvs_cmd .= "export -r unicode -- core";
 
-	if (-d $home_dir){
-		$cvs_cmd .= "set HOME=f:/home/koichi& ";
-	}
-
-	$cvs_cmd .= "ssh -l ko-ichi ";
-
-	if (-d $home_dir){
-		$cvs_cmd .= "-i $key_file ";
-	}
-
-	$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
-	$cvs_cmd .= "export -r HEAD -- core";
+	my $cvs_cmd = "svn export --username=ko-ichi https://svn.code.sf.net/p/khc/svn/branches/unicode/core core";
 
 	print "cmd: $cvs_cmd\n";
 
@@ -397,7 +429,6 @@ sub source_tgz{
 	#   不要なファイルを削除   #
 
 	my @rm_dir = (
-		'core/.settings',
 		'core/auto_test',
 		'core/test',
 		'core/utils',
@@ -410,10 +441,8 @@ sub source_tgz{
 		'core/memo/bib_t2h.bat',
 		'core/memo/db_memo.csv',
 		'core/memo/devnote.txt',
+		'core/memo/1.icns',
 		'core/memo/performance.csv',
-		'core/plugin_jp/jssdb_bench1.pm',
-		'core/plugin_jp/jssdb_prepare.pm',
-		'core/plugin_jp/jssdb_search.pm',
 		'core/auto_test.pl',
 		'core/kh_coder.perlapp',
 		'core/make_exe.bat',

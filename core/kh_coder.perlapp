@@ -1,17 +1,20 @@
-#!C:\Program Files\ActiveState Perl Dev Kit 9.1.1\bin\perlapp-gui.exe
+#!C:\Program Files (x86)\ActiveState Perl Dev Kit 9.2.1\bin\perlapp-gui.exe
 PAP-Version: 1.0
-Packer: C:\Program Files\ActiveState Perl Dev Kit 9.1.1\bin\perlapp.exe
+Packer: C:\Program Files (x86)\ActiveState Perl Dev Kit 9.2.1\bin\perlapp.exe
 Script: kh_coder.pl
-Cwd: F:\home\Koichi\Study\perl\core
+Cwd: F:\home\Koichi\Study\perl\core_uni
 Add: Encode::Guess
-Add: Encode::JP::H2Z
-Add: Encode::JP
 Add: feature
 Add: Encode::EUCJPMS
 Add: kh_project_io
 Add: YAML::Dumper
 Add: YAML::Loader
 Add: Clipboard::Win32::
+Add: PerlIO::via::
+Add: Encode::CN::
+Add: Encode::JP::
+Add: Encode::KR::
+Add: Encode::TW::
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ca[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.ca,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.de[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.de,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.el[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.el,mode=666]
@@ -21,8 +24,9 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.fr[file=C:\apps\Perl\si
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.it[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.it,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.nl,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.pt,mode=666]
+Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.ru,mode=666]
 Clean: 0
-Date: 2012-12-26 01:30:42
+Date: 2016-01-18 01:01:27
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -30,7 +34,7 @@ Exe: kh_coder.exe
 Force: 1
 Gui: 0
 Hostname: FORTUNA
-Icon: memo\1.ico
+Icon: ..\core\memo\1.ico
 Lib: lib:.\kh_lib
 Manifest: 
 No-Compress: 0
@@ -42,12 +46,12 @@ Verbose: 1
 Version-Comments: 
 Version-CompanyName: Ritsumeikan Univ.
 Version-FileDescription: KH Coder
-Version-FileVersion: 2
+Version-FileVersion: 3
 Version-InternalName: kh_coder.exe
 Version-LegalCopyright: Higuchi Koichi
 Version-LegalTrademarks: 
 Version-OriginalFilename: kh_coder.exe
 Version-ProductName: KH Coder
-Version-ProductVersion: 2
+Version-ProductVersion: 3
 Warnings: 0
 Xclude: 0

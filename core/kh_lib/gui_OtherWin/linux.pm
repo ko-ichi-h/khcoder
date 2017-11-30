@@ -10,7 +10,7 @@ sub _open{
 	if ($t =~ /^http/ or $t =~ /\.htm$/ or $t =~ /\.html$/ or $t =~ /\.png$/){
 		$cmd = $::config_obj->app_html;
 	}
-	elsif($t =~ /\.csv$/ || $t =~ /\.xls$/){
+	elsif($t =~ /\.csv$/ || $t =~ /\.xls$/ || $t =~ /\.xlsx$/){
 		$cmd = $::config_obj->app_csv;
 	}
 	elsif($t =~ /\.pdf$/){

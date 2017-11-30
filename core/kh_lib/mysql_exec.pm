@@ -11,22 +11,30 @@ use kh_project;
 # 		sql: SQL文
 #		[1/0]: Critical(1) or not(0)
 
-my $username = $::config_obj->sql_username;
-my $password = $::config_obj->sql_password;
-my $host     = $::config_obj->sql_host;
-my $port     = $::config_obj->sql_port;
+my ($username, $password, $host, $port);
+if ($::config_obj){
+	$username = $::config_obj->sql_username;
+	$password = $::config_obj->sql_password;
+	$host     = $::config_obj->sql_host;
+	$port     = $::config_obj->sql_port;
+}
 
-my $mysql_version;
+my $mysql_version = -1;
 my $win_9x = 0;
 
-$username = '' unless defined ($username);
-$password = '' unless defined ($password);
-$host     = '' unless defined ($host);
-$port     = '' unless defined ($port);
+my $dbh_common;
 
 #------------#
 #   DB操作   #
 #------------#
+
+sub connect_common{
+	my $dsn = 
+		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+	$dbh_common = DBI->connect($dsn,$username,$password)
+		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	#print "Created a shared connection to MySQL.\n";
+}
 
 # 既存DBにConnect
 sub connect_db{
@@ -34,7 +42,7 @@ sub connect_db{
 	my $no_verbose = $_[2];
 	my $dsn = 
 		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
+	my $dbh = DBI->connect($dsn,$username,$password,{mysql_enable_utf8 => 1})
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
 	# MySQLのバージョンチェック
@@ -57,10 +65,11 @@ sub connect_db{
 	}
 
 	# 文字コードの設定
-	if ( substr($r,0,3) > 4 ){
-		$dbh->do("SET NAMES ujis");
-		print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
-	}
+	#if ( substr($r,0,3) > 4 ){
+	#	$dbh->do("SET NAMES ujis");
+	#	print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
+	#}
+	$dbh->do("SET NAMES utf8mb4");
 
 	return $dbh;
 }
@@ -68,9 +77,11 @@ sub connect_db{
 # DBへの接続テスト
 sub connection_test{
 	# コンソールへのエラー出力抑制
-	my $temp_file = 'temp.txt';
+	my $temp_file = 'config/temp.txt';
+	my $n = 0;
 	while (-e $temp_file){
-		$temp_file .= '.tmp';
+		$temp_file .= "config/temp$n.txt";
+		++$n;
 	}
 	open (STDERR,">$temp_file");
 	
@@ -104,7 +115,10 @@ sub connection_test{
 
 # 新規DBの作成
 sub create_new_db{
-	# DB名決定
+	my $class = shift;
+	my $file = shift;
+	
+	# Get DB List
 	my $drh = DBI->install_driver("mysql") or
 		gui_errormsg->open(type => 'mysql',sql=>'install_driver');
 	my @dbs = $drh->func($host,$port,$username,$password,'_ListDBs') or 
@@ -112,38 +126,71 @@ sub create_new_db{
 	my %dbs;
 	foreach my $i (@dbs){
 		$dbs{$i} = 1;
-		# print "$i\n";
 	}
-	my $n = 0;
-	while ( $dbs{"khc$n"} ){
-		++$n;
+	
+	# Prepare master DB (this happens only once)
+	unless ($dbs{khc_master}){
+		# create DB
+		my $dsn = 
+			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		my $dbh = DBI->connect($dsn,$username,$password)
+			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+		$dbh->do("
+			create database khc_master default character set utf8mb4
+		");
+		$dbh->disconnect;
+		
+		# create table
+		$dsn = 
+			"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
+		$dbh = DBI->connect($dsn,$username,$password)
+			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+		$dbh->do("
+			create table db_name(
+				id     int auto_increment primary key not null,
+				target varchar(10000)
+			)
+		");
+		
+		# insert dummy data
+		my $max = 0;
+		foreach my $i (@dbs){
+			if ( $i =~ /khc([0-9]+)/ ) {
+				if ($1 > $max) {
+					$max = $1;
+				}
+			}
+		}
+		for (my $i = 0; $i <= $max; ++$i){
+			$dbh->do("
+				insert into db_name (target) VALUES (\"dummy$i\")
+			");
+		}
+		$dbh->disconnect;
 	}
-	my $new_db_name = "khc$n";
-
-	# DB作成
+	
+	# Get new DB number
 	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	$file = $dbh->quote($file);
+	$dbh->do("
+		insert into db_name (target) VALUES ($file)
+	");
+	my $h = $dbh->prepare("select LAST_INSERT_ID()");
+	$h->execute;
+	my $n = $h->fetch or die("Failed to obtain new DB name!");
+	$h->finish;
+	$n = $n->[0];
 
-	# Check MySQL Ver.
-	my $t = $dbh->prepare("show variables like \"version\"");
-	$t->execute;
-	my $r = $t->fetch;
-	$t->finish;
-	$r = $r->[1] if $r;
-	print "Connected to MySQL $r. Creating new DB...\n";
+	# Create new DB
+	my $new_db_name = "khc$n";
+	$dbh->do("
+		create database $new_db_name default character set utf8mb4
+	") or die("Failed to create new DB!");
 
-	my $sql = '';
-	$sql .= "create database $new_db_name";
-	$sql .= " default character set ujis" if substr($r,0,3) >= 4.1;
-	$dbh->do($sql)
-		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
-
-#	$dbh->func("createdb", $new_db_name,$host,$username,$password,'admin')
-#		or gui_errormsg->open(type => 'mysql', sql => 'Create DB');
 	$dbh->disconnect;
-	
 	return $new_db_name;
 }
 
@@ -168,10 +215,14 @@ sub drop_db{
 # DB Serverのシャットダウン
 
 sub shutdown_db_server{
-	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password);
-		#or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	my $dbh;
+	if ($dbh_common) {
+		$dbh = $dbh_common;
+	} else {
+		my $dsn = 
+			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+		$dbh = DBI->connect($dsn,$username,$password);
+	}
 
 	$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
 		#or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
@@ -253,7 +304,15 @@ sub do{
 	
 	$self->log;
 
-	$::project_obj->dbh->do($self->sql)
+	my $dbh;
+	if ($::project_obj) {
+		$dbh = $::project_obj->dbh;
+	} else {
+		&connect_common unless $dbh_common;
+		$dbh = $dbh_common;
+	}
+
+	$dbh->do($self->sql)
 		or $self->print_error;
 	return $self;
 }
@@ -265,14 +324,24 @@ sub select{
 	$self->{critical} = shift;
 	bless $self, $class;
 	
+	($self->{caller_pac}, $self->{caller_file}, $self->{caller_line}) = caller;
+	
 	$self->{sql} =~ s/TYPE\s*=\s*HEAP/ENGINE = HEAP/ig
 		if $mysql_version >= 5.5;
 	$self->{sql} =~ s/LOAD DATA LOCAL INFILE/LOAD DATA INFILE/
 		if $win_9x; # for Win9x
 
 	$self->log;
-	
-	my $t = $::project_obj->dbh->prepare($self->sql) or $self->print_error;
+
+	my $dbh;
+	if ($::project_obj) {
+		$dbh = $::project_obj->dbh;
+	} else {
+		&connect_common unless $dbh_common;
+		$dbh = $dbh_common;
+	}
+
+	my $t = $dbh->prepare($self->sql) or $self->print_error;
 	$t->execute or $self->print_error;
 	$self->{hundle} = $t;
 	return $self;
@@ -285,10 +354,24 @@ sub selected_rows{
 
 sub print_error{
 	my $self = shift;
-	$self->{err} =
-		"SQL Input:\n".$self->sql."\nError:\n".
-		$::project_obj->dbh->{'mysql_error'};
+	
+	if ($::project_obj) {
+		$self->{err} =
+			"SQL Input:\n".$self->sql."\nError:\n"
+			.$::project_obj->dbh->{'mysql_error'}."\n\n"
+			."SQL Caller: $self->{caller_file} line $self->{caller_line}"
+		;
+	}
+	elsif ( $dbh_common ){
+		$self->{err} =
+			"SQL Input:\n".$self->sql."\nError:\n"
+			.$dbh_common->{'mysql_error'}."\n\n"
+			."SQL Caller: $self->{caller_file} line $self->{caller_line}"
+		;
+	}
+	
 	unless ($self->critical){
+		warn($self->{err});
 		return 0;
 	}
 	gui_errormsg->open(type => 'mysql',sql => $self->err);
@@ -320,7 +403,7 @@ sub log{
 	use POSIX 'strftime';
 	my $self = shift;
 	my $logfile = $::config_obj->sqllog_file;
-	open (LOG,">>$logfile") or 
+	open (LOG,">>:utf8", $logfile) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$logfile"

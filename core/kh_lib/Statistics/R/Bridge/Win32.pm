@@ -101,17 +101,17 @@
     if ( !-s $this->{R_BIN} ) { $this->error("Can'find R binary!") ; return UNDEF ;}
     if ( !-d $this->{R_DIR} ) { $this->error("Can'find R directory!") ; return UNDEF ;}
     
-    $this->{R_BIN}   = Jcode->new($this->{R_BIN},   'sjis')->euc;
-    $this->{R_DIR}   = Jcode->new($this->{R_DIR},   'sjis')->euc;
-    $this->{TMP_DIR} = Jcode->new($this->{TMP_DIR}, 'sjis')->euc;
+    $this->{R_BIN}   = $::config_obj->uni_path($this->{R_BIN});
+    $this->{R_DIR}   = $::config_obj->uni_path($this->{R_DIR});
+    $this->{TMP_DIR} = $::config_obj->uni_path($this->{TMP_DIR});
     
     $this->{R_BIN} =~ s/\//\\/g ;
     $this->{R_DIR} =~ s/\//\\/g ;
     $this->{TMP_DIR} =~ s/[\/\\]+/\//g ;
     
-    $this->{R_BIN}   = Jcode->new($this->{R_BIN},   'euc')->sjis;
-    $this->{R_DIR}   = Jcode->new($this->{R_DIR},   'euc')->sjis;
-    $this->{TMP_DIR} = Jcode->new($this->{TMP_DIR}, 'euc')->sjis;
+    $this->{R_BIN}   = $::config_obj->os_path($this->{R_BIN});
+    $this->{R_DIR}   = $::config_obj->os_path($this->{R_DIR});
+    $this->{TMP_DIR} = $::config_obj->os_path($this->{TMP_DIR});
     
     # print "rd: $this->{R_DIR}\n";
     

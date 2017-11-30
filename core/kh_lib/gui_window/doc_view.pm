@@ -1,6 +1,7 @@
 package gui_window::doc_view;
 use base qw(gui_window);
 use strict;
+use utf8;
 use Tk;
 use Tk::Balloon;
 use Tk::ROText;
@@ -8,33 +9,31 @@ use Tk::ROText;
 use gui_jchar;
 use mysql_getdoc;
 use gui_window::word_conc;
-use gui_window::doc_view::win32;
-use gui_window::doc_view::linux;
 
 my $ascii = '[\x00-\x7F]';
 my $twoBytes = '[\x8E\xA1-\xFE][\xA1-\xFE]';
 my $threeBytes = '\x8F[\xA1-\xFE][\xA1-\xFE]';
 
 #------------------#
-#   Window¤ò³«¤¯   #
+#   Windowã‚’é–‹ã   #
 #------------------#
 
 sub _new{
 	my $self = shift;
-	my $class = 'gui_window::doc_view::'.$::config_obj->os;
-	bless $self, $class;
+	bless $self, 'gui_window::doc_view';
 	$self->_init;
 	
 	my $mw = $::main_gui->mw;
 	my $bunhyojiwin = $self->{win_obj};
-	$bunhyojiwin->title($self->gui_jt( kh_msg->get('win_title') )); # 'Ê¸½ñÉ½¼¨'
+	$bunhyojiwin->title($self->gui_jt( kh_msg->get('win_title') )); # 'æ–‡æ›¸è¡¨ç¤º'
 
-	# morpho_analyzer
+	my $lang = $::project_obj->morpho_analyzer_lang;
 	my $wrap = 'char';
 	unless (
-		   $::project_obj->morpho_analyzer eq 'chasen'
-		|| $::project_obj->morpho_analyzer eq 'mecab'
-	){
+		   $lang eq 'jp'
+		|| $lang eq 'cn'
+		|| $lang eq 'kr'
+	) {
 		$wrap = 'word';
 	}
 
@@ -64,11 +63,11 @@ sub _new{
 		-fill => 'x',-expand => 'no');
 
 	$bframe->Label(
-		-text => kh_msg->get('in_the_file'),#'¥Õ¥¡¥¤¥ëÆâ¡§'
+		-text => kh_msg->get('in_the_file'),#'ãƒ•ã‚¡ã‚¤ãƒ«å†…ï¼š'
 	)->pack(-side => 'left');
 
 	$self->{pre_btn} = $bframe->Button(
-		-text => kh_msg->get('p1'),#$self->gui_jchar('<< Á°'),
+		-text => kh_msg->get('p1'),#$self->gui_jchar('<< å‰'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -79,7 +78,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => '0');
 
 	$self->{nxt_btn} = $bframe->Button(
-		-text => kh_msg->get('n1'),#$self->gui_jchar('¸å >>'),
+		-text => kh_msg->get('n1'),#$self->gui_jchar('å¾Œ >>'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -90,11 +89,11 @@ sub _new{
 	)->pack(-side => 'left',-padx => '2');
 
 	$bframe->Label(
-		-text => kh_msg->get('in_the_results'),#'  ¸¡º÷·ë²Ì¡§'
+		-text => kh_msg->get('in_the_results'),#'  æ¤œç´¢çµæžœï¼š'
 	)->pack(-side => 'left');
 
 	$self->{pre_result_btn} = $bframe->Button(
-		-text => kh_msg->get('p2'),#$self->gui_jchar('<< Á°'),
+		-text => kh_msg->get('p2'),#$self->gui_jchar('<< å‰'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -117,7 +116,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => '1');
 
 	$self->{nxt_result_btn} = $bframe->Button(
-		-text => kh_msg->get('n2'),#$self->gui_jchar('¼¡ >>'),
+		-text => kh_msg->get('n2'),#$self->gui_jchar('æ¬¡ >>'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -140,12 +139,12 @@ sub _new{
 	)->pack(-side => 'left',-padx => '2');
 
 	$bframe->Label(
-		-text => $self->gui_jchar('¡¡'),
+		-text => $self->gui_jchar('ã€€'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w',-side => 'left');
 
 	$bframe->Button(
-		-text => kh_msg->gget('close'),#$self->gui_jchar('ÊÄ¤¸¤ë'),
+		-text => kh_msg->gget('close'),#$self->gui_jchar('é–‰ã˜ã‚‹'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -159,7 +158,7 @@ sub _new{
 	)->pack(-side => 'right');
 
 	$bframe->Button(
-		-text => kh_msg->get('highlight'),#$self->gui_jchar('¶¯Ä´'),
+		-text => kh_msg->get('highlight'),#$self->gui_jchar('å¼·èª¿'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
@@ -169,7 +168,7 @@ sub _new{
 		}
 	)->pack(-side => 'right',-pady => '0', -padx => 2);
 
-	# ¥Ð¥¤¥ó¥É´Ø·¸
+	# ãƒã‚¤ãƒ³ãƒ‰é–¢ä¿‚
 	$bunhyojiwin->bind(
 		"<Shift-Key-Prior>",
 		sub { $self->{pre_btn}->invoke; }
@@ -213,10 +212,10 @@ sub _new{
 }
 
 #--------------------------#
-#   Ê¸½ñ¤ÎÆÉ¤ß¹þ¤ß¡õÉ½¼¨   #
+#   æ–‡æ›¸ã®èª­ã¿è¾¼ã¿ï¼†è¡¨ç¤º   #
 #--------------------------#
 
-# ÄÌ¾ï¤ÎÊ¸½ñÆÉ¤ß¹þ¤ß
+# é€šå¸¸ã®æ–‡æ›¸èª­ã¿è¾¼ã¿
 sub view{
 	my $self = shift;
 	my %args = @_;
@@ -240,7 +239,7 @@ sub view{
 	$self->_view_doc($doc);
 }
 
-# Ä¾Á°¡¦Ä¾¸å¤ÎÊ¸½ñ¤òÆÉ¤ß¹þ¤ß
+# ç›´å‰ãƒ»ç›´å¾Œã®æ–‡æ›¸ã‚’èª­ã¿è¾¼ã¿
 sub near{
 	my $self = shift;
 	my $id = shift;
@@ -249,7 +248,7 @@ sub near{
 	if ($self->{parent}{code_obj}){
 		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
 	} else {
-		$t = kh_msg->get('current_doc');#Jcode->new('¡¦¸½ºßÉ½¼¨Ãæ¤ÎÊ¸½ñ¡§  ')->sjis;
+		$t = kh_msg->get('current_doc');#Jcode->new('ãƒ»ç¾åœ¨è¡¨ç¤ºä¸­ã®æ–‡æ›¸ï¼š  ')->sjis;
 	}
 	$self->{foot} = $t;
 	my $doc = mysql_getdoc->get(
@@ -264,11 +263,11 @@ sub near{
 	$self->_view_doc($doc);
 }
 
-# ¼ÂºÝ¤ÎÉ½¼¨ÍÑ¥ë¡¼¥Á¥ó
+# å®Ÿéš›ã®è¡¨ç¤ºç”¨ãƒ«ãƒ¼ãƒãƒ³
 sub _view_doc{
 	my $self = shift;
 	my $doc = shift;
-	my %color;                                    # ¿§¾ðÊó½àÈ÷
+	my %color;                                    # è‰²æƒ…å ±æº–å‚™
 	foreach my $i ('info', 'search','html','CodeW','force'){
 		my $name = "color_DocView_".$i;
 		$self->text->tagConfigure($i,
@@ -278,31 +277,22 @@ sub _view_doc{
 		);
 	}
 	
-	my $morpho = $::project_obj->morpho_analyzer; # ¥¹¥Ú¡¼¥µ¡¼ÀßÄê
-	my $spacer = '';
-	if (
-		   $morpho eq 'chasen'
-		|| $morpho eq 'mecab'
-	){
-		$spacer = '';
-	} else {
-		$spacer = ' ';
-	}
-	
-	$self->text->delete('0.0','end');             # ¸«½Ð¤·½ñ¤­½Ð¤·
-	$self->text->insert('end',$self->gui_jchar($doc->header,'sjis'),'info');
+	my $spacer = $::project_obj->spacer; # ã‚¹ãƒšãƒ¼ã‚µãƒ¼è¨­å®š
+
+	$self->text->delete('0.0','end');             # è¦‹å‡ºã—æ›¸ãå‡ºã—
+	$self->text->insert('end', $doc->header, 'info');
 	
 	my $t;
-	my $buffer;                                   # ËÜÊ¸½ñ¤­½Ð¤·
-	foreach my $i (@{$doc->body}){      # ¶¯Ä´¸ì¤Î¾ì¹ç
+	my $buffer;                                   # æœ¬æ–‡æ›¸ãå‡ºã—
+	foreach my $i (@{$doc->body}){      # å¼·èª¿èªžã®å ´åˆ
 		$buffer .= $spacer if $buffer && $buffer ne $spacer;
 		if ($i->[1]){
 			if (length($buffer)){
 				$self->_str_color($buffer);
 				$buffer = $spacer;
 			}
-			$self->text->insert('end',$self->gui_jchar("$i->[0]",'sjis'),$i->[1]);
-		} else {                        # ¶¯Ä´¸ì°Ê³°¡§¥Ð¥Ã¥Õ¥¡¤ËÃßÀÑ
+			$self->text->insert('end', $i->[0], $i->[1]);
+		} else {                        # å¼·èª¿èªžä»¥å¤–ï¼šãƒãƒƒãƒ•ã‚¡ã«è“„ç©
 			$buffer .= $i->[0];
 		}
 	}
@@ -310,14 +300,14 @@ sub _view_doc{
 
 	chomp $self->{foot};
 	$self->text->insert('end',"\n\n");
-	$self->text->insert('end',$self->gui_jchar($self->{foot},'sjis'),'info');
+	$self->text->insert('end', $self->{foot}, 'info');
 	$self->text->insert('end',"No. ".$doc->doc_id."\n",'info');
-	$self->text->insert('end',$self->gui_jchar('  '.$doc->id_for_print),'info');
+	$self->text->insert('end', '  '.$doc->id_for_print, 'info');
 
 	$self->wrap;
 	$self->update_buttons;
 
-	# Â¾¤ÎWindow¤È¤ÎÆ±´ü
+	# ä»–ã®Windowã¨ã®åŒæœŸ
 	if ( $::main_gui->if_opened('w_bayes_view_log') ){
 		$::main_gui
 			->get('w_bayes_view_log')
@@ -325,7 +315,7 @@ sub _view_doc{
 		;
 	}
 
-	# ¥¹¥¯¥í¡¼¥ë¥Ð¡¼¤òÉ½¼¨¤¹¤ë¤¿¤á¤ÎµóÆ°
+	# ã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ãƒãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹ãŸã‚ã®æŒ™å‹•
 	#$self->win_obj->update;
 	#$self->text->yview(moveto => 0);
 	#$self->text->yview('scroll', 1,'units');
@@ -334,16 +324,15 @@ sub _view_doc{
 	#$self->text->yview('scroll',-1,'units');
 }
 
-# Ê¸»úÎó¶¯Ä´¥ë¡¼¥Á¥ó
+# æ–‡å­—åˆ—å¼·èª¿ãƒ«ãƒ¼ãƒãƒ³
 sub _str_color{
 	my $self = shift;
 	my $str  = shift;
 	
-	$str = Jcode->new($str)->euc;
 	foreach my $i (@{$self->{s_search}}, @{$self->{str_force}}){
 		my $pat = $i;
 		my $rep = "	start$i	end";
-		$str =~ s/\G((?:$ascii|$twoBytes|$threeBytes)*?)(?:$pat)/$1$rep/g;
+		$str =~ s/$pat/$rep/g;
 	}
 
 	my %s_search;
@@ -353,12 +342,12 @@ sub _str_color{
 
 	my $pref = 0;
 	while ( (my $pos = index($str,'	end',$pref)) >= 0 ){
-		my $color;                      # start¤Þ¤Ç
+		my $color;                      # startã¾ã§
 		while ( (my $start = index($str,'	start',$pref)) >= 0){
 			last if $start > $pos;
 			$self->text->insert(
 				'end',
-				$self->gui_jchar(substr($str,$pref,$start - $pref),'euc'),
+				$self->gui_jchar(substr($str,$pref,$start - $pref) ),
 				$color
 			);
 			# print Jcode->new(substr($str,$pref,$start - $pref))->sjis.", $color, ,$pref, $start\n";
@@ -366,13 +355,13 @@ sub _str_color{
 			$pref = $start + 6;
 		}
 		
-		my $color2 = 'force';           # end¤Þ¤Ç
+		my $color2 = 'force';           # endã¾ã§
 		if ( $s_search{substr($str, $pref, $pos - $pref)} ){
 			$color2 = 'search';
 		}
 		$self->text->insert(
 			'end',
-			$self->gui_jchar(substr($str, $pref, $pos - $pref),'euc'),
+			$self->gui_jchar(substr($str, $pref, $pos - $pref) ),
 			$color2
 		);
 		# print Jcode->new( substr($str, $pref, $pos - $pref) )->sjis.", nakami\n";
@@ -380,21 +369,21 @@ sub _str_color{
 		$pref = $pos + 4;
 	}
 	
-	$self->text->insert(                # end°Ê¹ß
+	$self->text->insert(                # endä»¥é™
 		'end',
-		$self->gui_jchar( substr($str, $pref, length($str) - $pref), 'euc')
+		$self->gui_jchar( substr($str, $pref, length($str) - $pref) )
 	);
 	# print Jcode->new( substr($str, $pref, length($str) - $pref) )->sjis.", nokori\n";
 }
 
-# ºÆÉÁ²è¥ë¡¼¥Á¥ó
+# å†æç”»ãƒ«ãƒ¼ãƒãƒ³
 sub refresh{
 	my $self = shift;
 	
-	# ÀßÄê¤ÎÆÉ¤ß¹þ¤ß
+	# è¨­å®šã®èª­ã¿è¾¼ã¿
 	$self->_init;
 	
-	# Ê¸½ñºÆ¼èÆÀ
+	# æ–‡æ›¸å†å–å¾—
 	my ($t,$w);
 	if ($self->{parent}{code_obj}){
 		($t,$w) = $self->{parent}{code_obj}->check_a_doc($self->{doc_id});
@@ -409,19 +398,19 @@ sub refresh{
 	);
 	$self->{doc}    = $doc;
 	
-	# É½¼¨
+	# è¡¨ç¤º
 	$self->_view_doc($doc);
 }
 
 #------------#
-#   ¤½¤ÎÂ¾   #
+#   ãã®ä»–   #
 #------------#
 
 sub _init{
 	my $self = shift;
 	my @l;
 	
-	# ¶¯Ä´¸ì¤Î¼èÆÀ
+	# å¼·èª¿èªžã®å–å¾—
 	my $h = mysql_exec->select(
 		"SELECT name FROM d_force WHERE type=1",
 		1
@@ -436,7 +425,7 @@ sub _init{
 	}
 	$self->{w_force} = \@l;
 	
-	# ¶¯Ä´Ê¸»úÎó¤Î¼èÆÀ
+	# å¼·èª¿æ–‡å­—åˆ—ã®å–å¾—
 	$self->{str_force} = undef;
 	$h = mysql_exec->select(
 		"SELECT name FROM d_force WHERE type=0 ORDER BY id",
@@ -456,26 +445,26 @@ sub wrap{
 sub update_buttons{
 	my $self = shift;
 	
-	# Ä¾¸å¥Ü¥¿¥ó
+	# ç›´å¾Œãƒœã‚¿ãƒ³
 	if ($self->{doc}->if_next){
 		$self->{nxt_btn}->configure(-state, 'normal');
 	} else {
 		$self->{nxt_btn}->configure(-state, 'disable');
 	}
-	# Ä¾Á°¥Ü¥¿¥ó
+	# ç›´å‰ãƒœã‚¿ãƒ³
 	if ($self->{doc_id} > 1){
 		$self->{pre_btn}->configure(-state, 'normal');
 	} else {
 		$self->{pre_btn}->configure(-state, 'disable');
 	}
 	
-	# ¼¡¤Î·ë²Ì
+	# æ¬¡ã®çµæžœ
 	if ($self->{parent}->if_next){
 		$self->{nxt_result_btn}->configure(-state, 'normal');
 	} else {
 		$self->{nxt_result_btn}->configure(-state, 'disable');
 	}
-	# Á°¤Î·ë²Ì
+	# å‰ã®çµæžœ
 	if ($self->{parent}->if_prev){
 		$self->{pre_result_btn}->configure(-state, 'normal');
 	} else {

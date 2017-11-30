@@ -2,9 +2,9 @@
 PAP-Version: 1.0
 Packer: /usr/local/PDK/bin/perlapp
 Script: x_mac64setup.pl
-Cwd: /Users/K/perl/core
+Cwd: /Users/K/perl/core_uni
 Clean: 0
-Date: 2014-05-05 14:47:53
+Date: 2015-09-28 00:33:27
 Debug: 
 Dependent: 0
 Dyndll: 0

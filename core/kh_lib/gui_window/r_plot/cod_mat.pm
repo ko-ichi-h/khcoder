@@ -27,12 +27,12 @@ sub open_config{
 	my $ax = $self->{ax};
 	$self->{ax} = 0;
 	$self->renew(1);
-	my $plot_size_heat = $self->{photo}->cget(-image)->height;
+	my $plot_size_heat = $self->img_height;
 	
 	$self->{ax} = 1;
 	$self->renew(1);
-	my $plot_size_maph = $self->{photo}->cget(-image)->height;
-	my $plot_size_mapw = $self->{photo}->cget(-image)->width;
+	my $plot_size_maph = $self->img_height;
+	my $plot_size_mapw = $self->img_width;
 	
 	$self->{ax} = $ax;
 	$self->renew(1);

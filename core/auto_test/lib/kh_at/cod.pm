@@ -240,9 +240,11 @@ sub _exec_test{
 	$cod_f_r = kh_cod::func->read_file($self->file_cod) or die;
 	$cod_f_r->cod_out_csv('h2',$self->file_out_tmp_base.'.csv');
 
-	open (RFILE,$self->file_out_tmp_base.'.csv') or die;
+	#open (RFILE,$self->file_out_tmp_base.'.csv') or die;
+	use File::BOM;
+	File::BOM::open_bom (RFILE, $self->file_out_tmp_base.'.csv', ":encoding(UTF-8)" );
 	while (<RFILE>){
-		$self->{result} .= Jcode->new($_,'sjis')->euc;
+		$self->{result} .= Encode::encode('euc-jp',$_);
 	}
 	close (RFILE);
 

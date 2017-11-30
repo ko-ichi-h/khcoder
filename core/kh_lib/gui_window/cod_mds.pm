@@ -2,16 +2,16 @@ package gui_window::cod_mds;
 use base qw(gui_window);
 
 use strict;
-
+use utf8;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ¥³¡¼¥Ç¥£¥ó¥°¡¦Â¿¼¡¸µ¼ÜÅÙË¡¡§¥ª¥×¥·¥ç¥ó
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ»å¤šæ¬¡å…ƒå°ºåº¦æ³•ï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 
 	my $lf = $win->LabFrame(
 		-label => 'Codes',
@@ -28,7 +28,7 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill => 'x', -expand => 0, -anchor => 'n');
 
-	# ¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë
+	# ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«
 	my %pack0 = (
 		-anchor => 'w',
 		#-padx => 2,
@@ -42,14 +42,14 @@ sub _new{
 		command => sub{$self->read_cfile;},
 	);
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½
 	my $f1 = $lf->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4
 	);
 	$f1->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì¡§
+		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -62,9 +62,9 @@ sub _new{
 		pack   => \%pack1,
 	);
 
-	# ¥³¡¼¥ÉÁªÂò
+	# ã‚³ãƒ¼ãƒ‰é¸æŠ
 	$lf->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # ¥³¡¼¥ÉÁªÂò¡§
+		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # ã‚³ãƒ¼ãƒ‰é¸æŠï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -95,7 +95,7 @@ sub _new{
 			-expand => 1
 	);
 
-	# ¥³¡¼¥ÉÁªÂòÍÑHList
+	# ã‚³ãƒ¼ãƒ‰é¸æŠç”¨HList
 	$self->{hlist} = $f2_1->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
@@ -118,14 +118,14 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => kh_msg->gget('all'), # ¤¹¤Ù¤Æ
+		-text => kh_msg->gget('all'), # ã™ã¹ã¦
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
-		-text => kh_msg->gget('clear'), # ¥¯¥ê¥¢
+		-text => kh_msg->gget('clear'), # ã‚¯ãƒªã‚¢
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -133,47 +133,21 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => kh_msg->get('sel5'), #     ¢¨¥³¡¼¥É¤ò5¤Ä°Ê¾åÁªÂò¤·¤Æ²¼¤µ¤¤¡£
+		-text => kh_msg->get('sel5'), #     â€»ã‚³ãƒ¼ãƒ‰ã‚’5ã¤ä»¥ä¸Šé¸æŠã—ã¦ä¸‹ã•ã„ã€‚
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
 		-padx   => 4,
 	);
 
-	# ¥¢¥ë¥´¥ê¥º¥àÁªÂò
+	# ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ é¸æŠ
 	$self->{mds_obj} = gui_widget::r_mds->open(
 		parent       => $lf2,
 		command      => sub{ $self->_calc; },
 		pack    => { -anchor   => 'w'},
 	);
 
-	# ¥Ğ¥Ö¥ë¥×¥í¥Ã¥È
-	$self->{bubble_obj} = gui_widget::bubble->open(
-		parent       => $lf2,
-		type         => 'mds',
-		command      => sub{ $self->_calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-
-	# ¥¯¥é¥¹¥¿¡¼²½
-	$self->{cls_obj} = gui_widget::cls4mds->open(
-		parent       => $lf2,
-		command      => sub{ $self->_calc; },
-		pack    => {
-			-anchor   => 'w',
-		},
-	);
-
-	# È¾Æ©ÌÀ¤Î¿§
-	$self->{use_alpha} = 1;
-	$lf2->Checkbutton(
-		-variable => \$self->{use_alpha},
-		-text     => kh_msg->get('gui_window::word_mds->r_alpha'), 
-	)->pack(-anchor => 'w');
-
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf2,
 		command   => sub{ $self->_calc; },
@@ -183,14 +157,14 @@ sub _new{
 	);
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤','euc
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	# OK¡¦¥­¥ã¥ó¥»¥ë
+	# OKãƒ»ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 	$win->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -212,7 +186,7 @@ sub _new{
 
 
 
-# ¥³¡¼¥Ç¥£¥ó¥°¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë¤ÎÆÉ¤ß¹ş¤ß
+# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿
 sub read_cfile{
 	my $self = shift;
 	
@@ -238,7 +212,7 @@ sub read_cfile{
 		$self->{checks}[$row]{name}  = $i->name;
 		
 		my $c = $self->{hlist}->Checkbutton(
-			-text     => gui_window->gui_jchar($i->name,'euc'),
+			-text     => $i->name,
 			-variable => \$self->{checks}[$row]{check},
 			-command  => sub{ $self->check_selected_num; },
 			-anchor => 'w',
@@ -264,7 +238,7 @@ sub read_cfile{
 sub start_raise{
 	my $self = shift;
 	
-	# ¥³¡¼¥ÉÁªÂò¤òÆÉ¤ß¼è¤ê
+	# ã‚³ãƒ¼ãƒ‰é¸æŠã‚’èª­ã¿å–ã‚Š
 	my %selection = ();
 	foreach my $i (@{$self->{checks}}){
 		if ($i->{check}){
@@ -274,10 +248,10 @@ sub start_raise{
 		}
 	}
 	
-	# ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤òºÆÆÉ¤ß¹ş¤ß
+	# ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å†èª­ã¿è¾¼ã¿
 	$self->read_cfile;
 	
-	# ÁªÂò¤òÅ¬ÍÑ
+	# é¸æŠã‚’é©ç”¨
 	foreach my $i (@{$self->{checks}}){
 		if ($selection{$i->{name}} == 1 || $selection{$i->{name}} == 0){
 			$i->{check} = 1;
@@ -291,7 +265,7 @@ sub start_raise{
 }
 
 
-# ¥³¡¼¥É¤¬5¤Ä°Ê¾åÁªÂò¤µ¤ì¤Æ¤¤¤ë¤«¥Á¥§¥Ã¥¯
+# ã‚³ãƒ¼ãƒ‰ãŒ5ã¤ä»¥ä¸Šé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 sub check_selected_num{
 	my $self = shift;
 	
@@ -308,7 +282,7 @@ sub check_selected_num{
 	return $self;
 }
 
-# ¤¹¤Ù¤ÆÁªÂò
+# ã™ã¹ã¦é¸æŠ
 sub select_all{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -318,7 +292,7 @@ sub select_all{
 	return $self;
 }
 
-# ¥¯¥ê¥¢
+# ã‚¯ãƒªã‚¢
 sub select_none{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -331,7 +305,7 @@ sub select_none{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -343,7 +317,7 @@ sub start{
 	$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->withd; });
 }
 
-# ¥×¥í¥Ã¥ÈºîÀ®¡õÉ½¼¨
+# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆï¼†è¡¨ç¤º
 sub _calc{
 	my $self = shift;
 
@@ -356,14 +330,14 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => kh_msg->get('sel5_e'), # ¥³¡¼¥É¤ò5¤Ä°Ê¾åÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£
+			msg    => kh_msg->get('sel5_e'), # ã‚³ãƒ¼ãƒ‰ã‚’5ã¤ä»¥ä¸Šé¸æŠã—ã¦ãã ã•ã„ã€‚
 		);
 		return 0;
 	}
 
 	my $wait_window = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¼èÆÀ
+	# ãƒ‡ãƒ¼ã‚¿å–å¾—
 	my $r_command;
 	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){
 		gui_errormsg->open(
@@ -376,15 +350,15 @@ sub _calc{
 		return 0;
 	}
 	
-	# ¥Ç¡¼¥¿À°Íı
+	# ãƒ‡ãƒ¼ã‚¿æ•´ç†
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
 		my $name = $i->{name};
 		
-		if (index($name,'¡ö') == 0){
-			substr($name, 0, 2) = '';
+		if (index($name,'ï¼Š') == 0){
+			substr($name, 0, 1) = '';
 		}
 		elsif (index($name,'*') == 0){
 			substr($name, 0, 1) = ''
@@ -401,23 +375,15 @@ sub _calc{
 		font_size         => $self->{font_obj}->font_size,
 		font_bold         => $self->{font_obj}->check_bold_text,
 		plot_size         => $self->{font_obj}->plot_size,
-		method         => $self->{mds_obj}->method,
-		method_dist    => $self->{mds_obj}->method_dist,
-		dim_number     => $self->{mds_obj}->dim_number,
+		$self->{mds_obj}->params,
 		r_command      => $r_command,
 		plotwin_name   => 'cod_mds',
-		bubble       => $self->{bubble_obj}->check_bubble,
-		std_radius   => $self->{bubble_obj}->chk_std_radius,
-		bubble_size  => $self->{bubble_obj}->size,
-		bubble_var   => $self->{bubble_obj}->var,
-		n_cls          => $self->{cls_obj}->n,
-		cls_raw        => $self->{cls_obj}->raw,
-		use_alpha      => $self->gui_jg( $self->{use_alpha} ),
 	);
 
 	$wait_window->end(no_dialog => 1);
+	return 0 unless $plot;
 	
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	if ($::main_gui->if_opened('w_cod_mds_plot')){
 		$::main_gui->get('w_cod_mds_plot')->close;
 	}
@@ -438,7 +404,7 @@ sub _calc{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub cfile{
 	my $self = shift;

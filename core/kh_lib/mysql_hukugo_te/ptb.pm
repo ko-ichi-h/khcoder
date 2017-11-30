@@ -2,31 +2,32 @@ package mysql_hukugo_te::ptb;
 use base qw(mysql_hukugo_te);
 
 use strict;
+use utf8;
 
 my $debug = 0;
 
 sub _run_from_morpho{
 	use TermExtract::BrillsTagger;
 
-	# POS Taggerµ¯Æ°
+	# POS Taggerèµ·å‹•
 	my $t0 = new Benchmark;
 	print "01. Marking...\n" if $debug;
-	my $source = $::project_obj->file_target;
-	my $dist   = $::project_obj->file_m_target;
+	my $source = $::config_obj->os_path( $::project_obj->file_target);
+	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target);
 	unlink($dist);
-	my $icode = kh_jchar->check_code($source);
-	open (MARKED,">$dist") or 
+	my $icode = kh_jchar->check_code_en($source);
+	open (MARKED,'>:encoding(utf8)', $dist) or 
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $dist
 		);
-	open (SOURCE,"$source") or
+	open (SOURCE,"<:encoding($icode)", $source) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $source
 		);
 	while (<SOURCE>){
-		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ²þ¹Ô¥³¡¼¥ÉÅý°ì
+		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # æ”¹è¡Œã‚³ãƒ¼ãƒ‰çµ±ä¸€
 		chomp;
 		print MARKED "$_\n";
 	}
@@ -36,25 +37,26 @@ sub _run_from_morpho{
 	print "02. POS Tagger...\n" if $debug;
 	kh_morpho->run;
 
-	# TermExtractÍÑ¤ÎÆþÎÏ¥Õ¥¡¥¤¥ë¤òºîÀ®
-	my $file_input = $::config_obj->file_temp;
-	open my $fh, '>', $file_input
+	# TermExtractç”¨ã®å…¥åŠ›ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆ
+	my $file_input = $::config_obj->os_path( $::config_obj->file_temp );
+	open my $fh, '>:encoding(utf8)', $file_input
 		or gui_errormsg->open(
 			type    => 'file',
 			thefile => $file_input,
 		)
 	;
 	my %is_alone = ();
-	open (CHASEN,$::project_obj->file_MorphoOut) or 
+	my $file_MorphoOut = $::config_obj->os_path( $::project_obj->file_MorphoOut );
+	open (CHASEN,'<:encoding(utf8)',$file_MorphoOut) or 
 			gui_errormsg->open(
 				type    => 'file',
-				thefile => $::project_obj->file_MorphoOut
+				thefile => $file_MorphoOut
 			);
 	my $cu = '';
 	while (<CHASEN>){
 		chomp;
 		my @cu = split /\t/, $_;
-		if ($cu[0] eq '¡£' || $cu[0] eq 'EOS'){
+		if ($cu[0] eq 'ã€‚' || $cu[0] eq 'EOS'){
 			if (length($cu)){
 				print $fh "$cu\n";
 				$cu = '';
@@ -69,23 +71,59 @@ sub _run_from_morpho{
 	close (CHASEN);
 	close ($fh);
 
-	# TermExtract¤Î¼Â¹Ô
+	# TermExtractã®å®Ÿè¡Œ
 	use TermExtract::BrillsTagger;
 	my $data = new TermExtract::BrillsTagger;
 	my @noun_list = $data->get_imp_word($file_input);
 	#unlink($file_input);
 
-	# ½ÐÎÏ
+	# å‡ºåŠ›
 	print "06. Output...\n" if $debug;
-	my $data_out = 
-		 kh_msg->get('gui_window::use_te_g->h_hukugo')
-		.','
-		.kh_msg->get('gui_window::use_te_g->h_score')
-		."\n"
-	;
-	$data_out = Encode::encode('shift-jis',$data_out);
-	
-	"Ê£¹ç¸ì,¥¹¥³¥¢\n";
+
+	my $target = $::project_obj->file_HukugoListTE;
+	use Excel::Writer::XLSX;
+	my $workbook  = Excel::Writer::XLSX->new($target);
+	my $worksheet = $workbook->add_worksheet('Sheet1',1);
+	$worksheet->hide_gridlines(1);
+
+	#my $font = '';
+	#if ($] > 5.008){
+	#	$font = 'ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯';
+	#} else {
+	#	$font = 'MS PGothic';
+	#}
+	#$workbook->{_formats}->[15]->set_properties( # cannot do this with Excel::Writer::XLSX
+	#	font       => $font,
+	#	size       => 11,
+	#	valign     => 'vcenter',
+	#	align      => 'center',
+	#);
+	my $format_n = $workbook->add_format(         # æ•°å€¤
+		num_format => '0',
+		size       => 11,
+		#font       => $font,
+		align      => 'right',
+	);
+	my $format_c = $workbook->add_format(         # æ–‡å­—åˆ—
+		#font       => $font,
+		size       => 11,
+		align      => 'left',
+		num_format => '@'
+	);
+
+	# the first line
+	$worksheet->write_string(
+		0,
+		0,
+		kh_msg->get('gui_window::use_te_g->h_hukugo'),
+		$format_c
+	);
+	$worksheet->write_string(
+		0,
+		1,
+		kh_msg->get('gui_window::use_te_g->h_score'),
+		$format_c
+	);
 
 	mysql_exec->drop_table("hukugo_te");
 	mysql_exec->do("
@@ -95,13 +133,26 @@ sub _run_from_morpho{
 		)
 	",1);
 
+	my $row = 1;
 	foreach (@noun_list) {
-		next unless $_->[0] =~ / /; # Ã±Ì¾»ì¤Ï¥Ñ¥¹
+		next unless $_->[0] =~ / /; # å˜åè©žã¯ãƒ‘ã‚¹
 
+		#$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
+		$worksheet->write_string(
+			$row,
+			0,
+			$_->[0],
+			$format_c
+		);
+		$worksheet->write_number(
+			$row,
+			1,
+			$_->[1],
+			$format_n
+		);
+		++$row;
+		
 		my $q = mysql_exec->quote($_->[0]);
-		#print "$q ";
-
-		$data_out .= kh_csv->value_conv($_->[0]).",$_->[1]\n";
 		mysql_exec->do("
 			INSERT INTO hukugo_te (name, num)
 			VALUES ($q, $_->[1])
@@ -109,16 +160,9 @@ sub _run_from_morpho{
 	}
 	print "\n";
 
+	$worksheet->freeze_panes(1, 0);
+	$workbook->close;
 
-	my $target_csv = $::project_obj->file_HukugoListTE;
-	open (OUT,">$target_csv") or
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $target_csv
-		);
-	print OUT $data_out;
-	close (OUT);
-	
 	my $t1 = new Benchmark;
 	print timestr(timediff($t1,$t0)),"\n" if $debug;
 

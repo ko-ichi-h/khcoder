@@ -54,8 +54,7 @@ sub innner{
 
 	# 共通のパラメーター
 	my @code_names = ();
-	my $euc_command = Jcode->new($self->{command_f})->euc;
-	if ( $euc_command =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
+	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
 		@code_names = eval( "($1)" );
 	}
 	#if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
@@ -63,7 +62,7 @@ sub innner{
 	#}
 	
 	my %selected = ();
-	if ( $euc_command =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
+	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
 		#print "code selection: found!\n";
 		my @selecteda = eval( "($1)" );
 		foreach my $i (@selecteda){
@@ -243,6 +242,16 @@ sub innner{
 		$self->{color_gry} = $1;
 	}
 
+	$self->{color_maxv} = 10;
+	if ( $self->{command_f} =~ /\nmaxv <\- (.+)\n/ ){
+		$self->{color_maxv} = $1;
+	}
+
+	$self->{color_fix} = 0;
+	if ( $self->{command_f} =~ /\ncolor_fix <\- (.+)\n/ ){
+		$self->{color_fix} = $1;
+	}
+
 	# ヒートマップのGUI
 	my $lf_h = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->heat'),
@@ -279,7 +288,6 @@ sub innner{
 	$self->{entry_plot_size_heat}->bind("<KP_Enter>", sub {$self->calc});
 	
 	$self->{entry_plot_size_heat}->insert(0,$self->{plot_size_heat});
-
 
 	# バブルプロットのGUI
 	my $lf_f = $right->LabFrame(
@@ -341,19 +349,49 @@ sub innner{
 		-text     => '  ',
 	)->pack(-side => 'left');
 
-	$self->{widget_color_col} = $f_f4->Radiobutton( # カラー
-		-text     => kh_msg->get('gui_window::r_plot::word_corresp->col'),
+	$self->{widget_color_col1} = $f_f4->Radiobutton( # カラー1
+		-text     => kh_msg->get('col1'),
 		-variable => \$self->{color_gry},
 		-value    => 0,
 	)->pack(-side => 'left');
 
+	#$self->{widget_color_col2} = $f_f4->Radiobutton( # カラー2
+	#	-text     => kh_msg->get('col2'),
+	#	-variable => \$self->{color_gry},
+	#	-value    => -1,
+	#)->pack(-side => 'left');
+
 	$self->{widget_color_gry} = $f_f4->Radiobutton( # グレー
-		-text     => kh_msg->get('gui_window::r_plot::word_corresp->gray'),
+		-text     => kh_msg->get('gray'),
 		-variable => \$self->{color_gry},
 		-value    => 1,
 	)->pack(-side => 'left');
 
 	$self->color_widgets;
+
+	my $f_f5 = $lf_f->Frame()
+		->pack(-fill=>'x',-expand=>0, -pady => 2)
+	;
+
+	$f_f5->Label(
+		-text     => '  ',
+	)->pack(-side => 'left');
+
+	$f_f5->Checkbutton(                                     # カラースケール固定
+		-variable => \$self->{color_fix},
+		-text     => kh_msg->get('color_fix'),
+		-command  => sub {$self->color_fix;}
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{entry_color_fix} = $f_f5->Entry(
+		-width      => 3,
+		-background => 'white',
+	)->pack(-side => 'left');
+	gui_window->config_entry_focusin($self->{entry_color_fix});
+	$self->{entry_color_fix}->bind("<Key-Return>", sub {$self->calc});
+	$self->{entry_color_fix}->bind("<KP_Enter>", sub {$self->calc});
+	$self->{entry_color_fix}->insert(0,$self->{color_maxv});
+	$self->color_fix;
 
 	my $f_f2 = $lf_f->Frame()                               # プロットの幅
 		->pack(-fill=>'x',-expand=>0, -pady => 2);
@@ -367,7 +405,7 @@ sub innner{
 	)->pack(-side => 'left');
 	gui_window->config_entry_focusin($self->{entry_plot_size_mapw});
 	$self->{entry_plot_size_mapw}->bind("<Key-Return>", sub {$self->calc});
-	$self->{entry_plot_size_mapw}->bind("<KP_Enter>", sub {$self->calc});
+	$self->{entry_plot_size_mapw}->bind("<KP_Enter>",   sub {$self->calc});
 	
 	$self->{entry_plot_size_mapw}->insert(0,$self->{plot_size_mapw});
 
@@ -388,14 +426,28 @@ sub innner{
 	return $self;
 }
 
+sub color_fix{
+	my $self = shift;
+	
+	if ($self->{color_fix}){
+		$self->{entry_color_fix}->configure(-state => 'normal');
+	} else {
+		$self->{entry_color_fix}->configure(-state => 'disabled');
+	}
+	
+	return 1;
+}
+
 sub color_widgets{
 	my $self = shift;
 	
 	if ($self->{color_rsd}){
-		$self->{widget_color_col}->configure(-state => 'normal');
+		$self->{widget_color_col1}->configure(-state => 'normal');
+		#$self->{widget_color_col2}->configure(-state => 'normal');
 		$self->{widget_color_gry}->configure(-state => 'normal');
 	} else {
-		$self->{widget_color_col}->configure(-state => 'disabled');
+		$self->{widget_color_col1}->configure(-state => 'disabled');
+		#$self->{widget_color_col2}->configure(-state => 'disabled');
 		$self->{widget_color_gry}->configure(-state => 'disabled');
 	}
 	
@@ -410,8 +462,8 @@ sub calc{
 	if ($self->{command_f} =~ /\A(.+)# END: DATA.+/s){
 		$r_command = $1;
 		#print "chk: $r_command\n";
-		$r_command = Jcode->new($r_command)->euc
-			if $::config_obj->os eq 'win32';
+		#$r_command = Jcode->new($r_command)->euc
+		#	if $::config_obj->os eq 'win32';
 	} else {
 		gui_errormsg->open(
 			type => 'msg',
@@ -442,22 +494,24 @@ sub calc{
 	use plotR::code_mat;
 	my $plot = plotR::code_mat->new(
 		r_command      => $r_command,
-		#font_size      => $self->{font_obj}->font_size,
 
 		heat_dendro_c  => $self->gui_jg( $self->{heat_dendro_c} ),
 		heat_dendro_v  => $self->gui_jg( $self->{heat_dendro_v} ),
 		heat_cellnote  => $self->gui_jg( $self->{heat_cellnote} ),
-		plot_size_heat => $self->gui_jg( $self->{entry_plot_size_heat}->get ),
+		plot_size_heat => $self->gui_jgn( $self->{entry_plot_size_heat}->get ),
 		
-		bubble_size    => $self->gui_jg( $self->{entry_bubble_size}->get) /100,
+		bubble_size    => $self->gui_jgn( $self->{entry_bubble_size}->get) /100,
 		bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
 		color_rsd      => $self->gui_jg( $self->{color_rsd} ),
 		color_gry      => $self->gui_jg( $self->{color_gry} ),
-		plot_size_mapw => $self->gui_jg( $self->{entry_plot_size_mapw}->get ),
-		plot_size_maph => $self->gui_jg( $self->{entry_plot_size_maph}->get ),
+		plot_size_mapw => $self->gui_jgn( $self->{entry_plot_size_mapw}->get ),
+		plot_size_maph => $self->gui_jgn( $self->{entry_plot_size_maph}->get ),
+		
+		color_fix      => $self->gui_jg( $self->{color_fix} ),
+		color_maxv     => $self->gui_jgn( $self->{entry_color_fix}->get ),
 		
 		selection      => \@selection,
-		font_size      => $self->gui_jg( $self->{entry_font_size}->get) /100,
+		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		plotwin_name   => 'code_mat',
 	);
 	$wait_window->end(no_dialog => 1);

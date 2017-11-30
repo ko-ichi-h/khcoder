@@ -98,7 +98,7 @@ sub _read{
 	my $self = shift;
 
 	# 入力チェック
-	unless (-e $self->gui_jg( $self->{entry}->get ) ){
+	unless (-e $::config_obj->os_path( $self->gui_jg( $self->{entry}->get ) ) ){
 		gui_errormsg->open(
 			type   => 'msg',
 			msg    => kh_msg->get('no_such_file'), # ファイルを正しく指定して下さい。

@@ -105,7 +105,7 @@ sub _new{
 
 sub search{
 	my $self = shift;
-	my $query = Jcode->new( $self->gui_jg($self->entry->get),'sjis')->euc;
+	my $query = $self->gui_jg($self->entry->get);
 	unless ($query){
 		return;
 	}

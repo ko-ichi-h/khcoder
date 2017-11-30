@@ -182,8 +182,10 @@ sub make{
 		pack    => {-side => 'right'},
 		options =>
 			[
+				[ 'Chinese'  => 'cn'],
 				[ 'English'  => 'en'],
 				[ 'Japanese' => 'jp'],
+				[ 'Korean'   => 'kr'],
 				[ 'Spanish'  => 'es'],
 			],
 		variable => \$self->{optmenu_lg_v},
@@ -222,6 +224,7 @@ sub switch_lang{
 	
 	unless ($::config_obj->msg_lang eq $v){
 		$::config_obj->msg_lang($v);
+		$::config_obj->msg_lang_set($v);
 		gui_errormsg->open(
 			type => 'msg',
 			icon => 'info',
@@ -288,7 +291,7 @@ sub refresh{
 					my $num = mysql_exec->select(
 						"SELECT count(*) FROM $i"
 					)->hundle->fetch->[0];
-					push @list, [gui_window->gui_jchar($name{$i},'euc'), num_format($num)];
+					push @list, [gui_window->gui_jchar($name{$i}), num_format($num)];
 				}
 			}
 		}

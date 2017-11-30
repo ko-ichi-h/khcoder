@@ -1,5 +1,6 @@
 package gui_window::word_cls;
 use base qw(gui_window);
+use utf8;
 
 use strict;
 use Tk;
@@ -9,7 +10,7 @@ use mysql_crossout;
 use kh_r_plot;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
@@ -18,14 +19,14 @@ sub _new{
 	$win->title($self->gui_jt($self->label));
 
 	my $lf_w = $win->LabFrame(
-		-label       => kh_msg->get('u_w'), # ½¸·×Ã±°Ì¤ÈÃê½Ğ¸ì¤ÎÁªÂò
+		-label       => kh_msg->get('u_w'), # é›†è¨ˆå˜ä½ã¨æŠ½å‡ºèªã®é¸æŠ
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 		-foreground  => 'blue',
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
 	my $lf = $win->LabFrame(
-		-label       => kh_msg->get('opt'), # ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î¥ª¥×¥·¥ç¥ó
+		-label       => kh_msg->get('opt'), # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 		-labelside   => 'acrosstop',
 		-borderwidth => 2,
 		-foreground  => 'blue',
@@ -33,17 +34,17 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('cluster'), # Ê¬Îà
+		verb   => kh_msg->get('cluster'), # åˆ†é¡
 	);
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î¥ª¥×¥·¥ç¥ó
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	$self->{cls_obj} = gui_widget::r_cls->open(
 		parent       => $lf,
 		command      => sub{ $self->calc; },
 		pack    => { -anchor   => 'w'},
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
 		command   => sub{ $self->calc; },
@@ -83,7 +84,7 @@ sub start_raise{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -96,16 +97,16 @@ sub start{
 }
 
 #----------#
-#   ¼Â¹Ô   #
+#   å®Ÿè¡Œ   #
 
 sub calc{
 	my $self = shift;
 	
-	# ÆşÎÏ¤Î¥Á¥§¥Ã¥¯
+	# å…¥åŠ›ã®ãƒã‚§ãƒƒã‚¯
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # 'ÉÊ»ì¤¬1¤Ä¤âÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó¡£',
+			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # 'å“è©ãŒ1ã¤ã‚‚é¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚',
 		);
 		return 0;
 	}
@@ -126,7 +127,7 @@ sub calc{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::word_corresp->select_3words'), #'¾¯¤Ê¤¯¤È¤â3¤Ä°Ê¾å¤ÎÃê½Ğ¸ì¤òÁªÂò¤·¤Æ²¼¤µ¤¤¡£',
+			msg  => kh_msg->get('gui_window::word_corresp->select_3words'), #'å°‘ãªãã¨ã‚‚3ã¤ä»¥ä¸Šã®æŠ½å‡ºèªã‚’é¸æŠã—ã¦ä¸‹ã•ã„ã€‚',
 		);
 		return 0;
 	}
@@ -154,7 +155,7 @@ sub calc{
 
 	my $w = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $self->tani,
@@ -166,15 +167,11 @@ sub calc{
 		rownames => 0,
 	)->run;
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤ò¼Â¹Ô¤¹¤ë¤¿¤á¤Î¥³¥Ş¥ó¥É
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã‚’å®Ÿè¡Œã™ã‚‹ãŸã‚ã®ã‚³ãƒãƒ³ãƒ‰
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
-	&make_plot(
-		#cluster_number => $self->{cls_obj}->cluster_number,
-		#cluster_color  => $self->{cls_obj}->cluster_color,
-		#method_dist    => $self->{cls_obj}->method_dist,
-		#method_mthd    => $self->{cls_obj}->method_mthd,
+	my $plot = &make_plot(
 		$self->{cls_obj}->params,
 		font_size      => $self->{font_obj}->font_size,
 		font_bold      => $self->{font_obj}->check_bold_text,
@@ -185,6 +182,7 @@ sub calc{
 	);
 
 	$w->end(no_dialog => 1);
+	return 0 unless $plot;
 
 	unless ( $self->{check_rm_open} ){
 		$self->withd;
@@ -263,10 +261,10 @@ if (exists(\"doc_length_mtr\")){
 	if ($args{method_dist} eq 'euclid'){
 		$r_command .= "d <- t( scale( t(d) ) )\n";
 	}
-	# euclid¤Î¾ì¹ç¤ÏÃê½Ğ¸ì¤´¤È¤ËÉ¸½à²½
-		# euclid·¸¿ô¤ò»È¤¦¼ç»İ¤«¤é¤¹¤ë¤È¡¢É¸½à²½¤ÏÉÔÍ×¤È¤â¹Í¤¨¤é¤ì¤ë¤¬¡¢
-		# É¸½à²½¤ò¹Ô¤ï¤Ê¤¤¤ÈÏ¢º¿¤ÎÄøÅÙ¤¬·ã¤·¤¯¤Ê¤ê¡¢¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤È¤·¤Æ
-		# ¤ÎÍÑ¤ò¤Ê¤µ¤Ê¤¯¤Ê¤ë¾ì¹ç¤¬¤Ş¤Ş¸«¤é¤ì¤ë¡£
+	# euclidã®å ´åˆã¯æŠ½å‡ºèªã”ã¨ã«æ¨™æº–åŒ–
+		# euclidä¿‚æ•°ã‚’ä½¿ã†ä¸»æ—¨ã‹ã‚‰ã™ã‚‹ã¨ã€æ¨™æº–åŒ–ã¯ä¸è¦ã¨ã‚‚è€ƒãˆã‚‰ã‚Œã‚‹ãŒã€
+		# æ¨™æº–åŒ–ã‚’è¡Œã‚ãªã„ã¨é€£é–ã®ç¨‹åº¦ãŒæ¿€ã—ããªã‚Šã€ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã¨ã—ã¦
+		# ã®ç”¨ã‚’ãªã•ãªããªã‚‹å ´åˆãŒã¾ã¾è¦‹ã‚‰ã‚Œã‚‹ã€‚
 
 	$r_command .= "method_dist <- \"$args{method_dist}\"\n";
 	$r_command .= "method_clst <- \"$args{method_mthd}\"\n";
@@ -297,23 +295,23 @@ if (
 	$r_command .= "\n$par";
 	$r_command .= &r_command_plot($old_simple_style);
 
-	# ¥×¥í¥Ã¥ÈºîÀ®
-	my $flg_error = 0;
+	# make plots
 	my $merges;
 	
 	my ($w,$h) = ($::config_obj->plot_size_codes, $args{plot_size});
 	($w,$h) = ($h,$w) if $old_simple_style;
 	
-	# WardË¡
+	# dendrogram
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $w,
 		height    => $h,
 		font_size => $args{font_size},
-	) or $flg_error = 1;
+	) or return 0;
 	$plot1->rotate_cls if $old_simple_style;
 
+	# heights
 	foreach my $i ('last','first','all'){
 		$merges->{0}{$i} = kh_r_plot->new(
 			name      => $args{plotwin_name}.'_1_'.$i,
@@ -325,17 +323,15 @@ if (
 			width     => $::config_obj->plot_size_words,
 			height    => $::config_obj->plot_size_codes,
 			font_size => $args{font_size},
-		);
+		) or return 0;
 	}
 
-	# ¥×¥í¥Ã¥ÈWindow¤ò³«¤¯
+	# ãƒ—ãƒ­ãƒƒãƒˆWindowã‚’é–‹ã
 	kh_r_plot->clear_env;
 	my $plotwin_id = 'w_'.$args{plotwin_name}.'_plot';
 	if ($::main_gui->if_opened($plotwin_id)){
 		$::main_gui->get($plotwin_id)->close;
 	}
-	
-	return 0 if $flg_error;
 	
 	my $plotwin = 'gui_window::r_plot::'.$args{plotwin_name};
 	$plotwin->open(
@@ -349,11 +345,11 @@ if (
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 
 sub label{
-	return kh_msg->get('win_title'); # Ãê½Ğ¸ì¡¦¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	return kh_msg->get('win_title'); # æŠ½å‡ºèªãƒ»ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 }
 
 sub win_name{
@@ -387,25 +383,25 @@ sub hinshi{
 sub r_command_height{
 	my $t = '
 
-# ¥×¥í¥Ã¥È¤Î½àÈ÷³«»Ï
-pp_focus  <- 50     # ºÇ½é¡¦ºÇ¸å¤Î50²ó¤ÎÊ»¹ç¤ò¥×¥í¥Ã¥È
-pp_kizami <-  5     # ¥¯¥é¥¹¥¿¡¼¿ô¤Î¤­¤¶¤ß¡Ê5¸Ä¤ª¤­¤ËÉ½¼¨¡Ë
+# ãƒ—ãƒ­ãƒƒãƒˆã®æº–å‚™é–‹å§‹
+pp_focus  <- 50     # æœ€åˆãƒ»æœ€å¾Œã®50å›ã®ä½µåˆã‚’ãƒ—ãƒ­ãƒƒãƒˆ
+pp_kizami <-  5     # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ã®ãã–ã¿ï¼ˆ5å€‹ãŠãã«è¡¨ç¤ºï¼‰
 
-# Ê»¹ç¿å½à¤ò¼èÆÀ
+# ä½µåˆæ°´æº–ã‚’å–å¾—
 det <- hcl$merge
 det <- cbind(1:nrow(det), nrow(det):1, det, hcl$height)
 colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
 
-# ¥¿¥¤¥×ÊÌ¤Î½èÍı¡§É¬Í×¤ÊÉôÊ¬¤ÎÊ»¹ç¥Ç¡¼¥¿ÀÚ½Ğ¤·¡¦É½µ­¡¦¥¯¥é¥¹¥¿¡¼¿ôÉ½¼¨¤Î¤­¤¶¤ß
+# ã‚¿ã‚¤ãƒ—åˆ¥ã®å‡¦ç†ï¼šå¿…è¦ãªéƒ¨åˆ†ã®ä½µåˆãƒ‡ãƒ¼ã‚¿åˆ‡å‡ºã—ãƒ»è¡¨è¨˜ãƒ»ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°è¡¨ç¤ºã®ãã–ã¿
 if (pp_type == "last"){
 	n_start <- nrow(det) - pp_focus + 1
 	if (n_start < 1){ n_start <- 1 }
 	det <- det[nrow(det):n_start,]
 	
 	str_xlab <- paste(" ('
-	.Encode::encode('euc-jp', kh_msg->get('last1')) # ºÇ¸å¤Î
+	.kh_msg->pget('last1') # æœ€å¾Œã®
 	.'",pp_focus,"'
-	.Encode::encode('euc-jp', kh_msg->get('last2')) # ²ó
+	.kh_msg->pget('last2') # å›
 	.')",sep="")
 } else if (pp_type == "first") {
 	if ( pp_focus > nrow(det) ){
@@ -414,9 +410,9 @@ if (pp_type == "last"){
 	det <- det[pp_focus:1,]
 	
 	str_xlab <- paste(" ('
-	.Encode::encode('euc-jp', kh_msg->get('first1')) # ºÇ½é¤Î
+	.kh_msg->pget('first1') # æœ€åˆã®
 	.'",pp_focus,"'
-	.Encode::encode('euc-jp', kh_msg->get('first2')) # ²ó
+	.kh_msg->pget('first2') # å›
 	.')",sep="")
 } else if (pp_type == "all") {
 	det <- det[nrow(det):1,]
@@ -426,7 +422,7 @@ if (pp_type == "last"){
 	str_xlab <- ""
 }
 
-# ¥¯¥é¥¹¥¿¡¼¿ô¤Î¥Ş¡¼¥«¡¼¤òÆş¤ì¤ë½àÈ÷
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼æ•°ã®ãƒãƒ¼ã‚«ãƒ¼ã‚’å…¥ã‚Œã‚‹æº–å‚™
 p_type <- NULL
 p_nums <- NULL
 for (i in 1:nrow(det)){
@@ -439,7 +435,7 @@ for (i in 1:nrow(det)){
 	}
 }
 
-# ¥×¥í¥Ã¥È
+# ãƒ—ãƒ­ãƒƒãƒˆ
 par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
 plot(
 	det[,"u_n"],
@@ -447,10 +443,10 @@ plot(
 	type = "b",
 	pch  = p_type,
 	xlab = paste("'
-	.Encode::encode('euc-jp', kh_msg->get('agglomer')) # ¥¯¥é¥¹¥¿¡¼Ê»¹ç¤ÎÃÊ³¬
+	.kh_msg->pget('agglomer') # ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ä½µåˆã®æ®µéš
 	.'",str_xlab,sep = ""),
 	ylab = "'
-	.Encode::encode('euc-jp', kh_msg->get('hight')) # Ê»¹ç¿å½à¡ÊÈóÎà»÷ÅÙ¡Ë
+	.kh_msg->pget('hight') # ä½µåˆæ°´æº–ï¼ˆéé¡ä¼¼åº¦ï¼‰
 	.'"
 )
 
@@ -468,7 +464,7 @@ legend(
 	min(det[,"u_n"]),
 	max(det[,"height"]),
 	legend = c("'
-	.Encode::encode('euc-jp', kh_msg->get('note1')) # ¢¨¥×¥í¥Ã¥ÈÆâ¤Î¿ôÃÍ¥é¥Ù¥ë¤Ï\n¡¡Ê»¹ç¸å¤Î¥¯¥é¥¹¥¿¡¼Áí¿ô
+	.kh_msg->pget('note1') # â€»ãƒ—ãƒ­ãƒƒãƒˆå†…ã®æ•°å€¤ãƒ©ãƒ™ãƒ«ã¯\nã€€ä½µåˆå¾Œã®ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç·æ•°
 	.'"),
 	#pch = c(16),
 	cex = .9,
@@ -516,20 +512,25 @@ ddata <- dendro_data(as.dendrogram(hcl), type="rectangle")
 p <- NULL
 p <- ggplot()
 
-# ¥¯¥é¥¹¥¿¡¼¤´¤È¤Î¥«¥é¡¼ÀßÄê
+font_family <- "'.$::config_obj->font_plot_current.'"
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ã”ã¨ã®ã‚«ãƒ©ãƒ¼è¨­å®š
 
 if (n_cls > 1){
 	memb <- cutree(hcl,k=n_cls)
-	# Á´ÂÎ¤Î¿§ÀßÄê
+	# å…¨ä½“ã®è‰²è¨­å®š
 	p <- p + scale_colour_hue(l=40, c=100)
-	# ÀÚ¤êÎ¥¤·Àş(1)
+	# åˆ‡ã‚Šé›¢ã—ç·š(1)
 	cutpoint <- mean(
 		c(
 			rev(hcl$height)[n_cls-1],
 			rev(hcl$height)[n_cls]
 		)
 	)
-	# ¿§¤Î½çÈÖ¤ò·èÄê
+	# è‰²ã®é †ç•ªã‚’æ±ºå®š
 	n <- length( unique(memb[hcl$order]) )
 	new_col <- NULL
 	for (i in 1:ceiling(n / 2) ){
@@ -538,7 +539,7 @@ if (n_cls > 1){
 			new_col <- c(new_col, i + ceiling(n / 2))
 		}
 	}
-	# ¥¯¥é¥¹¥¿¡¼ÈÖ¹æ¢ª¿§Ì¾¤ÎÊÑ´¹ÍÑ¥Ù¥¯¥È¥ëºîÀ®¡Êcol_vec¡Ë
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼ç•ªå·â†’è‰²åã®å¤‰æ›ç”¨ãƒ™ã‚¯ãƒˆãƒ«ä½œæˆï¼ˆcol_vecï¼‰
 	col_tab <- cbind(
 		unique(memb[hcl$order]),
 		new_col
@@ -552,7 +553,7 @@ if (n_cls > 1){
 		}
 		col_vec <- c(col_vec, c)
 	}
-	# Àş¤Î¿§Ê¬¤±
+	# ç·šã®è‰²åˆ†ã‘
 	seg_bl <- NULL
 	seg_cl <- NULL
 	colnames(ddata$segment) <- c(
@@ -607,7 +608,7 @@ if (n_cls > 1){
 	if (is.null(seg_bl) == F){
 		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
 		seg_bl <- as.data.frame(seg_bl)
-		# ÀÚ¤êÎ¥¤·Àş(2)
+		# åˆ‡ã‚Šé›¢ã—ç·š(2)
 		if ( max(seg_bl$y1) > cutpoint ){
 			p <- p + geom_hline(
 				yintercept = cutpoint,
@@ -622,7 +623,7 @@ if (n_cls > 1){
 	seg_cl$c <- col_vec[seg_cl$c]
 
 	p <- p + geom_text(
-		data=data.frame(                    # ¥é¥Ù¥ë
+		data=data.frame(                    # ãƒ©ãƒ™ãƒ«
 			x=label(ddata)$x,
 			y=label(ddata)$y,
 			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -636,6 +637,8 @@ if (n_cls > 1){
 		),
 		hjust=1,
 		angle =0,
+		family = font_family,
+		fontface = "bold",
 		size = 5 * 0.85 * font_size
 	)
 
@@ -650,7 +653,7 @@ if (n_cls > 1){
 	seg_bl <- ddata$segment
 	col_vec <- c("001")
 	p <- p + geom_text(
-		data=data.frame(                    # ¥é¥Ù¥ë
+		data=data.frame(                    # ãƒ©ãƒ™ãƒ«
 			x=label(ddata)$x,
 			y=label(ddata)$y,
 			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -664,6 +667,8 @@ if (n_cls > 1){
 		),
 		hjust=1,
 		angle =0,
+		family = font_family,
+		fontface = "bold",
 		size = 5 * 0.85 * font_size
 	)
 }
@@ -678,7 +683,7 @@ if (is.null(seg_bl) == F){
 }
 
 p <- p + geom_text(
-	data=data.frame(                    # ¥é¥Ù¥ëÊÑ´¹
+	data=data.frame(                    # ãƒ©ãƒ™ãƒ«å¤‰æ›
 		x=label(ddata)$x,
 		y=label(ddata)$y,
 		text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
@@ -692,18 +697,27 @@ p <- p + geom_text(
 	),
 	hjust=1,
 	angle =0,
+	family = font_family,
+	fontface = "bold",
 	size = 5 * 0.85 * font_size
 )
 
-# ¸ì¤ä¥³¡¼¥É¤ÎÄ¹¤µ¤Ë¤¢¤ï¤»¤ÆÍ¾Çò¤ÎÂç¤­¤µ¤òÀßÄê
+# èªã‚„ã‚³ãƒ¼ãƒ‰ã®é•·ã•ã«ã‚ã‚ã›ã¦ä½™ç™½ã®å¤§ãã•ã‚’è¨­å®š
 y_max <- max( ddata$segment$y1 )
-y_min <- max(
-	strwidth(
-		labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
-		units = "figure",
-		font = 2
+y_min <- 0.2
+# "strwidth" crashes if the device is cairo_pdf or cairo_ps 
+if (
+	is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
+	y_min <- max(
+		strwidth(
+			labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			units = "figure",
+			font = 2
+		)
 	)
-)
+}
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
 y_min <- y_min * 1.1
 if (y_min > y_max * 2){
@@ -711,7 +725,7 @@ if (y_min > y_max * 2){
 }
 y_min <- y_min * -1
 
-# ÌÜÀ¹¤Î°ÌÃÖ¤òÀßÄê
+# ç›®ç››ã®ä½ç½®ã‚’è¨­å®š
 b1 <- 0
 for (i in 1:1000){
 	b1 <- signif(y_max * 0.875, i)
@@ -808,12 +822,15 @@ if (show_bar == 1){
 	print(p)
 }
 
-if ( is.na(dev.list()["pdf"]) && is.na(dev.list()["postscript"]) ){
+if (
+	is.na(dev.list()["pdf"])
+	&& is.na(dev.list()["postscript"])
+	&& is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
 	if ( grepl("darwin", R.version$platform) ){
-		quartzFonts(HiraKaku=quartzFont(rep("Hiragino Kaku Gothic Pro W6",4)))
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
 		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
-	} else {
-		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="'.$::config_obj->font_plot.'", fontface="bold"))
 	}
 }
 

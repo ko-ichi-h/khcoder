@@ -37,6 +37,7 @@ sub _new{
 		$self->{$key} = $args{$key};
 	}
 	undef %args;
+	return 0 unless $self->{plots};
 
 	my $mw = $::main_gui->mw;
 	my $win= $self->{win_obj};
@@ -81,7 +82,7 @@ sub _new{
 		-fill   => 'both',
 		-expand => 1,
 	);
-	
+
 	$self->{photo_pane} = $fp->Scrolled(
 		'Pane',
 		-scrollbars  => 'osoe',
@@ -95,25 +96,35 @@ sub _new{
 		-expand => 1,
 	);
 	
-	$self->{photo} = $self->{photo_pane}->Label(
-		-image       => $imgs->{$self->win_name},
-		-cursor      => $cursor,
-		-background  => "white",
+	$self->{canvas} = $self->{photo_pane}->Canvas(
+		-width  => $self->{img_width},
+		-height => $self->{img_height},
+		-background  => 'white',
 		-borderwidth => 0,
+		-highlightthickness => 0,
+		#-cursor      => $cursor,
 	)->pack(
-		-expand => 1,
+		-anchor => 'c',
 		-fill   => 'both',
+		-expand => 1,
 	);
+	
+	my $image_id = $self->{canvas}->createImage(
+		int( $self->{img_width} / 2 ),
+		int( $self->{img_height} / 2 ),
+		-image => $gui_window::r_plot::imgs->{$self->win_name},
+	);
+	#print "image_id: $image_id\n";
 
 	# 画像のドラッグ
 	( $self->{xscroll}, $self->{yscroll} ) =
 		$self->{photo_pane}->Subwidget( 'xscrollbar', 'yscrollbar' );
-	$self->{photo}->bind(
+	$self->{canvas}->CanvasBind(
 		'<Button1-ButtonRelease>' => sub {
 			undef $self->{last_x};
 		}
 	);
-	$self->{photo}->bind(
+	$self->{canvas}->CanvasBind(
 		'<Button1-Motion>' => [
 			\&drag, $self, Ev('X'), Ev('Y')
 		]
@@ -159,7 +170,7 @@ sub _new{
 		my @opt = ();
 		my $n = 0;
 		foreach my $i (@{$self->option1_options}){
-			push @opt, [$self->gui_jchar($i,'euc'),$n];
+			push @opt, [$self->gui_jchar($i),$n];
 			++$n;
 		}
 
@@ -171,6 +182,17 @@ sub _new{
 			command  => sub {$self->renew;},
 		);
 		$self->{optmenu}->set_value($self->{ax});
+
+		$self->win_obj->bind(
+			'<Key-l>',
+			sub{
+				$self->{optmenu}->{win_obj}->menu->Post(
+					$self->{optmenu}->{win_obj}->rootx,
+					$self->{optmenu}->{win_obj}->rooty,
+					#$self->{ax}
+				);
+			}
+		);
 	}
 
 	$self->{button_config} = $f1->Button(
@@ -180,15 +202,22 @@ sub _new{
 		-command => sub {$self->open_config;},
 	)->pack(-side => 'left', -padx => 2);
 
+	$self->win_obj->bind(
+		'<Key-c>',
+		sub{
+			$self->{button_config}->invoke;
+		}
+	);
+
 	if (length($self->{msg})){
 		my $info_label = $f1->Label(
-			-text => $self->gui_jchar($self->{msg},'euc')
+			-text => $self->gui_jchar($self->{msg})
 		)->pack(-side => 'left');
 
 		if ( length($self->{msg_long}) ){
 			$self->{blhelp} = $mw->Balloon();
 			$self->{blhelp}->attach( $info_label,
-				-balloonmsg => $self->gui_jchar($self->{msg_long},'euc'),
+				-balloonmsg => $self->gui_jchar($self->{msg_long}),
 				-font       => "TKFN"
 			);
 		}
@@ -214,6 +243,11 @@ sub _new{
 		}
 	)->pack(-side => 'right',-padx => 4);
 
+	$self->win_obj->bind(
+		'<Key-s>',
+		sub{ $self->save; }
+	);
+	
 	$self->{bottom_frame} = $f1;
 	return $self;
 }
@@ -319,8 +353,8 @@ sub save{
 
 	# 保存先の参照
 	my @types = (
-		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "PDF",[qw/.pdf/] ],
+		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "SVG",[qw/.svg/] ],
 		[ "PNG",[qw/.png/] ],
 		[ "R Source",[qw/.r/] ],
@@ -345,6 +379,15 @@ sub save{
 	return 1;
 }
 
+sub img_height{
+	my $self = shift;
+	return $self->{img_height};
+}
+sub img_width{
+	my $self = shift;
+	return $self->{img_width};
+}
+
 sub photo_pane_height{
 	my $self = shift;
 	return $self->{photo_pane_height};
@@ -361,8 +404,91 @@ sub original_plot_size{
 	if ($self->{original_plot_size}){
 		return $self->{original_plot_size};
 	} else {
-		return $self->{photo}->cget(-image)->height;
+		#return $self->{photo}->cget(-image)->height;
+		return $self->{img_height};
 	}
 }
+
+
+sub show_kwic{
+	my $self = shift;
+	my $id = shift;
+
+	# コンコーダンスの呼び出し
+	my $conc = gui_window::word_conc->open;
+	$conc->entry->delete(0,'end');
+	$conc->entry4->delete(0,'end');
+	$conc->entry2->delete(0,'end');
+	$conc->entry->insert('end', $self->{coordin}{$id}{name});
+	$conc->search;
+	
+	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
+}
+
+sub clear_clickablemap{
+	my $self = shift;
+	
+	return 0 unless defined( $self->{coordin} );
+	return 0 unless $self->{coordin};
+	return 0 unless $self->{canvas};
+	
+	$self->undecorate;
+	
+	foreach my $i (keys %{$self->{coordin}}) {
+		$self->{canvas}->delete( $i );
+	}
+	
+	$self->{coordin} = ();
+	return 1;
+}
+
+sub decorate{
+	my $self = shift;
+	my $id = shift;
+	
+	#print "decorate: $id, $self->{coordin}{$id}{x1}\n";
+	
+	return 1 if $self->{coordin}{$id}{did};
+	
+	# show
+	$self->{coordin}{$id}{did} = $self->{canvas}->createRectangle(
+		$self->{coordin}{$id}{x1} -1,
+		$self->{coordin}{$id}{y1} +1,
+		$self->{coordin}{$id}{x2} +1,
+		$self->{coordin}{$id}{y2} -1,
+		-outline => '#778899',
+		-width   => 1,
+	);
+	
+	# unshow others
+	foreach my $i (@{$self->{coordin}{decorated}}){
+		if ($i == $id) {
+			next;
+		}
+		if ( $self->{coordin}{$i}{did} ){
+			$self->{canvas}->delete( $self->{coordin}{$i}{did} );
+			$self->{coordin}{$i}{did} = undef;
+		}
+	}
+	@{$self->{coordin}{decorated}} = ();
+	
+	push @{$self->{coordin}{decorated}}, $id;
+}
+
+sub undecorate{
+	my $self = shift;
+	
+	#print "undecorate\n";
+	
+	foreach my $i (@{$self->{coordin}{decorated}}){
+		if ( $self->{coordin}{$i}{did} ){
+			$self->{canvas}->delete( $self->{coordin}{$i}{did} );
+			$self->{coordin}{$i}{did} = undef;
+		}
+	}
+	@{$self->{coordin}{decorated}} = ();
+
+}
+
 
 1;

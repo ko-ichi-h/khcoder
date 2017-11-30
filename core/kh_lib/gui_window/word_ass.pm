@@ -4,6 +4,7 @@ use vars qw($filter);
 
 use Tk;
 use strict;
+use utf8;
 
 use gui_widget::optmenu;
 use kh_cod::asso;
@@ -11,7 +12,7 @@ use kh_cod::asso;
 my $order_name;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 #-------------#
 
 sub _new{
@@ -19,7 +20,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
 	#$win->focus;
-	$win->title($self->gui_jt(kh_msg->get('win_title'))); # ´ØÏ¢¸ìÃµº÷
+	$win->title($self->gui_jt(kh_msg->get('win_title'))); # é–¢é€£èªæ¢ç´¢
 	#$self->{win_obj} = $win;
 
 	
@@ -50,7 +51,7 @@ sub _new{
 	)->pack(-anchor => 'w');
 
 	#--------------------#
-	#   ¸¡º÷¥ª¥×¥·¥ç¥ó   #
+	#   æ¤œç´¢ã‚ªãƒ—ã‚·ãƒ§ãƒ³   #
 
 	my $left = $lf->Frame()->pack(-side => 'left', -fill => 'both', -expand => 1);
 	my $right = $lf->Frame()->pack(-side => 'right',-anchor => 'nw');
@@ -75,7 +76,7 @@ sub _new{
 		-browsecmd        => sub{ $self->clist_check; },
 	)->pack(-anchor => 'w', -padx => '4',-pady => '2', -fill => 'both',-expand => 1);
 
-	# ¥³¡¼¥Ç¥£¥ó¥°¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«
 	my %pack0 = (
 			-anchor => 'w',
 	);
@@ -86,10 +87,10 @@ sub _new{
 		pack     => \%pack0,
 	);
 
-	# Ä¾ÀÜÆşÎÏ¥Õ¥ì¡¼¥à
+	# ç›´æ¥å…¥åŠ›ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $f3 = $right->Frame()->pack(-fill => 'x', -pady => 6);
 	$self->{direct_w_l} = $f3->Label(
-		-text => kh_msg->get('direct'), # Ä¾ÀÜÆşÎÏ¡§
+		-text => kh_msg->get('direct'), # ç›´æ¥å…¥åŠ›ï¼š
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
@@ -116,12 +117,12 @@ sub _new{
 	$self->{direct_w_e}->bind("<Key-Return>", sub{$self->search;});
 	$self->{direct_w_e}->bind("<KP_Enter>",   sub{$self->search;});
 
-	# ³Æ¼ï¥ª¥×¥·¥ç¥ó
+	# å„ç¨®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	my $f2 = $right->Frame()->pack(-fill => 'x',-pady => 2);
 
 	$self->{btn_search} = $f2->Button(
 		-font    => "TKFN",
-		-text    => kh_msg->get('go'), # ½¸·×
+		-text    => kh_msg->get('go'), # é›†è¨ˆ
 		-command => sub{$self->search;}
 	)->pack(-side => 'right',-padx => 4);
 	$win->Balloon()->attach(
@@ -142,7 +143,7 @@ sub _new{
 		pack   => \%pack
 	);
 	$self->{l_c_2} = $f2->Label(
-		-text => kh_msg->get('unit'), # ½¸·×Ã±°Ì¡§
+		-text => kh_msg->get('unit'), # é›†è¨ˆå˜ä½ï¼š
 		-font => "TKFN"
 	)->pack(-anchor => 'w', -side => 'right');
 
@@ -153,14 +154,14 @@ sub _new{
 		pack    => {-pady => '1', -side => 'right'},
 		options =>
 			[
-				[kh_msg->get('and'), 'and'], # AND¸¡º÷
-				[kh_msg->get('or') , 'or'] # OR¸¡º÷
+				[kh_msg->get('and'), 'and'], # ANDæ¤œç´¢
+				[kh_msg->get('or') , 'or'] # ORæ¤œç´¢
 			],
 		variable => \$self->{opt_method1},
 	);
 
 	#--------------#
-	#   ¸¡º÷·ë²Ì   #
+	#   æ¤œç´¢çµæœ   #
 
 	$self->{rlist} = $rf->Scrolled(
 		'HList',
@@ -181,11 +182,11 @@ sub _new{
 	)->pack(-fill =>'both',-expand => 1);
 
 	$self->{rlist}->header('create',0,-text => 'N');
-	$self->{rlist}->header('create',1,-text => kh_msg->get('word_h')); # Ãê½Ğ¸ì
-	$self->{rlist}->header('create',2,-text => kh_msg->get('pos_h')); # ÉÊ»ì
-	$self->{rlist}->header('create',3,-text => kh_msg->get('prob_h')); # Á´ÂÎ
-	$self->{rlist}->header('create',4,-text => kh_msg->get('cond_h')); # ¶¦µ¯
-	$self->{rlist}->header('create',5,-text => kh_msg->get('sort_h')); #  ¥½¡¼¥È
+	$self->{rlist}->header('create',1,-text => kh_msg->get('word_h')); # æŠ½å‡ºèª
+	$self->{rlist}->header('create',2,-text => kh_msg->get('pos_h')); # å“è©
+	$self->{rlist}->header('create',3,-text => kh_msg->get('prob_h')); # å…¨ä½“
+	$self->{rlist}->header('create',4,-text => kh_msg->get('cond_h')); # å…±èµ·
+	$self->{rlist}->header('create',5,-text => kh_msg->get('sort_h')); #  ã‚½ãƒ¼ãƒˆ
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
@@ -197,7 +198,7 @@ sub _new{
 
 	$self->{copy_btn} = $f5->Button(
 		-font    => "TKFN",
-		-text    => kh_msg->gget('copy'), # ¥³¥Ô¡¼
+		-text    => kh_msg->gget('copy'), # ã‚³ãƒ”ãƒ¼
 		#-width   => 8,
 		-command => sub{gui_hlist->copy($self->{rlist});},
 		-borderwidth => 1
@@ -222,7 +223,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$f5->Label(
-		-text => kh_msg->get('sort'), #  ¥½¡¼¥È¡§
+		-text => kh_msg->get('sort'), #  ã‚½ãƒ¼ãƒˆï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -231,23 +232,23 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				[kh_msg->get('fr') , 'fr'   ], # ¶¦µ¯
-				[kh_msg->get('sa') , 'sa'   ], # ³ÎÎ¨º¹
-				[kh_msg->get('hi') , 'hi'   ], # ³ÎÎ¨Èæ
+				[kh_msg->get('fr') , 'fr'   ], # å…±èµ·
+				[kh_msg->get('sa') , 'sa'   ], # ç¢ºç‡å·®
+				[kh_msg->get('hi') , 'hi'   ], # ç¢ºç‡æ¯”
 				['Jaccard'         , 'jac'  ],
 				['Dice'            , 'dice' ],
 				['Ochiai'          , 'ochi' ],
 				['Log Likelihood'  , 'll'   ],
-				#[kh_msg->get('18') , 'chi'], # ¦Ö2¾è
+				#[kh_msg->get('18') , 'chi'], # Ï‡2ä¹—
 			],
 		variable => \$self->{opt_order},
 		command  => sub{$self->display;}
 	)->set_value('jac');
 
 	$order_name = {
-		'fr'  => kh_msg->get('fr'), # ¶¦µ¯
-		'sa'  => kh_msg->get('sa'), # ³ÎÎ¨º¹
-		'hi'  => kh_msg->get('hi'), # ³ÎÎ¨Èæ
+		'fr'  => kh_msg->get('fr'), # å…±èµ·
+		'sa'  => kh_msg->get('sa'), # ç¢ºç‡å·®
+		'hi'  => kh_msg->get('hi'), # ç¢ºç‡æ¯”
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
 		'dice'=> 'Dice',
@@ -260,7 +261,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{btn_prev} = $f5->Button(
-		-text        => kh_msg->get('filter'), # ¥Õ¥£¥ë¥¿ÀßÄê
+		-text        => kh_msg->get('filter'), # ãƒ•ã‚£ãƒ«ã‚¿è¨­å®š
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -271,7 +272,7 @@ sub _new{
 	)->pack(-side => 'left',-padx => 2);
 
 	$self->{btn_net} = $f5->Button(
-		-text        => kh_msg->get('net'), # ¶¦µ¯¥Í¥Ã¥È
+		-text        => kh_msg->get('net'), # å…±èµ·ãƒãƒƒãƒˆ
 		-font        => "TKFN",
 		-command     =>
 			sub{
@@ -292,7 +293,7 @@ sub _new{
 	);
 
 	$self->{hits_label} = $f5->Label(
-		-text       => kh_msg->get('hits0'), #  Ê¸½ñ¿ô¡§0
+		-text       => kh_msg->get('hits0'), #  æ–‡æ›¸æ•°ï¼š0
 		-font       => "TKFN",
 	)->pack(-side => 'left',);
 
@@ -302,12 +303,12 @@ sub _new{
 	);
 
 	#--------------------------#
-	#   ¥Õ¥£¥ë¥¿ÀßÄê¤Î½é´ü²½   #
+	#   ãƒ•ã‚£ãƒ«ã‚¿è¨­å®šã®åˆæœŸåŒ–   #
 
 	$filter = undef;
-	$filter->{limit}   = 75;                   # LIMIT¿ô
-	$filter->{min_doc} = 1;                    # ºÇÄãÊ¸½ñ¿ô
-	my $h = mysql_exec->select("               # ÉÊ»ì¤Ë¤è¤ë¥Õ¥£¥ë¥¿
+	$filter->{limit}   = 75;                   # LIMITæ•°
+	$filter->{min_doc} = 1;                    # æœ€ä½æ–‡æ›¸æ•°
+	my $h = mysql_exec->select("               # å“è©ã«ã‚ˆã‚‹ãƒ•ã‚£ãƒ«ã‚¿
 		SELECT name, khhinshi_id
 		FROM   hselection
 		WHERE  ifuse = 1
@@ -315,8 +316,8 @@ sub _new{
 	while (my $i = $h->fetch){
 		if (
 			   $i->[0] =~ /B$/
-			|| $i->[0] eq 'ÈİÄê½õÆ°»ì'
-			|| $i->[0] eq '·ÁÍÆ»ì¡ÊÈó¼«Î©¡Ë'
+			|| $i->[0] eq 'å¦å®šåŠ©å‹•è©'
+			|| $i->[0] eq 'å½¢å®¹è©ï¼ˆéè‡ªç«‹ï¼‰'
 		){
 			$filter->{hinshi}{$i->[1]} = 0;
 		} else {
@@ -339,7 +340,7 @@ sub start{
 }
 
 #------------------------------------#
-#   ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤Î¹¹¿·¤ò¥Á¥§¥Ã¥¯   #
+#   ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®æ›´æ–°ã‚’ãƒã‚§ãƒƒã‚¯   #
 
 sub activate{
 	my $self = shift;
@@ -362,24 +363,24 @@ sub activate{
 }
 
 #----------------------------#
-#   ¥ë¡¼¥ë¥Õ¥¡¥¤¥ëÆÉ¤ß¹ş¤ß   #
+#   ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿   #
 
 sub read_code{
 	my $self = shift;
 	
 	$self->{clist}->delete('all');
 	
-	# ¡ÖÄ¾ÀÜÆşÎÏ¡×¤òÄÉ²Ã
+	# ã€Œç›´æ¥å…¥åŠ›ã€ã‚’è¿½åŠ 
 	$self->{clist}->add(0,-at => 0);
 	$self->{clist}->itemCreate(
 		0,
 		0,
-		-text  => kh_msg->get('direct_code'), # ¡ôÄ¾ÀÜÆşÎÏ
+		-text  => kh_msg->get('direct_code'), # ï¼ƒç›´æ¥å…¥åŠ›
 	);
 	#$self->{clist}->selectionClear;
 	$self->{clist}->selectionSet(0);
 
-	# ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤òÆÉ¤ß¹ş¤ß
+	# ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã¿
 	unless (-e $self->cfile ){
 		$self->{code_obj} = kh_cod::asso->new;
 		return 0;
@@ -404,12 +405,12 @@ sub read_code{
 	}
 	$self->{code_obj} = $cod_obj;
 	
-	# ¡Ö¥³¡¼¥ÉÌµ¤·¡×¤òÉÕÍ¿
+	# ã€Œã‚³ãƒ¼ãƒ‰ç„¡ã—ã€ã‚’ä»˜ä¸
 	$self->{clist}->add($row,-at => "$row");
 	$self->{clist}->itemCreate(
 		$row,
 		0,
-		-text  => kh_msg->get('no_code'), # ¡ô¥³¡¼¥ÉÌµ¤·
+		-text  => kh_msg->get('no_code'), # ï¼ƒã‚³ãƒ¼ãƒ‰ç„¡ã—
 	);
 	
 	gui_hlist->update4scroll($self->{clist});
@@ -419,7 +420,7 @@ sub read_code{
 }
 
 #----------------------------------#
-#   ¡ÖÄ¾ÀÜÆşÎÏ¡×¤Îon/offÀÚ¤êÂØ¤¨   #
+#   ã€Œç›´æ¥å…¥åŠ›ã€ã®on/offåˆ‡ã‚Šæ›¿ãˆ   #
 
 sub clist_check{
 	my $self = shift;
@@ -448,27 +449,27 @@ sub clist_check{
 
 
 #--------------#
-#   ¸¡º÷¼Â¹Ô   #
+#   æ¤œç´¢å®Ÿè¡Œ   #
 #--------------#
 
 sub search{
 	my $self = shift;
 	$self->activate;
 	
-	# ÁªÂò¤Î¥Á¥§¥Ã¥¯
+	# é¸æŠã®ãƒã‚§ãƒƒã‚¯
 	my @selected = $self->{clist}->info('selection');
 	unless (@selected){
 		my $win = $self->win_obj;
 		gui_errormsg->open(
 			type   => 'msg',
-			msg    => kh_msg->get('gui_window::doc_search->error_no_code'), # '¥³¡¼¥É¤¬ÁªÂò¤µ¤ì¤Æ¤¤¤Ş¤»¤ó',
+			msg    => kh_msg->get('gui_window::doc_search->error_no_code'), # 'ã‚³ãƒ¼ãƒ‰ãŒé¸æŠã•ã‚Œã¦ã„ã¾ã›ã‚“',
 			window => \$win,
 		);
 		return 0;
 	}
 	
-	# ¥é¥Ù¥ë¤ÎÊÑ¹¹
-	$self->{hits_label}->configure(-text => kh_msg->get('hits0')); #  Ê¸½ñ¿ô¡§ 0
+	# ãƒ©ãƒ™ãƒ«ã®å¤‰æ›´
+	$self->{hits_label}->configure(-text => kh_msg->get('hits0')); #  æ–‡æ›¸æ•°ï¼š 0
 	$self->{status_label}->configure(
 		-foreground => 'red',
 		-text => 'Searching...'
@@ -478,13 +479,13 @@ sub search{
 	sleep (0.01);
 	
 	
-	# Ä¾ÀÜÆşÎÏÉôÊ¬¤ÎÆÉ¤ß¹ş¤ß
+	# ç›´æ¥å…¥åŠ›éƒ¨åˆ†ã®èª­ã¿è¾¼ã¿
 	$self->{code_obj}->add_direct(
 		mode => $self->gui_jg( $self->{opt_direct} ),
 		raw  => $self->gui_jg( $self->{direct_w_e}->get ),
 	);
 	
-	# ¸¡º÷¥í¥¸¥Ã¥¯¤Î¸Æ¤Ó½Ğ¤·¡Ê¸¡º÷¼Â¹Ô¡Ë
+	# æ¤œç´¢ãƒ­ã‚¸ãƒƒã‚¯ã®å‘¼ã³å‡ºã—ï¼ˆæ¤œç´¢å®Ÿè¡Œï¼‰
 	my $query_ok = $self->{code_obj}->asso(
 		selected => \@selected,
 		tani     => $self->tani,
@@ -504,7 +505,7 @@ sub search{
 }
 
 #------------------------#
-#   ¸¡º÷·ë²Ì¤Î½ñ¤­½Ğ¤·   #
+#   æ¤œç´¢çµæœã®æ›¸ãå‡ºã—   #
 
 sub display{
 	my $self = shift;
@@ -512,7 +513,7 @@ sub display{
 	unless ( $self->{code_obj}          ) {return undef;}
 	unless ( $self->{code_obj}->doc_num ) {return undef;}
 	
-	# HList¤Î¹¹¿·
+	# HListã®æ›´æ–°
 	$self->{rlist}->headerConfigure(5,-text,$order_name->{$self->{opt_order}});
 	
 	$self->{result} = $self->{code_obj}->fetch_results(
@@ -532,35 +533,35 @@ sub display{
 		my $row = 0;
 		foreach my $i (@{$self->{result}}){
 			$self->{rlist}->add($row,-at => "$row");
-			$self->{rlist}->itemCreate(           # ½ç°Ì
+			$self->{rlist}->itemCreate(           # é †ä½
 				$row,
 				0,
 				-text  => $row + 1,
 				-style => $numb_style
 			);
-			$self->{rlist}->itemCreate(           # Ã±¸ì
+			$self->{rlist}->itemCreate(           # å˜èª
 				$row,
 				1,
 				-text  => $self->gui_jchar($i->[0]),
 			);
-			$self->{rlist}->itemCreate(           # ÉÊ»ì
+			$self->{rlist}->itemCreate(           # å“è©
 				$row,
 				2,
 				-text  => $self->gui_jchar($i->[1]),
 			);
-			$self->{rlist}->itemCreate(           # Á´ÂÎ
+			$self->{rlist}->itemCreate(           # å…¨ä½“
 				$row,
 				3,
 				-text  => " $i->[2]"." ("."$i->[3]".")",
 				-style => $numb_style
 			);
-			$self->{rlist}->itemCreate(           # ¶¦µ¯
+			$self->{rlist}->itemCreate(           # å…±èµ·
 				$row,
 				4,
 				-text  => " $i->[4]"." ("."$i->[5]".")",
 				-style => $numb_style
 			);
-			#$self->{rlist}->itemCreate(           # ¾ò·ïÉÕ¤­³ÎÎ©
+			#$self->{rlist}->itemCreate(           # æ¡ä»¶ä»˜ãç¢ºç«‹
 			#	$row,
 			#	5,
 			#	-text  => "$i->[5]",
@@ -578,12 +579,12 @@ sub display{
 		$self->{result} = [];
 	}
 	
-	# ¥é¥Ù¥ë¤Î¹¹¿·
+	# ãƒ©ãƒ™ãƒ«ã®æ›´æ–°
 	my $num_total = $self->{code_obj}->doc_num;
 	gui_hlist->update4scroll($self->{rlist});
 	$self->{hits_label}->configure(
 		-text => $self->gui_jchar(
-			kh_msg->get('hits') # Ê¸½ñ¿ô¡§ 
+			kh_msg->get('hits') # æ–‡æ›¸æ•°ï¼š 
 			.$num_total
 		)
 	);
@@ -591,7 +592,7 @@ sub display{
 }
 
 #----------------------------#
-#   ¶¦µ¯¥Í¥Ã¥È¥ï¡¼¥¯¤òÉÁ²è   #
+#   å…±èµ·ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚’æç”»   #
 
 sub net_calc{
 	my $self = shift;
@@ -606,14 +607,14 @@ sub net_calc{
 	if ($n < 4){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('msg_l5') # ¥ê¥¹¥È¥¢¥Ã¥×¤µ¤ì¤Æ¤¤¤ë¸ì¤Î¿ô¤¬5Ì¤Ëş¤Î¤¿¤á¡¢½èÍı¤òÃæ»ß¤·¤Ş¤¹¡£
+			msg  => kh_msg->get('msg_l5') # ãƒªã‚¹ãƒˆã‚¢ãƒƒãƒ—ã•ã‚Œã¦ã„ã‚‹èªã®æ•°ãŒ5æœªæº€ã®ãŸã‚ã€å‡¦ç†ã‚’ä¸­æ­¢ã—ã¾ã™ã€‚
 		);
 		return undef;
 	}
 	
 	my $wait_window = gui_wait->start;
 	
-	# ¥Í¥Ã¥È¥ï¡¼¥¯ÉÁ²è¤Ë»ÈÍÑ¤¹¤ë¸ì¤Î´ğËÜ·ÁID¥ê¥¹¥È
+	# ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æç”»ã«ä½¿ç”¨ã™ã‚‹èªã®åŸºæœ¬å½¢IDãƒªã‚¹ãƒˆ
 	my @words = @{$self->{code_obj}{query_words}};
 	
 	my $r = $self->{code_obj}->fetch_results(
@@ -639,7 +640,7 @@ sub net_calc{
 	chop $sql_w;
 	mysql_exec->do($sql_w,1);
 
-	# ¡ÖÊ¸½ñ x Ãê½Ğ¸ì¡×¥Ç¡¼¥¿¤Î¼è¤ê½Ğ¤·
+	# ã€Œæ–‡æ›¸ x æŠ½å‡ºèªã€ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—
 	#my $docs = $self->{code_obj}->fetch_Doc_IDs;
 	my $r_command = mysql_crossout::selected::r_com->new(
 		tani           => $self->{code_obj}->{tani},
@@ -647,7 +648,7 @@ sub net_calc{
 		doc_list_table => "temp_word_ass",
 	)->run;
 
-	# ³ºÅö¤¹¤ëÊ¸½ñ¤À¤±¤òÁªÂò
+	# è©²å½“ã™ã‚‹æ–‡æ›¸ã ã‘ã‚’é¸æŠ
 	#my $docs = $self->{code_obj}->fetch_Doc_IDs;
 	#$r_command .= "target_docs <- c(";
 	#foreach my $i (@{$docs}){
@@ -659,7 +660,7 @@ sub net_calc{
 
 	#$r_command .= "d <- t(d)\n";
 
-	# ¸¡º÷¸ì¤Î¥ê¥¹¥È¡Ê¶¯Ä´ÍÑ¡Ë
+	# æ¤œç´¢èªã®ãƒªã‚¹ãƒˆï¼ˆå¼·èª¿ç”¨ï¼‰
 	my $qw_name = $self->{code_obj}->fetch_query_words_name;
 	if ($qw_name){
 		$r_command .= "target_words <- c(";
@@ -671,20 +672,25 @@ sub net_calc{
 	}
 	#print "$r_command\n";
 
-	# ¥Ç¥Õ¥©¥ë¥ÈÀßÄê¤Ç¥Í¥Ã¥È¥ï¡¼¥¯ÉÁ²è
+	# ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆè¨­å®šã§ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯æç”»
 	$r_command .= "# END: DATA\n\n";
 	use plotR::network;
 	my $plotR = plotR::network->new(
 		font_size           => $::config_obj->plot_font_size / 100,
 		plot_size           => $::config_obj->plot_size_words,
+		edge_type           => 'words',
 		n_or_j              => "n",
 		edges_num           => 60,
+		method_coef         => 'binary',
 		edges_jac           => 0,
-		use_freq_as_size    => 0,
-		use_freq_as_fsize   => 0,
+		use_freq_as_size    => 1,
 		smaller_nodes       => 0,
 		use_weight_as_width => 0,
 		min_sp_tree         => 0,
+		min_sp_tree_only    => 0,
+		font_bold           => 0,
+		use_alpha           => 1,
+		fix_lab             => 1,
 		r_command           => $r_command,
 		plotwin_name        => 'selected_netgraph',
 	);
@@ -701,7 +707,9 @@ sub net_calc{
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},
 		msg_long    => $plotR->{result_info_long},
+		ax          => 5,
 		#no_geometry => 1,
+		coord       => $plotR->{coord},
 	);
 
 	$plotR = undef;
@@ -711,13 +719,13 @@ sub net_calc{
 }
 
 #----------------------------#
-#   ¥³¥ó¥³¡¼¥À¥ó¥¹¸Æ¤Ó½Ğ¤·   #
+#   ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹å‘¼ã³å‡ºã—   #
 
 sub conc{
 	use gui_window::word_conc;
 	my $self = shift;
 
-	# ÊÑ¿ô¼èÆÀ
+	# å¤‰æ•°å–å¾—
 	my @selected = $self->{rlist}->infoSelection;
 	unless(@selected){
 		return;
@@ -727,7 +735,7 @@ sub conc{
 	$query = $self->gui_jchar($self->{result}->[$selected][0]);
 	$hinshi = $self->gui_jchar($self->{result}->[$selected][1]);
 	
-	# ¥³¥ó¥³¡¼¥À¥ó¥¹¤Î¸Æ¤Ó½Ğ¤·
+	# ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹ã®å‘¼ã³å‡ºã—
 	my $conc = gui_window::word_conc->open;
 	$conc->entry->delete(0,'end');
 	$conc->entry4->delete(0,'end');
@@ -739,7 +747,7 @@ sub conc{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub last_words{
 	my $self = shift;

@@ -1,30 +1,31 @@
 package p2_io3_morpho;
 use strict;
+use utf8;
 
 #----------------------#
-#   ¥×¥é¥°¥¤¥ó¤ÎÀßÄê   #
+#   ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¨­å®š   #
 
 sub plugin_config{
 	return {
-		name => '·ÁÂÖÁÇ²òÀÏ¤Î·ë²Ì¤òºÆÆÉ¤ß¹ş¤ß',
+		name => 'å½¢æ…‹ç´ è§£æã®çµæœã‚’å†èª­ã¿è¾¼ã¿',
 		menu_cnf => 2,
-		menu_grp => 'Æş½ĞÎÏ',
+		menu_grp => 'å…¥å‡ºåŠ›',
 	};
 }
 
 #----------------------------------------#
-#   ¥á¥Ë¥å¡¼ÁªÂò»ş¤Ë¼Â¹Ô¤µ¤ì¤ë¥ë¡¼¥Á¥ó   #
+#   ãƒ¡ãƒ‹ãƒ¥ãƒ¼é¸æŠæ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹ãƒ«ãƒ¼ãƒãƒ³   #
 
 sub exec{
-	# ¥Ğ¥Ã¥¯¥¢¥Ã¥×
+	# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—
 	*backup_morpho = \&kh_morpho::run;
 	*backup_jchar  = \&kh_jchar::to_euc;
 	
-	# ÊÑ¹¹¤·¤Æ¤«¤é
+	# å¤‰æ›´ã—ã¦ã‹ã‚‰
 	*kh_morpho::run = \&dummy;
 	*kh_jchar::to_euc = \&dummy;
 	
-	# ¼Â¹Ô
+	# å®Ÿè¡Œ
 	$::main_gui->close_all;
 	my $w = gui_wait->start;
 	mysql_ready->first;
@@ -32,7 +33,7 @@ sub exec{
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 
-	# ¥Ğ¥Ã¥¯¥¢¥Ã¥×¤«¤éÌá¤¹
+	# ãƒãƒƒã‚¯ã‚¢ãƒƒãƒ—ã‹ã‚‰æˆ»ã™
 	*kh_morpho::run = \&backup_morpho;
 	*kh_jchar::to_euc = \&backup_jchar;
 	

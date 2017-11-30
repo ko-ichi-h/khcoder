@@ -2,6 +2,7 @@ package gui_widget::r_xy;
 use base qw(gui_widget);
 use strict;
 use Tk;
+use utf8;
 use Jcode;
 
 sub _new{
@@ -25,13 +26,50 @@ sub _new{
 		if ( $self->{r_cmd} =~ /\nscaling <\- "([a-z]+)"\n/ ){
 			$self->{scale_opt} = $1;
 		}
+		if ( $self->{r_cmd} =~ /\nzoom_factor <\- ([0-9\.]+)\n/ ){
+			$self->{check_zoom} = $1;
+		}
 		
 		$self->{r_cmd} = undef;
 	}
 
+	my $fz  = $win->Frame()->pack(-fill => 'x', -pady => 1);
+
+	$fz->Checkbutton(
+		-text     => kh_msg->get('zoom'),
+		-variable => \$self->{check_zoom},
+		-command  => sub{$self->refresh_zoom;}
+	)->pack(
+		-side => 'left'
+	);
+
+	$self->{label_zoom} = $fz->Label(
+		-text => kh_msg->get('zoom_factor'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	
+	$self->{entry_zoom} = $fz->Entry(
+		-font       => "TKFN",
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+	
+	if ($self->{check_zoom}){
+		$self->{entry_zoom}->insert(0,$self->{check_zoom});
+		$self->{check_zoom} = 1;
+	} else {
+		$self->{entry_zoom}->insert(0,3);
+	}
+	$self->{entry_zoom}->bind("<Key-Return>",$self->{command})
+		if defined( $self->{command} );
+	$self->{entry_zoom}->bind("<KP_Enter>",  $self->{command})
+		if defined( $self->{command} );
+	gui_window->config_entry_focusin($self->{entry_zoom});
+	gui_window->disabled_entry_configure($self->{entry_zoom});
+
 	my $fd  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 	$fd->Label(
-		-text => kh_msg->get('cmp_plot'), # ¥×¥í¥Ã¥È¤¹¤ëÀ®Ê¬¡§
+		-text => kh_msg->get('cmp_plot'), # ãƒ—ãƒ­ãƒƒãƒˆã™ã‚‹æˆåˆ†ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -45,7 +83,7 @@ sub _new{
 	#$self->config_entry_focusin($self->{entry_d_n});
 
 	$fd->Label(
-		-text => kh_msg->get('x'), #  X¼´
+		-text => kh_msg->get('x'), #  Xè»¸
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -57,10 +95,12 @@ sub _new{
 	$self->{entry_d_x}->insert(0,$self->{x});
 	$self->{entry_d_x}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_d_x}->bind("<KP_Enter>",  $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_d_x});
 
 	$fd->Label(
-		-text => kh_msg->get('y'), #  Y¼´
+		-text => kh_msg->get('y'), #  Yè»¸
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -72,8 +112,9 @@ sub _new{
 	$self->{entry_d_y}->insert(0,$self->{y});
 	$self->{entry_d_y}->bind("<Key-Return>",$self->{command})
 		if defined( $self->{command} );
+	$self->{entry_d_y}->bind("<KP_Enter>",  $self->{command})
+		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_d_y});
-
 
 	my $fs  = $win->Frame()->pack(-fill => 'x', -pady => 1);
 
@@ -82,7 +123,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
-	gui_widget::optmenu->open(
+	$self->{sc_obj} = gui_widget::optmenu->open(
 		parent  => $fs,
 		pack    => {-side => 'left'},
 		options =>
@@ -104,13 +145,27 @@ sub _new{
 	)->pack(
 		-side => 'left'
 	);
-
+	
+	$self->refresh_zoom;
 	$self->{win_obj} = $win;
 	return $self;
 }
 
+sub refresh_zoom{
+	my $self = shift;
+	if ($self->{check_zoom}) {
+		$self->{label_zoom}->configure(-state, 'normal');
+		$self->{entry_zoom}->configure(-state, 'normal');
+		$self->{sc_obj}->{win_obj}->configure(-state, 'disable');
+	} else {
+		$self->{label_zoom}->configure(-state, 'disable');
+		$self->{entry_zoom}->configure(-state, 'disable');
+		$self->{sc_obj}->{win_obj}->configure(-state, 'normal');
+	}
+}
+
 #----------------------#
-#   ÀßÄê¤Ø¤Î¥¢¥¯¥»¥µ   #
+#   è¨­å®šã¸ã®ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub params{
 	my $self = shift;
@@ -119,17 +174,27 @@ sub params{
 		d_y         => $self->y,
 		show_origin => $self->origin,
 		scaling     => $self->scale,
+		zoom        => $self->zoom,
 	);
+}
+
+sub zoom{
+	my $self = shift;
+	if ( $self->{check_zoom} ){
+		return gui_window->gui_jgn( $self->{entry_zoom}->get );
+	} else {
+		return 0;
+	}
 }
 
 sub x{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_d_x}->get );
+	return gui_window->gui_jgn( $self->{entry_d_x}->get );
 }
 
 sub y{
 	my $self = shift;
-	return gui_window->gui_jg( $self->{entry_d_y}->get );
+	return gui_window->gui_jgn( $self->{entry_d_y}->get );
 }
 
 sub origin{
