@@ -43,6 +43,72 @@ sub start{
 			}
 		}
 	)->pack(-side => 'left',-padx => 2);
+
+	return 1 if $::config_obj->web_if;
+
+	# read coordinates
+	return 0 unless -e $self->{coord};
+	@{$self->{coordi}} = ();
+	open(my $fh, '<:encoding(utf8)', $self->{coord}) or die("file: $self->{coord}");
+	while (<$fh>) {
+		chomp;
+		push @{$self->{coordi}}, [split /\t/, $_];
+	}
+	close $fh;
+	
+	# make clickable image map
+	my $yo   = -10;
+	my $yax  = 14;
+	my $ymag = 0.999;
+	my $th   = 11;
+	$yax = $yax * $self->{img_width} / 480;
+	$yo  = $yo * $self->{img_width} / 480;
+	$th  = $th * $self->{img_width} / 480;
+	
+	$self->{coordin} = {};
+	foreach my $i (@{$self->{coordi}}){
+		my $x1 = $self->{img_width} * 1 / 6;
+		my $x2 = $self->{img_width} * $i->[1] ;
+		my $y1 = ( $self->{img_height} - $yax) * $ymag * $i->[2] + $yo + $th;
+		my $y2 = ( $self->{img_height} - $yax) * $ymag * $i->[2] + $yo - $th;
+		
+		$x1 = int($x1);
+		$x2 = int($x2);
+		$y1 = int($y1);
+		$y2 = int($y2);
+		
+		$y1 = 0 if $y1 < 0;
+		$y2 = 0 if $y2 < 0;
+		
+		my $id = $self->{canvas}->createRectangle(
+			$x1,$y1, $x2, $y2,
+			-outline => ""
+		);
+		
+		$self->{canvas}->bind(
+			$id,
+			"<Enter>",
+			sub { $self->decorate($id); }
+		);
+		$self->{canvas}->bind(
+			$id,
+			"<Button-1>",
+			sub { $self->show_kwic($id); }
+		);
+		$self->{canvas}->bind(
+			1,
+			"<Button-1>",
+			sub { $self->undecorate; }
+		);
+		
+		$self->{coordin}{$id} = {
+			'x1' => $x1,
+			'x2' => $x2,
+			'y1' => $y1,
+			'y2' => $y2,
+			'name' => $i->[0],
+		};
+	}
 }
 
 sub end{

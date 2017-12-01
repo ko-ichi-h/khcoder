@@ -311,6 +311,15 @@ if (
 	) or return 0;
 	$plot1->rotate_cls if $old_simple_style;
 
+	# write coordinates to a file
+	my $csv;
+	unless ($old_simple_style) {
+		$csv = $::project_obj->file_TempCSV;
+		$::config_obj->R->send("
+			write.table(coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
+		");
+	}
+
 	# heights
 	foreach my $i ('last','first','all'){
 		$merges->{0}{$i} = kh_r_plot->new(
@@ -339,6 +348,7 @@ if (
 		#no_geometry => 1,
 		plot_size   => $args{plot_size},
 		merges      => $merges,
+		coord       => $csv,
 	);
 
 	return 1;
@@ -735,8 +745,16 @@ for (i in 1:1000){
 }
 
 p <- p + coord_flip()
-p <- p + scale_x_reverse( expand = c(0.01,0.01), breaks = NULL )
-p <- p + scale_y_continuous( limits=c(y_min,y_max), breaks=c(0,b1/2,b1) )
+p <- p + scale_x_reverse(
+	expand = c(0,0),
+	breaks = NULL,
+	limits=c( length(ddata$labels$text) + 0.5 , 1 - 0.5 )
+)
+p <- p + scale_y_continuous(
+	limits=c(y_min,y_max),
+	breaks=c(0,b1/2,b1),
+	expand = c(0.02,0.02)
+)
 
 p <- p + theme(
 	axis.title.y = element_blank(),
@@ -796,7 +814,7 @@ if (show_bar == 1){
 	)
 	p2 <- p2 + coord_flip()
 	p2 <- p2 + scale_y_reverse( expand = c(0,0))
-	p2 <- p2 + scale_x_discrete( expand = c(0.005,0.005) )
+	p2 <- p2 + scale_x_discrete( expand = c(0,0) )
 	p2 <- p2 + theme(
 		axis.title.y     = element_blank(),
 		axis.title.x     = element_blank(),
@@ -811,7 +829,7 @@ if (show_bar == 1){
 
 	margin <- 0.002 * nrow(d) + 0.00001 * nrow(d)^2 - 0.12
 	p2 <- p2 + theme(
-		plot.margin = unit(c(margin,-0.75,margin,0), "lines")
+		plot.margin = unit(c(0.25,0,0.25,0), "lines") # r: -0.75
 	)
 
 	grid.newpage()
@@ -835,6 +853,15 @@ if (
 }
 
 detach("package:ggdendro", unload=T)
+
+# for clickable image map
+exp <- (y_max - y_min ) * 0.02
+coord <- cbind(
+	(1 / 6 + 5 / 6 * -1 * (y_min - exp) / ( (y_max + exp) - (y_min - exp) )) * 1.03,
+	1:length(ddata$labels$text) / length(ddata$labels$text)
+)
+rownames(coord) <-
+	labels[ as.numeric( as.vector( ddata$labels$text ) ) ]
 
 ';
 
