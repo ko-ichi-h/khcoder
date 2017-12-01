@@ -47,6 +47,7 @@ sub start{
 	return 1 if $::config_obj->web_if;
 
 	# read coordinates
+	return 0 unless defined($self->{coord});
 	return 0 unless -e $self->{coord};
 	@{$self->{coordi}} = ();
 	open(my $fh, '<:encoding(utf8)', $self->{coord}) or die("file: $self->{coord}");

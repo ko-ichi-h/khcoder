@@ -419,7 +419,7 @@ sub rotate_cls{
 		$p->Crop(geometry=> "$self->{height}x$scale_height+0+0");
 		
 		# 本体切り出し
-		print "$temp\n";
+		#print "$temp\n";
 		$p->Read( $::config_obj->uni_path( $temp ) );
 		unless ($p->[1]){
 			warn("Could not rotate the dendrogram: $!");
