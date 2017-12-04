@@ -66,6 +66,9 @@ sub start{
 	$yo  = $yo * $self->{img_width} / 480;
 	$th  = $th * $self->{img_width} / 480;
 	
+	# adjustments for font size (dpi value)
+	$yax = $yax * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
+	
 	$self->{coordin} = {};
 	foreach my $i (@{$self->{coordi}}){
 		my $x1 = $self->{img_width} * 1 / 6;
