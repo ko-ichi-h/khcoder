@@ -756,6 +756,7 @@ plot(
 	det[,"height"],
 	type = "b",
 	pch  = p_type,
+	bty = "l",
 	xlab = paste("'
 	.kh_msg->pget('gui_window::word_cls->agglomer') # クラスター併合の段階
 	.'",str_xlab,sep = ""),
