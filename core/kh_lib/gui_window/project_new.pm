@@ -135,6 +135,11 @@ sub _new{
 		-font => "TKFN",
 		-command => sub{$self->_make_new;}
 	)->pack(-side => 'right');
+	
+	#SCREEN Plugin
+	use screen_code::rde_newproject_button;
+	&screen_code::rde_newproject_button::add_button($self,$mw);
+	#SCREEN Plugin
 
 	# ENTRYのバインド
 	$e1->DropSite(

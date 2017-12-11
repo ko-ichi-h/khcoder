@@ -163,6 +163,10 @@ sub make{
 		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
+		#SCREEN Plugin
+		use screen_code::rde_menu;
+		&screen_code::rde_menu::add_menu($self,$f,\@menu0);
+		#SCREEN Plugin
 
 		$self->{m_b2_datacheck} = $f->command(
 				-label => kh_msg->get('check'),
