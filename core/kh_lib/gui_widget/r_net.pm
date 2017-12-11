@@ -139,7 +139,7 @@ sub _new{
 		variable => \$self->{method_coef},
 	);
 	
-	if ($self->{from} eq 'selected_netgraph') {
+	if ( defined($self->{from}) && $self->{from} eq 'selected_netgraph') {
 		$method_coef_wd->configure(-state => 'disabled');
 	}
 	
