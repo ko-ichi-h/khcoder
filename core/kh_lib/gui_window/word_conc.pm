@@ -173,7 +173,7 @@ sub _new{
 		-width => 2,
 		-background => 'white'
 	)->pack(-side => 'left');
-	$e3->insert('end','20');
+	$e3->insert('end','24');
 	$self->config_entry_focusin($e3);
 
 	$fra4h->Label(

@@ -1,5 +1,8 @@
 package mysql_conc;
+
 use strict;
+use utf8;
+
 use mysql_exec;
 use mysql_a_word;
 
@@ -13,7 +16,7 @@ if ($::config_obj->web_if){
 }
 
 #----------------------------#
-#   ½é´ü²½¡¦¥³¥ó¥¹¥È¥é¥¯¥È   #
+#   åˆæœŸåŒ–ãƒ»ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ãƒˆ   #
 #----------------------------#
 
 sub initialize{
@@ -147,7 +150,7 @@ sub _hyoso_ext{
 		)  TYPE = HEAP
 	",1);
 	
-	# ¸ì¤¬»ØÄê¤µ¤ì¤Æ¤¤¤ë¾ì¹ç
+	# èªãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆ
 	if (length($self->{query})){
 		$r = mysql_a_word->new(
 			genkei   => $self->{query},
@@ -168,7 +171,7 @@ sub _hyoso_ext{
 			return 0;
 		}
 	}
-	# ÉÊ»ì¡¦³èÍÑ·Á¤Ç¤Î»ØÄê
+	# å“è©ãƒ»æ´»ç”¨å½¢ã§ã®æŒ‡å®š
 	elsif ( ( length($self->{katuyo}) ) || ( length($self->{hinshi}) ) ){
 		my $sql = '';
 		$sql .= "INSERT INTO temp_conc_hyoso (id)\n";
@@ -196,7 +199,7 @@ sub _hyoso_ext{
 }
 
 #----------#
-#   ¸¡º÷   #
+#   æ¤œç´¢   #
 #----------#
 
 sub _find{
@@ -206,7 +209,7 @@ sub _find{
 
 	# print "\n1: Searching(1)...\n";
 
-	# Temp TableºîÀ®
+	# Temp Tableä½œæˆ
 	mysql_exec->drop_table("temp_conc");
 	mysql_exec->do("
 		create $temporary table temp_conc (
@@ -226,7 +229,7 @@ sub _find{
 		)  TYPE = HEAP
 	",1);
 
-	# ¸¡º÷¤·¤ÆÅêÆş
+	# æ¤œç´¢ã—ã¦æŠ•å…¥
 	my $sql = '';
 	$sql .= "INSERT INTO temp_conc\n";
 	$sql .= "(id, l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5)\n";
@@ -257,24 +260,24 @@ sub _find{
 }
 
 #----------------------------#
-#   ÄÉ²Ã¾ò·ï¤Ë¤è¤ë¹Ê¤ê¹ş¤ß   #
+#   è¿½åŠ æ¡ä»¶ã«ã‚ˆã‚‹çµã‚Šè¾¼ã¿   #
 #----------------------------#
 
 sub _tuika{
 	my $self = shift;
 	# print "\n1: Searching(2)...\n";
 	
-	# ¹Ê¤ê¹ş¤ß¤Î½àÈ÷
+	# çµã‚Šè¾¼ã¿ã®æº–å‚™
 	foreach my $i (1,2,3){
 		next unless $self->{tuika}{$i}{pos};
-		# ¥Æ¡¼¥Ö¥ë¤Î½àÈ÷
+		# ãƒ†ãƒ¼ãƒ–ãƒ«ã®æº–å‚™
 		mysql_exec->drop_table("temp_conc_hyoso_opt$i");
 		mysql_exec->do("
 			create table temp_conc_hyoso_opt$i(
 				id int primary key not null
 			)  TYPE = HEAP
 		",1);
-		# ¸ì¤¬»ØÄê¤µ¤ì¤Æ¤¤¤ë¾ì¹ç
+		# èªãŒæŒ‡å®šã•ã‚Œã¦ã„ã‚‹å ´åˆ
 		if ( length($self->{tuika}{$i}{query}) ){
 			my $r = mysql_a_word->new(
 				genkei   => $self->{tuika}{$i}{query},
@@ -293,7 +296,7 @@ sub _tuika{
 				mysql_exec->do($sql,1);
 			}
 		}
-		# ÉÊ»ì¡¦³èÍÑ·Á¤Ë¤è¤ë»ØÄê
+		# å“è©ãƒ»æ´»ç”¨å½¢ã«ã‚ˆã‚‹æŒ‡å®š
 		elsif (
 			   (length($self->{tuika}{$i}{katuyo}))
 			|| (length($self->{tuika}{$i}{hinshi}))
@@ -318,7 +321,7 @@ sub _tuika{
 		}
 	}
 	
-	# Temp TableºîÀ®
+	# Temp Tableä½œæˆ
 	mysql_exec->drop_table("temp_conc_old");
 	mysql_exec->do("ALTER TABLE temp_conc RENAME temp_conc_old",1);
 	mysql_exec->do("
@@ -390,7 +393,7 @@ sub _tuika{
 }
 
 #------------#
-#   ¥½¡¼¥È   #
+#   ã‚½ãƒ¼ãƒˆ   #
 #------------#
 
 sub _sort{
@@ -411,8 +414,8 @@ sub _sort{
 		$chk_dup{$args{$i}} = 1;
 	}
 	
-	if (@cols){                                   # ¥½¡¼¥È¤ò¹Ô¤¦¾ì¹ç
-		# ´ğËÜ·Á¤Î¥Æ¡¼¥Ö¥ë¤òºîÀ®
+	if (@cols){                                   # ã‚½ãƒ¼ãƒˆã‚’è¡Œã†å ´åˆ
+		# åŸºæœ¬å½¢ã®ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’ä½œæˆ
 		mysql_exec->drop_table("temp_conc_fs");
 		my $sql = '';
 		my $sql_temp0 = '';
@@ -428,7 +431,7 @@ sub _sort{
 		$sql .= "\n) TYPE = HEAP";
 		mysql_exec->do($sql,1);
 		
-		# ´ğËÜ·Á¤òÅêÆş
+		# åŸºæœ¬å½¢ã‚’æŠ•å…¥
 		my $join_count = 0;
 		$sql = '';
 		$sql .= "INSERT INTO temp_conc_fs (id, $sql_temp0 )\n";
@@ -458,13 +461,13 @@ sub _sort{
 		#$sql .= ")";
 		#mysql_exec->do($sql,1);
 		
-		# Í½È÷Åª¤Ê¥½¡¼¥È
+		# äºˆå‚™çš„ãªã‚½ãƒ¼ãƒˆ
 		my ($group, $n);
 		foreach my $i ('sort1','sort2','sort3'){
 			mysql_exec->drop_table("temp_conc_$i");
 			last if $args{$i} eq "id";
 			
-			my $sql = '';                                       # ¥Æ¡¼¥Ö¥ëºîÀ®
+			my $sql = '';                                       # ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 			$sql .= "create $temporary table temp_conc_$i (\n";
 			#$sql .= "create table temp_conc_$i (\n";
 			$sql .= "	id int auto_increment primary key not null,\n";
@@ -481,7 +484,7 @@ sub _sort{
 			$sql .= "\n)";
 			mysql_exec->do($sql,1);
 			
-			$sql = '';                                          # ÁŞÆş
+			$sql = '';                                          # æŒ¿å…¥
 			$sql .= "INSERT INTO temp_conc_$i ( ";
 			for (my $count = 0; $count < $n; ++$count){
 				$sql .= "temp$count, ";
@@ -493,7 +496,7 @@ sub _sort{
 			$sql .= "ORDER BY count DESC, $args{$i}";
 			mysql_exec->do($sql,1);
 			
-			$sql = '';                                          # ¥¤¥ó¥Ç¥Ã¥¯¥¹
+			$sql = '';                                          # ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 			$sql .= "ALTER TABLE temp_conc_$i ADD INDEX index1 (hyoso_id,";
 			if ($n){
 				my $l = $n - 1;
@@ -510,7 +513,7 @@ sub _sort{
 			++$n;
 		}
 		
-		# ºÇ½ª¥½¡¼¥È
+		# æœ€çµ‚ã‚½ãƒ¼ãƒˆ
 		mysql_exec->drop_table("temp_conc_sort");
 		mysql_exec->do("
 			create $temporary table temp_conc_sort (
@@ -550,7 +553,7 @@ sub _sort{
 		mysql_exec->do($sql,1);
 
 	} else {
-		# ºÇ½ª¥½¡¼¥È¡¦¥Æ¡¼¥Ö¥ë
+		# æœ€çµ‚ã‚½ãƒ¼ãƒˆãƒ»ãƒ†ãƒ¼ãƒ–ãƒ«
 		mysql_exec->drop_table("temp_conc_sort");
 		mysql_exec->do("
 			create $temporary table temp_conc_sort (
@@ -595,17 +598,17 @@ sub _sort{
 }
 
 #--------------------------------#
-#   ¥³¥ó¥³¡¼¥À¥ó¥¹¡¦¥é¥¤¥óºîÀ®   #
+#   ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹ãƒ»ãƒ©ã‚¤ãƒ³ä½œæˆ   #
 #--------------------------------#
 
-sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
+sub _format{                                      # çµæœã®å‡ºåŠ›
 	my $self = shift;
 	my $start = shift;
 	
 	# print "3: Formating...\n";
 	my $spacer = $::project_obj->spacer;
 	
-	# ½ĞÎÏ¥ê¥¹¥ÈºîÀ®¡ÊÃæ±û¤ÎID¡Ë;
+	# å‡ºåŠ›ãƒªã‚¹ãƒˆä½œæˆï¼ˆä¸­å¤®ã®IDï¼‰;
 	my $st1 = mysql_exec->select("
 		SELECT temp_conc.id
 		FROM   temp_conc,temp_conc_sort
@@ -619,7 +622,7 @@ sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
 	
 	#print "mysql_conc::_format, dlist: @{$dlist}\n";
 	
-	# ¥Ç¡¼¥¿¤òMySQL¤«¤é¼è¤ê½Ğ¤¹
+	# ãƒ‡ãƒ¼ã‚¿ã‚’MySQLã‹ã‚‰å–ã‚Šå‡ºã™
 	my $sql = '';
 	$sql .= "SELECT hyosobun.id, hyoso.name, hyosobun.dan_id\n";
 	$sql .= "FROM   hyosobun, hyoso\n";
@@ -643,15 +646,16 @@ sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
 		$res->{$i->[0]}[1] = $i->[2];
 	}
 	
-	# ¥Õ¥©¡¼¥Ş¥Ã¥È
+	# ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+	my $fix_cell = $::project_obj->status_from_table;
 	my $return;
 	$n = 0;
 	foreach my $i (@{$dlist}){
-		# Ãæ±û
+		# ä¸­å¤®
 		$return->[$n][3] = $i->[0];
 		$return->[$n][1] = $res->{$i->[0]}[0];
 		
-		# º¸Â¦
+		# å·¦å´
 		my $l_dan = 0;
 		for (my $m = $i->[0] - $self->{length}; $m < $i->[0]; ++$m){
 			next unless defined($res->{$m}[0]);
@@ -673,9 +677,13 @@ sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
 		) {
 			$return->[$n][0] .= $::config_obj->kaigyo_kigou;
 		}
+		if ($fix_cell) {
+			$return->[$n][0] =~ s/<h5>$spacer---cell---$spacer<\/h5>/â™¢/go;
+		}
+		
 		$l_dan = $res->{$i->[0]}[1];
 		
-		# ±¦Â¦
+		# å³å´
 		for (my $m = $i->[0] + 1; $m <= $i->[0] + $self->{length}; ++$m){
 			next unless defined($res->{$m}[0]);
 			if ( 
@@ -689,6 +697,9 @@ sub _format{                                      # ·ë²Ì¤Î½ĞÎÏ
 			$return->[$n][2] .= $spacer if length($return->[$n][2]);
 			$return->[$n][2] .= $res->{$m}[0];
 		}
+		if ($fix_cell) {
+			$return->[$n][2] =~ s/<h5>$spacer---cell---$spacer<\/h5>/â™¢/go;
+		}
 		++$n;
 	}
 	return $return;
@@ -698,7 +709,7 @@ sub save_all{
 	my $self = shift;
 	my %args = @_;
 	
-	# Ê¸»úÎó¥Ç¡¼¥¿À°Íı
+	# æ–‡å­—åˆ—ãƒ‡ãƒ¼ã‚¿æ•´ç†
 	my @result;
 	my $start = 1;
 	my $max   = $self->_count;
@@ -708,7 +719,7 @@ sub save_all{
 		$start += 200;
 	}
 	
-	# ID¾ğÊó¤ÎÀ°Íı
+	# IDæƒ…å ±ã®æ•´ç†
 	my $st1 = mysql_exec->select("
 		SELECT h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt,temp_conc.id
 		FROM   temp_conc,temp_conc_sort,hyosobun
@@ -719,7 +730,7 @@ sub save_all{
 	",1)->hundle;
 	my $id = $st1->fetchall_arrayref;
 	
-	# ½ĞÎÏ
+	# å‡ºåŠ›
 	use File::BOM;
 	open (KWICO, '>:encoding(utf8):via(File::BOM)', $args{path}) or 
 		gui_errormsg->open(
@@ -743,14 +754,14 @@ sub save_all{
 
 
 #------------------------#
-#   ¥³¥í¥±¡¼¥·¥ç¥ó½¸·×   #
+#   ã‚³ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³é›†è¨ˆ   #
 #------------------------#
 
 sub coloc{
 	my $self = shift;
 	my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5');
 	
-	# Îó¤´¤È¤Ë¥«¥¦¥ó¥È
+	# åˆ—ã”ã¨ã«ã‚«ã‚¦ãƒ³ãƒˆ
 	my %words;
 	my $res_atom;
 	foreach my $i (@cols){
@@ -771,7 +782,7 @@ sub coloc{
 		}
 	}
 	
-	# ²¾¥Æ¡¼¥Ö¥ëºîÀ®
+	# ä»®ãƒ†ãƒ¼ãƒ–ãƒ«ä½œæˆ
 	mysql_exec->drop_table("temp_conc_coloc");
 	my $sql = '';
 	$sql .= "create $temporary table temp_conc_coloc(\n";
@@ -783,7 +794,7 @@ sub coloc{
 	$sql .= ") TYPE = HEAP";
 	mysql_exec->do($sql);
 	
-	# À°·Á¤·¤Æ²¾¥Æ¡¼¥Ö¥ë¤ËÅêÆş
+	# æ•´å½¢ã—ã¦ä»®ãƒ†ãƒ¼ãƒ–ãƒ«ã«æŠ•å…¥
 	my $value; my $n;
 	foreach my $i (keys %words){
 		$value .= "($i,";
@@ -802,7 +813,7 @@ sub coloc{
 	}
 	&coloc_insert($value);
 	
-	# ¥Æ¡¼¥Ö¥ëÅêÆşÍÑ¥ë¡¼¥Á¥ó
+	# ãƒ†ãƒ¼ãƒ–ãƒ«æŠ•å…¥ç”¨ãƒ«ãƒ¼ãƒãƒ³
 	sub coloc_insert{
 		my @cols = ('l5','l4','l3','l2','l1','r1','r2','r3','r4','r5');
 		my $value = shift;
@@ -823,13 +834,13 @@ sub format_coloc{
 	my $self = shift;
 	my %args = @_;
 	
-	# Áí¸ì¿ô
+	# ç·èªæ•°
 	my $total = mysql_words->num_all;
 
-	# Node word¤Î½Ğ¸½¿ô
+	# Node wordã®å‡ºç¾æ•°
 	my $w1_freq = $self->_count;
 	
-	# ¶¦µ¯¿ô¤ÎÉ½¸½
+	# å…±èµ·æ•°ã®è¡¨ç¾
 	my $joint;
 	my $j_f;
 	my $span = 0;
@@ -933,7 +944,7 @@ sub format_coloc{
 
 
 #------------#
-#   ¤½¤ÎÂ¾   #
+#   ãã®ä»–   #
 #------------#
 
 sub _count{
