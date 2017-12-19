@@ -4,7 +4,7 @@
 # またファイル名はフルパスで指定。
 
 # 共立出版の「Useful R」シリーズ第10巻『Rのパッケージおよびツールの作成と応用』
-# に本プラグインの解説があります。
+# に本プラグインの解説があります。http://amzn.to/2AYS5dI
 
 # プラグインの設定
 package auto_run;
@@ -16,7 +16,7 @@ sub plugin_config{
 		
 		# ファイル名指定
 		my $file_target = $ARGV[1];
-		my $file_save   = 'C:\khcoder\net.png';
+		my $file_save   = 'net.png';
 
 		# プロジェクト新規作成
 		my $new = kh_project->new(
@@ -27,6 +27,8 @@ sub plugin_config{
 
 		# 新規作成したプロジェクトを開く
 		$new->open or die("could not open the project\n");
+		$::project_obj->morpho_analyzer_lang( 'jp' );
+		$::project_obj->morpho_analyzer( 'chasen' );
 
 		# 前処理実行
 		my $wait_window = gui_wait->start;
