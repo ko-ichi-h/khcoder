@@ -1165,15 +1165,35 @@ if ( exists("saving_eps") ){
 #  Edges  #
 
 if (com_method == "cor"){ # cor
-	p <- p + geom_edges(
-		aes(
-			color = edge_pos
-		),
-		size = 0.6,
-	)
-	myPalette <- colorRampPalette(
-		rev( brewer.pal(9, "RdYlBu") )
-	)(100) #Spectral
+
+	if ( gray_scale == 1) {
+		myPalette <- gray( seq(1, 0, length.out=100) )
+		gray_color_n <- "black"
+		if (alpha_value < 0.8) {
+			alpha_value <- 0.8
+		}
+		p <- p + geom_edges(
+			color = "black",
+			size = 1.5
+		)
+		p <- p + geom_edges(
+			aes(
+				color = edge_pos
+			),
+			size = 1,
+		)
+	} else {
+		myPalette <- colorRampPalette(
+			rev( brewer.pal(9, "RdYlBu") )
+		)(100) #Spectral
+		p <- p + geom_edges(
+			aes(
+				color = edge_pos
+			),
+			size = 0.6,
+		)
+	}
+
 	p <- p + scale_color_gradientn(
 		colours = myPalette,
 		#limits = c( min(edge_pos), limv ),
@@ -1457,49 +1477,12 @@ if ( (is.null(target_ids) == FALSE) ) {
 #}
 
 if (
-	( com_method == "com-b" || com_method == "com-g" || com_method == "com-r")
+	( com_method == "com-b" || com_method == "com-g" || com_method == "com-r" || com_method == "cor")
 	&& gray_scale == 1
 	&& smaller_nodes == 0
 ){
-	theta <- seq(0, 2*pi, length.out=32)
-	xo <- 0.8 / 200
-	yo <- 0.8 / 200
-	for(i in theta) {
-		df <- data.frame(
-			x = lay_f_df$x + cos(i)*xo,
-			y = lay_f_df$y + sin(i)*yo,
-			lab = lay_f_df$lab
-		)
-		p <- p + geom_text( 
-			data = df,
-			aes(
-				x     = x,
-				y     = y,
-				xend  = x,
-				yend  = y,
-				label =lab
-			),
-			colour="white",
-			size=4,
-			hjust = hjust,
-			nudge_x = nudge,
-			nudge_y = nudge,
-			family=font_fam,
-			na.rm = T,
-			#alpha = 0.8,
-			fontface=face
-		)
-	}
-}
-
-if (
-	   (com_method == "twomode_c" || com_method == "twomode_g")
-	&& (smaller_nodes == 1)
-){
-	lay_f_df_bak <- lay_f_df[var_select,]
-	lay_f_df$lab[var_select] <- NA
-	p <- p + geom_text(
-		data = lay_f_df_bak,
+	p <- p + geom_label(
+		data = lay_f_df,
 		aes(
 			x = x,
 			y = y,
@@ -1508,32 +1491,35 @@ if (
 			label = lab
 		),
 		size=4,
-		#hjust = hjust,
-		#nudge_x = nudge,
-		nudge_y = nudge * 1.65,
+		hjust = hjust,
+		nudge_x = nudge,
+		nudge_y = nudge * 1.25,
+		family=font_fam,
+		na.rm = T,
+		label.size = NA,
+		label.padding = unit(0.2, "lines"),
+		label.r = unit(0.1, "lines"),
+		fontface=face
+	)
+} else {
+	p <- p + geom_text(
+		data = lay_f_df,
+		aes(
+			x = x,
+			y = y,
+			xend = x,
+			yend = y,
+			label = lab
+		),
+		size=4,
+		hjust = hjust,
+		nudge_x = nudge,
+		nudge_y = nudge * 1.25,
 		family=font_fam,
 		na.rm = T,
 		fontface=face
 	)
 }
-
-p <- p + geom_text(
-	data = lay_f_df,
-	aes(
-		x = x,
-		y = y,
-		xend = x,
-		yend = y,
-		label = lab
-	),
-	size=4,
-	hjust = hjust,
-	nudge_x = nudge,
-	nudge_y = nudge * 1.25,
-	family=font_fam,
-	na.rm = T,
-	fontface=face
-)
 
 #---------------#
 #  Edge labels  #
@@ -1711,7 +1697,7 @@ p <- p + theme_blank(
 	base_family  = font_fam
 )
 
-if (com_method == "cor"){ # cor
+if (com_method == "cor" && gray_scale == 0){ # cor
 	if ( cor_var_darker == 1 ){
 		col_backg <- "gray50"
 	} else {
@@ -1757,7 +1743,7 @@ if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray30"
 		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
 	}
-	if ( com_method == "cor" ){
+	if ( com_method == "cor" && gray_scale == 0){
 		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray40"
 		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.1
 	}

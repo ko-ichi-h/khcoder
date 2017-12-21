@@ -737,7 +737,7 @@ gui_widget::r_net:
     smaller:                  'Smaller Nodes'
     min_sp_tree:              'Highlight the minimum spanning tree'
     min_sp_tree_only:         'Draw the minimum spanning tree only'
-    gray_scale:               'Grayscale (centralities & communities)'
+    gray_scale:               'Grayscale'
     fix_lab:                  'Avoid overlapping of labels'
     view_coef:                Show coef.
     cor_var:                  'Color: correlation with variables / position'

@@ -91,7 +91,7 @@ gui_widget::r_net:
   e_top_n: 绘图数
   filter_edges: 帅选绘图的共现关系（edge）
   fix_lab: 为了标签不重叠对位置进行调整
-  gray_scale: 用灰度等级来表示(中心性和副图表)
+  gray_scale: 用灰度等级来表示
   min_sp_tree: 强调表示最小生成树
   min_sp_tree_only: 只绘制最小生成树
   or_more: 以上

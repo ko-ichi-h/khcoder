@@ -732,7 +732,7 @@ gui_widget::r_net:
     smaller:                  '小さめの円ですべての語を描画'
     min_sp_tree:              '最小スパニング・ツリーを強調表示'
     min_sp_tree_only:         '最小スパニング・ツリーだけを描画'
-    gray_scale:               'グレースケールで表現（中心性・サブグラフ）'
+    gray_scale:               'グレースケールで表現'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
     view_coef:                '係数を表示'
     cor_var:                  '外部変数・見出し・位置との相関をカラー表示：'

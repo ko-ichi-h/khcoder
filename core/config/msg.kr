@@ -91,7 +91,7 @@ gui_widget::r_net:
   e_top_n: '묘화수'
   filter_edges: 묘화하는 공기 관계(edge) 한정
   fix_lab: 라벨이 겹치지 않도록 위치 조정
-  gray_scale: 그레이 스케일로 표현(중심성/서브그래프)
+  gray_scale: 그레이 스케일로 표현
   min_sp_tree: 최소 스패닝 트리를 강조 표시
   min_sp_tree_only: 최소 스패닝 트리만 묘화
   or_more: 이상

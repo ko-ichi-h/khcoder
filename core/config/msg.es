@@ -730,7 +730,7 @@ gui_widget::r_net:
     smaller:                  'Nodos más pequeños'
     min_sp_tree:              'Destacar el árbol recubridor mínimo'
     min_sp_tree_only:         'Dibujar solo el árbol recubridor mínimo'
-    gray_scale:               'Escala de grises (centralidades & comunalidades)'
+    gray_scale:               'Escala de grises'
     fix_lab:                  'Evitar superposición de etiquetas'
 gui_window::word_netgraph:
     u_w:                      'Seleccionar unidad & palabras'
