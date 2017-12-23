@@ -6,7 +6,6 @@ use utf8;
 use Tk;
 use Tk::Tree;
 use Tk::Balloon;
-#use NKF;
 
 use mysql_words;
 use gui_widget::optmenu;
@@ -231,6 +230,7 @@ sub refresh{
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
 			-height           => 20,
+			-browsecmd        => sub {$self->_delayed_color;},
 		)->pack(-fill =>'both',-expand => 'yes');
 		$self->list->header('create',0,-text => '#');
 		$self->list->header('create',1,-text => kh_msg->get('word'));#$self->gui_jchar('抽出語')
@@ -257,6 +257,7 @@ sub refresh{
 			-highlightthickness => 0,
 			-selectmode       => 'extended',
 			-height           => 20,
+			-browsecmd        => sub {$self->_delayed_color;},
 		)->pack(-fill =>'both',-expand => 'yes');
 		$self->list->header('create',0,-text => '#');
 		$self->list->header('create',1,-text => kh_msg->get('morph'));#$self->gui_jchar('形態素')
@@ -267,6 +268,107 @@ sub refresh{
 	$self->list->update;
 }
 
+
+sub _delayed_color{
+	my $self = shift;
+	
+	my @selection = $self->list->info('selection');
+	my $current = $selection[0];
+	my $cn = @selection;
+
+	$self->win_obj->after(
+		80,
+		sub{ $self->_delayed_color_exe($current, $cn) }
+	);
+}
+
+my $nnn = 0;
+
+my $last_chk = -1;
+my $last_chkn = -1;
+
+sub _delayed_color_exe{
+	my $self   = shift;
+	my $chk    = shift;
+	my $chk_n  = shift;
+	
+	return 0 unless defined($chk);
+	
+	my @selection = $self->{list}->info('selection');
+	my $current = $selection[0];
+	my $cn = @selection;
+	
+	if (
+		   ( $chk      == $current && $chk_n     == $cn )
+		&! ( $last_chk == $current && $last_chkn == $cn )
+	){
+		$last_chk = $current;
+		$last_chkn = $cn;
+		
+		my %chk = ();
+		foreach my $i (@selection){
+			$chk{$i} = 1;
+		}
+		
+		my $r = 0;
+		while ( $self->list->info('exists', $r) ){
+			
+			
+			# parents
+			my $c1 = $self->list->itemCget($r, 1, -window);
+			if ($chk{$r}) {
+				$c1->configure(-state => 'active');
+			} else {
+				$c1->configure(-state => 'normal');
+			}
+			
+			# children
+			my @children = $self->list->info('children', $r);
+			foreach my $i (@children){
+				++$r;
+				next if $self->list->info('hidden', $i);
+				
+				my $c2 = $self->list->itemCget($i, 2, -window);
+				if ($chk{$i}) {
+					$c2->configure(-state => 'active');
+				} else {
+					$c2->configure(-state => 'normal');
+				}
+			}
+			++$r;
+		}
+		#$self->list->anchorClear;
+		
+		print "col_fix: $chk, $chk_n, $nnn\n";
+		++$nnn;
+		
+		$self->win_obj->after(
+			333,
+			sub{ $self->_delayed_anchor_exe($current, $cn) }
+		);
+		
+	}
+}
+
+sub _delayed_anchor_exe{
+	my $self   = shift;
+	my $chk    = shift;
+	my $chk_n  = shift;
+
+	return 0 unless defined($chk);
+	
+	my @selection = $self->{list}->info('selection');
+	my $current = $selection[0];
+	my $cn = @selection;
+
+	if (
+		$chk == $current && $chk_n == $cn 
+	){
+		$self->list->anchorClear;
+		print "anchor_fix: $chk, $chk_n\n";
+	}
+
+}
 
 #----------#
 #   検索   #
@@ -312,7 +414,7 @@ sub search{
 	my $left = $self->list->ItemStyle(
 		'window',
 		-anchor => 'w',
-		-pady => 2,
+		-pady => 0,
 		-padx => 5,
 	);
 	
@@ -381,6 +483,7 @@ sub search{
 						-text => $h,
 						-font       => "TKFN",
 						-foreground => 'blue',
+						-activeforeground => 'blue',
 						#-cursor     => 'hand2',
 						-anchor     => 'w',
 						-background => 'white',
@@ -403,13 +506,13 @@ sub search{
 					$c->bind(
 						"<Enter>",
 						sub {
-							$c->configure(-foreground => 'red');
+							$c->configure(-foreground => 'red',-activeforeground => 'red');
 						}
 					);
 					$c->bind(
 						"<Leave>",
 						sub {
-							$c->configure(-foreground => 'blue');
+							$c->configure(-foreground => 'blue',-activeforeground => 'blue');
 						}
 					);
 					$self->list->itemCreate(

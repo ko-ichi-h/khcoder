@@ -616,7 +616,7 @@ sub display{
 		-font => "TKFN",
 		-anchor => 'e',
 		-background => 'white',
-		-padx => 7,
+		-padx => 5,
 	);
 	my $center_style = $self->list->ItemStyle(
 		'text',
@@ -624,14 +624,14 @@ sub display{
 		-font => "TKFN",
 		-background => 'white',
 		-foreground => 'red',
-		-padx => 7,
+		-padx => 5,
 	);
 	my $left_style = $self->list->ItemStyle(
 		'text',
 		-font => "TKFN",
 		-anchor => 'w',
 		-background => 'white',
-		-padx => 7,
+		-padx => 5,
 	);
 	
 	my $row = 0;

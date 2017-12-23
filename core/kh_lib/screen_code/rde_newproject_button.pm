@@ -64,7 +64,9 @@ sub add_button{
 						$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
 						if ($plugin_rtn != 0) {
 							open($DATAFILE, "<", $file_option) if -f $file_option;
-							if (my $line = <$DATAFILE>) {
+							#if (my $line = <$DATAFILE>) { # higuchi
+							my $line = <$DATAFILE>;        # higuchi
+							if ( defined($line) ) {        # higuchi
 								$self->{column} = $line;
 							}
 							$self->check_path($t);
@@ -86,7 +88,9 @@ sub add_button{
 						$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
 						if ($plugin_rtn != 0) {
 							open($DATAFILE, "<", $file_option) if -f $file_option;
-							if (my $line = <$DATAFILE>) {
+							#if (my $line = <$DATAFILE>) { # higuchi
+							my $line = <$DATAFILE>;        # higuchi
+							if ( defined($line) ) {        # higuchi
 								$self->{column} = $line;
 							}
 							$self->check_path($t);
