@@ -313,6 +313,7 @@ sub search{
 		'window',
 		-anchor => 'w',
 		-pady => 2,
+		-padx => 5,
 	);
 	
 	$self->list->delete('all');

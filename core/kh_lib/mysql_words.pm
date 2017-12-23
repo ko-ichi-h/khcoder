@@ -93,12 +93,13 @@ sub search{
 				push @{$result2}, $i;
 				
 				my $r = mysql_exec->select("      # 活用語を探す
-					SELECT hyoso.name, katuyo.name, hyoso.num
+					SELECT hyoso.name, katuyo.name, sum( hyoso.num ) as nn
 					FROM hyoso, katuyo
 					WHERE
 						    hyoso.katuyo_id = katuyo.id
 						AND hyoso.genkei_id = $id
-					ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('katuyo.name')
+					GROUP BY hyoso.name, hyoso.katuyo_id
+					ORDER BY nn DESC, ".$::project_obj->mysql_sort('katuyo.name')
 				,1)->hundle->fetchall_arrayref;
 				
 				my @katuyo = ();
@@ -121,7 +122,7 @@ sub search{
 					   $n > 0
 					&& (
 						   $n > 1                     # 活用形が複数ある
-						|| $katuyo[0]->[1] ne $i->[0] # 活用形が基本形と異なる
+						|! $katuyo[0]->[1] =~ /^$i->[0]$/i # 活用形が基本形と異なる
 					)
 					#&& $katuyo[0]->[2] ne '   .'     # 活用名が「.」でない
 				){

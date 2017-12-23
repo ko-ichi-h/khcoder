@@ -452,8 +452,8 @@ gui_window::main::menu:
   vars_heads: 외부 변수와 제목
   web: 최신 정보(Web)
   word_ass: 관련어 검색
-  word_freq: 추출어 리스트
-  word_search: 추출어 검색
+  word_freq: 추출어 리스트 (Excel)
+  word_search: 추출어 리스트
   words: 추출어
   words_cluster: 복합어 검출
   words_selection: 어휘 취사선택
@@ -974,7 +974,7 @@ gui_window::word_search:
   pos_conj: 품사/활용
   search: 검색
   view_conj: 활용형을 표시
-  win_title: 추출어 검색
+  win_title: 추출어 리스트
   word: 추출어
 gui_window::word_som:
   cluster: 배치

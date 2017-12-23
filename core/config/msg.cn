@@ -452,8 +452,8 @@ gui_window::main::menu:
   vars_heads: 外部变量和标题
   web: 最新信息（Web）
   word_ass: 搜索相关词汇
-  word_freq: 词频表
-  word_search: 搜索词汇
+  word_freq: 词频表 (Excel)
+  word_search: 词频表
   words: 词汇
   words_cluster: 检测复合词
   words_selection: 选择词汇的取舍
@@ -974,7 +974,7 @@ gui_window::word_search:
   pos_conj: 词类/活用
   search: 搜索
   view_conj: 显示活用形
-  win_title: 搜索词汇
+  win_title: 词频表
   word: 词汇
 gui_window::word_som:
   cluster: 配置

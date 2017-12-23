@@ -220,8 +220,8 @@ gui_window::main::menu:
     vars_heads:               Variables & Headings
     web:                      Latest Info (Web)
     word_ass:                 Word Association
-    word_freq:                Frequency List
-    word_search:              Search Words
+    word_freq:                Frequency List (Excel)
+    word_search:              Frequency List
     words:                    Words
     words_cluster:            Word Clusters
     words_selection:          Select Words to Analyze
@@ -555,7 +555,7 @@ gui_window::word_search:
     pos_conj:                 POS / Conj.
     search:                   Search
     view_conj:                View Conj.
-    win_title:                Search Words
+    win_title:                Word Frequency List
     word:                     Word
 gui_window::word_tf_df:
     df:                       Document Frequency

@@ -203,7 +203,6 @@ sub _new{
 		-itemtype         => 'text',
 		-font             => 'TKFN',
 		-columns          => 3,
-		-padx             => 2,
 		-background       => 'white',
 		-selectforeground   => $::config_obj->color_ListHL_fore,
 		-selectbackground   => $::config_obj->color_ListHL_back,
@@ -616,16 +615,25 @@ sub display{
 		'text',
 		-font => "TKFN",
 		-anchor => 'e',
-		-background => 'white'
+		-background => 'white',
+		-padx => 7,
 	);
 	my $center_style = $self->list->ItemStyle(
 		'text',
 		-anchor => 'c',
 		-font => "TKFN",
 		-background => 'white',
-		-foreground => 'red'
+		-foreground => 'red',
+		-padx => 7,
 	);
-
+	my $left_style = $self->list->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => 'white',
+		-padx => 7,
+	);
+	
 	my $row = 0;
 	foreach my $i (@{$result}){
 		$self->list->add($row,-at => "$row");
@@ -645,6 +653,7 @@ sub display{
 			$row,
 			2,
 			-text  => $self->gui_jchar($i->[2]),
+			-style => $left_style
 		);
 		++$row;
 	}
