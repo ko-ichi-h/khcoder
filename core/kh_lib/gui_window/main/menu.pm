@@ -262,6 +262,15 @@ sub make{
 			-tearoff=>'no'
 		);
 
+		$self->{t_word_search} = $f3->command(
+				-label => kh_msg->get('word_search'),#gui_window->gui_jchar('抽出語検索'),
+				-font => "TKFN",
+				-command => sub{
+					gui_window::word_search->open;
+				},
+				-state => 'disable'
+			);
+
 		$self->{t_word_list_cf} = $f3->command(
 				-label => kh_msg->get('word_freq'), #gui_window->gui_jchar('抽出語リスト'),
 				-font => "TKFN",
@@ -306,15 +315,6 @@ sub make{
 		push @menu1, 't_word_tf_df' if $::config_obj->R;
 
 		$f3->separator;
-
-		$self->{t_word_search} = $f3->command(
-				-label => kh_msg->get('word_search'),#gui_window->gui_jchar('抽出語検索'),
-				-font => "TKFN",
-				-command => sub{
-					gui_window::word_search->open;
-				},
-				-state => 'disable'
-			);
 
 		$self->{t_word_conc} = $f3->command(
 				-label => kh_msg->get('kwic'),#gui_window->gui_jchar('KWICコンコーダンス'),

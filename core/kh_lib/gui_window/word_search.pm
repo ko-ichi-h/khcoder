@@ -4,7 +4,7 @@ use vars qw($method $kihon $katuyo $filter);
 use strict;
 use utf8;
 use Tk;
-use Tk::HList;
+use Tk::Tree;
 use Tk::Balloon;
 #use NKF;
 
@@ -62,14 +62,14 @@ sub _new{
 		-text     => kh_msg->get('baseform'),#$self->gui_jchar('抽出語検索'),
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
-		-command  => sub{$self->refresh;}
+		-command  => sub{$self->refresh; $self->search;}
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
 		-text     => kh_msg->get('view_conj'),#$self->gui_jchar('活用形を表示'),
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
-		-command  => sub{$self->refresh;}
+		-command  => sub{$self->refresh; $self->search;}
 	)->pack(-side => 'left');
 
 	unless (defined($gui_window::word_search::katuyo)){
@@ -89,6 +89,7 @@ sub _new{
 				[kh_msg->get('and'), 'AND'], # $self->gui_jchar('AND検索')
 			],
 		variable => \$gui_window::word_search::method,
+		command => sub{$self->search;},
 	);
 
 	$self->{optmenu_bk} = gui_widget::optmenu->open(
@@ -103,6 +104,7 @@ sub _new{
 				[kh_msg->get('back') => 'k'] #$self->gui_jchar('後方一致')
 			],
 		variable => \$gui_window::word_search::s_mode,
+		command => sub{$self->search;},
 	);
 
 
@@ -116,13 +118,13 @@ sub _new{
 	my $hlist_fra = $fra5->Frame()->pack(-expand => 'y', -fill => 'both');
 
 	my $lis = $hlist_fra->Scrolled(
-		'HList',
+		'Tree',
 		-scrollbars       => 'osoe',
 		-header           => 1,
 		-itemtype         => 'text',
 		-font             => 'TKFN',
 		-columns          => 3,
-		-padx             => 2,
+		-padx             => 7,
 		-background       => 'white',
 		-selectforeground   => $::config_obj->color_ListHL_fore,
 		-selectbackground   => $::config_obj->color_ListHL_back,
@@ -130,7 +132,7 @@ sub _new{
 		-highlightthickness => 0,
 		-selectmode       => 'extended',
 		-command          => sub {$self->conc;},
-		#-height           => 20,
+		-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('抽出語')
@@ -213,14 +215,14 @@ sub refresh{
 		$self->list->destroy;
 		
 		$self->{list} = $self->list_f->Scrolled(
-			'HList',
+			'Tree',
 			-scrollbars       => 'osoe',
 			-header           => 1,
 			-itemtype         => 'text',
 			-font             => 'TKFN',
-			-columns          => 3,
+			-columns          => 4,
 			-indent           => 20,
-			-padx             => 2,
+			-padx             => 7,
 			-background       => 'white',
 			-selectforeground   => $::config_obj->color_ListHL_fore,
 			-selectbackground   => $::config_obj->color_ListHL_back,
@@ -228,35 +230,39 @@ sub refresh{
 			-highlightthickness => 0,
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
+			-height           => 20,
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => kh_msg->get('word'));#$self->gui_jchar('抽出語')
+		$self->list->header('create',0,-text => '#');
+		$self->list->header('create',1,-text => kh_msg->get('word'));#$self->gui_jchar('抽出語')
 		if ( $gui_window::word_search::katuyo ){
-			$self->list->header('create',1,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('品詞/活用')
+			$self->list->header('create',2,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('品詞/活用')
 		} else {
-			$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞')
+			$self->list->header('create',2,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞')
 		}
-		$self->list->header('create',2,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
+		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
 	} else {
 		$self->list->destroy;
 		$self->{list} = $self->list_f->Scrolled(
-			'HList',
+			'Tree',
 			-scrollbars       => 'osoe',
 			-header           => 1,
 			-itemtype         => 'text',
 			-font             => 'TKFN',
-			-columns          => 4,
-			-padx             => 2,
+			-columns          => 5,
+			-padx             => 7,
 			-background       => 'white',
 			-selectforeground   => $::config_obj->color_ListHL_fore,
 			-selectbackground   => $::config_obj->color_ListHL_back,
 			-selectborderwidth  => 0,
 			-highlightthickness => 0,
 			-selectmode       => 'extended',
+			-height           => 20,
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => kh_msg->get('morph'));#$self->gui_jchar('形態素')
-		$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞（茶筌）')
-		$self->list->header('create',2,-text => kh_msg->get('conj'));#$self->gui_jchar('活用')
-		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
+		$self->list->header('create',0,-text => '#');
+		$self->list->header('create',1,-text => kh_msg->get('morph'));#$self->gui_jchar('形態素')
+		$self->list->header('create',2,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞（茶筌）')
+		$self->list->header('create',3,-text => kh_msg->get('conj'));#$self->gui_jchar('活用')
+		$self->list->header('create',4,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
 	}
 	$self->list->update;
 }
@@ -294,35 +300,139 @@ sub search{
 		-font => "TKFN"
 	);
 	
+	my $numb_style_g = $self->list->ItemStyle(
+		'text',
+		-anchor => 'e',
+		-background => 'white',
+		-foreground => '#696969',
+		-selectforeground => '#696969',
+		-font => "TKFN"
+	);
+	
+	my $left = $self->list->ItemStyle(
+		'window',
+		-anchor => 'w',
+		-pady => 2,
+	);
+	
 	$self->list->delete('all');
 	my $row = 0;
+	my $num = 1;
 	my $last;
+	my $child_flag = 0;
 	foreach my $i (@{$result}){
 		my $cu;
+		my $col = 0;
+		
+		
+		# children (conjugated)
 		if ( $i->[0] eq 'katuyo' ){
 			$cu = $self->list->addchild($last);
 			shift @{$i};
+			++$child_flag;
+			$self->list->itemCreate(
+				$cu,
+				$col,
+				-text  => ' ',
+				#-style => $numb_style
+			);
+		
+		# parents (base form)
 		} else {
 			$cu = $self->list->add($row,-at => "$row");
 			$last = $cu;
+			$child_flag = 0;
+			
+			$self->list->itemCreate(
+				$cu,
+				$col,
+				-text  => $num,
+				#-style => $numb_style
+			);
+			++$num;
 		}
-		my $col = 0;
+		++$col;
+		
 		foreach my $h (@{$i}){
+			# numbers
 			if ($h =~ /^[0-9]+$/o && $col > 0){
+				my $s;
+				if ($child_flag){
+					$s = $numb_style_g;
+				} else {
+					$s = $numb_style;
+				}
+				
 				$self->list->itemCreate(
 					$cu,
 					$col,
 					-text  => $h,
-					-style => $numb_style
+					-style => $s
 				);
+			# text
 			} else {
-				$self->list->itemCreate($cu,$col,-text => $self->gui_jchar($h));
+				# clickable text
+				if (
+					   ( $col == 1 && $child_flag == 0 )
+					|| ( $col == 2 && $child_flag )
+				){
+					my $c = $self->list->Label(
+						-text => $h,
+						-font       => "TKFN",
+						-foreground => 'blue',
+						#-cursor     => 'hand2',
+						-anchor     => 'w',
+						-background => 'white',
+						-pady       => 0,
+						-activebackground => $::config_obj->color_ListHL_back,
+					);
+					my $r;
+					if ($child_flag == 0){
+						$r = $row;
+					} else {
+						my $c = $child_flag - 1;
+						$r = "$last.$c";
+					}
+					$c->bind(
+						"<Button-1>",
+						sub {
+							$self->conc($r);
+						}
+					);
+					$c->bind(
+						"<Enter>",
+						sub {
+							$c->configure(-foreground => 'red');
+						}
+					);
+					$c->bind(
+						"<Leave>",
+						sub {
+							$c->configure(-foreground => 'blue');
+						}
+					);
+					$self->list->itemCreate(
+						$cu,
+						$col,
+						-itemtype => 'window',
+						-widget => $c,
+						-style => $left,
+					);
+				# normal text
+				} else {
+					my $t = '';
+					$t .= '   ' if $child_flag;
+					$t .= $h;
+					$self->list->itemCreate($cu,$col,-text => $t);
+				}
 			}
 			++$col;
 		}
+		$self->list->hide('entry', $cu) if $child_flag;
 		++$row;
 	}
 	$self->{last_search} = $result;
+	$self->list->autosetmode();
 	
 	gui_hlist->update4scroll($self->list);
 }
@@ -338,11 +448,15 @@ sub conc{
 	}
 	
 	# 変数取得
-	my @selected = $self->list->infoSelection;
-	unless(@selected){
-		return;
+	my $selected = shift;
+	unless ( defined($selected) ){
+		my @selected = $self->list->infoSelection;
+		unless(@selected){
+			return;
+		}
+		$selected = $selected[0];
 	}
-	my $selected = $selected[0];
+
 	my $result = $self->last_search;
 	my ($query, $hinshi, $katuyo);
 	if (index($selected,'.') > 0){
@@ -350,7 +464,7 @@ sub conc{
 		$query = $self->gui_jchar($result->[$parent][0]);
 		$hinshi = $self->gui_jchar($result->[$parent][1]);
 		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][1]);
-		substr($katuyo,0,3) = ''
+		#substr($katuyo,0,3) = '';
 	} else {
 		$query = $self->gui_jchar($result->[$selected][0]);
 		$hinshi = $self->gui_jchar($result->[$selected][1]);

@@ -220,8 +220,8 @@ gui_window::main::menu:
     vars_heads:               外部変数と見出し
     web:                      最新情報(Web)
     word_ass:                 関連語検索
-    word_freq:                抽出語リスト
-    word_search:              抽出語検索
+    word_freq:                抽出語リスト（Excel出力）
+    word_search:              抽出語リスト
     words:                    抽出語
     words_cluster:            複合語の検出
     words_selection:          語の取捨選択
@@ -555,7 +555,7 @@ gui_window::word_search:
     pos_conj:                 品詞/活用
     search:                   検索
     view_conj:                活用形を表示
-    win_title:                抽出語検索
+    win_title:                抽出語リスト
     word:                     抽出語
 gui_window::word_tf_df:
     df:                       文書数
