@@ -93,7 +93,7 @@ sub search{
 				push @{$result2}, $i;
 				
 				my $r = mysql_exec->select("      # 活用語を探す
-					SELECT hyoso.name, katuyo.name, sum( hyoso.num ) as nn
+					SELECT lower( hyoso.name ), katuyo.name, sum( hyoso.num ) as nn
 					FROM hyoso, katuyo
 					WHERE
 						    hyoso.katuyo_id = katuyo.id

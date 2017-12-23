@@ -140,7 +140,7 @@ sub _new{
 
 	$lis->header('create',0,-text => '#');
 	$lis->header('create',1,-text => kh_msg->get('word')); # $self->gui_jchar('抽出語')
-	$lis->header('create',2,-text => kh_msg->get('pos')); # $self->gui_jchar('品詞')
+	$lis->header('create',2,-text => kh_msg->get('pos_conj')); # $self->gui_jchar('品詞')
 	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
 
 	$self->{copy_btn} = $fra5->Button(
@@ -171,13 +171,13 @@ sub _new{
 	#   initialise word filer   #
 
 	$filter = undef;
-	$filter->{limit}   = 150;                  # LIMIT数
-	my $h = mysql_exec->select("               # 品詞によるフィルタ
+	$filter->{limit}   = 100;                  # LIMIT number
+	my $h = mysql_exec->select("
 		SELECT name, khhinshi_id
 		FROM   hselection
 		WHERE  ifuse = 1
 	",1)->hundle;
-	while (my $i = $h->fetch){
+	while (my $i = $h->fetch){                 # Filter by POS
 		if (
 			   $i->[0] =~ /B$/
 			|| $i->[0] eq '否定助動詞'
@@ -202,7 +202,7 @@ sub _new{
 #   表示の切り替え   #
 #--------------------#
 
-sub refresh{
+sub refresh_obsolete{
 	my $self = shift;
 	
 	# チェックボックスの切り替え
