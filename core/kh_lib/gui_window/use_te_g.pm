@@ -15,7 +15,7 @@ sub _new{
 
 	# エントリと検索ボタンのフレーム
 	my $fra4 = $self->{win_obj}->LabFrame(
-		-label => 'Search Entry',
+		-label => 'Filter Entry',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
@@ -72,7 +72,7 @@ sub _new{
 
 	# 結果表示部分
 	my $fra5 = $self->{win_obj}->LabFrame(
-		-label => 'Result (Top 500)',
+		-label => 'List (Top 500)',
 		-labelside => 'acrosstop',
 		-borderwidth => 2
 	)->pack(-expand=>'yes',-fill=>'both');

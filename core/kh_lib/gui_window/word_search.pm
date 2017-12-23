@@ -23,7 +23,7 @@ sub _new{
 	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # '抽出語検索'
 
 	my $fra4 = $wmw->LabFrame(
-		-label => 'Search Entry',
+		-label => 'Filter Entry',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
@@ -33,7 +33,8 @@ sub _new{
 
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
-		-background => 'white'
+		-background => 'white',
+		-width => 25,
 	)->pack(-expand => 'y', -fill => 'x', -side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
@@ -55,28 +56,28 @@ sub _new{
 	);
 
 	# オプション・フレーム
-	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
+	#my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
-	$fra4h->Checkbutton(
-		-text     => kh_msg->get('baseform'),#$self->gui_jchar('抽出語検索'),
-		-variable => \$gui_window::word_search::kihon,
-		-font     => "TKFN",
-		-command  => sub{$self->refresh; $self->search;}
-	)->pack(-side => 'left');
+	#$fra4h->Checkbutton(
+	#	-text     => kh_msg->get('baseform'),#$self->gui_jchar('抽出語検索'),
+	#	-variable => \$gui_window::word_search::kihon,
+	#	-font     => "TKFN",
+	#	-command  => sub{$self->refresh; $self->search;}
+	#)->pack(-side => 'left');
 
-	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => kh_msg->get('view_conj'),#$self->gui_jchar('活用形を表示'),
-		-variable => \$gui_window::word_search::katuyo,
-		-font     => "TKFN",
-		-command  => sub{$self->refresh; $self->search;}
-	)->pack(-side => 'left');
+	#$self->{the_check} = $fra4h->Checkbutton(
+	#	-text     => kh_msg->get('view_conj'),#$self->gui_jchar('活用形を表示'),
+	#	-variable => \$gui_window::word_search::katuyo,
+	#	-font     => "TKFN",
+	#	-command  => sub{$self->refresh; $self->search;}
+	#)->pack(-side => 'left');
 
 	unless (defined($gui_window::word_search::katuyo)){
 		$gui_window::word_search::kihon = 1;
 		$gui_window::word_search::katuyo = 1;
 	}
 	
-	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
+	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -padx => 2, -pady => 2);
 
 	$self->{optmenu_andor} = gui_widget::optmenu->open(
 		parent  => $fra4i,
@@ -109,7 +110,7 @@ sub _new{
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
-		-label => 'Result',
+		-label => 'List',
 		-labelside => 'acrosstop',
 		-borderwidth => 2
 	)->pack(-expand=>'yes',-fill=>'both');
@@ -117,26 +118,30 @@ sub _new{
 	my $hlist_fra = $fra5->Frame()->pack(-expand => 'y', -fill => 'both');
 
 	my $lis = $hlist_fra->Scrolled(
-		'Tree',
-		-scrollbars       => 'osoe',
-		-header           => 1,
-		-itemtype         => 'text',
-		-font             => 'TKFN',
-		-columns          => 3,
-		-padx             => 7,
-		-background       => 'white',
-		-selectforeground   => $::config_obj->color_ListHL_fore,
-		-selectbackground   => $::config_obj->color_ListHL_back,
-		-selectborderwidth  => 0,
-		-highlightthickness => 0,
-		-selectmode       => 'extended',
-		-command          => sub {$self->conc;},
-		-height           => 20,
+			'Tree',
+			-scrollbars       => 'osoe',
+			-header           => 1,
+			-itemtype         => 'text',
+			-font             => 'TKFN',
+			-columns          => 4,
+			-indent           => 20,
+			-padx             => 7,
+			-background       => 'white',
+			-selectforeground   => $::config_obj->color_ListHL_fore,
+			-selectbackground   => $::config_obj->color_ListHL_back,
+			-selectborderwidth  => 0,
+			-highlightthickness => 0,
+			-selectmode       => 'extended',
+			-command          => sub {$self->conc;},
+			-height           => 20,
+			-width            => 36,
+			-browsecmd        => sub {$self->_delayed_color;},
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('抽出語')
-	$lis->header('create',1,-text => kh_msg->get('pos')); # $self->gui_jchar('品詞')
-	$lis->header('create',2,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
+	$lis->header('create',0,-text => '#');
+	$lis->header('create',1,-text => kh_msg->get('word')); # $self->gui_jchar('抽出語')
+	$lis->header('create',2,-text => kh_msg->get('pos')); # $self->gui_jchar('品詞')
+	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
 
 	$self->{copy_btn} = $fra5->Button(
 		-text => kh_msg->gget('copy'),
@@ -188,7 +193,7 @@ sub _new{
 	$self->{list}  = $lis;
 	#$self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
-	$self->refresh;
+	#$self->refresh;
 	$self->search;
 	return $self;
 }
@@ -201,13 +206,13 @@ sub refresh{
 	my $self = shift;
 	
 	# チェックボックスの切り替え
-	if ($gui_window::word_search::kihon){
-		$self->the_check->configure(-state,'normal');
-		$self->conc_button->configure(-state,'normal');
-	} else {
-		$self->the_check->configure(-state,'disable');
-		$self->conc_button->configure(-state,'disable');
-	}
+	#if ($gui_window::word_search::kihon){
+	#	$self->the_check->configure(-state,'normal');
+	#	$self->conc_button->configure(-state,'normal');
+	#} else {
+	#	$self->the_check->configure(-state,'disable');
+	#	$self->conc_button->configure(-state,'disable');
+	#}
 	
 	# リストの切り替え
 	if ($gui_window::word_search::kihon){
@@ -337,10 +342,9 @@ sub _delayed_color_exe{
 			}
 			++$r;
 		}
-		#$self->list->anchorClear;
 		
-		print "col_fix: $chk, $chk_n, $nnn\n";
-		++$nnn;
+		#print "col_fix: $chk, $chk_n, $nnn\n";
+		#++$nnn;
 		
 		$self->win_obj->after(
 			333,
@@ -365,7 +369,7 @@ sub _delayed_anchor_exe{
 		$chk == $current && $chk_n == $cn 
 	){
 		$self->list->anchorClear;
-		print "anchor_fix: $chk, $chk_n\n";
+		#print "anchor_fix: $chk, $chk_n\n";
 	}
 
 }
