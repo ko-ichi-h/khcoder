@@ -105,6 +105,9 @@ sub _new{
 		}
 	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
 	
+	$few->Label(
+		-text => '        '
+	)->pack(-anchor => 'w',-side => 'right',-padx => 2,-pady => 2);
 	
 	$self->{g_buttons} = [$b1,$b2,$b3];
 	

@@ -27,6 +27,8 @@ sub search{
 	$query =~ s/　/ /g;
 	my @query = split / /, $query;
 	
+	$query =~ s/ //g;
+	
 	my $result;
 	
 	if ($args{kihon}){        # KHCの抽出語(基本形)を検索
@@ -41,35 +43,42 @@ sub search{
 				#AND genkei.hinshi_id = hinshi.id
 				AND hselection.ifuse = 1
 				AND genkei.nouse = 0'."\n";
-		$sql .= "\t\t\tAND (\n";
-		foreach my $i (@query){
-			unless ($i){ next; }
-			my $word = $self->conv_query($i);
-			$sql .= "\t\t\t\tgenkei.name LIKE $word";
-			if ($args{method} eq 'AND'){
-				$sql .= " AND\n";
-			} else {
-				$sql .= " OR\n";
+		
+		# Filter: hinshi(pos)
+		my $n = 0;
+		$sql .= "\tAND (\n";
+		foreach my $i (keys %{$self->{filter}{hinshi}}){
+			if ($self->{filter}{hinshi}{$i}){
+				$sql .= "\t\t";
+				$sql .= "|| " if $n;
+				$sql .= "genkei.khhinshi_id = $i\n";
+				++$n;
 			}
 		}
-		substr($sql,-4,3) = '';
-		$sql .= "\t\t\t)\n\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
+		$sql .= "\t)\n";
+		
+		# Query
+		if ( length($query) ){
+			$sql .= "\t\t\tAND (\n";
+			foreach my $i (@query){
+				unless ($i){ next; }
+				my $word = $self->conv_query($i);
+				$sql .= "\t\t\t\tgenkei.name LIKE $word";
+				if ($args{method} eq 'AND'){
+					$sql .= " AND\n";
+				} else {
+					$sql .= " OR\n";
+				}
+			}
+			substr($sql,-4,3) = '';
+			$sql .= "\n\t\t\t)\n";
+		}
+		
+		$sql .= "\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
 		$sql .= $::project_obj->mysql_sort('genkei.name');
+		$sql .= "\nlimit $self->{filter}{limit}";
 		my $t = mysql_exec->select($sql,1);
 		$result = $t->hundle->fetchall_arrayref;
-		
-		# 「その他」対策
-		#if (
-		#	mysql_exec->select("
-		#		SELECT ifuse FROM hselection WHERE name = \'その他\'
-		#	",1)->hundle->fetch->[0]
-		#){
-		#	foreach my $i (@{$result}){
-		#		if ($i->[1] eq 'その他'){
-		#			$i->[0] = "$i->[0]($i->[4])";
-		#		}
-		#	}
-		#}
 		
 		if ( ! $args{katuyo} ){         # 活用語なしの場合
 			foreach my $i (@{$result}){
@@ -131,19 +140,26 @@ sub search{
 			WHERE
 				    hyoso.genkei_id = genkei.id
 				AND hyoso.hinshi_id = hinshi.id
-				AND hyoso.katuyo_id = katuyo.id AND (
+				AND hyoso.katuyo_id = katuyo.id
 		';
-		foreach my $i (@query){
-			my $word = $self->conv_query($i);
-			$sql .= "\t\t\t\thyoso.name LIKE $word";
-			if ($args{method} eq 'AND'){
-				$sql .= " AND\n";
-			} else {
-				$sql .= " OR\n";
+		
+		if ( length($query) ){
+			$sql .= " AND (\n";
+			foreach my $i (@query){
+				my $word = $self->conv_query($i);
+				$sql .= "\t\t\t\thyoso.name LIKE $word";
+				if ($args{method} eq 'AND'){
+					$sql .= " AND\n";
+				} else {
+					$sql .= " OR\n";
+				}
 			}
+			substr($sql,-4,3) = '';
+			$sql .= " ) \n";
 		}
-		substr($sql,-4,3) = '';
-		$sql .= ") \n ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
+		
+		$sql .= " ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
+		$sql .= "\nlimit $self->{filter}{limit}";
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 

@@ -1,7 +1,8 @@
 package gui_window::word_search;
 use base qw(gui_window);
-use vars qw($method $kihon $katuyo);
+use vars qw($method $kihon $katuyo $filter);
 use strict;
+use utf8;
 use Tk;
 use Tk::HList;
 use Tk::Balloon;
@@ -11,7 +12,7 @@ use mysql_words;
 use gui_widget::optmenu;
 
 #---------------------#
-#   Window ¥ª¡¼¥×¥ó   #
+#   Window ã‚ªãƒ¼ãƒ—ãƒ³   #
 #---------------------#
 
 sub _new{
@@ -20,7 +21,7 @@ sub _new{
 	my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
-	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'Ãê½Ð¸ì¸¡º÷'
+	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'æŠ½å‡ºèªžæ¤œç´¢'
 
 	my $fra4 = $wmw->LabFrame(
 		-label => 'Search Entry',
@@ -28,7 +29,7 @@ sub _new{
 		-borderwidth => 2,
 	)->pack(-fill=>'x');
 
-	# ¥¨¥ó¥È¥ê¤È¸¡º÷¥Ü¥¿¥ó¤Î¥Õ¥ì¡¼¥à
+	# ã‚¨ãƒ³ãƒˆãƒªã¨æ¤œç´¢ãƒœã‚¿ãƒ³ã®ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
 
 	my $e1 = $fra4e->Entry(
@@ -42,7 +43,7 @@ sub _new{
 	$self->config_entry_focusin($e1);
 
 	my $sbutton = $fra4e->Button(
-		-text => kh_msg->get('search'),#$self->gui_jchar('¸¡º÷'),
+		-text => kh_msg->get('search'),#$self->gui_jchar('æ¤œç´¢'),
 		-font => "TKFN",
 		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
@@ -54,18 +55,18 @@ sub _new{
 		-font => "TKFN"
 	);
 
-	# ¥ª¥×¥·¥ç¥ó¡¦¥Õ¥ì¡¼¥à
+	# ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ»ãƒ•ãƒ¬ãƒ¼ãƒ 
 	my $fra4h = $fra4->Frame->pack(-expand => 'y', -fill => 'x');
 
 	$fra4h->Checkbutton(
-		-text     => kh_msg->get('baseform'),#$self->gui_jchar('Ãê½Ð¸ì¸¡º÷'),
+		-text     => kh_msg->get('baseform'),#$self->gui_jchar('æŠ½å‡ºèªžæ¤œç´¢'),
 		-variable => \$gui_window::word_search::kihon,
 		-font     => "TKFN",
 		-command  => sub{$self->refresh;}
 	)->pack(-side => 'left');
 
 	$self->{the_check} = $fra4h->Checkbutton(
-		-text     => kh_msg->get('view_conj'),#$self->gui_jchar('³èÍÑ·Á¤òÉ½¼¨'),
+		-text     => kh_msg->get('view_conj'),#$self->gui_jchar('æ´»ç”¨å½¢ã‚’è¡¨ç¤º'),
 		-variable => \$gui_window::word_search::katuyo,
 		-font     => "TKFN",
 		-command  => sub{$self->refresh;}
@@ -84,8 +85,8 @@ sub _new{
 		#width   => 7,
 		options =>
 			[
-				[kh_msg->get('or') , 'OR'], # $self->gui_jchar('OR¸¡º÷')
-				[kh_msg->get('and'), 'AND'], # $self->gui_jchar('AND¸¡º÷')
+				[kh_msg->get('or') , 'OR'], # $self->gui_jchar('ORæ¤œç´¢')
+				[kh_msg->get('and'), 'AND'], # $self->gui_jchar('ANDæ¤œç´¢')
 			],
 		variable => \$gui_window::word_search::method,
 	);
@@ -96,16 +97,16 @@ sub _new{
 		#width   => 8,
 		options =>
 			[
-				[kh_msg->get('part') => 'p'], # $self->gui_jchar('ÉôÊ¬°ìÃ×')
-				[kh_msg->get('comp') => 'c'], # $self->gui_jchar('´°Á´°ìÃ×')
-				[kh_msg->get('forw') => 'z'], # $self->gui_jchar('Á°Êý°ìÃ×')
-				[kh_msg->get('back') => 'k'] #$self->gui_jchar('¸åÊý°ìÃ×')
+				[kh_msg->get('part') => 'p'], # $self->gui_jchar('éƒ¨åˆ†ä¸€è‡´')
+				[kh_msg->get('comp') => 'c'], # $self->gui_jchar('å®Œå…¨ä¸€è‡´')
+				[kh_msg->get('forw') => 'z'], # $self->gui_jchar('å‰æ–¹ä¸€è‡´')
+				[kh_msg->get('back') => 'k'] #$self->gui_jchar('å¾Œæ–¹ä¸€è‡´')
 			],
 		variable => \$gui_window::word_search::s_mode,
 	);
 
 
-	# ·ë²ÌÉ½¼¨ÉôÊ¬
+	# çµæžœè¡¨ç¤ºéƒ¨åˆ†
 	my $fra5 = $wmw->LabFrame(
 		-label => 'Result',
 		-labelside => 'acrosstop',
@@ -132,9 +133,9 @@ sub _new{
 		#-height           => 20,
 	)->pack(-fill =>'both',-expand => 'yes');
 
-	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('Ãê½Ð¸ì')
-	$lis->header('create',1,-text => kh_msg->get('pos')); # $self->gui_jchar('ÉÊ»ì')
-	$lis->header('create',2,-text => kh_msg->get('freq')); # $self->gui_jchar('ÉÑÅÙ')
+	$lis->header('create',0,-text => kh_msg->get('word')); # $self->gui_jchar('æŠ½å‡ºèªž')
+	$lis->header('create',1,-text => kh_msg->get('pos')); # $self->gui_jchar('å“è©ž')
+	$lis->header('create',2,-text => kh_msg->get('freq')); # $self->gui_jchar('é »åº¦')
 
 	$self->{copy_btn} = $fra5->Button(
 		-text => kh_msg->gget('copy'),
@@ -154,28 +155,51 @@ sub _new{
 	);
 
 	$self->{conc_button} = $fra5->Button(
-		-text => kh_msg->get('kwic'),#$self->gui_jchar('¥³¥ó¥³¡¼¥À¥ó¥¹'),
+		-text => kh_msg->get('kwic'),#$self->gui_jchar('ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {$self->conc;}
 	)->pack(-side => 'left');
+	
+	#---------------------------#
+	#   initialise word filer   #
+
+	$filter = undef;
+	$filter->{limit}   = 150;                  # LIMITæ•°
+	my $h = mysql_exec->select("               # å“è©žã«ã‚ˆã‚‹ãƒ•ã‚£ãƒ«ã‚¿
+		SELECT name, khhinshi_id
+		FROM   hselection
+		WHERE  ifuse = 1
+	",1)->hundle;
+	while (my $i = $h->fetch){
+		if (
+			   $i->[0] =~ /B$/
+			|| $i->[0] eq 'å¦å®šåŠ©å‹•è©ž'
+			|| $i->[0] eq 'å½¢å®¹è©žï¼ˆéžè‡ªç«‹ï¼‰'
+		){
+			$filter->{hinshi}{$i->[1]} = 0;
+		} else {
+			$filter->{hinshi}{$i->[1]} = 1;
+		}
+	}
 	
 	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
 	#$self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
 	$self->refresh;
+	$self->search;
 	return $self;
 }
 
 #--------------------#
-#   É½¼¨¤ÎÀÚ¤êÂØ¤¨   #
+#   è¡¨ç¤ºã®åˆ‡ã‚Šæ›¿ãˆ   #
 #--------------------#
 
 sub refresh{
 	my $self = shift;
 	
-	# ¥Á¥§¥Ã¥¯¥Ü¥Ã¥¯¥¹¤ÎÀÚ¤êÂØ¤¨
+	# ãƒã‚§ãƒƒã‚¯ãƒœãƒƒã‚¯ã‚¹ã®åˆ‡ã‚Šæ›¿ãˆ
 	if ($gui_window::word_search::kihon){
 		$self->the_check->configure(-state,'normal');
 		$self->conc_button->configure(-state,'normal');
@@ -184,7 +208,7 @@ sub refresh{
 		$self->conc_button->configure(-state,'disable');
 	}
 	
-	# ¥ê¥¹¥È¤ÎÀÚ¤êÂØ¤¨
+	# ãƒªã‚¹ãƒˆã®åˆ‡ã‚Šæ›¿ãˆ
 	if ($gui_window::word_search::kihon){
 		$self->list->destroy;
 		
@@ -205,13 +229,13 @@ sub refresh{
 			-selectmode       => 'extended',
 			-command          => sub {$self->conc;},
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => kh_msg->get('word'));#$self->gui_jchar('Ãê½Ð¸ì')
+		$self->list->header('create',0,-text => kh_msg->get('word'));#$self->gui_jchar('æŠ½å‡ºèªž')
 		if ( $gui_window::word_search::katuyo ){
-			$self->list->header('create',1,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('ÉÊ»ì/³èÍÑ')
+			$self->list->header('create',1,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('å“è©ž/æ´»ç”¨')
 		} else {
-			$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('ÉÊ»ì')
+			$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('å“è©ž')
 		}
-		$self->list->header('create',2,-text => kh_msg->get('freq'));#$self->gui_jchar('ÉÑÅÙ')
+		$self->list->header('create',2,-text => kh_msg->get('freq'));#$self->gui_jchar('é »åº¦')
 	} else {
 		$self->list->destroy;
 		$self->{list} = $self->list_f->Scrolled(
@@ -229,40 +253,40 @@ sub refresh{
 			-highlightthickness => 0,
 			-selectmode       => 'extended',
 		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => kh_msg->get('morph'));#$self->gui_jchar('·ÁÂÖÁÇ')
-		$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('ÉÊ»ì¡ÊÃãä¥¡Ë')
-		$self->list->header('create',2,-text => kh_msg->get('conj'));#$self->gui_jchar('³èÍÑ')
-		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('ÉÑÅÙ')
+		$self->list->header('create',0,-text => kh_msg->get('morph'));#$self->gui_jchar('å½¢æ…‹ç´ ')
+		$self->list->header('create',1,-text => kh_msg->get('pos'));#$self->gui_jchar('å“è©žï¼ˆèŒ¶ç­Œï¼‰')
+		$self->list->header('create',2,-text => kh_msg->get('conj'));#$self->gui_jchar('æ´»ç”¨')
+		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('é »åº¦')
 	}
 	$self->list->update;
 }
 
 
 #----------#
-#   ¸¡º÷   #
+#   æ¤œç´¢   #
 #----------#
 
 sub search{
 	my $self = shift;
 	
-	# ÊÑ¿ô¼èÆÀ
+	# å¤‰æ•°å–å¾—
 	my $query = $self->gui_jg( $self->entry->get );
 
-	unless ($query){
-		return;
-	}
+	#unless ($query){
+	#	return;
+	#}
 
-	# ¸¡º÷¼Â¹Ô
+	# æ¤œç´¢å®Ÿè¡Œ
 	my $result = mysql_words->search(
 		query  => $query,
 		method => $gui_window::word_search::method,
 		kihon  => $gui_window::word_search::kihon,
 		katuyo => $gui_window::word_search::katuyo,
-		mode   => $gui_window::word_search::s_mode
+		mode   => $gui_window::word_search::s_mode,
+		filter => $filter
 	);
 
-	# ·ë²ÌÉ½¼¨
-	
+	# çµæžœè¡¨ç¤º
 	my $numb_style = $self->list->ItemStyle(
 		'text',
 		-anchor => 'e',
@@ -304,7 +328,7 @@ sub search{
 }
 
 #----------------------------#
-#   ¥³¥ó¥³¡¼¥À¥ó¥¹¸Æ¤Ó½Ð¤·   #
+#   ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹å‘¼ã³å‡ºã—   #
 #----------------------------#
 sub conc{
 	use gui_window::word_conc;
@@ -313,7 +337,7 @@ sub conc{
 		return 0;
 	}
 	
-	# ÊÑ¿ô¼èÆÀ
+	# å¤‰æ•°å–å¾—
 	my @selected = $self->list->infoSelection;
 	unless(@selected){
 		return;
@@ -332,7 +356,7 @@ sub conc{
 		$hinshi = $self->gui_jchar($result->[$selected][1]);
 	}
 
-	# ¥³¥ó¥³¡¼¥À¥ó¥¹¤Î¸Æ¤Ó½Ð¤·
+	# ã‚³ãƒ³ã‚³ãƒ¼ãƒ€ãƒ³ã‚¹ã®å‘¼ã³å‡ºã—
 	my $conc = gui_window::word_conc->open;
 	$conc->entry->delete(0,'end');
 	$conc->entry4->delete(0,'end');
@@ -344,7 +368,7 @@ sub conc{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 #--------------#
 
 sub list{

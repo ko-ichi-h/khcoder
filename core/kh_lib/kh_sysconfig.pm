@@ -1400,7 +1400,7 @@ sub kaigyo_kigou{
 	
 	# デフォルト値
 	unless ( defined($self->{kaigyo_kigou}) ){
-		return '（↓）';
+		return '⏎';
 	}
 	
 	return $self->{kaigyo_kigou};
