@@ -127,11 +127,12 @@ sub _new{
 			-indent           => 20,
 			-padx             => 7,
 			-background       => 'white',
-			-selectforeground   => $::config_obj->color_ListHL_fore,
-			-selectbackground   => $::config_obj->color_ListHL_back,
+			-highlightcolor   => 'white',
+			#-selectforeground   => "",#$::config_obj->color_ListHL_fore,
+			-selectbackground   => 'white',#$::config_obj->color_ListHL_back,
 			-selectborderwidth  => 0,
 			-highlightthickness => 0,
-			-selectmode       => 'extended',
+			-selectmode       => 'single',
 			-command          => sub {$self->conc;},
 			-height           => 20,
 			-width            => 36,
@@ -279,8 +280,15 @@ sub _delayed_color{
 	
 	my @selection = $self->list->info('selection');
 	my $current = $selection[0];
-	my $cn = @selection;
 
+	print "browse! $current\n";
+
+
+
+	$self->list->anchorClear;
+	return 1;
+
+	my $cn = @selection;
 	$self->win_obj->after(
 		80,
 		sub{ $self->_delayed_color_exe($current, $cn) }

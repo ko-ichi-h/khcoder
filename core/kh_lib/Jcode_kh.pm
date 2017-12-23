@@ -29,12 +29,12 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT_OK   = qw($RCSID $VERSION $DEBUG);
 %EXPORT_TAGS = ( all       => [ @EXPORT, @EXPORT_OK ] );
 
-use overload 
-    q("") => sub { $_[0]->euc },
-    q(==) => sub { overload::StrVal($_[0]) eq overload::StrVal($_[1]) },
-    q(.=) => sub { $_[0]->append( $_[1] ) },
-    fallback => 1,
-    ;
+#use overload 
+#    q("") => sub { $_[0]->euc },
+#    q(==) => sub { overload::StrVal($_[0]) eq overload::StrVal($_[1]) },
+#    q(.=) => sub { $_[0]->append( $_[1] ) },
+#    fallback => 1,
+#    ;
 
 if ($USE_ENCODE){
     $DEBUG and warn "Using Encode";
