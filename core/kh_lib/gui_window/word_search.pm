@@ -132,11 +132,11 @@ sub _new{
 			-selectbackground   => 'white',#$::config_obj->color_ListHL_back,
 			-selectborderwidth  => 0,
 			-highlightthickness => 0,
-			-selectmode       => 'single',
+			-selectmode       => 'none',
 			-command          => sub {$self->conc;},
 			-height           => 20,
 			-width            => 36,
-			-browsecmd        => sub {$self->_delayed_color;},
+			-browsecmd        => sub {$self->_unselect;},
 	)->pack(-fill =>'both',-expand => 'yes');
 
 	$lis->header('create',0,-text => '#');
@@ -199,188 +199,14 @@ sub _new{
 	return $self;
 }
 
-#--------------------#
-#   表示の切り替え   #
-#--------------------#
-
-sub refresh_obsolete{
+sub _unselect{
 	my $self = shift;
-	
-	# チェックボックスの切り替え
-	#if ($gui_window::word_search::kihon){
-	#	$self->the_check->configure(-state,'normal');
-	#	$self->conc_button->configure(-state,'normal');
-	#} else {
-	#	$self->the_check->configure(-state,'disable');
-	#	$self->conc_button->configure(-state,'disable');
-	#}
-	
-	# リストの切り替え
-	if ($gui_window::word_search::kihon){
-		$self->list->destroy;
-		
-		$self->{list} = $self->list_f->Scrolled(
-			'Tree',
-			-scrollbars       => 'osoe',
-			-header           => 1,
-			-itemtype         => 'text',
-			-font             => 'TKFN',
-			-columns          => 4,
-			-indent           => 20,
-			-padx             => 7,
-			-background       => 'white',
-			-selectforeground   => $::config_obj->color_ListHL_fore,
-			-selectbackground   => $::config_obj->color_ListHL_back,
-			-selectborderwidth  => 0,
-			-highlightthickness => 0,
-			-selectmode       => 'extended',
-			-command          => sub {$self->conc;},
-			-height           => 20,
-			-browsecmd        => sub {$self->_delayed_color;},
-		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => '#');
-		$self->list->header('create',1,-text => kh_msg->get('word'));#$self->gui_jchar('抽出語')
-		if ( $gui_window::word_search::katuyo ){
-			$self->list->header('create',2,-text => kh_msg->get('pos_conj'));#$self->gui_jchar('品詞/活用')
-		} else {
-			$self->list->header('create',2,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞')
-		}
-		$self->list->header('create',3,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
-	} else {
-		$self->list->destroy;
-		$self->{list} = $self->list_f->Scrolled(
-			'Tree',
-			-scrollbars       => 'osoe',
-			-header           => 1,
-			-itemtype         => 'text',
-			-font             => 'TKFN',
-			-columns          => 5,
-			-padx             => 7,
-			-background       => 'white',
-			-selectforeground   => $::config_obj->color_ListHL_fore,
-			-selectbackground   => $::config_obj->color_ListHL_back,
-			-selectborderwidth  => 0,
-			-highlightthickness => 0,
-			-selectmode       => 'extended',
-			-height           => 20,
-			-browsecmd        => sub {$self->_delayed_color;},
-		)->pack(-fill =>'both',-expand => 'yes');
-		$self->list->header('create',0,-text => '#');
-		$self->list->header('create',1,-text => kh_msg->get('morph'));#$self->gui_jchar('形態素')
-		$self->list->header('create',2,-text => kh_msg->get('pos'));#$self->gui_jchar('品詞（茶筌）')
-		$self->list->header('create',3,-text => kh_msg->get('conj'));#$self->gui_jchar('活用')
-		$self->list->header('create',4,-text => kh_msg->get('freq'));#$self->gui_jchar('頻度')
-	}
-	$self->list->update;
-}
-
-
-sub _delayed_color{
-	my $self = shift;
-	
-	my @selection = $self->list->info('selection');
-	my $current = $selection[0];
-
-	print "browse! $current\n";
-
-
 
 	$self->list->anchorClear;
 	return 1;
 
-	my $cn = @selection;
-	$self->win_obj->after(
-		80,
-		sub{ $self->_delayed_color_exe($current, $cn) }
-	);
 }
 
-my $nnn = 0;
-
-my $last_chk = -1;
-my $last_chkn = -1;
-
-sub _delayed_color_exe{
-	my $self   = shift;
-	my $chk    = shift;
-	my $chk_n  = shift;
-	
-	return 0 unless defined($chk);
-	
-	my @selection = $self->{list}->info('selection');
-	my $current = $selection[0];
-	my $cn = @selection;
-	
-	if (
-		   ( $chk      == $current && $chk_n     == $cn )
-		&! ( $last_chk == $current && $last_chkn == $cn )
-	){
-		$last_chk = $current;
-		$last_chkn = $cn;
-		
-		my %chk = ();
-		foreach my $i (@selection){
-			$chk{$i} = 1;
-		}
-		
-		my $r = 0;
-		while ( $self->list->info('exists', $r) ){
-			
-			
-			# parents
-			my $c1 = $self->list->itemCget($r, 1, -window);
-			if ($chk{$r}) {
-				$c1->configure(-state => 'active');
-			} else {
-				$c1->configure(-state => 'normal');
-			}
-			
-			# children
-			my @children = $self->list->info('children', $r);
-			foreach my $i (@children){
-				++$r;
-				next if $self->list->info('hidden', $i);
-				
-				my $c2 = $self->list->itemCget($i, 2, -window);
-				if ($chk{$i}) {
-					$c2->configure(-state => 'active');
-				} else {
-					$c2->configure(-state => 'normal');
-				}
-			}
-			++$r;
-		}
-		
-		#print "col_fix: $chk, $chk_n, $nnn\n";
-		#++$nnn;
-		
-		$self->win_obj->after(
-			333,
-			sub{ $self->_delayed_anchor_exe($current, $cn) }
-		);
-		
-	}
-}
-
-sub _delayed_anchor_exe{
-	my $self   = shift;
-	my $chk    = shift;
-	my $chk_n  = shift;
-
-	return 0 unless defined($chk);
-	
-	my @selection = $self->{list}->info('selection');
-	my $current = $selection[0];
-	my $cn = @selection;
-
-	if (
-		$chk == $current && $chk_n == $cn 
-	){
-		$self->list->anchorClear;
-		#print "anchor_fix: $chk, $chk_n\n";
-	}
-
-}
 
 #----------#
 #   検索   #
@@ -406,7 +232,21 @@ sub search{
 		filter => $filter
 	);
 
-	# 結果表示
+	# check the result
+	my %have_child;
+	my $row = 0;
+	my $last_parent = -1;
+	foreach my $i ( @{$result} ){
+		if ( $i->[0] eq 'katuyo' ){
+			$have_child{$last_parent} = 1;
+			#print "have_child: $last_parent\n";
+		} else {
+			$last_parent = $row;
+		}
+		++$row;
+	}
+	
+	# display the result
 	my $numb_style = $self->list->ItemStyle(
 		'text',
 		-anchor => 'e',
@@ -431,14 +271,13 @@ sub search{
 	);
 	
 	$self->list->delete('all');
-	my $row = 0;
+	$row = 0;
 	my $num = 1;
 	my $last;
 	my $child_flag = 0;
 	foreach my $i (@{$result}){
 		my $cu;
 		my $col = 0;
-		
 		
 		# children (conjugated)
 		if ( $i->[0] eq 'katuyo' ){
@@ -458,12 +297,66 @@ sub search{
 			$last = $cu;
 			$child_flag = 0;
 			
-			$self->list->itemCreate(
-				$cu,
-				$col,
-				-text  => $num,
-				#-style => $numb_style
-			);
+			if ($have_child{$row}) {
+				my $color = "#007b43";
+				my $c = $self->list->Label(
+					-text => $num,
+					-font       => "TKFN",
+					-foreground => $color,
+					-activeforeground => $color,
+					-anchor     => 'w',
+					-background => 'white',
+					-pady       => 0,
+					-activebackground => $::config_obj->color_ListHL_back,
+				);
+				my $r = $row;
+				$c->bind(
+					"<Button-1>",
+					sub {
+						$self->show_children($r);
+					}
+				);
+				$c->bind(
+					"<Enter>",
+					sub {
+						$c->configure(-foreground => 'red',-activeforeground => 'red');
+					}
+				);
+				$c->bind(
+					"<Leave>",
+					sub {
+						$c->configure(-foreground => $color,-activeforeground => $color);
+					}
+				);
+				$self->list->itemCreate(
+					$cu,
+					$col,
+					-itemtype => 'window',
+					-widget => $c,
+					-style => $left,
+				);
+			} else {
+				
+				my $c = $self->list->Label(
+					-text => $num,
+					-font       => "TKFN",
+					-foreground => "black",
+					-activeforeground => "black",
+					-anchor     => 'w',
+					-background => 'white',
+					-pady       => 0,
+					-activebackground => $::config_obj->color_ListHL_back,
+				);
+				
+				$self->list->itemCreate(
+					$cu,
+					$col,
+					-itemtype => 'window',
+					-widget => $c,
+					-style => $left,
+				);
+			}
+			
 			++$num;
 		}
 		++$col;
@@ -486,7 +379,7 @@ sub search{
 				);
 			# text
 			} else {
-				# clickable text
+				# clickable text (KWIC)
 				if (
 					   ( $col == 1 && $child_flag == 0 )
 					|| ( $col == 2 && $child_flag )
@@ -548,10 +441,33 @@ sub search{
 		++$row;
 	}
 	$self->{last_search} = $result;
+	$self->{list_entry_mode} = undef;
 	$self->list->autosetmode();
 	
 	gui_hlist->update4scroll($self->list);
 }
+
+sub show_children{
+	my $self = shift;
+	my $n = shift;
+	
+	my @children = $self->list->info('children', $n);
+	
+	if ($self->{list_entry_mode}{$n}) {
+		foreach my $i (@children){
+			$self->list->hide('entry', $i);
+		}
+		$self->{list_entry_mode}{$n} = 0;
+	} else {
+		foreach my $i (@children){
+			$self->list->show('entry', $i);
+		}
+		$self->{list_entry_mode}{$n} = 1;
+	}
+
+	$self->list->autosetmode();
+}
+
 
 #----------------------------#
 #   コンコーダンス呼び出し   #
