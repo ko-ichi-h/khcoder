@@ -557,6 +557,8 @@ gui_window::word_search:
     view_conj:                View Conj.
     win_title:                Word Frequency List
     word:                     Word
+gui_window::word_search_opt:
+    win_title:                'Filter: Word Frequency List'
 gui_window::word_tf_df:
     df:                       Document Frequency
     log:                      '  Logarithmic axes:'

@@ -557,6 +557,8 @@ gui_window::word_search:
     view_conj:                活用形を表示
     win_title:                抽出語リスト
     word:                     抽出語
+gui_window::word_search_opt:
+    win_title:                抽出語リスト・フィルタ設定
 gui_window::word_tf_df:
     df:                       文書数
     log:                      対数軸の使用：

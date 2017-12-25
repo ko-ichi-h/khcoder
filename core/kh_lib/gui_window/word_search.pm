@@ -29,7 +29,7 @@ sub _new{
 	)->pack(-fill=>'x');
 
 	# エントリと検索ボタンのフレーム
-	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x');
+	my $fra4e = $fra4->Frame()->pack(-expand => 'y', -fill => 'x', -padx => 2, -pady => 2);
 
 	my $e1 = $fra4e->Entry(
 		-font => "TKFN",
@@ -45,6 +45,7 @@ sub _new{
 	my $sbutton = $fra4e->Button(
 		-text => kh_msg->get('search'),#$self->gui_jchar('検索'),
 		-font => "TKFN",
+		-borderwidth => '1',
 		-command => sub{$self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
@@ -77,7 +78,7 @@ sub _new{
 		$gui_window::word_search::katuyo = 1;
 	}
 	
-	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -padx => 2, -pady => 2);
+	my $fra4i = $fra4->Frame->pack(-expand => 'y', -fill => 'x', -padx => 2, -pady => 4);
 
 	$self->{optmenu_andor} = gui_widget::optmenu->open(
 		parent  => $fra4i,
@@ -107,6 +108,12 @@ sub _new{
 		command => sub{$self->search;},
 	);
 
+	$fra4i->Button(
+		-text => kh_msg->get('gui_window::word_ass->filter'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{ gui_window::word_search_opt->open; }
+	)->pack(-anchor=>'e', -side => 'left', -padx => 2);
 
 	# 結果表示部分
 	my $fra5 = $wmw->LabFrame(
@@ -484,7 +491,7 @@ sub copy_all{
 		foreach my $h (@{$i}){
 			$t .= "\t" if $c;
 			if ($h eq 'katuyo' && $c == 0){
-				print "katuyo!";
+				#print "katuyo!";
 			} else {
 				$t .= "$h";
 			}
