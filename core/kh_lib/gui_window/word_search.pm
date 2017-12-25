@@ -466,7 +466,7 @@ sub search{
 			$bar_col = '#cee4ae';
 		} else {
 			$nbar = $i->[2];
-			$bar_col = '#87cefa';
+			$bar_col = '#89c3eb';
 		}
 		my $b = $self->list->ProgressBar(
 			-troughcolor => 'white',
