@@ -145,10 +145,10 @@ sub _new{
 	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
 
 	$self->{copy_btn} = $fra5->Button(
-		-text => kh_msg->gget('copy'),
+		-text => kh_msg->gget('copy_all'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub {gui_hlist->copy($self->list);}
+		-command => sub {$self->copy_all;}
 	)->pack(-side => 'right');
 
 	$self->win_obj->bind(
@@ -161,12 +161,12 @@ sub _new{
 		-font => "TKFN"
 	);
 
-	$self->{conc_button} = $fra5->Button(
-		-text => kh_msg->get('kwic'),#$self->gui_jchar('コンコーダンス'),
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub {$self->conc;}
-	)->pack(-side => 'left');
+	#$self->{conc_button} = $fra5->Button(
+	#	-text => kh_msg->get('kwic'),#$self->gui_jchar('コンコーダンス'),
+	#	-font => "TKFN",
+	#	-borderwidth => '1',
+	#	-command => sub {$self->conc;}
+	#)->pack(-side => 'left');
 	
 	#---------------------------#
 	#   initialise word filer   #
@@ -282,7 +282,7 @@ sub search{
 		# children (conjugated)
 		if ( $i->[0] eq 'katuyo' ){
 			$cu = $self->list->addchild($last);
-			shift @{$i};
+			#shift @{$i};
 			++$child_flag;
 			$self->list->itemCreate(
 				$cu,
@@ -362,6 +362,10 @@ sub search{
 		++$col;
 		
 		foreach my $h (@{$i}){
+			if ($col == 1 && $h eq 'katuyo'){
+				next;
+			}
+			
 			# numbers
 			if ($h =~ /^[0-9]+$/o && $col > 0){
 				my $s;
@@ -468,10 +472,34 @@ sub show_children{
 	$self->list->autosetmode();
 }
 
+sub copy_all{
+	my $self = shift;
+	
+	return 0 unless $self->{last_search};
+	
+	my $t = '';
+	my $r = 0;
+	foreach my $i (@{$self->{last_search}}){
+		my $c = 0;
+		foreach my $h (@{$i}){
+			$t .= "\t" if $c;
+			if ($h eq 'katuyo' && $c == 0){
+				print "katuyo!";
+			} else {
+				$t .= "$h";
+			}
+			++$c;
+		}
+		$t .= "\n";
+	}
+	
+	use kh_clipboard;
+	kh_clipboard->string($t);
+}
 
 #----------------------------#
-#   コンコーダンス呼び出し   #
-#----------------------------#
+#   Open KWIC Concordance   #
+
 sub conc{
 	use gui_window::word_conc;
 	my $self = shift;
@@ -495,7 +523,7 @@ sub conc{
 		my ($parent, $child) = split /\./, $selected;
 		$query = $self->gui_jchar($result->[$parent][0]);
 		$hinshi = $self->gui_jchar($result->[$parent][1]);
-		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][1]);
+		$katuyo = $self->gui_jchar($result->[$parent + $child + 1][2]);
 		#substr($katuyo,0,3) = '';
 	} else {
 		$query = $self->gui_jchar($result->[$selected][0]);
