@@ -5,6 +5,7 @@ use strict;
 use utf8;
 use Tk;
 use Tk::Tree;
+use Tk::ProgressBar;
 use Tk::Balloon;
 
 use mysql_words;
@@ -130,7 +131,7 @@ sub _new{
 			-header           => 1,
 			-itemtype         => 'text',
 			-font             => 'TKFN',
-			-columns          => 4,
+			-columns          => 5,
 			-indent           => 20,
 			-padx             => 7,
 			-background       => 'white',
@@ -142,7 +143,7 @@ sub _new{
 			-selectmode       => 'none',
 			-command          => sub {$self->conc;},
 			-height           => 20,
-			-width            => 36,
+			-width            => 48,
 			-browsecmd        => sub {$self->_unselect;},
 	)->pack(-fill =>'both',-expand => 'yes');
 
@@ -277,11 +278,19 @@ sub search{
 		-padx => 5,
 	);
 	
+	my $leftu = $self->list->ItemStyle(
+		'window',
+		-anchor => 'nw',
+		-pady => 0,
+		-padx => 0,
+	);
+	
 	$self->list->delete('all');
 	$row = 0;
 	my $num = 1;
 	my $last;
 	my $child_flag = 0;
+	my $max = $result->[0][2];
 	foreach my $i (@{$result}){
 		my $cu;
 		my $col = 0;
@@ -448,6 +457,35 @@ sub search{
 			}
 			++$col;
 		}
+		
+		# bar graph
+		my $nbar;
+		my $bar_col;
+		if ($child_flag){
+			$nbar = $i->[3];
+			$bar_col = '#cee4ae';
+		} else {
+			$nbar = $i->[2];
+			$bar_col = '#87cefa';
+		}
+		my $b = $self->list->ProgressBar(
+			-troughcolor => 'white',
+			-colors => [ 0, $bar_col ],
+			-gap => 0,
+			-length => 150,
+			-padx => 7,
+			-pady => 2,
+		);
+		$b->value( $nbar / $max * 100 );
+		$self->list->itemCreate(
+			$cu,
+			$col,
+			-itemtype => 'window',
+			-widget => $b,
+			-style => $leftu,
+		);
+		
+		
 		$self->list->hide('entry', $cu) if $child_flag;
 		++$row;
 	}
