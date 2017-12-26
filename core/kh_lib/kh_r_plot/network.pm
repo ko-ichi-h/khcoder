@@ -400,25 +400,25 @@ d3net <- forceNetwork(
 sub r_command_n3{
 	return '
 
-n3 <- set.vertex.attribute(
+n3 <- igraph::set.vertex.attribute(
     n2,
     "id",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-    colnames(d)[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
+    colnames(d)[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 )
 
-n3 <- set.vertex.attribute(
+n3 <- igraph::set.vertex.attribute(
     n3,
     "xfact",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-    sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
+    sqrt( freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ] )
 )
 
-n3 <- set.vertex.attribute(
+n3 <- igraph::set.vertex.attribute(
     n3,
     "yfact",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-    sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
+    sqrt( freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ] )
 )
 
 
@@ -431,31 +431,31 @@ sub r_command_n4{
 
 print(paste("use_alpha", use_alpha))
 
-n4 <- set.vertex.attribute(
+n4 <- igraph::set.vertex.attribute(
     n2,
     "frequency",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-    freq[ as.numeric( get.vertex.attribute(n2,"name") ) ]
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
+    freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ]
 )
 
-n4 <- set.vertex.attribute(
+n4 <- igraph::set.vertex.attribute(
     n4,
     "size",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
-    sqrt( freq[ as.numeric( get.vertex.attribute(n2,"name") ) ] )
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
+    sqrt( freq[ as.numeric( igraph::get.vertex.attribute(n2,"name") ) ] )
 )
 
-n4 <- set.vertex.attribute(
+n4 <- igraph::set.vertex.attribute(
     n4,
     "x",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
     lay_f[,1] * 100
 )
 
-n4 <- set.vertex.attribute(
+n4 <- igraph::set.vertex.attribute(
     n4,
     "y",
-    (0+new_igraph):(length(get.vertex.attribute(n2,"name"))-1+new_igraph),
+    (0+new_igraph):(length(igraph::get.vertex.attribute(n2,"name"))-1+new_igraph),
     lay_f[,2] * 100
 )
 
