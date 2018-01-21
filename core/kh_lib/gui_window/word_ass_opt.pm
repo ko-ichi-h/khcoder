@@ -106,6 +106,12 @@ sub _new{
 	$self->{ent_limit}->bind("<Key-Return>",sub{$self->save});
 	$self->{ent_limit}->bind("<KP_Enter>", sub{$self->save});
 	
+	my $frame1 = $win->Frame()->pack(-fill => 'x', -expand => 1);
+	$frame1->Checkbutton(
+		-text     => kh_msg->get('show_lowc'), 
+		-variable => \$gui_window::word_ass::filter->{show_lowc},
+	)->pack(-anchor => 'w');
+	
 	# OK & Cancel
 	$win->Button(
 		-text => kh_msg->gget('cancel'), # キャンセル
@@ -134,7 +140,6 @@ sub _new{
 	return $self;
 }
 
-
 sub save{
 	my $self = shift;
 
@@ -152,7 +157,6 @@ sub save{
 	$::main_gui->get('w_doc_ass')->display;
 	$self->close;
 }
-
 
 sub win_name{
 	return 'w_doc_ass_opt';

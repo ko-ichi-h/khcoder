@@ -505,28 +505,13 @@ sub fetch_results{
 	if ( $args{for_net} ){
 		$sql = "
 			SELECT
-				genkei.id, # ここだけ変更
-				khhinshi.name,
-				df_$self->{tani}.f,
-				ROUND(df_$self->{tani}.f / $denom2, 3),
-				ct_ass_p.p,
-				ROUND(ct_ass_p.p / $denom1, 3),
-				ROUND($lift{$args{order}}, 15) as lift
-			FROM genkei, khhinshi, ct_ass_p, df_$self->{tani}
-			WHERE
-				    genkei.khhinshi_id = khhinshi.id
-				AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
-				AND ct_ass_p.genkei_id = genkei.id
-				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
-				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
-				$hselection
-			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
-			LIMIT $args{filter}->{limit}
-		";
+				genkei.id, # ここだけ変更";
 	} else {
 		$sql = "
 			SELECT
-				genkei.name,
+				genkei.name,";
+	}
+	$sql .= "
 				khhinshi.name,
 				df_$self->{tani}.f,
 				ROUND(df_$self->{tani}.f / $denom2, 3),
@@ -537,14 +522,18 @@ sub fetch_results{
 			WHERE
 				    genkei.khhinshi_id = khhinshi.id
 				AND ct_ass_p.genkei_id = df_$self->{tani}.genkei_id
-				AND ct_ass_p.genkei_id = genkei.id
-				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0
+				AND ct_ass_p.genkei_id = genkei.id";
+	unless ( $args{filter}->{show_lowc} ){
+		$sql .= "
+				AND ( ct_ass_p.p / $denom1 - df_$self->{tani}.f / $denom2 ) > 0\n";
+	}
+	$sql .= "
 				AND df_$self->{tani}.f >= $args{filter}->{min_doc}
 				$hselection
 			ORDER BY lift DESC, ct_ass_p.p DESC, ".$::project_obj->mysql_sort('genkei.name')."
 			LIMIT $args{filter}->{limit}
-		";
-	}
+	";
+	
 
 	return mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 

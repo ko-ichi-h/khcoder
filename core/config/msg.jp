@@ -369,6 +369,7 @@ gui_window::word_ass_opt:
     by_df:                    ・全体での出現数による語の選択
     by_pos:                   ・品詞による語の選択
     min_df:                   '　　最小文書数：'
+    show_lowc:                条件付き確率が低下する語も表示
     top:                      '　　上位：'
     view:                     ・表示する語の数
     win_title:                関連語検索・フィルタ設定

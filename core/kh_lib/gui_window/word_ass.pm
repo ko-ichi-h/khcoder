@@ -306,9 +306,10 @@ sub _new{
 	#   フィルタ設定の初期化   #
 
 	$filter = undef;
-	$filter->{limit}   = 75;                   # LIMIT数
-	$filter->{min_doc} = 1;                    # 最低文書数
-	my $h = mysql_exec->select("               # 品詞によるフィルタ
+	$filter->{limit}     = 75;                   # Retrieve how many words
+	$filter->{min_doc}   = 1;                    # Minimum DF of words
+	$filter->{show_lowc} = 0;                    # Show words with lower conditional probability
+	my $h = mysql_exec->select("                 # Filter by POS
 		SELECT name, khhinshi_id
 		FROM   hselection
 		WHERE  ifuse = 1
