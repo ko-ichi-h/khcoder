@@ -37,7 +37,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Librar
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
 Bind: auto/DBD/mysql/mysql.bundle[file=/usr/local/ActivePerl-5.16/site/lib/auto/DBD/mysql/mysql.bundle,extract]
 Clean: 0
-Date: 2017-09-07 16:05:06
+Date: 2017-12-22 00:19:57
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -45,6 +45,7 @@ Exe: x_mac64
 Force: 1
 Gui: 0
 Hostname: Ks-Mac.local
+Lib: lib:kh_lib/screen_code
 Lib: lib:kh_lib
 Manifest: 
 No-Compress: 0
