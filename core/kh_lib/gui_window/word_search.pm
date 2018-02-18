@@ -159,6 +159,16 @@ sub _new{
 		-command => sub {$self->copy_all;}
 	)->pack(-side => 'right');
 
+	$self->{show_bars} = $::config_obj->show_bars_wordlist;
+	$fra5->Checkbutton(
+		-variable => \$self->{show_bars},
+		-text     => kh_msg->get('show_bars'),
+		-command  => sub {
+			$::config_obj->show_bars_wordlist($self->{show_bars});
+			$self->search;
+		},
+	)->pack(-anchor => 'w', -side => 'left');
+
 	$self->win_obj->bind(
 		'<Control-Key-c>',
 		sub{ $self->{copy_btn}->invoke; }
@@ -459,31 +469,33 @@ sub search{
 		}
 		
 		# bar graph
-		my $nbar;
-		my $bar_col;
-		if ($child_flag){
-			$nbar = $i->[3];
-			$bar_col = '#cee4ae';
-		} else {
-			$nbar = $i->[2];
-			$bar_col = '#89c3eb';
+		if ( $self->{show_bars} ){
+			my $nbar;
+			my $bar_col;
+			if ($child_flag){
+				$nbar = $i->[3];
+				$bar_col = '#cee4ae';
+			} else {
+				$nbar = $i->[2];
+				$bar_col = '#89c3eb';
+			}
+			my $b = $self->list->ProgressBar(
+				-troughcolor => 'white',
+				-colors => [ 0, $bar_col ],
+				-gap => 0,
+				-length => 150,
+				-padx => 7,
+				-pady => 2,
+			);
+			$b->value( $nbar / $max * 100 );
+			$self->list->itemCreate(
+				$cu,
+				$col,
+				-itemtype => 'window',
+				-widget => $b,
+				-style => $leftu,
+			);
 		}
-		my $b = $self->list->ProgressBar(
-			-troughcolor => 'white',
-			-colors => [ 0, $bar_col ],
-			-gap => 0,
-			-length => 150,
-			-padx => 7,
-			-pady => 2,
-		);
-		$b->value( $nbar / $max * 100 );
-		$self->list->itemCreate(
-			$cu,
-			$col,
-			-itemtype => 'window',
-			-widget => $b,
-			-style => $leftu,
-		);
 		
 		
 		$self->list->hide('entry', $cu) if $child_flag;

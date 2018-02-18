@@ -555,6 +555,7 @@ gui_window::word_search:
     pos:                      品詞
     pos_conj:                 品詞/活用
     search:                   検索
+    show_bars:                棒グラフ
     view_conj:                活用形を表示
     win_title:                抽出語リスト
     word:                     抽出語

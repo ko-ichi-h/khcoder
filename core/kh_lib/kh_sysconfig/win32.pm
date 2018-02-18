@@ -115,6 +115,7 @@ sub save_ini{
 		'mail_from',
 		'mail_to',
 		'use_heap',
+		'show_bars_wordlist',
 		'all_in_one_pack',
 		'font_main',
 		'font_plot',

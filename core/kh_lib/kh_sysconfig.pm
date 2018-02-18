@@ -1389,6 +1389,23 @@ sub all_in_one_pack{
 	return $self->{all_in_one_pack};
 }
 
+sub show_bars_wordlist{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 新しい値を指定された場合
+	if (defined($new)){
+		$self->{show_bars_wordlist} = $new;
+	}
+	
+	# デフォルト値
+	unless ( defined($self->{show_bars_wordlist}) ){
+		$self->{show_bars_wordlist} = 1;
+	}
+	
+	return $self->{show_bars_wordlist};
+}
+
 sub kaigyo_kigou{
 	my $self = shift;
 	my $new  = shift;
