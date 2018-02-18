@@ -193,7 +193,7 @@ gui_window::main::menu:
     h_cluster:                Hierarchical Cluster Analysis
     help:                     Help
     import:                   Import
-    import_save_path:         Saving the target text file ("coder_data" folder will be created at the same path).
+    import_save_path:         Saving the target text file
     import_win_title:         Import a project from a *.khc file.
     jac_mtrx:                 Similarity Matrix
     kwic:                     KWIC Concordance

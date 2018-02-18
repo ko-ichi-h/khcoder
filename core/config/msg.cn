@@ -422,7 +422,7 @@ gui_window::main::menu:
   h_cluster: 阶层式集群分析
   help: 帮助（H)
   import: 导入
-  import_save_path: 请指定分析对象文件的保存地址（在同一地方会建立一个coder_data文件夹）
+  import_save_path: 请指定分析对象文件的保存地址
   import_win_title: 从KHC格式的文件导入项目。
   jac_mtrx: 相似性行列
   kwic: KWIC Concordance

@@ -422,7 +422,7 @@ gui_window::main::menu:
   h_cluster: 계층적 클러스터 분석
   help: 도움말(H)
   import: 입력
-  import_save_path: 분석 대상 파일의 저장 장소를 지정해 주십시오(같은 장소에 coder_data 폴더가 작성됩니다)
+  import_save_path: 분석 대상 파일의 저장 장소를 지정해 주십시오
   import_win_title: 'KHC 형식의 파일에서 프로젝트를 가져오기. '
   jac_mtrx: 유사도 행렬
   kwic: KWIC 콘코던스

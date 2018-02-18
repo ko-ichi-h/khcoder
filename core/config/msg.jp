@@ -193,7 +193,7 @@ gui_window::main::menu:
     h_cluster:                階層的クラスター分析
     help:                     ヘルプ(H)
     import:                   インポート
-    import_save_path:         分析対象ファイルの保存先を指定して下さい（同じ場所にcoder_dataフォルダが作成されます）
+    import_save_path:         分析対象ファイルの保存先を指定して下さい
     import_win_title:         KHC形式のファイルからプロジェクトをインポート。
     jac_mtrx:                 類似度行列
     kwic:                     KWICコンコーダンス

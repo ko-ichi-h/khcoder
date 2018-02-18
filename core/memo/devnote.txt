@@ -15,7 +15,7 @@
 		・半角スペースを含む語を強制抽出すると、その語に含まれる半角スペースを削除した状態で抽出される
 
 	■メモ（設定等）
-	・MySQL 5.6では「innodb_flush_log_at_trx_commit = 0」としないと一部の処理（プロジェクトのインポート）がとてつもなく遅くなる
+	・MySQL 5.6では「innodb_flush_log_at_trx_commit = 2」としないと一部の処理（プロジェクトのインポート）がとてつもなく遅くなる
 	・Performance Schemaも配布版ではOFFにする
 
 	・FreeLingの対応言語

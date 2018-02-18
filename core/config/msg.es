@@ -192,7 +192,7 @@ gui_window::main::menu:
     h_cluster:                Análisis jerárquico de cluster
     help:                     Ayuda
     import:                   Importar
-    import_save_path:         Guardando archivo de texto de destino (se creará la carpeta "coder_data" en la misma ruta).
+    import_save_path:         Guardando archivo de texto de destino
     import_win_title:         Importar proyecto desde archivo *.khc.
     jac_mtrx:                 Matriz de similitud
     kwic:                     Concordancia KWIC
