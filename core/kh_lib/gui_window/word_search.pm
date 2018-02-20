@@ -179,13 +179,6 @@ sub _new{
 		-font => "TKFN"
 	);
 
-	#$self->{conc_button} = $fra5->Button(
-	#	-text => kh_msg->get('kwic'),#$self->gui_jchar('コンコーダンス'),
-	#	-font => "TKFN",
-	#	-borderwidth => '1',
-	#	-command => sub {$self->conc;}
-	#)->pack(-side => 'left');
-	
 	#---------------------------#
 	#   initialise word filer   #
 
@@ -596,6 +589,8 @@ sub conc{
 	$conc->entry4->insert('end',$hinshi);
 	$conc->entry2->insert('end',$katuyo);
 	$conc->search;
+	
+	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
 }
 
 #--------------#
@@ -625,10 +620,7 @@ sub last_search{
 	my $self = shift;
 	return $self->{last_search};
 }
-sub conc_button{
-	my $self = shift;
-	return $self->{conc_button};
-}
+
 sub start{
 	my $self = shift;
 	$self->entry->focus;
