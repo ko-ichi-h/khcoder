@@ -226,7 +226,7 @@ sub _exec{
 	$save = gui_window->gui_jg_filename_win98($save);
 	$save = gui_window->gui_jg($save);
 	$save = $::config_obj->os_path($save);
-
+	#print "file save: $save\n";
 
 	# 処理の実行
 	my @files = ();
@@ -242,7 +242,7 @@ sub _exec{
 		return unless $_ =~ /.+\.txt$/;
 		
 		my $f = $File::Find::name;
-		#print "$f, ";
+		return if $f eq $save;
 
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
 		$f_o = $::config_obj->uni_path( $f_o );
