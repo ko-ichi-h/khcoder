@@ -179,6 +179,38 @@ sub _new{
 		-font => "TKFN"
 	);
 
+	#--------------------------#
+	#   initialise POS stats   #
+	
+	# 全体と比較するよりも、画面上のほかの語と比較する方が効果的だった…
+	$self->{morpho_analyzer} = $::project_obj->morpho_analyzer;
+	if (0) {
+		my $pos;
+		my $pos_list;
+		my $h = mysql_exec->select("
+			SELECT khhinshi.name, katuyo.name, count(*)
+			FROM katuyo, hyoso, genkei, khhinshi
+			WHERE 
+			  hyoso.katuyo_id = katuyo.id
+			  AND hyoso.genkei_id = genkei.id
+			  AND genkei.khhinshi_id = khhinshi.id
+			GROUP BY katuyo.id, khhinshi.id
+			ORDER BY khhinshi_id
+		")->hundle;
+		
+		while (my $i = $h->fetch){
+			my $name = $i->[1];
+			
+			# Heuristic for ChaSen & IPADic: See 2 first chars only
+			$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+			
+			push @{$pos_list->{$i->[0]}}, $name unless defined($pos->{$i->[0]}{$name});
+			$pos->{$i->[0]}{$name} += $i->[2];
+		}
+		$self->{pos} = $pos;
+		$self->{pos_list} = $pos_list;
+	}
+	
 	#---------------------------#
 	#   initialise word filer   #
 
@@ -242,19 +274,104 @@ sub search{
 		mode   => $gui_window::word_search::s_mode,
 		filter => $filter
 	);
-
-	# check the result
-	my %have_child;
-	my $row = 0;
-	my $last_parent = -1;
-	foreach my $i ( @{$result} ){
-		if ( $i->[0] eq 'katuyo' ){
-			$have_child{$last_parent} = 1;
-			#print "have_child: $last_parent\n";
-		} else {
-			$last_parent = $row;
+	
+	# POS check 1st pass
+	my $n = 0;
+	my $flg_katuyo = 0;
+	my $current;
+	my $last;
+	my $pos_num;
+	my $pos_list;
+	foreach my $i (@{$result}){
+		if ($i->[0] eq 'katuyo') {
+			if ($flg_katuyo == 0) {
+				$current->{posname} = $last->[1];
+				$flg_katuyo = 1;
+			}
+			my $name = $i->[2];
+			$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+			
+			push @{$pos_list->{$current->{posname}}}, $name
+				unless defined( $pos_num->{$current->{posname}}{$name} );
+			$pos_num->{$current->{posname}}{$name} += $i->[3];
+			
 		}
-		++$row;
+		
+		if ( ($flg_katuyo == 1) &! ($i->[0] eq 'katuyo') ) {
+			$flg_katuyo = 0;
+			$current->{posname} = '';
+		}
+		
+		$last = $i;
+		++$n;
+	}
+	
+	$self->{pos_list} = $pos_list;
+	$self->{pos} = $pos_num;
+	
+	
+	# POS check 2nd pass
+	use Statistics::ChisqIndep;
+	my $chi = new Statistics::ChisqIndep;
+	
+	$n = 0;
+	$flg_katuyo = 0;
+	$current = undef;
+	$last = undef;
+	my $pos_chk;
+	my %have_child;
+	foreach my $i (@{$result}){
+		if ($i->[0] eq 'katuyo') {
+			if ($flg_katuyo == 0) {
+				$current->{mother}  = $n - 1;
+				$current->{posname} = $last->[1];
+				$current->{word}    = $last->[0];
+				$have_child{$current->{mother}} = 1;
+				$flg_katuyo = 1;
+			}
+			
+			my $name = $i->[2];
+			$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+			$current->{pos}{$name} += $i->[3];
+		}
+		
+		if ( ($flg_katuyo == 1) &! ($i->[0] eq 'katuyo') ) {
+			# check distribution
+			my @data;
+			foreach my $h ( @{$self->{pos_list}{$current->{posname}}} ){
+				my $num = 0;
+				if ( defined($current->{pos}{$h}) ){
+					$num = $current->{pos}{$h};
+				}
+				push @{$data[1]}, $num;
+				push @{$data[0]}, $self->{pos}{$current->{posname}}{$h} - $num;
+			}
+
+			$chi->load_data(\@data);
+			my $v = sqrt( $chi->{chisq_statistic} / $chi->{total} );
+			if ($v >= 0.1 && $chi->{p_value} < 0.01) {
+				#$pos_chk->{$current->{mother}} = 1;
+				
+				# check residuals
+				my $cols = @{$data[1]};
+				for (my $j = 0; $j <= $cols; ++$j){
+					my $rsd = 0;
+					$rsd = ( $chi->{obs}[1][$j] - $chi->{expected}[1][$j] )
+						/ sqrt( $chi->{expected}[1][$j] ) if $chi->{expected}[1][$j];
+					if ($rsd >= 3.291) {
+						$pos_chk->{$current->{mother}}->{$self->{pos_list}{"$current->{posname}"}[$j]} = 1;
+					}
+				}
+			
+			}
+			
+			$current = undef;
+			$flg_katuyo = 0;
+		}
+		
+		
+		$last = $i;
+		++$n;
 	}
 	
 	# display the result
@@ -289,10 +406,11 @@ sub search{
 	);
 	
 	$self->list->delete('all');
-	$row = 0;
+	my $row = 0;
 	my $num = 1;
-	my $last;
+	$last = undef;
 	my $child_flag = 0;
+	my $pos_flag = 0;
 	my $max = $result->[0][2];
 	foreach my $i (@{$result}){
 		my $cu;
@@ -316,8 +434,16 @@ sub search{
 			$last = $cu;
 			$child_flag = 0;
 			
+			if ( $have_child{$row} && $pos_chk->{$row} ){
+				$pos_flag = $row;
+			} else {
+				$pos_flag = -1;
+			}
+			
 			if ($have_child{$row}) {
 				my $color = "#007b43";
+				$color = "#ea5506" if $pos_chk->{$row};
+				
 				my $c = $self->list->Label(
 					-text => $num,
 					-font       => "TKFN",
@@ -407,6 +533,14 @@ sub search{
 					   ( $col == 1 && $child_flag == 0 )
 					|| ( $col == 2 && $child_flag )
 				){
+					if ($col == 2 && $child_flag && $pos_flag > -1) {
+						my $name = $h;
+						$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+						if ($pos_chk->{$pos_flag}{$name}) {
+							$h .= " !";
+						}
+					}
+					
 					my $c = $self->list->Label(
 						-text => $h,
 						-font       => "TKFN",
@@ -578,6 +712,9 @@ sub conc{
 	} else {
 		$query = $self->gui_jchar($result->[$selected][0]);
 		$hinshi = $self->gui_jchar($result->[$selected][1]);
+	}
+	if ( $katuyo =~ /(.+) !$/ ){
+		$katuyo = $1;
 	}
 
 	# コンコーダンスの呼び出し

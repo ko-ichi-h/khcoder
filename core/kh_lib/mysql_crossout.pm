@@ -149,7 +149,7 @@ sub sql2{
 
 	my $sql;
 	$sql .= "SELECT $self->{tani}.id, genkei.id, hyoso.name, genkei.nouse\n";
-	$sql .= "FROM   hyosobun USE INDEX (PRIMARY), hyoso, genkei, $self->{tani}\n";
+	$sql .= "FROM   hyosobun, hyoso, genkei, $self->{tani}\n"; # hyosobun USE INDEX (PRIMARY)
 	$sql .= "WHERE\n";
 	$sql .= "	hyosobun.hyoso_id = hyoso.id\n";
 	$sql .= "	AND hyoso.genkei_id = genkei.id\n";
