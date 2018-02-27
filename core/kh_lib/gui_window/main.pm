@@ -165,7 +165,7 @@ sub close_all{
 	my $self = shift;
 	my %args = @_;
 	foreach my $i (keys %{$self}){
-		if ( substr($i,0,2) eq 'w_'){
+		if ( substr($i,0,2) eq 'w_'){ # do not close main window: 'main_window'
 			my $win;
 			if ($self->{$i}){
 				my $win = $self->{$i}->win_obj;
