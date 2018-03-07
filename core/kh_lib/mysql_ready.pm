@@ -73,16 +73,72 @@ sub first{
 	$self->fix_michigo;
 	
 	&zero_length_headings;
+	
+	&make_cache;
 
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
+	mysql_exec->flush;
 	
 	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+}
+
+sub make_cache{
+	
+	# Light weight version of "hyosobun" for mysql_crossout.pm
+	mysql_exec->do("
+		DROP TABLE IF EXISTS hyosobun2
+	",1);
+	
+	mysql_exec->do("
+		CREATE TABLE hyosobun2(
+			id INT primary key,
+			hyoso_id INT
+		)
+	",1);
+	
+	mysql_exec->do("
+		INSERT INTO hyosobun2 (id, hyoso_id)
+		SELECT id, hyoso_id
+		FROM hyosobun
+	",1);
+	
+	mysql_exec->do("
+		ALTER TABLE hyosobun2 ADD INDEX index1 (id, hyoso_id);
+	",1);
+	
+	# Light weight version of "bun" for mysql_crossout.pm
+	
+	mysql_exec->do("
+		DROP TABLE IF EXISTS bun_hb
+	",1);
+	
+	mysql_exec->do("
+		CREATE TABLE bun_hb(
+			hyosobun_id INT primary key,
+			tid         INT
+		)
+	",1);
+	
+	mysql_exec->do("
+		INSERT INTO bun_hb (hyosobun_id, tid)
+		SELECT hyosobun.id, bun.id
+		FROM hyosobun, bun
+		WHERE
+			hyosobun.bun_id = bun.bun_id
+			AND hyosobun.dan_id = bun.dan_id
+			AND hyosobun.h5_id = bun.h5_id
+			AND hyosobun.h4_id = bun.h4_id
+			AND hyosobun.h3_id = bun.h3_id
+			AND hyosobun.h2_id = bun.h2_id
+			AND hyosobun.h1_id = bun.h1_id
+		ORDER BY hyosobun.id
+	",1);
 	
 }
 

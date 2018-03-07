@@ -8,7 +8,7 @@ use mysql_a_word;
 
 my ( $l_query, $l_hinshi, $l_katuyo, $l_length, $l_tuika);
 my $docs_per_once = 200;
-my $temporary = '';
+my $temporary = 'temporary';
 
 if ($::config_obj->web_if){
 	$docs_per_once = 50;
@@ -145,7 +145,7 @@ sub _hyoso_ext{
 	
 	mysql_exec->drop_table("temp_conc_hyoso");
 	mysql_exec->do("
-		create table temp_conc_hyoso(
+		create $temporary table temp_conc_hyoso(
 			id int primary key not null
 		)  TYPE = HEAP
 	",1);
@@ -273,7 +273,7 @@ sub _tuika{
 		# テーブルの準備
 		mysql_exec->drop_table("temp_conc_hyoso_opt$i");
 		mysql_exec->do("
-			create table temp_conc_hyoso_opt$i(
+			create $temporary table temp_conc_hyoso_opt$i(
 				id int primary key not null
 			)  TYPE = HEAP
 		",1);

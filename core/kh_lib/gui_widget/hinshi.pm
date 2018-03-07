@@ -40,11 +40,9 @@ sub _new{
 	
 	my $sth = mysql_exec->select("
 		SELECT hselection.name, hselection.khhinshi_id
-		FROM genkei, hselection
+		FROM hselection
 		WHERE
-			    genkei.khhinshi_id = hselection.khhinshi_id
-			AND hselection.ifuse = 1
-		GROUP BY hselection.khhinshi_id
+			hselection.ifuse = 1
 		ORDER BY hselection.khhinshi_id
 	",1)->hundle;
 	

@@ -94,13 +94,15 @@ sub num_expr{
 	
 	my $t = $self->expr;
 	
-	if ($sort eq 'tf*idf'){
-		$t .= " * ".$self->idf;
-	}
-	elsif ($sort eq 'tf/idf'){
-		my $idf = $self->idf;
-		$idf = 1 unless $idf;
-		$t .= " / $idf";
+	if ( length($sort) ) {
+		if ($sort eq 'tf*idf'){
+			$t .= " * ".$self->idf;
+		}
+		elsif ($sort eq 'tf/idf'){
+			my $idf = $self->idf;
+			$idf = 1 unless $idf;
+			$t .= " / $idf";
+		}
 	}
 	#print Jcode->new("$sort : ".$self->raw." : $t \n")->sjis;
 	

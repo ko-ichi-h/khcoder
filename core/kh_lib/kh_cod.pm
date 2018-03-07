@@ -32,6 +32,7 @@ sub code{
 		
 	}
 	
+	mysql_exec->flush;
 	return $self;
 }
 

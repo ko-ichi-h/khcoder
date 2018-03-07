@@ -115,6 +115,7 @@ sub read{
 		mysql_exec->do($sql, 1);
 	}
 	
+	mysql_exec->flush;
 	return 1;
 }
 
@@ -426,6 +427,7 @@ sub save{
 		++$n;
 	}
 	
+	mysql_exec->flush;
 	return 1;
 }
 

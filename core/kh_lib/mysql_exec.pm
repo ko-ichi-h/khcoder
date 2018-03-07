@@ -290,6 +290,24 @@ sub table_list{
 #   Do¤ÈSelect   #
 #----------------#
 
+sub flush{
+	my $class = shift;
+	
+	my $dbh;
+	if ($::project_obj) {
+		$dbh = $::project_obj->dbh;
+	} else {
+		&connect_common unless $dbh_common;
+		$dbh = $dbh_common;
+	}
+	
+	$dbh->do("FLUSH TABLES") or die("FLUSH TABLES");
+	$dbh->do("FLUSH LOGS")   or die("FLUSH LOGS");
+	print "MySQL: FLUSH\n";
+	
+	return 1;
+}
+
 sub do{
 	my $class = shift;
 	my $self;

@@ -439,10 +439,13 @@ if ( exists("com_method") ){
 		std <- scale(std, center=T, scale=F)
 		std <- t(std)
 
-		if ( min(std[!is.na(std)]) < 0.0005 ){
-			std <- std + ( 0.0005 - min(std[!is.na(std)]) );
-		}
-		std <- std / max(std[!is.na(std)])
+		chkm_temp <- chkm[!is.na(chkm)]
+		std_range <- max(chkm_temp) - min(chkm_temp[chkm_temp!=0])
+		std <- std - min(std[!is.na(std)])        # min = 0
+		std <- std / max(std[!is.na(std)])        # max = 1
+		std <- std * std_range                    # set range
+		std <- std + min(chkm_temp[chkm_temp!=0]) # set min
+		chkm_temp <- NULL
 		
 		std[chkm == 0] <- 0
 		d[(n_words+1):nrow(d),1:n_words] <- std
@@ -477,6 +480,35 @@ el <- data.frame(
 	stringsAsFactors = FALSE
 )
 
+# making backup of coef.
+if ( exists("com_method") ){
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		dbb <- d
+		dbb[(n_words+1):nrow(dbb),1:n_words] <- chkm
+		
+		nbb <- graph.adjacency(dbb, mode="lower", weighted=T, diag=F)
+		nbb <- igraph::set.vertex.attribute(
+			nbb,
+			"name",
+			(0+new_igraph):(length(dbb[1,])-1+new_igraph),
+			as.character( 1:length(dbb[1,]) )
+		)
+		
+		elbb <- data.frame(
+			edge1            = get.edgelist(nbb,name=T)[,1],
+			edge2            = get.edgelist(nbb,name=T)[,2],
+			weight_b           = igraph::get.edge.attribute(nbb, "weight"),
+			stringsAsFactors = FALSE
+		)
+		
+		if ( identical(el[,1:2], elbb[,1:2]) == F ){
+			print("Error: could not make coef. backup!")
+		}
+		
+		el <- data.frame(el, elbb$weight_b)
+	}
+}
+
 # Find a threshold value
 if (th < 0){
 	if(edges > length(el[,1])){
@@ -504,6 +536,18 @@ n2 <- igraph::set.edge.attribute(
 	(0+new_igraph):(length(get.edgelist(n2)[,1])-1+new_igraph),
 	el2[,3]
 )
+
+# use the backup of coef.
+if ( exists("com_method") ){
+	if (com_method == "twomode_c" || com_method == "twomode_g"){
+		n2 <- igraph::set.edge.attribute(
+			n2,
+			"weight",
+			(0+new_igraph):(length(get.edgelist(n2)[,1])-1+new_igraph),
+			el2[,4]
+		)
+	}
+}
 
 if ( min_sp_tree_only == 1 ){
 	n2 <- minimum.spanning.tree(

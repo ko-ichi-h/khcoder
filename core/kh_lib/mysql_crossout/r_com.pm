@@ -32,6 +32,38 @@ sub run{
 
 sub out2{                               # length作製をする
 	my $self = shift;
+
+	# 無視する語をリストアップ
+	my %ignore;
+	my $h = mysql_exec->select(
+		"SELECT id FROM genkei WHERE ( nouse = 1 ) OR khhinshi_id = 99999",
+		1
+	)->hundle;
+	print "ignore: ";
+	while (my $i = $h->fetch) {
+		$ignore{$i->[0]} = 1;
+		print "$i->[0],";
+	}
+	print "\n";
+	
+	# hyoso2テーブルを作成
+	mysql_exec->do("DROP TABLE IF EXISTS hyoso2", 1);
+	my $sql1 = "
+		CREATE TABLE hyoso2(
+			id INT primary key,
+			len INT,
+			genkei_id INT
+		)";
+	$sql1 .= " ENGINE = MEMORY" if $::config_obj->use_heap;
+	mysql_exec->do($sql1, 1);
+	
+	mysql_exec->do("
+		INSERT INTO hyoso2 (id, len, genkei_id)
+		SELECT id, len, genkei_id
+		FROM hyoso
+		",
+		1
+	);
 	
 	# データを保存するファイル
 	my $file = $::project_obj->file_TempR;
@@ -103,21 +135,15 @@ sub out2{                               # length作製をする
 			$last = $i->[0] unless $started;
 			$started = 1;
 			
-			# HTMLタグを無視
-			if (
-				!  ( $self->{use_html} )
-				&& ( $i->[2] =~ /<[h|H][1-5]>|<\/[h|H][1-5]>/o )
-			){
-				next;
-			}
-			# 未使用語を無視
-			if ($i->[3]){
+			# HTMLタグと未使用語を無視
+			if ( $ignore{$i->[1]} ){
 				next;
 			}
 			
 			# 集計
 			++$current{'length_w'};
-			$current{'length_c'} += length($i->[2]);
+			#$current{'length_c'} += length($i->[2]);
+			$current{'length_c'} += $i->[2];
 			if ($self->{wName}{$i->[1]}){
 				++$current{$i->[1]};
 			}

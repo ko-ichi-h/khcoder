@@ -442,7 +442,7 @@ sub search{
 			
 			if ($have_child{$row}) {
 				my $color = "#007b43";
-				$color = "#ea5506" if $pos_chk->{$row};
+				#$color = "#ea5506" if $pos_chk->{$row}; # temporarily hiding the new feature
 				
 				my $c = $self->list->Label(
 					-text => $num,
@@ -713,7 +713,7 @@ sub conc{
 		$query = $self->gui_jchar($result->[$selected][0]);
 		$hinshi = $self->gui_jchar($result->[$selected][1]);
 	}
-	if ( $katuyo =~ /(.+) !$/ ){
+	if ( length($katuyo) && $katuyo =~ /(.+) !$/ ){
 		$katuyo = $1;
 	}
 

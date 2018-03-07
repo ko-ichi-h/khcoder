@@ -112,6 +112,8 @@ sub import{
 	kh_projects->read->add_new($new) or return 0; # このプロジェクトが開かれる
 
 	# MySQLデータベースの準備（クリア）
+	#mysql_exec->do("set global innodb_flush_log_at_trx_commit = 0");
+
 	my @tables = mysql_exec->table_list;
 	foreach my $i (@tables){
 		mysql_exec->drop_table($i);
@@ -126,6 +128,9 @@ sub import{
 	$mb->run_restore_script($file_temp_mysql);
 	unlink($file_temp_mysql);
 
+	#mysql_exec->do("set global innodb_flush_log_at_trx_commit = 2");
+	mysql_exec->flush;
+	
 	undef $::project_obj;
 }
 

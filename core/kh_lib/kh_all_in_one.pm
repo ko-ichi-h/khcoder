@@ -216,7 +216,7 @@ sub init{
 	my ($mysql_pass, $cmd_line);
 	
 	$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld.exe';
-	$cmd_line = 'bin\mysqld --defaults-file=khc.ini';
+	$cmd_line = 'bin\mysqld --defaults-file=khc.ini --standalone';
 
 	Win32::Process::Create(
 		$obj,
