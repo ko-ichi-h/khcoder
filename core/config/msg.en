@@ -746,6 +746,7 @@ gui_widget::r_net:
     view_coef:                Show coef.
     cor_var:                  'Color: correlation with variables / position'
     cor_var_darker:           'Darker background color (correlation)'
+    standardize_coef:         'Standardize coef.'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''

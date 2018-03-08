@@ -28,6 +28,10 @@ sub _new{
 		unless defined $self->{check_use_freq_as_size};
 	$self->{check_smaller_nodes}       = 0
 		unless defined $self->{check_smaller_nodes};
+	$self->{standardize_coef}          = 1
+		unless defined $self->{standardize_coef};
+	$self->{edge_type}                 = "words"
+		unless defined $self->{edge_type};
 
 	my $num_size = 100;
 
@@ -90,7 +94,10 @@ sub _new{
 		if ($self->{r_cmd} =~ /method_coef <- "(.+)"\n/){
 			$self->{method_coef} = $1;
 		}
-	
+		if ($self->{r_cmd} =~ /standardize_coef <- ([01])\n/){
+			$self->{standardize_coef} = $1;
+		}
+
 		if ($edges == 0){
 			$self->{radio} = 'j';
 			if ($self->{r_cmd} =~ /# edges: ([0-9]+)\n/){
@@ -181,7 +188,7 @@ sub _new{
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$f4->Radiobutton(
+	$self->{widget_th1} = $f4->Radiobutton(
 		-text             => kh_msg->get('e_jac'), # Jaccard係数：
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
@@ -201,11 +208,32 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_edges_jac});
 
-	$f4->Label(
+	$self->{widget_th2} = $f4->Label(
 		-text => kh_msg->get('or_more'), # 以上
 		-font => "TKFN",
 	)->pack(-anchor => 'w', -side => 'left');
 
+	# coef. standardize
+	if (
+		!  ( $self->{r_cmd} )
+		|| ( $self->{r_cmd} && $self->{edge_type} eq "twomode")
+	) {
+		my $f4a = $lf->Frame()->pack(
+			-fill => 'x',
+			-pady => 2,
+		);
+		$f4a->Label(
+			-text => '  ',
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left');
+		$self->{chkwid_standardize_coef} = $f4a->Checkbutton(
+				-text     => kh_msg->get('standardize_coef'),
+				-variable => \$self->{standardize_coef},
+				-command  => sub{$self->refresh;},
+				-anchor   => 'w',
+		)->pack(-anchor => 'w', -side => 'left');
+	}
+	
 	# Edgeの太さ
 	my $edge_frame = $lf->Frame()->pack(-anchor => 'w');
 	$edge_frame->Checkbutton(
@@ -339,6 +367,21 @@ sub refresh{
 	return unless $self->{wc_smaller_nodes};
 	
 	my (@dis, @nor);
+
+	if ($self->{edge_type} eq 'twomode'){
+		if ( $self->{standardize_coef} ){
+			$self->{radio} = 'n';
+			push @dis, $self->{widget_th1};
+			push @dis, $self->{widget_th2};
+		} else {
+			push @nor, $self->{widget_th1};
+			push @nor, $self->{widget_th2};
+		}
+	} else {
+		push @nor, $self->{widget_th1};
+		push @nor, $self->{widget_th2};
+	}
+
 	if ($self->{radio} eq 'n'){
 		push @nor, $self->{entry_edges_number};
 		push @dis, $self->{entry_edges_jac};
@@ -364,9 +407,11 @@ sub refresh{
 	unless ($self->{r_cmd}) {
 		if ( $self->{from}{radio_type} eq "twomode" ){
 			push @dis, $self->{wd_check_cor_var};
+			push @nor, $self->{chkwid_standardize_coef};
 			$self->{var_obj2}->disable;
 		} else {
 			push @nor, $self->{wd_check_cor_var};
+			push @dis, $self->{chkwid_standardize_coef};
 			if ($self->{check_cor_var}){
 				$self->{var_obj2}->enable;
 			} else {
@@ -374,6 +419,8 @@ sub refresh{
 			}
 		}
 	}
+	
+
 
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal') if $i;
@@ -410,6 +457,7 @@ sub params{
 		method_coef         => gui_window->gui_jg( $self->{method_coef} ),
 		cor_var             => $self->cor_var,
 		cor_var_darker      => gui_window->gui_jg( $self->{check_cor_var_darker} ),
+		standardize_coef    => $self->{standardize_coef},
 	);
 }
 

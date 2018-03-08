@@ -741,6 +741,7 @@ gui_widget::r_net:
     view_coef:                '係数を表示'
     cor_var:                  '外部変数・見出し・位置との相関をカラー表示：'
     cor_var_darker:           '背景色を暗めにする（相関）'
+    standardize_coef:         '係数を標準化する'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'

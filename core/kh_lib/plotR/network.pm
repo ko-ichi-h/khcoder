@@ -88,6 +88,8 @@ sub new{
 
 	$r_command .= "method_coef <- \"$args{method_coef}\"\n\n";
 
+	$args{standardize_coef} = 1 unless ( length($args{standardize_coef}) );
+	$r_command .= "standardize_coef <- $args{standardize_coef}\n";
 
 	# プロット作成
 	
@@ -427,28 +429,32 @@ if ( method_coef == "euclid" ){
 	d <- 1 - d
 }
 
-# Delete unnecessary edges and standardize
+# For twomode
 if ( exists("com_method") ){
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
+	if ( com_method == "twomode_c" || com_method == "twomode_g" ){
+		# delete unnecessary edges
 		d[1:n_words,] <- 0
 
-		std  <- d[(n_words+1):nrow(d),1:n_words]
-		chkm <- std
-		
-		std <- t(std)
-		std <- scale(std, center=T, scale=F)
-		std <- t(std)
-
-		chkm_temp <- chkm[!is.na(chkm)]
-		std_range <- max(chkm_temp) - min(chkm_temp[chkm_temp!=0])
-		std <- std - min(std[!is.na(std)])        # min = 0
-		std <- std / max(std[!is.na(std)])        # max = 1
-		std <- std * std_range                    # set range
-		std <- std + min(chkm_temp[chkm_temp!=0]) # set min
-		chkm_temp <- NULL
-		
-		std[chkm == 0] <- 0
-		d[(n_words+1):nrow(d),1:n_words] <- std
+		# standardize coef.
+		if ( standardize_coef == 1 ) {
+			std  <- d[(n_words+1):nrow(d),1:n_words]
+			chkm <- std
+			
+			std <- t(std)
+			std <- scale(std, center=T, scale=F)
+			std <- t(std)
+	
+			chkm_temp <- chkm[!is.na(chkm)]
+			std_range <- max(chkm_temp) - min(chkm_temp[chkm_temp!=0])
+			std <- std - min(std[!is.na(std)])        # min = 0
+			std <- std / max(std[!is.na(std)])        # max = 1
+			std <- std * std_range                    # set range
+			std <- std + min(chkm_temp[chkm_temp!=0]) # set min
+			chkm_temp <- NULL
+			
+			std[chkm == 0] <- 0
+			d[(n_words+1):nrow(d),1:n_words] <- std
+		}
 	}
 }
 
@@ -482,7 +488,10 @@ el <- data.frame(
 
 # making backup of coef.
 if ( exists("com_method") ){
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
+	if (
+		( com_method == "twomode_c" || com_method == "twomode_g" )
+		&& ( standardize_coef == 1 )
+	){
 		dbb <- d
 		dbb[(n_words+1):nrow(dbb),1:n_words] <- chkm
 		
@@ -539,7 +548,10 @@ n2 <- igraph::set.edge.attribute(
 
 # use the backup of coef.
 if ( exists("com_method") ){
-	if (com_method == "twomode_c" || com_method == "twomode_g"){
+	if (
+		( com_method == "twomode_c" || com_method == "twomode_g" )
+		&& ( standardize_coef == 1 )
+	){
 		n2 <- igraph::set.edge.attribute(
 			n2,
 			"weight",
