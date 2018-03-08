@@ -810,9 +810,12 @@ if ( length(igraph::get.vertex.attribute(n2,"name")) >= 3 ){
 			}
 			return( NA )
 		}
+		salt <- 1
 		while ( is.na(check4fr(lay)) == 0 ){
 			mv <-  check4fr(lay)
-			lay[mv,1] <- lay[mv,1] + 0.001
+			lay[mv,1] <- lay[mv,1] + 0.001 * salt
+			# Much faster if you add salt. But layout will be changed.
+			#salt <- salt + 0.2
 			#print( paste( "Moved:", mv ) )
 		}
 	}
