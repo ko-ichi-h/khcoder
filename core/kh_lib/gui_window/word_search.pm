@@ -416,6 +416,10 @@ sub search{
 		my $cu;
 		my $col = 0;
 		
+		# not sure why we need this...
+		my $chk = @{$i};
+		next unless $chk;
+		
 		# children (conjugated)
 		if ( $i->[0] eq 'katuyo' ){
 			$cu = $self->list->addchild($last);

@@ -12,9 +12,9 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a12a';
+my $V = '3a12b';
 my $V_main = "3.Alpha.12"; # フォルダ名
-my $V_full = "3.Alpha.12a";
+my $V_full = "3.Alpha.12b";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -94,13 +94,13 @@ use File::Path 'rmtree';
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
-&source_tgz;
+#&source_tgz;
 &win_pkg;
 	#&win_upd;
 	#&win_strb;
-&upload;
+#&upload;
 
 sub upload{
 	print "Uploading...\n";
@@ -441,12 +441,14 @@ sub source_tgz{
 		'core/memo/bib_t2h.pl',
 		'core/memo/bib_t2h.bat',
 		'core/memo/db_memo.csv',
+		'core/memo/bib_ng.txt',
 		'core/memo/devnote.txt',
 		'core/memo/1.icns',
 		'core/memo/performance.csv',
 		'core/auto_test.pl',
 		'core/kh_coder.perlapp',
 		'core/make_exe.bat',
+		'core/make_exe_as.bat',
 		'core/x_mac64.perlapp',
 		'core/x_mac64.scpt',
 		'core/x_mac64setup.perlapp',
