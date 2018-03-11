@@ -45,17 +45,19 @@ sub search{
 				AND genkei.nouse = 0'."\n";
 		
 		# Filter: hinshi(pos)
-		my $n = 0;
-		$sql .= "\tAND (\n";
-		foreach my $i (keys %{$self->{filter}{hinshi}}){
-			if ($self->{filter}{hinshi}{$i}){
-				$sql .= "\t\t";
-				$sql .= "|| " if $n;
-				$sql .= "genkei.khhinshi_id = $i\n";
-				++$n;
+		unless ( length($query) ){
+			my $n = 0;
+			$sql .= "\tAND (\n";
+			foreach my $i (keys %{$self->{filter}{hinshi}}){
+				if ($self->{filter}{hinshi}{$i}){
+					$sql .= "\t\t";
+					$sql .= "|| " if $n;
+					$sql .= "genkei.khhinshi_id = $i\n";
+					++$n;
+				}
 			}
+			$sql .= "\t)\n";
 		}
-		$sql .= "\t)\n";
 		
 		# Query
 		if ( length($query) ){
@@ -159,7 +161,7 @@ sub search{
 		}
 		
 		$sql .= " ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
-		$sql .= "\nlimit $self->{filter}{limit}";
+		$sql .= "\nlimit $self->{filter}{limit}" unless length($query);
 		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
 	}
 

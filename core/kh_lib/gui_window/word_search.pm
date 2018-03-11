@@ -109,7 +109,7 @@ sub _new{
 		command => sub{$self->search;},
 	);
 
-	$fra4i->Button(
+	$self->{filter_button} = $fra4i->Button(
 		-text => kh_msg->get('gui_window::word_ass->filter'),
 		-font => "TKFN",
 		-borderwidth => '1',
@@ -261,9 +261,11 @@ sub search{
 	# 変数取得
 	my $query = $self->gui_jg( $self->entry->get );
 
-	#unless ($query){
-	#	return;
-	#}
+	if ( length( $query ) ){
+		$self->{filter_button}->configure(-state => 'disabled');
+	} else {
+		$self->{filter_button}->configure(-state => 'normal');
+	}
 
 	# 検索実行
 	my $result = mysql_words->search(
