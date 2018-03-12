@@ -182,6 +182,10 @@ sub init{
 		elsif ($_ =~ /^tmpdir = (.+)$/){
 			print MYININ "tmpdir = $p4\n";
 		}
+		elsif ($_ =~ /^secure\-file\-priv = (.+)$/){
+			print MYININ "secure-file-priv = $p4\n";
+		}
+		
 		elsif ($_ =~ /max_heap_table_size/i){
 			print MYININ
 				"max_heap_table_size = "
@@ -223,7 +227,7 @@ sub init{
 		$mysql_pass,
 		$cmd_line,
 		0,
-		Win32::Process->CREATE_NO_WINDOW,
+		undef,#Win32::Process->CREATE_NO_WINDOW,
 		$p3,
 	) or gui_errormsg->open(
 		type => 'mysql',
