@@ -344,6 +344,12 @@ sub new{
 	# 情報の取得（長いバージョン）
 	my $info_long;
 	$::config_obj->R->send('
+		thrnd <- NULL
+		if ( round( th, 3 ) == 0 ){
+			thrnd <- "0"
+		} else {
+			thrnd <- substr( paste( round( th, 3 ) ), 2, 5)
+		}
 		print(
 			paste(
 				"khcoderNodes ",
@@ -357,7 +363,7 @@ sub new{
 				"), Density ",
 				substr(paste( round( graph.density(n2), 3 ) ), 2, 5 ),
 				", Min. Coef. ",
-				substr( paste( round( th, 3 ) ), 2, 5),
+				thrnd,
 				sep=""
 			)
 		)

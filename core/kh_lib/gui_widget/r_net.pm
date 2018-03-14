@@ -42,7 +42,7 @@ sub _new{
 		} else {
 			die("cannot get configuration: edges");
 		}
-		if ($self->{r_cmd} =~ /th <- ([0-9\.]+)\n/){
+		if ($self->{r_cmd} =~ /th <- ([0-9\.eE\-\+]+)\n/){
 			$self->{edges_jac} = $1;
 		} else {
 			die("cannot get configuration: th");
@@ -98,6 +98,7 @@ sub _new{
 			$self->{standardize_coef} = $1;
 		}
 
+		# min coef. specified
 		if ($edges == 0){
 			$self->{radio} = 'j';
 			if ($self->{r_cmd} =~ /# edges: ([0-9]+)\n/){
@@ -105,15 +106,16 @@ sub _new{
 			} else {
 				die("cannot get configuration: edges 2A");
 			}
+		# number of edges specified
 		} else {
 			$self->{radio} = 'n';
-			$self->{edges_number}= $edges;
-			if ($self->{r_cmd} =~ /# min. jaccard: ([0-9\.]+)\n/){
+			if ($self->{r_cmd} =~ /# min. jaccard: ([0-9\.eE\-\+]+)\n/){
 				$self->{edges_jac} = $1;
 			} else {
 				die("cannot get configuration: edges 2B");
 			}
 		}
+		$self->{edges_number}= $edges;
 
 		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
 			$num_size = $1;
