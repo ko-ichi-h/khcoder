@@ -39,15 +39,15 @@ sub _new{
 	)->pack(-expand => 'y', -fill => 'x', -side => 'left');
 	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
 	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
-	$e1->bind("<Key-Return>",sub{$self->search;});
-	$e1->bind("<KP_Enter>",sub{$self->search;});
+	$e1->bind("<Key-Return>",sub{return 0 if $self->{running}; $self->search;});
+	$e1->bind("<KP_Enter>",sub{return 0 if $self->{running}; $self->search;});
 	$self->config_entry_focusin($e1);
 
 	my $sbutton = $fra4e->Button(
 		-text => kh_msg->get('search'),#$self->gui_jchar('検索'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub{$self->search;}
+		-command => sub{return 0 if $self->{running}; $self->search;}
 	)->pack(-side => 'right', -padx => '2');
 
 	my $blhelp = $wmw->Balloon();
@@ -152,6 +152,9 @@ sub _new{
 	$lis->header('create',2,-text => kh_msg->get('pos_conj')); # $self->gui_jchar('品詞')
 	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
 
+	$self->{list_f} = $hlist_fra;
+	$self->{list}  = $lis;
+
 	$self->{copy_btn} = $fra5->Button(
 		-text => kh_msg->gget('copy_all'),
 		-font => "TKFN",
@@ -165,6 +168,20 @@ sub _new{
 		-text     => kh_msg->get('show_bars'),
 		-command  => sub {
 			$::config_obj->show_bars_wordlist($self->{show_bars});
+			return 0 if $self->{running};
+			$self->search;
+		},
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$fra5->Label(
+		-text     => '  ',
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$fra5->Checkbutton(
+		-variable => \$self->{enable_filter},
+		-text     => kh_msg->get('enable_filter'),
+		-command  => sub{
+			return 0 if $self->{running};
 			$self->search;
 		},
 	)->pack(-anchor => 'w', -side => 'left');
@@ -233,8 +250,7 @@ sub _new{
 		}
 	}
 	
-	$self->{list_f} = $hlist_fra;
-	$self->{list}  = $lis;
+
 	#$self->{win_obj} = $wmw;
 	$self->{entry}   = $e1;
 	#$self->refresh;
@@ -258,10 +274,13 @@ sub _unselect{
 sub search{
 	my $self = shift;
 	
+	$self->{running} = 1;
+	#print "search!\n";
+	
 	# 変数取得
 	my $query = $self->gui_jg( $self->entry->get );
 
-	if ( length( $query ) ){
+	if ( length( $query ) && $self->{enable_filter} == 0 ){
 		$self->{filter_button}->configure(-state => 'disabled');
 	} else {
 		$self->{filter_button}->configure(-state => 'normal');
@@ -269,12 +288,13 @@ sub search{
 
 	# 検索実行
 	my $result = mysql_words->search(
-		query  => $query,
-		method => $gui_window::word_search::method,
-		kihon  => $gui_window::word_search::kihon,
-		katuyo => $gui_window::word_search::katuyo,
-		mode   => $gui_window::word_search::s_mode,
-		filter => $filter
+		query         => $query,
+		method        => $gui_window::word_search::method,
+		kihon         => $gui_window::word_search::kihon,
+		katuyo        => $gui_window::word_search::katuyo,
+		mode          => $gui_window::word_search::s_mode,
+		filter        => $filter,
+		enable_filter => $self->{enable_filter},
 	);
 	
 	# POS check 1st pass
@@ -377,6 +397,36 @@ sub search{
 	}
 	
 	# display the result
+
+	$self->list->destroy;
+	my $lis = $self->{list_f}->Scrolled(
+			'Tree',
+			-scrollbars       => 'osoe',
+			-header           => 1,
+			-itemtype         => 'text',
+			-font             => 'TKFN',
+			-columns          => 5,
+			-indent           => 20,
+			-padx             => 7,
+			-background       => 'white',
+			-highlightcolor   => 'white',
+			#-selectforeground   => "",#$::config_obj->color_ListHL_fore,
+			-selectbackground   => 'white',#$::config_obj->color_ListHL_back,
+			-selectborderwidth  => 0,
+			-highlightthickness => 0,
+			-selectmode       => 'none',
+			-command          => sub {$self->conc;},
+			-height           => 20,
+			-width            => 48,
+			-browsecmd        => sub {$self->_unselect;},
+	)->pack(-fill =>'both',-expand => 'yes');
+
+	$lis->header('create',0,-text => '#');
+	$lis->header('create',1,-text => kh_msg->get('word')); # $self->gui_jchar('抽出語')
+	$lis->header('create',2,-text => kh_msg->get('pos_conj')); # $self->gui_jchar('品詞')
+	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
+	$self->{list}  = $lis;
+
 	my $numb_style = $self->list->ItemStyle(
 		'text',
 		-anchor => 'e',
@@ -407,7 +457,6 @@ sub search{
 		-padx => 0,
 	);
 	
-	$self->list->delete('all');
 	my $row = 0;
 	my $num = 1;
 	$last = undef;
@@ -612,6 +661,7 @@ sub search{
 				$nbar = $i->[2];
 				$bar_col = '#89c3eb';
 			}
+			my $bv = 0;
 			my $b = $self->list->ProgressBar(
 				-troughcolor => 'white',
 				-colors => [ 0, $bar_col ],
@@ -619,8 +669,11 @@ sub search{
 				-length => 150,
 				-padx => 7,
 				-pady => 2,
+				-variable => \$bv,
+				#-value => $nbar / $max * 100,
 			);
-			$b->value( $nbar / $max * 100 );
+			$bv = $nbar / $max * 100;
+			#$b->value( $nbar / $max * 100 );
 			$self->list->itemCreate(
 				$cu,
 				$col,
@@ -639,6 +692,10 @@ sub search{
 	$self->list->autosetmode();
 	
 	gui_hlist->update4scroll($self->list);
+	use Time::HiRes;
+	sleep (0.1);
+	$self->{running} = 0;
+	return 1;
 }
 
 sub show_children{
@@ -685,6 +742,7 @@ sub copy_all{
 	
 	use kh_clipboard;
 	kh_clipboard->string($t);
+	return $t;
 }
 
 #----------------------------#

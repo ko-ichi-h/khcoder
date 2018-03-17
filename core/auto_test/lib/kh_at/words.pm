@@ -10,20 +10,20 @@ sub _exec_test{
 	$self->{result} .= "¢£Ãê½Ğ¸ì¸¡º÷\n";
 	my $win_src = gui_window::word_search->open;
 	
-	$self->{result} .= "¢¢·ÁÂÖÁÇ\n";
-	$gui_window::word_search::kihon = 0;
-	$win_src->refresh;
-	$self->_ws_BK($win_src);
+	#$self->{result} .= "¢¢·ÁÂÖÁÇ\n";
+	#$gui_window::word_search::kihon = 0;
+	#$win_src->refresh;
+	#$self->_ws_BK($win_src);
 	
-	$self->{result} .= "¢¢Ãê½Ğ¸ì\n";
-	$gui_window::word_search::kihon = 1;
-	$gui_window::word_search::katuyo = 0;
-	$win_src->refresh;
-	$self->_ws_BK($win_src);
+	#$self->{result} .= "¢¢Ãê½Ğ¸ì\n";
+	#$gui_window::word_search::kihon = 1;
+	#$gui_window::word_search::katuyo = 0;
+	#$win_src->refresh;
+	#$self->_ws_BK($win_src);
 	
 	$self->{result} .= "¢¢Ãê½Ğ¸ì¡İ³èÍÑ·ÁÉ½¼¨\n";
-	$gui_window::word_search::katuyo = 1;
-	$win_src->refresh;
+	#$gui_window::word_search::katuyo = 1;
+	#$win_src->refresh;
 	$self->_ws_BK($win_src);
 	
 	# ¥³¥ó¥³¡¼¥À¥ó¥¹
@@ -40,15 +40,17 @@ sub _exec_test{
 	$self->_wc_sort($win_cnc);
 	
 	$self->{result} .= "¢¢Ãê½Ğ¸ì¡ÜÉÊ»ì¡Ü³èÍÑ·Á\n";
-	$win_src->list->selectionClear(0);
-	$win_src->list->selectionSet("0.4");
-	$win_src->conc;
+	#$win_src->list->selectionClear(0);
+	#$win_src->list->selectionSet("0.4");
+	#$win_src->conc;
+	$win_cnc->entry2->insert( 0, gui_window->gui_jchar('Ï¢ÍÑ·Á') );
 	$self->_wc_sort($win_cnc);
 	
 	$self->{result} .= "¢¢Ãê½Ğ¸ì¡ÜÉÊ»ì¡ÜÄÉ²Ã¾ò·ï\n";
-	$win_src->list->selectionClear("0.4");
-	$win_src->list->selectionSet(0);
-	$win_src->conc;
+	#$win_src->list->selectionClear("0.4");
+	#$win_src->list->selectionSet(0);
+	#$win_src->conc;
+	$win_cnc->entry2->delete(0,'end');
 	my $win_cnc_opt = gui_window::word_conc_opt->open;
 	$win_cnc_opt->{menu1}->set_value('l2');
 	$win_cnc_opt->_menu_check;
@@ -198,6 +200,9 @@ sub _wc_sort{
 	my $win  = shift;
 	my $t = '';
 	
+	my $tmp = '';
+	my $k = $::config_obj->kaigyo_kigou;
+	
 	#$win->{entry}->insert(0, gui_window->gui_jchar('»à¤Ì') );
 	
 	$win->{menu1}->set_value('l1');
@@ -207,9 +212,10 @@ sub _wc_sort{
 	$win->{menu3}->set_value('l3');
 	$win->_menu_check;
 	$win->search;
-	$t .= "¡û¥½¡¼¥È¡§º¸\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
+	
+	$tmp = gui_hlist->get_all( $win->{list} );
+	$tmp =~ s/$k/\[\]/g;
+	$t .= "¡û¥½¡¼¥È¡§º¸\n".Jcode->new( gui_window->gui_jg( $tmp,'reserve_rn' ) )->euc;
 
 	$win->{menu1}->set_value('r1');
 	$win->_menu_check;
@@ -218,27 +224,26 @@ sub _wc_sort{
 	$win->{menu3}->set_value('r3');
 	$win->_menu_check;
 	$win->search;
-	$t .= "¡û¥½¡¼¥È¡§±¦\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
+	$tmp = gui_hlist->get_all( $win->{list} );
+	$tmp =~ s/$k/\[\]/g;
+	$t .= "¡û¥½¡¼¥È¡§±¦\n".Jcode->new( gui_window->gui_jg( $tmp,'reserve_rn' ) )->euc;
 
 	$win->{menu1}->set_value('l2');
 	$win->_menu_check;
 	$win->{menu2}->set_value('id');
 	$win->_menu_check;
 	$win->search;
-	$t .= "¡û¥½¡¼¥È¡§º¸2\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
-
+	$tmp = gui_hlist->get_all( $win->{list} );
+	$tmp =~ s/$k/\[\]/g;
+	$t .= "¡û¥½¡¼¥È¡§º¸2\n".Jcode->new( gui_window->gui_jg( $tmp,'reserve_rn' ) )->euc;
 
 	$win->{menu1}->set_value('id');
 	$win->_menu_check;
 	$win->search;
-	$t .= "¡û¥½¡¼¥È¡§ID\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
-	
+	$tmp = gui_hlist->get_all( $win->{list} );
+	$tmp =~ s/$k/\[\]/g;
+	$t .= "¡û¥½¡¼¥È¡§ID\n".Jcode->new( gui_window->gui_jg( $tmp,'reserve_rn' ) )->euc;
+
 	$self->{result} .= $t;
 	return $self;
 }
@@ -279,32 +284,27 @@ sub _ws_AndOr{
 	$win->{entry}->delete(0,'end');
 	$win->{entry}->insert( 0, gui_window->gui_jchar('¼Ô') );
 	$win->search;
-	$t .= "¡ûOR-1:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
-
+	$t .= "¡ûOR-1:\n".Jcode->new($win->copy_all)->euc;
+	
 	$win->{entry}->delete(0,'end');
+	
 	$win->{entry}->insert( 0, gui_window->gui_jchar('»à »¦¡¡Ë´') );
+	
 	$win->search;
-	$t .= "¡ûOR-2:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
+	
+	$t .= "¡ûOR-2:\n".Jcode->new($win->copy_all)->euc;
 
 	# AND¸¡º÷
 	$win->{optmenu_andor}->set_value('AND');
 	$win->{entry}->delete(0,'end');
 	$win->{entry}->insert( 0, gui_window->gui_jchar('»à') );
 	$win->search;
-	$t .= "¡ûAND-1:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
+	$t .= "¡ûAND-1:\n".Jcode->new($win->copy_all)->euc;
 
 	$win->{entry}->delete(0,'end');
 	$win->{entry}->insert( 0, gui_window->gui_jchar('À¸¡¡¤ë') );
 	$win->search;
-	$t .= "¡ûAND-2:\n".Jcode->new(
-		gui_window->gui_jg( gui_hlist->get_all( $win->{list} ),'reserve_rn'  )
-	)->euc;
+	$t .= "¡ûAND-2:\n".Jcode->new($win->copy_all)->euc;
 
 	$self->{result} .= $t;
 	return $self;

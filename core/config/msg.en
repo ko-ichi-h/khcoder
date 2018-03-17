@@ -546,6 +546,7 @@ gui_window::word_search:
     baseform:                 Search Baseform
     comp:                     Complete Match
     conj:                     Conj.
+    enable_filter:            Enable Filter when Searching
     forw:                     Forward Match
     freq:                     Frequency
     kwic:                     KWIC Concordance

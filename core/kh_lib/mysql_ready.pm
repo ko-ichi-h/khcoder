@@ -726,7 +726,7 @@ sub reform{
 				AND genkei.hinshi_id = hinshi.id
 	',1); 
 	mysql_exec->drop_table("hgh");
-	if ($len[0] + $len[1] + $len[2] <= 500){
+	if ($len[0] + $len[1] + $len[2] <= 250){
 		mysql_exec->do(
 			"alter table hghi add index index1 (hyoso, genkei, hinshi)",
 			1

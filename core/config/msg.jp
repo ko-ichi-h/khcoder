@@ -546,6 +546,7 @@ gui_window::word_search:
     baseform:                 抽出語検索
     comp:                     完全一致
     conj:                     活用
+    enable_filter:            検索時もフィルタを有効に
     forw:                     前方一致
     freq:                     頻度
     kwic:                     KWICコンコーダンス
