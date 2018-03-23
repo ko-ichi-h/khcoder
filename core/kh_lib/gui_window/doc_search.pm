@@ -633,6 +633,8 @@ sub copy{
 		return;
 	}
 	
+	my $spacer = $::project_obj->spacer;
+	
 	my $t;
 	foreach my $i (@selected){
 		
@@ -643,8 +645,9 @@ sub copy{
 		
 		$t .= $doc->header;
 		foreach my $i (@{$doc->body}){
-			$t .= $i->[0];
+			$t .= $i->[0].$spacer;
 		}
+		chop $t;
 		$t .= "\n";
 	}
 	

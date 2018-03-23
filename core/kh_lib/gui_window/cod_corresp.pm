@@ -348,6 +348,11 @@ sub _new{
 		plot_size => $::config_obj->plot_size_codes,
 	);
 
+	#SCREEN Plugin
+	use screen_code::correspond;
+	&screen_code::correspond::add_menu($self,$lf2);
+	#SCREEN Plugin
+
 	$rf->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'),
 			-variable => \$self->{check_rm_open},
@@ -373,7 +378,14 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
-		-command => sub{$self->_calc;}
+		-command => sub{
+						#SCREEN Plugin
+						if ($self->{use_plugin}) {
+							&screen_code::correspond::calc_code_plugin_loop($self);
+						} else {
+							$self->_calc;
+						}
+					}
 	)->pack(-side => 'right');
 	$self->{ok_btn}->focus;
 

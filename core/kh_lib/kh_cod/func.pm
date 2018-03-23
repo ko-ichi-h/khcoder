@@ -542,6 +542,7 @@ sub outtab{
 	# 中身
 	my @sum = ( kh_msg->get('total') );
 	my $total;
+	my @arr; #SCREEN Plugin
 	while (my $i = $h->fetch){
 		my $n = 0;
 		my @current;
@@ -549,6 +550,7 @@ sub outtab{
 		my @current_for_plot;
 		my @c = @{$i};
 		my $nd = pop @c;
+		my @arr_temp; #SCREEN Plugin
 		
 		$var_obj->{labels}{$c[0]} = ''
 			unless defined($var_obj->{labels}{$c[0]});
@@ -582,6 +584,7 @@ sub outtab{
 				} else {
 					push @current, "$p"."%";
 				}
+				push @arr_temp, $h; #SCREEN Plugin
 			}
 			++$n;
 		}
@@ -590,10 +593,15 @@ sub outtab{
 		push @result, \@current;
 		push @for_chisq, \@current_for_chisq if @current_for_chisq;
 		push @for_plot, \@current_for_plot;
+		
+		#SCREEN Plugin
+		push @arr_temp, $nd;
+		push @arr, \@arr_temp if @arr_temp;
 	}
 	# 合計行
 	my @c = @sum;
 	my @current; my $n = 0;
+	my @arr_retsu; #SCREEN Plugin
 	foreach my $i (@sum){
 		if ($n == 0){
 			push @current, $i;
@@ -609,12 +617,17 @@ sub outtab{
 			} else {
 				push @current, "$p"."%";
 			}
+			push @arr_retsu, $i; #SCREEN Plugin
 		}
 		++$n;
 	}
 	push @current, $total;
 	push @result, \@current;
-
+	
+	#SCREEN Plugin
+	push @arr_retsu, $total;
+	push @arr, \@arr_retsu;
+	
 	# chi-square test
 	my ($chisq, $rsd) = &_chisq_test(\@current, \@for_chisq);
 	push @result, $chisq if $chisq;
@@ -624,6 +637,11 @@ sub outtab{
 	$ret->{plot}     = \@for_plot;
 	$ret->{t_rsd}    = $rsd;
 
+	#SCREEN Plugin
+	use screen_code::cross_func;
+	&screen_code::cross_func::func_ratio($ret,\@arr);
+	#SCREEN Plugin
+	
 	return $ret;
 }
 

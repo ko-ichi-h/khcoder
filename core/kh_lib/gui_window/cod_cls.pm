@@ -151,6 +151,11 @@ sub _new{
 		plot_size => 'Auto',
 	);
 
+	#SCREEN Plugin
+	use screen_code::cluster;
+	&screen_code::cluster::add_menu($self,$lf);
+	#SCREEN Plugin
+
 	$win->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない
 			-variable => \$self->{check_rm_open},
@@ -176,7 +181,14 @@ sub _new{
 		-width => 8,
 		-font => "TKFN",
 		-state => 'disable',
-		-command => sub{$self->_calc;}
+		-command => sub{
+						#SCREEN Plugin
+						if ($self->{use_plugin}) {
+							&screen_code::cluster::calc_code_plugin_loop($self);
+						} else {
+							$self->_calc;
+						}
+					}
 	)->pack(-side => 'right');
 	$self->{ok_btn}->focus;
 

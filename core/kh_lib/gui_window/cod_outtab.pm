@@ -175,6 +175,11 @@ sub _new{
 		-text       => kh_msg->get('map'), # マップ
 	)->pack(-side => 'right');
 
+	#SCREEN plugin
+	use screen_code::cross_func;
+	screen_code::cross_func::add_menu($self,$rf);
+	#SCREEN Plugin
+
 	# Rが使えない場合
 	unless ($::config_obj->R){
 		$b1->configure(-state => 'disable');

@@ -1,6 +1,9 @@
 package screen_code::rde_newproject_button;
 use strict;
 
+use screen_code::plugin_path;
+
+use encoding "cp932";
 use gui_window::project_new;
 use File::Path;
 use Encode qw/encode decode/;
@@ -11,7 +14,7 @@ sub add_button{
 	my $self = shift;
 	my $mw = shift;
 	
-	if (-f 'screen/MonkinCleanser/MonkinCleanser.exe') {
+	if (-f &screen_code::plugin_path::rde_path) {
 		$self->{plugin_btn} = $mw->Button(
 			-text => kh_msg->get('plugin_raw_data_editor'),
 			-width => 25,
@@ -23,9 +26,8 @@ sub add_button{
 						)
 					);
 					
-					print $self->{column}."\n";
-					#sjis -> euc -> utf8
 					my $inner_name = decode('cp932', $t);
+					my $file_option = 'screen/temp/option.txt';
 					my $font_str = gui_window->gui_jchar($::config_obj->font_main);
 					my $plugin_rtn;
 					if ($t =~ /\.(xls|xlsx)$/i){
@@ -42,13 +44,6 @@ sub add_button{
 							selected => $self->{column},
 							lang     => $self->{lang},
 							);
-						#my $header = $sheet_obj->save_csv(
-						#	filev    => $file_vars,
-						#	selected => $self->{column},
-						#	lang     => $self->{lang},
-						#	#icode    => $self->{icode},
-						#);
-						my $file_option = 'screen/temp\option.txt';
 						unlink $file_option if -f $file_option;
 						open(my $DATAFILE, ">:utf8", $file_option);
 						print $DATAFILE "type=excel\n";
@@ -58,11 +53,14 @@ sub add_button{
 						print $DATAFILE "font=$font_str\n";
 						close($DATAFILE);
 						
-						
 						$mw->iconify;
 						$::main_gui->{win_obj}->iconify;
-						$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
-						if ($plugin_rtn != 0) {
+						my $system_err = 0;
+						$! = undef;
+						$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+						$system_err = 1 if ($!) ;
+						
+						if ($plugin_rtn != 0 && $system_err == 0) {
 							open($DATAFILE, "<", $file_option) if -f $file_option;
 							#if (my $line = <$DATAFILE>) { # higuchi
 							my $line = <$DATAFILE>;        # higuchi
@@ -76,17 +74,21 @@ sub add_button{
 						unlink $file_vars if -f $file_vars;
 						unlink $file_option if -f $file_option;
 					} else {
-						my $file_option = 'screen/temp\option.txt';
 						open(my $DATAFILE, ">:utf8", $file_option);
 						print $DATAFILE "type=other\n";
 						print $DATAFILE "target=$inner_name\n";
 						print $DATAFILE "colnumber=$self->{column}\n";
 						print $DATAFILE "font=$font_str\n";
 						close($DATAFILE);
+						
 						$mw->iconify;
 						$::main_gui->{win_obj}->iconify;
-						$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
-						if ($plugin_rtn != 0) {
+						my $system_err = 0;
+						$! = undef;
+						$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+						$system_err = 1 if ($!) ;
+						
+						if ($plugin_rtn != 0 && $system_err == 0) {
 							open($DATAFILE, "<", $file_option) if -f $file_option;
 							#if (my $line = <$DATAFILE>) { # higuchi
 							my $line = <$DATAFILE>;        # higuchi

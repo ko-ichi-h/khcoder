@@ -1117,3 +1117,13 @@ screen_code::rde_menu:
     err_edit:                  "プロジェクトデータの編集処理に失敗しました。\n再試行するか、サポートまでお問い合わせください。"
 screen_code::rde_newproject_button:
     plugin_raw_data_editor:    "｢文錦｣ 分析対象ファイルの編集"
+screen_code::assistant:
+    use_plugin:                "「文錦」による結果表示"
+    cross_map_label:           "「文錦」マップ："
+    corresp_rad:               " 範囲： 原点付近"
+    corresp_ang:               "  変数方向"
+    corresp_drop_menu1:        "狭い"
+    corresp_drop_menu2:        "やや狭い"
+    corresp_drop_menu3:        "普通"
+    corresp_drop_menu4:        "やや広い"
+    corresp_drop_menu5:        "広い"

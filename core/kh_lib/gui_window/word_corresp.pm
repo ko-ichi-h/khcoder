@@ -248,6 +248,11 @@ sub _new{
 		show_bold => 1,
 	);
 
+	#SCREEN Plugin
+	use screen_code::correspond;
+	&screen_code::correspond::add_menu($self,$lf2);
+	#SCREEN Plugin
+	
 	$rf->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない
 			-variable => \$self->{check_rm_open},
@@ -265,7 +270,14 @@ sub _new{
 		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{$self->calc;}
+		-command => sub{
+						#SCREEN Plugin
+						if ($self->{use_plugin}) {
+							&screen_code::correspond::calc_plugin_loop($self);
+						} else {
+							$self->calc;
+						}
+					}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->_settings_load;

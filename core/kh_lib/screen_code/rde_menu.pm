@@ -1,6 +1,9 @@
 package screen_code::rde_menu;
 use strict;
 
+use screen_code::plugin_path;
+
+use encoding "cp932";
 use gui_window::main::menu;
 use File::Path;
 use Encode qw/encode decode/;
@@ -10,7 +13,7 @@ sub add_menu{
 	my $f = shift;
 	my $menu0_ref = shift;
 	
-	if (-f 'screen/MonkinCleanser/MonkinCleanser.exe') {
+	if (-f &screen_code::plugin_path::rde_path) {
 		push @{$menu0_ref}, 'm_b2_plugin';
 			$self->{m_b2_plugin} = $f->command(
 			-label => kh_msg->get('plugin_raw_data_editor'),
@@ -19,7 +22,6 @@ sub add_menu{
 			#	),
 			-font => "TKFN",
 			-command => sub{
-				
 				my $font_str = gui_window->gui_jchar($::config_obj->font_main);
 				
 				mkpath('screen/temp');
@@ -63,7 +65,6 @@ sub add_menu{
 				my $DATAFILE;
 				if ($varTableNum) {
 					$csv_file = $::config_obj->cwd."/screen/temp/vardata.csv";
-					print $csv_file."\n";
 					unlink $csv_file if -f $csv_file;
 					open($DATAFILE, "+>>", $csv_file);
 					my $h = mysql_exec->select("SELECT name FROM $dbName.outvar ORDER BY id",1)->hundle;
@@ -85,13 +86,16 @@ sub add_menu{
 				print $DATAFILE "vardata=$csv_file\n";
 				print $DATAFILE "font=$font_str\n";
 				close($DATAFILE);
-					
+				
 				my $plugin_rtn = -1;
 				
 				$::main_gui->{win_obj}->iconify;
-				$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
+				my $system_err = 0;
+				$! = undef;
+				$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+				$system_err = 1 if ($!) ;
 				$::main_gui->{win_obj}->deiconify;
-				if ($plugin_rtn != 0 && $varTableNum) {
+				if ($plugin_rtn != 0 && $varTableNum && $system_err == 0) {
 					if (mysql_exec->table_exists("$dbName.outvarcopy")) {
 						mysql_exec->drop_table("$dbName.outvarcopy");
 					}
@@ -102,15 +106,23 @@ sub add_menu{
 						mysql_exec->drop_table("$dbName.${varTableNum}copy");
 					}
 					mysql_exec->do("RENAME TABLE $dbName.$varTableNum TO $dbName.${varTableNum}copy",1);
-					my $SQLres = mysql_outvar::read::tab->new(
-						file        => $csv_file,
-						tani        => 'h5',
-						skip_checks => 1,
-					)->read if -e $csv_file;
-					if ($SQLres != 1) {
+					#my $SQLres = mysql_outvar::read::tab->new(
+					#	file        => $csv_file,
+					#	tani        => 'h5',
+					#	skip_checks => 1,
+					#)->read if -e $csv_file;
+					my $SQLres = 0;
+					eval {
+						$SQLres = mysql_outvar::read::tab->new(
+							file        => $csv_file,
+							tani        => 'h5',
+							skip_checks => 1,
+						)->read if -e $csv_file;
+					};
+					if ($SQLres != 1 || $@) {
 						gui_errormsg->open(
 							type   => 'msg',
-							msg    => msg    => kh_msg->get('err_edit'),
+							msg    => kh_msg->get('err_edit'),
 						);
 						if (mysql_exec->table_exists("$dbName.outvar")) {
 							mysql_exec->do("DELETE FROM $dbName.outvar",1);
