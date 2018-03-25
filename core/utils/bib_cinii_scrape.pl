@@ -20,9 +20,11 @@ my $n = 0;
 while (1){
 	my $start = $n * 200;
 	
-	my $r = $ua->get("http://ci.nii.ac.jp/opensearch/fulltext?q=%22KH+Coder%22+%7C+KHCODER+%7C+%22KH%E3%82%B3%E3%83%BC%E3%83%80%E3%83%BC%22+%7C+%22%E6%A8%8B%E5%8F%A3%E8%80%95%E4%B8%80%22&start=$start&count=200&format=rss&sortorder=1");
+	my $r = $ua->get("http://ci.nii.ac.jp/opensearch/search?q=%22KH+Coder%22+%7C+KHCODER+%7C+%22KH%E3%82%B3%E3%83%BC%E3%83%80%E3%83%BC%22+%7C+%22%E6%A8%8B%E5%8F%A3%E8%80%95%E4%B8%80%22&start=$start&count=200&format=rss&sortorder=1");
 	#my $r = $ua->get("http://ci.nii.ac.jp/opensearch/fulltext?q=%22KH+Corder%22+%7C+KHCORDER&start=$start&count=200&format=rss&sortorder=1");
 	$r = Encode::decode('UTF-8', $r->content);
+	
+	#print "$r\n\n";
 	
 	my $rss = XML::RSS->new;
 	$rss->parse($r);

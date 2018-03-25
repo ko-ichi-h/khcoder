@@ -68,10 +68,10 @@ print "skiped: $nskip";
 sub count_matches{
 	my $query = shift;
 	
-	# 2グラムのリストアップ
+	# 3グラムのリストアップ
 	my @bigram;
-	for (my $s = 0; $s <= length($query) -1; ++$s){
-		push @bigram, substr($query, $s, 2);
+	for (my $s = 0; $s <= length($query) -2; ++$s){
+		push @bigram, substr($query, $s, 3);
 	}
 	my $total = @bigram;
 	

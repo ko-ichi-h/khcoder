@@ -12,7 +12,7 @@ use strict;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # ‰Šúİ’è
-my $V = '3a12e';
+my $V = '3a12f';
 my $V_main = "3.Alpha.12"; # ƒtƒHƒ‹ƒ_–¼
 my $V_full = "3.Alpha.12f";
 
