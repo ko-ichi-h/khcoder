@@ -10,7 +10,8 @@ use Encode::Locale;
 eval { binmode STDOUT, ":encoding(console_out)"; }; warn $@ if $@;
 
 my @results;
-for (my $n = 1; $n <= 4; ++$n){
+my $n = 1;
+while (-e "gscholar/$n.html"){
 	open my $fh, '<:utf8', "gscholar/$n.html" or die;
 	my @t = <$fh>;
 	close $fh;
@@ -18,6 +19,7 @@ for (my $n = 1; $n <= 4; ++$n){
 
 	my $r = &pickup_elements($t);
 	@results = (@results, @{$r});
+	++$n;
 }
 
 open my $fh, '>:utf8', "cinii_result.txt";
