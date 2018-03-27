@@ -23,11 +23,17 @@ my $pdf = 0;
 my $home_dir = '';
 my $key_file = '';
 
-if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # 家PC
+if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # Home
 	$key_file = 'f:/home/koichi/study/.ssh/id_dsa';
 	$home_dir = 'f:/home/koichi/study/';
-	system("set HOME=$home_dir");
 }
+elsif (-e "C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa") { # Vaio
+	$key_file = 'C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa';
+	$home_dir = 'C:/Users/K/GoogleDrive/KHC/';
+} else {
+	die("No ssh key!");
+}
+system("set HOME=$home_dir");
 
 # 更新するファイルの指定
 my @cp_f = (
@@ -380,8 +386,8 @@ sub win_pkg{
 	
 	# 新しいファイルを「pub/win_pkg」へコピー
 	foreach my $i (@cp_f){
-		copy($i->[0], 'pub/win_pkg/'.$i->[1]) or die("Can not copy $i\n");
-		print "copy: $i->[1]\n";
+		print "copy: $i->[0]\n";
+		copy("$i->[0]", 'pub/win_pkg/'."$i->[1]") or die("Can not copy $i->[0]\n");
 	}
 
 	# Zip自己解凍ファイルを作成
