@@ -1,10 +1,10 @@
 use strict;
 
-# core/pub/base 以下に：
+# core_uni/pub/base 以下に：
 #	/web
 #	/win_pkg  →現行のWindows版パッケージを解凍しておく
-#	/win_upd  →現行のWindows版バイナリを解凍しておく
-#	/win_strb →現行のWindows・Strawberry版を解凍しておく
+#	# /win_upd  →現行のWindows版バイナリを解凍しておく
+#	# /win_strb →現行のWindows・Strawberry版を解凍しておく
 
 # 配布パッケージに新しいファイルを加える場合は @cp_f を編集（後ろに追加）
 # 新たなPerlモジュールを使い始める場合にはStrawberry Perlの編集が必要
