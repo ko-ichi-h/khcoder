@@ -250,7 +250,7 @@ sub _new{
 
 	#SCREEN Plugin
 	use screen_code::correspond;
-	&screen_code::correspond::add_menu($self,$lf2);
+	&screen_code::correspond::add_menu($self,$lf2,0);
 	#SCREEN Plugin
 	
 	$rf->Checkbutton(
@@ -270,14 +270,7 @@ sub _new{
 		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{
-						#SCREEN Plugin
-						if ($self->{use_plugin}) {
-							&screen_code::correspond::calc_plugin_loop($self);
-						} else {
-							$self->calc;
-						}
-					}
+		-command => sub{$self->calc;}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->_settings_load;

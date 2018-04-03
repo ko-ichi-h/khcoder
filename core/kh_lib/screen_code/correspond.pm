@@ -5,19 +5,34 @@ use screen_code::plugin_path;
 
 use gui_window;
 use gui_window::word_corresp;
+use gui_window::cod_corresp;
 use File::Path;
 use Encode qw/encode decode/;
 
 my $radius;
 my $angle;
 
+my $default_calc_temp;
+my $default_code_calc_temp;
+
 sub add_menu{
 	if (-f &screen_code::plugin_path::assistant_path) {
 		my $self = shift;
 		my $lf2 = shift;
+		my $isCode = shift;
+		if ($isCode) {
+			unless ($default_code_calc_temp) {
+				$default_code_calc_temp = \&gui_window::cod_corresp::_calc;
+				*gui_window::cod_corresp::_calc = \&plug_code_calc;
+			}
+		} else {
+			unless ($default_calc_temp) {
+				$default_calc_temp = \&gui_window::word_corresp::calc;
+				*gui_window::word_corresp::calc = \&plug_calc;
+			}
+		}
 		my $radiSetting = $lf2->Frame()->pack(
 			-fill => 'x',
-			#-padx => 2,
 			-pady => 2,
 		);
 		
@@ -81,6 +96,24 @@ sub add_menu{
 		
 		
 		refresh_plugin($self);
+	}
+}
+
+sub plug_calc{
+	my $self = shift;
+	if ($self->{use_plugin}) {
+		&calc_plugin_loop($self,0);
+	} else {
+		$default_calc_temp->($self);
+	}
+}
+
+sub plug_code_calc{
+	my $self = shift;
+	if ($self->{use_plugin}) {
+		&calc_plugin_loop($self,1);
+	} else {
+		$default_code_calc_temp->($self);
 	}
 }
 
@@ -154,31 +187,21 @@ sub text_henkan{
 	}
 }
 
-
 sub calc_plugin_loop{
 	my $self = shift;
+	my $isCode = shift;
 	
 	#プラグインライセンス確認
 	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
 	
 	$self->{config_param} = undef;
 	while(1) {
-		my $rtn = calc_plugin($self);
-		if (!$rtn) {
-			last;
+		my $rtn;
+		if ($isCode) {
+			$rtn = calc_code_plugin($self);
+		} else {
+			$rtn = calc_plugin($self);
 		}
-	}
-}
-
-sub calc_code_plugin_loop{
-	my $self = shift;
-	
-	#プラグインライセンス確認
-	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
-	
-	$self->{config_param} = undef;
-	while(1) {
-		my $rtn = calc_code_plugin($self);
 		if (!$rtn) {
 			last;
 		}
@@ -327,7 +350,7 @@ sub calc_plugin{
 			++$n_v;
 		}
 		
-		$r_command .= &gui_window::word_corresp::r_command_aggr($n_v);
+		$r_command .= &r_command_aggr($n_v);
 	}
 
 	# 外部変数が無かった場合
@@ -556,7 +579,7 @@ sub calc_code_plugin{
 		chop $r_command;
 		$r_command .= ")\n";
 
-		$r_command .= &gui_window::cod_corresp::r_command_aggr_str;
+		$r_command .= &r_command_aggr_str;
 
 		if ( length($headings) > 7 ){
 			$headings .= ")\n";
@@ -625,7 +648,7 @@ sub calc_code_plugin{
 			$r_command .= ")\n";
 			++$n_v;
 		}
-		$r_command .= &gui_window::cod_corresp::r_command_aggr_var($n_v);
+		$r_command .= &r_command_aggr_var($n_v);
 	}
 	# 外部変数が無かった場合
 	$r_command .= '
@@ -764,7 +787,7 @@ sub make_plot_plugin{
 
 	$r_command .= "library(MASS)\n";
 
-	$r_command .= &gui_window::word_corresp::r_command_filter;
+	$r_command .= &r_command_filter;
 
 	$r_command .= "k <- c\$cor^2\n";
 	$r_command .=
@@ -788,22 +811,22 @@ sub make_plot_plugin{
 	
 	# ドットのみ
 	$r_command .= "plot_mode <- \"color\"\n";
-	$r_command .= &gui_window::word_corresp::r_command_bubble(%args);
+	$r_command .= &r_command_bubble(%args);
 
 	# カラー
 	$r_command_2a .= "plot_mode <- \"dots\"\n";
-	$r_command_2a .= &gui_window::word_corresp::r_command_bubble(%args);
+	$r_command_2a .= &r_command_bubble(%args);
 	$r_command_2  = $common.$r_command_2a;
 
 	if ($args{biplot}){
 		# 変数のみ
 		$r_command_3a .= "plot_mode <- \"vars\"\n";
-		$r_command_3a .= &gui_window::word_corresp::r_command_bubble(%args);
+		$r_command_3a .= &r_command_bubble(%args);
 		$r_command_3  = $common.$r_command_3a;
 		
 		# グレースケール
 		$r_com_gray_a .= "plot_mode <- \"gray\"\n";
-		$r_com_gray_a .= &gui_window::word_corresp::r_command_bubble(%args);
+		$r_com_gray_a .= &r_command_bubble(%args);
 		$r_com_gray = $common.$r_com_gray_a;
 	}
 	
@@ -1128,5 +1151,886 @@ sub get_config_param{
 		);
 }
 
+
+sub r_command_aggr{
+	my $n_v = shift;
+	my $t =
+		"name_nav <- '"
+		.kh_msg->pget('nav')
+		."'\n"; # 欠損値
+	$t .= << 'END_OF_the_R_COMMAND';
+
+aggregate_with_var <- function(d, doc_length_mtr, v) {
+	d              <- aggregate(d,list(name = v), sum)
+	doc_length_mtr <- aggregate(doc_length_mtr,list(name = v), sum)
+
+	row.names(d) <- d$name
+	d$name <- NULL
+	row.names(doc_length_mtr) <- doc_length_mtr$name
+	doc_length_mtr$name <- NULL
+
+	d              <- d[              order(rownames(d             )), ]
+	doc_length_mtr <- doc_length_mtr[ order(rownames(doc_length_mtr)), ]
+
+	doc_length_mtr <- subset(
+		doc_length_mtr,
+		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
+	)
+	d <- subset(
+		d,
+		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
+	)
+
+	# doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+	# d              <- subset(d,              rowSums(d) > 0)
+
+	return( list(d, doc_length_mtr) )
+}
+
+dd <- NULL
+nn <- NULL
+
+END_OF_the_R_COMMAND
+
+	$t .= "for (i in list(";
+	for (my $i = 0; $i < $n_v; ++$i){
+		$t .= "v$i,";
+	}
+	chop $t;
+	$t .= ")){\n";
+
+	$t .= << 'END_OF_the_R_COMMAND2';
+
+	cur <- aggregate_with_var(d, doc_length_mtr, i)
+	dd <- rbind(dd, cur[[1]])
+	nn <- rbind(nn, cur[[2]])
+	v_count <- v_count + 1
+	v_pch <- c( v_pch, rep(v_count + 2, nrow(cur[[1]]) ) )
+}
+
+d              <- dd
+doc_length_mtr <- nn
+
+END_OF_the_R_COMMAND2
+
+	return $t;
+}
+
+sub r_command_filter{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# Filter words by chi-square value
+if ( (flw > 0) && (flw < ncol(d)) ){
+	sort  <- NULL
+	for (i in 1:ncol(d) ){
+		# print( paste(colnames(d)[i], chisq.test( cbind(d[,i], n_total - d[,i]) )$statistic) )
+		sort <- c(
+			sort, 
+			chisq.test( cbind(d[,i], n_total - d[,i]) )$statistic
+		)
+	}
+	d <- d[,order(sort,decreasing=T)]
+	d <- d[,1:flw]
+	
+	d <- subset(d, rowSums(d) > 0)
+	if (exists("doc_length_mtr")){
+		doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
+		n_total <- doc_length_mtr[,2]
+	}
+}
+
+d_max <- min( nrow(d), ncol(d) ) - 1
+if (d_x > d_max){
+	d_x <- d_max
+}
+if (d_y > d_max){
+	d_y <- d_max
+}
+
+c <- corresp(d, nf=d_max )
+
+if (d_max == 1){
+	c$cscore <- as.matrix( c$cscore )
+	c$rscore <- as.matrix( c$rscore )
+	colnames(c$cscore) <- c("X1")
+	colnames(c$rscore) <- c("X1")
+}
+
+# Dilplay Labels only for distinctive words
+if ( (flt > 0) && (flt < nrow(c$cscore)) ){
+	sort  <- NULL
+	limit <- NULL
+	names <- NULL
+	ptype <- NULL
+	
+	# compute distance from (0,0)
+	for (i in 1:nrow(c$cscore) ){
+		sort <- c(sort, c$cscore[i,d_x] ^ 2 + c$cscore[i,d_y] ^ 2 )
+	}
+	
+	# Put labels to top words
+	limit <- sort[order(sort,decreasing=T)][flt]
+	for (i in 1:nrow(c$cscore) ){
+		if ( sort[i] >= limit ){
+			names <- c(names, rownames(c$cscore)[i])
+			ptype <- c(ptype, 1)
+		} else {
+			names <- c(names, NA)
+			ptype <- c(ptype, 2)
+		}
+	}
+	rownames(c$cscore) <- names;
+} else {
+	ptype <- 1
+}
+
+pch_cex <- 1
+if ( v_count > 1 ){
+	pch_cex <- 1.25
+}
+
+# Zooming area near the origin
+
+log_conv <- function(x, y, a){
+	log_base <- 10
+	
+	# Find Cosine theta
+	OA  <- sqrt( x^2 + y^2 )
+	OA[OA == 0] <- 0.00000000000000000001
+	Cos <- x / OA
+	
+	# Convert OA
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+	OA <- OA * a
+	OA <- log(OA + 1, log_base)
+
+	# Find OB
+	OB <- Cos * OA
+	
+	# Find AB
+	AB = sqrt( OA^2 - OB^2 )
+	AB[y < 0] <- AB[y < 0] * -1
+	
+	cbind(OB, AB)
+}
+
+axp <- NULL
+#screen plugin range#
+if (zoom_factor >= 1 ){
+	scaling <- "none"
+	axp <- c(0,0,1)
+
+	r <- log_conv( c$cscore[,d_x], c$cscore[,d_y], zoom_factor )
+	c$cscore[,d_x] <- r[,1]
+	c$cscore[,d_y] <- r[,2]
+
+	r <- log_conv( c$rscore[,d_x], c$rscore[,d_y], zoom_factor )
+	c$rscore[,d_x] <- r[,1]
+	c$rscore[,d_y] <- r[,2]
+}
+
+# Scaling
+asp <- 0
+if (scaling == "sym"){
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * c$cor[i]
+		c$rscore[,i] <- c$rscore[,i] * c$cor[i]
+	}
+	asp <- 1
+} else if (scaling == "symbi"){
+	for (i in 1:d_max){
+		c$cscore[,i] <- c$cscore[,i] * sqrt( c$cor[i] )
+		c$rscore[,i] <- c$rscore[,i] * sqrt( c$cor[i] )
+	}
+	asp <- 1
+}
+
+
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_bubble{
+	my %args = @_;
+	return '
+
+library(ggplot2)
+
+font_family <- "'.$::config_obj->font_plot_current.'"
+
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+if ( exists("bs_fixed") == F ) {
+	bubble_size <- bubble_size / '.$args{font_size}.'
+	bs_fixed <- 1
+}
+
+#-----------------------------------------------------------------------------#
+#                           prepare label positions
+#-----------------------------------------------------------------------------#
+
+# compute label positions
+if (biplot == 1 && plot_mode != "vars"){
+	cb <- rbind(
+		cbind(c$cscore[,d_x], c$cscore[,d_y], ptype),
+		cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+	)
+} else if (plot_mode == "vars") {
+	cb <- cbind(c$rscore[,d_x], c$rscore[,d_y], v_pch)
+} else {
+	cb <- cbind(c$cscore[,d_x], c$cscore[,d_y], ptype)
+}
+
+if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
+
+	png_width  <- '.$args{width}.'
+	png_height <- '.$args{height}.' 
+	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
+	dpi <- 72 * min(png_width, png_height) / 640 * '.$args{font_size}.'
+	p_size <- 12 * dpi / 72;
+	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
+
+	#if ( exists("PERL_font_family") ){
+	#	par(family=PERL_font_family) 
+	#}
+
+	plot(
+		x=c(c$cscore[,d_x],c$rscore[,d_x]),
+		y=c(c$cscore[,d_y],c$rscore[,d_y]),
+		asp=asp
+	)
+
+	library(maptools)
+	labcd <- pointLabel(
+		x=cb[,1],
+		y=cb[,2],
+		labels=rownames(cb),
+		cex=font_size,
+		offset=0,
+		doPlot=F
+	)
+
+	xorg <- cb[,1]
+	yorg <- cb[,2]
+	#cex  <- 1
+
+	n_words_chk <- c( length(c$cscore[,d_x]) )
+	if (flt > 0) {
+		n_words_chk <- c(n_words_chk, flt)
+	}
+	if (flw > 0) {
+		n_words_chk <- c(n_words_chk, flw)
+	}
+	if ( 
+		   ( (biplot == 0) && (min(n_words_chk) < 300) )
+		|| (
+			   (biplot == 1)
+			&& ( min(n_words_chk) < 300 )
+			&& ( length(c$rscore[,d_x]) < r_max )
+		)
+	){
+
+		library(wordcloud)
+		'.&plotR::network::r_command_wordlayout.'
+
+		nc <- wordlayout(
+			labcd$x,
+			labcd$y,
+			rownames(cb),
+			cex=cex * 1.05,
+			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
+			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
+		)
+
+		xlen <- par("usr")[2] - par("usr")[1]
+		ylen <- par("usr")[4] - par("usr")[3]
+
+		segs <- NULL
+		for (i in 1:length( rownames(cb) ) ){
+			x <- ( nc[i,1] + .5 * nc[i,3] - labcd$x[i] ) / xlen
+			y <- ( nc[i,2] + .5 * nc[i,4] - labcd$y[i] ) / ylen
+			dst <- sqrt( x^2 + y^2 )
+			if ( dst > 0.05 ){
+				segs <- rbind(
+					segs,
+					c(
+						nc[i,1] + .5 * nc[i,3], nc[i,2] + .5 * nc[i,4],
+						xorg[i], yorg[i]
+					) 
+				)
+			}
+		}
+
+		xorg <- labcd$x
+		yorg <- labcd$y
+		labcd$x <- nc[,1] + .5 * nc[,3]
+		labcd$y <- nc[,2] + .5 * nc[,4]
+	}
+	
+	text(labcd$x, labcd$y, rownames(cb))
+	dev.off()
+}
+
+
+#-----------------------------------------------------------------------------#
+#                              start plotting
+#-----------------------------------------------------------------------------#
+
+#-----------#
+#   Words   #
+
+b_size <- NULL
+for (i in rownames(c$cscore)){
+	if ( is.na(i) || is.null(i) || is.nan(i) ){
+		b_size <- c( b_size, 1 )
+	} else {
+		b_size <- c( b_size, sum( d[,i] ) )
+	}
+}
+
+col_bg_words <- NA
+col_bg_vars  <- NA
+
+if (plot_mode == "color"){
+	col_dot_words <- "#00CED1"
+	col_dot_vars  <- "#FF6347"
+	if ( use_alpha == 1 ){
+		col_bg_words <- "#48D1CC"
+		col_bg_vars  <- "#FFA07A"
+		
+		rgb <- col2rgb(col_bg_words) / 255
+		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3])
+		
+		rgb <- rgb * 0.5
+		col_dot_words <- "#87CAC6" #  <- rgb( rgb[1], rgb[2], rgb[3])
+		
+		rgb <- col2rgb(col_bg_vars) / 255
+		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3])
+	}
+}
+
+if (plot_mode == "gray"){
+	col_dot_words <- "gray55"
+	col_dot_vars  <- "gray30"
+}
+
+if (plot_mode == "vars"){
+	col_dot_words <- "#ADD8E6"
+	col_dot_vars  <- "red"
+}
+
+if (plot_mode == "dots"){
+	col_dot_words <- "black"
+	col_dot_vars  <- "black"
+}
+
+g <- ggplot()
+
+df.words <- data.frame(
+	x    = c$cscore[,d_x],
+	y    = c$cscore[,d_y],
+	size = b_size,
+	type = ptype
+)
+
+df.words.sub <- subset(df.words, type==2)
+df.words     <- subset(df.words, type==1)
+
+if (bubble_plot == 1){
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		#colour = NA,
+		fill = col_bg_words,
+		alpha=0.15
+	)
+	
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y, size=size),
+		shape=21,
+		colour = col_dot_words,
+		fill = NA,
+		alpha=1,
+		show.legend = F
+	)
+	
+	g <- g + scale_size_area(
+		max_size= 30 * bubble_size / 100,
+		guide = guide_legend(
+			title = "Frequency:",
+			override.aes = list(colour="black", fill=NA, alpha=1),
+			label.hjust = 1,
+			order = 2
+		)
+	)
+} else {
+	g <- g + geom_point(
+		data=df.words,
+		aes(x=x, y=y),
+		size = 2,
+		shape=16,
+		colour = col_dot_words,
+		alpha=1,
+		show.legend = F
+	)
+}
+
+if ( nrow(df.words.sub) > 0 ){
+	g <- g + geom_point(
+		data=df.words.sub,
+		aes(x=x, y=y),
+		shape=19,
+		size=2,
+		colour = "#ADD8E6",
+		alpha=1,
+		show.legend = F
+	)
+}
+
+#---------------#
+#   Variables   #
+
+if ( biplot == 1 ){
+	df.vars <- data.frame(
+		x    = c$rscore[,d_x],
+		y    = c$rscore[,d_y],
+		size = n_total * max(b_size) / max(n_total) * 0.6,
+		type = v_pch
+	)
+
+	if ( (resize_vars == 1) && (bubble_plot == 1) ) {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			#colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			show.legend = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, size=size, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			show.legend = F
+		)
+	} else {
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = NA,
+			fill = col_bg_vars,
+			alpha=0.2,
+			size=3.5,
+			show.legend = F
+		)
+
+		g <- g + geom_point(
+			data=df.vars,
+			aes(x=x, y=y, shape=factor(type) ),
+			colour = col_dot_vars,
+			fill = NA,
+			alpha=1,
+			size=3.5,
+			show.legend = F
+		)
+	}
+
+	g <- g + scale_shape_manual(
+		values = c(22:25,0-6)
+	)
+}
+
+#------------#
+#   Labels   #
+
+# label colors
+if (plot_mode == "color"){
+	#if (bubble_plot == 1){
+		col_txt_words <- "black"
+		col_txt_vars  <- "#DC143C"
+	#} else {
+	#	col_txt_words <- "black"
+	#	col_txt_vars  <- "#FF6347"
+	#}
+}
+
+if (plot_mode == "gray"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "vars"){
+	col_txt_words <- "black"
+	col_txt_vars  <- "black"
+}
+
+if (plot_mode == "dots"){
+	col_txt_words <- NA
+	col_txt_vars  <- NA
+}
+
+if ( text_font == 1 ){
+	font_face <- "plain"
+} else {
+	font_face <- "bold"
+}
+
+if ( exists("df.labels.save ") == F ){
+	df.labels.save <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+}
+
+if (plot_mode != "dots") {
+	df.labels <- data.frame(
+		x    = labcd$x,
+		y    = labcd$y,
+		labs = rownames(cb),
+		cols = cb[,3]
+	)
+	if ( plot_mode == "gray" ){
+		df.labels.var  <- subset(df.labels, cols == 3)
+		df.labels <- subset(df.labels, cols != 3)
+		g <- g + geom_label(
+			data=df.labels.var,
+			family=font_family,
+			fontface="bold",
+			#label.size=0.25,
+			label.padding=unit(1.8, "mm"),
+			colour="white",
+			fill="gray50",
+			#alpha=0.7,
+			aes(x=x, y=y,label=labs)
+		)
+		if ( (resize_vars == 0) || (bubble_plot == 0) ) {
+			g <- g + geom_point(
+				data=df.vars,
+				aes(x=x, y=y, shape=factor(type) ),
+				colour = col_dot_vars,
+				fill = NA,
+				alpha=1,
+				size=3.5,
+				show.legend = F
+			)
+		}
+	}
+	
+	g <- g + geom_text(
+		data=df.labels,
+		aes(x=x, y=y,label=labs,colour=factor(cols)),
+		size=4,
+		family=font_family,
+		fontface=font_face
+		#colour="black"
+	)
+	
+	#label_legend <- guide_legend(
+	#	title = "Labels:",
+	#	key.theme   = element_rect(colour = "gray30"),
+	#	override.aes = list(size=5),
+	#	order = 1
+	#)
+	label_legend <- "none"
+	
+	g <- g + scale_color_manual(
+		values = c(col_txt_words, col_txt_vars, col_txt_vars),
+		breaks = c(1,3),
+		labels = c("Words / Codes", "Variables"),
+		guide = label_legend
+	)
+
+	
+	
+	if ( exists("segs") ){
+		if ( is.null(segs) == F){
+			colnames(segs) <- c("x1", "y1", "x2", "y2")
+			segs <- as.data.frame(segs)
+			g <- g + geom_segment(
+				aes(x=x1, y=y1, xend=x2, yend=y2),
+				data=segs,
+				colour="gray60"
+			)
+		}
+	}
+}
+
+if (plot_mode == "vars"){
+	labcd <- NULL
+}
+
+#--------------------#
+#   Configurations   #
+
+#if ( asp == 1 ){
+#	g <- g + coord_fixed()
+#}
+
+g <- g + labs(
+	x=paste(name_dim,d_x,"  (",inertias[d_x],",  ", k[d_x],"%)",sep=""),
+	y=paste(name_dim,d_y,"  (",inertias[d_y],",  ", k[d_y],"%)",sep="")
+)
+g <- g + theme_classic(base_family=font_family)
+g <- g + theme(
+	legend.key   = element_rect(colour = NA, fill= NA),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0)
+)
+
+#---------------------#
+#   show the origin   #
+
+if (show_origin == 1){
+	line_color <- "gray30"
+	
+	lim_chk <-ggplot_build(g)
+	xlims <- lim_chk$panel$ranges[[1]]$x.range
+	ylims <- lim_chk$panel$ranges[[1]]$y.range
+	if ( is.null(xlims) ){
+		xlims <- lim_chk$layout$panel_ranges[[1]]$x.range
+		ylims <- lim_chk$layout$panel_ranges[[1]]$x.range
+	}
+	
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0), breaks=c(0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0), breaks=c(0) )
+	} else {
+		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0) )
+		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0) )
+	}
+	
+	m_x <- (xlims[2] - xlims[1]) * 0.03
+	m_y <- (ylims[2] - ylims[1]) * 0.03
+	
+	g <- g + geom_segment(
+		aes(x = xlims[1], y = 0, xend = m_x, yend = 0),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+	g <- g + geom_segment(
+		aes(x = 0, y = ylims[1], xend = 0, yend = m_y),
+		size=0.25,
+		linetype="dashed",
+		colour=line_color
+	)
+} else {
+	if (zoom_factor >= 1){
+		g <- g + scale_x_continuous( breaks=c(0) )
+		g <- g + scale_y_continuous( breaks=c(0) )
+	} 
+}
+
+#screen plugin2#
+
+#-----------------------------#
+#   for clickable image map   #
+
+# fix range
+if ( exists("xlimv") == F ){
+	# for setting xlim & ylim
+	out_coord <- cbind(
+		c( df.labels.save$x, df.words$x),
+		c( df.labels.save$y, df.words$y)
+	)
+	
+	xlimv <- c(
+		min( out_coord[,1] ) - 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) ),
+		max( out_coord[,1] ) + 0.04 * ( max( out_coord[,1] ) - min( out_coord[,1] ) )
+	)
+	ylimv <- c(
+		min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
+		max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
+	)
+	
+	# for saving
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+}
+
+# aspect ratio
+if (asp == 1){
+	g <- g + coord_fixed(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+} else {
+	g <- g + coord_cartesian(
+		xlim=xlimv,
+		ylim=ylimv,
+		expand = F
+	)
+}
+
+# coordinates for saving
+if (plot_mode == "color"){
+	df.labels.save <- subset(df.labels.save, cols != 3)
+	out_coord <- cbind(
+		df.labels.save$x,
+		df.labels.save$y
+	)
+	rownames(out_coord) <- df.labels.save$labs
+	
+	add <- -1 * xlimv[1]
+	div <- add + xlimv[2]
+	out_coord[,1] <- ( out_coord[,1] + add ) / div
+
+	
+	add <- -1 *  ylimv[1]
+	div <- add + ylimv[2]
+	out_coord[,2] <- ( out_coord[,2] + add ) / div
+
+}
+
+# fixing width of legends to 22%
+library(grid)
+library(gtable)
+g <- ggplotGrob(g)
+
+if ( bubble_plot == 0 ){
+	saving_file <- 1
+}
+
+if ( exists("saving_file") ){
+	if ( saving_file == 0){
+		target_legend_width <- convertX(
+			unit( image_width * 0.22, "in" ),
+			"mm"
+		)
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+			diff_mm <- diff( c(
+				convertX( g$widths[5], "mm" ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		} else { # ggplot2 >= 2.2.0
+			
+			diff_mm <- diff( c(
+				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+				target_legend_width
+			))
+			if ( diff_mm > 0 ){
+				print(diff_mm)
+				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			}
+		}
+	}
+}
+
+# fixing width of left spaces to 4.25 char
+if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+	diff_char <- diff( c(
+		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+		unit(4.25, "char")
+	))
+	if ( diff_char > 0 ){
+		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
+	}
+}
+
+
+grid.draw(g)
+';
+}
+
+
+sub r_command_aggr_var{
+	my $n_v = shift;
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# aggregate
+aggregate_with_var <- function(d, doc_length_mtr, v) {
+	d       <- aggregate(d,list(name = v), sum)
+	n_total <- as.matrix( table(v) )
+
+	row.names(d) <- d$name
+	d$name <- NULL
+
+	d       <- d[       order(rownames(d      )), ]
+	n_total <- n_total[ order(rownames(n_total)), ]
+
+	n_total <- subset(
+		n_total,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
+	)
+	d <- subset(
+		d,
+		row.names(d) != "欠損値" & row.names(d) != "." & row.names(d) != "missing" & row.names(d) != ""
+	)
+	n_total <- as.matrix(n_total)
+	return( list(d, n_total) )
+}
+
+dd <- NULL
+nn <- NULL
+
+END_OF_the_R_COMMAND
+
+	$t .= "for (i in list(";
+	for (my $i = 0; $i < $n_v; ++$i){
+		$t .= "v$i,";
+	}
+	chop $t;
+	$t .= ")){\n";
+
+	$t .= << 'END_OF_the_R_COMMAND2';
+
+	cur <- aggregate_with_var(d, doc_length_mtr, i)
+	dd <- rbind(dd, cur[[1]])
+	nn <- rbind(nn, cur[[2]])
+	v_count <- v_count + 1
+	v_pch <- c( v_pch, rep(v_count + 2, nrow(cur[[1]]) ) )
+}
+
+d       <- dd
+
+n_total <- nn
+n_total <- subset(n_total, rowSums(d) > 0)
+n_total <- n_total[,1]
+
+END_OF_the_R_COMMAND2
+
+	return $t;
+}
+
+
+sub r_command_aggr_str{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+# aggregate
+n_total <- table(v)
+d <- aggregate(d,list(name = v), sum)
+row.names(d) <- d$name
+d$name <- NULL
+d       <- d[       order(rownames(d      )), ]
+n_total <- n_total[ order(rownames(n_total))  ]
+n_total <- subset(n_total,rowSums(d) > 0)
+
+END_OF_the_R_COMMAND
+return $t;
+}
 
 1;

@@ -5,16 +5,31 @@ use screen_code::plugin_path;
 
 use gui_window;
 use gui_window::word_cls;
+use gui_window::cod_cls;
 use File::Path;
 use Encode qw/encode decode/;
+
+my $default_calc_temp;
+my $default_code_calc_temp;
 
 sub add_menu{
 	if (-f &screen_code::plugin_path::assistant_path) {
 		my $self = shift;
 		my $lf = shift;
+		my $isCode = shift;
+		if ($isCode) {
+			unless ($default_code_calc_temp) {
+				$default_code_calc_temp = \&gui_window::cod_cls::_calc;
+				*gui_window::cod_cls::_calc = \&plug_code_calc;
+			}
+		} else {
+			unless ($default_calc_temp) {
+				$default_calc_temp = \&gui_window::word_cls::calc;
+				*gui_window::word_cls::calc = \&plug_calc;
+			}
+		}
 		my $setting = $lf->Frame()->pack(
 			-fill => 'x',
-			#-padx => 2,
 			-pady => 2,
 		);
 		
@@ -27,6 +42,25 @@ sub add_menu{
 		);
 	}
 }
+
+sub plug_calc{
+	my $self = shift;
+	if ($self->{use_plugin}) {
+		&calc_plugin_loop($self,0);
+	} else {
+		$default_calc_temp->($self);
+	}
+}
+
+sub plug_code_calc{
+	my $self = shift;
+	if ($self->{use_plugin}) {
+		&calc_plugin_loop($self,1);
+	} else {
+		$default_code_calc_temp->($self);
+	}
+}
+
 sub text_henkan{
 	if (-f &screen_code::plugin_path::assistant_path) {
 		my $r_command_ref = shift;
@@ -63,6 +97,7 @@ sub text_henkan{
 
 sub calc_plugin_loop{
 	my $self = shift;
+	my $isCode = shift;
 	
 	#プラグインライセンス確認
 	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
@@ -70,28 +105,16 @@ sub calc_plugin_loop{
 	reset_plot_hash($self);
 	$self->{config_param} = undef;
 	while(1) {
-		my $rtn = calc_plugin($self);
+		my $rtn;
+		if ($isCode) {
+			$rtn = calc_code_plugin($self);
+		} else {
+			$rtn = calc_plugin($self);
+		}
 		if (!$rtn) {
 			last;
 		}
 	}
-}
-
-sub calc_code_plugin_loop{
-	my $self = shift;
-	
-	#プラグインライセンス確認
-	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
-	
-	reset_plot_hash($self);
-	$self->{config_param} = undef;
-	while(1) {
-		my $rtn = calc_code_plugin($self);
-		if (!$rtn) {
-			last;
-		}
-	}
-	$self->{config_param} = undef;
 }
 
 sub calc_plugin{
@@ -475,7 +498,7 @@ if (
 	;
 
 	$r_command .= "\n$par";
-	my $r_command_plot .= &gui_window::word_cls::r_command_plot($old_simple_style);
+	my $r_command_plot .= &r_command_plot($old_simple_style);
 
 	# make plots
 	my $merges;
@@ -493,9 +516,9 @@ if (
 	#) or return 0;
 	#$plot1->rotate_cls if $old_simple_style;
 	
-	my $r_command_add = &gui_window::word_cls::r_command_height;
+	my $r_command_add = &r_command_height;
 	
-	&screen_code::cluster::text_henkan(\$r_command_plot, \$r_command_add);
+	&text_henkan(\$r_command_plot, \$r_command_add);
 	$r_command .= $r_command_plot;
 	
 	my $plots = $args{plots};
@@ -837,6 +860,497 @@ sub reset_plot_hash{
 	$self->{plot_file_names} = "";
 	$self->{plot_number} = "";
 	$self->{maked_merges} = 0;
+}
+
+sub r_command_height{
+	my $t = '
+
+# プロットの準備開始
+pp_focus  <- 50     # 最初・最後の50回の併合をプロット
+pp_kizami <-  5     # クラスター数のきざみ（5個おきに表示）
+
+# 併合水準を取得
+det <- hcl$merge
+det <- cbind(1:nrow(det), nrow(det):1, det, hcl$height)
+colnames(det) <- c("u_n", "cls_n", "u1", "u2", "height")
+
+# タイプ別の処理：必要な部分の併合データ切出し・表記・クラスター数表示のきざみ
+if (pp_type == "last"){
+	n_start <- nrow(det) - pp_focus + 1
+	if (n_start < 1){ n_start <- 1 }
+	det <- det[nrow(det):n_start,]
+	
+	str_xlab <- paste(" ('
+	.kh_msg->pget('gui_window::word_cls->last1') # 最後の
+	.'",pp_focus,"'
+	.kh_msg->pget('gui_window::word_cls->last2') # 回
+	.')",sep="")
+} else if (pp_type == "first") {
+	if ( pp_focus > nrow(det) ){
+		pp_focus <- nrow(det)
+	}
+	det <- det[pp_focus:1,]
+	
+	str_xlab <- paste(" ('
+	.kh_msg->pget('gui_window::word_cls->first1') # 最初の
+	.'",pp_focus,"'
+	.kh_msg->pget('gui_window::word_cls->first2') # 回
+	.')",sep="")
+} else if (pp_type == "all") {
+	det <- det[nrow(det):1,]
+	pp_kizami <- nrow(det) / 8
+	pp_kizami <- pp_kizami - ( pp_kizami %% 5 ) + 5
+	
+	str_xlab <- ""
+}
+
+# クラスター数のマーカーを入れる準備
+p_type <- NULL
+p_nums <- NULL
+#screen plugin2 start#
+for (i in 1:nrow(det)){
+	if ( (det[i,"cls_n"] %%  pp_kizami == 0) | (det[i,"cls_n"] == 1)){
+		p_type <- c(p_type, 16)
+		p_nums <- c(p_nums, det[i,"cls_n"])
+	} else {
+		p_type <- c(p_type, 1)
+		p_nums <- c(p_nums, "")
+	}
+}
+#screen plugin2 end#
+
+# プロット
+par(mai=c(0,0,0,0), mar=c(4,4,1,1), omi=c(0,0,0,0), oma =c(0,0,0,0) )
+plot(
+	det[,"u_n"],
+	det[,"height"],
+	type = "b",
+	pch  = p_type,
+	bty = "l",
+	xlab = paste("'
+	.kh_msg->pget('gui_window::word_cls->agglomer') # クラスター併合の段階
+	.'",str_xlab,sep = ""),
+	ylab = "'
+	.kh_msg->pget('gui_window::word_cls->hight') # 併合水準（非類似度）
+	.'",
+	#screen plugin p_col#
+)
+
+text(
+	x      = det[,"u_n"],
+	y      = det[,"height"]
+	         - ( max(det[,"height"]) - min(det[,"height"]) ) / 40,
+	labels = p_nums,
+	pos    = 4,
+	offset = .2,
+	cex    = .8,
+	#screen plugin p_col#
+)
+
+legend(
+	min(det[,"u_n"]),
+	max(det[,"height"]),
+	legend = c("'
+	.kh_msg->pget('gui_window::word_cls->note1') # ※プロット内の数値ラベルは\n　併合後のクラスター総数
+	.'"),
+	#pch = c(16),
+	cex = .9,
+	box.lty = 0
+)
+
+';
+return $t;
+}
+
+sub r_command_plot{
+	my $simple = shift;
+	my $t;
+	if ($simple){
+		$t = &r_command_plot_simple;
+	} else {
+		$t = &r_command_plot_ggplot2;
+	}
+	return $t;
+}
+
+
+sub r_command_plot_simple{
+	my $t = << 'END_OF_the_R_COMMAND';
+
+#screen plugin1#
+hcl$labels <- labels
+plot(hcl,ann=0,cex=font_size, hang=-1)
+if (n_cls > 1){
+	rect.hclust(hcl, k=n_cls, border="#FF8B00FF")
+}
+#screen plugin represent_word_symple#
+END_OF_the_R_COMMAND
+return $t;
+}
+
+sub r_command_plot_ggplot2{
+	my $t = '
+
+library(grid)
+library(ggplot2)
+library(ggdendro)
+
+ddata <- dendro_data(as.dendrogram(hcl), type="rectangle")
+
+p <- NULL
+p <- ggplot()
+
+font_family <- "'.$::config_obj->font_plot_current.'"
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
+
+#screen plugin1#
+
+# クラスターごとのカラー設定
+
+if (n_cls > 1){
+	memb <- cutree(hcl,k=n_cls)
+	# 全体の色設定
+	p <- p + scale_colour_hue(l=40, c=100)
+	# 切り離し線(1)
+	cutpoint <- mean(
+		c(
+			rev(hcl$height)[n_cls-1],
+			rev(hcl$height)[n_cls]
+		)
+	)
+	# 色の順番を決定
+	n <- length( unique(memb[hcl$order]) )
+	new_col <- NULL
+	for (i in 1:ceiling(n / 2) ){
+		new_col <- c(new_col, i)
+		if (i + ceiling(n / 2) <= n){
+			new_col <- c(new_col, i + ceiling(n / 2))
+		}
+	}
+	# クラスター番号→色名の変換用ベクトル作成（col_vec）
+	col_tab <- cbind(
+		unique(memb[hcl$order]),
+		new_col
+	)
+	colnames(col_tab) <- c("org","new")
+	col_vec <- NULL
+	for (i in col_tab[order(col_tab[,1]),2]){
+		c <- as.character(i)
+		while (nchar(c) < 3){
+			c <- paste("0",c,sep="")
+		}
+		col_vec <- c(col_vec, c)
+	}
+	# 線の色分け
+	seg_bl <- NULL
+	seg_cl <- NULL
+	colnames(ddata$segment) <- c(
+		"x0",
+		"y0",
+		"x1",
+		"y1"
+	)
+	colnames(ddata$labels) <- c(
+		"x",
+		"y",
+		"text"
+	)
+	
+	for ( i in 1:nrow( ddata$segment ) ) {
+		if (
+			   ddata$segment$y0[i] > cutpoint
+			|| ddata$segment$y1[i] > cutpoint
+			|| (
+				   ddata$segment$y0[i] >= cutpoint
+				&& ddata$segment$y1[i] >= cutpoint
+			   )
+		) {
+			seg_bl <- c(
+				seg_bl,
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i]
+			)
+		} else {
+			seg_cl <- c(
+				seg_cl,
+				ddata$segment$x0[i],
+				ddata$segment$y0[i],
+				ddata$segment$x1[i],
+				ddata$segment$y1[i],
+				#col_vec[
+					memb[hcl$order][
+						floor(
+							mean(
+								ddata$segment$x0[i],
+								ddata$segment$x1[i]) 
+							)
+					]
+				#]
+			)
+		}
+	}
+	seg_bl = matrix(seg_bl, byrow=T, ncol=4 )
+	seg_cl = matrix(seg_cl, byrow=T, ncol=5 )
+	
+	if (is.null(seg_bl) == F){
+		colnames(seg_bl) <- c("x0", "y0", "x1", "y1")
+		seg_bl <- as.data.frame(seg_bl)
+		# 切り離し線(2)
+		if ( max(seg_bl$y1) > cutpoint ){
+			p <- p + geom_hline(
+				yintercept = cutpoint,
+				colour="black",
+				linetype=5,
+				size=0.5
+			)
+		}
+	}
+	colnames(seg_cl) <- c("x0", "y0", "x1", "y1", "c")
+	seg_cl <- as.data.frame(seg_cl)
+	seg_cl$c <- col_vec[seg_cl$c]
+
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		family = font_family,
+		fontface = "bold",
+		size = 5 * 0.85 * font_size
+	)
+
+	p <- p + geom_segment(
+		data=seg_cl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1", colour="c"),
+		size=0.5
+	)
+} else {
+	memb <- rep( c("a"), length(labels) )
+	p <- p + scale_colour_manual(values=c("black"))
+	seg_bl <- ddata$segment
+	col_vec <- c("001")
+	p <- p + geom_text(
+		data=data.frame(                    # ラベル
+			x=label(ddata)$x,
+			y=label(ddata)$y,
+			text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+		),
+		aes_string(
+			x="x",
+			y="y",
+			label="text",
+			colour="cols"
+		),
+		hjust=1,
+		angle =0,
+		family = font_family,
+		fontface = "bold",
+		size = 5 * 0.85 * font_size
+	)
+}
+
+if (is.null(seg_bl) == F){
+	p <- p + geom_segment(
+		data=seg_bl,
+		aes_string(x="x0", y="y0", xend="x1", yend="y1"),
+		color="gray50",
+		linetype=1,
+	)
+}
+
+p <- p + geom_text(
+	data=data.frame(                    # ラベル変換
+		x=label(ddata)$x,
+		y=label(ddata)$y,
+		text=labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
+	),
+	aes_string(
+		x="x",
+		y="y",
+		label="text",
+		colour="cols"
+	),
+	hjust=1,
+	angle =0,
+	family = font_family,
+	fontface = "bold",
+	size = 5 * 0.85 * font_size
+)
+
+# 語やコードの長さにあわせて余白の大きさを設定
+y_max <- max( ddata$segment$y1 )
+y_min <- 0.2
+# "strwidth" crashes if the device is cairo_pdf or cairo_ps 
+if (
+	is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
+	y_min <- max(
+		strwidth(
+			labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+			units = "figure",
+			font = 2
+		)
+	)
+}
+y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
+y_min <- y_min * 1.1
+if (y_min > y_max * 2){
+	y_min <- y_max * 2
+}
+y_min <- y_min * -1
+
+# 目盛の位置を設定
+b1 <- 0
+for (i in 1:1000){
+	b1 <- signif(y_max * 0.875, i)
+	if (b1 < y_max){
+		break
+	}
+}
+
+p <- p + coord_flip()
+p <- p + scale_x_reverse(
+	expand = c(0,0),
+	breaks = NULL,
+	limits=c( length(ddata$labels$text) + 0.5 , 1 - 0.5 )
+)
+p <- p + scale_y_continuous(
+	limits=c(y_min,y_max),
+	breaks=c(0,b1/2,b1),
+	expand = c(0.02,0.02)
+)
+
+p <- p + theme(
+	axis.title.y = element_blank(),
+	axis.title.x = element_blank(),
+	axis.ticks   = element_line(colour="gray60"),
+	axis.text.y  = element_text(size=12,colour="gray40"),
+	axis.text.x  = element_text(size=12,colour="gray40"),
+	legend.position="none"
+)
+
+if (n_cls <= 1){
+	p <- p + theme(
+		axis.text.y  = element_blank(),
+		axis.text.x  = element_text(size=12,colour="black"),
+		axis.ticks = element_line(colour="black"),
+		#panel.grid.major = theme_blank(),
+		#panel.grid.minor = theme_blank(),
+		#panel.background = theme_blank(),
+		axis.line = element_line(colour = "black")
+	)
+}
+
+show_bar <- 1
+
+if (show_bar == 1){
+	p <- p + theme(
+		axis.ticks  = element_blank(),
+		axis.text.y = element_blank()
+	)
+	p <- p + theme(
+		plot.margin = unit(c(0,0,0,0), "lines")
+	)
+
+	bard <- data.frame(
+		nm <- labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		ht <- freq[ as.numeric( as.vector( ddata$labels$text ) ) ],
+		cl <- col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ],
+		od <- nrow(d):1
+	)
+
+	if (n_cls <= 1){
+		bard$cl <- "001"
+	}
+
+	p2 <- NULL
+	p2 <- ggplot()
+	p2 <- p2 + geom_bar(
+		stat="identity",
+		position = "identity",
+		width=0.75,
+		data=bard,
+		aes(
+			x=reorder(od,od),
+			y=ht,
+			fill=cl
+		)
+	)
+	p2 <- p2 + coord_flip()
+	p2 <- p2 + scale_y_reverse( expand = c(0,0))
+	p2 <- p2 + scale_x_discrete( expand = c(0,0) )
+	p2 <- p2 + theme(
+		axis.title.y     = element_blank(),
+		axis.title.x     = element_blank(),
+		axis.ticks       = element_blank(),
+		axis.text.y      = element_blank(),
+		axis.text.x      = element_text(size=12,colour="white"),
+		legend.position  = "none",
+		panel.background = element_rect(fill="white", colour="white"),
+		panel.grid.major = element_blank(),
+		panel.grid.minor = element_blank()
+	)
+
+	margin <- 0.002 * nrow(d) + 0.00001 * nrow(d)^2 - 0.12
+	p2 <- p2 + theme(
+		plot.margin = unit(c(0.25,0,0.25,0), "lines") # r: -0.75
+	)
+
+
+	#screen plugin represent_word#
+	
+	grid.newpage()
+	pushViewport(viewport(layout=grid.layout(1,2, width=c(1,5)) ) )
+	print(p,  vp= viewport(layout.pos.row=1, layout.pos.col=2) )
+	print(p2, vp= viewport(layout.pos.row=1, layout.pos.col=1) )
+} else {
+	print(p)
+}
+
+if (
+	is.na(dev.list()["pdf"])
+	&& is.na(dev.list()["postscript"])
+	&& is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
+	if ( grepl("darwin", R.version$platform) ){
+		quartzFonts(HiraKaku=quartzFont(rep("'.$::config_obj->font_plot_current.'",4)))
+		grid.gedit("GRID.text", grep=TRUE, global=TRUE, gp=gpar(fontfamily="HiraKaku"))
+	}
+}
+
+detach("package:ggdendro", unload=T)
+
+# for clickable image map
+exp <- (y_max - y_min ) * 0.02
+coord <- cbind(
+	(1 / 6 + 5 / 6 * -1 * (y_min - exp) / ( (y_max + exp) - (y_min - exp) )) * 1.03,
+	1:length(ddata$labels$text) / length(ddata$labels$text)
+)
+rownames(coord) <-
+	labels[ as.numeric( as.vector( ddata$labels$text ) ) ]
+
+';
+
+
+return $t;
 }
 
 1;

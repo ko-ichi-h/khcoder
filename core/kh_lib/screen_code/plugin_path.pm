@@ -7,7 +7,7 @@ use File::Spec;
 use Encode qw/encode decode/;
 
 my $rde_name = File::Spec->catfile('screen', 'MonkinCleanser', 'MonkinCleanser.exe');
-my $assistant_name = File::Spec->catfile('screen', 'MonkinReporter', 'MonkinReporter.exe');
+my $assistant_name = File::Spec->catfile('screen', 'MonkinReport', 'MonkinReport.exe');
 
 sub rde_path{
 	return $rde_name;

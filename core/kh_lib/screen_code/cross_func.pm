@@ -1,16 +1,23 @@
 package screen_code::cross_func;
 use strict;
 
+use kh_cod::func;
 use screen_code::plugin_path;
 
 use File::Path;
 use Clone qw(clone);
 use Encode qw/encode decode/;
 
+my $replace_flag;
+
 sub add_menu{
 	if (-f &screen_code::plugin_path::assistant_path) {
 		my $self = shift;
 		my $rf = shift;
+		unless ($replace_flag) {
+			$replace_flag = 1;
+			*kh_cod::func::outtab = \&outtab;
+		}
 		$rf->Label(
 			-text     => kh_msg->get('screen_code::assistant->cross_map_label'),
 		)->pack(-side => 'left');
@@ -22,6 +29,187 @@ sub add_menu{
 		)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'left');
 		
 	}
+}
+
+sub outtab{
+	my $self  = shift;
+	my $tani = shift;
+	my $var_id = shift;
+	my $cell  = shift;
+	
+	# コーディングの実行
+	$self->code($tani) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 29;
+	
+	# 外部変数のチェック
+	my $heap = 'TYPE=HEAP';
+	$heap = '' unless $::config_obj->use_heap;
+	my ($outvar_tbl,$outvar_clm);
+	my $var_obj = mysql_outvar::a_var->new(undef,$var_id);
+	if ( $var_obj->{tani} eq $tani){
+		$outvar_tbl = $var_obj->{table};
+		$outvar_clm = $var_obj->{column};
+	} else {
+		$outvar_tbl = 'ct_outvar_cross';
+		$outvar_clm = 'value';
+		mysql_exec->drop_table('ct_outvar_cross');
+		mysql_exec->do("
+			CREATE TABLE ct_outvar_cross (
+				id int primary key not null,
+				value varchar(255)
+			) $heap
+		",1);
+		my $sql;
+		$sql .= "INSERT INTO ct_outvar_cross\n";
+		$sql .= "SELECT $tani.id, $var_obj->{table}.$var_obj->{column}\n";
+		$sql .= "FROM $tani, $var_obj->{tani}, $var_obj->{table}\n";
+		$sql .= "WHERE\n";
+		$sql .= "	$var_obj->{tani}.id = $var_obj->{table}.id\n";
+		foreach my $i ('h1','h2','h3','h4','h5','dan','bun'){
+			$sql .= "	and $var_obj->{tani}.$i"."_id = $tani.$i"."_id\n";
+			last if ($var_obj->{tani} eq $i);
+		}
+		$sql .= "ORDER BY $tani.id";
+		#print "$sql\n\n";
+		mysql_exec->do("$sql",1);
+	}
+	
+	
+	# 集計用SQL文の作製
+	my $sql;
+	$sql .= "SELECT if ( outvar_lab.lab is NULL, $outvar_tbl.$outvar_clm, outvar_lab.lab) as name,";
+	foreach my $i (@{$self->{valid_codes}}){
+		$sql .= "sum( IF(".$i->res_table.".".$i->res_col.",1,0) ),";
+	}
+	$sql .= " count(*) \n";
+	$sql .= "FROM $outvar_tbl\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON $outvar_tbl.id = $i.id\n";
+	}
+	$sql .= "LEFT JOIN outvar_lab ON ( outvar_lab.var_id = $var_id AND outvar_lab.val = $outvar_tbl.$outvar_clm )\n";
+	$sql .= "\nGROUP BY name";
+	$sql .= "\nORDER BY ".$::project_obj->mysql_sort('name');
+	#print "$sql\n";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	
+	# 結果出力の作製
+	my @result;
+	my @for_chisq;
+	my @for_plot;
+	
+	# 一行目
+	my @head = ('');
+	foreach my $i (@{$self->{valid_codes}}){
+		push @head, gui_window->gui_jchar($i->name);
+	}
+	push @for_plot, clone(\@head);
+	push @head, kh_msg->get('kh_cod::func->n_cases');
+	push @result, \@head;
+	# 中身
+	my @sum = ( kh_msg->get('kh_cod::func->total') );
+	my $total;
+	my @arr; #SCREEN Plugin
+	while (my $i = $h->fetch){
+		my $n = 0;
+		my @current;
+		my @current_for_chisq;
+		my @current_for_plot;
+		my @c = @{$i};
+		my $nd = pop @c;
+		my @arr_temp; #SCREEN Plugin
+		
+		$var_obj->{labels}{$c[0]} = ''
+			unless defined($var_obj->{labels}{$c[0]});
+		
+		next if
+			   length($i->[0]) == 0
+			or $c[0] eq '.'
+			or $c[0] eq '欠損値'
+			or $c[0] =~  /^missing$/i
+			or $var_obj->{labels}{$c[0]} eq '.'
+			or $var_obj->{labels}{$c[0]} eq '欠損値'
+			or $var_obj->{labels}{$c[0]} =~ /^missing$/i
+		;
+		
+		foreach my $h (@c){
+			if ($n == 0){                         # 行ヘッダ（1列目）
+				push @current,          gui_window->gui_jchar($h);
+				push @current_for_plot, gui_window->gui_jchar($h);
+			} else {                              # 中身
+				$sum[$n] += $h;
+				my $p = sprintf("%.2f",($h / $nd ) * 100);
+				push @current_for_chisq, [$h, $nd - $h];
+				push @current_for_plot, ($h / $nd) * 100;
+				if ($cell == 0){
+					my $pp = "($p"."%)";
+					$pp = '  '.$pp if length($pp) == 7;
+					push @current, "$h $pp";
+				}
+				elsif ($cell == 1){
+					push @current, $h;
+				} else {
+					push @current, "$p"."%";
+				}
+				push @arr_temp, $h; #SCREEN Plugin
+			}
+			++$n;
+		}
+		$total += $nd;
+		push @current, $nd;
+		push @result, \@current;
+		push @for_chisq, \@current_for_chisq if @current_for_chisq;
+		push @for_plot, \@current_for_plot;
+		
+		#SCREEN Plugin
+		push @arr_temp, $nd;
+		push @arr, \@arr_temp if @arr_temp;
+	}
+	# 合計行
+	my @c = @sum;
+	my @current; my $n = 0;
+	my @arr_retsu; #SCREEN Plugin
+	foreach my $i (@sum){
+		if ($n == 0){
+			push @current, $i;
+		} else {
+			my $p = sprintf("%.2f", ($i / $total) * 100);
+			if ($cell == 0){
+				my $pp = "($p"."%)";
+				$pp = '  '.$pp if length($pp) == 7;
+				push @current, "$i $pp";
+			}
+			elsif ($cell == 1){
+				push @current, $i;
+			} else {
+				push @current, "$p"."%";
+			}
+			push @arr_retsu, $i; #SCREEN Plugin
+		}
+		++$n;
+	}
+	push @current, $total;
+	push @result, \@current;
+	
+	#SCREEN Plugin
+	push @arr_retsu, $total;
+	push @arr, \@arr_retsu;
+	
+	# chi-square test
+	my ($chisq, $rsd) = &kh_cod::func::_chisq_test(\@current, \@for_chisq);
+	push @result, $chisq if $chisq;
+	
+	my $ret;
+	$ret->{display}  = \@result;
+	$ret->{plot}     = \@for_plot;
+	$ret->{t_rsd}    = $rsd;
+
+	#SCREEN Plugin
+	&screen_code::cross_func::func_ratio($ret,\@arr);
+	#SCREEN Plugin
+	
+	return $ret;
 }
 
 sub func_ratio{
@@ -465,11 +653,9 @@ sub read_sort_file{
 			if ($splited[0] eq "row_sort") {
 				$isChanged = 1 if ($temp ne $self->{row_sort});
 				$self->{row_sort} = $temp;
-				print "row_sort\n";
 			} elsif ($splited[0] eq "col_sort") {
 				$isChanged = 1 if ($temp ne $self->{col_sort});
 				$self->{col_sort} = $temp;
-				print "col_sort\n";
 			}
 		}
 		

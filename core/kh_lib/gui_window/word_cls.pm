@@ -55,7 +55,7 @@ sub _new{
 
 	#SCREEN Plugin
 	use screen_code::cluster;
-	&screen_code::cluster::add_menu($self,$lf);
+	&screen_code::cluster::add_menu($self,$lf,0);
 	#SCREEN Plugin
 
 	$win->Checkbutton(
@@ -75,14 +75,7 @@ sub _new{
 		-text => kh_msg->gget('ok'),
 		-width => 8,
 		-font => "TKFN",
-		-command => sub{
-						#SCREEN Plugin
-						if ($self->{use_plugin}) {
-							&screen_code::cluster::calc_plugin_loop($self);
-						} else {
-							$self->calc;
-						}
-					}
+		-command => sub{$self->calc;}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	return $self;
