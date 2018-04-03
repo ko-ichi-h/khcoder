@@ -182,9 +182,9 @@ sub init{
 		elsif ($_ =~ /^tmpdir = (.+)$/){
 			print MYININ "tmpdir = $p4\n";
 		}
-		elsif ($_ =~ /^secure\-file\-priv = (.+)$/){
-			print MYININ "secure-file-priv = $p4\n";
-		}
+		#elsif ($_ =~ /^secure\-file\-priv = (.+)$/){
+		#	print MYININ "secure-file-priv = $p4\n";
+		#}
 		
 		elsif ($_ =~ /max_heap_table_size/i){
 			print MYININ
