@@ -390,6 +390,7 @@ sub mark{
 			$text = $_;
 			$text =~ s/\t/ /go;
 			$text =~ s/\\/ /go;
+			$text =~ s/。/./go;
 		}
 		
 		# Delete characters outside of BMP (Basic Multilingual Plane)
