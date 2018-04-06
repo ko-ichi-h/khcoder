@@ -370,7 +370,8 @@ sub search{
 			}
 
 			$chi->load_data(\@data);
-			my $v = sqrt( $chi->{chisq_statistic} / $chi->{total} );
+			my $v = 0;
+			$v = sqrt( $chi->{chisq_statistic} / $chi->{total} ) if $chi->{total};
 			if ($v >= 0.1 && $chi->{p_value} < 0.01) {
 				#$pos_chk->{$current->{mother}} = 1;
 				
