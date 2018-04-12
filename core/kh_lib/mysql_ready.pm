@@ -715,16 +715,54 @@ sub reform{
 			num       int not null
 		) $self->{type_heap}
 	",1);
-	mysql_exec->do('
+	
+	# MySQL 5.6のMyISAMの挙動に合わせるため変更した (2018 4/18)
+	mysql_exec->drop_table("hg_tmp");
+	mysql_exec->do("
+		create table hg_tmp(
+			genkei_name varchar($len[1]) not null,
+			hinshi_name varchar($len[2]) not null,
+			genkei_id int not null,
+			hinshi_id int not null
+		);
+	", 1);
+	mysql_exec->do("
+		INSERT
+		INTO hg_tmp (genkei_name, hinshi_name, genkei_id, hinshi_id)
+		SELECT genkei.name, hinshi.name, genkei.id, hinshi.id
+		FROM genkei, hinshi
+		WHERE
+			genkei.hinshi_id = hinshi.id;
+	", 1);
+	if ($len[0] + $len[1] < 250){
+		mysql_exec->do(
+			"alter table hg_tmp add index index1 (genkei_name, hinshi_name)",
+			1
+		);
+	}
+	mysql_exec->do("
 		INSERT
 		INTO hghi (hyoso, genkei, hinshi, katuyo, hyoso_id, genkei_id, hinshi_id, num)
-		SELECT hgh.hyoso, hgh.genkei, hgh.hinshi, hgh.katuyo, hgh.id, genkei.id, hinshi.id, hgh.num
-			FROM hgh, genkei, hinshi
-			WHERE
-				    hgh.genkei = genkei.name
-				AND hgh.hinshi = hinshi.name
-				AND genkei.hinshi_id = hinshi.id
-	',1); 
+		SELECT hgh.hyoso, hgh.genkei, hgh.hinshi, hgh.katuyo, hgh.id, hg_tmp.genkei_id, hg_tmp.hinshi_id, hgh.num
+		FROM hgh, hg_tmp
+		WHERE
+			hgh.genkei = hg_tmp.genkei_name
+			AND hgh.hinshi = hg_tmp.hinshi_name
+	", 1);
+	
+	# MySQL 5.6でMyISAM利用の場合、以下のコードではなぜかINSERTされる行数が
+	# 減ることが判明した。InnoDBでは問題ないのだが…。orz
+	#mysql_exec->do('
+	#	INSERT
+	#	INTO hghi (hyoso, genkei, hinshi, katuyo, hyoso_id, genkei_id, hinshi_id, num)
+	#	SELECT hgh.hyoso, hgh.genkei, hgh.hinshi, hgh.katuyo, hgh.id, genkei.id, hinshi.id, hgh.num
+	#		FROM hgh, genkei, hinshi
+	#		WHERE
+	#			    hgh.genkei = genkei.name
+	#			AND hgh.hinshi = hinshi.name
+	#			AND genkei.hinshi_id = hinshi.id
+	#',1);
+	
 	mysql_exec->drop_table("hgh");
 	if ($len[0] + $len[1] + $len[2] <= 250){
 		mysql_exec->do(
@@ -806,7 +844,6 @@ sub genkei_sql{
 	";
 	return $sql;
 }
-
 
 #-------------------------#
 #   表層-文テーブル作成   #
@@ -1295,6 +1332,7 @@ sub rowtxt{
 				}
 				unless ($last + 1 == $i->[0]){
 					print "counters: $last, $i->[0]\n";
+					print "the sentence: $temp\n";
 					gui_errormsg->open(
 						type => 'msg',
 						msg  => kh_msg->get('error_in_mysql_bunr') # "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"

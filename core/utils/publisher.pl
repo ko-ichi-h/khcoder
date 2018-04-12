@@ -1,25 +1,26 @@
 use strict;
+use utf8;
 
-# core_uni/pub/base ˆÈ‰º‚ÉF
+# core_uni/pub/base ä»¥ä¸‹ã«ï¼š
 #	/web
-#	/win_pkg  ¨Œ»s‚ÌWindows”ÅƒpƒbƒP[ƒW‚ğ‰ğ“€‚µ‚Ä‚¨‚­
-#	# /win_upd  ¨Œ»s‚ÌWindows”ÅƒoƒCƒiƒŠ‚ğ‰ğ“€‚µ‚Ä‚¨‚­
-#	# /win_strb ¨Œ»s‚ÌWindowsEStrawberry”Å‚ğ‰ğ“€‚µ‚Ä‚¨‚­
+#	/win_pkg  â†’ç¾è¡Œã®Windowsç‰ˆãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã‚’è§£å‡ã—ã¦ãŠã
+#	# /win_upd  â†’ç¾è¡Œã®Windowsç‰ˆãƒã‚¤ãƒŠãƒªã‚’è§£å‡ã—ã¦ãŠã
+#	# /win_strb â†’ç¾è¡Œã®Windowsãƒ»Strawberryç‰ˆã‚’è§£å‡ã—ã¦ãŠã
 
-# ”z•zƒpƒbƒP[ƒW‚ÉV‚µ‚¢ƒtƒ@ƒCƒ‹‚ğ‰Á‚¦‚éê‡‚Í @cp_f ‚ğ•ÒWiŒã‚ë‚É’Ç‰Áj
-# V‚½‚ÈPerlƒ‚ƒWƒ…[ƒ‹‚ğg‚¢n‚ß‚éê‡‚É‚ÍStrawberry Perl‚Ì•ÒW‚ª•K—v
+# é…å¸ƒãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã«æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’åŠ ãˆã‚‹å ´åˆã¯ @cp_f ã‚’ç·¨é›†ï¼ˆå¾Œã‚ã«è¿½åŠ ï¼‰
+# æ–°ãŸãªPerlãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’ä½¿ã„å§‹ã‚ã‚‹å ´åˆã«ã¯Strawberry Perlã®ç·¨é›†ãŒå¿…è¦
 
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
-# ‰Šúİ’è
-my $V = '3a13a';
-my $V_main = "3.Alpha.13"; # ƒtƒHƒ‹ƒ_–¼
-my $V_full = "3.Alpha.13a";
+# åˆæœŸè¨­å®š
+my $V = '3a13b';
+my $V_main = "3.Alpha.13"; # ãƒ•ã‚©ãƒ«ãƒ€å
+my $V_full = "3.Alpha.13b";
 
-# ƒ}ƒjƒ…ƒAƒ‹Eƒ`ƒ…[ƒgƒŠƒAƒ‹‚ÌPDF‚ğÄì¬‚·‚é‚©
+# ãƒãƒ‹ãƒ¥ã‚¢ãƒ«ãƒ»ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ã®PDFã‚’å†ä½œæˆã™ã‚‹ã‹
 my $pdf = 0;
 
-# ŠÂ‹«İ’è
+# ç’°å¢ƒè¨­å®š
 my $home_dir = '';
 my $key_file = '';
 
@@ -35,7 +36,7 @@ elsif (-e "C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa") { # Vaio
 }
 system("set HOME=$home_dir");
 
-# XV‚·‚éƒtƒ@ƒCƒ‹‚Ìw’è
+# æ›´æ–°ã™ã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã®æŒ‡å®š
 my @cp_f = (
 	['kh_coder.exe' , 'kh_coder.exe'  ],
 	['khc.xla'      , 'khc.xla'       ],
@@ -69,7 +70,7 @@ find(
 	'../plugin_jp'
 );
 
-# ŒÃ‚¢ƒvƒ‰ƒOƒCƒ“‚Í‚·‚×‚Äíœ
+# å¤ã„ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã¯ã™ã¹ã¦å‰Šé™¤
 find(
 	sub {
 		unlink $_ or die($File::Find::name) unless -d $_;
@@ -84,8 +85,19 @@ find(
 	'../pub/win_pkg/plugin_jp'
 );
 
-#use Data::Dumper;
-#print Dumper(@cp_f);
+
+#------------------------------------------------------------------------------
+#                                     å®Ÿè¡Œ
+#------------------------------------------------------------------------------
+
+#&web;
+	#&pdfs if $pdf;
+#&source_tgz;
+#&win_pkg;
+	#&win_upd;
+	#&win_strb;
+&upload;
+
 
 use Archive::Tar;
 use File::Copy;
@@ -95,22 +107,13 @@ use Time::Piece;
 use Net::SFTP::Foreign;
 use LWP::UserAgent;
 use File::Path 'rmtree';
-
-#------------------------------------------------------------------------------
-#                                     Às
-#------------------------------------------------------------------------------
-
-&web;
-	#&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
-	#&win_upd;
-	#&win_strb;
-&upload;
+use Encode;
 
 sub upload{
 	print "Uploading...\n";
 
+	#print "key: $key_file\n";
+	
 	my $sftp = Net::SFTP::Foreign->new(
 		host => 'web.sourceforge.net',
 		user => 'ko-ichi,khc',
@@ -138,6 +141,7 @@ sub upload{
 		#"khcoder-$V-s.zip",
 		"khcoder-$V.exe",
 	){
+		next unless -e $i;
 		print "put: $i\n";
 		$sftp->put ($i, $i) or die;
 	}
@@ -146,7 +150,7 @@ sub upload{
 	$sftp->setcwd("/home/project-web/khc/htdocs");
 
 	foreach my $i (
-		#"index.html",
+		"index.html",
 		"dl3.html",
 	){
 		$sftp->put ("../pub/web/$i", $i) or die;
@@ -164,7 +168,7 @@ sub web{
 		agent      => 'Mozilla/5.0 (Windows NT 6.1; rv:19.0) Gecko/20100101 Firefox/19.0',
 	);
 	
-	# “ú•t
+	# æ—¥ä»˜
 	my $time = localtime;
 	my $year = $time->year;
 	my $mon  = $time->mon;
@@ -176,28 +180,28 @@ sub web{
 	my $t = '';
 	
 	# index.html
-	#my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
-	#$t = '';
-	#$r0->is_success or die;
-	#$t = $r0->content;
-	#
-	#$t =~ s/Ver\. [0-9]+[a-z]*</Ver\. $V_full</;  # ƒo[ƒWƒ‡ƒ“”Ô†
-	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # “ú•t
-	#
-	#open(my $fh, '>', "../pub/base/web/index.html") or die;
-	#print $fh $t;
-	#close ($fh);
+	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
+	$t = '';
+	$r0->is_success or die;
+	$t = Encode::decode('cp932', $r0->content);
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # æ”¹è¡Œã‚³ãƒ¼ãƒ‰
+	
+	$t =~ s/KH Coder 3ï¼ˆæœ€æ–°ã‚¢ãƒ«ãƒ•ã‚¡ç‰ˆï¼‰ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰<\/a><font size=\-1 color="#3cb371">ï¼ˆ.+ï¼‰<\/font>/KH Coder 3ï¼ˆæœ€æ–°ã‚¢ãƒ«ãƒ•ã‚¡ç‰ˆï¼‰ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰<\/a><font size=\-1 color="#3cb371">ï¼ˆ$V_full - $dateï¼‰<\/font>/;
+	
+	open(my $fh, ">:encoding(cp932)", "../pub/web/index.html") or die("$!");
+	print $fh $t;
+	close ($fh);
 	
 	# en/index.html
 	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
 	my $t = '';
 	$r2->is_success or die;
 	$t = $r2->content;
-	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ‰üsƒR[ƒh
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # æ”¹è¡Œã‚³ãƒ¼ãƒ‰
 
-	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # ƒo[ƒWƒ‡ƒ“”Ô†
-	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # “ú•t
-	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ƒ_ƒEƒ“ƒ[ƒhƒtƒHƒ‹ƒ_
+	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # ãƒãƒ¼ã‚¸ãƒ§ãƒ³ç•ªå·
+	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # æ—¥ä»˜
+	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒ•ã‚©ãƒ«ãƒ€
 	#
 	open(my $fh, '>', "../pub/web/en_index.html") or die;
 	print $fh $t;
@@ -208,12 +212,12 @@ sub web{
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
-	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # ‰üsƒR[ƒh
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # æ”¹è¡Œã‚³ãƒ¼ãƒ‰
 	
-	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # “ú•t
-	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ƒtƒ@ƒCƒ‹–¼
-	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # ƒtƒHƒ‹ƒ_–¼1
-	$t =~ s/KH Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # ƒtƒHƒ‹ƒ_–¼2
+	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # æ—¥ä»˜
+	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ãƒ•ã‚¡ã‚¤ãƒ«å
+	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # ãƒ•ã‚©ãƒ«ãƒ€å1
+	$t =~ s/KH Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # ãƒ•ã‚©ãƒ«ãƒ€å2
 
 
 	open(my $fh, '>', "../pub/web/dl3.html") or die;
@@ -222,13 +226,13 @@ sub web{
 }
 
 sub pdfs{
-	# ƒpƒXƒ[ƒh
+	# ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰
 	open (my $fh, '<', 'pass.txt') or die;
 	my $pass = readline $fh;
 	close ($fh);
 	undef $fh;
 
-	# Distiller‚ÌƒpƒX
+	# Distillerã®ãƒ‘ã‚¹
 	system('where acrodist.exe > temp.txt');
 	open (my $fh,'<',"temp.txt") or die;
 	my $acro_path = readline $fh;
@@ -239,14 +243,14 @@ sub pdfs{
 		die("Could not find Distiller.");
 	}
 
-	# ˆÚ“®
+	# ç§»å‹•
 	chdir('..');
 	chdir('..');
 	chdir('..');
 	chdir('doc');
 	chdir('tex__phd');
 	
-	# Distiller‚Ì‹N“®
+	# Distillerã®èµ·å‹•
 	my $acro_proc;
 	Win32::Process::Create(
 		$acro_proc,
@@ -294,7 +298,7 @@ sub pdfs{
 	copy ('khcoder_tutorial.pdf', '../../perl/core/pub/base/win_strb/khcoder_tutorial.pdf') or die;
 	copy ('khcoder_tutorial.pdf', '../../perl/core/utils/khcoder_tutorial.pdf') or die;
 
-	# ˆÚ“®
+	# ç§»å‹•
 	chdir('..');
 	chdir('..');
 	chdir('perl');
@@ -307,13 +311,13 @@ sub pdfs{
 sub win_upd{
 	chdir("..");
 	
-	# V‚µ‚¢ƒtƒ@ƒCƒ‹‚ğupub/base/win_updv‚ÖƒRƒs[
+	# æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã€Œpub/base/win_updã€ã¸ã‚³ãƒ”ãƒ¼
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/base/win_upd/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
 	}
 	
-	# Zipƒtƒ@ƒCƒ‹‚ğì¬
+	# Zipãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆ
 	unlink("utils\\khcoder-$V-s.zip");
 	system("wzzip -rp -ex utils\\khcoder-$V-s.zip pub\\base\\win_upd");
 	
@@ -323,7 +327,7 @@ sub win_upd{
 sub win_strb{
 	chdir("..");
 	
-	# khc.pl‚ğì¬
+	# khc.plã‚’ä½œæˆ
 	open (my $fh, '<', 'utils/kh_coder/kh_coder.pl') or die;
 	my $t = do { local $/; <$fh> };
 	close $fh;
@@ -334,18 +338,18 @@ sub win_strb{
 	print $fh $t;
 	close $fh;
 	
-	# V‚µ‚¢ƒtƒ@ƒCƒ‹‚ğupub/base/win_strbv‚ÖƒRƒs[i1jstrb“Á—L
+	# æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã€Œpub/base/win_strbã€ã¸ã‚³ãƒ”ãƒ¼ï¼ˆ1ï¼‰strbç‰¹æœ‰
 	rmtree('pub/base/win_strb/kh_lib');
 	dircopy('utils/kh_coder/kh_lib', 'pub/base/win_strb/kh_lib');
 	shift @cp_f;
 	
-	# V‚µ‚¢ƒtƒ@ƒCƒ‹‚ğupub/base/win_strbv‚ÖƒRƒs[i2j‹¤’Ê
+	# æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã€Œpub/base/win_strbã€ã¸ã‚³ãƒ”ãƒ¼ï¼ˆ2ï¼‰å…±é€š
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/base/win_strb/'.$i->[1]) or die("Can not copy $i\n");
 		print "copy: $i->[1]\n";
 	}
 	
-	# Zipƒtƒ@ƒCƒ‹‚ğì¬
+	# Zipãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆ
 	unlink("utils\\khcoder-$V-strb.zip");
 	system("wzzip -rp -ex utils\\khcoder-$V-strb.zip pub\\base\\win_strb");
 	
@@ -354,10 +358,10 @@ sub win_strb{
 
 
 sub win_pkg{
-	# ukh_coder.exev‚ğì¬
+	# ã€Œkh_coder.exeã€ã‚’ä½œæˆ
 	chdir("..");
 
-	system("svn update");
+	#system("svn update");
 	unlink("kh_coder.exe");
 	system("make_exe.bat");
 	unless (-e "kh_coder.exe"){
@@ -384,13 +388,13 @@ sub win_pkg{
 		9
 	);
 	
-	# V‚µ‚¢ƒtƒ@ƒCƒ‹‚ğupub/win_pkgv‚ÖƒRƒs[
+	# æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã€Œpub/win_pkgã€ã¸ã‚³ãƒ”ãƒ¼
 	foreach my $i (@cp_f){
 		print "copy: $i->[0]\n";
 		copy("$i->[0]", 'pub/win_pkg/'."$i->[1]") or die("Can not copy $i->[0]\n");
 	}
 
-	# Zip©ŒÈ‰ğ“€ƒtƒ@ƒCƒ‹‚ğì¬
+	# Zipè‡ªå·±è§£å‡ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä½œæˆ
 	unlink("utils\\khcoder-$V.zip");
 	unlink("utils\\khcoder-$V.exe");
 	system("wzzip -rp -ex utils\\khcoder-$V.zip pub\\win_pkg");
@@ -410,7 +414,7 @@ sub win_pkg{
 
 sub source_tgz{
 	#---------------------------------#
-	#   CVS‚©‚çÅVƒ\[ƒX‚ğæ‚èo‚µ   #
+	#   CVSã‹ã‚‰æœ€æ–°ã‚½ãƒ¼ã‚¹ã‚’å–ã‚Šå‡ºã—   #
 
 
 	#my $cvs_cmd = 'cvs -d ":ext;command=\'';
@@ -433,7 +437,7 @@ sub source_tgz{
 	system($cvs_cmd);
 
 	#--------------------------#
-	#   •s—v‚Èƒtƒ@ƒCƒ‹‚ğíœ   #
+	#   ä¸è¦ãªãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤   #
 
 	my @rm_dir = (
 		'core/auto_test',
@@ -471,7 +475,7 @@ sub source_tgz{
 	}
 
 	#---------------------#
-	#   ƒ\[ƒXZip‚ğì¬   #
+	#   ã‚½ãƒ¼ã‚¹Zipã‚’ä½œæˆ   #
 
 	unlink("khcoder-$V.tar.gz");
 

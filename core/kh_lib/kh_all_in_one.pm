@@ -160,6 +160,7 @@ sub init{
 			)
 		;
 	}
+	my $p5 = $::config_obj->cwd.'/screen/';
 
 	open (MYINI,$::config_obj->cwd.'/dep/mysql/khc.ini') or 
 		gui_errormsg->open(
@@ -182,9 +183,9 @@ sub init{
 		elsif ($_ =~ /^tmpdir = (.+)$/){
 			print MYININ "tmpdir = $p4\n";
 		}
-		#elsif ($_ =~ /^secure\-file\-priv = (.+)$/){
-		#	print MYININ "secure-file-priv = $p4\n";
-		#}
+		elsif ($_ =~ /^secure\-file\-priv = (.+)$/){
+			print MYININ "secure-file-priv = $p5\n";
+		}
 		
 		elsif ($_ =~ /max_heap_table_size/i){
 			print MYININ

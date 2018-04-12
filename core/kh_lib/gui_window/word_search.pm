@@ -662,28 +662,33 @@ sub search{
 				$nbar = $i->[2];
 				$bar_col = '#89c3eb';
 			}
-			my $bv = 0;
-			my $b = $self->list->ProgressBar(
-				-troughcolor => 'white',
-				-colors => [ 0, $bar_col ],
-				-gap => 0,
-				-length => 150,
-				-padx => 7,
-				-pady => 2,
-				-variable => \$bv,
-				#-value => $nbar / $max * 100,
-			);
-			$bv = $nbar / $max * 100;
-			#$b->value( $nbar / $max * 100 );
-			$self->list->itemCreate(
-				$cu,
-				$col,
-				-itemtype => 'window',
-				-widget => $b,
-				-style => $leftu,
-			);
+			
+			# 多すぎるとPerlが落ちるので、活用形についてはグラフ非表示
+			unless ( $child_flag ){
+				my $bv = 0;
+				my $b = $self->list->ProgressBar(
+					-troughcolor => 'white',
+					-colors => [ 0, $bar_col ],
+					-gap => 0,
+					-length => 150,
+					-padx => 7,
+					-pady => 2,
+					-variable => \$bv,
+					#-value => $nbar / $max * 100,
+				);
+				#print $row, ', ', $nbar / $max * 100, "\n";
+				$bv = $nbar / $max * 100;
+				#$bv = 3;
+				#$b->value( $nbar / $max * 100 );
+				$self->list->itemCreate(
+					$cu,
+					$col,
+					-itemtype => 'window',
+					-widget => $b,
+					-style => $leftu,
+				);
+			}
 		}
-		
 		
 		$self->list->hide('entry', $cu) if $child_flag;
 		++$row;

@@ -76,6 +76,11 @@ FROM katuyo, hyoso
 where hyoso.katuyo_id = katuyo.id
   and katuyo.name like "F%"
 
+セミナー用KH Coder
+	・MySQLのポート番号
+	・MySQL用にDLLを同梱
+	・回答先フォルダ名
+	・ショートカット名
 
 [3.Alpha.10]
 	・抽出語リストをExcel形式で書き出す際、従来は*.xls形式を用いていたが、*.xlsx形式を用いるように変更した。
