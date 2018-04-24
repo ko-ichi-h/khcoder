@@ -528,7 +528,7 @@ sub params{
 		$cor_var_min = gui_window->gui_jgn( $self->{entry_cor_var_min}->get );
 	}
 	if ( $self->{check_cor_var_max} ){
-		$cor_var_min = gui_window->gui_jgn( $self->{entry_cor_var_max}->get );
+		$cor_var_max = gui_window->gui_jgn( $self->{entry_cor_var_max}->get );
 	}
 	
 	return (
