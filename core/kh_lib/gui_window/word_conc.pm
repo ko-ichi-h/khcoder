@@ -525,9 +525,7 @@ sub search{
 	#}
 	my $katuyo = $self->entry2->get;
 	my $hinshi = $self->entry4->get;
-	my $length = $self->entry3->get;
-
-	$length =~ tr/０-９/0-9/;
+	my $length = gui_window->gui_jgn( $self->entry3->get );
 
 	$query  = $self->check_entry_input($query );
 	$katuyo = $self->check_entry_input($katuyo);

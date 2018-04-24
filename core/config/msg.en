@@ -23,6 +23,8 @@ global:
     r_net_msg_fail:           'Error: could not configure the options.'
     words:                    Words
     select_a_file:            Please select a file
+    min:                      Min
+    max:                      Max
 gui_errormsg::mysql:
     fatal:                   "Failed in accessing MySQL database system.\nKH Coder will exit now."
 gui_wait:
@@ -746,7 +748,8 @@ gui_widget::r_net:
     fix_lab:                  'Avoid overlapping of labels'
     view_coef:                Show coef.
     cor_var:                  'Color: correlation with variables / position'
-    cor_var_darker:           'Darker background color (correlation)'
+    cor_var_colors:           'Color scale of correlation'
+    cor_var_darker:           'Darker background color'
     standardize_coef:         'Standardize coef.'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'

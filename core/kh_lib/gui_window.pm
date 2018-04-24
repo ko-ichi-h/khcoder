@@ -359,7 +359,7 @@ sub gui_jgn{ # 入力された数値の変換
 		unless ( $reserve_rn ){ # ATOK対策
 			$char =~ s/\x0D|\x0A//g;
 		}
-		$char =~ tr/０-９/0-9/;
+		$char =~ tr/。．、，,０-９ー－―/.....0-9\-\-\-/;
 		$char =~ s/[[:cntrl:]]|\s//g;
 		return $char;
 	} else {

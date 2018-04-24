@@ -80,6 +80,11 @@ sub new{
 	$args{cor_var_darker} = 0 unless length($args{cor_var_darker} );
 	$r_command .= "cor_var_darker <- $args{cor_var_darker}\n";
 
+	$args{cor_var_min} = -1 unless length($args{cor_var_min} );
+	$r_command .= "cor_var_min <- $args{cor_var_min}\n";
+	$args{cor_var_max} = 1 unless length($args{cor_var_max} );
+	$r_command .= "cor_var_max <- $args{cor_var_max}\n";
+
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 
@@ -1010,6 +1015,9 @@ if ( com_method == "cor" ){  # cor
 	#	edge_pos[edge_pos < -limv] <- -limv
 	#}
 
+	edge_pos[edge_pos > cor_var_max] <- cor_var_max
+	edge_pos[edge_pos < cor_var_min] <- cor_var_min
+	
 	n2 <- igraph::set.edge.attribute(
 		n2,
 		"edge_pos",

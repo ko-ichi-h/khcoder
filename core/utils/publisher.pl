@@ -13,9 +13,9 @@ use utf8;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a13b';
+my $V = '3a13c';
 my $V_main = "3.Alpha.13"; # フォルダ名
-my $V_full = "3.Alpha.13b";
+my $V_full = "3.Alpha.13c";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;

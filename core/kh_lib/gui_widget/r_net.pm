@@ -32,6 +32,10 @@ sub _new{
 		unless defined $self->{standardize_coef};
 	$self->{edge_type}                 = "words"
 		unless defined $self->{edge_type};
+	$self->{cor_var_max} = 1
+		unless defined $self->{cor_var_max};
+	$self->{cor_var_min} = -1
+		unless defined $self->{cor_var_min};
 
 	my $num_size = 100;
 
@@ -88,6 +92,12 @@ sub _new{
 		if ($self->{r_cmd} =~ /cor_var <- ([01])\n/){
 			$self->{check_cor_var} = $1;
 		}
+		if ($self->{r_cmd} =~ /cor_var_min <- ([0-9\.eE\-\+]+)\n/){
+			$self->{cor_var_min} = $1;
+		}
+		if ($self->{r_cmd} =~ /cor_var_max <- ([0-9\.eE\-\+]+)\n/){
+			$self->{cor_var_max} = $1;
+		}
 		if ($self->{r_cmd} =~ /cor_var_darker <- ([01])\n/){
 			$self->{check_cor_var_darker} = $1;
 		}
@@ -96,6 +106,12 @@ sub _new{
 		}
 		if ($self->{r_cmd} =~ /standardize_coef <- ([01])\n/){
 			$self->{standardize_coef} = $1;
+		}
+		unless ( $self->{cor_var_min} == -1 ){
+			$self->{check_cor_var_min} = 1;
+		}
+		unless ( $self->{cor_var_max} == 1 ){
+			$self->{check_cor_var_max} = 1;
 		}
 
 		# min coef. specified
@@ -297,11 +313,60 @@ sub _new{
 	if ($self->{r_cmd}) {
 		# "configure" button screen
 		if ( $self->{check_cor_var} ){
-			$lf->Checkbutton(
+			$lf->Label(
+				-text => kh_msg->get('cor_var_colors')
+			)->pack(-anchor => 'w');
+			
+			my $cvf0 = $lf->Frame()->pack(-anchor => 'w');
+			$cvf0->Label(-text => '  ')->pack(-side => 'left');
+			$cvf0->Checkbutton(
+					-text     => kh_msg->gget('min'),
+					-variable => \$self->{check_cor_var_min},
+					-command => sub{$self->refresh;},
+					-anchor => 'w',
+			)->pack(-anchor => 'w', -side => 'left');
+			
+			$self->{entry_cor_var_min} = $cvf0->Entry(
+				-width      => 5,
+				-background => 'white',
+			)->pack(-side => 'left', -padx => 2);
+			$self->{entry_cor_var_min}->insert(0,$self->{cor_var_min});
+			$self->{entry_cor_var_min}->bind("<Return>",   $self->{command})
+				if defined( $self->{command} )
+			;
+			$self->{entry_cor_var_min}->bind("<KP_Enter>", $self->{command})
+				if defined( $self->{command} )
+			;
+			gui_window->config_entry_focusin($self->{entry_cor_var_min});
+			
+			$cvf0->Label(-text => '  ')->pack(-side => 'left');
+			$cvf0->Checkbutton(
+					-text     => kh_msg->gget('max'),
+					-variable => \$self->{check_cor_var_max},
+					-command => sub{$self->refresh;},
+					-anchor => 'w',
+			)->pack(-anchor => 'w', -side => 'left');
+			
+			$self->{entry_cor_var_max} = $cvf0->Entry(
+				-width      => 5,
+				-background => 'white',
+			)->pack(-side => 'left', -padx => 2);
+			$self->{entry_cor_var_max}->insert(0,$self->{cor_var_max});
+			$self->{entry_cor_var_max}->bind("<Return>",   $self->{command})
+				if defined( $self->{command} )
+			;
+			$self->{entry_cor_var_max}->bind("<KP_Enter>", $self->{command})
+				if defined( $self->{command} )
+			;
+			gui_window->config_entry_focusin($self->{entry_cor_var_max});
+			
+			my $cvf1 = $lf->Frame()->pack(-anchor => 'w');
+			$cvf1->Label(-text => '  ')->pack(-side => 'left');
+			$cvf1->Checkbutton(
 					-text     => kh_msg->get('cor_var_darker'),
 					-variable => \$self->{check_cor_var_darker},
 					-anchor => 'w',
-			)->pack(-anchor => 'w');
+			)->pack(-anchor => 'w', -side => 'left');
 		}
 	} else {
 		# initial option screen
@@ -406,6 +471,21 @@ sub refresh{
 		push @nor,  $self->{bubble_obj}{chkw_main};
 	}
 
+	if ($self->{r_cmd}) {
+		if ($self->{check_cor_var}){
+			if ( $self->{check_cor_var_min} ){
+				push @nor, $self->{entry_cor_var_min};
+			} else {
+				push @dis, $self->{entry_cor_var_min};
+			}
+			if ( $self->{check_cor_var_max} ){
+				push @nor, $self->{entry_cor_var_max};
+			} else {
+				push @dis, $self->{entry_cor_var_max};
+			}
+		}
+	}
+
 	unless ($self->{r_cmd}) {
 		if ( $self->{from}{radio_type} eq "twomode" ){
 			push @dis, $self->{wd_check_cor_var};
@@ -440,6 +520,17 @@ sub refresh{
 
 sub params{
 	my $self = shift;
+	
+	my $cor_var_max = 1;
+	my $cor_var_min = -1;
+	
+	if ( $self->{check_cor_var_min} ){
+		$cor_var_min = gui_window->gui_jgn( $self->{entry_cor_var_min}->get );
+	}
+	if ( $self->{check_cor_var_max} ){
+		$cor_var_min = gui_window->gui_jgn( $self->{entry_cor_var_max}->get );
+	}
+	
 	return (
 		n_or_j              => $self->n_or_j,
 		edges_num           => $self->edges_num,
@@ -459,6 +550,8 @@ sub params{
 		method_coef         => gui_window->gui_jg( $self->{method_coef} ),
 		cor_var             => $self->cor_var,
 		cor_var_darker      => gui_window->gui_jg( $self->{check_cor_var_darker} ),
+		cor_var_min         => $cor_var_min,
+		cor_var_max         => $cor_var_max,
 		standardize_coef    => $self->{standardize_coef},
 	);
 }
@@ -493,8 +586,7 @@ sub edges_num{
 sub edges_jac{
 	my $self = shift;
 	my $n = $self->{entry_edges_jac}->get;
-	$n =~ tr/。．、，,０-９/.....0-9/;
-	return gui_window->gui_jg( $n );
+	return gui_window->gui_jgn( $n );
 }
 
 sub use_alpha{
