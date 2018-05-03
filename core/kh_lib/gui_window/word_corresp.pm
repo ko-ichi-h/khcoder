@@ -1609,7 +1609,7 @@ if (show_origin == 1){
 	ylims <- lim_chk$panel$ranges[[1]]$y.range
 	if ( is.null(xlims) ){
 		xlims <- lim_chk$layout$panel_ranges[[1]]$x.range
-		ylims <- lim_chk$layout$panel_ranges[[1]]$x.range
+		ylims <- lim_chk$layout$panel_ranges[[1]]$y.range
 	}
 	
 	if (zoom_factor >= 1){
