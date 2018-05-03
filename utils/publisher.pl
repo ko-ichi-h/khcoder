@@ -13,9 +13,9 @@ use utf8;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a13c';
+my $V = '3a13d';
 my $V_main = "3.Alpha.13"; # フォルダ名
-my $V_full = "3.Alpha.13c";
+my $V_full = "3.Alpha.13d";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -428,13 +428,12 @@ sub source_tgz{
 	#$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
 	#$cvs_cmd .= "export -r unicode -- core";
 
-	my $cvs_cmd = "svn export --username=ko-ichi https://svn.code.sf.net/p/khc/svn/trunk/core core";
-
-	print "cmd: $cvs_cmd\n";
-
 	rmtree('core');
 	rmtree('kh_coder');
-	system($cvs_cmd);
+
+	chdir('..');
+	system('git checkout-index -a -f --prefix=utils/core/');
+	chdir('utils');
 
 	#--------------------------#
 	#   不要なファイルを削除   #
