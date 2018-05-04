@@ -1083,3 +1083,10 @@ gui_window::r_plot::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ・調整"
+screen_code::rde_menu:
+    plugin_raw_data_editor:    "「文錦」分析対象データの編集"
+    err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"
+    err_output_from_db:        "データベースからの外部変数出力に失敗しました。"
+    err_edit:                  "プロジェクトデータの編集処理に失敗しました。\n再試行するか、サポートまでお問い合わせください。"
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:    "「文錦」分析対象ファイルの編集"
