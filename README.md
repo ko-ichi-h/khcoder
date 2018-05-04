@@ -1,6 +1,20 @@
 # KH Coder: for Quantitative Content Analysis or Text Mining
 
-Web pages, documentations, discussion forum, and file releases are still on SourceForge.
-http://khc.sourceforge.net/
+## Description
+
+Web pages, screenshots, documentations, discussion forum, and file releases are still on SourceForge.
+http://khc.sourceforge.net/en/
 
 I am going to gradually move them here.
+
+## How to run source code of KH Coder on Windows
+
+1. Download & install Perl: http://strawberryperl.com/
+2. git clone this repository
+3. Download \*.exe file (Winzip self-extractor) of KH Coder 3 from http://khc.sourceforge.net/en/
+4. Unzip the downloaded file into the clone directory
+5. Open command prompt window and go to the clone directory, type "perl kh_coder.pl", and hit "Enter" key
+
+If you get errors like "Can't locate **Jcode**.pm in @INC", you need to install Perl module called "**Jcode**". To install it, type "cpanm **Jcode**" and hit "Enter" key on your command prompt window.
+
+Above procedure is for people who want to modify or develop KH Coder. If you want to just run, try or use KH Coder, just unzip the \*.exe and double click “kh_coder.exe”.
