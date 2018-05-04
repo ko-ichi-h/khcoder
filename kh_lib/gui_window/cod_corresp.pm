@@ -343,6 +343,11 @@ sub _new{
 		plot_size => $::config_obj->plot_size_codes,
 	);
 
+	#SCREEN Plugin
+	use screen_code::correspond;
+	&screen_code::correspond::add_menu($self,$lf2,1);
+	#SCREEN Plugin
+
 	$rf->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'),
 			-variable => \$self->{check_rm_open},

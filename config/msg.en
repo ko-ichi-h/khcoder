@@ -1089,3 +1089,14 @@ screen_code::rde_menu:
     err_edit:                  "Projectdata cannot edit."
 screen_code::rde_newproject_button:
     plugin_raw_data_editor:    "Edit File"
+screen_code::assistant:
+    use_plugin:                "use plugin"
+    cross_map_label:           "use plugin:"
+    corresp_rad:               "  origin range:"
+    corresp_ang:               "  variable range:"
+    corresp_drop_menu1:        "narrow"
+    corresp_drop_menu2:        "slightly narrower"
+    corresp_drop_menu3:        "normal"
+    corresp_drop_menu4:        "slightly wider"
+    corresp_drop_menu5:        "wide"
+    package_file_not_exist:    "Please re-install MonkinReport."

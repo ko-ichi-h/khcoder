@@ -1,6 +1,8 @@
 package screen_code::rde_menu;
 use strict;
 
+use screen_code::plugin_path;
+
 use gui_window::main::menu;
 use File::Path;
 use Encode qw/encode decode/;
@@ -10,7 +12,7 @@ sub add_menu{
 	my $f = shift;
 	my $menu0_ref = shift;
 	
-	if (-f 'screen/MonkinCleanser/MonkinCleanser.exe') {
+	if (-f &screen_code::plugin_path::rde_path) {
 		push @{$menu0_ref}, 'm_b2_plugin';
 			$self->{m_b2_plugin} = $f->command(
 			-label => kh_msg->get('plugin_raw_data_editor'),
@@ -23,7 +25,7 @@ sub add_menu{
 				
 				mkpath('screen/temp');
 				my $dbName = $::project_obj->dbname;
-				my $t_file = $::project_obj->file_target;
+				my $t_file = decode('SJIS', $::project_obj->file_target);
 				my $sql_file = $::config_obj->cwd."/screen/temp/mysql_output.csv";
 				$sql_file =~ s/\\/\//g;
 				my $varTableNum;
@@ -42,7 +44,6 @@ sub add_menu{
 				}
 				
 				print $t_file."\n";
-				print $varTableNum."\n";
 				if (!$t_file){
 					gui_errormsg->open(
 						type   => 'msg',
@@ -65,9 +66,7 @@ sub add_menu{
 					unlink $csv_file if -f $csv_file;
 					open($DATAFILE, "+>>:encoding(utf8)", $csv_file);
 					my $h = mysql_exec->select("SELECT name FROM $dbName.outvar ORDER BY id",1)->hundle;
-					#my $temp;
 					while (my $i = $h->fetch){
-						#$temp = decode('euc-jp', "$i->[0],");
 						print $DATAFILE decode('euc-jp', "$i->[0],");
 						$i++;
 					}
@@ -80,18 +79,21 @@ sub add_menu{
 				}
 				my $file_option = 'screen/temp/option.txt';
 				open($DATAFILE, ">:encoding(utf8)", $file_option);
-				print $DATAFILE decode('SJIS', "type=project\n");
-				print $DATAFILE decode('SJIS', "textdata=$t_file\n");
-				print $DATAFILE decode('SJIS', "vardata=$csv_file\n");
-				print $DATAFILE decode('SJIS', "font=$font_str\n");
+				print $DATAFILE "type=project\n";
+				print $DATAFILE "textdata=$t_file\n";
+				print $DATAFILE "vardata=$csv_file\n";
+				print $DATAFILE "font=$font_str\n";
 				close($DATAFILE);
 					
 				my $plugin_rtn = -1;
 				
 				$::main_gui->{win_obj}->iconify;
-				$plugin_rtn = system('screen/MonkinCleanser/MonkinCleanser.exe', "$file_option");
+				my $system_err = 0;
+				$! = undef;
+				$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+				$system_err = 1 if ($!) ;
 				$::main_gui->{win_obj}->deiconify;
-				if ($plugin_rtn != 0 && $varTableNum) {
+				if ($plugin_rtn != 0 && $varTableNum && $system_err == 0) {
 					if (mysql_exec->table_exists("$dbName.outvarcopy")) {
 						mysql_exec->drop_table("$dbName.outvarcopy");
 					}

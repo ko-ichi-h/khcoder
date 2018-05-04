@@ -241,6 +241,11 @@ sub _new{
 		show_bold => 0,
 	);
 
+	#SCREEN Plugin
+	use screen_code::correspond;
+	&screen_code::correspond::add_menu($self,$lf2,0);
+	#SCREEN Plugin
+
 	$rf->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない
 			-variable => \$self->{check_rm_open},

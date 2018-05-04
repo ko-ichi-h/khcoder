@@ -151,6 +151,11 @@ sub _new{
 		plot_size => 'Auto',
 	);
 
+	#SCREEN Plugin
+	use screen_code::cluster;
+	&screen_code::cluster::add_menu($self,$lf,1);
+	#SCREEN Plugin
+
 	$win->Checkbutton(
 			-text     => kh_msg->gget('r_dont_close'), # 実行時にこの画面を閉じない','euc
 			-variable => \$self->{check_rm_open},
