@@ -10,7 +10,7 @@ I am going to gradually move them here.
 ## How to run source code of KH Coder on Windows
 
 1. Download & install Perl: http://strawberryperl.com/
-2. Fork and clone this repository
+2. (Fork and) clone this repository
 3. Download \*.exe file (Winzip self-extractor) of KH Coder 3 from http://khc.sourceforge.net/en/
 4. Unzip the downloaded file into the clone directory
 5. Open command prompt window and go to the clone directory, type "perl kh_coder.pl", and hit "Enter" key
@@ -21,7 +21,7 @@ Above procedure is for people who want to modify or develop KH Coder. If you wan
 
 ## On Linux or other Un\*x like system
 
-You will need:
+You need:
 
 - MySQL
 - Perl (and various Perl modules)
