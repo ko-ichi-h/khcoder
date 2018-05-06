@@ -19,7 +19,7 @@ If you get errors like "Can't locate **Jcode**.pm in @INC", you need to install 
 
 Above procedure is for people who want to modify or develop KH Coder. If you want to just run, try or use KH Coder, just unzip the \*.exe and double click “kh_coder.exe”.
 
-## Linux and other UNIX like systems
+## On Linux or other Un*\x like system
 
 You will need:
 
