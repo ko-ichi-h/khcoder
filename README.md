@@ -24,8 +24,8 @@ Above procedure is for people who want to modify or develop KH Coder. If you wan
 You will need:
 
 - MySQL
-- Perl
-- R
+- Perl (and various Perl modules)
+- R (and some R packages)
 - Morphological Analysis and POS Tagging software
     - ChaSen or MeCab for analyzing Japanese text
     - FreeLing for analyzing Catalan, English, French, German, Italian, Portuguese, Russian or Spanish text
