@@ -539,7 +539,7 @@ gui_window::word_list:
     tf:                       出現回数（TF）
     top150:                   頻出150語
     type:                     抽出語リストの形式：
-    win_title:                '抽出語リスト - オプション'
+    win_title:                抽出語リスト（Excel出力）
     xls:                      Excel (*.xls)
     xlsx:                     Excel (*.xlsx)
 gui_window::word_search:

@@ -539,7 +539,7 @@ gui_window::word_list:
     tf:                       Term frequency
     top150:                   Top 150
     type:                     'Type of the list:'
-    win_title:                'Options: Frequency List'
+    win_title:                'Options: Frequency List (Excel)'
     xls:                      Excel (*.xls)
     xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
