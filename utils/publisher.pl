@@ -111,34 +111,24 @@ use Encode;
 
 sub upload{
 	print "Uploading...\n";
-
-	#print "key: $key_file\n";
 	
+	# Github (not ready)
+	# system("git tag -a $V_full -m \"$V\"");
+	# system("git push origin $V_full");
+	
+	# Connect to SourceForge
 	my $sftp = Net::SFTP::Foreign->new(
 		host => 'web.sourceforge.net',
 		user => 'ko-ichi,khc',
 		key_path => $key_file,
 	);
-	
-	# Files
-	#if ($pdf){
-	#	$sftp->setcwd("/home/pfs/project/khc/Manual");
-	#	print "put: khcoder_manual.pdf\n";
-	#	$sftp->put ("khcoder_manual.pdf", "khcoder_manual.pdf") or die;
-	#	
-	#	$sftp->setcwd("/home/pfs/project/khc/Tutorial/for KH Coder 2.x");
-	#	print "put: khcoder_tutorial.pdf\n";
-	#	$sftp->put ("khcoder_tutorial.pdf", "khcoder_tutorial.pdf") or die;
-	#}
-	
-	#/home/project-web/khc/htdocs
+
+	# Upload binary files to SourceForge
 	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
 	$sftp->mkdir($V_main);
 	$sftp->setcwd($V_main);
 	foreach my $i (
-		#"khcoder-$V-strb.zip",
 		"khcoder-$V.tar.gz",
-		#"khcoder-$V-s.zip",
 		"khcoder-$V.exe",
 	){
 		next unless -e $i;
@@ -146,19 +136,16 @@ sub upload{
 		$sftp->put ($i, $i) or die;
 	}
 
-	# Web pages
+	# Upload web pages to SourceForge
 	$sftp->setcwd("/home/project-web/khc/htdocs");
-
 	foreach my $i (
 		"index.html",
 		"dl3.html",
 	){
 		$sftp->put ("../pub/web/$i", $i) or die;
 	}
-
 	$sftp->setcwd("en");
 	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
-
 	$sftp->disconnect;
 }
 
