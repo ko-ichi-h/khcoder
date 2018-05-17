@@ -21,12 +21,14 @@ my $V_full = "3.Alpha.13d";
 my $pdf = 0;
 
 # 環境設定
-my $home_dir = '';
-my $key_file = '';
+my $home_dir;
+my $key_file;
+my $github_token;
 
 if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # Home
 	$key_file = 'f:/home/koichi/study/.ssh/id_dsa';
 	$home_dir = 'f:/home/koichi/study/';
+	$github_token = "f:/home/Koichi/Google Drive/KHC/SSH-Key-Github/token";
 }
 elsif (-e "C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa") { # Vaio
 	$key_file = 'C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa';
@@ -110,21 +112,23 @@ use File::Path 'rmtree';
 use Encode;
 
 sub upload{
-	print "Uploading...\n";
-	
-	# Create a Tag (and Release) on Github
+	# Create a Tag on Github
 	# system("git tag -a $V_full -m \"$V\"");
 	# system("git push origin $V_full");
 	
+	# Create a release on Github using github-release
+	# https://github.com/aktau/github-release
+	open my $fh, '<', $github_token or die;
+	my $token = <$fh>;
+	close $fh;
+	$ENV{GITHUB_TOKEN} = $token;
+	
+	system("github-release release --user ko-ichi-h --repo khc --tag $V_full --name $V_full --description \"$V\" ");
 	
 	
-	
-	# I want to upload binary files to a Github release named $V_full HERE!
-	# But I don't know how...
-	
-	
-	
-	
+	print "Uploading...\n";
+	system("github-release upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
+	# error: could not upload, status code (504 Gateway Time-out)
 	
 	if ( 0 ){
 		# Connect to SourceForge
