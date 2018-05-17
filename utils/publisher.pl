@@ -112,12 +112,16 @@ use File::Path 'rmtree';
 use Encode;
 
 sub upload{
-	# Create a Tag on Github
-	# system("git tag -a $V_full -m \"$V\"");
-	# system("git push origin $V_full");
+	# Create a tag on Github
+	system("git tag -a $V_full -m \"$V\"");
+	system("git push origin $V_full");
 	
 	# Create a release on Github using github-release
-	# https://github.com/aktau/github-release
+	#    https://github.com/aktau/github-release
+	
+	# But I get "error: could not upload, status code (504 Gateway Time-out)"
+	# Any Idea?
+	
 	open my $fh, '<', $github_token or die;
 	my $token = <$fh>;
 	close $fh;
@@ -125,10 +129,11 @@ sub upload{
 	
 	system("github-release release --user ko-ichi-h --repo khc --tag $V_full --name $V_full --description \"$V\" ");
 	
-	
 	print "Uploading...\n";
 	system("github-release upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
-	# error: could not upload, status code (504 Gateway Time-out)
+	
+	
+	
 	
 	if ( 0 ){
 		# Connect to SourceForge
