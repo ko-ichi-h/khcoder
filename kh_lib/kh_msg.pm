@@ -173,26 +173,25 @@ sub load{
 		$msg_fb = LoadFile($file_fb) or die;
 		
 		if ($debug){
-			# 足りないメッセージや重複をチェック
-			my %chk = ();
+			# Check missing or duplicated MSG
+			my $chk;
+            my $flag_error;
 			foreach my $i (keys %{$msg_fb}){
-				++$chk{$i};
-				unless ($chk{$i} == 1){
-					print "Duplicated msg in ".$::config_obj->msg_lang.".msg: $i\n";
-				}
-				unless ( length( $msg->{$i} ) ){
-					print "Missing from ".$::config_obj->msg_lang.".msg: $i\n";
+				foreach my $h (keys %{$msg_fb->{$i}}){
+					++$chk->{$i}{$h};
+					unless ($chk->{$i}{$h} == 1){
+						print "Duplicated msg in ".$::config_obj->msg_lang.".msg: $i -> $h\n";
+						++$flag_error;
+					}
+					unless ( length( $msg->{$i}{$h} ) ){
+						print "Missing from ".$::config_obj->msg_lang.".msg: $i -> $h\n";
+						print "\t\"$msg_fb->{$i}{$h}\"\n";
+						++$flag_error;
+					}
 				}
 			}
-			%chk = ();
-			foreach my $i (keys %{$msg}){
-				++$chk{$i};
-				unless ($chk{$i} == 1){
-					print "Duplicated msg in jp.msg: $i\n";
-				}
-				unless ( length( $msg_fb->{$i} ) ){
-					print "Missing from jp.msg: $i\n";
-				}
+			if ($flag_error) {
+				print "$flag_error messages missing or dupulicated.\n\n";
 			}
 		}
 	}
