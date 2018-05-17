@@ -129,9 +129,12 @@ sub upload{
 	close $fh;
 	$ENV{GITHUB_TOKEN} = $token;
 	
+	#system("github-release release --user ko-ichi-h --repo khc --tag $V_full --name $V_full --description \"$V\" ");
+	
 	print "Uploading...\n";
 	system("github-release --verbose upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
 	
+	# I got the 504 error from the above line.
 	
 	
 	
