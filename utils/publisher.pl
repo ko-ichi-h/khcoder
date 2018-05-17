@@ -112,14 +112,21 @@ use Encode;
 sub upload{
 	print "Uploading...\n";
 	
-	# Github (not ready)
+	# Create a Tag (and Release) on Github
 	# system("git tag -a $V_full -m \"$V\"");
 	# system("git push origin $V_full");
 	
-	# We want to upload binary files to a Github release HERE!
 	
 	
-	if (0){
+	
+	# I want to upload binary files to a Github release named $V_full HERE!
+	# But I don't know how...
+	
+	
+	
+	
+	
+	if ( 0 ){
 		# Connect to SourceForge
 		my $sftp = Net::SFTP::Foreign->new(
 			host => 'web.sourceforge.net',
