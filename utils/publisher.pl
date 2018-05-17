@@ -119,7 +119,7 @@ sub upload{
 	# Create a release on Github using github-release
 	#    https://github.com/aktau/github-release
 	
-	# But I get "error: could not upload, status code (504 Gateway Time-out)"
+	# I get "error: could not upload, status code (504 Gateway Time-out)"
 	# Any Idea?
 	
 	open my $fh, '<', $github_token or die;
