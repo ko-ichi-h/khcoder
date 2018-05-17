@@ -113,13 +113,15 @@ use Encode;
 
 sub upload{
 	# Create a tag on Github
-	system("git tag -a $V_full -m \"$V\"");
-	system("git push origin $V_full");
+	#system("git tag -a $V_full -m \"$V\"");
+	#system("git push origin $V_full");
+	
+	
 	
 	# Create a release on Github using github-release
 	#    https://github.com/aktau/github-release
 	
-	# I get "error: could not upload, status code (504 Gateway Time-out)"
+	# But I get "error: could not upload, status code (504 Gateway Time-out)"
 	# Any Idea?
 	
 	open my $fh, '<', $github_token or die;
@@ -127,10 +129,8 @@ sub upload{
 	close $fh;
 	$ENV{GITHUB_TOKEN} = $token;
 	
-	system("github-release release --user ko-ichi-h --repo khc --tag $V_full --name $V_full --description \"$V\" ");
-	
 	print "Uploading...\n";
-	system("github-release upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
+	system("github-release --verbose upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
 	
 	
 	
