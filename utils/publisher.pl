@@ -90,10 +90,10 @@ find(
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
-&source_tgz;
-&win_pkg;
+#&source_tgz;
+#&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;
@@ -116,37 +116,42 @@ sub upload{
 	# system("git tag -a $V_full -m \"$V\"");
 	# system("git push origin $V_full");
 	
-	# Connect to SourceForge
-	my $sftp = Net::SFTP::Foreign->new(
-		host => 'web.sourceforge.net',
-		user => 'ko-ichi,khc',
-		key_path => $key_file,
-	);
+	# We want to upload binary files to a Github release HERE!
+	
+	
+	if (0){
+		# Connect to SourceForge
+		my $sftp = Net::SFTP::Foreign->new(
+			host => 'web.sourceforge.net',
+			user => 'ko-ichi,khc',
+			key_path => $key_file,
+		);
 
-	# Upload binary files to SourceForge
-	$sftp->setcwd("/home/pfs/project/khc/KH Coder");
-	$sftp->mkdir($V_main);
-	$sftp->setcwd($V_main);
-	foreach my $i (
-		"khcoder-$V.tar.gz",
-		"khcoder-$V.exe",
-	){
-		next unless -e $i;
-		print "put: $i\n";
-		$sftp->put ($i, $i) or die;
-	}
+		# Upload binary files to SourceForge
+		#$sftp->setcwd("/home/pfs/project/khc/KH Coder");
+		#$sftp->mkdir($V_main);
+		#$sftp->setcwd($V_main);
+		#foreach my $i (
+		#	"khcoder-$V.tar.gz",
+		#	"khcoder-$V.exe",
+		#){
+		#	next unless -e $i;
+		#	print "put: $i\n";
+		#	$sftp->put ($i, $i) or die;
+		#}
 
-	# Upload web pages to SourceForge
-	$sftp->setcwd("/home/project-web/khc/htdocs");
-	foreach my $i (
-		"index.html",
-		"dl3.html",
-	){
-		$sftp->put ("../pub/web/$i", $i) or die;
+		# Upload web pages to SourceForge
+		$sftp->setcwd("/home/project-web/khc/htdocs");
+		foreach my $i (
+			"index.html",
+			"dl3.html",
+		){
+			$sftp->put ("../pub/web/$i", $i) or die;
+		}
+		$sftp->setcwd("en");
+		$sftp->put ("../pub/web/en_index.html", "index.html") or die;
+		$sftp->disconnect;
 	}
-	$sftp->setcwd("en");
-	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
-	$sftp->disconnect;
 }
 
 
