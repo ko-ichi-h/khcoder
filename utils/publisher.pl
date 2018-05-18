@@ -260,7 +260,7 @@ sub web{
 	
 	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付
 	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
-	$t =~ s/download\/3.Alpha.13d\//download\/$V_full\//g; # フォルダ名1
+	$t =~ s/download\/3[\.a-zA-Z0-9]+\//download\/$V_full\//g; # フォルダ名1
 
 	open(my $fh, '>', "../pub/web/dl3.html") or die;
 	print $fh $t;
