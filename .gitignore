@@ -1,0 +1,7 @@
+.gitattributes
+make_exe_as.bat
+x_mac64.perlapp
+x_mac64.scpt
+x_mac64setup.perlapp
+x_mac64setup.pl
+x_mac64setup.scpt
