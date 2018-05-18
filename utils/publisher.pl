@@ -1,5 +1,6 @@
 use strict;
 use utf8;
+$| = 1;
 
 # core_uni/pub/base 以下に：
 #	/web
@@ -13,9 +14,9 @@ use utf8;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a13d';
+my $V = '3a13e';
 my $V_main = "3.Alpha.13"; # フォルダ名
-my $V_full = "3.Alpha.13d";
+my $V_full = "3.Alpha.13e";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
@@ -92,14 +93,13 @@ find(
 #                                     実行
 #------------------------------------------------------------------------------
 
-#&web;
+&web;
 	#&pdfs if $pdf;
-#&source_tgz;
-#&win_pkg;
+	#&source_tgz;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;
-
 
 use Archive::Tar;
 use File::Copy;
@@ -113,64 +113,93 @@ use Encode;
 
 sub upload{
 	# Create a tag on Github
-	#system("git tag -a $V_full -m \"$V\"");
-	#system("git push origin $V_full");
+	system("git tag -a $V_full -m \"$V\"");
+	system("git push origin $V_full");
 	
+	# Create a release on Github
+	open my $fh, '<', $github_token or die;
+	my $token = <$fh>;
+	close $fh;
+	$ENV{GITHUB_TOKEN} = $token;
+
+	use Net::GitHub;
+	my $gh = Net::GitHub->new(
+		version => 3,
+		login => 'ko-ichi-h',
+		access_token => $token
+	);
 	
+	my $repos = $gh->repos;
+	$repos->set_default_user_repo('ko-ichi-h', 'khc');
 	
+	my $release_new = $repos->create_release({
+		"tag_name"         => $V_full,
+		"target_commitish" => "master",
+		"name"             => $V_full,
+		"body"             => $V,
+		"draft"            => \0,
+	});
+	
+	# Upload Windows binary to the release
+	my $release;
+	my @releases = $repos->releases();
+	foreach my $i (@releases) {
+		if ($i->{name} eq $V_full ){
+			$release = $i;
+			last;
+		}
+	}
+	
+	open my $fh, '<', "khcoder-$V.exe" or die;
+	binmode $fh;
+	my $file_content;
+	my $count = read($fh, $file_content, -s "khcoder-$V.exe");
+	close $fh;
+	
+	print "Read $count bytes. Uploading...\n";
+	
+	my $asset = $repos->upload_asset(
+		$release->{id},
+		"khcoder-$V.exe",
+		'application/octet-stream',
+		$file_content
+	);
+
+
+
 	# Create a release on Github using github-release
 	#    https://github.com/aktau/github-release
 	
 	# But I get "error: could not upload, status code (504 Gateway Time-out)"
 	# Any Idea?
 	
-	open my $fh, '<', $github_token or die;
-	my $token = <$fh>;
-	close $fh;
-	$ENV{GITHUB_TOKEN} = $token;
-	
 	#system("github-release release --user ko-ichi-h --repo khc --tag $V_full --name $V_full --description \"$V\" ");
 	
-	print "Uploading...\n";
-	system("github-release --verbose upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
+	#print "Uploading...\n";
+	#system("github-release --verbose upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
 	
-	# I got the 504 error from the above line.
-	
-	
-	
-	if ( 0 ){
-		# Connect to SourceForge
-		my $sftp = Net::SFTP::Foreign->new(
-			host => 'web.sourceforge.net',
-			user => 'ko-ichi,khc',
-			key_path => $key_file,
-		);
+	# This way is much faster but I got the 504 error from the above line.
 
-		# Upload binary files to SourceForge
-		#$sftp->setcwd("/home/pfs/project/khc/KH Coder");
-		#$sftp->mkdir($V_main);
-		#$sftp->setcwd($V_main);
-		#foreach my $i (
-		#	"khcoder-$V.tar.gz",
-		#	"khcoder-$V.exe",
-		#){
-		#	next unless -e $i;
-		#	print "put: $i\n";
-		#	$sftp->put ($i, $i) or die;
-		#}
 
-		# Upload web pages to SourceForge
-		$sftp->setcwd("/home/project-web/khc/htdocs");
-		foreach my $i (
-			"index.html",
-			"dl3.html",
-		){
-			$sftp->put ("../pub/web/$i", $i) or die;
-		}
-		$sftp->setcwd("en");
-		$sftp->put ("../pub/web/en_index.html", "index.html") or die;
-		$sftp->disconnect;
+
+	# Connect to SourceForge
+	my $sftp = Net::SFTP::Foreign->new(
+		host => 'web.sourceforge.net',
+		user => 'ko-ichi,khc',
+		key_path => $key_file,
+	);
+
+	# Upload web pages to SourceForge
+	$sftp->setcwd("/home/project-web/khc/htdocs");
+	foreach my $i (
+		"index.html",
+		"dl3.html",
+	){
+		$sftp->put ("../pub/web/$i", $i) or die;
 	}
+	$sftp->setcwd("en");
+	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
+	$sftp->disconnect;
 }
 
 
@@ -212,7 +241,7 @@ sub web{
 
 	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	$t =~ s/files\/KH%20Coder\/3\.[Aa]lpha\.[0-9]+\//files\/KH%20Coder\/$V_main\//; # ダウンロードフォルダ
+	$t =~ s/khc\/releases\/tag\/3\.[Aa]lpha\.[0-9a-z]+\//khc\/releases\/tag\/$V_full\//; # ダウンロードフォルダ
 	#
 	open(my $fh, '>', "../pub/web/en_index.html") or die;
 	print $fh $t;
@@ -227,9 +256,7 @@ sub web{
 	
 	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付
 	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
-	$t =~ s/KH%20Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名1
-	$t =~ s/KH Coder\/3\.Alpha\.[0-9]+\//KH%20Coder\/$V_main\//g; # フォルダ名2
-
+	$t =~ s/download\/3.Alpha.13d\//download\/$V_full\//g; # フォルダ名1
 
 	open(my $fh, '>', "../pub/web/dl3.html") or die;
 	print $fh $t;
