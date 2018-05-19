@@ -8,7 +8,7 @@ Screenshots:
 https://goo.gl/photos/ixn1sTM3jm8o11bP8
 
 For more details:
-http://khcoder.net/en/
+http://khcoder.net/en
 
 ## How to run source code of KH Coder on Windows
 
