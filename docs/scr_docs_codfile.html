@@ -1,9 +1,9 @@
 <html>
 
 	<head>
-		<title>�R�[�f�B���O���[���E�t�@�C��</title>
+		<title>コーディングルール・ファイル</title>
 		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
-  <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <csimport user="../khc.data/Components/head.html" occur="28"></csimport>
   <csimport user="../khc.data/Components/foot.html" occur="47"></csimport>
  </head>
@@ -33,7 +33,7 @@
         <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
           <table border="0" cellpadding="0" cellspacing="0" width="100%">
            <tr>
-            <td><span class="ph">�R�[�f�B���O���[���E�t�@�C��</span></td>
+            <td><span class="ph">コーディングルール・ファイル</span></td>
             <td>
              <div align="right">
               <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
@@ -49,9 +49,9 @@
 						<tr>
 							<td>
 										<div align="left">
-           <h3>�����������t�@�C���ɋL�q</h3>
-           <p>�����̌����������e�L�X�g�t�@�C���ɋL�q����<font color="red">�R�[�f�B���O���[���E�t�@�C��</font>�ƌĂ΂����̂��쐻����΁A���̃y�[�W��<a href="#search">��q</a>���錟����A<a href="scr_docs_cod.html">�ʃy�[�W</a>�ŏq�ׂ鐔���グ�E�W�v�ɗ��p���邱�Ƃ��ł��܂��B�i�����炭�A���������A�����グ�E�W�v����p�r�ƂȂ�ꍇ�������ł��傤�j</p>
-											<p>���}���R�[�f�B���O���[���E�t�@�C���̗�ł��B�u���v�Ŏn�܂��Ă���s�����������̖��O�i�R�[�h���j��\���A����ɑ����s������������\���Ă��܂��B</p>
+           <h3>検索条件をファイルに記述</h3>
+           <p>複数の検索条件をテキストファイルに記述して<font color="red">コーディングルール・ファイル</font>と呼ばれるものを作製すれば、このページで<a href="#search">後述</a>する検索や、<a href="scr_docs_cod.html">別ページ</a>で述べる数え上げ・集計に利用することができます。（おそらく、検索よりも、数え上げ・集計が主用途となる場合が多いでしょう）</p>
+											<p>下図がコーディングルール・ファイルの例です。「＊」で始まっている行が検索条件の名前（コード名）を表し、それに続く行が検索条件を表しています。</p>
 										</div>
 									</td>
 						</tr>
@@ -72,7 +72,7 @@
 								<tr>
 									<td>
 										<div align="left">
-											<p>�����w��i�R�[�f�B���O���[���j�ł́A���̕\�Ɏ����悤�ȏ������Aand, or, not, ()�ȂǂŎ��R�ɑg�ݍ��킹�ėp���邱�Ƃ��ł��܂��B</p>
+											<p>条件指定（コーディングルール）では、下の表に示すような条件を、and, or, not, ()などで自由に組み合わせて用いることができます。</p>
 										</div>
 										<div align="center">
 											<table border="0" cellpadding="0" cellspacing="0" width="80%">
@@ -82,52 +82,52 @@
 															<tr>
 																<td bgcolor="#dcdcdc" nowrap>
 																	<div align="center">
-																		<span class="t12">																		�w��ł������</span></div>
+																		<span class="t12">																		指定できる条件</span></div>
 																</td>
 																<td bgcolor="#dcdcdc">
 																	<div align="center">
-																		<span class="t12">																		�����̋�̗�</span></div>
+																		<span class="t12">																		条件の具体例</span></div>
 																</td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">��̗L��</span></td>
-																<td bgcolor="white"><span class="t12">�u���v�Ƃ����ꂪ�o�����Ă����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">語の有無</span></td>
+																<td bgcolor="white"><span class="t12">「愛」という語が出現していれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">��̃t���[�Y</span></td>
-																<td bgcolor="white"><span class="t12">�u���Ɓv�Ɓu�_���v���A�����ďo�����Ă����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">語のフレーズ</span></td>
+																<td bgcolor="white"><span class="t12">「卒業」と「論文」が連続して出現していれば</span></td>
 															</tr>
                <tr>
-                <td bgcolor="white" nowrap><span class="t12">�ߐڂ��Ă����</span></td>
-                <td bgcolor="white"><span class="t12">�u�搶�v�Ɓu������v���߂��ʒu�ɏo�����Ă����</span></td>
+                <td bgcolor="white" nowrap><span class="t12">近接している語</span></td>
+                <td bgcolor="white"><span class="t12">「先生」と「奥さん」が近い位置に出現していれば</span></td>
                </tr>
                <tr>
-                <td bgcolor="white" nowrap><span class="t12">��̏���</span></td>
-                <td bgcolor="white"><span class="t12">�u�C�̓Łv���o��������A�i�߂��ʒu�Ɂj�u�v���v���o�����Ă����</span></td>
+                <td bgcolor="white" nowrap><span class="t12">語の順序</span></td>
+                <td bgcolor="white"><span class="t12">「気の毒」が出現した後、（近い位置に）「思う」が出現していれば</span></td>
                </tr>
                <tr>
-																<td bgcolor="white" nowrap><span class="t12">��̏o����</span></td>
-																<td bgcolor="white"><span class="t12">�u���v�Ɓu���v�����킹��3��ȏ�o�����Ă����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">語の出現数</span></td>
+																<td bgcolor="white"><span class="t12">「愛」と「恋」があわせて3回以上出現していれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">���ɍ쐻�������������i�R�[�h�j</span></td>
-																<td bgcolor="white"><span class="t12">�u�����v�܂��́u���ǓƁv�Ƀq�b�g���Ă����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">他に作製した検索条件（コード）</span></td>
+																<td bgcolor="white"><span class="t12">「＊死」または「＊孤独」にヒットしていれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">�O���ϐ�</span></td>
-																<td bgcolor="white"><span class="t12">�i�f�[�^�����R�񓚂̏ꍇ�j�����̉񓚂ł����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">外部変数</span></td>
+																<td bgcolor="white"><span class="t12">（データが自由回答の場合）女性の回答であれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">�����̒���</span></td>
-																<td bgcolor="white"><span class="t12">�i�f�[�^�����R�񓚂̏ꍇ�j1��݂̂���Ȃ�񓚂ł����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">文書の長さ</span></td>
+																<td bgcolor="white"><span class="t12">（データが自由回答の場合）1語のみからなる回答であれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">�����̔ԍ�</span></td>
-																<td bgcolor="white"><span class="t12">�i�擪���琔���āj50�Ԗڈȍ~100�Ԗڂ܂ł̕����ł����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">文書の番号</span></td>
+																<td bgcolor="white"><span class="t12">（先頭から数えて）50番目以降100番目までの文書であれば</span></td>
 															</tr>
 															<tr>
-																<td bgcolor="white" nowrap><span class="t12">������</span></td>
-																<td bgcolor="white"><span class="t12">�i�������o���ꂽ��ł͂Ȃ��j�u������΁v�Ƃ��������񂪏o�����Ă����</span></td>
+																<td bgcolor="white" nowrap><span class="t12">文字列</span></td>
+																<td bgcolor="white"><span class="t12">（自動抽出された語ではなく）「多ければ」という文字列が出現していれば</span></td>
 															</tr>
 														</table>
 													</td>
@@ -137,23 +137,23 @@
 										<div align="left">
 											<p></p>
 											<p></p>
-											<h3><a name="search"></a>����</h3>
-											<p>��ɗᎦ�����R�[�f�B���O���[���E�t�@�C����ǂݍ���ŕ����������s���Ă����ʂ����̐}�ł��B</p>
+											<h3><a name="search"></a>検索</h3>
+											<p>上に例示したコーディングルール・ファイルを読み込んで文書検索を行っている画面が下の図です。</p>
 										</div>
 										<div align="center">
 											<p><img src="screen/doc_search_cod.gif" width="557" height="448" border="0"></p>
 										</div>
 										<div align="left">
-											<p>���̉�ʂł́A�����̃R�[�h��I�����āAAND������OR�������s�����Ƃ��ł��܂��B<br>
-												�u�����ړ��́v�Ƃ�AND�������s���΁A�R�[�f�B���O���[���E�t�@�C������ǂݍ��񂾏����ɁA���ړ��͂���������ǉ����Č������s�����Ƃ��ł��܂��B�i�R�[�f�B���O���[���E�t�@�C����ύX�����ɁA����������ǉ��E�ύX���Ă݂����ꍇ�ɂ͕֗��ł��傤�j</p>
+											<p>この画面では、複数のコードを選択して、AND検索やOR検索を行うこともできます。<br>
+												「＃直接入力」とのAND検索を行えば、コーディングルール・ファイルから読み込んだ条件に、直接入力した条件を追加して検索を行うことができます。（コーディングルール・ファイルを変更せずに、検索条件を追加・変更してみたい場合には便利でしょう）</p>
 											<ul>
-												<li type="square">�R�}���h�F �u�c�[���v���u�����v���u�����v
+												<li type="square">コマンド： 「ツール」→「文書」→「検索」
 											</ul>
 										</div>
 									</td>
 								</tr>
 							</table>
-							<p><a href="scr_docs.html">��Back</a></p>
+							<p><a href="scr_docs.html">→Back</a></p>
 						</div>
 						<div align="right">
 							<csobj w="636" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="47">
@@ -165,11 +165,11 @@
              <p><span class="t12">Hosted by <b>GitHub</b></p>
             </div>
            </td>
-           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">��</span>&nbsp;&nbsp;</td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
            <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
 TYnow = new Date();document.write( TYnow.getFullYear() );
-// --></script> <a href="http://koichi.nihon.to/psnl">����k��</a></span><br>
-            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> �mJavaScript��L���ɂ���ƃA�h���X���\������܂��n </noscript></span></td>
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
           </tr>
          </table>
         </div>

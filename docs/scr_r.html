@@ -1,9 +1,9 @@
 <html>
 
 	<head>
-	<title>R�ɂ�鑽�ϗʉ�͂Ɖ���</title>
+	<title>Rによる多変量解析と可視化</title>
 		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
-		<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<csimport user="../khc.data/Components/head.html" occur="9"></csimport>
 		<csimport user="../khc.data/Components/foot.html" occur="1"></csimport>
  </head>
@@ -15,14 +15,14 @@
 <div style="position:absolute; width:141px; top:15px; left:725px;  line-height: 138%; font-size: 10pt; color: dimgray; text-align: justify; text-justify: inter-ideograph;">
 
 <div align="center">
-	<span style="padding: 2px 5px; border: 1px solid dimgray;">���E�߂̖{ (3)</span><br>
+	<span style="padding: 2px 5px; border: 1px solid dimgray;">お薦めの本 (3)</span><br>
 </div>
 
 &nbsp;<br>
 
 
 <a href="book.html"><img class="amamid" src="img/book_s.jpg" ></a><br>
-<a href="book.html">KH Coder�̖{�i�T�|�[�g�y�[�W�ցj</a><br>
+<a href="book.html">KH Coderの本（サポートページへ）</a><br>
 
 &nbsp;<br>
 
@@ -54,7 +54,7 @@
 								<div align="center">
 									<table border="1" cellpadding="0" cellspacing="0" width="64">
 										<tr>
-											<td><a href="./" title="�C���f�b�N�X�֖߂�"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="Back to &quot;KH Coder&quot;"></a></td>
+											<td><a href="./" title="インデックスへ戻る"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="Back to &quot;KH Coder&quot;"></a></td>
 										</tr>
 									</table>
 								</div>
@@ -66,10 +66,10 @@
         <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
           <table border="0" cellpadding="0" cellspacing="0" width="100%">
            <tr>
-            <td><span class="ph">R��p�������ϗʉ�͂Ɖ���</span></td>
+            <td><span class="ph">Rを用いた多変量解析と可視化</span></td>
             <td>
              <div align="right">
-              <font size="+1" color="#696969">[</font> <a href="./">KH Coder�ɖ߂�</a> <font size="+1" color="#696969">]</font></div>
+              <font size="+1" color="#696969">[</font> <a href="./">KH Coderに戻る</a> <font size="+1" color="#696969">]</font></div>
             </td>
            </tr>
           </table>
@@ -81,21 +81,21 @@
        <table border="0" cellpadding="0" cellspacing="0" width="97%">
 						<tr>
 							<td>
-          <p>�킴�킴�ʂ̓��v��̓\�t�g�E�F�A���g��Ȃ��Ă��A������x�܂ł�KH Coder��Ńf�[�^�̗l�q�����邱�Ƃ��ł���悤�ɁA�ȉ��̂悤�ȉ�͋@�\���������܂����B��͂ɂ́A���v�v�Z�ƃO���t�B�b�N�X�̂��߂̊��u<a href="http://www.okada.jp.org/RWiki/" target="_blank">R</a>�v������ŗ��p���Ă��܂��B<br>
-            <span class="gray_char">���ȉ��̃X�N���[���V���b�g�ɂ͈ꕔ�J�����̃o�[�W�������܂܂�Ă��܂��B</span></p>
+          <p>わざわざ別の統計解析ソフトウェアを使わなくても、ある程度まではKH Coder上でデータの様子を見ることができるように、以下のような解析機能を準備しました。解析には、統計計算とグラフィックスのための環境「<a href="http://www.okada.jp.org/RWiki/" target="_blank">R</a>」を内部で利用しています。<br>
+            <span class="gray_char">※以下のスクリーンショットには一部開発中のバージョンが含まれています。</span></p>
           <ul>
-            <li><a href="#wc_cls">�K�w�I�N���X�^�[����</a></li>
-            <li><a href="#mds">�������ړx�\���@�iMDS�j</a></li>
-            <li><a href="#corresp">�Ή�����</a></li>
-            <li><a href="#netg">���N�l�b�g���[�N</a></li>
-            <li><a href="#som">���ȑg�D���}�b�v</a></li>
-            <li><a href="#cross">�������ŃR�[�h�������o�����Ă���ӏ�</a></li>
-            <li><a href="#doc-cls">�����̃N���X�^�[����</a></li>
-            <li><a href="#readme">���g�����������ɂ�������</a></li>
+            <li><a href="#wc_cls">階層的クラスター分析</a></li>
+            <li><a href="#mds">多次元尺度構成法（MDS）</a></li>
+            <li><a href="#corresp">対応分析</a></li>
+            <li><a href="#netg">共起ネットワーク</a></li>
+            <li><a href="#som">自己組織化マップ</a></li>
+            <li><a href="#cross">文書中でコードが多く出現している箇所</a></li>
+            <li><a href="#doc-cls">文書のクラスター分析</a></li>
+            <li><a href="#readme">お使いいただくにあたって</a></li>
           </ul>
-          <h3><a name="wc_cls"></a>�K�w�I�N���X�^�[����</h3>
+          <h3><a name="wc_cls"></a>階層的クラスター分析</h3>
           <div align="left">
-           <p>���o��̊K�w�I�N���X�^�[���͂��s���A�f���h���O������\�����܂��B���o�ꂾ���łȂ��R�[�f�B���O���ʁi�R�[�h�j�ɂ��Ă��A�����悤�ɕ��͂��s���܂��B</p>
+           <p>抽出語の階層的クラスター分析を行い、デンドログラムを表示します。抽出語だけでなくコーディング結果（コード）についても、同じように分析を行えます。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2">
@@ -112,29 +112,29 @@
             <tr>
              <td valign="top" width="220">
               <div align="center">
-               <font color="#3cb371">New!</font> <span class="t12">�f���h���O����</span></div>
+               <font color="#3cb371">New!</font> <span class="t12">デンドログラム</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="165">
               <div align="left">
-               <span class="t12">���o��͏o������i���őI��</span></div>
+               <span class="t12">抽出語は出現数や品詞で選択</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="127">
               <div align="left">
-               <span class="t12">�R�[�h�̓`�F�b�N�{�b�N�X�Œ��ڑI��</span></div>
+               <span class="t12">コードはチェックボックスで直接選択</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>�w�肳�ꂽ�N���X�^�[���ɑS�̂𕪊����A���̌��ʂ�F�����ɂ���ĕ\�����܂��B�F���������ɁA�l�p�`�Ŋe�N���X�^�[���͂ނ��Ƃ��ł��܂��B</p>
+           <p>指定されたクラスター数に全体を分割し、その結果を色分けによって表示します。色分けせずに、四角形で各クラスターを囲むこともできます。</p>
            
-           <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
            
            
-           <h3><a name="mds"></a>�������ړx�\���@�iMDS�j</h3>
-           <p>���������o��܂��̓R�[�h��p���ẮA�������ړx�\���@�ł��B</p>
+           <h3><a name="mds"></a>多次元尺度構成法（MDS）</h3>
+           <p>同じく抽出語またはコードを用いての、多次元尺度構成法です。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2">
@@ -151,26 +151,26 @@
             <tr>
              <td width="135" valign="top">
               <div align="center">
-               <span class="t12">2�����̉�</span></div>
+               <span class="t12">2次元の解</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="left">
-               <font color="#3cb371">New!</font><span class="t12"> </span><span class="t12">�N���X�^�����O�ƐF����</span></div>
+               <font color="#3cb371">New!</font><span class="t12"> </span><span class="t12">クラスタリングと色分け</span></div>
              </td>
              <td valign="top"></td>
              <td width="135" valign="top">
               <div align="center">
-               <span class="t12">3�����̉�</span></div>
+               <span class="t12">3次元の解</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>1��������3�����܂ł̉���\�����邱�Ƃ��ł��܂��B�z�u������R�[�h�̐��������ꍇ�ɂ́A2�������̕\���������Ƃ��ǂݎ��₷���ł��傤�B</p>
-           <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
-           <h3><a name="corresp"></a>�Ή�����</h3>
-           <p>���������o��܂��̓R�[�h��p���ẮA�Ή����͂ł��B</p>
+           <p>1次元から3次元までの解を表示することができます。布置する語やコードの数が多い場合には、2次元解の表示がもっとも読み取りやすいでしょう。</p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="corresp"></a>対応分析</h3>
+           <p>同じく抽出語またはコードを用いての、対応分析です。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2" width="542">
@@ -193,17 +193,17 @@
             <tr>
              <td width="165" valign="top">
               <div align="center">
-               <span class="t12">�����z�u�}</span></div>
+               <span class="t12">同時布置図</span></div>
              </td>
              <td valign="top" width="5"></td>
              <td width="152">
               <div align="left">
-               <span class="t12">���ق������Ȍ�ɒ��ځi���50��j</span></div>
+               <span class="t12">差異が顕著な語に注目（上位50語）</span></div>
              </td>
              <td width="5"></td>
              <td valign="top" width="153">
               <div align="center">
-               <span class="t12">�O���[�X�P�[������p</span></div>
+               <span class="t12">グレースケール印刷用</span></div>
              </td>
             </tr>
            </table>
@@ -219,18 +219,18 @@
               <div align="center">
                <a href="screen_r/corresp_multi.png"><img src="screen_r/corresp_multi_x.png" width="150" height="150" border="1"></a></div>
              </td>
-             <td width="5">�@</td>
+             <td width="5">　</td>
              <td width="153"></td>
             </tr>
             <tr>
              <td width="165" valign="top">
               <div align="center">
-               <font color="#3cb371">New!</font> <span class="t12">�o�u���v���b�g</span></div>
+               <font color="#3cb371">New!</font> <span class="t12">バブルプロット</span></div>
              </td>
              <td valign="top" width="5"></td>
              <td width="152">
               <div align="left">
-               <span class="t12">�����̊O���ϐ���p�������d�Ή�����</span></div>
+               <span class="t12">複数の外部変数を用いた多重対応分析</span></div>
              </td>
              <td width="5"></td>
              <td width="153">
@@ -241,11 +241,11 @@
            </table>
           </div>
           <div align="left">
-           <p>���͌��ʂƂ��āA���̂悤��2�����̃v���b�g���\������܂��B�����̐����𒊏o���A�ǂ̐��������ꂼ��x���Ey���ɗp���邩���ݒ�ł��܂��B</p>
-           <p>������KH Coder�ɂ�錋�ʕ\���͂��̉�ʂ����Ȃ̂ŁA2�����łȂ�<font color="black">��葽���̐����𒊏o������Ƃ������A�ڍׂȒT�����s���ɂ͏��X�ꂵ�����̂����邩������܂���B���������ڍׂȒT���ɂ������ẮA�Ⴆ�Ίe�����̓��������₷���ꗗ�\�ɂ܂Ƃ߂Ă����@�\���͂��߂Ƃ��āA�[�������������f�[�^��͂̋@�\������<a href="http://wordminer.comquest.co.jp/" target="_blank">WordMiner</a>���AKH Coder��<a href="FAQ.html#wm1">���p</a>����ƕ֗��ł��傤</font><font color="black">�B</font></p>
-           <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
-           <h3><a name="netg"></a>���N�l�b�g���[�N</h3>
-           <p>���o��܂��̓R�[�h��p���āA�o���p�^�[���̎��ʂ������̂���Ō��񂾐}�A���Ȃ킿���N�֌W����iedge�j�ŕ\�����l�b�g���[�N��`���@�\�ł��B</p>
+           <p>分析結果として、このような2次元のプロットが表示されます。いくつの成分を抽出し、どの成分をそれぞれx軸・y軸に用いるかも設定できます。</p>
+           <p>ただしKH Coderによる結果表示はこの画面だけなので、2つだけでなく<font color="black">より多くの成分を抽出したりといった、詳細な探索を行うには少々苦しいものがあるかもしれません。そうした詳細な探索にあたっては、例えば各成分の特徴を見やすい一覧表にまとめてくれる機能をはじめとして、充実した多次元データ解析の機能を持つ<a href="http://wordminer.comquest.co.jp/" target="_blank">WordMiner</a>を、KH Coderと<a href="FAQ.html#wm1">併用</a>すると便利でしょう</font><font color="black">。</font></p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="netg"></a>共起ネットワーク</h3>
+           <p>抽出語またはコードを用いて、出現パターンの似通ったものを線で結んだ図、すなわち共起関係を線（edge）で表したネットワークを描く機能です。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2" width="495">
@@ -262,23 +262,23 @@
             <tr>
              <td width="139" valign="top">
               <div align="left">
-               <span class="t12">���N�̒��x�����ɋ������̂�������Ō��񂾐}</span></div>
+               <span class="t12">共起の程度が非常に強いものだけを線で結んだ図</span></div>
              </td>
              <td valign="top"></td>
              <td width="139" valign="top">
               <div align="left">
-               <span class="t12">���ア���N�֌W���`��Ɋ܂߁A�����I�ɃO���[�v�����i�F�����j</span></div>
+               <span class="t12">やや弱い共起関係も描画に含め、自動的にグループ分け（色分け）</span></div>
              </td>
              <td></td>
              <td width="139" valign="top">
               <div align="left">
-               <span class="t12">�o������������قǑ傫���A�܂�</span><span class="t12">���N�̒��x�������قǑ������ŕ`��</span></div>
+               <span class="t12">出現数が多い語ほど大きく、また</span><span class="t12">共起の程度が強いほど太い線で描画</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>��̍��[�̐}�ł́A�l�b�g���[�N���͂Ō����u���S���v�ɂ��ƂÂ��ĐF�������s���Ă��܂��B���F�E���E�s���N�̏��ɒ��S���������Ȃ�܂��B�Ȃ��A���̐}�͑������ړx�@�iMDS�j�Ƃ͈قȂ�A�z�u���ꂽ�ʒu�����A���Ō��΂�Ă��邩�ǂ����Ƃ������ƂɈӖ�������܂��B���������āA�P�ɋ߂��ɕz�u����Ă��邾���Ő��Ō��΂�Ă��Ȃ���΁A���N�̒��x���������Ƃ��Ӗ����܂���B</p>
+           <p>上の左端の図では、ネットワーク分析で言う「中心性」にもとづいて色分けを行っています。水色・白・ピンクの順に中心性が高くなります。なお、この図は多次元尺度法（MDS）とは異なり、布置された位置よりも、線で結ばれているかどうかということに意味があります。したがって、単に近くに布置されているだけで線で結ばれていなければ、共起の程度が強いことを意味しません。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2" width="508">
@@ -294,27 +294,27 @@
             <tr>
              <td valign="top">
               <div align="left">
-               <span class="t12">����̌�u���v�Ɗ֘A��������̋��N�l�b�g���[�N</span></div>
+               <span class="t12">特定の語「父」と関連が強い語の共起ネットワーク</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top">
               <div align="left">
-               <span class="t12">���ꂼ��̌�������߂̉~�ŕ`�� �i�Ȃ��΍D�݂̖��ł����A����Ȃ�Ɉ�ۂ��Ⴂ�܂��j</span></div>
+               <span class="t12">それぞれの語を小さめの円で描画 （なかば好みの問題ですが、それなりに印象が違います）</span></div>
              </td>
              <td></td>
              <td valign="top">
               <div align="left">
-               <span class="t12">��ƌ�ł͂Ȃ��A��ƊO���ϐ��^���o���̊֘A��`�����l�b�g���[�N</span></div>
+               <span class="t12">語と語ではなく、語と外部変数／見出しの関連を描いたネットワーク</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>����2�́A�u���v�Ƃ�������̌�ɒ��ڂ��āA(1)�֘A������������X�g�A�b�v���A(2)�����̌��p���ċ��N�l�b�g���[�N���쐬�������̂ł��B����̌�Ɍ��炸�A����̃R�[�h�ɒ��ڂ��邱�Ƃ��ł��܂��B����āA�A���P�[�g�̎��R�L�q�f�[�^�������ꍇ�ł���΁A�u�����̉񓚂̋��N�l�b�g���[�N�v�u�j���̉񓚂̋��N�l�b�g���[�N�v�����ꂼ��쐬���Ĕ�ׂ�Ƃ��������Ƃ��ł���ł��傤�B�����̋@�\�́u���N�l�b�g���[�N�v�R�}���h�ł͂Ȃ��A�u�֘A��T���v�R�}���h����Ăяo���܂��B</p>
-           <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
+           <p>左の2つは、「父」という特定の語に注目して、(1)関連が強い語をリストアップし、(2)それらの語を用いて共起ネットワークを作成したものです。特定の語に限らず、特定のコードに注目することもできます。よって、アンケートの自由記述データを扱う場合であれば、「女性の回答の共起ネットワーク」「男性の回答の共起ネットワーク」をそれぞれ作成して比べるといったこともできるでしょう。※この機能は「共起ネットワーク」コマンドではなく、「関連語探索」コマンドから呼び出します。</p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
            <div align="left">
-            <h3><a name="som"></a>���ȑg�D���}�b�v</h3>
-            <p>���o��܂��̓R�[�h��p���ẮA���ȑg�D���}�b�v�ł��B</p>
+            <h3><a name="som"></a>自己組織化マップ</h3>
+            <p>抽出語またはコードを用いての、自己組織化マップです。</p>
            </div>
           </div>
           <div align="center">
@@ -332,12 +332,12 @@
             <tr>
              <td width="135" valign="top">
               <div align="center">
-               <span class="t12">�N���X�^�[�F����</span></div>
+               <span class="t12">クラスター色分け</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="center">
-               <span class="t12"> </span><span class="t12">�p�x�̃v���b�g</span></div>
+               <span class="t12"> </span><span class="t12">頻度のプロット</span></div>
              </td>
              <td valign="top"></td>
              <td width="135" valign="top">
@@ -349,10 +349,10 @@
           </div>
           <div align="left">
            <div align="left">
-            <p>�f�t�H���g�̐ݒ�ł́A�w�K�ɔ��ɒ������Ԃ�v����̂ł����Ӊ������B</p>
-            <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
-            <h3><a name="cross"></a>�R�[�h�������o�����Ă���ӏ�</h3>
-            <p>�f�[�^���̂ǂ̕����Ŋe�R�[�h�������o�����Ă���̂���\������v���b�g�ł��B</p>
+            <p>デフォルトの設定では、学習に非常に長い時間を要するのでご注意下さい。</p>
+            <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+            <h3><a name="cross"></a>コードが多く出現している箇所</h3>
+            <p>データ中のどの部分で各コードが多く出現しているのかを表現するプロットです。</p>
            </div>
           </div>
           <div align="center">
@@ -370,19 +370,19 @@
             <tr>
              <td width="135" valign="top">
               <div align="center">
-               <font color="red">New!</font><span class="t12"> �q�[�g�}�b�v<br>
-                �i���������j</span></div>
+               <font color="red">New!</font><span class="t12"> ヒートマップ<br>
+                （分割数小）</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="center">
-               <font color="red">New!</font><span class="t12"> </span><span class="t12">�q�[�g�}�b�v<br>
-                �i��������j</span></div>
+               <font color="red">New!</font><span class="t12"> </span><span class="t12">ヒートマップ<br>
+                （分割数大）</span></div>
              </td>
              <td valign="top"></td>
              <td width="135" valign="top">
               <div align="center">
-               <font color="red">New!</font><span class="t12"> �܂���O���t</span></div>
+               <font color="red">New!</font><span class="t12"> 折れ線グラフ</span></div>
              </td>
             </tr>
             <tr>
@@ -408,14 +408,14 @@
             <tr>
              <td width="135" valign="top">
               <div align="center">
-               <font color="red">New!</font><span class="t12"> �o�u���v���b�g<br>
-                �i���������E�J���[�j</span></div>
+               <font color="red">New!</font><span class="t12"> バブルプロット<br>
+                （分割数小・カラー）</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="center">
-               <font color="red">New!</font><span class="t12"> �o�u���v���b�g<br>
-                �i��������E�O���[�j</span></div>
+               <font color="red">New!</font><span class="t12"> バブルプロット<br>
+                （分割数大・グレー）</span></div>
              </td>
              <td valign="top"></td>
              <td width="135" valign="top"></td>
@@ -423,12 +423,12 @@
            </table>
           </div>
           <div align="left">
-            <p>���̕����́A�����ԁuExcel�ŃO���t������ĉ������v�Ƃ����`�ɂȂ��Ă��܂������A��͂菭���s�ւł����B���ɂ��낢��ȕ��͂������Č��ʂ��������ꍇ�ɂ́AKH Coder��ł����ɃO���t������������֗����Ƃ������ƂŁA�����̍�}�@�\���������܂����B</p>
+            <p>この部分は、長い間「Excelでグラフを作って下さい」という形になっていましたが、やはり少し不便でした。特にいろいろな分析を試して結果を見たい場合には、KH Coder上ですぐにグラフを見られる方が便利だということで、これらの作図機能を準備しました。</p>
            </div>
-           <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
-           <h3><a name="doc-cls"></a>�����̃N���X�^�[����</h3>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="doc-cls"></a>文書のクラスター分析</h3>
           <div align="left">
-           <p>�����̕��ނ��s���N���X�^�[���͂ł��B</p>
+           <p>文書の分類を行うクラスター分析です。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2">
@@ -445,23 +445,23 @@
             <tr>
              <td valign="top">
               <div align="center">
-               <span class="t12">�N���X�^�[���͂̌��ʉ��</span></div>
+               <span class="t12">クラスター分析の結果画面</span></div>
              </td>
              <td valign="top"></td>
              <td width="162" valign="top">
               <div align="left">
-               <span class="t12">���̉�ʂŁu���������v���N���b�N����ƁA���Y�N���X�^�[�Ɋ܂܂�镶���̈ꗗ��\��</span></div>
+               <span class="t12">左の画面で「文書検索」をクリックすると、当該クラスターに含まれる文書の一覧を表示</span></div>
              </td>
              <td valign="top"></td>
              <td width="136" valign="top">
               <div align="left">
-               <span class="t12">��ԍ��̉�ʂŁu������v���N���b�N����ƁA���Y�N���X�^�[�ɓ����I�Ȍ�����X�g�A�b�v</span></div>
+               <span class="t12">一番左の画面で「特徴語」をクリックすると、当該クラスターに特徴的な語をリストアップ</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>�N���X�^�[���͂̌��ʉ�ʂɂ́A�e�N���X�^�[�ɂ����̕��������ނ��ꂽ�����\������Ă��܂��B�܂�1�N���b�N�ŁA�I�𒆂̃N���X�^�[�Ɋ܂܂�镶���̈ꗗ��i���������j�A���̃N���X�^�[�ɓ����I�Ȍ�i�֘A��T���j��\���ł��܂��B�ȉ��̂悤�ȃv���b�g���\���ł��܂��B</p>
+           <p>クラスター分析の結果画面には、各クラスターにいくつの文書が分類されたかが表示されています。また1クリックで、選択中のクラスターに含まれる文書の一覧や（文書検索）、そのクラスターに特徴的な語（関連語探索）を表示できます。以下のようなプロットも表示できます。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2">
@@ -473,18 +473,18 @@
             <tr>
              <td width="135" valign="top">
               <div align="left">
-               <span class="t12">���������̃v���b�g�B�N���X�^�[��5�t�߂��畹���������}�㏸�B10�ł������オ���Ă���̂ŁA���̏ꍇ�N���X�^�[����11���ǂ����B</span></div>
+               <span class="t12">併合水準のプロット。クラスター数5付近から併合水準が急上昇。10でも少し上がっているので、この場合クラスター数は11が良いか。</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="left">
-               <span class="t12">�����̃f���h���O�����B���̖_�O���t�͊e�����̒���������킷�B�Ȃ��A��������500�𒴂���ꍇ�A�f���h���O�����͕\���s�B</span></div>
+               <span class="t12">文書のデンドログラム。左の棒グラフは各文書の長さをあらわす。なお、文書数が500を超える場合、デンドログラムは表示不可。</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
-           <p>�����𕪗ނ������ʂ́A<a href="FAQ.html#ov1">�O���ϐ�</a>�Ƃ��ĕۑ����邱�Ƃ��ł��܂��B���̊O���ϐ����g���΁A�e�N���X�^�[�̓�����̈ꗗ���쐬������A�Ή����͂��s�Ȃ����肷�邱�ƂŁA�N���X�^�[�̓��e��T���ł��܂��B</p>
+           <p>文書を分類した結果は、<a href="FAQ.html#ov1">外部変数</a>として保存することができます。この外部変数を使えば、各クラスターの特徴語の一覧を作成したり、対応分析を行なったりすることで、クラスターの内容を探索できます。</p>
           </div>
           <div align="center">
            <table border="0" cellpadding="5" cellspacing="2">
@@ -496,21 +496,21 @@
             <tr>
              <td width="135" valign="top">
               <div align="left">
-               <span class="t12">�e���X�^�[�̓�����ꗗ�B�����ł͒i���P�ʂŌv�Z�B</span></div>
+               <span class="t12">各ラスターの特徴語一覧。ここでは段落単位で計算。</span></div>
              </td>
              <td valign="top"></td>
              <td valign="top" width="139">
               <div align="left">
-               <span class="t12">�Ή����͂ł́A�e�N���X�^�[�̓����ꂾ���łȂ��A�ǂ̃N���X�^�[�Ƃǂ̃N���X�^�[�̓��e�����ʂ��Ă��邩�����₷���B</span></div>
+               <span class="t12">対応分析では、各クラスターの特徴語だけでなく、どのクラスターとどのクラスターの内容が似通っているかも見やすい。</span></div>
              </td>
             </tr>
            </table>
           </div>
-          <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
+          <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
           <div align="left">
            <div align="left">
-            <h3><a name="using_plots"></a>�v���b�g�̕ۑ��Ɗ��p</h3>
-            <p>�e�v���b�g��ʂ́u�ۑ��v�{�^�����N���b�N���邱�ƂŁA�v���b�g��4��ނ̌`���ŕۑ����邱�Ƃ��ł��܂��BWord�EPowerPoint���֓\��t����ۂ�EMF�`���ALaTeX�ŗ��p����ꍇ��EPS�`���AWeb�y�[�W�ɍڂ���ꍇ�Ȃǂ�PNG�`���ŕۑ�����Ɨǂ��ł��傤�B</p>
+            <h3><a name="using_plots"></a>プロットの保存と活用</h3>
+            <p>各プロット画面の「保存」ボタンをクリックすることで、プロットを4種類の形式で保存することができます。Word・PowerPoint等へ貼り付ける際はEMF形式、LaTeXで利用する場合はEPS形式、Webページに載せる場合などはPNG形式で保存すると良いでしょう。</p>
            </div>
           </div>
           <div align="center">
@@ -526,19 +526,19 @@
             <tr>
              <td width="135" valign="top">
               <div align="center">
-               <span class="t12">KH Coder�ł̕\��</span></div>
+               <span class="t12">KH Coderでの表示</span></div>
              </td>
              <td valign="top"></td>
              <td width="297" valign="top">
               <div align="center">
-               <span class="t12">�ۑ����</span></div>
+               <span class="t12">保存画面</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
            <div align="left">
-            <p>������4�ڂ́uR Source�v�`����I������ƁA�e�v���b�g���쐬���邽�߂�R�ɑ���ꂽ�R�}���h���A���̂܂ܕۑ�����܂��B�ۑ������R�}���h��R�Ŏ��s����ƁA�܂����������v���b�g��R��ō쐬�ł��܂��B�܂��A�R�}���h�̊e��I�v�V������ҏW���邱�ƂŁA�v���b�g�̃J�X�^�}�C�Y���s���܂��B</p>
+            <p>ここで4つ目の「R Source」形式を選択すると、各プロットを作成するためにRに送られたコマンドが、そのまま保存されます。保存したコマンドをRで実行すると、まったく同じプロットをR上で作成できます。また、コマンドの各種オプションを編集することで、プロットのカスタマイズを行えます。</p>
            </div>
           </div>
           <div align="center">
@@ -549,25 +549,25 @@
             <tr>
              <td width="200" valign="top">
               <div align="center">
-               <span class="t12">R��ŃJ�X�^�}�C�Y</span></div>
+               <span class="t12">R上でカスタマイズ</span></div>
              </td>
             </tr>
            </table>
           </div>
           <div align="left">
            <div align="left">
-            <p>���̗�ł́A�ۑ������t�@�C�������s���āA����ɃR�}���h��2�s�ǉ����邱�ƂŃJ�X�^�}�C�Y���Ă��܂��B�v���b�g�̐F��ς�����ŁA����������r�I���Ȃ��̂Ɂi���Ȃ킿��r�I���Ȃ����̏͂ɂ����o�Ă��Ă��Ȃ��̂Ɂj�A�o���񐔂����ΓI�ɑ�������uIdentify�v�R�}���h�œ��肵�Ă��܂��B�i���̃y�[�W�̗�͂قڂ��ׂāj���΁u������v���f�[�^�Ƃ��ėp���Ă���̂ł����A��v�ȓo��l���������ɏo������Ă��܂��B</p>
+            <p>この例では、保存したファイルを実行して、さらにコマンドを2行追加することでカスタマイズしています。プロットの色を変えた上で、文書数が比較的少ないのに（すなわち比較的少ない数の章にしか出てきていないのに）、出現回数が相対的に多い語を「Identify」コマンドで特定しています。（このページの例はほぼすべて）漱石「こころ」をデータとして用いているのですが、主要な登場人物がここに出そろっています。</p>
             <p></p>
            </div>
           </div>
-          <div align="right"><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></div>
-          <h3><a name="readme"></a>���g�����������ɂ�������</h3>
-          <p>�����̋@�\�ɂ����ẮAKH Coder�����ł͂قƂ�ǌv�Z���s���Ă��܂���BR�ɉ�̓R�}���h�𑗂�AR����͂��s�������ʂ�\�����Ă��܂��B�v���b�g��ʂ����O�̕`��ł͂Ȃ��AR���쐬�����摜�t�@�C����\�����Ă��邾���ł��B</p>
-          <p>���̂悤�Ȃ����Ԃ񊄂�؂������̋@�\�Ȃ̂ŁA�c�O�Ȃ���A�}�E�X����Ńv���b�g�̈ꕔ��I�����ăt�H���g��ς�����Ƃ��������Ƃ͂ł��܂���B���������ׂ��Ȓ�����A��荂�x�ȉ�́A�ʂ̖ړI�ɉ�������͂ɂ��ẮA<a href="#using_plots">��̗�</a>�̂悤��R�����R�}���h��ҏW�E�ǉ����Ă����������A���邢�͂��D�݂̓��v�\�t�g�E�F�A�����g���������B</p>
+          <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+          <h3><a name="readme"></a>お使いいただくにあたって</h3>
+          <p>これらの機能においては、KH Coder内部ではほとんど計算を行っていません。Rに解析コマンドを送り、Rが解析を行った結果を表示しています。プロット画面も自前の描画ではなく、Rが作成した画像ファイルを表示しているだけです。</p>
+          <p>このようないくぶん割り切った作りの機能なので、残念ながら、マウス操作でプロットの一部を選択してフォントを変えたりといったことはできません。こうした細かな調整や、より高度な解析、個別の目的に沿った解析については、<a href="#using_plots">上の例</a>のようにR向けコマンドを編集・追加していただくか、あるいはお好みの統計ソフトウェアをお使い下さい。</p>
          </td>
 						</tr>
 					</table>
-       <p><a href="#pagetop">�� �y�[�W�g�b�v�� ��</a></p>
+       <p><a href="#pagetop">↑ ページトップへ ↑</a></p>
       </div>
       <div align="right">        <div align="center">
          <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
@@ -577,11 +577,11 @@
              <p><span class="t12">Hosted by <b>GitHub</b></p>
             </div>
            </td>
-           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">��</span>&nbsp;&nbsp;</td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
            <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
 TYnow = new Date();document.write( TYnow.getFullYear() );
-// --></script> <a href="http://koichi.nihon.to/psnl">����k��</a></span><br>
-            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> �mJavaScript��L���ɂ���ƃA�h���X���\������܂��n </noscript></span></td>
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
           </tr>
          </table>
         </div>

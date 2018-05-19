@@ -1,9 +1,9 @@
 <html>
 
 	<head>
-		<title>�R�[�f�B���O �i�����グ�E�W�v�j</title>
+		<title>コーディング （数え上げ・集計）</title>
 		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
-  <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <csimport user="../khc.data/Components/head.html" occur="28"></csimport>
   <csimport user="../khc.data/Components/foot.html" occur="1"></csimport>
  </head>
@@ -32,7 +32,7 @@
         <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
           <table border="0" cellpadding="0" cellspacing="0" width="100%">
            <tr>
-            <td><span class="ph">�R�[�f�B���O �i�����グ�E�W�v�j</span></td>
+            <td><span class="ph">コーディング （数え上げ・集計）</span></td>
             <td>
              <div align="right">
               <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
@@ -48,30 +48,30 @@
 						<tr>
 							<td>
           <div align="left">
-           <h3>�P���W�v</h3>
-           <p>�e�L�X�g�f�[�^���v�ʓI�ɕ��͂���ۂɂ́A1��1�̌��t�Ƃ��������A�ނ���ނ��뎖���E�T�O�E�J�e�S���Ƃ��������̂̏o�����𐔂������ꍇ�������̂ł͂Ȃ��ł��傤���B�Ⴆ�΁A�u�l�̎��v�Ƃ��������́A�K�������u���ʁv�Ƃ������t�ɂ���Ă̂ݕ\�����킯�ł͂���܂���B�u���ʁv�̑��ɁA�u�S���Ȃ�v��u���E�v�Ƃ��������t���������Ƃ��ɂ��A�u�l�̎��v�Ƃ��������Ƃ��Đ��������̂ł͂Ȃ��ł��傤���B</p>
-											<p>�����Ŗ𗧂̂�<a href="scr_docs_codfile.html">�O�q</a>�̃R�[�f�B���O���[���E�t�@�C���ł��B�u���� or �����Ȃ� or ���E or ...�v�Ƃ����������������R�[�f�B���O���[���E�t�@�C���ɋL�q���Ă����΁AKH Coder�͂��̏����ɍ��v���镶���Ɂu���l�̎��v�Ƃ����R�[�h��^���܂��B�i���̍�Ƃ��R�[�f�B���O�ƌĂт܂��j���Ƃ́A�R�[�h�̐����W�v����Ηǂ������ł��B</p>
+           <h3>単純集計</h3>
+           <p>テキストデータを計量的に分析する際には、1つ1つの言葉というよりも、むしろむしろ事柄・概念・カテゴリといったものの出現数を数えたい場合が多いのではないでしょうか。例えば、「人の死」という事柄は、必ずしも「死ぬ」という言葉によってのみ表されるわけではありません。「死ぬ」の他に、「亡くなる」や「自殺」といった言葉があったときにも、「人の死」という事柄として数えたいのではないでしょうか。</p>
+											<p>ここで役立つのが<a href="scr_docs_codfile.html">前述</a>のコーディングルール・ファイルです。「死ぬ or 無くなる or 自殺 or ...」といった検索条件をコーディングルール・ファイルに記述しておけば、KH Coderはその条件に合致する文書に「＊人の死」というコードを与えます。（この作業をコーディングと呼びます）あとは、コードの数を集計すれば良いだけです。</p>
 										</div>
           <div align="center">
            <p><img src="screen/cod_freq.gif" width="279" height="441" border="0"></p>
           </div>
-          <div align="left"><p>���̐}�́A<a href="scr_docs_codfile.html">�����y�[�W</a>�ŗᎦ�����R�[�f�B���O���[���E�t�@�C�����g���āA�R�[�f�B���O�Ɓi�R�[�h�o�����́j�P���W�v���s������ʂł��B</p></div>
+          <div align="left"><p>この図は、<a href="scr_docs_codfile.html">説明ページ</a>で例示したコーディングルール・ファイルを使って、コーディングと（コード出現数の）単純集計を行った画面です。</p></div>
           <ul>
-           <li type="square">�R�}���h�F �u�c�[���v���u�R�[�f�B���O�v���u�P���W�v�v          </ul>
+           <li type="square">コマンド： 「ツール」→「コーディング」→「単純集計」          </ul>
 		<a name="cross" id="detail"></a>
-          <h3>�N���X�W�v</h3>
-          <p>�����R�[�f�B���O���[���E�t�@�C�����g���āA�u��v�u���v�u���v�Ƃ������������ƂɁA�R�[�h�̏o�������W�v������ł��B</p>
+          <h3>クロス集計</h3>
+          <p>同じコーディングルール・ファイルを使って、「上」「中」「下」といった部分ごとに、コードの出現数を集計した例です。</p>
           <div align="center">
            <p><img src="screen/cod_cross.gif" width="570" height="347" border="0"></p>
           </div>
 										<div align="left">
-											<p>��������́A�u��v�u���v�ɔ�ׂāA�u���v�ł́u�����v�Ƃ����R�[�h�̏o�������{�����Ă���Ƃ��������Ƃ��ǂݎ��܂��B<br>
-																																				�����������W�v�̑��ɂ��A�Ⴆ�Ύ��R�񓚃f�[�^�������ꍇ�ɂ́A�N��ʂ�j���ʂ̏W�v�Ȃǂ��s���܂��B</p>
+											<p>ここからは、「上」「中」に比べて、「下」では「＊死」というコードの出現率が倍増しているといったことが読み取れます。<br>
+																																				こういった集計の他にも、例えば自由回答データを扱う場合には、年代別や男女別の集計なども行えます。</p>
 											<ul>
-												<li type="square">�R�}���h�F �u�c�[���v���u�R�[�f�B���O�v���u�́E�߁E�i�����Ƃ̏W�v�v
+												<li type="square">コマンド： 「ツール」→「コーディング」→「章・節・段落ごとの集計」
 											</ul>
-											<h3><a name="graph"></a>�O���t�쐻</h3>
-											<p>�������f�[�^�i���΁u������v�j�S�̂̒��ŁA�u�����v�Ƃ����R�[�h�̏o�����������ɐ��ڂ��Ă��邩���ڂ������ׂ邽�߂ɃO���t���쐻�����Ⴊ���}�ł��B</p>
+											<h3><a name="graph"></a>グラフ作製</h3>
+											<p>扱ったデータ（漱石「こころ」）全体の中で、「＊死」というコードの出現数がいかに推移しているかを詳しく調べるためにグラフを作製した例が下図です。</p>
 										</div>
 										<div align="center">
 											<table border="0" cellpadding="0" cellspacing="5" width="561">
@@ -79,19 +79,19 @@
 													<td><img src="screen/cod_graph.gif" width="550" height="372" border="0"></td>
 												</tr>
 												<tr>
-													<td><span class="t12"><b>�o�T�F</b> ����k�� 2003 �u�R���s���[�^�E�R�[�f�B���O�̎��H �\���΁w������x��p�����`���[�g���A���\�v �w�N��l�ԉȊw�x 24: 193-214</span></td>
+													<td><span class="t12"><b>出典：</b> 樋口耕一 2003 「コンピュータ・コーディングの実践 ―漱石『こころ』を用いたチュートリアル―」 『年報人間科学』 24: 193-214</span></td>
 												</tr>
 											</table>
 										</div>
 										<div align="left">
-											<p>���̐}������ƁA��v�ȓo��l���̎����`����Ă��Ȃ��u��E�搶�Ǝ��v�ɂ����Ă��A�u�l�̎��v�Ƃ���������傫�����グ���߂����݂����Ƃ��������ƂɋC�Â�����܂��i���ɏ�E��\�l�Ə�O�\�܁j�B</p>
-											<p>�������̎����ɒ��ڂ��Ȃ���A�����������`�̃O���t���쐬���Ă���Ԃɂ́A�P�Ƀf�[�^��ǂ�ł��邾���ł͌��o���ɂ����悤�ȃf�[�^�̓����ɋC�������Ƃ�����ł͂Ȃ��ł��傤���B</p>
+											<p>この図を見ると、主要な登場人物の死が描かれていない「上・先生と私」においても、「人の死」という事柄を大きく取り上げた節が存在したといったことに気づかされます（特に上・二十四と上三十五）。</p>
+											<p>いくつかの事柄に注目しながら、こういった形のグラフを作成している間には、単にデータを読んでいるだけでは見出しにくいようなデータの特徴に気がつくこともあるではないでしょうか。</p>
 											<ul>
-												<li type="square">�R�}���h�F �u�c�[���v���u�R�[�f�B���O�v���u�́E�߁E�i�����Ƃ̏W�v�v  
-												<li type="square">�{�\�v�Z�\�t�g��ŃO���t�쐻
+												<li type="square">コマンド： 「ツール」→「コーディング」→「章・節・段落ごとの集計」  
+												<li type="square">＋表計算ソフト上でグラフ作製
 											</ul>
-											<h3><a name="mds"></a>�R�[�h�Ԃ̊֘A</h3>
-											<p>�R�[�f�B���O�̌��ʂ��g���đ��ϗʉ�́iMDS�j���s���A�֘A�������i�Ɛ��������j�R�[�h�قǋ߂��ɕz�u�����悤�Ȑ}���쐬�������̂����}�ł��B���ڂ������Ǝv���i�����́j�������R�[�f�B���O���[���̌`�ŋL�q�i�R�[�h���j����΁A�����������`�ŁA���ꂼ��̎����̊Ԃ̊֘A�𒲂ׂ邱�Ƃ��ł��܂��B</p>
+											<h3><a name="mds"></a>コード間の関連</h3>
+											<p>コーディングの結果を使って多変量解析（MDS）を行い、関連が強い（と推測される）コードほど近くに布置されるような図を作成したものが下図です。注目したいと思う（複数の）事柄をコーディングルールの形で記述（コード化）すれば、こういった形で、それぞれの事柄の間の関連を調べることができます。</p>
 										</div>
 										<div align="center">
 											<table border="0" cellpadding="0" cellspacing="5" width="480">
@@ -99,20 +99,20 @@
 													<td><img src="screen/cod_mds.gif" width="469" height="344" border="0"></td>
 												</tr>
 												<tr>
-													<td><span class="t12"><b>�o�T�F</b> ����k�� 2002 �u�R���s���[�^�E�R�[�f�B���O�ɂ��Љ���̕��́v ����w��w�@ �C�m�_��</span></td>
+													<td><span class="t12"><b>出典：</b> 樋口耕一 2002 「コンピュータ・コーディングによる社会情報の分析」 大阪大学大学院 修士論文</span></td>
 												</tr>
 											</table>
 										</div>
 										<div align="left">
-											<p>�u�ƍ߁v�Ɓu�g���u���v�̊֘A�������Ƃ��������Ƃ͎��ɓ�����O�Ȃ̂ł����A�A�A�����ŁA�u����H�v�Ǝv���悤�ȃR�[�h�ԂɊ֘A������΁i�Ȃ���΁j�A����͔����̃`�����X��������܂���B�Ȃ��֘A���������̂��i�Ȃ������̂��j���A�����@�\���g���Č��̃e�L�X�g�f�[�^�ɂ�����Ȃ��璲�ׂĂ݂�Ƃ悢�ł��傤�B</p>
+											<p>「犯罪」と「トラブル」の関連が強いといったことは至極当たり前なのですが、、、ここで、「あれ？」と思うようなコード間に関連があれば（なければ）、それは発見のチャンスかもしれません。なぜ関連があったのか（なかったのか）を、検索機能を使って元のテキストデータにあたりながら調べてみるとよいでしょう。</p>
            <ul>
-												<li type="square">�R�}���h�F �u�c�[���v���u�R�[�f�B���O�v���u�������ړx�\���@�v
+												<li type="square">コマンド： 「ツール」→「コーディング」→「多次元尺度構成法」
 											</ul>
           </div>
 									</td>
 						</tr>
 					</table>
-       <p><a href="scr_docs.html">��Back</a></p>
+       <p><a href="scr_docs.html">→Back</a></p>
       </div>
 				<div align="right">
        <csobj w="643" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="1">
@@ -124,11 +124,11 @@
              <p><span class="t12">Hosted by <b>GitHub</b></p>
             </div>
            </td>
-           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">��</span>&nbsp;&nbsp;</td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
            <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
 TYnow = new Date();document.write( TYnow.getFullYear() );
-// --></script> <a href="http://koichi.nihon.to/psnl">����k��</a></span><br>
-            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> �mJavaScript��L���ɂ���ƃA�h���X���\������܂��n </noscript></span></td>
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
           </tr>
          </table>
         </div>
