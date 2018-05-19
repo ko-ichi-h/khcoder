@@ -2,10 +2,13 @@
 
 ## Description
 
-Web pages, screenshots, documentations, discussion forum, and file releases are still on SourceForge.
-http://khc.sourceforge.net/en/
+KH Coder is a free software for **quantitative content analysis** or **text mining**. It is also utilized for computational linguistics. You can analyze Japanese, English, French, German, Italian, Portuguese and Spanish text with KH Coder. Also, Chinese (simplified), Korean and Russian language data can be analyzed with the latest release (Version 3).
 
-I am going to gradually move them here.
+Screenshots:
+https://goo.gl/photos/ixn1sTM3jm8o11bP8
+
+For more details:
+http://khcoder.net/en
 
 ## How to run source code of KH Coder on Windows
 
