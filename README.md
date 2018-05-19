@@ -11,7 +11,7 @@ I am going to gradually move them here.
 
 1. Download & install Perl: http://strawberryperl.com/
 2. (Fork and) clone this repository
-3. Download \*.exe file (Winzip self-extractor) of KH Coder 3 from http://khc.sourceforge.net/en/
+3. Download \*.exe file (Winzip self-extractor) of KH Coder 3
 4. Unzip the downloaded file into the clone directory
 5. Open command prompt window and go to the clone directory, type "perl kh_coder.pl", and hit "Enter" key
 
