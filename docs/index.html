@@ -1,1 +1,528 @@
-<h1>Hello world!</h1>
+<html>
+<head>
+	<title>KH Coder</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+	<link rel="icon" href="favicon.ico" type="image/vnd.microsoft.icon">
+	<LINK REL=STYLESHEET TYPE="text/css" HREF="ve_top.css" TITLE="VE Style">
+	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <META HTTP-EQUIV="Content-Script-Type" CONTENT="text/javascript">
+  <script type="text/javascript">
+<!--//
+function links(){
+linkurl=links.arguments[1];
+document.write(linkurl.link(links.arguments[2] + links.arguments[0] + links.arguments[3]));
+}
+//--></script><STYLE TYPE=text/css>
+	<!--
+#SearchMenu {
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	overflow: hidden;
+	border: none;
+}
+#SearchMenu li {
+	float: left;
+	list-style: none;
+	margin: 0px;
+}
+#SearchMenu li.backLava {
+	background-color:#D3D3D3;
+}
+#SearchMenu li a {
+	font-size: 10pt;
+	#font-family: sans-serif;
+	#font-weight: bold;
+	text-decoration: none;
+	color: black;
+	outline: none;
+	text-align: center;
+	padding: 0px 3px;
+	z-index: 10;
+	display: block;
+	float: left;
+	position: relative;
+	overflow: hidden;
+	margin: 0px 3px;
+}
+ul#rotation {
+    margin:0;
+    padding:0;
+    position:relative;
+    list-style:none;
+}
+ul#rotation li {
+    margin:0;
+    padding:0;
+    position:absolute;
+    top:0;
+    left:0;
+    display: block;
+    margin: 0 auto;
+}
+	-->
+</STYLE>
+	<!--[if gte IE 8 ]>
+		<STYLE TYPE=text/css>
+			<!--
+			#SearchMenu {
+				position: relative;
+				width: 145px;
+				padding: 0px;
+				margin: 0px;
+				overflow: hidden;
+				border: none;
+			}
+			-->
+		</STYLE>
+	<![endif]-->
+	<!--[if lte IE 7 ]>
+		<STYLE TYPE=text/css>
+			<!--
+			#SearchMenu {
+				position: relative;
+				width: 150px;
+				padding: 0px;
+				margin: 0px;
+				overflow: hidden;
+				border: none;
+			}
+			-->
+		</STYLE>
+	<![endif]-->
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="slide.js"></script>
+	<script type="text/javascript" src="jquery.csv.js"></script>
+	<script type="text/javascript" src="jquery.easing.1.3.js"></script>
+	<script type="text/javascript" src="jquery.lavalamp.1.3.5.js"></script>
+	<script type="text/javascript" src="jquery.balloon.min030.js"></script>
+  <csimport user="../khc.data/Components/foot.html" occur="44"></csimport>
+ </head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript" type="text/javascript">
+	$(document).ready(function() {
+		$('ul#rotation').slide();
+	});
+</script>
+<div align="left">
+   <table border="0" cellpadding="0" cellspacing="2">
+   <!--
+   <tr>
+   <td colspan=3 valign="top">
+   </td>
+   </tr>
+   -->
+    <tr valign="top">
+     <td>
+      <table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+       <tr>
+        <td bgcolor="white"><!-- Facebook -->
+<!-- <div id="fb-root"></div> -->
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<!-- <div style="width:120px; float:left; margin-top: 0px">
+<fb:like href="http://khcoder.net" send="false" layout="button_count" width="150" show_faces="true"></fb:like>
+</div> -->
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+	document.write(
+		//'<div align="right"><table style="margin: 0px 0px 10px 0px"><tr><td></td><td style="border-bottom: 1px solid black;padding-bottom: 2px;"><ul id="SearchMenu" class="lamp">',
+		'<div style="float:right; border-bottom: 1px solid black;padding-bottom: 0px;"><ul id="SearchMenu" class="lamp">',
+		'	<li style="margin: 0px 2px 0px 0px"><a href="#">Japanese</a></li>',
+		'	<li style="margin: 0px 0px 0px 2px"><a href="en/">English</a></li>',
+		//'</ul></td><td></td></tr></table></div>'
+		'</ul></div><div style="clear:right"></div><br>'
+	);
+	document.close();
+	// メニューの設定
+	$(function() {
+		$('#SearchMenu').lavaLamp({
+			startItem: 0,
+			fx: 'easeInOut' + 'Quart',
+			speed: 400
+		});
+	});
+// -->
+
+
+</SCRIPT>
+<NOSCRIPT>
+	<div align="right" style="font-size:11pt">[ Japanese | <a href="en/">English</a> ]</div><br>
+</NOSCRIPT>
+          <div align="center">
+           <table border="1" cellpadding="0" cellspacing="0">
+            <tr>
+             <td><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="KH Coder ロゴ" title="KH Coder ロゴ"></td>
+            </tr>
+           </table>
+          </div><br>
+         <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+          <tr>
+           <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+           <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">Index</span></td>
+          </tr>
+         </table>
+         <br>
+         <div align="right">
+          <table border="0" cellpadding="0" cellspacing="0" width="97%">
+           <tr>
+            <td>
+
+<!--
+<p><font color="orangered">［お知らせ］</font>3月16日（金）京都にて<a href="http://www.screen.co.jp/as/event/kh-coder.html">【ステップアップ編】セミナー</a>が開催されます。これまでの【初級編】やチュートリアルから一歩先へ進みたい方が対象です。これまでのセミナーと違う、まったく新しい内容を鋭意準備しています。</p>
+-->
+
+<!--
+<p><font color="orangered">【お知らせ】</font><a href="http://www.screen.co.jp/as/event/kh-coder.html">2月23日（金）東京開催のセミナー</a>にて、KH Coderを使った計量テキスト分析・テキストマイニングについて開発者・樋口がご紹介いたします。※結構、席が埋まってきているようです。お考えの方はどうぞお早めにお申込みください。</p>
+-->
+
+<!--
+<p><font color="orangered">【お知らせ】</font><a href="http://www.screen.co.jp/as/event/kh-coder.html">2018年2月23日（金）東京開催のセミナー</a>にて、KH Coderを使った計量テキスト分析・テキストマイニングの考え方と手順を、開発者・樋口がご紹介いたします。また分析の操作を体験していただきます。※企業様開催につき有償です。</p>
+-->
+
+
+<h3 class="kh">概要</h3>
+             <p>
+             KH Coderとは、テキスト型（文章型）データを統計的に分析するためのフリーソフトウェアです。アンケートの自由記述・インタビュー記録・新聞記事など、さまざまな社会調査データを分析するために制作しました。「計量テキスト分析」または「テキストマイニング」と呼ばれる方法に対応。
+             </p>
+             <ul>
+              <li><a href="diagram.html">主な機能と分析の手順</a>
+              <li><a id="bib_link" href="bib.html" >KH Coderを用いた研究事例のリスト</a>
+<SCRIPT LANGUAGE="JavaScript"><!-- // --></SCRIPT>
+<NOSCRIPT>
+	<font color="#3cb371">New!</font>
+</NOSCRIPT>
+             </ul>
+             <h3 class="kh">機能紹介（スクリーンショット）</h3>
+             <ul>
+              <li><a href="https://photos.app.goo.gl/BmlqzICa2irG1Mar2" target="new">スクリーンショット集</a><font size="-1"> （旧ページ：<a href="scr_words.html">言葉</a>・<a href="scr_docs.html">文書</a>・<a href="scr_r.html">可視化</a>・<a href="scr_others.html">他</a>）</font>
+              <li><a id="new1" href="scr_3wnew.html">KH Coder 3の新機能</a>
+              <SCRIPT LANGUAGE="JavaScript"><!-- // --></SCRIPT>
+<NOSCRIPT>
+	<font color="#3cb371">New!</font>
+</NOSCRIPT>
+              </ul>
+
+<!--
+<ul>
+	<li><a href="http://www.slideshare.net/khcoder/kh-coder-28776074">漱石「こころ」チュートリアル</a>
+	<li><a href="http://www.slideshare.net/khcoder/20141220-tokyo-web">アンケート自由回答の分析例ほか</a>
+	<li><a href="http://www.slideshare.net/khcoder/20150307-engweb">英文テキストのKWIC検索と分析</a>
+	<li><a href="http://www.slideshare.net/khcoder/20141220-tokyo-web/21">カスタマイズと自動化</a>
+</ul>
+-->
+             <h3 class="kh">KH Coderの入手</h3>
+             <ul>
+              <li><a href="dl3.html" id="alpha">KH Coder 3（最新アルファ版）ダウンロード</a><font size=-1 color="#3cb371">（3.Alpha.13d - 2018 05/19）</font>
+              <li><a href="dl.html">KH Coder 2（古い安定版）ダウンロード</a>
+              <li><a href="spec.html">必要なソフトウェア / ハードウェア</a>
+              <li><a href="versions.html">バージョンアップ履歴</a>
+              <li><a href="license.html">使用許諾</a>
+             </ul>
+             <p></p>
+             <h3 class="kh">サポート</h3>
+             <ul>
+              <li>
+               <script type="text/javascript">
+<!-- //
+links("ihon.to/cgi-bin","掲示板（ユーザーフォーラム）","&#104;&#116;&#116;&#112;&#58;&#47;&#47;koichi.n","/bbs_khn/khcf&#46;&#99;&#103;&#105;");
+// -->
+</script>
+              <noscript>
+               JavaScriptを有効にすると掲示板へのリンクが表示されます
+              </noscript>
+              <li><a href="kh_tuto.html">チュートリアル＆ヒント</a>
+              <li><a href="FAQ.html">よくある質問（FAQ）</a>
+              <li><a href="http://www.screen.co.jp/as/products/monkin-main.html">データ準備用プラグイン販売</a>＆<a href="http://screencojp.x-trans.jp/as/solution/idea.html">分析サポート</a>：<a href="http://screencojp.x-trans.jp/as/solution/idea.html" id="new2">SCREEN AS社ご提供</a>
+              <span id="ViewArea"></span>
+              <li><a href="link.html">関連リンク</a>
+             </ul>
+             <p><font size="-1">※KH Coderは科学研究費補助金および立命館大学研究推進プログラムによる助成を受けた研究成果の一部です<span onClick="FontChange();">。</span></font></p>
+
+
+<div style="width:120px; float:left; margin-top: 0px">
+<fb:like href="http://khcoder.net" send="false" layout="button_count" width="150" show_faces="true"></fb:like>
+</div>
+
+<!-- Google +1 -->
+<script type="text/javascript">
+<!--//
+	var msie=navigator.appVersion.toLowerCase();
+	msie=(msie.indexOf('msie')>-1)?parseInt(msie.replace(/.*msie[ ]/,'').match(/^[0-9]+/)):0;
+	if ((msie>8)||(msie==0)){
+		document.write(
+			'<div style="width:88px; float:left; margin-top: 3px">',
+			'<g:plusone size="medium" href="http://khcoder.net" ></g:plusone>',
+			'</div>',
+			'<script type="text/javascript">',
+			'  window.___gcfg = {lang: \'ja\'};',
+			'  (function() {',
+			'    var po = document.createElement(\'script\'); po.type = \'text/javascript\'; po.async = true;',
+			'    po.src = \'https://apis.google.com/js/plusone.js\';',
+			'    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(po, s);',
+			'  })();',
+			'</script>'
+		);
+		document.close();
+	}
+//-->
+</script>
+
+<!-- はてブ -->
+<div style="width:140px; float:left; margin-top: 3px">
+<a href="http://b.hatena.ne.jp/entry/http://khcoder.net" class="hatena-bookmark-button" data-hatena-bookmark-title="KH Coder Index Page" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="50" height="20" style="border: none;" /></a>
+</div>
+<script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async></script>
+
+<!-- Twitter -->
+<div style="width:120px; float:left; margin-top: 3px">
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://khcoder.net" data-text="計量テキスト分析のためのフリーソフトウェア「KH Coder」" data-via="khcoder" data-lang="ja">ツイート</a>
+</div>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </td>
+           </tr>
+           <tr>
+             <td>&nbsp;</td>
+           </tr>
+          </table>
+          <p></p>
+         </div>
+         <div align="right">
+          <csobj w="643" h="70" t="Component" csref="../khc.data/Components/foot.html" occur="44">
+           <div align="center">
+            <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+             <tr>
+              <td nowrap valign="middle">
+               <div align="left">
+                <p><span class="t12">Hosted by <b>GitHub</b></p>
+               </div>
+              </td>
+              <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+              <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+               <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script></span></td>
+             </tr>
+            </table>
+           </div>
+          </csobj></div>
+        </td>
+       </tr>
+      </table>
+     </td>
+<td width="28" nowrap><img src="img/white.png" width=36, height=1></td>
+     <td nowrap width="275">
+	<table border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<img src="img/white.png" width=5 height=210>
+			</td>
+			<td valign="top">
+				<div id="ban_area">
+					<ul id="rotation">
+						<li><a href="book.html"><img src="img/ban_ba.png" width="265" height="190" alt="KH Coderの本、刊行しました！" /></a></li>
+						<li><a href="book.html"><img src="img/ban_ba.png" width="265" height="190" alt="KH Coderの本、刊行しました！" /></a></li>
+					</ul>
+				</div>
+			</td>
+		</tr>
+	</table><a href="http://www.jsps.go.jp/j-grantsinaid/"><img style="position: absolute;  top:900; left:771;" src="img/logo_kaken.png" border="0" alt="科研費ロゴ"></a>
+<a href="http://www.ritsumei.jp/index_j.html"><img style="position: absolute;  top:965; left:753; " src="img/logo_ritsumei.png" width="152" height="38" border="0" alt="立命館ロゴ"></a>
+      <div align="center">
+<a class="twitter-timeline" width="270" height="650" data-chrome="nofooter" lang="ja" href="https://twitter.com/khcoder" data-widget-id="308860324923179009">@khcoder からのツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>      </div>
+     </td>
+    </tr>
+   </table>
+   <p></p>
+  </div>
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-Top";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-Top" alt="" border="0" />
+</noscript>
+<SCRIPT LANGUAGE="JavaScript">
+	<!--
+		function FontChange() {
+			location.href = "http://koichi.nihon.to/cgi-bin/ds/dsa.cgi";
+		}
+		// New 1
+		$(function() {
+			$('#new1').showBalloon({
+				contents: "<font size=\"-1\">New!</font>",
+				position: "right",
+				tipSize: 10,
+				offsetX: 7,
+				tipSize: 7,
+				showDuration: 0,
+				css: {
+					boxShadow: "none",
+					border: "solid 1px #3cb371",
+					padding: "1px 5px",
+					borderRadius: "3px",
+					opacity: "1",
+					backgroundColor: "white",
+					color: "#3cb371",
+					minWidth: "10px"
+				}
+			});
+		});
+		// 有償サポート
+		$(function(){
+			//表示場所のID
+			var VID = "#ViewArea";
+			
+			$.ajax({
+				url: 'http://koichi.nihon.to/cgi-bin/ip.cgi',
+				dataType : 'jsonp',
+				cache: false,
+				success: function( data ){
+					if (data.name != ''){
+						// ここで対象ドメインを指定
+						if ( data.name == 'yes'){
+							$(VID).append('<li><a href="com.html" id="new3">企業様向けの各種サポート：KH Coder開発者</a>');
+							// $("#BanArea").append('<a href="com.html"><img src="img/ban_com.jpg" width=270, height=190 border="0"></a>');
+							// New 3
+							$(function() {
+								$('#new3').showBalloon({
+									contents: "<font size=\"-1\">New!</font>",
+									position: "right",
+									tipSize: 10,
+									offsetX: 7,
+									tipSize: 7,
+									showDuration: 0,
+									css: {
+										boxShadow: "none",
+										border: "solid 1px #3cb371",
+										padding: "1px 5px",
+										borderRadius: "3px",
+										opacity: "1",
+										backgroundColor: "white",
+										color: "#3cb371",
+										minWidth: "10px"
+									}
+								});
+							});
+							document.getElementById('rotation').innerHTML = 
+								'<li><a href="com.html"><img src="img/ban_com.jpg" width="265" height="190" alt="企業様向けサポート" /></a></li>'
+								+'<li><a href="book.html"><img src="img/ban_ba.png" width="265" height="190" alt="KH Coderの本、刊行しました！" /></a></li>'
+							;
+						} else { // 企業向けアドなし
+							// バナー --- Macの場合のみMac用表示を追加
+							var ua =  navigator.userAgent;
+							if (ua.match(/Mac|PPC/)) {
+								document.getElementById('rotation').innerHTML = '<li><a href="mac_com.html"><img src="img/ban_m.png" width="265" height="190" alt="Macでも手軽にKH Coderを！" /></a></li>'
+								+'<li><a href="book.html"><img src="img/ban_ba.png" width="265" height="190" alt="KH Coderの本、刊行しました！" /></a></li>'
+								;
+							}
+						}
+					} else {
+						// $(VID).append('<li>受信内容が空でした。');
+					}
+					// New 2
+					$(function() {
+						$('#new2').showBalloon({
+							contents: "<font size=\"-1\">New!</font>",
+							position: "right",
+							tipSize: 10,
+							offsetX: 7,
+							tipSize: 7,
+							showDuration: 0,
+							css: {
+								boxShadow: "none",
+								border: "solid 1px #3cb371",
+								padding: "1px 5px",
+								borderRadius: "3px",
+								opacity: "1",
+								backgroundColor: "white",
+								color: "#3cb371",
+								minWidth: "10px"
+							}
+						});
+					});
+				},
+				
+				error: function(){
+					// $(VID).append('<li>データの受信に失敗しました。');
+					// New 2
+					$(function() {
+						$('#new2').showBalloon({
+							contents: "<font size=\"-1\">New!</font>",
+							position: "right",
+							tipSize: 10,
+							offsetX: 7,
+							tipSize: 7,
+							showDuration: 0,
+							css: {
+								boxShadow: "none",
+								border: "solid 1px #3cb371",
+								padding: "1px 5px",
+								borderRadius: "3px",
+								opacity: "1",
+								backgroundColor: "white",
+								color: "#3cb371",
+								minWidth: "10px"
+							}
+						});
+					});
+				}
+			});
+		});
+		// 文献数
+		var bibs = new Array();
+		$.ajax({
+			url: "bib.tsv",
+			dataType: "text",
+			cache: false,
+			success: function(data, status) {
+				bibs = jQuery.csv("\t")(data);
+				if (bibs[0].length == 1){
+					ddocument.getElementById('n_of_research').innerHTML = "<font color=\"#3cb371\">New!</font>";
+				} else {
+					var n_total = bibs.length - 1;
+					var t = '';
+					t = '<font size="-1">' + n_total + '件</font>';
+					$(function() {
+						$('#bib_link').showBalloon({
+							contents: t,
+							position: "right",
+							tipSize: 10,
+							offsetX: 7,
+							tipSize: 7,
+							showDuration: "slow",
+							showAnimation: function(d) { this.fadeIn(d); },
+							css: {
+								boxShadow: "none",
+								border: "solid 1px #3cb371",
+								padding: "1px 5px",
+								borderRadius: "3px",
+								opacity: "1",
+								backgroundColor: "white",
+								color: "#3cb371",
+								minWidth: "10px"
+							}
+						});
+					});
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				document.getElementById('n_of_research').innerHTML = "<font color=\"#3cb371\">New!</font>";
+			}
+		});
+	// -->
+</SCRIPT></body>
+</html>
+	

@@ -1,0 +1,610 @@
+<html>
+
+	<head>
+	<title>Rによる多変量解析と可視化</title>
+		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
+		<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+		<csimport user="../khc.data/Components/head.html" occur="9"></csimport>
+		<csimport user="../khc.data/Components/foot.html" occur="1"></csimport>
+ </head>
+
+	<body bgcolor="#FFFFFF">
+
+
+
+<div style="position:absolute; width:141px; top:15px; left:725px;  line-height: 138%; font-size: 10pt; color: dimgray; text-align: justify; text-justify: inter-ideograph;">
+
+<div align="center">
+	<span style="padding: 2px 5px; border: 1px solid dimgray;">お薦めの本 (3)</span><br>
+</div>
+
+&nbsp;<br>
+
+
+<a href="book.html"><img class="amamid" src="img/book_s.jpg" ></a><br>
+<a href="book.html">KH Coderの本（サポートページへ）</a><br>
+
+&nbsp;<br>
+
+
+<!-- Amazon -->
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+<div align="left"><a name="pagetop"></a>
+	<table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+		<tr>
+			<td bgcolor="white">
+						<center>
+							<csobj w="643" h="134" t="Component" csref="../khc.data/Components/head.html" occur="9">
+								<div align="center">
+									<table border="1" cellpadding="0" cellspacing="0" width="64">
+										<tr>
+											<td><a href="./" title="インデックスへ戻る"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="Back to &quot;KH Coder&quot;"></a></td>
+										</tr>
+									</table>
+								</div>
+							</csobj><br>
+						</center>
+      <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+       <tr>
+        <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+        <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+           <tr>
+            <td><span class="ph">Rを用いた多変量解析と可視化</span></td>
+            <td>
+             <div align="right">
+              <font size="+1" color="#696969">[</font> <a href="./">KH Coderに戻る</a> <font size="+1" color="#696969">]</font></div>
+            </td>
+           </tr>
+          </table>
+         </span></td>
+       </tr>
+      </table>
+      <br>
+      <div align="right">
+       <table border="0" cellpadding="0" cellspacing="0" width="97%">
+						<tr>
+							<td>
+          <p>わざわざ別の統計解析ソフトウェアを使わなくても、ある程度まではKH Coder上でデータの様子を見ることができるように、以下のような解析機能を準備しました。解析には、統計計算とグラフィックスのための環境「<a href="http://www.okada.jp.org/RWiki/" target="_blank">R</a>」を内部で利用しています。<br>
+            <span class="gray_char">※以下のスクリーンショットには一部開発中のバージョンが含まれています。</span></p>
+          <ul>
+            <li><a href="#wc_cls">階層的クラスター分析</a></li>
+            <li><a href="#mds">多次元尺度構成法（MDS）</a></li>
+            <li><a href="#corresp">対応分析</a></li>
+            <li><a href="#netg">共起ネットワーク</a></li>
+            <li><a href="#som">自己組織化マップ</a></li>
+            <li><a href="#cross">文書中でコードが多く出現している箇所</a></li>
+            <li><a href="#doc-cls">文書のクラスター分析</a></li>
+            <li><a href="#readme">お使いいただくにあたって</a></li>
+          </ul>
+          <h3><a name="wc_cls"></a>階層的クラスター分析</h3>
+          <div align="left">
+           <p>抽出語の階層的クラスター分析を行い、デンドログラムを表示します。抽出語だけでなくコーディング結果（コード）についても、同じように分析を行えます。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="220"><a href="screen_r/dendrob.png"><img src="screen_r/dendrob_x.png" width="220" height="150" border="1"></a></td>
+             <td></td>
+             <td width="165">
+              <div align="center">
+               <a href="screen_r/cluster_w.png"><img src="screen_r/x_cluster_w.png" width="165" height="150" border="1"></a></div>
+             </td>
+             <td></td>
+             <td width="127"><a href="screen_r/cluster_c.png"><img src="screen_r/x_cluster_c.png" width="127" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td valign="top" width="220">
+              <div align="center">
+               <font color="#3cb371">New!</font> <span class="t12">デンドログラム</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="165">
+              <div align="left">
+               <span class="t12">抽出語は出現数や品詞で選択</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="127">
+              <div align="left">
+               <span class="t12">コードはチェックボックスで直接選択</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>指定されたクラスター数に全体を分割し、その結果を色分けによって表示します。色分けせずに、四角形で各クラスターを囲むこともできます。</p>
+           
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           
+           
+           <h3><a name="mds"></a>多次元尺度構成法（MDS）</h3>
+           <p>同じく抽出語またはコードを用いての、多次元尺度構成法です。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/mds2d.png"><img src="screen_r/x_mds2d.png" width="139" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139"><a href="screen_r/mds_cls.png"><img src="screen_r/mds_cls_x.png" width="139" height="150" border="1"></a></td>
+             <td></td>
+             <td width="135">
+              <div align="center">
+               <a href="screen_r/mds3d.png"><img src="screen_r/x_mds3d.png" width="136" height="150" border="1"></a></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <span class="t12">2次元の解</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="left">
+               <font color="#3cb371">New!</font><span class="t12"> </span><span class="t12">クラスタリングと色分け</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="135" valign="top">
+              <div align="center">
+               <span class="t12">3次元の解</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>1次元から3次元までの解を表示することができます。布置する語やコードの数が多い場合には、2次元解の表示がもっとも読み取りやすいでしょう。</p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="corresp"></a>対応分析</h3>
+           <p>同じく抽出語またはコードを用いての、対応分析です。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2" width="542">
+            <tr>
+             <td width="165">
+              <div align="center">
+               <a href="screen_r/corresp.png"><img src="screen_r/x_corresp.png" width="139" height="150" border="1"></a></div>
+             </td>
+             <td width="5"></td>
+             <td width="152">
+              <div align="center">
+               <a href="screen_r/corresp_top50.png"><img src="screen_r/corresp_top50_x.png" width="139" height="150" border="1"></a></div>
+             </td>
+             <td width="5"></td>
+             <td width="153">
+              <div align="center">
+               <a href="screen_r/corresp_mono.png"><img src="screen_r/x_corresp-mono.png" width="150" height="150" border="1"></a></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="165" valign="top">
+              <div align="center">
+               <span class="t12">同時布置図</span></div>
+             </td>
+             <td valign="top" width="5"></td>
+             <td width="152">
+              <div align="left">
+               <span class="t12">差異が顕著な語に注目（上位50語）</span></div>
+             </td>
+             <td width="5"></td>
+             <td valign="top" width="153">
+              <div align="center">
+               <span class="t12">グレースケール印刷用</span></div>
+             </td>
+            </tr>
+           </table>
+           <p></p>
+           <table border="0" cellpadding="5" cellspacing="2" width="542">
+            <tr>
+             <td width="165">
+              <div align="center">
+               <a href="screen_r/bubble.png"><img src="screen_r/bubble_x.png" width="160" height="150" border="1"></a></div>
+             </td>
+             <td width="5"></td>
+             <td width="152" >
+              <div align="center">
+               <a href="screen_r/corresp_multi.png"><img src="screen_r/corresp_multi_x.png" width="150" height="150" border="1"></a></div>
+             </td>
+             <td width="5">　</td>
+             <td width="153"></td>
+            </tr>
+            <tr>
+             <td width="165" valign="top">
+              <div align="center">
+               <font color="#3cb371">New!</font> <span class="t12">バブルプロット</span></div>
+             </td>
+             <td valign="top" width="5"></td>
+             <td width="152">
+              <div align="left">
+               <span class="t12">複数の外部変数を用いた多重対応分析</span></div>
+             </td>
+             <td width="5"></td>
+             <td width="153">
+              <div align="center">
+               </div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>分析結果として、このような2次元のプロットが表示されます。いくつの成分を抽出し、どの成分をそれぞれx軸・y軸に用いるかも設定できます。</p>
+           <p>ただしKH Coderによる結果表示はこの画面だけなので、2つだけでなく<font color="black">より多くの成分を抽出したりといった、詳細な探索を行うには少々苦しいものがあるかもしれません。そうした詳細な探索にあたっては、例えば各成分の特徴を見やすい一覧表にまとめてくれる機能をはじめとして、充実した多次元データ解析の機能を持つ<a href="http://wordminer.comquest.co.jp/" target="_blank">WordMiner</a>を、KH Coderと<a href="FAQ.html#wm1">併用</a>すると便利でしょう</font><font color="black">。</font></p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="netg"></a>共起ネットワーク</h3>
+           <p>抽出語またはコードを用いて、出現パターンの似通ったものを線で結んだ図、すなわち共起関係を線（edge）で表したネットワークを描く機能です。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2" width="495">
+            <tr>
+             <td width="139"><a href="screen_r/netg-60-cnt.png"><img src="screen_r/x_netg-60-cnt.png" width="139" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139">
+              <div align="center">
+               <a href="screen_r/netg-144-com.png"><img src="screen_r/x_netg-144-com.png" width="139" height="150" border="1"></a></div>
+             </td>
+             <td></td>
+             <td width="139"><a href="screen_r/netg-144-sw.png"><img src="screen_r/netg-144-sw-x.png" width="139" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td width="139" valign="top">
+              <div align="left">
+               <span class="t12">共起の程度が非常に強いものだけを線で結んだ図</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="139" valign="top">
+              <div align="left">
+               <span class="t12">やや弱い共起関係も描画に含め、自動的にグループ分け（色分け）</span></div>
+             </td>
+             <td></td>
+             <td width="139" valign="top">
+              <div align="left">
+               <span class="t12">出現数が多い語ほど大きく、また</span><span class="t12">共起の程度が強いほど太い線で描画</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>上の左端の図では、ネットワーク分析で言う「中心性」にもとづいて色分けを行っています。水色・白・ピンクの順に中心性が高くなります。なお、この図は多次元尺度法（MDS）とは異なり、布置された位置よりも、線で結ばれているかどうかということに意味があります。したがって、単に近くに布置されているだけで線で結ばれていなければ、共起の程度が強いことを意味しません。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2" width="508">
+            <tr>
+             <td><a href="screen_r/as_father_net.png"><img src="screen_r/as_father_net_x.png" width="150" height="150" border="1"></a></td>
+             <td></td>
+             <td>
+              <div align="center"><a href="screen_r/as_father_net_smaller.png"><img src="screen_r/as_father_net_smaller_x.png" width="150" height="150" border="1"></a></div>
+             </td>
+             <td></td>
+             <td><a href="screen_r/net_var.png"><img src="screen_r/net_var_x.png" width="139" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td valign="top">
+              <div align="left">
+               <span class="t12">特定の語「父」と関連が強い語の共起ネットワーク</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top">
+              <div align="left">
+               <span class="t12">それぞれの語を小さめの円で描画 （なかば好みの問題ですが、それなりに印象が違います）</span></div>
+             </td>
+             <td></td>
+             <td valign="top">
+              <div align="left">
+               <span class="t12">語と語ではなく、語と外部変数／見出しの関連を描いたネットワーク</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>左の2つは、「父」という特定の語に注目して、(1)関連が強い語をリストアップし、(2)それらの語を用いて共起ネットワークを作成したものです。特定の語に限らず、特定のコードに注目することもできます。よって、アンケートの自由記述データを扱う場合であれば、「女性の回答の共起ネットワーク」「男性の回答の共起ネットワーク」をそれぞれ作成して比べるといったこともできるでしょう。※この機能は「共起ネットワーク」コマンドではなく、「関連語探索」コマンドから呼び出します。</p>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <div align="left">
+            <h3><a name="som"></a>自己組織化マップ</h3>
+            <p>抽出語またはコードを用いての、自己組織化マップです。</p>
+           </div>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/som_cls.png"><img src="screen_r/som_cls_s.png" width="136" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139"><a href="screen_r/som_freq.png"><img src="screen_r/som_freq_s.png" width="136" height="150" border="1"></a></td>
+             <td></td>
+             <td width="135">
+              <div align="center">
+               <a href="screen_r/som_umat.png"><img src="screen_r/som_umat_s.png" width="136" height="150" border="1"></a></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <span class="t12">クラスター色分け</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="center">
+               <span class="t12"> </span><span class="t12">頻度のプロット</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="135" valign="top">
+              <div align="center">
+               <span class="t12">U-Matrix</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <div align="left">
+            <p>デフォルトの設定では、学習に非常に長い時間を要するのでご注意下さい。</p>
+            <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+            <h3><a name="cross"></a>コードが多く出現している箇所</h3>
+            <p>データ中のどの部分で各コードが多く出現しているのかを表現するプロットです。</p>
+           </div>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/heat1.png"><img src="screen_r/heat1_s.png" width="177" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139"><a href="screen_r/heat2.png"><img src="screen_r/heat2_s.png" width="177" height="150" border="1"></a></td>
+             <td></td>
+             <td width="135">
+              <div align="center">
+               <a href="screen_r/line.png"><img src="screen_r/line_s.png" width="173" height="150" border="1"></a></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <font color="red">New!</font><span class="t12"> ヒートマップ<br>
+                （分割数小）</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="center">
+               <font color="red">New!</font><span class="t12"> </span><span class="t12">ヒートマップ<br>
+                （分割数大）</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="135" valign="top">
+              <div align="center">
+               <font color="red">New!</font><span class="t12"> 折れ線グラフ</span></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="135" valign="top"></td>
+             <td valign="top"></td>
+             <td valign="top" width="139"></td>
+             <td valign="top"></td>
+             <td width="135" valign="top"></td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <a href="screen_r/bubble1.png"><img src="screen_r/bubble1_s.png" width="140" height="150" border="1"></a></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="center">
+               <a href="screen_r/bubble2.png"><img src="screen_r/bubble2_s.png" width="160" height="150" border="1"></a></div>
+             </td>
+             <td valign="top"></td>
+             <td width="135" valign="top"></td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <font color="red">New!</font><span class="t12"> バブルプロット<br>
+                （分割数小・カラー）</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="center">
+               <font color="red">New!</font><span class="t12"> バブルプロット<br>
+                （分割数大・グレー）</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="135" valign="top"></td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+            <p>この部分は、長い間「Excelでグラフを作って下さい」という形になっていましたが、やはり少し不便でした。特にいろいろな分析を試して結果を見たい場合には、KH Coder上ですぐにグラフを見られる方が便利だということで、これらの作図機能を準備しました。</p>
+           </div>
+           <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+           <h3><a name="doc-cls"></a>文書のクラスター分析</h3>
+          <div align="left">
+           <p>文書の分類を行うクラスター分析です。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td><a href="screen_r/doc_cluster.png"><img src="screen_r/doc_cluster_small.png" width="205" height="150" border="1"></a></td>
+             <td></td>
+             <td width="162">
+              <div align="center">
+               <a href="screen_r/doc_cls2.png"><img src="screen_r/x_doc_cls2.png" width="167" height="150" border="1"></a></div>
+             </td>
+             <td></td>
+             <td width="136"><a href="screen_r/doc_cls3.png"><img src="screen_r/x_doc_cls3.png" width="158" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td valign="top">
+              <div align="center">
+               <span class="t12">クラスター分析の結果画面</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="162" valign="top">
+              <div align="left">
+               <span class="t12">左の画面で「文書検索」をクリックすると、当該クラスターに含まれる文書の一覧を表示</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="136" valign="top">
+              <div align="left">
+               <span class="t12">一番左の画面で「特徴語」をクリックすると、当該クラスターに特徴的な語をリストアップ</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>クラスター分析の結果画面には、各クラスターにいくつの文書が分類されたかが表示されています。また1クリックで、選択中のクラスターに含まれる文書の一覧や（文書検索）、そのクラスターに特徴的な語（関連語探索）を表示できます。以下のようなプロットも表示できます。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/doc_cls5.png"><img src="screen_r/doc_cls5_s.png" width="150" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139"><a href="screen_r/doc_cls6.png"><img src="screen_r/doc_cls6_s.png" width="150" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="left">
+               <span class="t12">併合水準のプロット。クラスター数5付近から併合水準が急上昇。10でも少し上がっているので、この場合クラスター数は11が良いか。</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="left">
+               <span class="t12">文書のデンドログラム。左の棒グラフは各文書の長さをあらわす。なお、文書数が500を超える場合、デンドログラムは表示不可。</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <p>文書を分類した結果は、<a href="FAQ.html#ov1">外部変数</a>として保存することができます。この外部変数を使えば、各クラスターの特徴語の一覧を作成したり、対応分析を行なったりすることで、クラスターの内容を探索できます。</p>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/doc_cls7.png"><img src="screen_r/doc_cls7_s.png" width="150" height="150" border="1"></a></td>
+             <td></td>
+             <td width="139"><a href="screen_r/doc_cls4.png"><img src="screen_r/x_doc_cls4.png" width="150" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="left">
+               <span class="t12">各ラスターの特徴語一覧。ここでは段落単位で計算。</span></div>
+             </td>
+             <td valign="top"></td>
+             <td valign="top" width="139">
+              <div align="left">
+               <span class="t12">対応分析では、各クラスターの特徴語だけでなく、どのクラスターとどのクラスターの内容が似通っているかも見やすい。</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+          <div align="left">
+           <div align="left">
+            <h3><a name="using_plots"></a>プロットの保存と活用</h3>
+            <p>各プロット画面の「保存」ボタンをクリックすることで、プロットを4種類の形式で保存することができます。Word・PowerPoint等へ貼り付ける際はEMF形式、LaTeXで利用する場合はEPS形式、Webページに載せる場合などはPNG形式で保存すると良いでしょう。</p>
+           </div>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="135"><a href="screen_r/plot_save1.png"><img src="screen_r/x_plot_save1.png" width="135" height="150" border="1"></a></td>
+             <td></td>
+             <td width="297">
+              <div align="center">
+               <a href="screen_r/plot_save2.png"><img src="screen_r/x_plot_save2.png" width="297" height="99" border="1"></a></div>
+             </td>
+            </tr>
+            <tr>
+             <td width="135" valign="top">
+              <div align="center">
+               <span class="t12">KH Coderでの表示</span></div>
+             </td>
+             <td valign="top"></td>
+             <td width="297" valign="top">
+              <div align="center">
+               <span class="t12">保存画面</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <div align="left">
+            <p>ここで4つ目の「R Source」形式を選択すると、各プロットを作成するためにRに送られたコマンドが、そのまま保存されます。保存したコマンドをRで実行すると、まったく同じプロットをR上で作成できます。また、コマンドの各種オプションを編集することで、プロットのカスタマイズを行えます。</p>
+           </div>
+          </div>
+          <div align="center">
+           <table border="0" cellpadding="5" cellspacing="2">
+            <tr>
+             <td width="200"><a href="screen_r/plot_save3.png"><img src="screen_r/x_plot_save3.png" width="200" height="150" border="1"></a></td>
+            </tr>
+            <tr>
+             <td width="200" valign="top">
+              <div align="center">
+               <span class="t12">R上でカスタマイズ</span></div>
+             </td>
+            </tr>
+           </table>
+          </div>
+          <div align="left">
+           <div align="left">
+            <p>この例では、保存したファイルを実行して、さらにコマンドを2行追加することでカスタマイズしています。プロットの色を変えた上で、文書数が比較的少ないのに（すなわち比較的少ない数の章にしか出てきていないのに）、出現回数が相対的に多い語を「Identify」コマンドで特定しています。（このページの例はほぼすべて）漱石「こころ」をデータとして用いているのですが、主要な登場人物がここに出そろっています。</p>
+            <p></p>
+           </div>
+          </div>
+          <div align="right"><a href="#pagetop">↑ ページトップへ ↑</a></div>
+          <h3><a name="readme"></a>お使いいただくにあたって</h3>
+          <p>これらの機能においては、KH Coder内部ではほとんど計算を行っていません。Rに解析コマンドを送り、Rが解析を行った結果を表示しています。プロット画面も自前の描画ではなく、Rが作成した画像ファイルを表示しているだけです。</p>
+          <p>このようないくぶん割り切った作りの機能なので、残念ながら、マウス操作でプロットの一部を選択してフォントを変えたりといったことはできません。こうした細かな調整や、より高度な解析、個別の目的に沿った解析については、<a href="#using_plots">上の例</a>のようにR向けコマンドを編集・追加していただくか、あるいはお好みの統計ソフトウェアをお使い下さい。</p>
+         </td>
+						</tr>
+					</table>
+       <p><a href="#pagetop">↑ ページトップへ ↑</a></p>
+      </div>
+      <div align="right">        <div align="center">
+         <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+          <tr>
+           <td nowrap valign="middle">
+            <div align="left">
+             <p><span class="t12">Hosted by <b>GitHub</b></p>
+            </div>
+           </td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+           <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
+          </tr>
+         </table>
+        </div>
+       </div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-SCR-R";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-SCR-R" alt="" border="0" />
+</noscript>
+
+</body>
+
+</html>
+	

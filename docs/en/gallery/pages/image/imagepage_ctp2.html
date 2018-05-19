@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Screenshot of KH Coder</title>
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript1.1">
+		var playing = 0
+		var timeoutID = 0
+		var slideShowNextLink = "../../pages/image/imagepage_ctp3.html"
+		var slideShowDelay = 4000
+
+		// Browser detection	
+		var agt = navigator.userAgent.toLowerCase();
+		var is_ie = (agt.indexOf("msie") != -1);
+
+		if (location.href.indexOf("?") != -1) {
+			urlQuery = location.href.split("?")
+			playing = parseInt(urlQuery[1])
+		}
+		
+		if (playing == 1) {
+			startSlideShow()
+		}
+	
+		function slideShow() {
+			window.location.href = slideShowNextLink + "?" + "1"
+			timeoutID = setInterval("slideShow()", slideShowDelay);
+		}
+
+		function startSlideShow() {
+			clearTimeout(timeoutID)
+			timeoutID = setInterval("slideShow()", slideShowDelay);
+		}
+
+		function stopSlideShow() {
+			clearTimeout(timeoutID)
+			if (is_ie) {
+				fakeTimeoutID = setInterval("redirectDelay()", 0);
+			}
+			else {
+				redirectDelay();
+			}
+		}
+		
+		function redirectDelay() {
+			tempArray = window.location.href.split("?")
+			window.location.href = tempArray[0]
+		}
+</script>
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="center" valign="middle">
+<table width="760" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="center" valign="middle">
+<div id="wrapper">
+<div id="logohead" class="left">
+<div class="infor">
+<div class="xsnazzy">
+<b class="xtop">
+<b class="xb1">	</b>
+<b class="xb2">	</b>
+<b class="xb3">	</b>
+<b class="xb4">	</b>
+</b>
+<div class="xboxcontent">
+<p>
+<a href="/en"><img src="../../images/logo/headerlogo.jpg" /></a>
+</p>
+</div>
+<b class="xbottom">
+<b class="xb4">	</b>
+<b class="xb3">	</b>
+<b class="xb2">	</b>
+<b class="xb1">	</b>
+</b>
+</div>
+</div>
+</div>
+<div class="clearer"> </div>
+<div class="infor">
+<div class="xsnazzy">
+<b class="xtop">
+<b class="xb1">	</b>
+<b class="xb2">	</b>
+<b class="xb3">	</b>
+<b class="xb4">	</b>
+</b>
+<div class="xboxcontent">
+<div class="imagenav">
+<div class="left">
+<table>
+<tr>
+<td valign="center">
+<strong>Slideshow:</strong> 
+							</td>
+<td valign="center">
+<a href="javascript:void(0)" name="slideShowControl" onclick="startSlideShow()">
+<img src="../../resources/btn_slide_start.gif" width="20" height="19" border="0" />
+</a>
+</td>
+<td valign="center">
+<a href="javascript:void(0)" name="slideShowControl" onclick="stopSlideShow()">
+<img src="../../resources/btn_slide_stop.gif" width="20" height="19" border="0" />
+</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="right">
+<a href="../../pages/image/imagepage_ctp1.html">
+<img src="../../resources/btn_prev.gif" width="19" height="19" border="0" />
+</a> 
+		 			<a href="../../index.html">
+<img src="../../resources/btn_home.gif" width="19" height="19" border="0" />
+</a> 
+					<a href="../../pages/image/imagepage_ctp3.html">
+<img src="../../resources/btn_next.gif" width="19" height="19" border="0" />
+</a>
+</div>
+<div class="clearer"> </div>
+</div>
+<div id="mainimage">
+<img src="../../images/image/heat.png" width="660" height="561" />
+<div class="metabox">
+<table>
+<tr>
+<td>
+<div class="metaitem">
+<strong>Caption:</strong>&nbsp;&nbsp;
+</div>
+</td>
+<td>
+<div class="metaitem">Heatmap of the Crosstab of Codes</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<b class="xbottom">
+<b class="xb4">	</b>
+<b class="xb3">	</b>
+<b class="xb2">	</b>
+<b class="xb1">	</b>
+</b>
+</div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+&nbsp;<br/ >
+<center>
+           <div align="center">
+            <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+             <tr>
+              <td nowrap valign="middle">
+               <div align="left">
+                <p><span class="t12">Hosted by </span><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=65640&amp;type=1" width="88" height="31" border="0" alt="SourceForge" align="absmiddle"></a></p>
+               </div>
+              </td>
+              <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">*</span>&nbsp;&nbsp;</td>
+              <td nowrap><span class="t12">Copyright &copy; 2001-2013 <a href="http://koichi.nihon.to/psnl/en">Koichi Higuchi</a></span><br>
+               <span class="t12">E-Mail: <script type="text/javascript" language="javascript">
+var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+
+"XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r="";
+for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33);
+document.write('<a href="mailto:'+r+'">'+r+'</a>')</script></span></td>
+             </tr>
+            </table>
+</center>
+
+
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-EN-Gallery-17";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-EN-Gallery-17" alt="" border="0" />
+</noscript>
+
+
+</body>
+</html>

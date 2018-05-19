@@ -1,0 +1,424 @@
+<html>
+
+	<head>
+		<title>Mac版自動設定ソフトウェアのFAQ</title>
+		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
+		<style type="text/css">
+		<!--
+			h4{
+				color:#FFFFFF;
+				background-color:
+				#191970;padding: 1px 1px 1px 3px;
+				width: 100%; border: 1px none white;
+				font-weight:normal;}
+			-->
+		</style>
+		<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+		<csimport user="../khc.data/Components/head.html" occur="39"></csimport>
+		<csimport user="../khc.data/Components/foot.html" occur="56"></csimport>
+
+  <script type="text/javascript">
+<!--//
+function links(){
+linkurl=links.arguments[1];
+document.write(linkurl.link(links.arguments[2] + links.arguments[0] + links.arguments[3]));
+}
+//--></script>
+
+
+ </head>
+
+	<body bgcolor="#FFFFFF">
+
+
+  <div align="left">
+   <a name="page-top"></a>
+   <table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+		<tr>
+			<td bgcolor="white">
+      <center>
+							</center>
+      <csobj w="643" h="134" t="Component" csref="../khc.data/Components/head.html" occur="39">
+							<div align="center">
+								<table border="1" cellpadding="0" cellspacing="0" width="64">
+									<tr>
+										<td><a href="./" title="KH Coder"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="KH Coder"></a></td>
+									</tr>
+								</table>
+							</div>
+						</csobj><br>
+      <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+       <tr>
+        <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+        <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+           <tr>
+            <td><span class="ph">Mac版自動設定ソフトウェアのFAQ</span></td>
+            <td>
+             <div align="right">
+              <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
+            </td>
+           </tr>
+          </table>
+         </span></td>
+       </tr>
+      </table>
+      <br>
+      <div align="right">
+							<table border="0" cellpadding="0" cellspacing="0" width="97%">
+								<tr>
+									<td>
+		<h3>Index</h3>
+          <ul>
+           <li>全般           
+             <ul>
+               <li><a href="#pre">なにか問題が生じた場合は</a>
+                 </li>
+               <li><a href="#up">以前導入したバージョンをアップデートできますか？</a>           
+               </li>
+             </ul>           
+           <li>前処理がうまくいかない場合           
+             <ul>
+               <li><a href="#chasen">「茶筌の起動に失敗しました」エラーに対処する方法は？</a></li>
+               <li><a href="#pre1">メニューの「前処理の実行」をクリックするとKH Coderが固まってしまい、まったく何も起こりません</a> </li>
+             </ul>           
+           <li>操作方法           
+             <ul>
+               <li><a href="#plot">共起ネットワークや対応分析などのプロットを保存するとPDF形式になりますが、PNG形式やその他の形式で保存するには？</a>
+                 </li>
+               <li><a href="#jp">日本語を入力するための操作は？</a>           
+                 </li>
+               <li><a href="#jpf">日本語入力中に、「Space」キーを何度か押して漢字の候補を選択しようとすると、KH Coderが固まってしまうのですが？</a></li>
+               <li><a href="#paste">KH Coderにデータを貼り付けるための操作は？
+                 </a></li>
+             </ul>           
+           <li>KH Coderが起動しない
+             <ul>
+               <li><a href="#unzip">ダウンロード・解凍したファイルを「開く」と、テキストエディットが開いてしまい、インストールが進まない</a></li>
+               <li><a href="#secur">「開発元が未確認のため開けません」エラーが出る</a></li>
+               <li><a href="#secur2">「壊れているため開けません。 &ldquo;ゴミ箱&rdquo;に入れる必要があります」エラーが出る</a></li>
+               <li><a href="#Tk">ターミナルに「Can't load 'auto/Tk/Tk.bundle' for module Tk」というエラーが表示され、KH Coderが起動しない</a>           
+               </li>
+               <li><a href="#MacUIM">ターミナル上部のタイトルバーに「uim-helper-serve」と表示された状態で止ってしまい、KH Coderが起動しない</a>
+                 </li>
+               <li><a href="#bash">ターミナルに「export: Command not found」「Undefined variable」といったエラーが表示され、KH Coderが起動しない          </a>           
+               </li>
+             </ul>           
+           </ul>
+           
+          <div align="right">
+          	<a href="mac_com.html">[Mac版自動設定ソフトウェアに戻る]</a>
+          </div>
+                                  </td>
+								</tr>
+							</table>
+							<br>
+						</div>
+      <div align="right">
+       <table border="0" cellpadding="0" cellspacing="0" width="97%">
+        <tr>
+         <td>
+
+          <h4><a name="pre" id="pre"></a> なにか問題が生じた場合は</h4>
+          <p><a href="mac_com.html">Mac OS X用の自動設定ソフトウェア</a>を使用しても、KH Coderが上手く動かないときには、まず<a href="mac_com.html#pre">事前の準備</a>や<a href="mac_com.html#usage">設定</a>を記載どおりの手順で行なったかを振り返ってください。特にXquartzのインストールが正常に完了しているかどうかを再度確認してください。正常に完了していれば、Finderで「アプリケーション」「ユーティリティ」の中にある「Xquartz」をダブルクリックすると、「xterm」というタイトルの画面が開きます。この画面がちゃんと開くか確認し、もしも開かない場合はXquartzのインストールを再度行なってください。</p>
+          <p>その上で、本ページに掲載の他の項目で、該当するものがないかどうかご覧ください。</p>
+          <p>それでも上手くいかない場合には、どのような問題が生じているかをなるべく詳しく、<script type="text/javascript">
+						document.write('<a href="');
+						document.write('&#109;&#97;&#105;&#108;&#116;&#111;&#58;');
+						document.write('&#107;&#111;&#105;&#99;&#104;&#105;&#46;&#104;&#105;&#103;&#117;&#99;&#104;&#105;');
+						document.write('&#64;');
+						document.write('&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;');
+						document.write('">');
+						document.write('メール</a>');
+						</script><noscript>メール</noscript>または<script type="text/javascript">links("ihon.to/cgi-bin","掲示板（ユーザーフォーラム）","&#104;&#116;&#116;&#112;&#58;&#47;&#47;koichi.n","/bbs_khn/khcf&#46;&#99;&#103;&#105;");</script><noscript>掲示板</noscript>でご連絡いただけますと幸いです。その際には、ターミナルの表示内容をすべて貼り付けてお知らせください。</p>
+          <p>なお、自動設定ソフトウェアとは直接的に関係がないご質問、すなわちKH Coderが起動したあとのKH Coderについての一般的なご質問につきましては、メールではなく掲示板をご利用ください。<br>
+          </p>
+          <div align="right">
+            <p><a href="#page-top">↑ Index ↑</a></p>
+     </div>
+
+
+
+
+
+
+    <h4><a name="up" id="up"></a>以前導入したバージョンをアップデートできますか？</h4>
+          <p>この自動設定ソフトウェアは「買い切り」のものとお考えください。新しいバージョンを利用したい場合には、新しいバージョンの自動設定ソフトウェアをお買い求めいただく形となります。</p>
+          <div align="right">
+            <p><a href="#page-top">↑ Index ↑</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+          <h4><a name="chasen" id="chasen"></a>「茶筌の起動に失敗しました」エラーに対処する方法は？</h4>
+          <p>「前処理の実行」時に「茶筌の起動に失敗しました」というエラーが出る場合には、まずはチュートリアルとして添付されている漱石「こころ」データでも同じエラーが出るかどうかをご確認ください。すなわち、KH Coderのメニューから「プロジェクト」「新規」と進み、「tutorial_jp」フォルダ内の「kokoro2.txt」を選択してください。そして前処理の実行や、抽出語リストの作成を行なってみてください。          </p>
+          <p><strong>■チュートリアルの「こころ」データであれば上手くいく場合</strong></p>
+          <p>チュートリアルデータであれば上手くいく場合、エラーが出る原因は、データ準備の仕方にありそうです。</p>
+          <p>データは「テキストエディット」で入力し（あるいはテキストエディットに貼り付けて）、メニューの「フォーマット」「標準テキストにする」をクリックしてから保存すると良いでしょう。また保存時には「標準テキストのエンコーディング」を「日本語（Shift JIS）」とすると確実でしょう。</p>
+          <p>またファイル名に日本語文字や半角スペースを含めないようご注意ください。ファイルを置くフォルダの名前についても同様です。（特にフォルダ名の問題で上手くいかない場合には）チュートリアルのデータ「kokoro2.txt」と同じ場所に自分のファイルを保存して試してみると良いでしょう。</p>
+          <p><strong>■チュートリアルの「こころ」データでも上手くいかない場合</strong></p>
+          <p>この場合は、以下の手順をお試しください。</p>
+          <ol>
+            <li> 「khcoder」フォルダを、フォルダごと「ユーザ」フォルダ内に移動します。<br>
+              <img src="screen/user_folder.png" width="522" height="148" border=1></li>
+            <li> 移動した「khcoder」フォルダ内の「setup」をダブルクリックします。</li>
+            <li> 移動した「khcoder」フォルダ内の「kh_coder」をダブルクリックして、KH Coderを起動します。</li>
+            <li>メニューから「プロジェクト」「開く」をクリックし、開いた画面で、既に登録しているプロジェクトをすべて削除します。</li>
+            <li>「tutorial_jp」フォルダ内の「kokoro2.txt」を再度プロジェクトとして登録し、前処理を実行してみてください。          </li>
+            </ol>
+          <p>この手順で「kokoro2.txt」の前処理を行えるようでしたら、上の「『こころ』データであれば上手くいく場合」にお進みください。</p>
+          <p><strong>■茶筌の更新が必要な場合</strong></p>
+          <p>チュートリアルデータでもエラーが出る場合には、以下の手順で茶筌を更新する必要があるかもしれません。特に、2014年10月28日以前に自動設定ソフトウェアを購入され、なおかつMac OS X 10.6または10.7をお使いの場合、以下の手順で問題が解決する可能性があります。</p>
+          <ol>
+            <li>「<a href="http://koichi.nihon.to/psnl/tmp/chasen.zip">chasen.zip</a>」をダウンロードしてください。</li>
+            <li>ダウンロードした「chasen.zip」をダブルクリック（展開）すると、「chasen」というフォルダが出てきます。</li>
+            <li>この「chasen」フォルダを、「kh_coder」と同じ場所にある「deps」とい
+              うフォルダの中にコピー（ドラッグ＆ドロップ）してください。「置き換える
+              」かどうかを聞かれますので、「置き換える」を選択してください。</li>
+          </ol>
+
+<center>          
+          <p><a href="screen/chasen_over.png"><img src="screen/chasen_over_s.png" width="580" height="327" alt="setup" border="1"><br>
+(クリックで拡大) </a></p>
+</center>
+          <p><strong>■それでも上手くいかない場合</strong></p>
+          <p>Mac OS Xのバージョンや、ターミナルの表示内容、「kh_coder」と同じ場所に生成されている「error_log.txt」ファイルの内容などを添えて、
+						  <script type="text/javascript">links("ihon.to/cgi-bin","掲示板（ユーザーフォーラム）","&#104;&#116;&#116;&#112;&#58;&#47;&#47;koichi.n","/bbs_khn/khcf&#46;&#99;&#103;&#105;");</script><noscript>掲示板</noscript>
+						でご連絡ください。</p>
+
+          <div align="right">
+            <p><a href="#page-top">↑ Index ↑</a></p>
+</div>
+
+
+          <h4><a name="pre1" id="pre1"></a>メニューの「前処理の実行」をクリックするとKH Coderが固まってしまい、まったく何も起こりません。</h4>
+          <p>メニューの「前処理の実行」をクリックすると、本来であれば、「この処理には時間がかかる場合があります。続行してよろしいですか」という問い合わせ画面が出ます。</p>
+          <p>しかし、Macbookに外部モニターをつないだりといった形で、複数のモニターを使用している場合、この画面が出ずにKH Coderが固まってしまうことがあるようです。</p>
+          <p>この際にはご不便をおかけして恐縮ですが、2台目のモニターを取り外して、使用モニターを1つにした上で前処理を行なうと上手くいくようです。</p>
+             <div align="right">
+               <p><a href="#page-top">↑ Index ↑</a></p>
+ </div>
+
+
+
+
+          <h4><a name="plot" id="plot"></a>共起ネットワークや対応分析などのプロットを保存するとPDF形式になりますが、PNG形式やその他の形式で保存するには？ </h4>
+          <center><img src="screen/save_plot_mac.png" width="462" height="311"></center>
+          <p>少し分かりにくくて恐縮なのですが、PNG形式で保存したいときには、ファイル名を入力する際に最後の「.png」まで入力するようにしてください。たとえば、「filename」だけで止めずに、「filename.png」と入力してから「Save」をクリックして下さい。          </p>
+          <p>同様にRコマンド形式で保存するときには「filename.r」のように入力して「Save」をクリックしてください。</p>
+          <div align="right">
+            <p><a href="#page-top">&uarr; Index &uarr;</a></p>
+      </div>
+          <h4><a name="jp" id="jp"></a>日本語を入力するための操作は？ </h4>
+          <p>Mac OS X版のKH Coderでは、通常のMacアプリのようには日本語を入力できません。入力欄で「Shift」キーを押しながら「Space」キーを押すことで、日本語入力モードになります。（MacUIM + Anthyによる日本語入力となります）</p>
+          <p>全角英数字を入力したいときには「Shift + F9」を、ひらがなに戻すには「Shift + F6」を押してください。</p>
+          <p>なお、「Shift」キーを押しながら「Space」キーを押しても、どうしても日本語を入力できない場合には、まずテキストエディットに日本語を入力し、それをコピーして、KH Coderに貼り付けることができます。KH Coderに貼り付けるには、「Ctrl」キーを押しながら「v」キーを押して下さい。「Ctrl」キーを使う点にご注意下さい。</p>
+             <div align="right">
+               <p><a href="#page-top">↑ Index ↑</a></p>
+   </div>
+
+          <h4><a name="paste" id="paste"></a>KH Coderにデータを貼り付けるための操作は？ </h4>
+          <p>KH Coderに文字などを貼り付ける時には、キーボードの「Ctrl」キーを押しながら「V」キーを押して下さい。「Ctrl」キーを使う点にご注意下さい。</p>
+          <center><img src="screen/stops.png" alt="" width="341" height="541"></center>
+          <p>たとえばstop wordsを設定するときなど、データを貼り付けたい場合は多くあると思います。「Ctrl」キーを使えば貼り付けられます。KH Coder上でコピーしたいときにも「Ctrl」キーを押しながら「C」キーを押すか、あるいは「コピー」という画面上のボタンを押してください。             </p>
+          <div align="right">
+            <p><a href="#page-top">↑ Index ↑</a></p>
+     </div>
+
+             <div align="left">
+               <h4><a name="jpf" id="jpf"></a>日本語入力中に、「Space」キーを何度か押して漢字の候補を選択しようとすると、KH Coderが固まってしまうのですが？</h4>
+               <p>Mac OS X 10.6ではこの問題が生じる場合があるようです。この問題が生じた場合には、以下の手順で解決できます。</p>
+               <ol>
+                 <li>「システム環境設定」を開き、一番下の「その他」の箇所にある「MacUIM」をクリックします。</li>
+                 <li>MacUIMの設定画面が開いたら、(1)「uim」をクリックして、(2)「Anthy」のところにある右向きの三角形をクリックします。</li>
+                 <li>そして(3)「候補ウィンドウを使用する」のチェックを外して、(4)「変更を適用」をクリックします。</li>
+                 <li>Macを再起動します。</li>
+               </ol>
+               <center>
+               <p><a href="screen/osx_uim.png"><img src="screen/osx_uim_s.png" width="580" height="463" alt="setup" border="1"><br>
+(クリックで拡大) </a></p>
+</center>
+               <div align="right">
+                 <p><a href="#page-top">↑ Index ↑</a></p>
+             </div>
+             <div align="left">
+
+          <h4><a name="unzip" id="unzip"></a>ダウンロード・解凍したファイルを「開く」と、テキストエディットが開いてしまい、インストールが進まない</h4>
+          <p>「Alzip」のような、Macにもとからついていたのではない、別途のZip解凍ソフトをインストールしていると、この問題が生じる場合があるようです。</p>
+          <p>この場合には一時的に、Macにもとからついていた「アーカイブユーティリティ」でZipファイル（*.zip）を開くようにMacの設定を行なってください。言葉をかえると、*.zipという拡張子に関連付けられているアプリケーションを、「Alzip」等から「アーカイブユーティリティ」に変更する必要があります。この手順については<a href="https://pc-karuma.net/mac-extension-related-app-change/">こちらのページ</a>が分かりやすいと思います。</p>
+          <p>この設定を行なってから、再度ダウンロード・解凍・インストールを行なってみてください。</p>
+             <div align="right">
+               <p><a href="#page-top">↑ Index ↑</a></p>
+ </div>
+
+
+          <h4><a name="secur" id="secur"></a>「開発元が未確認のため開けません」エラーが出る</h4>
+          <p>「setup」や「kh_coder」をダブルクリックした際に、「開発元が未確認のため開けません」というエラーが出る場合があります。この場合はダブルクリックではなく、右クリックしてから「開く」をクリックしてください。</p>
+             <div align="right">
+               <p><a href="#page-top">↑ Index ↑</a></p>
+ </div>
+
+          <h4><a name="secur2" id="secur2"></a>「壊れているため開けません。 “ゴミ箱”に入れる必要があります」エラーが出る</h4>
+          <p><a href="http://miyabilucas.net/broken-file-error-osx/">こちらのページ</a>をご参照ください。</p>
+             <div align="right">
+               <p><a href="#page-top">↑ Index ↑</a></p>
+ </div>
+
+
+                 <h4><a name="Tk" id="Tk"></a>ターミナルに「Can't load 'auto/Tk/Tk.bundle' for module Tk」というエラーが表示され、KH Coderが起動しない</h4>
+                 <p>まれに、ターミナル画面に次のようなエラーが表示されて、KH Coderが起動しない場合があります。</p>
+                 <blockquote>
+                   <p><font color="darkgreen">Can't load 'auto/Tk/Tk.bundle' for module Tk: dlopen(auto/Tk/Tk.bundle, 1): image not found at /&lt;/Users/K/Desktop/khcoder/kh_coder&gt;DynaLoader.pm line 223, &lt;DATA&gt; line 855.<br>
+                     &nbsp;at perlapp line 827.<br>
+                     BEGIN failed--compilation aborted at hoge_exe.pl line 105, &lt;DATA&gt; line 855.</font></p>
+                 </blockquote>
+                 <p>この場合には、<a href="mac_com.html#pre">事前の準備</a>について今一度ご確認の上、以下の手順をお試しください。                 </p>
+                 <p><strong>■ 「x_mac64」ファイルの置き換え</strong></p>
+                 <ol>
+                   <li>「<a href="http://koichi.nihon.to/psnl/tmp/x_mac64_1.zip" target="_blank">x_mac64_1.zip</a>」をダウンロードして下さい。</li>
+                   <li>ダウンロードしたファイルをダブルクリックして展開すると、「x_mac64」というファイルが出てきます。※Safariでダウンロードすると、自動的に展開されていることがあります。</li>
+                   <li>こ
+                     の「x_mac64」を、「khcoder」フォルダにドラッグ＆ドロップします。</li>
+                   <li>「置き換えますか？」と聞かれますので、「置き換え」をクリックして
+                     下さい。</li>
+                   <li>「kh_coder」をダブルクリックします。</li>
+                 </ol>
+                 <p>これでも起動しなかった場合には、ターミナルの表示内容をすべてお知らせい
+                   ただけますと幸いです。</p>
+                 <p>&nbsp;</p>
+
+                 <div align="right">
+                   <p><a href="#page-top">&uarr; Index &uarr;</a></p>
+                 </div>
+             </div>
+
+
+
+
+          <h4><a name="MacUIM" id="MacUIM"></a>ターミナル上部のタイトルバーに「uim-helper-serve」と表示された状態で止ってしまい、KH Coderが起動しない</h4>
+          <center><img src="screen/uim.png" width="606" height="60"></center>
+          <p>ターミナル上部のタイトルバーに「uim-helper-serve」と表示された状態で止ってしまい、KH Coderが起動しない場合があるようです。</p>
+          <p>これはKH Coder上（X11上）で日本語入力を行なうためのソフトウェア「MacUIM」が、上手く起動せず、止ってしまった時に生じる現象です。最新版のMacUIM（MacUIM-0.6.16-1.dmg）ではなく、1つ前のバージョンのMacUIM（MacUIM-0.6.15-2.dmg）をインストールすることで、問題が解決する場合があるとのことです。そのための手順は以下のようになります。</p>
+          <p>■最新版MacUIMをアンインストール          </p>
+          <ol>
+            <li>Finderで「アプリケーション」「ユーティリティ
+              」とたどり、その中の「ターミナル」をダブルクリックしてターミナルを開きます。すでにターミナルを開いている場合も、いったん閉じて、Finderから開きます。</li>
+            <li>以下の行を1行ずつ、ターミナルに貼り付けてキーボードの「Return」キーを押します。「password:」という表示が出たら、ログイン・パスワードを入力して「Return」キーを押します。            </li>
+          </ol>
+          <blockquote>
+            <tt>sudo rm -rf /Library/Frameworks/UIM.framework<br>
+              sudo rm -rf "/Library/Input Methods/MacUIM.app"<br>
+              sudo rm -rf /Library/PreferencePanes/MacUIM.prefPane<br>
+              sudo rm -rf /Library/Anthy<br>
+              sudo rm -rf /Library/PRIME</tt>
+          </blockquote>
+          <p>ここまで来たら、いったんMacを再起動して、KH Coderが起動するかどうかをお試しください。起動するようなら、KH Coderをこの状態でお使いいただくことも可能です。ただし、日本語についてはいったんテキストエディットで入力したものをKH Coderへ貼り付ける（Ctrl + V）形になります。KH Coderに直接日本語を入力するためにはMacUIMが必要なので、下記の手順で1つ前のバージョンのMacUIMをインストールしてみるとよいでしょう。</p>
+          <p>■1つ前のバージョンのMacUIMをインストール</p>
+          <p><a href="https://code.google.com/p/macuim/downloads/list">MacUIMのダウンロードサイト</a>から、「MacUIM-0.6.15-2.dmg」をダウンロードしてインストールします。</p>
+          <p>1つ前のバージョンのMacUIMをインストールすると再びKH Coderが起動しなくなった場合には、残念ですが再度MacUIMのアンインストールを行なってください。この場合、お使いのMac環境ではKH Coderに直接日本語を入力することはできません。いったんテキストエディットで入力した日本語をKH Coderへ貼り付ける（Ctrl + V）形でご利用ください。</p>
+          <div align="right">
+            <p><a href="#page-top">&uarr; Index &uarr;</a></p>
+
+          </div>
+            <h4><a name="bash" id="pre2"></a> ターミナルに「export: Command not found」「Undefined variable」といったエラーが表示され、KH Coderが起動しない </h4>
+            <p>2015年4月22日以前に自動設定ソフトウェアを購入された場合、まれに、ターミナル画面に次のようなエラーが表示されて、KH Coderが起動しないことがあります。            </p>
+            <blockquote>
+              <p><font color="darkgreen">export: Command not found.<br>
+                export: Command not found.<br>
+                export: Command not found.<br>
+                export: Command not found.<br>
+                DYLD_FALLBACK_LIBRARY_PATH: Undefined variable.
+              </font></p>
+            </blockquote>
+            <p>この場合には以下の手順をお試しください。</p>
+            <ol>
+              <li>「<a href="http://koichi.nihon.to/psnl/tmp/kh_coder.app.zip">kh_coder.app.zip</a>」をダウンロードしてください。</li>
+              <li>ダウンロードしたZipファイルをダブルクリックして展開すると、「kh_coder」または「kh_coder.app」が出てきます。※Safariでダウンロードすると、自動的に展開されていることがあります。</li>
+              <li>この「kh_coder」または「kh_coder.app」を、「khcoder」フォルダにドラッグ＆ドロップします。</li>
+              <li>「置き換えますか？」と聞かれますので、「置き換え」をクリックして
+                下さい。</li>
+              <li>「kh_coder」をダブルクリックします。</li>
+            </ol>
+            <p>これでも起動しなかった場合には、ターミナルの表示内容をすべてお知らせい
+                  ただけますと幸いです。</p>
+            <div align="right">
+              <p><a href="#page-top">&uarr; Index &uarr;</a></p>
+            </div>
+            <p>&nbsp;</p>
+
+
+             </div></td>
+        </tr>
+       </table>
+       <div align="right"><br>
+       </div>
+       <div align="right">
+        
+       </div>
+      </div>
+      <div align="right">
+       <csobj w="643" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="56">
+        <div align="center">
+         <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+          <tr>
+           <td nowrap valign="middle">
+            <div align="left">
+             <p><span class="t12">Hosted by <b>GitHub</b></p>
+            </div>
+           </td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+           <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript">
+<!--
+function convertMoji2_shtml(t){
+var s="",moji="";
+for(var i=0;i<t.length;i++){
+moji=t.charCodeAt(i);
+s +=String.fromCharCode(moji+1);
+}
+return s;
+}
+var em_shtml=convertMoji2_shtml(String.fromCharCode(106,110,104,98,103,104,45,103,104,102,116,98)+String.fromCharCode(103,104,63,102,108,96,104,107,45,98,110,108));
+document.write("<a href=\"mai"+"lto:"+em_shtml+"\">"+em_shtml+"</a>");
+// -->
+</script><noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript> </span></td>
+          </tr>
+         </table>
+        </div>
+       </csobj></div>
+     </td>
+		</tr>
+	</table>
+  </div>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-MAC_COM_FAQ";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-MAC_COM_FAQ" alt="" border="0" />
+</noscript>
+
+
+ </body>
+
+
+
+</html>
+	

@@ -1,0 +1,115 @@
+<html>
+
+	<head>
+		<title>SQLを使った柔軟な検索</title>
+		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
+  <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <csimport user="../khc.data/Components/head.html" occur="28"></csimport>
+  <csimport user="../khc.data/Components/foot.html" occur="1"></csimport>
+ </head>
+
+	<body bgcolor="#FFFFFF">
+
+<div align="left">
+	<table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+		<tr>
+			<td bgcolor="white">
+      <center>
+							<csobj w="643" h="134" t="Component" csref="../khc.data/Components/head.html" occur="28">
+								<div align="center">
+									<table border="1" cellpadding="0" cellspacing="0" width="64">
+										<tr>
+											<td><a href="./" title="KH Coder"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="KH Coder"></a></td>
+										</tr>
+									</table>
+								</div>
+							</csobj>
+							<p></p>
+       <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+        <tr>
+         <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+         <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
+           <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+             <td><span class="ph">SQLを使った柔軟な検索</span></td>
+             <td>
+              <div align="right">
+               <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
+             </td>
+            </tr>
+           </table>
+          </span></td>
+        </tr>
+       </table>
+      </center>
+      <p></p>
+      <div align="right">
+       <table border="0" cellpadding="0" cellspacing="0" width="97%">
+						<tr>
+							<td>
+          <div align="left">
+           <h3>SQLの実行</h3>
+           <p>KH Coder上で「前処理」を実行すると、形態素解析（語の切り出し）の結果等がデータベース化されます。データベース・エンジンとしてMySQLを利用しているので、SQL文を入力することで（すなわちMySQLに検索命令を与えることで）様々な検索を自在に行うことができます。よって、あらかじめKH Coderの機能として用意されていないようなタイプの検索を行うこともできます。</p>
+          </div>
+          <div align="center">
+           <p><img src="screen/sql_select.gif" width="408" height="536" border="0"></p>
+          </div>
+          <div align="left"><p>SQL文を記述して検索を行う際には、テーブル名やフィールド（カラム）名といった、KH Coderが作製するデータベースについての情報が必要になります。こういった情報はマニュアルの「前処理の実行」節に記述されています。</p></div>
+          <ul>
+           <li type="square">コマンド： 「ツール」→「SQL文入力」→「SELECT」
+          </ul>
+          <h3>専用クライアント</h3>
+          <p>上の画面はKH Coderに用意されている簡易SQLクライアントですが、本格的にSQLを使用する場合には専用のクライアント・ソフトウェアを用いた方が便利でしょう。下の図は、専用ソフトウェア「<a href="http://www.mysql.com/products/mysqlcc/" target="_blank">MySQL Control Center</a>」を用いて、同じ条件での検索を行っている画面です。</p>
+          <div align="center">
+           <p><img src="screen/sql_select_mysqlcc.gif" width="512" height="604" border="0"></p>
+          </div>
+          <div align="left">
+           <p></p>
+           <p>この画面はMySQL Control Centerですが、このソフトは古くなってきました。現在ではMySQL Query Browserを利用するのが良いでしょう。</p>
+          </div>
+         </td>
+						</tr>
+					</table>
+       <p><a href="scr_others.html">→Back</a></p>
+      </div>
+				<div align="right">
+       <csobj w="643" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="1">
+        <div align="center">
+         <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+          <tr>
+           <td nowrap valign="middle">
+            <div align="left">
+             <p><span class="t12">Hosted by <b>GitHub</b></p>
+            </div>
+           </td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+           <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
+          </tr>
+         </table>
+        </div>
+       </csobj></div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-SCR-Others-SQL";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-SCR-Others-SQL" alt="" border="0" />
+</noscript>
+
+</body>
+
+</html>
+	

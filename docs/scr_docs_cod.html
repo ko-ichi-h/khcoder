@@ -1,0 +1,157 @@
+<html>
+
+	<head>
+		<title>コーディング （数え上げ・集計）</title>
+		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
+  <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <csimport user="../khc.data/Components/head.html" occur="28"></csimport>
+  <csimport user="../khc.data/Components/foot.html" occur="1"></csimport>
+ </head>
+
+	<body bgcolor="#FFFFFF">
+
+<div align="left">
+	<table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+		<tr>
+			<td bgcolor="white">
+      <center>
+							<csobj w="643" h="134" t="Component" csref="../khc.data/Components/head.html" occur="28">
+								<div align="center">
+									<table border="1" cellpadding="0" cellspacing="0" width="64">
+										<tr>
+											<td><a href="./" title="KH Coder"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="KH Coder"></a></td>
+										</tr>
+									</table>
+								</div>
+							</csobj>
+							<p></p>
+						</center>
+      <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+       <tr>
+        <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+        <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+           <tr>
+            <td><span class="ph">コーディング （数え上げ・集計）</span></td>
+            <td>
+             <div align="right">
+              <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
+            </td>
+           </tr>
+          </table>
+         </span></td>
+       </tr>
+      </table>
+      <p></p>
+      <div align="right">
+       <table border="0" cellpadding="0" cellspacing="0" width="97%">
+						<tr>
+							<td>
+          <div align="left">
+           <h3>単純集計</h3>
+           <p>テキストデータを計量的に分析する際には、1つ1つの言葉というよりも、むしろむしろ事柄・概念・カテゴリといったものの出現数を数えたい場合が多いのではないでしょうか。例えば、「人の死」という事柄は、必ずしも「死ぬ」という言葉によってのみ表されるわけではありません。「死ぬ」の他に、「亡くなる」や「自殺」といった言葉があったときにも、「人の死」という事柄として数えたいのではないでしょうか。</p>
+											<p>ここで役立つのが<a href="scr_docs_codfile.html">前述</a>のコーディングルール・ファイルです。「死ぬ or 無くなる or 自殺 or ...」といった検索条件をコーディングルール・ファイルに記述しておけば、KH Coderはその条件に合致する文書に「＊人の死」というコードを与えます。（この作業をコーディングと呼びます）あとは、コードの数を集計すれば良いだけです。</p>
+										</div>
+          <div align="center">
+           <p><img src="screen/cod_freq.gif" width="279" height="441" border="0"></p>
+          </div>
+          <div align="left"><p>この図は、<a href="scr_docs_codfile.html">説明ページ</a>で例示したコーディングルール・ファイルを使って、コーディングと（コード出現数の）単純集計を行った画面です。</p></div>
+          <ul>
+           <li type="square">コマンド： 「ツール」→「コーディング」→「単純集計」          </ul>
+		<a name="cross" id="detail"></a>
+          <h3>クロス集計</h3>
+          <p>同じコーディングルール・ファイルを使って、「上」「中」「下」といった部分ごとに、コードの出現数を集計した例です。</p>
+          <div align="center">
+           <p><img src="screen/cod_cross.gif" width="570" height="347" border="0"></p>
+          </div>
+										<div align="left">
+											<p>ここからは、「上」「中」に比べて、「下」では「＊死」というコードの出現率が倍増しているといったことが読み取れます。<br>
+																																				こういった集計の他にも、例えば自由回答データを扱う場合には、年代別や男女別の集計なども行えます。</p>
+											<ul>
+												<li type="square">コマンド： 「ツール」→「コーディング」→「章・節・段落ごとの集計」
+											</ul>
+											<h3><a name="graph"></a>グラフ作製</h3>
+											<p>扱ったデータ（漱石「こころ」）全体の中で、「＊死」というコードの出現数がいかに推移しているかを詳しく調べるためにグラフを作製した例が下図です。</p>
+										</div>
+										<div align="center">
+											<table border="0" cellpadding="0" cellspacing="5" width="561">
+												<tr>
+													<td><img src="screen/cod_graph.gif" width="550" height="372" border="0"></td>
+												</tr>
+												<tr>
+													<td><span class="t12"><b>出典：</b> 樋口耕一 2003 「コンピュータ・コーディングの実践 ―漱石『こころ』を用いたチュートリアル―」 『年報人間科学』 24: 193-214</span></td>
+												</tr>
+											</table>
+										</div>
+										<div align="left">
+											<p>この図を見ると、主要な登場人物の死が描かれていない「上・先生と私」においても、「人の死」という事柄を大きく取り上げた節が存在したといったことに気づかされます（特に上・二十四と上三十五）。</p>
+											<p>いくつかの事柄に注目しながら、こういった形のグラフを作成している間には、単にデータを読んでいるだけでは見出しにくいようなデータの特徴に気がつくこともあるではないでしょうか。</p>
+											<ul>
+												<li type="square">コマンド： 「ツール」→「コーディング」→「章・節・段落ごとの集計」  
+												<li type="square">＋表計算ソフト上でグラフ作製
+											</ul>
+											<h3><a name="mds"></a>コード間の関連</h3>
+											<p>コーディングの結果を使って多変量解析（MDS）を行い、関連が強い（と推測される）コードほど近くに布置されるような図を作成したものが下図です。注目したいと思う（複数の）事柄をコーディングルールの形で記述（コード化）すれば、こういった形で、それぞれの事柄の間の関連を調べることができます。</p>
+										</div>
+										<div align="center">
+											<table border="0" cellpadding="0" cellspacing="5" width="480">
+												<tr>
+													<td><img src="screen/cod_mds.gif" width="469" height="344" border="0"></td>
+												</tr>
+												<tr>
+													<td><span class="t12"><b>出典：</b> 樋口耕一 2002 「コンピュータ・コーディングによる社会情報の分析」 大阪大学大学院 修士論文</span></td>
+												</tr>
+											</table>
+										</div>
+										<div align="left">
+											<p>「犯罪」と「トラブル」の関連が強いといったことは至極当たり前なのですが、、、ここで、「あれ？」と思うようなコード間に関連があれば（なければ）、それは発見のチャンスかもしれません。なぜ関連があったのか（なかったのか）を、検索機能を使って元のテキストデータにあたりながら調べてみるとよいでしょう。</p>
+           <ul>
+												<li type="square">コマンド： 「ツール」→「コーディング」→「多次元尺度構成法」
+											</ul>
+          </div>
+									</td>
+						</tr>
+					</table>
+       <p><a href="scr_docs.html">→Back</a></p>
+      </div>
+				<div align="right">
+       <csobj w="643" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="1">
+        <div align="center">
+         <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+          <tr>
+           <td nowrap valign="middle">
+            <div align="left">
+             <p><span class="t12">Hosted by <b>GitHub</b></p>
+            </div>
+           </td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+           <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
+          </tr>
+         </table>
+        </div>
+       </csobj></div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-SCR-Docs-Coding";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-SCR-Docs-Coding" alt="" border="0" />
+</noscript>
+
+</body>
+
+</html>
+	

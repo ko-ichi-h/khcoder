@@ -1,0 +1,196 @@
+<html>
+
+	<head>
+		<title>コーディングルール・ファイル</title>
+		<LINK REL=STYLESHEET TYPE="text/css" HREF="ve.css" TITLE="VE Style">
+  <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+  <csimport user="../khc.data/Components/head.html" occur="28"></csimport>
+  <csimport user="../khc.data/Components/foot.html" occur="47"></csimport>
+ </head>
+
+	<body bgcolor="#FFFFFF">
+
+<div align="left">
+	<table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+		<tr>
+			<td bgcolor="white">
+      <center>
+							<csobj w="643" h="134" t="Component" csref="../khc.data/Components/head.html" occur="28">
+								<div align="center">
+									<table border="1" cellpadding="0" cellspacing="0" width="64">
+										<tr>
+											<td><a href="./" title="KH Coder"><img src="img/kh_log.jpg" width="400" height="122" border="0" alt="KH Coder"></a></td>
+										</tr>
+									</table>
+								</div>
+							</csobj>
+							<p>
+       </p>
+						</center>
+      <table width="638" border="0" cellspacing="0" cellpadding="0" height="27">
+       <tr>
+        <td width="12" bgcolor="white"><img src="img/databg2.gif" width="17" height="35" align="BOTTOM" border="0" naturalsizeflag="3"></td>
+        <td bgcolor="#00006c" background="img/databg.gif" width="626"><span class="ph">
+          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+           <tr>
+            <td><span class="ph">コーディングルール・ファイル</span></td>
+            <td>
+             <div align="right">
+              <font size="+1" color="#696969">[</font> <a href="./">KH Coder</a> <font size="+1" color="#696969">]</font></div>
+            </td>
+           </tr>
+          </table>
+         </span></td>
+       </tr>
+      </table>
+      <p></p>
+      <div align="right">
+							<table border="0" cellpadding="0" cellspacing="0" width="97%">
+						<tr>
+							<td>
+										<div align="left">
+           <h3>検索条件をファイルに記述</h3>
+           <p>複数の検索条件をテキストファイルに記述して<font color="red">コーディングルール・ファイル</font>と呼ばれるものを作製すれば、このページで<a href="#search">後述</a>する検索や、<a href="scr_docs_cod.html">別ページ</a>で述べる数え上げ・集計に利用することができます。（おそらく、検索よりも、数え上げ・集計が主用途となる場合が多いでしょう）</p>
+											<p>下図がコーディングルール・ファイルの例です。「＊」で始まっている行が検索条件の名前（コード名）を表し、それに続く行が検索条件を表しています。</p>
+										</div>
+									</td>
+						</tr>
+					</table>
+						</div>
+     </td>
+		</tr>
+	</table>
+			<p><img src="screen/cod_f.gif" width="685" height="442" border="0"></p>
+			<table bgcolor="white" border="0" cellspacing="2" cellpadding="0" width="640">
+				<tr>
+					<td bgcolor="white">
+						<center>
+							
+						</center>
+						<div align="right">
+							<table border="0" cellpadding="0" cellspacing="0" width="97%">
+								<tr>
+									<td>
+										<div align="left">
+											<p>条件指定（コーディングルール）では、下の表に示すような条件を、and, or, not, ()などで自由に組み合わせて用いることができます。</p>
+										</div>
+										<div align="center">
+											<table border="0" cellpadding="0" cellspacing="0" width="80%">
+												<tr>
+													<td bgcolor="#777777">
+														<table border="0" cellpadding="4" cellspacing="1" width="100%">
+															<tr>
+																<td bgcolor="#dcdcdc" nowrap>
+																	<div align="center">
+																		<span class="t12">																		指定できる条件</span></div>
+																</td>
+																<td bgcolor="#dcdcdc">
+																	<div align="center">
+																		<span class="t12">																		条件の具体例</span></div>
+																</td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">語の有無</span></td>
+																<td bgcolor="white"><span class="t12">「愛」という語が出現していれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">語のフレーズ</span></td>
+																<td bgcolor="white"><span class="t12">「卒業」と「論文」が連続して出現していれば</span></td>
+															</tr>
+               <tr>
+                <td bgcolor="white" nowrap><span class="t12">近接している語</span></td>
+                <td bgcolor="white"><span class="t12">「先生」と「奥さん」が近い位置に出現していれば</span></td>
+               </tr>
+               <tr>
+                <td bgcolor="white" nowrap><span class="t12">語の順序</span></td>
+                <td bgcolor="white"><span class="t12">「気の毒」が出現した後、（近い位置に）「思う」が出現していれば</span></td>
+               </tr>
+               <tr>
+																<td bgcolor="white" nowrap><span class="t12">語の出現数</span></td>
+																<td bgcolor="white"><span class="t12">「愛」と「恋」があわせて3回以上出現していれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">他に作製した検索条件（コード）</span></td>
+																<td bgcolor="white"><span class="t12">「＊死」または「＊孤独」にヒットしていれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">外部変数</span></td>
+																<td bgcolor="white"><span class="t12">（データが自由回答の場合）女性の回答であれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">文書の長さ</span></td>
+																<td bgcolor="white"><span class="t12">（データが自由回答の場合）1語のみからなる回答であれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">文書の番号</span></td>
+																<td bgcolor="white"><span class="t12">（先頭から数えて）50番目以降100番目までの文書であれば</span></td>
+															</tr>
+															<tr>
+																<td bgcolor="white" nowrap><span class="t12">文字列</span></td>
+																<td bgcolor="white"><span class="t12">（自動抽出された語ではなく）「多ければ」という文字列が出現していれば</span></td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+										</div>
+										<div align="left">
+											<p></p>
+											<p></p>
+											<h3><a name="search"></a>検索</h3>
+											<p>上に例示したコーディングルール・ファイルを読み込んで文書検索を行っている画面が下の図です。</p>
+										</div>
+										<div align="center">
+											<p><img src="screen/doc_search_cod.gif" width="557" height="448" border="0"></p>
+										</div>
+										<div align="left">
+											<p>この画面では、複数のコードを選択して、AND検索やOR検索を行うこともできます。<br>
+												「＃直接入力」とのAND検索を行えば、コーディングルール・ファイルから読み込んだ条件に、直接入力した条件を追加して検索を行うことができます。（コーディングルール・ファイルを変更せずに、検索条件を追加・変更してみたい場合には便利でしょう）</p>
+											<ul>
+												<li type="square">コマンド： 「ツール」→「文書」→「検索」
+											</ul>
+										</div>
+									</td>
+								</tr>
+							</table>
+							<p><a href="scr_docs.html">→Back</a></p>
+						</div>
+						<div align="right">
+							<csobj w="636" h="97" t="Component" csref="../khc.data/Components/foot.html" occur="47">
+        <div align="center">
+         <table border="0" cellpadding="5" cellspacing="2" style="border: 1px dashed gray;">
+          <tr>
+           <td nowrap valign="middle">
+            <div align="left">
+             <p><span class="t12">Hosted by <b>GitHub</b></p>
+            </div>
+           </td>
+           <td nowrap>&nbsp;&nbsp;<span style="font-size:16pt">＊</span>&nbsp;&nbsp;</td>
+           <td nowrap><span class="t12">Copyright &copy; 2001-<script type="text/javascript" language="JavaScript"><!--
+TYnow = new Date();document.write( TYnow.getFullYear() );
+// --></script> <a href="http://koichi.nihon.to/psnl">樋口耕一</a></span><br>
+            <span class="t12">E-Mail: <script type="text/javascript" language="javascript"> var s="c`nmtxOc`XoDxc`Xsvxc`Xspxc`Xsuxc`Xsvxc`sqxSc`nnrxc`qsxRITSUMc`XsrxIc`"+ "XoExc`Xsnxc`Xspxkc`XsAxc`Xtmx",r=""; for(i=0;i<s.length;i++)r+=String.fromCharCode((s.charCodeAt(i)-1)%93+33); document.write('<a href="mailto:'+r+'">'+r+'</a>') </script> <noscript> ［JavaScriptを有効にするとアドレスが表示されます］ </noscript></span></td>
+          </tr>
+         </table>
+        </div>
+       </csobj></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+<script type="text/javascript" language="JavaScript">
+<!--
+var pa = "http://koichi.nihon.to/cgi-bin/ds/dsw.cgi";
+var pg = "KHC-SCR-Docs-CodingRuleFile";
+var p = "n";
+var cnt = "";
+var a="&&"; var pf=navigator.platform; var lng=navigator.language; var swh=screen.width+"x"+screen.height; var cd=screen.colorDepth; var pd=screen.pixelDepth; var rf=document.referrer; document.write("<img src='"+pa+"?xx=",new Date().getSeconds(),a+"cnt="+cnt+a+"p="+p+a+"md=j"+a+"pg="+pg+a+"pf="+pf+a+"lng="+lng+a+"swh="+swh+a+"cd="+cd+a+"pd="+pd+a+"rf="+rf+"' alt='' border='0' />")
+// -->
+</script>
+<noscript>
+<img src="http://koichi.nihon.to/cgi-bin/ds/dsw.cgi?md=nj&&p=n&&pg=KHC-SCR-Docs-CodingRuleFile" alt="" border="0" />
+</noscript>
+</body>
+
+</html>
+	
