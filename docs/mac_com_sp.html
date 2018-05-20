@@ -281,8 +281,14 @@ document.write(linkurl.link(links.arguments[2] + links.arguments[0] + links.argu
                      &nbsp;at perlapp line 827.<br>
                      BEGIN failed--compilation aborted at hoge_exe.pl line 105, &lt;DATA&gt; line 855.</font></p>
                  </blockquote>
-                 <p>この場合には、<a href="mac_com.html#pre">事前の準備</a>について今一度ご確認の上、以下の手順をお試しください。                 </p>
+
+		<p><strong>■ XQuartzのインストールとMacの再起動</strong></p>
+
+		<p>ほとんどの場合、このエラーの原因は<a href="https://xquartz.macosforge.org/landing/">XQuartz</a>のインストールを行っていないか、インストール後にMacの再起動をおこなっていないことです。<a href="https://xquartz.macosforge.org/landing/">XQuartz</a>をダウンロードしてインストールし、Macを再起動してください。その後「アプリケーション」「ユーティリティ」「XQuartz」をダブルクリックして、XQuartzが正常に起動することを確認してください。「Xterm」というWindowが開けばXQuartzは正常に動作しています。この確認を行ってから「kh_coder」をダブルクリックしてください。</p>
+
                  <p><strong>■ 「x_mac64」ファイルの置き換え</strong></p>
+                 <p>XQuartzの正常動作を確認してもこのエラーが消えない場合には、以下の手順をお試しください。ただし、以下の手順はKH Coder 2でのみ有効です。もしKH Coder 3でこの状態になった場合には作者までご連絡ください。</p>
+
                  <ol>
                    <li>「<a href="http://koichi.nihon.to/psnl/tmp/x_mac64_1.zip" target="_blank">x_mac64_1.zip</a>」をダウンロードして下さい。</li>
                    <li>ダウンロードしたファイルをダブルクリックして展開すると、「x_mac64」というファイルが出てきます。※Safariでダウンロードすると、自動的に展開されていることがあります。</li>
