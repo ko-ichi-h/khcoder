@@ -10,7 +10,7 @@ use HTTP::Request::Common;
 binmode STDOUT, ":utf8";
 
 my $debug = 0;
-my $target = 'http://khc.sourceforge.net/bib.tsv';
+my $target = 'http://khcoder.net/bib.tsv';
 my $localf = 'bib_tmp/bib.tsv';
 my $pass = '123457';
 
@@ -88,7 +88,8 @@ if ( $q->param('Excecute') eq 'search' ){
 		chomp $i;
 		chomp $i;
 		next unless $i =~ /^http/;
-		my $t = &get_info($i);
+		my ($t, $uri) = &get_info($i);
+		$i = $uri if $uri;
 		push @new_data, [$t, $i];
 	}
 
@@ -107,6 +108,7 @@ if ( $q->param('Excecute') eq 'search' ){
 			$names =~ s/・//g;
 		}
 		my $chk = &check_dup($i->[0]);
+		$i->[0] =~ s/\x0D|\x0A//g;
 		print
 			$q->h3("#".$n),
 			$q->textarea(
@@ -400,7 +402,7 @@ sub print_script{
 			&! ( yomi == yomi_now )
 		){
 			//alert(key);
-			var nkey = "a-z";
+			var nkey = "A-Z";
 			
 			if ( key.match( "[あ-お]" ) ){
 				nkey = "あ";
@@ -451,6 +453,7 @@ sub print_script{
 sub get_info{
 	my $i = shift;
 	my $output = '';
+	my $uri_tmp;
 
 	print "url2: $i<br>\n" if $debug;;
 
@@ -462,16 +465,17 @@ sub get_info{
 	if ( $i =~ /naid\/(\d+)/ ) {                        # CiNiiの場合
 		#$output .= "cinii\n";
 		my $r = $ua->get("http://ci.nii.ac.jp/naid/$1.bib");
-		$output .= &format( Encode::decode('UTF-8', $r->content) );
+		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
 	}
 	elsif ( $i =~ /ncid\/BB(\d+)/ ) {                   # CiNii Booksの場合
 		#$output .= "cinii books\n" if $debug;;
 		my $r = $ua->get("http://ci.nii.ac.jp/ncid/BB$1.bib");
 		#$output .= Encode::decode('UTF-8', $r->content)."\n" if $debug;
-		$output .= &format( Encode::decode('UTF-8', $r->content) );
+		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
 	}
 	elsif ($i =~ /jstage/ ) {                           # JSTAGEの場合
 		$i =~ s/\/_pdf\/-char\/ja/\/_article\/-char\/ja/;
+		$uri_tmp = $i;
 	
 		my $r = $ua->get($i);
 		my $t = Encode::decode('UTF-8', $r->content);
@@ -502,19 +506,29 @@ sub get_info{
 		print "url3: $url<br>\n" if $debug;
 		
 		my $r1 = $ua->get($url);
-		$output .= &format( Encode::decode('UTF-8', $r1->content) );
+		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r1->content) );
+	}
+	elsif ($i =~ /ipsj\.ixsq\.nii\.ac\.jp/ ) {          # 情報処理学会・電子図書館
+		my $r = $ua->get($i);
+		my $t = Encode::decode('UTF-8', $r->content);
+		print "<p>情報処理学会・電子図書館</p>\n"  if $debug;
+		
+		if ($t =~ /href="(.+?oaipmh.+?)"/i){
+			my $url = $1;
+			$url =~ s/&amp;/&/g;
+			my $r1 = $ua->get($url);
+			($output, $uri_tmp) = &format_oaipmh( Encode::decode('UTF-8', $r1->content) );
+		}
 	} else {                                            # その他リポジトリ
 		my $r = $ua->get($i);
 		my $t = Encode::decode('UTF-8', $r->content);
-		
 		if ($t =~ /href="(.+?bibtex.+?)"/i){            # bibtex
-			#$output .= "other: bibtex\n"  if $debug;
+			print "<p>other: bibtex</p>\n"  if $debug;
 			my $url = $1;
-			#$output .= "biburl: $url\n"  if $debug;
 			$url =~ s/&amp;/&/g;
 			
 			my $r1 = $ua->get($url);
-			$output .= &format( Encode::decode('UTF-8', $r1->content) );
+			($output, $uri_tmp) = &format( Encode::decode('UTF-8', $r1->content) );
 		}
 		elsif ( $t =~ /dspace/i ){                      # dspace
 			#$output .= "other: dspace\n"  if $debug;
@@ -526,16 +540,133 @@ sub get_info{
 			$biburl = $biburl.'?mode=full';
 			#$output .= "biburl: $biburl\n" if $debug;
 			my $r1 = $ua->get($biburl);
-			$output .= &format_dspace(
+			($output, $uri_tmp) =  &format_dspace(
 				Encode::decode('UTF-8', $r1->content)
 			);
 			
 			#$output .= "\n\n\n".Encode::decode('UTF-8', $r1->content)
 			#	if $debug;
 		}
+		
+		if ($t =~ />Permalink : (http.+?)</){
+			$uri_tmp = $1;
+		}
+		
 	}
 	#print "output: $output\n";
-	return $output;
+	return ($output, $uri_tmp);
+}
+
+sub format_oaipmh{
+	my $t = shift;
+	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	$t =~ tr/()/（）/;
+	$t =~ s/&#x20;/ /g;
+	$t =~ s/&amp;/&/g;
+	$t =~ s/(<\/.+?>)/$1\n/g;
+	
+	
+	print "<p>$t</p>" if $debug;
+	
+	my $year     ;
+	my $author   ;
+	my $title    ;
+	my $journal  = '情報処理学会研究報告';
+	my $vol      ;
+	my $num      ;
+	my $pages    ;
+	my $doi      ;
+	my $publisher;
+	my $series   ;
+	
+	my $spage;
+	my $epage;
+	
+	my $uri;
+	
+	foreach my $i (split /\n/, $t){
+		if ( $i =~ /<title.*?>(.+?)<\/title>/ ){                # title
+			$title = $1;
+		}
+		if ( $i =~ /<date>(.+)<\/date>/ ){                 # year
+			$year = $1;
+		}
+		if ( $i =~ /<creator.*?>(.+?)<\/creator>/ ){        # author
+			$author .= '・' if length($author);
+			$author .= $1;
+		}
+		if ( $i =~ /<volume>(.+)<\/volume>/ ){                     # volume
+			$vol = $1;
+		}
+		if ( $i =~ /<issue>(.+)<\/issue>/ ){                     # number
+			$num = $1;
+		}
+		if ( $i =~ /<spage>(.+)<\/spage>/ ){                       # spage
+			$spage = $1;
+		}
+		if ( $i =~ /<epage>(.+)<\/epage>/ ){                       # epage
+			$epage = $1;
+		}
+		print "<p><xmp>$i</xmp></p>" if $debug;
+		if ( $i =~ /<uri>(.+?)<\/uri>/i ){                       # uri
+			print "<p>hit!</p>\n" if $debug;
+			$uri = $1;
+		}
+	}
+
+	$author =~ s/,//g;
+	$author =~ s/ //g;
+
+	if ($title =~ /(.+) : (.+)/) {
+		$title = $1.' ―'.$2.'―';
+	}
+	if ($title =~ /(.+)、(.+)/) {
+		$title = $1.' ―'.$2.'―';
+	}
+	if ($title =~ /<b>(.+)<\/b>$/) {
+		$title = $1;
+	}
+	if ($title =~ /(.+)\s$/) {
+		$title = $1;
+	}
+	
+	if ( $title =~ /(.+)\－(.+)\－$/ ){
+		$title = $1.'―'.$2.'―';
+	}
+	if ( $title =~ /(.+)\-(.+)\-$/ ){
+		$title = $1.'―'.$2.'―';
+	}
+	$title =~ s/(\S)―(.+)/$1 ―$2/;
+	$title =~ tr/「」/『』/;
+
+	if (length($epage) && length($spage) ){
+		$pages = "$spage-$epage";
+	}
+	elsif (length($spage)){
+		$pages = $spage;
+	}
+	$year = substr($year, 0, 4);
+
+	my $out;
+	$out = "$author $year 「$title」 『$journal』 ";
+	if ( length($vol) ) {
+		$out .= $vol;
+	}
+	if ( length($num) ) {
+		if ( length($vol) ){
+			$out .= "($num)";
+		} else {
+			$out .= "$num";
+		}
+	}
+	if ($pages) {
+		$out .= ": $pages";
+	}
+	$out .= "\n";
+
+	print "<p>uri1: $uri</p>" if $debug;
+
+	return ($out, $uri);
 }
 
 sub format_dspace{
@@ -557,6 +688,7 @@ sub format_dspace{
 	
 	my $spage;
 	my $epage;
+
 	
 	foreach my $i (split /\n/, $t){
 		
@@ -674,7 +806,6 @@ sub format{
 	my $publisher;
 	my $series   ;
 	
-	
 	if ($t =~ /year\s*=\s*"(\d+)"[,\n]/ || $t =~ /year=\{(\d+)\},/) {
 		$year = $1;
 	}
@@ -772,9 +903,6 @@ sub format{
 		if ($pages) {
 			$out .= ": $pages";
 		}
-		if ($doi) {
-			$out .= ", doi: $doi";
-		}
 	} else {
 		$title .= '（'.$series.'）';
 		$out .=
@@ -783,6 +911,10 @@ sub format{
 		;
 	}
 
+	if ($doi) {
+		$doi = 'https://doi.org/'.$doi;
+	}
+
 	#$out .= "\n";
-	return $out;
+	return ($out, $doi);
 }
