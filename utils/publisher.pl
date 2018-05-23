@@ -111,11 +111,7 @@ use File::Path 'rmtree';
 use Encode;
 
 sub upload{
-	# Create a tag on Github
-	system("git tag -a $V_full -m \"$V\"");
-	system("git push origin $V_full");
-	
-	# Create a release on Github
+	# getting ready
 	open my $fh, '<', $github_token or die;
 	my $token = <$fh>;
 	close $fh;
@@ -127,18 +123,24 @@ sub upload{
 		login => 'ko-ichi-h',
 		access_token => $token
 	);
-	
 	my $repos = $gh->repos;
 	$repos->set_default_user_repo('ko-ichi-h', 'khc');
-	
-	my $release_new = $repos->create_release({
-		"tag_name"         => $V_full,
-		"target_commitish" => "master",
-		"name"             => $V_full,
-		"body"             => $V,
-		"draft"            => \0,
-	});
-	
+
+	if (1) {
+		# Create a tag on Github
+		system("git tag -a $V_full -m \"$V\"");
+		system("git push origin $V_full");
+		
+		# Create a release on Github
+		my $release_new = $repos->create_release({
+			"tag_name"         => $V_full,
+			"target_commitish" => "master",
+			"name"             => $V_full,
+			"body"             => $V,
+			"draft"            => \0,
+		});
+	}
+
 	# Upload Windows binary to the release
 	my $release;
 	my @releases = $repos->releases();
@@ -183,6 +185,8 @@ sub upload{
 	#system("github-release --verbose upload --user ko-ichi-h --repo khc --tag $V_full --name \"khcoder-$V.exe\" --file khcoder-$V.exe ");
 	#
 	# This way is much faster but I got the 504 error from the above line.
+
+
 
 	copy('../pub/web/en_index.html', '../../core_web/en/index.html');
 	copy('../pub/web/dl3.html',      '../../core_web/dl3.html');
