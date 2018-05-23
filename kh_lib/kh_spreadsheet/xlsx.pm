@@ -27,7 +27,7 @@ sub columns{
 	$p->{CellHandler} = \&cell_handler_c;
 	$p->parse(
 		$self->{file},
-		Spreadsheet::ParseExcel::FmtJapan->new
+		#Spreadsheet::ParseExcel::FmtJapan->new
 	);
 
 	sub cell_handler_c{
@@ -87,12 +87,18 @@ sub save_files{
 		#quote_char => undef
 	});
 
+	my $fmt;
+	if ($args{lang} eq 'jp') {
+		use Spreadsheet::ParseExcel::FmtJapan;
+		$fmt = Spreadsheet::ParseExcel::FmtJapan->new;
+	}
+
 	my $p = Spreadsheet::ParseXLSX->new;
 	$p->{NotSetCell} = 1;
 	$p->{CellHandler} = \&cell_handler_s;
 	$p->parse(
 		$self->{file},
-		Spreadsheet::ParseExcel::FmtJapan->new
+		$fmt,
 	);
 	die("failed to open *.xlsx file!\n") unless $p;
 

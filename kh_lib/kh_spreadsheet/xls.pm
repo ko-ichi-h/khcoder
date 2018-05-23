@@ -81,13 +81,18 @@ sub save_files{
 		#quote_char => undef
 	});
 
-	use Spreadsheet::ParseExcel::FmtJapan;
+	my $fmt;
+	if ($args{lang} eq 'jp') {
+		use Spreadsheet::ParseExcel::FmtJapan;
+		$fmt = Spreadsheet::ParseExcel::FmtJapan->new;
+	}
+	
 	my $p = Spreadsheet::ParseExcel->new(
 		CellHandler => \&cell_handler_s,
 		NotSetCell  => 1
 	)->parse(
 		$self->{file},
-		Spreadsheet::ParseExcel::FmtJapan->new
+		$fmt
 	);
 	die("failed to open *.xls file!\n") unless $p;
 
