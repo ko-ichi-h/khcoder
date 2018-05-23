@@ -193,11 +193,7 @@ sub upload{
 	system("git push origin master");
 
 	# 移動
-	chdir('..');
-	chdir('..');
-	chdir('perl');
-	chdir('core');
-	chdir('utils');
+	chdir('../core_uni/utils');
 }
 
 
