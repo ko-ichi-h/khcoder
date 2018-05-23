@@ -184,26 +184,20 @@ sub upload{
 	#
 	# This way is much faster but I got the 504 error from the above line.
 
+	copy('../pub/web/en_index.html', '../../core_web/en/index.html');
+	copy('../pub/web/dl3.html',      '../../core_web/dl3.html');
+	copy('../pub/web/index.html',    '../../core_web/index.html');
 
+	chdir('../../core_web');
+	system("git commit -a -m \"release $V_full\"");
+	system("git push origin master");
 
-	# Connect to SourceForge
-	my $sftp = Net::SFTP::Foreign->new(
-		host     => 'web.sourceforge.net',
-		user     => 'ko-ichi,khc',
-		key_path => $key_file,
-	);
-
-	# Upload web pages to SourceForge
-	$sftp->setcwd("/home/project-web/khc/htdocs");
-	foreach my $i (
-		"index.html",
-		"dl3.html",
-	){
-		$sftp->put ("../pub/web/$i", $i) or die;
-	}
-	$sftp->setcwd("en");
-	$sftp->put ("../pub/web/en_index.html", "index.html") or die;
-	$sftp->disconnect;
+	# 移動
+	chdir('..');
+	chdir('..');
+	chdir('perl');
+	chdir('core');
+	chdir('utils');
 }
 
 
@@ -224,20 +218,20 @@ sub web{
 	my $t = '';
 	
 	# index.html
-	my $r0 = $ua->get('http://khc.sourceforge.net/index.html') or die;
+	my $r0 = $ua->get('http://khcoder.net/index.html') or die;
 	$t = '';
 	$r0->is_success or die;
-	$t = Encode::decode('cp932', $r0->content);
+	$t = Encode::decode('UTF-8', $r0->content);
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
 	
 	$t =~ s/KH Coder 3（最新アルファ版）ダウンロード<\/a><font size=\-1 color="#3cb371">（.+）<\/font>/KH Coder 3（最新アルファ版）ダウンロード<\/a><font size=\-1 color="#3cb371">（$V_full - $date）<\/font>/;
 	
-	open(my $fh, ">:encoding(cp932)", "../pub/web/index.html") or die("$!");
+	open(my $fh, ">:encoding(UTF-8)", "../pub/web/index.html") or die("$!");
 	print $fh $t;
 	close ($fh);
 	
 	# en/index.html
-	my $r2 = $ua->get('http://khc.sourceforge.net/en/index.html') or die;
+	my $r2 = $ua->get('http://khcoder.net/en/index.html') or die;
 	my $t = '';
 	$r2->is_success or die;
 	$t = $r2->content;
@@ -252,7 +246,7 @@ sub web{
 	close ($fh);
 	
 	# dl3.html
-	my $r1 = $ua->get('http://khc.sourceforge.net/dl3.html') or die;
+	my $r1 = $ua->get('http://khcoder.net/dl3.html') or die;
 	$t = '';
 	$r1->is_success or die;
 	$t = $r1->content;
