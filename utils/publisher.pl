@@ -21,22 +21,16 @@ my $V_full = "3.Alpha.13e";
 my $pdf = 0;
 
 # 環境設定
-my $home_dir;
-my $key_file;
 my $github_token;
 
-if ( -e "f:/home/koichi/study/.ssh/id_dsa" ) { # Home
-	$key_file = 'f:/home/koichi/study/.ssh/id_dsa';
-	$home_dir = 'f:/home/koichi/study/';
+if ( -e "f:/home/Koichi/Google Drive/KHC/SSH-Key-Github/token" ) { # Home
 	$github_token = "f:/home/Koichi/Google Drive/KHC/SSH-Key-Github/token";
 }
-elsif (-e "C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa") { # Vaio
-	$key_file = 'C:/Users/K/GoogleDrive/KHC/.ssh/id_dsa';
-	$home_dir = 'C:/Users/K/GoogleDrive/KHC/';
+elsif (-e "hoge") { # Vaio
+	$github_token = "hoge";
 } else {
-	die("No ssh key!");
+	die("No GitHub Token!");
 }
-system("set HOME=$home_dir");
 
 # 更新するファイルの指定
 my @cp_f = (
@@ -449,20 +443,8 @@ sub win_pkg{
 }
 
 sub source_tgz{
-	#---------------------------------#
-	#   CVSから最新ソースを取り出し   #
-
-
-	#my $cvs_cmd = 'cvs -d ":ext;command=\'';
-	#if (-d $home_dir){
-	#	$cvs_cmd .= "set HOME=f:/home/koichi& ";
-	#}
-	#$cvs_cmd .= "ssh -l ko-ichi ";
-	#if (-d $home_dir){
-	#	$cvs_cmd .= "-i $key_file ";
-	#}
-	#$cvs_cmd .= "khc.cvs.sourceforge.net':ko-ichi\@khc.cvs.sourceforge.net:/cvsroot/khc\" ";
-	#$cvs_cmd .= "export -r unicode -- core";
+	#--------------------------#
+	#   最新ソースを取り出し   #
 
 	rmtree('core');
 	rmtree('kh_coder');
