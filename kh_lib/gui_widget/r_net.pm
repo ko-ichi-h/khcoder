@@ -312,14 +312,14 @@ sub _new{
 	# Coloring by Correlation
 	if ($self->{r_cmd}) {
 		# "configure" button screen
-		if ( $self->{check_cor_var} ){
-			$lf->Label(
+		#if ( $self->{check_cor_var} ){
+			$self->{cor_var_lab} = $lf->Label(
 				-text => kh_msg->get('cor_var_colors')
 			)->pack(-anchor => 'w');
 			
 			my $cvf0 = $lf->Frame()->pack(-anchor => 'w');
 			$cvf0->Label(-text => '  ')->pack(-side => 'left');
-			$cvf0->Checkbutton(
+			$self->{cor_var_c1} = $cvf0->Checkbutton(
 					-text     => kh_msg->gget('min'),
 					-variable => \$self->{check_cor_var_min},
 					-command => sub{$self->refresh;},
@@ -340,7 +340,7 @@ sub _new{
 			gui_window->config_entry_focusin($self->{entry_cor_var_min});
 			
 			$cvf0->Label(-text => '  ')->pack(-side => 'left');
-			$cvf0->Checkbutton(
+			$self->{cor_var_c2} = $cvf0->Checkbutton(
 					-text     => kh_msg->gget('max'),
 					-variable => \$self->{check_cor_var_max},
 					-command => sub{$self->refresh;},
@@ -362,12 +362,12 @@ sub _new{
 			
 			my $cvf1 = $lf->Frame()->pack(-anchor => 'w');
 			$cvf1->Label(-text => '  ')->pack(-side => 'left');
-			$cvf1->Checkbutton(
+			$self->{cor_var_cd} = $cvf1->Checkbutton(
 					-text     => kh_msg->get('cor_var_darker'),
 					-variable => \$self->{check_cor_var_darker},
 					-anchor => 'w',
 			)->pack(-anchor => 'w', -side => 'left');
-		}
+		#}
 	} else {
 		# initial option screen
 		$self->{check_cor_var} = 0
@@ -483,6 +483,17 @@ sub refresh{
 			} else {
 				push @dis, $self->{entry_cor_var_max};
 			}
+			push @nor, $self->{cor_var_lab};
+			push @nor, $self->{cor_var_c1};
+			push @nor, $self->{cor_var_c2};
+			push @nor, $self->{cor_var_cd};
+		} else {
+			push @dis, $self->{entry_cor_var_min};
+			push @dis, $self->{entry_cor_var_max};
+			push @dis, $self->{cor_var_lab};
+			push @dis, $self->{cor_var_c1};
+			push @dis, $self->{cor_var_c2};
+			push @dis, $self->{cor_var_cd};
 		}
 	}
 
