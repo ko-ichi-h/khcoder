@@ -78,8 +78,8 @@ sub _new{
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('http://khc.sourceforge.net'),
-		url    => 'http://khc.sourceforge.net',
+		label  => $self->gui_jchar('http://khcoder.net'),
+		url    => 'http://khcoder.net',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
@@ -183,7 +183,7 @@ sub _new{
 	}
 
 	$fra_r->Label(
-		-text => $self->gui_jchar($copy_mark.'2001-2017'),
+		-text => $self->gui_jchar($copy_mark.'2001-2018'),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 
