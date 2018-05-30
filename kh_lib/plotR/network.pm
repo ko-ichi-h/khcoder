@@ -905,7 +905,8 @@ sub r_plot_cmd_p4{
 	my $t = 
 '
 if ( exists("saving_emf") || exists("saving_eps") ){
-	use_alpha <- 0 
+	use_alpha <- 0           # need something before \n (gui_widget::r_net)
+	use_weight_as_width <- 0 # need something before \n (gui_widget::r_net)
 }
 
 target_ids <-  NULL
