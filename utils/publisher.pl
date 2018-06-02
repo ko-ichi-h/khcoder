@@ -118,7 +118,7 @@ sub upload{
 		access_token => $token
 	);
 	my $repos = $gh->repos;
-	$repos->set_default_user_repo('ko-ichi-h', 'khc');
+	$repos->set_default_user_repo('ko-ichi-h', 'khcoder');
 
 	if (1) {
 		# Create a tag on Github
