@@ -259,8 +259,8 @@ sub escape_unicode{
 	
 	if ($::config_obj->os eq 'win32') {
 		# Delete characters outside of the current locale (Win32)
-		if ($::project_obj) {
-		#if (0) {
+		# if ($::project_obj) {
+		if (0) {
 			my %loc = (
 				'jp' => 'cp932',
 				'en' => 'cp1252',
