@@ -29,17 +29,12 @@ sub _save_csv{
 	$::config_obj->R->send('dev.off()');
 	
 	# run save command
-	my $first_out    = $::config_obj->cwd.'/config/R-bridge/temp0.csv';
-	my $first_out_os = $::config_obj->os_path($first_out);
-	if (-e $first_out_os){
-		unlink $first_out_os or die("Could not delete file: $first_out_os");
-	}
-	
 	my $r_command = &r_command_ready;
-	$r_command .= "write.csv(out, file=\"$first_out\", fileEncoding = \"UTF-8\")";
+	$r_command .= "write.csv(out, file=\"$path\", fileEncoding = \"UTF-8\")";
 	$::config_obj->R->send($r_command);
 	
 	# add BOM
+	my $os_path = $::config_obj->os_path($path);
 	my $temp_out = $::config_obj->cwd.'/config/R-bridge/temp.csv';
 	$temp_out = $::config_obj->os_path($temp_out);
 	if (-e $temp_out){
@@ -53,10 +48,10 @@ sub _save_csv{
 			thefile => $temp_out,
 		)
 	;
-	open(my $fh_in, "<:encoding(UTF-8)", $first_out_os) or
+	open(my $fh_in, "<:encoding(UTF-8)", $os_path) or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => $first_out_os,
+			thefile => $os_path,
 		)
 	;
 	while (<$fh_in>) {
@@ -65,14 +60,12 @@ sub _save_csv{
 	close $fh_in;
 	close $fh_out;
 	
-	unlink ($first_out_os) or
+	unlink ($os_path) or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => $first_out_os,
+			thefile => $os_path,
 		)
 	;
-	
-	my $os_path = $::config_obj->os_path($path);
 	rename($temp_out, $os_path) or
 		gui_errormsg->open(
 			type    => 'file',
