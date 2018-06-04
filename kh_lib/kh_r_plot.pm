@@ -38,6 +38,7 @@ sub new{
 	# コマンドから日本語コメントを削除
 	if (
 		   ($::config_obj->os eq 'win32')
+		&& 0
 		#&! ($::project_obj->morpho_analyzer_lang eq 'jp')
 	){
 		$self->{command_f} =~ s/#.*?\p{Hiragana}.*?\n/\n/go;
@@ -55,6 +56,10 @@ sub new{
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_s} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+
+	$self->{command_f} = $self->escape_unicode($self->{command_f});
+	$self->{command_a} = $self->escape_unicode($self->{command_a});
+	$self->{command_s} = $self->escape_unicode($self->{command_s});
 
 	if ( length($self->{command_f}) ) {
 		$self->{command_f} =
@@ -84,7 +89,7 @@ sub new{
 		$command = $self->{command_f};
 	}
 	
-	$command = $self->escape_unicode($command);
+	#$command = $self->escape_unicode($command);
 	
 	# Debug用出力 1
 	if ($::config_obj->r_plot_debug){
@@ -616,9 +621,9 @@ sub _save_emf{
 	);
 	$self->set_par;
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
+		$::config_obj->R->send( $self->{command_s} );
 	} else {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
+		$::config_obj->R->send( $self->{command_f} );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -670,9 +675,9 @@ sub _save_pdf{
 
 	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
+		$::config_obj->R->send( $self->{command_s} );
 	} else {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
+		$::config_obj->R->send( $self->{command_f} );
 	}
 	$::config_obj->R->send('dev.off()');
 
@@ -739,9 +744,9 @@ sub _save_eps{
 
 	$self->set_par('ps_font');
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
+		$::config_obj->R->send( $self->{command_s} );
 	} else {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
+		$::config_obj->R->send( $self->{command_f} );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -808,9 +813,9 @@ sub _save_png{
 
 	$self->set_par;
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
+		$::config_obj->R->send( $self->{command_s} );
 	} else {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
+		$::config_obj->R->send( $self->{command_f} );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -884,9 +889,9 @@ sub _save_svg{
 	}
 	
 	if ( length($self->{command_s}) ) {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_s} ) );
+		$::config_obj->R->send( $self->{command_s} );
 	} else {
-		$::config_obj->R->send( $self->escape_unicode( $self->{command_f} ) );
+		$::config_obj->R->send( $self->{command_f} );
 	}
 	$::config_obj->R->send('dev.off()');
 	$::config_obj->R->unlock;
@@ -982,7 +987,7 @@ sub _save_r{
 		$t =~ s/source\(\"(.+)\"\)//;
 	}
 	
-	$t = $self->escape_unicode($t);
+	#$t = $self->escape_unicode($t);
 	print OUTF $t,"\n";
 	close (OUTF);
 	
