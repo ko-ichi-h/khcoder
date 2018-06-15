@@ -78,7 +78,7 @@ sub text_henkan{
 		print $DATAFILE encode('utf8',$$r_command_add_ref);
 		close($DATAFILE);
 		
-		system(&screen_code::plugin_path::assistant_path_system, "3");
+		system(&screen_code::plugin_path::assistant_path, "3");
 		
 		open($DATAFILE, "<:utf8", $file_rcom);
 		{
@@ -100,7 +100,7 @@ sub calc_plugin_loop{
 	my $isCode = shift;
 	
 	#プラグインライセンス確認
-	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
+	return 0 unless(system(&screen_code::plugin_path::assistant_path, 0));
 	
 	reset_plot_hash($self);
 	$self->{config_param} = undef;
@@ -237,7 +237,7 @@ sub calc_plugin{
 		save_option($self,'word');
 		save_config($self);
 		$! = undef;
-		$rtn = system(&screen_code::plugin_path::assistant_path_system, "4");
+		$rtn = system(&screen_code::plugin_path::assistant_path, "4");
 		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		if (read_config($self)) {
 			last;
@@ -359,7 +359,7 @@ sub calc_code_plugin{
 		save_option($self,'cod');
 		save_config($self);
 		$! = undef;
-		$rtn = system(&screen_code::plugin_path::assistant_path_system, "4");
+		$rtn = system(&screen_code::plugin_path::assistant_path, "4");
 		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		read_config($self);
 		if (!$rtn) {

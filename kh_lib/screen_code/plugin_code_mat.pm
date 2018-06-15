@@ -152,7 +152,7 @@ sub text_henkan{
 		print $DATAFILE encode('utf8',$$r_com_ref);
 		close($DATAFILE);
 		
-		system(&screen_code::plugin_path::assistant_path_system, "5");
+		system(&screen_code::plugin_path::assistant_path, "5");
 		
 		open($DATAFILE, "<:utf8", $file_rcom);
 		{

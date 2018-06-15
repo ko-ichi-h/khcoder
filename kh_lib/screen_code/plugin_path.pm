@@ -1,7 +1,6 @@
 package screen_code::plugin_path;
 use strict;
 
-use encoding "cp932";
 use File::Path;
 use File::Spec;
 use Encode qw/encode decode/;
@@ -10,22 +9,14 @@ my $rde_name = File::Spec->catfile('screen', 'MonkinCleanser', 'MonkinCleanser.e
 my $assistant_name = File::Spec->catfile('screen', 'MonkinReport', 'MonkinReport.exe');
 
 sub rde_path{
-	return $rde_name;
-}
-
-sub rde_path_system{
 	return encoding($rde_name);
 }
 
 sub assistant_path{
-	return $assistant_name;
-}
-
-sub assistant_path_system{
 	return encoding($assistant_name);
 }
 
-#SystemŠÖ”‚É“n‚·Žž‚ÉOS‚É‚æ‚Á‚Ä•¶ŽšƒR[ƒh‚ð•Ï‚¦‚é•K—v‚ª‚ ‚é
+#Systemé–¢æ•°ã«æ¸¡ã™æ™‚ã«OSã«ã‚ˆã£ã¦æ–‡å­—ã‚³ãƒ¼ãƒ‰ã‚’å¤‰ãˆã‚‹å¿…è¦ãŒã‚ã‚‹
 sub encoding{
 	my $plugin_name = shift;
 	my $encode;
@@ -37,7 +28,7 @@ sub encoding{
 	return encode($encode, $plugin_name);
 }
 
-#ƒIƒvƒVƒ‡ƒ“ƒtƒ@ƒCƒ‹‚ðo—Í‚·‚éƒtƒHƒ‹ƒ_‚ÌƒpƒX=ƒvƒ‰ƒOƒCƒ“‚ÌƒpƒX
+#ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‡ºåŠ›ã™ã‚‹ãƒ•ã‚©ãƒ«ãƒ€ã®ãƒ‘ã‚¹=ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ãƒ‘ã‚¹
 sub assistant_option_folder{
 	return $::config_obj->cwd."/screen/temp/";
 }

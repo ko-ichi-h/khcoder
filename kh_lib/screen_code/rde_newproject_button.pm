@@ -3,7 +3,7 @@ use strict;
 
 use screen_code::plugin_path;
 
-use encoding "cp932";
+#use encoding "cp932";
 use gui_window::project_new;
 use File::Path;
 use Encode qw/encode decode/;
@@ -57,7 +57,7 @@ sub add_button{
 						$::main_gui->{win_obj}->iconify;
 						my $system_err = 0;
 						$! = undef;
-						$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+						$plugin_rtn = system(&screen_code::plugin_path::rde_path, "$file_option");
 						$system_err = 1 if ($!) ;
 						
 						if ($plugin_rtn != 0 && $system_err == 0) {
@@ -85,7 +85,7 @@ sub add_button{
 						$::main_gui->{win_obj}->iconify;
 						my $system_err = 0;
 						$! = undef;
-						$plugin_rtn = system(&screen_code::plugin_path::rde_path_system, "$file_option");
+						$plugin_rtn = system(&screen_code::plugin_path::rde_path, "$file_option");
 						$system_err = 1 if ($!) ;
 						
 						if ($plugin_rtn != 0 && $system_err == 0) {

@@ -344,7 +344,7 @@ sub calc_plugin_loop{
 	my $self = shift;
 	
 	#プラグインライセンス確認
-	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
+	return 0 unless(system(&screen_code::plugin_path::assistant_path, 0));
 	
 	$self->{config_param} = undef;
 	while(1) {
@@ -551,7 +551,7 @@ sub plot_plugin{
 		save_config($self);
 		save_sort_file($self);
 		$! = undef;
-		$rtn = system(&screen_code::plugin_path::assistant_path_system, "6");
+		$rtn = system(&screen_code::plugin_path::assistant_path, "6");
 		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		if (read_config($self)) {
 			last;
