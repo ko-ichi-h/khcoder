@@ -163,7 +163,7 @@ sub text_henkan{
 		print $DATAFILE encode('utf8',$$rcom_color_ref);
 		close($DATAFILE);
 		
-		system(&screen_code::plugin_path::assistant_path_system, "1", "$radius", "$angle");
+		system(&screen_code::plugin_path::assistant_path, "1", "$radius", "$angle");
 		
 		open($DATAFILE, "<:utf8", $file_rcom_gray);
 		{
@@ -192,7 +192,7 @@ sub calc_plugin_loop{
 	my $isCode = shift;
 	
 	#プラグインライセンス確認
-	return 0 unless(system(&screen_code::plugin_path::assistant_path_system, 0));
+	return 0 unless(system(&screen_code::plugin_path::assistant_path, 0));
 	
 	$self->{config_param} = undef;
 	while(1) {
@@ -418,7 +418,7 @@ sub calc_plugin{
 		save_option($self,'word');
 		save_config($self);
 		$! = undef;
-		$rtn = system(&screen_code::plugin_path::assistant_path_system, "2");
+		$rtn = system(&screen_code::plugin_path::assistant_path, "2");
 		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		if (read_config($self)) {
 			last;
@@ -719,7 +719,7 @@ sub calc_code_plugin{
 		save_option($self,'cod');
 		save_config($self);
 		$! = undef;
-		$rtn = system(&screen_code::plugin_path::assistant_path_system, "2");
+		$rtn = system(&screen_code::plugin_path::assistant_path, "2");
 		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		if (read_config($self)) {
 			last;
