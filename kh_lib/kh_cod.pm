@@ -47,14 +47,7 @@ sub read_file{
 	# Convert RTF to TXT (macOS / darwin only)
 	if ($^O =~ /darwin/i){
 		if ($file =~ /(.+)\.rtf$/i){
-			# name of the new text file
-			my $n = 0;
-			while (-e $1."_txt$n.txt"){
-				++$n;
-			}
 			my $file_text = $::project_obj->file_TempTXT;
-			
-			# convert
 			system("textutil $file -convert txt -output $file_text");
 			$file = $file_text;
 			print "### The coding rule file was NOT in TEXT format. So I converted it! ###\n";
