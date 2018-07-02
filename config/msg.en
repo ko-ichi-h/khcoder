@@ -768,9 +768,9 @@ gui_window::r_plot::word_netgraph:
     cnt_b:                    'Centrality: betweenness'
     cnt_d:                    'Centrality: degree'
     cnt_v:                    'Centrality: eigenvector'
-    com_b:                    'Communities: betweenness'
-    com_r:                    'Communities: random walks'
-    com_m:                    'Communities: modularity'
+    com_b:                    'Subgraph: betweenness'
+    com_r:                    'Subgraph: random walks'
+    com_m:                    'Subgraph: modularity'
     cor:                      'Correlation'
     none:                     None
     color:                    ' color:'

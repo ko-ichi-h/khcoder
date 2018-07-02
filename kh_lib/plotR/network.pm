@@ -1619,7 +1619,7 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 		p <- p + scale_fill_grey(
 			na.value = "white",
 			guide = guide_legend(
-				title = "Community:",
+				title = "Subgraph:",
 				override.aes = list(size=5.5, alpha=1, shape=22),
 				keyheight = unit(1,"line"),
 				ncol=2,
@@ -1637,7 +1637,7 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				palette = "Set3",
 				na.value = "white",
 				guide = guide_legend(
-					title = "Community:",
+					title = "Subgraph:",
 					override.aes = list(size=5.5, alpha=1, shape=22),
 					keyheight = unit(1.25,"line"),
 					ncol=2,
