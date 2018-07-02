@@ -48,7 +48,7 @@ sub read_file{
 	if ($^O =~ /darwin/i){
 		if ($file =~ /(.+)\.rtf$/i){
 			my $file_text = $::project_obj->file_TempTXT;
-			system("textutil $file -convert txt -output $file_text");
+			system("textutil \"$file\" -convert txt -output \"$file_text\"");
 			$file = $file_text;
 			print "### The coding rule file was NOT in TEXT format. So I converted it! ###\n";
 		}

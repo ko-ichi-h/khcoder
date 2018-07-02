@@ -316,6 +316,22 @@ sub _make_new{
 		$t = $file_text;
 	}
 
+	# Convert RTF to TXT (macOS / darwin only)
+	if ($^O =~ /darwin/i){
+		if ($t =~ /(.+)\.rtf$/i){
+			# file name
+			my $n = 0;
+			while (-e $1."_txt$n.txt"){
+				++$n;
+			}
+			my $file_text = $1."_txt$n.txt";
+			# convert using textutil (macOS's built in tool)
+			system("textutil \"$t\" -convert txt -output \"$file_text\"");
+			$t = $file_text;
+			print "### The target file was NOT in TEXT format. So I converted it! ###\n";
+		}
+	}
+
 	my $new = kh_project->new(
 		target  => $t,
 		comment => $self->gui_jg($self->e2->get),
