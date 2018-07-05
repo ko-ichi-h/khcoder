@@ -373,20 +373,21 @@ sub _new{
 		$self->{check_cor_var} = 0
 			unless defined($self->{check_cor_var})
 		;
-		$self->{wd_check_cor_var} = $lf->Checkbutton(
-				-text     => kh_msg->get('cor_var'),
-				-variable => \$self->{check_cor_var},
-				-command  => sub{ $self->refresh;},
-				-anchor => 'w',
-		)->pack(-anchor => 'w');
 
 		my $f7 = $lf->Frame()->pack(
 			-fill => 'x',
 			-pady => 1
 		);
-		
+
+		$self->{wd_check_cor_var} = $f7->Checkbutton(
+				-text     => kh_msg->get('cor_var'),
+				-variable => \$self->{check_cor_var},
+				-command  => sub{ $self->refresh;},
+				-anchor => 'w',
+		)->pack(-anchor => 'w', -side => 'left');
+
 		$f7->Label(
-			-text => '  ',
+			-text => ' ',
 			-font => "TKFN",
 		)->pack(-anchor => 'w', -side => 'left');
 

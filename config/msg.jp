@@ -742,7 +742,7 @@ gui_widget::r_net:
     gray_scale:               'グレースケールで表現'
     fix_lab:                  'ラベルが重ならないように位置を調整する'
     view_coef:                '係数を表示'
-    cor_var:                  '外部変数・見出し・位置との相関をカラー表示：'
+    cor_var:                  '相関のカラー表示：'
     cor_var_colors:           '相関のカラースケール'
     cor_var_darker:           '背景色を暗めにする'
     standardize_coef:         '係数を標準化する'

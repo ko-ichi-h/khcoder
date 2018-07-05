@@ -747,7 +747,7 @@ gui_widget::r_net:
     gray_scale:               'Grayscale'
     fix_lab:                  'Avoid overlapping of labels'
     view_coef:                Show coef.
-    cor_var:                  'Color: correlation with variables / position'
+    cor_var:                  'Color: correlation with'
     cor_var_colors:           'Color scale of correlation'
     cor_var_darker:           'Darker background color'
     standardize_coef:         'Standardize coef.'
