@@ -52,11 +52,11 @@ sub innner{
 	# 共通のパラメーター
 	my @code_names = ();
 	if ( $self->{command_f} =~ /colnames\(d\) <\- c\((.+)\)\n/ ){
-		@code_names = eval( "($1)" );
+		use Unicode::Escape;
+		my $u = Unicode::Escape::unescape($1);
+		$u = Encode::decode('UTF-8', $u);
+		@code_names = eval( "($u)" );
 	}
-	#if ( $self->{command_f} =~ /cex <\- (.+)\n/ ){
-	#	$self->{font_size} = $1;
-	#}
 	
 	my %selected = ();
 	if ( $self->{command_f} =~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ ){
