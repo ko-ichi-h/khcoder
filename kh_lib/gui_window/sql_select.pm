@@ -226,6 +226,9 @@ sub exec{
 	)->pack(-fill=>'both',-expand => 'yes');
 	my $n = 0;
 	foreach my $i (@{$t->hundle->{NAME}}){
+		unless ( utf8::is_utf8($i) ){
+			$i = Encode::decode('UTF-8', $i);
+		}
 		$self->list->header('create',$n,-text => $self->gui_jchar($i) );
 		++$n;
 	}
