@@ -721,15 +721,16 @@ sub save_all{
 	
 	# ID情報の整理
 	my $st1 = mysql_exec->select("
-		SELECT h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id, bun_idt,temp_conc.id
-		FROM   temp_conc,temp_conc_sort,hyosobun
+		SELECT hyosobun.h1_id, hyosobun.h2_id, hyosobun.h3_id, hyosobun.h4_id, hyosobun.h5_id, hyosobun.dan_id, hyosobun.bun_id, bun.seq, temp_conc.id
+		FROM   temp_conc, temp_conc_sort, hyosobun, bun
 		WHERE
 			    temp_conc.id = hyosobun.id
 			AND temp_conc.id = temp_conc_sort.conc_id
+			AND hyosobun.bun_idt = bun.id
 		ORDER BY temp_conc_sort.id
 	",1)->hundle;
 	my $id = $st1->fetchall_arrayref;
-	
+
 	# 出力
 	use File::BOM;
 	open (KWICO, '>:encoding(utf8):via(File::BOM)', $args{path}) or 
@@ -737,8 +738,8 @@ sub save_all{
 			type => 'file',
 			thefile => $args{path}
 		);
-	
-	print KWICO "h1,h2,h3,h4,h5,dan,bun,bun-No.,mp-No.,L,C,R\n";	
+
+	print KWICO "h1,h2,h3,h4,h5,dan,bun,bun-No.,mp-No.,L,C,R\n";
 	for (my $n = 0; $n < $max; ++$n){
 		my $line = "$id->[$n][0],$id->[$n][1],$id->[$n][2],$id->[$n][3],$id->[$n][4],$id->[$n][5],$id->[$n][6],$id->[$n][7],$id->[$n][8],";
 		$line .= kh_csv->value_conv($result[$n]->[0]).",";
