@@ -1,0 +1,33 @@
+#!C:\Program Files (x86)\ActiveState Perl Dev Kit 9.2.1\bin\perlapp-gui.exe
+PAP-Version: 1.0
+Packer: C:\Program Files (x86)\ActiveState Perl Dev Kit 9.2.1\bin\perlapp.exe
+Script: create_shortcut.pl
+Cwd: F:\home\Koichi\Study\perl\core_uni\utils
+Clean: 0
+Date: 2017-09-27 23:10:39
+Debug: 
+Dependent: 0
+Dyndll: 0
+Exe: create_shortcut.exe
+Force: 1
+Gui: 1
+Hostname: FORTUNA
+Manifest: 
+No-Compress: 0
+No-Logo: 0
+Runlib: 
+Shared: none
+Tmpdir: 
+Verbose: 0
+Version-Comments: 
+Version-CompanyName: 
+Version-FileDescription: 
+Version-FileVersion: 
+Version-InternalName: 
+Version-LegalCopyright: 
+Version-LegalTrademarks: 
+Version-OriginalFilename: 
+Version-ProductName: 
+Version-ProductVersion: 
+Warnings: 0
+Xclude: 0
