@@ -1081,6 +1081,9 @@ mysql_getheader:
 gui_window::r_plot::doc_cls:
     win_title:                 "Dendrogram of Documents"
 gui_window::r_plot_opt::doc_cls:
+    doc_label:                 "Case Label:"
+    number:                    "No."
+    heading:                   "Heading"
     win_title:                 "Configure: Dendrogram of Documents"
 mysql_ready::check:
     error:                     "Something wrong with the database: "

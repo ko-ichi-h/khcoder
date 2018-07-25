@@ -1083,6 +1083,9 @@ mysql_getheader:
 gui_window::r_plot::doc_cls:
     win_title:                 "文書のデンドログラム"
 gui_window::r_plot_opt::doc_cls:
+    doc_label:                 "文書ラベル："
+    number:                    "文書番号"
+    heading:                   "見出し"
     win_title:                 "文書のデンドログラム・調整"
 mysql_ready::check:
     error:                     "前処理データの整合性が失われました。"

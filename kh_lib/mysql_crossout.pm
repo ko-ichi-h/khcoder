@@ -26,11 +26,12 @@ sub new{
 
 sub run{
 	my $self = shift;
-	
 	use Benchmark;
-	
-	# 見出しの取得
-	$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani});
+
+	# Getting ID or NAME of documents
+	if ( $::project_obj->status_from_table == 0 ){
+		$self->{midashi} = mysql_getheader->get_selected(tani => $self->{tani});
+	}
 
 	# 一時ファイルの命名
 	$self->{file_temp} = "temp.dat";

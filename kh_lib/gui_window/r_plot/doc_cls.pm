@@ -1,10 +1,12 @@
 package gui_window::r_plot::doc_cls;
 use base qw(gui_window::r_plot);
+use strict;
+use utf8;
 
 sub save{
 	my $self = shift;
 
-	# ÊİÂ¸Àè¤Î»²¾È
+	# ä¿å­˜å…ˆã®å‚ç…§
 	my @types = (
 		[ "Encapsulated PostScript",[qw/.eps/] ],
 		[ "PDF",[qw/.pdf/] ],
@@ -19,7 +21,7 @@ sub save{
 		-defaultextension => '.eps',
 		-filetypes        => \@types,
 		-title            =>
-			$self->gui_jt(kh_msg->get('gui_window::r_plot->saving')), # ¥×¥í¥Ã¥È¤òÊİÂ¸
+			$self->gui_jt(kh_msg->get('gui_window::r_plot->saving')), # ãƒ—ãƒ­ãƒƒãƒˆã‚’ä¿å­˜
 		-initialdir       => $self->gui_jchar($::config_obj->cwd)
 	);
 
@@ -27,7 +29,7 @@ sub save{
 	$path = $self->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	
-	# R¥Õ¥¡¥¤¥ë¤òÊİÂ¸¤¹¤ë¾ì¹ç¤ÏÊÌÅÓ½èÍı¤Ë
+	# Rãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã™ã‚‹å ´åˆã¯åˆ¥é€”å‡¦ç†ã«
 	if ($path =~ /.*\.r$/){
 		$self->save_r($path);
 	} else {
@@ -36,12 +38,12 @@ sub save{
 	return 1;
 }
 
-# R¥Õ¥¡¥¤¥ë¤òÊİÂ¸¤¹¤ë½èÍı
+# Rãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã™ã‚‹å‡¦ç†
 sub save_r{
 	my $self = shift;
 	my $path = shift;
 	
-	# tmp¥Õ¥¡¥¤¥ëÌ¾¼èÆÀ
+	# tmpãƒ•ã‚¡ã‚¤ãƒ«åå–å¾—
 	my $file_tmp = '';
 	if (
 		$self->{plots}[0]->{command_f}
@@ -52,12 +54,12 @@ sub save_r{
 		$file_tmp = $::config_obj->os_path($file_tmp);
 	}
 
-	# tmp¥Õ¥¡¥¤¥ë¤òÊİÂ¸ÍÑ¤Ë¥³¥Ô¡¼
+	# tmpãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ç”¨ã«ã‚³ãƒ”ãƒ¼
 	my $file_csv = $path.'.csv';
 	if (-e $file_csv){
 		my $ans = $self->win_obj->messageBox(
 			-message => 
-				   kh_msg->get('gui_window::cls_height::doc->overwr') # ¤³¤Î¥Õ¥¡¥¤¥ë¤ò¾å½ñ¤­¤·¤Æ¤è¤í¤·¤¤¤Ç¤¹¤«¡§
+				   kh_msg->get('gui_window::cls_height::doc->overwr') # ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¸Šæ›¸ãã—ã¦ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼š
 				   ."\n"
 				   .$::config_obj->uni_path($file_csv)
 			-icon    => 'question',
@@ -74,12 +76,13 @@ sub save_r{
 			file => $file_csv,
 	);
 
-	# r¥³¥Ş¥ó¥É¤ÎÊÑ¹¹
+	# rã‚³ãƒãƒ³ãƒ‰ã®å¤‰æ›´
 	$file_csv = $::config_obj->uni_path($file_csv);
 	$file_csv =~ s/\\/\\\\/g;
 
+	$self->{plots}[0]->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{plots}[0]->{command_f}
-		=~ s/^.+read.csv\(".+?\n/\n/;
+		=~ s/\n.+?read\.csv.+?\n/\n/;
 	$self->{plots}[0]->{command_f} =
 		'd <- read.csv("'.$file_csv.'", fileEncoding="UTF-8-BOM")'."\n"
 		.$self->{plots}[0]->{command_f};
@@ -103,7 +106,7 @@ sub option1_name{
 }
 
 sub win_title{
-	return kh_msg->get('win_title'); # Ê¸½ñ¤Î¥Ç¥ó¥É¥í¥°¥é¥à
+	return kh_msg->get('win_title'); # æ–‡æ›¸ã®ãƒ‡ãƒ³ãƒ‰ãƒ­ã‚°ãƒ©ãƒ 
 }
 
 sub win_name{
