@@ -14,7 +14,7 @@ $| = 1;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3a13h';
+my $V = '3a13j';
 my $V_full = "3.Alpha.13j";
 
 # マニュアル・チュートリアルのPDFを再作成するか
@@ -218,7 +218,7 @@ sub web{
 	$t = Encode::decode('UTF-8', $r0->content);
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
 	
-	$t =~ s/KH Coder 3（最新アルファ版）ダウンロード<\/a><font size=\-1 color="#3cb371">（.+）<\/font>/KH Coder 3（最新アルファ版）ダウンロード<\/a><font size=\-1 color="#3cb371">（$V_full - $date）<\/font>/;
+	$t =~ s/KH Coder 3（最新版）ダウンロード<\/a><font size=\-1 color="#3cb371">（.+）<\/font>/KH Coder 3（最新版）ダウンロード<\/a><font size=\-1 color="#3cb371">（$V_full - $date）<\/font>/;
 	
 	open(my $fh, ">:encoding(UTF-8)", "../pub/web/index.html") or die("$!");
 	print $fh $t;
