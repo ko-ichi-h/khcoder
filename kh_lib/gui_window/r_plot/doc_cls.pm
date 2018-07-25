@@ -61,10 +61,10 @@ sub save_r{
 			-message => 
 				   kh_msg->get('gui_window::cls_height::doc->overwr') # このファイルを上書きしてよろしいですか：
 				   ."\n"
-				   .$::config_obj->uni_path($file_csv)
+				   .$::config_obj->uni_path($file_csv),
 			-icon    => 'question',
 			-type    => 'OKCancel',
-			-title   => 'KH Coder'
+			-title   => 'KH Coder',
 		);
 		unless ($ans =~ /ok/i){ return 0; }
 		unlink($file_csv);

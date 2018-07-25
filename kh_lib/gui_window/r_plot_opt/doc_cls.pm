@@ -16,6 +16,9 @@ sub innner{
 	if ( $self->{command_f} =~ /\n# UNIT: (.+?)\n/ ){
 		$self->{tani} = $1;
 	}
+	if ( $self->{command_f} =~ /# added labels: (.+?)\n/ ){
+		$self->{label} = $1;
+	}
 	
 	# Case labels
 	$lf1->Label(
@@ -42,7 +45,7 @@ sub innner{
 			next;
 		}
 		if ($i->[0] eq $self->{tani}){
-			push @options, [$i->[1], $i->[1]];
+			push @options, [$i->[1], $i->[2]];
 		}
 	}
 	
@@ -90,12 +93,17 @@ sub calc{
 		return 0;
 	}
 
-	# Case label
+	# Delete older added labels
+	$r_command =~ s/\n.+? # added labels: .*?\n/\n/;
+	
+	# Add case label
 	my $label = '';
 	unless ( $self->{label} eq $self->{default_label} ){
+		# Number
 		if ($self->{label} eq 'number') {
-			$label = "d_labels <- as.character( 1:length(d_selection) )\n";
+			$label = "d_labels <- as.character( 1:length(d_selection) )";
 		}
+		# Heading
 		elsif ($self->{label} eq 'heading') {
 			my $midashi = mysql_getheader->get_selected(tani => $self->{tani});
 			$label = "d_labels <- c(";
@@ -103,9 +111,35 @@ sub calc{
 				$label .= "\"$i\",";
 			}
 			chop $label;
-			$label .= ")\n";
+			$label .= ")";
 		}
-		
+		# Variable
+		elsif ($self->{label}){
+			my $var_obj = mysql_outvar::a_var->new(undef,$self->{label});
+			
+			my $sql = '';
+			$sql .= "SELECT $var_obj->{column} FROM $var_obj->{table} ";
+			$sql .= "ORDER BY id";
+			
+			$label = "d_labels <- c(";
+			my $h = mysql_exec->select($sql,1)->hundle;
+			my $n = 0;
+			while (my $i = $h->fetch){
+				$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
+				if ( length( $var_obj->{labels}{$i->[0]} ) ){
+					my $t = $var_obj->{labels}{$i->[0]};
+					$t =~ s/"/ /g;
+					$label .= "\"$t\",";
+				} else {
+					$label .= "\"$i->[0]\",";
+				}
+				++$n;
+			}
+			
+			chop $label;
+			$label .= ")";
+		}
+		$label .= " # added labels: $self->{label}\n";
 	}
 	$r_command .= $label;
 

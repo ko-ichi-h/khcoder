@@ -1098,24 +1098,6 @@ if (n_cls > 1){
 	seg_cl <- as.data.frame(seg_cl)
 	seg_cl$c <- col_vec[seg_cl$c]
 
-	p <- p + geom_text(
-		data=data.frame(                    # ラベル
-			x=label(ddata)$x,
-			y=label(ddata)$y,
-			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
-			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
-		),
-		aes_string(
-			x="x",
-			y="y",
-			label="text",
-			colour="cols"
-		),
-		hjust=1,
-		angle =0,
-		size = 5 * 0.85 * font_size
-	)
-
 	p <- p + geom_segment(
 		data=seg_cl,
 		aes_string(x="x0", y="y0", xend="x1", yend="y1", colour="c"),
@@ -1126,23 +1108,6 @@ if (n_cls > 1){
 	p <- p + scale_colour_manual(values=c("black"))
 	seg_bl <- ddata$segment
 	col_vec <- c("001")
-	p <- p + geom_text(
-		data=data.frame(                    # ラベル
-			x=label(ddata)$x,
-			y=label(ddata)$y,
-			text=d_labels[ as.numeric( as.vector( ddata$labels$text ) ) ],
-			cols= col_vec[ memb[ as.numeric( as.vector( ddata$labels$text ) ) ] ]
-		),
-		aes_string(
-			x="x",
-			y="y",
-			label="text",
-			colour="cols"
-		),
-		hjust=1,
-		angle =0,
-		size = 5 * 0.85 * font_size
-	)
 }
 
 if (is.null(seg_bl) == F){
@@ -1173,9 +1138,49 @@ p <- p + geom_text(
 	size = 5 * 0.85 * font_size
 )
 
+# ラベルの長さにあわせて余白の大きさを設定
+y_max <- max( ddata$segment$y1 )
+y_min <- 0.2
+# "strwidth" crashes if the device is cairo_pdf or cairo_ps 
+if (
+	is.na(dev.list()["cairo_pdf"])
+	&& is.na(dev.list()["cairo_ps"])
+){
+	y_min <- max(
+		strwidth(
+			d_labels,
+			units = "figure",
+			font = 2
+		)
+	)
+}
+y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
+y_min <- y_min * 1.1
+if (y_min > y_max * 2){
+	y_min <- y_max * 2
+}
+y_min <- y_min * -1
+
+# 目盛の位置を設定
+b1 <- 0
+for (i in 1:1000){
+	b1 <- signif(y_max * 0.875, i)
+	if (b1 < y_max){
+		break
+	}
+}
+
 p <- p + coord_flip()
-p <- p + scale_x_reverse( expand = c(0.01,0.01) )
-p <- p + scale_y_continuous(expand = c(0.25,0))
+p <- p + scale_x_reverse(
+	expand = c(0,0),
+	breaks = NULL,
+	limits=c( length(d_labels) + 0.5 , 1 - 0.5 )
+)
+p <- p + scale_y_continuous(
+	limits=c(y_min,y_max),
+	breaks=c(0,b1/2,b1),
+	expand = c(0.02,0.02)
+)
 
 p <- p + theme(
 	axis.title.y = element_blank(),
@@ -1241,7 +1246,7 @@ if (show_bar == 1){
 	)
 	p2 <- p2 + coord_flip()
 	p2 <- p2 + scale_y_reverse( expand = c(0,0))
-	p2 <- p2 + scale_x_discrete( expand = c(0.005,0.005) )
+	p2 <- p2 + scale_x_discrete( expand = c(0,0) )
 	p2 <- p2 + theme(
 		axis.title.y     = element_blank(),
 		axis.title.x     = element_blank(),
@@ -1256,7 +1261,7 @@ if (show_bar == 1){
 
 	margin <- 0.002 * nrow(d) + 0.00001 * nrow(d)^2 - 0.12
 	p2 <- p2 + theme(
-		plot.margin = unit(c(margin,-0.75,margin,0), "lines")
+		plot.margin = unit(c(0.25,0,0.25,0), "lines") # r: -0.75
 	)
 
 	grid.newpage()
