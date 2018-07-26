@@ -145,6 +145,7 @@ sub calc{
 
 	my ($w, $h) = ($::config_obj->plot_size_codes, $self->{font_obj}->plot_size);
 
+	my $size_variable = $h;
 	if ($self->{check_color_cls}){
 		$r_command .= &gui_window::doc_cls::r_command_dendro2(
 			$self->{font_obj}->font_size
@@ -174,6 +175,7 @@ sub calc{
 	gui_window::r_plot::doc_cls->open(
 		plots       => [$plot],
 		ax          => $self->{ax},
+		plot_size   => $size_variable,
 	);
 
 	$plot = undef;

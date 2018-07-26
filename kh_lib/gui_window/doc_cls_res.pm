@@ -104,8 +104,8 @@ sub _new{
 				}
 			
 				gui_window::r_plot::doc_cls->open(
-					plots       => [$self->{plots}{_dendro}],
-					#plot_size   => 480,
+					plots     => [$self->{plots}{_dendro}],
+					plot_size => $self->{plots}{_dendro}{width},
 				);
 			}
 		)->pack(-side => 'right', -padx => 2, -pady => 2, -anchor => 'c');
