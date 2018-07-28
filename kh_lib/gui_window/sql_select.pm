@@ -233,13 +233,38 @@ sub exec{
 		++$n;
 	}
 	
+	my $style_r = $self->{list}->ItemStyle(
+		'text',
+		-anchor => 'e',
+		-background => 'white',
+		-padx => 3,
+	);
+	my $style_l = $self->{list}->ItemStyle(
+		'text',
+		-anchor => 'w',
+		-background => 'white',
+		-padx => 3,
+	);
+	
 	my $row = 0;                                            # Ãæ¿È
 	my $max = $self->max; my $frag = 0;
 	while (my $i = $t->hundle->fetch){
 		$self->list->add($row,-at => "$row");
 		my $col = 0;
 		foreach my $h (@{$i}){
-			$self->list->itemCreate($row,$col,-text => $self->gui_jchar($h)); # nkf('-s -E',$h)
+			my $s;
+			if ($h =~ /^[0-9]+$/) {
+				$s = $style_r;
+			} else {
+				$s = $style_l;
+			}
+			
+			$self->list->itemCreate(
+				$row,
+				$col,
+				-text => $self->gui_jchar($h),
+				-style => $s,
+			);
 			++$col;
 		}
 		++$row;
