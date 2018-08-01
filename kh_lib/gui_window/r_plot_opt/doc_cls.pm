@@ -94,7 +94,7 @@ sub calc{
 	}
 
 	# Delete older added labels
-	$r_command =~ s/\n.+? # added labels: .*?\n/\n/;
+	$r_command =~ s/\n.+? # added labels: .*?\n/\n/g;
 	
 	# Add case label
 	my $label = '';
@@ -140,6 +140,7 @@ sub calc{
 			$label .= ")";
 		}
 		$label .= " # added labels: $self->{label}\n";
+		$label .= "d_labels <- d_labels[d_selection] # added labels: $self->{label}\n";
 	}
 	$r_command .= $label;
 

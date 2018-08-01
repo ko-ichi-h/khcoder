@@ -401,9 +401,10 @@ sub _calc_exec{
 
 	# 各種準備（Rコマンド）
 	$r_command .= "n_org <- nrow(d)\n";                     # 分析対象語を含まない文書を除外
-	$r_command .= "d_selection <- rowSums(d) > 0\n";
-	$r_command .= "d <- d[d_selection, ]\n";
 	$r_command .= "row.names(d) <- 1:nrow(d)\n";
+	$r_command .= "d_selection <- rowSums(d) > 0\n";
+	$r_command .= "d        <- d[d_selection, ]\n";
+	$r_command .= "d_labels <- d_labels[d_selection]\n";
 	$r_command .= "n_cls <- $cluster_number\n";
 	
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
@@ -962,7 +963,6 @@ par(
 			oma=c(0,0,0,0) 
 		)
 
-d_labels <- d_labels[d_selection]
 dcls$labels <- d_labels
 plot(dcls,ann=0,cex=font_size, hang=-1)
 
@@ -1119,7 +1119,6 @@ if (is.null(seg_bl) == F){
 	)
 }
 
-d_labels <- d_labels[d_selection]
 p <- p + geom_text(
 	data=data.frame(                    # ラベル変換
 		x=label(ddata)$x,

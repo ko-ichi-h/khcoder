@@ -28,7 +28,7 @@ sub finish{
 	}
 	
 	foreach my $i (@{$self->{wList}}){
-		$head .= '"'.kh_csv->value_conv($self->{wName}{$i}).'",';
+		$head .= kh_csv->value_conv($self->{wName}{$i}).',';
 	}
 	chop $head;
 	#if ($::config_obj->os eq 'win32'){
