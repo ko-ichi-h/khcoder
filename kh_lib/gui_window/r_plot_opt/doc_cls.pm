@@ -139,7 +139,7 @@ sub calc{
 			chop $label;
 			$label .= ")";
 		}
-		$label .= " # added labels: $self->{label}\n";
+		$label .= " # added labels: $self->{label}\n\n";
 		$label .= "d_labels <- d_labels[d_selection] # added labels: $self->{label}\n";
 	}
 	$r_command .= $label;
