@@ -62,18 +62,21 @@ sub new{
 	$self->{command_s} = $self->escape_unicode($self->{command_s});
 
 	if ( length($self->{command_f}) ) {
+		$self->{command_f} =~ s/color_universal_design <\- [01]\n//;
 		$self->{command_f} =
 			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
 			.$self->{command_f}
 		;
 	}
 	if ( length($self->{command_a}) ) {
+		$self->{command_a} =~ s/color_universal_design <\- [01]\n//;
 		$self->{command_a} =
 			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
 			.$self->{command_a}
 		;
 	}
 	if ( length($self->{command_s}) ) {
+		$self->{command_s} =~ s/color_universal_design <\- [01]\n//;
 		$self->{command_s} =
 			 'color_universal_design <- '.$::config_obj->color_universal_design."\n"
 			.$self->{command_s}

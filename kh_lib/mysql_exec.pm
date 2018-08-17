@@ -174,6 +174,8 @@ sub create_new_db{
 		"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
 	my $dbh = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	$dbh->do('SET NAMES utf8mb4');
+	$file = $::config_obj->uni_path($file);
 	$file = $dbh->quote($file);
 	$dbh->do("
 		insert into db_name (target) VALUES ($file)
