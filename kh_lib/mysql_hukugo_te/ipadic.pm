@@ -19,13 +19,17 @@ sub _run_from_morpho{
 
 	my $icode = kh_jchar->check_code2($source);
 	my $ocode;
-	if ($::config_obj->os eq 'win32'){
-		$ocode = 'cp932';
+	if ($::config_obj->c_or_j eq 'mecab'){
+		$ocode = 'utf8';
 	} else {
-		if (eval 'require Encode::EUCJPMS') {
-			$ocode = 'eucJP-ms';
+		if ($::config_obj->os eq 'win32'){
+			$ocode = 'cp932';
 		} else {
-			$ocode = 'euc-jp';
+			if (eval 'require Encode::EUCJPMS') {
+				$ocode = 'eucJP-ms';
+			} else {
+				$ocode = 'euc-jp';
+			}
 		}
 	}
 
@@ -69,6 +73,7 @@ sub _run_from_morpho{
 		$is_alone{(split /\t/, $_)[0]} = 1;
 	}
 	close (CHASEN);
+	$is_alone{'--- cell ---'} = 1; # for MeCab
 
 	# TermExtractの実行
 	print "05. TermExtract...\n" if $debug;

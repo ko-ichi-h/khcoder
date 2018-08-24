@@ -68,13 +68,17 @@ sub get_noun_frq {
     # 単名詞の連結処理
     # foreach my $morph ((split "\n", $data)) {                  # higuchi
 	my $ocode;                                                   # higuchi
-	if ($::config_obj->os eq 'win32'){                           # higuchi
-		$ocode = 'cp932';                                        # higuchi
+	if ($::config_obj->c_or_j eq 'mecab'){                       # higuchi
+		$ocode = 'utf8';                                         # higuchi
 	} else {                                                     # higuchi
-		if (eval 'require Encode::EUCJPMS') {                    # higuchi
-			$ocode = 'eucJP-ms';                                 # higuchi
+		if ($::config_obj->os eq 'win32'){                       # higuchi
+			$ocode = 'cp932';                                    # higuchi
 		} else {                                                 # higuchi
-			$ocode = 'euc-jp';                                   # higuchi
+			if (eval 'require Encode::EUCJPMS') {                # higuchi
+				$ocode = 'eucJP-ms';                             # higuchi
+			} else {                                             # higuchi
+				$ocode = 'euc-jp';                               # higuchi
+			}                                                    # higuchi
 		}                                                        # higuchi
 	}                                                            # higuchi
     open (IN, "<:encoding($ocode)", $data) ||                    # higuchi
