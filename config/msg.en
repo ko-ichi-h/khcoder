@@ -562,6 +562,7 @@ gui_window::word_search:
     view_conj:                View Conj.
     win_title:                Word Frequency List
     word:                     Word
+    excel:                    Excel
 gui_window::word_search_opt:
     win_title:                'Filter: Word Frequency List'
 gui_window::word_tf_df:
@@ -621,8 +622,7 @@ mysql_words:
     excel_limit:              "Could not export all of the records due to the 65,536 records limit of Excel file.\nPlease select CSV to export all the data."
 gui_widget::cls4mds:
     cluster_color:            'Indicate clusters by different colors'
-    cls_num:                  'Number of clusters:'
-    2_12:                     '(from 2 to 12)'
+    cls_num:                  'N of clusters:'
     adj:                      'Adjacent clusters'
 gui_widget::r_mds:
     method:                   'Method:'

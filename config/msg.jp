@@ -562,6 +562,7 @@ gui_window::word_search:
     view_conj:                活用形を表示
     win_title:                抽出語リスト
     word:                     抽出語
+    excel:                    Excel出力
 gui_window::word_search_opt:
     win_title:                抽出語リスト・フィルタ設定
 gui_window::word_tf_df:
@@ -622,7 +623,6 @@ mysql_words:
 gui_widget::cls4mds:
     cluster_color:            'クラスター化と色分け'
     cls_num:                  'クラスター数：'
-    2_12:                     '（2から12まで）'
     adj:                      '隣接クラスター'
 gui_widget::r_mds:
     method:                   '方法：'

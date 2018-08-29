@@ -48,17 +48,12 @@ sub _new{
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin($self->{entry_cls_num});
 
-	$self->{label_cls2} = $fcls1->Label(
-		-text => kh_msg->get('2_12'), # （2から12まで）
-		-font => "TKFN",
-	)->pack(-side => 'left');
+	#$self->{label_cls2} = $fcls1->Label(
+	#	-text => kh_msg->get('2_12'), # （2から12まで）
+	#	-font => "TKFN",
+	#)->pack(-side => 'left');
 
-	my $fcls2 = $win->Frame()->pack(
-		-fill => 'x',
-		-pady => 2,
-	);
-
-	$fcls2->Label(
+	$fcls1->Label(
 		-text => '  ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
@@ -67,7 +62,7 @@ sub _new{
 		$self->{check_cls_raw} = 1;
 	}
 
-	$self->{check_cls_raw_w} = $fcls2->Checkbutton(
+	$self->{check_cls_raw_w} = $fcls1->Checkbutton(
 			-text     => kh_msg->get('adj'), # 隣接クラスター
 			-variable => \$self->{check_nei},
 			-anchor => 'w',
@@ -83,12 +78,12 @@ sub refresh_cls{
 	my $self = shift;
 	if ($self->{check_cls}){
 		$self->{label_cls1}     ->configure(-state => 'normal');
-		$self->{label_cls2}     ->configure(-state => 'normal');
+		#$self->{label_cls2}     ->configure(-state => 'normal');
 		$self->{entry_cls_num}  ->configure(-state => 'normal');
 		$self->{check_cls_raw_w}->configure(-state => 'normal');
 	} else {
 		$self->{label_cls1}     ->configure(-state => 'disable');
-		$self->{label_cls2}     ->configure(-state => 'disable');
+		#$self->{label_cls2}     ->configure(-state => 'disable');
 		$self->{entry_cls_num}  ->configure(-state => 'disable');
 		$self->{check_cls_raw_w}->configure(-state => 'disable');
 	}
@@ -103,9 +98,9 @@ sub n{
 	my $self = shift;
 	if ( $self->{check_cls} ) {
 		my $n = gui_window->gui_jgn( $self->{entry_cls_num}->get );
-		unless ($n =~ /\A[0-9]+\Z/ && $n >= 2 && $n <= 12) {
-			$n = 7;
-		}
+		#unless ($n =~ /\A[0-9]+\Z/ && $n >= 2 && $n <= 12) {
+		#	$n = 7;
+		#}
 		return ($n);
 	} else {
 		return 0;

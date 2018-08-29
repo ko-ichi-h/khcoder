@@ -785,16 +785,46 @@ if ( bubble == 1 ){
 }
 
 if ( n_cls > 0 ){
-	g <- g + scale_fill_brewer(
-		palette = "Set3",
-		guide = guide_legend(
-			title = "Cluster:",
-			override.aes = list(size=5.5, alpha=1, shape=22),
-			keyheight = unit(1.25,"line"),
-			ncol=2,
-			order = 1
+	if ( n_cls <= 12 ) {
+		g <- g + scale_fill_brewer(
+			palette = "Set3",
+			guide = guide_legend(
+				title = "Cluster:",
+				override.aes = list(size=5.5, alpha=1, shape=22),
+				keyheight = unit(1.25,"line"),
+				ncol=2,
+				order = 1
+			)
 		)
-	)
+	}
+	else if ( n_cls <= 20 ) {
+		library(ggsci)
+		g <- g + scale_fill_d3(
+			palette = "category20",
+			na.value = "white",
+			guide = guide_legend(
+				title = "Cluster:",
+				override.aes = list(size=5.5, alpha=1, shape=22),
+				keyheight = unit(1.25,"line"),
+				ncol=2,
+				order = 1
+			)
+		)
+	}
+	else {
+		g <- g + scale_fill_hue(
+			c = 50,
+			l = 85,
+			na.value = "white",
+			guide = guide_legend(
+				title = "Cluster:",
+				override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
+				keyheight = unit(1.25,"line"),
+				ncol=3,
+				order = 1
+			)
+		)
+	}
 } else {
 	g <- g + scale_fill_brewer(
 		palette = "Set3",

@@ -155,11 +155,18 @@ sub _new{
 	$self->{list_f} = $hlist_fra;
 	$self->{list}  = $lis;
 
+	#$self->{copy_btn} = $fra5->Button(
+	#	-text => kh_msg->gget('copy_all'),
+	#	-font => "TKFN",
+	#	-borderwidth => '1',
+	#	-command => sub {$self->copy_all;}
+	#)->pack(-side => 'right');
+
 	$self->{copy_btn} = $fra5->Button(
-		-text => kh_msg->gget('copy_all'),
+		-text => kh_msg->get('excel'),
 		-font => "TKFN",
 		-borderwidth => '1',
-		-command => sub {$self->copy_all;}
+		-command => sub { gui_window::word_list->open; }
 	)->pack(-side => 'right');
 
 	$self->{show_bars} = $::config_obj->show_bars_wordlist;
@@ -188,13 +195,13 @@ sub _new{
 
 	$self->win_obj->bind(
 		'<Control-Key-c>',
-		sub{ $self->{copy_btn}->invoke; }
+		sub{ $self->copy_all; }
 	);
-	$self->win_obj->Balloon()->attach(
-		$self->{copy_btn},
-		-balloonmsg => 'Ctrl + C',
-		-font => "TKFN"
-	);
+	#$self->win_obj->Balloon()->attach(
+	#	$self->{copy_btn},
+	#	-balloonmsg => 'Ctrl + C',
+	#	-font => "TKFN"
+	#);
 
 	#--------------------------#
 	#   initialise POS stats   #
