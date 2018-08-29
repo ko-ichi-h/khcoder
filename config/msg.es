@@ -610,7 +610,6 @@ mysql_words:
 gui_widget::cls4mds:
     cluster_color:            'Indicar clusters con colores diferentes'
     cls_num:                  'Cantidad de clusters:'
-    2_12:                     '(de 2 a 12)'
     adj:                      'Clusters adyacentes'
 gui_widget::r_mds:
     method:                   'Método:'

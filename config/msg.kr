@@ -36,7 +36,6 @@ gui_widget::bubble:
   variable: 변수의 값/제목 크기도 변경 가능하게
   variance: 분산
 gui_widget::cls4mds:
-  2_12: (2에서 12까지)
   adj: 인접 클러스터
   cls_num: '클러스터 수:'
   cluster_color: 클러스터화와 색분류

@@ -36,7 +36,6 @@ gui_widget::bubble:
   variable: 变量值/将标题的大小设为可变
   variance: 分散
 gui_widget::cls4mds:
-  2_12: （从2到12）
   adj: 相邻的集群
   cls_num: 集群数：
   cluster_color: 集群化和颜色区分
