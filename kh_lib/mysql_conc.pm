@@ -605,6 +605,8 @@ sub _format{                                      # 結果の出力
 	my $self = shift;
 	my $start = shift;
 	
+	my $cell_symbol = $::config_obj->cell_symbol;
+	
 	#print "3: Formating...\n";
 	my $spacer = $::project_obj->spacer;
 	
@@ -664,7 +666,7 @@ sub _format{                                      # 結果の出力
 				&& ( $l_dan > 0 )
 				&& ( $res->{$m}[1] > 1 )
 			){
-				$return->[$n][0] .= $::config_obj->kaigyo_kigou;
+				$return->[$n][0] .= $::config_obj->newline_symbol;
 			}
 			$l_dan = $res->{$m}[1];
 			$return->[$n][0] .= $spacer if length($return->[$n][0]);
@@ -675,10 +677,10 @@ sub _format{                                      # 結果の出力
 			&& ( $l_dan > 0 )
 			&& ( $res->{$i->[0]}[1] > 1 )
 		) {
-			$return->[$n][0] .= $::config_obj->kaigyo_kigou;
+			$return->[$n][0] .= $::config_obj->newline_symbol;
 		}
 		if ($fix_cell) {
-			$return->[$n][0] =~ s/<h5>$spacer---cell---$spacer<\/h5>/♢/g;
+			$return->[$n][0] =~ s/<h5>$spacer---cell---$spacer<\/h5>/$cell_symbol/g;
 		}
 		
 		$l_dan = $res->{$i->[0]}[1];
@@ -691,14 +693,14 @@ sub _format{                                      # 結果の出力
 				&& ( $l_dan > 0 )
 				&& ( $res->{$m}[1] > 1 )
 			){
-				$return->[$n][2] .= $::config_obj->kaigyo_kigou;
+				$return->[$n][2] .= $::config_obj->newline_symbol;
 			}
 			$l_dan = $res->{$m}[1];
 			$return->[$n][2] .= $spacer if length($return->[$n][2]);
 			$return->[$n][2] .= $res->{$m}[0];
 		}
 		if ($fix_cell) {
-			$return->[$n][2] =~ s/<h5>$spacer---cell---$spacer<\/h5>/♢/g;
+			$return->[$n][2] =~ s/<h5>$spacer---cell---$spacer<\/h5>/$cell_symbol/g;
 		}
 		++$n;
 	}

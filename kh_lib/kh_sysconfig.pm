@@ -1406,22 +1406,40 @@ sub show_bars_wordlist{
 	return $self->{show_bars_wordlist};
 }
 
-sub kaigyo_kigou{
+sub newline_symbol{
 	my $self = shift;
 	my $new  = shift;
-	
+
 	# 新しい値を指定された場合
 	if (defined($new)){
-		$self->{kaigyo_kigou} = $new;
+		$self->{newline_symbol} = $new;
 	}
-	
+
 	# デフォルト値
-	unless ( defined($self->{kaigyo_kigou}) ){
-		return '⏎';
+	unless ( defined($self->{newline_symbol}) ){
+		$self->{newline_symbol} = '⏎';
 	}
-	
-	return $self->{kaigyo_kigou};
+
+	return $self->{newline_symbol};
 }
+
+sub cell_symbol{
+	my $self = shift;
+	my $new  = shift;
+
+	# new value
+	if (defined($new)){
+		$self->{cell_symbol} = $new;
+	}
+
+	# default
+	unless ( defined($self->{cell_symbol}) ){
+		$self->{cell_symbol} = '◇';
+	}
+
+	return $self->{cell_symbol};
+}
+
 
 sub R{
 	my $self = shift;
