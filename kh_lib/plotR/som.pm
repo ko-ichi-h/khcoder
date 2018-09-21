@@ -262,13 +262,21 @@ if ( if_cls == 1 ){
 	colors <- NULL
 	if (n_cls <= 9){
 		pastel <- brewer.pal(9, "Pastel1")
-		# pastel[6] = brewer.pal(9, "Pastel1")[9]
-		# pastel[9] = brewer.pal(9, "Pastel1")[6]
 		pastel[6] = "gray91"
-		pastel[9] = "#F5F5DC" # FAF3C8 F7F1C6 EEE8AA F0E68C
+		pastel[9] = "#F3F3C1" # #F5F5DC FAF3C8 F7F1C6 EEE8AA F0E68C
 		colors <- pastel[cutree(hcl,k=n_cls)]
 	}
-	if (n_cls > 9) {
+	#else if (n_cls <= 12){
+	#	palette <- brewer.pal(12, "Set3")
+	#	palette[2] <- "#E4E4AB"
+	#	colors <- palette[cutree(hcl,k=n_cls)]
+	#}
+	else if (n_cls <= 20){
+		library( ggsci )
+		palette <- pal_d3("category20",0.4)(20)
+		colors <- palette[cutree(hcl,k=n_cls)]
+	}
+	else {
 		# 色の順番を決定
 		library(colorspace)
 		new_col <- order( runif(n_cls) )
