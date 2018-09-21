@@ -273,7 +273,7 @@ if ( if_cls == 1 ){
 	#}
 	else if (n_cls <= 20){
 		library( ggsci )
-		palette <- pal_d3("category20",0.4)(20)
+		palette <- pal_d3("category20",0.375)(20)
 		colors <- palette[cutree(hcl,k=n_cls)]
 	}
 	else {
