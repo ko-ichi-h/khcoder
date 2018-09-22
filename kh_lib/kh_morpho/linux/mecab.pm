@@ -77,7 +77,7 @@ sub _run_morpho{
 		$mecab_exe = './deps/mecab/bin/mecab';
 	}
 	
-	$self->{cmdline} = "$mecab_exe $rcpath -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
+	$self->{cmdline} = "$mecab_exe -p $rcpath -Ochasen -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
 	
 	if ($::config_obj->all_in_one_pack){
 		$self->{cmdline} = "DYLD_FALLBACK_LIBRARY_PATH=\"$::ENV{DYLD_FALLBACK_LIBRARY_PATH}\" $self->{cmdline}";
