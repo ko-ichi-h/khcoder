@@ -601,6 +601,103 @@ sub load_dmp{
 	}
 }
 
+sub reloadable{
+	my $self = shift;
+	return 0  unless $self->status_from_table;
+	
+	my $source = $::config_obj->os_path( $self->status_source_file );
+	return 0 unless -e $source;
+	
+	my $target = $::config_obj->os_path( $self->file_target );
+	
+	if ( ( stat($target) )[9] < ( stat($source) )[9] ){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+sub status_selected_coln{
+	my $self = shift;
+	my $new  = shift;
+
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'selected_coln'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('selected_coln', '')"
+		,1);
+	}
+
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status_char SET status = '$new' WHERE name = 'selected_coln'"
+		,1);
+		$current = $new;
+	}
+
+	return $current;
+}
+
+sub status_var_file{
+	my $self = shift;
+	my $new  = shift;
+
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'var_file'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('var_file', '')"
+		,1);
+	}
+
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status_char SET status = '$new' WHERE name = 'var_file'"
+		,1);
+		$current = $new;
+	}
+
+	return $current;
+}
+
+sub status_source_file{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'source_file'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('source_file', '')"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status_char SET status = '$new' WHERE name = 'source_file'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
+}
+
 sub status_from_table{
 	my $self = shift;
 	my $new  = shift;

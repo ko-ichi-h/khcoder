@@ -21,12 +21,18 @@ my $data_per_1ins = 200;      # 一度にINSERTする値の数
 
 sub first{
 	my $class = shift;
+	my $reload = shift;
 	my $self;
 	$self->{temp} = 'temp';
 	bless $self, $class;
 
 	$::config_obj->in_preprocessing(1);
 
+	# Reload Excel/CSV
+	if ($reload) {
+		&reload_from_spreadsheet;
+	}
+	
 	if ($::config_obj->use_heap) {
 		# $self->{type_heap} = ' TYPE=HEAP ';
 		$self->{type_heap} = '';        # 安全第一 / heapではなくmyisamで
@@ -86,6 +92,80 @@ sub first{
 	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+}
+
+sub reload_from_spreadsheet{
+	# Identify the target column
+	my $col_name = $::project_obj->status_selected_coln;
+	my $source   = $::config_obj->os_path( $::project_obj->status_source_file );
+	my $columns = kh_spreadsheet->new($source)->columns();
+	my $col = 0;
+	my $hit = 0;
+	foreach my $i (@{$columns}){
+		if ($i eq $col_name){
+			$hit = 1;
+			last;
+		}
+		++$col;
+	}
+	unless ($hit){
+		die(
+			"Cannot reload data from the Excel/CSV file: cannot identify the target column.\n"
+			."Please create a new project with the Excel/CSV file"
+		);
+	}
+	
+	# Create text files from Excel/CSV
+	my $target   = $::config_obj->os_path( $::project_obj->file_target );
+	my $var      = $::config_obj->os_path( $::project_obj->status_var_file );
+
+	my $temp_t = $::project_obj->file_TempTXT;
+	my $temp_v = $::project_obj->file_TempTXT;
+	unlink($temp_t);
+	unlink($temp_v);
+
+	my $sheet_obj = kh_spreadsheet->new($source);
+	$sheet_obj->save_files(
+		filet    => $temp_t,
+		filev    => $temp_v,
+		selected => $col,
+		lang     => $::project_obj->morpho_analyzer_lang,
+	);
+	unless ( -e $temp_t ) {
+		return 0;
+	}
+	
+	unlink($target);
+	unlink($var);
+	rename($temp_t, $target) or die;
+	rename($temp_v, $var) if -e $temp_v;
+
+	# Drop duplicated variable
+	use File::BOM;
+	File::BOM::open_bom (my $fh, $var, ":encoding(utf-8)" );
+	use Text::CSV_XS;
+	my $tsv = Text::CSV_XS->new({
+		binary     => 1,
+		auto_diag  => 2,
+		sep_char   => "\t",
+		allow_loose_quotes => 1
+	});
+	my $names = $tsv->getline($fh);
+	close $fh;
+	foreach my $i (@{$names}){
+		mysql_outvar->delete(
+			name => $i,
+		);
+	}
+	
+	# Load variables
+	mysql_outvar::read::tab->new(
+		file        => $var,
+		tani        => 'h5',
+		skip_checks => 1,
+	)->read if -e $var;
+
+	return 1;
 }
 
 sub make_cache{

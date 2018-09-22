@@ -61,7 +61,7 @@ sub read{
 	
 	# prepare ID numbers
 	my @ids;
-	if ( mysql_exec->table_exists($self->{tani}) ){
+	if ( (mysql_exec->table_exists($self->{tani})) &! ($self->{skip_checks}) ){
 		my $h_id = mysql_exec->select("
 			select id from $self->{tani} order by id
 		",1)->hundle;
@@ -261,7 +261,7 @@ sub save{
 	my @data = @{$args{data}};
 
 	my @exts = ();
-	if ( $args{skip_checks} == 0 ){
+	unless ( $args{skip_checks} ){
 
 		# ケース数のチェック
 		my $cases_in_file = @data; --$cases_in_file;

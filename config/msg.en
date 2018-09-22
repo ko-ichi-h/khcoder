@@ -167,6 +167,7 @@ gui_window::main::inner:
 gui_window::main::menu:
     open_nbl:                 'Select the classification log file to view'
     open_knb:                 'Select the model file to view'
+    prepro_reload:            "It may take a while.\nIf you don't want to execute it now, please click 'Cancel'.\n\nExcel/CSV file is updated!\nShall we read the content of Excel/CSV file again?"
     about:                    About
     bayes_classi:             Classify Documents using a Model
     bayes_learn:              Build a Model from a Variable

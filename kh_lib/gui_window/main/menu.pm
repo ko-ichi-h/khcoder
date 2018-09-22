@@ -188,14 +188,26 @@ sub make{
 				-label => kh_msg->get('run_prep'),
 				-font => "TKFN",
 				-command => sub{
-					my $ans = $mw->messageBox(
-						-message => kh_msg->gget('cont_big_pros'),
-						-icon    => 'question',
-						-type    => 'OKCancel',
-						-title   => 'KH Coder'
-					);
-					unless ($ans =~ /ok/i){ return 0; }
-					$self->mc_morpho;
+					my $reload = 0;
+					if ( $::project_obj->reloadable ){
+						my $ans = $mw->messageBox(
+							-message => kh_msg->get('prepro_reload'),
+							-icon    => 'question',
+							-type    => 'YesNoCancel',
+							-title   => 'KH Coder'
+						);
+						if ($ans =~ /cancel/i){ return 0; }
+						if ($ans =~ /Yes/i) {   $reload = 1; }
+					} else {
+						my $ans = $mw->messageBox(
+							-message => kh_msg->gget('cont_big_pros'),
+							-icon    => 'question',
+							-type    => 'OKCancel',
+							-title   => 'KH Coder'
+						);
+						unless ($ans =~ /ok/i){ return 0; }
+					}
+					$self->mc_morpho($reload);
 				},
 				-state => 'disable'
 			);
@@ -1044,15 +1056,19 @@ sub mc_datacheck{
 }
 sub mc_morpho{
 	my $self = shift;
+	my $reload = shift;
+	
 	$::main_gui->close_all;
 	my $w = gui_wait->start;
-	$self->mc_morpho_exec;
+	$self->mc_morpho_exec($reload);
 	$w->end;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 }
 sub mc_morpho_exec{
-	mysql_ready->first;
+	my $self = shift;
+	my $reload = shift;
+	mysql_ready->first($reload);
 	$::project_obj->status_morpho(1);
 }
 sub mc_hukugo{

@@ -286,6 +286,7 @@ sub _make_new{
 
 	# Excel / CSV (1)
 	my $file_vars;
+	my $file_source;
 	if ($t =~ /(.+)\.(xls|xlsx|csv)$/i){
 		$from_table = 1;
 		
@@ -312,7 +313,8 @@ sub _make_new{
 			lang     => $self->{lang},
 			#icode    => $self->{icode},
 		);
-
+		
+		$file_source = $t;
 		$t = $file_text;
 	}
 
@@ -371,6 +373,9 @@ sub _make_new{
 		# some configurations
 		$::project_obj->last_tani('h5');
 		$::project_obj->status_from_table(1);
+		$::project_obj->status_source_file( $::config_obj->uni_path($file_source) );
+		$::project_obj->status_var_file( $::config_obj->uni_path($file_vars) );
+		$::project_obj->status_selected_coln( $self->{column_list}[$self->{column}] );
 	} else {
 		$::project_obj->status_from_table(0);
 	}
@@ -459,7 +464,7 @@ sub _columns{
 
 	use kh_spreadsheet;
 	my $columns = kh_spreadsheet->new($path)->columns();
-
+	$self->{column_list} = $columns;
 	
 	$self->{column_label}->configure( -state => 'normal' );
 	$self->{column_menu}->{win_obj}->destroy;

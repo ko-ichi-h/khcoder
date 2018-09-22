@@ -208,6 +208,7 @@ gui_window::main::menu:
     partial:                  部分テキストの取り出し
     plugin:                   プラグイン
     prep:                     前処理(R)
+    prepro_reload:            "この処理には時間がかかる場合があります。\n今すぐ実行したくないときは「キャンセル」をクリックしてください。\n\nExcel/CSVファイルが更新されています！\nExcel/CSVファイルの内容を再度読み込みますか？"
     project:                  プロジェクト(P)
     read:                     読み込み
     run_prep:                 前処理の実行
