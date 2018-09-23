@@ -233,7 +233,7 @@ sub web{
 
 	#$t =~ s/Ver\. 2\.[Bb]eta\.[0-9]+[a-z]*</Ver\. $V_full</;  # バージョン番号
 	#$t =~ s/20[0-9]{2} [0-9]{2}\/[0-9]{2}/$date/;             # 日付
-	$t =~ s/khc\/releases\/tag\/3\.[Aa]lpha\.[0-9a-z]+\//khc\/releases\/tag\/$V_full\//; # ダウンロードフォルダ
+	$t =~ s/khc\/releases\/tag\/3\.[0-9a-zA-Z\.]+?\//khc\/releases\/tag\/$V_full\//; # ダウンロードフォルダ
 	#
 	open(my $fh, '>', "../pub/web/en_index.html") or die;
 	print $fh $t;
@@ -247,7 +247,7 @@ sub web{
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
 	
 	$t =~ s/\(20[0-9]{2} [0-9]{2}\/[0-9]{2}\)/($date)/g;                 # 日付
-	$t =~ s/khcoder\-3a[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
+	$t =~ s/khcoder\-3[ab\.]*[0-9]+[a-zA-Z]*([\-\.])/khcoder\-$V$1/g;       # ファイル名
 	$t =~ s/download\/3[\.a-zA-Z0-9]+\//download\/$V_full\//g; # フォルダ名1
 
 	open(my $fh, '>', "../pub/web/dl3.html") or die;
