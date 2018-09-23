@@ -313,51 +313,89 @@ sub zero_length_headings{
 sub fix_michigo{
 	my $self = shift;
 	
-	unless ( $::project_obj->morpho_analyzer eq 'chasen' ){
-		return 0;
+	# Japanese
+	if ( $::project_obj->morpho_analyzer_lang eq 'jp' ){
+		my $h = mysql_exec->select("
+			SELECT genkei.id, genkei.name
+			FROM   genkei, khhinshi
+			WHERE
+					genkei.khhinshi_id = khhinshi.id
+				AND khhinshi.name = \"未知語\"
+		",1)->hundle;
+		
+		my @gomi = ();
+		
+		while (my $i = $h->fetch){
+			#print Jcode->new("$i->[1]: ")->sjis;
+			if ( $i->[1] =~ /[a-z]/io ){
+				#print "alpha\n";
+				next;
+			}
+			if ( $i->[1] =~ /\p{Han}|\p{Hiragana}|\p{Katakana}/o){
+				#print "zenkaku\n";
+				next;
+			}
+			if ( $i->[1] =~ /[ａ-ｚ|Ａ-Ｚ]/o){
+				#print "zenkaku-alpha\n";
+				next;
+			}
+			#print "gomi\n";
+			push @gomi, $i->[0];
+		}
+		
+		my $sql = '';
+		$sql .= "UPDATE genkei SET khhinshi_id = 9999 WHERE\n";
+		
+		my $n = 0;
+		foreach my $i (@gomi){
+			$sql .= "OR " if $n;
+			$sql .= "( id = $i )\n";
+			++$n;
+		}
+		
+		#print "$sql\n\n";
+		
+		mysql_exec->do($sql, 1) if $n;
 	}
 	
-	my $h = mysql_exec->select("
-		SELECT genkei.id, genkei.name
-		FROM   genkei, khhinshi
-		WHERE
-			    genkei.khhinshi_id = khhinshi.id
-			AND khhinshi.name = \"未知語\"
-	",1)->hundle;
-	
-	my @gomi = ();
-	
-	while (my $i = $h->fetch){
-		#print Jcode->new("$i->[1]: ")->sjis;
-		if ( $i->[1] =~ /[a-z]/io ){
-			#print "alpha\n";
-			next;
+	# Korean
+	if ( $::project_obj->morpho_analyzer_lang eq 'kr' ){
+		my $h = mysql_exec->select("
+			SELECT genkei.id, genkei.name
+			FROM   genkei, khhinshi
+			WHERE
+					genkei.khhinshi_id = khhinshi.id
+				AND khhinshi.name = \"Unknown\"
+		",1)->hundle;
+		
+		my @gomi = ();
+		
+		while (my $i = $h->fetch){
+			# numbers
+			if ( $i->[1] =~ /^\p{PosixDigit}+$/o ){
+				push @gomi, $i->[0];
+			}
+
+			# symbols
+			if ( $i->[1] =~ /^\p{PosixPunct}+$/o ){
+				push @gomi, $i->[0];
+			}
 		}
-		if ( $i->[1] =~ /\p{Han}|\p{Hiragana}|\p{Katakana}/o){
-			#print "zenkaku\n";
-			next;
+		
+		my $sql = '';
+		$sql .= "UPDATE genkei SET khhinshi_id = 99999 WHERE\n";
+		
+		my $n = 0;
+		foreach my $i (@gomi){
+			$sql .= "OR " if $n;
+			$sql .= "( id = $i )\n";
+			++$n;
 		}
-		if ( $i->[1] =~ /[ａ-ｚ|Ａ-Ｚ]/o){
-			#print "zenkaku-alpha\n";
-			next;
-		}
-		#print "gomi\n";
-		push @gomi, $i->[0];
+		
+		#print "$sql\n\n";
+		
+		mysql_exec->do($sql, 1) if $n;
 	}
-	
-	my $sql = '';
-	$sql .= "UPDATE genkei SET khhinshi_id = 9999 WHERE\n";
-	
-	my $n = 0;
-	foreach my $i (@gomi){
-		$sql .= "OR " if $n;
-		$sql .= "( id = $i )\n";
-		++$n;
-	}
-	
-	#print "$sql\n\n";
-	
-	mysql_exec->do($sql, 1) if $n;
 }
 
 
