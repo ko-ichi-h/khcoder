@@ -5,6 +5,7 @@ use warnings;
 use kh_spreadsheet::xls;
 use kh_spreadsheet::xlsx;
 use kh_spreadsheet::csv;
+use kh_spreadsheet::tsv;
 
 use Encode;
 
@@ -15,7 +16,7 @@ sub new{
 	$self->{file} = $_[1];
 	
 	my $ext;
-	if ( $self->{file} =~ /\.(xls|xlsx|csv)$/i ){
+	if ( $self->{file} =~ /\.(xls|xlsx|csv|tsv)$/i ){
 		$ext = $1;
 		$ext =~ tr/A-Z/a-z/;
 	} else {

@@ -287,7 +287,7 @@ sub _make_new{
 	# Excel / CSV (1)
 	my $file_vars;
 	my $file_source;
-	if ($t =~ /(.+)\.(xls|xlsx|csv)$/i){
+	if ($t =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
 		$from_table = 1;
 		
 		# name of the new text file
@@ -387,7 +387,7 @@ sub _sansyo{
 	my $self = shift;
 
 	my @types = (
-		[ "Data files",[qw/.txt .csv .xls .xlsx/] ],
+		[ "Data files",[qw/.txt .csv .tsv .xls .xlsx/] ],
 		[ "All files",'*' ]
 	);
 
@@ -426,7 +426,7 @@ sub check_path{
 	my $path = shift;
 	
 	# Excel / CSV
-	if ($path =~ /\.(xls|xlsx|csv)$/i){
+	if ($path =~ /\.(xls|xlsx|csv|tsv)$/i){
 		$self->_columns($path);
 	}
 	# TXT / HTML

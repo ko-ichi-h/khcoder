@@ -1,4 +1,4 @@
-package kh_spreadsheet::csv;
+package kh_spreadsheet::tsv;
 
 use strict;
 use warnings;
@@ -64,8 +64,8 @@ sub save_files{
 		eol       => $/
 	});
 
-	# open csv file
-	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, allow_loose_quotes => 1 } );
+	# open tsv file
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, allow_loose_quotes => 1, sep_char  => "\t" } );
 	use File::BOM;
 	File::BOM::open_bom (my $fh, $self->{file}, ":encoding($icode)" );
 	gui_errormsg->open(
@@ -152,7 +152,7 @@ sub columns{
 	}
 
 	# open csv file
-	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 1 } );
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 1, sep_char  => "\t" } );
 	use File::BOM;
 	File::BOM::open_bom (my $fh, $self->{file}, ":encoding($icode)" );
 	gui_errormsg->open(
