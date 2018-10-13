@@ -217,19 +217,38 @@ sub drop_db{
 # DB Serverのシャットダウン
 
 sub shutdown_db_server{
-	my $dbh;
-	if ($dbh_common) {
-		$dbh = $dbh_common;
-	} else {
-		my $dsn = 
-			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-		$dbh = DBI->connect($dsn,$username,$password);
-	}
 
-	$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
-		#or gui_errormsg->open(type => 'mysql', sql => 'Drop DB');
-		# このルーチンは終了処理で呼ばれる（はず）なので、例外ハンドリングを
-		# 省いて終了させる…。
+	if ($::config_obj->os eq 'win32' && $^V ne 'v5.14.2'){
+		print "Shutting down MySQL using mysqladmin.exe...\n";
+		
+		require Win32::Process;
+		my $obj;
+		my ($mysql_pass, $cmd_line);
+		
+		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqladmin.exe';
+		$cmd_line = "dep\\mysql\\bin\\mysqladmin --user=$username --password=$password --port=$port shutdown";
+
+		Win32::Process::Create(
+			$obj,
+			$mysql_pass,
+			$cmd_line,
+			0,
+			Win32::Process->CREATE_NO_WINDOW,
+			$::config_obj->cwd,
+		);
+	} else {
+		my $dbh;
+		if ($dbh_common) {
+			$dbh = $dbh_common;
+		} else {
+			my $dsn = 
+				"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+			$dbh = DBI->connect($dsn,$username,$password);
+		}
+		$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
+	}
+	# このルーチンは終了処理で呼ばれる（はず）なので、例外ハンドリングを
+	# 省いて終了させる。
 }
 
 #------------------#
