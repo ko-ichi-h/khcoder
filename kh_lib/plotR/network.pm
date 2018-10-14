@@ -1341,39 +1341,12 @@ p <- p + scale_linetype_identity()
 
 # words
 
-alpha_config <- 0
-if (
-	   ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r" )
-	&& ( length(com_m$csize[com_m$csize >= 2]) >= 13 )
-	&& ( length(com_m$csize[com_m$csize >= 2]) <= 20 )
-){
-	alpha_config <- -0.5
-	p <- p + geom_nodes(
-		aes(
-			size = size * 0.41
-		),
-		alpha = 0.3, # 0.65
-		color = "white",
-		show.legend = F,
-		shape = 16
-	)
-	p <- p + geom_nodes(
-		aes(
-			size = size
-		),
-		alpha = 0.65,
-		color = "white",
-		show.legend = F,
-		shape = 16
-	)
-}
-
 p <- p + geom_nodes(
 	aes(
 		size = size * 0.41,
 		color = com
 	),
-	alpha = 0.85 + alpha_config,
+	alpha = 0.85,
 	show.legend = F,
 	shape = 16
 )
@@ -1383,7 +1356,7 @@ p <- p + geom_nodes(
 		color = com,
 		shape = shape
 	),
-	alpha = alpha_value + alpha_config / 3,
+	alpha = alpha_value,
 	shape = 16
 )
 p <- p + geom_nodes(
@@ -1646,13 +1619,15 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 			)
 		} else if (length(com_m$csize[com_m$csize > 1]) <= 20)  {
 			library(ggsci)
-			p <- p + scale_color_d3(
-				palette = "category20",
+			c20org <- col2rgb( pal_d3("category20")(20) )
+
+			p <- p + scale_color_manual(
+				values = rgb( t( ( 255 - ( 255 - c20org ) * 0.5 ) / 255  ) ),
 				na.value = "white",
 				guide = FALSE
 			)
-			p <- p + scale_fill_d3(
-				palette = "category20",
+			p <- p + scale_fill_manual(
+				values = rgb( t( ( 255 - ( 255 - c20org ) * 0.5 ) / 255  ) ),
 				na.value = "white",
 				guide = guide_legend(
 					title = "Community:",
