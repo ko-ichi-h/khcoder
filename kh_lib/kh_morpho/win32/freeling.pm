@@ -52,7 +52,7 @@ sub _run_morpho{
 	
 	my $cmd_line =                                           # command line
 		$cmd_path 
-		." /C $freeling_path"
+		." /C \"$freeling_path\""
 		." --nodate --noquant --flush -f "
 		.$::project_obj->morpho_analyzer_lang
 		.'.cfg --server --port 50005'
@@ -73,6 +73,10 @@ sub _run_morpho{
 	foreach my $i (@info){
 		Win32::Process::KillProcess($i->{ProcessId}, 1);
 	}
+	
+	#print "path:    $self->{cmd_path}\n";
+	#print "cmdline: $self->{cmd_line}\n";
+	#print "dir:     $self->{dir}\n";
 	
 	# run the server
 	require Win32::Process;
@@ -105,7 +109,7 @@ sub _run_morpho{
 	
 	for (my $n = 0; $n <= 120; ++$n){
 		print "Waiting ($n/120): ";
-		my $return = `$freeling_path 50005 < $file_temp`;
+		my $return = `"$freeling_path" 50005 < $file_temp`;
 		#print "Return: \"$return\"\n";
 		if ( length($return) > 5 ) {
 			last;
@@ -119,8 +123,8 @@ sub _run_morpho{
 
 	$self->{cmd_line} =                                # command line
 		$cmd_path 
-		." /C $freeling_path 50005 "
-		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
+		." /C \"\"$freeling_path\" 50005 "
+		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"\"";
 	;
 
 	# ファイルオープン
@@ -309,6 +313,9 @@ sub _fl_run{
 	return 0 unless -e $self->{target_temp};
 
 	# run freeling
+	#print "path:    $self->{cmd_path}\n";
+	#print "cmdline: $self->{cmd_line}\n";
+	#print "dir:     $self->{dir}\n";
 	require Win32::Process;
 	my $process;
 	Win32::Process::Create(
