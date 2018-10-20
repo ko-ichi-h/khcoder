@@ -74,8 +74,8 @@ sub exec{
 	');
 
 	# 実行結果の取得 3
-	use Encode;
-	use Encode::Locale;
+	#use Encode;
+	#use Encode::Locale;
 	my $t3 = $::config_obj->R->read();
 	$t3 = Encode::decode('console_out', $t3);
 	$t .= "\n\ngetwd():\n\n$t3";

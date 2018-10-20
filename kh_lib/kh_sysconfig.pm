@@ -7,13 +7,10 @@ use kh_sysconfig::win32;
 use kh_sysconfig::linux;
 
 use Encode;
-use Encode::Locale;
+
 my $locale_fs = 1;
-eval {
-	Encode::encode('locale_fs', 'test');
-};
+eval { require Encode::Locale; };
 if ( $@ ){
-	warn $@;
 	$locale_fs = 0;
 }
 

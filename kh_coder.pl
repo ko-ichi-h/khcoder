@@ -29,18 +29,11 @@ BEGIN {
 	use Jcode;
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
-	use Encode::Locale;
-	eval {
-		binmode STDOUT, ":encoding(console_out)";
-	};
-	warn $@ if $@;
-
 	my $locale_fs = 1;
-	eval {
-		Encode::decode('locale_fs', $ENV{'PWD'});
-	};
+	eval { require Encode::Locale; };
 	if ( $@ ){
 		warn $@;
+		print "Fatal error detected! Please report the content of this window to the developper. Thanks!\n";
 		$locale_fs = 0;
 	}
 

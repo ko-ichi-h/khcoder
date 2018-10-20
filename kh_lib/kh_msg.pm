@@ -138,8 +138,8 @@ sub load{
 		$lang = $::config_obj->msg_lang;
 	} else {
 		if ($::config_obj->os eq 'win32'){
-			use Encode::Locale;
-			$locale = $Encode::Locale::ENCODING_LOCALE;
+			eval{ require Encode::Locale; };
+			$locale = $Encode::Locale::ENCODING_LOCALE unless $@;
 			$lang = 'jp' if $locale eq 'cp932';
 		} else {
 			$locale = $ENV{LANG};

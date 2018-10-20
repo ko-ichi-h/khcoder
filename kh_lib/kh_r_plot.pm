@@ -216,8 +216,8 @@ sub new{
 	$::config_obj->R->output_chk(1);
 
 	# Reading text output from R
-	use Encode;
-	use Encode::Locale;
+	#use Encode;
+	#use Encode::Locale;
 	my $loc = 'console_out';
 	if (
 		   ( $::config_obj->os eq 'win32' )
