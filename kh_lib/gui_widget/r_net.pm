@@ -374,20 +374,20 @@ sub _new{
 			unless defined($self->{check_cor_var})
 		;
 
+		$self->{wd_check_cor_var} = $lf->Checkbutton(
+				-text     => kh_msg->get('cor_var'),
+				-variable => \$self->{check_cor_var},
+				-command  => sub{ $self->refresh;},
+				-anchor => 'w',
+		)->pack(-anchor => 'w');
+
 		my $f7 = $lf->Frame()->pack(
 			-fill => 'x',
 			-pady => 1
 		);
 
-		$self->{wd_check_cor_var} = $f7->Checkbutton(
-				-text     => kh_msg->get('cor_var'),
-				-variable => \$self->{check_cor_var},
-				-command  => sub{ $self->refresh;},
-				-anchor => 'w',
-		)->pack(-anchor => 'w', -side => 'left');
-
-		$f7->Label(
-			-text => ' ',
+		$self->{cor_var_t} = $f7->Label(
+			-text => kh_msg->get('cor_var2'),
 			-font => "TKFN",
 		)->pack(-anchor => 'w', -side => 'left');
 
@@ -508,13 +508,13 @@ sub refresh{
 			push @dis, $self->{chkwid_standardize_coef};
 			if ($self->{check_cor_var}){
 				$self->{var_obj2}->enable;
+				push @nor, $self->{cor_var_t};
 			} else {
 				$self->{var_obj2}->disable;
+				push @dis, $self->{cor_var_t};
 			}
 		}
 	}
-	
-
 
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal') if $i;
