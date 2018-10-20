@@ -410,11 +410,13 @@ sub _new{
 	}
 
 	$self->{check_use_alpha} = 1 unless defined($self->{check_use_alpha});
-	$lf->Checkbutton(
-			-text     => kh_msg->get('gui_window::word_mds->r_alpha'),
-			-variable => \$self->{check_use_alpha},
-			-anchor => 'w',
-	)->pack(-anchor => 'w');
+	if ($self->{r_cmd}){
+		$lf->Checkbutton(
+				-text     => kh_msg->get('gui_window::word_mds->r_alpha'),
+				-variable => \$self->{check_use_alpha},
+				-anchor => 'w',
+		)->pack(-anchor => 'w');
+	}
 
 	$self->{check_gray_scale} = 0 unless defined($self->{check_gray_scale});
 	#if ($self->{r_cmd}){

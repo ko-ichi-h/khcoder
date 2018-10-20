@@ -20,7 +20,7 @@ use strict;
 
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "3.Alpha.14";
+$kh_version = "3.Alpha.14a";
 
 BEGIN {
 	# デバッグ用…
@@ -35,6 +35,11 @@ BEGIN {
 		warn $@;
 		print "Fatal error detected! Please report the content of this window to the developper. Thanks!\n";
 		$locale_fs = 0;
+	}
+	if ($locale_fs){
+		eval {
+			binmode STDOUT, ":encoding(console_out)";
+		};
 	}
 
 	# for Windows [1]
