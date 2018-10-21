@@ -413,6 +413,8 @@ sub print_error{
 		warn($self->{err});
 		return 0;
 	}
+	
+	print "\n\n$self->{err}\n";
 	gui_errormsg->open(type => 'mysql',sql => $self->err);
 }
 

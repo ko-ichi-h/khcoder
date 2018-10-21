@@ -213,7 +213,6 @@ sub _find{
 	mysql_exec->drop_table("temp_conc");
 	mysql_exec->do("
 		create $temporary table temp_conc (
-		#create table temp_conc (
 			id int primary key not null,
 			l5 int,
 			l4 int,
@@ -359,7 +358,7 @@ sub _tuika{
 	
 	my $sql = '';
 	$sql .= "INSERT INTO temp_conc (id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5)\n";
-	$sql .= "SELECT temp_conc_old.id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5\n";
+	$sql .= "SELECT DISTINCT temp_conc_old.id,l5,l4,l3,l2,l1,center,r1,r2,r3,r4,r5\n";
 	$sql .= "FROM temp_conc_old";
 	foreach my $i (1,2,3){
 		if ($self->{tuika}{$i}{pos}){
