@@ -744,7 +744,7 @@ gui_widget::r_net:
     fix_lab:                  'ラベルが重ならないように位置を調整する'
     view_coef:                '係数を表示'
     cor_var:                  '共起パターンの変化を探る（相関）'
-    cor_var2:                 '  対象変数（数値）：'
+    cor_var2:                 '  対象とする数値変数：'
     cor_var_colors:           '相関のカラースケール'
     cor_var_darker:           '背景色を暗めにする'
     standardize_coef:         '係数を標準化する'
