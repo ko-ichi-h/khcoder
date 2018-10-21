@@ -74,9 +74,9 @@ sub _run_morpho{
 		Win32::Process::KillProcess($i->{ProcessId}, 1);
 	}
 	
-	#print "path:    $self->{cmd_path}\n";
-	#print "cmdline: $self->{cmd_line}\n";
-	#print "dir:     $self->{dir}\n";
+	print "\n\tpath:    $self->{cmd_path}\n";
+	print "\tcmdline: $self->{cmd_line}\n";
+	print "\tdir:     $self->{dir}\n";
 	
 	# run the server
 	require Win32::Process;
