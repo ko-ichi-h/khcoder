@@ -108,7 +108,7 @@ gui_window::cod_corresp:
     er_zero:                  '出現数が0のコードは利用できません。'
     er_unit:                  '集計単位の選択が不正です。'
 gui_window::datacheck:
-    auto_correct:             '   分析対象ファイルの自動修正：'
+    auto_correct:             '   テキストの自動修正：'
     close:                    閉じる
     correction_done:          ●自動修正を行いました。
     details:                  見つかった問題点の詳細：
@@ -116,13 +116,13 @@ gui_window::datacheck:
     file_backup:              ○修正前の分析対象ファイルを次の場所にバックアップしました：
     file_diff:                ○修正箇所のリスト（diff）を次のファイルに保存しました：
     headmark:                 '■■ '
-    looks_complete:           ○分析対象ファイル内に発見された既知の問題点はすべて修正されました。
+    looks_complete:           ○テキスト内に発見された既知の問題点はすべて修正されました。
     not_complete:             ○自動的に修正できない箇所が残っています。分析対象ファイルを直接修正して下さい。
     print:                    画面に表示
     save_as:                  ファイルに保存
-    save_as_win:              分析対象ファイル内に見つかった問題点の詳細を保存
+    save_as_win:              テキスト内に見つかった問題点の詳細を保存
     saved:                    ●見つかった問題点の詳細を次のファイルに保存しました：
-    win_title:                分析対象ファイルのチェックと修正
+    win_title:                テキストのチェックと修正
 gui_window::dictionary:
     force_ignore:             使用しない語の指定：
     force_pick:               強制抽出する語の指定：
@@ -170,7 +170,7 @@ gui_window::main::menu:
     about:                    KH Coderについて
     bayes_classi:             学習結果を用いた自動分類
     bayes_learn:              外部変数から学習
-    check:                    分析対象ファイルのチェック
+    check:                    テキストのチェック
     check_classi:             分類ログファイルの内容を確認
     check_learning:           学習結果ファイルの内容を確認
     check_morpho:             語の抽出結果を確認
@@ -1081,7 +1081,7 @@ mysql_ready::dump:
     too_long_word1:            "制限を超える長さの語（形態素）が抽出されました。\nKH Coderが扱えるの語の長さは128文字までです。\n\nKH Coderは当該の語を短縮した状態で認識します。\n当該の語は以下のファイルに記録しました：\n"
     too_long_word2:            "OKをクリックすると前処理を続行します。"
 mysql_getheader:
-    error:                     "見出しの取り出しに失敗しました。\n\nH1～H5タグを使った見出し作成に失敗している可能性があります。\n分析対象ファイルのチェックを行ってみてください。"
+    error:                     "見出しの取り出しに失敗しました。\n\nH1～H5タグを使った見出し作成に失敗している可能性があります。\n「テキストのチェック」を行ってみてください。"
 gui_window::r_plot::doc_cls:
     win_title:                 "文書のデンドログラム"
 gui_window::r_plot_opt::doc_cls:

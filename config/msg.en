@@ -108,7 +108,7 @@ gui_window::cod_corresp:
     er_zero:                  'We cannot use 0 frequency codes for this analysis.'
     er_unit:                  'Illegal selection of Tabulating Unit.'
 gui_window::datacheck:
-    auto_correct:             '   Auto correction of the target file:'
+    auto_correct:             '   Auto correction of the target text:'
     close:                    Close
     correction_done:          '*** Auto correction was performed:'
     details:                  'Detailed info on problems:'
@@ -122,7 +122,7 @@ gui_window::datacheck:
     save_as:                  Save as
     save_as_win:              Saving the detailed info on problems
     saved:                    '*** Detailed info on problems saved:'
-    win_title:                Checking the target file
+    win_title:                Checking the target text
 gui_window::dictionary:
     force_ignore:             'Force ignore following words:'
     force_pick:               'Pick up following strings as words:'
@@ -171,7 +171,7 @@ gui_window::main::menu:
     about:                    About
     bayes_classi:             Classify Documents using a Model
     bayes_learn:              Build a Model from a Variable
-    check:                    Check the Target File
+    check:                    Check the Target Text
     check_classi:             View a Classification Log
     check_learning:           View a Model File
     check_morpho:             Check the Result of Word Extraction
