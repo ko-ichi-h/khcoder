@@ -199,7 +199,7 @@ gui_window::main::menu:
     import_win_title:         KHC形式のファイルからプロジェクトをインポート。
     jac_mtrx:                 類似度行列
     kwic:                     KWICコンコーダンス
-    man:                      マニュアル(PDF)
+    man:                      マニュアル (PDF)
     mds:                      多次元尺度構成法
     netg:                     共起ネットワーク
     new:                      新規
@@ -221,7 +221,7 @@ gui_window::main::menu:
     use_termextract:          TermExtractを利用
     var_list:                 リスト
     vars_heads:               外部変数と見出し
-    web:                      最新情報(Web)
+    web:                      最新情報 (Web)
     word_ass:                 関連語検索
     word_freq:                抽出語リスト（Excel出力）
     word_search:              抽出語リスト
