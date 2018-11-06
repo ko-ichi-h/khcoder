@@ -11,12 +11,14 @@ use kh_project;
 # 		sql: SQL文
 #		[1/0]: Critical(1) or not(0)
 
-my ($username, $password, $host, $port);
+my ($username, $password, $host, $port, $type, $socket);
 if ($::config_obj){
 	$username = $::config_obj->sql_username;
 	$password = $::config_obj->sql_password;
 	$host     = $::config_obj->sql_host;
 	$port     = $::config_obj->sql_port;
+	$type     = $::config_obj->sql_type;
+	$socket   = $::config_obj->sql_socket;
 }
 
 my $mysql_version = -1;
@@ -28,9 +30,19 @@ my $dbh_common;
 #   DB操作   #
 #------------#
 
+sub dsn_gen{
+	#my $self = shift;
+	my $db   = shift;
+	
+	if ($type eq 'TCP/IP'){
+		return "DBI:mysql:database=$db;$host;port=$port;mysql_local_infile=1";
+	} else {
+		return "DBI:mysql:database=$db;host=.;mysql_socket=$socket;mysql_local_infile=1";
+	}
+}
+
 sub connect_common{
-	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
+	my $dsn = &dsn_gen("mysql");
 	$dbh_common = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 	#print "Created a shared connection to MySQL.\n";
@@ -40,8 +52,7 @@ sub connect_common{
 sub connect_db{
 	my $dbname     = $_[1];
 	my $no_verbose = $_[2];
-	my $dsn = 
-		"DBI:mysql:database=$dbname;$host;port=$port;mysql_local_infile=1";
+	my $dsn = &dsn_gen($dbname);
 	my $dbh = DBI->connect($dsn,$username,$password,{mysql_enable_utf8 => 1})
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 
@@ -88,10 +99,10 @@ sub connection_test{
 	# テスト実行
 	print "Checking MySQL connection...\n";
 	my $if_error = 0;
-	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
-		or $if_error = 1;
+	
+	my $dsn = &dsn_gen("mysql");
+	my $dbh = DBI->connect($dsn,$username,$password) or $if_error = 1;
+
 	unless ($if_error){
 		my @r = $dbh->func('_ListDBs') or $if_error = 1;
 		if (@r){
@@ -119,9 +130,10 @@ sub create_new_db{
 	my $file = shift;
 	
 	# Get DB List
-	my $drh = DBI->install_driver("mysql") or
-		gui_errormsg->open(type => 'mysql',sql=>'install_driver');
-	my @dbs = $drh->func($host,$port,$username,$password,'_ListDBs') or 
+	&connect_common unless $dbh_common;
+	my $dbh = $dbh_common;
+	
+	my @dbs = $dbh->func('_ListDBs') or
 		gui_errormsg->open(type => 'mysql', sql => 'List DBs');
 	my %dbs;
 	foreach my $i (@dbs){
@@ -131,18 +143,13 @@ sub create_new_db{
 	# Prepare master DB (this happens only once)
 	unless ($dbs{khc_master}){
 		# create DB
-		my $dsn = 
-			"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-		my $dbh = DBI->connect($dsn,$username,$password)
-			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 		$dbh->do("
 			create database khc_master default character set utf8mb4
 		");
 		$dbh->disconnect;
 		
 		# create table
-		$dsn = 
-			"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
+		my $dsn = &dsn_gen("khc_master");
 		$dbh = DBI->connect($dsn,$username,$password)
 			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 		$dbh->do("
@@ -170,17 +177,16 @@ sub create_new_db{
 	}
 	
 	# Get new DB number
-	my $dsn = 
-		"DBI:mysql:database=khc_master;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
+	my $dsn = &dsn_gen("khc_master");
+	my $dbhm = DBI->connect($dsn,$username,$password)
 		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
-	$dbh->do('SET NAMES utf8mb4');
+	$dbhm->do('SET NAMES utf8mb4');
 	$file = $::config_obj->uni_path($file);
-	$file = $dbh->quote($file);
-	$dbh->do("
+	$file = $dbhm->quote($file);
+	$dbhm->do("
 		insert into db_name (target) VALUES ($file)
 	");
-	my $h = $dbh->prepare("select LAST_INSERT_ID()");
+	my $h = $dbhm->prepare("select LAST_INSERT_ID()");
 	$h->execute;
 	my $n = $h->fetch or die("Failed to obtain new DB name!");
 	$h->finish;
@@ -188,11 +194,11 @@ sub create_new_db{
 
 	# Create new DB
 	my $new_db_name = "khc$n";
-	$dbh->do("
+	$dbhm->do("
 		create database $new_db_name default character set utf8mb4
 	") or die("Failed to create new DB!");
 
-	$dbh->disconnect;
+	$dbhm->disconnect;
 	return $new_db_name;
 }
 
@@ -200,10 +206,8 @@ sub create_new_db{
 sub drop_db{
 	my $drop = $_[1];
 
-	my $dsn = 
-		"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-	my $dbh = DBI->connect($dsn,$username,$password)
-		or gui_errormsg->open(type => 'mysql', sql => 'Connect');
+	&connect_common unless $dbh_common;
+	my $dbh = $dbh_common;
 
 	$dbh->func("dropdb", $drop,$host,$username,$password,'admin')
 		or gui_errormsg->open(
@@ -226,7 +230,12 @@ sub shutdown_db_server{
 		my ($mysql_pass, $cmd_line);
 		
 		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqladmin.exe';
-		$cmd_line = "dep\\mysql\\bin\\mysqladmin --user=$username --password=$password --port=$port shutdown";
+		
+		if ($type eq 'TCP/IP'){
+			$cmd_line = "dep\\mysql\\bin\\mysqladmin --user=$username --password=$password --port=$port shutdown";
+		} else {
+			$cmd_line = "dep\\mysql\\bin\\mysqladmin --user=$username --password=$password --host=. --socket=$socket shutdown";
+		}
 
 		Win32::Process::Create(
 			$obj,
@@ -237,14 +246,8 @@ sub shutdown_db_server{
 			$::config_obj->cwd,
 		);
 	} else {
-		my $dbh;
-		if ($dbh_common) {
-			$dbh = $dbh_common;
-		} else {
-			my $dsn = 
-				"DBI:mysql:database=mysql;$host;port=$port;mysql_local_infile=1";
-			$dbh = DBI->connect($dsn,$username,$password);
-		}
+		&connect_common unless $dbh_common;
+		my $dbh = $dbh_common;
 		$dbh->func("shutdown",$host,$username,$password,'admin') if $dbh;
 	}
 	# このルーチンは終了処理で呼ばれる（はず）なので、例外ハンドリングを

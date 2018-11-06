@@ -27,6 +27,7 @@ BEGIN {
 	#open (STDERR,">stderr.txt") or die;
 
 	use Jcode;
+	push @INC, '.';
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
 
 	my $locale_fs = 1;

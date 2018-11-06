@@ -108,6 +108,8 @@ sub save_ini{
 		'sql_password',
 		'sql_host',
 		'sql_port',
+		'sql_type',
+		'sql_socket',
 		'multi_threads',
 		'color_universal_design',
 		'mail_if',

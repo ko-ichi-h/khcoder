@@ -1324,6 +1324,34 @@ sub sql_host{
 	}
 }
 
+sub sql_type{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{sql_type} = $new;
+	}
+	if ( defined($self->{sql_type}) ){
+		return $self->{sql_type};
+	} else {
+		return 'TCP/IP';
+	}
+}
+
+sub sql_socket{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{sql_socket} = $new;
+	}
+	if ( defined($self->{sql_socket}) ){
+		return $self->{sql_socket};
+	} else {
+		return 'MySQL';
+	}
+}
+
 sub sqllog{
 	my $self = shift;
 	my $new = shift;
