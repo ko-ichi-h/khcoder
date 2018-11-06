@@ -222,7 +222,7 @@ sub drop_db{
 
 sub shutdown_db_server{
 
-	if ($::config_obj->os eq 'win32' && $^V ne 'v5.14.2'){
+	if ( $::config_obj->os eq 'win32' ){
 		print "Shutting down MySQL using mysqladmin.exe...\n";
 		
 		require Win32::Process;
