@@ -37,7 +37,11 @@ sub dsn_gen{
 	if ($type eq 'TCP/IP'){
 		return "DBI:mysql:database=$db;$host;port=$port;mysql_local_infile=1";
 	} else {
-		return "DBI:mysql:database=$db;host=.;mysql_socket=$socket;mysql_local_infile=1";
+		if ($::config_obj->os eq 'win32'){
+			return "DBI:mysql:database=$db;host=.;mysql_socket=$socket;mysql_local_infile=1";
+		} else {
+			return "DBI:mysql:database=$db;mysql_socket=$socket;mysql_local_infile=1";
+		}
 	}
 }
 
