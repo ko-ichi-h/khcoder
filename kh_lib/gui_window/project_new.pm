@@ -16,9 +16,11 @@ sub _new{
 
 	# Minimize Console
 	if (
-		   $::config_obj->os eq 'win32'
-		&& defined($PerlApp::VERSION)
-		&& substr($PerlApp::VERSION,0,1) >= 7
+		 $::config_obj->os eq 'win32'
+		&& (
+			   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
+			|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
+		)
 	){
 		require Win32::API;
 		my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');

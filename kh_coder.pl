@@ -73,7 +73,10 @@ BEGIN {
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
 		Win32::Sleep(50);
-		if (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7 ){
+		if (
+			   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
+			|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
+		){
 			require Win32::API;
 			my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
 			my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
