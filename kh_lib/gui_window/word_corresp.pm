@@ -979,11 +979,11 @@ aggregate_with_var <- function(d, doc_length_mtr, v) {
 
 	doc_length_mtr <- subset(
 		doc_length_mtr,
-		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != name_nav & row.names(d) != "." & regexpr("^missing$", row.names(d), ignore.case = T, perl = T) == -1
 	)
 	d <- subset(
 		d,
-		row.names(d) != name_nav & row.names(d) != "." & row.names(d) != "missing"
+		row.names(d) != name_nav & row.names(d) != "." & regexpr("^missing$", row.names(d), ignore.case = T, perl = T) == -1
 	)
 
 	# doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)

@@ -518,7 +518,7 @@ d <- subset(
 	d,
 	v0 != "'
 	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
-	.'" & v0 != "." & v0 != "missing"
+	.'" & v0 != "." & regexpr("^missing$", v0, ignore.case = T, perl = T) == -1
 )
 v0 <- NULL
 v1 <- NULL
@@ -528,7 +528,7 @@ d <- subset(
 	d,
 	rownames(d) != "<>'
 	.kh_msg->get('gui_window::word_corresp->nav') # 欠損値
-	.'" & rownames(d) != "<>." & rownames(d) != "<>missing"
+	.'" & rownames(d) != "<>." & regexpr("^<>missing$", rownames(d), ignore.case = T, perl = T) == -1
 )
 d <- t(d)
 
