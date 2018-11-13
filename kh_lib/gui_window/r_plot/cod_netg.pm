@@ -33,6 +33,21 @@ sub option1_options{
 			kh_msg->get('gui_window::r_plot::word_netgraph->gray'), # グレー
 		] ;
 	}
+	elsif (@{$self->{plots}} == 3){
+		return [
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_r'),
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_m'), # サブグラフ検出（modularity）
+			kh_msg->get('gui_window::r_plot::word_netgraph->none'),  # なし
+		];
+	}
+	elsif (@{$self->{plots}} == 4){
+		return [
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_r'),
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_m'), # サブグラフ検出（modularity）
+			kh_msg->get('gui_window::r_plot::word_netgraph->cor'),  # 相関
+			kh_msg->get('gui_window::r_plot::word_netgraph->none'),  # なし
+		];
+	}
 	elsif (@{$self->{plots}} == 8){
 		return [
 			kh_msg->get('gui_window::r_plot::word_netgraph->cnt_b'), # 中心性（媒介）

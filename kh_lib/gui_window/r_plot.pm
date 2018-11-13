@@ -45,6 +45,9 @@ sub _new{
 
 	# 画像をロード
 	$self->{ax} = 0 unless defined( $self->{ax} );
+	$self->{ax} = 0 if $self->{ax} < 0;
+	$self->{ax} = 0 unless $self->{plots}[$self->{ax}];
+	#print "ax[a]: $self->{ax}\n";
 	if ( $imgs->{$self->win_name} ){
 		#print "img: read: ".$self->win_name."\n";
 		$imgs->{$self->win_name}->read($self->{plots}[$self->{ax}]->path);
@@ -182,6 +185,7 @@ sub _new{
 			command  => sub {$self->renew;},
 		);
 		$self->{optmenu}->set_value($self->{ax});
+		#print "ax[b]: $self->{ax}\n";
 
 		$self->win_obj->bind(
 			'<Key-l>',

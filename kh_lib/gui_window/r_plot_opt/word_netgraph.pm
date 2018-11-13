@@ -14,6 +14,8 @@ sub innner{
 		r_cmd   => $self->{command_f},
 	);
 
+	$self->{old_additional_plots} = $self->{net_obj}{check_additional_plots};
+
 	return $self;
 }
 
@@ -55,6 +57,15 @@ sub calc{
 		$::main_gui->get('w_word_netgraph_plot')->close;
 	}
 	return 0 unless $plotR;
+
+	if ( $self->{old_additional_plots} !=  $self->{net_obj}{check_additional_plots}){
+		if ($self->{net_obj}{check_additional_plots}) {
+			$self->{ax} = $self->{ax} + 3;
+		} else {
+			$self->{ax} = $self->{ax} - 3;
+		}
+		
+	}
 
 	my $win = gui_window::r_plot::word_netgraph->open(
 		plots       => $plotR->{result_plots},

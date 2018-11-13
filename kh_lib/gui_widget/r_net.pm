@@ -107,6 +107,9 @@ sub _new{
 		if ($self->{r_cmd} =~ /standardize_coef <- ([01])\n/){
 			$self->{standardize_coef} = $1;
 		}
+		if ($self->{r_cmd} =~ /# additional_plots: ([01])\n/){
+			$self->{check_additional_plots} = $1;
+		}
 		unless ( $self->{cor_var_min} == -1 ){
 			$self->{check_cor_var_min} = 1;
 		}
@@ -427,6 +430,17 @@ sub _new{
 		)->pack(-anchor => 'w');
 	#}
 
+	# addtional plots
+	if (
+		$self->{r_cmd} && $self->{edge_type} ne "twomode"
+	) {
+		$lf->Checkbutton(
+				-text     => kh_msg->get('additional_plots'),
+				-variable => \$self->{check_additional_plots},
+				-anchor => 'w',
+		)->pack(-anchor => 'w');
+	}
+
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
 	return $self;
@@ -567,6 +581,7 @@ sub params{
 		cor_var_min         => $cor_var_min,
 		cor_var_max         => $cor_var_max,
 		standardize_coef    => $self->{standardize_coef},
+		additional_plots    => gui_window->gui_jg( $self->{check_additional_plots} ),
 	);
 }
 

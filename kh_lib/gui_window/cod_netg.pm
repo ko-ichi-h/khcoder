@@ -612,11 +612,15 @@ sub _calc{
 	return 0 unless $plotR;
 
 	my $ax = 0;
-	if (
-			$self->{net_obj}{check_cor_var} == 1
-			&& $self->{radio_type} ne "twomode"
-		){
-		$ax = 6;
+	if ( $self->{radio_type} ne "twomode" ){
+		if ( $self->{net_obj}{check_additional_plots} ) {
+			$ax = 5;
+		} else {
+			$ax = 1;
+		}
+		if ( $self->{net_obj}{check_cor_var} == 1) {
+			$ax = $ax + 1;
+		}
 	}
 
 	gui_window::r_plot::cod_netg->open(

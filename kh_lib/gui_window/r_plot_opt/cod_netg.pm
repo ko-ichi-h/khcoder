@@ -14,6 +14,8 @@ sub innner{
 		type    => 'codes',
 	);
 
+	$self->{old_additional_plots} = $self->{net_obj}{check_additional_plots};
+
 	return $self;
 }
 
@@ -55,6 +57,15 @@ sub calc{
 	}
 
 	return 0 unless $plotR;
+
+	if ( $self->{old_additional_plots} !=  $self->{net_obj}{check_additional_plots}){
+		if ($self->{net_obj}{check_additional_plots}) {
+			$self->{ax} = $self->{ax} + 3;
+		} else {
+			$self->{ax} = $self->{ax} - 3;
+		}
+		
+	}
 
 	gui_window::r_plot::cod_netg->open(
 		plots       => $plotR->{result_plots},

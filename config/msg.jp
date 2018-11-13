@@ -731,6 +731,7 @@ gui_window::r_plot::cod_cls:
 gui_window::cls_height::cod:
     win_title:                'コードのクラスター分析：併合水準'
 gui_widget::r_net:
+    additional_plots:         '追加的なプロットを作成（中心性など）'
     filter_edges:             '描画する共起関係（edge）の選択： '
     e_top_n:                  '上位'
     e_jac:                    '係数'

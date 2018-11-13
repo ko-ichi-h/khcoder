@@ -96,6 +96,9 @@ sub new{
 	$args{standardize_coef} = 1 unless ( length($args{standardize_coef}) );
 	$r_command .= "standardize_coef <- $args{standardize_coef}\n";
 
+	$args{additional_plots} = 0 unless length( $args{additional_plots} );
+	$r_command .= "# additional_plots: $args{additional_plots}\n";
+
 	# プロット作成
 	
 	#use Benchmark;
@@ -138,108 +141,129 @@ sub new{
 		) or return 0;
 	}
 	elsif ($::config_obj->web_if == 0) {
-		$plots[0] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_1',
-			command_f =>
-				 $r_command
-				.$self->r_plot_cmd_p1
-				."\ncom_method <- \"cnt-b\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
+
+		push (
+			@plots,
+			kh_r_plot::network->new(
+				name      => $args{plotwin_name}.'_1',
+				command_f =>
+					 $r_command
+					.$self->r_plot_cmd_p1
+					."\ncom_method <- \"cnt-b\"\n"
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p3
+					.$self->r_plot_cmd_p4,
+				width     => int( $args{plot_size} * $x_factor ),
+				height    => $args{plot_size},
+				font_size => $args{font_size},
+			)
 		) or return 0;
 
-		$plots[1] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_2',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"cnt-d\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"cnt-d\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
+		if ( $args{additional_plots} ) {
+			push (
+				@plots,
+				kh_r_plot::network->new(
+					name      => $args{plotwin_name}.'_2',
+					command_f =>
+						 $r_command
+						."\ncom_method <- \"cnt-d\"\n"
+						.$self->r_plot_cmd_p1
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p3
+						.$self->r_plot_cmd_p4,
+					command_a =>
+						 "com_method <- \"cnt-d\"\n"
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p4,
+					width     => int( $args{plot_size} * $x_factor ),
+					height    => $args{plot_size},
+					font_size => $args{font_size},
+				)
+			) or return 0;
+
+			push (
+				@plots,
+				kh_r_plot::network->new(
+					name      => $args{plotwin_name}.'_3',
+					command_f =>
+						 $r_command
+						."\ncom_method <- \"cnt-e\"\n"
+						.$self->r_plot_cmd_p1
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p3
+						.$self->r_plot_cmd_p4,
+					command_a =>
+						 "com_method <- \"cnt-e\"\n"
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p4,
+					width     => int( $args{plot_size} * $x_factor ),
+					height    => $args{plot_size},
+					font_size => $args{font_size},
+				)
+			) or return 0;
+	
+			push (
+				@plots,
+				kh_r_plot::network->new(
+					name      => $args{plotwin_name}.'_4',
+					command_f =>
+						 $r_command
+						."\ncom_method <- \"com-b\"\n"
+						.$self->r_plot_cmd_p1
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p3
+						.$self->r_plot_cmd_p4,
+					command_a =>
+						 "com_method <- \"com-b\"\n"
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p4,
+					width     => int( $args{plot_size} * $x_factor ),
+					height    => $args{plot_size},
+					font_size => $args{font_size},
+				)
+			) or return 0;
+		}
+
+		push (
+			@plots,
+			kh_r_plot::network->new(
+				name      => $args{plotwin_name}.'_5',
+				command_f =>
+					 $r_command
+					."\ncom_method <- \"com-r\"\n"
+					.$self->r_plot_cmd_p1
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p3
+					.$self->r_plot_cmd_p4,
+				command_a =>
+					"com_method <- \"com-r\"\n"
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p4,
+				width     => int( $args{plot_size} * $x_factor ),
+				height    => $args{plot_size},
+				font_size => $args{font_size},
+			)
 		) or return 0;
 
-		$plots[2] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_3',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"cnt-e\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"cnt-e\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
-		) or return 0;
-
-		$plots[3] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_4',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"com-b\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"com-b\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
-		) or return 0;
-
-		$plots[4] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_5',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"com-r\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"com-r\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
-		) or return 0;
-
-		$plots[5] = kh_r_plot::network->new(
-			name      => $args{plotwin_name}.'_6',
-			command_f =>
-				 $r_command
-				."\ncom_method <- \"com-g\"\n"
-				.$self->r_plot_cmd_p1
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p3
-				.$self->r_plot_cmd_p4,
-			command_a =>
-				 "com_method <- \"com-g\"\n"
-				.$self->r_plot_cmd_p2
-				.$self->r_plot_cmd_p4,
-			width     => int( $args{plot_size} * $x_factor ),
-			height    => $args{plot_size},
-			font_size => $args{font_size},
+		push (
+			@plots,
+			kh_r_plot::network->new(
+				name      => $args{plotwin_name}.'_6',
+				command_f =>
+					 $r_command
+					."\ncom_method <- \"com-g\"\n"
+					.$self->r_plot_cmd_p1
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p3
+					.$self->r_plot_cmd_p4,
+				command_a =>
+					 "com_method <- \"com-g\"\n"
+					.$self->r_plot_cmd_p2
+					.$self->r_plot_cmd_p4,
+				width     => int( $args{plot_size} * $x_factor ),
+				height    => $args{plot_size},
+				font_size => $args{font_size},
+			)
 		) or return 0;
 
 		if (
@@ -272,27 +296,29 @@ sub new{
 			return 0 unless $plots[$#plots];
 		}
 
-		push (
-			@plots,
-			kh_r_plot::network->new(
-				name      => $args{plotwin_name}.'_8',
-				command_f =>
-					 $r_command
-					."\ncom_method <- \"none\"\n"
-					.$self->r_plot_cmd_p1
-					.$self->r_plot_cmd_p2
-					.$self->r_plot_cmd_p3
-					.$self->r_plot_cmd_p4,
-				command_a =>
-					 "com_method <- \"none\"\n"
-					#.$self->r_plot_cmd_p2
-					.$self->r_plot_cmd_p4,
-				width     => int( $args{plot_size} * $x_factor ),
-				height    => $args{plot_size},
-				font_size => $args{font_size},
-			)
-		);
-		return 0 unless $plots[$#plots];
+		if ( $args{additional_plots} ) {
+			push (
+				@plots,
+				kh_r_plot::network->new(
+					name      => $args{plotwin_name}.'_8',
+					command_f =>
+						 $r_command
+						."\ncom_method <- \"none\"\n"
+						.$self->r_plot_cmd_p1
+						.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p3
+						.$self->r_plot_cmd_p4,
+					command_a =>
+						 "com_method <- \"none\"\n"
+						#.$self->r_plot_cmd_p2
+						.$self->r_plot_cmd_p4,
+					width     => int( $args{plot_size} * $x_factor ),
+					height    => $args{plot_size},
+					font_size => $args{font_size},
+				)
+			);
+			return 0 unless $plots[$#plots];
+		}
 	} else { # For web if
 		$plots[5] = kh_r_plot::network->new(
 			name      => $args{plotwin_name}.'_6',
@@ -402,6 +428,9 @@ sub new{
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;
 	$self->{coord} = $csv;
+	
+	my $n = @plots;
+	print "plots: $n\n";
 	
 	return $self;
 }
