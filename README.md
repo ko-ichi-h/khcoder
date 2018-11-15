@@ -24,21 +24,23 @@ http://khcoder.net/en
 
 If you get errors like "Can't locate **Jcode**.pm in @INC", you need to install Perl module called "**Jcode**". To install it, type "cpanm **Jcode**" and hit "Enter" key on your command prompt window.
 
-Above procedure is for people who want to modify or develop KH Coder. If you want to just run, try or use KH Coder, just unzip the downloaded \*.exe file and double click “kh_coder.exe”.
+Above procedure is for people who want to modify or develop KH Coder. If you want to just use KH Coder, just unzip the downloaded \*.exe file and double click “kh_coder.exe”.
 
 ## On Linux or other Un\*x like system
 
 You need:
 
 - MySQL
-- Perl (and various Perl modules)
+- Perl (and some Perl modules)
 - R (and some R packages)
 - Morphological Analysis and POS Tagging software
     - ChaSen or MeCab for analyzing Japanese text
-    - FreeLing for analyzing Catalan, English, French, German, Italian, Portuguese, Russian or Spanish text
+    - FreeLing or Stanford POS Tagger for analyzing English text
+    - FreeLing for analyzing Catalan, French, German, Italian, Portuguese, Russian or Spanish text
     - MeCab and HanDic for analyzing Korean text
-    - Stanford POS Tagger and JAVA for analyzing English text
-    - Stanford Word Segmenter, Stanford POS Tagger and JAVA for analyzing English text
+    - Stanford Word Segmenter and Stanford POS Tagger for analyzing Chinese text
+
+You also need JAVA to run Stanford POS Tagger.
 
 ## License
 
