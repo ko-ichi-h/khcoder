@@ -35,10 +35,8 @@ If applicable, add screenshots to help explain your problem.
 **Version number of KH Coder**
 e.g. 2.00f, 3.Alapha.08, etc. To check the version number, go to "Help" "About" in the menu of KH Coder.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**OS**
+e.g. Windows 10, Ubuntu 14.02
 
 **Additional context**
 Add any other context about the problem here.
