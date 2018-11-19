@@ -1,11 +1,13 @@
 ---
 name: Questions
-about: Before you ask questions on how to use this software
+about: Questions on how to use this software
 labels: 
 
 ---
 
-## 1. See Tutorials
+# Before you post Questions
+
+## 1. Please See the Tutorial
 
 Please read tutorials and **simulate the same analysis on your PC**. We can understand better by actually performing the operation. Also, open tutorial files and look into them to learn how to prepare your own files.
 

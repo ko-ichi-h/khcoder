@@ -21,13 +21,10 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **What happens if you perform the same operation with the tutorial file (Anne.xls)**
-Can you get an intended result with tutoiral data files? Or you get the same error? Please use "Anne.xls" in "tutorial_en" folder. By testing with tutorial data, we can confirm whether KH Coder on your PC is working normally or not.
+Can you get the intended result with tutorial data files? Or you get the same error? Please use "Anne.xls" in "tutorial_en" folder to test it out. 
 
-If you got same error with tutorial data, there is something wrong with KH Coder. It may be a bug of KH Coder. Or there maybe problems in your software / hardware enviroment.
-
-If you can perform operation with tutorial data, we have to look into your data. Because it seems that your data is causing the error.
-
-Either way, testing with tutorial data is an indispensable step of a trouble shooting in most cases. So, when you report errors of KH Coder, please do this and let me know the result.
+**Files to Reproduce the Error**
+If we can't reproduce the error with the tutorial file "Anne.xls", please consider attaching files that can reproduce the Error.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
