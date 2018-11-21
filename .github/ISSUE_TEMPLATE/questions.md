@@ -1,7 +1,6 @@
 ---
 name: Questions
 about: Questions on how to use this software
-labels: 
 
 ---
 
