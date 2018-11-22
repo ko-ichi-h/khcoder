@@ -1,7 +1,7 @@
 ---
 name: Questions
 about: Questions on how to use this software
-
+labels: question
 ---
 
 # Before you post Questions
