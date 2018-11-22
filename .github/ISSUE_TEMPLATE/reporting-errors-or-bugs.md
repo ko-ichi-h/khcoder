@@ -1,7 +1,7 @@
 ---
 name: Reporting Errors or Bugs
 about: Create a report to help us figure out the problem
-
+labels: error
 ---
 
 **The error message as detailed as possible**
