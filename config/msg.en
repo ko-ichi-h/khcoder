@@ -372,7 +372,7 @@ gui_window::word_ass_opt:
     by_df:                    'Filter words by DF:'
     by_pos:                   'Filter words by POS:'
     min_df:                   '    Min. DF '
-    show_lowc:                Show words with lower conditional probabilities
+    show_lowc:                Show words with lower or equal prob.
     top:                      '    Top '
     view:                     'View:'
     win_title:                'Filter: Word Association'
