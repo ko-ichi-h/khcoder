@@ -20,3 +20,4 @@ x_mac64setup.scpt export-ignore
 test/ export-ignore
 utils/ export-ignore
 auto_test/ export-ignore
+.github/ export-ignore
