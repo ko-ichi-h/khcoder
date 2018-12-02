@@ -4,6 +4,8 @@ about: Questions on how to use this software
 labels: question
 ---
 
+Please edit the following template and write your question contents.
+
 # Before you post Questions
 
 ## 1. Please See the Tutorial

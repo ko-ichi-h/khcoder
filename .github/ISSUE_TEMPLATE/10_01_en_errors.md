@@ -4,6 +4,8 @@ about: Create a report to help us figure out the problem
 labels: error
 ---
 
+Please edit the following template and write your question contents.
+
 **The error message as detailed as possible**
 Please do not abbreviate or translate the message. Please tell me as it is, verbatim. If you don't like to type, you can attach a screenshot.
 
