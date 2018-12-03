@@ -444,6 +444,11 @@ sub readin{
 		}
 	}
 
+	#SCREEN Plugin
+	use screen_code::negationchecker;
+	screen_code::negationchecker::check_use_plug();
+	#SCREEN Plugin
+
 	# データファイルのサイズを確認
 	open (RCNT,$file) or
 		gui_errormsg->open(
