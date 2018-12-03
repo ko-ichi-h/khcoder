@@ -97,7 +97,7 @@ sub _run_morpho{
 			type => 'file'
 		)
 	;
-	open(my $fhoo, ">:encoding($icode)", $self->output)
+	open(my $fhoo, ">:encoding(utf8)", $self->output)
 		or gui_errormsg->open(
 			thefile => $self->output,
 			type => 'file'
