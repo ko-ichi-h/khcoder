@@ -13,18 +13,22 @@ use HTTP::Request::Common;
 use XML::RSS;
 
 my $ua = LWP::UserAgent->new(
+	ssl_opts => { verify_hostname => 0, },
 	#agent      => 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0',
 );
 
+$ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
+
+
 my $n = 0;
 while (1){
-	my $start = $n * 200;
+	my $start = 1 + $n * 200;
 	
-	my $r = $ua->get("http://ci.nii.ac.jp/opensearch/search?q=%22KH+Coder%22+%7C+KHCODER+%7C+%22KH%E3%82%B3%E3%83%BC%E3%83%80%E3%83%BC%22+%7C+%22%E6%A8%8B%E5%8F%A3%E8%80%95%E4%B8%80%22&start=$start&count=200&format=rss&sortorder=1");
+	my $r = $ua->get("http://ci.nii.ac.jp/opensearch/search?q=%22KH+Coder%22+%7C+KHCODER+%7C+%22KH%E3%82%B3%E3%83%BC%E3%83%80%E3%83%BC%22+%7C+%22%E6%A8%8B%E5%8F%A3%E8%80%95%E4%B8%80%22+%7C+%22%E8%A8%88%E9%87%8F%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E5%88%86%E6%9E%90%22+%7C+%22KH+Corder%22+%7C+KHCORDER&start=$start&count=200&format=rss&sortorder=1");
 	#my $r = $ua->get("http://ci.nii.ac.jp/opensearch/fulltext?q=%22KH+Corder%22+%7C+KHCORDER&start=$start&count=200&format=rss&sortorder=1");
 	$r = Encode::decode('UTF-8', $r->content);
 	
-	#print "$r\n\n";
+	print "$r\n\n";
 	
 	my $rss = XML::RSS->new;
 	$rss->parse($r);
