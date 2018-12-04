@@ -164,6 +164,11 @@ sub _new{
 		-droptypes => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
 
+	#SCREEN Plugin
+	use screen_code::negationchecker;
+	&screen_code::negationchecker::add_label($self,$wmw);
+	#SCREEN Plugin
+	
 	$wmw->Label(
 		-text => kh_msg->get('note1'),#$self->gui_jchar("(*) 「強制抽出する語」の指定は、再度\n　　前処理を行うまで反映されません。"),
 		-font => 'TKFN',

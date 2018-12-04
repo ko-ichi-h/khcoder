@@ -557,6 +557,7 @@ sub plot_plugin{
 			last;
 		}
 		if (read_sort_file($self)) {
+			read_option($self);
 			last;
 		}
 		if (!$rtn) {

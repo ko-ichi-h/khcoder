@@ -188,6 +188,12 @@ sub make{
 				-label => kh_msg->get('run_prep'),
 				-font => "TKFN",
 				-command => sub{
+					
+					#SCREEN Plugin
+					use screen_code::negationchecker;
+					return 0 if screen_code::negationchecker::plugin_dialog($self,$mw);
+					#SCREEN Plugin
+					
 					my $reload = 0;
 					if ( $::project_obj->reloadable ){
 						my $ans = $mw->messageBox(
