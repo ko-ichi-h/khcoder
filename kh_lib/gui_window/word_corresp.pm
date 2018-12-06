@@ -1611,7 +1611,11 @@ if (show_origin == 1){
 		xlims <- lim_chk$layout$panel_ranges[[1]]$x.range
 		ylims <- lim_chk$layout$panel_ranges[[1]]$y.range
 	}
-	
+	if ( is.null(xlims) ){
+		xlims <- lim_chk$layout$panel_params[[1]]$x.range
+		ylims <- lim_chk$layout$panel_params[[1]]$y.range
+	}
+
 	if (zoom_factor >= 1){
 		g <- g + scale_x_continuous( limits=xlims, expand=c(0,0), breaks=c(0) )
 		g <- g + scale_y_continuous( limits=ylims, expand=c(0,0), breaks=c(0) )
