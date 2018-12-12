@@ -59,6 +59,15 @@ sub calc{
 
 	return 0 unless $plotR;
 
+	if ( $self->{old_additional_plots} !=  $self->{net_obj}{check_additional_plots}){
+		if ($self->{net_obj}{check_additional_plots}) {
+			$self->{ax} = $self->{ax} + 3 if $self->{ax} > 0;
+		} else {
+			$self->{ax} = $self->{ax} - 3;
+		}
+		
+	}
+
 	gui_window::r_plot::selected_netgraph->open(
 		plots       => $plotR->{result_plots},
 		msg         => $plotR->{result_info},

@@ -2,15 +2,25 @@ package gui_window::r_plot::selected_netgraph;
 use base qw(gui_window::r_plot);
 
 sub option1_options{
-	return [
-		kh_msg->get('gui_window::r_plot::word_netgraph->cnt_b'), # 中心性（媒介）
-		kh_msg->get('gui_window::r_plot::word_netgraph->cnt_d'), # 中心性（次数）
-		kh_msg->get('gui_window::r_plot::word_netgraph->cnt_v'), # 中心性（固有ベクトル）
-		kh_msg->get('gui_window::r_plot::word_netgraph->com_b'), # サブグラフ検出（媒介）
-		kh_msg->get('gui_window::r_plot::word_netgraph->com_r'),
-		kh_msg->get('gui_window::r_plot::word_netgraph->com_m'), # サブグラフ検出（modularity）
-		kh_msg->get('gui_window::r_plot::word_netgraph->none'),  # なし
-	];
+	my $self = shift;
+
+	if (@{$self->{plots}} == 3){
+		return [
+			kh_msg->get('gui_window::r_plot::word_netgraph->cnt_b'),
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_r'),
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_m'), # サブグラフ検出（modularity）
+		];
+	} else {
+		return [
+			kh_msg->get('gui_window::r_plot::word_netgraph->cnt_b'), # 中心性（媒介）
+			kh_msg->get('gui_window::r_plot::word_netgraph->cnt_d'), # 中心性（次数）
+			kh_msg->get('gui_window::r_plot::word_netgraph->cnt_v'), # 中心性（固有ベクトル）
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_b'), # サブグラフ検出（媒介）
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_r'),
+			kh_msg->get('gui_window::r_plot::word_netgraph->com_m'), # サブグラフ検出（modularity）
+			kh_msg->get('gui_window::r_plot::word_netgraph->none'),  # なし
+		];
+	}
 }
 
 sub start{
