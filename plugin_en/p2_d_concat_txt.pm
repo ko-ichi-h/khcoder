@@ -241,7 +241,7 @@ sub _exec{
 		return unless $_ =~ /.+\.txt$/;
 		
 		my $f = $File::Find::name;
-		#print "$f, ";
+		return if $f eq $save;
 
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
 		$f_o = $::config_obj->uni_path( $f_o );
