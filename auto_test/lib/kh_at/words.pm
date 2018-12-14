@@ -201,7 +201,7 @@ sub _wc_sort{
 	my $t = '';
 	
 	my $tmp = '';
-	my $k = $::config_obj->kaigyo_kigou;
+	my $k = $::config_obj->newline_symbol;
 	
 	#$win->{entry}->insert(0, gui_window->gui_jchar('»à¤Ì') );
 	
