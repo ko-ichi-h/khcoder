@@ -277,7 +277,13 @@ sub _exec{
 	};
 
 	use File::Find;
-	find($read_each, $path);
+	find(
+		{
+			preprocess => sub {sort {$a cmp $b} @_},
+			wanted     => $read_each
+		},
+		$path
+	);
 	close($fh);
 	$fh = undef;
 	#if ($::config_obj->os eq 'win32'){
