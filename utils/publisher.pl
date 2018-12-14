@@ -35,7 +35,6 @@ elsif (-e "hoge") { # Vaio
 # 更新するファイルの指定
 my @cp_f = (
 	['kh_coder.exe' , 'kh_coder.exe'  ],
-	['khc.xla'      , 'khc.xla'       ],
 	['config/msg.en', 'config/msg.en' ],
 	['config/msg.jp', 'config/msg.jp' ],
 	['config/msg.es', 'config/msg.es' ],
