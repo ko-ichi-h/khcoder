@@ -372,6 +372,8 @@ sub mark{
 	while (<SOURCE>){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
 		chomp;
+		
+		next unless length($_); # skip empty lines
 
 		my $text = $_;
 	

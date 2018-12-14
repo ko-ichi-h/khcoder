@@ -112,13 +112,16 @@ sub check_code{
 			return $chk;
 		}
 	}
-	print "Checking icode (jp)... " unless $silent;
+	print "Checking icode (jp1)... " unless $silent;
 	
 	open (TEMP,$the_file)
 		or gui_errormsg->open(type => 'file',thefile => $the_file);
 	my $n = 0;
 	my $t;
 	while (<TEMP>){
+		$_ =~ s/\x0D\x0A$|\x0D$|\x0A$/\n/;
+		chomp;
+		next unless length($_);
 		$t .= $_;
 		++$n;
 		last if $n > $lines;
@@ -156,13 +159,16 @@ sub check_code2{
 			return $chk;
 		}
 	}
-	print "Checking icode (jp)... " unless $silent;
+	print "Checking icode (jp2)... " unless $silent;
 	
 	open (TEMP,$the_file)
 		or gui_errormsg->open(type => 'file',thefile => $the_file);
 	my $n = 0;
 	my $t;
 	while (<TEMP>){
+		$_ =~ s/\x0D\x0A$|\x0D$|\x0A$/\n/;
+		chomp;
+		next unless length($_);
 		$t .= $_;
 		++$n;
 		last if $n > $lines;
@@ -196,13 +202,16 @@ sub check_code3{
 	
 	$lines = 1000 unless $lines;
 	
-	print "Checking icode (jp)... " unless $silent;
+	print "Checking icode (jp3)... " unless $silent;
 	
 	open (TEMP,$the_file)
 		or gui_errormsg->open(type => 'file',thefile => $the_file);
 	my $n = 0;
 	my $t;
 	while (<TEMP>){
+		$_ =~ s/\x0D\x0A$|\x0D$|\x0A$/\n/;
+		chomp;
+		next unless length($_);
 		$t .= $_;
 		++$n;
 		last if $n > $lines;
