@@ -211,15 +211,14 @@ sub drop_db{
 	my $drop = $_[1];
 
 	&connect_common unless $dbh_common;
-	my $dbh = $dbh_common;
 
-	$dbh->func("dropdb", $drop,$host,$username,$password,'admin')
+	$dbh_common->do("drop database $drop")
 		or gui_errormsg->open(
 			type => 'msg',
 			msg => 'Could not delete the database from MySQL'
 		);
-
-	$dbh->disconnect;
+	
+	return 1;
 }
 
 # DB Serverのシャットダウン
