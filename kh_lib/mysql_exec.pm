@@ -108,7 +108,17 @@ sub connection_test{
 	my $dbh = DBI->connect($dsn,$username,$password) or $if_error = 1;
 
 	unless ($if_error){
-		my @r = $dbh->func('_ListDBs') or $if_error = 1;
+		my $t = $dbh->prepare("show databases");
+		$t->execute or $if_error = 1;
+		my @r;
+		print "DBs: ";
+		unless ($if_error){
+			while (my $i = $t->fetch) {
+				push @r, $i->[0];
+				print "$i->[0],";
+			}
+		}
+		print "\n";
 		if (@r){
 			$dbh->disconnect;
 		} else {
@@ -137,8 +147,16 @@ sub create_new_db{
 	&connect_common unless $dbh_common;
 	my $dbh = $dbh_common;
 	
-	my @dbs = $dbh->func('_ListDBs') or
-		gui_errormsg->open(type => 'mysql', sql => 'List DBs');
+	my $t = $dbh->prepare("show databases");
+	$t->execute or gui_errormsg->open(type => 'mysql', sql => 'List DBs');
+	my @dbs;
+	print "DBs: ";
+	while (my $i = $t->fetch) {
+		push @dbs, $i->[0];
+		print "$i->[0],";
+	}
+	print "\n";
+	
 	my %dbs;
 	foreach my $i (@dbs){
 		$dbs{$i} = 1;
