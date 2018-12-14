@@ -588,7 +588,7 @@ kh_datacheck:
     errors_summary:           'Following probrems were found (summary):'
     lines:                    ' line(s)'
     looks_good:              "We found no known problems.\nPlease proceed to pre-processing."
-    error_charcode:           "Could not detect character code of the target file. Please specify the character code. Go to [Project] [Open] in the menubar and click \"edit\" button to specify the code."
+    error_charcode:           "Could not detect character code of the target file. Please try changing character code to UTF-8."
 kh_morpho::chasen:
     error:                    'Fatal error: Could not execute ChaSen.'
     error_config:             'Fatal error: Could not find ChaSen.'
