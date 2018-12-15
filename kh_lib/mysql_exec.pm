@@ -111,14 +111,14 @@ sub connection_test{
 		my $t = $dbh->prepare("show databases");
 		$t->execute or $if_error = 1;
 		my @r;
-		print "DBs: ";
+		#print "DBs: ";
 		unless ($if_error){
 			while (my $i = $t->fetch) {
 				push @r, $i->[0];
-				print "$i->[0],";
+				#print "$i->[0],";
 			}
 		}
-		print "\n";
+		#print "\n";
 		if (@r){
 			$dbh->disconnect;
 		} else {
@@ -150,12 +150,12 @@ sub create_new_db{
 	my $t = $dbh->prepare("show databases");
 	$t->execute or gui_errormsg->open(type => 'mysql', sql => 'List DBs');
 	my @dbs;
-	print "DBs: ";
+	#print "DBs: ";
 	while (my $i = $t->fetch) {
 		push @dbs, $i->[0];
-		print "$i->[0],";
+		#print "$i->[0],";
 	}
-	print "\n";
+	#print "\n";
 	
 	my %dbs;
 	foreach my $i (@dbs){
