@@ -103,7 +103,7 @@ sub finish{
 			last;
 		}
 	}
-	$spss .= " name" if $self->{tani} =~ /h[1-5]/i;
+	$spss .= " name" if $self->{midashi};
 	$spss .= ".\n";
 	
 	$spss .= "FLIP.\n";
