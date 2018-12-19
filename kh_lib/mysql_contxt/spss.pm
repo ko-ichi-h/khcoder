@@ -16,7 +16,7 @@ sub _save_finish{
 	$spss .= "file handle trgt1 /name=\'";
 	$spss .= $::config_obj->uni_path($file_data);
 	$spss .= "\'\n";
-	$spss .= "                 /lrecl=32767 .\n";
+	$spss .= "                 /lrecl=32767  /ENCODING='UTF8'.\n";
 	$spss .= "data list list(',') file=trgt1 /\n";
 	$spss .= "  word(A255)\n";
 	my $n = 0;
@@ -36,7 +36,9 @@ sub _save_finish{
 	}
 	$spss .= ".\nexecute.";
 
-	open (SOUT,'>:encoding(utf8)', $file_syntax) or 
+	use File::BOM;
+	open (SOUT, '>:encoding(utf8):via(File::BOM)', $file_syntax) or 
+	#open (SOUT,'>:encoding(utf8)', $file_syntax) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_syntax",

@@ -49,7 +49,9 @@ sub finish{
 	$spss .= ".\n";
 	$spss .= "Execute.\n";
 
-	open (SOUT,'>:encoding(utf8)', $self->{file}) or 
+	use File::BOM;
+	open (SOUT, '>:encoding(utf8):via(File::BOM)', $self->{file}) or 
+	#open (SOUT,'>:encoding(utf8)', $self->{file}) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$self->{file}",
@@ -59,7 +61,6 @@ sub finish{
 	#kh_jchar->to_sjis($self->{file});
 
 	# データファイル作製（位置情報とのマージ）
-
 	open (OUTF,'>:encoding(utf8)', $file_data) or 
 		gui_errormsg->open(
 			type    => 'file',
@@ -130,7 +131,8 @@ sub finish{
 	$spss .= "MATCH FILES FILE=* /KEEP case_lbl 単語 品詞 var001 to var$nc.\n";
 	$spss .= "FORMATS var001 to var$nc (f8.0).\n";
 	$spss .= "EXECUTE.\n";
-	open (SOUT,'>:encoding(utf8)', $file_la) or 
+	#open (SOUT,'>:encoding(utf8)', $file_la) or
+	open (SOUT, '>:encoding(utf8):via(File::BOM)', $file_la) or 
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => "$file_la",

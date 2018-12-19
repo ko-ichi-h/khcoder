@@ -172,7 +172,9 @@ sub cod_out_spss{
 	$spss .= ".\n";
 	$spss .= "execute.\n";
 	
-	open(CODO,'>:encoding(utf8)', $outfile) or
+	use File::BOM;
+	open(CODO, '>:encoding(utf8):via(File::BOM)', $outfile) or 
+	#open(CODO, '>:encoding(utf8)', $outfile) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $outfile
