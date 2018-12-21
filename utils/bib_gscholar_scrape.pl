@@ -13,6 +13,7 @@ my @results;
 my $n = 1;
 while (-e "gscholar/$n.html"){
 	open my $fh, '<:utf8', "gscholar/$n.html" or die;
+	print "gscholar/$n.html\n";
 	my @t = <$fh>;
 	close $fh;
 	my $t = join ("\n", @t);

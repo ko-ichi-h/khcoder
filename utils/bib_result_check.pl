@@ -18,7 +18,7 @@ open my $fh, '<:utf8', $current_file1 or die;
 while (<$fh>){
 	chomp;
 	my @line = split /\t/, $_;
-	push @current, [ $line[2], $line[4] ];
+	push @current, [ lc($line[2]), $line[4] ];
 }
 close $fh;
 
@@ -26,7 +26,7 @@ open my $fh, '<:utf8', $current_file2 or die;
 while (<$fh>){
 	chomp;
 	my @line = split /\t/, $_;
-	push @current, [ $line[0], $line[1] ];
+	push @current, [ lc($line[0]), $line[1] ];
 }
 close $fh;
 
@@ -36,7 +36,7 @@ open my $fh, '<:utf8', $new_file or die;
 while (<$fh>){
 	chomp;
 	my @line = split /\t/, $_;
-	push @new, [ $line[0], $line[1] ];
+	push @new, [ lc($line[0]), $line[1] ];
 }
 
 my @results;
