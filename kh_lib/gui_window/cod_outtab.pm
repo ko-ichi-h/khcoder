@@ -603,9 +603,8 @@ sub plot{
 	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
-		my $t = Encode::encode('cp932', $i);
-		if ( $label_length < length($t) ){
-			$label_length = length($t);
+		if ( $label_length < length($i) ){
+			$label_length = length($i);
 		}
 	}
 	my $height = int( ( 30 * $ncol + $label_length * 14 ) * ($::config_obj->plot_size_codes / 480));
@@ -615,29 +614,27 @@ sub plot{
 	
 	my $bs_h = 1;
 	my $bs_w = 1;
-	my $height_f = int( ( 20 * $ncol + $label_length * 14 ) * ($::config_obj->plot_size_codes / 480));
+	my $height_f = int( ( 20 * $ncol + $label_length * 15 ) * ($::config_obj->plot_size_codes / 480));
 	if ($height_f < $::config_obj->plot_size_codes){
 		$height_f = $::config_obj->plot_size_codes;
-		$bs_h = (480 - $label_length * 14) / $ncol / 25;
+		$bs_h = (480 - $label_length * 15) / $ncol / 34;
 	}
 	
 	# マップの幅
 	$label_length = 0;
 	foreach my $i (@col_names){
-		my $t = Encode::encode('cp932', $i);
-		if ( $label_length < length($t) ){
-			$label_length = length($t);
+		if ( $label_length < length($i) ){
+			$label_length = length($i);
 		}
 	}
-	my $width_f = int( (18 * $nrow + $label_length * 14 + 25) * ($::config_obj->plot_size_words / 640) );
+	my $width_f = int( (18 * $nrow + $label_length * 15 + 25) * ($::config_obj->plot_size_words / 640) );
 	if ($width_f < $::config_obj->plot_size_words){
 		$width_f = $::config_obj->plot_size_words;
-		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 25;
+		$bs_w = (640 - 10 - $label_length * 15) / ($nrow + 1) / 34;
 	}
 	use List::Util 'min';
-	#print "bubble_size: $bs_h, $bs_w\n";
-	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) );
-	#print "bubble_size: $bubble_size\n";
+	print "bubble size adjustment: $bs_h, $bs_w\n";
+	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) * 10 ) / 10;
 	
 	
 	# プロット作成
