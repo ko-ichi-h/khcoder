@@ -145,9 +145,8 @@ sub create_new_db{
 	
 	# Get DB List
 	&connect_common unless $dbh_common;
-	my $dbh = $dbh_common;
 	
-	my $t = $dbh->prepare("show databases");
+	my $t = $dbh_common->prepare("show databases");
 	$t->execute or gui_errormsg->open(type => 'mysql', sql => 'List DBs');
 	my @dbs;
 	#print "DBs: ";
@@ -165,14 +164,14 @@ sub create_new_db{
 	# Prepare master DB (this happens only once)
 	unless ($dbs{khc_master}){
 		# create DB
-		$dbh->do("
+		$dbh_common->do("
 			create database khc_master default character set utf8mb4
 		");
-		$dbh->disconnect;
+		#$dbh_common->disconnect;
 		
 		# create table
 		my $dsn = &dsn_gen("khc_master");
-		$dbh = DBI->connect($dsn,$username,$password)
+		my $dbh = DBI->connect($dsn,$username,$password)
 			or gui_errormsg->open(type => 'mysql', sql => 'Connect');
 		$dbh->do("
 			create table db_name(
