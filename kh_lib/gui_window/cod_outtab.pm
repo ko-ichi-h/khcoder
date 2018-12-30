@@ -633,7 +633,7 @@ sub plot{
 		$bs_w = (640 - 10 - $label_length * 15) / ($nrow + 1) / 34;
 	}
 	use List::Util 'min';
-	print "bubble size adjustment: $bs_h, $bs_w\n";
+	print "bubble size adjustment, height: $bs_h,  width: $bs_w\n";
 	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) * 10 ) / 10;
 	
 	
