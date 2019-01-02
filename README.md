@@ -46,4 +46,4 @@ You also need JAVA to run Stanford POS Tagger.
 
 GNU GPL version 2 or later
 
-[grd_count user="User" repo="MyRepo"]
+[grd_count user="ko-ichi-h" repo="khcoder"]
