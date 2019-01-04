@@ -54,7 +54,7 @@ sub read_file{
 		}
 	}
 
-	# 文字コード判別
+	# check character code
 	my $icode;
 	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
 		$icode = kh_jchar->check_code2($file);
@@ -62,15 +62,12 @@ sub read_file{
 		$icode = kh_jchar->check_code_en($file);
 	}
 
-	open (F, "<:encoding($icode)", $file) or 
-		gui_errormsg->open(
-			type => 'file',
-			thefile => $file
-		);
-	
-	# 読みとり
+	use File::BOM;
+	File::BOM::open_bom (my $fh, $file, ":encoding($icode)" );
+
+	# read
 	my (@codes, %codes, $head);
-	while (<F>){
+	while (<$fh>){
 		$_ =~ s/\r\n\z/\n/o;
 		chomp;
 		if ((substr($_,0,1) eq '#') || (length($_) == 0)){
@@ -87,16 +84,16 @@ sub read_file{
 			#print Jcode->new("condition: $_\n")->sjis;
 		}
 	}
-	close (F);
+	close ($fh);
 	
-	# 解釈
+	# interpret
 	foreach my $i (@codes){
 		# print Jcode->new("code: $i\n")->sjis;
 		my $c = kh_cod::a_code->new($i,$codes{$i});
 		push @{$self->{codes}}, $c;
 		$kh_cod::reading{$i} =  $c;
 	}
-	# リセット
+	# reset
 	%kh_cod::reading = ();
 	kh_cod::a_code::atom::code->reset;
 	kh_cod::a_code::atom::string->reset;
@@ -104,7 +101,7 @@ sub read_file{
 	unless ($self){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('not_coding_rules') # "選択されたファイルはコーディング・ルール・ファイルに見えません。"
+			msg  => kh_msg->get('not_coding_rules') # this is not a coding rule file!
 		);
 		return 0;
 	}
