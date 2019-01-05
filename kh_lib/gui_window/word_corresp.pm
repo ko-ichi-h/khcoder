@@ -669,6 +669,7 @@ sub calc{
 		min_df => $self->min_df,
 		rownames => $rownames,
 	)->run;
+	$r_command .= "rownames(d) = 1:nrow(d)\n";
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 
@@ -1037,11 +1038,11 @@ if ( (flw > 0) && (flw < ncol(d)) ){
 	d <- d[,order(sort,decreasing=T)]
 	d <- d[,1:flw]
 	
-	d <- subset(d, rowSums(d) > 0)
 	if (exists("doc_length_mtr")){
 		doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
 		n_total <- doc_length_mtr[,2]
 	}
+	d <- subset(d, rowSums(d) > 0)
 }
 
 d_max <- min( nrow(d), ncol(d) ) - 1
