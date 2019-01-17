@@ -669,7 +669,7 @@ sub calc{
 		min_df => $self->min_df,
 		rownames => $rownames,
 	)->run;
-	$r_command .= "rownames(d) = 1:nrow(d)\n";
+	$r_command .= "if ( is.null( rownames(d) ) ){ rownames(d) = 1:nrow(d) }\n";
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 
