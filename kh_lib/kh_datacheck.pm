@@ -43,8 +43,29 @@ sub run{
 		return 0;
 	}
 
-	# 内容チェックの実行
+	# 改行コードの統一
+	my $file_lines = $::project_obj->file_TempTXT;
+	my $line_count1 = 0;
 	open (SOURCE,"$self->{file_source}") or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $self->{file_source}
+		);
+	open (LINES, '>', $file_lines) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $file_lines
+		);
+	while (<SOURCE>) {
+		s/[\x0D\x0A]+/\n/go;
+		print LINES $_;
+		++$line_count1;
+	}
+	close (SOURCE);
+	close (LINES);
+	
+	# 内容チェックの実行
+	open (SOURCE,$file_lines) or
 		gui_errormsg->open(
 			type => 'file',
 			thefile => $self->{file_source}
@@ -104,6 +125,16 @@ sub run{
 	}
 	close (EDITED);
 	close (SOURCE);
+	
+	# 改行コードの不統一が発見された場合
+	my $line_count2 = $n - 1;
+	unless  ($line_count1 == $line_count2) {
+		print "lines: $line_count1, $line_count2\n";
+		$self->{error_c2}{flag} = 1;
+		unless (defined($self->{error_c2}{array})) {
+			$self->{error_c2}{array} = [];
+		}
+	}
 
 	# レポート（概要）の作成
 	my $if_errors = 0;
@@ -111,6 +142,7 @@ sub run{
 	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
+			$num = '?' unless $num;
 			$msg .= "  * $errors{$i}: $num".kh_msg->get('lines')."\n";
 			
 			# 自動修正できるかどうかで分ける
@@ -144,6 +176,7 @@ sub run{
 	foreach my $i ('error_m1','error_n1b','error_mn','error_c1','error_c2','error_n1a'){
 		if ($self->{$i}{flag}){
 			my $num = @{$self->{$i}{array}};
+			$num = '?' unless $num;
 			$msg .= "\n* $errors{$i}: $num".kh_msg->get('lines')."\n";
 			
 			foreach my $h (@{$self->{$i}{array}}){
@@ -260,6 +293,7 @@ sub edit{
 				#}
 				
 				my $num = @{$self->{$i}{array}};
+				$num = '?' unless $num;
 				$msg .= "\n* $errors{$i}： $num".kh_msg->get('lines')."\n";
 				
 				foreach my $h (@{$self->{$i}{array}}){
@@ -335,10 +369,6 @@ sub exec{
 	my $flag_long     = 0;
 	my $flag_longlong = 0;
 
-	if (length($t) > 8000){
-		$flag_long = 1;
-	}
-	
 	# morpho_analyzer
 	if (
 		   $::config_obj->c_or_j eq 'chasen'
@@ -355,6 +385,7 @@ sub exec{
 		$t =~ s/</＜/g;
 		$t =~ s/>/＞/g;
 		$t =~ s/$ctrl/ /g;
+		$t =~ s/ /　/g;
 	} else {                                      # chasen・mecab以外の場合
 		if ($t =~ /<|>|$ctrl/){
 			$flag_hankaku = 1;
@@ -365,6 +396,11 @@ sub exec{
 		$t =~ s/$ctrl/ /g;
 	}
 
+	my $max = 8000; 
+	$max = 4000 if $::config_obj->c_or_j eq 'mecab';
+	if (length($t) > $max){
+		$flag_long = 1;
+	}
 
 	# 一文字ずつ処理
 	my @chars = $t =~ /$ascii|$twoBytes|$threeBytes/og;
