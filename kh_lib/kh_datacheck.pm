@@ -443,7 +443,7 @@ sub exec{
 		){
 			$cu .= "$i\n";
 			$r .= $cu;
-			if (length($cu) > 8000){
+			if (length($cu) > $max){
 				$flag_longlong = 1;
 			}
 			$cu = '';
@@ -453,7 +453,7 @@ sub exec{
 		}
 		++$n;
 	}
-	if (length($cu) > 8000){
+	if (length($cu) > $max){
 		$flag_longlong = 1;
 	}
 	$r .= "$cu";

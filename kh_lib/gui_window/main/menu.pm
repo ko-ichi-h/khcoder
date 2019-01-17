@@ -1055,10 +1055,10 @@ sub mc_close_project{
 	$::main_gui->inner->refresh;
 }
 sub mc_datacheck{
-	#my $w = gui_wait->start;
+	my $w = gui_wait->start;
 	use kh_datacheck;
 	kh_datacheck->run;
-	#$w->end;
+	$w->end(no_dialog => 1);
 }
 sub mc_morpho{
 	my $self = shift;
