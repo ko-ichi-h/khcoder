@@ -125,6 +125,7 @@ sub run{
 	}
 	close (EDITED);
 	close (SOURCE);
+	unlink ($file_lines);
 	
 	# 改行コードの不統一が発見された場合
 	my $line_count2 = $n - 1;
