@@ -85,7 +85,7 @@ sub _run_morpho{
 	$self->{dir} = substr($path,0,$pos);
 	my $chasenrc = $self->{dir}."/etc/mecabrc";
 	$self->{cmdline} = "mecab -Ochasen -p -r \"$chasenrc\" -o \"$self->{output_temp}\" \"$self->{target_temp}\"";
-	#print "cmdline: $self->{cmdline}\n";
+	print "cmdline: $self->{cmdline}\n";
 	
 	require Win32::Process;
 	my $ChasenObj;
@@ -94,7 +94,7 @@ sub _run_morpho{
 		$::config_obj->os_path( $self->config->mecab_path ),
 		$self->{cmdline},
 		0,
-		Win32::Process->CREATE_NO_WINDOW,
+		undef,#Win32::Process->CREATE_NO_WINDOW,
 		$self->{dir}.'/bin',
 	) || $self->Exec_Error("Wi32::Process can not start");
 	$ChasenObj->Wait( Win32::Process->INFINITE )
