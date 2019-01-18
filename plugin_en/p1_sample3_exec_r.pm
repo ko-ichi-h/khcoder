@@ -48,7 +48,7 @@ sub exec{
 		');
 		
 		# read output of R 1
-		my $t = $::config_obj->R->read();
+		$t = $::config_obj->R->read();
 		
 		# modify the output string for print
 		$t =~ s/.+"(.+)"/$1/;
