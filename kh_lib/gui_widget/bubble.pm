@@ -86,6 +86,37 @@ sub _new{
 		)->pack(-anchor => 'w');
 	}
 
+	if ($self->{breaks}) {
+		my $frm_breaks = $win->Frame()->pack(
+			-fill => 'x',
+			-expand => 1,
+		);
+		
+		$frm_breaks->Label(
+			-text => '  ',
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left');
+		
+		$self->{lab_breaks} = $frm_breaks->Label(
+			-text => kh_msg->get('breaks'),
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left');
+		
+		$self->{ent_breaks} = $frm_breaks->Entry(
+			-font       => "TKFN",
+			-width      => 15,
+			-background => 'white',
+		)->pack(-side => 'left', -fill => 'x', -expand => 1, -padx => 2, -pady => 2);
+		
+		$self->{ent_breaks}->insert(0,$self->{breaks});
+		
+		$self->{ent_breaks}->bind("<Key-Return>", $self->{command})
+			if defined( $self->{command} );
+		$self->{ent_breaks}->bind("<KP_Enter>", $self->{command})
+			if defined( $self->{command} );
+	}
+	
+	
 	$self->refresh_std_radius;
 	$self->{win_obj} = $win;
 	return $self;
@@ -105,6 +136,11 @@ sub refresh_std_radius{
 		#$self->{ent_var},
 		$self->{chkw_alpha},
 	);
+	
+	if ($self->{breaks}) {
+		push @temp, $self->{lab_breaks} if $self->{lab_breaks};
+		push @temp, $self->{ent_breaks} if $self->{ent_breaks};
+	}
 	
 	my $state = 'disabled';
 	$state = 'normal' if $self->{check_bubble};
@@ -147,6 +183,15 @@ sub chk_std_radius{
 sub size{
 	my $self = shift;
 	return gui_window->gui_jgn( $self->{ent_size}->get );
+}
+
+sub breaks{
+	my $self = shift;
+	if ($self->{breaks}) {
+		return gui_window->gui_jgn( $self->{ent_breaks}->get );
+	} else {
+		return undef;
+	}
 }
 
 sub var{

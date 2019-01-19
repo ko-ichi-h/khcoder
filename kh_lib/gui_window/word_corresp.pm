@@ -807,8 +807,13 @@ sub make_plot{
 	} else {
 		$args{font_bold} = 1;
 	}
+	
+	if (length($args{breaks})) {
+		$r_command .= "breaks <- c($args{breaks})\n";
+	} else {
+		$r_command .= "breaks <- NULL\n";
+	}
 	$r_command .= "text_font <- $args{font_bold}\n";
-
 	$r_command .= "r_max <- 150\n";
 	$r_command .= "zoom_factor <- $args{zoom}\n";
 	$r_command .= "d_x <- $args{d_x}\n";
@@ -945,6 +950,40 @@ sub make_plot{
 	my $ratio = $::config_obj->R->read;
 	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
 		$ratio = $1;
+	}
+
+	# get breaks of bubble plot legend
+	if ($args{bubble}){
+		$::config_obj->R->send('
+			if ( is.null(breaks) ){
+				legend_breaks <- labeling::extended(
+					range(df.words$size)[1],
+					range(df.words$size)[2],
+					5
+				)
+			} else {
+				legend_breaks <- breaks
+			}
+			legend_breaks_n <- ""
+			for ( i in 1:length(legend_breaks) ){
+				if (
+					range(df.words$size)[1] <= legend_breaks[i]
+					&& range(df.words$size)[2] >= legend_breaks[i]
+				){
+					legend_breaks_n <- paste(legend_breaks_n, legend_breaks[i], sep = ", ")
+				}
+			}
+			print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
+		');
+		my $breaks = $::config_obj->R->read;
+		if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
+			$breaks = $1;
+			substr($breaks, 0, 2) = '';
+		}
+		foreach my $i (@plots){
+			$i->{command_f} .= "\n# breaks: $breaks\n";
+		}
+		#print "breaks: $breaks\n";
 	}
 
 	kh_r_plot::corresp->clear_env;
@@ -1365,8 +1404,15 @@ if (bubble_plot == 1){
 		show.legend = F
 	)
 	
+	if (is.null(breaks)){
+		breaks_a <- waiver()
+	} else {
+		breaks_a <- breaks
+	}
+	
 	g <- g + scale_size_area(
 		max_size= 30 * bubble_size / 100,
+		breaks = breaks_a,
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", fill=NA, alpha=1),

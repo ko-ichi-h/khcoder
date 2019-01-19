@@ -35,6 +35,7 @@ gui_widget::bubble:
     standardize:              'Standardize the size:'
     variable:                 Size of variables also reflect word counts
     variance:                 'Variance '
+    breaks:                   'Legend ' 
 gui_widget::codf:
     browse_title:             Please select a coding rule file.
     cod_rule_f:               'Coding Rule File:'

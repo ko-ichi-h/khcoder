@@ -35,6 +35,7 @@ gui_widget::bubble:
     standardize:              バブルの大きさを標準化：
     variable:                 変数の値 / 見出しの大きさも可変に
     variance:                 分散
+    breaks:                   '凡例 '
 gui_widget::codf:
     browse_title:             コーディングルール・ファイルを選択してください
     cod_rule_f:               コーディングルール・ファイル：
