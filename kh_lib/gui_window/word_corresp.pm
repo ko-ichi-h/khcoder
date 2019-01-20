@@ -1394,15 +1394,15 @@ if (bubble_plot == 1){
 	limits_a <- c(NA, NA);
 	if (is.null(breaks)){
 		breaks <- labeling::extended(
-			min(df.words$size),
-			max(df.words$size),
+			min(df.words$size, na.rm=T),
+			max(df.words$size, na.rm=T),
 			5
 		)
 		breaks_a <- NULL
 		for ( i in 1:length(breaks) ){
 			if (
-				   min(df.words$size) <= breaks[i]
-				&& max(df.words$size) >= breaks[i]
+				   min(df.words$size, na.rm=T) <= breaks[i]
+				&& max(df.words$size, na.rm=T) >= breaks[i]
 			){
 				breaks_a <- c(breaks_a, breaks[i])
 			}
@@ -1410,10 +1410,10 @@ if (bubble_plot == 1){
 		breaks <- breaks_a
 	} else {
 		breaks_a <- breaks
-		if (  min(breaks) < min(df.words$size) ){
+		if (  min(breaks) < min(df.words$size, na.rm=T) ){
 			limits_a[1] <- min(breaks)
 		}
-		if (  max(breaks) > max(df.words$size) ){
+		if (  max(breaks) > max(df.words$size, na.rm=T) ){
 			limits_a[2] <- max(breaks)
 		}
 	}

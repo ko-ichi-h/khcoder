@@ -1437,15 +1437,15 @@ if ( use_freq_as_size == 1 ){
 	limits_a <- c(NA, NA);
 	if (is.null(breaks)){
 		breaks <- labeling::extended(
-			min(ver_freq),
-			max(ver_freq),
+			min(ver_freq, na.rm=T),
+			max(ver_freq, na.rm=T),
 			5
 		)
 		breaks_a <- NULL
 		for ( i in 1:length(breaks) ){
 			if (
-				min(ver_freq) <= breaks[i]
-				&& max(ver_freq) >= breaks[i]
+				   min(ver_freq, na.rm=T) <= breaks[i]
+				&& max(ver_freq, na.rm=T) >= breaks[i]
 			){
 				breaks_a <- c(breaks_a, breaks[i])
 			}
@@ -1453,10 +1453,10 @@ if ( use_freq_as_size == 1 ){
 		breaks <- breaks_a
 	} else {
 		breaks_a <- breaks
-		if (  min(breaks) < min(ver_freq) ){
+		if (  min(breaks) < min(ver_freq, na.rm=T) ){
 			limits_a[1] <- min(breaks)
 		}
-		if (  max(breaks) > max(ver_freq) ){
+		if (  max(breaks) > max(ver_freq, na.rm=T) ){
 			limits_a[2] <- max(breaks)
 		}
 	}
