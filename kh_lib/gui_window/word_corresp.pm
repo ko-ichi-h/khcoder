@@ -961,15 +961,19 @@ sub make_plot{
 					range(df.words$size)[2],
 					5
 				)
+				legend_breaks_n <- ""
+				for ( i in 1:length(legend_breaks) ){
+					if (
+						range(df.words$size)[1] <= legend_breaks[i]
+						&& range(df.words$size)[2] >= legend_breaks[i]
+					){
+						legend_breaks_n <- paste(legend_breaks_n, legend_breaks[i], sep = ", ")
+					}
+				}
 			} else {
 				legend_breaks <- breaks
-			}
-			legend_breaks_n <- ""
-			for ( i in 1:length(legend_breaks) ){
-				if (
-					range(df.words$size)[1] <= legend_breaks[i]
-					&& range(df.words$size)[2] >= legend_breaks[i]
-				){
+				legend_breaks_n <- ""
+				for ( i in 1:length(legend_breaks) ){
 					legend_breaks_n <- paste(legend_breaks_n, legend_breaks[i], sep = ", ")
 				}
 			}
@@ -1404,15 +1408,24 @@ if (bubble_plot == 1){
 		show.legend = F
 	)
 	
+	# bubble plot legend configuration
+	limits_a <- c(NA, NA);
 	if (is.null(breaks)){
 		breaks_a <- waiver()
 	} else {
 		breaks_a <- breaks
+		if (  min(breaks) < range(df.words$size)[1] ){
+			limits_a[1] <- min(breaks)
+		}
+		if (  max(breaks) > range(df.words$size)[2] ){
+			limits_a[2] <- max(breaks)
+		}
 	}
 	
 	g <- g + scale_size_area(
 		max_size= 30 * bubble_size / 100,
 		breaks = breaks_a,
+		limits = limits_a,
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", fill=NA, alpha=1),
