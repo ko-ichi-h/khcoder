@@ -70,8 +70,13 @@ sub innner{
 	#$self->refresh_flt;
 
 	# バブルプロット用のパラメーター
-	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var)
-		= (0,1,0,100,100);
+	my ($check_bubble, $chk_resize_vars, $chk_std_radius, $num_size, $num_var, $breaks)
+		= (0,1,0,100,100,'');
+
+	if ( $self->{command_f} =~ /# breaks: (.+)\n/ ){
+		$breaks = $1;
+	}
+	$self->{command_f} =~ s/\n# breaks: (.+)\n//;
 
 	if ( $self->{command_f} =~ /bubble_plot <- ([0-9]+)\n/ ){
 		$check_bubble = $1;
@@ -109,8 +114,9 @@ sub innner{
 		num_size        => $num_size,
 		num_var         => $num_var,
 		use_alpha       => $use_alpha,
+		breaks          => $breaks,
 		pack            => {
-			-anchor => 'w',
+			-anchor => 'w', -fill => 'x', -expand => 1
 		},
 	);
 
@@ -243,6 +249,7 @@ sub calc{
 		bubble_size  => $self->{bubble_obj}->size,
 		bubble_var   => $self->{bubble_obj}->var,
 		use_alpha    => $self->{bubble_obj}->alpha,
+		breaks       => $self->{bubble_obj}->breaks,
 	);
 	$wait_window->end(no_dialog => 1);
 	
