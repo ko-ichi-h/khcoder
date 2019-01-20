@@ -39,6 +39,7 @@ sub _new{
 
 	my $num_size = 100;
 
+	my $breaks = '';
 	if ( length($self->{r_cmd}) ){
 		my ($edges);
 		if ($self->{r_cmd} =~ /edges <- ([0-9\.]+)\n/){
@@ -139,6 +140,11 @@ sub _new{
 		if ( $self->{r_cmd} =~ /bubble_size <\- ([0-9]+)\n/ ){
 			$num_size = $1;
 		}
+
+		if ( $self->{r_cmd} =~ /# breaks: (.+)\n/ ){
+			$breaks = $1;
+		}
+		$self->{r_cmd} =~ s/\n# breaks: (.+)\n//;
 
 		$self->{r_cmd} = 1;
 	}
@@ -273,10 +279,11 @@ sub _new{
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf,
 		type         => 'mds',
-		command2      => sub {$self->refresh(3);},
+		command2     => sub {$self->refresh(3);},
 		command      => $self->{command},
+		breaks       => $breaks,
 		pack    => {
-			-anchor   => 'w',
+			-anchor => 'w', -fill => 'x', -expand => 1
 		},
 		check_bubble    => $self->{check_use_freq_as_size},
 		num_size        => $num_size,
@@ -582,6 +589,7 @@ sub params{
 		cor_var_max         => $cor_var_max,
 		standardize_coef    => $self->{standardize_coef},
 		additional_plots    => gui_window->gui_jg( $self->{check_additional_plots} ),
+		breaks              => $self->{bubble_obj}->breaks,
 	);
 }
 

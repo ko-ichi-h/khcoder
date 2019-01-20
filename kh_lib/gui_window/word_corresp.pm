@@ -955,27 +955,9 @@ sub make_plot{
 	# get breaks of bubble plot legend
 	if ($args{bubble}){
 		$::config_obj->R->send('
-			if ( is.null(breaks) ){
-				legend_breaks <- labeling::extended(
-					range(df.words$size)[1],
-					range(df.words$size)[2],
-					5
-				)
-				legend_breaks_n <- ""
-				for ( i in 1:length(legend_breaks) ){
-					if (
-						range(df.words$size)[1] <= legend_breaks[i]
-						&& range(df.words$size)[2] >= legend_breaks[i]
-					){
-						legend_breaks_n <- paste(legend_breaks_n, legend_breaks[i], sep = ", ")
-					}
-				}
-			} else {
-				legend_breaks <- breaks
-				legend_breaks_n <- ""
-				for ( i in 1:length(legend_breaks) ){
-					legend_breaks_n <- paste(legend_breaks_n, legend_breaks[i], sep = ", ")
-				}
+			legend_breaks_n <- ""
+			for ( i in 1:length(breaks_a) ){
+				legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
 			}
 			print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
 		');
@@ -1411,13 +1393,27 @@ if (bubble_plot == 1){
 	# bubble plot legend configuration
 	limits_a <- c(NA, NA);
 	if (is.null(breaks)){
-		breaks_a <- waiver()
+		breaks <- labeling::extended(
+			min(df.words$size),
+			max(df.words$size),
+			5
+		)
+		breaks_a <- NULL
+		for ( i in 1:length(breaks) ){
+			if (
+				   min(df.words$size) <= breaks[i]
+				&& max(df.words$size) >= breaks[i]
+			){
+				breaks_a <- c(breaks_a, breaks[i])
+			}
+		}
+		breaks <- breaks_a
 	} else {
 		breaks_a <- breaks
-		if (  min(breaks) < range(df.words$size)[1] ){
+		if (  min(breaks) < min(df.words$size) ){
 			limits_a[1] <- min(breaks)
 		}
-		if (  max(breaks) > range(df.words$size)[2] ){
+		if (  max(breaks) > max(df.words$size) ){
 			limits_a[2] <- max(breaks)
 		}
 	}

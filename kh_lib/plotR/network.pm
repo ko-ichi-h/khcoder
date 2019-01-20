@@ -96,6 +96,12 @@ sub new{
 	$args{standardize_coef} = 1 unless ( length($args{standardize_coef}) );
 	$r_command .= "standardize_coef <- $args{standardize_coef}\n";
 
+	if (length($args{breaks})) {
+		$r_command .= "breaks <- c($args{breaks})\n";
+	} else {
+		$r_command .= "breaks <- NULL\n";
+	}
+
 	$args{additional_plots} = 0 unless length( $args{additional_plots} );
 	$r_command .= "# additional_plots: $args{additional_plots}\n";
 
@@ -419,6 +425,26 @@ sub new{
 	foreach my $i (@plots){
 		$i->{command_f} .= "\n# edges: $info_edges\n";
 		$i->{command_f} .= "\n# min. jaccard: $info_jac\n";
+	}
+
+	# get breaks of bubble plot legend
+	if ($args{use_freq_as_size}){
+		$::config_obj->R->send('
+			legend_breaks_n <- ""
+			for ( i in 1:length(breaks_a) ){
+				legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
+			}
+			print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
+		');
+		my $breaks = $::config_obj->R->read;
+		if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
+			$breaks = $1;
+			substr($breaks, 0, 2) = '';
+		}
+		foreach my $i (@plots){
+			$i->{command_f} .= "\n# breaks: $breaks\n";
+		}
+		print "breaks: $breaks\n";
 	}
 
 	kh_r_plot::network->clear_env;
@@ -1407,9 +1433,38 @@ p <- p + geom_nodes( # dummy for the legend
 )
 
 if ( use_freq_as_size == 1 ){
+	# bubble plot legend configuration
+	limits_a <- c(NA, NA);
+	if (is.null(breaks)){
+		breaks <- labeling::extended(
+			min(ver_freq),
+			max(ver_freq),
+			5
+		)
+		breaks_a <- NULL
+		for ( i in 1:length(breaks) ){
+			if (
+				min(ver_freq) <= breaks[i]
+				&& max(ver_freq) >= breaks[i]
+			){
+				breaks_a <- c(breaks_a, breaks[i])
+			}
+		}
+		breaks <- breaks_a
+	} else {
+		breaks_a <- breaks
+		if (  min(breaks) < min(ver_freq) ){
+			limits_a[1] <- min(breaks)
+		}
+		if (  max(breaks) > max(ver_freq) ){
+			limits_a[2] <- max(breaks)
+		}
+	}
 	p <- p + scale_size_area(
 		"Frequency",
 		max_size = 30 * bubble_size / 100,
+		breaks = breaks_a,
+		limits = limits_a,
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", alpha=1, shape=1),

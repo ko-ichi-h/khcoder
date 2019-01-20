@@ -10,7 +10,7 @@ sub innner{
 	$self->{net_obj} = gui_widget::r_net->open(
 		parent  => $lf,
 		command => sub{ $self->calc; },
-		pack    => { -anchor   => 'w'},
+		pack    => { -anchor   => 'w', -fill => 'x', -expand => 1},
 		r_cmd   => $self->{command_f},
 	);
 
