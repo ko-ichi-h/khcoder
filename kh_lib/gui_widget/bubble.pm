@@ -86,7 +86,7 @@ sub _new{
 		)->pack(-anchor => 'w');
 	}
 
-	if ($self->{breaks}) {
+	if ($self->{breaks} || $self->{config}) {
 		my $frm_breaks = $win->Frame()->pack(
 			-fill => 'x',
 			-expand => 1,
@@ -140,6 +140,10 @@ sub refresh_std_radius{
 	if ($self->{breaks}) {
 		push @temp, $self->{lab_breaks} if $self->{lab_breaks};
 		push @temp, $self->{ent_breaks} if $self->{ent_breaks};
+	}
+	elsif ($self->{config}){
+		$self->{lab_breaks}->configure(-state => 'disabled') if $self->{lab_breaks};
+		$self->{ent_breaks}->configure(-state => 'disabled') if $self->{ent_breaks};
 	}
 	
 	my $state = 'disabled';

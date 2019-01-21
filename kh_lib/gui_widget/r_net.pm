@@ -275,13 +275,14 @@ sub _new{
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	# Nodeの大きさ
+	# bubble plot
 	$self->{bubble_obj} = gui_widget::bubble->open(
 		parent       => $lf,
 		type         => 'mds',
 		command2     => sub {$self->refresh(3);},
 		command      => $self->{command},
 		breaks       => $breaks,
+		config       => length($self->{r_cmd}),
 		pack    => {
 			-anchor => 'w', -fill => 'x', -expand => 1
 		},

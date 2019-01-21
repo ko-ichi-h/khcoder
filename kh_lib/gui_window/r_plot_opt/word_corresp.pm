@@ -125,6 +125,7 @@ sub innner{
 		num_var         => $num_var,
 		use_alpha       => $use_alpha,
 		breaks          => $breaks,
+		config          => 1,
 		pack            => {
 			-anchor => 'w', -fill => 'x', -expand => 1
 		},
