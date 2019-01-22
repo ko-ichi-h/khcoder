@@ -27,6 +27,7 @@ sub _new{
 	}
 	$self->{cls_n} = $cls_n_d unless defined $self->{cls_n};
 	
+	my $breaks;
 	if ( length($self->{r_cmd}) ){
 		if ($self->{r_cmd} =~ /method_mds <\- "(.+)"\n/){
 			$self->{method_opt} = $1;
@@ -70,6 +71,12 @@ sub _new{
 			$check_bubble = $1;
 		}
 
+		if ( $self->{r_cmd} =~ /# breaks: (.+)\n/ ){
+			$breaks = $1;
+			print "r_mds, breaks: $breaks\n";
+		}
+		$self->{r_cmd} =~ s/\n# breaks: (.+)\n//;
+
 		# クラスター化のパラメーター
 		if ( $self->{r_cmd} =~ /n_cls <\- ([0-9]+)\n/ ){
 			$self->{cls_if} = $1;
@@ -92,7 +99,7 @@ sub _new{
 			}
 		}
 
-		$self->{r_cmd} = undef;
+		$self->{r_cmd} = 1;
 	}
 
 	$f4->Label(
@@ -173,7 +180,9 @@ sub _new{
 			-anchor   => 'w',
 		},
 		check_bubble    => $check_bubble,
+		breaks          => $breaks,
 		num_size        => $num_size,
+		config          => length($self->{r_cmd}),
 	);
 
 	# クラスター化
@@ -244,6 +253,7 @@ sub params{
 		fix_asp        => gui_window->gui_jg( $self->{fix_asp} ),
 		use_alpha      => gui_window->gui_jg( $self->{use_alpha} ),
 		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
+		breaks         => $self->{bubble_obj}->breaks,
 	);
 }
 

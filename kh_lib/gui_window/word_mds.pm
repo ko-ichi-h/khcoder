@@ -281,6 +281,12 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 	$r_command .= "dim_n <- $args{dim_number}\n";
 
+	if (length($args{breaks})) {
+		$r_command .= "breaks <- c($args{breaks})\n";
+	} else {
+		$r_command .= "breaks <- NULL\n";
+	}
+
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
@@ -527,6 +533,26 @@ while ( is.na(check4mds(d)) == 0 ){
 		$ratio = $1;
 	}
 	
+	# get breaks of bubble plot legend
+	if ($args{bubble}){
+		$::config_obj->R->send('
+			legend_breaks_n <- ""
+			for ( i in 1:length(breaks_a) ){
+				legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
+			}
+			print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
+		');
+		my $breaks = $::config_obj->R->read;
+		if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
+			$breaks = $1;
+			substr($breaks, 0, 2) = '';
+		}
+		foreach my $i ($plot1, $plot2){
+			$i->{command_f} .= "\n# breaks: $breaks\n";
+		}
+		#print "breaks: $breaks\n";
+	}
+	
 	my $plotR;
 	$plotR->{result_plots} = [$plot1, $plot2];
 	$plotR->{result_info} =  $stress;
@@ -754,8 +780,39 @@ if ( bubble == 1 ){
 		colour="gray40",
 		alpha=alpha_value
 	)
+	
+	# bubble plot legend configuration
+	limits_a <- c(NA, NA);
+	if (is.null(breaks)){
+		breaks <- labeling::extended(
+			min(cl2$s, na.rm=T),
+			max(cl2$s, na.rm=T),
+			5
+		)
+		breaks_a <- NULL
+		for ( i in 1:length(breaks) ){
+			if (
+				   min(cl2$s, na.rm=T) <= breaks[i]
+				&& max(cl2$s, na.rm=T) >= breaks[i]
+			){
+				breaks_a <- c(breaks_a, breaks[i])
+			}
+		}
+		breaks <- breaks_a
+	} else {
+		breaks_a <- breaks
+		if (  min(breaks) < min(cl2$s, na.rm=T) ){
+			limits_a[1] <- min(breaks)
+		}
+		if (  max(breaks) > max(cl2$s, na.rm=T) ){
+			limits_a[2] <- max(breaks)
+		}
+	}
+	
 	g <- g + scale_size_area(
 		max_size= 30 * bubble_size / 100,
+		breaks = breaks_a,
+		limits = limits_a,
 		guide = guide_legend(
 			title = "Frequency:",
 			override.aes = list(colour="black", alpha=1),
