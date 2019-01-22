@@ -30,7 +30,7 @@ sub new{
 		$r_command .= "edges <- $args{edges_num}\n";
 		$r_command .= "th <- -1\n";
 	}
-	#$r_command .= "cex <- $args{font_size}\n";
+	$r_command .= "font_size <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
 
 	unless ( $args{view_coef} ){
@@ -1460,6 +1460,13 @@ if ( use_freq_as_size == 1 ){
 			limits_a[2] <- max(breaks)
 		}
 	}
+
+	# bubble size configuration
+	if ( exists("bs_fixed") == F ) {
+		bubble_size <- bubble_size / font_size
+		bs_fixed <- 1
+	}
+
 	p <- p + scale_size_area(
 		"Frequency",
 		max_size = 30 * bubble_size / 100,
