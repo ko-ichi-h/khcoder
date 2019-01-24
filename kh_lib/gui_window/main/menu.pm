@@ -205,13 +205,25 @@ sub make{
 						if ($ans =~ /cancel/i){ return 0; }
 						if ($ans =~ /Yes/i) {   $reload = 1; }
 					} else {
-						my $ans = $mw->messageBox(
-							-message => kh_msg->gget('cont_big_pros'),
-							-icon    => 'question',
-							-type    => 'OKCancel',
-							-title   => 'KH Coder'
+						#my $ans = $mw->messageBox(
+						#	-message => kh_msg->gget('cont_big_pros'),
+						#	-icon    => 'question',
+						#	-type    => 'OKCancel',
+						#	-title   => 'KH Coder'
+						#);
+						#unless ($ans =~ /ok/i){ return 0; }
+						
+						require Tk::Dialog;
+						my $dialog_win = $mw->Dialog(
+							-title => 'KH Coder',
+							-text => kh_msg->gget('cont_big_pros'),
+							-bitmap => 'question',
+							-default_button => 'OK',
+							-buttons => [kh_msg->gget('ok'),kh_msg->gget('cancel')],
 						);
-						unless ($ans =~ /ok/i){ return 0; }
+						my $ans = $dialog_win->Show;
+						my $ok = kh_msg->gget('ok');
+						unless ($ans =~ /$ok/i){ return 0; }
 					}
 					$self->mc_morpho($reload);
 				},
