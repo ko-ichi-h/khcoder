@@ -207,7 +207,8 @@ sub make{
 					} else {
 
 						if ($^O eq 'darwin') {
-							print "Trying the dialog method for darwin...\n";
+						#if (1) {
+							print "Trying out a different dialog method for darwin...\n";
 							require Tk::Dialog;
 							my $dialog_win = $mw->Dialog(
 								-title => 'KH Coder',
@@ -216,7 +217,7 @@ sub make{
 								-default_button => 'OK',
 								-buttons => [kh_msg->gget('ok'),kh_msg->gget('cancel')],
 							);
-							my $ans = $dialog_win->Show;
+							my $ans = $dialog_win->Show(-popover => $::main_gui->mw);
 							my $ok = kh_msg->gget('ok');
 							unless ($ans =~ /$ok/i){ return 0; }
 						} else {

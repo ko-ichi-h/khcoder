@@ -18,7 +18,14 @@ sub print{
 	
 	if ($window){
 		if ($^O eq 'darwin') {
+		#if (1) {
+			print "Trying out a different dialog method for darwin...\n";
 			require Tk::Dialog;
+			
+			#require Tk::DialogBox;
+			#require Tk::DialogBox_kh;
+			#*Tk::DialogBox::Show = \&Tk::DialogBox_kh::Show;
+			
 			my $dialog_win = $window->Dialog(
 				-title => 'KH Coder',
 				-text => gui_window->gui_jchar("$self->{msg}"),
@@ -26,7 +33,7 @@ sub print{
 				-default_button => 'OK',
 				-buttons => [kh_msg->gget('ok')],
 			);
-			$dialog_win->Show;
+			$dialog_win->Show(-popover => $window);
 		} else {
 			$window->messageBox(
 				-icon => $self->icon,

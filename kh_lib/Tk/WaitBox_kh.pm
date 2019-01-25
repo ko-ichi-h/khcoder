@@ -118,16 +118,20 @@ sub Show {
     #$wd->configure(-cursor => 'watch');
     $wd->update;
 
-    my($x) = int( ($wd->screenwidth
-		 - $wd->reqwidth)/2
-		 - $wd->vrootx);
-
-    my($y) = int( ($wd->screenheight
-		 - $wd->reqheight)/2
-		 - $wd->vrooty);
-	$y -= 150;
-
-    $wd->geometry("+$x+$y");
+	if ($^O ne 'darwin') {
+	#if (0) {
+		print "Trying out a different dialog method for darwin...\n";
+		my($x) = int( ($wd->screenwidth
+			 - $wd->reqwidth)/2
+			 - $wd->vrootx);
+	
+		my($y) = int( ($wd->screenheight
+			 - $wd->reqheight)/2
+			 - $wd->vrooty);
+		$y -= 150;
+	
+		$wd->geometry("+$x+$y");
+	}
 
     $wd->{Shown} = 1;
 
