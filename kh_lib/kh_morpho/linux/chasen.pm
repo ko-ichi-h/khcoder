@@ -11,7 +11,7 @@ sub _run_morpho{
 
 	unless (-e $::config_obj->chasenrc_path){
 		gui_errormsg->open(
-			msg  => kh_msg->get('error_confg'),
+			msg  => kh_msg->get('error_config'),
 			type => 'msg'
 		);
 		exit;

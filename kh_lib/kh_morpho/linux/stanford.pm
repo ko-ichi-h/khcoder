@@ -37,7 +37,7 @@ sub _run_morpho{
 		&& -e $p2
 	){
 		gui_errormsg->open(
-			msg => kh_msg->get('error_confg'),
+			msg => kh_msg->get('error_config'),
 			type => 'msg'
 		);
 		exit;
