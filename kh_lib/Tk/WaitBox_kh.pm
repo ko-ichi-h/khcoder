@@ -118,9 +118,9 @@ sub Show {
     #$wd->configure(-cursor => 'watch');
     $wd->update;
 
-	if ($^O ne 'darwin') {
-	#if (0) {
+	if ($^O eq 'darwin') {
 		print "Trying out a different dialog method for darwin...\n";
+	} else {
 		my($x) = int( ($wd->screenwidth
 			 - $wd->reqwidth)/2
 			 - $wd->vrootx);
