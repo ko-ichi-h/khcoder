@@ -281,12 +281,6 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 	$r_command .= "dim_n <- $args{dim_number}\n";
 
-	if (length($args{breaks})) {
-		$r_command .= "breaks <- c($args{breaks})\n";
-	} else {
-		$r_command .= "breaks <- NULL\n";
-	}
-
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
@@ -348,6 +342,14 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 	$r_command_d .= "text_font <- $args{font_bold}\n";
 	$r_command_a .= "text_font <- $args{font_bold}\n";
+
+	if (length($args{breaks})) {
+		$r_command_d .= "breaks <- c($args{breaks})\n";
+		$r_command_a .= "breaks <- c($args{breaks})\n";
+	} else {
+		$r_command_d .= "breaks <- NULL\n";
+		$r_command_a .= "breaks <- NULL\n";
+	}
 
 	if ( $args{dim_number} <= 2){
 		if ( $args{bubble} == 0 ){
