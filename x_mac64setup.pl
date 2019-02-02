@@ -13,8 +13,8 @@ while (<$fh>){
 }
 close ($fh);
 
-$config{chasenrc_path}        = cwd.'/deps/ipadic-2.7.0/chasenrc';
-$config{grammarcha_path}      = cwd.'/deps/ipadic-2.7.0/grammar.cha';
+$config{chasenrc_path}        = cwd.'/deps/ipadic-2.6.1/chasenrc';
+$config{grammarcha_path}      = cwd.'/deps/ipadic-2.6.1/grammar.cha';
 $config{stanf_jar_path}       = cwd.'/deps/stanford-postagger/stanford-postagger.jar';
 $config{stanf_tagger_path_en} = cwd.'/deps/stanford-postagger/models/wsj-0-18-left3words-distsim.tagger';
 $config{stanf_tagger_path_cn} = cwd.'/deps/stanford-postagger/models/chinese-distsim.tagger';
@@ -24,8 +24,10 @@ $config{mecabrc_path}         = cwd.'/deps/mecab/etc/mecabrc';
 $config{freeling_dir}         = cwd.'/deps/freeling40/share/freeling';
 $config{sql_username}         = 'root';
 $config{sql_password}         = 'khc';
-$config{sql_host}             = '127.0.0.1';
-$config{sql_port}             = '3309';
+#$config{sql_host}             = '127.0.0.1';
+#$config{sql_port}             = '3309';
+$config{sql_type}             = 'SOCKET';
+$config{sql_socket}           = '/tmp/mysql.sock.khc3';
 $config{c_or_j}               = 'chasen';
 $config{all_in_one_pack}      = 1;
 $config{app_html}             = 'open %s &';
@@ -57,9 +59,9 @@ print $fh $mecabrc;
 close($fh);
 
 # Edit configurations of Chasen
-my $dici_dir = cwd.'/deps/ipadic-2.7.0';
+my $dici_dir = cwd.'/deps/ipadic-2.6.1';
 my $chasenrc;
-open (my $fh, '<', cwd.'/deps/ipadic-2.7.0/chasenrc') or die("could not read file: chasenrc\n");
+open (my $fh, '<', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not read file: chasenrc\n");
 {
 	local $/ = undef;
 	$chasenrc = <$fh>;
@@ -69,7 +71,7 @@ close ($fh);
 $chasenrc =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 $chasenrc =~ s/\n\(GRAMMAR .+?\n/\n\(GRAMMAR $dici_dir\)\n/;
 
-open (my $fh, '>', cwd.'/deps/ipadic-2.7.0/chasenrc') or die("could not write file: chasenrc\n");
+open (my $fh, '>', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not write file: chasenrc\n");
 print $fh $chasenrc;
 close($fh);
 
