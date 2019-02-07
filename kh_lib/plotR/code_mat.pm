@@ -68,6 +68,12 @@ sub new{
 	$args{bubble_size} = int( $args{bubble_size} * 100 + 0.5) / 100;
 	$r_command .= "bubble_size <- $args{bubble_size}\n";
 
+	if (length($args{breaks})) {
+		$r_command .= "breaks <- c($args{breaks})\n";
+	} else {
+		$r_command .= "breaks <- NULL\n";
+	}
+
 	$args{color_rsd} = 1 unless length($args{color_rsd});
 	$r_command .= "color_rsd <- $args{color_rsd}\n";
 
@@ -104,15 +110,23 @@ sub new{
 		font_size => $args{font_size},
 	) or return 0;
 
-	#$plots[2] = kh_r_plot->new(
-	#	name      => $args{plotwin_name}.'_3',
-	#	command_f =>
-	#		 $r_command
-	#		.$self->r_plot_cmd_line,
-	#	width     => 640,
-	#	height    => 480,
-	#) or $flg_error = 1;
-
+	# get breaks of bubble plot legend
+	$::config_obj->R->send('
+		legend_breaks_n <- ""
+		for ( i in 1:length(breaks_a) ){
+			legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
+		}
+		print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
+	');
+	my $breaks = $::config_obj->R->read;
+	if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
+		$breaks = $1;
+		substr($breaks, 0, 2) = '';
+	}
+	foreach my $i (@plots){
+		$i->{command_f} .= "\n# breaks: $breaks\n";
+	}
+	print "breaks: $breaks\n";
 
 	kh_r_plot->clear_env;
 	undef $self;
@@ -263,8 +277,38 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 		}
 	}
 
+	# bubble plot legend configuration
+	limits_a <- c(0.05, ceiling(max(table$result)));
+	if (is.null(breaks)){
+		breaks <- labeling::extended(
+			0.05,
+			max(table$result, na.rm=T),
+			5
+		)
+		breaks_a <- NULL
+		for ( i in 1:length(breaks) ){
+			if (
+				   0.05 <= breaks[i]
+				&& max(table$result, na.rm=T) >= breaks[i]
+			){
+				breaks_a <- c(breaks_a, breaks[i])
+			}
+		}
+		breaks <- breaks_a
+	} else {
+		breaks_a <- breaks
+		if (  min(breaks) < 0.05 ){
+			limits_a[1] <- min(breaks)
+		}
+		if (  max(breaks) > max(table$result, na.rm=T) ){
+			limits_a[2] <- max(breaks)
+		}
+	}
+	breaks_a <<- breaks_a
+
 	p <- p + scale_size_area(
-		limits = c(0.05, ceiling(max(table$result))),
+		breaks = breaks_a,
+		limits = limits_a,
 		max_size = 15*bubble_size,
 		guide = guide_legend(
 			title = "\nPercent:",

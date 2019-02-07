@@ -238,6 +238,12 @@ sub innner{
 		$self->{color_rsd} = $1;
 	}
 
+	my $breaks = '';
+	if ( $self->{command_f} =~ /# breaks: (.+)\n/ ){
+		$breaks = $1;
+	}
+	$self->{command_f} =~ s/\n# breaks: (.+)\n//;
+
 	if ( $self->{command_f} =~ /color_gry <\- (.+)\n/ ){
 		$self->{color_gry} = $1;
 	}
@@ -334,6 +340,28 @@ sub innner{
 		-variable => \$self->{bubble_shape},
 		-value    => 1,
 	)->pack(-side => 'left');
+
+	# breaks
+	my $frm_breaks = $lf_f->Frame()->pack(
+		-fill => 'x',
+		-expand => 1,
+	);
+	
+	$self->{lab_breaks} = $frm_breaks->Label(
+		-text => kh_msg->get('gui_widget::bubble->breaks'),
+		-font => "TKFN",
+	)->pack(-anchor => 'w', -side => 'left');
+	
+	$self->{ent_breaks} = $frm_breaks->Entry(
+		-font       => "TKFN",
+		-width      => 15,
+		-background => 'white',
+	)->pack(-side => 'left', -fill => 'x', -expand => 1, -padx => 2, -pady => 2);
+	
+	$self->{ent_breaks}->insert(0,$breaks);
+	
+	$self->{ent_breaks}->bind("<Key-Return>", sub{ $self->calc; });
+	$self->{ent_breaks}->bind("<KP_Enter>",   sub{ $self->calc; });
 
 	$lf_f->Checkbutton(                                     # 残差による色分け
 		-variable => \$self->{color_rsd},
@@ -502,6 +530,7 @@ sub calc{
 		
 		bubble_size    => $self->gui_jgn( $self->{entry_bubble_size}->get) /100,
 		bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
+		breaks         => $self->gui_jg( $self->{ent_breaks}->get ),
 		color_rsd      => $self->gui_jg( $self->{color_rsd} ),
 		color_gry      => $self->gui_jg( $self->{color_gry} ),
 		plot_size_mapw => $self->gui_jgn( $self->{entry_plot_size_mapw}->get ),
