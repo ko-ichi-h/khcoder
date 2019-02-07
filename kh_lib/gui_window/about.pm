@@ -194,6 +194,18 @@ sub _new{
 		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
 	);
 
+	$fra_r->Label(
+		-text => '+',
+		-font => "TKFN",
+	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
+
+	gui_widget::url_lab->open(
+		label  => 'Contributors',
+		url    => 'https://github.com/ko-ichi-h/khcoder/graphs/contributors',
+		parent => $fra_r,
+		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
+	);
+
 	$wabtkh->Button(
 		-text => kh_msg->get('close'),
 		-font => "TKFN",
