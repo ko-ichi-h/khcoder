@@ -615,14 +615,19 @@ sub _save_emf{
 		$p = 12 + int($diff * 0.5);
 	}
 	
+	# Font configuration for EMF files
+	my $font = $::config_obj->font_plot_current;
+	$::config_obj->R->send( "windowsFonts(serif=windowsFont(\"TT $font\"))" );
+	$::config_obj->R->send( "PERL_font_family <- \"serif\"" );
+	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
 	$::config_obj->R->send(
-		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=$p)"
+		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=$p, family=\"serif\")"
 	);
-	$self->set_par;
+	#$self->set_par;
 	if ( length($self->{command_s}) ) {
 		$::config_obj->R->send( $self->{command_s} );
 	} else {
