@@ -1092,7 +1092,7 @@ gui_window::r_plot_opt::doc_cls:
     heading:                   "見出し"
     win_title:                 "文書のデンドログラム・調整"
 mysql_ready::check:
-    error:                     "前処理データの整合性が失われました。"
+    error:                     "前処理データの整合性が失われました："
 gui_window::r_plot::cod_mat:
     win_title:                 "クロス集計のマップ"
     heat:                      "ヒート"

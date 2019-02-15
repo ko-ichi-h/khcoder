@@ -1090,7 +1090,7 @@ gui_window::r_plot_opt::doc_cls:
     heading:                   "Heading"
     win_title:                 "Configure: Dendrogram of Documents"
 mysql_ready::check:
-    error:                     "Something wrong with the database: "
+    error:                     "Data integrity lost: "
 gui_window::r_plot::cod_mat:
     win_title:                 "Crosstab Plots"
     heat:                      "heat"

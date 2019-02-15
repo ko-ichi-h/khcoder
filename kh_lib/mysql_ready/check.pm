@@ -47,8 +47,12 @@ sub do{
 	my $vars = mysql_outvar->get_list;
 	foreach my $i (@{$vars}){
 		my $var = mysql_outvar::a_var->new( undef, $i->[2] );
-		#print "$i->[2], ", $var->n, ", $cases{$var->tani}\n";
 		unless ( $cases{$var->tani} == $var->n ){
+			print
+				"variable error: var_id $i->[2], var_name $var->{name}, cases_var ",
+				$var->n,
+				", cases $cases{$var->tani}\n"
+			;
 			push @error, "variable $i->[2]";
 		}
 	}
