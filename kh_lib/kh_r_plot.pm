@@ -151,11 +151,19 @@ sub new{
 
 	# Windows用の設定
 	if ( ($::config_obj->os eq 'win32') and ($kh_r_plot::if_font == 0) ){
-		print "loading Cairo...\n";
+		print "kh_r_plot: Loading Cairo...\n";
 		$::config_obj->R->output_chk(0);
 		$::config_obj->R->send( "try( library(Cairo) )" );
 		$::config_obj->R->output_chk(1);
 		$kh_r_plot::if_font = 1;
+		
+		# no good effect: trying to allocate more memory on 32 bit Windows  
+		#require Devel::Platform::Info::Win32;
+		#my $os_info = Devel::Platform::Info::Win32->new->get_info();
+		#if ( ($os_info->{wow64} == 0) && ($os_info->{is64bit} == 0) ){
+		#	print "kh_r_plot: sending: memory.limit(size=4095)...\n";
+		#	$::config_obj->R->send( "try( memory.limit(size=4095) )" );
+		#}
 	}
 
 	# Rのバージョンが2.5.0より小さい場合の対処
