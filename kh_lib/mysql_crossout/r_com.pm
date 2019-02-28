@@ -15,6 +15,16 @@ sub run{
 
 	$self->{tani} = $self->{tani2};
 
+	# random sampling
+	my $target = 500;
+	my $th = 1;
+	my $n = mysql_exec->select("select count(*) from $self->{tani}",1)->hundle->fetch->[0];
+	if ($target < $n){
+		$th = $target / $n;
+	}
+	$self->{th} = $th;
+	print "th: $th\n";
+
 	my $t0 = new Benchmark;
 	$self->out2;
 	#$self->finish;
@@ -88,7 +98,9 @@ sub out2{                               # length作製をする
 	
 	my $length = 'doc_length_mtr <- matrix( c( ';
 	
-	my $num_r = 0;
+	my $num_r  = 0;
+	my $num_ra = 0;
+	srand 10;
 	
 	# セル内容の作製
 	my $id = 1;
@@ -122,10 +134,14 @@ sub out2{                               # length作製をする
 					}
 				}
 				chop $temp;
-				print $fh "$temp,\n";
 				$current{length_c} = "0" unless length($current{length_c});
 				$current{length_w} = "0" unless length($current{length_w});
-				$length .= "$current{length_c},$current{length_w},";
+				if (rand() <= $self->{th}) {
+					print $fh ",\n" if $num_ra;
+					print $fh "$temp\n";
+					$length .= "$current{length_c},$current{length_w},";
+					++$num_ra;
+				}
 				# 初期化
 				%current = ();
 				$last = $i->[0];
@@ -167,10 +183,15 @@ sub out2{                               # length作製をする
 	++$num_r;
 	my $ncol = @{$self->{wList}} + 1;
 	chop $temp;
-	print $fh "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
 	$current{length_c} = "0" unless length($current{length_c});
 	$current{length_w} = "0" unless length($current{length_w});
-	$length .= "$current{length_c},$current{length_w},";
+	if (rand() <= $self->{th}) {
+		print $fh "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+		$length .= "$current{length_c},$current{length_w},";
+		++$num_r;
+	} else {
+		print $fh "), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+	}
 	chop $row_names;
 	
 	# データ整形
@@ -203,7 +224,7 @@ sub out2{                               # length作製をする
 	print $fh $length;
 	close($fh);
 
-	$self->{num_r} = $num_r;
+	$self->{num_r} = $num_ra;
 
 	# Rコマンド
 	$file = $::config_obj->uni_path($file);
