@@ -1467,6 +1467,9 @@ sub cell_symbol{
 	return $self->{cell_symbol};
 }
 
+sub ram{
+	return 0;
+}
 
 sub R{
 	my $self = shift;

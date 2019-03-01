@@ -188,6 +188,7 @@ if ($::config_obj->{R}){
 	$::config_obj->{R}->send('dummy_r <- cmdscale(dist(dummy_d), k=1)');
 	$::config_obj->{R}->read();
 	$::config_obj->{R}->output_chk(1);
+	$::config_obj->ram;
 } else {
 	$::config_obj->{R} = 0;
 }

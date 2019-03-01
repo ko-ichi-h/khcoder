@@ -179,6 +179,25 @@ sub save_ini{
 
 }
 
+sub ram{
+	my $self = shift;
+	
+	return 0 unless $::config_obj->R;
+	
+	return $self->{ram_r} if $self->{ram_r};
+	
+	$::config_obj->R->send('
+		ram <- memory.limit()
+		print( paste0("khcoder", ram, "khcoder") )
+	');
+	my $t = $::config_obj->R->read;
+	
+	if ($t =~ /khcoder(.+)khcoder/) {
+		$self->{ram_r} = $1;
+	}
+	return $self->{ram_r};
+}
+
 #--------------------#
 #   形態素解析関係   #
 

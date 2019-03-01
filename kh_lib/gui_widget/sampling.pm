@@ -25,7 +25,7 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2);
 
-	$self->{entry}->insert(0,'500000');
+	#$self->{entry}->insert(0,'500000');
 	$self->{entry}->bind("<Return>", $self->{command})
 		if defined( $self->{command} )
 	;
@@ -34,9 +34,60 @@ sub _new{
 	;
 	gui_window->config_entry_focusin($self->{entry});
 	
+	$self->{target} = 500000;
+	my $d = $self->sampling_target;
+	$self->{target} = $d if $d;
+	$self->{entry}->insert(0,$self->{target});
 	
 	$self->{win_obj} = $fr;
 	$self->refresh;
+	return $self;
+}
+
+sub sampling_target{
+	my $self = shift;
+	
+	my $ram = $::config_obj->ram;
+	return 0 unless $ram;
+	
+	print "RAM: $ram\n";
+	
+	my $target = 1250000;
+	if ($ram < 1023){
+		$target = 10000
+	}
+	elsif ($ram < 2047){
+		$target = 25000;
+	}
+	elsif ($ram < 2800){
+		$target = 50000;
+	}
+	elsif ($ram < 7000){
+		$target = 100000;
+	}
+	elsif ($ram < 13000){
+		$target = 250000;
+	}
+	elsif ($ram < 25000){
+		$target = 500000;
+	}
+	elsif ($ram < 32767){
+		$target = 1000000;
+	}
+	return $target;
+}
+
+sub onoff{
+	my $self = shift;
+	my $n = shift;
+	
+	if ($n > $self->{target}) {
+		$self->{check_sampling} = 1;
+	} else {
+		$self->{check_sampling} = 0;
+	}
+	$self->refresh;
+	
 	return $self;
 }
 

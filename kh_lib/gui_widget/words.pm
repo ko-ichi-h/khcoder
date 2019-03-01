@@ -26,7 +26,10 @@ sub _new{
 		$self->{tani_obj} = gui_widget::tani->open(
 			parent => $l1,
 			pack   => \%pack,
-			command => $self->{tani_command},
+			command => sub{
+				&{$self->{tani_command}};
+				$self->sampling_config;
+			},
 			#dont_remember => 1,
 		);
 		if ($self->{sampling}) {
@@ -36,8 +39,9 @@ sub _new{
 				command => $self->{command},
 			);
 		}
+		$self->sampling_config;
 	}
-
+	
 	# 最小・最大出現数
 	$left->Label(
 		-text => kh_msg->get('by_tf'), # 最小/最大 出現数による語の取捨選択
@@ -210,6 +214,15 @@ sub _new{
 	gui_hlist->update4scroll($self->{hinshi_obj}->hlist);
 
 	return $self;
+}
+
+sub sampling_config{
+	my $self = shift;
+	if ($self->{tani_obj} && $self->{sampling_obj}) {
+		my $tani = $self->{tani_obj}->tani;
+		my $n = mysql_exec->select("select count(*) from $tani",1)->hundle->fetch->[0];
+		$self->{sampling_obj}->onoff($n);
+	}
 }
 
 #--------------#

@@ -11,7 +11,7 @@ use mysql_crossout;
 use kh_r_plot;
 
 my $bench = 0;
-my $debug = 0;
+my $debug = 1;
 
 #-------------#
 #   GUI作製   #
@@ -286,7 +286,7 @@ sub calc{
 			$threshold = $target / $n;
 			$threshold = sprintf("%.5f",$threshold);
 		}
-		print "sampling th: $threshold\n";
+		print "sampling th: $threshold\n" if $debug;
 	}
 
 	# 見出しの取り出し
