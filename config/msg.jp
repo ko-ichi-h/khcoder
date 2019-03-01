@@ -75,6 +75,8 @@ gui_widget::r_xy:
     symbi:                    対称biplot
     zoom:                     原点付近を拡大：
     zoom_factor:              係数
+gui_widget::sampling:
+    sampling:                 サンプリング：
 gui_widget::words:
     by_df:                    最小/最大 文書数による語の取捨選択
     by_pos:                   品詞による語の取捨選択

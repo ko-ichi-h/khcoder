@@ -75,6 +75,8 @@ gui_widget::r_xy:
     symbi:                    symmetric biplot
     zoom:                     Enlarge area near the origin:
     zoom_factor:              Factor
+gui_widget::sampling:
+    sampling:                 'Sampling:'
 gui_widget::words:
     by_df:                    Filter words by Document Frequency
     by_pos:                   Filter words by POS

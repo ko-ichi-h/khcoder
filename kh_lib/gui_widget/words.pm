@@ -29,6 +29,13 @@ sub _new{
 			command => $self->{tani_command},
 			#dont_remember => 1,
 		);
+		if ($self->{sampling}) {
+			$self->{sampling_obj} = gui_widget::sampling->open(
+				parent => $l1,
+				pack   => { -side => 'left' },
+				command => $self->{command},
+			);
+		}
 	}
 
 	# 最小・最大出現数
@@ -196,7 +203,7 @@ sub _new{
 	)->pack(-side => 'left', -fill => 'x', -expand => 1);
 	gui_window->disabled_entry_configure($self->{ent_check});
 
-	$self->{win_obj} = $left; # ?
+	$self->{win_obj} = $left;
 	$self->{win_obj}->update;
 	$self->settings_load;
 
@@ -315,6 +322,11 @@ sub settings_load{
 
 #--------------#
 #   アクセサ   #
+
+sub sampling_value{
+	my $self = shift;
+	return $self->{sampling_obj}->parameter;
+}
 
 sub min{
 	my $self = shift;

@@ -30,7 +30,7 @@ sub _new{
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
 	$self->{words_obj} = gui_widget::words->open(
-		parent => $lf_w,
+		parent       => $lf_w,
 		tani_command => sub{
 			if ($self->{var_obj}){
 				$self->{var_obj}->new_tani($self->tani);
@@ -39,7 +39,11 @@ sub _new{
 				$self->{net_obj}{var_obj2}->new_tani($self->tani);
 			}
 		},
-		verb   => kh_msg->get('use'), # 利用
+		command      => sub{
+			$self->calc;
+		},
+		verb         => kh_msg->get('use'), # 利用
+		sampling     => 1,
 	);
 
 	my $lf = $win->LabFrame(
@@ -266,9 +270,24 @@ sub calc{
 		max_df => $self->max_df,
 		min_df => $self->min_df,
 		rownames => 0,
+		sampling => $self->{words_obj}->sampling_value,
 	)->run;
 
 	print '$r_command is_utf8 (1): ', utf8::is_utf8($r_command), "\n" if $debug;
+
+	# rondom sampling
+	my $threshold = 2;
+	srand 11;
+	if ( $self->{words_obj}->sampling_value ){
+		my $tani = $self->tani;
+		my $target = $self->{words_obj}->sampling_value;
+		my $n = mysql_exec->select("select count(*) from $tani",1)->hundle->fetch->[0];
+		if ($target < $n){
+			$threshold = $target / $n;
+			$threshold = sprintf("%.5f",$threshold);
+		}
+		print "sampling th: $threshold\n";
+	}
 
 	# 見出しの取り出し
 	if (
@@ -323,7 +342,9 @@ sub calc{
 
 		$r_command .= "\nv0 <- c(";
 		while (my $i = $h->fetch){
-			$r_command .= "\"$heads{$i->[0]}\",";
+			if (rand() <= $threshold) {
+				$r_command .= "\"$heads{$i->[0]}\",";
+			}
 		}
 		chop $r_command;
 		$r_command .= ")\n";
@@ -372,16 +393,16 @@ sub calc{
 		
 		$r_command .= "v0 <- c(";
 		my $h = mysql_exec->select($sql,1)->hundle;
-		my $n = 0;
 		while (my $i = $h->fetch){
-			if ( length( $var_obj->{labels}{$i->[0]} ) ){
-				my $t = $var_obj->{labels}{$i->[0]};
-				$t =~ s/"/ /g;
-				$r_command .= "\"$t\",";
-			} else {
-				$r_command .= "\"$i->[0]\",";
+			if (rand() <= $threshold) {
+				if ( length( $var_obj->{labels}{$i->[0]} ) ){
+					my $t = $var_obj->{labels}{$i->[0]};
+					$t =~ s/"/ /g;
+					$r_command .= "\"$t\",";
+				} else {
+					$r_command .= "\"$i->[0]\",";
+				}
 			}
-			++$n;
 		}
 		
 		chop $r_command;

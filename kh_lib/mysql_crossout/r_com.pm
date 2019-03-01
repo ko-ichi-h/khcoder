@@ -16,14 +16,16 @@ sub run{
 	$self->{tani} = $self->{tani2};
 
 	# random sampling
-	my $target = 500;
-	my $th = 1;
-	my $n = mysql_exec->select("select count(*) from $self->{tani}",1)->hundle->fetch->[0];
-	if ($target < $n){
-		$th = $target / $n;
+	$self->{th} = 2;
+	if ($self->{sampling}) {
+		my $target = $self->{sampling};
+		my $n = mysql_exec->select("select count(*) from $self->{tani}",1)->hundle->fetch->[0];
+		if ($target < $n){
+			$self->{th} = $target / $n;
+			$self->{th} = sprintf("%.5f",$self->{th});
+		}
+		print "sampling th: $self->{th}\n";
 	}
-	$self->{th} = $th;
-	print "th: $th\n";
 
 	my $t0 = new Benchmark;
 	$self->out2;
@@ -32,7 +34,7 @@ sub run{
 	my $t1 = new Benchmark;
 	print "\n",timestr(timediff($t1,$t0)),"\n";
 	
-	print "Data matrix for R: $self->{num_w} words x $self->{num_r} docs\n";
+	print "Data matrix for R: $self->{num_w} words x $self->{num_ra} ($self->{num_r}) docs\n";
 	
 	return $self->{r_command};
 }
@@ -100,7 +102,7 @@ sub out2{                               # length作製をする
 	
 	my $num_r  = 0;
 	my $num_ra = 0;
-	srand 10;
+	srand 11;
 	
 	# セル内容の作製
 	my $id = 1;
@@ -122,10 +124,6 @@ sub out2{                               # length作製をする
 			if ($last != $i->[0] && $started == 1){
 				# 書き出し
 				my $temp = "$last,";
-				if ($self->{midashi}){
-					$self->{midashi}->[$last - 1] =~ s/"/ /g;
-					$row_names .= '"'.$self->{midashi}->[$last - 1].'",';
-				}
 				foreach my $h (@{$self->{wList}} ){
 					if ($current{$h}){
 						$temp .= "$current{$h},";
@@ -137,9 +135,13 @@ sub out2{                               # length作製をする
 				$current{length_c} = "0" unless length($current{length_c});
 				$current{length_w} = "0" unless length($current{length_w});
 				if (rand() <= $self->{th}) {
-					print $fh ",\n" if $num_ra;
+					print $fh "," if $num_ra;
 					print $fh "$temp\n";
 					$length .= "$current{length_c},$current{length_w},";
+					if ($self->{midashi}){
+						$self->{midashi}->[$last - 1] =~ s/"/ /g;
+						$row_names .= '"'.$self->{midashi}->[$last - 1].'",';
+					}
 					++$num_ra;
 				}
 				# 初期化
@@ -169,10 +171,6 @@ sub out2{                               # length作製をする
 	
 	# 最終行の出力
 	my $temp = "$last,";
-	if ($self->{midashi}){
-		$self->{midashi}->[$last - 1] =~ s/"/ /g;
-		$row_names .= '"'.$self->{midashi}->[$last - 1].'",';
-	}
 	foreach my $h (@{$self->{wList}} ){
 		if ($current{$h}){
 			$temp .= "$current{$h},";
@@ -186,11 +184,16 @@ sub out2{                               # length作製をする
 	$current{length_c} = "0" unless length($current{length_c});
 	$current{length_w} = "0" unless length($current{length_w});
 	if (rand() <= $self->{th}) {
-		print $fh "$temp), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+		++$num_ra;
+		print $fh "," if $num_ra;
+		print $fh "$temp), byrow=T, nrow=$num_ra, ncol=$ncol )\n";
 		$length .= "$current{length_c},$current{length_w},";
-		++$num_r;
+		if ($self->{midashi}){
+			$self->{midashi}->[$last - 1] =~ s/"/ /g;
+			$row_names .= '"'.$self->{midashi}->[$last - 1].'",';
+		}
 	} else {
-		print $fh "), byrow=T, nrow=$num_r, ncol=$ncol )\n";
+		print $fh "), byrow=T, nrow=$num_ra, ncol=$ncol )\n";
 	}
 	chop $row_names;
 	
@@ -224,7 +227,8 @@ sub out2{                               # length作製をする
 	print $fh $length;
 	close($fh);
 
-	$self->{num_r} = $num_ra;
+	$self->{num_ra} = $num_ra;
+	$self->{num_r} = $num_r;
 
 	# Rコマンド
 	$file = $::config_obj->uni_path($file);
