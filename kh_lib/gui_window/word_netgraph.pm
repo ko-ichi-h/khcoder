@@ -519,20 +519,42 @@ sub hinshi{
 sub r_command_concat{
 	return '
 # 1つの外部変数が入ったベクトルを0-1マトリクスに変換
-mk.dummy <- function(dat){
-	dat  <- factor(dat)
-	cols <- length(levels(dat))
-	ret <- NULL
-	for (i in 1:length( dat ) ){
-		c <- numeric(cols)
-		c[as.numeric(dat)[i]] <- 1
-		ret <- rbind(ret, c)
+make.dummys <- function(dat, basal_level = FALSE, sep = "_") {
+	n_col <- ncol(dat)
+	name_col <- colnames(dat)
+	name_row <- rownames(dat)
+
+	result <- NULL
+	for (i in seq(n_col)) {
+		## process each column
+		tmp <- dat[,name_col[i]]
+		if (is.factor(tmp)) {
+			## factor or ordered => convert dummy variables
+			level <- levels(droplevels(tmp))
+			## http://aoki2.si.gunma-u.ac.jp/taygeta/statistics.cgi
+			## No. 21773
+			m <- length(tmp)
+			n <- length(level)
+			res <- matrix(0, m, n)
+			res[cbind(seq(m), tmp)] <- 1
+			## res <- sapply(level, function(j) ifelse(tmp == j, 1, 0))
+			colnames(res) <- paste("", level, sep = sep)
+			if (basal_level == FALSE) {
+				res <- res[,-1]
+			}
+		} else {
+			## non-factor or non-ordered => as-is
+			res <- as.matrix(tmp)
+			colnames(res) <- name_col[i]
+		}
+		result <- cbind(result, res)
 	}
-	colnames(ret) <- paste( "<>", levels(dat), sep="" )
-	rownames(ret) <- NULL
-	return(ret)
+	rownames(result) <- name_row
+	return(result)
 }
-v1 <- mk.dummy(v0)
+vf <- data.frame(x = factor(v0))
+v1 <- make.dummys(vf, sep = "<>", basal_level = TRUE)
+rm(vf)
 
 # 抽出語と外部変数を接合
 n_words <- ncol(d)

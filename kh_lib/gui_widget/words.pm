@@ -27,7 +27,7 @@ sub _new{
 			parent => $l1,
 			pack   => \%pack,
 			command => sub{
-				&{$self->{tani_command}};
+				&{$self->{tani_command}} if $self->{tani_command};
 				$self->sampling_config;
 			},
 			#dont_remember => 1,

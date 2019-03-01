@@ -10,7 +10,7 @@ use vars qw($if_font);
 $kh_r_plot::if_font = 0;
 
 my $if_lt25 = 0;
-my $debug = 0;
+my $debug = 1;
 
 sub new{
 	my $class = shift;
@@ -26,6 +26,7 @@ sub new{
 	$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
 
 	# コマンドの文字コード
+	print "Checking character code...\n" if $debug;
 	if ( utf8::is_utf8($self->{command_f}) ){
 		# It's OK!
 	} else {
@@ -36,6 +37,7 @@ sub new{
 	}
 
 	# コマンドから日本語コメントを削除
+	print "Checking Japanese comments...\n" if $debug;
 	if (
 		   ($::config_obj->os eq 'win32')
 		&& 0
@@ -53,14 +55,17 @@ sub new{
 	}
 
 	# コマンドの改行コード
+	print "Checking CR LR comments...\n" if $debug;
 	$self->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_a} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	$self->{command_s} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 
+	print "Escaping Unicode char...\n" if $debug;
 	$self->{command_f} = $self->escape_unicode($self->{command_f});
 	$self->{command_a} = $self->escape_unicode($self->{command_a});
 	$self->{command_s} = $self->escape_unicode($self->{command_s});
 
+	print "Here...\n" if $debug;
 	if ( length($self->{command_f}) ) {
 		$self->{command_f} =~ s/color_universal_design <\- [01]\n//;
 		$self->{command_f} =
@@ -269,6 +274,20 @@ sub new{
 	return $self;
 }
 
+### From Encode::Escape::Unicode
+sub chr2hex {
+    my($c) = @_;
+    if ( ord($c) < 65536 ) {
+        return sprintf("%04x", ord($c));
+    }
+    else {
+        require Carp;
+        Carp::croak (
+            "'unicode-escape' codec can't encode character: ordinal " . ord($c)
+        );
+    }
+}
+
 sub escape_unicode{
 	my $self = shift;
 	my $input = shift;
@@ -303,9 +322,12 @@ sub escape_unicode{
 		}
 		
 		# Escape Unicode characaters
-		my $utf8 = Encode::encode('UTF-8', $input);
-		use Unicode::Escape;
-		return Unicode::Escape::escape($utf8);
+		#my $utf8 = Encode::encode('UTF-8', $input);
+		#use Unicode::Escape;
+		#return Unicode::Escape::escape($utf8);
+		
+		$input =~ s/([\x{7f}-\x{ffff}])/'\u'.chr2hex($1)/gse;
+		return $input;
 	} else {
 		return $input;
 	}
