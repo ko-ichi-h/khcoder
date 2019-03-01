@@ -216,15 +216,6 @@ sub _new{
 	return $self;
 }
 
-sub sampling_config{
-	my $self = shift;
-	if ($self->{tani_obj} && $self->{sampling_obj}) {
-		my $tani = $self->{tani_obj}->tani;
-		my $n = mysql_exec->select("select count(*) from $tani",1)->hundle->fetch->[0];
-		$self->{sampling_obj}->onoff($n);
-	}
-}
-
 #--------------#
 #   チェック   #
 sub check{

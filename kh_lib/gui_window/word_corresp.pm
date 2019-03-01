@@ -44,10 +44,17 @@ sub _new{
 	);
 
 	# 入力データの設定
-	$lf2->Label(
+	my $lf3 = $lf2->Frame->pack(-anchor => 'nw');
+	$lf3->Label(
 		-text => kh_msg->get('matrix'), # 分析に使用するデータ表の種類：
 		-font => "TKFN",
-	)->pack(-anchor => 'nw', -padx => 2, -pady => 2);
+	)->pack(-anchor => 'nw', -padx => 2, -pady => 2, -side => 'left');
+
+	$self->{sampling_obj} = gui_widget::sampling->open(
+		parent => $lf3,
+		pack   => { -side => 'left' },
+		command => sub{$self->calc;},
+	);
 
 	my $fi = $lf2->Frame()->pack(
 		-fill   => 'both',
@@ -274,8 +281,36 @@ sub _new{
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
 	$self->_settings_load;
-
+	$self->sampling_config;
 	return $self;
+}
+
+sub sampling_config{
+	my $self = shift;
+	return unless $self->{entry_flw_l1};
+	
+	my $tani2 = $self->tani2;
+
+	my $n = mysql_exec->select("select count(*) from $tani2",1)->hundle->fetch->[0];
+	$self->{sampling_obj}->onoff($n);
+}
+
+sub tani2{
+	my $self = shift;
+	my $tani2;
+	my $vars;
+	
+	if ($self->{radio} == 0){
+		$tani2 = $self->gui_jg($self->{high});
+	}
+	elsif ($self->{radio} == 1){
+		my $i = $self->{opt_body_var}->selectionGet->[0];
+		$i = $self->{vars}[$i][1];
+		$tani2 = mysql_outvar::a_var->new(undef,$i)->{tani};
+	}
+	
+	#print "tani2: $tani2\n";
+	return $tani2;
 }
 
 # 設定の保存（「OK」をクリックして実行する時に）
@@ -413,6 +448,7 @@ sub refresh{
 			-selectborderwidth  => 0,
 			-highlightthickness => 0,
 			-selectmode         => 'extended',
+			-browsecmd          => sub{ $self->sampling_config; },
 		)->pack(
 			-anchor => 'w',
 			-padx   => '2',
@@ -482,6 +518,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => \@tanis,
 				variable => \$self->{high},
+				command => sub {$self->sampling_config;},
 			);
 			$self->{opt_body_high_ok} = 1;
 		} else {
@@ -668,10 +705,25 @@ sub calc{
 		max_df => $self->max_df,
 		min_df => $self->min_df,
 		rownames => $rownames,
+		sampling => $self->{sampling_obj}->parameter,
 	)->run;
 	$r_command .= "if ( is.null( rownames(d) ) ){ rownames(d) = 1:nrow(d) }\n";
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
+
+	# rondom sampling
+	my $threshold = 2;
+	srand 11;
+	if ( $self->{sampling_obj}->parameter ){
+		my $tani = $tani2;
+		my $target = $self->{sampling_obj}->parameter;
+		my $n = mysql_exec->select("select count(*) from $tani",1)->hundle->fetch->[0];
+		if ($target < $n){
+			$threshold = $target / $n;
+			$threshold = sprintf("%.5f",$threshold);
+		}
+		#print "sampling th: $threshold\n";
+	}
 
 	# 外部変数の付与
 	if ($self->{radio} == 1){
@@ -686,17 +738,17 @@ sub calc{
 			
 			$r_command .= "v$n_v <- c(";
 			my $h = mysql_exec->select($sql,1)->hundle;
-			my $n = 0;
 			while (my $i = $h->fetch){
-				$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
-				if ( length( $var_obj->{labels}{$i->[0]} ) ){
-					my $t = $var_obj->{labels}{$i->[0]};
-					$t =~ s/"/ /g;
-					$r_command .= "\"$t\",";
-				} else {
-					$r_command .= "\"$i->[0]\",";
+				if (rand() <= $threshold) {
+					$i->[0] = Encode::decode('utf8', $i->[0]) unless utf8::is_utf8($i->[0]);
+					if ( length( $var_obj->{labels}{$i->[0]} ) ){
+						my $t = $var_obj->{labels}{$i->[0]};
+						$t =~ s/"/ /g;
+						$r_command .= "\"$t\",";
+					} else {
+						$r_command .= "\"$i->[0]\",";
+					}
 				}
-				++$n;
 			}
 			
 			chop $r_command;

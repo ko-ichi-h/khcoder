@@ -10,7 +10,7 @@ use vars qw($if_font);
 $kh_r_plot::if_font = 0;
 
 my $if_lt25 = 0;
-my $debug = 1;
+my $debug = 0;
 
 sub new{
 	my $class = shift;

@@ -102,7 +102,7 @@ gui_window::cod_corresp:
     coding_unit:              コーディング単位：
     flt:                      原点から離れたコードのみラベル表示：
     flw:                      差異が顕著なコードを分析に使用：
-    matrix_type:              分析に使用するデータ表の種類：
+    matrix_type:              分析に使用するデータ表
     na:                       利用不可
     sel3:                     '    ※コードを3つ以上選択して下さい。'
     select_codes:             コード選択：
@@ -480,7 +480,7 @@ gui_window::word_corresp:
     exp:                      寄与率
     flt:                      原点から離れた語のみラベル表示：
     flw:                      差異が顕著な語を分析に使用：
-    matrix:                   分析に使用するデータ表の種類：
+    matrix:                   分析に使用するデータ表
     na:                       利用不可
     nav:                      欠損値
     option_ca:                対応分析のオプション
