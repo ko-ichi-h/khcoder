@@ -167,6 +167,22 @@ sub save_ini{
 
 }
 
+sub ram{
+	my $self = shift;
+	return $self->{ram_r} if $self->{ram_r};
+
+	if ($^O =~ /darwin/i){
+		return 0;
+	} else {
+	  my $r = `free -m | grep Mem`;
+	  $r =~ s/Mem:\s+([0-9]+)\s+.+/$1/;
+	  $self->{ram_r} = $r;
+	  #print "ram_r: $self->{ram_r}\n";
+	}
+
+	return $self->{ram_r};
+}
+
 #--------------------------------#
 #   以下は設定値を返すルーチン   #
 #--------------------------------#
