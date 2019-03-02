@@ -172,12 +172,20 @@ sub ram{
 	return $self->{ram_r} if $self->{ram_r};
 
 	if ($^O =~ /darwin/i){
-		return 0;
+		my $r = `system_profiler SPHardwareDataType | grep Memory`;
+		my $r0 = 0;
+		if ( $r =~ /([0-9]+)/ ){
+			$r0 = $1;
+		}
+		if ($r =~ /GB/){
+			$r0 = $r0 * 1024;
+		}
+		$self->{ram_r} = $r0;
+		print "ram_r $r0\n";
 	} else {
 	  my $r = `free -m | grep Mem`;
 	  $r =~ s/Mem:\s+([0-9]+)\s+.+/$1/;
 	  $self->{ram_r} = $r;
-	  #print "ram_r: $self->{ram_r}\n";
 	}
 
 	return $self->{ram_r};
