@@ -35,6 +35,10 @@ sub _new{
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
 		verb   => kh_msg->get('cluster'), # 分類
+		sampling     => 1,
+		command      => sub{
+			$self->calc;
+		},
 	);
 
 	# クラスター分析のオプション
@@ -170,6 +174,7 @@ sub calc{
 		max_df => $self->max_df,
 		min_df => $self->min_df,
 		rownames => 0,
+		sampling => $self->{words_obj}->sampling_value,
 	)->run;
 
 	# クラスター分析を実行するためのコマンド

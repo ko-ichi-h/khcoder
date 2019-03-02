@@ -28,8 +28,12 @@ sub _new{
 	)->pack(-fill => 'both', -expand => 1, -side => 'left');
 
 	$self->{words_obj} = gui_widget::words->open(
-		parent => $lf_w,
-		verb   => kh_msg->get('plot'), # 布置
+		parent  => $lf_w,
+		verb    => kh_msg->get('plot'), # 布置
+		command => sub{
+			$self->calc;
+		},
+		sampling => 1,
 	);
 
 	my $lf = $win->LabFrame(
@@ -167,6 +171,7 @@ sub calc{
 		max_df => $self->max_df,
 		min_df => $self->min_df,
 		rownames => 0,
+		sampling => $self->{words_obj}->sampling_value,
 	)->run;
 
 	# データ整理
