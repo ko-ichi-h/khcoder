@@ -552,7 +552,7 @@ gui_window::word_search:
     baseform:                 Search Baseform
     comp:                     Complete Match
     conj:                     Conj.
-    enable_filter:            Enable Filter when Searching
+    enable_filter:            Enable Filter when Search
     forw:                     Forward Match
     freq:                     Frequency
     kwic:                     KWIC Concordance
@@ -567,6 +567,8 @@ gui_window::word_search:
     win_title:                Word Frequency List
     word:                     Word
     excel:                    Excel
+    n100:                     N100
+    p100:                     P100
 gui_window::word_search_opt:
     win_title:                'Filter: Word Frequency List'
 gui_window::word_tf_df:

@@ -26,155 +26,159 @@ sub search{
 	my $query = $args{query};
 	$query =~ s/　/ /g;
 	my @query = split / /, $query;
-	
 	$query =~ s/ //g;
-	
-	my $result;
-	
-	if ($args{kihon}){        # KHCの抽出語(基本形)を検索
-		my $sql;
-		$sql = '
-			SELECT
-				genkei.name, hselection.name, genkei.num, genkei.id
-			FROM
-				genkei, hselection
-			WHERE
-				    genkei.khhinshi_id = hselection.khhinshi_id
-				#AND genkei.hinshi_id = hinshi.id
-				AND hselection.ifuse = 1
-				AND genkei.nouse = 0'."\n";
-		
-		# Filter: hinshi(pos)
-		if (
-			   ( length($query) == 0  )
-			|| ( $args{enable_filter} )
-		){
-			my $n = 0;
-			$sql .= "\tAND (\n";
-			foreach my $i (keys %{$self->{filter}{hinshi}}){
-				if ($self->{filter}{hinshi}{$i}){
-					$sql .= "\t\t";
-					$sql .= "|| " if $n;
-					$sql .= "genkei.khhinshi_id = $i\n";
-					++$n;
-				}
-			}
-			$sql .= "\t)\n";
-		}
-		
-		# Query
-		if ( length($query) ){
-			$sql .= "\t\t\tAND (\n";
-			foreach my $i (@query){
-				unless ($i){ next; }
-				my $word = $self->conv_query($i);
-				$sql .= "\t\t\t\tgenkei.name LIKE $word";
-				if ($args{method} eq 'AND'){
-					$sql .= " AND\n";
-				} else {
-					$sql .= " OR\n";
-				}
-			}
-			substr($sql,-4,3) = '';
-			$sql .= "\n\t\t\t)\n";
-		}
-		
-		$sql .= "\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
-		$sql .= $::project_obj->mysql_sort('genkei.name');
-		if (
-			   ( length($query) == 0  )
-			|| ( $args{enable_filter} )
-		){
-			$sql .= "\nlimit $self->{filter}{limit}";
-		}
-		my $t = mysql_exec->select($sql,1);
-		$result = $t->hundle->fetchall_arrayref;
-		
-		if ( ! $args{katuyo} ){         # 活用語なしの場合
-			foreach my $i (@{$result}){
-				pop @{$i};
-				#pop @{$i};
-			}
-		} else {                        # 活用語ありの場合
-			my $result2;
-			foreach my $i (@{$result}){
-				#my $hinshi = pop @{$i};
-				my $id = pop @{$i};
-				push @{$result2}, $i;
-				
-				my $r = mysql_exec->select("      # 活用語を探す
-					SELECT lower( hyoso.name ), katuyo.name, sum( hyoso.num ) as nn
-					FROM hyoso, katuyo
-					WHERE
-						    hyoso.katuyo_id = katuyo.id
-						AND hyoso.genkei_id = $id
-					GROUP BY hyoso.name, hyoso.katuyo_id
-					ORDER BY nn DESC, ".$::project_obj->mysql_sort('katuyo.name')
-				,1)->hundle->fetchall_arrayref;
-				
-				my @katuyo = ();
-				my $n = 0;
-				foreach my $h (@{$r}){            # 活用語の追加
-					if (
-						#   length($h->[1]) > 0
-						length($h->[0]) > 0
-						&& $h->[2] =~ /[0-9]+/
-						&& $h->[2] > 0
-					){
-						unshift @{$h}, 'katuyo';
-						#push @{$result2}, $h;
-						push @katuyo, $h;
-						++$n;
-					}
-				}
 
-				if (                              # 以下の条件を満たせば追加
-					   $n > 0
-					&& (
-						   ( $n > 1 )                    # 活用形が複数ある
-						|! ( lc( $katuyo[0]->[1] ) eq lc( $i->[0] ) ) # 活用形が基本形と異なる
-					)
-					#&& $katuyo[0]->[2] ne '   .'     # 活用名が「.」でない
-				){
-					@{$result2} = (@{$result2},@katuyo);
-				}
-			}
-			$result = $result2
-		}
+	mysql_exec->drop_table("word_search_temp");
+	my $max_length1 =
+		mysql_exec->select("SELECT MAX( CHAR_LENGTH(name) ) FROM genkei", 1)
+		->hundle->fetch->[0];
+	;
+	my $max_length2 =
+		mysql_exec->select("SELECT MAX( CHAR_LENGTH(name) ) FROM hselection", 1)
+		->hundle->fetch->[0];
+	;
+	mysql_exec->do("
+		CREATE TEMPORARY TABLE word_search_temp(
+			id INT primary key auto_increment not null,
+			genkei_name varchar($max_length1) not null,
+			hselection_name varchar($max_length2) not null,
+			genkei_num INT not null,
+			genkei_id INT not null
+		)
+	",1);
 
-	} else {                  # 非-抽出語 検索
-		my $sql;
-		$sql = '
-			SELECT hyoso.name, hinshi.name, katuyo.name, hyoso.num
-			FROM hyoso, genkei, hinshi, katuyo
-			WHERE
-				    hyoso.genkei_id = genkei.id
-				AND hyoso.hinshi_id = hinshi.id
-				AND hyoso.katuyo_id = katuyo.id
-		';
-		
-		if ( length($query) ){
-			$sql .= " AND (\n";
-			foreach my $i (@query){
-				my $word = $self->conv_query($i);
-				$sql .= "\t\t\t\thyoso.name LIKE $word";
-				if ($args{method} eq 'AND'){
-					$sql .= " AND\n";
-				} else {
-					$sql .= " OR\n";
-				}
+	my $sql;
+	$sql = '
+		INSERT INTO word_search_temp (genkei_name,hselection_name,genkei_num,genkei_id)
+		SELECT
+			genkei.name, hselection.name, genkei.num, genkei.id
+		FROM
+			genkei, hselection
+		WHERE
+			    genkei.khhinshi_id = hselection.khhinshi_id
+			#AND genkei.hinshi_id = hinshi.id
+			AND hselection.ifuse = 1
+			AND genkei.nouse = 0'."\n";
+	
+	# Filter: hinshi(pos)
+	if (
+		   ( length($query) == 0  )
+		|| ( $args{enable_filter} )
+	){
+		my $n = 0;
+		$sql .= "\tAND (\n";
+		foreach my $i (keys %{$self->{filter}{hinshi}}){
+			if ($self->{filter}{hinshi}{$i}){
+				$sql .= "\t\t";
+				$sql .= "|| " if $n;
+				$sql .= "genkei.khhinshi_id = $i\n";
+				++$n;
 			}
-			substr($sql,-4,3) = '';
-			$sql .= " ) \n";
 		}
-		
-		$sql .= " ORDER BY hyoso.num DESC, ".$::project_obj->mysql_sort('hyoso.name');
-		$sql .= "\nlimit $self->{filter}{limit}" unless length($query);
-		$result = mysql_exec->select($sql,1)->hundle->fetchall_arrayref;
+		$sql .= "\t)\n";
 	}
+	
+	# Query
+	if ( length($query) ){
+		$sql .= "\t\t\tAND (\n";
+		foreach my $i (@query){
+			unless ($i){ next; }
+			my $word = $self->conv_query($i);
+			$sql .= "\t\t\t\tgenkei.name LIKE $word";
+			if ($args{method} eq 'AND'){
+				$sql .= " AND\n";
+			} else {
+				$sql .= " OR\n";
+			}
+		}
+		substr($sql,-4,3) = '';
+		$sql .= "\n\t\t\t)\n";
+	}
+	
+	$sql .= "\t\tORDER BY\n\t\t\tgenkei.num DESC, ";
+	$sql .= $::project_obj->mysql_sort('genkei.name');
+	#if (
+	#	   ( length($query) == 0  )
+	#	|| ( $args{enable_filter} )
+	#){
+	#	$sql .= "\nlimit $self->{filter}{limit}";
+	#} else {
+	#	$sql .= "\nlimit 200";
+	#}
+	mysql_exec->do($sql,1);
+	return $self;
+}
+
+sub fetch{
+	my $self  = shift;
+	my $start = shift;
+	
+	my $t = mysql_exec->select("
+		select genkei_name,hselection_name,genkei_num,genkei_id
+		from word_search_temp
+		where id > $start
+		order by id
+		limit 100
+	",1);
+	
+	my $result = $t->hundle->fetchall_arrayref;
+
+	my $result2;
+	foreach my $i (@{$result}){
+		#my $hinshi = pop @{$i};
+		my $id = pop @{$i};
+		push @{$result2}, $i;
+		
+		my $r = mysql_exec->select("      # 活用語を探す
+			SELECT lower( hyoso.name ), katuyo.name, sum( hyoso.num ) as nn
+			FROM hyoso, katuyo
+			WHERE
+				    hyoso.katuyo_id = katuyo.id
+				AND hyoso.genkei_id = $id
+			GROUP BY hyoso.name, hyoso.katuyo_id
+			ORDER BY nn DESC, ".$::project_obj->mysql_sort('katuyo.name')
+		,1)->hundle->fetchall_arrayref;
+		
+		my @katuyo = ();
+		my $n = 0;
+		foreach my $h (@{$r}){            # 活用語の追加
+			if (
+				#   length($h->[1]) > 0
+				length($h->[0]) > 0
+				&& $h->[2] =~ /[0-9]+/
+				&& $h->[2] > 0
+			){
+				unshift @{$h}, 'katuyo';
+				#push @{$result2}, $h;
+				push @katuyo, $h;
+				++$n;
+			}
+		}
+
+		if (                              # 以下の条件を満たせば追加
+			   $n > 0
+			&& (
+				   ( $n > 1 )                    # 活用形が複数ある
+				|! ( lc( $katuyo[0]->[1] ) eq lc( $i->[0] ) ) # 活用形が基本形と異なる
+			)
+			#&& $katuyo[0]->[2] ne '   .'     # 活用名が「.」でない
+		){
+			@{$result2} = (@{$result2},@katuyo);
+		}
+	}
+	$result = $result2;
 
 	return $result;
 }
+
+sub search_hits{
+	my $self = shift;
+	return mysql_exec->select(
+		"select count(*) from word_search_temp",
+		1,
+	)->hundle->fetch->[0];
+}
+
 sub conv_query{
 	my $self = shift;
 	my $q = shift;

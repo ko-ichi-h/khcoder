@@ -181,7 +181,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$fra5->Label(
-		-text     => '  ',
+		-text     => ' ',
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$fra5->Checkbutton(
@@ -191,6 +191,24 @@ sub _new{
 			return 0 if $self->{running};
 			$self->search;
 		},
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$fra5->Label(
+		-text     => ' ',
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{button_p100} = $fra5->Button(
+		-text => kh_msg->get('p100'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->display( $self->{start} - 100 ); }
+	)->pack(-anchor => 'w', -side => 'left');
+
+	$self->{button_n100} = $fra5->Button(
+		-text => kh_msg->get('n100'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->display( $self->{start} + 100 ); }
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$self->win_obj->bind(
@@ -294,7 +312,7 @@ sub search{
 	}
 
 	# 検索実行
-	my $result = mysql_words->search(
+	$self->{result} = mysql_words->search(
 		query         => $query,
 		method        => $gui_window::word_search::method,
 		kihon         => $gui_window::word_search::kihon,
@@ -303,6 +321,29 @@ sub search{
 		filter        => $filter,
 		enable_filter => $self->{enable_filter},
 	);
+	
+	$self->display(0);
+	return $self;
+}
+
+sub display{
+	my $self = shift;
+	my $start = shift;
+	$self->{start} = $start;
+	
+	# update P & N buttons
+	if ($self->{start} == 0) {
+		$self->{button_p100}->configure(-state => "disabled");
+	} else {
+		$self->{button_p100}->configure(-state => "normal");
+	}
+	if ($self->{result}->search_hits > $self->{start} + 100 ) {
+		$self->{button_n100}->configure(-state => "normal");
+	} else {
+		$self->{button_n100}->configure(-state => "disabled");
+	}
+	
+	my $result = $self->{result}->fetch($start);
 	
 	# POS check 1st pass
 	my $n = 0;
@@ -466,7 +507,7 @@ sub search{
 	);
 	
 	my $row = 0;
-	my $num = 1;
+	my $num = 1 + $start;
 	$last = undef;
 	my $child_flag = 0;
 	my $pos_flag = 0;
@@ -708,6 +749,7 @@ sub search{
 	use Time::HiRes;
 	sleep (0.1);
 	$self->{running} = 0;
+
 	return 1;
 }
 

@@ -9,6 +9,7 @@ my @menu0 = (
 	'm_b2_morpho',
 	't_sql_select',
 	'm_b0_close',
+	'm_b0_editdata',
 	#'m_b1_hukugo',
 	#'m_b1_hukugo_te',
 	#'m_b2_datacheck',
@@ -163,10 +164,30 @@ sub make{
 		-underline => $underline_pos,
 		-tearoff=>'no'
 	);
-		#SCREEN Plugin
-		use screen_code::rde_menu;
-		&screen_code::rde_menu::add_menu($self,$f,\@menu0);
-		#SCREEN Plugin
+	
+		if (
+			   ($::config_obj->os       eq 'win32')
+			&& ($::config_obj->msg_lang eq 'jp'   )
+		) {
+			my $plugin_path =
+				$::config_obj->cwd.'/screen/MonkinCleanser/MonkinCleanser.exe'
+			;
+			if (-e $plugin_path) {
+				#SCREEN Plugin
+				use screen_code::rde_menu;
+				&screen_code::rde_menu::add_menu($self,$f,\@menu0);
+				#SCREEN Plugin
+			} else {
+				$self->{m_b0_editdata} = $f->command(
+					-label => kh_msg->get('plugin_raw_data_editor2'),
+					-font => "TKFN",
+					-command => sub{
+						gui_OtherWin->open('https://twitter.com/khcoder/status/1060740035488571392');
+					},
+					-state => 'disable'
+				);
+			}
+		}
 
 		$self->{m_b2_datacheck} = $f->command(
 				-label => kh_msg->get('check'),
@@ -1176,6 +1197,7 @@ sub refresh{
 sub normalize{
 	my $self = shift;
 	foreach my $i (@{$_[0]}){
+		next unless $self->{$i};
 		$self->{$i}->configure(-state,'normal');
 	}
 }
@@ -1184,6 +1206,7 @@ sub disable_all{
 	my $self = shift;
 	foreach my $i (keys %{$self}){
 		if (substr($i,0,2) eq 'm_' || substr($i,0,2) eq 't_'){
+			next unless $self->{$i};
 			$self->{$i}->configure(-state, 'disable');
 		}
 	}

@@ -62,25 +62,25 @@ sub _new{
 	)->pack(-pady => 2);
 
 	# 表示数のLIMIT
-	my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
-	$left3->Label(
-		-text => kh_msg->get('gui_window::word_ass_opt->view'), # ・表示する語の数
-		-font => "TKFN"
-	)->pack(-anchor => 'w',-pady => 2);
+	#my $left3 = $win->Frame()->pack(-fill => 'x', -expand => 0);
+	#$left3->Label(
+	#	-text => kh_msg->get('gui_window::word_ass_opt->view'), # ・表示する語の数
+	#	-font => "TKFN"
+	#)->pack(-anchor => 'w',-pady => 2);
 	
-	$left3->Label(
-		-text => kh_msg->get('gui_window::word_ass_opt->top'), # 　　　上位：
-		-font => "TKFN"
-	)->pack(-anchor => 'w', -side => 'left', -pady => 5);
+	#$left3->Label(
+	#	-text => kh_msg->get('gui_window::word_ass_opt->top'), # 　　　上位：
+	#	-font => "TKFN"
+	#)->pack(-anchor => 'w', -side => 'left', -pady => 5);
 	
-	$self->{ent_limit} = $left3->Entry(
-		-font  => "TKFN",
-		-width => 6,
-	)->pack(-anchor => 'w',-pady => 5);
-	$self->config_entry_focusin($self->{ent_limit});
+	#$self->{ent_limit} = $left3->Entry(
+	#	-font  => "TKFN",
+	#	-width => 6,
+	#)->pack(-anchor => 'w',-pady => 5);
+	#$self->config_entry_focusin($self->{ent_limit});
 	
-	$self->{ent_limit}->bind("<Key-Return>",sub{$self->save});
-	$self->{ent_limit}->bind("<KP_Enter>", sub{$self->save});
+	#$self->{ent_limit}->bind("<Key-Return>",sub{$self->save});
+	#$self->{ent_limit}->bind("<KP_Enter>", sub{$self->save});
 	
 	# OK & Cancel
 	$win->Button(
@@ -98,10 +98,10 @@ sub _new{
 	)->pack(-side => 'right');
 	
 	# 値の入力
-	$self->{ent_limit}->insert(
-		"end",
-		"$gui_window::word_search::filter->{limit}"
-	);
+	#$self->{ent_limit}->insert(
+	#	"end",
+	#	"$gui_window::word_search::filter->{limit}"
+	#);
 	
 	return $self;
 }
@@ -110,7 +110,7 @@ sub _new{
 sub save{
 	my $self = shift;
 
-	$gui_window::word_search::filter->{limit}   = $self->gui_jgn( $self->{ent_limit}->get );
+	#$gui_window::word_search::filter->{limit}   = $self->gui_jgn( $self->{ent_limit}->get );
 
 	my %selected;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){
