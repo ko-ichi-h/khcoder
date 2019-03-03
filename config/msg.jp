@@ -168,7 +168,7 @@ gui_window::main::inner:
     types:                    異なり語数（使用）：
     units:                    集計単位
 gui_window::main::menu:
-    plugin_raw_data_editor2:  "【文錦】テキストと変数の編集 ※"
+    plugin_raw_data_editor2:  "〔文錦〕 テキスト・変数を編集 ※"
     open_nbl:                 '閲覧する分類ログファイルを選択'
     open_knb:                 '閲覧する学習結果ファイルを選択'
     about:                    KH Coderについて
@@ -1126,15 +1126,15 @@ gui_window::r_plot::cod_mat_line:
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ・調整"
 screen_code::rde_menu:
-    plugin_raw_data_editor:    "【文錦】テキストと変数の編集"
+    plugin_raw_data_editor:    "〔文錦〕 テキスト・変数を編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"
     err_output_from_db:        "データベースからの外部変数出力に失敗しました。"
     err_edit:                  "プロジェクトデータの編集処理に失敗しました。\n再試行するか、サポートまでお問い合わせください。"
 screen_code::rde_newproject_button:
-    plugin_raw_data_editor:    "【文錦】テキストと変数の編集"
+    plugin_raw_data_editor:    "〔文錦〕 テキスト・変数を編集"
 screen_code::assistant:
-    use_plugin:                "【文錦】による結果表示"
-    cross_map_label:           "【文錦】マップ："
+    use_plugin:                "〔文錦〕 による結果表示"
+    cross_map_label:           "〔文錦〕 マップ："
     corresp_rad:               " 範囲： 原点付近"
     corresp_ang:               "  変数方向"
     corresp_drop_menu1:        "狭い"
@@ -1146,7 +1146,7 @@ screen_code::assistant:
     dialog_yes:                "はい"
     dialog_no:                 "いいえ"
     dialog_cancel:             "キャンセル"
-    dialog_use_plugin:         "【文錦】否定形チェッカーを有効にする"
-    label_use_plugin:          "【文錦】否定形チェッカー "
+    dialog_use_plugin:         "〔文錦〕 否定形チェッカーを有効にする"
+    label_use_plugin:          "〔文錦〕 否定形チェッカー "
     label_enable:              "有効  "
     label_disable:             "無効  "
