@@ -182,7 +182,7 @@ sub make{
 					-label => kh_msg->get('plugin_raw_data_editor2'),
 					-font => "TKFN",
 					-command => sub{
-						gui_OtherWin->open('https://twitter.com/khcoder/status/1060740035488571392');
+						gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
 					},
 					-state => 'disable'
 				);
