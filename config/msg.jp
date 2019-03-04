@@ -168,7 +168,7 @@ gui_window::main::inner:
     types:                    異なり語数（使用）：
     units:                    集計単位
 gui_window::main::menu:
-    plugin_raw_data_editor2:  "《文錦》 テキスト・変数の編集 ※"
+    plugin_raw_data_editor2:  "《文錦》 テキスト・変数の編集 ※"
     open_nbl:                 '閲覧する分類ログファイルを選択'
     open_knb:                 '閲覧する学習結果ファイルを選択'
     about:                    KH Coderについて
