@@ -41,7 +41,7 @@ sub plugin_config{
 
 		# save the network
 		my $win_result = $::main_gui->get('w_word_netgraph_plot');
-		$win_result->{plots}[5]->save($file_save);
+		$win_result->{plots}[2]->save($file_save);
 
 		# close the project
 		$::main_gui->close_all;
