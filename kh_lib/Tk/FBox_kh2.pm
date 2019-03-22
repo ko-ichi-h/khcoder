@@ -525,6 +525,13 @@ sub SetPath {
 #XXX here's much more code in the tcl version ... check it out
 sub SetFilter {
     my($w, $title, $filter) = @_;
+	
+	# KH Coder
+	my $ext = $filter;
+	substr($ext, 0, 1) = '';
+	print "new default extension: $ext\n";
+	$w->configure(-defaultextension, $ext);
+	
     $w->configure(-filter => $filter);
     $w->{'typeMenuBtn'}->configure(-text => $title,
 				   -indicatoron => 1);
