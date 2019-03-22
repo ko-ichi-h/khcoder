@@ -112,7 +112,7 @@ BEGIN {
 			$version_tk = substr($version_tk,0,7);
 		}
 		print "Perl/Tk: $version_tk\n";
-		if ($] > 5.008 && $version_tk <= 804.032){
+		if ($] > 5.008 && $version_tk <= 804.034){
 			require Tk::FBox;
 			require Tk::FBox_kh2;
 		}
