@@ -51,7 +51,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 
-	if ($self->{type} eq 'corresp'){
+	if ($self->{type} eq 'corresp' && $self->{config}){
 		my $frm_std_radius = $win->Frame()->pack(
 			-fill => 'x',
 		);
@@ -67,10 +67,7 @@ sub _new{
 				-anchor => 'w',
 				-state => 'disabled',
 		)->pack(-anchor => 'w');
-	}
 
-	if ($self->{type} eq 'corresp'){
-	
 		my $frm_alpha = $win->Frame()->pack(
 			-fill => 'x',
 		);
