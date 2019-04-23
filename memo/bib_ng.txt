@@ -1,3 +1,6 @@
+「ヤンバル」についての意識と実態 : 観光客実態調査および計量テキスト分析を用いて	https://ci.nii.ac.jp/naid/40021777939
+
+
 інформаційна технологія автоматичної класифікації неструктурованих текстових масивів інформації	http://ela.kpi.ua/bitstream/123456789/23795/4/Katiushchenko_magistr.pdf
 лингвистика в сопоставлении разноструктурных языков	http://kpfu.ru/staff_files/F903949827/Sbornik_konferencii_ot_4.12.2017_KFU.PDF
 省略と修飾パターンを用いた用語不一致検証による要求仕様の一貫性検証支援ツールの実現と適用評価	https://www.jstage.jst.go.jp/article/jssst/35/3/35_3_109/_article/-char/ja/
