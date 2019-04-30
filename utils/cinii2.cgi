@@ -459,7 +459,7 @@ sub get_info{
 
 
 	my $ua = LWP::UserAgent->new(
-		agent      => 'Mozilla/5.0 (Windows NT 6.3; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0',
+		agent      => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0',
 	);
 
 	if ( $i =~ /naid\/(\d+)/ ) {                        # CiNiiの場合
@@ -530,30 +530,33 @@ sub get_info{
 			my $r1 = $ua->get($url);
 			($output, $uri_tmp) = &format( Encode::decode('UTF-8', $r1->content) );
 		}
-		elsif ( $t =~ /dspace/i ){                      # dspace
-			#$output .= "other: dspace\n"  if $debug;
+		elsif ( $t =~ /dspace/i || $t =~ /アイテムの詳細レコードを表示する/i ){
+			                                             # dspace
+			$output .= "other: dspace\n"  if $debug;
 			my $biburl = $i;
 			if ($biburl =~ /(.+)\?.+/){
 				$biburl = $1;
 				$i = $1;
 			}
 			$biburl = $biburl.'?mode=full';
-			#$output .= "biburl: $biburl\n" if $debug;
+			$output .= "biburl: $biburl\n" if $debug;
 			my $r1 = $ua->get($biburl);
 			($output, $uri_tmp) =  &format_dspace(
 				Encode::decode('UTF-8', $r1->content)
 			);
 			
-			#$output .= "\n\n\n".Encode::decode('UTF-8', $r1->content)
-			#	if $debug;
+			$output .= "\n\n\n".Encode::decode('UTF-8', $r1->content)
+				if $debug;
+		}
+		else {
+			print "input: $t\n<p>\n" if $debug;
 		}
 		
 		if ($t =~ />Permalink : (http.+?)</){
 			$uri_tmp = $1;
 		}
-		
 	}
-	#print "output: $output\n";
+	print "output: $output\n" if $debug;
 	return ($output, $uri_tmp);
 }
 
