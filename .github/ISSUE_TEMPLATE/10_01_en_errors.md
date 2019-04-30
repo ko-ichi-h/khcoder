@@ -9,7 +9,7 @@ Please edit the following template and write your question contents.
 **The error message as detailed as possible**
 Please do not abbreviate or translate the message. Please tell me as it is, verbatim. If you don't like to type, you can attach a screenshot.
 
-Other than errors in pop-up windows, the full console/terminal output really helps. On Windows, you can find the console window by clicking KH Coder icon in the task bar, the window has white texts on a black background.
+Other than errors in pop-up windows, the full console/terminal output really helps. On Windows, you can find the console window by clicking KH Coder icon in the [task bar](https://en.wikipedia.org/wiki/Taskbar#Microsoft_Windows). The window has white texts on a black background.
 
 **To Reproduce**
 Steps to reproduce the behavior:
