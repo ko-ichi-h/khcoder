@@ -349,6 +349,9 @@ sub renew_bib{
 		my @stat = stat $localf;
 		print $q->p( "Remote: $d, Local: $stat[9]" ) if $debug;
 		if ($stat[9] < $d){
+			open my $fhb, '>>', $backup or die;
+			print $fhb "\t\t\Download! Remote: $d, Local: $stat[9]\x0D\x0A";
+			close $fhb;
 			&download_bib;
 		}
 	} else {
