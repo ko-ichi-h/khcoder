@@ -12,6 +12,7 @@ binmode STDOUT, ":utf8";
 my $debug = 0;
 my $target = 'http://khcoder.net/bib.tsv';
 my $localf = 'bib_tmp/bib.tsv';
+my $backup = 'bib_tmp/backup.tsv';
 my $pass = '123457';
 
 my $q = new CGI; 
@@ -138,6 +139,9 @@ if ( $q->param('Excecute') eq 'add' ){
 	open my $fh, '>>', $localf or die;
 	binmode($fh);
 	
+	open my $fhb,'>>', $backup or die;
+	binmode($fhb);
+	
 	while ( $q->param("bib$n") ){
 		my $line = '';
 		$line .= Encode::decode('utf8', $q->param("yomiB$n") );
@@ -152,6 +156,7 @@ if ( $q->param('Excecute') eq 'add' ){
 		$line .= Encode::decode('utf8', $q->param("yomiA$n"));
 		$line = Encode::encode('utf8', $line);
 		print $fh "$line\x0D\x0A";
+		print $fhb "$line\x0D\x0A";
 		
 		print $q->textarea(
 			-name    =>'hoge'.$n,
@@ -162,6 +167,8 @@ if ( $q->param('Excecute') eq 'add' ){
 		++$n;
 	}
 	
+	close $fh;
+	close $fhb;
 	print $q->p("Added!");
 }
 
