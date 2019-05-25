@@ -41,7 +41,8 @@ sub columns{
 			return $self;
 		}
 		
-		push @kh_spreadsheet::xlsx::col, $cell->value;
+		#push @kh_spreadsheet::xlsx::col, $cell->value;
+		$kh_spreadsheet::xlsx::col[$col] = $cell->value;
 		return $self;
 	}
 

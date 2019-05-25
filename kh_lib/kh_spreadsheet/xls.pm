@@ -24,7 +24,7 @@ sub columns{
 		my $workbook    = $_[0];
 		my $sheet_index = $_[1];
 		my $row         = $_[2];
-		#my $col         = $_[3];
+		my $col         = $_[3];
 		my $cell        = $_[4];
 		
 		#print "$sheet_index, $row\n";
@@ -35,7 +35,8 @@ sub columns{
 		if ($row == 0 && $sheet_index == 0){
 			my $t = $cell->value;
 			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			push @kh_spreadsheet::xls::cell, $t;
+			#push @kh_spreadsheet::xls::cell, $t;
+			$kh_spreadsheet::xls::cell[$col] = $t;
 		}
 	}
 	
