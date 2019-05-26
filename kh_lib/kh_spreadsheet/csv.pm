@@ -72,8 +72,18 @@ sub save_files{
 		type => 'file',
 		file => $self->{file}
 	) unless $fh;
-	my $row_n = 0;
+	my $row_n = -1;
 	while ( my $row = $csv->getline($fh) ){
+		# skip blank lines at the top of the CSV file
+		if ($row_n == -1){
+			my $chk = join('',@{$row});
+			if (length($chk)) {
+				$row_n = 0;
+			} else {
+				next;
+			}
+		}
+		
 		# text
 		if ($row_n){
 			my $t = $row->[$args{selected}];
@@ -106,7 +116,6 @@ sub save_files{
 			}
 		}
 		$tsv->print($fhv, $line) if $line;
-		
 		++$row_n;
 	}
 
@@ -159,13 +168,25 @@ sub columns{
 		type => 'file',
 		file => $self->{file}
 	) unless $fh;
-	my $row = $csv->getline($fh);
+	
+	my $the_row;
+	while ( my $row = $csv->getline($fh) ){
+		my $chk = join('',@{$row});
+		if (length($chk)) {
+			$the_row = $row;
+			last;
+		}
+	}
 	close($fh);
 
 	#my $t1 = new Benchmark;
 	#print "Get Columns:\t",timestr(timediff($t1,$t0)),"\n";
 
-	return $row;
+	foreach my $i (@{$the_row}){
+		$i = "[no_name]" unless length($i);
+	}
+
+	return $the_row;
 }
 
 1;

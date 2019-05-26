@@ -10,6 +10,7 @@ use vars qw(@cell);
 sub columns{
 	my $self = shift;
 	@kh_spreadsheet::xls::cell = ();
+	$kh_spreadsheet::xls::the_row = -1;
 
 	use Spreadsheet::ParseExcel;
 	my $parser = Spreadsheet::ParseExcel->new(
@@ -19,25 +20,29 @@ sub columns{
 		$self->{file}
 	);
 	
-	
 	sub cell_handler_cc {
 		my $workbook    = $_[0];
 		my $sheet_index = $_[1];
 		my $row         = $_[2];
 		my $col         = $_[3];
 		my $cell        = $_[4];
-		
-		#print "$sheet_index, $row\n";
-		
-		$workbook->ParseAbort(1) if $row > 0;
-		$workbook->ParseAbort(1) if $sheet_index > 0;
-		
-		if ($row == 0 && $sheet_index == 0){
-			my $t = $cell->value;
-			#$t = Encode::decode('utf8', $t) unless utf8::is_utf8($t);
-			#push @kh_spreadsheet::xls::cell, $t;
-			$kh_spreadsheet::xls::cell[$col] = $t;
+
+		#print "$sheet_index, $row, $col\n";
+		$kh_spreadsheet::xls::the_row = $row
+			if $kh_spreadsheet::xls::the_row == -1;
+
+		if ($row > $kh_spreadsheet::xls::the_row){
+			$workbook->ParseAbort(1);
+			return;
 		}
+		if ($sheet_index > 0){
+			$workbook->ParseAbort(1);
+			return;
+		}
+
+		my $t = $cell->value;
+		$t = "[no_name]" unless length($t);
+		$kh_spreadsheet::xls::cell[$col] = $t;
 	}
 	
 	return \@kh_spreadsheet::xls::cell;
@@ -46,6 +51,8 @@ sub columns{
 sub save_files{
 	my $self = shift;
 	my %args = @_;
+	$kh_spreadsheet::the_first_line = -1;
+	$kh_spreadsheet::the_first_colm = -1;
 
 	use Benchmark;
 	my $t0 = new Benchmark;
@@ -70,7 +77,7 @@ sub save_files{
 	# init
 	$kh_spreadsheet::line = undef;
 	$kh_spreadsheet::row = 0;
-	$kh_spreadsheet::ncol = 0;
+	$kh_spreadsheet::ncol = -1;
 	$kh_spreadsheet::selected = $args{selected};
 
 	use Text::CSV_XS;
@@ -104,6 +111,12 @@ sub save_files{
 		my $col         = $_[3];
 		my $cell        = $_[4];
 		
+		$kh_spreadsheet::the_first_line = $row
+			if $kh_spreadsheet::the_first_line == -1;
+		
+		$kh_spreadsheet::the_first_colm = $col
+			if $kh_spreadsheet::the_first_colm == -1;
+		
 		if ($sheet_index > 0){
 			$workbook->ParseAbort(1);
 			return 1;
@@ -116,7 +129,8 @@ sub save_files{
 			$kh_spreadsheet::row = $row;
 		}
 		
-		++$kh_spreadsheet::ncol if $row == 0;
+		$kh_spreadsheet::ncol = $col if
+			$row == $kh_spreadsheet::the_first_line && $kh_spreadsheet::ncol < $col;
 		$kh_spreadsheet::line->[$col] = $cell->value;
 	}
 

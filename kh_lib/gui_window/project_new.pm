@@ -471,6 +471,7 @@ sub _columns{
 	$self->{column_label}->configure( -state => 'normal' );
 	$self->{column_menu}->{win_obj}->destroy;
 	$self->{column_menu} = undef;
+	$self->{column}      = -1;
 	
 	my @options;
 	my $n = 0;
@@ -488,7 +489,8 @@ sub _columns{
 		$label = Encode::decode('UCS-2LE', $label);
 		$label =~ s/\x{fffd}/?/g;
 		
-		push @options, [$label, $n];
+		push @options, [$label, $n] if length($label);
+		$self->{column} = $n if length($label) && $self->{column} == -1;
 		++$n;
 	}
 	$self->{column_menu} = gui_widget::optmenu->open(

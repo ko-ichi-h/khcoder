@@ -21,6 +21,7 @@ use vars qw(@col);
 sub columns{
 	my $self = shift;
 	@kh_spreadsheet::xlsx::col = ();
+	$kh_spreadsheet::xlsx::the_line = -1;
 
 	my $p = Spreadsheet::ParseXLSX->new;
 	$p->{NotSetCell} = 1;
@@ -36,13 +37,18 @@ sub columns{
 		my $col   = $_[2];
 		my $cell  = $_[3];
 		
-		if ($row > 0){
+		$kh_spreadsheet::xlsx::the_line = $row
+			if $kh_spreadsheet::xlsx::the_line == -1;
+		
+		if ($row > $kh_spreadsheet::xlsx::the_line){
 			$self->{_ParseAbort} = 1 ;
 			return $self;
 		}
 		
-		#push @kh_spreadsheet::xlsx::col, $cell->value;
-		$kh_spreadsheet::xlsx::col[$col] = $cell->value;
+		my $t = $cell->value;
+		$t = "[no_name]" unless length($t);
+		$kh_spreadsheet::xlsx::col[$col] = $t;
+		
 		return $self;
 	}
 
@@ -76,8 +82,10 @@ sub save_files{
 	# init
 	$kh_spreadsheet::line = undef;
 	$kh_spreadsheet::row = 0;
-	$kh_spreadsheet::ncol = 0;
+	$kh_spreadsheet::ncol = -1;
 	$kh_spreadsheet::selected = $args{selected};
+	$kh_spreadsheet::the_first_line = -1;
+	$kh_spreadsheet::the_first_colm = -1;
 
 	use Text::CSV_XS;
 	$kh_spreadsheet::tsv = Text::CSV_XS->new({
@@ -109,6 +117,12 @@ sub save_files{
 		my $col  = $_[2];
 		my $cell = $_[3];
 		
+		$kh_spreadsheet::the_first_line = $row
+			if $kh_spreadsheet::the_first_line == -1;
+
+		$kh_spreadsheet::the_first_colm = $col
+			if $kh_spreadsheet::the_first_colm == -1;
+
 		unless ($row == $kh_spreadsheet::row){
 			&kh_spreadsheet::print_line;
 			
@@ -116,7 +130,8 @@ sub save_files{
 			$kh_spreadsheet::row = $row;
 		}
 		
-		++$kh_spreadsheet::ncol if $row == 0;
+		$kh_spreadsheet::ncol = $col if
+			$row == $kh_spreadsheet::the_first_line && $kh_spreadsheet::ncol < $col;
 		$kh_spreadsheet::line->[$col] = $cell->value;
 		
 		return $self;

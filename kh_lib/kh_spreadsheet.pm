@@ -29,11 +29,12 @@ sub new{
 	return $self;
 }
 
+
 sub print_line{
 	my $v;
-	for (my $i = 0; $i < $kh_spreadsheet::ncol;  ++$i){
+	for (my $i = 0; $i <= $kh_spreadsheet::ncol;  ++$i){
 		if ($i == $kh_spreadsheet::selected){
-			next if $kh_spreadsheet::row == 0;
+			next if $kh_spreadsheet::row == $kh_spreadsheet::the_first_line;
 			my $t = $kh_spreadsheet::line->[$i];
 			$t =~ tr/<>/()/;
 			$t =~ s/\x0D\x0A|\x0D|\x0A/\n/go;
@@ -46,6 +47,7 @@ sub print_line{
 			;
 		} else {
 			next if $i > 1000;
+			next if $i < $kh_spreadsheet::the_first_colm;
 			my $t = $kh_spreadsheet::line->[$i];
 			$t = '.' unless defined($t);
 			$t = '.' if length($t) == 0;
