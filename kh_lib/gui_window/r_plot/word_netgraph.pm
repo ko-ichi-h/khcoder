@@ -37,11 +37,35 @@ sub start{
 	close $fh;
 
 	# make clickable image map
-	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.11, 1.11, 47, 32, 30, 11);
+	my ($mag, $xmag, $xo, $yo, $tw, $th) = (1.0275, 0.983, 9, 10, 30, 11);
 	$xo = $xo * $self->{img_height} / 640;
 	$yo = $yo * $self->{img_height} / 640;
 	$tw = $tw * $self->{img_height} / 640;
 	$th = $th * $self->{img_height} / 640;
+	
+	# adjustments for X-Y ratio
+	$self->{ratio} = $self->{ratio} - 0.04629629629;
+	if ($self->{ratio}) {
+		print "ratio: $self->{ratio}\n";
+		if ($self->{ratio} > 1.01 ) { # width is longer
+			if ($self->{ratio} < 1) {
+				$self->{ratio} = 1;
+			}
+			$yo = $yo +
+				( ( $self->{img_height} - $yo ) / $mag ) * ( 1 -  1 / $self->{ratio} ) / 2;
+			$mag = $mag * $self->{ratio};
+			#$yo = $yo * 0.88; # umm...
+			#$mag = $mag * 0.96; # umm...
+		}
+		elsif ($self->{ratio} < 0.99 ){ # height is longer
+			$xo = $xo +
+				( ( $self->{img_height} - $xo ) / $mag ) * ( 1 - $self->{ratio} ) / 2;
+			$xmag = $xmag / $self->{ratio};
+			#$xo = $xo * 1.00; # umm...
+			$xmag = $xmag * 0.98; # umm...
+		}
+		#print "$xo, $yo, $mag, $xmag\n";
+	}
 	
 	$self->{coordin} = {};
 	foreach my $i (@{$self->{coordi}}){

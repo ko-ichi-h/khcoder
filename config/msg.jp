@@ -756,6 +756,12 @@ gui_widget::r_net:
     cor_var_colors:           '相関のカラースケール'
     cor_var_darker:           '背景色を暗めにする'
     standardize_coef:         '係数を標準化する'
+gui_widget::r_margin:
+    margin:                   '余白：'
+    left:                     '左'
+    right:                    '右'
+    top:                      '上'
+    bottom:                   '下'
 gui_window::word_netgraph:
     u_w:                      '集計単位と抽出語の選択'
     use:                      '利用'

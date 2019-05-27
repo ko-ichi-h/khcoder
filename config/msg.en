@@ -760,6 +760,12 @@ gui_widget::r_net:
     cor_var_colors:           'Color scale of correlation'
     cor_var_darker:           'Darker background color'
     standardize_coef:         'Standardize coef.'
+gui_widget::r_margin:
+    margin:                   'Margin: '
+    left:                     'left'
+    right:                    'right'
+    top:                      'top'
+    bottom:                   'bottom'
 gui_window::word_netgraph:
     u_w:                      'Select the unit & words'
     use:                      ''
