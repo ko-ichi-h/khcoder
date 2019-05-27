@@ -146,7 +146,7 @@ sub _new{
 		}
 		$self->{r_cmd} =~ s/\n# breaks: (.+)\n//;
 
-		$self->{r_cmd} = 1;
+		#$self->{r_cmd} = 1;
 	}
 
 	# Edge選択
@@ -449,6 +449,19 @@ sub _new{
 		)->pack(-anchor => 'w');
 	}
 
+	# margins
+	if ( $self->{r_cmd} ){
+		$self->{margin_obj} = gui_widget::r_margin->open(
+			parent  => $lf,
+			command => $self->{command},
+			r_cmd   => $self->{r_cmd},
+			pack    => {
+				-anchor => 'w', -fill => 'x', -expand => 1
+			}
+		);
+	}
+	$self->{r_cmd} = 1;
+
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
 	return $self;
@@ -591,7 +604,23 @@ sub params{
 		standardize_coef    => $self->{standardize_coef},
 		additional_plots    => gui_window->gui_jg( $self->{check_additional_plots} ),
 		breaks              => $self->{bubble_obj}->breaks,
+		$self->margins,
 	);
+}
+
+sub margins{
+	my $self = shift;
+	
+	if ( $self->{margin_obj} ){
+		return $self->{margin_obj}->params;
+	} else {
+		return (
+			margin_top    => 0,
+			margin_bottom => 0,
+			margin_left   => 0,
+			margin_right  => 0,
+		);
+	}
 }
 
 sub cor_var{

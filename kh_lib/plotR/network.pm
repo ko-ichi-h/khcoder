@@ -33,6 +33,11 @@ sub new{
 	$r_command .= "font_size <- $args{font_size}\n";
 	$r_command .= "cex <- 1\n";
 
+	$r_command .= "margin_top <- $args{margin_top}\n";
+	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
+	$r_command .= "margin_left <- $args{margin_left}\n";
+	$r_command .= "margin_right <- $args{margin_right}\n";
+
 	unless ( $args{view_coef} ){
 		$args{view_coef} = 0;
 	}
@@ -353,6 +358,14 @@ sub new{
 			coord <- lay_f
 		}
 		
+		add <- -1 * xlimv[1]
+		div <- add + xlimv[2]
+		coord[,1] <- ( coord[,1] + add ) / div
+		
+		add <- -1 *  ylimv[1]
+		div <- add + ylimv[2]
+		coord[,2] <- ( coord[,2] + add ) / div
+		
 		write.table(coord, file=\"".$::config_obj->uni_path($csv)."\", fileEncoding=\"UTF-8\", sep=\"\\t\", quote=F, col.names=F)\n
 	");
 
@@ -412,6 +425,16 @@ sub new{
 		$info_long = undef;
 	}
 
+	# get XY ratio
+	$::config_obj->R->send("
+		ratio <- ( xlimv[2] - xlimv[1] ) / ( ylimv[2] - ylimv[1] )
+		print( paste0('<ratio>', ratio ,'</ratio>') )
+	");
+	my $ratio = $::config_obj->R->read;
+	if ( $ratio =~ /<ratio>(.+)<\/ratio>/) {
+		$ratio = $1;
+	}
+
 	# edgeの数・最小のjaccard係数などの情報をcommand_fに付加
 	my ($info_edges, $info_jac);
 	if ($info =~ /E ([0-9]+), D/){
@@ -454,6 +477,7 @@ sub new{
 	$self->{result_info} = $info;
 	$self->{result_info_long} = $info_long;
 	$self->{coord} = $csv;
+	$self->{ratio} = $ratio;
 	
 	my $n = @plots;
 	print "plots: $n\n";
@@ -1856,15 +1880,22 @@ p <- p + theme(
 
 # make a small space between the graph and the legend
 margin <- 0.04
-#if (smaller_nodes == 1){
-#	extra <- 0.05
-#	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
-#} else {
-	extra <- 0.025
-	p <- p + coord_fixed(ratio=1, xlim=c(0-margin-extra,1+margin+extra), ylim=c(0-margin,1+margin), expand = F )
-#}
+extra  <- 0.025
 
-#p <- p + theme(plot.margin= unit(c(5, 0, 5, 0), "pt"))
+m_t <- margin_top    / 100
+m_b <- margin_bottom / 100
+m_l <- margin_left   / 100
+m_r <- margin_right  / 100
+
+xlimv <- c(0-margin-extra-m_l, 1+margin+extra+m_r)
+ylimv <- c(0-margin-m_b, 1+margin+m_t)
+
+p <- p + coord_fixed(
+	ratio = 1,
+	expand = F,
+	xlim = xlimv,
+	ylim = ylimv
+)
 
 g <- ggplotGrob(p)
 

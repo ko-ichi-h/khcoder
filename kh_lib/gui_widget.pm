@@ -21,6 +21,7 @@ use gui_widget::r_cls;
 use gui_widget::r_net;
 use gui_widget::r_som;
 use gui_widget::sampling;
+use gui_widget::r_margin;
 
 sub open{
 	my $class = shift;
