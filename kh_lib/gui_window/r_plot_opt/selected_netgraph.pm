@@ -75,6 +75,7 @@ sub calc{
 		ax          => $self->{ax},
 		#no_geometry => 1,
 		coord       => $plotR->{coord},
+		ratio       => $plotR->{ratio},
 	);
 
 	$plotR = undef;

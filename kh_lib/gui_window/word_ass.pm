@@ -712,6 +712,7 @@ sub net_calc{
 		ax          => 2,
 		#no_geometry => 1,
 		coord       => $plotR->{coord},
+		ratio       => $plotR->{ratio},
 	);
 
 	$plotR = undef;
