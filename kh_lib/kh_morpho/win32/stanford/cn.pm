@@ -99,8 +99,26 @@ sub segment{
 	
 	die( "Could not execute Stanford Segmenter!\n" ) unless -d $seg_dir;
 	
+	# Dir of JAVA
+	my $j = $::config_obj->java_path;
+	$j = $::config_obj->os_path($j);
+	unless (-e $j && length($j)){
+		gui_errormsg->open(
+			msg => kh_msg->get('kh_morpho::win32::stanford->no_java'),
+			type => 'msg'
+		);
+		exit;
+	}
+	use File::Basename 'fileparse';
+	my ($j_base_name, $j_dir) = fileparse $j;
+	chop $j_dir;
+	
+	my $path_back = $::ENV{PATH};
+	$::ENV{PATH} = $j_dir;
+	
+	# Run
 	my $cmd_line  =
-		 'cmd /c java -mx1024m -cp "'
+		 "cmd /c java -showversion -mx1024m -cp \""
 		.$seg_dir
 		.'*;" edu.stanford.nlp.ie.crf.CRFClassifier -sighanCorporaDict "'
 		.$seg_dir.'data'
@@ -112,9 +130,9 @@ sub segment{
 		.$seg_dir.'data/dict-chris6.ser.gz'
 		.'" "" > "'
 		.$self->target
-		.'"'
+		.'""'
 	;
-	#print "$cmd_line\n";
+	print "$cmd_line\n";
 
 	require Win32::SearchPath;
 	my $java_path = Win32::SearchPath::SearchPath('cmd');
@@ -132,6 +150,7 @@ sub segment{
 	$process->Wait( Win32::Process->INFINITE );
 	
 	unlink ($file_sentences);
+	$::ENV{PATH} = $path_back;
 }
 
 

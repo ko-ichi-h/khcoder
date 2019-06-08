@@ -87,6 +87,7 @@ sub save_ini{
 		'chasen_path',
 		'mecab_path',
 		'mecab_unicode',
+		'java_path',
 		'stanf_jar_path',
 		'stanf_tagger_path_en',
 		'stanf_tagger_path_cn',
@@ -200,6 +201,15 @@ sub ram{
 
 #--------------------#
 #   形態素解析関係   #
+
+sub java_path{
+	my $self = shift;
+	my $new = shift;
+	if ($new){
+		$self->{java_path} = $new;
+	}
+	return $self->{java_path};
+}
 
 sub chasen_path{
 	my $self = shift;

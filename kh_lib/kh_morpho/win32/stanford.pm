@@ -30,8 +30,7 @@ sub _run_morpho{
 	$self->segment($icode);
 
 	# Stanford POS Taggerのサーバーを起動
-	require Win32::SearchPath;
-	my $java_path = Win32::SearchPath::SearchPath('java');
+	my $java_path = $::config_obj->java_path;
 
 	unless (-e $java_path && length($java_path)){
 		gui_errormsg->open(
@@ -56,7 +55,7 @@ sub _run_morpho{
 	}
 	
 	my $cmd_line  =
-		 'java -mx300m  -cp "'
+		 'java -showversion -mx300m  -cp "'
 		.$p1
 		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
 		.$p2
@@ -72,7 +71,7 @@ sub _run_morpho{
 		$java_path,
 		$cmd_line,
 		0,
-		Win32::Process->CREATE_NO_WINDOW,
+		undef,#Win32::Process->CREATE_NO_WINDOW,
 		$::config_obj->cwd,
 	) || $self->Exec_Error("Wi32::Process can not start");
 	
@@ -304,7 +303,7 @@ sub _run_tagger{
 			
 			# 語が空白の場合はスキップ
 			if ($line =~ /^\t/o){
-				warn("dropped: $i\n");
+				#warn("dropped: $i\n");
 				next;
 			}
 			$line =~ s/\t\tALL/\t\?\?\?\tALL/o;

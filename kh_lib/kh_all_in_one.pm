@@ -58,6 +58,21 @@ sub init{
 		);
 	}
 	
+	# JAVAのパス設定
+	unless ( -e $::config_obj->java_path ) {
+		if (-e $::config_obj->cwd.'/dep/AdoptOpenJDK/bin/java.exe') {
+			$::config_obj->java_path(
+				$::config_obj->cwd.'/dep/AdoptOpenJDK/bin/java.exe'
+			);
+		} else {
+			require Win32::SearchPath;
+			my $j = Win32::SearchPath::SearchPath('java');
+			if (-e $j && length($j) ) {
+				$::config_obj->java_path($j);
+			}
+		}
+	}
+	
 	# HanDicのパス設定
 	if (
 		not -d $::config_obj->han_dic_path
