@@ -100,7 +100,7 @@ sub segment{
 	die( "Could not execute Stanford Segmenter!\n$seg_dir" ) unless -d $seg_dir;
 	
 	my $cmd_line  =
-		 'java -mx1024m -cp "'
+		 'java -showversion -mx1024m -cp "'
 		.$seg_dir
 		.'*:" edu.stanford.nlp.ie.crf.CRFClassifier -sighanCorporaDict "'
 		.$seg_dir.'data'

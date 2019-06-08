@@ -42,7 +42,7 @@ sub _run_morpho{
 		);
 		exit;
 	}
-	my $cmd_line  = 'java -mx300m -cp ';
+	my $cmd_line  = 'java -showversion -mx300m -cp ';
 	if ($::config_obj->stanf_jar_path =~ / /){
 		$cmd_line .= '"'.$::config_obj->stanf_jar_path.'"';
 	} else {
