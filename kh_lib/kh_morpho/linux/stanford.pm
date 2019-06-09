@@ -288,7 +288,7 @@ sub _run_tagger{
 			
 			# 語が空白の場合はスキップ
 			if ($line =~ /^\t/o){
-				warn("dropped: $i\n");
+				#warn("dropped: $i\n");
 				next;
 			}
 			$line =~ s/\t\tALL/\t\?\?\?\tALL/o;
