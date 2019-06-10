@@ -1055,14 +1055,10 @@ aggregate_with_var <- function(d, doc_length_mtr, v) {
 	d              <- d[              order(rownames(d             )), ]
 	doc_length_mtr <- doc_length_mtr[ order(rownames(doc_length_mtr)), ]
 
-	doc_length_mtr <- subset(
-		doc_length_mtr,
-		row.names(d) != name_nav & row.names(d) != "." & regexpr("^missing$", row.names(d), ignore.case = T, perl = T) == -1
-	)
-	d <- subset(
-		d,
-		row.names(d) != name_nav & row.names(d) != "." & regexpr("^missing$", row.names(d), ignore.case = T, perl = T) == -1
-	)
+	tf <- row.names(d) != name_nav & row.names(d) != "." & regexpr("^missing$", row.names(d), ignore.case = T, perl = T) == -1
+	
+	doc_length_mtr <- subset(doc_length_mtr, tf)
+	d <- subset(d, tf)
 
 	# doc_length_mtr <- subset(doc_length_mtr, rowSums(d) > 0)
 	# d              <- subset(d,              rowSums(d) > 0)
@@ -1091,8 +1087,8 @@ END_OF_the_R_COMMAND
 	v_pch <- c( v_pch, rep(v_count + 2, nrow(cur[[1]]) ) )
 }
 
-d              <- dd
-doc_length_mtr <- nn
+d              <- as.matrix( dd )
+doc_length_mtr <- as.matrix( nn )
 
 END_OF_the_R_COMMAND2
 
