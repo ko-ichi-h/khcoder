@@ -89,10 +89,10 @@ sub init{
 	# FreeLing
 	if (
 		not -d $::config_obj->freeling_dir
-		and -d $::config_obj->cwd.'/deps/freeling40'
+		and -d $::config_obj->cwd.'/deps/freeling40/share/freeling'
 	) { 
 		$::config_obj->freeling_dir(
-			$::config_obj->cwd.'/deps/freeling40'
+			$::config_obj->cwd.'/deps/freeling40/share/freeling'
 		);
 	}
 
