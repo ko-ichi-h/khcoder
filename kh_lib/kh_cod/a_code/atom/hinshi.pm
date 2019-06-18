@@ -172,14 +172,22 @@ sub ready{
 		return '';
 	}
 	
-	# テーブル名決定
-	my $table = "ct_$tani"."_h_";
-	foreach my $i (@{$list}){
-		$table .= "$i"."d";
-	}
+	# テーブル名決定とキャッシュのチェック
+	my $debug = 0;
+	my @c_c = kh_cod::a_code->cache_check(
+		tani => $tani,
+		kind => 'hinshi',
+		name => $self->raw
+	);
+	my $table = 'ct_'."$tani"."_hinshi_$c_c[1]";
 	$self->{tables} = ["$table"];
-	if ( mysql_exec->table_exists($table) ){
-		return 1;
+	
+	print "cache: $table" if $debug;
+	if ($c_c[0]){
+		print " hit\n" if $debug;
+		return $self;
+	} else {
+		print "\n" if $debug;
 	}
 	
 	# テーブル作成
