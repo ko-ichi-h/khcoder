@@ -111,48 +111,54 @@ sub init{
 			$mecabrc = <$fh>;
 		}
 		close ($fh);
+		undef $fh;
 		
 		$mecabrc =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 		$mecabrc =~ s/\ndicdir = .+?\n/\ndicdir = $dic_dir\n/;
 		
-		open (my $fh, '>', cwd.'/deps/mecab/etc/mecabrc') or die("could not write file: mecabrc\n");
+		open ($fh, '>', cwd.'/deps/mecab/etc/mecabrc') or die("could not write file: mecabrc\n");
 		print $fh $mecabrc;
 		close($fh);
+		undef $fh;
 		
 		# Edit configurations of Chasen
 		my $dici_dir = cwd.'/deps/ipadic-2.6.1';
 		my $chasenrc;
-		open (my $fh, '<', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not read file: chasenrc\n");
+		open ($fh, '<', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not read file: chasenrc\n");
 		{
 			local $/ = undef;
 			$chasenrc = <$fh>;
 		}
 		close ($fh);
+		undef $fh;
 		
 		$chasenrc =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 		$chasenrc =~ s/\n\(GRAMMAR .+?\n/\n\(GRAMMAR $dici_dir\)\n/;
 		
-		open (my $fh, '>', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not write file: chasenrc\n");
+		open ($fh, '>', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not write file: chasenrc\n");
 		print $fh $chasenrc;
 		close($fh);
+		undef $fh;
 		
 		# Edit configurations of R
 		my $file_r = cwd.'/deps/R-3.1.0/Versions/3.1/Resources/bin/R';
 		my $r_home = cwd.'/deps/R-3.1.0/Resources';
 		
 		my $r;
-		open (my $fh, '<', $file_r) or die("could not read file: $file_r\n");
+		open ($fh, '<', $file_r) or die("could not read file: $file_r\n");
 		{
 			local $/ = undef;
 			$r = <$fh>;
 		}
 		close ($fh);
+		undef $fh;
 		
 		$r =~ s/\nR_HOME_DIR=\/.+?\n/\nR_HOME_DIR=$r_home\n/;
 		
-		open (my $fh, '>', $file_r) or die("could not write file: $file_r\n");
+		open ($fh, '>', $file_r) or die("could not write file: $file_r\n");
 		print $fh $r;
 		close ($fh);
+		undef $fh;
 		
 		# Edit configurations of MySQL
 		my $file_mysql = cwd.'/deps/mysql-5.6.17/khc.cnf';
@@ -160,19 +166,21 @@ sub init{
 		my $mysal_d = cwd.'/deps/mysql-5.6.17/data';
 		
 		my $cnf;
-		open (my $fh, '<', $file_mysql) or die("could not read file: $file_mysql\n");
+		open ($fh, '<', $file_mysql) or die("could not read file: $file_mysql\n");
 		{
 			local $/ = undef;
 			$cnf = <$fh>;
 		}
 		close ($fh);
+		undef $fh;
 		
 		$cnf =~ s/\nbasedir = .+?\n/\nbasedir = $mysal_b\n/;
 		$cnf =~ s/\ndatadir = .+?\n/\ndatadir = $mysal_d\n/;
 		
-		open (my $fh, '>', $file_mysql) or die("could not write file: $file_mysql\n");
+		open ($fh, '>', $file_mysql) or die("could not write file: $file_mysql\n");
 		print $fh $cnf;
 		close ($fh);
+		undef $fh;
 
 	}
 
