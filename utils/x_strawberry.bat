@@ -17,4 +17,5 @@ goto :KHCODER
 
 :KHCODER
 perl -MConfig -e "printf("""Perl executable: %%s\nPerl version   : %%vd $Config{archname}\n\n""", $^X, $^V)" 2>nul
+set KHCPUB=2
 perl kh_coder.pl

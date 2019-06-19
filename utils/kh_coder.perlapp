@@ -26,7 +26,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.nl[file=C:\apps\Perl\si
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.pt[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.pt,mode=666]
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.ru[file=C:\apps\Perl\site\lib\auto\share\dist\Lingua-Sentence\nonbreaking_prefix.ru,mode=666]
 Clean: 0
-Date: 2016-01-18 01:01:27
+Date: 2019-06-19 13:41:20
 Debug: 
 Dependent: 0
 Dyndll: 0
@@ -34,8 +34,9 @@ Exe: kh_coder.exe
 Force: 1
 Gui: 0
 Hostname: FORTUNA
-Icon: ..\core\memo\1.ico
-Lib: lib:.\kh_lib
+Icon: memo\1.ico
+Lib: lib:kh_lib\screen_code
+Lib: lib:kh_lib
 Manifest: 
 No-Compress: 0
 No-Logo: 0
