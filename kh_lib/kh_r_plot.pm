@@ -706,7 +706,7 @@ sub _save_pdf{
 		);
 	} else {
 		$::config_obj->R->send(
-			 "pdf(file=\"$path\", height = $h, width = $w, "
+			 "pdf(file=\"$path\", height = $h, width = $w, useDingbats=F, "
 			."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
 		);
 	}
