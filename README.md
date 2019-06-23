@@ -26,7 +26,7 @@ https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=http%3A%2F%2Fkhcoder.
 
 If you get errors like "Can't locate **Jcode**.pm in @INC", you need to install Perl module called "**Jcode**". To install it, type "cpanm **Jcode**" and hit "Enter" key on your command prompt window.
 
-Above procedure is for people who want to develop or modify KH Coder. If you want to just try or use KH Coder, you don't need Perl. Please just download and unzip released \*.exe file.
+Above procedure is for people who want to develop or modify KH Coder. If you want to just try or use KH Coder, you don't need Perl. Please just download and unzip released \*.exe file, then double click extracted "kh_coder.exe".
 
 ## On Linux or other Un\*x like system
 
