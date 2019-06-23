@@ -144,10 +144,10 @@ sub upload{
 		}
 	}
 	
-	open my $fh, '<', "khcoder-$V.exe" or die;
+	open my $fh, '<', "builds/khcoder-$V.exe" or die;
 	binmode $fh;
 	my $file_content;
-	my $count = read($fh, $file_content, -s "khcoder-$V.exe");
+	my $count = read($fh, $file_content, -s "builds/khcoder-$V.exe");
 	close $fh;
 	
 	print "Read $count bytes. Uploading...\n";
@@ -388,12 +388,12 @@ sub win_strb{
 
 sub win_pkg{
 	# 「kh_coder.exe」を作成
-	chdir("..");
+	# chdir("..");
 
 	#system("svn update");
-	unlink("kh_coder.exe");
+	unlink("..\\kh_coder.exe");
 	system("make_exe.bat");
-	unless (-e "kh_coder.exe"){
+	unless (-e "..\\kh_coder.exe"){
 		die("Could not create \"kh_coder.exe\"\n");
 	}
 	
@@ -418,25 +418,27 @@ sub win_pkg{
 	);
 	
 	# 新しいファイルを「pub/win_pkg」へコピー
+	chdir("..");
 	foreach my $i (@cp_f){
 		print "copy: $i->[0]\n";
 		copy("$i->[0]", 'pub/win_pkg/'."$i->[1]") or die("Can not copy $i->[0]\n");
 	}
 
 	# Zip自己解凍ファイルを作成
-	unlink("utils\\khcoder-$V.zip");
-	unlink("utils\\khcoder-$V.exe");
-	system("wzzip -rp -ex utils\\khcoder-$V.zip pub\\win_pkg");
+	unlink("utils\\builds\\khcoder-$V.zip");
+	unlink("utils\\builds\\khcoder-$V.exe");
+	system("wzzip -rp -ex utils\\builds\\khcoder-$V.zip pub\\win_pkg");
 	sleep 5;
-	system("wzipse32 utils\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
+	system("wzipse32 utils\\builds\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
 	
 	for (my $n = 0; $n < 5; ++$n){
-		if (-e "utils\\khcoder-$V.exe" && -e "utils\\khcoder-$V.zip") {
+		if (-e "utils\\builds\\khcoder-$V.exe" && -e "utils\\builds\\khcoder-$V.zip") {
 			last;
 		}
 		sleep 5;
-		system("wzipse32 utils\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
+		system("wzipse32 utils\\builds\\khcoder-$V.zip -y -d C:\\khcoder3 -le -overwrite -c .\\create_shortcut.exe");
 	}
+	unlink("utils\\builds\\khcoder-$V.zip");
 
 	chdir("utils");
 }
