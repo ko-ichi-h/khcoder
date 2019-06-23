@@ -18,13 +18,13 @@ https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=http%3A%2F%2Fkhcoder.
 
 1. Download & install Perl: http://strawberryperl.com/
 2. (Fork and) clone this repository
-3. Download \*.exe file (Winzip self-extractor) of KH Coder 3
+3. Download released \*.exe file (Winzip self-extractor) of KH Coder 3
 4. Unzip the downloaded file into the clone directory
 5. Open command prompt window and go to the clone directory, type "perl kh_coder.pl", and hit "Enter" key
 
 If you get errors like "Can't locate **Jcode**.pm in @INC", you need to install Perl module called "**Jcode**". To install it, type "cpanm **Jcode**" and hit "Enter" key on your command prompt window.
 
-Above procedure is for people who want to modify or develop KH Coder. If you want to just try or use KH Coder, just unzip the downloaded \*.exe file and double click “kh_coder.exe”.
+Above procedure is for people who want to develop or modify KH Coder. If you want to just try or use KH Coder, you don't need Perl. Please just download and unzip released \*.exe file.
 
 ## On Linux or other Un\*x like system
 
