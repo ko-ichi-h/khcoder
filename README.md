@@ -11,8 +11,10 @@ KH Coder is a free software for **quantitative content analysis** or **text mini
 Screenshots: 
 https://goo.gl/photos/ixn1sTM3jm8o11bP8
 
+<!--
 Changelog:
 https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=http%3A%2F%2Fkhcoder.net%2Fversions.html&sandbox=1
+-->
 
 ## How to run source code of KH Coder on Windows
 
