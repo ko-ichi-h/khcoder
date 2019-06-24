@@ -603,7 +603,7 @@ sub load_dmp{
 
 sub reloadable{
 	my $self = shift;
-	return 0  unless $self->status_from_table;
+	#return 0  unless $self->status_from_table;
 	
 	my $source = $::config_obj->os_path( $self->status_source_file );
 	return 0 unless -e $source;

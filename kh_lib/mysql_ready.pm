@@ -30,7 +30,11 @@ sub first{
 
 	# Reload Excel/CSV
 	if ($reload) {
-		&reload_from_spreadsheet;
+		if ( $::project_obj->status_from_table ){
+			&reload_from_spreadsheet;
+		} else {
+			&reload_from_docx;
+		}
 	}
 	
 	if ($::config_obj->use_heap) {
@@ -92,6 +96,25 @@ sub first{
 	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+}
+
+sub reload_from_docx{
+	my $target = $::config_obj->os_path( $::project_obj->file_target );
+	my $temp   = $::project_obj->file_TempTXT;
+	
+	use kh_docx;
+	my $c = kh_docx->new($::project_obj->status_source_file);
+	$c->{converted} = $temp;
+	$c->conv;
+	
+	unless (-e $temp){
+		warn("Failed to reload data from ".$::project_obj->status_source_file."\n");
+		return 0;
+	}
+	
+	unlink $target;
+	rename($temp, $target) or die;
+	return 1;
 }
 
 sub reload_from_spreadsheet{

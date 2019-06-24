@@ -320,20 +320,23 @@ sub _make_new{
 		$t = $file_text;
 	}
 
-	# Convert RTF to TXT (macOS / darwin only)
-	if ($^O =~ /darwin/i){
-		if ($t =~ /(.+)\.rtf$/i){
-			# file name
-			my $n = 0;
-			while (-e $1."_txt$n.txt"){
-				++$n;
-			}
-			my $file_text = $1."_txt$n.txt";
-			# convert using textutil (macOS's built in tool)
-			system("textutil \"$t\" -convert txt -output \"$file_text\"");
-			$t = $file_text;
-			print "### The target file was NOT in TEXT format. So I converted it! ###\n";
+	# Convert Word/RTF files to plain text
+	if ($t =~ /(.+)\.docx$/i || $t =~ /(.+)\.doc$/i || $t =~ /(.+)\.rtf$/i){
+		use kh_docx;
+		my $c = kh_docx->new($t);
+		$c->conv;
+		$t = $c->{converted};
+		
+		unless (-e $t){
+			gui_errormsg->open(
+				msg => kh_msg->get('type_error'),
+				type => 'msg',
+				window => \$self->{win_obj},
+			);
+			return 0;
 		}
+		
+		$file_source = $c->{original};
 	}
 
 	my $new = kh_project->new(
@@ -380,6 +383,9 @@ sub _make_new{
 		$::project_obj->status_selected_coln( $self->{column_list}[$self->{column}] );
 	} else {
 		$::project_obj->status_from_table(0);
+		if (-e $file_source) {
+			$::project_obj->status_source_file( $::config_obj->uni_path($file_source) );
+		}
 	}
 	
 	return 1;
@@ -389,7 +395,7 @@ sub _sansyo{
 	my $self = shift;
 
 	my @types = (
-		[ "Data files",[qw/.txt .csv .tsv .xls .xlsx/] ],
+		[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx/] ],
 		[ "All files",'*' ]
 	);
 

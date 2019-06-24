@@ -213,7 +213,7 @@ gui_window::main::menu:
     partial:                  部分テキストの取り出し
     plugin:                   プラグイン
     prep:                     前処理(R)
-    prepro_reload:            "この処理には時間がかかる場合があります。\n今すぐ実行したくないときは「キャンセル」をクリックしてください。\n\nExcel/CSVファイルが更新されています！\nExcel/CSVファイルの内容を再度読み込みますか？"
+    prepro_reload:            "この処理には時間がかかる場合があります。\n今すぐ実行したくないときは「キャンセル」をクリックしてください。\n\n読み込み元ファイルが更新されています！\n元ファイルの内容を再度読み込みますか？"
     project:                  プロジェクト(P)
     read:                     読み込み
     run_prep:                 前処理の実行
@@ -261,6 +261,7 @@ gui_window::project_new:
     target_char_code:         分析対象ファイルの文字コード：
     target_column:            分析対象とする列：
     target_file:              分析対象ファイル：
+    type_error:               対応していないファイル形式です。
     win_title:                新規プロジェクト
 gui_window::project_open:
     lang:                     言語
