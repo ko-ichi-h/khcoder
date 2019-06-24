@@ -28,6 +28,11 @@ sub init{
 	$mHash{AvailPhys} = $mHash{AvailPhys} - 500;
 	$mHash{AvailPhys} = 16 if $mHash{AvailPhys} < 16;
 
+	# pandocのパスを追加
+	my $pandoc = $::config_obj->cwd.'/dep/pandoc-2.7.3-windows-i386';
+	$::config_obj->os_path($pandoc);
+	$::ENV{PATH} = "$pandoc".";"."$::ENV{PATH}";
+
 	# 茶筌のパス設定
 	if (
 		not -e $::config_obj->chasen_path
