@@ -194,7 +194,7 @@ sub init{
 	}
 	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 
-	# Chasen, MeCab, FreeLing, JDK
+	# Chasen, MeCab, FreeLing, JDK, pandoc
 	unless ($::ENV{PATH} =~ /deps\/chasen:/){
 		#system "export PATH=".$::config_obj->cwd."/deps/chasen/bin:".$::config_obj->cwd."/deps/mecab/bin:\$PATH";
 		$::ENV{PATH} =
@@ -202,6 +202,7 @@ sub init{
 			.$::config_obj->cwd."/deps/mecab/bin:"
 			.$::config_obj->cwd."/deps/freeling40/bin:"
 			.$::config_obj->cwd."/deps/AdoptOpenJDK/bin:"
+			.$::config_obj->cwd."/deps/pandoc-2.7.3/bin:"
 			.$::ENV{PATH}
 		;
 		

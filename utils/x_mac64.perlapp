@@ -37,7 +37,7 @@ Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sl[file=/Users/K/Librar
 Bind: auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv[file=/Users/K/Library/ActivePerl-5.16/lib/auto/share/dist/Lingua-Sentence/nonbreaking_prefix.sv]
 Bind: auto/DBD/mysql/mysql.bundle[file=/usr/local/ActivePerl-5.16/site/lib/auto/DBD/mysql/mysql.bundle,extract]
 Clean: 0
-Date: 2017-12-22 00:19:57
+Date: 2019-06-23 17:50:08
 Debug: 
 Dependent: 0
 Dyndll: 0
