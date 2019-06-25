@@ -457,14 +457,15 @@ sub make{
 				&screen_code::synonym_menu::add_menu_exec_plugin($self,$f,\@menu1);
 				#SCREEN Plugin
 			} else {
-				$self->{m_b0_editdata} = $f->command(
-					-label => kh_msg->get('plugin_synonym2'),
-					-font => "TKFN",
-					-command => sub{
-						gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
-					},
-					-state => 'disable'
-				);
+				# ちょっと検討中。コメントアウトを外す場合は「m_b0_editdata」を別の名前に。
+				#$self->{m_b0_editdata} = $f->command(
+				#	-label => kh_msg->get('plugin_synonym2'),
+				#	-font => "TKFN",
+				#	-command => sub{
+				#		gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
+				#	},
+				#	-state => 'disable'
+				#);
 			}
 		}
 
@@ -1130,13 +1131,13 @@ sub mc_morpho{
 	my $reload = shift;
 	
 	$::main_gui->close_all;
-	my $w = gui_wait->start;
+	my $w = gui_wait->start;           # Show "please wait" window
 	$self->mc_morpho_exec($reload);
-	$w->end;
 	#SCREEN Plugin
 	use screen_code::synonym_menu;
 	&screen_code::synonym_menu::run_after_prep();
 	#SCREEN Plugin
+	$w->end;                           # Show "processing complete" window
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 }
