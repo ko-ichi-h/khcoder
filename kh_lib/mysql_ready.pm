@@ -702,25 +702,29 @@ sub reform{
 		
 		while (my $d = $td->fetch){                             # 振り分け
 			my $kh_hinshi = '9999';
+			my $chk = $d->[0];
+			#SCREEN Plugin
+			$chk = &screen_code::negationchecker::mod_for_detecting_pos($chk);
+			#SCREEN Plugin
 			foreach my $i (@{$rule}){
 				$i->[2] = '' unless defined($i->[2]);
 				if ( index("$d->[3]","$i->[1]") == 0 ){        # 条件1
 					if ($i->[2] eq 'ひらがな'){            # 条件2:ひらがな
-						if ($d->[0] =~ /^\p{Hiragana}+$/o){
+						if ($chk =~ /^\p{Hiragana}+$/o){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
-					elsif ($i->[2] eq '一文字'){           # 条件2:ひらがな
-						if (length($d->[0]) == 1){
+					elsif ($i->[2] eq '一文字'){           # 条件2:一文字
+						if (length($chk) == 1){
 							$kh_hinshi = $i->[3];
 							last;
 						}
 					}
 					elsif ($i->[2] eq 'HTML'){             # 条件2:HTML
 						if ( 
-							   ($d->[0] =~ /<h[1-5]>/io)
-							|| ($d->[0] =~ /<\/h[1-5]>/io) 
+							   ($chk =~ /<h[1-5]>/io)
+							|| ($chk =~ /<\/h[1-5]>/io) 
 						){
 							$kh_hinshi = $i->[3];
 							last;
@@ -728,10 +732,10 @@ sub reform{
 					}
 					elsif($i->[2] eq '否定'){             # 条件2:否定
 						if (
-							   ($d->[0] eq 'ない')
-							|| ($d->[0] eq 'まい')
-							|| ($d->[0] eq 'ぬ')
-							|| ($d->[0] eq 'ん')
+							   ($chk eq 'ない')
+							|| ($chk eq 'まい')
+							|| ($chk eq 'ぬ')
+							|| ($chk eq 'ん')
 						){
 							$kh_hinshi = $i->[3];
 							last;
@@ -748,7 +752,6 @@ sub reform{
 				}
 			}
 			
-			my $chk = $d->[0];
 			$chk =~ tr/A-Z/a-z/;
 			if ($stopwords{$chk}){
 				$kh_hinshi = '9999';

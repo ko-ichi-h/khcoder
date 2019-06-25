@@ -9,6 +9,7 @@ use Encode qw/encode decode/;
 use Tk::DialogBox;
 
 my $use_plug_flag;
+my $status;
 my $image_file = File::Spec->catfile('screen', 'MonkinNegationChecker', '/systemicon_q.png');
 my $icon_file = File::Spec->catfile('screen', 'MonkinNegationChecker', '/1.ico');
 
@@ -203,11 +204,25 @@ sub add_menu{
 }
 
 sub check_use_plug{
+	$status = 0;
 	if ($use_plug_flag) {
 		my $file = $::config_obj->os_path( $::project_obj->file_MorphoOut );
 		system(&screen_code::plugin_path::negationchecker_path, "$file", $::config_obj->c_or_j);
+		$status = 1;
 	}
 	$use_plug_flag = 0;
+}
+
+sub mod_for_detecting_pos{
+	my $chk = shift;
+	if ($status == 0){
+		return $chk;
+	} else {
+		if ( $chk =~ /(.+)\(否定\)$/o ){
+			$chk = $1;
+		}
+		return $chk;
+	}
 }
 
 1;
