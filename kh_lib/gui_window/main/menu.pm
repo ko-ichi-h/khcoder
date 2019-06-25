@@ -444,6 +444,29 @@ sub make{
 				},
 				-state => 'disable'
 			);
+			
+		if (
+			   ($::config_obj->os       eq 'win32')
+			&& ($::config_obj->msg_lang eq 'jp'   )
+		) {
+			my $plugin_path =
+				$::config_obj->cwd.'/screen/MonkinSynonym/MonkinSynonym.exe';
+			if (-e $plugin_path) {
+				#SCREEN Plugin
+				use screen_code::synonym_menu;
+				&screen_code::synonym_menu::add_menu_exec_plugin($self,$f,\@menu1);
+				#SCREEN Plugin
+			} else {
+				$self->{m_b0_editdata} = $f->command(
+					-label => kh_msg->get('plugin_synonym2'),
+					-font => "TKFN",
+					-command => sub{
+						gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
+					},
+					-state => 'disable'
+				);
+			}
+		}
 
 		$f->separator();
 
@@ -1110,6 +1133,10 @@ sub mc_morpho{
 	my $w = gui_wait->start;
 	$self->mc_morpho_exec($reload);
 	$w->end;
+	#SCREEN Plugin
+	use screen_code::synonym_menu;
+	&screen_code::synonym_menu::run_after_prep();
+	#SCREEN Plugin
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 }
