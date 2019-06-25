@@ -393,11 +393,20 @@ sub _make_new{
 
 sub _sansyo{
 	my $self = shift;
-
-	my @types = (
-		[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx/] ],
-		[ "All files",'*' ]
-	);
+	
+	my @types;
+	
+	if ($::config_obj->os eq 'win32') {
+		@types = (
+			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .doc/] ],
+			[ "All files",'*' ]
+		);
+	} else {
+		@types = (
+			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx/] ],
+			[ "All files",'*' ]
+		);
+	}
 
 	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
