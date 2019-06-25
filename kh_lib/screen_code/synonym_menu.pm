@@ -428,7 +428,7 @@ sub read_wordset{
 			++$n;
 		}
 		$sql = $sql .= "( $sql_w )";
-		my $hdl = mysql_exec->select($sql,1)->hundle;
+		$hdl = mysql_exec->select($sql,1)->hundle;
 		#親単語ごとに子の hyoso.id のリストを作る
 		while (my $h = $hdl->fetch){
 			#print "\n hyoso_id $h->[0] \n";
@@ -436,7 +436,7 @@ sub read_wordset{
 		}
 
 		# 子ども達の出現数
-		my $hdl = mysql_exec->select("
+		$hdl = mysql_exec->select("
 			SELECT sum(genkei.num)
 			FROM   genkei INNER JOIN hselection ON genkei.khhinshi_id = hselection.khhinshi_id
 			WHERE  $sql_w
@@ -473,7 +473,7 @@ sub read_wordset{
 		$sql = '';
 		$sql .= "DELETE genkei FROM genkei INNER JOIN hselection ON genkei.khhinshi_id = hselection.khhinshi_id \n WHERE "; #子単語の行をすべて削除している これを下のように数だけ0にして残しておくと0除算によるエラーが出るため不適
 		#$sql .= "UPDATE genkei SET num = 0\nWHERE ";
-		my $n = 0;
+		$n = 0;
 		foreach my $h (@{$config->{$i}}){
 			my $child_genkei = $h->{'genkei'};
 			my $child_type = $h->{'type'};
@@ -513,7 +513,7 @@ sub run_after_prep{
 	my $FILE;
 	open($FILE, "<:encoding(utf8)", $previous_file);
 	my $line;
-	return unless $line = <$FILE>;
+	return unless defined($line = <$FILE>);
 	if ($line =~ /#前処理後自動適用/) {
 		print "前処理後自動適用\n";
 		read_wordset($previous_file);
