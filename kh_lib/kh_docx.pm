@@ -29,6 +29,10 @@ sub conv{
 		$type = 'rtf';
 		$base = $1;
 	}
+	elsif ($self->{original} =~ /(.+)\.odt$/i) {
+		$type = 'odt';
+		$base = $1;
+	}
 	else {
 		print "kh_docx: not intended file type (docx/doc/rtf).\n";
 		return undef;
@@ -50,7 +54,7 @@ sub conv{
 
 	# check the result
 	unless (-e $::config_obj->os_path( $self->{converted} )){
-		print "failed to convert docx (pandoc).\n";
+		print "failed to convert: $exe\n";
 		return undef;
 	}
 	return $self->{converted};
@@ -105,6 +109,50 @@ sub _docx_linux{
 	my $cmd = "pandoc --from=docx --to=plain --output=\"$o\" \"$i\"";
 	
 	system "$cmd";
+	
+	return 1;
+}
+
+sub _odt_linux{
+	my $self = shift;
+
+	my $o = $::config_obj->os_path( $self->{converted} );
+	my $i = $::config_obj->os_path( $self->{original}  );
+	my $cmd = "pandoc --from=odt --to=plain --output=\"$o\" \"$i\"";
+	
+	system "$cmd";
+	
+	return 1;
+}
+
+sub _odt_win32{
+	my $self = shift;
+	
+	# pandoc path
+	require Win32::SearchPath;
+	my $path = Win32::SearchPath::SearchPath('pandoc');
+	print "path: $path\n";
+	unless (-e $path && length($path) ) {
+		print "kh_docx: could not find pandoc.\n";
+		return undef;
+	}
+
+	# convert
+	my $o = $::config_obj->os_path( $self->{converted} );
+	my $i = $::config_obj->os_path( $self->{original}  );
+	my $cmd = "pandoc --from=odt --to=plain --output=\"$o\" \"$i\"";
+	
+	require Win32::Process;
+	my $process;
+	Win32::Process::Create(
+		$process,
+		$path,
+		$cmd,
+		0,
+		undef,
+		$::config_obj->cwd,
+	) || return undef;
+	$process->Wait( Win32::Process->INFINITE );
 	
 	return 1;
 }

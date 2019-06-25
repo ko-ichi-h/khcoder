@@ -321,7 +321,12 @@ sub _make_new{
 	}
 
 	# Convert Word/RTF files to plain text
-	if ($t =~ /(.+)\.docx$/i || $t =~ /(.+)\.doc$/i || $t =~ /(.+)\.rtf$/i){
+	if (
+		   $t =~ /(.+)\.docx$/i
+		|| $t =~ /(.+)\.doc$/i
+		|| $t =~ /(.+)\.rtf$/i
+		|| $t =~ /(.+)\.odt$/i
+	){
 		use kh_docx;
 		my $c = kh_docx->new($t);
 		$c->conv;
@@ -383,7 +388,7 @@ sub _make_new{
 		$::project_obj->status_selected_coln( $self->{column_list}[$self->{column}] );
 	} else {
 		$::project_obj->status_from_table(0);
-		if (-e $file_source) {
+		if (defined($file_source) && -e $file_source) {
 			$::project_obj->status_source_file( $::config_obj->uni_path($file_source) );
 		}
 	}
@@ -398,12 +403,12 @@ sub _sansyo{
 	
 	if ($::config_obj->os eq 'win32') {
 		@types = (
-			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .doc/] ],
+			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .doc .odt/] ],
 			[ "All files",'*' ]
 		);
 	} else {
 		@types = (
-			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx/] ],
+			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .odt/] ],
 			[ "All files",'*' ]
 		);
 	}
