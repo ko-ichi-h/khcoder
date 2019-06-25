@@ -169,6 +169,7 @@ gui_window::main::inner:
     units:                    集計単位
 gui_window::main::menu:
     plugin_raw_data_editor2:  "《文錦》 テキスト・変数の編集 ※"
+    plugin_synonym2:          "《文錦》 表記ゆれ＆同義語 ※"
     open_nbl:                 '閲覧する分類ログファイルを選択'
     open_knb:                 '閲覧する学習結果ファイルを選択'
     about:                    KH Coderについて
@@ -1143,6 +1144,7 @@ screen_code::rde_newproject_button:
 screen_code::assistant:
     use_plugin:                "《文錦》 による結果表示"
     cross_map_label:           "《文錦》 マップ："
+    p_value:                   "有意確率"
     corresp_rad:               " 範囲： 原点付近"
     corresp_ang:               "  変数方向"
     corresp_drop_menu1:        "狭い"
@@ -1156,5 +1158,6 @@ screen_code::assistant:
     dialog_cancel:             "キャンセル"
     dialog_use_plugin:         "《文錦》 否定形チェッカーを有効にする"
     label_use_plugin:          "《文錦》 否定形チェッカー "
-    label_enable:              "有効  "
-    label_disable:             "無効  "
+    label_enable:              "有効"
+    label_disable:             "無効"
+    plugin_synonym:            "《文錦》 表記ゆれ＆同義語"

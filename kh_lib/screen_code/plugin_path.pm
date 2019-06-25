@@ -8,6 +8,7 @@ use Encode qw/encode decode/;
 my $rde_name = File::Spec->catfile('screen', 'MonkinCleanser', 'MonkinCleanser.exe');
 my $assistant_name = File::Spec->catfile('screen', 'MonkinReport', 'MonkinReport.exe');
 my $negationchecker_name = File::Spec->catfile('screen', 'MonkinNegationChecker', 'MonkinNegationChecker.exe');
+my $synonym_name = File::Spec->catfile('screen', 'MonkinSynonym', 'MonkinSynonym.exe');
 my $inifile_name = File::Spec->catfile('screen', 'plugin.ini');
 
 sub rde_path{
@@ -20,6 +21,10 @@ sub assistant_path{
 
 sub negationchecker_path{
 	return encoding($negationchecker_name);
+}
+
+sub synonym_path{
+	return encoding($synonym_name);
 }
 
 #System関数に渡す時にOSによって文字コードを変える必要がある
