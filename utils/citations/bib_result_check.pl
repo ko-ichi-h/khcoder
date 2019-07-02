@@ -7,8 +7,8 @@ use utf8;
 use Encode::Locale;
 eval { binmode STDOUT, ":encoding(console_out)"; }; warn $@ if $@;
 
-my $current_file1 = '..\..\core_web\bib.tsv';
-my $current_file2 = '..\memo\bib_ng.txt';
+my $current_file1 = '..\..\..\core_web\bib.tsv';
+my $current_file2 = '..\..\memo\bib_ng.txt';
 
 my $new_file = 'cinii_result.txt';
 
