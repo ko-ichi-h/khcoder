@@ -79,27 +79,18 @@ sub _doc_linux{
 }
 
 BEGIN{
-	return 1 unless $^O eq 'MSWin32';
-	
-	require Win32::OLE;
-	Win32::OLE->import;
-	
-	require Win32::OLE::Const;
-	Win32::OLE::Const->import( 'Microsoft Word' );
+	if ( $^O eq 'MSWin32' ){
+		require Win32::OLE;
+		Win32::OLE->import;
+		require Win32::OLE::Const;
+		Win32::OLE::Const->import( 'Microsoft Word' );
+	} else {
+		*wdFormatText = \&new;
+	}
 }
 
 sub _doc_win32{
 	my $self = shift;
-
-	
-	
-	#require Win32::OLE;
-	#Win32::OLE->import;
-	#require Win32::OLE::Const;
-	#Win32::OLE::Const->import( 'Microsoft Word' );
-	
-	#use Win32::OLE;
-	#use Win32::OLE::Const 'Microsoft Word';
 	
 	my $word = Win32::OLE->GetActiveObject('Word.Application')
 		|| Win32::OLE->new('Word.Application', 'Quit')
@@ -110,6 +101,7 @@ sub _doc_win32{
 	my $i = $::config_obj->os_path( $self->{original}  );
 	
 	my $doc = $word->Documents->Open($i) || return undef;
+	no warnings 'syntax';
 	$doc->SaveAs({
 		Filename   => $o,
 		FileFormat => wdFormatText,
