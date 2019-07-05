@@ -84,6 +84,11 @@ BEGIN{
 		Win32::OLE->import;
 		require Win32::OLE::Const;
 		Win32::OLE::Const->import( 'Microsoft Word' );
+		
+		unless ( exists &wdFormatText ){
+			print "M\$ Word not found...\n";
+			*wdFormatText = \&new;
+		}
 	} else {
 		*wdFormatText = \&new;
 	}
@@ -101,7 +106,6 @@ sub _doc_win32{
 	my $i = $::config_obj->os_path( $self->{original}  );
 	
 	my $doc = $word->Documents->Open($i) || return undef;
-	no warnings 'syntax';
 	$doc->SaveAs({
 		Filename   => $o,
 		FileFormat => wdFormatText,
