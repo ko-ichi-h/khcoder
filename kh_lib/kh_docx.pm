@@ -78,15 +78,28 @@ sub _doc_linux{
 	return undef;
 }
 
+BEGIN{
+	return 1 unless $^O eq 'MSWin32';
+	
+	require Win32::OLE;
+	Win32::OLE->import;
+	
+	require Win32::OLE::Const;
+	Win32::OLE::Const->import( 'Microsoft Word' );
+}
+
 sub _doc_win32{
 	my $self = shift;
 
+	
+	
 	#require Win32::OLE;
 	#Win32::OLE->import;
 	#require Win32::OLE::Const;
 	#Win32::OLE::Const->import( 'Microsoft Word' );
-	use Win32::OLE;
-	use Win32::OLE::Const 'Microsoft Word';
+	
+	#use Win32::OLE;
+	#use Win32::OLE::Const 'Microsoft Word';
 	
 	my $word = Win32::OLE->GetActiveObject('Word.Application')
 		|| Win32::OLE->new('Word.Application', 'Quit')
