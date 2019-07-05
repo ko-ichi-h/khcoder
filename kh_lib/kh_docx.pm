@@ -81,9 +81,13 @@ sub _doc_linux{
 sub _doc_win32{
 	my $self = shift;
 
-	require Win32::OLE;
-	require Win32::OLE::Const;
-
+	#require Win32::OLE;
+	#Win32::OLE->import;
+	#require Win32::OLE::Const;
+	#Win32::OLE::Const->import( 'Microsoft Word' );
+	use Win32::OLE;
+	use Win32::OLE::Const 'Microsoft Word';
+	
 	my $word = Win32::OLE->GetActiveObject('Word.Application')
 		|| Win32::OLE->new('Word.Application', 'Quit')
 		|| return undef
@@ -93,7 +97,11 @@ sub _doc_win32{
 	my $i = $::config_obj->os_path( $self->{original}  );
 	
 	my $doc = $word->Documents->Open($i) || return undef;
-	$doc->SaveAs($o, 2);
+	$doc->SaveAs({
+		Filename   => $o,
+		FileFormat => wdFormatText,
+		Encoding   => '65001',
+	});
 	$doc->Close;
 	
 	return 1;
@@ -142,7 +150,7 @@ sub _odt_win32{
 	my $i = $::config_obj->os_path( $self->{original}  );
 	my $cmd = "pandoc --from=odt --to=plain --output=\"$o\" \"$i\"";
 	
-	require Win32::Process;
+		require Win32::Process;
 	my $process;
 	Win32::Process::Create(
 		$process,
