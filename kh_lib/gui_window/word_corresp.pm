@@ -1310,11 +1310,15 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 		library(wordcloud)
 		'.&plotR::network::r_command_wordlayout.'
 
+		cex <- font_size * 1.05
+		if (font_size > 1){
+			cex <- cex + (font_size - 1) * 1.05
+		}
 		nc <- wordlayout(
 			labcd$x,
 			labcd$y,
 			rownames(cb),
-			cex=font_size * 1.1,
+			cex=cex,
 			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
 			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
 		)

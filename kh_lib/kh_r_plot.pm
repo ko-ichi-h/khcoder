@@ -638,13 +638,6 @@ sub _save_emf{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 	
-	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
-	my $p = int(12 * $self->{font_size});
-	if ($p > 12) {
-		my $diff = $p - 12;
-		$p = 12 + int($diff * 0.5);
-	}
-	
 	# Font configuration for EMF files
 	my $font = $::config_obj->font_plot_current;
 	$::config_obj->R->send( "windowsFonts(serif=windowsFont(\"TT $font\"))" );
@@ -655,7 +648,7 @@ sub _save_emf{
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
 	$::config_obj->R->send(
-		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=$p, family=\"serif\")"
+		 "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=12, family=\"serif\")"
 	);
 	#$self->set_par;
 	if ( length($self->{command_s}) ) {
@@ -683,13 +676,6 @@ sub _save_pdf{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
-	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
-	my $p = int(12 * $self->{font_size});
-	if ($p > 12) {
-		my $diff = $p - 12;
-		$p = 12 + int($diff * 0.5);
-	}
-
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -702,12 +688,12 @@ sub _save_pdf{
 	if ($lang eq 'ru') {
 		$::config_obj->R->send(
 			 "cairo_pdf(file=\"$path\", height = $h, width = $w, "
-			."pointsize=$p)"
+			."pointsize=12)"
 		);
 	} else {
 		$::config_obj->R->send(
 			 "pdf(file=\"$path\", height = $h, width = $w, useDingbats=F, "
-			."family=\"".$::config_obj->font_pdf_current."\", pointsize=$p)"
+			."family=\"".$::config_obj->font_pdf_current."\", pointsize=12)"
 		);
 	}
 
@@ -751,13 +737,6 @@ sub _save_eps{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
-	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
-	my $p = int(12 * $self->{font_size});
-	if ($p > 12) {
-		my $diff = $p - 12;
-		$p = 12 + int($diff * 0.5);
-	}
-
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -770,13 +749,13 @@ sub _save_eps{
 	}
 	if ($lang eq 'ru' || $lang eq 'kr' || $^O =~ /darwin/i ) {
 		$::config_obj->R->send(
-			"cairo_ps(\"$path\", height = $h, width = $w, pointsize=$p)"
+			"cairo_ps(\"$path\", height = $h, width = $w, pointsize=12)"
 		);
 	} else {
 		$::config_obj->R->send(
 			 "postscript(\"$path\", horizontal = FALSE, onefile = FALSE,"
 			."paper = \"special\", height = $h, width = $w,"
-			."family=\"".$::config_obj->font_pdf_current."\",pointsize=$p)"
+			."family=\"".$::config_obj->font_pdf_current."\",pointsize=12)"
 		);
 	}
 
@@ -879,13 +858,6 @@ sub _save_svg{
 		$h = sprintf("%.5f", 8 * $self->{height} / $self->{width} );
 	}
 
-	$self->{font_size} = $::config_obj->plot_font_size / 100 unless $self->{font_size};
-	my $p = int(12 * $self->{font_size});
-	if ($p > 12) {
-		my $diff = $p - 12;
-		$p = 12 + int($diff * 0.5);
-	}
-
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
@@ -901,7 +873,7 @@ sub _save_svg{
 				bg=\"transparent\",
 				dpi=72,
 				units=\"px\",
-				pointsize=$p
+				pointsize=12
 			)
 		} else {
 			# for darwin
