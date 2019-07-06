@@ -605,7 +605,7 @@ sub R_device{
 		$dpi = int( 72 * ( min($width,$height) / 640 ) )
 	}
 
-	$dpi = int( $dpi * $self->{font_size} );
+	#$dpi = int( $dpi * $self->{font_size} );
 
 	return 0 unless $::config_obj->R;
 	$self->{dpi} = $dpi;
@@ -831,7 +831,7 @@ sub _save_png{
 		$dpi = int( 72 * ( min($width,$height) / 640 ) )
 	}
 
-	$dpi = int( $dpi * $self->{font_size} );
+	#$dpi = int( $dpi * $self->{font_size} );
 	$self->{dpi} = $dpi;
 	
 	my $p = 12 * $dpi / 72;

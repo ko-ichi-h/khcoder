@@ -846,7 +846,7 @@ sub make_plot{
 	$args{height} = $args{plot_size};
 	$args{width}  = int( $args{plot_size} * $x_factor );
 
-	my $fontsize = 1;
+	#my $fontsize = 1;
 	my $r_command = $args{r_command};
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
@@ -874,7 +874,7 @@ sub make_plot{
 	$r_command .= "flw <- $args{flw}\n";
 	$r_command .= "bubble_plot <- $args{bubble}\n";
 	$r_command .= "biplot <- $args{biplot}\n";
-	$r_command .= "cex=$fontsize\n";
+	#$r_command .= "cex=$fontsize\n";
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 	$r_command .= "show_origin <- $args{show_origin}\n";
 	$r_command .= "scaling <- \"$args{scaling}\"\n";
@@ -906,7 +906,7 @@ sub make_plot{
 	my ($r_com_gray, $r_com_gray_a);
 
 	# 初期化
-	$r_command .= "font_size <- $fontsize\n";
+	$r_command .= "font_size <- $args{font_size}\n";
 	$r_command .= "resize_vars <- $args{resize_vars}\n";
 	$r_command .= "bubble_size <- $args{bubble_size}\n";
 	$r_command .= "labcd <- NULL\n\n";
@@ -1242,11 +1242,6 @@ if ( exists("PERL_font_family") ){
 	font_family <- PERL_font_family
 }
 
-if ( exists("bs_fixed") == F ) {
-	bubble_size <- bubble_size / '.$args{font_size}.'
-	bs_fixed <- 1
-}
-
 #-----------------------------------------------------------------------------#
 #                           prepare label positions
 #-----------------------------------------------------------------------------#
@@ -1267,8 +1262,8 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 
 	png_width  <- '.$args{width}.'
 	png_height <- '.$args{height}.' 
-	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
-	dpi <- 72 * min(png_width, png_height) / 640 * '.$args{font_size}.'
+	png_width  <- png_width - 0.16 * bubble_size / 100 * png_width
+	dpi <- 72 * min(png_width, png_height) / 640
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
@@ -1319,7 +1314,7 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 			labcd$x,
 			labcd$y,
 			rownames(cb),
-			cex=cex * 1.05,
+			cex=font_size * 1.1,
 			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
 			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
 		)
@@ -1615,8 +1610,9 @@ if (plot_mode != "dots") {
 			data=df.labels.var,
 			family=font_family,
 			fontface="bold",
-			#label.size=0.25,
-			label.padding=unit(1.8, "mm"),
+			label.size=0.25 * font_size,
+			size=4 * font_size,
+			label.padding=unit(1.8 * font_size, "mm"),
 			colour="white",
 			fill="gray50",
 			#alpha=0.7,
@@ -1638,7 +1634,7 @@ if (plot_mode != "dots") {
 	g <- g + geom_text(
 		data=df.labels,
 		aes(x=x, y=y,label=labs,colour=factor(cols)),
-		size=4,
+		size=4 * font_size,
 		family=font_family,
 		fontface=font_face
 		#colour="black"
