@@ -66,8 +66,17 @@ sub start{
 	$yo  = $yo * $self->{img_width} / 480;
 	$th  = $th * $self->{img_width} / 480;
 	
+	my $n = @{$self->{coordi}};
+	my $height_of_one_word = ( $self->{img_height} - $yax) / $n;
+	
+	if ($height_of_one_word > $th * 2) {
+		print "one_word: $height_of_one_word, th: $th, yo: $yo\n";
+		$yo = $yo - int( ($height_of_one_word - $th * 2) / 2 );
+		print "yo: $yo\n";
+	}
+	
 	# adjustments for font size (dpi value)
-	$yax = $yax * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
+	#$yax = $yax * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
 	
 	$self->{coordin} = {};
 	foreach my $i (@{$self->{coordi}}){
