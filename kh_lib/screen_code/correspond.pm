@@ -1106,7 +1106,7 @@ sub set_config_param{
 			'show_origin'    => $self->{xy_obj}->origin,
 			'scaling'        => $self->{xy_obj}->scale,
 			'check_zoom'     => $self->{xy_obj}->{check_zoom},
-			'zoom'           => $self->{xy_obj}->{entry_zoom}->get,
+			'zoom'           => 3,
 			'check_filter'   => $self->{check_filter},
 			'filter'         => $self->gui_jgn( $self->{entry_flt}->get),
 			'check_filter_w' => $self->{check_filter_w},
