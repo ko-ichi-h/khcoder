@@ -26,8 +26,8 @@ sub new{
 
 	# パラメーター設定（描画）
 	my $param1 = "\n";
-	#$param1 .= "cex <- $args{font_size}\n";
-	$param1 .= "cex <- 1\n";
+	$param1 .= "cex <- $args{font_size}\n";
+	#$param1 .= "cex <- 1\n";
 	$param1 .= "text_font <- $args{font_bold}\n";
 	$param1 .= "if_cls <- $args{if_cls}\n";
 	$param1 .= "n_cls <- $args{n_cls}\n";
