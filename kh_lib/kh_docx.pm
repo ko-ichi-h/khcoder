@@ -148,7 +148,7 @@ sub _odt_win32{
 	# pandoc path
 	require Win32::SearchPath;
 	my $path = Win32::SearchPath::SearchPath('pandoc');
-	print "path: $path\n";
+	#print "path: $path\n";
 	unless (-e $path && length($path) ) {
 		print "kh_docx: could not find pandoc.\n";
 		return undef;
@@ -180,7 +180,7 @@ sub _docx_win32{
 	# pandoc path
 	require Win32::SearchPath;
 	my $path = Win32::SearchPath::SearchPath('pandoc');
-	print "path: $path\n";
+	#print "path: $path\n";
 	unless (-e $path && length($path) ) {
 		print "kh_docx: could not find pandoc.\n";
 		return undef;

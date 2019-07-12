@@ -10,10 +10,11 @@ use HTTP::Request::Common;
 binmode STDOUT, ":utf8";
 
 my $debug = 0;
-my $target = 'http://khcoder.net/bib.tsv';
-my $localf = 'bib_tmp/bib.tsv';
-my $backup = 'bib_tmp/backup.tsv';
-my $pass = '123457';
+my $target    = 'http://khcoder.net/bib.tsv';
+my $localf    = 'bib_tmp/bib.tsv';
+my $localf_dl = 'bib_tmp/bib_dl.tsv';
+my $backup    = 'bib_tmp/backup.tsv';
+my $pass      = '123457';
 
 my $q = new CGI; 
 my $cbib = '';
@@ -172,16 +173,18 @@ if ( $q->param('Excecute') eq 'add' ){
 
 	while ( $q->param("bib$n") ){
 		my $line = '';
-		$line .= Encode::decode('utf8', $q->param("yomiB$n") );
+		$line .= &del_tab( Encode::decode('utf8', $q->param("yomiB$n")));
 		$line .= "\t";
-		$line .= Encode::decode('utf8', $q->param("year$n"));
+		$line .= &del_tab( Encode::decode('utf8', $q->param("year$n")));
 		$line .= "\t";
-		$line .= Encode::decode('utf8', $q->param("bib$n"));
+		$line .= &del_tab( Encode::decode('utf8', $q->param("bib$n")));
 		$line .= "\t";
 		$line .= "\t";
-		$line .= Encode::decode('utf8', $q->param("url$n"));
+		$line .= &del_tab( Encode::decode('utf8', $q->param("url$n")));
 		$line .= "\t";
-		$line .= Encode::decode('utf8', $q->param("yomiA$n"));
+		$line .= &del_tab( Encode::decode('utf8', $q->param("yomiA$n")));
+		
+		$line =~ s/\x0D|\x0A//g;
 		print $fh "$line\x0D\x0A";
 		print $fhb "$line\x0D\x0A";
 		
@@ -198,6 +201,12 @@ if ( $q->param('Excecute') eq 'add' ){
 	close $fhb;
 	
 	print $q->p("Added!");
+}
+
+sub del_tab{
+	my $t = shift;
+	$t =~ s/\t/ /g;
+	return $t;
 }
 
 #print
@@ -350,7 +359,7 @@ sub renew_bib{
 		print $q->p( "Remote: $d, Local: $stat[9]" ) if $debug;
 		if ($stat[9] < $d){
 			open my $fhb, '>>', $backup or die;
-			print $fhb "\t\t\Download! Remote: $d, Local: $stat[9]\x0D\x0A";
+			print $fhb "\t\tDownload! Remote: $d, Local: $stat[9]\x0D\x0A";
 			close $fhb;
 			&download_bib;
 		}
@@ -369,17 +378,37 @@ sub download_bib{
 		print "エラー： $target のダウンロードに失敗しました！";
 		exit;
 	}
-	
+
 	my $d = $r->content;
-	$d =~ s/\x0D\x0A|\x0D|\x0A/\x0D\x0A/g;
+	$d =~ s/\x0D/\x0A/g;
+	$d =~ s/\x0A+/\x0A/g;
+	$d =~ s/\x0A/\x0D\x0A/g;
 	
-	open my $fh, '>', $localf or die();
+	open my $fh, '>', $localf_dl or die();
+	binmode $fh;
 	print $fh $d;
 	close($fh);
 	
-	print "Downloaded: $target.\n CWD: $cwd. ";
+	my $new_size = -s $localf_dl;
+	my $old_size = 0;
+	if (-e $localf){
+		$old_size = -s $localf;
+	}
+	
+	if ($new_size > $old_size){
+		if (-e $localf ){
+			unlink $localf or die;
+		}
+		rename $localf_dl, $localf or die;
+		
+		open my $fhb, '>>', $backup or die;
+		print $fhb "\t\tSize: $old_size -> $new_size\x0D\x0A";
+		close $fhb;
+		print "Downloaded: $target. Size: $old_size -> $new_size\nCWD: $cwd. ";
+	} else {
+		print "ローカルファイルの方が大きいのでダウンロードを中止しました";
+	}
 }
-
 
 sub print_script{
 	my $n = shift;

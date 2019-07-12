@@ -38,7 +38,7 @@ sub _new{
 	);
 
 	$mw->Label(
-		-text => '指定されたフォルダ内のテキストファイル（*.txt）をすべて結合します',
+		-text => '指定されたフォルダ内の文書ファイルをすべて結合します',
 	)->pack(-anchor => 'w');
 
 	my $fra_lab = $mw->LabFrame(
@@ -238,10 +238,9 @@ sub _exec{
 
 	my $read_each = sub {
 		# ファイル名関係
-		return if(-d $File::Find::name);
-		return unless $_ =~ /.+\.txt$/;
-		
 		my $f = $File::Find::name;
+		return if -d $f;
+		return unless $f =~ /.+\.txt$|.+\.doc$|.+\.docx$|.+\.rtf$|.+\.odt$/;
 		return if $f eq $save;
 
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
@@ -250,6 +249,26 @@ sub _exec{
 
 		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
 		push @files, "file:$f_o";
+
+		# Convert to *.txt
+		my $converted = '';
+		if ($f =~ /.+\.doc$|.+\.docx$|.+\.rtf$|.+\.odt$/) {
+			local ($^W) = 0;
+			use File::Temp 'tempfile';
+			(undef, $converted) = tempfile(
+				OPEN => 0,
+				DIR  => $::config_obj->cwd.'/config'
+			);
+			$converted .= '.txt';
+			print "Converted: $converted\n\tFrom: $f_o\n";
+			my $c = kh_docx->new($f);
+			$c->{converted} = $converted;
+			$c->conv;
+			unless (-e $converted && -s $converted){
+				return 0;
+			}
+			$f = $converted;
+		}
 
 		# 文字コード
 		my $icode = $self->{icode};
@@ -274,6 +293,11 @@ sub _exec{
 		}
 		close (TEMP);
 		print $fh "\n";
+		
+		# clean up
+		if (-e $converted) {
+			unlink $converted;
+		}
 	};
 
 	use File::Find;

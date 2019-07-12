@@ -28,7 +28,7 @@ sub plugin_dialog{
 	my $add_height = 0;
 	if ( $::project_obj->reloadable) {
 		$buttons = [kh_msg->get('screen_code::assistant->dialog_yes'), kh_msg->get('screen_code::assistant->dialog_no'), kh_msg->get('screen_code::assistant->dialog_cancel')];
-		$messeage = kh_msg->get('gui_window::main::menu->prepro_reload');
+		$messeage = kh_msg->get('gui_window::main::menu->prepro_reload')."\n";
 		$add_width = 100;
 		$add_height = 40;
 	} else {
@@ -36,38 +36,49 @@ sub plugin_dialog{
 		$messeage = kh_msg->gget('cont_big_pros');
 	}
 	my $d = $mw->DialogBox(-title => "KH Coder", -buttons => $buttons,);
-	$d->resizable(0,0);
-	$d->iconbitmap("$icon_file");
 	
+	$d->iconbitmap("$icon_file");
 	my $image = $mw->Photo(-file => $image_file);
 	
-	$d->add(
-		'Canvas',
-		-bg => 'white',
-		-width => 300 + $add_width,
-		-height => 120 + $add_height,
+	my $frame0 = $d->add(
+		'Frame',
+		-background => 'white',
+		-padx => 15,
+		-pady => 15,
 	)->pack(
-		-anchor => 'n',
-		-side  => 'top',
+		-fill => 'both',
+		-expand => 1,
 	);
-	$d->add(
-		'Label',
-		-bg => 'white',
+	$frame0->Label(
+		-background => 'white',
 		-image => $image,
-	)->place(-x => 30, -y => 30);
-	$d->add(
-		'Label',
-		-bg => 'white',
+	)->pack(
+		-side   => 'left',
+		-anchor => 'n',
+		-pady   => 5,
+		-padx   => 15,
+	);
+	my $frame1 = $frame0->Frame(
+		-background => 'white',
+	)->pack(
+		-fill => 'both',
+		-expand => 1,
+	);
+	$frame1->Label(
+		-background => 'white',
 		-justify => 'left',
 		-text => $messeage,
-	)->place(-x => 65, -y => 27);
-	
-	my $use_check = $d->add(
-		'Checkbutton',
+	)->pack(
+		-anchor => 'n',
+	);
+	my $use_check = $frame1->Checkbutton(
 		-bg => 'white',
 		-text => kh_msg->get('screen_code::assistant->dialog_use_plugin'),
 		-variable => \$use_plug_flag
-	)->place(-x => 65, -y => 80 + $add_height);
+	)->pack(
+		-anchor => 'w',
+	);
+	$d->resizable(0,0);
 	
 	my $ans = $d->Show;
 	unless ($ans){ return 1; }
