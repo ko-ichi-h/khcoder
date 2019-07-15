@@ -16,7 +16,7 @@ sub option1_name{
 
 sub photo_pane_width{
 	my $self = shift;
-	return 640;
+	return $::config_obj->plot_size_words;
 }
 
 # 調整用のWindowを開く
@@ -49,6 +49,15 @@ sub open_config{
 	);
 	
 	return $self;
+}
+
+sub img_height{
+	my $self = shift;
+	return $gui_window::r_plot::imgs->{$self->win_name}->height;
+}
+sub img_width{
+	my $self = shift;
+	return $gui_window::r_plot::imgs->{$self->win_name}->width;
 }
 
 # 画像表示用オブジェクトを再作成（スクロールバーをリセットするため）

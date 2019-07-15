@@ -589,6 +589,10 @@ sub R_device{
 	) {                         # dendrogram
 		$dpi = int( 72 * ($::config_obj->plot_size_codes / 480) );
 	}
+	elsif ( $self->{command_f} =~ /pheatmap/){
+		$dpi = int( 72 * ($width / 640) );
+		# print "pheatmap! width: $width\n";
+	}
 	elsif ($self->{command_f} =~ /# dpi: short based\n/){ # short based (codes, mainly)
 		$dpi = int( 72 * ( min($width,$height) / 480) );
 	}
@@ -793,6 +797,10 @@ sub _save_png{
 		and not ( $self->{command_f} =~ /pp_type/ )
 	) {                         # dendrogram
 		$dpi = int( 72 * ($::config_obj->plot_size_codes / 480) );
+	}
+	elsif ( $self->{command_f} =~ /pheatmap/){
+		$dpi = int( 72 * ($width / 640) );
+		# print "pheatmap! width: $width\n";
 	}
 	elsif ($self->{command_f} =~ /# dpi: short based\n/){ # short based (codes, mainly)
 		$dpi = int( 72 * ( min($width,$height) / 480) );

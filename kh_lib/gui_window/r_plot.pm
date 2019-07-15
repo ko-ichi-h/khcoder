@@ -99,39 +99,68 @@ sub _new{
 		-expand => 1,
 	);
 	
-	$self->{canvas} = $self->{photo_pane}->Canvas(
-		-width  => $self->{img_width},
-		-height => $self->{img_height},
-		-background  => 'white',
-		-borderwidth => 0,
-		-highlightthickness => 0,
-		#-cursor      => $cursor,
-	)->pack(
-		-anchor => 'c',
-		-fill   => 'both',
-		-expand => 1,
-	);
-	
-	my $image_id = $self->{canvas}->createImage(
-		int( $self->{img_width} / 2 ),
-		int( $self->{img_height} / 2 ),
-		-image => $gui_window::r_plot::imgs->{$self->win_name},
-	);
-	#print "image_id: $image_id\n";
+	# Clickableにする場合はcanvas
+	if ( $self->{coord} ) {
+		$self->{canvas} = $self->{photo_pane}->Canvas(
+			-width  => $self->{img_width},
+			-height => $self->{img_height},
+			-background  => 'white',
+			-borderwidth => 0,
+			-highlightthickness => 0,
+			#-cursor      => $cursor,
+		)->pack(
+			-anchor => 'c',
+			-fill   => 'both',
+			-expand => 1,
+		);
+		
+		my $image_id = $self->{canvas}->createImage(
+			int( $self->{img_width} / 2 ),
+			int( $self->{img_height} / 2 ),
+			-image => $gui_window::r_plot::imgs->{$self->win_name},
+		);
+		#print "image_id: $image_id\n";
 
-	# 画像のドラッグ
-	( $self->{xscroll}, $self->{yscroll} ) =
-		$self->{photo_pane}->Subwidget( 'xscrollbar', 'yscrollbar' );
-	$self->{canvas}->CanvasBind(
-		'<Button1-ButtonRelease>' => sub {
-			undef $self->{last_x};
-		}
-	);
-	$self->{canvas}->CanvasBind(
-		'<Button1-Motion>' => [
-			\&drag, $self, Ev('X'), Ev('Y')
-		]
-	);
+		# 画像のドラッグ
+		( $self->{xscroll}, $self->{yscroll} ) =
+			$self->{photo_pane}->Subwidget( 'xscrollbar', 'yscrollbar' );
+		$self->{canvas}->CanvasBind(
+			'<Button1-ButtonRelease>' => sub {
+				undef $self->{last_x};
+			}
+		);
+		$self->{canvas}->CanvasBind(
+			'<Button1-Motion>' => [
+				\&drag, $self, Ev('X'), Ev('Y')
+			]
+		);
+	}
+	# Clickableにしない場合はlabel
+	else {
+		$self->{photo} = $self->{photo_pane}->Label(
+			-image       => $imgs->{$self->win_name},
+			-cursor      => $cursor,
+			-background  => "white",
+			-borderwidth => 0,
+		)->pack(
+			-expand => 1,
+			-fill   => 'both',
+		);
+		
+		# 画像のドラッグ
+		( $self->{xscroll}, $self->{yscroll} ) =
+			$self->{photo_pane}->Subwidget( 'xscrollbar', 'yscrollbar' );
+		$self->{photo}->bind(
+			'<Button1-ButtonRelease>' => sub {
+				undef $self->{last_x};
+			}
+		);
+		$self->{photo}->bind(
+			'<Button1-Motion>' => [
+				\&drag, $self, Ev('X'), Ev('Y')
+			]
+		);
+	}
 
 	# カーソルキーによるスクロール
 	$self->win_obj->bind( '<Up>'    =>
@@ -275,7 +304,7 @@ sub drag {
 		my( $dx, $dy ) = ( $x - $self->{last_x}, $y - $self->{last_y} );
 		my( $xf1, $xf2 ) = $self->{xscroll}->get;
 		my( $yf1, $yf2 ) = $self->{yscroll}->get;
-		my( $iw, $ih ) = ( $self->{img_width}, $self->{img_height} );
+		my( $iw, $ih ) = ( $self->img_width, $self->img_height );
 		if ( $dx < 0 )
 		{
 			$self->{photo_pane}->xview( moveto => $xf1-($dx/$iw) );
