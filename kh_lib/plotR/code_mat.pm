@@ -20,8 +20,8 @@ sub new{
 
 	# パラメーター設定（共通）
 	$args{font_size} = $::config_obj->plot_font_size / 100 unless $args{font_size}; # フォントサイズ
-	#$r_command .= "cex <- $args{font_size}\n";
-	$r_command .= "cex <- 1\n";
+	$r_command .= "cex <- $args{font_size}\n";
+	#$r_command .= "cex <- 1\n";
 
 	if ( defined($self->{selection}) ){                # コード選択
 		if ( $#{$self->{selection}} > -1 ){
@@ -140,9 +140,8 @@ sub r_plot_cmd_fluc{
 	my $self = shift;
 	return '
 
+# dpi: short based
 alpha_value <- 0.5
-
-bubble_size <- bubble_size / '.$self->{font_size}.'
 
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1
@@ -440,7 +439,12 @@ if (cellnote == 1){
 
 col.labels <- rownames(d);
 if ( length(col.labels) > 35 && (dendro_v == 0)){
-	cutting <- length(col.labels) / 30
+	n_lab <- 30
+	n_lab <- round( n_lab / cex )
+	if (n_lab < 2){
+		n_lab <- 2
+	}
+	cutting <- length(col.labels) / n_lab
 	cutting <- ceiling(cutting)
 	col.labels <- NULL
 	n <- 1

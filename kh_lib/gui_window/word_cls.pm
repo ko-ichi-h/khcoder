@@ -205,8 +205,8 @@ sub make_plot{
 
 	kh_r_plot->clear_env;
 
-	#my $fontsize = $args{font_size};
-	my $fontsize = 1;
+	my $fontsize = $args{font_size};
+	#my $fontsize = 1;
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 
@@ -739,6 +739,7 @@ if (
 		)
 	)
 }
+y_min <- y_min * font_size
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
 y_min <- y_min * 1.1
 if (y_min > y_max * 2){

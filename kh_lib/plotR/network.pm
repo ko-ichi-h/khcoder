@@ -31,7 +31,6 @@ sub new{
 		$r_command .= "th <- -1\n";
 	}
 	$r_command .= "font_size <- $args{font_size}\n";
-	$r_command .= "cex <- 1\n";
 
 	$r_command .= "margin_top <- $args{margin_top}\n";
 	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
@@ -1027,7 +1026,7 @@ if ( length(igraph::get.vertex.attribute(n2,"name")) > 1 ){
 				labcd$x,
 				labcd$y,
 				word_labs,
-				cex=cex * 1.28,
+				cex=1.28,
 				xlim=c( -1, 1 ),
 				ylim=c( -1, 1 )
 			)
@@ -1485,12 +1484,6 @@ if ( use_freq_as_size == 1 ){
 		}
 	}
 
-	# bubble size configuration
-	if ( exists("bs_fixed") == F ) {
-		bubble_size <- bubble_size / font_size
-		bs_fixed <- 1
-	}
-
 	p <- p + scale_size_area(
 		"Frequency",
 		max_size = 30 * bubble_size / 100,
@@ -1652,14 +1645,14 @@ if (
 			yend = y,
 			label = lab
 		),
-		size=4,
+		size=4 * font_size,
 		hjust = hjust,
 		nudge_x = nudge,
 		nudge_y = nudge * 1.25,
 		family=font_fam,
 		na.rm = T,
 		label.size = NA,
-		label.padding = unit(0.2, "lines"),
+		label.padding = unit(0.2 * font_size, "lines"),
 		label.r = unit(0.1, "lines"),
 		fontface=face
 	)
@@ -1673,7 +1666,7 @@ if (
 			yend = y,
 			label = lab
 		),
-		size=4,
+		size=4 * font_size,
 		hjust = hjust,
 		nudge_x = nudge,
 		nudge_y = nudge * 1.25,

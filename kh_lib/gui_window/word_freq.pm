@@ -192,7 +192,7 @@ sub plot{
 		name      => 'words_TF_freq1',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,ylab="'
+			.'plot(hoge[,1],hoge[,3],type="b",bty="l",lty=1,pch=1,ylab="'
 			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
@@ -204,7 +204,7 @@ sub plot{
 		name      => 'words_TF_freq2',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],type="b",lty=1,pch=1,log="x",ylab="'
+			.'plot(hoge[,1],hoge[,3],type="b",bty="l",lty=1,pch=1,log="x",ylab="'
 			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
@@ -216,7 +216,7 @@ sub plot{
 		name      => 'words_TF_freq3',
 		command_f => 
 			"$self->{rcmd}\n"
-			.'plot(hoge[,1],hoge[,3],lty=1,pch=1,log="xy",ylab="'
+			.'plot(hoge[,1],hoge[,3],bty="l",lty=1,pch=1,log="xy",ylab="'
 			.kh_msg->pget('freq')
 			.'",'
 			.'xlab="'
