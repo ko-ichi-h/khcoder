@@ -48,6 +48,11 @@ sub conv{
 	}
 
 	# exec conv
+	use Cwd;
+	my $cwd = cwd;
+	chdir( $::config_obj->cwd );
+	#print "moved cwd: ", cwd, "\n";
+	
 	my $os = $::config_obj->os;
 	my $exe = "_$type"."_$os";
 	$self->$exe;
@@ -57,6 +62,9 @@ sub conv{
 		print "failed to convert: $exe\n";
 		return undef;
 	}
+	
+	chdir( $cwd );
+	#print "returned cwd: ", cwd, "\n";
 	return $self->{converted};
 }
 
