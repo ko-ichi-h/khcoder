@@ -41,9 +41,14 @@ sub renew_command{
 	$tw = $tw * $self->{img_height} / 640;
 	$th = $th * $self->{img_height} / 640;
 
-	# adjustments for font size (dpi value)
-	my $nxo = $xo * 0.00 + $xo * 1.00 * $self->{plots}[$self->{ax}]->{font_size};
-	my $nyo = $yo * 0.10 + $yo * 0.90 * $self->{plots}[$self->{ax}]->{font_size};
+	# adjustments for font size (dpi value) 
+	#my $nxo = $xo * $self->{plots}[$self->{ax}]->{font_size};
+	#my $nyo = $yo * $self->{plots}[$self->{ax}]->{font_size};
+	
+	# Using "1" as the font size because the axis font size is currently fixed
+	my $nxo = $xo * 1;
+	my $nyo = $yo * 1;
+
 	$xmag = $xmag / (( $self->{img_height} - ($nxo) ) / ( $self->{img_height} - ($xo) ));
 	$mag = $mag / (( $self->{img_height} - ($nyo) ) / ( $self->{img_height} - ($yo) ));
 	#print "$xmag, $mag\n";

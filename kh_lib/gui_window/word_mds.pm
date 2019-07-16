@@ -213,7 +213,6 @@ sub calc{
 sub make_plot{
 	my %args = @_;
 
-	my $fontsize = 1;
 	my $x_factor = 1;
 	if (
 		$args{dim_number} <= 2
@@ -313,7 +312,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		}
 	";
 	$r_command_d .= "plot_mode <- \"color\"\n";
-	$r_command_d .= "font_size <- $fontsize\n";
+	$r_command_d .= "font_size <- $args{font_size}\n";
 	$r_command_d .= "n_cls <- $args{n_cls}\n";
 	$r_command_d .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_d .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # 次元
@@ -330,7 +329,7 @@ while ( is.na(check4mds(d)) == 0 ){
 		}
 	";
 	$r_command_a .= "plot_mode <- \"dots\"\n";
-	$r_command_a .= "font_size <- $fontsize\n";
+	$r_command_a .= "font_size <- $args{font_size}\n";
 	$r_command_a .= "n_cls <- $args{n_cls}\n";
 	$r_command_a .= "cls_raw <- $args{cls_raw}\n";
 	$r_command_a .= "dim_n <- $args{dim_number}\n";
@@ -387,7 +386,7 @@ while ( is.na(check4mds(d)) == 0 ){
 			."cl2 <- s3d\$xyz.convert(cl)\n"
 			."library(maptools)\n"
 			."labcd <- pointLabel(x=cl2\$x, y=cl2\$y, labels=rownames(cl),"
-				."cex=$fontsize, offset=0, col=\"black\", font = text_font, doPlot=F)\n"
+				."cex=font_size, offset=0, col=\"black\", font = text_font, doPlot=F)\n"
 			.'
 	# ラベル再調整
 	xorg <- cl2$x
@@ -541,7 +540,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	}
 	
 	# get breaks of bubble plot legend
-	if ($args{bubble}){
+	if ($args{bubble} && $args{dim_number} <= 2){
 		$::config_obj->R->send('
 			legend_breaks_n <- ""
 			for ( i in 1:length(breaks_a) ){
@@ -623,10 +622,6 @@ bty      <- "l"
 if ( exists("bubble_size") == F ) {
 	bubble_size <- 100
 }
-if ( exists("bs_fixed") == F ) {
-	bubble_size <- bubble_size / '.$args{font_size}.'
-	bs_fixed <- 1
-}
 
 # クラスター分析
 if (n_cls > 0){
@@ -671,9 +666,9 @@ if (plot_mode == "color") {
 	png_width  <- '.$args{width}.'
 	png_height <- '.$args{height}.'
 	if ( png_width > png_height ){
-		png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
+		png_width  <- png_width - 0.16 * bubble_size / 100 * png_width
 	}
-	dpi <- 72 * min(png_width, png_width) / 640 * '.$args{font_size}.'
+	dpi <- 72 * min(png_width, png_width) / 640
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
 
@@ -705,7 +700,7 @@ if (plot_mode == "color") {
 			labcd$x,
 			labcd$y,
 			rownames(cl),
-			cex=cex * 1.25,
+			cex=cex * 1.05,
 			xlim=c(  par( "usr" )[1], par( "usr" )[2] ),
 			ylim=c(  par( "usr" )[3], par( "usr" )[4] )
 		)
@@ -906,7 +901,7 @@ if (plot_mode == "color") {
 	g <- g + geom_text(
 		data=cl2,
 		aes(x=lx,y=ly,label=labels),
-		size=4,
+		size=4*font_size,
 		colour="black",
 		family=font_family,
 		fontface=face

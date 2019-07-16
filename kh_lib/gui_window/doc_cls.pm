@@ -557,8 +557,8 @@ if (
 			name      => 'doc_cls_dendro',
 			command_f =>  $r_command
 			             .$r_command_ward
-			             .&r_command_dendro1(1),
-			command_a =>  &r_command_dendro1(1),
+			             .&r_command_dendro1($::config_obj->plot_font_size / 100),
+			command_a =>  &r_command_dendro1($::config_obj->plot_font_size / 100),
 			width     => $size,
 			height    => $::config_obj->plot_size_codes,
 			font_size => $::config_obj->plot_font_size / 100,
@@ -951,8 +951,8 @@ sub r_command_dendro1{
 
 	my $t = "# start dendro\n";
 
-	#$t .= "font_size <- $font_size\n";
-	$t .= "font_size <- 1\n";
+	$t .= "font_size <- $font_size\n";
+	#$t .= "font_size <- 1\n";
 
 	$t .= '
 
@@ -977,8 +977,8 @@ sub r_command_dendro2{
 
 	my $t = "# start dendro\n";
 
-	#$t .= "font_size <- $font_size\n";
-	$t .= "font_size <- 1\n";
+	$t .= "font_size <- $font_size\n";
+	#$t .= "font_size <- 1\n";
 
 	$t .= '
 
@@ -1153,6 +1153,7 @@ if (
 		)
 	)
 }
+y_min <- y_min * font_size
 y_min <- ( 6 * y_max * y_min ) / ( 5 - 6 * y_min )
 y_min <- y_min * 1.1
 if (y_min > y_max * 2){

@@ -598,8 +598,6 @@ sub plot{
 	
 	$rcom .= "# END: DATA\n\n";
 
-	$rcom .= "# dpi: short based\n";
-
 	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){

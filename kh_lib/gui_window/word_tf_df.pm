@@ -137,7 +137,7 @@ sub count{
 		name      => 'words_TF_DF1',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="'
+			.'plot(hoge[,1],hoge[,2],bty="l",ylab="'
 			.kh_msg->pget('df')
 			.' ('.$tani_name.') ", xlab="'
 			.kh_msg->pget('tf')
@@ -148,7 +148,7 @@ sub count{
 		name      => 'words_TF_DF2',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="'
+			.'plot(hoge[,1],hoge[,2],bty="l",ylab="'
 			.kh_msg->pget('df')
 			.' ('.$tani_name.')",xlab="'
 			.kh_msg->pget('tf')
@@ -159,7 +159,7 @@ sub count{
 		name      => 'words_TF_DF3',
 		command_f => 
 			"$rcmd\n"
-			.'plot(hoge[,1],hoge[,2],ylab="'
+			.'plot(hoge[,1],hoge[,2],bty="l",ylab="'
 			.kh_msg->pget('df')
 			.' ('.$tani_name.')",xlab="'
 			.kh_msg->pget('tf')
