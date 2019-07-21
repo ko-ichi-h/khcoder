@@ -888,8 +888,8 @@ sub _save_svg{
 			library(RSVGTipsDevice)
 			devSVGTips(
 				\"$path\",
-				width=$w,
-				height=$h,
+				width=$w * 1.4,
+				height=$h * 1.4,
 				bg=\"white\",
 				fg=\"black\",
 				toolTipMode=0
