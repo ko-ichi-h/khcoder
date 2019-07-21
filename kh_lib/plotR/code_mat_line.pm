@@ -190,6 +190,11 @@ p <- p + theme(
 		colour="black",
 		hjust=1
 		#family=font_fam
+	),
+	legend.text=element_text(
+		size=12 * cex,
+		colour="black"
+		#family=font_fam
 	)
 )
 
