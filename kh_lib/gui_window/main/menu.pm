@@ -810,7 +810,13 @@ sub make{
 	}
 	use File::Find;
 	push @INC, $::config_obj->cwd.'/plugin_'.$plugin_lang;
-	find($read_each, $::config_obj->cwd.'/plugin_'.$plugin_lang);
+	find(
+		{
+			preprocess => sub {sort {$a cmp $b} @_},
+			wanted     => $read_each
+		},
+		$::config_obj->cwd.'/plugin_'.$plugin_lang
+	);
 
 	foreach (@plugins){
 		unless (eval "use $_; 1"){
