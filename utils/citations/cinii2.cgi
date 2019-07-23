@@ -395,7 +395,7 @@ sub download_bib{
 		$old_size = -s $localf;
 	}
 	
-	if ($new_size > $old_size){
+	if ($new_size >= $old_size){
 		if (-e $localf ){
 			unlink $localf or die;
 		}
