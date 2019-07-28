@@ -386,14 +386,30 @@ sub save{
 
 	# 保存先の参照
 	my @types = (
-		[ "PDF",[qw/.pdf/] ],
 		[ "Encapsulated PostScript",[qw/.eps/] ],
-		[ "SVG",[qw/.svg/] ],
 		[ "PNG",[qw/.png/] ],
+	);
+	
+	@types = (
+		@types,
+		$self->extra_save_types,
 		[ "R Source",[qw/.r/] ],
 	);
-	@types = ([ "Enhanced Metafile",[qw/.emf/] ], @types)
-		if $::config_obj->os eq 'win32';
+	
+	if ($::config_obj->os eq 'win32'){
+		@types = (
+			[ "SVG",[qw/.svg/] ],
+			[ "PDF",[qw/.pdf/] ],
+			[ "Enhanced Metafile",[qw/.emf/] ],
+			@types,
+		);
+	} else {
+		@types = (
+			[ "PDF",[qw/.pdf/] ],
+			[ "SVG",[qw/.svg/] ],
+			@types,
+		);
+	}
 
 	my $path = $self->win_obj->getSaveFile(
 		-defaultextension => '.pdf',
@@ -410,6 +426,10 @@ sub save{
 	$self->{plots}[$self->{ax}]->save($path) if $path;
 
 	return 1;
+}
+
+sub extra_save_types{
+	return ();
 }
 
 sub img_height{
