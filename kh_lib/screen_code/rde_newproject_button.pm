@@ -30,7 +30,10 @@ sub add_button{
 					my $file_option = 'screen/temp/option.txt';
 					my $font_str = gui_window->gui_jchar($::config_obj->font_main);
 					my $plugin_rtn;
-					if ($t =~ /\.(xls|xlsx)$/i){
+					#Wordとそれに類するファイル形式は非対応
+					if ($t =~ /\.(docx|doc|rtf|odt)$/i){
+						return;
+					} elsif ($t =~ /\.(xls|xlsx)$/i){
 						mkpath('screen/temp');
 						
 						my $file_vars = $::config_obj->cwd."/screen/temp/vardata.csv";
@@ -103,9 +106,21 @@ sub add_button{
 					}
 					
 				}
-		)->pack(-side => 'right');
-		
-		$self->{plugin_btn}->configure( -state => 'disabled' );
+		);
+	}
+}
+
+#拡張子を確認しボタンの非表示/表示を切り替える
+#プラグインが対応している拡張子のときにボタンを表示するように変更
+sub check_plugin_btn{
+	my $self = shift;
+	my $path = shift;
+	if (exists($self->{plugin_btn})){
+		if ($path =~ /\.(xls|xlsx|csv|tsv|txt)$/i){
+			$self->{plugin_btn}->pack(-side => 'right');
+		} else {
+			$self->{plugin_btn}->packForget();
+		}
 	}
 }
 1;
