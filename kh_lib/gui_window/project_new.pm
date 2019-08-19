@@ -470,9 +470,7 @@ sub check_path{
 		
 	}
 	#SCREEN Plugin
-	if (exists($self->{plugin_btn})){
-		$self->{plugin_btn}->configure( -state => 'normal' );
-	}
+	&screen_code::rde_newproject_button::check_plugin_btn($self, $path);
 	#SCREEN Plugin
 	
 	return 1;
