@@ -2035,7 +2035,9 @@ writeLines("wordlayout <- function (x, y, words, cex = 1, rotate90 = FALSE, xlim
 	result
 }
 ", filename)
-insertSource(filename, package="wordcloud", force=FALSE)
+if ( packageVersion("wordcloud") == 2.4){
+	insertSource(filename, package="wordcloud", force=FALSE)
+}
 ';
 	$t = Encode::decode('UTF-8', $t);
 	return $t;
