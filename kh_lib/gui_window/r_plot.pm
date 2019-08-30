@@ -398,9 +398,9 @@ sub save{
 	
 	if ($::config_obj->os eq 'win32'){
 		@types = (
+			[ "Enhanced Metafile",[qw/.emf/] ],
 			[ "SVG",[qw/.svg/] ],
 			[ "PDF",[qw/.pdf/] ],
-			[ "Enhanced Metafile",[qw/.emf/] ],
 			@types,
 		);
 	} else {
