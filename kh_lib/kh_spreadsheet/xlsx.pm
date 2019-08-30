@@ -130,8 +130,13 @@ sub save_files{
 			$kh_spreadsheet::row = $row;
 		}
 		
-		$kh_spreadsheet::ncol = $col if
-			$row == $kh_spreadsheet::the_first_line && $kh_spreadsheet::ncol < $col;
+		if (
+			   $row == $kh_spreadsheet::the_first_line
+			&& $kh_spreadsheet::ncol < $col
+		) {
+			$kh_spreadsheet::ncol = $col;
+			print "col_changed: $row, $col, ", $cell->value, "\n";
+		}
 		$kh_spreadsheet::line->[$col] = $cell->value;
 		
 		return $self;
@@ -147,7 +152,9 @@ sub save_files{
 	my $t1 = new Benchmark;
 	print "Conv:\t",timestr(timediff($t1,$t0)),"\n";
 	
-	unlink $args{filev} if $kh_spreadsheet::ncol == 1;
+	unlink $args{filev}
+		if $kh_spreadsheet::ncol == $kh_spreadsheet::the_first_colm
+	;
 }
 
 
