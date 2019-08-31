@@ -229,9 +229,11 @@ sub new{
 	$::config_obj->R->output_chk(1);
 
 	# Reading text output from R
-	#use Encode;
-	#use Encode::Locale;
 	my $loc = 'console_out';
+	unless ( Encode::find_encoding('console_out') ){
+		$loc = 'ascii';
+	}
+	
 	if (
 		   ( $::config_obj->os eq 'win32' )
 		&& $::project_obj->morpho_analyzer_lang eq 'cn')
@@ -261,15 +263,6 @@ sub new{
 		);
 		return 0;
 	}
-	
-	# テキスト出力
-	#my $txt = $self->{r_msg};
-	#if ( length($txt) ){
-	#	$txt = Jcode->new($txt)->sjis if $::config_obj->os eq 'win32';
-	#	print "[Begin]--------------------------------------------------[R]\n";
-	#	print "$txt\n";
-	#	print "[End]----------------------------------------------------[R]\n";
-	#}
 	
 	return $self;
 }

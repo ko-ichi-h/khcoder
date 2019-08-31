@@ -23,9 +23,9 @@ use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 $kh_version = "3.Alpha.17d";
 
 BEGIN {
-	# デバッグ用…
-	#open (STDERR,">stderr.txt") or die;
+	# open (STDERR,">stderr.txt") or die; # for debug
 
+	# Encoding configurations
 	use Jcode;
 	push @INC, '.';
 	require kh_lib::Jcode_kh if $] > 5.008 && eval 'require Encode::EUCJPMS';
@@ -38,6 +38,23 @@ BEGIN {
 		$locale_fs = 0;
 	}
 	if ($locale_fs){
+		print "Encoding of this Console: $Encode::Locale::ENCODING_CONSOLE_OUT";
+		unless ( Encode::find_encoding('console_out') ) {
+			$Encode::Locale::ENCODING_CONSOLE_OUT = $Encode::Locale::ENCODING_LOCALE;
+			$Encode::Locale::ENCODING_CONSOLE_IN  = $Encode::Locale::ENCODING_LOCALE;
+			eval{ Encode::Locale::_flush_aliases(); };
+			print " -> $Encode::Locale::ENCODING_LOCALE";
+		}
+		print "\n";
+
+		print "Encoding of this file system: $Encode::Locale::ENCODING_CONSOLE_OUT";
+		unless  ( Encode::find_encoding('locale_fs') ) {
+			$Encode::Locale::ENCODING_LOCALE_FS = $Encode::Locale::ENCODING_LOCALE;
+			eval{ Encode::Locale::_flush_aliases(); };
+			print " -> $Encode::Locale::ENCODING_LOCALE";
+		}
+		print "\n";
+
 		eval {
 			binmode STDOUT, ":encoding(console_out)";
 		};
