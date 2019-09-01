@@ -79,12 +79,8 @@ sub connect_db{
 		$win_9x = 1 unless Win32::IsWinNT();
 	}
 
-	# 文字コードの設定
-	#if ( substr($r,0,3) > 4 ){
-	#	$dbh->do("SET NAMES ujis");
-	#	print "Performed \"SET NAMES ujis\"\n" unless $no_verbose;
-	#}
 	$dbh->do("SET NAMES utf8mb4");
+	$dbh->do("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
 
 	return $dbh;
 }
