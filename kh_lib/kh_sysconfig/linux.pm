@@ -59,20 +59,9 @@ sub _readin{
 #   設定値の保存   #
 #------------------#
 
-sub save{
-	my $self = shift;
 
-	$self = $self->refine_cj;
-	if ($self->path_check){
-		$self->config_morph;
-	}
 
-	$self->save_ini;
-	
-	return 1;
-}
-
-sub save_ini{
+sub ini_content{
 	my $self = shift;
 	$self = $self->refine_cj;
 
@@ -141,29 +130,24 @@ sub save_ini{
 		'app_pdf',
 	);
 
-	my $f = $self->{ini_file};
-	open (INI, '>encoding(utf8)', $f) or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => ">$f"
-		);
+	my $content = '';
+
 	foreach my $i (@outlist){
 		my $value = $self->$i(undef,'1');
 		$value = '' unless defined $value;
-		print INI "$i\t$value\n";
+		$content .= "$i\t$value\n";
 	}
 	foreach my $i (keys %{$self}){
 		if ( index($i,'w_') == 0 ){
 			my $value = $self->win_gmtry($i);
 			$value = '' unless defined $value;
-			print INI "$i\t$value\n";
+			$content .= "$i\t$value\n";
 		}
 	}
 	if ($self->{main_window}){
-		print INI "main_window\t$self->{main_window}";
+		$content .= "main_window\t$self->{main_window}";
 	}
-	close (INI);
-	return 1;
+	return $content;
 
 }
 

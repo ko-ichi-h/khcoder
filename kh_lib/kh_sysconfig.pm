@@ -14,6 +14,8 @@ if ( $@ ){
 	$locale_fs = 0;
 }
 
+our $ini_content;
+
 sub readin{
 	my $class = shift;
 	$class .= '::'.&os;
@@ -74,7 +76,51 @@ sub readin{
 
 	$self = $self->_readin;
 
+	$ini_content = $self->ini_content;
 	return $self;
+}
+
+
+sub save{
+	my $self = shift;
+
+	$self = $self->refine_cj;
+	if ($self->path_check){
+		$self->config_morph;
+	}
+	
+	$self->save_ini;
+	
+	return 1;
+}
+
+
+sub save_ini{
+	my $self = shift;
+	my $s_debug = 1;
+	
+	my $content = $self->ini_content;
+	
+	if ($ini_content eq $content) {
+		print "coder.ini not changed. abort saving...\n" if $s_debug;
+		return 1;
+	} else {
+		print "coder.ini changed:\n" if $s_debug;
+		use Text::Diff;
+		print diff(\$ini_content, \$content) if $s_debug;
+		print "\n" if $s_debug;
+		$ini_content = $content;
+	}
+	
+	my $f = $self->{ini_file};
+	open (INI,'>:encoding(utf8)', "$f") or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$f"
+		);
+	print INI $content;
+	close (INI);
+	return 1;
 }
 
 #------------------#
