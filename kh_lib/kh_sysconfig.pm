@@ -56,12 +56,24 @@ sub readin{
 		$self->reset_parm;
 	}
 
-	# iniファイル
-	#print "kh_sysconfig: $self->{ini_file}\n";
-	open (CINI, '<:encoding(utf8)', "$self->{ini_file}") or
+	# read from backup config file when it seems to be corrupt
+	my $f = $self->{ini_file};
+	my $bflag = 0;
+	if (-s $f < 512) {
+		if (-e "$f.bak") {
+			if (-s "$f.bak" > 1024) {
+				print "Reading configurations from backup *.ini file.\n";
+				$f = "$f.bak";
+				$bflag = 1;
+			}
+		}
+	}
+	
+	# read config file
+	open (CINI, '<:encoding(utf8)', $f) or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => "$self->{ini_file}"
+			thefile => $f
 		);
 	while (<CINI>){
 		chomp;
@@ -76,7 +88,8 @@ sub readin{
 
 	$self = $self->_readin;
 
-	$ini_content = $self->ini_content;
+	$ini_content = $self->ini_content unless $bflag;
+
 	return $self;
 }
 
@@ -97,7 +110,7 @@ sub save{
 
 sub save_ini{
 	my $self = shift;
-	my $s_debug = 1;
+	my $s_debug = 0;
 	
 	my $content = $self->ini_content;
 	
@@ -112,14 +125,31 @@ sub save_ini{
 		$ini_content = $content;
 	}
 	
-	my $f = $self->{ini_file};
-	open (INI,'>:encoding(utf8)', "$f") or
+	use File::Temp;
+	my $tmp = File::Temp->new(
+		TEMPLATE => 'coder.ini.XXXXX',
+		DIR      => $self->cwd.'/config',
+		UNLINK   => 0,
+	);
+	my $f = $tmp->filename;
+	$tmp = undef;
+	
+	open (INI,'>:encoding(utf8)',  $f) or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => "$f"
+			thefile =>  $f
 		);
 	print INI $content;
 	close (INI);
+	print "config temp: ", $f, "\n" if $s_debug;
+	
+	unlink($self->{ini_file})
+		or warn("Failed to save config file (1). $@\n")
+	;
+	rename($f, $self->{ini_file})
+		or warn("Failed to save config file (2). $@\n")
+	;
+	
 	return 1;
 }
 
@@ -752,10 +782,21 @@ sub ini_backup{
 	my $file_ini = $self->cwd.'/config/coder.ini';
 	my $file_bak = $file_ini.'.bak';
 	
-	unlink($file_bak) if -e $file_bak;
+	my $flag = 0;
+	if (-e $file_bak) {
+		if ( (stat $file_ini)[9] > (stat $file_bak)[9] ) {
+			$flag = 1;
+		}
+	} else {
+		$flag = 1;
+	}
 	
-	use File::Copy;
-	copy($file_ini, $file_bak);
+	if ($flag) {
+		#print "making backup copy of config file.\n";
+		unlink($file_bak) if -e $file_bak;
+		use File::Copy;
+		copy($file_ini, $file_bak);
+	}
 	
 	return $self;
 }
@@ -1315,8 +1356,25 @@ sub win32_monitor_chk{
 	my $self = shift;
 	my $new = shift;
 	
+	my $dir = $self->cwd."/config/monitor_chk";
+	
 	if ( defined($new) ){
 		$self->{win32_monitor_chk} = $new;
+		if ($self->{win32_monitor_chk}) {
+			unless (-d $dir){
+				mkdir($dir) or warn("failed co create $dir");
+			}
+		} else {
+			rmdir($dir) if -d $dir;
+		}
+		
+	} else {
+		if (-d $dir) {
+			$self->{win32_monitor_chk} = 1;
+		} else {
+			$self->{win32_monitor_chk} = 0;
+		}
+		
 	}
 	
 	return $self->{win32_monitor_chk};

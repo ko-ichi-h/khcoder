@@ -115,7 +115,6 @@ sub ini_content{
 		'font_pdf',
 		'font_pdf_cn',
 		'font_pdf_kr',
-		'win32_monitor_chk',
 		'newline_symbol',
 		'cell_symbol',
 		'color_DocView_info',
@@ -156,7 +155,7 @@ sub ini_content{
 		}
 	}
 	if ($self->{main_window}){
-		$content .= "main_window\t$self->{main_window}";
+		$content .= "main_window\t$self->{main_window}\n";
 	}
 	
 	return $content;

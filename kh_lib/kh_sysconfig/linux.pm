@@ -145,7 +145,7 @@ sub ini_content{
 		}
 	}
 	if ($self->{main_window}){
-		$content .= "main_window\t$self->{main_window}";
+		$content .= "main_window\t$self->{main_window}\n";
 	}
 	return $content;
 

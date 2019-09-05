@@ -172,7 +172,7 @@ sub check_viewable{
 		&& $::config_obj->win32_monitor_chk == 0
 	) {
 		$::config_obj->win32_monitor_chk(1);
-		$::config_obj->save;
+		#$::config_obj->save;
 
 		require gui_checkgeo;
 		my $r = gui_checkgeo::check(
