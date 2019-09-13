@@ -310,6 +310,7 @@ sub calc_code_plugin{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "# END: DATA\n";
 
 	&set_config_param($self);
