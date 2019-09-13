@@ -30,7 +30,19 @@ sub readin{
 			warn "Error: Unexpected UTF8 Flag!";
 		}
 	}
-	#print "kh_sysconfig: $self->{cwd}\n";
+
+	# use backup config file
+	my $f = $self->{ini_file};
+	if ( not (-e $f) or (-s $f < 512) ) {
+		if (-e "$f.bak") {
+			if (-s "$f.bak" > 1024) {
+				print "Reading configurations from backup *.ini file.\n";
+				unlink($f) if -e $f;
+				use File::Copy;
+				copy("$f.bak", $f);
+			}
+		}
+	}
 
 	# 設定ファイルが揃っているか確認
 	if (
@@ -56,19 +68,6 @@ sub readin{
 		$self->reset_parm;
 	}
 
-	# read from backup config file when it seems to be corrupt
-	my $f = $self->{ini_file};
-	my $bflag = 0;
-	if (-s $f < 512) {
-		if (-e "$f.bak") {
-			if (-s "$f.bak" > 1024) {
-				print "Reading configurations from backup *.ini file.\n";
-				$f = "$f.bak";
-				$bflag = 1;
-			}
-		}
-	}
-	
 	# read config file
 	open (CINI, '<:encoding(utf8)', $f) or
 		gui_errormsg->open(
@@ -88,7 +87,7 @@ sub readin{
 
 	$self = $self->_readin;
 
-	$ini_content = $self->ini_content unless $bflag;
+	$ini_content = $self->ini_content;
 
 	return $self;
 }
@@ -115,7 +114,7 @@ sub save_ini{
 	my $content = $self->ini_content;
 	
 	if ($ini_content eq $content) {
-		print "coder.ini not changed. abort saving...\n" if $s_debug;
+		print "coder.ini not changed. skip saving...\n" if $s_debug;
 		return 1;
 	} else {
 		print "coder.ini changed:\n" if $s_debug;
@@ -133,6 +132,8 @@ sub save_ini{
 	);
 	my $f = $tmp->filename;
 	$tmp = undef;
+	
+	print "Saving config. tmp file: $f\n";
 	
 	open (INI,'>:encoding(utf8)',  $f) or
 		gui_errormsg->open(
