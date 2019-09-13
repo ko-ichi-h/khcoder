@@ -357,6 +357,7 @@ sub _calc{
 	}
 	chop $r_command;
 	$r_command .= ")\n";
+	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "# END: DATA\n";
 
 	my $plot = &gui_window::word_cls::make_plot(

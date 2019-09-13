@@ -108,7 +108,7 @@ gui_window::cod_corresp:
     select_codes:             'Select code:'
     top:                      Top
     win_title:                'Options: Correspondence Analysis of Codes'
-    er_zero:                  'We cannot use 0 frequency codes for this analysis.'
+    er_zero:                  'Coding failed. Please check frequencies of codes.'
     er_unit:                  'Illegal selection of Tabulating Unit.'
 gui_window::datacheck:
     auto_correct:             '   Auto correction of the target text:'

@@ -589,6 +589,7 @@ sub _calc{
 	# データ整理
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
+	$r_command .= "d <- subset(d, rowSums(d) > 0)\n";
 	$r_command .= "# END: DATA\n";
 
 	use plotR::network;

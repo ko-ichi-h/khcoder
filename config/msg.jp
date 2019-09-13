@@ -108,7 +108,7 @@ gui_window::cod_corresp:
     select_codes:             コード選択：
     top:                      上位
     win_title:                コーディング・対応分析：オプション
-    er_zero:                  '出現数が0のコードは利用できません。'
+    er_zero:                  'コーディングに失敗しました。単純集計を確認してください。'
     er_unit:                  '集計単位の選択が不正です。'
 gui_window::datacheck:
     auto_correct:             '   テキストの自動修正：'

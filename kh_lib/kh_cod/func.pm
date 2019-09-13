@@ -214,14 +214,17 @@ sub out2r_selected{
 	my %tables = ();
 	foreach my $i (@{$selected}){
 		unless ($i->res_table){
-			print "no result table!\n";
-			return 0;
+			next;
 		}
 		++$tables{$i->res_table};
 	}
 	my $sql = "SELECT ";
 	foreach my $i (@{$selected}){
-		$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+		if ($i->res_table) {
+			$sql .= "IF(".$i->res_table.".".$i->res_col.",1,0),";
+		} else {
+			$sql .= '0,';
+		}
 	}
 	chop $sql;
 	$sql .= "\nFROM ".$self->tani."\n";
