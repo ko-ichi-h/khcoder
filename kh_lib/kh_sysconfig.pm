@@ -1382,14 +1382,12 @@ sub win32_monitor_chk{
 		} else {
 			rmdir($dir) if -d $dir;
 		}
-		
 	} else {
 		if (-d $dir) {
 			$self->{win32_monitor_chk} = 1;
 		} else {
 			$self->{win32_monitor_chk} = 0;
 		}
-		
 	}
 	
 	return $self->{win32_monitor_chk};

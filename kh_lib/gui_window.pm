@@ -87,6 +87,7 @@ use gui_window::stop_words;
 use gui_window::word_som;
 use gui_window::cod_som;
 use gui_window::word_search_opt;
+use gui_window::import_folder;
 
 BEGIN{
 	if( $] > 5.008 ){
@@ -155,7 +156,6 @@ sub open{
 		$self->start;
 
 		$self->check_viewable;
-
 	}
 	return $self;
 }
@@ -163,17 +163,28 @@ sub open{
 # Window位置のチェック（スクリーンをはみ出していないか）
 sub check_viewable{
 	my $self = shift;
-
+	
+	$self->{no_geometry} = 0 unless $self->{no_geometry};
 	my $g = $::config_obj->win_gmtry($self->win_name);
+	
+	#print "1\n";
+	#print "-----------------\n";
+	#print "g: $g\n";
+	#print "ng: $self->{no_geometry}\n";
+	#print "os: ".$::config_obj->os."\n";
+	#print "wmc: ".$::config_obj->win32_monitor_chk."\n";
+	#print "-----------------\n";
+	
 	if (
 		   defined($g) && length($g)        # 位置を読み込んでいて
-		&! $self->{no_geometry}
+		&& $self->{no_geometry} == 0
 		&& $::config_obj->os eq 'win32'     # なおかつWindowsで
 		&& $::config_obj->win32_monitor_chk == 0
 	) {
+		#print "2\n";
 		$::config_obj->win32_monitor_chk(1);
-		#$::config_obj->save;
 
+		$self->win_obj->update;
 		require gui_checkgeo;
 		my $r = gui_checkgeo::check(
 			$self->win_obj->rootx,
