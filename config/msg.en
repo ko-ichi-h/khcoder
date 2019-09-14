@@ -192,7 +192,7 @@ gui_window::main::menu:
     exec_sql:                 Execute SQL Statements
     exit:                     Exit
     export:                   Export
-    export_kh:                For KH Coder (importable)
+    export_kh:                For KH Coder (*.khc)
     export_win_title:         Export current project to a *.khc file.
     freq:                     Frequency
     freq_df:                  Document Frequency Distribution
@@ -200,6 +200,8 @@ gui_window::main::menu:
     h_cluster:                Hierarchical Cluster Analysis
     help:                     Help
     import:                   Import
+    import_folder:            Multiple texts in a folder
+    import_khc:               KH Coder (*.khc)
     import_save_path:         Saving the target text file
     import_win_title:         Import a project from a *.khc file.
     jac_mtrx:                 Similarity Matrix

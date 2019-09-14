@@ -201,6 +201,8 @@ gui_window::main::menu:
     h_cluster:                階層的クラスター分析
     help:                     ヘルプ(H)
     import:                   インポート
+    import_folder:            フォルダ内の複数テキスト
+    import_khc:               KH Coder形式
     import_save_path:         分析対象ファイルの保存先を指定して下さい
     import_win_title:         KHC形式のファイルからプロジェクトをインポート。
     jac_mtrx:                 類似度行列
@@ -1134,6 +1136,17 @@ gui_window::r_plot::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ・調整"
+gui_window::import_folder:
+    win_title:                 "インポート：フォルダ内の複数テキスト"
+    description:               "指定されたフォルダ内の文書ファイルをすべて結合してプロジェクト作成"
+    folder:                    "フォルダ："
+    level:                     "ファイル名の見出しレベル："
+    conv:                      "データ内の半角山カッコ「<>」をスペースに変換する"
+    auto:                      "自動"
+    auto_jp:                   "自動（日本語）"
+    unicode:                   "Unicode（UTF-8）"
+    char_code:                 "文字コード："
+    memo:                      "プロジェクトの説明（メモ）："
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"

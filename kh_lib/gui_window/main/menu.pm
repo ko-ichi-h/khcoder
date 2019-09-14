@@ -280,8 +280,23 @@ sub make{
 					},
 		);
 
-		$f1->command(
-			-label => kh_msg->get('import'),
+		my $f_import = $f1->cascade(
+				-label => kh_msg->get('import'),
+				-font => "TKFN",
+				-tearoff=>'no'
+			);
+
+		$f_import->command(
+			-label => kh_msg->get('import_folder'),
+			-font => "TKFN",
+			-command =>
+				sub{
+						gui_window::import_folder->open;
+					},
+		);
+
+		$f_import->command(
+			-label => kh_msg->get('import_khc'),
 			-font => "TKFN",
 			-command =>
 				sub{
