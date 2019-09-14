@@ -31,17 +31,13 @@ sub readin{
 		}
 	}
 
-	# use backup config file
+	# Use backup if coder.ini is missing...
 	my $f = $self->{ini_file};
-	if ( not (-e $f) or (-s $f < 512) ) {
-		if (-e "$f.bak") {
-			if (-s "$f.bak" > 1024) {
-				print "Reading configurations from backup *.ini file.\n";
-				unlink($f) if -e $f;
-				use File::Copy;
-				copy("$f.bak", $f);
-			}
-		}
+	if ( not (-e $f) and (-s "$f.bak" > 1024) ){
+		use File::Copy;
+		sleep 1; # wait for 1 sec, considering the possibility that the file is being updated.
+		copy("$f.bak", $f) unless -e $f;
+		print "Using backup coder.ini file...\n";
 	}
 
 	# 設定ファイルが揃っているか確認
@@ -68,6 +64,18 @@ sub readin{
 		$self->reset_parm;
 	}
 
+	# read from backup coder.ini when it seems to be corrupt
+	my $bflag = 0;
+	if (-s $f < 512) {
+		if (-e "$f.bak") {
+			if (-s "$f.bak" > 1024) {
+				print "Reading backup coder.ini file...\n";
+				$f = "$f.bak";
+				$bflag = 1;
+			}
+		}
+	}
+
 	# read config file
 	open (CINI, '<:encoding(utf8)', $f) or
 		gui_errormsg->open(
@@ -87,7 +95,8 @@ sub readin{
 
 	$self = $self->_readin;
 
-	$ini_content = $self->ini_content;
+	$ini_content = $self->ini_content unless $bflag;
+	$self->{read_from_backup} = $bflag;
 
 	return $self;
 }
@@ -779,6 +788,11 @@ sub os_code{
 
 sub ini_backup{
 	my $self = shift;
+	
+	# Don't make a new backup file when we are using backup
+	if ( $self->{read_from_backup} ){
+		return 1;
+	}
 	
 	my $file_ini = $self->cwd.'/config/coder.ini';
 	my $file_bak = $file_ini.'.bak';

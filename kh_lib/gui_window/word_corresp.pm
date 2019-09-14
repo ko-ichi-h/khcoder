@@ -711,7 +711,7 @@ sub calc{
 	$r_command .= "v_count <- 0\n";
 	$r_command .= "v_pch   <- NULL\n";
 
-	# rondom sampling
+	# random sampling
 	my $threshold = 2;
 	srand 11;
 	if ( $self->{sampling_obj}->parameter ){
