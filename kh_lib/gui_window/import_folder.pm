@@ -497,7 +497,7 @@ sub _exec{
 		$f_o = $::config_obj->uni_path( $f_o );
 		$f_o =~ s/\\/\//g;
 
-		print $fh "<$self->{tani}><file:$f_o></$self->{tani}>\n";
+		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
 		push @files, "file:$f_o";
 
 		# Convert to *.txt
@@ -603,6 +603,9 @@ sub _exec{
 			$text =~ s/。/./go;
 		}
 		$text = mysql_exec->quote($text);
+		mysql_exec->do("
+			INSERT INTO dmark (name) VALUES ($text)
+		",1);
 		mysql_exec->do("
 			INSERT INTO dstop (name) VALUES ($text)
 		",1);
