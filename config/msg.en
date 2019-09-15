@@ -1132,6 +1132,21 @@ gui_window::r_plot::cod_mat_line:
     win_title:                 "Line Chart"
 gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "Configure: Line Chart"
+gui_window::import_folder:
+    win_title:                 "Import: multiple texts in a folder"
+    description:               "Unify all document files in a folder and creat a project"
+    folder:                    "Folder: "
+    level:                     "Heading level of filenames:"
+    conv:                      'convert "<" and ">" in the data to white space'
+    auto:                      "Auto Detect"
+    auto_jp:                   "Auto Detect (Japanese)"
+    unicode:                   "Unicode（UTF-8）"
+    char_code:                 "Encoding of files: "
+    unified:                   "Unified file: "
+    change:                    "Change"
+    browse_unified:            "Please enter a name for the unified text file"
+    opt_unify:                 "Unify documents"
+    opt_project:               "New project"
 screen_code::rde_menu:
     plugin_raw_data_editor:    "Edit Data"
     err_not_exist:             "Projectdata don't exist."

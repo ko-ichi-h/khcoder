@@ -18,8 +18,12 @@ sub _new{
 		-text => kh_msg->get('description')
 	)->pack(-anchor => 'w', -padx => 5);
 
+	#-------------------#
+	#   Unify options   #
+
 	my $fra_lab = $mw->LabFrame(
-		-label       => 'Options',
+		-label       => kh_msg->get('opt_unify'),
+		-foreground  => 'blue',
 		-labelside   => 'acrosstop',
 		-borderwidth => 2
 	)->pack(
@@ -27,20 +31,32 @@ sub _new{
 		-fill   => 'both'
 	);
 
-	# フォルダ用フレーム
+	# Folder
 	my $fra1 = $fra_lab->Frame()->pack(
 		-anchor => 'c',
 		-fill   => 'x',
 		-expand => 'x',
+		-pady   => 2,
 	);
 
 	$fra1->Label(
 		-text => kh_msg->get('folder'),
-	)->pack(
-		-side => 'left',
+	)->grid(
+		-row    => 0,
+		-column => 0,
+		-sticky => 'w',
+		-pady=>2
 	);
 
-	$self->{btn1} = $fra1->Button(
+	my $fra1a = $fra1->Frame(
+	)->grid(
+		-row    => 0,
+		-column => 1,
+		-sticky => 'ew',
+		-pady=>2
+	);
+
+	$self->{btn1} = $fra1a->Button(
 		-text => kh_msg->gget('browse'),
 		-font => 'TKFN',
 		-borderwidth => 1,
@@ -51,16 +67,63 @@ sub _new{
 		}
 	)->pack(-padx => '2',-side => 'left');
 
-	$self->{entry_folder} = $fra1->Entry()->pack(
+	$self->{entry_folder} = $fra1a->Entry(
+		-background => 'white',
+	)->pack(
 		-side   => 'left',
 		-fill   => 'x',
 		-expand => 'x',
 	);
 
 	$self->{entry_folder}->DropSite(
-		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_folder},],
+		-dropcommand => sub{
+			&Gui_DragDrop::get_filename_droped( $self->{entry_folder} );
+			$self->_unified_default;
+		},
 		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
 	);
+
+	# Unified file
+	$fra1->Label(
+		-text => kh_msg->get('unified'),
+	)->grid(
+		-row    => 1,
+		-column => 0,
+		-sticky => 'w',
+		-pady=>2
+	);
+	
+	my $fra1b = $fra1->Frame(
+	)->grid(
+		-row    => 1,
+		-column => 1,
+		-sticky => 'ew',
+		-pady=>2
+	);
+	
+	$fra1b->Button(
+		-text => kh_msg->get('change'),
+		-font => 'TKFN',
+		-borderwidth => 1,
+		-command => sub{ $mw->after
+			(10,
+				sub { $self->_browse_unified; }
+			);
+		}
+	)->pack(-padx => '2',-side => 'left');
+	
+	$self->{entry_unified} = $fra1b->Entry(-background => 'gray')->pack(
+		-side   => 'left',
+		-fill   => 'x',
+		-expand => 'x',
+	);
+
+	$self->{entry_unified}->DropSite(
+		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_unified},],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
+	
+	$fra1->gridColumnconfigure(1, -weight => 1);
 
 	# 見出しレベル選択用フレーム
 	my $fra2 = $fra_lab->Frame()->pack(
@@ -70,7 +133,7 @@ sub _new{
 	);
 
 	$fra2->Label(
-		-text => kh_msg->get('level'),#'ファイル名の見出しレベル：',
+		-text => '    '.kh_msg->get('level'),#'ファイル名の見出しレベル：',
 	)->pack(
 		-side => 'left',
 	);
@@ -98,7 +161,7 @@ sub _new{
 	);
 
 	$fra3->Label(
-		-text => kh_msg->get('char_code'),
+		-text => '    '.kh_msg->get('char_code'),
 	)->pack(
 		-side => 'left',
 	);
@@ -125,25 +188,88 @@ sub _new{
 	}
 	
 	# チェックボックス
+	my $fra5 = $fra_lab->Frame()->pack(
+		-fill   => 'x',
+		-expand => 'x',
+	);
+	$fra5->Label(-text => '    ')->pack(-side => 'left');
 	$self->{if_conv} = 1;
-	$self->{check2} = $fra_lab->Checkbutton(
+	$self->{check2} = $fra5->Checkbutton(
 		-variable => \$self->{if_conv},
 		-text     => kh_msg->get('conv'),#'データ内の半角山カッコ「<>」をスペースに変換する',
 		-font     => "TKFN",
 	)->pack(-anchor => 'w');
+
+	#---------------------#
+	#   Project options   #
+
+	my $fra_lab2 = $mw->LabFrame(
+		-label       => kh_msg->get('opt_project'),
+		-foreground  => 'blue',
+		-labelside   => 'acrosstop',
+		-borderwidth => 2
+	)->pack(
+		-expand => 'yes',
+		-fill   => 'both'
+	);
+	
+	# language
+	$fra_lab2->Label(
+		-text => kh_msg->get('lang', 'gui_window::stop_words'), # 言語
+		-font => "TKFN"
+	)->grid(-row => 0, -column => 0, -sticky => 'w', -pady=>2);
+	
+	my $fra3a = $fra_lab2->Frame()->grid(-row => 0, -column => 1, -sticky => 'ew',-pady=>2);
+	$self->{fra3a} = $fra3a;
+
+	$self->{lang_menu} = gui_widget::optmenu->open(
+		parent  => $fra3a,
+		pack    => { -side => 'left', -padx => 2},
+		options =>
+			[
+				[ kh_msg->get('l_jp', 'gui_window::sysconfig') => 'jp'],#'Japanese'
+				[ kh_msg->get('l_en', 'gui_window::sysconfig') => 'en'],#'English'
+				[ kh_msg->get('l_cn', 'gui_window::sysconfig') => 'cn'],#'Chinese'
+				[ kh_msg->get('l_kr', 'gui_window::sysconfig') => 'kr'],#'Korean *'
+				[ kh_msg->get('l_ca', 'gui_window::sysconfig') => 'ca'],#'Catalan *'
+				[ kh_msg->get('l_nl', 'gui_window::sysconfig') => 'nl'],#'Dutch *'
+				[ kh_msg->get('l_fr', 'gui_window::sysconfig') => 'fr'],#'French *'
+				[ kh_msg->get('l_de', 'gui_window::sysconfig') => 'de'],#'German *'
+				[ kh_msg->get('l_it', 'gui_window::sysconfig') => 'it'],#'Italian *'
+				[ kh_msg->get('l_pt', 'gui_window::sysconfig') => 'pt'],#'Portuguese *'
+				[ kh_msg->get('l_ru', 'gui_window::sysconfig') => 'ru'],#'Russian *'
+				[ kh_msg->get('l_sl', 'gui_window::sysconfig') => 'sl'],#'Slovenian *'
+				[ kh_msg->get('l_es', 'gui_window::sysconfig') => 'es'],#'Spanish *'
+			],
+		variable => \$self->{lang},
+		command => sub {$self->refresh_method;},
+	);
+	$self->{lang_menu}->set_value( $::config_obj->last_lang );
+
+	# method
+	$self->refresh_method;
 	
 	# Memo
-	my $fra4 = $fra_lab->Frame()->pack(
-		-anchor => 'c',
-		-fill   => 'x',
-		-expand => 'x',
+	$fra_lab2->Label(
+		-text => kh_msg->get('memo', 'gui_window::project_new'),
+	)->grid(
+		-row    => 1,
+		-column => 0,
+		-sticky => 'w',
+		-pady=>2
 	);
-	$fra4->Label(
-		-text => kh_msg->get('memo'),
-	)->pack(
-		-side => 'left',
+
+	$self->{entry_memo} =$fra_lab2->Entry(
+		-background => 'white',
+	)->grid(
+		-row    => 1,
+		-column => 1,
+		-sticky => 'we',
+		-pady=>2
 	);
-	
+
+
+	$fra_lab2->gridColumnconfigure(1, -weight => 1);
 
 	# ボタン類の配置
 	$mw->Button(
@@ -167,6 +293,103 @@ sub _new{
 	return $self;
 }
 
+sub refresh_method{
+	my $self = shift;
+	$self->{method_menu}->destroy if $self->{method_menu};
+	
+	my @options;
+	my %possbile;
+	# Japanese
+	if ($self->{lang} eq 'jp') {
+		push @options, ['ChaSen', 'chasen'];
+		$possbile{chasen} = 1;
+		if (
+			   ($::config_obj->os ne 'win32')
+			|| ($::config_obj->os eq 'win32' && -e $::config_obj->os_path( $::config_obj->mecab_path) )
+		) {
+			push @options, ['MeCab', 'mecab'];
+			$possbile{mecab} = 1;
+		}
+	}
+	# Korean
+	elsif ($self->{lang} eq 'kr') {
+		push @options, ['MeCab & HanDic', 'mecab_k'];
+		$possbile{mecab} = 1;
+	}
+	
+	else {
+		
+		# add stanford pos tagger
+		if (
+				$self->{lang} eq 'cn'
+			 || $self->{lang} eq 'en'
+		) {
+			push @options, ['Stanford POS Tagger', 'stanford'];
+			$possbile{stanford} = 1;
+		}
+
+		# add FreeLing
+		if (
+			(
+				$self->{lang} eq 'ca' ##
+			 || $self->{lang} eq 'en'
+			 || $self->{lang} eq 'fr'
+			 || $self->{lang} eq 'it'
+			 || $self->{lang} eq 'pt'
+			 || $self->{lang} eq 'ru' ##
+			 || $self->{lang} eq 'sl' ####
+			 || $self->{lang} eq 'es'
+			 || $self->{lang} eq 'de'
+			)
+			&& (
+				   ($::config_obj->os ne 'win32')
+				|| (
+					$::config_obj->os eq 'win32'
+					&& -d $::config_obj->freeling_dir
+				)
+			)
+		) {
+			push @options, ['FreeLing', 'freeling'];
+			$possbile{freeling} = 1;
+		}
+		
+		# add Snowball stemmer
+		if (
+			   $self->{lang} eq 'en'
+			|| $self->{lang} eq 'nl'
+			|| $self->{lang} eq 'fr'
+			|| $self->{lang} eq 'de'
+			|| $self->{lang} eq 'it'
+			|| $self->{lang} eq 'pt'
+			|| $self->{lang} eq 'es'
+		) {
+			push @options, ['Snowball stemmer', 'stemming'];
+			$possbile{stemming} = 1;
+		}
+	}
+
+	# Select last used method
+	#my $last = $::config_obj->last_method;
+	#if ($possbile{$last}) {
+	#	$self->{method} = $last;
+	#} else {
+	#	$self->{method} = $options[0]->[1];
+	#}
+	$self->{method} = undef;
+
+	$self->{method_menu} = gui_widget::optmenu->open(
+		parent  => $self->{fra3a}, #$fra3,
+		width   => 19,
+		pack    => { -side => 'right', -padx => 2, -fill => 'x', -expand => 1},
+		options => \@options,
+		variable => \$self->{method},
+		command => sub {}
+	);
+	
+	#$lang = $self->{lang};
+	return $self;
+}
+
 sub _get_folder{
 	my $self = shift;
 
@@ -181,16 +404,64 @@ sub _get_folder{
 		$path = $self->gui_jg_filename_win98($path);
 		$path = $self->gui_jg($path);
 		$path = $::config_obj->os_path($path);
+		
+		# Folder entry
+		my $uni_path = $::config_obj->uni_path($path);
 		$self->{entry_folder}->delete('0','end');
-		$self->{entry_folder}->insert(0,$self->gui_jchar($path));
+		$self->{entry_folder}->insert(0,$uni_path);
+		
+		$self->_unified_default;
 	}
 	
 	return $self;
 }
 
-sub _exec{
+sub _unified_default{
+	my $self = shift;
+
+	# Unified file entry
+	my $unified = $self->{entry_folder}->get;
+	$unified = $::config_obj->os_path( $unified );
+	if ($unified =~ /\/$/) {
+		chop $unified;
+	}
+	
+	my $n = 0;
+	while (-e $unified."_uni$n.txt") {
+		++$n;
+	}
+	$unified = $unified."_uni$n.txt";
+	
+	$unified = $::config_obj->uni_path($unified);
+	$self->{entry_unified}->delete('0','end');
+	$self->{entry_unified}->insert(0,$unified);
+	
+	return 1;
+}
+
+sub _browse_unified{
 	my $self = shift;
 	
+	my @types = (
+		[ "Text files",[qw/.txt/] ],
+		[ "All files",'*' ]
+	);
+
+	my $path = $self->win_obj->getSaveFile(
+		-filetypes  => \@types,
+		-title      => $self->gui_jt( kh_msg->get('browse_unified')),
+		-initialdir => $::config_obj->uni_path( $::config_obj->cwd ),
+	);
+
+	if ($path){
+		$self->{entry_unified}->delete('0','end');
+		$self->{entry_unified}->insert(0, $::config_obj->uni_path($path) );
+	}
+}
+
+sub _exec{
+	my $self = shift;
+
 	# フォルダのチェック
 	my $path = $self->gui_jg_filename_win98( $self->{entry_folder}->get() );
 	$path = $self->gui_jg($path);
@@ -203,24 +474,9 @@ sub _exec{
 		return 0;
 	}
 
-	# 保存先の参照
-	my @types = (
-		[ "text file",[qw/.txt/] ],
-		["All files",'*']
-	);
-	my $save = $self->win_obj->getSaveFile(
-		-defaultextension => '.txt',
-		-filetypes        => \@types,
-		-title            =>
-			$self->gui_jt('名前を付けて結合ファイルを保存')
-	);
-	unless ($save){
-		return 0;
-	}
-	$save = gui_window->gui_jg_filename_win98($save);
-	$save = gui_window->gui_jg($save);
+	# 保存先
+	my $save = $self->{entry_unified}->get;
 	$save = $::config_obj->os_path($save);
-	#print "file save: $save\n";
 
 	# 処理の実行
 	my @files = ();
@@ -241,7 +497,7 @@ sub _exec{
 		$f_o = $::config_obj->uni_path( $f_o );
 		$f_o =~ s/\\/\//g;
 
-		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
+		print $fh "<$self->{tani}><file:$f_o></$self->{tani}>\n";
 		push @files, "file:$f_o";
 
 		# Convert to *.txt
@@ -304,24 +560,58 @@ sub _exec{
 	);
 	close($fh);
 	$fh = undef;
-	#if ($::config_obj->os eq 'win32'){
-	#	kh_jchar->to_sjis($save);
-	#}
 
-	# ファイル名の格納
-	my $names = substr( $save,0, rindex($save,'.txt') );
-	$names .= '_names.txt';
-	open my $fhn, '>:encoding(utf8)', $names or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => $names,
-		);
-	foreach my $i (@files){
-		print $fhn "$i\n";
+	# Create a new project
+	unless (-e $save){
+		return 0;
 	}
-	close ($fhn);
+	my $new = kh_project->new(
+		target  => $save,
+		comment => $self->gui_jg( $self->{entry_memo}->get ),
+	) or return 0;
+	
+	kh_projects->read->add_new($new) or return 0;
+	
+	$new->{target} = $::config_obj->uni_path($save);
+	
+	$new->open or die;
+	
+	$::project_obj->morpho_analyzer( $self->{method} );
+	$::project_obj->morpho_analyzer_lang( $self->{lang} );
+	$::project_obj->read_hinshi_setting;
+	
+	# ignore file names (don't use them as parts of text data)
+	foreach my $i (@files){
+		
+		# morpho_analyzer
+		use Lingua::JA::Regular::Unicode qw(katakana_h2z);
+		my $text = $i;
+		if (
+			   $::config_obj->c_or_j eq 'chasen'
+			|| $::config_obj->c_or_j eq 'mecab'
+		){
+			$text = katakana_h2z($text);
+			$text =~ s/ /　/go;
+			$text =~ s/\t/　/go;
+			$text =~ s/\\/￥/go;
+			$text =~ s/'/’/go;
+			$text =~ s/"/”/go;
+		} else {
+			$text = $_;
+			$text =~ s/\t/ /go;
+			$text =~ s/\\/ /go;
+			$text =~ s/。/./go;
+		}
+		$text = mysql_exec->quote($text);
+		mysql_exec->do("
+			INSERT INTO dstop (name) VALUES ($text)
+		",1);
+	}
 
-	$self->close;
+	$::main_gui->close_all;
+	$::main_gui->menu->refresh;
+	$::main_gui->inner->refresh;
+	return 1
 }
 
 sub win_name{

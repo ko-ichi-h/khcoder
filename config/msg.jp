@@ -1138,7 +1138,7 @@ gui_window::r_plot_opt::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ・調整"
 gui_window::import_folder:
     win_title:                 "インポート：フォルダ内の複数テキスト"
-    description:               "指定されたフォルダ内の文書ファイルをすべて結合してプロジェクト作成"
+    description:               "指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します"
     folder:                    "フォルダ："
     level:                     "ファイル名の見出しレベル："
     conv:                      "データ内の半角山カッコ「<>」をスペースに変換する"
@@ -1146,7 +1146,11 @@ gui_window::import_folder:
     auto_jp:                   "自動（日本語）"
     unicode:                   "Unicode（UTF-8）"
     char_code:                 "文字コード："
-    memo:                      "プロジェクトの説明（メモ）："
+    unified:                   "結合ファイル："
+    change:                    "変更"
+    browse_unified:            "結合ファイルの名前を指定してください"
+    opt_unify:                 "テキストファイル結合"
+    opt_project:               "新規プロジェクト"
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"
