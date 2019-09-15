@@ -137,6 +137,7 @@ sub _new{
 		-font => "TKFN",
 		-command => sub{$self->_make_new;}
 	)->pack(-side => 'right');
+	$lfra->gridColumnconfigure(1, -weight => 1);
 	
 	#SCREEN Plugin
 	use screen_code::rde_newproject_button;
@@ -256,7 +257,7 @@ sub refresh_method{
 	$self->{method_menu} = gui_widget::optmenu->open(
 		parent  => $self->{fra3}, #$fra3,
 		width   => 19,
-		pack    => { -side => 'right', -padx => 2},
+		pack    => { -side => 'right', -padx => 2, -fill => 'x', -expand => 1},
 		options => \@options,
 		variable => \$self->{method},
 		command => sub {}
