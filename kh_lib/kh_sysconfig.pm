@@ -32,9 +32,9 @@ sub readin{
 	}
 
 	# Use backup if coder.ini is missing...
+	use File::Copy;
 	my $f = $self->{ini_file};
 	if ( not (-e $f) and (-s "$f.bak" > 1024) ){
-		use File::Copy;
 		sleep 1; # wait for 1 sec, considering the possibility that the file is being updated.
 		copy("$f.bak", $f) unless -e $f;
 		print "Using backup coder.ini file...\n";
@@ -76,11 +76,27 @@ sub readin{
 		}
 	}
 
-	# read config file
-	open (CINI, '<:encoding(utf8)', $f) or
+	# make a tmp copy of coder.ini
+	use File::Temp;
+	my $tmp = File::Temp->new(
+		TEMPLATE => 'coder.ini.read.XXXXX',
+		DIR      => $self->cwd.'/config',
+		UNLINK   => 0,
+	);
+	my $ft = $tmp->filename;
+	$tmp = undef;
+	copy($f, $ft) or
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => $f
+			thefile => "read: $f"
+		)
+	;
+	
+	# read config from copied tmp file
+	open (CINI, '<:encoding(utf8)', $ft) or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $ft
 		);
 	while (<CINI>){
 		chomp;
@@ -88,6 +104,7 @@ sub readin{
 		$self->{$temp[0]} = $temp[1];
 	}
 	close (CINI);
+	unlink($ft);
 
 	# その他
 	$self->{history_file} = $self->{cwd}.'/config/projects';
