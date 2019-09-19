@@ -219,7 +219,7 @@ sub init{
 	#unless (-e '/tmp/mysql.sock.khc3'){
 	unless (mysql_exec->connection_test){
 		print "Starting MySQL...\n";
-		system "deps/MySQL-5.6.17/bin/mysqld --defaults-file=deps/MySQL-5.6.17/khc.cnf &"
+		system $::config_obj->cwd."/deps/mysql-5.6.17/bin/mysqld --defaults-file=".$::config_obj->cwd."/deps/mysql-5.6.17/khc.cnf &"
 	}
 
 	# Start UIM
