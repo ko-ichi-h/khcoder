@@ -42,7 +42,7 @@ You need:
     - MeCab and HanDic for analyzing Korean text
     - Stanford Word Segmenter and Stanford POS Tagger for analyzing Chinese text
 
-You also need JAVA to run Stanford POS Tagger.
+You also need JAVA to run Stanford POS Tagger. See #91 for more details.
 
 ## License
 
