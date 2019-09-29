@@ -177,8 +177,8 @@ sub save{
 	if (eval (@{$self->words_mk})){
 		my $sql1 = 'INSERT INTO dmark (name) VALUES ';
 		foreach my $i (@{$self->words_mk}){
-			$i =~ s/'/\\'/go;
-			$sql1 .= "('$i'),";
+			$i = mysql_exec->quote($i);
+			$sql1 .= "($i),";
 		}
 		chop $sql1;
 		mysql_exec->do($sql1,1);
@@ -215,8 +215,8 @@ sub save{
 	if (eval (@{$self->words_st})){
 		my $sql1 = 'INSERT INTO dstop (name) VALUES ';
 		foreach my $i (@{$self->words_st}){
-			$i =~ s/'/\\'/go;
-			$sql1 .= "('$i'),";
+			$i = mysql_exec->quote($i);
+			$sql1 .= "($i),";
 		}
 		chop $sql1;
 		mysql_exec->do($sql1,1);
@@ -226,10 +226,12 @@ sub save{
 		mysql_exec->do('UPDATE genkei SET nouse=0',1);
 		if (eval (@{$self->{stopwords_act}})){
 			foreach my $i (@{$self->{stopwords_act}}){
+				my $i_k = mysql_exec->quote("<$i>");
+				$i = mysql_exec->quote($i);
 				mysql_exec->
-					do("UPDATE genkei SET nouse=1 WHERE name=\'$i\'",1);
+					do("UPDATE genkei SET nouse=1 WHERE name=$i",1);
 				mysql_exec->
-					do("UPDATE genkei SET nouse=1 WHERE name=\'<$i>\'",1);
+					do("UPDATE genkei SET nouse=1 WHERE name=$i_k",1);
 				#print "no use: $i\n";
 			}
 		}

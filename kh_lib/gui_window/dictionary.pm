@@ -424,7 +424,7 @@ sub save{
 	$self->config->words_mk(\@mark); # ファイル利用のあとから設定
 
 	# 使用しない語
-	my @stop; %check={};
+	my @stop; %check = ();
 	$t = $self->t2->get("1.0","end");
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
 	#print Jcode->new("$t\n")->sjis;
