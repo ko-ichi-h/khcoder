@@ -137,16 +137,7 @@ sub ini_content{
 		$value = '' unless defined $value;
 		$content .= "$i\t$value\n";
 	}
-	foreach my $i (keys %{$self}){
-		if ( index($i,'w_') == 0 ){
-			my $value = $self->win_gmtry($i);
-			$value = '' unless defined $value;
-			$content .= "$i\t$value\n";
-		}
-	}
-	if ($self->{main_window}){
-		$content .= "main_window\t$self->{main_window}\n";
-	}
+
 	return $content;
 
 }

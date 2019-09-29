@@ -15,6 +15,7 @@ if ( $@ ){
 }
 
 our $ini_content;
+our $win_content;
 
 sub readin{
 	my $class = shift;
@@ -106,6 +107,19 @@ sub readin{
 	close (CINI);
 	unlink($ft);
 
+	# read win.ini
+	open (WINI, '<:encoding(utf8)', $self->cwd.'/config/win.ini') or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => 'win.ini'
+		);
+	while (<WINI>){
+		chomp;
+		my @temp = split /\t/, $_;
+		$self->{$temp[0]} = $temp[1];
+	}
+	close (WINI);
+	
 	# その他
 	$self->{history_file} = $self->{cwd}.'/config/projects';
 	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
@@ -113,6 +127,7 @@ sub readin{
 	$self = $self->_readin;
 
 	$ini_content = $self->ini_content unless $bflag;
+	$win_content = $self->win_content;
 	$self->{read_from_backup} = $bflag;
 
 	return $self;
@@ -135,51 +150,106 @@ sub save{
 
 sub save_ini{
 	my $self = shift;
-	my $s_debug = 0;
+	my $s_debug = 1;
+	
+	# coder.ini
 	
 	my $content = $self->ini_content;
 	
 	if ($ini_content eq $content) {
 		print "coder.ini not changed. skip saving...\n" if $s_debug;
-		return 1;
 	} else {
 		print "coder.ini changed:\n" if $s_debug;
 		use Text::Diff;
 		print diff(\$ini_content, \$content) if $s_debug;
 		print "\n" if $s_debug;
 		$ini_content = $content;
+		
+		use File::Temp;
+		my $tmp = File::Temp->new(
+			TEMPLATE => 'coder.ini.XXXXX',
+			DIR      => $self->cwd.'/config',
+			UNLINK   => 0,
+		);
+		my $f = $tmp->filename;
+		$tmp = undef;
+		
+		print "Saving coder.ini, Tmp file: $f\n";
+		
+		open (INI,'>:encoding(utf8)',  $f) or
+			gui_errormsg->open(
+				type    => 'file',
+				thefile =>  $f
+			);
+		print INI $content;
+		close (INI);
+		
+		unlink($self->{ini_file})
+			or warn("Failed to save config file (1). $@\n")
+		;
+		rename($f, $self->{ini_file})
+			or warn("Failed to save config file (2). $@\n")
+		;
 	}
 	
-	use File::Temp;
-	my $tmp = File::Temp->new(
-		TEMPLATE => 'coder.ini.XXXXX',
-		DIR      => $self->cwd.'/config',
-		UNLINK   => 0,
-	);
-	my $f = $tmp->filename;
-	$tmp = undef;
+	# win.ini
+	my $w_content = $self->win_content;
 	
-	print "Saving config. tmp file: $f\n";
-	
-	open (INI,'>:encoding(utf8)',  $f) or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile =>  $f
+	if ($win_content eq $w_content) {
+		print "win.ini not changed. skip saving...\n" if $s_debug;
+	} else {
+		print "win.ini changed:\n" if $s_debug;
+		use Text::Diff;
+		print diff(\$win_content, \$w_content) if $s_debug;
+		print "\n" if $s_debug;
+		$win_content = $w_content;
+
+		use File::Temp;
+		my $tmp = File::Temp->new(
+			TEMPLATE => 'win.ini.XXXXX',
+			DIR      => $self->cwd.'/config',
+			UNLINK   => 0,
 		);
-	print INI $content;
-	close (INI);
-	print "config temp: ", $f, "\n" if $s_debug;
-	
-	unlink($self->{ini_file})
-		or warn("Failed to save config file (1). $@\n")
-	;
-	rename($f, $self->{ini_file})
-		or warn("Failed to save config file (2). $@\n")
-	;
-	
+		my $f = $tmp->filename;
+		$tmp = undef;
+		
+		print "Saving win.ini, Tmp file: $f\n";
+		
+		open (INI,'>:encoding(utf8)',  $f) or
+			gui_errormsg->open(
+				type    => 'file',
+				thefile =>  $f
+			);
+		print INI $w_content;
+		close (INI);
+		
+		unlink($self->cwd.'/config/win.ini')
+			or warn("Failed to save W config file (1). $@\n")
+		;
+		rename($f, $self->cwd.'/config/win.ini')
+			or warn("Failed to save W config file (2). $@\n")
+		;
+	}
+
 	return 1;
 }
 
+sub win_content{
+	my $self = shift;
+	my $content = '';
+
+	foreach my $i (keys %{$self}){
+		if ( index($i,'w_') == 0 ){
+			my $value = $self->win_gmtry($i);
+			$value = '' unless defined($value);
+			$content .= "$i\t".$value."\n";
+		}
+	}
+	if ($self->{main_window}){
+		$content .= "main_window\t$self->{main_window}\n";
+	}
+	return $content;
+}
 #------------------#
 #   設定の初期化   #
 
