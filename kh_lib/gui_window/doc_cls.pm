@@ -391,7 +391,6 @@ sub _calc_exec{
 	my $self = shift;
 	
 	my $r_command = $self->{r_command};
-	my $cluster_number = $self->{cluster_number};
 
 	# クラスター分析の結果を納めるファイル名
 	my $file = $::project_obj->file_datadir.'_doc_cls_ward';
@@ -405,7 +404,9 @@ sub _calc_exec{
 	$r_command .= "d_selection <- rowSums(d) > 0\n";
 	$r_command .= "d        <- d[d_selection, ]\n";
 	$r_command .= "d_labels <- d_labels[d_selection]\n";
-	$r_command .= "n_cls <- $cluster_number\n";
+	$r_command .= "n_cls <- $self->{cluster_number}\n";
+	$r_command .= "if (n_cls >= nrow(d)){ n_cls <- nrow(d) - 1 }\n";
+	$r_command .= "if (n_cls <= 1){ print(\"Error: the number of (valid) documents is too small. We need more than 3 documents to perform this analysis.\") }\n";
 	
 	if ( $self->{method_tfidf} eq 'tf-idf' ){
 		$r_command .= &r_command_tfidf;
@@ -456,7 +457,7 @@ if (
 ';
 
 
-	$r_command_ward .= "q <- cutree(dcls,k=$cluster_number)\n";
+	$r_command_ward .= "q <- cutree(dcls,k=n_cls)\n";
 	
 	$r_command_ward .= "ord <- order( unique( q[order.dendrogram( as.dendrogram(dcls) )] ) )\n";
 	$r_command_ward .= "q   <- ord[q]\n";
