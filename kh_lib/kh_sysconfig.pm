@@ -108,17 +108,14 @@ sub readin{
 	unlink($ft);
 
 	# read win.ini
-	open (WINI, '<:encoding(utf8)', $self->cwd.'/config/win.ini') or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => 'win.ini'
-		);
+	open (WINI, '<:encoding(utf8)', $self->cwd.'/config/win.ini'); # just ignore when failed to open
 	while (<WINI>){
 		chomp;
 		my @temp = split /\t/, $_;
 		$self->{$temp[0]} = $temp[1];
 	}
 	close (WINI);
+
 	
 	# その他
 	$self->{history_file} = $self->{cwd}.'/config/projects';
