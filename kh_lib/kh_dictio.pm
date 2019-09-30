@@ -226,7 +226,7 @@ sub save{
 		mysql_exec->do('UPDATE genkei SET nouse=0',1);
 		if (eval (@{$self->{stopwords_act}})){
 			foreach my $i (@{$self->{stopwords_act}}){
-				print "no use: $i\n";
+				#print "no use: $i\n";
 				my $i_k = mysql_exec->quote("<$i>");
 				$i = mysql_exec->quote($i);
 				mysql_exec->
