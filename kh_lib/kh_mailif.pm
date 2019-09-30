@@ -5,6 +5,9 @@ use strict;
 use Net::SMTP;
 
 sub success{
+	unless ($::config_obj){
+		return 0;
+	}
 	unless ($::config_obj->mail_if){
 		return 0;
 	}
@@ -50,6 +53,9 @@ sub success{
 }
 
 sub failure{
+	unless ($::config_obj){
+		return 0;
+	}
 	unless ($::config_obj->mail_if && $::config_obj->in_preprocessing){
 		return 0;
 	}
