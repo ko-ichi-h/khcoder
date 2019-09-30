@@ -215,8 +215,8 @@ sub save{
 	if (eval (@{$self->words_st})){
 		my $sql1 = 'INSERT INTO dstop (name) VALUES ';
 		foreach my $i (@{$self->words_st}){
-			$i = mysql_exec->quote($i);
-			$sql1 .= "($i),";
+			my $t = mysql_exec->quote($i);
+			$sql1 .= "($t),";
 		}
 		chop $sql1;
 		mysql_exec->do($sql1,1);
@@ -226,13 +226,13 @@ sub save{
 		mysql_exec->do('UPDATE genkei SET nouse=0',1);
 		if (eval (@{$self->{stopwords_act}})){
 			foreach my $i (@{$self->{stopwords_act}}){
+				print "no use: $i\n";
 				my $i_k = mysql_exec->quote("<$i>");
 				$i = mysql_exec->quote($i);
 				mysql_exec->
 					do("UPDATE genkei SET nouse=1 WHERE name=$i",1);
 				mysql_exec->
 					do("UPDATE genkei SET nouse=1 WHERE name=$i_k",1);
-				#print "no use: $i\n";
 			}
 		}
 		# 韓国語データの場合は半角スペースを無視する設定に
