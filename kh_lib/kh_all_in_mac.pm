@@ -229,6 +229,9 @@ sub init{
 		system 'xterm -e echo ok';
 	}
 
+	# Minimize Terminal window
+	system 'osascript -e \'tell application "Terminal" to set miniaturized of every window to true\'';
+
 	return 1;
 }
 
