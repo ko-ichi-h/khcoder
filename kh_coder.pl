@@ -25,6 +25,12 @@ $kh_version = "3.Alpha.17h";
 BEGIN {
 	# open (STDERR,">stderr.txt") or die; # for debug
 
+	# for macOS
+	if ($^O eq 'darwin'){
+		# Un-minimize Terminal window
+		system 'osascript -e \'tell application "Terminal" to set miniaturized of front window to false\'';
+	}
+
 	# Encoding configurations
 	use Jcode;
 	push @INC, '.';
@@ -219,6 +225,16 @@ my_threads->init;
 
 # GUI¤Î³«»Ï
 $main_gui = gui_window::main->open;
+
+# for macOS
+if (
+	   ($^O eq 'darwin')
+	&& $::config_obj->all_in_one_pack
+){
+	# Minimize Terminal window
+	system 'osascript -e \'tell application "Terminal" to set miniaturized of front window to true\'';
+}
+
 MainLoop;
 
 __END__
