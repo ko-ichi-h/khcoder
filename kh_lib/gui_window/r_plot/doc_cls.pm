@@ -20,9 +20,9 @@ sub save{
 	
 	if ($::config_obj->os eq 'win32'){
 		@types = (
+			[ "Enhanced Metafile",[qw/.emf/] ],
 			[ "SVG",[qw/.svg/] ],
 			[ "PDF",[qw/.pdf/] ],
-			[ "Enhanced Metafile",[qw/.emf/] ],
 			@types,
 		);
 	} else {
@@ -97,13 +97,15 @@ sub save_r{
 	$file_csv =~ s/\\/\\\\/g;
 
 	$self->{plots}[0]->{command_f} =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+	my $backup = $self->{plots}[0]->{command_f};
 	$self->{plots}[0]->{command_f}
-		=~ s/\n.+?read\.csv.+?\n/\n/;
+		=~ s/d <\- read\.csv.+?\n/\n/;
 	$self->{plots}[0]->{command_f} =
 		'd <- read.csv("'.$file_csv.'", fileEncoding="UTF-8-BOM")'."\n"
 		.$self->{plots}[0]->{command_f};
 
 	$self->{plots}[0]->save($path) if $path;
+	$self->{plots}[0]->{command_f} = $backup;
 
 	return 1;
 }

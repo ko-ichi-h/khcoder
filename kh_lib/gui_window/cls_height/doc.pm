@@ -50,7 +50,7 @@ sub _save{
 			$file_csv =~ s/\\/\\\\/g;
 		}
 		$self->{plots}{$self->{type}}{$self->{range}}->{command_f}
-			=~ s/^.+read.csv\(.+?\)\n/\n/;
+			=~ s/d <\- read.csv\(.+?\)\n/\n/;
 		$self->{plots}{$self->{type}}{$self->{range}}->{command_f} =
 			'd <- read.csv("'.$file_csv.'",fileEncoding="UTF-8-BOM")'."\n"
 			.$self->{plots}{$self->{type}}{$self->{range}}->{command_f};
