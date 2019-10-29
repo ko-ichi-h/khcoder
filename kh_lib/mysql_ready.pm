@@ -463,7 +463,7 @@ sub readin{
 		if ($::config_obj->os eq 'win32') {
 			$icode = 'cp932';
 		} else {
-			$icode = 'ujis'
+			$icode = 'eucjpms'
 		}
 	}
 
