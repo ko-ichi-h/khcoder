@@ -497,7 +497,7 @@ sub copy{
 	$clip .= "\n";
 	
 	# Ãæ¿È
-	my $rows = @{$self->{result}} - 2;
+	my $rows = @{$self->{result}} - 1;
 	for (my $r = 0; $r <= $rows; ++$r){
 		# 1ÎóÌÜ
 		if ($self->{list2}->itemExists($r, 0)){
