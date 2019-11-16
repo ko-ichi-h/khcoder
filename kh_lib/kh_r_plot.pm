@@ -773,6 +773,12 @@ sub _save_png{
 	my $self = shift;
 	my $path = shift;
 	
+	if (-e $self->{path}) {
+		use File::Copy qw/copy/;
+		copy($self->{path}, $path) or warn("File copy failed: $path\n");
+		return 1;
+	}
+	
 	my $width = $self->{width};
 	my $height = $self->{height};
 
