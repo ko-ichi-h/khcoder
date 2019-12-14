@@ -80,17 +80,29 @@ sub first{
 		print "Check\t",timestr(timediff($t7,$t6)),"\n";
 
 	$self->fix_katuyo;
+		my $t8 = new Benchmark;
+		print "fix_morpho\t",timestr(timediff($t8,$t7)),"\n";
+
 	$self->fix_michigo;
-	
+		my $t9 = new Benchmark;
+		print "fix_unknown\t",timestr(timediff($t9,$t8)),"\n";
+
 	&zero_length_headings;
-	
+		my $t10 = new Benchmark;
+		print "fix_headings\t",timestr(timediff($t10,$t9)),"\n";
+
 	&make_cache;
+		my $t11 = new Benchmark;
+		print "make_cache\t",timestr(timediff($t11,$t10)),"\n";
 
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
+		my $t12 = new Benchmark;
+		print "clear_tmp\t",timestr(timediff($t12,$t11)),"\n";
+
 	mysql_exec->flush;
 	
 	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
