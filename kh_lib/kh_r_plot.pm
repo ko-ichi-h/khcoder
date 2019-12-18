@@ -108,6 +108,7 @@ sub new{
 				thefile => $file_debug,
 			)
 		;
+		print "R debug file: $file_debug\n";
 		print RDEBUG
 			"# command_f\n",
 			$self->{command_f},
