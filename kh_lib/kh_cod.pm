@@ -77,8 +77,14 @@ sub read_file{
 		#$_ = Jcode->new("$_",$icode)->euc;
 		if ( $_ =~ /^＊.+/o || $_ =~ /^\*.+/o ){
 			$head = $_;
+			if ( defined($codes{$head}) ){
+				$codes{$head} = '';
+				gui_errormsg->open(
+					type => 'msg',
+					msg  => $head.kh_msg->get('redefined')
+				);
+			}
 			push @codes, $head;
-			#print Jcode->new("head: $head\n")->sjis;
 		} else {
 			$codes{$head} .= "$_\n";
 			#print Jcode->new("condition: $_\n")->sjis;

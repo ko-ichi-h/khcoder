@@ -1077,6 +1077,7 @@ gui_errormsg::file:
     could_not_open_the_file:  "Could not open the file.\nKH Coder will exit now.\n* "
 kh_cod:
     not_coding_rules:         'The selected file does not look like a coding rule file'
+    redefined:                " code is redefined.\nPlease change the name of the code."
 kh_r_plot:
     illegal_plot_size:        'Illegal plot size'
     faliled_in_plotting:      "Failed in plotting with R\n\n"

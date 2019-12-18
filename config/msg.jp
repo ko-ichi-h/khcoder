@@ -1081,6 +1081,7 @@ gui_errormsg::file:
     could_not_open_the_file:  "ファイルを開けませんでした。\nKH Coderを終了します。\n* "
 kh_cod:
     not_coding_rules:         '選択されたファイルはコーディング・ルール・ファイルに見えません。'
+    redefined:                " コードが何度も定義されています。\nコードの名前を変更してください。"
 kh_r_plot:
     illegal_plot_size:        'プロットサイズの指定が不正です'
     faliled_in_plotting:      "Rを用いた推定または描画に失敗しました\n\n"
