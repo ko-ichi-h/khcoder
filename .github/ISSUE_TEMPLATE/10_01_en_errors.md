@@ -4,7 +4,7 @@ about: Create a report to help us figure out the problem
 labels: error
 ---
 
-Please edit the following template and write your question contents.
+<!-- Please edit the following template and write your question contents. -->
 
 **The error message as detailed as possible**
 Please do not abbreviate or translate the message. Please tell me as it is, verbatim. If you don't like to type, you can attach a screenshot.
@@ -22,7 +22,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **What happens if you perform the same operation with the tutorial file (Anne.xls)**
-Can you get the intended result with tutorial data files? Or you get the same error? Please use "Anne.xls" in "tutorial_en" folder to test it out. 
+Can you get the intended result with tutorial data files? Or you get the same error? Please use "Anne.xls" in "tutorial_en" folder to test it out.
 
 **Files to Reproduce the Error**
 If we can't reproduce the error with the tutorial file "Anne.xls", please consider attaching files that can reproduce the Error.
@@ -37,4 +37,4 @@ e.g. 2.00f, 3.Alapha.08, etc. To check the version number, go to "Help" "About" 
 e.g. Windows 10, Ubuntu 14.02
 
 **Additional context**
-Add any other context about the problem here.
+Add any other context about the problem.

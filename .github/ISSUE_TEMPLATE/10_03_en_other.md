@@ -4,7 +4,7 @@ about: Suggest an idea for this project or drop a comment
 
 ---
 
-Please edit the following template and write your comments.
+<!-- Please edit the following template and write your comments. -->
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]

@@ -4,6 +4,7 @@ about: Questions on how to use this software
 labels: question
 ---
 
+<!-- 
 Please edit the following template and write your question contents.
 
 # Before you post Questions
@@ -35,9 +36,19 @@ The old discussion forum here:
 https://sourceforge.net/p/khc/discussion/222396/
 
 ## 4. Include Following Information
+-->
 
-### 4.1 The version number of KH Coder you use
+**The version number of KH Coder you use**
 ex. 2.00f, 3.Alapha.08, etc. To check the version number, go to "Help" "About" in the menu of KH Coder.
 
-### 4.2  Your Operating System
+**Your Operating System**
 ex. Windows 10, Mac OS X 10.12, Ubuntu 10.14, etc.
+
+**What language of text are you trying to analyze?**
+ex. English, Japanese, Chinese, etc.
+
+**Your Qeuestion**
+A clear and concise description of your question.
+
+**Screenshots**
+If applicable, add screenshots to help explain your question.
