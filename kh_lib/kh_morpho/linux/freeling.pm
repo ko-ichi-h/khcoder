@@ -30,7 +30,7 @@ sub _run_morpho{
 	my $cmd_line =                                           # command line
 		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg --server --port 50005'
+		.'.cfg --server --port '.$::config_obj->freeling_port
 		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	
@@ -47,7 +47,7 @@ sub _run_morpho{
 		|| $self->Exec_Error("Process could not start");
 	
 	$cmd_line =                                           # command line
-		"analyzer_client 50005 "
+		"analyzer_client ".$::config_obj->freeling_port." "
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	$self->{cmd_line}      = $cmd_line;
@@ -65,7 +65,8 @@ sub _run_morpho{
 	
 	for (my $n = 0; $n <= 120; ++$n){
 		print "Waiting ($n/120): ";
-		my $return = `analyzer_client 50005 < $file_temp`;
+		my $freeling_client_cmd = "analyzer_client ".$::config_obj->freeling_port." < $file_temp";
+		my $return = `$freeling_client_cmd`;
 		#print "Return: \"$return\"";
 		if (
 			length($return) > 5

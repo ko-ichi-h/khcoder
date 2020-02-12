@@ -55,7 +55,7 @@ sub _run_morpho{
 		." /C \"$freeling_path\""
 		." --nodate --noquant --flush -f "
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg --server --port 50005'
+		.'.cfg --server --port '.$::config_obj->freeling_port
 	;
 	
 	$self->{cmd_path}      = $cmd_path;
@@ -109,7 +109,8 @@ sub _run_morpho{
 	
 	for (my $n = 0; $n <= 120; ++$n){
 		print "Waiting ($n/120): ";
-		my $return = `"$freeling_path" 50005 < $file_temp`;
+		my $freeling_client_cmd = "\"$freeling_path\" ".$::config_obj->freeling_port." < $file_temp";
+		my $return = `$freeling_client_cmd`;
 		#print "Return: \"$return\"\n";
 		if ( length($return) > 5 ) {
 			last;
@@ -123,7 +124,7 @@ sub _run_morpho{
 
 	$self->{cmd_line} =                                # command line
 		$cmd_path 
-		." /C \"\"$freeling_path\" 50005 "
+		." /C \"\"$freeling_path\" ".$::config_obj->freeling_port." "
 		."< \"$self->{target_temp}\" >\"$self->{output_temp}\"\"";
 	;
 

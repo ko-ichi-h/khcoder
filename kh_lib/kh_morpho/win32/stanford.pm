@@ -57,12 +57,12 @@ sub _run_morpho{
 	my $cmd_line  =
 		 'java -showversion -mx300m  -cp "'
 		.$p1
-		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model "'
+		.'" edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port '.$::config_obj->stanford_port.' -model "'
 		.$p2
 		.'"'
 	;
 	
-	#print "\ncmd: $cmd_line\n";
+	print "\nServer cmd: $cmd_line\n";
 	
 	require Win32::Process;
 	my $process;
@@ -82,7 +82,7 @@ sub _run_morpho{
 	while (not $self->{client}){
 		$self->{client} = new Net::Telnet(
 			Host => '127.0.0.1',
-			Port => 2020,
+			Port => $::config_obj->stanford_port,
 			Errmode => 'return',
 		);
 		sleep 1;

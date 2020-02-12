@@ -48,7 +48,7 @@ sub _run_morpho{
 	} else {
 		$cmd_line .= $::config_obj->stanf_jar_path;
 	}
-	$cmd_line .= ' edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port 2020 -model ';
+	$cmd_line .= ' edu.stanford.nlp.tagger.maxent.MaxentTaggerServer -outputFormat xml -outputFormatOptions lemmatize -port '.$::config_obj->stanford_port.' -model ';
 	if ($::config_obj->stanf_tagger_path =~ / /){
 		$cmd_line .= '"'.$::config_obj->stanf_tagger_path.'"';
 	} else {
@@ -67,7 +67,7 @@ sub _run_morpho{
 	while (not $self->{client}){
 		$self->{client} = new Net::Telnet(
 			Host => '127.0.0.1',
-			Port => 2020,
+			Port => $::config_obj->stanford_port,
 			Errmode => 'return',
 		);
 		sleep 1;

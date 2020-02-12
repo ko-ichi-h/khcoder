@@ -94,6 +94,7 @@ sub readin{
 	;
 	
 	# read config from copied tmp file
+	my $ini_content_tmp = '';
 	open (CINI, '<:encoding(utf8)', $ft) or
 		gui_errormsg->open(
 			type    => 'file',
@@ -103,6 +104,7 @@ sub readin{
 		chomp;
 		my @temp = split /\t/, $_;
 		$self->{$temp[0]} = $temp[1];
+		$ini_content_tmp .= "$_\n";
 	}
 	close (CINI);
 	unlink($ft);
@@ -123,7 +125,7 @@ sub readin{
 
 	$self = $self->_readin;
 
-	$ini_content = $self->ini_content unless $bflag;
+	$ini_content = $ini_content_tmp unless $bflag;
 	$win_content = $self->win_content;
 	$self->{read_from_backup} = $bflag;
 
@@ -1571,6 +1573,32 @@ sub sqllog_file{
 
 #------------#
 #   その他   #
+
+sub stanford_port{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{stanford_port} = $new;
+	}
+	
+	$self->{stanford_port} = 32020  unless defined( $self->{stanford_port} );
+	
+	return Encode::encode('ascii', $self->{stanford_port});
+}
+
+sub freeling_port{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{freeling_port} = $new;
+	}
+	
+	$self->{freeling_port} = 32021 unless defined( $self->{freeling_port} );
+	
+	return Encode::encode('ascii', $self->{freeling_port});
+}
 
 sub color_universal_design{
 	my $self = shift;
