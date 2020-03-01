@@ -33,12 +33,13 @@ sub _save_csv{
 	$::config_obj->R->send('dev.off()');
 	
 	# run save command
+	my $os_path = $::config_obj->os_path($path);
+	unlink($os_path) if -e $os_path;
 	my $r_command = &r_command_ready;
-	$r_command .= "write.csv(out, file=\"$path\", fileEncoding = \"UTF-8\")";
+	$r_command .= "write.csv(out, file=\"$path\", fileEncoding = \"UTF-8\", row.names=F)";
 	$::config_obj->R->send($r_command);
 	
 	# add BOM
-	my $os_path = $::config_obj->os_path($path);
 	my $temp_out = $::config_obj->cwd.'/config/R-bridge/temp.csv';
 	$temp_out = $::config_obj->os_path($temp_out);
 	if (-e $temp_out){
@@ -85,7 +86,7 @@ sub r_command_ready{
 
 # basic result
 out <- data.frame(
-	row.names = rownames(cl),
+	names = rownames(cl),
 	dim1 = cl[,1]
 )
 
