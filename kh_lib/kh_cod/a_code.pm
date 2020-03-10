@@ -5,7 +5,7 @@ use mysql_exec;
 use strict;
 use utf8;
 
-my $debug = 0;
+my $debug = 1;
 
 #----------------------#
 #   コーディング実行   #
@@ -111,13 +111,13 @@ sub code{
 			$words .= $i;
 			++$n;
 		}
-		#$words = '-1' if $error_flag;
+		$words = '-1' if $error_flag;
 		$self->cache_regist(
 			tani   => $tani,
 			kind   => $kind,
 			name   => $raw,
 			hyosos => $words,
-		) unless $error_flag; # do not regist cache if there is a syntax error
+		); # unless $error_flag; # do not regist cache if there is a syntax error
 	}
 	
 	# キャッシュを$self->{res_table}にコピー

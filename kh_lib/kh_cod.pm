@@ -83,6 +83,7 @@ sub read_file{
 					type => 'msg',
 					msg  => $head.kh_msg->get('redefined')
 				);
+				return 0;
 			}
 			push @codes, $head;
 		} else {
