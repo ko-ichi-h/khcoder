@@ -5,7 +5,7 @@ use mysql_exec;
 use strict;
 use utf8;
 
-my $debug = 1;
+my $debug = 0;
 
 #----------------------#
 #   コーディング実行   #
@@ -117,7 +117,7 @@ sub code{
 			kind   => $kind,
 			name   => $raw,
 			hyosos => $words,
-		); # unless $error_flag; # do not regist cache if there is a syntax error
+		);
 	}
 	
 	# キャッシュを$self->{res_table}にコピー
