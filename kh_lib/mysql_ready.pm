@@ -95,19 +95,151 @@ sub first{
 		my $t11 = new Benchmark;
 		print "make_cache\t",timestr(timediff($t11,$t10)),"\n";
 
+	my $t12;
+	if ( $::config_obj->unify_words_with_same_lemma ){
+	&unify_words;
+		$t12 = new Benchmark;
+		print "unify_words\t",timestr(timediff($t12,$t11)),"\n";
+	} else {
+		$t12 = new Benchmark;
+	}
+
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
-		my $t12 = new Benchmark;
-		print "clear_tmp\t",timestr(timediff($t12,$t11)),"\n";
+		my $t13 = new Benchmark;
+		print "clear_tmp\t",timestr(timediff($t13,$t12)),"\n";
 
 	mysql_exec->flush;
 	
 	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+}
+
+sub unify_words{
+	# Words with the same basic form are regarded as identical even if POS is different
+	
+	my $h = mysql_exec->select("
+		select genkei.name, sum(num)
+		from genkei, hselection
+		where
+			genkei.khhinshi_id = hselection.khhinshi_id
+			AND genkei.nouse = 0
+			AND hselection.ifuse = 1
+		group by genkei.name having count(genkei.name) > 1
+		order by sum(num) DESC
+	",1)->hundle;
+	
+	my $config;
+	while (my $i = $h->fetch) {
+		$config->{$i->[0]} = [$i->[0]];
+	}
+	
+	# get required info
+	my ($hyoso, $genkei);
+	foreach my $i (keys %{$config}){
+
+		# parent
+		my $hdl7 = mysql_exec->select("
+			SELECT genkei.id, genkei.num
+			FROM   genkei
+			WHERE  genkei.name = '$i'
+			ORDER BY num DESC
+			LIMIT 1
+		",1)->hundle->fetch;
+
+		next unless $hdl7;
+
+		$genkei->{$i}{id}  = $hdl7->[0];
+		$genkei->{$i}{num} = $hdl7->[1];
+
+		# hyoso of children
+		my $sql = "
+			SELECT hyoso.id
+			FROM   hyoso, genkei, hselection
+			WHERE
+				hyoso.genkei_id = genkei.id
+				AND genkei.khhinshi_id = hselection.khhinshi_id
+				AND genkei.nouse = 0
+				AND hselection.ifuse = 1
+				AND 
+		";
+		my $sql_w;
+		my $n = 0;
+		foreach my $h (@{$config->{$i}}){
+			$sql_w .= " OR " if $n;
+			$sql_w .= "genkei.name = '$h'";
+			++$n;
+		}
+		$sql = $sql .= "( $sql_w )";
+		$sql .= " AND NOT genkei_id = $genkei->{$i}{id}";
+		
+		my $hdl8 = mysql_exec->select($sql,1)->hundle;
+		while (my $h = $hdl8->fetch){
+			push @{$hyoso->{$i}}, $h->[0];
+		}
+
+		# freq of children
+		my $hdl9 = mysql_exec->select("
+			SELECT sum(genkei.num)
+			FROM   genkei, hselection
+			WHERE
+				genkei.khhinshi_id = hselection.khhinshi_id
+				AND hselection.ifuse = 1
+				AND ( $sql_w )
+				AND NOT genkei.id = $genkei->{$i}{id}
+		",1)->hundle->fetch;
+		if ($hdl9){
+			$genkei->{$i}{add} = $hdl9->[0];
+		} else {
+			$genkei->{$i}{add} = 0;
+		}
+	}
+
+	# exec
+	foreach my $i (keys %{$config}){
+	
+		# hyoso
+		my $sql = '';
+		$sql .= "
+			UPDATE hyoso
+			SET    genkei_id = $genkei->{$i}{id}
+			WHERE 
+		";
+		my $n = 0;
+		foreach my $h (@{$hyoso->{$i}}){
+			$sql .= " OR " if $n;
+			$sql .= "id = $h";
+			++$n;
+		}
+		next unless $n;
+		mysql_exec->do($sql,1);
+
+		# genkei 1
+		$sql = '';
+		$sql .= "DELETE FROM genkei\nWHERE ";
+		my $nn = 0;
+		foreach my $h (@{$config->{$i}}){
+			$sql .= " OR " if $nn;
+			$sql .= "( name = '$h' AND NOT id = $genkei->{$i}{id} )";
+			++$nn;
+		}
+		mysql_exec->do($sql,1);
+
+		# genkei 2
+		my $new_num = $genkei->{$i}{num} + $genkei->{$i}{add};
+		$sql = '';
+		$sql .= "
+			UPDATE genkei
+			SET    num = $new_num
+			WHERE  id = $genkei->{$i}{id}
+		";
+		mysql_exec->do($sql,1);
+	}
+	return 1;
 }
 
 sub reload_from_docx{

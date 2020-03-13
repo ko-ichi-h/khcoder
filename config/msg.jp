@@ -348,6 +348,7 @@ gui_window::sysconfig:
     web_browser:              Webブラウザ：
     win_title:                KH Coderの設定
     words_ext:                語を抽出する方法
+    unify_words_sl:           基本形が同じ語は，品詞名が異なっていても同じ語と見なす
 gui_window::stop_words:
     change_will:              "※前処理を（再度）実行するまで\n変更は反映されません。"
     for_this_method:          Stop wordを以下の抽出方法と言語むけに設定： 

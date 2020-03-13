@@ -1391,6 +1391,23 @@ sub color_DocView_CodeW{
 	}
 }
 
+sub unify_words_with_same_lemma{
+	my $self = shift;
+	my $new  = shift;
+	
+	# the default value
+	unless ( length( $self->{unify_words_with_same_lemma} ) ){
+		$self->{unify_words_with_same_lemma} = 0;
+	}
+	
+	# set a new value
+	if ( defined($new) ){
+		$self->{unify_words_with_same_lemma} = $new;
+	}
+	
+	return $self->{unify_words_with_same_lemma};
+}
+
 sub plot_size_words{
 	my $self = shift;
 	my $new  = shift;

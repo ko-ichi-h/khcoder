@@ -296,6 +296,25 @@ sub __new{
 		}
 	)->pack(-side => 'left');
 
+sub Tk::Separator
+  {
+  my ($self, %rest ) = @_;
+  my $direction = delete $rest{'-orient'} // 'horizontal';
+  $self->Frame( %{ {%rest, -bg => 'dimgray',
+    $direction eq 'vertical' ? '-width' : '-height' => 2 } } );
+  }
+
+	$lfra->Separator()->pack( -fill => 'x', -padx => 5, -pady => 7);
+	$self->{check_unify_words_sl} = $::config_obj->unify_words_with_same_lemma;
+	$self->{chkwd_unify_words_sl} = $lfra->Checkbutton(
+		-text     => kh_msg->get('unify_words_sl'),
+		-variable => \$self->{check_unify_words_sl},
+		-wraplength => "10c",
+		-justify  => 'left',
+	)->pack(
+		-anchor => 'w'
+	);
+
 	$self->{mail_obj} = gui_widget::mail_config->open(
 		parent => $inis,
 		pack   => {
@@ -389,6 +408,8 @@ sub ok{
 	$::config_obj->plot_size_words( $self->{mail_obj}->plot_size1 );
 	$::config_obj->plot_size_codes( $self->{mail_obj}->plot_size2 );
 	$::config_obj->plot_font_size(  $self->{mail_obj}->plot_font  );
+
+	$::config_obj->unify_words_with_same_lemma( $self->gui_jg( $self->{check_unify_words_sl} ) );
 
 	if ($::config_obj->save){
 		$self->close;

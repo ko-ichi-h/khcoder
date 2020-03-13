@@ -346,6 +346,7 @@ gui_window::sysconfig:
     web_browser:              'Web Browser:'
     win_title:                Global Settings
     words_ext:                Word Extraction
+    unify_words_sl:           "Words with the same basic form are recognized\nidentical even if the POS is different"
 gui_window::stop_words:
     change_will:              "* Changes will take effect when you invoke\nthe \"Run Preprocessing\" command (again)."
     for_this_method:          Stop words for the following method:
