@@ -10,6 +10,8 @@ global:
   copy_all: 복사(표 전체)
   csv_f: CSV 파일
   default: 기본값
+  max: '***not translated*** Max // 最大'
+  min: '***not translated*** Min // 最小'
   ok: OK
   paragraph: 단락
   plot: 플롯
@@ -30,6 +32,7 @@ gui_errormsg::mysql:
 gui_wait:
   done: '처리가 완료되었습니다. 경과 시간: '
 gui_widget::bubble:
+  breaks: '***not translated*** Legend  // 凡例 '
   bubble: '버블 플롯:'
   size: 버블의 크기
   standardize: '버블의 크기를 표준화:'
@@ -51,6 +54,7 @@ gui_widget::mail_config:
   font: '폰트 설정:'
   font_size: '기본 플롯 내 폰트 크기:  '
   from: '  From: '
+  if_cud: '***not translated*** Color universal design // カラーユニバーサルデザインを考慮'
   note_fs: KH Coder는 계량 텍스트 분석을 실천하기 위한 도구입니다.
   other: 기타
   plot_size1: '기본 플롯 사이즈: 긴 쪽'
@@ -80,14 +84,30 @@ gui_widget::r_font:
   font_size: '폰트 크기:'
   pcnt: '% '
   plot_size: ' 플롯 사이즈:'
+gui_widget::r_margin:
+  bottom: '***not translated*** bottom // 下'
+  left: '***not translated*** left // 左'
+  margin: '***not translated*** Margin:  // 余白：'
+  right: '***not translated*** right // 右'
+  top: '***not translated*** top // 上'
 gui_widget::r_mds:
   1_3: (1에서 3까지의 범위로 지정)
   dim: '차원:'
   dist: ' 거리:'
+  fix_asp: '***not translated*** Fix aspect ratio // 縦横比を固定する'
   method: '방법:'
+  random_start: |-
+    ***not translated*** Use random starts to find better solutions
+    *It may take 10 minutes or more. // ランダムスタートを繰り返してより良い解を探す
+    ※10分またはそれ以上の時間がかかる場合があります
 gui_widget::r_net:
-  e_jac: '계수'
-  e_top_n: '묘화수'
+  additional_plots: '***not translated*** Make additional plot (centrality etc.) // 追加的なプロットを作成（中心性など）'
+  cor_var: '***not translated*** Explore changes in co-occurrence patterns // 共起パターンの変化を探る（相関）'
+  cor_var2: '***not translated***   correlation with:  //   対象とする数値変数：'
+  cor_var_colors: '***not translated*** Color scale of correlation // 相関のカラースケール'
+  cor_var_darker: '***not translated*** Darker background color // 背景色を暗めにする'
+  e_jac: 계수
+  e_top_n: 묘화수
   filter_edges: 묘화하는 공기 관계(edge) 한정
   fix_lab: 라벨이 겹치지 않도록 위치 조정
   gray_scale: 그레이 스케일로 표현
@@ -95,7 +115,9 @@ gui_widget::r_net:
   min_sp_tree_only: 최소 스패닝 트리만 묘화
   or_more: 이상
   smaller: 모든 어휘를 작은 원으로 묘화
+  standardize_coef: '***not translated*** Standardize coef. // 係数を標準化する'
   thicker: 강한 관계를 위해 어두운 선으로 그립니다
+  view_coef: '***not translated*** Show coef. // 係数を表示'
 gui_widget::r_som:
   2_12: (2에서 12까지)
   cls_num: '클러스터 수:'
@@ -114,9 +136,14 @@ gui_widget::r_xy:
   symbi: 대칭 biplot
   x: ' X축'
   y: ' Y축'
+  zoom: '***not translated*** Enlarge area near the origin: // 原点付近を拡大：'
+  zoom_factor: '***not translated*** Factor // 係数'
+gui_widget::sampling:
+  sampling: '***not translated*** Sampling: // サンプリング：'
 gui_widget::select_a_var:
   heading: 제목
   na: 이용 불가
+  pos: '***not translated*** Position // 出現位置'
 gui_widget::tani2:
   unit_c: '코딩 단위:'
   unit_t: '  집계 단위:'
@@ -384,6 +411,21 @@ gui_window::hukugo:
   run: 검색
   whole: 전체 복합어 리스트
   win_title: 복합어 검출(ChaSen)
+gui_window::import_folder:
+  auto: '***not translated*** Auto Detect // 自動'
+  auto_jp: '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
+  browse_unified: '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
+  change: '***not translated*** Change // 変更'
+  char_code: '***not translated*** Encoding of files:  // 文字コード：'
+  conv: '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
+  description: '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
+  folder: '***not translated*** Folder:  // フォルダ：'
+  level: '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
+  opt_project: '***not translated*** New project // 新規プロジェクト'
+  opt_unify: '***not translated*** Unify documents // テキストファイル結合'
+  unicode: '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
+  unified: '***not translated*** Unified file:  // 結合ファイル：'
+  win_title: '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
 gui_window::main::inner:
   cases: 사례수
   docs: '문서의 단순 집계:'
@@ -414,6 +456,7 @@ gui_window::main::menu:
   exec_sql: SQL문 실행
   exit: 종료
   export: 익스포트
+  export_kh: '***not translated*** For KH Coder (*.khc) // KH Coder形式（インポート可）'
   export_win_title: 현재의 프로젝트를 KHC 형식의 파일로 출력.
   freq: 단순 집계
   freq_df: 출현 문서수(DF)의 분포
@@ -421,6 +464,8 @@ gui_window::main::menu:
   h_cluster: 계층적 클러스터 분석
   help: 도움말(H)
   import: 입력
+  import_folder: '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
+  import_khc: '***not translated*** KH Coder (*.khc) // KH Coder形式'
   import_save_path: 분석 대상 파일의 저장 장소를 지정해 주십시오
   import_win_title: 'KHC 형식의 파일에서 프로젝트를 가져오기. '
   jac_mtrx: 유사도 행렬
@@ -436,6 +481,16 @@ gui_window::main::menu:
   partial: 부분 텍스트 꺼내기
   plugin: 플러그인
   prep: 전처리(R)
+  prepro_reload: |-
+    ***not translated*** It may take a while.
+    If you don't want to execute it now, please click 'Cancel'.
+    
+    The source file is updated!
+    Shall we read the content of the source file again? // この処理には時間がかかる場合があります。
+    今すぐ実行したくないときは「キャンセル」をクリックしてください。
+    
+    読み込み元ファイルが更新されています！
+    元ファイルの内容を再度読み込みますか？
   project: 프로젝트(P)
   read: 읽기
   run_prep: 전처리 실행
@@ -540,6 +595,7 @@ gui_window::project_new:
   target_char_code: '분석 대상 파일의 문자 코드:'
   target_column: '분석 대상 열:'
   target_file: '분석 대상 파일:'
+  type_error: '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
   win_title: 신규 프로젝트
 gui_window::project_open:
   del: 삭제
@@ -603,7 +659,9 @@ gui_window::r_plot::word_netgraph:
   com_b: 서브그래프 검출(매개)
   com_m: 서브그래프 검출(modularity)
   com_r: 서브그래프 검출(random walks)
+  cor: '***not translated*** Correlation // 相関'
   gray: 그레이 스케일
+  interactive: '***not translated*** HTML // HTML表示'
   none: 없음
   win_title: 추출어 공기 네트워크
 gui_window::r_plot::word_som:
@@ -622,10 +680,14 @@ gui_window::r_plot_opt::cod_mat:
   bubble_size: '버블의 크기:'
   cellnote: 각 셀의 비중을 표시
   circle: 원
+  col1: '***not translated*** Color // カラー'
+  col2: '***not translated*** Color (CM) // カラー(CM)'
+  color_fix: '***not translated*** Fixed color scale:  // カラースケールを固定： '
   color_rsd: 표준화와의 차이로 색구분
   common: 공통의 설정
   dendro_c: 코드의 클러스터화와 재정렬
   dendro_v: 외부 변수/제목의 클러스터화와 재정렬
+  gray: '***not translated*** Gray // グレー'
   plot_size_heat: '플롯 사이즈  높이: '
   plot_size_maph: '  높이: '
   plot_size_mapw: '플롯 사이즈  폭: '
@@ -641,6 +703,9 @@ gui_window::r_plot_opt::cod_netg:
 gui_window::r_plot_opt::cod_som:
   win_title: '코딩 자기 조직화 지도: 조정'
 gui_window::r_plot_opt::doc_cls:
+  doc_label: '***not translated*** Case Label: // 文書ラベル：'
+  heading: '***not translated*** Heading // 見出し'
+  number: '***not translated*** No. // 文書番号'
   win_title: '문서의 덴드로그램: 조정'
 gui_window::r_plot_opt::selected_netgraph:
   win_title: '관련어 공기 네트워크: 조정'
@@ -676,6 +741,7 @@ gui_window::sysconfig:
   browse_stanford_tag: 모델 파일을 열어 주십시오.
   chasen: ChaSen(일본어)
   config: 설정
+  l_ca: '***not translated*** Catalan // カタロニア語'
   l_cn: 중국어
   l_de: 독일어
   l_en: 영어
@@ -686,6 +752,8 @@ gui_window::sysconfig:
   l_kr: 한국어
   l_nl: 네덜란드어
   l_pt: 포르투갈어
+  l_ru: '***not translated*** Russian // ロシア語'
+  l_sl: '***not translated*** Slovenian // スロベニア語'
   lang: '    언어: '
   mecab: MeCab(일본어)
   mecab_unicode: Unicode 사전
@@ -702,6 +770,9 @@ gui_window::sysconfig:
   stanford: Stanford POS Tagger
   stemming: Snowball Stemmer
   stopwords: '  Stop words: '
+  unify_words_sl: |-
+    ***not translated*** Words with the same basic form are recognized
+    identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
   web_browser: 'Web 브라우저: '
   win_title: KH Coder 설정
   words_ext: 어휘 추출 방법
@@ -757,6 +828,7 @@ gui_window::word_ass_opt:
   by_df: ㆍ전체에서의 출현수에 따른 어휘 선택
   by_pos: ㆍ품사에 따른 어휘 선택
   min_df: '    최소 문서수: '
+  show_lowc: '***not translated*** Show words with lower or equal prob. // 条件付き確率が同等ないし低下する語も表示'
   top: '    상위: '
   view: ㆍ표시할 어휘수
   win_title: 관련어 검색/필터 설정
@@ -938,6 +1010,7 @@ gui_window::word_list:
   type: '추출어 리스트 형식: '
   win_title: '추출어 리스트 - 옵션'
   xls: Excel(*.xls)
+  xlsx: '***not translated*** Excel (*.xlsx) // Excel (*.xlsx)'
 gui_window::word_mds:
   dim: 차원
   error_dim: 차원의 지정이 올바르지 않습니다. 1에서 3까지의 수치를 지정해 주십시오.
@@ -963,18 +1036,25 @@ gui_window::word_search:
   baseform: 추출어 검색
   comp: 완전 일치
   conj: 활용
+  enable_filter: '***not translated*** Enable Filter when Search // 検索時もフィルタ有効'
+  excel: '***not translated*** Excel // Excel出力'
   forw: 전방 일치
   freq: 빈도
   kwic: KWIC 콘코던스
   morph: 형태소
+  n100: '***not translated*** N100 // 次100'
   or: OR 검색
+  p100: '***not translated*** P100 // 前100'
   part: 부분 일치
   pos: 품사
   pos_conj: 품사/활용
   search: 검색
+  show_bars: '***not translated*** Bar chart // 棒グラフ'
   view_conj: 활용형을 표시
   win_title: 추출어 리스트
   word: 추출어
+gui_window::word_search_opt:
+  win_title: '***not translated*** Filter: Word Frequency List // 抽出語リスト・フィルタ設定'
 gui_window::word_som:
   cluster: 배치
   opt: 자기 조직화 지도의 옵션
@@ -993,6 +1073,10 @@ gui_window::word_tf_df:
   xy: 출현 횟수(X)와 문서수(Y)
 kh_cod:
   not_coding_rules: 선택하신 파일은 코딩 룰 파일로 보이지 않습니다.
+  redefined: |-
+    ***not translated***  code is redefined.
+    Please change the name of the code. //  コードが何度も定義されています。
+    コードの名前を変更してください。
 kh_cod::a_code:
   syntax_error: '코딩 룰 서식에 잘못이 있었습니다. 오류를 포함한 코드:  '
 kh_cod::a_code::atom::code:
@@ -1082,3 +1166,30 @@ mysql_words:
   tf: 출현 횟수
   types: 다른 어휘수(n)
   words: 추출어
+screen_code::assistant:
+  corresp_ang: '***not translated***   variable range: //   変数方向'
+  corresp_drop_menu1: '***not translated*** narrow // 狭い'
+  corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
+  corresp_drop_menu3: '***not translated*** normal // 普通'
+  corresp_drop_menu4: '***not translated*** slightly wider // やや広い'
+  corresp_drop_menu5: '***not translated*** wide // 広い'
+  corresp_rad: '***not translated***   origin range: //  範囲： 原点付近'
+  cross_map_label: '***not translated*** use plugin: // 《文錦》 マップ：'
+  dialog_cancel: '***not translated*** Cancel // キャンセル'
+  dialog_no: '***not translated*** No // いいえ'
+  dialog_ok: '***not translated*** OK // OK'
+  dialog_use_plugin: '***not translated*** Enable NegationChecker // 《文錦》 否定表現チェッカーを有効にする'
+  dialog_yes: '***not translated*** Yes // はい'
+  label_disable: '***not translated*** Disable   // 無効'
+  label_enable: '***not translated*** Enable   // 有効'
+  label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
+  use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
+screen_code::rde_menu:
+  err_edit: |-
+    ***not translated*** Projectdata cannot edit. // プロジェクトデータの編集処理に失敗しました。
+    再試行するか、サポートまでお問い合わせください。
+  err_not_exist: "***not translated*** Projectdata don't exist. // 分析対象ファイルに関連するデータが、データベースに存在しません。"
+  err_output_from_db: '***not translated*** Projectdata cannot output from database. // データベースからの外部変数出力に失敗しました。'
+  plugin_raw_data_editor: '***not translated*** Edit Data // 《文錦》 テキスト・変数の編集'
+screen_code::rde_newproject_button:
+  plugin_raw_data_editor: '***not translated*** Edit File // 《文錦》 テキスト・変数の編集'
