@@ -39,6 +39,14 @@ sub browse_freeling{
 	return $self;
 }
 
+sub Tk::Separator
+  {
+  my ($self, %rest ) = @_;
+  my $direction = delete $rest{'-orient'} // 'horizontal';
+  $self->Frame( %{ {%rest, -bg => 'dimgray',
+    $direction eq 'vertical' ? '-width' : '-height' => 2 } } );
+  }
+
 # .jar¤Î»²¾È
 sub browse_stanford_jar{
 	my $self  = shift;

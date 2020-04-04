@@ -5,8 +5,6 @@ use Tk;
 
 use gui_jchar;
 use Gui_DragDrop;
-#use gui_window::sysconfig::win32::chasen;
-#use gui_window::sysconfig::win32::mecab;
 
 my $last_stanf_lang;
 
@@ -295,14 +293,6 @@ sub __new{
 			$class->open();
 		}
 	)->pack(-side => 'left');
-
-sub Tk::Separator
-  {
-  my ($self, %rest ) = @_;
-  my $direction = delete $rest{'-orient'} // 'horizontal';
-  $self->Frame( %{ {%rest, -bg => 'dimgray',
-    $direction eq 'vertical' ? '-width' : '-height' => 2 } } );
-  }
 
 	$lfra->Separator()->pack( -fill => 'x', -padx => 5, -pady => 7);
 	$self->{check_unify_words_sl} = $::config_obj->unify_words_with_same_lemma;
