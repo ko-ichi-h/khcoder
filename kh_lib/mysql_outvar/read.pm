@@ -85,6 +85,7 @@ sub read{
 				if ($i eq '') {
 					$i = '.';
 				}
+				$i =~ tr/　/ /;
 				$v .= mysql_exec->quote($i).',';
 			}
 		}
