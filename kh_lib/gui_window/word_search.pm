@@ -310,6 +310,8 @@ sub clear{
 #   検索   #
 #----------#
 
+my $debug = 1;
+
 sub search{
 	my $self = shift;
 	
@@ -326,6 +328,7 @@ sub search{
 	}
 
 	# 検索実行
+	print "search..." if $debug;
 	$self->{result} = mysql_words->search(
 		query         => $query,
 		method        => $gui_window::word_search::method,
@@ -335,6 +338,7 @@ sub search{
 		filter        => $filter,
 		enable_filter => $self->{enable_filter},
 	);
+	print "ok   " if $debug;
 	
 	$self->display(0);
 	return $self;
@@ -344,6 +348,8 @@ sub display{
 	my $self = shift;
 	my $start = shift;
 	$self->{start} = $start;
+	
+	print "ready..." if $debug;
 	
 	# update P & N buttons
 	if ($self->{start} == 0) {
@@ -360,6 +366,8 @@ sub display{
 	my $result = $self->{result}->fetch($start);
 	
 	# POS check 1st pass
+	if (0) {
+	
 	my $n = 0;
 	my $flg_katuyo = 0;
 	my $current;
@@ -458,9 +466,30 @@ sub display{
 		$last = $i;
 		++$n;
 	}
+	}
 	
-	# display the result
-
+	# No POS check
+	my $n = 0;
+	my $flg_katuyo = 0;
+	my %have_child;
+	foreach my $i (@{$result}){
+		if ($i->[0] eq 'katuyo') {
+			if ($flg_katuyo == 0) {
+				my $nn = $n -1;
+				$have_child{$nn} = 1;
+				$flg_katuyo = 1;
+			}
+		}
+		if ( ($flg_katuyo == 1) &! ($i->[0] eq 'katuyo') ) {
+			$flg_katuyo = 0;
+		}
+		++$n;
+	}
+	
+	print "ok   ";
+	print "print..." if $debug;
+	
+	# display the result # it takes too much time!!!
 	$self->list->destroy;
 	my $lis = $self->{list_f}->Scrolled(
 			'Tree',
@@ -522,9 +551,9 @@ sub display{
 	
 	my $row = 0;
 	my $num = 1 + $start;
-	$last = undef;
+	my $last = undef;
 	my $child_flag = 0;
-	my $pos_flag = 0;
+	# my $pos_flag = 0;
 	my $max = $result->[0][2];
 	foreach my $i (@{$result}){
 		my $cu;
@@ -552,11 +581,11 @@ sub display{
 			$last = $cu;
 			$child_flag = 0;
 			
-			if ( $have_child{$row} && $pos_chk->{$row} ){
-				$pos_flag = $row;
-			} else {
-				$pos_flag = -1;
-			}
+			#if ( $have_child{$row} && $pos_chk->{$row} ){
+			#	$pos_flag = $row;
+			#} else {
+			#	$pos_flag = -1;
+			#}
 			
 			if ($have_child{$row}) {
 				my $color = "#007b43";
@@ -651,13 +680,13 @@ sub display{
 					   ( $col == 1 && $child_flag == 0 )
 					|| ( $col == 2 && $child_flag )
 				){
-					if ($col == 2 && $child_flag && $pos_flag > -1) {
-						my $name = $h;
-						$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
-						if ($pos_chk->{$pos_flag}{$name}) {
-							$h .= " !";
-						}
-					}
+					#if ($col == 2 && $child_flag && $pos_flag > -1) {
+					#	my $name = $h;
+					#	$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+					#	if ($pos_chk->{$pos_flag}{$name}) {
+					#		$h .= " !";
+					#	}
+					#}
 					
 					my $c = $self->list->Label(
 						-text => $h,
@@ -763,6 +792,7 @@ sub display{
 	use Time::HiRes;
 	sleep (0.1);
 	$self->{running} = 0;
+	print "ok\n" if $debug;
 
 	return 1;
 }
