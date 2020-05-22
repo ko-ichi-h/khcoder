@@ -27,6 +27,10 @@ Can you get the intended result with tutorial data files? Or you get the same er
 **Files to Reproduce the Error**
 If we can't reproduce the error with the tutorial file "Anne.xls", please consider attaching files that can reproduce the Error.
 
+**Language of the Text**
+What language of text are you trying to analyze?
+e.g. English, Spanish
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
