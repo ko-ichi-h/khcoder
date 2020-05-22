@@ -43,6 +43,13 @@ sub _new{
 	$e1->bind("<KP_Enter>",sub{return 0 if $self->{running}; $self->search;});
 	$self->config_entry_focusin($e1);
 
+	$self->{btn_clear} = $fra4e->Button(
+		-text => kh_msg->gget('clear'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{return 0 if $self->{running}; $self->clear;}
+	)->pack(-side => 'right', -padx => '2');
+
 	my $sbutton = $fra4e->Button(
 		-text => kh_msg->get('search'),#$self->gui_jchar('検索'),
 		-font => "TKFN",
@@ -291,6 +298,13 @@ sub _unselect{
 
 }
 
+sub clear{
+	my $self = shift;
+	$self->entry->delete(0, 'end');
+	
+	$self->search;
+	return $self;
+}
 
 #----------#
 #   検索   #
