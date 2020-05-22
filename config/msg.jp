@@ -25,6 +25,7 @@ global:
     select_a_file:            ファイルを選択して下さい
     min:                      最小
     max:                      最大
+    select_3words:            "この分析を行うためにはより多くの抽出語が必要です。\n抽出語リストを確認し、設定を見直してください。"
 gui_errormsg::mysql:
     fatal:                   "MySQLデータベースの処理に失敗しました。\nKH Coderを終了します。"
 gui_wait:
@@ -493,7 +494,6 @@ gui_window::word_corresp:
     option_ca:                対応分析のオプション
     option_words:             抽出語の選択
     plot:                     布置
-    select_3words:            少なくとも3つ以上の抽出語を布置して下さい。
     select_pos:               品詞が1つも選択されていません。
     select_var:               外部変数を1つ以上選択してください。
     too_many1:                現在の設定では
@@ -873,7 +873,6 @@ gui_widget::select_a_var:
     pos:                      '出現位置'
 gui_window::doc_cls:
     verb:                     '使用'
-    select_3words:            '少なくとも3つ以上の抽出語を選択して下さい。'
     fail:                     '計算に失敗しました'
     win_title:                '文書のクラスター分析：オプション'
 gui_window::doc_cls_res:

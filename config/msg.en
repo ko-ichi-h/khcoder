@@ -25,6 +25,7 @@ global:
     select_a_file:            Please select a file
     min:                      Min
     max:                      Max
+    select_3words:            "We need more words to run this analysis.\nPlease check the frequency list of words."
 gui_errormsg::mysql:
     fatal:                   "Failed in accessing MySQL database system.\nKH Coder will exit now."
 gui_wait:
@@ -491,7 +492,6 @@ gui_window::word_corresp:
     option_ca:                'Correspondence Analysis Options'
     option_words:             'Select Words'
     plot:                     ' '
-    select_3words:            Error Please select at least 3 words.
     select_pos:               'Error: Please select at least 1 POS.'
     select_var:               'Error: Please select at least 1 variable.'
     too_many1:                ' '
@@ -869,7 +869,6 @@ gui_widget::select_a_var:
     na:                       'n / a '
 gui_window::doc_cls:
     verb:                     ''
-    select_3words:            'Please select at least 3 words.'
     fail:                     'Failed to compute clusters.'
     win_title:                'Options: Cluster Analysis of Documents'
 gui_window::doc_cls_res:

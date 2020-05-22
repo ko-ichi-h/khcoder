@@ -276,7 +276,7 @@ sub calc_plugin{
 	if ($check_num < 3){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->get('gui_window::word_corresp->select_3words'), # 少なくとも3つ以上の抽出語を布置して下さい。
+			msg  => kh_msg->gget('select_3words'), # 少なくとも3つ以上の抽出語を布置して下さい。
 		);
 		return 0;
 	}

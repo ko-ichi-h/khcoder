@@ -293,7 +293,7 @@ sub check_code_en{
 		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
 		$enc = 'utf8';
 	} else {
-		die("something wrong with icode! $enc");
+		die("Something wrong with text encoding: $enc\nPlease make a UTF-8 text without any non-printing characters or control characters.");
 	}
 
 	return $enc;
