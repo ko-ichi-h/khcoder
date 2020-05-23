@@ -31,6 +31,10 @@ If we can't reproduce the error with the tutorial file "Anne.xls", please consid
 What language of text are you trying to analyze?
 e.g. English, Spanish
 
+**Type of the data file**
+What kind of file are you trying to analyze?
+e.g. Plain text (.txt), Excel (.xlsx), Word (.docx)
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
