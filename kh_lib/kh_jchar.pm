@@ -290,10 +290,11 @@ sub check_code_en{
 	} elsif ($enc =~ /latin1/){
 		$enc = 'latin1';
 	} elsif ($enc =~ /^No / ){
-		warn("\nFailed to guess encoding of the text.\nMaybe, you need to clean up your data...\n");
+		warn("\nFailed to guess encoding of the text: $enc\n\nMaybe, you need to clean up your data...\n");
 		$enc = 'utf8';
 	} else {
-		die("Something wrong with text encoding: $enc\nPlease make a UTF-8 text without any non-printing characters or control characters.");
+		warn("Something wrong with text encoding: $enc\n\nPlease make a UTF-8 text without any non-printing characters or control characters.");
+		$enc = 'utf8';
 	}
 
 	return $enc;

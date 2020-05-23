@@ -143,10 +143,11 @@ sub unify_words{
 	foreach my $i (keys %{$config}){
 
 		# parent
+		my $quoted = mysql_exec->quote($i);
 		my $hdl7 = mysql_exec->select("
 			SELECT genkei.id, genkei.num
 			FROM   genkei
-			WHERE  genkei.name = '$i'
+			WHERE  genkei.name = $quoted
 			ORDER BY num DESC
 			LIMIT 1
 		",1)->hundle->fetch;
@@ -171,7 +172,8 @@ sub unify_words{
 		my $n = 0;
 		foreach my $h (@{$config->{$i}}){
 			$sql_w .= " OR " if $n;
-			$sql_w .= "genkei.name = '$h'";
+			my $quoted1 = mysql_exec->quote($h);
+			$sql_w .= "genkei.name = $quoted1";
 			++$n;
 		}
 		$sql = $sql .= "( $sql_w )";
@@ -223,8 +225,9 @@ sub unify_words{
 		$sql .= "DELETE FROM genkei\nWHERE ";
 		my $nn = 0;
 		foreach my $h (@{$config->{$i}}){
+			my $quoted2 = mysql_exec->quote($h);
 			$sql .= " OR " if $nn;
-			$sql .= "( name = '$h' AND NOT id = $genkei->{$i}{id} )";
+			$sql .= "( name = $quoted2 AND NOT id = $genkei->{$i}{id} )";
 			++$nn;
 		}
 		mysql_exec->do($sql,1);
