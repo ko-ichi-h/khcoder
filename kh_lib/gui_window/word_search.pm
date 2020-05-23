@@ -222,6 +222,12 @@ sub _new{
 		'<Control-Key-c>',
 		sub{ $self->copy_all; }
 	);
+	
+	$self->win_obj->bind(
+		'<Control-Key-z>',
+		sub{ $self->speed_test; }
+	);
+	
 	#$self->win_obj->Balloon()->attach(
 	#	$self->{copy_btn},
 	#	-balloonmsg => 'Ctrl + C',
@@ -305,6 +311,51 @@ sub clear{
 	$self->search;
 	return $self;
 }
+
+sub speed_test{ # Ctrl + Z
+	my $self = shift;
+	
+	use Benchmark;
+	my $t0 = new Benchmark;
+	
+	for (my $n = 0; $n < 5; ++$n){
+		# 1
+		$self->entry->delete(0, 'end');
+		$self->entry->insert(0, '生');
+		$self->search;
+		$self->clear;
+	
+		# 2
+		$self->entry->delete(0, 'end');
+		$self->entry->insert(0, '死　殺　亡');
+		$self->search;
+		$self->clear;
+		
+		# 3
+		$self->entry->delete(0, 'end');
+		$self->entry->insert(0, '先');
+		$self->search;
+		$self->clear;
+		
+		# 4
+		$self->entry->delete(0, 'end');
+		$self->entry->insert(0, '友');
+		$self->search;
+		$self->clear;
+		
+		# 5
+		$self->entry->delete(0, 'end');
+		$self->entry->insert(0, '男　女');
+		$self->search;
+		$self->clear;
+	}
+
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n";
+	
+	return $self;
+}
+
 
 #----------#
 #   検索   #
@@ -490,6 +541,7 @@ sub display{
 	print "print..." if $debug;
 	
 	# display the result # it takes too much time!!!
+	
 	$self->list->destroy;
 	my $lis = $self->{list_f}->Scrolled(
 			'Tree',
@@ -518,6 +570,8 @@ sub display{
 	$lis->header('create',2,-text => kh_msg->get('pos_conj')); # $self->gui_jchar('品詞')
 	$lis->header('create',3,-text => kh_msg->get('freq')); # $self->gui_jchar('頻度')
 	$self->{list}  = $lis;
+	
+	print "," if $debug;
 
 	my $numb_style = $self->list->ItemStyle(
 		'text',
@@ -588,8 +642,10 @@ sub display{
 			#}
 			
 			if ($have_child{$row}) {
+			#if (0) {
+			
 				my $color = "#007b43";
-				#$color = "#ea5506" if $pos_chk->{$row}; # temporarily hiding the new feature
+				##$color = "#ea5506" if $pos_chk->{$row}; # temporarily hiding the new feature
 				
 				my $c = $self->list->Label(
 					-text => $num,
@@ -626,6 +682,7 @@ sub display{
 					-itemtype => 'window',
 					-widget => $c,
 					-style => $left,
+					#-text => $num,
 				);
 			} else {
 				
@@ -680,14 +737,15 @@ sub display{
 					   ( $col == 1 && $child_flag == 0 )
 					|| ( $col == 2 && $child_flag )
 				){
-					#if ($col == 2 && $child_flag && $pos_flag > -1) {
-					#	my $name = $h;
-					#	$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
-					#	if ($pos_chk->{$pos_flag}{$name}) {
-					#		$h .= " !";
-					#	}
-					#}
+					##if ($col == 2 && $child_flag && $pos_flag > -1) {
+					##	my $name = $h;
+					##	$name = substr($name, 0, 2) if $self->{morpho_analyzer} eq 'chasen';
+					##	if ($pos_chk->{$pos_flag}{$name}) {
+					##		$h .= " !";
+					##	}
+					##}
 					
+					# clickable text
 					my $c = $self->list->Label(
 						-text => $h,
 						-font       => "TKFN",
@@ -784,13 +842,14 @@ sub display{
 		$self->list->hide('entry', $cu) if $child_flag;
 		++$row;
 	}
+	print "." if $debug;
 	$self->{last_search} = $result;
 	$self->{list_entry_mode} = undef;
 	$self->list->autosetmode();
 	
 	gui_hlist->update4scroll($self->list);
 	use Time::HiRes;
-	sleep (0.1);
+	sleep (0.01);
 	$self->{running} = 0;
 	print "ok\n" if $debug;
 
