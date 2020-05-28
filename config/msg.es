@@ -21,6 +21,10 @@ global:
   r_net_msg_fail: 'Error: imposible configurar las opciones.'
   save: Guardar
   search: Buscar
+  select_3words: |-
+    ***not translated*** We need more words to run this analysis.
+    Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
+    抽出語リストを確認し、設定を見直してください。
   select_a_file: Seleccionar archivo
   sentence: Oraciones
   spss_f: SPSS File

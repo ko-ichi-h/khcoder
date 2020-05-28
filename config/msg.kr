@@ -19,6 +19,10 @@ global:
   r_net_msg_fail: 조정에 실패했습니다.
   save: 저장
   search: 검색
+  select_3words: |-
+    ***not translated*** We need more words to run this analysis.
+    Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
+    抽出語リストを確認し、設定を見直してください。
   select_a_file: 파일을 선택해 주십시오
   sentence: 문
   spss_f: SPSS 파일
