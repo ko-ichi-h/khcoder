@@ -118,7 +118,7 @@ sub segment{
 	
 	# Run
 	my $cmd_line  =
-		 "cmd /c java -showversion -mx1024m -cp \""
+		 "cmd /c java -showversion -mx".$::config_obj->stanford_ram." -cp \""
 		.$seg_dir
 		.'*;" edu.stanford.nlp.ie.crf.CRFClassifier -sighanCorporaDict "'
 		.$seg_dir.'data'
@@ -130,7 +130,7 @@ sub segment{
 		.$seg_dir.'data/dict-chris6.ser.gz'
 		.'" "" > "'
 		.$self->target
-		.'""'
+		.'"'
 	;
 	print "$cmd_line\n";
 

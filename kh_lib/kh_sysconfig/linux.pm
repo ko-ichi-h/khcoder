@@ -75,6 +75,7 @@ sub ini_content{
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
 		'stanford_port',
+		'stanford_ram',
 		'han_dic_path',
 		'freeling_dir',
 		'freeling_port',
@@ -167,6 +168,19 @@ sub ram{
 	}
 
 	return $self->{ram_r};
+}
+
+sub stanford_ram{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{stanford_ram} = $new;
+	}
+	
+	$self->{stanford_ram} = "2g"  unless defined( $self->{stanford_ram} );
+	
+	return Encode::encode('ascii', $self->{stanford_ram});
 }
 
 #--------------------------------#

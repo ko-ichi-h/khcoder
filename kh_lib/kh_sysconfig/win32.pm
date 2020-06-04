@@ -80,6 +80,7 @@ sub ini_content{
 		'stanf_tagger_path_cn',
 		'stanf_seg_path',
 		'stanford_port',
+		'stanford_ram',
 		'han_dic_path',
 		'freeling_dir',
 		'freeling_port',

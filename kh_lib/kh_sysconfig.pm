@@ -1617,6 +1617,19 @@ sub freeling_port{
 	return Encode::encode('ascii', $self->{freeling_port});
 }
 
+sub stanford_ram{
+	my $self = shift;
+	my $new  = shift;
+	
+	if (defined($new) && length($new)){
+		$self->{stanford_ram} = $new;
+	}
+	
+	$self->{stanford_ram} = "1024m"  unless defined( $self->{stanford_ram} );
+	
+	return Encode::encode('ascii', $self->{stanford_ram});
+}
+
 sub color_universal_design{
 	my $self = shift;
 	my $new = shift;
