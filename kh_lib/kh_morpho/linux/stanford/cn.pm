@@ -114,7 +114,7 @@ sub segment{
 		.$self->target
 		.'"'
 	;
-	print "$cmd_line\n";
+	print "cmdline: $cmd_line\n";
 
 	system($cmd_line);
 	

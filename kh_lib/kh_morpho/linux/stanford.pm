@@ -54,7 +54,7 @@ sub _run_morpho{
 	} else {
 		$cmd_line .= $::config_obj->stanf_tagger_path;
 	}
-	#print "cmdline: $cmd_line\n";
+	print "cmdline: $cmd_line\n";
 
 	require Proc::Background;
 	my $process = Proc::Background->new($cmd_line)
