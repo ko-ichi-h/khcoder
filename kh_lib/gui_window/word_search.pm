@@ -361,7 +361,7 @@ sub speed_test{ # Ctrl + Z
 #   検索   #
 #----------#
 
-my $debug = 1;
+my $debug = 0;
 
 sub search{
 	my $self = shift;
