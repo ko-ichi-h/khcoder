@@ -144,7 +144,7 @@ sub segment{
 		$java_path,
 		$cmd_line,
 		0,
-		undef,#Win32::Process->CREATE_NO_WINDOW,
+		Win32::Process->NORMAL_PRIORITY_CLASS,
 		$::config_obj->cwd,
 	) || $self->Exec_Error("Wi32::Process can not start");
 	$process->Wait( Win32::Process->INFINITE );
