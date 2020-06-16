@@ -160,7 +160,7 @@ sub save_ini{
 	} else {
 		print "coder.ini changed:\n" if $s_debug;
 		use Text::Diff;
-		print diff(\$ini_content, \$content) if $s_debug;
+		print diff(\$ini_content, \$content,  { STYLE => "OldStyle" }) if $s_debug;
 		print "\n" if $s_debug;
 		$ini_content = $content;
 		
@@ -197,10 +197,10 @@ sub save_ini{
 	if ($win_content eq $w_content) {
 		print "win.ini not changed. skip saving...\n" if $s_debug;
 	} else {
-		print "win.ini changed:\n" if $s_debug;
-		use Text::Diff;
-		print diff(\$win_content, \$w_content) if $s_debug;
-		print "\n" if $s_debug;
+		print "win.ini changed\n" if $s_debug;
+		#use Text::Diff;
+		#print diff(\$win_content, \$w_content) if $s_debug;
+		#print "\n" if $s_debug;
 		$win_content = $w_content;
 
 		use File::Temp;
