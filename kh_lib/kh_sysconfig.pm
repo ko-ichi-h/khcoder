@@ -156,12 +156,12 @@ sub save_ini{
 	my $content = $self->ini_content;
 	
 	if ($ini_content eq $content) {
-		print "coder.ini not changed. skip saving...\n" if $s_debug;
+		#print "coder.ini not changed. skip saving...\n" if $s_debug;
 	} else {
 		print "coder.ini changed:\n" if $s_debug;
 		use Text::Diff;
 		print diff(\$ini_content, \$content,  { STYLE => "OldStyle" }) if $s_debug;
-		print "\n" if $s_debug;
+		#print "\n" if $s_debug;
 		$ini_content = $content;
 		
 		use File::Temp;
@@ -173,7 +173,7 @@ sub save_ini{
 		my $f = $tmp->filename;
 		$tmp = undef;
 		
-		print "Saving coder.ini, Tmp file: $f\n";
+		print "saving coder.ini, tmp file: $f\n";
 		
 		open (INI,'>:encoding(utf8)',  $f) or
 			gui_errormsg->open(
@@ -195,9 +195,9 @@ sub save_ini{
 	my $w_content = $self->win_content;
 	
 	if ($win_content eq $w_content) {
-		print "win.ini not changed. skip saving...\n" if $s_debug;
+		#print "win.ini not changed. skip saving...\n" if $s_debug;
 	} else {
-		print "win.ini changed\n" if $s_debug;
+		#print "win.ini changed\n" if $s_debug;
 		#use Text::Diff;
 		#print diff(\$win_content, \$w_content) if $s_debug;
 		#print "\n" if $s_debug;
@@ -212,7 +212,7 @@ sub save_ini{
 		my $f = $tmp->filename;
 		$tmp = undef;
 		
-		print "Saving win.ini, Tmp file: $f\n";
+		print "saving win.ini, tmp file: $f\n";
 		
 		open (INI,'>:encoding(utf8)',  $f) or
 			gui_errormsg->open(
