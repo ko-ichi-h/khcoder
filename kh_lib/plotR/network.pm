@@ -1680,8 +1680,29 @@ if (
 #  Edge labels  #
 
 if (view_coef == 1){
+	my_n_form <- function(d){
+		len = length(d)
+		print(len)
+		for (i in 1:len){
+			s <- d[i]
+			if ( is.na(s) || is.nan(s) || is.null(s) ){
+				s <- NA
+			} else {
+				s <- as.numeric(s)
+				if (s < 1){
+					s <- sprintf("%.2f",s)
+					s <- substring(s, 2, 4)
+				} else {
+					s <- sprintf("%.1f",s)
+				}
+			}
+			d[i] <- s
+		}
+		return(d)
+	}
+	
 	p <- p + geom_edgetext(
-		aes(label = substring( round(weight, digits = 2), 2, 4) ),
+		aes(label = my_n_form(weight)),
 		color = "#000080",
 		fill = NA,
 		size=3.5,
