@@ -1682,7 +1682,6 @@ if (
 if (view_coef == 1){
 	my_n_form <- function(d){
 		len = length(d)
-		print(len)
 		for (i in 1:len){
 			s <- d[i]
 			if ( is.na(s) || is.nan(s) || is.null(s) ){
