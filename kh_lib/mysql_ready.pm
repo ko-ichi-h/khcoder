@@ -122,6 +122,14 @@ sub first{
 sub unify_words{
 	# Words with the same basic form are regarded as identical even if POS is different
 	
+	# list up existing units
+	my @avail = ();
+	foreach my $tani ('bun','dan','h1','h2','h3','h4','h5'){
+		if ( mysql_exec->table_exists($tani) ){
+			push @avail, $tani;
+		}
+	}
+	
 	my $h = mysql_exec->select("
 		select genkei.name, sum(num)
 		from genkei, hselection
@@ -241,6 +249,38 @@ sub unify_words{
 			WHERE  id = $genkei->{$i}{id}
 		";
 		mysql_exec->do($sql,1);
+
+		# df
+		foreach my $u (@avail){
+			my $df = 0;
+			if ($u eq 'bun'){
+				$df = mysql_exec->select("
+					SELECT COUNT(DISTINCT bun_idt)
+					FROM hyosobun, hyoso
+					WHERE
+						hyosobun.bun_idt
+						AND hyosobun.hyoso_id = hyoso.id
+						AND hyoso.genkei_id = $genkei->{$i}{id}
+				",1)->hundle->fetch;
+				$df = $df->[0] if $df;
+			} else {
+				$df = mysql_exec->select("
+					SELECT COUNT(DISTINCT tid)
+					FROM hyosobun, $u"."_hb, hyoso
+					WHERE
+						hyosobun.id = $u"."_hb.hyosobun_id
+						AND hyosobun.hyoso_id = hyoso.id
+						AND hyoso.genkei_id = $genkei->{$i}{id}
+				",1)->hundle->fetch;
+				$df = $df->[0] if $df;
+			}
+			
+			mysql_exec->do("
+				UPDATE df_$u
+				SET f = $df
+				WHERE genkei_id = $genkei->{$i}{id}
+			",1);
+		}
 	}
 	return 1;
 }
