@@ -201,6 +201,9 @@ sub save_ini{
 		#use Text::Diff;
 		#print diff(\$win_content, \$w_content) if $s_debug;
 		#print "\n" if $s_debug;
+		print "win.ini changed:\n" if $s_debug;
+		use Text::Diff;
+		print diff(\$win_content, \$w_content,  { STYLE => "OldStyle" }) if $s_debug;
 		$win_content = $w_content;
 
 		use File::Temp;
@@ -237,7 +240,7 @@ sub win_content{
 	my $self = shift;
 	my $content = '';
 
-	foreach my $i (keys %{$self}){
+	foreach my $i (sort keys %{$self}){
 		if ( index($i,'w_') == 0 ){
 			my $value = $self->win_gmtry($i);
 			$value = '' unless defined($value);
