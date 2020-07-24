@@ -65,11 +65,23 @@ sub init{
 	
 	# JAVAのパス設定
 	unless ( -e $::config_obj->java_path ) {
-		if (-e $::config_obj->cwd.'/dep/AdoptOpenJDK/bin/java.exe') {
+		require Devel::Platform::Info::Win32;
+		my $os_info = Devel::Platform::Info::Win32->new->get_info();
+		
+		if (
+			( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1) )
+			&& -e $::config_obj->cwd.'/dep/AdoptOpenJDK64/bin/java.exe'
+		){
+			$::config_obj->java_path(
+				$::config_obj->cwd.'/dep/AdoptOpenJDK64/bin/java.exe'
+			);
+		}
+		elsif (-e $::config_obj->cwd.'/dep/AdoptOpenJDK/bin/java.exe') {
 			$::config_obj->java_path(
 				$::config_obj->cwd.'/dep/AdoptOpenJDK/bin/java.exe'
 			);
-		} else {
+		}
+		else {
 			require Win32::SearchPath;
 			my $j = Win32::SearchPath::SearchPath('java');
 			if (-e $j && length($j) ) {
@@ -130,8 +142,6 @@ sub init{
 	if (not -e $::config_obj->r_path){
 		require Devel::Platform::Info::Win32;
 		my $os_info = Devel::Platform::Info::Win32->new->get_info();
-		#use Data::Dumper;
-		#print Dumper $os_info;
 		
 		my $candidate = '';
 		if (
