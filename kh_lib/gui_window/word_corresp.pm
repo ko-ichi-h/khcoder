@@ -89,7 +89,7 @@ sub _new{
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 0,
-		-command          => sub{ $self->refresh;},
+		-command          => sub{ $self->refresh; $self->sampling_config;},
 	)->pack(-anchor => 'w');
 
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
@@ -293,6 +293,22 @@ sub sampling_config{
 
 	my $n = mysql_exec->select("select count(*) from $tani2",1)->hundle->fetch->[0];
 	$self->{sampling_obj}->onoff($n);
+	
+	# Biplot configuration
+	if ($n <= 20) {
+		$self->{biplot} = 1;
+	} else {
+		$self->{biplot} = 0;
+	}
+	
+	if ($self->{label_high2}) {
+		$self->{label_high2}->configure(-state => 'normal');
+		$self->{label_high2}->update;
+		
+		if ($n > $::config_obj->corresp_max_values) {
+			$self->{label_high2}->configure(-state => 'disabled');
+		}
+	}
 }
 
 sub tani2{
@@ -878,6 +894,7 @@ sub make_plot{
 	$r_command .= "use_alpha <- $args{use_alpha}\n";
 	$r_command .= "show_origin <- $args{show_origin}\n";
 	$r_command .= "scaling <- \"$args{scaling}\"\n";
+	$r_command .= "corresp_max_values <- ".$::config_obj->corresp_max_values."\n";
 	$r_command .= "
 		if ( exists(\"saving_emf\") || exists(\"saving_eps\") ){
 			use_alpha <- 0 
@@ -924,7 +941,10 @@ sub make_plot{
 	if ($args{biplot}){
 		# 変数のみ
 		$r_command_3a .= "plot_mode <- \"vars\"\n";
+		$r_command_3a .= "if (biplot==0){\n plot(0,0,pch=3)\n text(0,0.5,\"No output\")\n}\n";
+		$r_command_3a .= "if (biplot==1){\n";
 		$r_command_3a .= &r_command_bubble(%args);
+		$r_command_3a .= "\n}\n";
 		$r_command_3  = $common.$r_command_3a;
 		
 		# グレースケール
@@ -1127,6 +1147,10 @@ if (d_y > d_max){
 }
 
 c <- corresp(d, nf=d_max )
+
+if ( nrow(d) > corresp_max_values ){
+	biplot <- 0
+}
 
 if (d_max == 1){
 	c$cscore <- as.matrix( c$cscore )
@@ -1622,7 +1646,10 @@ if (plot_mode != "dots") {
 			#alpha=0.7,
 			aes(x=x, y=y,label=labs)
 		)
-		if ( (resize_vars == 0) || (bubble_plot == 0) ) {
+		if (
+			exists("df.vars")
+			&& ( (resize_vars == 0) || (bubble_plot == 0) ) 
+		){
 			g <- g + geom_point(
 				data=df.vars,
 				aes(x=x, y=y, shape=factor(type) ),

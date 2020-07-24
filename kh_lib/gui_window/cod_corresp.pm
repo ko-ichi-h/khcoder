@@ -59,7 +59,7 @@ sub _new{
 	);
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $f1,
-		command => sub { $self->refresh; },
+		command => sub { $self->refresh; $self->biplot_config; },
 		pack   => \%pack1,
 	);
 
@@ -189,7 +189,7 @@ sub _new{
 		-font             => "TKFN",
 		-variable         => \$self->{radio},
 		-value            => 1,
-		-command          => sub{ $self->refresh;},
+		-command          => sub{ $self->refresh; $self->biplot_config;},
 	)->pack(-anchor => 'w');
 
 	my $fi_2 = $fi_1->Frame()->pack(-anchor => 'w');
@@ -424,6 +424,30 @@ sub refresh_same_doc_unit{
 	}
 }
 
+sub biplot_config{
+	my $self = shift;
+	
+	my $tani2 = $self->{high};
+	return 0 unless $tani2;
+
+	my $n = mysql_exec->select("select count(*) from $tani2",1)->hundle->fetch->[0];
+	
+	# Biplot configuration
+	if ($n <= 20) {
+		$self->{biplot} = 1;
+	} else {
+		$self->{biplot} = 0;
+	}
+	
+	if ($self->{label_high2}) {
+		$self->{label_high2}->configure(-state => 'normal');
+		$self->{label_high2}->update;
+		
+		if ($n > $::config_obj->corresp_max_values) {
+			$self->{label_high2}->configure(-state => 'disabled');
+		}
+	}
+}
 
 # ラジオボタン関連
 sub refresh{
@@ -526,6 +550,7 @@ sub refresh{
 				)->hundle->fetch->[0]
 			){
 				# コーディング単位が「文」の場合、「段落」単位での集計は不可
+				# （見出し文が存在するため）
 				if (
 					   $i eq 'dan'
 					&& $self->tani eq 'bun'
@@ -547,7 +572,7 @@ sub refresh{
 				pack    => {-side => 'left', -padx => 2},
 				options => \@tanis,
 				variable => \$self->{high},
-				command => sub{$self->refresh_same_doc_unit;},
+				command => sub{$self->refresh_same_doc_unit; $self->biplot_config;},
 			);
 			$self->{opt_body_high_ok} = 1;
 		} else {

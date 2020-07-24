@@ -1459,6 +1459,23 @@ sub plot_font_size{
 	return $self->{plot_font_size};
 }
 
+sub corresp_max_values{
+	my $self = shift;
+	my $new  = shift;
+
+	# the default value
+	unless ( $self->{corresp_max_values} ){
+		$self->{corresp_max_values} = 200;
+	}
+	
+	# set a new value
+	if ( defined($new) ){
+		$self->{corresp_max_values} = $new;
+	}
+	
+	return $self->{corresp_max_values};
+}
+
 sub win_gmtry{
 	my $self = shift;
 	my $win_name = shift;

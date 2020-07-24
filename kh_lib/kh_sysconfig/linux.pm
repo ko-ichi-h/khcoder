@@ -114,6 +114,7 @@ sub ini_content{
 		'font_pdf',
 		'font_pdf_cn',
 		'font_pdf_kr',
+		'corresp_max_values',
 		'newline_symbol',
 		'cell_symbol',
 		'color_DocView_info',
