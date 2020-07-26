@@ -174,7 +174,10 @@ sub init{
 	){
 		$::config_obj->r_path($::config_obj->cwd.'/dep/R/bin/i386/Rterm.exe');
 	}
-	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
+	$ENV{R_USER}         = 'DO_NOT_LOAD_FROM_USER_DIR';
+	$ENV{R_LIBS_USER}    = 'DO_NOT_LOAD_FROM_USER_DIR';
+	$ENV{R_PROFILE_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
+	$ENV{R_ENVIRON_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 	
 	# MySQL設定ファイル修正（khc.ini）
 	my $p1 = $::config_obj->cwd.'/dep/mysql/';
