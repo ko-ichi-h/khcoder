@@ -174,13 +174,16 @@ sub init{
 	){
 		$::config_obj->r_path($::config_obj->cwd.'/dep/R/bin/i386/Rterm.exe');
 	}
-	
+
+	# environment variables
+	$ENV{R_HOME}         = $::config_obj->cwd.'/dep/R';
+	$ENV{R_LIBS}         = $::config_obj->cwd.'/dep/R/library';
+	# environment variables: dummy
 	$ENV{R_USER}         = $::config_obj->cwd.'/config/Rtmp';
 	$ENV{R_LIBS_USER}    = $::config_obj->cwd.'/config/Rtmp';
-	$ENV{R_HOME}         = $::config_obj->cwd.'/dep/R';
 	$ENV{R_PROFILE_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 	$ENV{R_ENVIRON_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
-	
+
 	# MySQL設定ファイル修正（khc.ini）
 	my $p1 = $::config_obj->cwd.'/dep/mysql/';
 	my $p2 = $::config_obj->cwd.'/dep/mysql/data/';
