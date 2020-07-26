@@ -174,8 +174,10 @@ sub init{
 	){
 		$::config_obj->r_path($::config_obj->cwd.'/dep/R/bin/i386/Rterm.exe');
 	}
-	$ENV{R_USER}         = 'DO_NOT_LOAD_FROM_USER_DIR';
-	$ENV{R_LIBS_USER}    = 'DO_NOT_LOAD_FROM_USER_DIR';
+	
+	$ENV{R_USER}         = $::config_obj->cwd.'/config/Rtmp';
+	$ENV{R_LIBS_USER}    = $::config_obj->cwd.'/config/Rtmp';
+	$ENV{R_HOME}         = $::config_obj->cwd.'/dep/R';
 	$ENV{R_PROFILE_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 	$ENV{R_ENVIRON_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
 	
