@@ -245,6 +245,7 @@ sub make_plot{
 	}
 
 	$r_command .= "
+word_freq <- rowSums(d)
 library(amap)
 check4mds <- function(d){
 	jm <- as.matrix(Dist($source_matrix, method=\"$args{method_dist}\"))
@@ -653,7 +654,7 @@ for (i in rownames(cl)){
 	if ( is.na(i) || is.null(i) || is.nan(i) ){
 		b_size <- c( b_size, 1 )
 	} else {
-		b_size <- c( b_size, sum( d[i,] ) )
+		b_size <- c( b_size, as.numeric( word_freq[i] ) )
 	}
 }
 
