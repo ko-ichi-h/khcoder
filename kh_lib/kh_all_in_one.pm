@@ -203,7 +203,7 @@ sub init{
 	open (MYINI,$::config_obj->cwd.'/dep/mysql/khc.ini') or 
 		gui_errormsg->open(
 			type    => 'file',
-			thefile => ">khc.ini"
+			thefile => "<khc.ini"
 		);
 	open (MYININ,'>'.$::config_obj->cwd.'/dep/mysql/khc.ini.new') or 
 		gui_errormsg->open(
@@ -237,18 +237,36 @@ sub init{
 	}
 	close (MYINI);
 	close (MYININ);
+	
+	
 	unlink($::config_obj->cwd.'\dep\mysql\khc.ini') or
 		gui_errormsg->open(
 			type    => 'file',
 			thefile => ">khc.ini"
 		);
-	rename(
-		$::config_obj->cwd.'\dep\mysql\khc.ini.new',
-		$::config_obj->cwd.'\dep\mysql\khc.ini'
-	) or gui_errormsg->open(
-			type    => 'file',
-			thefile => ">khc.ini.new"
-	);
+	
+	# Wainting for the unlink to take effect (max 3 sec: 0.05 * 60)
+	use Time::HiRes;
+	my $n_w = 0;
+	while (-e $::config_obj->cwd.'\dep\mysql\khc.ini') {
+		++$n_w;
+		print "Wainting for unlink (dep/mysql/khc.ini) $n_w...\n";
+		Time::HiRes::sleep (0.05);
+		if ($n_w > 60){
+			warn("Could not configure MySQL (khc.ini) ...\n");
+			last;
+		}
+	}
+
+	if ($n_w <= 60 ){
+		rename(
+			$::config_obj->cwd.'\dep\mysql\khc.ini.new',
+			$::config_obj->cwd.'\dep\mysql\khc.ini'
+		) or gui_errormsg->open(
+				type    => 'file',
+				thefile => "khc.ini.new -> khc.ini"
+		);
+	}
 
 	# MySQL¤Îµ¯Æ°
 	return 1 if mysql_exec->connection_test;
