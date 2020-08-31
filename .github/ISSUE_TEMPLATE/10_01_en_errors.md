@@ -44,7 +44,7 @@ e.g. 2.00f, 3.Alapha.08, etc. To check the version number, go to "Help" "About" 
 **OS**
 e.g. Windows 10, Ubuntu 14.02
 
-**Antivirus or Security software**
+**Antivirus or Security software running on the PC**
 e.g. Norton 360, Avast
 
 **Additional context**
