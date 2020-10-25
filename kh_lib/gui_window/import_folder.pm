@@ -5,6 +5,8 @@ use strict;
 use utf8;
 use Tk;
 
+my $debug = 0;
+
 # Windowの作成
 sub _new{
 	my $self = shift;
@@ -493,9 +495,13 @@ sub _exec{
 		return unless $f =~ /.+\.txt$|.+\.doc$|.+\.docx$|.+\.rtf$|.+\.odt$/;
 		return if $f eq $save;
 
+		print "\"$f\", " if $debug;
 		my $f_o = substr($f, length($path) + 1, length($f) - length($path));
+		print "\"$f_o\", " if $debug;
 		$f_o = $::config_obj->uni_path( $f_o );
+		print "\"$f_o\", " if $debug;
 		$f_o =~ s/\\/\//g;
+		print "\"$f_o\"\n" if $debug;
 
 		print $fh "<$self->{tani}>file:$f_o</$self->{tani}>\n";
 		push @files, "file:$f_o";
@@ -586,6 +592,7 @@ sub _exec{
 		# morpho_analyzer
 		use Lingua::JA::Regular::Unicode qw(katakana_h2z);
 		my $text = $i;
+		print "\"$text\", " if $debug;
 		if (
 			   $::config_obj->c_or_j eq 'chasen'
 			|| $::config_obj->c_or_j eq 'mecab'
@@ -597,12 +604,13 @@ sub _exec{
 			$text =~ s/'/’/go;
 			$text =~ s/"/”/go;
 		} else {
-			$text = $_;
 			$text =~ s/\t/ /go;
 			$text =~ s/\\/ /go;
 			$text =~ s/。/./go;
 		}
+		print "\"$text\", " if $debug;
 		$text = mysql_exec->quote($text);
+		print "\"$text\"\n" if $debug;
 		mysql_exec->do("
 			INSERT INTO dmark (name) VALUES ($text)
 		",1);
