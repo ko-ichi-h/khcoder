@@ -120,6 +120,9 @@ sub renew_command{
 			'name' => $i->[0],
 		};
 	}
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	&screen_code::r_plot_multiselect::bind_multiselect($self);
 }
 
 sub extra_save_types{

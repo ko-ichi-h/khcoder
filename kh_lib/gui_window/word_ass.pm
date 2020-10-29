@@ -331,6 +331,10 @@ sub _new{
 	$adj->pack(-side => 'top', -fill => 'x', -pady => 2, -padx => 4);
 	$rf->pack(-side => 'top', -fill => 'both', -expand => 1);
 	
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	&screen_code::r_plot_multiselect::add_button_ass($self, $f5);
+	
 	return $self;
 }
 
@@ -733,6 +737,13 @@ sub conc{
 	unless(@selected){
 		return;
 	}
+	
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	if (screen_code::r_plot_multiselect::checkbutton_KWIC($self)) {
+		return;
+	}
+	
 	my $selected = $selected[0];
 	my ($query, $hinshi);
 	$query = $self->gui_jchar($self->{result}->[$selected][0]);

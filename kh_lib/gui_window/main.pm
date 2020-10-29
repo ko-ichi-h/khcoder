@@ -146,6 +146,9 @@ sub closed{
 sub close{
 	my $self        = shift;
 	$self->close_all;
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	screen_code::r_plot_multiselect::close_KWIC();
 
 	$::config_obj->win_gmtry($self->win_name, $self->win_obj->geometry);
 	$::config_obj->save;

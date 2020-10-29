@@ -1140,6 +1140,10 @@ sub mc_close_project{
 	undef $::project_obj;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	screen_code::r_plot_multiselect::close_KWIC();
+	#SCREEN Plugin
 }
 sub mc_datacheck{
 	my $w = gui_wait->start;
@@ -1151,6 +1155,10 @@ sub mc_morpho{
 	my $self = shift;
 	my $reload = shift;
 	
+	#SCREEN Plugin
+	use screen_code::r_plot_multiselect;
+	screen_code::r_plot_multiselect::close_KWIC();
+	#SCREEN Plugin
 	$::main_gui->close_all;
 	my $w = gui_wait->start;           # Show "please wait" window
 	$self->mc_morpho_exec($reload);

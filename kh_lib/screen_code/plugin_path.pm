@@ -9,6 +9,9 @@ my $rde_name = File::Spec->catfile('screen', 'MonkinCleanser', 'MonkinCleanser.e
 my $assistant_name = File::Spec->catfile('screen', 'MonkinReport', 'MonkinReport.exe');
 my $negationchecker_name = File::Spec->catfile('screen', 'MonkinNegationChecker', 'MonkinNegationChecker.exe');
 my $synonym_name = File::Spec->catfile('screen', 'MonkinSynonym', 'MonkinSynonym.exe');
+my $KWIC_main_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinKWIC.exe');
+my $KWIC_sub_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinSendClient.exe');
+my $KWIC_pl_name = File::Spec->catfile('screen', 'MonkinKWIC', 'do_plugin.pl');
 my $inifile_name = File::Spec->catfile('screen', 'plugin.ini');
 
 sub rde_path{
@@ -25,6 +28,18 @@ sub negationchecker_path{
 
 sub synonym_path{
 	return encoding($synonym_name);
+}
+
+sub KWIC_main_path{
+	return encoding($KWIC_main_name);
+}
+
+sub KWIC_sub_path{
+	return encoding($KWIC_sub_name);
+}
+
+sub KWIC_pl_path{
+	return encoding($KWIC_pl_name);
 }
 
 #System関数に渡す時にOSによって文字コードを変える必要がある
