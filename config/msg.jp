@@ -1179,3 +1179,6 @@ screen_code::assistant:
     label_enable:              "有効"
     label_disable:             "無効"
     plugin_synonym:            "《文錦》 表記ゆれ＆同義語"
+    KWIC_button:               "《文錦》KWIC "
+    KWIC_button2:              "《文錦》KWIC※"
+    KWIC_label:                "《文錦》"
