@@ -708,7 +708,7 @@ sub copy{
 	$clip .= "\n";
 	
 	# 中身
-	my $rows = @{$self->{result}} - 2;
+	my $rows = @{$self->{result}} - 1;
 	for (my $r = 0; $r <= $rows; ++$r){
 		# 1列目
 		if ($self->{list2}->itemExists($r, 0)){
