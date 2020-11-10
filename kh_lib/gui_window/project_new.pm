@@ -276,7 +276,6 @@ sub end{
 
 sub _make_new{
 	my $self = shift;
-	my $from_table = 0;
 
 	$::config_obj->last_method( $self->{method} );
 	$::config_obj->last_lang(   $self->{lang}   );
@@ -287,113 +286,38 @@ sub _make_new{
 		)
 	);
 
-	# Excel / CSV (1)
-	my $file_vars;
-	my $file_source;
-	if ($t =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
-		$from_table = 1;
-		
-		# name of the new text file
-		my $n = 0;
-		while (-e $1."_txt$n.txt"){
-			++$n;
-		}
-		my $file_text = $1."_txt$n.txt";
-		
-		# name of the new variable file
-		$n = 0;
-		while (-e $1."_var$n.txt"){
-			++$n;
-		}
-		$file_vars = $1."_var$n.txt";
-
-		# make files
-		my $sheet_obj = kh_spreadsheet->new($t);
-		$sheet_obj->save_files(
-			filet    => $file_text,
-			filev    => $file_vars,
-			selected => $self->{column},
-			lang     => $self->{lang},
-			#icode    => $self->{icode},
-		);
-		
-		$file_source = $t;
-		$t = $file_text;
-	}
-
-	# Convert Word/RTF files to plain text
-	if (
-		   $t =~ /(.+)\.docx$/i
-		|| $t =~ /(.+)\.doc$/i
-		|| $t =~ /(.+)\.rtf$/i
-		|| $t =~ /(.+)\.odt$/i
-	){
-		use kh_docx;
-		my $c = kh_docx->new($t);
-		$c->conv;
-		$t = $c->{converted};
-		
-		unless (-e $t){
-			gui_errormsg->open(
-				msg => kh_msg->get('type_error'),
-				type => 'msg',
-				window => \$self->{win_obj},
-			);
-			return 0;
-		}
-		
-		$file_source = $c->{original};
-	}
-
 	my $new = kh_project->new(
 		target  => $t,
 		comment => $self->gui_jg($self->e2->get),
-		#icode   => $self->gui_jg($self->{icode}),
 	) or return 0;
-	kh_projects->read->add_new($new) or return 0;
-	$self->close;
+	$new->prepare_db;
+	$new->open or return 0;
 
-	$new->{target} = $::config_obj->uni_path($t);
-
-	$new->open or die;
 	$::project_obj->morpho_analyzer( $self->{method} );
 	$::project_obj->morpho_analyzer_lang( $self->{lang} );
 	$::project_obj->read_hinshi_setting;
+
+	$::project_obj->copy_and_convert_target_file(
+		original    => $t,
+		column      => $self->{column},
+		column_list => $self->{column_list},
+		lang        => $self->{lang}
+	) or return 0;
+
+	if ( length($self->{column_list}[$self->{column}]) ) {
+		$new->{target} .= $::config_obj->os_path(" [".$self->{column_list}[$self->{column}]."]");
+	}
+	
+	kh_projects->read->add_new($new, 'skip_db') or return 0;
+
+	$::project_obj->check_copied_and_converted;
+
+	$self->close;
 
 	$::main_gui->close_all;
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 
-	# Excel / CSV (2)
-	if ( $from_table ){
-		# read variables
-		mysql_outvar::read::tab->new(
-			file        => $file_vars,
-			tani        => 'h5',
-			skip_checks => 1,
-		)->read if -e $file_vars;
-
-		# ignoring the separator string
-		mysql_exec->do("
-			INSERT INTO dmark (name) VALUES ('---cell---')
-		",1);
-		mysql_exec->do("
-			INSERT INTO dstop (name) VALUES ('---cell---')
-		",1);
-		
-		# some configurations
-		$::project_obj->last_tani('h5');
-		$::project_obj->status_from_table(1);
-		$::project_obj->status_source_file( $::config_obj->uni_path($file_source) );
-		$::project_obj->status_var_file( $::config_obj->uni_path($file_vars) );
-		$::project_obj->status_selected_coln( $self->{column_list}[$self->{column}] );
-	} else {
-		$::project_obj->status_from_table(0);
-		if (defined($file_source) && -e $file_source) {
-			$::project_obj->status_source_file( $::config_obj->uni_path($file_source) );
-		}
-	}
-	
 	return 1;
 }
 

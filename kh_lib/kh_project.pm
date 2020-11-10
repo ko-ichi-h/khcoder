@@ -23,6 +23,116 @@ sub new{
 	return $self;
 }
 
+sub copy_and_convert_target_file{ # into inner structure
+	my $self = shift;
+	my %args = @_;
+	
+	# Copy
+	my $original = $args{original};
+
+	my $suf;
+	if ($original =~ /(\.[a-zA-Z]+?)$/) {
+		$suf = $1;
+	}
+	my $copied   = $self->file_datadir.'_tgt'.$suf;
+	
+	use File::Copy;
+	copy($original, $copied) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $original,
+		)
+	;
+	print "Specified target file is copied to: $copied\n";
+	$self->status_source_file( $::config_obj->uni_path($original) );
+	$self->status_copied_file( $::config_obj->uni_path($copied) );
+
+	# Convert Excel
+	my $t = $copied;
+	if ($t =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
+		# name of the new text file
+		my $n = 0;
+		while (-e $1."_txt$n.txt"){
+			++$n;
+		}
+		my $file_text = $1."_txt$n.txt";
+		
+		# name of the new variable file
+		$n = 0;
+		while (-e $1."_var$n.txt"){
+			++$n;
+		}
+		my $file_vars = $1."_var$n.txt";
+
+		# make files
+		my $sheet_obj = kh_spreadsheet->new($t);
+		$sheet_obj->save_files(
+			filet    => $file_text,
+			filev    => $file_vars,
+			selected => $args{column},
+			lang     => $args{lang},
+			#icode    => $self->{icode},
+		);
+
+		unless (-e $file_text){
+			gui_errormsg->open(
+				msg => kh_msg->get('gui_window::project_new->type_error'),
+				type => 'msg',
+				#window => \$self->{win_obj},
+			);
+			return 0;
+		}
+
+		# read variables
+		mysql_outvar::read::tab->new(
+			file        => $file_vars,
+			tani        => 'h5',
+			skip_checks => 1,
+		)->read if -e $file_vars;
+
+		# ignoring the separator string
+		mysql_exec->do("
+			INSERT INTO dmark (name) VALUES ('---cell---')
+		",1);
+		mysql_exec->do("
+			INSERT INTO dstop (name) VALUES ('---cell---')
+		",1);
+
+		$self->last_tani('h5');
+		$self->status_from_table(1);
+		$self->status_var_file( $::config_obj->uni_path($file_vars) );
+		$self->status_selected_coln( $args{column_list}[$args{column}] );
+		$self->status_converted_file( $::config_obj->uni_path($file_text) );
+	} else {
+		$self->status_from_table(0);
+	}
+	
+	# Convert Word/RTF files to plain text
+	if (
+		   $t =~ /(.+)\.docx$/i
+		|| $t =~ /(.+)\.doc$/i
+		|| $t =~ /(.+)\.rtf$/i
+		|| $t =~ /(.+)\.odt$/i
+	){
+		use kh_docx;
+		my $c = kh_docx->new($t);
+		$c->conv;
+		
+		unless (-e $c->{converted}){
+			gui_errormsg->open(
+				msg => kh_msg->get('gui_window::project_new->type_error'),
+				type => 'msg',
+				#window => \$self->{win_obj},
+			);
+			return 0;
+		}
+		
+		$self->status_converted_file( $::config_obj->uni_path($c->{converted}) );
+	}
+	
+	return 1;
+}
+
 sub prepare_db{
 	my $self   = shift;
 	$self->{dbname} = mysql_exec->create_new_db($self->file_target);
@@ -215,7 +325,12 @@ sub temp{
 sub open{
 	my $self = shift;
 	
+	# open DB
+	$self->{dbh} = mysql_exec->connect_db($self->{dbname}, $::config_obj->web_if);
+	$::project_obj = $self;
+	
 	# check the target file
+	$self->check_copied_and_converted;
 	unless (-e $::config_obj->os_path( $self->file_target ) ){
 		gui_errormsg->open(
 			type   => 'msg',
@@ -226,19 +341,29 @@ sub open{
 	
 	# reset font settings of R
 	$kh_r_plot::if_font = 0;
-	
-	# open DB
-	$self->{dbh} = mysql_exec->connect_db($self->{dbname}, $::config_obj->web_if);
-	$::project_obj = $self;
-	
+
 	my_threads->open_project;
 	
 	$self->check_up;
-	
 	$::config_obj->c_or_j( $self->morpho_analyzer );
 	
 	return $self;
 }
+
+sub check_copied_and_converted{
+	my $self = shift;
+	
+	if ( $self->status_copied_file() ){
+		$self->{target} = $self->status_copied_file();
+	}
+	
+	if ( $self->status_converted_file() ){
+		$self->{target} = $self->status_converted_file();
+	}
+	
+	return $self;
+}
+
 
 sub morpho_analyzer{
 	my $self = shift;
@@ -698,6 +823,60 @@ sub status_source_file{
 	return $current;
 }
 
+sub status_converted_file{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'converted_file'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('converted_file', '')"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status_char SET status = '$new' WHERE name = 'converted_file'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
+}
+
+sub status_copied_file{
+	my $self = shift;
+	my $new  = shift;
+	
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'copied_file'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('copied_file', '')"
+		,1);
+	}
+	
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status_char SET status = '$new' WHERE name = 'copied_file'"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
+}
+
 sub status_from_table{
 	my $self = shift;
 	my $new  = shift;
@@ -1073,6 +1252,31 @@ sub file_short_name{
 		$self->file_target,
 		$pos,
 		length($self->file_target) - $pos
+	);
+
+	# return basename($self->file_target);
+}
+
+sub file_short_name_mw{ # Only for showing the source file name. NOT for processing.
+	my $self = shift;
+
+	my $file = $self->file_target;
+	if ($::project_obj) {
+		if ($::project_obj->dbname eq $self->dbname) {
+			if ( length( $self->status_source_file ) ){
+				$file = $self->status_source_file;
+			}
+			if ( length( $self->status_selected_coln ) ){
+				$file .= " [".$self->status_selected_coln."]";
+			}
+		}
+	}
+
+	my $pos = rindex($file ,'/'); ++$pos;
+	return substr(
+		$file ,
+		$pos,
+		length($file) - $pos
 	);
 
 	# return basename($self->file_target);

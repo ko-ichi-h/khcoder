@@ -261,11 +261,11 @@ sub refresh{
 		if ( length($::project_obj->comment) ){
 			$title = $::project_obj->comment;
 		} else {
-			$title = $::project_obj->file_short_name;
+			$title = $::project_obj->file_short_name_mw;
 		}
 		$title .= ' - KH Coder';
 		$mw->title(gui_window->gui_jt($title));
-		$self->entry('e_curent_project', gui_window->gui_jchar($::project_obj->file_short_name));
+		$self->entry('e_curent_project', gui_window->gui_jchar($::project_obj->file_short_name_mw));
 		$self->entry('e_project_memo', gui_window->gui_jchar($::project_obj->comment));
 		
 		if ($::project_obj->status_morpho){       # 前処理が完了している場合

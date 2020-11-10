@@ -39,6 +39,7 @@ sub read{
 				comment => $r->{"comment"},
 				dbname  => $r->{"dbname"},
 			);
+		#print "$r->{target}, $r->{comment}, $r->{dbname}\n";
 		++$n;
 	}
 	return $self;
@@ -95,6 +96,7 @@ sub create_project_list{
 sub add_new{
 	my $self = shift;
 	my $new  = shift;
+	my $skip_db = shift;
 
 	# プロジェクト・テーブルが存在しない場合は作成
 	my $save_file = $::config_obj->history_file;
@@ -103,18 +105,22 @@ sub add_new{
 	}
 
 	# 既にファイルが登録されていないかチェック
-	foreach my $i (@{$self->list}){
-		if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
-			gui_errormsg->open(
-				type    => 'msg',
-				msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
-			);
-			return 0;
+	print "new: ".$new->file_target."\n";
+	#unless ($new->file_target =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
+		foreach my $i (@{$self->list}){
+			print "chk: ".$::config_obj->os_path($i->file_target)."\n";
+			if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
+				gui_errormsg->open(
+					type    => 'msg',
+					msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
+				);
+				return 0;
+			}
 		}
-	}
+	#}
 
 	# MySQL DBの整備
-	$new->prepare_db;
+	$new->prepare_db unless $skip_db;
 
 	# プロジェクトを登録
 	my $sth = $self->dbh->prepare(
@@ -165,14 +171,15 @@ sub delete{
 	my $del = $self->a_project($_[0]);
 
 	my $sth = $self->dbh->prepare(
-		"DELETE FROM projects WHERE target = ?"
+		"DELETE FROM projects WHERE target = ? "
 	);
 	$sth->execute(
 		$del->file_target
 	) or die;
 	undef $sth;
+
 	
-	
+
 	# ゴミ箱テーブルが存在しない場合は作成 
 	my $save_file = $::config_obj->history_trush_file;
 	unless (-e $save_file){
@@ -186,7 +193,7 @@ sub delete{
 	}
 
 	# ゴミ箱テーブルに追加
-	$sth = $self->dbh->prepare(
+	my $sth = $self->dbh->prepare(
 		"INSERT INTO projects_trush (target, comment, dbname) VALUES (?,?,?)"
 	);
 	$sth->execute(
@@ -231,8 +238,4 @@ sub list{
 
 
 1;
-__END__
-プロジェクトリストの
-	・読み込み （すべてkh_project->temp）
-	・編集
-	・保存
+
