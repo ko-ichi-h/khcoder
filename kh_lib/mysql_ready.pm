@@ -30,9 +30,18 @@ sub first{
 
 	# Reload Excel/CSV
 	if ($reload) {
+		&reload_source;
+		
+		my $source = $::project_obj->status_source_file;
+		
 		if ( $::project_obj->status_from_table ){
 			&reload_from_spreadsheet;
-		} else {
+		} elsif (
+			   $source =~ /(.+)\.docx$/i
+			|| $source =~ /(.+)\.doc$/i
+			|| $source =~ /(.+)\.rtf$/i
+			|| $source =~ /(.+)\.odt$/i
+		) {
 			&reload_from_docx;
 		}
 	}
@@ -285,30 +294,66 @@ sub unify_words{
 	return 1;
 }
 
+sub reload_source{
+	my $copied = $::config_obj->os_path( $::project_obj->status_copied_file );
+	my $source = $::config_obj->os_path( $::project_obj->status_source_file );
+	
+	if (-e $copied) {
+		unlink($copied)
+			or gui_errormsg->open(
+				type => 'file',
+				thefile =>$copied,
+			)
+		;
+	}
+	
+	unless ( length($copied) ){
+		my $suf;
+		if ($source =~ /(\.[a-zA-Z]+?)$/) {
+			$suf = $1;
+		}
+		$copied   = $::project_obj->file_datadir.'_tgt'.$suf;
+		$::project_obj->status_copied_file( $::config_obj->uni_path($copied) );
+	}
+	
+	use File::Copy;
+	copy($source, $copied)
+		or gui_errormsg->open(
+			type => 'file',
+			thefile =>$copied,
+		)
+	;
+	print "Specified target file is copied to: $copied\n";
+	
+	return 1;
+}
+
 sub reload_from_docx{
+	my $copied = $::config_obj->os_path( $::project_obj->status_copied_file );
 	my $target = $::config_obj->os_path( $::project_obj->file_target );
 	my $temp   = $::project_obj->file_TempTXT;
 	
 	use kh_docx;
-	my $c = kh_docx->new($::project_obj->status_source_file);
+	my $c = kh_docx->new( $copied );
 	$c->{converted} = $temp;
 	$c->conv;
 	
 	unless (-e $temp){
-		warn("Failed to reload data from ".$::project_obj->status_source_file."\n");
+		warn("Failed to reload data from ".$::project_obj->status_copied_file."\n");
 		return 0;
 	}
 	
 	unlink $target;
 	rename($temp, $target) or die;
+	print "Converted to: $target\n";
 	return 1;
 }
 
 sub reload_from_spreadsheet{
 	# Identify the target column
 	my $col_name = $::project_obj->status_selected_coln;
-	my $source   = $::config_obj->os_path( $::project_obj->status_source_file );
-	my $columns = kh_spreadsheet->new($source)->columns();
+	my $copied   = $::config_obj->os_path( $::project_obj->status_copied_file );
+	my $columns = kh_spreadsheet->new($copied)->columns();
 	my $col = 0;
 	my $hit = 0;
 	foreach my $i (@{$columns}){
@@ -334,7 +379,7 @@ sub reload_from_spreadsheet{
 	unlink($temp_t);
 	unlink($temp_v);
 
-	my $sheet_obj = kh_spreadsheet->new($source);
+	my $sheet_obj = kh_spreadsheet->new($copied);
 	$sheet_obj->save_files(
 		filet    => $temp_t,
 		filev    => $temp_v,
@@ -349,6 +394,7 @@ sub reload_from_spreadsheet{
 	unlink($var);
 	rename($temp_t, $target) or die;
 	rename($temp_v, $var) if -e $temp_v;
+	print "Converted to: $target\n";
 
 	# Drop duplicated variable
 	use File::BOM;

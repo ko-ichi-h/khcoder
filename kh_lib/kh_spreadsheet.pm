@@ -20,7 +20,7 @@ sub new{
 		$ext = $1;
 		$ext =~ tr/A-Z/a-z/;
 	} else {
-		die("Unexpected extension!\n");
+		die("Unexpected extension: \"$self->{file}\"\n");
 	}
 	
 	$ext = "kh_spreadsheet::$ext";

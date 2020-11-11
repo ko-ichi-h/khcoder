@@ -193,7 +193,7 @@ sub delete{
 	}
 
 	# ゴミ箱テーブルに追加
-	my $sth = $self->dbh->prepare(
+	$sth = $self->dbh->prepare(
 		"INSERT INTO projects_trush (target, comment, dbname) VALUES (?,?,?)"
 	);
 	$sth->execute(
