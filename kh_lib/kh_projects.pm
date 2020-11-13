@@ -105,22 +105,20 @@ sub add_new{
 	}
 
 	# 既にファイルが登録されていないかチェック
-	print "new: ".$new->file_target."\n";
-	#unless ($new->file_target =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
-		foreach my $i (@{$self->list}){
-			print "chk: ".$::config_obj->uni_path($i->file_target)."\n";
-			if (
-				   $::config_obj->uni_path($i->file_target)
-				eq $::config_obj->uni_path($new->file_target)
-			){
-				gui_errormsg->open(
-					type    => 'msg',
-					msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
-				);
-				return 0;
-			}
+	# print "new: ".$new->file_target."\n";
+	foreach my $i (@{$self->list}){
+		# print "chk: ".$::config_obj->uni_path($i->file_target)."\n";
+		if (
+			   $::config_obj->uni_path($i->file_target)
+			eq $::config_obj->uni_path($new->file_target)
+		){
+			gui_errormsg->open(
+				type    => 'msg',
+				msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"
+			);
+			return 0;
 		}
-	#}
+	}
 
 	# MySQL DBの整備
 	$new->prepare_db unless $skip_db;
