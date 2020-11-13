@@ -108,8 +108,11 @@ sub add_new{
 	print "new: ".$new->file_target."\n";
 	#unless ($new->file_target =~ /(.+)\.(xls|xlsx|csv|tsv)$/i){
 		foreach my $i (@{$self->list}){
-			print "chk: ".$::config_obj->os_path($i->file_target)."\n";
-			if ( $::config_obj->os_path($i->file_target) eq $new->file_target){
+			print "chk: ".$::config_obj->uni_path($i->file_target)."\n";
+			if (
+				   $::config_obj->uni_path($i->file_target)
+				eq $::config_obj->uni_path($new->file_target)
+			){
 				gui_errormsg->open(
 					type    => 'msg',
 					msg     => kh_msg->get('already_registered') # "当該のファイルは既にプロジェクトとして登録されています"

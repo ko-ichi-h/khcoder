@@ -304,8 +304,9 @@ sub _make_new{
 		lang        => $self->{lang}
 	) or return 0;
 
+	$new->{target} = $::config_obj->uni_path( $new->{target} );
 	if ( length($self->{column_list}[$self->{column}]) ) {
-		$new->{target} .= $::config_obj->os_path(" [".$self->{column_list}[$self->{column}]."]");
+		$new->{target} .= " [".$self->{column_list}[$self->{column}]."]";
 	}
 	
 	kh_projects->read->add_new($new, 'skip_db') or return 0;
