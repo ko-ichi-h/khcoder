@@ -8,9 +8,6 @@ use screen_code::plugin_path;
 use File::Path;
 use Encode qw/encode decode/;
 
-use Win32::Process::List;
-
-
 use Time::Local;
 use Time::HiRes 'usleep';
 
@@ -45,13 +42,16 @@ my $previousTime;
 
 my $checkState = 0;
 
+my $parent_win_obj;
+
 #中止可能なダイアログの開始
 sub start_waitDialog {
 	if (defined($waitDialog)) {
 		$waitDialog->destroy;
 		undef $waitDialog;
 	}
-	my $mw = $::main_gui->mw;
+	
+	my $mw = $parent_win_obj;
 	my $message = "Monkin is processing data...";
 	$cancel_flag = 0;
 	$waitDialog = $mw->Toplevel();
@@ -136,7 +136,43 @@ sub make_tani_id_col{
 sub bind_multiselect{
 	my $self = shift;
 	return 0 unless $self->{coordin};
+	$parent_win_obj = $self->{win_obj};
 	$checkState = 0;
+	if (-e &screen_code::plugin_path::KWIC_main_path) {
+		$self->{bottom_frame}->Button(
+			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
+			-font => "TKFN",
+			-borderwidth => '1',
+			-command => sub {
+				my @selected_words;
+				foreach my $i (keys %{$self->{coordin}}) {
+					if ($i ne 'decorated' && $self->{coordin}{$i}{selected}) {
+						push @selected_words, $self->{coordin}{$i}{name};
+					}
+				}
+				do_multi_KWIC(\@selected_words);
+			}
+		)->pack(-side => 'right');
+		$self->{bottom_frame}->Checkbutton(
+			-variable => \$checkState,
+		)->pack(-side => 'right');
+	} else {
+		if ( $::config_obj->os eq 'win32' ){
+			$self->{bottom_frame}->Button(
+				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
+				-font => "TKFN",
+				-borderwidth => '1',
+				-command => sub {
+					gui_OtherWin->open($kh_homepage_url);
+				}
+			)->pack(-side => 'right');
+			$self->{bottom_frame}->Checkbutton(
+				-variable => \$checkState,
+				-state => 'disable',
+			)->pack(-side => 'right');
+			return 0;
+		}
+	}
 	foreach my $i (keys %{$self->{coordin}}) {
 		
 		next unless $i =~ /^[0-9]+$/;
@@ -152,7 +188,7 @@ sub bind_multiselect{
 			$i,
 			"<Button-1>",
 			sub {
-				$self->undecorate;
+				$self->undecorate(1);
 				if ($checkState) {
 					my @selected_words;
 					push @selected_words, $self->{coordin}{$i}{name};
@@ -179,35 +215,6 @@ sub bind_multiselect{
 		-font => "TKFN",
 	)->pack(-side => 'right');
 	
-	if (-e &screen_code::plugin_path::KWIC_main_path) {
-		$self->{bottom_frame}->Button(
-			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
-			-font => "TKFN",
-			-borderwidth => '1',
-			-command => sub {
-				my @selected_words;
-				foreach my $i (keys %{$self->{coordin}}) {
-					if ($i ne 'decorated' && $self->{coordin}{$i}{selected}) {
-						push @selected_words, $self->{coordin}{$i}{name};
-					}
-				}
-				do_multi_KWIC(\@selected_words);
-			}
-		)->pack(-side => 'right');
-	} else {
-		$self->{bottom_frame}->Button(
-			-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
-			-font => "TKFN",
-			-borderwidth => '1',
-			-command => sub {
-				gui_OtherWin->open($kh_homepage_url);
-			}
-		)->pack(-side => 'right');
-	}
-	
-	$self->{bottom_frame}->Checkbutton(
-		-variable => \$checkState,
-	)->pack(-side => 'right');
 }
 
 sub add_button_ass{
@@ -216,6 +223,7 @@ sub add_button_ass{
 	$checkState = 0;
 	
 	if (-e &screen_code::plugin_path::KWIC_main_path) {
+		$parent_win_obj = $self->{win_obj};
 		$f5->Button(
 			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
 			-font => "TKFN",
@@ -230,21 +238,28 @@ sub add_button_ass{
 				}
 			}
 		)->pack(-side => 'right');
-	} else {
-		$f5->Button(
-			-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
-			-font => "TKFN",
-			-borderwidth => '1',
-			-command => sub {
-				gui_OtherWin->open($kh_homepage_url);
-			}
+		 $f5->Checkbutton(
+			-variable => \$checkState,
+			-width => 0,
 		)->pack(-side => 'right');
+	} else {
+		if ($::config_obj->os eq 'win32'){
+			$f5->Button(
+				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
+				-font => "TKFN",
+				-borderwidth => '1',
+				-command => sub {
+					gui_OtherWin->open($kh_homepage_url);
+				}
+			)->pack(-side => 'right');
+			 $f5->Checkbutton(
+				-variable => \$checkState,
+				-width => 0,
+				-state => 'disable',
+			)->pack(-side => 'right');
+		}
 	}
 	
-	 $f5->Checkbutton(
-		-variable => \$checkState,
-		-width => 0,
-	)->pack(-side => 'right');
 }
 
 sub checkbutton_KWIC{
@@ -272,12 +287,12 @@ sub do_multi_KWIC{
 	my $relation_file_path = &screen_code::plugin_path::assistant_option_folder.$relation_file_name;
 	unlink $relation_file_path if -f $relation_file_path;
 	
-	
 	start_waitDialog();
 	my $rtn = output_KWIC_files($selected_words_ref);
 	end_waitDialog();
 	return 0 if !$rtn;
 	
+	require Win32::Process::List;
 	my %list =Win32::Process::List->new()->GetProcesses();
 	unlink &screen_code::plugin_path::assistant_option_folder.$recieved_file_name if -f &screen_code::plugin_path::assistant_option_folder.$recieved_file_name;
 	while (my ($key,$value) = each(%list)){
@@ -291,7 +306,7 @@ sub do_multi_KWIC{
 	}
 	
 	output_font_file();
-	system("perl ".&screen_code::plugin_path::KWIC_pl_path." ".&screen_code::plugin_path::KWIC_main_path." do");
+	system(&screen_code::plugin_path::KWIC_pl_path." ".&screen_code::plugin_path::KWIC_main_path);
 	return 0;
 	
 }
@@ -309,6 +324,10 @@ sub output_font_file{
 }
 
 sub close_KWIC{
+	unless (-e &screen_code::plugin_path::KWIC_main_path) {
+		return 0;
+	}
+	require Win32::Process::List;
 	my %list =Win32::Process::List->new()->GetProcesses();
 	unlink &screen_code::plugin_path::assistant_option_folder.$recieved_file_name if -f &screen_code::plugin_path::assistant_option_folder.$recieved_file_name;
 	while (my ($key,$value) = each(%list)){
@@ -366,6 +385,7 @@ sub do_multi_KWIC_relation{
 	end_waitDialog();
 	return 0 unless $rtn;
 	
+	require Win32::Process::List;
 	my %list =Win32::Process::List->new()->GetProcesses();
 	unlink &screen_code::plugin_path::assistant_option_folder.$recieved_file_name if -f &screen_code::plugin_path::assistant_option_folder.$recieved_file_name;
 	while (my ($key,$value) = each(%list)){
@@ -379,7 +399,7 @@ sub do_multi_KWIC_relation{
 	}
 	
 	output_font_file();
-	system("perl ".&screen_code::plugin_path::KWIC_pl_path." ".&screen_code::plugin_path::KWIC_main_path);
+	system(&screen_code::plugin_path::KWIC_pl_path." ".&screen_code::plugin_path::KWIC_main_path);
 	
 	return 0;
 	
@@ -846,8 +866,9 @@ sub get_outvar_by_part_target_id{
 #主に単語でない場所をクリックした際の処理
 sub undecorate_multiselect{
 	my $self = shift;
+	my $without_default = shift;
 	
-	$default_undecorate->($self);
+	$default_undecorate->($self) unless $without_default;
 	
 	foreach my $i (keys %{$self->{coordin}}) {
 		if ($i ne 'decorated' && $self->{coordin}{$i}{selected}) {

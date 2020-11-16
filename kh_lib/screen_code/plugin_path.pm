@@ -11,7 +11,7 @@ my $negationchecker_name = File::Spec->catfile('screen', 'MonkinNegationChecker'
 my $synonym_name = File::Spec->catfile('screen', 'MonkinSynonym', 'MonkinSynonym.exe');
 my $KWIC_main_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinKWIC.exe');
 my $KWIC_sub_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinSendClient.exe');
-my $KWIC_pl_name = File::Spec->catfile('screen', 'MonkinKWIC', 'do_plugin.pl');
+my $KWIC_pl_name = File::Spec->catfile('screen', 'MonkinKWIC', 'do_plugin.bat');
 my $inifile_name = File::Spec->catfile('screen', 'plugin.ini');
 
 sub rde_path{
