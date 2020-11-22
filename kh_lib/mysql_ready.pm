@@ -346,6 +346,11 @@ sub reload_from_docx{
 	unlink $target;
 	rename($temp, $target) or die;
 	print "Converted to: $target\n";
+	
+	unless ( $::project_obj->status_converted_file ){
+		$::project_obj->status_converted_file($target);
+	}
+	
 	return 1;
 }
 
@@ -395,6 +400,10 @@ sub reload_from_spreadsheet{
 	rename($temp_t, $target) or die;
 	rename($temp_v, $var) if -e $temp_v;
 	print "Converted to: $target\n";
+	
+	unless ( $::project_obj->status_converted_file ){
+		$::project_obj->status_converted_file($target);
+	}
 
 	# Drop duplicated variable
 	use File::BOM;
