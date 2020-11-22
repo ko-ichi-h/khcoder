@@ -422,7 +422,10 @@ sub config_entry_focusin{
 	$ent->configure(
 		-validate => 'focusin',
 		-validatecommand => sub{
-			$ent->selectionRange(0,'end');
+			my $t = $ent->get;
+			if ( length($t) ){
+				$ent->selectionRange(0,'end');
+			}
 		}
 	);
 }
