@@ -289,7 +289,7 @@ sub settings_load{
 	);
 	
 	if ($settings){
-		$self->{hinshi_obj}->selection_set($settings->{hinshi});
+		$self->{hinshi_obj}->selection_set($settings->{hinshi}) if $settings->{hinshi};
 		
 		$self->min( $settings->{min} );
 		$self->max( $settings->{max} );

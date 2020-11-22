@@ -287,6 +287,7 @@ sub read_hinshi_setting{
 		} else {
 			$val = 0 if $i->[1] eq "HTMLタグ" || $i->[1] eq "HTML_TAG";
 			$val = 0 if $i->[1] eq "その他"   || $i->[1] eq "OTHER";
+			$val = 0 if $i->[1] eq "代名詞"
 		}
 		$sql .= "($i->[0],$val,'$i->[1]'),";
 	}

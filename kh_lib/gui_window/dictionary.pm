@@ -334,6 +334,8 @@ sub _fill_in{
 			++$row;
 		}
 		$self->{checks} = \@selection;
+		my @org = @selection;
+		$self->{org_checks} = \@org;
 	}
 
 
@@ -463,23 +465,37 @@ sub save{
 
 	# 品詞選択
 	if ($self->config->hinshi_list){
+		my $changed = 0;
 		my $row = 0;
 		foreach my $i (@{$self->config->hinshi_list}){
 			#print Jcode->new("$i, ".$self->checks->[$row]."\n",'euc')->sjis;
 			$self->config->ifuse_this($i,$self->gui_jg($self->checks->[$row]));
+			if ($self->{checks}[$row] != $self->{org_checks}[$row]) {
+				$changed = 1;
+			}
+			
 			++$row;
+		}
+		if ( $changed ){
+			my $settings = $::project_obj->load_dmp(
+				name => 'widget_words',
+			);
+			if ($settings) {
+				$settings->{hinshi} = undef;
+				$::project_obj->save_dmp(
+					name => 'widget_words',
+					var  => $settings,
+				);
+			}
 		}
 	}
 
 	$self->config->save;
-	$self->close;
+	$::main_gui->close_all;
 	
 	# Main Windowの表示を更新
 	$::main_gui->inner->refresh;
 	
-	if ( $::main_gui->if_opened('w_doc_ass') ){
-		$::main_gui->get('w_doc_ass')->close;
-	}
 }
 
 #--------------#
