@@ -5,6 +5,8 @@ use strict;
 
 use kh_r_plot::network;
 
+my $debug = 0;
+
 sub new{
 	my $class = shift;
 	my %args = @_;
@@ -151,7 +153,8 @@ sub new{
 		) or return 0;
 	}
 	elsif ($::config_obj->web_if == 0) {
-
+		
+		print "netwrok: cnt-b\n" if $debug;
 		push (
 			@plots,
 			kh_r_plot::network->new(
@@ -170,6 +173,7 @@ sub new{
 		) or return 0;
 
 		if ( $args{additional_plots} ) {
+			print "netwrok: cnt-d\n" if $debug;
 			push (
 				@plots,
 				kh_r_plot::network->new(
@@ -191,6 +195,7 @@ sub new{
 				)
 			) or return 0;
 
+			print "netwrok: cnt-e\n" if $debug;
 			push (
 				@plots,
 				kh_r_plot::network->new(
@@ -211,7 +216,8 @@ sub new{
 					font_size => $args{font_size},
 				)
 			) or return 0;
-	
+
+			print "netwrok: com-b\n" if $debug;
 			push (
 				@plots,
 				kh_r_plot::network->new(
@@ -234,6 +240,7 @@ sub new{
 			) or return 0;
 		}
 
+		print "netwrok: com-r\n" if $debug;
 		push (
 			@plots,
 			kh_r_plot::network->new(
@@ -255,6 +262,7 @@ sub new{
 			)
 		) or return 0;
 
+		print "netwrok: com-g\n" if $debug;
 		push (
 			@plots,
 			kh_r_plot::network->new(
@@ -283,6 +291,7 @@ sub new{
 			)
 			&& $args{cor_var} == 1
 		) {
+			print "netwrok: cor\n" if $debug;
 			push (
 				@plots,
 				kh_r_plot::network->new(
@@ -307,6 +316,7 @@ sub new{
 		}
 
 		if ( $args{additional_plots} ) {
+			print "netwrok: none\n" if $debug;
 			push (
 				@plots,
 				kh_r_plot::network->new(
