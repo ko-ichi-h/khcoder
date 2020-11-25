@@ -617,7 +617,7 @@ sub _calc{
 		if ( $self->{net_obj}{check_additional_plots} ) {
 			$ax = 5;
 		} else {
-			$ax = 1;
+			$ax = 2;
 		}
 		if ( $self->{net_obj}{check_cor_var} == 1) {
 			$ax = $ax + 1;
