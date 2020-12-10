@@ -1173,3 +1173,7 @@ screen_code::assistant:
     label_use_plugin:          "NegationChecker "
     label_enable:              "Enable  "
     label_disable:             "Disable  "
+    plugin_synonym:            "《M》 Synonym"
+    KWIC_button:               "《M》 KWIC "
+    KWIC_button2:              "《M》 KWIC*"
+    KWIC_label:                "《M》 "

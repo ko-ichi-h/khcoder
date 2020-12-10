@@ -157,7 +157,7 @@ sub bind_multiselect{
 			-variable => \$checkState,
 		)->pack(-side => 'right');
 	} else {
-		if ( $::config_obj->os eq 'win32' ){
+		if ( $::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' ){
 			$self->{bottom_frame}->Button(
 				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
 				-font => "TKFN",
@@ -243,7 +243,7 @@ sub add_button_ass{
 			-width => 0,
 		)->pack(-side => 'right');
 	} else {
-		if ($::config_obj->os eq 'win32'){
+		if ($::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' ){
 			$f5->Button(
 				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
 				-font => "TKFN",
