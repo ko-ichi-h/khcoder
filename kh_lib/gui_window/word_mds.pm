@@ -296,7 +296,7 @@ while ( is.na(check4mds(d)) == 0 ){
 	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$args{plotwin_name};
 	unlink $file_save if -e $file_save;
 	$file_save = $::config_obj->uni_path($file_save);
-	$r_command .= "save(d,cl,dim_n, file=\"$file_save\" )\n";
+	$r_command .= "save(d,cl,dim_n,word_freq, file=\"$file_save\" )\n";
 	
 	# プロット用のコマンド（次元別）
 	$args{n_cls}     = 0 unless ( length($args{n_cls}) );
