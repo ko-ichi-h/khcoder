@@ -1399,15 +1399,20 @@ col_bg_vars  <- NA
 if (plot_mode == "color"){
 	col_dot_words <- "#00CED1"
 	col_dot_vars  <- "#FF6347"
+	if (color_universal_design == 1){
+		col_dot_words <- "#74add1" # #2c7bb6
+		col_dot_vars  <- "#f46d43"
+	}
 	if ( use_alpha == 1 ){
 		col_bg_words <- "#48D1CC"
 		col_bg_vars  <- "#FFA07A"
+		if (color_universal_design == 1){
+			col_bg_words <- "#abd9e9"
+			col_bg_vars  <- "#FFA07A"
+		}
 		
 		rgb <- col2rgb(col_bg_words) / 255
 		col_bg_words <- rgb( rgb[1], rgb[2], rgb[3])
-		
-		rgb <- rgb * 0.5
-		col_dot_words <- "#87CAC6" #  <- rgb( rgb[1], rgb[2], rgb[3])
 		
 		rgb <- col2rgb(col_bg_vars) / 255
 		col_bg_vars <- rgb( rgb[1], rgb[2], rgb[3])
@@ -1587,7 +1592,7 @@ if ( biplot == 1 ){
 if (plot_mode == "color"){
 	#if (bubble_plot == 1){
 		col_txt_words <- "black"
-		col_txt_vars  <- "#DC143C"
+		col_txt_vars  <- "#d73027"
 	#} else {
 	#	col_txt_words <- "black"
 	#	col_txt_vars  <- "#FF6347"
