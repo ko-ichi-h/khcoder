@@ -138,8 +138,8 @@ sub bind_multiselect{
 	return 0 unless $self->{coordin};
 	$parent_win_obj = $self->{win_obj};
 	$checkState = 0;
-	if (-e &screen_code::plugin_path::KWIC_main_path) {
-		$self->{bottom_frame}->Button(
+	if (-e &screen_code::plugin_path::KWIC_main_path &! $self->{kwic_button_w}) {
+		$self->{kwic_button_w} = $self->{bottom_frame}->Button(
 			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
 			-font => "TKFN",
 			-borderwidth => '1',
@@ -157,8 +157,8 @@ sub bind_multiselect{
 			-variable => \$checkState,
 		)->pack(-side => 'right');
 	} else {
-		if ( $::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' ){
-			$self->{bottom_frame}->Button(
+		if ( $::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' &! $self->{kwic_button_w}){
+			$self->{kwic_button_w} = $self->{bottom_frame}->Button(
 				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
 				-font => "TKFN",
 				-borderwidth => '1',
