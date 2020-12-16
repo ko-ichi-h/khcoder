@@ -101,7 +101,7 @@ sub copy_and_convert_target_file{ # into inner structure
 		$self->last_tani('h5');
 		$self->status_from_table(1);
 		$self->status_var_file( $::config_obj->uni_path($file_vars) );
-		$self->status_selected_coln( $args{column_list}[$args{column}] );
+		$self->status_selected_coln( gui_window->gui_bmp($args{column_list}[$args{column}]) );
 		$self->status_converted_file( $::config_obj->uni_path($file_text) );
 	} else {
 		$self->status_from_table(0);
@@ -1274,13 +1274,14 @@ sub file_short_name_mw{ # Only for showing the source file name. NOT for process
 	}
 
 	my $pos = rindex($file ,'/'); ++$pos;
-	return substr(
+	$file = substr(
 		$file ,
 		$pos,
 		length($file) - $pos
 	);
 
-	# return basename($self->file_target);
+	$file = gui_window->gui_bmp( $file );
+	return $file;
 }
 
 sub file_dir{

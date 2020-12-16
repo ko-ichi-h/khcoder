@@ -308,6 +308,31 @@ sub start_raise{
 #   日本語表示・入力関係   #
 #--------------------------#
 
+sub gui_bmp{ # Delete characters outside of BMP (Basic Multilingual Plane)
+	my $t = $_[1];
+	
+	unless ( utf8::is_utf8($t) ){
+		my $code = Jcode->new($t)->icode;
+		$code = $char_code{euc}  if $code eq 'euc';
+		$code = $char_code{sjis} if $code eq 'sjis';
+		$code = $char_code{sjis} if $code eq 'shiftjis';
+		$code = $char_code{euc}  unless length($code);
+		
+		$t = Encode::decode($code,$t);
+		
+		if ( $t =~ /[[:^ascii:]]/ ){
+			my ($package, $filename, $line) = caller;
+			print "Warn: Non-decoded string: $t,\n\t$code,\n\t$package, $filename, $line\n";
+		}
+	}
+
+	$t = Encode::encode('UCS-2LE', $t, Encode::FB_DEFAULT);
+	$t = Encode::decode('UCS-2LE', $t);
+	$t  =~ s/\x{fffd}/?/g;
+
+	return $t;
+}
+
 sub gui_jchar{ # GUI表示用の日本語
 	my $char = $_[1];
 	my $code = $_[2];

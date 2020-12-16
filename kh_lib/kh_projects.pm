@@ -33,10 +33,11 @@ sub read{
 	$st->execute or die;
 	my $n = 0;
 	while (my $r = $st->fetchrow_hashref){
+		
 		$self->{project}[$n] =
 			kh_project->temp(
-				target  => $r->{"target"},
-				comment => $r->{"comment"},
+				target  => gui_window->gui_bmp( $r->{"target"} ),
+				comment => gui_window->gui_bmp( $r->{"comment"} ),
 				dbname  => $r->{"dbname"},
 			);
 		#print "$r->{target}, $r->{comment}, $r->{dbname}\n";

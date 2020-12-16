@@ -306,7 +306,7 @@ sub _make_new{
 
 	$new->{target} = $::config_obj->uni_path( $new->{target} );
 	if ( length($self->{column_list}[$self->{column}]) ) {
-		$new->{target} .= " [".$self->{column_list}[$self->{column}]."]";
+		$new->{target} .= gui_window->gui_bmp(" [".$self->{column_list}[$self->{column}]."]");
 	}
 	
 	kh_projects->read->add_new($new, 'skip_db') or return 0;
