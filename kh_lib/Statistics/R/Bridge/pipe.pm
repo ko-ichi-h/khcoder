@@ -487,6 +487,7 @@ my $DEBUG_TIMING = 0;
 
 	} else {
 		chdir("$this->{LOG_DIR}") ;
+		print "starting R: $this->{START_CMD}\n";
 		my $cmd = "$this->{START_CMD} < start.r > output.log" ;
 		$pid = open(my $read , "| $cmd") ;
 		return if !$pid ;

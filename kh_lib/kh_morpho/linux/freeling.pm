@@ -28,9 +28,9 @@ sub _run_morpho{
 	unlink $self->{output_temp} if -e $self->{output_temp};
 	
 	my $cmd_line =                                           # command line
-		"analyzer --nodate --noquant --flush -f $freeling_dir/config/"
+		"analyzer --nodate --noquant --flush -f \"$freeling_dir/config/"
 		.$::project_obj->morpho_analyzer_lang
-		.'.cfg --server --port '.$::config_obj->freeling_port
+		.'.cfg" --server --port '.$::config_obj->freeling_port
 		#."< \"$self->{target_temp}\" >\"$self->{output_temp}\"";
 	;
 	

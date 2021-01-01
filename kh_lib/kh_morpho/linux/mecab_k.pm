@@ -106,13 +106,13 @@ sub _run_morpho{
 	close ($fhto);
 	
 	
-	# Run MeCab (Win32)
+	# Run MeCab
 	my $dic_path = $self->config->han_dic_path;
 	$dic_path =~ s/\\/\//g;
 	$dic_path = $::config_obj->os_path($dic_path);
 	
 	my $rcpath = '';
-	$rcpath = ' -r '.$::config_obj->mecabrc_path if length($::config_obj->mecabrc_path);
+	$rcpath = ' -r "'.$::config_obj->mecabrc_path.'"' if length($::config_obj->mecabrc_path);
 	
 	my $mecab_exe = 'mecab';
 	if ($::config_obj->all_in_one_pack) {

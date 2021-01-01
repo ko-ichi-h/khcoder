@@ -98,7 +98,7 @@
     if ( !-s $this->{R_BIN} ) { $this->error("Can'find R binary!") ; return UNDEF ;}
     if ( !-d $this->{R_DIR} ) { $this->error("Can'find R directory!") ; return UNDEF ;}
     
-    $this->{START_CMD} = "$this->{R_BIN} --slave --vanilla " ;
+    $this->{START_CMD} = "\"$this->{R_BIN}\" --slave --vanilla " ;
     
     if ( !$args{log_dir} ) { $args{log_dir} = "$this->{TMP_DIR}/Statistics-R" ;}
     

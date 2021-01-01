@@ -122,7 +122,7 @@ sub init{
 		undef $fh;
 		
 		# Edit configurations of Chasen
-		my $dici_dir = cwd.'/deps/ipadic-2.6.1';
+		my $dici_dir = '"'.cwd.'/deps/ipadic-2.6.1"';
 		my $chasenrc;
 		open ($fh, '<', cwd.'/deps/ipadic-2.6.1/chasenrc') or die("could not read file: chasenrc\n");
 		{
@@ -142,7 +142,7 @@ sub init{
 		
 		# Edit configurations of R
 		my $file_r = cwd.'/deps/R-3.1.0/Versions/3.1/Resources/bin/R';
-		my $r_home = cwd.'/deps/R-3.1.0/Resources';
+		my $r_home = '"'.cwd.'/deps/R-3.1.0/Resources"';
 		
 		my $r;
 		open ($fh, '<', $file_r) or die("could not read file: $file_r\n");
@@ -189,7 +189,7 @@ sub init{
 
 	# R's path
 	unless ($::ENV{PATH} =~ /deps\/R\-3\.1\.0\/Resources\/bin:/){
-		system "export PATH=".$::config_obj->cwd."/deps/R-3.1.0/Resources/bin:\$PATH";
+		system "export PATH=\"".$::config_obj->cwd."/deps/R-3.1.0/Resources/bin\":\$PATH";
 		$::ENV{PATH} = $::config_obj->cwd."/deps/R-3.1.0/Resources/bin:".$::ENV{PATH};
 	}
 	$ENV{R_LIBS_USER} = 'DO_NOT_LOAD_FROM_USER_DIR';
@@ -219,7 +219,7 @@ sub init{
 	#unless (-e '/tmp/mysql.sock.khc3'){
 	unless (mysql_exec->connection_test){
 		print "Starting MySQL...\n";
-		system $::config_obj->cwd."/deps/mysql-5.6.17/bin/mysqld --defaults-file=".$::config_obj->cwd."/deps/mysql-5.6.17/khc.cnf &"
+		system '"'.$::config_obj->cwd."/deps/mysql-5.6.17/bin/mysqld\" --defaults-file=\"".$::config_obj->cwd."/deps/mysql-5.6.17/khc.cnf\" &"
 	}
 
 	# Start UIM
