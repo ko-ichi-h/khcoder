@@ -28,6 +28,13 @@ sub init{
 	$mHash{AvailPhys} = $mHash{AvailPhys} - 500;
 	$mHash{AvailPhys} = 16 if $mHash{AvailPhys} < 16;
 
+	# 64bit / 32bit 
+	require Devel::Platform::Info::Win32;
+	my $os_info = Devel::Platform::Info::Win32->new->get_info();
+	if ( $ENV{PROCESSOR_ARCHITEW6432} =~ /ARM/ ) { # recognize ARM as 32bit
+		$os_info->{wow64} == 0;
+	}
+
 	# pandocのパスを追加
 	my $pandoc = $::config_obj->cwd.'/dep/pandoc-2.7.3-windows-i386';
 	$::config_obj->os_path($pandoc);
@@ -65,9 +72,6 @@ sub init{
 	
 	# JAVAのパス設定
 	unless ( -e $::config_obj->java_path ) {
-		require Devel::Platform::Info::Win32;
-		my $os_info = Devel::Platform::Info::Win32->new->get_info();
-		
 		if (
 			( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1) )
 			&& -e $::config_obj->cwd.'/dep/AdoptOpenJDK64/bin/java.exe'
@@ -140,9 +144,6 @@ sub init{
 
 	# Rのパス設定
 	if (not -e $::config_obj->r_path){
-		require Devel::Platform::Info::Win32;
-		my $os_info = Devel::Platform::Info::Win32->new->get_info();
-		
 		my $candidate = '';
 		if (
 			( ($os_info->{wow64} == 1) || ($os_info->{is64bit} == 1) )
