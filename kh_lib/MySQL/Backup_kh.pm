@@ -40,9 +40,14 @@ sub run_sql{
     my ($self, $sql) = @_;
     my $dbh = $self->{'DBH_OBJ'};
     #die $dbh->prepare($sql);
-    
+
+	# debug print
+	#my ($package_name, $file_name, $line) = caller;
+	#print "Caller: $package_name, $file_name, $line\nSQL: $sql\n\n";
+
     my $sth = $dbh->prepare($sql) || die $self->caller();
-    
+    $sth->{"mysql_use_result"} = 1;
+
     if (not $sth){
       die $DBI::errstr;
     }
