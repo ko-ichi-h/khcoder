@@ -32,7 +32,7 @@ sub init{
 	require Devel::Platform::Info::Win32;
 	my $os_info = Devel::Platform::Info::Win32->new->get_info();
 	if ( $ENV{PROCESSOR_ARCHITEW6432} =~ /ARM/ ) { # recognize ARM as 32bit
-		$os_info->{wow64} == 0;
+		$os_info->{wow64} = 0;
 	}
 
 	# pandocのパスを追加
