@@ -34,13 +34,25 @@ sub export{
 	my $file_temp_info = $::config_obj->file_temp;
 	my %info;
 	$info{'file_name'} = encode_base64(
-		Encode::encode('utf8', $::project_obj->file_short_name),
+		Encode::encode('utf8', $::project_obj->file_short_name_mw('no_col' => 1) ),
 		''
 	);
 	$info{'comment'}   = encode_base64(
 		Encode::encode('utf8', $::project_obj->comment),
 		''
 	);
+	if ($::project_obj->status_var_file) {
+		$info{'var_file'}   = encode_base64('1', '');
+	} else {
+		$info{'var_file'}   = encode_base64('0', '');
+	}
+	if ($::project_obj->status_selected_coln) {
+		$info{'selected_coln'}   = encode_base64(
+			Encode::encode('utf8', $::project_obj->status_selected_coln),
+			''
+		);
+	}
+	
 	DumpFile($file_temp_info, %info) or
 		gui_errormsg->open(
 			type => 'file',
@@ -53,10 +65,32 @@ sub export{
 	
 	$zip->addFile( $file_temp_mysql, 'mysql' );
 	$zip->addFile( $file_temp_info,  'info' );
-	$zip->addFile(
-		$::config_obj->os_path($::project_obj->file_target),
-		'target'
-	);
+	
+	if ( -e $::project_obj->status_source_file ){
+		$zip->addFile(
+			$::config_obj->os_path( $::project_obj->status_source_file  ),
+			'source'
+		);
+	} else {
+		$zip->addFile(
+			$::config_obj->os_path($::project_obj->file_target),
+			'target'
+		);
+	}
+	
+	if ( -e $::project_obj->status_copied_file ){
+		$zip->addFile(
+			$::config_obj->os_path($::project_obj->status_copied_file),
+			'copied'
+		);
+	}
+	
+	if ( -e $::project_obj->status_converted_file ){
+		$zip->addFile(
+			$::config_obj->os_path($::project_obj->status_converted_file),
+			'converted'
+		);
+	}
 	
 	unless ( $zip->writeToFileNamed($savefile) == AZ_OK ) {
 		gui_errormsg->open(
@@ -94,8 +128,16 @@ sub import{
 	}
 
 	my $file_temp_target = $::config_obj->file_temp;
-	unless ( $zip->extractMember('target',$file_temp_target) == AZ_OK ){
-		print "Could not extract target file!\n";
+	
+	my $ext;
+	if ($names{'source'}) {
+		$ext = 'source';
+	} else {
+		$ext = 'target';
+	}
+	
+	unless ( $zip->extractMember($ext, $file_temp_target) == AZ_OK ){
+		print "Could not extract $ext file!\n";
 		return undef;
 	}
 	rename($file_temp_target, $file_target) or
@@ -108,12 +150,17 @@ sub import{
 
 	# プロジェクトの登録
 	my $info = &get_info($file_save);
-	
 	my $new = kh_project->new(
 		target  => $file_target,
 		comment => $info->{comment},
 		icode   => 0,
 	) or return 0;
+	
+	$file_target = $::config_obj->uni_path( $file_target );
+	if ( length($info->{selected_coln}) ) {
+		my $target_for_projects .= "$file_target [".$info->{selected_coln}."]";
+		$new->{target} = $target_for_projects;
+	}
 	kh_projects->read->add_new($new) or return 0; # このプロジェクトが開かれる
 
 	# MySQLデータベースの準備（クリア）
@@ -133,26 +180,50 @@ sub import{
 	$mb->run_restore_script($file_temp_mysql);
 	unlink($file_temp_mysql);
 
-	# when there are no copied, converted, var, source files
-	unless ( $names{copied_file} ){
-		mysql_exec->do("DELETE FROM status_char WHERE name = 'copied_file'");
-	}
-	unless ( $names{converted_file} ){
-		mysql_exec->do("DELETE FROM status_char WHERE name = 'converted_file'");
-	}
-	unless ( $names{var_file} ){
-		mysql_exec->do("DELETE FROM status_char WHERE name = 'var_file'");
-	}
-	unless ( $names{source_file} ){
-		mysql_exec->do("DELETE FROM status_char WHERE name = 'source_file'");
-		mysql_exec->do("DELETE FROM status_char WHERE name = 'target'");
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('target', "
-			.mysql_exec->quote($file_target)
-			.")"
-		);
+	# save some info into MySQL status_char table
+	mysql_exec->do("DELETE FROM status_char WHERE name = 'copied_file'");
+	mysql_exec->do("DELETE FROM status_char WHERE name = 'converted_file'");
+	mysql_exec->do("DELETE FROM status_char WHERE name = 'var_file'");
+	mysql_exec->do("DELETE FROM status_char WHERE name = 'source_file'");
+	mysql_exec->do("DELETE FROM status_char WHERE name = 'target'");
+
+	mysql_exec->do("
+		INSERT INTO status_char (name, status) VALUES ('target', "
+		.mysql_exec->quote($file_target)
+		.")"
+	);
+
+	if ($names{source}) {
+		$::project_obj->status_source_file( $file_target );
 	}
 	
+	if ( $info->{var_file} ){
+		$::project_obj->status_var_file( $::config_obj->uni_path( $::project_obj->file_datadir.'_tgt_var0.txt' ));
+	}
+	
+	# files in the inner structure
+	if ($names{copied}) {
+		my $suf;
+		if ($file_target =~ /(\.[a-zA-Z]+?)$/) {
+			$suf = $1;
+		}
+		my $copied   = $::project_obj->file_datadir.'_tgt'.$suf;
+		
+		unless ( $zip->extractMember('copied', $copied) == AZ_OK ){
+			print "Could not extract copied file!\n";
+			return undef;
+		}
+		$::project_obj->status_copied_file( $::config_obj->uni_path($copied) );
+	}
+	if ($names{converted}) {
+		my $converted = $::project_obj->file_datadir.'_tgt_txt0.txt';
+		
+		unless ( $zip->extractMember('converted', $converted) == AZ_OK ){
+			print "Could not extract converted file!\n";
+			return undef;
+		}
+		$::project_obj->status_converted_file( $::config_obj->uni_path($converted) );
+	}
 	mysql_exec->flush;
 	
 	undef $::project_obj;

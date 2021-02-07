@@ -1081,7 +1081,7 @@ sub mc_import_project{
 	my $info = &kh_project_io::get_info($path);
 	return undef unless length($info->{file_name});
 	@types = (
-		['Data Files',[qw/.txt .html .htm/] ],
+		['Data Files',[qw/.txt .docx .doc .xls .xlsx .csv .tsv/] ],
 		["All Files",'*']
 	);
 	my $path_s = $::main_gui->mw->getSaveFile(

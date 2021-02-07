@@ -761,8 +761,9 @@ sub status_selected_coln{
 	}
 
 	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = '$new' WHERE name = 'selected_coln'"
+			UPDATE status_char SET status = $quoted WHERE name = 'selected_coln'"
 		,1);
 		$current = $new;
 	}
@@ -788,8 +789,9 @@ sub status_var_file{
 	}
 
 	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = '$new' WHERE name = 'var_file'"
+			UPDATE status_char SET status = $quoted WHERE name = 'var_file'"
 		,1);
 		$current = $new;
 	}
@@ -815,8 +817,9 @@ sub status_source_file{
 	}
 	
 	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = '$new' WHERE name = 'source_file'"
+			UPDATE status_char SET status = $quoted WHERE name = 'source_file'"
 		,1);
 		$current = $new;
 	}
@@ -842,8 +845,9 @@ sub status_converted_file{
 	}
 	
 	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = '$new' WHERE name = 'converted_file'"
+			UPDATE status_char SET status = $quoted WHERE name = 'converted_file'"
 		,1);
 		$current = $new;
 	}
@@ -869,8 +873,9 @@ sub status_copied_file{
 	}
 	
 	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = '$new' WHERE name = 'copied_file'"
+			UPDATE status_char SET status = $quoted WHERE name = 'copied_file'"
 		,1);
 		$current = $new;
 	}
@@ -1260,6 +1265,7 @@ sub file_short_name{
 
 sub file_short_name_mw{ # Only for showing the source file name. NOT for processing.
 	my $self = shift;
+	my %args = @_;
 
 	my $file = $self->file_target;
 	if ($::project_obj) {
@@ -1267,7 +1273,7 @@ sub file_short_name_mw{ # Only for showing the source file name. NOT for process
 			if ( length( $self->status_source_file ) ){
 				$file = $self->status_source_file;
 			}
-			if ( length( $self->status_selected_coln ) ){
+			if ( length( $self->status_selected_coln ) and not $args{no_col} ){
 				$file .= " [".$self->status_selected_coln."]";
 			}
 		}
