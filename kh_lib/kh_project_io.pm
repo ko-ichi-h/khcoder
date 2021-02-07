@@ -4,7 +4,7 @@ use strict;
 use MySQL::Backup_kh;
 use MIME::Base64;
 use YAML qw(DumpFile LoadFile);
-use Archive::Zip;
+use Archive::Zip qw( :ERROR_CODES );
 
 sub export{
 	my $savefile = $_[0];
@@ -58,7 +58,7 @@ sub export{
 		'target'
 	);
 	
-	unless ( $zip->writeToFileNamed($savefile) == "AZ_OK" ) {
+	unless ( $zip->writeToFileNamed($savefile) == AZ_OK ) {
 		gui_errormsg->open(
 			type => 'file',
 			file => $savefile
@@ -83,13 +83,18 @@ sub import{
 
 	# 分析対象ファイルの解凍
 	my $zip = Archive::Zip->new();
-	unless ( $zip->read( $file_save ) == "AZ_OK" ) {
+	unless ( $zip->read( $file_save ) == AZ_OK ) {
 		print "Could not open zip file!\n";
 		return undef;
 	}
+	my @names = $zip->memberNames();
+	my %names = ();
+	foreach my $i (@names){
+		$names{$i} = 1;
+	}
 
 	my $file_temp_target = $::config_obj->file_temp;
-	unless ( $zip->extractMember('target',$file_temp_target) == "AZ__OK" ){
+	unless ( $zip->extractMember('target',$file_temp_target) == AZ_OK ){
 		print "Could not extract target file!\n";
 		return undef;
 	}
@@ -121,14 +126,33 @@ sub import{
 
 	# MySQLデータベースの復帰
 	my $file_temp_mysql = $::config_obj->file_temp;
-	unless ( $zip->extractMember('mysql',$file_temp_mysql) == "AZ__OK" ){
+	unless ( $zip->extractMember('mysql',$file_temp_mysql) == AZ_OK ){
 		return undef;
 	}
 	my $mb = new_from_DBH MySQL::Backup_kh($::project_obj->dbh);
 	$mb->run_restore_script($file_temp_mysql);
 	unlink($file_temp_mysql);
 
-	#mysql_exec->do("set global innodb_flush_log_at_trx_commit = 2");
+	# when there are no copied, converted, var, source files
+	unless ( $names{copied_file} ){
+		mysql_exec->do("DELETE FROM status_char WHERE name = 'copied_file'");
+	}
+	unless ( $names{converted_file} ){
+		mysql_exec->do("DELETE FROM status_char WHERE name = 'converted_file'");
+	}
+	unless ( $names{var_file} ){
+		mysql_exec->do("DELETE FROM status_char WHERE name = 'var_file'");
+	}
+	unless ( $names{source_file} ){
+		mysql_exec->do("DELETE FROM status_char WHERE name = 'source_file'");
+		mysql_exec->do("DELETE FROM status_char WHERE name = 'target'");
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('target', "
+			.mysql_exec->quote($file_target)
+			.")"
+		);
+	}
+	
 	mysql_exec->flush;
 	
 	undef $::project_obj;
@@ -140,11 +164,11 @@ sub get_info{
 	
 	# 解凍
 	my $zip = Archive::Zip->new();
-	unless ( $zip->read( $file ) == "AZ_OK" ) {
+	unless ( $zip->read( $file ) == AZ_OK ) {
 		return undef;
 	}
 	my $file_temp_info = $::config_obj->file_temp;
-	unless ( $zip->extractMember('info',$file_temp_info) == "AZ__OK" ){
+	unless ( $zip->extractMember('info',$file_temp_info) == AZ_OK ){
 		return undef;
 	}
 
