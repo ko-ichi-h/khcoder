@@ -402,49 +402,81 @@ sub mark{
 		$text = Encode::decode('UCS-2LE', $text);
 		$text =~ s/\x{fffd}/?/g;
 		
-		while (1){
-			my %temp = (); my $f = 0;                      # 位置を取得
-			foreach my $i (@keywords){
-				# 当該の行内に文字列$iが存在すれば位置をチェック
-				if (index(lc $text, lc $i) > -1){
-					$temp{$i} = index(lc $text, lc $i, -1);
-					++$f;
-				}
-			}
-			unless ($f){                                   # 存在しなければ中止
+		# Evade already marked part (for marking keywords for "force pickup")
+		while ( index($text, '<') > -1) {
+			my $pos_start = index($text, '<');
+			my $pos_end   = index($text, '>', $pos_start);
+			if ($pos_end < 0) {
 				last;
 			}
-			
-			my %firstplaces = (); my $n = -1;              # 先頭チェック
-			for my $i (sort {$temp{$a} <=> $temp{$b}} keys %temp){
-				if ($n < 0){
-					$n = $temp{$i};
-				}
-				elsif ($n != $temp{$i}){
-					last;
-				}
-				$firstplaces{$i} = $priority{$i};
-			}
-			for my $i (                                    # 優先度チェック
-				sort { $firstplaces{$a} <=> $firstplaces{$b} }
-				keys %firstplaces
-			){
-				my $len = length ($i);                     # マーキング
-				$len += $n;
-				my $t = substr($text,0,$n);
-				substr($text,0,$len) = '';
-				print MARKED "$t<$i>";
-				last;
-			}
+
+			my $pre = substr($text,0,$pos_start);
+			my $cnt = substr(
+				$text,
+				$pos_start,
+				$pos_end - $pos_start + 1
+			);
+			print MARKED mark_text($pre,\@keywords,\%priority);
+			print MARKED $cnt;
+			substr($text,0,$pos_end + 1) = '';
 		}
-		print MARKED "$text\n";
+		print MARKED mark_text($text,\@keywords,\%priority), "\n";
+
 	}
 	close (SOURCE);
 	close (MARKED);
 	
-	#print " ( $cn characters are converted to '?' ) " if $cn;
-	
 	return 1;
+}
+
+# Mark keywords for "force pickup"
+sub mark_text{
+	my $text_to_mark = shift;
+	my $keywords = shift;
+	my $priority = shift;
+	
+	my $out = '';
+	
+	while (1){
+		my %temp = (); my $f = 0;                      # Find keywords
+		foreach my $i (@{$keywords}){
+			if (index(lc $text_to_mark, lc $i) > -1){
+				$temp{$i} = index(lc $text_to_mark, lc $i, -1);
+				++$f;
+			}
+		}
+		unless ($f){                                   # Done if none
+			last;
+		}
+		
+		my $c = ''; my $n = -1; my $p = 0;             # Examin marking candidates
+		for my $i (sort {$temp{$a} <=> $temp{$b}} keys %temp){
+			# the 1st candidate
+			if ($n < 0){
+				$n = $temp{$i} + length($i); # current candidate's effect range (end)
+				$p = $priority->{$i};        # current candidate's priority
+				$c = $i;                     # current candidate
+			}
+			# 2nd and so on...
+			elsif ($n > $temp{$i}){          # overlapping effect range
+				if ($priority->{$i} < $p) {  # higher priority
+					# new candidate
+					$n = $temp{$i} + length($i);
+					$p = $priority->{$i};
+					$c = $i;
+				}
+			}
+			else {
+				last;
+			}
+		}
+
+		my $t = substr($text_to_mark,0,$temp{$c});             # Perform Marking
+		substr($text_to_mark,0,$n) = '';
+		$out .= "$t<$c>";
+	}
+	$out .= "$text_to_mark";
+	return $out;
 }
 
 #--------------#
