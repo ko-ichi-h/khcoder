@@ -438,32 +438,36 @@ sub mark_text{
 	my $out = '';
 	
 	while (1){
-		my %temp = (); my $f = 0;                      # Find keywords
+		my %temp = (); my $f = 0;                     # Find keywords
 		foreach my $i (@{$keywords}){
 			if (index(lc $text_to_mark, lc $i) > -1){
 				$temp{$i} = index(lc $text_to_mark, lc $i, -1);
 				++$f;
 			}
 		}
-		unless ($f){                                   # Done if none
+		unless ($f){                                  # Done if none
 			last;
 		}
 		
-		my $c = ''; my $n = -1; my $p = 0;             # Examin marking candidates
+		my @candidates = (); my $c;                   # Examin marking candidates
 		for my $i (sort {$temp{$a} <=> $temp{$b}} keys %temp){
 			# the 1st candidate
-			if ($n < 0){
-				$n = $temp{$i} + length($i); # current candidate's effect range (end)
-				$p = $priority->{$i};        # current candidate's priority
-				$c = $i;                     # current candidate
+			if (not $c){
+				$c = undef;
+				$c->{start} = $temp{$i};
+				$c->{end}   = $temp{$i} + length($i);
+				$c->{text}  = $i;
+				push @candidates, $c;
 			}
 			# 2nd and so on...
-			elsif ($n > $temp{$i}){          # overlapping effect range
-				if ($priority->{$i} < $p) {  # higher priority
+			elsif ($c->{end} > $temp{$i}){                       # overlapping effect range
+				if ($priority->{$i} < $priority->{$c->{text}}) { # higher priority
 					# new candidate
-					$n = $temp{$i} + length($i);
-					$p = $priority->{$i};
-					$c = $i;
+					push @candidates, $c;
+					$c = undef;
+					$c->{start} = $temp{$i};
+					$c->{end}   = $temp{$i} + length($i);
+					$c->{text}  = $i;
 				}
 			}
 			else {
@@ -471,9 +475,27 @@ sub mark_text{
 			}
 		}
 
-		my $t = substr($text_to_mark,0,$temp{$c});             # Perform Marking
-		substr($text_to_mark,0,$n) = '';
-		$out .= "$t<$c>";
+		while (1) {                                   # Revive candidate if it is ahead of
+			my @revived_candidates = ();              # effect range of the current primary
+			my $n = 0;                                # candidate ($c)
+			foreach my $i (@candidates){
+				if ( $i->{end} <= $c->{start} ) {
+					push @revived_candidates, $i;
+					++$n;
+				}
+			}
+			unless ($n){
+				last;
+			}
+			$c = (
+				sort { $priority->{$a->{text}} <=> $priority->{$b->{text}} }
+				@revived_candidates
+			)[0];
+		}
+
+		my $t = substr($text_to_mark,0,$c->{start});             # Perform Marking
+		substr($text_to_mark,0,$c->{end}) = '';
+		$out .= "$t<$c->{text}>";
 	}
 	$out .= "$text_to_mark";
 	return $out;
