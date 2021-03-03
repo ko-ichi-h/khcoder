@@ -153,7 +153,7 @@ sub init{
 		close ($fh);
 		undef $fh;
 		
-		$r =~ s/\nR_HOME_DIR=\/.+?\n/\nR_HOME_DIR=$r_home\n/;
+		$r =~ s/\nR_HOME_DIR=.+?\n/\nR_HOME_DIR=$r_home\n/;
 		
 		open ($fh, '>', $file_r) or die("could not write file: $file_r\n");
 		print $fh $r;
