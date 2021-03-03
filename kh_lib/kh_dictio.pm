@@ -475,9 +475,9 @@ sub mark_text{
 			}
 		}
 
-		while (1) {                                   # Revive candidate if it is ahead of
-			my @revived_candidates = ();              # effect range of the current primary
-			my $n = 0;                                # candidate ($c)
+		while (1) {                                   # Revive candidates if they are ahead
+			my @revived_candidates = ();              # of the effect range of the current
+			my $n = 0;                                # primary candidate ($c)
 			foreach my $i (@candidates){
 				if ( $i->{end} <= $c->{start} ) {
 					push @revived_candidates, $i;
