@@ -15,6 +15,7 @@ use gui_window::r_plot::cod_mat;
 use gui_window::r_plot::cod_mat_line;
 use gui_window::r_plot::selected_netgraph;
 use gui_window::r_plot::doc_cls;
+use gui_window::r_plot::topic_n_perplexity;
 
 use strict;
 use gui_hlist;
