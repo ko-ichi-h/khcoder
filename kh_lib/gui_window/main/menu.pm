@@ -54,6 +54,7 @@ my @menu1 = (
 	't_bayes_predict',
 	't_bayes_view',
 	't_bayes_view_log',
+	't_topic_pp',
 );
 
 
@@ -696,6 +697,22 @@ sub make{
 			},
 			-state => 'disable'
 		);
+
+	my $f_topic = $f->cascade(
+			-label => kh_msg->get('topic'), # トピックモデル
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+		$self->{t_topic_pp} = $f_topic->command(
+			-label => kh_msg->get('topic_pp'), # トピック数の探索（Perplexity）
+			-font => "TKFN",
+			-command => sub{
+					gui_window::topic_perplexity->open;
+				},
+			-state => 'disable'
+		);
+
 
 	my $f5 = $f->cascade(
 			-label => kh_msg->get('coding'),#gui_window->gui_jchar('コーディング'),

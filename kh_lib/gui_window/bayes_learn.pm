@@ -47,7 +47,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 	
 	$self->{label_fold} = $fcv->Label(
-		-text       => '  Folds:',
+		-text       => '  fold:',
 		#-foreground => 'gray',
 	)->pack(-anchor => 'w', -side => 'left');
 	

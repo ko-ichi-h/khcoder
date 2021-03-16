@@ -88,6 +88,7 @@ use gui_window::word_som;
 use gui_window::cod_som;
 use gui_window::word_search_opt;
 use gui_window::import_folder;
+use gui_window::topic_perplexity;
 
 BEGIN{
 	if( $] > 5.008 ){

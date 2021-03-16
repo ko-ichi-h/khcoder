@@ -223,6 +223,8 @@ gui_window::main::menu:
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
     to_csv:                   Convert to CSV
+    topic:                    Topic models
+    topic_pp:                 Find N of topics
     tools:                    Tools
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract
@@ -1148,6 +1150,11 @@ gui_window::import_folder:
     browse_unified:            "Please enter a name for the unified text file"
     opt_unify:                 "Unify documents"
     opt_project:               "New project"
+gui_window::topic_perplexity:
+    opt:                       Method and Number of topics
+    win_title:                 Find Optimal Number of Topics
+    candidates:                N of Topics:
+    folds:                     Fold: 
 screen_code::rde_menu:
     plugin_raw_data_editor:    "Edit Data"
     err_not_exist:             "Projectdata don't exist."
