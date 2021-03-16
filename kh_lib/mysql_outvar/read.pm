@@ -145,7 +145,7 @@ sub prepare_db{
 		my $col = 'col'."$cn"; ++$cn;
 		mysql_exec->do("
 			INSERT INTO outvar (name, tab, col, tani)
-			VALUES (\'$i\', \'$table\', \'$col\', \'$self->{tani}\')
+			VALUES (".mysql_exec->quote($i).", \'$table\', \'$col\', \'$self->{tani}\')
 		",1);
 		
 		if ($self->{var_type} eq 'INT') {
