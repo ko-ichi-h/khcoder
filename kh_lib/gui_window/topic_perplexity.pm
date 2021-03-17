@@ -37,7 +37,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('gui_window::doc_cls->verb'), # 分類
+		verb   => kh_msg->get('gui_window::doc_cls->verb'), # 使用
 		sampling     => 1,
 		command      => sub{
 			$self->calc;
@@ -86,10 +86,8 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$self->{entry_folds}->insert(0, '5');
-	$self->{entry_folds}->bind("<Key-Return>", sub{ $self->calc; })
-		if defined( $self->{command} );
-	$self->{entry_folds}->bind("<KP_Enter>", sub{ $self->calc; })
-		if defined( $self->{command} );
+	$self->{entry_folds}->bind("<Key-Return>", sub{ $self->calc; });
+	$self->{entry_folds}->bind("<KP_Enter>", sub{ $self->calc; });
 	gui_window->config_entry_focusin( $self->{entry_folds} );
 
 	$self->refresh_fold;
@@ -110,10 +108,8 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2, -fill => 'x', -expand => 1);
 	$self->{entry_candidates}->insert(0,'seq(2, 35, by=3), 40, 45, 50, 60, 70');
-	$self->{entry_candidates}->bind("<Key-Return>",sub{ $self->calc; })
-		if defined( $self->{command} );
-	$self->{entry_candidates}->bind("<KP_Enter>", sub{ $self->calc; })
-		if defined( $self->{command} );
+	$self->{entry_candidates}->bind("<Key-Return>",sub{ $self->calc; });
+	$self->{entry_candidates}->bind("<KP_Enter>", sub{ $self->calc; });
 
 
 	# フォントサイズ
@@ -121,7 +117,8 @@ sub _new{
 		parent    => $lf,
 		command   => sub{ $self->calc; },
 		pack      => { -anchor   => 'w', -pady => 4 },
-		show_bold => 1,
+		show_bold => 0,
+		plot_size => $::config_obj->plot_size_codes,
 	);
 
 	$rf->Checkbutton(
@@ -262,20 +259,23 @@ sub make_plot{
 
 	kh_r_plot->clear_env;
 
+	my $width;
 	my $r_command = $args{r_command};
 	
 	if ($args{method} eq 'perplexity'){
 		$r_command .= &r_command_perp($args{fold}, $args{candidates});
+		$width = $::config_obj->plot_size_codes;
 	} else {
-		print "method: $args{method}\n";
+		$r_command .= &r_command_ldatuning($args{candidates});
+		$width = $::config_obj->plot_size_words;
 	}
 	
 	# make the plot
 	my $plot1 = kh_r_plot->new(
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
-		width     => $args{plot_size},
-		height    => $args{plot_size},
+		width     => $width,
+		height    => $::config_obj->plot_size_codes,
 		font_size => $args{font_size},
 	) or return 0;
 	
@@ -332,6 +332,7 @@ sub hinshi{
 	my $self = shift;
 	return $self->{words_obj}->hinshi;
 }
+
 sub r_command_perp{
 	my $fold       = shift;
 	my $candidates = shift;
@@ -379,14 +380,62 @@ for (i in 1:ncol(perp)){
 }
 perppl <- data.frame(perplexity = perpp, k = perpk)
 
+# dpi: short based
+
+col_dot_words <- "#74add1"
+
 library(ggplot2)
+font_family <- "'.$::config_obj->font_plot_current.'"
+if ( exists("PERL_font_family") ){
+	font_family <- PERL_font_family
+}
 print( ggplot(perppl, aes(x = k, y = perplexity)) +
-	geom_point() +
-	geom_smooth(se = F ) +
-	labs(x = "number of topics", y = "perplexity") )
+	geom_point(colour = col_dot_words) +
+	geom_smooth(se = F, colour = "black" ) +
+	labs(x = "number of topics", y = "perplexity") +
+	theme_classic(base_family=font_family) +
+	theme(
+	legend.key   = element_rect(colour = NA, fill= NA),
+	axis.line.x    = element_line(colour = "black", size=0.5),
+	axis.line.y    = element_line(colour = "black", size=0.5),
+	axis.title.x = element_text(face="plain", size=11, angle=0),
+	axis.title.y = element_text(face="plain", size=11, angle=90),
+	axis.text.x  = element_text(face="plain", size=11, angle=0),
+	axis.text.y  = element_text(face="plain", size=11, angle=0),
+	legend.title = element_text(face="bold",  size=11, angle=0),
+	legend.text  = element_text(face="plain", size=11, angle=0)
+	))
 
 ';
 return $t;
 }
+
+sub r_command_ldatuning{
+	my $candidates = shift;
+	
+	my $t = '
+dtm <- t(d)
+rownames(dtm) <- 1:nrow(dtm)
+dtm <- dtm[rowSums(dtm) > 0,]
+
+library(topicmodels)
+library(ldatuning)
+
+result_tps <- FindTopicsNumber(
+	dtm,
+	topics =  c('.$candidates.'),
+	metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+	method = "Gibbs"
+	#verbose = T
+)
+
+# dpi: short based
+
+FindTopicsNumber_plot(result_tps)
+
+';
+return $t;
+}
+
 
 1;
