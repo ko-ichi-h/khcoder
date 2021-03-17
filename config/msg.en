@@ -282,6 +282,10 @@ gui_window::project_open:
 gui_window::r_plot:
     options:                  Config
     saving:                   'Save the Plot as:'
+gui_window::r_plot::topic_n_perplexity:
+    win_title:                Find Optimal N of Topics: Perplexity
+gui_window::r_plot::topic_n_ldatuning:
+    win_title:                Find Optimal N of Topics: ldatuning
 gui_window::r_plot::cod_corresp:
     win_title:                Correspondence Analysis of Codes
 gui_window::r_plot::selected_netgraph:

@@ -37,7 +37,7 @@ sub _new{
 
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
-		verb   => kh_msg->get('cluster'), # 分類
+		verb   => kh_msg->get('gui_window::doc_cls->verb'), # 分類
 		sampling     => 1,
 		command      => sub{
 			$self->calc;
@@ -86,9 +86,9 @@ sub _new{
 	)->pack(-side => 'left', -padx => 2);
 
 	$self->{entry_folds}->insert(0, '5');
-	$self->{entry_folds}->bind("<Key-Return>",$self->{command})
+	$self->{entry_folds}->bind("<Key-Return>", sub{ $self->calc; })
 		if defined( $self->{command} );
-	$self->{entry_folds}->bind("<KP_Enter>", $self->{command})
+	$self->{entry_folds}->bind("<KP_Enter>", sub{ $self->calc; })
 		if defined( $self->{command} );
 	gui_window->config_entry_focusin( $self->{entry_folds} );
 
@@ -110,9 +110,9 @@ sub _new{
 		-background => 'white',
 	)->pack(-side => 'left', -padx => 2, -fill => 'x', -expand => 1);
 	$self->{entry_candidates}->insert(0,'seq(2, 35, by=3), 40, 45, 50, 60, 70');
-	$self->{entry_candidates}->bind("<Key-Return>",$self->{command})
+	$self->{entry_candidates}->bind("<Key-Return>",sub{ $self->calc; })
 		if defined( $self->{command} );
-	$self->{entry_candidates}->bind("<KP_Enter>", $self->{command})
+	$self->{entry_candidates}->bind("<KP_Enter>", sub{ $self->calc; })
 		if defined( $self->{command} );
 
 
@@ -343,12 +343,12 @@ dtm <- dtm[rowSums(dtm) > 0,]
 
 library(topicmodels)
 
-folds <- trunc( runif( nrow(dtm) ) / 2 * 10 ) + 1
+folds <- trunc( runif( nrow(dtm) ) * '.$fold.' ) + 1
 perp <- NULL
 
 my_perp <- function(k){
 	current <- NULL
-	for (i in 1:5) {
+	for (i in 1:'.$fold.') {
 		test_result_lda <- topicmodels::LDA(dtm[folds!=i,], k = k, method = "Gibbs")
 		current[i] <- topicmodels::perplexity(test_result_lda, newdata = dtm[folds==i,], use_theta = TRUE, estimate_theta = TRUE)
 	}

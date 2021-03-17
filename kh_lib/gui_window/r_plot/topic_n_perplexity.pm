@@ -1,6 +1,11 @@
 package gui_window::r_plot::topic_n_perplexity;
 use base qw(gui_window::r_plot);
 
+sub start{
+	my $self = shift;
+	$self->{button_config}->configure(-state => 'disabled');
+}
+
 sub option1_options{
 	return [ 'nothing' ];
 }

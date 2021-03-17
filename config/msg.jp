@@ -284,6 +284,10 @@ gui_window::project_open:
 gui_window::r_plot:
     options:                  調整
     saving:                   プロットを保存
+gui_window::r_plot::topic_n_perplexity:
+    win_title:                トピック数の探索：Perplexity
+gui_window::r_plot::topic_n_ldatuning:
+    win_title:                トピック数の探索：ldatuning
 gui_window::r_plot::cod_corresp:
     win_title:                コーディング・対応分析
 gui_window::r_plot::selected_netgraph:
