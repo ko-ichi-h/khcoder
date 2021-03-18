@@ -238,7 +238,6 @@ sub calc{
 		fold           => gui_window->gui_jgn( $self->{entry_folds}->get ),
 		candidates     => gui_window->gui_jgn( $self->{entry_candidates}->get ),
 		font_size      => $self->{font_obj}->font_size,
-		font_bold      => $self->{font_obj}->check_bold_text,
 		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
 		plotwin_name   => 'topic_n_'.$self->{method},
@@ -261,13 +260,14 @@ sub make_plot{
 
 	my $width;
 	my $r_command = $args{r_command};
+	$r_command .= "\ncex <- $args{font_size}\n";
 	
 	if ($args{method} eq 'perplexity'){
 		$r_command .= &r_command_perp($args{fold}, $args{candidates});
-		$width = $::config_obj->plot_size_codes;
+		$width = $args{plot_size};
 	} else {
 		$r_command .= &r_command_ldatuning($args{candidates});
-		$width = $::config_obj->plot_size_words;
+		$width = int($args{plot_size} * 4 / 3);
 	}
 	
 	# make the plot
@@ -275,7 +275,7 @@ sub make_plot{
 		name      => $args{plotwin_name}.'_1',
 		command_f => $r_command,
 		width     => $width,
-		height    => $::config_obj->plot_size_codes,
+		height    => $args{plot_size},
 		font_size => $args{font_size},
 	) or return 0;
 	
@@ -398,12 +398,12 @@ print( ggplot(perppl, aes(x = k, y = perplexity)) +
 	legend.key   = element_rect(colour = NA, fill= NA),
 	axis.line.x    = element_line(colour = "black", size=0.5),
 	axis.line.y    = element_line(colour = "black", size=0.5),
-	axis.title.x = element_text(face="plain", size=11, angle=0),
-	axis.title.y = element_text(face="plain", size=11, angle=90),
-	axis.text.x  = element_text(face="plain", size=11, angle=0),
-	axis.text.y  = element_text(face="plain", size=11, angle=0),
-	legend.title = element_text(face="bold",  size=11, angle=0),
-	legend.text  = element_text(face="plain", size=11, angle=0)
+	axis.title.x = element_text(face="plain", size=11 * cex, angle=0),
+	axis.title.y = element_text(face="plain", size=11 * cex, angle=90),
+	axis.text.x  = element_text(face="plain", size=11 * cex, angle=0),
+	axis.text.y  = element_text(face="plain", size=11 * cex, angle=0),
+	legend.title = element_text(face="bold",  size=11 * cex, angle=0),
+	legend.text  = element_text(face="plain", size=11 * cex, angle=0)
 	))
 
 ';
