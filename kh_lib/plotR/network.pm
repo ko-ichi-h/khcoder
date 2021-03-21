@@ -1768,7 +1768,7 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				values = rgb( t( ( 255 - ( 255 - c20org ) * 0.5 ) / 255  ) ),
 				na.value = "white",
 				guide = guide_legend(
-					title = "Community:",
+					title = "Subgraph:",
 					override.aes = list(size=5.5, alpha=1, shape=22),
 					keyheight = unit(1.25,"line"),
 					ncol=2,
@@ -1787,7 +1787,7 @@ if ( com_method == "com-b" || com_method == "com-g" || com_method == "com-r"){
 				l = 85,
 				na.value = "white",
 				guide = guide_legend(
-					title = "Community:",
+					title = "Subgraph:",
 					override.aes = list(size=5.5, alpha=1, shape=22, colour="gray45"),
 					keyheight = unit(1.25,"line"),
 					ncol=2,
