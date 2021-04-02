@@ -55,6 +55,7 @@ my @menu1 = (
 	't_bayes_view',
 	't_bayes_view_log',
 	't_topic_pp',
+	't_topic_ft',
 );
 
 
@@ -713,6 +714,14 @@ sub make{
 			-state => 'disable'
 		);
 
+		$self->{t_topic_ft} = $f_topic->command(
+			-label => kh_msg->get('topic_ft'), # トピックの推定
+			-font => "TKFN",
+			-command => sub{
+					gui_window::topic_fitting->open;
+				},
+			-state => 'disable'
+		);
 
 	my $f5 = $f->cascade(
 			-label => kh_msg->get('coding'),#gui_window->gui_jchar('コーディング'),

@@ -226,6 +226,7 @@ gui_window::main::menu:
     tf_df:                    出現回数ｘ文書数のプロット
     topic:                    トピックモデル
     topic_pp:                 トピック数の探索
+    topic_ft:                 トピックの推定
     to_csv:                   HTMLからCSVに変換
     tools:                    ツール(T)
     use_chasen:               茶筌を利用
@@ -1158,12 +1159,18 @@ gui_window::import_folder:
     browse_unified:            "結合ファイルの名前を指定してください"
     opt_unify:                 "テキストファイル結合"
     opt_project:               "新規プロジェクト"
+gui_window::topic_fitting:
+    win_title:                 トピックの推定
+    opt:                       トピックモデルのオプション
+    n_topics:                  トピック数：
 gui_window::topic_perplexity:
     opt:                       探索のオプション
     win_title:                 トピック数の探索
     candidates:                トピック数の候補：
     folds:                     分割数（fold）：
     method:                    方法：
+gui_window::topic_result:
+    win_title:                 トピックの推定結果
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"

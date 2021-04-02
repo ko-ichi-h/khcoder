@@ -338,7 +338,8 @@ sub r_command_perp{
 	my $candidates = shift;
 	
 	my $t = '
-dtm <- t(d)
+#dtm <- t(d)
+dtm <- d
 rownames(dtm) <- 1:nrow(dtm)
 dtm <- dtm[rowSums(dtm) > 0,]
 
@@ -414,7 +415,8 @@ sub r_command_ldatuning{
 	my $candidates = shift;
 	
 	my $t = '
-dtm <- t(d)
+#dtm <- t(d)
+dtm <- d
 rownames(dtm) <- 1:nrow(dtm)
 dtm <- dtm[rowSums(dtm) > 0,]
 

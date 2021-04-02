@@ -225,6 +225,7 @@ gui_window::main::menu:
     to_csv:                   Convert to CSV
     topic:                    Topic models
     topic_pp:                 Find Optimal N of topics
+    topic_ft:                 Fit a LDA Model
     tools:                    Tools
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract
