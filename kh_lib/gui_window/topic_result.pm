@@ -157,6 +157,13 @@ sub _new{
 sub start{
 	my $self = shift;
 	
+	# data structure
+	# $term->[topic_number - 1] = [
+	#	[word, value],
+	#	[word, value],
+	#	,,,
+	# ]
+	
 	# load data 1: open file
 	my $tsv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, sep_char  => "\t" } );
 	use File::BOM;
@@ -183,17 +190,18 @@ sub start{
 	}
 	
 	# check
-	my $n = 0;
-	foreach my $i (sort {$b->[1] <=> $a->[1]} @{$term->[0]}){
-		print "$i->[0], ";
-		++$n;
-		if ($n == 10) {
-			last;
-		}
-	}
-	print "\n";
+	#my $n = 0;
+	#foreach my $i (sort {$b->[1] <=> $a->[1]} @{$term->[0]}){
+	#	print "$i->[0], ";
+	#	++$n;
+	#	if ($n == 10) {
+	#		last;
+	#	}
+	#}
+	#print "\n";
 	
-	
+	$self->{term} = $term;
+	$self->view;
 	return $self;
 }
 
@@ -206,49 +214,130 @@ sub list_all{
 	gui_OtherWin->open($dist);
 }
 
+sub _view_simple{
+	my $self = shift;
+
+	$self->{list} = $self->{list_flame}->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header             => 1,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => 3,
+		-padx               => 2,
+		-background         => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'extended',
+		-height             => 10,
+		#-borderwidth        => 0,
+		-highlightthickness => 0,
+	)->pack(-fill => 'both', -expand => 1);
+	$self->{list}->header('create',0,-text => 'topic#');
+	$self->{list}->header('create',1,-text => 'name');
+	$self->{list}->header('create',2,-text => kh_msg->gget('words').' (Top 10)');
+
+	my $row = 0;
+	foreach my $topic (@{$self->{term}}){
+		
+		$self->{list}->add($row,-at => "$row");
+		
+		$self->{list}->itemCreate(
+			$row,
+			0,
+			-text => $row + 1,
+		);
+		
+		my $c = $self->{list}->Entry(
+			-font  => "TKFN",
+			-width => 15
+		);
+		$self->{list}->itemCreate(
+			$row,
+			1,
+			-itemtype  => 'window',
+			-widget    => $c,
+		);
+		$self->{entry}[$row] = $c;
+
+		my $w = '';
+		my $n_w = 0;
+		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
+			if (length($w)) {
+				$w .= ', ';
+			}
+			$w .= $i->[0];
+			++$n_w;
+			last if $n_w >= 10;
+		}
+		
+		$self->{list}->itemCreate(
+			$row,
+			2,
+			-text => $w,
+		);
+		print "$w\n";
+		
+		++$row;
+	}
+
+	return $self;
+}
+
 
 sub view{
 	my $self = shift;
 
-	#--------------------#
-	#   抽出語のリスト   #
+	#-------------------#
+	#   Create HLists   #
 
-	# 1列目の長さ
-	my $width = 0;
-	foreach my $i ( @{$self->{knb_obj}->rows} ){
-		if ( length($i->[0]) > $width ){
-			$width = length($i->[0]);
-		}
-	}
-	my $cols = 2 + ($self->{knb_obj}->labels) * 2;
+	# column length
+	my $cols = 2;
 
-	# リストWidget
-	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
+	# Hlist Widgets
+	$self->{list}->destroy if $self->{list};                # Destroy
 	$self->{list2}->destroy if $self->{list2};
 	$self->{sb1}->destroy if $self->{sb1};
 	$self->{sb2}->destroy if $self->{sb2};
 	$self->{list_flame_inner}->destroy if $self->{list_flame_inner};
 
-	$self->{list_flame_inner} = $self->{list_flame}->Frame( # 新たなリスト作成
+	$self->{list_flame_inner} = $self->{list_flame}->Frame( # Create
 		-relief      => 'sunken',
 		-borderwidth => 2
 	);
+
+	$self->_view_simple;
+	return $self;
+
+
+
 	$self->{list2} = $self->{list_flame_inner}->HList(
 		-header             => 1,
 		-itemtype           => 'text',
 		-font               => 'TKFN',
-		-columns            => 1,
+		-columns            => 2,
 		-padx               => 2,
 		-background         => 'white',
 		-selectforeground   => $::config_obj->color_ListHL_fore,
 		-selectbackground   => $::config_obj->color_ListHL_back,
 		-selectmode         => 'extended',
 		-height             => 10,
-		-width              => $width,
+		-width              => 22,
 		-borderwidth        => 0,
 		-highlightthickness => 0,
 	);
-	$self->{list2}->header('create',0,-text => ' ');
+	$self->{list2}->header('create',0,-text => 'topic#');
+	my $h = $self->{list2}->Label(
+		-text               => 'name',
+		-font               => "TKFN",
+		#-foreground         => 'blue',
+		#-cursor             => 'hand2',
+		-padx               => 0,
+		-pady               => 0,
+		-borderwidth        => 0,
+		-highlightthickness => 0,
+	);
+	$self->{list2}->header('create',1,-itemtype  => 'window',-widget => $h);
+	
 	$self->{list} = $self->{list_flame_inner}->HList(
 		-header             => 1,
 		-itemtype           => 'text',
@@ -263,52 +352,86 @@ sub view{
 		-highlightthickness => 0,
 	);
 
-	my $col = 0;                                            # Header作成
-	my @temp = ();
-	foreach my $i ( $self->{knb_obj}->labels ){
-		push @temp, $i.' (%)';
-	}
+	my $col = 0;                                            # Add Header
 	foreach my $i (
-		kh_msg->gget('words'), $self->{knb_obj}->labels, kh_msg->get('variance'), @temp # 分散
+		kh_msg->gget('words').' (Top 10)'
 	){
-		unless ($col){
-			++$col;
-			next;
-		}
 		my $w = $self->{list}->Label(
-			-text               => $self->gui_jchar($i),
+			-text               => $i,
 			-font               => "TKFN",
-			-foreground         => 'blue',
-			-cursor             => 'hand2',
+			#-foreground         => 'blue',
+			#-cursor             => 'hand2',
 			-padx               => 0,
 			-pady               => 0,
 			-borderwidth        => 0,
 			-highlightthickness => 0,
 		);
 		my $key = $col;
-		unless ( $i eq '  ' ){
-			$w->bind(
-				"<Button-1>",
-				sub { $self->sort($key); }
-			);
-			$w->bind(
-				"<Enter>",
-				sub { $w->configure(-foreground => 'red'); }
-			);
-			$w->bind(
-				"<Leave>",
-				sub { $w->configure(-foreground => 'blue');}
-			);
-		}
+
 		$self->{list}->header(
 			'create',
-			$col - 1,
+			$col,
 			-itemtype  => 'window',
 			-widget    => $w,
 		);
 		++$col;
 	}
 
+	$self->confugre_hlist_scroll;
+
+	#---------------------#
+	#   Fill the HLists   #
+
+	my $row = 0;
+	foreach my $topic (@{$self->{term}}){
+		
+		$self->{list}->add($row,-at => "$row");
+		$self->{list2}->add($row,-at => "$row");
+		
+		$self->{list2}->itemCreate(
+			$row,
+			0,
+			-text => $row + 1,
+		);
+		
+		my $c = $self->{list2}->Entry(
+			-font  => "TKFN",
+			-width => 15
+		);
+		$self->{list2}->itemCreate(
+			$row,
+			1,
+			-itemtype  => 'window',
+			-widget    => $c,
+		);
+		$self->{entry}[$row] = $c;
+
+		my $w = '';
+		my $n_w = 0;
+		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
+			if (length($w)) {
+				$w .= ', ';
+			}
+			$w .= $i->[0];
+			++$n_w;
+			last if $n_w >= 10;
+		}
+		
+		$self->{list}->itemCreate(
+			$row,
+			0,
+			-text => $w,
+		);
+		
+		++$row;
+	}
+
+	return $self;
+}
+
+sub confugre_hlist_scroll{
+	my $self = shift;
+	
 	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
 		-orient  => 'v',
 		-command => sub {
@@ -394,12 +517,6 @@ sub view{
 	$self->{list2}->pack(-side => 'left', -fill =>'y', -pady => 0);
 	$self->{list}->pack(-fill =>'both',-expand => 'yes', -pady => 0);
 	$sb2->pack(-fill => 'x');
-
-	#--------------------#
-	#   抽出語のリスト   #
-
-	$self->sort;
-	return $self;
 }
 
 sub multiscrolly{
@@ -634,7 +751,7 @@ sub copy{
 
 
 sub win_name{
-	return 'w_bayes_view_knb';
+	return 'w_topic_result';
 }
 
 1;

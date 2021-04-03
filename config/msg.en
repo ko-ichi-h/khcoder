@@ -224,8 +224,8 @@ gui_window::main::menu:
     tf_df:                    TF-DF Plot
     to_csv:                   Convert to CSV
     topic:                    Topic models
-    topic_pp:                 Find Optimal N of topics
-    topic_ft:                 Fit a LDA Model
+    topic_pp:                 Find Optimal N of Topics
+    topic_ft:                 Fit a Topic Model
     tools:                    Tools
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract

@@ -238,6 +238,10 @@ sub calc{
 		$self->withd;
 	}
 	
+	if ($::main_gui->if_opened('w_topic_result')){
+		$::main_gui->get('w_topic_result')->close;
+	}
+	
 	gui_window::topic_result->open(
 		tani        => $self->tani,
 		used_words  => $check_num,
