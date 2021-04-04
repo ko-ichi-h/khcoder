@@ -37,7 +37,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_unit} = $lf->Entry(
-		-width => 12,
+		-width => 6,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	$lf->Label(-text => '  ')->pack(-side => 'left');
@@ -46,7 +46,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_n_topics} = $lf->Entry(
-		-width => 12,
+		-width => 6,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	$lf->Label(-text => ' ')->pack(-side => 'left');
@@ -55,7 +55,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_n_words} = $lf->Entry(
-		-width => 12,
+		-width => 6,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	my $unit_label = $args{tani};
@@ -80,7 +80,7 @@ sub _new{
 
 
 	my $lf1 = $win->LabFrame(
-		-label => 'Topics with top 10 words',
+		-label => 'Topics',
 		-labelside => 'acrosstop',
 		-borderwidth => 2,
 	)->pack(-fill => 'both', -expand => 1);
@@ -223,7 +223,7 @@ sub _view_simple{
 		-header             => 1,
 		-itemtype           => 'text',
 		-font               => 'TKFN',
-		-columns            => 3,
+		-columns            => 2,
 		-padx               => 2,
 		-background         => 'white',
 		-selectforeground   => 'black',
@@ -233,8 +233,12 @@ sub _view_simple{
 		-highlightthickness => 0,
 	)->pack(-fill => 'both', -expand => 1);
 	$self->{list}->header('create',0,-text => 'topic#');
-	$self->{list}->header('create',1,-text => 'name');
-	$self->{list}->header('create',2,-text => kh_msg->gget('words').' (Top 10)');
+	
+	my $header_label = my $w = $self->{list}->Label(
+		-text => kh_msg->gget('words').' (Top 10)',
+		-font               => "TKFN",
+	);
+	$self->{list}->header('create',1,-itemtype  => 'window',-widget => $header_label);
 
 	my $row = 0;
 	foreach my $topic (@{$self->{term}}){
@@ -247,17 +251,17 @@ sub _view_simple{
 			-text => $row + 1,
 		);
 		
-		my $c = $self->{list}->Entry(
-			-font  => "TKFN",
-			-width => 15
-		);
-		$self->{list}->itemCreate(
-			$row,
-			1,
-			-itemtype  => 'window',
-			-widget    => $c,
-		);
-		$self->{entry}[$row] = $c;
+		#my $c = $self->{list}->Entry(
+		#	-font  => "TKFN",
+		#	-width => 15
+		#);
+		#$self->{list}->itemCreate(
+		#	$row,
+		#	1,
+		#	-itemtype  => 'window',
+		#	-widget    => $c,
+		#);
+		#$self->{entry}[$row] = $c;
 
 		my $w = '';
 		my $n_w = 0;
@@ -272,13 +276,269 @@ sub _view_simple{
 		
 		$self->{list}->itemCreate(
 			$row,
-			2,
+			1,
 			-text => $w,
 		);
 		print "$w\n";
 		
 		++$row;
 	}
+
+	return $self;
+}
+
+sub _view_with_val{
+	my $self = shift;
+
+	$self->{list} = $self->{list_flame}->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header             => 0,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => @{$self->{term}} * 3,
+		-padx               => 2,
+		-background         => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'none',
+		-height             => 10,
+		#-borderwidth        => 0,
+		-highlightthickness => 0,
+	)->pack(-fill => 'both', -expand => 1);
+
+	my $lgray_style = $self->{list}->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => "#f0f0f0",
+	);
+
+	my $gray_style = $self->{list}->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => "gray",
+	);
+
+	for (my $r = 0; $r <= 10; ++$r){
+		$self->{list}->add($r,-at => $r);
+	}
+
+	my $t = 1;
+	foreach my $topic (@{$self->{term}}){
+		my $col = ( $t - 1 ) * 3;
+		
+		$self->{list}->itemCreate(
+			0,
+			$col,
+			-text => '#'.$t,
+			-style => $lgray_style,
+		);
+		
+		$self->{list}->itemCreate(
+			0,
+			$col + 2,
+			-text => ' ',
+			#-style => $gray_style,
+		);
+		
+		my $c = $self->{list}->Entry(
+			-font  => "TKFN",
+			-width => 15
+		);
+		#$self->{list}->itemCreate(
+		#	0,
+		#	$col + 1,
+		#	-itemtype  => 'window',
+		#	-widget    => $c,
+		#);
+		$self->{entry}[$t-1] = $c;
+
+		my $row = 1;
+		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
+			
+			$self->{list}->itemCreate(
+				$row,
+				$col,
+				-text => $i->[0],
+				-style => $lgray_style,
+			);
+			$self->{list}->itemCreate(
+				$row,
+				$col + 1,
+				-text => sprintf("%.3f", $i->[1]),
+				#-style => $lgray_style,
+			);
+			
+			
+			
+			++$row;
+			last if $row >= 10;
+		}
+		++$t;
+	}
+
+	return $self;
+}
+
+sub _view_with_valbar{
+	my $self = shift;
+
+	$self->{list} = $self->{list_flame}->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header             => 0,
+		-itemtype           => 'text',
+		-font               => 'TKFN',
+		-columns            => @{$self->{term}} * 3,
+		-padx               => 2,
+		-background         => 'white',
+		-selectforeground   => 'black',
+		-selectmode         => 'none',
+		-height             => 10,
+		#-borderwidth        => 0,
+		-highlightthickness => 0,
+	)->pack(-fill => 'both', -expand => 1);
+
+	my $lgray_style = $self->{list}->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => "#f0f0f0",
+	);
+
+	my $gray_style = $self->{list}->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => "gray",
+	);
+
+	for (my $r = 0; $r <= 10; ++$r){
+		$self->{list}->add($r,-at => $r);
+	}
+
+	my $t = 1;
+	my @values = ();
+	my @col_values = ();
+	foreach my $topic (@{$self->{term}}){
+		my $col = ( $t - 1 ) * 3;
+		
+		$self->{list}->itemCreate(
+			0,
+			$col,
+			-text => '#'.$t,
+			-style => $lgray_style,
+		);
+		
+		$self->{list}->itemCreate( # spacer
+			0,
+			$col + 2,
+			-text => ' ',
+			#-style => $gray_style,
+		);
+
+		my $row = 1;
+		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
+			
+			$self->{list}->itemCreate(
+				$row,
+				$col,
+				-text => $i->[0],
+				-style => $lgray_style,
+			);
+			#$self->{list}->itemCreate(
+			#	$row,
+			#	$col + 1,
+			#	-text => sprintf("%.3f", $i->[1]),
+			#	#-style => $lgray_style,
+			#);
+			
+			push @values, $i->[1];
+			push @{$col_values[$t - 1]}, $i->[1];
+			
+			++$row;
+			last if $row >= 10;
+		}
+		++$t;
+	}
+	
+	# bar graph
+	my $test_label = $self->{list}->Label(       # width & height
+		-text => '0.000',
+		-font => "TKFN",
+		-background => 'white',
+		-foreground => 'white',
+	);
+	$self->{list}->itemCreate(
+		0,
+		1,
+		-itemtype => 'window',
+		-widget => $test_label,
+	);
+	$self->{list}->update;
+	my $height = $test_label->height;
+	my $width_min  = $test_label->width;
+	#$test_label->destroy;
+	$self->{list}->itemDelete(0, 1);
+	
+	use Statistics::Lite;                        # preparation for computing bar length
+	my $min = Statistics::Lite::min(@values);
+	my $max = Statistics::Lite::max(@values);
+	my $range = $max - $min;
+	
+	
+	$t = 1;                                      # draw bars & numbers
+	foreach my $topic (@{$self->{term}}){
+		my $row = 1;
+		
+		my $width = Statistics::Lite::max( @{$col_values[$t - 1]} );
+		$width = int( ( $width - $min ) / $range * 100 );
+		if ($width < $width_min) {
+			$width = $width_min
+		}
+		
+		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
+			my $col = ( $t - 1 ) * 3;
+			
+			my $length = int( ( $i->[1] - $min ) / $range * 100 );
+			
+			
+			my $c = $self->{list}->Canvas(
+				-width => $width,
+				-height => $height,
+				-background => 'white',
+				-borderwidth => 0,
+				-highlightthickness => 0,
+			);
+			$c->create(
+				'rectangle',
+				0, 0, $length, 20,
+				-fill    => '#a0d8ef',
+				-outline => '#a0d8ef',
+			);
+
+			$c->createText(
+				0, 10,
+				-text => ' '.sprintf("%.3f", $i->[1]),
+				-anchor => 'w',
+				-font => "TKFN",
+			);
+
+			$self->{list}->itemCreate(
+				$row,
+				$col + 1,
+				-itemtype => 'window',
+				-widget => $c,
+				#-style => $leftu,
+			);
+			
+			++$row;
+			last if $row >= 10;
+		}
+		++$t;
+	}
+	
 
 	return $self;
 }
@@ -305,6 +565,7 @@ sub view{
 		-borderwidth => 2
 	);
 
+	#$self->_view_simple;
 	$self->_view_simple;
 	return $self;
 
