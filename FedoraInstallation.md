@@ -3,25 +3,25 @@
 These instructions have been tested on Fedora 32. Install dependencies
 
 ```bash
-sudo dnf -y groupinstall "Development Tools"
-sudo dnf -y install mysql-devel perl-devel java-1.8.0-openjdk-devel R-devel perl-CPAN
+$ sudo dnf -y groupinstall "Development Tools"
+$ sudo dnf -y install mysql-devel perl-devel java-1.8.0-openjdk-devel R-devel perl-CPAN
 ```
 
 Create a directory for KH Coder and go to it
 
 ```bash
-mkdir khcoder
-cd khcoder
+$ mkdir khcoder
+$ cd khcoder
 ```
 
 Download [latest release of KH coder](https://github.com/ko-ichi-h/khcoder/releases/latest)
 as well as [Stanford POS tagger](https://nlp.stanford.edu/software/tagger.shtml#Download)
 
 ```bash
-wget https://nlp.stanford.edu/software/stanford-tagger-4.2.0.zip
-unzip stanford-tagger-4.2.0.zip
-wget https://github.com/ko-ichi-h/khcoder/archive/refs/tags/3.Beta.03.zip
-unzip 3.Beta.03.zip
+$ wget https://nlp.stanford.edu/software/stanford-tagger-4.2.0.zip
+$ unzip stanford-tagger-4.2.0.zip
+$ wget https://github.com/ko-ichi-h/khcoder/archive/refs/tags/3.Beta.03.zip
+$ unzip 3.Beta.03.zip
 ```
 
 Install R depedencies, create the script below and save it as `InstallRDependencies.R`
@@ -56,7 +56,7 @@ package.check <- lapply(packages,
 
 Run the script
 ```bash
-Rscript InstallRDependencies.R
+$ Rscript InstallRDependencies.R
 ```
 
 Install Perl depedencies, create the script below and save it as `InstallPerlDependencies.sh`
@@ -82,12 +82,45 @@ done
 
 Run the script
 ```bash
-sudo bash InstallPerlDependencies.sh
+$ sudo bash InstallPerlDependencies.sh
 ```
 
-Configure KH Coder
+Now setup database. MariaDB can replace Mysql, but needs to be
+configured. Information is adapted from the 
+[Fedora Mariadb wiki](https://fedoraproject.org/wiki/MariaDB)
 
-Configure KH Code (important):
+```bash
+$ sudo systemctl enable mariadb
+$ sudo systemctl start mariadb
+$ mysql_secure_installation
+
+Set root password? [Y/n] y
+Remove anonymous users? [Y/n] y
+Disallow root login remotely? [Y/n] y
+Remove test database and access to it? [Y/n] y
+Reload privilege tables now? [Y/n] y
+
+$ mysql -uroot -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 26
+Server version: 10.4.18-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> CREATE USER 'khcoder'@'localhost' IDENTIFIED BY 'SecurePassword';
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> GRANT ALL ON *.* TO 'khcoder'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> exit
+Bye
+
+```
+Configure KH Coder
 
 ```bash
     nano /config/coder.ini
@@ -95,6 +128,7 @@ Configure KH Code (important):
 - change java_path: <...>/bin/java.exe
 - change stanf_jar_path: <...>/stanford-postagger.jar
 - change stanf_tagger_path_en: <...>/models..tagger
+- change sql_username, sql_password, sql_host (localhost), sql_port (3306)
  
 Start KH Coder
 ```bash
