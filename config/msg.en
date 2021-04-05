@@ -1155,11 +1155,20 @@ gui_window::import_folder:
     browse_unified:            "Please enter a name for the unified text file"
     opt_unify:                 "Unify documents"
     opt_project:               "New project"
+gui_window::topic_fitting:
+    win_title:                 "Fit a Topic Model"
+    opt:                       "Topic Model Options"
+    n_topics:                  "N of Topics: "
 gui_window::topic_perplexity:
     opt:                       Method and Number of topics
     win_title:                 Find Optimal Number of Topics
-    candidates:                N of Topics:
-    folds:                     Fold: 
+    candidates:                "N of Topics: "
+    folds:                     "Fold: "
+    method:                    "Method: "
+gui_window::topic_result:
+    win_title:                 Result of Topic Model
+    extended:                  words and prob.
+    simple:                    words only
 screen_code::rde_menu:
     plugin_raw_data_editor:    "Edit Data"
     err_not_exist:             "Projectdata don't exist."

@@ -37,7 +37,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_unit} = $lf->Entry(
-		-width => 6,
+		-width => 3,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	$lf->Label(-text => '  ')->pack(-side => 'left');
@@ -46,7 +46,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_n_topics} = $lf->Entry(
-		-width => 6,
+		-width => 3,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	$lf->Label(-text => ' ')->pack(-side => 'left');
@@ -55,7 +55,7 @@ sub _new{
 	)->pack(-side => 'left');
 
 	$self->{entry_n_words} = $lf->Entry(
-		-width => 6,
+		-width => 3,
 	)->pack(-side => 'left',-fill => 'x', -expand => 1);
 
 	my $unit_label = $args{tani};
@@ -87,12 +87,47 @@ sub _new{
 
 	$self->{list_flame} = $lf1->Frame()->pack(-fill => 'both', -expand => 1);
 
-	return $self; ###
-
 	#------------------#
 	#   操作ボタン類   #
 
 	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
+
+	$f1->Label(
+		-text => kh_msg->get('gui_window::r_plot::word_corresp->view'),
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	
+	$self->{view_type} = 1;
+	$self->{show_bars} = 0;
+	
+	$self->{optmenu_view} = gui_widget::optmenu->open(
+		parent  => $f1,
+		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
+		#width   => 7,
+		options =>
+			[
+				[kh_msg->get('extended'), 1],
+				[kh_msg->get('simple') ,  0],
+			],
+		variable => \$self->{view_type},
+		command => sub{$self->view;},
+	);
+
+	$f1->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+	
+	$self->{check_show_bars} = $f1->Checkbutton(
+		-variable => \$self->{show_bars},
+		-text     => kh_msg->get('gui_window::word_search->show_bars'),
+		-command  => sub {
+			$self->view;
+		},
+	)->pack(-anchor => 'w', -side => 'left');
+
+	return $self; ###
+
 
 	$self->{entry_wsearch} = $f1->Entry(
 		-width => 15,
@@ -232,7 +267,7 @@ sub _view_simple{
 		#-borderwidth        => 0,
 		-highlightthickness => 0,
 	)->pack(-fill => 'both', -expand => 1);
-	$self->{list}->header('create',0,-text => 'topic#');
+	$self->{list}->header('create',0,-text => '#');
 	
 	my $header_label = my $w = $self->{list}->Label(
 		-text => kh_msg->gget('words').' (Top 10)',
@@ -565,8 +600,19 @@ sub view{
 		-borderwidth => 2
 	);
 
-	#$self->_view_simple;
-	$self->_view_simple;
+	if ( $self->{view_type} == 0 ){
+		$self->_view_simple;
+		$self->{check_show_bars}->configure(-state => 'disable');
+	} else {
+		if ( $self->{show_bars} ){
+			$self->_view_with_valbar;
+		} else {
+			$self->_view_with_val;
+		}
+		$self->{check_show_bars}->configure(-state => 'normal');
+	}
+	
+	
 	return $self;
 
 

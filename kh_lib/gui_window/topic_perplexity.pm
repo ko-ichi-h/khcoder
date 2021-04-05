@@ -351,7 +351,7 @@ perp <- NULL
 my_perp <- function(k){
 	current <- NULL
 	for (i in 1:'.$fold.') {
-		test_result_lda <- topicmodels::LDA(dtm[folds!=i,], k = k, method = "Gibbs")
+		test_result_lda <- topicmodels::LDA(dtm[folds!=i,], k = k, method = "Gibbs", control = list(seed = 1234567,  burnin = 1000))
 		current[i] <- topicmodels::perplexity(test_result_lda, newdata = dtm[folds==i,], use_theta = TRUE, estimate_theta = TRUE)
 	}
 	current <- matrix(current,nrow=1)
@@ -425,9 +425,10 @@ library(ldatuning)
 
 result_tps <- FindTopicsNumber(
 	dtm,
-	topics =  c('.$candidates.'),
-	metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
-	method = "Gibbs"
+	topics   = c('.$candidates.'),
+	metrics  = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+	method   = "Gibbs",
+	control  = list(seed = 1234567,  burnin = 1000)
 	#verbose = T
 )
 

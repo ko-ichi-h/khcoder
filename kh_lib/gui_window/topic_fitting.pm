@@ -304,7 +304,7 @@ library(topicmodels)
 
 result_lda <- topicmodels::LDA(dtm, k = '.$n_topics.', method = "Gibbs"';
 
-	$t .= ", control = list(seed = 1234567)";
+	$t .= ", control = list(seed = 1234567,  burnin = 1000)";
 	$t .= ')';
 
 	return $t;
