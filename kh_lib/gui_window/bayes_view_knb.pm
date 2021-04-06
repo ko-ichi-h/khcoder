@@ -260,7 +260,7 @@ sub view{
 			'create',
 			$col - 1,
 			-itemtype  => 'window',
-			
+			-widget => $w,
 		);
 		++$col;
 	}

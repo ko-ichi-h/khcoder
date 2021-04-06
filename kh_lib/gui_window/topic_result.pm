@@ -90,28 +90,18 @@ sub _new{
 	#------------------#
 	#   操作ボタン類   #
 
-	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
-
-	$f1->Label(
-		-text => kh_msg->get('gui_window::r_plot::word_corresp->view'),
-		-font => "TKFN",
-	)->pack(-side => 'left');
-	
 	$self->{view_type} = 1;
 	$self->{show_bars} = 0;
+
+	my $f1 = $lf1->Frame()->pack(-fill => 'x',-pady => 2);
 	
-	$self->{optmenu_view} = gui_widget::optmenu->open(
-		parent  => $f1,
-		pack    => {-anchor=>'e', -side => 'left', -padx => 2},
-		#width   => 7,
-		options =>
-			[
-				[kh_msg->get('extended'), 1],
-				[kh_msg->get('simple') ,  0],
-			],
-		variable => \$self->{view_type},
-		command => sub{$self->view;},
-	);
+	$self->{check_view_type} = $f1->Checkbutton(
+		-variable => \$self->{view_type},
+		-text     => kh_msg->get('extended'),
+		-command  => sub {
+			$self->view;
+		},
+	)->pack(-anchor => 'w', -side => 'left');
 
 	$f1->Label(
 		-text => '  ',
@@ -125,6 +115,12 @@ sub _new{
 			$self->view;
 		},
 	)->pack(-anchor => 'w', -side => 'left');
+
+
+	my $btn = $f1->Button(
+		-text => kh_msg->gget('copy_all'), # コピー（表全体）
+		-command => sub { $self->copy; }
+	)->pack(-side => 'right', -padx => 2);
 
 	return $self; ###
 
@@ -168,10 +164,7 @@ sub _new{
 		-command => sub { $self->list_all; }
 	)->pack(-side => 'left', -padx => 2);
 
-	my $btn = $f1->Button(
-		-text => kh_msg->gget('copy_all'), # コピー（表全体）
-		-command => sub { $self->copy; }
-	)->pack(-side => 'left', -padx => 2);
+
 	
 	$self->win_obj->bind(
 		'<Control-Key-c>',
@@ -269,7 +262,7 @@ sub _view_simple{
 	)->pack(-fill => 'both', -expand => 1);
 	$self->{list}->header('create',0,-text => '#');
 	
-	my $header_label = my $w = $self->{list}->Label(
+	my $header_label = $self->{list}->Label(
 		-text => kh_msg->gget('words').' (Top 10)',
 		-font               => "TKFN",
 	);
@@ -314,11 +307,12 @@ sub _view_simple{
 			1,
 			-text => $w,
 		);
-		print "$w\n";
+		#print "$w\n";
 		
 		++$row;
 	}
 
+	$self->{copy_text} = gui_hlist->get_all( $self->{list} );
 	return $self;
 }
 
@@ -413,11 +407,13 @@ sub _view_with_val{
 		++$t;
 	}
 
+	$self->{copy_text} = gui_hlist->get_all($self->{list});
 	return $self;
 }
 
 sub _view_with_valbar{
 	my $self = shift;
+	my @copy_text = ();
 
 	$self->{list} = $self->{list_flame}->Scrolled(
 		'HList',
@@ -466,6 +462,9 @@ sub _view_with_valbar{
 			-style => $lgray_style,
 		);
 		
+		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
+		$copy_text[0] .= '#'.$t;
+		
 		$self->{list}->itemCreate( # spacer
 			0,
 			$col + 2,
@@ -491,6 +490,9 @@ sub _view_with_valbar{
 			
 			push @values, $i->[1];
 			push @{$col_values[$t - 1]}, $i->[1];
+			
+			$copy_text[$row] .= "\t\t" if length( $copy_text[$row] );
+			$copy_text[$row] .= "$i->[0]\t$i->[1]";
 			
 			++$row;
 			last if $row >= 10;
@@ -574,7 +576,7 @@ sub _view_with_valbar{
 		++$t;
 	}
 	
-
+	$self->{copy_text} = join("\n", @copy_text);
 	return $self;
 }
 
@@ -735,6 +737,28 @@ sub view{
 
 	return $self;
 }
+
+sub copy{
+	my $self = shift;
+	
+	
+	
+	use kh_clipboard;
+	kh_clipboard->string( $self->{copy_text} );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 sub confugre_hlist_scroll{
 	my $self = shift;
@@ -993,68 +1017,7 @@ sub sort{
 	return $self;
 }
 
-sub copy{
-	my $self = shift;
-	
-	return 0 unless $self->{knb_obj}->rows;
-	
-	# 1行目
-	my $clip = "\t";
-	
-	my $cols = @{$self->{knb_obj}->rows->[0]} - 2;
-	for (my $n = 0; $n <= $cols; ++$n){
-		#if ($self->{last_sort_key}){
-		#	unless ($n + 1 == $self->{last_sort_key}){
-		#		next;
-		#	}
-		#}
-		
-		my $w = $self->{list}->header(
-			'cget',
-			$n,
-			'-widget'
-		);
-		$clip .= $w->cget('-text')."\t";
-	}
-	chop $clip;
-	$clip .= "\n";
 
-	# 中身
-	my $rows = @{$self->{knb_obj}->rows} - 2;
-	for (my $r = 0; $r <= $rows; ++$r){
-		last unless $self->{list2}->info('exists', $r);
-		
-		# 1列目
-		if ($self->{list2}->itemExists($r, 0)){
-			my $cell = $self->{list2}->itemCget($r, 0, -text);
-			chop $cell if $cell =~ /\r$/o;
-			$clip .= "$cell\t";
-		} else {
-			$clip .= "\t";
-		}
-		# 2列目以降
-		for (my $c = 0; $c <= $cols; ++$c){
-			#if ($self->{last_sort_key}){
-			#	unless ($c + 1 == $self->{last_sort_key}){
-			#		next;
-			#	}
-			#}
-		
-			if ($self->{list}->itemExists($r, $c)){
-				my $cell = $self->{list}->itemCget($r, $c, -text);
-				chop $cell if $cell =~ /\r$/o;
-				$clip .= "$cell\t";
-			} else {
-				$clip .= "\t";
-			}
-		}
-		chop $clip;
-		$clip .= "\n";
-	}
-	
-	use kh_clipboard;
-	kh_clipboard->string($clip);
-}
 
 
 sub win_name{
