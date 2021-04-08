@@ -1172,6 +1172,7 @@ gui_window::topic_perplexity:
 gui_window::topic_result:
     win_title:                 トピックの推定結果
     extended:                  確率の値を表示
+    words:                     表示する語：
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"

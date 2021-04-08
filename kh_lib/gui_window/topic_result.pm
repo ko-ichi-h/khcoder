@@ -116,6 +116,26 @@ sub _new{
 		},
 	)->pack(-anchor => 'w', -side => 'left');
 
+	$f1->Label(
+		-text => '  ',
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$f1->Label(
+		-text => kh_msg->get('words'),,
+		-font => "TKFN",
+	)->pack(-side => 'left');
+
+	$self->{entry_n_words} = $f1->Entry(
+		-font       => "TKFN",
+		-width      => 4,
+		-background => 'white',
+	)->pack(-side => 'left', -padx => 2);
+
+	$self->{entry_n_words}->insert(0, '10');
+	$self->{entry_n_words}->bind("<Key-Return>", sub{ $self->view; });
+	$self->{entry_n_words}->bind("<KP_Enter>", sub{ $self->view; });
+	gui_window->config_entry_focusin( $self->{entry_n_words} );
 
 	my $btn = $f1->Button(
 		-text => kh_msg->gget('copy_all'), # コピー（表全体）
@@ -263,7 +283,7 @@ sub _view_simple{
 	$self->{list}->header('create',0,-text => '#');
 	
 	my $header_label = $self->{list}->Label(
-		-text => kh_msg->gget('words').' (Top 10)',
+		-text => kh_msg->gget('words').' (Top '.$self->{n_words}.')',
 		-font               => "TKFN",
 	);
 	$self->{list}->header('create',1,-itemtype  => 'window',-widget => $header_label);
@@ -299,7 +319,7 @@ sub _view_simple{
 			}
 			$w .= $i->[0];
 			++$n_w;
-			last if $n_w >= 10;
+			last if $n_w >= $self->{n_words};
 		}
 		
 		$self->{list}->itemCreate(
@@ -349,7 +369,7 @@ sub _view_with_val{
 		-background => "gray",
 	);
 
-	for (my $r = 0; $r <= 10; ++$r){
+	for (my $r = 0; $r <= $self->{n_words} + 1; ++$r){
 		$self->{list}->add($r,-at => $r);
 	}
 
@@ -402,7 +422,7 @@ sub _view_with_val{
 			
 			
 			++$row;
-			last if $row >= 10;
+			last if $row >= $self->{n_words} + 1;
 		}
 		++$t;
 	}
@@ -445,7 +465,7 @@ sub _view_with_valbar{
 		-background => "gray",
 	);
 
-	for (my $r = 0; $r <= 10; ++$r){
+	for (my $r = 0; $r <= $self->{n_words} + 1; ++$r){
 		$self->{list}->add($r,-at => $r);
 	}
 
@@ -495,7 +515,7 @@ sub _view_with_valbar{
 			$copy_text[$row] .= "$i->[0]\t$i->[1]";
 			
 			++$row;
-			last if $row >= 10;
+			last if $row >= $self->{n_words} + 1;
 		}
 		++$t;
 	}
@@ -571,7 +591,7 @@ sub _view_with_valbar{
 			);
 			
 			++$row;
-			last if $row >= 10;
+			last if $row >= $self->{n_words} + 1;
 		}
 		++$t;
 	}
@@ -602,6 +622,8 @@ sub view{
 		-borderwidth => 2
 	);
 
+	$self->{n_words} = gui_window->gui_jgn( $self->{entry_n_words}->get );
+	
 	if ( $self->{view_type} == 0 ){
 		$self->_view_simple;
 		$self->{check_show_bars}->configure(-state => 'disable');
@@ -616,409 +638,14 @@ sub view{
 	
 	
 	return $self;
-
-
-
-	$self->{list2} = $self->{list_flame_inner}->HList(
-		-header             => 1,
-		-itemtype           => 'text',
-		-font               => 'TKFN',
-		-columns            => 2,
-		-padx               => 2,
-		-background         => 'white',
-		-selectforeground   => $::config_obj->color_ListHL_fore,
-		-selectbackground   => $::config_obj->color_ListHL_back,
-		-selectmode         => 'extended',
-		-height             => 10,
-		-width              => 22,
-		-borderwidth        => 0,
-		-highlightthickness => 0,
-	);
-	$self->{list2}->header('create',0,-text => 'topic#');
-	my $h = $self->{list2}->Label(
-		-text               => 'name',
-		-font               => "TKFN",
-		#-foreground         => 'blue',
-		#-cursor             => 'hand2',
-		-padx               => 0,
-		-pady               => 0,
-		-borderwidth        => 0,
-		-highlightthickness => 0,
-	);
-	$self->{list2}->header('create',1,-itemtype  => 'window',-widget => $h);
-	
-	$self->{list} = $self->{list_flame_inner}->HList(
-		-header             => 1,
-		-itemtype           => 'text',
-		-font               => 'TKFN',
-		-columns            => $cols - 1,
-		-padx               => 2,
-		-background         => 'white',
-		-selectforeground   => 'black',
-		-selectmode         => 'extended',
-		-height             => 10,
-		-borderwidth        => 0,
-		-highlightthickness => 0,
-	);
-
-	my $col = 0;                                            # Add Header
-	foreach my $i (
-		kh_msg->gget('words').' (Top 10)'
-	){
-		my $w = $self->{list}->Label(
-			-text               => $i,
-			-font               => "TKFN",
-			#-foreground         => 'blue',
-			#-cursor             => 'hand2',
-			-padx               => 0,
-			-pady               => 0,
-			-borderwidth        => 0,
-			-highlightthickness => 0,
-		);
-		my $key = $col;
-
-		$self->{list}->header(
-			'create',
-			$col,
-			-itemtype  => 'window',
-			-widget    => $w,
-		);
-		++$col;
-	}
-
-	$self->confugre_hlist_scroll;
-
-	#---------------------#
-	#   Fill the HLists   #
-
-	my $row = 0;
-	foreach my $topic (@{$self->{term}}){
-		
-		$self->{list}->add($row,-at => "$row");
-		$self->{list2}->add($row,-at => "$row");
-		
-		$self->{list2}->itemCreate(
-			$row,
-			0,
-			-text => $row + 1,
-		);
-		
-		my $c = $self->{list2}->Entry(
-			-font  => "TKFN",
-			-width => 15
-		);
-		$self->{list2}->itemCreate(
-			$row,
-			1,
-			-itemtype  => 'window',
-			-widget    => $c,
-		);
-		$self->{entry}[$row] = $c;
-
-		my $w = '';
-		my $n_w = 0;
-		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
-			if (length($w)) {
-				$w .= ', ';
-			}
-			$w .= $i->[0];
-			++$n_w;
-			last if $n_w >= 10;
-		}
-		
-		$self->{list}->itemCreate(
-			$row,
-			0,
-			-text => $w,
-		);
-		
-		++$row;
-	}
-
-	return $self;
 }
 
 sub copy{
 	my $self = shift;
 	
-	
-	
 	use kh_clipboard;
 	kh_clipboard->string( $self->{copy_text} );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-sub confugre_hlist_scroll{
-	my $self = shift;
-	
-	my $sb1 = $self->{list_flame}->Scrollbar(               # スクロール設定
-		-orient  => 'v',
-		-command => sub {
-			$self->multiscrolly(@_);
-		},
-	);
-
-	my $sb2 = $self->{list_flame}->Scrollbar(
-		-orient => 'h',
-		-command => ['xview' => $self->{list}]
-	);
-
-	$self->{list}->configure(
-		-yscrollcommand => sub{
-			$sb1->set(@_);
-			# もう一方のリストが追随していなければ同期させる
-			my $p1 = $_[0];
-			my @t = $self->{list2}->yview;
-			my $p2 = $t[0];
-			
-			if (
-				   defined($self->{list_moveto})
-				&& $self->{list_moveto} == $p1 
-			){
-					print "list1: pass\n" if $debug_ms;
-					return 1;
-			}
-			
-			if ($p1 == $p2){
-				print "list1: list2 ok\n" if $debug_ms;
-			} else {
-				if ($self->{list2_moveto} == $p1){
-					print "list1: already moved?\n" if $debug_ms;
-					return 1
-				}
-				print "list1: change list2 to $p1 from $p2\n" if $debug_ms;
-				$self->{list2_moveto} = $p1;
-				$self->{list2}->yview(
-					moveto => $p1,
-				);
-			}
-		},
-	);
-
-	$self->{list2}->configure(
-		-yscrollcommand => sub{
-			$sb1->set(@_);
-			# もう一方のリストが追随していなければ同期させる
-			my $p1 = $_[0];
-			my @t = $self->{list}->yview;
-			my $p2 = $t[0];
-			
-			if (
-				   defined($self->{list2_moveto})
-				&& $self->{list2_moveto} == $p1 
-			){
-				print "list2: pass\n" if $debug_ms;
-				return 1;
-			}
-			
-			if ($p1 == $p2){
-				print "list2: list1 ok\n" if $debug_ms;
-			} else {
-				if ($self->{list_moveto} == $p1){
-					print "list2: already moved?\n" if $debug_ms;
-					return 1
-				}
-				print "list2: change list1 to $p1 from $p2\n" if $debug_ms;
-				$self->{list_moveto} = $p1;
-				$self->{list}->yview(
-					moveto => $p1,
-				);
-			}
-		},
-	);
-	
-	$self->{list}->configure( -xscrollcommand => ['set', $sb2] );
-	$self->{sb1} = $sb1;
-	$self->{sb2} = $sb2;
-	
-	$sb1->pack(-side => 'right', -fill => 'y');             # Pack
-	$self->{list_flame_inner}->pack(-fill =>'both',-expand => 'yes');
-	$self->{list2}->pack(-side => 'left', -fill =>'y', -pady => 0);
-	$self->{list}->pack(-fill =>'both',-expand => 'yes', -pady => 0);
-	$sb2->pack(-fill => 'x');
-}
-
-sub multiscrolly{
-	my $self = shift;
-	
-	my $from = ( $self->{sb1}->get() )[0];
-	
-	$self->{list}->yview('moveto', $_[1]);
-	
-
-	print "multiscrolly to $_[1] from $from\n" if $debug_ms;
-	
-	return $self;
-}
-
-#--------------------------#
-#   抽出語のソート＋表示   #
-
-sub sort{
-	my $self = shift;
-	my $key  = shift;
-	$key = 0 if $self->{last_sort_key} == $key;
-	
-	$self->{list}->delete('all');
-	$self->{list2}->delete('all');
-	
-	# ソート
-	my @sort;
-	if ($key){
-		@sort = sort { $b->[$key] <=> $a->[$key] } @{$self->{knb_obj}->rows};
-	} else {
-		@sort = @{$self->{knb_obj}->rows};
-	}
-
-	# 検索ルーチン
-	my $s_method = 'AND';
-	my $search = $self->gui_jg( $self->{entry_wsearch}->get );
-	$search =~ s/　/ /go;
-	$search = [ split / /, $search ]; # /
-
-	my @temp = ();
-	if ( @{$search} ){
-		foreach my $i (@sort){
-			my $cnt = 0;
-			foreach my $j (@{$search}){
-				if ($i->[0] =~ /$j/) {
-					if ($s_method eq 'OR'){
-						push @temp, $i;
-						last;
-					} else {
-						++$cnt;
-					}
-				} else {
-					if ($s_method eq 'AND'){
-						last;
-					}
-				}
-			}
-			if ($s_method eq 'AND' && $cnt == @{$search}){
-				push @temp, $i;
-			}
-		}
-	} else {
-		@temp = @sort;
-	}
-
-	# 出力
-	my $right_style = $self->{list}->ItemStyle(
-		'text',
-		-font => "TKFN",
-		-anchor => 'e',
-	);
-	my $right_style_g = $self->{list}->ItemStyle(
-		'text',
-		-font             => "TKFN",
-		-anchor           => 'e',
-		-foreground       => '#B22222',
-		-selectforeground => '#B22222',
-		#-background       => 'white'
-	);
-	my $right_style_o = $self->{list}->ItemStyle(
-		'text',
-		-font             => "TKFN",
-		-anchor           => 'e',
-		-foreground       => '#2A4596',
-		-selectforeground => '#2A4596',
-		#-background       => 'white'
-	);
-
-	my $row = 0;
-	foreach my $i ( @temp ){
-		my $len = ( @{$i} - 2 ) / 2;
-
-		my $max1 = max( @{$i}[1..$len] );
-		my $max2 = max( @{$i}[2+$len..1+$len+$len] );
-
-		$self->{list}->add($row,-at => "$row");
-		$self->{list2}->add($row,-at => "$row");
-		my $col = 0;
-		foreach my $h (@{$i}){
-			if ($col){
-				my $style = $right_style;
-				if     ($col >= 1 && $col <= $len && $h == $max1){
-					$style = $right_style_g;
-				} elsif ($col >= 2+$len && $col <= 1+$len+$len && $h == $max2){
-					$style = $right_style_g;
-				} elsif ($col == 1 + $len){
-					$style = $right_style_o;
-				}
-
-				$self->{list}->itemCreate(
-					$row,
-					$col - 1,
-					-text  => sprintf("%.2f", $h),
-					-style => $style
-				);
-			} else {
-				$self->{list2}->itemCreate(
-					$row,
-					0,
-					-text => $h
-				);
-			}
-			++$col;
-		}
-		++$row;
-		last if $row >= 500;
-	}
-	$self->{list}->yview(0);
-	$self->{list2}->yview(0);
-	
-	# ラベルの色を変更
-	if ($key){
-		my $w = $self->{list}->header(
-			'cget',
-			$key - 1,
-			'-widget'
-		);
-		$w->configure(
-			-foreground => 'red',
-			#-cursor => undef
-		);
-		$w->bind(
-			"<Leave>",
-			sub { $w->configure(-foreground => 'red'); }
-		);
-	}
-	
-	# 前回変更したラベルの色を元に戻す
-	if ($self->{last_sort_key}){
-		my $lw = $self->{list}->header(
-			'cget',
-			$self->{last_sort_key} - 1,
-			'-widget'
-		);
-		$lw->configure(
-			-foreground => 'blue',
-			#-cursor => 'hand2'
-		);
-		$lw->bind(
-			"<Leave>",
-			sub { $lw->configure(-foreground => 'blue'); }
-		);
-	}
-	
-	$self->{last_sort_key} = $key;
-	return $self;
-}
-
-
-
 
 sub win_name{
 	return 'w_topic_result';
