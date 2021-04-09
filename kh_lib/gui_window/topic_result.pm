@@ -714,6 +714,95 @@ sub export_topic_term{
 	return 1;
 }
 
+sub export_doc_topic{
+	my $self = shift;
+	
+	# save file name
+	my @types = (
+		['CSV Files',[qw/.csv/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.csv',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt(kh_msg->get('doc_topic')),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	
+	# open source file
+	my $tsv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, sep_char  => "\t" } );
+	use File::BOM;
+	File::BOM::open_bom (my $fh, $self->{file_topics}, ":encoding(utf8)" );
+	gui_errormsg->open(
+		type => 'file',
+		file => $self->{file_term}
+	) unless $fh;
+	
+	# open export file
+	use File::BOM;
+	open (my $of, '>:encoding(utf8):via(File::BOM)', $path) or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$path"
+		)
+	;
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
+	
+	# export
+	
+	my $max = mysql_exec->select(
+		"SELECT count(*) FROM ".$self->{tani}
+	)->hundle->fetch->[0];
+	
+	my @dummy = ();
+	$dummy[$self->{n_topics}] = "";
+	
+	my $n = 1;
+	my $flag = 0;
+	while ( my $row = $tsv->getline($fh) ){
+		if ($flag == 0) {                   # the 1st line
+			print $csv->print($of, $row);
+			print $of "\n";
+			++$flag;
+			next;
+		}
+		
+		if ($row->[0] > $n) {               # 2nd and so on
+			while ( $row->[0] > $n ) {
+				my $current = \@dummy;
+				$current->[0] = $n;
+				print $csv->print($of, $current);
+				print $of "\n";
+				++$n;
+			}
+		}
+		$csv->print($of, $row);
+		print $of "\n";
+		++$n;
+	}
+	
+	while ($n < $max) {
+		my $current = \@dummy;
+		$current->[0] = $n;
+		print $csv->print($of, $current);
+		print $of "\n";
+		++$n;
+	}
+
+	close ($fh);
+	close ($of);
+	
+	return 1;
+}
+
+
 
 sub copy{
 	my $self = shift;

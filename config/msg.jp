@@ -1174,8 +1174,8 @@ gui_window::topic_result:
     extended:                  確率の値を表示
     words:                     表示する語：
     export:                    ▽出力
-    topic_term:                「トピック×語の確率」表
-    doc_topic:                 「文書×トピック確率」表
+    topic_term:                「トピック×語」表
+    doc_topic:                 「文書×トピック」表
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"
