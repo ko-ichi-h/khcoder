@@ -140,7 +140,29 @@ sub _new{
 	my $btn = $f1->Button(
 		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-command => sub { $self->copy; }
-	)->pack(-side => 'right', -padx => 2);
+	)->pack(-side => 'right', -padx => 3);
+	$btn->update;
+
+	my $mb = $f1->Menubutton(
+		-text        => kh_msg->get('export'), # ▽出力
+		-tearoff     => 'no',
+		-relief      => 'raised',
+		-indicator   => 'no',
+		-font        => "TKFN",
+		#-height     => $btn->height,
+		#-width       => $self->{width},
+		#-borderwidth => 1,
+	)->pack(-padx => 2, -pady => 2, -side => 'right');
+
+	$mb->command(
+		-command => sub { $self->export_topic_term; },
+		-label   => kh_msg->get('topic_term'), # 「トピック×語の確率」表
+	);
+
+	$mb->command(
+		-command => sub {$self->export_doc_topic;},
+		-label   => kh_msg->get('doc_topic'), # 「文書×トピック確率」表
+	);
 
 	return $self; ###
 
@@ -217,8 +239,8 @@ sub start{
 	use File::BOM;
 	File::BOM::open_bom (my $fh, $self->{file_term}, ":encoding(utf8)" );
 	gui_errormsg->open(
-		type => 'file',
-		file => $self->{file_term}
+			type => 'file',
+			file => $self->{file_term}
 	) unless $fh;
 	
 	# load data 2: the fist line
@@ -236,6 +258,7 @@ sub start{
 			++$n;
 		}
 	}
+	close( $fh );
 	
 	# check
 	#my $n = 0;
@@ -639,6 +662,58 @@ sub view{
 	
 	return $self;
 }
+
+sub export_topic_term{
+	my $self = shift;
+	
+	# save file name
+	my @types = (
+		['CSV Files',[qw/.csv/] ],
+		["All files",'*']
+	);
+	my $path = $self->win_obj->getSaveFile(
+		-defaultextension => '.csv',
+		-filetypes        => \@types,
+		-title            =>
+			$self->gui_jt(kh_msg->get('topic_term')),
+		-initialdir       => $self->gui_jchar($::config_obj->cwd)
+	);
+	unless ($path){
+		return 0;
+	}
+	$path = gui_window->gui_jg_filename_win98($path);
+	$path = gui_window->gui_jg($path);
+	$path = $::config_obj->os_path($path);
+	
+	# open source file
+	my $tsv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, sep_char  => "\t" } );
+	use File::BOM;
+	File::BOM::open_bom (my $fh, $self->{file_term}, ":encoding(utf8)" );
+	gui_errormsg->open(
+		type => 'file',
+		file => $self->{file_term}
+	) unless $fh;
+	
+	# open export file
+	use File::BOM;
+	open (my $of, '>:encoding(utf8):via(File::BOM)', $path) or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => "$path"
+		)
+	;
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
+	
+	while ( my $row = $tsv->getline($fh) ){
+		$csv->print($of, $row);
+		print $of "\n";
+	}
+	close ($fh);
+	close ($of);
+	
+	return 1;
+}
+
 
 sub copy{
 	my $self = shift;
