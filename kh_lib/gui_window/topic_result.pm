@@ -768,7 +768,7 @@ sub export_doc_topic{
 	my $flag = 0;
 	while ( my $row = $tsv->getline($fh) ){
 		if ($flag == 0) {                   # the 1st line
-			print $csv->print($of, $row);
+			$csv->print($of, $row);
 			print $of "\n";
 			++$flag;
 			next;
@@ -778,7 +778,7 @@ sub export_doc_topic{
 			while ( $row->[0] > $n ) {
 				my $current = \@dummy;
 				$current->[0] = $n;
-				print $csv->print($of, $current);
+				$csv->print($of, $current);
 				print $of "\n";
 				++$n;
 			}
@@ -791,7 +791,7 @@ sub export_doc_topic{
 	while ($n < $max) {
 		my $current = \@dummy;
 		$current->[0] = $n;
-		print $csv->print($of, $current);
+		$csv->print($of, $current);
 		print $of "\n";
 		++$n;
 	}
