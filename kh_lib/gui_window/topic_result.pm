@@ -139,7 +139,7 @@ sub _new{
 
 	my $btn = $f1->Button(
 		-text => kh_msg->gget('copy_all'), # コピー（表全体）
-		-command => sub { $self->copy; }
+		-command => sub { $self->copy_all; }
 	)->pack(-side => 'right', -padx => 3);
 	$btn->update;
 
@@ -234,7 +234,7 @@ sub start{
 	#	,,,
 	# ]
 	
-	# load data 1: open file
+	# load topic-term data 1: open file
 	my $tsv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, sep_char  => "\t" } );
 	use File::BOM;
 	File::BOM::open_bom (my $fh, $self->{file_term}, ":encoding(utf8)" );
@@ -243,11 +243,11 @@ sub start{
 			file => $self->{file_term}
 	) unless $fh;
 	
-	# load data 2: the fist line
+	# load topic-term data 2: the fist line
 	my $words = $tsv->getline($fh);
 	shift @{$words};
 	
-	# load data 3: 2nd and so on...
+	# load topic-term data 3: 2nd and so on...
 	my $term;
 	while ( my $row = $tsv->getline($fh) ){
 		my $current_topic_number = shift @{$row};
@@ -259,19 +259,26 @@ sub start{
 		}
 	}
 	close( $fh );
-	
-	# check
-	#my $n = 0;
-	#foreach my $i (sort {$b->[1] <=> $a->[1]} @{$term->[0]}){
-	#	print "$i->[0], ";
-	#	++$n;
-	#	if ($n == 10) {
-	#		last;
-	#	}
-	#}
-	#print "\n";
-	
 	$self->{term} = $term;
+
+	# load doc-topic data 1: delete old variables
+	my $h = mysql_outvar->get_list;
+	foreach my $i (@{$h}){
+		if ( $i->[1] =~ /^_topic_/ ){
+			mysql_outvar->delete(
+				tani => $i->[0],
+				name => $i->[1],
+			);
+		}
+	}
+
+	# load doc-topic data 2: read variables
+	mysql_outvar::read::csv->new(
+		file     => $self->{file_topics_csv},
+		tani     => $self->{tani},
+		var_type => "DOUBLE",
+	)->read;
+
 	$self->view;
 	return $self;
 }
@@ -736,75 +743,16 @@ sub export_doc_topic{
 	$path = gui_window->gui_jg($path);
 	$path = $::config_obj->os_path($path);
 	
-	# open source file
-	my $tsv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2, sep_char  => "\t" } );
-	use File::BOM;
-	File::BOM::open_bom (my $fh, $self->{file_topics}, ":encoding(utf8)" );
-	gui_errormsg->open(
-		type => 'file',
-		file => $self->{file_term}
-	) unless $fh;
-	
-	# open export file
-	use File::BOM;
-	open (my $of, '>:encoding(utf8):via(File::BOM)', $path) or
-		gui_errormsg->open(
-			type    => 'file',
-			thefile => "$path"
-		)
-	;
-	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
-	
-	# export
-	
-	my $max = mysql_exec->select(
-		"SELECT count(*) FROM ".$self->{tani}
-	)->hundle->fetch->[0];
-	
-	my @dummy = ();
-	$dummy[$self->{n_topics}] = "";
-	
-	my $n = 1;
-	my $flag = 0;
-	while ( my $row = $tsv->getline($fh) ){
-		if ($flag == 0) {                   # the 1st line
-			$csv->print($of, $row);
-			print $of "\n";
-			++$flag;
-			next;
-		}
-		
-		if ($row->[0] > $n) {               # 2nd and so on
-			while ( $row->[0] > $n ) {
-				my $current = \@dummy;
-				$current->[0] = $n;
-				$csv->print($of, $current);
-				print $of "\n";
-				++$n;
-			}
-		}
-		$csv->print($of, $row);
-		print $of "\n";
-		++$n;
-	}
-	
-	while ($n < $max) {
-		my $current = \@dummy;
-		$current->[0] = $n;
-		$csv->print($of, $current);
-		print $of "\n";
-		++$n;
-	}
-
-	close ($fh);
-	close ($of);
+	# copy the file
+	use File::Copy qw/copy/;
+	copy($self->{file_topics_csv}, $path) or warn("File copy failed: $path\n");
 	
 	return 1;
 }
 
 
 
-sub copy{
+sub copy_all{
 	my $self = shift;
 	
 	use kh_clipboard;

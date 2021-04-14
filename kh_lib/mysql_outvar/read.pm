@@ -79,7 +79,10 @@ sub read{
 	while ( my $line = $csv->getline($fh) ){
 		my $v = "";
 		foreach my $i (@{$line}){
-			if ($self->{var_type} eq 'INT'){
+			if ($self->{var_type} eq 'INT' || $self->{var_type} eq 'DOUBLE'){
+				if ($i eq '') {
+					$i = "NULL";
+				}
 				$v .= "$i,";
 			} else {
 				if ($i eq '') {
@@ -140,19 +143,18 @@ sub prepare_db{
 	my $cn = 0;
 	my $cols = '';
 	my $cols2 = '';
-	$self->{var_type} = '' unless defined( $self->{var_type} );
+	
+	unless ( $self->{var_type} ){
+		$self->{var_type} = "TEXT";
+	}
+	
 	foreach my $i (@{$names}){
 		my $col = 'col'."$cn"; ++$cn;
 		mysql_exec->do("
 			INSERT INTO outvar (name, tab, col, tani)
 			VALUES (".mysql_exec->quote($i).", \'$table\', \'$col\', \'$self->{tani}\')
 		",1);
-		
-		if ($self->{var_type} eq 'INT') {
-			$cols .= "\t\t\t$col INT,\n";
-		} else {
-			$cols .= "\t\t\t$col TEXT,\n";
-		}
+		$cols .= "\t\t\t$col $self->{var_type},\n";
 		$cols2 .= "$col,";
 	}
 	chop $cols2;

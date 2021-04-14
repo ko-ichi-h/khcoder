@@ -223,11 +223,89 @@ sub calc{
 	);
 	print $::config_obj->R->read();
 
+	# Save the result into tmp files 4: Topic-CSV
+	my $save_tp_csv = $::config_obj->cwd
+		.'/config/R-bridge/'
+		.$::project_obj->dbname
+		.'_topicTP.csv'
+	;
+	
+	my $tsv = Text::CSV_XS->new({            # open source file
+		binary => 1,
+		auto_diag => 2,
+		sep_char  => "\t"
+	} );
+	use File::BOM;
+	File::BOM::open_bom (my $fh, $save_tp, ":encoding(utf8)" );
+	gui_errormsg->open(
+		type => 'file',
+		file => $save_tp
+	) unless $fh;
+	
+	use File::BOM;                          # open export file
+	open (my $of, '>:encoding(utf8):via(File::BOM)', $save_tp_csv) or
+		gui_errormsg->open(
+			type    => 'file',
+			thefile => $save_tp_csv
+		)
+	;
+	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
+	
+	my $max = mysql_exec->select(           # export
+		"SELECT count(*) FROM ".$self->tani
+	)->hundle->fetch->[0];
+	
+	my @dummy = ();
+	$dummy[$n_topics] = "";
+	
+	my $n = 1;
+	my $flag = 0;
+	while ( my $row = $tsv->getline($fh) ){
+		if ($flag == 0) {                   # the 1st line
+			my $col = 0;
+			foreach my $i (@{$row}){
+				if ($col) {
+					$i = '_topic_'.$i;
+				} else {
+					$i = '_topic_docid'
+				}
+				++$col;
+			}
+			$csv->print($of, $row);
+			print $of "\n";
+			++$flag;
+			next;
+		}
+		
+		if ($row->[0] > $n) {               # 2nd and so on
+			while ( $row->[0] > $n ) {
+				my $current = \@dummy;
+				$current->[0] = $n;
+				$csv->print($of, $current);
+				print $of "\n";
+				++$n;
+			}
+		}
+		$csv->print($of, $row);
+		print $of "\n";
+		++$n;
+	}
+	
+	while ($n < $max) {
+		my $current = \@dummy;
+		$current->[0] = $n;
+		$csv->print($of, $current);
+		print $of "\n";
+		++$n;
+	}
+	close ($fh);
+	close ($of);
+	
 	#$::config_obj->R->send("print( terms(result_lda, 10) )");
 	#print $::config_obj->R->read;
 
 	$w->end(no_dialog => 1);
-	unless (-e $save_r && -e $save_tm && -e $save_tp){
+	unless (-e $save_r && -e $save_tm && -e $save_tp && -e $save_tp_csv){
 		gui_errormsg->open(
 			type => 'msg',
 			msg  => 'Error in fitting the model...',
@@ -243,12 +321,13 @@ sub calc{
 	}
 	
 	gui_window::topic_result->open(
-		tani        => $self->tani,
-		used_words  => $check_num,
-		n_topics    => $n_topics,
-		file_r      => $save_r,
-		file_term   => $save_tm,
-		file_topics => $save_tp,
+		tani            => $self->tani,
+		used_words      => $check_num,
+		n_topics        => $n_topics,
+		file_r          => $save_r,
+		file_term       => $save_tm,
+		file_topics     => $save_tp,
+		file_topics_csv => $save_tp_csv,
 	);
 	return 1;
 }
