@@ -383,7 +383,7 @@ sub search{
 			$sql .= "ORDER BY $args{tani}.id";
 		}
 	}
-	print "\n$sql\n";
+	#print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
 	# 検索に利用した語（表層）のリスト
