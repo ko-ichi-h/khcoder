@@ -101,6 +101,7 @@ sub code{
 			unless (my $ch = $check2->fetch){
 				$self->{res_table} = '';
 				$error_flag = 1;
+				print "$sql\n\n";
 			}
 		}
 		

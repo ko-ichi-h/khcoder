@@ -99,7 +99,8 @@ sub _new{
 			[
 				['and'  , 'and' ],
 				['or'   , 'or'  ],
-				['code' , 'code']
+				['code' , 'code'],
+				['var'  , 'var' ],
 			],
 		variable => \$self->{opt_direct},
 	);
@@ -539,12 +540,17 @@ sub search{
 		raw  => $self->gui_jg( $self->{direct_w_e}->get ),
 	);
 	
+	my $order = $self->{opt_order};
+	if ($selected[0] == 0 && $self->{opt_direct} eq 'var') {
+		$order = 'var';
+	}
+	
 	# 検索ロジックの呼び出し（検索実行）
 	my $query_ok = $self->{code_obj}->search(
 		selected => \@selected,
 		tani     => $self->tani,
 		method   => $self->{opt_method1},
-		order    => $self->{opt_order},
+		order    => $order,
 	);
 	
 	$self->{status_label}->configure(

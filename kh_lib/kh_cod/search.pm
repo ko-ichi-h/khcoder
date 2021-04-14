@@ -96,6 +96,13 @@ sub add_direct{
 			$direct,
 			$args{raw},
 		);
+	}
+	elsif ($args{mode} eq 'var') {                # 「var」の場合
+		$args{raw} = '<>'.$args{raw}.'<>';
+		unshift @{$self->{codes}}, kh_cod::a_code->new(
+			$direct,
+			$args{raw},
+		);
 	} else {                                      # 「AND」,「OR」の場合
 		#$args{raw} = Jcode->new($args{raw},'euc')->tr('　',' ');
 		$args{raw} =~ tr/　/ /;
@@ -318,7 +325,20 @@ sub search{
 				$sql .= "0) as tf\n";
 			}
 			$sql .= "FROM $args{tani}_length, $args{tani}\n";
-		} else {
+		}
+		elsif ($args{order} eq 'var') {
+			my $i = $args{selected}->[0];
+			if ($self->{codes}[$i]->res_table){
+				$sql .=
+					"IFNULL("
+					.$self->{codes}[$i]->res_table
+					."."
+					.$self->{codes}[$i]->res_col
+					.",0) as var\n";
+			}
+			$sql .= "FROM $args{tani}\n";
+		}
+		else {
 			$sql .= "1\n";
 			$sql .= "FROM $args{tani}\n";
 		}
@@ -356,11 +376,14 @@ sub search{
 		$sql .= ")\n";
 		if ($args{order} =~ /^tf/o){
 			$sql .= "ORDER BY tf,$args{tani}.id";
+		}
+		elsif ($args{order} eq 'var') {
+			$sql .= "ORDER BY var DESC, $args{tani}.id";
 		} else {
 			$sql .= "ORDER BY $args{tani}.id";
 		}
 	}
-	#print "\n$sql\n";
+	print "\n$sql\n";
 	mysql_exec->do($sql,1);
 	
 	# 検索に利用した語（表層）のリスト

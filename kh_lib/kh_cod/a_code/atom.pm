@@ -9,6 +9,7 @@ use kh_cod::a_code::atom::string;
 use kh_cod::a_code::atom::number;
 use kh_cod::a_code::atom::length;
 use kh_cod::a_code::atom::outvar_o;
+use kh_cod::a_code::atom::outvar_s;
 use kh_cod::a_code::atom::heading;
 use kh_cod::a_code::atom::phrase;
 use kh_cod::a_code::atom::near;
@@ -26,6 +27,10 @@ BEGIN {
 	push @pattern, [
 		kh_cod::a_code::atom::outvar_o->pattern,
 		kh_cod::a_code::atom::outvar_o->name
+	];
+	push @pattern, [
+		kh_cod::a_code::atom::outvar_s->pattern,
+		kh_cod::a_code::atom::outvar_s->name
 	];
 	push @pattern, [
 		kh_cod::a_code::atom::length->pattern,
