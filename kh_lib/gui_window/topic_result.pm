@@ -505,12 +505,43 @@ sub _view_with_valbar{
 	foreach my $topic (@{$self->{term}}){
 		my $col = ( $t - 1 ) * 3;
 		
+		# topic_number: start
+		my $c = $self->{list}->Label(
+			-text => '#'.$t,
+			-font       => "TKFN",
+			-foreground => "blue",
+			-activeforeground => "blue",
+			-anchor     => 'w',
+			-background => 'white',
+			-pady       => 0,
+			-activebackground => $::config_obj->color_ListHL_back,
+		);
+		my $tmp_number = $t;
+		$c->bind(
+			"<Button-1>",
+			sub {
+				$self->show_docs($tmp_number);
+			}
+		);
+		$c->bind(
+			"<Enter>",
+			sub {
+				$c->configure(-foreground => 'red',-activeforeground => 'red');
+			}
+		);
+		$c->bind(
+			"<Leave>",
+			sub {
+				$c->configure(-foreground => 'blue',-activeforeground => 'blue');
+			}
+		);
 		$self->{list}->itemCreate(
 			0,
 			$col,
-			-text => '#'.$t,
-			-style => $lgray_style,
+			-itemtype => 'window',
+			-widget => $c,
 		);
+		# topic_number: end
 		
 		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
 		$copy_text[0] .= '#'.$t;
@@ -669,6 +700,36 @@ sub view{
 	
 	return $self;
 }
+
+sub show_docs{
+	my $self = shift;
+	my $t = shift;
+	print "show_docs: $t\n";
+	
+	my $win;
+	if ($::main_gui->if_opened('w_doc_search')){
+		$win = $::main_gui->get('w_doc_search');
+	} else {
+		$win = gui_window::doc_search->open;
+	}
+	
+	$win->{tani_obj}->{raw_opt} = $self->{tani};
+	$win->{tani_obj}->mb_refresh;
+	
+	$win->{clist}->selectionClear;
+	$win->{clist}->selectionSet(0);
+	$win->clist_check;
+	
+	$win->{direct_w_o}->set_value('var');
+	&{$win->{direct_w_o}{command}};
+	
+	$win->{direct_w_e}->delete(0,'end');
+	$win->{direct_w_e}->insert('end','_topic_'.$t);
+	$win->win_obj->raise;
+	$win->win_obj->focus;
+	$win->search;
+}
+
 
 sub export_topic_term{
 	my $self = shift;

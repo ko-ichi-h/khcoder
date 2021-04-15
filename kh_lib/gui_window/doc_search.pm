@@ -103,7 +103,20 @@ sub _new{
 				['var'  , 'var' ],
 			],
 		variable => \$self->{opt_direct},
+		command  => sub{ $self->refresh_sort_order; },
 	);
+	
+	sub refresh_sort_order{
+		my $self = shift;
+		return unless $self->{optmenu_sort};
+		
+		if ($self->{opt_direct} eq 'var') {
+			$self->{optmenu_sort}->configure(-state => 'disabled');
+		} else {
+			$self->{optmenu_sort}->configure(-state => 'normal');
+		}
+		
+	}
 
 	$self->{direct_w_e} = $f3->Entry(
 		-font       => "TKFN",
@@ -156,7 +169,7 @@ sub _new{
 		variable => \$self->{opt_method1},
 	);
 
-	gui_widget::optmenu->open(
+	$self->{optmenu_sort} = gui_widget::optmenu->open(
 		parent  => $f2,
 		pack    => {-padx => 8, -pady => 1},
 		options =>
@@ -172,7 +185,8 @@ sub _new{
 	#--------------#
 	#   検索結果   #
 
-	$self->{rlist} = $rf->Scrolled(
+	$self->{rlist_frame} = $rf->Frame()->pack(-fill =>'both',-expand => 1);
+	$self->{rlist} = $self->{rlist_frame}->Scrolled(
 		'HList',
 		-scrollbars       => 'osoe',
 		-header           => 0,
@@ -543,6 +557,10 @@ sub search{
 	my $order = $self->{opt_order};
 	if ($selected[0] == 0 && $self->{opt_direct} eq 'var') {
 		$order = 'var';
+		$self->{var_mode} = 1;
+		$self->{var_name} = $self->gui_jg( $self->{direct_w_e}->get );
+	} else {
+		$self->{var_mode} = 0;
 	}
 	
 	# 検索ロジックの呼び出し（検索実行）
@@ -574,17 +592,51 @@ sub display{
 	my $start = shift;
 	$self->{current_start} = $start;
 
-	# HListの更新
+	# Fetch results
 	unless ( $self->{code_obj} ){return undef;}
-	$self->{result}     = $self->{code_obj}->fetch_results($start);
-	$self->{rlist}->delete('all');
+	if ($self->{var_mode}) {
+		$self->{result} = $self->{code_obj}->fetch_results_var($start,$self->{var_name});
+	} else {
+		$self->{result} = $self->{code_obj}->fetch_results($start);
+	}
+	
+	# Renew HList
+	$self->{rlist}->destroy;
+	$self->{rlist} = $self->{rlist_frame}->Scrolled(
+		'HList',
+		-scrollbars       => 'osoe',
+		-header           => 0,
+		-itemtype         => 'text',
+		-font             => 'TKFN',
+		-columns          => 1 + $self->{var_mode},
+		-padx             => 2,
+		-background       => 'white',
+		-selectforeground   => $::config_obj->color_ListHL_fore,
+		-selectbackground   => $::config_obj->color_ListHL_back,
+		-selectborderwidth  => 0,
+		-highlightthickness => 0,
+		-selectmode       => 'extended',
+		-height           => 10,
+		-command          => sub {$self->view_doc;}
+	)->pack(-fill =>'both',-expand => 1);
+	
+	# Fill HList
 	if ($self->{result}){
 		my $row = 0;
 		foreach my $i (@{$self->{result}}){
 			$self->{rlist}->add($row,-at => "$row");
+			
+			if ($self->{var_mode}) {
+				$self->{rlist}->itemCreate(
+					$row,
+					0,
+					-text  => sprintf("%.3f", $i->[2]),
+				);
+			}
+			
 			$self->{rlist}->itemCreate(
 				$row,
-				0,
+				0 + $self->{var_mode},
 				-text  => $self->gui_jchar($i->[1]),
 			);
 			++$row;

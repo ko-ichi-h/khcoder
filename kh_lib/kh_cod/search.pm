@@ -98,7 +98,10 @@ sub add_direct{
 		);
 	}
 	elsif ($args{mode} eq 'var') {                # 「var」の場合
-		$args{raw} = '<>'.$args{raw}.'<>';
+		if ( length($args{raw}) ) {
+			$args{raw} = '<>'.$args{raw}.'<>';
+		}
+		
 		unshift @{$self->{codes}}, kh_cod::a_code->new(
 			$direct,
 			$args{raw},
@@ -465,6 +468,39 @@ sub fetch_results{
 		push @result, [
 			$i->[0],
 			kh_cod::search->get_doc_head($i->[0],$self->{tani})
+		];
+		print ".";
+	}
+	print "\n";
+	return \@result;
+}
+
+sub fetch_results_var{
+	my $self  = shift;
+	my $start = shift;
+	my $var   = shift;
+	
+	print "kh_cod::search -> fetching (var)";
+
+	my $var_obj = mysql_outvar::a_var->new($var);
+	
+	
+	my $sth = mysql_exec->select("
+		SELECT temp_doc_search.id, $var_obj->{table}.$var_obj->{column}
+		FROM   temp_doc_search, $var_obj->{table}
+		WHERE
+			    temp_doc_search.rnum >= $start
+			AND temp_doc_search.rnum <  $start + $docs_per_once
+			AND temp_doc_search.id = $var_obj->{table}.id
+		ORDER BY temp_doc_search.rnum
+	",1)->hundle;
+
+	my @result;
+	while (my $i = $sth->fetch){
+		push @result, [
+			$i->[0],
+			kh_cod::search->get_doc_head($i->[0],$self->{tani}),
+			$i->[1]
 		];
 		print ".";
 	}
