@@ -212,8 +212,13 @@ sub out2{                               # length作製をする
 	my $colnames = '';
 	$colnames .= "colnames(d) <- c(";
 	foreach my $i (@{$self->{wList}}){
-		my $t = $self->{wName}{$i};
-		$t =~ s/"/ /g;
+		my $t;
+		if ($self->{not_word_but_id}) {
+			$t = $i;
+		} else {
+			$t = $self->{wName}{$i};
+			$t =~ s/"/ /g;
+		}
 		$colnames .= "\"$t\",";
 	}
 	chop $colnames;

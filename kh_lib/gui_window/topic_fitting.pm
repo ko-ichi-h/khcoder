@@ -154,7 +154,7 @@ sub calc{
 	my $w = gui_wait->start;
 
 	# Extract data for the analysis
-	my $r_command = mysql_crossout::r_com->new(
+	my $r_data_obj = mysql_crossout::r_com->new(
 		tani   => $self->tani,
 		tani2  => $self->tani,
 		hinshi => $self->hinshi,
@@ -164,8 +164,12 @@ sub calc{
 		min_df => $self->min_df,
 		rownames => 0,
 		sampling => $self->{words_obj}->sampling_value,
-	)->run;
+		not_word_but_id => 1,
+	);
+	my $r_command = $r_data_obj->run;
 	$r_command .= "\n# END: DATA\n";
+	my %names = %{$r_data_obj->{wName}};
+	$r_data_obj = undef;
 
 	# Commands for fitting the Topic Model
 	my $n_topics = gui_window->gui_jgn( $self->{entry_n_topics}->get );
@@ -328,6 +332,7 @@ sub calc{
 		file_term       => $save_tm,
 		file_topics     => $save_tp,
 		file_topics_csv => $save_tp_csv,
+		names           => \%names,
 	);
 	return 1;
 }

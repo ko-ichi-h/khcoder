@@ -621,6 +621,13 @@ sub display{
 	)->pack(-fill =>'both',-expand => 1);
 	
 	# Fill HList
+	my $lgray_style = $self->{rlist}->ItemStyle(
+		'text',
+		-font => "TKFN",
+		-anchor => 'w',
+		-background => "#f0f0f0",
+	);
+	
 	if ($self->{result}){
 		my $row = 0;
 		foreach my $i (@{$self->{result}}){
@@ -631,6 +638,7 @@ sub display{
 					$row,
 					0,
 					-text  => sprintf("%.3f", $i->[2]),
+					-style => $lgray_style,
 				);
 			}
 			

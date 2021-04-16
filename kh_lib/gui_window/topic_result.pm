@@ -347,7 +347,7 @@ sub _view_simple{
 			if (length($w)) {
 				$w .= ', ';
 			}
-			$w .= $i->[0];
+			$w .= $self->{names}{$i->[0]};
 			++$n_w;
 			last if $n_w >= $self->{n_words};
 		}
@@ -439,7 +439,7 @@ sub _view_with_val{
 			$self->{list}->itemCreate(
 				$row,
 				$col,
-				-text => $i->[0],
+				-text => $self->{names}{$i->[0]},
 				-style => $lgray_style,
 			);
 			$self->{list}->itemCreate(
@@ -448,8 +448,6 @@ sub _view_with_val{
 				-text => sprintf("%.3f", $i->[1]),
 				#-style => $lgray_style,
 			);
-			
-			
 			
 			++$row;
 			last if $row >= $self->{n_words} + 1;
@@ -559,7 +557,7 @@ sub _view_with_valbar{
 			$self->{list}->itemCreate(
 				$row,
 				$col,
-				-text => $i->[0],
+				-text => $self->{names}{$i->[0]},
 				-style => $lgray_style,
 			);
 			#$self->{list}->itemCreate(
@@ -573,7 +571,7 @@ sub _view_with_valbar{
 			push @{$col_values[$t - 1]}, $i->[1];
 			
 			$copy_text[$row] .= "\t\t" if length( $copy_text[$row] );
-			$copy_text[$row] .= "$i->[0]\t$i->[1]";
+			$copy_text[$row] .= "$self->{names}{$i->[0]}\t$i->[1]";
 			
 			++$row;
 			last if $row >= $self->{n_words} + 1;
@@ -706,6 +704,7 @@ sub show_docs{
 	my $t = shift;
 	print "show_docs: $t\n";
 	
+	# open "Document Search" window
 	my $win;
 	if ($::main_gui->if_opened('w_doc_search')){
 		$win = $::main_gui->get('w_doc_search');
@@ -713,6 +712,7 @@ sub show_docs{
 		$win = gui_window::doc_search->open;
 	}
 	
+	# manipulate the window
 	$win->{tani_obj}->{raw_opt} = $self->{tani};
 	$win->{tani_obj}->mb_refresh;
 	
@@ -728,6 +728,34 @@ sub show_docs{
 	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
+	
+	# words for "Document View" window
+	$self->{n_words} = gui_window->gui_jgn( $self->{entry_n_words}->get );
+	print "n_words: $self->{n_words}\n";
+	my $sql = '';
+	my $n = 0;
+	foreach my $i ( sort {$b->[1] <=> $a->[1]} @{$self->{term}[$t-1]} ){
+		if ( length($sql) ){
+			$sql .= "	OR ";
+		} else {
+			$sql .= "	   ";
+		}
+		$sql .= "genkei_id = $i->[0]\n";
+		++$n;
+		last if $n >= $self->{n_words};
+	}
+	$sql = "SELECT hyoso.id FROM hyoso WHERE\n".$sql;
+	print "$sql\n";
+	my $st = mysql_exec->select($sql)->hundle;
+	
+	my @words = ();
+	while (my $i = $st->fetch) {
+		push @words, $i->[0];
+	}
+	$win->{last_words} = \@words;
+	print "hyoso: ", @words, "\n";
+	
+	return 1;
 }
 
 
@@ -772,9 +800,18 @@ sub export_topic_term{
 	;
 	my $csv = Text::CSV_XS->new ( { binary => 1, auto_diag => 2 } );
 	
+	my $n = 0;
 	while ( my $row = $tsv->getline($fh) ){
+		if ($n == 0) { # the first line
+			foreach my $i (@{$row}){
+				if ( length($i) ){
+					$i = $self->{names}{$i};
+				}
+			}
+		}
 		$csv->print($of, $row);
 		print $of "\n";
+		++$n;
 	}
 	close ($fh);
 	close ($of);
