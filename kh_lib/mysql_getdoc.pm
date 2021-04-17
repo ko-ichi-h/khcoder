@@ -274,18 +274,32 @@ sub id_for_print{
 	} else {
 		return $r;
 	}
+	my $flg_topic = 0;
 	foreach my $i (@vars){              # 値の取得
 		my $val = $i->doc_val(
 			doc_id => $self->{doc_id},
 			tani   => $self->{tani}
 		);
-		$val = $i->print_val($val);
-		$r .= $i->{name}; #Jcode->new($i->{name},'euc')->sjis;
-		$r .= " = $val,  ";
+		if ( $flg_topic ){
+			$r .= " ".$i->{name};
+			$r .= " = ".sprintf("%.3f", $val)."\n";
+			#$r .= " = $val\n";
+		} else {
+			$r .= $i->{name};
+			$val = $i->print_val($val);
+			$r .= " = $val,  ";
+		}
+		if ($i->{name} eq '_topic_docid') {
+			$flg_topic = 1;
+			$r .= "\n";
+		}
 	}
-	chop $r;
-	chop $r;
-	chop $r;
+	
+	unless ($flg_topic){
+		chop $r;
+		chop $r;
+		chop $r;
+	}
 	
 	return $r;
 }

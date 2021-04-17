@@ -147,6 +147,7 @@ gui_window::doc_view:
     p1:                       << 前
     p2:                       << 前
     win_title:                文書表示
+    info:                     ・位置と変数
 gui_window::force_color:
     add:                      追加
     delete:                   選択した言葉を削除

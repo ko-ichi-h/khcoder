@@ -887,6 +887,15 @@ sub status_from_table{
 	my $self = shift;
 	my $new  = shift;
 	
+	my $check = 0;
+	
+	if ( defined($new) == 0 && defined($self->{status_from_table_cache}) ) {
+		print "status_from_table: retuning cache\n" if $check;
+		return $self->{status_from_table_cache};
+	} else {
+		print "status_from_table: getting the value from MySQL\n" if $check;
+	}
+	
 	# 行があるかチェック
 	my $h = mysql_exec->select(
 		"SELECT status FROM status WHERE name = 'from_table'",1
@@ -906,6 +915,8 @@ sub status_from_table{
 		,1);
 		$current = $new;
 	}
+	
+	$self->{status_from_table_cache} = $current;
 	
 	return $current;
 }

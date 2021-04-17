@@ -414,7 +414,7 @@ sub view_doc{
 	}
 	my $selected = $selected[0];
 	
-	my ($t,$w) = $self->{code_obj}->check_a_doc($self->{result}[$selected][0]);
+	my ($t,$w,$t2) = $self->{code_obj}->check_a_doc($self->{result}[$selected][0]);
 	
 	my $view_win = gui_window::doc_view->open;
 	$view_win->view(
@@ -425,6 +425,7 @@ sub view_doc{
 		kyotyo2  => $w,
 		s_search => $self->{last_strings},
 		foot     => $t,
+		head     => $t2,
 	);
 }
 
@@ -440,7 +441,7 @@ sub next{
 		$selected = $max;
 	}
 	my $doc_id = $self->{result}[$selected][0];
-	my ($t,$w) = $self->{code_obj}->check_a_doc($doc_id);
+	my ($t,$w, $t2) = $self->{code_obj}->check_a_doc($doc_id);
 	
 	$self->{rlist}->selectionClear;
 	$self->{rlist}->selectionSet($selected);
@@ -450,7 +451,7 @@ sub next{
 		$self->{rlist}->yview(scroll => -5, 'units');
 	}
 	
-	return (undef,$doc_id,$t,$w);
+	return (undef,$doc_id,$t,$w, $t2);
 }
 
 sub prev{
@@ -464,7 +465,7 @@ sub prev{
 		$selected = 0;
 	}
 	my $doc_id = $self->{result}[$selected][0];
-	my ($t,$w) = $self->{code_obj}->check_a_doc($doc_id);
+	my ($t,$w,$t2) = $self->{code_obj}->check_a_doc($doc_id);
 	
 	$self->{rlist}->selectionClear;
 	$self->{rlist}->selectionSet($selected);
@@ -474,7 +475,7 @@ sub prev{
 		$self->{rlist}->yview(scroll => -5, 'units');
 	}
 	
-	return (undef,$doc_id,$t,$w);
+	return (undef,$doc_id,$t,$w,$t2);
 }
 
 sub if_next{

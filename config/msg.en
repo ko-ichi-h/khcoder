@@ -147,6 +147,7 @@ gui_window::doc_view:
     p1:                       <<
     p2:                       <<
     win_title:                Document
+    info:                     '* Location & Variables: '
 gui_window::force_color:
     add:                      Add
     delete:                   Delete

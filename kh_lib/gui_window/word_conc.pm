@@ -373,7 +373,7 @@ sub view_doc{
 		kyotyo      => \@kyotyo,
 		tani        => "$tani",
 		parent      => $self,
-		foot        => $foot,
+		head        => $foot,
 	);
 }
 

@@ -731,7 +731,7 @@ sub show_docs{
 	
 	# words for "Document View" window
 	$self->{n_words} = gui_window->gui_jgn( $self->{entry_n_words}->get );
-	print "n_words: $self->{n_words}\n";
+	#print "n_words: $self->{n_words}\n";
 	my $sql = '';
 	my $n = 0;
 	foreach my $i ( sort {$b->[1] <=> $a->[1]} @{$self->{term}[$t-1]} ){
@@ -745,7 +745,7 @@ sub show_docs{
 		last if $n >= $self->{n_words};
 	}
 	$sql = "SELECT hyoso.id FROM hyoso WHERE\n".$sql;
-	print "$sql\n";
+	#print "$sql\n";
 	my $st = mysql_exec->select($sql)->hundle;
 	
 	my @words = ();
@@ -753,7 +753,7 @@ sub show_docs{
 		push @words, $i->[0];
 	}
 	$win->{last_words} = \@words;
-	print "hyoso: ", @words, "\n";
+	#print "hyoso: ", @words, "\n";
 	
 	return 1;
 }

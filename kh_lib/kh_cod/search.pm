@@ -539,6 +539,7 @@ sub check_a_doc{
 	$text .= "\n";
 	
 	# いくつ目の検索結果かをチェック
+	my $text2 = '';
 	my ($rnum_all, $rnum);
 	if (
 		$rnum = mysql_exec->select("
@@ -549,13 +550,13 @@ sub check_a_doc{
 	){
 		$rnum = $rnum->[0];
 		$rnum_all = $self->total_hits;
-		$text .= kh_msg->get('gui_window::word_conc->currentDoc')."$rnum / $rnum_all,  ";
+		$text2 .= kh_msg->get('gui_window::word_conc->currentDoc')."$rnum / $rnum_all,  ";
 	} else {
-		$text .= kh_msg->get('gui_window::doc_view->current_doc'); # ・現在表示中の文書：  
+		$text2 .= kh_msg->get('gui_window::doc_view->current_doc'); # ・現在表示中の文書：  
 	}
 	
 	#$text = Encode::encode('cp932', $text);
-	return ($text,\@words);
+	return ($text,\@words, $text2);
 }
 
 

@@ -97,11 +97,12 @@ sub _new{
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
-			my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->prev;
+			my ($hyosobun_id,$doc_id,$foot,$w,$head) = $self->{parent}->prev;
 			if ( ! defined($doc_id) && $hyosobun_id <= 0){
 				return;
 			}
 			$self->{foot} = $foot;
+			$self->{head} = $head;
 			$self->{doc} = mysql_getdoc->get(
 				hyosobun_id => $hyosobun_id,
 				doc_id      => $doc_id,
@@ -120,11 +121,12 @@ sub _new{
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
-			my ($hyosobun_id,$doc_id,$foot,$w) = $self->{parent}->next;
+			my ($hyosobun_id,$doc_id,$foot,$w,$head) = $self->{parent}->next;
 			if ( ! defined($doc_id) && $hyosobun_id <= 0){
 				return;
 			}
 			$self->{foot} = $foot;
+			$self->{head} = $head;
 			$self->{doc} = mysql_getdoc->get(
 				hyosobun_id => $hyosobun_id,
 				doc_id      => $doc_id,
@@ -224,6 +226,7 @@ sub view{
 	$self->{tani}     = $args{tani};
 	$self->{parent}   = $args{parent};
 	$self->{foot}     = $args{foot};
+	$self->{head}     = $args{head};
 
 	my $doc = mysql_getdoc->get(
 		hyosobun_id => $args{hyosobun_id},
@@ -244,13 +247,14 @@ sub near{
 	my $self = shift;
 	my $id = shift;
 	
-	my ($t,$w);
+	my ($t,$w,$t2);
 	if ($self->{parent}{code_obj}){
-		($t,$w) = $self->{parent}{code_obj}->check_a_doc($id);
+		($t,$w,$t2) = $self->{parent}{code_obj}->check_a_doc($id);
 	} else {
-		$t = kh_msg->get('current_doc');#Jcode->new('・現在表示中の文書：  ')->sjis;
+		$t2 = kh_msg->get('current_doc');#Jcode->new('・現在表示中の文書：  ')->sjis;
 	}
 	$self->{foot} = $t;
+	$self->{head} = $t2;
 	my $doc = mysql_getdoc->get(
 		doc_id   => $id,
 		w_search => $self->{w_search},
@@ -277,15 +281,34 @@ sub _view_doc{
 		);
 	}
 	
+	$self->text->delete('0.0','end');
+	$self->text->insert('end', $self->{head}, 'info');
+	$self->text->insert('end',"No. ".$doc->doc_id."\n\n",'info');
+	
 	my $spacer = $::project_obj->spacer; # スペーサー設定
 
-	$self->text->delete('0.0','end');             # 見出し書き出し
-	$self->text->insert('end', $doc->header, 'info');
+	unless ( $::project_obj->status_from_table ){ # 見出し書き出し
+		$self->text->insert('end', $doc->header, 'info');
+	}
 	
+	my $flg = 1;
+	$flg = 0 if $::project_obj->status_from_table;
 	my $t;
-	my $buffer;                                   # 本文書き出し
+	my $buffer = '';                              # 本文書き出し
 	foreach my $i (@{$doc->body}){      # 強調語の場合
 		$buffer .= $spacer if $buffer && $buffer ne $spacer;
+		
+		# skip H5 heading if from_table is 1
+		if ( $flg == 0 && $i->[0] eq '</h5>' ){
+			$flg = 1;
+			next;
+		}
+		next unless ($flg);
+		
+		if ( length($buffer) == 0 && $i->[0] eq "\n" ){
+			next;
+		}
+		
 		if ($i->[1]){
 			if (length($buffer)){
 				$self->_str_color($buffer);
@@ -300,10 +323,14 @@ sub _view_doc{
 
 	chomp $self->{foot};
 	$self->text->insert('end',"\n\n");
-	$self->text->insert('end', $self->{foot}, 'info');
-	$self->text->insert('end',"No. ".$doc->doc_id."\n",'info');
-	$self->text->insert('end', '  '.$doc->id_for_print, 'info');
-
+	if ($self->{foot}) {
+		$self->text->insert('end', $self->{foot}."\n", 'info');
+	}
+	$self->text->insert(
+		'end',
+		kh_msg->get('info')."\n".'  '.$doc->id_for_print,
+		'info'
+	);
 	$self->wrap;
 	$self->update_buttons;
 
