@@ -1168,7 +1168,10 @@ gui_window::topic_perplexity:
     method:                    "Method: "
 gui_window::topic_result:
     win_title:                 Result of Topic Model
-    extended:                  show prob.
+    extended:                  "prob."
+    export:                    "*Export"
+    topic_term:                Topic-Word Matrix
+    doc_topic:                 Document-Topic Matrix
 screen_code::rde_menu:
     plugin_raw_data_editor:    "Edit Data"
     err_not_exist:             "Projectdata don't exist."

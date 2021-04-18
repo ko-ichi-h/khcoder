@@ -264,6 +264,13 @@ sub _new{
 	$self->{list2} = $lis_f;
 
 	$self->renew;
+	
+	# 「外部変数リスト」が開いている場合は更新
+	if ($::main_gui->if_opened('w_outvar_list')){
+		my $win_list = $::main_gui->get('w_outvar_list');
+		$win_list->_fill if defined($win_list);
+	}
+	
 	return $self;
 }
 

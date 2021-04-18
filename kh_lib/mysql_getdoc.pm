@@ -284,11 +284,16 @@ sub id_for_print{
 			doc_id => $self->{doc_id},
 			tani   => $self->{tani}
 		);
-		if ( $flg_topic ){
-			$r .= " ".$i->{name};
-			$r .= " = ".sprintf("%.3f", $val)."\n";
-			#$r .= " = $val\n";
-		} else {
+		if ( $flg_topic ){ # topic variables
+			$topics->[$c_row][$c_col] .= "  ".$i->{name};
+			$topics->[$c_row][$c_col] .= " = ".sprintf("%.3f", $val);
+			++$c_row;
+			
+			if ($c_row >= $n_row) {
+				$c_row = 0;
+				++$c_col;
+			}
+		} else {          # non-topic, normal variables
 			$r .= $i->{name};
 			$val = $i->print_val($val);
 			$r .= " = $val,  ";
@@ -317,6 +322,13 @@ sub id_for_print{
 				}
 			}
 			print "n_topic: $max, n_row: $n_row\n";
+		}
+	}
+	
+	if ( $flg_topic ){
+		foreach my $i (@{$topics}){
+			$r .= join(", ", @{$i});
+			$r .= "\n";
 		}
 	}
 	

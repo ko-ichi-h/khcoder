@@ -104,7 +104,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$f1->Label(
-		-text => '  ',
+		-text => ' ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	
@@ -117,7 +117,7 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left');
 
 	$f1->Label(
-		-text => '  ',
+		-text => ' ',
 		-font => "TKFN",
 	)->pack(-side => 'left');
 
@@ -280,6 +280,12 @@ sub start{
 	)->read;
 
 	$self->view;
+
+	# update outvar_list window
+	if ($::main_gui->if_opened('w_outvar_list')){
+		$::main_gui->get('w_outvar_list')->_fill;
+	}
+
 	return $self;
 }
 
@@ -435,17 +441,17 @@ sub _view_with_val{
 			#-style => $gray_style,
 		);
 		
-		my $c = $self->{list}->Entry(
-			-font  => "TKFN",
-			-width => 15
-		);
+		#my $c = $self->{list}->Entry(
+		#	-font  => "TKFN",
+		#	-width => 15
+		#);
 		#$self->{list}->itemCreate(
 		#	0,
 		#	$col + 1,
 		#	-itemtype  => 'window',
 		#	-widget    => $c,
 		#);
-		$self->{entry}[$t-1] = $c;
+		#$self->{entry}[$t-1] = $c;
 
 		my $row = 1;
 		foreach my $i (sort {$b->[1] <=> $a->[1]} @{$topic}){
@@ -783,9 +789,34 @@ sub show_docs{
 	$win->{last_words} = \@words;
 	#print "hyoso: ", @words, "\n";
 	
-	return 1;
+	return $self;
 }
 
+sub end{
+	my $self = shift;
+	
+	# close doc_search window
+	if ($::main_gui->if_opened('w_doc_search')){
+		$::main_gui->get('w_doc_search')->close;
+	}
+
+	my $h = mysql_outvar->get_list;
+	foreach my $i (@{$h}){
+		if ( $i->[1] =~ /^_topic_/ ){
+			mysql_outvar->delete(
+				tani => $i->[0],
+				name => $i->[1],
+			);
+		}
+	}
+	
+	# update outvar_list window
+	if ($::main_gui->if_opened('w_outvar_list')){
+		$::main_gui->get('w_outvar_list')->_fill;
+	}
+	
+	return 1;
+}
 
 sub export_topic_term{
 	my $self = shift;
