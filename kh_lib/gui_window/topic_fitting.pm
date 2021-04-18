@@ -269,6 +269,9 @@ sub calc{
 			my $col = 0;
 			foreach my $i (@{$row}){
 				if ($col) {
+					if ($i < 10){
+						$i = '0'."$i";
+					}
 					$i = '_topic_'.$i;
 				} else {
 					$i = '_topic_docid'

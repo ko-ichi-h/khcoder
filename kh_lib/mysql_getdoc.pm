@@ -275,6 +275,10 @@ sub id_for_print{
 		return $r;
 	}
 	my $flg_topic = 0;
+	my $n_row = 0;
+	my $c_row = 0;
+	my $c_col = 0;
+	my $topics;
 	foreach my $i (@vars){              # 値の取得
 		my $val = $i->doc_val(
 			doc_id => $self->{doc_id},
@@ -292,6 +296,27 @@ sub id_for_print{
 		if ($i->{name} eq '_topic_docid') {
 			$flg_topic = 1;
 			$r .= "\n";
+			# number of topics
+			my $max = 0;
+			foreach my $h (@vars){
+				if ($h->{name} =~ /_topic_([0-9]+)$/){
+					my $cn = $1;
+					if ($max < $cn){
+						$max = $cn;
+					}
+				}
+			}
+			# number of rows for topic prob.
+			if ($max <= 3){
+				$n_row = $max;
+			} else {
+				$n_row = $max / 3;
+				if ($max % 3 > 0){
+					$n_row = $n_row + 1;
+					$n_row = int($n_row);
+				}
+			}
+			print "n_topic: $max, n_row: $n_row\n";
 		}
 	}
 	

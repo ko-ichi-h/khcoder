@@ -318,16 +318,23 @@ sub _view_simple{
 	);
 	$self->{list}->header('create',1,-itemtype  => 'window',-widget => $header_label);
 
+	my @copy_text;
 	my $row = 0;
 	foreach my $topic (@{$self->{term}}){
-		
 		$self->{list}->add($row,-at => "$row");
 		
+		# topic_number
+		my $c = $self->topic_number($row + 1);
 		$self->{list}->itemCreate(
 			$row,
 			0,
-			-text => $row + 1,
+			-itemtype => 'window',
+			-widget => $c,
 		);
+
+		$copy_text[$row] = '#';
+		$copy_text[$row] .= $row + 1;
+		$copy_text[$row] .= "\t";
 		
 		#my $c = $self->{list}->Entry(
 		#	-font  => "TKFN",
@@ -358,11 +365,12 @@ sub _view_simple{
 			-text => $w,
 		);
 		#print "$w\n";
+		$copy_text[$row] .= $w;
 		
 		++$row;
 	}
 
-	$self->{copy_text} = gui_hlist->get_all( $self->{list} );
+	$self->{copy_text} = join("\n", @copy_text);
 	return $self;
 }
 
@@ -403,16 +411,22 @@ sub _view_with_val{
 		$self->{list}->add($r,-at => $r);
 	}
 
+	my @copy_text;
 	my $t = 1;
 	foreach my $topic (@{$self->{term}}){
 		my $col = ( $t - 1 ) * 3;
 		
+		# topic_number
+		my $c = $self->topic_number($t);
 		$self->{list}->itemCreate(
 			0,
 			$col,
-			-text => '#'.$t,
-			-style => $lgray_style,
+			-itemtype => 'window',
+			-widget => $c,
 		);
+		
+		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
+		$copy_text[0] .= '#'.$t;
 		
 		$self->{list}->itemCreate(
 			0,
@@ -449,13 +463,16 @@ sub _view_with_val{
 				#-style => $lgray_style,
 			);
 			
+			$copy_text[$row] .= "\t\t" if length( $copy_text[$row] );
+			$copy_text[$row] .= "$self->{names}{$i->[0]}\t$i->[1]";
+			
 			++$row;
 			last if $row >= $self->{n_words} + 1;
 		}
 		++$t;
 	}
 
-	$self->{copy_text} = gui_hlist->get_all($self->{list});
+	$self->{copy_text} = join("\n", @copy_text);
 	return $self;
 }
 
@@ -503,47 +520,18 @@ sub _view_with_valbar{
 	foreach my $topic (@{$self->{term}}){
 		my $col = ( $t - 1 ) * 3;
 		
-		# topic_number: start
-		my $c = $self->{list}->Label(
-			-text => '#'.$t,
-			-font       => "TKFN",
-			-foreground => "blue",
-			-activeforeground => "blue",
-			-anchor     => 'w',
-			-background => 'white',
-			-pady       => 0,
-			-activebackground => $::config_obj->color_ListHL_back,
-		);
-		my $tmp_number = $t;
-		$c->bind(
-			"<Button-1>",
-			sub {
-				$self->show_docs($tmp_number);
-			}
-		);
-		$c->bind(
-			"<Enter>",
-			sub {
-				$c->configure(-foreground => 'red',-activeforeground => 'red');
-			}
-		);
-		$c->bind(
-			"<Leave>",
-			sub {
-				$c->configure(-foreground => 'blue',-activeforeground => 'blue');
-			}
-		);
+		# topic_number
+		my $c = $self->topic_number($t);
 		$self->{list}->itemCreate(
 			0,
 			$col,
 			-itemtype => 'window',
 			-widget => $c,
 		);
-		# topic_number: end
 		
 		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
 		$copy_text[0] .= '#'.$t;
-		
+
 		$self->{list}->itemCreate( # spacer
 			0,
 			$col + 2,
@@ -659,6 +647,42 @@ sub _view_with_valbar{
 	return $self;
 }
 
+sub topic_number{
+	my $self = shift;
+	my $t = shift;
+	
+	my $c = $self->{list}->Label(
+		-text => '#'.$t,
+		-font       => "TKFN",
+		-foreground => "blue",
+		-activeforeground => "blue",
+		-anchor     => 'w',
+		-background => 'white',
+		-pady       => 0,
+		-activebackground => $::config_obj->color_ListHL_back,
+	);
+	my $tmp_number = $t;
+	$c->bind(
+		"<Button-1>",
+		sub {
+			$self->show_docs($tmp_number);
+		}
+	);
+	$c->bind(
+		"<Enter>",
+		sub {
+			$c->configure(-foreground => 'red',-activeforeground => 'red');
+		}
+	);
+	$c->bind(
+		"<Leave>",
+		sub {
+			$c->configure(-foreground => 'blue',-activeforeground => 'blue');
+		}
+	);
+	return $c;
+}
+
 
 sub view{
 	my $self = shift;
@@ -724,7 +748,11 @@ sub show_docs{
 	&{$win->{direct_w_o}{command}};
 	
 	$win->{direct_w_e}->delete(0,'end');
-	$win->{direct_w_e}->insert('end','_topic_'.$t);
+	my $t_name = $t;
+	if ($t_name < 10){
+		$t_name = '0'.$t_name;
+	}
+	$win->{direct_w_e}->insert('end','_topic_'.$t_name);
 	$win->win_obj->raise;
 	$win->win_obj->focus;
 	$win->search;
