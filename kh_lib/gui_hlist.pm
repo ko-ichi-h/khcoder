@@ -62,7 +62,19 @@ sub update4scroll{
 	my $self;
 	$self->{list} = shift;
 	bless $self, "$class"."::".$::config_obj->os;
-	
+
+	if ($debug) {
+		print "\ngui_hlist::update4scroll: \n";
+		
+		my ($package_name, $file_name, $line) = caller;
+		print "\t$package_name, $file_name, $line\n";
+		
+		print "\t",ref $self->{list}, "\n";
+
+		my $p = $self->{list}->Parent;
+		print "\t",ref $p, "\n";
+	}
+
 	$self->{list}->update;
 	$self->{list}->yview(moveto => 0);
 	$self->{list}->yview('scroll', 1,'units');
