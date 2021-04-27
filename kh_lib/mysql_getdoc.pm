@@ -74,8 +74,9 @@ sub get{
 	$self->{body} = \@body;
 	
 	# 上位見出しの取り出し
-	print "header..." if $debug;
+	print "header: " if $debug;
 	$self->{header} = $self->get_header;
+	print $self->{header},"\n" if $debug;
 	
 	print "done...\n" if $debug;
 	return $self;
@@ -321,7 +322,7 @@ sub id_for_print{
 					$n_row = int($n_row);
 				}
 			}
-			print "n_topic: $max, n_row: $n_row\n";
+			#print "n_topic: $max, n_row: $n_row\n";
 		}
 	}
 	

@@ -292,14 +292,16 @@ sub _view_doc{
 	}
 	
 	my $flg = 1;
-	$flg = 0 if $::project_obj->status_from_table;
 	my $t;
 	my $buffer = '';                              # 本文書き出し
 	foreach my $i (@{$doc->body}){      # 強調語の場合
 		$buffer .= $spacer if $buffer && $buffer ne $spacer;
 		
 		# skip H5 heading if from_table is 1
-		if ( $flg == 0 && $i->[0] eq '</h5>' ){
+		if ( $::project_obj->status_from_table && ( $i->[0] eq '<h5>' || $i->[0] eq '<H5>') ){
+			$flg = 0;
+		}
+		if ( $flg == 0 && ( $i->[0] eq '</h5>' || $i->[0] eq '</H5>') ){
 			$flg = 1;
 			next;
 		}
