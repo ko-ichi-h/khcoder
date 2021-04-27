@@ -33,7 +33,7 @@ sub new{
 			}
 			chop $t;
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
-			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
+			#$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 		}
 	}
@@ -169,8 +169,14 @@ p <- p + scale_x_discrete(
 	labels = x.labels
 )
 
+if ( max(table$y) > 1 ){
+	y_max <- ceiling( max(table$y) * 1.01 )
+} else {
+	y_max <- NA
+}
+
 p <- p + scale_y_continuous(
-	limits = c(0, ceiling( max(table$y) * 1.01 ))
+	limits = c(0, y_max)
 )
 
 p <- p + theme(

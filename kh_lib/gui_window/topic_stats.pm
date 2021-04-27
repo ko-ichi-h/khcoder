@@ -606,20 +606,20 @@ sub plot{
 	$rcom .= "), byrow=T, nrow=$nrow, ncol=$ncol )\n";
 	
 	# 残差行列
-	$rcom .= 'rsd <- matrix( c(';
-	foreach my $row (@{$self->{result}{t_rsd}}){
-		foreach my $cell (@{$row}){
-			$rcom .= "$cell,"
-		}
-	}
-	chop $rcom;
-	$rcom .= "), byrow=T, nrow=$ncol, ncol=$nrow )\n";
-	$rcom .= "rsd <- t(rsd)\n";
+	#$rcom .= 'rsd <- matrix( c(';
+	#foreach my $row (@{$self->{result}{t_rsd}}){
+	#	foreach my $cell (@{$row}){
+	#		$rcom .= "$cell,"
+	#	}
+	#}
+	#chop $rcom;
+	#$rcom .= "), byrow=T, nrow=$ncol, ncol=$nrow )\n";
+	#$rcom .= "rsd <- t(rsd)\n";
 	
 	# 列名
-	foreach my $i (@col_names){ # 行頭の「＊」を削除（データはdecode済み）
-		substr($i,0,1) = '';
-	}
+	#foreach my $i (@col_names){ # 行頭の「＊」を削除（データはdecode済み）
+	#	substr($i,0,1) = '';
+	#}
 	$rcom .= "colnames(d) <- c(";
 	foreach my $i (@col_names){
 		$rcom .= "\"$i\",";
