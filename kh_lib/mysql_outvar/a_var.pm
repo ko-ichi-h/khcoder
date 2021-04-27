@@ -340,4 +340,9 @@ sub tani{
 	return $self->{tani};
 }
 
+sub table{
+	my $self = shift;
+	return $self->{table};
+}
+
 1;

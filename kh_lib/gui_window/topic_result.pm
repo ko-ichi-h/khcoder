@@ -137,11 +137,34 @@ sub _new{
 	$self->{entry_n_words}->bind("<KP_Enter>", sub{ $self->view; });
 	gui_window->config_entry_focusin( $self->{entry_n_words} );
 
+	$f1->Button(
+		-text => kh_msg->get('gui_window::word_conc->stats'), # 集計
+		-command => sub{
+			if ($::main_gui->if_opened('w_topic_stats')){
+				$::main_gui->get('w_topic_stats')->close;
+			}
+			gui_window::topic_stats->open(
+				tani     => $self->{tani},
+				n_topics => $self->{n_topics},
+			);
+		}
+	)->pack(-side => 'right', -padx => 3);
+	
 	my $btn = $f1->Button(
 		-text => kh_msg->gget('copy_all'), # コピー（表全体）
 		-command => sub { $self->copy_all; }
 	)->pack(-side => 'right', -padx => 3);
 	$btn->update;
+
+	$self->win_obj->bind(
+		'<Control-Key-c>',
+		sub{ $btn->invoke; }
+	);
+	$self->win_obj->Balloon()->attach(
+		$btn,
+		-balloonmsg => 'Ctrl + C',
+		-font => "TKFN"
+	);
 
 	my $mb = $f1->Menubutton(
 		-text        => kh_msg->get('export'), # ▽出力
@@ -164,60 +187,6 @@ sub _new{
 		-label   => kh_msg->get('doc_topic'), # 「文書×トピック確率」表
 	);
 
-	return $self; ###
-
-
-	$self->{entry_wsearch} = $f1->Entry(
-		-width => 15,
-	)->pack(-side => 'left', -fill => 'x', -expand => 1);
-
-	$self->{entry_wsearch}->bind(
-		"<Key-Return>",
-		sub{
-			my $key = $self->{last_sort_key};
-			$self->{last_sort_key} = undef;
-			$self->sort($key);
-		}
-	);
-	$self->{entry_wsearch}->bind(
-		"<KP_Enter>",
-		sub{
-			my $key = $self->{last_sort_key};
-			$self->{last_sort_key} = undef;
-			$self->sort($key);
-		}
-	);
-
-	$f1->Button(
-		-text => kh_msg->get('search'), # 検索
-		-command => sub{
-			my $key = $self->{last_sort_key};
-			$self->{last_sort_key} = undef;
-			$self->sort($key);
-		}
-	)->pack(-side => 'left', -padx => 2);
-
-	$f1->Label(
-		-text => '  ',
-	)->pack(-side => 'left');
-
-	$f1->Button(
-		-text => kh_msg->get('whole'), # 全抽出語のリスト
-		-command => sub { $self->list_all; }
-	)->pack(-side => 'left', -padx => 2);
-
-
-	
-	$self->win_obj->bind(
-		'<Control-Key-c>',
-		sub{ $btn->invoke; }
-	);
-	$self->win_obj->Balloon()->attach(
-		$btn,
-		-balloonmsg => 'Ctrl + C',
-		-font => "TKFN"
-	);
-	
 	return $self;
 }
 
@@ -287,15 +256,6 @@ sub start{
 	}
 
 	return $self;
-}
-
-sub list_all{
-	my $self = shift;
-	my $dist = $::project_obj->file_TempCSV;
-	$self->{knb_obj}->make_csv(
-		$dist,
-	);
-	gui_OtherWin->open($dist);
 }
 
 sub _view_simple{
@@ -800,6 +760,12 @@ sub end{
 		$::main_gui->get('w_doc_search')->close;
 	}
 
+	# close stats window
+	if ($::main_gui->if_opened('w_topic_stats')){
+		$::main_gui->get('w_topic_stats')->close;
+	}
+	
+	# delete topic variables
 	my $h = mysql_outvar->get_list;
 	foreach my $i (@{$h}){
 		if ( $i->[1] =~ /^_topic_/ ){

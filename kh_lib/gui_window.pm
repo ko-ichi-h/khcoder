@@ -91,6 +91,7 @@ use gui_window::import_folder;
 use gui_window::topic_perplexity;
 use gui_window::topic_fitting;
 use gui_window::topic_result;
+use gui_window::topic_stats;
 
 BEGIN{
 	if( $] > 5.008 ){
