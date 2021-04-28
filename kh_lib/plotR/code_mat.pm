@@ -33,7 +33,7 @@ sub new{
 			}
 			chop $t;
 			$r_command .= "d <- as.matrix(d[,c($t)])\n";
-			$r_command .= "rsd <- as.matrix(rsd[,c($t)])\n";
+			$r_command .= "if (exists(\"rsd\")){ rsd <- as.matrix(rsd[,c($t)]) }\n";
 			$r_command .= "colnames(d) <- c_names[c($t)]\n";
 		}
 	}
@@ -392,7 +392,9 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 	print(p)
 }
 
-
+if (exists("rsd") == FALSE){
+	rsd <- d
+}
 ggfluctuation_my(  t( as.matrix(d) ),  t( as.matrix(rsd) ), maxv ) 
 
 	';

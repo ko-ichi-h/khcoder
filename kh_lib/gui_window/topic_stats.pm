@@ -689,6 +689,7 @@ sub plot{
 			plot_size_mapw      => $width_f,
 			bubble_size         => $bubble_size,
 			selection           => $selection,
+			color_rsd           => 0,
 		);
 		
 		$wait_window->end(no_dialog => 1);
