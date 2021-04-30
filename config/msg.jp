@@ -290,6 +290,11 @@ gui_window::r_plot::topic_n_perplexity:
     win_title:                トピック数の探索：Perplexity
 gui_window::r_plot::topic_n_ldatuning:
     win_title:                トピック数の探索：ldatuning
+gui_window::r_plot::tpc_mat_line:
+    win_title:                トピック比率の折れ線グラフ
+gui_window::r_plot_opt::tpc_mat_line:
+    win_title:                 "トピック比率の折れ線グラフ・調整"
+    select_topics:             トピック選択
 gui_window::r_plot::cod_corresp:
     win_title:                コーディング・対応分析
 gui_window::r_plot::selected_netgraph:

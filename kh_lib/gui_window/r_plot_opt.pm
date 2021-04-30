@@ -15,6 +15,7 @@ use gui_window::r_plot_opt::cod_mat;
 use gui_window::r_plot_opt::cod_mat_line;
 use gui_window::r_plot_opt::selected_netgraph;
 use gui_window::r_plot_opt::doc_cls;
+use gui_window::r_plot_opt::tpc_mat_line;
 
 sub _new{
 	my $self = shift;

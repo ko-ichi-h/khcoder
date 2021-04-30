@@ -170,6 +170,7 @@ sub fill{
 			tani            => $self->tani,
 			show_headings   => 1,
 			higher_headings => 1,
+			no_topics       => 1,
 		);
 	} else {
 		$self->{var_obj}->new_tani( $self->tani );
@@ -434,11 +435,12 @@ sub _calc{
 				-itemtype  => 'window',
 				-widget    => $w,
 			);
-			push @code_names, substr(
-				$self->gui_jchar($i),
-				1,
-				length( $self->gui_jchar($i) )
-			);
+			push @code_names, $i;
+			#push @code_names, substr(
+			#	$self->gui_jchar($i),
+			#	1,
+			#	length( $self->gui_jchar($i) )
+			#);
 		}
 		++$col;
 	}
@@ -489,19 +491,19 @@ sub _calc{
 	$self->rtn;
 	
 	# プロットWindowが開いている場合は内容を更新する
-	if ($::main_gui->if_opened('w_cod_mat_plot')){          # マップ
+	if ($::main_gui->if_opened('w_tpc_mat_plot')){          # マップ
 		# オプション類はすべてリセット
-		$self->plot($::main_gui->get('w_cod_mat_plot')->{ax});
+		$self->plot($::main_gui->get('w_tpc_mat_plot')->{ax});
 	}
 	
-	if ($::main_gui->if_opened('w_cod_mat_line')){          # 折れ線
+	if ($::main_gui->if_opened('w_tpc_mat_line')){          # 折れ線
 		# オプション類はリセットするがコード選択だけは活かすように試みる
 		my @selected2 = ();
 		my @selected3 = ();
 		my @names = ();
 		my @selected_names = ();
 		if (
-			$::main_gui->get('w_cod_mat_line')->{plots}[0]->command_f
+			$::main_gui->get('w_tpc_mat_line')->{plots}[0]->command_f
 			=~ /d <\- as\.matrix\(d\[,c\((.+)\)\]\)\n/ 
 		){
 			# 選択されたコードの番号
@@ -509,7 +511,7 @@ sub _calc{
 			
 			# 選択されたコードの名前
 			if (
-				$::main_gui->get('w_cod_mat_line')->{plots}[0]->command_f
+				$::main_gui->get('w_tpc_mat_line')->{plots}[0]->command_f
 				=~ /colnames\(d\) <\- c\((.+?)\)\n/ 
 			){
 				@names = eval( "($1)" );
@@ -710,19 +712,19 @@ sub plot{
 		$plot = plotR::code_mat_line->new(
 			font_size           => $::config_obj->plot_font_size / 100,
 			r_command           => $rcom,
-			plotwin_name        => 'code_mat_line',
+			plotwin_name        => 'tpc_mat_line',
 			selection           => $selection,
 		);
 		
 		$wait_window->end(no_dialog => 1);
 		
-		if ($::main_gui->if_opened('w_cod_mat_line')){
-			$::main_gui->get('w_cod_mat_line')->close;
+		if ($::main_gui->if_opened('w_tpc_mat_line')){
+			$::main_gui->get('w_tpc_mat_line')->close;
 		}
 		
 		return 0 unless $plot;
 		
-		gui_window::r_plot::cod_mat_line->open(
+		gui_window::r_plot::tpc_mat_line->open(
 			plots       => $plot->{result_plots},
 			#no_geometry => 1,
 		);

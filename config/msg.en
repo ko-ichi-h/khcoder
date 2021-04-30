@@ -288,6 +288,11 @@ gui_window::r_plot::topic_n_perplexity:
     win_title:                Find Optimal N of Topics: Perplexity
 gui_window::r_plot::topic_n_ldatuning:
     win_title:                Find Optimal N of Topics: ldatuning
+gui_window::r_plot::tpc_mat_line:
+    win_title:                "Line Chart of Topic Proportion"
+gui_window::r_plot_opt::tpc_mat_line:
+    win_title:                 "Configure: Line Chart of Topic Proportion"
+    select_topics:             "Select Topics:"
 gui_window::r_plot::cod_corresp:
     win_title:                Correspondence Analysis of Codes
 gui_window::r_plot::selected_netgraph:

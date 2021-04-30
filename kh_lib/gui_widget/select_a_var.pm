@@ -32,6 +32,9 @@ sub fill{
 			if ( $self->{higher_headings} && $i eq $self->{tani} ){
 				last;
 			}
+			if ( $i eq "h5" && $::project_obj->status_from_table ){
+				next;
+			}
 			
 			if (
 				mysql_exec->select(
@@ -58,6 +61,10 @@ sub fill{
 	my $h = mysql_outvar->get_list;
 	
 	foreach my $i (@{$h}){
+		if ($i->[1] =~ /^_topic_[0-9]+$|^_topic_docid$/ && $self->{no_topics}) {
+			next;
+		}
+		
 		if ($tani_check{$i->[0]}){
 			push @options, [gui_window->gui_jchar($i->[1]), $i->[2]];
 			$vars{$i->[2]} = 1;
