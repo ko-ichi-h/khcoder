@@ -1177,6 +1177,9 @@ gui_window::topic_result:
     export:                    "*Export"
     topic_term:                Topic-Word Matrix
     doc_topic:                 Document-Topic Matrix
+gui_window::topic_stats:
+    win_title:                 Topic Proportion Table
+    var:                       Tabulation:
 screen_code::rde_menu:
     plugin_raw_data_editor:    "Edit Data"
     err_not_exist:             "Projectdata don't exist."

@@ -263,8 +263,8 @@ sub _view_simple{
 
 	$self->{list} = $self->{list_flame}->Scrolled(
 		'HList',
-		-scrollbars       => 'osoe',
-		-header             => 1,
+		-scrollbars         => 'osoe',
+		-header             => 0,
 		-itemtype           => 'text',
 		-font               => 'TKFN',
 		-columns            => 3,
@@ -276,13 +276,13 @@ sub _view_simple{
 		#-borderwidth        => 0,
 		-highlightthickness => 0,
 	)->pack(-fill => 'both', -expand => 1);
-	$self->{list}->header('create',0,-text => '#');
 	
-	my $header_label = $self->{list}->Label(
-		-text => kh_msg->gget('words').' (Top '.$self->{n_words}.')',
-		-font               => "TKFN",
-	);
-	$self->{list}->header('create',2,-itemtype  => 'window',-widget => $header_label);
+	#$self->{list}->header('create',0,-text => '#');
+	#my $header_label = $self->{list}->Label(
+	#	-text => kh_msg->gget('words').' (Top '.$self->{n_words}.')',
+	#	-font               => "TKFN",
+	#);
+	#$self->{list}->header('create',2,-itemtype  => 'window',-widget => $header_label);
 
 	my @copy_text;
 	my $row = 0;

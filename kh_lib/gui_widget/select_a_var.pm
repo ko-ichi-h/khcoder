@@ -113,6 +113,8 @@ sub fill{
 	if ($self->{if_disabled}){
 		$self->{opt_body}->{win_obj}->configure(-state => "disabled");
 	}
+	
+	$self->{options} = \@options;
 }
 
 sub new_tani{
@@ -139,6 +141,10 @@ sub enable{
 sub rem_ov{
 	my $self = shift;
 	$self->{last_var_id} = $self->{var_id};
+	
+	if ( defined($self->{command}) ){
+		&{$self->{command}};
+	}
 }
 
 sub var_id{

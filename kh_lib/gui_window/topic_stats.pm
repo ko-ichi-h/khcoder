@@ -33,18 +33,18 @@ sub _new{
 
 	# 変数選択
 	$f1->Label(
-		-text => kh_msg->get('var'), # 外部変数：
+		-text => kh_msg->get('var'), # 集計：
 		-font => "TKFN"
 	)->pack(-side => 'left');
 	
 	$self->{opt_frame} = $f1;
 	
-	$f1->Button(
-		-text    => kh_msg->get('gui_window::cod_outtab->run'), # 集計
-		-font    => "TKFN",
-		-width   => 8,
-		-command => sub{$self->_calc;}
-	)->pack( -anchor => 'e', -side => 'right')->focus;
+	#$f1->Button(
+	#	-text    => kh_msg->get('gui_window::cod_outtab->run'), # 集計
+	#	-font    => "TKFN",
+	#	-width   => 8,
+	#	-command => sub{$self->_calc;}
+	#)->pack( -anchor => 'e', -side => 'right')->focus;
 	
 	#------------------#
 	#   結果表示部分   #
@@ -149,11 +149,35 @@ sub _new{
 		$b4->configure(-state => 'disable');
 	}
 
-	#$rf->Label(
-	#	-text       => kh_msg->get('plot'),
-	#)->pack(-side => 'right');
-
 	$self->fill;
+	return 0 unless $self->{var_obj}{if_vars}; # no variables available
+	
+	# select a variable
+	my $var = '';
+	if ( length( $::project_obj->status_topic_tabulation_var ) ){
+		$var = $::project_obj->status_topic_tabulation_var;
+	} else {
+		foreach my $i (@{$self->{var_obj}{options}}){
+			my $n = 0;
+			if ($i->[1] =~ /^h[0-5]$/) {
+				$n = mysql_exec->select("select count(*) from $i->[1]",1)->hundle->fetch->[0];
+				print "$i->[1], $n\n";
+			} else {
+				my $var = mysql_outvar::a_var->new(undef, $i->[1])->values;
+				$n = @{$var};
+				print "$i->[0], $n\n";
+			}
+			if ($n <= 200) {
+				$var = $i->[1];
+				last;
+			}
+		}
+	}
+	
+	$self->{var_obj}{var_id} = $var;
+	$self->{var_obj}{opt_body}->set_value($var);
+	$self->_calc;
+	
 	return $self;
 }
 
@@ -171,6 +195,7 @@ sub fill{
 			show_headings   => 1,
 			higher_headings => 1,
 			no_topics       => 1,
+			command         => sub {$self->_calc;},
 		);
 	} else {
 		$self->{var_obj}->new_tani( $self->tani );
@@ -218,6 +243,8 @@ sub _calc{
 	#	return 0;
 	#}
 
+	$::project_obj->status_topic_tabulation_var( $self->var_id );
+	
 	my $result;
 	if ($self->var_id =~ /h[1-5]/){              # Headings (not ready yet)
 		unless (

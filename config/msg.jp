@@ -1184,7 +1184,7 @@ gui_window::topic_result:
     doc_topic:                 「文書×トピック」表
 gui_window::topic_stats:
     win_title:                 トピック比率の集計
-    var:                       外部変数：
+    var:                       集計：
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"
     err_not_exist:             "分析対象ファイルに関連するデータが、データベースに存在しません。"

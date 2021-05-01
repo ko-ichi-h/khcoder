@@ -771,6 +771,34 @@ sub status_selected_coln{
 	return $current;
 }
 
+sub status_topic_tabulation_var{
+	my $self = shift;
+	my $new  = shift;
+
+	# 行があるかチェック
+	my $h = mysql_exec->select(
+		"SELECT status FROM status_char WHERE name = 'topic_tabulation_var'",1
+	)->hundle;
+	my $current = '';
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status_char (name, status) VALUES ('topic_tabulation_var', '')"
+		,1);
+	}
+
+	if (defined($new)) {
+		my $quoted = mysql_exec->quote($new);
+		mysql_exec->do("
+			UPDATE status_char SET status = $quoted WHERE name = 'topic_tabulation_var'"
+		,1);
+		$current = $new;
+	}
+
+	return $current;
+}
+
 sub status_var_file{
 	my $self = shift;
 	my $new  = shift;
