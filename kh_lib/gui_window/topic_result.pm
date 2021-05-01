@@ -267,7 +267,7 @@ sub _view_simple{
 		-header             => 1,
 		-itemtype           => 'text',
 		-font               => 'TKFN',
-		-columns            => 2,
+		-columns            => 3,
 		-padx               => 2,
 		-background         => 'white',
 		-selectforeground   => 'black',
@@ -282,7 +282,7 @@ sub _view_simple{
 		-text => kh_msg->gget('words').' (Top '.$self->{n_words}.')',
 		-font               => "TKFN",
 	);
-	$self->{list}->header('create',1,-itemtype  => 'window',-widget => $header_label);
+	$self->{list}->header('create',2,-itemtype  => 'window',-widget => $header_label);
 
 	my @copy_text;
 	my $row = 0;
@@ -296,6 +296,15 @@ sub _view_simple{
 			0,
 			-itemtype => 'window',
 			-widget => $c,
+		);
+
+		# line chart 
+		my $d = $self->line_label($row + 1);
+		$self->{list}->itemCreate(
+			$row,
+			1,
+			-itemtype => 'window',
+			-widget => $d,
 		);
 
 		$copy_text[$row] = '#';
@@ -327,7 +336,7 @@ sub _view_simple{
 		
 		$self->{list}->itemCreate(
 			$row,
-			1,
+			2,
 			-text => $w,
 		);
 		#print "$w\n";
@@ -389,6 +398,14 @@ sub _view_with_val{
 			$col,
 			-itemtype => 'window',
 			-widget => $c,
+		);
+		# line chart 
+		my $d = $self->line_label($t);
+		$self->{list}->itemCreate(
+			0,
+			$col + 1,
+			-itemtype => 'window',
+			-widget => $d,
 		);
 		
 		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
@@ -495,6 +512,15 @@ sub _view_with_valbar{
 			-widget => $c,
 		);
 		
+		# line chart 
+		my $d = $self->line_label($t);
+		$self->{list}->itemCreate(
+			0,
+			$col + 1,
+			-itemtype => 'window',
+			-widget => $d,
+		);
+		
 		$copy_text[0] .= "\t\t\t" if length( $copy_text[0] );
 		$copy_text[0] .= '#'.$t;
 
@@ -541,7 +567,7 @@ sub _view_with_valbar{
 		-foreground => 'white',
 	);
 	$self->{list}->itemCreate(
-		0,
+		1,
 		1,
 		-itemtype => 'window',
 		-widget => $test_label,
@@ -550,7 +576,7 @@ sub _view_with_valbar{
 	my $height = $test_label->height;
 	my $width_min  = $test_label->width;
 	#$test_label->destroy;
-	$self->{list}->itemDelete(0, 1);
+	$self->{list}->itemDelete(1, 1);
 	
 	use Statistics::Lite;                        # preparation for computing bar length
 	my $min = Statistics::Lite::min(@values);
@@ -611,6 +637,52 @@ sub _view_with_valbar{
 	
 	$self->{copy_text} = join("\n", @copy_text);
 	return $self;
+}
+
+sub line_label{
+	my $self = shift;
+	my $t = shift;
+
+	my $d = $self->{list}->Label(
+		-text => '_/‾',
+		-font       => "TKFN",
+		-foreground => "blue",
+		-activeforeground => "blue",
+		#-cursor             => 'hand2',
+		-anchor     => 'w',
+		-background => 'white',
+		-pady       => 0,
+		-activebackground => $::config_obj->color_ListHL_back,
+	);
+	my $tmp_number = $t;
+	$d->bind(
+		"<Button-1>",
+		sub {
+			my $win;
+			if ($::main_gui->if_opened('w_topic_stats')){
+				$win = $::main_gui->get('w_topic_stats');
+			} else {
+				$win = gui_window::topic_stats->open(
+					tani     => $self->{tani},
+					n_topics => $self->{n_topics},
+				);
+			}
+			$win->plot(2,[$win->{code2number}{"#$tmp_number"}]);
+		}
+	);
+	$d->bind(
+		"<Enter>",
+		sub {
+			$d->configure(-foreground => 'red',-activeforeground => 'red');
+		}
+	);
+	$d->bind(
+		"<Leave>",
+		sub {
+			$d->configure(-foreground => 'blue',-activeforeground => 'blue');
+		}
+	);
+	return $d;
 }
 
 sub topic_number{
