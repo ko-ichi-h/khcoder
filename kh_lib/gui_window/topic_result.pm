@@ -622,6 +622,7 @@ sub topic_number{
 		-font       => "TKFN",
 		-foreground => "blue",
 		-activeforeground => "blue",
+		#-cursor             => 'hand2',
 		-anchor     => 'w',
 		-background => 'white',
 		-pady       => 0,

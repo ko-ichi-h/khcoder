@@ -333,12 +333,18 @@ sub _calc{
 	# 結果表示用のHList作成
 	my $cols = @{$result->{display}[0]};
 	my $width = 0;
+	my $longest = '';
 	foreach my $i (@{$result->{display}}){
 		if ( length( Encode::encode('cp932',$i->[0]) ) > $width ){
 			$width = length( Encode::encode('cp932',$i->[0]) );
+			$longest = $i->[0];
 		}
 		# Chinese characters will be transformed to "??".
 		# So it's OK to get length.
+	}
+	unless ( $longest =~ /(\P{ASCII}+)/ ){
+		$width += 1;
+		print "width +1\n";
 	}
 	
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
@@ -419,16 +425,43 @@ sub _calc{
 	my @code_names = ();
 	foreach my $i (@{$result->{display}[0]}){
 		if ($col){
-			my $w = $self->{list}->Label(
-				-text               => $self->gui_jchar($i),
-				-font               => "TKFN",
-				-foreground         => 'black',
-				#-background         => 'white',
-				-padx               => 0,
-				-pady               => 0,
-				-borderwidth        => 0,
-				-highlightthickness => 0,
-			);
+			my $w;
+			if ($i =~ /#[0-9]+/) {
+				$w = $self->{list}->Label(
+					-text               => $self->gui_jchar($i),
+					-font               => "TKFN",
+					-foreground         => 'blue',
+					#-cursor             => 'hand2',
+					-padx               => 0,
+					-pady               => 0,
+					-borderwidth        => 0,
+					-highlightthickness => 0,
+				);
+				$w->bind(
+					"<Button-1>",
+					sub { $self->plot(2,[$self->{code2number}{$i}]) }
+				);
+				$w->bind(
+					"<Enter>",
+					sub { $w->configure(-foreground => 'red'); }
+				);
+				$w->bind(
+					"<Leave>",
+					sub { $w->configure(-foreground => 'blue'); }
+				);
+			} else {
+				$w = $self->{list}->Label(
+					-text               => $self->gui_jchar($i),
+					-font               => "TKFN",
+					-foreground         => 'black',
+					#-background         => 'white',
+					-padx               => 0,
+					-pady               => 0,
+					-borderwidth        => 0,
+					-highlightthickness => 0,
+				);
+			}
+
 			$self->list->header(
 				'create',
 				$col - 1,
@@ -458,7 +491,7 @@ sub _calc{
 				$self->list->itemCreate(
 					$row,
 					$col -1,
-					-text  => $h,#$self->gui_jchar($h,'sjis'),
+					-text  => " ".$h,#$self->gui_jchar($h,'sjis'),
 					-style => $right_style
 				);
 			} else {
