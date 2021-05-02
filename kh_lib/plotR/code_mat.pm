@@ -54,6 +54,10 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
+	unless ( $args{toppic_model} ){
+		$args{toppic_model} = 1;
+	}
+	$r_command .= "toppic_model <- $args{toppic_model}\n";
 	
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
@@ -1278,7 +1282,7 @@ if ( is.null(font_fam) == FALSE ){
 		cluster_cols             = ifelse(dendro_v==1, T, F),
 		cluster_rows             = ifelse(dendro_c==1, T, F),
 		display_numbers          = ifelse(cellnote==1, T, F),
-		number_format            = "%.1f",
+		number_format            = ifelse(toppic_model==1, "%.3f", "%.1f"),
 		legend                   = ifelse(cellnote==1, F, T),
 		fontsize_number          = 10 * cex,
 		fontfamily               = font_fam,

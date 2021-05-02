@@ -246,17 +246,97 @@ sub _calc{
 	$::project_obj->status_topic_tabulation_var( $self->var_id );
 	
 	my $result;
+	my $topic_table = mysql_outvar::a_var->new('_topic_docid',undef)->table;
+	
 	if ($self->var_id =~ /h[1-5]/){              # Headings (not ready yet)
-		unless (
-			$result = $result->tab(
-				$self->tani,
-				$self->var_id,
-				$self->{cell_opt}
-			)
-		){
-			$self->rtn;
-			return 0;
+		my $tani1 = $self->tani;
+		my $tani2 = $self->var_id;
+		
+		# compose & run SQL for stats
+		my $sql;
+		$sql .= "SELECT $tani2.id, ";
+		for (my $i = 1; $i <= $self->{n_topics}; ++$i){
+			$sql .= "AVG( $topic_table.col$i ),";
 		}
+		$sql .= " count(*) \n";
+		$sql .= "FROM $tani1\n";
+		$sql .= "\tLEFT JOIN $topic_table ON $tani1.id = $topic_table.id\n";
+		$sql .= "\tLEFT JOIN $tani2 ON ";
+		my ($flag1,$n);
+		foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+			if ($tani2 eq $i){
+				$flag1 = 1;
+			}
+			if ($flag1){
+				if ($n){$sql .= " AND ";}
+				$sql .= "$tani1.$i".'_id = '."$tani2.$i".'_id ';
+				++$n;
+			}
+		}
+		$sql .= "\n";
+		$sql .= "\nGROUP BY ";
+		my $flag2 = 0;
+		foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+			if ($tani2 eq $i){
+				$flag2 = 1;
+			}
+			if ($flag2){
+				$sql .= "$tani1.$i".'_id,';
+			}
+		}
+		chop $sql;
+		$sql .= "\nORDER BY $tani2.id";
+		
+		print "$sql\n";
+		
+		my $h = mysql_exec->select($sql,1)->hundle;
+		
+		# compose output table
+		my @result;
+		my @for_plot;
+		
+		my @head = ('');                         # the 1st line (header)
+		for (my $i = 1; $i <= $self->{n_topics}; ++$i){
+			push @head, "#$i";
+		}
+		use Clone qw(clone);
+		push @for_plot, clone(\@head);
+		push @head, kh_msg->get('kh_cod::func->n_cases');
+		push @result, \@head;
+		
+		while (my $i = $h->fetch){               # 2nd and so on...
+			my $n = 0;
+			my @current;
+			my @current_for_plot;
+			my @c = @{$i};
+			my $nd = pop @c;
+		
+			foreach my $h (@c){
+				if ($n == 0){                         # the 1st col
+					if (index($tani2,'h') == 0){
+						my $t_name = gui_window->gui_jchar( # Decoding
+							mysql_getheader->get($tani2, $h)#,
+							#'cp932'
+						);
+						push @current, $t_name;
+						push @current_for_plot, $t_name;
+					} else {
+						push @current, $h;
+						push @current_for_plot, $h;
+					}
+				} else {                              # 2nd and so on...
+					push @current_for_plot, $h;
+					push @current,          sprintf("%.3f", $h);
+				}
+				++$n;
+			}
+			push @current, $nd;
+			push @result, \@current;
+			push @for_plot, \@current_for_plot;
+		}
+		$result->{display} = \@result;
+		$result->{plot}    = \@for_plot;
+
 	} else {                                      # Variables
 		# check the selected variable
 		my $heap = 'TYPE=HEAP';
@@ -292,7 +372,6 @@ sub _calc{
 		}
 		
 		# compose & run SQL for stats
-		my $topic_table = mysql_outvar::a_var->new('_topic_docid',undef)->table;
 		my $sql;
 		$sql .= "SELECT if ( outvar_lab.lab is NULL, $outvar_tbl.$outvar_clm, outvar_lab.lab) as name,";
 		for (my $i = 1; $i <= $self->{n_topics}; ++$i){
@@ -742,7 +821,7 @@ sub plot{
 		$plot = plotR::code_mat->new(
 			font_size           => $::config_obj->plot_font_size / 100,
 			r_command           => $rcom,
-			heat_dendro_c       => 1,
+			heat_dendro_c       => 0,
 			heat_cellnote       => $nrow < 10 ? 1 : 0,
 			plotwin_name        => 'tpc_mat',
 			plot_size_heat      => $height,
@@ -751,6 +830,7 @@ sub plot{
 			bubble_size         => $bubble_size,
 			selection           => $selection,
 			color_rsd           => 0,
+			toppic_model        => 1,
 		);
 		
 		$wait_window->end(no_dialog => 1);

@@ -298,7 +298,7 @@ sub calc{
 		++$n;
 	}
 	
-	while ($n < $max) {
+	while ($n <= $max) {
 		my $current = \@dummy;
 		$current->[0] = $n;
 		$csv->print($of, $current);

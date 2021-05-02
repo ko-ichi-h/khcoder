@@ -546,6 +546,7 @@ sub calc{
 		selection      => \@selection,
 		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		plotwin_name   => 'tpc_mat',
+		toppic_model   => 1,
 	);
 	$wait_window->end(no_dialog => 1);
 
