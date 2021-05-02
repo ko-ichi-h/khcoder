@@ -250,7 +250,7 @@ sub calc{
 		#font_size      => $self->{font_obj}->font_size,
 		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
 		selection      => \@selection,
-		plotwin_name   => 'code_mat_line',
+		plotwin_name   => 'tpc_mat_line',
 	);
 	$wait_window->end(no_dialog => 1);
 
@@ -262,7 +262,9 @@ sub calc{
 
 	use gui_window::r_plot::tpc_mat_line;
 	gui_window::r_plot::tpc_mat_line->open(
-		plots       => $plot->{result_plots},
+		plots => $plot->{result_plots},
+		var   => $self->{var},
+		tani  => $self->{tani},
 	);
 
 	$plot = undef;

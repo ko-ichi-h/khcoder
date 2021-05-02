@@ -785,7 +785,9 @@ sub plot{
 		return 0 unless $plot;
 		
 		gui_window::r_plot::tpc_mat_line->open(
-			plots       => $plot->{result_plots},
+			plots => $plot->{result_plots},
+			var   => $self->var_id,
+			tani  => $self->tani,
 			#no_geometry => 1,
 		);
 	}
@@ -793,6 +795,15 @@ sub plot{
 
 	$plot = undef;
 }
+
+sub end{
+	my $self = shift;
+	
+	if ($::main_gui->if_opened('w_tpc_mat_line')){
+		$::main_gui->get('w_tpc_mat_line')->close;
+	}
+}
+
 
 #--------------#
 #   アクセサ   #
