@@ -123,12 +123,12 @@ sub _new{
 		-text       => kh_msg->get('gui_window::cod_outtab->line'), # 折れ線
 	)->pack(-side => 'right');
 
-	my $b3 = $rf->Button(
-		-text => kh_msg->get('gui_window::r_plot::cod_mat->fluc'), # バブル
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub { $self->plot(1); }
-	)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
+	#my $b3 = $rf->Button(
+	#	-text => kh_msg->get('gui_window::r_plot::cod_mat->fluc'), # バブル
+	#	-font => "TKFN",
+	#	-borderwidth => '1',
+	#	-command => sub { $self->plot(1); }
+	#)->pack(-anchor => 'e', -pady => 2, -padx => 2, -side => 'right');
 
 	my $b4 = $rf->Button(
 		-text => kh_msg->get('gui_window::r_plot::cod_mat->heat'), # ヒート
@@ -145,7 +145,7 @@ sub _new{
 	unless ($::config_obj->R){
 		$b1->configure(-state => 'disable');
 		$b2->configure(-state => 'disable');
-		$b3->configure(-state => 'disable');
+		#$b3->configure(-state => 'disable');
 		$b4->configure(-state => 'disable');
 	}
 
@@ -764,7 +764,7 @@ sub plot{
 		gui_window::r_plot::tpc_mat->open(
 			plots       => $plot->{result_plots},
 			ax          => $ax,
-			no_geometry => 1,
+			#no_geometry => 1,
 			var         => $self->var_id,
 			tani        => $self->tani,
 		);

@@ -1193,7 +1193,7 @@ gui_window::topic_result:
     stats_table:               表
     plot:                      マップ
 gui_window::topic_stats:
-    win_title:                 トピック比率の集計
+    win_title:                 トピック比率の集計表
     var:                       集計：
 screen_code::rde_menu:
     plugin_raw_data_editor:    "《文錦》 テキスト・変数の編集"

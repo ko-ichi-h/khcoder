@@ -296,6 +296,8 @@ sub innner{
 	$self->{entry_plot_size_heat}->insert(0,$self->{plot_size_heat});
 
 	# バブルプロットのGUI
+	if (0) {
+	
 	my $lf_f = $right->LabFrame(
 		-label => kh_msg->get('gui_window::r_plot::cod_mat->fluc'),
 		-labelside => 'acrosstop',
@@ -450,6 +452,8 @@ sub innner{
 	$self->{entry_plot_size_maph}->bind("<KP_Enter>", sub {$self->calc});
 	
 	$self->{entry_plot_size_maph}->insert(0,$self->{plot_size_maph});
+	
+	}
 
 	return $self;
 }
@@ -528,16 +532,16 @@ sub calc{
 		heat_cellnote  => $self->gui_jg( $self->{heat_cellnote} ),
 		plot_size_heat => $self->gui_jgn( $self->{entry_plot_size_heat}->get ),
 		
-		bubble_size    => $self->gui_jgn( $self->{entry_bubble_size}->get) /100,
-		bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
-		breaks         => $self->gui_jg( $self->{ent_breaks}->get ),
-		color_rsd      => $self->gui_jg( $self->{color_rsd} ),
-		color_gry      => $self->gui_jg( $self->{color_gry} ),
-		plot_size_mapw => $self->gui_jgn( $self->{entry_plot_size_mapw}->get ),
-		plot_size_maph => $self->gui_jgn( $self->{entry_plot_size_maph}->get ),
+		#bubble_size    => $self->gui_jgn( $self->{entry_bubble_size}->get) /100,
+		#bubble_shape   => $self->gui_jg( $self->{bubble_shape} ),
+		#breaks         => $self->gui_jg( $self->{ent_breaks}->get ),
+		#color_rsd      => $self->gui_jg( $self->{color_rsd} ),
+		#color_gry      => $self->gui_jg( $self->{color_gry} ),
+		#plot_size_mapw => $self->gui_jgn( $self->{entry_plot_size_mapw}->get ),
+		#plot_size_maph => $self->gui_jgn( $self->{entry_plot_size_maph}->get ),
 		
-		color_fix      => $self->gui_jg( $self->{color_fix} ),
-		color_maxv     => $self->gui_jgn( $self->{entry_color_fix}->get ),
+		#color_fix      => $self->gui_jg( $self->{color_fix} ),
+		#color_maxv     => $self->gui_jgn( $self->{entry_color_fix}->get ),
 		
 		selection      => \@selection,
 		font_size      => $self->gui_jgn( $self->{entry_font_size}->get) /100,
@@ -555,6 +559,8 @@ sub calc{
 	gui_window::r_plot::tpc_mat->open(
 		plots       => $plot->{result_plots},
 		ax          => $self->{ax},
+		var   => $self->{var},
+		tani  => $self->{tani},
 	);
 
 	$plot = undef;
