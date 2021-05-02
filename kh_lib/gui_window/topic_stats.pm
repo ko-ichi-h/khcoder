@@ -735,17 +735,16 @@ sub plot{
 	print "bubble size adjustment, height: $bs_h,  width: $bs_w\n";
 	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) * 10 ) / 10;
 	
-	
 	# プロット作成
 	my $plot;
-	if ($ax <= 1){                      # ヒート・バブル
+	if ($ax <= 1){                      # Heat & Bubble Map
 		use plotR::code_mat;
 		$plot = plotR::code_mat->new(
 			font_size           => $::config_obj->plot_font_size / 100,
 			r_command           => $rcom,
 			heat_dendro_c       => 1,
 			heat_cellnote       => $nrow < 10 ? 1 : 0,
-			plotwin_name        => 'code_mat',
+			plotwin_name        => 'tpc_mat',
 			plot_size_heat      => $height,
 			plot_size_maph      => $height_f,
 			plot_size_mapw      => $width_f,
@@ -756,18 +755,20 @@ sub plot{
 		
 		$wait_window->end(no_dialog => 1);
 		
-		if ($::main_gui->if_opened('w_cod_mat_plot')){
-			$::main_gui->get('w_cod_mat_plot')->close;
+		if ($::main_gui->if_opened('w_tpc_mat_plot')){
+			$::main_gui->get('w_tpc_mat_plot')->close;
 		}
 		
 		return 0 unless $plot;
 		
-		gui_window::r_plot::cod_mat->open(
+		gui_window::r_plot::tpc_mat->open(
 			plots       => $plot->{result_plots},
 			ax          => $ax,
 			no_geometry => 1,
+			var         => $self->var_id,
+			tani        => $self->tani,
 		);
-	} else {
+	} else {                            # Line Chart
 		use plotR::code_mat_line;
 		$plot = plotR::code_mat_line->new(
 			font_size           => $::config_obj->plot_font_size / 100,
@@ -801,6 +802,9 @@ sub end{
 	
 	if ($::main_gui->if_opened('w_tpc_mat_line')){
 		$::main_gui->get('w_tpc_mat_line')->close;
+	}
+	if ($::main_gui->if_opened('w_tpc_mat_plot')){
+		$::main_gui->get('w_tpc_mat_plot')->close;
 	}
 }
 

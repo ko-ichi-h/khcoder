@@ -1120,7 +1120,11 @@ gui_window::r_plot_opt::doc_cls:
 mysql_ready::check:
     error:                     "Data integrity lost: "
 gui_window::r_plot::cod_mat:
-    win_title:                 "Crosstab Plots"
+    win_title:                 "Crosstab Map"
+    heat:                      "heat"
+    fluc:                      "bubble"
+gui_window::r_plot::tpc_mat:
+    win_title:                 "Topic Proportion Map"
     heat:                      "heat"
     fluc:                      "bubble"
 gui_window::r_plot_opt::cod_mat:
@@ -1174,9 +1178,13 @@ gui_window::topic_perplexity:
 gui_window::topic_result:
     win_title:                 Result of Topic Model
     extended:                  "prob."
+    words:                     "Words: "
     export:                    "*Export"
     topic_term:                Topic-Word Matrix
     doc_topic:                 Document-Topic Matrix
+    topic_prop:                " Topic proportion:"
+    stats_table:               Table
+    plot:                      Map
 gui_window::topic_stats:
     win_title:                 Topic Proportion Table
     var:                       Tabulation:

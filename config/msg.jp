@@ -1127,6 +1127,10 @@ gui_window::r_plot::cod_mat:
     win_title:                 "クロス集計のマップ"
     heat:                      "ヒート"
     fluc:                      "バブル"
+gui_window::r_plot::tpc_mat:
+    win_title:                 "トピック比率のマップ"
+    heat:                      "ヒート"
+    fluc:                      "バブル"
 gui_window::r_plot_opt::cod_mat:
     win_title:                 "クロス集計のマップ・調整"
     cellnote:                  "各セルのパーセンテージを表示"
@@ -1146,6 +1150,9 @@ gui_window::r_plot_opt::cod_mat:
     col2:                      "カラー(CM)"
     gray:                      "グレー"
     color_fix:                 "カラースケールを固定： "
+gui_window::r_plot_opt::tpc_mat:
+    win_title:                 "トピック比率のマップ・調整"
+    dendro_c:                  "トピックのクラスター化と並べ替え"
 gui_window::r_plot::cod_mat_line:
     win_title:                 "クロス集計の折れ線グラフ"
 gui_window::r_plot_opt::cod_mat_line:
@@ -1182,6 +1189,9 @@ gui_window::topic_result:
     export:                    ▽出力
     topic_term:                「トピック×語」表
     doc_topic:                 「文書×トピック」表
+    topic_prop:                "  トピック比率："
+    stats_table:               表
+    plot:                      マップ
 gui_window::topic_stats:
     win_title:                 トピック比率の集計
     var:                       集計：

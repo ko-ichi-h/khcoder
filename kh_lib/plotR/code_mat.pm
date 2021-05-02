@@ -1243,7 +1243,9 @@ draw_colnames = function(coln, ...){
 #)
 
 cluster_mat = function(mat, distance, method){
-	d = dist(mat, method = "euclid")
+	#d = dist(mat, method = "euclid")
+	library(proxy)
+	d <- proxy::dist(mat, method = "correlation")
 	
 	if (
 		   ( as.numeric( R.Version()$major ) >= 3 )

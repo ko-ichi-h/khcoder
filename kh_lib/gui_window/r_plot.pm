@@ -18,6 +18,7 @@ use gui_window::r_plot::doc_cls;
 use gui_window::r_plot::topic_n_perplexity;
 use gui_window::r_plot::topic_n_ldatuning;
 use gui_window::r_plot::tpc_mat_line;
+use gui_window::r_plot::tpc_mat;
 
 use strict;
 use gui_hlist;

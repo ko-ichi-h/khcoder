@@ -138,7 +138,7 @@ sub _new{
 	gui_window->config_entry_focusin( $self->{entry_n_words} );
 
 	$f1->Button(
-		-text => kh_msg->get('gui_window::word_conc->stats'), # 集計
+		-text => kh_msg->get('stats_table'), # 集計表
 		-command => sub{
 			if ($::main_gui->if_opened('w_topic_stats')){
 				$::main_gui->get('w_topic_stats')->close;
@@ -148,7 +148,28 @@ sub _new{
 				n_topics => $self->{n_topics},
 			);
 		}
-	)->pack(-side => 'right', -padx => 3);
+	)->pack(-side => 'right', -padx => 2);
+	
+	$f1->Button(
+		-text => kh_msg->get('plot'), # プロット
+		-command => sub{
+			my $win;
+			if ($::main_gui->if_opened('w_topic_stats')){
+				$win = $::main_gui->get('w_topic_stats');
+			} else {
+				$win = gui_window::topic_stats->open(
+					tani     => $self->{tani},
+					n_topics => $self->{n_topics},
+				);
+			}
+			$win->plot(0);
+		}
+	)->pack(-side => 'right', -padx => 2);
+	
+	$f1->Label(
+		-text => kh_msg->get('topic_prop'), # トピック比率
+		-font => "TKFN",
+	)->pack(-side => 'right', -padx => 2);
 	
 	my $btn = $f1->Button(
 		-text => kh_msg->gget('copy_all'), # コピー（表全体）
