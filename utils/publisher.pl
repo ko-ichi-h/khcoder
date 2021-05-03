@@ -14,8 +14,8 @@ $| = 1;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3b03';
-my $V_full = "3.Beta.03";
+my $V = '3b03a';
+my $V_full = "3.Beta.03a";
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
