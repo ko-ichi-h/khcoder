@@ -824,9 +824,39 @@ sub status_from_table{
 	if ( defined($new) == 0 && defined($self->{status_from_table_cache}) ) {
 		return $self->{status_from_table_cache};
 	} else {
-		$self->{status_from_table_cache} = $self->_status_char_common('source_file', $new);
+		$self->{status_from_table_cache} = $self->_status_common('from_table', $new);
 		return $self->{status_from_table_cache};
 	}
+}
+
+sub _status_common{
+	my $self = shift;
+	my $key  = shift;
+	my $new  = shift;
+	
+	# check if there is a row
+	my $v = mysql_exec->quote($key);
+	my $h = mysql_exec->select(
+		"SELECT status FROM status WHERE name = $v",1
+	)->hundle;
+	my $current = 0;
+	if ($h->rows > 0) {
+		$current = $h->fetch->[0];
+	} else {
+		mysql_exec->do("
+			INSERT INTO status (name, status) VALUES ($v, $current)"
+		,1);
+	}
+	
+	# when a new value is set
+	if (defined($new)) {
+		mysql_exec->do("
+			UPDATE status SET status = $new WHERE name = $v"
+		,1);
+		$current = $new;
+	}
+	
+	return $current;
 }
 
 sub status_hb{
