@@ -37,7 +37,7 @@ sub _new{
 	$self->{words_obj} = gui_widget::words->open(
 		parent => $lf_w,
 		verb   => kh_msg->get('gui_window::doc_cls->verb'), # 使用
-		sampling     => 1,
+		sampling     => 0,
 		command      => sub{
 			$self->calc;
 		},

@@ -25,6 +25,12 @@ sub fill{
 			'pos'
 		];
 	}
+	if ( $self->{add_position2} ){
+		push @options, [
+			kh_msg->get('pos2'),
+			'pos'
+		];
+	}
 	
 	# ¸«½Ð¤·
 	if ($self->{show_headings}){

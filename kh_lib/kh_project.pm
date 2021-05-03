@@ -746,164 +746,70 @@ sub reloadable{
 sub status_selected_coln{
 	my $self = shift;
 	my $new  = shift;
-
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'selected_coln'",1
-	)->hundle;
-	my $current = '';
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('selected_coln', '')"
-		,1);
-	}
-
-	if (defined($new)) {
-		my $quoted = mysql_exec->quote($new);
-		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'selected_coln'"
-		,1);
-		$current = $new;
-	}
-
-	return $current;
+	return $self->_status_char_common('selected_coln', $new);
 }
 
 sub status_topic_tabulation_var{
 	my $self = shift;
 	my $new  = shift;
+	return $self->_status_char_common('topic_tabulation_var', $new);
+}
 
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'topic_tabulation_var'",1
-	)->hundle;
-	my $current = '';
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('topic_tabulation_var', '')"
-		,1);
-	}
-
-	if (defined($new)) {
-		my $quoted = mysql_exec->quote($new);
-		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'topic_tabulation_var'"
-		,1);
-		$current = $new;
-	}
-
-	return $current;
+sub status_topic_tabulation_tani{
+	my $self = shift;
+	my $new  = shift;
+	return $self->_status_char_common('topic_tabulation_tani', $new);
 }
 
 sub status_var_file{
 	my $self = shift;
 	my $new  = shift;
-
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'var_file'",1
-	)->hundle;
-	my $current = '';
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('var_file', '')"
-		,1);
-	}
-
-	if (defined($new)) {
-		my $quoted = mysql_exec->quote($new);
-		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'var_file'"
-		,1);
-		$current = $new;
-	}
-
-	return $current;
+	return $self->_status_char_common('var_file', $new);
 }
 
 sub status_source_file{
 	my $self = shift;
 	my $new  = shift;
-	
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'source_file'",1
-	)->hundle;
-	my $current = '';
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('source_file', '')"
-		,1);
-	}
-	
-	if (defined($new)) {
-		my $quoted = mysql_exec->quote($new);
-		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'source_file'"
-		,1);
-		$current = $new;
-	}
-	
-	return $current;
+	return $self->_status_char_common('source_file', $new);
 }
 
 sub status_converted_file{
 	my $self = shift;
 	my $new  = shift;
-	
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'converted_file'",1
-	)->hundle;
-	my $current = '';
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('converted_file', '')"
-		,1);
-	}
-	
-	if (defined($new)) {
-		my $quoted = mysql_exec->quote($new);
-		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'converted_file'"
-		,1);
-		$current = $new;
-	}
-	
-	return $current;
+	return $self->_status_char_common('converted_file', $new);
 }
 
 sub status_copied_file{
 	my $self = shift;
 	my $new  = shift;
+	return $self->_status_char_common('copied_file', $new);
+}
+
+sub _status_char_common{
+	my $self = shift;
+	my $key  = shift;
+	my $new  = shift;
 	
-	# 行があるかチェック
+	# check if there is a row
+	my $v = mysql_exec->quote($key);
 	my $h = mysql_exec->select(
-		"SELECT status FROM status_char WHERE name = 'copied_file'",1
+		"SELECT status FROM status_char WHERE name = $v",1
 	)->hundle;
 	my $current = '';
 	if ($h->rows > 0) {
 		$current = $h->fetch->[0];
 	} else {
+		
 		mysql_exec->do("
-			INSERT INTO status_char (name, status) VALUES ('copied_file', '')"
+			INSERT INTO status_char (name, status) VALUES ($v, '')"
 		,1);
 	}
 	
+	# when a new value is set
 	if (defined($new)) {
 		my $quoted = mysql_exec->quote($new);
 		mysql_exec->do("
-			UPDATE status_char SET status = $quoted WHERE name = 'copied_file'"
+			UPDATE status_char SET status = $quoted WHERE name = $v"
 		,1);
 		$current = $new;
 	}
@@ -914,39 +820,13 @@ sub status_copied_file{
 sub status_from_table{
 	my $self = shift;
 	my $new  = shift;
-	
-	my $check = 0;
-	
+
 	if ( defined($new) == 0 && defined($self->{status_from_table_cache}) ) {
-		print "status_from_table: retuning cache\n" if $check;
 		return $self->{status_from_table_cache};
 	} else {
-		print "status_from_table: getting the value from MySQL\n" if $check;
+		$self->{status_from_table_cache} = $self->_status_char_common('source_file', $new);
+		return $self->{status_from_table_cache};
 	}
-	
-	# 行があるかチェック
-	my $h = mysql_exec->select(
-		"SELECT status FROM status WHERE name = 'from_table'",1
-	)->hundle;
-	my $current = 0;
-	if ($h->rows > 0) {
-		$current = $h->fetch->[0];
-	} else {
-		mysql_exec->do("
-			INSERT INTO status (name, status) VALUES ('from_table', $current)"
-		,1);
-	}
-	
-	if (defined($new)) {
-		mysql_exec->do("
-			UPDATE status SET status = $new WHERE name = 'from_table'"
-		,1);
-		$current = $new;
-	}
-	
-	$self->{status_from_table_cache} = $current;
-	
-	return $current;
 }
 
 sub status_hb{

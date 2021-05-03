@@ -338,7 +338,11 @@ sub settings_load{
 
 sub sampling_value{
 	my $self = shift;
-	return $self->{sampling_obj}->parameter;
+	if ( $self->{sampling_obj} ) {
+		return $self->{sampling_obj}->parameter;
+	} else {
+		return 0;
+	}
 }
 
 sub min{

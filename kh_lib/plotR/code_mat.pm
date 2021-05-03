@@ -54,10 +54,10 @@ sub new{
 	}
 	$r_command .= "cellnote <- $args{heat_cellnote}\n";
 
-	unless ( $args{toppic_model} ){
-		$args{toppic_model} = 1;
+	unless ( $args{topic_model} ){
+		$args{topic_model} = 0;
 	}
-	$r_command .= "toppic_model <- $args{toppic_model}\n";
+	$r_command .= "topic_model <- $args{topic_model}\n";
 	
 	$args{plot_size_heat} = 480 unless $args{plot_size_heat};
 
@@ -104,33 +104,36 @@ sub new{
 		font_size => $args{font_size},
 	) or return 0;
 
-	$plots[1] = kh_r_plot->new(
-		name      => $args{plotwin_name}.'_2',
-		command_f =>
-			 $r_command
-			.$self->r_plot_cmd_fluc,
-		width     => $args{plot_size_mapw},
-		height    => $args{plot_size_maph},
-		font_size => $args{font_size},
-	) or return 0;
-
-	# get breaks of bubble plot legend
-	$::config_obj->R->send('
-		legend_breaks_n <- ""
-		for ( i in 1:length(breaks_a) ){
-			legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
+	print "topic_model: $self->{topic_model}\n";
+	unless ( $self->{topic_model} ){
+		$plots[1] = kh_r_plot->new(
+			name      => $args{plotwin_name}.'_2',
+			command_f =>
+				 $r_command
+				.$self->r_plot_cmd_fluc,
+			width     => $args{plot_size_mapw},
+			height    => $args{plot_size_maph},
+			font_size => $args{font_size},
+		) or return 0;
+	
+		# get breaks of bubble plot legend
+		$::config_obj->R->send('
+			legend_breaks_n <- ""
+			for ( i in 1:length(breaks_a) ){
+				legend_breaks_n <- paste(legend_breaks_n, breaks_a[i], sep = ", ")
+			}
+			print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
+		');
+		my $breaks = $::config_obj->R->read;
+		if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
+			$breaks = $1;
+			substr($breaks, 0, 2) = '';
 		}
-		print(paste0("<breaks>", legend_breaks_n, "</breaks>"))
-	');
-	my $breaks = $::config_obj->R->read;
-	if ( $breaks =~ /<breaks>(.+)<\/breaks>/) {
-		$breaks = $1;
-		substr($breaks, 0, 2) = '';
+		foreach my $i (@plots){
+			$i->{command_f} .= "\n# breaks: $breaks\n";
+		}
+		print "breaks: $breaks\n";
 	}
-	foreach my $i (@plots){
-		$i->{command_f} .= "\n# breaks: $breaks\n";
-	}
-	print "breaks: $breaks\n";
 
 	kh_r_plot->clear_env;
 	undef $self;
@@ -1247,9 +1250,9 @@ draw_colnames = function(coln, ...){
 #)
 
 cluster_mat = function(mat, distance, method){
-	#d = dist(mat, method = "euclid")
-	library(proxy)
-	d <- proxy::dist(mat, method = "correlation")
+	d = dist(mat, method = "euclid")
+	#library(proxy)
+	#d <- proxy::dist(mat, method = "correlation")
 	
 	if (
 		   ( as.numeric( R.Version()$major ) >= 3 )
@@ -1282,7 +1285,7 @@ if ( is.null(font_fam) == FALSE ){
 		cluster_cols             = ifelse(dendro_v==1, T, F),
 		cluster_rows             = ifelse(dendro_c==1, T, F),
 		display_numbers          = ifelse(cellnote==1, T, F),
-		number_format            = ifelse(toppic_model==1, "%.3f", "%.1f"),
+		number_format            = ifelse(topic_model==1, "%.3f", "%.1f"),
 		legend                   = ifelse(cellnote==1, F, T),
 		fontsize_number          = 10 * cex,
 		fontfamily               = font_fam,

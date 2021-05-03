@@ -878,6 +878,7 @@ kh_cod::search:
     direct:                   '#direct'
 gui_widget::select_a_var:
     pos:                      'Position'
+    pos2:                     'Documents'
     heading:                  'Heading '
     na:                       'n / a '
 gui_window::doc_cls:
@@ -1167,7 +1168,7 @@ gui_window::import_folder:
     opt_project:               "New project"
 gui_window::topic_fitting:
     win_title:                 "Fit a Topic Model"
-    opt:                       "Topic Model Options"
+    opt:                       "Topic Model (LDA) Options"
     n_topics:                  "N of Topics: "
 gui_window::topic_perplexity:
     opt:                       Method and Number of topics

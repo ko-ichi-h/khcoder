@@ -169,8 +169,10 @@ p <- p + scale_x_discrete(
 	labels = x.labels
 )
 
-if ( max(table$y) > 1 ){
-	y_max <- ceiling( max(table$y) * 1.01 )
+tmp_a <- table$y
+tmp_a <- tmp_a[!is.na(tmp_a)]
+if ( max(tmp_a) > 1 ){
+	y_max <- ceiling( max(tmp_a) * 1.01 )
 } else {
 	y_max <- NA
 }

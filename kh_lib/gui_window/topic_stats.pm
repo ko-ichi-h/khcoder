@@ -154,18 +154,26 @@ sub _new{
 	
 	# select a variable
 	my $var = '';
-	if ( length( $::project_obj->status_topic_tabulation_var ) ){
+	if (
+		$::project_obj->status_topic_tabulation_tani eq $self->tani
+		&& length( $::project_obj->status_topic_tabulation_var )
+	){
 		$var = $::project_obj->status_topic_tabulation_var;
+		#print "loaded: $var\n";
 	} else {
 		foreach my $i (@{$self->{var_obj}{options}}){
 			my $n = 0;
-			if ($i->[1] =~ /^h[0-5]$/) {
-				$n = mysql_exec->select("select count(*) from $i->[1]",1)->hundle->fetch->[0];
-				print "$i->[1], $n\n";
+			if ($i->[1] =~ /^h[0-5]$/ || $i->[1] eq 'pos') {
+				my $t = $i->[1];
+				if ($t eq 'pos') {
+					$t = $self->tani;
+				}
+				$n = mysql_exec->select("select count(*) from $t",1)->hundle->fetch->[0];
+				#print "$i->[1], $n\n";
 			} else {
 				my $var = mysql_outvar::a_var->new(undef, $i->[1])->values;
 				$n = @{$var};
-				print "$i->[0], $n\n";
+				#print "$i->[0], $n\n";
 			}
 			if ($n <= 200) {
 				$var = $i->[1];
@@ -195,6 +203,7 @@ sub fill{
 			show_headings   => 1,
 			higher_headings => 1,
 			no_topics       => 1,
+			add_position2   => 1,
 			command         => sub {$self->_calc;},
 		);
 	} else {
@@ -243,14 +252,19 @@ sub _calc{
 	#	return 0;
 	#}
 
-	$::project_obj->status_topic_tabulation_var( $self->var_id );
+	$::project_obj->status_topic_tabulation_var(  $self->var_id );
+	$::project_obj->status_topic_tabulation_tani( $self->tani   );
 	
 	my $result;
 	my $topic_table = mysql_outvar::a_var->new('_topic_docid',undef)->table;
 	
-	if ($self->var_id =~ /h[1-5]/){              # Headings (not ready yet)
+	if ($self->var_id =~ /h[1-5]/ || $self->var_id eq 'pos'){ ### Headings
 		my $tani1 = $self->tani;
 		my $tani2 = $self->var_id;
+		
+		if ($tani2 eq 'pos') {
+			$tani2 = $tani1;
+		}
 		
 		# compose & run SQL for stats
 		my $sql;
@@ -261,19 +275,22 @@ sub _calc{
 		$sql .= " count(*) \n";
 		$sql .= "FROM $tani1\n";
 		$sql .= "\tLEFT JOIN $topic_table ON $tani1.id = $topic_table.id\n";
-		$sql .= "\tLEFT JOIN $tani2 ON ";
-		my ($flag1,$n);
-		foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
-			if ($tani2 eq $i){
-				$flag1 = 1;
+		unless ($tani1 eq $tani2){
+			$sql .= "\tLEFT JOIN $tani2 ON ";
+			my ($flag1,$n);
+			foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+				if ($tani2 eq $i){
+					$flag1 = 1;
+				}
+				if ($flag1){
+					if ($n){$sql .= " AND ";}
+					$sql .= "$tani1.$i".'_id = '."$tani2.$i".'_id ';
+					++$n;
+				}
 			}
-			if ($flag1){
-				if ($n){$sql .= " AND ";}
-				$sql .= "$tani1.$i".'_id = '."$tani2.$i".'_id ';
-				++$n;
-			}
+			$sql .= "\n";
 		}
-		$sql .= "\n";
+		
 		$sql .= "\nGROUP BY ";
 		my $flag2 = 0;
 		foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
@@ -313,7 +330,7 @@ sub _calc{
 		
 			foreach my $h (@c){
 				if ($n == 0){                         # the 1st col
-					if (index($tani2,'h') == 0){
+					if (index($tani2,'h') == 0 &! $::project_obj->status_from_table){
 						my $t_name = gui_window->gui_jchar( # Decoding
 							mysql_getheader->get($tani2, $h)#,
 							#'cp932'
@@ -325,8 +342,13 @@ sub _calc{
 						push @current_for_plot, $h;
 					}
 				} else {                              # 2nd and so on...
-					push @current_for_plot, $h;
-					push @current,          sprintf("%.3f", $h);
+					if ( defined($h) ) {
+						push @current, sprintf("%.3f", $h);
+						push @current_for_plot, $h;
+					} else {
+						push @current, '.';
+						push @current_for_plot, 'NA';
+					}
 				}
 				++$n;
 			}
@@ -337,7 +359,7 @@ sub _calc{
 		$result->{display} = \@result;
 		$result->{plot}    = \@for_plot;
 
-	} else {                                      # Variables
+	} else {                                      #### Variables
 		# check the selected variable
 		my $heap = 'TYPE=HEAP';
 		$heap = '' unless $::config_obj->use_heap;
@@ -450,7 +472,7 @@ sub _calc{
 	}
 	unless ( $longest =~ /(\P{ASCII}+)/ ){
 		$width += 1;
-		print "width +1\n";
+		#print "width +1\n";
 	}
 	
 	$self->{list}->destroy if $self->{list};                # 古いものを廃棄
@@ -811,7 +833,7 @@ sub plot{
 		$bs_w = (640 - 10 - $label_length * 15) / ($nrow + 1) / 34;
 	}
 	use List::Util 'min';
-	print "bubble size adjustment, height: $bs_h,  width: $bs_w\n";
+	#print "bubble size adjustment, height: $bs_h,  width: $bs_w\n";
 	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) * 10 ) / 10;
 	
 	# プロット作成
@@ -830,7 +852,7 @@ sub plot{
 			bubble_size         => $bubble_size,
 			selection           => $selection,
 			color_rsd           => 0,
-			toppic_model        => 1,
+			topic_model         => 1,
 		);
 		
 		$wait_window->end(no_dialog => 1);

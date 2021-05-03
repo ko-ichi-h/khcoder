@@ -655,6 +655,30 @@ sub make{
 			);
 		push @menu1, 't_doc_cls' if $::config_obj->R;
 
+	my $f_topic = $f8->cascade(
+			-label => kh_msg->get('topic'), # トピックモデル
+			 -font => "TKFN",
+			 -tearoff=>'no'
+		);
+
+		$self->{t_topic_pp} = $f_topic->command(
+			-label => kh_msg->get('topic_pp'), # トピック数の探索（Perplexity）
+			-font => "TKFN",
+			-command => sub{
+					gui_window::topic_perplexity->open;
+				},
+			-state => 'disable'
+		);
+
+		$self->{t_topic_ft} = $f_topic->command(
+			-label => kh_msg->get('topic_ft'), # トピックの推定
+			-font => "TKFN",
+			-command => sub{
+					gui_window::topic_fitting->open;
+				},
+			-state => 'disable'
+		);
+
 		$self->{t_cas_bayes} = $f8->cascade(
 			-label => kh_msg->get('docs_bayes'),#gui_window->gui_jchar('ベイズ学習による分類'),
 			 -font => "TKFN",
@@ -699,29 +723,7 @@ sub make{
 			-state => 'disable'
 		);
 
-	my $f_topic = $f->cascade(
-			-label => kh_msg->get('topic'), # トピックモデル
-			 -font => "TKFN",
-			 -tearoff=>'no'
-		);
 
-		$self->{t_topic_pp} = $f_topic->command(
-			-label => kh_msg->get('topic_pp'), # トピック数の探索（Perplexity）
-			-font => "TKFN",
-			-command => sub{
-					gui_window::topic_perplexity->open;
-				},
-			-state => 'disable'
-		);
-
-		$self->{t_topic_ft} = $f_topic->command(
-			-label => kh_msg->get('topic_ft'), # トピックの推定
-			-font => "TKFN",
-			-command => sub{
-					gui_window::topic_fitting->open;
-				},
-			-state => 'disable'
-		);
 
 	my $f5 = $f->cascade(
 			-label => kh_msg->get('coding'),#gui_window->gui_jchar('コーディング'),

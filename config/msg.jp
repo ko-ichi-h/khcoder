@@ -884,6 +884,7 @@ gui_widget::select_a_var:
     heading:                  '見出し'
     na:                       '利用不可'
     pos:                      '出現位置'
+    pos2:                     '文書ごと'
 gui_window::doc_cls:
     verb:                     '使用'
     fail:                     '計算に失敗しました'
@@ -1174,7 +1175,7 @@ gui_window::import_folder:
     opt_project:               "新規プロジェクト"
 gui_window::topic_fitting:
     win_title:                 トピックの推定
-    opt:                       トピックモデルのオプション
+    opt:                       トピックモデル（LDA）のオプション
     n_topics:                  トピック数：
 gui_window::topic_perplexity:
     opt:                       探索のオプション

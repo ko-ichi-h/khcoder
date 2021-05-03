@@ -20,6 +20,7 @@ sub start{
 		show_headings   => 1,
 		higher_headings => 1,
 		no_topics       => 1,
+		add_position2   => 1,
 		command         => sub {
 			my $win = $::main_gui->get('w_topic_stats');
 			
