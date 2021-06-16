@@ -1,0 +1,140 @@
+# This Vagrantfile is for setting up KH Coder on an Ubuntu 20.04 virtual machine,
+# using Vagrant (https://www.vagrantup.com/) and VirtualBox (https://www.virtualbox.org/).
+# After installing them, put this file into any directory, run `vagrant up` in it,
+# and follow the instructions shown after the installation is finished.
+# The author tested this with VirtualBox 6.1.16 and Vagrant 2.2.6.
+
+$script = <<-'SCRIPT'
+# Install KH Coder dependencies, using native deb packages as long as possible
+apt-get update
+apt-get install -y                 \
+  cpanminus                        \
+  fonts-ipafont-gothic             \
+  libalgorithm-naivebayes-perl     \
+  libclass-accessor-lite-perl      \
+  libcryptx-perl                   \
+  libdbd-csv-perl                  \
+  libdbd-mysql-perl                \
+  libdbi-perl                      \
+  libexcel-writer-xlsx-perl        \
+  libextutils-config-perl          \
+  libextutils-helpers-perl         \
+  libextutils-installpaths-perl    \
+  libfile-bom-perl                 \
+  libgraphics-colorutils-perl      \
+  libgsl-dev                       \
+  libjcode-perl                    \
+  liblingua-sentence-perl          \
+  libmodule-build-tiny-perl        \
+  libnet-telnet-perl               \
+  libproc-background-perl          \
+  libspreadsheet-parseexcel-perl   \
+  libstatistics-distributions-perl \
+  libstatistics-lite-perl          \
+  libtest-requires-perl            \
+  libtext-diff-perl                \
+  libunicode-escape-perl           \
+  libxml-twig-perl                 \
+  libxml2-dev                      \
+  libyaml-perl                     \
+  mecab                            \
+  mysql-server                     \
+  openjdk-8-jdk                    \
+  perl-tk                          \
+  r-base-core                      \
+  r-cran-ade4                      \
+  r-cran-amap                      \
+  r-cran-cairo                     \
+  r-cran-cluster                   \
+  r-cran-codetools                 \
+  r-cran-colorspace                \
+  r-cran-dichromat                 \
+  r-cran-foreign                   \
+  r-cran-ggdendro                  \
+  r-cran-ggsci                     \
+  r-cran-gtable                    \
+  r-cran-igraph                    \
+  r-cran-kernsmooth                \
+  r-cran-lattice                   \
+  r-cran-maptools                  \
+  r-cran-mass                      \
+  r-cran-matrix                    \
+  r-cran-mgcv                      \
+  r-cran-munsell                   \
+  r-cran-nlme                      \
+  r-cran-nnet                      \
+  r-cran-permute                   \
+  r-cran-pheatmap                  \
+  r-cran-plyr                      \
+  r-cran-proto                     \
+  r-cran-rcolorbrewer              \
+  r-cran-rcpp                      \
+  r-cran-reshape2                  \
+  r-cran-rgl                       \
+  r-cran-rpart                     \
+  r-cran-scales                    \
+  r-cran-scatterplot3d             \
+  r-cran-slam                      \
+  r-cran-sp                        \
+  r-cran-spatial                   \
+  r-cran-stringr                   \
+  r-cran-survival                  \
+  r-cran-tm                        \
+  r-cran-vegan                     \
+  r-cran-wordcloud                 \
+  ubuntu-desktop
+
+# Install CPAN libraries which are not provided as native packages
+cpanm Lingua::JA::Regular::Unicode Statistics::ChisqIndep
+
+# Install CRAN libraries which are not provided as native packages
+Rscript -e 'install.packages(c("ggnetwork", "som", "topicmodels"))'
+
+# Install specific versions of some packages
+cpanm DOY/Spreadsheet-ParseXLSX-0.17.tar.gz
+Rscript -e 'install.packages("http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_2.2.1.tar.gz", repos=NULL, type="source")'
+
+# Download KH Coder and install it under /opt
+KHCODER_VERSION=3.Beta.03a
+curl -sLO https://github.com/ko-ichi-h/khcoder/archive/refs/tags/${KHCODER_VERSION}.tar.gz
+tar xf ${KHCODER_VERSION}.tar.gz -C /opt
+ln -s /opt/khcoder-${KHCODER_VERSION} /opt/khcoder
+
+# Download Stanford POS Tagger and install it under /opt
+curl -sLO https://nlp.stanford.edu/software/stanford-postagger-full-2015-04-20.zip
+unzip stanford-postagger-full-2015-04-20.zip -d /opt
+
+# Workaround for enabling KH Coder to execute
+# `LOAD DATA LOCAL INFILE` with MySQL 8.x
+echo local_infile=1 >> /etc/mysql/mysql.conf.d/mysqld.cnf
+systemctl restart mysql.service
+
+echo
+echo '----------------------------------------------------------------'
+echo
+echo 'Setup finished. To try KH Coder, follow the steps below:'
+echo
+echo '1. Run `vagrant reload` to restart the VM and enable its desktop environment.'
+echo
+echo '2. Log in to the VM via GUI with "vagrant" for both username and password.'
+echo
+echo '3. Run `perl kh_coder.pl` from console under /opt/khcoder as root.'
+echo
+echo '4. Select "Project" > "Settings" from the menu and set the jar and tagger paths'
+echo '   for Stanford POS Tagger, which is already installed in /opt/stanford-postagger-*.'
+echo
+echo '5. Create a new project, select any file written in English,'
+echo '   pre-process it with Stanford POS Tagger and make sure it succeeds.'
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = true
+    # The default RAM and VRAM sizes are
+    # too small to run MySQL and GUI
+    vb.memory = 4096
+    vb.customize ["modifyvm", :id, "--vram", "128"]
+  end
+  config.vm.provision "shell", inline: $script
+end
