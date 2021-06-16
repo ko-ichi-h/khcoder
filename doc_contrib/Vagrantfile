@@ -9,6 +9,7 @@ $script = <<-'SCRIPT'
 apt-get update
 apt-get install -y                 \
   cpanminus                        \
+  fonts-ipafont-gothic             \
   libalgorithm-naivebayes-perl     \
   libclass-accessor-lite-perl      \
   libcryptx-perl                   \
@@ -28,7 +29,6 @@ apt-get install -y                 \
   libnet-telnet-perl               \
   libproc-background-perl          \
   libspreadsheet-parseexcel-perl   \
-  libspreadsheet-parsexlsx-perl    \
   libstatistics-distributions-perl \
   libstatistics-lite-perl          \
   libtest-requires-perl            \
@@ -43,6 +43,7 @@ apt-get install -y                 \
   perl-tk                          \
   r-base-core                      \
   r-cran-ade4                      \
+  r-cran-amap                      \
   r-cran-cairo                     \
   r-cran-cluster                   \
   r-cran-codetools                 \
@@ -50,7 +51,6 @@ apt-get install -y                 \
   r-cran-dichromat                 \
   r-cran-foreign                   \
   r-cran-ggdendro                  \
-  r-cran-ggplot2                   \
   r-cran-ggsci                     \
   r-cran-gtable                    \
   r-cran-igraph                    \
@@ -90,6 +90,10 @@ cpanm Lingua::JA::Regular::Unicode Statistics::ChisqIndep
 # Install CRAN libraries which are not provided as native packages
 Rscript -e 'install.packages(c("ggnetwork", "som", "topicmodels"))'
 
+# Install specific versions of some packages
+cpanm DOY/Spreadsheet-ParseXLSX-0.17.tar.gz
+Rscript -e 'install.packages("http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_2.2.1.tar.gz", repos=NULL, type="source")'
+
 # Download KH Coder and install it under /opt
 KHCODER_VERSION=3.Beta.03a
 curl -sLO https://github.com/ko-ichi-h/khcoder/archive/refs/tags/${KHCODER_VERSION}.tar.gz
@@ -97,8 +101,8 @@ tar xf ${KHCODER_VERSION}.tar.gz -C /opt
 ln -s /opt/khcoder-${KHCODER_VERSION} /opt/khcoder
 
 # Download Stanford POS Tagger and install it under /opt
-curl -sLO https://nlp.stanford.edu/software/stanford-tagger-4.2.0.zip
-unzip stanford-tagger-4.2.0.zip -d /opt
+curl -sLO https://nlp.stanford.edu/software/stanford-postagger-full-2015-04-20.zip
+unzip stanford-postagger-full-2015-04-20.zip -d /opt
 
 # Workaround for enabling KH Coder to execute
 # `LOAD DATA LOCAL INFILE` with MySQL 8.x
