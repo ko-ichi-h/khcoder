@@ -642,14 +642,19 @@ sub _save_emf{
 	#$::config_obj->R->send( "windowsFonts(serif=windowsFont(\"TT $font\"))" );
 	#$::config_obj->R->send( "PERL_font_family <- \"serif\"" );
 
+	# devEMF package or default win.metafile
+	my $emf_command = '';
+	if ( $::config_obj->devEMF ){
+		$emf_command = "library(devEMF)\n emf(file=\"$path\", width = $w, height = $h, pointsize=12, emfPlus=F)"
+	} else {
+		$emf_command = "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=12, family=\"serif\")";
+	}
+	
 	# プロット作成
 	$::config_obj->R->output_chk(0);
 	$::config_obj->R->lock;
 	$::config_obj->R->send( "saving_emf <- 1" );
-	$::config_obj->R->send(
-		# "win.metafile(filename=\"$path\", width = $w, height = $h, pointsize=12, family=\"serif\")"
-		"library(devEMF)\n emf(file=\"$path\", width = $w, height = $h, pointsize=12, emfPlus=F)"
-	);
+	$::config_obj->R->send( $emf_command );
 	$self->set_par;
 	if ( length($self->{command_s}) ) {
 		$::config_obj->R->send( $self->{command_s} );

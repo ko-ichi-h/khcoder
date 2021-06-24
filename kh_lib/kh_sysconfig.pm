@@ -1130,6 +1130,20 @@ sub msg_lang_set{
 	}
 }
 
+sub devEMF{
+	my $self = shift;
+	my $new = shift;
+	if (defined($new)){
+		$self->{devEMF} = $new;
+	}
+
+	if (length($self->{devEMF}) > 0) {
+		return $self->{devEMF};
+	} else {
+		return 0;
+	}
+}
+
 sub stopwords{
 	my $self = shift;
 	my %args = @_;

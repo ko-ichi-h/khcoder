@@ -95,6 +95,7 @@ sub ini_content{
 		'msg_lang_set',
 		'r_path',
 		'r_plot_debug',
+		'devEMF',
 		'sqllog',
 		'sql_username',
 		'sql_password',
