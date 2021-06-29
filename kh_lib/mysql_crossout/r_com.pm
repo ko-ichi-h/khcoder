@@ -347,18 +347,15 @@ sub make_list{
 	$sql .= $::project_obj->mysql_sort('genkei.name');
 	
 	my $sth = mysql_exec->select($sql, 1)->hundle;
-	my (@list, %name, %hinshi);
+	my (@list, %name, %hinshi, %name_count);
 	while (my $i = $sth->fetch) {
 		push @list,        $i->[0];
 		$name{$i->[0]}   = $i->[1];
 		$hinshi{$i->[0]} = $i->[2];
+		++$name_count{$i->[1]}; 
 	}
 	$sth->finish;
-	$self->{wList}   = \@list;
-	$self->{wName}   = \%name;
-	$self->{wHinshi} = \%hinshi;
-	$self->{num_w} = @list;
-	
+
 	# 品詞リストの作製
 	$sql = '';
 	$sql .= "SELECT khhinshi_id, name\n";
@@ -377,6 +374,18 @@ sub make_list{
 			$self->{use_html} = 1;
 		}
 	}
+	
+	foreach my $i (keys %name){
+		if ( $name_count{$name{$i}} > 1 ){
+			$name{$i} .= " [$self->{hName}{$hinshi{$i}}"."]";
+		}
+	}
+	
+	$self->{wList}   = \@list;
+	$self->{wName}   = \%name;
+	$self->{wHinshi} = \%hinshi;
+	$self->{num_w} = @list;
+	
 	
 	return $self;
 }

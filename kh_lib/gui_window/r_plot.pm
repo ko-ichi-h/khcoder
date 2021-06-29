@@ -482,7 +482,16 @@ sub show_kwic{
 	$conc->entry->delete(0,'end');
 	$conc->entry4->delete(0,'end');
 	$conc->entry2->delete(0,'end');
-	$conc->entry->insert('end', $self->{coordin}{$id}{name});
+	
+	my $word = $self->{coordin}{$id}{name};
+	my $pos;
+	if ($word =~ /([^ ]+) \[([^ ]+)\]$/){
+		$word   = $1;
+		$pos = $2;
+		$conc->entry4->insert('end', $pos);
+	}
+	
+	$conc->entry->insert('end', $word);
 	$conc->search;
 	
 	$self->{win_obj}->focus unless $::config_obj->os eq 'win32';
