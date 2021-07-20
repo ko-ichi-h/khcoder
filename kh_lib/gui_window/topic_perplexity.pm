@@ -215,6 +215,9 @@ sub calc{
 
 	my $w = gui_wait->start;
 
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_topic_n_'.$self->{method};
+	unlink $file_save if -e $file_save;
+
 	# データの取り出し
 	my $r_command = mysql_crossout::r_com->new(
 		tani   => $self->tani,
@@ -228,12 +231,9 @@ sub calc{
 		sampling => $self->{words_obj}->sampling_value,
 	)->run;
 
-	# クラスター分析を実行するためのコマンド
-	#$r_command .= "d <- t(d)\n";
 	$r_command .= "# END: DATA\n";
 
 	my $plot = &make_plot(
-		#$self->{cls_obj}->params,
 		method         => $self->{method},
 		fold           => gui_window->gui_jgn( $self->{entry_folds}->get ),
 		candidates     => gui_window->gui_jgn( $self->{entry_candidates}->get ),
@@ -241,7 +241,6 @@ sub calc{
 		plot_size      => $self->{font_obj}->plot_size,
 		r_command      => $r_command,
 		plotwin_name   => 'topic_n_'.$self->{method},
-		#data_number    => $check_num,
 	);
 
 	$w->end(no_dialog => 1);
@@ -337,6 +336,8 @@ sub r_command_perp{
 	my $fold       = shift;
 	my $candidates = shift;
 	
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_topic_n_perplexity';
+	
 	my $t = '
 #dtm <- t(d)
 dtm <- d
@@ -348,29 +349,41 @@ library(topicmodels)
 folds <- trunc( runif( nrow(dtm) ) * '.$fold.' ) + 1
 perp <- NULL
 
-my_perp <- function(k){
-	current <- NULL
-	for (i in 1:'.$fold.') {
-		test_result_lda <- topicmodels::LDA(dtm[folds!=i,], k = k, method = "Gibbs", control = list(seed = 1234567,  burnin = 1000))
-		current[i] <- topicmodels::perplexity(test_result_lda, newdata = dtm[folds==i,], use_theta = TRUE, estimate_theta = TRUE)
+flg <- 0
+if ( exists("saving_file") ){
+	if ( saving_file == 1){
+		flg <- 1
 	}
-	current <- matrix(current,nrow=1)
-	rownames(current) <- k
-	return(current)
 }
 
-library(parallel)
-cl <- parallel::makeCluster(parallel::detectCores())
-parallel::setDefaultCluster(cl)
-parallel::clusterExport(varlist = c("my_perp", "dtm", "folds"), envir = environment())
+if (flg == 0){
+	my_perp <- function(k){
+		current <- NULL
+		for (i in 1:'.$fold.') {
+			test_result_lda <- topicmodels::LDA(dtm[folds!=i,], k = k, method = "Gibbs", control = list(seed = 1234567,  burnin = 1000))
+			current[i] <- topicmodels::perplexity(test_result_lda, newdata = dtm[folds==i,], use_theta = TRUE, estimate_theta = TRUE)
+		}
+		current <- matrix(current,nrow=1)
+		rownames(current) <- k
+		return(current)
+	}
+	
+	library(parallel)
+	cl <- parallel::makeCluster(parallel::detectCores())
+	parallel::setDefaultCluster(cl)
+	parallel::clusterExport(varlist = c("my_perp", "dtm", "folds"), envir = environment())
 
-perp <- parallel::parLapply(
-	cl,
-	c('.$candidates.'),
-	my_perp
-)
-
-perp <- do.call("rbind", perp)
+	perp <- parallel::parLapply(
+		cl,
+		c('.$candidates.'),
+		my_perp
+	)
+	
+	perp <- do.call("rbind", perp)
+	save(perp, file="'.$::config_obj->uni_path($file_save).'")
+} else {
+	load("'.$::config_obj->uni_path($file_save).'")
+}
 
 # プロット
 perpp <- NULL
@@ -413,6 +426,7 @@ return $t;
 
 sub r_command_ldatuning{
 	my $candidates = shift;
+	my $file_save = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_topic_n_ldatuning';
 	
 	my $t = '
 #dtm <- t(d)
@@ -420,21 +434,67 @@ dtm <- d
 rownames(dtm) <- 1:nrow(dtm)
 dtm <- dtm[rowSums(dtm) > 0,]
 
+library(ggplot2)
 library(topicmodels)
 library(ldatuning)
 
-result_tps <- FindTopicsNumber(
-	dtm,
-	topics   = c('.$candidates.'),
-	metrics  = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
-	method   = "Gibbs",
-	control  = list(seed = 1234567,  burnin = 1000)
-	#verbose = T
-)
+flg <- 0
+if ( exists("saving_file") ){
+	if ( saving_file == 1){
+		flg <- 1
+	}
+}
+
+if (flg == 0){
+	result_tps <- FindTopicsNumber(
+		dtm,
+		topics   = c('.$candidates.'),
+		metrics  = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+		method   = "Gibbs",
+		control  = list(seed = 1234567,  burnin = 1000)
+		#verbose = T
+	)
+	save(result_tps, file="'.$::config_obj->uni_path($file_save).'")
+} else {
+	load("'.$::config_obj->uni_path($file_save).'")
+}
 
 # dpi: short based
 
-FindTopicsNumber_plot(result_tps)
+FindTopicsNumber_plot_kh <- function (values) 
+{
+    if ("LDA_model" %in% names(values)) {
+        values <- values[!names(values) %in% c("LDA_model")]
+    }
+    columns <- base::subset(values, select = 2:ncol(values))
+    values <- base::data.frame(values["topics"], base::apply(columns, 
+        2, function(column) {
+            scales::rescale(column, to = c(0, 1), from = range(column))
+        }))
+    values <- reshape2::melt(values, id.vars = "topics", na.rm = TRUE)
+    values$group <- values$variable %in% c("Griffiths2004", "Deveaud2014")
+    values$group <- base::factor(values$group, levels = c(FALSE, 
+        TRUE), labels = c("minimize", "maximize"))
+    p <- ggplot(values, aes_string(x = "topics", y = "value", 
+        group = "variable"))
+    p <- p + geom_line()
+    p <- p + geom_point(aes_string(shape = "variable"), size = 3)
+    p <- p + guides(size = FALSE, shape = guide_legend(title = "metrics:"))
+    p <- p + scale_x_continuous(breaks = values$topics)
+    p <- p + scale_y_continuous(breaks = NULL)                        # kh
+    p <- p + labs(x = "number of topics", y = NULL)
+    p <- p + facet_grid(group ~ .)
+    p <- p + theme_bw() %+replace% theme(panel.grid.major.y = element_blank(), 
+        panel.grid.minor.y = element_blank(), panel.grid.major.x = element_line(colour = "grey70"), 
+        panel.grid.minor.x = element_blank(), legend.key = element_blank(), 
+        strip.text.y = element_text(angle = 90))
+    #g <- ggplotGrob(p)                                               # kh
+    #g$layout[g$layout$name == "strip-right", c("l", "r")] <- 3       # kh
+    #grid::grid.newpage()                                             # kh
+    #grid::grid.draw(g)                                               # kh
+    print(p)                                                          # kh
+}
+FindTopicsNumber_plot_kh(result_tps)
 
 ';
 return $t;
