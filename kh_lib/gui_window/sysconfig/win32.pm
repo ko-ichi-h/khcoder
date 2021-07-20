@@ -44,7 +44,7 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry1 = $fra1->Entry(-font => 'TKFN')->pack(-side => 'right');
+	my $entry1 = $fra1->Entry(-font => 'TKFN', -width => 22)->pack(-side => 'right');
 	$self->{entry1} = $entry1;
 
 	$entry1->DropSite(
@@ -72,7 +72,7 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	my $entry2 = $fra2->Entry(-font => 'TKFN')->pack(-side => 'right');
+	my $entry2 = $fra2->Entry(-font => 'TKFN', -width => 22)->pack(-side => 'right');
 	$self->{entry2} = $entry2;
 
 	$entry2->DropSite(
@@ -119,7 +119,7 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	$self->{entry_stan1} = $fra_jar->Entry(-font => 'TKFN')->pack(-side => 'right');
+	$self->{entry_stan1} = $fra_jar->Entry(-font => 'TKFN', -width => 22)->pack(-side => 'right');
 
 	$self->{entry_stan1}->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan1},],
@@ -180,7 +180,7 @@ sub __new{
 		-font => 'TKFN'
 	)->pack(-side => 'left');
 
-	$self->{entry_stan2} = $fra_tag->Entry(-font => 'TKFN')->pack(-side => 'right');
+	$self->{entry_stan2} = $fra_tag->Entry(-font => 'TKFN', -width => 22)->pack(-side => 'right');
 
 	$self->{entry_stan2}->DropSite(
 		-dropcommand => [\&Gui_DragDrop::get_filename_droped, $self->{entry_stan2},],
@@ -203,7 +203,7 @@ sub __new{
 	
 	my $fra_flp = $lfra->Frame()->pack(-fill=>'x',-expand=>'yes');
 	$fra_flp->Label(-text => '    Installation dir: ')->pack(-side => 'left');
-	$self->{entry_freeling} = $fra_flp->Entry()->pack(-side => 'right');
+	$self->{entry_freeling} = $fra_flp->Entry(-width => 22)->pack(-side => 'right');
 	$fra_flp->Button(
 		-text => kh_msg->gget('browse'),#$self->gui_jchar('»²¾È'),
 		-command => sub { $self->browse_freeling(); }
