@@ -369,7 +369,13 @@ if (flg == 0){
 	}
 	
 	library(parallel)
-	cl <- parallel::makeCluster(parallel::detectCores())
+';
+	if ($::config_obj->os eq 'win32') {
+		$t .= 'cl <- parallel::makeCluster(parallel::detectCores())'
+	} else {
+		$t .= 'cl <- parallel::makeCluster(parallel::detectCores(), type="FORK")'
+	}
+	$t .= '
 	parallel::setDefaultCluster(cl)
 	parallel::clusterExport(varlist = c("my_perp", "dtm", "folds"), envir = environment())
 
