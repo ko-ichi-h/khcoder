@@ -353,23 +353,23 @@ sub mark{
 	File::BOM::open_bom (SOURCE, $source, ":encoding($icode)" );
 
 	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
-	my %loc = (
-		'jp' => 'cp932',
-		'en' => 'cp1252',
-		'cn' => 'cp936',
-		'de' => 'cp1252',
-		'es' => 'cp1252',
-		'fr' => 'cp1252',
-		'it' => 'cp1252',
-		'nl' => 'cp1252',
-		'pt' => 'cp1252',
-		'kr' => 'cp949',
-		'ca' => 'cp1252',
-		'ru' => 'cp1251',
-		'sl' => 'cp1251',
-	);
+	#my %loc = (
+	#	'jp' => 'cp932',
+	#	'en' => 'cp1252',
+	#	'cn' => 'cp936',
+	#	'de' => 'cp1252',
+	#	'es' => 'cp1252',
+	#	'fr' => 'cp1252',
+	#	'it' => 'cp1252',
+	#	'nl' => 'cp1252',
+	#	'pt' => 'cp1252',
+	#	'kr' => 'cp949',
+	#	'ca' => 'cp1252',
+	#	'ru' => 'cp1251',
+	#	'sl' => 'cp1251',
+	#);
 	my $lang = $::project_obj->morpho_analyzer_lang;
-	$lang = $loc{$lang};
+	#$lang = $loc{$lang};
 
 	while (<SOURCE>){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
@@ -380,16 +380,18 @@ sub mark{
 		my $text = $_;
 	
 		# morpho_analyzer
-		if (
-			   $::config_obj->c_or_j eq 'chasen'
-			|| $::config_obj->c_or_j eq 'mecab'
-		){
+		if ( $lang eq 'jp' ){
 			$text = katakana_h2z($text);
 			$text =~ s/ /　/go;
 			$text =~ s/\t/　/go;
 			$text =~ s/\\/￥/go;
 			$text =~ s/'/’/go;
 			$text =~ s/"/”/go;
+		}
+		elsif ($lang eq 'cn'){
+			$text = $_;
+			$text =~ s/\t/ /go;
+			$text =~ s/\\/ /go;
 		} else {
 			$text = $_;
 			$text =~ s/\t/ /go;
