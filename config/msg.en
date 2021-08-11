@@ -1176,6 +1176,7 @@ gui_window::topic_perplexity:
     candidates:                "N of Topics: "
     folds:                     "Fold: "
     method:                    "Method: "
+    error_terms_topics:        "When you choose ldatuning, number of selected words should be larger than maximum number of topics"
 gui_window::topic_result:
     win_title:                 Result of Topic Model
     extended:                  "prob."

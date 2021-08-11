@@ -1183,6 +1183,7 @@ gui_window::topic_perplexity:
     candidates:                トピック数の候補：
     folds:                     分割数（fold）：
     method:                    方法：
+    error_terms_topics:        ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。
 gui_window::topic_result:
     win_title:                 トピックの推定結果
     extended:                  確率

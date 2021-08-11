@@ -181,7 +181,7 @@ sub refresh_fold{
 sub calc{
 	my $self = shift;
 	
-	# 入力のチェック
+	# 入力のチェック: 品詞
 	unless ( eval(@{$self->hinshi}) ){
 		gui_errormsg->open(
 			type => 'msg',
@@ -189,7 +189,8 @@ sub calc{
 		);
 		return 0;
 	}
-
+	
+	# 入力のチェック: 語数
 	my $check_num = mysql_crossout::r_com->new(
 		tani     => $self->tani,
 		tani2    => $self->tani,
@@ -199,16 +200,41 @@ sub calc{
 		max_df   => $self->max_df,
 		min_df   => $self->min_df,
 	)->wnum;
-	
 	$check_num =~ s/,//g;
 	#print "$check_num\n";
 
 	if ($check_num < 10){
 		gui_errormsg->open(
 			type => 'msg',
-			msg  => kh_msg->gget('select_3words'), #'少なくとも3つ以上の抽出語を選択して下さい。',
+			msg  => kh_msg->gget('select_3words'), #'少なくとも3つ以上の抽出語を選択し…',
 		);
 		return 0;
+	}
+	
+	# 入力のチェック: ladatuning
+	if ($self->{method} eq 'ldatuning') {
+		
+		$::config_obj->R->send(
+			"mx <- max(".gui_window->gui_jgn( $self->{entry_candidates}->get ).")\n"
+			."print( paste( \"max:\", mx, sep=\"\" ))\n"
+		);
+		my $max = $::config_obj->R->read;
+		#print "max1: $max\n";
+		if ($max =~ /"max:(.+)"/) {
+			$max = $1;
+		} else {
+			$max = 0;
+		}
+		#print "max2: $max\n";
+		#print "check_num: $check_num\n";
+		
+		if ($check_num < $max) {
+			gui_errormsg->open(
+				type => 'msg',
+				msg  => kh_msg->get('error_terms_topics'),
+			);
+			return 0;
+		}
 	}
 
 	$self->{words_obj}->settings_save;
