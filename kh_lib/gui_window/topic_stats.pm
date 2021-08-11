@@ -330,7 +330,7 @@ sub _calc{
 		
 			foreach my $h (@c){
 				if ($n == 0){                         # the 1st col
-					if (index($tani2,'h') == 0 &! $::project_obj->status_from_table){
+					if ((index($tani2,'h') == 0) &! $::project_obj->status_from_table){
 						my $t_name = gui_window->gui_jchar( # Decoding
 							mysql_getheader->get($tani2, $h)#,
 							#'cp932'
