@@ -20,7 +20,7 @@ use strict;
 
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "3.Beta.03d";
+$kh_version = "3.Beta.03e";
 
 BEGIN {
 	# open (STDERR,">stderr.txt") or die; # for debug
