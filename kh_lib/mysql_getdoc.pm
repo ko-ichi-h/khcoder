@@ -204,22 +204,86 @@ sub get_header{
 
 sub if_next{
 	my $self = shift;
-	my $max = mysql_exec->select("
-		SELECT max(id)
-		FROM $self->{tani}
-	",1)->hundle->fetch->[0];
-	if ($self->{doc_id} < $max){
-		return 1;
-	} else {
-		return 0;
+	# bun (check "seq" column)
+	if ($self->{tani} eq 'bun') {
+		my $max = mysql_exec->select("
+			SELECT max(seq)
+			FROM $self->{tani}
+		",1)->hundle->fetch->[0];
+		my $seq = $self->doc_seq;
+		if ($seq < $max) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	# not bun
+	else {
+		my $max = mysql_exec->select("
+			SELECT max(id)
+			FROM $self->{tani}
+		",1)->hundle->fetch->[0];
+		if ($self->{doc_id} < $max){
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 }
-
 
 sub doc_id{
 	my $self = shift;
 	return $self->{doc_id};
 }
+sub doc_seq{
+	my $self = shift;
+	# not bun
+	unless ($self->{tani} eq 'bun'){
+		return $self->{doc_id};
+	}
+	# bun
+	my $h = mysql_exec->select("SELECT seq FROM bun WHERE id = $self->{doc_id}",1);
+	my $seq = $h->hundle->fetch->[0];
+	return $seq;
+}
+
+sub id_next{
+	my $self = shift;
+	my $id   = shift;
+	
+	# not bun
+	unless ($self->{tani} eq 'bun'){
+		return $id + 1;
+	}
+	# bun
+	my $seq = $self->doc_seq;
+	++$seq;
+	my $h = mysql_exec->select("SELECT id FROM bun WHERE seq = $seq")->hundle;
+	if ( $h->rows ) {
+		return $h->fetch->[0];
+	} else {
+		return 0;
+	}
+}
+
+sub id_prev{
+	my $self = shift;
+	my $id   = shift;
+	
+	# not bun
+	unless ($self->{tani} eq 'bun'){
+		return $id - 1;
+	}
+	# bun
+	my $seq = $self->doc_seq;
+	--$seq;
+	if ($seq > 0) {
+		 mysql_exec->select("SELECT id FROM bun WHERE seq = $seq")->hundle->fetch->[0];
+	} else {
+		return 0;
+	}
+}
+
 sub body{
 	my $self = shift;
 	return $self->{body};

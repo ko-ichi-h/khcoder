@@ -71,8 +71,7 @@ sub _new{
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
-			my $id = $self->{doc_id};
-			--$id;
+			my $id = $self->{doc}->id_prev;
 			$self->near($id);
 		}
 	)->pack(-side => 'left',-padx => '0');
@@ -82,8 +81,7 @@ sub _new{
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub {
-			my $id = $self->{doc_id};
-			++$id;
+			my $id = $self->{doc}->id_next;
 			$self->near($id);
 		}
 	)->pack(-side => 'left',-padx => '2');
@@ -283,7 +281,7 @@ sub _view_doc{
 	
 	$self->text->delete('0.0','end');
 	$self->text->insert('end', $self->{head}, 'info');
-	$self->text->insert('end',"No. ".$doc->doc_id."\n\n",'info');
+	$self->text->insert('end',"No. ".$doc->doc_seq."\n\n",'info');
 	
 	my $spacer = $::project_obj->spacer; # スペーサー設定
 
@@ -481,7 +479,7 @@ sub update_buttons{
 		$self->{nxt_btn}->configure(-state, 'disable');
 	}
 	# 直前ボタン
-	if ($self->{doc_id} > 1){
+	if ($self->{doc}->doc_seq > 1){
 		$self->{pre_btn}->configure(-state, 'normal');
 	} else {
 		$self->{pre_btn}->configure(-state, 'disable');
