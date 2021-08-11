@@ -72,6 +72,7 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub {
 			my $id = $self->{doc}->id_prev;
+			#print "id $id\n";
 			$self->near($id);
 		}
 	)->pack(-side => 'left',-padx => '0');
@@ -82,6 +83,7 @@ sub _new{
 		-borderwidth => '1',
 		-command => sub {
 			my $id = $self->{doc}->id_next;
+			#print "id $id\n";
 			$self->near($id);
 		}
 	)->pack(-side => 'left',-padx => '2');

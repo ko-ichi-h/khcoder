@@ -253,7 +253,7 @@ sub id_next{
 	
 	# not bun
 	unless ($self->{tani} eq 'bun'){
-		return $id + 1;
+		return $self->{doc_id} + 1;
 	}
 	# bun
 	my $seq = $self->doc_seq;
@@ -272,7 +272,7 @@ sub id_prev{
 	
 	# not bun
 	unless ($self->{tani} eq 'bun'){
-		return $id - 1;
+		return $self->{doc_id} - 1;
 	}
 	# bun
 	my $seq = $self->doc_seq;
