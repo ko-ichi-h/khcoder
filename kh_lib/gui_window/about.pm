@@ -68,9 +68,10 @@ sub _new{
 	}
 
 	$fra_r->Label(
-		-text => "$::kh_version  [Perl ".$version_perl.", Perl/Tk $version_tk]",
+		-text => kh_about->version,
 		-font => "TKFN",
 		)->pack(-anchor=>'w',-pady=>'2',-padx=>'2');
+	print "Perl ".$version_perl.", Perl/Tk $version_tk\n";
 
 	$fra_l->Label(
 		-text => '  Web page:',
@@ -78,8 +79,8 @@ sub _new{
 		)->pack(-anchor => 'w',-pady=>'2',-padx=>'2');
 
 	gui_widget::url_lab->open(
-		label  => $self->gui_jchar('http://khcoder.net'),
-		url    => 'http://khcoder.net',
+		label  => $self->gui_jchar('https://khcoder.net'),
+		url    => 'https://khcoder.net',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
@@ -165,7 +166,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => kh_msg->get('kawabata'),
-		url    => 'http://www.dma.jim.osaka-u.ac.jp/kg-portal/aspI/RX0011D.asp?UNO=12484',
+		url    => 'https://researchmap.jp/KA010203',
 		parent => $fra_r,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
@@ -183,7 +184,7 @@ sub _new{
 	}
 
 	$fra_r->Label(
-		-text => $self->gui_jchar($copy_mark.'2001-2020'),
+		-text => $self->gui_jchar($copy_mark.'2001-'.kh_about->current_year),
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -pady=>'2', -side => 'left');
 

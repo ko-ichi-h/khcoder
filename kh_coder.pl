@@ -20,8 +20,6 @@ use strict;
 
 use vars qw($config_obj $project_obj $main_gui $splash $kh_version);
 
-$kh_version = "3.Beta.03g";
-
 BEGIN {
 	# open (STDERR,">stderr.txt") or die; # for debug
 
@@ -150,10 +148,13 @@ use Tk;
 use mysql_ready;
 use mysql_words;
 use mysql_conc;
+use kh_about;
 use kh_project;
 use kh_projects;
 use kh_morpho;
 use gui_window;
+
+$kh_version = kh_about->version;
 
 # Say hello
 print "This is KH Coder $kh_version on $^O.\n";

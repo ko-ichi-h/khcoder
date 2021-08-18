@@ -14,8 +14,9 @@ $| = 1;
 $Archive::Tar::DO_NOT_USE_PREFIX = 1;
 
 # 初期設定
-my $V = '3b03g';
-my $V_full = "3.Beta.03g";
+require "../kh_lib/kh_about.pm";
+my $V = kh_about->version_short;
+my $V_full = kh_about->version;
 
 # マニュアル・チュートリアルのPDFを再作成するか
 my $pdf = 0;
