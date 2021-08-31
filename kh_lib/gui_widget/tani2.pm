@@ -136,7 +136,7 @@ sub check{
 	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
 		if ($i eq $self->tani1){
 			$flag = 1;
-			next;
+			#next;
 		}
 		
 		if (
@@ -154,10 +154,10 @@ sub check{
 		}
 	}
 	
-	@list = reverse( @list );
+	#@list = reverse( @list );
 	
-	$self->{raw_opt2} = '';
-	$self->{raw_opt2} = $old if $old_ok;
+	$self->{raw_opt2} = $self->tani1;
+	#$self->{raw_opt2} = $old if $old_ok;
 	
 	$self->{opt2} = $self->win_obj->Optionmenu(
 		-options=> \@list,
