@@ -154,7 +154,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => $self->gui_jchar('more'),
-		url    => 'http://khc.sourceforge.net/link.html',
+		url    => 'https://khcoder.net/link.html',
 		parent => $fra_r1,
 		pack   => {-anchor => 'nw',-pady=>'2'},
 	);
@@ -190,7 +190,7 @@ sub _new{
 
 	gui_widget::url_lab->open(
 		label  => kh_msg->get('higuchi'),
-		url    => 'http://koichi.nihon.to/psnl',
+		url    => 'https://research-db.ritsumei.ac.jp/rithp/k03/resid/S000577',
 		parent => $fra_r,
 		pack   => {-anchor => 'w',-side => 'left', -pady=>'2'},
 	);
