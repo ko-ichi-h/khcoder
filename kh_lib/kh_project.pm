@@ -761,28 +761,73 @@ sub status_topic_tabulation_tani{
 	return $self->_status_char_common('topic_tabulation_tani', $new);
 }
 
-sub status_var_file{
-	my $self = shift;
-	my $new  = shift;
-	return $self->_status_char_common('var_file', $new);
-}
-
 sub status_source_file{
 	my $self = shift;
 	my $new  = shift;
-	return $self->_status_char_common('source_file', $new);
+	my $name = $self->_status_char_common('source_file', $new);
+	$name = $::config_obj->os_path($name);
+	
+	return $name;
+}
+
+sub status_var_file{
+	my $self = shift;
+	my $new  = shift;
+	my $name = $self->_status_char_common('var_file', $new);
+	$name = $::config_obj->os_path($name);
+	
+	# when instllation dir is moved
+	if ( length($name) and not -e $name ){
+		if ( $name =~ /.+(config\/khc.+)/ ) {
+			$name = $::config_obj->cwd."/$1";
+		}
+		if (-e $name) {
+			$self->_status_char_common('var_file', $::config_obj->uni_path($name));
+			print "var file moved: ".$::config_obj->uni_path($name)."\n";
+		}
+	}
+
+	return $name;
 }
 
 sub status_converted_file{
 	my $self = shift;
 	my $new  = shift;
-	return $self->_status_char_common('converted_file', $new);
+	my $name = $self->_status_char_common('converted_file', $new );
+	$name = $::config_obj->os_path($name);
+	
+	# when instllation dir is moved
+	if ( length($name) and not -e $name ){
+		if ( $name =~ /.+(config\/khc.+)/ ) {
+			$name = $::config_obj->cwd."/$1";
+		}
+		if (-e $name) {
+			$self->_status_char_common('converted_file', $::config_obj->uni_path($name) );
+			print "converted file moved: ".$::config_obj->uni_path($name)."\n";
+		}
+	}
+
+	return $name;
 }
 
 sub status_copied_file{
 	my $self = shift;
 	my $new  = shift;
-	return $self->_status_char_common('copied_file', $new);
+	my $name = $self->_status_char_common('copied_file', $new);
+	$name = $::config_obj->os_path($name);
+	
+	# when instllation dir is moved
+	if ( length($name) and not -e $name ){
+		if ( $name =~ /.+(config\/khc.+)/ ) {
+			$name = $::config_obj->cwd."/$1";
+		}
+		if (-e $name) {
+			$self->_status_char_common('copied_file', $::config_obj->uni_path($name));
+			print "copied file moved: ".$::config_obj->uni_path($name)."\n";
+		}
+	}
+
+	return $name;
 }
 
 sub _status_char_common{
