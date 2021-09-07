@@ -23,7 +23,15 @@ sub new{
 	return undef unless $::config_obj->R;
 	
 	# ファイル名
+	if ( utf8::is_utf8($self->{name}) ) {
+		$self->{name} = Encode::encode('ascii', $self->{name} );
+	}
 	$self->{path} = $::config_obj->cwd.'/config/R-bridge/'.$::project_obj->dbname.'_'.$self->{name};
+	#print "path: $self->{path}\n";
+	#print "utf8? path : ", utf8::is_utf8($self->{path}), "\n";
+	#print "utf8? name : ", utf8::is_utf8($self->{name}), "\n";
+	#print "utf8? db_name : ", utf8::is_utf8($::project_obj->dbname), "\n";
+	#print "utf8? cwd_name : ", utf8::is_utf8($::config_obj->cwd), "\n";
 
 	# コマンドの文字コード
 	print "Checking character code...\n" if $debug;
@@ -108,7 +116,7 @@ sub new{
 				thefile => $file_debug,
 			)
 		;
-		print "R debug file: $file_debug\n";
+		print "R debug file: ", $::config_obj->uni_path($file_debug), "\n";
 		print RDEBUG
 			"# command_f\n",
 			$self->{command_f},

@@ -123,7 +123,7 @@ sub first{
 
 	mysql_exec->flush;
 	
-	print "Morpho File: ".$::project_obj->file_MorphoOut."\n";
+	print "Morpho File: ".$::config_obj->uni_path( $::project_obj->file_MorphoOut )."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
 }
