@@ -94,6 +94,7 @@ sub run{
 	#$r_cmd .= "# END: DATA\n\n";
 
 	# Rコマンド
+	$file = $::config_obj->uni_path($file);
 	my $r_cmd = "source(\"$file\", encoding=\"UTF-8\")\n";
 
 	if ($::config_obj->os eq 'win32'){
