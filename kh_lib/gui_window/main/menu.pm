@@ -957,7 +957,7 @@ sub make{
 			-label => kh_msg->get('web'),
 			-font => "TKFN",
 			-command => sub {
-					 gui_OtherWin->open('http://khc.sourceforge.net');
+					 gui_OtherWin->open('https://khcoder.net');
 					},
 		);
 		
