@@ -6,6 +6,8 @@ sub _open{
 	my $self = shift;
 	my $t = $self->target;
 
+	$t = $::config_obj->uni_path($t); # checked on macOS with a path that contains non-ascii characters
+
 	my $cmd;
 	if ($t =~ /^http/ or $t =~ /\.htm$/ or $t =~ /\.html$/ or $t =~ /\.png$/){
 		$cmd = $::config_obj->app_html;
