@@ -258,10 +258,12 @@ sub Show {
     # settings
     {
 	my $initialdir = $w->cget(-initialdir);
+	# print "initial dir: $initialdir\n";
+	# print "utf8: ", utf8::is_utf8($initialdir), "\n";
 	if (defined $initialdir) {
 	    my ($flag, $path, $file) = ResolveFile($initialdir, 'junk');
 	    if ($flag eq 'OK' or $flag eq 'FILE') {
-		$w->{'selectPath'} = $path;
+		$w->{'selectPath'} = $w->_decode_filename($path); # KH Coder
 	    } else {
 		$w->Error("\"$initialdir\" is not a valid directory");
 	    }
@@ -416,6 +418,7 @@ sub Update {
 	# should have been checked before tkFDialog_Update is called, so
 	# we normally won't come to here. Anyways, give an error and abort
 	# action.
+	warn "here";
 	$w->messageBox(-type => 'OK',
 		       -message => 'Cannot change to the directory "' .
 		       $w->_get_select_path . "\".\nPermission denied.",
@@ -725,6 +728,7 @@ sub VerifyFileName {
 	$ent->selectionRange(0, 'end');
 	$ent->icursor('end');
     } elsif ($flag eq 'CHDIR') {
+	warn "here";
 	$w->messageBox(-type => 'OK',
 		       -message => "Cannot change to the directory \"$path\".\nPermission denied.",
 		       -icon => 'warning');
@@ -898,6 +902,7 @@ sub ListInvoke {
     if (-d $file) {
 	my $appPWD = _cwd();
 	if (!ext_chdir($file)) {
+	    warn "here";
 	    $w->messageBox(-type => 'OK',
 			   -message => "Cannot change to the directory \"$file\".\nPermission denied.",
 			   -icon => 'warning');
@@ -1027,6 +1032,10 @@ sub ext_chdir {
     } elsif ($dir =~ m|^~([^/]+(.*))|s) {
 	chdir _get_homedir($1) . $2;
     } else {
+	# print "dir: $dir\n";
+	# print "utf8: ", utf8::is_utf8($dir), "\n";
+	# my ($package, $filename, $line, $subroutine) = caller(1);
+	# print "caller: $package, $line, $subroutine\n\n";
 	chdir $dir;
     }
 }
@@ -1077,7 +1086,16 @@ sub _get_from_icons {
 
 sub _get_select_path {
     my($w) = @_;
-    $w->_encode_filename($w->{'selectPath'});
+	# print "\n";
+	my $path = $w->{'selectPath'};
+	# print "_get_select_path: $path\n";
+	# print "_get_select_path: utf8: ", utf8::is_utf8($path), "\n";
+	$path = $w->_encode_filename($path) if utf8::is_utf8($path);
+	# print "_get_select_path: $path\n";
+	my ($package, $filename, $line, $subroutine) = caller(1);
+	# print "_get_select_path: caller: $package, $line, $subroutine\n";
+	# print "\n";
+    return $path;
 }
 
 sub _encode_filename {
