@@ -371,6 +371,8 @@ sub mark{
 	my $lang = $::project_obj->morpho_analyzer_lang;
 	#$lang = $loc{$lang};
 
+	use Unicode::Normalize qw(compose);
+	my $n_nfd = 0;
 	while (<SOURCE>){
 		$_ =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード統一
 		chomp;
@@ -378,7 +380,7 @@ sub mark{
 		next unless length($_); # skip empty lines
 
 		my $text = $_;
-	
+
 		# morpho_analyzer
 		if ( $lang eq 'jp' ){
 			$text = katakana_h2z($text);
@@ -397,6 +399,12 @@ sub mark{
 			$text =~ s/\t/ /go;
 			$text =~ s/\\/ /go;
 			$text =~ s/。/./go;
+		}
+		
+		# NFD to NFC
+		unless ($text eq compose($text) ){
+			$text = compose($text);
+			++$n_nfd;
 		}
 		
 		# Delete characters outside of BMP (Basic Multilingual Plane)
@@ -427,6 +435,7 @@ sub mark{
 	}
 	close (SOURCE);
 	close (MARKED);
+	print "NFD lines found: $n_nfd\n" if $n_nfd;
 	
 	return 1;
 }
