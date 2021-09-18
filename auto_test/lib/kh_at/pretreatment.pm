@@ -29,8 +29,8 @@ sub _exec_test{
 	# 「語の取捨選択」（品詞選択）
 	gui_window::dictionary->open;
 	my $win_dic1 = $::main_gui->get('w_dictionary');
-	$win_dic1->{checks}[3] = 0;
 	$win_dic1->{checks}[4] = 0;
+	$win_dic1->{checks}[5] = 0;
 	$win_dic1->hlist->update;
 	$win_dic1->save;
 	$t .= "■品詞選択（変更）:\n";
@@ -43,8 +43,8 @@ sub _exec_test{
 
 	gui_window::dictionary->open;
 	my $win_dic2 = $::main_gui->get('w_dictionary');
-	$win_dic2->{checks}[3] = 1;
 	$win_dic2->{checks}[4] = 1;
+	$win_dic2->{checks}[5] = 1;
 	$win_dic2->hlist->update;
 	$win_dic2->save;
 	$t .= "■品詞選択（再変更）:\n";

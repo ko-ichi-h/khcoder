@@ -11,7 +11,7 @@
 ■project_name:	kokoro2_.txt
 ■project_comment:	自動テスト用Project［編］
 ■words_all:	106,344 (35,974)
-■project_kinds:	6,098 (5,480)
+■project_kinds:	6,101 (5,480)
 ■doc num:
 文	5,177
 段落	1,215
