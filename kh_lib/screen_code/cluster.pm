@@ -382,8 +382,8 @@ sub make_plot_plugin{
 
 	kh_r_plot->clear_env;
 
-	#my $fontsize = $args{font_size};
-	my $fontsize = 1;
+	my $fontsize = $args{font_size};
+	#my $fontsize = 1;
 	my $r_command = $args{r_command};
 	my $cluster_number = $args{cluster_number};
 

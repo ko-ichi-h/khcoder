@@ -4,11 +4,29 @@ use strict;
 use kh_cod::func;
 use screen_code::plugin_path;
 
+use utf8;
 use File::Path;
 use Clone qw(clone);
 use Encode qw/encode decode/;
 
 my $replace_flag;
+my $version_num = 0;
+
+
+
+sub checkPluginFileVersion{
+	if ($version_num == 0) {
+		my $rtn = system(&screen_code::plugin_path::assistant_path, "0");
+		
+		if ($rtn == 0) {
+			$version_num =  1;
+		} else {
+			$version_num =  $rtn / 256;
+		}
+	}
+
+	return $version_num;
+}
 
 sub add_menu{
 	if (-f &screen_code::plugin_path::assistant_path) {
@@ -17,6 +35,7 @@ sub add_menu{
 		unless ($replace_flag) {
 			$replace_flag = 1;
 			*kh_cod::func::outtab = \&outtab;
+			*kh_cod::func::tab = \&tab;
 		}
 		$rf->Label(
 			-text     => kh_msg->get('screen_code::assistant->cross_map_label'),
@@ -31,18 +50,194 @@ sub add_menu{
 	}
 }
 
+#----------------------------#
+#   章・節・段落ごとの集計   #
+
+sub tab{
+	my $self  = shift;
+	my $tani1 = shift;
+	my $tani2 = shift;
+	my $cell  = shift;
+	
+	$self->code($tani1) or return 0;
+	unless ($self->valid_codes){ return 0; }
+	$self->cumulate if @{$self->{valid_codes}} > 29;
+	
+	# 集計用SQL文の作製
+	my $sql;
+	$sql .= "SELECT $tani2.id, ";
+	foreach my $i (@{$self->{valid_codes}}){
+		$sql .= "sum( IF(".$i->res_table.".".$i->res_col.",1,0) ),";
+	}
+	$sql .= " count(*) \n";
+	$sql .= "FROM $tani1\n";
+	foreach my $i (@{$self->tables}){
+		$sql .= "LEFT JOIN $i ON $tani1.id = $i.id\n";
+	}
+	$sql .= "LEFT JOIN $tani2 ON ";
+	my ($flag1,$n);
+	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+		if ($tani2 eq $i){
+			$flag1 = 1;
+		}
+		if ($flag1){
+			if ($n){$sql .= " AND ";}
+			$sql .= "$tani1.$i".'_id = '."$tani2.$i".'_id ';
+			++$n;
+		}
+	}
+	$sql .= "\n";
+	$sql .= "\nGROUP BY ";
+	my $flag2 = 0;
+	foreach my $i ("bun","dan","h5","h4","h3","h2","h1"){
+		if ($tani2 eq $i){
+			$flag2 = 1;
+		}
+		if ($flag2){
+			$sql .= "$tani1.$i".'_id,';
+		}
+	}
+	chop $sql;
+	$sql .= "\nORDER BY $tani2.id";
+	
+	my $h = mysql_exec->select($sql,1)->hundle;
+	
+	# 結果出力の作製
+	my @result;
+	my @for_chisq;
+	my @for_plot;
+
+	# 一行目
+	my @head = ('');
+	foreach my $i (@{$self->{valid_codes}}){
+		push @head, gui_window->gui_jchar($i->name);
+	}
+
+	push @for_plot, clone(\@head);
+	push @head, kh_msg->get('kh_cod::func->n_cases'); # ケース数
+	push @result, \@head;
+
+	# 中身
+	my @sum = ( kh_msg->get('kh_cod::func->total') ); # 合計
+	my $total;
+	my @arr; #SCREEN Plugin
+	while (my $i = $h->fetch){
+		my $n = 0;
+		my @current;
+		my @current_for_chisq;
+		my @current_for_plot;
+		my @c = @{$i};
+		my $nd = pop @c;
+		my @arr_temp; #SCREEN Plugin
+		
+		unless ( length($i->[0]) ){next;}
+		foreach my $h (@c){
+			if ($n == 0){                         # 行ヘッダ
+				if (index($tani2,'h') == 0){
+					my $t_name = gui_window->gui_jchar( # Decoding
+						mysql_getheader->get($tani2, $h),
+						'cp932'
+					);
+					push @current, $t_name;
+					push @current_for_plot, $t_name;
+				} else {
+					push @current, $h;
+					push @current_for_plot, $h;
+				}
+			} else {                              # 中身
+				$sum[$n] += $h;
+				my $p = sprintf("%.2f",($h / $nd ) * 100);
+				push @current_for_chisq, [$h, $nd - $h];
+				push @current_for_plot, ($h / $nd) * 100;
+				if ($cell == 0){
+					my $pp = "($p"."%)";
+					$pp = '  '.$pp if length($pp) == 7;
+					push @current, "$h $pp";
+				}
+				elsif ($cell == 1){
+					push @current, $h;
+				} else {
+					push @current, "$p"."%";
+				}
+				push @arr_temp, $h; #SCREEN Plugin
+			}
+			++$n;
+		}
+		$total += $nd;
+		push @current, $nd;
+		push @result, \@current;
+		push @for_chisq, \@current_for_chisq if @current_for_chisq;
+		push @for_plot,  \@current_for_plot;
+		
+		#SCREEN Plugin
+		push @arr_temp, $nd;
+		push @arr, \@arr_temp if @arr_temp;
+	}
+	# 合計行
+	print "kh_cod tab(Monkin) sum\n".join("\n", @sum)."\n";
+	my @c = @sum;
+	my @current;
+	my @arr_retsu; #SCREEN Plugin
+	$n = 0;
+	foreach my $i (@sum){
+		if ($n == 0){
+			push @current, $i;
+		} else {
+			my $p = sprintf("%.2f", ($i / $total) * 100);
+			if ($cell == 0){
+				my $pp = "($p"."%)";
+				$pp = '  '.$pp if length($pp) == 7;
+				push @current, "$i $pp";
+			}
+			elsif ($cell == 1){
+				push @current, $i;
+			} else {
+				push @current, "$p"."%";
+			}
+			push @arr_retsu, $i; #SCREEN Plugin
+		}
+		++$n;
+	}
+	push @current, $total;
+	push @result, \@current;
+
+	#SCREEN Plugin
+	#「合計」行を追加する前にp値の計算処理をRで行うべきか
+	push @arr_retsu, $total;
+	push @arr, \@arr_retsu;
+	
+	# chi-square test
+	my ($chisq, $rsd, $chisq_value_array, $col_p_value_array, $cell_p_value_array) = _chisq_test(\@current, \@for_chisq);
+	push @result, $chisq if $chisq;
+
+	my $ret;
+	$ret->{display} = \@result;
+	$ret->{plot}    = \@for_plot;
+	$ret->{t_rsd}   = $rsd;
+	$ret->{chisq_value_array} = $chisq_value_array;
+	$ret->{col_p_value_array} = $col_p_value_array;
+	$ret->{cell_p_value_array} = $cell_p_value_array;
+
+	#SCREEN Plugin
+	&screen_code::cross_func::func_ratio($ret,\@arr);
+	#SCREEN Plugin
+	
+	return $ret;
+}
+
+
 sub outtab{
 	my $self  = shift;
 	my $tani = shift;
 	my $var_id = shift;
 	my $cell  = shift;
 	
-	# �R�[�f�B���O�̎��s
+	# コーディングの実行
 	$self->code($tani) or return 0;
 	unless ($self->valid_codes){ return 0; }
 	$self->cumulate if @{$self->{valid_codes}} > 29;
 	
-	# �O���ϐ��̃`�F�b�N
+	# 外部変数のチェック
 	my $heap = 'TYPE=HEAP';
 	$heap = '' unless $::config_obj->use_heap;
 	my ($outvar_tbl,$outvar_clm);
@@ -76,7 +271,7 @@ sub outtab{
 	}
 	
 	
-	# �W�v�pSQL���̍쐻
+	# 集計用SQL文の作製
 	my $sql;
 	$sql .= "SELECT if ( outvar_lab.lab is NULL, $outvar_tbl.$outvar_clm, outvar_lab.lab) as name,";
 	foreach my $i (@{$self->{valid_codes}}){
@@ -94,12 +289,12 @@ sub outtab{
 	
 	my $h = mysql_exec->select($sql,1)->hundle;
 	
-	# ���ʏo�͂̍쐻
+	# 結果出力の作製
 	my @result;
 	my @for_chisq;
 	my @for_plot;
 	
-	# ��s��
+	# 一行目
 	my @head = ('');
 	foreach my $i (@{$self->{valid_codes}}){
 		push @head, gui_window->gui_jchar($i->name);
@@ -107,7 +302,7 @@ sub outtab{
 	push @for_plot, clone(\@head);
 	push @head, kh_msg->get('kh_cod::func->n_cases');
 	push @result, \@head;
-	# ���g
+	# 中身
 	my @sum = ( kh_msg->get('kh_cod::func->total') );
 	my $total;
 	my @arr; #SCREEN Plugin
@@ -126,18 +321,18 @@ sub outtab{
 		next if
 			   length($i->[0]) == 0
 			or $c[0] eq '.'
-			or $c[0] eq '�����l'
+			or $c[0] eq '欠損値'
 			or $c[0] =~  /^missing$/i
 			or $var_obj->{labels}{$c[0]} eq '.'
-			or $var_obj->{labels}{$c[0]} eq '�����l'
+			or $var_obj->{labels}{$c[0]} eq '欠損値'
 			or $var_obj->{labels}{$c[0]} =~ /^missing$/i
 		;
 		
 		foreach my $h (@c){
-			if ($n == 0){                         # �s�w�b�_�i1��ځj
+			if ($n == 0){                         # 行ヘッダ（1列目）
 				push @current,          gui_window->gui_jchar($h);
 				push @current_for_plot, gui_window->gui_jchar($h);
-			} else {                              # ���g
+			} else {                              # 中身
 				$sum[$n] += $h;
 				my $p = sprintf("%.2f",($h / $nd ) * 100);
 				push @current_for_chisq, [$h, $nd - $h];
@@ -166,10 +361,11 @@ sub outtab{
 		push @arr_temp, $nd;
 		push @arr, \@arr_temp if @arr_temp;
 	}
-	# ���v�s
+	# 合計行
 	my @c = @sum;
-	my @current; my $n = 0;
+	my @current;
 	my @arr_retsu; #SCREEN Plugin
+	my $n = 0;
 	foreach my $i (@sum){
 		if ($n == 0){
 			push @current, $i;
@@ -197,13 +393,18 @@ sub outtab{
 	push @arr, \@arr_retsu;
 	
 	# chi-square test
-	my ($chisq, $rsd) = &kh_cod::func::_chisq_test(\@current, \@for_chisq);
+	my ($chisq, $rsd, $chisq_value_array, $col_p_value_array, $cell_p_value_array, $ESw_array, $fisher_array) = _chisq_test(\@current, \@for_chisq);
 	push @result, $chisq if $chisq;
 	
 	my $ret;
 	$ret->{display}  = \@result;
 	$ret->{plot}     = \@for_plot;
 	$ret->{t_rsd}    = $rsd;
+	$ret->{chisq_value_array} = $chisq_value_array;
+	$ret->{col_p_value_array} = $col_p_value_array;
+	$ret->{cell_p_value_array} = $cell_p_value_array;
+	$ret->{ESw_array} = $ESw_array;
+	$ret->{fisher_array} = $fisher_array;
 
 	#SCREEN Plugin
 	&screen_code::cross_func::func_ratio($ret,\@arr);
@@ -273,10 +474,14 @@ sub func_ratio{
 				push @symbol_temp, "99";
 			} elsif ($temp >= 1.96) {
 				push @symbol_temp, "95";
+			} elsif ($temp >= 1.65) {
+				push @symbol_temp, "90";
 			} elsif ($temp <= -2.58) {
 				push @symbol_temp, "1";
 			} elsif ($temp <= -1.96) {
 				push @symbol_temp, "5";
+			} elsif ($temp <= -1.65) {
+				push @symbol_temp, "10";
 			} else {
 				push @symbol_temp, "";
 			}
@@ -287,17 +492,159 @@ sub func_ratio{
 		$row_num++;
 	}
 	
+	#記号ありのカイ二乗値は削除
+	pop @result_;
+	push @result_, $ret->{chisq_value_array};
+	push @result_, $ret->{col_p_value_array};
+	push @result_, $ret->{ESw_array};
+	push @result_, $ret->{fisher_array};
+	
 	$ret->{hrt} = \@hiritsu_array;
 	$ret->{symbol} = \@symbol_array;
 	$ret->{display_for_plugin} = \@result_;
 }
 
 
+#列ごとのカイ二乗値とp値を追加で取得するため、kh_cod::func::_chisq_test()を変更する必要がある
+sub _chisq_test{
+	my @current   = @{$_[0]};
+	my @for_chisq = @{$_[1]};
+	
+	my @chisq = ();
+	my @rsd   = ();
+	my @chisq_value_array = ();#有意水準の記号をつけていないカイ二乗値を保存
+	my @col_p_value_array = ();#列ごとのp値を保存
+	my @cell_p_value_array = ();#各セルのp値を保存
+	my @ESw_array = ();#列ごとの効果量を保存
+	my @fisher_array = ();#フィッシャーの正確検定を保存
+	
+	my $R_debug = 0;
+	if ($::config_obj->R){
+		@chisq = ( kh_msg->get('kh_cod::func->chisq') ); # カイ2乗値
+		@chisq_value_array = ( kh_msg->get('kh_cod::func->chisq') ); # カイ2乗値
+		@col_p_value_array = ( kh_msg->get('screen_code::assistant->p_value') ); # 有意確率
+		@ESw_array = ( kh_msg->get('screen_code::assistant->ESw') ); # 効果量
+		@fisher_array = ( kh_msg->get('screen_code::assistant->fisher') ); # フィッシャーの正確検定
+		my $n = @current - 2;
+		$::config_obj->R->lock;
+		for (my $c = 0; $c < $n; ++$c){
+			my $cmd = 'dosu <- matrix( c(';
+			my $nrow = 0;
+			foreach my $i (@for_chisq){
+				$cmd .= "$i->[$c][0],";
+				$cmd .= "$i->[$c][1], ";
+				++$nrow;
+			}
+			chop $cmd; chop $cmd;
+			$cmd .=  "), nrow=$nrow, ncol=2, byrow=TRUE)\n";
+			$cmd .=  "chi <- chisq.test(dosu, correct=TRUE)\n";
+			$cmd .=  "N <- sum( dosu )\n";
+
+			# 残差・調整済み残差・p値も取得
+			$cmd .= '
+				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
+				for (i in 1:nrow(chi$residuals)){
+					c_rsd <- paste(c_rsd, chi$residuals[i,1],sep="=")
+				}
+				for (i in 1:nrow(chi$stdres)){
+					c_rsd <- paste(c_rsd, chi$stdres[i,1],sep="=")
+				}
+				for (i in 1:nrow(chi$stdres)){
+					c_rsd <- paste(c_rsd, pnorm(abs(chi$stdres[i,1]), lower.tail=FALSE)*2,sep="=")
+				}
+				print ( paste( "khc", c_rsd, "khcend", sep="=" ))
+				options(scipen=2)
+				kai2 <- chi$sta
+				ESw <- round(sqrt( kai2/N ),5)
+				print ( paste( "ESw", ESw, "ESwend", sep="=" ))
+				fisTest <- fisher.test( dosu )
+				fis <- round(fisTest$p.v, 4)
+				print ( paste( "fis", fis, "fisend", sep="=" ))
+			';
+			print "send: $cmd ..." if $R_debug;
+			$::config_obj->R->send($cmd);
+
+			my $rtnTemp = $::config_obj->R->read();
+			my $rtn = $rtnTemp;
+			#カイ二乗値とp値を計算しているので、この結果を変数で持っておけばプラグインに渡すことができる
+			if ($rtn =~ /khc=(.+)=khcend/){
+				$rtn = $1;
+				my @rtnarray = split /=/, $rtn;
+				
+				# カイ二乗値
+				my $stat    = shift @rtnarray;
+				my $p_value = shift @rtnarray;
+				
+				my @rtn_rsd = splice(@rtnarray, 0, $nrow);
+				my @rtn_srdres = splice(@rtnarray, 0, $nrow);
+				my @rtn_p = splice(@rtnarray, 0, $nrow);
+				
+				if ( $stat =~ /na/i ){
+					push @chisq, 'na';
+				} else {
+					$stat =~ s/\x0D\x0A|\x0D|\x0A/\n/g;
+					$stat =~ s/ //g;
+					$stat = sprintf("%.3f", $stat);
+					
+					push @chisq_value_array, $stat;
+					push @col_p_value_array, sprintf('%.3f', $p_value);
+					if ($stat > 0){
+						if ($p_value < 0.01){
+							$stat .= '**';
+						}
+						elsif ($p_value < 0.05){
+							$stat .= '*';
+						}
+						elsif ($p_value < 0.10){
+							$stat .= '†';
+						}
+					}
+					push @chisq, $stat;
+				}
+				
+				push @rsd, \@rtn_rsd;
+				#@cell_p_value_arrayは出力処理のため行→列である必要があり、このデータは一列のデータであるため、入れ方を考える必要がある
+				#行数分の配列がないなら先に追加する
+				my $length = @cell_p_value_array;
+				while ($length < $nrow) {
+					my @void_ary = ();
+					push @cell_p_value_array, \@void_ary;
+					$length = @cell_p_value_array;
+				}
+				for (my $row = 0; $row < $nrow; ++$row) {
+					push @{$cell_p_value_array[$row]}, sprintf('%.3f', $rtn_p[$row]);
+				}
+			} else {
+				warn "Could not read the output of R.\n$rtn\n";
+				push @chisq, '---';
+			}
+			
+			$rtn = $rtnTemp;
+			if ($rtn =~ /ESw=(.+)=ESwend/){
+				$rtn = $1;
+				push @ESw_array, $rtn
+				#print $rtn." ESw\n";
+			}
+			
+			$rtn = $rtnTemp;
+			if ($rtn =~ /fis=(.+)=fisend/){
+				$rtn = $1;
+				push @fisher_array, $rtn
+				#print $rtn." fis\n";
+			}
+		}
+		$::config_obj->R->unlock;
+		push @chisq, ' ';
+	}
+	
+	return (\@chisq, \@rsd, \@chisq_value_array, \@col_p_value_array, \@cell_p_value_array, \@ESw_array, \@fisher_array);
+}
+
 sub _rsd_copy{
 	my $arref   = clone($_[0]);
 	my @arr   = @{$arref};
 	
-	pop @arr; #�ŏI�s�͗񍇌v�������Ă��邽�ߏ��O����
+	pop @arr; #最終行は列合計が入っているため除外する
 	my @rsd   = ();
 	
 	my $R_debug = 0;
@@ -318,11 +665,11 @@ sub _rsd_copy{
 		}
 		chop $cmd;
 		$cmd .=  "), nrow=".@arr.", ncol=$col_count, byrow=TRUE), correct=TRUE)\n";
-		#���P�[�X���ɂ��Ă̌v�Z���ʂ��v��Ȃ��ꍇ�� chi$residuals[,-ncol(chi$residuals)] �̂悤�ɍŏI������O��������o�͂���
-		#paste�̈��� collapse �ŏW���f�[�^���ЂƂ̕�����ɂ܂Ƃ߂邱�Ƃ��ł��� ���̂Ƃ��f�[�^�ԂɎw�肵������������
+		#総ケース数についての計算結果が要らない場合は chi$residuals[,-ncol(chi$residuals)] のように最終列を除外しそれを出力する
+		#pasteの引数 collapse で集合データをひとつの文字列にまとめることができる そのときデータ間に指定した文字が入る
 		
-		#KHCoder�ł�R����̏o�͂��󂯎��ƍs�ԍ�([1][2]���)�͕K���t������邽��(�_�u���N�H�[�e�[�V������ quote=F �ŏ�����)�A������폜����K�v������
-		#���Ƃ��΁Apaste�Ŗڈ�ƂȂ镶�����O��ɕt�����A���K�\���Ń}�b�`��������������o��( ~= /header(.+)footer/  $data = $1)�ăf�[�^�݂̂��擾����Ƃ������@������
+		#KHCoderではRからの出力を受け取ると行番号([1][2]･･･)は必ず付加されるため(ダブルクォーテーションは quote=F で消せる)、それを削除する必要がある
+		#たとえば、pasteで目印となる文字列を前後に付加し、正規表現でマッチした文字列を取り出し( ~= /header(.+)footer/  $data = $1)てデータのみを取得するという方法がある
 		$cmd .= '
 			c_rsd <- chi$residuals[,-ncol(chi$residuals)]
 			write.table(c_rsd, "C:/khcoder3/screen/test/rsdtest.txt", sep=",", quote=F, append=F, row.names=F, col.names=F)
@@ -343,7 +690,11 @@ sub _rsd_copy{
 sub calc_plugin_loop{
 	my $self = shift;
 	
-	#�v���O�C�����C�Z���X�m�F
+	print "calc_plugin_loop start\n";
+	delete $self->{row_sort};
+	delete $self->{col_sort};
+	
+	#プラグインライセンス確認
 	return 0 unless(system(&screen_code::plugin_path::assistant_path, 0));
 	
 	$self->{config_param} = undef;
@@ -357,15 +708,17 @@ sub calc_plugin_loop{
 
 sub plot_plugin{
 	my $self   = shift;
-	#my $ax     = shift; �q�[�g�E�o�u���̎w��ł���v���O�C���̓o�u���݂̂Ȃ̂ŕs�v
-	#my $selection = shift; �R�[�h��I�����ăv���b�g����@�\ �����{�^������w�肵�Ă���
+	#my $ax     = shift; ヒート・バブルの指定でありプラグインはバブルのみなので不要
+	#my $selection = shift; コードを選択してプロットする機能 調整ボタンから指定している
 	my $selection;
 	
 	unless ($self->{result}){
+		print "plot_plugin no result return 0\n";
 		return 0;
 	}
-	#�v���O�C���ɂ��v�Z�ŕK�v�ȃf�[�^�����邩�m�F
+	#プラグインによる計算で必要なデータがあるか確認
 	unless ($self->{result}{hrt}){
+		print "plot_plugin no hrt return 0\n";
 		return 0;
 	}
 	
@@ -378,7 +731,7 @@ sub plot_plugin{
 	my $nrow = @matrix;
 	my $ncol = @col_names;
 
-	# �f�[�^�s��
+	# データ行列
 	my $rcom = 'd <- matrix( c(';
 	my @row_names;
 	foreach my $row (@matrix){
@@ -395,7 +748,7 @@ sub plot_plugin{
 	chop $rcom;
 	$rcom .= "), byrow=T, nrow=$nrow, ncol=$ncol )\n";
 	
-	# �c���s��
+	# 残差行列
 	$rcom .= 'rsd <- matrix( c(';
 	foreach my $row (@{$self->{result}{t_rsd}}){
 		foreach my $cell (@{$row}){
@@ -406,7 +759,7 @@ sub plot_plugin{
 	$rcom .= "), byrow=T, nrow=$ncol, ncol=$nrow )\n";
 	$rcom .= "rsd <- t(rsd)\n";
 	
-	#�N���X�W�v�ɋL���t��
+	#クロス集計に記号付加
 	$rcom .= 'hrt <- matrix( c(';
 	foreach my $row (@{$self->{result}{hrt}}){
 		foreach my $cell (@{$row}){
@@ -417,8 +770,8 @@ sub plot_plugin{
 	$rcom .= "), byrow=T, nrow=$nrow, ncol=$ncol )\n";
 	$rcom .= "array <- rsd / hrt\n";
 	
-	# ��
-	foreach my $i (@col_names){ # �s���́u���v���폜�i�f�[�^��decode�ς݁j
+	# 列名
+	foreach my $i (@col_names){ # 行頭の「＊」を削除（データはdecode済み）
 		substr($i,0,1) = '';
 	}
 	$rcom .= "colnames(d) <- c(";
@@ -430,31 +783,58 @@ sub plot_plugin{
 	chop $rcom;
 	$rcom .= ")\n";
 	
-	#�摜�̗񖼌��o����p�l�̊��ǉ�����
+	#画像の列名見出しにp値の基準を追加する
 	my @last_row = @{${$self->{result}{display}}[-1]};
 	my @p_symbol;
-	foreach my $i (@last_row){
+	my $threshold;
+	if (!defined($self->{config_param})) {
+		$threshold = &screen_code::plugin_path::read_inifile("report_threshold", 0.05);
+	} else {
+		$threshold = $self->{config_param}->{threshold};
+	}
+	
+	foreach my $col_p_value (@{$self->{result}{col_p_value_array}}){
 		my $temp = "";
-		if ($i =~ /\*\*/) {
-			$temp = "p<.01 **"
-		} elsif ($i =~ /\*/) {
-			$temp = "p<.05 *"
-		} else {
-			$temp = "n.s."
+		if ($col_p_value < 0.01 && $col_p_value < $threshold){
+			$temp .= ' **';
+		}
+		elsif ($col_p_value < 0.05 && $col_p_value < $threshold){
+			$temp .= ' *';
+		}
+		elsif ($col_p_value < 0.10 && $col_p_value < $threshold){
+			$temp .= '†';
+		}
+		else {
+			$temp .= ' n.s.';
 		}
 		push @p_symbol, $temp;
 	}
-	#�擪�Ɩ������폜
-	shift @p_symbol; pop @p_symbol;
+	#先頭を削除
+	shift @p_symbol;
+	
+	#foreach my $i (@last_row){
+	#	my $temp = "";
+	#	if ($i =~ /\*\*/) {
+	#		$temp = "p<.01 **"
+	#	} elsif ($i =~ /\*/) {
+	#		$temp = "p<.05 *"
+	#	} else {
+	#		$temp = "n.s."
+	#	}
+	#	push @p_symbol, $temp;
+	#}
+	#先頭と末尾を削除
+	#shift @p_symbol; pop @p_symbol;
+	
 	$rcom .= "p_symbol <- c(";
 	foreach my $i (@p_symbol){
 		$rcom .= "\"$i\",";
 	}
 	chop $rcom;
 	$rcom .= ")\n";
-	$rcom .= "colnames(d) <- paste(p_symbol, colnames(d))\n";
+	$rcom .= "colnames(d) <- paste(colnames(d), p_symbol)\n";
 	
-	# �s��
+	# 行名
 	$rcom .= "rownames(d) <- c(";
 	foreach my $i (@row_names){
 		$rcom .= "\"$i\",";
@@ -466,7 +846,7 @@ sub plot_plugin{
 
 	$rcom .= "# dpi: short based\n";
 
-	# �}�b�v�̍���
+	# マップの高さ
 	my $label_length = 0;
 	foreach my $i (@row_names){
 		my $t = Encode::encode('cp932', $i);
@@ -487,7 +867,7 @@ sub plot_plugin{
 		$bs_h = (480 - $label_length * 14) / $ncol / 25;
 	}
 	
-	# �}�b�v�̕�
+	# マップの幅
 	$label_length = 0;
 	foreach my $i (@col_names){
 		my $t = Encode::encode('cp932', $i);
@@ -501,18 +881,19 @@ sub plot_plugin{
 		$bs_w = (640 - 10 - $label_length * 14) / ($nrow + 1) / 25;
 	}
 	use List::Util 'min';
-	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) );
+	#my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) );
+	my $bubble_size = int( min($bs_h, $bs_w) / ( $::config_obj->plot_font_size / 100 ) * 10 ) / 10;
 	
 	&set_config_param($self,$bubble_size,$height_f,$width_f);
 	
 	
-	# �v���b�g�쐬
+	# プロット作成
 	my $plot;
 	use screen_code::plugin_code_mat;
-	#config_param�ɐݒ荀�ڂ��܂Ƃ߂Ă���̂ŁA�ȉ��͌Ăяo���K�v�������Ȃ�
+	#config_paramに設定項目をまとめているので、以下は呼び出す必要が無くなる
 	#plot_size_maph      => $height_f, plot_size_mapw      => $width_f,
 	#bubble_size         => $bubble_size,font_size           => $::config_obj->plot_font_size / 100,
-	#�ȉ��̍��ڂ̓q�[�g�}�b�v�p�Ȃ̂ŕs�v
+	#以下の項目はヒートマップ用なので不要
 	#heat_dendro_c       => 1,
 	#heat_cellnote       => $nrow < 10 ? 1 : 0,
 	#plot_size_heat      => $height,
@@ -552,7 +933,7 @@ sub plot_plugin{
 		save_sort_file($self);
 		$! = undef;
 		$rtn = system(&screen_code::plugin_path::assistant_path, "6");
-		$rtn = 0 if ($!) ; #system�ŃG���[���������ꍇ
+		$rtn = 0 if ($!) ; #systemでエラーがあった場合
 		if (read_config($self)) {
 			last;
 		}
@@ -629,7 +1010,7 @@ sub save_option{
 	my $dbn = $::project_obj->dbname;
 	my $plot_file_names = $self->{plot_file_names};
 	my $plot_number = $self->{plot_number};
-	#�v���O�C���̏����ύX�ɂ��K�v�Ȃ��Ȃ邩������Ȃ�
+	#プラグインの処理変更により必要なくなるかもしれない
 	my $initial_display = $self->{plot_o};
 	my $font_str = gui_window->gui_jchar($::config_obj->font_main);
 	print $OUT "db_name=$dbn\n";
@@ -721,8 +1102,18 @@ sub read_config{
 			} elsif ($splited[0] eq "symbol_rate") {
 				$isChanged = 1 if ($temp ne $self->{config_param}->{symbol_rate});
 				$self->{config_param}->{symbol_rate} = $temp;
+			} elsif ($splited[0] eq "threshold") {
+				$isChanged = 1 if ($temp ne $self->{config_param}->{threshold});
+				$self->{config_param}->{threshold} = $temp;
+			} elsif ($splited[0] eq "displayLevel") {
+				$isChanged = 1 if ($temp ne $self->{config_param}->{displayLevel});
+				$self->{config_param}->{displayLevel} = $temp;
 			}
 		}
+		
+		#プラグインで設定されたコンフィグを読み込んだ時点で、p値の設定をiniファイルに記録する
+		&screen_code::plugin_path::save_inifile("report_threshold", $self->{config_param}->{threshold});
+		&screen_code::plugin_path::save_inifile("report_displayLevel", $self->{config_param}->{displayLevel});
 		
 		close($IN);
 		unlink $file_config if -f $file_config;
@@ -747,6 +1138,8 @@ sub save_config{
 	print $OUT "plot_size_maph=".$self->{config_param}->{plot_size_maph}."\n";
 	print $OUT "plot_size_mapw=".$self->{config_param}->{plot_size_mapw}."\n";
 	print $OUT "symbol_rate=".$self->{config_param}->{symbol_rate}."\n";
+	print $OUT "threshold=".$self->{config_param}->{threshold}."\n";
+	print $OUT "displayLevel=".$self->{config_param}->{displayLevel}."\n";
 
 	close($OUT);
 }
@@ -756,6 +1149,9 @@ sub set_config_param{
 	my $bubble_size = shift;
 	my $height_f = shift;
 	my $width_f = shift;
+	#iniファイルからp値の設定を取得
+	my $threshold_default = &screen_code::plugin_path::read_inifile("report_threshold", 0.05);
+	my $displayLevel_default = &screen_code::plugin_path::read_inifile("report_displayLevel", 0);
 	if (!defined($self->{config_param})) {
 		$self->{config_param} = {
 			'bubble_size'    => $bubble_size,
@@ -767,6 +1163,8 @@ sub set_config_param{
 			'plot_size_maph' => $height_f,
 			'plot_size_mapw' => $width_f,
 			'symbol_rate'    => 100,
+			'threshold'      => $threshold_default,
+			'displayLevel'   => $displayLevel_default,
 		};
 	}
 }
@@ -783,6 +1181,8 @@ sub get_config_param{
 			'plot_size_maph' => $self->{config_param}->{plot_size_maph},
 			'plot_size_mapw' => $self->{config_param}->{plot_size_mapw},
 			'symbol_rate'    => $self->{config_param}->{symbol_rate},
+			'threshold'      => $self->{config_param}->{threshold},
+			'displayLevel'   => $self->{config_param}->{displayLevel},
 		);
 }
 
@@ -790,57 +1190,78 @@ sub write_display_data{
 	my $self = shift;
 	
 	$,="\t";
-	my $DATAFILE;
+	my $DATAFILE, my $PVALEUFILE, my $SYMBOLFILE;
 	my $file_display = &screen_code::plugin_path::assistant_option_folder."crs_display.txt";
 	unlink $file_display if -f $file_display;
+	my $file_p_value = &screen_code::plugin_path::assistant_option_folder."crs_p_value.txt";
+	unlink $file_p_value if -f $file_p_value;
 	my $file_symbol = &screen_code::plugin_path::assistant_option_folder."crs_symbol.txt";
 	unlink $file_symbol if -f $file_symbol;
-	open($DATAFILE, ">:encoding(utf8)", $file_symbol);
 	
-	my $ary = $self->{result}{symbol};
+	open($PVALEUFILE, ">:encoding(utf8)", $file_p_value);
+	open($SYMBOLFILE, ">:encoding(utf8)", $file_symbol);
+	
+	my $p_value_ary = $self->{result}{cell_p_value_array};
+	my $symbol_ary = $self->{result}{symbol};
 	
 	my @row_sort;
 	my @col_sort;
 	
+	#ソート配列は1から開始する番号の配列
 	if (!($self->{row_sort})) {
-		@row_sort = (1 .. int(@{$ary}));
+		@row_sort = (1 .. int(@{$symbol_ary}));
 	} else {
 		@row_sort = split(/,/, $self->{row_sort});
 	}
 	if (!($self->{col_sort})) {
-		@col_sort = (1 .. int(@{$ary->[0]}));
+		@col_sort = (1 .. int(@{$symbol_ary->[0]}));
 	} else {
 		@col_sort = split(/,/, $self->{col_sort});
 	}
 	
 	for (my $i = 0; $i < @row_sort; $i++) {
 		for (my $j = 0; $j < @col_sort; $j++) {
+			#1列目以外は間にタブを入れる
 			if ($j) {
-				print $DATAFILE "\t";
+				print $SYMBOLFILE "\t";
+				print $PVALEUFILE "\t";
 			}
-			print $DATAFILE $ary->[$row_sort[$i]-1][$col_sort[$j]-1];
+			#シンボルやp値の配列と、表示データの配列で、見出しの有無がことなるため、配列中の位置を指すために番号-1する
+			print $SYMBOLFILE $symbol_ary->[$row_sort[$i]-1][$col_sort[$j]-1];
+			print $PVALEUFILE $p_value_ary->[$row_sort[$i]-1][$col_sort[$j]-1];
 		}
-		print $DATAFILE "\n";
+		print $SYMBOLFILE "\n";
+		print $PVALEUFILE "\n";
 	}
-	close($DATAFILE);
+	close($SYMBOLFILE);
+	close($PVALEUFILE);
 	
-	$ary = $self->{result}{display_for_plugin};
+	my $data_ary = $self->{result}{display_for_plugin};
 	open($DATAFILE, ">:encoding(utf8)", $file_display);
 	
-	#���ёւ��Ώۂ̍s�ȊO�ɁA�擪�Ɍ��o���s�A�����ɍ��v�E���v��񂪂���(���v���͑�����\��������)
+	#並び替え対象の行以外に、先頭に見出し行、末尾に合計・統計情報がある(統計情報は増える可能性がある)
+	#最初にある見出しや通常データ行以降はそのままにするため、ソート配列の先頭と末尾にそのままの数値の並びを追加する
+	#「@変数名」で配列のサイズの値を取れる ソート配列のサイズ＝先に0を追加しているため最後の数＋１が取れる
+	#つまり通常データ行＋１から統計情報の終わる行まで順番の数値の並びとなる
 	unshift(@row_sort, 0);
-	push @row_sort, (@row_sort .. @{$ary}-1);
+	push @row_sort, (@row_sort .. @{$data_ary}-1);
 	
-	#���ёւ��Ώۂ̗�ȊO�ɁA�擪�Ɍ��o����A�����ɃP�[�X��������
+	#並び替え対象の列以外に、先頭に見出し列、末尾にケース数がある
 	unshift(@col_sort, 0);
 	push @col_sort, (int(@col_sort));
 	
-	for (my $i = 0; $i < @row_sort; $i++) {
+	#旧バージョン対応
+	my $versionRevise = 0;
+	if (checkPluginFileVersion == 1) {
+		$versionRevise = 3;
+	}
+	for (my $i = 0; $i < @row_sort - $versionRevise; $i++) {
 		for (my $j = 0; $j < @col_sort; $j++) {
+			#1列目以外は間にタブを入れる
 			if ($j) {
 				print $DATAFILE "\t";
 			}
-			print $DATAFILE $ary->[$row_sort[$i]][$col_sort[$j]];
+			print $DATAFILE $data_ary->[$row_sort[$i]][$col_sort[$j]];
 		}
 		print $DATAFILE "\n";
 	}
