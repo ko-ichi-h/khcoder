@@ -749,7 +749,7 @@ sub make_plot_plugin{
 	$args{height} = $args{plot_size};
 	$args{width}  = int( $args{plot_size} * $x_factor );
 	
-	my $fontsize = 1;
+	my $fontsize = $args{font_size};
 	my $r_command = $args{r_command};
 	$args{use_alpha} = 0 unless ( length($args{use_alpha}) );
 
@@ -1038,7 +1038,8 @@ sub read_config{
 				$self->{config_param}->{bubble_size} = $temp;
 			} elsif ($splited[0] eq "resize_vars") {
 				$isChanged = 1 if ($temp ne $self->{config_param}->{resize_vars});
-				$self->{config_param}->{bubble_var} = $temp;
+				#$self->{config_param}->{bubble_var} = $temp;
+				$self->{config_param}->{resize_vars} = $temp;
 			} elsif ($splited[0] eq "use_alpha") {
 				$isChanged = 1 if ($temp ne $self->{config_param}->{use_alpha});
 				$self->{config_param}->{use_alpha} = $temp;
@@ -1364,10 +1365,11 @@ if ( exists("PERL_font_family") ){
 	font_family <- PERL_font_family
 }
 
-if ( exists("bs_fixed") == F ) {
-	bubble_size <- bubble_size / '.$args{font_size}.'
-	bs_fixed <- 1
-}
+#unuse font_size 210638
+#if ( exists("bs_fixed") == F ) {
+#	bubble_size <- bubble_size / '.$args{font_size}.'
+#	bs_fixed <- 1
+#}
 
 #-----------------------------------------------------------------------------#
 #                           prepare label positions
@@ -1389,10 +1391,11 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 
 	png_width  <- '.$args{width}.'
 	png_height <- '.$args{height}.' 
-	png_width  <- png_width - 0.16 * '.$args{font_size}.' * bubble_size / 100 * png_width
-	dpi <- 72 * min(png_width, png_height) / 640 * '.$args{font_size}.'
+	png_width  <- png_width - 0.16 * bubble_size / 100 * png_width
+	dpi <- 72 * min(png_width, png_height) / 640
 	p_size <- 12 * dpi / 72;
 	png("temp.png", width=png_width, height=png_height, unit="px", pointsize=p_size)
+	
 
 	#if ( exists("PERL_font_family") ){
 	#	par(family=PERL_font_family) 
@@ -1437,6 +1440,10 @@ if ( (is.null(labcd) && plot_mode != "dots" ) || plot_mode == "vars"){
 		library(wordcloud)
 		'.&plotR::network::r_command_wordlayout.'
 
+		cex <- font_size * 1.05
+		if (font_size > 1){
+			cex <- cex + (font_size - 1) * 1.05
+		}
 		nc <- wordlayout(
 			labcd$x,
 			labcd$y,
@@ -1707,8 +1714,9 @@ if (plot_mode != "dots") {
 			data=df.labels.var,
 			family=font_family,
 			fontface="bold",
-			#label.size=0.25,
-			label.padding=unit(1.8, "mm"),
+			label.size=0.25 * font_size,
+			size=4 * font_size,
+			label.padding=unit(1.8 * font_size, "mm"),
 			colour="white",
 			fill="gray50",
 			#alpha=0.7,
@@ -1730,7 +1738,7 @@ if (plot_mode != "dots") {
 	g <- g + geom_text(
 		data=df.labels,
 		aes(x=x, y=y,label=labs,colour=factor(cols)),
-		size=4,
+		size=4 * font_size,
 		family=font_family,
 		fontface=font_face
 		#colour="black"

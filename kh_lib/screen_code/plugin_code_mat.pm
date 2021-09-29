@@ -27,8 +27,8 @@ sub new{
 	#selectionで一部のコードのみ表示する機能？ 記号を追加するための行列も同様の処理を行えば適用可能か
 	# パラメーター設定（共通）
 	$args{font_size} = $::config_obj->plot_font_size / 100 unless $args{font_size}; # フォントサイズ
-	#$r_command .= "cex <- $args{font_size}\n";
-	$r_command .= "cex <- 1\n";
+	$r_command .= "cex <- $args{font_size}\n";
+	#$r_command .= "cex <- 1\n";
 
 	#if ( defined($self->{selection}) ){                # コード選択
 	#	if ( $#{$self->{selection}} > -1 ){
@@ -83,6 +83,12 @@ sub new{
 	
 	$args{symbol_rate} = 100 unless length( $args{symbol_rate} );
 	$r_command .= "symbol_rate <- $args{symbol_rate}\n";
+	
+	$args{threshold} = 0.05 unless length( $args{threshold} );
+	$r_command .= "threshold <- $args{threshold}\n";
+	
+	$args{displayLevel} = 0 unless length( $args{displayLevel} );
+	$r_command .= "displayLevel <- $args{displayLevel}\n";
 	
 	my $r_command_fluc = $self->r_plot_cmd_fluc;
 	my $r_command_fluc_plug = $r_command_fluc;
@@ -170,7 +176,7 @@ sub r_plot_cmd_fluc{
 
 alpha_value <- 0.5
 
-bubble_size <- bubble_size / '.$self->{font_size}.'
+#bubble_size <- bubble_size / '.$self->{font_size}.'
 
 if ( exists("saving_emf") || exists("saving_eps") ){
 	alpha_value <- 1

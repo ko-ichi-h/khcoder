@@ -1227,3 +1227,5 @@ screen_code::assistant:
     KWIC_button:               "《文錦》KWIC "
     KWIC_button2:              "《文錦》KWIC※"
     KWIC_label:                "《文錦》"
+    ESw:                       "効果量"
+    fisher:                    "フィッシャーの正確検定"
