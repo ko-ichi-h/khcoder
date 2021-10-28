@@ -1265,7 +1265,7 @@ sub file_short_name_mw{ # Only for showing the source file name. NOT for process
 	if ($::project_obj) {
 		if ($::project_obj->dbname eq $self->dbname) {
 			if ( length( $self->status_source_file ) ){
-				$file = $self->status_source_file;
+				$file = $::config_obj->uni_path( $self->status_source_file );
 			}
 			if ( length( $self->status_selected_coln ) and not $args{no_col} ){
 				$file .= " [".$self->status_selected_coln."]";
