@@ -42,7 +42,7 @@ You need:
     - MeCab and HanDic for analyzing Korean text
     - Stanford Word Segmenter and Stanford POS Tagger for analyzing Chinese text
 
-See [issue #91](https://github.com/ko-ichi-h/khcoder/issues/91) for more details.
+See [issue #91](https://github.com/ko-ichi-h/khcoder/issues/91), [doc_contrib/Vagrantfile](https://github.com/ko-ichi-h/khcoder/blob/master/doc_contrib/Vagrantfile) and [doc_contrib/FedoraInstallation.md](https://github.com/ko-ichi-h/khcoder/blob/master/doc_contrib/FedoraInstallation.md) for more details.
 
 ## License
 
