@@ -79,6 +79,10 @@ sub run{
 
 	my $n = 1;
 	while (<SOURCE>){
+		if ($n == 1 && $icode eq 'utf8') { # ignore UTF-8 BOM
+			s/^\xef\xbb\xbf//;
+		}
+		
 		s/\x0D\x0A|\x0D|\x0A/\n/g;
 		chomp;
 		

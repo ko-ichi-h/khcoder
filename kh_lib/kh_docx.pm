@@ -86,41 +86,36 @@ sub _doc_linux{
 	return undef;
 }
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ){
-		require Win32::OLE;
-		Win32::OLE->import;
-		require Win32::OLE::Const;
-		Win32::OLE::Const->import( 'Microsoft Word' );
-		
-		unless ( exists &wdFormatText ){
-			print "M\$ Word not found...\n";
-			*wdFormatText = \&new;
-		}
-	} else {
-		*wdFormatText = \&new;
-	}
-}
-
 sub _doc_win32{
 	my $self = shift;
 	
+	if ( $^O eq 'MSWin32' ){
+		require Win32::OLE;
+	} else {
+		return undef;
+	}
+
 	my $word = Win32::OLE->GetActiveObject('Word.Application')
 		|| Win32::OLE->new('Word.Application', 'Quit')
 		|| return undef
 	;
-	
+
+	# https://docs.microsoft.com/ja-jp/office/vba/api/Word.WdSaveFormat
+	# https://docs.microsoft.com/ja-jp/office/vba/api/office.msoencoding
+	use constant wdFormatUnicodeText => 7;
+	use constant msoEncodingUTF8 => 65001;
+
 	my $o = $::config_obj->os_path( $self->{converted} );
 	my $i = $::config_obj->os_path( $self->{original}  );
-	
+
 	my $doc = $word->Documents->Open($i) || return undef;
-	$doc->SaveAs({
+	$doc->SaveAs2({
 		Filename   => $o,
-		FileFormat => wdFormatText,
-		Encoding   => '65001',
+		FileFormat => wdFormatUnicodeText,
+		Encoding   => msoEncodingUTF8,
 	});
 	$doc->Close;
-	
+
 	return 1;
 }
 
