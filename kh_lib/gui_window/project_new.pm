@@ -246,20 +246,19 @@ sub refresh_method{
 	}
 
 	# Select last used method
-	#my $last = $::config_obj->last_method;
-	#if ($possbile{$last}) {
-	#	$self->{method} = $last;
-	#} else {
-	#	$self->{method} = $options[0]->[1];
-	#}
-	$self->{method} = undef;
+	my $last = $::config_obj->last_method;
+	if ($possbile{$last}) {
+		$self->{last_method} = $last;
+	} else {
+		$self->{last_method} = undef;
+	}
 
 	$self->{method_menu} = gui_widget::optmenu->open(
 		parent  => $self->{fra3}, #$fra3,
 		width   => 19,
 		pack    => { -side => 'right', -padx => 2, -fill => 'x', -expand => 1},
 		options => \@options,
-		variable => \$self->{method},
+		variable => \$self->{last_method},
 		command => sub {}
 	);
 	
