@@ -238,7 +238,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				colours = paste("gray",95:1, sep=""),
 				limits = c( limv * -1, limv ),
 				guide = guide_legend(
-					title = "Pearson rsd.",
+					title = "Pearson residuals:",
 					order = 1,
 					override.aes = list(size=6, shape=22),
 					label.hjust = 1,
@@ -252,7 +252,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				colours = cm.colors(99),
 				limits = c( limv * -1, limv ),
 				guide = guide_legend(
-					title = "Pearson rsd.",
+					title = "Pearson residuals:",
 					order = 1,
 					override.aes = list(size=6, shape=22),
 					label.hjust = 1,
@@ -269,9 +269,8 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 				limits = c( limv * -1, limv ),
 				na.value = "black",
 				guide = guide_colourbar(
-					title = "Pearson rsd.:\n",
+					title = "Pearson residuals:\n",
 					title.theme = element_text(
-						face="bold",
 						size=11,
 						lineheight=0.4,
 						angle=0
@@ -344,7 +343,7 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 		#aspect.ratio = ny/nx,
 		#legend.background=element_rect(fill="gray96",colour = NA),
 		legend.key=element_rect(fill=NA,colour = NA),
-		legend.title = element_text(face="bold",  size=11, angle=0),
+		legend.title = element_text(face="plain", size=11, angle=0),
 		legend.text  = element_text(face="plain", size=11, angle=0),
 		plot.margin =   unit(c(0.25, 0.01, 0.25, 0.25), "cm"),
 		axis.line.x    = element_line(colour = "black", size=0.5),
