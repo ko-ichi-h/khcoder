@@ -89,13 +89,14 @@ sub connect_db{
 		$mysql_act = $mysql_act->fetch;
 		$mysql_act = $mysql_act->[0] if $mysql_act;
 		$mysql_act = $::config_obj->uni_path($mysql_act);
+		chop $mysql_act if substr($mysql_act, -1) eq '/';
 		
 		# MySQL expected basedir
 		my $mysql_exp = $::config_obj->cwd;
 		if ($::config_obj->os eq 'win32') {
-			$mysql_exp .= '/dep/mysql/';
+			$mysql_exp .= '/dep/mysql';
 		} else {
-			$mysql_exp .= '/deps/mysql-5.6.17/';
+			$mysql_exp .= '/deps/mysql-5.6.17';
 		}
 		$mysql_exp = $::config_obj->uni_path($mysql_exp);
 		
