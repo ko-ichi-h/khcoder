@@ -25,6 +25,7 @@ my $mysql_version = -1;
 my $win_9x = 0;
 
 my $dbh_common;
+my $mysgl_itegrity = 0;
 
 #------------#
 #   DB操作   #
@@ -77,6 +78,44 @@ sub connect_db{
 	# OSのバージョンチェック
 	if ($::config_obj->os eq 'win32'){
 		$win_9x = 1 unless Win32::IsWinNT();
+	}
+
+	# Check MySQL integrity
+	if ($mysgl_itegrity == 0 && $::config_obj->all_in_one_pack) {
+		# MySQL actual basedir
+		$dbh->do('set names binary');
+		my $mysql_act = $dbh->prepare('select @@basedir');
+		$mysql_act->execute;
+		$mysql_act = $mysql_act->fetch;
+		$mysql_act = $mysql_act->[0] if $mysql_act;
+		$mysql_act = $::config_obj->uni_path($mysql_act);
+		
+		# MySQL expected basedir
+		my $mysql_exp = $::config_obj->cwd;
+		if ($::config_obj->os eq 'win32') {
+			$mysql_exp .= '/dep/mysql/';
+		} else {
+			$mysql_exp .= '/deps/mysql-5.6.17/';
+		}
+		$mysql_exp = $::config_obj->uni_path($mysql_exp);
+		
+		# Compare
+		if ($::config_obj->os eq 'win32') {
+			$mysql_act = lc($mysql_act);
+			$mysql_exp = lc($mysql_exp);
+		}
+		if ($mysql_act eq $mysql_exp){
+			$mysgl_itegrity = 1;
+			print "MySQL integrity check: pass, $mysql_act\n";
+		} else {
+			warn("MySQL integrity check: possible cross-talk!\n");
+			print "MySQL basedir: $mysql_act\n";
+			print "MySQL expectd: $mysql_exp\n";
+			gui_errormsg->open(
+				type    => 'msg',
+				msg => kh_msg->get('cross')
+			);
+		}
 	}
 
 	$dbh->do("SET NAMES utf8mb4");

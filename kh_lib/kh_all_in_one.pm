@@ -270,27 +270,28 @@ sub init{
 	}
 
 	# MySQL¤Îµ¯Æ°
-	return 1 if mysql_exec->connection_test;
-	print "Starting MySQL...\n";
-	require Win32;
-	require Win32::Process;
-	my $obj;
-	my ($mysql_pass, $cmd_line);
+	unless ( mysql_exec->connection_test ) {
+		print "Starting MySQL...\n";
+		require Win32;
+		require Win32::Process;
+		my $obj;
+		my ($mysql_pass, $cmd_line);
+		
+		$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld.exe';
+		$cmd_line = 'bin\mysqld --defaults-file=khc.ini --standalone';
 	
-	$mysql_pass = $::config_obj->cwd.'\dep\mysql\bin\mysqld.exe';
-	$cmd_line = 'bin\mysqld --defaults-file=khc.ini --standalone';
-
-	Win32::Process::Create(
-		$obj,
-		$mysql_pass,
-		$cmd_line,
-		0,
-		undef,#Win32::Process->CREATE_NO_WINDOW,
-		$p3,
-	) or gui_errormsg->open(
-		type => 'mysql',
-		sql  => 'Start'
-	);
+		Win32::Process::Create(
+			$obj,
+			$mysql_pass,
+			$cmd_line,
+			0,
+			undef,#Win32::Process->CREATE_NO_WINDOW,
+			$p3,
+		) or gui_errormsg->open(
+			type => 'mysql',
+			sql  => 'Start'
+		);
+	}
 	
 	$::config_obj->save;
 	return 1;

@@ -633,6 +633,8 @@ kh_sysconfig::mecab:
     path_error:               Cannot find MeCab.exe!
 kh_sysconfig::stanford:
     path_error:               Cannot find Stanford POS Tagger!
+mysql_exec:
+    cross:                    "Do your have multiple KH Coder on the same PC? \nMySQL database may be interfering.\n\nWe recommend that you restart KH Coder."
 mysql_words:
     df:                       DF
     mean_df:                  Mean of DF
