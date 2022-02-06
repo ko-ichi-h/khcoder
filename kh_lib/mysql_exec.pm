@@ -80,16 +80,34 @@ sub connect_db{
 		$win_9x = 1 unless Win32::IsWinNT();
 	}
 
-	# Check MySQL integrity
+	&integrity_test;
+
+	$dbh->do("SET NAMES utf8mb4");
+	$dbh->do("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'");
+
+	return $dbh;
+}
+
+# Check cross-talk of MySQL servers. Are there multiple KH Coders on the same PC?
+sub integrity_test{
 	if ($mysgl_itegrity == 0 && $::config_obj->all_in_one_pack) {
 		# MySQL actual basedir
-		$dbh->do('set names binary');
-		my $mysql_act = $dbh->prepare('select @@basedir');
+		&connect_common unless $dbh_common;
+		
+		# my $t = $dbh_common->prepare('show variables like "%char%"');
+		# $t->execute;
+		# while (my $i = $t->fetch) {
+		# 	print "$i->[0]\t$i->[1]\n";
+		# }
+		
+		$dbh_common->do('SET NAMES binary');
+		my $mysql_act = $dbh_common->prepare('select @@basedir');
 		$mysql_act->execute;
 		$mysql_act = $mysql_act->fetch;
 		$mysql_act = $mysql_act->[0] if $mysql_act;
 		$mysql_act = $::config_obj->uni_path($mysql_act);
 		chop $mysql_act if substr($mysql_act, -1) eq '/';
+		$dbh_common->do('SET NAMES utf8mb4');
 		
 		# MySQL expected basedir
 		my $mysql_exp = $::config_obj->cwd;
@@ -118,11 +136,6 @@ sub connect_db{
 			);
 		}
 	}
-
-	$dbh->do("SET NAMES utf8mb4");
-	$dbh->do("SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION'");
-
-	return $dbh;
 }
 
 # DBへの接続テスト

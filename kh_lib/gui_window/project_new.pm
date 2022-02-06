@@ -166,6 +166,8 @@ sub _new{
 	$self->{e1}  = $e1;
 	$self->{e2}  = $e2;
 
+	mysql_exec->integrity_test;
+
 	#MainLoop;
 	return $self;
 }

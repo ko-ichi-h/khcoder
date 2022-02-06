@@ -636,7 +636,7 @@ kh_sysconfig::mecab:
 kh_sysconfig::stanford:
     path_error:               Stanford POS Taggerのパスが不正です
 mysql_exec:
-    cross:                    "複数のKH Coderが同じPC上に存在していますか？\nそれぞれのMySQLデータベースが混信している可能性があります。\n\nKH Coderの再起動をお勧めします。"
+    cross:                    "複数のKH Coderが同じPC上に存在していますか？\nそれぞれのMySQLデータベースが混信している可能性があります。\n\nKH Coderの再起動を強くお勧めします。"
 mysql_words:
     df:                       文書数
     mean_df:                  文書数の平均
