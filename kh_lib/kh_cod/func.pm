@@ -798,15 +798,16 @@ sub _chisq_test{
 		my $n = @current - 2;
 		$::config_obj->R->lock;
 		for (my $c = 0; $c < $n; ++$c){
-			my $cmd = 'chi <- chisq.test(matrix( c(';
+			my $dat = 'matrix( c(';
 			my $nrow = 0;
 			foreach my $i (@for_chisq){
-				$cmd .= "$i->[$c][0],";
-				$cmd .= "$i->[$c][1], ";
+				$dat .= "$i->[$c][0],";
+				$dat .= "$i->[$c][1], ";
 				++$nrow;
 			}
-			chop $cmd; chop $cmd;
-			$cmd .=  "), nrow=$nrow, ncol=2, byrow=TRUE), correct=TRUE)\n";
+			chop $dat; chop $dat;
+			$dat .= "), nrow=$nrow, ncol=2, byrow=TRUE)";
+			my $cmd =  "chi <- chisq.test($dat, correct=TRUE)\n";
 			# 残差も取得
 			$cmd .= '
 				c_rsd <- paste(chi$statistic,chi$p.value,sep="=")
@@ -825,8 +826,8 @@ sub _chisq_test{
 				my @rtnarray = split /=/, $rtn;
 				
 				# カイ二乗値
-				my $stat    = shift @rtnarray;
-				my $p_value = shift @rtnarray;
+				my $stat      = shift @rtnarray;
+				my $p_value   = shift @rtnarray;
 				
 				if ( $stat =~ /na/i ){
 					push @chisq, 'na';
@@ -851,12 +852,13 @@ sub _chisq_test{
 				warn "Could not read the output of R.\n$rtn\n";
 				push @chisq, '---';
 			}
+			# my $cmd2 =  "fisher <- fisher.test($dat)\n"; # Fisher's Exact Test, Already implemented in MonKin
 		}
 		$::config_obj->R->unlock;
 		push @chisq, ' ';
 	}
 
-	return (\@chisq, \@rsd);
+	return (\@chisq, \@rsd );
 }
 
 
