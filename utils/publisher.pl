@@ -218,7 +218,7 @@ sub web{
 	$t = Encode::decode('UTF-8', $r0->content);
 	$t =~ s/\x0D\x0A|\x0D|\x0A/\n/g; # 改行コード
 	
-	$t =~ s/KH Coder 3（最新版）ダウンロード<\/a><font size=\-1 color="#3cb371">（.+）<\/font>/KH Coder 3（最新版）ダウンロード<\/a><font size=\-1 color="#3cb371">（$V_full - $date）<\/font>/;
+	$t =~ s/KH Coder 3 ダウンロード<\/a><font size=\-1 color="#3cb371">（.+）<\/font>/KH Coder 3 ダウンロード<\/a><font size=\-1 color="#3cb371">（$V_full - $date）<\/font>/;
 	
 	open(my $fh, ">:encoding(UTF-8)", "../pub/web/index.html") or die("$!");
 	print $fh $t;
