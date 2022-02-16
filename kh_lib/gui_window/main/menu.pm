@@ -475,14 +475,15 @@ sub make{
 				#SCREEN Plugin
 			} else {
 				# ちょっと検討中。コメントアウトを外す場合は「m_b0_editdata」を別の名前に。
-				#$self->{m_b0_editdata} = $f->command(
-				#	-label => kh_msg->get('plugin_synonym2'),
-				#	-font => "TKFN",
-				#	-command => sub{
-				#		gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
-				#	},
-				#	-state => 'disable'
-				#);
+				$self->{m_b2_no_synonym} = $f->command(
+					-label => kh_msg->get('plugin_synonym2'),
+					-font => "TKFN",
+					-command => sub{
+						gui_OtherWin->open('http://khcoder.net/scr_3wnew_monkin.html');
+					},
+					-state => 'disable'
+				);
+				push @menu0, 'm_b2_no_synonym';
 			}
 		}
 
