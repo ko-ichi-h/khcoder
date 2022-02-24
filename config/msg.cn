@@ -146,6 +146,7 @@ gui_widget::select_a_var:
   heading: 标题
   na: 不能使用
   pos: 出现位置
+  pos2: '***not translated*** Documents // 文書ごと'
 gui_widget::tani2:
   unit_c: 编码单元：
   unit_t: 汇总单元：
@@ -390,6 +391,7 @@ gui_window::doc_view:
   highlight: 强调
   in_the_file: 文件内：
   in_the_results: 搜索结果：
+  info: '***not translated*** * Location & Variables:  // ・位置と変数'
   n1: '下一步>>'
   n2: '下一步>>'
   p1: <<上一步
@@ -494,6 +496,9 @@ gui_window::main::menu:
   tf_df: 出现次数×文档数的图表
   to_csv: 从HTML变换为CSV
   tools: 工具（T)
+  topic: '***not translated*** Topic models // トピックモデル'
+  topic_ft: '***not translated*** Fit a Topic Model // トピックの推定'
+  topic_pp: '***not translated*** Find Optimal N of Topics // トピック数の探索'
   use_chasen: 使用ChaSen
   use_termextract: 使用TermExtract
   var_list: 明细表
@@ -627,6 +632,16 @@ gui_window::r_plot::doc_cls:
 gui_window::r_plot::selected_netgraph:
   color: 彩色：
   win_title: 相关词汇网络
+gui_window::r_plot::topic_n_ldatuning:
+  win_title: '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+gui_window::r_plot::topic_n_perplexity:
+  win_title: '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+gui_window::r_plot::tpc_mat:
+  fluc: 气泡
+  heat: 热
+  win_title: '***not translated*** Topic Proportion Map // トピック比率のマップ'
+gui_window::r_plot::tpc_mat_line:
+  win_title: '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
 gui_window::r_plot::word_cls:
   agglomer: 合并水平
   ave: 群平均法
@@ -703,6 +718,9 @@ gui_window::r_plot_opt::doc_cls:
   win_title: 文档的树状图调整
 gui_window::r_plot_opt::selected_netgraph:
   win_title: 相关词汇网络：调整
+gui_window::r_plot_opt::tpc_mat_line:
+  select_topics: '***not translated*** Select Topics: // トピック選択'
+  win_title: '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
 gui_window::r_plot_opt::word_cls:
   err_no_auto: 该Window中不能指定“Auto”。请输入数值。
   win_title: 词汇集群分析：调整
@@ -770,6 +788,30 @@ gui_window::sysconfig:
   web_browser: Web浏览器：
   win_title: KH Coder的设定
   words_ext: 将词汇提取的方法
+gui_window::topic_fitting:
+  n_topics: '***not translated*** N of Topics:  // トピック数：'
+  opt: '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
+  win_title: '***not translated*** Fit a Topic Model // トピックの推定'
+gui_window::topic_perplexity:
+  candidates: '***not translated*** N of Topics:  // トピック数の候補：'
+  error_terms_topics: '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
+  folds: '***not translated*** Fold:  // 分割数（fold）：'
+  method: '***not translated*** Method:  // 方法：'
+  opt: '***not translated*** Method and Number of topics // 探索のオプション'
+  win_title: '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+gui_window::topic_result:
+  doc_topic: '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
+  export: '***not translated*** *Export // ▽出力'
+  extended: '***not translated*** prob. // 確率'
+  plot: '***not translated*** Map // マップ'
+  stats_table: '***not translated*** Table // 表'
+  topic_prop: '***not translated***  Topic proportion: //   トピック比率：'
+  topic_term: '***not translated*** Topic-Word Matrix // 「トピック×語」表'
+  win_title: '***not translated*** Result of Topic Model // トピックの推定結果'
+  words: '***not translated*** Words:  // 語：'
+gui_window::topic_stats:
+  var: '***not translated*** Tabulation: // 集計：'
+  win_title: '***not translated*** Topic Proportion Table // トピック比率の集計表'
 gui_window::txt_html2csv:
   saving: CSV文件的保存
   select: 选择：
@@ -1135,6 +1177,15 @@ kh_sysconfig::mecab:
   path_error: MeCab.exe的路径不正确
 kh_sysconfig::stanford:
   path_error: Stanford POS Tagger的路径不正确
+mysql_exec:
+  cross: |-
+    ***not translated*** Do your have multiple KH Coder on the same PC? 
+    MySQL database may be interfering.
+    
+    It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
+    それぞれのMySQLデータベースが混信している可能性があります。
+    
+    KH Coderの再起動を強くお勧めします。
 mysql_getheader:
   error: 在取出标题上失败了。在使用H1～H5标签制作标题时可能已经失败。请尝试检查分析对象文件。
 mysql_outvar::read:
@@ -1161,6 +1212,9 @@ mysql_words:
   types: 不同的词数（n）
   words: 词汇
 screen_code::assistant:
+  KWIC_button: '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
+  KWIC_button2: '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
+  KWIC_label: '***not translated*** 《M》  // 《文錦》'
   corresp_ang: '***not translated***   variable range: //   変数方向'
   corresp_drop_menu1: '***not translated*** narrow // 狭い'
   corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
@@ -1177,6 +1231,7 @@ screen_code::assistant:
   label_disable: '***not translated*** Disable   // 無効'
   label_enable: '***not translated*** Enable   // 有効'
   label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
+  plugin_synonym: '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
   use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
 screen_code::rde_menu:
   err_edit: |-

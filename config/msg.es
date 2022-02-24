@@ -98,11 +98,11 @@ gui_widget::r_font:
   pcnt: '% '
   plot_size: '  Tamaño de diagrama:'
 gui_widget::r_margin:
-  bottom: 'abajo'
-  left: 'izquierda'
-  margin: 'margen'
-  right: 'derecha'
-  top: 'arriba'
+  bottom: abajo
+  left: izquierda
+  margin: margen
+  right: derecha
+  top: arriba
 gui_widget::r_mds:
   1_3: (de 1 a 3)
   dim: 'Dimensiones:'
@@ -157,6 +157,7 @@ gui_widget::select_a_var:
   heading: Encabezado
   na: 'n / a '
   pos: '***not translated*** Position // 出現位置'
+  pos2: '***not translated*** Documents // 文書ごと'
 gui_widget::tani2:
   unit_c: 'Unidad de codificación:'
   unit_t: '    Unidad de tabulación:'
@@ -408,6 +409,7 @@ gui_window::doc_view:
   highlight: Destacar
   in_the_file: 'En el archivo:'
   in_the_results: '  En los resultados:'
+  info: '***not translated*** * Location & Variables:  // ・位置と変数'
   n1: '>>'
   n2: '>>'
   p1: <<
@@ -433,19 +435,19 @@ gui_window::hukugo:
   whole: Lista completa
   win_title: 'Clusters de palabras: ChaSen'
 gui_window::import_folder:
-  auto: 'detección automática'
-  auto_jp: 'detección automática (japonés)'
-  browse_unified: 'ingrese un nombre para el archivo de texto unificado'
-  change: 'Cambio'
-  char_code: 'codificación de archivos'
+  auto: detección automática
+  auto_jp: detección automática (japonés)
+  browse_unified: ingrese un nombre para el archivo de texto unificado
+  change: Cambio
+  char_code: codificación de archivos
   conv: '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
-  description: 'unifique todos los archivos de documentos en una carpeta y cree un proyecto'
-  folder: 'carpeta'
+  description: unifique todos los archivos de documentos en una carpeta y cree un proyecto
+  folder: carpeta
   level: '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
-  opt_project: 'nuevo proyecto'
-  opt_unify: 'unificar documentos'
-  unicode: 'Unicode（UTF-8）'
-  unified: 'archivo unificado'
+  opt_project: nuevo proyecto
+  opt_unify: unificar documentos
+  unicode: Unicode（UTF-8）
+  unified: archivo unificado
   win_title: 'Importar: múltiples textos en una carpeta'
 gui_window::main::inner:
   cases: Casos
@@ -521,6 +523,9 @@ gui_window::main::menu:
   tf_df: Diagrama FT-FD
   to_csv: Convertir a CSV
   tools: Herramientas
+  topic: '***not translated*** Topic models // トピックモデル'
+  topic_ft: '***not translated*** Fit a Topic Model // トピックの推定'
+  topic_pp: '***not translated*** Find Optimal N of Topics // トピック数の探索'
   use_chasen: Usar ChaSen
   use_termextract: Usar TermExtract
   var_list: Lista
@@ -660,6 +665,16 @@ gui_window::r_plot::doc_cls:
 gui_window::r_plot::selected_netgraph:
   color: ' Color:'
   win_title: Red de Coocurrencias (palabras seleccionadas)
+gui_window::r_plot::topic_n_ldatuning:
+  win_title: '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+gui_window::r_plot::topic_n_perplexity:
+  win_title: '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+gui_window::r_plot::tpc_mat:
+  fluc: burbuja
+  heat: heat
+  win_title: '***not translated*** Topic Proportion Map // トピック比率のマップ'
+gui_window::r_plot::tpc_mat_line:
+  win_title: '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
 gui_window::r_plot::word_cls:
   agglomer: Aglomeración
   ave: promedio
@@ -736,6 +751,9 @@ gui_window::r_plot_opt::doc_cls:
   win_title: 'Configurar: Dendrograma de Documentos'
 gui_window::r_plot_opt::selected_netgraph:
   win_title: 'Configurar: Red de Coocurrencias (palabras seleccionadas)'
+gui_window::r_plot_opt::tpc_mat_line:
+  select_topics: '***not translated*** Select Topics: // トピック選択'
+  win_title: '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
 gui_window::r_plot_opt::word_cls:
   err_no_auto: En esta ventana no puede especificar "Automático". Especifique valores numéricos.
   win_title: 'Configurar: Análisis Jerárquico de Cluster de Palabras'
@@ -808,6 +826,30 @@ gui_window::sysconfig:
   web_browser: 'Navegador:'
   win_title: Configuración General
   words_ext: Extracción de Palabras
+gui_window::topic_fitting:
+  n_topics: '***not translated*** N of Topics:  // トピック数：'
+  opt: '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
+  win_title: '***not translated*** Fit a Topic Model // トピックの推定'
+gui_window::topic_perplexity:
+  candidates: '***not translated*** N of Topics:  // トピック数の候補：'
+  error_terms_topics: '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
+  folds: '***not translated*** Fold:  // 分割数（fold）：'
+  method: '***not translated*** Method:  // 方法：'
+  opt: '***not translated*** Method and Number of topics // 探索のオプション'
+  win_title: '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+gui_window::topic_result:
+  doc_topic: '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
+  export: '***not translated*** *Export // ▽出力'
+  extended: '***not translated*** prob. // 確率'
+  plot: '***not translated*** Map // マップ'
+  stats_table: '***not translated*** Table // 表'
+  topic_prop: '***not translated***  Topic proportion: //   トピック比率：'
+  topic_term: '***not translated*** Topic-Word Matrix // 「トピック×語」表'
+  win_title: '***not translated*** Result of Topic Model // トピックの推定結果'
+  words: '***not translated*** Words:  // 語：'
+gui_window::topic_stats:
+  var: '***not translated*** Tabulation: // 集計：'
+  win_title: '***not translated*** Topic Proportion Table // トピック比率の集計表'
 gui_window::txt_html2csv:
   saving: guardar archivo CSV como
   select: 'Selección:'
@@ -1179,6 +1221,15 @@ kh_sysconfig::mecab:
   path_error: No se encuentra MeCab.exe
 kh_sysconfig::stanford:
   path_error: No se encuentra Stanford POS Tagger
+mysql_exec:
+  cross: |-
+    ***not translated*** Do your have multiple KH Coder on the same PC? 
+    MySQL database may be interfering.
+    
+    It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
+    それぞれのMySQLデータベースが混信している可能性があります。
+    
+    KH Coderの再起動を強くお勧めします。
 mysql_getheader:
   error: |-
     Error al procesar los documentos.
@@ -1224,6 +1275,9 @@ mysql_words:
   types: Tipos de palabras (n)
   words: Palabras
 screen_code::assistant:
+  KWIC_button: '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
+  KWIC_button2: '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
+  KWIC_label: '***not translated*** 《M》  // 《文錦》'
   corresp_ang: '***not translated***   variable range: //   変数方向'
   corresp_drop_menu1: '***not translated*** narrow // 狭い'
   corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
@@ -1240,6 +1294,7 @@ screen_code::assistant:
   label_disable: '***not translated*** Disable   // 無効'
   label_enable: '***not translated*** Enable   // 有効'
   label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
+  plugin_synonym: '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
   use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
 screen_code::rde_menu:
   err_edit: |-

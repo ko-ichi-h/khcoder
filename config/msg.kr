@@ -148,6 +148,7 @@ gui_widget::select_a_var:
   heading: 제목
   na: 이용 불가
   pos: '***not translated*** Position // 出現位置'
+  pos2: '***not translated*** Documents // 文書ごと'
 gui_widget::tani2:
   unit_c: '코딩 단위:'
   unit_t: '  집계 단위:'
@@ -391,6 +392,7 @@ gui_window::doc_view:
   highlight: 강조
   in_the_file: '파일 내:'
   in_the_results: '  검색 결과:'
+  info: '***not translated*** * Location & Variables:  // ・位置と変数'
   n1: '다음 >>'
   n2: '다음 >>'
   p1: << 이전
@@ -504,6 +506,9 @@ gui_window::main::menu:
   tf_df: 출현 횟수 x 문서수의 플롯
   to_csv: HTML에서 CSV로 변환
   tools: 도구(T)
+  topic: '***not translated*** Topic models // トピックモデル'
+  topic_ft: '***not translated*** Fit a Topic Model // トピックの推定'
+  topic_pp: '***not translated*** Find Optimal N of Topics // トピック数の探索'
   use_chasen: ChaSen을 이용
   use_termextract: TermExtract를 이용
   var_list: 리스트
@@ -637,6 +642,16 @@ gui_window::r_plot::doc_cls:
 gui_window::r_plot::selected_netgraph:
   color: '  컬러:'
   win_title: 관련어 공기 네트워크
+gui_window::r_plot::topic_n_ldatuning:
+  win_title: '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+gui_window::r_plot::topic_n_perplexity:
+  win_title: '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+gui_window::r_plot::tpc_mat:
+  fluc: 버블
+  heat: 히트
+  win_title: '***not translated*** Topic Proportion Map // トピック比率のマップ'
+gui_window::r_plot::tpc_mat_line:
+  win_title: '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
 gui_window::r_plot::word_cls:
   agglomer: 병합 수준
   ave: 평균연결법
@@ -713,6 +728,9 @@ gui_window::r_plot_opt::doc_cls:
   win_title: '문서의 덴드로그램: 조정'
 gui_window::r_plot_opt::selected_netgraph:
   win_title: '관련어 공기 네트워크: 조정'
+gui_window::r_plot_opt::tpc_mat_line:
+  select_topics: '***not translated*** Select Topics: // トピック選択'
+  win_title: '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
 gui_window::r_plot_opt::word_cls:
   err_no_auto: 이 Window에서는 "Auto" 지정이 불가능합니다. 수치를 입력해 주십시오
   win_title: '추출어 클러스터 분석: 조정'
@@ -780,6 +798,30 @@ gui_window::sysconfig:
   web_browser: 'Web 브라우저: '
   win_title: KH Coder 설정
   words_ext: 어휘 추출 방법
+gui_window::topic_fitting:
+  n_topics: '***not translated*** N of Topics:  // トピック数：'
+  opt: '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
+  win_title: '***not translated*** Fit a Topic Model // トピックの推定'
+gui_window::topic_perplexity:
+  candidates: '***not translated*** N of Topics:  // トピック数の候補：'
+  error_terms_topics: '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
+  folds: '***not translated*** Fold:  // 分割数（fold）：'
+  method: '***not translated*** Method:  // 方法：'
+  opt: '***not translated*** Method and Number of topics // 探索のオプション'
+  win_title: '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+gui_window::topic_result:
+  doc_topic: '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
+  export: '***not translated*** *Export // ▽出力'
+  extended: '***not translated*** prob. // 確率'
+  plot: '***not translated*** Map // マップ'
+  stats_table: '***not translated*** Table // 表'
+  topic_prop: '***not translated***  Topic proportion: //   トピック比率：'
+  topic_term: '***not translated*** Topic-Word Matrix // 「トピック×語」表'
+  win_title: '***not translated*** Result of Topic Model // トピックの推定結果'
+  words: '***not translated*** Words:  // 語：'
+gui_window::topic_stats:
+  var: '***not translated*** Tabulation: // 集計：'
+  win_title: '***not translated*** Topic Proportion Table // トピック比率の集計表'
 gui_window::txt_html2csv:
   saving: CSV 파일 저장
   select: '  선택: '
@@ -1145,6 +1187,15 @@ kh_sysconfig::mecab:
   path_error: MeCab.exe의 패스가 올바르지 않습니다
 kh_sysconfig::stanford:
   path_error: Stanford POS Tagger의 패스가 올바르지 않습니다
+mysql_exec:
+  cross: |-
+    ***not translated*** Do your have multiple KH Coder on the same PC? 
+    MySQL database may be interfering.
+    
+    It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
+    それぞれのMySQLデータベースが混信している可能性があります。
+    
+    KH Coderの再起動を強くお勧めします。
 mysql_getheader:
   error: 제목 꺼내기에 실패했습니다. H1~H5 태그를 사용한 제목 작성에 실패했을 가능성이 있습니다. 분석 대상 파일의 체크를 실시해 보십시오.
 mysql_outvar::read:
@@ -1171,6 +1222,9 @@ mysql_words:
   types: 다른 어휘수(n)
   words: 추출어
 screen_code::assistant:
+  KWIC_button: '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
+  KWIC_button2: '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
+  KWIC_label: '***not translated*** 《M》  // 《文錦》'
   corresp_ang: '***not translated***   variable range: //   変数方向'
   corresp_drop_menu1: '***not translated*** narrow // 狭い'
   corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
@@ -1187,6 +1241,7 @@ screen_code::assistant:
   label_disable: '***not translated*** Disable   // 無効'
   label_enable: '***not translated*** Enable   // 有効'
   label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
+  plugin_synonym: '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
   use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
 screen_code::rde_menu:
   err_edit: |-
