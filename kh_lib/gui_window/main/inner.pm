@@ -184,6 +184,7 @@ sub make{
 			[
 				[ 'Chinese'  => 'cn'],
 				[ 'English'  => 'en'],
+				[ 'French'   => 'fr'],
 				[ 'Japanese' => 'jp'],
 				[ 'Korean'   => 'kr'],
 				[ 'Spanish'  => 'es'],

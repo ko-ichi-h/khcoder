@@ -188,7 +188,7 @@ sub load{
 						print "\t\"$msg_fb->{$i}{$h}\"\n";
 						++$flag_error;
 					}
-					if ( substr($msg->{$i}{$h}, 0, 20) eq '***not translated***') {
+					if ( $msg->{$i}{$h} && substr($msg->{$i}{$h}, 0, 20) eq '***not translated***') {
 						$msg->{$i}{$h} = undef;
 					}
 				}
