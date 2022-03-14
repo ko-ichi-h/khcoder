@@ -1,1254 +1,1254 @@
 ---
 global:
-  all: 모두
-  browse: 참조
-  cancel: 취소
-  clear: 클리어
-  close: 닫기
-  cont_big_pros: 처리에 시간이 걸리는 경우가 있습니다. 계속하시겠습니까?
-  copy: 복사
-  copy_all: 복사(표 전체)
-  csv_f: CSV 파일
-  default: 기본값
-  max: '***not translated*** Max // 最大'
-  min: '***not translated*** Min // 最小'
-  ok: OK
-  paragraph: 단락
-  plot: 플롯
-  r_dont_close: 실행 중 이 화면은 닫지 마십시오
-  r_net_msg_fail: 조정에 실패했습니다.
-  save: 저장
-  search: 검색
-  select_3words: |-
-    ***not translated*** We need more words to run this analysis.
-    Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
-    抽出語リストを確認し、設定を見直してください。
-  select_a_file: 파일을 선택해 주십시오
-  sentence: 문
-  spss_f: SPSS 파일
-  tab_f: 탭 구분
-  wm_f: 다양한 길이의 CSV(WordMiner)
-  words: 추출어
+    all:                      모두
+    browse:                   참조
+    cancel:                   취소
+    clear:                    클리어
+    close:                    닫기
+    cont_big_pros:            처리에 시간이 걸리는 경우가 있습니다. 계속하시겠습니까?
+    copy:                     복사
+    copy_all:                 복사(표 전체)
+    csv_f:                    CSV 파일
+    default:                  기본값
+    max:                      '***not translated*** Max // 最大'
+    min:                      '***not translated*** Min // 最小'
+    ok:                       OK
+    paragraph:                단락
+    plot:                     플롯
+    r_dont_close:             실행 중 이 화면은 닫지 마십시오
+    r_net_msg_fail:           조정에 실패했습니다.
+    save:                     저장
+    search:                   검색
+    select_3words:            |-
+        ***not translated*** We need more words to run this analysis.
+        Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
+        抽出語リストを確認し、設定を見直してください。
+    select_a_file:            파일을 선택해 주십시오
+    sentence:                 문
+    spss_f:                   SPSS 파일
+    tab_f:                    탭 구분
+    wm_f:                     다양한 길이의 CSV(WordMiner)
+    words:                    추출어
 gui_errormsg::file:
-  could_not_open_the_file: 파일이 열리지 않았습니다. KH Coder를 종료합니다.*
+    could_not_open_the_file:  파일이 열리지 않았습니다. KH Coder를 종료합니다.*
 gui_errormsg::mysql:
-  fatal: MySQL 데이터베이스 처리에 실패했습니다. KH Coder를 종료합니다.
+    fatal:                    MySQL 데이터베이스 처리에 실패했습니다. KH Coder를 종료합니다.
 gui_wait:
-  done: '처리가 완료되었습니다. 경과 시간: '
+    done:                     '처리가 완료되었습니다. 경과 시간: '
 gui_widget::bubble:
-  breaks: '***not translated*** Legend  // 凡例 '
-  bubble: '버블 플롯:'
-  size: 버블의 크기
-  standardize: '버블의 크기를 표준화:'
-  variable: 변수의 값/제목 크기도 변경 가능하게
-  variance: 분산
+    breaks:                   '***not translated*** Legend  // 凡例 '
+    bubble:                   '버블 플롯:'
+    size:                     버블의 크기
+    standardize:              '버블의 크기를 표준화:'
+    variable:                 변수의 값/제목 크기도 변경 가능하게
+    variance:                 분산
 gui_widget::cls4mds:
-  adj: 인접 클러스터
-  cls_num: '클러스터 수:'
-  cluster_color: 클러스터화와 색분류
+    adj:                      인접 클러스터
+    cls_num:                  '클러스터 수:'
+    cluster_color:            클러스터화와 색분류
 gui_widget::codf:
-  browse_title: 코딩 룰 파일을 선택해 주십시오
-  cod_rule_f: '코딩 룰 파일:'
-  no_file: 선택 파일 없음
-  reload: 리로드
+    browse_title:             코딩 룰 파일을 선택해 주십시오
+    cod_rule_f:               '코딩 룰 파일:'
+    no_file:                  선택 파일 없음
+    reload:                   리로드
 gui_widget::mail_config:
-  change_font: 폰트 변경
-  config: 변경
-  display: 화면 표시
-  font: '폰트 설정:'
-  font_size: '기본 플롯 내 폰트 크기:  '
-  from: '  From: '
-  if_cud: '***not translated*** Color universal design // カラーユニバーサルデザインを考慮'
-  note_fs: KH Coder는 계량 텍스트 분석을 실천하기 위한 도구입니다.
-  other: 기타
-  plot_size1: '기본 플롯 사이즈: 긴 쪽'
-  plot_size2: ' 짧은 쪽'
-  select_font: '폰트:'
-  sendmail: 전처리 완료를 메일로 통지하기
-  size: '사이즈:'
-  smtp: '  SMTP Server: '
-  to: '  To: '
-  use_heap: 전처리 효율화를 위해 데이터를 RAM으로 읽기
+    change_font:              폰트 변경
+    config:                   변경
+    display:                  화면 표시
+    font:                     '폰트 설정:'
+    font_size:                '기본 플롯 내 폰트 크기:  '
+    from:                     '  From: '
+    if_cud:                   '***not translated*** Color universal design // カラーユニバーサルデザインを考慮'
+    note_fs:                  KH Coder는 계량 텍스트 분석을 실천하기 위한 도구입니다.
+    other:                    기타
+    plot_size1:               '기본 플롯 사이즈: 긴 쪽'
+    plot_size2:               ' 짧은 쪽'
+    select_font:              '폰트:'
+    sendmail:                 전처리 완료를 메일로 통지하기
+    size:                     '사이즈:'
+    smtp:                     '  SMTP Server: '
+    to:                       '  To: '
+    use_heap:                 전처리 효율화를 위해 데이터를 RAM으로 읽기
 gui_widget::r_cls:
-  average: 평균연결법
-  by_docs: 문서별
-  by_words: 추출어별
-  clara: CLARA
-  color: 클러스터 색분류
-  complete: 최장연결법
-  dist: ' 거리:'
-  method: '방법:'
-  n_cls: '클러스터 수:'
-  none: 없음
-  stand: '표준화:'
-  tfidf: ' 값:'
-  ward: Ward법
+    average:                  평균연결법
+    by_docs:                  문서별
+    by_words:                 추출어별
+    clara:                    CLARA
+    color:                    클러스터 색분류
+    complete:                 최장연결법
+    dist:                     ' 거리:'
+    method:                   '방법:'
+    n_cls:                    '클러스터 수:'
+    none:                     없음
+    stand:                    '표준화:'
+    tfidf:                    ' 값:'
+    ward:                     Ward법
 gui_widget::r_font:
-  bold: 굵은 글씨
-  font_size: '폰트 크기:'
-  pcnt: '% '
-  plot_size: ' 플롯 사이즈:'
+    bold:                     굵은 글씨
+    font_size:                '폰트 크기:'
+    pcnt:                     '% '
+    plot_size:                ' 플롯 사이즈:'
 gui_widget::r_margin:
-  bottom: '***not translated*** bottom // 下'
-  left: '***not translated*** left // 左'
-  margin: '***not translated*** Margin:  // 余白：'
-  right: '***not translated*** right // 右'
-  top: '***not translated*** top // 上'
+    bottom:                   '***not translated*** bottom // 下'
+    left:                     '***not translated*** left // 左'
+    margin:                   '***not translated*** Margin:  // 余白：'
+    right:                    '***not translated*** right // 右'
+    top:                      '***not translated*** top // 上'
 gui_widget::r_mds:
-  1_3: (1에서 3까지의 범위로 지정)
-  dim: '차원:'
-  dist: ' 거리:'
-  fix_asp: '***not translated*** Fix aspect ratio // 縦横比を固定する'
-  method: '방법:'
-  random_start: |-
-    ***not translated*** Use random starts to find better solutions
-    *It may take 10 minutes or more. // ランダムスタートを繰り返してより良い解を探す
-    ※10分またはそれ以上の時間がかかる場合があります
+    1_3:                      (1에서 3까지의 범위로 지정)
+    dim:                      '차원:'
+    dist:                     ' 거리:'
+    fix_asp:                  '***not translated*** Fix aspect ratio // 縦横比を固定する'
+    method:                   '방법:'
+    random_start:             |-
+        ***not translated*** Use random starts to find better solutions
+        *It may take 10 minutes or more. // ランダムスタートを繰り返してより良い解を探す
+        ※10分またはそれ以上の時間がかかる場合があります
 gui_widget::r_net:
-  additional_plots: '***not translated*** Make additional plot (centrality etc.) // 追加的なプロットを作成（中心性など）'
-  cor_var: '***not translated*** Explore changes in co-occurrence patterns // 共起パターンの変化を探る（相関）'
-  cor_var2: '***not translated***   correlation with:  //   対象とする数値変数：'
-  cor_var_colors: '***not translated*** Color scale of correlation // 相関のカラースケール'
-  cor_var_darker: '***not translated*** Darker background color // 背景色を暗めにする'
-  e_jac: 계수
-  e_top_n: 묘화수
-  filter_edges: 묘화하는 공기 관계(edge) 한정
-  fix_lab: 라벨이 겹치지 않도록 위치 조정
-  gray_scale: 그레이 스케일로 표현
-  min_sp_tree: 최소 스패닝 트리를 강조 표시
-  min_sp_tree_only: 최소 스패닝 트리만 묘화
-  or_more: 이상
-  smaller: 모든 어휘를 작은 원으로 묘화
-  standardize_coef: '***not translated*** Standardize coef. // 係数を標準化する'
-  thicker: 강한 관계를 위해 어두운 선으로 그립니다
-  view_coef: '***not translated*** Show coef. // 係数を表示'
+    additional_plots:         '***not translated*** Make additional plot (centrality etc.) // 追加的なプロットを作成（中心性など）'
+    cor_var:                  '***not translated*** Explore changes in co-occurrence patterns // 共起パターンの変化を探る（相関）'
+    cor_var2:                 '***not translated***   correlation with:  //   対象とする数値変数：'
+    cor_var_colors:           '***not translated*** Color scale of correlation // 相関のカラースケール'
+    cor_var_darker:           '***not translated*** Darker background color // 背景色を暗めにする'
+    e_jac:                    계수
+    e_top_n:                  묘화수
+    filter_edges:             묘화하는 공기 관계(edge) 한정
+    fix_lab:                  라벨이 겹치지 않도록 위치 조정
+    gray_scale:               그레이 스케일로 표현
+    min_sp_tree:              최소 스패닝 트리를 강조 표시
+    min_sp_tree_only:         최소 스패닝 트리만 묘화
+    or_more:                  이상
+    smaller:                  모든 어휘를 작은 원으로 묘화
+    standardize_coef:         '***not translated*** Standardize coef. // 係数を標準化する'
+    thicker:                  강한 관계를 위해 어두운 선으로 그립니다
+    view_coef:                '***not translated*** Show coef. // 係数を表示'
 gui_widget::r_som:
-  2_12: (2에서 12까지)
-  cls_num: '클러스터 수:'
-  cluster_color: 노드의 클러스터화
-  hex: 6각형
-  n_nodes1: '1변의 노드 수:'
-  p_nodes: '묘화의 형상:'
-  rlen: '학습 횟수:'
-  sq: 4각형
+    2_12:                     (2에서 12까지)
+    cls_num:                  '클러스터 수:'
+    cluster_color:            노드의 클러스터화
+    hex:                      6각형
+    n_nodes1:                 '1변의 노드 수:'
+    p_nodes:                  '묘화의 형상:'
+    rlen:                     '학습 횟수:'
+    sq:                       4각형
 gui_widget::r_xy:
-  cmp_plot: '플롯할 성분:'
-  none: 표준화
-  origin: 원점을 표시
-  scaling: '스코어:'
-  sym: 대칭
-  symbi: 대칭 biplot
-  x: ' X축'
-  y: ' Y축'
-  zoom: '***not translated*** Enlarge area near the origin: // 原点付近を拡大：'
-  zoom_factor: '***not translated*** Factor // 係数'
+    cmp_plot:                 '플롯할 성분:'
+    none:                     표준화
+    origin:                   원점을 표시
+    scaling:                  '스코어:'
+    sym:                      대칭
+    symbi:                    대칭 biplot
+    x:                        ' X축'
+    y:                        ' Y축'
+    zoom:                     '***not translated*** Enlarge area near the origin: // 原点付近を拡大：'
+    zoom_factor:              '***not translated*** Factor // 係数'
 gui_widget::sampling:
-  sampling: '***not translated*** Sampling: // サンプリング：'
+    sampling:                 '***not translated*** Sampling: // サンプリング：'
 gui_widget::select_a_var:
-  heading: 제목
-  na: 이용 불가
-  pos: '***not translated*** Position // 出現位置'
-  pos2: '***not translated*** Documents // 文書ごと'
+    heading:                  제목
+    na:                       이용 불가
+    pos:                      '***not translated*** Position // 出現位置'
+    pos2:                     '***not translated*** Documents // 文書ごと'
 gui_widget::tani2:
-  unit_c: '코딩 단위:'
-  unit_t: '  집계 단위:'
+    unit_c:                   '코딩 단위:'
+    unit_t:                   '  집계 단위:'
 gui_widget::words:
-  by_df: 최소/최대 문서수에 따른 어휘 취사선택
-  by_pos: 품사에 따른 어휘 취사선택
-  by_tf: 최소/최대 출현수에 따른 어휘 취사선택
-  check: 체크
-  check_desc1: 현재의 설정으로
-  check_desc2: ' 되는 어휘수:'
-  df_unit: '   문서로 간주되는 단위:'
-  max_df: ' 최대 문서수:'
-  max_tf: ' 최대 출현수:'
-  min_df: '  최소 문서수:'
-  min_tf: '  최소 출현수:'
-  no_pos_selected: 품사가 하나도 선택되어 있지 않습니다.
-  unit: '집계 단위:'
+    by_df:                    최소/최대 문서수에 따른 어휘 취사선택
+    by_pos:                   품사에 따른 어휘 취사선택
+    by_tf:                    최소/최대 출현수에 따른 어휘 취사선택
+    check:                    체크
+    check_desc1:              현재의 설정으로
+    check_desc2:              ' 되는 어휘수:'
+    df_unit:                  '   문서로 간주되는 단위:'
+    max_df:                   ' 최대 문서수:'
+    max_tf:                   ' 최대 출현수:'
+    min_df:                   '  최소 문서수:'
+    min_tf:                   '  최소 출현수:'
+    no_pos_selected:          품사가 하나도 선택되어 있지 않습니다.
+    unit:                     '집계 단위:'
 gui_widget::words_bayes:
-  n_a: 이용 불가
-  unit: '분류 단위:'
-  var: '학습할 외부 변수:'
+    n_a:                      이용 불가
+    unit:                     '분류 단위:'
+    var:                      '학습할 외부 변수:'
 gui_window::about:
-  close: 닫기
-  higuchi: 히구치 고이치
-  kawabata: 가와바타 아키라
-  win_title: KH Coder에 대하여
+    close:                    닫기
+    higuchi:                  히구치 고이치
+    kawabata:                 가와바타 아키라
+    win_title:                KH Coder에 대하여
 gui_window::bayes_learn:
-  accuracy: '분류의 정확성:'
-  add2exists: 기존의 학습 결과 파일에 이번 내용을 추가한다
-  cr_validate: 교차 타당화를 실시한다
-  docs: ' 이번에 학습한 문서:'
-  docs_total: '문서의 총수:'
-  done: '나이브 베이즈 모델의 학습이 완료되었습니다. '
-  error_exists: 지정된 이름의 변수가 이미 존재합니다.
-  error_f20: Fold에는 2에서 20까지의 값을 지정해 주십시오.
-  error_no_words: 현재의 설정 내용으로는 사용할 수 있는 어휘가 없습니다.
-  error_var: 외부 변수를 선택해 주십시오.
-  savecls: 분류 결과를 외부 변수에 저장
-  savelog: 분류 로그를 파일에 저장
-  saving_log: 분류 로그를 파일에 저장
-  saving_new: 학습 결과를 신규 파일에 저장
-  select_exist: 이번 학습 내용을 추가할 파일을 선택
-  verb4wid: 학습에 사용
-  vname: '변수 이름:'
-  win_title: 외부 변수에서 학습
+    accuracy:                 '분류의 정확성:'
+    add2exists:               기존의 학습 결과 파일에 이번 내용을 추가한다
+    cr_validate:              교차 타당화를 실시한다
+    docs:                     ' 이번에 학습한 문서:'
+    docs_total:               '문서의 총수:'
+    done:                     '나이브 베이즈 모델의 학습이 완료되었습니다. '
+    error_exists:             지정된 이름의 변수가 이미 존재합니다.
+    error_f20:                Fold에는 2에서 20까지의 값을 지정해 주십시오.
+    error_no_words:           현재의 설정 내용으로는 사용할 수 있는 어휘가 없습니다.
+    error_var:                외부 변수를 선택해 주십시오.
+    savecls:                  분류 결과를 외부 변수에 저장
+    savelog:                  분류 로그를 파일에 저장
+    saving_log:               분류 로그를 파일에 저장
+    saving_new:               학습 결과를 신규 파일에 저장
+    select_exist:             이번 학습 내용을 추가할 파일을 선택
+    verb4wid:                 학습에 사용
+    vname:                    '변수 이름:'
+    win_title:                외부 변수에서 학습
 gui_window::bayes_predict:
-  er_exists: 지정된 이름의 변수가 이미 존재합니다.
-  er_no_such_file: 파일을 올바르게 지정해 주십시오.
-  er_specify_name: 변수 이름을 지정해 주십시오.
-  model_file: '학습 결과 파일:'
-  opening_model: 학습 결과 파일을 선택해 주십시오
-  save_log: 분류 로그를 파일에 저장
-  saving_log: 분류 로그를 파일에 저장
-  unit: 분류 단위
-  var_desc: '  (분류 결과는 외부 변수로 저장됩니다)'
-  var_name: '변수 이름:'
-  win_title: 학습 결과를 이용한 자동 분류
+    er_exists:                지정된 이름의 변수가 이미 존재합니다.
+    er_no_such_file:          파일을 올바르게 지정해 주십시오.
+    er_specify_name:          변수 이름을 지정해 주십시오.
+    model_file:               '학습 결과 파일:'
+    opening_model:            학습 결과 파일을 선택해 주십시오
+    save_log:                 분류 로그를 파일에 저장
+    saving_log:               분류 로그를 파일에 저장
+    unit:                     분류 단위
+    var_desc:                 '  (분류 결과는 외부 변수로 저장됩니다)'
+    var_name:                 '변수 이름:'
+    win_title:                학습 결과를 이용한 자동 분류
 gui_window::bayes_view_knb:
-  n_docs: '학습한 문서:'
-  n_types: '  다른 어휘수:'
-  search: 검색
-  variance: 분산
-  whole: 전체 추출어 리스트
-  win_title: '학습 결과 파일:'
+    n_docs:                   '학습한 문서:'
+    n_types:                  '  다른 어휘수:'
+    search:                   검색
+    variance:                 분산
+    whole:                    전체 추출어 리스트
+    win_title:                '학습 결과 파일:'
 gui_window::bayes_view_log:
-  class: '분류:'
-  doc_id: ' 문서 No.'
-  freq: 빈도
-  higher_left: ※왼쪽부터 스코어가 높은 순서로 표시
-  model_file: '학습 결과:'
-  run: 검색
-  saved_var: ' 저장할 곳 변수:'
-  search_words: '추출어 검색:'
-  unit: ' 분류 단위:'
-  variance: 분산
-  win_title: '분류 로그 파일:'
-  word: 추출어
+    class:                    '분류:'
+    doc_id:                   ' 문서 No.'
+    freq:                     빈도
+    higher_left:              ※왼쪽부터 스코어가 높은 순서로 표시
+    model_file:               '학습 결과:'
+    run:                      검색
+    saved_var:                ' 저장할 곳 변수:'
+    search_words:             '추출어 검색:'
+    unit:                     ' 분류 단위:'
+    variance:                 분산
+    win_title:                '분류 로그 파일:'
+    word:                     추출어
 gui_window::cls_height:
-  all: 전체
-  f50: << 최초 50
-  l50: '최후 50 >>'
-  plotting: ' 플롯 범위: '
-  save_as: 플롯을 저장
+    all:                      전체
+    f50:                      << 최초 50
+    l50:                      '최후 50 >>'
+    plotting:                 ' 플롯 범위: '
+    save_as:                  플롯을 저장
 gui_window::cls_height::cod:
-  win_title: '코드의 클러스터 분석: 병합 수준'
+    win_title:                '코드의 클러스터 분석: 병합 수준'
 gui_window::cls_height::doc:
-  overwr: 이 파일에 덮어쓰기를 실행해도 좋겠습니까?
-  win_title: '문서의 클러스터 분석: 병합 수준'
+    overwr:                   이 파일에 덮어쓰기를 실행해도 좋겠습니까?
+    win_title:                '문서의 클러스터 분석: 병합 수준'
 gui_window::cls_height::word:
-  win_title: '추출어의 클러스터 분석: 병합 수준'
+    win_title:                '추출어의 클러스터 분석: 병합 수준'
 gui_window::cod_cls:
-  win_titile: '코딩 클러스터 분석: 옵션'
+    win_titile:               '코딩 클러스터 분석: 옵션'
 gui_window::cod_corresp:
-  c_dd: 코드 x 문서
-  c_v: 코드 x 외부 변수
-  coding_unit: '코딩 단위:'
-  er_unit: 집계 단위 선택이 올바르지 않습니다.
-  er_zero: 출현수가 0인 코드는 이용할 수 없습니다.
-  flt: '원점에서 떨어진 코드만 라벨 표시:'
-  flw: '차이가 현저한 코드를 분석에 사용:'
-  matrix_type: '분석에 사용하는 데이터 표의 종류:'
-  na: 이용 불가
-  sel3: '  ※코드를 3개 이상 선택해 주십시오.'
-  select_codes: '코드 선택:'
-  top: 상위
-  win_title: '코딩 대응 분석: 옵션'
+    c_dd:                     코드 x 문서
+    c_v:                      코드 x 외부 변수
+    coding_unit:              '코딩 단위:'
+    er_unit:                  집계 단위 선택이 올바르지 않습니다.
+    er_zero:                  출현수가 0인 코드는 이용할 수 없습니다.
+    flt:                      '원점에서 떨어진 코드만 라벨 표시:'
+    flw:                      '차이가 현저한 코드를 분석에 사용:'
+    matrix_type:              '분석에 사용하는 데이터 표의 종류:'
+    na:                       이용 불가
+    sel3:                     '  ※코드를 3개 이상 선택해 주십시오.'
+    select_codes:             '코드 선택:'
+    top:                      상위
+    win_title:                '코딩 대응 분석: 옵션'
 gui_window::cod_count:
-  error_cod_f: 코딩 룰 파일이 선택되어 있지 않습니다.
-  go_c: 집계
-  h_code: 코드명
-  h_freq: 빈도
-  h_pcnt: 퍼센트
-  win_title: 코딩 단순 집계
+    error_cod_f:              코딩 룰 파일이 선택되어 있지 않습니다.
+    go_c:                     집계
+    h_code:                   코드명
+    h_freq:                   빈도
+    h_pcnt:                   퍼센트
+    win_title:                코딩 단순 집계
 gui_window::cod_jaccard:
-  copy_sel: 복사(선택렬)
-  unit_cod: ' 코딩 단위:'
-  win_title: 코딩/유사도 행렬(Jaccard 계수)
+    copy_sel:                 복사(선택렬)
+    unit_cod:                 ' 코딩 단위:'
+    win_title:                코딩/유사도 행렬(Jaccard 계수)
 gui_window::cod_mds:
-  sel5: '  ※코드를 5개 이상 선택해 주십시오.'
-  sel5_e: 코드를 5개 이상 선택해 주십시오.
-  win_title: '코딩 다차원 척도법: 옵션'
+    sel5:                     '  ※코드를 5개 이상 선택해 주십시오.'
+    sel5_e:                   코드를 5개 이상 선택해 주십시오.
+    win_title:                '코딩 다차원 척도법: 옵션'
 gui_window::cod_netg:
-  c_c: 어휘 ― 어휘
-  c_v: 어휘 ― 외부 변수/제목
-  win_title: '코딩 공기 네트워크: 옵션'
+    c_c:                      어휘 ― 어휘
+    c_v:                      어휘 ― 외부 변수/제목
+    win_title:                '코딩 공기 네트워크: 옵션'
 gui_window::cod_out::csv:
-  save_as: '코딩 결과(CSV): 다른 이름으로 저장'
-  win_title: '코딩 결과 출력: CSV 파일'
+    save_as:                  '코딩 결과(CSV): 다른 이름으로 저장'
+    win_title:                '코딩 결과 출력: CSV 파일'
 gui_window::cod_out::spss:
-  save_as: '코딩 결과(SPSS): 다른 이름으로 저장'
-  win_title: '코딩 결과 출력: SPSS 파일'
+    save_as:                  '코딩 결과(SPSS): 다른 이름으로 저장'
+    win_title:                '코딩 결과 출력: SPSS 파일'
 gui_window::cod_out::tab:
-  save_as: '코딩 결과: 다른 이름으로 저장'
-  tab_delimited: 탭 구분
-  win_title: '코딩 결과 출력: 탭 구분'
+    save_as:                  '코딩 결과: 다른 이름으로 저장'
+    tab_delimited:            탭 구분
+    win_title:                '코딩 결과 출력: 탭 구분'
 gui_window::cod_out::var:
-  save_as: '코딩 결과: 다양한 길이의 CSV: 다른 이름으로 저장'
-  win_title: '코딩 결과 출력: 다양한 길이의 CSV'
+    save_as:                  '코딩 결과: 다양한 길이의 CSV: 다른 이름으로 저장'
+    win_title:                '코딩 결과 출력: 다양한 길이의 CSV'
 gui_window::cod_outtab:
-  cells: '  셀 내용:'
-  er_ill: 지정된 조건으로 집계를 할 수 없습니다.
-  f: 도수만
-  f_p: 도수와 퍼센트
-  line: ' 꺾은선:'
-  line_all: 모두
-  line_select: 선택
-  map: '지도:'
-  p: 퍼센트만
-  run: 집계
-  unit_cod: '코딩 단위:'
-  var: '  크로스 집계:'
-  win_title: 코딩/크로스 집계
+    cells:                    '  셀 내용:'
+    er_ill:                   지정된 조건으로 집계를 할 수 없습니다.
+    f:                        도수만
+    f_p:                      도수와 퍼센트
+    line:                     ' 꺾은선:'
+    line_all:                 모두
+    line_select:              선택
+    map:                      '지도:'
+    p:                        퍼센트만
+    run:                      집계
+    unit_cod:                 '코딩 단위:'
+    var:                      '  크로스 집계:'
+    win_title:                코딩/크로스 집계
 gui_window::cod_som:
-  win_title: '코딩 자기 조직화 지도: 옵션'
+    win_title:                '코딩 자기 조직화 지도: 옵션'
 gui_window::contxt_out:
-  options: 집계 단위와 가중치
-  use: 사용
-  words: 추출어
-  words4cntxt: 문맥 벡터 계산에 이용하는 추출어
+    options:                  집계 단위와 가중치
+    use:                      사용
+    words:                    추출어
+    words4cntxt:              문맥 벡터 계산에 이용하는 추출어
 gui_window::contxt_out::csv:
-  saving: '"추출어 x 문맥 벡터" 표: 다른 이름으로 저장'
-  win_title: '"추출어 x 문맥 벡터" 표 출력: CSV'
+    saving:                   '"추출어 x 문맥 벡터" 표: 다른 이름으로 저장'
+    win_title:                '"추출어 x 문맥 벡터" 표 출력: CSV'
 gui_window::contxt_out::spss:
-  win_title: '"추출어 x 문맥 벡터" 표 출력: SPSS'
+    win_title:                '"추출어 x 문맥 벡터" 표 출력: SPSS'
 gui_window::contxt_out::tab:
-  win_title: '"추출어 x 문맥 벡터" 표 출력: 탭 구분'
+    win_title:                '"추출어 x 문맥 벡터" 표 출력: 탭 구분'
 gui_window::datacheck:
-  auto_correct: '  분석 대상 파일의 자동 수정:'
-  close: 닫기
-  correction_done: ● 자동 수정을 실시했습니다.
-  details: '발견된 문제점의 상세 내용:'
-  exec: 실행
-  file_backup: '○ 수정 이전의 분석 대상 파일을 다음 장소에 백업했습니다:'
-  file_diff: '○ 수정 부분 리스트(diff)를 다음 파일에 저장했습니다:'
-  headmark: '■ ■ '
-  looks_complete: ○ 분석 대상 파일 내에 발견된 기존의 문제점은 모두 수정되었습니다.
-  not_complete: ○ 자동적으로 수정할 수 없는 부분이 남아 있습니다. 분석 대상 파일을 직접 수정해 주십시오.
-  print: 화면에 표시
-  save_as: 파일에 저장
-  save_as_win: 분석 대상 파일 내에 발견된 문제점의 상세 내용을 저장
-  saved: '● 발견된 문제점의 상세 내용을 다음 파일에 저장했습니다:'
-  win_title: 분석 대상 파일의 체크와 수정
+    auto_correct:             '  분석 대상 파일의 자동 수정:'
+    close:                    닫기
+    correction_done:          ● 자동 수정을 실시했습니다.
+    details:                  '발견된 문제점의 상세 내용:'
+    exec:                     실행
+    file_backup:              '○ 수정 이전의 분석 대상 파일을 다음 장소에 백업했습니다:'
+    file_diff:                '○ 수정 부분 리스트(diff)를 다음 파일에 저장했습니다:'
+    headmark:                 '■ ■ '
+    looks_complete:           ○ 분석 대상 파일 내에 발견된 기존의 문제점은 모두 수정되었습니다.
+    not_complete:             ○ 자동적으로 수정할 수 없는 부분이 남아 있습니다. 분석 대상 파일을 직접 수정해 주십시오.
+    print:                    화면에 표시
+    save_as:                  파일에 저장
+    save_as_win:              분석 대상 파일 내에 발견된 문제점의 상세 내용을 저장
+    saved:                    '● 발견된 문제점의 상세 내용을 다음 파일에 저장했습니다:'
+    win_title:                분석 대상 파일의 체크와 수정
 gui_window::dictionary:
-  file_error: '지정된 파일이 존재하지 않습니다:'
-  force_ignore: '사용하지 않는 어휘 지정:'
-  force_pick: '강제로 추출할 어휘 지정:'
-  note1: (*) "강제로 추출할 어휘"의 지정은 다시 전처리를 실시할 때까지 반영되지 않습니다.
-  one_line1: (복수의 경우는 행을 나누어 구분)
-  one_line2: (복수의 경우는 행을 나누어 구분)
-  pos: '품사에 따른 어휘 선택:'
-  use_file: 파일에서 읽어들이기
-  win_title: 분석에 사용하는 어휘 취사선택
+    file_error:               '지정된 파일이 존재하지 않습니다:'
+    force_ignore:             '사용하지 않는 어휘 지정:'
+    force_pick:               '강제로 추출할 어휘 지정:'
+    note1:                    (*) "강제로 추출할 어휘"의 지정은 다시 전처리를 실시할 때까지 반영되지 않습니다.
+    one_line1:                (복수의 경우는 행을 나누어 구분)
+    one_line2:                (복수의 경우는 행을 나누어 구분)
+    pos:                      '품사에 따른 어휘 선택:'
+    use_file:                 파일에서 읽어들이기
+    win_title:                분석에 사용하는 어휘 취사선택
 gui_window::doc_cls:
-  fail: 계산에 실패했습니다
-  select_3words: 적어도 3개 이상의 추출어를 선택해 주십시오.
-  verb: 사용
-  win_title: '문서의 클러스터 분석: 옵션'
+    fail:                     계산에 실패했습니다
+    select_3words:            적어도 3개 이상의 추출어를 선택해 주십시오.
+    verb:                     사용
+    win_title:                '문서의 클러스터 분석: 옵션'
 gui_window::doc_cls_res:
-  agglm: 클러스터 병합 과정
-  bal_agg_docs: '[더블 클릭] 병합한 클러스터에 포함되는 문서를 검색'
-  bal_docs: '클러스터에 포함되는 문서를 검색 [클러스터를 더블 클릭]'
-  bal_words: '클러스터의 특징을 나타내는 어휘를 검색 [Shift + 클러스터를 더블 클릭]'
-  both: 1과 2
-  cluster: 클러스터
-  config: 조정
-  docs: 문서 검색
-  docs_in_clusters: 각 클러스터에 포함되는 문서
-  h_cls1: 병합 1
-  h_cls2: 병합 2
-  h_cls_id: 클러스터 번호
-  h_coeff: 병합 수준
-  h_doc_num: 문서수
-  h_stage: 단계
-  m_ave: 평균연결법
-  m_clk: 최장연결법
-  m_wrd: Ward법
-  na: 분류 불가
-  only1: 1만
-  only2: 2만
-  save: 분류 결과 저장
-  win_title: 문서의 클러스터 분석
-  words: 특징어
+    agglm:                    클러스터 병합 과정
+    bal_agg_docs:             '[더블 클릭] 병합한 클러스터에 포함되는 문서를 검색'
+    bal_docs:                 '클러스터에 포함되는 문서를 검색 [클러스터를 더블 클릭]'
+    bal_words:                '클러스터의 특징을 나타내는 어휘를 검색 [Shift + 클러스터를 더블 클릭]'
+    both:                     1과 2
+    cluster:                  클러스터
+    config:                   조정
+    docs:                     문서 검색
+    docs_in_clusters:         각 클러스터에 포함되는 문서
+    h_cls1:                   병합 1
+    h_cls2:                   병합 2
+    h_cls_id:                 클러스터 번호
+    h_coeff:                  병합 수준
+    h_doc_num:                문서수
+    h_stage:                  단계
+    m_ave:                    평균연결법
+    m_clk:                    최장연결법
+    m_wrd:                    Ward법
+    na:                       분류 불가
+    only1:                    1만
+    only2:                    2만
+    save:                     분류 결과 저장
+    win_title:                문서의 클러스터 분석
+    words:                    특징어
 gui_window::doc_cls_res_opt:
-  win_title: '문서 클러스터 분석: 조정'
+    win_title:                '문서 클러스터 분석: 조정'
 gui_window::doc_cls_res_sav:
-  desc: 분류 결과를 외부 변수로 저장합니다.
-  name: '변수 이름:'
-  specify_var: 변수 이름을 지정해 주십시오
-  win_title: '문서 클러스터 분석: 저장'
+    desc:                     분류 결과를 외부 변수로 저장합니다.
+    name:                     '변수 이름:'
+    specify_var:              변수 이름을 지정해 주십시오
+    win_title:                '문서 클러스터 분석: 저장'
 gui_window::doc_search:
-  error_no_code: 코드가 선택되어 있지 않습니다
-  no_sort: 출현순
-  run: 검색
-  tf: tf순
-  tf_D_idf: tf/idf순
-  tf_M_idf: tf*idf순
-  unit: '검색 단위:'
-  win_title: 문서 검색
+    error_no_code:            코드가 선택되어 있지 않습니다
+    no_sort:                  출현순
+    run:                      검색
+    tf:                       tf순
+    tf_D_idf:                 tf/idf순
+    tf_M_idf:                 tf*idf순
+    unit:                     '검색 단위:'
+    win_title:                문서 검색
 gui_window::doc_view:
-  current_doc: 'ㆍ현재 표시 중인 문서:'
-  highlight: 강조
-  in_the_file: '파일 내:'
-  in_the_results: '  검색 결과:'
-  info: '***not translated*** * Location & Variables:  // ・位置と変数'
-  n1: '다음 >>'
-  n2: '다음 >>'
-  p1: << 이전
-  p2: << 이전
-  win_title: 문서 표시
+    current_doc:              'ㆍ현재 표시 중인 문서:'
+    highlight:                강조
+    in_the_file:              '파일 내:'
+    in_the_results:           '  검색 결과:'
+    info:                     '***not translated*** * Location & Variables:  // ・位置と変数'
+    n1:                       '다음 >>'
+    n2:                       '다음 >>'
+    p1:                       << 이전
+    p2:                       << 이전
+    win_title:                문서 표시
 gui_window::force_color:
-  add: 추가
-  delete: 선택한 말을 삭제
-  desc: ■ 아래의 말이 항상 강조됩니다.
-  exists: 그 말은 이미 등록되어 있습니다.
-  highlight: '말:'
-  highlight_h: 말
-  no_word: 말이 입력되어 있지 않습니다.
-  string: 문자열
-  type: '종류:'
-  type_h: 종류
-  win_title: 강조할 말
-  word: 추출어
+    add:                      추가
+    delete:                   선택한 말을 삭제
+    desc:                     ■ 아래의 말이 항상 강조됩니다.
+    exists:                   그 말은 이미 등록되어 있습니다.
+    highlight:                '말:'
+    highlight_h:              말
+    no_word:                  말이 입력되어 있지 않습니다.
+    string:                   문자열
+    type:                     '종류:'
+    type_h:                   종류
+    win_title:                강조할 말
+    word:                     추출어
 gui_window::hukugo:
-  h_freq: 출현수
-  h_huku: 복합어
-  run: 검색
-  whole: 전체 복합어 리스트
-  win_title: 복합어 검출(ChaSen)
+    h_freq:                   출현수
+    h_huku:                   복합어
+    run:                      검색
+    whole:                    전체 복합어 리스트
+    win_title:                복합어 검출(ChaSen)
 gui_window::import_folder:
-  auto: '***not translated*** Auto Detect // 自動'
-  auto_jp: '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
-  browse_unified: '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
-  change: '***not translated*** Change // 変更'
-  char_code: '***not translated*** Encoding of files:  // 文字コード：'
-  conv: '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
-  description: '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
-  folder: '***not translated*** Folder:  // フォルダ：'
-  level: '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
-  opt_project: '***not translated*** New project // 新規プロジェクト'
-  opt_unify: '***not translated*** Unify documents // テキストファイル結合'
-  unicode: '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
-  unified: '***not translated*** Unified file:  // 結合ファイル：'
-  win_title: '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
+    auto:                     '***not translated*** Auto Detect // 自動'
+    auto_jp:                  '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
+    browse_unified:           '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
+    change:                   '***not translated*** Change // 変更'
+    char_code:                '***not translated*** Encoding of files:  // 文字コード：'
+    conv:                     '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
+    description:              '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
+    folder:                   '***not translated*** Folder:  // フォルダ：'
+    level:                    '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
+    opt_project:              '***not translated*** New project // 新規プロジェクト'
+    opt_unify:                '***not translated*** Unify documents // テキストファイル結合'
+    unicode:                  '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
+    unified:                  '***not translated*** Unified file:  // 結合ファイル：'
+    win_title:                '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
 gui_window::main::inner:
-  cases: 사례수
-  docs: '문서의 단순 집계:'
-  memo: '설명(메모):'
-  target: '현재의 프로젝트:'
-  tokens: '총 추출어수(사용):'
-  types: '다른 어휘수(사용):'
-  units: 집계 단위
+    cases:                    사례수
+    docs:                     '문서의 단순 집계:'
+    memo:                     '설명(메모):'
+    target:                   '현재의 프로젝트:'
+    tokens:                   '총 추출어수(사용):'
+    types:                    '다른 어휘수(사용):'
+    units:                    집계 단위
 gui_window::main::menu:
-  about: KH Coder에 대하여
-  bayes_classi: 학습 결과를 이용한 자동 분류
-  bayes_learn: 외부 변수에서 학습
-  check: 분석 대상 파일의 체크
-  check_classi: 분류 로그 파일의 내용을 확인
-  check_learning: 학습 결과 파일의 내용을 확인
-  check_morpho: 어휘 추출 결과를 확인
-  close: 닫기
-  cluster: 클러스터 분석
-  coding: 코딩
-  config: 설정
-  corresp: 대응 분석
-  cross_vr: 크로스 집계
-  desc_stats: 기술 통계
-  doc_search: 문서 검색
-  doc_term_mtrx: '"문서 x 추출어" 표 출력'
-  docs: 문서
-  docs_bayes: 베이즈 학습에 의한 분류
-  exec_sql: SQL문 실행
-  exit: 종료
-  export: 익스포트
-  export_kh: '***not translated*** For KH Coder (*.khc) // KH Coder形式（インポート可）'
-  export_win_title: 현재의 프로젝트를 KHC 형식의 파일로 출력.
-  freq: 단순 집계
-  freq_df: 출현 문서수(DF)의 분포
-  freq_tf: 출현 횟수(TF)의 분포
-  h_cluster: 계층적 클러스터 분석
-  help: 도움말(H)
-  import: 입력
-  import_folder: '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
-  import_khc: '***not translated*** KH Coder (*.khc) // KH Coder形式'
-  import_save_path: 분석 대상 파일의 저장 장소를 지정해 주십시오
-  import_win_title: 'KHC 형식의 파일에서 프로젝트를 가져오기. '
-  jac_mtrx: 유사도 행렬
-  kwic: KWIC 콘코던스
-  man: 매뉴얼(PDF)
-  mds: 다차원 척도 구성법
-  netg: 공기 네트워크
-  new: 신규
-  open: 열기
-  open_knb: 열람할 학습 결과 파일을 선택
-  open_nbl: 열람할 분류 로그 파일을 선택
-  output_cod: 코딩 결과 출력
-  partial: 부분 텍스트 꺼내기
-  plugin: 플러그인
-  prep: 전처리(R)
-  prepro_reload: |-
-    ***not translated*** It may take a while.
-    If you don't want to execute it now, please click 'Cancel'.
-    
-    The source file is updated!
-    Shall we read the content of the source file again? // この処理には時間がかかる場合があります。
-    今すぐ実行したくないときは「キャンセル」をクリックしてください。
-    
-    読み込み元ファイルが更新されています！
-    元ファイルの内容を再度読み込みますか？
-  project: 프로젝트(P)
-  read: 읽기
-  run_prep: 전처리 실행
-  som: 자기 조직화 지도
-  term_vec_mtrx: '"추출어 x 문맥 벡터" 표 출력'
-  text_format: 텍스트 파일의 변형
-  tf_df: 출현 횟수 x 문서수의 플롯
-  to_csv: HTML에서 CSV로 변환
-  tools: 도구(T)
-  topic: '***not translated*** Topic models // トピックモデル'
-  topic_ft: '***not translated*** Fit a Topic Model // トピックの推定'
-  topic_pp: '***not translated*** Find Optimal N of Topics // トピック数の探索'
-  use_chasen: ChaSen을 이용
-  use_termextract: TermExtract를 이용
-  var_list: 리스트
-  vars_heads: 외부 변수와 제목
-  web: 최신 정보(Web)
-  word_ass: 관련어 검색
-  word_freq: 추출어 리스트 (Excel)
-  word_search: 추출어 리스트
-  words: 추출어
-  words_cluster: 복합어 검출
-  words_selection: 어휘 취사선택
+    about:                    KH Coder에 대하여
+    bayes_classi:             학습 결과를 이용한 자동 분류
+    bayes_learn:              외부 변수에서 학습
+    check:                    분석 대상 파일의 체크
+    check_classi:             분류 로그 파일의 내용을 확인
+    check_learning:           학습 결과 파일의 내용을 확인
+    check_morpho:             어휘 추출 결과를 확인
+    close:                    닫기
+    cluster:                  클러스터 분석
+    coding:                   코딩
+    config:                   설정
+    corresp:                  대응 분석
+    cross_vr:                 크로스 집계
+    desc_stats:               기술 통계
+    doc_search:               문서 검색
+    doc_term_mtrx:            '"문서 x 추출어" 표 출력'
+    docs:                     문서
+    docs_bayes:               베이즈 학습에 의한 분류
+    exec_sql:                 SQL문 실행
+    exit:                     종료
+    export:                   익스포트
+    export_kh:                '***not translated*** For KH Coder (*.khc) // KH Coder形式（インポート可）'
+    export_win_title:         현재의 프로젝트를 KHC 형식의 파일로 출력.
+    freq:                     단순 집계
+    freq_df:                  출현 문서수(DF)의 분포
+    freq_tf:                  출현 횟수(TF)의 분포
+    h_cluster:                계층적 클러스터 분석
+    help:                     도움말(H)
+    import:                   입력
+    import_folder:            '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
+    import_khc:               '***not translated*** KH Coder (*.khc) // KH Coder形式'
+    import_save_path:         분석 대상 파일의 저장 장소를 지정해 주십시오
+    import_win_title:         'KHC 형식의 파일에서 프로젝트를 가져오기. '
+    jac_mtrx:                 유사도 행렬
+    kwic:                     KWIC 콘코던스
+    man:                      매뉴얼(PDF)
+    mds:                      다차원 척도 구성법
+    netg:                     공기 네트워크
+    new:                      신규
+    open:                     열기
+    open_knb:                 열람할 학습 결과 파일을 선택
+    open_nbl:                 열람할 분류 로그 파일을 선택
+    output_cod:               코딩 결과 출력
+    partial:                  부분 텍스트 꺼내기
+    plugin:                   플러그인
+    prep:                     전처리(R)
+    prepro_reload:            |-
+        ***not translated*** It may take a while.
+        If you don't want to execute it now, please click 'Cancel'.
+        
+        The source file is updated!
+        Shall we read the content of the source file again? // この処理には時間がかかる場合があります。
+        今すぐ実行したくないときは「キャンセル」をクリックしてください。
+        
+        読み込み元ファイルが更新されています！
+        元ファイルの内容を再度読み込みますか？
+    project:                  프로젝트(P)
+    read:                     읽기
+    run_prep:                 전처리 실행
+    som:                      자기 조직화 지도
+    term_vec_mtrx:            '"추출어 x 문맥 벡터" 표 출력'
+    text_format:              텍스트 파일의 변형
+    tf_df:                    출현 횟수 x 문서수의 플롯
+    to_csv:                   HTML에서 CSV로 변환
+    tools:                    도구(T)
+    topic:                    '***not translated*** Topic models // トピックモデル'
+    topic_ft:                 '***not translated*** Fit a Topic Model // トピックの推定'
+    topic_pp:                 '***not translated*** Find Optimal N of Topics // トピック数の探索'
+    use_chasen:               ChaSen을 이용
+    use_termextract:          TermExtract를 이용
+    var_list:                 리스트
+    vars_heads:               외부 변수와 제목
+    web:                      최신 정보(Web)
+    word_ass:                 관련어 검색
+    word_freq:                추출어 리스트 (Excel)
+    word_search:              추출어 리스트
+    words:                    추출어
+    words_cluster:            복합어 검출
+    words_selection:          어휘 취사선택
 gui_window::morpho_check:
-  details: 상세 표시
-  note: 어휘 추출(형태소 분석) 결과를 확인하고 싶은 문구/문을 입력
-  sentence: 문(분할 완료)
-  win_title: 어휘 추출 결과
+    details:                  상세 표시
+    note:                     어휘 추출(형태소 분석) 결과를 확인하고 싶은 문구/문을 입력
+    sentence:                 문(분할 완료)
+    win_title:                어휘 추출 결과
 gui_window::morpho_crossout:
-  output: 출력
+    output:                   출력
 gui_window::morpho_crossout::csv:
-  er_no_pos: 품사가 하나도 선택되어 있지 않습니다.
-  saving: '"문서 x 추출어" 표: 다른 이름으로 저장'
-  win_title: '"문서 x 추출어" 표 출력: CSV'
+    er_no_pos:                품사가 하나도 선택되어 있지 않습니다.
+    saving:                   '"문서 x 추출어" 표: 다른 이름으로 저장'
+    win_title:                '"문서 x 추출어" 표 출력: CSV'
 gui_window::morpho_crossout::spss:
-  win_title: '"문서 x 추출어" 표 출력: SPSS'
+    win_title:                '"문서 x 추출어" 표 출력: SPSS'
 gui_window::morpho_crossout::tab:
-  tabdel: 탭 구분
-  win_title: '"문서 x 추출어" 표 출력: 탭 구분'
+    tabdel:                   탭 구분
+    win_title:                '"문서 x 추출어" 표 출력: 탭 구분'
 gui_window::morpho_crossout::var:
-  win_title: '"문서 x 추출어" 표 출력: 다양한 길이의 CSV'
+    win_title:                '"문서 x 추출어" 표 출력: 다양한 길이의 CSV'
 gui_window::morpho_detail:
-  base: 기본형
-  hyoso: 표층어
-  katuyo: ChaSen-활용
-  next: 다음 검색 결과
-  pos_cha: ChaSen-품사
-  pos_kh: 품사
-  previous: 이전 검색 결과
-  win_title: '어휘 추출 결과: 상세 내용'
+    base:                     기본형
+    hyoso:                    표층어
+    katuyo:                   ChaSen-활용
+    next:                     다음 검색 결과
+    pos_cha:                  ChaSen-품사
+    pos_kh:                   품사
+    previous:                 이전 검색 결과
+    win_title:                '어휘 추출 결과: 상세 내용'
 gui_window::outvar_list:
-  catalogue_csv: 목록(CSV 형식)
-  catalogue_xls: 목록(Excel 형식)
-  csv: CSV 파일
-  del: 삭제
-  del_ok: 선택하신 변수를 삭제하시겠습니까?
-  docs: 문서 검색
-  error_hd1: 현재 이 명령으로 제목을 삭제할 수 없습니다. \n분석 대상 파일을 직접 수정해 주십시오.
-  error_hd2: 현재 이 명령으로 제목을 출력할 수 없습니다. \n"텍스트 파일의 변형" 메뉴를 이용해 주십시오.
-  error_sel_a_var: 변수가 선택되어 있지 않습니다
-  error_sel_a_vv: 변수 또는 제목을 선택해 주십시오.
-  error_units: 집계 단위가 다른 변수들을 한꺼번에 저장할 수 없습니다.
-  export: 출력
-  h_freq: 도수
-  h_label: 라벨
-  h_name: 변수 이름
-  h_unit: 문서 단위
-  h_value: 값
-  headings: 제목
-  help_docs: '선택한 값을 가진 문서를 검색합니다[값을 더블 클릭]'
-  help_words: '선택한 값을 가진 문서에 특징적인 어휘를 탐색합니다[Shift + 값을 더블 클릭]'
-  mspgoth: MS P고딕
-  read: ▽ 읽기
-  save: 라벨을 저장
-  saving: '외부 변수: 다른 이름으로 저장'
-  selected: 선택한 값
-  tabdel: 탭 구분 파일
-  unit: '단위:'
-  values: '■ 값과 라벨:'
-  vars: ■ 변수 리스트
-  win_title: 외부 변수와 제목
-  words: ▽ 특징어
+    catalogue_csv:            목록(CSV 형식)
+    catalogue_xls:            목록(Excel 형식)
+    csv:                      CSV 파일
+    del:                      삭제
+    del_ok:                   선택하신 변수를 삭제하시겠습니까?
+    docs:                     문서 검색
+    error_hd1:                현재 이 명령으로 제목을 삭제할 수 없습니다. \n분석 대상 파일을 직접 수정해 주십시오.
+    error_hd2:                현재 이 명령으로 제목을 출력할 수 없습니다. \n"텍스트 파일의 변형" 메뉴를 이용해 주십시오.
+    error_sel_a_var:          변수가 선택되어 있지 않습니다
+    error_sel_a_vv:           변수 또는 제목을 선택해 주십시오.
+    error_units:              집계 단위가 다른 변수들을 한꺼번에 저장할 수 없습니다.
+    export:                   출력
+    h_freq:                   도수
+    h_label:                  라벨
+    h_name:                   변수 이름
+    h_unit:                   문서 단위
+    h_value:                  값
+    headings:                 제목
+    help_docs:                '선택한 값을 가진 문서를 검색합니다[값을 더블 클릭]'
+    help_words:               '선택한 값을 가진 문서에 특징적인 어휘를 탐색합니다[Shift + 값을 더블 클릭]'
+    mspgoth:                  MS P고딕
+    read:                     ▽ 읽기
+    save:                     라벨을 저장
+    saving:                   '외부 변수: 다른 이름으로 저장'
+    selected:                 선택한 값
+    tabdel:                   탭 구분 파일
+    unit:                     '단위:'
+    values:                   '■ 값과 라벨:'
+    vars:                     ■ 변수 리스트
+    win_title:                외부 변수와 제목
+    words:                    ▽ 특징어
 gui_window::outvar_read:
-  no_such_file: 파일을 올바르게 지정해 주십시오.
-  unit: '읽기 단위:'
+    no_such_file:             파일을 올바르게 지정해 주십시오.
+    unit:                     '읽기 단위:'
 gui_window::outvar_read::csv:
-  csv: CSV 파일
-  open: 외부 변수 파일을 선택해 주십시오
-  win_title: '외부 변수 읽기: CSV 파일'
+    csv:                      CSV 파일
+    open:                     외부 변수 파일을 선택해 주십시오
+    win_title:                '외부 변수 읽기: CSV 파일'
 gui_window::outvar_read::tab:
-  open: 외부 변수 파일을 선택해 주십시오
-  tabdel: 탭 구분 파일
-  tabdelf: 탭 구분 파일
-  win_title: '외부 변수 읽기: 탭 구분'
+    open:                     외부 변수 파일을 선택해 주십시오
+    tabdel:                   탭 구분 파일
+    tabdelf:                  탭 구분 파일
+    win_title:                '외부 변수 읽기: 탭 구분'
 gui_window::project_edit:
-  auto_detect: 자동 판별
-  memo: '설명(메모):'
-  target_char_code: '분석 대상 파일의 문자 코드:'
-  target_file: '분석 대상 파일:'
-  win_title: 설명(메모) 편집
+    auto_detect:              자동 판별
+    memo:                     '설명(메모):'
+    target_char_code:         '분석 대상 파일의 문자 코드:'
+    target_file:              '분석 대상 파일:'
+    win_title:                설명(메모) 편집
 gui_window::project_new:
-  auto_detect: 자동 판별
-  browse_target: 분석 대상 파일을 선택해 주십시오
-  memo: '설명(메모):'
-  target_char_code: '분석 대상 파일의 문자 코드:'
-  target_column: '분석 대상 열:'
-  target_file: '분석 대상 파일:'
-  type_error: '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
-  win_title: 신규 프로젝트
+    auto_detect:              자동 판별
+    browse_target:            분석 대상 파일을 선택해 주십시오
+    memo:                     '설명(메모):'
+    target_char_code:         '분석 대상 파일의 문자 코드:'
+    target_column:            '분석 대상 열:'
+    target_file:              '분석 대상 파일:'
+    type_error:               '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
+    win_title:                신규 프로젝트
 gui_window::project_open:
-  del: 삭제
-  dir: 디렉토리
-  edit: 편집
-  lang: 언어
-  memo: 설명(메모)
-  new: 신규
-  open: 열기
-  opened: 그 프로젝트는 현재 열려 있습니다. 지정된 조작을 수행할 수 없습니다.
-  select_one: 프로젝트를 선택해 주십시오.
-  target_file: 대상 파일
-  win_title: 프로젝트 매니저
+    del:                      삭제
+    dir:                      디렉토리
+    edit:                     편집
+    lang:                     언어
+    memo:                     설명(메모)
+    new:                      신규
+    open:                     열기
+    opened:                   그 프로젝트는 현재 열려 있습니다. 지정된 조작을 수행할 수 없습니다.
+    select_one:               프로젝트를 선택해 주십시오.
+    target_file:              대상 파일
+    win_title:                프로젝트 매니저
 gui_window::r_plot:
-  options: 조정
-  saving: 플롯을 저장
+    options:                  조정
+    saving:                   플롯을 저장
 gui_window::r_plot::cod_cls:
-  win_titile: 코딩 클러스터 분석
+    win_titile:               코딩 클러스터 분석
 gui_window::r_plot::cod_corresp:
-  win_title: 코딩 대응 분석
+    win_title:                코딩 대응 분석
 gui_window::r_plot::cod_mat:
-  fluc: 버블
-  heat: 히트
-  win_title: 크로스 집계 지도
+    fluc:                     버블
+    heat:                     히트
+    win_title:                크로스 집계 지도
 gui_window::r_plot::cod_mat_line:
-  win_title: 크로스 집계 꺾은선 그래프
+    win_title:                크로스 집계 꺾은선 그래프
 gui_window::r_plot::cod_mds:
-  win_title: 코딩 다차원 척도법
+    win_title:                코딩 다차원 척도법
 gui_window::r_plot::cod_netg:
-  win_title: 코딩 공기 네트워크
+    win_title:                코딩 공기 네트워크
 gui_window::r_plot::cod_som:
-  win_title: 코딩 자기 조직화 지도
+    win_title:                코딩 자기 조직화 지도
 gui_window::r_plot::doc_cls:
-  win_title: 문서의 덴드로그램
+    win_title:                문서의 덴드로그램
 gui_window::r_plot::selected_netgraph:
-  color: '  컬러:'
-  win_title: 관련어 공기 네트워크
+    color:                    '  컬러:'
+    win_title:                관련어 공기 네트워크
 gui_window::r_plot::topic_n_ldatuning:
-  win_title: '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+    win_title:                '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
 gui_window::r_plot::topic_n_perplexity:
-  win_title: '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+    win_title:                '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
 gui_window::r_plot::tpc_mat:
-  fluc: 버블
-  heat: 히트
-  win_title: '***not translated*** Topic Proportion Map // トピック比率のマップ'
+    fluc:                     버블
+    heat:                     히트
+    win_title:                '***not translated*** Topic Proportion Map // トピック比率のマップ'
 gui_window::r_plot::tpc_mat_line:
-  win_title: '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
+    win_title:                '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
 gui_window::r_plot::word_cls:
-  agglomer: 병합 수준
-  ave: 평균연결법
-  clink: 최장연결법
-  method: '  방법:'
-  ward: Ward법
-  win_title: 추출어 클러스터 분석
+    agglomer:                 병합 수준
+    ave:                      평균연결법
+    clink:                    최장연결법
+    method:                   '  방법:'
+    ward:                     Ward법
+    win_title:                추출어 클러스터 분석
 gui_window::r_plot::word_corresp:
-  col: 컬러
-  d: 닷만
-  d_l: 닷과 라벨
-  gray: 그레이 스케일
-  var: 변수만
-  view: '  표시:'
-  win_title: 추출어 대응 분석
+    col:                      컬러
+    d:                        닷만
+    d_l:                      닷과 라벨
+    gray:                     그레이 스케일
+    var:                      변수만
+    view:                     '  표시:'
+    win_title:                추출어 대응 분석
 gui_window::r_plot::word_mds:
-  win_title: 추출어 다차원 척도법
+    win_title:                추출어 다차원 척도법
 gui_window::r_plot::word_netgraph:
-  cnt_b: 중심성(매개)
-  cnt_d: 중심성(차수)
-  cnt_v: 중심성(고유 벡터)
-  col: 컬러
-  color: '  컬러:'
-  com_b: 서브그래프 검출(매개)
-  com_m: 서브그래프 검출(modularity)
-  com_r: 서브그래프 검출(random walks)
-  cor: '***not translated*** Correlation // 相関'
-  gray: 그레이 스케일
-  interactive: '***not translated*** HTML // HTML表示'
-  none: 없음
-  win_title: 추출어 공기 네트워크
+    cnt_b:                    중심성(매개)
+    cnt_d:                    중심성(차수)
+    cnt_v:                    중심성(고유 벡터)
+    col:                      컬러
+    color:                    '  컬러:'
+    com_b:                    서브그래프 검출(매개)
+    com_m:                    서브그래프 검출(modularity)
+    com_r:                    서브그래프 검출(random walks)
+    cor:                      '***not translated*** Correlation // 相関'
+    gray:                     그레이 스케일
+    interactive:              '***not translated*** HTML // HTML表示'
+    none:                     없음
+    win_title:                추출어 공기 네트워크
 gui_window::r_plot::word_som:
-  cls: 클러스터
-  freq: 도수
-  gray: 그레이 스케일
-  umat: U-Matrix
-  views: '  컬러:'
-  win_title: 추출어 자기 조직화 지도
+    cls:                      클러스터
+    freq:                     도수
+    gray:                     그레이 스케일
+    umat:                     U-Matrix
+    views:                    '  컬러:'
+    win_title:                추출어 자기 조직화 지도
 gui_window::r_plot_opt::cod_cls:
-  win_title: '코딩 클러스터 분석: 조정'
+    win_title:                '코딩 클러스터 분석: 조정'
 gui_window::r_plot_opt::cod_corresp:
-  win_title: '코딩 대응 분석: 조정'
+    win_title:                '코딩 대응 분석: 조정'
 gui_window::r_plot_opt::cod_mat:
-  bubble_shape: '버블의 형상:  '
-  bubble_size: '버블의 크기:'
-  cellnote: 각 셀의 비중을 표시
-  circle: 원
-  col1: '***not translated*** Color // カラー'
-  col2: '***not translated*** Color (CM) // カラー(CM)'
-  color_fix: '***not translated*** Fixed color scale:  // カラースケールを固定： '
-  color_rsd: 표준화와의 차이로 색구분
-  common: 공통의 설정
-  dendro_c: 코드의 클러스터화와 재정렬
-  dendro_v: 외부 변수/제목의 클러스터화와 재정렬
-  gray: '***not translated*** Gray // グレー'
-  plot_size_heat: '플롯 사이즈  높이: '
-  plot_size_maph: '  높이: '
-  plot_size_mapw: '플롯 사이즈  폭: '
-  select_1: 코드를 적어도 1개 선택해 주십시오
-  square: 정방형
-  win_title: 크로스 집계의 지도/조정
+    bubble_shape:             '버블의 형상:  '
+    bubble_size:              '버블의 크기:'
+    cellnote:                 각 셀의 비중을 표시
+    circle:                   원
+    col1:                     '***not translated*** Color // カラー'
+    col2:                     '***not translated*** Color (CM) // カラー(CM)'
+    color_fix:                '***not translated*** Fixed color scale:  // カラースケールを固定： '
+    color_rsd:                표준화와의 차이로 색구분
+    common:                   공통의 설정
+    dendro_c:                 코드의 클러스터화와 재정렬
+    dendro_v:                 외부 변수/제목의 클러스터화와 재정렬
+    gray:                     '***not translated*** Gray // グレー'
+    plot_size_heat:           '플롯 사이즈  높이: '
+    plot_size_maph:           '  높이: '
+    plot_size_mapw:           '플롯 사이즈  폭: '
+    select_1:                 코드를 적어도 1개 선택해 주십시오
+    square:                   정방형
+    win_title:                크로스 집계의 지도/조정
 gui_window::r_plot_opt::cod_mat_line:
-  win_title: 크로스 집계의 꺾은선 그래프/조정
+    win_title:                크로스 집계의 꺾은선 그래프/조정
 gui_window::r_plot_opt::cod_mds:
-  win_title: '코딩 다차원 척도법: 조정'
+    win_title:                '코딩 다차원 척도법: 조정'
 gui_window::r_plot_opt::cod_netg:
-  win_title: '코딩 공기 네트워크: 조정'
+    win_title:                '코딩 공기 네트워크: 조정'
 gui_window::r_plot_opt::cod_som:
-  win_title: '코딩 자기 조직화 지도: 조정'
+    win_title:                '코딩 자기 조직화 지도: 조정'
 gui_window::r_plot_opt::doc_cls:
-  doc_label: '***not translated*** Case Label: // 文書ラベル：'
-  heading: '***not translated*** Heading // 見出し'
-  number: '***not translated*** No. // 文書番号'
-  win_title: '문서의 덴드로그램: 조정'
+    doc_label:                '***not translated*** Case Label: // 文書ラベル：'
+    heading:                  '***not translated*** Heading // 見出し'
+    number:                   '***not translated*** No. // 文書番号'
+    win_title:                '문서의 덴드로그램: 조정'
 gui_window::r_plot_opt::selected_netgraph:
-  win_title: '관련어 공기 네트워크: 조정'
+    win_title:                '관련어 공기 네트워크: 조정'
 gui_window::r_plot_opt::tpc_mat_line:
-  select_topics: '***not translated*** Select Topics: // トピック選択'
-  win_title: '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
+    select_topics:            '***not translated*** Select Topics: // トピック選択'
+    win_title:                '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
 gui_window::r_plot_opt::word_cls:
-  err_no_auto: 이 Window에서는 "Auto" 지정이 불가능합니다. 수치를 입력해 주십시오
-  win_title: '추출어 클러스터 분석: 조정'
+    err_no_auto:              이 Window에서는 "Auto" 지정이 불가능합니다. 수치를 입력해 주십시오
+    win_title:                '추출어 클러스터 분석: 조정'
 gui_window::r_plot_opt::word_corresp:
-  win_title: '추출어 대응 분석: 조정'
+    win_title:                '추출어 대응 분석: 조정'
 gui_window::r_plot_opt::word_mds:
-  win_title: '추출어 다차원 척도법: 조정'
+    win_title:                '추출어 다차원 척도법: 조정'
 gui_window::r_plot_opt::word_netgraph:
-  win_title: '추출어 공기 네트워크: 조정'
+    win_title:                '추출어 공기 네트워크: 조정'
 gui_window::r_plot_opt::word_som:
-  win_title: '추출어 자기 조직화 지도: 조정'
+    win_title:                '추출어 자기 조직화 지도: 조정'
 gui_window::sql_select:
-  Server: '  서버:  '
-  exec: 실행
-  max_rows: '최대 표시수: '
-  rows: '  출력된 행수:  '
-  sql_error: SQL문에 에러가 있었습니다.
-  win_title: SQL문 실행
+    Server:                   '  서버:  '
+    exec:                     실행
+    max_rows:                 '최대 표시수: '
+    rows:                     '  출력된 행수:  '
+    sql_error:                SQL문에 에러가 있었습니다.
+    win_title:                SQL문 실행
 gui_window::stop_words:
-  change_will: ※전처리를 (다시)실행할 때까지 변경은 반영되지 않습니다.
-  for_this_method: 'Stop word를 아래 추출 방법과 언어용으로 설정: '
-  lang: '언어: '
-  select_all: 모두 선택
+    change_will:              ※전처리를 (다시)실행할 때까지 변경은 반영되지 않습니다.
+    for_this_method:          'Stop word를 아래 추출 방법과 언어용으로 설정: '
+    lang:                     '언어: '
+    select_all:               모두 선택
 gui_window::sysconfig:
-  apps: 외부 어플리케이션
-  browse_: ____를 열어 주십시오
-  browse_chasen: ChaSen.exe를 열어 주십시오
-  browse_mecab: MeCab.exe를 열어 주십시오
-  browse_stanford_jar: stanford-postagger.jar를 열어 주십시오.
-  browse_stanford_tag: 모델 파일을 열어 주십시오.
-  chasen: ChaSen(일본어)
-  config: 설정
-  l_ca: '***not translated*** Catalan // カタロニア語'
-  l_cn: 중국어
-  l_de: 독일어
-  l_en: 영어
-  l_es: 스페인어
-  l_fr: 프랑스어
-  l_it: 이탈리아어
-  l_jp: 일본어
-  l_kr: 한국어
-  l_nl: 네덜란드어
-  l_pt: 포르투갈어
-  l_ru: '***not translated*** Russian // ロシア語'
-  l_sl: '***not translated*** Slovenian // スロベニア語'
-  lang: '    언어: '
-  mecab: MeCab(일본어)
-  mecab_unicode: Unicode 사전
-  note_font: 폰트가 변경되었습니다. 변경을 유효하게 하려면 KH Coder를 다시 기동해 주십시오.
-  note_s: ※%s는 파일명과 URL로 바뀝니다
-  p_chasen.exe: '   chasen.exe의 패스: '
-  p_chasenrc: '   "chasenrc"의 패스: '
-  p_grammer.cha: '   "grammar.cha"의 패스: '
-  p_mecab.exe: '   mecab.exe의 패스: '
-  p_stanford_jar: '   *.JAR file path: '
-  p_stanford_tag: '   *.TAGGER file path: '
-  pdf: 'PDF 뷰어: '
-  s_sheet: '표 계산(CSV/Excel): '
-  stanford: Stanford POS Tagger
-  stemming: Snowball Stemmer
-  stopwords: '  Stop words: '
-  unify_words_sl: |-
-    ***not translated*** Words with the same basic form are recognized
-    identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
-  web_browser: 'Web 브라우저: '
-  win_title: KH Coder 설정
-  words_ext: 어휘 추출 방법
+    apps:                     외부 어플리케이션
+    browse_:                  ____를 열어 주십시오
+    browse_chasen:            ChaSen.exe를 열어 주십시오
+    browse_mecab:             MeCab.exe를 열어 주십시오
+    browse_stanford_jar:      stanford-postagger.jar를 열어 주십시오.
+    browse_stanford_tag:      모델 파일을 열어 주십시오.
+    chasen:                   ChaSen(일본어)
+    config:                   설정
+    l_ca:                     '***not translated*** Catalan // カタロニア語'
+    l_cn:                     중국어
+    l_de:                     독일어
+    l_en:                     영어
+    l_es:                     스페인어
+    l_fr:                     프랑스어
+    l_it:                     이탈리아어
+    l_jp:                     일본어
+    l_kr:                     한국어
+    l_nl:                     네덜란드어
+    l_pt:                     포르투갈어
+    l_ru:                     '***not translated*** Russian // ロシア語'
+    l_sl:                     '***not translated*** Slovenian // スロベニア語'
+    lang:                     '    언어: '
+    mecab:                    MeCab(일본어)
+    mecab_unicode:            Unicode 사전
+    note_font:                폰트가 변경되었습니다. 변경을 유효하게 하려면 KH Coder를 다시 기동해 주십시오.
+    note_s:                   ※%s는 파일명과 URL로 바뀝니다
+    p_chasen.exe:             '   chasen.exe의 패스: '
+    p_chasenrc:               '   "chasenrc"의 패스: '
+    p_grammer.cha:            '   "grammar.cha"의 패스: '
+    p_mecab.exe:              '   mecab.exe의 패스: '
+    p_stanford_jar:           '   *.JAR file path: '
+    p_stanford_tag:           '   *.TAGGER file path: '
+    pdf:                      'PDF 뷰어: '
+    s_sheet:                  '표 계산(CSV/Excel): '
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
+    stopwords:                '  Stop words: '
+    unify_words_sl:           |-
+        ***not translated*** Words with the same basic form are recognized
+        identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
+    web_browser:              'Web 브라우저: '
+    win_title:                KH Coder 설정
+    words_ext:                어휘 추출 방법
 gui_window::topic_fitting:
-  n_topics: '***not translated*** N of Topics:  // トピック数：'
-  opt: '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
-  win_title: '***not translated*** Fit a Topic Model // トピックの推定'
+    n_topics:                 '***not translated*** N of Topics:  // トピック数：'
+    opt:                      '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
+    win_title:                '***not translated*** Fit a Topic Model // トピックの推定'
 gui_window::topic_perplexity:
-  candidates: '***not translated*** N of Topics:  // トピック数の候補：'
-  error_terms_topics: '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
-  folds: '***not translated*** Fold:  // 分割数（fold）：'
-  method: '***not translated*** Method:  // 方法：'
-  opt: '***not translated*** Method and Number of topics // 探索のオプション'
-  win_title: '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+    candidates:               '***not translated*** N of Topics:  // トピック数の候補：'
+    error_terms_topics:       '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
+    folds:                    '***not translated*** Fold:  // 分割数（fold）：'
+    method:                   '***not translated*** Method:  // 方法：'
+    opt:                      '***not translated*** Method and Number of topics // 探索のオプション'
+    win_title:                '***not translated*** Find Optimal Number of Topics // トピック数の探索'
 gui_window::topic_result:
-  doc_topic: '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
-  export: '***not translated*** *Export // ▽出力'
-  extended: '***not translated*** prob. // 確率'
-  plot: '***not translated*** Map // マップ'
-  stats_table: '***not translated*** Table // 表'
-  topic_prop: '***not translated***  Topic proportion: //   トピック比率：'
-  topic_term: '***not translated*** Topic-Word Matrix // 「トピック×語」表'
-  win_title: '***not translated*** Result of Topic Model // トピックの推定結果'
-  words: '***not translated*** Words:  // 語：'
+    doc_topic:                '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
+    export:                   '***not translated*** *Export // ▽出力'
+    extended:                 '***not translated*** prob. // 確率'
+    plot:                     '***not translated*** Map // マップ'
+    stats_table:              '***not translated*** Table // 表'
+    topic_prop:               '***not translated***  Topic proportion: //   トピック比率：'
+    topic_term:               '***not translated*** Topic-Word Matrix // 「トピック×語」表'
+    win_title:                '***not translated*** Result of Topic Model // トピックの推定結果'
+    words:                    '***not translated*** Words:  // 語：'
 gui_window::topic_stats:
-  var: '***not translated*** Tabulation: // 集計：'
-  win_title: '***not translated*** Topic Proportion Table // トピック比率の集計表'
+    var:                      '***not translated*** Tabulation: // 集計：'
+    win_title:                '***not translated*** Topic Proportion Table // トピック比率の集計表'
 gui_window::txt_html2csv:
-  saving: CSV 파일 저장
-  select: '  선택: '
-  unit: 어떤 단위를 1행(1케이스)으로 출력하시겠습니까?
-  win_title: CSV 파일로 변환
+    saving:                   CSV 파일 저장
+    select:                   '  선택: '
+    unit:                     어떤 단위를 1행(1케이스)으로 출력하시겠습니까?
+    win_title:                CSV 파일로 변환
 gui_window::txt_pickup:
-  codes: 특정 코드가 주어진 문서만 꺼내기
-  error_no_headings: 제목을 선택해 주십시오
-  headings: 제목 글만 꺼내기
-  headings_name: 제목
-  higher: 더 상위에 있는 제목을 신규 텍스트 파일에 포함하기
-  saving: '부분 텍스트 꺼내기: 다른 이름으로 저장'
-  unit: '코딩 단위:'
-  win_title: 부분 텍스트 꺼내기
+    codes:                    특정 코드가 주어진 문서만 꺼내기
+    error_no_headings:        제목을 선택해 주십시오
+    headings:                 제목 글만 꺼내기
+    headings_name:            제목
+    higher:                   더 상위에 있는 제목을 신규 텍스트 파일에 포함하기
+    saving:                   '부분 텍스트 꺼내기: 다른 이름으로 저장'
+    unit:                     '코딩 단위:'
+    win_title:                부분 텍스트 꺼내기
 gui_window::use_te:
-  about: 'TermExtract에 대하여: '
-  desc: 전문용어(키워드) 자동 추출용 Perl 모듈 "TermExtract"를 이용합니다.
-  web: 'TermExtract의 Web 페이지: '
-  win_title: TermExtract의 저작권에 대하여
+    about:                    'TermExtract에 대하여: '
+    desc:                     전문용어(키워드) 자동 추출용 Perl 모듈 "TermExtract"를 이용합니다.
+    web:                      'TermExtract의 Web 페이지: '
+    win_title:                TermExtract의 저작권에 대하여
 gui_window::use_te_g:
-  h_hukugo: 복합어
-  h_score: 스코어
-  run: 검색
-  win_title: 복합어 검출(TermExtract)
+    h_hukugo:                 복합어
+    h_score:                  스코어
+    run:                      검색
+    win_title:                복합어 검출(TermExtract)
 gui_window::word_ass:
-  18: χ 2제곱
-  and: AND 검색
-  cond_h: 공기
-  direct: '직접 입력: '
-  direct_code: '#직접 입력'
-  filter: 필터 설정
-  fr: 공기
-  go: 집계
-  hi: 확률비
-  hits: '문서수:  '
-  hits0: '  문서수: 0'
-  msg_l5: 리스트업 되어 있는 어휘수가 5 미만이기 때문에 처리를 중지합니다.
-  net: 공기 네트워크
-  no_code: '#코드 없음'
-  or: OR 검색
-  pos_h: 품사
-  prob_h: 전체
-  sa: 확률차
-  sort: ' 소트: '
-  sort_h: 소트
-  unit: '집계 단위:'
-  win_title: 관련어 검색
-  word_h: 추출어
+    18:                       χ 2제곱
+    and:                      AND 검색
+    cond_h:                   공기
+    direct:                   '직접 입력: '
+    direct_code:              '#직접 입력'
+    filter:                   필터 설정
+    fr:                       공기
+    go:                       집계
+    hi:                       확률비
+    hits:                     '문서수:  '
+    hits0:                    '  문서수: 0'
+    msg_l5:                   리스트업 되어 있는 어휘수가 5 미만이기 때문에 처리를 중지합니다.
+    net:                      공기 네트워크
+    no_code:                  '#코드 없음'
+    or:                       OR 검색
+    pos_h:                    품사
+    prob_h:                   전체
+    sa:                       확률차
+    sort:                     ' 소트: '
+    sort_h:                   소트
+    unit:                     '집계 단위:'
+    win_title:                관련어 검색
+    word_h:                   추출어
 gui_window::word_ass_opt:
-  by_df: ㆍ전체에서의 출현수에 따른 어휘 선택
-  by_pos: ㆍ품사에 따른 어휘 선택
-  min_df: '    최소 문서수: '
-  show_lowc: '***not translated*** Show words with lower or equal prob. // 条件付き確率が同等ないし低下する語も表示'
-  top: '    상위: '
-  view: ㆍ표시할 어휘수
-  win_title: 관련어 검색/필터 설정
+    by_df:                    ㆍ전체에서의 출현수에 따른 어휘 선택
+    by_pos:                   ㆍ품사에 따른 어휘 선택
+    min_df:                   '    최소 문서수: '
+    show_lowc:                '***not translated*** Show words with lower or equal prob. // 条件付き確率が同等ないし低下する語も表示'
+    top:                      '    상위: '
+    view:                     ㆍ표시할 어휘수
+    win_title:                관련어 검색/필터 설정
 gui_window::word_cls:
-  agglomer: 클러스터 병합의 단계
-  cluster: 분류
-  first1: 처음의
-  first2: 회
-  hight: 병합 수준(비유사도)
-  last1: 마지막
-  last2: 회
-  note1: ※플롯 안의 수치 라벨은 병합 후의 클러스터 총수
-  opt: 클러스터 분석의 옵션
-  u_w: 집계 단위와 추출어 선택
-  win_title: '추출어 클러스터 분석: 옵션'
+    agglomer:                 클러스터 병합의 단계
+    cluster:                  분류
+    first1:                   처음의
+    first2:                   회
+    hight:                    병합 수준(비유사도)
+    last1:                    마지막
+    last2:                    회
+    note1:                    ※플롯 안의 수치 라벨은 병합 후의 클러스터 총수
+    opt:                      클러스터 분석의 옵션
+    u_w:                      집계 단위와 추출어 선택
+    win_title:                '추출어 클러스터 분석: 옵션'
 gui_window::word_conc:
-  additional: 추가 조건
-  center: 활용형
-  conj: '    활용형: '
-  currentDoc: 'ㆍ현재 표시 중인 검색 결과:  '
-  hits: '  히트수: '
-  l1: 왼쪽 1
-  l2: 왼쪽 2
-  l3: 왼쪽 3
-  l4: 왼쪽 4
-  l5: 왼쪽 5
-  next: 다음
-  ns: 출현순
-  pos: '  품사: '
-  prev: 전
-  r1: 오른쪽 1
-  r2: 오른쪽 2
-  r3: 오른쪽 3
-  r4: 오른쪽 4
-  r5: 오른쪽 5
-  retrieveNum1: (전후
-  retrieveNum2: 어휘를 표시)
-  saving: KWIC 콘코던스의 결과를 저장
-  search: 검색
-  sort1: '  소트 1: '
-  sort2: '  소트 2: '
-  sort3: '  소트 3: '
-  stats: 집계
-  viewDoc: 문서 표시
-  viewing: ', 표시: '
-  viewingUnit: ' 표시 단위:'
-  win_title: KWIC 콘코던스
-  word: '추출어: '
+    additional:               추가 조건
+    center:                   활용형
+    conj:                     '    활용형: '
+    currentDoc:               'ㆍ현재 표시 중인 검색 결과:  '
+    hits:                     '  히트수: '
+    l1:                       왼쪽 1
+    l2:                       왼쪽 2
+    l3:                       왼쪽 3
+    l4:                       왼쪽 4
+    l5:                       왼쪽 5
+    next:                     다음
+    ns:                       출현순
+    pos:                      '  품사: '
+    prev:                     전
+    r1:                       오른쪽 1
+    r2:                       오른쪽 2
+    r3:                       오른쪽 3
+    r4:                       오른쪽 4
+    r5:                       오른쪽 5
+    retrieveNum1:             (전후
+    retrieveNum2:             어휘를 표시)
+    saving:                   KWIC 콘코던스의 결과를 저장
+    search:                   검색
+    sort1:                    '  소트 1: '
+    sort2:                    '  소트 2: '
+    sort3:                    '  소트 3: '
+    stats:                    집계
+    viewDoc:                  문서 표시
+    viewing:                  ', 표시: '
+    viewingUnit:              ' 표시 단위:'
+    win_title:                KWIC 콘코던스
+    word:                     '추출어: '
 gui_window::word_conc_coloc:
-  additional: '  + 추가 조건'
-  conj: '  활용형: '
-  filter: 필터 설정
-  h_l_total: 왼쪽 합계
-  h_pos: 품사
-  h_r_total: 오른쪽 합계
-  h_score: 스코어
-  h_word: 추출어
-  hits: '  히트수: '
-  l1: 왼쪽 1
-  l2: 왼쪽 2
-  l3: 왼쪽 3
-  l4: 왼쪽 4
-  l5: 왼쪽 5
-  l_total: 왼쪽 합계
-  pos: '  품사: '
-  r1: 오른쪽 1
-  r2: 오른쪽 2
-  r3: 오른쪽 3
-  r4: 오른쪽 4
-  r5: 오른쪽 5
-  r_total: 오른쪽 합계
-  sort: '  소트: '
-  span: '  집계 범위: '
-  total: 합계
-  win_title: 콜로케이션 통계
-  word: '추출어: '
+    additional:               '  + 추가 조건'
+    conj:                     '  활용형: '
+    filter:                   필터 설정
+    h_l_total:                왼쪽 합계
+    h_pos:                    품사
+    h_r_total:                오른쪽 합계
+    h_score:                  스코어
+    h_word:                   추출어
+    hits:                     '  히트수: '
+    l1:                       왼쪽 1
+    l2:                       왼쪽 2
+    l3:                       왼쪽 3
+    l4:                       왼쪽 4
+    l5:                       왼쪽 5
+    l_total:                  왼쪽 합계
+    pos:                      '  품사: '
+    r1:                       오른쪽 1
+    r2:                       오른쪽 2
+    r3:                       오른쪽 3
+    r4:                       오른쪽 4
+    r5:                       오른쪽 5
+    r_total:                  오른쪽 합계
+    sort:                     '  소트: '
+    span:                     '  집계 범위: '
+    total:                    합계
+    win_title:                콜로케이션 통계
+    word:                     '추출어: '
 gui_window::word_conc_coloc_opt:
-  filter_by_pos: 'ㆍ품사에 따른 어휘 선택: '
-  no_less_than: '   최소: '
-  top: '   상위: '
-  total_filt: ㆍ"합계"열에 따른 어휘 선택
-  view: ㆍ표시할 어휘수
-  win_title: 콜로케이션 통계/필터 설정
+    filter_by_pos:            'ㆍ품사에 따른 어휘 선택: '
+    no_less_than:             '   최소: '
+    top:                      '   상위: '
+    total_filt:               ㆍ"합계"열에 따른 어휘 선택
+    view:                     ㆍ표시할 어휘수
+    win_title:                콜로케이션 통계/필터 설정
 gui_window::word_conc_opt:
-  0: 지정 없음
-  conj: '  활용형: '
-  l: 왼쪽 1-5
-  l1: 왼쪽 1
-  l2: 왼쪽 2
-  l3: 왼쪽 3
-  l4: 왼쪽 4
-  l5: 왼쪽 5
-  opt1: 추가 조건 1
-  opt2: 추가 조건 2
-  opt3: 추가 조건 3
-  pos: '  품사: '
-  position: '위치: '
-  preface1: '"좌우(전후)에 특정 어휘가 출현해 있을 것"이라는 조건을 추가할 수 있습니다.'
-  preface2: ' 조건을 추가하려면 우선 "위치"를 지정해 주십시오.'
-  r: 오른쪽 1-5
-  r1: 오른쪽 1
-  r2: 오른쪽 2
-  r3: 오른쪽 3
-  r4: 오른쪽 4
-  r5: 오른쪽 5
-  rl: 좌우 1-5
-  win_title: 추가 조건(KWIC 콘코던스)
-  word: '  추출어: '
+    0:                        지정 없음
+    conj:                     '  활용형: '
+    l:                        왼쪽 1-5
+    l1:                       왼쪽 1
+    l2:                       왼쪽 2
+    l3:                       왼쪽 3
+    l4:                       왼쪽 4
+    l5:                       왼쪽 5
+    opt1:                     추가 조건 1
+    opt2:                     추가 조건 2
+    opt3:                     추가 조건 3
+    pos:                      '  품사: '
+    position:                 '위치: '
+    preface1:                 '"좌우(전후)에 특정 어휘가 출현해 있을 것"이라는 조건을 추가할 수 있습니다.'
+    preface2:                 ' 조건을 추가하려면 우선 "위치"를 지정해 주십시오.'
+    r:                        오른쪽 1-5
+    r1:                       오른쪽 1
+    r2:                       오른쪽 2
+    r3:                       오른쪽 3
+    r4:                       오른쪽 4
+    r5:                       오른쪽 5
+    rl:                       좌우 1-5
+    win_title:                추가 조건(KWIC 콘코던스)
+    word:                     '  추출어: '
 gui_window::word_corresp:
-  biplot: 제목 또는 문서 번호를 동시 배치
-  check_var_unit: 현재 집계 단위가 다른 외부 변수를 동시에 사용할 수 없습니다.
-  dim: 성분
-  eig: 고유값
-  exp: 기여율
-  flt: '원점에서 벗어난 어휘만 라벨 표시: '
-  flw: '차이가 현저한 어휘를 분석에 사용: '
-  matrix: '분석에 사용하는 데이터 표의 종류: '
-  na: 이용 불가
-  nav: 결손치
-  option_ca: 대응 분석의 옵션
-  option_words: 추출어 선택
-  plot: 배치
-  select_3words: 적어도 3개 이상의 추출어를 배치해 주십시오.
-  select_pos: 품사가 하나도 선택되어 있지 않습니다.
-  select_var: 외부 변수를 1개 이상 선택해 주십시오.
-  too_many1: 현재의 설정에서는
-  too_many2: 어휘가 배치됩니다.
-  too_many3: 배치하는 어휘의 수는 100~150 정도로 한정할 것을 권장합니다.
-  too_many4: 계속해도 되겠습니까?
-  top: 상위
-  unit: '집계 단위:'
-  w_d: 추출어 × 문서
-  w_v: 추출어 × 외부 변수
-  win_title: '추출어 대응 분석: 옵션'
-  words: 어휘
+    biplot:                   제목 또는 문서 번호를 동시 배치
+    check_var_unit:           현재 집계 단위가 다른 외부 변수를 동시에 사용할 수 없습니다.
+    dim:                      성분
+    eig:                      고유값
+    exp:                      기여율
+    flt:                      '원점에서 벗어난 어휘만 라벨 표시: '
+    flw:                      '차이가 현저한 어휘를 분석에 사용: '
+    matrix:                   '분석에 사용하는 데이터 표의 종류: '
+    na:                       이용 불가
+    nav:                      결손치
+    option_ca:                대응 분석의 옵션
+    option_words:             추출어 선택
+    plot:                     배치
+    select_3words:            적어도 3개 이상의 추출어를 배치해 주십시오.
+    select_pos:               품사가 하나도 선택되어 있지 않습니다.
+    select_var:               외부 변수를 1개 이상 선택해 주십시오.
+    too_many1:                현재의 설정에서는
+    too_many2:                어휘가 배치됩니다.
+    too_many3:                배치하는 어휘의 수는 100~150 정도로 한정할 것을 권장합니다.
+    too_many4:                계속해도 되겠습니까?
+    top:                      상위
+    unit:                     '집계 단위:'
+    w_d:                      추출어 × 문서
+    w_v:                      추출어 × 외부 변수
+    win_title:                '추출어 대응 분석: 옵션'
+    words:                    어휘
 gui_window::word_df_freq:
-  c_freq: 누적 도수
-  c_pcnt: 누적 퍼센트
-  descr: ■ 기술 통계
-  df: 문서수
-  freq: 도수
-  freq_tab: ■ 도수분포표
-  pcnt: 퍼센트
-  units: '  집계 단위:'
-  win_title: '문서수: 분포'
+    c_freq:                   누적 도수
+    c_pcnt:                   누적 퍼센트
+    descr:                    ■ 기술 통계
+    df:                       문서수
+    freq:                     도수
+    freq_tab:                 ■ 도수분포표
+    pcnt:                     퍼센트
+    units:                    '  집계 단위:'
+    win_title:                '문서수: 분포'
 gui_window::word_df_freq_plot:
-  log: '대수축 사용: '
-  none: 없음
-  saving: 다른 이름으로 플롯을 저장
-  win_title: '문서수: 분포: 플롯'
-  x: 문서수(X)
-  xy: 문서수(X)와 도수(Y)
+    log:                      '대수축 사용: '
+    none:                     없음
+    saving:                   다른 이름으로 플롯을 저장
+    win_title:                '문서수: 분포: 플롯'
+    x:                        문서수(X)
+    xy:                       문서수(X)와 도수(Y)
 gui_window::word_freq:
-  c_freq: 누적 도수
-  c_pcnt: 누적 퍼센트
-  descr: ■ 기술 통계
-  freq: 도수
-  freq_tab: ■ 도수분포표
-  pcnt: 퍼센트
-  refresh: 재계산
-  tf: 출현 횟수
-  win_title: '출현 횟수: 분포'
+    c_freq:                   누적 도수
+    c_pcnt:                   누적 퍼센트
+    descr:                    ■ 기술 통계
+    freq:                     도수
+    freq_tab:                 ■ 도수분포표
+    pcnt:                     퍼센트
+    refresh:                  재계산
+    tf:                       출현 횟수
+    win_title:                '출현 횟수: 분포'
 gui_window::word_freq_plot:
-  log: '대수축 사용: '
-  none: 없음
-  saving: 다른 이름으로 플롯을 저장
-  win_title: '출현 횟수: 분포: 플롯'
-  x: 출현 횟수(X)
-  xy: 출현 횟수(X)와 도수(Y)
+    log:                      '대수축 사용: '
+    none:                     없음
+    saving:                   다른 이름으로 플롯을 저장
+    win_title:                '출현 횟수: 분포: 플롯'
+    x:                        출현 횟수(X)
+    xy:                       출현 횟수(X)와 도수(Y)
 gui_window::word_list:
-  count: '기입할 수치: '
-  csv: 쉼표 구분(*.csv)
-  df: 문서수(DF)
-  file_type: '출력할 파일 형식: '
-  hinshi: 품사별
-  single: 1열
-  tf: 출현 횟수(TF)
-  top150: 빈출 150 어휘
-  type: '추출어 리스트 형식: '
-  win_title: '추출어 리스트 - 옵션'
-  xls: Excel(*.xls)
-  xlsx: '***not translated*** Excel (*.xlsx) // Excel (*.xlsx)'
+    count:                    '기입할 수치: '
+    csv:                      쉼표 구분(*.csv)
+    df:                       문서수(DF)
+    file_type:                '출력할 파일 형식: '
+    hinshi:                   품사별
+    single:                   1열
+    tf:                       출현 횟수(TF)
+    top150:                   빈출 150 어휘
+    type:                     '추출어 리스트 형식: '
+    win_title:                '추출어 리스트 - 옵션'
+    xls:                      Excel(*.xls)
+    xlsx:                     '***not translated*** Excel (*.xlsx) // Excel (*.xlsx)'
 gui_window::word_mds:
-  dim: 차원
-  error_dim: 차원의 지정이 올바르지 않습니다. 1에서 3까지의 수치를 지정해 주십시오.
-  mds_opt: 다차원 척도법 옵션
-  omit: '아래의 추출어/코드는 분석에서 생략되었습니다:'
-  plot: 배치
-  r_alpha: 반투명의 색(EMF/EPS 형식으로 저장 불가)
-  select_5words: 적어도 5개 이상의 추출어를 배치해 주십시오.
-  units_words: 집계 단위와 추출어 선택
-  win_title: '추출어 다차원 척도법: 옵션'
+    dim:                      차원
+    error_dim:                차원의 지정이 올바르지 않습니다. 1에서 3까지의 수치를 지정해 주십시오.
+    mds_opt:                  다차원 척도법 옵션
+    omit:                     '아래의 추출어/코드는 분석에서 생략되었습니다:'
+    plot:                     배치
+    r_alpha:                  반투명의 색(EMF/EPS 형식으로 저장 불가)
+    select_5words:            적어도 5개 이상의 추출어를 배치해 주십시오.
+    units_words:              집계 단위와 추출어 선택
+    win_title:                '추출어 다차원 척도법: 옵션'
 gui_window::word_netgraph:
-  e_type: 공기 관계(edge)의 종류
-  net_opt: 공기 네트워크 설정
-  u_w: 집계 단위와 추출어 선택
-  use: 이용
-  var: '외부 변수/제목: '
-  w_v: 어휘 ― 외부 변수/제목
-  w_w: 어휘 ―어휘
-  win_title: '추출어 공기 네트워크: 옵션'
+    e_type:                   공기 관계(edge)의 종류
+    net_opt:                  공기 네트워크 설정
+    u_w:                      집계 단위와 추출어 선택
+    use:                      이용
+    var:                      '외부 변수/제목: '
+    w_v:                      어휘 ― 외부 변수/제목
+    w_w:                      어휘 ―어휘
+    win_title:                '추출어 공기 네트워크: 옵션'
 gui_window::word_search:
-  and: AND 검색
-  back: 후방 일치
-  baseform: 추출어 검색
-  comp: 완전 일치
-  conj: 활용
-  enable_filter: '***not translated*** Enable Filter when Search // 検索時もフィルタ有効'
-  excel: '***not translated*** Excel // Excel出力'
-  forw: 전방 일치
-  freq: 빈도
-  kwic: KWIC 콘코던스
-  morph: 형태소
-  n100: '***not translated*** N100 // 次100'
-  or: OR 검색
-  p100: '***not translated*** P100 // 前100'
-  part: 부분 일치
-  pos: 품사
-  pos_conj: 품사/활용
-  search: 검색
-  show_bars: '***not translated*** Bar chart // 棒グラフ'
-  view_conj: 활용형을 표시
-  win_title: 추출어 리스트
-  word: 추출어
+    and:                      AND 검색
+    back:                     후방 일치
+    baseform:                 추출어 검색
+    comp:                     완전 일치
+    conj:                     활용
+    enable_filter:            '***not translated*** Enable Filter when Search // 検索時もフィルタ有効'
+    excel:                    '***not translated*** Excel // Excel出力'
+    forw:                     전방 일치
+    freq:                     빈도
+    kwic:                     KWIC 콘코던스
+    morph:                    형태소
+    n100:                     '***not translated*** N100 // 次100'
+    or:                       OR 검색
+    p100:                     '***not translated*** P100 // 前100'
+    part:                     부분 일치
+    pos:                      품사
+    pos_conj:                 품사/활용
+    search:                   검색
+    show_bars:                '***not translated*** Bar chart // 棒グラフ'
+    view_conj:                활용형을 표시
+    win_title:                추출어 리스트
+    word:                     추출어
 gui_window::word_search_opt:
-  win_title: '***not translated*** Filter: Word Frequency List // 抽出語リスト・フィルタ設定'
+    win_title:                '***not translated*** Filter: Word Frequency List // 抽出語リスト・フィルタ設定'
 gui_window::word_som:
-  cluster: 배치
-  opt: 자기 조직화 지도의 옵션
-  time_warn: ※자기 조직화 지도 작성에는 몇 시간 내지 며칠이 필요한 경우가 있습니다.
-  u_w: 집계 단위와 추출어 선택
-  win_title: '추출어 자기 조직화 지도: 옵션'
+    cluster:                  배치
+    opt:                      자기 조직화 지도의 옵션
+    time_warn:                ※자기 조직화 지도 작성에는 몇 시간 내지 며칠이 필요한 경우가 있습니다.
+    u_w:                      집계 단위와 추출어 선택
+    win_title:                '추출어 자기 조직화 지도: 옵션'
 gui_window::word_tf_df:
-  df: 문서수
-  log: '대수축 사용: '
-  none: 없음
-  saving: 다른 이름으로 플롯을 저장
-  tf: 출현 횟수
-  units: '집계 단위:'
-  win_title: 출현 횟수와 문서수
-  x: 출현 횟수(X)
-  xy: 출현 횟수(X)와 문서수(Y)
+    df:                       문서수
+    log:                      '대수축 사용: '
+    none:                     없음
+    saving:                   다른 이름으로 플롯을 저장
+    tf:                       출현 횟수
+    units:                    '집계 단위:'
+    win_title:                출현 횟수와 문서수
+    x:                        출현 횟수(X)
+    xy:                       출현 횟수(X)와 문서수(Y)
 kh_cod:
-  not_coding_rules: 선택하신 파일은 코딩 룰 파일로 보이지 않습니다.
-  redefined: |-
-    ***not translated***  code is redefined.
-    Please change the name of the code. //  コードが何度も定義されています。
-    コードの名前を変更してください。
+    not_coding_rules:         선택하신 파일은 코딩 룰 파일로 보이지 않습니다.
+    redefined:                |-
+        ***not translated***  code is redefined.
+        Please change the name of the code. //  コードが何度も定義されています。
+        コードの名前を変更してください。
 kh_cod::a_code:
-  syntax_error: '코딩 룰 서식에 잘못이 있었습니다. 오류를 포함한 코드:  '
+    syntax_error:             '코딩 룰 서식에 잘못이 있었습니다. 오류를 포함한 코드:  '
 kh_cod::a_code::atom::code:
-  no_code_error: '코딩 룰 기술에 오류가 있습니다. 다음 코드는 정의되어 있지 않습니다: '
+    no_code_error:            '코딩 룰 기술에 오류가 있습니다. 다음 코드는 정의되어 있지 않습니다: '
 kh_cod::func:
-  chisq: 카이 2제곱치
-  n_cases: 사례수
-  n_docs: (문서수)
-  no_codes: '#코드 없음'
-  total: 합계
+    chisq:                    카이 2제곱치
+    n_cases:                  사례수
+    n_docs:                   (문서수)
+    no_codes:                 '#코드 없음'
+    total:                    합계
 kh_cod::search:
-  codes: ㆍ이 문서에 히트한 코드(현재 열려 있는 코딩 룰 파일 안에)
-  direct: '#직접 입력'
-  no_codes: '#코드 없음'
+    codes:                    ㆍ이 문서에 히트한 코드(현재 열려 있는 코딩 룰 파일 안에)
+    direct:                   '#직접 입력'
+    no_codes:                 '#코드 없음'
 kh_datacheck:
-  corrected: 이미 알려진 문제점은 전부 수정되어 있습니다.
-  error_c1: 문자 깨짐을 포함한 행이 있습니다
-  error_c2: 바람직하지 않은 반각 기호가 포함된 행이 있습니다
-  error_charcode: 분석 대상 파일의 문자 코드 식별에 실패했습니다. 프로젝트 편집 화면에서 문자 코드를 지정해 주십시오. 프로젝트 편집 화면을 열려면 메뉴에서 "프로젝트"→"열기"→"편집"을 클릭합니다.
-  error_m1: 너무 긴 제목 행이 있습니다(자동 수정 불가)
-  error_mn: H1~H5 태그를 사용한 제목 작성에 실패했을 가능성이 있습니다(자동 수정 불가)
-  error_n1a: 너무 긴 행이 있습니다
-  error_n1b: 너무 길고 또 스페이스와 마침표 등이 적절한 위치에 포함되어 있지 않은 행이 있습니다(자동 수정 불가)
-  errors_detail: '분석 대상 파일 내에 아래와 같은 문제점이 발견되었습니다(상세 표시): '
-  errors_summary: '분석 대상 파일 내에 아래와 같은 문제점이 발견되었습니다(요약 표시): '
-  lines: 행
-  looks_good: 분석 대상 파일 내에 이미 알려진 문제점은 발견되지 않았습니다. 전처리를 안전하게 실행할 수 있다고 생각됩니다.
+    corrected:                이미 알려진 문제점은 전부 수정되어 있습니다.
+    error_c1:                 문자 깨짐을 포함한 행이 있습니다
+    error_c2:                 바람직하지 않은 반각 기호가 포함된 행이 있습니다
+    error_charcode:           분석 대상 파일의 문자 코드 식별에 실패했습니다. 프로젝트 편집 화면에서 문자 코드를 지정해 주십시오. 프로젝트 편집 화면을 열려면 메뉴에서 "프로젝트"→"열기"→"편집"을 클릭합니다.
+    error_m1:                 너무 긴 제목 행이 있습니다(자동 수정 불가)
+    error_mn:                 H1~H5 태그를 사용한 제목 작성에 실패했을 가능성이 있습니다(자동 수정 불가)
+    error_n1a:                너무 긴 행이 있습니다
+    error_n1b:                너무 길고 또 스페이스와 마침표 등이 적절한 위치에 포함되어 있지 않은 행이 있습니다(자동 수정 불가)
+    errors_detail:            '분석 대상 파일 내에 아래와 같은 문제점이 발견되었습니다(상세 표시): '
+    errors_summary:           '분석 대상 파일 내에 아래와 같은 문제점이 발견되었습니다(요약 표시): '
+    lines:                    행
+    looks_good:               분석 대상 파일 내에 이미 알려진 문제점은 발견되지 않았습니다. 전처리를 안전하게 실행할 수 있다고 생각됩니다.
 kh_morpho::chasen:
-  error: ChaSen 기동에 실패했습니다.
-  error_config: 사전에 KH Coder 설정(차센 관련)을 해 주십시오.
+    error:                    ChaSen 기동에 실패했습니다.
+    error_config:             사전에 KH Coder 설정(차센 관련)을 해 주십시오.
 kh_morpho::mecab:
-  error: MeCab 기동에 실패했습니다.
-  error_config: 사전에 KH Coder 설정(MeCab 관련)을 해 주십시오.
-  illegal_bra: 꺾쇠괄호(<>)에 따른 잘못된 마킹이 있었습니다.
+    error:                    MeCab 기동에 실패했습니다.
+    error_config:             사전에 KH Coder 설정(MeCab 관련)을 해 주십시오.
+    illegal_bra:              꺾쇠괄호(<>)에 따른 잘못된 마킹이 있었습니다.
 kh_morpho::mecab_k:
-  error: MeCab의 기동에 실패했습니다.
+    error:                    MeCab의 기동에 실패했습니다.
 kh_morpho::stanford:
-  error: Stanford POS Tagger의 기동에 실패했습니다.
-  error_config: 사전에 KH Coder 설정(Stanford POS Tagger 관련)을 해 주십시오.
-  no_java: java.exe가 발견되지 않았습니다. 사전에 JAVA를 설치해 주십시오.
+    error:                    Stanford POS Tagger의 기동에 실패했습니다.
+    error_config:             사전에 KH Coder 설정(Stanford POS Tagger 관련)을 해 주십시오.
+    no_java:                  java.exe가 발견되지 않았습니다. 사전에 JAVA를 설치해 주십시오.
 kh_morpho::stemming:
-  error: Stemmer에 의한 처리에 실패했습니다.
+    error:                    Stemmer에 의한 처리에 실패했습니다.
 kh_nbayes:
-  classified_as: 베이즈 학습에 따른 분류
-  classs: 정답
-  correct_insts: 정답을 얻은 수
-  kappa: 'Kappa 통계량:  '
+    classified_as:            베이즈 학습에 따른 분류
+    classs:                   정답
+    correct_insts:            정답을 얻은 수
+    kappa:                    'Kappa 통계량:  '
 kh_nbayes::Util:
-  prior: '[사전 확률]'
+    prior:                    '[사전 확률]'
 kh_nbayes::cv_predict:
-  cross_validation: (교차 타당화)
+    cross_validation:         (교차 타당화)
 kh_project:
-  no_target_file: 분석 대상 파일이 존재하지 않습니다
+    no_target_file:           분석 대상 파일이 존재하지 않습니다
 kh_projects:
-  already_registered: 해당 파일은 이미 프로젝트로 등록되어 있습니다
+    already_registered:       해당 파일은 이미 프로젝트로 등록되어 있습니다
 kh_r_plot:
-  faliled_in_plotting: R을 이용한 추정 또는 묘화에 실패했습니다
-  illegal_plot_size: 플롯 사이즈 지정이 올바르지 않습니다
+    faliled_in_plotting:      R을 이용한 추정 또는 묘화에 실패했습니다
+    illegal_plot_size:        플롯 사이즈 지정이 올바르지 않습니다
 kh_sysconfig::chasen:
-  path_error: Chasen.exe의 패스가 올바르지 않습니다
+    path_error:               Chasen.exe의 패스가 올바르지 않습니다
 kh_sysconfig::mecab:
-  path_error: MeCab.exe의 패스가 올바르지 않습니다
+    path_error:               MeCab.exe의 패스가 올바르지 않습니다
 kh_sysconfig::stanford:
-  path_error: Stanford POS Tagger의 패스가 올바르지 않습니다
+    path_error:               Stanford POS Tagger의 패스가 올바르지 않습니다
 mysql_exec:
-  cross: |-
-    ***not translated*** Do your have multiple KH Coder on the same PC? 
-    MySQL database may be interfering.
-    
-    It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
-    それぞれのMySQLデータベースが混信している可能性があります。
-    
-    KH Coderの再起動を強くお勧めします。
+    cross:                    |-
+        ***not translated*** Do your have multiple KH Coder on the same PC? 
+        MySQL database may be interfering.
+        
+        It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
+        それぞれのMySQLデータベースが混信している可能性があります。
+        
+        KH Coderの再起動を強くお勧めします。
 mysql_getheader:
-  error: 제목 꺼내기에 실패했습니다. H1~H5 태그를 사용한 제목 작성에 실패했을 가능성이 있습니다. 분석 대상 파일의 체크를 실시해 보십시오.
+    error:                    제목 꺼내기에 실패했습니다. H1~H5 태그를 사용한 제목 작성에 실패했을 가능성이 있습니다. 분석 대상 파일의 체크를 실시해 보십시오.
 mysql_outvar::read:
-  midashi_error: '"제목 1"-"제목 5"와 "Heading 1"-"Heading 5"는 변수 이름으로 이용할 수 없습니다. 외부 변수 읽기를 중단합니다.'
-  overwrite_vars: 같은 이름의 변수가 이미 읽혀져 있습니다. 기존 변수에 덮어쓰기를 해도 좋습니까?
-  records_error: 사례수가 일치하지 않습니다. 읽기 처리를 중단합니다.
+    midashi_error:            '"제목 1"-"제목 5"와 "Heading 1"-"Heading 5"는 변수 이름으로 이용할 수 없습니다. 외부 변수 읽기를 중단합니다.'
+    overwrite_vars:           같은 이름의 변수가 이미 읽혀져 있습니다. 기존 변수에 덮어쓰기를 해도 좋습니까?
+    records_error:            사례수가 일치하지 않습니다. 읽기 처리를 중단합니다.
 mysql_ready:
-  error_in_mysql_bunr: '"bun_r" 테이블 작성 중에 데이터 정합성이 상실되었습니다. KH Coder를 종료합니다.'
-  too_long_sentence: 데이터 안에 너무 긴 글이 있었습니다. 65535자(반각)를 넘었습니다. KH Coder를 종료합니다.
+    error_in_mysql_bunr:      '"bun_r" 테이블 작성 중에 데이터 정합성이 상실되었습니다. KH Coder를 종료합니다.'
+    too_long_sentence:        데이터 안에 너무 긴 글이 있었습니다. 65535자(반각)를 넘었습니다. KH Coder를 종료합니다.
 mysql_ready::check:
-  error: '전처리 데이터의 정합성이 상실되었습니다. '
+    error:                    '전처리 데이터의 정합성이 상실되었습니다. '
 mysql_ready::dump:
-  too_long_word1: '제한을 넘는 길이의 어휘(형태소)가 추출되었습니다. KH Coder가 다룰 수 있는 어휘의 길이는 128문자까지입니다. KH Coder는 해당 어휘를 단축시킨 상태에서 인식합니다. 해당 어휘는 아래 파일에 기록했습니다: '
-  too_long_word2: OK를 클릭하면 전처리를 계속합니다.
+    too_long_word1:           '제한을 넘는 길이의 어휘(형태소)가 추출되었습니다. KH Coder가 다룰 수 있는 어휘의 길이는 128문자까지입니다. KH Coder는 해당 어휘를 단축시킨 상태에서 인식합니다. 해당 어휘는 아래 파일에 기록했습니다: '
+    too_long_word2:           OK를 클릭하면 전처리를 계속합니다.
 mysql_words:
-  df: 문서수
-  excel_limit: 'Excel 형식 파일의 제한으로 인해 65,536행을 넘는 부분의 데이터는 출력하지 않았습니다. 이 부분의 데이터를 출력하려면 CSV 형식을 선택해 주십시오.'
-  mean_df: 문서수의 평균
-  mean_tf: 출현 횟수의 평균
-  pos: 품사
-  std_dev_df: 문서수의 표준편차
-  std_dev_tf: 출현 횟수의 표준편차
-  tf: 출현 횟수
-  types: 다른 어휘수(n)
-  words: 추출어
+    df:                       문서수
+    excel_limit:              'Excel 형식 파일의 제한으로 인해 65,536행을 넘는 부분의 데이터는 출력하지 않았습니다. 이 부분의 데이터를 출력하려면 CSV 형식을 선택해 주십시오.'
+    mean_df:                  문서수의 평균
+    mean_tf:                  출현 횟수의 평균
+    pos:                      품사
+    std_dev_df:               문서수의 표준편차
+    std_dev_tf:               출현 횟수의 표준편차
+    tf:                       출현 횟수
+    types:                    다른 어휘수(n)
+    words:                    추출어
 screen_code::assistant:
-  KWIC_button: '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
-  KWIC_button2: '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
-  KWIC_label: '***not translated*** 《M》  // 《文錦》'
-  corresp_ang: '***not translated***   variable range: //   変数方向'
-  corresp_drop_menu1: '***not translated*** narrow // 狭い'
-  corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
-  corresp_drop_menu3: '***not translated*** normal // 普通'
-  corresp_drop_menu4: '***not translated*** slightly wider // やや広い'
-  corresp_drop_menu5: '***not translated*** wide // 広い'
-  corresp_rad: '***not translated***   origin range: //  範囲： 原点付近'
-  cross_map_label: '***not translated*** use plugin: // 《文錦》 マップ：'
-  dialog_cancel: '***not translated*** Cancel // キャンセル'
-  dialog_no: '***not translated*** No // いいえ'
-  dialog_ok: '***not translated*** OK // OK'
-  dialog_use_plugin: '***not translated*** Enable NegationChecker // 《文錦》 否定表現チェッカーを有効にする'
-  dialog_yes: '***not translated*** Yes // はい'
-  label_disable: '***not translated*** Disable   // 無効'
-  label_enable: '***not translated*** Enable   // 有効'
-  label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
-  plugin_synonym: '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
-  use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
+    KWIC_button:              '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
+    KWIC_button2:             '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
+    KWIC_label:               '***not translated*** 《M》  // 《文錦》'
+    corresp_ang:              '***not translated***   variable range: //   変数方向'
+    corresp_drop_menu1:       '***not translated*** narrow // 狭い'
+    corresp_drop_menu2:       '***not translated*** slightly narrower // やや狭い'
+    corresp_drop_menu3:       '***not translated*** normal // 普通'
+    corresp_drop_menu4:       '***not translated*** slightly wider // やや広い'
+    corresp_drop_menu5:       '***not translated*** wide // 広い'
+    corresp_rad:              '***not translated***   origin range: //  範囲： 原点付近'
+    cross_map_label:          '***not translated*** use plugin: // 《文錦》 マップ：'
+    dialog_cancel:            '***not translated*** Cancel // キャンセル'
+    dialog_no:                '***not translated*** No // いいえ'
+    dialog_ok:                '***not translated*** OK // OK'
+    dialog_use_plugin:        '***not translated*** Enable NegationChecker // 《文錦》 否定表現チェッカーを有効にする'
+    dialog_yes:               '***not translated*** Yes // はい'
+    label_disable:            '***not translated*** Disable   // 無効'
+    label_enable:             '***not translated*** Enable   // 有効'
+    label_use_plugin:         '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
+    plugin_synonym:           '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
+    use_plugin:               '***not translated*** use plugin // 《文錦》 による結果表示'
 screen_code::rde_menu:
-  err_edit: |-
-    ***not translated*** Projectdata cannot edit. // プロジェクトデータの編集処理に失敗しました。
-    再試行するか、サポートまでお問い合わせください。
-  err_not_exist: "***not translated*** Projectdata don't exist. // 分析対象ファイルに関連するデータが、データベースに存在しません。"
-  err_output_from_db: '***not translated*** Projectdata cannot output from database. // データベースからの外部変数出力に失敗しました。'
-  plugin_raw_data_editor: '***not translated*** Edit Data // 《文錦》 テキスト・変数の編集'
+    err_edit:                 |-
+        ***not translated*** Projectdata cannot edit. // プロジェクトデータの編集処理に失敗しました。
+        再試行するか、サポートまでお問い合わせください。
+    err_not_exist:            "***not translated*** Projectdata don't exist. // 分析対象ファイルに関連するデータが、データベースに存在しません。"
+    err_output_from_db:       '***not translated*** Projectdata cannot output from database. // データベースからの外部変数出力に失敗しました。'
+    plugin_raw_data_editor:   '***not translated*** Edit Data // 《文錦》 テキスト・変数の編集'
 screen_code::rde_newproject_button:
-  plugin_raw_data_editor: '***not translated*** Edit File // 《文錦》 テキスト・変数の編集'
+    plugin_raw_data_editor:   '***not translated*** Edit File // 《文錦》 テキスト・変数の編集'
