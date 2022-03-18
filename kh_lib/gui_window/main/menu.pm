@@ -940,6 +940,23 @@ sub make{
 		-tearoff=>'no'
 	);
 	
+	if ($::config_obj->{msg_lang} eq 'jp') {
+		$f->command(
+			-label => kh_msg->get('book2'),
+			-font => "TKFN",
+			-command => sub {
+				 gui_OtherWin->open('https://khcoder.net/book2/');
+			},
+		);
+		$f->command(
+			-label => kh_msg->get('book1'),
+			-font => "TKFN",
+			-command => sub {
+				 gui_OtherWin->open('https://khcoder.net/book.html');
+			},
+		);
+	}
+
 		$f->command(
 			-label => kh_msg->get('man'),
 			-font => "TKFN",
@@ -954,13 +971,15 @@ sub make{
 			},
 		);
 		
-		$f->command(
-			-label => kh_msg->get('web'),
-			-font => "TKFN",
-			-command => sub {
-					 gui_OtherWin->open('https://khcoder.net');
-					},
-		);
+		unless ($::config_obj->{msg_lang} eq 'jp') {
+			$f->command(
+				-label => kh_msg->get('web'),
+				-font => "TKFN",
+				-command => sub {
+						 gui_OtherWin->open('https://khcoder.net');
+						},
+			);
+		}
 		
 		$f->command(
 			-label => kh_msg->get('about'),
