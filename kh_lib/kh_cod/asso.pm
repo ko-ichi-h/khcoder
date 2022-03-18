@@ -442,6 +442,14 @@ sub fetch_results{
 				+ $denom1 - ct_ass_p.p
 			)
 			",
+		'simp' => "
+			ct_ass_p.p
+			/
+			least(
+				df_$self->{tani}.f,
+				$denom1
+			)
+			",
 		'dice' => "
 			ct_ass_p.p * 2
 			/

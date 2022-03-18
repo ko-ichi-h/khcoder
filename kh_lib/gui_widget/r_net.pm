@@ -161,15 +161,28 @@ sub _new{
 	)->pack(-anchor => 'w', -side => 'left',);
 	
 	$self->{method_coef} = 'binary' unless $self->{method_coef};
+	
+	my $coef_mehods;
+	if ( defined($self->{from}) && $self->{from} eq 'selected_netgraph') {
+		$coef_mehods = [
+			['Jaccard', 'binary' ],
+			['Dice',    'Dice'   ],
+			['Simpson', 'Simpson'],
+		];
+	} else {
+		$coef_mehods = [
+			['Jaccard', 'binary' ],
+			['Dice',    'Dice'   ],
+			['Simpson', 'Simpson'],
+			['Cosine',  'pearson'],
+			['Euclid',  'euclid'],
+		];
+	}
+	
 	my $method_coef_wd = gui_widget::optmenu->open(
 		parent  => $f5,
 		pack    => {-anchor => 'w', -side => 'left'},
-		options =>
-			[
-				['Jaccard', 'binary'],
-				['Cosine',  'pearson'],
-				['Euclid',  'euclid'],
-			],
+		options => $coef_mehods,
 		variable => \$self->{method_coef},
 	);
 	
@@ -313,7 +326,7 @@ sub _new{
 	$self->{check_min_sp_tree_only} = 0
 		unless defined($self->{check_min_sp_tree_only})
 	;
-	$lf->Checkbutton(
+	$self->{widget_check_min_sp_tree_only} = $lf->Checkbutton(
 			-text     => kh_msg->get('min_sp_tree_only'),
 			-variable => \$self->{check_min_sp_tree_only},
 			-anchor => 'w',
@@ -460,7 +473,7 @@ sub _new{
 			}
 		);
 	}
-	$self->{r_cmd} = 1;
+	#$self->{r_cmd} = 1;
 
 	$self->refresh(3);
 	$self->{win_obj} = $lf;
@@ -482,9 +495,11 @@ sub refresh{
 			push @nor, $self->{widget_th1};
 			push @nor, $self->{widget_th2};
 		}
+		push @dis, $self->{widget_check_min_sp_tree_only};
 	} else {
 		push @nor, $self->{widget_th1};
 		push @nor, $self->{widget_th2};
+		push @nor, $self->{widget_check_min_sp_tree_only};
 	}
 
 	if ($self->{radio} eq 'n'){
@@ -536,7 +551,7 @@ sub refresh{
 	}
 
 	unless ($self->{r_cmd}) {
-		if ( $self->{from}{radio_type} eq "twomode" ){
+		if ( $self->{edge_type} eq 'twomode' ){
 			push @dis, $self->{wd_check_cor_var};
 			push @nor, $self->{chkwid_standardize_coef};
 			$self->{var_obj2}->disable;
@@ -578,6 +593,10 @@ sub params{
 	}
 	if ( $self->{check_cor_var_max} ){
 		$cor_var_max = gui_window->gui_jgn( $self->{entry_cor_var_max}->get );
+	}
+	
+	if ($self->{edge_type} eq 'twomode'){
+		$self->{check_min_sp_tree_only} = 0;
 	}
 	
 	return (

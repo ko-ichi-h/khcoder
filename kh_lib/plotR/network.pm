@@ -504,7 +504,14 @@ for (i in 1:length( rownames(d) )) {
 }
 
 # Compute co-occurrence coefficient
-if ( (exists("doc_length_mtr")) &! (method_coef == "binary")){
+if (
+	(exists("doc_length_mtr"))
+	&! (
+		(method_coef == "binary")
+		|| (method_coef == "Dice")
+		|| (method_coef == "Simpson")
+	)
+){
 	leng <- as.numeric(doc_length_mtr[,2])
 	leng[leng ==0] <- 1
 	d <- t(d)
@@ -517,8 +524,16 @@ if (method_coef == "euclid"){ # standardize for each word
 }
 
 dr <- d
-library(amap)
-d <- Dist(d,method=method_coef)
+if (
+	   ( method_coef == "Dice" )
+	|| ( method_coef == "Simpson" )
+){
+	library(proxy)
+	d <- proxy::dist(d,method=method_coef)
+} else {
+	library(amap)
+	d <- Dist(d,method=method_coef)
+}
 
 d <- as.matrix(d)
 if ( method_coef == "euclid" ){
