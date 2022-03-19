@@ -238,47 +238,8 @@ sub make_plot{
 		return 0;
 	}
 
-	my $source_matrix = 'd';
-	if ($args{method_dist} eq 'euclid'){
-		# 抽出語ごとに標準化
-		$source_matrix = 't( scale( t(d) ) )';
-	}
-
-	$r_command .= "
-word_freq <- rowSums(d)
-library(amap)
-check4mds <- function(d){
-	jm <- as.matrix(Dist($source_matrix, method=\"$args{method_dist}\"))
-	jm[upper.tri(jm,diag=TRUE)] <- NA
-	if ( length( which(jm==0, arr.ind=TRUE) ) ){
-		return( which(jm==0, arr.ind=TRUE)[,1][1] )
-	} else {
-		return( NA )
-	}
-}
-";
-
-	$r_command .= "
-if (exists(\"doc_length_mtr\")){
-	leng <- as.numeric(doc_length_mtr[,2])
-	leng[leng ==0] <- 1
-	d <- t(d)
-	d <- d / leng
-	d <- d * 1000
-	d <- t(d)
-}
-" unless $args{method_dist} eq 'binary';
-
-	$r_command .= "
-while ( is.na(check4mds(d)) == 0 ){
-	n <-  check4mds(d)
-	print( paste( \"Dropped object:\", row.names(d)[n]) )
-	d <- d[-n,]
-}
-";
-
-	$r_command .= "dj <- Dist($source_matrix,method=\"$args{method_dist}\")\n";
-
+	$r_command .= "method_mds <- \"$args{method}\"\n";
+	$r_command .= "method_coef <- \"$args{method_dist}\"\n";
 	if ($args{random_starts} == 1){
 		$r_command .= "random_starts <- 1\n";
 	} else {
@@ -289,7 +250,6 @@ while ( is.na(check4mds(d)) == 0 ){
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
-	$r_command .= "method_mds <- \"$args{method}\"\n";
 	$r_command .= &r_command_mds();
 	
 	# MDSの保存
@@ -1026,6 +986,67 @@ grid.draw(g)
 
 sub r_command_mds{
 	return '
+
+word_freq <- rowSums(d)
+
+library(amap)
+library(proxy)
+
+check4mds <- function(d){
+	if (
+		   ( method_coef == "Dice" )
+		|| ( method_coef == "Simpson" )
+	){
+		jm <- proxy::dist(d, method=method_coef)
+	} else {
+		jm <- Dist(d, method=method_coef)
+	}
+	jm <- as.matrix(jm)
+	jm[upper.tri(jm,diag=TRUE)] <- NA
+	if ( length( which(jm==0, arr.ind=TRUE) ) ){
+		return( which(jm==0, arr.ind=TRUE)[,1][1] )
+	} else {
+		return( NA )
+	}
+}
+
+if (
+	(exists("doc_length_mtr"))
+	&! (
+		(method_coef == "binary")
+		|| (method_coef == "Dice")
+		|| (method_coef == "Simpson")
+	)
+){
+	leng <- as.numeric(doc_length_mtr[,2])
+	leng[leng ==0] <- 1
+	d <- t(d)
+	d <- d / leng
+	d <- d * 1000
+	d <- t(d)
+}
+if (method_coef == "euclid"){ # standardize for each word
+	d <- t( scale( t(d) ) )
+}
+
+if ( (method_mds == "K") || (method_mds == "S") ) {
+	while ( is.na(check4mds(d)) == 0 ){
+		n <-  check4mds(d)
+		print( paste( "Dropped object:", row.names(d)[n]) )
+		d <- d[-n,]
+	}
+}
+
+if (
+	   ( method_coef == "Dice" )
+	|| ( method_coef == "Simpson" )
+){
+	dj <- proxy::dist(d, method=method_coef)
+} else {
+	dj <- Dist(d, method=method_coef)
+}
+detach("package:proxy")
+
 
 if (method_mds == "K"){
 	# Kruskal
