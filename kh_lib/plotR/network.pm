@@ -530,6 +530,7 @@ if (
 ){
 	library(proxy)
 	d <- proxy::dist(d,method=method_coef)
+	detach("package:proxy")
 } else {
 	library(amap)
 	d <- Dist(d,method=method_coef)
