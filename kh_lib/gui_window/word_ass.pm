@@ -237,7 +237,8 @@ sub _new{
 				[kh_msg->get('hi') , 'hi'   ], # 確率比
 				['Jaccard'         , 'jac'  ],
 				['Dice'            , 'dice' ],
-				['Ochiai'          , 'ochi' ],
+#				['Ochiai'          , 'ochi' ],
+				['Simpson'         , 'simp' ],
 				['Log Likelihood'  , 'll'   ],
 				#[kh_msg->get('18') , 'chi'], # χ2乗
 			],
@@ -252,6 +253,7 @@ sub _new{
 		'jac' => 'Jaccard',
 		'ochi'=> 'Ochiai',
 		'dice'=> 'Dice',
+		'simp'=> 'Simpson',
 		'll'  => 'Log Likelihood',
 	};
 
@@ -678,6 +680,14 @@ sub net_calc{
 	}
 	#print "$r_command\n";
 
+	my $method_coef = "binary";
+	if ( $self->{opt_order} eq 'simp' ){
+		$method_coef = 'Simpson';
+	}
+	elsif ( $self->{opt_order} eq 'dice' ){
+		$method_coef = 'Dice';
+	}
+
 	# デフォルト設定でネットワーク描画
 	$r_command .= "# END: DATA\n\n";
 	use plotR::network;
@@ -687,7 +697,7 @@ sub net_calc{
 		edge_type           => 'words',
 		n_or_j              => "n",
 		edges_num           => 60,
-		method_coef         => 'binary',
+		method_coef         => $method_coef,
 		edges_jac           => 0,
 		use_freq_as_size    => 1,
 		smaller_nodes       => 0,

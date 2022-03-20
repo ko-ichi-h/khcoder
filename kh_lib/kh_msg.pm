@@ -183,11 +183,11 @@ sub load{
 						print "Duplicated msg in ".$::config_obj->msg_lang.".msg: $i -> $h\n";
 						++$flag_error;
 					}
-					unless ( length( $msg->{$i}{$h} ) ){
-						print "Missing from ".$::config_obj->msg_lang.".msg: $i -> $h\n";
-						print "\t\"$msg_fb->{$i}{$h}\"\n";
-						++$flag_error;
-					}
+					#unless ( length( $msg->{$i}{$h} ) ){
+					#	print "Missing from ".$::config_obj->msg_lang.".msg: $i -> $h\n";
+					#	print "\t\"$msg_fb->{$i}{$h}\"\n";
+					#	++$flag_error;
+					#}
 					if ( $msg->{$i}{$h} && substr($msg->{$i}{$h}, 0, 20) eq '***not translated***') {
 						$msg->{$i}{$h} = undef;
 					}

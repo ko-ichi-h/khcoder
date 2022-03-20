@@ -95,7 +95,7 @@ gui_widget::words:
 gui_window::about:
     close:                    关闭
     higuchi:                  'HIGUCHI, Koichi'
-    kawabata:                 '作者：KAWABATA, Akira，中文翻译：王顺(shuonwang@gmail.com)'
+    kawabata:                 'KAWABATA, Akira'
     win_title:                关于 KH Coder
 gui_window::cod_corresp:
     c_dd:                     编码 x 文档

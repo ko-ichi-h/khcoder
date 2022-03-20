@@ -387,13 +387,15 @@ sub refresh{
 		$self->{var_obj}->enable;
 	}
 
-
 	foreach my $i (@nor){
 		$i->configure(-state => 'normal');
 	}
 	foreach my $i (@dis){
 		$i->configure(-state => 'disabled');
 	}
+	
+	$self->{net_obj}->{edge_type} = $self->gui_jg( $self->{radio_type} );
+	$self->{net_obj}->refresh;
 	
 	$nor[0]->focus unless $_[0] == 3;
 }

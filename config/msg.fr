@@ -1,3 +1,1305 @@
 ---
 global:
-  all: Todo
+    all:                      Tout
+    browse:                   Parcourir...
+    cancel:                   Annuler
+    clear:                    Supprimer
+    close:                    Fermer
+    cont_big_pros:            |-
+        Cette opération va prendre un certain temps. 
+        Puis-je continuer ?
+    copy:                     Copier
+    copy_all:                 Copier (Tout)
+    csv_f:                    Fichier CSV
+    default:                  Par Défaut
+    max:                      Maximum
+    min:                      Minimum
+    ok:                       OK
+    paragraph:                Paragraphes
+    plot:                     Graphique
+    r_dont_close:             Conserver cette fenêtre ouvertes
+    r_net_msg_fail:           'Erreur: Impossible de configurer ces options.'
+    save:                     Enregistrer
+    search:                   Rechercher
+    select_3words:            |-
+        ***not translated*** We need more words to run this analysis.
+        Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
+        抽出語リストを確認し、設定を見直してください。
+    select_a_file:            Sélectionner un fichier
+    sentence:                 Phrase
+    spss_f:                   Fichier SPSS
+    tab_f:                    Séparer par des tab.
+    wm_f:                     'CSV (des lignes de longueur variable): pour WordMiner'
+    words:                    Mots
+gui_errormsg::file:
+    could_not_open_the_file:  |-
+        Impossible d'ouvrir ce fichier.
+        KH Coder va se terminer.
+        * 
+gui_errormsg::mysql:
+    fatal:                    |-
+        Erreur lors de la connexion à la base de données MySQL. 
+        KH Coder va se terminer.
+gui_wait:
+    done:                     |-
+        Le processus est terminé.
+        Temps écoulé:
+gui_widget::bubble:
+    breaks:                   'Légende '
+    bubble:                   'Graphique à bulles:'
+    size:                     ' Taille des bulles '
+    standardize:              'Standardiser la taille des bulles:'
+    variable:                 Modifier la taille des valeurs des variables / la taille des titres
+    variance:                 'Variance '
+gui_widget::cls4mds:
+    adj:                      Clusters adjacents
+    cls_num:                  Nombre de clusters
+    cluster_color:            Mettre en cluster et coloration
+gui_widget::codf:
+    browse_title:             Sélectionner un fichier de règles de codage
+    cod_rule_f:               'Fichier de règles de codage:'
+    no_file:                  Aucun fichier sélectionné
+    reload:                   Recharger
+gui_widget::mail_config:
+    change_font:              Modifier la police
+    config:                   Modifier
+    display:                  Afficher
+    font:                     'Paramètres de police:'
+    font_size:                'Taille de police sur des graphiques par défaut: '
+    from:                     '    De: '
+    if_cud:                   La conception universelle des couleurs
+    note_fs:                  KH Coder est un outil d'analyse quantitative des données textuelles
+    other:                    Autre
+    plot_size1:               'Taille des graphiques par défaut:  Côté long'
+    plot_size2:               '  Côté court'
+    select_font:              'Police:'
+    sendmail:                 Envoyer un e-mail quand le pré-traitement se termine
+    size:                     'Taille:'
+    smtp:                     '    Serveur SMTP: '
+    to:                       '    À: '
+    use_heap:                 Charger des données en mémoire pour accélérer le pré-traitement
+gui_widget::r_cls:
+    average:                  Average
+    by_docs:                  Par document
+    by_words:                 Par mots
+    clara:                    CLARA
+    color:                    Coloration de clusters
+    complete:                 Complete
+    dist:                     '  Distance:'
+    method:                   'Méthode:'
+    n_cls:                    'Nombre de clusters:'
+    none:                     Aucun
+    stand:                    'Standardisation:'
+    tfidf:                    '  TF-IDF:'
+    ward:                     Ward
+gui_widget::r_font:
+    bold:                     Gras
+    font_size:                'Taille de police:'
+    pcnt:                     '% '
+    plot_size:                '  Taille des graphiques:'
+gui_widget::r_margin:
+    bottom:                   Bas
+    left:                     Gauche
+    margin:                   'Marge: '
+    right:                    Droite
+    top:                      Haut
+gui_widget::r_mds:
+    1_3:                      (Indiquez entre 1 et 3.)
+    dim:                      'Dimensions:'
+    dist:                     '  Distance:'
+    fix_asp:                  Fixer les proportions
+    method:                   'Méthode:'
+    random_start:             |-
+        Utilisez des démarrages aléatoires pour trouver de meilleures solutions. 
+         * Cela prendra 10 minutes ou plus.
+gui_widget::r_net:
+    additional_plots:         Créer un graphique supplémentaire (centralité etc.)
+    cor_var:                  Explorer les changements dans les types de cooccurrence
+    cor_var2:                 '  Corrélation avec: '
+    cor_var_colors:           Échelle de couleur pour corrélation
+    cor_var_darker:           Couleur du fond plus sombre
+    e_jac:                    'Coefficient >= '
+    e_top_n:                  Premier rang
+    filter_edges:             'Sélectionner la cooccurrence à tracer (edge): '
+    fix_lab:                  Éviter le chevauchement des étiquettes
+    gray_scale:               Niveau de gris
+    min_sp_tree:              Mettre en surbrillance l'arbre couvrant minimum
+    min_sp_tree_only:         Dessiner l'arbre couvrant minimum uniquement
+    or_more:                  ''
+    smaller:                  Dessiner tous les mots avec des petits ronds
+    standardize_coef:         Standardiser le coefficient
+    thicker:                  Lignes plus sombres pour des liens plus forts
+    view_coef:                Afficher des coefficients
+gui_widget::r_som:
+    2_12:                     (de 2 à 12)
+    cls_num:                  'Nombre de clusters:'
+    cluster_color:            Mettre en cluster des nœuds
+    hex:                      hexagone
+    n_nodes1:                 'Nombre de nœuds (un côté):'
+    p_nodes:                  'Graphique: '
+    rlen:                     "Nombre d'étapes:"
+    sq:                       carré
+gui_widget::r_xy:
+    cmp_plot:                 "Éléments d'un graphique: "
+    none:                     Normalisation
+    origin:                   Montrer le point d'origine O
+    scaling:                  'Scores:'
+    sym:                      Symétrique
+    symbi:                    Biplot symétrique
+    x:                        l'axe des x
+    y:                        l'axe des y
+    zoom:                     "Agrandir la zone près du point d'origine O:"
+    zoom_factor:              Facteur
+gui_widget::sampling:
+    sampling:                 'Échantillonnage:'
+gui_widget::select_a_var:
+    heading:                  Titres
+    na:                       'n/a '
+    pos:                      Position
+    pos2:                     '***not translated*** Documents // 文書ごと'
+gui_widget::tani2:
+    unit_c:                   'Unité de codage:'
+    unit_t:                   '    Unité de tabulation:'
+gui_widget::words:
+    by_df:                    Filtrer des mots par la fréquence des documents d'une terme(DF)
+    by_pos:                   Filtrer des mots par les parties du discours (POS).
+    by_tf:                    Filtrer des mots par la fréquence de terme (TF)
+    check:                    Vérifier
+    check_desc1:              Nombre de mots sélectionnés
+    check_desc2:              ' '
+    df_unit:                  '    Unité de document:'
+    max_df:                   '  Maximum DF:'
+    max_tf:                   '  Maximum TF:'
+    min_df:                   '    Minimum DF:'
+    min_tf:                   '    Minmum TF:'
+    no_pos_selected:          'Erreur: Aucunes les parties du discours ne sont sélectionnées.'
+    unit:                     'Unité:'
+gui_widget::words_bayes:
+    n_a:                      Non disponible
+    unit:                     'Unité de classification:'
+    var:                      'Variable:'
+gui_window::about:
+    close:                    Fermer
+    higuchi:                  'HIGUCHI, Koichi'
+    kawabata:                 'KAWABATA, Akira'
+    win_title:                À propos de KH Coder
+gui_window::bayes_learn:
+    accuracy:                 'Précision:'
+    add2exists:               Ajouter le résultat courant au fichier modèle existant
+    cr_validate:              Effectuer une validation croisée
+    docs:                     "Nombre de documents utilisés comme données d'entraînement:"
+    docs_total:               'Nombre total de documents:'
+    done:                     La construction du modèle est terminée.
+    error_exists:             'Erreur: cette variable déjà existe.'
+    error_f20:                'Erreur: spécifiez de 2 à 20 comme valeur "Fold".'
+    error_no_words:           'Erreur: aucun mot disponible dans les paramètres actuels.'
+    error_var:                'Erreur: sélectionnez la variable.'
+    savecls:                  Enregistrer le résultat de la classification comme une variable
+    savelog:                  Enregistrer le fichier LOG de la classification.
+    saving_log:               'Enregistrer le LOG de la classification sous:'
+    saving_new:               'Enregistrer ce fichier modèle sous:'
+    select_exist:             Sélectionnez le fichier modèle pour ajouter le résultat courant.
+    verb4wid:                 ''
+    vname:                    'Variable:'
+    win_title:                Créer un modèle en utilisant une variable
+gui_window::bayes_predict:
+    er_exists:                'Erreur: ce nom de variable est déjà enregistré.'
+    er_no_such_file:          'Erreur: veuillez spécifier le nom de fichier correctement.'
+    er_specify_name:          'Erreur: veuillez spécifier le nom de variable.'
+    model_file:               'Fichier modèle:'
+    opening_model:            Choisir un fichier modèle...
+    save_log:                 'Enregistrer le LOG de la classification sous:'
+    saving_log:               'Enregistrer le LOG de la classification sous:'
+    unit:                     'Unité de la classification:'
+    var_desc:                 '    * Le résultat de la classification sera enregistré comme une variable.'
+    var_name:                 'Nom de variable:'
+    win_title:                Classer les documents à l'aide du fichier modèle
+gui_window::bayes_view_knb:
+    n_docs:                   'Documents traités:'
+    n_types:                  'Types de mots:'
+    search:                   Rechercher
+    variance:                 Variance
+    whole:                    Liste entière
+    win_title:                'Afficher un fichier modèle:'
+gui_window::bayes_view_log:
+    class:                    'Classification:'
+    doc_id:                   ' Numéro de document'
+    freq:                     Fréquence
+    higher_left:              " * Afficher des scores dans l'ordre croissant à partir de la gauche"
+    model_file:               'Fichier modèle: '
+    run:                      Exécuter
+    saved_var:                ' Variable enregistrée:'
+    search_words:             'Rechercher des mots:'
+    unit:                     ' Unité de classification:'
+    variance:                 Variance
+    win_title:                'Fichier LOG de la classification:'
+    word:                     Mots
+gui_window::cls_height:
+    all:                      Tout
+    f50:                      << le début 50
+    l50:                      'le dernier 50 >>'
+    plotting:                 ' Champ de graphique: '
+    save_as:                  'Enregistrer le graphique sous: '
+gui_window::cls_height::cod:
+    win_title:                'Agglomération: Analyse de Regroupement hiérarchique de codage'
+gui_window::cls_height::doc:
+    overwr:                   'Puis-je écraser ce fichier ?:'
+    win_title:                "Agglomération: l'analyse par grappes des documents"
+gui_window::cls_height::word:
+    win_title:                'Agglomération: Analyse de Regroupement hiérarchique de mots'
+gui_window::cod_cls:
+    win_titile:               'Options: Analyse de Regroupement hiérarchique de codage'
+gui_window::cod_corresp:
+    c_dd:                     Codes x Documents
+    c_v:                      Codes x Variables
+    coding_unit:              'Unité de codage:'
+    er_unit:                  Sélection incorrecte de l'unité de totalisation.
+    er_zero:                  Nous ne pouvons pas utiliser le code de 0 fréquence pour cette analyse.
+    flt:                      "Afficher les étiquettes de mots isolés du point d'origine O uniquement:"
+    flw:                      'Filtrer les codes par la valeur du khi-deux:'
+    matrix_type:              Importer la donnée tabulaire
+    na:                       Indisponible
+    sel3:                     '    * Veuillez sélectionner au moins 3 codes.'
+    select_codes:             'Sélectionner le code:'
+    top:                      Premier rang
+    win_title:                'Options: Codage / Analyse factorielle des correspondances'
+gui_window::cod_count:
+    error_cod_f:              'Erreur: Sélectionnez un fichier de règles de codage.'
+    go_c:                     Exécuter
+    h_code:                   Codes
+    h_freq:                   Fréquence
+    h_pcnt:                   pourcentage
+    win_title:                Fréquence de codage
+gui_window::cod_jaccard:
+    copy_sel:                 Copier (sélectionnée)
+    unit_cod:                 '  Unité de codage:'
+    win_title:                'Codage: Coefficient de Jaccard'
+gui_window::cod_mds:
+    sel5:                     '    * Veuillez sélectionner au moins 5 codes.'
+    sel5_e:                   'Erreur: Veuillez sélectionner au moins 5 codes.'
+    win_title:                'Options: Positionnement multidimensionnel (MDS) de codage'
+gui_window::cod_netg:
+    c_c:                      'codes - codes'
+    c_v:                      'codes - variables / titres'
+    win_title:                'Options: Réseaux de cooccurrence de codage'
+gui_window::cod_out::csv:
+    save_as:                  Enregistrer le tableau de document-code sous *.csv
+    win_title:                'Exporter le tableau de document-code: CSV'
+gui_window::cod_out::spss:
+    save_as:                  Enregistrer le tableau de document-code sous *.sps
+    win_title:                'Exporter le tableau de document-code: SPSS'
+gui_window::cod_out::tab:
+    save_as:                  Enregistrer le tableau de document-code sous *.txt
+    tab_delimited:            Séparer par des tab.
+    win_title:                'Exporter le tableau de document-code: séparer par des tab.'
+gui_window::cod_out::var:
+    save_as:                  Enregistrer le tableau de document-code sous *.cvs
+    win_title:                'Exporter le tableau de document-code: CSV (des lignes de longueur variable)'
+gui_window::cod_outtab:
+    cells:                    '    Cellules:'
+    er_ill:                   'Erreur: paramètres illégaux!'
+    f:                        Fréquence
+    f_p:                      Tous les deux
+    line:                     ' Ligne:'
+    line_all:                 Tout
+    line_select:              Sélectionner
+    map:                      'Carte: '
+    p:                        Pour cent
+    run:                      Exécuter
+    unit_cod:                 'Unité de codage:'
+    var:                      '   Tableau croisé:'
+    win_title:                'Codage: tableau croisé'
+gui_window::cod_som:
+    win_title:                'Options: Carte auto adaptative de codage'
+gui_window::contxt_out:
+    options:                  Unités et poids
+    use:                      ''
+    words:                    Mots
+    words4cntxt:              Mots pour calculer les vecteurs de contexte
+gui_window::contxt_out::csv:
+    saving:                   'Enregistrer le tableau de mots-contexte sous:'
+    win_title:                'Exporter le tableau de mots-contexte: CSV'
+gui_window::contxt_out::spss:
+    win_title:                'Exporter le tableau de mots-contexte: SPSS'
+gui_window::contxt_out::tab:
+    win_title:                'Exporter le tableau de mots-contexte: séparer par des tab.'
+gui_window::datacheck:
+    auto_correct:             '   Correction automatique du texte:'
+    close:                    Fermer
+    correction_done:          '*** La correction automatique a été effectuée:'
+    details:                  'Informations détaillées des problèmes:'
+    exec:                     Exécution !
+    file_backup:              '* La sauvegarde du fichier non-traité a été enregistrée ici:'
+    file_diff:                '* La liste de modification (diff) a été enregistrée ici:'
+    headmark:                 '*** '
+    looks_complete:           Tous les problèmes connus sont corrigés.
+    not_complete:             "* Certaines erreurs détectées ne peuvent pas être corrigées. Corrigez manuellement, s'il vous plaît."
+    print:                    Afficher
+    save_as:                  Enregistrer un fichier
+    save_as_win:              Enregistrer des informations détaillées des problèmes
+    saved:                    '*** Informations détaillées des problèmes ont été enregistrées ici:'
+    win_title:                Vérification et correction du texte
+gui_window::dictionary:
+    file_error:               "Le fichier indiqué n'exsiste pas:"
+    force_ignore:             'Désignation des mots à ne pas utiliser:'
+    force_pick:               "Désignation des mots de l'échantillonnage forcé:"
+    note1:                    |-
+        (*) Modification"des mots de l'échantillonnage forcé" s'appliquera quand 
+         vous exécutez la commande"le pré-traitement"de nouveau.
+    one_line1:                (une chaîne de caractères dans chaque ligne)
+    one_line2:                (un mot à chaque ligne)
+    pos:                      'Sélectionner des mots par les parties du discours:'
+    use_file:                 Importer des données depuis le fichier
+    win_title:                Sélectionner des mots à analyser
+gui_window::doc_cls:
+    fail:                     Échec du calcul des clusters.
+    select_3words:            Veuillez sélectionner au moins 3 mots.
+    verb:                     ''
+    win_title:                "Options: l'analyse par grappes de documents"
+gui_window::doc_cls_res:
+    agglm:                    Processus de l'agglomération de cluster
+    bal_agg_docs:             |-
+        Rechercher des documents dans des clusters agglomérés
+        [Double-clic]
+    bal_docs:                 |-
+        Rechercher des documents dans le cluster
+        [Double-clic]
+    bal_words:                |-
+        Rechercher des mots caractéristiques du cluster
+        [shift + Double-clic]
+    both:                     1 & 2
+    cluster:                  Cluster
+    config:                   Configuration
+    docs:                     Recherche de documents
+    docs_in_clusters:         Documents dans chaque cluster
+    h_cls1:                   Cluster 1
+    h_cls2:                   Cluster 2
+    h_cls_id:                 Numéro de cluster
+    h_coeff:                  Coefficients
+    h_doc_num:                Nombre de documents
+    h_stage:                  Degré
+    m_ave:                    Average
+    m_clk:                    Complete linkage
+    m_wrd:                    Ward
+    na:                       n/a
+    only1:                    1 seulement
+    only2:                    2 seulement
+    save:                     Enregistrer le résultat de la classification
+    win_title:                L'analyse par grappes de documents
+    words:                    Mots caractéristiques
+gui_window::doc_cls_res_opt:
+    win_title:                "Configuration: l'analyse par grappes des documents"
+gui_window::doc_cls_res_sav:
+    desc:                     Enregistrer le résultat de la classification comme une variable
+    name:                     'Nom de variable:'
+    specify_var:              Indiquer le nom de variable
+    win_title:                "Enregistrer: l'analyse par grappes des documents"
+gui_window::doc_search:
+    error_no_code:            Veuillez sélectionner au moins 1 code.
+    no_sort:                  Ne pas trier
+    run:                      Rechercher
+    tf:                       tf
+    tf_D_idf:                 tf/idf
+    tf_M_idf:                 tf*idf
+    unit:                     'Unité:'
+    win_title:                Rechercher des documents
+gui_window::doc_view:
+    current_doc:              '* Document actuel: '
+    highlight:                Mettre en surbrillance
+    in_the_file:              'Dans le fichier:'
+    in_the_results:           '  dans les résultats:'
+    info:                     '***not translated*** * Location & Variables:  // ・位置と変数'
+    n1:                       '>>'
+    n2:                       '>>'
+    p1:                       <<
+    p2:                       <<
+    win_title:                Afficher les documents
+gui_window::force_color:
+    add:                      Ajouter
+    delete:                   Supprimer
+    desc:                     'Les mots/chaînes suivants seront mis en surbrillance:'
+    exists:                   Le mot/la chaîne est déjà enregistré/e.
+    highlight:                'Mettre en surbrillance:'
+    highlight_h:              Mettre en surbrillance
+    no_word:                  Veuillez saisir des mots/chaînes pour mettre en surbrillance.
+    string:                   Chaîne de caractères
+    type:                     'Catégorie:'
+    type_h:                   Catégorie
+    win_title:                Mettre en surbrillance des mots/des chaînes
+    word:                     Tokens
+gui_window::hukugo:
+    h_freq:                   Fréquence
+    h_huku:                   Cluster des mots
+    run:                      Exécuter
+    whole:                    Liste entière
+    win_title:                'Cluster des mots: ChaSen'
+gui_window::import_folder:
+    auto:                     '***not translated*** Auto Detect // 自動'
+    auto_jp:                  '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
+    browse_unified:           '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
+    change:                   '***not translated*** Change // 変更'
+    char_code:                '***not translated*** Encoding of files:  // 文字コード：'
+    conv:                     '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
+    description:              '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
+    folder:                   '***not translated*** Folder:  // フォルダ：'
+    level:                    '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
+    opt_project:              '***not translated*** New project // 新規プロジェクト'
+    opt_unify:                '***not translated*** Unify documents // テキストファイル結合'
+    unicode:                  '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
+    unified:                  '***not translated*** Unified file:  // 結合ファイル：'
+    win_title:                '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
+gui_window::main::inner:
+    cases:                    Cas
+    docs:                     'Documents:'
+    memo:                     'Notes:'
+    target:                   'Le projet actif:'
+    tokens:                   "Tokens (en cours d'utilisation):"
+    types:                    "Types (en cours d'utilisation):"
+    units:                    Unité
+gui_window::main::menu:
+    about:                    À propos de KH Coder
+    bayes_classi:             Classer les documents à l'aide du fichier modèle
+    bayes_learn:              Créer un modèle en utilisant une variable
+    check:                    Vérifier le texte
+    check_classi:             Afficher le fichier LOG de la classification
+    check_learning:           Afficher le fichier modèle
+    check_morpho:             Vérifier le résultat de l'extraction des mots
+    close:                    Fermer
+    cluster:                  L'analyse par grappes
+    coding:                   Codage
+    config:                   Paramètres
+    corresp:                  Analyse factorielle des correspondances
+    cross_vr:                 Tableau croisé
+    desc_stats:               Statistique descriptive
+    doc_search:               Rechercher des documents
+    doc_term_mtrx:            Tableau de document-mots
+    docs:                     Documents
+    docs_bayes:               Classifieur bayésien naïf
+    exec_sql:                 Exécuter des Commandes SQL
+    exit:                     Sortie
+    export:                   Exportation
+    export_kh:                Pour KH Coder (importable)
+    export_win_title:         Exporter le projet actif dans un fichier *.khc.
+    freq:                     Fréquence
+    freq_df:                  Distribution de la fréquence des documents d'une terme(DF)
+    freq_tf:                  Distribution de fréquence du terme(TF)
+    h_cluster:                Analyse de Regroupement hiérarchique
+    help:                     Aide
+    import:                   Importer
+    import_folder:            '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
+    import_khc:               '***not translated*** KH Coder (*.khc) // KH Coder形式'
+    import_save_path:         Enregistrer le fichier actif
+    import_win_title:         Importer un projet à partir d'un fichier *.khc
+    jac_mtrx:                 Matrices de similarité
+    kwic:                     Concordance KWIC(Key Word in Context)
+    man:                      Manuel (PDF)
+    mds:                      Positionnement multidimensionnel
+    netg:                     Réseaux de cooccurrence
+    new:                      Nouveau
+    open:                     Ouvrir
+    open_knb:                 'Pour afficher, sélectionnez le fichier modèle.'
+    open_nbl:                 'Pour afficher, sélectionnez le fichier LOG de la classification.'
+    output_cod:               Tableau de document-code
+    partial:                  Extraire une partie de texte
+    plugin:                   Plugin
+    prep:                     Pré-traitement
+    prepro_reload:            |-
+        Cette opération va prendre un certain temps. 
+        Si vous ne voulez pas l'exécuter maintenant, cliquez 'Annuler'.
+        
+        Le fichier Excel/CSV est mis à jour!
+        Voulez-vous relire le fichier Excel/CSV?
+    project:                  Projet
+    read:                     Importer des variables
+    run_prep:                 Exécuter le pré-traitement
+    som:                      Carte auto adaptative
+    term_vec_mtrx:            Tableau de mots-contexte
+    text_format:              Convertir un fichier du texte
+    tf_df:                    Représentation graphique de TF-DF
+    to_csv:                   Convertir au format CSV
+    tools:                    Outils
+    topic:                    '***not translated*** Topic models // トピックモデル'
+    topic_ft:                 '***not translated*** Fit a Topic Model // トピックの推定'
+    topic_pp:                 '***not translated*** Find Optimal N of Topics // トピック数の探索'
+    use_chasen:               Utiliser ChaSen
+    use_termextract:          Utiliser TermExtract
+    var_list:                 Liste
+    vars_heads:               Variables & Titres
+    web:                      les dernières infos (Web)
+    word_ass:                 Mots relatifs
+    word_freq:                Liste de fréquence lexicale (pour Excel)
+    word_search:              Liste de fréquence lexicale
+    words:                    Mots
+    words_cluster:            Cluster des mots
+    words_selection:          Sélectionner les mots à analyser
+gui_window::morpho_check:
+    details:                  Détails
+    note:                     Saisir une chaîne de caractères ou une phrase à vérifier
+    sentence:                 La phrase divisée
+    win_title:                Résultats de mots extraits
+gui_window::morpho_crossout:
+    output:                   ''
+gui_window::morpho_crossout::csv:
+    er_no_pos:                'Erreur: Aucunes les parties du discours ne sont sélectionnées.'
+    saving:                   'Enregistrer le tableau document-mots sous:'
+    win_title:                'Exporter le tableau document-mots: CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                'Exporter le tableau document-mots: SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   Séparer par des tab.
+    win_title:                'Exporter le tableau document-mots: séparer par des tab.'
+gui_window::morpho_crossout::var:
+    win_title:                'Exporter le tableau document-mots: CSV (des lignes de longueur variable)'
+gui_window::morpho_detail:
+    base:                     lemme / radical
+    hyoso:                    mots
+    katuyo:                   POS taggers 2
+    next:                     Suivant
+    pos_cha:                  POS taggers 1
+    pos_kh:                   POS taggers KH Coder
+    previous:                 Précédent
+    win_title:                'Résultats de mots extraits: Détails'
+gui_window::outvar_list:
+    catalogue_csv:            'Tableau: CSV'
+    catalogue_xls:            'Tableau: Excel'
+    csv:                      Fichier CSV
+    del:                      Supprimer
+    del_ok:                   Supprimer des variables sélectionnées ?
+    docs:                     Documents
+    error_hd1:                |-
+        Nous ne pouvons pas supprimer le titre avec cette commande.
+        Modifiez directement le fichier actuel.
+    error_hd2:                |-
+        Nous ne pouvons pas exporter des titres avec cette commande actuellement.
+        Nous vous recommandons d'utiliser cette commande "Extraire une partie de texte"
+    error_sel_a_var:          'Erreur: veuillez sélectionner la variable.'
+    error_sel_a_vv:           'Erreur: veuillez sélectionner la variable ou la valeur.'
+    error_units:              Nous ne pouvons pas enregistrer des variables avec des unités différentes.
+    export:                   Exporter
+    h_freq:                   Fréquence
+    h_label:                  Étiquettes
+    h_name:                   Variable
+    h_unit:                   Unité
+    h_value:                  Valeurs
+    headings:                 Titres
+    help_docs:                |-
+        Rechercher des documents comportant la valeur sélectionnée
+        [Double-clic]
+    help_words:               |-
+        Rechercher des mots caractéristiques dans des documents comportant la valeur sélectionnée
+        [Shift + Double-clic]
+    mspgoth:                  MS PGothic
+    read:                     '*Importer'
+    save:                     Enregistrer les étiquettes
+    saving:                   'Enregistrer cette variable sous: '
+    selected:                 Valeurs sélectionnées
+    tabdel:                   Fichier séparé par des tab.
+    unit:                     'Unité:'
+    values:                   'Valeurs & étiquettes des valeurs: '
+    vars:                     Liste des variables
+    win_title:                Liste des variables & titres
+    words:                    '*Mots caractéristiques'
+gui_window::outvar_read:
+    no_such_file:             'Erreur: impossible de trouver ce fichier !'
+    unit:                     'Unité des variables:'
+gui_window::outvar_read::csv:
+    csv:                      'Fichier CSV:'
+    open:                     Sélectionner le fichier qui contient des variables
+    win_title:                Lire des variables du fichier CSV
+gui_window::outvar_read::tab:
+    open:                     Sélectionner le fichier qui contient des variables
+    tabdel:                   Fichier séparé par des tab.
+    tabdelf:                  Fichier séparé par des tab.
+    win_title:                Lire des variables du fichier séparé par des tab.
+gui_window::project_edit:
+    auto_detect:              Distinction automatique
+    memo:                     'Notes:'
+    target_char_code:         'Le codage des caractères du fichier à analyser:'
+    target_file:              'Le fichier à analyser:'
+    win_title:                Editer le projet
+gui_window::project_new:
+    auto_detect:              Distinction automatique
+    browse_target:            Sélectionner le fichier du texte à analyser
+    memo:                     'Notes:'
+    target_char_code:         'Le codage des caractères du fichier à analyser:'
+    target_column:            'Colonne à analyser:'
+    target_file:              'Le fichier à analyser:'
+    type_error:               '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
+    win_title:                Nouveau projet
+gui_window::project_open:
+    del:                      Effacer
+    dir:                      Répertoire
+    edit:                     Modifier
+    lang:                     Langue
+    memo:                     Notes
+    new:                      Nouveau
+    open:                     Ouvrir
+    opened:                   |-
+        Le projet est actuellement ouvert.
+        Impossible d'exécuter l'action spécifiée.
+    select_one:               Sélectionner un projet
+    target_file:              Fichier à analyser
+    win_title:                Gestionnaire de projet
+gui_window::r_plot:
+    options:                  Configuration
+    saving:                   'Enregistrer le graphique sous:'
+gui_window::r_plot::cod_cls:
+    win_titile:               Analyse de Regroupement hiérarchique de codage
+gui_window::r_plot::cod_corresp:
+    win_title:                Codage/Analyse factorielle des correspondances
+gui_window::r_plot::cod_mat:
+    fluc:                     Graphique à bulles
+    heat:                     Heat map
+    win_title:                Graphique de tableau croisé
+gui_window::r_plot::cod_mat_line:
+    win_title:                Graphique linéaire
+gui_window::r_plot::cod_mds:
+    win_title:                Positionnement multidimensionnel (MDS) de codage
+gui_window::r_plot::cod_netg:
+    win_title:                Réseaux de cooccurrence de codage
+gui_window::r_plot::cod_som:
+    win_title:                Carte auto adaptative de codage
+gui_window::r_plot::doc_cls:
+    win_title:                Dendrogramme de documents
+gui_window::r_plot::selected_netgraph:
+    color:                    'Couleur:'
+    win_title:                Mots relatifs/Réseaux de cooccurrence
+gui_window::r_plot::topic_n_ldatuning:
+    win_title:                '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+gui_window::r_plot::topic_n_perplexity:
+    win_title:                '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+gui_window::r_plot::tpc_mat:
+    fluc:                     '***not translated*** bubble // バブル'
+    heat:                     '***not translated*** heat // ヒート'
+    win_title:                '***not translated*** Topic Proportion Map // トピック比率のマップ'
+gui_window::r_plot::tpc_mat_line:
+    win_title:                '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
+gui_window::r_plot::word_cls:
+    agglomer:                 Agglomération
+    ave:                      Average
+    clink:                    Complete
+    method:                   ' méthode:'
+    ward:                     Ward
+    win_title:                Analyse de Regroupement hiérarchique de mots
+gui_window::r_plot::word_corresp:
+    col:                      Couleur
+    d:                        Points
+    d_l:                      Points et Étiquettes
+    gray:                     Niveau de gris
+    var:                      Variables
+    view:                     ' Afficher:'
+    win_title:                Mots/Analyse factorielle des correspondances
+gui_window::r_plot::word_mds:
+    win_title:                Positionnement multidimensionnel (MDS) de mots
+gui_window::r_plot::word_netgraph:
+    cnt_b:                    Centralité d'intermédiarité
+    cnt_d:                    Centralité de degré
+    cnt_v:                    Centralité de vecteur propre
+    col:                      Couleur
+    color:                    ' Couleur:'
+    com_b:                    Détection de sous-graphique (intermédiarité)
+    com_m:                    Détection de sous-graphique (modularité)
+    com_r:                    Détection de sous-graphique (marche aléatoire)
+    cor:                      Corrélation
+    gray:                     Niveau de gris
+    interactive:              HTML
+    none:                     Aucun
+    win_title:                Réseaux de cooccurrence des mots
+gui_window::r_plot::word_som:
+    cls:                      Clusters
+    freq:                     Fréquence
+    gray:                     Niveau de gris
+    umat:                     U-Matrix
+    views:                    ' Couleur: '
+    win_title:                Carte auto adaptative de mots
+gui_window::r_plot_opt::cod_cls:
+    win_title:                'Configuration: Analyse de Regroupement hiérarchique de codage'
+gui_window::r_plot_opt::cod_corresp:
+    win_title:                'Configuration: Codage/Analyse factorielle des correspondances'
+gui_window::r_plot_opt::cod_mat:
+    bubble_shape:             'Forme des bulles: '
+    bubble_size:              'Taille des bulles: '
+    cellnote:                 Afficher le pourcentage de chaque cellule
+    circle:                   Cercle
+    col1:                     Couleur
+    col2:                     Couleur (CM)
+    color_fix:                "Fixer de l'échelle de couleur: "
+    color_rsd:                Visualiser les résidu standardisés par la couleur
+    common:                   Paramètres communs
+    dendro_c:                 Mettre en cluster des codes
+    dendro_v:                 Mettre en cluster des variables ou des titres
+    gray:                     Niveau de gris
+    plot_size_heat:           'Taille des graphiques, hauteur:'
+    plot_size_maph:           '  hauteur:'
+    plot_size_mapw:           'Taille des graphiques, largeur:'
+    select_1:                 Veuillez sélectionner au moins 1 code.
+    square:                   Carré
+    win_title:                'Configuration: Graphique de tableau croisé'
+gui_window::r_plot_opt::cod_mat_line:
+    win_title:                'Configuration: Graphique linéaire'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                'Configuration: Positionnement multidimensionnel (MDS) de codage'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                'Configuration: Réseaux de cooccurrence de codage'
+gui_window::r_plot_opt::cod_som:
+    win_title:                'Configuration: Carte auto adaptative de codage'
+gui_window::r_plot_opt::doc_cls:
+    doc_label:                'Étiquette de document :'
+    heading:                  Titre
+    number:                   Numéro de document
+    win_title:                'Configuration: Dendrogramme de documents'
+gui_window::r_plot_opt::selected_netgraph:
+    win_title:                'Configuration: Mots relatifs/Réseaux de cooccurrence'
+gui_window::r_plot_opt::tpc_mat_line:
+    select_topics:            '***not translated*** Select Topics: // トピック選択'
+    win_title:                '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              Vous ne pouvez pas sélectionner "Auto" dans cette fenêtre. Veuillez saisir des valeurs numériques.
+    win_title:                'Configuration: Analyse de Regroupement hiérarchique de mots'
+gui_window::r_plot_opt::word_corresp:
+    win_title:                'Configuration: Mots/Analyse factorielle des correspondances'
+gui_window::r_plot_opt::word_mds:
+    win_title:                'Configuration: Positionnement multidimensionnel (MDS) de mots'
+gui_window::r_plot_opt::word_netgraph:
+    win_title:                'Configuration: Réseaux de cooccurrence des mots'
+gui_window::r_plot_opt::word_som:
+    win_title:                'Configuration: Carte auto adaptative de mots'
+gui_window::sql_select:
+    Server:                   '  Connexion au serveur: '
+    exec:                     Exécution
+    max_rows:                 'Nombre maximum de lignes à afficher:'
+    rows:                     '  Lignes: '
+    sql_error:                Erreur dans l'instruction SQL.
+    win_title:                Exécuter des instructions SQL
+gui_window::stop_words:
+    change_will:              |-
+        * Modification s'appliquera quand 
+         vous exécutez la commande"le pré-traitement"de nouveau.
+    for_this_method:          'Mots vides pour la méthode suivante:'
+    lang:                     'Langue:'
+    select_all:               Sélectionner tout
+gui_window::sysconfig:
+    apps:                     Applications
+    browse_:                  Veuillez ouvrir ____
+    browse_chasen:            Veuillez ouvrir ChaSen.exe
+    browse_mecab:             Veuillez ouvrir MeCab.exe
+    browse_stanford_jar:      Veuillez ouvrir stanford-postagger.jar
+    browse_stanford_tag:      Veuillez ouvrir un fichier modèle.
+    chasen:                   '"ChaSen" pour le texte japonais'
+    config:                   Configuration
+    l_ca:                     catalan
+    l_cn:                     chinois
+    l_de:                     allemand
+    l_en:                     anglais
+    l_es:                     espagnol
+    l_fr:                     français
+    l_it:                     italien
+    l_jp:                     japonais
+    l_kr:                     coréen
+    l_nl:                     hollandais
+    l_pt:                     portugais
+    l_ru:                     russe
+    l_sl:                     slovène
+    lang:                     '    Langage:'
+    mecab:                    '"MeCab" pour le texte japonais'
+    mecab_unicode:            Dictionnaire Unicode
+    note_font:                |-
+        Le paramètre de police a été modifié.
+        Veuillez redémarrer KH Coder pour que les modifications prennent effet.
+    note_s:                   '* % s sera remplacé par les noms de fichiers ou URL'
+    p_chasen.exe:             "    le chemin d'accès de \"chasen.exe\":"
+    p_chasenrc:               "    le chemin d'accès de \"chasenrc\":"
+    p_grammer.cha:            "    le chemin d'accès de \"grammar.cha\":"
+    p_mecab.exe:              "    le chemin d'accès de \"mecab.exe\":"
+    p_stanford_jar:           "    le chemin d'accès de *.JAR:"
+    p_stanford_tag:           "    le chemin d'accès de  *.TAGGER:"
+    pdf:                      'Lecteur PDF:'
+    s_sheet:                  'Feuilles de calcul (CSV/Excel):'
+    stanford:                 Stanford POS Tagger
+    stemming:                 Snowball Stemmer
+    stopwords:                '  Mots vides (Stop Words):'
+    unify_words_sl:           |-
+        ***not translated*** Words with the same basic form are recognized
+        identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
+    web_browser:              'Navigateur Web:'
+    win_title:                Paramètres globaux
+    words_ext:                Moyen d'extraire des mots
+gui_window::topic_fitting:
+    n_topics:                 '***not translated*** N of Topics:  // トピック数：'
+    opt:                      '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
+    win_title:                '***not translated*** Fit a Topic Model // トピックの推定'
+gui_window::topic_perplexity:
+    candidates:               '***not translated*** N of Topics:  // トピック数の候補：'
+    error_terms_topics:       '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
+    folds:                    '***not translated*** Fold:  // 分割数（fold）：'
+    method:                   '***not translated*** Method:  // 方法：'
+    opt:                      '***not translated*** Method and Number of topics // 探索のオプション'
+    win_title:                '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+gui_window::topic_result:
+    doc_topic:                '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
+    export:                   '***not translated*** *Export // ▽出力'
+    extended:                 '***not translated*** prob. // 確率'
+    plot:                     '***not translated*** Map // マップ'
+    stats_table:              '***not translated*** Table // 表'
+    topic_prop:               '***not translated***  Topic proportion: //   トピック比率：'
+    topic_term:               '***not translated*** Topic-Word Matrix // 「トピック×語」表'
+    win_title:                '***not translated*** Result of Topic Model // トピックの推定結果'
+    words:                    '***not translated*** Words:  // 語：'
+gui_window::topic_stats:
+    var:                      '***not translated*** Tabulation: // 集計：'
+    win_title:                '***not translated*** Topic Proportion Table // トピック比率の集計表'
+gui_window::txt_html2csv:
+    saving:                   Enregistrer le fichier CSV sous
+    select:                   'Sélectionner :'
+    unit:                     Quelle unité voulez-vous considérer comme une ligne de CSV ?
+    win_title:                Convertir au format CSV
+gui_window::txt_pickup:
+    codes:                    Extraire des documents avec un code déterminé
+    error_no_headings:        Veuillez sélectionner au minimum un titre.
+    headings:                 Extraire les titres
+    headings_name:            '  '
+    higher:                   Inclure le titre supérieur dans le fichier nouveau
+    saving:                   "Extraire une partie de texte: l'enregistrer sous"
+    unit:                     Unité de codage
+    win_title:                Extraire une partie de texte
+gui_window::use_te:
+    about:                    'À propos de TermExtract:'
+    desc:                     'Appliquer TermExtract(Module Perl: extraire automatiquement des termes techniques)'
+    web:                      'Page web de TermExtract:'
+    win_title:                Copyright de TermExtract
+gui_window::use_te_g:
+    h_hukugo:                 Cluster des mots
+    h_score:                  Score
+    run:                      Exécuter
+    win_title:                'Cluster des mots: TermExtract'
+gui_window::word_ass:
+    18:                       'Khi-deux:'
+    and:                      et
+    cond_h:                   conditionnel
+    direct:                   '#Entrée directe:'
+    direct_code:              '#Entrée directe'
+    filter:                   Filtre
+    fr:                       Fréquence
+    go:                       Exécuter
+    hi:                       Comparaison de probabilité
+    hits:                     ' Nombre de documents: '
+    hits0:                    ' Nombre de documents: 0'
+    msg_l5:                   'Il a moins de 5 mots sur la liste, on arrête ce traitement.'
+    net:                      Réseaux de cooccurrence
+    no_code:                  '#aucun'
+    or:                       ou
+    pos_h:                    Parties du discours
+    prob_h:                   Inconditionnel
+    sa:                       Différence de probabilité
+    sort:                     ' Trier:'
+    sort_h:                   Trier
+    unit:                     'Unité:'
+    win_title:                Mots relatifs
+    word_h:                   Mots
+gui_window::word_ass_opt:
+    by_df:                    "Filtrer des mots par la fréquence des documents d'une terme(DF):"
+    by_pos:                   'Filtrer des mots par les parties du discours(POS):'
+    min_df:                   '    Minimum DF:'
+    show_lowc:                Afficher les mots que la probabilité conditionnelle est égale ou baissée
+    top:                      '    Premier rang '
+    view:                     'Nombre de mots à afficher:'
+    win_title:                Mots relatifs/Filtre
+gui_window::word_cls:
+    agglomer:                 Degré de l'agglomération de cluster
+    cluster:                  ' '
+    first1:                   'le début '
+    first2:                   ''
+    hight:                    Coefficients de dissimilarité
+    last1:                    'le dernier '
+    last2:                    ''
+    note1:                    |-
+        * Les étiquettes des valeurs numériques dans le graphique indiquent
+         le nombre de cluster après l'agglomération.
+    opt:                      "Options: L'analyse par grappes"
+    u_w:                      Sélectionner l'unité de comptage et les mots
+    win_title:                "Options: L'analyse par grappes de mots"
+gui_window::word_conc:
+    additional:               Options supplémentaire
+    center:                   Conjugaison
+    conj:                     '  Conjugaison:'
+    currentDoc:               '* Résultat de recherche: '
+    hits:                     '  Nombre de résultats: '
+    l1:                       G1
+    l2:                       G2
+    l3:                       G3
+    l4:                       G4
+    l5:                       G5
+    next:                     Suivant
+    ns:                       Aucun
+    pos:                      'Parties du discours:'
+    prev:                     Précédent
+    r1:                       D1
+    r2:                       D2
+    r3:                       D3
+    r4:                       D4
+    r5:                       D5
+    retrieveNum1:             '  (Récupérer GD '
+    retrieveNum2:             Mots)
+    saving:                   Enregistrer le résultat de la concordance KWIC ...
+    search:                   Recherche
+    sort1:                    '  Tri 1:'
+    sort2:                    '  Tri 2:'
+    sort3:                    '  Tri 3:'
+    stats:                    Exécuter
+    viewDoc:                  Afficher les documents
+    viewing:                  ', Afficher: '
+    viewingUnit:              ' Unité:'
+    win_title:                Concordance KWIC
+    word:                     'Mots:'
+gui_window::word_conc_coloc:
+    additional:               '  + Options supplémentaire'
+    conj:                     '  Conjugaison:'
+    filter:                   Filtre
+    h_l_total:                SG
+    h_pos:                    Parties du discours
+    h_r_total:                SD
+    h_score:                  Somme
+    h_word:                   Mots
+    hits:                     '  Nombre de résultats: '
+    l1:                       G1
+    l2:                       G2
+    l3:                       G3
+    l4:                       G4
+    l5:                       G5
+    l_total:                  Somme gauche
+    pos:                      '  Parties du discours:'
+    r1:                       D1
+    r2:                       D2
+    r3:                       D3
+    r4:                       D4
+    r5:                       D5
+    r_total:                  Somme droite
+    sort:                     '  Tri:'
+    span:                     '  Champ de totalisation:'
+    total:                    Somme totale
+    win_title:                Statistique de collocation
+    word:                     'Mots:'
+gui_window::word_conc_coloc_opt:
+    filter_by_pos:            'Filtrer des mots par les parties du discours:'
+    no_less_than:             '      Minimum '
+    top:                      '      Premier rang '
+    total_filt:               'Filtrer des mots par colonne "Somme":'
+    view:                     'Nombre de mots à affichier:'
+    win_title:                Statistique des collocations/Filtre
+gui_window::word_conc_opt:
+    0:                        Aucun
+    conj:                     '  Conjugaison:'
+    l:                        G1-5
+    l1:                       G1
+    l2:                       G2
+    l3:                       G3
+    l4:                       G4
+    l5:                       G5
+    opt1:                     Options supplémentaire 1
+    opt2:                     Options supplémentaire 2
+    opt3:                     Options supplémentaire 3
+    pos:                      '  Parties du discours:'
+    position:                 'Position:'
+    preface1:                 Vous pouvez ajouter cette option "Il y a le mot A sur G5-D5."
+    preface2:                 'Pour ajouter des options, il faut indiquer la position.'
+    r:                        D1-5
+    r1:                       D1
+    r2:                       D2
+    r3:                       D3
+    r4:                       D4
+    r5:                       D5
+    rl:                       GD1-5
+    win_title:                Options supplémentaire de Concordance KWIC
+    word:                     '  Mots:'
+gui_window::word_corresp:
+    biplot:                   'Superposer deux graphiques : titres / numéro de document'
+    check_var_unit:           'Erreur: Veuillez séléctionner des variables avec la même unité.'
+    dim:                      'Éléments '
+    eig:                      Cor ^2
+    exp:                      Explained
+    flt:                      "Afficher les étiquettes de mots isolés du point d'origine O uniquement:"
+    flw:                      'Filtrer les mots par la valeur du khi-deux:'
+    matrix:                   Importer la donnée tabulaire
+    na:                       Indisponible
+    nav:                      Valeurs manquantes
+    option_ca:                Option de l'analyse factorielle des correspondances
+    option_words:             Sélectionner des mots
+    plot:                     ' '
+    select_3words:            'Erreur: Veuillez sélectionner au moins 3 mots.'
+    select_pos:               'Erreur: Aucunes les parties du discours ne sont sélectionnées.'
+    select_var:               Veuillez sélectionner au moins 1 variable.
+    too_many1:                ' '
+    too_many2:                mots vont mettre sur la graphique.
+    too_many3:                Je vous recommande de limiter le nombre de mots entre 100 et 150 approximativement.
+    too_many4:                Puis-je continuer ?
+    top:                      Premier rang
+    unit:                     'Unité:'
+    w_d:                      Mots-documents
+    w_v:                      Mots x Variable(s)
+    win_title:                'Options: mots/analyse factorielle des correspondances'
+    words:                    ' '
+gui_window::word_df_freq:
+    c_freq:                   "Fréquence\ncumulée"
+    c_pcnt:                   "Pourcentage\ncumulé"
+    descr:                    Statistique descriptive
+    df:                       DF
+    freq:                     Fréquence
+    freq_tab:                 Tableau de distribution de fréquence
+    pcnt:                     Pourcentage
+    units:                    '  Unités de comptage:'
+    win_title:                Fréquence des documents d'une terme(DF) / Distribution
+gui_window::word_df_freq_plot:
+    log:                      'Axes logarithmiques:'
+    none:                     Aucun
+    saving:                   Enregistrer le graphique sous...
+    win_title:                Fréquence des documents d'une terme(DF) / Distribution / Graphique
+    x:                        DF (X)
+    xy:                       DF (X) et Fréquence (Y)
+gui_window::word_freq:
+    c_freq:                   "Fréquence\ncumulée"
+    c_pcnt:                   "Pourcentage\ncumulé"
+    descr:                    Statistique descriptive
+    freq:                     Fréquence
+    freq_tab:                 Tableau de distribution de fréquence
+    pcnt:                     Pourcentage
+    refresh:                  Recalculer
+    tf:                       TF
+    win_title:                Fréquence du terme (TF) / Distribution
+gui_window::word_freq_plot:
+    log:                      'Axes logarithmiques:'
+    none:                     Aucun
+    saving:                   'Enregistrer le graphique sous:'
+    win_title:                Fréquence du terme (TF) / Distribution / Graphique
+    x:                        TF (X)
+    xy:                       TF (X) et Fréquence (Y)
+gui_window::word_list:
+    count:                    'Choisir la valeur numérique :'
+    csv:                      Séparé par des virgules (* .csv)
+    df:                       Fréquence des documents d'une terme(DF)
+    file_type:                'Types de fichier:'
+    hinshi:                   Par les parties du discours
+    single:                   la seule colonne
+    tf:                       Fréquence du terme(TF)
+    top150:                   Top 150
+    type:                     'Type de liste de fréquence lexicale:'
+    win_title:                'Options: Liste de fréquence lexicale (Excel)'
+    xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
+gui_window::word_mds:
+    dim:                      Dimension
+    error_dim:                'Erreur: Veuillez spécifier de 1 à 3 comme nombre de dimensions.'
+    mds_opt:                  Options de positionnement multidimensionnel (MDS)
+    omit:                     "Les mots / codes suivants sont omis de l'analyser.:\n"
+    plot:                     ' '
+    r_alpha:                  Couleurs translucides (ne convient pas aux EMF/EPS)
+    select_5words:            'Erreur: Veuillez sélectionner au moins 5 mots.'
+    units_words:              Sélectionner l'unité de comptage et les mots
+    win_title:                'Options: Positionnement multidimensionnel (MDS) de mots'
+gui_window::word_netgraph:
+    e_type:                   'Type des liens (edge) de cooccurrence:'
+    net_opt:                  'Options: Réseaux de cooccurrence'
+    u_w:                      Sélectionner l'unité de comptage et les mots
+    use:                      ''
+    var:                      'Variables / Titres:'
+    w_v:                      'mots - variables / titres'
+    w_w:                      'mots - mots'
+    win_title:                'Options: Réseaux de cooccurrence des mots'
+gui_window::word_search:
+    and:                      Recherche par ET
+    back:                     Correspondance par terminaison
+    baseform:                 Recherche par des mots
+    comp:                     Correspondance exacte
+    conj:                     Conjugaison
+    enable_filter:            Activer le filtre pendant la recherche
+    excel:                    Excel
+    forw:                     Correspondance au début du mot
+    freq:                     Fréquence
+    kwic:                     Concordance KWIC(Keyword in Context)
+    morph:                    Morphème
+    n100:                     S100
+    or:                       Recherche par OU
+    p100:                     P100
+    part:                     Correspondance partielle
+    pos:                      Parties du discours
+    pos_conj:                 Parties du discours / Conj.
+    search:                   Recherche
+    show_bars:                Diagramme à barres
+    view_conj:                Afficher les parties du discours
+    win_title:                Liste de fréquence lexicale
+    word:                     Mots
+gui_window::word_search_opt:
+    win_title:                'Filtre: Liste de fréquence lexicale'
+gui_window::word_som:
+    cluster:                  Mettre sur la graphique
+    opt:                      'Options: Carte auto adaptative'
+    time_warn:                |-
+        La création de la carte auto adaptative peut prendre 
+        plusieurs heures ou jours !
+    u_w:                      Sélectionner l'unité de comptage et les mots
+    win_title:                'Options: Carte auto adaptative de mots'
+gui_window::word_tf_df:
+    df:                       Fréquence des documents d'une terme (DF)
+    log:                      '  Axes logarithmiques:'
+    none:                     Aucun
+    saving:                   Enregistrer le graphique sous...
+    tf:                       Fréquence du terme (TF)
+    units:                    'Unités de comptage:'
+    win_title:                Graphique de TF-DF
+    x:                        TF(X)
+    xy:                       TF(X) et DF(Y)
+kh_cod:
+    not_coding_rules:         On ne peut pas lire le fichier sélectionné comme fichier de règles de codage.
+    redefined:                |-
+        ***not translated***  code is redefined.
+        Please change the name of the code. //  コードが何度も定義されています。
+        コードの名前を変更してください。
+kh_cod::a_code:
+    syntax_error:             'Erreur de syntaxe dans la règle de codage:'
+kh_cod::a_code::atom::code:
+    no_code_error:            "Erreur de syntaxe. Le code suivant n'est pas encore défini: "
+kh_cod::func:
+    chisq:                    Khi-deux
+    n_cases:                  'Nombre de cas:'
+    n_docs:                   'Nombre de documents:'
+    no_codes:                 '#no_codes'
+    total:                    Somme totale
+kh_cod::search:
+    codes:                    '* Codes ajoutés à ce document (dans le fichier de règles de codage actuel):'
+    direct:                   '#Saisir au clavier'
+    no_codes:                 '#Aucun'
+kh_datacheck:
+    corrected:                Tous les problèmes connus sont corrigés.
+    error_c1:                 Certaines lignes contiennent Mojibake (problème de codage).
+    error_c2:                 Certaines lignes contiennent des caractères spéciaux.
+    error_charcode:           Impossible de détecter le codage des caractères du fichier actuel. Veuillez essayer de changer le codage des caractères en UTF-8.
+    error_m1:                 Lignes de titre sont trop longues. (Impossible de corriger automatiquement.)
+    error_mn:                 Utilisation incorrecte des étiquettes H1-H5. (Impossible de corriger automatiquement.)
+    error_n1a:                Il y a des lignes trop longues.
+    error_n1b:                'Il y a des lignes trop longues et en plus la ponctuation (espace, point, etc.) est mal situé. (Impossible de corriger automatiquement.)'
+    errors_detail:            'Les problèmes suivants ont été trouvés. (détails):'
+    errors_summary:           'Les problèmes suivants ont été trouvés. (résumé):'
+    lines:                    lignes
+    looks_good:               |-
+        Nous n'avons trouvé aucun problème connu. 
+        Veuillez procéder au pré-traitement
+kh_morpho::chasen:
+    error:                    "Erreur fatale: impossible d'exécuter ChaSen."
+    error_config:             Veuillez confirmer la configuration de ChaSen sur KH Coder.
+kh_morpho::mecab:
+    error:                    "Erreur fatale: impossible d'exécuter MeCab."
+    error_config:             Veuillez confirmer la configuration de MeCab sur KH Coder.
+    illegal_bra:              'Utilisation incorrecte de marquage <> '
+kh_morpho::mecab_k:
+    error:                    "Erreur fatale: impossible d'exécuter MeCab."
+kh_morpho::stanford:
+    error:                    "Erreur fatale: impossible d'exécuter Stanford POS Tagger."
+    error_config:             Veuillez confirmer la configuration de Stanford POS Tagger sur KH Coder.
+    no_java:                  |-
+        Erreur fatale: on ne peut pas trouver JAVA.
+        Veuillez installer JAVA.
+kh_morpho::stemming:
+    error:                    "Erreur fatale: impossible d'effectuer le traitement de Stemmer."
+kh_nbayes:
+    classified_as:            Classifieur bayésien naïf
+    classs:                   Classification
+    correct_insts:            Exemples de classés correctement
+    kappa:                    'Kappa de Cohen: '
+kh_nbayes::Util:
+    prior:                    '[Probabilité a priori]'
+kh_nbayes::cv_predict:
+    cross_validation:         (validation croisée)
+kh_project:
+    no_target_file:           On ne peut pas trouver le fichier indiqué.
+kh_projects:
+    already_registered:       Ce fichier est déjà enregistré comme projet.
+kh_r_plot:
+    faliled_in_plotting:      "Échec du traçage avec R\n\n"
+    illegal_plot_size:        Erreur de taille des graphiques
+kh_sysconfig::chasen:
+    path_error:               Erreur de chemin d'accès de Chasen.exe !
+kh_sysconfig::mecab:
+    path_error:               Erreur de chemin d'accès de MeCab.exe !
+kh_sysconfig::stanford:
+    path_error:               Erreur de chemin d'accès de Stanford POS Tagger !
+mysql_exec:
+    cross:                    |-
+        ***not translated*** Do your have multiple KH Coder on the same PC? 
+        MySQL database may be interfering.
+        
+        It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
+        それぞれのMySQLデータベースが混信している可能性があります。
+        
+        KH Coderの再起動を強くお勧めします。
+mysql_getheader:
+    error:                    |-
+        Échouer à extraire des titres. 
+        
+        Il est possible que vous ayez échoué à la rédaction avec des étiquettes H1-H5 dans le fichier actuel.
+        Veuillez essayer la commande "Vérifier le texte".
+mysql_outvar::read:
+    midashi_error:            "Impossible d'utiliser \"Heading1\" - \"Headings5\" comme nom de la variable."
+    overwrite_vars:           |+
+        La variable du même nom existe déjà.
+        Écraser cette variable existante ?
+
+    records_error:            |-
+        Le nombre de cas ne correspond pas.
+        On interrompt ce processus.
+mysql_ready:
+    error_in_mysql_bunr:      |-
+        La conformité des données a été perdue lors de la création de la table: bun_r.
+        KH Coder va se terminer.
+    too_long_sentence:        |-
+        Erreur: Il y a des phrases trop longues. ( > 65535 )
+        KH Coder va se terminer.
+mysql_ready::check:
+    error:                    'La conformité des données du pré-traitement a été perdue: '
+mysql_ready::dump:
+    too_long_word1:           |
+        On a trouvé des mots qui débordent le cadre de la longueur. ( > 128 )
+        
+        KH Coder peut traiter la longueur de mot jusqu'à 128 lettres.
+        Les mots trouvés sont enregistrés dans le fichier suivant: 
+    too_long_word2:           Cliquez 'OK' pour continuer le pré-traitement.
+mysql_words:
+    df:                       Fréquence des documents d'une terme (DF)
+    excel_limit:              |-
+        En raison de limitation du fichier Excel (65536 lignes), on ne peut pas exporter toutes les données. 
+        Veuillez sélectionner CSV pour les exporter.
+    mean_df:                  Moyenne de DF
+    mean_tf:                  Moyenne de TF
+    pos:                      Parties du discours(POS)
+    std_dev_df:               Écart type de DF
+    std_dev_tf:               Écart type de TF
+    tf:                       Distribution de fréquence du terme (TF)
+    types:                    Types de mots (n)
+    words:                    Mots
+screen_code::assistant:
+    KWIC_button:              '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
+    KWIC_button2:             '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
+    KWIC_label:               '***not translated*** 《M》  // 《文錦》'
+    corresp_ang:              'Direction de variable:'
+    corresp_drop_menu1:       étroit
+    corresp_drop_menu2:       légèrement plus étroit
+    corresp_drop_menu3:       moyen
+    corresp_drop_menu4:       légèrement plus large
+    corresp_drop_menu5:       large
+    corresp_rad:              "Champ: autour du point d'origine O"
+    cross_map_label:          'Utiliser le plugin:'
+    dialog_cancel:            Annuler
+    dialog_no:                Non
+    dialog_ok:                OK
+    dialog_use_plugin:        Activer NegationChecker
+    dialog_yes:               Oui
+    label_disable:            'Désactiver  '
+    label_enable:             'Activer  '
+    label_use_plugin:         'NegationChecker '
+    plugin_synonym:           '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
+    use_plugin:               Utiliser le plugin
+screen_code::rde_menu:
+    err_edit:                 On ne peut pas éditer les données du projet.
+    err_not_exist:            Les données du projet n'existent pas.
+    err_output_from_db:       Les données de projet ne peuvent pas sortir de la base de données.
+    plugin_raw_data_editor:   Éditer les données
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:   Éditer le fichier

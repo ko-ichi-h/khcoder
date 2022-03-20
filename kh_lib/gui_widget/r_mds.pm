@@ -35,14 +35,8 @@ sub _new{
 			$self->{method_opt} = 'K';
 		}
 
-		if ( $self->{r_cmd} =~ /dj .+euclid/ ){
-			$self->{method_dist} = 'euclid';
-		}
-		elsif  ( $self->{r_cmd} =~ /dj .+binary/ ){
-			$self->{method_dist} = 'binary';
-		}
-		else {
-			$self->{method_dist} = 'pearson';
+		if ($self->{r_cmd} =~ /method_coef <- "(.+)"\n/){
+			$self->{method_dist} = $1;
 		}
 
 		if ( $self->{r_cmd} =~ /dim_n <\- ([123])\n/ ){
@@ -131,9 +125,11 @@ sub _new{
 		pack    => {-side => 'left'},
 		options =>
 			[
-				['Jaccard', 'binary'],
+				['Jaccard', 'binary' ],
+				['Dice',    'Dice'   ],
+				['Simpson', 'Simpson'],
 				['Cosine',  'pearson'],
-				['Euclid',  'euclid'],
+				['Euclid',  'euclid' ],
 			],
 		variable => \$self->{method_dist},
 	);

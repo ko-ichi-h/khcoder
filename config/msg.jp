@@ -209,7 +209,7 @@ gui_window::main::menu:
     import_win_title:         KHC形式のファイルからプロジェクトをインポート。
     jac_mtrx:                 類似度行列
     kwic:                     KWICコンコーダンス
-    man:                      マニュアル (PDF)
+    man:                      マニュアルPDF
     mds:                      多次元尺度構成法
     netg:                     共起ネットワーク
     new:                      新規
@@ -242,6 +242,8 @@ gui_window::main::menu:
     words_cluster:            複合語の検出
     words_selection:          語の取捨選択
     som:                      自己組織化マップ
+    book2:                    公式入門書
+    book1:                    深く知るための書
 gui_window::morpho_check:
     details:                  詳細表示
     note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力
