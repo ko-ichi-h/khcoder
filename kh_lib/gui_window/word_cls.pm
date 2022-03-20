@@ -280,8 +280,17 @@ if (exists(\"doc_length_mtr\")){
 	$r_command .= "method_clst <- \"$args{method_mthd}\"\n";
 
 	$r_command .= '
-library(amap)
-dj <- Dist(d,method=method_dist)
+if (
+	   ( method_dist == "Dice" )
+	|| ( method_dist == "Simpson" )
+){
+	library(proxy)
+	dj <- proxy::dist(d,method=method_dist)
+	detach("package:proxy")
+} else {
+	library(amap)
+	dj <- Dist(d,method=method_dist)
+}
 
 if (
 	   ( as.numeric( R.Version()$major ) >= 3 )

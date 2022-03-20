@@ -76,6 +76,8 @@ sub _new{
 		options =>
 			[
 				['Jaccard', 'binary' ],
+				['Dice',    'Dice'   ],
+				['Simpson', 'Simpson' ],
 				['Cosine',  'pearson'],
 				['Euclid',  'euclid' ],
 			],
