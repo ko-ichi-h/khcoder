@@ -198,7 +198,7 @@ gui_window::main::menu:
     export_win_title:         ‘将当前项目导出到 *.khc 文件’
     freq:                     频率
     freq_df:                  '文档频率分布(DF)'
-    freq_tf:                  '项目频率分布(TF)'
+    freq_tf:                  '项数分布(TF)'
     h_cluster:                层次聚类分析
     help:                     帮助
     import:                   导入
@@ -480,3 +480,744 @@ gui_window::word_conc_opt:
     opt3:                     条件 3
     pos:                      '  词性(POS):'
     position:                 '位置:'
+    preface1:                 您可以添加特定搜索条件，类似 "词汇A位于 L1."
+    preface2:                 '要添加条件，首先要指定一个 "位置"。'
+    r:                        右1-5
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    rl:                       左右1-5
+    win_title:                附加条件(KWIC 索引)
+    word:                     '  词汇:'
+gui_window::word_corresp:
+    biplot:                   双标图(标题或文档号)
+    check_var_unit:           '错误: 目前不能同时使用不同聚合单元的外部变量'
+    dim:                      '成分 '
+    eig:                      特征值Cor ^2
+    exp:                      贡献率
+    flt:                      '仅标记远离远点的词汇:'
+    flw:                      '使用卡方值筛选词汇:'
+    matrix:                   '输入数据矩阵表'
+    na:                       不可用
+    nav:                      缺失值
+    option_ca:                '对应分析选项'
+    option_words:             '选择词汇'
+    plot:                     ' '
+    select_pos:               '错误: 请至少选择1个词性(POS)'
+    select_var:               '错误: 请至少选择1个变量'
+    too_many1:                ' '
+    too_many2:                词汇将被绘制
+    too_many3:                建议将绘制的词数限制在100至150左右。
+    too_many4:                确定要继续吗?
+    top:                      前
+    unit:                     '聚合单位:'
+    w_d:                      词汇×文档
+    w_v:                      词汇×外部变量
+    win_title:                '可选: 提取词汇的对应分析'
+    words:                    ' '
+gui_window::word_df_freq:
+    c_freq:                   "累积\n频率"
+    c_pcnt:                   "累积\n百分比"
+    descr:                    描述统计
+    df:                       文档数(DF)
+    freq:                     频率
+    freq_tab:                 频率分布表
+    pcnt:                     百分比
+    units:                    '  聚合单位:'
+    win_title:                文档频率分布
+gui_window::word_df_freq_plot:
+    log:                      '对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    win_title:                文档频率分布图
+    x:                        DF (X)
+    xy:                       DF (X) 和频率 (Y)
+gui_window::word_freq:
+    c_freq:                   "累积\n频率"
+    c_pcnt:                   "累积\n百分比"
+    descr:                    描述统计
+    freq:                     频率
+    freq_tab:                 频率分布表
+    pcnt:                     百分比
+    refresh:                  刷新
+    tf:                       TF
+    win_title:                项数(TF)分布
+gui_window::word_freq_plot:
+    log:                      '对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    win_title:                项数分布图
+    x:                        TF (X)
+    xy:                       TF (X) 和频率 (Y)
+gui_window::word_list:
+    count:                    '想要计数的:'
+    csv:                      逗号分割(*.csv)
+    df:                       文档数
+    file_type:                '文件类型:'
+    hinshi:                   通过词性(POS)标签
+    single:                   单列
+    tf:                       项数
+    top150:                   前 150
+    type:                     '列表类型:'
+    win_title:                '选项: 频率表 (Excel)'
+    xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
+gui_window::word_search:
+    and:                      AND
+    back:                     向后匹配
+    baseform:                 按基本形搜索
+    comp:                     完全匹配
+    conj:                     Conj.
+    enable_filter:            搜索时启用筛选器
+    forw:                     向前匹配
+    freq:                     频率
+    kwic:                     KWIC 索引
+    morph:                    词汇
+    or:                       OR
+    part:                     部分匹配
+    pos:                      词性(POS)
+    pos_conj:                 POS / Conj.
+    search:                   搜索
+    show_bars:                条形图
+    view_conj:                查看 Conj.
+    win_title:                词频列表
+    word:                     词汇
+    excel:                    Excel
+    n100:                     后100个
+    p100:                     前100个
+gui_window::word_search_opt:
+    win_title:                '筛选器: 词频列表'
+gui_window::word_tf_df:
+    df:                       文档数
+    log:                      '  对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    tf:                       项数
+    units:                    '聚合单位:'
+    win_title:                TF-DF 图
+    x:                        TF(X)
+    xy:                       TF(X) 和 DF(Y)
+kh_datacheck:
+    corrected:                所有已知问题都已纠正。
+    error_c1:                 某些行包含乱码
+    error_c2:                 包含不适当的字符
+    error_m1:                 标题行过长 (无法自动更正)
+    error_mn:                 '使用 H1 到 H5 的标签创建标题可能失败 (无法自动更正)'
+    error_n1a:                有些行太长
+    error_n1b:                行太长 (无法自动更正)
+    errors_detail:            '在要分析的文件中发现以下问题 (详情视图):'
+    errors_summary:           '在要分析的文件中发现以下问题 (摘要视图):'
+    lines:                    ' 行'
+    looks_good:              "没有发现已知问题。\n请继续预处理进程"
+    error_charcode:           "无法确定要分析文件的字符编码。\n 请尝试将文件字符编码改为 UTF-8."
+kh_morpho::chasen:
+    error:                    '致命错误: 无法启动 ChaSen.'
+    error_config:             '致命错误: 请提前设置 ChaSen.'
+kh_morpho::mecab:
+    error:                    '致命错误: 无法启动 MeCab.'
+    error_config:             '致命错误: 请提前设置 MeCab.'
+    illegal_bra:              '括号 <> 标记使用不正确'
+kh_morpho::mecab_k:
+    error:                    '致命错误: 无法执行 MeCab.'
+kh_morpho::stanford:
+    error:                    '致命错误: 无法启动 Stanford POS Tagger.'
+    error_config:             '致命错误: 请提前设置 KH Coder(JStanford POS Tagger)。'
+    no_java:                  '致命错误: 找不到java.exe，请提前安装 JAVA.'
+kh_morpho::stemming:
+    error:                    '致命错误: 无法处理 stemming.'
+kh_sysconfig::chasen:
+    path_error:               找不到 Chasen.exe 路径无效!
+kh_sysconfig::mecab:
+    path_error:               找不到 MeCab.exe 路径无效!
+kh_sysconfig::stanford:
+    path_error:               找不到 Stanford POS Tagger 路径无效!
+mysql_exec:
+    cross:                    "此电脑上是否还存在多个 KH Coder? \n有可能每个 MySQL数据库相互干扰\n\n我们强烈建议重新启动 KH Coder"
+mysql_words:
+    df:                       DF
+    mean_df:                  平均文档数
+    mean_tf:                  平均项数
+    pos:                      词性
+    std_dev_df:               文档数的标准查
+    std_dev_tf:               项数标准差
+    tf:                       TF
+    types:                    词汇类型 (n)
+    words:                    词汇
+    excel_limit:              "由于Excel文档格式限制，我们只能输出65536行以内的数据。\n请选择 CSV 格式来输出所有数据。"
+gui_widget::cls4mds:
+    cluster_color:            '聚类和颜色编码'
+    cls_num:                  '聚类簇数:'
+    adj:                      '相邻的簇'
+gui_widget::r_mds:
+    method:                   '方法:'
+    dist:                     '  距离:'
+    dim:                      '维度:'
+    1_3:                      '(从 1 到 3的范围指定)'
+    fix_asp:                  '固定宽高比'
+    random_start:             "使用随机过程以找到更好的方案\n*可能需要10分钟或更长时间"
+gui_window::word_mds:
+    units_words:              '选择单位和词汇'
+    mds_opt:                  '多维尺度选项'
+    plot:                     ' '
+    win_title:                '选项: 词汇的多维尺度'
+    select_5words:            错误: 请至少选择5个词汇
+    error_dim:                Error: 请为维度指定1-3的数字
+    dim:                      维度
+    omit:                     "分析中省略了以下词汇或编码:\n"
+    r_alpha:                  '半透明颜色 (不能保存为 EMF/EPS 格式)'
+gui_window::r_plot_opt::word_mds:
+    win_title:                '设置: 词汇的多维尺度'
+gui_window::r_plot::word_mds:
+    win_title:                '词汇的多维尺度'
+gui_window::cod_mds:
+    win_title:                '选项: 编码的多维尺度'
+    sel5:                     '    * 请选择至少5个编码'
+    sel5_e:                   错误：请选择至少5个编码。
+gui_window::r_plot::cod_mds:
+    win_title:                '编码的多维尺度'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                '设置: 编码的多维尺度'
+gui_widget::r_cls:
+    method:                   '方法:'
+    ward:                     '词汇'
+    average:                  '平均'
+    complete:                 '完全'
+    clara:                    'CLARA'
+    dist:                     '  距离:'
+    n_cls:                    '据类簇数:'
+    color:                    '聚类颜色'
+    stand:                    '标准化:'
+    none:                     '无'
+    by_words:                 '由词汇'
+    by_docs:                  '由文档'
+    tfidf:                    '  TF-IDF:'
+gui_window::word_som:
+    win_title:                '自组织图选项'
+    cluster:                  ' '
+    u_w:                      '选择单元和词汇'
+    opt:                      '自组织图选项'
+    time_warn:                "创建自组织图(self-organizing map)可能要数小时或数天!"
+gui_widget::r_som:
+    n_nodes1:                 '节点数(单侧):'
+    cluster_color:            '聚类节点'
+    cls_num:                  '聚类簇数:'
+    2_12:                     '(从 2 到 12)'
+    hex:                      '六边形'
+    sq:                       '四边形'
+    p_nodes:                  '绘图: '
+    rlen:                     '学习步骤数量:'
+gui_window::r_plot::word_som:
+    cls:                      '聚类'
+    gray:                     '灰度'
+    freq:                     '频率'
+    umat:                     'U-矩阵'
+    views:                    ' 颜色: '
+    win_title:                '词汇的自组织图'
+gui_window::r_plot_opt::word_som:
+    win_title:                '配置: 词汇的自组织图'
+gui_window::word_cls:
+    u_w:                      '选择单位和词汇'
+    opt:                      '聚类分析选项'
+    cluster:                  ' '
+    win_title:                '选项: 词汇的层次聚类分析'
+    last1:                    '最后 '
+    last2:                    ''
+    first1:                   '最前 '
+    first2:                   ''
+    agglomer:                 '凝聚阶段'
+    hight:                    '系数 (相异性)'
+    note1:                    "* 图中的数字标签为\n  每步凝聚后的簇数"
+gui_window::r_plot::word_cls:
+    ward:                     'ward-离差平方和法'
+    ave:                      '组均值法'
+    clink:                    'clink 法'
+    method:                   ' 方法:'
+    agglomer:                 '凝聚'
+    win_title:                '词汇层次聚类分析'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              '您不能在此窗口中指定"自动" 。 请输入一个数值。'
+    win_title:                '配置: 词汇层次聚类分析'
+gui_window::cls_height::word:
+    win_title:                '凝聚: 词汇层次聚类分析'
+gui_window::cls_height:
+    plotting:                 ' 步骤: '
+    f50:                      '<< 前 50'
+    all:                      '全部'
+    l50:                      '后 50 >>'
+    save_as:                  '绘图另存为:'
+gui_window::cod_cls:
+    win_titile:               '选项: 编码的层次聚类分析'
+gui_window::r_plot_opt::cod_cls:
+    win_title:                '配置: 编码的层次聚类分析'
+gui_window::r_plot::cod_cls:
+    win_titile:               '编码的层次聚类分析'
+gui_window::cls_height::cod:
+    win_title:                '凝聚: 编码的层次聚类分析'
+gui_window::cod_som:
+    win_title:                '选项: 编码的自组织图'
+gui_window::r_plot::cod_som:
+    win_title:                '编码的自组织图'
+gui_window::r_plot_opt::cod_som:
+    win_title:                '配置: 编码的自组织图'
+gui_widget::r_net:
+    additional_plots:         '附加绘图 (如中心性 等)'
+    filter_edges:             '要绘制的共现关系（边）: '
+    e_top_n:                  '前'
+    e_jac:                    '系数. >= '
+    or_more:                  ''
+    thicker:                  '关系（边）越强线条越黑'
+    smaller:                  '更小的节点'
+    min_sp_tree:              '突出显示最小生成树'
+    min_sp_tree_only:         '仅绘制最小生成树'
+    gray_scale:               '灰阶'
+    fix_lab:                  '调整重叠标签'
+    view_coef:                显示系数.
+    cor_var:                  '探索共现模式的变化'
+    cor_var2:                 '  相关性 与: '
+    cor_var_colors:           '以颜色标示相关性'
+    cor_var_darker:           '加深背景色'
+    standardize_coef:         '标准化系数.'
+gui_widget::r_margin:
+    margin:                   '边距: '
+    left:                     '左'
+    right:                    '右'
+    top:                      '顶部'
+    bottom:                   '底部'
+gui_window::word_netgraph:
+    u_w:                      '聚合单元和提取词的选择'
+    use:                      ''
+    net_opt:                  '共现网络选项'
+    e_type:                   '共现关系类型（边）:'
+    w_w:                      '词汇 - 词汇'
+    w_v:                      '词汇 - 变量 / 标题'
+    var:                      '变量 / 标题:'
+    win_title:                '选项: 词汇的共现网络'
+gui_window::r_plot_opt::word_netgraph:
+    win_title:                '配置: 词汇的共现网络'
+gui_window::r_plot::word_netgraph:
+    col:                      '颜色'
+    gray:                     '灰阶'
+    cnt_b:                    '间接中心性'
+    cnt_d:                    '度中心性'
+    cnt_v:                    '特征向量中心性'
+    com_b:                    '间接子图'
+    com_r:                    '随机游走子图'
+    com_m:                    '模块化子图'
+    cor:                      '相关性'
+    none:                     无
+    color:                    ' 颜色:'
+    interactive:              'HTML'
+    win_title:                '词汇的共现网络'
+gui_window::cod_netg:
+    win_title:                '选项: 编码的共现网络'
+    c_c:                      '编码 - 编码'
+    c_v:                      '编码 - 变量 / 标题'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                '配置: 编码的共现网络'
+gui_window::r_plot::cod_netg:
+    win_title:                '编码的共现网络'
+gui_window::cod_count:
+    win_title:                '编码的频率'
+    go_c:                     '运行'
+    h_code:                   '编码'
+    h_freq:                   '频率'
+    h_pcnt:                   '百分比'
+    error_cod_f:              '错误: 请选择编码规则文件'
+kh_cod::func:
+    no_codes:                 '#没有编码'
+    n_docs:                   '文档数'
+    n_cases:                  '案例数'
+    total:                    '总计'
+    chisq:                    '卡方'
+gui_widget::tani2:
+    unit_c:                   '编码单位:'
+    unit_t:                   '    制表单位:'
+gui_window::cod_outtab:
+    win_title:                '编码: 交叉表'
+    cells:                    '    单元格:'
+    unit_cod:                 '编码单位:'
+    var:                      '   交叉表:'
+    f_p:                      '两者'
+    f:                        '频率'
+    p:                        '百分比'
+    run:                      '运行'
+    er_ill:                   '错误: 非法的参数!'
+    line_all:                 '全部'
+    line_select:              '选择'
+    line:                     ' 线:'
+    map:                      'map: '
+gui_window::cod_jaccard:
+    win_title:                '编码: 相似度矩阵-Jaccard系数'
+    unit_cod:                 '  编码单位:'
+    copy_sel:                 '复制 (所选)'
+gui_window::cod_out::csv:
+    save_as:                  '文档-编码矩阵结果另存为 *.csv'
+    win_title:                '导出文档编码矩阵为: CSV'
+gui_window::cod_out::spss:
+    save_as:                  '文档-编码矩阵结果另存为 *.sps'
+    win_title:                '导出文档编码矩阵为: SPSS'
+gui_window::cod_out::tab:
+    save_as:                  '文档-编码矩阵结果另存为 *.txt'
+    win_title:                '导出文档编码矩阵为: 制表符分隔'
+    tab_delimited:            '制表符分隔'
+gui_window::cod_out::var:
+    save_as:                  '档-编码矩阵结果另存为 *.cvs'
+    win_title:                '导出文档编码矩阵为: 不定长 CSV'
+gui_window::doc_search:
+    win_title:                '搜索文档'
+    run:                      '运行'
+    unit:                     '单位:'
+    no_sort:                  '不排序'
+    tf:                       'tf'
+    tf_M_idf:                 'tf*idf'
+    tf_D_idf:                 'tf/idf'
+    error_no_code:            '请至少选择1个编码'
+kh_cod::search:
+    codes:                    '* 添加到本文档的代码（在当前编码规则文件中）:'
+    no_codes:                 '#无'
+    direct:                   '#直接输入'
+gui_widget::select_a_var:
+    pos:                      '位置'
+    pos2:                     '文档'
+    heading:                  '标题 '
+    na:                       '不可用'
+gui_window::doc_cls:
+    verb:                     ''
+    fail:                     '聚类计算失败'
+    win_title:                '选项: 文档聚类分析'
+gui_window::doc_cls_res:
+    win_title:                '文档的聚类分析'
+    docs_in_clusters:         '每个聚类包含文档'
+    h_cls_id:                 '聚类簇'
+    h_doc_num:                '文档数'
+    docs:                     '文档'
+    bal_docs:                 "在聚类中搜索文档.\n[双击]"
+    words:                    '词汇'
+    bal_words:                "搜索聚类的特征词\n[shift + 双击]"
+    agglm:                    '凝聚阶段'
+    h_stage:                  '阶段'
+    h_cls1:                   '聚类 1'
+    h_cls2:                   '聚类 2'
+    h_coeff:                  '系数'
+    both:                     '1 和 2'
+    only1:                    '仅 1'
+    only2:                    '仅 2'
+    bal_agg_docs:             "搜索阶段中的文档\n[双击]"
+    m_wrd:                    'ward-离差平方和法'
+    m_ave:                    '组均值法'
+    m_clk:                    'CLink 法'
+    config:                   '配置'
+    save:                     '将结果保存为变量'
+    cluster:                  '聚类'
+    na:                       '不可用'
+gui_window::doc_cls_res_sav:
+    desc:                     '将聚类分析结果保存为变量。'
+    name:                     '变量名:'
+    specify_var:              '指定新变量的名称'
+    win_title:                '聚类结果另存为变量'
+gui_window::doc_cls_res_opt:
+    win_title:                '配置: 文档的聚类分析'
+gui_window::cls_height::doc:
+    win_title:                '凝聚: 文档的聚类分析'
+    overwr:                   '确定要覆盖此文件吗: '
+gui_window::morpho_crossout:
+    output:                   ''
+gui_window::morpho_crossout::csv:
+    er_no_pos:                '错误: 请至少选择1个词性'
+    saving:                   '"文档-词汇"矩阵另存为:'
+    win_title:                '导出"文档-词汇"矩阵为: CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                '导出"文档-词汇"矩阵为: SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   '制表符分隔'
+    win_title:                '导出"文档-词汇"矩阵为: 制表符分隔'
+gui_window::morpho_crossout::var:
+    win_title:                'E导出文档-词汇矩阵为: 不定长 CSV'
+gui_window::contxt_out:
+    words:                    '词汇'
+    words4cntxt:              '计算上下文向量的词汇'
+    options:                  '单位和加权'
+    use:                      ''
+gui_window::contxt_out::csv:
+    saving:                   '"词汇-上下文向量" 矩阵另存为:'
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: CSV'
+gui_window::contxt_out::spss:
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: SPSS'
+gui_window::contxt_out::tab:
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: 制表符分隔'
+gui_window::txt_pickup:
+    win_title:                '提取部分文本'
+    headings:                 '提取标题'
+    headings_name:            '  '
+    codes:                    '提取具有特定编码的文档'
+    unit:                     '编码单位'
+    higher:                   '包含更高级别的标题'
+    error_no_headings:        '请选择至少1个标题'
+    saving:                   '提取部分文本: 另存为'
+gui_window::txt_html2csv:
+    win_title:                '转换为 CSV'
+    unit:                     '哪个单位应被视为 CSV 的行/个案'
+    select:                   '选择:'
+    saving:                   'CSV 文件另存为'
+gui_window::outvar_read:
+    unit:                     '变量的单位:'
+    no_such_file:             '错误: 找不到文件，请指定正确的文件!'
+gui_window::outvar_read::csv:
+    open:                     '请选择包含变量的文件'
+    csv:                      'CSV 文件:'
+    win_title:                '从 CSV 中读取变量'
+gui_window::outvar_read::tab:
+    tabdelf:                  '制表符分隔文件'
+    open:                     '请选择包含变量的文件'
+    tabdel:                   '制表符分隔'
+    win_title:                '从制表符分隔文件中读取变量'
+gui_window::outvar_list:
+    win_title:                '变量和标题列表'
+    headings:                 '标题'
+    vars:                     '变量'
+    h_unit:                   '单位'
+    h_name:                   '变量'
+    del:                      '删除'
+    export:                   '导出'
+    read:                     '*导入'
+    csv:                      'CSV 文件'
+    tabdel:                   '制表符分隔'
+    values:                   '变量和变量标签: '
+    h_value:                  '值'
+    h_label:                  '标签'
+    h_freq:                   '频率'
+    save:                     '保存标签'
+    docs:                     '文档'
+    words:                    '*词汇'
+    selected:                 '所选值'
+    catalogue_xls:            '目录: Excel'
+    catalogue_csv:            '目录: CSV'
+    help_words:               "搜索值的特征词\n[Shift + 双击]"
+    unit:                     '单位:'
+    help_docs:                "通过所选值搜索文档\n[双击]"
+    error_sel_a_var:          '错误: 请选择变量！'
+    mspgoth:                  'MS PGothic'
+    error_sel_a_vv:           '错误: 请选择变量和值.'
+    error_hd1:                '无法删除标题。\n请直接修改要分析的文件'
+    del_ok:                   '确定要删除选中的变量吗?'
+    error_units:              '聚类单位不同的变量不能同时保存'
+    error_hd2:                '无法导出标题。\n请尝试使用 "提取部分文本" 命令'
+    saving:                   '变量另存为'
+gui_window::hukugo:
+    win_title:                '词汇聚类器: ChaSen'
+    run:                      '运行'
+    h_huku:                   '聚类'
+    h_freq:                   '频率'
+    whole:                    '整体列表'
+gui_window::use_te:
+    win_title:                'Copyright of TermExtract'
+    desc:                     'TermExtract will be utilized in this function.'
+    web:                      'TermExtract 网页:'
+    about:                    '关于 TermExtract:'
+gui_window::use_te_g:
+    win_title:                '词汇聚类器: TermExtract'
+    run:                      '运行'
+    h_hukugo:                 '聚类'
+    h_score:                  '分数'
+gui_window::bayes_learn:
+    win_title:                '从变量构建模型（使用变量作为训练数据）'
+    add2exists:               '将当前结果附加到现有模型文件'
+    cr_validate:              '执行交叉验证'
+    savelog:                  '保存分类日志'
+    savecls:                  '将分类结果保存为变量'
+    vname:                    '变量:'
+    error_f20:                '错误: 请指定从 2 到 20 作为折叠值'
+    error_var:                '错误: 请选择一个变量'
+    error_exists:             '错误: 指定的变量名已经存在'
+    select_exist:             '选择要附加的模型文件'
+    saving_new:               '模型另存为'
+    saving_log:               '分类日志另存为'
+    error_no_words:           '错误: 当前设置中没有可用的词汇。'
+    done:                     '模型构建完成'
+    docs:                     '用作训练数据的文档数:'
+    docs_total:               '文件总数:'
+    accuracy:                 '准确率:'
+    verb4wid:                 ''
+gui_widget::words_bayes:
+    unit:                     '分类单位：'
+    var:                      '变量:'
+    n_a:                      '不可用'
+gui_window::bayes_view_knb:
+    win_title:                '查看模型文件:'
+    n_docs:                   '已处理的文档:'
+    n_types:                  ' 词汇类型:'
+    search:                   '搜索'
+    whole:                    '整个列表'
+    variance:                 方查
+kh_nbayes::cv_predict:
+    cross_validation:         '(交叉验证)'
+kh_nbayes::Util:
+    prior:                    '[先验概率]'
+gui_window::bayes_predict:
+    win_title:                '使用模型文件对文档进行分类'
+    unit:                     '分类单位:'
+    model_file:               '模型文件:'
+    var_name:                 '变量名:'
+    var_desc:                 '    * 分类结果将保存为变量。'
+    save_log:                 '将分类详细信息保存到日志文件'
+    opening_model:            '打开模型文件...'
+    er_no_such_file:          '错误: 请指定正确的文件'
+    er_specify_name:          '错误: 请指定正确的变量名'
+    er_exists:                '错误: 指定的变量名已经存在'
+    saving_log:               '分类详情另存为:'
+gui_window::bayes_view_log:
+    win_title:                '分类详情文件:'
+    model_file:               '模型文件:'
+    saved_var:                ' 已保存的变量:'
+    unit:                     ' 分类单位:'
+    doc_id:                   ' 文件编号'
+    search_words:             '搜索词汇:'
+    class:                    '分类:'
+    higher_left:              ' * 从左到右按分数降序显示'
+    word:                     '词汇'
+    freq:                     '频率'
+    variance:                 '方查'
+    run:                      '运行'
+kh_nbayes:
+    classified_as:            '分类为'
+    classs:                   '分类'
+    correct_insts:            '正确分类的实例'
+    kappa:                    'Kappa 统计量: '
+kh_project:
+    no_target_file:           '要分析的文件不存在'
+kh_projects:
+    already_registered:       '该文件已注册为项目'
+gui_errormsg::file:
+    could_not_open_the_file:  "无法打开文件.\nKH Coder 即将退出。\n* "
+kh_cod:
+    not_coding_rules:         '所选文件看起来不像编码规则文件'
+    redefined:                " 编码已定义过，\n请改变编码名称"
+kh_r_plot:
+    illegal_plot_size:        '非法的绘图尺寸'
+    faliled_in_plotting:      '无法使用 R 绘图\n\n'
+mysql_ready:
+    error_in_mysql_bunr:      '数据库有错误: bun_r 表\nKH Coder 即将退出'
+    too_long_sentence:        "错误: 有一条语句过长 ( > 65535 )\nKH Coder 即将退出"
+kh_cod::a_code:
+    syntax_error:             '编码规则中有语法错误:'
+kh_cod::a_code::atom::code:
+    no_code_error:            '语法错误，编码未定义: '
+mysql_outvar::read:
+    records_error:            "记录数并不多.\n正在退出进程"
+    midashi_error:            '不能使用 "Heading1" - "Headings5" 作为变量名'
+    overwrite_vars:           '已加载了同名变量\n是否要覆盖现有变量?\n\n'
+mysql_ready::dump:
+    too_long_word1:            "提取词长度超过限制 ( > 128 )\n\nKH Coder 仅识别了前 128 个字符串.\n词汇已经记录在下列文件: \n"
+    too_long_word2:            "点击 OK 继续执行处理进程"
+mysql_getheader:
+    error:                     "无法处理文件。\n\n目标文件中可能存在H1-H5标签使用错误。\n请尝试\"检查目标文本\" 命令。"
+gui_window::r_plot::doc_cls:
+    win_title:                 "文件树状图"
+gui_window::r_plot_opt::doc_cls:
+    doc_label:                 "个案标签:"
+    number:                    "编号."
+    heading:                   "标题"
+    win_title:                 "配置: 文件树状图"
+mysql_ready::check:
+    error:                     "数据不完整: "
+gui_window::r_plot::cod_mat:
+    win_title:                 "交叉表图"
+    heat:                      "特土"
+    fluc:                      "气泡"
+gui_window::r_plot::tpc_mat:
+    win_title:                 "主题比例图"
+    heat:                      "热图"
+    fluc:                      "气泡"
+gui_window::r_plot_opt::cod_mat:
+    win_title:                 "设置: 交叉表图"
+    cellnote:                  "显示百分比"
+    dendro_c:                  "聚类编码"
+    dendro_v:                  "聚类变量或标题"
+    bubble_size:               "气泡大小: "
+    plot_size_heat:            "绘图高度:"
+    plot_size_mapw:            "绘图宽度:"
+    plot_size_maph:            "  高度:"
+    bubble_shape:              "气泡形状: "
+    square:                    "方形"
+    circle:                    "圆形"
+    common:                    "通用设置"
+    select_1:                  "请至少选择1个编码"
+    color_rsd:                 "按颜色标记标准化残差"
+    col1:                      "颜色"
+    col2:                      "颜色 (CM)"
+    gray:                      "灰阶"
+    color_fix:                 "固定颜色: "
+gui_window::r_plot::cod_mat_line:
+    win_title:                 "折线图"
+gui_window::r_plot_opt::cod_mat_line:
+    win_title:                 "配置: 折线图"
+gui_window::import_folder:
+    win_title:                 "导入: 文件夹中的多个文本"
+    description:               "统一文件夹中的所有文档文件并创建项目"
+    folder:                    "文件夹: "
+    level:                     "文件名标题级别:"
+    conv:                      '将数据中的 "<" 和 ">" 转换为空格'
+    auto:                      "自动检测"
+    auto_jp:                   "自动检测 (日语)"
+    unicode:                   "Unicode（UTF-8）"
+    char_code:                 "文件的字符编码: "
+    unified:                   "统一文件: "
+    change:                    "变更"
+    browse_unified:            "请输入统一文本文件的名称"
+    opt_unify:                 "统一文件"
+    opt_project:               "新建项目"
+gui_window::topic_fitting:
+    win_title:                 "拟合主题模型"
+    opt:                       "主题模型 (LDA) 选项"
+    n_topics:                  "主题数量: "
+gui_window::topic_perplexity:
+    opt:                       '方法和主题数量'
+    win_title:                 '查找最佳主题数'
+    candidates:                "主题数量: "
+    folds:                     "分割数（折叠）: "
+    method:                    "方法: "
+    error_terms_topics:        "使用 ldatuning 时, 所选单词数应大于最大主题数"
+gui_window::topic_result:
+    win_title:                 主题估计结果
+    extended:                  "概率."
+    words:                     "词汇: "
+    export:                    "*导出"
+    topic_term:                主题×词汇 矩阵表
+    doc_topic:                 文档×词汇 矩阵表
+    topic_prop:                " 主题比例:"
+    stats_table:               表
+    plot:                      图
+gui_window::topic_stats:
+    win_title:                 话题比例表
+    var:                       制表:
+screen_code::rde_menu:
+    plugin_raw_data_editor:    "编辑数据"
+    err_not_exist:             "项目数据不存在。"
+    err_output_from_db:        "Projectdata 无法从数据库输出。"
+    err_edit:                  "Projectdata 无法编辑。"
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:    "编辑文件"
+screen_code::assistant:
+    use_plugin:                "使用插件"
+    cross_map_label:           "使用插件:"
+    corresp_rad:               "  原点范围:"
+    corresp_ang:               "  变量范围:"
+    corresp_drop_menu1:        "窄"
+    corresp_drop_menu2:        "稍窄"
+    corresp_drop_menu3:        "正常"
+    corresp_drop_menu4:        "稍宽"
+    corresp_drop_menu5:        "宽"
+    dialog_ok:                 "是"
+    dialog_yes:                "是"
+    dialog_no:                 "否"
+    dialog_cancel:             "取消"
+    dialog_use_plugin:         "启用 NegationChecker"
+    label_use_plugin:          "NegationChecker "
+    label_enable:              "启用  "
+    label_disable:             "禁用  "
+    plugin_synonym:            "《M》 Synonym"
+    KWIC_button:               "《M》 KWIC "
+    KWIC_button2:              "《M》 KWIC*"
+    KWIC_label:                "《M》 "
