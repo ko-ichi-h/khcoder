@@ -238,6 +238,7 @@ sub make_plot{
 		return 0;
 	}
 
+	$r_command .= "\n";
 	$r_command .= "method_mds <- \"$args{method}\"\n";
 	$r_command .= "method_coef <- \"$args{method_dist}\"\n";
 	if ($args{random_starts} == 1){
@@ -986,7 +987,6 @@ grid.draw(g)
 
 sub r_command_mds{
 	return '
-
 word_freq <- rowSums(d)
 
 library(amap)
