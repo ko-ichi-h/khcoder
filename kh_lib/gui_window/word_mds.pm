@@ -987,7 +987,8 @@ grid.draw(g)
 
 sub r_command_mds{
 	return '
-word_freq <- rowSums(d)
+word_freq   <- rowSums(d)
+word_freq_c <- word_freq
 
 library(amap)
 library(proxy)
@@ -1002,12 +1003,26 @@ check4mds <- function(d){
 		jm <- Dist(d, method=method_coef)
 	}
 	jm <- as.matrix(jm)
+	ddj <- jm
 	jm[upper.tri(jm,diag=TRUE)] <- NA
-	if ( length( which(jm==0, arr.ind=TRUE) ) ){
-		return( which(jm==0, arr.ind=TRUE)[,1][1] )
-	} else {
-		return( NA )
+	while ( length( which(jm==0, arr.ind=TRUE) ) ){
+		lf <- which(jm==0, arr.ind=TRUE)[1,]
+		#print( paste(lf[1], word_freq_c[lf[1]], lf[2], word_freq_c[lf[2]]) )
+		if ( word_freq_c[lf[1]] > word_freq_c[lf[2]] ){
+			rmv <- lf[2];
+		} else {
+			rmv <- lf[1];
+		}
+		print( paste( "Dropped object:", row.names(d)[rmv]) )
+		d <- d[-rmv,]
+		word_freq_c <- word_freq_c[-rmv]
+		jm <- jm[-rmv,]
+		jm <- jm[,-rmv]
+		ddj <- ddj[-rmv,]
+		ddj <- ddj[,-rmv]
 	}
+	ddj <- as.dist(ddj)
+	return( list( d, ddj ) )
 }
 
 if (
@@ -1030,20 +1045,19 @@ if (method_coef == "euclid"){ # standardize for each word
 }
 
 if ( (method_mds == "K") || (method_mds == "S") ) {
-	while ( is.na(check4mds(d)) == 0 ){
-		n <-  check4mds(d)
-		print( paste( "Dropped object:", row.names(d)[n]) )
-		d <- d[-n,]
-	}
-}
-
-if (
-	   ( method_coef == "Dice" )
-	|| ( method_coef == "Simpson" )
-){
-	dj <- proxy::dist(d, method=method_coef)
+	checked <- check4mds(d)
+	d  <- checked[[1]]
+	dj <- checked[[2]]
+	rm(checked)
 } else {
-	dj <- Dist(d, method=method_coef)
+	if (
+		   ( method_coef == "Dice" )
+		|| ( method_coef == "Simpson" )
+	){
+		dj <- proxy::dist(d, method=method_coef)
+	} else {
+		dj <- Dist(d, method=method_coef)
+	}
 }
 detach("package:proxy")
 
