@@ -1,1244 +1,1223 @@
 ---
 global:
-  all: 全部
-  browse: 参照
-  cancel: 取消
-  clear: 清除
-  close: 关闭
-  cont_big_pros: 这个处理可能需要花费一定的时间。可以继续吗？
-  copy: 复制
-  copy_all: 复制（表全体）
-  csv_f: CSV文件
-  default: 既定值
-  max: 最小
-  min: 最大
-  ok: 同意
-  paragraph: 段落
-  plot: 图表
-  r_dont_close: 实行时不要关闭这个画面
-  r_net_msg_fail: 调整失败了。
-  save: 保存
-  search: 搜索
-  select_3words: |-
-    ***not translated*** We need more words to run this analysis.
-    Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
-    抽出語リストを確認し、設定を見直してください。
-  select_a_file: 请选择文件
-  sentence: 字句
-  spss_f: SPSS文件
-  tab_f: 栏标定界
-  wm_f: 不定长CSV（WordMiner）
-  words: 词汇
-gui_errormsg::file:
-  could_not_open_the_file: 文件无法打开。结束KH Coder。*
+    all:                      全部
+    browse:                   浏览
+    cancel:                   取消
+    clear:                    清除
+    close:                    关闭
+    cont_big_pros:            "这可能需要花费一些时间。\n \n需要继续吗？"
+    copy:                     复制
+    copy_all:                 复制(全部)
+    csv_f:                    CSV 文件
+    default:                  默认
+    ok:                       确认
+    paragraph:                段落
+    plot:                     图表
+    save:                     保存
+    search:                   搜索
+    sentence:                 字句
+    spss_f:                   SPSS 文件
+    tab_f:                    Tab Delimited
+    wm_f:                     不定长CSV（WordMiner）
+    r_dont_close:             运行时不要关闭此窗口
+    r_net_msg_fail:           错误：配置选项失败
+    words:                    提取词
+    select_a_file:            请选择一个文件
+    min:                      最小
+    max:                      最大
+    select_3words:            "我们需要更多提取此来运行此分析.\n请检查提取词列表并查看设置。"
 gui_errormsg::mysql:
-  fatal: MySQL数据库的处理已经失败。结束KH Coder。
+    fatal:                   "无法处理 MySQL 数据库.\nKH Coder 即将退出."
 gui_wait:
-  done: 处理已经完成。经过的时间：
+    done:                    "该进程已完成。\n花费时间："
 gui_widget::bubble:
-  breaks: 图例
-  bubble: 气泡图：
-  size: 气泡的大小
-  standardize: 将气泡的大小标准化：
-  variable: 变量值/将标题的大小设为可变
-  variance: 分散
-gui_widget::cls4mds:
-  adj: 相邻的集群
-  cls_num: 集群数：
-  cluster_color: 集群化和颜色区分
+    bubble:                   气泡图：
+    size:                     气泡大小：
+    standardize:              标准化气泡大小：
+    variable:                 ’变量/大小也与词频相关‘
+    variance:                 离散
+    breaks:                   '图例' 
 gui_widget::codf:
-  browse_title: 请选择编码规则文件
-  cod_rule_f: 编码规则文件：
-  no_file: 没有选择文件
-  reload: 重新载入
+    browse_title:             请选择编码规则文件
+    cod_rule_f:               编码规则文件
+    no_file:                  没有选择文件
+    reload:                   重新载入
 gui_widget::mail_config:
-  change_font: 字体的变更
-  config: 变更
-  display: 画面表示
-  font: 字体的设定：
-  font_size: 默认图表内的字体大小：
-  from: From：
-  if_cud: 采用色彩通用设计（Color Universal Design）
-  note_fs: KH Coder是将计量文本分析进行实践的工具。
-  other: 其他
-  plot_size1: 默认图表的大小：长边
-  plot_size2: 短边
-  select_font: 字体：
-  sendmail: 预处理的完成用邮件来通知
-  size: 尺寸：
-  smtp: SMTP Server：
-  to: To：
-  use_heap: 为了将预处理高效化在RAM中读取数据
-gui_widget::r_cls:
-  average: 群平均法
-  by_docs: 每个文档
-  by_words: 每个词汇
-  clara: CLARA
-  color: 集群的颜色区分
-  complete: 最远邻法
-  dist: 距离：
-  method: 方法：
-  n_cls: 集群数：
-  none: 没有
-  stand: 标准化：
-  tfidf: 值：
-  ward: Ward法
+    change_font:              字体设置
+    config:                   设置
+    font:                     字体设置：
+    from:                     '    From: '
+    note_fs:                  KH Coder 一款用于定量文本分析的工具.
+    other:                    其他
+    select_font:              字体：
+    sendmail:                 预处理完成后发送一个邮件通知
+    size:                     '尺寸：'
+    smtp:                     '    SMTP Server: '
+    to:                       '    To: '
+    use_heap:                 将数据读取到 RAM 以加速预处理
+    display:                  显示
+    plot_size1:               '默认绘图大小：长边'
+    plot_size2:               '  短边'
+    font_size:                '绘图中的默认字体大小: '
+    if_cud:                   '通用颜色设计'
 gui_widget::r_font:
-  bold: 粗体字
-  font_size: 字体大小：
-  pcnt: '%'
-  plot_size: 图表大小：
-gui_widget::r_margin:
-  bottom: '***not translated*** bottom // 下'
-  left: '***not translated*** left // 左'
-  margin: '***not translated*** Margin:  // 余白：'
-  right: '***not translated*** right // 右'
-  top: '***not translated*** top // 上'
-gui_widget::r_mds:
-  1_3: （在1到3的范围内指定）
-  dim: 次元：
-  dist: 距离：
-  fix_asp: 固定长宽比例
-  method: 方法：
-  random_start: "随即初始值来得到最优解\n※有可能耗费10分钟以上的时间"
-gui_widget::r_net:
-  additional_plots: 追加其他的图
-  cor_var: 探索共起模式的变化
-  cor_var2: 相关数值参数
-  cor_var_colors: 相关性的参数
-  cor_var_darker: 设置背景暗色
-  e_jac: 系数
-  e_top_n: 绘图数
-  filter_edges: 帅选绘图的共现关系（edge）
-  fix_lab: 为了标签不重叠对位置进行调整
-  gray_scale: 用灰度等级来表示
-  larger_font: 字体变大 ※输出EMF或者EPS格式（适合印刷）
-  min_sp_tree: 强调表示最小生成树
-  min_sp_tree_only: 只绘制最小生成树
-  or_more: 以上
-  smaller: 所有的词汇用小圆来绘制
-  standardize_coef: 系数标准化
-  thicker: 坚定的共现关系用暗线绘制
-  view_coef: 显示系数
-gui_widget::r_som:
-  2_12: （从2到12为止）
-  cls_num: 集群数：
-  cluster_color: 节点的集群化
-  hex: 6角形
-  n_nodes1: 1边的节点数：
-  p_nodes: 图表的形状：
-  rlen: 学习次数：
-  sq: 4角形
+    bold:                     加粗
+    font_size:                '字体大小:'
+    pcnt:                     '% '
+    plot_size:                '  图表尺寸:'
 gui_widget::r_xy:
-  cmp_plot: 绘图的構成要素：
-  none: 标准化
-  origin: 表示原点
-  scaling: 分数：
-  sym: 对称
-  symbi: 对称双位点图
-  x: X轴
-  y: Y轴
-  zoom: 放大原点附近
-  zoom_factor: 系数
+    cmp_plot:                 '绘图维度: '
+    x:                        ' X轴'
+    y:                        ' Y轴'
+    origin:                   显示原点
+    scaling:                  Scaling:
+    none:                     无
+    sym:                      对称
+    symbi:                    对称 biplot
+    zoom:                     放大原点附近的区域：
+    zoom_factor:              因子
 gui_widget::sampling:
-  sampling: '***not translated*** Sampling: // サンプリング：'
-gui_widget::select_a_var:
-  heading: 标题
-  na: 不能使用
-  pos: 出现位置
-  pos2: '***not translated*** Documents // 文書ごと'
-gui_widget::tani2:
-  unit_c: 编码单元：
-  unit_t: 汇总单元：
+    sampling:                 '抽样:'
 gui_widget::words:
-  by_df: 根据最小/最大文档数来选择词汇的取舍
-  by_pos: 根据词类来选择词汇的取舍
-  by_tf: 根据最小/最大出现数来选择词汇的取舍
-  check: 检查
-  check_desc1: 现在的设定
-  check_desc2: 词汇的数量：
-  df_unit: 被视为文档的单元：
-  max_df: 最大文档数：
-  max_tf: 最大出现数：
-  min_df: 最小文档数：
-  min_tf: 最小出现数：
-  no_pos_selected: 一个词类也没有被选择。
-  unit: 汇总单元：
-gui_widget::words_bayes:
-  n_a: 不能使用
-  unit: 分类的单元：
-  var: 学习的外部变量：
+    by_df:                    根据文档数量分词(DF)
+    by_pos:                   根据词性分词
+    by_tf:                    根据出现次数分词
+    check:                    检查
+    check_desc1:              已选择词数
+    check_desc2:              ' '
+    df_unit:                  '    文件单位:'
+    max_df:                   '  最大文件数(DF):'
+    max_tf:                   '  最大出现数(PF)：'
+    min_df:                   '    最小文件数(DF):'
+    min_tf:                   '    最小出现数(PF):'
+    no_pos_selected:          '错误：没有选择词性'
+    unit:                     '单位:'
 gui_window::about:
-  close: 关闭
-  higuchi: 樋口耕一
-  kawabata: 川端亮
-  win_title: 关于KH Coder
-gui_window::bayes_learn:
-  accuracy: 正确的分类：
-  add2exists: 将此次的内容追加到现有的学习结果文件中
-  cr_validate: 进行交叉验证
-  docs: 此次学习的文档：
-  docs_total: 文档的总数：
-  done: 朴素贝叶斯模型的学习已经完成。
-  error_exists: 被指定名字的变量已经存在。
-  error_f20: 请在Fold中指定从2到20为止的值。
-  error_no_words: 现在的设定内容中，没有能使用的词汇。
-  error_var: 请选择外部变量。
-  savecls: 将分类结果保存到外部变量中
-  savelog: 将分类日志保存到文件中
-  saving_log: 将分类日志保存到文件中
-  saving_new: 将学习结果保存到新建文件中
-  select_exist: 选择追加此次学习内容的文件
-  verb4wid: 使用在学习上
-  vname: 变量名：
-  win_title: 从外部变量中学习
-gui_window::bayes_predict:
-  er_exists: 被指定名字的变量已经存在。
-  er_no_such_file: 请指定正确文件。
-  er_specify_name: 请指定变量名。
-  model_file: 学习结果文件：
-  opening_model: 请选择学习结果文件
-  save_log: 将分类日志保存到文件中
-  saving_log: 将分类日志保存到文件中
-  unit: 分类的单元：
-  var_desc: （分类的结果作为外部变量被保存）
-  var_name: 变量名：
-  win_title: 使用学习结果的自动分类
-gui_window::bayes_view_knb:
-  n_docs: 学习的文档：
-  n_types: 不同的词汇数：
-  search: 搜索
-  variance: 分散
-  whole: 所有词汇的明细表
-  win_title: 学习结果文件：
-gui_window::bayes_view_log:
-  class: 分类：
-  doc_id: 文档号码
-  freq: 频率
-  higher_left: ※从左边开始显示分数从高到低的顺序
-  model_file: 学习结果：
-  run: 搜索
-  saved_var: 保存先变量：
-  search_words: 词汇的搜索：
-  unit: 分类单元：
-  variance: 分散
-  win_title: 分类日志文件：
-  word: 词汇
-gui_window::cls_height:
-  all: 全体
-  f50: << 最初的50
-  l50: '最后的50 >>'
-  plotting: 图表范围：
-  save_as: 保存图表
-gui_window::cls_height::cod:
-  win_title: 代码的集群分析：合并水平
-gui_window::cls_height::doc:
-  overwr: 覆盖这个文件可以吗：
-  win_title: 文档的的集群分析：合并水平
-gui_window::cls_height::word:
-  win_title: 词汇的集群分析：合并水平
-gui_window::cod_cls:
-  win_titile: 编码集群分析：选项
+    close:                    关闭
+    higuchi:                  'HIGUCHI, Koichi'
+    kawabata:                 'KAWABATA, Akira'
+    win_title:                关于 KH Coder
 gui_window::cod_corresp:
-  c_dd: 代码×文档
-  c_v: 代码×外部变量
-  coding_unit: 编码单元：
-  er_unit: 汇总单元的选择不正确。
-  er_zero: 出现数为0的代码不能使用。
-  flt: 只有远离原点的代码用标签表示：
-  flw: 差异明显的代码用于分析：
-  matrix_type: 用于分析的数据表的种类：
-  na: 不能使用
-  sel3: ※请至少选择3个代码。
-  select_codes: 代码选择：
-  top: 上位
-  win_title: 编码对应分析：选项
-gui_window::cod_count:
-  error_cod_f: 编码规则文件没有被选择。
-  go_c: 汇总
-  h_code: 代码名
-  h_freq: 频率
-  h_pcnt: 百分比
-  win_title: 编码简单汇总
-gui_window::cod_jaccard:
-  copy_sel: 复制（选择列）
-  unit_cod: 编码单元：
-  win_title: 编码相似性行列（Jaccard系数）
-gui_window::cod_mds:
-  sel5: ※请至少选择5个代码。
-  sel5_e: 请至少选择5个代码。
-  win_title: 编码多维尺度法：选项
-gui_window::cod_netg:
-  c_c: 词汇-词汇
-  c_v: 词汇-外部变量和标题
-  win_title: 编码网络：选项
-gui_window::cod_out::csv:
-  save_as: 编码结果（CSV）：附上名字然后保存
-  win_title: 输出编码结果：CSV文件
-gui_window::cod_out::spss:
-  save_as: 编码结果（SPSS）：附上名字然后保存
-  win_title: 输出编码结果：SPSS文件
-gui_window::cod_out::tab:
-  save_as: 编码结果：附上名字然后保存
-  tab_delimited: 栏标定界
-  win_title: 输出编码结果：栏标定界
-gui_window::cod_out::var:
-  save_as: 编码结果：不定长CSV：附上名字然后保存
-  win_title: 输出编码结果：不定长CSV
-gui_window::cod_outtab:
-  cells: 单元格内容：
-  er_ill: 不能在被指定的条件下进行汇总。
-  f: 只有频率
-  f_p: 频率和百分比
-  line: 折线：
-  line_all: 全部
-  line_select: 选择
-  map: 映射：
-  p: 只有百分比
-  plot: "##'プロット：'"
-  run: 汇总
-  unit_cod: 编码单元：
-  var: 交叉汇总：
-  win_title: 编码交叉汇总
-gui_window::cod_som:
-  win_title: 编码自组织映射：选项
-gui_window::contxt_out:
-  options: 汇总单元和加权
-  use: 使用
-  words: 词汇
-  words4cntxt: 用于上下文矢量计算的词汇
-gui_window::contxt_out::csv:
-  saving: “词汇ｘ上下文矢量”表：附上名字然后保存
-  win_title: “词汇ｘ上下文矢量”表的输出：CSV
-gui_window::contxt_out::spss:
-  win_title: “词汇ｘ上下文矢量”表的输出：SPSS
-gui_window::contxt_out::tab:
-  win_title: “词汇ｘ上下文矢量”表的输出：栏标定界
+    c_dd:                     编码 x 文档
+    c_v:                      编码 x 变量
+    coding_unit:              '编码单位:'
+    flt:                      '仅显示独特（愿离远点）编码标签:'
+    flw:                      '按卡方值筛选编码:'
+    matrix_type:              '输入数据矩阵表'
+    na:                       不可用
+    sel3:                     '    * 请选择至少3个编码.'
+    select_codes:             '选择编码:'
+    top:                      最佳
+    win_title:                '可选: 编码对应分析'
+    er_zero:                  '编码失败，请检查编码表。'
+    er_unit:                  '聚合单位选择错误.'
 gui_window::datacheck:
-  auto_correct: 分析对象文件的自动修正：
-  close: 关闭
-  correction_done: ●已经进行自动修正。
-  details: 发现的问题点的详细资料：
-  exec: 执行
-  file_backup: ○将修正前的分析对象文件备份到下一个地方：
-  file_diff: ○将已修改地方的清单（diff）保存到下一个文件中：
-  headmark: '■■ '
-  looks_complete: ○在分析对象文件内发现的已知的问题点已经全部被修正。
-  not_complete: ○残余无法自动修正的地方。请直接修正分析对象文件。
-  print: 显示在画面上
-  save_as: 保存到文件中
-  save_as_win: 保存在分析对象文件中发现的问题的详细资料
-  saved: ●将发现的问题点的详细资料保存到下一个文件中：
-  win_title: 分析对象文件的检查和修正
+    auto_correct:             '   目标文本自动校正:'
+    close:                    关闭
+    correction_done:          '*** 已执行自动校正:'
+    details:                  '问题的详情:'
+    exec:                     执行!
+    file_backup:              '* 将目标文件的备份保存为：'
+    file_diff:                '* 修正列表 (diff) 被保存为:'
+    headmark:                 '*** '
+    looks_complete:           文本中的已知问题均已修正。
+    not_complete:             '* 无法修正一些错误。请手动更正。'
+    print:                    打印显示
+    save_as:                  另存为
+    save_as_win:              保存文本中发现问题的详情
+    saved:                    '*** 问题详情已保存:'
+    win_title:                正在检查目标文本
 gui_window::dictionary:
-  file_error: 指定的文件不存在：
-  force_ignore: 指定的不使用的词汇：
-  force_pick: 指定的强制提取词汇：
-  note1: 指定的“强制提取词汇”到预处理再次进行为止不能被反映。
-  one_line1: （复数的情况下用换行来划分）
-  one_line2: （复数的情况下用换行来划分）
-  pos: 根据词类选择词汇：
-  use_file: 从文件中读取
-  win_title: 选择在分析中使用词汇的取舍
-gui_window::doc_cls:
-  fail: 计算失败
-  select_3words: 请选择至少3个的词汇。
-  verb: 使用
-  win_title: 文档的集群分析：选项
-gui_window::doc_cls_res:
-  agglm: 集群合并的过程
-  bal_agg_docs: '搜索包含在合并的群中的文档[双击]'
-  bal_docs: '搜索包含在群中的文档[双击集群]'
-  bal_words: '搜索表现出集群特征的词汇[Shift+双击集群]'
-  both: 1和2
-  cluster: 集群
-  config: 调整
-  docs: 搜索文档
-  docs_in_clusters: 含有各集群的文档
-  h_cls1: 合并1
-  h_cls2: 合并2
-  h_cls_id: 集群编号
-  h_coeff: 合并水平
-  h_doc_num: 文档数
-  h_stage: 阶段
-  m_ave: 群平均法
-  m_clk: 最远邻法
-  m_wrd: Ward法
-  na: 不可分类
-  only1: 只有1
-  only2: 只有2
-  save: 保存分类结果
-  win_title: 文档的集群分析
-  words: 特征词汇
-gui_window::doc_cls_res_opt:
-  win_title: 文档集群分析：调整
-gui_window::doc_cls_res_sav:
-  desc: 分类结果作为外部变量来保存。
-  name: 变量名：
-  specify_var: 请指定变量名
-  win_title: 文档集群分析：保存
-gui_window::doc_search:
-  error_no_code: 代码没有被选择
-  no_sort: 出现顺序
-  run: 搜索
-  tf: tf顺序
-  tf_D_idf: tf/idf顺序
-  tf_M_idf: tf*idf顺序
-  unit: 搜索单元：
-  win_title: 搜索文档
+    force_ignore:             '强制忽略以下词汇:'
+    force_pick:               '提取以下字符串作为词汇:'
+    note1:                   ‘(*) "强制提取" 中的更改将在您调用 "运行预处理" 命令时（再次）生效.’
+    one_line1:                (每行一个字符串，使用回车分割)
+    one_line2:                (每行一个词汇，使用回车分割)
+    pos:                      '按词性选择:'
+    win_title:                选择要分析的词汇
+    use_file:                 从文件读取
+    file_error:               '指定的文件不存在:'
 gui_window::doc_view:
-  current_doc: ・现在显示中的文档：
-  highlight: 强调
-  in_the_file: 文件内：
-  in_the_results: 搜索结果：
-  info: '***not translated*** * Location & Variables:  // ・位置と変数'
-  n1: '下一步>>'
-  n2: '下一步>>'
-  p1: <<上一步
-  p2: <<上一步
-  win_title: 显示文档
+    current_doc:              '* 当前文档: '
+    highlight:                强调
+    in_the_file:              '在文件中:'
+    in_the_results:           '  在结果中:'
+    n1:                       '>>'
+    n2:                       '>>'
+    p1:                       <<
+    p2:                       <<
+    win_title:                文档
+    info:                     '* 位置和变量: '
 gui_window::force_color:
-  add: 追加
-  delete: 删除选择的单词
-  desc: ■以下的单词经常被强调。
-  exists: 这个单词已经被登录。
-  highlight: 单词：
-  highlight_h: 单词
-  no_word: 单词没有被输入。
-  string: 字符串
-  type: 种类：
-  type_h: 种类
-  win_title: 强调的单词
-  word: 词汇
-gui_window::hukugo:
-  h_freq: 出现数
-  h_huku: 复合词
-  run: 搜索
-  whole: 所有复合词的明细
-  win_title: 检测复合词（ChaSen）
-gui_window::import_folder:
-  auto: '***not translated*** Auto Detect // 自動'
-  auto_jp: '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
-  browse_unified: '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
-  change: '***not translated*** Change // 変更'
-  char_code: '***not translated*** Encoding of files:  // 文字コード：'
-  conv: '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
-  description: '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
-  folder: '***not translated*** Folder:  // フォルダ：'
-  level: '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
-  opt_project: '***not translated*** New project // 新規プロジェクト'
-  opt_unify: '***not translated*** Unify documents // テキストファイル結合'
-  unicode: '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
-  unified: '***not translated*** Unified file:  // 結合ファイル：'
-  win_title: '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
+    add:                      添加
+    delete:                   删除
+    desc:                     '始终强调以下字符串/词汇:'
+    exists:                   字符串/词汇已经存在。
+    highlight:                '高亮:'
+    highlight_h:              强调
+    no_word:                  请插入需要高亮强调的字符串或词汇。
+    string:                   字符串
+    type:                     '类型:'
+    type_h:                   类型
+    win_title:                要高亮的字符串/词汇
+    word:                     词汇
 gui_window::main::inner:
-  cases: 格数
-  docs: 文档的简单汇总
-  memo: 说明（备忘录）：
-  target: 现在的项目：
-  tokens: 词汇数（使用）：
-  types: 不同的词汇数（使用）：
-  units: 汇总单元
+    cases:                    个案
+    docs:                     '文档:'
+    memo:                     '备忘录:'
+    target:                   '目标文件:'
+    tokens:                   '提取的单词总数(使用)(Tokens):'
+    types:                    '不同的词数类型(使用)(Types):'
+    units:                    聚合单位
 gui_window::main::menu:
-  about: 关于KH Coder
-  bayes_classi: 使用学习结果的自动分类
-  bayes_learn: 从外部变量中学习
-  check: 分析对象文件的检查
-  check_classi: 确认分类日志文件的内容
-  check_learning: 确认学习结果文件的内容
-  check_morpho: 确认词汇的提取结果
-  close: 关闭
-  cluster: 集群分析
-  coding: 编码
-  config: 设定
-  corresp: 对应分析
-  cross_vr: 交叉汇总
-  desc_stats: 描述性统计
-  doc_search: 搜索文档
-  doc_term_mtrx: “文档ｘ词汇”表的输出
-  docs: 文档
-  docs_bayes: 根据贝叶斯学习的分类
-  exec_sql: SQL语句的执行
-  exit: 结束
-  export: 导出
-  export_kh: '***not translated*** For KH Coder (*.khc) // KH Coder形式（インポート可）'
-  export_win_title: 现在的项目导出为KHC格式的文件。
-  freq: 简单汇总
-  freq_df: 出现文档数（DF）的分布
-  freq_tf: 出现次数（TF）的分布
-  h_cluster: 阶层式集群分析
-  help: 帮助（H)
-  import: 导入
-  import_folder: '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
-  import_khc: '***not translated*** KH Coder (*.khc) // KH Coder形式'
-  import_save_path: 请指定分析对象文件的保存地址
-  import_win_title: 从KHC格式的文件导入项目。
-  jac_mtrx: 相似性行列
-  kwic: KWIC Concordance
-  man: 使用手册(PDF)
-  mds: 多维尺度构成法
-  netg: 网络
-  new: 新建
-  open: 打开
-  open_knb: 选择阅览的学习结果文件
-  open_nbl: 选择阅览的分类日志文件
-  output_cod: 输出编码结果
-  partial: 取出部分文本
-  plugin: 插件
-  prep: 预处理（R)
-  prepro_reload: '##"この処理には時間がかかる場合があります。\n今すぐ実行したくないときは「キャンセル」をクリックしてください。\n\nExcel/CSVファイルが更新されています！\nExcel/CSVファイルの内容を再度読み込みますか？"'
-  project: 项目（P)
-  read: 读取
-  run_prep: 执行预处理
-  som: 自组织映射
-  term_vec_mtrx: “词汇ｘ上下文矢量”表的输出
-  text_format: 文本文件的变形
-  tf_df: 出现次数×文档数的图表
-  to_csv: 从HTML变换为CSV
-  tools: 工具（T)
-  topic: '***not translated*** Topic models // トピックモデル'
-  topic_ft: '***not translated*** Fit a Topic Model // トピックの推定'
-  topic_pp: '***not translated*** Find Optimal N of Topics // トピック数の探索'
-  use_chasen: 使用ChaSen
-  use_termextract: 使用TermExtract
-  var_list: 明细表
-  vars_heads: 外部变量和标题
-  web: 最新信息（Web）
-  word_ass: 搜索相关词汇
-  word_freq: 词频表 (Excel)
-  word_search: 词频表
-  words: 词汇
-  words_cluster: 检测复合词
-  words_selection: 选择词汇的取舍
+    open_nbl:                 '选择并查看分类日志文件'
+    open_knb:                 '选择并查看模型文件'
+    prepro_reload:            "这可能需要一些时间。 \nI如果您现在不想执行，请点击 '取消'。 \n\n源文件已更新!\n是否重新读取源文件的内容?"
+    about:                    关于
+    bayes_classi:             使用模型对文档进行分类
+    bayes_learn:              从变量构建学习模型
+    check:                    检查目标文本
+    check_classi:             查看分类日志
+    check_learning:           查看模型文件
+    check_morpho:             检查词汇提取的结果
+    close:                    关闭
+    cluster:                  聚类分析
+    coding:                   编码
+    config:                   设置
+    corresp:                  对应分析
+    cross_vr:                 交叉表
+    desc_stats:               描述统计
+    doc_search:               搜索文档
+    doc_term_mtrx:            文档-词汇 矩阵表
+    docs:                     文档
+    docs_bayes:               朴素贝叶斯分类器
+    exec_sql:                 执行 SQL 语句
+    exit:                     退出
+    export:                   导出
+    export_kh:                KH Coder文件 (*.khc)
+    export_win_title:         ‘将当前项目导出到 *.khc 文件’
+    freq:                     频率
+    freq_df:                  '文档频率分布(DF)'
+    freq_tf:                  '项数分布(TF)'
+    h_cluster:                层次聚类分析
+    help:                     帮助
+    import:                   导入
+    import_folder:            文件夹中的多个文本
+    import_khc:               KH Coder (*.khc)
+    import_save_path:         指定分析文件的保存位置
+    import_win_title:         '从 *.khc 文件导入项目'
+    jac_mtrx:                 相似度矩阵
+    kwic:                     KWIC 索引
+    man:                      手册 (PDF)
+    mds:                      多维尺度
+    netg:                     共现网络
+    new:                      新建
+    open:                     打开
+    output_cod:               文档代码矩阵
+    partial:                  提取部分文本
+    plugin:                   插件
+    prep:                     预处理(R)
+    project:                  项目(P)
+    read:                     导入变量
+    run_prep:                 执行预处理
+    term_vec_mtrx:            提取词×上下文 矩阵表
+    text_format:              转换为目标文件
+    tf_df:                    TF-DF 绘图
+    to_csv:                   转换为 CSV文件
+    topic:                    主题模型
+    topic_pp:                 搜索主题数
+    topic_ft:                 拟合主题模型
+    tools:                    工具
+    use_chasen:               使用 ChaSen
+    use_termextract:          使用 TermExtract
+    var_list:                 列表
+    vars_heads:               外部变量和标题
+    web:                      最新信息 (Web)
+    word_ass:                 提取词汇联想
+    word_freq:                提取词汇词频(用于 Excel)
+    word_search:              词频列表
+    words:                    提取词汇
+    words_cluster:            提取词汇分类
+    words_selection:          选择词汇用于分析
+    som:                      自组织图
 gui_window::morpho_check:
-  details: 详细表示
-  note: 输入想确认的词汇提取(词素分析)结果的词组/文字
-  sentence: 语句（分割完毕）
-  win_title: 词汇提取结果
-gui_window::morpho_crossout:
-  output: 输出
-gui_window::morpho_crossout::csv:
-  er_no_pos: 一个词类也没有被选择。
-  saving: “文档ｘ词汇”表：附上名字然后保存
-  win_title: “文档ｘ词汇”表的输出：CSV
-gui_window::morpho_crossout::spss:
-  win_title: “文档ｘ词汇”表的输出：SPSS
-gui_window::morpho_crossout::tab:
-  tabdel: 栏标定界
-  win_title: “文档ｘ词汇”表的输出：栏标定界
-gui_window::morpho_crossout::var:
-  win_title: “文档ｘ词汇”表的输出：不定长CSV
+    details:                  详情
+    note:                     输入要检查提取词的短语或句子
+    sentence:                 拆分的句子
+    win_title:                词汇提取结果
 gui_window::morpho_detail:
-  base: 基本形
-  hyoso: 表层词汇
-  katuyo: ChaSen-活用
-  next: 下一个搜索结果
-  pos_cha: ChaSen-词类
-  pos_kh: 词类
-  previous: 上一个搜索结果
-  win_title: 词汇的提取结果：详细
-gui_window::outvar_list:
-  catalogue_csv: 一览（CSV格式）
-  catalogue_xls: 一览（Excel格式）
-  csv: CSV文件
-  del: 删除
-  del_ok: 要删除所选的变量吗？
-  docs: 搜索文档
-  error_hd1: 目前，用这个指令不能删除标题。\n请直接修改分析对象文件。
-  error_hd2: 目前，用这个指令不能输出标题。\n请使用“文本文件的变形”菜单。
-  error_sel_a_var: 没有选择变量
-  error_sel_a_vv: 请选择变量或者标题。
-  error_units: 汇总单元不同的变量群不能进行同时保存。
-  export: 输出
-  h_freq: 频率
-  h_label: 标签
-  h_name: 变量名
-  h_unit: 文档单元
-  h_value: 值
-  headings: 标题
-  help_docs: '搜索有选择过值的文档[双击该值]'
-  help_words: '有选择过值的文档中搜索有特征的词汇[Shift +双击该值]'
-  mspgoth: MS PGothic
-  read: ▽读取
-  save: 保存标签
-  saving: 外部变量：附上名字然后保存
-  selected: 选择的值
-  tabdel: 栏标定界文件
-  unit: 单元：
-  values: ■值和标签：
-  vars: ■变量明细
-  win_title: 外部变量和标题
-  words: ▽特征词汇
-gui_window::outvar_read:
-  no_such_file: 请指定正确文件。
-  unit: 读取单元
-gui_window::outvar_read::csv:
-  csv: CSV文件
-  open: 请选择外部变量文件
-  win_title: 读取外部变量：CSV文件
-gui_window::outvar_read::tab:
-  open: 请选择外部变量文件
-  tabdel: 栏标定界文件
-  tabdelf: 栏标定界文件
-  win_title: 外部变量的读取：栏标定界
+    base:                     lemma / stem
+    hyoso:                    词汇
+    katuyo:                   POS of Tagger 2
+    next:                     下一个
+    pos_cha:                  POS of Tagger 1
+    pos_kh:                   POS of KH Coder
+    previous:                 上一个
+    win_title:                '词汇提取结果: 详情'
 gui_window::project_edit:
-  auto_detect: 自动辨别
-  memo: 说明（备忘录）：
-  target_char_code: 分析对象文件的字符代码：
-  target_file: 分析对象文件：
-  win_title: 说明（备忘录）的编辑
+    auto_detect:              自动检测
+    memo:                     '备忘录:'
+    target_char_code:         '要分析文件的字符编码:'
+    target_file:              '要分析的文件:'
+    win_title:                编辑项目
 gui_window::project_new:
-  auto_detect: 自动辨别
-  browse_target: 请选择分析对象文件
-  memo: 说明（备忘录）：
-  target_char_code: 分析对象文件的字符代码：
-  target_column: 作为分析对象的列：
-  target_file: 分析对象文件：
-  type_error: '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
-  win_title: 新建项目
+    auto_detect:              自动检测
+    browse_target:            请选择要分析的文本文件
+    memo:                     '备忘录:'
+    target_char_code:         '要分析文件的字符编码:'
+    target_column:            '要分析的列:'
+    target_file:              '要分析的文件:'
+    type_error:               'KH Coder 不支持此文件类型。'
+    win_title:                新建项目
 gui_window::project_open:
-  del: 删除
-  dir: 索引簿
-  edit: 编辑
-  lang: 语言
-  memo: 说明（备忘录）
-  new: 新建
-  open: 打开
-  opened: 该项目已经打开。无法执行指定的操作。
-  select_one: 请选择项目。
-  target_file: 对象文件
-  win_title: 项目管理
+    del:                      删除
+    dir:                      目录
+    edit:                     编辑
+    memo:                     备忘录
+    new:                      新建
+    open:                     打开
+    lang:                     语言
+    opened:                   "当前项目已打开.\n无法执行指定的操作。"
+    select_one:               请选择一个项目
+    target_file:              目标文件
+    win_title:                项目管理
 gui_window::r_plot:
-  options: 调整
-  saving: 保存图表
-gui_window::r_plot::cod_cls:
-  win_titile: 编码集群分析
-gui_window::r_plot::cod_corresp:
-  win_title: 编码对应分析
-gui_window::r_plot::cod_mat:
-  fluc: 气泡
-  heat: 热
-  win_title: 交叉汇总的映射
-gui_window::r_plot::cod_mat_line:
-  win_title: 交叉汇总折线图
-gui_window::r_plot::cod_mds:
-  win_title: 编码多维尺度法
-gui_window::r_plot::cod_netg:
-  win_title: 编码网络
-gui_window::r_plot::cod_som:
-  win_title: 编码自组织映射
-gui_window::r_plot::doc_cls:
-  win_title: 文档的树状图
-gui_window::r_plot::selected_netgraph:
-  color: 彩色：
-  win_title: 相关词汇网络
-gui_window::r_plot::topic_n_ldatuning:
-  win_title: '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+    options:                  配置
+    saving:                   '绘图另存为:'
 gui_window::r_plot::topic_n_perplexity:
-  win_title: '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
-gui_window::r_plot::tpc_mat:
-  fluc: 气泡
-  heat: 热
-  win_title: '***not translated*** Topic Proportion Map // トピック比率のマップ'
+    win_title:                找到N个最优主题：困惑度
+gui_window::r_plot::topic_n_ldatuning:
+    win_title:                找到N个最优主题: ldatuning
 gui_window::r_plot::tpc_mat_line:
-  win_title: '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
-gui_window::r_plot::word_cls:
-  agglomer: 合并水平
-  ave: 群平均法
-  clink: 最远邻法
-  method: 方法：
-  ward: Ward法
-  win_title: 词汇集群分析
-gui_window::r_plot::word_corresp:
-  col: 彩色
-  d: 只有点
-  d_l: 点和标签
-  gray: 灰度等级
-  var: 只有变量
-  view: 显示：
-  win_title: 词汇和对应分析
-gui_window::r_plot::word_mds:
-  win_title: 词汇多维尺度法
-gui_window::r_plot::word_netgraph:
-  cnt_b: 中心性（中介）
-  cnt_d: 中心性(度)
-  cnt_v: 中心性(特征向量)
-  col: 彩色
-  color: 彩色：
-  com_b: 检测副图表（中介）
-  com_m: 检测副图表（modularity）
-  com_r: 检测副图表（random walks）
-  cor: 相关
-  gray: 灰度等级
-  interactive: HTML格式
-  none: 没有
-  win_title: 词汇网络
-gui_window::r_plot::word_som:
-  cls: 集群
-  freq: 频率
-  gray: 灰度等级
-  umat: U-Matrix
-  views: 彩色：
-  win_title: 词汇自组织映射
-gui_window::r_plot_opt::cod_cls:
-  win_title: 编码集群分析：调整
-gui_window::r_plot_opt::cod_corresp:
-  win_title: 编码对应分析：调整
-gui_window::r_plot_opt::cod_mat:
-  bubble_shape: 气泡的形状：
-  bubble_size: 气泡的大小：
-  cellnote: 显示各单元格的百分比
-  circle: 圆
-  col1: 色彩
-  col2: 色彩(CM)
-  color_fix: '固定色阶： '
-  color_rsd: 根据标准化残留误差区分颜色
-  common: 共同的设定
-  dendro_c: 代码的集群化和排序
-  dendro_v: 外部变量、标题的集群化和排序
-  gray: 灰色
-  plot_size_heat: 图表大小 高度：
-  plot_size_maph: 高度：
-  plot_size_mapw: 图表大小 宽度：
-  select_1: 请至少选择一个代码
-  square: 正方形
-  win_title: 交叉汇总的映射调整
-gui_window::r_plot_opt::cod_mat_line:
-  win_title: 交叉汇总折线图调整
-gui_window::r_plot_opt::cod_mds:
-  win_title: 编码多维尺度法：调整
-gui_window::r_plot_opt::cod_netg:
-  win_title: 编码网络：调整
-gui_window::r_plot_opt::cod_som:
-  win_title: 编码自组织映射：调整
-gui_window::r_plot_opt::doc_cls:
-  doc_label: 文档标签：
-  heading: 标题
-  number: 文档编号
-  win_title: 文档的树状图调整
-gui_window::r_plot_opt::selected_netgraph:
-  win_title: 相关词汇网络：调整
+    win_title:                "主题比例折线图"
 gui_window::r_plot_opt::tpc_mat_line:
-  select_topics: '***not translated*** Select Topics: // トピック選択'
-  win_title: '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
-gui_window::r_plot_opt::word_cls:
-  err_no_auto: 该Window中不能指定“Auto”。请输入数值。
-  win_title: 词汇集群分析：调整
+    win_title:                 "配置: 主题比例折线图"
+    select_topics:             "选择主题:"
+gui_window::r_plot::cod_corresp:
+    win_title:                编码的对应分析
+gui_window::r_plot::selected_netgraph:
+    color:                    ' 颜色:'
+    win_title:                共现网络 (选定的词汇)
+gui_window::r_plot::word_corresp:
+    col:                      颜色
+    d:                        点
+    d_l:                      点和标签
+    gray:                     灰度
+    var:                      变量
+    view:                     ' 查看:'
+    win_title:                词汇的对应分析
+gui_window::r_plot_opt::cod_corresp:
+    win_title:                '配置: 代码的对应分析'
+gui_window::r_plot_opt::selected_netgraph:
+    win_title:                '配置: 共现网络 (选定的词汇)'
 gui_window::r_plot_opt::word_corresp:
-  win_title: 词汇对应分析：调整
-gui_window::r_plot_opt::word_mds:
-  win_title: 词汇多维尺度法：调整
-gui_window::r_plot_opt::word_netgraph:
-  win_title: 词汇网络：调整
-gui_window::r_plot_opt::word_som:
-  win_title: 词汇自组织映射：调整
+    win_title:                '配置: 词汇的对应分析'
 gui_window::sql_select:
-  Server: 服务器：
-  exec: 执行
-  max_rows: 最大显示数：
-  rows: 被输出的行数：
-  sql_error: SQL语句中有错误。
-  win_title: SQL语句的执行
-gui_window::stop_words:
-  change_will: ※到预处理（再次）执行为止 变更没有被反映。
-  for_this_method: 将Stop word设定为以下的提取方法和服从词汇：
-  lang: 语言：
-  select_all: 全部选择
+    Server:                   '  连接到: '
+    exec:                     执行
+    max_rows:                 '显示的最大行数:'
+    rows:                     '  行数: '
+    sql_error:                SQL 语句中有错误
+    win_title:                执行 SQL 语句
 gui_window::sysconfig:
-  apps: 外部应用
-  browse_: 请打开____
-  browse_chasen: 请打开ChaSen.exe
-  browse_mecab: 请打开MeCab.exe
-  browse_stanford_jar: 请打开stanford-postagger.jar。
-  browse_stanford_tag: 请打开模型文件。
-  chasen: ChaSen（日语）
-  config: 设定
-  l_ca: 加泰罗尼亚语
-  l_cn: 中文
-  l_de: 德语
-  l_en: 英语
-  l_es: 西班牙语
-  l_fr: 法语
-  l_it: 意大利语
-  l_jp: 日语
-  l_kr: 韩语
-  l_nl: 荷兰语
-  l_pt: 葡萄牙语
-  l_ru: 俄语
-  l_sl: 西班牙语
-  lang: 词汇：
-  mecab: MeCab（日语）
-  mecab_unicode: Unicode词典
-  note_font: 字体被变更了。为了使变更有效，请重新启动KH Coder。
-  note_s: ※ %s被用文件名和ＵＲＬ替换了
-  p_chasen.exe: chasen.exe的路径：
-  p_chasenrc: “chasenrc”的路径：
-  p_grammer.cha: “grammar.cha”的路径：
-  p_mecab.exe: mecab.exe的路径：
-  p_stanford_jar: ' *.JAR文件路径:'
-  p_stanford_tag: ' *.TAGGER文件路径:'
-  pdf: PDF阅读器：
-  s_sheet: 表格程序(CSV/Excel)：
-  stanford: Stanford POS Tagger
-  stemming: Snowball Stemmer
-  stopwords: ' Stop words:'
-  unify_words_sl: |-
-    ***not translated*** Words with the same basic form are recognized
-    identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
-  web_browser: Web浏览器：
-  win_title: KH Coder的设定
-  words_ext: 将词汇提取的方法
-gui_window::topic_fitting:
-  n_topics: '***not translated*** N of Topics:  // トピック数：'
-  opt: '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
-  win_title: '***not translated*** Fit a Topic Model // トピックの推定'
-gui_window::topic_perplexity:
-  candidates: '***not translated*** N of Topics:  // トピック数の候補：'
-  error_terms_topics: '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
-  folds: '***not translated*** Fold:  // 分割数（fold）：'
-  method: '***not translated*** Method:  // 方法：'
-  opt: '***not translated*** Method and Number of topics // 探索のオプション'
-  win_title: '***not translated*** Find Optimal Number of Topics // トピック数の探索'
-gui_window::topic_result:
-  doc_topic: '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
-  export: '***not translated*** *Export // ▽出力'
-  extended: '***not translated*** prob. // 確率'
-  plot: '***not translated*** Map // マップ'
-  stats_table: '***not translated*** Table // 表'
-  topic_prop: '***not translated***  Topic proportion: //   トピック比率：'
-  topic_term: '***not translated*** Topic-Word Matrix // 「トピック×語」表'
-  win_title: '***not translated*** Result of Topic Model // トピックの推定結果'
-  words: '***not translated*** Words:  // 語：'
-gui_window::topic_stats:
-  var: '***not translated*** Tabulation: // 集計：'
-  win_title: '***not translated*** Topic Proportion Table // トピック比率の集計表'
-gui_window::txt_html2csv:
-  saving: CSV文件的保存
-  select: 选择：
-  unit: 哪个单元是作为1行（1格）来输出的？
-  win_title: CSV文件的变换
-gui_window::txt_pickup:
-  codes: 只提取被给与了特定代码的文档
-  error_no_headings: 请选择标题
-  headings: 只提取标题字句
-  headings_name: 标题
-  higher: 更加上位的标题包含在新建文本文件中
-  saving: 取出部分文本：附上名字然后保存
-  unit: 编码单元：
-  win_title: 取出部分文本
-gui_window::use_te:
-  about: 关于TermExtract：
-  desc: 使用了专业用语（关键词）自动提取用Perl模块“TermExtract”。
-  web: TermExtract的Web页面：
-  win_title: 关于TermExtract的著作权
-gui_window::use_te_g:
-  h_hukugo: 复合词
-  h_score: 分数
-  run: 搜索
-  win_title: 检测复合词（TermExtract）
+    apps:                     外部应用程序
+    browse_:                  请打开浏览 ____
+    browse_chasen:            请打开 ChaSen.exe
+    browse_mecab:             请打开 MeCab.exe
+    browse_stanford_jar:      请打开 stanford-postagger.jar
+    browse_stanford_tag:      请打开模型文件
+    chasen:                   '"ChaSen" 用于日语文本'
+    config:                   配置
+    l_jp:                     日语
+    l_cn:                     中文
+    l_de:                     德语
+    l_en:                     英语
+    l_es:                     西班牙语
+    l_fr:                     法语
+    l_it:                     意大利语
+    l_nl:                     荷兰语
+    l_pt:                     葡萄牙语
+    l_kr:                     汉语
+    l_ca:                     加泰罗尼亚
+    l_ru:                     俄语
+    l_sl:                     斯洛文尼亚
+    lang:                     '    语言:'
+    mecab:                    '"MeCab" 用于日语文本'
+    note_font:               "字体以更改。\n请重新启动 KH Coder 以使其生效。"
+    note_s:                   '* %s will be replaced by filenames of URLs'
+    p_chasen.exe:             '     "chasen.exe"的路径:'
+    p_chasenrc:               '     "chasenrc" 的路径:'
+    p_grammer.cha:            '     "grammar.cha" 的路径:'
+    p_mecab.exe:              '     "mecab.exe" 的路径:'
+    mecab_unicode:            'UTF-8 Dictionary'
+    p_stanford_jar:           '     *.JAR 的路径:'
+    p_stanford_tag:           '     *.TAGGER 的路径:'
+    pdf:                      'PDF 查看器:'
+    s_sheet:                  '电子表格 (CSV/Excel):'
+    stanford:                 斯坦福 POS 标记器
+    stemming:                 滚雪球
+    stopwords:                '  停用词汇:'
+    web_browser:              'Web 浏览器:'
+    win_title:                全局编码器设置
+    words_ext:                词汇提取
+    unify_words_sl:           "基本形式相同的词会被认为是同一个词\n即使它们有不同的词性（POS）"
+gui_window::stop_words:
+    change_will:              '* 在（再次）执行\"预处理\"之前不会发生更改。'
+    for_this_method:          为以下提取方法和语言设置停用词:
+    select_all:               全选
+    lang:                     语言:
 gui_window::word_ass:
-  18: 卡方
-  and: 搜索AND
-  cond_h: 共现
-  direct: 直接输入：
-  direct_code: '#直接输入'
-  filter: 筛选的设定
-  fr: 共现
-  go: 汇总
-  hi: 概率比
-  hits: 文档数：
-  hits0: 文档数：0
-  msg_l5: 由于被列出来词汇的数量为不足5，处理中止。
-  net: 网络
-  no_code: '#没有代码'
-  or: 搜索OR
-  pos_h: 词类
-  prob_h: 全体
-  sa: 概率差
-  sort: 排序：
-  sort_h: 排序
-  unit: 汇总单元：
-  win_title: 搜索相关词汇
-  word_h: 词汇
+    18:                       卡方
+    and:                      AND
+    cond_h:                   共现
+    direct:                   '#直接输入:'
+    direct_code:              '#直接输入'
+    filter:                   筛选器设置
+    fr:                       频率
+    go:                       运行
+    hi:                       剩余
+    hits:                     ' 命中: '
+    hits0:                    ' 命中: 0'
+    msg_l5:                   即将中止处理，因为列出的词汇数少于5个。
+    net:                      网络
+    no_code:                  '#无'
+    or:                       OR
+    pos_h:                    词性(POS)
+    prob_h:                   无条件的
+    sa:                       微分
+    sort:                     ' 排序:'
+    sort_h:                   排序
+    unit:                     '聚合单位:'
+    win_title:                词汇联想
+    word_h:                   词汇
 gui_window::word_ass_opt:
-  by_df: 根据在全体里的出现数来选择词汇
-  by_pos: 根据词类选择词汇
-  min_df: 最小文档数：
-  show_lowc: 显示条件概率低的单词
-  top: 上位：
-  view: 显示的词汇数量：
-  win_title: 搜索相关词汇・筛选设定
-gui_window::word_cls:
-  agglomer: 集群合并的阶段
-  cluster: 分类
-  first1: 最初的
-  first2: 次
-  hight: 合并水平(非相似性）
-  last1: 最后的
-  last2: 次
-  note1: ※图表里的数值标签为合并后的集群总数
-  opt: 集群分析的选项
-  u_w: 汇总单元和词汇的选择
-  win_title: 词汇集群分析：选项
+    by_df:                    '根据出现次数(DF)筛选词汇:'
+    by_pos:                   '根据词性(POS)筛选词汇:'
+    min_df:                   '    最小文档书 '
+    show_lowc:                显示条件概率相等或较低的单词
+    top:                      '    前 '
+    view:                     '查看:'
+    win_title:                '筛选器：联想词'
 gui_window::word_conc:
-  additional: 追加条件
-  center: 活用形
-  conj: 活用形：
-  currentDoc: 现在表示中的搜索结果：
-  hits: 叫用次数：
-  l1: 左1
-  l2: 左2
-  l3: 左3
-  l4: 左4
-  l5: 左5
-  next: 下一个
-  ns: 出现顺序
-  pos: 词类：
-  prev: 上一个
-  r1: 右1
-  r2: 右2
-  r3: 右3
-  r4: 右4
-  r5: 右5
-  retrieveNum1: （显示前后
-  retrieveNum2: 个词）
-  saving: 保存KWIC Concordance的结果
-  search: 搜索
-  sort1: 排序1：
-  sort2: 排序2：
-  sort3: 排序3：
-  stats: 汇总
-  viewDoc: 显示文档
-  viewing: ，显示：
-  viewingUnit: 显示单元：
-  win_title: KWIC Concordance
-  word: 词汇
+    additional:               附加选项
+    center:                   Conj.
+    conj:                     '  Conj.:'
+    currentDoc:               '* 搜索结果: '
+    hits:                     '  命中: '
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    next:                     N
+    ns:                       无
+    pos:                      '  词性(POS):'
+    prev:                     前
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    retrieveNum1:             '  ( 在左和右 '
+    retrieveNum2:             显示词汇)
+    saving:                   保存 KWIC 索引结果...
+    search:                   搜索
+    sort1:                    '  排序 1:'
+    sort2:                    '  排序 2:'
+    sort3:                    '  排序 3:'
+    stats:                    统计
+    viewDoc:                  查看文档
+    viewing:                  ', 查看: '
+    viewingUnit:              ' 单位:'
+    win_title:                KWIC 索引
+    word:                     '词汇:'
 gui_window::word_conc_coloc:
-  additional: ' +追加条件'
-  conj: 活用形：
-  filter: 筛选的设定
-  h_l_total: 左边合计
-  h_pos: 词类
-  h_r_total: 右边合计
-  h_score: 分数
-  h_word: 词汇：
-  hits: 叫用次数：
-  l1: 左1
-  l2: 左2
-  l3: 左3
-  l4: 左4
-  l5: 左5
-  l_total: 左边合计
-  pos: 词类：
-  r1: 右1
-  r2: 右2
-  r3: 右3
-  r4: 右4
-  r5: 右5
-  r_total: 右边合计
-  sort: 排序：
-  span: 汇总范围：
-  total: 合计
-  win_title: 配置统计
-  word: 词汇：
+    additional:               '  + 附加设置'
+    conj:                     '  Conj.:'
+    filter:                   筛选器
+    h_l_total:                左侧总计(LT)
+    h_pos:                    词性(POS)
+    h_r_total:                右侧总计(RT)
+    h_score:                  得分
+    h_word:                   词汇
+    hits:                     '  命中: '
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    l_total:                  左侧总计
+    pos:                      '  词性(POS):'
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    r_total:                  右侧总计
+    sort:                     '  排序:'
+    total:                    总计
+    win_title:                搭配统计
+    word:                     '词汇:'
+    span:                     '  窗口跨度:'
 gui_window::word_conc_coloc_opt:
-  filter_by_pos: ・根据词类选择词汇：
-  no_less_than: 最小：
-  top: 上位：
-  total_filt: ・根据“合计”列选择词汇
-  view: ・显示的词汇数量
-  win_title: 配置的统计・筛选的设定
+    filter_by_pos:            '通过词性(POS)筛选词汇:'
+    total_filt:               '通过 "总计" 列筛选词汇:'
+    no_less_than:             '      不小于 '
+    view:                     '查看:'
+    top:                      '      前 '
+    win_title:                '筛选器: 搭配统计'
 gui_window::word_conc_opt:
-  0: 没有指定
-  conj: 活用形：
-  l: 左1-5
-  l1: 左1
-  l2: 左2
-  l3: 左3
-  l4: 左4
-  l5: 左5
-  opt1: 追加条件1
-  opt2: 追加条件2
-  opt3: 追加条件3
-  pos: 词类：
-  position: 位置：
-  preface1: 追加一个“左右（前后）出现特定词汇”的条件。
-  preface2: 追加条件时，首先请指定“位置”。
-  r: 右1-5
-  r1: 右1
-  r2: 右2
-  r3: 右3
-  r4: 右4
-  r5: 右5
-  rl: 左右1-5
-  win_title: 追加条件（KWIC Concordance）
-  word: 词汇：
+    0:                        无
+    conj:                     '  Conj.:'
+    l:                        左1-5
+    l1:                       左1
+    l2:                       左2
+    l3:                       左3
+    l4:                       左4
+    l5:                       左5
+    opt1:                     条件 1
+    opt2:                     条件 2
+    opt3:                     条件 3
+    pos:                      '  词性(POS):'
+    position:                 '位置:'
+    preface1:                 您可以添加特定搜索条件，类似 "词汇A位于 L1."
+    preface2:                 '要添加条件，首先要指定一个 "位置"。'
+    r:                        右1-5
+    r1:                       右1
+    r2:                       右2
+    r3:                       右3
+    r4:                       右4
+    r5:                       右5
+    rl:                       左右1-5
+    win_title:                附加条件(KWIC 索引)
+    word:                     '  词汇:'
 gui_window::word_corresp:
-  biplot: 同时配置标题或者文档编号
-  check_var_unit: 现在，不能同时使用汇总单元不同的外部变量。
-  dim: 成分
-  eig: 固有值
-  exp: 贡献率
-  flt: 只有远离原点的词汇用标签表示：
-  flw: 用于分析差异显著的词汇：
-  matrix: 用于分析的数据表的种类：
-  na: 不能使用
-  nav: 缺值
-  option_ca: 对应分析的选项
-  option_words: 选择词汇
-  plot: 配置
-  select_3words: 请至少配置3个词汇。
-  select_pos: 一个词类也没有被选择。
-  select_var: 请至少选择1个外部变量。
-  too_many1: 现在的设定中
-  too_many2: 配置词汇。
-  too_many3: 推荐将配置词汇的数量控制在100～150左右。
-  too_many4: 可以继续吗？
-  top: 上位
-  unit: 汇总单元：
-  w_d: 词汇×文档
-  w_v: 词汇×外部变量
-  win_title: 词汇对应分析：选项
-  words: 词汇
+    biplot:                   双标图(标题或文档号)
+    check_var_unit:           '错误: 目前不能同时使用不同聚合单元的外部变量'
+    dim:                      '成分 '
+    eig:                      特征值Cor ^2
+    exp:                      贡献率
+    flt:                      '仅标记远离远点的词汇:'
+    flw:                      '使用卡方值筛选词汇:'
+    matrix:                   '输入数据矩阵表'
+    na:                       不可用
+    nav:                      缺失值
+    option_ca:                '对应分析选项'
+    option_words:             '选择词汇'
+    plot:                     ' '
+    select_pos:               '错误: 请至少选择1个词性(POS)'
+    select_var:               '错误: 请至少选择1个变量'
+    too_many1:                ' '
+    too_many2:                词汇将被绘制
+    too_many3:                建议将绘制的词数限制在100至150左右。
+    too_many4:                确定要继续吗?
+    top:                      前
+    unit:                     '聚合单位:'
+    w_d:                      词汇×文档
+    w_v:                      词汇×外部变量
+    win_title:                '可选: 提取词汇的对应分析'
+    words:                    ' '
 gui_window::word_df_freq:
-  c_freq: 累积频率
-  c_pcnt: 累计百分比
-  descr: ■描述性统计
-  df: 文档数
-  freq: 频率
-  freq_tab: ■频率分布表
-  pcnt: 百分比
-  units: 汇总单元：
-  win_title: 文档数：分布
+    c_freq:                   "累积\n频率"
+    c_pcnt:                   "累积\n百分比"
+    descr:                    描述统计
+    df:                       文档数(DF)
+    freq:                     频率
+    freq_tab:                 频率分布表
+    pcnt:                     百分比
+    units:                    '  聚合单位:'
+    win_title:                文档频率分布
 gui_window::word_df_freq_plot:
-  log: 使用对数轴：
-  none: 没有
-  saving: 附上名字然后保存图表
-  win_title: 文档数：分布：图表
-  x: 文档数（X)
-  xy: 文档数(X)和频率(Y)
+    log:                      '对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    win_title:                文档频率分布图
+    x:                        DF (X)
+    xy:                       DF (X) 和频率 (Y)
 gui_window::word_freq:
-  c_freq: 累积频率
-  c_pcnt: 累计百分比
-  descr: ■描述性统计
-  freq: 频率
-  freq_tab: ■频率分布表
-  pcnt: 百分比
-  refresh: 重新计算
-  tf: 出现次数
-  win_title: 出现次数：分布
+    c_freq:                   "累积\n频率"
+    c_pcnt:                   "累积\n百分比"
+    descr:                    描述统计
+    freq:                     频率
+    freq_tab:                 频率分布表
+    pcnt:                     百分比
+    refresh:                  刷新
+    tf:                       TF
+    win_title:                项数(TF)分布
 gui_window::word_freq_plot:
-  log: 使用对数轴：
-  none: 没有
-  saving: 附上名字然后保存图表
-  win_title: 出现次数：分布：图表
-  x: 出现次数（X）
-  xy: 出现次数（X）和频率（Y)
+    log:                      '对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    win_title:                项数分布图
+    x:                        TF (X)
+    xy:                       TF (X) 和频率 (Y)
 gui_window::word_list:
-  count: 记入的数值：
-  csv: 逗号分隔(*. csv）
-  df: 文档数（DF)
-  file_type: 输出的文件的格式：
-  hinshi: 根据词类
-  single: 1列
-  tf: 出现次数（TF）
-  top150: 频繁出现的150个词汇
-  type: 词频表的格式：
-  win_title: 词频表-选项
-  xls: Excel (*.xls)
-  xlsx: Excel (*.xlsx)
-gui_window::word_mds:
-  dim: 次元
-  error_dim: 次元的指定不正确。请指定从1到3的数值。
-  mds_opt: 多维尺度法的选项
-  omit: 以下的词汇/代码已经从分析中省略了：
-  plot: 配置
-  r_alpha: 半透明的颜色（不能用EMF和EPS格式保存）
-  select_5words: 请至少配置5个词汇。
-  units_words: 汇总单元和词汇的选择
-  win_title: 词汇多维尺度法：选项
-gui_window::word_netgraph:
-  e_type: 共现关系（edge）的种类
-  net_opt: 网络的设定
-  u_w: 汇总单元和词汇的选择
-  use: 使用
-  var: 外部变量和标题：
-  w_v: 词汇-外部变量和标题
-  w_w: 词汇-词汇
-  win_title: 词汇网络：选项
+    count:                    '想要计数的:'
+    csv:                      逗号分割(*.csv)
+    df:                       文档数
+    file_type:                '文件类型:'
+    hinshi:                   通过词性(POS)标签
+    single:                   单列
+    tf:                       项数
+    top150:                   前 150
+    type:                     '列表类型:'
+    win_title:                '选项: 频率表 (Excel)'
+    xls:                      Excel (*.xls)
+    xlsx:                     Excel (*.xlsx)
 gui_window::word_search:
-  and: 搜索AND
-  back: 后方一致
-  baseform: 搜索词汇
-  comp: 完全一致
-  conj: 活用
-  enable_filter: 查询的时候也启用过滤
-  excel: 输出Excel
-  forw: 前方一致
-  freq: 频率
-  kwic: KWIC Concordance
-  morph: 词素
-  n100: '***not translated*** N100 // 次100'
-  or: 搜索OR
-  p100: '***not translated*** P100 // 前100'
-  part: 部分一致
-  pos: 词类
-  pos_conj: 词类/活用
-  search: 搜索
-  show_bars: 柱状图
-  view_conj: 显示活用形
-  win_title: 词频表
-  word: 词汇
+    and:                      AND
+    back:                     向后匹配
+    baseform:                 按基本形搜索
+    comp:                     完全匹配
+    conj:                     Conj.
+    enable_filter:            搜索时启用筛选器
+    forw:                     向前匹配
+    freq:                     频率
+    kwic:                     KWIC 索引
+    morph:                    词汇
+    or:                       OR
+    part:                     部分匹配
+    pos:                      词性(POS)
+    pos_conj:                 POS / Conj.
+    search:                   搜索
+    show_bars:                条形图
+    view_conj:                查看 Conj.
+    win_title:                词频列表
+    word:                     词汇
+    excel:                    Excel
+    n100:                     后100个
+    p100:                     前100个
 gui_window::word_search_opt:
-  win_title: 单词表 过滤设定
-gui_window::word_som:
-  cluster: 配置
-  opt: 自组织映射的选项
-  time_warn: ※自组织映射的制作有时需要数小时乃至几天。
-  u_w: 汇总单元和词汇的选择
-  win_title: 词汇自组织映射：选项
+    win_title:                '筛选器: 词频列表'
 gui_window::word_tf_df:
-  df: 文档数
-  log: 使用对数轴：
-  none: 没有
-  saving: 附上名字然后保存图表
-  tf: 出现次数
-  units: 汇总单元：
-  win_title: 出现次数和文档数
-  x: 出现次数（X）
-  xy: 出现次数（X）和文档数（Y)
-kh_cod:
-  not_coding_rules: 所选择的文件看上去不像是编码规则文件。
-  redefined: |-
-    ***not translated***  code is redefined.
-    Please change the name of the code. //  コードが何度も定義されています。
-    コードの名前を変更してください。
-kh_cod::a_code:
-  syntax_error: 编码规则的格式中有错误。含有错误的代码：
-kh_cod::a_code::atom::code:
-  no_code_error: 编码规则的描述中有错误。没有定义下一个代码：
-kh_cod::func:
-  chisq: 卡方值
-  n_cases: 格数
-  n_docs: （文档数）
-  no_codes: '#没有代码'
-  total: 合计
-kh_cod::search:
-  codes: ・在此文档中找到的代码（在现在打开的编码规则文件中）
-  direct: '#直接输入'
-  no_codes: '#没有代码'
+    df:                       文档数
+    log:                      '  对数数轴:'
+    none:                     无
+    saving:                   将绘图另存为...
+    tf:                       项数
+    units:                    '聚合单位:'
+    win_title:                TF-DF 图
+    x:                        TF(X)
+    xy:                       TF(X) 和 DF(Y)
 kh_datacheck:
-  corrected: 已知的问题点已经全部被修正。
-  error_c1: 有含有乱码的行。
-  error_c2: 有含有不需要的半角记号的行
-  error_charcode: 分析对象文件的字符代码辨别失败。在项目编辑画面指定字符代码。打开项目编辑画面，在菜单中点击“项目”→“打开”→“编辑”。
-  error_m1: 有过长的标题行（不能自动修正）
-  error_mn: 在使用H1～H5标签制作标题时可能已经失败（不能自动修正）
-  error_n1a: 有过长的行
-  error_n1b: 不仅过长，而且有在适当的位置上没有空间和句号等的行（不能自动修正）
-  errors_detail: 在分析对象文件内发现了以下的问题点（详细表示）：
-  errors_summary: 在分析对象文件内发现了以下的问题点（概括表示）：
-  lines: 行
-  looks_good: 在分析对象文件内没有发现已知的问题点。预处理可以安全的实行。
+    corrected:                所有已知问题都已纠正。
+    error_c1:                 某些行包含乱码
+    error_c2:                 包含不适当的字符
+    error_m1:                 标题行过长 (无法自动更正)
+    error_mn:                 '使用 H1 到 H5 的标签创建标题可能失败 (无法自动更正)'
+    error_n1a:                有些行太长
+    error_n1b:                行太长 (无法自动更正)
+    errors_detail:            '在要分析的文件中发现以下问题 (详情视图):'
+    errors_summary:           '在要分析的文件中发现以下问题 (摘要视图):'
+    lines:                    ' 行'
+    looks_good:              "没有发现已知问题。\n请继续预处理进程"
+    error_charcode:           "无法确定要分析文件的字符编码。\n 请尝试将文件字符编码改为 UTF-8."
 kh_morpho::chasen:
-  error: ChaSen启动失败了。
-  error_config: 请事先进行KH Coder的设定（关联ChaSen）。
+    error:                    '致命错误: 无法启动 ChaSen.'
+    error_config:             '致命错误: 请提前设置 ChaSen.'
 kh_morpho::mecab:
-  error: MeCab的启动失败了。
-  error_config: 请事先进行KH Coder的设定（关联MeCab）。
-  illegal_bra: 由于山括号（<>）出现了不正确的符号。
+    error:                    '致命错误: 无法启动 MeCab.'
+    error_config:             '致命错误: 请提前设置 MeCab.'
+    illegal_bra:              '括号 <> 标记使用不正确'
 kh_morpho::mecab_k:
-  error: MeCab的启动失败了。
+    error:                    '致命错误: 无法执行 MeCab.'
 kh_morpho::stanford:
-  error: Stanford POS Tagger的启动失败了。
-  error_config: 请事先进行KH Coder的设定（关联Stanford POS Tagger）。
-  no_java: 找不到java.exe。请先安装JAVA。
+    error:                    '致命错误: 无法启动 Stanford POS Tagger.'
+    error_config:             '致命错误: 请提前设置 KH Coder(JStanford POS Tagger)。'
+    no_java:                  '致命错误: 找不到java.exe，请提前安装 JAVA.'
 kh_morpho::stemming:
-  error: 来自Stemmer的处理失败了。
-kh_nbayes:
-  classified_as: 根据贝叶斯学习的分类
-  classs: 正确答案
-  correct_insts: 得到正确答案的数字
-  kappa: Kappa统计量：
-kh_nbayes::Util:
-  prior: '[事前的概率]'
-kh_nbayes::cv_predict:
-  cross_validation: （交叉验证）
-kh_project:
-  no_target_file: 分析对象文件不存在
-kh_projects:
-  already_registered: 该文件已经作为项目登录了
-kh_r_plot:
-  faliled_in_plotting: 使用R的评价或绘制失败了
-  illegal_plot_size: 图表大小的指定不正确
+    error:                    '致命错误: 无法处理 stemming.'
 kh_sysconfig::chasen:
-  path_error: Chasen.exe的路径不正确
+    path_error:               找不到 Chasen.exe 路径无效!
 kh_sysconfig::mecab:
-  path_error: MeCab.exe的路径不正确
+    path_error:               找不到 MeCab.exe 路径无效!
 kh_sysconfig::stanford:
-  path_error: Stanford POS Tagger的路径不正确
+    path_error:               找不到 Stanford POS Tagger 路径无效!
 mysql_exec:
-  cross: |-
-    ***not translated*** Do your have multiple KH Coder on the same PC? 
-    MySQL database may be interfering.
-    
-    It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
-    それぞれのMySQLデータベースが混信している可能性があります。
-    
-    KH Coderの再起動を強くお勧めします。
-mysql_getheader:
-  error: 在取出标题上失败了。在使用H1～H5标签制作标题时可能已经失败。请尝试检查分析对象文件。
-mysql_outvar::read:
-  midashi_error: “目录1”-“目录5”和“标题1”-“标题5”不能作为变量名称来使用。 中断外部变量的读取。
-  overwrite_vars: 相同名称的变量已经被读取。需要覆盖现有的变量吗？
-  records_error: 格数不一致。中断读取处理。
-mysql_ready:
-  error_in_mysql_bunr: 在制作“bun_r”工作表中失去了数据的完整性。结束KH Coder。
-  too_long_sentence: 数据中有过长的字句。超过了65535字符（半角）。结束KH Coder。
-mysql_ready::check:
-  error: 失去了预处理数据的完整性。
-mysql_ready::dump:
-  too_long_word1: 提取了超过限制长度的词汇（词素）。KH Coder能够处理的长度为最多128个字符。KH Coder是在该词汇缩短后的状态下进行认知的。该词汇记录在以下的文件中：
-  too_long_word2: 点击OK的话继续进行预处理。
+    cross:                    "此电脑上是否还存在多个 KH Coder? \n有可能每个 MySQL数据库相互干扰\n\n我们强烈建议重新启动 KH Coder"
 mysql_words:
-  df: 文档数
-  excel_limit: '因为Excel格式的文件的限制，超过65,536行部分的数据没有输出。这个部分数据的输出，请选择CSV格式。'
-  mean_df: 平均文档数
-  mean_tf: 平均出现次数
-  pos: 词类
-  std_dev_df: 文档数的标准偏差
-  std_dev_tf: 出现次数的标准偏差
-  tf: 出现次数
-  types: 不同的词数（n）
-  words: 词汇
-screen_code::assistant:
-  KWIC_button: '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
-  KWIC_button2: '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
-  KWIC_label: '***not translated*** 《M》  // 《文錦》'
-  corresp_ang: '***not translated***   variable range: //   変数方向'
-  corresp_drop_menu1: '***not translated*** narrow // 狭い'
-  corresp_drop_menu2: '***not translated*** slightly narrower // やや狭い'
-  corresp_drop_menu3: '***not translated*** normal // 普通'
-  corresp_drop_menu4: '***not translated*** slightly wider // やや広い'
-  corresp_drop_menu5: '***not translated*** wide // 広い'
-  corresp_rad: '***not translated***   origin range: //  範囲： 原点付近'
-  cross_map_label: '***not translated*** use plugin: // 《文錦》 マップ：'
-  dialog_cancel: '***not translated*** Cancel // キャンセル'
-  dialog_no: '***not translated*** No // いいえ'
-  dialog_ok: '***not translated*** OK // OK'
-  dialog_use_plugin: '***not translated*** Enable NegationChecker // 《文錦》 否定表現チェッカーを有効にする'
-  dialog_yes: '***not translated*** Yes // はい'
-  label_disable: '***not translated*** Disable   // 無効'
-  label_enable: '***not translated*** Enable   // 有効'
-  label_use_plugin: '***not translated*** NegationChecker  // 《文錦》 否定表現チェッカー '
-  plugin_synonym: '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
-  use_plugin: '***not translated*** use plugin // 《文錦》 による結果表示'
+    df:                       DF
+    mean_df:                  平均文档数
+    mean_tf:                  平均项数
+    pos:                      词性
+    std_dev_df:               文档数的标准查
+    std_dev_tf:               项数标准差
+    tf:                       TF
+    types:                    词汇类型 (n)
+    words:                    词汇
+    excel_limit:              "由于Excel文档格式限制，我们只能输出65536行以内的数据。\n请选择 CSV 格式来输出所有数据。"
+gui_widget::cls4mds:
+    cluster_color:            '聚类和颜色编码'
+    cls_num:                  '聚类簇数:'
+    adj:                      '相邻的簇'
+gui_widget::r_mds:
+    method:                   '方法:'
+    dist:                     '  距离:'
+    dim:                      '维度:'
+    1_3:                      '(从 1 到 3的范围指定)'
+    fix_asp:                  '固定宽高比'
+    random_start:             "使用随机过程以找到更好的方案\n*可能需要10分钟或更长时间"
+gui_window::word_mds:
+    units_words:              '选择单位和词汇'
+    mds_opt:                  '多维尺度选项'
+    plot:                     ' '
+    win_title:                '选项: 词汇的多维尺度'
+    select_5words:            错误: 请至少选择5个词汇
+    error_dim:                Error: 请为维度指定1-3的数字
+    dim:                      维度
+    omit:                     "分析中省略了以下词汇或编码:\n"
+    r_alpha:                  '半透明颜色 (不能保存为 EMF/EPS 格式)'
+gui_window::r_plot_opt::word_mds:
+    win_title:                '设置: 词汇的多维尺度'
+gui_window::r_plot::word_mds:
+    win_title:                '词汇的多维尺度'
+gui_window::cod_mds:
+    win_title:                '选项: 编码的多维尺度'
+    sel5:                     '    * 请选择至少5个编码'
+    sel5_e:                   错误：请选择至少5个编码。
+gui_window::r_plot::cod_mds:
+    win_title:                '编码的多维尺度'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                '设置: 编码的多维尺度'
+gui_widget::r_cls:
+    method:                   '方法:'
+    ward:                     '词汇'
+    average:                  '平均'
+    complete:                 '完全'
+    clara:                    'CLARA'
+    dist:                     '  距离:'
+    n_cls:                    '据类簇数:'
+    color:                    '聚类颜色'
+    stand:                    '标准化:'
+    none:                     '无'
+    by_words:                 '由词汇'
+    by_docs:                  '由文档'
+    tfidf:                    '  TF-IDF:'
+gui_window::word_som:
+    win_title:                '自组织图选项'
+    cluster:                  ' '
+    u_w:                      '选择单元和词汇'
+    opt:                      '自组织图选项'
+    time_warn:                "创建自组织图(self-organizing map)可能要数小时或数天!"
+gui_widget::r_som:
+    n_nodes1:                 '节点数(单侧):'
+    cluster_color:            '聚类节点'
+    cls_num:                  '聚类簇数:'
+    2_12:                     '(从 2 到 12)'
+    hex:                      '六边形'
+    sq:                       '四边形'
+    p_nodes:                  '绘图: '
+    rlen:                     '学习步骤数量:'
+gui_window::r_plot::word_som:
+    cls:                      '聚类'
+    gray:                     '灰度'
+    freq:                     '频率'
+    umat:                     'U-矩阵'
+    views:                    ' 颜色: '
+    win_title:                '词汇的自组织图'
+gui_window::r_plot_opt::word_som:
+    win_title:                '配置: 词汇的自组织图'
+gui_window::word_cls:
+    u_w:                      '选择单位和词汇'
+    opt:                      '聚类分析选项'
+    cluster:                  ' '
+    win_title:                '选项: 词汇的层次聚类分析'
+    last1:                    '最后 '
+    last2:                    ''
+    first1:                   '最前 '
+    first2:                   ''
+    agglomer:                 '凝聚阶段'
+    hight:                    '系数 (相异性)'
+    note1:                    "* 图中的数字标签为\n  每步凝聚后的簇数"
+gui_window::r_plot::word_cls:
+    ward:                     'ward-离差平方和法'
+    ave:                      '组均值法'
+    clink:                    'clink 法'
+    method:                   ' 方法:'
+    agglomer:                 '凝聚'
+    win_title:                '词汇层次聚类分析'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              '您不能在此窗口中指定"自动" 。 请输入一个数值。'
+    win_title:                '配置: 词汇层次聚类分析'
+gui_window::cls_height::word:
+    win_title:                '凝聚: 词汇层次聚类分析'
+gui_window::cls_height:
+    plotting:                 ' 步骤: '
+    f50:                      '<< 前 50'
+    all:                      '全部'
+    l50:                      '后 50 >>'
+    save_as:                  '绘图另存为:'
+gui_window::cod_cls:
+    win_titile:               '选项: 编码的层次聚类分析'
+gui_window::r_plot_opt::cod_cls:
+    win_title:                '配置: 编码的层次聚类分析'
+gui_window::r_plot::cod_cls:
+    win_titile:               '编码的层次聚类分析'
+gui_window::cls_height::cod:
+    win_title:                '凝聚: 编码的层次聚类分析'
+gui_window::cod_som:
+    win_title:                '选项: 编码的自组织图'
+gui_window::r_plot::cod_som:
+    win_title:                '编码的自组织图'
+gui_window::r_plot_opt::cod_som:
+    win_title:                '配置: 编码的自组织图'
+gui_widget::r_net:
+    additional_plots:         '附加绘图 (如中心性 等)'
+    filter_edges:             '要绘制的共现关系（边）: '
+    e_top_n:                  '前'
+    e_jac:                    '系数. >= '
+    or_more:                  ''
+    thicker:                  '关系（边）越强线条越黑'
+    smaller:                  '更小的节点'
+    min_sp_tree:              '突出显示最小生成树'
+    min_sp_tree_only:         '仅绘制最小生成树'
+    gray_scale:               '灰阶'
+    fix_lab:                  '调整重叠标签'
+    view_coef:                显示系数.
+    cor_var:                  '探索共现模式的变化'
+    cor_var2:                 '  相关性 与: '
+    cor_var_colors:           '以颜色标示相关性'
+    cor_var_darker:           '加深背景色'
+    standardize_coef:         '标准化系数.'
+gui_widget::r_margin:
+    margin:                   '边距: '
+    left:                     '左'
+    right:                    '右'
+    top:                      '顶部'
+    bottom:                   '底部'
+gui_window::word_netgraph:
+    u_w:                      '聚合单元和提取词的选择'
+    use:                      ''
+    net_opt:                  '共现网络选项'
+    e_type:                   '共现关系类型（边）:'
+    w_w:                      '词汇 - 词汇'
+    w_v:                      '词汇 - 变量 / 标题'
+    var:                      '变量 / 标题:'
+    win_title:                '选项: 词汇的共现网络'
+gui_window::r_plot_opt::word_netgraph:
+    win_title:                '配置: 词汇的共现网络'
+gui_window::r_plot::word_netgraph:
+    col:                      '颜色'
+    gray:                     '灰阶'
+    cnt_b:                    '间接中心性'
+    cnt_d:                    '度中心性'
+    cnt_v:                    '特征向量中心性'
+    com_b:                    '间接子图'
+    com_r:                    '随机游走子图'
+    com_m:                    '模块化子图'
+    cor:                      '相关性'
+    none:                     无
+    color:                    ' 颜色:'
+    interactive:              'HTML'
+    win_title:                '词汇的共现网络'
+gui_window::cod_netg:
+    win_title:                '选项: 编码的共现网络'
+    c_c:                      '编码 - 编码'
+    c_v:                      '编码 - 变量 / 标题'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                '配置: 编码的共现网络'
+gui_window::r_plot::cod_netg:
+    win_title:                '编码的共现网络'
+gui_window::cod_count:
+    win_title:                '编码的频率'
+    go_c:                     '运行'
+    h_code:                   '编码'
+    h_freq:                   '频率'
+    h_pcnt:                   '百分比'
+    error_cod_f:              '错误: 请选择编码规则文件'
+kh_cod::func:
+    no_codes:                 '#没有编码'
+    n_docs:                   '文档数'
+    n_cases:                  '案例数'
+    total:                    '总计'
+    chisq:                    '卡方'
+gui_widget::tani2:
+    unit_c:                   '编码单位:'
+    unit_t:                   '    制表单位:'
+gui_window::cod_outtab:
+    win_title:                '编码: 交叉表'
+    cells:                    '    单元格:'
+    unit_cod:                 '编码单位:'
+    var:                      '   交叉表:'
+    f_p:                      '两者'
+    f:                        '频率'
+    p:                        '百分比'
+    run:                      '运行'
+    er_ill:                   '错误: 非法的参数!'
+    line_all:                 '全部'
+    line_select:              '选择'
+    line:                     ' 线:'
+    map:                      'map: '
+gui_window::cod_jaccard:
+    win_title:                '编码: 相似度矩阵-Jaccard系数'
+    unit_cod:                 '  编码单位:'
+    copy_sel:                 '复制 (所选)'
+gui_window::cod_out::csv:
+    save_as:                  '文档-编码矩阵结果另存为 *.csv'
+    win_title:                '导出文档编码矩阵为: CSV'
+gui_window::cod_out::spss:
+    save_as:                  '文档-编码矩阵结果另存为 *.sps'
+    win_title:                '导出文档编码矩阵为: SPSS'
+gui_window::cod_out::tab:
+    save_as:                  '文档-编码矩阵结果另存为 *.txt'
+    win_title:                '导出文档编码矩阵为: 制表符分隔'
+    tab_delimited:            '制表符分隔'
+gui_window::cod_out::var:
+    save_as:                  '档-编码矩阵结果另存为 *.cvs'
+    win_title:                '导出文档编码矩阵为: 不定长 CSV'
+gui_window::doc_search:
+    win_title:                '搜索文档'
+    run:                      '运行'
+    unit:                     '单位:'
+    no_sort:                  '不排序'
+    tf:                       'tf'
+    tf_M_idf:                 'tf*idf'
+    tf_D_idf:                 'tf/idf'
+    error_no_code:            '请至少选择1个编码'
+kh_cod::search:
+    codes:                    '* 添加到本文档的代码（在当前编码规则文件中）:'
+    no_codes:                 '#无'
+    direct:                   '#直接输入'
+gui_widget::select_a_var:
+    pos:                      '位置'
+    pos2:                     '文档'
+    heading:                  '标题 '
+    na:                       '不可用'
+gui_window::doc_cls:
+    verb:                     ''
+    fail:                     '聚类计算失败'
+    win_title:                '选项: 文档聚类分析'
+gui_window::doc_cls_res:
+    win_title:                '文档的聚类分析'
+    docs_in_clusters:         '每个聚类包含文档'
+    h_cls_id:                 '聚类簇'
+    h_doc_num:                '文档数'
+    docs:                     '文档'
+    bal_docs:                 "在聚类中搜索文档.\n[双击]"
+    words:                    '词汇'
+    bal_words:                "搜索聚类的特征词\n[shift + 双击]"
+    agglm:                    '凝聚阶段'
+    h_stage:                  '阶段'
+    h_cls1:                   '聚类 1'
+    h_cls2:                   '聚类 2'
+    h_coeff:                  '系数'
+    both:                     '1 和 2'
+    only1:                    '仅 1'
+    only2:                    '仅 2'
+    bal_agg_docs:             "搜索阶段中的文档\n[双击]"
+    m_wrd:                    'ward-离差平方和法'
+    m_ave:                    '组均值法'
+    m_clk:                    'CLink 法'
+    config:                   '配置'
+    save:                     '将结果保存为变量'
+    cluster:                  '聚类'
+    na:                       '不可用'
+gui_window::doc_cls_res_sav:
+    desc:                     '将聚类分析结果保存为变量。'
+    name:                     '变量名:'
+    specify_var:              '指定新变量的名称'
+    win_title:                '聚类结果另存为变量'
+gui_window::doc_cls_res_opt:
+    win_title:                '配置: 文档的聚类分析'
+gui_window::cls_height::doc:
+    win_title:                '凝聚: 文档的聚类分析'
+    overwr:                   '确定要覆盖此文件吗: '
+gui_window::morpho_crossout:
+    output:                   ''
+gui_window::morpho_crossout::csv:
+    er_no_pos:                '错误: 请至少选择1个词性'
+    saving:                   '"文档-词汇"矩阵另存为:'
+    win_title:                '导出"文档-词汇"矩阵为: CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                '导出"文档-词汇"矩阵为: SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   '制表符分隔'
+    win_title:                '导出"文档-词汇"矩阵为: 制表符分隔'
+gui_window::morpho_crossout::var:
+    win_title:                'E导出文档-词汇矩阵为: 不定长 CSV'
+gui_window::contxt_out:
+    words:                    '词汇'
+    words4cntxt:              '计算上下文向量的词汇'
+    options:                  '单位和加权'
+    use:                      ''
+gui_window::contxt_out::csv:
+    saving:                   '"词汇-上下文向量" 矩阵另存为:'
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: CSV'
+gui_window::contxt_out::spss:
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: SPSS'
+gui_window::contxt_out::tab:
+    win_title:                '导出 "词汇-上下文向量" 矩阵为: 制表符分隔'
+gui_window::txt_pickup:
+    win_title:                '提取部分文本'
+    headings:                 '提取标题'
+    headings_name:            '  '
+    codes:                    '提取具有特定编码的文档'
+    unit:                     '编码单位'
+    higher:                   '包含更高级别的标题'
+    error_no_headings:        '请选择至少1个标题'
+    saving:                   '提取部分文本: 另存为'
+gui_window::txt_html2csv:
+    win_title:                '转换为 CSV'
+    unit:                     '哪个单位应被视为 CSV 的行/个案'
+    select:                   '选择:'
+    saving:                   'CSV 文件另存为'
+gui_window::outvar_read:
+    unit:                     '变量的单位:'
+    no_such_file:             '错误: 找不到文件，请指定正确的文件!'
+gui_window::outvar_read::csv:
+    open:                     '请选择包含变量的文件'
+    csv:                      'CSV 文件:'
+    win_title:                '从 CSV 中读取变量'
+gui_window::outvar_read::tab:
+    tabdelf:                  '制表符分隔文件'
+    open:                     '请选择包含变量的文件'
+    tabdel:                   '制表符分隔'
+    win_title:                '从制表符分隔文件中读取变量'
+gui_window::outvar_list:
+    win_title:                '变量和标题列表'
+    headings:                 '标题'
+    vars:                     '变量'
+    h_unit:                   '单位'
+    h_name:                   '变量'
+    del:                      '删除'
+    export:                   '导出'
+    read:                     '*导入'
+    csv:                      'CSV 文件'
+    tabdel:                   '制表符分隔'
+    values:                   '变量和变量标签: '
+    h_value:                  '值'
+    h_label:                  '标签'
+    h_freq:                   '频率'
+    save:                     '保存标签'
+    docs:                     '文档'
+    words:                    '*词汇'
+    selected:                 '所选值'
+    catalogue_xls:            '目录: Excel'
+    catalogue_csv:            '目录: CSV'
+    help_words:               "搜索值的特征词\n[Shift + 双击]"
+    unit:                     '单位:'
+    help_docs:                "通过所选值搜索文档\n[双击]"
+    error_sel_a_var:          '错误: 请选择变量！'
+    mspgoth:                  'MS PGothic'
+    error_sel_a_vv:           '错误: 请选择变量和值.'
+    error_hd1:                '无法删除标题。\n请直接修改要分析的文件'
+    del_ok:                   '确定要删除选中的变量吗?'
+    error_units:              '聚类单位不同的变量不能同时保存'
+    error_hd2:                '无法导出标题。\n请尝试使用 "提取部分文本" 命令'
+    saving:                   '变量另存为'
+gui_window::hukugo:
+    win_title:                '词汇聚类器: ChaSen'
+    run:                      '运行'
+    h_huku:                   '聚类'
+    h_freq:                   '频率'
+    whole:                    '整体列表'
+gui_window::use_te:
+    win_title:                'Copyright of TermExtract'
+    desc:                     'TermExtract will be utilized in this function.'
+    web:                      'TermExtract 网页:'
+    about:                    '关于 TermExtract:'
+gui_window::use_te_g:
+    win_title:                '词汇聚类器: TermExtract'
+    run:                      '运行'
+    h_hukugo:                 '聚类'
+    h_score:                  '分数'
+gui_window::bayes_learn:
+    win_title:                '从变量构建模型（使用变量作为训练数据）'
+    add2exists:               '将当前结果附加到现有模型文件'
+    cr_validate:              '执行交叉验证'
+    savelog:                  '保存分类日志'
+    savecls:                  '将分类结果保存为变量'
+    vname:                    '变量:'
+    error_f20:                '错误: 请指定从 2 到 20 作为折叠值'
+    error_var:                '错误: 请选择一个变量'
+    error_exists:             '错误: 指定的变量名已经存在'
+    select_exist:             '选择要附加的模型文件'
+    saving_new:               '模型另存为'
+    saving_log:               '分类日志另存为'
+    error_no_words:           '错误: 当前设置中没有可用的词汇。'
+    done:                     '模型构建完成'
+    docs:                     '用作训练数据的文档数:'
+    docs_total:               '文件总数:'
+    accuracy:                 '准确率:'
+    verb4wid:                 ''
+gui_widget::words_bayes:
+    unit:                     '分类单位：'
+    var:                      '变量:'
+    n_a:                      '不可用'
+gui_window::bayes_view_knb:
+    win_title:                '查看模型文件:'
+    n_docs:                   '已处理的文档:'
+    n_types:                  ' 词汇类型:'
+    search:                   '搜索'
+    whole:                    '整个列表'
+    variance:                 方查
+kh_nbayes::cv_predict:
+    cross_validation:         '(交叉验证)'
+kh_nbayes::Util:
+    prior:                    '[先验概率]'
+gui_window::bayes_predict:
+    win_title:                '使用模型文件对文档进行分类'
+    unit:                     '分类单位:'
+    model_file:               '模型文件:'
+    var_name:                 '变量名:'
+    var_desc:                 '    * 分类结果将保存为变量。'
+    save_log:                 '将分类详细信息保存到日志文件'
+    opening_model:            '打开模型文件...'
+    er_no_such_file:          '错误: 请指定正确的文件'
+    er_specify_name:          '错误: 请指定正确的变量名'
+    er_exists:                '错误: 指定的变量名已经存在'
+    saving_log:               '分类详情另存为:'
+gui_window::bayes_view_log:
+    win_title:                '分类详情文件:'
+    model_file:               '模型文件:'
+    saved_var:                ' 已保存的变量:'
+    unit:                     ' 分类单位:'
+    doc_id:                   ' 文件编号'
+    search_words:             '搜索词汇:'
+    class:                    '分类:'
+    higher_left:              ' * 从左到右按分数降序显示'
+    word:                     '词汇'
+    freq:                     '频率'
+    variance:                 '方查'
+    run:                      '运行'
+kh_nbayes:
+    classified_as:            '分类为'
+    classs:                   '分类'
+    correct_insts:            '正确分类的实例'
+    kappa:                    'Kappa 统计量: '
+kh_project:
+    no_target_file:           '要分析的文件不存在'
+kh_projects:
+    already_registered:       '该文件已注册为项目'
+gui_errormsg::file:
+    could_not_open_the_file:  "无法打开文件.\nKH Coder 即将退出。\n* "
+kh_cod:
+    not_coding_rules:         '所选文件看起来不像编码规则文件'
+    redefined:                " 编码已定义过，\n请改变编码名称"
+kh_r_plot:
+    illegal_plot_size:        '非法的绘图尺寸'
+    faliled_in_plotting:      '无法使用 R 绘图\n\n'
+mysql_ready:
+    error_in_mysql_bunr:      '数据库有错误: bun_r 表\nKH Coder 即将退出'
+    too_long_sentence:        "错误: 有一条语句过长 ( > 65535 )\nKH Coder 即将退出"
+kh_cod::a_code:
+    syntax_error:             '编码规则中有语法错误:'
+kh_cod::a_code::atom::code:
+    no_code_error:            '语法错误，编码未定义: '
+mysql_outvar::read:
+    records_error:            "记录数并不多.\n正在退出进程"
+    midashi_error:            '不能使用 "Heading1" - "Headings5" 作为变量名'
+    overwrite_vars:           '已加载了同名变量\n是否要覆盖现有变量?\n\n'
+mysql_ready::dump:
+    too_long_word1:            "提取词长度超过限制 ( > 128 )\n\nKH Coder 仅识别了前 128 个字符串.\n词汇已经记录在下列文件: \n"
+    too_long_word2:            "点击 OK 继续执行处理进程"
+mysql_getheader:
+    error:                     "无法处理文件。\n\n目标文件中可能存在H1-H5标签使用错误。\n请尝试\"检查目标文本\" 命令。"
+gui_window::r_plot::doc_cls:
+    win_title:                 "文件树状图"
+gui_window::r_plot_opt::doc_cls:
+    doc_label:                 "个案标签:"
+    number:                    "编号."
+    heading:                   "标题"
+    win_title:                 "配置: 文件树状图"
+mysql_ready::check:
+    error:                     "数据不完整: "
+gui_window::r_plot::cod_mat:
+    win_title:                 "交叉表图"
+    heat:                      "特土"
+    fluc:                      "气泡"
+gui_window::r_plot::tpc_mat:
+    win_title:                 "主题比例图"
+    heat:                      "热图"
+    fluc:                      "气泡"
+gui_window::r_plot_opt::cod_mat:
+    win_title:                 "设置: 交叉表图"
+    cellnote:                  "显示百分比"
+    dendro_c:                  "聚类编码"
+    dendro_v:                  "聚类变量或标题"
+    bubble_size:               "气泡大小: "
+    plot_size_heat:            "绘图高度:"
+    plot_size_mapw:            "绘图宽度:"
+    plot_size_maph:            "  高度:"
+    bubble_shape:              "气泡形状: "
+    square:                    "方形"
+    circle:                    "圆形"
+    common:                    "通用设置"
+    select_1:                  "请至少选择1个编码"
+    color_rsd:                 "按颜色标记标准化残差"
+    col1:                      "颜色"
+    col2:                      "颜色 (CM)"
+    gray:                      "灰阶"
+    color_fix:                 "固定颜色: "
+gui_window::r_plot::cod_mat_line:
+    win_title:                 "折线图"
+gui_window::r_plot_opt::cod_mat_line:
+    win_title:                 "配置: 折线图"
+gui_window::import_folder:
+    win_title:                 "导入: 文件夹中的多个文本"
+    description:               "统一文件夹中的所有文档文件并创建项目"
+    folder:                    "文件夹: "
+    level:                     "文件名标题级别:"
+    conv:                      '将数据中的 "<" 和 ">" 转换为空格'
+    auto:                      "自动检测"
+    auto_jp:                   "自动检测 (日语)"
+    unicode:                   "Unicode（UTF-8）"
+    char_code:                 "文件的字符编码: "
+    unified:                   "统一文件: "
+    change:                    "变更"
+    browse_unified:            "请输入统一文本文件的名称"
+    opt_unify:                 "统一文件"
+    opt_project:               "新建项目"
+gui_window::topic_fitting:
+    win_title:                 "拟合主题模型"
+    opt:                       "主题模型 (LDA) 选项"
+    n_topics:                  "主题数量: "
+gui_window::topic_perplexity:
+    opt:                       '方法和主题数量'
+    win_title:                 '查找最佳主题数'
+    candidates:                "主题数量: "
+    folds:                     "分割数（折叠）: "
+    method:                    "方法: "
+    error_terms_topics:        "使用 ldatuning 时, 所选单词数应大于最大主题数"
+gui_window::topic_result:
+    win_title:                 主题估计结果
+    extended:                  "概率."
+    words:                     "词汇: "
+    export:                    "*导出"
+    topic_term:                主题×词汇 矩阵表
+    doc_topic:                 文档×词汇 矩阵表
+    topic_prop:                " 主题比例:"
+    stats_table:               表
+    plot:                      图
+gui_window::topic_stats:
+    win_title:                 话题比例表
+    var:                       制表:
 screen_code::rde_menu:
-  err_edit: |-
-    ***not translated*** Projectdata cannot edit. // プロジェクトデータの編集処理に失敗しました。
-    再試行するか、サポートまでお問い合わせください。
-  err_not_exist: "***not translated*** Projectdata don't exist. // 分析対象ファイルに関連するデータが、データベースに存在しません。"
-  err_output_from_db: '***not translated*** Projectdata cannot output from database. // データベースからの外部変数出力に失敗しました。'
-  plugin_raw_data_editor: '***not translated*** Edit Data // 《文錦》 テキスト・変数の編集'
+    plugin_raw_data_editor:    "编辑数据"
+    err_not_exist:             "项目数据不存在。"
+    err_output_from_db:        "Projectdata 无法从数据库输出。"
+    err_edit:                  "Projectdata 无法编辑。"
 screen_code::rde_newproject_button:
-  plugin_raw_data_editor: '***not translated*** Edit File // 《文錦》 テキスト・変数の編集'
+    plugin_raw_data_editor:    "编辑文件"
+screen_code::assistant:
+    use_plugin:                "使用插件"
+    cross_map_label:           "使用插件:"
+    corresp_rad:               "  原点范围:"
+    corresp_ang:               "  变量范围:"
+    corresp_drop_menu1:        "窄"
+    corresp_drop_menu2:        "稍窄"
+    corresp_drop_menu3:        "正常"
+    corresp_drop_menu4:        "稍宽"
+    corresp_drop_menu5:        "宽"
+    dialog_ok:                 "是"
+    dialog_yes:                "是"
+    dialog_no:                 "否"
+    dialog_cancel:             "取消"
+    dialog_use_plugin:         "启用 NegationChecker"
+    label_use_plugin:          "NegationChecker "
+    label_enable:              "启用  "
+    label_disable:             "禁用  "
+    plugin_synonym:            "《M》 Synonym"
+    KWIC_button:               "《M》 KWIC "
+    KWIC_button2:              "《M》 KWIC*"
+    KWIC_label:                "《M》 "
