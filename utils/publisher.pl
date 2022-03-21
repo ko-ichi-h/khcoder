@@ -86,10 +86,10 @@ find(
 #                                     実行
 #------------------------------------------------------------------------------
 
-#&web;
+&web;
 	#&pdfs if $pdf;
 	#&source_tgz;
-#&win_pkg;
+&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;
@@ -120,7 +120,7 @@ sub upload{
 	my $repos = $gh->repos;
 	$repos->set_default_user_repo('ko-ichi-h', 'khcoder');
 
-	if (0) {
+	if (1) {
 		# Create a tag on Github
 		system("git tag -a $V_full -m \"$V\"");
 		system("git push origin $V_full");
