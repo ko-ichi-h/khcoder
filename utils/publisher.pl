@@ -86,10 +86,10 @@ find(
 #                                     実行
 #------------------------------------------------------------------------------
 
-&web;
+#&web;
 	#&pdfs if $pdf;
 	#&source_tgz;
-&win_pkg;
+#&win_pkg;
 	#&win_upd;
 	#&win_strb;
 &upload;
@@ -120,7 +120,7 @@ sub upload{
 	my $repos = $gh->repos;
 	$repos->set_default_user_repo('ko-ichi-h', 'khcoder');
 
-	if (1) {
+	if (0) {
 		# Create a tag on Github
 		system("git tag -a $V_full -m \"$V\"");
 		system("git push origin $V_full");
@@ -145,22 +145,38 @@ sub upload{
 		}
 	}
 	
+	unless ( $release->{id} ){
+		for (my $n = 0; $n < 10; ++$n){
+			print "kh: waiting for github to create the release ($n)...\n";
+			sleep 10;
+			my @releases = $repos->releases();
+			foreach my $i (@releases) {
+				if ($i->{name} eq $V_full ){
+					$release = $i;
+					last;
+				}
+			}
+			if ($release->{id}){
+				last;
+			}
+		}
+	}
+	print "kh: Release id: $release->{id}\n";
+
+	
 	open my $fh, '<', "builds/khcoder-$V.exe" or die;
 	binmode $fh;
 	my $file_content;
 	my $count = read($fh, $file_content, -s "builds/khcoder-$V.exe");
 	close $fh;
 	
-	print "Read $count bytes. Uploading...\n";
-	
+	print "kh: Read $count bytes. Uploading...\n";
 	my $asset = $repos->upload_asset(
 		$release->{id},
 		"khcoder-$V.exe",
 		'application/octet-stream',
 		$file_content
 	);
-
-
 
 	# Create a release on Github using github-release
 	#    https://github.com/aktau/github-release
@@ -376,7 +392,7 @@ sub win_strb{
 	# 新しいファイルを「pub/base/win_strb」へコピー（2）共通
 	foreach my $i (@cp_f){
 		copy($i->[0], 'pub/base/win_strb/'.$i->[1]) or die("Can not copy $i\n");
-		print "copy: $i->[1]\n";
+		print "kh: copy: $i->[1]\n";
 	}
 	
 	# Zipファイルを作成
