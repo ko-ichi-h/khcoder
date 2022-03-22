@@ -22,9 +22,8 @@ global:
     save:                     Enregistrer
     search:                   Rechercher
     select_3words:            |-
-        ***not translated*** We need more words to run this analysis.
-        Please check the frequency list of words. // この分析を行うためにはより多くの抽出語が必要です。
-        抽出語リストを確認し、設定を見直してください。
+        Pour cette analyse, il faut plus de mots.
+        Veuillez vérifier la liste de fréquence lexicale, réviser des paramètres.
     select_a_file:            Sélectionner un fichier
     sentence:                 Phrase
     spss_f:                   Fichier SPSS
@@ -156,7 +155,7 @@ gui_widget::select_a_var:
     heading:                  Titres
     na:                       'n/a '
     pos:                      Position
-    pos2:                     '***not translated*** Documents // 文書ごと'
+    pos2:                     'Par document'
 gui_widget::tani2:
     unit_c:                   'Unité de codage:'
     unit_t:                   '    Unité de tabulation:'
@@ -408,7 +407,7 @@ gui_window::doc_view:
     highlight:                Mettre en surbrillance
     in_the_file:              'Dans le fichier:'
     in_the_results:           '  dans les résultats:'
-    info:                     '***not translated*** * Location & Variables:  // ・位置と変数'
+    info:                     'Position et Variables'
     n1:                       '>>'
     n2:                       '>>'
     p1:                       <<
@@ -434,20 +433,20 @@ gui_window::hukugo:
     whole:                    Liste entière
     win_title:                'Cluster des mots: ChaSen'
 gui_window::import_folder:
-    auto:                     '***not translated*** Auto Detect // 自動'
-    auto_jp:                  '***not translated*** Auto Detect (Japanese) // 自動（日本語）'
-    browse_unified:           '***not translated*** Please enter a name for the unified text file // 結合ファイルの名前を指定してください'
-    change:                   '***not translated*** Change // 変更'
-    char_code:                '***not translated*** Encoding of files:  // 文字コード：'
-    conv:                     '***not translated*** convert "<" and ">" in the data to white space // データ内の半角山カッコ「<>」をスペースに変換する'
-    description:              '***not translated*** Unify all document files in a folder and creat a project // 指定されたフォルダ内にある文書ファイルをすべて結合し，プロジェクトを作成します'
-    folder:                   '***not translated*** Folder:  // フォルダ：'
-    level:                    '***not translated*** Heading level of filenames: // ファイル名の見出しレベル：'
-    opt_project:              '***not translated*** New project // 新規プロジェクト'
-    opt_unify:                '***not translated*** Unify documents // テキストファイル結合'
-    unicode:                  '***not translated*** Unicode（UTF-8） // Unicode（UTF-8）'
-    unified:                  '***not translated*** Unified file:  // 結合ファイル：'
-    win_title:                '***not translated*** Import: multiple texts in a folder // インポート：フォルダ内の複数テキスト'
+    auto:                     'Distinction automatique'
+    auto_jp:                  'Distinction automatique (japonais)'
+    browse_unified:           'Veuillez saisir un nom pour le fichier texte combiné.'
+    change:                   'Modifier'
+    char_code:                'Encodage du fichier:'
+    conv:                     'Remplacer les guillemets en chevron simple (<>) dans les données par un espace'
+    description:              'Fusionner tous les documents dans un dossier indiqué, et créer un projet.'
+    folder:                   'Dossier:'
+    level:                    'Niveau hiérarchique de titre pour le nom de fichier'
+    opt_project:              'Nouveau projet'
+    opt_unify:                'Combiner des fichiers textes'
+    unicode:                  'Unicode（UTF-8）'
+    unified:                  'Fichier texte combiné:'
+    win_title:                'Importer: des plusieurs textes dans un dossier'
 gui_window::main::inner:
     cases:                    Cas
     docs:                     'Documents:'
@@ -486,8 +485,8 @@ gui_window::main::menu:
     h_cluster:                Analyse de Regroupement hiérarchique
     help:                     Aide
     import:                   Importer
-    import_folder:            '***not translated*** Multiple texts in a folder // フォルダ内の複数テキスト'
-    import_khc:               '***not translated*** KH Coder (*.khc) // KH Coder形式'
+    import_folder:            'Plusieurs textes dans un dossier'
+    import_khc:               'KH Coder (*.khc)'
     import_save_path:         Enregistrer le fichier actif
     import_win_title:         Importer un projet à partir d'un fichier *.khc
     jac_mtrx:                 Matrices de similarité
@@ -518,9 +517,9 @@ gui_window::main::menu:
     tf_df:                    Représentation graphique de TF-DF
     to_csv:                   Convertir au format CSV
     tools:                    Outils
-    topic:                    '***not translated*** Topic models // トピックモデル'
-    topic_ft:                 '***not translated*** Fit a Topic Model // トピックの推定'
-    topic_pp:                 '***not translated*** Find Optimal N of Topics // トピック数の探索'
+    topic:                    'Topic models'
+    topic_ft:                 'Calculer les modèles probabilistes'
+    topic_pp:                 'Définir le nombre de topics idéals'
     use_chasen:               Utiliser ChaSen
     use_termextract:          Utiliser TermExtract
     var_list:                 Liste
@@ -624,7 +623,7 @@ gui_window::project_new:
     target_char_code:         'Le codage des caractères du fichier à analyser:'
     target_column:            'Colonne à analyser:'
     target_file:              'Le fichier à analyser:'
-    type_error:               '***not translated*** KH Coder is not ready for this file type. // 対応していないファイル形式です。'
+    type_error:               'KH Coder ne connaît pas ce format de fichier.'
     win_title:                Nouveau projet
 gui_window::project_open:
     del:                      Effacer
@@ -665,15 +664,15 @@ gui_window::r_plot::selected_netgraph:
     color:                    'Couleur:'
     win_title:                Mots relatifs/Réseaux de cooccurrence
 gui_window::r_plot::topic_n_ldatuning:
-    win_title:                '***not translated*** Find Optimal N of Topics: ldatuning // トピック数の探索：ldatuning'
+    win_title:                'Définir le nombre de topics idéals: ldatuning'
 gui_window::r_plot::topic_n_perplexity:
-    win_title:                '***not translated*** Find Optimal N of Topics: Perplexity // トピック数の探索：Perplexity'
+    win_title:                'Définir le nombre de topics idéals: Perplexity'
 gui_window::r_plot::tpc_mat:
-    fluc:                     '***not translated*** bubble // バブル'
-    heat:                     '***not translated*** heat // ヒート'
-    win_title:                '***not translated*** Topic Proportion Map // トピック比率のマップ'
+    fluc:                     'Bulles'
+    heat:                     'Heat'
+    win_title:                'Carte de proportion du topic'
 gui_window::r_plot::tpc_mat_line:
-    win_title:                '***not translated*** Line Chart of Topic Proportion // トピック比率の折れ線グラフ'
+    win_title:                'Graphique linéaire de proportion du topic'
 gui_window::r_plot::word_cls:
     agglomer:                 Agglomération
     ave:                      Average
@@ -751,8 +750,8 @@ gui_window::r_plot_opt::doc_cls:
 gui_window::r_plot_opt::selected_netgraph:
     win_title:                'Configuration: Mots relatifs/Réseaux de cooccurrence'
 gui_window::r_plot_opt::tpc_mat_line:
-    select_topics:            '***not translated*** Select Topics: // トピック選択'
-    win_title:                '***not translated*** Configure: Line Chart of Topic Proportion // トピック比率の折れ線グラフ・調整'
+    select_topics:            'Sélectionner des topics'
+    win_title:                'Configuration: Graphique linéaire de proportion du topic'
 gui_window::r_plot_opt::word_cls:
     err_no_auto:              Vous ne pouvez pas sélectionner "Auto" dans cette fenêtre. Veuillez saisir des valeurs numériques.
     win_title:                'Configuration: Analyse de Regroupement hiérarchique de mots'
@@ -819,35 +818,34 @@ gui_window::sysconfig:
     stemming:                 Snowball Stemmer
     stopwords:                '  Mots vides (Stop Words):'
     unify_words_sl:           |-
-        ***not translated*** Words with the same basic form are recognized
-        identical even if the POS is different // 基本形が同じ語は，品詞名が異なっていても同じ語と見なす
+        'Des mots que les parties du discours sont différentes, mais qui portent le même lemme, on les considère comme les mêmes.'
     web_browser:              'Navigateur Web:'
     win_title:                Paramètres globaux
     words_ext:                Moyen d'extraire des mots
 gui_window::topic_fitting:
-    n_topics:                 '***not translated*** N of Topics:  // トピック数：'
-    opt:                      '***not translated*** Topic Model (LDA) Options // トピックモデル（LDA）のオプション'
-    win_title:                '***not translated*** Fit a Topic Model // トピックの推定'
+    n_topics:                 'Nombre de topics'
+    opt:                      'Option du topic model (LDA)'
+    win_title:                'Calculer les modèles probabilistes'
 gui_window::topic_perplexity:
-    candidates:               '***not translated*** N of Topics:  // トピック数の候補：'
-    error_terms_topics:       '***not translated*** When you choose ldatuning, number of selected words should be larger than maximum number of topics // ldatuning使用時は、トピック数候補の最大値よりも、使用する語の数を大きくする必要があります。'
-    folds:                    '***not translated*** Fold:  // 分割数（fold）：'
-    method:                   '***not translated*** Method:  // 方法：'
-    opt:                      '***not translated*** Method and Number of topics // 探索のオプション'
-    win_title:                '***not translated*** Find Optimal Number of Topics // トピック数の探索'
+    candidates:               'Nombre de topics proposé: '
+    error_terms_topics:       'Lorsque vous choisissez ldatuning, le nombre de mots sélectionnés doit être supérieur au nombre de topics proposé.'
+    folds:                    'Fold:  '
+    method:                   'Méthode:  '
+    opt:                      'Option de méthode et nombre de topics'
+    win_title:                'Définir le nombre de topics idéals'
 gui_window::topic_result:
-    doc_topic:                '***not translated*** Document-Topic Matrix // 「文書×トピック」表'
-    export:                   '***not translated*** *Export // ▽出力'
-    extended:                 '***not translated*** prob. // 確率'
-    plot:                     '***not translated*** Map // マップ'
-    stats_table:              '***not translated*** Table // 表'
-    topic_prop:               '***not translated***  Topic proportion: //   トピック比率：'
-    topic_term:               '***not translated*** Topic-Word Matrix // 「トピック×語」表'
-    win_title:                '***not translated*** Result of Topic Model // トピックの推定結果'
-    words:                    '***not translated*** Words:  // 語：'
+    doc_topic:                'Tableau de document-topic'
+    export:                   '*Exporter'
+    extended:                 'Probabilité'
+    plot:                     'Carte'
+    stats_table:              'Tableau'
+    topic_prop:               'Proportion du topic'
+    topic_term:               'Tableau de topic-mots'
+    win_title:                'Résultats des modèles probabilistes'
+    words:                    'Mots'
 gui_window::topic_stats:
-    var:                      '***not translated*** Tabulation: // 集計：'
-    win_title:                '***not translated*** Topic Proportion Table // トピック比率の集計表'
+    var:                      'Totalisation:'
+    win_title:                'Tableau de proportion du topic'
 gui_window::txt_html2csv:
     saving:                   Enregistrer le fichier CSV sous
     select:                   'Sélectionner :'
@@ -1150,9 +1148,7 @@ gui_window::word_tf_df:
 kh_cod:
     not_coding_rules:         On ne peut pas lire le fichier sélectionné comme fichier de règles de codage.
     redefined:                |-
-        ***not translated***  code is redefined.
-        Please change the name of the code. //  コードが何度も定義されています。
-        コードの名前を変更してください。
+        "Le code est redéfini plusieurs fois.\nChangez le nom du code."
 kh_cod::a_code:
     syntax_error:             'Erreur de syntaxe dans la règle de codage:'
 kh_cod::a_code::atom::code:
@@ -1223,13 +1219,10 @@ kh_sysconfig::stanford:
     path_error:               Erreur de chemin d'accès de Stanford POS Tagger !
 mysql_exec:
     cross:                    |-
-        ***not translated*** Do your have multiple KH Coder on the same PC? 
-        MySQL database may be interfering.
+        Avez-vous plusieurs KH Coder sur le même PC ?
+        La base de données MySQL peut interférer.
         
-        It is highly recommended to restart KH Coder. // 複数のKH Coderが同じPC上に存在していますか？
-        それぞれのMySQLデータベースが混信している可能性があります。
-        
-        KH Coderの再起動を強くお勧めします。
+        Il est fortement recommandé de redémarrer KH Coder.
 mysql_getheader:
     error:                    |-
         Échouer à extraire des titres. 
@@ -1275,9 +1268,9 @@ mysql_words:
     types:                    Types de mots (n)
     words:                    Mots
 screen_code::assistant:
-    KWIC_button:              '***not translated*** 《M》 KWIC  // 《文錦》KWIC '
-    KWIC_button2:             '***not translated*** 《M》 KWIC* // 《文錦》KWIC※'
-    KWIC_label:               '***not translated*** 《M》  // 《文錦》'
+    KWIC_button:              '《M》 KWIC'
+    KWIC_button2:             '《M》 KWIC*'
+    KWIC_label:               '《M》 '
     corresp_ang:              'Direction de variable:'
     corresp_drop_menu1:       étroit
     corresp_drop_menu2:       légèrement plus étroit
@@ -1294,7 +1287,7 @@ screen_code::assistant:
     label_disable:            'Désactiver  '
     label_enable:             'Activer  '
     label_use_plugin:         'NegationChecker '
-    plugin_synonym:           '***not translated*** 《M》 Synonym // 《文錦》 表記ゆれ＆同義語'
+    plugin_synonym:           '《M》 Synonyme'
     use_plugin:               Utiliser le plugin
 screen_code::rde_menu:
     err_edit:                 On ne peut pas éditer les données du projet.
