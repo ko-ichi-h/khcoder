@@ -17,7 +17,7 @@ global:
     search:                   搜索
     sentence:                 字句
     spss_f:                   SPSS 文件
-    tab_f:                    Tab Delimited
+    tab_f:                    制表符分隔
     wm_f:                     不定长CSV（WordMiner）
     r_dont_close:             运行时不要关闭此窗口
     r_net_msg_fail:           错误：配置选项失败
@@ -70,7 +70,7 @@ gui_widget::r_xy:
     x:                        ' X轴'
     y:                        ' Y轴'
     origin:                   显示原点
-    scaling:                  Scaling:
+    scaling:                  缩放:
     none:                     无
     sym:                      对称
     symbi:                    对称 biplot
@@ -349,7 +349,7 @@ gui_window::sysconfig:
     p_chasenrc:               '     "chasenrc" 的路径:'
     p_grammer.cha:            '     "grammar.cha" 的路径:'
     p_mecab.exe:              '     "mecab.exe" 的路径:'
-    mecab_unicode:            'UTF-8 Dictionary'
+    mecab_unicode:            'UTF-8 路径（如中文路径名请勾选此项）'
     p_stanford_jar:           '     *.JAR 的路径:'
     p_stanford_tag:           '     *.TAGGER 的路径:'
     pdf:                      'PDF 查看器:'
@@ -409,7 +409,7 @@ gui_window::word_conc:
     l3:                       左3
     l4:                       左4
     l5:                       左5
-    next:                     N
+    next:                     后
     ns:                       无
     pos:                      '  词性(POS):'
     prev:                     前
@@ -480,7 +480,7 @@ gui_window::word_conc_opt:
     opt3:                     条件 3
     pos:                      '  词性(POS):'
     position:                 '位置:'
-    preface1:                 您可以添加特定搜索条件，类似 "词汇A位于 L1."
+    preface1:                 '您可以添加特定搜索条件，类似 "词汇A位于 左1."'
     preface2:                 '要添加条件，首先要指定一个 "位置"。'
     r:                        右1-5
     r1:                       右1
@@ -720,12 +720,12 @@ gui_window::r_plot_opt::word_som:
 gui_window::word_cls:
     u_w:                      '选择单位和词汇'
     opt:                      '聚类分析选项'
-    cluster:                  ' '
+    cluster:                  '聚类'
     win_title:                '选项: 词汇的层次聚类分析'
     last1:                    '最后 '
-    last2:                    ''
+    last2:                    '次'
     first1:                   '最前 '
-    first2:                   ''
+    first2:                   '次'
     agglomer:                 '凝聚阶段'
     hight:                    '系数 (相异性)'
     note1:                    "* 图中的数字标签为\n  每步凝聚后的簇数"
@@ -766,7 +766,7 @@ gui_widget::r_net:
     filter_edges:             '要绘制的共现关系（边）: '
     e_top_n:                  '前'
     e_jac:                    '系数. >= '
-    or_more:                  ''
+    or_more:                  '以上'
     thicker:                  '关系（边）越强线条越黑'
     smaller:                  '更小的节点'
     min_sp_tree:              '突出显示最小生成树'
@@ -787,7 +787,7 @@ gui_widget::r_margin:
     bottom:                   '底部'
 gui_window::word_netgraph:
     u_w:                      '聚合单元和提取词的选择'
-    use:                      ''
+    use:                      '使用'
     net_opt:                  '共现网络选项'
     e_type:                   '共现关系类型（边）:'
     w_w:                      '词汇 - 词汇'
@@ -846,7 +846,7 @@ gui_window::cod_outtab:
     er_ill:                   '错误: 非法的参数!'
     line_all:                 '全部'
     line_select:              '选择'
-    line:                     ' 线:'
+    line:                     ' 折线:'
     map:                      'map: '
 gui_window::cod_jaccard:
     win_title:                '编码: 相似度矩阵-Jaccard系数'
@@ -884,7 +884,7 @@ gui_widget::select_a_var:
     heading:                  '标题 '
     na:                       '不可用'
 gui_window::doc_cls:
-    verb:                     ''
+    verb:                     '使用'
     fail:                     '聚类计算失败'
     win_title:                '选项: 文档聚类分析'
 gui_window::doc_cls_res:
@@ -923,7 +923,7 @@ gui_window::cls_height::doc:
     win_title:                '凝聚: 文档的聚类分析'
     overwr:                   '确定要覆盖此文件吗: '
 gui_window::morpho_crossout:
-    output:                   ''
+    output:                   '输出'
 gui_window::morpho_crossout::csv:
     er_no_pos:                '错误: 请至少选择1个词性'
     saving:                   '"文档-词汇"矩阵另存为:'
@@ -939,7 +939,7 @@ gui_window::contxt_out:
     words:                    '词汇'
     words4cntxt:              '计算上下文向量的词汇'
     options:                  '单位和加权'
-    use:                      ''
+    use:                      '使用'
 gui_window::contxt_out::csv:
     saving:                   '"词汇-上下文向量" 矩阵另存为:'
     win_title:                '导出 "词汇-上下文向量" 矩阵为: CSV'
@@ -1013,7 +1013,7 @@ gui_window::hukugo:
     whole:                    '整体列表'
 gui_window::use_te:
     win_title:                'Copyright of TermExtract'
-    desc:                     'TermExtract will be utilized in this function.'
+    desc:                     '此功能中将使用 TermExtract。'
     web:                      'TermExtract 网页:'
     about:                    '关于 TermExtract:'
 gui_window::use_te_g:
@@ -1039,7 +1039,7 @@ gui_window::bayes_learn:
     docs:                     '用作训练数据的文档数:'
     docs_total:               '文件总数:'
     accuracy:                 '准确率:'
-    verb4wid:                 ''
+    verb4wid:                 '用作训练'
 gui_widget::words_bayes:
     unit:                     '分类单位：'
     var:                      '变量:'
@@ -1124,7 +1124,7 @@ mysql_ready::check:
     error:                     "数据不完整: "
 gui_window::r_plot::cod_mat:
     win_title:                 "交叉表图"
-    heat:                      "特土"
+    heat:                      "热图"
     fluc:                      "气泡"
 gui_window::r_plot::tpc_mat:
     win_title:                 "主题比例图"
