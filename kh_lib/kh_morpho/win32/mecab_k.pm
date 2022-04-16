@@ -171,6 +171,11 @@ sub _run_morpho{
 			$_ = "$1\t$1\t$1\t$2";
 		}
 
+		# patchim
+		if ($_ =~ /.+?\t([ᆨᆩᆪᆫᆬᆭᆮᆯᆰᆱᆲᆳᆴᆵᆶᆷᆸᆹᆺᆻᆼᆽᆾᆿᇀᇁᇂ])/) {
+			substr($_, 0 ,1) = $1;
+		}
+
 		# insert white spaces deleted in pre-processing
 		if (index($_, '<<space>>') == 0 ) {
 			$_ = " \t \t \t半角スペース\t\t";

@@ -703,6 +703,15 @@ sub _format{                                      # 結果の出力
 		}
 		++$n;
 	}
+	
+	# Korean patchim check
+	if ($::project_obj->morpho_analyzer_lang eq 'kr' ) {
+		foreach my $i (@{$return}){
+			$i->[0] = gui_window->kchar_patchim($i->[0]);
+			$i->[2] = gui_window->kchar_patchim($i->[2]);
+		}
+	}
+
 	return $return;
 }
 

@@ -357,7 +357,12 @@ sub _view_doc{
 sub _str_color{
 	my $self = shift;
 	my $str  = shift;
-	
+
+	# Korean patchim check
+	if ($::project_obj->morpho_analyzer_lang eq 'kr') {
+		$str = gui_window->kchar_patchim($str);
+	}
+
 	foreach my $i (@{$self->{s_search}}, @{$self->{str_force}}){
 		my $pat = $i;
 		my $rep = "	start$i	end";
