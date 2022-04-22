@@ -41,6 +41,7 @@ my @cp_f = (
 	['config/msg.es', 'config/msg.es' ],
 	['config/msg.cn', 'config/msg.cn' ],
 	['config/msg.kr', 'config/msg.kr' ],
+	['config/msg.fr', 'config/msg.fr' ],
 );
 
 use File::Find 'find';
