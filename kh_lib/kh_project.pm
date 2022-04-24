@@ -88,6 +88,7 @@ sub copy_and_convert_target_file{ # into inner structure
 			file        => $file_vars,
 			tani        => 'h5',
 			skip_checks => 1,
+			icode       => 'utf8',
 		)->read if -e $file_vars;
 
 		# ignoring the separator string
@@ -99,6 +100,7 @@ sub copy_and_convert_target_file{ # into inner structure
 		",1);
 
 		$self->last_tani('h5');
+		$self->assigned_icode('utf8');
 		$self->status_from_table(1);
 		$self->status_var_file( $::config_obj->uni_path($file_vars) );
 		$self->status_selected_coln( gui_window->gui_bmp($args{column_list}[$args{column}]) );

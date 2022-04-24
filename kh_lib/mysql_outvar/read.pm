@@ -18,11 +18,13 @@ sub read{
 	my $self = shift;
 	
 	# detect character code
-	my $icode;
-	if ( $::project_obj->morpho_analyzer_lang eq 'jp') {
-		$icode = kh_jchar->check_code2($self->{file});
-	} else {
-		$icode = kh_jchar->check_code_en($self->{file});
+	my $icode = $self->{icode};
+	unless ( $icode ) {
+		if ( $::project_obj->morpho_analyzer_lang eq 'jp') {
+			$icode = kh_jchar->check_code2($self->{file});
+		} else {
+			$icode = kh_jchar->check_code_en($self->{file});
+		}
 	}
 	
 	# open the file (1)
