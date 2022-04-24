@@ -1209,7 +1209,11 @@ sub mc_morpho{
 	#SCREEN Plugin
 	$::main_gui->close_all;
 	my $w = gui_wait->start;           # Show "please wait" window
-	$self->mc_morpho_exec($reload);
+	my $rtn = $self->mc_morpho_exec($reload);
+	unless ( $rtn ){                   # when failed...
+		$w->end(no_dialog => 1);
+		return 0;
+	}
 	#SCREEN Plugin
 	use screen_code::synonym_menu;
 	&screen_code::synonym_menu::run_after_prep();
@@ -1221,8 +1225,9 @@ sub mc_morpho{
 sub mc_morpho_exec{
 	my $self = shift;
 	my $reload = shift;
-	mysql_ready->first($reload);
+	mysql_ready->first($reload) or return 0;
 	$::project_obj->status_morpho(1);
+	return 1;
 }
 sub mc_hukugo{
 	my $self = shift;

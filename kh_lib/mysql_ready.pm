@@ -56,7 +56,7 @@ sub first{
 	my $ta0 = new Benchmark;
 	$::project_obj->read_hinshi_setting;
 	kh_dictio->readin->mark;
-	kh_morpho->run;
+	kh_morpho->run or return 0;
 		my $ta1 = new Benchmark;
 		print "Morpho1\t",timestr(timediff($ta1,$ta0)),"\n";
 		my $t0 = new Benchmark;
@@ -126,6 +126,8 @@ sub first{
 	print "Morpho File: ".$::config_obj->uni_path( $::project_obj->file_MorphoOut )."\n";
 	kh_mailif->success;
 	$::config_obj->in_preprocessing(0);
+	
+	return 1;
 }
 
 sub unify_words{

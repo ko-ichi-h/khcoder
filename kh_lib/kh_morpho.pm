@@ -22,6 +22,14 @@ sub run{
 	};
 	bless $self, $class;
 
+	if (-s $self->target == 0 ) {
+		gui_errormsg->open(
+			msg  => kh_msg->get('error_empty'), # Error: the target file is empty.
+			type => 'msg'
+		);
+		return 0;
+	}
+
 	$self->_run;
 
 	return(1);

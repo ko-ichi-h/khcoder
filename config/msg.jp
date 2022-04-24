@@ -616,6 +616,8 @@ kh_datacheck:
     lines:                    行
     looks_good:               "分析対象ファイル内に既知の問題点は発見されませんでした。\n前処理を安全に実行できると考えられます。"
     error_charcode:           "分析対象ファイルの文字コード判別に失敗しました。\nテキストファイルの文字コードをUTF-8に変更してみ下さい。"
+kh_morpho:
+    error_empty:              "エラー：分析対象ファイルの内容が空のようです。\n前処理を中止します。"
 kh_morpho::chasen:
     error:                    茶筌の起動に失敗しました。
     error_config:             事前にKH Coderの設定（茶筌関連）を行ってください。
