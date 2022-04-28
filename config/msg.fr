@@ -25,7 +25,7 @@ global:
         Pour cette analyse, il faut plus de mots.
         Veuillez vérifier la liste de fréquence lexicale, réviser des paramètres.
     select_a_file:            Sélectionner un fichier
-    sentence:                 Phrase
+    sentence:                 Phrases
     spss_f:                   Fichier SPSS
     tab_f:                    Séparer par des tab.
     wm_f:                     'CSV (des lignes de longueur variable): pour WordMiner'
@@ -345,7 +345,7 @@ gui_window::dictionary:
     note1:                    |-
         (*) Modification"des mots de l'échantillonnage forcé" s'appliquera quand 
          vous exécutez la commande"le pré-traitement"de nouveau.
-    one_line1:                (une chaîne de caractères dans chaque ligne)
+    one_line1:                (un mot à chaque ligne)
     one_line2:                (un mot à chaque ligne)
     pos:                      'Sélectionner des mots par les parties du discours:'
     use_file:                 Importer des données depuis le fichier
@@ -412,7 +412,7 @@ gui_window::doc_view:
     n2:                       '>>'
     p1:                       <<
     p2:                       <<
-    win_title:                Afficher les documents
+    win_title:                Afficher
 gui_window::force_color:
     add:                      Ajouter
     delete:                   Supprimer
@@ -451,7 +451,7 @@ gui_window::main::inner:
     cases:                    Cas
     docs:                     'Documents:'
     memo:                     'Notes:'
-    target:                   'Le projet actif:'
+    target:                   'Projet actif:'
     tokens:                   "Tokens (en cours d'utilisation):"
     types:                    "Types (en cours d'utilisation):"
     units:                    Unité
@@ -614,7 +614,7 @@ gui_window::project_edit:
     auto_detect:              Distinction automatique
     memo:                     'Notes:'
     target_char_code:         'Le codage des caractères du fichier à analyser:'
-    target_file:              'Le fichier à analyser:'
+    target_file:              'Fichier à analyser:'
     win_title:                Editer le projet
 gui_window::project_new:
     auto_detect:              Distinction automatique
@@ -622,7 +622,7 @@ gui_window::project_new:
     memo:                     'Notes:'
     target_char_code:         'Le codage des caractères du fichier à analyser:'
     target_column:            'Colonne à analyser:'
-    target_file:              'Le fichier à analyser:'
+    target_file:              'Fichier à analyser:'
     type_error:               'KH Coder ne connaît pas ce format de fichier.'
     win_title:                Nouveau projet
 gui_window::project_open:
@@ -944,7 +944,7 @@ gui_window::word_conc:
     sort2:                    '  Tri 2:'
     sort3:                    '  Tri 3:'
     stats:                    Exécuter
-    viewDoc:                  Afficher les documents
+    viewDoc:                  Afficher
     viewing:                  ', Afficher: '
     viewingUnit:              ' Unité:'
     win_title:                Concordance KWIC
