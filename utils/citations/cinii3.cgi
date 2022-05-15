@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 use strict;
 use utf8;
@@ -159,7 +159,7 @@ if ( $q->param('Excecute') eq 'add' ){
 		
 		$line =~ s/\x0D|\x0A//g;
 		print $fh "$line\x0D\x0A";
-		print $fhb "$line\x0D\x0A";
+		print $fhb "$line\t[cinii3.cgi]\x0D\x0A";
 		
 		print $q->textarea(
 			-name    =>'hoge'.$n,

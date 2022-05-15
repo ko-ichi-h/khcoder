@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 use strict;
 use utf8;
@@ -186,7 +186,7 @@ if ( $q->param('Excecute') eq 'add' ){
 		
 		$line =~ s/\x0D|\x0A//g;
 		print $fh "$line\x0D\x0A";
-		print $fhb "$line\x0D\x0A";
+		print $fhb "$line\t[cinii2]\x0D\x0A";
 		
 		print $q->textarea(
 			-name    =>'hoge'.$n,
@@ -505,10 +505,21 @@ sub get_info{
 		my $r = $ua->get("http://ci.nii.ac.jp/naid/$1.bib");
 		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
 	}
+	elsif ( $i =~ /crid\/(\d+)/ ) {                      # CiNii Researchの場合
+		#$output .= "cinii\n";
+		my $r = $ua->get("http://cir.nii.ac.jp/crid/$1.bib");
+		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
+	}
 	elsif ( $i =~ /ncid\/BB(\d+)/ ) {                   # CiNii Booksの場合
 		#$output .= "cinii books\n" if $debug;;
 		my $r = $ua->get("http://ci.nii.ac.jp/ncid/BB$1.bib");
 		#$output .= Encode::decode('UTF-8', $r->content)."\n" if $debug;
+		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
+	}
+	elsif ( $i =~ /ncid\/BC(\d+X?)/ ) {                 # CiNii Booksの場合(2)
+		$output .= "cinii books\n" if $debug;;
+		my $r = $ua->get("http://ci.nii.ac.jp/ncid/BC$1.bib");
+		$output .= Encode::decode('UTF-8', $r->content)."\n" if $debug;
 		($output, $uri_tmp) =  &format( Encode::decode('UTF-8', $r->content) );
 	}
 	elsif ($i =~ /jstage/ ) {                           # JSTAGEの場合
@@ -945,7 +956,7 @@ sub format{
 			$out .= ": $pages";
 		}
 	} else {
-		$title .= '（'.$series.'）';
+		$title .= '（'.$series.'）' if $series;
 		$out .=
 			"$author $year 『$title"
 			."』 $publisher"
