@@ -93,7 +93,7 @@ sub _new{
 			}
 		}
 
-		$self->{r_cmd} = 1;
+		#$self->{r_cmd} = 1;
 	}
 
 	$f4->Label(
@@ -214,6 +214,19 @@ sub _new{
 		-anchor => 'w',
 	)->pack(-anchor => 'w');
 	
+	# margins
+	if ( $self->{r_cmd} ){
+		$self->{margin_obj} = gui_widget::r_margin->open(
+			parent  => $lf,
+			command => $self->{command},
+			r_cmd   => $self->{r_cmd},
+			pack    => {
+				-anchor => 'w', -fill => 'x', -expand => 1
+			}
+		);
+		$self->{r_cmd} = 1;
+	}
+	
 	$self->{win_obj} = $win;
 	return $self;
 }
@@ -250,7 +263,23 @@ sub params{
 		use_alpha      => gui_window->gui_jg( $self->{use_alpha} ),
 		random_starts  => gui_window->gui_jg( $self->{check_random_start} ),
 		breaks         => $self->{bubble_obj}->breaks,
+		$self->margins,
 	);
+}
+
+sub margins{
+	my $self = shift;
+	
+	if ( $self->{margin_obj} ){
+		return $self->{margin_obj}->params;
+	} else {
+		return (
+			margin_top    => 0,
+			margin_bottom => 0,
+			margin_left   => 0,
+			margin_right  => 0,
+		);
+	}
 }
 
 sub dim_number{

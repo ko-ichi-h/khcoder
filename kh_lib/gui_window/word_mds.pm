@@ -248,6 +248,11 @@ sub make_plot{
 	}
 	$r_command .= "dim_n <- $args{dim_number}\n";
 
+	$r_command .= "margin_top <- $args{margin_top}\n";
+	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
+	$r_command .= "margin_left <- $args{margin_left}\n";
+	$r_command .= "margin_right <- $args{margin_right}\n";
+
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
 	my $r_command_a = '';
@@ -907,6 +912,16 @@ ylimv <- c(
 	min( out_coord[,2] ) - 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) ),
 	max( out_coord[,2] ) + 0.04 * ( max( out_coord[,2] ) - min( out_coord[,2] ) )
 )
+
+m_t <- ( ylimv[2] - ylimv[1] ) * margin_top    / 100
+m_b <- ( ylimv[2] - ylimv[1] ) * margin_bottom / 100
+m_l <- ( xlimv[2] - xlimv[1] ) * margin_left   / 100
+m_r <- ( xlimv[2] - xlimv[1] ) * margin_right  / 100
+
+ylimv[2] <- ylimv[2] + m_t
+ylimv[1] <- ylimv[1] - m_b
+xlimv[1] <- xlimv[1] - m_l
+xlimv[2] <- xlimv[2] + m_r
 
 # aspect ratio
 if (fix_asp == 1){
