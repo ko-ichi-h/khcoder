@@ -904,6 +904,15 @@ sub make_plot{
 	$r_command .= "name_dim <- '".kh_msg->pget('dim')."'\n"; # 成分
 	$r_command .= "name_eig <- '".kh_msg->pget('eig')."'\n"; # 固有値
 	$r_command .= "name_exp <- '".kh_msg->pget('exp')."'\n"; # 寄与率
+	
+	$args{margin_top}    = 0 unless length($args{margin_top}   );
+	$args{margin_bottom} = 0 unless length($args{margin_bottom});
+	$args{margin_left}   = 0 unless length($args{margin_left}  );
+	$args{margin_right}  = 0 unless length($args{margin_right} );
+	$r_command .= "margin_top <- $args{margin_top}\n";
+	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
+	$r_command .= "margin_left <- $args{margin_left}\n";
+	$r_command .= "margin_right <- $args{margin_right}\n";
 
 	$r_command .= "library(MASS)\n";
 
@@ -1809,6 +1818,16 @@ if ( exists("xlimv") == F ){
 	)
 	rownames(out_coord) <- df.labels.save$labs
 }
+
+m_t <- ( ylimv[2] - ylimv[1] ) * margin_top    / 100
+m_b <- ( ylimv[2] - ylimv[1] ) * margin_bottom / 100
+m_l <- ( xlimv[2] - xlimv[1] ) * margin_left   / 100
+m_r <- ( xlimv[2] - xlimv[1] ) * margin_right  / 100
+
+ylimv[2] <- ylimv[2] + m_t
+ylimv[1] <- ylimv[1] - m_b
+xlimv[1] <- xlimv[1] - m_l
+xlimv[2] <- xlimv[2] + m_r
 
 # aspect ratio
 if (asp == 1){

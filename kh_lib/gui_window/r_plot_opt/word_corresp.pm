@@ -161,7 +161,31 @@ sub innner{
 		$self->refresh_flw;
 	}
 
+	# margins
+	$self->{margin_obj} = gui_widget::r_margin->open(
+		parent  => $lf,
+		command => sub{$self->calc;},
+		r_cmd   => $self->{command_f},
+		pack    => {
+			-anchor => 'w', -fill => 'x', -expand => 1
+		}
+	);
 	return $self;
+}
+
+sub margins{
+	my $self = shift;
+	
+	if ( $self->{margin_obj} ){
+		return $self->{margin_obj}->params;
+	} else {
+		return (
+			margin_top    => 0,
+			margin_bottom => 0,
+			margin_left   => 0,
+			margin_right  => 0,
+		);
+	}
 }
 
 # 「特徴語に注目」のチェックボックス
@@ -245,6 +269,7 @@ sub calc{
 		bubble_var   => $self->{bubble_obj}->var,
 		use_alpha    => $self->{bubble_obj}->alpha,
 		breaks       => $self->{bubble_obj}->breaks,
+		$self->margins,
 	);
 	
 	$wait_window->end(no_dialog => 1);
