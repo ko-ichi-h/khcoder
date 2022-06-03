@@ -612,6 +612,8 @@ kh_datacheck:
     lines:                    ' 行'
     looks_good:              "没有发现已知问题。\n请继续预处理进程"
     error_charcode:           "无法确定要分析文件的字符编码。\n 请尝试将文件字符编码改为 UTF-8."
+kh_morpho:
+    error_empty:              "错误：目标文件为空。"
 kh_morpho::chasen:
     error:                    '致命错误: 无法启动 ChaSen.'
     error_config:             '致命错误: 请提前设置 ChaSen.'
