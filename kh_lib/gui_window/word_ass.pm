@@ -707,6 +707,7 @@ sub net_calc{
 		font_bold           => 0,
 		use_alpha           => 1,
 		fix_lab             => 1,
+		line_width          => 100,
 		r_command           => $r_command,
 		plotwin_name        => 'selected_netgraph',
 	);

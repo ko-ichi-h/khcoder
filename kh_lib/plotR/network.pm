@@ -33,6 +33,7 @@ sub new{
 		$r_command .= "th <- -1\n";
 	}
 	$r_command .= "font_size <- $args{font_size}\n";
+	$r_command .= "line_width <- $args{line_width}\n";
 
 	$r_command .= "margin_top <- $args{margin_top}\n";
 	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
@@ -1342,6 +1343,8 @@ if ( exists("saving_eps") ){
 #---------#
 #  Edges  #
 
+line_width_act <- line_width / 100
+
 if (com_method == "cor"){ # cor
 
 	if ( gray_scale == 1) {
@@ -1352,13 +1355,13 @@ if (com_method == "cor"){ # cor
 		}
 		p <- p + geom_edges(
 			color = "black",
-			size = 1.5
+			size = 1.5 * line_width_act
 		)
 		p <- p + geom_edges(
 			aes(
 				color = edge_pos
 			),
-			size = 1,
+			size = 1 * line_width_act,
 		)
 	} else {
 		myPalette <- colorRampPalette(
@@ -1368,7 +1371,7 @@ if (com_method == "cor"){ # cor
 			aes(
 				color = edge_pos
 			),
-			size = 0.6,
+			size = 0.6 * line_width_act,
 		)
 	}
 
@@ -1404,7 +1407,7 @@ if (com_method == "cor"){ # cor
 	edg_col2[edg_col2=="gray70"] <- "non-MST"
 	p <- p + geom_edges(
 		aes(linetype = as.character(line), alpha=edg_col2),
-		#size = 0.8,
+		size = 0.4 * line_width_act,
 		color = "grey10"
 	)
 	p <- p + scale_alpha_discrete(
@@ -1418,7 +1421,7 @@ if (com_method == "cor"){ # cor
 } else if ( use_weight_as_width == 1 ){
 	p <- p + geom_edges(
 		aes(linetype = as.character(line), alpha=weight),
-		#size = 0.8,
+		size = 0.4 * line_width_act,
 		color = "grey10"
 	)
 	p <- p + scale_alpha(
@@ -1433,7 +1436,7 @@ if (com_method == "cor"){ # cor
 } else {
 	p <- p + geom_edges(
 		aes(linetype = as.character(line)),
-		size = 0.4,
+		size = 0.4 * line_width_act,
 		color = edge_colour
 	)
 }
@@ -1445,7 +1448,7 @@ p <- p + scale_linetype_identity()
 
 # words
 
-p <- p + geom_nodes(
+p <- p + geom_nodes(                # fill the entire shape
 	aes(
 		size = size * 0.41,
 		color = com
@@ -1454,7 +1457,7 @@ p <- p + geom_nodes(
 	show.legend = F,
 	shape = 16
 )
-p <- p + geom_nodes(
+p <- p + geom_nodes(                # fill the core
 	aes(
 		size = size,
 		color = com,
@@ -1463,7 +1466,7 @@ p <- p + geom_nodes(
 	alpha = alpha_value,
 	shape = 16
 )
-p <- p + geom_nodes(
+p <- p + geom_nodes(                # frame border
 	aes(
 		size = size,
 		shape = shape
@@ -1471,9 +1474,10 @@ p <- p + geom_nodes(
 	colour = gray_color_n,
 	show.legend = F,
 	alpha = alpha_value,
+	stroke = 0.5 * line_width_act,
 	shape = 1
 )
-p <- p + geom_nodes( # dummy for the legend
+p <- p + geom_nodes(                # dummy for the legend
 	aes( fill = com ),
 	size=0,
 	colour = gray_color_n,
@@ -1576,6 +1580,7 @@ if ( (com_method == "twomode_c" || com_method == "twomode_g") ) {
 		fill = var_fill_c,
 		show.legend = F,
 		colour = var_outline_c,
+		stroke = 0.5 * line_width_act,
 		alpha = alpha_value,
 		size = vv,
 		shape = 22
@@ -1620,6 +1625,7 @@ if ( (is.null(target_ids) == FALSE) ) {
 		),
 		show.legend = F,
 		colour = gray_color_n,
+		stroke = 0.5 * line_width_act,
 		alpha = alpha_value,
 		size = vv,
 		shape = 22
@@ -1639,6 +1645,7 @@ if ( (is.null(target_ids) == FALSE) ) {
 		fill = NA,
 		show.legend = F,
 		colour = gray_color_n,
+		stroke = 0.5 * line_width_act,
 		alpha = alpha_value,
 		size = vv * 1.4,
 		shape = 22

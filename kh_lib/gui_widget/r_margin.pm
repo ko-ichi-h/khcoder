@@ -8,7 +8,7 @@ sub _new{
 	my $self = shift;
 	
 	my $win = $self->parent->Frame();
-	my $f4  = $win->Frame()->pack(-fill => 'x');
+	my $f4  = $win->Frame()->pack(-fill => 'x', -pady => 2);
 
 	$self->{margin_left}   = 0;
 	$self->{margin_right}  = 0;

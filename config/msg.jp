@@ -780,6 +780,7 @@ gui_widget::r_net:
     cor_var_colors:           '相関のカラースケール'
     cor_var_darker:           '背景色を暗めにする'
     standardize_coef:         '係数を標準化する'
+    line_width:               '線の太さ'
 gui_widget::r_margin:
     margin:                   '余白：'
     left:                     '左'
