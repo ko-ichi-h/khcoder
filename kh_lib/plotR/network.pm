@@ -34,6 +34,7 @@ sub new{
 	}
 	$r_command .= "font_size <- $args{font_size}\n";
 	$r_command .= "line_width <- $args{line_width}\n";
+	$r_command .= "line_width_n <- $args{line_width_n}\n";
 
 	$r_command .= "margin_top <- $args{margin_top}\n";
 	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
@@ -1448,6 +1449,8 @@ p <- p + scale_linetype_identity()
 
 # words
 
+line_width_n_act <- line_width_n / 100
+
 p <- p + geom_nodes(                # fill the entire shape
 	aes(
 		size = size * 0.41,
@@ -1474,7 +1477,7 @@ p <- p + geom_nodes(                # frame border
 	colour = gray_color_n,
 	show.legend = F,
 	alpha = alpha_value,
-	stroke = 0.5 * line_width_act,
+	stroke = 0.5 * line_width_n_act,
 	shape = 1
 )
 p <- p + geom_nodes(                # dummy for the legend
@@ -1580,7 +1583,7 @@ if ( (com_method == "twomode_c" || com_method == "twomode_g") ) {
 		fill = var_fill_c,
 		show.legend = F,
 		colour = var_outline_c,
-		stroke = 0.5 * line_width_act,
+		stroke = 0.5 * line_width_n_act,
 		alpha = alpha_value,
 		size = vv,
 		shape = 22
@@ -1625,7 +1628,7 @@ if ( (is.null(target_ids) == FALSE) ) {
 		),
 		show.legend = F,
 		colour = gray_color_n,
-		stroke = 0.5 * line_width_act,
+		stroke = 0.5 * line_width_n_act,
 		alpha = alpha_value,
 		size = vv,
 		shape = 22
@@ -1645,7 +1648,7 @@ if ( (is.null(target_ids) == FALSE) ) {
 		fill = NA,
 		show.legend = F,
 		colour = gray_color_n,
-		stroke = 0.5 * line_width_act,
+		stroke = 0.5 * line_width_n_act,
 		alpha = alpha_value,
 		size = vv * 1.4,
 		shape = 22

@@ -781,7 +781,8 @@ gui_widget::r_net:
     cor_var_colors:           'Color scale of correlation'
     cor_var_darker:           'Darker background color'
     standardize_coef:         'Standardize coef.'
-    line_width:               'Line width'
+    line_width:               'Line width: edge'
+    line_width_n:             'node'
 gui_widget::r_margin:
     margin:                   'Margin: '
     left:                     'left'

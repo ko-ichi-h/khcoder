@@ -111,8 +111,11 @@ sub _new{
 		if ($self->{r_cmd} =~ /# additional_plots: ([01])\n/){
 			$self->{check_additional_plots} = $1;
 		}
-		if ($self->{r_cmd} =~ /line_width <\- ([0-9]+)\n/) {
+		if ($self->{r_cmd} =~ /line_width <\- ([0-9\.]+)\n/) {
 			$self->{line_width} = $1;
+		}
+		if ($self->{r_cmd} =~ /line_width_n <\- ([0-9\.]+)\n/) {
+			$self->{line_width_n} = $1;
 		}
 		
 		unless ( $self->{cor_var_min} == -1 ){
@@ -155,6 +158,9 @@ sub _new{
 
 	unless ( $self->{line_width} ){
 		$self->{line_width} = 100;
+	}
+	unless ( $self->{line_width_n} ){
+		$self->{line_width_n} = 100;
 	}
 
 	# Edge選択
@@ -494,10 +500,30 @@ sub _new{
 		gui_window->config_entry_focusin($self->{entry_line_width});
 
 		$f_line->Label(
-			-text => '%',
+			-text => '%  ',
 			-font => "TKFN",
 		)->pack(-anchor => 'w', -side => 'left',);
 
+		$f_line->Label(
+			-text => kh_msg->get('line_width_n'),
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left',);
+
+		$self->{entry_line_width_n} = $f_line->Entry(
+				-width      => 3,
+				-background => 'white',
+		)->pack(-side => 'left', -padx => 2);
+		$self->{entry_line_width_n}->insert(0,$self->{line_width_n});
+		if ( defined( $self->{command} ) ){
+			$self->{entry_line_width_n}->bind("<Return>",   $self->{command});
+			$self->{entry_line_width_n}->bind("<KP_Enter>", $self->{command});
+		}
+		gui_window->config_entry_focusin($self->{entry_line_width_n});
+
+		$f_line->Label(
+			-text => '%',
+			-font => "TKFN",
+		)->pack(-anchor => 'w', -side => 'left',);
 
 		# margins
 		$self->{margin_obj} = gui_widget::r_margin->open(
@@ -660,6 +686,7 @@ sub params{
 		additional_plots    => gui_window->gui_jg( $self->{check_additional_plots} ),
 		breaks              => $self->{bubble_obj}->breaks,
 		line_width          => $self->line_width,
+		line_width_n        => $self->line_width_n,
 		$self->margins,
 	);
 }
@@ -684,6 +711,16 @@ sub line_width{
 	
 	if ($self->{entry_line_width}) {
 		return gui_window->gui_jgn( $self->{entry_line_width}->get );
+	} else {
+		return 100;
+	}
+}
+
+sub line_width_n{
+	my $self = shift;
+	
+	if ($self->{entry_line_width_n}) {
+		return gui_window->gui_jgn( $self->{entry_line_width_n}->get );
 	} else {
 		return 100;
 	}
