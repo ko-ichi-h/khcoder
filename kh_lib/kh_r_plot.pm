@@ -887,6 +887,7 @@ sub _save_svg{
 
 	$::config_obj->R->send("
 		if ( exists(\"Cairo\") ){
+			library(Cairo)
 			Cairo(
 				width=$w * 80,
 				height=$h * 80,
@@ -900,6 +901,8 @@ sub _save_svg{
 			)
 		} else {
 			# for darwin
+
+			# Could not render some circle outlines
 			library(RSVGTipsDevice)
 			devSVGTips(
 				\"$path\",
@@ -909,6 +912,16 @@ sub _save_svg{
 				fg=\"black\",
 				toolTipMode=0
 			)
+			
+			# Font rendering is ugly (same as Cairo)
+			#svg(
+			#	\"$path\",
+			#	width=$w,
+			#	height=$h
+			#	family=\"".$::config_obj->font_pdf_current."\"
+			#)
+
+			# Could not install 'svglite' package for R 3.1.0
 		}
 	");
 

@@ -413,6 +413,11 @@ sub save{
 			[ "PDF",[qw/.pdf/] ],
 			@types,
 		);
+	} elsif ($^O eq 'darwin') {
+		@types = (
+			[ "PDF",[qw/.pdf/] ],
+			@types,
+		);
 	} else {
 		@types = (
 			[ "PDF",[qw/.pdf/] ],
