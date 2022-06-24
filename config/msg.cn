@@ -781,6 +781,8 @@ gui_widget::r_net:
     cor_var_colors:           '以颜色标示相关性'
     cor_var_darker:           '加深背景色'
     standardize_coef:         '标准化系数.'
+    line_width:               '线宽: 边'
+    line_width_n:             '节点'
 gui_widget::r_margin:
     margin:                   '边距: '
     left:                     '左'
