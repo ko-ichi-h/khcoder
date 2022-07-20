@@ -115,6 +115,8 @@ gui_widget::r_net:
     filter_edges:             묘화하는 공기 관계(edge) 한정
     fix_lab:                  라벨이 겹치지 않도록 위치 조정
     gray_scale:               그레이 스케일로 표현
+    line_width:               '***not translated*** Line width: edge // 線の太さ： edge'
+    line_width_n:             '***not translated*** node // node'
     min_sp_tree:              최소 스패닝 트리를 강조 표시
     min_sp_tree_only:         최소 스패닝 트리만 묘화
     or_more:                  이상
@@ -1150,6 +1152,8 @@ kh_datacheck:
     errors_summary:           '분석 대상 파일 내에 아래와 같은 문제점이 발견되었습니다(요약 표시): '
     lines:                    행
     looks_good:               분석 대상 파일 내에 이미 알려진 문제점은 발견되지 않았습니다. 전처리를 안전하게 실행할 수 있다고 생각됩니다.
+kh_morpho:
+    error_empty:              '***not translated*** Error: the target file is empty. // エラー： 分析対象ファイルの内容が空のようです。'
 kh_morpho::chasen:
     error:                    ChaSen 기동에 실패했습니다.
     error_config:             사전에 KH Coder 설정(차센 관련)을 해 주십시오.

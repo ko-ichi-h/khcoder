@@ -124,6 +124,8 @@ gui_widget::r_net:
     filter_edges:             'Filtrar bordes:'
     fix_lab:                  Evitar superposición de etiquetas
     gray_scale:               Escala de grises
+    line_width:               '***not translated*** Line width: edge // 線の太さ： edge'
+    line_width_n:             '***not translated*** node // node'
     min_sp_tree:              Destacar el árbol recubridor mínimo
     min_sp_tree_only:         Dibujar solo el árbol recubridor mínimo
     or_more:                  ''
@@ -1184,6 +1186,8 @@ kh_datacheck:
     looks_good:               |-
         No se encontraron problemas.
          Proceda al preprocesamiento.
+kh_morpho:
+    error_empty:              '***not translated*** Error: the target file is empty. // エラー： 分析対象ファイルの内容が空のようです。'
 kh_morpho::chasen:
     error:                    'Error fatal: no se puede ejecutar ChaSen.'
     error_config:             'Error fatal: no se encuentra ChaSen.'

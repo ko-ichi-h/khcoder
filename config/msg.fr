@@ -122,6 +122,8 @@ gui_widget::r_net:
     filter_edges:             'Sélectionner la cooccurrence à tracer (edge): '
     fix_lab:                  Éviter le chevauchement des étiquettes
     gray_scale:               Niveau de gris
+    line_width:               '***not translated*** Line width: edge // 線の太さ： edge'
+    line_width_n:             '***not translated*** node // node'
     min_sp_tree:              Mettre en surbrillance l'arbre couvrant minimum
     min_sp_tree_only:         Dessiner l'arbre couvrant minimum uniquement
     or_more:                  ''
@@ -155,7 +157,7 @@ gui_widget::select_a_var:
     heading:                  Titres
     na:                       'n/a '
     pos:                      Position
-    pos2:                     'Par document'
+    pos2:                     Par document
 gui_widget::tani2:
     unit_c:                   'Unité de codage:'
     unit_t:                   '    Unité de tabulation:'
@@ -407,7 +409,7 @@ gui_window::doc_view:
     highlight:                Mettre en surbrillance
     in_the_file:              'Dans le fichier:'
     in_the_results:           '  dans les résultats:'
-    info:                     'Position et Variables'
+    info:                     Position et Variables
     n1:                       '>>'
     n2:                       '>>'
     p1:                       <<
@@ -433,18 +435,18 @@ gui_window::hukugo:
     whole:                    Liste entière
     win_title:                'Cluster des mots: ChaSen'
 gui_window::import_folder:
-    auto:                     'Distinction automatique'
-    auto_jp:                  'Distinction automatique (japonais)'
-    browse_unified:           'Veuillez saisir un nom pour le fichier texte combiné.'
-    change:                   'Modifier'
+    auto:                     Distinction automatique
+    auto_jp:                  Distinction automatique (japonais)
+    browse_unified:           Veuillez saisir un nom pour le fichier texte combiné.
+    change:                   Modifier
     char_code:                'Encodage du fichier:'
-    conv:                     'Remplacer les guillemets en chevron simple (<>) dans les données par un espace'
+    conv:                     Remplacer les guillemets en chevron simple (<>) dans les données par un espace
     description:              'Fusionner tous les documents dans un dossier indiqué, et créer un projet.'
     folder:                   'Dossier:'
-    level:                    'Niveau hiérarchique de titre pour le nom de fichier'
-    opt_project:              'Nouveau projet'
-    opt_unify:                'Combiner des fichiers textes'
-    unicode:                  'Unicode（UTF-8）'
+    level:                    Niveau hiérarchique de titre pour le nom de fichier
+    opt_project:              Nouveau projet
+    opt_unify:                Combiner des fichiers textes
+    unicode:                  Unicode（UTF-8）
     unified:                  'Fichier texte combiné:'
     win_title:                'Importer: des plusieurs textes dans un dossier'
 gui_window::main::inner:
@@ -485,8 +487,8 @@ gui_window::main::menu:
     h_cluster:                Analyse de Regroupement hiérarchique
     help:                     Aide
     import:                   Importer
-    import_folder:            'Plusieurs textes dans un dossier'
-    import_khc:               'KH Coder (*.khc)'
+    import_folder:            Plusieurs textes dans un dossier
+    import_khc:               KH Coder (*.khc)
     import_save_path:         Enregistrer le fichier actif
     import_win_title:         Importer un projet à partir d'un fichier *.khc
     jac_mtrx:                 Matrices de similarité
@@ -517,9 +519,9 @@ gui_window::main::menu:
     tf_df:                    Représentation graphique de TF-DF
     to_csv:                   Convertir au format CSV
     tools:                    Outils
-    topic:                    'Topic models'
-    topic_ft:                 'Calculer les modèles probabilistes'
-    topic_pp:                 'Définir le nombre de topics idéals'
+    topic:                    Topic models
+    topic_ft:                 Calculer les modèles probabilistes
+    topic_pp:                 Définir le nombre de topics idéals
     use_chasen:               Utiliser ChaSen
     use_termextract:          Utiliser TermExtract
     var_list:                 Liste
@@ -623,7 +625,7 @@ gui_window::project_new:
     target_char_code:         'Le codage des caractères du fichier à analyser:'
     target_column:            'Colonne à analyser:'
     target_file:              'Fichier à analyser:'
-    type_error:               'KH Coder ne connaît pas ce format de fichier.'
+    type_error:               KH Coder ne connaît pas ce format de fichier.
     win_title:                Nouveau projet
 gui_window::project_open:
     del:                      Effacer
@@ -668,11 +670,11 @@ gui_window::r_plot::topic_n_ldatuning:
 gui_window::r_plot::topic_n_perplexity:
     win_title:                'Définir le nombre de topics idéals: Perplexity'
 gui_window::r_plot::tpc_mat:
-    fluc:                     'Bulles'
-    heat:                     'Heat'
-    win_title:                'Carte de proportion du topic'
+    fluc:                     Bulles
+    heat:                     Heat
+    win_title:                Carte de proportion du topic
 gui_window::r_plot::tpc_mat_line:
-    win_title:                'Graphique linéaire de proportion du topic'
+    win_title:                Graphique linéaire de proportion du topic
 gui_window::r_plot::word_cls:
     agglomer:                 Agglomération
     ave:                      Average
@@ -750,7 +752,7 @@ gui_window::r_plot_opt::doc_cls:
 gui_window::r_plot_opt::selected_netgraph:
     win_title:                'Configuration: Mots relatifs/Réseaux de cooccurrence'
 gui_window::r_plot_opt::tpc_mat_line:
-    select_topics:            'Sélectionner des topics'
+    select_topics:            Sélectionner des topics
     win_title:                'Configuration: Graphique linéaire de proportion du topic'
 gui_window::r_plot_opt::word_cls:
     err_no_auto:              Vous ne pouvez pas sélectionner "Auto" dans cette fenêtre. Veuillez saisir des valeurs numériques.
@@ -817,35 +819,34 @@ gui_window::sysconfig:
     stanford:                 Stanford POS Tagger
     stemming:                 Snowball Stemmer
     stopwords:                '  Mots vides (Stop Words):'
-    unify_words_sl:           |-
-        'Des mots que les parties du discours sont différentes, mais qui portent le même lemme, on les considère comme les mêmes.'
+    unify_words_sl:           "'Des mots que les parties du discours sont différentes, mais qui portent le même lemme, on les considère comme les mêmes.'"
     web_browser:              'Navigateur Web:'
     win_title:                Paramètres globaux
     words_ext:                Moyen d'extraire des mots
 gui_window::topic_fitting:
-    n_topics:                 'Nombre de topics'
-    opt:                      'Option du topic model (LDA)'
-    win_title:                'Calculer les modèles probabilistes'
+    n_topics:                 Nombre de topics
+    opt:                      Option du topic model (LDA)
+    win_title:                Calculer les modèles probabilistes
 gui_window::topic_perplexity:
     candidates:               'Nombre de topics proposé: '
     error_terms_topics:       'Lorsque vous choisissez ldatuning, le nombre de mots sélectionnés doit être supérieur au nombre de topics proposé.'
     folds:                    'Fold:  '
     method:                   'Méthode:  '
-    opt:                      'Option de méthode et nombre de topics'
-    win_title:                'Définir le nombre de topics idéals'
+    opt:                      Option de méthode et nombre de topics
+    win_title:                Définir le nombre de topics idéals
 gui_window::topic_result:
-    doc_topic:                'Tableau de document-topic'
+    doc_topic:                Tableau de document-topic
     export:                   '*Exporter'
-    extended:                 'Probabilité'
-    plot:                     'Carte'
-    stats_table:              'Tableau'
-    topic_prop:               'Proportion du topic'
-    topic_term:               'Tableau de topic-mots'
-    win_title:                'Résultats des modèles probabilistes'
-    words:                    'Mots'
+    extended:                 Probabilité
+    plot:                     Carte
+    stats_table:              Tableau
+    topic_prop:               Proportion du topic
+    topic_term:               Tableau de topic-mots
+    win_title:                Résultats des modèles probabilistes
+    words:                    Mots
 gui_window::topic_stats:
     var:                      'Totalisation:'
-    win_title:                'Tableau de proportion du topic'
+    win_title:                Tableau de proportion du topic
 gui_window::txt_html2csv:
     saving:                   Enregistrer le fichier CSV sous
     select:                   'Sélectionner :'
@@ -1147,8 +1148,7 @@ gui_window::word_tf_df:
     xy:                       TF(X) et DF(Y)
 kh_cod:
     not_coding_rules:         On ne peut pas lire le fichier sélectionné comme fichier de règles de codage.
-    redefined:                |-
-        "Le code est redéfini plusieurs fois.\nChangez le nom du code."
+    redefined:                '"Le code est redéfini plusieurs fois.\nChangez le nom du code."'
 kh_cod::a_code:
     syntax_error:             'Erreur de syntaxe dans la règle de codage:'
 kh_cod::a_code::atom::code:
@@ -1178,6 +1178,8 @@ kh_datacheck:
     looks_good:               |-
         Nous n'avons trouvé aucun problème connu. 
         Veuillez procéder au pré-traitement
+kh_morpho:
+    error_empty:              '***not translated*** Error: the target file is empty. // エラー： 分析対象ファイルの内容が空のようです。'
 kh_morpho::chasen:
     error:                    "Erreur fatale: impossible d'exécuter ChaSen."
     error_config:             Veuillez confirmer la configuration de ChaSen sur KH Coder.
@@ -1268,8 +1270,8 @@ mysql_words:
     types:                    Types de mots (n)
     words:                    Mots
 screen_code::assistant:
-    KWIC_button:              '《M》 KWIC'
-    KWIC_button2:             '《M》 KWIC*'
+    KWIC_button:              《M》 KWIC
+    KWIC_button2:             《M》 KWIC*
     KWIC_label:               '《M》 '
     corresp_ang:              'Direction de variable:'
     corresp_drop_menu1:       étroit
@@ -1287,7 +1289,7 @@ screen_code::assistant:
     label_disable:            'Désactiver  '
     label_enable:             'Activer  '
     label_use_plugin:         'NegationChecker '
-    plugin_synonym:           '《M》 Synonyme'
+    plugin_synonym:           《M》 Synonyme
     use_plugin:               Utiliser le plugin
 screen_code::rde_menu:
     err_edit:                 On ne peut pas éditer les données du projet.
