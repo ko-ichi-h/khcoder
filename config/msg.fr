@@ -122,8 +122,8 @@ gui_widget::r_net:
     filter_edges:             'Sélectionner la cooccurrence à tracer (edge): '
     fix_lab:                  Éviter le chevauchement des étiquettes
     gray_scale:               Niveau de gris
-    line_width:               '***not translated*** Line width: edge // 線の太さ： edge'
-    line_width_n:             '***not translated*** node // node'
+    line_width:               'Largeur de ligne: edge'
+    line_width_n:             'nœud'
     min_sp_tree:              Mettre en surbrillance l'arbre couvrant minimum
     min_sp_tree_only:         Dessiner l'arbre couvrant minimum uniquement
     or_more:                  ''
@@ -1179,7 +1179,7 @@ kh_datacheck:
         Nous n'avons trouvé aucun problème connu. 
         Veuillez procéder au pré-traitement
 kh_morpho:
-    error_empty:              '***not translated*** Error: the target file is empty. // エラー： 分析対象ファイルの内容が空のようです。'
+    error_empty:              'Erreur: le fichier à analyser est vide.'
 kh_morpho::chasen:
     error:                    "Erreur fatale: impossible d'exécuter ChaSen."
     error_config:             Veuillez confirmer la configuration de ChaSen sur KH Coder.
