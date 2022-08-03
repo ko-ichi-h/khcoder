@@ -16,7 +16,7 @@ use gui_widget::optmenu;
 sub _new{
 	my $self = shift;
 	
-	my $mw = $::main_gui->mw;
+	#my $mw = $::main_gui->mw;
 	my $wmw= $self->{win_obj};
 	#$wmw->focus;
 	$wmw->title($self->gui_jt( kh_msg->get('win_title') )); # 'KWICコンコーダンス'
@@ -35,16 +35,107 @@ sub _new{
 		-font => "TKFN"
 	)->pack(-side => 'left');
 
-	my $e1 = $fra4e->Entry(
-		-font => "TKFN",
-		-background => 'white',
-		-width => 14
+#	my $e1 = $fra4e->Entry(
+#		-font => "TKFN",
+#		-background => 'white',
+#		-width => 14
+#	)->pack(-side => 'left');
+#	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
+#	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
+#	$e1->bind("<Key-Return>",sub{$self->search;});
+#	$e1->bind("<KP_Enter>",sub{$self->search;});
+#	$self->config_entry_focusin($e1);
+
+	my @choices = ('');
+
+	use Tk::MatchEntry_kh;
+
+	$self->{match_entry} = $fra4e->MatchEntry(
+		-textvariable => \$self->{entry_word},
+		-width        => 14,
+		-choices        => \@choices,
+		-fixedwidth     => 0,
+		-autosort       => 0,
+		-complete       => 0,
+		-ignorecase     => 1,
+		-maxheight      => 20,
+		   -entercmd       => sub { print "callback: -entercmd  \n"; }, 
+		   -onecmd         => sub { $wmw->after(100, sub{$self->update_choices;}) },
+		   -invcmd         => sub { $self->match_invoke; },
 	)->pack(-side => 'left');
-	$wmw->bind('Tk::Entry', '<Key-Delete>', \&gui_jchar::check_key_e_d);
-	$e1->bind("<Key>",[\&gui_jchar::check_key_e,Ev('K'),\$e1]);
-	$e1->bind("<Key-Return>",sub{$self->search;});
-	$e1->bind("<KP_Enter>",sub{$self->search;});
-	$self->config_entry_focusin($e1);
+
+	my $e1 = $self->{match_entry}->Subwidget('entry');
+	$e1->configure(
+		-background => 'white',
+		-font       => "TKFN",
+	);
+
+	sub match_invoke{
+		my $self = shift;
+		
+		my $word;
+		my $pos;
+		if ( $self->{match_entry}{invoke} =~ /(.+)   <(.+)> [0-9]+/ ){
+			$word = $1;
+			$pos  = $2;
+			
+			$self->entry->delete(0,'end');
+			$self->entry4->delete(0,'end');
+			$self->entry2->delete(0,'end');
+			$self->entry->insert('end', $word);
+			$self->entry4->insert('end',$pos);
+			
+			$self->search;
+		}
+	}
+	
+	sub update_choices{
+		my $self = shift;
+		
+		# get input char
+		my $t = $self->check_entry_input( $self->entry->get );
+		#print "update_choices: input: $t\n";
+		
+		if ( $self->{last_input} eq $t ){
+			return;
+		}
+		if ( length($t) == 0 ){
+			return;
+		}
+		$self->{last_input} = $t;
+		
+		# search for choices
+		print "update_choices Searching... $t\n";
+		my $sql = "
+			SELECT genkei.name, hselection.name, genkei.num
+			FROM genkei, hselection
+			WHERE
+				genkei.name like \"$t%\"
+				AND genkei.nouse = 0
+				AND genkei.khhinshi_id = hselection.khhinshi_id
+				AND hselection.ifuse = 1
+			ORDER BY
+				genkei.num DESC
+			LIMIT 100
+		";
+		
+		my $h = mysql_exec->select($sql)->hundle;
+		my @choices = ();
+		while (my $i = $h->fetch){
+			my $w = "$i->[0]   <$i->[1]> $i->[2]";
+			#print "update_choices choice: $w\n";
+			push @choices, $w;
+		}
+		
+		# update choices
+		$self->{match_entry}->close_listbox;
+		$self->{match_entry}->choices(\@choices);
+		$self->{match_entry}->popup;
+		
+		return $self;
+	}
+
+
 
 	$fra4e->Label(
 		-text => kh_msg->get('pos'), #self->gui_jchar('　品詞：'),
@@ -735,6 +826,19 @@ sub start{
 	$gui_window::word_conc::additional = undef;
 	mysql_conc->initialize;
 	$self->entry->focus;
+
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{
+			#my $self = shift;
+			print "escape pressed...\n";
+			if ($self->{match_entry}->{popped}) {
+				$self->{match_entry}->close_listbox;
+			} else {
+				$self->close;
+			}
+		}
+	);	
 }
 
 
