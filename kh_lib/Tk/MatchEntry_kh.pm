@@ -51,11 +51,11 @@ sub Populate {
     # set exportselection to 0 in the listbox widget so we can have
     # selections in both the entry and the listbox widget at the same time
     my $scrolled_listbox = $popup_frame->Scrolled(
-        qw/Listbox -selectmode browse -scrollbars oe -exportselection 0/
+        qw/Listbox -selectmode browse -scrollbars oe -exportselection 0 -font TKFN/
         );
     $self->Advertise('choices' => $popup_frame);
     $self->Advertise('slistbox' => $scrolled_listbox);
-    $scrolled_listbox->pack(-expand => 1, -fill => 'both'); # place it    
+    $scrolled_listbox->pack(-expand => 1, -fill => 'both', -padx => 5); # place it    
     
     # Other initializations
     $self->set_bindings;    # Set up keyboard and mouse bindings
@@ -153,7 +153,7 @@ sub entry_leave {
 sub entry_return {
     my $self = shift;
 
-    if ( $self->{popped} ){
+    if ( $self->{popped} && $self->{selected} ){
         $self->copy_selection_listbox;;
     } else {
         # Execute given callback
@@ -695,6 +695,7 @@ sub release_listbox {
 sub popup {
     my $self = shift;
     my $current_word = shift; # optional, introduced with multi-matching
+    $self->{selected} = 0;
     $self->open_listbox($current_word);
 }
 
@@ -939,9 +940,10 @@ sub show_listbox {
 
         $choices->configure(-cursor => 'arrow');
         
+        $self->{selected} = 0;
         $scrolled_listbox->selection('clear', 0, 'end');
         
-        $self->grabGlobal;
+        #$self->grabGlobal;
     }
 }
 
@@ -989,7 +991,8 @@ sub copy_selection_listbox {
 
 sub listbox_invoke{
     my ($self) = @_;
-    return unless ($self->{'popped'});
+    return unless ($self->{popped});
+    return unless ($self->{selected});
     my $index = $self->listbox_index;
     if (defined $index) {
         my $listbox = $self->Subwidget('slistbox')->Subwidget('listbox');

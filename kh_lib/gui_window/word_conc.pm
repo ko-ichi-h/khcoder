@@ -59,8 +59,8 @@ sub _new{
 		-complete       => 0,
 		-ignorecase     => 1,
 		-maxheight      => 20,
-		   -entercmd       => sub { print "callback: -entercmd  \n"; }, 
-		   -onecmd         => sub { $wmw->after(100, sub{$self->update_choices;}) },
+		   -entercmd       => sub { $self->search; }, 
+		   -onecmd         => sub { $wmw->after(100, sub{$self->match_update_choices;}) },
 		   -invcmd         => sub { $self->match_invoke; },
 	)->pack(-side => 'left');
 
@@ -69,6 +69,8 @@ sub _new{
 		-background => 'white',
 		-font       => "TKFN",
 	);
+	$e1->bind("<KP_Enter>",sub{$self->search;});
+	$self->config_entry_focusin($e1);
 
 	sub match_invoke{
 		my $self = shift;
@@ -89,7 +91,7 @@ sub _new{
 		}
 	}
 	
-	sub update_choices{
+	sub match_update_choices{
 		my $self = shift;
 		
 		# get input char
@@ -116,7 +118,7 @@ sub _new{
 				AND hselection.ifuse = 1
 			ORDER BY
 				genkei.num DESC
-			LIMIT 100
+			LIMIT 50
 		";
 		
 		my $h = mysql_exec->select($sql)->hundle;
