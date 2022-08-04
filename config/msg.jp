@@ -234,7 +234,7 @@ gui_window::main::menu:
     use_termextract:          TermExtractを利用
     var_list:                 リスト
     vars_heads:               外部変数と見出し
-    web:                      最新情報 (Web)
+    web:                      最新情報
     word_ass:                 関連語検索
     word_freq:                抽出語リスト（Excel向け）
     word_search:              抽出語リスト
@@ -242,8 +242,8 @@ gui_window::main::menu:
     words_cluster:            複合語の検出
     words_selection:          語の取捨選択
     som:                      自己組織化マップ
-    book2:                    公式入門書 ※
-    book1:                    深く知るための解説書 ※
+    book2:                    公式入門書
+    book1:                    詳細マニュアル +alpha
 gui_window::morpho_check:
     details:                  詳細表示
     note:                     語の抽出（形態素解析）結果を確認したいフレーズ / 文を入力

@@ -945,47 +945,41 @@ sub make{
 			-label => kh_msg->get('book2'),
 			-font => "TKFN",
 			-command => sub {
-				 gui_OtherWin->open('https://khcoder.net/book2/');
+				 gui_OtherWin->open('https://amzn.to/3LdRHMJ');
 			},
 		);
 		$f->command(
 			-label => kh_msg->get('book1'),
 			-font => "TKFN",
 			-command => sub {
-				 gui_OtherWin->open('https://khcoder.net/book.html');
+				 gui_OtherWin->open('http://amzn.to/2wHFxKg');
 			},
 		);
 	}
 
+	unless ($::config_obj->{msg_lang} eq 'jp') {
 		$f->command(
 			-label => kh_msg->get('man'),
 			-font => "TKFN",
 			-command => sub {
-				my $file;
-				if ($::config_obj->msg_lang eq 'jp') {
-					$file = 'khcoder_manual.pdf';
-				} else {
-					$file = 'khcoder_manual_en.pdf';
-				}
-				gui_OtherWin->open($file);
+				gui_OtherWin->open('khcoder_manual_en.pdf');
 			},
 		);
-		
-		unless ($::config_obj->{msg_lang} eq 'jp') {
-			$f->command(
-				-label => kh_msg->get('web'),
-				-font => "TKFN",
-				-command => sub {
-						 gui_OtherWin->open('https://khcoder.net');
-						},
-			);
-		}
-		
-		$f->command(
-			-label => kh_msg->get('about'),
-			-command => sub{gui_window::about->open;},
-			-font => "TKFN",
-		);
+	}
+
+	$f->command(
+		-label => kh_msg->get('web'),
+		-font => "TKFN",
+		-command => sub {
+				 gui_OtherWin->open('https://khcoder.net');
+				},
+	);
+
+	$f->command(
+		-label => kh_msg->get('about'),
+		-command => sub{gui_window::about->open;},
+		-font => "TKFN",
+	);
 
 	#--------------------#
 	#   キー・バインド   #
