@@ -10,6 +10,8 @@ package Tk::MatchEntry;
 # Set version information
 our $VERSION = '0.5';
 
+my $debug = 0;
+
 # Define dependencies
 use strict;
 # use warnings;       # use warnings for debugging purposes
@@ -869,7 +871,8 @@ sub show_listbox {
         my $elements_per_page = 
             $number_of_visible_elements < $maxheight ?
             $number_of_visible_elements : $maxheight;
-            
+        $elements_per_page = 2 if $elements_per_page == 1;            #kh
+
         my $ht = (($scrolled_listbox->reqheight * 
                  $elements_per_page) / 10) + 2 * $bd + 2;
                 
@@ -943,7 +946,7 @@ sub show_listbox {
         $self->{selected} = 0;
         $scrolled_listbox->selection('clear', 0, 'end');
         
-        #$self->grabGlobal;
+        return $self;
     }
 }
 
@@ -965,7 +968,9 @@ sub close_listbox {
 sub choose_listbox {
     my ($self, $x, $y) = @_;
     
-    return unless($self->{'popped'});
+    print "MatchEntry_kh::choose_listbox 1: $self->{popped}\n" if $debug;
+    #return unless($self->{'popped'}); # kh
+    print "MatchEntry_kh::choose_listbox 2\n" if $debug;
     
     my $listbox = $self->Subwidget('slistbox')->Subwidget('listbox');
     # check whether the user clicked outside
@@ -973,9 +978,13 @@ sub choose_listbox {
          ($y < 0) ||
          ($x > $listbox->Width) ||
          ($y > $listbox->Height) ) {
+         print "MatchEntry_kh::choose_listbox 3a\n" if $debug;
          $self->close_listbox;
     }
     else { # some entry was clicked on
+        print "MatchEntry_kh::choose_listbox 3b\n" if $debug;
+        $self->{'popped'} = 1;
+        $self->{'selected'} = 1;
         $self->copy_selection_listbox;
         $self->Callback(-browsecmd => $self, $self->Subwidget('entry')->get);
     }
@@ -991,8 +1000,10 @@ sub copy_selection_listbox {
 
 sub listbox_invoke{
     my ($self) = @_;
+    print "MatchEntry_kh::listbox_invoke 1\n" if $debug;
     return unless ($self->{popped});
     return unless ($self->{selected});
+    print "MatchEntry_kh::listbox_invoke 2\n" if $debug;
     my $index = $self->listbox_index;
     if (defined $index) {
         my $listbox = $self->Subwidget('slistbox')->Subwidget('listbox');
@@ -1092,21 +1103,21 @@ sub hide_listbox {
 
 # User pressed <Return> in the listbox
 sub return_listbox {
-    print "return_listbox 0\n";
+    print "return_listbox 0\n" if $debug;
     my ($self, $listbox) = @_;
     my @sel = $self->Subwidget('slistbox')->Subwidget('listbox')->curselection;
     my $sel;
     $sel = $sel[0] if (defined($sel[0]));
     return unless (defined($sel));
-    print "return_listbox 1\n";
+    print "return_listbox 1\n" if $debug;
     
     my ($x, $y) = $listbox->bbox($sel);
     $self->choose_listbox($x, $y);
-    print "return_listbox 2\n";
+    print "return_listbox 2\n" if $debug;
 
     # place insert cursor at end of entry widget
     $self->Subwidget('entry')->icursor('end');
-    print "return_listbox 3\n";
+    print "return_listbox 3\n" if $debug;
 }
 
 # User pressed <Tab> in the listbox
