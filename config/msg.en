@@ -5,38 +5,55 @@ global:
     cancel:                   Cancel
     clear:                    Clear
     close:                    Close
-    cont_big_pros:            "It may take a while.\nMay I continue?"
+    cont_big_pros:            |-
+        It may take a while.
+        May I continue?
     copy:                     Copy
     copy_all:                 Copy (all)
     csv_f:                    CSV File
     default:                  Default
+    max:                      Max
+    min:                      Min
     ok:                       OK
     paragraph:                Paragraphs
     plot:                     Plot
+    r_dont_close:             Keep this window open
+    r_net_msg_fail:           'Error: could not configure the options.'
     save:                     Save
     search:                   Search
+    select_3words:            |-
+        We need more words to run this analysis.
+        Please check the frequency list of words.
+    select_a_file:            Please select a file
     sentence:                 Sentences
     spss_f:                   SPSS File
     tab_f:                    Tab Delimited
     wm_f:                     'Variable-length CSV: for WordMiner'
-    r_dont_close:             Keep this window open
-    r_net_msg_fail:           'Error: could not configure the options.'
     words:                    Words
-    select_a_file:            Please select a file
-    min:                      Min
-    max:                      Max
-    select_3words:            "We need more words to run this analysis.\nPlease check the frequency list of words."
+gui_errormsg::file:
+    could_not_open_the_file:  |-
+        Could not open the file.
+        KH Coder will exit now.
+        * 
 gui_errormsg::mysql:
-    fatal:                   "Failed in accessing MySQL database system.\nKH Coder will exit now."
+    fatal:                    |-
+        Failed in accessing MySQL database system.
+        KH Coder will exit now.
 gui_wait:
-    done:                    "The process is complete.\nElapsed time:"
+    done:                     |-
+        The process is complete.
+        Elapsed time:
 gui_widget::bubble:
+    breaks:                   'Legend '
     bubble:                   'Bubble plot:'
     size:                     ' Size of bubbles '
     standardize:              'Standardize the size:'
     variable:                 Size of variables also reflect word counts
     variance:                 'Variance '
-    breaks:                   'Legend ' 
+gui_widget::cls4mds:
+    adj:                      Adjacent clusters
+    cls_num:                  'N of clusters:'
+    cluster_color:            Indicate clusters by different colors
 gui_widget::codf:
     browse_title:             Please select a coding rule file.
     cod_rule_f:               'Coding Rule File:'
@@ -45,39 +62,105 @@ gui_widget::codf:
 gui_widget::mail_config:
     change_font:              Font Config
     config:                   config
+    display:                  Display
     font:                     'Font settings:'
+    font_size:                'Default font size in plots: '
     from:                     '    From: '
+    if_cud:                   Color universal design
     note_fs:                  KH Coder is a tool for Quantitative Text Analysis.
     other:                    Other
+    plot_size1:               'Default plot size:  long side'
+    plot_size2:               '  short side'
     select_font:              'Font family:'
     sendmail:                 Send an e-mail when pre-processing is done
     size:                     'Size:'
     smtp:                     '    SMTP Server: '
     to:                       '    To: '
     use_heap:                 Load data into memory to speedup pre-processing
-    display:                  Display
-    plot_size1:               'Default plot size:  long side'
-    plot_size2:               '  short side'
-    font_size:                'Default font size in plots: '
-    if_cud:                   'Color universal design'
+gui_widget::r_cls:
+    average:                  Average
+    by_docs:                  By Document
+    by_words:                 By Words
+    clara:                    CLARA
+    color:                    Different colors
+    complete:                 Complete
+    dist:                     '  Distance:'
+    method:                   'Method:'
+    n_cls:                    'N of clusters:'
+    none:                     None
+    stand:                    'Standardize:'
+    tfidf:                    '  TF-IDF:'
+    ward:                     Ward
 gui_widget::r_font:
     bold:                     Bold
     font_size:                'Font size:'
     pcnt:                     '% '
     plot_size:                '  Plot size:'
+gui_widget::r_margin:
+    bottom:                   bottom
+    left:                     left
+    margin:                   'Margin: '
+    right:                    right
+    top:                      top
+gui_widget::r_mds:
+    1_3:                      (from 1 to 3)
+    dim:                      'Dimensions:'
+    dist:                     '  Distance:'
+    fix_asp:                  Fix aspect ratio
+    method:                   'Method:'
+    random_start:             |-
+        Use random starts to find better solutions
+        *It may take 10 minutes or more.
+gui_widget::r_net:
+    additional_plots:         Additional plots (centrality etc.)
+    cor_var:                  Explore changes in co-occurrence patterns
+    cor_var2:                 '  correlation with: '
+    cor_var_colors:           Color scale of correlation
+    cor_var_darker:           Darker background color
+    e_jac:                    'Coef. >= '
+    e_top_n:                  Top
+    filter_edges:             'Filter edges: '
+    fix_lab:                  Avoid overlapping of labels
+    gray_scale:               Grayscale
+    line_width:               'Line width: edge'
+    line_width_n:             node
+    min_sp_tree:              Highlight the minimum spanning tree
+    min_sp_tree_only:         Draw the minimum spanning tree only
+    or_more:                  ''
+    smaller:                  Smaller Nodes
+    standardize_coef:         Standardize coef.
+    thicker:                  Darker lines for stronger edges
+    view_coef:                Show coef.
+gui_widget::r_som:
+    2_12:                     (from 2 to 12)
+    cls_num:                  'Number of clusters:'
+    cluster_color:            Clustering nodes
+    hex:                      hexagon
+    n_nodes1:                 'Number of nodes (a side):'
+    p_nodes:                  'Plot: '
+    rlen:                     'Number of steps:'
+    sq:                       square
 gui_widget::r_xy:
     cmp_plot:                 'Dimensions of the Plot: '
-    x:                        ' X'
-    y:                        ' Y'
-    origin:                   Show the origin
-    scaling:                  Scaling:
     none:                     none
+    origin:                   Show the origin
+    scaling:                  'Scaling:'
     sym:                      symmetric
     symbi:                    symmetric biplot
-    zoom:                     Enlarge area near the origin:
+    x:                        ' X'
+    y:                        ' Y'
+    zoom:                     'Enlarge area near the origin:'
     zoom_factor:              Factor
 gui_widget::sampling:
     sampling:                 'Sampling:'
+gui_widget::select_a_var:
+    heading:                  'Heading '
+    na:                       'n / a '
+    pos:                      Position
+    pos2:                     Documents
+gui_widget::tani2:
+    unit_c:                   'Coding Unit:'
+    unit_t:                   '    Tabulating Unit:'
 gui_widget::words:
     by_df:                    Filter words by Document Frequency
     by_pos:                   Filter words by POS
@@ -92,25 +175,155 @@ gui_widget::words:
     min_tf:                   '    Min. TF:'
     no_pos_selected:          'Error: No POS is selected.'
     unit:                     'Unit:'
+gui_widget::words_bayes:
+    n_a:                      not available
+    unit:                     'Classification unit:'
+    var:                      'Variable:'
 gui_window::about:
     close:                    Close
     higuchi:                  'HIGUCHI, Koichi'
     kawabata:                 'KAWABATA, Akira'
     win_title:                About KH Coder
+gui_window::bayes_learn:
+    accuracy:                 'Accuracy:'
+    add2exists:               Append current result to existing model file
+    cr_validate:              Perform cross-validation
+    docs:                     'Number of documents used as training data:'
+    docs_total:               'Total number of documents:'
+    done:                     The model build is complete.
+    error_exists:             'Error: the variable already exists'
+    error_f20:                'Error: please specify from 2 to 20 as the Fold number'
+    error_no_words:           'Error: No available words in current settings.'
+    error_var:                'Error: please select a variable.'
+    savecls:                  Save classification result as a variable
+    savelog:                  Save classification log
+    saving_log:               Saving the classification log as
+    saving_new:               Saving the model as
+    select_exist:             Select the model file to append
+    verb4wid:                 ''
+    vname:                    'Variable:'
+    win_title:                Build a Model from a variable (use a variable as training data)
+gui_window::bayes_predict:
+    er_exists:                'Error: the variable already exists.'
+    er_no_such_file:          'Error: please specify a correct file name.'
+    er_specify_name:          'Error: please specify a varible name.'
+    model_file:               'Model file:'
+    opening_model:            Opening a model file...
+    save_log:                 Save classification details to a log file
+    saving_log:               'Saving classification details as:'
+    unit:                     'Classification unit:'
+    var_desc:                 '    * Classification result will be saved as a variable.'
+    var_name:                 'Variable name:'
+    win_title:                Classify documents using a model file
+gui_window::bayes_view_knb:
+    n_docs:                   'Processed documents:'
+    n_types:                  ' Types of Words:'
+    search:                   Search
+    variance:                 Variance
+    whole:                    Whole list
+    win_title:                'View a Model File:'
+gui_window::bayes_view_log:
+    class:                    'class:'
+    doc_id:                   ' Doc No.'
+    freq:                     frequency
+    higher_left:              ' * Higher scores are placed towards the left.'
+    model_file:               'Model file:'
+    run:                      run
+    saved_var:                ' Saved variable:'
+    search_words:             'Search words:'
+    unit:                     ' Classification unit:'
+    variance:                 variance
+    win_title:                'Classification details file:'
+    word:                     words
+gui_window::cls_height:
+    all:                      all
+    f50:                      << first 50
+    l50:                      'last 50 >>'
+    plotting:                 ' Stages: '
+    save_as:                  'Save the plot as:'
+gui_window::cls_height::cod:
+    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Codes'
+gui_window::cls_height::doc:
+    overwr:                   'May I overwrite this file: '
+    win_title:                'Agglomeration: Cluster Analysis of Documents'
+gui_window::cls_height::word:
+    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Words'
+gui_window::cod_cls:
+    win_titile:               'Options: Hierarchical Cluster Analysis of Codes'
 gui_window::cod_corresp:
     c_dd:                     Codes x Documents
     c_v:                      Codes x Variables
     coding_unit:              'Coding unit:'
+    er_unit:                  Illegal selection of Tabulating Unit.
+    er_zero:                  Coding failed. Please check frequencies of codes.
     flt:                      'Show labels only for distinctive codes:'
     flw:                      'Filter codes by chi-square value:'
-    matrix_type:              'Input data matrix'
+    matrix_type:              Input data matrix
     na:                       Not Available
     sel3:                     '    * Please select at least 3 codes.'
     select_codes:             'Select code:'
     top:                      Top
     win_title:                'Options: Correspondence Analysis of Codes'
-    er_zero:                  'Coding failed. Please check frequencies of codes.'
-    er_unit:                  'Illegal selection of Tabulating Unit.'
+gui_window::cod_count:
+    error_cod_f:              'Error: Please select a coding rule file.'
+    go_c:                     Run
+    h_code:                   codes
+    h_freq:                   frequency
+    h_pcnt:                   percent
+    win_title:                Frequency of Codes
+gui_window::cod_jaccard:
+    copy_sel:                 Copy (selected)
+    unit_cod:                 '  Coding Unit:'
+    win_title:                'Coding: Jaccard Coefficients'
+gui_window::cod_mds:
+    sel5:                     '    * Please select at least 5 codes.'
+    sel5_e:                   Error Please select at least 5 codes.
+    win_title:                'Options: Multi-Dimensional Scaling of Codes'
+gui_window::cod_netg:
+    c_c:                      'codes - codes'
+    c_v:                      'codes - variables / headings'
+    win_title:                'Options: Co-Occurrence Network of Codes'
+gui_window::cod_out::csv:
+    save_as:                  Save the Document-Code Matrix As *.csv
+    win_title:                'Export Document-Code Matrix: CSV'
+gui_window::cod_out::spss:
+    save_as:                  Save the Document-Code Matrix As *.sps
+    win_title:                'Export Document-Code Matrix: SPSS'
+gui_window::cod_out::tab:
+    save_as:                  Save the Document-Code Matrix As *.txt
+    tab_delimited:            Tab Delimited
+    win_title:                'Export Document-Code Matrix: Tab delimited'
+gui_window::cod_out::var:
+    save_as:                  Save the Document-Code Matrix As *.cvs
+    win_title:                'Export Document-Code Matrix: Variable Length CSV'
+gui_window::cod_outtab:
+    cells:                    '    Cells:'
+    er_ill:                   'Error: illegal parameters!'
+    f:                        frequency
+    f_p:                      both
+    line:                     ' line:'
+    line_all:                 all
+    line_select:              select
+    map:                      'map: '
+    p:                        percent
+    run:                      Run
+    unit_cod:                 'Coding Unit:'
+    var:                      '   Crosstab:'
+    win_title:                'Coding: Crosstab'
+gui_window::cod_som:
+    win_title:                'Options: Self-Organizing Map of Codes'
+gui_window::contxt_out:
+    options:                  Units & Weights
+    use:                      ''
+    words:                    Words
+    words4cntxt:              Words for Calculating Context Vectors
+gui_window::contxt_out::csv:
+    saving:                   'Save Word-Context Matrix as:'
+    win_title:                'Export Word-Context Matrix: CSV'
+gui_window::contxt_out::spss:
+    win_title:                'Export Word-Context Matrix: SPSS'
+gui_window::contxt_out::tab:
+    win_title:                'Export Word-Context Matrix: Tab Delimited'
 gui_window::datacheck:
     auto_correct:             '   Auto correction of the target text:'
     close:                    Close
@@ -128,26 +341,79 @@ gui_window::datacheck:
     saved:                    '*** Detailed info on problems saved:'
     win_title:                Checking the target text
 gui_window::dictionary:
+    file_error:               'The specified file does not exist:'
     force_ignore:             'Force ignore following words:'
     force_pick:               'Pick up following strings as words:'
-    note1:                   "(*) Changes in \"force pick up\" will take effect when\nyou invoke the \"Run Preprocessing\" command (again)."
+    note1:                    |-
+        (*) Changes in "force pick up" will take effect when
+        you invoke the "Run Preprocessing" command (again).
     one_line1:                (one string in each line)
     one_line2:                (one word in each line)
     pos:                      'Select by Parts of Speech:'
-    win_title:                Select Words to Analyze
     use_file:                 Read from a file
-    file_error:               'The specified file does not exist:'
+    win_title:                Select Words to Analyze
+gui_window::doc_cls:
+    fail:                     Failed to compute clusters.
+    verb:                     ''
+    win_title:                'Options: Cluster Analysis of Documents'
+gui_window::doc_cls_res:
+    agglm:                    Agglomeration Stages
+    bal_agg_docs:             |-
+        Search documents in the stage
+        [double click]
+    bal_docs:                 |-
+        Search documents in the cluster.
+        [double click]
+    bal_words:                |-
+        Search distinctive words of the cluster
+        [shift + double click]
+    both:                     1 & 2
+    cluster:                  Cluster
+    config:                   Config
+    docs:                     Documents
+    docs_in_clusters:         Documents in each cluster
+    h_cls1:                   cluster 1
+    h_cls2:                   cluster 2
+    h_cls_id:                 cluster
+    h_coeff:                  coefficients
+    h_doc_num:                documents
+    h_stage:                  stage
+    m_ave:                    Average
+    m_clk:                    CLink
+    m_wrd:                    Ward
+    na:                       n/a
+    only1:                    1 only
+    only2:                    2 only
+    save:                     Save the result as a variable
+    win_title:                Cluster Analysis of Documents
+    words:                    Words
+gui_window::doc_cls_res_opt:
+    win_title:                'Configure: Cluster Analysis of Documents'
+gui_window::doc_cls_res_sav:
+    desc:                     Saving cluster analysis result as a variable.
+    name:                     'Variable name:'
+    specify_var:              Specify the name of new variable
+    win_title:                Save Cluster as New Variable
+gui_window::doc_search:
+    error_no_code:            Please select at least 1 code.
+    no_sort:                  no sort
+    run:                      Run
+    tf:                       tf
+    tf_D_idf:                 tf/idf
+    tf_M_idf:                 tf*idf
+    unit:                     'Unit:'
+    win_title:                Search Documents
 gui_window::doc_view:
     current_doc:              '* Current Document: '
     highlight:                highlight
     in_the_file:              'In the File:'
     in_the_results:           '  In the Results:'
+    info:                     '* Location & Variables: '
     n1:                       '>>'
     n2:                       '>>'
     p1:                       <<
     p2:                       <<
     win_title:                Document
-    info:                     '* Location & Variables: '
 gui_window::force_color:
     add:                      Add
     delete:                   Delete
@@ -161,6 +427,27 @@ gui_window::force_color:
     type_h:                   type
     win_title:                Highlight Words/Strings
     word:                     word
+gui_window::hukugo:
+    h_freq:                   frequency
+    h_huku:                   cluster
+    run:                      Run
+    whole:                    Whole list
+    win_title:                'Word Clusters: ChaSen'
+gui_window::import_folder:
+    auto:                     Auto Detect
+    auto_jp:                  Auto Detect (Japanese)
+    browse_unified:           Please enter a name for the unified text file
+    change:                   Change
+    char_code:                'Encoding of files: '
+    conv:                     convert "<" and ">" in the data to white space
+    description:              Unify all document files in a folder and creat a project
+    folder:                   'Folder: '
+    level:                    'Heading level of filenames:'
+    opt_project:              New project
+    opt_unify:                Unify documents
+    unicode:                  Unicode（UTF-8）
+    unified:                  'Unified file: '
+    win_title:                'Import: multiple texts in a folder'
 gui_window::main::inner:
     cases:                    Cases
     docs:                     'Documents:'
@@ -170,9 +457,6 @@ gui_window::main::inner:
     types:                    'Types (in use):  '
     units:                    Units
 gui_window::main::menu:
-    open_nbl:                 'Select the classification log file to view'
-    open_knb:                 'Select the model file to view'
-    prepro_reload:            "It may take a while.\nIf you don't want to execute it now, please click 'Cancel'.\n\nThe source file is updated!\nShall we read the content of the source file again?"
     about:                    About
     bayes_classi:             Classify Documents using a Model
     bayes_learn:              Build a Model from a Variable
@@ -213,21 +497,30 @@ gui_window::main::menu:
     netg:                     Co-Occurrence Network
     new:                      New
     open:                     Open
+    open_knb:                 Select the model file to view
+    open_nbl:                 Select the classification log file to view
     output_cod:               Document-Code Matrix
     partial:                  Extract Partial Text
     plugin:                   Plugin
     prep:                     PRe-Processing
+    prepro_reload:            |-
+        It may take a while.
+        If you don't want to execute it now, please click 'Cancel'.
+        
+        The source file is updated!
+        Shall we read the content of the source file again?
     project:                  Project
     read:                     Import Variables
     run_prep:                 Run Pre-Processing
+    som:                      Self-Organizing Map
     term_vec_mtrx:            Word-Context Matrix
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
     to_csv:                   Convert to CSV
-    topic:                    Topic models
-    topic_pp:                 Find Optimal N of Topics
-    topic_ft:                 Fit a Topic Model
     tools:                    Tools
+    topic:                    Topic models
+    topic_ft:                 Fit a Topic Model
+    topic_pp:                 Find Optimal N of Topics
     use_chasen:               use ChaSen
     use_termextract:          use TermExtract
     var_list:                 List
@@ -239,12 +532,24 @@ gui_window::main::menu:
     words:                    Words
     words_cluster:            Word Clusters
     words_selection:          Select Words to Analyze
-    som:                      Self-Organizing Map
 gui_window::morpho_check:
     details:                  Details
     note:                     Input a string or phrase to check.
     sentence:                 The splited sentence
     win_title:                Results of Word Extraction
+gui_window::morpho_crossout:
+    output:                   ''
+gui_window::morpho_crossout::csv:
+    er_no_pos:                'Error: Please select at least 1 POS'
+    saving:                   'Save document-word matrix as:'
+    win_title:                'Export Document-Word Matrix: CSV'
+gui_window::morpho_crossout::spss:
+    win_title:                'Export Document-Word Matrix: SPSS'
+gui_window::morpho_crossout::tab:
+    tabdel:                   Tab Delimited
+    win_title:                'Export Document-Word Matrix: Tab Delimited'
+gui_window::morpho_crossout::var:
+    win_title:                'Export Document-Word Matrix: Variable Length CSV'
 gui_window::morpho_detail:
     base:                     lemma / stem
     hyoso:                    word
@@ -254,6 +559,56 @@ gui_window::morpho_detail:
     pos_kh:                   POS of KH Coder
     previous:                 Previous
     win_title:                'Results of Word Extraction: Details'
+gui_window::outvar_list:
+    catalogue_csv:            'catalogue: CSV'
+    catalogue_xls:            'catalogue: Excel'
+    csv:                      CSV File
+    del:                      Delete
+    del_ok:                   Delete selected variables?
+    docs:                     Documents
+    error_hd1:                |-
+        Cannot delete headings.
+        Please directly modify the target file.
+    error_hd2:                Cannot export headings.\nPlease consider using "Extract Partial Text" command
+    error_sel_a_var:          'Error: Please select a variable.'
+    error_sel_a_vv:           'Error: Please select a variable and a value.'
+    error_units:              Cannot export variables with multiple units.
+    export:                   Export
+    h_freq:                   frequency
+    h_label:                  label
+    h_name:                   variable
+    h_unit:                   unit
+    h_value:                  value
+    headings:                 Heading
+    help_docs:                |-
+        Search documents with the selected value
+        [DoubleClick]
+    help_words:               |-
+        Search distinctive words of the value.
+        [Shift + DoubleClick]
+    mspgoth:                  MS PGothic
+    read:                     '*Import'
+    save:                     Save labels
+    saving:                   Save variables as
+    selected:                 selected value
+    tabdel:                   Tab Delimited
+    unit:                     'Unit:'
+    values:                   'Values & Value labels: '
+    vars:                     Variables
+    win_title:                List of Variables & Headings
+    words:                    '*Words'
+gui_window::outvar_read:
+    no_such_file:             'Error: Could not find the file!'
+    unit:                     'Unit of Variables:'
+gui_window::outvar_read::csv:
+    csv:                      'CSV File:'
+    open:                     Select the file that contains variables
+    win_title:                Read variables from the CSV file
+gui_window::outvar_read::tab:
+    open:                     Select the file that contains variables
+    tabdel:                   Tab Delimited File
+    tabdelf:                  Tab Delimited File
+    win_title:                Read variables from the Tab Delimited file
 gui_window::project_edit:
     auto_detect:              Auto detect
     memo:                     'Memo:'
@@ -267,37 +622,63 @@ gui_window::project_new:
     target_char_code:         'Encoding of the target file:'
     target_column:            'Target Column:'
     target_file:              'The Target File:'
-    type_error:               'KH Coder is not ready for this file type.'
+    type_error:               KH Coder is not ready for this file type.
     win_title:                New Project
 gui_window::project_open:
     del:                      delete
     dir:                      dir
     edit:                     edit
+    lang:                     language
     memo:                     memo
     new:                      new
     open:                     Open
-    lang:                     language
-    opened:                   "The project is currently opened.\nCannot perform the specified action."
+    opened:                   |-
+        The project is currently opened.
+        Cannot perform the specified action.
     select_one:               Please select a project.
     target_file:              target file
     win_title:                Project Manager
 gui_window::r_plot:
     options:                  Config
     saving:                   'Save the Plot as:'
-gui_window::r_plot::topic_n_perplexity:
-    win_title:                Find Optimal N of Topics: Perplexity
-gui_window::r_plot::topic_n_ldatuning:
-    win_title:                Find Optimal N of Topics: ldatuning
-gui_window::r_plot::tpc_mat_line:
-    win_title:                "Line Chart of Topic Proportion"
-gui_window::r_plot_opt::tpc_mat_line:
-    win_title:                 "Configure: Line Chart of Topic Proportion"
-    select_topics:             "Select Topics:"
+gui_window::r_plot::cod_cls:
+    win_titile:               Hierarchical Cluster Analysis of Codes
 gui_window::r_plot::cod_corresp:
     win_title:                Correspondence Analysis of Codes
+gui_window::r_plot::cod_mat:
+    fluc:                     bubble
+    heat:                     heat
+    win_title:                Crosstab Map
+gui_window::r_plot::cod_mat_line:
+    win_title:                Line Chart
+gui_window::r_plot::cod_mds:
+    win_title:                Multi-Dimensional Scaling of Codes
+gui_window::r_plot::cod_netg:
+    win_title:                Co-Occurrence Network of Codes
+gui_window::r_plot::cod_som:
+    win_title:                Self-Organizing Map of Codes
+gui_window::r_plot::doc_cls:
+    win_title:                Dendrogram of Documents
 gui_window::r_plot::selected_netgraph:
     color:                    ' Color:'
     win_title:                Co-Occurrence Network (selected words)
+gui_window::r_plot::topic_n_ldatuning:
+    win_title:                'Find Optimal N of Topics: ldatuning'
+gui_window::r_plot::topic_n_perplexity:
+    win_title:                'Find Optimal N of Topics: Perplexity'
+gui_window::r_plot::tpc_mat:
+    fluc:                     bubble
+    heat:                     heat
+    win_title:                Topic Proportion Map
+gui_window::r_plot::tpc_mat_line:
+    win_title:                Line Chart of Topic Proportion
+gui_window::r_plot::word_cls:
+    agglomer:                 Agglomeration
+    ave:                      average
+    clink:                    clink
+    method:                   ' method:'
+    ward:                     ward
+    win_title:                Hierarchical Cluster Analysis of Words
 gui_window::r_plot::word_corresp:
     col:                      color
     d:                        dots
@@ -306,12 +687,81 @@ gui_window::r_plot::word_corresp:
     var:                      variables
     view:                     ' View:'
     win_title:                Correspondence Analysis of Words
+gui_window::r_plot::word_mds:
+    win_title:                Multi-Dimensional Scaling of Words
+gui_window::r_plot::word_netgraph:
+    cnt_b:                    'Centrality: betweenness'
+    cnt_d:                    'Centrality: degree'
+    cnt_v:                    'Centrality: eigenvector'
+    col:                      color
+    color:                    ' color:'
+    com_b:                    'Subgraph: betweenness'
+    com_m:                    'Subgraph: modularity'
+    com_r:                    'Subgraph: random walks'
+    cor:                      Correlation
+    gray:                     grayscale
+    interactive:              HTML
+    none:                     None
+    win_title:                Co-Occurrence Network of Words
+gui_window::r_plot::word_som:
+    cls:                      Clusters
+    freq:                     Frequency
+    gray:                     Grayscale
+    umat:                     U-Matrix
+    views:                    ' Color: '
+    win_title:                Self-Organizing Map of Words
+gui_window::r_plot_opt::cod_cls:
+    win_title:                'Configure: Hierarchical Cluster Analysis of Codes'
 gui_window::r_plot_opt::cod_corresp:
     win_title:                'Configure: Correspondence Analysis of Codes'
+gui_window::r_plot_opt::cod_mat:
+    bubble_shape:             'Shape of bubbles: '
+    bubble_size:              'Size of bubbles: '
+    cellnote:                 Display percentages
+    circle:                   circle
+    col1:                     Color
+    col2:                     Color (CM)
+    color_fix:                'Fixed color scale: '
+    color_rsd:                Visualize standardized residuals by color
+    common:                   common settings
+    dendro_c:                 Cluster codes
+    dendro_v:                 Cluster variables or headings
+    gray:                     Gray
+    plot_size_heat:           'Plot size, height:'
+    plot_size_maph:           '  height:'
+    plot_size_mapw:           'Plot size, width:'
+    select_1:                 Please select at least 1 code
+    square:                   square
+    win_title:                'Configure: Crosstab Plots'
+gui_window::r_plot_opt::cod_mat_line:
+    win_title:                'Configure: Line Chart'
+gui_window::r_plot_opt::cod_mds:
+    win_title:                'Configure: Multi-Dimensional Scaling of Codes'
+gui_window::r_plot_opt::cod_netg:
+    win_title:                'Configure: Co-Occurrence Network of Codes'
+gui_window::r_plot_opt::cod_som:
+    win_title:                'Configure: Self-Organizing Map of Codes'
+gui_window::r_plot_opt::doc_cls:
+    doc_label:                'Case Label:'
+    heading:                  Heading
+    number:                   No.
+    win_title:                'Configure: Dendrogram of Documents'
 gui_window::r_plot_opt::selected_netgraph:
     win_title:                'Configure: Co-Occurrence Network (selected words)'
+gui_window::r_plot_opt::tpc_mat_line:
+    select_topics:            'Select Topics:'
+    win_title:                'Configure: Line Chart of Topic Proportion'
+gui_window::r_plot_opt::word_cls:
+    err_no_auto:              You cannot specify "Auto" in this window. Please specify numerical values.
+    win_title:                'Configure: Hierarchical Cluster Analysis of Words'
 gui_window::r_plot_opt::word_corresp:
     win_title:                'Configure: Correspondence Analysis of Words'
+gui_window::r_plot_opt::word_mds:
+    win_title:                'Configure: Multi-Dimensional Scaling of Words'
+gui_window::r_plot_opt::word_netgraph:
+    win_title:                'Configure: Co-Occurrence Network of Words'
+gui_window::r_plot_opt::word_som:
+    win_title:                'Configure: Self-Organizing Map of Words'
 gui_window::sql_select:
     Server:                   '  Connected to: '
     exec:                     Execute
@@ -319,6 +769,13 @@ gui_window::sql_select:
     rows:                     '  Rows: '
     sql_error:                An Error in the SQL Statement.
     win_title:                Execute SQL Statements
+gui_window::stop_words:
+    change_will:              |-
+        * Changes will take effect when you invoke
+        the "Run Preprocessing" command (again).
+    for_this_method:          'Stop words for the following method:'
+    lang:                     'Language:'
+    select_all:               Select ALL
 gui_window::sysconfig:
     apps:                     Applications
     browse_:                  Please open ____
@@ -328,28 +785,30 @@ gui_window::sysconfig:
     browse_stanford_tag:      Please open a model file
     chasen:                   '"ChaSen" for Japanese text'
     config:                   config
-    l_jp:                     Japanese
+    l_ca:                     Catalan
     l_cn:                     Chinese
     l_de:                     German
     l_en:                     English
     l_es:                     Spanish
     l_fr:                     French
     l_it:                     Italian
+    l_jp:                     Japanese
+    l_kr:                     Korean
     l_nl:                     Dutch
     l_pt:                     Portuguese
-    l_kr:                     Korean
-    l_ca:                     Catalan
     l_ru:                     Russian
     l_sl:                     Slovenian
     lang:                     '    Language:'
     mecab:                    '"MeCab" for Japanese text'
-    note_font:               "Font setting has been changed.\nPlease restart KH Coder for changes to take effect."
+    mecab_unicode:            UTF-8 Dictionary
+    note_font:                |-
+        Font setting has been changed.
+        Please restart KH Coder for changes to take effect.
     note_s:                   '* %s will be replaced by filenames of URLs'
     p_chasen.exe:             '    path of "chasen.exe":'
     p_chasenrc:               '    path of "chasenrc":'
     p_grammer.cha:            '    path of "grammar.cha":'
     p_mecab.exe:              '    path of "mecab.exe":'
-    mecab_unicode:            'UTF-8 Dictionary'
     p_stanford_jar:           '    path of *.JAR:'
     p_stanford_tag:           '    path of *.TAGGER:'
     pdf:                      'PDF Viewer:'
@@ -357,15 +816,60 @@ gui_window::sysconfig:
     stanford:                 Stanford POS Tagger
     stemming:                 Snowball
     stopwords:                '  Stop words:'
+    unify_words_sl:           |-
+        Words with the same basic form are recognized
+        identical even if the POS is different
     web_browser:              'Web Browser:'
     win_title:                Global Settings
     words_ext:                Word Extraction
-    unify_words_sl:           "Words with the same basic form are recognized\nidentical even if the POS is different"
-gui_window::stop_words:
-    change_will:              "* Changes will take effect when you invoke\nthe \"Run Preprocessing\" command (again)."
-    for_this_method:          Stop words for the following method:
-    select_all:               Select ALL
-    lang:                     Language:
+gui_window::topic_fitting:
+    n_topics:                 'N of Topics: '
+    opt:                      Topic Model (LDA) Options
+    win_title:                Fit a Topic Model
+gui_window::topic_perplexity:
+    candidates:               'N of Topics: '
+    error_terms_topics:       'When you choose ldatuning, number of selected words should be larger than maximum number of topics'
+    folds:                    'Fold: '
+    method:                   'Method: '
+    opt:                      Method and Number of topics
+    win_title:                Find Optimal Number of Topics
+gui_window::topic_result:
+    doc_topic:                Document-Topic Matrix
+    export:                   '*Export'
+    extended:                 prob.
+    plot:                     Map
+    stats_table:              Table
+    topic_prop:               ' Topic proportion:'
+    topic_term:               Topic-Word Matrix
+    win_title:                Result of Topic Model
+    words:                    'Words: '
+gui_window::topic_stats:
+    var:                      'Tabulation:'
+    win_title:                Topic Proportion Table
+gui_window::txt_html2csv:
+    saving:                   Save CSV file as
+    select:                   'Selection:'
+    unit:                     Which unit should be considered as row/case of CSV
+    win_title:                Convert to CSV
+gui_window::txt_pickup:
+    codes:                    Extract Documents with Specific Code
+    error_no_headings:        Please select at least 1 headings
+    headings:                 Extract Headings
+    headings_name:            '  '
+    higher:                   Include higher level headings
+    saving:                   'Extract Partial Text: Save as'
+    unit:                     Coding unit
+    win_title:                Extract Partial Text
+gui_window::use_te:
+    about:                    'About TermExtract:'
+    desc:                     TermExtract will be utilized in this function.
+    web:                      'Web page of TermExtract:'
+    win_title:                Copyright of TermExtract
+gui_window::use_te_g:
+    h_hukugo:                 cluster
+    h_score:                  score
+    run:                      Run
+    win_title:                'Word Clusters: TermExtract'
 gui_window::word_ass:
     18:                       chi square
     and:                      AND
@@ -398,6 +902,20 @@ gui_window::word_ass_opt:
     top:                      '    Top '
     view:                     'View:'
     win_title:                'Filter: Word Association'
+gui_window::word_cls:
+    agglomer:                 Agglomeration Stages
+    cluster:                  ' '
+    first1:                   'first '
+    first2:                   ''
+    hight:                    Coefficients (dissimilarity)
+    last1:                    'last '
+    last2:                    ''
+    note1:                    |-
+        * Numerical values in the plot indicate
+          number of clusters at each stage
+    opt:                      Cluster Analysis Options
+    u_w:                      Select the unit & words
+    win_title:                'Options: Hierarchical Cluster Analysis of Words'
 gui_window::word_conc:
     additional:               Additional Options
     center:                   Conj.
@@ -455,16 +973,16 @@ gui_window::word_conc_coloc:
     r5:                       R5
     r_total:                  Right Total
     sort:                     '  Sort:'
+    span:                     '  Window span:'
     total:                    Total
     win_title:                Collocation Stats
     word:                     'Word:'
-    span:                     '  Window span:'
 gui_window::word_conc_coloc_opt:
     filter_by_pos:            'Filter words by POS:'
-    total_filt:               'Filter words by "Total" column:'
     no_less_than:             '      No less than '
-    view:                     'View:'
     top:                      '      Top '
+    total_filt:               'Filter words by "Total" column:'
+    view:                     'View:'
     win_title:                'Filter: Collocation Stats'
 gui_window::word_conc_opt:
     0:                        None
@@ -499,11 +1017,11 @@ gui_window::word_corresp:
     exp:                      Explained
     flt:                      'Show labels only for distinctive words:'
     flw:                      'Filter words by chi-square value:'
-    matrix:                   'Input data matrix'
+    matrix:                   Input data matrix
     na:                       Not Available
     nav:                      missing
-    option_ca:                'Correspondence Analysis Options'
-    option_words:             'Select Words'
+    option_ca:                Correspondence Analysis Options
+    option_words:             Select Words
     plot:                     ' '
     select_pos:               'Error: Please select at least 1 POS.'
     select_var:               'Error: Please select at least 1 variable.'
@@ -564,6 +1082,25 @@ gui_window::word_list:
     win_title:                'Options: Frequency List (Excel)'
     xls:                      Excel (*.xls)
     xlsx:                     Excel (*.xlsx)
+gui_window::word_mds:
+    dim:                      Dimension
+    error_dim:                'Error: Please specify from 1 to 3 as the number of dimensions'
+    mds_opt:                  Multi-Dimensional Scaling Options
+    omit:                     "Following words/codes are omited from analysis:\n"
+    plot:                     ' '
+    r_alpha:                  Translucent Colors (not suitable for EMF/EPS)
+    select_5words:            'Error: Please select at least 5 words.'
+    units_words:              Select the unit & words
+    win_title:                'Options: Multi-Dimensional Scaling of Words'
+gui_window::word_netgraph:
+    e_type:                   'Type of edges:'
+    net_opt:                  Co-Occurrence Network Options
+    u_w:                      Select the unit & words
+    use:                      ''
+    var:                      'Variable / Headings:'
+    w_v:                      'words - variables / headings'
+    w_w:                      'words - words'
+    win_title:                'Options: Co-Occurrence Network of Words'
 gui_window::word_search:
     and:                      AND
     back:                     Backward Match
@@ -571,11 +1108,14 @@ gui_window::word_search:
     comp:                     Complete Match
     conj:                     Conj.
     enable_filter:            Enable Filter when Search
+    excel:                    Excel
     forw:                     Forward Match
     freq:                     Frequency
     kwic:                     KWIC Concordance
     morph:                    Word
+    n100:                     N100
     or:                       OR
+    p100:                     P100
     part:                     Partial Match
     pos:                      POS
     pos_conj:                 POS / Conj.
@@ -584,11 +1124,16 @@ gui_window::word_search:
     view_conj:                View Conj.
     win_title:                Word Frequency List
     word:                     Word
-    excel:                    Excel
-    n100:                     N100
-    p100:                     P100
 gui_window::word_search_opt:
     win_title:                'Filter: Word Frequency List'
+gui_window::word_som:
+    cluster:                  ' '
+    opt:                      Self-Organizing Map Options
+    time_warn:                |-
+        It may take several hours or days to make the
+        self-organizing map!
+    u_w:                      Select the unit & words
+    win_title:                Self-Organizing Map Options
 gui_window::word_tf_df:
     df:                       Document Frequency
     log:                      '  Logarithmic axes:'
@@ -599,10 +1144,30 @@ gui_window::word_tf_df:
     win_title:                TF-DF Plot
     x:                        TF(X)
     xy:                       TF(X) and DF(Y)
+kh_cod:
+    not_coding_rules:         The selected file does not look like a coding rule file
+    redefined:                |-4
+         code is redefined.
+        Please change the name of the code.
+kh_cod::a_code:
+    syntax_error:             'Syntax error in the coding rule:'
+kh_cod::a_code::atom::code:
+    no_code_error:            'Syntax error. Can not find the code: '
+kh_cod::func:
+    chisq:                    chi-square
+    n_cases:                  N of Documents
+    n_docs:                   N of Documents
+    no_codes:                 '#no_codes'
+    total:                    Total
+kh_cod::search:
+    codes:                    '* Codes added to this document (in the current coding rule file):'
+    direct:                   '#direct'
+    no_codes:                 '#none'
 kh_datacheck:
     corrected:                All known problems are corrected.
     error_c1:                 Some lines contain Mojibake
     error_c2:                 Unsuitable symbols
+    error_charcode:           Could not detect character code of the target file. Please try changing character code to UTF-8.
     error_m1:                 Too long heading line (cannot correct automatically)
     error_mn:                 'Incorrect use of H1 - H5 tags (cannot correct automatically)'
     error_n1a:                Too long lines
@@ -610,10 +1175,11 @@ kh_datacheck:
     errors_detail:            'Following probrems were found (details):'
     errors_summary:           'Following probrems were found (summary):'
     lines:                    ' line(s)'
-    looks_good:              "We found no known problems.\nPlease proceed to pre-processing."
-    error_charcode:           "Could not detect character code of the target file. Please try changing character code to UTF-8."
+    looks_good:               |-
+        We found no known problems.
+        Please proceed to pre-processing.
 kh_morpho:
-    error_empty:              "Error: the target file is empty."
+    error_empty:              'Error: the target file is empty.'
 kh_morpho::chasen:
     error:                    'Fatal error: Could not execute ChaSen.'
     error_config:             'Fatal error: Could not find ChaSen.'
@@ -629,6 +1195,22 @@ kh_morpho::stanford:
     no_java:                  'Fatal error: Could not find JAVA.'
 kh_morpho::stemming:
     error:                    'Fatal error: Could not perform stemming.'
+kh_nbayes:
+    classified_as:            classified as
+    classs:                   class
+    correct_insts:            Correctly Classified Instances
+    kappa:                    'Kappa statistic: '
+kh_nbayes::Util:
+    prior:                    '[prior probability]'
+kh_nbayes::cv_predict:
+    cross_validation:         (cross validation)
+kh_project:
+    no_target_file:           Cannot find the target file
+kh_projects:
+    already_registered:       The file is already registered as a project
+kh_r_plot:
+    faliled_in_plotting:      "Failed in plotting with R\n\n"
+    illegal_plot_size:        Illegal plot size
 kh_sysconfig::chasen:
     path_error:               Cannot find Chasen.exe!
 kh_sysconfig::mecab:
@@ -636,9 +1218,47 @@ kh_sysconfig::mecab:
 kh_sysconfig::stanford:
     path_error:               Cannot find Stanford POS Tagger!
 mysql_exec:
-    cross:                    "Do your have multiple KH Coder on the same PC? \nMySQL database may be interfering.\n\nIt is highly recommended to restart KH Coder."
+    cross:                    |-
+        Do your have multiple KH Coder on the same PC? 
+        MySQL database may be interfering.
+        
+        It is highly recommended to restart KH Coder.
+mysql_getheader:
+    error:                    |-
+        Failed to process documents.
+        
+        There may be incorrect use of H1 - H5 tags in the target file.
+        Please try the "Check the Target File" command.
+mysql_outvar::read:
+    midashi_error:            'Cannot use "Heading1" - "Headings5" as the name of the variable.'
+    overwrite_vars:           |+
+        The varible with the same name already exists.
+        Over wright?
+
+    records_error:            |-
+        Number of records does not much.
+        Aborting the process.
+mysql_ready:
+    error_in_mysql_bunr:      |-
+        Something wrong with the database: bun_r table
+        KH Coder will exit now
+    too_long_sentence:        |-
+        Error: there are too long sentences. ( > 65535 )
+        KH Coder will exit now.
+mysql_ready::check:
+    error:                    'Data integrity lost: '
+mysql_ready::dump:
+    too_long_word1:           |
+        There are too long words. ( > 128 )
+        
+        KH Coder recognize the first 128 characters only.
+        The words are recorded in the following file: 
+    too_long_word2:           Click OK to continue the pre-processing.
 mysql_words:
     df:                       DF
+    excel_limit:              |-
+        Could not export all of the records due to the 65,536 records limit of Excel file.
+        Please select CSV to export all the data.
     mean_df:                  Mean of DF
     mean_tf:                  Mean of TF
     pos:                      POS
@@ -647,581 +1267,32 @@ mysql_words:
     tf:                       TF
     types:                    Types of Words (n)
     words:                    Words
-    excel_limit:              "Could not export all of the records due to the 65,536 records limit of Excel file.\nPlease select CSV to export all the data."
-gui_widget::cls4mds:
-    cluster_color:            'Indicate clusters by different colors'
-    cls_num:                  'N of clusters:'
-    adj:                      'Adjacent clusters'
-gui_widget::r_mds:
-    method:                   'Method:'
-    dist:                     '  Distance:'
-    dim:                      'Dimensions:'
-    1_3:                      '(from 1 to 3)'
-    fix_asp:                  'Fix aspect ratio'
-    random_start:             "Use random starts to find better solutions\n*It may take 10 minutes or more."
-gui_window::word_mds:
-    units_words:              'Select the unit & words'
-    mds_opt:                  'Multi-Dimensional Scaling Options'
-    plot:                     ' '
-    win_title:                'Options: Multi-Dimensional Scaling of Words'
-    select_5words:            Error: Please select at least 5 words.
-    error_dim:                Error: Please specify from 1 to 3 as the number of dimensions
-    dim:                      Dimension
-    omit:                     "Following words/codes are omited from analysis:\n"
-    r_alpha:                  'Translucent Colors (not suitable for EMF/EPS)'
-gui_window::r_plot_opt::word_mds:
-    win_title:                'Configure: Multi-Dimensional Scaling of Words'
-gui_window::r_plot::word_mds:
-    win_title:                'Multi-Dimensional Scaling of Words'
-gui_window::cod_mds:
-    win_title:                'Options: Multi-Dimensional Scaling of Codes'
-    sel5:                     '    * Please select at least 5 codes.'
-    sel5_e:                   Error Please select at least 5 codes.
-gui_window::r_plot::cod_mds:
-    win_title:                'Multi-Dimensional Scaling of Codes'
-gui_window::r_plot_opt::cod_mds:
-    win_title:                'Configure: Multi-Dimensional Scaling of Codes'
-gui_widget::r_cls:
-    method:                   'Method:'
-    ward:                     'Ward'
-    average:                  'Average'
-    complete:                 'Complete'
-    clara:                    'CLARA'
-    dist:                     '  Distance:'
-    n_cls:                    'N of clusters:'
-    color:                    'Different colors'
-    stand:                    'Standardize:'
-    none:                     'None'
-    by_words:                 'By Words'
-    by_docs:                  'By Document'
-    tfidf:                    '  TF-IDF:'
-gui_window::word_som:
-    win_title:                'Self-Organizing Map Options'
-    cluster:                  ' '
-    u_w:                      'Select the unit & words'
-    opt:                      'Self-Organizing Map Options'
-    time_warn:                "It may take several hours or days to make the\nself-organizing map!"
-gui_widget::r_som:
-    n_nodes1:                 'Number of nodes (a side):'
-    cluster_color:            'Clustering nodes'
-    cls_num:                  'Number of clusters:'
-    2_12:                     '(from 2 to 12)'
-    hex:                      'hexagon'
-    sq:                       'square'
-    p_nodes:                  'Plot: '
-    rlen:                     'Number of steps:'
-gui_window::r_plot::word_som:
-    cls:                      'Clusters'
-    gray:                     'Grayscale'
-    freq:                     'Frequency'
-    umat:                     'U-Matrix'
-    views:                    ' Color: '
-    win_title:                'Self-Organizing Map of Words'
-gui_window::r_plot_opt::word_som:
-    win_title:                'Configure: Self-Organizing Map of Words'
-gui_window::word_cls:
-    u_w:                      'Select the unit & words'
-    opt:                      'Cluster Analysis Options'
-    cluster:                  ' '
-    win_title:                'Options: Hierarchical Cluster Analysis of Words'
-    last1:                    'last '
-    last2:                    ''
-    first1:                   'first '
-    first2:                   ''
-    agglomer:                 'Agglomeration Stages'
-    hight:                    'Coefficients (dissimilarity)'
-    note1:                    "* Numerical values in the plot indicate\n  number of clusters at each stage"
-gui_window::r_plot::word_cls:
-    ward:                     'ward'
-    ave:                      'average'
-    clink:                    'clink'
-    method:                   ' method:'
-    agglomer:                 'Agglomeration'
-    win_title:                'Hierarchical Cluster Analysis of Words'
-gui_window::r_plot_opt::word_cls:
-    err_no_auto:              'You cannot specify "Auto" in this window. Please specify numerical values.'
-    win_title:                'Configure: Hierarchical Cluster Analysis of Words'
-gui_window::cls_height::word:
-    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Words'
-gui_window::cls_height:
-    plotting:                 ' Stages: '
-    f50:                      '<< first 50'
-    all:                      'all'
-    l50:                      'last 50 >>'
-    save_as:                  'Save the plot as:'
-gui_window::cod_cls:
-    win_titile:               'Options: Hierarchical Cluster Analysis of Codes'
-gui_window::r_plot_opt::cod_cls:
-    win_title:                'Configure: Hierarchical Cluster Analysis of Codes'
-gui_window::r_plot::cod_cls:
-    win_titile:               'Hierarchical Cluster Analysis of Codes'
-gui_window::cls_height::cod:
-    win_title:                'Agglomeration: Hierarchical Cluster Analysis of Codes'
-gui_window::cod_som:
-    win_title:                'Options: Self-Organizing Map of Codes'
-gui_window::r_plot::cod_som:
-    win_title:                'Self-Organizing Map of Codes'
-gui_window::r_plot_opt::cod_som:
-    win_title:                'Configure: Self-Organizing Map of Codes'
-gui_widget::r_net:
-    additional_plots:         'Additional plots (centrality etc.)'
-    filter_edges:             'Filter edges: '
-    e_top_n:                  'Top'
-    e_jac:                    'Coef. >= '
-    or_more:                  ''
-    thicker:                  'Darker lines for stronger edges'
-    smaller:                  'Smaller Nodes'
-    min_sp_tree:              'Highlight the minimum spanning tree'
-    min_sp_tree_only:         'Draw the minimum spanning tree only'
-    gray_scale:               'Grayscale'
-    fix_lab:                  'Avoid overlapping of labels'
-    view_coef:                Show coef.
-    cor_var:                  'Explore changes in co-occurrence patterns'
-    cor_var2:                 '  correlation with: '
-    cor_var_colors:           'Color scale of correlation'
-    cor_var_darker:           'Darker background color'
-    standardize_coef:         'Standardize coef.'
-    line_width:               'Line width: edge'
-    line_width_n:             'node'
-gui_widget::r_margin:
-    margin:                   'Margin: '
-    left:                     'left'
-    right:                    'right'
-    top:                      'top'
-    bottom:                   'bottom'
-gui_window::word_netgraph:
-    u_w:                      'Select the unit & words'
-    use:                      ''
-    net_opt:                  'Co-Occurrence Network Options'
-    e_type:                   'Type of edges:'
-    w_w:                      'words - words'
-    w_v:                      'words - variables / headings'
-    var:                      'Variable / Headings:'
-    win_title:                'Options: Co-Occurrence Network of Words'
-gui_window::r_plot_opt::word_netgraph:
-    win_title:                'Configure: Co-Occurrence Network of Words'
-gui_window::r_plot::word_netgraph:
-    col:                      'color'
-    gray:                     'grayscale'
-    cnt_b:                    'Centrality: betweenness'
-    cnt_d:                    'Centrality: degree'
-    cnt_v:                    'Centrality: eigenvector'
-    com_b:                    'Subgraph: betweenness'
-    com_r:                    'Subgraph: random walks'
-    com_m:                    'Subgraph: modularity'
-    cor:                      'Correlation'
-    none:                     None
-    color:                    ' color:'
-    interactive:              'HTML'
-    win_title:                'Co-Occurrence Network of Words'
-gui_window::cod_netg:
-    win_title:                'Options: Co-Occurrence Network of Codes'
-    c_c:                      'codes - codes'
-    c_v:                      'codes - variables / headings'
-gui_window::r_plot_opt::cod_netg:
-    win_title:                'Configure: Co-Occurrence Network of Codes'
-gui_window::r_plot::cod_netg:
-    win_title:                'Co-Occurrence Network of Codes'
-gui_window::cod_count:
-    win_title:                'Frequency of Codes'
-    go_c:                     'Run'
-    h_code:                   'codes'
-    h_freq:                   'frequency'
-    h_pcnt:                   'percent'
-    error_cod_f:              'Error: Please select a coding rule file.'
-kh_cod::func:
-    no_codes:                 '#no_codes'
-    n_docs:                   'N of Documents'
-    n_cases:                  'N of Documents'
-    total:                    'Total'
-    chisq:                    'chi-square'
-gui_widget::tani2:
-    unit_c:                   'Coding Unit:'
-    unit_t:                   '    Tabulating Unit:'
-gui_window::cod_outtab:
-    win_title:                'Coding: Crosstab'
-    cells:                    '    Cells:'
-    unit_cod:                 'Coding Unit:'
-    var:                      '   Crosstab:'
-    f_p:                      'both'
-    f:                        'frequency'
-    p:                        'percent'
-    run:                      'Run'
-    er_ill:                   'Error: illegal parameters!'
-    line_all:                 'all'
-    line_select:              'select'
-    line:                     ' line:'
-    map:                      'map: '
-gui_window::cod_jaccard:
-    win_title:                'Coding: Jaccard Coefficients'
-    unit_cod:                 '  Coding Unit:'
-    copy_sel:                 'Copy (selected)'
-gui_window::cod_out::csv:
-    save_as:                  'Save the Document-Code Matrix As *.csv'
-    win_title:                'Export Document-Code Matrix: CSV'
-gui_window::cod_out::spss:
-    save_as:                  'Save the Document-Code Matrix As *.sps'
-    win_title:                'Export Document-Code Matrix: SPSS'
-gui_window::cod_out::tab:
-    save_as:                  'Save the Document-Code Matrix As *.txt'
-    win_title:                'Export Document-Code Matrix: Tab delimited'
-    tab_delimited:            'Tab Delimited'
-gui_window::cod_out::var:
-    save_as:                  'Save the Document-Code Matrix As *.cvs'
-    win_title:                'Export Document-Code Matrix: Variable Length CSV'
-gui_window::doc_search:
-    win_title:                'Search Documents'
-    run:                      'Run'
-    unit:                     'Unit:'
-    no_sort:                  'no sort'
-    tf:                       'tf'
-    tf_M_idf:                 'tf*idf'
-    tf_D_idf:                 'tf/idf'
-    error_no_code:            'Please select at least 1 code.'
-kh_cod::search:
-    codes:                    '* Codes added to this document (in the current coding rule file):'
-    no_codes:                 '#none'
-    direct:                   '#direct'
-gui_widget::select_a_var:
-    pos:                      'Position'
-    pos2:                     'Documents'
-    heading:                  'Heading '
-    na:                       'n / a '
-gui_window::doc_cls:
-    verb:                     ''
-    fail:                     'Failed to compute clusters.'
-    win_title:                'Options: Cluster Analysis of Documents'
-gui_window::doc_cls_res:
-    win_title:                'Cluster Analysis of Documents'
-    docs_in_clusters:         'Documents in each cluster'
-    h_cls_id:                 'cluster'
-    h_doc_num:                'documents'
-    docs:                     'Documents'
-    bal_docs:                 "Search documents in the cluster.\n[double click]"
-    words:                    'Words'
-    bal_words:                "Search distinctive words of the cluster\n[shift + double click]"
-    agglm:                    'Agglomeration Stages'
-    h_stage:                  'stage'
-    h_cls1:                   'cluster 1'
-    h_cls2:                   'cluster 2'
-    h_coeff:                  'coefficients'
-    both:                     '1 & 2'
-    only1:                    '1 only'
-    only2:                    '2 only'
-    bal_agg_docs:             "Search documents in the stage\n[double click]"
-    m_wrd:                    'Ward'
-    m_ave:                    'Average'
-    m_clk:                    'CLink'
-    config:                   'Config'
-    save:                     'Save the result as a variable'
-    cluster:                  'Cluster'
-    na:                       'n/a'
-gui_window::doc_cls_res_sav:
-    desc:                     'Saving cluster analysis result as a variable.'
-    name:                     'Variable name:'
-    specify_var:              'Specify the name of new variable'
-    win_title:                'Save Cluster as New Variable'
-gui_window::doc_cls_res_opt:
-    win_title:                'Configure: Cluster Analysis of Documents'
-gui_window::cls_height::doc:
-    win_title:                'Agglomeration: Cluster Analysis of Documents'
-    overwr:                   'May I overwrite this file: '
-gui_window::morpho_crossout:
-    output:                   ''
-gui_window::morpho_crossout::csv:
-    er_no_pos:                'Error: Please select at least 1 POS'
-    saving:                   'Save document-word matrix as:'
-    win_title:                'Export Document-Word Matrix: CSV'
-gui_window::morpho_crossout::spss:
-    win_title:                'Export Document-Word Matrix: SPSS'
-gui_window::morpho_crossout::tab:
-    tabdel:                   'Tab Delimited'
-    win_title:                'Export Document-Word Matrix: Tab Delimited'
-gui_window::morpho_crossout::var:
-    win_title:                'Export Document-Word Matrix: Variable Length CSV'
-gui_window::contxt_out:
-    words:                    'Words'
-    words4cntxt:              'Words for Calculating Context Vectors'
-    options:                  'Units & Weights'
-    use:                      ''
-gui_window::contxt_out::csv:
-    saving:                   'Save Word-Context Matrix as:'
-    win_title:                'Export Word-Context Matrix: CSV'
-gui_window::contxt_out::spss:
-    win_title:                'Export Word-Context Matrix: SPSS'
-gui_window::contxt_out::tab:
-    win_title:                'Export Word-Context Matrix: Tab Delimited'
-gui_window::txt_pickup:
-    win_title:                'Extract Partial Text'
-    headings:                 'Extract Headings'
-    headings_name:            '  '
-    codes:                    'Extract Documents with Specific Code'
-    unit:                     'Coding unit'
-    higher:                   'Include higher level headings'
-    error_no_headings:        'Please select at least 1 headings'
-    saving:                   'Extract Partial Text: Save as'
-gui_window::txt_html2csv:
-    win_title:                'Convert to CSV'
-    unit:                     'Which unit should be considered as row/case of CSV'
-    select:                   'Selection:'
-    saving:                   'Save CSV file as'
-gui_window::outvar_read:
-    unit:                     'Unit of Variables:'
-    no_such_file:             'Error: Could not find the file!'
-gui_window::outvar_read::csv:
-    open:                     'Select the file that contains variables'
-    csv:                      'CSV File:'
-    win_title:                'Read variables from the CSV file'
-gui_window::outvar_read::tab:
-    tabdelf:                  'Tab Delimited File'
-    open:                     'Select the file that contains variables'
-    tabdel:                   'Tab Delimited File'
-    win_title:                'Read variables from the Tab Delimited file'
-gui_window::outvar_list:
-    win_title:                'List of Variables & Headings'
-    headings:                 'Heading'
-    vars:                     'Variables'
-    h_unit:                   'unit'
-    h_name:                   'variable'
-    del:                      'Delete'
-    export:                   'Export'
-    read:                     '*Import'
-    csv:                      'CSV File'
-    tabdel:                   'Tab Delimited'
-    values:                   'Values & Value labels: '
-    h_value:                  'value'
-    h_label:                  'label'
-    h_freq:                   'frequency'
-    save:                     'Save labels'
-    docs:                     'Documents'
-    words:                    '*Words'
-    selected:                 'selected value'
-    catalogue_xls:            'catalogue: Excel'
-    catalogue_csv:            'catalogue: CSV'
-    help_words:               "Search distinctive words of the value.\n[Shift + DoubleClick]"
-    unit:                     'Unit:'
-    help_docs:                "Search documents with the selected value\n[DoubleClick]"
-    error_sel_a_var:          'Error: Please select a variable.'
-    mspgoth:                  'MS PGothic'
-    error_sel_a_vv:           'Error: Please select a variable and a value.'
-    error_hd1:                "Cannot delete headings.\nPlease directly modify the target file."
-    del_ok:                   'Delete selected variables?'
-    error_units:              'Cannot export variables with multiple units.'
-    error_hd2:                'Cannot export headings.\nPlease consider using "Extract Partial Text" command'
-    saving:                   'Save variables as'
-gui_window::hukugo:
-    win_title:                'Word Clusters: ChaSen'
-    run:                      'Run'
-    h_huku:                   'cluster'
-    h_freq:                   'frequency'
-    whole:                    'Whole list'
-gui_window::use_te:
-    win_title:                'Copyright of TermExtract'
-    desc:                     'TermExtract will be utilized in this function.'
-    web:                      'Web page of TermExtract:'
-    about:                    'About TermExtract:'
-gui_window::use_te_g:
-    win_title:                'Word Clusters: TermExtract'
-    run:                      'Run'
-    h_hukugo:                 'cluster'
-    h_score:                  'score'
-gui_window::bayes_learn:
-    win_title:                'Build a Model from a variable (use a variable as training data)'
-    add2exists:               'Append current result to existing model file'
-    cr_validate:              'Perform cross-validation'
-    savelog:                  'Save classification log'
-    savecls:                  'Save classification result as a variable'
-    vname:                    'Variable:'
-    error_f20:                'Error: please specify from 2 to 20 as the Fold number'
-    error_var:                'Error: please select a variable.'
-    error_exists:             'Error: the variable already exists'
-    select_exist:             'Select the model file to append'
-    saving_new:               'Saving the model as'
-    saving_log:               'Saving the classification log as'
-    error_no_words:           'Error: No available words in current settings.'
-    done:                     'The model build is complete.'
-    docs:                     'Number of documents used as training data:'
-    docs_total:               'Total number of documents:'
-    accuracy:                 'Accuracy:'
-    verb4wid:                 ''
-gui_widget::words_bayes:
-    unit:                     'Classification unit:'
-    var:                      'Variable:'
-    n_a:                      'not available'
-gui_window::bayes_view_knb:
-    win_title:                'View a Model File:'
-    n_docs:                   'Processed documents:'
-    n_types:                  ' Types of Words:'
-    search:                   'Search'
-    whole:                    'Whole list'
-    variance:                 Variance
-kh_nbayes::cv_predict:
-    cross_validation:         '(cross validation)'
-kh_nbayes::Util:
-    prior:                    '[prior probability]'
-gui_window::bayes_predict:
-    win_title:                'Classify documents using a model file'
-    unit:                     'Classification unit:'
-    model_file:               'Model file:'
-    var_name:                 'Variable name:'
-    var_desc:                 '    * Classification result will be saved as a variable.'
-    save_log:                 'Save classification details to a log file'
-    opening_model:            'Opening a model file...'
-    er_no_such_file:          'Error: please specify a correct file name.'
-    er_specify_name:          'Error: please specify a varible name.'
-    er_exists:                'Error: the variable already exists.'
-    saving_log:               'Saving classification details as:'
-gui_window::bayes_view_log:
-    win_title:                'Classification details file:'
-    model_file:               'Model file:'
-    saved_var:                ' Saved variable:'
-    unit:                     ' Classification unit:'
-    doc_id:                   ' Doc No.'
-    search_words:             'Search words:'
-    class:                    'class:'
-    higher_left:              ' * Higher scores are placed towards the left.'
-    word:                     'words'
-    freq:                     'frequency'
-    variance:                 'variance'
-    run:                      'run'
-kh_nbayes:
-    classified_as:            'classified as'
-    classs:                   'class'
-    correct_insts:            'Correctly Classified Instances'
-    kappa:                    'Kappa statistic: '
-kh_project:
-    no_target_file:           'Cannot find the target file'
-kh_projects:
-    already_registered:       'The file is already registered as a project'
-gui_errormsg::file:
-    could_not_open_the_file:  "Could not open the file.\nKH Coder will exit now.\n* "
-kh_cod:
-    not_coding_rules:         'The selected file does not look like a coding rule file'
-    redefined:                " code is redefined.\nPlease change the name of the code."
-kh_r_plot:
-    illegal_plot_size:        'Illegal plot size'
-    faliled_in_plotting:      "Failed in plotting with R\n\n"
-mysql_ready:
-    error_in_mysql_bunr:      "Something wrong with the database: bun_r table\nKH Coder will exit now"
-    too_long_sentence:        "Error: there are too long sentences. ( > 65535 )\nKH Coder will exit now."
-kh_cod::a_code:
-    syntax_error:             "Syntax error in the coding rule:"
-kh_cod::a_code::atom::code:
-    no_code_error:            "Syntax error. Can not find the code: "
-mysql_outvar::read:
-    records_error:            "Number of records does not much.\nAborting the process."
-    midashi_error:            'Cannot use "Heading1" - "Headings5" as the name of the variable.'
-    overwrite_vars:           "The varible with the same name already exists.\nOver wright?\n\n"
-mysql_ready::dump:
-    too_long_word1:            "There are too long words. ( > 128 )\n\nKH Coder recognize the first 128 characters only.\nThe words are recorded in the following file: \n"
-    too_long_word2:            "Click OK to continue the pre-processing."
-mysql_getheader:
-    error:                     "Failed to process documents.\n\nThere may be incorrect use of H1 - H5 tags in the target file.\nPlease try the \"Check the Target File\" command."
-gui_window::r_plot::doc_cls:
-    win_title:                 "Dendrogram of Documents"
-gui_window::r_plot_opt::doc_cls:
-    doc_label:                 "Case Label:"
-    number:                    "No."
-    heading:                   "Heading"
-    win_title:                 "Configure: Dendrogram of Documents"
-mysql_ready::check:
-    error:                     "Data integrity lost: "
-gui_window::r_plot::cod_mat:
-    win_title:                 "Crosstab Map"
-    heat:                      "heat"
-    fluc:                      "bubble"
-gui_window::r_plot::tpc_mat:
-    win_title:                 "Topic Proportion Map"
-    heat:                      "heat"
-    fluc:                      "bubble"
-gui_window::r_plot_opt::cod_mat:
-    win_title:                 "Configure: Crosstab Plots"
-    cellnote:                  "Display percentages"
-    dendro_c:                  "Cluster codes"
-    dendro_v:                  "Cluster variables or headings"
-    bubble_size:               "Size of bubbles: "
-    plot_size_heat:            "Plot size, height:"
-    plot_size_mapw:            "Plot size, width:"
-    plot_size_maph:            "  height:"
-    bubble_shape:              "Shape of bubbles: "
-    square:                    "square"
-    circle:                    "circle"
-    common:                    "common settings"
-    select_1:                  "Please select at least 1 code"
-    color_rsd:                 "Visualize standardized residuals by color"
-    col1:                      "Color"
-    col2:                      "Color (CM)"
-    gray:                      "Gray"
-    color_fix:                 "Fixed color scale: "
-gui_window::r_plot::cod_mat_line:
-    win_title:                 "Line Chart"
-gui_window::r_plot_opt::cod_mat_line:
-    win_title:                 "Configure: Line Chart"
-gui_window::import_folder:
-    win_title:                 "Import: multiple texts in a folder"
-    description:               "Unify all document files in a folder and creat a project"
-    folder:                    "Folder: "
-    level:                     "Heading level of filenames:"
-    conv:                      'convert "<" and ">" in the data to white space'
-    auto:                      "Auto Detect"
-    auto_jp:                   "Auto Detect (Japanese)"
-    unicode:                   "Unicode（UTF-8）"
-    char_code:                 "Encoding of files: "
-    unified:                   "Unified file: "
-    change:                    "Change"
-    browse_unified:            "Please enter a name for the unified text file"
-    opt_unify:                 "Unify documents"
-    opt_project:               "New project"
-gui_window::topic_fitting:
-    win_title:                 "Fit a Topic Model"
-    opt:                       "Topic Model (LDA) Options"
-    n_topics:                  "N of Topics: "
-gui_window::topic_perplexity:
-    opt:                       Method and Number of topics
-    win_title:                 Find Optimal Number of Topics
-    candidates:                "N of Topics: "
-    folds:                     "Fold: "
-    method:                    "Method: "
-    error_terms_topics:        "When you choose ldatuning, number of selected words should be larger than maximum number of topics"
-gui_window::topic_result:
-    win_title:                 Result of Topic Model
-    extended:                  "prob."
-    words:                     "Words: "
-    export:                    "*Export"
-    topic_term:                Topic-Word Matrix
-    doc_topic:                 Document-Topic Matrix
-    topic_prop:                " Topic proportion:"
-    stats_table:               Table
-    plot:                      Map
-gui_window::topic_stats:
-    win_title:                 Topic Proportion Table
-    var:                       Tabulation:
-screen_code::rde_menu:
-    plugin_raw_data_editor:    "Edit Data"
-    err_not_exist:             "Projectdata don't exist."
-    err_output_from_db:        "Projectdata cannot output from database."
-    err_edit:                  "Projectdata cannot edit."
-screen_code::rde_newproject_button:
-    plugin_raw_data_editor:    "Edit File"
 screen_code::assistant:
-    use_plugin:                "use plugin"
-    cross_map_label:           "use plugin:"
-    corresp_rad:               "  origin range:"
-    corresp_ang:               "  variable range:"
-    corresp_drop_menu1:        "narrow"
-    corresp_drop_menu2:        "slightly narrower"
-    corresp_drop_menu3:        "normal"
-    corresp_drop_menu4:        "slightly wider"
-    corresp_drop_menu5:        "wide"
-    dialog_ok:                 "OK"
-    dialog_yes:                "Yes"
-    dialog_no:                 "No"
-    dialog_cancel:             "Cancel"
-    dialog_use_plugin:         "Enable NegationChecker"
-    label_use_plugin:          "NegationChecker "
-    label_enable:              "Enable  "
-    label_disable:             "Disable  "
-    plugin_synonym:            "《M》 Synonym"
-    KWIC_button:               "《M》 KWIC "
-    KWIC_button2:              "《M》 KWIC*"
-    KWIC_label:                "《M》 "
+    KWIC_button:              '《M》 KWIC '
+    KWIC_button2:             《M》 KWIC*
+    KWIC_label:               '《M》 '
+    corresp_ang:              '  variable range:'
+    corresp_drop_menu1:       narrow
+    corresp_drop_menu2:       slightly narrower
+    corresp_drop_menu3:       normal
+    corresp_drop_menu4:       slightly wider
+    corresp_drop_menu5:       wide
+    corresp_rad:              '  origin range:'
+    cross_map_label:          'use plugin:'
+    dialog_cancel:            Cancel
+    dialog_no:                No
+    dialog_ok:                OK
+    dialog_use_plugin:        Enable NegationChecker
+    dialog_yes:               Yes
+    label_disable:            'Disable  '
+    label_enable:             'Enable  '
+    label_use_plugin:         'NegationChecker '
+    plugin_synonym:           《M》 Synonym
+    use_plugin:               use plugin
+screen_code::rde_menu:
+    err_edit:                 Projectdata cannot edit.
+    err_not_exist:            Projectdata don't exist.
+    err_output_from_db:       Projectdata cannot output from database.
+    plugin_raw_data_editor:   Edit Data
+screen_code::rde_newproject_button:
+    plugin_raw_data_editor:   Edit File

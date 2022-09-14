@@ -123,7 +123,7 @@ gui_widget::r_net:
     fix_lab:                  Éviter le chevauchement des étiquettes
     gray_scale:               Niveau de gris
     line_width:               'Largeur de ligne: edge'
-    line_width_n:             'nœud'
+    line_width_n:             nœud
     min_sp_tree:              Mettre en surbrillance l'arbre couvrant minimum
     min_sp_tree_only:         Dessiner l'arbre couvrant minimum uniquement
     or_more:                  ''

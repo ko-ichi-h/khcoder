@@ -59,4 +59,34 @@ foreach my $j (@chk){
 	
 	# check
 	my $msg_ch = LoadFile('../config/'.$j) or die;
+	print '../config/'.$j."\n";
+}
+
+# Format JP and EN files
+DumpFile('../config/msg.jp', $msg_jp) or die;
+DumpFile('../config/msg.en', $msg_en) or die;
+
+foreach my $j ('msg.jp', 'msg.en'){
+	# formatting
+	my $t;
+	open (my $fh, '<:utf8', '../config/'.$j) or die;
+	while ( <$fh> ){
+		if ($_ =~ /^    (\S+): (.+)\n/ ){
+			my $n = 30 - (4 + 1);
+			$n -= length($1);
+			$n = 1 if $n < 1 ;
+			$t .= "    $1:".' ' x $n."$2\n";
+		} else {
+			$t .= $_;
+		}
+	}
+	close ($fh);
+	
+	open (my $fho, '>:utf8', '../config/'.$j) or die;
+	print $fho $t;
+	close ($fho);
+	
+	# check
+	my $msg_ch = LoadFile('../config/'.$j) or die;
+	print '../config/'.$j."\n";
 }
