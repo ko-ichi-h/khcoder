@@ -280,6 +280,12 @@ sub _new{
 		-command => sub{$self->calc;}
 	)->pack(-side => 'right', -pady => 2, -anchor => 'se')->focus;
 
+	#SCREEN Plugin
+	use screen_code::batch_plugin;
+	&screen_code::batch_plugin::add_button_batch($self,$rf);
+	#SCREEN Plugin
+
+	
 	$self->_settings_load;
 	$self->sampling_config;
 	return $self;

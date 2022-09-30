@@ -12,6 +12,11 @@ my $synonym_name = File::Spec->catfile('screen', 'MonkinSynonym', 'MonkinSynonym
 my $KWIC_main_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinKWIC.exe');
 my $KWIC_sub_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinSendClient.exe');
 my $KWIC_pl_name = File::Spec->catfile('screen', 'MonkinKWIC', 'do_plugin.bat');
+my $WC_name = File::Spec->catfile('screen', 'MonkinWordCloud', 'MonkinWordCloud.exe');
+my $batch_name = File::Spec->catfile('screen', 'MonkinBatch', 'MonkinBatch.exe');
+my $batch_HTML_name = File::Spec->catfile('screen', 'MonkinBatch');
+my $batch_dummy_name = File::Spec->catfile('screen', 'MonkinBatch', 'dummy.png');
+my $batch_js_name = File::Spec->catfile('screen', 'MonkinBatch', 'js');
 my $inifile_name = File::Spec->catfile('screen', 'plugin.ini');
 
 sub rde_path{
@@ -21,6 +26,7 @@ sub rde_path{
 sub assistant_path{
 	return encoding($assistant_name);
 }
+
 
 sub negationchecker_path{
 	return encoding($negationchecker_name);
@@ -40,6 +46,25 @@ sub KWIC_sub_path{
 
 sub KWIC_pl_path{
 	return encoding($KWIC_pl_name);
+}
+
+sub WC_path{
+	return encoding($WC_name);
+}
+
+sub batch_path{
+	return encoding($batch_name);
+}
+sub batch_HTML_path{
+	return encoding($batch_HTML_name);
+}
+
+sub batch_dummy_path{
+	return encoding($batch_dummy_name);
+}
+
+sub batch_js_path{
+	return encoding($batch_js_name);
 }
 
 #System関数に渡す時にOSによって文字コードを変える必要がある
