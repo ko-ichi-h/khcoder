@@ -1302,7 +1302,7 @@ screen_code::assistant:
     p_value:                  有意確率
     plugin_synonym:           《文錦》 表記ゆれ＆同義語
     use_plugin:               《文錦》 による結果表示
-    batch_plugin:              "《文錦》バッチ実行"
+    batch_plugin:              "《文錦》 バッチ実行"
     batch_wait:                "分析処理実行中…"
 screen_code::rde_menu:
     err_edit:                 |-
