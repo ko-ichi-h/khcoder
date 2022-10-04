@@ -148,19 +148,39 @@ sub batch_calc_test{
 
 
 sub add_button_batch{
-	if (1) {
+	if (
+		   ($::config_obj->os       eq 'win32')
+		&& ($::config_obj->msg_lang eq 'jp'   )
+	) {
 		my $self = shift;
 		my $rf = shift;
-		$parent_win_obj = $self->{win_obj};
-		
-		mkpath('screen/temp');
-		
-		$rf->Button(
-			-text => kh_msg->get('screen_code::assistant->batch_plugin'),
-			-width => 12,
-			-font => "TKFN",
-			-command => sub{&batch_calc($self);}
-		)->pack(-side => 'right', -pady => 2,  -padx => 30, -anchor => 'se');
+		if (-f &screen_code::plugin_path::batch_path) {
+			$parent_win_obj = $self->{win_obj};
+			
+			mkpath('screen/temp');
+			
+			$rf->Label(
+				-text => ' ',
+				-font => "TKFN",
+			)->pack(-side => 'right', -pady => 2,  -padx => 10, -anchor => 'se');
+			$rf->Button(
+				-text => kh_msg->get('screen_code::assistant->batch_plugin'),
+				-width => 12,
+				-font => "TKFN",
+				-command => sub{&batch_calc($self);}
+			)->pack(-side => 'right', -pady => 2,  -padx => 2, -anchor => 'se');
+		} else {
+			$rf->Label(
+				-text => ' ',
+				-font => "TKFN",
+			)->pack(-side => 'right', -pady => 2,  -padx => 10, -anchor => 'se');
+			$rf->Button(
+				-text => kh_msg->get('screen_code::assistant->batch_plugin2'),
+				-width => 14,
+				-font => "TKFN",
+				-command => sub{gui_OtherWin->open('http://khcoder.net/scr_monkin.html');}
+			)->pack(-side => 'right', -pady => 2,  -padx => 2, -anchor => 'se');
+		}
 	}
 }
 
