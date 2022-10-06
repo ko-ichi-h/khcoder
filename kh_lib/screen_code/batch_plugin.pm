@@ -148,19 +148,40 @@ sub batch_calc_test{
 
 
 sub add_button_batch{
-	if (1) {
+	if (
+		   ($::config_obj->os       eq 'win32')
+		&& ($::config_obj->msg_lang eq 'jp'   )
+	) {
 		my $self = shift;
 		my $rf = shift;
-		$parent_win_obj = $self->{win_obj};
-		
-		mkpath('screen/temp');
-		
-		$rf->Button(
-			-text => kh_msg->get('screen_code::assistant->batch_plugin'),
-			-width => 12,
-			-font => "TKFN",
-			-command => sub{&batch_calc($self);}
-		)->pack(-side => 'right', -pady => 2,  -padx => 30, -anchor => 'se');
+		if (-f &screen_code::plugin_path::batch_path) {
+			$parent_win_obj = $self->{win_obj};
+			
+			mkpath('screen/temp');
+			
+			$rf->Label(
+				-text => ' ',
+				-font => "TKFN",
+			)->pack(-side => 'right', -pady => 2,  -padx => 10, -anchor => 'se');
+			$rf->Button(
+				-text => kh_msg->get('screen_code::assistant->batch_plugin'),
+				-width => 12,
+				-font => "TKFN",
+				-command => sub{
+				&batch_calc($self);}
+			)->pack(-side => 'right', -pady => 2,  -padx => 2, -anchor => 'se');
+		} else {
+			$rf->Label(
+				-text => ' ',
+				-font => "TKFN",
+			)->pack(-side => 'right', -pady => 2,  -padx => 10, -anchor => 'se');
+			$rf->Button(
+				-text => kh_msg->get('screen_code::assistant->batch_plugin2'),
+				-width => 14,
+				-font => "TKFN",
+				-command => sub{gui_OtherWin->open('http://khcoder.net/scr_monkin.html');}
+			)->pack(-side => 'right', -pady => 2,  -padx => 2, -anchor => 'se');
+		}
 	}
 }
 
@@ -351,14 +372,14 @@ sub r_code_replace{
 sub r_new_replace{
 	my $class = shift;
 	my %args = @_;
-	print "r_new_replace start\n";
+	#print "r_new_replace start\n";
 	
 	my $use_option_table = 0;
 	if (exists($obj{'match_str'}) && exists($obj{'replace_str'}) && $obj{'display_option'} && !$obj{'do_other_expand'}) {
-		print "match_str=".$obj{'match_str'}." replace_str=".$obj{'replace_str'}." display_option=".$obj{'display_option'}." \n\n";
+		#print "match_str=".$obj{'match_str'}." replace_str=".$obj{'replace_str'}." display_option=".$obj{'display_option'}." \n\n";
 		$use_option_table = 1;
 	}
-	print "use_option_table $use_option_table\n";
+	#print "use_option_table $use_option_table\n";
 	$args{width}  = $::config_obj->plot_size_codes unless defined($args{width});
 	$args{height} = $::config_obj->plot_size_codes unless defined($args{height});
 	#print $args{height}." height \n";
@@ -1110,16 +1131,16 @@ sub batch_calc{
 					}
 				} elsif ($cls_num eq 'Auto') {
 					&cluster_R_test($self, 1);
-					print "cls_num=Auto defalut=".$obj{'default_cls'}."\n";
-					set_entry($self, 'クラスター数', $obj{'default_cls'}, 'cls_obj->entry_cluster_number');
-						my $temps = $obj{'batch_setting_description_for_HTML'}[$obj{'count'}];
-						$temps =~ s/Auto/$obj{'default_cls'}/;
-						$obj{'batch_setting_description_for_HTML'}[$obj{'count'}] = $temps;
-						print "$temps\n";
-						$temps = $obj{'plugin_setting_description_for_HTML'}[$obj{'count'}];
-						$temps =~ s/Auto/$obj{'default_cls'}/;
-						$obj{'plugin_setting_description_for_HTML'}[$obj{'count'}] = $temps;
-						print "$temps\n";
+					#print "cls_num=Auto defalut=".$obj{'default_cls'}."\n";
+					set_entry($self, 'クラスター数', $obj{'default_cls'}, 'cls_obj->entry_cluster_number', 1);
+					my $temps = $obj{'batch_setting_description_for_HTML'}[$obj{'count'}];
+					$temps =~ s/Auto/$obj{'default_cls'}/;
+					$obj{'batch_setting_description_for_HTML'}[$obj{'count'}] = $temps;
+					#print "$temps\n";
+					$temps = $obj{'plugin_setting_description_for_HTML'}[$obj{'count'}];
+					$temps =~ s/Auto/$obj{'default_cls'}/;
+					$obj{'plugin_setting_description_for_HTML'}[$obj{'count'}] = $temps;
+					#print "$temps\n";
 					#$obj{'setting_description_hash'}->{'クラスター数'} = $obj{'default_cls'};
 				}
 			}
@@ -1416,7 +1437,7 @@ sub batch_calc{
 	print $HTML $HTML_string;
 	close($HTML);
 	
-	system(encode("cp932",$obj{'HTML_file_path'}));
+	system("START ".encode("cp932",$obj{'HTML_file_path'}));
 	
 	
 	#オブジェクトをリセット
@@ -1762,7 +1783,7 @@ sub set_entry{
 	my $hashRef = get_target_ref($self, $hashStr);
 	
 	#最初の一回は元の値を保存
-	if (!exists($obj{'original_setting'}{$key})) {
+	if (!exists($obj{'original_setting'}{$key}) && $ignore_add_whole_setting == 0) {
 		my $origin_val = $hashRef->get;
 		#print "register new original_setting to $key val=".$origin_val."\n";
     	$obj{'original_setting'}{$key} = $hashRef->get;
@@ -1867,7 +1888,6 @@ sub checked_hinshi_word{
 
 #品詞設定は複雑だが、品詞設定コントロールクラスが持つ、チェックされた品詞一覧を返すメソッドを置き換えることで対応可能か
 sub set_hinshi{
-
 	#品詞選択メソッドの一時置き換え
 	unless ($default_hinshi_method) {
 		$default_hinshi_method = \&gui_widget::hinshi::selected;
@@ -1922,7 +1942,7 @@ sub set_hinshi{
 		$obj{'whole_setting_hash'}{$key} = '可変';
 	}
 
-	
+	@hinshi_list = ();
 	#品詞名から番号に置き換える
 	foreach my $hinshi_name (@hinshi_name_list) {
 		if (exists($hinshi_table{$hinshi_name})) {
