@@ -4,6 +4,10 @@ use utf8;
 
 use screen_code::plugin_path;
 use gui_widget::hinshi;
+use screen_code::batch_plugin::word_netgraph;
+use screen_code::batch_plugin::word_cls;
+use screen_code::batch_plugin::word_mds;
+use screen_code::batch_plugin::word_corresp;
 
 #use encoding "cp932";
 use gui_window::main::menu;
