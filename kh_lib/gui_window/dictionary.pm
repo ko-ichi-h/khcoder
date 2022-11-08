@@ -387,6 +387,22 @@ sub unselect{
 sub save{
 	my $self = shift;
 
+	# fool proof
+	if ($self->config->hinshi_list){
+		my $count_pos = 0;
+		foreach my $i ( @{$self->{checks}} ){
+			++$count_pos if $i;
+		}
+		unless ($count_pos){
+			gui_errormsg->open(
+				msg    => kh_msg->get('no_pos_selected'),
+				type   => 'msg',
+				window => \$self->{win_obj},
+			);
+			return 0;
+		}
+	}
+
 	# ¶¯À©Ãê½Ğ
 	my @mark; my %check;
 	my $t = $self->t1->get("1.0","end");

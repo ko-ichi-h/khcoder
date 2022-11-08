@@ -344,6 +344,7 @@ gui_window::dictionary:
     file_error:               'The specified file does not exist:'
     force_ignore:             'Force ignore following words:'
     force_pick:               'Pick up following strings as words:'
+    no_pos_selected:          "No POS is selected. \nPlease select at least one POS."
     note1:                    |-
         (*) Changes in "force pick up" will take effect when
         you invoke the "Run Preprocessing" command (again).

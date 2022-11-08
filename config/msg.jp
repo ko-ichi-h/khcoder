@@ -344,6 +344,7 @@ gui_window::dictionary:
     file_error:               指定されたファイルが存在しません：
     force_ignore:             使用しない語の指定：
     force_pick:               強制抽出する語の指定：
+    no_pos_selected:          "品詞が1つも選択されていません。\n品詞を1つ以上選択して下さい。"
     note1:                    |-
         (*) 「強制抽出する語」の指定は、再度
             前処理を行うまで反映されません。

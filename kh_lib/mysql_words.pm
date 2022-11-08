@@ -912,7 +912,7 @@ sub num_kinds{
 		$sql .= "khhinshi_id=$i->[1]\n";
 		++$n;
 	}
-	$sql .= " 1 " unless $n;
+	$sql .= " 0 " unless $n;
 	$sql .= " )";
 	return mysql_exec->select($sql,1)->hundle->fetch->[0];
 }
@@ -932,9 +932,11 @@ sub num{
 		$sql .= "khhinshi_id=$i->[1]\n";
 		++$n;
 	}
-	$sql .= " 1 " unless $n;
+	$sql .= " 0 " unless $n;
 	$sql .= " )";
-	return mysql_exec->select($sql,1)->hundle->fetch->[0];
+	my $r = mysql_exec->select($sql,1)->hundle->fetch->[0];
+	$r = 0 unless length($r);
+	return $r;
 }
 sub num_kinds_all{
 	return mysql_exec                   # HTMLおよび幽霊を除く単語種類数を返す
