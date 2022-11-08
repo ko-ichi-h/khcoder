@@ -113,9 +113,22 @@ sub save{
 	#$gui_window::word_search::filter->{limit}   = $self->gui_jgn( $self->{ent_limit}->get );
 
 	my %selected;
+	my $count_pos = 0;
 	foreach my $i (@{$self->{hinshi_obj}->selected}){
 		$selected{$i} = 1;
+		++$count_pos;
 	}
+	
+	# fool proof
+	unless ($count_pos){
+		gui_errormsg->open(
+			msg    => kh_msg->get('gui_window::dictionary->no_pos_selected'),
+			type   => 'msg',
+			window => \$self->{win_obj},
+		);
+		return 0;
+	}
+	
 	foreach my $i (keys %{$gui_window::word_search::filter->{hinshi}}){
 			$gui_window::word_search::filter->{hinshi}{$i} = $selected{$i};
 	}
