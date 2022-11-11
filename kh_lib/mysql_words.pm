@@ -75,6 +75,7 @@ sub search{
 				++$n;
 			}
 		}
+		$sql .= ' 0 ' unless $n;
 		$sql .= "\t)\n";
 	}
 	
