@@ -1721,6 +1721,7 @@ sub rowtxt{
 						type => 'msg',
 						msg  => kh_msg->get('too_long_sentence') # "Error: there are too long sentences. ( > 65535 )\nKH Coder will exit now."
 					);
+					print "The too long sentence: $temp\n";
 					exit;
 				}
 				unless ($last + 1 == $i->[0]){
