@@ -111,7 +111,8 @@ sub read_file_mk{
 		}
 		
 		my @words;
-		open (SOURCE, "<:encoding($icode)", $self->{words_mk_file}) or
+		use File::BOM;
+		File::BOM::open_bom (SOURCE, $self->{words_mk_file}, ":encoding($icode)" ) or 
 			gui_errormsg->open(
 				type => 'file',
 				thefile => $self->{words_mk_file}
@@ -148,7 +149,8 @@ sub read_file_st{
 		}
 
 		my @words;
-		open (SOURCE, "<:encoding($icode)", $self->{words_st_file}) or
+		use File::BOM;
+		File::BOM::open_bom (SOURCE, $self->{words_st_file}, ":encoding($icode)" ) or 
 			gui_errormsg->open(
 				type => 'file',
 				thefile => $self->{words_st_file}
