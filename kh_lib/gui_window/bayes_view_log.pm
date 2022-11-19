@@ -178,6 +178,16 @@ sub start{
 		$tani
 	);
 	$self->{entry_tani}->configure(-state => 'disable');
+	
+	$self->{bun_sq_2_id} = undef;
+	$self->{bun_id_2_sq} = undef;
+	if ( $self->{log_obj}{tani} eq 'bun') {
+		my $h = mysql_exec->select("SELECT id, seq FROM bun",1)->hundle;
+		while (my $i = $h->fetch) {
+			$self->{bun_id_2_sq}{$i->[0]} = $i->[1];
+			$self->{bun_sq_2_id}{$i->[1]} = $i->[0];
+		}
+	}
 
 	# ログファイル名
 	my $fl = $::config_obj->uni_path($self->{path});
@@ -191,6 +201,12 @@ sub start{
 		$self->{current} = $::main_gui->get('w_doc_view')->{doc_id};
 	} else {
 		$self->{current} = 1;
+		
+		# modify sentence id number
+		if ( $self->{log_obj}{tani} eq 'bun'){
+			#print "modify 4: $self->{current}, $self->{bun_sq_2_id}{$self->{current}}\n";
+			$self->{current} = $self->{bun_sq_2_id}{$self->{current}};
+		}
 	}
 	
 	$self->view;
@@ -208,7 +224,14 @@ sub from_doc_view{
 	
 	if ($tani eq  $self->{log_obj}{tani}){
 		$self->{entry_dno}->delete(0,'end');
-		$self->{entry_dno}->insert(0,$id);
+		
+		# modify sentence id number
+		my $id_4_print = $id;
+		if ( $self->{log_obj}{tani} eq 'bun'){
+			#print "modify 1: $id_4_print, $self->{bun_id_2_sq}{$id_4_print}\n";
+			$id_4_print = $self->{bun_id_2_sq}{$id_4_print};
+		}
+		$self->{entry_dno}->insert(0,$id_4_print);
 	
 		$self->{current} = $id;
 		$self->view;
@@ -219,6 +242,13 @@ sub from_doc_view{
 sub select_doc{
 	my $self = shift;
 	my $doc = $self->gui_jg( $self->{entry_dno}->get );
+	
+	# modify sentence id number
+	if ( $self->{log_obj}{tani} eq 'bun'){
+		#print "modify 3: $doc, $self->{bun_sq_2_id}{$doc}\n";
+		$doc = $self->{bun_sq_2_id}{$doc};
+	}
+	
 	$self->{current} = $doc;
 	$self->view;
 	return $self;
@@ -246,7 +276,14 @@ sub view{
 		
 		# 文書番号の表示
 		$self->{entry_dno}->delete(0,'end');
-		$self->{entry_dno}->insert(0, $self->{current});
+		
+		# modify sentence id number
+		my $id_4_print = $self->{current};
+		if ( $self->{log_obj}{tani} eq 'bun'){
+			#print "modify 2: $id_4_print, $self->{bun_id_2_sq}{$id_4_print}\n";
+			$id_4_print = $self->{bun_id_2_sq}{$id_4_print};
+		}
+		$self->{entry_dno}->insert(0, $id_4_print);
 		
 		# スコアの表示
 		$self->{frame_scores_a}->destroy if $self->{frame_scores_a};
@@ -343,7 +380,7 @@ sub view{
 		-selectbackground   => $::config_obj->color_ListHL_back,
 		-selectmode         => 'extended',
 		-height             => 10,
-		-width              => $width,
+		#-width              => $width,
 		-borderwidth        => 0,
 		-highlightthickness => 0,
 	);

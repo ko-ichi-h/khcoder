@@ -200,7 +200,7 @@ sub view{
 		-selectbackground   => $::config_obj->color_ListHL_back,
 		-selectmode         => 'extended',
 		-height             => 10,
-		-width              => $width,
+		#-width              => $width,
 		-borderwidth        => 0,
 		-highlightthickness => 0,
 	);
