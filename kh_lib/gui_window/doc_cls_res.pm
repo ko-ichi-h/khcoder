@@ -324,6 +324,16 @@ sub renew{
 	
 	# データの読み込み
 	if ($self->{merge_files}){
+		
+		# modify sentence id number (1)
+		my $bun_id_2_seq;
+		if ( $self->{tani} eq 'bun' ){
+			my $h = mysql_exec->select("SELECT id, seq FROM bun",1)->hundle;
+			while (my $i = $h->fetch) {
+				$bun_id_2_seq->{$i->[0]} = $i->[1];
+			}
+		}
+		
 		open (MERGE,$self->{merge_files}{'_cluster_tmp'}) or
 			gui_errormsg->open(
 				type => 'file',
@@ -333,7 +343,19 @@ sub renew{
 		my $merge;
 		while (<MERGE>){
 			chomp;
-			push @{$merge}, [split /,/, $_ ];
+			my @c = split /,/, $_;
+			
+			# modify sentence id number (2)
+			if ( $self->{tani} eq 'bun' ){
+				if ($c[1] < 0) {
+					$c[1] = $bun_id_2_seq->{$c[1] * -1} * -1;
+				}
+				if ($c[2] < 0) {
+					$c[2] = $bun_id_2_seq->{$c[2] * -1} * -1;
+				}
+			}
+			
+			push @{$merge}, \@c;
 		}
 		close (MERGE);
 		$self->{merge} = $merge;
