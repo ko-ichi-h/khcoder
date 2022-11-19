@@ -1339,7 +1339,7 @@ sub batch_calc{
 	&restore_subroutine();
 	
 	#JavaScript実行用のファイルをフォルダごとコピー
-	use File::Copy::Recursive q(dircopy);\
+	use File::Copy::Recursive q(dircopy);
 	mkpath(encode("cp932", $obj{'pict_folder'}.'/js'));
 	dircopy(&screen_code::plugin_path::batch_js_path, encode("cp932", $obj{'pict_folder'}.'/js'));
 	
