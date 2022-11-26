@@ -112,17 +112,13 @@ sub read_file_mk{
 		
 		my @words;
 		use File::BOM;
-		File::BOM::open_bom (SOURCE, $self->{words_mk_file}, ":encoding($icode)" ) or 
-			gui_errormsg->open(
-				type => 'file',
-				thefile => $self->{words_mk_file}
-			)
-		;
-		while (<SOURCE>){
+		File::BOM::open_bom (my $fh, $self->{words_mk_file}, ":encoding($icode)" );
+		while (<$fh>){
 			s/\x0D|\x0A//g;
 			next unless length($_);
 			push @words, $_;
 		}
+		close ($fh);
 		$self->{markwords_act}  = \@words;
 	}
 
@@ -150,17 +146,13 @@ sub read_file_st{
 
 		my @words;
 		use File::BOM;
-		File::BOM::open_bom (SOURCE, $self->{words_st_file}, ":encoding($icode)" ) or 
-			gui_errormsg->open(
-				type => 'file',
-				thefile => $self->{words_st_file}
-			)
-		;
-		while (<SOURCE>){
+		File::BOM::open_bom (my $fh, $self->{words_st_file}, ":encoding($icode)" );
+		while (<$fh>){
 			s/\x0D|\x0A//g;
 			next unless length($_);
 			push @words, $_;
 		}
+		close ($fh);
 		$self->{stopwords_act}  = \@words;
 	}
 
