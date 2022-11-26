@@ -1,11 +1,11 @@
 package kh_about;
 
 sub version{
-	"3.Beta.06c";
+	"3.Beta.06d";
 }
 
 sub version_short{
-	"3b06c";
+	"3b06d";
 }
 
 sub current_year{
