@@ -955,6 +955,16 @@ sub make{
 				 gui_OtherWin->open('http://amzn.to/2wHFxKg');
 			},
 		);
+		if (-e 'khcoder_manual.pdf') {
+			$f->command(
+				-label => kh_msg->get('man'),
+				-font => "TKFN",
+				-command => sub {
+					gui_OtherWin->open('khcoder_manual.pdf');
+				},
+			);
+		}
+		
 	}
 
 	unless ($::config_obj->{msg_lang} eq 'jp') {
