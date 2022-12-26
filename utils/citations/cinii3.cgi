@@ -57,6 +57,11 @@ print
 	),
 	$q->end_form,
 	$q->hr,
+	
+	$q->a({href => 'cinii2.cgi'}, "CiNii・Jstage・機関リポジトリから追加"),
+	' | ',
+	$q->a({href => 'edit_bib.cgi'}, "すでに入力した文献の修正・削除"),
+	$q->p(' '),
 ;
 
 # 書誌情報の入力があった場合の検索
@@ -333,7 +338,7 @@ sub renew_bib{
 			open my $fhb, '>>', $backup or die;
 			print $fhb "\t\tDownload! Remote: $d, Local: $stat[9]\x0D\x0A";
 			close $fhb;
-			&download_bib;
+			#&download_bib;
 		}
 	} else {
 		&download_bib;
