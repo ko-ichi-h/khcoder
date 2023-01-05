@@ -90,7 +90,7 @@ sub code{
 				type => 'msg',
 				msg  =>
 					kh_msg->get('syntax_error')#"コーディング・ルールの書式に誤りがありました。\n誤りを含むコード： "
-					.$self->name."\n".$check->err
+					.$self->name
 			);
 			$error_flag = 1;
 		}
@@ -118,7 +118,7 @@ sub code{
 			kind   => $kind,
 			name   => $raw,
 			hyosos => $words,
-		);
+		) unless $error_flag;
 	}
 	
 	# キャッシュを$self->{res_table}にコピー
