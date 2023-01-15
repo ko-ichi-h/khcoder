@@ -337,6 +337,11 @@ gui_window::dictionary:
     file_error:               '지정된 파일이 존재하지 않습니다:'
     force_ignore:             '사용하지 않는 어휘 지정:'
     force_pick:               '강제로 추출할 어휘 지정:'
+    input_directly:           '***not translated*** Input directly: // 直接入力：'
+    no_pos_selected:          |-
+        ***not translated*** No POS is selected. 
+        Please select at least one POS. // 品詞が1つも選択されていません。
+        品詞を1つ以上選択して下さい。
     note1:                    (*) "강제로 추출할 어휘"의 지정은 다시 전처리를 실시할 때까지 반영되지 않습니다.
     one_line1:                (복수의 경우는 행을 나누어 구분)
     one_line2:                (복수의 경우는 행을 나누어 구분)

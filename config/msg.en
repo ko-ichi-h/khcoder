@@ -342,16 +342,19 @@ gui_window::datacheck:
     win_title:                Checking the target text
 gui_window::dictionary:
     file_error:               'The specified file does not exist:'
-    force_ignore:             'Force ignore following words:'
-    force_pick:               'Pick up following strings as words:'
-    no_pos_selected:          "No POS is selected. \nPlease select at least one POS."
+    force_ignore:             Force ignore following words
+    force_pick:               Pick up following strings as words
+    input_directly:           'Input directly:'
+    no_pos_selected:          |-
+        No POS is selected. 
+        Please select at least one POS.
     note1:                    |-
         (*) Changes in "force pick up" will take effect when
         you invoke the "Run Preprocessing" command (again).
     one_line1:                (one string in each line)
     one_line2:                (one word in each line)
-    pos:                      'Select by Parts of Speech:'
-    use_file:                 Read from a file
+    pos:                      Select by Parts of Speech
+    use_file:                 'Read from a file:'
     win_title:                Select Words to Analyze
 gui_window::doc_cls:
     fail:                     Failed to compute clusters.

@@ -346,6 +346,11 @@ gui_window::dictionary:
     file_error:               'El archivo especificado no existe:'
     force_ignore:             'Forzar omisión de las siguientes palabras:'
     force_pick:               'Identificar las siguientes cadenas como palabras:'
+    input_directly:           '***not translated*** Input directly: // 直接入力：'
+    no_pos_selected:          |-
+        ***not translated*** No POS is selected. 
+        Please select at least one POS. // 品詞が1つも選択されていません。
+        品詞を1つ以上選択して下さい。
     note1:                    |-
         (*) Los cambios en "Forzar omisión" tendrán efecto
         cuando haga click en "Ejecutar Preprocesamiento" (nuevamente).

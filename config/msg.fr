@@ -344,6 +344,11 @@ gui_window::dictionary:
     file_error:               "Le fichier indiqué n'exsiste pas:"
     force_ignore:             'Désignation des mots à ne pas utiliser:'
     force_pick:               "Désignation des mots de l'échantillonnage forcé:"
+    input_directly:           '***not translated*** Input directly: // 直接入力：'
+    no_pos_selected:          |-
+        ***not translated*** No POS is selected. 
+        Please select at least one POS. // 品詞が1つも選択されていません。
+        品詞を1つ以上選択して下さい。
     note1:                    |-
         (*) Modification"des mots de l'échantillonnage forcé" s'appliquera quand 
          vous exécutez la commande"le pré-traitement"de nouveau.

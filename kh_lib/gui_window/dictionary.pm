@@ -30,7 +30,7 @@ sub _new{
 	my $f_mark = $base->LabFrame(
 		-label =>'force pick up',
 		-labelside => 'acrosstop'
-	)->pack(-side => 'left', -expand => '1', -fill => 'both');
+	)->pack(-side => 'left', -expand => '1', -fill => 'both', -padx => 3);
 
 	my $f_stop = $base->LabFrame(
 		-label =>'force ignore',
@@ -63,25 +63,50 @@ sub _new{
 		-text => kh_msg->get('one_line1'),#$self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
-	my $t1 = $f_mark->Scrolled(
+	
+	$self->{ff_mark_check_v} = 0;
+	$f_mark->Radiobutton(
+		-text             => kh_msg->get('input_directly'), # 直接入力
+		-font             => "TKFN",
+		-variable         => \$self->{ff_mark_check_v},
+		-value            => 0,
+		-command          => sub{ $self->ff_mark_refresh; },
+	)->pack(-anchor => 'w');
+	
+	my $f_mark_input = $f_mark->Frame()->pack(-expand => 1, -fill => 'both');
+	
+	$f_mark_input->Label(
+		-text => '  ',
+	)->pack(
+		-side => 'left',
+	);
+	
+	my $t1 = $f_mark_input->Scrolled(
 		'Text',
 		-scrollbars => 'se',
 		-background => 'white',
-		-height     => 18,
+		-height     => 16,
 		-width      => 14,
 		-wrap       => 'none',
 		-font       => "TKFN",
-	)->pack(-expand => 1, -fill => 'both');
+	)->pack(-side => 'left', -expand => 1, -fill => 'both');
 
 	# ファイルからの読み込み
-	$self->{ff_mark_check} = $f_mark->Checkbutton(
-			-text     => kh_msg->get('use_file'),
-			-variable => \$self->{ff_mark_check_v},
-			-anchor => 'w',
-			-command => sub{ $self->ff_mark_refresh; },
+	$f_mark->Radiobutton(
+		-text             => kh_msg->get('use_file'), # ファイルから読み込み
+		-font             => "TKFN",
+		-variable         => \$self->{ff_mark_check_v},
+		-value            => 1,
+		-command          => sub{ $self->ff_mark_refresh; },
 	)->pack(-anchor => 'w');
 
 	my $ff_mark = $f_mark->Frame()->pack(-fill => 'x');
+
+	$ff_mark->Label(
+		-text => '  ',
+	)->pack(
+		-side => 'left',
+	);
 
 	$self->{ff_mark_button} = $ff_mark->Button(
 		-text    => kh_msg->gget('browse'),
@@ -109,10 +134,28 @@ sub _new{
 		-text => kh_msg->get('one_line2'),#$self->gui_jchar('　（複数の場合は改行で区切る）'),
 		-font => "TKFN"
 	)->pack(-anchor=>'w');
-	my $t2 = $f_stop->Scrolled(
+
+	$self->{ff_stop_check_v} = 0;
+	$f_stop->Radiobutton(
+		-text             => kh_msg->get('input_directly'), # 直接入力
+		-font             => "TKFN",
+		-variable         => \$self->{ff_stop_check_v},
+		-value            => 0,
+		-command          => sub{ $self->ff_stop_refresh; },
+	)->pack(-anchor => 'w');
+	
+	my $f_stop_input = $f_stop->Frame()->pack(-expand => 1, -fill => 'both');
+	
+	$f_stop_input->Label(
+		-text => '  ',
+	)->pack(
+		-side => 'left',
+	);
+	
+	my $t2 = $f_stop_input->Scrolled(
 		'Text',
 		-scrollbars => 'se',
-		-height     => 18,
+		-height     => 16,
 		-width      => 14,
 		-wrap       => 'none',
 		-font       => "TKFN",
@@ -120,14 +163,21 @@ sub _new{
 	)->pack(-expand => 1, -fill => 'both');
 
 	# ファイルからの読み込み
-	$self->{ff_stop_check} = $f_stop->Checkbutton(
-			-text     => kh_msg->get('use_file'),
-			-variable => \$self->{ff_stop_check_v},
-			-anchor => 'w',
-			-command => sub{ $self->ff_stop_refresh; },
+	$f_stop->Radiobutton(
+		-text             => kh_msg->get('use_file'), # ファイルから読み込み
+		-font             => "TKFN",
+		-variable         => \$self->{ff_stop_check_v},
+		-value            => 1,
+		-command          => sub{ $self->ff_stop_refresh; },
 	)->pack(-anchor => 'w');
 
 	my $ff_stop = $f_stop->Frame()->pack(-fill => 'x');
+
+	$ff_stop->Label(
+		-text => '  ',
+	)->pack(
+		-side => 'left',
+	);
 
 	$self->{ff_stop_button} = $ff_stop->Button(
 		-text    => kh_msg->gget('browse'),

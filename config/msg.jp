@@ -342,16 +342,19 @@ gui_window::datacheck:
     win_title:                テキストのチェックと修正
 gui_window::dictionary:
     file_error:               指定されたファイルが存在しません：
-    force_ignore:             使用しない語の指定：
-    force_pick:               強制抽出する語の指定：
-    no_pos_selected:          "品詞が1つも選択されていません。\n品詞を1つ以上選択して下さい。"
+    force_ignore:             使用しない語の指定
+    force_pick:               強制抽出する語の指定
+    input_directly:           直接入力：
+    no_pos_selected:          |-
+        品詞が1つも選択されていません。
+        品詞を1つ以上選択して下さい。
     note1:                    |-
         (*) 「強制抽出する語」の指定は、再度
             前処理を行うまで反映されません。
     one_line1:                （複数の場合は改行で区切る）
     one_line2:                （複数の場合は改行で区切る）
     pos:                      品詞による語の選択：
-    use_file:                 ファイルから読み込み
+    use_file:                 ファイルから読み込み：
     win_title:                分析に使用する語の取捨選択
 gui_window::doc_cls:
     fail:                     計算に失敗しました
@@ -1283,6 +1286,9 @@ screen_code::assistant:
     KWIC_button:              '《文錦》KWIC '
     KWIC_button2:             《文錦》KWIC※
     KWIC_label:               《文錦》
+    batch_plugin:             《文錦》 バッチ実行
+    batch_plugin2:            《文錦》 バッチ実行※
+    batch_wait:               分析処理実行中…
     corresp_ang:              '  変数方向'
     corresp_drop_menu1:       狭い
     corresp_drop_menu2:       やや狭い
@@ -1303,9 +1309,6 @@ screen_code::assistant:
     p_value:                  有意確率
     plugin_synonym:           《文錦》 表記ゆれ＆同義語
     use_plugin:               《文錦》 による結果表示
-    batch_plugin:              "《文錦》 バッチ実行"
-    batch_plugin2:             "《文錦》 バッチ実行※"
-    batch_wait:                "分析処理実行中…"
 screen_code::rde_menu:
     err_edit:                 |-
         プロジェクトデータの編集処理に失敗しました。

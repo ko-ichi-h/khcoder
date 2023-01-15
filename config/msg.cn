@@ -333,6 +333,7 @@ gui_window::dictionary:
     file_error:               '指定的文件不存在:'
     force_ignore:             '强制忽略以下词汇:'
     force_pick:               '提取以下字符串作为词汇:'
+    input_directly:           '***not translated*** Input directly: // 直接入力：'
     no_pos_selected:          "未选择词性(POS)。 \n请至少选择一个词性。"
     note1:                    ‘(*) "强制提取" 中的更改将在您调用 "运行预处理" 命令时（再次）生效.’
     one_line1:                (每行一个字符串，使用回车分割)
