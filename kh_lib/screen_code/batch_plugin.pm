@@ -291,7 +291,7 @@ sub r_command_method_replace{
 		my @setting_col_sorted = ();
 		
 		#順番の固定化にExcelでの列番号を利用するが、先頭の1個が空白になるためshiftで削除する必要がある
-		for my $col_name (keys $obj{'worksheet_col_hash'}) {
+		for my $col_name (keys %{$obj{'worksheet_col_hash'}}) {
 			$setting_col_sorted[$obj{'worksheet_col_hash'}->{$col_name}] = $col_name;
 		}
 		shift @setting_col_sorted;
@@ -1064,7 +1064,7 @@ sub batch_calc{
 			#品詞の設定を擬似的に元に戻す
 			@hinshi_list = @hinshi_list_original;
 			#KHCoderの元の設定を取得する
-			for my $col_name (keys $obj{'worksheet_col_hash'}) {
+			for my $col_name (keys %{$obj{'worksheet_col_hash'}}) {
 				my $hash_str = $obj{'setting_table'}->{$col_name}{'hash'};
     			eval '&get_from_window_'.$obj{'setting_table'}->{$col_name}{'type'}.'($self, $col_name, $hash_str);';
 		
@@ -1193,7 +1193,7 @@ sub batch_calc{
 			my @description_str = ();
 			my @description_str_for_HTML = ();
 			#設定を説明する文字列を作成する 順番の固定化にExcelでの列番号を利用するが、先頭の1個が空白になるためあとで削除する必要がある
-			for my $col_name (keys $obj{'worksheet_col_hash'}) {
+			for my $col_name (keys %{$obj{'worksheet_col_hash'}}) {
 				my $display_colname;
 				if (exists($obj{'display_colname_hash'}{$col_name})) {
 					$display_colname = $obj{'display_colname_hash'}{$col_name};
@@ -1282,7 +1282,7 @@ sub batch_calc{
 				}
 			}
 			
-			push $obj{'index_hash'}{$index_parent}{'subItems'}{$index_key}{'pngTitles'}, 'No.'.$obj{'pict_file_main'};
+			push @{$obj{'index_hash'}{$index_parent}{'subItems'}{$index_key}{'pngTitles'}}, 'No.'.$obj{'pict_file_main'};
 	
 			my $i = 1;
 			my $ini_path = $obj{'pict_folder'}.'/'.$obj{'sub_folder_name'}.'/'.$obj{'pict_file_main'}.'.ini';
@@ -1316,7 +1316,7 @@ sub batch_calc{
 			
 			#元の値に戻す
 			#print "start return to original_setting\n";
-			foreach my $key (keys $obj{'original_setting'}) {
+			foreach my $key (keys %{$obj{'original_setting'}}) {
 				#print " original_setting $key\n";
 				set_config($self, $key, $obj{'original_setting'}{$key});
 			}
@@ -1365,7 +1365,7 @@ sub batch_calc{
 		
 	my @whole_settings_for_HTML = ();
 	#設定を説明する文字列を作成する 順番の固定化にExcelでの列番号を利用するが、先頭の1個が空白になるためあとで削除する必要がある
-	for my $col_name (keys $obj{'whole_setting_hash'}) {
+	for my $col_name (keys %{$obj{'whole_setting_hash'}}) {
 		#if (exists($inBatchSettingHash{$col_name})) {
 		#	$whole_settings_for_HTML[$obj{'worksheet_col_hash'}->{$col_name}] = "\n".$col_name.':\'可変\'';
 		#} els
@@ -1385,7 +1385,7 @@ sub batch_calc{
 	
 	#検索対象の文字列
 	my $filter_types_string = '';
-	for my $col_name (keys $obj{'filterTypes'}) {
+	for my $col_name (keys %{$obj{'filterTypes'}}) {
 	
 		my $display_colname;
 		if (exists($obj{'display_colname_hash'}{$col_name})) {
@@ -1396,7 +1396,7 @@ sub batch_calc{
 		if ($obj{'setting_table'}->{$col_name}{'category'} eq 'numeric') {
 			$filter_types_string .= '{label:\''.$display_colname.'\',category:\'number\',comboItems:null},'."\n";
 		} else {
-			my $itemStr = join("','", keys $obj{'filterTypes'}->{$col_name});
+			my $itemStr = join("','", keys %{$obj{'filterTypes'}->{$col_name}});
 			$filter_types_string .= '{label:\''.$display_colname.'\',category:\'combo\',comboItems:[\''.$itemStr.'\']},'."\n";
 		
 		}
@@ -1417,10 +1417,10 @@ sub batch_calc{
 	
 	my $top_index_string;
 	my $png_index_string;
-	for my $index_name (keys $obj{'index_hash'}) {
+	for my $index_name (keys %{$obj{'index_hash'}}) {
 		#print "index_name=$index_name \n";
 		$top_index_string .= '{label:\''.$obj{'index_hash'}{$index_name}{'label'}.'\',subItems:[';
-		for my $sub_item_name (keys $obj{'index_hash'}{$index_name}{'subItems'}) {
+		for my $sub_item_name (keys %{$obj{'index_hash'}{$index_name}{'subItems'}}) {
 		#print "sub_item_name=$sub_item_name \n";
 			$top_index_string .= '\''.$obj{'index_hash'}{$index_name}{'subItems'}{$sub_item_name}{'id'}.'\',';
 			$png_index_string .= '{label:\''.$obj{'index_hash'}{$index_name}{'subItems'}{$sub_item_name}{'label'}.'\',';
@@ -1518,7 +1518,7 @@ sub set_header{
 	$header_format->set_border(2);
 	$header_format->set_bg_color( 'yellow' );
 	$header_format->set_bold();
-	for my $col_name (keys $obj{'worksheet_col_hash'}) {
+	for my $col_name (keys %{$obj{'worksheet_col_hash'}}) {
 		$obj{'worksheet'}->write_string(
 			1,
 			$obj{'worksheet_col_hash'}{$col_name},
