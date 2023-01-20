@@ -37,6 +37,7 @@ apt-get install -y                 \
   libxml-twig-perl                 \
   libxml2-dev                      \
   libyaml-perl                     \
+  libfile-copy-recursive-perl      \
   mecab                            \
   mysql-server                     \
   openjdk-8-jdk                    \
