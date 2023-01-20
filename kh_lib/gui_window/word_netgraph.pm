@@ -280,7 +280,7 @@ sub calc{
 
 	print '$r_command is_utf8 (1): ', utf8::is_utf8($r_command), "\n" if $debug;
 
-	# rondom sampling
+	# random sampling
 	my $threshold = 2;
 	srand 11;
 	if ( $self->{words_obj}->sampling_value ){

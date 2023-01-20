@@ -1975,11 +1975,11 @@ library(gtable)
 # fixing width of legends to 22%
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
-		target_legend_width <- convertX(
-			unit( image_width * 0.22, "in" ),
-			"mm"
-		)
-		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 1) ) <= 2 ){ # ggplot2 <= 2
+			target_legend_width <- convertX(
+				unit( image_width * 0.22, "in" ),
+				"mm"
+			)
 			diff_mm <- diff( c(
 				convertX( g$widths[5], "mm" ),
 				target_legend_width
@@ -1988,21 +1988,23 @@ if ( exists("saving_file") ){
 				print(diff_mm)
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
-		} else { # ggplot2 >= 2.2.0
-			
-			diff_mm <- diff( c(
-				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
-				target_legend_width
-			))
-			if ( diff_mm > 0 ){
-				print(diff_mm)
-				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
-			}
+			grid.draw(g)
+		} else { # ggplot2 >= 3
+			library(cowplot)
+			legendkh <- get_legend(p)
+			grid <- plot_grid(
+				p + theme(legend.position = "none"),
+				legendkh,
+				rel_widths = c(78, 22),
+				#labels = c("A", "B"),
+				nrow = 1
+			)
+			print(grid)
 		}
 	}
+} else {
+	grid.draw(g)
 }
-
-grid.draw(g)
 
 if (exists("com_m")){
 	rm("com_m")
