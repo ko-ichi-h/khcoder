@@ -1,7 +1,7 @@
 package kh_about;
 
 sub version{
-	"3.Beta.06d";
+	"3.Beta.07";
 }
 
 sub version_short{

@@ -51,6 +51,7 @@ apt-get install -y                 \
   r-cran-colorspace                \
   r-cran-dichromat                 \
   r-cran-foreign                   \
+  r-cran-ggplot2                   \
   r-cran-ggdendro                  \
   r-cran-ggsci                     \
   r-cran-gtable                    \
@@ -94,10 +95,9 @@ Rscript -e 'install.packages(c("ggnetwork", "som", "topicmodels"))'
 
 # Install specific versions of some packages
 cpanm DOY/Spreadsheet-ParseXLSX-0.17.tar.gz
-Rscript -e 'install.packages("http://cran.r-project.org/src/contrib/Archive/ggplot2/ggplot2_2.2.1.tar.gz", repos=NULL, type="source")'
 
 # Download KH Coder and install it under /opt
-KHCODER_VERSION=3.Beta.03a
+KHCODER_VERSION=3.Beta.07
 curl -sLO https://github.com/ko-ichi-h/khcoder/archive/refs/tags/${KHCODER_VERSION}.tar.gz
 tar xf ${KHCODER_VERSION}.tar.gz -C /opt
 ln -s /opt/khcoder-${KHCODER_VERSION} /opt/khcoder
