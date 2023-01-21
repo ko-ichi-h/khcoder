@@ -1954,6 +1954,9 @@ p <- p + coord_fixed(
 	ylim = ylimv
 )
 
+library(grid)
+library(gtable)
+
 g <- ggplotGrob(p)
 
 # color and width of ticks; continuous color scale legends; for ggplot2 v2.x.x
@@ -1977,9 +1980,6 @@ if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.1
 	}
 }
-
-library(grid)
-library(gtable)
 
 flag_printed <- 0
 
