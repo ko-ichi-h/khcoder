@@ -83,6 +83,7 @@ apt-get install -y                 \
   r-cran-tm                        \
   r-cran-vegan                     \
   r-cran-wordcloud                 \
+  r-cran-cowplot                   \
   ubuntu-desktop
 
 # Install CPAN libraries which are not provided as native packages

@@ -1364,6 +1364,7 @@ if (com_method == "cor"){ # cor
 			),
 			size = 1 * line_width_act,
 		)
+		ticks_color = "white"
 	} else {
 		myPalette <- colorRampPalette(
 			rev( brewer.pal(9, "RdYlBu") )
@@ -1374,6 +1375,7 @@ if (com_method == "cor"){ # cor
 			),
 			size = 0.6 * line_width_act,
 		)
+		ticks_color = "gray40"
 	}
 
 	p <- p + scale_color_gradientn(
@@ -1392,6 +1394,8 @@ if (com_method == "cor"){ # cor
 			order = 1,
 			#override.aes = list(size=6, shape=22),
 			label.hjust = 1,
+			ticks.colour = ticks_color,
+			ticks.linewidth = 1.25/.pt,
 			#reverse = TRUE,
 			#ncol=2,
 			#keyheight = unit(1.5,"line")
@@ -1831,6 +1835,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 	
 	if (gray_scale == 1){
 		myPalette <- gray( seq(1, 0.4, length.out=100) )
+		ticks_color = "gray30"
 	} else {
 		if (color_universal_design == 0){
 			myPalette <- cm.colors(99)
@@ -1841,6 +1846,7 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 			myPalette <- colorRampPalette( col_seed )
 			myPalette <- myPalette(99)
 		}
+		ticks_color = "gray45"
 	}
 
 	p <- p + scale_color_gradientn(
@@ -1861,6 +1867,8 @@ if ( com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e"){
 			order = 1,
 			#override.aes = list(size=6, shape=22),
 			label.hjust = 1,
+			ticks.colour = ticks_color,
+			ticks.linewidth = 1.25/.pt,
 			#reverse = TRUE,
 			#ncol=2,
 			#keyheight = unit(1.5,"line")
@@ -1948,6 +1956,7 @@ p <- p + coord_fixed(
 
 g <- ggplotGrob(p)
 
+# color and width of ticks; continuous color scale legends; for ggplot2 v2.x.x
 if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 	if ( 
 		(com_method == "cnt-b" || com_method == "cnt-d" || com_method == "cnt-e")
@@ -1975,7 +1984,7 @@ library(gtable)
 # fixing width of legends to 22%
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
-		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 1) ) <= 2 ){ # ggplot2 <= 2
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 1) ) <= 2 ){   # ggplot2 v2.x.x
 			target_legend_width <- convertX(
 				unit( image_width * 0.22, "in" ),
 				"mm"
@@ -1989,12 +1998,11 @@ if ( exists("saving_file") ){
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
 			grid.draw(g)
-		} else { # ggplot2 >= 3
+		} else {                                                              # ggplot2 v3.x.x
 			library(cowplot)
-			legendkh <- get_legend(p)
 			grid <- plot_grid(
-				p + theme(legend.position = "none"),
-				legendkh,
+				p + theme(legend.position = "none"), # plot without legends
+				get_legend(p),                       # legends only
 				rel_widths = c(78, 22),
 				#labels = c("A", "B"),
 				nrow = 1
