@@ -1981,6 +1981,8 @@ if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
 library(grid)
 library(gtable)
 
+flag_printed <- 0
+
 # fixing width of legends to 22%
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
@@ -1998,6 +2000,7 @@ if ( exists("saving_file") ){
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
 			grid.draw(g)
+			flag_printed <- 1
 		} else {                                                              # ggplot2 v3.x.x
 			library(cowplot)
 			grid <- plot_grid(
@@ -2008,9 +2011,12 @@ if ( exists("saving_file") ){
 				nrow = 1
 			)
 			print(grid)
+			flag_printed <- 1
 		}
 	}
-} else {
+}
+
+if (flag_printed == 0){
 	grid.draw(g)
 }
 
