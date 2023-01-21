@@ -253,10 +253,10 @@ sub make_plot{
 	}
 	$r_command .= "dim_n <- $args{dim_number}\n";
 
-	$r_command .= "margin_top <- $args{margin_top}\n";
+	$r_command .= "margin_top    <- $args{margin_top}\n";
 	$r_command .= "margin_bottom <- $args{margin_bottom}\n";
-	$r_command .= "margin_left <- $args{margin_left}\n";
-	$r_command .= "margin_right <- $args{margin_right}\n";
+	$r_command .= "margin_left   <- $args{margin_left}\n";
+	$r_command .= "margin_right  <- $args{margin_right}\n";
 
 	# アルゴリズム別のコマンド
 	my $r_command_d = '';
@@ -953,21 +953,22 @@ div <- add + ylimv[2]
 out_coord[,2] <- ( out_coord[,2] + add ) / div
 
 # fixing width of legends to 22%
-library(grid)
-library(gtable)
-g <- ggplotGrob(g)
-
 if ( ( n_cls == 0 ) && ( bubble == 0 ) ){
 	saving_file <- 1
 }
 
+flag_printed <- 0
+
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
-		target_legend_width <- convertX(
-			unit( image_width * 0.22, "in" ),
-			"mm"
-		)
-		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
+		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 1) ) <= 2 ){     # ggplot2 v2.x.x
+			library(grid)
+			library(gtable)
+			g <- ggplotGrob(g)
+			target_legend_width <- convertX(
+				unit( image_width * 0.22, "in" ),
+				"mm"
+			)
 			diff_mm <- diff( c(
 				convertX( g$widths[5], "mm" ),
 				target_legend_width
@@ -975,32 +976,35 @@ if ( exists("saving_file") ){
 			if ( diff_mm > 0 ){
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
-		} else { # ggplot2 >= 2.2.0
-			
-			diff_mm <- diff( c(
-				convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
-				target_legend_width
+
+			# fixing width of left spaces to 4.25 char (we need this with ggplot2 v3.x.x too???)
+			diff_char <- diff( c(
+				convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
+				unit(4.25, "char")
 			))
-			if ( diff_mm > 0 ){
-				print(diff_mm)
-				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
+			if ( diff_char > 0 ){
+				g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
 			}
+			grid.draw(g)
+			flag_printed <- 1
+		} else {                                                                # ggplot2 v3.x.x
+			library(cowplot)
+			grid <- plot_grid(
+				g + theme(legend.position = "none"), # plot without legends
+				get_legend(g),                       # legends only
+				rel_widths = c(78, 22),
+				#labels = c("A", "B"),
+				nrow = 1
+			)
+			print(grid)
+			flag_printed <- 1
 		}
 	}
 }
 
-# fixing width of left spaces to 4.25 char
-if ( as.numeric( substr( packageVersion("ggplot2"), 1, 3) ) <= 2.1 ){ # ggplot2 <= 2.1.0
-	diff_char <- diff( c(
-		convertX( g$widths[1] + g$widths[2] + g$widths[3], "char" ),
-		unit(4.25, "char")
-	))
-	if ( diff_char > 0 ){
-		g <- gtable_add_cols(g, unit(diff_char, "char"), pos=0)
-	}
+if (flag_printed == 0){
+	print(g)
 }
-
-grid.draw(g)
 
 ';
 }
