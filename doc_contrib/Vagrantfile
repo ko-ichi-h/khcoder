@@ -91,7 +91,7 @@ apt-get install -y                 \
 cpanm Lingua::JA::Regular::Unicode Statistics::ChisqIndep
 
 # Install CRAN libraries which are not provided as native packages
-Rscript -e 'install.packages(c("ggnetwork", "som", "topicmodels"))'
+Rscript -e 'install.packages(c("ggnetwork", "som", "topicmodels", "proxy"))'
 
 # Install specific versions of some packages
 cpanm DOY/Spreadsheet-ParseXLSX-0.17.tar.gz
