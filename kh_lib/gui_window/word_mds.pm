@@ -961,11 +961,14 @@ if ( ( n_cls == 0 ) && ( bubble == 0 ) ){
 	saving_file <- 1
 }
 
+# fixing width of legends to 22%
+
 flag_printed <- 0
+ggplot2_v <- as.numeric( substr( packageVersion("ggplot2"), 1, 3) )
 
 if ( exists("saving_file") ){
 	if ( saving_file == 0){
-		if ( as.numeric( substr( packageVersion("ggplot2"), 1, 1) ) <= 2 ){     # ggplot2 v2.x.x
+		if ( ggplot2_v < 3 ){                         # ggplot2 v2.x
 			library(grid)
 			library(gtable)
 			g <- ggplotGrob(g)
@@ -973,10 +976,18 @@ if ( exists("saving_file") ){
 				unit( image_width * 0.22, "in" ),
 				"mm"
 			)
-			diff_mm <- diff( c(
-				convertX( g$widths[5], "mm" ),
-				target_legend_width
-			))
+			diff_mm <- NULL
+			if (ggplot2_v <= 2.1){ # ggplot2 v2.1-
+				diff_mm <- diff( c(
+					convertX( g$widths[5], "mm" ),
+					target_legend_width
+				))
+			} else {               # ggplot2 v2.2
+				diff_mm <- diff( c(
+					convertX( g$widths[7], "mm", valueOnly=T ) + convertX( g$widths[8], "mm", valueOnly=T ),
+					target_legend_width
+				))
+			}
 			if ( diff_mm > 0 ){
 				g <- gtable_add_cols(g, unit(diff_mm, "mm"))
 			}
@@ -991,7 +1002,7 @@ if ( exists("saving_file") ){
 			}
 			grid.draw(g)
 			flag_printed <- 1
-		} else {                                                                # ggplot2 v3.x.x
+		} else {                                       # ggplot2 v3.x
 			library(cowplot)
 			grid <- plot_grid(
 				g + theme(legend.position = "none"), # plot without legends
