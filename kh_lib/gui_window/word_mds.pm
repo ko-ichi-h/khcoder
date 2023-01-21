@@ -425,6 +425,10 @@ sub make_plot{
 
 	#$r_command .= $r_command_a;
 	my $r_command_l = "load(\"$file_save\")\n";
+	$r_command_l .= "margin_top    <- $args{margin_top}\n";
+	$r_command_l .= "margin_bottom <- $args{margin_bottom}\n";
+	$r_command_l .= "margin_left   <- $args{margin_left}\n";
+	$r_command_l .= "margin_right  <- $args{margin_right}\n";
 
 	# プロット作成
 	my $plot1 = kh_r_plot::mds->new(
