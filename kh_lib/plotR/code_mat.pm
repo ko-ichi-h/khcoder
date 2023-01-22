@@ -275,8 +275,8 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 						lineheight=0.4,
 						angle=0
 					),
-					ticks.colour = "gray35",
-					ticks.linewidth = 1.25/.pt,
+					ticks.colour = "gray45",
+					ticks.linewidth = 1/.pt,
 					label.hjust = 1,
 					order = 1
 				)
@@ -403,8 +403,8 @@ ggfluctuation_my <- function (mat, rsd, maxv){
 	library(gtable)
 	g <- ggplotGrob(p)
 	if ( length( g$grobs[[8]][[1]][[1]] ) > 1){
-		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray35"
-		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1.25
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$col <- "gray45"
+		g$grobs[[8]][[1]][[1]]$grobs[[5]]$gp$lwd <- 1
 	}
 	grid.draw(g)
 	#print(p)
