@@ -5,11 +5,11 @@ sub version{
 }
 
 sub version_short{
-	"3b06d";
+	"3b07";
 }
 
 sub current_year{
-	2022;
+	2023;
 }
 
 1;
