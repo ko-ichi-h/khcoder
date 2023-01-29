@@ -17,7 +17,7 @@ global:
     ok:                       OK
     paragraph:                Paragraphes
     plot:                     Graphique
-    r_dont_close:             Conserver cette fenêtre ouvertes
+    r_dont_close:             Conserver cette fenêtre ouverte
     r_net_msg_fail:           'Erreur: Impossible de configurer ces options.'
     save:                     Enregistrer
     search:                   Rechercher
