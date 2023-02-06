@@ -511,7 +511,7 @@ gui_window::main::menu:
     term_vec_mtrx:            '"추출어 x 문맥 벡터" 표 출력'
     text_format:              텍스트 파일의 변형
     tf_df:                    출현 횟수 x 문서수의 플롯
-    to_csv:                   HTML에서 CSV로 변환
+    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
     tools:                    도구(T)
     topic:                    '***not translated*** Topic models // トピックモデル'
     topic_ft:                 '***not translated*** Fit a Topic Model // トピックの推定'

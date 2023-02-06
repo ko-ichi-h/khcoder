@@ -56,6 +56,25 @@ my @menu1 = (
 	't_bayes_view_log',
 	't_topic_pp',
 	't_topic_ft',
+
+	't_word_list_cf2',
+	'm_b3_crossout2',
+	'm_b3_crossout_csv2',
+	'm_b3_crossout_spss2',
+	'm_b3_crossout_tab2',
+	'm_b3_crossout_var2',
+	't_cod_out2',
+	't_cod_out_csv2',
+	't_cod_out_spss2',
+	't_cod_out_tab2',
+	't_cod_out_var2',
+	'm_b3_contxtout2',
+	'm_b3_contxtout_csv2',
+	'm_b3_contxtout_spss2',
+	'm_b3_contxtout_tab2',
+	't_txt_pickup2',
+	't_txt_html2mod2',
+	'm_b0_export2',
 );
 
 
@@ -117,6 +136,9 @@ sub make{
 		
 		$f1->separator();
 
+
+
+		# export menu #1
 		my $f_export = $f1->cascade(
 				-label => kh_msg->get('export'),
 				-font => "TKFN",
@@ -281,6 +303,9 @@ sub make{
 						$self->mc_export_project;
 					},
 		);
+		# export menu #1 (end)
+
+
 
 		my $f_import = $f1->cascade(
 				-label => kh_msg->get('import'),
@@ -817,12 +842,10 @@ sub make{
 			);
 		push @menu1, 't_cod_som' if $::config_obj->R;
 
-
-
 	$f->separator();
 
 	$self->{t_out_list} = $f->command(
-		-label => kh_msg->get('vars_heads'),#gui_window->gui_jchar('リストの確認・管理'),
+		-label => kh_msg->get('vars_heads'), # 外部変数
 		-font => "TKFN",
 		-command => sub{
 				gui_window::outvar_list->open;
@@ -830,8 +853,178 @@ sub make{
 		-state => 'disable'
 	);
 
-	# プラグインの読み込み
 	$f->separator();
+
+	# export menu #2
+	my $f_export2 = $f->cascade(
+			-label => kh_msg->get('export'),
+			-font => "TKFN",
+			-tearoff=>'no'
+		);
+
+	$self->{t_word_list_cf2} = $f_export2->command(
+			-label => kh_msg->get('word_freq'), # 抽出語リスト
+			-font => "TKFN",
+			-command => sub{
+				gui_window::word_list->open;
+			},
+			-state => 'disable'
+		);
+
+	$f_export2->separator;
+	
+	$self->{m_b3_crossout2} = $f_export2->cascade(
+			-label => kh_msg->get('doc_term_mtrx'), # 「文書ｘ抽出語」表の出力
+			-font => "TKFN",
+			-state => 'disable',
+			-tearoff=>'no'
+		);
+
+		$self->{m_b3_crossout_csv2} = $self->{m_b3_crossout2}->command(
+			-label => kh_msg->gget('csv_f'), # CSVファイル"
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::morpho_crossout::csv->open;
+			},
+		);
+
+		$self->{m_b3_crossout_spss2} = $self->{m_b3_crossout2}->command(
+			-label => kh_msg->gget('spss_f'), # SPSSファイル
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::morpho_crossout::spss->open;
+			},
+		);
+
+		$self->{m_b3_crossout_tab2} = $self->{m_b3_crossout2}->command(
+			-label => kh_msg->gget('tab_f'), # タブ区切り
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::morpho_crossout::tab->open;
+			},
+		);
+
+		$self->{m_b3_crossout2}->separator;
+
+		$self->{m_b3_crossout_var2} = $self->{m_b3_crossout2}->command(
+			-label => kh_msg->gget('wm_f'), # 不定長CSV （WordMiner）
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::morpho_crossout::var->open;
+			},
+		);
+
+	$self->{t_cod_out2} = $f_export2->cascade(
+		-label => kh_msg->get('output_cod'), # コーディング結果の出力
+		 -font => "TKFN",
+		 -tearoff=>'no'
+	);
+
+		$self->{t_cod_out_csv2} = $self->{t_cod_out2}->command(
+			-label => kh_msg->gget('csv_f'), # CSVファイル
+			-font => "TKFN",
+			-command => sub{
+					gui_window::cod_out::csv->open;
+				},
+			-state => 'disable'
+		);
+
+		$self->{t_cod_out_spss2} = $self->{t_cod_out2}->command(
+			-label => kh_msg->gget('spss_f'), # SPSSファイル
+			-font => "TKFN",
+			-command => sub{
+					gui_window::cod_out::spss->open;
+				},
+			-state => 'disable'
+		);
+
+		$self->{t_cod_out_tab2} = $self->{t_cod_out2}->command(
+			-label => kh_msg->gget('tab_f'), # タブ区切り
+			-font => "TKFN",
+			-command => sub{
+					gui_window::cod_out::tab->open;
+				},
+			-state => 'disable'
+		);
+
+		$self->{t_cod_out2}->separator();
+
+		$self->{t_cod_out_var2} = $self->{t_cod_out2}->command(
+			-label => kh_msg->gget('wm_f'), # 不定長CSV （WordMiner）
+			-font => "TKFN",
+			-command => sub{
+					gui_window::cod_out::var->open;
+				},
+			-state => 'disable'
+		);
+
+	$self->{m_b3_contxtout2} = $f_export2->cascade(
+			-label => kh_msg->get('term_vec_mtrx'), # 「抽出語ｘ文脈ベクトル」
+			-font => "TKFN",
+			-state => 'disable',
+			-tearoff=>'no'
+		);
+
+		$self->{m_b3_contxtout_csv2} = $self->{m_b3_contxtout2}->command(
+			-label => kh_msg->gget('csv_f'),
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::contxt_out::csv->open;
+			},
+		);
+
+		$self->{m_b3_contxtout_spss2} = $self->{m_b3_contxtout2}->command(
+			-label => kh_msg->gget('spss_f'),
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::contxt_out::spss->open;
+			},
+		);
+
+		$self->{m_b3_contxtout_tab2} = $self->{m_b3_contxtout2}->command(
+			-label => kh_msg->gget('tab_f'),
+			-font  => "TKFN",
+			-command => sub{
+				gui_window::contxt_out::tab->open;
+			},
+		);
+
+	$f_export2->separator;
+
+	$self->{t_txt_pickup2} = $f_export2->command(
+		-label => kh_msg->get('partial'), # 部分テキストの取り出し
+		-font => "TKFN",
+		-command => sub{
+				gui_window::txt_pickup->open;
+			},
+		-state => 'disable'
+	);
+
+	$self->{t_txt_html2mod2} = $f_export2->command(
+		-label => kh_msg->get('to_csv'), # HTMLからCSVに変換
+		-font => "TKFN",
+		-command => sub{
+				gui_window::txt_html2csv->open;
+			},
+		-state => 'disable'
+	);
+
+	$f_export2->separator;
+
+	$self->{m_b0_export2} = $f_export2->command(
+		-label => kh_msg->get('export_kh'),
+		-font => "TKFN",
+		-state => 'disable',
+		-command =>
+			sub{
+					$self->mc_export_project;
+				},
+	);
+	# export menu #2 (end)
+
+
+
+	# プラグインの読み込み
 	my $f_p = $f->cascade(
 			-label => kh_msg->get('plugin'),#gui_window->gui_jchar('プラグイン'),
 			-font => "TKFN",

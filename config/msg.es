@@ -528,7 +528,7 @@ gui_window::main::menu:
     term_vec_mtrx:            Exportar Matriz Palabra-Contexto
     text_format:              Convertir Archivo de Destino
     tf_df:                    Diagrama FT-FD
-    to_csv:                   Convertir a CSV
+    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
     tools:                    Herramientas
     topic:                    '***not translated*** Topic models // トピックモデル'
     topic_ft:                 '***not translated*** Fit a Topic Model // トピックの推定'

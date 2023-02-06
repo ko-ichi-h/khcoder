@@ -39,7 +39,7 @@ gui_widget::bubble:
     bubble:                   气泡图：
     size:                     气泡大小：
     standardize:              标准化气泡大小：
-    variable:                 "变量/大小也与词频相关"
+    variable:                 变量/大小也与词频相关
     variance:                 离散
 gui_widget::cls4mds:
     adj:                      相邻的簇
@@ -333,7 +333,7 @@ gui_window::dictionary:
     file_error:               '指定的文件不存在:'
     force_ignore:             '强制忽略以下词汇:'
     force_pick:               '提取以下字符串作为词汇:'
-    input_directly:           '直接输入：'
+    input_directly:           直接输入：
     no_pos_selected:          "未选择词性(POS)。 \n请至少选择一个词性。"
     note1:                    ‘(*) "强制提取" 中的更改将在您调用 "运行预处理" 命令时（再次）生效.’
     one_line1:                (每行一个字符串，使用回车分割)
@@ -499,7 +499,7 @@ gui_window::main::menu:
     term_vec_mtrx:            提取词×上下文 矩阵表
     text_format:              转换为目标文件
     tf_df:                    TF-DF 绘图
-    to_csv:                   转换为 CSV文件
+    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
     tools:                    工具
     topic:                    主题模型
     topic_ft:                 拟合主题模型

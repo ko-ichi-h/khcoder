@@ -520,9 +520,9 @@ gui_window::main::menu:
     term_vec_mtrx:            Word-Context Matrix
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
-    to_csv:                   Convert to CSV
+    to_csv:                   Texts in Arbitrary Units
     tools:                    Tools
-    topic:                    Topic models
+    topic:                    Topic Models
     topic_ft:                 Fit a Topic Model
     topic_pp:                 Find Optimal N of Topics
     use_chasen:               use ChaSen

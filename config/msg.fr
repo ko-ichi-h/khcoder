@@ -522,7 +522,7 @@ gui_window::main::menu:
     term_vec_mtrx:            Tableau de mots-contexte
     text_format:              Convertir un fichier du texte
     tf_df:                    Représentation graphique de TF-DF
-    to_csv:                   Convertir au format CSV
+    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
     tools:                    Outils
     topic:                    Topic models
     topic_ft:                 Calculer les modèles probabilistes
