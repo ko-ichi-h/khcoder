@@ -119,6 +119,7 @@ sub code{
 			name   => $raw,
 			hyosos => $words,
 		) unless $error_flag;
+		return 0 if $error_flag;
 	}
 	
 	# キャッシュを$self->{res_table}にコピー
