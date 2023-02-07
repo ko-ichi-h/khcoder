@@ -522,7 +522,7 @@ gui_window::main::menu:
     term_vec_mtrx:            「抽出語×文脈ベクトル」表
     text_format:              テキストファイルの変形
     tf_df:                    出現回数ｘ文書数のプロット
-    to_csv:                   任意の単位で区切ったテキスト
+    to_csv:                   任意の単位に区切ったテキスト
     tools:                    ツール(T)
     topic:                    トピックモデル
     topic_ft:                 トピックの推定
