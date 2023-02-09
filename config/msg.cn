@@ -499,7 +499,7 @@ gui_window::main::menu:
     term_vec_mtrx:            提取词×上下文 矩阵表
     text_format:              转换为目标文件
     tf_df:                    TF-DF 绘图
-    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
+    to_csv:                   任意分隔符的文本
     tools:                    工具
     topic:                    主题模型
     topic_ft:                 拟合主题模型
