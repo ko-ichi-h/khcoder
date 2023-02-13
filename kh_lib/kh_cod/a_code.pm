@@ -118,8 +118,12 @@ sub code{
 			kind   => $kind,
 			name   => $raw,
 			hyosos => $words,
-		) unless $error_flag;
-		return 0 if $error_flag;
+		) unless $error_flag;    # (1) coding-rule errors displayed only once.
+		                         # So, added "unless" to display errors in 2nd, 3rd, ... times.
+
+		return 0 if $error_flag; # (2) the above modification made 0 frequecy codes cause MySQL errors.
+		                         # Added this "return" to avoid it. 2023/02/07
+		                         # Not very sure whether there are any other side effects or not...
 	}
 	
 	# キャッシュを$self->{res_table}にコピー
