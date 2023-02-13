@@ -399,6 +399,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              Specify the name of new variable
     win_title:                Save Cluster as New Variable
 gui_window::doc_search:
+    KWIC_single:              single line for each document
+    KWIC_style:               KWIC-style
     error_no_code:            Please select at least 1 code.
     no_sort:                  no sort
     run:                      Run

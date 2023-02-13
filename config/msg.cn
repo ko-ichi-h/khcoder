@@ -378,6 +378,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              指定新变量的名称
     win_title:                聚类结果另存为变量
 gui_window::doc_search:
+    KWIC_single:              '***not translated*** single line for each document // 1文書につき1行のみ表示'
+    KWIC_style:               '***not translated*** KWIC-style // KWICスタイル'
     error_no_code:            请至少选择1个编码
     no_sort:                  不排序
     run:                      运行
@@ -499,7 +501,7 @@ gui_window::main::menu:
     term_vec_mtrx:            提取词×上下文 矩阵表
     text_format:              转换为目标文件
     tf_df:                    TF-DF 绘图
-    to_csv:                   '***not translated*** Texts in Arbitrary Units // 任意の単位で区切ったテキスト'
+    to_csv:                   任意分隔符的文本
     tools:                    工具
     topic:                    主题模型
     topic_ft:                 拟合主题模型

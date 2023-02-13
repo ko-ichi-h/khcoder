@@ -401,6 +401,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              Indiquer le nom de variable
     win_title:                "Enregistrer: l'analyse par grappes des documents"
 gui_window::doc_search:
+    KWIC_single:              '***not translated*** single line for each document // 1文書につき1行のみ表示'
+    KWIC_style:               '***not translated*** KWIC-style // KWICスタイル'
     error_no_code:            Veuillez sélectionner au moins 1 code.
     no_sort:                  Ne pas trier
     run:                      Rechercher

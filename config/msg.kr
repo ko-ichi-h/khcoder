@@ -386,6 +386,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              변수 이름을 지정해 주십시오
     win_title:                '문서 클러스터 분석: 저장'
 gui_window::doc_search:
+    KWIC_single:              '***not translated*** single line for each document // 1文書につき1行のみ表示'
+    KWIC_style:               '***not translated*** KWIC-style // KWICスタイル'
     error_no_code:            코드가 선택되어 있지 않습니다
     no_sort:                  출현순
     run:                      검색

@@ -403,6 +403,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              Especifique el nuevo nombre de la variable
     win_title:                Guardar cluster como nueva variable
 gui_window::doc_search:
+    KWIC_single:              '***not translated*** single line for each document // 1文書につき1行のみ表示'
+    KWIC_style:               '***not translated*** KWIC-style // KWICスタイル'
     error_no_code:            Seleccione al menos 1 código.
     no_sort:                  no ordenar
     run:                      Ejecutar

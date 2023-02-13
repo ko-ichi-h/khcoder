@@ -397,6 +397,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              変数名を指定してください
     win_title:                文書・クラスター分析：保存
 gui_window::doc_search:
+    KWIC_single:              1文書につき1行のみ表示
+    KWIC_style:               KWICスタイル
     error_no_code:            コードが選択されていません
     no_sort:                  出現順
     run:                      検索
@@ -522,7 +524,7 @@ gui_window::main::menu:
     term_vec_mtrx:            「抽出語×文脈ベクトル」表
     text_format:              テキストファイルの変形
     tf_df:                    出現回数ｘ文書数のプロット
-    to_csv:                   任意の単位で区切ったテキスト
+    to_csv:                   任意の単位に区切ったテキスト
     tools:                    ツール(T)
     topic:                    トピックモデル
     topic_ft:                 トピックの推定
