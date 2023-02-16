@@ -11,10 +11,11 @@ sub new{
 	bless $self, $class;
 	
 	if (defined($self->{name}) && length($self->{name}) ){# 変数名から他の情報を取得
+		my $name = mysql_exec->quote( $self->{name} );
 		my $i = mysql_exec->select("
 			SELECT tab, col, tani, id
 			FROM outvar
-			where name = \'$self->{name}\'
+			where name = $name
 		",1)->hundle->fetch;
 		
 		if ($i){
