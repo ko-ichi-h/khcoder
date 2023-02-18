@@ -450,16 +450,14 @@ sub _calc{
 
 	$r_command .= "\ncolnames(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
-		my $name = $i->{name};
-		if (index($name,'＊') == 0){
-			substr($name, 0, 1) = '';
+		if ( $i->{check} ){
+			my $name = $i->{name};
+			if ( index($name,'＊') == 0 || index($name,'*') == 0){
+				substr($name, 0, 1) = '';
+			}
+			$name = kh_r_plot->quote($name);
+			$r_command .= $name.',';
 		}
-		elsif (index($name,'*') == 0){
-			substr($name, 0, 1) = ''
-		}
-		$r_command .= '"'.$name.'",'
-			if $i->{check}
-		;
 	}
 	chop $r_command;
 	$r_command .= ")\n";

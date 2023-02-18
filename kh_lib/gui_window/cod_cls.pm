@@ -2,16 +2,16 @@ package gui_window::cod_cls;
 use base qw(gui_window);
 
 use strict;
-
+use utf8;
 
 #-------------#
-#   GUIºîÀ½   #
+#   GUIä½œè£½   #
 
 sub _new{
 	my $self = shift;
 	my $mw = $::main_gui->mw;
 	my $win = $self->{win_obj};
-	$win->title($self->gui_jt(kh_msg->get('win_titile'))); # ¥³¡¼¥Ç¥£¥ó¥°¡¦¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¡§¥ª¥×¥·¥ç¥ó
+	$win->title($self->gui_jt(kh_msg->get('win_titile'))); # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ»ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æï¼šã‚ªãƒ—ã‚·ãƒ§ãƒ³
 
 	my $lf = $win->LabFrame(
 		-label       => 'Options',
@@ -22,7 +22,7 @@ sub _new{
 		-expand => 1
 	);
 
-	# ¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë
+	# ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«
 	my %pack0 = (
 		-anchor => 'w',
 		#-padx => 2,
@@ -36,14 +36,14 @@ sub _new{
 		command => sub{$self->read_cfile;},
 	);
 	
-	# ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì
+	# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½
 	my $f1 = $lf->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
 		-pady => 4
 	);
 	$f1->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # ¥³¡¼¥Ç¥£¥ó¥°Ã±°Ì¡§
+		-text => kh_msg->get('gui_window::cod_corresp->coding_unit'), # ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°å˜ä½ï¼š
 		-font => "TKFN",
 	)->pack(-side => 'left');
 	my %pack1 = (
@@ -56,9 +56,9 @@ sub _new{
 		pack   => \%pack1,
 	);
 
-	# ¥³¡¼¥ÉÁªÂò
+	# ã‚³ãƒ¼ãƒ‰é¸æŠ
 	$lf->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # ¥³¡¼¥ÉÁªÂò¡§
+		-text => kh_msg->get('gui_window::cod_corresp->select_codes'), # ã‚³ãƒ¼ãƒ‰é¸æŠï¼š
 		-font => "TKFN",
 	)->pack(-anchor => 'nw', -padx => 2, -pady => 0);
 
@@ -89,7 +89,7 @@ sub _new{
 			-expand => 1
 	);
 
-	# ¥³¡¼¥ÉÁªÂòÍÑHList
+	# ã‚³ãƒ¼ãƒ‰é¸æŠç”¨HList
 	$self->{hlist} = $f2_1->Scrolled(
 		'HList',
 		-scrollbars         => 'osoe',
@@ -112,14 +112,14 @@ sub _new{
 		-side   => 'left'
 	);
 	$f2_2->Button(
-		-text => kh_msg->gget('all'), # ¤¹¤Ù¤Æ
+		-text => kh_msg->gget('all'), # ã™ã¹ã¦
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
 		-command => sub{$self->select_all;}
 	)->pack(-pady => 3);
 	$f2_2->Button(
-		-text => kh_msg->gget('clear'), # ¥¯¥ê¥¢
+		-text => kh_msg->gget('clear'), # ã‚¯ãƒªã‚¢
 		-width => 8,
 		-font => "TKFN",
 		-borderwidth => 1,
@@ -127,7 +127,7 @@ sub _new{
 	)->pack();
 
 	$lf->Label(
-		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # ¡¡¡¡¢¨¥³¡¼¥É¤ò3¤Ä°Ê¾åÁªÂò¤·¤Æ²¼¤µ¤¤¡£
+		-text => kh_msg->get('gui_window::cod_corresp->sel3'), # ã€€ã€€â€»ã‚³ãƒ¼ãƒ‰ã‚’3ã¤ä»¥ä¸Šé¸æŠã—ã¦ä¸‹ã•ã„ã€‚
 		-font => "TKFN",
 	)->pack(
 		-anchor => 'w',
@@ -135,14 +135,14 @@ sub _new{
 		-pady   => 2,
 	);
 
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¤Î¥ª¥×¥·¥ç¥ó
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	$self->{cls_obj} = gui_widget::r_cls->open(
 		parent       => $lf,
 		command      => sub{ $self->_calc; },
 		pack    => { -anchor   => 'w'},
 	);
 
-	# ¥Õ¥©¥ó¥È¥µ¥¤¥º
+	# ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚º
 	$self->{font_obj} = gui_widget::r_font->open(
 		parent    => $lf,
 		command   => sub{ $self->_calc; },
@@ -157,12 +157,12 @@ sub _new{
 	#SCREEN Plugin
 
 	$win->Checkbutton(
-			-text     => kh_msg->gget('r_dont_close'), # ¼Â¹Ô»ş¤Ë¤³¤Î²èÌÌ¤òÊÄ¤¸¤Ê¤¤
+			-text     => kh_msg->gget('r_dont_close'), # å®Ÿè¡Œæ™‚ã«ã“ã®ç”»é¢ã‚’é–‰ã˜ãªã„
 			-variable => \$self->{check_rm_open},
 			-anchor => 'w',
 	)->pack(-anchor => 'w');
 
-	# OK¡¦¥­¥ã¥ó¥»¥ë
+	# OKãƒ»ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 	my $f3 = $win->Frame()->pack(
 		-fill => 'x',
 		-padx => 2,
@@ -170,7 +170,7 @@ sub _new{
 	);
 
 	$f3->Button(
-		-text => kh_msg->gget('cancel'), # ¥­¥ã¥ó¥»¥ë
+		-text => kh_msg->gget('cancel'), # ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 		-font => "TKFN",
 		-width => 8,
 		-command => sub{$self->withd;}
@@ -190,7 +190,7 @@ sub _new{
 	return $self;
 }
 
-# ¥³¡¼¥Ç¥£¥ó¥°¥ë¡¼¥ë¡¦¥Õ¥¡¥¤¥ë¤ÎÆÉ¤ß¹ş¤ß
+# ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°ãƒ«ãƒ¼ãƒ«ãƒ»ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿
 sub read_cfile{
 	my $self = shift;
 	
@@ -242,7 +242,7 @@ sub read_cfile{
 sub start_raise{
 	my $self = shift;
 	
-	# ¥³¡¼¥ÉÁªÂò¤òÆÉ¤ß¼è¤ê
+	# ã‚³ãƒ¼ãƒ‰é¸æŠã‚’èª­ã¿å–ã‚Š
 	my %selection = ();
 	foreach my $i (@{$self->{checks}}){
 		if ($i->{check}){
@@ -252,10 +252,10 @@ sub start_raise{
 		}
 	}
 	
-	# ¥ë¡¼¥ë¥Õ¥¡¥¤¥ë¤òºÆÆÉ¤ß¹ş¤ß
+	# ãƒ«ãƒ¼ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å†èª­ã¿è¾¼ã¿
 	$self->read_cfile;
 	
-	# ÁªÂò¤òÅ¬ÍÑ
+	# é¸æŠã‚’é©ç”¨
 	foreach my $i (@{$self->{checks}}){
 		if ($selection{$i->{name}} == 1 || $selection{$i->{name}} == 0){
 			$i->{check} = 1;
@@ -269,7 +269,7 @@ sub start_raise{
 }
 
 
-# ¥³¡¼¥É¤¬3¤Ä°Ê¾åÁªÂò¤µ¤ì¤Æ¤¤¤ë¤«¥Á¥§¥Ã¥¯
+# ã‚³ãƒ¼ãƒ‰ãŒ3ã¤ä»¥ä¸Šé¸æŠã•ã‚Œã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 sub check_selected_num{
 	my $self = shift;
 	
@@ -286,7 +286,7 @@ sub check_selected_num{
 	return $self;
 }
 
-# ¤¹¤Ù¤ÆÁªÂò
+# ã™ã¹ã¦é¸æŠ
 sub select_all{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -296,7 +296,7 @@ sub select_all{
 	return $self;
 }
 
-# ¥¯¥ê¥¢
+# ã‚¯ãƒªã‚¢
 sub select_none{
 	my $self = shift;
 	foreach my $i (@{$self->{checks}}){
@@ -306,7 +306,7 @@ sub select_none{
 	return $self;
 }
 
-# ¥×¥í¥Ã¥ÈºîÀ®¡õÉ½¼¨
+# ãƒ—ãƒ­ãƒƒãƒˆä½œæˆï¼†è¡¨ç¤º
 sub _calc{
 	my $self = shift;
 
@@ -319,14 +319,14 @@ sub _calc{
 		gui_errormsg->open(
 			type   => 'msg',
 			window  => \$self->win_obj,
-			msg    => kh_msg->get('gui_window::cod_corresp->sel3'), # '¥³¡¼¥É¤ò3¤Ä°Ê¾åÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£'
+			msg    => kh_msg->get('gui_window::cod_corresp->sel3'), # 'ã‚³ãƒ¼ãƒ‰ã‚’3ã¤ä»¥ä¸Šé¸æŠã—ã¦ãã ã•ã„ã€‚'
 		);
 		return 0;
 	}
 
 	my $wait_window = gui_wait->start;
 
-	# ¥Ç¡¼¥¿¼èÆÀ
+	# ãƒ‡ãƒ¼ã‚¿å–å¾—
 	my $r_command;
 	unless ( $r_command =  kh_cod::func->read_file($self->cfile)->out2r_selected($self->tani,\@selected) ){
 		gui_errormsg->open(
@@ -339,21 +339,19 @@ sub _calc{
 		return 0;
 	}
 	
-	# ¥¯¥é¥¹¥¿¡¼Ê¬ÀÏ¼Â¹Ô¤Î¤¿¤á¤ÎR¥³¥Ş¥ó¥É
+	# ã‚¯ãƒ©ã‚¹ã‚¿ãƒ¼åˆ†æå®Ÿè¡Œã®ãŸã‚ã®Rã‚³ãƒãƒ³ãƒ‰
 	$r_command .= "\n";
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
-		my $name = $i->{name};
-		if (index($name,'¡ö') == 0){
-			substr($name, 0, 2) = '';
+		if ( $i->{check} ){
+			my $name = $i->{name};
+			if ( index($name,'ï¼Š') == 0 || index($name,'*') == 0){
+				substr($name, 0, 1) = '';
+			}
+			$name = kh_r_plot->quote($name);
+			$r_command .= $name.',';
 		}
-		elsif (index($name,'*') == 0){
-			substr($name, 0, 1) = ''
-		}
-		$r_command .= '"'.$name.'",'
-			if $i->{check}
-		;
 	}
 	chop $r_command;
 	$r_command .= ")\n";
@@ -382,7 +380,7 @@ sub _calc{
 sub start{
 	my $self = shift;
 
-	# Window¤òÊÄ¤¸¤ëºİ¤Î¥Ğ¥¤¥ó¥É
+	# Windowã‚’é–‰ã˜ã‚‹éš›ã®ãƒã‚¤ãƒ³ãƒ‰
 	$self->win_obj->bind(
 		'<Control-Key-q>',
 		sub{ $self->withd; }
@@ -395,7 +393,7 @@ sub start{
 }
 
 #--------------#
-#   ¥¢¥¯¥»¥µ   #
+#   ã‚¢ã‚¯ã‚»ã‚µ   #
 
 sub cfile{
 	my $self = shift;

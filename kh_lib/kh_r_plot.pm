@@ -1055,6 +1055,14 @@ sub path{
 	return $self->{path};
 }
 
+sub quote{
+	my $class = shift;
+	my $t     = shift;
+	
+	$t =~ s/"/\\"/g;
+	return '"'.$t.'"';
+}
+
 #sub DESTROY{
 #	my $self = shift;
 #	print "DESTROYed: $self->{name}\n";

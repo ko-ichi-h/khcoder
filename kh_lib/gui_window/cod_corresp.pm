@@ -845,11 +845,14 @@ sub _calc{
 	$r_command .= "d <- t(d)\n";
 	$r_command .= "row.names(d) <- c(";
 	foreach my $i (@{$self->{checks}}){
-		my $name = $i->{name};
-		substr($name, 0, 1) = '';
-		$r_command .= '"'.$name.'",'
-			if $i->{check}
-		;
+		if ( $i->{check} ){
+			my $name = $i->{name};
+			if ( index($name,'＊') == 0 || index($name,'*') == 0){
+				substr($name, 0, 1) = '';
+			}
+			$name = kh_r_plot->quote($name);
+			$r_command .= $name.',';
+		}
 	}
 	chop $r_command;
 	$r_command .= ")\n";

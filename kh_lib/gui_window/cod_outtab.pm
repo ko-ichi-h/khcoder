@@ -583,7 +583,9 @@ sub plot{
 	}
 	$rcom .= "colnames(d) <- c(";
 	foreach my $i (@col_names){
-		$rcom .= "\"$i\",";
+		my $name = $i;
+		$name = kh_r_plot->quote($name);
+		$rcom .= "$name,";
 	}
 	chop $rcom;
 	$rcom .= ")\n";
@@ -591,7 +593,9 @@ sub plot{
 	# นิฬพ
 	$rcom .= "rownames(d) <- c(";
 	foreach my $i (@row_names){
-		$rcom .= "\"$i\",";
+		my $name = $i;
+		$name = kh_r_plot->quote($name);
+		$rcom .= "$name,";
 	}
 	chop $rcom;
 	$rcom .= ")\n";
