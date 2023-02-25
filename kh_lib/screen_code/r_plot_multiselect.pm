@@ -928,28 +928,43 @@ sub get_outvar_by_part_target_id{
 	
 	$sql = "SELECT tani, tab, name, col FROM outvar WHERE tani = '$outbar_tani' ORDER BY CHAR_LENGTH(col), col";
 	my $t = mysql_exec->select($sql,1)->hundle;
-	my $id_where = "WHERE (";
-	my $count = 0;
-	foreach my $id (@{$part_target_id_list}){
-		$id_where .= " OR " if $count > 0;
-		$id_where .= "id = $id";
-		$count++;
-	}
-	$id_where .= ")";
+
 	my $select_str;
 	my $table_str;
-	$count = 0;
+	my $count = 0;
 	my @col_names;
+	my %table_added = ();
+	my $table_first = '';
+	my $table_where = '';
 	while (my $i = $t->fetch){
 		$select_str .= ", " if $count > 0;
 		$select_str .= "$i->[1].$i->[3]";
 		push @col_names, $i->[2];
-		$table_str = "$i->[1]";
+		unless ( $table_added{"$i->[1]"} ) { # 複数テーブルに格納されている場合を想定
+			if ( length($table_str) == 0 ) {
+				$table_str   = "$i->[1]";
+				$table_first = "$i->[1]";
+			} else {
+				$table_str .= ", $i->[1]";
+				$table_where .= " AND $table_first.id = $i->[1].id"
+			}
+			$table_added{"$i->[1]"} = 1;
+		}
 		$count++;
 		return 0 if check_cancel();
 	}
+	
+	my $id_where = "WHERE (";
+	my $count1 = 0;
+	foreach my $id (@{$part_target_id_list}){
+		$id_where .= " OR " if $count1 > 0;
+		$id_where .= "$table_first.id = $id";
+		$count1++;
+	}
+	$id_where .= ")";
+	
 	return 1 unless $count;
-	$sql = "SELECT $select_str, id FROM $table_str $id_where ORDER BY id";
+	$sql = "SELECT $select_str, $table_first.id FROM $table_str $id_where $table_where ORDER BY $table_first.id";
 	
 	$t = mysql_exec->select($sql,1)->hundle;
 	while (my $i = $t->fetch){
