@@ -1,26 +1,27 @@
 ---
 name: 使い方などについての質問
-about: 質問の前にお願いしたいこと
+about: 疑問があるときに
 labels: Non-English, question
 ---
 
 <!--
-※以下のテンプレート（雛形）を編集・削除して、質問内容をお書きください。
+※以下のテンプレート（雛形）を編集して、質問内容をお書きください。この入力欄の左上の角あたりにある「Preview」ボタンをクリックすると、この投稿がどんなふうに表示されるか確認できます。
 
-質問を投稿する前にできるだけ，「よくある質問」ページや、すでに投稿されたissue、旧掲示板をご覧ください。同じような質問がすでに投稿されているかもしれません。issueや旧掲示板については検索可能です。
+本掲示板（Issues）はユーザー同士の助け合いの場という位置づけです。何を疑問に思っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
 
-「よくある質問」ページ：
+もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の「KH Coderサポートパッケージ」（Pro Edition以上）を購入することで、 同社のQ & A対応を利用できます。
+https://www.screen.co.jp/as/solution/khcoder
+
+なお、質問しなくても以下のページを閲覧・検索すると解決するかもしれません。
+
+「よくある質問」
 https://khcoder.net/FAQ.html
 
+既存のIssue
+https://github.com/ko-ichi-h/khcoder/issues?q=is%3Aissue
+
 旧掲示板：
-http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi
-
-また、チュートリアル・スライドで疑問が解決するかもしれません。
-
-チュートリアル：
-http://khcoder.net/tutorial.html
-
-この入力欄の左上の角あたりにある「Preview」ボタンをクリックすると、この投稿がどんなふうに表示されるかを確認できます。
+https://khcoder.info/cgi-bin/bbs_khn/khcf.cgi
 -->
 
 ■お使いのOS
