@@ -5,14 +5,14 @@ labels: Non-English, error
 ---
 
 <!--
-※以下のテンプレート（雛形）を編集して、質問内容をお書きください。この入力欄の左上の角あたりにある「Preview」ボタンをクリックすると、この投稿がどんなふうに表示されるか確認できます。
+※下方の「■KH Coderのバージョン」から始まるテンプレート（雛形）を編集して、質問内容をお書きください。この入力欄の左上の角あたりにある「Preview」ボタンをクリックすると、この投稿がどんなふうに表示されるか確認できます。
 
 本掲示板（Issues）はユーザー同士の助け合いの場という位置づけです。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
 
 もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の「KH Coderサポートパッケージ」（Pro Edition以上）を購入することで、 同社のQ & A対応を利用できます。
 https://www.screen.co.jp/as/solution/khcoder
 
-なお、質問しなくても以下のページを閲覧・検索すると解決するかもしれません。
+なお、質問しなくても以下のページを閲覧・検索すると解決する場合があります。
 
 「よくある質問」
 https://khcoder.net/FAQ.html
@@ -24,8 +24,11 @@ https://github.com/ko-ichi-h/khcoder/issues?q=is%3Aissue
 http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi
 -->
 
-■お使いのKH Coderのバージョン
+■KH Coderのバージョン
 →記入例：3.Alpha.13c, 2.00fなど。KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。
+
+■お使いのOS
+→記入例：Windows 11, Windows 10, macOS 14, Ubuntu 18.04など
 
 ■KH Coderのインストール先フォルダ（解凍先フォルダ）
 →記入例：C:\khcoder3。KH Coder起動時のコンソール画面に「CWD: C:\khcoder3」のように表示されます。
@@ -62,9 +65,6 @@ Macでは，エラー発生時のターミナルの表示内容をすべて，�
 
 ■分析対象として指定しているファイルの形式は何ですか？
 →記入例：テキスト形式（.txt）、Excel形式（.xlsx）、CSV形式（.csv）など
-
-■お使いのOS
-→記入例：Windows 10, Windows 7, macOS 14, Ubuntu 18.04など
 
 ■お使いのセキュリティ対策／ウイルス対策ソフトウェア
 →記入例：Norton 360, ウイルスバスター Corp Clientなど
