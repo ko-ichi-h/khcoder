@@ -143,6 +143,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 "Éléments d'un graphique: "
     none:                     Normalisation
+    oned_horizontal:          '***not translated*** plot 1 dimension results horizontally // 1次元の結果を水平にプロット'
     origin:                   Montrer le point d'origine O
     scaling:                  'Scores:'
     sym:                      Symétrique

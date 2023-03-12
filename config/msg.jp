@@ -142,6 +142,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 プロットする成分：
     none:                     標準化
+    oned_horizontal:          1次元の結果を水平にプロット
     origin:                   原点を表示
     scaling:                  スコア：
     sym:                      対称

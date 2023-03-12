@@ -145,6 +145,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 'Dimensiones del diagrama: '
     none:                     Ninguno
+    oned_horizontal:          '***not translated*** plot 1 dimension results horizontally // 1次元の結果を水平にプロット'
     origin:                   Mostrar el origen
     scaling:                  'Escalamiento:'
     sym:                      Simétrico

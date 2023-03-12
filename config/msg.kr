@@ -136,6 +136,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 '플롯할 성분:'
     none:                     표준화
+    oned_horizontal:          '***not translated*** plot 1 dimension results horizontally // 1次元の結果を水平にプロット'
     origin:                   원점을 표시
     scaling:                  '스코어:'
     sym:                      대칭

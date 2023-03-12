@@ -132,6 +132,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 '绘图维度: '
     none:                     无
+    oned_horizontal:          '***not translated*** plot 1 dimension results horizontally // 1次元の結果を水平にプロット'
     origin:                   显示原点
     scaling:                  '缩放:'
     sym:                      对称
@@ -378,8 +379,8 @@ gui_window::doc_cls_res_sav:
     specify_var:              指定新变量的名称
     win_title:                聚类结果另存为变量
 gui_window::doc_search:
-    KWIC_single:              '每个文件单行显示'
-    KWIC_style:               'KWIC 风格'
+    KWIC_single:              每个文件单行显示
+    KWIC_style:               KWIC 风格
     error_no_code:            请至少选择1个编码
     no_sort:                  不排序
     run:                      运行

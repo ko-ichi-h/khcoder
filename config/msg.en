@@ -143,6 +143,7 @@ gui_widget::r_som:
 gui_widget::r_xy:
     cmp_plot:                 'Dimensions of the Plot: '
     none:                     none
+    oned_horizontal:          plot 1 dimension results horizontally
     origin:                   Show the origin
     scaling:                  'Scaling:'
     sym:                      symmetric
