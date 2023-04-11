@@ -1,5 +1,5 @@
-title: "[エラーや不具合で思ったように動作しない場合] "
-labels: ["Non-English", "error"]
+title: "[errors j]"
+labels: ["errors j label"]
 body:
   - type: markdown
     attributes:
