@@ -1,11 +1,15 @@
 title: "短い言葉で具体的に状況をあらわすタイトルをここに入力"
 labels: ["error", "Non-English"]
 body:
-- type: input
-  id: suggestion
-  attributes:
-    label: Suggestion
-    description: "How might we make this project better?"
-    placeholder: "Adding a CODE_OF_CONDUCT.md file would be a great idea."
-  validations:
-    required: true
+  - type: markdown
+    attributes:
+      value: |
+        This is text that will show up in the template!
+  - type: input
+    id: suggestion
+    attributes:
+      label: Suggestion
+      description: "How might we make this project better?"
+      placeholder: "Adding a CODE_OF_CONDUCT.md file would be a great idea."
+    validations:
+      required: true
