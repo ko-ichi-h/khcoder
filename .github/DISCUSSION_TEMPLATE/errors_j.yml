@@ -87,12 +87,12 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: input
     id: kokoro
     attributes:
       label: "その問題はチュートリアルの漱石「こころ」データでも同様に発生しましたか？"
-      options:
-        - "はい"
-        - "いいえ"
+      description: "データに原因があるのか、操作方法に問題があるのか、KH Coderのバグなのかを区別するために、チュートリアル・データでも同じ操作をお試しください。"
+      placeholder: "記入例：はい、いいえ、他"
     validations:
       required: true
+
