@@ -86,3 +86,13 @@ body:
         Macの場合，エラー発生時のターミナルの表示内容をすべて，コピー＆ペーストでお知らせください。
     validations:
       required: true
+
+- type: dropdown
+    id: kokoro
+    attributes:
+      label: "その問題はチュートリアルの漱石「こころ」データでも同様に発生しましたか？"
+    options:
+      - はい
+      - いいえ
+    validations:
+      required: true
