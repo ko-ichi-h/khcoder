@@ -2,8 +2,7 @@ title: "短い言葉で具体的に状況をあらわすタイトルをここに
 labels: ["error", "Non-English"]
 body:
 - type: markdown
-  value: |
-    本掲示板（Issues）はユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
+  value: 本掲示板（Issues）はユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
 - type: input
   id: suggestion
   attributes:
