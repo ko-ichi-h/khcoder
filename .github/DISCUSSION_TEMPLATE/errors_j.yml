@@ -43,7 +43,7 @@ body:
     validations:
       required: true
 
-  - type: Textarea
+  - type: textarea
     id: problem
     attributes:
       label: "どんなエラー・不具合・問題ですか？"
