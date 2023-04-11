@@ -97,7 +97,7 @@ body:
       required: true
 
   - type: textarea
-    id: error_messages
+    id: files
     attributes:
       label: "その問題を再現できるファイル（群）"
       description: "その問題を再現できる分析対象ファイル等をなるべく添付してください。必要に応じてZip圧縮して添付してください。チュートリアルとして同梱されているファイルのみで問題を再現可能な場合は不要です。"
