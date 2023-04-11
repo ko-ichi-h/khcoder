@@ -143,3 +143,7 @@ body:
       placeholder: "→記入例：Intel Core i5, AMD Ryzen 5, Apple M1, Microsoft SQ2など"
     validations:
       required: true
+
+  - type: markdown
+    attributes:
+      value: ※ほとんどの入力欄が入力必須となっていますが、どうしても不明なところは「不明」と入力していただいて結構です。
