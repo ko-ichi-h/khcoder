@@ -30,7 +30,6 @@ body:
     id: os
     attributes:
       label: "お使いのOS"
-      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
       placeholder: "記入例：Windows 11, Windows 10, macOS 14, Ubuntu 18.04など"
     validations:
       required: true
