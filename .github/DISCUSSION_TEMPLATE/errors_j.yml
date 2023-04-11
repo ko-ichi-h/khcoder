@@ -1,5 +1,5 @@
-title: "[Errors_j]"
-labels: ["error"]
+title: ""
+labels: ["error", "Non-English"]
 body:
 - type: input
   id: suggestion
