@@ -38,7 +38,7 @@ body:
     id: path
     attributes:
       label: "KH Coderのインストール先フォルダ（解凍先フォルダ）"
-      description: "KH Coder起動時のコンソール画面に「CWD: C:\khcoder3」のように表示されます。"
-      placeholder: "記入例：C:\khcoder3"
+      description: "KH Coder起動時のコンソール画面に「CWD: C:\\khcoder3」のように表示されます。"
+      placeholder: "記入例：C:\\khcoder3"
     validations:
       required: true
