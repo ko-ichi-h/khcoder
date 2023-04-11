@@ -42,3 +42,12 @@ body:
       placeholder: "記入例：C:\\khcoder3"
     validations:
       required: true
+
+  - type: Textarea
+    id: problem
+    attributes:
+      label: "どんなエラー・不具合・問題ですか？"
+      description: "「うまくいかない」のようなあいまいな書き方ではなく、「○○の結果を期待していたが、□□の結果になった」のように、できるだけ具体的にお書きください。"
+      placeholder: "記入例：共起ネットワーク作成時に○△□にチェックを入れるとエラーになる。"
+    validations:
+      required: true
