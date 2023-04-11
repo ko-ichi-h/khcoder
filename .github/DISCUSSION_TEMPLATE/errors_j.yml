@@ -24,3 +24,21 @@ body:
       placeholder: "記入例：3.00a, 3.Beta.06など。"
     validations:
       required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: "お使いのOS"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
+      placeholder: "記入例：Windows 11, Windows 10, macOS 14, Ubuntu 18.04など"
+    validations:
+      required: true
+
+   - type: input
+    id: path
+    attributes:
+      label: "KH Coderのインストール先フォルダ（解凍先フォルダ）"
+      description: "KH Coder起動時のコンソール画面に「CWD: C:\khcoder3」のように表示されます。"
+      placeholder: "記入例：C:\khcoder3"
+    validations:
+      required: true
