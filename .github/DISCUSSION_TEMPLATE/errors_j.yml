@@ -1,5 +1,5 @@
 
-title: "短い言葉で具体的に状況をあらわすタイトルをここに入力"
+title: "短い言葉で具体的に状況をあらわすタイトルをここに入力してください"
 labels: ["error", "Non-English"]
 body:
   - type: markdown
@@ -102,3 +102,35 @@ body:
       label: "その問題を再現できるファイル（群）"
       description: "その問題を再現できる分析対象ファイル等をなるべく添付してください。必要に応じてZip圧縮して添付してください。チュートリアルとして同梱されているファイルのみで問題を再現可能な場合は不要です。"
 
+  - type: input
+    id: language
+    attributes:
+      label: "分析しようとしているのは何語のテキストですか？"
+      placeholder: "記入例：日本語、英語、ロシア語、中国語など"
+    validations:
+      required: true
+
+  - type: input
+    id: filetype
+    attributes:
+      label: "分析対象として指定しているファイルの形式は何ですか？"
+      placeholder: "記入例：テキスト形式（.txt）、Excel形式（.xlsx）、CSV形式（.csv）など"
+    validations:
+      required: true
+
+  - type: input
+    id: virus
+    attributes:
+      label: "お使いのセキュリティ対策／ウイルス対策ソフトウェア "
+      placeholder: "記入例：Norton 360, ウイルスバスター Corp Clientなど"
+    validations:
+      required: true
+
+  - type: input
+    id: cpu
+    attributes:
+      label: "お使いのCPU"
+      description: "不明の場合はPCの機種名をお書きいただいてもOKです。"
+      placeholder: "→記入例：Intel Core i5, AMD Ryzen 5, Apple M1, Microsoft SQ2など"
+    validations:
+      required: true
