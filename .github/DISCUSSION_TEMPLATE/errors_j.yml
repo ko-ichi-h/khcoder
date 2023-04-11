@@ -1,6 +1,20 @@
-title: "Title"
+title: "短い言葉で具体的に状況をあらわすタイトルをここに入力"
 labels: ["error", "Non-English"]
 body:
+- type: markdown
+  value: |
+    本掲示板（Issues）はユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
+    
+    もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の[「KH Coderサポートパッケージ」](https://www.screen.co.jp/as/solution/khcoder)（Pro Edition以上）を購入することで、 同社のQ & A対応を利用できます。
+    
+    なお、質問しなくても以下の資料によって解決する場合があります。
+   
+    -「よくある質問」
+    -https://khcoder.net/FAQ.html
+    -既存のIssue
+    -https://github.com/ko-ichi-h/khcoder/issues?q=is%3Aissue
+    -旧掲示板：
+    -http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi
 - type: input
   id: suggestion
   attributes:
