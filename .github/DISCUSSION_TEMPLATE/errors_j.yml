@@ -8,13 +8,13 @@ body:
     もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の[「KH Coderサポートパッケージ」](https://www.screen.co.jp/as/solution/khcoder)（Pro Edition以上）を購入することで、 同社のQ & A対応を利用できます。
     
     なお、質問しなくても以下の資料によって解決する場合があります。
-   
-    -「よくある質問」
-    -https://khcoder.net/FAQ.html
-    -既存のIssue
-    -https://github.com/ko-ichi-h/khcoder/issues?q=is%3Aissue
-    -旧掲示板：
-    -http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi
+    
+    - 「よくある質問」
+    - https://khcoder.net/FAQ.html
+    - 既存のIssue
+    - https://github.com/ko-ichi-h/khcoder/issues?q=is%3Aissue
+    - 旧掲示板：
+    - http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi
 - type: input
   id: suggestion
   attributes:
