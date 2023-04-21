@@ -29,7 +29,12 @@ sub open{
 	my $self = \%args;
 	bless $self, $class;
 	
-	$self->_new->win_obj->pack(%{$self->{pack}});
+	if ($self->{grid}) {
+		$self->_new->win_obj->grid(%{$self->{grid}});
+	} else {
+		$self->_new->win_obj->pack(%{$self->{pack}});
+	}
+	
 	$self->start;
 	return $self;
 }
