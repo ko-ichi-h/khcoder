@@ -24,7 +24,6 @@ body:
     id: problem
     attributes:
       label: "Your Qeuestion"
-      description: "すでに入力されているテンプレートを編集しながらご記入ください"
       value: |
         **Your Operating System**
         ex. Windows 10, Mac OS X 10.12, Ubuntu 10.14, etc.
