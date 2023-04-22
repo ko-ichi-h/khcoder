@@ -60,7 +60,6 @@ body:
     validations:
       required: true
 
-
   - type: textarea
     id: console
     attributes:
