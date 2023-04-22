@@ -37,7 +37,7 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: "エラー・不具合について詳しくお書きください"
+      label: "ご質問の内容をお書きください"
       description: "すでに入力されているテンプレートを編集しながらご記入ください"
       value: |
         ■お使いのOS
