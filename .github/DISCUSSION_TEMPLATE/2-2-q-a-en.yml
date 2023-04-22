@@ -13,32 +13,29 @@ body:
   - type: input
     id: version
     attributes:
-      label: "KH Coderのバージョン"
-      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
-      placeholder: "記入例：3.00a, 3.Beta.06など。"
+      label: "Version number of KH Coder"
+      description: "To check the version number, go to \"Help\" \"About\" in the menu of KH Coder."
+      placeholder: "e.g. 2.00f, 3.Alapha.08, etc."
     validations:
       required: true
 
   - type: textarea
     id: problem
     attributes:
-      label: "ご質問の内容をお書きください"
+      label: "Your Qeuestion"
       description: "すでに入力されているテンプレートを編集しながらご記入ください"
       value: |
-        ■お使いのOS
-        →記入例：Windows 11, Windows 10, macOS 14, Ubuntu 18.04など
+        **Your Operating System**
+        ex. Windows 10, Mac OS X 10.12, Ubuntu 10.14, etc.
         
-        ■スクリーンショット
-        可能であれば、質問したい状況をあらわすようなスクリーンショットを添付してください。
+        **Your Qeuestion**
+        A clear and concise description of your question.
         
-        ■ご質問の内容
-        「うまくいかない」といった書き方ではなく、なるべく多くの情報を含めて、具体的にお書き下さい。
+        **Screenshots**
+        If applicable, add screenshots to help explain your question.
         
-        ■チュートリアル・データで試してみると
-        操作・分析が上手くいかない場合は、チュートリアルの漱石「こころ」データで同じことを試してみると上手くいくのかどうかをお知らせください。
-        
-        ■再現用ファイル
-        チュートリアル・データなら上手くいくけれど自分のファイルでは上手くいかないという場合、その現象を再現できるファイルをできれば添付してください。
+        **What language of text are you trying to analyze?**
+        ex. English, Japanese, Chinese, etc.
     validations:
       required: true
 
