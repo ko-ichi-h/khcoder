@@ -1,5 +1,5 @@
 
-title: "で-きるだけ具体的に状況をあらわすタイトルをここに入力してください"
+title: "できるだけ具体的に状況をあらわすタイトルをここに入力してください"
 labels: ["error", "Non-English"]
 body:
   - type: markdown
@@ -15,11 +15,11 @@ body:
         
         # 各種資料
         
-        書き込みしなくても、次の資料にあたることで解決する場合があります。
+        投稿をしなくても、次の資料にあたることで解決する場合があります。
         
         - [「よくある質問」ページ](https://khcoder.net/FAQ.html)
+        - [既存のDiscussions](https://github.com/ko-ichi-h/khcoder/discussions?discussions_q=)
         - [旧掲示板](http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi)
-        - 既存のDiscussion
         - [公式入門書](https://amzn.to/3iyPimF)
         - [詳細マニュアル +alpha](http://amzn.to/2wHFxKg)
         
