@@ -78,7 +78,6 @@ body:
         ■お使いのCPU
         →不明の場合はPCの機種名をお書きいただいてもOKです。
         →記入例：Intel Core i5, AMD Ryzen 5, Apple M1, Microsoft SQ2など
-
     validations:
       required: true
 
