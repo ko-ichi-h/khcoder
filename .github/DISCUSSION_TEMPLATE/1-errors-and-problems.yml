@@ -7,7 +7,7 @@ body:
       value: |
         # 投稿の前に
         
-        本掲示板（Discussion）はユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
+        本掲示板（Discussions）はユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
         
         もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の[「KH Coderサポートパッケージ」](https://www.screen.co.jp/as/solution/khcoder)（Pro Edition以上）を購入することで、 同社のQ & A対応窓口を利用できます。
         
@@ -68,6 +68,16 @@ body:
         
         ■分析しようとしているのは何語のテキストですか？
         →記入例：日本語、英語、ロシア語、中国語など
+        
+        ■分析対象として指定しているファイルの形式は何ですか？
+        →記入例：テキスト形式（.txt）、Excel形式（.xlsx）、CSV形式（.csv）など
+        
+        ■お使いのセキュリティ対策／ウイルス対策ソフトウェア
+        →記入例：Norton 360, ウイルスバスター Corp Clientなど
+        
+        ■お使いのCPU
+        →不明の場合はPCの機種名をお書きいただいてもOKです。
+        →記入例：Intel Core i5, AMD Ryzen 5, Apple M1, Microsoft SQ2など
 
     validations:
       required: true
@@ -89,33 +99,3 @@ body:
         Macの場合，エラー発生時のターミナルの表示内容をすべて，コピー＆ペーストでお知らせください。
     validations:
       required: true
-
-
-  - type: input
-    id: filetype
-    attributes:
-      label: "分析対象として指定しているファイルの形式は何ですか？"
-      placeholder: "記入例：テキスト形式（.txt）、Excel形式（.xlsx）、CSV形式（.csv）など"
-    validations:
-      required: true
-
-  - type: input
-    id: virus
-    attributes:
-      label: "お使いのセキュリティ対策／ウイルス対策ソフトウェア "
-      placeholder: "記入例：Norton 360, ウイルスバスター Corp Clientなど"
-    validations:
-      required: true
-
-  - type: input
-    id: cpu
-    attributes:
-      label: "お使いのCPU"
-      description: "不明の場合はPCの機種名をお書きいただいてもOKです。"
-      placeholder: "→記入例：Intel Core i5, AMD Ryzen 5, Apple M1, Microsoft SQ2など"
-    validations:
-      required: true
-
-  - type: markdown
-    attributes:
-      value: ※ほとんどの記入欄が記入必須となっていますが、どうしても不明なところは「不明」と記入していただいて結構です。
