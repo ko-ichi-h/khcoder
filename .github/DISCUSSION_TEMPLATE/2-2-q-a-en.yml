@@ -1,0 +1,59 @@
+
+title: "できるだけ具体的に内容をあらわすタイトルをここに入力してください"
+labels: ["question", "Non-English"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 投稿の前に
+        
+        本掲示板（Discussions）はユーザー同士の助け合いの場です。何を疑問に思っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
+        
+        もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の[「KH Coderサポートパッケージ」](https://www.screen.co.jp/as/solution/khcoder)（Pro Edition以上）を購入することで、 同社のQ & A対応窓口を利用できます。
+        
+        投稿した疑問が解決したら、解決につながったコメントを「answer」としてマークし、Discussionを「close」してください。
+        
+        # 各種資料
+        
+        質問しなくても、次の資料にあたることで解決する場合があります。
+        
+        - [「よくある質問」ページ](https://khcoder.net/FAQ.html)
+        - [既存のDiscussions](https://github.com/ko-ichi-h/khcoder/discussions?discussions_q=)
+        - [旧掲示板](http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi)
+        - [公式入門書](https://amzn.to/3iyPimF)
+        - [詳細マニュアル +alpha](http://amzn.to/2wHFxKg)
+        
+        # 記入欄
+        
+  - type: input
+    id: version
+    attributes:
+      label: "KH Coderのバージョン"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
+      placeholder: "記入例：3.00a, 3.Beta.06など。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "ご質問の内容をお書きください"
+      description: "すでに入力されているテンプレートを編集しながらご記入ください"
+      value: |
+        ■お使いのOS
+        →記入例：Windows 11, Windows 10, macOS 14, Ubuntu 18.04など
+        
+        ■スクリーンショット
+        可能であれば、質問したい状況をあらわすようなスクリーンショットを添付してください。
+        
+        ■ご質問の内容
+        「うまくいかない」といった書き方ではなく、なるべく多くの情報を含めて、具体的にお書き下さい。
+        
+        ■チュートリアル・データで試してみると
+        操作・分析が上手くいかない場合は、チュートリアルの漱石「こころ」データで同じことを試してみると上手くいくのかどうかをお知らせください。
+        
+        ■再現用ファイル
+        チュートリアル・データなら上手くいくけれど自分のファイルでは上手くいかないという場合、その現象を再現できるファイルをできれば添付してください。
+    validations:
+      required: true
+
