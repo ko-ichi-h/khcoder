@@ -15,7 +15,7 @@ body:
     attributes:
       label: "Version number of KH Coder"
       description: "To check the version number, go to \"Help\" \"About\" in the menu of KH Coder."
-      placeholder: "e.g. 2.00f, 3.Alapha.08, etc."
+      placeholder: "e.g. 3.Beta.06, 2.00f, etc."
     validations:
       required: true
 

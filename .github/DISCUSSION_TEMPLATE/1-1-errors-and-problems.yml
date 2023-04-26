@@ -30,7 +30,7 @@ body:
     attributes:
       label: "KH Coderのバージョン"
       description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
-      placeholder: "記入例：3.00a, 3.Beta.06など。"
+      placeholder: "記入例：3.Beta.06, 2.00fなど。"
     validations:
       required: true
 
