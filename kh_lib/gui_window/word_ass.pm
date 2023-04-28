@@ -190,11 +190,6 @@ sub _new{
 
 	my $f5 = $rf->Frame()->pack(-fill => 'x', -pady => 2);
 	
-	$self->{status_label} = $f5->Label(
-		-text       => 'Ready.',
-		-font       => "TKFN",
-		-foreground => 'blue'
-	)->pack(-side => 'right');
 
 	$self->{copy_btn} = $f5->Button(
 		-font    => "TKFN",
@@ -335,7 +330,16 @@ sub _new{
 	
 	#SCREEN Plugin
 	use screen_code::r_plot_multiselect;
-	&screen_code::r_plot_multiselect::add_button_ass($self, $f5);
+	&screen_code::r_plot_multiselect::add_button_ass($self, $rf, $f5);
+	
+	use screen_code::word_cloud;
+	&screen_code::word_cloud::add_button_grouping($self, $rf, $f5);
+	
+	$self->{status_label} = $rf->Label(
+		-text       => 'Ready.',
+		-font       => "TKFN",
+		-foreground => 'blue'
+	)->pack(-side => 'right');
 	
 	return $self;
 }

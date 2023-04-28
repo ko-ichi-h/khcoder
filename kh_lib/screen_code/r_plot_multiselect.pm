@@ -11,7 +11,6 @@ use Encode qw/encode decode/;
 use Time::Local;
 use Time::HiRes 'usleep';
 
-
 my $kh_homepage_url = "http://khcoder.net/scr_3wnew_monkin.html";
 
 my $default_undecorate;
@@ -31,6 +30,7 @@ my $part_target = "h5";
 my @tani_ary;
 my $tani_col_str;
 my $dan_disuse_flg;
+my $dan_in_tag_flg;
 my $dan_replace_tani_str;
 my $outbar_tani;
 my $outvar_tani_index;
@@ -40,9 +40,11 @@ my $cancel_flag;
 my $waitDialog;
 my $previousTime;
 
+my $result_window_checkState = 0;
 my $checkState = 0;
 
 my $parent_win_obj;
+my $result_window_parent_win_obj;
 
 #中止可能なダイアログの開始
 sub start_waitDialog {
@@ -51,7 +53,13 @@ sub start_waitDialog {
 		undef $waitDialog;
 	}
 	
-	my $mw = $parent_win_obj;
+	my $is_result_window = shift;
+	my $mw;
+	if ($is_result_window) {
+		$mw = $result_window_parent_win_obj;
+	} else {
+		$mw = $parent_win_obj;
+	}
 	my $message = "Monkin is processing data...";
 	$cancel_flag = 0;
 	$waitDialog = $mw->Toplevel();
@@ -105,7 +113,7 @@ sub make_tani_id_col{
 		my $dan_row = $t->fetch->[0];
 		$t = mysql_exec->select("SELECT COUNT(*) FROM $h_min_tani",1)->hundle;
 		my $h_min_row = $t->fetch->[0];
-		$dan_disuse_flg = 1 if $dan_row == $h_min_row;
+		$dan_disuse_flg = 0 if $dan_row == $h_min_row;
 		$dan_replace_tani_str = $h_min_tani;
 	}
 	
@@ -136,8 +144,26 @@ sub make_tani_id_col{
 sub bind_multiselect{
 	my $self = shift;
 	return 0 unless $self->{coordin};
-	$parent_win_obj = $self->{win_obj};
-	$checkState = 0;
+	$result_window_parent_win_obj = $self->{win_obj};
+	$result_window_checkState = 0;
+	print "bind_multiselect called \n";
+	
+	foreach my $i (keys %{$self->{coordin}}) {
+		
+		next unless $i =~ /^[0-9]+$/;
+		$self->{canvas}->bind(
+			$i,
+			"<Button-3>",
+			[sub {
+				my($w) = @_;
+				my $select_word = $self->{coordin}{$i}{name};
+				
+				use screen_code::word_cloud;
+				&screen_code::word_cloud::grouping_network_menu($w, $result_window_parent_win_obj, $select_word);
+				return;
+			}]
+		);
+	}
 	if (-e &screen_code::plugin_path::KWIC_main_path &! $self->{kwic_button_w}) {
 		$self->{kwic_button_w} = $self->{bottom_frame}->Button(
 			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
@@ -154,7 +180,7 @@ sub bind_multiselect{
 			}
 		)->pack(-side => 'right');
 		$self->{bottom_frame}->Checkbutton(
-			-variable => \$checkState,
+			-variable => \$result_window_checkState,
 		)->pack(-side => 'right');
 	} else {
 		if ( $::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' &! $self->{kwic_button_w}){
@@ -167,11 +193,11 @@ sub bind_multiselect{
 				}
 			)->pack(-side => 'right');
 			$self->{bottom_frame}->Checkbutton(
-				-variable => \$checkState,
+				-variable => \$result_window_checkState,
 				-state => 'disable',
 			)->pack(-side => 'right');
-			return 0;
 		}
+		return;
 	}
 	foreach my $i (keys %{$self->{coordin}}) {
 		
@@ -189,7 +215,7 @@ sub bind_multiselect{
 			"<Button-1>",
 			sub {
 				$self->undecorate(1);
-				if ($checkState) {
+				if ($result_window_checkState) {
 					my @selected_words;
 					push @selected_words, $self->{coordin}{$i}{name};
 					do_multi_KWIC(\@selected_words);
@@ -219,44 +245,47 @@ sub bind_multiselect{
 
 sub add_button_ass{
 	my $self = shift;
+	my $rf = shift;
 	my $f5 = shift;
 	$checkState = 0;
 	
 	if (-e &screen_code::plugin_path::KWIC_main_path) {
 		$parent_win_obj = $self->{win_obj};
-		$f5->Button(
+		 $rf->Checkbutton(
+			-variable => \$checkState,
+			-width => 0,
+		)->pack(-side => 'left');
+		$rf->Button(
 			-text => kh_msg->get('screen_code::assistant->KWIC_button'),
 			-font => "TKFN",
 			-borderwidth => '1',
 			-command => sub {
-				my @selected = $self->{rlist}->infoSelection;
-				return unless @selected;
-				my @s = $self->{clist}->info('selection');
-				if ( @s && $s[0] eq '0' ) {
-					my $mode =  $self->gui_jg( $self->{opt_direct});
-					screen_code::r_plot_multiselect::do_multi_KWIC_relation($self->{result}->[$selected[0]][0], $self->{code_obj}->{query_words}, $mode);
-				}
+				#if ($checkState) {
+					my @selected = $self->{rlist}->infoSelection;
+					return unless @selected;
+					my @s = $self->{clist}->info('selection');
+					if ( @s && $s[0] eq '0' ) {
+						my $mode =  $self->gui_jg( $self->{opt_direct});
+						screen_code::r_plot_multiselect::do_multi_KWIC_relation($self->{result}->[$selected[0]][0], $self->{code_obj}->{query_words}, $mode);
+					}
+				#}
 			}
-		)->pack(-side => 'right');
-		 $f5->Checkbutton(
-			-variable => \$checkState,
-			-width => 0,
-		)->pack(-side => 'right');
+		)->pack(-side => 'left');
 	} else {
 		if ($::config_obj->os eq 'win32' && $::config_obj->msg_lang eq 'jp' ){
-			$f5->Button(
+			$rf->Checkbutton(
+				-variable => \$checkState,
+				-width => 0,
+				-state => 'disable',
+			)->pack(-side => 'left');
+			$rf->Button(
 				-text => kh_msg->get('screen_code::assistant->KWIC_button2'),
 				-font => "TKFN",
 				-borderwidth => '1',
 				-command => sub {
 					gui_OtherWin->open($kh_homepage_url);
 				}
-			)->pack(-side => 'right');
-			 $f5->Checkbutton(
-				-variable => \$checkState,
-				-width => 0,
-				-state => 'disable',
-			)->pack(-side => 'right');
+			)->pack(-side => 'left');
 		}
 	}
 	
@@ -287,7 +316,7 @@ sub do_multi_KWIC{
 	my $relation_file_path = &screen_code::plugin_path::assistant_option_folder.$relation_file_name;
 	unlink $relation_file_path if -f $relation_file_path;
 	
-	start_waitDialog();
+	start_waitDialog(1);
 	my $rtn = output_KWIC_files($selected_words_ref);
 	end_waitDialog();
 	return 0 if !$rtn;
@@ -380,7 +409,7 @@ sub do_multi_KWIC_relation{
 	print $OUT "$selected_word_ref $mode";
 	close($OUT);
 	
-	start_waitDialog();
+	start_waitDialog(0);
 	my $rtn = output_KWIC_files(\@words);
 	end_waitDialog();
 	return 0 unless $rtn;
@@ -585,22 +614,38 @@ sub output_or_result{
 	my $prev_id = "";
 	my $footer_id_str;
 	my @tani_order = ('h1','h2','h3','h4','h5','dan','bun');
+	my $dan_in_tag; #hタグを考慮した段落番号
+	$dan_in_tag_flg = 0;
 	while (my $i = $t->fetch){
 		push @hyosobun_id_list, $i->[0];
 		push @target_id_list, $i->[1];
+		
+		#hタグ内の段落に対応する
+		$dan_in_tag = $i->[7];
+		if ($i->[6] > 0) {
+			$dan_in_tag = $i->[6] * 100 + $i->[7];
+			$dan_in_tag_flg = 1;
+			#print "h5=$i->[6] dan=$i->[7] dan_in_tag=$dan_in_tag \n";
+		}
 		
 		$footer_id_str = "";
 		foreach my $tani_str (@tani_ary) {
 			my $temp_tani_str;
 			if ($dan_disuse_flg && $tani_str eq "dan") {
 				$temp_tani_str = $dan_replace_tani_str;
+			
+			#hタグ内の段落はテーブルの値そのままではないため特別な対応が必要
+			} elsif ($tani_str eq "dan") {
+				$footer_id_str .= $tani_str.":".$dan_in_tag."@";
+				next;
 			} else {
 				$temp_tani_str = $tani_str;
 			}
 			my ($index) = grep { $tani_order[$_] eq $temp_tani_str } 0 .. $#tani_order;
 			$footer_id_str .= $tani_str.":".$i->[$index + 2]."@";
 		}
-		push @tani_id_list, $footer_id_str."h1 = $i->[2], h2 = $i->[3], h3 = $i->[4], h4 = $i->[5], h5 = $i->[6], dan = $i->[7], bun = $i->[8]";
+		
+		push @tani_id_list, $footer_id_str."h1 = $i->[2], h2 = $i->[3], h3 = $i->[4], h4 = $i->[5], h5 = $i->[6], dan = $dan_in_tag, bun = $i->[8]";
 		push @tani_id_list_header, $i->[$outvar_tani_index+2];
 		$prev_id = $i->[1];
 	}
@@ -668,7 +713,7 @@ sub get_result_by_hyosobun_id{
 	mysql_exec->do("DELETE FROM temp_part",1);
 	mysql_exec->do("LOAD DATA LOCAL INFILE '$csv_file_path' INTO TABLE temp_part",1);
 	
-	$sql = "SELECT hyosobun.id, hyoso.name, temp_conc_multi.hyosobun_id, hyoso.genkei_id, hyosobun.hyoso_id, hyosobun.bun_id, temp_conc_multi.tani_id_string\n";
+	$sql = "SELECT hyosobun.id, hyoso.name, temp_conc_multi.hyosobun_id, hyoso.genkei_id, hyosobun.hyoso_id, hyosobun.bun_id, temp_conc_multi.tani_id_string, hyosobun.dan_id, hyosobun.h5_id\n";
 	$sql .= "FROM (hyosobun INNER JOIN temp_part ON  hyosobun.id = temp_part.id) INNER JOIN hyoso ON hyosobun.hyoso_id = hyoso.id LEFT JOIN temp_conc_multi ON hyosobun.id = temp_conc_multi.hyosobun_id\n";
 	
 	my $t = mysql_exec->select($sql,1)->hundle;
@@ -677,12 +722,15 @@ sub get_result_by_hyosobun_id{
 	my $is_bun_header = 0;
 	my $res;
 	while (my $i = $t->fetch){
-		$res->{$i->[0]}[0] = $i->[1];
-		$res->{$i->[0]}[1] = $i->[2];
-		$res->{$i->[0]}[2] = $i->[3];
-		$res->{$i->[0]}[3] = $i->[4];
-		$res->{$i->[0]}[4] = $i->[5];
-		$res->{$i->[0]}[5] = $i->[6];
+		$res->{$i->[0]}[0] = $i->[1]; #name
+		$res->{$i->[0]}[1] = $i->[2]; #hsb_id
+		$res->{$i->[0]}[2] = $i->[3]; #genkei_id
+		$res->{$i->[0]}[3] = $i->[4]; #hyoso_id
+		$res->{$i->[0]}[4] = $i->[5]; #bun_id
+		$res->{$i->[0]}[5] = $i->[6]; #tani_id
+		
+		$res->{$i->[0]}[6] = $i->[7]; #dan_id
+		$res->{$i->[0]}[7] = $i->[8]; #h5_id
 	}
 	
 	return 0 if check_cancel();
@@ -691,6 +739,8 @@ sub get_result_by_hyosobun_id{
 	my $row_num = 0;
 	my @sort_id_ary;
 	my $sort_genkei_id;
+	my $dan_str_temp;
+	my $dan_in_tag_str;
 	
 	foreach my $id (@{$hyosobun_id_list}){
 		my $row_str = "";
@@ -708,7 +758,18 @@ sub get_result_by_hyosobun_id{
 				}
 				if ($res->{$count}[1]) {
 					$row_str .= "@" if $count == $id;
-					$row_str = $res->{$count}[5].$row_str if $count == $id;
+					if ($count == $id) {
+						if ($dan_in_tag_flg) {
+							$dan_in_tag_str = 'dan:'.($res->{$count}[7] * 100 + $res->{$count}[6]);
+							$dan_str_temp = $res->{$count}[5];
+							#print "dan_str_temp=$dan_str_temp ";
+							$dan_str_temp =~ s/dan:[1-9]+/$dan_in_tag_str/;
+							#print "$dan_str_temp \n";
+							$row_str = $dan_str_temp.$row_str;
+						} else {
+							$row_str = $res->{$count}[5].$row_str;
+						}
+					}
 					$row_str .= "$res->{$count}[2]:$res->{$count}[3]";
 				} else {
 					$row_str .= "$res->{$count}[0]";
@@ -777,41 +838,82 @@ sub get_detail_by_part_target_id{
 	foreach my $tani (@tani_ary) {
 		my $part_target_id = part_target_id($tani);
 		
-		mysql_exec->do("DELETE FROM temp_part",1);
-		$sql = "INSERT IGNORE INTO temp_part (id) SELECT $part_target_id FROM temp_conc_multi INNER JOIN hyosobun ON temp_conc_multi.hyosobun_id = hyosobun.id";
+		if ($tani eq 'dan' && $dan_in_tag_flg) {
 		
-		mysql_exec->do($sql,1);
-		$sql = "SELECT hyoso.name, hyosobun.$part_target_id, hyosobun.id, temp_conc_multi.genkei_id, temp_conc_multi.hyoso_id\n";
-		$sql .= "FROM (hyosobun INNER JOIN temp_part ON temp_part.id = hyosobun.$part_target_id)";
-		$sql .= "INNER JOIN hyoso ON hyosobun.hyoso_id = hyoso.id ";
-		$sql .= " LEFT JOIN temp_conc_multi ON hyosobun.id = temp_conc_multi.hyosobun_id ORDER BY hyosobun.id";
+			mysql_exec->do("DELETE FROM temp_part",1);
+			$sql = "INSERT IGNORE INTO temp_part (id) SELECT (h5_id * 100) + dan_id FROM temp_conc_multi INNER JOIN hyosobun ON temp_conc_multi.hyosobun_id = hyosobun.id";
+			
+			mysql_exec->do($sql,1);
+			
+			$sql = "SELECT hyoso.name, temp_part.id, hyosobun.id, temp_conc_multi.genkei_id, temp_conc_multi.hyoso_id \n";
+			$sql .= "FROM (hyosobun INNER JOIN temp_part ON ((temp_part.id MOD 100) = hyosobun.dan_id AND (temp_part.id DIV 100) = hyosobun.h5_id) ) ";
+			$sql .= "INNER JOIN hyoso ON hyosobun.hyoso_id = hyoso.id ";
+			$sql .= " LEFT JOIN temp_conc_multi ON hyosobun.id = temp_conc_multi.hyosobun_id ORDER BY hyosobun.id";
+			my $t = mysql_exec->select($sql,1)->hundle;
+			
+			my $row_str = "";
+			my $prev_part_id;
+			my $prev_hsb_id;
+			my $count = 0;
+			while (my $i = $t->fetch){
+				if ($count && $prev_part_id != $i->[1]) {
+					$row_str = "$tani:$prev_part_id@".$row_str."//\n";
+					push @{$result}, $row_str;
+					$row_str = "";
+				} elsif ($count && $i->[2] == $prev_hsb_id) {
+					next;
+				}
+				if ($i->[3]) {
+					$row_str .= "$i->[3]:$i->[4]";
+				} else {
+					$row_str .= "$i->[0]";
+				}
+				$prev_part_id = $i->[1];
+				$prev_hsb_id = $i->[2];
+				$count++;
+				return 0 if check_cancel();
+			}
+			$row_str = "$tani:$prev_part_id@".$row_str."//\n";
+			push @{$result}, $row_str;
+			
+		} else {
 		
-		my $t = mysql_exec->select($sql,1)->hundle;
-		my $row_str = "";
-		my $prev_part_id;
-		my $prev_hsb_id;
-		my $count = 0;
-		while (my $i = $t->fetch){
-			if ($count && $prev_part_id != $i->[1]) {
-				$row_str = "$tani:$prev_part_id@".$row_str."//\n";
-				push @{$result}, $row_str;
-				$row_str = "";
-			} elsif ($count && $i->[2] == $prev_hsb_id) {
-				next;
+			mysql_exec->do("DELETE FROM temp_part",1);
+			$sql = "INSERT IGNORE INTO temp_part (id) SELECT $part_target_id FROM temp_conc_multi INNER JOIN hyosobun ON temp_conc_multi.hyosobun_id = hyosobun.id";
+			mysql_exec->do($sql,1);
+			
+			$sql = "SELECT hyoso.name, hyosobun.$part_target_id, hyosobun.id, temp_conc_multi.genkei_id, temp_conc_multi.hyoso_id \n";
+			$sql .= "FROM (hyosobun INNER JOIN temp_part ON temp_part.id = hyosobun.$part_target_id)";
+			$sql .= "INNER JOIN hyoso ON hyosobun.hyoso_id = hyoso.id ";
+			$sql .= " LEFT JOIN temp_conc_multi ON hyosobun.id = temp_conc_multi.hyosobun_id ORDER BY hyosobun.id";
+			my $t = mysql_exec->select($sql,1)->hundle;
+			
+			my $row_str = "";
+			my $prev_part_id;
+			my $prev_hsb_id;
+			my $count = 0;
+			while (my $i = $t->fetch){
+				if ($count && $prev_part_id != $i->[1]) {
+					$row_str = "$tani:$prev_part_id@".$row_str."//\n";
+					push @{$result}, $row_str;
+					$row_str = "";
+				} elsif ($count && $i->[2] == $prev_hsb_id) {
+					next;
+				}
+				if ($i->[3]) {
+					$row_str .= "$i->[3]:$i->[4]";
+				} else {
+					$row_str .= "$i->[0]";
+				}
+				$prev_part_id = $i->[1];
+				$prev_hsb_id = $i->[2];
+				$count++;
+				return 0 if check_cancel();
 			}
-			if ($i->[3]) {
-				$row_str .= "$i->[3]:$i->[4]";
-			} else {
-				$row_str .= "$i->[0]";
-			}
-			$prev_part_id = $i->[1];
-			$prev_hsb_id = $i->[2];
-			$count++;
-			return 0 if check_cancel();
+			$row_str = "$tani:$prev_part_id@".$row_str."//\n";
+			push @{$result}, $row_str;
+			
 		}
-		$row_str = "$tani:$prev_part_id@".$row_str."//\n";
-		push @{$result}, $row_str;
-		
 	}
 	return 1;
 }

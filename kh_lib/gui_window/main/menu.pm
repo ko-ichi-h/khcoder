@@ -549,6 +549,11 @@ sub make{
 				},
 				-state => 'disable'
 			);
+		
+		#SCREEN Plugin
+		use screen_code::word_cloud;
+		&screen_code::word_cloud::add_word_cloud_menu($self,$f3,\@menu1);
+		#SCREEN Plugin
 
 		my $f_wd_stats = $f3->cascade(
 			-label => kh_msg->get('desc_stats'),

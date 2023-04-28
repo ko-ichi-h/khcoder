@@ -1289,9 +1289,6 @@ screen_code::assistant:
     KWIC_button:              '《文錦》KWIC '
     KWIC_button2:             《文錦》KWIC※
     KWIC_label:               《文錦》
-    batch_plugin:             《文錦》 バッチ実行
-    batch_plugin2:            《文錦》 バッチ実行※
-    batch_wait:               分析処理実行中…
     corresp_ang:              '  変数方向'
     corresp_drop_menu1:       狭い
     corresp_drop_menu2:       やや狭い
@@ -1312,6 +1309,18 @@ screen_code::assistant:
     p_value:                  有意確率
     plugin_synonym:           《文錦》 表記ゆれ＆同義語
     use_plugin:               《文錦》 による結果表示
+    batch_plugin:              "《文錦》バッチ実行"
+    batch_plugin2:             "《文錦》バッチ実行※"
+    batch_wait:                "分析処理実行中…"
+    wordcloud_button:          《文錦》ワードクラウド
+    wordcloud_button2:         《文錦》ワードクラウド※
+    presentation_button:       《文錦》ブレゼンテーション
+    presentation_button2:      《文錦》ブレゼンテーション※
+    grouping_menu_p:           《文錦》この語を中心に表現
+    grouping_menu_p2:          《文錦》この語を中心に表現※
+    grouping_menu_1:           同じグループの語
+    grouping_menu_2:           つながっている語
+    grouping_menu_3:           関連語
 screen_code::rde_menu:
     err_edit:                 |-
         プロジェクトデータの編集処理に失敗しました。
