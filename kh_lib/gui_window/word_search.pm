@@ -169,12 +169,6 @@ sub _new{
 	#	-command => sub {$self->copy_all;}
 	#)->pack(-side => 'right');
 
-	$self->{copy_btn} = $fra5->Button(
-		-text => kh_msg->get('excel'),
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub { gui_window::word_list->open; }
-	)->pack(-side => 'right');
 
 	$self->{show_bars} = $::config_obj->show_bars_wordlist;
 	$fra5->Checkbutton(
@@ -204,25 +198,32 @@ sub _new{
 		-text     => ' ',
 	)->pack(-anchor => 'w', -side => 'left');
 
-	$self->{button_p100} = $fra5->Button(
-		-text => kh_msg->get('p100'),
-		-font => "TKFN",
-		-borderwidth => '1',
-		-command => sub { $self->display( $self->{start} - 100 ); }
-	)->pack(-anchor => 'w', -side => 'left');
-
 	$self->{button_n100} = $fra5->Button(
 		-text => kh_msg->get('n100'),
 		-font => "TKFN",
 		-borderwidth => '1',
 		-command => sub { $self->display( $self->{start} + 100 ); }
-	)->pack(-anchor => 'w', -side => 'left');
+	)->pack(-anchor => 'e', -side => 'right');
+
+	$self->{button_p100} = $fra5->Button(
+		-text => kh_msg->get('p100'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { $self->display( $self->{start} - 100 ); }
+	)->pack(-anchor => 'e', -side => 'right');
 
 	#SCREEN Plugin
 	use screen_code::word_cloud;
-	&screen_code::word_cloud::add_button_wordcloud($self,$wmw,$fra5);
+	&screen_code::word_cloud::add_button_wordcloud($self,$wmw);
 	#SCREEN Plugin
 	
+	$self->{copy_btn} = $wmw->Button(
+		-text => kh_msg->get('excel'),
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub { gui_window::word_list->open; }
+	)->pack(-anchor => 'w', -padx => 4);
+
 	
 	$self->win_obj->bind(
 		'<Control-Key-c>',

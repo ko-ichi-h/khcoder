@@ -379,7 +379,7 @@ sub make{
 					-label => kh_msg->get('plugin_raw_data_editor2'),
 					-font => "TKFN",
 					-command => sub{
-						gui_OtherWin->open('http://khcoder.net/scr_monkin.html');
+						gui_OtherWin->open('https://khcoder.net/scr_monkin.html');
 					},
 					-state => 'disable'
 				);

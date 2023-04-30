@@ -5,7 +5,7 @@ use mysql_exec;
 
 use screen_code::plugin_path;
 
-my $kh_homepage_url = "http://khcoder.net/scr_3wnew_monkin.html";
+my $kh_homepage_url = "https://khcoder.net/scr_monkin.html";
 
 use gui_window::main::menu;
 use File::Path;
@@ -194,8 +194,8 @@ sub add_word_cloud_menu{
 	my $f = shift;
 	my $menu1_ref = shift;
 	
+	push @{$menu1_ref}, 't_wordcloud_plugin';
 	if (-e &screen_code::plugin_path::WC_path) {
-		push @{$menu1_ref}, 't_wordcloud_plugin';
 		$self->{t_wordcloud_plugin} = $f->command(
 			-label => kh_msg->get('screen_code::assistant->wordcloud_button'),
 			-font => "TKFN",
@@ -214,7 +214,6 @@ sub add_word_cloud_menu{
 			}
 		);
 	} else {
-		push @{$menu1_ref}, 't_no_wordcloud_plugin';
 		$self->{t_wordcloud_plugin} = $f->command(
 			-label => kh_msg->get('screen_code::assistant->wordcloud_button2'),
 			-font => "TKFN",
@@ -228,7 +227,6 @@ sub add_word_cloud_menu{
 sub add_button_wordcloud{
 	my $self = shift;
 	my $wmw = shift;
-	my $fra5 = shift;
 	
 	if (-e &screen_code::plugin_path::WC_path) {
 		$self->{wc_btn} = $wmw->Button(
@@ -482,7 +480,7 @@ sub grouping_network_menu{
 					}
 					close($IN);
 					
-					open(my $IN, "<:encoding(cp932)", $network_line_data_file);
+					open($IN, "<:encoding(cp932)", $network_line_data_file);
 					my $wordPairDic = {};
 					while (my $line = <$IN>) {
 						chomp($line);
