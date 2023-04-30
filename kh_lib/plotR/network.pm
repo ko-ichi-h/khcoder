@@ -115,6 +115,11 @@ sub new{
 
 	# プロット作成
 	
+	#SCREEN Plugin
+	use screen_code::word_cloud;
+	&screen_code::word_cloud::add_code_to_network(\$r_command);
+	#SCREEN Plugin
+	
 	#use Benchmark;
 	#my $t0 = new Benchmark;
 	
@@ -1953,6 +1958,25 @@ p <- p + coord_fixed(
 	xlim = xlimv,
 	ylim = ylimv
 )
+
+if (exists("output_word_data")) {
+	line_data <- p$data
+	line_data <- line_data[is.na(line_data$line) == FALSE,]
+	word_data <- p$data[is.na(p$data$line),]
+	line_data["line_pair"] <- c(0)
+	for( i in 1:nrow(line_data)){
+		for( j in 1:nrow(word_data)){
+			if (is.na(line_data[i,"line"]) == FALSE) {
+				if (line_data[i,"xend"] == word_data[j,"xend"]) {
+					line_data[i,"line_pair"] <- row.names(word_data)[j]
+				}
+			}
+		}
+	}
+	line_data <- line_data[is.na(line_data$line) == FALSE,]
+	write.table(word_data[3:6], output_word_data, quote=F, append=F, row.names=T, col.names=F, sep = ",")
+	write.table(line_data, output_line_data, quote=F, append=F, row.names=F, col.names=F, sep = ",")
+}
 
 library(grid)
 library(gtable)

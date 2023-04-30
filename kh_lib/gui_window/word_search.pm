@@ -218,6 +218,12 @@ sub _new{
 		-command => sub { $self->display( $self->{start} + 100 ); }
 	)->pack(-anchor => 'w', -side => 'left');
 
+	#SCREEN Plugin
+	use screen_code::word_cloud;
+	&screen_code::word_cloud::add_button_wordcloud($self,$wmw,$fra5);
+	#SCREEN Plugin
+	
+	
 	$self->win_obj->bind(
 		'<Control-Key-c>',
 		sub{ $self->copy_all; }

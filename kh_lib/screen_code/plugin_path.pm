@@ -12,7 +12,8 @@ my $synonym_name = File::Spec->catfile('screen', 'MonkinSynonym', 'MonkinSynonym
 my $KWIC_main_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinKWIC.exe');
 my $KWIC_sub_name = File::Spec->catfile('screen', 'MonkinKWIC', 'MonkinSendClient.exe');
 my $KWIC_pl_name = File::Spec->catfile('screen', 'MonkinKWIC', 'do_plugin.bat');
-my $WC_name = File::Spec->catfile('screen', 'MonkinWordCloud', 'MonkinWordCloud.exe');
+my $WC_name = File::Spec->catfile('screen', 'MonkinPresentation', 'MonkinPresentation.exe');
+my $WC_python_folder = File::Spec->catfile('screen', 'MonkinPresentation', 'python-3.8.10-embed');
 my $batch_name = File::Spec->catfile('screen', 'MonkinBatch', 'MonkinBatch.exe');
 my $batch_HTML_name = File::Spec->catfile('screen', 'MonkinBatch');
 my $batch_dummy_name = File::Spec->catfile('screen', 'MonkinBatch', 'dummy.png');
@@ -51,6 +52,10 @@ sub KWIC_pl_path{
 sub WC_path{
 	return encoding($WC_name);
 }
+sub WC_python_path{
+	return encoding($WC_python_folder);
+}
+
 
 sub batch_path{
 	return encoding($batch_name);
