@@ -318,6 +318,13 @@ sub add_button_grouping{
 
 sub add_code_to_network{
     my($r_command_ref) = @_;
+
+	unless (-d $::config_obj->cwd."/screen/temp"){
+		mkdir($::config_obj->cwd."/screen/temp")
+			or die("could not create dir: ".$::config_obj->cwd."/screen/temp")
+		;
+	}
+
 	$$r_command_ref .= "output_word_data <- \"".$network_word_group_file."\"\n";
 	unlink $network_word_group_file if -f $network_word_group_file;
 	$$r_command_ref .= "output_line_data <- \"".$network_line_data_file."\"\n";
