@@ -13,7 +13,10 @@ use Encode qw/encode decode/;
 
 my $hselection_file = &screen_code::plugin_path::assistant_option_folder."WC_hselection.txt";
 my $folder_path = $::config_obj->cwd."/screen/MonkinPresentation/python-3.8.10-embed/";
-my $network_word_group_file = $::config_obj->cwd."/screen/temp/word_data2.csv";
+my $network_word_group_file = $::config_obj->cwd."/screen/temp/word_data.csv";
+my $network_word_group_file_r = $::config_obj->cwd."/screen/temp/word_data_r.csv";
+my $network_word_group_file_b = $::config_obj->cwd."/screen/temp/word_data_b.csv";
+my $network_word_group_file_m = $::config_obj->cwd."/screen/temp/word_data_m.csv";
 my $network_line_data_file = $::config_obj->cwd."/screen/temp/line_data.csv";
 
 my $grouping_checkState;
@@ -329,6 +332,12 @@ sub add_code_to_network{
 	unlink $network_word_group_file if -f $network_word_group_file;
 	$$r_command_ref .= "output_line_data <- \"".$network_line_data_file."\"\n";
 	unlink $network_line_data_file if -f $network_line_data_file;
+	$$r_command_ref .= "output_word_data_r <- \"".$network_word_group_file_r."\"\n";
+	unlink $network_word_group_file_r if -f $network_word_group_file_r;
+	$$r_command_ref .= "output_word_data_b <- \"".$network_word_group_file_b."\"\n";
+	unlink $network_word_group_file_b if -f $network_word_group_file_b;
+	$$r_command_ref .= "output_word_data_m <- \"".$network_word_group_file_m."\"\n";
+	unlink $network_word_group_file_m if -f $network_word_group_file_m;
 }
 
 
@@ -351,11 +360,42 @@ sub grouping_network_menu{
 	my $w = shift;
 	my $parent_win_obj = shift;
 	my $select_word = shift;
+	my $result_window_self = shift;
+	
 	
 	my $title = $parent_win_obj->title;
 	$title = Encode::decode("utf-8",$title);
-	print "grouping_network_menu title=$title select_word=$select_word \n";
+	#print "grouping_network_menu title=$title select_word=$select_word\n";
 	if ($title eq "抽出語・共起ネットワーク") {
+	
+		#print "grouping_network_menu called ax=$result_window_self->{ax} \n";
+		my $ax_num = 0;
+		my $selected_picture = "";
+		my $selected_picture_type = "";
+		my $use_word_file;
+		foreach my $i (@{$result_window_self->option1_options}){
+			#print "$i \n";
+			if ($ax_num == $result_window_self->{ax}) {
+				#print "selected picture = $i \n";
+				$selected_picture = $i;
+			}
+			$ax_num++;
+		}
+		
+		if ($selected_picture eq kh_msg->get('gui_window::r_plot::word_netgraph->com_m')) {
+			$selected_picture_type = "com";
+			$use_word_file = $network_word_group_file_m;
+		} elsif ($selected_picture eq kh_msg->get('gui_window::r_plot::word_netgraph->com_b')) {
+			$selected_picture_type = "com";
+			$use_word_file = $network_word_group_file_b;
+		} elsif ($selected_picture eq kh_msg->get('gui_window::r_plot::word_netgraph->com_r')) {
+			$selected_picture_type = "com";
+			$use_word_file = $network_word_group_file_r;
+		} else {
+			$selected_picture_type = "cnt";
+			$use_word_file = $network_word_group_file;
+		}
+	
 		my $x = $w->pointerx;
 		my $y = $w->pointery;
 		my $m = $parent_win_obj->Menu(
@@ -374,56 +414,51 @@ sub grouping_network_menu{
 				-tearoff=>'no'
 			);
 			$cascade->command(-label => kh_msg->get('screen_code::assistant->grouping_menu_1'), -command => sub {
-				if (-f $network_word_group_file) {
-					my %wordToGroupDic = ();
-					my %groupTowordsDic = ();
-					my %wordNumDic = ();
-					open(my $IN, "<:encoding(cp932)", $network_word_group_file);
-					while (my $line = <$IN>) {
-						chomp($line);
-						$line =~ s/\t//go;
-						my @splited = split(/,/, $line);
-						my $word = $splited[0];
-						my $group = $splited[1];
-						my $wordnum = $splited[4];
-						$wordToGroupDic{$word} = $group;
-						if (exists($groupTowordsDic{$group})) {
-						} else{
-							$groupTowordsDic{$group} = [];
+				if ($selected_picture_type eq "cnt") {
+					if (-f $network_line_data_file) {
+						my %wordNumDic = ();
+						open(my $IN, "<:encoding(cp932)", $use_word_file);
+						while (my $line = <$IN>) {
+							chomp($line);
+							$line =~ s/\t//go;
+							my @splited = split(/,/, $line);
+							my $word = $splited[0];
+							my $wordnum = $splited[4];
+							$wordNumDic{$word} = $wordnum;
 						}
-						push(@{$groupTowordsDic{$group}}, $word);
-						$wordNumDic{$word} = $wordnum;
-					}
-					close($IN);
-					
-					open($IN, "<:encoding(cp932)", $network_line_data_file);
-					my %wordPairDic = ();
-					while (my $line = <$IN>) {
-						chomp($line);
-						my @splited = split(/,/, $line);
-						my $word1 = $splited[3];
-						my $word2 = $splited[12];
-						my $weiget = $splited[11];
-						unless (exists($wordPairDic{$word1})) {
-							$wordPairDic{$word1} = {};
-							$wordPairDic{$word1}{1} = $word1;
+						close($IN);
+						
+						open($IN, "<:encoding(cp932)", $network_line_data_file);
+						my $wordPairDic = {};
+						while (my $line = <$IN>) {
+							chomp($line);
+							my @splited = split(/,/, $line);
+							my $word1 = $splited[3];
+							my $word2 = $splited[12];
+							my $weiget = $splited[11];
+							unless (exists($$wordPairDic{$word1})) {
+								$$wordPairDic{$word1} = [];
+							}
+							unless (exists($$wordPairDic{$word2})) {
+								$$wordPairDic{$word2} = [];
+							}
+							push(@{$$wordPairDic{$word1}}, $word2);
+							push(@{$$wordPairDic{$word2}}, $word1);
 						}
-						unless (exists($wordPairDic{$word2})) {
-							$wordPairDic{$word2} = {};
-							$wordPairDic{$word2}{1} = $word2;
-						}
-						$wordPairDic{$word1}{$weiget} = $word2;
-						$wordPairDic{$word2}{$weiget} = $word1;
-					}
-					close($IN);
-					my @keys = sort { $b cmp $a } keys %{$wordPairDic{$select_word}};
-					
-					my $groupStr = $wordToGroupDic{$select_word};
-					if ($groupStr ne "NA") {
+						close($IN);
+						
+						my $checkedWord = {};
+						my $linkedWords = {};
+						&word_link_check($wordPairDic, $checkedWord, $linkedWords, $select_word);
+						
+						my @linkedWordsAry = keys %{$linkedWords};
+						
+						my $first = 1;
 						my $relation_file = $folder_path."wordRelationList.txt";
 						unlink $relation_file if -f $relation_file;
 						my $REALTION;
 						open ($REALTION, '>:encoding(utf8)', $relation_file) or return;
+						
 						my $genkei = shift;
 						my $sql = '
 							SELECT
@@ -436,7 +471,7 @@ sub grouping_network_menu{
 								AND genkei.nouse = 0
 								AND (genkei.name = \''.$select_word.'\'';
 								
-						foreach my $genkei (@{$groupTowordsDic{$groupStr}}) {
+						foreach my $genkei (@linkedWordsAry) {
 							$sql .= ' OR genkei.name = \''.$genkei.'\'';
 						}
 						$sql .= ') ORDER BY genkei.num DESC';
@@ -456,6 +491,7 @@ sub grouping_network_menu{
 						print $REALTION join("\n", @relationStrArray)."\n";
 						close ($REALTION);
 						
+						
 						my $system_err = 0;
 						$! = undef;
 						my $plugin_rtn = system(&screen_code::plugin_path::WC_path, "2","0");
@@ -466,17 +502,114 @@ sub grouping_network_menu{
 						} elsif ($plugin_rtn == 256) {
 							
 						}
-						
+					} else {
+						return;
 					}
-				} else {
-					return;
+				} elsif ($selected_picture_type eq "com") {
+					if (-f $use_word_file) {
+						my %wordToGroupDic = ();
+						my %groupTowordsDic = ();
+						my %wordNumDic = ();
+						open(my $IN, "<:encoding(cp932)", $use_word_file);
+						while (my $line = <$IN>) {
+							chomp($line);
+							$line =~ s/\t//go;
+							my @splited = split(/,/, $line);
+							my $word = $splited[0];
+							my $group = $splited[1];
+							my $wordnum = $splited[4];
+							$wordToGroupDic{$word} = $group;
+							if (exists($groupTowordsDic{$group})) {
+							} else{
+								$groupTowordsDic{$group} = [];
+							}
+							push(@{$groupTowordsDic{$group}}, $word);
+							$wordNumDic{$word} = $wordnum;
+						}
+						close($IN);
+						
+						open($IN, "<:encoding(cp932)", $network_line_data_file);
+						my %wordPairDic = ();
+						while (my $line = <$IN>) {
+							chomp($line);
+							my @splited = split(/,/, $line);
+							my $word1 = $splited[3];
+							my $word2 = $splited[12];
+							my $weiget = $splited[11];
+							unless (exists($wordPairDic{$word1})) {
+								$wordPairDic{$word1} = {};
+								$wordPairDic{$word1}{1} = $word1;
+							}
+							unless (exists($wordPairDic{$word2})) {
+								$wordPairDic{$word2} = {};
+								$wordPairDic{$word2}{1} = $word2;
+							}
+							$wordPairDic{$word1}{$weiget} = $word2;
+							$wordPairDic{$word2}{$weiget} = $word1;
+						}
+						close($IN);
+						my @keys = sort { $b cmp $a } keys %{$wordPairDic{$select_word}};
+						
+						my $groupStr = $wordToGroupDic{$select_word};
+						if ($groupStr ne "NA") {
+							my $relation_file = $folder_path."wordRelationList.txt";
+							unlink $relation_file if -f $relation_file;
+							my $REALTION;
+							open ($REALTION, '>:encoding(utf8)', $relation_file) or return;
+							my $genkei = shift;
+							my $sql = '
+								SELECT
+									genkei.name, hselection.name, genkei.num 
+								FROM
+									genkei, hselection
+								WHERE
+									genkei.khhinshi_id = hselection.khhinshi_id
+									AND hselection.ifuse = 1
+									AND genkei.nouse = 0
+									AND (genkei.name = \''.$select_word.'\'';
+									
+							foreach my $genkei (@{$groupTowordsDic{$groupStr}}) {
+								$sql .= ' OR genkei.name = \''.$genkei.'\'';
+							}
+							$sql .= ') ORDER BY genkei.num DESC';
+							
+							my $t = mysql_exec->select($sql,1)->hundle;
+							my @relationStrArray;
+							while (my $i = $t->fetch){
+								if ($wordNumDic{$i->[0]} == $i->[2]) {
+									if ($i->[0] eq $select_word) {
+										unshift(@relationStrArray, $i->[0]." ".$i->[1]." ".$i->[2]);
+									} else {
+										push(@relationStrArray, $i->[0]." ".$i->[1]." ".$i->[2]);
+									}
+								}
+							}
+							
+							print $REALTION join("\n", @relationStrArray)."\n";
+							close ($REALTION);
+							
+							my $system_err = 0;
+							$! = undef;
+							my $plugin_rtn = system(&screen_code::plugin_path::WC_path, "2","0");
+							$system_err = 1 if ($!) ;
+							$::main_gui->{win_obj}->deiconify;
+							if ($plugin_rtn == 0 || $system_err != 0) {
+								
+							} elsif ($plugin_rtn == 256) {
+								
+							}
+							
+						}
+					} else {
+						return;
+					}
 				}
 			});
 			
 			$cascade->command(-label => kh_msg->get('screen_code::assistant->grouping_menu_2'),  -command => sub {
 				if (-f $network_line_data_file) {
 					my %wordNumDic = ();
-					open(my $IN, "<:encoding(cp932)", $network_word_group_file);
+					open(my $IN, "<:encoding(cp932)", $use_word_file);
 					while (my $line = <$IN>) {
 						chomp($line);
 						$line =~ s/\t//go;

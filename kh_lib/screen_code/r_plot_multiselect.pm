@@ -45,6 +45,7 @@ my $checkState = 0;
 
 my $parent_win_obj;
 my $result_window_parent_win_obj;
+my $result_window_self;
 
 #中止可能なダイアログの開始
 sub start_waitDialog {
@@ -146,7 +147,8 @@ sub bind_multiselect{
 	return 0 unless $self->{coordin};
 	$result_window_parent_win_obj = $self->{win_obj};
 	$result_window_checkState = 0;
-	print "bind_multiselect called \n";
+	$result_window_self = $self;
+	#print "bind_multiselect called\n";
 	
 	foreach my $i (keys %{$self->{coordin}}) {
 		
@@ -159,7 +161,7 @@ sub bind_multiselect{
 				my $select_word = $self->{coordin}{$i}{name};
 				
 				use screen_code::word_cloud;
-				&screen_code::word_cloud::grouping_network_menu($w, $result_window_parent_win_obj, $select_word);
+				&screen_code::word_cloud::grouping_network_menu($w, $result_window_parent_win_obj, $select_word, $result_window_self);
 				return;
 			}]
 		);
