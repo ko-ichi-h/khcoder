@@ -1974,8 +1974,17 @@ if (exists("output_word_data")) {
 		}
 	}
 	line_data <- line_data[is.na(line_data$line) == FALSE,]
-	write.table(word_data[3:6], output_word_data, quote=F, append=F, row.names=T, col.names=F, sep = ",")
+	write.table(word_data[3:6], output_word_data, quote=F, append=F, row.names=T, col.names=T, sep = ",")
 	write.table(line_data, output_line_data, quote=F, append=F, row.names=F, col.names=F, sep = ",")
+	if (com_method == "com-g"){
+		write.table(word_data[3:6], output_word_data_m, quote=F, append=F, row.names=T, col.names=T, sep = ",")
+	}
+	if (com_method == "com-r"){   
+		write.table(word_data[3:6], output_word_data_r, quote=F, append=F, row.names=T, col.names=T, sep = ",")
+	}
+	if (com_method == "com-b"){   
+		write.table(word_data[3:6], output_word_data_b, quote=F, append=F, row.names=T, col.names=T, sep = ",")
+	}
 }
 
 library(grid)
