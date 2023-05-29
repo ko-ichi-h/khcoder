@@ -136,13 +136,18 @@ sub print_values{
 	my $self = shift;
 	
 	# リストの取得
+	my %d;
 	my $raw_values = $self->values;
 	my @v = ();
 	my $names = '';
 	my $names_v = '';
 	foreach my $i (@{$raw_values}){
-		push @v, $self->print_val($i);
-		$names .= $self->print_val($i);
+		my $chk = $self->print_val($i);
+		next if $d{$chk};
+		$d{$chk} = 1;
+		
+		push @v, $chk;
+		$names .= $chk;
 		$names_v .= $i;
 	}
 	
@@ -151,7 +156,11 @@ sub print_values{
 		if ($names =~ /\A[0-9]+\Z/){
 			@v = sort {$a <=> $b} @v;
 		} else {
-			@v = sort @v;
+			if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+			@v = sort {Encode::encode('eucjp', $a) cmp Encode::encode('eucjp', $b)} @v;
+			} else {
+				@v = sort @v;
+			}
 		}
 	}
 
