@@ -1,5 +1,4 @@
 
-title: "できるだけ具体的にバグ内容をあらわすタイトルをここに入力してください"
 labels: ["error", "Non-English"]
 body:
   - type: markdown

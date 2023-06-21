@@ -1,5 +1,4 @@
 
-title: "Please enter a title that specifically describes the qustion here"
 labels: ["question"]
 body:
   - type: markdown

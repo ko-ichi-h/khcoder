@@ -1,4 +1,4 @@
-title: "Please enter a title that specifically describes the error or problem here"
+
 labels: ["error"]
 body:
   - type: markdown
