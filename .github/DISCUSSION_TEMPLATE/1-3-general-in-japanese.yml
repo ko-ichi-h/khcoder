@@ -1,0 +1,21 @@
+
+title: "できるだけ具体的に内容をあらわすタイトルをここに入力してください"
+labels: ["Non-English"]
+body:
+
+  - type: input
+    id: version
+    attributes:
+      label: "KH Coderのバージョン"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
+      placeholder: "記入例：3.Beta.06, 2.00fなど。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "内容をご自由にお書きください"
+    validations:
+      required: true
+
