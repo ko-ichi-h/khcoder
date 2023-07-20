@@ -323,6 +323,11 @@ sub add_code_to_network{
     my($r_command_ref) = @_;
 
 	unless (-d $::config_obj->cwd."/screen/temp"){
+		unless (-d $::config_obj->cwd."/screen"){
+			mkdir($::config_obj->cwd."/screen")
+				or die("could not create dir: ".$::config_obj->cwd."/screen")
+			;
+		}
 		mkdir($::config_obj->cwd."/screen/temp")
 			or die("could not create dir: ".$::config_obj->cwd."/screen/temp")
 		;
