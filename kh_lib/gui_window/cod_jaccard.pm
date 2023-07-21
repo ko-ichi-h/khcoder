@@ -38,6 +38,7 @@ sub _new{
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $lf,
 		pack   => \%pack0,
+		tani_gt_1 => 1,
 	);
 
 	$lf->Button(
@@ -126,7 +127,17 @@ sub _calc{
 		$self->rtn;
 		return 0;
 	}
-	
+
+	# number of cases
+	my $cases = mysql_exec->select("select count(*) from ".$self->tani,1)->hundle->fetch->[0];
+	unless ( $cases > 1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->gget('to_few_cases')." [$cases]",
+		);
+		return 0;
+	}
+
 	# 集計の実行
 	my $result;
 	unless ($result = kh_cod::func->read_file($self->cfile)){

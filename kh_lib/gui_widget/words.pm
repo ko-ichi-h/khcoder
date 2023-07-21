@@ -31,6 +31,7 @@ sub _new{
 				$self->sampling_config;
 			},
 			#dont_remember => 1,
+			tani_gt_1 => $self->{tani_gt_1},
 		);
 		if ($self->{sampling}) {
 			$self->{sampling_obj} = gui_widget::sampling->open(

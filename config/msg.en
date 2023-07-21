@@ -28,6 +28,9 @@ global:
     sentence:                 Sentences
     spss_f:                   SPSS File
     tab_f:                    Tab Delimited
+    to_few_cases:             |-
+        We need more cases to run this analysis.
+        Please check the unit setting.
     wm_f:                     'Variable-length CSV: for WordMiner'
     words:                    Words
 gui_errormsg::file:

@@ -54,6 +54,7 @@ sub _new{
 	$self->{tani_obj} = gui_widget::tani->open(
 		parent => $f1,
 		pack   => \%pack1,
+		tani_gt_1 => 1,
 	);
 
 	# コード選択
@@ -309,6 +310,16 @@ sub select_none{
 # プロット作成＆表示
 sub _calc{
 	my $self = shift;
+
+	# number of cases
+	my $cases = mysql_exec->select("select count(*) from ".$self->tani,1)->hundle->fetch->[0];
+	unless ( $cases > 1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->gget('to_few_cases')." [$cases]",
+		);
+		return 0;
+	}
 
 	my @selected = ();
 	foreach my $i (@{$self->{checks}}){

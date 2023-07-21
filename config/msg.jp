@@ -28,6 +28,9 @@ global:
     sentence:                 文
     spss_f:                   SPSSファイル
     tab_f:                    タブ区切り
+    to_few_cases:             |-
+        この分析を行うにはケース数が少なすぎます。
+        集計単位の設定を見直してください。
     wm_f:                     不定長CSV （WordMiner）
     words:                    抽出語
 gui_errormsg::file:

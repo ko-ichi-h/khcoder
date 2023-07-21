@@ -31,14 +31,38 @@ sub _new{
 	my @list0 = ("bun","dan","h5","h4","h3","h2","h1");
 
 	my $len = 0;
-
 	my @list1;
+	my %cases = ();
+
 	foreach my $i (@list0){
+		my $flag1 = 0;
 		if (
 			mysql_exec->select(
 				"select status from status where name = \'$i\'",1
 			)->hundle->fetch->[0]
 		){
+			$flag1 = 1;
+		}
+		
+		my $flag2 = 0;
+		if ( $self->{tani_gt_1} && $flag1 ) {     # Check if there are 2 or more cases,
+			$cases{$i} = mysql_exec->select(      # when "tani_gt_1" is ON.
+				"select count(*) from $i",        # ("bun" will go thru this check)
+				1                                 #
+			)->hundle->fetch->[0];                #
+			if ($cases{$i} > 1) {                 #
+				$flag2 = 1;                       #
+			}                                     #
+		}                                         #
+		elsif ( (! $self->{tani_gt_1}) ) {
+			$flag2 = 1;
+		}
+
+		if ($i eq 'bun') {
+			$flag2 = 1;
+		}
+
+		if ($flag1 && $flag2) {
 			push @list1, $i;
 			$len = length( $name{$i} )
 				if $len < length( $name{$i} );
@@ -73,6 +97,27 @@ sub _new{
 	}
 
 	$self->{raw_opt} = $::project_obj->last_tani;
+	
+	# check if there are 2 or more cases: default "h5" or "dan"
+	if ( $self->{tani_gt_1} ){
+		if ($cases{$self->{raw_opt}} < 2) {
+			if ( $self->{raw_opt} eq 'h5' ){
+				if ($cases{dan} < 50 && $cases{bun} > $cases{dan} ) {
+					$self->{raw_opt} = 'bun';
+				}
+				elsif ($cases{dan} < 2) {
+					$self->{raw_opt} = 'bun';
+				}
+				else {
+					$self->{raw_opt} = 'dan';
+				}
+			}
+			elsif ( $self->{raw_opt} eq 'dan' ){
+				$self->{raw_opt} = 'bun';
+			}
+			print "The default unit (tani) is modified to \"$self->{raw_opt}\".\n";
+		}
+	}
 
 	return $self;
 }

@@ -42,6 +42,7 @@ sub _new{
 		command      => sub{
 			$self->calc;
 		},
+		tani_gt_1 => 1,
 	);
 
 	# Perplexity計算のオプション
@@ -189,7 +190,17 @@ sub calc{
 		);
 		return 0;
 	}
-	
+
+	# number of cases
+	my $cases = mysql_exec->select("select count(*) from ".$self->tani,1)->hundle->fetch->[0];
+	unless ( $cases > 1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->gget('to_few_cases')." [$cases]",
+		);
+		return 0;
+	}
+
 	# 入力のチェック: 語数
 	my $check_num = mysql_crossout::r_com->new(
 		tani     => $self->tani,

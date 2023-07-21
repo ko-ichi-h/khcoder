@@ -529,6 +529,10 @@ sub refresh{
 				mysql_exec->select(
 					"select status from status where name = \'$i\'",1
 				)->hundle->fetch->[0]
+				&&
+				mysql_exec->select(
+					"select count(*) from $i",1
+				)->hundle->fetch->[0] > 1
 			){
 				push @tanis, [$self->gui_jchar($tani_name{$i}),$i];
 			}

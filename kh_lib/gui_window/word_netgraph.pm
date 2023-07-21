@@ -44,6 +44,7 @@ sub _new{
 		},
 		verb         => kh_msg->get('use'), # 利用
 		sampling     => 1,
+		tani_gt_1    => 1,
 	);
 
 	my $lf = $win->LabFrame(
@@ -217,6 +218,16 @@ sub calc{
 		gui_errormsg->open(
 			type => 'msg',
 			msg  => kh_msg->get('gui_window::word_corresp->select_pos'), # '品詞が1つも選択されていません。',
+		);
+		return 0;
+	}
+
+	# number of cases
+	my $cases = mysql_exec->select("select count(*) from ".$self->tani,1)->hundle->fetch->[0];
+	unless ( $cases > 1 ){
+		gui_errormsg->open(
+			type => 'msg',
+			msg  => kh_msg->gget('to_few_cases')." [$cases]",
 		);
 		return 0;
 	}
