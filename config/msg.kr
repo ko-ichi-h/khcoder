@@ -27,6 +27,10 @@ global:
     sentence:                 문
     spss_f:                   SPSS 파일
     tab_f:                    탭 구분
+    to_few_cases:             |-
+        ***not translated*** We need more cases to run this analysis.
+        Please check the unit setting. // この分析を行うにはケース数が少なすぎます。
+        集計単位の設定を見直してください。
     wm_f:                     다양한 길이의 CSV(WordMiner)
     words:                    추출어
 gui_errormsg::file:

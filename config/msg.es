@@ -29,6 +29,10 @@ global:
     sentence:                 Oraciones
     spss_f:                   SPSS File
     tab_f:                    Delimitado por <
+    to_few_cases:             |-
+        ***not translated*** We need more cases to run this analysis.
+        Please check the unit setting. // この分析を行うにはケース数が少なすぎます。
+        集計単位の設定を見直してください。
     wm_f:                     'Longitud de Variable CSV: para WordMiner'
     words:                    Palabras
 gui_errormsg::file:
