@@ -20,16 +20,15 @@ global:
     save:                     保存
     search:                   搜索
     select_3words:            |-
-        我们需要更多提取此来运行此分析.
+        需要更多提取词来运行此分析，
         请检查提取词列表并查看设置。
     select_a_file:            请选择一个文件
     sentence:                 字句
     spss_f:                   SPSS 文件
     tab_f:                    制表符分隔
     to_few_cases:             |-
-        ***not translated*** We need more cases to run this analysis.
-        Please check the unit setting. // この分析を行うにはケース数が少なすぎます。
-        集計単位の設定を見直してください。
+        需要更多个案来运行此分析，
+        请检查聚类单位设置。
     wm_f:                     不定长CSV（WordMiner）
     words:                    提取词
 gui_errormsg::file:
