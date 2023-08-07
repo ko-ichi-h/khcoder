@@ -1725,8 +1725,48 @@ sub rowtxt{
 					exit;
 				}
 				unless ($last + 1 == $i->[0]){
-					print "counters: $last, $i->[0]\n";
-					print "the sentence: $temp\n";
+					# get raw text for error messages
+					sub get_raw_sentence{
+						my $idt = shift;
+						my $sql ="
+							SELECT hyoso.name
+							FROM hyosobun, hyoso
+							WHERE 
+									hyosobun.hyoso_id = hyoso.id
+								AND hyosobun.bun_idt = $idt
+							ORDER BY hyosobun.id
+						";
+						my $h = mysql_exec->select($sql)->hundle;
+						my $t = '';
+						my $spacer = $::project_obj->spacer;
+						while (my $i = $h->fetch) {
+							$t .= $spacer if length($t);
+							$t .= "$i->[0]";
+						}
+						return $t;
+					}
+					
+					# print detailed info to console;
+					print "\npossible illegal input around here:\n";
+					print "error -3:\t", &get_raw_sentence( $i->[0] - 3), "\n";
+					print "error -2:\t", &get_raw_sentence( $i->[0] - 2), "\n";
+					print "error -1:\t", &get_raw_sentence( $i->[0] - 1), "\n";
+					print "error at:\t$temp\n";
+					print "error +1:\t", &get_raw_sentence( $i->[0] + 1), "\n";
+					print "error +2:\t", &get_raw_sentence( $i->[0] + 2), "\n";
+					print "error +3:\t", &get_raw_sentence( $i->[0] + 3), "\n";
+					
+					print "bun_idt counters: $last, $i->[0]\n";
+					
+					my $hoge = mysql_exec->select("
+						select h1_id, h2_id, h3_id, h4_id, h5_id, dan_id, bun_id
+						from hyosobun
+						where bun_idt = $i->[0]
+						limit 1
+					")->hundle->fetch;
+					print "other counters: H1 $hoge->[0], H2 $hoge->[1], H3 $hoge->[2], H4 $hoge->[3], H5 $hoge->[4], dan $hoge->[5], bun $hoge->[6]\n";
+					
+					# GUI error message
 					gui_errormsg->open(
 						type => 'msg',
 						msg  => kh_msg->get('error_in_mysql_bunr') # "「bun_r」テーブル作成中にデータの整合性が失われました。\nKH Coderを終了します。"
