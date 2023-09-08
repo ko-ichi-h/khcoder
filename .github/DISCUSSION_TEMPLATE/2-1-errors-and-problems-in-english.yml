@@ -14,7 +14,7 @@ body:
     id: version
     attributes:
       label: "Version number of KH Coder"
-      description: "To check the version number, go to \"Help\" \"About\" in the menu of KH Coder."
+      description: "To check the version number, go to \"Help\" \"About\" in the menu of KH Coder. Please be sure to enter it correctly, such as \"3.Beta.07f\", not just \"3\"."
       placeholder: "e.g. 3.Beta.06, 2.00f, etc."
     validations:
       required: true

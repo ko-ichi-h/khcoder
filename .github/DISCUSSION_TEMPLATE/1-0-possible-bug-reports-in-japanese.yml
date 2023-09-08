@@ -8,13 +8,15 @@ body:
         
         KH Coderはソースコードを公開している自由ソフトウェアですから、どなたでもバグ修正を行っていただけます。バグ・レポートのみならず、修正パッチのご提供も歓迎いたします。
         
+        コメントが得られたら、なるべく早急にコメント中で示唆された対策を試し、結果を報告してください。さらに、問題が解決した場合は、解決につながったコメントを「answer」としてマークしましょう。
+        
         # 記入欄
         
   - type: input
     id: version
     attributes:
-      label: "KH Coderのバージョン"
-      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。"
+      label: "お使いのKH Coderのバージョン"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。「3」だけでなく必ず「3.Beta.07f」のように正確に記入してください。"
       placeholder: "記入例：3.Beta.06, 2.00fなど。"
     validations:
       required: true
