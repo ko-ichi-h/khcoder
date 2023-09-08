@@ -9,6 +9,8 @@ body:
         * [Tutorial slides](https://khcoder.net/en/tutorial_slides.pdf) and [video](https://www.youtube.com/watch?v=ULhddsc2Nqo)
         * Detailed tutorial: [Part I](http://www.ritsumei.ac.jp/file.jsp?id=325881) & [Part II](http://www.ritsumei.ac.jp/file.jsp?id=346128)
         * [manual](https://khcoder.net/en/manual_en_v3.pdf)
+        
+        When the problem is solved, it is good manners to make comments such as \"This operation solved it\" or \"This document helped me understand\".
 
   - type: input
     id: version
