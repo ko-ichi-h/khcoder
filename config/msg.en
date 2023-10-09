@@ -84,6 +84,7 @@ gui_widget::r_cls:
     average:                  Average
     by_docs:                  By Document
     by_words:                 By Words
+    circular:                 Circular layout
     clara:                    CLARA
     color:                    Different colors
     complete:                 Complete
@@ -572,6 +573,7 @@ gui_window::morpho_detail:
 gui_window::outvar_list:
     catalogue_csv:            'catalogue: CSV'
     catalogue_xls:            'catalogue: Excel'
+    crosstab:                 '*Crosstab'
     csv:                      CSV File
     del:                      Delete
     del_ok:                   Delete selected variables?

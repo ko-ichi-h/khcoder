@@ -82,6 +82,7 @@ gui_widget::r_cls:
     average:                  群平均法
     by_docs:                  文書ごと
     by_words:                 抽出語ごと
+    circular:                 円状にデンドログラムを配置
     clara:                    CLARA
     color:                    クラスターの色分け
     complete:                 最遠隣法
@@ -574,6 +575,7 @@ gui_window::morpho_detail:
 gui_window::outvar_list:
     catalogue_csv:            一覧（CSV形式）
     catalogue_xls:            一覧（Excel形式）
+    crosstab:                 ▽クロス集計
     csv:                      CSVファイル
     del:                      削除
     del_ok:                   選択されている変数を削除しますか？

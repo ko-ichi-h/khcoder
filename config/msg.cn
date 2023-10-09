@@ -19,16 +19,12 @@ global:
     r_net_msg_fail:           错误：配置选项失败
     save:                     保存
     search:                   搜索
-    select_3words:            |-
-        需要更多提取词来运行此分析，
-        请检查提取词列表并查看设置。
+    select_3words:            "需要更多提取词来运行此分析，\n请检查提取词列表并查看设置。"
     select_a_file:            请选择一个文件
     sentence:                 字句
     spss_f:                   SPSS 文件
     tab_f:                    制表符分隔
-    to_few_cases:             |-
-        需要更多个案来运行此分析，
-        请检查聚类单位设置。
+    to_few_cases:             "需要更多个案来运行此分析，\n请检查聚类单位设置。"
     wm_f:                     不定长CSV（WordMiner）
     words:                    提取词
 gui_errormsg::file:
@@ -75,6 +71,7 @@ gui_widget::r_cls:
     average:                  平均
     by_docs:                  由文档
     by_words:                 由词汇
+    circular:                 '***not translated*** Circular layout // 円状にデンドログラムを配置'
     clara:                    CLARA
     color:                    聚类颜色
     complete:                 完全
@@ -551,6 +548,7 @@ gui_window::morpho_detail:
 gui_window::outvar_list:
     catalogue_csv:            '目录: CSV'
     catalogue_xls:            '目录: Excel'
+    crosstab:                 '***not translated*** *Crosstab // ▽クロス集計'
     csv:                      CSV 文件
     del:                      删除
     del_ok:                   确定要删除选中的变量吗?

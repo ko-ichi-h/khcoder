@@ -85,6 +85,7 @@ gui_widget::r_cls:
     average:                  Average
     by_docs:                  Par document
     by_words:                 Par mots
+    circular:                 '***not translated*** Circular layout // 円状にデンドログラムを配置'
     clara:                    CLARA
     color:                    Coloration de clusters
     complete:                 Complete
@@ -575,6 +576,7 @@ gui_window::morpho_detail:
 gui_window::outvar_list:
     catalogue_csv:            'Tableau: CSV'
     catalogue_xls:            'Tableau: Excel'
+    crosstab:                 '***not translated*** *Crosstab // ▽クロス集計'
     csv:                      Fichier CSV
     del:                      Supprimer
     del_ok:                   Supprimer des variables sélectionnées ?
