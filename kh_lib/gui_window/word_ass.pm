@@ -684,6 +684,9 @@ sub net_calc{
 	}
 	#print "$r_command\n";
 
+	# avoid zero frequency words
+	$r_command .= "\nd <- d[ rowSums(d) > 0, ]\n";
+
 	my $method_coef = "binary";
 	if ( $self->{opt_order} eq 'simp' ){
 		$method_coef = 'Simpson';
