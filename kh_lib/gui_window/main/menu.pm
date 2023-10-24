@@ -469,14 +469,14 @@ sub make{
 				-tearoff=>'no'
 			);
 
-		$self->{m_b1_hukugo_te} = $f_hukugo->command(
-				-label => kh_msg->get('use_termextract'),
-				-font => "TKFN",
-				-command => sub{
-						gui_window::use_te->open;
-				},
-				-state => 'disable'
-			);
+		#$self->{m_b1_hukugo_te} = $f_hukugo->command(
+		#		-label => kh_msg->get('use_termextract'),
+		#		-font => "TKFN",
+		#		-command => sub{
+		#				gui_window::use_te->open;
+		#		},
+		#		-state => 'disable'
+		#	);
 
 		$self->{m_b1_hukugo_np} = $f_hukugo->command(
 				-label => kh_msg->get('noun_phrases'),
