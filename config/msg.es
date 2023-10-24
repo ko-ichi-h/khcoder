@@ -86,7 +86,7 @@ gui_widget::r_cls:
     average:                  Promedio
     by_docs:                  Por Documentos
     by_words:                 Por Palabras
-    circular:                 '***not translated*** Circular layout // 円状にデンドログラムを配置'
+    circular:                 '***not translated*** Circular layout // 円形にデンドログラムを配置'
     clara:                    CLARA
     color:                    Colores diferentes
     complete:                 Completo
@@ -512,6 +512,7 @@ gui_window::main::menu:
     mds:                      Escalamiento multidimensional
     netg:                     Red de coocurrencias
     new:                      Nuevo
+    noun_phrases:             '***not translated*** Noun Phrases // 名詞を連結'
     open:                     Abrir
     open_knb:                 Seleccionar el modelo de archivo para ver
     open_nbl:                 Seleccionar la clasificación del archivo de registro para ver
@@ -579,6 +580,8 @@ gui_window::morpho_detail:
     pos_kh:                   POS de KH Coder
     previous:                 Anterior
     win_title:                'Resultados de la Extracción de Palabras: Detalles'
+gui_window::noun_phrases:
+    win_title:                '***not translated*** Noun Phrases // 複合語検出：名詞を連結'
 gui_window::outvar_list:
     catalogue_csv:            'catálogo: CSV'
     catalogue_xls:            'catálogo: Excel'

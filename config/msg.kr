@@ -77,7 +77,7 @@ gui_widget::r_cls:
     average:                  평균연결법
     by_docs:                  문서별
     by_words:                 추출어별
-    circular:                 '***not translated*** Circular layout // 円状にデンドログラムを配置'
+    circular:                 '***not translated*** Circular layout // 円形にデンドログラムを配置'
     clara:                    CLARA
     color:                    클러스터 색분류
     complete:                 최장연결법
@@ -495,6 +495,7 @@ gui_window::main::menu:
     mds:                      다차원 척도 구성법
     netg:                     공기 네트워크
     new:                      신규
+    noun_phrases:             '***not translated*** Noun Phrases // 名詞を連結'
     open:                     열기
     open_knb:                 열람할 학습 결과 파일을 선택
     open_nbl:                 열람할 분류 로그 파일을 선택
@@ -562,6 +563,8 @@ gui_window::morpho_detail:
     pos_kh:                   품사
     previous:                 이전 검색 결과
     win_title:                '어휘 추출 결과: 상세 내용'
+gui_window::noun_phrases:
+    win_title:                '***not translated*** Noun Phrases // 複合語検出：名詞を連結'
 gui_window::outvar_list:
     catalogue_csv:            목록(CSV 형식)
     catalogue_xls:            목록(Excel 형식)

@@ -507,6 +507,7 @@ gui_window::main::menu:
     mds:                      Multi-Dimensional Scaling
     netg:                     Co-Occurrence Network
     new:                      New
+    noun_phrases:             Noun Phrases
     open:                     Open
     open_knb:                 Select the model file to view
     open_nbl:                 Select the classification log file to view
@@ -570,6 +571,8 @@ gui_window::morpho_detail:
     pos_kh:                   POS of KH Coder
     previous:                 Previous
     win_title:                'Results of Word Extraction: Details'
+gui_window::noun_phrases:
+    win_title:                Noun Phrases
 gui_window::outvar_list:
     catalogue_csv:            'catalogue: CSV'
     catalogue_xls:            'catalogue: Excel'
