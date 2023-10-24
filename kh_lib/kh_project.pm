@@ -1173,6 +1173,14 @@ sub file_TempExcelX{
 	my $f = $dir.'_temp'.$n.'.xlsx';
 	return $f;
 }
+
+sub file_NounPhrases{
+	my $self = shift;
+	my $list = $self->file_datadir.'_np.xlsx';
+	$list = $::config_obj->os_path($list);
+	return $list;
+}
+
 sub file_HukugoList{
 	my $self = shift;
 	my $list = $self->file_datadir.'_hl.xlsx';

@@ -478,6 +478,15 @@ sub make{
 				-state => 'disable'
 			);
 
+		$self->{m_b1_hukugo_np} = $f_hukugo->command(
+				-label => kh_msg->get('noun_phrases'),
+				-font => "TKFN",
+				-command => sub{
+					$self->mc_noun_phrases;
+				},
+				-state => 'disable'
+			);
+
 		$self->{m_b1_hukugo} = $f_hukugo->command(
 				-label => kh_msg->get('use_chasen'), #gui_window->gui_jchar('茶筌による連結'),
 				-font => "TKFN",
@@ -1431,6 +1440,43 @@ sub mc_morpho_exec{
 	$::project_obj->status_morpho(1);
 	return 1;
 }
+sub mc_noun_phrases{
+	my $self = shift;
+	my $mw = $::main_gui->{win_obj};
+
+	my $file_hukugo = $::config_obj->os_path( $::project_obj->file_NounPhrases );
+	my $file_target = $::config_obj->os_path( $::project_obj->file_target );
+	
+	my $if_exec = 1;
+	if (
+		   ( -e $file_hukugo )
+		&& ( mysql_exec->table_exists('noun_phrases') )
+	){
+		my $t0 = (stat $file_target)[9];
+		my $t1 = (stat $file_hukugo)[9];
+		if ($t0 < $t1){
+			$if_exec = 0; # do not analyze
+		}
+	}
+	
+	if ($if_exec){
+		my $ans = $mw->messageBox(
+			-message => kh_msg->gget('cont_big_pros'),
+			-icon    => 'question',
+			-type    => 'OKCancel',
+			-title   => 'KH Coder'
+		);
+		unless ($ans =~ /ok/i){ return 0; }
+
+		my $w = gui_wait->start;
+		use mysql_nounphrases;
+		mysql_nounphrases->detect;
+		$w->end;
+	}
+
+	use gui_window::noun_phrases;
+	gui_window::noun_phrases->open;
+}
 sub mc_hukugo{
 	my $self = shift;
 	my $mw = $::main_gui->{win_obj};
@@ -1500,6 +1546,7 @@ sub refresh{
 		){
 			$self->normalize([
 				'm_b1_hukugo_te',
+				'm_b1_hukugo_np',
 			]);
 		}
 
