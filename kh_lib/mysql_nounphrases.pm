@@ -192,6 +192,7 @@ sub _detect_ipadic{
 			++$phrases{$t};
 		}
 	}
+	close(TAGGED);
 
 	# output
 	&output(\%phrases);
@@ -295,6 +296,7 @@ sub _detect_ptb{
 			++$phrases{$t};
 		}
 	}
+	close(TAGGED);
 
 	# output
 	&output(\%phrases);
