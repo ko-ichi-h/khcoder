@@ -169,7 +169,7 @@ sub _detect_ipadic{
 		chomp;
 		my @c = split /\t/, $_;
 		if (
-			( substr($c[3],0,3) eq '名詞-' )
+			( ( substr($c[3],0,3) eq '名詞-' ) &! ($c[3] =~ /名詞\-数/) )
 			|| ( $c[3] eq '未知語' )
 			|| ( $c[3] eq '接頭詞-名詞接続' )
 			|| ( $c[3] eq '記号-アルファベット' )
