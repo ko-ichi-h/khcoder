@@ -95,7 +95,111 @@ sub detect{
 	){
 		&_detect_ptb;
 	}
+	elsif (
+		   ($::config_obj->c_or_j eq 'chasen')
+		|| ($::config_obj->c_or_j eq 'mecab')
+	){
+		&_detect_ipadic;
+	}
 }
+
+sub _detect_ipadic{
+	# run morpho
+	my $t0 = new Benchmark;
+	print "01. Marking...\n" if $debug;
+	my $source = $::config_obj->os_path( $::project_obj->file_target);
+	my $dist   = $::config_obj->os_path( $::project_obj->file_m_target);
+	unlink($dist);
+
+	my $icode = kh_jchar->check_code2($source);
+	my $ocode;
+	if ($::config_obj->c_or_j eq 'mecab'){
+		$ocode = 'utf8';
+	} else {
+		if ($::config_obj->os eq 'win32'){
+			$ocode = 'cp932';
+		} else {
+			if (eval 'require Encode::EUCJPMS') {
+				$ocode = 'eucJP-ms';
+			} else {
+				$ocode = 'euc-jp';
+			}
+		}
+	}
+
+	open (MARKED,">:encoding($ocode)", $dist) or 
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $dist
+		);
+	open (SOURCE,"<:encoding($icode)", $source) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $source
+		);
+	use Lingua::JA::Regular::Unicode qw(katakana_h2z);
+	while (<SOURCE>){
+		chomp;
+		my $text = katakana_h2z($_);
+		$text =~ s/ /　/go;
+		$text =~ s/\\/￥/go;
+		$text =~ s/'/’/go;
+		$text =~ s/"/”/go;
+		print MARKED "$text\n";
+	}
+	close (SOURCE);
+	close (MARKED);
+	
+	print "03. Chasen...\n" if $debug;
+	kh_morpho->run;
+
+	# noun phrase detection
+	my $file_MorphoOut = $::config_obj->os_path( $::project_obj->file_MorphoOut );
+	open (TAGGED,"<:encoding($ocode)", $file_MorphoOut) or
+		gui_errormsg->open(
+			type => 'file',
+			thefile => $file_MorphoOut
+		)
+	;
+	
+	my %phrases = ();
+	my $wc = 0;
+	my $t  = '';
+	while ( <TAGGED> ){
+		chomp;
+		my @c = split /\t/, $_;
+		if (
+			( substr($c[3],0,3) eq '名詞-' )
+			|| ( $c[3] eq '未知語' )
+			|| ( $c[3] eq '接頭詞-名詞接続' )
+			|| ( $c[3] eq '記号-アルファベット' )
+		){
+			$t .= $c[0];
+			++$wc;
+		}
+		else {
+			if ($t) {
+				if ($wc > 1) {
+					++$phrases{$t};
+				}
+				$t = '';
+				$wc = 0;
+			}
+		}
+	}
+	if ($t) {
+		if ($wc > 1) {
+			++$phrases{$t};
+		}
+	}
+
+	# output
+	&output(\%phrases);
+
+	my $t1 = new Benchmark;
+	print timestr(timediff($t1,$t0)),"\n" if $debug;
+}
+
 
 sub _detect_ptb{
 	# run pos tagger

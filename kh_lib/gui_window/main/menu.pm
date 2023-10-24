@@ -1531,17 +1531,22 @@ sub refresh{
 			$self->normalize([
 				'm_b1_hukugo',
 				'm_b1_hukugo_te',
+				'm_b1_hukugo_np',
 				'm_b2_datacheck',
 			]);
 		}
 		elsif ($::config_obj->c_or_j eq 'mecab'){
 			$self->normalize([
 				'm_b1_hukugo_te',
+				'm_b1_hukugo_np',
 				'm_b2_datacheck',
 			]);
 		}
 		elsif (
-			   $::config_obj->c_or_j        eq 'stanford'
+			(
+				( $::config_obj->c_or_j eq 'stanford' )
+			 || ( $::config_obj->c_or_j eq 'freeling' )
+			)
 			&& $::project_obj->morpho_analyzer_lang eq 'en'
 		){
 			$self->normalize([
