@@ -66,6 +66,7 @@ sub ini_content{
 	$self = $self->refine_cj;
 
 	my @outlist = (
+		'private_dir',
 		'chasenrc_path',
 		'grammarcha_path',
 		'mecab_unicode',

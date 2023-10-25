@@ -906,6 +906,22 @@ sub ini_backup{
 	return $self;
 }
 
+sub private_dir{
+	my $self = shift;
+	my $new  = shift;
+	if ( defined($new) ){
+		$self->{private_dir} = $new;
+	}
+	
+	# default
+	unless ($self->{private_dir}){
+		$self->{private_dir} = $::config_obj->cwd.'/config'
+	}
+	
+	return $self->{private_dir};
+}
+
+
 #--------------------#
 #   形態素解析関係   #
 

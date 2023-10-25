@@ -71,6 +71,7 @@ sub ini_content{
 	my $self = shift;
 
 	my @outlist = (
+		'private_dir',
 		'chasen_path',
 		'mecab_path',
 		'mecab_unicode',
