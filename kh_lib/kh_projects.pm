@@ -14,7 +14,7 @@ sub read{
 	my $class = shift;
 	my $self;
 	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
-		f_dir      => "./config",
+		f_dir      => $::config_obj->os_path( $::config_obj->private_dir ),
 		f_encoding => "UTF8",
 		csv_eol    => "\n",
 	}) or die;
@@ -180,8 +180,6 @@ sub delete{
 	) or die;
 	undef $sth;
 
-	
-
 	# ゴミ箱テーブルが存在しない場合は作成 
 	my $save_file = $::config_obj->history_trush_file;
 	unless (-e $save_file){
@@ -209,10 +207,9 @@ sub delete{
 	
 	# Delete Working folder
 	use File::Path qw(remove_tree);
-	remove_tree( $del->dir_CoderData );
-	#print "removed: ".$del->dir_CoderData."\n";
+	#print "Deleting: ".$del->dir_CoderData4new."\n";
+	remove_tree( $del->dir_CoderData4new );
 }
-
 
 
 #--------------#

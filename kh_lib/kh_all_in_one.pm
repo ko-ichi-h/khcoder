@@ -187,7 +187,7 @@ sub init{
 
 	# MySQL設定ファイル修正（khc.ini）
 	my $p1 = $::config_obj->cwd.'/dep/mysql/';
-	my $p2 = $::config_obj->cwd.'/dep/mysql/data/';
+	my $p2 = $::config_obj->private_dir.'/mysql_data/';
 	my $p3 = $p1; chop $p3;
 
 	my $p4 = $p1.'tmp/';

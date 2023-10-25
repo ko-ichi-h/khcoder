@@ -574,7 +574,7 @@ gui_window::morpho_detail:
     previous:                 前の検索結果
     win_title:                語の抽出結果：詳細
 gui_window::noun_phrases:
-    win_title:                複合語検出：名詞を連結
+    win_title:                複合語の検出：名詞を連結
 gui_window::outvar_list:
     catalogue_csv:            一覧（CSV形式）
     catalogue_xls:            一覧（Excel形式）

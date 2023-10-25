@@ -118,10 +118,13 @@ sub readin{
 	}
 	close (WINI);
 
-	
 	# その他
-	$self->{history_file} = $self->{cwd}.'/config/projects';
-	$self->{history_trush_file} = $self->{cwd}.'/config/projects_trush';
+	$self->{history_file} =
+		$self->os_path( $self->private_dir ).'/projects'
+	;
+	$self->{history_trush_file} =
+		$self->os_path( $self->private_dir ).'/projects_trush'
+	;
 
 	$self = $self->_readin;
 
@@ -912,12 +915,13 @@ sub private_dir{
 	if ( defined($new) ){
 		$self->{private_dir} = $new;
 	}
-	
+	$self->{private_dir} =~ tr/\\/\//;
+
 	# default
 	unless ($self->{private_dir}){
-		$self->{private_dir} = $::config_obj->cwd.'/config'
+		$self->{private_dir} = $self->{cwd}.'/config'
 	}
-	
+
 	return $self->{private_dir};
 }
 
