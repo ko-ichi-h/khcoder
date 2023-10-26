@@ -34,7 +34,7 @@ sub copy_and_convert_target_file{ # into inner structure
 	if ($original =~ /(\.[a-zA-Z]+?)$/) {
 		$suf = $1;
 	}
-	my $copied   = $self->file_datadir4new.'_tgt'.$suf;
+	my $copied   = $self->file_datadir.'_tgt'.$suf;
 	
 	use File::Copy;
 	copy($original, $copied) or
@@ -201,10 +201,10 @@ sub prepare_db{
 	",1);
 
 	# データディレクトリが無かった場合は作成
-	print "Data dir: ".$self->dir_CoderData4new."\n";
-	print "target: ", $self->file_target, "\n";
-	unless (-d $self->dir_CoderData4new){
-		mkdir $self->dir_CoderData4new or die;
+	print "Data dir: ".$self->dir_CoderData."\n";
+	#print "target: ", $self->file_target, "\n";
+	unless (-d $self->dir_CoderData){
+		mkdir $self->dir_CoderData or die;
 	}
 }
 
@@ -1217,29 +1217,33 @@ sub file_ColorSave{
 
 sub dir_CoderData{
 	my $self = shift;
-	my $pos = rindex($self->file_target,'/'); ++$pos;
-	my $datadir = substr($self->file_target,0,"$pos");
-	#$datadir .= 'coder_data/';
-	$datadir = $::config_obj->os_path($datadir);
-	return $datadir;
+	#my $pos = rindex($self->file_target,'/'); ++$pos;
+	#my $datadir = substr($self->file_target,0,"$pos");
+	##$datadir .= 'coder_data/';
+	#$datadir = $::config_obj->os_path($datadir);
+	#return $datadir;
 	
 	#my $dir = cwd;
 	#$dir .= '/config/'.$self->dbname.'/';
 	#$dir = $::config_obj->os_path($dir);
 	#return $dir;
-}
-
-sub dir_CoderData4new{
-	my $self = shift;
+	
 	my $dir = $::config_obj->os_path( $::config_obj->private_dir );
 	$dir .= '/'.$self->dbname.'/';
 	return $dir
 }
 
-sub file_datadir4new{
-	my $self = shift;
-	return $self->dir_CoderData4new.$self->dbname;
-}
+#sub dir_CoderData4new{
+#	my $self = shift;
+#	my $dir = $::config_obj->os_path( $::config_obj->private_dir );
+#	$dir .= '/'.$self->dbname.'/';
+#	return $dir
+#}
+
+#sub file_datadir4new{
+#	my $self = shift;
+#	return $self->dir_CoderData4new.$self->dbname;
+#}
 
 sub file_datadir{
 	my $self = shift;

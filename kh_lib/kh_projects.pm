@@ -207,8 +207,8 @@ sub delete{
 	
 	# Delete Working folder
 	use File::Path qw(remove_tree);
-	#print "Deleting: ".$del->dir_CoderData4new."\n";
-	remove_tree( $del->dir_CoderData4new );
+	#print "Deleting: ".$del->dir_CoderData."\n";
+	remove_tree( $del->dir_CoderData );
 }
 
 
