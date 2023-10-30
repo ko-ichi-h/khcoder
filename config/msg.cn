@@ -71,7 +71,7 @@ gui_widget::r_cls:
     average:                  平均
     by_docs:                  由文档
     by_words:                 由词汇
-    circular:                 '***not translated*** Circular layout // 円形にデンドログラムを配置'
+    circular:                 圆形布局
     clara:                    CLARA
     color:                    聚类颜色
     complete:                 完全
@@ -482,7 +482,7 @@ gui_window::main::menu:
     mds:                      多维尺度
     netg:                     共现网络
     new:                      新建
-    noun_phrases:             '***not translated*** Noun Phrases // 名詞を連結'
+    noun_phrases:             名词短语
     open:                     打开
     open_knb:                 选择并查看模型文件
     open_nbl:                 选择并查看分类日志文件
@@ -547,11 +547,11 @@ gui_window::morpho_detail:
     previous:                 上一个
     win_title:                '词汇提取结果: 详情'
 gui_window::noun_phrases:
-    win_title:                '***not translated*** Noun Phrases // 複合語検出：名詞を連結'
+    win_title:                名词短语
 gui_window::outvar_list:
     catalogue_csv:            '目录: CSV'
     catalogue_xls:            '目录: Excel'
-    crosstab:                 '***not translated*** *Crosstab // ▽クロス集計'
+    crosstab:                 交叉表
     csv:                      CSV 文件
     del:                      删除
     del_ok:                   确定要删除选中的变量吗?
