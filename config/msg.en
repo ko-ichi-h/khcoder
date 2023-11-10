@@ -544,8 +544,6 @@ gui_window::main::menu:
     words:                    Words
     words_cluster:            Word Clusters
     words_selection:          Select Words to Analyze
-gui_window::noun_phrases:
-    win_title:                Noun Phrases
 gui_window::morpho_check:
     details:                  Details
     note:                     Input a string or phrase to check.
