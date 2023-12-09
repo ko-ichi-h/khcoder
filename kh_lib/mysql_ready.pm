@@ -113,13 +113,23 @@ sub first{
 		$t12 = new Benchmark;
 	}
 
+	# Korean patchim fix
+	my $t13;
+	if ($::project_obj->morpho_analyzer_lang eq 'kr' ) {
+		&fix_hangul;
+		$t13 = new Benchmark;
+		print "fix_hangul\t",timestr(timediff($t13,$t12)),"\n";
+	} else {
+		$t13 = new Benchmark;
+	}
+
 	# データベース内の一時テーブルをクリア
 	mysql_exec->clear_tmp_tables;
 	mysql_ready::heap->clear_heap;
 	mysql_exec->drop_table("hyosobun_t");
 	#mysql_exec->drop_table("hghi");
-		my $t13 = new Benchmark;
-		print "clear_tmp\t",timestr(timediff($t13,$t12)),"\n";
+		my $t14 = new Benchmark;
+		print "clear_tmp\t",timestr(timediff($t14,$t13)),"\n";
 
 	mysql_exec->flush;
 	
@@ -665,6 +675,34 @@ sub fix_michigo{
 	}
 }
 
+sub fix_hangul{
+	my $h = mysql_exec->select("
+		SELECT genkei.id, genkei.name, hyoso.id, hyoso.name
+		FROM   hyoso, genkei, khhinshi
+		WHERE
+			    hyoso.genkei_id    = genkei.id
+			AND genkei.khhinshi_id = khhinshi.id
+			AND khhinshi.name = \"Unknown\"
+	")->hundle;
+
+	use Unicode::Normalize;
+
+	while (my $i = $h->fetch) {
+		my $t1 = NFC($i->[1]);
+		my $t2 = NFC($i->[3]);
+
+		unless ($t1 eq $i->[1]){
+			$t1 = mysql_exec->quote($t1);
+			mysql_exec->do("UPDATE genkei SET name = $t1 WHERE id = $i->[0]");
+		}
+
+		unless ($t2 eq $i->[2]){
+			$t2 = mysql_exec->quote($t2);
+			mysql_exec->do("UPDATE hyoso SET name = $t2 WHERE id = $i->[2]");
+		}
+	}
+	
+}
 
 sub fix_katuyo{
 	my $self = shift;
