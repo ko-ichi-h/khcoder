@@ -9,12 +9,12 @@ English: http://khcoder.net/en
 KH Coder is a free software for **quantitative content analysis** or **text mining**. It is also utilized for computational linguistics. You can analyze Catalan, Chinese (simplified), Dutch, English, French, German, Italian, Japanese, Korean, Portuguese, Russian, Slovenian and Spanish text with KH Coder.
 
 Screenshots: https://goo.gl/photos/ixn1sTM3jm8o11bP8 <br>
-Official book (in Japanese): https://amzn.to/3LdRHMJ & http://amzn.to/2wHFxKg
+Official books (in Japanese): https://amzn.to/3LdRHMJ & http://amzn.to/2wHFxKg
 
 <!--
 Changelog:
 https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=http%3A%2F%2Fkhcoder.net%2Fversions.html&sandbox=1
--->
+
 
 ## How to run source code of KH Coder on Windows
 
@@ -43,6 +43,7 @@ You need:
     - Stanford Word Segmenter and Stanford POS Tagger for analyzing Chinese text
 
 See [issue #91](https://github.com/ko-ichi-h/khcoder/issues/91), [doc_contrib/Vagrantfile](https://github.com/ko-ichi-h/khcoder/blob/master/doc_contrib/Vagrantfile) and [doc_contrib/FedoraInstallation.md](https://github.com/ko-ichi-h/khcoder/blob/master/doc_contrib/FedoraInstallation.md) for more details.
+-->
 
 ## License
 
