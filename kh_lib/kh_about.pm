@@ -5,7 +5,7 @@ sub version{
 }
 
 sub version_short{
-	"3b07g";
+	"3b07h";
 }
 
 sub current_year{
