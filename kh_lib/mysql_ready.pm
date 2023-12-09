@@ -113,7 +113,7 @@ sub first{
 		$t12 = new Benchmark;
 	}
 
-	# Korean patchim fix
+	# Korean Jamo fix
 	my $t13;
 	if ($::project_obj->morpho_analyzer_lang eq 'kr' ) {
 		&fix_hangul;
@@ -675,6 +675,7 @@ sub fix_michigo{
 	}
 }
 
+# Korean Jamo fix
 sub fix_hangul{
 	my $h = mysql_exec->select("
 		SELECT genkei.id, genkei.name, hyoso.id, hyoso.name
@@ -1816,6 +1817,12 @@ sub rowtxt{
 				if ($spacer eq ' '){
 					$temp =~ s/^(<h[1-5]>) /$1/i;
 					$temp =~ s/ (<\/h[1-5]>)$/$1/i;
+				}
+				
+				# Korean Jamo fix
+				use Unicode::Normalize;
+				if ($::project_obj->morpho_analyzer_lang eq 'kr' ) {
+					$temp = NFC($temp);
 				}
 				
 				$values .= "(\'$temp\'),";

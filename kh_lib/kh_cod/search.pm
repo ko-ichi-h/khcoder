@@ -465,13 +465,20 @@ sub fetch_results{
 
 	my @result;
 	while (my $i = $sth->fetch){
+		my $t = kh_cod::search->get_doc_head($i->[0],$self->{tani});
+		
+		if ($::project_obj->morpho_analyzer_lang eq 'kr' ) {
+			$t = gui_window->kchar_patchim($t);
+		}
+		
 		push @result, [
 			$i->[0],
-			kh_cod::search->get_doc_head($i->[0],$self->{tani})
+			$t
 		];
 		print ".";
 	}
 	print "\n";
+	
 	return \@result;
 }
 
