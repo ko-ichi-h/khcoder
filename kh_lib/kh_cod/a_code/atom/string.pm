@@ -1,4 +1,5 @@
-# À¸¤ÎÊ¸»úÎó¤Ë¤è¤ë»ØÄê
+# ç”Ÿã®æ–‡å­—åˆ—ã«ã‚ˆã‚‹æŒ‡å®š
+use utf8;
 
 package kh_cod::a_code::atom::string;
 use base qw(kh_cod::a_code::atom);
@@ -8,7 +9,7 @@ use mysql_exec;
 use POSIX qw(log10);
 
 #-----------------#
-#   SQLÊ¸¤Î½àÈ÷   #
+#   SQLæ–‡ã®æº–å‚™   #
 #-----------------#
 
 my %sql_join = (
@@ -58,7 +59,7 @@ sub reset{}
 my $dn;
 
 #--------------------#
-#   WHEREÀáÍÑSQLÊ¸   #
+#   WHEREç¯€ç”¨SQLæ–‡   #
 #--------------------#
 
 sub expr{
@@ -76,7 +77,7 @@ sub idf{
 	my $self = shift;
 	return 0 unless $self->tables;
 	
-	# Á´Ê¸½ñ¿ô¤Î¼èÆÀ¡¦Êİ»ı
+	# å…¨æ–‡æ›¸æ•°ã®å–å¾—ãƒ»ä¿æŒ
 	unless (
 		($dn->{$self->{tani}}) && ($dn->{check} eq $::project_obj->file_target)
 	){
@@ -86,7 +87,7 @@ sub idf{
 		$dn->{check} = $::project_obj->file_target;
 	}
 	
-	# ·×»»
+	# è¨ˆç®—
 	my $df;
 	$df = mysql_exec->select(
 		"SELECT COUNT(*) FROM $self->{tables}[0]",1
@@ -98,7 +99,7 @@ sub idf{
 
 
 #---------------------------------------#
-#   ¥³¡¼¥Ç¥£¥ó¥°½àÈ÷¡Êtmp tableºîÀ®¡Ë   #
+#   ã‚³ãƒ¼ãƒ‡ã‚£ãƒ³ã‚°æº–å‚™ï¼ˆtmp tableä½œæˆï¼‰   #
 #---------------------------------------#
 
 sub ready{
@@ -106,12 +107,12 @@ sub ready{
 	my $tani = shift;
 	$self->{tani} = $tani;
 
-	# ¥¯¥¨¥ê¤Î¼èÆÀ
+	# ã‚¯ã‚¨ãƒªã®å–å¾—
 	my $query = $self->raw;
 	chop $query;
 	substr($query,0,1) = '';
 
-	# ¥­¥ã¥Ã¥·¥å¤Î¥Á¥§¥Ã¥¯¤È¥Æ¡¼¥Ö¥ëÌ¾·èÄê
+	# ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã®ãƒã‚§ãƒƒã‚¯ã¨ãƒ†ãƒ¼ãƒ–ãƒ«åæ±ºå®š
 	my @c_c = kh_cod::a_code->cache_check(
 		tani => $tani,
 		kind => 'string',
@@ -123,7 +124,7 @@ sub ready{
 		return 1;
 	}
 	
-	# ¥Æ¡¼¥Ö¥ëºîÀ½
+	# ãƒ†ãƒ¼ãƒ–ãƒ«ä½œè£½
 	mysql_exec->drop_table($table);
 	mysql_exec->do("
 		CREATE TABLE $table (
@@ -131,6 +132,13 @@ sub ready{
 			num INT
 		)
 	",1);
+
+	# Convert from white-space to 2-bytes-space whene analyzing Japanese.
+	#     because we converted all white-spaces in input text into 2-bytes-spaces
+	#     at kh_dictio::mark
+	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
+		$query =~ s/ /ã€€/go;
+	}
 
 	# INSERT
 	my $sql;
@@ -152,7 +160,7 @@ sub ready{
 }
 
 #-------------------------------#
-#   ÍøÍÑ¤¹¤ëtmp table¤Î¥ê¥¹¥È   #
+#   åˆ©ç”¨ã™ã‚‹tmp tableã®ãƒªã‚¹ãƒˆ   #
 
 sub tables{
 	my $self = shift;
@@ -160,7 +168,7 @@ sub tables{
 }
 
 #----------------#
-#   ¿Æ¥Æ¡¼¥Ö¥ë   #
+#   è¦ªãƒ†ãƒ¼ãƒ–ãƒ«   #
 sub parent_table{
 	my $self = shift;
 	my $new  = shift;
