@@ -133,7 +133,7 @@ sub ready{
 		)
 	",1);
 
-	# Convert from white-space to 2-bytes-space whene analyzing Japanese.
+	# Convert from white-space to 2-bytes-space when analyzing Japanese.
 	#     because we converted all white-spaces in input text into 2-bytes-spaces
 	#     at kh_dictio::mark
 	if ($::project_obj->morpho_analyzer_lang eq 'jp') {
