@@ -141,6 +141,7 @@ sub ready{
 	}
 
 	# INSERT
+	$query = mysql_exec->quote( "%$query%" );
 	my $sql;
 	$sql = "
 		INSERT
@@ -152,7 +153,7 @@ sub ready{
 		WHERE
 			    bun.id = bun_r.id
 			$sql_join{$tani}
-			AND rowtxt like \"%$query%\"
+			AND rowtxt like $query
 		GROUP BY $tani.id
 	";
 	mysql_exec->do($sql,1);
