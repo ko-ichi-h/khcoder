@@ -6,8 +6,8 @@ body:
     id: version
     attributes:
       label: "お使いのKH Coderのバージョン"
-      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。「3」だけでなく必ず「3.Beta.07f」のように正確に記入してください。"
-      placeholder: "記入例：3.Beta.06, 2.00fなど。"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。「3」だけでなく必ず「3.00 official-package」「3.Beta.08」のように正確に記入してください。"
+      placeholder: "記入例：3.Beta.08, 3.00 official-package など。"
     validations:
       required: true
 

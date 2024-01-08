@@ -8,8 +8,6 @@ body:
         
         本掲示板（Discussions）は原則として、ユーザー同士の助け合いの場です。何に困っているのかを分かりやすく、詳しくお書きいただくほど、応答を得られる可能性が高くなります。
         
-        もし確実に応答を得たい場合は、㈱SCREEN アドバンストシステムソリューションズ様ご提供の[「KH Coderサポートパッケージ」](https://www.screen.co.jp/as/solution/khcoder)（Pro Edition以上）を購入することで、 同社のQ & A対応窓口を利用できます。
-        
         コメントが得られたら、なるべく早急にコメント中で示唆された対策を試し、結果を報告しましょう。また、問題が解決した場合は、解決につながったコメントを「answer」としてマークてください。
         
         # 各種資料
@@ -30,8 +28,8 @@ body:
     id: version
     attributes:
       label: "お使いのKH Coderのバージョン"
-      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。「3」だけでなく必ず「3.Beta.07f」のように正確に記入してください。"
-      placeholder: "記入例：3.Beta.06, 2.00fなど。"
+      description: "KH Coderのメニューから「ヘルプ」「KH Coderについて」を選択してバージョンをご確認ください。「3」だけでなく必ず「3.00 official-package」「3.Beta.08」のように正確に記入してください。"
+      placeholder: "記入例：3.Beta.08, 3.00 official-package など。"
     validations:
       required: true
 
