@@ -10,6 +10,18 @@ body:
         
         コメントが得られたら、なるべく早急にコメント中で示唆された対策を試し、結果を報告しましょう。また、問題が解決した場合は、解決につながったコメントを「answer」としてマークしてください。
         
+        # 各種資料
+        
+        投稿をしなくても、次の資料にあたることで解決する場合があります。
+        
+        - [「よくある質問」ページ](https://khcoder.net/FAQ.html)
+        - [既存のDiscussions](https://github.com/ko-ichi-h/khcoder/discussions?discussions_q=) （検索可）
+        - [旧掲示板](http://koichi.nihon.to/cgi-bin/bbs_khn/khcf.cgi) （検索可）
+        - [公式入門書](https://amzn.to/3iyPimF)
+        - [詳細マニュアル +alpha](http://amzn.to/2wHFxKg)
+        
+        また、もし学生さんでしたら、授業やゼミでご指導いただいている先生に教えを請うのも一手ではないでしょうか。
+        
         # 記入欄
         
   - type: input
