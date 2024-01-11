@@ -17,4 +17,4 @@ GNU GPL version 2 or later
 
 ## Note
 
-This repository is primarily for Discussions. The source code here is outdated beta version.
+This repository is primarily for Discussions. The source code contained herein is an outdated beta version.
