@@ -1,14 +1,14 @@
 ---
-name: Reporting Errors or Bugs
-about: Create a report to help us figure out the problem
+name: Please do not post a new issue
+about: Post it to Discussions
 labels: error
 ---
 
 <!--
 
-Moved to discussion.
+We have moved to "Discussions".
 
-Please post there.
+Please post it there.
 https://github.com/ko-ichi-h/khcoder/discussions
 
 -->

@@ -1,7 +1,7 @@
 ---
-name: エラーや不具合で思ったように動作しない場合
-about: 一字一句そのままのエラーメッセージとできる限りの詳細を添えてください
-labels: Non-English, error
+name: 新しいIssueは投稿しないでください
+about: Discussionsの方へ投稿してください
+labels: error, Non-English
 ---
 
 <!--
