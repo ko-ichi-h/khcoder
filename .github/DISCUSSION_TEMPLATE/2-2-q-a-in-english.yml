@@ -4,13 +4,20 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before posting questions, I hope you check the tutorial and the manual.
+        # Before posting questions.
+        This Discussions board is a place for users to help each other. The more clearly and in detail you can describe what you are having question with, the more likely you are to receive a helpful response.
+        
+        When the question is solved, please mark the helpful comment as \"answer\". Also, it is good manners to make comments such as \"This operation solved it\" or \"This document helped me understand\".
+        
+        # References
+        
+        Your issue may be resolved by referring to the following materials.
         
         * [Tutorial slides](https://khcoder.net/en/tutorial_slides.pdf) and [video](https://www.youtube.com/watch?v=ULhddsc2Nqo)
         * Detailed tutorial: [Part I](http://www.ritsumei.ac.jp/file.jsp?id=325881) & [Part II](http://www.ritsumei.ac.jp/file.jsp?id=346128)
         * [manual](https://khcoder.net/en/manual_en_v3.pdf)
         
-        When the problem is solved, please mark the helpful comment as \"answer\". Also, it is good manners to make comments such as \"This operation solved it\" or \"This document helped me understand\".
+        # Describe your question in detail below
 
   - type: input
     id: version
