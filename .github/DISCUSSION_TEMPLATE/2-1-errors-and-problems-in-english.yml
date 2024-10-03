@@ -18,6 +18,7 @@ body:
         * Detailed tutorial: [Part I](http://www.ritsumei.ac.jp/file.jsp?id=325881) & [Part II](http://www.ritsumei.ac.jp/file.jsp?id=346128)
         * [manual](https://khcoder.net/en/manual_en_v3.pdf)
         
+        # Describe your issue in detail below
 
   - type: input
     id: version
