@@ -226,6 +226,7 @@ my_threads->init;
 
 # GUI¤Î³«»Ï
 $main_gui = gui_window::main->open;
+gui_window::suggest->open if $::config_obj->show_suggest_on_startup;
 
 # for macOS
 if (

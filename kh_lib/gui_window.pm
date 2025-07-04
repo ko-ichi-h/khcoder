@@ -90,6 +90,7 @@ use gui_window::topic_perplexity;
 use gui_window::topic_fitting;
 use gui_window::topic_result;
 use gui_window::topic_stats;
+use gui_window::suggest;
 
 BEGIN{
 	if( $] > 5.008 ){
@@ -134,31 +135,168 @@ sub open{
 		$::main_gui->opened($self->win_name,$self);
 
 		# Windowを閉じる際のバインド
-		$self->win_obj->bind(
-			'<Control-Key-q>',
-			sub{ $self->close; }
-		);
-		$self->win_obj->bind(
-			'<Key-Escape>',
-			sub{ $self->close; }
-		);
 		$self->win_obj->protocol('WM_DELETE_WINDOW', sub{ $self->close; });
 
-		# メインWindowsへ戻るためのキー・バインド
-		$self->win_obj->bind(
-			'<Alt-Key-m>',
-			sub { $::main_gui->{main_window}->win_obj->focus; }
-		);
-		$self->win_obj->bind(
-			'<Control-Key-m>',
-			sub { $::main_gui->{main_window}->win_obj->focus; }
-		);
+		# common key bindings
+		$self->common_key_bindings;
 
 		# 特殊処理に対応
 		$self->start;
 
 		$self->check_viewable;
 	}
+	return $self;
+}
+
+sub common_key_bindings{
+	my $self = shift;
+	my $win = $self->win_obj;
+
+    # Key bindings: common actions
+    $win->bind(
+		'<Control-Key-v>',
+		sub{gui_window::about->open;}
+	);
+	$win->bind(
+		'<Control-Key-w>',
+		sub{$::main_gui->{menu}->mc_close_project;}
+	);
+	$win->bind(
+		'<Alt-Key-s>',
+		sub { gui_window::suggest->open; }
+	);
+	$win->bind(
+		'<Alt-Key-m>',
+		sub { $::main_gui->{main_window}->win_obj->focus; }
+	);
+	$win->bind(
+		'<Control-Key-m>',
+		sub { $::main_gui->{main_window}->win_obj->focus; }
+	);
+	$self->win_obj->bind(
+		'<Control-Key-q>',
+		sub{ $self->close; }
+    );
+	$self->win_obj->bind(
+		'<Key-Escape>',
+		sub{ $self->close; }
+	);
+
+    # Key bindings: buttons on the suggest window
+	$win->bind(
+		'<Control-Key-o>',
+		sub{gui_window::project_open->open;}
+	);
+	$win->bind(
+		'<Control-Key-n>',
+		sub{gui_window::project_new->open;}
+	);
+    $win->bind(
+        '<Control-Key-t>',
+        sub{gui_window::suggest->_tutorial_proj;}
+    );
+    $win->bind(
+        '<Control-Key-f>',
+        sub{gui_window::suggest->_tutorial_fold;}
+    );
+
+    $win->bind(
+        '<Control-Key-r>',
+        sub{
+            return 0 unless $::project_obj;
+            $::main_gui->menu->mc_morpho_dialog;
+        }
+    );
+    $win->bind(
+        '<Control-Key-x>',
+        sub{
+            return 0 unless $::project_obj;
+            gui_window::dictionary->open;
+        }
+    );
+    $win->bind(
+        '<Control-Key-h>',
+        sub{
+            return 0 unless $::project_obj;
+            if ($::config_obj->c_or_j eq 'chasen'){
+                $::main_gui->menu->mc_hukugo;
+            }
+            elsif  ($::config_obj->c_or_j eq 'mecab'){
+                $::main_gui->menu->mc_noun_phrases;
+            }
+            elsif (
+                (
+                    ( $::config_obj->c_or_j eq 'stanford' )
+                || ( $::config_obj->c_or_j eq 'freeling' )
+                )
+                && $::project_obj->morpho_analyzer_lang eq 'en'
+            ){
+                $::main_gui->menu->mc_noun_phrases;
+            }
+            else {
+                warn("unsupported morpho_analyzer: " . $::config_obj->c_or_j);
+                return 0;
+            }
+        }
+    );
+    $win->bind(
+        '<Control-Key-k>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::morpho_check->open;
+        }
+    );
+
+    $win->bind(
+        '<Control-Key-a>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::word_search->open;
+        }
+    );
+    #$win->bind(
+    #    '<Control-Key-l>',
+    #    sub{
+    #        return 0 unless $::project_obj && $::project_obj->status_morpho;
+    #        gui_window::word_net_cloud->open;
+    #    }
+    #);
+    $win->bind(
+        '<Control-Key-e>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::word_netgraph->open;
+        }
+    );
+    $win->bind(
+        '<Control-Key-p>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::word_corresp->open;
+        }
+    );
+    $win->bind(
+        '<Control-Key-b>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::cod_outtab->open;
+        }
+    );
+    $win->bind(
+        '<Control-Key-d>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::cod_count->open;
+        }
+    );
+    $win->bind(
+        '<Control-Key-u>',
+        sub{
+            return 0 unless $::project_obj && $::project_obj->status_morpho;
+            gui_window::cod_cls->open;
+        }
+    );
+
 	return $self;
 }
 

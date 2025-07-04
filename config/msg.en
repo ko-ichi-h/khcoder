@@ -505,6 +505,7 @@ gui_window::main::menu:
     kwic:                     KWIC Concordance
     man:                      Manual (PDF)
     mds:                      Multi-Dimensional Scaling
+    net_cloud:                Context Cloud
     netg:                     Co-Occurrence Network
     new:                      New
     noun_phrases:             Noun Phrases
@@ -525,6 +526,7 @@ gui_window::main::menu:
     read:                     Import Variables
     run_prep:                 Run Pre-Processing
     som:                      Self-Organizing Map
+    suggest:                  Show suggest window
     term_vec_mtrx:            Word-Context Matrix
     text_format:              Convert the Target File
     tf_df:                    TF-DF Plot
@@ -784,6 +786,18 @@ gui_window::sql_select:
     rows:                     '  Rows: '
     sql_error:                An Error in the SQL Statement.
     win_title:                Execute SQL Statements
+gui_window::suggest:
+    check_morpho:             "Check the Result of\nWord Extraction"
+    codes:                    Codes
+    codes_new:                New Coding Rule file
+    proj_new:                 New Project
+    proj_open:                Open a Project
+    proj_tuto:                "New Project\nwith Tutorial file"
+    proj_tuto_folder:         Open tutorial Folder
+    show_on_startup:          Show on startup
+    stands_with_main:         Follow the main screen
+    win_title:                Suggest - KH Coder
+    words:                    Words
 gui_window::stop_words:
     change_will:              |-
         * Changes will take effect when you invoke

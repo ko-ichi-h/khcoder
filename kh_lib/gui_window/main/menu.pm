@@ -405,52 +405,7 @@ sub make{
 		$self->{m_b2_morpho} = $f->command(
 				-label => kh_msg->get('run_prep'),
 				-font => "TKFN",
-				-command => sub{
-					
-					#SCREEN Plugin
-					use screen_code::negationchecker;
-					return 0 if screen_code::negationchecker::plugin_dialog($self,$mw);
-					#SCREEN Plugin
-					
-					my $reload = 0;
-					if ( $::project_obj->reloadable ){
-						my $ans = $mw->messageBox(
-							-message => kh_msg->get('prepro_reload'),
-							-icon    => 'question',
-							-type    => 'YesNoCancel',
-							-title   => 'KH Coder'
-						);
-						if ($ans =~ /cancel/i){ return 0; }
-						if ($ans =~ /Yes/i) {   $reload = 1; }
-					} else {
-
-						if ($^O eq 'darwin') {
-						#if (1) {
-							print "Trying out a different dialog method for darwin...\n";
-							require Tk::Dialog;
-							my $dialog_win = $mw->Dialog(
-								-title => 'KH Coder',
-								-text => kh_msg->gget('cont_big_pros'),
-								-bitmap => 'question',
-								-default_button => 'OK',
-								-buttons => [kh_msg->gget('ok'),kh_msg->gget('cancel')],
-							);
-							my $ans = $dialog_win->Show(-popover => $::main_gui->mw);
-							my $ok = kh_msg->gget('ok');
-							unless ($ans =~ /$ok/i){ return 0; }
-						} else {
-							my $ans = $mw->messageBox(
-								-message => kh_msg->gget('cont_big_pros'),
-								-icon    => 'question',
-								-type    => 'OKCancel',
-								-title   => 'KH Coder'
-							);
-							unless ($ans =~ /ok/i){ return 0; }
-						}
-
-					}
-					$self->mc_morpho($reload);
-				},
+				-command => sub{ $self->mc_morpho_dialog; },
 				-state => 'disable'
 			);
 		$f->separator();
@@ -1193,6 +1148,13 @@ sub make{
 	);
 
 	$f->command(
+		-label => kh_msg->get('suggest'),
+		-font => "TKFN",
+		-command => sub{gui_window::suggest->open;},
+		#-accelerator => 'Alt + S',
+	);
+
+	$f->command(
 		-label => kh_msg->get('about'),
 		-command => sub{gui_window::about->open;},
 		-font => "TKFN",
@@ -1409,6 +1371,54 @@ sub mc_datacheck{
 	use kh_datacheck;
 	kh_datacheck->run;
 	$w->end(no_dialog => 1);
+}
+sub mc_morpho_dialog{
+	my $self = shift;
+	my $mw = $::main_gui->{win_obj};
+
+	#SCREEN Plugin
+	use screen_code::negationchecker;
+	return 0 if screen_code::negationchecker::plugin_dialog($self,$mw);
+	#SCREEN Plugin
+	
+	my $reload = 0;
+	if ( $::project_obj->reloadable ){
+		my $ans = $mw->messageBox(
+			-message => kh_msg->get('prepro_reload'),
+			-icon    => 'question',
+			-type    => 'YesNoCancel',
+			-title   => 'KH Coder'
+		);
+		if ($ans =~ /cancel/i){ return 0; }
+		if ($ans =~ /Yes/i) {   $reload = 1; }
+	} else {
+
+		if ($^O eq 'darwin') {
+		#if (1) {
+			print "Trying out a different dialog method for darwin...\n";
+			require Tk::Dialog;
+			my $dialog_win = $mw->Dialog(
+				-title => 'KH Coder',
+				-text => kh_msg->gget('cont_big_pros'),
+				-bitmap => 'question',
+				-default_button => 'OK',
+				-buttons => [kh_msg->gget('ok'),kh_msg->gget('cancel')],
+			);
+			my $ans = $dialog_win->Show(-popover => $::main_gui->mw);
+			my $ok = kh_msg->gget('ok');
+			unless ($ans =~ /$ok/i){ return 0; }
+		} else {
+			my $ans = $mw->messageBox(
+				-message => kh_msg->gget('cont_big_pros'),
+				-icon    => 'question',
+				-type    => 'OKCancel',
+				-title   => 'KH Coder'
+			);
+			unless ($ans =~ /ok/i){ return 0; }
+		}
+
+	}
+	$self->mc_morpho($reload);
 }
 sub mc_morpho{
 	my $self = shift;

@@ -505,6 +505,7 @@ gui_window::main::menu:
     kwic:                     KWICコンコーダンス
     man:                      詳細マニュアル（PDF）
     mds:                      多次元尺度構成法
+    net_cloud:                文脈クラウド
     netg:                     共起ネットワーク
     new:                      新規
     noun_phrases:             名詞を連結
@@ -527,6 +528,7 @@ gui_window::main::menu:
     read:                     読み込み
     run_prep:                 前処理の実行
     som:                      自己組織化マップ
+    suggest:                  サジェスト画面
     term_vec_mtrx:            「抽出語×文脈ベクトル」表
     text_format:              テキストファイルの変形
     tf_df:                    出現回数ｘ文書数のプロット
@@ -789,6 +791,18 @@ gui_window::sql_select:
     rows:                     '  出力された行数： '
     sql_error:                SQL文にエラーがありました。
     win_title:                SQL文の実行
+gui_window::suggest:
+    check_morpho:             語の抽出結果を確認
+    codes:                    コーディング (C)
+    codes_new:                新規コーディングルール・ファイル
+    proj_new:                 新規プロジェクト作成
+    proj_open:                プロジェクトを開く
+    proj_tuto:                "チュートリアル・ファイルで\nプロジェクト作成"
+    proj_tuto_folder:         "チュートリアル・フォルダを開く"
+    show_on_startup:          起動時にサジェスト画面を表示
+    stands_with_main:         メイン画面に追従する
+    win_title:                サジェスト - KH Coder
+    words:                    抽出語 (W)
 gui_window::stop_words:
     change_will:              "※前処理を（再度）実行するまで\n変更は反映されません。"
     for_this_method:          Stop wordを以下の抽出方法と言語むけに設定：

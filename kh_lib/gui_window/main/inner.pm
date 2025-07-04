@@ -245,6 +245,7 @@ sub unselect{
 #--------------------#
 sub refresh{
 	my $self = shift;
+	my %args = @_;
 	my $mw = $::main_gui->mw;
 	
 	# ½é´ü²½
@@ -316,6 +317,12 @@ sub refresh{
 			-text      => $i->[1]
 		);
 		++$row;
+	}
+
+	# refresh Suggest window
+	if ($::main_gui->if_opened('suggest') &! $args{-dont_refresh_suggest} == 1){
+		my $suggest = $::main_gui->get('suggest');
+		$suggest->refresh;
 	}
 }
 

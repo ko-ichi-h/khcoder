@@ -92,6 +92,8 @@ sub ini_content{
 		'last_method',
 		'c_or_j',
 		'unify_words_with_same_lemma',
+		'show_suggest_on_startup',
+		'suggest_stands_with_main',
 		'msg_lang',
 		'msg_lang_set',
 		'r_path',

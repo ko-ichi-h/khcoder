@@ -141,6 +141,26 @@ sub _sansyo{
 	}
 }
 
+sub set{
+	my $self = shift;
+	my $path = shift; # should be os_path
+	
+	if ($path){
+		$self->{cfile} = $::config_obj->os_path($path);
+
+		$path = $::config_obj->uni_path($path);
+		substr($path, 0, rindex($path, '/') + 1 ) = '';
+		$self->entry->configure(-state,'normal');
+		$self->entry->delete(0, 'end');
+		$self->entry->insert('0',gui_window->gui_jchar("$path"));
+		$self->entry->configure(-state,'disable');
+
+		if (defined($self->{command})){
+			&{$self->{command}};
+		}
+	}
+}
+
 #--------------#
 #   アクセサ   #
 
