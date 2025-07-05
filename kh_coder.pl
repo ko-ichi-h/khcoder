@@ -90,20 +90,10 @@ BEGIN {
 
 	# for Windows [2]
 	if ($^O eq 'MSWin32'){
-		# コンソールを最小化
+		# コンソールを最小化する準備
 		require Win32::Console;
 		Win32::Console->new->Title('Console of KH Coder');
-		Win32::Sleep(50);
-		if (
-			   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
-			|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
-		){
-			require Win32::API;
-			my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
-			my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
-			my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
-			$ShowWindow->Call( $hw, 7 );
-		}
+		#Win32::Sleep(50);
 		$SIG{TERM} = $SIG{QUIT} = sub{ exit; };
 		# スプラッシュ
 		#require Tk::Splash;
@@ -228,13 +218,28 @@ my_threads->init;
 $main_gui = gui_window::main->open;
 gui_window::suggest->open if $::config_obj->show_suggest_on_startup;
 
-# for macOS
+# Minimize Terminal window (macOS)
 if (
 	   ($^O eq 'darwin')
 	&& $::config_obj->all_in_one_pack
 ){
-	# Minimize Terminal window
+	
 	system 'osascript -e \'tell application "Terminal" to set miniaturized of front window to true\'';
+}
+
+# Minimize Console window (Windows)
+if (
+	   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
+	|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
+){
+	print "Minimizing Console window...\n";
+	require Win32::API;
+	my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
+	my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
+	my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
+	$ShowWindow->Call( $hw, 7 );
+} else {
+	print "Do not minimize Console window...\n";
 }
 
 MainLoop;
