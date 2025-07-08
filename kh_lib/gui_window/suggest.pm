@@ -10,13 +10,10 @@ sub _new{
     my $self = shift;
 
     $self->{win_obj}->withdraw;
+    $::main_gui->mw->update;
 
-    my $mw = $::main_gui->mw;
     my $win = $self->{win_obj};
     $win->title( kh_msg->get('win_title') );
-
-    # not resizable
-    $self->{win_obj}->resizable(0, 0);
 
     # Get Screen dpi / scale
     if ( $^O eq 'MSWin32' ) {
@@ -118,17 +115,14 @@ sub _new{
     $win->bind('<Alt-C>' => sub { $self->{nb}->raise('codes'); });
 
     $self->refresh;
-
     $self->follow_main if $::config_obj->suggest_stands_with_main;
 
     # set to natural size
-    my $g = $::config_obj->win_gmtry($self->win_name);
-    print "gui_window::suggest::_new: geometry saved: $g\n";
-    unless ( length( $g ) ) {
-        print "gui_window::suggest::_new: no geometry saved, setting to natural size\n";
-        $self->{win_obj}->geometry("");
-        $self->{win_obj}->update;
-    }
+    $self->{win_obj}->geometry("");
+    $self->{win_obj}->update;
+
+    # not resizable
+    $self->{win_obj}->resizable(0, 0);
 
 	$self->{win_obj}->deiconify;
 	$self->{win_obj}->raise;
@@ -259,7 +253,7 @@ sub padx{
 
 sub make_codes_tab{
     my $self = shift;
-    $self->{page_codes}->pack(-expand => 1, -fill => 'both');
+
     $self->{frame_codes} = $self->{page_codes}->Frame()->pack(
         -expand => 1,
         -fill   => 'both',
@@ -307,7 +301,7 @@ sub make_codes_tab{
 
 sub make_words_tab{
     my $self = shift;
-    $self->{page_words}->pack(-expand => 1, -fill => 'both');
+
     $self->{frame_words} = $self->{page_words}->Frame()->pack(
         -expand => 1,
         -fill   => 'both',
@@ -356,7 +350,6 @@ sub make_words_tab{
 # "Pre-Processing" tab creation
 sub make_prep_tab{
     my $self = shift;
-    $self->{page_prep}->pack(-expand => 1, -fill => 'both');
 
     $self->{frame_prep} = $self->{page_prep}->Frame()->pack(
         -expand => 1,
@@ -426,7 +419,6 @@ sub make_prep_tab{
 # "Project" tab creation
 sub make_proj_tab{
     my $self = shift;
-    $self->{page_proj}->pack(-expand => 1, -fill => 'both');
 
     $self->{frame_proj} = $self->{page_proj}->Frame()->pack(
         -expand => 1,
