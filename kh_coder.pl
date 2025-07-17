@@ -150,6 +150,21 @@ $kh_version = kh_about->version;
 print "This is KH Coder $kh_version on $^O.\n";
 print "CWD: ", $config_obj->uni_path( $config_obj->cwd ), "\n";
 
+# Minimize Console window (Windows)
+if (
+	   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
+	|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
+){
+	print "Minimizing Console window...\n";
+	require Win32::API;
+	my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
+	my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
+	my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
+	$ShowWindow->Call( $hw, 7 );
+} else {
+	print "Do not minimize Console window...\n";
+}
+
 # Windows版パッケージ用の初期化
 if (
 	   ($::config_obj->os eq 'win32')
@@ -227,20 +242,6 @@ if (
 	system 'osascript -e \'tell application "Terminal" to set miniaturized of front window to true\'';
 }
 
-# Minimize Console window (Windows)
-if (
-	   (defined($PerlApp::VERSION) && substr($PerlApp::VERSION,0,1) >= 7)
-	|| (defined($main::ENV{KHCPUB}) && $main::ENV{KHCPUB} == 2)
-){
-	print "Minimizing Console window...\n";
-	require Win32::API;
-	my $FindWindow = new Win32::API('user32', 'FindWindow', 'PP', 'N');
-	my $ShowWindow = new Win32::API('user32', 'ShowWindow', 'NN', 'N');
-	my $hw = $FindWindow->Call( 0, 'Console of KH Coder' );
-	$ShowWindow->Call( $hw, 7 );
-} else {
-	print "Do not minimize Console window...\n";
-}
 
 MainLoop;
 
