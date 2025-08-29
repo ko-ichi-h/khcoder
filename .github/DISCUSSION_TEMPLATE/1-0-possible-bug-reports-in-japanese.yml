@@ -85,7 +85,7 @@ body:
       required: true
 
 
-  - type: textarea
+  - type: markdown
     id: console
     attributes:
       label: "コンソール・ウィンドウの表示内容（Macではターミナルの表示内容）を貼り付けてください"
@@ -97,5 +97,16 @@ body:
         https://support.hp.com/jp-ja/document/c03715297
         
         Macの場合、エラー発生時のターミナルの表示内容をすべて、コピー＆ペーストでお知らせください。ターミナル画面は、ドックにアイコン化されています。
+      value: |
+        <details>
+        <summary>Console messages...</summary>
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        〔ここに貼り付けてください〕
+        
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        </details>
     validations:
       required: true
