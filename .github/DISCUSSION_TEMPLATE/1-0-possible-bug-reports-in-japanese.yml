@@ -96,7 +96,16 @@ body:
         
         Macの場合、エラー発生時のターミナルの表示内容をすべて、コピー＆ペーストでお知らせください。ターミナル画面は、ドックにアイコン化されています。
       value: |
-        hogehoge
-        hoge
+        <details>
+        <summary>Console messages...</summary>
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        
+        ↓ここに貼り付けてください↓
+        
+        
+        
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        </details>
     validations:
       required: true
