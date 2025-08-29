@@ -81,7 +81,6 @@ body:
     id: console
     attributes:
       label: "Contents of the console window"
-      render: t
       description: |
         Other than errors in pop-up windows, the full console/terminal output really helps. On Windows, you can find the console window by clicking KH Coder icon in the [task bar](https://en.wikipedia.org/wiki/Taskbar#Microsoft_Windows). The window has white texts on a black background.
         

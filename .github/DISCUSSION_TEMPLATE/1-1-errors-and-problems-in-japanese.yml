@@ -89,7 +89,6 @@ body:
     id: console
     attributes:
       label: "コンソール・ウィンドウの表示内容（Macではターミナルの表示内容）を貼り付けてください"
-      render: t
       description: |
         問題が生じたときのコンソール・ウィンドウの表示内容をすべてここにコピー＆ペーストしてください。
         
