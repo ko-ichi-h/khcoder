@@ -166,6 +166,12 @@ sub delete{
 	$self->projects->delete($self->selected);
 	
 	$self->refresh;
+
+	# refresh Suggest window
+	if ($::main_gui->if_opened('suggest')){
+		my $suggest = $::main_gui->get('suggest');
+		$suggest->refresh;
+	}
 }
 
 sub _open{
@@ -194,10 +200,18 @@ sub if_selected{
 	if (@temp == 1){
 		my $current_file;
 		eval{ $current_file = $::project_obj->file_target; };
+		eval{ $current_file = $::project_obj->status_source_file; };
+		$current_file = $::config_obj->uni_path($current_file) if defined $current_file;
+		
+		my $check_file = $self->projects->a_project("$temp[0]")->file_target;
+		$check_file =~ s/ \[.+\]$//; 
+		$check_file = $::config_obj->uni_path($check_file);
+		print "current_file: ", $current_file, "\n";
+		print "selected: ", $check_file, "\n";
 		if (
 			( defined($current_file) )
 			&& (
-				   $self->projects->a_project("$temp[0]")->file_target
+				   $check_file
 				eq $current_file
 			)
 		){
