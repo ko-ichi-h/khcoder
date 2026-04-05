@@ -334,11 +334,11 @@ sub make_codes_tab{
 
     # "Cluster analysis" button
     $self->{button_codes_cls} = $self->{frame_codes}->Button(
-        -image    => $self->get_icon('codes_cls'),
+        -image    => $self->get_icon('doc_search'),
         -compound => 'top',
-        -text     => kh_msg->get('gui_window::main::menu->h_cluster')."\n".'  Ctrl + U', #階層的クラスター分析
+        -text     => kh_msg->get('gui_window::main::menu->doc_search').'  Ctrl + U', #文書検索
         -font     => "TKFN",
-        -command  => sub { gui_window::cod_cls->open; }
+        -command  => sub { gui_window::doc_search->open; }
     )->pack(-side => 'left', -padx => $self->padx, -pady => 3);
 
     # "New" button
@@ -424,7 +424,7 @@ sub make_prep_tab{
     $self->{button_force_pickup} = $self->{frame_prep}->Button(
         -image    => $self->get_icon('prep_force'),
         -compound => 'top',
-        -text     => kh_msg->get('gui_window::main::menu->words_selection').'  Ctrl + X', #"語の取捨選択",
+        -text     => kh_msg->get('gui_window::main::menu->words_selection').'  Ctrl + T', #"語の取捨選択",
         -font     => "TKFN",
         -command  => sub { gui_window::dictionary->open; }
     )->pack(-side => 'left', -padx => $self->padx, -pady => 3);
@@ -506,7 +506,7 @@ sub make_proj_tab{
     $self->{button_tutorial_proj} = $self->{frame_proj}->Button(
         -image    => $self->get_icon('proj_tuto'),
         -compound => 'top',
-        -text     => kh_msg->get('proj_tuto').'  Ctrl + T',#"チュートリアルファイルで\nプロジェクト作成",
+        -text     => kh_msg->get('proj_tuto'),#"チュートリアルファイルで\nプロジェクト作成",
         -font     => "TKFN",
         #-width    => 120,
         #-height   => 120,
@@ -517,7 +517,7 @@ sub make_proj_tab{
     $self->{button_tutorial_fold} = $self->{frame_proj}->Button(
         -image    => $self->get_icon('proj_tuto_folder'),
         -compound => 'top',
-        -text     => kh_msg->get('proj_tuto_folder').'  Ctrl + F',#"チュートリアルフォルダを開く",
+        -text     => kh_msg->get('proj_tuto_folder'),#"チュートリアルフォルダを開く",
         -font     => "TKFN",
         #-width    => 120,
         #-height   => 120,

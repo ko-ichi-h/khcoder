@@ -191,14 +191,14 @@ sub common_key_bindings{
 		'<Control-Key-n>',
 		sub{gui_window::project_new->open;}
 	);
-    $win->bind(
-        '<Control-Key-t>',
-        sub{gui_window::suggest->_tutorial_proj;}
-    );
-    $win->bind(
-        '<Control-Key-f>',
-        sub{gui_window::suggest->_tutorial_fold;}
-    );
+    #$win->bind(
+    #    '<Control-Key-t>',
+    #    sub{gui_window::suggest->_tutorial_proj;}
+    #);
+    #$win->bind(
+    #    '<Control-Key-f>',
+    #    sub{gui_window::suggest->_tutorial_fold;}
+    #);
 
     $win->bind(
         '<Control-Key-r>',
@@ -208,7 +208,7 @@ sub common_key_bindings{
         }
     );
     $win->bind(
-        '<Control-Key-x>',
+        '<Control-Key-t>',
         sub{
             return 0 unless $::project_obj;
             gui_window::dictionary->open;
@@ -293,7 +293,7 @@ sub common_key_bindings{
         '<Control-Key-u>',
         sub{
             return 0 unless $::project_obj && $::project_obj->status_morpho;
-            gui_window::cod_cls->open;
+            gui_window::doc_search->open;
         }
     );
 
