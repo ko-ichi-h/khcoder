@@ -149,6 +149,7 @@ $kh_version = kh_about->version;
 # Say hello
 print "This is KH Coder $kh_version on $^O.\n";
 print "CWD: ", $config_obj->uni_path( $config_obj->cwd ), "\n";
+print "Private dir: ", $::config_obj->private_dir, "\n";
 
 # Minimize Console window (Windows)
 if (

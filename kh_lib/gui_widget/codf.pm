@@ -21,6 +21,13 @@ sub _new{
 		-command => sub{$self->_sansyo;}
 	)->pack( -side => 'left');
 	
+	$self->{button_edit} = $f1->Button(
+		-text => kh_msg->get('gui_window::project_open->edit'), # 編集
+		-font => "TKFN",
+		-borderwidth => '1',
+		-command => sub{$self->_edit;},
+		-state => 'disable',
+	)->pack(-side => 'left', -padx => 1);
 	if ($self->{r_button}){
 		$self->{button} = $f1->Button(
 			-text => kh_msg->get('reload'), # リロード
@@ -55,6 +62,9 @@ sub _new{
 		$e1->configure(-state,'normal');
 		$e1->insert('0',gui_window->gui_jchar($path));
 		$e1->configure(-state,'disable');
+		$self->{button_edit}->configure(-state => 'normal')
+			if $self->{button_edit}
+		;
 	} else {
 		$e1->configure(-state,'normal');
 		$e1->insert('0',kh_msg->get('no_file')); # 選択ファイル無し
@@ -64,6 +74,10 @@ sub _new{
 	return $self;
 }
 
+sub _edit{
+	my $self = shift;
+	gui_OtherWin->open( $self->cfile );
+}
 sub _drop{
 	my $self      = shift;
 	my $selection = shift;
@@ -101,6 +115,9 @@ sub _drop{
 		$self->entry->insert('0',$::config_obj->uni_path("$path"));
 		$self->entry->configure(-state,'disable');
 
+		$self->{button_edit}->configure(-state => 'normal')
+			if $self->{button_edit}
+		;
 		if (defined($self->{command})){
 			&{$self->{command}};
 		}
@@ -135,6 +152,9 @@ sub _sansyo{
 		$self->entry->insert('0',gui_window->gui_jchar("$path"));
 		$self->entry->configure(-state,'disable');
 
+		$self->{button_edit}->configure(-state => 'normal')
+			if $self->{button_edit}
+		;
 		if (defined($self->{command})){
 			&{$self->{command}};
 		}
@@ -154,6 +174,9 @@ sub set{
 		$self->entry->delete(0, 'end');
 		$self->entry->insert('0',gui_window->gui_jchar("$path"));
 		$self->entry->configure(-state,'disable');
+		$self->{button_edit}->configure(-state => 'normal')
+			if $self->{button_edit}
+		;
 
 		if (defined($self->{command})){
 			&{$self->{command}};
