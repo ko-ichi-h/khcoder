@@ -1409,7 +1409,7 @@ sub mc_morpho_dialog{
 			unless ($ans =~ /$ok/i){ return 0; }
 		} else {
 			my $ans = $mw->messageBox(
-				-message => kh_msg->gget('cont_big_pros'),
+				-message => kh_msg->get('run_prep_dialog'),
 				-icon    => 'question',
 				-type    => 'OKCancel',
 				-title   => 'KH Coder'

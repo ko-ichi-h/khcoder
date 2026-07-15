@@ -320,6 +320,8 @@ sub _make_new{
 	$::main_gui->menu->refresh;
 	$::main_gui->inner->refresh;
 
+	$::main_gui->menu->mc_morpho_dialog;
+
 	return 1;
 }
 

@@ -527,6 +527,11 @@ gui_window::main::menu:
     project:                  プロジェクト(P)
     read:                     読み込み
     run_prep:                 前処理の実行
+    run_prep_dialog:          |-
+        今すぐ前処理を実行してよろしいですか？
+        この処理には時間がかかる場合があります。
+
+        ※前処理とは分析の準備のために、語を抽出・整理する処理です。
     som:                      自己組織化マップ
     suggest:                  サジェスト画面
     term_vec_mtrx:            「抽出語×文脈ベクトル」表

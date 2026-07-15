@@ -9,7 +9,7 @@ sub version_short{
 }
 
 sub current_year{
-	2023;
+	2026;
 }
 
 1;

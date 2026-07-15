@@ -525,6 +525,12 @@ gui_window::main::menu:
     project:                  Project
     read:                     Import Variables
     run_prep:                 Run Pre-Processing
+    run_prep_dialog:          |-
+        Run Pre-Processing now?
+        This may take some time.
+
+        Note: Pre-Processing extracts and organizes words
+        in preparation for analysis.
     som:                      Self-Organizing Map
     suggest:                  Show suggest window
     term_vec_mtrx:            Word-Context Matrix
