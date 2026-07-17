@@ -1,4 +1,4 @@
-# KH Coder: for Quantitative Content Analysis or Text Mining
+# KH Coder 3 beta: for Quantitative Content Analysis or Text Mining
 
 ## Web
 Japanese: http://khcoder.net <br>
