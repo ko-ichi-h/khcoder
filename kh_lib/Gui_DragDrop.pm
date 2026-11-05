@@ -184,8 +184,9 @@ sub open_new_project_droped{
 
 	# Supported file types: same as the "Browse" button
 	unless ( gui_window::project_new->is_data_file($path) ){
-		print "Drag & Drop: not a supported file: ",
-			$::config_obj->os_path($path), "\n";
+		# STDOUT has the ":encoding(console_out)" layer:
+		# print the decoded path, not the os_path() bytes
+		print "Drag & Drop: not a supported file: $path\n";
 		return 0;
 	}
 
