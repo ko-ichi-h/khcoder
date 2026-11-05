@@ -328,19 +328,10 @@ sub _make_new{
 sub _sansyo{
 	my $self = shift;
 	
-	my @types;
-	
-	if ($::config_obj->os eq 'win32') {
-		@types = (
-			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .doc .odt/] ],
-			[ "All files",'*' ]
-		);
-	} else {
-		@types = (
-			[ "Data files",[qw/.txt .csv .tsv .xls .xlsx .docx .odt/] ],
-			[ "All files",'*' ]
-		);
-	}
+	my @types = (
+		[ "Data files", [ map {".$_"} $self->data_file_types ] ],
+		[ "All files",'*' ]
+	);
 
 	#print $::config_obj->cwd, "\n";
 	my $path = $self->win_obj->getOpenFile(
@@ -355,21 +346,42 @@ sub _sansyo{
 	my $t0 = new Benchmark;
 	
 	if ($path){
-		$self->e1->delete('0','end');
-		my $t2 = new Benchmark;
-		print "del:\t",timestr(timediff($t2,$t0)),"\n" if $time;
-		$self->e1->insert(0,$self->gui_jchar($path));
-		my $t3 = new Benchmark;
-		print "ins:\t",timestr(timediff($t3,$t2)),"\n" if $time;
-		
-		$path = $::config_obj->os_path($path);
-		my $t4 = new Benchmark;
-		print "char:\t",timestr(timediff($t4,$t3)),"\n" if $time;
-		$self->check_path($path);
-		my $t5 = new Benchmark;
-		print "cols:\t",timestr(timediff($t5,$t4)),"\n" if $time;
-		
+		$self->set_target_file($path);
+		my $t1 = new Benchmark;
+		print "set:\t",timestr(timediff($t1,$t0)),"\n" if $time;
 	}
+}
+
+# Set the target file.
+# Called from _sansyo ("Browse" button), Gui_DragDrop::open_new_project_droped
+# (Drag & Drop) and gui_window::suggest::_tutorial_proj.
+# $path: decoded (Unicode) path, as returned by getOpenFile
+sub set_target_file{
+	my $self = shift;
+	my $path = shift;
+
+	$self->e1->delete('0','end');
+	$self->e1->insert(0,$self->gui_jchar($path));
+
+	$path = $::config_obj->os_path($path);
+	$self->check_path($path);
+
+	return $self;
+}
+
+# Data file types that can be the target file (.doc: Windows only)
+sub data_file_types{
+	return grep { $_ ne 'doc' || $::config_obj->os eq 'win32' }
+		qw/txt csv tsv xls xlsx docx doc odt/;
+}
+
+# Is the file a supported data file?  $path: decoded (Unicode) path
+sub is_data_file{
+	my $class = shift;
+	my $path  = shift;
+
+	my $ext = join('|', $class->data_file_types);
+	return ( $path =~ /\.($ext)$/i && -f $::config_obj->os_path($path) );
 }
 
 sub check_path{

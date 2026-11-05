@@ -6,6 +6,7 @@ use gui_window::main::menu;
 use gui_window::main::inner;
 
 use Tk;
+use Gui_DragDrop;
 
 #----------------------------------#
 #   メインウィンドウ・クラス作成   #
@@ -36,6 +37,9 @@ sub _new{
 			}
 		}
 	);
+
+	# Drop a data file: open the "New Project" window with the file
+	Gui_DragDrop::new_project_site( $self->{win_obj} );
 
 	# スプラッシュWindowを閉じる
 	if ($::config_obj->os eq 'win32'){

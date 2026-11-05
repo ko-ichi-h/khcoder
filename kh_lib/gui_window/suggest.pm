@@ -5,6 +5,7 @@ use utf8;
 use strict;
 
 use Tk;
+use Gui_DragDrop;
 
 sub _new{
     my $self = shift;
@@ -131,6 +132,9 @@ sub _new{
 	$self->{win_obj}->deiconify;
 	$self->{win_obj}->raise;
 	$self->{win_obj}->focus;
+
+    # Drop a data file: open the "New Project" window with the file
+    Gui_DragDrop::new_project_site( $self->{win_obj} );
 
     return $self;
 }
@@ -632,9 +636,7 @@ sub _tutorial_proj{
 
     # Select the tutorial file
     my $win_new_proj = gui_window::project_new->open;
-    $win_new_proj->e1->delete('0','end');
-    $win_new_proj->e1->insert('0', $::config_obj->uni_path($tutorial_file));
-    $win_new_proj->check_path($::config_obj->os_path($tutorial_file));
+    $win_new_proj->set_target_file( $::config_obj->uni_path($tutorial_file) );
 
     if ($::config_obj->{msg_lang} eq 'jp') {
         # Select Japanese and Chasen by default

@@ -131,4 +131,74 @@ sub read_TextFile_droped{
 	}
 }
 
+#-------------------------------------------------#
+#   Drop to open the "New Project" window         #
+#-------------------------------------------------#
+# - When a data file is dropped on the main window or the suggest window,
+#   open the "New Project" window and select the file as if it was chosen
+#   with the "Browse" button.
+# - Only the first file is used when multiple files are dropped at once.
+#
+# - Usage:
+# Gui_DragDrop::new_project_site($Toplevel);
+
+sub new_project_site{
+	my $win = shift;
+	return $win->DropSite(
+		-dropcommand => [\&open_new_project_droped, $win],
+		-droptypes   => ($^O eq 'MSWin32' ? 'Win32' : ['XDND', 'Sun'])
+	);
+}
+
+my $new_project_droped = 0;
+
+sub open_new_project_droped{
+	my($widget, $selection) = @_;
+
+	# Win32: the callback is called once per file. Ignore the rest.
+	return 0 if $new_project_droped;
+
+	unless (length($selection)){
+		$selection = 'CLIPBOARD';
+	}
+	my $filename;
+	eval {
+		if ($^O eq 'MSWin32') {
+			$filename = $widget->SelectionGet(
+				-selection => $selection,
+				'STRING'
+			);
+		} else {
+			$filename = $widget->SelectionGet(
+				-selection => $selection,
+				'FILE_NAME'
+			);
+		}
+	};
+	return 0 unless defined($filename) && length($filename);
+
+	# SelectionGet returns the raw bytes of the file system encoding
+	# (as characters). Turn them back into bytes and decode them.
+	utf8::downgrade($filename, 1);
+	my $path = $::config_obj->uni_path($filename);
+
+	# Supported file types: same as the "Browse" button
+	unless ( gui_window::project_new->is_data_file($path) ){
+		print "Drag & Drop: not a supported file: ",
+			$::config_obj->os_path($path), "\n";
+		return 0;
+	}
+
+	$new_project_droped = 1;
+	$widget->afterIdle(
+		sub {
+			$new_project_droped = 0;
+			my $win = gui_window::project_new->open or return 0;
+			$win->set_target_file($path);
+			$win->win_obj->focusForce;
+		}
+	);
+	return 1;
+}
+
 1;
